@@ -1,60 +1,91 @@
-Return-Path: <linux-kernel+bounces-769251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA56B26BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:04:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6317B26BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C00CD7B52DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:03:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6E162356A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8F212B1E;
-	Thu, 14 Aug 2025 16:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A062472AB;
+	Thu, 14 Aug 2025 16:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1FZCpuG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is4eNz25"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5F121C9ED;
-	Thu, 14 Aug 2025 16:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8110A229B02;
+	Thu, 14 Aug 2025 16:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187472; cv=none; b=iD9/UQA7jceKrlBBSOrYw1Ce2pOTvSv1UX8vH4utfILyqK7yriFUE8wAAR/7FtRlhOtEC4tIiHNYBgw1s8pxwF6mBOuOPbVeUUxtSyn/Mx/4vRtKgXx25TtBx+vZSWxxleXSzC9ef+tP5WTdnMy5RvK5ZSpOUqmHaEcmr9hnUVU=
+	t=1755187544; cv=none; b=EPiWPswu+4P7CHToVAXYy1hxeguXZzYBlbw+KoOdzC23/PDWQHY94nekC1Uw+za0XfV2T9XHn3SCg31M1ZQOATJnQztDERBslflYMBcVqRlk8g0pev653fqXCj+T5C735NetrAfR3A1ynj899G4pMcpPoo5feQpT0i0yBxU+iq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187472; c=relaxed/simple;
-	bh=0DvQEAd0ldq1r3dzwWT+fSNKJ5CZVR01NTIGwBUpIL8=;
+	s=arc-20240116; t=1755187544; c=relaxed/simple;
+	bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KcCQCZyjag5YGSLL8Psp0TTZBqYDgb4Byhd4dXT+3D7S8wWjB/U5ox7+sgbOneanWBfyqbQxKzmMcFXo0JeqTwbTxwOR8K/mEkA629U4tDopr7QFa/+lunXb8IGb/qsh1XLnpO3sxtZUycRwW6XEvjUYy1zkgitn7Nfke/h0QvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1FZCpuG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A5FC4CEEF;
-	Thu, 14 Aug 2025 16:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755187471;
-	bh=0DvQEAd0ldq1r3dzwWT+fSNKJ5CZVR01NTIGwBUpIL8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l1FZCpuGsRG6LoTlMwU47Eq1G/89Mq76dfMn5sDX6GxTtkW7JNlOaLZUkB5MKsNdj
-	 tWPnUMIbJXcHZJIM1iyPIKOoOHX+C9A5o1jV/5Z1gtA2k/qUqEttQ7gQb/YftF4t1R
-	 +btu+JJB2uMxtwXvZngJ3YbUH48zMUM1QcM4NuresbPlclmygvx621Q2ACOq/Cvuww
-	 w8ZGVHpeU+pKv1JSkOPjXF9ahETOkyKl1tUbvWLeslO+kzJ+GdZWZWdM0xRQvnQJaC
-	 gsK9PNDoF6d1mKs+xG6UQoMftDoi7dygOlOAMkJAXRHfUGtiHPaXqB6n4Bt6PNtwzr
-	 iwlOqwVRkPz8w==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
-Date: Thu, 14 Aug 2025 09:04:29 -0700
-Message-Id: <20250814160429.67476-1-sj@kernel.org>
+	 MIME-Version:Content-Type; b=dgSMkrImTUvJ+Q+QJrI21AIdle7VsXtyd7iVFapWUBt50qPW8PnR0ghb27uyAvZT/NQAGforM0jnssdN55pfsO9H7VKPGF2PlzMgLkJL/O0NlSDJ23+444sCSuyTbn5U0Ky747qAONwQMJJWEi22l0OiZzg6QY7xvgpHUxHgT2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is4eNz25; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b6e79a0so1614437a12.2;
+        Thu, 14 Aug 2025 09:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755187541; x=1755792341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
+        b=is4eNz25hodoyDne4Sm4q6ySLRarHBfeCvj2SHQE0h3/HK5A1b+m8uHEhAQaFYWAQQ
+         9hgOoz2j7DddCVt8EV77dwRg/0gd+bIVrm7/ADvUl0tE/51NzgVLHGzBc1zE5lfsQK0A
+         6K72bztGvgVmDdIdR7UcEN5sWTxE0j/F+5Z+ToOnYb034LTkfntRhjGFJrPc5uTS72xd
+         49NZ/lDx+vwAdXShQKYwqfJvrTsgD0fL4XCip8bGY1P0LYenknoxezjpzJGWg1EA9OXB
+         d42Au1rDKa0cafrz7+tn6isI+Pf9jkTFIQqjxjGe9VL02q7+dZ+FQ96eW2wEpbPR8IqO
+         +Ybw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755187541; x=1755792341;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
+        b=vKBOjC7Z4c+qYNzBHJuMDrYEBfj15G5nGU9Rl0rY8cnRjDJ/8buvGR2TT214uXQf2V
+         R8vlQKlSnR8M4/3h8QNybpYnnmOpQndNiGNTrhtgF8nv+A9kRUUSAPhMtRdViiSZtxB3
+         8Ln0sumoPOz+uLCmlGcA9MHMkm+i0y4sRnaUtBSCtw9lKK/lmMKqENfIq7DiHFRV4a44
+         pC1IGGx6CYV+pBDwaBR9v0aXttoK1uICFYzV/oW9TSEUNKWiTHFiBruCFCH3pFuIshYB
+         uefnx4YWA4IvQPa7YuPuq+ZUbKSKSBQi4gzf8ue/XqRYfcTYksv8TEMy+s04zOmNeD83
+         KsIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW790Qlbrc8y4QeZQAUBrAa0lv8jQRojHaQe9VvXgeoR7S4C2DSUBoyJ4T5UzL6ZzMW7ovy34F6vdriA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxII0YQpOX8TtbJzF8lU6YzwKZRtWFVM2sXNTmLGqjrDJMTMaN6
+	TDF3ydi73+tmoDqKv9ALx47OymmrwIE1285Eo9/zYzd7nEo0bIzIQkh0
+X-Gm-Gg: ASbGncsvnxpXIQDaQOSTm1N3e0qCNWaETGKkK3zSvKyEt3zrcQeFQqR0/5NEm8Vu+/a
+	IDRYJQfJn5uf28iPKntIw7vegv+mPp4oem/VviI4w3qWNXgZ867pCBOvrddsU3w+2oal5t2B/0i
+	Xxi5Dk1wqBia0i5+r9Mpqn4VD3IHwd4XmWsRR8LZUaFbEmu0vaaz0cQDer4kahthszmK6MPlrhq
+	GSjkK9T9DFEU6i/pdipRQh5XdYHnF6jrnU34heHoyES5a6LgOaopQ0oMtJ9+xhVdu1+a92x7Ydf
+	Mf1fixxq9ODvAOElxNn8A8L50B/IDJt4ssFUdKexxBLRI3EDLjhIUyXre6CVo6ySdSlSNG7TVQK
+	MeHXBc4SsL3LpFwKFBPr7cjwiHija0yFykR3sEGtkE9z+Ejf0ABWHxgnbFwxol+vFQ016DfMZs3
+	fiVMk70/Q=
+X-Google-Smtp-Source: AGHT+IG5WggNgC2/hqpkeGTZv4PzkkEHiFlfXEjNy62djRE4DmAspEIhTs+rKOl1TP7K6jYTcO96sg==
+X-Received: by 2002:a05:6402:5250:b0:617:e4ba:30aa with SMTP id 4fb4d7f45d1cf-6188c21d516mr3253372a12.32.1755187540529;
+        Thu, 14 Aug 2025 09:05:40 -0700 (PDT)
+Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2b892sm24277253a12.25.2025.08.14.09.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 09:05:40 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: tiwai@suse.de
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	ramiserifpersia@gmail.com,
+	tiwai@suse.com
+Subject: Re: [PATCH v5 0/7] ALSA: usb-audio: Add driver for TASCAM US-144MKII
+Date: Thu, 14 Aug 2025 18:05:38 +0200
+Message-Id: <20250814160538.3269-1-ramiserifpersia@gmail.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <ee37ea36-7298-4174-b146-fd62b24ef345@huawei.com>
-References: 
+In-Reply-To: <87qzxduchg.wl-tiwai@suse.de>
+References: <87qzxduchg.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,78 +95,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Aug 2025 22:07:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-
-> 
-> 在 2025/8/14 8:57, SeongJae Park 写道:
-> > On Wed, 13 Aug 2025 10:25:44 -0700 SeongJae Park <sj@kernel.org> wrote:
-> >
-> >> Hello Quanmin,
-> >>
-> >> On Wed, 13 Aug 2025 13:06:50 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-> >>
-> >>> Previously, DAMON's physical address space monitoring only supported
-> >>> memory ranges below 4GB on LPAE-enabled systems. This was due to
-> >>> the use of 'unsigned long' in 'struct damon_addr_range', which is
-> >>> 32-bit on ARM32 even with LPAE enabled.
-> >>>
-> >>> Implements DAMON compatibility for ARM32 with LPAE enabled.
-> >> Thank you for working on this, Quanmin!
-> >>
-> >>> Patches 01/16 through 10/16 are from the mailing list[1], add a new core
-> >>> layer parameter called 'addr_unit'. Operations set layer can translate a
-> >>> core layer address to the real address by multiplying the parameter value
-> >>> to the core layer address.
-> >>>
-> >>> Patches 11/16 through 14/16 extend and complement patches 01~10, addressing
-> >>> various issues introduced by the addr_unit implementation.
-> >>>
-> >>> Patches 15/16 and 16/16 complete native DAMON support for 32-bit systems.
-> >> Overall, looks good to me.  I have a few change requests including below major
-> >> ones, though.
-> >>
-> >> First, let's squash patches for fixing problems made with patches 1-10 into
-> >> patches 1-10.  If you don't mind, I will post RFC v2 of those so that you can
-> >> pick into your series.
-> >>
-> >> Second, let's keep DAMOS stats in 'unsigned long' type.  This require fixups of
-> >> patches 1-10.  If you don't mind, I will also do this in RFC v2 of those.
-> > Instead of posting completely new RFC v2 of the ten patches, I think posting
-> > fixup patches as replies to this thread might be a better approach.  I will
-> > make fixups first, see what looks easier for working together with you, and
-> > either post entirely new version of the patch series, or send individual fixups
-> > as replies to each patch of this thread.
-> >
-> > And one more questions.  What is the baseline if this series?  I cannot simply
-> > apply these patches on mm-unstable or mm-new.  It would be nice if you could
-> > share a git tree having these patches fully applied, since 'cherry-pick' is
-> > easier than 'am' for me.
-> 
-> Hi SJ,
-> 
-> Thank you for your detailed suggestions on the patch series. Please allow me
-> some time to thoroughly review each of your recommendations.
-
-No worry, please take your time :)
-
-> I haven’t responded
-> to every point immediately because I’d like to first attempt updating the patches
-> accordingly. If I encounter any questions or issues during the process, I’ll promptly
-> reach out to discuss them with you, very appreciate your patience and guidance.
-
-Sounds good.
-
-> 
-> By the way, this patch series is based on linux-next(commit:2674d1eadaa2).
-
-Thank you for sharing this.  From the next time, please use mm-new[1] as a
-baseline for DAMON patches if there is no reason to not do so.
-
-[1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
-
+Thanks, I’ll fix the brace placement for scoped_guard() in the next revision.
+If there’s anything else you’d like me to adjust before resubmitting, please let me know.
 
 Thanks,
-SJ
-
-[...]
+Šerif
 
