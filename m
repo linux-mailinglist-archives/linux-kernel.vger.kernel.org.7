@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel+bounces-769712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3B2B272BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB075B272BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDA51CC629E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1557725DEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D33B2857F8;
-	Thu, 14 Aug 2025 22:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B5B2853E3;
+	Thu, 14 Aug 2025 23:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nbB0IjiO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vtf5cjKR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA292750F9;
-	Thu, 14 Aug 2025 22:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC055211A19;
+	Thu, 14 Aug 2025 23:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755212381; cv=none; b=oFX86/y15GUMm8nrYEcz4pxwXfKTkL8jf+/mXkTR99nbqlSPXNXy50LV83/Q2I9kjyJWZo+i8GIMVe8D3WcZnumopeHfMrH7S+Onb8UMSDNpyp5tkUy8ulMyxLXRIr+PzT5Ew19KCHwcmP1yeP16fgDDT6vSxFBpkZDfNNm++kM=
+	t=1755212501; cv=none; b=PP96+SvpSou+P+rWBvFeBVkkRz0rPMSejV1RMkup5h1G24VImT4WrAdhN7J4/lbHag8Q28KD4kxrpm+waqFki/HRbCNoqnEgtwgt5PPv+jUKrY3snYCMQVSK4ri2MSTccM6toWOzxq5kk9OT99ZPFwbkSdHHx8UT0HeAC68B234=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755212381; c=relaxed/simple;
-	bh=wRmDNIfn0SfSwme/IUQhw758Yz/1APoVv6n8UlZ5c4U=;
+	s=arc-20240116; t=1755212501; c=relaxed/simple;
+	bh=71270bDwQGdyjI2tptY1IgBLbrB/+yi1tFe2mVuz4C4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BQ2bWN2o3iXZPrhLKD8J12liVxImcFFa/1rMFmj3RfQjXng6j9bHktpYkxNYAnOooQvmE/dGmXbnTIKnuGKWZOq3xmg3pXtO59YbEkjrkvZ2lfrsU53/4/7fT0dEZbWxJCjvDEAHjHP/B0zGdJo93lNX9SWnWiJB08Y4A8fGAHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nbB0IjiO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FVeqKZFSQAwTQ3X+OQ356lDO2rMn750JHLVwuLVdXuY=; b=nbB0IjiOCZdnPWniC0NBCmaSWG
-	VUswlUZpP9b2hcKUXjyw+4lNp5AQmRqjhDphqc6ljlGagKOZPy1cvc4g7J4XWdxR3t+awNs8Kz5YS
-	5VH/EbCWkaxCYIjuC3the6YEM5UApFrEuNWEr0XtBFHsImabcBj/ASe3mmBd3J67o8SI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umgux-004kxy-TD; Fri, 15 Aug 2025 00:59:31 +0200
-Date: Fri, 15 Aug 2025 00:59:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frieder Schrempf <frieder@fris.de>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>, Paolo Abeni <pabeni@redhat.com>,
-	UNGLinuxDriver@microchip.com, Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jesse Van Gavere <jesseevg@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <tristram.ha@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH] net: dsa: microchip: Prevent overriding of HSR port
- forwarding
-Message-ID: <d7b430cf-7b28-49af-91f9-6b0da0f81c6a@lunn.ch>
-References: <20250813152615.856532-1-frieder@fris.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6HCNo3+nT98j22YlzW1DlLizNsVwHH9WIQFj5IImrlDZ9pKNqBDWPepL+unRYhm9f65c7XOEtPHAK97OObTCJ1NCd2JsFPXNWkomQLoC5poDzUhEF8uLKgWEZ/GpXhVlVe+YR2YsToLG99yTikfIYze+NYXQC1xaxeHmFenqS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vtf5cjKR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA21C4CEED;
+	Thu, 14 Aug 2025 23:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755212501;
+	bh=71270bDwQGdyjI2tptY1IgBLbrB/+yi1tFe2mVuz4C4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vtf5cjKRs3CRafEa4qw9FGnBuhKVtmby7/CdYjmzF1Opmlbyaz5yL4yGknkkQPlPK
+	 GW0Vu1jxMrVOcpZhtc2NMCmbaKZbtaoXy4kV2eT7AQeck3QXZO8ueHADf8GDE+BIWa
+	 PapHIDMT+Bfjopjsb/9W/r29u45cKnL+klCdz3koCB0xHaM0RHiHf8qU68Sy3XamX5
+	 SUiZYAUAQhXCQzRskkxv7yAIf18wzwqJSUmgQCcNDf89oLeVCtwlDdBGWhl2kMDRXJ
+	 Ym8QmJIzcIkJAv0xX25jI86HT0QTbDMGAN1x47QY3g11LE5ZeTdIvGh3VFR/O55YWL
+	 66b0qbmPfn0Bw==
+Date: Thu, 14 Aug 2025 16:01:37 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix objtool warnings if LTO is enabled for LoongArch
+Message-ID: <20250814230137.GA2247447@ax162>
+References: <20250812132716.1465-1-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,41 +58,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250813152615.856532-1-frieder@fris.de>
+In-Reply-To: <20250812132716.1465-1-yangtiezhu@loongson.cn>
 
-On Wed, Aug 13, 2025 at 05:26:12PM +0200, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> 
-> The KSZ9477 supports NETIF_F_HW_HSR_FWD to forward packets between
-> HSR ports. This is set up when creating the HSR interface via
-> ksz9477_hsr_join() and ksz9477_cfg_port_member().
-> 
-> At the same time ksz_update_port_member() is called on every
-> state change of a port and reconfiguring the forwarding to the
-> default state which means packets get only forwarded to the CPU
-> port.
-> 
-> If the ports are brought up before setting up the HSR interface
-> and then the port state is not changed afterwards, everything works
-> as intended:
-> 
->   ip link set lan1 up
->   ip link set lan2 up
->   ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
->   ip addr add dev hsr 10.0.0.10/24
->   ip link set hsr up
-> 
-> If the port state is changed after creating the HSR interface, this results
-> in a non-working HSR setup:
-> 
->   ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
->   ip addr add dev hsr 10.0.0.10/24
->   ip link set lan1 up
->   ip link set lan2 up
->   ip link set hsr up
+On Tue, Aug 12, 2025 at 09:27:14PM +0800, Tiezhu Yang wrote:
+> The patch #1 should be a preparation for patch #2, that is to say,
+> the patch #2 is dependent on the patch #1, otherwise there is build
+> error if LTO is enabled after only applying patch #2.
 
-So, restating what i said in a different thread, what happens if only
-software was used? No hardware offload.
+Thanks, these two patches do indeed resolve most of the warnings that I
+see.
 
-	Andrew
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+> With this series, most of warnings have been silenced, only remains
+> the following warning by now, it needs more analysis:
+> 
+>   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel() falls through
+>   to next function __efistub_exit_boot_func()
+
+Yes, I do see this one too. Odd, as efi_boot_kernel() ends in a
+__noreturn function...
+
+Cheers,
+Nathan
 
