@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-768701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90322B26457
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:33:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D4DB26460
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C485A759C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C89A00FA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2412BE020;
-	Thu, 14 Aug 2025 11:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE012F39AA;
+	Thu, 14 Aug 2025 11:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HO0OcpRO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QMVtGJJO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HO0OcpRO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QMVtGJJO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l76vktzh"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51A0264628
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FBF41A8F;
+	Thu, 14 Aug 2025 11:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171222; cv=none; b=Oj2cs0Ib//H7n2c0XVIGpcTjHjO+aWUKrV8DJXOZWHgImh7kfHjePqJipzQZfMceNtAiM6kC81/69Dx12oLIQO/oBxU199/iuavmZO+EK4zuvUcUY9eT/XTDr0p2CMiPYicEBuT5szgqrwrENIB4nSc+pVlahWvfitgrWcdpU40=
+	t=1755171286; cv=none; b=Mg7A99yoUt9jyDnLVv8GVsUfB2zL0YK1R7+EQDwKkbsuFzUKoUnmY+GLmTjwOiPsbSjNLNEGA0tZEQlB1MtIJnTvzOhPx+Wb6rilLrMVZTvEMryQoV905GfcY6P0TosgQ6Yc8DhR7uVouyHGngIMb1bssfAZ8UZM9TdH8h4UHH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171222; c=relaxed/simple;
-	bh=8OGF908ntYCbQXkbjE9tmYFEhsESj7VNH5YPooOxzqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SiWFIDEZf85r8YnJQmbPC2vaBHd2zm4BFOJlgqj3c4bTcQPcdnATELNAC6/ZqcSaGVjsyxy4VZ536u9r837lpOHpPGcveVcIV7MTnx+O1E82YTAOaUb/6J3YyicCiZ2Q3ZntsVdrhGp6h8OGS1SrLgNpxlZR2aaYVxyGi7xN57I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HO0OcpRO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QMVtGJJO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HO0OcpRO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QMVtGJJO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 00B951F458;
-	Thu, 14 Aug 2025 11:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1755171219;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g4IZjbsA2SbNT88FhoIMYzLgAjX+PED6nqI2Pi4TRQ=;
-	b=HO0OcpRO47vE0hJ6GjfSdusf9xJl5eOFbf4ygw7dzGDmY3adH8tnNWD+scT/NEsNqzeATJ
-	DcYKlD9xoqXHJZyTVruVlOSOXHbb+07kppPAir22Ajv7cEjl3SggcjznYJZ/VCDI2xcsfD
-	vMxPIYBFpae2d+YNAWaIQmIEv9OgYd8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1755171219;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g4IZjbsA2SbNT88FhoIMYzLgAjX+PED6nqI2Pi4TRQ=;
-	b=QMVtGJJOQZuyQ01omg/U9gn2E8dtVdBOZKgPQYwwJopCnUul3ftKtXwgZstQYQssGF9fvJ
-	1e5+SFDlANBGmjAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1755171219;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g4IZjbsA2SbNT88FhoIMYzLgAjX+PED6nqI2Pi4TRQ=;
-	b=HO0OcpRO47vE0hJ6GjfSdusf9xJl5eOFbf4ygw7dzGDmY3adH8tnNWD+scT/NEsNqzeATJ
-	DcYKlD9xoqXHJZyTVruVlOSOXHbb+07kppPAir22Ajv7cEjl3SggcjznYJZ/VCDI2xcsfD
-	vMxPIYBFpae2d+YNAWaIQmIEv9OgYd8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1755171219;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g4IZjbsA2SbNT88FhoIMYzLgAjX+PED6nqI2Pi4TRQ=;
-	b=QMVtGJJOQZuyQ01omg/U9gn2E8dtVdBOZKgPQYwwJopCnUul3ftKtXwgZstQYQssGF9fvJ
-	1e5+SFDlANBGmjAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DD018136AE;
-	Thu, 14 Aug 2025 11:33:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RwvGNZLJnWhHRQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 14 Aug 2025 11:33:38 +0000
-Date: Thu, 14 Aug 2025 13:33:37 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Sterba <dsterba@suse.com>, linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: Remove remainders of reiserfs
-Message-ID: <20250814113337.GD22430@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250813100053.1291961-1-dsterba@suse.com>
- <aJyQcAyOrp45D84g@casper.infradead.org>
+	s=arc-20240116; t=1755171286; c=relaxed/simple;
+	bh=Zuk+VGhg6j5wK1OB9dS8TGsA6Z+8A+u3suS/2dnnabE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aFzsAPZBq3bTPEdGyxiDKwkhhBN4ezAVeGeavwtTwZxCZecK5IOGUtKFBGt5LDUj8Ogl/4BR3WWd8v6uw0LBEjvPp26Li7OIPVwh3b/IfFJj25EgGmFicafl9C2Zt4MYy3sYIr+8J5o++aGTgIc2IPSksX9jzfJb6bUP0fvTjSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l76vktzh; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74381e0a227so606530a34.0;
+        Thu, 14 Aug 2025 04:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755171284; x=1755776084; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KfsQ0qqhk7rtPTAMLbJo5EZqlICp1s4TcMgY/WUahN0=;
+        b=l76vktzhZWPa8j+weL32foWTGKaW93k4wrGxgC3aWRCNqC0UcrTgJdViEMkQ4FRu7C
+         SDWbesyS/SJGkOLWeieuxfeV0rjN1zznLHYJqv+d9DYytzevRImY5QAIep6uninNSvob
+         PbMlmcNh1nfC1W2USqJYQ8YokQpp1KDEz5V5MsscvYiTsYV2hEabdnzMAz2w8fDEI00f
+         p5V/5N2ebNAtroQMTG+ucRTwd1s3ykPuG/vdhWshfe1pIx3/6rm+8kKS67ZnzFW8HEE/
+         8Pdg38gfUqmb8cunIw/CJap+iKs5NQ6cTlL+6ZJHtETdNnWp+1NHsDKWdIEBzR5/gzQ7
+         ajxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755171284; x=1755776084;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KfsQ0qqhk7rtPTAMLbJo5EZqlICp1s4TcMgY/WUahN0=;
+        b=oLPfEwg6ZsxE5jUkrnkkdf+vD0x8hG+iWPuD23umeErv/DPYPVN0O8qwDHgHSDaXd+
+         1XjyojNY3/FDxMnbm9qujOeQlUw2fgh1JdcacGU7TPdgt2IlHTdrMqyeXCbHH0jt+b0M
+         UOoE8+rupZXT4HZVbUzKYkfLDe0D+hei6hul6t3trsqDmatemGSNJJDLN8YCd0WU5wZW
+         4BJIgGogeEjZ+hyQ6+zFfk+zMhSJl4fswiR4AJXKPY6Utngl1WqLIs+AYjgCvX/z7tlD
+         8c/vWwzZ8gxANJw47ttiaJ0GagImNRY3itHtpaKMvEeJPgalMq9wpUkODN2xi7WGFeBX
+         539w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQtIXkfh985Jt0QzHNE9729jHf0oNgbPZeHbNI0QwjJO8hd9WLZuR8wqzjWFm0yP4McxiCGnBtzgA=@vger.kernel.org, AJvYcCXnydKWTEy4Tg2okDaAN5d+oR4FyFol/EwqxISgF/BQp0kZwp6PPdUq3imBO+F7NTJOOxgVr+KmqRJHiQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgmotqAzT7KdwZCaIKVTZtVtTLeeRzdILsle8kIcVlDkVr7xAA
+	yDTKOFjj6+WCOQAj+ateWFGAYoVWYAil6UeZpgcp9aK7LPQQG0k5e5LWJjEDuWJjogMMPAdE2E5
+	52ck07XDF9wbX9TyXYoiImNE3GldEG46qOwuk
+X-Gm-Gg: ASbGnct7bC2QszF7vF06Agr4YBSOcxIP7HdO+5WlKk9+yvI5uq8f3ZK3gaDtPx+fxJp
+	YVuBeTxaq3TZa6/2KkfVxyFpe/f8YjUhLHr5Rcvav4HEUIiipFbB6q03jTYdmSZ9D+xjOORfM14
+	h/RGUkgIUXs8s7Q36NQwhj3fqU5v9tPaHnAhezobq3hC2u+LywiRdQUtu7ogFPqWotTyAyHJVhc
+	c5J
+X-Google-Smtp-Source: AGHT+IFoou5bSu/kqDLdzefLDe0WLJaufqCS9rAF/VRLOcfCgnPo245UHo+Js3kcXq6dc//GcucSxxgTqPnwfAXzSZM=
+X-Received: by 2002:a05:6830:3497:b0:727:3439:5bdf with SMTP id
+ 46e09a7af769-74382bc3f86mr1518448a34.13.1755171284124; Thu, 14 Aug 2025
+ 04:34:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJyQcAyOrp45D84g@casper.infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+From: =?UTF-8?Q?Rafa=C5=82_Wysocki?= <rjwysocki@gmail.com>
+Date: Thu, 14 Aug 2025 13:34:31 +0200
+X-Gm-Features: Ac12FXytc0dymczB_6o7akUKrXNMtwU4g0NYyt99SuhFWDhS5SSpjpVawz5w29Q
+Message-ID: <CAJZ5v0hdFatBoM-o3s_-+Q+529npq8FNo36pESFQrBGqZJdm=w@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v6.17-rc2
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 13, 2025 at 02:17:36PM +0100, Matthew Wilcox wrote:
-> On Wed, Aug 13, 2025 at 12:00:52PM +0200, David Sterba wrote:
-> > +++ b/Documentation/admin-guide/laptops/laptop-mode.rst
-> > @@ -61,7 +61,7 @@ Caveats
-> >    Check your drive's rating, and don't wear down your drive's lifetime if you
-> >    don't need to.
-> >  
-> > -* If you mount some of your ext3/reiserfs filesystems with the -n option, then
-> > +* If you mount some of your ext3 filesystems with the -n option, then
-> 
-> Should this be updated to ext4?  ;-)
-> 
-> > @@ -587,7 +587,7 @@ Control script::
-> >  					FST=$(deduce_fstype $MP)
-> >  				fi
-> >  				case "$FST" in
-> > -					"ext3"|"reiserfs")
-> > +					"ext3")
-> 
-> ... uh.  Maybe much more significant work is needed ;-)
-> 
-> > +++ b/Documentation/arch/powerpc/eeh-pci-error-recovery.rst
-> > @@ -315,7 +315,6 @@ network daemons and file systems that didn't need to be disturbed.
-> >     ideally, the reset should happen at or below the block layer,
-> >     so that the file systems are not disturbed.
-> >  
-> > -   Reiserfs does not tolerate errors returned from the block device.
-> >     Ext3fs seems to be tolerant, retrying reads/writes until it does
-> >     succeed. Both have been only lightly tested in this scenario.
-> 
-> "Both" is now orphaned with the removal of ReiserFS.  And the ext3
-> sentence has an implicit reference to "errors returned from the block
-> device" that is now missing.  A wider change is needed here.
+Hi Linus,
 
-Yes, the ext3 mentions stand out in the documentation. I don't think it
-could be changed to ext4 in all places, there's a mix of historical
-references, quotes and 'scripts in documentation'.
+Please pull from the tag
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.17-rc2
+
+with top-most commit 40f2f1aa62578547e2977e8c0516048e0b71018c
+
+ Merge branches 'acpi-ec' and 'acpi-processor'
+
+on top of commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+
+ Linux 6.17-rc1
+
+to receive ACPI fixes for 6.17-rc2.
+
+These restore corner case behavior of the EC driver related to the
+handling of defective ACPI tables and fix a recent regression in the
+ACPI processor driver:
+
+ - Prevent the ACPI EC driver from ignoring ECDT information in the
+   cases when the ID string in the ECDT is invalid, but not empty, to
+   fix touchpad detection on ThinkBook 14 G7 IML (Armin Wolf).
+
+ - Rearrange checks in acpi_processor_ppc_init() to restore the handling
+   of frequency QoS requests related to _PPC limits inadvertently broken
+   by a recent update (Rafael Wysocki).
+
+Thanks!
+
+
+---------------
+
+Armin Wolf (1):
+      ACPI: EC: Relax sanity check of the ECDT ID string
+
+Rafael J. Wysocki (1):
+      ACPI: processor: perflib: Move problematic pr->performance check
+
+---------------
+
+ drivers/acpi/ec.c                | 10 +++++++---
+ drivers/acpi/processor_perflib.c |  5 ++++-
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
