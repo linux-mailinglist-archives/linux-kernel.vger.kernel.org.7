@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-769396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91E9B26DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2814B26DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4533F1C283F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454731C810EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4946C30E0C6;
-	Thu, 14 Aug 2025 17:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5F330E0DA;
+	Thu, 14 Aug 2025 17:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPnRqPJo"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qET8o0Xv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D96264614;
-	Thu, 14 Aug 2025 17:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9862622D7B6;
+	Thu, 14 Aug 2025 17:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755193366; cv=none; b=UiD60dwwvhXBWaMgBlIxAQuqzeD5BbvcifWXHzMVf/k9D6bqShhfzwkCCAX19d0EkHrpgJ9BUuEd+g7ay/JTKryLoMdB+/fhY12OjU3KtxkdutsLqyfCzLVVuq8lct0cfXPcqfmmb81fxB72hJ8gB/D9mN8Y8IT8HDMB8BdSMSg=
+	t=1755193419; cv=none; b=ClCHMjkwkV9gKMTAh8/p+/8Y6Hr7D1Qz6Zt9tf8ZFEMNwAB65O8nJInvEhAIQ/oMFkfg5iPdZMDPhtGWEgjtjzekKgfGeEjNtX0hcmNpnx0lWPMM6+cf5sew2oJY0UzcN2FbEzzNrguUq4ft2BV54noYMFIJktaMoefurzgW7Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755193366; c=relaxed/simple;
-	bh=yR2zwBCG982hTiJjUi6O+KQnO4OZIKVyy61m0AAI0cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQ7xARi4t8boZa7tABMEiAAEba74ygBa6jLXs4nz4MVFAdz8e7fEw1VS3IDTKe3VrAIY8VDOdSoqQ4nTNw7Z+RgAdRfKZbOcz2W1IxV7S/EsKcgXPWqW/e7JdDI6mohc/jkjj/FwB2PEvaVhKbGy17TYSelIbFVDkA7xd2iRSgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPnRqPJo; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-244581cd020so1727515ad.2;
-        Thu, 14 Aug 2025 10:42:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755193364; x=1755798164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yR2zwBCG982hTiJjUi6O+KQnO4OZIKVyy61m0AAI0cs=;
-        b=JPnRqPJoRg/Hsp+QMzvqjerSb4Jk+07IxM2B04V8cm1XH/msTf0v36lKnMK4MjIVjI
-         qnF9Lk6sFprsJX3V0L7qvW5OjQLapUti81Evy8vHlEuW62p2MPQGana6RER155GfkeMP
-         hUSrm9MdcsRp7AoJl+8DEUsV+lbP6lNwVoPmHwEh9x4NwnriB9+wfDasImPwugopIb8I
-         N4RUnSQZWN6UeK6CSuZEeiOdK2jXHzzvqgz3rdw+FmAuYq7fM4YufSN4oLg3r4tpI72L
-         Bi5ACgAIO5qTBOajSXV+XNumrEhTCZ8VB8Rl9zT7XnsjKt0kwLINOgwZ8o49zQNnh83a
-         jF1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755193364; x=1755798164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yR2zwBCG982hTiJjUi6O+KQnO4OZIKVyy61m0AAI0cs=;
-        b=A00/3413bFQW/IaXihv53IXLQXqfyQDGNoTn0jM8v05J0cckGg4xkMM9574Nq237Sm
-         3Lg36iMWVN8Srgd/bMAX8NI3vBco6LiJ0R0XVJV8qzVew9z7jlltM1pD40Dm8q4z6wSG
-         km9J0BuiFF+v94F71KOE6pqqfjyLzNNqMN9bR8AXOjbPrFkDms8Cu33wAMD+ILrx1ZnK
-         OnWgCNGRgWEDo/nBP8ZUR7aAzWGQmfeB8d0f8GKvRs0sC8+lf0fV7j7rdOCMiRcpUu4x
-         5FIfseiqN+vUOyqBaxNZv/agAzUInYZm/wJ/p6oQjbn6y6f7rh7l2muMr7/PEuVMKhe7
-         NdaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi+nqup45GmNUcjzt2f1RFWJ1fiGCYERjn3v31F6RBJhQBrcXRoNGKFeImCFevlmj53waKsD2plSAEA2fIBs0=@vger.kernel.org, AJvYcCX8zmYr1l8wmmfht9HA/2Yde318NpFFOQRl/w6hyKIchf9VbQatTQFD6CXT63qKuc+v/wVQmiZ1pMrpGmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyn8RN1d5PHsKFYNUHCoTuFKT7FD7hO6hIP8ZcbDsnVaoGxOTI
-	gCiju/YnYG6r8RYb6jaX7V8wMDfHyyWvegp/jMYMku4U+03bJJUCHzJdhTtwNBG9fOkg/W0y9qQ
-	FFnTtJUo7zVjX/SH/3k2/vMTWWNfNSw4=
-X-Gm-Gg: ASbGnctbbvgTIDatY2KbVIsG/9ILlfMgJJN8eu84Jim8KbAxG1ck33xGq03jTndVKZ3
-	YCR0BZ76EzzS9at3S7yf3aRik793ENEkZRgRg5BT0nrkCE0r0Ho4iFhbcZI3FmJT3BkhHxP35eF
-	BP+wL2Kk4ZgTHp5bBOVS/jjyCaOHGv333tsLTDrpitPzGQYwvCgBvZWNIFysVTzjKV38k2cSlSi
-	yBk9YEO
-X-Google-Smtp-Source: AGHT+IFVRWRKMNpPNMXe4pUN3qwj9nK+CZW0/Uv4J66/szRyOsOJHYXCKkVSkRf+pjgUBCpz7NIgvR/0Ou6u9Ge1P6w=
-X-Received: by 2002:a17:902:f550:b0:240:4d65:508f with SMTP id
- d9443c01a7336-244586aa416mr31153045ad.6.1755193364393; Thu, 14 Aug 2025
- 10:42:44 -0700 (PDT)
+	s=arc-20240116; t=1755193419; c=relaxed/simple;
+	bh=NtGaXEt/rCXZbH6AhRXhKag5AQfcAprg8g7HcBf4fa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxyWF9vgbQiArA75Sa2Fz0DIijUFb9mZgoY+0KAMaOeLiGzGRuMVuag5nJ5Uk/a4W7NmK6Rfwo/tkybFmHBVzSrDFxEPiFtup22yXWyu1feieOeYsUDyNpMRDAm3BVN6oPVrpDFDDZpf58IjXQAtSgZfLUa4NOyYPhiVStMdtTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qET8o0Xv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66588C4CEED;
+	Thu, 14 Aug 2025 17:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755193419;
+	bh=NtGaXEt/rCXZbH6AhRXhKag5AQfcAprg8g7HcBf4fa8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qET8o0XvKzXdUiWMSbCsLL3eECdWZ/AbT+J3b7auosgo7K/gf6rt6x3D6UTI76iqO
+	 ti/iGG5xkCHTOQimoWMmFfEnk9qKFL2quOO5nh0SiN+AtdcIknOOMaCwhWCHlP4gMD
+	 ykB+wRt62M5cjTVShpIgxGBKujUJevNaAvQmESCXsgTaz6eSAmBzP6Np2+HWgacd/i
+	 ptn2QT+kSVgRjXKbq92+rFZQUf9rAqUBC2DFgoqq/jRE8er78UlpXtOrVW/WVebQgm
+	 oscioXsT1akK/vdGGIJZToP0KYoeWZGwANzuVPBNp0BvFFlINHo65cmqBExc85Nyt2
+	 XqGc4T1I2WbCQ==
+Date: Thu, 14 Aug 2025 20:43:33 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 01/16] dma-mapping: introduce new DMA attribute to
+ indicate MMIO memory
+Message-ID: <20250814174333.GA8427@unreal>
+References: <cover.1755153054.git.leon@kernel.org>
+ <f832644c76e13de504ecf03450fd5d125f72f4c6.1755153054.git.leon@kernel.org>
+ <c855a4f9-4a50-4e02-9ac6-372abe7da730@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814093046.2071971-1-lossin@kernel.org> <20250814093046.2071971-8-lossin@kernel.org>
- <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com>
- <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
- <CANiq72k8kWHeBGLgHVE6vN36n6ashq-TVX3+h6WxLtc1jpUefQ@mail.gmail.com> <DC29H09I86EP.1WC5FDOG2NMN9@kernel.org>
-In-Reply-To: <DC29H09I86EP.1WC5FDOG2NMN9@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 14 Aug 2025 19:42:33 +0200
-X-Gm-Features: Ac12FXyb_mA9ffVMQ-zR9enRFTHwkDr0YIPyhThHultJbKNw-p7hdR7H505ly8M
-Message-ID: <CANiq72=FuzBB03nOEKvRnYn0y-NLkJ0R+TaSENNffh-zF_WtDw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
-To: Benno Lossin <lossin@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c855a4f9-4a50-4e02-9ac6-372abe7da730@infradead.org>
 
-On Thu, Aug 14, 2025 at 5:38=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> There are no pin-init changes in this patchset (in v2 there were, but I
-> took them for v6.16), so I think it should go via the rust tree.
+On Thu, Aug 14, 2025 at 10:37:22AM -0700, Randy Dunlap wrote:
+> Hi Leon,
+> 
+> On 8/14/25 3:13 AM, Leon Romanovsky wrote:
+> > diff --git a/Documentation/core-api/dma-attributes.rst b/Documentation/core-api/dma-attributes.rst
+> > index 1887d92e8e92..58a1528a9bb9 100644
+> > --- a/Documentation/core-api/dma-attributes.rst
+> > +++ b/Documentation/core-api/dma-attributes.rst
+> > @@ -130,3 +130,21 @@ accesses to DMA buffers in both privileged "supervisor" and unprivileged
+> >  subsystem that the buffer is fully accessible at the elevated privilege
+> >  level (and ideally inaccessible or at least read-only at the
+> >  lesser-privileged levels).
+> > +
+> > +DMA_ATTR_MMIO
+> > +-------------
+> > +
+> > +This attribute indicates the physical address is not normal system
+> > +memory. It may not be used with kmap*()/phys_to_virt()/phys_to_page()
+> > +functions, it may not be cachable, and access using CPU load/store
+> 
+> Usually "cacheable" (git grep -w cacheable counts 1042 hits vs.
+> 55 hits for "cachable"). And the $internet agrees.
+> 
+> > +instructions may not be allowed.
+> > +
+> > +Usually this will be used to describe MMIO addresses, or other non
+> 
+> non-cacheable
+> 
+> > +cachable register addresses. When DMA mapping this sort of address we
+> 
+> > +call the operation Peer to Peer as a one device is DMA'ing to another
+> > +device. For PCI devices the p2pdma APIs must be used to determine if
+> > +DMA_ATTR_MMIO is appropriate.
+> > +
+> > +For architectures that require cache flushing for DMA coherence
+> > +DMA_ATTR_MMIO will not perform any cache flushing. The address
+> > +provided must never be mapped cachable into the CPU.
+> again.
 
-Sounds good.
+Thanks, I will fix.
 
-> We can of course wait with patches 3-11 until the next cycle and let
-> maintainers pick them individually, but since they are so small, I think
-> it's easier to just pick them all at once via the rust tree.
-
-Yeah, either way is fine. I would say let's just land the ones we get
-Acked-bys for, even if they are not all.
-
-Cheers,
-Miguel
+> 
+> thanks.
+> -- 
+> ~Randy
+> 
+> 
 
