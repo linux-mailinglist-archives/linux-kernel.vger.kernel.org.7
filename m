@@ -1,151 +1,96 @@
-Return-Path: <linux-kernel+bounces-768408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E67B260CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:26:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDBEB260CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F199316CB79
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0467E16D695
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1037D2EA142;
-	Thu, 14 Aug 2025 09:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733842EA742;
+	Thu, 14 Aug 2025 09:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i3rnlNuF"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pe/z9zQd"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988962E7BB7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966862D46D4;
+	Thu, 14 Aug 2025 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163409; cv=none; b=aq4xUOBLnDGk2msSMr5jdvUL+2/UzFEp9Vhx9pPf6fe7mhfSUS23AqxPvIWcGkZ4GN/hmSA9Nrk0YY3N0j1X6j7BzAEFHt5bIGD5VM1lQ7or7ftdUCzgcaAzOpFvWinBl2CxdPSOhkAW8WT55Rv3kom9Pv9lrUOuSYQ/ZJIyNNw=
+	t=1755163421; cv=none; b=oA1DCvlQ6MiSqVw88Hrv/TeEKqd4J11M2zB8bXhFLVP/203s17oqF5thQJbV6j8xUy4mmeCje/9hQoQ6KV0shyjcZEwgSUb0OTT4fgikP18zzN2llbG2UxFxHJ+kozDyfONYM/SA6Q9xuJrioJkT2t/DnI7yUXReNe3Kes/eyLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163409; c=relaxed/simple;
-	bh=1p31ORQ0LGAdIkX4tlRR4sW7uMHgmXUc2XnTrS78Yfs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSebDKAfxYxOQEfedZO8Sncn96bk0YICYnk6Ymue5qxQ2iWtrv37q1vu6uKSFUU7XHEIb62JmLdw0okkwvpyUeeTb5Q+XsnVBKk9lFwRp63KpnjUkrI/Dqsu3/XV2vXTfYGXl5xRpiY0SLNIzxMli/CSYtYmQhd/GCagjQxUdqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i3rnlNuF; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce5268cb8so664011e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755163406; x=1755768206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jpEu3YjSYoh7r4VO0s5m1PdSv0aUP+n6hdz3pBdusjA=;
-        b=i3rnlNuFoF5iWgIiZYlsHJPEzg+eLsWgp5Q4XZ4Ahw2EuaIca1VwE44t5Pg86lzDq6
-         C2w40v/WB5sQfExBCHYih1xeuRR3Q1eLtCCwMzHkggAJsLiGzwfkAFwzJ7ln96WBIOj4
-         CCEZoq8QdJlzbbPq8xnoocC01cyVrlLZ60jJI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755163406; x=1755768206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jpEu3YjSYoh7r4VO0s5m1PdSv0aUP+n6hdz3pBdusjA=;
-        b=IWgUcPU2yXlt7vIaE7APBdSyobMCy8Oyw2AVHB4v/hSs78WuUzF72L9bmXrgwU1Ucy
-         KNwQvzWeh/rgl0ZqkqAsun+2EWG7rdB8xMtjwHP+iHibcUlvZy20mfP9jwrW7TiuKm61
-         IvGpi87th1XY+zoRqYd/pGhCfnGtNG+UbWkSuUCNIXM4x/eWn8NgxIK28MpE5tDhr6dP
-         GRk4BFAT6/GbQKenGBYiUqARo1R5Z4qst5akcs9+CoyBHya9qQlZFWeuyPRXHqy4s5e7
-         EMHvM+eT1nN2ktTPc/VcMRFTM48/g2dWY0D+ioDyjear0u5WCPJlkrv/mG9kGIRBhMgP
-         6wKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVOix6tn071OuIP8ZpfJnIphB3fyVC8I/sO9Ah3mMtGjwwn3EWpa14cKWVIACX6HiQVaZFHZ6zOeIRaAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1k1CEMkKz3lbDKThGZinHhXjnAH+oUHWALahTG66m5rmrgFZD
-	vEgc15Noqf2vcspn8n/woNUIzJujo6nuYZEa5BxyDOWq3Wx4gJ4PBGrPfBM4TRTPxhXVZNtpr+j
-	OYsXmCjE24GJfpUEwAPtQOCvWtz39oNHdCWr1u3Cb
-X-Gm-Gg: ASbGncub6krXxm163hKfsHKOsXiHZhtn1kKRd8IHGUTYeN5LUcsL/ZdFO5/FRID3vid
-	hWXpjB4oTHMIFYH97RnCE3NQh15USH2hJ8G6bfcfG9IJ/9xAb4aRMq9uLOBt0lNx7XpcELq59bo
-	2CvIcaJ5MhJLOZlrJ8G+nuQiJ0fasfctPAK/pIBpzgTa0iMPYh/zfCjseMr08YbP5MGZAticQo0
-	ayeLpXbyV9dYRl8uSWTDNmq/syJ5cSq1Ak=
-X-Google-Smtp-Source: AGHT+IGpKciwODEZc1IhhzYqeOLMaszqjmQ++VhTEo22Iom9UGzpsRrcz90fbohkGI5byeGYbxmvyFlt9Y3WLL1B2b0=
-X-Received: by 2002:a05:6512:6d3:b0:55b:8f02:c9e1 with SMTP id
- 2adb3069b0e04-55ce50739efmr676632e87.27.1755163405566; Thu, 14 Aug 2025
- 02:23:25 -0700 (PDT)
+	s=arc-20240116; t=1755163421; c=relaxed/simple;
+	bh=2WDja3Xm58FNfC9FIMddv3gF5tE6jqzgi3yHc/39j18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ao/B0ewBgHYuxMNiti1ZJ5bWQW2AkVqL7ou/7M12gZ3twwBouYkwdxzSANvzIevItFoi3W/QhDlV3X2/zvNFnsO6M47KxIcF5MW3i9kGXMuzPX313swvSqnDm76zYR/ywSsyQORboMAckOIj5gldK7ku0voVxlzVGfEGyIvTcPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pe/z9zQd; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TXNnGNU4HZErrTRJ2fJqyiAOQXXe4JUJrwrT0g3iBec=; b=pe/z9zQd93ARu6/ecfEdcV7CMc
+	7wJH7n4LoI0wiJ1H5qORX5L2YOcHB5zSUIBqKZl535FnsiuA7RMwloOuEldEy/IU0SK7v4hP/bSRv
+	MkC2wVyWat5ypLgk5960lIFDY0yZRd4iDiqcOHzvrzHBTnQY1nJOj/cA4Z2YXFa8cPbQmXNvtMfYU
+	25EIw6HNWgeaQL5aZN8FmxUj7bXkxdFdcV9m4wiXa/K57W3pgZv9uFeN2KOtuepejKbA6Us1qppUJ
+	boH6p1AaoTgWjAikXD17q2eF/ZYSLEBlyrRgmboCIdRuyOBMSmN6mEQe7f1Ktb30XCXysHWvFoqRs
+	ZuE5/ZQQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59264)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1umUBF-00083b-1m;
+	Thu, 14 Aug 2025 10:23:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1umUBD-0006hF-1A;
+	Thu, 14 Aug 2025 10:23:27 +0100
+Date: Thu, 14 Aug 2025 10:23:27 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	richardcochran@gmail.com, o.rempel@pengutronix.de,
+	alok.a.tiwari@oracle.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 3/4] net: phy: micrel: Replace hardcoded
+ pages with defines
+Message-ID: <aJ2rD8v_ztwwV4Mp@shell.armlinux.org.uk>
+References: <20250814082624.696952-1-horatiu.vultur@microchip.com>
+ <20250814082624.696952-4-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812085902.3309160-1-wenst@chromium.org> <CAC=S1nhG_ExACJRpJoqmO7nn+P24uiaha21SFEyR3aoKL-Pjgw@mail.gmail.com>
-In-Reply-To: <CAC=S1nhG_ExACJRpJoqmO7nn+P24uiaha21SFEyR3aoKL-Pjgw@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 14 Aug 2025 17:23:14 +0800
-X-Gm-Features: Ac12FXxQGyeanDOqLQ_pP2in2SjWgkqtc8UcLGeK7yro90D1xizR-yjtyHCuvWc
-Message-ID: <CAGXv+5FF5ZfOVP1qQh7s0sw9z4SXY6Rh8kS+8HcTxNY1gQ_kJg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8188-geralt: Enable first SCP core
-To: Fei Shao <fshao@chromium.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814082624.696952-4-horatiu.vultur@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Aug 13, 2025 at 6:03=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
-:
->
-> On Tue, Aug 12, 2025 at 8:39=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >
-> > The first SCP core is used to drive the video decoder and encoders.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi b/arch/arm=
-64/boot/dts/mediatek/mt8188-geralt.dtsi
-> > index c5254ae0bb99..10764786bc21 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-> > @@ -164,6 +164,12 @@ reserved_memory: reserved-memory {
-> >                 #size-cells =3D <2>;
-> >                 ranges;
-> >
-> > +               scp_mem_reserved: memory@50000000 {
-> > +                       compatible =3D "shared-dma-pool";
-> > +                       reg =3D <0 0x50000000 0 0x800000>;
-> > +                       no-map;
-> > +               };
-> > +
-> >                 apu_mem: memory@55000000 {
-> >                         compatible =3D "shared-dma-pool";
-> >                         reg =3D <0 0x55000000 0 0x1400000>;
-> > @@ -1146,6 +1152,16 @@ &postmask0_out {
-> >         remote-endpoint =3D <&dither0_in>;
-> >  };
-> >
-> > +&scp_cluster {
-> > +       status =3D "okay";
-> > +};
-> > +
-> > +&scp_c0 {
-> > +       firmware-name =3D "mediatek/mt8188/scp.img";
-> > +       memory-region =3D <&scp_mem_reserved>;
->
-> It looks like a pinctrl for SCP_VREQ_VAO (GPIO 98) is missing?
-> Datasheet says it's for "SCP to PMIC normal voltage request", and
-> MT8195 and MT8192 also have that configured.
+On Thu, Aug 14, 2025 at 10:26:23AM +0200, Horatiu Vultur wrote:
+> The functions lan_*_page_reg gets as a second parameter the page
+> where the register is. In all the functions the page was hardcoded.
+> Replace the hardcoded values with defines to make it more clear
+> what are those parameters.
+> 
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-You are right. Will send v2.
+LGTM.
 
-> Regards,
-> Fei
->
-> > +       status =3D "okay";
-> > +};
-> > +
-> >  &sound {
-> >         pinctrl-names =3D "aud_etdm_hp_on", "aud_etdm_hp_off",
-> >                         "aud_etdm_spk_on", "aud_etdm_spk_off",
-> > --
-> > 2.51.0.rc0.215.g125493bb4a-goog
-> >
-> >
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
