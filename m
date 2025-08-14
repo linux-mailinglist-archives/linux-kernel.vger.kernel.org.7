@@ -1,206 +1,180 @@
-Return-Path: <linux-kernel+bounces-769238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE43EB26BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712DFB26BB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF8A188A62D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EFFD188D013
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB6F24502D;
-	Thu, 14 Aug 2025 15:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20311199924;
+	Thu, 14 Aug 2025 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MgEuEiGZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HhUKmSmR"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334DA24167F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C493199FD0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186884; cv=none; b=TJhdJOkhIEyhzPy0o3eqnvoDjxV1dEieoJ6+uvks2qNwsodcmxDgk1OT3mj8wbWaqNZz+FRzBoQA/BUb5NbWEOihVX+LJ7GVu4/juiMtpqSCk7iyPK1+Cz2o6XxFvau4CLGIPfc2fJY4UtQHwTC0ZlxTZb07CIKkczt6wkYhoOk=
+	t=1755186906; cv=none; b=alGEXvGmkbccObyFIsmGS+9189JCbi9tymxYjhWV8+TVt38k5dPh8q3KhgbfLE9187+Zaqc5xvJCDpH7tXRs/QMcQrtW2crD5mCZhEN281tSAPgiZ0ewklI0tV2OSTY8PpDU7TQZLO84Vf36nNsbatKUbEOfK8/4t2vDaz+e718=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186884; c=relaxed/simple;
-	bh=vxbUBZLeqSaZmAih4KWD9p4o6a+gjkGNgT8HqQYq2xQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JA4v2fTxXddhvgTo8mcMAOghJymX6wi58wEi04sgX/E4EEAoCZ/Cpxd3KqoewkdbbRt2RFmpGHZ4sbcwTA3qLajMlGohcZjuPkSnApL4EO1h49E5IERu9vH4ZgSE+pw3g7h+9qXUkwPHyE+G7vNTrDx0JdT4gB3dlW+u2m6QlSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MgEuEiGZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755186882;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pw6J7G4lublkYHd4TwpQ/RsLsKwRDz0RFjIsgsnVAJk=;
-	b=MgEuEiGZIeodFneBLYiOp4jEwrsJqEekpycfW+3WKpxtdB3bR9QoAeXvOnM08alEhuy1Jy
-	4nGVWsYNUWpAWdCXGQ+jiYvEI/j3COu85oIYssuM+DJgZZVUryvwv8T7cTYfGeAOK5DD+9
-	qrgDZefnPJeCirwiI98k21RwwTd+Pf0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-ig0ngxLWOlmZsnHpAVxLWQ-1; Thu, 14 Aug 2025 11:54:40 -0400
-X-MC-Unique: ig0ngxLWOlmZsnHpAVxLWQ-1
-X-Mimecast-MFC-AGG-ID: ig0ngxLWOlmZsnHpAVxLWQ_1755186880
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e8705feefaso292444085a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:54:40 -0700 (PDT)
+	s=arc-20240116; t=1755186906; c=relaxed/simple;
+	bh=XkpJgq+lIXUCppVHf15aiVr5Q8p7XI7C729dg+Vl3Qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHQcF3bGXMuxuWHF2kOkCdOxOFwViaDGESTE7RxWuHVs990PX2z2mV8loKbyaakbq5eTn9GI/Y7IeN9reU2mpIv/nwh+tiZXNA3Z7ux2+vJhoBs719hZ0N9gq/UXNoM77g4lJL5BvZOHpZX+/UowZoQEeBBYlIscneMcdLK0y70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HhUKmSmR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso7342005e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755186901; x=1755791701; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SviimhcnBMLOVVMhOENj2J5Tfh1/NQV1XS5VZG0D3iQ=;
+        b=HhUKmSmRpXmjZFZ5q/DoCDAPbLa89O1pAzxr9RG0pfEAMsY+VGEGPuPpus4BiNfK2f
+         OP3UWnBLgTiFOCLKIOudw+RO+8dZhLZQVivsrnUqdRizT964W2XrjTDknJ7fbqSEdXCB
+         yQMXKx/GosmiQWhAZd/aJRMxp7ySrXoZYphjtdkGbLVaI3vqu4tGWTrWRo1+ULQhcNeS
+         nXBonXQaaLA5APE+I2oLRjaM1LBFz644LtblJhLyqsSDU9umKxA3xEqg5nmQOzS4o0Rf
+         mnGGbtJDtkPowPQlKi/43B9xwTc04cJGX27HvfZ3NaBqROEu2Gl9OaqgX//qGncDXwlL
+         R3Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186880; x=1755791680;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pw6J7G4lublkYHd4TwpQ/RsLsKwRDz0RFjIsgsnVAJk=;
-        b=JbCDwy0GiOSzqjkjrLDNTOicw5f6zxt1ePxF8kFtTcKAzdOSfB9EoaUpyQvgnw8ihg
-         4WoC02gZNdCoQUcyuRix66i+BUN+8ETKugT6IH06X9Gt6NbE1Pogq+4ahEjHR3RtxCkM
-         Z48tsooA1MVafbJZWg70TV0I1jKUvrO8PPSjRYMBMFC8qkRJXFTBOXkx1hsQ2+KZ5c/V
-         SANe6qWuVXmnJh2nhaiCQck2wp5xD3uLI/ashQSTTqa9oNanSyahwXAtW2MqORjhbi8s
-         KBAwotkn4ieEtVq1e3LPfa2vGe51laBPcF1YPf6nGiO+seaGcJbX2D5bme06TRAFvtu+
-         NJVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+mU00EHH2+7yL8/2zKNe95c1OQGX0zk9FCHMMcFk4nSqxESIS2UQ6taNiuX2QfGYWmobJSAvMWDsHsXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa2fSkY+pBv3Zkl0pvW6wTHfpAQJTPmlnsSF3slvQ0L5bgnloz
-	31CubVupr1CMvBv3AzcYL9xp2PVFq9j6lwDr2Wzp7tZeAwbcqr9M02w2bc3KGABc9xJ1ijBr/Qu
-	lbQSfM0BH5eUJ7afO51owyVl0qHYWLiCyn5JwbV8any2MOlk85qEbVZmCnKmoB/H4EQ==
-X-Gm-Gg: ASbGncuwBgUFIMpXIl+CH+qYBPzwQOY7xutPGVakLHVgA8t4GUSL8IJJ7kPQMOdJiJn
-	RjWqZR/IZp9prd9NnkVLJXKZjl10Yf5xBR+9ZJ7IEHdm7YHBolyfOV1WwEbl0Iw9inFapyCRcjC
-	YMxidSpqoHZUoXFhSn1S6F3M9mtqI+cjjK+pTXNZ/TgsfZEODrtu+5NF/nv2PK1eEHm5zfXCk97
-	zZbdQonn2m0Bd2C3gYzMINnTAwvFsye/JXE4sTOSUn0mbatLlmiLcLYzACLuTYi6CUe84Wwu1rn
-	nQG/K+17gqjiKa0spQdKzufEjOg5wMT2/Hlrtmo2RPKT2mE9AsryVsvi1dGNimtunD3n9x+SOBi
-	v7je9UCga2vGAO+ev9rjmAxmx
-X-Received: by 2002:a05:620a:1a11:b0:7e8:61b4:fe76 with SMTP id af79cd13be357-7e8705952a3mr476264385a.42.1755186880135;
-        Thu, 14 Aug 2025 08:54:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9+hBPLWupIDIUMUZR0Os1k/8GAxJxAOwMDTb1NQNNmHkqSzifuYkAWsXjuU/YaLeCdE0qtA==
-X-Received: by 2002:a05:620a:1a11:b0:7e8:61b4:fe76 with SMTP id af79cd13be357-7e8705952a3mr476259785a.42.1755186879671;
-        Thu, 14 Aug 2025 08:54:39 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e84a217627sm813482685a.32.2025.08.14.08.54.35
+        d=1e100.net; s=20230601; t=1755186901; x=1755791701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SviimhcnBMLOVVMhOENj2J5Tfh1/NQV1XS5VZG0D3iQ=;
+        b=lXlClHPAzXuvN4UB+lAk041JVLAqNfAVCWaBeG701HjIpG9RIgt5C6xwQNJnvgEjo0
+         tmE/eJz9cJSQQADBcMAXgomOg9BuDjwR1SLjbJyIw5OYhEMUmwoRD+oqtM3aqspQKbmY
+         M17+91YO0xBamvMIZsVdAhWoX0SXCtO4svW+CrEZM8EFnbMvajYPNQHUgvTYuLNTn6MA
+         2l31msNI4E0lekjtdUNvLRPIXE4HF4ePJQrM7mmTfOOqpsbCDYGRcdjWsculk5joGzep
+         T42kNX263Pi3DNWx+j7dpBfSWbdmLtqWtNSelfWyW6Hbir0CrDD4x0yzF6Gtqczj8WmO
+         uNzg==
+X-Gm-Message-State: AOJu0YyXJhJ+Zd1UNUHDkGMqRluO6ByiegKhyeMqqWL0XQgchullxfau
+	NUA8CiPbga3HmI2lgSczs4FBhP3TA+b91JfF/ODGbnsKR3CKuet+cvPsKhbRNPYNTW0=
+X-Gm-Gg: ASbGncu8ijrS6rzlD6RUMzrb9r8JpRh3J0RLJ+zrMdswH09Y9VK1wYgyxdrSXMIn7Aa
+	lzN/2vufzf5R5MaSSPkXq3dGRN2qZGNm0GVykaqX6wQe4yKDI+mSaejDyuEnfMXr6u7pOgGAb3o
+	qFP8iZGI6mnYVIt52PUMrd1BwuvggmeoUBFNgIAp4ms3argisPpHmqdkNndjEB0c0GTxQgGHRtr
+	sQL5+nAR18IMwU3GvZfRfBqurTAew0wlssGMeHhWkFWQQWEB0dhZNCK7WyrnFPiTe/qCNruf7V9
+	mAYe6YgHh18pVPGNvNkEjbZUKI+5k+Qgfx4gWmc0hdiIqXKuHmtFjrIuWj+lvE28lFy7Gx4QlhU
+	s+BpIcDVlPseavRDlwTB1bcg+FzDT2bK7tOQOQAzcyg==
+X-Google-Smtp-Source: AGHT+IEg8KfFdsEWg4VePIf9NMFdjfj2YyB1TPJBwkQF8f3PI8g01heEQys1xj+KdL5pkHweD6cG9A==
+X-Received: by 2002:a05:6000:2910:b0:3b8:d5cb:ae1c with SMTP id ffacd0b85a97d-3b9edf2d87dmr3225979f8f.28.1755186901323;
+        Thu, 14 Aug 2025 08:55:01 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24302e028dcsm70954145ad.91.2025.08.14.08.54.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 08:54:38 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Ben Segall <bsegall@google.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, Chengming
- Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>, Ingo
- Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi
- Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Florian Bezdeka <florian.bezdeka@siemens.com>, Songtang Liu
- <liusongtang@bytedance.com>
-Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
-In-Reply-To: <20250812084828.GA52@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <20250715071658.267-4-ziqianlu@bytedance.com>
- <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250808101330.GA75@bytedance>
- <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250812084828.GA52@bytedance>
-Date: Thu, 14 Aug 2025 17:54:34 +0200
-Message-ID: <xhsmhh5y9j3ut.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Thu, 14 Aug 2025 08:55:00 -0700 (PDT)
+Date: Thu, 14 Aug 2025 17:54:44 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH v3 1/2] cgroup: cgroup.freeze.stat.local time
+ accounting
+Message-ID: <oel2dyzlyvzggpwxprhwbd7n2ye2bst32izjnzywjdilo4nena@p7bcxgy6lqyq>
+References: <20250805032940.3587891-4-ynaffit@google.com>
+ <20250805032940.3587891-5-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pjtwomnmbus7efjt"
+Content-Disposition: inline
+In-Reply-To: <20250805032940.3587891-5-ynaffit@google.com>
+
+
+--pjtwomnmbus7efjt
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v3 1/2] cgroup: cgroup.freeze.stat.local time
+ accounting
+MIME-Version: 1.0
 
-On 12/08/25 16:48, Aaron Lu wrote:
-> On Fri, Aug 08, 2025 at 01:45:11PM +0200, Valentin Schneider wrote:
->> On 08/08/25 18:13, Aaron Lu wrote:
->> > Let me run some scheduler benchmark to see how it impacts performance.
->> >
->> > I'm thinking maybe running something like hackbench on server platform=
-s,
->> > first with quota not set and see if performance changes; then also test
->> > with quota set and see how performance changes.
->> >
->> > Does this sound good to you? Or do you have any specific benchmark and
->> > test methodology in mind?
->> >
->>
->> Yeah hackbench is pretty good for stressing the EQ/DQ paths.
->>
->
-> Tested hackbench/pipe and netperf/UDP_RR on Intel EMR(2 sockets/240
-> cpus) and AMD Genoa(2 sockets/384 cpus), the tldr is: there is no clear
-> performance change between base and this patchset(head). Below is
-> detailed test data:
-> (turbo/boost disabled, cpuidle disabled, cpufreq set to performance)
->
-> hackbench/pipe/loops=3D150000
-> (seconds, smaller is better)
->
-> On Intel EMR:
->
-> nr_group          base             head          change
->  1              3.62=C2=B12.99%      3.61=C2=B110.42%      +0.28%
->  8              8.06=C2=B11.58%      7.88=C2=B15.82%       +2.23%
-> 16             11.40=C2=B12.57%     11.25=C2=B13.72%       +1.32%
->
-> For nr_group=3D16 case, configure a cgroup and set quota to half cpu and
-> then let hackbench run in this cgroup:
->
->                  base             head           change
-> quota=3D50%      18.35=C2=B12.40%     18.78=C2=B11.97%       -2.34%
->
-> On AMD Genoa:
->
-> nr_group          base             head          change
->  1             17.05=C2=B11.92%     16.99=C2=B12.81%       +0.35%
->  8             16.54=C2=B10.71%     16.73=C2=B11.18%       -1.15%
-> 16             27.04=C2=B10.39%     26.72=C2=B12.37%       +1.18%
->
-> For nr_group=3D16 case, configure a cgroup and set quota to half cpu and
-> then let hackbench run in this cgroup:
->
->                   base             head          change
-> quota=3D50%      43.79=C2=B11.10%     44.65=C2=B10.37%       -1.96%
->
-> Netperf/UDP_RR/testlen=3D30s
-> (throughput, higher is better)
->
-> 25% means nr_clients set to 1/4 nr_cpu, 50% means nr_clients is 1/2
-> nr_cpu, etc.
->
-> On Intel EMR:
->
-> nr_clients     base                 head             change
->   25%       83,567=C2=B10.06%         84,298=C2=B10.23%        +0.87%
->   50%       61,336=C2=B11.49%         60,816=C2=B10.63%        -0.85%
->   75%       40,592=C2=B10.97%         40,461=C2=B10.14%        -0.32%
->  100%       31,277=C2=B12.11%         30,948=C2=B11.84%        -1.05%
->
-> For nr_clients=3D100% case, configure a cgroup and set quota to half cpu
-> and then let netperf run in this cgroup:
->
-> nr_clients     base                 head             change
->  100%       25,532=C2=B10.56%         26,772=C2=B13.05%        +4.86%
->
-> On AMD Genoa:
->
-> nr_clients     base                 head             change
->  25%        12,443=C2=B10.40%         12,525=C2=B10.06%        +0.66%
->  50%        11,403=C2=B10.35%         11,472=C2=B10.50%        +0.61%
->  75%        10,070=C2=B10.19%         10,071=C2=B10.95%         0.00%
-> 100%         9,947=C2=B10.80%          9,881=C2=B10.58%        -0.66%
->
-> For nr_clients=3D100% case, configure a cgroup and set quota to half cpu
-> and then let netperf run in this cgroup:
->
-> nr_clients     base                 head             change
-> 100%         4,954=C2=B10.24%          4,952=C2=B10.14%         0.00%
+Hello.
 
-Thank you for running these, looks like mostly slightly bigger variance on
-a few of these but that's about it.
+On Mon, Aug 04, 2025 at 08:29:41PM -0700, Tiffany Yang <ynaffit@google.com>=
+ wrote:
+> +  cgroup.freeze.stat.local
+> +	A read-only flat-keyed file which exists in non-root cgroups.
+> +	The following entry is defined:
+> +
+> +	  freeze_time_total
+> +		Cumulative time that this cgroup has spent between freezing and
+> +		thawing, regardless of whether by self or ancestor groups.
+> +		NB: (not) reaching "frozen" state is not accounted here.
+> +
+> +		Using the following ASCII representation of a cgroup's freezer
+> +		state, ::
+> +
+> +			       1    _____
+> +			frozen 0 __/     \__
+> +			          ab    cd
+> +
+> +		.. Originally contributed by Michal Koutn=FD <mkoutny@suse.com>
+> +
+> +		the duration being measured is the span between a and c.
 
-I would also suggest running similar benchmarks but with deeper
-hierarchies, to get an idea of how much worse unthrottle_cfs_rq() can get
-when tg_unthrottle_up() goes up a bigger tree.
+This is so little "artwork" that a mere mention in commit message is OK
+;-)
 
+> +static int cgroup_freeze_local_stat_show(struct seq_file *seq, void *v)
+> +{
+> +	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
+> +	unsigned int sequence;
+> +	u64 freeze_time;
+> +
+> +	do {
+> +		sequence =3D read_seqcount_begin(&cgrp->freezer.freeze_seq);
+> +		freeze_time =3D cgrp->freezer.freeze_time_total_ns;
+> +		/* Add in current freezer interval if the task is now frozen */
+
+Nit: cgrp is frozen, not a task here
+
+> @@ -179,10 +179,16 @@ static void cgroup_do_freeze(struct cgroup *cgrp, b=
+ool freeze)
+>  	lockdep_assert_held(&cgroup_mutex);
+> =20
+>  	spin_lock_irq(&css_set_lock);
+> -	if (freeze)
+> +	write_seqcount_begin(&cgrp->freezer.freeze_seq);
+> +	if (freeze) {
+>  		set_bit(CGRP_FREEZE, &cgrp->flags);
+> -	else
+> +		cgrp->freezer.freeze_time_start_ns =3D ktime_get_ns();
+
+I wonder whether it wouldn't achieve more stable results if the
+reference timestamp was taken only once in cgroup_freeze().
+Measuring the rate of cgroup traversal is rather noise in this case.
+
+Thanks,
+Michal
+
+--pjtwomnmbus7efjt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaJ4GwgAKCRB+PQLnlNv4
+CNbxAP9FzlDCoVP1/jhXEaVA20T+mwq1x7BETTs7XxHWatYQTAD+OE7kYl0NbVYD
+g6r21AfecI9/DXVLMsPPub/G82cpWwI=
+=3Weh
+-----END PGP SIGNATURE-----
+
+--pjtwomnmbus7efjt--
 
