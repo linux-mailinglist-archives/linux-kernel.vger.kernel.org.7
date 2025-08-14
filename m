@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-769397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2814B26DE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:43:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F775B26DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454731C810EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:44:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3144A7A7615
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5F330E0DA;
-	Thu, 14 Aug 2025 17:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1CD223DCE;
+	Thu, 14 Aug 2025 17:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qET8o0Xv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WopLbjAX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9862622D7B6;
-	Thu, 14 Aug 2025 17:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1677A13A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755193419; cv=none; b=ClCHMjkwkV9gKMTAh8/p+/8Y6Hr7D1Qz6Zt9tf8ZFEMNwAB65O8nJInvEhAIQ/oMFkfg5iPdZMDPhtGWEgjtjzekKgfGeEjNtX0hcmNpnx0lWPMM6+cf5sew2oJY0UzcN2FbEzzNrguUq4ft2BV54noYMFIJktaMoefurzgW7Vc=
+	t=1755193553; cv=none; b=XIdp+Jc+HJzFwXiBiba4Ss8bHZQyHzjCbfQ+EVpnwaenj+55c+OCiGhs+JKjOxvVWSY6CRZqPXkupufyoFM2DlPmXiei8Wn0vT+T/Y1A58rH+6lwsnwts9s0YylpxVmxny4DoJMdGrjkcphUJndNAHMEZzONzX2TUe7x+6nTeBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755193419; c=relaxed/simple;
-	bh=NtGaXEt/rCXZbH6AhRXhKag5AQfcAprg8g7HcBf4fa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxyWF9vgbQiArA75Sa2Fz0DIijUFb9mZgoY+0KAMaOeLiGzGRuMVuag5nJ5Uk/a4W7NmK6Rfwo/tkybFmHBVzSrDFxEPiFtup22yXWyu1feieOeYsUDyNpMRDAm3BVN6oPVrpDFDDZpf58IjXQAtSgZfLUa4NOyYPhiVStMdtTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qET8o0Xv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66588C4CEED;
-	Thu, 14 Aug 2025 17:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755193419;
-	bh=NtGaXEt/rCXZbH6AhRXhKag5AQfcAprg8g7HcBf4fa8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qET8o0XvKzXdUiWMSbCsLL3eECdWZ/AbT+J3b7auosgo7K/gf6rt6x3D6UTI76iqO
-	 ti/iGG5xkCHTOQimoWMmFfEnk9qKFL2quOO5nh0SiN+AtdcIknOOMaCwhWCHlP4gMD
-	 ykB+wRt62M5cjTVShpIgxGBKujUJevNaAvQmESCXsgTaz6eSAmBzP6Np2+HWgacd/i
-	 ptn2QT+kSVgRjXKbq92+rFZQUf9rAqUBC2DFgoqq/jRE8er78UlpXtOrVW/WVebQgm
-	 oscioXsT1akK/vdGGIJZToP0KYoeWZGwANzuVPBNp0BvFFlINHo65cmqBExc85Nyt2
-	 XqGc4T1I2WbCQ==
-Date: Thu, 14 Aug 2025 20:43:33 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 01/16] dma-mapping: introduce new DMA attribute to
- indicate MMIO memory
-Message-ID: <20250814174333.GA8427@unreal>
-References: <cover.1755153054.git.leon@kernel.org>
- <f832644c76e13de504ecf03450fd5d125f72f4c6.1755153054.git.leon@kernel.org>
- <c855a4f9-4a50-4e02-9ac6-372abe7da730@infradead.org>
+	s=arc-20240116; t=1755193553; c=relaxed/simple;
+	bh=N6GdDA80btzjqCg7tM9oIOW1G5wmOjvhLBYDY0STrWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GolQb8Mx3OTpReGUK6mji5nSOnsxwe/QCYU015dybCx62iRqJzU/T+LUDZGDW/e9upHKhGOl7gO102v9gG2DM5M5MHl8ZkSgJU+Wn9He4IqZ8VfhviokwGUc/sqv77x4gm3FfXhbAbWlyLvFY/c1FHoZL7r3ip9iNusACPce+ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WopLbjAX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755193550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YLmNK2SIpYyqqZwufDdaR6EabRKEXax8n5yifa2/bJk=;
+	b=WopLbjAXIsrckrErBOnUf4i25SDspm0lrcdyve8RLNjQX7FNVPYi2bTHqpsp65v59McK/p
+	h/z18hmky94R5pjIVXGynrlAibPD4cqLNrjBcf786tz9B2zif6TkYboOCwnBntMxw3lkuN
+	veYsNJaKvOrUCpbqn8Na5vMuYA3iwRk=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-3Qi5NmQYNhO1dduGJdFiSQ-1; Thu, 14 Aug 2025 13:45:46 -0400
+X-MC-Unique: 3Qi5NmQYNhO1dduGJdFiSQ-1
+X-Mimecast-MFC-AGG-ID: 3Qi5NmQYNhO1dduGJdFiSQ_1755193545
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-55ce50aa2fdso558358e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:45:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755193545; x=1755798345;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLmNK2SIpYyqqZwufDdaR6EabRKEXax8n5yifa2/bJk=;
+        b=w9yKzTEpPm4THodby0co6XiG9zs8kq/Zt9SV5tTHqA+c/ZRoqqGagnFfuw3hhMBt/d
+         yfFW0u3yBIoej9irE3F4KTIg78+BgNHZkIiXB+vUWhMYYGbE8KM6q37IT/smlazkvEA0
+         TWrqxZqt2KrpqD+JxvxwQiH9kvqVTH4B8I3YalXaEjBNkYf7Vxtei0CsPkze0a0gE7tD
+         riAVZfWO1PbZMUHPMF1Zj8xb9lRU0uUJGvBbh4ZnP2nm0tnSyGK3ZmDfR2fcH0Dh2MNA
+         odOngq9xU0to0SEFrTqEs6vmup+f1wu4rSNls5oBSZOPPNBvYoCZNxu+dWTH7wB2VBwx
+         PoIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYuIVvH8kA4zKhW143HWdu5OnmT1vhlZhp6ZSx/5wm3i9qOjb0ClB/2FCUlovisD3bvrYJea3V5Ti+jl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0QNu0zgUNds/JoEYHj4duP5ftBYhq0Dcu6imO3M8R8R0c7WcS
+	9D6/Iotrnp/RsCvBoJ/+6Q9j3+0IDJSJMEini1YHEcQeP1D1CLs1Cgvum7BAFgfLp6021txoT+z
+	vpA9EQ/QIiHh5hf3dsEoWi+cS1Cs4M2QKB+SpzOn/9pmo54QQCFNpd6e8zcEgrW22
+X-Gm-Gg: ASbGnctHjzjwP8ZobpaYcepvnFQclRoZL2XkSPopVPqFgZvp/icn3ExdQwd87BK7pbj
+	+kxgSFbZgwpljq5CKGgx+/pK2p/2lZVDqbp/q4MLY0VXau3oHP0i34We20iosZTIn8ZDuAPp5xX
+	/EIKviwXIk/PoJP3A262IqizYkhgygHOWcdY49XaLlHAJHr+O0RSakDtn5pKwlT5hoH4pgd6Rlm
+	TyWDC3frkWgDzLqx/QvcuTtaHlC/HU2JHiQgHPLbaddIxAi0RCO8k+vV1CjttqEOahDWkZbbSiS
+	eQ+gC9IWMjmCCrG6u38vof49tL8Ydk6XwOiORN6WdNEAAXDfsNxRoUQq0UmaA+wkDg==
+X-Received: by 2002:a05:6512:400d:b0:553:663d:736c with SMTP id 2adb3069b0e04-55ce50419c0mr1337022e87.15.1755193545057;
+        Thu, 14 Aug 2025 10:45:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoGvy/3lqn2+KUjafXY/lDwg1jbWintZjZ67vF2LurnY6HesQlq/ETXwqXt9X0M1k2WOx1GQ==
+X-Received: by 2002:a05:6512:400d:b0:553:663d:736c with SMTP id 2adb3069b0e04-55ce50419c0mr1337018e87.15.1755193544623;
+        Thu, 14 Aug 2025 10:45:44 -0700 (PDT)
+Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cecfd842bsm15668e87.36.2025.08.14.10.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 10:45:44 -0700 (PDT)
+Message-ID: <2982b6f1-7c14-46ef-afb0-7951f7cdc2aa@redhat.com>
+Date: Thu, 14 Aug 2025 20:45:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c855a4f9-4a50-4e02-9ac6-372abe7da730@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] mm: use current as mmu notifier's owner
+To: Jason Gunthorpe <jgg@nvidia.com>, Alistair Popple <apopple@nvidia.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>, Leon Romanovsky <leonro@nvidia.com>,
+ Balbir Singh <balbirs@nvidia.com>
+References: <20250814072045.3637192-1-mpenttil@redhat.com>
+ <20250814072045.3637192-3-mpenttil@redhat.com>
+ <20250814124041.GD699432@nvidia.com>
+ <2da9464b-3b3d-46bd-a68f-bfef1226bbf6@redhat.com>
+ <20250814130403.GF699432@nvidia.com>
+ <67b6e041-4bea-485d-a881-cc674d719685@redhat.com>
+ <20250814141136.GG802098@nvidia.com>
+ <c7bbbbc8-b9fc-40f5-b86f-e43b9a85aaef@redhat.com>
+ <20250814172018.GJ802098@nvidia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
+In-Reply-To: <20250814172018.GJ802098@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 10:37:22AM -0700, Randy Dunlap wrote:
-> Hi Leon,
-> 
-> On 8/14/25 3:13 AM, Leon Romanovsky wrote:
-> > diff --git a/Documentation/core-api/dma-attributes.rst b/Documentation/core-api/dma-attributes.rst
-> > index 1887d92e8e92..58a1528a9bb9 100644
-> > --- a/Documentation/core-api/dma-attributes.rst
-> > +++ b/Documentation/core-api/dma-attributes.rst
-> > @@ -130,3 +130,21 @@ accesses to DMA buffers in both privileged "supervisor" and unprivileged
-> >  subsystem that the buffer is fully accessible at the elevated privilege
-> >  level (and ideally inaccessible or at least read-only at the
-> >  lesser-privileged levels).
-> > +
-> > +DMA_ATTR_MMIO
-> > +-------------
-> > +
-> > +This attribute indicates the physical address is not normal system
-> > +memory. It may not be used with kmap*()/phys_to_virt()/phys_to_page()
-> > +functions, it may not be cachable, and access using CPU load/store
-> 
-> Usually "cacheable" (git grep -w cacheable counts 1042 hits vs.
-> 55 hits for "cachable"). And the $internet agrees.
-> 
-> > +instructions may not be allowed.
-> > +
-> > +Usually this will be used to describe MMIO addresses, or other non
-> 
-> non-cacheable
-> 
-> > +cachable register addresses. When DMA mapping this sort of address we
-> 
-> > +call the operation Peer to Peer as a one device is DMA'ing to another
-> > +device. For PCI devices the p2pdma APIs must be used to determine if
-> > +DMA_ATTR_MMIO is appropriate.
-> > +
-> > +For architectures that require cache flushing for DMA coherence
-> > +DMA_ATTR_MMIO will not perform any cache flushing. The address
-> > +provided must never be mapped cachable into the CPU.
-> again.
 
-Thanks, I will fix.
+On 8/14/25 20:20, Jason Gunthorpe wrote:
 
-> 
-> thanks.
-> -- 
-> ~Randy
-> 
-> 
+> On Thu, Aug 14, 2025 at 08:00:01PM +0300, Mika Penttilä wrote:
+>> as well as hmm test module with :
+>>
+>>          * Ignore invalidation callbacks for device private pages since
+>>          * the invalidation is handled as part of the migration process.
+>>          */
+>>         if (range->event == MMU_NOTIFY_MIGRATE &&
+>>             range->owner == dmirror->mdevice)
+>>                 return true;
+> If I recall this was about a very specific case where migration does a
+> number of invalidations and some of the earlier ones are known to be
+> redundant in this specific case. Redundant means it can be ignored
+> without causing an inconsistency.
+>
+> Alistair would know, but I assumed this works OK because the above
+> invalidation doesn't actually go on to free any pages but keeps them
+> around until a later invalidation?
+>
+> This is nothing like what your case is talking about.
+
+This one is actually pretty similar, MMU_NOTIFY_CLEAR is also fired in migration process
+(split case) and invalidation handled part of the migration process.
+
+But I have already a working version without any of that.
+
+>
+> Jason
+>
+--Mika
+
 
