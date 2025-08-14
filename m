@@ -1,421 +1,128 @@
-Return-Path: <linux-kernel+bounces-768232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE76B25E90
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:17:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A29B26186
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0B71C80734
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169D8585B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E752E7633;
-	Thu, 14 Aug 2025 08:16:15 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C276C2EFDA5;
+	Thu, 14 Aug 2025 09:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X5+rh+QN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A48383CD1
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475002ED876;
+	Thu, 14 Aug 2025 09:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159374; cv=none; b=Cbu1Hvhv+katefr8Ikc3ICIaD7C9xfAadFAixa/UAZy+Trnoa6WxMHxZja/fZbk3qVRSh3UMNTIsp7HFLyIkZdGeIiYkpxA1cW0GP9UduKT48mCg2FjhA+k5vdIJrZSY9VCP9kg+eoHrr70vBc5VaGSr/2Kwq6S9BzhSav2DUvQ=
+	t=1755164935; cv=none; b=YRiCEoC1eQvg390KXH0SMAx9hg2j6IEmotm0+bksU1fL3TLPozQxezi4CbB9wsM9PaPNltuor+pQYBZh0ZICM3v9BYUsrweZII9hDGOo/ZsIar6MyBnNPskTC+U4EZuOUINOa7SZHSQHyuGeFpUfWCre4q/mqZ/IVMwxtKCXHQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159374; c=relaxed/simple;
-	bh=D8achbcoVMkGQQu9jch9Hu1D9Go29DH78PlT4IZj0x8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaIhSqzH3HablDaxEmS1F6KFWcJHPnZuXe+npZyloB9MPsQZT05xYUoDRDc4bxwtTIcczF3IxyAiI7yYl/qtmLt1H3drhcoc3dI6f0lcgVOzbsxkvM0FedtRNrqH7/GQ5eWLHZP7ZeJCGmwWVdWMOuEfE5M+zA8YgNsS1LYa3uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E19F81F68E;
-	Thu, 14 Aug 2025 08:16:06 +0000 (UTC)
-Message-ID: <91570387-4da1-4b26-a274-bed1c59ef12f@ghiti.fr>
-Date: Thu, 14 Aug 2025 10:16:05 +0200
+	s=arc-20240116; t=1755164935; c=relaxed/simple;
+	bh=oHZCjCggCGmF2cqQ/pqAIGefHXk/xNas8BCsSHYLSzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WHwdolKNb2PdKSvgsupgaoNUBzxpSlkcBbofAtKBlLyH5wJdx7fmSjfIcNUX1RpAKBunhSYecua0427Z+/68R/lzgmUGZeRdPIaiwk5SztRZKkC2LM4Sn8Wl0LKmLuYDPhkiqAXSQGk9OQU/nHir2HBmDIOd60HArgov7isaMRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X5+rh+QN; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755164933; x=1786700933;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oHZCjCggCGmF2cqQ/pqAIGefHXk/xNas8BCsSHYLSzI=;
+  b=X5+rh+QN9MyOtF5aqOPFM7jCoKCjLwqcTmw+URELBUq79wq52iNcHZIa
+   BAQkyNpTbzk9wEUuCJXDtir7VJJIOYya3EdrOKJK3kyDlsCSBj+yuzB6m
+   Ep59hwl/NjF1wKG5G9Z80eeVrmKxWszr8n5EoVvJKeA3c9TX8VWMRLvuA
+   30QnEoHUocMBs8whCkrRH6H9wL86bxAsFBrJq/lqJZFSPQeAOdlf1z/26
+   JnOYVa0nGGK1RQT6zFe15dMpTcoHXric93jYAZokQD3FJVtdHMqjdt3t9
+   xKhV2aqky+YnP1OPQB54P77kZ2AG/oA/EpSe7KbRe7Oxw0AWEwnMyUeK6
+   g==;
+X-CSE-ConnectionGUID: 9gtcPflcTu2bQ882g6yptA==
+X-CSE-MsgGUID: +CjbQ9ooQTSTGLAWJUtRzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="67746941"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="67746941"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:48:53 -0700
+X-CSE-ConnectionGUID: bMnA+89jTyC7F2UB3p4EAA==
+X-CSE-MsgGUID: i2qJNeW5RP22Q9bH7GHNVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166980939"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com ([10.245.244.150])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:48:49 -0700
+From: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Chris Wilson <chris.p.wilson@linux.intel.com>,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Subject: [PATCH 0/4] dma-buf/fence-chain: Speed up processing of rearmed callbacks
+Date: Thu, 14 Aug 2025 10:16:11 +0200
+Message-ID: <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: cacheinfo: init cache levels via fetch_cache_info
- when SMP disabled
-To: liu.xuemei1@zte.com.cn, paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu, spersvold@gmail.com,
- sudeep.holla@arm.com, mikisabate@gmail.com, robh@kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250814092936030rQLylo3a7HXUWKIniqFy1@zte.com.cn>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250814092936030rQLylo3a7HXUWKIniqFy1@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdeguefhhfevueejteevveeikeelkedvffdufeelveeggfeikeekgfeghfdttdevnecukfhppeduleefrdeffedrheejrdduleelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelfedrfeefrdehjedrudelledphhgvlhhopegludelvddrudeikedrvddvrddutddungdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhurdiguhgvmhgvihduseiithgvrdgtohhmrdgtnhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepshhpvghrshhvohhlugesghhmrghilhdrtghomhdprhgtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehmihhki
- hhsrggsrghtvgesghhmrghilhdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Jessica,
+CI results indicate excessive time spent on processing of wait_backward
+selftest.  The test case enables signaling on each link of a 4096 links
+long chain, then signals those links one after another in reverse order.
+That scanario corresponds to user space potentially building a dma_fence
+chain of an arbitrary length step by step, e.g. via drm_syncobj IOCTLs,
+and each step waiting on a chain link it has added.
 
-On 8/14/25 03:29, liu.xuemei1@zte.com.cn wrote:
->
-> Hi Alex,
->
->
-> >> Hi Jessica,
->
-> >>
->
-> >> On 8/1/25 03:32, liu.xuemei1@zte.com.cn wrote:
->
-> >>>
->
-> >>> On 7/31/25 21:29, alex@ghiti.fr wrote:
->
-> >>>
->
-> >>> > > From: Jessica Liu <liu.xuemei1@zte.com.cn>
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > > As described in commit 1845d381f280 ("riscv: cacheinfo: Add back
->
-> >>>
->
-> >>> > > init_cache_level() function"), when CONFIG_SMP is undefined, the
->
-> >>> cache
->
-> >>>
->
-> >>> > > hierarchy detection needs to be performed through the
->
-> >>> init_cache_level(),
->
-> >>>
->
-> >>> > > whereas when CONFIG_SMP is defined, this detection is handled
->
-> >>> during the
->
-> >>>
->
-> >>> > > init_cpu_topology() process.
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > > Furthermore, while commit 66381d36771e ("RISC-V: Select ACPI PPTT
->
-> >>> drivers")
->
-> >>>
->
-> >>> > > enables cache information retrieval through the ACPI PPTT 
-> table, the
->
-> >>>
->
-> >>> > > init_of_cache_level() called within init_cache_level() cannot
->
-> >>> support cache
->
-> >>>
->
-> >>> > > hierarchy detection through ACPI PPTT. Therefore, when 
-> CONFIG_SMP is
->
-> >>>
->
-> >>> > > undefined, we directly invoke the fetch_cache_info function to
->
-> >>> initialize
->
-> >>>
->
-> >>> > > the cache levels.
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > > Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
->
-> >>>
->
-> >>> > > ---
->
-> >>>
->
-> >>> > >   arch/riscv/kernel/cacheinfo.c | 6 +++++-
->
-> >>>
->
-> >>> > >   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > > diff --git a/arch/riscv/kernel/cacheinfo.c
->
-> >>> b/arch/riscv/kernel/cacheinfo.c
->
-> >>>
->
-> >>> > > index 26b085dbdd07..f81ca963d177 100644
->
-> >>>
->
-> >>> > > --- a/arch/riscv/kernel/cacheinfo.c
->
-> >>>
->
-> >>> > > +++ b/arch/riscv/kernel/cacheinfo.c
->
-> >>>
->
-> >>> > > @@ -73,7 +73,11 @@ static void ci_leaf_init(struct cacheinfo
->
-> >>> *this_leaf,
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > >   int init_cache_level(unsigned int cpu)
->
-> >>>
->
-> >>> > >   {
->
-> >>>
->
-> >>> > > -    return init_of_cache_level(cpu);
->
-> >>>
->
-> >>> > > +#ifdef CONFIG_SMP
->
-> >>>
->
-> >>> > > +    return 0;
->
-> >>>
->
-> >>> > > +#endif
->
-> >>>
->
-> >>> > > +
->
-> >>>
->
-> >>> > > +    return fetch_cache_info(cpu);
->
-> >>>
->
-> >>> > >   }
->
-> >>>
->
-> >>> > >
->
-> >>>
->
-> >>> > >   int populate_cache_leaves(unsigned int cpu)
->
-> >>>
->
-> >>> >
->
-> >>>
->
-> >>> >
->
-> >>>
->
-> >>> > Is the current behaviour wrong or just redundant? If wrong, I'll 
-> add a
->
-> >>>
->
-> >>> > Fixes tag to backport, otherwise I won't.
->
-> >>>
->
-> >>> >
->
-> >>>
->
-> >>> > Thanks,
->
-> >>>
->
-> >>> >
->
-> >>>
->
-> >>> > Alex
->
-> >>>
->
-> >>>
->
-> >>> Hi Alex,
->
-> >>>
->
-> >>>
->
-> >>> The current behavior is actually wrong when using ACPI on !CONFIG_SMP
->
-> >>>
->
-> >>> systems. The original init_of_cache_level() cannot detect cache
->
-> >>> hierarchy
->
-> >>>
->
-> >>> through ACPI PPTT table, which means cache information would be 
-> missing
->
-> >>>
->
-> >>> in this configuration.
->
-> >>>
->
-> >>>
->
-> >>> The patch fixes this by directly calling fetch_cache_info() when
->
-> >>>
->
-> >>> CONFIG_SMP is undefined, which properly handles both DT and ACPI 
-> cases..
->
-> >>>
->
-> >>>
->
-> >>> So yes, it would be appropriate to add a Fixes tag. The commit being
->
-> >>>
->
-> >>> fixed is 1845d381f280 ("riscv: cacheinfo: Add back init_cache_level()
->
-> >>> function").
->
-> >>>
->
-> >>>
->
-> >>> Please let me know if you need any additional information.
->
-> >>>
->
-> >>
->
-> >> I'm about to send my first PR for 6.17 so I'll delay merging this one
->
-> >> for the first rc.
->
-> >
->
-> >
->
-> >So I took the time this morning to look into this, and I don't really
->
-> >like the different treatment for smp, can't we just move
->
-> >init_cpu_topology() call to setup_arch() (or else) for both !smp and smp?
->
-> >
->
-> >Thanks,
->
-> >
->
-> >Alex
->
->
-> Thank you for your feedback and suggestion. I understand your desire
->
-> to have a unified approach for both SMP and !SMP. However, after
->
-> careful consideration, I still believe that handling them separately
->
-> is the more appropriate solution.
->
->
-> The current method of obtaining cache information in
->
-> `init_cpu_topology()` is specific to RISC-V and ARM64. If we move
->
-> `init_cpu_topology()` to cover both SMP and !SMP, it may require
->
-> modifying the generic boot sequence. This could inadvertently affect
->
-> other architectures that do not rely on `init_cpu_topology()` for
->
-> cache initialization, leading to potential regressions and maintenance
->
-> issues.
->
->
-> The `setup_arch()` function is called early in the boot process,
->
-> and at this stage, the ACPI subsystem has not been fully initialized.
->
-> Specifically, the ACPI tables (including PPTT) are not yet parsed.
->
-> Therefore, if we call `init_cpu_topology()` from `setup_arch()`, it
->
-> would not be able to retrieve cache information from the ACPI PPTT table.
->
->
-> I hope this clarifies my train of thought. I'm open to further 
-> discussion and
->
-> alternative suggestions that can address the issue properly.
->
+When first user starts waiting on a not yet signaled fence of a chain
+link, or signaling is explicitly enabled on it, a dma_fence_chain callback
+is added to a user fence of that link.  When the user fence of that chain
+link is then signaled, the chain is traversed in search for a first not
+signaled link and the callback is rearmed on a user fence of that link.
+Each time an arbitrary user fence is signaled, all dma_fence_chain
+callbacks added to it so far must be rearmed to another user fence of the
+chain.  In extreme scenarios, when all N links of a chain are awaited and
+then signaled in reverse order, the dma_fence_chain callback may be called
+up to N * (N + 1) / 2 times (an arithmetic series).
 
-To me it does not make sense to retrieve the cache info at 2 different 
-points in time if the system is smp or not. I still think we should find 
-a common place where init_cpu_topology() can be called for both smp and 
-up, setup_arch() could not be the right place for the reasons you gave, 
-but we just need to find the right one :)
+To avoid that potential excessive accumulation of dma_fence_chain
+callbacks, rearm a trimmed-down, signal only callback version to the base
+fence of a previous link, if not yet signaled, otherwise just signal the
+base fence of the current link instead of traversing the chain in search
+for a first not signaled link and moving all callbacks collected so far to
+a user fence of that link.
 
-Thanks for working on this,
-
-Alex
+For more clear correspondence to a potential userspace scenario, update
+the wait_* selftests so they actually wait on each link fence of the chain
+instead of just enabling signaling.  For easy evaluation of the change
+impact, report processing time of signaling loop of each wait_* test case.
 
 
->
-> Best regards,
->
-> Jessica
->
->
->
->
->
->
+Janusz Krzysztofik (4):
+  dma-buf/fence-chain: Report time spent in wait_* test cases
+  dma-buf/fence-chain: Let test cases decide which fence to wait on
+  dma-buf/fence-chain: Wait on each tested chain link
+  dma-buf/fence-chain: Speed up processing of rearmed callbacks
+
+ drivers/dma-buf/dma-fence-chain.c    | 101 ++++++++++++++++----
+ drivers/dma-buf/st-dma-fence-chain.c | 133 +++++++++++++++++++++------
+ 2 files changed, 189 insertions(+), 45 deletions(-)
+
+-- 
+2.50.1
+
 
