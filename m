@@ -1,242 +1,215 @@
-Return-Path: <linux-kernel+bounces-769632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE91B2713A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:59:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0B7B27132
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E386621E3A
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61F8C4E1000
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149E327E7EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F2C27AC5A;
 	Thu, 14 Aug 2025 21:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g1cFJq7/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW6udU89"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BB227AC57
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755208646; cv=fail; b=KXKpCSfDI0YX4EIggpJbbrEnLCMiWCqMOZOQc4oxmK/Y5a4u0/pVVGECd+AgrqEZRwuZaHdTqR7B1whjzpm7+mSkW7IJuWGW7vXcSKPJm4YunuFxV8WgeK/faySJnM/qnjH5pY52r8mZIZkgOojTbsj08sr1YEw+6vf4LRImf9E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FF627A92D;
+	Thu, 14 Aug 2025 21:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755208646; cv=none; b=qPZe8ZWfodqjKp++HYu900jyj5uPvYpFFzZLGIA/7Vc+f2n7DyJr1kB4M47dfLENyTckKn4bQiE8R/xwjOM3MXgvGqGzEnGc/Jl02sE6rUOaJO/9TQ8phL5yVYGLBd348Er5z340BRbU0SUYM+QesKEU5qtNFUu1+5M6Si5hvu0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755208646; c=relaxed/simple;
-	bh=X7B+4S26dgcvpZClHq8NHkzrHOLY7mYlAo3IkKL0XRo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UhAx+Xot/Pyrsgea3BYvHBIBUyByLS//ynW4bs+3FKH7tnSVjswiUil7nUjbQTIm0YK/H8XjcvLWR8tA0YVcgO83L/y9UERLhwXGsfEVuEK/cNHlUewp3s+BgRorg8+T1GnxG01guGcQ9j19FyhJ8pddLItWRvZV3QHH4bJPhQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g1cFJq7/; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755208645; x=1786744645;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=X7B+4S26dgcvpZClHq8NHkzrHOLY7mYlAo3IkKL0XRo=;
-  b=g1cFJq7/kmduKHOxlFEhHFQNbaCosJC1OQXDGLyb8NSHuLKwcKgH8DMD
-   XrHrlJCbwlwAznDE2rjhI+RHFk2g0zcKGm+NxKctMgGr84iF+gZALHvoU
-   B2ZVOsmnpGIhgTLM/X/C3Pp07Z8rl4jVkNzUGehhoN7rQzwrvBueO8ESd
-   KkXqASbFXHTRkZkbPoGW7VgJHFMIcC1ckd+mxnlZhmyjmP2ppMOmHXCby
-   9+2qU0AGVh7bUv0LK0texM/YljTZ4mDA722Uk8lVELYLFofE8rw/nJ7lg
-   jvyL+QYxcv/ynPgG4Uruejxp58IYW8Zo9iC6Dsy3gLKn7kc7UwjkyisYM
-   A==;
-X-CSE-ConnectionGUID: mB5bqA1nTqaK4wr9RPXDBw==
-X-CSE-MsgGUID: Whl4OHxSTe+nZ25amdeAsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="74988920"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="74988920"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 14:57:25 -0700
-X-CSE-ConnectionGUID: sJlTr9YgR3y0MMiDLMyKJw==
-X-CSE-MsgGUID: 3Qw2Zn7LQ/O6obqhyrUtVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="204052380"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 14:57:24 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 14:57:23 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 14:57:23 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.58)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 14:57:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pykYMuFDBAPHU7aFVosMADJQYBPHK+xx+mXuXRXGN90ZMXJEH84tL4itqeD88IJHS4iRCBThTApJ3CwhlRmz/0lYQIhe7KkwVc7mwOcmWkme9LcJTlDU751M2OAh1Nfm8EtKTUiaoOu+ZPoJFiojOhfDSC2tXvf9FTcazeOgvmQ2MuJPKcsZ1lJyNccAGgMtcE8R+bzwbXytkIQrbeT0jU7Elv74ADszlUcaiEfbn/NGG3z8zVUU/H/1l0kiL7ZhWYfTqB12+rTbIklI7WCF4docUtPDo/KSSVNI9d99SakJIYzDj+UB8aSHy+oGgVC7ERbtGAUX+yhOAXE8wfy17w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VwWsQOD80EOSCQZmopXn1hB44OwY82EOKDOEXvK414Y=;
- b=RARxJksQxgs5hEPGwg7OJJRl08CiiZKbXjhUer08shAHkLZfyTOeRUfK2xJDgDiz7+gux4RNF42vZK//KCbd0VxUF/SyegbFLDV1X/VIVByYwRuVukiyQYYxk4NjY61q/wLvmbetb4UTTyEpX4a5YqavLnPKUzv1/R/Xkb+b8L08fLh7C6JZHXzVfxUPZOZ9ApOEORmjKbT9aKl4x3NQ6Gry2h9fZnGcW4d6AGTugxxVwV81c1oxkdM+F1ulPG8VAhjZTUvaGNcuXZleF5Ob8bZdwmdicM6jXTpuDDW4T2dL9654Edcx597Qb64vdcRfMSphgpvOGQeHVbpjW6uvKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CH3PR11MB8467.namprd11.prod.outlook.com (2603:10b6:610:1bd::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Thu, 14 Aug
- 2025 21:57:22 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 21:57:22 +0000
-Message-ID: <94295ce0-0ed7-482f-8475-5f3fcaf63772@intel.com>
-Date: Thu, 14 Aug 2025 14:57:20 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 30/32] fs/resctrl: Provide interface to create
- architecture specific debugfs area
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250811181709.6241-1-tony.luck@intel.com>
- <20250811181709.6241-31-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250811181709.6241-31-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW2PR16CA0058.namprd16.prod.outlook.com
- (2603:10b6:907:1::35) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	bh=3uTHDMXMml7fueUtUfoKzzYcrvRb2prHJ1gvJShDbBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkxzJA4OYFSK4uqN0P5KpJszCboYMadbdSVB4fwGyCw9BDbVoLRgHXGIil6rC5AzAxcwHFET18f9Tw6cpaTJP2oJfygCl4Ktxvus77I29li5IPVtMbOLFJpD1yP4zAGYR9wr1ldBKhkhkIEb2jcbsKS+O4W8XqDQ5FcloD5qrqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QW6udU89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE12C4CEF1;
+	Thu, 14 Aug 2025 21:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755208645;
+	bh=3uTHDMXMml7fueUtUfoKzzYcrvRb2prHJ1gvJShDbBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QW6udU896EOcz+ZRLAD2kynlUjakc96W3XeF/Hce8BeobBglpUj3ezxqghZLGc1Na
+	 M77WiPSU0zYDtuKur0SFL0GOIBpqaWiWPnRi2m8EqjaSrTfC9GspHrdYdyzdHK6MNs
+	 uB+8Zuym3YQdq3VAZUDKltl2yMJRZJwqBzI0gNuzcS+rpjJmr1NEtgIbmhpu7/yvP6
+	 U0kIvHBZ1+qS1e2aq3R5YGvBMe0BFcCwbQ/C24k8E7ESvQNk8Scan+7OyivFV6Whde
+	 kbHBbQ1DQCfzBCd2ZyIe0UKzKLIWf+0F/SHOuDkEWq2lgWIWF+zYwKzhxfiX7ofJZa
+	 KqQWiSo7si6tg==
+Date: Thu, 14 Aug 2025 16:57:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Cc: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 1/6] dt-binbings: mfd: Add bindings for the LTC4283 Swap
+ Controller
+Message-ID: <20250814215724.GA3975144-robh@kernel.org>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CH3PR11MB8467:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e610ded-cad4-429d-9e41-08dddb7d8be9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?d0hOeXZtVzhIZXBWVmMvTlhZM1RGek1yd0FNRXdkUCtnN21HOEE5YklLc3Q1?=
- =?utf-8?B?TTE1TjdzbXdHSitaVU5ialB4SlI3Z3JZMGltTmZxTU4xUGNiT0JpaVhYbU0r?=
- =?utf-8?B?cmpUV3BObG1GK09JZzRlcGFZV1A4YnBaQjY1elRNZ2EycWExWiszZ2UvcXgz?=
- =?utf-8?B?MlR3K0JEazZsVVpQTGkwaWYzZEVUVnBOSmFRdUtBMVNPKzZXVEs2MUJnRVNZ?=
- =?utf-8?B?QnhSVlVtOVJiTTNmTTB5SW9ZcU8xeUhvblQwMXg4Nm5UeGJYU242Qk9ndHI0?=
- =?utf-8?B?akFZaGhqcHZ5RXFyMnI4MDhQVEZ6L1h2UlorWkQ1a1pKeUFnelNiSG1qM1BB?=
- =?utf-8?B?MkNXMDZSYlpVS3VmeUFyNzVmOCtOMVhSdjd3UmQyQ3ZTK0J5OGtYR3VLQ0h0?=
- =?utf-8?B?QUJ6VnV6RW1qODVjdXg3ci9NWmxMWWEyYXVHL25jTnJMSGw5OStPb3Y3QURI?=
- =?utf-8?B?V2pkaVNnTHN6ZW9hcWoySURCNk5LSDVQTE5TYmlTNTdySXkycUhVN3RzbU11?=
- =?utf-8?B?dVJoTW5HVitjRi96bStvWDlxTGwycnNHaW94U1NNTTB0dWtWcUVSQWdQZ3Uv?=
- =?utf-8?B?Tk9ZYnU3QVpPWDkwQllZWU5haHVUeWIrRkw0TDlKNlBSN2NVMU4valVrdnBR?=
- =?utf-8?B?dWFOU3NmTnEvY0R5TkZLTE1DN1JweWFvb2d6dFNkc2JJUWNKYU95QTBzOVJy?=
- =?utf-8?B?MWF4aXNQckxTUU5tUUZEakxYUXRrd0FHdTJBU1lJczNjRC9IcU0wQnNIcFQx?=
- =?utf-8?B?WWhZSWpGRGxGVVlxRUduUWNEUWE3aGtwYnJaOXQ2ZkJSM2pST0ZHSHA3c3VF?=
- =?utf-8?B?cDdOWkZqb09PZmJoMzJzK3RqWk1ubkhwNWtYUEc5T3ZQeFNlaEQvOEphd0Ft?=
- =?utf-8?B?U3czK0V1MmgrS0RVbSs4eS84cUpvRitMTTZJamJSbFlBMndtMjZYZEhtQTN1?=
- =?utf-8?B?emJNRHFuTVFqT0o1M04rYWtIZ2EvUVl4RWVRSXVwQ3B2Qzd6M242YURLNkNZ?=
- =?utf-8?B?N3dPQ2wydXBpZ29jcDZEbFVBQjExbHpHUmM3aVdlSlhJNXJteVErb0pvVUxl?=
- =?utf-8?B?YnhQaCtPU0JVTGY0clhWMnRiMU56WktodWROM0Q1eGhFNU1vMTFGeTFUS3F2?=
- =?utf-8?B?SzJvVVVzOHNQdUNvbXVZZlQ0QUxYNTdmcGJUM3IzOWgxc3poVTNGampPOUE1?=
- =?utf-8?B?a2o3N2crMzIxcDcvVEpaajZtZmhJL1pWMFB2aWJMM2Y5ZDBtR2d0K0laQ1ox?=
- =?utf-8?B?MU4xbXk3aU5oenhVSU9CaWFHL0NLNFZYVWtDSDBvMFhzL200QVlFUFo5bDU0?=
- =?utf-8?B?SDlKOE81cEp0ckZQMzJtOVM4Y0VxZm5DUWVVY3p5QW85LzVibDlrYkxlMXN2?=
- =?utf-8?B?WDZmemE3QUZCdWVrbXVNYU5iU29aRHNrNGM2aGk3cENScE0xbjU2eVFuT0hr?=
- =?utf-8?B?U2V6VFpBSmNWMTFQa2RaV1IzRU5FOUI0QWRSMUdiRTFKNCtzVjlnR2E0aklX?=
- =?utf-8?B?bzJuUVhNSVd0anpLV0E5L09JNDhBdnl0VVpoZVZpOGdWN2pxb1FpVWNkcEpy?=
- =?utf-8?B?OHpRSmZiOWJpUmlETWp2cWlnZ2NLMDJ3Mk9hVkQzdzZuYi9ibS84R05jSlIv?=
- =?utf-8?B?Ty9mZ1BGcG1zME9veFNUb0gwSXF3VmxFWE9XLzFzckQ3M1E0bzkvdXFaZjdH?=
- =?utf-8?B?MytsNkw3N0FoWm00K2pHck9nZGNtOEpiZWRDdktwdDZoYm1hMXdtV0NsaWpy?=
- =?utf-8?B?UDFXUlpiZDRwRDFWREQxdGxZbGJnR2c5SnBvdFl0TWtWYy9QVGFwNlRma2R4?=
- =?utf-8?B?c2pFcEFNQU5HbCtpQ2xPZFhyWHJTYU53VHJBaE1wSWV0REVpcFlBZEI4c0wv?=
- =?utf-8?B?QW55TTdZL0JRaEFuY3hjZGF2NmlmS1hrTEVMcHQzTERHYnRiTFZ2VDM5WXpF?=
- =?utf-8?Q?b/a8G97qhWc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eDJnY0hZeTBKNHZBbTk0SW1LVkJmQW9qREdTMjgzK1pGMnlOOFBBVlhOQXBE?=
- =?utf-8?B?S3lRV1dxVGM2Ymc2a3NGN053M3NhaXEwTTBkQkdlQ0tVYjdWN3ZCeUlNZlpB?=
- =?utf-8?B?R1BLUHVWYldETzFmbUFmclB5WUxKQi9SSDlaV2ZYdlBrak1Tb0dybENYR2Vr?=
- =?utf-8?B?ZHZPb1VvdDNVNjJUYnJpNytiZHBlSVE2eWFjSEdEVnoyL3M0aTE5TUlrU2NC?=
- =?utf-8?B?YURWMExtVXNQeVlCRVpxbmhyUUNhUVRPUGVHbXJwM1JVNXdTamxNejJoNU1V?=
- =?utf-8?B?eXNTRG5hRGlPdGNQMlNEZ1kyYjl5aGIvMDYxWWYwSUlQbmZsTDZlVWQ4d3Z2?=
- =?utf-8?B?MGt1L2l2TkJFZkdiNEp5dGZaZTJoSWw2TVdZR0daS2QxV2xpRkFxNFRBOHAz?=
- =?utf-8?B?T2dSZVpFSXk0ZVNGUFF1M2RNbzhzMFo1UVUxZGg3Y1ZWR0ExNllmNllNblo1?=
- =?utf-8?B?NkdVQ1NtVlI4bEpUNmZTMWxTb0EybEs5SE1KaEllUFl3aDhyN243MnR6ZTFO?=
- =?utf-8?B?WFNOOGQrSUVlWU41eXc4WmJaOC80U1dML0hFZmk5ZEpuUHJGMXVNZlBseTV0?=
- =?utf-8?B?U21HWENFWlNsTVZDYUt1TmcxbjRiR1ZIVThqdXNsQjJzQS9NdHR5dnovTkpN?=
- =?utf-8?B?VkNHZXZEYVJQdStYRGRVNDVvS0VEUjVpZTdDYmpZM1VBam4rekIxVnV1Z2pW?=
- =?utf-8?B?d1p3UytwSi9PeVZqNmpSL0ZPZ09ZOWJLcjZGK2tRU1RRSEFzNXdIV3RmbE9a?=
- =?utf-8?B?TjN6dXgvNkhmbjJpT3VWVVdDQUJ5cDF3UkIyZTlHWFQ3K1hWYlg4QlFqTk56?=
- =?utf-8?B?bDZYcSs3cUxBQkpBSWxIdzJhZENRVzZrb1hQNG1iaUF1d0t1eHZWb0o4S3NX?=
- =?utf-8?B?dmE4d2hxUHN1RGI4ZENaNUdTZFMxMng5Njk5SFJQT2hFMzBHdTcrUTB6MHAx?=
- =?utf-8?B?amFTZzJvc0FGcEF6Z2kwWWQzdXdPMHluNkFXZFV6VFN1WDlpeUwwemhhTTZZ?=
- =?utf-8?B?NklHWVBkaVFHT25RQldPZUprSXBrSHYzeWtsY1A0cldCNU42R2N5MFB0TTdF?=
- =?utf-8?B?N3QxZkYzOTUzdEM5WnNLRWVDcThSNUlnbE9qVG4zdEI5MjVNNDV2OEJBUEUx?=
- =?utf-8?B?cnFDU0E5Zkp1RTA1VnQ4Q1FUM2hPOHZLSFVId0xpcFR2dU11MHdGNFd0U0Zw?=
- =?utf-8?B?c1lrWUpSUHlwdkZFUFpLL0pKZ21jL2Y4bzBlNEc1Sk1YWVljZWZnSEpoUVMy?=
- =?utf-8?B?N2xUMHZsMk82SjdjWlNpa2RCMnlPUDZLN1F2U1djT3dYL1RLNkowbXpxK3Av?=
- =?utf-8?B?SUtWMGJTSmZ1WGo4cmZWUkpnVlR1UkptSVBrY003THZVTyt5M3NudEw5TENi?=
- =?utf-8?B?cFdjbWFpR2pReWcvdzcyMTFrWlhpOXBvYlZGcWpTaDdQTENnUjRSZTl0TGRJ?=
- =?utf-8?B?QUUza1J1czgxUEZsbWd2QW9QdHhFTmZrc1N5S2lTWndhOXE4QklxZGxSZy9V?=
- =?utf-8?B?VmFOTDBWV2QzQU5yZ2drM3c1RjQ1aUp5QkxaaE5kL3FXbllYQXJFSXowNndC?=
- =?utf-8?B?b1NNdjUrQlQyMW4wRVdlYmhvbjIrVTRES1QrbjlUTjVhWFMvT095SEpBYnda?=
- =?utf-8?B?b1BHWndJdEpYNkVIZGFkTWZYdFJhNWEwb0Nyc3p5RlVqQnlhUEJFeWh3TDdV?=
- =?utf-8?B?U015ZW41Z0tJRTc4REY4aU5tVmRZbmlIWlUwaTFZekE2VFZMczhZR2Z1Lysx?=
- =?utf-8?B?VXU4ZEtUdHpTZlJ5d0dLQWhYeGRMZzlway9IYnJ6dzA2WkFDVHRJRnZjUTJx?=
- =?utf-8?B?dXVFWnNHK1VEVnB5d29MVEFNOHROcy9LUncxSkdUT21LMUFIRWhzR3ZpRXBj?=
- =?utf-8?B?TmNPUExDbUhGQzNFREJNeXk1bkw2aHZVTmhvQ1hYZWh5c2tWVnVoRW5SVnBm?=
- =?utf-8?B?OGRjRCtkdkpjZU9SNUN4NWpMQjh4RGF3SmNNd2krVERLbjVxd3VGdjVORUNn?=
- =?utf-8?B?clZvbGR0WW5aMWJaMWozMUY1ckphaVg0R1lhdUJXWms3cVJ0cG02dWNNVnkw?=
- =?utf-8?B?VDRXZXp2WEVlVmZTcXlYWGk0WGphakI5V042ZVh2QkFSQnlSK0pOSUNEVXNX?=
- =?utf-8?B?VldQVCtqeU1iVENXS0hCSGhrMEtEcGVydzF5NnFndXAwcUpHU051QnVnRjFk?=
- =?utf-8?B?WXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e610ded-cad4-429d-9e41-08dddb7d8be9
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 21:57:22.2184
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aWes/1aNcQCcNS7Dv2ANU4NOQeiIB/UlMj8sDI8yy3XFkcjXmM9HJzQpUGBoCKdVpxgbGOUXCKGU6D/ljOeQrPkz2NsEujRXA2ED20UeAK0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8467
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
 
-Hi Tony,
+On Thu, Aug 14, 2025 at 11:52:23AM +0100, Nuno Sá wrote:
+> The LTC4283 is a negative voltage hot swap controller that drives an
+> external N-channel MOSFET to allow a board to be safely inserted and
+> removed from a live backplane.
 
-On 8/11/25 11:17 AM, Tony Luck wrote:
-> All files below /sys/fs/resctrl are considered user ABI.
-> 
-> This leaves no place for architectures to provide additional
-> interfaces.
-> 
-> Add resctrl_debugfs_mon_info_arch_mkdir() which creates a directory in the
-> debugfs file system for a resource. Naming follows the layout of the
+What's a binbing?
 
-"a resource" -> "a monitoring resource"
+When you fix that, don't say 'bindings' twice in the subject. Subject 
+space is precious.
 
-> main resctrl hierarchy:
 > 
-> 	/sys/kernel/debug/resctrl/info/{resource}_MON/{arch}
+> Main usage is as an Hardware Monitoring device. However, it has up to 8
+> pins that can be configured and used as GPIOs and hence, the device can
+> also be a GPIO controller.
 > 
-> The {arch} last level directory name matches the output of
-> the user level "uname -m" command.
-> 
-> Architecture code may use this directory for debug information,
-> or for minor tuning of features. It must not be used for basic
-> feature enabling as debugfs may not be configured/mounted on
-> production systems.
-> 
-> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 > ---
+>  .../devicetree/bindings/mfd/adi,ltc4283.yaml       | 85 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  7 ++
+>  2 files changed, 92 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml b/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c5e8aec887d9cfad9052a7c28783396efd6804a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LTC4283 I2C Negative Voltage Hot Swap Controller
+> +
+> +maintainers:
+> +  - Nuno Sá <nuno.sa@analog.com>
+> +
+> +description: |
+> +  The LTC4283 negative voltage hot swap controller drives an external N-channel
+> +  MOSFET to allow a board to be safely inserted and removed from a live
+> +  backplane.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4283.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ltc4283
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  gpio:
+> +    $ref: /schemas/gpio/adi,ltc4283.yaml
+> +  hwmon:
+> +    $ref: /schemas/hwmon/adi,ltc4283.yaml
 
-Reinette
+This patch has to come after these are added. However...
 
+> +
+> +  adi,gpio-pins:
+> +    description:
+> +      The pins to use as GPIOs. The device has 4 ADIO and 4 PGIO
+> +      pins than can be used as GPIOs. The ADIO pins are numbered from 0 to 3
+> +      and the PGIO pins are numbered from 4 to 7.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 8
+> +    items:
+> +      minimum: 0
+> +      maximum: 7
+> +
+> +dependencies:
+> +  gpio:
+> +    - adi,gpio-pins
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - hwmon
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        swap-controller@15 {
+> +            compatible = "adi,ltc4283";
+> +            reg = <0x15>;
+> +
+> +            /* pgio1 to pgio4 as gpios */
+> +            adi,gpio-pins = <0 1 2 3>;
+> +
+> +            gpio {
+> +                compatible = "adi,ltc4283-gpio";
+> +                gpio-controller;
+> +                #gpio-cells = <2>;
+> +            };
+> +
+> +            hwmon {
+> +                compatible = "adi,ltc4283-hwmon";
+> +
+> +                adi,rsense-nano-ohms = <500>;
+
+Seems like a current sense resistor might be a common thing.
+
+> +                adi,current-limit-sense-microvolt = <25000>;
+> +                adi,current-limit-foldback-factor = <10>;
+> +                adi,cooling-delay-ms = <8190>;
+> +                adi,fet-bad-timer-delay-ms = <512>;
+
+All these child node properties can be moved to the parent node.
+
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e90710a9b40d7b32c151472a9ac3b02efd95f346..413bb77d5eebe2b51aa9c3af86e7cfd5ab142044 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14500,6 +14500,13 @@ F:	Documentation/devicetree/bindings/hwmon/adi,ltc4282.yaml
+>  F:	Documentation/hwmon/ltc4282.rst
+>  F:	drivers/hwmon/ltc4282.c
+>  
+> +lTC4283 HARDWARE MONITOR AND GPIO DRIVER
+> +M:	Nuno Sá <nuno.sa@analog.com>
+> +L:	linux-hwmon@vger.kernel.org
+> +L:	linux-gpio@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> +
+>  LTC4286 HARDWARE MONITOR DRIVER
+>  M:	Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+>  L:	linux-hwmon@vger.kernel.org
+> 
+> -- 
+> 2.50.1
+> 
 
