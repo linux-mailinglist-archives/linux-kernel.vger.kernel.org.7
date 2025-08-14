@@ -1,351 +1,130 @@
-Return-Path: <linux-kernel+bounces-768259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA00B25EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:35:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA49B25EBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E621CC1D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B599E4D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1202EA14F;
-	Thu, 14 Aug 2025 08:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863542E7BB8;
+	Thu, 14 Aug 2025 08:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vXyHmYM8"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dOaLjk+T"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA152E88A5;
-	Thu, 14 Aug 2025 08:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5837725B2E3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160297; cv=none; b=czhkWTkRP0qfn+6zU8yDb5XSv2b93dqzgY6RhJtv55G4e4gHD5XB7oeAPLq1EjkHN3x24W+Y8Ii22My64dm2VEll2yMmtcYeHVB5piApcvXeRJ9MGBEPwHmGzYeh7GE3bSlw2phxf+80gMwb0jAdD3fVgARrrHnPMh7w5+GXEgw=
+	t=1755160007; cv=none; b=Pf01jZOCa+KZ3KYQz8825Fzfe6L0VDkxgW37JQ00RaDUS82+VhhJtUZUxydnAramZ8/90Gj62V7tIeoM7ZiyVTAC1/cXwNKIZDfuNcceo5mTxvUhwok9MxEWI0R8aYEf0xPLIwVWXFI2VFX/znzeQVLdDLIKokKV+kIAVEw67GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160297; c=relaxed/simple;
-	bh=95/oBxMbh4tDShmsSKqzklc4IQcXB1rEkailnUFNZuE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bUQoc51jYedA4mG4ooxxFUgGwolqCfdjwJfllPoGwl4dE85MOWJUKzoqOspQVQU31Sx99WUZixtU8cbP2N42PWlSels6yt4VQHk3VwlgrXQ8Z/urm17N5Q1mcmH1no2fhi/e5BFF/ba8SmJN4mOC6fj+m30NVw5c5h9SvMkUPHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vXyHmYM8; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755160295; x=1786696295;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=95/oBxMbh4tDShmsSKqzklc4IQcXB1rEkailnUFNZuE=;
-  b=vXyHmYM88+M5clMxILmTvf2Bj46hNBlCyZJxRhxJ7wPdEtEOzwq6dsyA
-   FxyoHLLeEc+WRjUChA84cY7eG/v/BFitwf+/snW9cYtZJjawB+B0TeMt/
-   34THxxU8su1+TzPH5TNY1Cat8dhjbMxbtU27j4a7BO66Bz2M32xKAdIHa
-   zXHCPOii2fitzzUoh/xKaWuFQJd7NYnPN1ba3AX7DD0QL/tahXYEFhg4e
-   W0qE1/WQxLZrXjWh69lHQ533S8qMUPxdrbhJQWooNQg86b3jeU1X4jbNo
-   NYMgIZ1JHlQJQiwKYGUMvixIuFsKrQ4VIW2PGv0/QMjWbNbqZUVBx6yJm
-   A==;
-X-CSE-ConnectionGUID: sG1idv10QAqjPnfZxhk11w==
-X-CSE-MsgGUID: F40BrHPFQlaoSBuHoUT2Wg==
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="45178592"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2025 01:31:32 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 14 Aug 2025 01:31:20 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 14 Aug 2025 01:31:18 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <o.rempel@pengutronix.de>,
-	<alok.a.tiwari@oracle.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next v4 4/4] net: phy: micrel: Add support for lan8842
-Date: Thu, 14 Aug 2025 10:26:24 +0200
-Message-ID: <20250814082624.696952-5-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250814082624.696952-1-horatiu.vultur@microchip.com>
-References: <20250814082624.696952-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1755160007; c=relaxed/simple;
+	bh=7ZIi+MkP1OxwrEPzpZafzArHv5qoy2iK0OXCG9SMGMU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DSnoI8WzfOkyU0HB8PQC+5TpbOnrqFzUEMDfrVO97hE4rBsqqpECv+2EBWhbN9VLz6w5I2n0drN02gAeox4uQQ/0tuMoximjT4IF2dSO/FMdc4leOTnPV6wK81cqeZ7yIGJNqP9FSnfJRRlm814IsKFOwtoFyMcSBIpWrsCIpeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dOaLjk+T; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0045a0so3293575e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755160004; x=1755764804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ZIi+MkP1OxwrEPzpZafzArHv5qoy2iK0OXCG9SMGMU=;
+        b=dOaLjk+TWTBAd0vn+0fBgoVHMvvK9fQQ5qR9Cq0LhznxjUx+gDIG8sSeaed6fISV/s
+         R5M2aRr+KZGbMwyYv3c8naogAfQqs/rjDAHDf/xcB34CAv+D5eIbINv1qbEapIE0xp5W
+         SZnvjFthz6VvDJl0PbFj9wItIQajDX6/kugW1pDaiKwgI+NCSNBFznBAB00O/l3LGpoa
+         OunsmNjZ21qxZk5b9swUZWqMsuBKnI6/PFmdQIcZER7OjS7CBPEn4Sk/aHtwdk8Abaxm
+         LZKWEyjXbXde591xyOka6S3D+CNshegu7xp4cL5mxtAkg5es46BrKxzb62MHCzs28uwX
+         CYQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755160004; x=1755764804;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7ZIi+MkP1OxwrEPzpZafzArHv5qoy2iK0OXCG9SMGMU=;
+        b=UfYao6WVD4XPVMHESdkCPMkRHbo/LG1CJSamYlqBi2l5rt3k5WdNBgfhzV3IeI3/+p
+         DarDXF3H2T6nCB5quywH8+ae9hRE3tfhJiBbq+PnSKK39Ez4xq1I8ZbfTioP6PRRt6xg
+         MsMtbyuQLai+VUg9TT6T9+8AwJQLEeM2yEaePDC2s/zjkgJKPE9KWHML33AXIIot4Rgr
+         MwfBHZuiZyd07z+7tNIebvHFatOQRpy5wwmwaX9xrhrdkuSLdub/5x65kJ5eVR/6uWLc
+         eQTpm9YnM8ViQp545aIWQHxuvH1+ukSzVXvH/nutYDAdVzBohY+YWKBWrchx/nL2rNxQ
+         EOSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJkWePrE2A5h4w1bWEWaRW2rP3QdV4iQG1MJvPCFI3LrTYLsqJvb3EkYvyGempyZj0seOqhdapvRNLHdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/9mtp9Az2iCTxeBCvpqDTiQyaFjuDTTleMUawIEkufTbRoSKv
+	Cd6SuXSQ4ZFkXSxD5GvOCU6BRs9rDiRCWJZz38vdAU/oKZF+tyehm3Z+5n9pjCdYzF2S9u3nqeA
+	LPcikQW15231VFEUUxw==
+X-Google-Smtp-Source: AGHT+IG9Pl+Ba6YPk1J0Vi/poXN6DiF5c3p/B8XyGbVL2OKVmjjV2Fnd88y+GbnqivrOCG20FfIAUfst1JOn5lc=
+X-Received: from wmsd13.prod.google.com ([2002:a05:600c:3acd:b0:459:da33:b20c])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:138d:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-45a1b6697d0mr13496565e9.19.1755160003795;
+ Thu, 14 Aug 2025 01:26:43 -0700 (PDT)
+Date: Thu, 14 Aug 2025 08:26:42 +0000
+In-Reply-To: <20250814.151147.29094382820492173.fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250811041039.3231548-1-fujita.tomonori@gmail.com>
+ <20250811041039.3231548-3-fujita.tomonori@gmail.com> <aJm9A_D-zlJtbV6X@google.com>
+ <20250814.151147.29094382820492173.fujita.tomonori@gmail.com>
+Message-ID: <aJ2dwkHX0i7bFobg@google.com>
+Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout functions
+From: Alice Ryhl <aliceryhl@google.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com, 
+	me@kloenk.dev
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The LAN8842 is a low-power, single port triple-speed (10BASE-T/ 100BASE-TX/
-1000BASE-T) ethernet physical layer transceiver (PHY) that supports
-transmission and reception of data on standard CAT-5, as well as CAT-5e and
-CAT-6, Unshielded Twisted Pair (UTP) cables.
+On Thu, Aug 14, 2025 at 03:11:47PM +0900, FUJITA Tomonori wrote:
+> On Mon, 11 Aug 2025 09:50:59 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> > On Mon, Aug 11, 2025 at 01:10:38PM +0900, FUJITA Tomonori wrote:
+> >> Add read_poll_timeout functions which poll periodically until a
+> >> condition is met or a timeout is reached.
+> >>=20
+> >> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
+> >> macro and a simple wrapper for Rust doesn't work. So this implements
+> >> the same functionality in Rust.
+> >>=20
+> >> The C version uses usleep_range() while the Rust version uses
+> >> fsleep(), which uses the best sleep method so it works with spans that
+> >> usleep_range() doesn't work nicely with.
+> >>=20
+> >> The sleep_before_read argument isn't supported since there is no user
+> >> for now. It's rarely used in the C version.
+> >>=20
+> >> read_poll_timeout() can only be used in a nonatomic context. This
+> >> requirement is not checked by these abstractions, but it is intended
+> >> that klint [1] or a similar tool will be used to check it in the
+> >> future.
+> >=20
+> > I would drop this paragraph. You have a call to might_sleep() now.
+>=20
+> Do you mean that, since it=E2=80=99s obvious might_sleep() can only be us=
+ed in
+> a non-atomic context, the above statement is redundant and can be
+> dropped?
 
-The LAN8842 supports industry-standard SGMII (Serial Gigabit Media
-Independent Interface) providing chip-to-chip connection to a Gigabit
-Ethernet MAC using a single serialized link (differential pair) in each
-direction.
+I mean, klint is nice as it's a compile-time check rather than a
+runtime check. But might_sleep() still counts as having the
+abstractions check it in my book. So you shouldn't say that you are not
+checking it, when you are checking it.
 
-There are 2 variants of the lan8842. The one that supports timestamping
-(lan8842) and one that doesn't have timestamping (lan8832).
-
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/micrel.c   | 203 +++++++++++++++++++++++++++++++++++++
- include/linux/micrel_phy.h |   1 +
- 2 files changed, 204 insertions(+)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index c621ed465d2e5..f57cb46341928 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -448,6 +448,17 @@ struct kszphy_priv {
- 	struct kszphy_phy_stats phy_stats;
- };
- 
-+struct lan8842_phy_stats {
-+	u64 rx_packets;
-+	u64 rx_errors;
-+	u64 tx_packets;
-+	u64 tx_errors;
-+};
-+
-+struct lan8842_priv {
-+	struct lan8842_phy_stats phy_stats;
-+};
-+
- static const struct kszphy_type lan8814_type = {
- 	.led_mode_reg		= ~LAN8814_LED_CTRL_1,
- 	.cable_diag_reg		= LAN8814_CABLE_DIAG,
-@@ -5768,6 +5779,184 @@ static int ksz9131_resume(struct phy_device *phydev)
- 	return kszphy_resume(phydev);
- }
- 
-+#define LAN8842_SELF_TEST			14 /* 0x0e */
-+#define LAN8842_SELF_TEST_RX_CNT_ENA		BIT(8)
-+#define LAN8842_SELF_TEST_TX_CNT_ENA		BIT(4)
-+
-+static int lan8842_probe(struct phy_device *phydev)
-+{
-+	struct lan8842_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	phydev->priv = priv;
-+
-+	/* Similar to lan8814 this PHY has a pin which needs to be pulled down
-+	 * to enable to pass any traffic through it. Therefore use the same
-+	 * function as lan8814
-+	 */
-+	ret = lan8814_release_coma_mode(phydev);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable to count the RX and TX packets */
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_PCS_DIGITAL,
-+				    LAN8842_SELF_TEST,
-+				    LAN8842_SELF_TEST_RX_CNT_ENA |
-+				    LAN8842_SELF_TEST_TX_CNT_ENA);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+#define LAN8842_SGMII_AUTO_ANEG_ENA		69 /* 0x45 */
-+#define LAN8842_FLF				15 /* 0x0e */
-+#define LAN8842_FLF_ENA				BIT(1)
-+#define LAN8842_FLF_ENA_LINK_DOWN		BIT(0)
-+
-+static int lan8842_config_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Reset the PHY */
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				     LAN8814_QSGMII_SOFT_RESET,
-+				     LAN8814_QSGMII_SOFT_RESET_BIT,
-+				     LAN8814_QSGMII_SOFT_RESET_BIT);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Disable ANEG with QSGMII PCS Host side
-+	 * It has the same address as lan8814
-+	 */
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-+				     LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
-+				     LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA,
-+				     0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Disable also the SGMII_AUTO_ANEG_ENA, this will determine what is the
-+	 * PHY autoneg with the other end and then will update the host side
-+	 */
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				    LAN8842_SGMII_AUTO_ANEG_ENA, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* To allow the PHY to control the LEDs the GPIOs of the PHY should have
-+	 * a function mode and not the GPIO. Apparently by default the value is
-+	 * GPIO and not function even though the datasheet it says that it is
-+	 * function. Therefore set this value.
-+	 */
-+	return lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				     LAN8814_GPIO_EN2, 0);
-+}
-+
-+#define LAN8842_INTR_CTRL_REG			52 /* 0x34 */
-+
-+static int lan8842_config_intr(struct phy_device *phydev)
-+{
-+	int err;
-+
-+	lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+			      LAN8842_INTR_CTRL_REG,
-+			      LAN8814_INTR_CTRL_REG_INTR_ENABLE);
-+
-+	/* enable / disable interrupts */
-+	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-+		err = lan8814_ack_interrupt(phydev);
-+		if (err)
-+			return err;
-+
-+		err = phy_write(phydev, LAN8814_INTC, LAN8814_INT_LINK);
-+	} else {
-+		err = phy_write(phydev, LAN8814_INTC, 0);
-+		if (err)
-+			return err;
-+
-+		err = lan8814_ack_interrupt(phydev);
-+	}
-+
-+	return err;
-+}
-+
-+static irqreturn_t lan8842_handle_interrupt(struct phy_device *phydev)
-+{
-+	int ret = IRQ_NONE;
-+	int irq_status;
-+
-+	irq_status = phy_read(phydev, LAN8814_INTS);
-+	if (irq_status < 0) {
-+		phy_error(phydev);
-+		return IRQ_NONE;
-+	}
-+
-+	if (irq_status & LAN8814_INT_LINK) {
-+		phy_trigger_machine(phydev);
-+		ret = IRQ_HANDLED;
-+	}
-+
-+	return ret;
-+}
-+
-+static u64 lan8842_get_stat(struct phy_device *phydev, int count, int *regs)
-+{
-+	int val;
-+	u64 ret = 0;
-+
-+	for (int j = 0; j < count; ++j) {
-+		val = lanphy_read_page_reg(phydev, LAN8814_PAGE_PCS_DIGITAL,
-+					   regs[j]);
-+		if (val < 0)
-+			return U64_MAX;
-+
-+		ret <<= 16;
-+		ret += val;
-+	}
-+	return ret;
-+}
-+
-+static int lan8842_update_stats(struct phy_device *phydev)
-+{
-+	struct lan8842_priv *priv = phydev->priv;
-+	int rx_packets_regs[] = {88, 61, 60};
-+	int rx_errors_regs[] = {63, 62};
-+	int tx_packets_regs[] = {89, 85, 84};
-+	int tx_errors_regs[] = {87, 86};
-+
-+	priv->phy_stats.rx_packets = lan8842_get_stat(phydev,
-+						      ARRAY_SIZE(rx_packets_regs),
-+						      rx_packets_regs);
-+	priv->phy_stats.rx_errors = lan8842_get_stat(phydev,
-+						     ARRAY_SIZE(rx_errors_regs),
-+						     rx_errors_regs);
-+	priv->phy_stats.tx_packets = lan8842_get_stat(phydev,
-+						      ARRAY_SIZE(tx_packets_regs),
-+						      tx_packets_regs);
-+	priv->phy_stats.tx_errors = lan8842_get_stat(phydev,
-+						     ARRAY_SIZE(tx_errors_regs),
-+						     tx_errors_regs);
-+
-+	return 0;
-+}
-+
-+static void lan8842_get_phy_stats(struct phy_device *phydev,
-+				  struct ethtool_eth_phy_stats *eth_stats,
-+				  struct ethtool_phy_stats *stats)
-+{
-+	struct lan8842_priv *priv = phydev->priv;
-+
-+	stats->rx_packets = priv->phy_stats.rx_packets;
-+	stats->rx_errors = priv->phy_stats.rx_errors;
-+	stats->tx_packets = priv->phy_stats.tx_packets;
-+	stats->tx_errors = priv->phy_stats.tx_errors;
-+}
-+
- static struct phy_driver ksphy_driver[] = {
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_KS8737),
-@@ -5987,6 +6176,19 @@ static struct phy_driver ksphy_driver[] = {
- 	.resume		= lan8841_resume,
- 	.cable_test_start	= lan8814_cable_test_start,
- 	.cable_test_get_status	= ksz886x_cable_test_get_status,
-+}, {
-+	PHY_ID_MATCH_MODEL(PHY_ID_LAN8842),
-+	.name		= "Microchip LAN8842 Gigabit PHY",
-+	.flags		= PHY_POLL_CABLE_TEST,
-+	.driver_data	= &lan8814_type,
-+	.probe		= lan8842_probe,
-+	.config_init	= lan8842_config_init,
-+	.config_intr	= lan8842_config_intr,
-+	.handle_interrupt = lan8842_handle_interrupt,
-+	.get_phy_stats	= lan8842_get_phy_stats,
-+	.update_stats	= lan8842_update_stats,
-+	.cable_test_start	= lan8814_cable_test_start,
-+	.cable_test_get_status	= ksz886x_cable_test_get_status,
- }, {
- 	PHY_ID_MATCH_MODEL(PHY_ID_KSZ9131),
- 	.name		= "Microchip KSZ9131 Gigabit PHY",
-@@ -6082,6 +6284,7 @@ static const struct mdio_device_id __maybe_unused micrel_tbl[] = {
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8814) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8804) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8841) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8842) },
- 	{ }
- };
- 
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index 9af01bdd86d26..ca691641788b8 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -32,6 +32,7 @@
- #define PHY_ID_LAN8814		0x00221660
- #define PHY_ID_LAN8804		0x00221670
- #define PHY_ID_LAN8841		0x00221650
-+#define PHY_ID_LAN8842		0x002216C0
- 
- #define PHY_ID_KSZ886X		0x00221430
- #define PHY_ID_KSZ8863		0x00221435
--- 
-2.34.1
-
+Alice
 
