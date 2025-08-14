@@ -1,175 +1,176 @@
-Return-Path: <linux-kernel+bounces-769161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E895B26AB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:20:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65234B26AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1431BB61218
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5605627C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63988221FDD;
-	Thu, 14 Aug 2025 15:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2C121ABA4;
+	Thu, 14 Aug 2025 15:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4WdoAyM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TWqBnJjQ"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D21220F5C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22D92746C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184803; cv=none; b=WkTqz0+ZXByvnjWNVKbxKf0kPs8Y4+jdX/vluqWJTym3bqHexmfdCGE49TlillGWYZvsZqY5vspQPw8uJRT9lZGt/HDLe21Qc7PqXuHcB1/ODgYbTKWZAhCiRCR3igymFGDN7VPjiKNp1fouq7bnRHWUllCifKE8K/H8U8CQ1RE=
+	t=1755184877; cv=none; b=p2b1Q3otJUUmssnq2ihnwEpOx1S1RwTtFW/gmuwWSSDVLN9DgjOXWE90X897+KZsz+YhA2Cspv1zgT6ndA5YvzK6/cxJOgO002e6ZL4i5PjX6+CaPEFqNQHBbRn3BszM2NnFtd74TcL/qIp1HOzr7hCAAbhw6+iLUUstoGoRT/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184803; c=relaxed/simple;
-	bh=Me9loLch93dkc0dpmXGYnGiHnYvadiSaEhticdiiJe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RVdFQhpSeu6NFX6gmLIsShV/1ud6x3dncJUT3d7x4eSFq0ck7blr6cp2ITalRPf+ufYM4vUjr4mnnN7zGgXQ4pW9V2QmSibYx+xhvSbk1DBOpqv/TPF7qXF/V/aJhnXnLoKdtnbPl3K8LxzxprU9WQN07vm1JzfWi0Vezvasavg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4WdoAyM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755184799;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHIaca87a+Lei/XHRRpk/utjyoa+VsnhzwStKO2yDEo=;
-	b=i4WdoAyMhIPe95scalyzetKf7MsktcacQAws5iBPmTPBbGljFLbt+potUK2lGIu7l2YaiD
-	ALhlROzZb4b+q2u+hZ7sjZbX6Ss+LaPLtpSEbHO//umIK12tG4RqXzTRLK8vnPVdPn6oWr
-	giKCn4BH0K6SUa2TK8Rg93ILwqEYZRg=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-DKyKJxDCM4SaIH5WQVTYdA-1; Thu, 14 Aug 2025 11:19:55 -0400
-X-MC-Unique: DKyKJxDCM4SaIH5WQVTYdA-1
-X-Mimecast-MFC-AGG-ID: DKyKJxDCM4SaIH5WQVTYdA_1755184793
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e864817cb8so527256685a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:19:54 -0700 (PDT)
+	s=arc-20240116; t=1755184877; c=relaxed/simple;
+	bh=YtibqpvfqC3LfxytTglBuRG0EuqfsV4YgreHLTN+6a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRDlwpmPzWeszPcQCoO08I5kIo2unU35LZXWELeTBh5/AZc9K4Hnn7NQwhUPNB7/3DlzAOUCBOpwnvlLnUJLoPF4AXjvUetxQLEiJkFKyku2eF8I+AQopcP81H5szlSQs+fA8UPz5Ss6U7dljPam+GGv9qedWO92VU+MCQ3+PiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TWqBnJjQ; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6188b657bddso1984122a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755184873; x=1755789673; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dgPDA3rgAIgMF4EheoIVvO5tKarS0jmBC9SraOljyw=;
+        b=TWqBnJjQ18r4AtKOR/IdnGdA9TIp5pkCJjrcCD14YcsJnxZSttxD7peWOLYm2h1Tfq
+         /I1+qH1pm/k4we+BKOaJQbtZgPPCPUwfSWzUwE/Es5jI1UE5VogCGgYPdYta8diNIF11
+         2UzVmHuEv6Aib3jLGO5nvZ9jw1RUjoYB35c3V+ynZwHzMJukY0IQwuDX7yFUKKJuwRTk
+         bCjZbQzNt7VBdBcV6F1L7Gjxpb7oRWmxO0PoFjSbBQYpWGyDU9u/HkK1gw2pxA80DmUB
+         8/3aaWbKIFPrMv5+rV3XhlR0z+8SFKw5Y+9wOJOoxEzBt1lf8YdszEWrxlivfhSpdbRR
+         ObWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755184793; x=1755789593;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KHIaca87a+Lei/XHRRpk/utjyoa+VsnhzwStKO2yDEo=;
-        b=fAWmUwdmb0nME9HCo2/6PVBuCMa+mZ9jd4okyHN9KnidtMRsQSSufaIi8xCwpm/jnd
-         OEEUifs+UTiDHVaaERJdjvJemHV4IX/C77AcmJXBr8Vyk1D+ohI0a6HQ5h4q6vxy9HCe
-         lvdPlnN2dn/vZ+QMXSZQ04Rhbi9LSwDI0Z1c+9L7e1PlqilZAcXcT7bcTBmeOx/AW95l
-         MGpmXKqr5yOngyQoxXv4QJfpLwrzN25u+YRp1MjtlislnPVWbIZ3hh0X4pjNKmeWkPiV
-         8IThSPpR3Egjw2u+cqSna4yp1xW4U4uZvi99cOv515fZsDplcPp0xvpAi7fnghTadsNB
-         JXNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsWvHRf9IjVqnOD0sOiNO6VU17aK3umIKgLlRyQqdzD3yDv5Y3QzuBHrfh12JsP7rLhuWHrZsIcd3uMG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvaN32GMVBFVCS3XIkuxZmKQr+gXi1GDqNKJzzScErGlaVl/nQ
-	u18/MZFyY0yroX/ILLlsRxniBOXXOZRvZlb+H28igGvrF2Cpz3QomUD5kJM0V+x/mxMB5LNm5F9
-	sFZBfc+D4YMjQw+MuGd0ZyZElP1XOJ/Op9PntvrDHQn2jtTNxT4Y+BkSqhx6R53JN9Q==
-X-Gm-Gg: ASbGncsQrKocWHkx+aP4+Znbwi95Rzy/0icvM+jNoVy/QK/NLrx8CIYQFy9/ucqRROQ
-	pCKmRXRKoQVwZtNJ7iLguWhIgsjUZfqsQSIqU5RmnVkrOtbYf3Yc4X7LoKDWqAd0KUcNBhVcjrR
-	8yK0h/HTZinB/uvwY//klu6MnNj9vaZro/m/vgNm5+sY1gxs9g/cZtovYRsWsGvNHeL8Ub54nC5
-	/BwmdRBQYcGFlJsSOqLOOZKajF/90n2JMS3IrqA9K6p8OLZhF8Toc4CDLC6v2h+l+USuOFpS/iw
-	r0BXAIHleaPVKe2h3qgOiuYK76R3eYonfcynE11EQF1n27gcu1VAgOSle1zK7JZua7rXqkP3JUP
-	rrr3l4ZiatPY=
-X-Received: by 2002:a05:620a:444f:b0:7e6:3e26:63b6 with SMTP id af79cd13be357-7e87177df9bmr360189285a.21.1755184792064;
-        Thu, 14 Aug 2025 08:19:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbBWvamtmgCDWchP6EGpptPrCEMuK58uAggqkP3T93k3CpPZISIT2j7qtn++KMlZQWGXRgAg==
-X-Received: by 2002:a05:620a:444f:b0:7e6:3e26:63b6 with SMTP id af79cd13be357-7e87177df9bmr360184485a.21.1755184791608;
-        Thu, 14 Aug 2025 08:19:51 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:f0e:9070:527b:9dff:feef:3874? ([2a01:e0a:f0e:9070:527b:9dff:feef:3874])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e806ad969dsm1617338385a.78.2025.08.14.08.19.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:19:51 -0700 (PDT)
-Message-ID: <3fdbd23d-cd65-453b-aa8d-78f9ed1bc4c4@redhat.com>
-Date: Thu, 14 Aug 2025 17:19:48 +0200
+        d=1e100.net; s=20230601; t=1755184873; x=1755789673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3dgPDA3rgAIgMF4EheoIVvO5tKarS0jmBC9SraOljyw=;
+        b=M11/3z6SCLFJJAGTQNXAFK5C/1wVG0IJS3c3BuRg4nvTH+1Or0mX/4dtZien62Yj1x
+         TcM7rtiYU96K9FzFLaczIUilOkhKoR34cQ54OUM+F9FRdHdySxwYn0y5bDyjbbn13w1U
+         Fq93He5n40ZwhA7JHs1160vpaNXIlkrZvC3Egns91zPeVl94tWq9UXtoxT+4hySv3lIW
+         UsRKau9qJVYMdm46synttE21BqIn2oZKYGeRfVcgnKo3miZX75G43dTh/JPWnU0rraLX
+         yWG6LYXWUDIxCiPQ3GTk777a3sXnu85Ee8Qc2sIyumAhj+0e0N+bIismKy0ehtCrJlPA
+         DuOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrYzzRoFIdgY0DdDW7rFx0L9k2k7KNGIoFxw1X05omr0IvYrOLSni4mqs8vRM745xZ1oc7M7Prcso+2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyGBtEmzopaBftbfR/t9rC+dMRT1JRpfmBGdraEedGUwc6/4RS
+	vsif+C6BVaoborKgJwMXnRuLvhi53eK+hHndu3jXTfg+TSIzaxM9gLu0fORfvMMfEt0=
+X-Gm-Gg: ASbGncuPp/xPvjDl3PYSr1rU+DD+q0zhCd7vZtfez/cjsGx165dxYWj4jljhQfxISf+
+	BTdx1s8FR7BP0CIFuyqtlmrybTU+J8tm/LCBs2nmkzxbOX8bMHaLqohH4LmFkn/htBxQ42SO1/y
+	MzFJRCQCcVfDq5Dx5Cd7Mmg/f427zpHWh0D41eODNU4NZpPk5h4jXuOPTzGM7dip/c7TJpu7RKF
+	pQIBv2Xcj1RjCBSuNOD47FL4F7TJHWI1opehUKJjjbcHgHPW3wtc+U/D20nAC3N0tDDCtVnqxKr
+	q6QXvw+qo5Nz30Nu2KL3lBuNsZw0ZGbBc2PrEwhoPYGXJeHkVbat2Rhb7IaGYFHTGkoQcQyNCYT
+	zmNhBFp2hs159Ew==
+X-Google-Smtp-Source: AGHT+IG0dndym1ylaT+8YI1Ye6c9nuVWlCv2UtObhVYRq2yk69h5K4kg7N4JhDWaFIAS3CKJEY6z4Q==
+X-Received: by 2002:a17:907:da7:b0:ade:44f8:569 with SMTP id a640c23a62f3a-afcb98f8816mr333424666b.42.1755184873216;
+        Thu, 14 Aug 2025 08:21:13 -0700 (PDT)
+Received: from pathway ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af928c84154sm2525183966b.84.2025.08.14.08.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 08:21:12 -0700 (PDT)
+Date: Thu, 14 Aug 2025 17:21:10 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	john.ogness@linutronix.de
+Subject: Re: [PATCH v3 5/5] panic: add note that panic_print sysctl interface
+ is deprecated
+Message-ID: <aJ3-5mSqEu4kegx4@pathway>
+References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
+ <20250703021004.42328-6-feng.tang@linux.alibaba.com>
+ <aJsrGgTYxtEhZ7jX@pathway>
+ <aJvk2ti-D3t3EUsX@U-2FWC9VHC-2323.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: eric.auger@redhat.com
-Subject: Re: [RFC] iommu: Fix virtio-iommu probing
-Content-Language: en-US
-To: Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
- rafael@kernel.org, bhelgaas@google.com, jgg@ziepe.ca, lpieralisi@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org,
- jean-philippe@linaro.org, jsnitsel@redhat.com
-References: <20250814141758.2140641-1-eric.auger@redhat.com>
- <e3935099-6e29-493d-8587-64ceca8a20e9@arm.com>
-From: Eric Auger <eric.auger@redhat.com>
-In-Reply-To: <e3935099-6e29-493d-8587-64ceca8a20e9@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJvk2ti-D3t3EUsX@U-2FWC9VHC-2323.local>
 
-Hi Robin
+On Wed 2025-08-13 09:05:30, Feng Tang wrote:
+> On Tue, Aug 12, 2025 at 01:52:58PM +0200, Petr Mladek wrote:
+> > On Thu 2025-07-03 10:10:04, Feng Tang wrote:
+> > > Add a dedicated core parameter 'panic_console_replay' for controlling
+> > > console replay, and add note that 'panic_print' sysctl interface  will
+> > > be obsoleted by 'panic_sys_info' and 'panic_console_replay'.  When it
+> > > happens, the SYS_INFO_PANIC_CONSOLE_REPLAY can be removed as well.
+> > > 
+> > > --- a/kernel/panic.c
+> > > +++ b/kernel/panic.c
+> > > @@ -77,6 +78,13 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+> > >  EXPORT_SYMBOL(panic_notifier_list);
+> > >  
+> > >  #ifdef CONFIG_SYSCTL
+> > > +static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
+> > > +			   void *buffer, size_t *lenp, loff_t *ppos)
+> > > +{
+> > > +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
+> > > +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+> > > +}
+> > 
+> > This warning is printed "only" when the value is accessed via the
+> > procfs. It would be great to print it also when it is set
+> > via the command line parameter.
+> 
+> Yes, this is indeed a remaining issue to be solved, as mentioned in
+> the cover letter.
 
-On 8/14/25 4:53 PM, Robin Murphy wrote:
-> On 14/08/2025 3:17 pm, Eric Auger wrote:
->> Commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
->> probe path") broke virtio-iommu probing and no iommu group are
->> produced anymore.
->>
->> When probe_iommu_group() gets called viommu_probe_device() fails
->> because viommu_get_by_fwnode(fwspec->iommu_fwnode) returns NULL.
->
-> ...which it's not supposed to. And *now* I remember, we never got this
-> finished, did we?
-Seems we did not ;-)
->
-> https://lore.kernel.org/linux-iommu/9beaed48da83a0882dba153e65e6cfd0a8e21482.1742484773.git.robin.murphy@arm.com/
->
+I see now.
 
-Unfortunately it does not fix my issue. Still no iommu group when
-booting with ACPI.
+> > It would require replacing
+> > 
+> > core_param(panic_print, panic_print, ulong, 0644);
+> > 
+> > with
+> > 
+> > core_param_cb(panic_print, &panic_print_ops, &panic_print, 0644);
+> 
+> When testing the change, I found  a problem:  'core_param_cb' is not
+> the real counterpart of 'core_param', that it is a module parameter
+> instead of kernel/core parameter, and adds the module.prefix to the
+> parameter, say, the effective cmdline parameter is changed to
+> 'panic.panic_print=' instead of 'panic_print='.
 
-Thanks
+I see. It is pity that it is messed like this.
 
-Eric
->
-> Thanks,
-> Robin.
->
->> So it seems we need to restore the original iommu_probe_device
->> call site in acpi_iommu_configure_id() to get a chance to probe
->> the device again.
->>
->> Maybe this defeats the whole purpose of the original commit but
->> at least it fixes the virtio-iommu probing.
->>
->> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
->> probe path")
->> Cc: stable@vger.kernel.org # v6.15+
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>
->> ---
->>
->> I also tested smmu probing and this seems to work fine.
->> ---
->>   drivers/acpi/scan.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->> index fb1fe9f3b1a3..9f4efa8f75a6 100644
->> --- a/drivers/acpi/scan.c
->> +++ b/drivers/acpi/scan.c
->> @@ -1632,6 +1632,13 @@ static int acpi_iommu_configure_id(struct
->> device *dev, const u32 *id_in)
->>           err = viot_iommu_configure(dev);
->>       mutex_unlock(&iommu_probe_device_lock);
->>   +    /*
->> +     * If we have reason to believe the IOMMU driver missed the initial
->> +     * iommu_probe_device() call for dev, replay it to get things in
->> order.
->> +     */
->> +    if (!err && dev->bus)
->> +        err = iommu_probe_device(dev);
->> +
->>       return err;
->>   }
->>   
->
+> While below patch of adding a new 'kernel_param_cb' can work without
+> the "panic" prefix, but I'm not sure if it is worth the change:
 
+I think that it is worth adding. IMHO, the parameter will primary be used
+from the command line. So, this is an important path how to make people
+aware of the obsoleting.
+
+> ---
+> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+> index bfb85fd13e1f..71053d078cea 100644
+> --- a/include/linux/moduleparam.h
+> +++ b/include/linux/moduleparam.h
+> @@ -194,6 +194,9 @@ struct kparam_array
+>  #define core_param_cb(name, ops, arg, perm)		\
+>  	__level_param_cb(name, ops, arg, perm, 1)
+>  
+> +#define kernel_param_cb(name, ops, arg, perm) \
+> +	__module_param_call("", name, ops, arg, perm, -1, 0)
+> +
+
+I would call it __core_param_cb(). And I move the definition
+down to the section where core_param() and core_param_unsafe()
+are defined. Also it would deserve a comment explaining
+why the "__" prefix is used.
+
+>  /**
+>   * postcore_param_cb - general callback for a module/cmdline parameter
+>   *                     to be evaluated before postcore initcall level
+
+Best Regards,
+Petr
 
