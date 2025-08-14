@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-769267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9366CB26C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:11:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD46B26BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0821886314
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:10:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B956E7B787E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7432571CD;
-	Thu, 14 Aug 2025 16:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7028A301004;
+	Thu, 14 Aug 2025 16:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MDc5ysOE"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3a4ERY5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A241303CB4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269EE2D6407;
+	Thu, 14 Aug 2025 16:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187640; cv=none; b=oK7PcWXcCZM6FqaWy+Q3rJi0aZRPf1dSrdBsu/PFjdthH0FVLJxsIce/k2kVUBsY/lHuTOJDOZJ7iRVV3+UUzpU8CAcnagjCvJr19sziLJiFwiJL0ZI4a120coWFuQSUqn77BEm4gxif0noCBiRIIGQFDbXHn7mblYzG8hGaiHo=
+	t=1755187633; cv=none; b=i0hLcLNFDuMHsAjlg6+23yATei+KNIf0yyaG8aE56VQGwPZsoU4AMjn9RqPA5qAcFZOvv82BSXCi6mh92TuoCfjLd6wUlXGhDPH1nSp46zdXcAig7CKIQOdidvlh6/pdMDrSJlelke4DGS4CNS1Tyr9n3Y8OUg020Y1eYRKtwHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187640; c=relaxed/simple;
-	bh=1ZN/hBU5KFnWEm5a5v90vlczlCZ4mmlahGdTTa+btSo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M1p6+NbxXHsrseQb9tDdSs81CtThpt94h0fnr5+xFH7qvVTKYthfaZkvrDzi3WhOC24B6omNO2htmTLgRVuDPsu39W4odPxbvrfvGHjcPbGzBxmZ9bRGfHgEsRmz2vKWzecXGCMlpGiD+L5FSylX6Na/fxxoeSA26/+09ammncw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MDc5ysOE; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b281d25so4763325e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755187637; x=1755792437; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6w8t1k0+L73Z3H7zGEQgr6I4vcHFOJ0Mhc+O6mOnc/w=;
-        b=MDc5ysOEPsZpzRLgJeMRCPc62mgSbmRtYz5mn8RCsRC0ZfxWSJxaVLcurIktGTYoXq
-         aHfAeXwv0mGTR+PLepNlQ/yFKudtVkHj6VC6ceWmve5Bh8Jcd0Jf2q8BSnABSwZaAImj
-         fLQ67WN5HktggrpfpcwkDFzdmtrT8Gey5UW5jITC55NtneQ5fTLH8Mbst7vqCJ0x3H7m
-         UAyy6y29IMoU6sp5jDAWBl1fGPCDyGC+l/luneApY3pnri1C7Ys4cQbVnv59CybQuxzH
-         3MQhmiIwT+fVVpK40pYUOjgHohbCD4/V2nh2xUU4XmrAzk0isM1MdxQA+Z4ivS0B0cLA
-         lgdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755187637; x=1755792437;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6w8t1k0+L73Z3H7zGEQgr6I4vcHFOJ0Mhc+O6mOnc/w=;
-        b=gPj/q+5hbAA+jW/+qM8Agbo/acqNb92y4KpNKaypotYLxYgkjWc0Jb1hYdZOSFKIPL
-         4wtTffcmI4t/tSTcQl/AlDzl9CBbz2LZRObaKsm5tbKjYC/Gcr24UMqecAyZJqx8046W
-         AxOvUDFKjt4dZ3eMUbGYNcAQNFs/9QPnQQ1sY4ex2vXsolfQptlY1Qq1kTe8XTREzloJ
-         zk/5bCEmxv8qZUA1KFNGwn0r2tAdWGH2vaCKY+pO2+EQ4mK2DR6mOhTmxHk+vfW6+xdm
-         JY36rZnTO0Kwp/FeelW6y1vNHgrcsZ/9D+uep3Xul1YCf9JDpTZnNMarwoe1/vE4DgVf
-         XNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk1wuwW/U5Pk9uZoalOpvx1bf+PO7/Yo/9T2vQMnG6FQz3kIGYkby+nHuN0xmwMgJQlYPjAkU8+H/yTl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDmDe0D2DSxa2bKqo5FYHi+97A0KV+qLHmjVfFJxpNi9CMBZGv
-	vACtuDdjjUKzgs3BmlLdtHFTpVIBgod+tJx+qOtvAGJczU/obCG83xcirCKGxZFL6uw=
-X-Gm-Gg: ASbGncvzGAMg4MaISdG1BvDS/ZKeI9XkpsuZb/pxtQ82zOls/lhqC2B8zKXnIeP1dKM
-	SntcHrmsWaf4xLcfyJQZdw0Ep5vWzJHK+MqR6emQOp7VWXPxIY+Rsn7qIX4i7y1nr+oC1KBkXsb
-	Z6kzsl4MedPo3GUg+FSdI8UnsGpyFB9XJEl7Mfti304Lf/65L4/+IZ36G9nR4py3Rmjdun+Y+7V
-	qWkLBMjVjUG9fv9etOotT+FIcJ7LWHyFuGh4zr0Q4ZJLSMPVr7ruT32IUEIruZG8i24RjPWGJYY
-	3rXZbHlL3fvdLwVpz3gY4rph2WKpxGAz9G7qUDiB+ayiXwHi72Ikx1rNj/vI/IQtI0iTCyyhKSE
-	5HMGWQnsccW7dS2HLVg8WlObIZyEEgUE=
-X-Google-Smtp-Source: AGHT+IEZbpliyIDsPb6R0FpfpFlg3UBRXfnKDNpZBswiqyG30cWnXAPOznL3hegH/Ef1DZOEk8/F0Q==
-X-Received: by 2002:a05:600c:45d0:b0:440:6a79:6df0 with SMTP id 5b1f17b1804b1-45a1b644c34mr26991495e9.22.1755187636941;
-        Thu, 14 Aug 2025 09:07:16 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6bd172sm28363495e9.6.2025.08.14.09.07.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:07:16 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Thu, 14 Aug 2025 17:06:53 +0100
-Subject: [PATCH 13/13] dt-bindings: lpspi: Document support for S32G
+	s=arc-20240116; t=1755187633; c=relaxed/simple;
+	bh=vG/qEKEpCZUZKsXkxVaanRomBpekziB+YRxHWgLrWI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fZy+4jJTtegXtJLGFvp9NhaYc5LNmnhFTyNi2DORuk+tteCedQsi08YV8JZxyNAHZKjI0ybCgFXSb67DXilMwk59nELw/H5CDz3B6a7ICp+2mO+cH+ds3nlSylToJWBAvdniZuo+cUUNjODk59e81zRPIfQ9aJda6WGv1/DjNZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3a4ERY5; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755187632; x=1786723632;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vG/qEKEpCZUZKsXkxVaanRomBpekziB+YRxHWgLrWI0=;
+  b=L3a4ERY5x62n9oPfRUcL4jDXmr5vxWN+Wtym0eYSHNNxOLGn4H0hjmWP
+   bRwFn0pec5UKhEUHHX3sAU2bMa86zMEbysxBVxuq9H4WlJTVc5WQD6Fa/
+   suMnat5iMBR0oQaIKo+tU+M9moBz8LVH2O2Hg3on6tHTLddmIasno9GFq
+   SQrHrGJaS2bT2r6VTbcL6Kx7+WZRVM0M01oyYqv80rdRbysD8eVKqtgd3
+   KyC1SguLiIH6L9wlQXMpN+dv6YkxbU1fIRZeuAr+01NOHlFM51lkoVDvb
+   20TBQ+HNSC374xY6XjCcmVEbG1SI8aRva1MxbScwSK3vaK/Y3gpWij9Au
+   A==;
+X-CSE-ConnectionGUID: +eRZjzjVRqKRCWWdradtKQ==
+X-CSE-MsgGUID: eKI51XkrS4yG/q0aOzFDRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68208578"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="68208578"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:07:11 -0700
+X-CSE-ConnectionGUID: XKwl5ZwpR/eOvQm+LOwh9w==
+X-CSE-MsgGUID: i2DLUQVrTfCuoOh9/S7xkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166767403"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.169]) ([10.247.119.169])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:07:04 -0700
+Message-ID: <18b2a030-f607-4a6c-bd55-b704a06c6948@intel.com>
+Date: Thu, 14 Aug 2025 09:06:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Fix driver-api typos
+To: Ranganath V N <vnranganath.20@gmail.com>, corbet@lwn.net,
+ linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+ dave@stgolabs.net, rafael@kernel.org, linux-kernel-mentees@vger.kernel.org,
+ skhan@linuxfoundation.org, vishal.l.verma@intel.com
+References: <20250814114245.16399-1-vnranganath.20@gmail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250814114245.16399-1-vnranganath.20@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-james-nxp-lpspi-v1-13-9586d7815d14@linaro.org>
-References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
-In-Reply-To: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>, 
- Clark Wang <xiaoning.wang@nxp.com>, Fugang Duan <B38611@freescale.com>, 
- Gao Pan <pandy.gao@nxp.com>, Fugang Duan <fugang.duan@nxp.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
- Larisa Grigore <larisa.grigore@oss.nxp.com>, 
- Larisa Grigore <larisa.grigore@nxp.com>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
- Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com
-Cc: James Clark <james.clark@linaro.org>, linux-spi@vger.kernel.org, 
- imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org
-X-Mailer: b4 0.14.0
 
-From: Larisa Grigore <larisa.grigore@nxp.com>
 
-S32G2 and S32G3 are currently treated the same way in the driver, so
-require that S32G3 is always paired with the S32G2 compatible string
-until there is divergence in the future.
 
-Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+On 8/14/25 4:42 AM, Ranganath V N wrote:
+> Corrected a few spelling mistakes
+> 
+> - functionalty ==> functionality
+> in Documentation/driver-api/cxl/devices/device-types.rst
+> 
+> - adjascent ==> adjacent
+> in Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> 
+> - succeessful ==> successful
+> in Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> 
+> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-index 3f8833911807..9fc98b0f3428 100644
---- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-@@ -20,6 +20,7 @@ properties:
-       - enum:
-           - fsl,imx7ulp-spi
-           - fsl,imx8qxp-spi
-+          - nxp,s32g2-lpspi
-       - items:
-           - enum:
-               - fsl,imx8ulp-spi
-@@ -27,6 +28,10 @@ properties:
-               - fsl,imx94-spi
-               - fsl,imx95-spi
-           - const: fsl,imx7ulp-spi
-+      - items:
-+          - const: nxp,s32g3-lpspi
-+          - const: nxp,s32g2-lpspi
-+
-   reg:
-     maxItems: 1
- 
-
--- 
-2.34.1
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  Documentation/driver-api/cxl/devices/device-types.rst           | 2 +-
+>  .../cxl/platform/example-configurations/one-dev-per-hb.rst      | 2 +-
+>  Documentation/driver-api/thermal/exynos_thermal_emulation.rst   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+> index 923f5d89bc04..7f69dfa4509b 100644
+> --- a/Documentation/driver-api/cxl/devices/device-types.rst
+> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
+> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+>  Typically used for initialization, configuration, and I/O access for anything
+>  other than memory (CXL.mem) or cache (CXL.cache) operations.
+>  
+> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
+> +The Linux CXL driver exposes access to .io functionality via the various sysfs
+>  interfaces and /dev/cxl/ devices (which exposes direct access to device
+>  mailboxes).
+>  
+> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> index aebda0eb3e17..a4c3fb51ea7d 100644
+> --- a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> +++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> @@ -10,7 +10,7 @@ has a single CXL memory expander with a 4GB of memory.
+>  Things to note:
+>  
+>  * Cross-Bridge interleave is not being used.
+> -* The expanders are in two separate but adjascent memory regions.
+> +* The expanders are in two separate but adjacent memory regions.
+>  * This CEDT/SRAT describes one node per device
+>  * The expanders have the same performance and will be in the same memory tier.
+>  
+> diff --git a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> index c21d10838bc5..f77d27c25ce2 100644
+> --- a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> +++ b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> @@ -32,7 +32,7 @@ Exynos emulation mode requires synchronous of value changing and
+>  enabling. It means when you want to update the any value of delay or
+>  next temperature, then you have to enable emulation mode at the same
+>  time. (Or you have to keep the mode enabling.) If you don't, it fails to
+> -change the value to updated one and just use last succeessful value
+> +change the value to updated one and just use last successful value
+>  repeatedly. That's why this node gives users the right to change
+>  termerpature only. Just one interface makes it more simply to use.
+>  
 
 
