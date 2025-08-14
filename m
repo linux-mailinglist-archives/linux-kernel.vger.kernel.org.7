@@ -1,239 +1,132 @@
-Return-Path: <linux-kernel+bounces-768203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687F5B25E22
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BC0B25E2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB3D7B0815
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3B51888639
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4865C2E5436;
-	Thu, 14 Aug 2025 07:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B502E2DC8;
+	Thu, 14 Aug 2025 07:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CdwYhxrt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bMWUXmaL"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910A42E2DF8;
-	Thu, 14 Aug 2025 07:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ABE2E2844
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158124; cv=none; b=KZCzG488SQw32ZTyNuo05iWcGu+vbn6VClcVV+6NZ+wwu9mu3nSE9BGg1PF7fYRzcHQmx9S81mK+EA7h0Q4lwNW9XD4uDxBVOOVFsbT5thtv6citKjiPpVu+SOCGy5k3ZU9LZpOpLRNBEblfNvP+Jorn+3mlitbwkZcnXDq7KQs=
+	t=1755158120; cv=none; b=m1+WYVOK4NXBV2KHTyI2hDDIk2NUZJ8wWG40l4CooC6PAH+pynNXSeOvfo0SXsZdsgQvG077RiAYzGAPtAa1JpybcwTEb4mLbZwGfh/9cfbQGF93IcVytp2dJKnSlZT4XAuO/zYjCPqvkJ+vZyAe7i9IxJ9vbN0JYi78RxK3C5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755158124; c=relaxed/simple;
-	bh=K706a+/OcSbYHCeqVGCGuDEaiNuFaDDkMqHrEExkTsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koYNm27UwXeYu140gTmx5NaewBOgQ8VtoggI01mxBsgBikc6gKH8R/zTko2R98m/54r7OtoBxoHJOxIJf8N9b5LfnP5nkwGEx6ZIfpzpKuMrxrSqlajdyipvKbwZU/UMt6K80ZuF1cpKqZJBGFKes65epc5Y/QEwtsqQwjK2Q1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CdwYhxrt; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755158122; x=1786694122;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K706a+/OcSbYHCeqVGCGuDEaiNuFaDDkMqHrEExkTsc=;
-  b=CdwYhxrtsBKioQInW0AjPvjbuIsrSqkN+CckBQRWf/9lbSxnXhuHz0Kt
-   PoE5snaMJv3LZAe9uhoNCN68wSw4ijSphWCTwf6NevNQnLFLw1QLah8yY
-   0WCB0p+Rv5zv22zhQqRtCllRcsZT2S5pz9ym+yvMbNTtYVUOQwVLJxQSw
-   h48Zv4WkkJs2nG8Pogq4mafxfSfsBpq5YZWGcmKzDpqQaGgMEkoj4Azdm
-   3hwN1deh5dZUZBITfL8NdPiYc/cQf/D3BPogiVnrlCQZJ6sIrx3PkXLja
-   HH6a7/zcP/kAgxw9qLmoM9O/+bpy/+KDGmeQtFQ5fiP/Sq4RAJ7d1u581
-   A==;
-X-CSE-ConnectionGUID: WwLb6U4lRL2q8vlJPkFz+w==
-X-CSE-MsgGUID: u4pg/TtrQkm5P0V+roThUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57534677"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57534677"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:55:22 -0700
-X-CSE-ConnectionGUID: COBFqvLsRs+TDow72JtVwA==
-X-CSE-MsgGUID: Y+Z7SIpxTC+IDyoW1ArBpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="167064142"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 14 Aug 2025 00:55:19 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umSnl-000AjE-2G;
-	Thu, 14 Aug 2025 07:55:11 +0000
-Date: Thu, 14 Aug 2025 15:54:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, horms@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
-	vsrama-krishna.nemani@broadcom.com,
-	Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
-	Vikas Gupta <vikas.gupta@broadcom.com>,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: Re: [net-next 7/9] bng_en: Register rings with the firmware
-Message-ID: <202508141517.TTc9sw7w-lkp@intel.com>
-References: <20250813215603.76526-8-bhargava.marreddy@broadcom.com>
+	s=arc-20240116; t=1755158120; c=relaxed/simple;
+	bh=VMoY9uH+QCsljh5aA/42PVLV0HoLhQc+LEs/AXP4pXo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZMApKwQTFt0oic8EoNAPwBtxRswty/qWVQblm3Ea2JfJ9FcBsxZBE3pl/5t8zJY4nPMr03PZ6vhiI+Vakh/ndrXxe6QVqlamIj4TXDV5F5YgXmWsyZvzAEKWy8GAGH3mIlmGVBoXSAx6AAmY4SxFTJsQfOl/ixGqL6XBnSdMtdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bMWUXmaL; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b00352eso2527485e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755158117; x=1755762917; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pkt9ozF4HjNo8N7YGJsDJbGhL2IzfusvyUWTBzPyf7M=;
+        b=bMWUXmaLJ2VY9BrnPhBdWDTNKgaidBDAgDHtqzX1xwruasy3p2zdPeVofPOOCy+H6F
+         ur6rlycSX3XzkRE3Y7/N0JNC+VNWp0GkarcvAubefHc02phibGLuLnbSatCoGXNFef7l
+         EAeswCuZ6NK8kZ07G5F0cOMGzixl5ayQSKIx/ZrZi+TLTwpNotOoeKJNJWZssh/coEO8
+         VfV9QIkhwn2HXjQ5EtWQzcTKF2HBED148ZAJ2gKWfgpjadfy6zWCzaya/RuUSZR63wHR
+         Oo17x60f+W873WOaEIRcqx3VWMw9XAiAr4CmNK5Pjf2OvsHS5Dt2uYPIs2HTxxsWWvTM
+         wWhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755158117; x=1755762917;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pkt9ozF4HjNo8N7YGJsDJbGhL2IzfusvyUWTBzPyf7M=;
+        b=hQQVxKQ4F9Xk0hCCPRcXkePZ2UoP7sGJXuKzmLg4f437JFXbe22q81+Fqu4cQLVwLF
+         qo4A42cFjwMVYVi+KwQrSts0D6Gbv+2DlFCP0WmUuh9WXzDXQD0pAR9yx19i8EBpubrV
+         l54iDm8leG+30IEtXRgOGCck1QPrUIywOOaKgnR2XUvVc98K7IqthzZgpWuyZ5KRkF9L
+         NE+j4dSUuAFM6+ErtMACd+uTmPMbsrEgB/HHwY8bx0mbxNO9DynLXByMcFnQ3CReInS7
+         bDOS9JI3hqygOgHRh4yu9PZySDjTDRtg2TJ56eOv614jRoWKj6Af0+sw2mCJvhO51sP+
+         Ws9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX/SQQZ6n5Y10205rOyGiTHEylMeq8onuBkrI6+gyD8ZPDBkOrmOXWfrDayDKKWrN4hJhfFl8Yo5+y4mn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZNMFmR9kqKE3Sd5KkbtTMcZUo6ahSDE8wREl76qDmgAHfQ8Wb
+	O+LUYY6bnzMnznG0pDPRSDDKvEmq/Qyawfl1XL++SoOFj2DZhj/a2zAaYgHxjv+qw1LYVChtQwS
+	jWbAukTcYWTVBFrfDuQ==
+X-Google-Smtp-Source: AGHT+IEwXLvyCAoWDtNfNW5WIiz6Y+KDZTy2eN5q6Eu1bB6BXaaznui8SXDAth8yHInJovhcWZQN9Sn9q2E2DRU=
+X-Received: from wmbem15.prod.google.com ([2002:a05:600c:820f:b0:451:d768:b11d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1d16:b0:459:94a7:220f with SMTP id 5b1f17b1804b1-45a1b6577f9mr12470205e9.26.1755158116883;
+ Thu, 14 Aug 2025 00:55:16 -0700 (PDT)
+Date: Thu, 14 Aug 2025 07:54:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813215603.76526-8-bhargava.marreddy@broadcom.com>
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1090; i=aliceryhl@google.com;
+ h=from:subject; bh=VMoY9uH+QCsljh5aA/42PVLV0HoLhQc+LEs/AXP4pXo=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonZXTyaGB12UQz+He5R88gG56onLNWGp1jIqZ1
+ vmC6SORLquJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJ2V0wAKCRAEWL7uWMY5
+ RmxKD/9XTAtpkY0tqkvQ/KI118GdnayeBzkBm3Ju8ZviwzKu1pt+Tj6C1oq7NXbmw4VPt2/JwEr
+ +R97IGMF5xudWN38Ee9hYouRwVKyE4412lVzr9KrDd0L59UpOvfYViUFV2Jt8pZynbJUUdDeVu4
+ NJ7AQJguuboQVezTI72dlooiVSoEqQgjqlTI5695l8FS31ddO7IBRt1gd3402n3emVpGjNUq7FD
+ QJz4++Wa2QsJ2SK8w9beudiWP1zXoFtJFQqQJp7eYVbFCtYi044prekxwkOpZayKSOa6YU6WfCq
+ dtSPrqA9zQESg+HbayhaPci7lGtJyGIqO70/gLuGesr5Ql440rigeOD8lO9OXkVLGw7+q5tAZWi
+ M1PQffntwdm6EQBR+fS437Z6Fu+wD6hXnDjJDpv/r/0DN22z0WH2Vd4+VP5qnsM3GQcl+GitSXo
+ gvbx3C/SuktLE7U1OMFFY9X9fzmV+lwi9ToMuL6OkwGpHYyX41TuoftVpF+qhDcqfoSXKAA2SI4
+ O54FedWn8jTp8GeasAV/pVgFAC/aklaQ5CBrmWyaZ4GH7kBSBzC9EEMz41LXZK/0jCJ4DamiqAh
+ guRlN8WW7goErG1vaOvwNELh0WlekDFeb8MoU4WRMBtLwLYLaqie52aaITPoleWWXJoept+Lbc7 83Xlpn3nO+wY5Hg==
+X-Mailer: git-send-email 2.51.0.rc0.215.g125493bb4a-goog
+Message-ID: <20250814075454.1596482-1-aliceryhl@google.com>
+Subject: [PATCH] mm: rust: add page.rs to MEMORY MANAGEMENT - RUST
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: rust-for-linux@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Bhargava,
+The page.rs file currently isn't included anywhere, and I think it's a
+good fit for the MEMORY MANAGEMENT - RUST entry. The file was originally
+added for use by Rust Binder, but I believe there is also work to use it
+in the upcoming scatterlist abstractions.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhargava-Marreddy/bng_en-Add-initial-support-for-RX-and-TX-rings/20250814-004339
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250813215603.76526-8-bhargava.marreddy%40broadcom.com
-patch subject: [net-next 7/9] bng_en: Register rings with the firmware
-config: um-randconfig-002-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141517.TTc9sw7w-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141517.TTc9sw7w-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508141517.TTc9sw7w-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_core.c:5:
-   In file included from include/linux/crash_dump.h:5:
-   In file included from include/linux/kexec.h:20:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_core.c:9:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:430:15: error: incomplete definition of type 'struct bnge_dev'
-     430 |         spin_lock(&bd->db_lock);
-         |                    ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_core.c:9:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:431:2: error: call to undeclared function 'lo_hi_writeq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     431 |         lo_hi_writeq(val, addr);
-         |         ^
-   drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:432:17: error: incomplete definition of type 'struct bnge_dev'
-     432 |         spin_unlock(&bd->db_lock);
-         |                      ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   drivers/net/ethernet/broadcom/bnge/bnge_core.c:177:40: warning: shift count >= width of type [-Wshift-count-overflow]
-     177 |         dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-         |                                               ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-      73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   2 warnings and 3 errors generated.
---
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.c:6:
-   In file included from include/linux/pci.h:38:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.c:10:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:430:15: error: incomplete definition of type 'struct bnge_dev'
-     430 |         spin_lock(&bd->db_lock);
-         |                    ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.c:10:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:431:2: error: call to undeclared function 'lo_hi_writeq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     431 |         lo_hi_writeq(val, addr);
-         |         ^
-   drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:432:17: error: incomplete definition of type 'struct bnge_dev'
-     432 |         spin_unlock(&bd->db_lock);
-         |                      ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   1 warning and 3 errors generated.
---
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c:7:
-   In file included from include/linux/pci.h:38:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c:10:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:430:15: error: incomplete definition of type 'struct bnge_dev'
-     430 |         spin_lock(&bd->db_lock);
-         |                    ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c:10:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge.h:13:
-   In file included from drivers/net/ethernet/broadcom/bnge/bnge_resc.h:7:
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:431:2: error: call to undeclared function 'lo_hi_writeq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     431 |         lo_hi_writeq(val, addr);
-         |         ^
-   drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:432:17: error: incomplete definition of type 'struct bnge_dev'
-     432 |         spin_unlock(&bd->db_lock);
-         |                      ~~^
-   drivers/net/ethernet/broadcom/bnge/bnge_rmem.h:8:8: note: forward declaration of 'struct bnge_dev'
-       8 | struct bnge_dev;
-         |        ^
-   drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c:768:32: warning: variable 'resp' set but not used [-Wunused-but-set-variable]
-     768 |         struct hwrm_ring_free_output *resp;
-         |                                       ^
-   2 warnings and 3 errors generated.
-
-
-vim +430 drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-
-   425	
-   426	static inline void bnge_writeq(struct bnge_dev *bd, u64 val,
-   427				       void __iomem *addr)
-   428	{
-   429	#if BITS_PER_LONG == 32
- > 430		spin_lock(&bd->db_lock);
- > 431		lo_hi_writeq(val, addr);
-   432		spin_unlock(&bd->db_lock);
-   433	#else
-   434		writeq(val, addr);
-   435	#endif
-   436	}
-   437	
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..45f7a21dafd4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16244,15 +16244,17 @@ S:	Maintained
+ MEMORY MANAGEMENT - RUST
+ M:	Alice Ryhl <aliceryhl@google.com>
+ R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+ R:	Liam R. Howlett <Liam.Howlett@oracle.com>
+ L:	linux-mm@kvack.org
+ L:	rust-for-linux@vger.kernel.org
+ S:	Maintained
+ W:	http://www.linux-mm.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+ F:	rust/helpers/mm.c
++F:	rust/helpers/page.c
+ F:	rust/kernel/mm.rs
+ F:	rust/kernel/mm/
++F:	rust/kernel/page.rs
+ 
+ MEMORY MAPPING
+ M:	Andrew Morton <akpm@linux-foundation.org>
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0.rc0.215.g125493bb4a-goog
+
 
