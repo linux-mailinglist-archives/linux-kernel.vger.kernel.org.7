@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-768381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9756FB26089
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:17:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2B8B2604F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2DA1C8604D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:11:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3444B7BB682
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A062EB5C7;
-	Thu, 14 Aug 2025 09:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FB22ED17A;
+	Thu, 14 Aug 2025 09:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIJrJcgz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLuUBGtd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0422EAB90;
-	Thu, 14 Aug 2025 09:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DF92EBDC7;
+	Thu, 14 Aug 2025 09:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162577; cv=none; b=bCy3UNyn/6IfsRx7TZMK+3qdzInfrVctj8lZIneEYjTmz0MJQJI/lKkP0rUNL0YsuARG3mdkwytqC1dct/a7KzRa2tqF3iB/Ll43xmoW9MJM5QIqVYIYYUInO4i6bqBFdHP5iLbglaoZzb0e/f/agPNi7Bgp0Ka7MV3baDiewTk=
+	t=1755162584; cv=none; b=CmVe97kSHJ3xn4tovJMW5JafHYIz2cgXGOrm+rHQW/M4os1GbV52TDf2/pv3rDG8Xppxh7z8MysBQF3WvPsVhs/KlAS+ukVUEyF5WtfGcCBCiCPP44MHqFl3GyRyS4N/WMwEmPyXqxk59mMWMGjzTK4bgWtLG80mGmspNds+dto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162577; c=relaxed/simple;
-	bh=dreDucqT4dEwFzw6JVDel4la7nqdTW1U39TroTgdP+Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=MsRFOHDD2u4hCLW9nXq9lZWd2V5MF4rW71mCJwMh492UZMZ8YDtO/vv+oLRxUk57973jqHUuunlmah01Ak4dStl9bvssh0g4J51hgyoORXZMthRrGQWw00IOMiUCjGoFfbYTtTzUNZBSXixYOiRtggoWN4nJHBYUnXqQ9T13AwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIJrJcgz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4EE7C4CEED;
-	Thu, 14 Aug 2025 09:09:34 +0000 (UTC)
+	s=arc-20240116; t=1755162584; c=relaxed/simple;
+	bh=4haXZhUQhwWTQfAUzZvN0UDYTjKDPWIQ5LTd46KE9Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6UF2pIPWBOMpuxe4fe6+xlna+hgPF7Co4WrN5DqiOvtV+IHW/d1mmTsblmlSYj5h3AIBYDnNxeJZrgWoOc11SZPqvkdyJWbYOX/iDWDQgB3YMgghUnfAYCLiw/jShkWWvKIwcrZtiTyOhoU6SvG7aUYjeepUmNeqmt753ZF1GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLuUBGtd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887F0C4CEEF;
+	Thu, 14 Aug 2025 09:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755162577;
-	bh=dreDucqT4dEwFzw6JVDel4la7nqdTW1U39TroTgdP+Y=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=UIJrJcgzc0u9OjPbU9hjdZLcpqTlKBuDVEAY8XjE2GGarE98yvA11lWUisbtFSIEU
-	 o0vNpmaCIPU8V8r8Oi69gX1xvw/w6afzpIa3dG5JbHhpCZwN6g3nT8HTQfm9sqo87R
-	 o9FcrEfgy4EarFY40rJ2XZPVcQTEQVxDo4ZJ8Nu7V4h//njR1v+pPpmTrgfMSoCjtO
-	 /tFpconJvEmr0VUlSnwcinn/mM0ody+Lad3XtIGDvaMaWwVKipbOZvHnPrgf+2Url0
-	 ud7RtUQcszCUldasw6JVFMDsT9QzClHJNTAzM3eJ0p2eoU8rL/0W/nrAR+NQUQ2Tkd
-	 SRi6rRFIsj7XQ==
+	s=k20201202; t=1755162583;
+	bh=4haXZhUQhwWTQfAUzZvN0UDYTjKDPWIQ5LTd46KE9Xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eLuUBGtdppkgsKgis3nVC/Avqik7RnCYzK9KO7reriPcUJPTO57YUPt85/HgWATYX
+	 v9Xpj+vF0aZsc18rDuptx7cW4VFNjpbBXuNKNF/BdANIEzLtY2wqZNZ7MAAWQMDBK/
+	 IWS+cH7eNxDp8JNHuyoSSiJQXAgvWF3CDzn0gZFUCptj/TB3sQ5f+WPhrzRnCOuIbk
+	 JwiFm7oLFMdZfFut8BL+1nbFQ3pzVMsXxnVW5fgtoDEPzWfSIFLmm187pl+w1OmZHW
+	 26Enk7S0sOkxJuXinXiwvqCjBvF6QqFEZ+mGMqIuZQ+iY/PBBNMU+lgeMhR2MoVCxl
+	 MQSCILYYJFxRQ==
+Date: Thu, 14 Aug 2025 11:09:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/13] dt-bindings: display: st: add new compatible to
+ LVDS device
+Message-ID: <20250814-dancing-nautilus-of-camouflage-ebb441@kuoka>
+References: <20250812-drm-misc-next-v2-0-132fd84463d7@foss.st.com>
+ <20250812-drm-misc-next-v2-3-132fd84463d7@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 14 Aug 2025 11:09:32 +0200
-Message-Id: <DC217EL7VQVH.S8MMZF1LP13N@kernel.org>
-Cc: "Lyude Paul" <lyude@redhat.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 03/13] rust: pin-init: add `zeroed()` &
- `Zeroable::zeroed()` functions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Fiona Behrens" <me@kloenk.dev>, "Christian
- Schrefl" <chrisi.schrefl@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250523145125.523275-1-lossin@kernel.org>
- <YQB28aSuStBXa5rR42ragT81sJsdvHv1g7oHQlBw4amdaPtRIczi3CYqYY6E1tumr63Ell5XB371DiuTZ6sU_w==@protonmail.internalid> <20250523145125.523275-4-lossin@kernel.org> <87pld65fcr.fsf@kernel.org>
-In-Reply-To: <87pld65fcr.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250812-drm-misc-next-v2-3-132fd84463d7@foss.st.com>
 
-On Fri Aug 8, 2025 at 11:31 AM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->
->> `zeroed()` returns a zeroed out value of a sized type implementing
->> `Zeroable`.
->>
->> The function is added as a free standing function, in addition to an
->> associated function on `Zeroable`, because then it can be marked `const`
->> (functions in traits can't be const at the moment).
->
-> Do you want to add a note on this in the code, so we can const the trait
-> function and let go of the other one if it becomes possible in the
-> future?
+On Tue, Aug 12, 2025 at 03:49:00PM +0200, Raphael Gallais-Pou wrote:
+> Update the compatible to accept both "st,stm32mp255-lvds" and
+> st,stm32mp25-lvds" respectively.  Default will fall back to
+> "st,stm32mp25-lvds".
+> 
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
+> index 6736f93256b5cebb558cda5250369ec4b1b3033c..b777c55626e4b322d77ef411ad9e4a3afb6c9131 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
+> +++ b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
+> @@ -31,7 +31,13 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: st,stm32mp25-lvds
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - st,stm32mp255-lvds
+> +          - const: st,stm32mp25-lvds
+> +      - items:
 
-I'll create an issue instead (the commit is already merged).
+Drop. This should be just enum or const, no need for items.
 
----
-Cheers,
-Benno
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
