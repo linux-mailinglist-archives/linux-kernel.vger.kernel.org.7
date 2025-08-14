@@ -1,75 +1,95 @@
-Return-Path: <linux-kernel+bounces-769701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803AEB27230
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE190B27234
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022C5AA072C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41FF1658DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A629286D49;
-	Thu, 14 Aug 2025 22:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707A2283130;
+	Thu, 14 Aug 2025 22:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzwUkoTq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcQ0s7/6"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8693B283FD9;
-	Thu, 14 Aug 2025 22:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE423185E;
+	Thu, 14 Aug 2025 22:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755211574; cv=none; b=fM3YSMdI73ciNwqweI96E8dR26/OIw9DM8phIs2A4kXJ+dZJv/dp6s5EMaNg3gv1Vs0S1a39ojn5NjoccFrbiGY3ui++w/I9PLzqEDBhBBhDjn85vasrhaFb0+OlAR12w4GNjnuI14aLjdW3Uvb0NY6pOuhqgS2ckFIi0sg+1os=
+	t=1755211852; cv=none; b=RPybrw8gkZfc85S3USmpocrOK4F40UQtDI8AFjxzW2BrWk8bCml0WoAMEZW5XkGC8JqQqmLny9lQjqVTUoziTSvc3SRcQuKs5ZGBJZGP1wrJsDLxUQxxCpBwf77CJU/PQjuzkOpC7pOlrkHl1gQb3NLVsJmHt7CsCgirKy0Mba8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755211574; c=relaxed/simple;
-	bh=eVKCvuZBdo7sTzDK9mufFyxVjNlpGmchq+d/D5GmycM=;
+	s=arc-20240116; t=1755211852; c=relaxed/simple;
+	bh=k3g3av1ExpxSpGPQvhDqy0PXWfc84KcrITee0dOTqgw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoBXP1Z0DBr+V9PZVQQ3TT6/6lmPjSlLydT6w3PPT22QcWP3aafAoDl5gMZm4AsaxWTzpnJH8yY1L2wBtV863oQu8J+da2G+x9cgkW/8CWTJTb0yoxD7yIXnPM6isZvDWQMyYsOLexCHnLaGygNddzh1Ka7GS9BNDaxqzs/41Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzwUkoTq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1540C4CEF1;
-	Thu, 14 Aug 2025 22:46:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755211574;
-	bh=eVKCvuZBdo7sTzDK9mufFyxVjNlpGmchq+d/D5GmycM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DzwUkoTqwUMyNSWMdTnnC7kDdMAhoIBXxmxUvHpoKQ3lHJzR15QCFXYIkslS5771z
-	 np5vqUeJLkSaucizKdOw+Qodlq6CX3ORVE1aeEDNZuZHAijeEhJGuUiJBXaPbAznRx
-	 d3fPFHHjU8QmSiNrXeQ/yNn0dcLrAI+skVOImTGRxtwDMqHsyoOLLC7uhUVsHP+85M
-	 bShH9tgKuPo1B+Xh4owWq1mKrO8fDgq7LEcHJHTYMehJZrFM0ntCtZo2FoH5nPUbFq
-	 aWNUrZM2aw8YNuIW1VxjCFifU+QIbhfxh/EzqiwMFaApPX/RYxntHnC6rsP1gEgYfb
-	 /Zdp9OI2Pw16w==
-Date: Thu, 14 Aug 2025 17:46:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Mahadevan <quic_mahap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v5 5/6] dt-bindings: display/msm: add stream pixel clock
- bindings for MST
-Message-ID: <20250814224613.GA4052689-robh@kernel.org>
-References: <20250809-dp_mst_bindings-v5-0-b185fe574f38@oss.qualcomm.com>
- <20250809-dp_mst_bindings-v5-5-b185fe574f38@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAOISnJXHSK6O6fPQVhkH+YU23V0jWHvrWAmVfjg7mw/cJQCv8JF3vmYHib/53A8zTnQUzqWoFaplbAIT23vYys32s4uI4TtWlve9Whq/Z45jIm2Aq4sAX3Cj1wyMTgu3Mq1Q+A8tbfVhUnVZeLiuU4BBsiSktifvOBkLLoV/5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcQ0s7/6; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-323267adb81so1949081a91.1;
+        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755211850; x=1755816650; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WVawUElbuEdpT/L0IVDdSj9wdhwbVEtke7BFQtXU6aA=;
+        b=DcQ0s7/6XGDmMx8IQ9ViQd6bimAQDM7N3nSNWqIykjLD4YZY0CkfGEbjoXblhrQq+3
+         /nc65dV2pYz8aSvax4pJEGDIklXtXHBqCJSpXr7zX+ckwAEO4pTzR+OLa2NrZmxyE7zN
+         EuLyUHE3pNIli4OHnPsbSx/u46l3Lf5jPY+UofRxMh+Yi71AyQzTeZuyTl4Nphs0pg8p
+         8Js3bzk3nXIQtgYKfHxVkns3hJSZQWJnY4M/VndAHYmuf8e+kDsErb9uUEX2zmCR2m3p
+         MPpW30Wf3TnHhzicW7OE5d+oAFeh0Z88IH1OcTX/3GkNcsgsBVtMdj3ELbOgWG4c3r6s
+         WWVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755211850; x=1755816650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVawUElbuEdpT/L0IVDdSj9wdhwbVEtke7BFQtXU6aA=;
+        b=f975AEV4H3icfnVlbkWoF2CdAKEg7j8iRl1CCHwkfv2BSaViADo7mu/YezQUVsc0Qh
+         CPPpjrQyp+HKQDg+dtTaNzqIt2nS5Ik+BQHzJ4BHeWTtTVsIhpV1srt/emI4EflL9mo6
+         uk28CLfZEjKJ9XP+ePcMJ0DIYvonjk0CVa0hX6GkMIGsoO+YKFFkNVENlK/XP4EEAy+N
+         zvAWw07OzH8aSABebJ43HqiDjDbfwL8ED2AdlqS8SOz72S175mUd+De4MuC3NbDexQwo
+         iis0TQl6CifCQ9Quc6Y5krkNHG7RhFcqoGNLusmFLKVFBTwsJU1FDCI2Au/yY9nlAYi8
+         gTow==
+X-Forwarded-Encrypted: i=1; AJvYcCUA8e0I22tgfGhuMfA+xfXx6nBQgyDm5e4IW45k0R3iD+WzoJm5GQ3VTSuyWeAmUIUpRmsW8sBwTVr2@vger.kernel.org, AJvYcCUM1NiJWmf7Lo5XrOaX7oCbD81auEt3YK+oohX1GN0zswjFBObQzF9p7qaRpbe1MjaCL5WT6Ui0F4CT@vger.kernel.org, AJvYcCXy/I6c0usgVVyGSQ5LsjoxiC2YIXnCp7gG66Qv4zbTZ4WgulD7lGW1+XkvxocayutpbHGNUjNG07jm3aMm@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg5Sfj2jYCTrLWDgO1JDHrd8wDti9Lv/dsfvhrhorkHcy1oj0/
+	toahmOezAWT0UZANH2pNXTaj1fZTLusPQm83VVkOAxo7jiF1hj7elTXi
+X-Gm-Gg: ASbGncsAIIWC4445JwT9hw7Pd9IYxljcVX6/T8oMQXh3y10jVxQ/ZvNvC7yoxL3UFe9
+	D+cFEuVH6v/DG2gqdXS/sOLIIib0cHMj6b5IoNamakYOlsI26mBcN6aV3+u2IN0+AHQy2R4+CLA
+	fBYlPZNJ5tT9alND/fKenTI+KNcVB3t9Oa6uhLTa7rfLW1uWlPlmB/vQSka50LsyKUvEJ9jTTh5
+	COQuLrn/CkUzk+rew2izvwpETRycesRh0k3HsI5JpiQfCn8FEIYkSlxcqeUXPvIlf6j9mJD0mQ2
+	43GHB31T5R4wuvTbRr/yTW//gIwEQ4vrOrWPwTGj975y9FqWDlhGxBRXu03SZRWsi4b/XCnGNN6
+	QE3XHTjI4DrMIzcry/TGX9mDVB4Yt9YvO
+X-Google-Smtp-Source: AGHT+IEJqNeT1yM7BjiHaonVA76lx9wIv7oauipmGKTTR2d3Fa2Yg6FGWlZUCw2T0pv6BwK2DA17bw==
+X-Received: by 2002:a17:90b:1810:b0:31a:9004:899d with SMTP id 98e67ed59e1d1-32327a4f242mr8445796a91.18.1755211850284;
+        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b471519d8bcsm2721398a12.61.2025.08.14.15.50.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
+Date: Fri, 15 Aug 2025 06:49:58 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, 
+	kishon@kernel.org
+Cc: dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de, 
+	johan+linaro@kernel.org, thippeswamy.havalige@amd.com, namcao@linutronix.de, 
+	mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, quic_schintav@quicinc.com, 
+	fan.ni@samsung.com, devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-pci@vger.kernel.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Junzhong Pan <panjunzhong@linux.spacemit.com>
+Subject: Re: [PATCH 4/6] phy: spacemit: introduce PCIe/combo PHY
+Message-ID: <mj5e6afmbqo2tpt3zjuebcfif3flvgqq663erv3xuvbg72nd6g@bapy44nobzyw>
+References: <20250813184701.2444372-1-elder@riscstar.com>
+ <20250813184701.2444372-5-elder@riscstar.com>
+ <valmrbddij2dn4fjxefr46zud2u6eco2isyaa62sd66d27foyl@4hrhafqftgb5>
+ <4eaa30bc-9a25-4fe0-b685-1d0d8fa503c2@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,144 +98,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250809-dp_mst_bindings-v5-5-b185fe574f38@oss.qualcomm.com>
+In-Reply-To: <4eaa30bc-9a25-4fe0-b685-1d0d8fa503c2@riscstar.com>
 
-On Sat, Aug 09, 2025 at 12:16:19PM +0300, Dmitry Baryshkov wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+On Thu, Aug 14, 2025 at 07:15:43AM -0500, Alex Elder wrote:
+> On 8/13/25 6:42 PM, Inochi Amaoto wrote:
+> > On Wed, Aug 13, 2025 at 01:46:58PM -0500, Alex Elder wrote:
+> > > Introduce a driver that supports three PHYs found on the SpacemiT
+> > > K1 SoC.  The first PHY is a combo PHY that can be configured for
+> > > use for either USB 3 or PCIe.  The other two PHYs support PCIe
+> > > only.
+> > > 
+> > > All three PHYs must be programmed with an 8 bit receiver termination
+> > > value, which must be determined dynamically; only the combo PHY is
+> > > able to determine this value.  The combo PHY performs a special
+> > > calibration step at probe time to discover this, and that value is
+> > > used to program each PHY that operates in PCIe mode.  The combo
+> > > PHY must therefore be probed--first--if either of the PCIe-only
+> > > PHYs will be used.
+> > > 
+> > > During normal operation, the USB or PCIe driver using the PHY must
+> > > ensure clocks and resets are set up properly.  However clocks are
+> > > enabled and resets are de-asserted temporarily by this driver to
+> > > perform the calibration step on the combo PHY.
+> > > 
+> > > Tested-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
+> > > Signed-off-by: Alex Elder <elder@riscstar.com>
+> > > ---
+> > >   drivers/phy/Kconfig                |  11 +
+> > >   drivers/phy/Makefile               |   1 +
+> > >   drivers/phy/phy-spacemit-k1-pcie.c | 639 +++++++++++++++++++++++++++++
+> > >   3 files changed, 651 insertions(+)
+> > >   create mode 100644 drivers/phy/phy-spacemit-k1-pcie.c
 > 
-> On a vast majority of Qualcomm chipsets DisplayPort controller can
-> support several MST streams (up to 4x). To support MST these chipsets
-> use up to 4 stream pixel clocks for the DisplayPort controller. Expand
-> corresponding clock bindings for these platforms and fix example
-> schema files to follow updated bindings.
+> . . .
 > 
-> Note: On chipsets that do support MST, the number of streams supported
-> can vary between controllers. For example, SA8775P supports 4 MST
-> streams on mdss_dp0 but only 2 streams on mdss_dp1.
+> > > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> > > index c670a8dac4680..20f0078e543c7 100644
+> > > --- a/drivers/phy/Makefile
+> > > +++ b/drivers/phy/Makefile
 > 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  .../bindings/display/msm/dp-controller.yaml        | 72 +++++++++++++++++++++-
->  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 20 ++++--
->  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 10 ++-
->  .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 10 ++-
->  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   | 10 ++-
->  5 files changed, 108 insertions(+), 14 deletions(-)
+> . . .
 > 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index 352824c245224d7b5e096770684795625fc9f146..0122592a3ef5fcfe5a5ff8364b2cb6540a37a8ab 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -58,20 +58,28 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    minItems: 5
->      items:
->        - description: AHB clock to enable register access
->        - description: Display Port AUX clock
->        - description: Display Port Link clock
->        - description: Link interface clock between DP and PHY
-> -      - description: Display Port Pixel clock
-> +      - description: Display Port stream 0 Pixel clock
-> +      - description: Display Port stream 1 Pixel clock
-> +      - description: Display Port stream 2 Pixel clock
-> +      - description: Display Port stream 3 Pixel clock
->  
->    clock-names:
-> +    minItems: 5
->      items:
->        - const: core_iface
->        - const: core_aux
->        - const: ctrl_link
->        - const: ctrl_link_iface
->        - const: stream_pixel
-> +      - const: stream_1_pixel
-> +      - const: stream_2_pixel
-> +      - const: stream_3_pixel
->  
->    phys:
->      maxItems: 1
-> @@ -187,6 +195,68 @@ allOf:
->          required:
->            - "#sound-dai-cells"
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sc7180-dp
-> +              - qcom,sc7280-dp
-> +              - qcom,sc7280-edp
-> +              - qcom,sc8180x-edp
-> +              - qcom,sc8280xp-edp
-> +              - qcom,sm6350-dp
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 5
-> +          maxItems: 5
-> +    else:
-> +      if:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                # some of SA8775P DP controllers support 4 streams MST,
-> +                # others just 2 streams MST
-> +                - qcom,sa8775p-dp
-> +      then:
-> +        oneOf:
-> +          - properties:
-> +              clocks:
-> +                minItems: 8
-> +                maxItems: 8
-> +          - properties:
-> +              clocks:
-> +                minItems: 6
-> +                maxItems: 6
+> > > +static int k1_pcie_pll_lock(struct k1_pcie_phy *k1_phy, bool pcie)
+> > > +{
+> > > +	u32 val = pcie ? CFG_FORCE_RCV_RETRY : 0;
+> > > +	void __iomem *virt;
+> > > +
+> > > +	writel(val, k1_phy->regs + PCIE_RC_DONE_STATUS);
+> > > +
+> > > +	/*
+> > > +	 * Wait for indication the PHY PLL is locked.  Lanes for ports
+> > > +	 * B and C share a PLL, so it's enough to sample just lane 0.
+> > > +	 */
+> > > +	virt = k1_phy->regs + PCIE_PU_ADDR_CLK_CFG;	/* Lane 0 */
+> > > +
+> > > +	return readl_poll_timeout(virt, val, val & PLL_READY,
+> > > +				  POLL_DELAY, PLL_TIMEOUT);
+> > > +}
+> > > +
+> > 
+> > Can we use standard clk_ops and clk_mux to normalize this process?
+> 
+> I understand you're suggesting that we represent this as a clock.
+> 
+> Can you be more specific about how you suggest I do that?
+> 
+> For example, are you suggesting I create a separate clock driver
+> for this one PLL (in each PCIe register space)?
+> 
+> Or do you mean use clock structures and callbacks within this
+> driver to represent this?
+> 
 
-I don't really care if we catch someone putting in 7 clocks. So just 
-do:
+I think using clock structures and registering them is just fine, 
+there are many phy drivers already do this.
 
-clocks:
-  minItems: 6
-  maxItems: 8
+> I'm just not sure what you have in mind, and the two options I
+> mention seem a lot more complicated than this one function.
+> 
 
-> +      else:
-> +        if:
-> +          properties:
-> +            compatible:
-> +              contains:
-> +                enum:
-> +                  # on these platforms some DP controllers support 2 streams
-> +                  # MST, others are SST only
-> +                  - qcom,sc8280xp-dp
-> +                  - qcom,x1e80100-dp
-> +        then:
-> +          oneOf:
-> +            - properties:
-> +                clocks:
-> +                  minItems: 6
-> +                  maxItems: 6
-> +            - properties:
-> +                clocks:
-> +                  minItems: 5
-> +                  maxItems: 5
+Yes, it is more complex than just adding one function, but it 
+make the code clean and easy to understand as the clock looks
+complex. Also, register this clock allow us to know the state
+of internal clock by looking clk_summary.
 
-And here you really didn't need the oneOf.
-
-> +        else:
-> +          properties:
-> +            clocks:
-> +              minItems: 6
-> +              maxItems: 6
-> +
-> +
->  additionalProperties: false
->  
->  examples:
+Regards,
+Inochi
 
