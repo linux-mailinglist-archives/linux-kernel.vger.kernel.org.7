@@ -1,195 +1,215 @@
-Return-Path: <linux-kernel+bounces-768088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88703B25CE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82608B25CD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8449188C476
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:16:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78769176799
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB45259C83;
-	Thu, 14 Aug 2025 07:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D59347DD;
+	Thu, 14 Aug 2025 07:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1IKT2zw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OqteK6wp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9382C24468A;
-	Thu, 14 Aug 2025 07:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B971A9F8F;
+	Thu, 14 Aug 2025 07:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155740; cv=none; b=avRkJlLsM/1S3HCTomVXqEfA9nREKFWdPJGqtsY82rN5BTAoWG0v/W5SwNw9iVnySc65QEx3khJbq4dGGIgWoLhK5X5+T3i0mv72l5HseXtu0nlbmLDQakIlGnT7acR7tay0K2ojuvgxDhJscKAbXQ2q6A5iS4yQIYOjFJ0UFo0=
+	t=1755155733; cv=none; b=KuTVBHejsxyNCQbNI68blXCaNw7DXAL2023KJ1VBxtqThZCVVDBzZbc8ZzR6FOb4jOAwGy9Rc23cM+BL560qgO/hKNKGJB5LnrcuE6LJIUNUgWOPAHqxkrDVVTPml4D5ML2IiorRFNAq9UpIe4oEQJSUlA5CtrMpPDLI636CSQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155740; c=relaxed/simple;
-	bh=SaB56iFHq9R1lIIJgY1jOBN/SbTeOE8emRCvNnsEoq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3RQy2Pmj9Fl8lc55CB5FJPsWZJj1lygVl9wXLl0XaGug4U3ii0ZnFgCMQhgsRb3/ufadoafhX/U9I8HrNiXeZJ9OLCifUwialYdnyT4r481mjIDvAuTn+kYhb65vRvbSLMAR21+Z/+oPsol+Uc4+EMjc/TJLMPeSdOD6JNibcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1IKT2zw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A94C4CEEF;
-	Thu, 14 Aug 2025 07:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755155740;
-	bh=SaB56iFHq9R1lIIJgY1jOBN/SbTeOE8emRCvNnsEoq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i1IKT2zwhssHQnjqKIWtvjwXerI6qQ1PNJ4VSL+eAdBxYbqVIjTYRDr4HQdDI2lyQ
-	 u6nsFBnRLyaqgFWWbzOeyOQEECfpnB7HFRoM6E3hO6sGlgss41eOmCgTCj8UDbGGiV
-	 kcOFxGN3h7q6PRJ0LFnpAK1twBP/I25c5bcY/wvp+piLO9bOEem5o1u/IyOlnGVqs5
-	 L90FI8Llj1gEjlrSGyhD/ENLft+kX+3j3yL1mUP3JUHnDXG1H78KF3wqJLtE+umkB6
-	 9qj4v3Wff5u7Gq6G5C3vOrkknrJVOKySTv9AXEbB2AQ2VTkv5un2lOKqSHyQjbbKCj
-	 5qil2ya53k7Hw==
-Date: Thu, 14 Aug 2025 10:15:09 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
-	Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
-	kaleshsingh@google.com, leitao@debian.org, coxu@redhat.com,
-	surenb@google.com, akpm@linux-foundation.org, luto@kernel.org,
-	jpoimboe@kernel.org, changyuanl@google.com, hpa@zytor.com,
-	dvyukov@google.com, kas@kernel.org, corbet@lwn.net,
-	vincenzo.frascino@arm.com, smostafa@google.com,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	andreyknvl@gmail.com, alexander.shishkin@linux.intel.com,
-	thiago.bauermann@linaro.org, catalin.marinas@arm.com,
-	ryabinin.a.a@gmail.com, jan.kiszka@siemens.com, jbohac@suse.cz,
-	dan.j.williams@intel.com, joel.granados@kernel.org,
-	baohua@kernel.org, kevin.brodsky@arm.com, nicolas.schier@linux.dev,
-	pcc@google.com, andriy.shevchenko@linux.intel.com,
-	wei.liu@kernel.org, bp@alien8.de, ada.coupriediaz@arm.com,
-	xin@zytor.com, pankaj.gupta@amd.com, vbabka@suse.cz,
-	glider@google.com, jgross@suse.com, kees@kernel.org,
-	jhubbard@nvidia.com, joey.gouly@arm.com, ardb@kernel.org,
-	thuth@redhat.com, pasha.tatashin@soleen.com,
-	kristina.martsenko@arm.com, bigeasy@linutronix.de,
-	lorenzo.stoakes@oracle.com, jason.andryuk@amd.com, david@redhat.com,
-	graf@amazon.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
-	mark.rutland@arm.com, dave.hansen@linux.intel.com,
-	samuel.holland@sifive.com, kbingham@kernel.org,
-	trintaeoitogc@gmail.com, scott@os.amperecomputing.com,
-	justinstitt@google.com, kuan-ying.lee@canonical.com, maz@kernel.org,
-	tglx@linutronix.de, samitolvanen@google.com, mhocko@suse.com,
-	nunodasneves@linux.microsoft.com, brgerst@gmail.com,
-	willy@infradead.org, ubizjak@gmail.com, peterz@infradead.org,
-	mingo@redhat.com, sohil.mehta@intel.com, linux-mm@kvack.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, llvm@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/18] x86: Reset tag for virtual to physical address
- conversions
-Message-ID: <aJ2M_eKPvBluyLKJ@kernel.org>
-References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
- <01e62233dcc39aeb8d640eb3ee794f5da533f2a3.1755004923.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1755155733; c=relaxed/simple;
+	bh=Q76elz5OfAOCUyiPxLaPswZ/mRc86NecebFPSfGGyCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F7wrcw2Q/oYINv0w0GyIHNCH1tQJih66ArJeP/3d3ngRDI3wo5luUvUuYQ/RAGa12ywtQjnQp6806ujkEbxEdLDcy+8Qcqqw3ySia7hCViPfAYvNXQfUTaJul+SRDAS09NQEURQYG4kNbiTgmsspsbtfObHsKKNbHyoEcYV6Db4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OqteK6wp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNS32b025686;
+	Thu, 14 Aug 2025 07:15:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MVJ2/ZBIIfsqqOG7o0XSDJgZ8RX55I7X6cWhwMyyOS4=; b=OqteK6wpH4Yf/IMk
+	rRsdvBCEc6bm1FaSCf481VRDkxtMFUlWo0fDyX7sMXqs692hKLJcq5wG/Yj3wwvr
+	O7mUQ/9jKw9p/gp3luL3DUG8LTyetw9Bkt620eUhPdH+V/rFutrZltNuucFHKN37
+	AkzBYpQAAJW8n6XGYznW4HycmxMkX970dr0Y2ZZFEOSQxbwiEe6DHLhCdkUdY56+
+	k3NN/KfaD1AGd7MhUDNbm1UeD2rWioKyZY8A3Xf69ZDF4NnvAsyhOAF8JRd2jieX
+	pJE2yb9hdgm2PjeA9m9YOUETjpIjWinaqIjct2Wb9oUT1TFM0e8duToDrnjVPEBD
+	R5ly3w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3gene1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 07:15:27 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E7FRhq022400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 07:15:27 GMT
+Received: from [10.204.78.60] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
+ 2025 00:15:21 -0700
+Message-ID: <dda9a2ef-5b86-4883-8347-b5ccf25e8d5d@quicinc.com>
+Date: Thu, 14 Aug 2025 12:45:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01e62233dcc39aeb8d640eb3ee794f5da533f2a3.1755004923.git.maciej.wieczor-retman@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
+ broken capabilities
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
+        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <kernel@oss.qualcomm.com>
+References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
+ <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
+ <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
+ <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
+ <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
+ <ab5d3811-9fbf-4749-9463-4457fbf50023@quicinc.com>
+ <4091c488-996c-4318-82ad-c054a9ef5a22@oss.qualcomm.com>
+ <a93fb5bf-1fd5-4e00-8338-b8608a9ba8fa@kernel.org>
+ <f2f13082-20d6-4f22-8dfb-f11b01cd6706@oss.qualcomm.com>
+Content-Language: en-US
+From: Sarthak Garg <quic_sartgarg@quicinc.com>
+In-Reply-To: <f2f13082-20d6-4f22-8dfb-f11b01cd6706@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689d8d0f cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=bExINVLK0oqGhwCZNEEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX8CUu284FyLnM
+ IwIk9PTqDxDN5GrBUfAzjyOrwijF6Ued3IbM4tWsz+u7O3gWV5nqWCD8QDYJd3rt/x13SoqKkTI
+ jKzFrGtueFaHWKEJj7OT6eDVdYDBI34u1XHoj7jLgSoKHlAx8SfnXoY6l1LHiun+OrRqOGo/v+R
+ 6/NoSufiekkDfMLLjsuYKEcu1SOAVsxhynnXeZjhnKiNsBJAWYLQCwYx3M8zo/O/6Rm6eZJOdoz
+ Csp2QHMs7pfViljnOw+ld68t4lY+k9Wj0AaXZpxYF6xtyTuTnLEJJ10GSLJ3Qe8tQIYsbn5W0FD
+ XzfiJbZjjK0oq9hAuUOcBh6VVnAl7hS2UQcSbVNSHpC3q7zJS8/ZXJkBT672xR8AJ7cIMgfBwOH
+ zZjpfmsm
+X-Proofpoint-GUID: r5uJAFNl0ZtT51drEVfGfxf6wGMoljaP
+X-Proofpoint-ORIG-GUID: r5uJAFNl0ZtT51drEVfGfxf6wGMoljaP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090031
 
-On Tue, Aug 12, 2025 at 03:23:42PM +0200, Maciej Wieczor-Retman wrote:
-> Any place where pointer arithmetic is used to convert a virtual address
-> into a physical one can raise errors if the virtual address is tagged.
+
+
+On 8/13/2025 5:37 PM, Konrad Dybcio wrote:
+> On 8/13/25 1:56 PM, Krzysztof Kozlowski wrote:
+>> On 13/08/2025 13:21, Konrad Dybcio wrote:
+>>> On 8/13/25 1:08 PM, Sarthak Garg wrote:
+>>>>
+>>>>
+>>>> On 8/5/2025 2:55 PM, Krzysztof Kozlowski wrote:
+>>>>> On 05/08/2025 11:19, Sarthak Garg wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
+>>>>>>> On 01/08/2025 10:45, Sarthak Garg wrote:
+>>>>>>>> The kernel now handles level shifter limitations affecting SD card
+>>>>>>>> modes, making it unnecessary to explicitly disable SDR104 and SDR50
+>>>>>>>> capabilities in the device tree.
+>>>>>>>>
+>>>>>>>> However, due to board-specific hardware constraints particularly related
+>>>>>>>> to level shifter in this case the maximum frequency for SD High-Speed
+>>>>>>>> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
+>>>>>>>> card in HS mode. This is achieved using the max-sd-hs-frequency property
+>>>>>>>> in the board DTS.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+>>>>>>>> ---
+>>>>>>>>     arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
+>>>>>>>>     arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
+>>>>>>>>     arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
+>>>>>>>>     arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
+>>>>>>>>     4 files changed, 3 insertions(+), 3 deletions(-)
+>>>>>>>>
+>>>>>>>
+>>>>>>> This will break MMC for all of the users and nothing in commit msg or
+>>>>>>> cover letter explains that or mentions merging strategy.
+>>>>>>>
+>>>>>>> Exactly this case is covered by your internal guideline, no? Please read it.
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>> Krzysztof
+>>>>>>
+>>>>>> Just to make sure I’m addressing the right concern — are you primarily
+>>>>>> worried about the introduction of the max-sd-hs-frequency property in
+>>>>>> the board DTS files, or about the removal of the sdhci-caps-mask
+>>>>>> from the common sm8550.dtsi?
+>>>>>
+>>>>>
+>>>>> Apply this patch and test MMC. Does it work? No. Was it working? Yes.
+>>>>>
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>
+>>>>
+>>>> You're absolutely right to raise the concern about potential breakage.
+>>>> After conducting additional testing across multiple boards, I’ve confirmed that the removal of SDR104/SDR50 broken capabilities does indeed affect V1 SM8550 devices.
+>>>
+>>> v1 is a prototype revision, please forget it exists, we most definitely
+>>> do not support it upstream
+>>
+>>
+>> You should double check. SM8450 (not v1!) needed it, so either it was
+>> copied to SM8550 (v2!) by mistake or was also needed.
 > 
-> Reset the pointer's tag by sign extending the tag bits in macros that do
-> pointer arithmetic in address conversions. There will be no change in
-> compiled code with KASAN disabled since the compiler will optimize the
-> __tag_reset() out.
+> I believe that the speed capabilities are indeed restricted on 8550-final
+> and that's why this patchset exists in the first place
 > 
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> ---
-> Changelog v4:
-> - Simplify page_to_virt() by removing pointless casts.
-> - Remove change in __is_canonical_address() because it's taken care of
->   in a later patch due to a LAM compatible definition of canonical.
-> 
->  arch/x86/include/asm/page.h    | 14 +++++++++++---
->  arch/x86/include/asm/page_64.h |  2 +-
->  arch/x86/mm/physaddr.c         |  1 +
->  3 files changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> index 9265f2fca99a..15c95e96fd15 100644
-> --- a/arch/x86/include/asm/page.h
-> +++ b/arch/x86/include/asm/page.h
-> @@ -7,6 +7,7 @@
->  #ifdef __KERNEL__
->  
->  #include <asm/page_types.h>
-> +#include <asm/kasan.h>
->  
->  #ifdef CONFIG_X86_64
->  #include <asm/page_64.h>
-> @@ -41,7 +42,7 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
->  #define __pa(x)		__phys_addr((unsigned long)(x))
->  #endif
->  
-> -#define __pa_nodebug(x)	__phys_addr_nodebug((unsigned long)(x))
-> +#define __pa_nodebug(x)	__phys_addr_nodebug((unsigned long)(__tag_reset(x)))
+> Konrad
 
-Why not reset the tag inside __phys_addr_nodebug() and __phys_addr()?
+Hi Krzysztof, Konrad,
 
->  /* __pa_symbol should be used for C visible symbols.
->     This seems to be the official gcc blessed way to do such arithmetic. */
->  /*
-> @@ -65,9 +66,16 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
->   * virt_to_page(kaddr) returns a valid pointer if and only if
->   * virt_addr_valid(kaddr) returns true.
->   */
-> -#define virt_to_page(kaddr)	pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
-> +
-> +#ifdef CONFIG_KASAN_SW_TAGS
-> +#define page_to_virt(x) ({							\
-> +	void *__addr = __va(page_to_pfn((struct page *)x) << PAGE_SHIFT);	\
-> +	__tag_set(__addr, page_kasan_tag(x));					\
-> +})
-> +#endif
-> +#define virt_to_page(kaddr)	pfn_to_page(__pa((void *)__tag_reset(kaddr)) >> PAGE_SHIFT)
+Konrad is right — this patch series addresses limitations seen on
+SM8550-final silicon.
 
-then virt_to_page() will remain the same, no?
+SDR50 mode: The tuning support introduced in this series helps ensure
+reliable operation.
+SDR104 mode: limitations are resolved in SM8550 v2.
 
->  extern bool __virt_addr_valid(unsigned long kaddr);
-> -#define virt_addr_valid(kaddr)	__virt_addr_valid((unsigned long) (kaddr))
-> +#define virt_addr_valid(kaddr)	__virt_addr_valid((unsigned long)(__tag_reset(kaddr)))
+But still to avoid regressions, *I’ll like to retain sdhci-caps-mask in
+sm8550.dtsi for now and revisit its removal for future targets after
+thorough validation and testing from the beginning.*
 
-The same here, I think tag_reset() should be inside __virt_addr_valid()
-  
->  static __always_inline void *pfn_to_kaddr(unsigned long pfn)
->  {
-> diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-> index 015d23f3e01f..de68ac40dba2 100644
-> --- a/arch/x86/include/asm/page_64.h
-> +++ b/arch/x86/include/asm/page_64.h
-> @@ -33,7 +33,7 @@ static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
->  extern unsigned long __phys_addr(unsigned long);
->  extern unsigned long __phys_addr_symbol(unsigned long);
->  #else
-> -#define __phys_addr(x)		__phys_addr_nodebug(x)
-> +#define __phys_addr(x)		__phys_addr_nodebug(__tag_reset(x))
->  #define __phys_addr_symbol(x) \
->  	((unsigned long)(x) - __START_KERNEL_map + phys_base)
->  #endif
-> diff --git a/arch/x86/mm/physaddr.c b/arch/x86/mm/physaddr.c
-> index fc3f3d3e2ef2..7f2b11308245 100644
-> --- a/arch/x86/mm/physaddr.c
-> +++ b/arch/x86/mm/physaddr.c
-> @@ -14,6 +14,7 @@
->  #ifdef CONFIG_DEBUG_VIRTUAL
->  unsigned long __phys_addr(unsigned long x)
->  {
-> +	x = __tag_reset(x);
->  	unsigned long y = x - __START_KERNEL_map;
->  
->  	/* use the carry flag to determine if x was < __START_KERNEL_map */
-> -- 
-> 2.50.1
-> 
+Konrad suggested placing max-sd-hs-frequency in the SoC dtsi.
+Krzysztof, could you please share your thoughts on this approach?
 
--- 
-Sincerely yours,
-Mike.
+Best regards,
+Sarthak Garg
 
