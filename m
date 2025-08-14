@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-769222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174C2B26B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:51:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3220B26B8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD741CE17C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C7D1CE5A40
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB6E23BD04;
-	Thu, 14 Aug 2025 15:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E25248894;
+	Thu, 14 Aug 2025 15:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1dV5XCn"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkxLPkez"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C21238C24;
-	Thu, 14 Aug 2025 15:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8835242D70;
+	Thu, 14 Aug 2025 15:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186346; cv=none; b=eP6OaH79tHtOVm2izzZalaNpdYis5MVjQKuMSpVR1PG7Z7sQAHsFOKNry5dGIdK5HLKQhT5mr4pvRLOrrS5A8EzvxXj8Id0gsngQmN7xeT6mxZROz/ew22s/1KZ7cOrcz22E4oEM6dilTG80ODePk8fBz6AbR8UG8VTCo3dt1AI=
+	t=1755186390; cv=none; b=qX/EFIigm5NtYXNS7+O7hFTJTVGZsoSzCwyRJ3H3qdoNH8JVG+CpnE1hWJpUTIEPUymOnXw3BAfYxaYWrD3CGkJ2umh7PYR7D67atlhWv9a+TQdXsufBnAZOype5rEbN0eASDmzAbv4PBelEws3N/yLz9wzhibDu6F04iPXeFb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186346; c=relaxed/simple;
-	bh=8PhsoonV74hS11HznyhtwwEr2mmvi6egb8cha1qlM7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cq5rCdRVj8YLdlLC3Y0reWYrUDl0N2j6yTktWQ9AECRugozhxPfHYWkQ9v9JA6NqEDh4qJd+E8NElf4a5BiFuXfzvSpZZrjg/CT4PwgmnLLBO1Bk6SLYWWHQd6tEl3h1zSXqku3PkgOggmdsuXR57PaVvmLMRyxYJIbkMA3eKwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1dV5XCn; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24457f3edd4so8268185ad.0;
-        Thu, 14 Aug 2025 08:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755186344; x=1755791144; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zPOjzgJ6ei3R7tSEzyHsuGUiKphrQk/wfZ7YvshtY8=;
-        b=c1dV5XCnDh30/E8wEBRo8f9hEiH50egncSDSnxO8rwaesO1hn2CLNTYIdKl9Uz14jC
-         4Hk0uhEqO683jfjfp8yie0+9hxvD/EDkadUn3lSflEk1zD4Rh6Pu/C4W6w9Bq2LYFjE6
-         2NUkQtVlWISsaBT+sRxnj2P8hpJk640NbJiLVgKEqXsJxP6qhjba0AnKFcnomszoXhp3
-         gp3xrn7EzOutHu1xVfBitdQ//wFNIoiFcizGliznNKrckcZ1LM0+eN9dkOLpt2nlfFdU
-         bvsDJ52Bk/z+7KcAO95nvlPamLc0B9bcaX35m67FG8M6OvzsZBbZptOfFUM5Wceav8Gn
-         v73w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186344; x=1755791144;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zPOjzgJ6ei3R7tSEzyHsuGUiKphrQk/wfZ7YvshtY8=;
-        b=Syo1vL64T/biIFn5AAk4F3o56Hs7N0i09DqWhSim8pKc+qr9yaFsSj2ky1neXnrR17
-         o9iBYn22A7i2YJf4rCzPJkUMj31TRz8jhu4XGfFhEvunEpo3rBgKZFo+I7hH4lTZNOhA
-         YcO7wjteosYP/W6tX4Vic4KcmtXcdli+MaoCS+/JmJ30L1D025/rUMSn4uGEUPeH7dgc
-         vK4a0Xnatfl2yOuK1S+1nvHF2bVI2ehqk2JeSYujWOwZhY39TipNOmoI3lJlCofbKA6k
-         Fwh5XLfavKTzS7+WrNIK/QLFOMod9En/ToOerg5H+KSRRYvRL91W61wpR9WW07cDynkA
-         Es3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSoSuMJnvm0ioy/U4uray8Dh0K0n9yMuFgsD6th3rfyqex5TJrQfkfsaCuKAE4oYi9HLGYTaLG7HwBJ/Q=@vger.kernel.org, AJvYcCXZjSc8P8SjcfNr64vR9sFad/6SlH55q/SsL8eGl1q+l4CXzCFtRM3YujclO/fWaqC/VpRA/OCSgJ8Xg+8iqcAN@vger.kernel.org, AJvYcCXn9UlTdh7wWA8AJ5LaJjxL63EqIKfHFstX2i3Sbz70jjmCP1pvtNXm2HmK3Q+wqov6M+iH/F6t@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT5BgJDzkFH5uW59w8GmekjO04UZSW4SDXFu+qFf2qofxxHCrs
-	n8M/Or7D+BkFIe1QyB0aREEJi7vw9NMdDxaxMAANcTwE4hJm/cZdaiY=
-X-Gm-Gg: ASbGncvMOYHlqIWlAybIqJD95S9HPhxLqmnprNLhr2u1mDfp0bkjntdqdVlj/mY7Ecj
-	sik3Xarhdduk9Kc1Qnt7dzclzysUQA71679GBoM5x5NhnQOLZnnGDazDF8frVIKOWQWiftdGxso
-	9FdabIlA02ZnAldIU9ZvjiZ/XZ+We4DzVpdLWQo7iiovkQUy/4kk4Fxn6JkXo9MB0nzeT5ZwUad
-	PS7tVqXHILlw9PcGt9XKje6qGl117T36lJxeag0LDaLKiu7YH7R+YZTLHzr+8GRPgfibvz5looL
-	jUmHvIhOR82h08EFb6ILfKVjyFD9+hrYOyH4lLJFI0bsJN009IaocFE+FZvX7uMRFI5gxJ/x7sc
-	SyodRKs3miAE4ydItx2URwcRbi94wAlZtaH4o8Y2I2KIGGl/AYFIYkZ6GC6go1tWujTVXpw==
-X-Google-Smtp-Source: AGHT+IGlxL2vO5rbswwUa03fBzurJOLXDC3ZMd0abz8+oqyFcg/bSZ3VQpRRuzxa9ZBIROVNKsj8mQ==
-X-Received: by 2002:a17:902:f602:b0:242:b315:ddaf with SMTP id d9443c01a7336-244589fe5e0mr49988975ad.7.1755186344057;
-        Thu, 14 Aug 2025 08:45:44 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241d1f1ebc1sm353014885ad.67.2025.08.14.08.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 08:45:43 -0700 (PDT)
-Date: Thu, 14 Aug 2025 08:45:43 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	ayush.sawal@chelsio.com, andrew+netdev@lunn.ch,
-	gregkh@linuxfoundation.org, horms@kernel.org, dsahern@kernel.org,
-	pablo@netfilter.org, kadlec@netfilter.org,
-	steffen.klassert@secunet.com, mhal@rbox.co,
-	abhishektamboli9@gmail.com, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, herbert@gondor.apana.org.au
-Subject: Re: [PATCH net-next 1/7] net: Add skb_dst_reset and skb_dst_restore
-Message-ID: <aJ4Ep13RwUSdJZfb@mini-arch>
-References: <20250812155245.507012-1-sdf@fomichev.me>
- <20250812155245.507012-2-sdf@fomichev.me>
- <20250813175740.4c24e747@kernel.org>
- <20250813180313.284432a8@kicinski-fedora-PF5CM1Y0>
+	s=arc-20240116; t=1755186390; c=relaxed/simple;
+	bh=LU2AjF6g6ffItPa2bvywFmHrveZHplbThPGtNa1fwAo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g/uHw036iYpY6CMOR5k+L2N5JVbXiEnN8zfzLXrV+dLfLzEHwPmqK8sXdNXZBUt6xiuhQ8D9FCX6c8g3dwLvEEDbaSni8N+7uW8lRJ91UxfUz/H9BcIBJrr2hQF7ffDBTAbT9iQDFw3DMvnmtj4hvWeLgOL+ERojbC4hceZEvQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkxLPkez; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EE6C4CEEF;
+	Thu, 14 Aug 2025 15:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755186390;
+	bh=LU2AjF6g6ffItPa2bvywFmHrveZHplbThPGtNa1fwAo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fkxLPkezxMG4OBdKPxcNEBpXusbQ7qOGmM2EiRkXvhQR7LyxzwdZiL7HdnRWb6dWJ
+	 +XHnm2qQgm6HhprZGb8trsrlEz+JQ1DQ7CewnIoq9lrldAP6WhjKycbCTI1ETtcGXl
+	 BesJOehqWCxLeTTicF02poMMI+3Nm2C8u0BbyttBnrnGwQVv0q1YqZi9uxhtn2jae/
+	 sPxJhjHM14ZaN7ojpydEK2AIX+ZfTBlDBB3i9NhXAmiqmXkG9c/eHJdGhy91AhRn7m
+	 oKMzcbYCmYlu6mcmqEb1m9gpQ096oFhYxF7iU25Ratbpo7QE0rBkgX4UeUm97Q7XNL
+	 f+R4r8DpQwbGQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uma9p-007VqB-Gu;
+	Thu, 14 Aug 2025 16:46:25 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Steven Price <steven.price@arm.com>
+Subject: [PATCH v2 0/4] clocksource: Add standalone MMIO ARM arch timer driver
+Date: Thu, 14 Aug 2025 16:46:18 +0100
+Message-Id: <20250814154622.10193-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250813180313.284432a8@kicinski-fedora-PF5CM1Y0>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com, alexandru.elisei@arm.com, steven.price@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 08/13, Jakub Kicinski wrote:
-> On Wed, 13 Aug 2025 17:57:40 -0700 Jakub Kicinski wrote:
-> > On Tue, 12 Aug 2025 08:52:39 -0700 Stanislav Fomichev wrote:
-> > > +/**
-> > > + * skb_dst_reset() - return current dst_entry value and clear it
-> > > + * @skb: buffer
-> > > + *
-> > > + * Resets skb dst_entry without adjusting its reference count. Useful in
-> > > + * cases where dst_entry needs to be temporarily reset and restored.
-> > > + * Note that the returned value cannot be used directly because it
-> > > + * might contain SKB_DST_NOREF bit.
-> > > + *
-> > > + * When in doubt, prefer skb_dst_drop() over skb_dst_reset() to correctly
-> > > + * handle dst_entry reference counting.  
-> > 
-> > thoughts on prefixing these two new helpers with __ to hint that
-> > they are low level and best avoided?
-> 
-> Looking at the uses -- maybe skb_dstref_steal() or skb_steal_dstref()
-> would be a better name? We have skb_steal_sock() (et.al.) already,
-> same semantics.
+For the past 10 years, both Mark and I have been lamenting about the
+sorry state of the badly named "arch_timer" driver, and about the way
+the MMIO part is intricately weaved into the system-register part.
 
-Sure, will rename and address the rest of your feedback. Thanks for
-the review!
+The time has finally come to take a stab at it.
+
+This small series simply creates a new timer driver for the MMIO arch
+timer, and only that. It is an actual driver, and not some kludge that
+has to run super early (that's what the per-CPU timers are for). This
+allows, in turn, a pretty large cleanup of the per-CPU driver, though
+there is more to come -- one thing at a time.
+
+As an added bonus, we get a clocksource, which the original code
+didn't provide. Just in case it might be useful. The end-result is far
+more readable, and about 100 lines smaller.
+
+Patches on top of 6.17-rc1.
+
+* From v1 [1]:
+
+  - Narrow the max delta to something that fits an unsigned long, as
+    the core code doesn't deal with 64bit quantities on 32bit CPUs.
+
+  - Collected RBs and TBs from Sudeep, with thanks.
+
+Marc Zyngier (4):
+  ACPI: GTDT: Generate platform devices for MMIO timers
+  clocksource/drivers/arm_arch_timer: Add standalone MMIO driver
+  clocksource/drivers/arm_arch_timer_mmio: Switch over to standalone
+    driver
+  clocksource/drivers/arm_arch_timer_mmio: Add MMIO clocksource
+
+ MAINTAINERS                               |   1 +
+ drivers/acpi/arm64/gtdt.c                 |  29 +-
+ drivers/clocksource/Makefile              |   1 +
+ drivers/clocksource/arm_arch_timer.c      | 686 ++--------------------
+ drivers/clocksource/arm_arch_timer_mmio.c | 440 ++++++++++++++
+ include/clocksource/arm_arch_timer.h      |   5 -
+ 6 files changed, 532 insertions(+), 630 deletions(-)
+ create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
+
+-- 
+2.39.2
+
 
