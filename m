@@ -1,132 +1,207 @@
-Return-Path: <linux-kernel+bounces-768765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A879B26536
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB320B26530
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1593B7BED9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7CCAA070B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542882FD1C5;
-	Thu, 14 Aug 2025 12:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD592FE054;
+	Thu, 14 Aug 2025 12:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ilCN0iHd"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dbLo7fO4"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3AD2FCBEB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82E62E7BBC;
+	Thu, 14 Aug 2025 12:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173759; cv=none; b=T3trGFe7/7G0RyFolRZnVTJkhruh3l3yjqJzOcaUEE1ftFbLibFWPUNbBTgDc4Nkcm6q7NGtDbJA/LH4szC9ghLYdCKA5ss7eP+ygsNcGMterOw6T+KiFdIjS1J6NevwKT5IEP0wya33MRJ9KRs/fKSNcgAnq/S15ji/LFQ2XQs=
+	t=1755173750; cv=none; b=PbAqpkYvyb5/n5zUlGcU2itNuqvJrW4Z2P3Bz7f2St0YDPsUqP4r7YliH9e0f011TFclhHBBzQ/PYWWvY3lR0YLa/L4zjkuMzUUlZqUoCTW6mle+BlHdWI1NT9wDGabCYXtWpqu6xr6G4ypUfUbtI8x8LKS6dlDtxDCgyJthnFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173759; c=relaxed/simple;
-	bh=ynSr0E47HmXYcUmddedDfIO1NaYKsuWB4E2xbZAmQgc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSkpew1PkH2I9h/UWt7RQEvtVM94lrAtT0PlAAFGEadYemYMW8hSaBZR83D9ATR9RtuVyXgvkWrPBAeh4NbLb9w/W7EYZHnnNc58eOARDzsH+2fPU1UPObXMH0k1ay9svX8qCFn+vfhusIdPj0A6u0fA164hnCR26J/Dj/UxmcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ilCN0iHd; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755173745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0ZjbPBfh7ujlNLzE0h5ffJa8LoQU/WhI2aIAZlbPDio=;
-	b=ilCN0iHdM5/+X1oXmtFfbHqTsQxh4P2A1hnbK4M+0T3Jqdwoqs9CIsPYsn5pRDSrNF+UVR
-	09bqkF36bhYOUxNLMNZboon6nwyTCxPlzlbcpHugtr+bruU0r64TbjlO5f8bDcY+EwMQQF
-	VdaYL6tk72VrrSDIHEQ1CQnAcsd8wz0=
-From: Tao Chen <chen.dylane@linux.dev>
-To: song@kernel.org,
-	jolsa@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH v3 bpf-next] bpf: Remove migrate_disable in kprobe_multi_link_prog_run
-Date: Thu, 14 Aug 2025 20:14:29 +0800
-Message-ID: <20250814121430.2347454-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1755173750; c=relaxed/simple;
+	bh=zsj/r4+qg+RibQeEvHxn2GkGt2ubYJ+iN86QAKdU1/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kDMjliO0nVgdoTneZuAKnt4S3wHTyVTU7MIFBcZXIuPpeHe3DMKhK7muCmV3gZgM5cpkjs+H+XbVhg9hnpoPsrVYWz4x+5zlZBnEfZg3auYGGxhz/UVrITSAxEZNTy5U5iGaTEuvQ2zyD5gZ9NDfBiOzdwiJ6CvWX4xeiL/YSRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dbLo7fO4; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57ECExwS1875851;
+	Thu, 14 Aug 2025 07:14:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755173699;
+	bh=3bkB4ImlGUHuqngaDsC8bS0n8FZ4dBNcDo4Y1EMKjpE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=dbLo7fO40YX7UWvYJmhodrSTTzlEIOLeOw35d4UR+YPJE1fj4ourbiGEy1rYfkDPC
+	 UWPGYNHmbEf1ZZzLDEw6H4MdUY3YKILbftMREbHBMams0wqz4AeHDrxD+57kPfR0x1
+	 7b56lgQBaD/wXECzbSoPTgKGr8Yy8WhDHq5TzZPQ=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57ECEx9L1821238
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 07:14:59 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 07:14:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 07:14:58 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57ECEqac3583824;
+	Thu, 14 Aug 2025 07:14:52 -0500
+Message-ID: <dd6ece66-ae4b-424a-aa09-872ac15e1549@ti.com>
+Date: Thu, 14 Aug 2025 17:44:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] net: rnpgbe: Add register_netdev
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-6-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250814073855.1060601-6-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Graph tracer framework ensures we won't migrate, kprobe_multi_link_prog_run
-called all the way from graph tracer, which disables preemption in
-function_graph_enter_regs, as Jiri and Yonghong suggested, there is no
-need to use migrate_disable. As a result, some overhead may will be reduced.
-And add cant_sleep check for __this_cpu_inc_return.
 
-Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/trace/bpf_trace.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Change list:
- v1 -> v2:
-  - s/called the way/called all the way/.(Jiri)
- v1: https://lore.kernel.org/bpf/f7acfd22-bcf3-4dff-9a87-7c1e6f84ce9c@linux.dev
+On 14/08/25 1:08 pm, Dong Yibo wrote:
+> Initialize get mac from hw, register the netdev.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 18 +++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 75 +++++++++++++++++++
+>  4 files changed, 167 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 7ab1cbb432f6..7e51a8871b71 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/mutex.h>
+> +#include <linux/netdevice.h>
+>  
+>  extern const struct rnpgbe_info rnpgbe_n500_info;
+>  extern const struct rnpgbe_info rnpgbe_n210_info;
+> @@ -82,6 +83,15 @@ struct mucse_mbx_info {
+>  	u32 fw2pf_mbox_vec;
+>  };
+>  
+> +struct mucse_hw_operations {
+> +	int (*reset_hw)(struct mucse_hw *hw);
+> +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
+> +};
+> +
+> +enum {
+> +	mucse_driver_insmod,
+> +};
+> +
+>  struct mucse_hw {
+>  	u8 pfvfnum;
+>  	void __iomem *hw_addr;
+> @@ -91,12 +101,17 @@ struct mucse_hw {
+>  	u32 axi_mhz;
+>  	u32 bd_uid;
+>  	enum rnpgbe_hw_type hw_type;
+> +	const struct mucse_hw_operations *ops;
+>  	struct mucse_dma_info dma;
+>  	struct mucse_eth_info eth;
+>  	struct mucse_mac_info mac;
+>  	struct mucse_mbx_info mbx;
+> +	u32 flags;
+> +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
+>  	u32 driver_version;
+>  	u16 usecstocount;
+> +	int lane;
+> +	u8 perm_addr[ETH_ALEN];
+>  };
+>  
+>  struct mucse {
+> @@ -117,4 +132,7 @@ struct rnpgbe_info {
+>  #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+>  #define PCI_DEVICE_ID_N210 0x8208
+>  #define PCI_DEVICE_ID_N210L 0x820a
+> +
+> +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
+> +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
 
- v2 -> v3:
-  - add cant_sleep for __this_cpu_inc_return.(Andrii)
-  - shorten comments.(Andrii)
- v2: https://lore.kernel.org/bpf/20250805162732.1896687-1-chen.dylane@linux.dev
+These macros could collide with other definitions. Consider prefixing
+them with the driver name (rnpgbe_dma_wr32).
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 3ae52978cae..606007c387c 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2728,20 +2728,25 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 	struct pt_regs *regs;
- 	int err;
- 
-+	/*
-+	 * graph tracer framework ensures we won't migrate, so there is no need
-+	 * to use migrate_disable for bpf_prog_run again. The check here just for
-+	 * __this_cpu_inc_return.
-+	 */
-+	cant_sleep();
-+
- 	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
- 		bpf_prog_inc_misses_counter(link->link.prog);
- 		err = 1;
- 		goto out;
- 	}
- 
--	migrate_disable();
- 	rcu_read_lock();
- 	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
- 	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
- 	err = bpf_prog_run(link->link.prog, regs);
- 	bpf_reset_run_ctx(old_run_ctx);
- 	rcu_read_unlock();
--	migrate_enable();
- 
-  out:
- 	__this_cpu_dec(bpf_prog_active);
+I don't see these macros getting used anywhere in this series. They
+should be introduced when they are used.
+
+>  #endif /* _RNPGBE_H */
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> index e0c6f47efd4c..aba44b31eae3 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -1,11 +1,83 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+>  
+> +#include <linux/pci.h>
+>  #include <linux/string.h>
+> +#include <linux/etherdevice.h>
+>  
+>  #include "rnpgbe.h"
+>  #include "rnpgbe_hw.h"
+>  #include "rnpgbe_mbx.h"
+> +#include "rnpgbe_mbx_fw.h"
+
+> +/**
+> + * rnpgbe_xmit_frame - Send a skb to driver
+> + * @skb: skb structure to be sent
+> + * @netdev: network interface device structure
+> + *
+> + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
+> + **/
+> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> +				     struct net_device *netdev)
+> +{
+> +		dev_kfree_skb_any(skb);
+> +		netdev->stats.tx_dropped++;
+> +		return NETDEV_TX_OK;
+> +}
+
+You didn't fix this extra indentation. This was present in v3 as well
+
+https://lore.kernel.org/all/94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com/#:~:text=skb)%3B%0A%3E%20%2B%09%09return%20NETDEV_TX_OK%3B%0A%3E%20%2B-,%7D,-Extra%20indentation%20on
+
+> +
+> +static const struct net_device_ops rnpgbe_netdev_ops = {
+> +	.ndo_open = rnpgbe_open,
+> +	.ndo_stop = rnpgbe_close,
+
+
 -- 
-2.48.1
+Thanks and Regards,
+Danish
 
 
