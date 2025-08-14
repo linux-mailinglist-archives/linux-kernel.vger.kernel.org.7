@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-769423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4167B26E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B301B26E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614413B0254
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D546A239E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629CE31987A;
-	Thu, 14 Aug 2025 17:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CE33112A1;
+	Thu, 14 Aug 2025 17:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2rSNS72"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="azuQEWTM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iKiOxMh4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100631985A;
-	Thu, 14 Aug 2025 17:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986A724DCF9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755194117; cv=none; b=c3D7QhTET4nnw1CGYZEU/mzuipTKaKkAJGpN2I6wwcae194m1qrp1tImyBc0uEYdSf5PIkCY/XiM5e+naci23NF1vw57hF4o1nqBzkSPdgmLQhVVWKNORkMfoqUrNFbnAahko8TjKngNpfHQ1s1pu0JGM98CizL9Yx8bhm3fR9E=
+	t=1755194058; cv=none; b=a3U3aaDNOwH18H+A6OtkzUAbNNdYcvoqKCUlLNXLc1Ju2lGtbOljTkUPmklj2NFX0KBoZsUl4EngTxeROuKGMZk6UeA6XfAxkWQnWRXsZJ31aCB6iJwb1eR2c+3wIMC000qpt2RUrrWn+CkhgmfxRZAoKfeGcniAnTXOZVoSAuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755194117; c=relaxed/simple;
-	bh=shzOb9LxCd4j9ffIAYJARd3Ll/bIHN63Rdsm8jF6HN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H496/F7YYNd20S6gg8cKe92ij37GAzpU+jK9Mt7d2X08FDQ00LXLqg3fgz8WWTrKidnj+iwLrTeaREDfIN3U06iSLaVFHk6aJL7jRqIWmlFl3Q3XKyiDQlSXw6VtsnvR96f8e+w4DHDYj1w3Iv4e5xYiJi1RkwBAbqPkspYF8GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2rSNS72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E86C4CEED;
-	Thu, 14 Aug 2025 17:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755194117;
-	bh=shzOb9LxCd4j9ffIAYJARd3Ll/bIHN63Rdsm8jF6HN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A2rSNS72zGetBKpBZhRpgqD/rhRKvperIaIjrbRs5wRy9RZU2ScEPi/IdUXlel8t2
-	 hDgSN0G3a2Rr04NiqmiYV9jLKqGT5IVplnGBul4pnKCtb46Ped2E5ecDGN1YyZ9EdT
-	 rXEjC1b3JvJImZhlMYQO6QlVt3EMPsCUGfWZr+AhLTcRk7pnn5IH6GnI2xlLYD7zEg
-	 XZ0PFeMCvymXzBoe83iYKupWfZGsEJm8bskOyv5EZlnO8619JC8K6d0uu61BKChHoS
-	 EV2FsRD9b3uIVJtaqF6rm99phCdO9U9AfY6/vt89TghuDzKHyGWoqQ9sfISwsumlQI
-	 OJ+zBWNq9+6YA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev,
-	Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com,
-	Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev,
-	Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v3 16/16] nvme-pci: unmap MMIO pages with appropriate interface
-Date: Thu, 14 Aug 2025 20:54:07 +0300
-Message-ID: <16e541279b4b030de54a0a2f1829e601b7923523.1755193625.git.leon@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755193625.git.leon@kernel.org>
-References: <cover.1755193625.git.leon@kernel.org>
+	s=arc-20240116; t=1755194058; c=relaxed/simple;
+	bh=nvBpJaJUAQZhRpVLUhmruWz45cVSlE8WvfWyN0heqns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDYb2HuPGzth5zRoy6riS9WfwqV581T1zu1f24ujJ9T7kqtmvTqq0hOgLIlM3djImLrwrswa37BMe20UQ3NEpd6DCE7qaKK7QXuMXpIA7MUtoA5GMpS//vrfmutAOIihHZ+cnpcMM8agngaQA5TNSfafSXS97kSITne8TxGvPp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=azuQEWTM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iKiOxMh4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Aug 2025 19:54:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755194054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2dpNfGPXVEnf8RnmmBYr7Vm5AjLGr6/HRcX0++L/Wag=;
+	b=azuQEWTMvfSf4Co/2PS5nmMC1cbzFGzk3w4wmG5ka6B4sTtjvlIr3pVGu/j4WLBnymNFG7
+	tOHei1foSBUTd3Ft4X3jnW0A3wVq1/TPdycFQ212+OsZQi5nOJi5ISP1r93w/r69Tp/739
+	0cn3q4dkASuNl+hXdO5dXgkoEZsFdmgdr6whpwiJ7vtrMHAFZalDSRA+Xzgl6bZsuf0886
+	ld5kvb5cnXQrki40fXF6Up6QR9jD896D4kucPDy0yqhkLxKEEReXn9uKhrD50zCnpHDv5J
+	8Fa4Af3KxgoNN94I8pe5Xjz1FCBoyje8iRgDKVcFshZXDl8P2DU6Q2Yn+PpDAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755194054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2dpNfGPXVEnf8RnmmBYr7Vm5AjLGr6/HRcX0++L/Wag=;
+	b=iKiOxMh4CQj9tejzEmcw6IguLYQnca8oIzhAG1d0sL5KvKr/nlNPKPF0CS+C1gpWm/dc/z
+	xinkpF7IKNM8dpBA==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>, linux-kernel@vger.kernel.org,
+	Konstantin Belousov <kib@kib.kiev.ua>,
+	John Baldwin <jhb@freebsd.org>,
+	"<cperciva@tarsnap.com>" <cperciva@tarsnap.com>
+Subject: Re: [PATCH v2] x86/bhyve: Detect FreeBSD Bhyve hypervisor
+Message-ID: <aJ4iwpQOnrc_iN8Y@lx-t490>
+References: <140183ef0ad52cf0f5f892409d362f1ed09129f3.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <140183ef0ad52cf0f5f892409d362f1ed09129f3.camel@infradead.org>
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Thu, 14 Aug 2025, David Woodhouse wrote:
+> +
+> +static uint32_t bhyve_cpuid_base;
+> +static uint32_t bhyve_cpuid_max;
+> +
+...
+> +static uint32_t __init bhyve_detect(void)
+> +{
+> +	if (boot_cpu_data.cpuid_level < 0 ||
+> +            !cpu_feature_enabled(X86_FEATURE_HYPERVISOR))
+> +                return 0;
+> +
+> +	bhyve_cpuid_base = cpuid_base_hypervisor("bhyve bhyve ", 0);
+> +	if (!bhyve_cpuid_base)
+> +		return 0;
+> +
+> +	bhyve_cpuid_max = cpuid_eax(bhyve_cpuid_max);
+> +
+                                                ^^^
 
-Block layer maps MMIO memory through dma_map_phys() interface
-with help of DMA_ATTR_MMIO attribute. There is a need to unmap
-that memory with the appropriate unmap function, something which
-wasn't possible before adding new REQ attribute to block layer in
-previous patch.
+You're using CPUID(0x0) by mistake here ;)
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/nvme/host/pci.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+I guess you just meant:
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 2c6d9506b172..f8ecc0e0f576 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -682,11 +682,15 @@ static void nvme_free_prps(struct request *req)
- {
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
- 	struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
-+	unsigned int attrs = 0;
- 	unsigned int i;
- 
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
-+
- 	for (i = 0; i < iod->nr_dma_vecs; i++)
--		dma_unmap_page(nvmeq->dev->dev, iod->dma_vecs[i].addr,
--				iod->dma_vecs[i].len, rq_dma_dir(req));
-+		dma_unmap_phys(nvmeq->dev->dev, iod->dma_vecs[i].addr,
-+				iod->dma_vecs[i].len, rq_dma_dir(req), attrs);
- 	mempool_free(iod->dma_vecs, nvmeq->dev->dmavec_mempool);
- }
- 
-@@ -699,15 +703,19 @@ static void nvme_free_sgls(struct request *req)
- 	unsigned int sqe_dma_len = le32_to_cpu(iod->cmd.common.dptr.sgl.length);
- 	struct nvme_sgl_desc *sg_list = iod->descriptors[0];
- 	enum dma_data_direction dir = rq_dma_dir(req);
-+	unsigned int attrs = 0;
-+
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
- 
- 	if (iod->nr_descriptors) {
- 		unsigned int nr_entries = sqe_dma_len / sizeof(*sg_list), i;
- 
- 		for (i = 0; i < nr_entries; i++)
--			dma_unmap_page(dma_dev, le64_to_cpu(sg_list[i].addr),
--				le32_to_cpu(sg_list[i].length), dir);
-+			dma_unmap_phys(dma_dev, le64_to_cpu(sg_list[i].addr),
-+				le32_to_cpu(sg_list[i].length), dir, attrs);
- 	} else {
--		dma_unmap_page(dma_dev, sqe_dma_addr, sqe_dma_len, dir);
-+		dma_unmap_phys(dma_dev, sqe_dma_addr, sqe_dma_len, dir, attrs);
- 	}
- }
- 
--- 
-2.50.1
+	bhyve_cpuid_max = cpuid_eax(bhyve_cpuid_base);
 
+Thanks!
+Ahmed
 
