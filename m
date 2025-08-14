@@ -1,266 +1,194 @@
-Return-Path: <linux-kernel+bounces-768271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71728B25F22
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B13B25F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418A31CC1893
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:38:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCEEA72256F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEF72E7BD3;
-	Thu, 14 Aug 2025 08:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A09E2E7BB5;
+	Thu, 14 Aug 2025 08:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6oXdcgV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="NeOPeJPq"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC5125B1D5;
-	Thu, 14 Aug 2025 08:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264991A317D;
+	Thu, 14 Aug 2025 08:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160658; cv=none; b=U0NGzORRFAzewEZYSjdU8iVCuwSyDk7VhNa2x80k7uNfcXMwViXPYvt594pFWVuN9ZuUXp9TEAYMbrB4r1/VTOqBi9ruDlo7LRHoYOOXqHSWgKjb9jXYNUj4GHmN1rosb/aPReCKD3HrfZDlKljhbP26YHsFkQjnOUdpiI5WrNU=
+	t=1755160736; cv=none; b=jbwsfqyKfgu5KEx3T+yakRluOZMRW/W9CUDcGT6V+y0gkFLZPT9wLDpxfEajOqO8yfGuTnKtDnSpP/1zgFGuJuBmEl2OulJa/7Tr4gIa70xZdbmeS5/OB+CN9h6JgGv+acJPGgVPeYIvO6Yzsd6ba6y8d89wgYhvbv11tp2WkDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160658; c=relaxed/simple;
-	bh=ySpcFEqW6mx248pQaNRvOQVwo6ykQE7J6nfU5QTBWiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slJqOGX41tRUuJQ5cXF6prlgRCqQGttwE90MwZ1um/md7GUu8OPeZA7QqFr5BYuQGWdO7ssUwBo/B5WyCb0rvwMQtReLe8cOthHiWT4lvf8ti+ZZ2yToEDeelMt20NM0RyHkt48q2WiWxjScwuDQMiX4dKuJ/hiSj58+U9fJ4Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6oXdcgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35236C4CEEF;
-	Thu, 14 Aug 2025 08:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160656;
-	bh=ySpcFEqW6mx248pQaNRvOQVwo6ykQE7J6nfU5QTBWiE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j6oXdcgVciv/6BykGif5185QIWWX9Vff7Gxpuxu1c1XK1or/K4wIhNhT+pes02G9K
-	 zNvEs9K7QoOxvFG6Fw6noFJ20aHFitgr//ZwU3ghWpn8hW+AZTT8MPYTZwBmVsq1BP
-	 LtAHwk+FdENWA+tnwN91riEqFzg7OMFUoCJOD8tWN/cLUZAp5E/TlJ4I9v8XQTwYoA
-	 +hgzErxjxvLrVN6Sg/aAGfeSYznXOQeiDmqdUmH9KK7FNbXA0BzTgKv7hIbx3uYcaC
-	 1Q2vqEreet9nlLsh5+8IyBPu0V3x30wCUzSOutTeO/X0ojmjwMiGayPIX3+Z7mxNOI
-	 OH9otFL1/ZPiQ==
-Date: Thu, 14 Aug 2025 11:37:14 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 06/10] mm: update coredump logic to correctly use bitmap
- mm flags
-Message-ID: <aJ2gOkevzkXazfvv@kernel.org>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <2a5075f7e3c5b367d988178c79a3063d12ee53a9.1755012943.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1755160736; c=relaxed/simple;
+	bh=oC4w0r+Y8/lS2On04LFvZMxS/7HpI84hdXY8N9SeUYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n1tSTQ6ZvG+KCJ8tAYz7lXoe0tTPPstcrWl92nDAO959JThza5VSXmBU/C1Ax531cF8T0MreyOQ4NrVVIpWfCaK+bTLZd2T3KXWEpj8JgI9u3dH7xQ7D7g5bE6TvjemFTXiEz39ZTMRbFEIk/uV4rAFA7gUtIVnx71TGVNky03s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=NeOPeJPq; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simcom.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=simcom.com;
+	s=oxqy2404; t=1755160697;
+	bh=TmzLBsblzlVCGEigafIkJTDDPkH67MJneLNgOeHkKl0=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=NeOPeJPqg6hnP1cDxVt9Xw2IByLCMB87kEJGCiSz7AWfKwzQ+XPY9fIYCl4rs7yCa
+	 rVbyh12InNdt1a8lhPYM5kJwCzZzRo7+ulqrZAQ2ZMTGESdBfFWDyf4IklRl1FgLVW
+	 DKDVw5B1f5wfsoedT/R8vqcqS968b4oM+pwmq+mM=
+X-QQ-mid: zesmtpgz1t1755160695t54cc26cf
+X-QQ-Originating-IP: FSUdK7A9mQBvAWnD53mTRB/7AddW/leOstDRoZZH0XY=
+Received: from smart.. ( [116.2.183.233])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Aug 2025 16:38:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6810780293316914624
+EX-QQ-RecipientCnt: 5
+From: "xiaowei.li" <xiaowei.li@simcom.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"xiaowei.li" <xiaowei.li@simcom.com>
+Subject: [PATCH] USB: serial: option: add SIMCom 8230C compositions
+Date: Thu, 14 Aug 2025 16:38:11 +0800
+Message-Id: <20250814083811.2033720-1-xiaowei.li@simcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a5075f7e3c5b367d988178c79a3063d12ee53a9.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NrYaBztQq5Mh5bKvkQFJnIqoy5bGmzsoJ8Q3o6gCRKglEdfovpmJxor8
+	crG4FQyL/Pr0yT4Gspgrsol268ua4qITPDrfsd5NCAViuCoHgjMe/jGSrjVWaXYpn1jEk6g
+	b4PRdy7Qk6QfXkYEO7AqWzSbBtU5P8IlCCzaTZkZ8yEax2wOe0D+iLfHR63TibgaOoNpKSL
+	mJ39jpiSlkVap/JOPm7wtW2530x5ld7MAut+yD+Qce7YuZ4tEJ/oB/HPS0YVj0a2yzggOpM
+	ha9cmEhlxA9InIUD87hEQ3VhyxF81BHCdE/o1odYzyWGDBOC4m1FuLgxpvCeBVrvtHXtURQ
+	IlBI7rFJLDLP6nGNFkVDRP7NXMgKr5SfDXUoWqGpA33W5lqrajov3Pe3AMrZINUgl4IRHs2
+	gk4lEMEUVGaWNqkyaHlub1j9kxPyezsDW/AVRSGueuphBOKk9X7BYnXQQg6OyCoAHJMhs4D
+	HNdZl7jJJGFUDWHVc+8uONrKOVaOg8ow9PKGOTwXOtzwDAZ9LdaoybF5KoiNM0rcAFKA9+U
+	KlMNIy+jWGNCtulyOo5L7kz2tUO0JChtiFI0tZMu2nOSoGgeH3msr+a/UuJAD8rkhjicnQu
+	SOSI7iHdh4Sfd2oexX+mAJVigphdQBtc1/guiZpSC4He9WRY+4v5ZliBQ1ZKlkBttbUV3SK
+	3V0i33ybSly1OpurosevcFshqym+0HhxGrEVElRns25aY32BVH826BtupeCLC1N9GrunKJf
+	vH8dCp8tHg3rTVG6ohhAb5trCNyIuLPvOZgtE62t+dLs9ulZpl4gLSVpd16E1DX/7ZsNnz0
+	mfBi0BS6kKW2KYslZ1o1/5KrqXdnG0DqeBTSmesNl1Uj8VknicWiD1bkpjO7PRdccWltbip
+	USnVVdiDWe2HwlFgDODWXPuFSTZ1HpvUvMft/nNkGvs0B0rklOuSC4N5u3CHOAyFVr30uGO
+	3H9yNdmUZwsiG+0H8wz0X5dmFRuDz2+T+9KXmPN6wQvx1r1hNSrL619ZVigpRPJNyJibOfT
+	HS9tsWHe28Di4RFp2P
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Aug 12, 2025 at 04:44:15PM +0100, Lorenzo Stoakes wrote:
-> The coredump logic is slightly different from other users in that it both
-> stores mm flags and additionally sets and gets using masks.
-> 
-> Since the MMF_DUMPABLE_* flags must remain as they are for uABI reasons,
-> and of course these are within the first 32-bits of the flags, it is
-> reasonable to provide access to these in the same fashion so this logic can
-> all still keep working as it has been.
-> 
-> Therefore, introduce coredump-specific helpers __mm_flags_get_dumpable()
-> and __mm_flags_set_mask_dumpable() for this purpose, and update all core
-> dump users of mm flags to use these.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+USB Device Listings:
+0x9071: tty (DM) + tty (NMEA) + tty (AT) + rmnet (QMI mode) + adb
+T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#= 10 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1e0e ProdID=9071 Rev= 5.15
+S:  Manufacturer=SIMCOM
+S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
+S:  SerialNumber=0123456789ABCDEF
+C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
+E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+0x9078: tty (DM) + tty (NMEA) + tty (AT) + ECM + adb
+T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  9 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=1e0e ProdID=9078 Rev= 5.15
+S:  Manufacturer=SIMCOM
+S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
+S:  SerialNumber=0123456789ABCDEF
+C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
+E:  Ad=86(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
+I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-> ---
->  fs/coredump.c                  |  4 +++-
->  fs/exec.c                      |  2 +-
->  fs/pidfs.c                     |  7 +++++--
->  fs/proc/base.c                 |  8 +++++---
->  include/linux/sched/coredump.h | 21 ++++++++++++++++++++-
->  5 files changed, 34 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index fedbead956ed..e5d9d6276990 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -1103,8 +1103,10 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
->  		 * We must use the same mm->flags while dumping core to avoid
->  		 * inconsistency of bit flags, since this flag is not protected
->  		 * by any locks.
-> +		 *
-> +		 * Note that we only care about MMF_DUMP* flags.
->  		 */
-> -		.mm_flags = mm->flags,
-> +		.mm_flags = __mm_flags_get_dumpable(mm),
->  		.vma_meta = NULL,
->  		.cpu = raw_smp_processor_id(),
->  	};
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 2a1e5e4042a1..dbac0e84cc3e 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1999,7 +1999,7 @@ void set_dumpable(struct mm_struct *mm, int value)
->  	if (WARN_ON((unsigned)value > SUID_DUMP_ROOT))
->  		return;
->  
-> -	set_mask_bits(&mm->flags, MMF_DUMPABLE_MASK, value);
-> +	__mm_flags_set_mask_dumpable(mm, value);
->  }
->  
->  SYSCALL_DEFINE3(execve,
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index edc35522d75c..5148b7646b7f 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -357,8 +357,11 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->  
->  	if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
->  		task_lock(task);
-> -		if (task->mm)
-> -			kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
-> +		if (task->mm) {
-> +			unsigned long flags = __mm_flags_get_dumpable(task->mm);
-> +
-> +			kinfo.coredump_mask = pidfs_coredump_mask(flags);
-> +		}
->  		task_unlock(task);
->  	}
->  
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 62d35631ba8c..f0c093c58aaf 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2962,8 +2962,10 @@ static ssize_t proc_coredump_filter_read(struct file *file, char __user *buf,
->  	ret = 0;
->  	mm = get_task_mm(task);
->  	if (mm) {
-> +		unsigned long flags = __mm_flags_get_dumpable(mm);
-> +
->  		len = snprintf(buffer, sizeof(buffer), "%08lx\n",
-> -			       ((mm->flags & MMF_DUMP_FILTER_MASK) >>
-> +			       ((flags & MMF_DUMP_FILTER_MASK) >>
->  				MMF_DUMP_FILTER_SHIFT));
->  		mmput(mm);
->  		ret = simple_read_from_buffer(buf, count, ppos, buffer, len);
-> @@ -3002,9 +3004,9 @@ static ssize_t proc_coredump_filter_write(struct file *file,
->  
->  	for (i = 0, mask = 1; i < MMF_DUMP_FILTER_BITS; i++, mask <<= 1) {
->  		if (val & mask)
-> -			set_bit(i + MMF_DUMP_FILTER_SHIFT, &mm->flags);
-> +			mm_flags_set(i + MMF_DUMP_FILTER_SHIFT, mm);
->  		else
-> -			clear_bit(i + MMF_DUMP_FILTER_SHIFT, &mm->flags);
-> +			mm_flags_clear(i + MMF_DUMP_FILTER_SHIFT, mm);
->  	}
->  
->  	mmput(mm);
-> diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-> index 6eb65ceed213..19ecfcceb27a 100644
-> --- a/include/linux/sched/coredump.h
-> +++ b/include/linux/sched/coredump.h
-> @@ -2,12 +2,29 @@
->  #ifndef _LINUX_SCHED_COREDUMP_H
->  #define _LINUX_SCHED_COREDUMP_H
->  
-> +#include <linux/compiler_types.h>
->  #include <linux/mm_types.h>
->  
->  #define SUID_DUMP_DISABLE	0	/* No setuid dumping */
->  #define SUID_DUMP_USER		1	/* Dump as user of process */
->  #define SUID_DUMP_ROOT		2	/* Dump as root */
->  
-> +static inline unsigned long __mm_flags_get_dumpable(struct mm_struct *mm)
-> +{
-> +	/*
-> +	 * By convention, dumpable bits are contained in first 32 bits of the
-> +	 * bitmap, so we can simply access this first unsigned long directly.
-> +	 */
-> +	return __mm_flags_get_word(mm);
-> +}
-> +
-> +static inline void __mm_flags_set_mask_dumpable(struct mm_struct *mm, int value)
-> +{
-> +	unsigned long *bitmap = ACCESS_PRIVATE(&mm->_flags, __mm_flags);
-> +
-> +	set_mask_bits(bitmap, MMF_DUMPABLE_MASK, value);
-> +}
-> +
->  extern void set_dumpable(struct mm_struct *mm, int value);
->  /*
->   * This returns the actual value of the suid_dumpable flag. For things
-> @@ -22,7 +39,9 @@ static inline int __get_dumpable(unsigned long mm_flags)
->  
->  static inline int get_dumpable(struct mm_struct *mm)
->  {
-> -	return __get_dumpable(mm->flags);
-> +	unsigned long flags = __mm_flags_get_dumpable(mm);
-> +
-> +	return __get_dumpable(flags);
->  }
->  
->  #endif /* _LINUX_SCHED_COREDUMP_H */
-> -- 
-> 2.50.1
-> 
+0x907b: RNDIS + tty (DM) + tty (NMEA) + tty (AT) + adb
+T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  8 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1e0e ProdID=907b Rev= 5.15
+S:  Manufacturer=SIMCOM
+S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
+S:  SerialNumber=0123456789ABCDEF
+C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=ef(misc ) Sub=04 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
+E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
+Signed-off-by: Xiaowei Li <xiaowei.li@simcom.com>
+---
+ drivers/usb/serial/option.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index e5cd33093423..8c4d28dfd64e 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2097,6 +2097,12 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff),	/* Simcom SIM7500/SIM7600 RNDIS mode */
+ 	  .driver_info = RSVD(7) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),
++	  .driver_info = RSVD(5) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),
++	  .driver_info = RSVD(5) },
++	{ USB_DEVICE(0x1e0e, 0x9071),
++	  .driver_info = RSVD(3) | RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT+ECM mode */
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT-only mode */
+ 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
 -- 
-Sincerely yours,
-Mike.
+2.34.1
+
 
