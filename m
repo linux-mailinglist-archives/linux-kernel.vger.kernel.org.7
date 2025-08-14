@@ -1,329 +1,176 @@
-Return-Path: <linux-kernel+bounces-768954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5787AB2684D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:00:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647CDB26843
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C651C259B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076D01BC533B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1866301036;
-	Thu, 14 Aug 2025 13:54:08 +0000 (UTC)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B08301460;
+	Thu, 14 Aug 2025 13:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3ZM2pHbT"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF9B26FD84;
-	Thu, 14 Aug 2025 13:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21413009EE
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179648; cv=none; b=cMDcrct/A0p8Wq7v+1NeKU4QmeVMvnA+4hi2YPIlcmOzs6dQsUF4ss0QLM+RcjtaMaRf2o62MB+rhZBvyQG8WPR48HzsgwWRobSR19DdeqIHiwegaIvYE85lvZ5cE5S87hvVbia3IHcoUhnf/R8ngdt/IvZTXit416PLUI/Bo8U=
+	t=1755179551; cv=none; b=Cky2I85szpDX52/CfdeZJIETxs5fUTzWb5xoAxb6GDb8Oh8iWQfEINlCYaAVyz2VYKgngRGAuG5H3l27GHkN3mJIXxpKYjMDpOlye6C6wfoizfm+tOMhtxLM5YcVQiuAsFbRGD5F1Tnngu48GdX4rHeHeTi5eAy/4fnYk0IZk38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179648; c=relaxed/simple;
-	bh=aCddeyp2wykbHL0o2ItlIM8ElLwpa+Qx3TvCvjfVTe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLWZ+PTkUyxEh9fuq0IQVpuutWyj0afjMPqEIF9EHJ+YWszKzVZEPXGJJ04xJ5BvAJhHY5wPs+gZ3PwLen6TqiFlzhY01qHI6pX2QOLy0A1bd6MNl5vxgxCvi8XOABzQJUvRX/3kxQ7C44SyK6K0o75cxPSMIxMAiVJrtfRX6Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz8t1755179525t0c4b564a
-X-QQ-Originating-IP: K4YTPx/FzH/0WKWZMeWOv8TngE/p6vFSRGE6pNA3ri8=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 14 Aug 2025 21:52:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3016173073873674600
-Date: Thu, 14 Aug 2025 21:52:03 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] net: rnpgbe: Add n500/n210 chip support
-Message-ID: <172956B3368FC20D+20250814135203.GA1094497@nic-Precision-5820-Tower>
-References: <20250814073855.1060601-1-dong100@mucse.com>
- <20250814073855.1060601-3-dong100@mucse.com>
- <8a041e8e-b9a8-4bd9-ab1a-de66f943dea6@ti.com>
+	s=arc-20240116; t=1755179551; c=relaxed/simple;
+	bh=AuSxpcvb7DLJUWQFOJ9pI6FfZFF9U7z3dCclw46zCw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q0d9VH772e7TM5Sj3m9ldSrhNG1zyu4P/b/kSrYEaZ4xPO0xt7LAeHzlpSB5fpVMecyl4BaQgUBjEfeBDH+0dIjEbzWQRat8IpQMNaPeOrfjK3qqnn3cg0gsrFUo/QMpAeTc0AmT7dkCsMm8OPqCdWAstrqQr5ZQieHPAlGEeVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3ZM2pHbT; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b0bf04716aso266891cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755179549; x=1755784349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iw1gbTTEoFVJTMKqMiHJHmmtmv0E4fqdZ5KeRQQuZ4M=;
+        b=3ZM2pHbTgHTwwfldM0M1qDOaBa2aEOIRg+4wg65BdesJAAZUdPxFwPZ8w+Kbr6cD8N
+         b/0L90hvxtk9m17Jt5UYLHuTR4jxAazlWZAFr7QxHB0QsKUrRRIyN19VkTG+VFGmthsI
+         70yi1jP9ZyxoWR2tjbhOoo3ApijCSrZxQcqrSuHyRwTGT9DnYRRZWRkKQbsF6fI55O7G
+         777a8bzJEQUAKNjp3+RZfO27/tP4Rbp3xG++qZbhwoFSr8JYflVTB4a+/sngmJGHdDDC
+         lSoPlfFg1jxNS4G+UsrkIs8EP4l9HjENgUUxBHx9me4KJfQNUx4myj7L+QxmfZZz+eTi
+         kf9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755179549; x=1755784349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iw1gbTTEoFVJTMKqMiHJHmmtmv0E4fqdZ5KeRQQuZ4M=;
+        b=JNQDxqW4OMqCWH3sNbrkyIPqOwg8i2WEt5lU7PrGf2YK2OQEuvLjdAHoKkO4zOR3fm
+         hiILAQ+rniF3Ni4JvLZsVavtwnhiDI54fe/nkanpnySEpG0BiKZX1ABx9OJHRCXoB5Z9
+         uTFEdCDBb5Zlgc2xJa6CTYuEKnTwEDSeFR1g8MsqrB95cBhl/R40ous5BoQ5WuS2TBsA
+         9g1jbf1KBuk1PKoKWUALEED/UsABC1AoRKfwVjVHriu6yMdo9hiin2uoXw3ozbWBWEc3
+         k+T3RteYGxNpYXahy6iSvaIYymrhHOts6OhLjyHRtCpNCp+llcXPqYxHyU+xDilawkU9
+         /g/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQmU0eFa0G0ZePNviTlRQuPVNFVRyARxrWFt23htW1zGNmen1byETHubc5d+mUsvElOACev19K1747wi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSYcB0qf+MBO+Q2d5PRo1JR/25Oobxk+tflfYt1nGahdyyTLOr
+	bR5bo4ks1ijgtXw+SPmvIACgkj/AMpVbxP3quOzafPJf8gYxtt/Y5iOBy8yCsptmWGwMFpVMg1d
+	g0Fvh29A3I3qqKoHU4KTwlXBwPh1hDOdMG0Ff18BW
+X-Gm-Gg: ASbGnctdQnBx8ySToO1/b0oXF/7Qc3nApSGak/DUemDgUC1632vnlfCUmp/nvl39uXb
+	OXlo68UQjcXcn8OZzeJitdzTRAi8CLe+K/2MnEIGcVhE22Bq0q/LjmAgpdMAS2nbwUS7uloc3TS
+	6X5fGJCU8PWhg8sT2HZBMvJajetG0F7lKtjdtb4N8nQDeuI8ep29QrgyIGxe09w+OwuB9SLIrmx
+	cSeCaltCGEKLLFqWjmtSCX9
+X-Google-Smtp-Source: AGHT+IFxCDaMIGSe3pZulw+GZLKqDhTfgI0QVOHcpZbnMzUJvM2n9+s+0HZfSWxvk4YSxiK5Ve0UBALAMOQ12E7m2ls=
+X-Received: by 2002:a05:622a:7ac9:b0:4a7:179e:5fec with SMTP id
+ d75a77b69052e-4b11648166emr751351cf.15.1755179548355; Thu, 14 Aug 2025
+ 06:52:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8a041e8e-b9a8-4bd9-ab1a-de66f943dea6@ti.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MAMW4dxoxFyt4QS9Wrwt6BZVV0CYwV1rHq/klM1IMsQrgFTlksz2H0tK
-	jYRjW5vZkvyxdHKR+DLRUVcA139KbWckQ/qnq4pIwCSEqegmfQYfonovqmXlRGVzeuaK7ab
-	Vuja6xKSnd0WsZ9FBlEHU9L5xv/4a1IOuccQQHCf9HyzHopzwb5oRS3MT6S54r2rcQBtzcJ
-	FblnUzQyJzuxfMDGGeCKrvgszeCSlSZOW485CbfD4uMysTiriUAMMOdpw98qdm/W6qiFqtt
-	HsQfEf30HTThJYSgqZw3USleRwixCidSCUIyw1vwIyDQsEaDLkpZGcF+GPr5P0ycDC5JkNM
-	Lw2/BkO5Xw5yhjB30ZVsAMKPEEGyHWvU6taIoTE3ll5oUGosF+N8sV9SEiwD5fjQy3vaMpL
-	Ae/AwI4CoPtb4wJKi6cBZq4oRySjpmM/UJ/yBCcItptm0F3fKH4qwiti/O6jFHotae0W3Mf
-	WVOJSV7ODa+/3Ng6UUEz37UbbrgkfM/jTQniDeI4aeYW1CSKAtc3XtiXH4jc8kilTOXpLAF
-	w8yoB5JtV6eLjdOIwAlFMSj6/08I7GUmsS+ryTFo+O6CNSW3+IE6mf9q1Bduwzvak7ZV/15
-	01llwwdm0meb+P0pXiGKChfhe4DnYHyMbn5CuBvA15WEszsbBySy2kptH3/FnxbPr2pDAKg
-	6rVBitgakXriUn+5/b+r2X85MPmakFLZ/bS+HsVZU0dJdc98OzBntPE3g8QLF8r016pE3Yx
-	MM6z0v6cghn2XUoVbl3zQTu6m2VrNXt3tXURM4BKXvNMzHShM4Cbi2VyHsYV+m7e6Dkpuu5
-	QpmxkLkyONz41lRI2b5C4HyV+Eql4LfSOaHAO+M6YLjsHl4lm26cnhLmF530OqnQi5JgJcX
-	v51puhGE3Mw6q2uAPGM/zMEKIP7n8oA8j9T4E/0Xp2ZYnPFoYJ7OqK5C2uVjp7Ayu3IEkmY
-	BTaNqg3FblR9h++rCWAfDpzY+8wi96avSZTUR93J1FzirtoR5L6+qr60wav3YTXMAX6ZlkG
-	7sNky+CsXj0EEFG7Yp
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+References: <202508142105.Jb5Smjsg-lkp@intel.com> <aJ3l0Te5Q1d4g3u-@google.com>
+In-Reply-To: <aJ3l0Te5Q1d4g3u-@google.com>
+From: Pranjal Shrivastava <praan@google.com>
+Date: Thu, 14 Aug 2025 19:22:15 +0530
+X-Gm-Features: Ac12FXyU5mWkZ0SgOCtUvtEQ_v_nO7Y8OIQ-eUV3qn2nKOwscpdgvvk2Hwf8ewQ
+Message-ID: <CAN6iL-SXvgRGSmUQ2-M115_y_k=cVCH3M3UATO7SzC8vMV3T9A@mail.gmail.com>
+Subject: Re: drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:
+ sparse: incorrect type in assignment (different base types)
+To: kernel test robot <lkp@intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Alok Tiwari <alok.a.tiwari@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 05:37:21PM +0530, MD Danish Anwar wrote:
-> On 14/08/25 1:08 pm, Dong Yibo wrote:
-> > Initialize n500/n210 chip bar resource map and
-> > dma, eth, mbx ... info for future use.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  55 +++++++++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  85 +++++++++++++
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  12 ++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 112 ++++++++++++++++++
-> >  5 files changed, 266 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > index 9df536f0d04c..42c359f459d9 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > @@ -5,4 +5,5 @@
-> >  #
-> >  
-> >  obj-$(CONFIG_MGBE) += rnpgbe.o
-> > -rnpgbe-objs := rnpgbe_main.o
-> > +rnpgbe-objs := rnpgbe_main.o\
-> > +	       rnpgbe_chip.o
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > index 64b2c093bc6e..08faac3a67af 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -4,15 +4,70 @@
-> >  #ifndef _RNPGBE_H
-> >  #define _RNPGBE_H
-> >  
-> > +#include <linux/types.h>
-> > +
-> > +extern const struct rnpgbe_info rnpgbe_n500_info;
-> > +extern const struct rnpgbe_info rnpgbe_n210_info;
-> > +extern const struct rnpgbe_info rnpgbe_n210L_info;
-> > +
-> >  enum rnpgbe_boards {
-> >  	board_n500,
-> >  	board_n210,
-> >  	board_n210L,
-> >  };
-> >  
-> > +enum rnpgbe_hw_type {
-> > +	rnpgbe_hw_n500 = 0,
-> > +	rnpgbe_hw_n210,
-> > +	rnpgbe_hw_n210L,
-> > +	rnpgbe_hw_unknown
-> > +};
-> > +
-> > +struct mucse_dma_info {
-> > +	void __iomem *dma_base_addr;
-> > +	void __iomem *dma_ring_addr;
-> > +	u32 dma_version;
-> > +};
-> > +
-> > +struct mucse_eth_info {
-> > +	void __iomem *eth_base_addr;
-> > +};
-> > +
-> > +struct mucse_mac_info {
-> > +	void __iomem *mac_addr;
-> > +};
-> > +
-> > +struct mucse_mbx_info {
-> > +	/* fw <--> pf mbx */
-> > +	u32 fw_pf_shm_base;
-> > +	u32 pf2fw_mbox_ctrl;
-> > +	u32 fw_pf_mbox_mask;
-> > +	u32 fw2pf_mbox_vec;
-> > +};
-> > +
-> > +struct mucse_hw {
-> > +	void __iomem *hw_addr;
-> > +	void __iomem *ring_msix_base;
-> > +	struct pci_dev *pdev;
-> > +	enum rnpgbe_hw_type hw_type;
-> > +	struct mucse_dma_info dma;
-> > +	struct mucse_eth_info eth;
-> > +	struct mucse_mac_info mac;
-> > +	struct mucse_mbx_info mbx;
-> > +	u32 driver_version;
-> > +	u16 usecstocount;
-> > +};
-> > +
-> >  struct mucse {
-> >  	struct net_device *netdev;
-> >  	struct pci_dev *pdev;
-> > +	struct mucse_hw hw;
-> > +};
-> > +
-> > +struct rnpgbe_info {
-> > +	int total_queue_pair_cnts;
-> > +	enum rnpgbe_hw_type hw_type;
-> > +	void (*init)(struct mucse_hw *hw);
-> >  };
-> >  
-> >  /* Device IDs */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > new file mode 100644
-> > index 000000000000..79aefd7e335d
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > @@ -0,0 +1,85 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#include "rnpgbe.h"
-> > +#include "rnpgbe_hw.h"
-> > +
-> > +/**
-> > + * rnpgbe_init_common - Setup common attribute
-> > + * @hw: hw information structure
-> > + **/
-> > +static void rnpgbe_init_common(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_dma_info *dma = &hw->dma;
-> > +	struct mucse_eth_info *eth = &hw->eth;
-> > +	struct mucse_mac_info *mac = &hw->mac;
-> > +
-> > +	dma->dma_base_addr = hw->hw_addr;
-> > +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
-> > +
-> > +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
-> > +
-> > +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_init_n500 - Setup n500 hw info
-> > + * @hw: hw information structure
-> > + *
-> > + * rnpgbe_init_n500 initializes all private
-> > + * structure, such as dma, eth, mac and mbx base on
-> > + * hw->hw_addr for n500
-> > + **/
-> > +static void rnpgbe_init_n500(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +	rnpgbe_init_common(hw);
-> > +
-> > +	mbx->fw2pf_mbox_vec = 0x28b00;
-> > +	mbx->fw_pf_shm_base = 0x2d000;
-> > +	mbx->pf2fw_mbox_ctrl = 0x2e000;
-> > +	mbx->fw_pf_mbox_mask = 0x2e200;
-> > +	hw->ring_msix_base = hw->hw_addr + 0x28700;
-> > +	hw->usecstocount = 125;
-> > +}
-> 
-> These hardcoded values should be defined in rnpgbe_hw.h as macros rather
-> than using magic numbers.
-> 
+On Thu, Aug 14, 2025 at 7:04=E2=80=AFPM Pranjal Shrivastava <praan@google.c=
+om> wrote:
+>
+> On Thu, Aug 14, 2025 at 09:21:50PM +0800, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git master
+> > head:   0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+> > commit: 32b2d3a57e26804ca96d82a222667ac0fa226cb7 iommu/tegra241-cmdqv: =
+Add IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV support
+> > date:   5 weeks ago
+> > config: arm64-randconfig-r112-20250814 (https://download.01.org/0day-ci=
+/archive/20250814/202508142105.Jb5Smjsg-lkp@intel.com/config)
+> > compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project=
+ 3769ce013be2879bf0b329c14a16f5cb766f26ce)
+> > reproduce: (https://download.01.org/0day-ci/archive/20250814/2025081421=
+05.Jb5Smjsg-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202508142105.Jb5Smjsg-l=
+kp@intel.com/
+> >
+> > sparse warnings: (new ones prefixed by >>)
+> > >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse: spars=
+e: incorrect type in assignment (different base types) @@     expected rest=
+ricted __le64 @@     got unsigned long long @@
+> >    drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:     e=
+xpected restricted __le64
+> >    drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:     g=
+ot unsigned long long
+> >
+> > vim +305 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> >
+> >    297
+> >    298        static void tegra241_vintf_user_handle_error(struct tegra=
+241_vintf *vintf)
+> >    299        {
+> >    300                struct iommufd_viommu *viommu =3D &vintf->vsmmu.c=
+ore;
+> >    301                struct iommu_vevent_tegra241_cmdqv vevent_data;
+> >    302                int i;
+> >    303
+> >    304                for (i =3D 0; i < LVCMDQ_ERR_MAP_NUM_64; i++)
+> >  > 305                        vevent_data.lvcmdq_err_map[i] =3D
+> >    306                                readq_relaxed(REG_VINTF(vintf, LV=
+CMDQ_ERR_MAP_64(i)));
+> >    307
+> >    308                iommufd_viommu_report_event(viommu, IOMMU_VEVENTQ=
+_TYPE_TEGRA241_CMDQV,
+> >    309                                            &vevent_data, sizeof(=
+vevent_data));
+> >    310        }
+> >    311
+> >
+>
+> I assume we'd need something like the following (untested) for this:
+>
+> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> @@ -303,8 +303,8 @@
+>
+>         for (i =3D 0; i < LVCMDQ_ERR_MAP_NUM_64; i++)
+>                 vevent_data.lvcmdq_err_map[i] =3D
+> -                       readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(=
+i)));
+> +                       cpu_to_le64(readq_relaxed(REG_VINTF(vintf, LVCMDQ=
+_ERR_MAP_64(i))));
+>
+>         iommufd_viommu_report_event(viommu, IOMMU_VEVENTQ_TYPE_TEGRA241_C=
+MDQV,
+>                                       &vevent_data, sizeof(vevent_data));
+>
 
-Got it, I will update this.
+Running `make C=3D2 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.o`
+seems to remove the warning, I haven't tested this on HW, though.
+LMK, if this needs to be sent as a separate patch?
 
-> > +
-> > +/**
-> > + * rnpgbe_init_n210 - Setup n210 hw info
-> 
-> > +static int rnpgbe_add_adapter(struct pci_dev *pdev,
-> > +			      const struct rnpgbe_info *info)
-> > +{
-> > +	struct net_device *netdev;
-> > +	void __iomem *hw_addr;
-> > +	struct mucse *mucse;
-> > +	struct mucse_hw *hw;
-> > +	u32 dma_version = 0;
-> > +	u32 queues;
-> > +	int err;
-> > +
-> > +	queues = info->total_queue_pair_cnts;
-> > +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
-> > +	if (!netdev)
-> > +		return -ENOMEM;
-> > +
-> > +	SET_NETDEV_DEV(netdev, &pdev->dev);
-> > +	mucse = netdev_priv(netdev);
-> > +	mucse->netdev = netdev;
-> > +	mucse->pdev = pdev;
-> > +	pci_set_drvdata(pdev, mucse);
-> > +
-> > +	hw = &mucse->hw;
-> > +	hw->hw_type = info->hw_type;
-> > +	hw->pdev = pdev;
-> > +
-> > +	switch (hw->hw_type) {
-> > +	case rnpgbe_hw_n500:
-> > +		hw_addr = devm_ioremap(&pdev->dev,
-> > +				       pci_resource_start(pdev, 2),
-> > +				       pci_resource_len(pdev, 2));
-> > +		if (!hw_addr) {
-> > +			err = -EIO;
-> > +			goto err_free_net;
-> > +		}
-> > +
-> > +		dma_version = readl(hw_addr);
-> > +		break;
-> > +	case rnpgbe_hw_n210:
-> > +	case rnpgbe_hw_n210L:
-> > +		hw_addr = devm_ioremap(&pdev->dev,
-> > +				       pci_resource_start(pdev, 2),
-> > +				       pci_resource_len(pdev, 2));
-> > +		if (!hw_addr) {
-> > +			err = -EIO;
-> > +			goto err_free_net;
-> > +		}
-> > +
-> > +		dma_version = readl(hw_addr);
-> > +		break;
-> 
-> The code in both case branches is identical. Remove the switch statement
-> and use the common code instead.
-> 
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
 
-Got it, I will fix this.
-
-> > +	default:
-> > +		err = -EIO;
-> > +		goto err_free_net;
-> > +	}
-> > +	hw->hw_addr = hw_addr;
-> > +	hw->dma.dma_version = dma_version;
-> > +	hw->driver_version = 0x0002040f;
-> > +	info->init(hw);
-> > +	return 0;
-> > +
-> > +err_free_net:
-> > +	free_netdev(netdev);
-> > +	return err;
-> > +}
-> > +
-> 
-> 
-> -- 
-> Thanks and Regards,
-> Danish
-> 
-> 
+- Praan
 
