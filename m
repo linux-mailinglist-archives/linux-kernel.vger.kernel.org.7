@@ -1,169 +1,130 @@
-Return-Path: <linux-kernel+bounces-768554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D5FB26288
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617ECB26272
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D325C2430
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7760A25EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF5A302CC0;
-	Thu, 14 Aug 2025 10:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6FB30BF67;
+	Thu, 14 Aug 2025 10:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZVXFvV0u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HPEJjy2C";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+r3+Uw9Q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F192EBBA7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A502FB960;
+	Thu, 14 Aug 2025 10:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755166567; cv=none; b=RBUYDBKh0UCWqFZEJYNe4Sqqj2xdmJ+tVVO+TEq0p4RIqIoMoz/pDhDNa1LZFG2On+mZvk4HCRCd5iZhZNk2SqYKJ+HnQPiA/Ze2JDky0RtrbqF0Jq8lXMSSeMXGMRjoXVwmn9C8q7QFkiL41w3pxjd7r35yup5taaLv5vNqIlo=
+	t=1755166499; cv=none; b=e/MW1WiqzaHC9D0B6C8DFNDK8T5Nwn8VQPSlSBWmMQnqtQKkAe/+UNB5Qnaf7jyIw5VX7DDk0GOdPrXG4tKNOexlKlpgFmPRUAyRbeCloHMU4BZ/aD22oh4Z3UXFD6fr/wuyBrQLexvNatxlHyvjwVAJkKZxI+tOchoND2sD/0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755166567; c=relaxed/simple;
-	bh=K9wUwnjWFxdOJ7Wm33r78Qn4RUe2Lz37lf3pYpYOLXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=EzH3qmKo00GaeFCUMy/OCxqFIgSGbqxiZbgb2+sC4THD2DVnuxm7yP0uSpLGMGyiiurkLTeyFIl6Bo0cm9jgoOV6tlPIPkqlK9QUl8NHk3tfq5E8AYjXaWUGwPK9iijojErSkVDW6NWhLWABpMMc0H+jAS82hA6DQNC9Ylhdl4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZVXFvV0u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755166565;
+	s=arc-20240116; t=1755166499; c=relaxed/simple;
+	bh=pa8PdBnag5fYYJVttkJ4ojzfP+jzfXoOjQRbMlzFjEY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VnPwRFrCbVbZ4Wltc1R0UiVDu9b+Wx6BT1j7lPJgRitoECTuggKDNx3LM1olJuRvZu1Rms03trXzcBkBUFgLWaR4IEk/GfhyDZ4pa88CqdxVdUPeKjQELzTxUMN+GaU1NH++97Mo8oYJDs+HTbHowCgz9nP7PF0AbP64bEliiW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HPEJjy2C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+r3+Uw9Q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755166496;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=DVY1QUCNIwldEWKREIgkBawz/WH7nI6qPUesGk16egQ=;
-	b=ZVXFvV0u5s8eEVPk8CX4BuHOhhy0b/tzj8C3/aVgBw7/X4nbnq1IHJnLKwVVaAUwe15YGF
-	RbeCGtUz5EC3a+HCv3wyz+dtYUJQnhLrlA4FqmaambGebWS+mY+DhkEgz/anV3bPbUTKBx
-	CZDxvMM0Kr0z/+SHfUHTGV4QMF464GM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-JBqeZ61SNCqTASO1AyXFcw-1; Thu,
- 14 Aug 2025 06:16:01 -0400
-X-MC-Unique: JBqeZ61SNCqTASO1AyXFcw-1
-X-Mimecast-MFC-AGG-ID: JBqeZ61SNCqTASO1AyXFcw_1755166560
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9BDEF18824F2;
-	Thu, 14 Aug 2025 10:15:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.62])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0B1911800446;
-	Thu, 14 Aug 2025 10:15:51 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 14 Aug 2025 12:14:43 +0200 (CEST)
-Date: Thu, 14 Aug 2025 12:14:35 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 5/6] x86/shstk: don't create the shadow stack for
- PF_USER_WORKERs
-Message-ID: <20250814101435.GA17362@redhat.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EBpqRI6i2kXSfd9AzTzdOpLrFWh91/jGpWY95euJX5k=;
+	b=HPEJjy2Cbh+rgvMXx0/c02wNDIA0BpKXcJ5aRR39Tk+T+A0v3NX9PSCvLBXkvhgOatFxCf
+	FBM1HL/BU6Vp9h+Gyoof2N7GbOQHhIrux0NHZGYpjw7nrctnvpQz2O2Fm9Lv5kQCzAuKjH
+	woL/dTO0/vZ7DjtHslMr1Tvw2recS035qMIpl6P95iZEVYYuO4VPHvbch/4Kgg0Jxl4Ugg
+	990rR4I4eGMDCqNPvKFUcpwfEV5n59exFXRFwomuXfaFI/erttpJV558S44cdZm8Q+uD+X
+	MrHwjRVSejEhVS9RFliOiJIcb6jZVQdJWLYzP7LGYTd/mp1XRKl2XYtSuL4Kjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755166496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EBpqRI6i2kXSfd9AzTzdOpLrFWh91/jGpWY95euJX5k=;
+	b=+r3+Uw9QPQyY3dJat11egGmNhIB6io8ka5g1VlKGsKrwGVuAC9vAGYQ2EkXSmUXHWJwpYV
+	yik/5aMOSBg4kzBw==
+Subject: [PATCH v2 0/6] kbuild: enable CONFIG_WERROR for more build steps
+Date: Thu, 14 Aug 2025 12:14:40 +0200
+Message-Id: <20250814-kbuild-werror-v2-0-c01e596309d2@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814101340.GA17288@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABC3nWgC/13Myw6CMBCF4VchXVszLeGiK9/DsFA6lYmkJVOoG
+ NJ3txJXLv+TnG8TAZkwiHOxCcZIgbzLoQ+F6Iebe6Akk1to0BW0oOTzvtBo5AuZPUtolW20RVQ
+ GRf5MjJbW3bt2uQcKs+f3zkf1XX+S0n9SVBJkWfcna+uqbAAuI7llZu9oPWa8Syl9AGipmtiuA
+ AAA
+X-Change-ID: 20250801-kbuild-werror-081f72fee1de
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755166493; l=1487;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=pa8PdBnag5fYYJVttkJ4ojzfP+jzfXoOjQRbMlzFjEY=;
+ b=Se4TW3EW+EJeKpwq2Y760ReNkGjdDVXlxP/8HXWtAKeJMEnvq0VC7N91W5FSgxNpUZqCrmw7S
+ cBPm/dzLwyTBh1QOLANVpRpCza1Ict73l0rCOwP/+9FdnQhnIDfEFG4
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-If a features_enabled(ARCH_SHSTK_SHSTK) userspace thread creates a
-PF_USER_WORKER thread, shstk_alloc_thread_stack() allocates the shadow
-stack for no reason, the new (kernel) thread will never return to usermode.
+CONFIG_WERROR is useful for all build steps, not only compilation of C and
+Rust sources linked into the kernel.
 
-Plus the current code doesn't even look correct, in this case fpu_clone()
-won't call update_fpu_shstk().
+Also enable it for assembler and linker invocations and userprogs.
 
-Add the new "bool minimal = !!args->fn" argument (which matches that of
-fpu_clone()) to shstk_alloc_thread_stack() and change it to do
-reset_thread_features(tsk) if "minimal" is true.
+In addition unify the implementations of CONFIG_WERROR and W=e.
 
-With this patch ssp_get() -> ssp_active(target) should never return true
-if target->flags & PF_USER_WORKER.
+This partially implements features of Miguel's Rust -Werror series [0].
+The changes to $(common_rust_flags) are not incorporated as it also modifies
+Rust hostprog flags.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+[0] https://lore.kernel.org/rust-for-linux/20240519211235.589325-2-ojeda@kernel.org
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/x86/include/asm/shstk.h |  4 ++--
- arch/x86/kernel/process.c    |  2 +-
- arch/x86/kernel/shstk.c      | 11 ++++++++++-
- 3 files changed, 13 insertions(+), 4 deletions(-)
+Changes in v2:
+- Unify CONFIG_WERROR with W=e
+- Unconditionally enable -Werror for C and Rust hostprogs
+- Link to v1: https://lore.kernel.org/r/20250812-kbuild-werror-v1-0-36c9ff653700@linutronix.de
 
-diff --git a/arch/x86/include/asm/shstk.h b/arch/x86/include/asm/shstk.h
-index 92d449cc352a..dfb2aeebc25f 100644
---- a/arch/x86/include/asm/shstk.h
-+++ b/arch/x86/include/asm/shstk.h
-@@ -17,7 +17,7 @@ struct thread_shstk {
- long shstk_prctl(struct task_struct *task, int option, unsigned long arg2);
- void reset_thread_features(struct task_struct *task);
- unsigned long shstk_alloc_thread_stack(struct task_struct *p, unsigned long clone_flags,
--				       unsigned long stack_size);
-+				       bool minimal, unsigned long stack_size);
- void shstk_free(struct task_struct *p);
- int setup_signal_shadow_stack(struct ksignal *ksig);
- int restore_signal_shadow_stack(void);
-@@ -28,7 +28,7 @@ static inline long shstk_prctl(struct task_struct *task, int option,
- 			       unsigned long arg2) { return -EINVAL; }
- static inline void reset_thread_features(struct task_struct *task) {}
- static inline unsigned long shstk_alloc_thread_stack(struct task_struct *p,
--						     unsigned long clone_flags,
-+						     unsigned long clone_flags, bool minimal,
- 						     unsigned long stack_size) { return 0; }
- static inline void shstk_free(struct task_struct *p) {}
- static inline int setup_signal_shadow_stack(struct ksignal *ksig) { return 0; }
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 1b7960cf6eb0..e932e0e53972 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -209,7 +209,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 	 * is disabled, new_ssp will remain 0, and fpu_clone() will know not to
- 	 * update it.
- 	 */
--	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
-+	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->fn, args->stack_size);
- 	if (IS_ERR_VALUE(new_ssp))
- 		return PTR_ERR((void *)new_ssp);
- 
-diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
-index e6d3b1371b11..3da22c6f5874 100644
---- a/arch/x86/kernel/shstk.c
-+++ b/arch/x86/kernel/shstk.c
-@@ -192,11 +192,20 @@ void reset_thread_features(struct task_struct *tsk)
- }
- 
- unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long clone_flags,
--				       unsigned long stack_size)
-+				       bool minimal, unsigned long stack_size)
- {
- 	struct thread_shstk *shstk = &tsk->thread.shstk;
- 	unsigned long addr, size;
- 
-+	/*
-+	 * Kernel threads cloned from userspace thread never return to
-+	 * usermode.
-+	 */
-+	if (minimal) {
-+		reset_thread_features(tsk);
-+		return 0;
-+	}
-+
- 	/*
- 	 * If shadow stack is not enabled on the new thread, skip any
- 	 * switch to a new shadow stack.
+---
+Miguel Ojeda (1):
+      kbuild: rust: move `-Dwarnings` handling to `Makefile.extrawarn`
+
+Thomas Weißschuh (5):
+      kbuild: align W=e with CONFIG_WERROR
+      kbuild: unify W=e and CONFIG_WERROR
+      kbuild: respect CONFIG_WERROR for linker and assembler
+      kbuild: respect CONFIG_WERROR for userprogs
+      kbuild: enable -Werror for hostprogs
+
+ Makefile                   |  3 ---
+ scripts/Makefile.extrawarn | 18 +++++++++++++-----
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+---
+base-commit: e8ee794a1f7705edd64b9eb9837e7baa4421c084
+change-id: 20250801-kbuild-werror-081f72fee1de
+
+Best regards,
 -- 
-2.25.1.362.g51ebf55
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
