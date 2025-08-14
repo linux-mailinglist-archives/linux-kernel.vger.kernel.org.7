@@ -1,83 +1,72 @@
-Return-Path: <linux-kernel+bounces-768234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B31EB25E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:20:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CA3B25E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA49E882843
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A421C28426
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7252E765D;
-	Thu, 14 Aug 2025 08:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91C62E7BBB;
+	Thu, 14 Aug 2025 08:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZFsi5XMk"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PBxUsAoY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613AA2749D9;
-	Thu, 14 Aug 2025 08:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D59F2749D9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159601; cv=none; b=q9IjCxgWM0JQsarNrs73HrtBvIoJ2UwO1rrcNuYWINmbFwiqete8ZxcgPKFNf9xVOQNgYEBYp+jEXS9kOFHimsVud6CXblcvMHuYh6nv7nj7ZnFcXh2hqRTXX430NcybrkKuxIrQc1RGGMmNSAd7Lcy8+iOSUzC6BWKmkgXUP24=
+	t=1755159689; cv=none; b=t0s0YphY7QorF+ABF57ofKYTIVqpj9NWzaP80LtGZhkj6jeJ1uipnOJ6EL8CPn3m43V/IAG7efCPGkzO6PRkdZW8oNa/UnA3BHZso2mfsZ5xmDLNoPyhY9gCfYcC5K2yHdNQ4iZ0FQRPfe2z7xrLUDrDWE927wFWmoiSfH7QHtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159601; c=relaxed/simple;
-	bh=5TdMWLNyvRbzRkR4/6Gl/84SFQDQIV/AtAC7R47cjUs=;
+	s=arc-20240116; t=1755159689; c=relaxed/simple;
+	bh=HnBnHwpP5i7jq+xMSEgshYAyEEtYmu/pth0vrOmnpCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ch/SUIinzbyOzJN8MDBv3tA4aQ49X8ZJZbnB9jxVAhzhKo6zF9JRmjuJ/XjX0Z9jAUAku25XiH67tSYzceaNLrC5PEf3rsQfSBKL0H38U+3Ygf0qsYuRO1Vy5uXQxZ3HNn+iQokLzSUv/QwHeoo8m9gfh81QyyA95aLTGplQBfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZFsi5XMk; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DI7Blf016749;
-	Thu, 14 Aug 2025 08:19:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=c1cDrcCciJILEK5837EGfN2uW9SDKC
-	YV8qxWLUygYMk=; b=ZFsi5XMkvT8Yt3KRf4gOcZn/90XvHIMXoRndnWsmJsNuOr
-	cbrdZX+1KRdpj3K31Xj455PrXYlRC/BAdpoenTeRfKWaWZVffVplYWCwCawbzaVA
-	8bptLzQHbvkMVPKbmnZZj3DwaAZPY+4GVNpDYZ9hdIC+lqGTGPw+a1Ucv+RXSM31
-	3fbRQ1AnzoLim22edULm8v6pee9PJowvIdDChMCQgLiHvAn3pBFnK/ATL5afQpCn
-	52nX+hddRfsfM6o5Qq6qhvOrx2/wUOD5j6mgaIECsm/pxZ+XtMbXd63YTfJbvhF7
-	8j+y+DVcBIwm3PJ/lR7nyqxiBsh17r6Qfcu//Nhg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48gypeaxte-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:19:57 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57E4ojRs020612;
-	Thu, 14 Aug 2025 08:19:55 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ehnq39p0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:19:55 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57E8JpnU52691450
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 08:19:52 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD8C420049;
-	Thu, 14 Aug 2025 08:19:51 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A548F20040;
-	Thu, 14 Aug 2025 08:19:51 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 14 Aug 2025 08:19:51 +0000 (GMT)
-Date: Thu, 14 Aug 2025 10:19:48 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 16/16] s390/char/con3270: use tty_port_tty guard()
-Message-ID: <20250814081948.7684Af9-hca@linux.ibm.com>
-References: <20250814072456.182853-1-jirislaby@kernel.org>
- <20250814072456.182853-17-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdB82d9AxRvBv75Z8AgdLH5zh0Yjxsm/3mXKvzjor5WNKFA50D0PLRqr0X2OsuLt2aAfonQ+cUPbis4YxJz6+v64HzFrXR3H5bWqSYyd6sz/aERassGu7MxHNhoPDFfFn9BKHAuErXCoDB14NAqlVczOaH63LqYBa16qC8RNMq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PBxUsAoY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755159685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fqaib5LzYjLIdEGI0u5LX7r7Yg4ypsXH3pC6i5Z2Rog=;
+	b=PBxUsAoY7hQfZKxix5rXcCt/j70LNwYeG480eP58mWPFtvS7iwptBZUcK5m0D7itM14YB+
+	tyUuJa0C7j+AFCj4K+pCrEZ/nZeE2n0EcKQyFSrmpOqB/AJExCC9cXlrMsHX5bKPVVS2iV
+	1ntCBhoqk/JQ+RD2b+1l7cc8LZMjU2g=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-492-ZYsI0mZsNQKkzbVbyIQmwA-1; Thu,
+ 14 Aug 2025 04:21:20 -0400
+X-MC-Unique: ZYsI0mZsNQKkzbVbyIQmwA-1
+X-Mimecast-MFC-AGG-ID: ZYsI0mZsNQKkzbVbyIQmwA_1755159678
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4FA6419775DE;
+	Thu, 14 Aug 2025 08:21:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.148])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 808631955E89;
+	Thu, 14 Aug 2025 08:21:09 +0000 (UTC)
+Date: Thu, 14 Aug 2025 16:20:52 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, yukuai3@huawei.com, bvanassche@acm.org,
+	nilay@linux.ibm.com, hare@suse.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH 08/16] blk-mq: fix blk_mq_tags double free while
+ nr_requests grown
+Message-ID: <aJ2cZGAWvZ0XfNr4@fedora>
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <20250814033522.770575-9-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,70 +75,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814072456.182853-17-jirislaby@kernel.org>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=eaU9f6EH c=1 sm=1 tr=0 ts=689d9c2d cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=vj4iyNoY2XoMar_OaJsA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: o79fJ5Lv1ee_yjyj5tNBHRFTMkK3KCbB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDE2NyBTYWx0ZWRfXxcw28h2QwDxl
- J5WO9A0+I2q2f0VAVhxT5+0Hw8quYbEGDIJLb6WiEtVVYYghuZQA05/dytR3VHwjIS+B478QR+E
- tvj5L5s2GIyIjHP54h1ZHyzFzQZw8j6MJ/8RDiceZRECyv3Hw6sb0D6b0mhYjAg8Jd0oLvs9t4X
- 8LxUHHxj+9XZQjxn9N71FxWq0/NozNL5aYZVRf+CzcMIHO4MNSMljmtl6Tkyb3Vj9rK6L+2sxOF
- T3bgMjk0Vp+nwd+bhF2o+cm3c3m+R1fUkOQU0gOWStyw8dYh36K7qJN/kKjCWPj4sasabP6/r4+
- ziV1H5W/I1dMsmtcsZMqOSVgKSsoQBgcibnlla9zhZUZM6RBKg7TKUAbgGbtSPznLv1FaD2KsCU
- ME8/ah+l
-X-Proofpoint-ORIG-GUID: o79fJ5Lv1ee_yjyj5tNBHRFTMkK3KCbB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501 spamscore=0
- bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508130167
+In-Reply-To: <20250814033522.770575-9-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Aug 14, 2025 at 09:24:56AM +0200, Jiri Slaby (SUSE) wrote:
-> Having the new tty_port_tty guard, use it in tty3270_resize(). This
-> makes the code easier to read. The winsize is now defined in the
-> scope and initialized immediately, so that it's obvious.
+On Thu, Aug 14, 2025 at 11:35:14AM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
+> In the case user trigger tags grow by queue sysfs attribute nr_requests,
+> hctx->sched_tags will be freed directly and replaced with a new
+> allocated tags, see blk_mq_tag_update_depth().
+> 
+> The problem is that hctx->sched_tags is from elevator->et->tags, while
+> et->tags is still the freed tags, hence later elevator exist will try to
+> free the tags again, causing kernel panic.
+> 
+> Fix this problem by using new halper blk_mq_alloc_sched_tags() to
+> allocate a new sched_tags. Meanwhile, there is a longterm problem can be
+> fixed as well:
+> 
+> If blk_mq_tag_update_depth() succeed for previous hctx, then bitmap depth
+> is updated, however, if following hctx failed, q->nr_requests is not
+> updated and the previous hctx->sched_tags endup bigger than q->nr_requests.
+> 
+> Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dependency in elv_iosched_store")
+> Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
-> Cc: linux-s390@vger.kernel.org
-> ---
->  drivers/s390/char/con3270.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
+>  block/blk-mq.c | 31 ++++++++++++++++++++-----------
+>  1 file changed, 20 insertions(+), 11 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index a7d6a20c1524..f1c11f591c27 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -4917,6 +4917,23 @@ void blk_mq_free_tag_set(struct blk_mq_tag_set *set)
+>  }
+>  EXPORT_SYMBOL(blk_mq_free_tag_set);
+>  
+> +static int blk_mq_sched_grow_tags(struct request_queue *q, unsigned int nr)
+> +{
+> +	struct elevator_tags *et =
+> +		blk_mq_alloc_sched_tags(q->tag_set, q->nr_hw_queues, nr);
+> +	struct blk_mq_hw_ctx *hctx;
+> +	unsigned long i;
+> +
+> +	if (!et)
+> +		return -ENOMEM;
+> +
+> +	blk_mq_free_sched_tags(q->elevator->et, q->tag_set);
+> +	queue_for_each_hw_ctx(q, hctx, i)
+> +		hctx->sched_tags = et->tags[i];
+> +	q->elevator->et = et;
+> +	return 0;
+> +}
 
-...
+It depends on protection from elevator_lock, so probably it is
+helpful by adding lockdep_assert_held(&q->elevator_lock), otherwise
+this fix looks fine:
 
-> -	tty = tty_port_tty_get(&tp->port);
-> -	if (!tty)
-> -		return;
-> -	ws.ws_row = tty3270_tty_rows(tp);
-> -	ws.ws_col = tp->view.cols;
-> -	tty_do_resize(tty, &ws);
-> -	tty_kref_put(tty);
-> +	/* Inform the tty layer about new size */
-> +	scoped_guard(tty_port_tty, &tp->port) {
-> +		struct winsize ws = {
-> +			.ws_row = tty3270_tty_rows(tp),
-> +			.ws_col = tp->view.cols,
-> +		};
-> +		tty_do_resize(scoped_tty(), &ws);
-> +	}
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-This generates worse code compared to before, since an extra not needed
-"if (IS_ERR(...))" check is added implicitly. For this particular code
-it doesn't matter.
-Just wanted to mention it, since this is not stated anywhere.
 
-In any case:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Thanks,
+Ming
+
 
