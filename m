@@ -1,89 +1,129 @@
-Return-Path: <linux-kernel+bounces-769586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FACEB270A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB191B270AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0360B1CC1103
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BC41BC80DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50662750E6;
-	Thu, 14 Aug 2025 21:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA2B273805;
+	Thu, 14 Aug 2025 21:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/ueKFr2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aif0DMJN"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF1224DFE6;
-	Thu, 14 Aug 2025 21:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF73224DFE6
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755206219; cv=none; b=QovQL/0KQLj2xMLqwXFUtHb34bKtiN6raGtF6Jjx9h56S33KNXkV2utJU1XJbax8Q5rgyOQ8luXGKOr6XU21LOTwH7XPuG5PSxNYIijgo+Lblp32TlcD1wvALxAfgyB/8Q2+B5rhS+3rCLHYzbqPUnK40W9P3NfH9IIlQiowj50=
+	t=1755206228; cv=none; b=JyE8VARBoXISl1I2DhqfrQn0d8zOn3tfqknHp7z4eYvti2YZvsdFf9eZf1tCaMMzklNBrpbeB8gdWCjUj73WL4hUbT82Bb6rJhfIXZT8/MXK7eYVsz1ukyG6t9G1O2sv2i/fvAw/3FI7wPro1IXKB69oV/qLssjyWVUbDExPPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755206219; c=relaxed/simple;
-	bh=7mVKEQKMNEIRj9xSvfxfFDaMvYFrSJwGFWyxPNN9BYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=FQS08YRCdahQhPAnbQB8WwMNyZIv6sO1tmgjMjDEXGH49l5SlqkugPvyb8oH9FisYlGRx5a6niOOwnPfMEV78UVDnztX/BiV6lk5RYU9ywaw8UbvYsbbDLi0E7/6/6Tqzrs0EbxJagYZsHosJpCbAGTe1kJUjcVtfGXPUF+ld3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/ueKFr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7863BC4CEED;
-	Thu, 14 Aug 2025 21:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755206218;
-	bh=7mVKEQKMNEIRj9xSvfxfFDaMvYFrSJwGFWyxPNN9BYE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=g/ueKFr2aF8+mvYmRNIGBdU+rP1u57UCPsJlMNN2dUBoQgIE34CWcYYg1S1WaBCvP
-	 e5USPHW8qKEKoyiwj0RVYBMg1RIsH4eXwNCHh0NVUTkYVpW3dvcn8xSGm+U4MeRLTl
-	 YgKlLmbak2b7WLGDAML99z2WV6R1kbYLkZlQLiCS2P/WuIjsctZGEyk2+FcQQtD07f
-	 pIKGUVdA6vroOB9qdd9rOpoiQW4dfrqDUufEttb5Ur5NlXECGyGy5vXuqPgR4JHJYI
-	 M2NoChsEFxxV1w3wqhq7p38P4lx6Q0V63FXyJxmFipWRVxrYQcQeddkumHTQoQWjfa
-	 nTpHpxiZSuk9w==
-Date: Thu, 14 Aug 2025 16:16:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: hans.zhang@cixtech.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
-	fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
-	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 02/13] PCI: cadence: Split PCIe controller header file
-Message-ID: <20250814211657.GA349149@bhelgaas>
+	s=arc-20240116; t=1755206228; c=relaxed/simple;
+	bh=dJxpxpV0+M6urq4guoBXheuD1T5/7twwXGcKBFHyUSg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=tM6IkqqHhSEXMhBWlMJC24jQaeXTA6lDpJSHU1qAkbwzRt0LE7fgL3kyIMhCpzGsgbHTCrjWtwMIGQy0/mhsh0JFnQwyjkVT/3C6cxD3lrkX5mv0M+yHQzb804pRe3Q5CKmRlAA/Rpcyf4FDRLXCc4EgtDDa/we6eXdyOChqJqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aif0DMJN; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250814211704euoutp02d54ae1d783c0ce7c5fa5f015e0c20677~bvsMS34IR0523805238euoutp02L
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:17:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250814211704euoutp02d54ae1d783c0ce7c5fa5f015e0c20677~bvsMS34IR0523805238euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755206224;
+	bh=cSEixDLE7xsPsFz7NBwxP7uK65MZGZKF8ZUmhrV1huw=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=aif0DMJNDGGyAVppTHMk6Yf+pUZiOWU0ER6evHyGiNIC4x5MUx2Uk4BrgOCHG32br
+	 v0vqia2Zf89eZKmw901sVlL+ul/Lzc6Y3ALfe83DhoHRPHhcp/U1Zx/XW7ya5K/4HA
+	 EyAA1M0g09bPOExExj4/J1IFPfi27LIby9z7wyEY=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250814211703eucas1p253cb95d05d46ff9f84c21d549f0f0098~bvsK_rr3M1788217882eucas1p2V;
+	Thu, 14 Aug 2025 21:17:03 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250814211700eusmtip10f43f1f50846dd52289fb97bdd649f18~bvsIPXpgd2313023130eusmtip1d;
+	Thu, 14 Aug 2025 21:17:00 +0000 (GMT)
+Message-ID: <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+Date: Thu, 14 Aug 2025 23:16:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813042331.1258272-3-hans.zhang@cixtech.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+In-Reply-To: <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250814211703eucas1p253cb95d05d46ff9f84c21d549f0f0098
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+X-EPHeader: CA
+X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+	<20250814104753.195255-1-damon.ding@rock-chips.com>
+	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
 
-On Wed, Aug 13, 2025 at 12:23:20PM +0800, hans.zhang@cixtech.com wrote:
-> From: Manikandan K Pillai <mpillai@cadence.com>
-> 
-> Split the Cadence PCIe header file by moving the Legacy(LGA)
-> controller register definitions to a separate header file for
-> support of next generation PCIe controller architecture.
 
-s/Legacy(LGA)/Legacy (LGA)/
+On 14.08.2025 16:33, Marek Szyprowski wrote:
+> On 14.08.2025 12:47, Damon Ding wrote:
+>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+>> PATCH 7 is to apply the drm_bridge_connector helper.
+>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
+>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>> PATCH 13 is to apply the panel_bridge helper.
+>
+> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig, 
+> so it causes build break:
+>
+> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to 
+> `drm_bridge_connector_init'
+> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>
+> After adding this dependency, the Exynos DP driver stops working. On 
+> Samsung Snow Chromebook I observed following issue:
+>
+> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach 
+> following panel or bridge (-16)
+> [    4.543428] exynos-drm exynos-drm: failed to bind 
+> 145b0000.dp-controller (ops exynos_dp_ops): -16
+> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver 
+> exynos-dp failed with error -16
+>
+> I will investigate details later in the evening.
 
-Similar for "HPA(High Performance architecture)" elsewhere.
+The failure is caused by trying to add plat_data->next_bridge twice 
+(from exynos_dp's .attach callback, and from analogix' ->bind callback).
 
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-lga-regs.h
-> @@ -0,0 +1,228 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +// Copyright (c) 2017 Cadence
-> +// Cadence PCIe controller driver.
-> +// Author: Manikandan K Pillai <mpillai@cadence.com>
 
-I'm not trying to be a killjoy, but the only author listed in
-pcie-cadence.h is Cyrille Pitchen, and I don't think simply moving
-these definitions to a separate file really counts as becoming the
-author.  I would at least preserve Cyrille's authorship.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Bjorn
 
