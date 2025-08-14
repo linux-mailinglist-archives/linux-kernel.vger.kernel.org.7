@@ -1,256 +1,304 @@
-Return-Path: <linux-kernel+bounces-769659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FE5B271A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582ABB271A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98CE61B67E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CA3682543
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D36280018;
-	Thu, 14 Aug 2025 22:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F95F280CFB;
+	Thu, 14 Aug 2025 22:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bBAhZfbR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H+9LMaCi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA2E1C9DE5;
-	Thu, 14 Aug 2025 22:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755210796; cv=fail; b=KKjABvmjKsu3ZJr4BAQQGcrnahJ7j97tfWKU3ltRR94b/Gbm5s2fpy1F0gxya0ajhR6vBSa+AHpQMgo3ui8bLXa9UPYspPbCV9x/JCYKXvJrzQT6WMzv/tk26jfMzrRThA914UxERzzKJAvQzDrkiEU7OgL3T+FVTZ4mK4kojZ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755210796; c=relaxed/simple;
-	bh=IlBPgeBEdr1OrgziVQScnCNGUA6wsgKQNIV8zjPZrmU=;
-	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
-	 Content-Type:MIME-Version; b=nCDUp0niozQh2zBAfVLAyZfjKt2AzuYCUxKKBFpcUKZFo645frEWWCJm8ZDW5+Bd1vNzOp0VhrQ+MOLoIahSSuRy8fDcXyO41gyixeAgd2ElYMWK4O84dVb98n2hWaW7fYCJcRydRmWpNgzUt3pJqAgY/s7OosSiAKYDeY6f6FY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bBAhZfbR; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755210795; x=1786746795;
-  h=from:date:to:cc:message-id:in-reply-to:references:
-   subject:content-transfer-encoding:mime-version;
-  bh=IlBPgeBEdr1OrgziVQScnCNGUA6wsgKQNIV8zjPZrmU=;
-  b=bBAhZfbRtZ6i5+HGli3R/5doAj+4GnEvwGIcEX8lubeVCnnMlE8cxFC/
-   VXln5oFw1k2pKefSU95+ZHga6OfQJnmOu/X3Q2bH3xaH4ODOcYKwF2vUD
-   Ytio06rFGaDXS0RLOPu57Q//EQ78Axs1/4FUasaGyOgIEq39p9dS+Qe1Q
-   MLJXeBNZrUFDWVYY7uWH4Fh62+igD9i887JI3nSKbTn2zGU269xr49QCv
-   9B4FLKW11iL+LPJLEVf2U3LYfpdsGb6rBduHGHkjQArEJjRf6cVIQ41kq
-   otTngblI2irOmHlIGGx37t6HIct1tdn5TyqjGdkuwvsQVDLVKY+lWXUrX
-   Q==;
-X-CSE-ConnectionGUID: F5kwJMPwRHyadTXCY1PMbg==
-X-CSE-MsgGUID: mp2VzqBlRbasFG7EWW7Kig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57610892"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57610892"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:33:11 -0700
-X-CSE-ConnectionGUID: O+aZlP7JQ5uEyH2Y6tFDCA==
-X-CSE-MsgGUID: beVmXELTQz+/MVa0yYPKlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="167239885"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:33:11 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 15:33:10 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 15:33:10 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.80)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 15:33:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wFl3Uz0OeSsmHQhPmK1getaNB8FKDDAXNI3e2jeKkVzPig66Iht3jW6+aVX6DslsEVbPc9F/L4XQMFNob6JvBzljnQ/S4XGvsV+oLNrNyITVA9UAlVRlMq0HHCZVPv9eMH5qQAf1tL1iUQlifHmjBP9k/sGtXFq9YyB8JHOMbL8lAn67/Nvt7P6SfdIFBoowgA0gMZ/DayVomvENWEpMOHyXpXMCnlu1j+/U6J1a0MNrPYLk/cTCO4VqqUc3Y1hpF3JVeaVPpZPXIqazMPVNhdp9TQDzxZEd8n9bg+9c7KrHTVYcg2g2vbjsMMVqjYp8G8hvH/dea1vhKCTqGgw7uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvIdrP4DI/I4RMXMB31A8chH4vZvVDpNbTqIzrqBACI=;
- b=hLGSG/+ygEHdwNEv7/sofVdYsUl0NMEdhis9K1SgmYavmjx48NNaYyZEYIFCyLyO6UPPcfyr0VrY4pCCiz7Ycr12fDtRXL+NFRH4LR+ncDzPhw516kmPWVEiVuKIXjX8X0aFX+DtrHW/9VxQIX3XUOC0s++BqPhdxO6BKSlHmArKz5JvFVXcaaOd1APT8NSNXlW5e3iWFrhMX9orjsz4cVGLenUmQViE4c+Qy830XWAE7OR1Fq5afJMbbSLUvI9R+YtZkrne/V4OMhc0QX8M01TFK19D7DrVe+4hgc8/VvkBlrZ1Mn1jq53/3tMvlhkS9eor8OPvBtnnGECSQ41+3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by DM4PR11MB6429.namprd11.prod.outlook.com (2603:10b6:8:b5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 22:33:08 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 22:33:08 +0000
-From: <dan.j.williams@intel.com>
-Date: Thu, 14 Aug 2025 15:33:06 -0700
-To: Dave Jiang <dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <dakr@kernel.org>,
-	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
-	<marc.herbert@linux.intel.com>, <akpm@linux-foundation.org>,
-	<david@redhat.com>
-Message-ID: <689e64229859f_50ce10082@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <20250814171650.3002930-4-dave.jiang@intel.com>
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
- <20250814171650.3002930-4-dave.jiang@intel.com>
-Subject: Re: [PATCH 3/4] cxl, acpi/hmat: Update CXL access coordinates
- directly instead of through HMAT
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0065.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::10) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE4D1C9DE5;
+	Thu, 14 Aug 2025 22:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755210810; cv=none; b=FWJgWw1FPuZ66SLlDHXP7ywLFJO39icxoZRmo1KtwpCVtrhchrnEgbEamTHL86ubGw8wO0HzypXi6ePNHcgsG9ffot0QP5M5979da+nfbwBcSww9Gj04Q2mKnFKzs/EvdrwFjAESu4EwdSBJd2ZBJPWtEw8vHWR09SeNXoQ++9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755210810; c=relaxed/simple;
+	bh=uW9o2cHRiQIZjKiQBTACGjxSgnXl+8ONtFIZBOuFIAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vxvr0MRINwmi70O9d+/KrGUwnAZw27ALjP1uV11QfFtaCtrd/SikwtzBG3ulpeqAoFE+P6C5sOmkmp7slxjWr/seGAOEKiqeNuN/47Tl2P1y3OKxioVnPSQ4oeliMxwcFAm9lewj9vmTeHpr5nizAWbwMfUVTo88GRY3zrRzt9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H+9LMaCi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EEVVFn011894;
+	Thu, 14 Aug 2025 22:33:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zuSRUD
+	2rkBpJ9+1LYHIAK5zHzxLoyqKNgz3w9zgHtps=; b=H+9LMaCi11Ud44/JfEIOge
+	XkB/UfLnKsJy9gq+D32C/3kJcRymCSfUpsbwWplSTlwevV6P5yPkvhH1QUjMmBQW
+	IHb27MHLmNL4y88Lff9LC/E9LCPGQ7iPquc+uVbUzXspkSBneRdG/YpwgXANH5NY
+	M16Cs6NhRgpGOYoSLQ6ID8G2ddNcXccGj7tEyF+FJeYGy1QJTlZBgwTJk0AbEfSN
+	Iik68/WgwswCOO+6XVe+/K/451phykVkMjPhfsIfVCiSDf/zpJxIU4gtBK68/VWs
+	0p1hG6vr4CYl+LEyoG9QpCEj01MzQFqUZZD5TF4oWsq5xqJ2eEbtsc7oS5RNUpMg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48durumuck-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 22:33:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57ELvnQG028674;
+	Thu, 14 Aug 2025 22:33:22 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5neaxk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 22:33:22 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57EMXDDa29950518
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Aug 2025 22:33:13 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 27A6958072;
+	Thu, 14 Aug 2025 22:33:21 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 93CE058071;
+	Thu, 14 Aug 2025 22:33:20 +0000 (GMT)
+Received: from [9.61.240.42] (unknown [9.61.240.42])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Aug 2025 22:33:20 +0000 (GMT)
+Message-ID: <576abfa6-effb-48b7-b15a-c964fad6ddea@linux.ibm.com>
+Date: Thu, 14 Aug 2025 15:33:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DM4PR11MB6429:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27eb618d-6847-43ce-01e5-08dddb828b1d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OEo0eFZ6cXdmMmhYNlE2Ri9tKzBUYUEwRGJhWGVTblZHaHdrM1RSZnpyNWdD?=
- =?utf-8?B?K0ZoZm5BUkVBOXdLU3FiSlFvTFJReUhCdm5iRmNzbkd2UU9OekdwSHhNZXNG?=
- =?utf-8?B?aGQ5a0ZyU3F5ZUUvWjVGQi83eThkd2ZYNWRPYXFWZXhOR2srYnRLNWt1U25K?=
- =?utf-8?B?MTZCb1FlTWVka1ZTZUgzU1hvRlc4bG1MTWIrR0MvRDFpTXFVbVdzU2xIQ210?=
- =?utf-8?B?VkJpTldXVHdyLzR4dmtjaHQyL1lTT2h6YlhaY2pzbGdUS09NZ2hxRURnbHly?=
- =?utf-8?B?M2pMVDc0Tk15a1d3TFcxTTBzNjA3aW5rRnAvaEVDRHhsQjFmTXhkdkxxOU1t?=
- =?utf-8?B?czUrTmVMY0E2WFJKRThBUjJYYmNGdzFCM2pqaVFycTFpUEI0UkdXUVV4aXBM?=
- =?utf-8?B?VEVwd0t3SDZzUkg5N1E4TDVzaXZkSUtTVnFEV3RJRFVoUmJCT1k0VmFRRFkw?=
- =?utf-8?B?cWhMMG9raG5GNnFGajRFK3VXRjlZbUl6SzhWcGhzNWtwQi8wSDBtWnVDSll6?=
- =?utf-8?B?NVI5eWw3dkZKeWMrQ2FMd1BlSWdFSVZVUjZKaGpTeFFpM2tlYWdvZW9WSmo2?=
- =?utf-8?B?MENEUFcwTWtpeW81a2dpQVhlR3ZqaHg4azhoc3BzVHZCTnpBWFAyZGhlRGZV?=
- =?utf-8?B?Z2N2N2dOaVVSdlg2eEsrWWxiSWt4bktDQ3pDSHJoYkVNQ2lJLzdiUTRQTVVE?=
- =?utf-8?B?V2RlL0lBQkhjajJtSmdKQkRFZXIyZ1ZwNVFtT2I1eVNUTjByMkNpRFJEdDhT?=
- =?utf-8?B?UU5HUnZsNHRKK1pDZHlwRXBZZkpqSlg1UDBiZ1FzTjJOdFJ5eUVsZ293ZFZE?=
- =?utf-8?B?Qms0YXYxL1Y2aGR1NnRtZTJNT2h3UXE2NVZITThrS1ZlenZyQTNVV1cyOFhN?=
- =?utf-8?B?U1NsYk0ybnYzVEE3MVRvcm9XRkUrYzZQdGpsd2RVS25mN1h1aXFwY0V6RXdJ?=
- =?utf-8?B?NzVKMWVRM1E2dUE2ZlhuQ1Z6TGNsN1hQSFpZRXpzR2pwTzUrME45M0Y4NFpp?=
- =?utf-8?B?ZkNqWXN3alVoU3M2SFk2WW1xd1hwcll3dUVLTzU0eUZOcDFsTTZNdjBNbGVK?=
- =?utf-8?B?RE1TaVN6VXo2UFc1UEZ5SXkwQW9OUlI1dXZ0THJHNVZYN1ZhQ1VoQWY5VUds?=
- =?utf-8?B?S0pBNWY5MENINWtIamppSWRDeTdEb3NwakVVYnowQ2tpZXRtb2E4MUg0Ly94?=
- =?utf-8?B?WkNEUVVYOVo4WGxDbHo1YUJrbUlQWG9DaTRSd2k2WW5kVnE5K2N3REljN0dp?=
- =?utf-8?B?WjFLTGNjbFBuZ3VHRllFaTh3V0o3NytzYklFQk9tTGhQcVZTdnFsRUxiSzRI?=
- =?utf-8?B?RnBYOUNYeFZKL1BBcUx5SmU3NW8rMTlYbkxQdmJML0F3UHhPc09KS0tPMUxI?=
- =?utf-8?B?elJKRjFxUVlzOHp4QWdweHJEdG02SWdobmlvbWRCQk8zZUYzUkFuWTRJRmh5?=
- =?utf-8?B?OXdOTURHanZOTWM0MjFMVjdESFZvd1JHY090S25CYUFqakZDZDZvWWd1UFpO?=
- =?utf-8?B?RzFGOVpsTitmR2F5bVZKMlg1WFF1L3ZCY0lsNzdOV085NHpzdFhlM1o3RXAr?=
- =?utf-8?B?d3RTNitVYzVKdER4UHdIVDE3K0NrRVBrb0lQbmNvVjArKzNLVUkrSEtpNDIr?=
- =?utf-8?B?bTNIcUVpYUROLzM1ZmtrNXdhVmExQllFVHhGY1dMUWxyaDJNNmZZYnFCdEYr?=
- =?utf-8?B?Qi9kSGlEendpbDhsTVZZR3Vtbm0zUEx4a01lb0p6cVk1bHY1SVNwZy92dHl2?=
- =?utf-8?B?cFNrckdBYzRqQ1V3cWR2YlhMOVRaQ3d5WnZRS3FXejdJUUtYcmNWRkNLNXhP?=
- =?utf-8?B?KzdxcHNhQWZvelRCOXhmYXlaMkE3STRyWm05eHdJblRHb1hOUnFES1A0d1h4?=
- =?utf-8?B?ejd2UTcvdUVuZ2pobi9KVEZUWTh0Rnk2dWZheGorR1dKV1E9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bktqUUo2cTBKbnYvY2VTNXdMd3cvUy9RTWJZOHJ5ME4yN28xb1MxWHF3eDRS?=
- =?utf-8?B?MkV6NVc4NmdoYzV2TU5oRkZLS3NkdU1NQjZzdzB0alVNTnBsS0haTjdCUGZX?=
- =?utf-8?B?Mk9VZXptQ1ZJb2REUkVRMkxzZ3ZwQjJkYmU0ci9vS0pNSEM0Mm5HZ0ZmOHB2?=
- =?utf-8?B?VTZZSUc3Qzk3K2xUQzlwblF6dmFoMGEwL3VCelJYc3N2bWRaNFpscWlKcm1s?=
- =?utf-8?B?UWh0cjJiSDlTclRDK2c3citSaFlrWTVMNng3ZVMwRjBkRVl6ajhPNzhmRDJs?=
- =?utf-8?B?MXlPbmhuQWxhcDMrNkJaUll4S2VqTm9EZjE2N3VVOUNrQWY5eXBwYlgyL0xn?=
- =?utf-8?B?eTBtT0x5T0FGYithRFZNM3QxdDhWYWFRbHJ0SjJ6WHh2TE9XNlNwTDFMa2xn?=
- =?utf-8?B?ZElyamY0ZnJ0N3lMUXN5RVNCRGF5MzhGTitGcUNPOXpzU0JWOHR2SUd5UzZW?=
- =?utf-8?B?VnVEWlhPeitGbVRoN1dJamJZUkUzbTZ3NGQzOGtFVHd3VWExVTRoZXpnN2s2?=
- =?utf-8?B?NmtnMXRFN2tTcm9sR0laQTVSdlQzNHp5ZmdGaXZWTlZnbzdwNFdDN0N1RHJu?=
- =?utf-8?B?OGJ5RW9OSXhjNHNQbHJLQ2FFYzNFTHovVklRek82VXo2NVpiNnUva2FISGNJ?=
- =?utf-8?B?dDdMOThjcWxWQU1lWVZsWkZNWGtNM0tEK1pycitVS1JoZXBENWZaY0ZObDM1?=
- =?utf-8?B?c2d1TEZSdFBCSll0UVhCRWxFMTl2UEN3RjFBaWtTTG5tQTNXc3NCajFSOUNj?=
- =?utf-8?B?WmVUcW4zTjdoYUVmNHRRTi82dVlUR3RiT2dTMnk5N3ZWL0E3R0JyQ3g2U0Jw?=
- =?utf-8?B?MjFsYmZkQlJmN01TNGNqL2VtR3RlVUFaWXB3Q0dkbHhnckcxbnZpdmhKVXZR?=
- =?utf-8?B?ckR5ZmJTU3pDZVdTRXMvY1NBTDFMaXRpeS85TVNrZkFKeUtKS2RHT2RJajkw?=
- =?utf-8?B?ZStzemFBaFNrbFprVXZXZk1vT1hPdXk3b1dtTWFaZXBzMDMrcGk5YitVQVJt?=
- =?utf-8?B?b0pzeWV1eitCM3Qwd29heUYxbnZmeWhuRXkyNS9yQmpjRW5YbTN0NFFPM203?=
- =?utf-8?B?STBSekRPOC8xRTNXZjhsRVZ5YlpXOGZOR0s0dHVFamRvT2JqK3RFcjBORml5?=
- =?utf-8?B?MWlNaExrcUtEelQ5WWsxd2R4V2NzQmM2MjltRVYvdHVXMjZXU1hvRjZvc3hz?=
- =?utf-8?B?U1dyYzlpVGcrWGJKR1lSa04xcElGdHJpSlNqbkQ4ZXJCNnNkVkRsUmplYmM1?=
- =?utf-8?B?M1pIdDZRcVlaa2hRRzZVNno5UXA0NjdIb0NtWXZxdEprbmxlQlZsWk5uY3JY?=
- =?utf-8?B?a0M0VWtlalFETGFtMGxrQ1RKdmpEdjVLaGxmOVE3M3VWc2hWMUlSZ25zNG8y?=
- =?utf-8?B?OFJROGZFZFZUMk1pdWtSVjNSSXJHSSt2SFBhLy9jdlV6L2tDY2xZNytLM3ox?=
- =?utf-8?B?UlpJbHNnMDFQSmJOWTI4K1AzYnVVdC82dHVuNDZYOXRBdUdHRE1ORktPejJn?=
- =?utf-8?B?QkMwaFRUTDVXa1c2U0xTYWR3RGpEN3lKWWlZYXlPNmpSbFBrS2VKOUtnYnF4?=
- =?utf-8?B?ZGJ4RldzazgyaEN0Y1FPSkRmQnJvWnRYaEI1djVmSTdlU2ZBZTlzQVJrM1Bt?=
- =?utf-8?B?cUwwTGdwbFJJRmJRTEMrT1pLejRvcjJXeVBIZWM5UnhCR0tpMDhTVzdDVHVB?=
- =?utf-8?B?QlVicnpaNWtmYW1obm5WT3lFMkw5N3BRL0RQell4WHdVZ3dsYXFzaE5vcTVq?=
- =?utf-8?B?RW55ekRKWFE2aitLc1NkRUcwWHZMcHFYaFlkRHJaajV2bzNXWWs5WDFRVXdP?=
- =?utf-8?B?M29zeVpxNHRmckpabkN6SFBoQ01COXcrMEJZNkFHVlpxVGVSOTB2Y0JlaFZH?=
- =?utf-8?B?NFBvdVhYZ09EOXRUQ0JnMEtGaFVncEZPVUNjVHUxUlpkbmZiRW1CcmIzZEln?=
- =?utf-8?B?c0Rua3N2a3I3Q3k5d1BIcytRTi9nNGp5NDd3dWJoVXlDZ0VpQkZaREllVno4?=
- =?utf-8?B?ZWNxUkxwVk1CSTl1bDJiTjBOd2Z1QmhtMlUzK3pmclhLTGN6alMwYzdLeWxC?=
- =?utf-8?B?T2tCaWtxYkUxQ243K2xSSU5zbjdqZzNyWDltMGNuaS9JVXdnM0c0UVVxbW9N?=
- =?utf-8?B?UXljRDcrYUg5L2lPdjZCUVNFUGpPWEZZb1pmbWlQdUZRUTJhYWlZZ0V1dWpt?=
- =?utf-8?B?aFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27eb618d-6847-43ce-01e5-08dddb828b1d
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 22:33:08.3872
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YMHyhs4dJaYSZrySUPSx8W4c3rJ6T770CaTopwRcnTbt2/rhyOjSP5NcD65XhNTl3+fVoNM3fzzYnZ3ZeORpjUqZDwARssPDAC7bs8Otbxg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6429
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific function
+ reset for zPCI
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mjrosato@linux.ibm.com
+References: <20250813170821.1115-1-alifm@linux.ibm.com>
+ <20250813170821.1115-6-alifm@linux.ibm.com>
+ <20250813143034.36f8c3a4.alex.williamson@redhat.com>
+ <7059025f-f337-493d-a50c-ccce8fb4beee@linux.ibm.com>
+ <20250813165631.7c22ef0f.alex.williamson@redhat.com>
+ <5c76f6cfb535828f6586a67bd3409981663d14d8.camel@linux.ibm.com>
+ <350a9bd5-c2a9-4206-98fd-8a7913d36112@linux.ibm.com>
+ <20250814145743.204ca19a.alex.williamson@redhat.com>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <20250814145743.204ca19a.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: _Sf7S6Ij0waST6W5barAPpyxPrhMN5Vk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfXyHGdOL8+jly5
+ pxyvdo9r8VcDNqPl1hcRQta7tNcwdYrztG+ijsh0jReN9zV6FyWQirWtgYUhLIWNRbA6eW/inSm
+ BLVGB7ahrjJ7Tm5k/muUy/siYg1s0kjwYTqX+lHqgWClj3VkjF+OZfqjKhimkWR1b3Znf4uj5T7
+ kX+v2XOKtA5slH5uKsPJ0githD676WhJS0GIxHGiwUWcRNASf7/btQQf+H5tuJIcfOPPI1WiI6q
+ gpE0N/UkS10/6aHCOkr8xB8S+PmftFnJaXTwfdPaluv1RUKnG0FSSChwJ5a7WoN19lgtKLW9wea
+ rg6iJKRx0pwGY+KcETirxeFK+Jz1PFBiiZNdoTHnMJhmnCVIpLCS+A2y0Cznx3BHXH3B5oqmEjj
+ 66t4lBVM
+X-Authority-Analysis: v=2.4 cv=QtNe3Uyd c=1 sm=1 tr=0 ts=689e6433 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=EquB62_POOUgM3g_TNIA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: _Sf7S6Ij0waST6W5barAPpyxPrhMN5Vk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-14_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120224
 
-Dave Jiang wrote:
-> The current implementation of CXL memory hotplug notifier gets called
-> before the HMAT memory hotplug notifier. The CXL driver calculates the
-> access coordinates (bandwidth and latency values) for the CXL end to
-> end path (i.e. CPU to endpoint). When the CXL region is onlined, the CXL
-> memory hotplug notifier writes the access coordinates to the HMAT target
-> structs. Then the HMAT memory hotplug notifier is called and it creates
-> the access coordinates for the node sysfs attributes.
 
-Perhaps summarize quickly here the before and after of sysfs, so people
-know if they are impacted by this bug, and backporters can verify they
-fixed it?
+On 8/14/2025 1:57 PM, Alex Williamson wrote:
+> On Thu, 14 Aug 2025 09:33:47 -0700
+> Farhan Ali <alifm@linux.ibm.com> wrote:
+>
+>> On 8/14/2025 6:12 AM, Niklas Schnelle wrote:
+>>> On Wed, 2025-08-13 at 16:56 -0600, Alex Williamson wrote:
+>>>> On Wed, 13 Aug 2025 14:52:24 -0700
+>>>> Farhan Ali <alifm@linux.ibm.com> wrote:
+>>>>   
+>>>>> On 8/13/2025 1:30 PM, Alex Williamson wrote:
+>>>>>> On Wed, 13 Aug 2025 10:08:19 -0700
+>>>>>> Farhan Ali <alifm@linux.ibm.com> wrote:
+>>>>>>      
+>>>>>>> For zPCI devices we should drive a platform specific function reset
+>>>>>>> as part of VFIO_DEVICE_RESET. This reset is needed recover a zPCI device
+>>>>>>> in error state.
+>>>>>>>
+>>>>>>> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+>>>>>>> ---
+>>>>>>>     arch/s390/pci/pci.c              |  1 +
+>>>>>>>     drivers/vfio/pci/vfio_pci_core.c |  4 ++++
+>>>>>>>     drivers/vfio/pci/vfio_pci_priv.h |  5 ++++
+>>>>>>>     drivers/vfio/pci/vfio_pci_zdev.c | 39 ++++++++++++++++++++++++++++++++
+>>>>>>>     4 files changed, 49 insertions(+)
+>>> --- snip ---
+>>>>>>>     
+>>>>>>> +int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
+>>>>>>> +{
+>>>>>>> +	struct zpci_dev *zdev = to_zpci(vdev->pdev);
+>>>>>>> +	int rc = -EIO;
+>>>>>>> +
+>>>>>>> +	if (!zdev)
+>>>>>>> +		return -ENODEV;
+>>>>>>> +
+>>>>>>> +	/*
+>>>>>>> +	 * If we can't get the zdev->state_lock the device state is
+>>>>>>> +	 * currently undergoing a transition and we bail out - just
+>>>>>>> +	 * the same as if the device's state is not configured at all.
+>>>>>>> +	 */
+>>>>>>> +	if (!mutex_trylock(&zdev->state_lock))
+>>>>>>> +		return rc;
+>>>>>>> +
+>>>>>>> +	/* We can reset only if the function is configured */
+>>>>>>> +	if (zdev->state != ZPCI_FN_STATE_CONFIGURED)
+>>>>>>> +		goto out;
+>>>>>>> +
+>>>>>>> +	rc = zpci_hot_reset_device(zdev);
+>>>>>>> +	if (rc != 0)
+>>>>>>> +		goto out;
+>>>>>>> +
+>>>>>>> +	if (!vdev->pci_saved_state) {
+>>>>>>> +		pci_err(vdev->pdev, "No saved available for the device");
+>>>>>>> +		rc = -EIO;
+>>>>>>> +		goto out;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	pci_dev_lock(vdev->pdev);
+>>>>>>> +	pci_load_saved_state(vdev->pdev, vdev->pci_saved_state);
+>>>>>>> +	pci_restore_state(vdev->pdev);
+>>>>>>> +	pci_dev_unlock(vdev->pdev);
+>>>>>>> +out:
+>>>>>>> +	mutex_unlock(&zdev->state_lock);
+>>>>>>> +	return rc;
+>>>>>>> +}
+>>>>>> This looks like it should be a device or arch specific reset
+>>>>>> implemented in drivers/pci, not vfio.  Thanks,
+>>>>>>
+>>>>>> Alex
+>>>>> Are you suggesting to move this to an arch specific function? One thing
+>>>>> we need to do after the zpci_hot_reset_device, is to correctly restore
+>>>>> the config space of the device. And for vfio-pci bound devices we want
+>>>>> to restore the state of the device to when it was initially opened.
+>>>> We generally rely on the abstraction of pci_reset_function() to select
+>>>> the correct type of reset for a function scope reset.  We've gone to
+>>>> quite a bit of effort to implement all device specific resets and
+>>>> quirks in the PCI core to be re-used across the kernel.
+>>>>
+>>>> Calling zpci_hot_reset_device() directly seems contradictory to those
+>>>> efforts.  Should pci_reset_function() call this universally on s390x
+>>>> rather than providing access to FLR/PM/SBR reset?
+>>>>   
+>>> I agree with you Alex. Still trying to figure out what's needed for
+>>> this. We already do zpci_hot_reset_device() in reset_slot() from the
+>>> s390_pci_hpc.c hotplug slot driver and that does get called via
+>>> pci_reset_hotplug_slot() and pci_reset_function(). There are a few
+>>> problems though that meant it didn't work for Farhan but I agree maybe
+>>> we can fix them for the general case. For one pci_reset_function()
+>>> via DEVICE_RESET first tries FLR but that won't work with the device in
+>>> the error state and MMIO blocked. Sadly __pci_reset_function_locked()
+>>> then concludes that other resets also won't work. So that's something
+>>> we might want to improve in general, for example maybe we need
+>>> something more like pci_dev_acpi_reset() with higher priority than FLR.
+>> Yeah I did think of adding something like s390x CLP reset as part of the
+>> reset methods. AFAIU the s390x CLP reset is similar to ACPI _RST. But
+>> that would introduce s390x specific code in pci core common code.
+>>
+>>> Now for pci_reset_hotplug_slot() via VFIO_DEVICE_PCI_HOT_RESET I'm not
+>>> sure why that won't work as is. @Farhan do you know?
+>> VFIO_DEVICE_PCI_HOT_RESET would have been sufficient interface for
+>> majority of PCI devices on s390x as that would drive a bus reset. It was
+>> sufficient as most devices were single bus devices. But in the latest
+>> generation of machines (z17) we expose true SR-IOV and an OS can have
+>> access to both PF and VFs and so these are on the same bus and can have
+>> different ownership based on what is bound to vfio-pci.
+>>
+>> My thinking for extending VFIO_DEVICE_RESET is because AFAIU its a per
+>> function reset mechanism, which maps well with what our architecture
+>> provides. On s390x we can drive a per function reset (via firmware)
+>> through the CLP instruction driven by the zpci_hot_reset_device(). And
+>> doing it as vfio zpci specific function would confine the s390x logic.
+>>
+>>>>    Why is it
+>>>> universally correct here given the ioctl previously made use of
+>>>> standard reset mechanisms?
+>>>>
+>>>> The DEVICE_RESET ioctl is simply an in-place reset of the device,
+>>>> without restoring the original device state.  So we're also subtly
+>>>> changing that behavior here, presumably because we're targeting the
+>>>> specific error recovery case.  Have you considered how this might
+>>>> break non-error-recovery use cases?
+>>>>
+>>>> I wonder if we want a different reset mechanism for this use case
+>>>> rather than these subtle semantic changes.
+>>> I think an alternative to that, which Farhan actually had in the
+>>> previous internal version, is to implement
+>>> pci_error_handlers::reset_done() and do the pci_load_saved_state()
+>>> there. That would only affect the error recovery case leaving other
+>>> cases alone.
+>>>
+>>>
+>>> Thanks,
+>>> Niklas
+>> The reason I abandoned reset_done() callback idea is because its not
+>> sufficient to recover the device correctly. Today before driving a reset
+>> we save the state of the device. When a device is in error state, any
+>> pci load/store (on s390x they are actual instructions :)) to config
+>> space would return an error value (0xffffffff). We don't have any checks
+>> in pci_save_state to prevent storing error values. And after a reset
+>> when we try to restore the config space (pci_dev_restore) we try to
+>> write the error value and this can be problematic. By the time the
+>> reset_done() callback is invoked, its already too late.
+> It's too late because we've re-written the error value back to config
+> space and as a result the device is broken?
+>
+>
+Yes, exactly.
 
-> The original intent of the 'ext_updated' flag in HMAT handling code was to
-> stop HMAT memory hotplug callback from clobbering the access coordinates
-> after CXL has injected its calculated coordinates and replaced the generic
-> target access coordinates provided by the HMAT table in the HMAT target
-> structs. However the flag is hacky at best and blocks the updates from
-> other CXL regions that are onlined in the same node later on. Remove the
-> 'ext_updated' flag usage and just update the access coordinates for the
-> nodes directly without touching HMAT target data.
-> 
-> The hotplug memory callback ordering is changed. Instead of changing CXL,
-> move HMAT back so there's room for the levels rather than have CXL share
-> the same level as SLAB_CALLBACK_PRI. The change will resulting in the CXL
-> callback to be executed after the HMAT callback.
-> 
-> With the change, the CXL hotplug memory notifier runs after the HMAT
-> callback. The HMAT callback will create the node sysfs attributes for
-> access coordinates. The CXL callback will write the access coordinates to
-> the now created node sysfs attributes directly and will not pollute the
-> HMAT target values.
-> 
-> Fixes: debdce20c4f2 ("cxl/region: Deal with numa nodes not enumerated by SRAT")
+>   What if
+> pci_restore_state() were a little smarter to detect that it has bad
+> read data from pci_save_state() and only restores state based on kernel
+> data?  Would that leave the device in a functional state that
+> reset_done() could restore the original saved state and push it out to
+> the device?
 
-Why that one and not?
+Yeah I think this could work. I can try something like this.
 
-067353a46d8c cxl/region: Add memory hotplug notifier for cxl region
+>> @Alex,
+>> I am open to ideas/suggestions on this. Do we think we need a separate
+>> VFIO ioctl to drive this or a new reset mechanism as Niklas suggested?
+> Unfortunately I was short sighted on VFIO_DEVICE_RESET and it's the one
+> ioctl that doesn't have any flags, so it's not very extensible.
+>
+> Can we do more of the above, ie. enlighten the FLR/PM reset callbacks to
+> return -ENOTTY if the device is in an error state and config space is
+> returning -1 such that we fall through to a slot reset that doesn't
+> care how broken the device is and you auto-magically get the zpci
+> function you want?  Follow-up with pushing the original state in
+> reset_done()?  Thanks,
+>
+> Alex
+>
+Yeah I can do that. I think adding some validation checks to the FLR/PM 
+callbacks wouldn't be a bad idea if its acceptable for PCI maintainers.
 
-It is the ext_updated machinery that is the main problem that messes up
-sysfs, right?
+If you are okay with a reset_done() callback, I will try to incorporate 
+your suggestions and spin a new series.
 
-...and per the backport concern this should be cc: stable as well.
+Thanks
+Farhan
 
-Other than that you can add:
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
