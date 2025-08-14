@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-768821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5F4B265E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:51:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB7DB26573
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C361899A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:50:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92BA04E3454
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9512D2FC87F;
-	Thu, 14 Aug 2025 12:49:05 +0000 (UTC)
-Received: from mail-m32117.qiye.163.com (mail-m32117.qiye.163.com [220.197.32.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF47F2F290A;
+	Thu, 14 Aug 2025 12:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lejqI9kt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544D02F99B5;
-	Thu, 14 Aug 2025 12:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2296C17B50A;
+	Thu, 14 Aug 2025 12:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175745; cv=none; b=IfRcOtbJVABnXp973r2hDjSv9CCs7nrzP4nsF0hEkirfKC0V2GLjWHPllX9KqPq/lkNNqwa11NcsU24rWMRDnzTHdfhibSc0p1PXKBLebHsh9oql1EEa7Ftz5Saq6olGDrzZGknnt7P37sIwfhBDy28tFb1m2RDs8R3kxQmvzzs=
+	t=1755174884; cv=none; b=mPnTZZ8mW+3PIWi3nWiigOZ59496R9NhtzAl7aREFRXT2Xm1iiFoHlLUay2j2EGzpwAcGv6HZVB77mOWGMNq+ZMNk7QWex0Sr1E2UbbirjrfD75PKcqdkm/CPJPdv+5Lbb6kRv2kth0l/bFFHoRNRUPSkHSbyfGFupTqJ+KuyFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175745; c=relaxed/simple;
-	bh=HZXTqrMNKlFg3UlZn0yyHm1+KqoxMpzwhmq/LswL8XU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eKx08Dcrc9dnBCIDIfcitiRzQET6lSzruxvWzQQ6UFXWahvLdvesqTDkLf+ecpXlcVm+pbBCukodeQoCxGptfaJlnCsByi3s8i93CZUCbaSMsGfbmM4vzTZ/WrFdRk0chlor0LMfQX6ZknEK3xWaceuQMn1VsAhjplfUDq1oDdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id ea2a95ec;
-	Thu, 14 Aug 2025 20:33:33 +0800 (GMT+08:00)
-From: Zhen Ni <zhen.ni@easystack.cn>
-To: daniel.lezcano@linaro.org,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Zhen Ni <zhen.ni@easystack.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] clocksource: clps711x: Fix resource leaks in error paths
-Date: Thu, 14 Aug 2025 20:33:24 +0800
-Message-Id: <20250814123324.1516495-1-zhen.ni@easystack.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250804123619.78282-1-zhen.ni@easystack.cn>
-References: <20250804123619.78282-1-zhen.ni@easystack.cn>
+	s=arc-20240116; t=1755174884; c=relaxed/simple;
+	bh=0VrAhuKLaVyb61WaZNhMiNNuBwVKngCyRJ/V5YN1iC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIFk+pjn5z4wxYjFYgYIPNIoolre70Z+wlgEW5ppcVl+BZhvLKnC240m0vBeIg2fXFhby16jWzW6AIYdFFgAFXS4XiGYIDhR50hhbvHQbtC+G+8gqpEt3FkztQNKXEyZn+eID+AdGZMYJbm2UQ7L/7vip1e/Pvo/d5Bw5HKnPCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lejqI9kt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D3BAC4CEED;
+	Thu, 14 Aug 2025 12:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755174883;
+	bh=0VrAhuKLaVyb61WaZNhMiNNuBwVKngCyRJ/V5YN1iC0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lejqI9kt2PAkvbRwc5AaugS5uDQA2HkPjMWYuMxXxEtFScLJzoUrTAQiqwJuBngFF
+	 lLVzwCltFh5qjf9/KX4a0w+Sd+CXsOL3dY2pq8juPi2E6gQCSO/IITqhxc4bDcm+lH
+	 8QgRcYEOPQh+19yrMj/gVX86hJADE2bn2LEjQyWQ6nat4FwWDtgEC+ImWeOeg0RIOv
+	 xTMKM0VOPQ/0ZiGH9lMcnz8b3Pkkhx77rG4nglx2PjjBfXqhZlyDrPZM0Jf/jg0+TB
+	 OJVeXwcsSpUAbZV42yDHMIFVThhRELGqvDhNvndpfzRPfYp23OfRcFlHVyDeB0ZrXs
+	 Nt2ds8u/ocxAA==
+Date: Thu, 14 Aug 2025 13:34:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Santhosh Kumar K <s-k6@ti.com>
+Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	tudor.ambarus@linaro.org, pratyush@kernel.org, mwalle@kernel.org,
+	p-mantena@ti.com, linux-spi@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	a-dutta@ti.com, u-kumar1@ti.com, praneeth@ti.com
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+Message-ID: <2f051eae-61c7-4bff-9f85-cf37b02a7ea3@sirena.org.uk>
+References: <20250811193219.731851-1-s-k6@ti.com>
+ <20250811193219.731851-2-s-k6@ti.com>
+ <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
+ <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98a8923e020229kunm667a5e1267a246
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHRhPVkhNTR9NQk1KGRlMSFYVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hsVsvyCGymldcnqG"
+Content-Disposition: inline
+In-Reply-To: <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
+X-Cookie: This sentence no verb.
 
-The current implementation of clps711x_timer_init() has multiple error
-paths that directly return without releasing the base I/O memory mapped
-via of_iomap(). Fix of_iomap leaks in error paths.
 
-Fixes: 04410efbb6bc ("clocksource/drivers/clps711x: Convert init function to return error")
-Fixes: 2a6a8e2d9004 ("clocksource/drivers/clps711x: Remove board support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
----
-changes in v3:
-- Change "err" to "error" in the commit message.
-changes in v2:
-- Add tags of 'Fixes' and 'Cc'
-- Reduce detailed enumeration of err paths
-- Omit a pointer check before iounmap()
-- Change goto target from out to unmap_io
----
- drivers/clocksource/clps711x-timer.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+--hsVsvyCGymldcnqG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clocksource/clps711x-timer.c b/drivers/clocksource/clps711x-timer.c
-index e95fdc49c226..bbceb0289d45 100644
---- a/drivers/clocksource/clps711x-timer.c
-+++ b/drivers/clocksource/clps711x-timer.c
-@@ -78,24 +78,33 @@ static int __init clps711x_timer_init(struct device_node *np)
- 	unsigned int irq = irq_of_parse_and_map(np, 0);
- 	struct clk *clock = of_clk_get(np, 0);
- 	void __iomem *base = of_iomap(np, 0);
-+	int ret = 0;
- 
- 	if (!base)
- 		return -ENOMEM;
--	if (!irq)
--		return -EINVAL;
--	if (IS_ERR(clock))
--		return PTR_ERR(clock);
-+	if (!irq) {
-+		ret = -EINVAL;
-+		goto unmap_io;
-+	}
-+	if (IS_ERR(clock)) {
-+		ret = PTR_ERR(clock);
-+		goto unmap_io;
-+	}
- 
- 	switch (of_alias_get_id(np, "timer")) {
- 	case CLPS711X_CLKSRC_CLOCKSOURCE:
- 		clps711x_clksrc_init(clock, base);
- 		break;
- 	case CLPS711X_CLKSRC_CLOCKEVENT:
--		return _clps711x_clkevt_init(clock, base, irq);
-+		ret =  _clps711x_clkevt_init(clock, base, irq);
-+		break;
- 	default:
--		return -EINVAL;
-+		ret = -EINVAL;
-+		break;
- 	}
- 
--	return 0;
-+unmap_io:
-+	iounmap(base);
-+	return ret;
- }
- TIMER_OF_DECLARE(clps711x, "cirrus,ep7209-timer", clps711x_timer_init);
--- 
-2.20.1
+On Thu, Aug 14, 2025 at 05:04:33PM +0530, Santhosh Kumar K wrote:
+> On 14/08/25 01:56, Mark Brown wrote:
 
+> > Should we have something that blocks these tuning required modes without
+> > the appropriate tuning, and/or allows discovery of which modes require
+> > this tuning?  This all feels very landmineish - client drivers just have
+> > to know when tuning is required.
+
+> The flash's maximum operating frequency determines whether PHY tuning is
+> required, as we need tuning in case of Cadence controller for frequencies
+> over 50 MHz.
+
+That's entirely specific to the Candence controller from the sounds of
+it, that makes it hard to write a client driver if you need to know
+exactly what the controller you're dealing with is and what it's
+requirements are.
+
+> And we do check for this condition - see Patch 07/10,
+> cqspi_phy_op_eligible_sdr(), which currently verifies the flash frequency
+> against 166 MHz. This logic can be improved by implementing both min and max
+> frequency checks, will update in the following version.
+
+I can't actually tell how that verifies if the tuning has been done
+appropriately TBH, at least not without more effort than I'd care to
+(and the tuning only gets added in patch 10?).
+
+--hsVsvyCGymldcnqG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmid190ACgkQJNaLcl1U
+h9BuIAf9HOg6LtPbsCspgF6wLQokIeC1xc/j87GykKnreWyld/ZIRyHTDhWa+kJl
+KxWpWUNF/Nu1JT9nAnx03BTvx7fTOt+WKScIJg1kZFnWRHoULMQ0tEoYxEGMPUVG
+TnXuBDDrb+AfwJdR5w112Z0ixw8yTVk8cNFnAEfCAUoxkpxXnesWYjoTV3GhztRQ
+LTWxBj+EWthPRgIz0SnZFC0o54u+iJ9n5hkb7YiAVJ2A+O/XvcYogdXmulGWlvLl
+g5Ec19gMjIo0LwIc6h9MDc/fFNnUDkSHSvd2t9g6DhjCMf+/Y+phV3v3AHYRlKhC
+GYTzuHHYpdWrQbl/1JO/bw31IFhtcA==
+=1D0X
+-----END PGP SIGNATURE-----
+
+--hsVsvyCGymldcnqG--
 
