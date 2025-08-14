@@ -1,115 +1,83 @@
-Return-Path: <linux-kernel+bounces-768348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A604B26012
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC58BB2602F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B8C5C6005
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C93B3BAD65
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B18303CB4;
-	Thu, 14 Aug 2025 08:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04952F5481;
+	Thu, 14 Aug 2025 08:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8S5mRfH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPSIh2Ku"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC422FE045;
-	Thu, 14 Aug 2025 08:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115E2EAB9F;
+	Thu, 14 Aug 2025 08:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161846; cv=none; b=d/Km1WBuyGX7doEKdfRIfvxjiN4gdNRVMkWMZL+gcLhPTR07kpdj2RVyFIQDPeXW+DkMg3ALxPuAmCiSeHWV4Gwt87MJbY2IjBZ7ZnS8uv8N27le1bLcRe5RVoI/sTtIVzpQHfUrJ0wtvzV8V5Xn4cWJrx5Cl7gtbuXK3i81faM=
+	t=1755161899; cv=none; b=Yg3DEK/izOAKAo9/PtwFrnZaT3jKAKvDhwW4VzwQx6CJCW3HGamGt+ycjvhqhUmCNaLYw34cVWFZvBrvzQUSJwkCoRKNu9WayrD0VaqXKUTgxwLlkplKcaQl2DLOJl2CWCilLMBB9eqf58o3HN/UnJZeWIIu6lYOwkSNsYPP6cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161846; c=relaxed/simple;
-	bh=DSLa9aPeM077q6gvw6PURI/pH8PombVAOR3qpaCktpg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uGAP6YBqnUpVc6/LYLV1u1GXV/Glsicrw5oYTqfRUAXR6FAxpG6bdXvX7TPUQshG8KUmSacn9wII59ofOfFUcmWmShVC97eG25V0i7BXzl8pLLm79uFV0klEUOQWfCDYE6OCJyprDHEmamiiC4X2h7wA8RnA7T0VCoFczB+JlVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8S5mRfH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0175FC4CEFD;
-	Thu, 14 Aug 2025 08:57:26 +0000 (UTC)
+	s=arc-20240116; t=1755161899; c=relaxed/simple;
+	bh=GuL1Hse2Ki00iXfGuSOwPw/XtYWtBN7xjmr/UregXvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBGcI9lOprYmYss0lfGXfTKsvJ7D1sgylzMGdlcwei0fs1xnS9NRSBYljp3d5DmcRBW9HdNd9WdFhQssXfpqHnANCCgLtpvWMADNqprhq+9HAyLUyxorU4wio+NNoJJKPRi9m5vh9pKjT+P7ESEyFgdzgYfZ22qwqtkQLbpwFMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPSIh2Ku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44569C4CEED;
+	Thu, 14 Aug 2025 08:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755161846;
-	bh=DSLa9aPeM077q6gvw6PURI/pH8PombVAOR3qpaCktpg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=L8S5mRfHeonEuGRYXrJFdUwE1Q7xSAoe4OghYO/AkpJOykpJZ3RR3WPkIAuHYhwc3
-	 wWFRYi8aDW6AitSU2GaKQOcV+FGzYZixrpQlhCyNEKaymz50Xx7IGP6PbjzWphwxYh
-	 WqvEMuiSdaEzh7sSSplVMzDeeSOKSGMs1jVdRL9WV4JuRqVOdNfsTC6AEnm14BuCg3
-	 h3Lxb6Iddq9ffklAFieU1DOZ40z+poz05VapJkVZh2pWJJRJ8y+iIt+jlCLQ7SBEcr
-	 o+rJeEnOEunzQg8zqFeWqijPhf9axpxVM2O4KUudU7IVV8m0/UKhG4zXrorkq7sZr6
-	 HC4NeRI0XNxRg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE93CA0EE8;
-	Thu, 14 Aug 2025 08:57:25 +0000 (UTC)
-From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Date: Thu, 14 Aug 2025 08:57:23 +0000
-Subject: [PATCH v4 9/9] MAINTAINERS: add entry for inv_icm45600 6-axis imu
- sensor
+	s=k20201202; t=1755161897;
+	bh=GuL1Hse2Ki00iXfGuSOwPw/XtYWtBN7xjmr/UregXvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rPSIh2KuNhmXneqY9TqE16P/N2RZMKYjt2h0b4AoLN9uuoU8iosTCRdrcQXqryaN7
+	 2f8lJzPNVNe8WclayI1eRlcif8y1J1Ip/r4zXyefQE+4Q5c37ZOyZ4lkpSVkFwSiLa
+	 DvJUnkyHCxmQ7qZxUyRqSsUK2JJbLeA9aQIL1qTvWhPOvlwflLyurfZBP6ECXPDa8Q
+	 nUuZx+LlAmuyBclwOJpnkglt5BzL8eCz1+5yjApYgth+a0MW/JGGWYL6kKzfqWYGT2
+	 iHwgicg5ksQJNfkxeAEESLZeqknyQP9JlEUjGIzO5kp+KLJ81O5pmXsUtEdF1kYFcS
+	 S2DP32bXYTQ8g==
+Date: Thu, 14 Aug 2025 10:58:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: input: Add bindings for Awinic
+ AW86927
+Message-ID: <20250814-towering-rough-raptor-f4dc2d@kuoka>
+References: <20250811-aw86927-v2-0-64be8f3da560@fairphone.com>
+ <20250811-aw86927-v2-1-64be8f3da560@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-add_newport_driver-v4-9-4464b6600972@tdk.com>
-References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
-In-Reply-To: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755161842; l=945;
- i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
- bh=8YxNmTOrgJXwqprkXECUw3/UJ3Lll4HOZd/QYkpH/Pw=;
- b=PnHrPRyoGlz9PBwE30dXa9D/cZTopUEHxiJM1dzIZEcevILmolfkMtzgXy/qoJZKRFnpYOOXq
- ao05Ai3Gm2kDJUdggm1zcgIBO1WlNYMtR8RV20VKSloZUCufwd5kNkx
-X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
- pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
-X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
- auth_id=372
-X-Original-From: Remi Buisson <remi.buisson@tdk.com>
-Reply-To: remi.buisson@tdk.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250811-aw86927-v2-1-64be8f3da560@fairphone.com>
 
-From: Remi Buisson <remi.buisson@tdk.com>
+On Mon, Aug 11, 2025 at 01:12:01PM +0200, Griffin Kroah-Hartman wrote:
+> Add bindings for the Awinic AW86927 haptic chip which can be found in
+> smartphones.
 
-Add MAINTAINERS entry for InvenSense ICM-45600 IMU device.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+If you are going to send new version, then also:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e3b0109a23045926d6a7e9659afdab0a6dbf7bed..c4aa2102ef398130074d20dd5b9367ce3fa51968 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12621,6 +12621,14 @@ F:	Documentation/ABI/testing/sysfs-bus-iio-inv_icm42600
- F:	Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
- F:	drivers/iio/imu/inv_icm42600/
- 
-+INVENSENSE ICM-456xx IMU DRIVER
-+M:	Remi Buisson <remi.buisson@tdk.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+W:	https://invensense.tdk.com/
-+F:	Documentation/devicetree/bindings/iio/imu/invensense,icm45600.yaml
-+F:	drivers/iio/imu/inv_icm45600/
-+
- INVENSENSE MPU-3050 GYROSCOPE DRIVER
- M:	Linus Walleij <linus.walleij@linaro.org>
- L:	linux-iio@vger.kernel.org
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
 
