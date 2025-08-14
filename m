@@ -1,244 +1,325 @@
-Return-Path: <linux-kernel+bounces-767856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA54B259E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:31:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD81B259CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508A7189BCD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:30:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E846E7AA255
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A919E230BD2;
-	Thu, 14 Aug 2025 03:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01B7257424;
+	Thu, 14 Aug 2025 03:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="LKJggS/W"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XGivc6y7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F8C3C33
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5302FF65E;
+	Thu, 14 Aug 2025 03:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755142179; cv=none; b=KUU3VeMPkJ6D89a5ICQ3VFhTfDPtoxSIBtJlmT6Tj6XfmV2tQJaqBYddSnx9fYEn79Jr1iknMjy4W+IFQhftnHh1RAbF21xcUItytkIrncP1dPjFupbuFQP220kfioz2vEOY8eZeFS2r89c/EaKOpc/tzfMcTRaxxdmzx1CU7Pw=
+	t=1755141851; cv=none; b=nrZjGEKu6ViZz4rbIf38oq+yht5fBwBWCi7SbwucL+/2PyxlJHkneT6apUQIdXT0vjRoNjNGGwc6T6Ujx3EvyAX6QY2Lv7bZjb3gpG2vdd3iWNyLwzO+r8MN8yWtDEQ7SMh/Lm8bG/T2p+5Lb9RJQGHCtwptrHhMDPPGv5hFXcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755142179; c=relaxed/simple;
-	bh=Euf7RGfdcRTByFbTluvA/RIw6+MZ44J8dHtq9uOZQdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=noW2oqBtQk4V8UM/1sgKH1JYXB6efNymmvHBHMVvsMrPd0gnx/mDI/RyxwzwZCM/Wa+ASDP1QomTtY+SYpGjujrX4DToKxys364oImitcip9IXHraJJkBxnYMux+9T/OOfVlZUd/GnrhBxj1tb1F29lIDOQRUxTNL0wxGBlTtc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=LKJggS/W; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 5C8BE223BF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:22:26 +0000 (UTC)
-Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 8F4DA200AF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:22:17 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay2.mymailcheap.com (Postfix) with ESMTPS id E06F03E891;
-	Thu, 14 Aug 2025 03:22:09 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id A006240086;
-	Thu, 14 Aug 2025 03:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1755141728; bh=Euf7RGfdcRTByFbTluvA/RIw6+MZ44J8dHtq9uOZQdI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LKJggS/WzySivrjP27Hzljd0PMhw8AlnDl04Vq+4nCkQ/e85ipxJFnQeVDppiGw8R
-	 m547Mh1ywTjS29poQpJpjbE/jBzTjX1pUFrYAyNDTQRP0XjkYwuRcJodA0qBBN7NeM
-	 WY6qEbAztAXET33Cf/JCHgBiZ9ZeQa30/hhm6BB4=
-Received: from JellyZhongke (unknown [223.76.243.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 1BB034069D;
-	Thu, 14 Aug 2025 03:22:02 +0000 (UTC)
-From: Mingcong Bai <jeffbai@aosc.io>
-To: linux-kernel@vger.kernel.org
-Cc: Wentao Guan <guanwentao@uniontech.com>,
-	WangYuli <wangyuli@uniontech.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Zhang Yuhao <xinmu@xinmu.moe>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [RFC PATCH] drm/amdkfd: disable HSA_AMD_SVM on LoongArch and AArch64
-Date: Thu, 14 Aug 2025 11:21:36 +0800
-Message-ID: <20250814032153.227285-1-jeffbai@aosc.io>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755141851; c=relaxed/simple;
+	bh=4THZIfgDYIgbaBQu5Q+kcCrH/ehvQ/jbsk2mCLf/DMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mCyQdTlQ0t4pI2pxUcKKAEmk04HCHqKHVtHsyWX8vESLS39QkQZeNCIIvLQenwbIAmr+f9w46AibcqdeYQQ5o/JXY8Qi6riI4ee8IZTePf6aW4UDWk5aI4aMHvssxsybBOjI7mTXYnQqnwRenOl/CAvduVR2AHzZCAis3tO0plM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XGivc6y7; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755141849; x=1786677849;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4THZIfgDYIgbaBQu5Q+kcCrH/ehvQ/jbsk2mCLf/DMs=;
+  b=XGivc6y7tcr7Pz0AsNm1giPmgYIqg+/CbEeHm8Gm0UU4W35hIOpzZVv4
+   d3gkJWeqm/rARnhX/6ztSQzH0sbu1BxHj61c2nxVAxEGXCSElPJH7VuO3
+   KZ2bG35nI3WKZbMujnmhCnKjJDAPVDq188nApysm24bwurdF0d+k6ppOA
+   pRUYMXM+4+/l18vUS+ELIUrJstJd+YLJhPsJd0gDy25c1e4UcRIRjhfrh
+   XK2weO62HoxCpNpF/zBIHD+I08L7VtRDm19lJ/E2PxO+27tp01iTTpeTl
+   GU8c+Snq9XCufdtBQNpKNExP0BQ37n9pop4fhJkOUwfALEPBUo8uDgaDU
+   Q==;
+X-CSE-ConnectionGUID: 3RLcp5VWTGyiMFk+jhb8hQ==
+X-CSE-MsgGUID: LP4v0Q4jSzKqNGAhPXT1PQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61254329"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="61254329"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 20:24:08 -0700
+X-CSE-ConnectionGUID: rGuHvHPrS8evz3mw/+y8EA==
+X-CSE-MsgGUID: sG/OWt6STeeHP++lKhPLEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="167447816"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 20:24:04 -0700
+Message-ID: <6aa15d1d-b67a-4c94-b6f0-674531ba7a63@linux.intel.com>
+Date: Thu, 14 Aug 2025 11:24:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [1.40 / 10.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,xinmu.xinmu.moe:server fail];
-	FREEMAIL_CC(0.00)[uniontech.com,kernel.org,aosc.io,xinmu.moe,amd.com,gmail.com,ffwll.ch,lists.freedesktop.org];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A006240086
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 11/30] KVM: selftests: TDX: Adding test case for TDX
+ port IO
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-12-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807201628.1185915-12-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-While testing my ROCm port for LoongArch and AArch64 (patches pending) on
-the following platforms:
 
-- LoongArch ...
-  - Loongson AC612A0_V1.1 (Loongson 3C6000/S) + AMD Radeon RX 6800
-- AArch64 ...
-  - FD30M51 (Phytium FT-D3000) + AMD Radeon RX 7600
-  - Huawei D920S10 (Huawei Kunpeng 920) + AMD Radeon RX 7600
 
-When HSA_AMD_SVM is enabled, amdgpu would fail to initialise at all on
-LoongArch (no output):
+On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+> Verifies TDVMCALL<INSTRUCTION.IO> READ and WRITE operations.
+>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   .../selftests/kvm/include/x86/tdx/test_util.h | 20 +++++
+>   .../selftests/kvm/lib/x86/tdx/test_util.c     | 35 +++++++++
+>   tools/testing/selftests/kvm/x86/tdx_vm_test.c | 78 ++++++++++++++++++-
+>   3 files changed, 130 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> index dafeee9af1dc..cf11955d56d6 100644
+> --- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> @@ -13,6 +13,19 @@
+>   #define PORT_READ	0
+>   #define PORT_WRITE	1
+>   
+> +/*
+> + * Assert that some IO operation involving tdg_vp_vmcall_instruction_io() was
+> + * called in the guest.
+> + */
+> +void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
+> +			uint8_t direction);
+> +
+> +/*
+> + * Run the tdx vcpu and check if there was some failure in the guest, either
+> + * an exception like a triple fault,
 
-  amdgpu 0000:0d:00.0: amdgpu: kiq ring mec 2 pipe 1 q 0
-  CPU 0 Unable to handle kernel paging request at virtual address ffffffffff800034, era == 9000000001058044, ra == 9000000001058660
-  Oops[#1]:
-  CPU: 0 UID: 0 PID: 202 Comm: kworker/0:3 Not tainted 6.16.0+ #103 PREEMPT(full)
-  Hardware name: To be filled by O.E.M.To be fill To be filled by O.E.M.To be fill/To be filled by O.E.M.To be fill, BIOS Loongson-UDK2018-V4.0.
-  Workqueue: events work_for_cpu_fn
-  pc 9000000001058044 ra 9000000001058660 tp 9000000101500000 sp 9000000101503aa0
-  a0 ffffffffff800000 a1 0000000ffffe0000 a2 0000000000000000 a3 90000001207c58e0
-  a4 9000000001a4c310 a5 0000000000000001 a6 0000000000000000 a7 0000000000000001
-  t0 000003ffff800000 t1 0000000000000001 t2 0000040000000000 t3 03ffff0000002000
-  t4 0000000000000000 t5 0001010101010101 t6 ffff800000000000 t7 0001000000000000
-  t8 000000000000002f u0 0000000000800000 s9 9000000002026000 s0 90000001207c58e0
-  s1 0000000000000001 s2 9000000001935c40 s3 0000001000000000 s4 0000000000000001
-  s5 0000000ffffe0000 s6 0000000000000040 s7 0001000000000001 s8 0001000000000000
-     ra: 9000000001058660 memmap_init_zone_device+0x120/0x1b0
-    ERA: 9000000001058044 __init_zone_device_page.constprop.0+0x4/0x1a0
-   CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-   PRMD: 00000004 (PPLV0 +PIE -PWE)
-   EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-   ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
-  ESTAT: 00020000 [PIS] (IS= ECode=2 EsubCode=0)
-   BADV: ffffffffff800034
-   PRID: 0014d010 (Loongson-64bit, Loongson-3C6000/S)
-  Modules linked in: amdgpu(+) vfat fat cfg80211 rfkill 8021q garp stp mrp llc snd_hda_codec_atihdmi snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic drm_client_lib drm_ttm_helper syscopyarea ttm sysfillrect sysimgblt fb_sys_fops drm_panel_backlight_quirks video drm_exec drm_suballoc_helper amdxcp mfd_core drm_buddy gpu_sched drm_display_helper drm_kms_helper cec snd_hda_intel ipmi_ssif snd_intel_dspcfg snd_hda_codec snd_hda_core acpi_ipmi snd_hwdep snd_pcm fb loongson3_cpufreq lcd igc snd_timer ipmi_si spi_loongson_pci spi_loongson_core snd ipmi_devintf soundcore ipmi_msghandler binfmt_misc fuse drm drm_panel_orientation_quirks backlight dm_mod dax nfnetlink
-  Process kworker/0:3 (pid: 202, threadinfo=00000000eb7cd5d6, task=000000004ca22b1b)
-  Stack : 0000000000001440 0000000000000000 ffffffffff800000 0000000000000001
-          90000000020b5978 9000000101503b38 0000000000000001 0000000000000001
-          0000000000000000 90000000020b5978 90000000020b3f48 0000000000001440
-          0000000000000000 90000001207c58e0 90000001207c5970 9000000000575e20
-          90000000010e2e00 90000000020b3f48 900000000205c238 0000000000000000
-          00000000000001d3 90000001207c58e0 9000000001958f28 9000000120790848
-          90000001207b3510 0000000000000000 9000000120780000 9000000120780010
-          90000001207d6000 90000001207c58e0 90000001015660c8 9000000120780000
-          0000000000000000 90000000005763a8 90000001207c58e0 00000003ff000000
-          9000000120780000 ffff80000296b820 900000012078f968 90000001207c6000
-          ...
-  Call Trace:
-  [<9000000001058044>] __init_zone_device_page.constprop.0+0x4/0x1a0
-  [<900000000105865c>] memmap_init_zone_device+0x11c/0x1b0
-  [<9000000000575e1c>] memremap_pages+0x24c/0x7b0
-  [<90000000005763a4>] devm_memremap_pages+0x24/0x80
-  [<ffff80000296b81c>] kgd2kfd_init_zone_device+0x11c/0x220 [amdgpu]
-  [<ffff80000265d09c>] amdgpu_device_init+0x27dc/0x2bf0 [amdgpu]
-  [<ffff80000265ece8>] amdgpu_driver_load_kms+0x18/0x90 [amdgpu]
-  [<ffff800002651fbc>] amdgpu_pci_probe+0x22c/0x890 [amdgpu]
-  [<9000000000916adc>] local_pci_probe+0x3c/0xb0
-  [<90000000002976c8>] work_for_cpu_fn+0x18/0x30
-  [<900000000029aeb4>] process_one_work+0x164/0x320
-  [<900000000029b96c>] worker_thread+0x37c/0x4a0
-  [<90000000002a695c>] kthread+0x12c/0x220
-  [<9000000001055b64>] ret_from_kernel_thread+0x24/0xc0
-  [<9000000000237524>] ret_from_kernel_thread_asm+0xc/0x88
+Only "KVM_EXIT_SYSTEM_EVENT" is checked in the implementation.
 
-  Code: 00000000  00000000  0280040d <2980d08d> 02bffc0e  2980c08e  02c0208d  29c0208d  1400004f
+> or if a tdx_test_fatal() was hit.
+> + */
+> +void tdx_run(struct kvm_vcpu *vcpu);
+> +
+>   /*
+>    * Run a test in a new process.
+>    *
+> @@ -57,4 +70,11 @@ void tdx_test_fatal(uint64_t error_code);
+>    */
+>   void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
+>   
+> +/*
+> + * Assert on @error and report the @error to userspace.
+> + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since execution
+> + * is not expected to continue beyond this point.
+> + */
+> +void tdx_assert_error(uint64_t error);
+> +
+>   #endif // SELFTEST_TDX_TEST_UTIL_H
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> index 6c82a0c3bd37..4ccc5298ba25 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> @@ -8,8 +8,37 @@
+>   
+>   #include "kvm_util.h"
+>   #include "tdx/tdx.h"
+> +#include "tdx/tdx_util.h"
+>   #include "tdx/test_util.h"
+>   
+> +void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
+> +			uint8_t direction)
+> +{
+> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO,
+> +		    "Got exit_reason other than KVM_EXIT_IO: %u (%s)\n",
+> +		    vcpu->run->exit_reason,
+> +		    exit_reason_str(vcpu->run->exit_reason));
+> +
+> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO &&
 
-  ---[ end trace 0000000000000000 ]---
+KVM_EXIT_IO has been checked above already.
 
-Or lock up and/or driver reset during computate tasks, such as when
-running llama.cpp over ROCm, at which point the compute process must be
-killed before the reset could complete:
 
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  amdgpu 0000:0a:00.0: amdgpu: failed to remove hardware queue from MES, doorbell=0x1202
-  amdgpu 0000:0a:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
-  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 3
-  amdgpu 0000:0a:00.0: amdgpu: GPU reset begin!
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  amdgpu 0000:0a:00.0: amdgpu: failed to remove hardware queue from MES, doorbell=0x1004
-  amdgpu 0000:0a:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
-  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 2
-  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 1
-  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 0
-  amdgpu: Failed to quiesce KFD
-  amdgpu 0000:0a:00.0: amdgpu: Dumping IP State
-  amdgpu 0000:0a:00.0: amdgpu: Dumping IP State Completed
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-  amdgpu 0000:0a:00.0: amdgpu: MODE1 reset
-  amdgpu 0000:0a:00.0: amdgpu: GPU mode1 reset
-  amdgpu 0000:0a:00.0: amdgpu: GPU smu mode1 reset
-  amdgpu 0000:0a:00.0: amdgpu: GPU reset succeeded, trying to resume
+> +		    vcpu->run->io.port == port &&
+> +		    vcpu->run->io.size == size &&
+> +		    vcpu->run->io.direction == direction,
+> +		    "Got unexpected IO exit values: %u (%s) %u %u %u\n",
+> +		    vcpu->run->exit_reason,
+> +		    exit_reason_str(vcpu->run->exit_reason),
 
-Disabling the aforementioned option makes the issue go away, though it is
-unclear whether this is a platform-specific issue or one that lies within
-the amdkfd code.
+the exit reason info could be removed since it is redundant
+> +		    vcpu->run->io.port, vcpu->run->io.size,
+> +		    vcpu->run->io.direction);
+> +}
+> +
+> +void tdx_run(struct kvm_vcpu *vcpu)
+> +{
+> +	td_vcpu_run(vcpu);
+> +	if (vcpu->run->exit_reason == KVM_EXIT_SYSTEM_EVENT)
+> +		TEST_FAIL("Guest reported error. error code: %lld (0x%llx)\n",
+> +			  vcpu->run->system_event.data[12],
+> +			  vcpu->run->system_event.data[13]);
+> +}
+> +
+>   int run_in_new_process(void (*func)(void))
+>   {
+>   	int wstatus;
+> @@ -69,3 +98,9 @@ void tdx_test_fatal(uint64_t error_code)
+>   {
+>   	tdx_test_fatal_with_data(error_code, 0);
+>   }
+> +
+> +void tdx_assert_error(uint64_t error)
+> +{
+> +	if (error)
+> +		tdx_test_fatal(error);
+> +}
+> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> index 7d6d71602761..97330e28f236 100644
+> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> @@ -3,6 +3,7 @@
+>   #include <signal.h>
+>   
+>   #include "kvm_util.h"
+> +#include "tdx/tdcall.h"
+>   #include "tdx/tdx.h"
+>   #include "tdx/tdx_util.h"
+>   #include "tdx/test_util.h"
+> @@ -25,7 +26,7 @@ static void verify_td_lifecycle(void)
+>   
+>   	printf("Verifying TD lifecycle:\n");
+>   
+> -	td_vcpu_run(vcpu);
+> +	tdx_run(vcpu);
+>   	tdx_test_assert_success(vcpu);
+>   
+>   	kvm_vm_free(vm);
+> @@ -69,9 +70,78 @@ void verify_report_fatal_error(void)
+>   	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], 0x0BAAAAAD00000000);
+>   	TEST_ASSERT_EQ(vcpu->run->system_event.data[13], 0);
+>   
+> -	td_vcpu_run(vcpu);
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_success(vcpu);
+> +
+> +	kvm_vm_free(vm);
+> +	printf("\t ... PASSED\n");
+> +}
+> +
+> +#define TDX_IOEXIT_TEST_PORT 0x50
+> +
+> +/*
+> + * Verifies IO functionality by writing a |value| to a predefined port.
+> + * Verifies that the read value is |value| + 1 from the same port.
+> + * If all the tests are passed then write a value to port TDX_TEST_PORT
+TDX_TEST_PORT should be TDX_TEST_SUCCESS_PORT?
 
-This patch has been tested on all the aforementioned platform
-combinations, and sent as an RFC to encourage discussion.
+> + */
+> +void guest_ioexit(void)
+> +{
+> +	uint64_t data_out, data_in;
+> +	uint64_t ret;
+> +
+> +	data_out = 0xAB;
+> +	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
+> +					   PORT_WRITE, &data_out);
+> +	tdx_assert_error(ret);
 
-Signed-off-by: Zhang Yuhao <xinmu@xinmu.moe>
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-Tested-by: Mingcong Bai <jeffbai@aosc.io>
----
- drivers/gpu/drm/amd/amdkfd/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it better to move the tdx_assert_error() inside
+tdg_vp_vmcall_instruction_io()? So that the callers can skip the check for each
+call to tdg_vp_vmcall_instruction_io().
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkfd/Kconfig
-index 16e12c9913f94..5d2fa86f60bf8 100644
---- a/drivers/gpu/drm/amd/amdkfd/Kconfig
-+++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
-@@ -14,7 +14,7 @@ config HSA_AMD
- 
- config HSA_AMD_SVM
- 	bool "Enable HMM-based shared virtual memory manager"
--	depends on HSA_AMD && DEVICE_PRIVATE
-+	depends on HSA_AMD && DEVICE_PRIVATE && !LOONGARCH && !ARM64
- 	default y
- 	select HMM_MIRROR
- 	select MMU_NOTIFIER
--- 
-2.50.1
+> +
+> +	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
+> +					   PORT_READ, &data_in);
+> +	tdx_assert_error(ret);
+> +
+> +	if (data_in != 0xAC)
+> +		tdx_test_fatal(data_in);
+> +
+> +	tdx_test_success();
+> +}
+> +
+> +void verify_td_ioexit(void)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	uint32_t port_data;
+> +	struct kvm_vm *vm;
+> +
+> +	vm = td_create();
+> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> +	vcpu = td_vcpu_add(vm, 0, guest_ioexit);
+> +	td_finalize(vm);
+> +
+> +	printf("Verifying TD IO Exit:\n");
+> +
+> +	/* Wait for guest to do a IO write */
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_WRITE);
+> +	port_data = *(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset);
+> +
+> +	printf("\t ... IO WRITE: DONE\n");
+> +
+> +	/*
+> +	 * Wait for the guest to do a IO read. Provide the previous written data
+> +	 * + 1 back to the guest
+> +	 */
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_READ);
+> +	*(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset) = port_data + 1;
+> +
+> +	printf("\t ... IO READ: DONE\n");
+> +
+> +	/*
+> +	 * Wait for the guest to complete execution successfully. The read
+> +	 * value is checked within the guest.
+> +	 */
+> +	tdx_run(vcpu);
+>   	tdx_test_assert_success(vcpu);
+>   
+> +	printf("\t ... IO verify read/write values: OK\n");
+>   	kvm_vm_free(vm);
+>   	printf("\t ... PASSED\n");
+>   }
+> @@ -83,11 +153,13 @@ int main(int argc, char **argv)
+>   	if (!is_tdx_enabled())
+>   		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
+>   
+> -	ksft_set_plan(2);
+> +	ksft_set_plan(3);
+>   	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
+>   			 "verify_td_lifecycle\n");
+>   	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
+>   			 "verify_report_fatal_error\n");
+> +	ksft_test_result(!run_in_new_process(&verify_td_ioexit),
+> +			 "verify_td_ioexit\n");
+>   
+>   	ksft_finished();
+>   	return 0;
 
 
