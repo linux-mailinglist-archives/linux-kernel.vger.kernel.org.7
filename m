@@ -1,131 +1,171 @@
-Return-Path: <linux-kernel+bounces-769014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0405B26914
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:23:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3879B26953
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58B11CE33BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3234A6019D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CCF1E1DEC;
-	Thu, 14 Aug 2025 14:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D14215055;
+	Thu, 14 Aug 2025 14:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HVgHGXbX"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Taw12qG1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B9C321431;
-	Thu, 14 Aug 2025 14:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DB3212546;
+	Thu, 14 Aug 2025 14:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180523; cv=none; b=Tmw1qikgnLbUiD5N9Lo8CVUGpMDRpHLj7xsGdv/06LK7gEqGsK5WJIYCFmDQyJsvQLv4qGlxJ8BBIqCooy0C29Rybhq9VMH5leGdED9vXOnoruDJaSq78PpP4MnaGcjIz8QqfUzX6DHoMfT2F0FW6zFP4vK6w7u7BylkHEf3xW0=
+	t=1755180541; cv=none; b=XuRPFmjA6qFr8OGMzIBYewP390wIVnCEjdS20+QhtFixuO92BbPlC9slqPxJ6rBANcMNCCQcoJCjQgQQpBWqLk0fK/jGMLDnFHpJjy5kn1vBGpQ8i9pQgH5b/iiIwGcSqAPy4i7uuLc+0cgd7Dka5SojbSivuDl7kbRO3naxYRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180523; c=relaxed/simple;
-	bh=svoSG8SaGn8D0Y1hfs1pbnH3CHdpAVIsu8oKIGzbN58=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VZxULdFxtzmik9aLkWKWbnfnvet7zrHFCefw6+0kpOP5gdJbvcaDgeEaLUNRTYLSdZQSEQVGAubFfsK3h0+w2+bwLy+s5ikeTY6ESxiXpa+bXNkYGt7c+fQ8U2BvuepBFY38q6ljh1KBJf3PLJy/K/OcEjeTQFbQ/IfWwrd3UaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HVgHGXbX; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EE8cR32395137;
-	Thu, 14 Aug 2025 09:08:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755180518;
-	bh=wlXlLOOUihpAaawLiXE3BQ55WcPQUhKk+KSgdYEt2rw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=HVgHGXbXxy2Jm3vSV9lqfudIgZbGcIjspXmlPoYikd6jFfX2TNDqbhbqhQe2pywVK
-	 Wn0nvIdaYedH8zVRleIIFJZY9fTXhC/hM5Pcq0nSNjQCo1nTBKlYBnI2DeMUrLDiN5
-	 LlD491iSUtaiTTKqlkE42Yi0GLCGmpOFbfwaIdYU=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EE8cl21883732
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 09:08:38 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 09:08:38 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 09:08:37 -0500
-Received: from lelvem-mr05.itg.ti.com ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EE8ani3715732;
-	Thu, 14 Aug 2025 09:08:37 -0500
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Hari Nagalla <hnagalla@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH 5/5] remoteproc: keystone: Use devm_rproc_add() helper
-Date: Thu, 14 Aug 2025 09:08:35 -0500
-Message-ID: <20250814140835.651652-5-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250814140835.651652-1-afd@ti.com>
-References: <20250814140835.651652-1-afd@ti.com>
+	s=arc-20240116; t=1755180541; c=relaxed/simple;
+	bh=KoWgzximSrrSXOKG05+Ln2RZTFfG6mhzQE07XNVMxr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=di1B6zQsccKFZ+zsY5qKl8Fwu2dYJ//OYNXT23ix573oDHw35r7O1wVOMINcwlVfhkwIgSIKVntpG3sBjsGzCV63sOFNSs71/W1e+xZMcKwjwUwBn7WIhl6KoU/rXDo4TQHYbYC4siSFyGqP6w0Le1NMSyzH0PwIAXODuwBP9l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Taw12qG1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163A3C4CEED;
+	Thu, 14 Aug 2025 14:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755180540;
+	bh=KoWgzximSrrSXOKG05+Ln2RZTFfG6mhzQE07XNVMxr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Taw12qG1musZlOg9O2MJdjAn+r2utRcPjMH9lo2Gx4scEDioXCFvdglOn+buWsSPO
+	 TWP8z/lZXaJeXSLJC+lzFQTe36YJbtPkFHqcpH1VytyXBVTfSRwJPGvJI4hIPlG6rr
+	 NmRsu9HjlOgmYHNTVCVdIa5TIIorSHLjuGSyYZZRadR2B6XRYjd4KusYoiYLxLIdN0
+	 qxfTVIF5mWJFwebr0eKSbDWX2pTwnhPm5zadc8yZwF0HlCSs03x/fl6xnVEd/e8bBg
+	 BHTtd2DePzkEG2QRrZQZejExx/HxUBICpPqwMod3zylWJ2YBwevKDI+AeVqgeYnZcz
+	 O2fvFiAJfd12w==
+Date: Thu, 14 Aug 2025 16:08:57 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-pwm@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <mlvple4tcnvu35a2liva5wxhafshc634fu46kwyrepn75wvuec@udshn3ja6lvc>
+References: <aJtRPZpc-Lv-C6zD@kspp>
+ <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
+ <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fuq2btbbfpvvuy3v"
+Content-Disposition: inline
+In-Reply-To: <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
 
-Use the device lifecycle managed add function. This helps prevent mistakes
-like deleting out of order in cleanup functions and forgetting to delete
-on error paths.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/remoteproc/keystone_remoteproc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+--fuq2btbbfpvvuy3v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
+ warnings
+MIME-Version: 1.0
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index f2972123ac453..8ef60ae4379f1 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -454,22 +454,13 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 		keystone_rproc_dsp_reset(ksproc);
- 	}
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register device with remoteproc core\n");
- 
--	platform_set_drvdata(pdev, ksproc);
--
- 	return 0;
- }
- 
--static void keystone_rproc_remove(struct platform_device *pdev)
--{
--	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
--
--	rproc_del(ksproc->rproc);
--}
--
- static const struct of_device_id keystone_rproc_of_match[] = {
- 	{ .compatible = "ti,k2hk-dsp", },
- 	{ .compatible = "ti,k2l-dsp", },
-@@ -481,7 +472,6 @@ MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
- 
- static struct platform_driver keystone_rproc_driver = {
- 	.probe	= keystone_rproc_probe,
--	.remove = keystone_rproc_remove,
- 	.driver	= {
- 		.name = "keystone-rproc",
- 		.of_match_table = keystone_rproc_of_match,
--- 
-2.39.2
+On Thu, Aug 14, 2025 at 08:48:23PM +0900, Gustavo A. R. Silva wrote:
+>=20
+> > diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+> > index dab49e2ec8c0..8ca9df87a523 100644
+> > --- a/include/linux/stddef.h
+> > +++ b/include/linux/stddef.h
+> > @@ -108,7 +108,7 @@ enum {
+> >   	union {									\
+> >   		TYPE NAME;							\
+> >   		struct {							\
+> > -			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
+> > +			unsigned char __offset_to_##FAM[sizeof(TYPE)];		\
+> >   			MEMBERS							\
+> >   		};								\
+> >   	}
+> >=20
+> > which only leaves one usage of FAM in the name of the padding struct
+> > member. I'm sure someone is able to come up with something nice here to
+> > get rid of FAM completely or point out what I'm missing.
+>=20
+> Flexible structures (structs that contain a FAM) may have trailing paddin=
+g.
+> Under that scenario sizeof(TYPE) causes the overlay between FAM and MEMBE=
+RS
+> to be misaligned.
 
+That sounds wrong to me; are you sure? In that case allocating space for
+such a struct using
+
+	struct mystruct {
+		unsigned short len;
+		unsigned int array[];
+	};
+
+	s =3D malloc(sizeof(struct mystruct) + n * sizeof(unsigned int));
+
+wouldn't do the right thing.=20
+
+I found in the net (e.g.
+https://rgambord.github.io/c99-doc/sections/6/7/2/1/index.html):
+
+	In most situations, the flexible array member is ignored. In
+	particular, the size of the structure is as if the flexible
+	array member were omitted except that it may have more trailing
+	padding than the omission would imply.
+
+So I'd claim that sizeof does work here as intended.
+
+gcc here also behaves fine:
+
+	uwe@taurus:~$ cat test.c
+	#include <stdio.h>
+
+	struct mystruct {
+		unsigned short len;
+		unsigned int array[];
+	};
+
+	struct mystruct2 {
+		unsigned short len;
+	};
+
+	int main()
+	{
+		printf("sizeof(struct mystruct) =3D %zu\n", sizeof(struct mystruct));
+		printf("sizeof(struct mystruct2) =3D %zu\n", sizeof(struct mystruct2));
+		return 0;
+	}
+
+	uwe@taurus:~$ make test
+	cc    -c -o test.o test.c
+	cc   test.o   -o test
+
+	uwe@taurus:~$ ./test
+	sizeof(struct mystruct) =3D 4
+	sizeof(struct mystruct2) =3D 2
+
+Best regards
+Uwe
+
+--fuq2btbbfpvvuy3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmid7fYACgkQj4D7WH0S
+/k5blAgAh5+IokY92+K/+9z3K4qgh2F2Qwfe9kLJkliHAtW0BjPXsSmvDfrl6liX
+GHh7M26217I9OMG75Bhpl8C+jpzN6EMtRsAD/zFcdDDl/JACrm7yO56/FcVN1rER
+vjf+3ExMbV/ZMhRKY+Rsp3LCAbkkuywX6g2Lr7lDWmu4L/RyEGi1lSXVYSgMGvpi
+npJhS+qEtbbHXT2eUQCR/e3aQHHA/PUSPvvXsJ7u5fVDCQzTz6gluHY0zrtXl5su
+jXZ4C0ux6veyfj7S7m0ayFZRRdavN2SOhBVcWSIwNewhGFjQZCAuFBZ6ht9TzwyF
+nL6IkD2TrBgj6T2mtyWwmt8eHuM4tg==
+=CpNn
+-----END PGP SIGNATURE-----
+
+--fuq2btbbfpvvuy3v--
 
