@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-768144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA88B25D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:36:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AC4B25D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791D3A0000D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F691C84F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6AB2749E5;
-	Thu, 14 Aug 2025 07:29:33 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA9526AABE;
+	Thu, 14 Aug 2025 07:29:28 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB69926CE06;
-	Thu, 14 Aug 2025 07:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E425D1E5;
+	Thu, 14 Aug 2025 07:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156572; cv=none; b=gpsO7df9o67T1D8heta4vQdgqr0pO9+gMkWasdPGtuV8aGUl+wrKZcqB62Xw63R3e8CdoR/MYq46RZA9JJ+zKEybrxtsvOBUYdrQ2mankoLWPu/pKvA/x6CJyQj5lYVCDpAfjAz6cb7HC+eSWg4Qy7281+TudhvyMzWfJXxdA6c=
+	t=1755156567; cv=none; b=igTwGpUnNv6p+3O4KYGDl4x4FLcKC57oJ/UDkPTEIyrpr6KQABXDwF4dSdg3Iuyli2PIgn4h3ddt2IzQwzDWGb0Gailz52XgqmH2QjP62tDm5xEOFXnGudZzDOIohNkpWsTgJ9poVGbalIhiKvwswljaaWvAUSk5/fHloSqmhIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156572; c=relaxed/simple;
-	bh=XQ4eBg80a96FV2MZDPzFeGhY4E98depsJi9EaPWmjxM=;
+	s=arc-20240116; t=1755156567; c=relaxed/simple;
+	bh=YKlfA2kI1t7LleRS1MTQtANevuawktIsdGIZOeMvcRo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ft+p/z/mJ+dLKcoPT1SBJHTCpv4rTiRaGpuCwzN7+yI9TslhiDtPsOeGdu4ErN6Lk5vmKDltyOX6TVLwusa9rZsuS4k5FRdoPgExheCHsIuRNEBYMT4NxNCOZI1Ng97ll9EnQIn3wtDsFMz9tWqPv6G4fE7+y9OfIe7znwf3PJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=VE83hZNv5XjcMj9qV8b28H5uVLd3lIAfIOVzUxdGM+6tdXeX5y5o1QpWpd1qw7Avj8AnqCftcJ7opXi06Bf935moxZCU9H42m1MYuOp43F4VaGW/Jy06PNQS/j3JeSS8vqVowojo8gJRao+mWVyjIEp4Y63chQ8j4ZJ31pfW/DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c2cHj12wdz2Dc1W;
-	Thu, 14 Aug 2025 15:26:41 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c2cKf4V59ztTLn;
+	Thu, 14 Aug 2025 15:28:22 +0800 (CST)
 Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 00CAA140293;
+	by mail.maildlp.com (Postfix) with ESMTPS id 9FF37140275;
 	Thu, 14 Aug 2025 15:29:22 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
@@ -46,9 +46,9 @@ CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
 	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
 	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
 	<yubowen8@huawei.com>, <linhongye@h-partners.com>, <zhenglifeng1@huawei.com>
-Subject: [PATCH v4 1/3] arm64: topology: Set scale freq source only for the CPUs that have not been set before
-Date: Thu, 14 Aug 2025 15:28:51 +0800
-Message-ID: <20250814072853.3426386-2-zhenglifeng1@huawei.com>
+Subject: [PATCH v4 2/3] cpufreq: Add a new function to get cpufreq policy without checking if the CPU is online
+Date: Thu, 14 Aug 2025 15:28:52 +0800
+Message-ID: <20250814072853.3426386-3-zhenglifeng1@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250814072853.3426386-1-zhenglifeng1@huawei.com>
 References: <20250814072853.3426386-1-zhenglifeng1@huawei.com>
@@ -63,28 +63,46 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
  kwepemh100008.china.huawei.com (7.202.181.93)
 
-The scale freq source of the CPUs in 'amu_fie_cpus' mask are already set to
-AMU tick before, so in amu_fie_setup(), only the CPUs in the 'cpus' mask
-should be set.
+cpufreq_cpu_get_raw() gets cpufreq policy only if the CPU is in
+policy->cpus mask, which means the CPU is already online. But in some
+cases, the policy is needed before the CPU is added to cpus mask. Add a
+function to get the policy in these cases.
 
 Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
 ---
- arch/arm64/kernel/topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq.c | 6 ++++++
+ include/linux/cpufreq.h   | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 5d07ee85bdae..9317a618bb87 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -373,7 +373,7 @@ static void amu_fie_setup(const struct cpumask *cpus)
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index fc7eace8b65b..78ca68ea754d 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -198,6 +198,12 @@ struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu)
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw);
  
- 	cpumask_or(amu_fie_cpus, amu_fie_cpus, cpus);
++struct cpufreq_policy *cpufreq_cpu_policy(unsigned int cpu)
++{
++	return per_cpu(cpufreq_cpu_data, cpu);
++}
++EXPORT_SYMBOL_GPL(cpufreq_cpu_policy);
++
+ unsigned int cpufreq_generic_get(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 95f3807c8c55..f135edeef925 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -205,6 +205,7 @@ struct cpufreq_freqs {
  
--	topology_set_scale_freq_source(&amu_sfd, amu_fie_cpus);
-+	topology_set_scale_freq_source(&amu_sfd, cpus);
- 
- 	pr_debug("CPUs[%*pbl]: counters will be used for FIE.",
- 		 cpumask_pr_args(cpus));
+ #ifdef CONFIG_CPU_FREQ
+ struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu);
++struct cpufreq_policy *cpufreq_cpu_policy(unsigned int cpu);
+ struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu);
+ void cpufreq_cpu_put(struct cpufreq_policy *policy);
+ #else
 -- 
 2.33.0
 
