@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-768862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA67FB2669A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAA1B26681
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33DD1CC7C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA4E723015
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DA02FF657;
-	Thu, 14 Aug 2025 13:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1D0301019;
+	Thu, 14 Aug 2025 13:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCaNwslg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U+KdK/3+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC3D2FDC2A;
-	Thu, 14 Aug 2025 13:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6713009CD
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176946; cv=none; b=nvt3rZ6FgUQ1t33saTeNsYlDbbk2mKLRPP+klj0czlai38sfUaIgbhjIH5PucOwnNxlzs+ZR+hjI1kAtztxAzdhuxiApotq/QPc/nXbdaaxaQvmk/Nkr4ccre/w5lmVezOMxO6SP+/SbrdWxX3is+J05U4SeecJJNxO/g3N9Tm0=
+	t=1755177058; cv=none; b=ueAZvEDlUwDi4npwxAZyQsaHdfktJKqfRLucV0UhFzjUwqmWYq7gsCug0LGPvS1fW58QYH+j2gVbKYMgmH2Lx1Kf6x3SIjyui+598wH8ZaFQCTG45HZGr4f9wBw12/QtKFrUxvwJIMEhQTo+wslwXkP9Q4as5GZXmpEfUze47sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176946; c=relaxed/simple;
-	bh=V0/mzt7rpQ7Ja/nnjC462dZYJStiYQcl4BcFdcuXGcQ=;
+	s=arc-20240116; t=1755177058; c=relaxed/simple;
+	bh=X4+/WfTXy2EGpX8MQmtccs2NkQei85yhvg8mmpAKCt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHqJgJg6zQ+Qv9n3mKawbFbZ5ivwhsdYOqxchoWNhmRPVsZ4I2X1snsOB0Xw/0xUf8gwwmV/eeyrJ3l+YYpZxhSyciaelaM/SJrZlAFtIQUu/FeOTOtA+xwriG7N6TdXcfFXZtSCX0dB44qgiOw2fxDSGHFPDZ/OU+TbgiRIQYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCaNwslg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5B4C4CEEF;
-	Thu, 14 Aug 2025 13:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755176946;
-	bh=V0/mzt7rpQ7Ja/nnjC462dZYJStiYQcl4BcFdcuXGcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kCaNwslgBWiblbN70JZHhnR5rMobNvr1yRsRWdmRLk8CfXmjfDOFKtMilcgwfucRX
-	 VeMVXVBYLCiJ3I8uK9A5rhZbCBO5DyKMWzaR6iU74ujFIK1PF2tUlV0MZwZC4MFwfV
-	 T9npTDmENz+NZ/nlqn5WLnVUPCxEN/pyzmuaDXZkcyckKJ4thf38213tTBFf8fw09Y
-	 ZEqOBWi+nL8MyTv1WdLnph3/Lz7lSTYVo20jjsUne0fWuxO5yhhhQcILxgJZr0P2Sv
-	 zHHZ0qGsMIWdb/pxVY+kyc5a2GYdPdKp0R91s+uUI3uq4UJBCBKP+tgDV04sTt5Xti
-	 6u9VjIh0hhAbA==
-Date: Thu, 14 Aug 2025 14:08:57 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
-	baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
-	ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
-	baolin.wang@linux.alibaba.com, npache@redhat.com,
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, vbabka@suse.cz,
-	jannh@google.com, Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-Message-ID: <620a586e-54a2-4ce0-9cf7-2ddf4b6ef59d@sirena.org.uk>
-References: <20250813135642.1986480-8-usamaarif642@gmail.com>
- <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
- <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
- <eb90eff6-ded8-40a3-818f-fce3331df464@redhat.com>
- <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
- <1387eeb8-fc61-4894-b12f-6cae3ad920bd@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+IQMwn4WFg7kzhIgFZzxzhyYhAiXlQ3VkthAv3Pm0CjNNZwM4fs+6/AQ2rNJSTfxddqwP0naDNVnXowJbqScqEeRLhyOrErUmcmgx/GGISIksDA5EAu5mAEJM0QxHuGTMfhtnbksa/TJ00FEz5f5OcMT5nUiwW02WHFBCZ6kTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U+KdK/3+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755177055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9daRKeqWtuowNYWAYBAEnJnsV0LGiFCiPyyQK9EshIc=;
+	b=U+KdK/3+WvyBO38CJoOuGDuc3RkwvRwYMB/g4k2a0euXqlBM4GPkSOZTLosL1ZdI2X+U+Z
+	NWABCoQxfXCthFPHdWHvbbRAIAe0zDKvVYDXFIfDdmX6VAt7YM4B6hAyJnk6vPcoyIdCsT
+	O+GQLzwrBcZtxe049mwvGVaeCwskrbQ=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-hhoP0BH1PDy_L60PAbJR-A-1; Thu, 14 Aug 2025 09:10:54 -0400
+X-MC-Unique: hhoP0BH1PDy_L60PAbJR-A-1
+X-Mimecast-MFC-AGG-ID: hhoP0BH1PDy_L60PAbJR-A_1755177054
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b1098f6142so17772731cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:10:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755177054; x=1755781854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9daRKeqWtuowNYWAYBAEnJnsV0LGiFCiPyyQK9EshIc=;
+        b=m65jxyKhTHXuMWsPPWU9dHH0nDxGW5jiJtilW2TPQn5cmO6mH4O0busLw/1IpBhKJX
+         LTUj/BlSHRZe5a64WR867EsQLuwndY5YOcbBb1toI4N31UuxLMaymnOLrIs5pX+NPHId
+         8hGd5quHAzQfPJ4KiVaz+Zt+sYHka8lFWgPd7V9q9hTGlJVzcXVT+PleqFQcjrANeZzV
+         F2H9ktpejTedSuQSP2wkCnmdj4q61uWXcOpADRoks+T4KjyAipn1np2alnLveNIXFwXV
+         8tBNZyQ+AnE/8tQk0YLSukz1/ldvkwAAP1gbIrxjvLknLuW0MynKI5ollr1lg3AL1hiC
+         nRWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFUSLf5OtTw01bxcqVN2VCNCASK14rTy1y1a5AcmRN8s4wLqhdaORPLIOqUHSsIe29axdbQd23qjUlR4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeqvjareGaUdQJRsaOlVFC6oVKFYpczNc9AMdTauVp3OcajZli
+	Pi7dkNlwggME/r4nqCx1w9eda02IcF+hWWQEhnKrkk75hxFxtV31K01RrmQfLKXioztirV7el43
+	S+eo1wrNgL7KooKisLlbY65WrBt6itUW35i9DFRKaZGaSXcYZZ8oY4vl1rfrry14bfA==
+X-Gm-Gg: ASbGnctqAaiAyCfi7pDhduKv67xJJc635eIOIztX8QMA+tGr/u2p3WApeBRNpPtZEyW
+	JvO5xl++v5wkGwJjtKbI6/4E1XizFXjn/CFqWuwMZ6L19VHa+0DkXdbyntAfa94wpmG9YoBtT1X
+	wOi07q2ibi9RNn10xZzIFzQ7PmrEZuu3T9TAKNXV8eJPISu9nl1wWqJPNmRCtqTOkOdTDV0N7gR
+	yCOzX9cJAULC3Yiok+RY8UdZB33jXWMMViHmp7LD9yC1KZa9jS6YrjdolQNu7O3ZpLB+XOrvs4Q
+	8ii7PMI7ZWG6+8W+yOZdhkCr1Us7imZB+OZ7mqFAh7pxeeRHaRUGNMThD8meWmYT2DF9uw==
+X-Received: by 2002:ac8:5f13:0:b0:4b0:dedc:1176 with SMTP id d75a77b69052e-4b10ab01c12mr42949821cf.49.1755177053680;
+        Thu, 14 Aug 2025 06:10:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrjQkoAx76aI1g1wd/vcIGYoxJOl/aVvP97mJrhfGZNpcG6YTfGg5/U0qUc/UJn81wFJcBhA==
+X-Received: by 2002:ac8:5f13:0:b0:4b0:dedc:1176 with SMTP id d75a77b69052e-4b10ab01c12mr42949151cf.49.1755177053128;
+        Thu, 14 Aug 2025 06:10:53 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.57.62.225])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b07e8ccb6asm137001761cf.24.2025.08.14.06.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 06:10:52 -0700 (PDT)
+Date: Thu, 14 Aug 2025 15:10:46 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v2 11/25] sched/deadline: Add dl_init_tg
+Message-ID: <aJ3gVqoGV7wZclyT@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250731105543.40832-1-yurand2000@gmail.com>
+ <20250731105543.40832-12-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="glbdhY1Z3FbfdGG7"
-Content-Disposition: inline
-In-Reply-To: <1387eeb8-fc61-4894-b12f-6cae3ad920bd@redhat.com>
-X-Cookie: This sentence no verb.
-
-
---glbdhY1Z3FbfdGG7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250731105543.40832-12-yurand2000@gmail.com>
 
-On Thu, Aug 14, 2025 at 02:59:13PM +0200, David Hildenbrand wrote:
-> On 14.08.25 14:09, Mark Brown wrote:
+Hi!
 
-> > Perhaps this is something that needs considering in the ABI, so
-> > userspace can reasonably figure out if it failed to configure whatever
-> > is being configured due to a missing feature (in which case it should
-> > fall back to not using that feature somehow) or due to it messing
-> > something else up?  We might be happy with the tests being version
-> > specific but general userspace should be able to be a bit more robust.
+On 31/07/25 12:55, Yuri Andriaccio wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> This function is used to initialize and/or update a rt-cgroup dl_server, also
+> accounting for the allocated bandwidth.
 
-> Yeah, the whole prctl() ship has sailed, unfortunately :(
+This function/this patch are usually frowned up [1].
 
-Perhaps a second call or sysfs file or something that returns the
-supported mask?  You'd still have a boostrapping issue with existing
-versions but at least at any newer stuff would be helped.
+Thanks,
+Juri
 
---glbdhY1Z3FbfdGG7
-Content-Type: application/pgp-signature; name="signature.asc"
+1 - https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmid3+kACgkQJNaLcl1U
-h9DBEAf/atqlzm4RBPppUe6r1XpYt+RajQsB5AiYLmN8lTjImryp/2Gh23hCHlZw
-gm22HJ5HZ/zAJketjugdDOiovu1RPgg4kJNoXy/tDnG/Sq1bFd9eZzu1QLKutztl
-Hr2SbJii1zQgWo7bcSXMKKoHOva+AbkhTItweml/3eD0ntEoAak2niwtuhKYzw25
-3DhOe5GOhsDt3OUTx9Z5kakWLDGkbmTc0ITomwJCste4pcdUFFOtv4m5XSGkAQOT
-8xyA9jEUMM5ZXsrhdkNa85XMDb3/CPhNEX0jHBr4tikptYvJDf/ZV5a9rCldNAvl
-lYGN1sDmGdtMHATgR170R/sTrdE2vw==
-=ASIV
------END PGP SIGNATURE-----
-
---glbdhY1Z3FbfdGG7--
 
