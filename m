@@ -1,242 +1,140 @@
-Return-Path: <linux-kernel+bounces-768346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18123B26008
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D04B2602A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 176995C4C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F4F3B0FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19C9301481;
-	Thu, 14 Aug 2025 08:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TY3/22/b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F10303CB1;
+	Thu, 14 Aug 2025 08:57:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC632FDC49;
-	Thu, 14 Aug 2025 08:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060CE2FD7C8;
+	Thu, 14 Aug 2025 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161846; cv=none; b=komzY9n4LEoRDtDLLujFgGdidQ+EFPKZ5Wi9bzit2xab9xfz3I4pnMAWTTI/Rv78lFXPRAv6NOIlx90cw3RekH/Th6MTUMS6ANk7oavGpOq5SV/dSJSWYZL00P8RYbMuCpY557ZIdJNoMr5F5bJ8qm1i6fWDTJ6S/VzPxLD4bWs=
+	t=1755161848; cv=none; b=rZ0UOLG0wlPpP+CQWZYVMC3wOO4pxKiekI7vW4D+LLkcsDjRiGsazuc2dZIP6WdwS7qG4NgRiKcIrnaKNm/i019CEWC7A283jZ2oBwLYtOus3Lz2P1vsUztXbbF6fqmYz4p7+p8UsHTdM3GGZcD0ZGx1abTBCxfPv8ezUSEeldI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161846; c=relaxed/simple;
-	bh=iad621vV49d+wv02UCcQ9so9zAeVhfhnBdchvCJXOp4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GyfYAGCiI5sgiFSwq16iF6QKy8RVrjQMalvPQ6LXbsE1fla36aomACLn8BonSWJjWyAasA0+ZvmZ18ov1utCWcS21WWkR5cqVN4F0mX7/WAsHMTovXUuMd6J/hGXW6dwi07KQpWg0wrDF3r7bwhoS09LLeaeg6jU4qQwyYsVUnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TY3/22/b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB764C4CEEF;
-	Thu, 14 Aug 2025 08:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755161845;
-	bh=iad621vV49d+wv02UCcQ9so9zAeVhfhnBdchvCJXOp4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TY3/22/bIQPTXtjknV4qywHdG3eCQiM7LT0CK5Fp6HfxWIjSk8s4y5NsxVjWzNNX5
-	 CZHcF2FIrU0o1Bhuyr+0rxmm8OLwcSMad0sy5PXNIXgBy6BTjgcVEaCcrNPQKx4djN
-	 phMsvKcIKfu4dc2BBtsDuQOchogRHlifHgH4td+Z4yrME5gvp/+7MiLRcQFw5JGS91
-	 geZWgW0SiSSc6lDJgldgmE5IWDs5jSnHSnFlCNE0Xwi2Nl3H3XNCjzyluYkSvF4pFE
-	 1ApPH1t5HZiQn30dMnU0/ASShAxSUAdxV1GADKDKi8mY+/yAcAFgFlRQbx94Bdh3Bk
-	 uhxjgYC0cT/Hg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5504CA0EE3;
-	Thu, 14 Aug 2025 08:57:25 +0000 (UTC)
-From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Date: Thu, 14 Aug 2025 08:57:20 +0000
-Subject: [PATCH v4 6/9] iio: imu: inv_icm45600: add I2C driver for
- inv_icm45600 driver
+	s=arc-20240116; t=1755161848; c=relaxed/simple;
+	bh=IyKSZjc3st7LAyMi4A/QhQBQYrwsTS/FsLwk99CX1e0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CW9C2rZs2vqkC7r+FB1+nYQ4MnJRyBVbihSCcMxTP3hi80nw4IcKrKBpkoG0DmLkrtPpa7ezd2cumtySp9luSWrOhGEKB+ttz7uL4bEFMofPbjnnu6y6eR4DMA9RCyw5QAvJJB3qycB9nYZ06mFdWanW9mytEv3h7AWB5c7aykQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2fJM6YD9zYQtHc;
+	Thu, 14 Aug 2025 16:57:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 83CC51A0842;
+	Thu, 14 Aug 2025 16:57:22 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIxTxpJ1oI+6QDg--.19948S3;
+	Thu, 14 Aug 2025 16:57:22 +0800 (CST)
+Subject: Re: [PATCH 00/16] blk-mq: introduce new queue attribute asyc_dpeth
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, bvanassche@acm.org, nilay@linux.ibm.com, hare@suse.de,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <aJ2WH_RAMPQ9sd6r@fedora>
+ <b6587204-9798-fcb0-c4b7-f00d5979d243@huaweicloud.com>
+ <aJ2d3gtfi0aEaeEc@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <8ff85b30-27c5-c980-a1fb-fdbe18329594@huaweicloud.com>
+Date: Thu, 14 Aug 2025 16:57:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-add_newport_driver-v4-6-4464b6600972@tdk.com>
-References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
-In-Reply-To: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755161842; l=5052;
- i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
- bh=sBMP9Nob/m9bf7U1Inc9JV4s0JfRRB/2JECgb0ifR6Q=;
- b=ih7QKMAqDdWeckff3TIS62v6nPwGu27551uGtpBe5BKoQK7pssDyPXmxyQYOL6LHuHHTD0xMO
- VXSy7fIz7lmBjgybvid1/BS5Xdv+bfUm+vzbYoqzjQqzRSaMoMBh5Af
-X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
- pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
-X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
- auth_id=372
-X-Original-From: Remi Buisson <remi.buisson@tdk.com>
-Reply-To: remi.buisson@tdk.com
+In-Reply-To: <aJ2d3gtfi0aEaeEc@fedora>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIxTxpJ1oI+6QDg--.19948S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWkuFyrCry7Cw43urW3Jrb_yoW8Zr1Up3
+	y3t3WSyr4DJry8Cw4xt3WrXry0kw1vgrZxXrs0gr17Gas0q3W0vF1fGF1F9F9rWrn8Gr4a
+	gF4qqa93Xa1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Remi Buisson <remi.buisson@tdk.com>
+Hi,
 
-Add I2C driver for InvenSense ICM-456000 devices.
+在 2025/08/14 16:27, Ming Lei 写道:
+> On Thu, Aug 14, 2025 at 04:22:27PM +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/08/14 15:54, Ming Lei 写道:
+>>> On Thu, Aug 14, 2025 at 11:35:06AM +0800, Yu Kuai wrote:
+>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>
+>>>> Backgroud and motivation:
+>>>>
+>>>> At first, we test a performance regression from 5.10 to 6.6 in
+>>>> downstream kernel(described in patch 13), the regression is related to
+>>>> async_depth in mq-dealine.
+>>>>
+>>>> While trying to fix this regression, Bart suggests add a new attribute
+>>>> to request_queue, and I think this is a good idea because all elevators
+>>>> have similar logical, however only mq-deadline allow user to configure
+>>>> async_depth. And this is patch 9-16, where the performance problem is
+>>>> fixed in patch 13;
+>>>>
+>>>> Because async_depth is related to nr_requests, while reviewing related
+>>>> code, patch 2-7 are cleanups and fixes to nr_reqeusts.
+>>>>
+>>>> I was planning to send this set for the next merge window, however,
+>>>> during test I found the last block pr(6.17-rc1) introduce a regression
+>>>> if nr_reqeusts grows, exit elevator will panic, and I fix this by
+>>>> patch 1,8.
+>>>
+>>> Please split the patchset into two:
+>>>
+>>> - one is for fixing recent regression on updating 'nr_requests', so this
+>>>     can be merged to v6.17, and be backport easily for stable & downstream
+>>
+>> There are actually two regressions, as fixed by patch 5 and patch 8, how
+>> about the first patchset for patch 1-8? Are you good with those minor
+>> prep cleanup patches?
+> 
+> Then probably you need to make it into three by adding one extra bug fix for
+> `fix elevator depth_updated method`, which follows the philosophy of
+> "do one thing, do it better", also helps people to review.
 
-Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
----
- drivers/iio/imu/inv_icm45600/Kconfig            | 21 ++++++
- drivers/iio/imu/inv_icm45600/Makefile           |  3 +
- drivers/iio/imu/inv_icm45600/inv_icm45600_i2c.c | 98 +++++++++++++++++++++++++
- 3 files changed, 122 insertions(+)
+Ok, I'll send patch 5 seperatly since it can solve problem
+independently, and then a patchset for nr_requests regression.
 
-diff --git a/drivers/iio/imu/inv_icm45600/Kconfig b/drivers/iio/imu/inv_icm45600/Kconfig
-index ea0a8d20cba26549b74105fa6fdbca1ddb222633..5b044a954e952ffa8e44507eea42872e1f3161bc 100644
---- a/drivers/iio/imu/inv_icm45600/Kconfig
-+++ b/drivers/iio/imu/inv_icm45600/Kconfig
-@@ -5,3 +5,24 @@ config INV_ICM45600
- 	select IIO_BUFFER
- 	select IIO_KFIFO_BUF
- 	select IIO_INV_SENSORS_TIMESTAMP
-+
-+config INV_ICM45600_I2C
-+	tristate "InvenSense ICM-456xx I2C driver"
-+	depends on I2C
-+	select INV_ICM45600
-+	select REGMAP_I2C
-+	help
-+	  This driver supports the InvenSense ICM-456xx motion tracking
-+	  devices over I2C.
-+	  Supported devices:
-+	  - ICM-45605
-+	  - ICM-45606
-+	  - ICM-45608
-+	  - ICM-45634
-+	  - ICM-45686
-+	  - ICM-45687
-+	  - ICM-45688-P
-+	  - ICM-45689
-+
-+	  This driver can be built as a module. The module will be called
-+	  inv-icm45600-i2c.
-diff --git a/drivers/iio/imu/inv_icm45600/Makefile b/drivers/iio/imu/inv_icm45600/Makefile
-index e34553d2b74dc46bb0f533d2bd0875655f91c781..c43e5d6ad3a2ddbd666d77630015c440e740d969 100644
---- a/drivers/iio/imu/inv_icm45600/Makefile
-+++ b/drivers/iio/imu/inv_icm45600/Makefile
-@@ -5,3 +5,6 @@ inv-icm45600-y += inv_icm45600_core.o
- inv-icm45600-y += inv_icm45600_buffer.o
- inv-icm45600-y += inv_icm45600_gyro.o
- inv-icm45600-y += inv_icm45600_accel.o
-+
-+obj-$(CONFIG_INV_ICM45600_I2C) += inv-icm45600-i2c.o
-+inv-icm45600-i2c-y += inv_icm45600_i2c.o
-diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i2c.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_i2c.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..5ebc18121a11f8ad576efb4d4cf80091c13af31d
---- /dev/null
-+++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i2c.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* Copyright (C) 2025 InvenSense, Inc. */
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/regmap.h>
-+
-+#include "inv_icm45600.h"
-+
-+static const struct regmap_config inv_icm45600_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static int inv_icm45600_probe(struct i2c_client *client)
-+{
-+	const struct inv_icm45600_chip_info *chip_info;
-+	struct regmap *regmap;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_I2C_BLOCK))
-+		return -ENODEV;
-+
-+	chip_info = device_get_match_data(&client->dev);
-+	if (!chip_info)
-+		return -ENODEV;
-+
-+	regmap = devm_regmap_init_i2c(client, &inv_icm45600_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	return inv_icm45600_core_probe(regmap, chip_info, true, NULL);
-+}
-+
-+/*
-+ * The device id table is used to identify which device is
-+ * supported by this driver.
-+ */
-+static const struct i2c_device_id inv_icm45600_id[] = {
-+	{ "icm45605", (kernel_ulong_t)&inv_icm45605_chip_info },
-+	{ "icm45606", (kernel_ulong_t)&inv_icm45606_chip_info },
-+	{ "icm45608", (kernel_ulong_t)&inv_icm45608_chip_info },
-+	{ "icm45634", (kernel_ulong_t)&inv_icm45634_chip_info },
-+	{ "icm45686", (kernel_ulong_t)&inv_icm45686_chip_info },
-+	{ "icm45687", (kernel_ulong_t)&inv_icm45687_chip_info },
-+	{ "icm45688p", (kernel_ulong_t)&inv_icm45688p_chip_info },
-+	{ "icm45689", (kernel_ulong_t)&inv_icm45689_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, inv_icm45600_id);
-+
-+static const struct of_device_id inv_icm45600_of_matches[] = {
-+	{
-+		.compatible = "invensense,icm45605",
-+		.data = &inv_icm45605_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45606",
-+		.data = &inv_icm45606_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45608",
-+		.data = &inv_icm45608_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45634",
-+		.data = &inv_icm45634_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45686",
-+		.data = &inv_icm45686_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45687",
-+		.data = &inv_icm45687_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45688p",
-+		.data = &inv_icm45688p_chip_info,
-+	}, {
-+		.compatible = "invensense,icm45689",
-+		.data = &inv_icm45689_chip_info,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, inv_icm45600_of_matches);
-+
-+static struct i2c_driver inv_icm45600_driver = {
-+	.driver = {
-+		.name = "inv-icm45600-i2c",
-+		.of_match_table = inv_icm45600_of_matches,
-+		.pm = pm_ptr(&inv_icm45600_pm_ops),
-+	},
-+	.id_table = inv_icm45600_id,
-+	.probe = inv_icm45600_probe,
-+};
-+module_i2c_driver(inv_icm45600_driver);
-+
-+MODULE_AUTHOR("InvenSense, Inc.");
-+MODULE_DESCRIPTION("InvenSense ICM-456xx I2C driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("IIO_ICM45600");
+Thanks,
+Kuai
 
--- 
-2.34.1
-
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
 
 
