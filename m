@@ -1,83 +1,161 @@
-Return-Path: <linux-kernel+bounces-769739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD40BB272FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:28:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED0AB27305
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F1B1CC77CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B987D1CC4AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69FE28507F;
-	Thu, 14 Aug 2025 23:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654EC28853C;
+	Thu, 14 Aug 2025 23:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2nc3wY6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ofrpo21Z"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCB928751D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1460B219E0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755214082; cv=none; b=RqOz/TUbqM+iDo/Ytkj/oZZG0F7+P7H61JbHSVU8TMkzZzRk34nJIW0XZK2RKRQa+KCVCDpddnxIVpduLH0zY3mOMd4JNL7sq/4hq96lYiRJxES2TGTeUKPfxtE8uY0b/lFFc2P0dpy1grwzUu2Si5QeDXsXaZnjxT8qvXxWRpc=
+	t=1755214245; cv=none; b=tmvQgwUgttJOlvVKM52SbIBByhOWdXTUmljuha1h/ocw6U+yQ8k7Rljp8pj8vtXW/ClIjlRWA7SejCacKvHAnfNM+e4Xc7NOflatrHo8y1Zg0MGb3exAo87/T2wmULLzuKetppMzYWNBT4npfYrqSmqNJKAeIzd3sWPK9ktSi3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755214082; c=relaxed/simple;
-	bh=RKMPJD91oygjixSsHWj5e0vCdzOp27ndBzqTMRaZ2B4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XHgTEAxdTE8St5f4xy2WzT+2Ka0VI4foim8I7tqkISCwR2ephm1/B22LafpDwo4i/cVBqkhSwdtflcDKsFsicfLeCksm5O+3LvqjKJlOKeibLBBaV7Do8qu9nzFX813XCHwfSRJXw2QCXQkmgVGeMZtgYlrt7/Xi44eNEvdcuz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2nc3wY6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6933C4CEED;
-	Thu, 14 Aug 2025 23:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755214081;
-	bh=RKMPJD91oygjixSsHWj5e0vCdzOp27ndBzqTMRaZ2B4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2nc3wY6HZVO3TgsWr3n8qKoRazbe/rFSYW3Vu93F4/XRHsdO3EVO88kWu5LBU/OvL
-	 A86xKo2De+y2rzau5wNNTNkps2GmviyfmIGMDqH+wkOPjtgagU6NOLcp3/dL2HwaRA
-	 Swry8zQyOTYUXdG5XbXofKKu+LctVQ/C9k25bh/4=
-Date: Thu, 14 Aug 2025 16:28:01 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: "Herton R. Krzesinski" <herton@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
- destroy_args()
-Message-Id: <20250814162801.08ece6844de66ac43af5224f@linux-foundation.org>
-In-Reply-To: <5e5f45c1-e813-4900-8fad-2ed0dc067468@arm.com>
-References: <20250731214051.4115182-1-herton@redhat.com>
-	<5e5f45c1-e813-4900-8fad-2ed0dc067468@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755214245; c=relaxed/simple;
+	bh=OvsVxJJrFGITa8UZyrCAXbsERpjYWiqbGEh4KJfUBUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s4nKu/9l1h7McFgjwCP7wchtSOx1FKBaDjqps8cQ3gTLzSNqo1DbziXBq2st46wSDdAuh8A46zOUFGsDpC5Bl8TDwU4an9xIFXuTaLPjlyivrERibbicAppXDc4ZfzCTS65JznahbfYHRB+MNKsAr60bvypCKh1sqbuNCzP2HtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ofrpo21Z; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459fbca0c95so29665e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755214242; x=1755819042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a0JmiFdlp9ZkN1fxeZfgjKK4+EMYxMKsgyQh0URM5ec=;
+        b=ofrpo21ZGZwTYZI6lSFZnurLvRCmOwZ0yBHRinNnu86sFWLlGJINMi+s6+a04qTsdl
+         l4PwpAWVoBgp5pP+Xwxm4JLX2VkuUadzgZtczkICNxjjGKBDDgdKlsLbZhWrB6fSwLzZ
+         cKHDOs3wvfGLtLEylaYkf67J7/rwE+qeP4p5iImJ/4h5kuKT0I/ydEA1y7IoLCThwi21
+         6nhPPfX5ySI4eHLuSLY5Co+TKsZyikoASS6P78BelM2nxJ6JofQ29z/iDgyBy62GpeKo
+         ItWS4xa6g7dmoKOIH+IoF0MMksExxf9359LpDr+BJxSJx0wVAMtF2QsWH1Gp3wy61c48
+         aRcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755214242; x=1755819042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a0JmiFdlp9ZkN1fxeZfgjKK4+EMYxMKsgyQh0URM5ec=;
+        b=HXiQ4zXkNwiuQUiXEevDhizNowRB1oX19hvUQMxTml8D6CtBhJQEXqi3Cpej+JyWTI
+         mQ0jWSJkItucJMtTdRqkzYsPOGsRitNfhWzEbfwl3V/+749pBN6PBItd0k0gBfV0pd44
+         77y0LHqJhYuxbfDi82U6CHQxAgx4OreJP9a2KJAZ/ytIfHdGOhxIWJs1ITfGnznXHY3c
+         bfAaabthUFmxuHFFpMyj0fqj86mfg45ldIepK1wSIcqKSkcUDYupZ4+zfBRwMUbJpW14
+         v1rW5jZMgNI9AkOtbL8kJDuNlFdcC63AEiCV53cRZ4rhy3gXBNZ4ORgFdxkkMg5DLmHs
+         Wj9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWBz/s82sWffPnapfbvNFb62da7whkZGz1PpP8h9Jg4Y+9AxMHKOkW3/hy1KFg/Sf68VwGCjFOOP2qpPHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf2d3ugHrVpjPxTi/Sz1eveS9fjx1njBVQXvWSm/rfSi8hsluq
+	OWvJTDGhVTD0MrgGN7EzppE9FyuYbKk4ern5XNQI5/0kDHPGQONol5wyk+wewEmSKGejL09/FKK
+	aRH7ftbnvugSSDwpwTX2AmMffwoivbj/w94tl6dZk
+X-Gm-Gg: ASbGncukdIGPtUd2LxrNLDEsST0ramjRDRsuINO8I5sP/AKQi4rWIVym/Anrs+12num
+	G7/U4Vo8FALJR9aO/lx7XPa4uxvUQ5nDEhPijpDGR24QS40+GdYVosLzyxcV3qIwl85ainC00H2
+	C/8v6DxBmsaCgboNPgWNdIempgcvSUqfgcJgeO4ERuBXKuH1DdkWJj3SCgo31xP3ALijK7c2Bae
+	1WXOZHv/7AeYhBhSFp2Lz9sLqlD7cf2jweUecGoxPU=
+X-Google-Smtp-Source: AGHT+IEEw+uzXS2i8WjnVSg7+M8YgE/PH0qtNvR3RZRshlFOrW4DkRzKM58Y1imbSzgGPptKIKq3mUjkWcuT38ZrZFk=
+X-Received: by 2002:a05:600c:8909:b0:453:5ffb:e007 with SMTP id
+ 5b1f17b1804b1-45a20af818amr346105e9.4.1755214242237; Thu, 14 Aug 2025
+ 16:30:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250813060339.2977604-1-jens.wiklander@linaro.org>
+ <20250813060339.2977604-3-jens.wiklander@linaro.org> <aJ1-YpgvGt4_6CFU@sumit-X1>
+In-Reply-To: <aJ1-YpgvGt4_6CFU@sumit-X1>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Thu, 14 Aug 2025 16:30:30 -0700
+X-Gm-Features: Ac12FXzYk8vQFwHlmYOx6GVXgELj4N91iOPnVrtkJq0EeS5aTQuf7I4LnzwBN-c
+Message-ID: <CABdmKX2FPg+hO55qWndMajuWP0kZH=OWEh9v-d8aO6HQWyxJtQ@mail.gmail.com>
+Subject: Re: [PATCH v11 2/9] dma-buf: dma-heap: export declared functions
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 14 Aug 2025 16:16:03 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-
-> On 01/08/25 3:10 AM, Herton R. Krzesinski wrote:
-> > The mm/debug_vm_pagetable test allocates manually page table entries for the
-> > tests it runs, using also its manually allocated mm_struct. That in itself is
-> > ok, but when it exits, at destroy_args() it fails to clear those entries with
-> > the *_clear functions.
-> > 
-> > The problem is that leaves stale entries. If another process allocates
-> > an mm_struct with a pgd at the same address, it may end up running into
-> > the stale entry. This is happening in practice on a debug kernel with
-> > CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
-> > extra debugging I added (it prints a warning trace if pgtables_bytes goes
-> > negative, in addition to the warning at check_mm() function):
+On Wed, Aug 13, 2025 at 11:13=E2=80=AFPM Sumit Garg <sumit.garg@kernel.org>=
+ wrote:
 >
-> This has been on linux-next for almost last two weeks now and
-> no problem has been reported. So I guess it's all good.
-> 
+> On Wed, Aug 13, 2025 at 08:02:51AM +0200, Jens Wiklander wrote:
+> > Export the dma-buf heap functions to allow them to be used by the OP-TE=
+E
+> > driver. The OP-TEE driver wants to register and manage specific secure
+> > DMA heaps with it.
+> >
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > ---
+> >  drivers/dma-buf/dma-heap.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+>
+> Can we get an ack from DMAbuf maintainers here? With that we should be
+> able to queue this patch-set for linux-next targetting the 6.18 merge
+> window.
+>
+> -Sumit
 
-[top-posting repaired]
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
 
-Thanks, I'll move this into the next batch for sending into mainline.
+Sorry I haven't been able to participate much upstream lately.
+>
+> > diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+> > index 3cbe87d4a464..cdddf0e24dce 100644
+> > --- a/drivers/dma-buf/dma-heap.c
+> > +++ b/drivers/dma-buf/dma-heap.c
+> > @@ -202,6 +202,7 @@ void *dma_heap_get_drvdata(struct dma_heap *heap)
+> >  {
+> >       return heap->priv;
+> >  }
+> > +EXPORT_SYMBOL(dma_heap_get_drvdata);
+> >
+> >  /**
+> >   * dma_heap_get_name - get heap name
+> > @@ -214,6 +215,7 @@ const char *dma_heap_get_name(struct dma_heap *heap=
+)
+> >  {
+> >       return heap->name;
+> >  }
+> > +EXPORT_SYMBOL(dma_heap_get_name);
+> >
+> >  /**
+> >   * dma_heap_add - adds a heap to dmabuf heaps
+> > @@ -303,6 +305,7 @@ struct dma_heap *dma_heap_add(const struct dma_heap=
+_export_info *exp_info)
+> >       kfree(heap);
+> >       return err_ret;
+> >  }
+> > +EXPORT_SYMBOL(dma_heap_add);
+> >
+> >  static char *dma_heap_devnode(const struct device *dev, umode_t *mode)
+> >  {
+> > --
+> > 2.43.0
+> >
 
