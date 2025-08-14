@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-768072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C33B25CA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739E2B25CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099072A65D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746B11C23BD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1469263C8E;
-	Thu, 14 Aug 2025 07:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E9F267B7F;
+	Thu, 14 Aug 2025 07:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Arj8w5xl"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUVRjhnX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E8264A83
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C67A25A659;
+	Thu, 14 Aug 2025 07:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155136; cv=none; b=uHGNG+0RJ0S+jeFn/ti9PXZdEJRNgkHGtCX/menddT99pxGYZ8BsOL81+S5wWjQSbHCFNkIjeB79QRztFUfdtmPeQQ4LEUeJzq5j7cKQUx1cvW2Xjwk+ct68UQCcJUrQsiRpA5pFy+oKpFW8IcdnxyIybZID++rzmtBGGChuREY=
+	t=1755155139; cv=none; b=OgH6wClEOEaRxav42RjDjg+o0yHvSula8uY8DCJS7SGVMu3ZCaD0INKJYatB2BMtboOH4mrhW7NeGavmNUQx0aIE4nXwUyTpJBS2j5xAurisWj6X8OisrF581eXXJTLpk4mp9HE0W9wpX43rQ00juRX531jEZqLeXkde8RCRrVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155136; c=relaxed/simple;
-	bh=eWddV2EZ2/YGe5+QEST1UDhAfqoCs+GBJ+Dkkq+nLYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwVEkx2kn3OUMVAbF4GqIvdDTeE12Ya2GBq3GkulLBnoCatWOllHjZCfnWExKhmfUbFyu7exDmEAj+vBGuGu/y0Hwb4j0zSLdxYy3F1dfUyLxPsWSR5rlX8Coj6v2mbSczidKKTvqw2pyid8rCx9AroUQiNJMA+zz22Ypq5i+K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Arj8w5xl; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so77916566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755155131; x=1755759931; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eWddV2EZ2/YGe5+QEST1UDhAfqoCs+GBJ+Dkkq+nLYQ=;
-        b=Arj8w5xlcPhr+R/zGQEzLWTY9MkKDTaHKKMsRixLIy1Z3h/R5Ty83z0P/jdFzuwMXU
-         RKNS5DVT4UFtwc0/QyfSutsPreaioHP/OXjWbpCeWetstmk8Xs+jOX+6mQMDHQNxbCyR
-         zllGNz+TPggjBHQaXzGdakmwvuu4FfxVmIp11C1ZQt05GwEMTkkGMnu33Wy0dT+dY2WZ
-         3E1Z5dAkjlCr8pWuFBAyJ1CWEJtSrCQ99bHlmGQQVw5aHfRUVOtxd5wJAbnRXvfDoSEP
-         EtVjD8n0H0wSjipjZz7jA/mN7uofpf4J0VF0Y4qN0iNdgKMR+WyvTnAOpE41rcYrrhGv
-         OA5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755155131; x=1755759931;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eWddV2EZ2/YGe5+QEST1UDhAfqoCs+GBJ+Dkkq+nLYQ=;
-        b=XFNQsrL4PtwXzpA0qLc/0oyPeFgRGxiqxP7WmhYWj4UW++HJct/C6Xiw8jKZR39O6F
-         fyk8GVUsVRb4xc4jgDTAsn5LRbnFG2bj0J0SjiNdn3Abi4fnuEeuO2a3t4QgGYXfjyXG
-         Oz3CjxRjX9Wd/9uQqqr+SDZyb/CdgfpTyDbIedMbXMlziMEvemWw+CT763vBiPm3LGmw
-         7RmdURVeIdbVTjwwyi3eVTdiAMNc0IFBHx69hx7vK0l54qDVKDwSMlpLjAT4rwJnqBcu
-         zfdJQ0hmuahBMFiZpG39+OsD+8FD7ME35BdZ8zZ/Uw19ldzBwDBYaf2O2KtvtIqtPEej
-         G0SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXN7v0Ia1qpE8OzOXHQ0pipw7U/67MzQ9Ek+rfzRx2NNJfscpEHYu3edJMHw2cW0nhc7MPm8KO2bSwVt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1JUsP53yczpuPSNQtUYouIyL73mMRRUA9AlM/1VQ1wHgFeeEg
-	LmYBJU+9wNgBpOhPZPcO3oG53XksqmUfX0Lhhb5Ns3EuOmvujMvCUvBtP6BrtndyC3U=
-X-Gm-Gg: ASbGnct8d0Vb1sICNwE57k+juIwxbix7Sc2qW/A7us2rV8oRm3fh9ee2kM0dHVZfyn/
-	P8VkiPWf/yBYrbnPYMNMEK2c0dPlQtqF0ZjlNFgm9OYItqi3noCkh9pwIXroSGRF2wUs4vgKMdE
-	PkYGZ0618mAmNhRjcXIYhsZLlS2BQ4QXF5phbocuPdPKjMgaun1cwNcLg9X6/ihyef8BZBhS0zi
-	QoRZosqzTr/izK8pPoZogBLf4NglbHgMdxhgx/C97kj5MzLldiMRD6u5gJUalGOWt06ydBQdkyJ
-	gKv1y4JOopDaHZyZb1nkOH/ihmUwEqPzmfA8gsxrnKC6dYVkEtXTLGi9DQ4TVoyD3tZGDkjfMSx
-	N91WW5qYZ2CoEpOOIl4NN51me9YHFpZ/LccA6glQ+x8G8bkjC9G3KfeIM3hK8Q9uI0Qnhd5VmBP
-	EB+Ga7GhMu1HqJzIgBiwABirRw/c+RPcvPEQIoKZvoq3GH4ewgvu1zyaSolaUI9q2nHw==
-X-Google-Smtp-Source: AGHT+IHg12R9C+kLY7lUSfkpHkqWYowYCW2UNXcMx6+EvIMip4yrK9CwnPJlXOIR8B6Lc1phO+8IoA==
-X-Received: by 2002:a17:907:2d21:b0:af1:f259:254d with SMTP id a640c23a62f3a-afcb93a24b1mr151824466b.8.1755155131402;
-        Thu, 14 Aug 2025 00:05:31 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8707:1600:914:c962:d2a8:524e? (p200300e5870716000914c962d2a8524e.dip0.t-ipconnect.de. [2003:e5:8707:1600:914:c962:d2a8:524e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af99518bfedsm1564401766b.105.2025.08.14.00.05.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 00:05:31 -0700 (PDT)
-Message-ID: <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
-Date: Thu, 14 Aug 2025 09:05:29 +0200
+	s=arc-20240116; t=1755155139; c=relaxed/simple;
+	bh=KXtijr+I+nto8on/vYSGro/glqW/adtu+zzDmd7P0To=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bBlI1S/lYKNz0Xa2wZ5HXwgrQZsvnlVajsahTpG6dWYcS1vDtJrzTG1eRilk523HTPdQm5nTPNTbtOQwdk/OAl6IRdvkwFxFf7yDadQbOeQ4X8QqECUmr5kKx34FH0FrnvAWDrZalw1Q/E9cxVNXp5doUzXnK2vt/DHums/W4pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUVRjhnX; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755155137; x=1786691137;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=KXtijr+I+nto8on/vYSGro/glqW/adtu+zzDmd7P0To=;
+  b=WUVRjhnXTkmur9SJOxddG4rbertoRUIQa5AB5/zKQxGVk8MY972FSYIe
+   VbyoLUhifK2fCtEI47u4Yt8jI8Nswsi0VfYPqXul5ByV/no8v25YhUHuY
+   38O12S22tf4F+g6cc5bG5xqQj/FR6FaRmVtqfBE5+EzcVhqs1yWn3Jm8K
+   Ui/L7XFiF+vfK9dRBiYWF5iSOR18xl9KW4CyqRF3XyBUVO2LMkFFMQOAl
+   jL8k4EpHcLYe+Ws613fPdrb5wxug6mptu+4LiaktDhv0cmBM8EmZ59GYY
+   JWgsyUh7KfJWEo9d0kgzqIKWjx6E3gZvp64xA71y8DUp0pSWZJRFrr+mF
+   w==;
+X-CSE-ConnectionGUID: wUzauBo6Q4KPgaOyJ7utfA==
+X-CSE-MsgGUID: Xa0w9SKEQB+p8/yjnC3ZcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="80040380"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="80040380"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:05:37 -0700
+X-CSE-ConnectionGUID: hee8cGoQTVqaZ6GC6+sPXw==
+X-CSE-MsgGUID: WlQoPe84Q4y0NiHDRz3qlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="197542278"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:05:33 -0700
+Message-ID: <c359e0d3-b840-4e98-b06d-94b4e3f7f792@linux.intel.com>
+Date: Thu, 14 Aug 2025 15:05:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,233 +66,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Chris Wright <chrisw@sous-sol.org>,
- Jeremy Fitzhardinge <jeremy@xensource.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-References: <20250812190041.23276-1-jason.andryuk@amd.com>
- <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
+Subject: Re: [PATCH v8 10/30] KVM: selftests: TDX: Add report_fatal_error test
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-11-sagis@google.com>
+ <ef499c6e-d62c-450e-982b-82c53054ea53@linux.intel.com>
 Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------n01cz0qzsiIkjS64c0EV3BZz"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------n01cz0qzsiIkjS64c0EV3BZz
-Content-Type: multipart/mixed; boundary="------------4ze0d0sDBVaNHHe93x0xGSVt";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Chris Wright <chrisw@sous-sol.org>,
- Jeremy Fitzhardinge <jeremy@xensource.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-Message-ID: <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
-Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-References: <20250812190041.23276-1-jason.andryuk@amd.com>
- <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
-In-Reply-To: <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
-
---------------4ze0d0sDBVaNHHe93x0xGSVt
-Content-Type: multipart/mixed; boundary="------------W3LIP514FcistQgDFAHvxPxq"
-
---------------W3LIP514FcistQgDFAHvxPxq
+In-Reply-To: <ef499c6e-d62c-450e-982b-82c53054ea53@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-T24gMTMuMDguMjUgMTc6MDMsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+IE9uIDIwMjUtMDgt
-MTIgMTU6MDAsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+PiBWSVJRcyBjb21lIGluIDMgZmxh
-dm9ycywgcGVyLVZQVSwgcGVyLWRvbWFpbiwgYW5kIGdsb2JhbC7CoCBUaGUgZXhpc3RpbmcN
-Cj4+IHRyYWNraW5nIG9mIFZJUlFzIGlzIGhhbmRsZWQgYnkgcGVyLWNwdSB2YXJpYWJsZXMg
-dmlycV90b19pcnEuDQo+Pg0KPj4gVGhlIGlzc3VlIGlzIHRoYXQgYmluZF92aXJxX3RvX2ly
-cSgpIHNldHMgdGhlIHBlcl9jcHUgdmlycV90b19pcnEgYXQNCj4+IHJlZ2lzdHJhdGlvbiB0
-aW1lIC0gdHlwaWNhbGx5IENQVSAwLsKgIExhdGVyLCB0aGUgaW50ZXJydXB0IGNhbiBtaWdy
-YXRlLA0KPj4gYW5kIGluZm8tPmNwdSBpcyB1cGRhdGVkLsKgIFdoZW4gY2FsbGluZyB1bmJp
-bmRfZnJvbV9pcnEoKSwgdGhlIHBlci1jcHUNCj4+IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQg
-Zm9yIGEgZGlmZmVyZW50IGNwdS7CoCBJZiBiaW5kX3ZpcnFfdG9faXJxKCkgaXMNCg0KVGhp
-cyBpcyB3aGF0IG5lZWRzIHRvIGJlIGZpeGVkLiBBdCBtaWdyYXRpb24gdGhlIHBlcl9jcHUg
-dmlycV90b19pcnEgb2YgdGhlDQpzb3VyY2UgYW5kIHRoZSB0YXJnZXQgY3B1IG5lZWQgdG8g
-YmUgdXBkYXRlZCB0byByZWZsZWN0IHRoYXQgbWlncmF0aW9uLg0KDQo+PiBjYWxsZWQgYWdh
-aW4gd2l0aCBDUFUgMCwgdGhlIHN0YWxlIGlycSBpcyByZXR1cm5lZC4NCj4+DQo+PiBDaGFu
-Z2UgdGhlIHZpcnFfdG9faXJxIHRyYWNraW5nIHRvIHVzZSBDUFUgMCBmb3IgcGVyLWRvbWFp
-biBhbmQgZ2xvYmFsDQo+PiBWSVJRcy7CoCBBcyB0aGVyZSBjYW4gYmUgYXQgbW9zdCBvbmUg
-b2YgZWFjaCwgdGhlcmUgaXMgbm8gbmVlZCBmb3INCj4+IHBlci12Y3B1IHRyYWNraW5nLsKg
-IEFsc28sIHBlci1kb21haW4gYW5kIGdsb2JhbCBWSVJRcyBuZWVkIHRvIGJlDQo+PiByZWdp
-c3RlcmVkIG9uIENQVSAwIGFuZCBjYW4gbGF0ZXIgbW92ZSwgc28gdGhpcyBtYXRjaGVzIHRo
-ZSBleHBlY3RhdGlvbi4NCj4+DQo+PiBGaXhlczogZTQ2Y2RiNjZjOGZjICgieGVuOiBldmVu
-dCBjaGFubmVscyIpDQo+PiBDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZw0KPj4gU2lnbmVk
-LW9mZi1ieTogSmFzb24gQW5kcnl1ayA8amFzb24uYW5kcnl1a0BhbWQuY29tPg0KPj4gLS0t
-DQo+PiBGaXhlcyBpcyB0aGUgaW50cm9kdWN0aW9uIG9mIHRoZSB2aXJxX3RvX2lycSBwZXIt
-Y3B1IGFycmF5Lg0KPj4NCj4+IFRoaXMgd2FzIGZvdW5kIHdpdGggdGhlIG91dC1vZi10cmVl
-IGFyZ28gZHJpdmVyIGR1cmluZyBzdXNwZW5kL3Jlc3VtZS4NCj4+IE9uIHN1c3BlbmQsIHRo
-ZSBwZXItZG9tYWluIFZJUlFfQVJHTyBpcyB1bmJvdW5kLsKgIE9uIHJlc3VtZSwgdGhlIGRy
-aXZlcg0KPj4gYXR0ZW1wdHMgdG8gYmluZCBWSVJRX0FSR08uwqAgVGhlIHN0YWxlIGlycSBp
-cyByZXR1cm5lZCwgYnV0IHRoZQ0KPj4gV0FSTl9PTihpbmZvID09IE5VTEwgfHwgaW5mby0+
-dHlwZSAhPSBJUlFUX1ZJUlEpIGluIGJpbmRfdmlycV90b19pcnEoKQ0KPj4gdHJpZ2dlcnMg
-Zm9yIE5VTEwgaW5mby7CoCBUaGUgYmluZCBmYWlscyBhbmQgZXhlY3V0aW9uIGNvbnRpbnVl
-cyB3aXRoIHRoZQ0KPj4gZHJpdmVyIHRyeWluZyB0byBjbGVhbiB1cCBieSB1bmJpbmRpbmcu
-wqAgVGhpcyBldmVudHVhbGx5IGZhdWx0cyBvdmVyIHRoZQ0KPj4gTlVMTCBpbmZvLg0KPj4g
-LS0tDQo+PiDCoCBkcml2ZXJzL3hlbi9ldmVudHMvZXZlbnRzX2Jhc2UuYyB8IDE3ICsrKysr
-KysrKysrKysrKystDQo+PiDCoCAxIGZpbGUgY2hhbmdlZCwgMTYgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3hlbi9ldmVudHMv
-ZXZlbnRzX2Jhc2UuYyBiL2RyaXZlcnMveGVuL2V2ZW50cy9ldmVudHNfYmFzZS5jDQo+PiBp
-bmRleCA0MTMwOWQzOGY3OGMuLmEyN2U0ZDdmMDYxZSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZl
-cnMveGVuL2V2ZW50cy9ldmVudHNfYmFzZS5jDQo+PiArKysgYi9kcml2ZXJzL3hlbi9ldmVu
-dHMvZXZlbnRzX2Jhc2UuYw0KPj4gQEAgLTE1OSw3ICsxNTksMTkgQEAgc3RhdGljIERFRklO
-RV9NVVRFWChpcnFfbWFwcGluZ191cGRhdGVfbG9jayk7DQo+PiDCoCBzdGF0aWMgTElTVF9I
-RUFEKHhlbl9pcnFfbGlzdF9oZWFkKTsNCj4+IC0vKiBJUlEgPC0+IFZJUlEgbWFwcGluZy4g
-Ki8NCj4+ICtzdGF0aWMgYm9vbCBpc19wZXJfdmNwdV92aXJxKGludCB2aXJxKSB7DQo+PiAr
-wqDCoMKgIHN3aXRjaCAodmlycSkgew0KPj4gK8KgwqDCoCBjYXNlIFZJUlFfVElNRVI6DQo+
-PiArwqDCoMKgIGNhc2UgVklSUV9ERUJVRzoNCj4+ICvCoMKgwqAgY2FzZSBWSVJRX1hFTk9Q
-Uk9GOg0KPj4gK8KgwqDCoCBjYXNlIFZJUlFfWEVOUE1VOg0KPj4gK8KgwqDCoMKgwqDCoMKg
-IHJldHVybiB0cnVlOw0KPj4gK8KgwqDCoCBkZWZhdWx0Og0KPj4gK8KgwqDCoMKgwqDCoMKg
-IHJldHVybiBmYWxzZTsNCj4+ICvCoMKgwqAgfQ0KPj4gK30NCj4+ICsNCj4+ICsvKiBJUlEg
-PC0+IFZJUlEgbWFwcGluZy7CoCBHbG9iYWwvRG9tYWluIHZpcnFzIGFyZSB0cmFja2VkIGlu
-IGNwdSAwLsKgICovDQo+PiDCoCBzdGF0aWMgREVGSU5FX1BFUl9DUFUoaW50IFtOUl9WSVJR
-U10sIHZpcnFfdG9faXJxKSA9IHtbMCAuLi4gTlJfVklSUVMtMV0gPSAtMX07DQo+PiDCoCAv
-KiBJUlEgPC0+IElQSSBtYXBwaW5nICovDQo+PiBAQCAtOTc0LDYgKzk4Niw5IEBAIHN0YXRp
-YyB2b2lkIF9fdW5iaW5kX2Zyb21faXJxKHN0cnVjdCBpcnFfaW5mbyAqaW5mbywgDQo+PiB1
-bnNpZ25lZCBpbnQgaXJxKQ0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHN3aXRjaCAoaW5mby0+
-dHlwZSkgew0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGNhc2UgSVJRVF9WSVJROg0KPj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFpc19wZXJfdmNwdV92aXJxKHZpcnFfZnJvbV9p
-cnEoaW5mbykpKQ0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjcHUgPSAw
-Ow0KPj4gKw0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcGVyX2NwdSh2aXJxX3Rv
-X2lycSwgY3B1KVt2aXJxX2Zyb21faXJxKGluZm8pXSA9IC0xOw0KPj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgY2FzZSBJUlFU
-X0lQSToNCj4gDQo+IFRoaW5raW5nIGFib3V0IGl0IGEgbGl0dGxlIG1vcmUsIGJpbmRfdmly
-cV90b19pcnEoKSBzaG91bGQgZW5zdXJlIGNwdSA9PSAwIGZvciANCj4gcGVyLWRvbWFpbiBh
-bmQgZ2xvYmFsIFZJUlFzIHRvIGVuc3VyZSB0aGUgcHJvcGVydHkgaG9sZHMuwqAgQWxzbyB2
-aXJxX3RvX2lycSANCg0KSW4gWGVuJ3MgZXZ0Y2huX2JpbmRfdmlycSgpIHRoZXJlIGlzOg0K
-DQogICAgIGlmICggdHlwZSAhPSBWSVJRX1ZDUFUgJiYgdmNwdSAhPSAwICkNCiAgICAgICAg
-IHJldHVybiAtRUlOVkFMOw0KDQpNYWtpbmcgc3VyZSBpbiBMaW51eCB0aGF0IHRoZXJlIGlz
-IG5ldmVyIGEgdmlvbGF0aW9uIG9mIHRoYXQgcmVzdHJpY3Rpb24gd291bGQNCnJlcXVpcmUg
-dG8gYWx3YXlzIGhhdmUgYW4gdXAtdG8tZGF0ZSB0YWJsZSBvZiBhbGwgcG9zc2libGUgVklS
-UXMgYW5kIHRoZWlyDQp0eXBlLCB3aGljaCBJJ2QgbGlrZSB0byBhdm9pZC4NCg0KSSB0aGlu
-ayBpdCBpcyB0aGUgdXNlciBvZiB0aGUgVklSUSB3aG8gaXMgcmVzcG9uc2libGUgdG8gZW5z
-dXJlIGNwdSAwIGlzIHBhc3NlZA0KdG8gYmluZF92aXJxX3RvX2lycSgpLCBhcyB0aGlzIHVz
-ZXIga25vd3MgdGhhdCBzdWNoIGEgcmVzdHJpY3Rpb24gYXBwbGllcyB0bw0KdGhlIFZJUlEg
-aW4gcXVlc3Rpb24gKGF0IGxlYXN0IGhlIHNob3VsZCBrbm93IHRoYXQpLg0KDQpTcGVjaWFs
-IGhhbmRsaW5nIGZvciByZWFsbHkgdXNlZCBWSVJRcyBpbiB0aGUga2VybmVsIGNhbiBoYXZl
-IHNvbWUgc3BlY2lhbA0KaGFuZGxpbmcsIG9mIGNvdXJzZSwgYXMgdGhleSBhcmUga25vd24g
-YWxyZWFkeSBhbmQgc2hvdWxkIGJlIHVzZWQgY29ycmVjdGx5Lg0KDQoNCkp1ZXJnZW4NCg==
 
---------------W3LIP514FcistQgDFAHvxPxq
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+On 8/13/2025 6:58 PM, Binbin Wu wrote:
+>
+>
+> On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+>> The test checks report_fatal_error functionality.
+>>
+>> TD guest can use TDG.VP.VMCALL<ReportFatalError> to report the fatal error
+>> it has experienced. TD guest is requesting a termination with the error
+>> information that include 16 general-purpose registers.
+>
+> I think it's worth to mention that KVM converts TDG.VP.VMCALL<ReportFatalError>
+> to KVM_EXIT_SYSTEM_EVENT with the type KVM_SYSTEM_EVENT_TDX_FATAL.
+>
+>>
+>> Co-developed-by: Binbin Wu <binbin.wu@linux.intel.com>
+>> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+>> Signed-off-by: Sagi Shahar <sagis@google.com>
+>> ---
+>>   .../selftests/kvm/include/x86/tdx/tdx.h       |  6 ++-
+>>   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  1 +
+>>   .../selftests/kvm/include/x86/tdx/test_util.h | 19 +++++++
+>>   tools/testing/selftests/kvm/lib/x86/tdx/tdx.c | 18 +++++++
+>>   .../selftests/kvm/lib/x86/tdx/tdx_util.c      |  6 +++
+>>   .../selftests/kvm/lib/x86/tdx/test_util.c     | 10 ++++
+>>   tools/testing/selftests/kvm/x86/tdx_vm_test.c | 51 ++++++++++++++++++-
+>>   7 files changed, 108 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+>> index a7161efe4ee2..2acccc9dccf9 100644
+>> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+>> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+>> @@ -4,9 +4,13 @@
+>>     #include <stdint.h>
+>>   +#include "kvm_util.h"
+>> +
+>> +#define TDG_VP_VMCALL_REPORT_FATAL_ERROR 0x10003
+>> +
+>>   #define TDG_VP_VMCALL_INSTRUCTION_IO 30
+>>     uint64_t tdg_vp_vmcall_instruction_io(uint64_t port, uint64_t size,
+>>                         uint64_t write, uint64_t *data);
+>> -
+>> +void tdg_vp_vmcall_report_fatal_error(uint64_t error_code, uint64_t data_gpa);
+>>   #endif // SELFTEST_TDX_TDX_H
+>> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>> index 57a2f5893ffe..d66cf17f03ea 100644
+>> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>> @@ -15,5 +15,6 @@ struct kvm_vm *td_create(void);
+>>   void td_initialize(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+>>              uint64_t attributes);
+>>   void td_finalize(struct kvm_vm *vm);
+>> +void td_vcpu_run(struct kvm_vcpu *vcpu);
+>>     #endif // SELFTESTS_TDX_KVM_UTIL_H
+>> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+>> index 07d63bf1ffe1..dafeee9af1dc 100644
+>> --- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+>> +++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+>> @@ -38,4 +38,23 @@ bool is_tdx_enabled(void);
+>>   void tdx_test_success(void);
+>>   void tdx_test_assert_success(struct kvm_vcpu *vcpu);
+>>   +/*
+>> + * Report an error with @error_code to userspace.
+>> + *
+>> + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since
+>> + * execution is not expected to continue beyond this point.
+>> + */
+>> +void tdx_test_fatal(uint64_t error_code);
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Another thing to mention is that tdx_test_fatal() and tdx_test_fatal_with_data()
+use R12 to pass the input error_code, which is functionally workable, since both
+guest and userspace code are in KVM selftest test code.
 
---------------W3LIP514FcistQgDFAHvxPxq--
+But TDX GHCI spec has its own format for R12:
+- 31:0
+   TD-specific error code
+   * Panic – 0x0.
+   * Values – 0x1 to 0xFFFFFFFF reserved.
+- 62:32
+   TD-specific extended error code.
+   TD software defined.
+- 63
+   Set if the TD specified additional information in the GPA parameter (R13).
+So, this patch series doesn't follow the format.
 
---------------4ze0d0sDBVaNHHe93x0xGSVt--
+Also, tdx_test_fatal_with_data() set bit 63 of R12, so, the value reported to
+userspace will be different in R12 from the original parameter passed by the
+guest, and setting bit 63 could collide with the error code defined by guest.
 
---------------n01cz0qzsiIkjS64c0EV3BZz
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+IMHO, it's better to follow the GHCI spec.
+But if TDX KVM selftest code doesn't want to follow it, then it should not set
+bit 63 for tdx_test_fatal_with_data() in R12.
 
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmidiroFAwAAAAAACgkQsN6d1ii/Ey9b
-qAf9E5eeox1eGx/zAvXtyXAucZh5lxVcoaexNIbYW/Vy7VJIZEOzGHXoOts7nYdRP14l0orHkdWT
-d+uoVOhBUhaqeMaVzWUDSV4wxAuxradDQTDKBz1mXI16J29sJMjuzcFr9Fn3H3eHpEwD/bUJPtVt
-BJnBRufRFCXtsVWnyHV1hO5A/khTUJlTZhEjooz62jgiC/uWeIEdoHRKLc1IPJBRxYfJtdfmjwEk
-P7zdjbLheGdNXibd2u19fvHUHCOB7Z4W+rqMYsTWT6e2VhKTm2ZxgZk8bQceT2KvP9GxEapOCwSq
-o3bYN5TV0A6JmbsywDs+ZDU9TZ3VFS9n4RSduO6b7g==
-=teqQ
------END PGP SIGNATURE-----
-
---------------n01cz0qzsiIkjS64c0EV3BZz--
+>>
+>> +
+>> +/*
+>> + * Report an error with @error_code to userspace.
+>> + *
+>> + * @data_gpa may point to an optional shared guest memory holding the error
+>> + * string.
+>
+> A according to the GHCI spec, this is the optional GPA pointing to a shared guest memory, but in these TDX KVM selftest cases, it may not used that way. It may need some clarification about it. And based on the usage in this patch series, the name data_gpa may be misleading.
+>
+>
+>> + *
+>> + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since
+>> + * execution is not expected to continue beyond this point.
+>> + */
+>> +void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
+>> + 
+[...]
 
