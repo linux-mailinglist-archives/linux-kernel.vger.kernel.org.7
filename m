@@ -1,48 +1,40 @@
-Return-Path: <linux-kernel+bounces-769027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA975B26973
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B9AB26860
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8429D606CB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35195E5FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70671C861A;
-	Thu, 14 Aug 2025 14:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="ZR9RNxbe"
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7DF301479;
+	Thu, 14 Aug 2025 13:56:12 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBDB1ADC93
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3252FE054
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180718; cv=none; b=LVMdBfpiGX4J1CX59kJLwvOtSkaBgrAUrUb0lfJfDphKGhvGC8PU3I/fhUMyjXYtN1ldyq0NFz/3BX44evEz1UXhZejv56RvaKUxxfRjbdOyDsa6dbMSDEWqu5N1O0+rotUeE7QGEES2b4yaygHGM1qeIFS6f2GKpnA3MIwRpZo=
+	t=1755179772; cv=none; b=DuscrF2OdqQ6eJfBorRSyPxF/uK8hPqmRq+BLXIDYGcX9fsvjA/SgkUXFTLT6HdDnV78eJyMImDsLbgtGegKWRd0krE88YF2VyFZBzk0YmeQWcEoOX/bRSxJYEPPp9t7+98WikOG/idexAS7LmrQzm9XncpbDpaqhukIUVltDQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180718; c=relaxed/simple;
-	bh=Y1o6emuvsPrqT+WdWAFVSifqHHuldu2i2ckRsNT25/I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TnRjlG5wIUSnO0WARvLSDekBPCZVfEEIe5qWmYWAjIQjhTuWE7SBisMYQylmPPSGnZX3Ab6snhQaGT93CGa2RT1dQhyJdO4OgQ3f0Lk1U3fPVXIUBk5MxXIr1jcicaCjtJhQ9fZDfSSFss86nMpesPLHO7E7URt+t7P5jurJEsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=ZR9RNxbe; arc=none smtp.client-ip=81.70.192.198
+	s=arc-20240116; t=1755179772; c=relaxed/simple;
+	bh=2qSTqKgAiQDfLqRBh2lVVrFNo/uyUMPLEYEWg2jiGM4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PhBV/IZO0LA2eRJig7UHzHsnsRlABdNua8tzBb0PV3p0uUEegXW62kCaDjEdgS8Chz0bZ49ifRrOdV/WiEPJfDqGNffcgxH7lFn1bbukgjZJn50vjTnmapPOUt5J2WZa3Oqu/8Lhlus6eOca1AZiq4+b2De30thBjGj93NQln00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=BBLjP4xvKDuUFhARlS1Ydysza6+nSWdlIM3BlOBCokY=;
-	b=ZR9RNxbeiqfWaz2YieZy484lT4aLrYRkBa5eVtHwAqoPKkWgCviGZXx0vOXHsCpdj7MYN2Gec
-	InkLNagzTTNNaNc9F3YunmB677AjilGx6mLexq8iT454fQi9NACXsrLPHx0zDCz7D8eTr28ASYA
-	m7Vu/RyqCaZkSVciXfLv8Fs=
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c2mwn2tTvzYlnhn;
-	Thu, 14 Aug 2025 21:55:53 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c2mwm1WGfzYl2mK;
+	Thu, 14 Aug 2025 21:55:52 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Aug
- 2025 21:55:59 +0800
+ 2025 21:56:00 +0800
 Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
  (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Aug
@@ -55,10 +47,12 @@ CC: <akpm@linux-foundation.org>, <mhocko@suse.com>, <rientjes@google.com>,
 	<peterz@infradead.org>, <dvhart@infradead.org>, <dave@stgolabs.net>,
 	<andrealmeid@igalia.com>, <liam.howlett@oracle.com>, <liulu.liu@honor.com>,
 	<feng.han@honor.com>, <zhongjinji@honor.com>
-Subject: [PATCH v4 0/3] mm/oom_kill: Only delay OOM reaper for processes using robust futexes
-Date: Thu, 14 Aug 2025 21:55:52 +0800
-Message-ID: <20250814135555.17493-1-zhongjinji@honor.com>
+Subject: [PATCH v4 1/3] futex: Introduce function process_has_robust_futex()
+Date: Thu, 14 Aug 2025 21:55:53 +0800
+Message-ID: <20250814135555.17493-2-zhongjinji@honor.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250814135555.17493-1-zhongjinji@honor.com>
+References: <20250814135555.17493-1-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,61 +65,94 @@ X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
 
 From: zhongjinji <zhongjinji@honor.com>
 
-The OOM reaper quickly reclaims a process's memory when the system hits OOM,
-helping the system recover. Without the OOM reaper, if a process frozen by
-cgroup v1 is OOM killed, the victim's memory cannot be freed, leaving the
-system in a poor state. Even if the process is not frozen by cgroup v1,
-reclaiming victims' memory remains important, as having one more process
-working speeds up memory release.
-
-When processes holding robust futexes are OOM killed but waiters on those
-futexes remain alive, the robust futexes might be reaped before
+When the holders of robust futexes are OOM killed but the waiters on robust
+futexes are still alive, the robust futexes might be reaped before
 futex_cleanup() runs. This can cause the waiters to block indefinitely [1].
+To prevent this issue, the OOM reaper's work is delayed by 2 seconds [1].
+However, the OOM reaper now rarely runs since many killed processes exit
+within 2 seconds.
 
-To prevent this issue, the OOM reaper's work is delayed by 2 seconds [1]. Since
-many killed processes exit within 2 seconds, the OOM reaper rarely runs after
-this delay. However, robust futex users are few, so delaying OOM reap for all
-victims is unnecessary.
+Because robust futex users are few, delay the reaper's execution only for
+processes holding robust futexes to improve the performance of the OOM
+reaper.
 
-If each thread's robust_list in a process is NULL, the process holds no robust
-futexes. For such processes, the OOM reaper should not be delayed. For
-processes holding robust futexes, to avoid issue [1], the OOM reaper must
-still be delayed.
-
-Patch 1 introduces process_has_robust_futex() to detect whether a process uses
-robust futexes. Patch 2 delays the OOM reaper only for processes holding robust
-futexes, improving OOM reaper performance. Patch 3 makes the OOM reaper and
-exit_mmap() traverse the maple tree in opposite orders to reduce PTE lock
-contention caused by unmapping the same vma.
+Introduce the function process_has_robust_futex() to detect whether a process
+uses robust futexes. If each thread's robust_list in a process is NULL, it
+means the process holds no robust futexes. Conversely, it means the process
+holds robust futexes.
 
 Link: https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u [1]
 
+Signed-off-by: zhongjinji <zhongjinji@honor.com>
 ---
+ include/linux/futex.h |  5 +++++
+ kernel/futex/core.c   | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-v3 -> v4:
-
-1. Rename check_robust_futex() to process_has_robust_futex() for clearer
-   intent.
-2. Because the delay_reap parameter was added to task_will_free_mem(),
-   the function is renamed to should_reap_task() to better clarify
-   its purpose.
-3. Add should_delay_oom_reap() to decide whether to delay OOM reap.
-4. Modify the OOM reaper to traverse the maple tree in reverse order; see patch
-   3 for details.
-These changes improve code readability and enhance OOM reaper behavior.
-
-zhongjinji (3):
-  futex: Introduce function process_has_robust_futex()
-  mm/oom_kill: Only delay OOM reaper for processes using robust futexes
-  mm/oom_kill: Have the OOM reaper and exit_mmap() traverse the maple
-    tree in opposite orders
-
- include/linux/futex.h |  5 ++++
- include/linux/mm.h    |  3 +++
- kernel/futex/core.c   | 30 +++++++++++++++++++++++
- mm/oom_kill.c         | 55 +++++++++++++++++++++++++++++++------------
- 4 files changed, 78 insertions(+), 15 deletions(-)
-
+diff --git a/include/linux/futex.h b/include/linux/futex.h
+index 9e9750f04980..39540b7ae2a1 100644
+--- a/include/linux/futex.h
++++ b/include/linux/futex.h
+@@ -81,6 +81,7 @@ void futex_exec_release(struct task_struct *tsk);
+ long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+ 	      u32 __user *uaddr2, u32 val2, u32 val3);
+ int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long arg4);
++bool process_has_robust_futex(struct task_struct *tsk);
+ 
+ #ifdef CONFIG_FUTEX_PRIVATE_HASH
+ int futex_hash_allocate_default(void);
+@@ -108,6 +109,10 @@ static inline int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsig
+ {
+ 	return -EINVAL;
+ }
++static inline bool process_has_robust_futex(struct task_struct *tsk)
++{
++	return false;
++}
+ static inline int futex_hash_allocate_default(void)
+ {
+ 	return 0;
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index d9bb5567af0c..01b6561ab4f6 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -1961,6 +1961,36 @@ int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long arg4)
+ 	return ret;
+ }
+ 
++/*
++ * process_has_robust_futex() - check whether the given task hold robust futexes.
++ * @p: task struct of which task to consider
++ *
++ * If any thread in the task has a non-NULL robust_list or compat_robust_list,
++ * it indicates that the task holds robust futexes.
++ */
++bool process_has_robust_futex(struct task_struct *tsk)
++{
++	struct task_struct *t;
++	bool ret = false;
++
++	rcu_read_lock();
++	for_each_thread(tsk, t) {
++		if (unlikely(t->robust_list)) {
++			ret = true;
++			break;
++		}
++#ifdef CONFIG_COMPAT
++		if (unlikely(t->compat_robust_list)) {
++			ret = true;
++			break;
++		}
++#endif
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ static int __init futex_init(void)
+ {
+ 	unsigned long hashsize, i;
 -- 
 2.17.1
 
