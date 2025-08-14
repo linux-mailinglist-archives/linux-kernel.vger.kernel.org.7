@@ -1,188 +1,263 @@
-Return-Path: <linux-kernel+bounces-768608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAFEB26326
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:48:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DBAB2632F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FD83A82D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154C79E4B05
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE518318123;
-	Thu, 14 Aug 2025 10:46:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9992E9721
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F6D2F83BE;
+	Thu, 14 Aug 2025 10:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNcIJ8DN"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFFD28724D;
+	Thu, 14 Aug 2025 10:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168371; cv=none; b=cCmzYi8/ZRYBR7ssKPUs/N0EszG5g5br746ThRyVA4vRVCXy+qlfGaOTL4XT+RvEvSI1QS3u2BK/uWdvyFZ9SRTeAf+miCpWGsAlYptjVvYPuWypwvxNMR5AYQxKcY3ZDzOLXkxtYu+DGiXOd0k1fzwQWKpN1FRfsY14PBz+XIs=
+	t=1755168393; cv=none; b=H6G9aDlNcOuF0fJVn0wHAXBUgQN5VPxu345IGtyYQBm+5c9wxNSld3TjB4HhtVY0PB93bYZ+JBV2QOOAUOIATN27OefYPaIlJ8j45bLRT8JtPXNXIi6o8LAQHjBBp3Cri7UvqB77JjeiqDKpFA8BycX78mtiFWOpRBlQ3nRMPYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168371; c=relaxed/simple;
-	bh=axo/qIflGsP0M3WRqY3IcIlA4kosE9/6nmehw11KYb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hx7Nwm1pjpR/WSIznfsBBK3/kUxa0W6Ugwdl5VFMv6ynqmeMhdzKQNaumvXgRDaG3IXI2griH7Fgmn/a2UhVv8d8t3jecDodJY2AP0X5Wf9HAgXl3tCj5Di3eBpSqjjZ/NXRVbOj9JMhNvb2u7wIJ0B/rRP+181CSL5YFFjcgtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E56F2113E;
-	Thu, 14 Aug 2025 03:45:59 -0700 (PDT)
-Received: from [10.163.65.236] (unknown [10.163.65.236])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C23BE3F738;
-	Thu, 14 Aug 2025 03:46:06 -0700 (PDT)
-Message-ID: <5e5f45c1-e813-4900-8fad-2ed0dc067468@arm.com>
-Date: Thu, 14 Aug 2025 16:16:03 +0530
+	s=arc-20240116; t=1755168393; c=relaxed/simple;
+	bh=9VjPhpkG31XsNvAy3oEQ6ai0rrumEGX6BoJKRDxARgI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oqNeiR/6c0/MJKf3Dy+AUcnDYzoZtt+BTEw+mvQ7MBa7o8lskuiUvUqlQ3akWObUav0zzsut2GdGmyOUH3ZILCqpDNgWc4EQh32TjTeIdZwzHCEZ39eO1PwwtkjqYFgDcO1QXaYcbCyqBBAQ257v4odGmcuIDsqv3xR5IrahkzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNcIJ8DN; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2ea94c7dso1215195b3a.2;
+        Thu, 14 Aug 2025 03:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755168391; x=1755773191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y21EAJKk09TeTY4oNrlpb8XfLwThF6yfFAYybJQLDII=;
+        b=CNcIJ8DN7BcuR+IvT4F4aD675tIktuaE18y7V/A4oZVd6TYsHvV0hhxZ3kKsjQ5MRt
+         +HlAzuoGxMOhCyAJF51/eUi/JPfyjHCOnJCVdCJ1Q6ZP024oB8SKWYTd4YoN4OXgpg7v
+         hcd4RNRNoI6xftHpt8jCEYWAXZBh2gIYua8ii7rxCNiRxBrn8HnZfxAo8lvNJvbD8p/v
+         iHILs3g1JWlXkuksW+sF8Datwg8BACDBG4BPdw//yM8imfEG1FcTt9ruKFKm1/Lf0Mg3
+         OiD/s023C0wjpfuhX445nCgOg3RU8Xb0/16spnXLdhXXPHlRZieBwyI19nF2xlf6v/NA
+         OCRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755168391; x=1755773191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y21EAJKk09TeTY4oNrlpb8XfLwThF6yfFAYybJQLDII=;
+        b=o4bSWCcm0L4UX0wgBq11c10YFHQgR4OMqH97XlYdtutIhT/uGgxG5Tt/RtwWkW0DfH
+         opLv87A3D0L249mq0qAkNwoyid7MR+V72NvxoY5GU1f//k0HmeWgVfV3w9mPJVawS7aK
+         O2FhSpqMBYLEnth6rA63FMyJ/nW+51T+WpkPZ45XR+I4IS1BuR6eV6aouIJ38xqXCM/7
+         X7vT4ZZX6K1LlN5xpIj4U/HR0l9WO9MU0yqwgM8YcJyjY92ccuqXdMPCoJaqaNi2VV0K
+         uEGVeQVQQwkI1KAuW2SZUdoi4pVL2zp7z2MtAmS7Ub6s8AU1HphfA4vRPD/50yoaIjxS
+         Hr9g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8FHLJq78qw1xZE20dModO7zr5ACI5voh1ASaDivKTBwKDH3J4FOVyIPD82K5BpSG4sIiTaUV8qRhEYsQ=@vger.kernel.org, AJvYcCXQrVOeyo16Wsvc/c6hsomIugaQF+DP349YQwYO7v+QLa0TO5IUAprh8WOEOzSgiprtmXMTN+VrVTTmU4GUPus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwidfUarL5iovrIAAXhSXBwuVWYHv5H+cGI2tVP8WwxLQxNCILq
+	dCXHFevR1SE3neN3OncJRoO7z1ZEB9lL/Hd/Pn3xrDpMc3Gi27RBINDLZclEi+DSA4s=
+X-Gm-Gg: ASbGnct6Ox/ZXKweG9h0CMWMQlubG7nkPNvwv5LTcTQiYNbJnQmSYHZxF/CiN6yddYd
+	+5kt8xmbUDoofMOgiwmILFp9o8mu4mNQac5a+2bP3ur2mtGR/lRLqYLD6IEvjA5HulnAtIN+bSZ
+	MdJ1pRhXClOSsgmUdjnz+3XxIXJM4yZfk9KxsMDgZlkewL0mH3xHv0Z0sLkJjGx2QUVjQD09NtH
+	C/NKatIMQ5BuKkO9kQplETVSF4cJ5sQhbDAgM9da2ijGt5VkWNZTxAJEwfHuGEW21IHJpA673Kv
+	u/d5DXazo5/KTBj+CNox2AJ9GXi86OWFKOrWGqsgO4E3vbpe7gJwY9xvLhvXTKKlXGXV4/SuSvx
+	S+tgiJLtNtxwRh86pDwsI5vhqAOGzpgPjTcNm
+X-Google-Smtp-Source: AGHT+IGQsx+0VKtIsXrcwIrlDVaIvLwJ4FShg9+W65gJti3oWQfttxGPubd6v0RwCnSOD2VMgGMY+w==
+X-Received: by 2002:a05:6a00:2d9d:b0:76b:ca98:faae with SMTP id d2e1a72fcca58-76e2fc290b2mr4487901b3a.8.1755168390809;
+        Thu, 14 Aug 2025 03:46:30 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcdd40f63sm34331201b3a.87.2025.08.14.03.46.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:46:30 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: [PATCH] rust: driver-core: Update ARef and AlwaysRefCounted imports from sync::aref
+Date: Thu, 14 Aug 2025 16:16:15 +0530
+Message-Id: <20250814104615.355106-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
- destroy_args()
-To: "Herton R. Krzesinski" <herton@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-References: <20250731214051.4115182-1-herton@redhat.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250731214051.4115182-1-herton@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-This has been on linux-next for almost last two weeks now and
-no problem has been reported. So I guess it's all good.
+Update call sites in the driver-core files and its related samples
+to import `ARef` and `AlwaysRefCounted` from `sync::aref`
+instead of `types`.
 
-On 01/08/25 3:10 AM, Herton R. Krzesinski wrote:
-> The mm/debug_vm_pagetable test allocates manually page table entries for the
-> tests it runs, using also its manually allocated mm_struct. That in itself is
-> ok, but when it exits, at destroy_args() it fails to clear those entries with
-> the *_clear functions.
-> 
-> The problem is that leaves stale entries. If another process allocates
-> an mm_struct with a pgd at the same address, it may end up running into
-> the stale entry. This is happening in practice on a debug kernel with
-> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
-> extra debugging I added (it prints a warning trace if pgtables_bytes goes
-> negative, in addition to the warning at check_mm() function):
-> 
-> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
-> [    2.539366] kmem_cache info
-> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
-> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
-> (...)
-> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
-> [    2.552816] Modules linked in:
-> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
-> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
-> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
-> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
-> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
-> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
-> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
-> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
-> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
-> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
-> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
-> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
-> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
-> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
-> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
-> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
-> [    2.553199] Call Trace:
-> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
-> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
-> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
-> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
-> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
-> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
-> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
-> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
-> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
-> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
-> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
-> (...)
-> [    2.558892] ---[ end trace 0000000000000000 ]---
-> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
-> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
-> 
-> Here the modprobe process ended up with an allocated mm_struct from the
-> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
-> problem, since the mm_struct is initialized again etc., however, if it ends up
-> using the same pgd table, it bumps into the old stale entry when clearing/freeing
-> the page table entries, so it tries to free an entry already gone (that one
-> which was allocated by the debug_vm_pgtable test), which also explains the
-> negative pgtables_bytes since it's accounting for not allocated entries in the
-> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
-> and clearing of the entries is explicitly done in the free_pgtables->
-> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
-> free_pte_range path. However, the debug_vm_pgtable test does not call
-> free_pgtables, since it allocates mm_struct and entries manually for its test
-> and eg. not goes through page faults. So it also should clear manually the
-> entries before exit at destroy_args().
-> 
-> This problem was noticed on a reboot X number of times test being done
-> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
-> enabled. Depends on the system, but on a 100 times reboot loop the
-> problem could manifest once or twice, if a process ends up getting the
-> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
-> After using this patch, I couldn't reproduce/experience the problems
-> anymore. I was able to reproduce the problem as well on latest upstream
-> kernel (6.16).
-> 
-> I also modified destroy_args() to use mmput() instead of mmdrop(), there
-> is no reason to hold mm_users reference and not release the mm_struct
-> entirely, and in the output above with my debugging prints I already
-> had patched it to use mmput, it did not fix the problem, but helped
-> in the debugging as well.
-> 
-> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
-> ---
->  mm/debug_vm_pgtable.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 7731b238b534..0f5ddefd128a 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
->  
->  	/* Free page table entries */
->  	if (args->start_ptep) {
-> +		pmd_clear(args->pmdp);
->  		pte_free(args->mm, args->start_ptep);
->  		mm_dec_nr_ptes(args->mm);
->  	}
->  
->  	if (args->start_pmdp) {
-> +		pud_clear(args->pudp);
->  		pmd_free(args->mm, args->start_pmdp);
->  		mm_dec_nr_pmds(args->mm);
->  	}
->  
->  	if (args->start_pudp) {
-> +		p4d_clear(args->p4dp);
->  		pud_free(args->mm, args->start_pudp);
->  		mm_dec_nr_puds(args->mm);
->  	}
->  
-> -	if (args->start_p4dp)
-> +	if (args->start_p4dp) {
-> +		pgd_clear(args->pgdp);
->  		p4d_free(args->mm, args->start_p4dp);
-> +	}
->  
->  	/* Free vma and mm struct */
->  	if (args->vma)
->  		vm_area_free(args->vma);
->  
->  	if (args->mm)
-> -		mmdrop(args->mm);
-> +		mmput(args->mm);
->  }
->  
->  static struct page * __init
+This aligns with the ongoing effort to move `ARef` and
+`AlwaysRefCounted` to sync.
+
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1173
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+---
+It part of a subsystem-wise split series, as suggested in:
+https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+This split series is intended to ease review and subsystem-level maintenance.
+
+The original moving patch is here: (commit 07dad44aa9a93)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+
+Gradually the re-export from types.rs will be eliminated in the
+future cycle.
+---
+ rust/kernel/auxiliary.rs             | 2 +-
+ rust/kernel/device.rs                | 7 ++++---
+ rust/kernel/devres.rs                | 4 ++--
+ rust/kernel/pci.rs                   | 5 +++--
+ rust/kernel/platform.rs              | 2 +-
+ samples/rust/rust_driver_pci.rs      | 2 +-
+ samples/rust/rust_driver_platform.rs | 2 +-
+ 7 files changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+index 4749fb6bffef..0cefe36ca4b5 100644
+--- a/rust/kernel/auxiliary.rs
++++ b/rust/kernel/auxiliary.rs
+@@ -245,7 +245,7 @@ extern "C" fn release(dev: *mut bindings::device) {
+ kernel::impl_device_context_into_aref!(Device);
+ 
+ // SAFETY: Instances of `Device` are always reference-counted.
+-unsafe impl crate::types::AlwaysRefCounted for Device {
++unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+         unsafe { bindings::get_device(self.as_ref().as_raw()) };
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index b8613289de8e..b860ab389f18 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -6,7 +6,8 @@
+ 
+ use crate::{
+     bindings,
+-    types::{ARef, ForeignOwnable, Opaque},
++    sync::aref::ARef,
++    types::{ForeignOwnable, Opaque},
+ };
+ use core::{fmt, marker::PhantomData, ptr};
+ 
+@@ -292,7 +293,7 @@ pub fn fwnode(&self) -> Option<&property::FwNode> {
+ kernel::impl_device_context_into_aref!(Device);
+ 
+ // SAFETY: Instances of `Device` are always reference-counted.
+-unsafe impl crate::types::AlwaysRefCounted for Device {
++unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+         unsafe { bindings::get_device(self.as_raw()) };
+@@ -411,7 +412,7 @@ macro_rules! impl_device_context_deref {
+ #[macro_export]
+ macro_rules! __impl_device_context_into_aref {
+     ($src:ty, $device:tt) => {
+-        impl ::core::convert::From<&$device<$src>> for $crate::types::ARef<$device> {
++        impl ::core::convert::From<&$device<$src>> for $crate::sync::aref::ARef<$device> {
+             fn from(dev: &$device<$src>) -> Self {
+                 (&**dev).into()
+             }
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index da18091143a6..99b7520019f0 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -13,8 +13,8 @@
+     ffi::c_void,
+     prelude::*,
+     revocable::{Revocable, RevocableGuard},
+-    sync::{rcu, Completion},
+-    types::{ARef, ForeignOwnable, Opaque, ScopeGuard},
++    sync::{aref::ARef, rcu, Completion},
++    types::{ForeignOwnable, Opaque, ScopeGuard},
+ };
+ 
+ use pin_init::Wrapper;
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index 887ee611b553..cfd00d4f0cfc 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -13,7 +13,8 @@
+     io::Io,
+     io::IoRaw,
+     str::CStr,
+-    types::{ARef, Opaque},
++    sync::aref::ARef,
++    types::Opaque,
+     ThisModule,
+ };
+ use core::{
+@@ -455,7 +456,7 @@ pub fn set_master(&self) {
+ impl crate::dma::Device for Device<device::Core> {}
+ 
+ // SAFETY: Instances of `Device` are always reference-counted.
+-unsafe impl crate::types::AlwaysRefCounted for Device {
++unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+         unsafe { bindings::pci_dev_get(self.as_raw()) };
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 8f028c76f9fa..032fd455b838 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -292,7 +292,7 @@ pub fn io_request_by_name(&self, name: &CStr) -> Option<IoRequest<'_>> {
+ impl crate::dma::Device for Device<device::Core> {}
+ 
+ // SAFETY: Instances of `Device` are always reference-counted.
+-unsafe impl crate::types::AlwaysRefCounted for Device {
++unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+         unsafe { bindings::get_device(self.as_ref().as_raw()) };
+diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
+index 606946ff4d7f..0798019014cd 100644
+--- a/samples/rust/rust_driver_pci.rs
++++ b/samples/rust/rust_driver_pci.rs
+@@ -4,7 +4,7 @@
+ //!
+ //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+ 
+-use kernel::{bindings, c_str, device::Core, devres::Devres, pci, prelude::*, types::ARef};
++use kernel::{bindings, c_str, device::Core, devres::Devres, pci, prelude::*, sync::aref::ARef};
+ 
+ struct Regs;
+ 
+diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+index 69ed55b7b0fa..6473baf4f120 100644
+--- a/samples/rust/rust_driver_platform.rs
++++ b/samples/rust/rust_driver_platform.rs
+@@ -72,7 +72,7 @@
+     of, platform,
+     prelude::*,
+     str::CString,
+-    types::ARef,
++    sync::aref::ARef,
+ };
+ 
+ struct SampleDriver {
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.34.1
 
 
