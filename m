@@ -1,171 +1,154 @@
-Return-Path: <linux-kernel+bounces-768671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BD3B263FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:17:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F69B263E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B009E56BF
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DB4A1C22475
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9BA2F49FA;
-	Thu, 14 Aug 2025 11:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE92F39D9;
+	Thu, 14 Aug 2025 11:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNpjrfeQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1NNCoDS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D472F39B2;
-	Thu, 14 Aug 2025 11:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA382F39A4;
+	Thu, 14 Aug 2025 11:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170054; cv=none; b=Ut15ndK9suyWTvlPi7DRjKmO94cmLLVDWMaRypWKxuWA8pHu+VadjJ6yv6l6yEZp82zCdcyPcg7J2QmL6NLM/Mn/GPL9gb4POPCN2yXj2gwqSWNVcr1EyFTdvAOID7POMYFRvLQ3eEjz5vah/gFkgjO6Bm6y49ViemAkEAi2Xws=
+	t=1755170046; cv=none; b=uGwThPIqLKgSFPFmj6rDR/dGPJBXmyhRFbVp4mdIhfR8SoM19MOwQ49raM3IW92T77PzD+TNkV3RidO6jcTWzIdALPcFyJHHS9YESkiBlo/2OMSTKEXLnk00kFkkThdL7K5bM7yFSmj5/rdEKG9p5RHDEyyQlI3pMki+DyipLiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170054; c=relaxed/simple;
-	bh=tEQmYgzbbnDyqDEJWRtGvNd+F5EzBR/vQBdSyaJQhYo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=f8zoWRljDaUtkBEG9jh9Akue/JgQHMQF2UYUfm6gU4hT/joe+akAkfpcd0ZHLLYz2KzJli0+FGfjLaIpZN4Vt1/8xS3graQCyQD/V4f92xGOE0q/i4rZPBfKTyrijFZMf6hOgat7utoV3U51SBti+RH3jtwtejtHqLftwZnUyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNpjrfeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF02C4CEED;
-	Thu, 14 Aug 2025 11:13:54 +0000 (UTC)
+	s=arc-20240116; t=1755170046; c=relaxed/simple;
+	bh=Zp1LwTzGyu5opfZZQrk1YaVyVYP61aThHFWSJdfT0J0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZSWmI7vhhiG/z3byqHAWzJMjuqR8uNHZ1sraeimaM9UBQMLReQJ9X8xN6zoFMl2cSS5VRgB4mOetnsFwMdEbL5WuJ5u4XzFujkz0zZUysPRrW7vAb0OZqiwivVEwMQ78S3r+aJYeRhg5UEv7cKXZTXOI9LW9A/wOJXF7iadOIGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1NNCoDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39150C4CEEF;
+	Thu, 14 Aug 2025 11:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755170053;
-	bh=tEQmYgzbbnDyqDEJWRtGvNd+F5EzBR/vQBdSyaJQhYo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=nNpjrfeQtIacQG0WEX7mhSYTd7hQlnB7xgoGgJ3v0sCDCZTw/gWywOLfqOYZY4LEw
-	 5E1vCRzlD1L7yPW24oE8hMcbLDvBgKF7UglcpNWQtk+d21igAN/jkLiw4vfw95mmaO
-	 Wy7Aqpr6pD43wwMPVYuuHLtW+Bl/6xetkfjwBZUQFNWFgaJ0eeIdJk6JAFWM+nmE53
-	 +kHohC9FP8zxW9RrnA7dkwqqcgSuN4MKh4R6jlzu+aBiOCgoS1PQtvycwFenFDAKSf
-	 8NGwtU+raJOCaLGmFHJD4RvJXWWS3gsAOxCpMzRtcOJrdMPkcN8DQ2NiQbSAuAjRLj
-	 ccmAEOd0wNzVg==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Andy Shevchenko <andy@kernel.org>, 
- Andy Yan <andy.yan@rock-chips.com>, Avi Fishman <avifishman70@gmail.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Benjamin Fair <benjaminfair@google.com>, 
- Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- David Airlie <airlied@gmail.com>, David Lechner <dlechner@baylibre.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Drew Fustini <fustini@kernel.org>, dri-devel@lists.freedesktop.org, 
- Fabio Estevam <festevam@gmail.com>, 
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Fu Wei <wefu@redhat.com>, 
- Guo Ren <guoren@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, imx@lists.linux.dev, 
- Iwona Winiarska <iwona.winiarska@intel.com>, 
- Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, Jonas Karlman <jonas@kwiboo.se>, 
- Jonathan Cameron <jic23@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-actions@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-rtc@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-sunxi@lists.linux.dev, Liu Ying <victor.liu@nxp.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, Nancy Yuen <yuenn@google.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Nicolin Chen <nicoleotsuka@gmail.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, openbmc@lists.ozlabs.org, 
- Patrick Venture <venture@google.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Robert Foss <rfoss@kernel.org>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Samuel Holland <samuel@sholland.org>, Sandy Huang <hjc@rock-chips.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Stephen Boyd <sboyd@kernel.org>, Takashi Iwai <tiwai@suse.com>, 
- Tali Perry <tali.perry1@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Tomer Maimon <tmaimon77@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Vasily Khoruzhick <anarsoul@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
- Vladimir Zapolskiy <vz@mleia.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Yangtao Li <tiny.windzz@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-In-Reply-To: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
-References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
-Subject: Re: (subset) [PATCH 00/21] treewide: remove unneeded 'fast_io'
- parameter in regmap_config
-Message-Id: <175517003454.17441.365944262533574232.b4-ty@kernel.org>
-Date: Thu, 14 Aug 2025 12:13:54 +0100
+	s=k20201202; t=1755170046;
+	bh=Zp1LwTzGyu5opfZZQrk1YaVyVYP61aThHFWSJdfT0J0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t1NNCoDSYRuWtD7PfLDno+SNNPsMDobPhxKPDCWbIbMWnrFJQriYfQFKY6zOpEMoQ
+	 ///hIoz8SEul3HnFinP+t93BiMm63HUrtQuSNoU6KhDt+4FPQ6StaXyMlTfmSxDhNh
+	 QYLXFoCmo+/p1XFAIv9t+5dAmyZCHdkOqYS/BpAA4nJj2X4zXkEAyaErLVOqxPiiB5
+	 vSNrI489fs994s//ajfkcFCY9E9yXjp0yM6dKOCGtVnkoeF5tLHY1TyAefInQH4s1u
+	 4v/17xiX1gX+kNDiejPRYKXbvs8sG93PPdFhhHK6qYChnyZ5RD9ksy1ZskU6KLZyGp
+	 RlyZzHjJBxSLA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1umVuG-007Q0C-4x;
+	Thu, 14 Aug 2025 12:14:04 +0100
+Date: Thu, 14 Aug 2025 12:14:03 +0100
+Message-ID: <871ppetatg.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Steven Price <steven.price@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/4] clocksource/drivers/arm_arch_timer: Add standalone MMIO driver
+In-Reply-To: <86ldnmdvpl.wl-maz@kernel.org>
+References: <20250807160243.1970533-1-maz@kernel.org>
+	<20250807160243.1970533-3-maz@kernel.org>
+	<8e58b01b-772d-4ca7-a681-34f10baa07e6@arm.com>
+	<86ldnmdvpl.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: daniel.lezcano@linaro.org, steven.price@arm.com, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 13 Aug 2025 18:14:46 +0200, Wolfram Sang wrote:
-> While working on a driver using regmap with MMIO, I wondered if I need
-> to set 'fast_io' in the config. Turned out I don't need to, so I added
-> documentation for it with commit ffc72771ff6e ("regmap: Annotate that
-> MMIO implies fast IO").
+On Thu, 14 Aug 2025 11:49:26 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
 > 
-> This series fixes the existing users in the tree which needlessly set
-> the flag. They have been found using this coccinelle script:
+> On Thu, 14 Aug 2025 11:13:47 +0100,
+> Steven Price <steven.price@arm.com> wrote:
+> > 
+> > On 07/08/2025 17:02, Marc Zyngier wrote:
+> > > Add a new driver for the MMIO side of the ARM architected timer.
+> > > Most of it has been lifted from the existing arch timer code,
+> > > massaged, and finally rewritten.
+> > > 
+> > > It supports both DT and ACPI as firmware descriptions.
+> > > 
+> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > ---
+> > >  MAINTAINERS                               |   1 +
+> > >  drivers/clocksource/arm_arch_timer_mmio.c | 420 ++++++++++++++++++++++
+> > >  2 files changed, 421 insertions(+)
+> > >  create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
+> > > 
+> > [...]
+> > > +static void arch_timer_mmio_setup(struct arch_timer *at, int irq)
+> > > +{
+> > > +	at->evt = (struct clock_event_device) {
+> > > +		.features		   = (CLOCK_EVT_FEAT_ONESHOT |
+> > > +					      CLOCK_EVT_FEAT_DYNIRQ),
+> > > +		.name			   = "arch_mem_timer",
+> > > +		.rating			   = 400,
+> > > +		.cpumask		   = cpu_possible_mask,
+> > > +		.irq 			   = irq,
+> > > +		.set_next_event		   = arch_timer_mmio_set_next_event,
+> > > +		.set_state_oneshot_stopped = arch_timer_mmio_shutdown,
+> > > +		.set_state_shutdown	   = arch_timer_mmio_shutdown,
+> > > +	};
+> > > +
+> > > +	at->evt.set_state_shutdown(&at->evt);
+> > > +
+> > > +	clockevents_config_and_register(&at->evt, at->rate, 0xf, CLOCKSOURCE_MASK(56));
+> > 
+> > This doesn't work on 32 bit - clockevents_config_and_register()'s final
+> > argument is an unsigned long, and a 56 bit mask doesn't fit. This
+> > triggers a compiler warning:
 > 
-> [...]
+> Already reported, see 20250814111657.7debc9f1@canb.auug.org.au.
+> 
+> > Possible this should really be min(CLOCKSOURCE_MASK(56), ULONG_MAX)? But
+> > I'm not familiar enough with this code. Most likely it's dead code on a
+> > 32 bit platform.
+> 
+> No, this definitely exists on 32bit crap, since it has been part of
+> the architecture from the ARMv7+VE days.
+> 
+> I think this is more of an impedance mismatch between the
+> CLOCKSOURCE_MASK() helper and the clockevents_config_and_register(),
+> and a (unsigned long) cast would do the trick.
 
-Applied to
+Of course not. That would just result in a big fat zero.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> But it also means that the per-cpu timer also gets truncated the same
+> way, and that has interesting impacts on how often the timer is
+> reprogrammed.
 
-Thanks!
+That question still stand, and I wonder whether we have ugly bugs
+lurking on 32bit platforms because of that... I'll try and have a
+look.
 
-[19/21] spi: remove unneeded 'fast_io' parameter in regmap_config
-        commit: 48124569bbc6bfda1df3e9ee17b19d559f4b1aa3
+	M.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Jazz isn't dead. It just smells funny.
 
