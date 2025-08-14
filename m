@@ -1,94 +1,176 @@
-Return-Path: <linux-kernel+bounces-768919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A52B267F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:49:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD12EB267AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A33A24251
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:39:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2EC7B0A0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6590302CCC;
-	Thu, 14 Aug 2025 13:35:34 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B832FE052;
+	Thu, 14 Aug 2025 13:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="SBjsbhDy"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDBA3002D7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB72305E36
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755178534; cv=none; b=kD79tytyVu4vjAXpoSrbiFWqNUvafY+1h5ZIK+HJNW3x1Ss8qf/2AmQwSFQZd5wPntezMiG2YqCrJIG1psllw+G7KuCyQKp/AuAmc5uQOJ8CmfSqRcyCRLoNNbAhkyivcyH+ntY2dhjHaJYdjYebUnP/uAXY+7Pi5s0nOe6yxyc=
+	t=1755178601; cv=none; b=EjDNcSikGUvm/SSfD5BHfaEomiHQ84wt4zKjxiWtKV8vQtuLUCEKurlYbV5MAzEIgZoztioMATsNhDuOJADxIlj15d6D7udf06j9D7+yHAilIKqAwlmqcs4NWdTKgtsdhq6Oz7SkRu4gXuXo5NONwwTycTmmPozEswSGRQ3oO2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755178534; c=relaxed/simple;
-	bh=tTg/BQQb/MEndZCoCqp6+iXly8N6eGsXGeHjX1FeH54=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=haQuzJSQWwkF6srD0wU1UOPUorVh81mhiZmdQ3s7rOGM+eCq/tH+B7SU0lU4IsAI9wo+mKDZTPHDmvs4h+b5aYTZFIrX/U7xGiKQuVS/s4EtQ+E8B99Eq5/ozRVaAfYCbG7FNOjlumSYQVLdQ1wzWwxH3WCm0nFUgPyxSHrM6Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c2mQ81ny6z2Dc0V;
-	Thu, 14 Aug 2025 21:32:48 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 70B4B1401F4;
-	Thu, 14 Aug 2025 21:35:29 +0800 (CST)
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 21:35:28 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-	<jonathan.cameron@huawei.com>
-CC: <prime.zeng@huawei.com>, <fanghao11@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<xiaqinxin@huawei.com>, <yangyicong@huawei.com>
-Subject: [PATCH 2/2] MAINTAINERS: add myself and Barry to dma_map_benchmark maintainers
-Date: Thu, 14 Aug 2025 21:35:27 +0800
-Message-ID: <20250814133527.2679261-3-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250814133527.2679261-1-xiaqinxin@huawei.com>
-References: <20250814133527.2679261-1-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1755178601; c=relaxed/simple;
+	bh=5pu5CCcwVsrYR5S/WgA6wkxRR40hQbEFvk1WFQLNauI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A4HpgLQtDuGlqcUZ8gr3xYOA7PoTXNHR+4AkCLaU8j2Gscm5A54CkzdjqERlKM7hIm0CzL656sp3tl+RPddZZvxxxzBUOXXIPgAgLgAA+/dwseSWiAH7hgz00T/Mfg44lyBlRYNmfn4jLtRtz8hXIAKjiInV5UcTmG377utIMd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=SBjsbhDy; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b109bd3f9fso12376291cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755178599; x=1755783399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xiJ+voUm58mOt9ANl6l8BPcmKr+2Gr+D+s+NWbUh7rs=;
+        b=SBjsbhDy5LLiWWwzXacdGJQ4Hp/Zf7tp9IRatLTbuO9IWQRQ0hpsacd64hUsDJ/pRx
+         m329H7MHaTDl8QgecfN0tW1BXuAtJaL1kgj77NNERPrd5uIwqAFp3DNhVmFir3WDPnGy
+         81q1DeQwetE3l+O+0dGR5KayoTZjdCCnzE6m8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755178599; x=1755783399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xiJ+voUm58mOt9ANl6l8BPcmKr+2Gr+D+s+NWbUh7rs=;
+        b=XjMl6h7CDEwW549/+gnXMK/WljdX97k6BwORHNhrSvQmFCtJu5PIk6WBrpsqxygn7l
+         k+7LSCC9ug5Z+ZNpLOHZ+An/cvQrVhrB3dwrhnWbwvr+MCUBTDhcyh+aBCBsg8YyR647
+         TguvdgwrCw3PziH6ylkk2a8yl6tvmv7vm1CDPHsUb/yvwoIvxBM9LdkRipOO/lYk8n8D
+         1i2YEg5gHPzozvAwLpw1IFWraYbpC4gZr5gkDFKMZLh58JnBDnJ0ZN9mka61QWXQrpQy
+         PFJPsPg+aUJdw23hkJU178TdcqiK5vGzJEaBc0twvJJbILVkxwui0uezUqs26wrxyEf7
+         eByA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB6X49ctADc48LiNtl0Rhtl+Xwwx/wpL4w2g0UXslS4Ef4Lh0AfJUWaX+wYa2WfWVRZDMfG2PODh2u0C8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/fFpF+MVOPteCx4RbgdhBg/nRDPl4MBThuDgdHN5lSArqexCU
+	3BVtKrJ8rHC31KZYzpsS3C5TZSgUpVo1WstvKntwiNlcx7pkJ/fhqOonmoWTp62ArphKvunHMz9
+	6+IRonbtuL1TWk3HXMAGR3BjZpo8zEJ8TFC50yABeHA==
+X-Gm-Gg: ASbGnctwuCiqt7dPiHM+c0/4ttv8K/nqqSXeOMq/5cmX6ecZHUpo4PaTPHlua+VM/vh
+	qCTWnZAifVHybed4ml2nzqGgtSXq86ajdTDZ1qk8dkIhXut32k95Onu8sd9HQdbJqcznpqHR1Eo
+	iMR6NuI+T/eJMpPS5NyAVvsAq6d74o3AEAfgqIH09orbnE4jhO4A4VMQj3qLjhE8GO0YnrYdcGA
+	SKq
+X-Google-Smtp-Source: AGHT+IGRLUNSdSZic/AfvkGEhcJ0i0UexRhcMwBfu+hTgWYJPH7NmUnalP/saR/GroY1O9C7uFRCx1HrQwBXZpKp4dE=
+X-Received: by 2002:ac8:590b:0:b0:4b0:7e22:36bd with SMTP id
+ d75a77b69052e-4b10a97a743mr43862441cf.23.1755178598536; Thu, 14 Aug 2025
+ 06:36:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-13-john@groves.net>
+In-Reply-To: <20250703185032.46568-13-john@groves.net>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 14 Aug 2025 15:36:26 +0200
+X-Gm-Features: Ac12FXz5KYhharzGRoAiyFuPvtQSxT3MxOHi7MhrKR_P4gCMelGIrgjr1IHTKO4
+Message-ID: <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredb.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Since Chenxiang has left HiSilicon, Barry and I will jointly
-maintain this module.
+On Thu, 3 Jul 2025 at 20:54, John Groves <John@groves.net> wrote:
+>
+> Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
+> retrieve and cache up the file-to-dax map in the kernel. If this
+> succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
 
-Cc: Barry Song <baohua@kernel.org>
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- MAINTAINERS | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Nothing to do at this time unless you want a side project:  doing this
+with compound requests would save a roundtrip (OPEN + GET_FMAP in one
+go).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5f17a58ffee..21e623b53a7f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7219,10 +7219,11 @@ F:	include/linux/dmaengine.h
- F:	include/linux/of_dma.h
- 
- DMA MAPPING BENCHMARK
--M:	Xiang Chen <chenxiang66@hisilicon.com>
-+M:	Barry Song <baohua@kernel.org>
-+M:	Qinxin Xia <xiaqinxin@huawei.com>
- L:	iommu@lists.linux.dev
- F:	kernel/dma/map_benchmark.c
--F:	tools/testing/selftests/dma/
-+F:	tools/dma/
- 
- DMA MAPPING HELPERS
- M:	Marek Szyprowski <m.szyprowski@samsung.com>
--- 
-2.33.0
+> GET_FMAP has a variable-size response payload, and the allocated size
+> is sent in the in_args[0].size field. If the fmap would overflow the
+> message, the fuse server sends a reply of size 'sizeof(uint32_t)' which
+> specifies the size of the fmap message. Then the kernel can realloc a
+> large enough buffer and try again.
 
+There is a better way to do this: the allocation can happen when we
+get the response.  Just need to add infrastructure to dev.c.
+
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 6c384640c79b..dff5aa62543e 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -654,6 +654,10 @@ enum fuse_opcode {
+>         FUSE_TMPFILE            = 51,
+>         FUSE_STATX              = 52,
+>
+> +       /* Famfs / devdax opcodes */
+> +       FUSE_GET_FMAP           = 53,
+> +       FUSE_GET_DAXDEV         = 54,
+
+Introduced too early.
+
+> +
+>         /* CUSE specific operations */
+>         CUSE_INIT               = 4096,
+>
+> @@ -888,6 +892,16 @@ struct fuse_access_in {
+>         uint32_t        padding;
+>  };
+>
+> +struct fuse_get_fmap_in {
+> +       uint32_t        size;
+> +       uint32_t        padding;
+> +};
+
+As noted, passing size to server really makes no sense.  I'd just omit
+fuse_get_fmap_in completely.
+
+> +
+> +struct fuse_get_fmap_out {
+> +       uint32_t        size;
+> +       uint32_t        padding;
+> +};
+> +
+>  struct fuse_init_in {
+>         uint32_t        major;
+>         uint32_t        minor;
+> @@ -1284,4 +1298,8 @@ struct fuse_uring_cmd_req {
+>         uint8_t padding[6];
+>  };
+>
+> +/* Famfs fmap message components */
+> +
+> +#define FAMFS_FMAP_MAX 32768 /* Largest supported fmap message */
+> +
+
+Hmm, Darrick's interface gets one extents at a time.   This one tries
+to get the whole map in one go.
+
+The single extent thing can be inefficient even for plain block fs, so
+it would be nice to get multiple extents.  The whole map has an
+artificial limit that currently may seem sufficient but down the line
+could cause pain.
+
+I'm still hoping some common ground would benefit both interfaces.
+Just not sure what it should be.
+
+Thanks,
+Miklos
 
