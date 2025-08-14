@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-768522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D34FB261EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019A2B261E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC53E3BA67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C76F3B9A5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D12F745C;
-	Thu, 14 Aug 2025 10:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17282F83B6;
+	Thu, 14 Aug 2025 10:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fLpJnsON"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrzpMIQm"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A072EB5B4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DB32F60D8;
+	Thu, 14 Aug 2025 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755166406; cv=none; b=DBggWmdSCPJ2ghUMaaRzDXM8ZFxzzPzQGg7gz2xwiD1gm1+wBWNhTMdIWtL4mZlVbwVBOlcLfYeFvG1Woc5vz/bWkyRg6w6eoZQAE4OyANqTOJgeibUyPcZICz09lB089DkoCfyreUjwLaJkuA6E/WoY6Uxov8xRuhf7iPtDT/Q=
+	t=1755166284; cv=none; b=oMcElcDmMnPDoQZilorVOxBjVT/3Mo372X0wvnU60QfFb+8vEGs0Zhp6BSBh7AYIoud4GhGhnCLXQkMfth1z5Ne6NDYpsTsuT/h+BErWYqPRpMPIcdr636JTeZ1vtKKT0jYbbC+LMKpz35zaZeQpz7gLIVAml+0tEQOMRrgKwJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755166406; c=relaxed/simple;
-	bh=fWV0Vky7dLN5wLLAfrWbf/PWgWvlpmsQDAwFJM1cuFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dZUfvP2l8FumtF2TBynZG74aGoKplyUXiUpLiFan1MogX39Vs6AgcQyXhmCoI7WWJ/YhdSpfjdnj7E8rDWp4CS+s90CHlHRuWEbhs8cqxSai/QtxG9MWvBpgQese6bQuq9jGC8cCP7NuA+DD5zo6Hh1QLlpI/4Boacv7DY03GLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fLpJnsON; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1755166284; c=relaxed/simple;
+	bh=eleB09cP4O0qMba1dKQ81WBnimwPCEOWQ1tZ3icgk3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JBo+YfZzBvm12Dg1VnPfSRfnAPi+Ojd0XYpxPSsVuKpseSCigZBE+nPauYa3gHp3xDGIyOR9fBc/YeOfqu8I+tZJpX0vOQa7kAtUgaKSS5KvEuktq5czq2aB80RI7mj7AP2cl6F6ZWuFpPeEg+RXWmilsF7a38oBTfNjsgut2BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrzpMIQm; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32326e8005bso854992a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:13:25 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24457f5835dso8775095ad.0;
+        Thu, 14 Aug 2025 03:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755166404; x=1755771204; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755166282; x=1755771082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fWV0Vky7dLN5wLLAfrWbf/PWgWvlpmsQDAwFJM1cuFQ=;
-        b=fLpJnsON9iyjPAfKR1IdAKdIqIyK451N07DMVTxt6Zonx0ernXYun3joPg2Ib/9q7F
-         KOXjIH1Oh8xMuRdPYvf2yoiVMM2jN4dqR9Peg0/RsthQspc57cMkUXl4UD/8LnCvGmwZ
-         8AilPh4rMMX0tItTs4gU8EjbmesZGGLC8FxTHSJcN33e6K1sgYGQr9f9jiMi14DZJz44
-         jpY9AZCRogLsy35RXZNX/u3q7JE18cEcxWcjghYRNWhnO3Y+motBI9okuJeUXa2dngAX
-         3fqWVtofBXX4BoYVdTeUu2VhEBjVMPk+j0J/OF9PrgPrF/zbHUrI4Ht20+DtZJxKDIDE
-         eqCA==
+        bh=XN+OTurFhUfLHMGvTX6bqf0NAEYy6h9ZR9IIwNc0kfI=;
+        b=WrzpMIQmOmpfQZY1vaYHzrtxAzcjV0XwLOc54kQlutc0fVUxAv/gVcOhg59yYqJxhF
+         FmitursKtAwyJanDc/iw6nfqz5uIwDautwJ6o1j78LusgB5E+ZfHeeah619c6xBfwJ/c
+         JUtdqMLRglBSZjPNFT7Pka3gi4jtXr6FrRiExGO1KOtZf0vqfronyM5rxL8ase1mLfMz
+         b/BhicPcQVHR0pPeh6tUFnQy9z/rxp+0Fk/WpDg+/yY2kG/UY5Jk0/cjAVrNQbi0MTps
+         dl7xp0NFbmajdCcAwDzNLPQ2aPpTYHPw7CNLhWnF7i4qU9r+aaMXxmFOy+/Ra0q9Asdh
+         35yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755166404; x=1755771204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755166282; x=1755771082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fWV0Vky7dLN5wLLAfrWbf/PWgWvlpmsQDAwFJM1cuFQ=;
-        b=pXjCzO1hh+gbnu7O1wiQuE3rwwmqW0wkXtq452qDkgdoNWl9n2LjcIXP8i6JQ/e8Eb
-         fkw5ZOfGT2FG35FyWbr7CzIGaEdEnk7xHdWtKfbzBDYURhqo6aFFzEQbbYM80CuH7QLd
-         hIy/AVK+J3NyrNlpr517jyKSDvxesM15XgDuf2xL9WeGjsYzyktKD6pEP9P4LE28Muhe
-         LGqs0aEzu3G+PGqGpdpPplWaUOIttioRr1aHYG8D0bAmcUMYLLQTWcK3hqI1XOo3tTRm
-         6KIU3NgkDoes8U3GnSS9VF0zafdFTq8SzuH2ANgAtdgP2WzNy80jvQhBoEDn9Gq1LFat
-         jGEA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Tuzv85RF8ydW7MA0v0X+4gE3lTZnLDh24wgnru6tGIQrsfwf6vrNBKhN7JOVQ/BzAfgMEy1PbyTOlpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXa4Y6WdbCDj9lDHVfCnBkbiZWX8WE25oa6EacSxMJEV43XQeX
-	2HIsRYravGoDiFjCEerRHrv2DYzTeENbLivhxE0mOc3CS3I+r3qdFAxuVRx72Jb2RIzXdfvcUs7
-	DrXRsRPgMrzwurtzx8MYIRuYW+s1Z8kM=
-X-Gm-Gg: ASbGnctvjUzRCO2YyIRGsEhuJ0xxQMY0hMq11ftqpZi1uzU1BGEz8CdOG1+XZYzHGfC
-	TyzelYQBZSqI3IsTDHxSrcBW0CECmVu7cZsgV1itecP2Fau6EXYz5XHwhQt50NJPMPKZQ4kpbUV
-	4cs2TyIkAbem/sVcdSKdYt1Ddu7aV7qelvRrPlnW6Cq3wh+E7mN+mOY5OdQ+9QTcFTMDbMmDGXg
-	LEKpnY=
-X-Google-Smtp-Source: AGHT+IGQB8r/pPHGVfsNp7+7bw5sKWLbla7BkdMq5nUYbmAEN+NnBiJIz4CX6aB11P4WqBNN6+MQuuJXSxJySIi6080=
-X-Received: by 2002:a17:90b:1d01:b0:321:87fa:e1ec with SMTP id
- 98e67ed59e1d1-32327accbcamr4020043a91.34.1755166404565; Thu, 14 Aug 2025
- 03:13:24 -0700 (PDT)
+        bh=XN+OTurFhUfLHMGvTX6bqf0NAEYy6h9ZR9IIwNc0kfI=;
+        b=YFq/aywTIvwCrVJNYGS9PG+i0I1JTdKWqNirRQflhbPBvAZ2wcC9e9DF8LXZpc27Ng
+         Y+PJr1Wu6DmGPnriV9vEH3n+tl7wqcDUbeORVDqWDLZnpNIQ39Nswmh1jYePgdCje7O2
+         A+ea4OvhfFxEmFOAMiI2OeZJYR25avmKZB9AQF0qgGRSCemxNXa6p0TDNZ3jKKWh+7qF
+         u53j8ne7008eKYdIat0XzUrux5luIouThODWTG9HzfFELzndMvNUswCYQRtyx908DEWC
+         bDaaPCYRgImK3COikx68iWxw7CfSSLGIhCldi2NabiUTokF1KweLM65rUID9xpPPB824
+         l4NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlZpbnn2pvYTmm8tPpjKwLOV+W2NBot1/nP1C8ptj9LxUqRFhyS1pv1rGr+IQjUUSv+XWurXGxHmIFoUT7bk=@vger.kernel.org, AJvYcCWgl7BmNlDBYzf6qc5KdXAjCVTM1024NykIAAk79517+HaCJi5ghhVVv7FmjelIl1/O4Zji9YFT8VdTomo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoV7U4C6IhBMcvDKJ1dU/p7IVILsszVOdU5Xo+tNOYKVDN6dKG
+	NybmenHJhxDR11vAqR3YkbS/UhdYtx007mtI/wXhSxboQkYuV/DdN4nX
+X-Gm-Gg: ASbGnctgzmK57RrRW751jxKnuAwQ4OVKROss/MsKoIQuO+lI4LFMWNpFt2Z9rB5XyEW
+	jy+n23s1I13cEDYNbxGKjJA/uxaRLQTK/lBaPZ3XRIqskm4kB0YZsCtkDoZYnOTzLcMcp9pxuVO
+	6sVYW5D9/4UBmSFEWpFP7rNd6HZWVtrJyA3NZ+JziNWtJ+7CBT6sTnDFTR07/M/TPSeyBM90gMU
+	pFh9lsA5A38CqMfTp5ylkCLimqwRAaK+u0pMUIhPwNK0m1VEptArM5jnyUzw6WYjrsU8KI3fZWC
+	Go/0+ivBeIbRMmRcqsRVBn9aKjDNozF3b3v2Hnz4AA+9ImAwTPDgaH3Ak4xTD6op9OKZUkXjTVw
+	IVRMw1bEm4G4hic+QcfY0FVFFpxg/AyFBdY7GN/D2g+fsk/A=
+X-Google-Smtp-Source: AGHT+IGFQy/akkao8mv1zo6fNthjIHl5Virn3hLhHOS5TrGg7uOk2CMWx+WX5ZIsg6IPJrcoSMt8jg==
+X-Received: by 2002:a17:903:1b64:b0:234:ed31:fca7 with SMTP id d9443c01a7336-244586daca3mr36175355ad.48.1755166281877;
+        Thu, 14 Aug 2025 03:11:21 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899d347sm343894775ad.140.2025.08.14.03.11.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:11:21 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 4/7] rust: fs: update ARef and AlwaysRefCounted imports from sync::aref
+Date: Thu, 14 Aug 2025 15:41:11 +0530
+Message-Id: <20250814101111.314193-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aJ2aUwi1L5RjK-X_@google.com>
+References: <aJ2aUwi1L5RjK-X_@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812051949.983040-1-linchengming884@gmail.com> <152133202.103367.1754981828821.JavaMail.zimbra@nod.at>
-In-Reply-To: <152133202.103367.1754981828821.JavaMail.zimbra@nod.at>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Thu, 14 Aug 2025 18:11:07 +0800
-X-Gm-Features: Ac12FXz2rhhyBIh2oSvcLuHLhf31k4mVO-sI8GTQ2EvX_sMkocC2UqI39p7JvyA
-Message-ID: <CAAyq3SaEqYiKhbjYwLH0p6F2G=UR-MwZF28AG1xVMoKhznS3Og@mail.gmail.com>
-Subject: Re: [RFC] mtd: ubi: skip programming unused bits in ubi headers
-To: Richard Weinberger <richard@nod.at>
-Cc: chengzhihao1 <chengzhihao1@huawei.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, Alvin Zhou <alvinzhou@mxic.com.tw>, leoyu@mxic.com.tw, 
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
+On Thu, Aug 14, 2025 at 08:12:03AM +0000, Alice Ryhl wrote:
+> On Thu, Aug 14, 2025 at 12:56:21AM +0530, Shankari Anand wrote:
+> > 
+> > Hello, can this be picked for review?
+> > 
+> > The initial patch which moves ARef and AlwaysRefCounted to sync/aref.rs is upstream (commit 07dad44aa9a93) [1]
+> > 
+> > Thanks,
+> > Shankari
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+> 
+> Christian maintains rust/kernel/fs, so could you resend this patch with
+> 
+> 	Christian Brauner <brauner@kernel.org>
+> 
+> as a recipient?
+> 
+> Feel free to add this when you resend:
+> Acked-by: Alice Ryhl <aliceryhl@google.com>
+> 
 
-Richard Weinberger <richard@nod.at> =E6=96=BC 2025=E5=B9=B48=E6=9C=8812=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=882:57=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> ----- Urspr=C3=BCngliche Mail -----
-> > Von: "Cheng Ming Lin" <linchengming884@gmail.com>
-> > An: "richard" <richard@nod.at>, "chengzhihao1" <chengzhihao1@huawei.com=
->, "Miquel Raynal" <miquel.raynal@bootlin.com>,
-> > "Vignesh Raghavendra" <vigneshr@ti.com>, "linux-mtd" <linux-mtd@lists.i=
-nfradead.org>, "linux-kernel"
-> > <linux-kernel@vger.kernel.org>
-> > CC: "Alvin Zhou" <alvinzhou@mxic.com.tw>, leoyu@mxic.com.tw, "Cheng Min=
-g Lin" <chengminglin@mxic.com.tw>
-> > Gesendet: Dienstag, 12. August 2025 07:19:49
-> > Betreff: [RFC] mtd: ubi: skip programming unused bits in ubi headers
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > This patch prevents unnecessary programming of bits in ec_hdr and
-> > vid_hdr that are not used or read during normal UBI operation. These
-> > unused bits are typically already set to 1 in erased flash and do not
-> > need to be explicitly programmed to 0 if they are not used.
-> >
-> > Programming such unused areas offers no functional benefit and may
-> > result in unnecessary flash wear, reducing the overall lifetime of the
-> > device. By skipping these writes, we preserve the flash state as much
-> > as possible and minimize wear caused by redundant operations.
->
-> We talk about programming a single (sub)page, right?
-
-Since the UBI header is mainly written into a single page, the "unused
-areas" here refer to the space within a single (sub)page that is outside
-the header content.
-
->
-> > This change ensures that only necessary fields are written when
-> > preparing UBI headers, improving flash efficiency without affecting
-> > functionality.
->
-> I have been told that writing 0xFF bytes to NAND should be avoided.
-> This is also why UBI initializes them to 0x00.
-
-Normally, after a NAND flash block is erased, all bits are in the 0xFF
-state. Programming 0xFF in this case will not actually change the NAND
-cells, as the device can inhibit programming=E2=80=94either by raising the
-bitline voltage or using a self-boosted program inhibit mechanism.
-Therefore, programming 0xFF is a normal and harmless operation for NAND
-flash.
-
->
-> Do you have data which proves the opposite?
-
-I am currently collecting relevant data, and will present it once it is
-ready. Thank you.
-
->
-> Thanks,
-> //richard
+Done, its here [1]
 
 Thanks,
-Cheng Ming Lin
+Shankari
+
+[1] https://lore.kernel.org/rust-for-linux/20250814100101.304408-1-shankari.ak0208@gmail.com/T/#u
 
