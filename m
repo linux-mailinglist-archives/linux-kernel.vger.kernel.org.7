@@ -1,425 +1,147 @@
-Return-Path: <linux-kernel+bounces-767857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058ECB259E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5BEB259F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74557687274
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:34:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C95E8851CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B70817333F;
-	Thu, 14 Aug 2025 03:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9NoDRo/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C41025A351;
+	Thu, 14 Aug 2025 03:43:14 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EEA2FF660
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF32FF660;
+	Thu, 14 Aug 2025 03:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755142439; cv=none; b=tM5FWH9DBO2gStbdLsXIWzwmVyFyQ8yBgDPq9978MzSX0gaRUlfFLQUsUEJFHuWymEjCVK3fRd3pTmsAUUbj+ee9RFY/qRyEq2n5EMF8BXXPVDTRLMQ3U4RKv8sVDvPBRhnVE6+IaDR2tGKPmCIIRO9axQM30zLZYgK6+9WB9GQ=
+	t=1755142993; cv=none; b=E/kN5+Vpv5xYvZr1dG2H0rCacbDujNEJOgNkbJT9VybCmREqRJwEKBL4D9sOA0hdY+n/rJfP21cpOGQjWFNkmuodIegaksmaVqShWiwozXAa6gNNIgbzJ7bHFDUki82FDdhq5BqsoOi3vX2ThuSWiN8Km1JgZ+QrAW6Rpa8khrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755142439; c=relaxed/simple;
-	bh=qCYPSQyXfbScn/dju49Sm6k7Gx67vpP4HB1TPAv6kAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sWYYBy2cv1qwVOGLKiC9cfYq0O56Lz6VTx572g4+4W0M11ANqJkvg/d9sg8TEhzW3eWTGbyBaBj4OkS4S7hqKpsUSRoZ4/WoNIqgwvDZ6z1g4/hm28vaQ9fKPd6C0b60escsdAA3MbuSPVZMAImEpRBid2/ChEHTjBal8rAkRD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9NoDRo/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755142436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eujK3cEs50pIJAHzYFF3mi6x7v5bUXVfJI3LrBNzuLQ=;
-	b=C9NoDRo/X77oFdPd+oNTgYLJxYRj7JZKJcJO+JdcMSwXXUaal9Rl03lufp41/Wr4Xhi4HG
-	pqF1xGYFyFY0/Llsz4aUdmmGubVcdE8Qqg0F7RmgxVTUhEFeWMHFAczE/+WlI1tG267dL8
-	d80d5l8ufuZE+DUbQDACBS5hq7q2hQo=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-8d9whlK0OFayi2lQgzcIgg-1; Wed, 13 Aug 2025 23:33:54 -0400
-X-MC-Unique: 8d9whlK0OFayi2lQgzcIgg-1
-X-Mimecast-MFC-AGG-ID: 8d9whlK0OFayi2lQgzcIgg_1755142434
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b4716fa1e59so359660a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:33:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755142433; x=1755747233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eujK3cEs50pIJAHzYFF3mi6x7v5bUXVfJI3LrBNzuLQ=;
-        b=PiWOPA1QIRKZvr0F6BaNLq+/e161q7H4XcWqepjh+QsOUmJPCNKVJPO7pXaH1csvEm
-         I8ZisWuO8hydM4PfvCYi5jNvQ5dLEsTwXOsuJOuOej9Xi4InucMtsoC9sPOiRr2UQKPz
-         n/x9RhdRzrDfnKg1HtMR5V9uIFvHhthXO6+JRrBLu6uWBVFv87Yfuhm6wXz2vb4W6DzU
-         gQe01iVoGnXWBTzi2Ie0tvUAzAEmxZxfnfZkaXSLX77Bb4PMh6CoYjtI6w5AxK/X0LXA
-         5C/M5uroBxokSC80SyBNT4QEzBBHdcY1eF026NIedRRJaPTbZaxHRjJMl3P7HnE9VjHF
-         cfiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkwvySy441X5Ueh6xWSDK2BMkclicg6SFPg1mSOfHI6ja4aIQWmbHkbM12MjAur/1MSiwUFGmXV/UQLQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztMR6gGWNoU61rtJIF8AGsXFzLLopPKX/+/DWHlaqzLUG8mLe5
-	h74OsWAdV324QX3MFH6Xsb4Xxq+rDnhHYkfeacZoAfJ49S7M+IMR2zrOMOkI/ifE62YsNNp33jG
-	RXdEbmzGAoh9tfmDNHC0h/6bb06m3cyBIVsf2WVdjhMDVA7rtLR6ehVcgACqUnBaGxpGaAKAmc8
-	+pflDfQ5PDBxBF8x+S4mUYAYNlFgmYILl/NdsEx8jN
-X-Gm-Gg: ASbGncs7i8QV+QNOIzcVWFr/Z7QKdEufpFHqDvsIy9dsysQzfxkF9uCx809H6GDos2K
-	f6wPsCBJjNH4yiEbvOAtMr2lNfD5T5vivEpiB8prpD0mSi+ywN+DzuMArCc0Wm0j1BzkXBBxvWn
-	dD5iEgEkZqaqHm+fQcjyivzA==
-X-Received: by 2002:a05:6a20:72a1:b0:240:1ca4:297d with SMTP id adf61e73a8af0-240bd1b1466mr2133434637.13.1755142433440;
-        Wed, 13 Aug 2025 20:33:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYhrBIKDCg8wLR+E2L4kHSK3U4ob+Ku/FTjWCsSq5KEr8be2JZ+cm7BU8SKuumSalPK5fRr0cs1aTm73S6eg4=
-X-Received: by 2002:a05:6a20:72a1:b0:240:1ca4:297d with SMTP id
- adf61e73a8af0-240bd1b1466mr2133378637.13.1755142432887; Wed, 13 Aug 2025
- 20:33:52 -0700 (PDT)
+	s=arc-20240116; t=1755142993; c=relaxed/simple;
+	bh=jC6oI7rRAbAjUrisCPWDlL475SGNNs1YyfBpEci0GIw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KDElMUBkmNBtEuFiiggGl/j/P/9yQ/al+ib+e7FH2eLTK1tqTGeR9znm/1pfWaPqm0Cr3QXuxbdAfRDQqnwBS3amQUA8OULkp5Qae1GilYCz5vUkjlwNW2/x+tdmw734FbLQNAzNd20YjhrGGsVwz9g+2mnobd+fZ6qwKzkhRmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c2WKn03t0zKHMSH;
+	Thu, 14 Aug 2025 11:43:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4A3A61A018D;
+	Thu, 14 Aug 2025 11:43:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIxRKW51ogs93Dg--.15627S4;
+	Thu, 14 Aug 2025 11:43:08 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	yukuai3@huawei.com,
+	bvanassche@acm.org,
+	nilay@linux.ibm.com,
+	hare@suse.de,
+	ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH 00/16] blk-mq: introduce new queue attribute asyc_dpeth
+Date: Thu, 14 Aug 2025 11:35:06 +0800
+Message-Id: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813054831.25865-1-jasowang@redhat.com> <20250813054831.25865-10-jasowang@redhat.com>
- <CAJaqyWdZv30TMedrdb-iF6qwwis7d_GJpVyk2dCur2J27+ywog@mail.gmail.com>
-In-Reply-To: <CAJaqyWdZv30TMedrdb-iF6qwwis7d_GJpVyk2dCur2J27+ywog@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 14 Aug 2025 11:33:41 +0800
-X-Gm-Features: Ac12FXzq8BSEPBlf1MWRz3DYcSqEp8m_lWYmVRk2raUvNN5Yp_wdHSHlFYsejm4
-Message-ID: <CACGkMEtYq9XnhNzdmD+=d1k8RStMcMP-Ljo_j1qfz6Us2wOXdQ@mail.gmail.com>
-Subject: Re: [PATCH V5 9/9] vduse: switch to use virtio map API instead of DMA API
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIxRKW51ogs93Dg--.15627S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWkGw4rWFWfCF17tF45Awb_yoW5GFWxp3
+	y3tF4akw1xKryxWF4fJw43Xr1rCws3ur43JrnxKr1rJr90kws2vFn5X3WrXryIvrWxCanF
+	gr1qgas8GrnFvFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Aug 13, 2025 at 5:03=E2=80=AFPM Eugenio Perez Martin
-<eperezma@redhat.com> wrote:
->
-> On Wed, Aug 13, 2025 at 7:49=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >
-> > Lacking the support of device specific mapping supported in virtio,
-> > VDUSE must trick the DMA API in order to make virtio-vdpa transport
-> > work. This is done by advertising vDPA device as dma device with a
-> > VDUSE specific dma_ops even if it doesn't do DMA at all.
-> >
-> > This will be fixed by this patch. Thanks to the new mapping operations
-> > support by virtio and vDPA. VDUSE can simply switch to advertise its
-> > specific mappings operations to virtio via virtio-vdpa then DMA API is
-> > not needed for VDUSE any more and iova domain could be used as the
-> > mapping token instead.
-> >
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > ---
-> >  drivers/vdpa/Kconfig                 |  8 +--
-> >  drivers/vdpa/vdpa_user/iova_domain.c |  2 +-
-> >  drivers/vdpa/vdpa_user/iova_domain.h |  2 +-
-> >  drivers/vdpa/vdpa_user/vduse_dev.c   | 75 ++++++++++++++--------------
-> >  4 files changed, 41 insertions(+), 46 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/Kconfig b/drivers/vdpa/Kconfig
-> > index 559fb9d3271f..857cf288c876 100644
-> > --- a/drivers/vdpa/Kconfig
-> > +++ b/drivers/vdpa/Kconfig
-> > @@ -34,13 +34,7 @@ config VDPA_SIM_BLOCK
-> >
-> >  config VDPA_USER
-> >         tristate "VDUSE (vDPA Device in Userspace) support"
-> > -       depends on EVENTFD && MMU && HAS_DMA
-> > -       #
-> > -       # This driver incorrectly tries to override the dma_ops.  It sh=
-ould
-> > -       # never have done that, but for now keep it working on architec=
-tures
-> > -       # that use dma ops
-> > -       #
-> > -       depends on ARCH_HAS_DMA_OPS
-> > +       depends on EVENTFD && MMU
-> >         select VHOST_IOTLB
-> >         select IOMMU_IOVA
-> >         help
-> > diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_u=
-ser/iova_domain.c
-> > index 58116f89d8da..ccaed24b7ef8 100644
-> > --- a/drivers/vdpa/vdpa_user/iova_domain.c
-> > +++ b/drivers/vdpa/vdpa_user/iova_domain.c
-> > @@ -447,7 +447,7 @@ void vduse_domain_unmap_page(struct vduse_iova_doma=
-in *domain,
-> >
-> >  void *vduse_domain_alloc_coherent(struct vduse_iova_domain *domain,
-> >                                   size_t size, dma_addr_t *dma_addr,
-> > -                                 gfp_t flag, unsigned long attrs)
-> > +                                 gfp_t flag)
-> >  {
-> >         struct iova_domain *iovad =3D &domain->consistent_iovad;
-> >         unsigned long limit =3D domain->iova_limit;
-> > diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_u=
-ser/iova_domain.h
-> > index 7f3f0928ec78..1f3c30be272a 100644
-> > --- a/drivers/vdpa/vdpa_user/iova_domain.h
-> > +++ b/drivers/vdpa/vdpa_user/iova_domain.h
-> > @@ -64,7 +64,7 @@ void vduse_domain_unmap_page(struct vduse_iova_domain=
- *domain,
-> >
-> >  void *vduse_domain_alloc_coherent(struct vduse_iova_domain *domain,
-> >                                   size_t size, dma_addr_t *dma_addr,
-> > -                                 gfp_t flag, unsigned long attrs);
-> > +                                 gfp_t flag);
-> >
-> >  void vduse_domain_free_coherent(struct vduse_iova_domain *domain, size=
-_t size,
-> >                                 void *vaddr, dma_addr_t dma_addr,
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index f161059d543e..3260edefdf0d 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -88,6 +88,7 @@ struct vduse_dev {
-> >         struct device *dev;
-> >         struct vduse_virtqueue **vqs;
-> >         struct vduse_iova_domain *domain;
-> > +       struct vduse_iova_domain *dom;
->
-> *dom is not used
->
+From: Yu Kuai <yukuai3@huawei.com>
 
-Let me fix that.
+Backgroud and motivation:
 
-> >         char *name;
-> >         struct mutex lock;
-> >         spinlock_t msg_lock;
-> > @@ -814,59 +815,53 @@ static const struct vdpa_config_ops vduse_vdpa_co=
-nfig_ops =3D {
-> >         .free                   =3D vduse_vdpa_free,
-> >  };
-> >
-> > -static void vduse_dev_sync_single_for_device(struct device *dev,
-> > +static void vduse_dev_sync_single_for_device(void *token,
-> >                                              dma_addr_t dma_addr, size_=
-t size,
-> >                                              enum dma_data_direction di=
-r)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
->
-> If I add ASID support to VDUSE I'll need to replace the token by a vq
-> group representor. Is that ok?
+At first, we test a performance regression from 5.10 to 6.6 in
+downstream kernel(described in patch 13), the regression is related to
+async_depth in mq-dealine.
 
-It should be ok.
+While trying to fix this regression, Bart suggests add a new attribute
+to request_queue, and I think this is a good idea because all elevators
+have similar logical, however only mq-deadline allow user to configure
+async_depth. And this is patch 9-16, where the performance problem is
+fixed in patch 13;
 
->
-> I think it is as I like how using *domain here makes this patch
-> clearer, and adding something else will make this patch harder to
-> review.
+Because async_depth is related to nr_requests, while reviewing related
+code, patch 2-7 are cleanups and fixes to nr_reqeusts.
 
-Yes.
+I was planning to send this set for the next merge window, however,
+during test I found the last block pr(6.17-rc1) introduce a regression
+if nr_reqeusts grows, exit elevator will panic, and I fix this by
+patch 1,8.
 
->
-> >
-> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
-);
-> >  }
-> >
-> > -static void vduse_dev_sync_single_for_cpu(struct device *dev,
-> > +static void vduse_dev_sync_single_for_cpu(void *token,
-> >                                              dma_addr_t dma_addr, size_=
-t size,
-> >                                              enum dma_data_direction di=
-r)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> >
-> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
-> >  }
-> >
-> > -static dma_addr_t vduse_dev_map_page(struct device *dev, struct page *=
-page,
-> > +static dma_addr_t vduse_dev_map_page(void *token, struct page *page,
-> >                                      unsigned long offset, size_t size,
-> >                                      enum dma_data_direction dir,
-> >                                      unsigned long attrs)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> >
-> >         return vduse_domain_map_page(domain, page, offset, size, dir, a=
-ttrs);
-> >  }
-> >
-> > -static void vduse_dev_unmap_page(struct device *dev, dma_addr_t dma_ad=
-dr,
-> > +static void vduse_dev_unmap_page(void *token, dma_addr_t dma_addr,
-> >                                 size_t size, enum dma_data_direction di=
-r,
-> >                                 unsigned long attrs)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> >
-> >         return vduse_domain_unmap_page(domain, dma_addr, size, dir, att=
-rs);
-> >  }
-> >
-> > -static void *vduse_dev_alloc_coherent(struct device *dev, size_t size,
-> > -                                       dma_addr_t *dma_addr, gfp_t fla=
-g,
-> > -                                       unsigned long attrs)
-> > +static void *vduse_dev_alloc_coherent(void *token, size_t size,
-> > +                                     dma_addr_t *dma_addr, gfp_t flag)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> >         unsigned long iova;
-> >         void *addr;
-> >
-> >         *dma_addr =3D DMA_MAPPING_ERROR;
-> >         addr =3D vduse_domain_alloc_coherent(domain, size,
-> > -                               (dma_addr_t *)&iova, flag, attrs);
-> > +                                          (dma_addr_t *)&iova, flag);
-> >         if (!addr)
-> >                 return NULL;
-> >
-> > @@ -875,31 +870,45 @@ static void *vduse_dev_alloc_coherent(struct devi=
-ce *dev, size_t size,
-> >         return addr;
-> >  }
-> >
-> > -static void vduse_dev_free_coherent(struct device *dev, size_t size,
-> > -                                       void *vaddr, dma_addr_t dma_add=
-r,
-> > -                                       unsigned long attrs)
-> > +static void vduse_dev_free_coherent(void *token, size_t size,
-> > +                                   void *vaddr, dma_addr_t dma_addr,
-> > +                                   unsigned long attrs)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> >
-> >         vduse_domain_free_coherent(domain, size, vaddr, dma_addr, attrs=
-);
-> >  }
-> >
-> > -static size_t vduse_dev_max_mapping_size(struct device *dev)
-> > +static bool vduse_dev_need_sync(void *token, dma_addr_t dma_addr)
-> >  {
-> > -       struct vduse_dev *vdev =3D dev_to_vduse(dev);
-> > -       struct vduse_iova_domain *domain =3D vdev->domain;
-> > +       struct vduse_iova_domain *domain =3D token;
-> > +
-> > +       return dma_addr < domain->bounce_size;
-> > +}
-> > +
-> > +static int vduse_dev_mapping_error(void *token, dma_addr_t dma_addr)
-> > +{
-> > +       if (unlikely(dma_addr =3D=3D DMA_MAPPING_ERROR))
-> > +               return -ENOMEM;
-> > +       return 0;
-> > +}
-> > +
-> > +static size_t vduse_dev_max_mapping_size(void *token)
-> > +{
-> > +       struct vduse_iova_domain *domain =3D token;
-> >
-> >         return domain->bounce_size;
-> >  }
-> >
-> > -static const struct dma_map_ops vduse_dev_dma_ops =3D {
-> > +static const struct virtio_map_ops vduse_map_ops =3D {
-> >         .sync_single_for_device =3D vduse_dev_sync_single_for_device,
-> >         .sync_single_for_cpu =3D vduse_dev_sync_single_for_cpu,
-> >         .map_page =3D vduse_dev_map_page,
-> >         .unmap_page =3D vduse_dev_unmap_page,
-> >         .alloc =3D vduse_dev_alloc_coherent,
-> >         .free =3D vduse_dev_free_coherent,
-> > +       .need_sync =3D vduse_dev_need_sync,
-> > +       .mapping_error =3D vduse_dev_mapping_error,
->
-> I think that adding these functions here is problematic,
->
-> In the case of mapping error vring_mapping_error only checks for
-> vdev->map, not for vdev->map->mapping_error:
->
-> static int vring_mapping_error(const struct vring_virtqueue *vq,
->                               dma_addr_t addr)
-> {
->        struct virtio_device *vdev =3D vq->vq.vdev;
->
->        if (!vq->use_map_api)
->                return 0;
->
->        if (vdev->map)
->                return vdev->map->mapping_error(vring_mapping_token(vq), a=
-ddr);
->        else
->                return dma_mapping_error(vring_dma_dev(vq), addr);
-> }
->
-> So we either add the check for the member or we define them from the begi=
-nning.
+So I send this set for now, and hope we can consider it for this merge
+window. If not, I'll have to rework the whole set and send the second
+kernel panic regression first.
 
-I'm not sure I will get here. I can add a comment to explain that all
-map ops are mandated not optional.
+Yu Kuai (16):
+  blk-mq-sched: add new parameter nr_requests in
+    blk_mq_alloc_sched_tags()
+  blk-mq: remove useless checking from queue_requests_store()
+  blk-mq: remove useless checkings from blk_mq_update_nr_requests()
+  blk-mq: check invalid nr_requests in queue_requests_store()
+  blk-mq: fix elevator depth_updated method
+  blk-mq: cleanup shared tags case in blk_mq_update_nr_requests()
+  blk-mq: split bitmap grow and resize case in
+    blk_mq_update_nr_requests()
+  blk-mq: fix blk_mq_tags double free while nr_requests grown
+  block: convert nr_requests to unsigned int
+  blk-mq-sched: unify elevators checking for async requests
+  blk-mq: add a new queue sysfs attribute async_depth
+  kyber: covert to use request_queue->async_depth
+  mq-deadline: covert to use request_queue->async_depth
+  block, bfq: convert to use request_queue->async_depth
+  blk-mq: fix stale nr_requests documentation
+  blk-mq: add documentation for new queue attribute async_dpeth
 
-Thanks
+ Documentation/ABI/stable/sysfs-block | 24 ++++---
+ block/bfq-iosched.c                  | 64 +++++++------------
+ block/blk-core.c                     |  1 +
+ block/blk-mq-sched.c                 | 14 +++--
+ block/blk-mq-sched.h                 | 18 +++++-
+ block/blk-mq-tag.c                   | 23 +------
+ block/blk-mq.c                       | 93 +++++++++++++++++-----------
+ block/blk-mq.h                       |  2 +-
+ block/blk-sysfs.c                    | 63 ++++++++++++++++++-
+ block/elevator.c                     |  3 +-
+ block/elevator.h                     |  2 +-
+ block/kyber-iosched.c                | 40 ++----------
+ block/mq-deadline.c                  | 55 ++--------------
+ include/linux/blkdev.h               |  3 +-
+ 14 files changed, 194 insertions(+), 211 deletions(-)
 
->
-> >         .max_mapping_size =3D vduse_dev_max_mapping_size,
-> >  };
-> >
-> > @@ -2003,27 +2012,18 @@ static struct vduse_mgmt_dev *vduse_mgmt;
-> >  static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name=
-)
-> >  {
-> >         struct vduse_vdpa *vdev;
-> > -       int ret;
-> >
-> >         if (dev->vdev)
-> >                 return -EEXIST;
-> >
-> >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
-> > -                                &vduse_vdpa_config_ops, NULL,
-> > +                                &vduse_vdpa_config_ops, &vduse_map_ops=
-,
-> >                                  1, 1, name, true);
-> >         if (IS_ERR(vdev))
-> >                 return PTR_ERR(vdev);
-> >
-> >         dev->vdev =3D vdev;
-> >         vdev->dev =3D dev;
-> > -       vdev->vdpa.dev.dma_mask =3D &vdev->vdpa.dev.coherent_dma_mask;
-> > -       ret =3D dma_set_mask_and_coherent(&vdev->vdpa.dev, DMA_BIT_MASK=
-(64));
-> > -       if (ret) {
-> > -               put_device(&vdev->vdpa.dev);
-> > -               return ret;
-> > -       }
-> > -       set_dma_ops(&vdev->vdpa.dev, &vduse_dev_dma_ops);
-> > -       vdev->vdpa.mapping_token.dma_dev =3D &vdev->vdpa.dev;
-> >         vdev->vdpa.mdev =3D &vduse_mgmt->mgmt_dev;
-> >
-> >         return 0;
-> > @@ -2056,6 +2056,7 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mde=
-v, const char *name,
-> >                 return -ENOMEM;
-> >         }
-> >
-> > +       dev->vdev->vdpa.mapping_token.token =3D dev->domain;
-> >         ret =3D _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
-> >         if (ret) {
-> >                 put_device(&dev->vdev->vdpa.dev);
-> > --
-> > 2.31.1
-> >
->
+-- 
+2.39.2
 
 
