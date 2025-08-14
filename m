@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-767977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8C0B25B6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:59:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A3B25B75
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5885C5C44E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7E77ABDDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE20228CB0;
-	Thu, 14 Aug 2025 05:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57459236430;
+	Thu, 14 Aug 2025 06:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FU61HHVU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ChL7xFU6"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBE1E7660;
-	Thu, 14 Aug 2025 05:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E3D230BD2;
+	Thu, 14 Aug 2025 06:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755151127; cv=none; b=jkIIdsMkQV99DuJJ4LaSowEz4cKR3eyTPQ82KUtWVlDUCLB4Yf+6lyrceG/6wAT99HlmjyXJdml/cRma5i5Sxl7Bqb4yr5wpZkrB9rY7q1WkDNzdl5KDZgAW5ldv5vHsx3uDxE9cfYfUPwlgMYZXO1nDKd3qcZOE5L7R1DZIpnU=
+	t=1755151251; cv=none; b=W/J9KDI/bTwvzkx9u5RJq0GCgdeeBw6fH+N+UGG+mmg2xoUmw/Z6dTc3ggwTT+ul75qdHJuip/L7EBvvwJjJnxK7LaJ6b9E5zDRly/Py5HWcfUM02y9ef2NvMRoOfphTO4/zdii/hUNUMEwgsnn9/4hlT99o2U8uI76c/Uj9rIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755151127; c=relaxed/simple;
-	bh=YqjGY16kAIhfftSdmD6Uo3e3M9wXkFLFyaZhRsF6uvc=;
+	s=arc-20240116; t=1755151251; c=relaxed/simple;
+	bh=JC/RWVioF1QV3ACGfJLGvNWucnG7XrmTqAIPB21t45Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jO96kmRGj9GC+J980ndryQeWbzjrBLXpbAQsZJqmcMxjUNZGGPfSQcY1cHt2EQvEkVnttIVa6AYoQEuTbgZl6gt/JYY6zC+gr6AgfBQUV+rPggNFs4SqnGHs2bIunC7mMcj/UxYfvXFjM/NwU5zSgU23mS7Xp+Ovq7flNZDa/JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FU61HHVU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5932C4CEF5;
-	Thu, 14 Aug 2025 05:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755151127;
-	bh=YqjGY16kAIhfftSdmD6Uo3e3M9wXkFLFyaZhRsF6uvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FU61HHVUBIw4vtg1C3qgLCXVuIE7UMisPWwvGsDUGX18a0i1FuLbCTMusEXGg0CK7
-	 dY5tNu7X34ifWdqGZRmiEJnZW4lYrMBhfqL93UqBdQJPa8MIss64/B9raRHONdcbNr
-	 hHsFALy+ocQqwIP4nIOs33XVqPV+batVqCtiflEl/EQOYSj9Kxu5KxwObGMkKjSEXz
-	 JvLb98Ch+99EFWb4c7aueHqKYiKXQB0D1F2ETarmf4t97BQBM4lwaEU87OwQ34bBDZ
-	 xQj6aTJBqEpisxsApAXL8zecEifPAdliRTYVbIwOfqBJt02ArrYOrkXGyzlNyGYhMj
-	 ngaXr+uHcxyUQ==
-Message-ID: <f9104329-f2ca-4b50-855f-27b7328efd61@kernel.org>
-Date: Thu, 14 Aug 2025 07:58:41 +0200
+	 In-Reply-To:Content-Type; b=uX6o0/1x4TObQo65UHaopFqoZJHU/1T8Ue1VOqtHF4iDYcx5Uk43Q8bcSO4GCUHH2TgAcwj6TStA4l1IBuT4NDNwWv0oIAPzbzpenPFEpDl6v+c5W8y2109RlHU0ERCoBvtQFd8cgO4guTqngn5ZX6S3PxbzD8c/JDmKbx/qjG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ChL7xFU6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=VHwBCELpy483gJxb6QuMvzNBeU1vQC2waNJoabTWiKU=; b=ChL7xFU61wQj98+eRVxbj6+nOp
+	dRLr8ewfvO5xwGwenuItHN5CApsc1a/oaJOChoROm7p4/7x3gCPjrz7igCSU0UIelKnKTZ1mB9ZAE
+	73wxUu/fBbxaLQzS6qMiGlmKNKbhmixdMClnCmUSdxzbTef6ekagcTN8gkm5L/DbRkmneeXh2Pf30
+	PCRDxEwhAz5Xebdm0wpYP9+Rwc+uuMb7/o6ZQRgEqocZSohu/aZRiwQah2115FdZhjZjpUI8QerM3
+	yy9QoyUFNSh7mL/n1MTN/24hb+dNT6u+RW2OPwmfPXP4cv2hysWPJHHyE9ur1FmCdqrkdFnA+zTfh
+	oj3wgJvQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umR14-0000000Fszj-1NYZ;
+	Thu, 14 Aug 2025 06:00:46 +0000
+Message-ID: <4c51b440-03c2-43cf-b9c9-67c0be3c3c25@infradead.org>
+Date: Wed, 13 Aug 2025 23:00:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +53,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
- video codec
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
- <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
- <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
- <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
- <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
- <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 01/14] net: ionic: Create an auxiliary device for rdma
+ driver
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>, brett.creeley@amd.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, corbet@lwn.net, jgg@ziepe.ca, leon@kernel.org,
+ andrew+netdev@lunn.ch
+Cc: sln@onemain.com, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+ linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shannon Nelson <shannon.nelson@amd.com>
+References: <20250814053900.1452408-1-abhijit.gangurde@amd.com>
+ <20250814053900.1452408-2-abhijit.gangurde@amd.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250814053900.1452408-2-abhijit.gangurde@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 23:15, Bryan O'Donoghue wrote:
-> @Krzysztof 
-> https://lore.kernel.org/linux-arm-msm/fb8f154b-3da4-4bee-82e1-3a1597a35c46@kernel.org/
-> 
-> Are you sending a v3 here ?
-> 
-> I can also just add the OPP when applying this patch.
-DTS is independent and whatever discussed there does not really stop
-this patch. This patch stops DTS, though. v3 of DTS does not matter -
-the question is if any has comments for this patch (other than doing
-something opposite we do for most bindings...).
 
-Best regards,
-Krzysztof
+
+On 8/13/25 10:38 PM, Abhijit Gangurde wrote:
+> +RDMA Support via Auxiliary Device
+> +=================================
+> +
+> +The ionic driver supports RDMA (Remote Direct Memory Access) functionality
+> +through the Linux auxiliary device framework when advertised by the firmware.
+> +RDMA capability is detected during device initialization, and if supported,
+> +the ethernet driver will create an auxiliary device that allows the rdma
+
+s/rdma/RDMA/ as is used elsewhere. (?)
+
+> +driver to bind and provide InfiniBand/RoCE functionality.
+> +
+
+-- 
+~Randy
+
 
