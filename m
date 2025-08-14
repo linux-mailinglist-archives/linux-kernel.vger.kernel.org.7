@@ -1,119 +1,129 @@
-Return-Path: <linux-kernel+bounces-768296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA4DB25F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:47:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030F4B25F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD78B644D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:45:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C4ACB64A9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5A23B610;
-	Thu, 14 Aug 2025 08:46:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3701DD0C7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1A523D287;
+	Thu, 14 Aug 2025 08:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuVReLob"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D5820013A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161187; cv=none; b=BjC6V3MG7iYR0SMEKccZQ6jITy2ad+JlTYMTxVzjTo9WzDtbNQvYC+4YLAjoGVhSjXcEv+eggetmzahRiCkanlv1iFQV040NsAl3NhuEBHyjJQB8uy9gtLHkJ/iNDXOQplJmdRUm2c+6xRPgKhDE4SNVXeMZoyaadHRL8qOFuKE=
+	t=1755161203; cv=none; b=U1AyeObLSqPrRKZWKDJuJKVVwoCLceJ2pJM0VC+DaDUkbA+3nF5IjNBRU9nz6G3xPBZpDrp/adGjwm2SA/mPw5fnODlInTdM4ge6xZkgHvBy6vMe+EWHbHPjOBrnZa9WrbifUNvhN9hWftJGglGg/FDXVxI0Ng3X8rI43xKIwko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161187; c=relaxed/simple;
-	bh=REw+v6U5HjfZ8GlRbNV5DektWf+6ind2kNIhpdPnbF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bYOWuqyzwDlq6OcnIxgCM3701sahOztbuAHMfKxhKndKGkfctLTExb33Id3X6ZjbsSXFQt4gkny5Iq4j/425d/8J+H0LvwFPG86He4DXUM+yrlsAo9WAx3ZYQP0nHsh46uf6MY1LpQlPfCyOnXCjHuezoK3zp6mw0KlRjFd/bO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8493168F;
-	Thu, 14 Aug 2025 01:46:09 -0700 (PDT)
-Received: from [10.13.87.1] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D2253F738;
-	Thu, 14 Aug 2025 01:46:13 -0700 (PDT)
-Message-ID: <cf7847e4-78a6-4286-baba-60ace0c3d507@arm.com>
-Date: Thu, 14 Aug 2025 09:46:08 +0100
+	s=arc-20240116; t=1755161203; c=relaxed/simple;
+	bh=nkf5Kv6sh59NWPCgxO5gwvDP6PYDVETVqOs8Tzl+4oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgkH7KqYfxAipbzZ/EfjwRx8ypX8aPWQ4i5BYJYddKNLzfbyALgYtguvjaN6BzhETH7J/Le8G6lWt0ElbMaI4glvoSWbQ13u48hkrzSZ9NNC/b2SuXmf0nlfbvPOh7WQ1X3XIM6xKD01Ub3UwRH0nCZqmUDLet09XZ6/JOrxTgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HuVReLob; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755161200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jnedLEQut04nXYZ6pySdP18cN8eWthaIoK2HqFHHYbU=;
+	b=HuVReLob7C/6t/zphROpCzgWivKMfKOFlWkK3eH6X77tKl0IhRj3J/EWyXiFI6rlKDur0S
+	SG/ADPutxuv8FSJZU3TVOxvZNPH/o6KiZgJs8B9zYa/3spFceD/rRFVR7EcsCq6NOcpGUS
+	htp0jclDd+m9+NGMhXeEj+ek5b/Fi4A=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-526-dow1iXJ4NUKu6-UUnKRFEw-1; Thu, 14 Aug 2025 04:46:39 -0400
+X-MC-Unique: dow1iXJ4NUKu6-UUnKRFEw-1
+X-Mimecast-MFC-AGG-ID: dow1iXJ4NUKu6-UUnKRFEw_1755161199
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e8705feefaso191053485a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:46:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755161199; x=1755765999;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jnedLEQut04nXYZ6pySdP18cN8eWthaIoK2HqFHHYbU=;
+        b=lyeds7BuA64djFY9mgTajDd7rfKgCyWzHVoko8WbtYr/oyQq3qwK8Ep3OpYon8A4Mm
+         l23oI2W17FR0EF9UHpE0GQsYRgwthzmTcInaEd/51PLeUC3IGyNGIHtKaVqeezbceqgG
+         Y+TL1WYUTVPKB+jhiQA8PxMfPoOtZUKub5kfCakxV9Xlip3wI8dIXgCIS04jWCnw5nfp
+         RGO2YHr+w2Q87t1M0Q0hy8r0okNG/hQRC1bKw9i0VP80dSBOZe2RK2x7ZSXEAb5wcHFg
+         LEQ9entVTwN5G4/8yQgF9gNOl8QSGWZ0oWZjT1qmQdQfz76aWy1QW6uQ70lt5WHqPRU7
+         XbxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsVGu5Cut4Dv7eQ8NhQhTVFpDD9vg0cMi8YLW91DTVinNT70fDKwB6lerCKByDE2MiTLicXenaQeu7iIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUUMK02OK/ZVTFAAGxznsRb1GcDfB98Nuqk4uBqIinU3gVruZR
+	Hhg8hYdKeqvpKIFL6rd0YBe/iawmcYrJBVSJCV6xhUqC2WAfESAYBTSLnoXApc86BC1/Xc8mNoF
+	XqZTd7aPz26wJa6du9lTz44KV98BiqQnJHmb410imxOB7/IxfOVyczX7E5SOVPQXdPQ==
+X-Gm-Gg: ASbGncvx3s8ZfmPAfwm9cBgnXoBsEMwzPtUqFURnzBaHqmGUNPYYOMjf19Luvr9zt4w
+	VY+YyCP80r3XwsBP5p8IQGTXJ5nIuyJtWjmq1u+ZeVY7dmcY3naQ/4P5aE7+xW+3KRBZvtvJh9b
+	6DsMhXcr7Qi0admA4Z3Ca1KsqXDlxlrNmDGKnpztabcJJA/3pSer2+Xr1WJh4xDgrvkHQwiYKws
+	Zpp+RLwCA0dWHuOeffO5ZQ5tIyeGeWE/SVcxYkHeiMzlL1hvDMWUJimZN4QI87Um5mkMz/GUHIJ
+	VYyeeW8hJF2UjRwSvtX1i7/hw6udQ5Ir/hFFnPz8j7C1SpX5Zy6NCBtccIPqxBFk2G84
+X-Received: by 2002:a05:622a:205:b0:4b0:6da6:aafb with SMTP id d75a77b69052e-4b10aad17e7mr27403301cf.19.1755161199139;
+        Thu, 14 Aug 2025 01:46:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF657St4z1hCJRc4ylw2YOLg5YWIvNkjJ+QuuTl3Mk0KpaDhti1jKf2ktN3PMQvhdp43xxWEA==
+X-Received: by 2002:a05:622a:205:b0:4b0:6da6:aafb with SMTP id d75a77b69052e-4b10aad17e7mr27402931cf.19.1755161198481;
+        Thu, 14 Aug 2025 01:46:38 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.57.34.72])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b06787441fsm153973501cf.28.2025.08.14.01.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 01:46:37 -0700 (PDT)
+Date: Thu, 14 Aug 2025 10:46:30 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v2 04/25] sched/rt: Pass an rt_rq instead of an rq
+ where needed
+Message-ID: <aJ2iZvioSRRlu_vE@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250731105543.40832-1-yurand2000@gmail.com>
+ <20250731105543.40832-5-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
-To: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, vdonnefort@google.com, ke.wang@unisoc.com,
- xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-References: <20250812093339.8895-1-xuewen.yan@unisoc.com>
-Content-Language: en-GB
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20250812093339.8895-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731105543.40832-5-yurand2000@gmail.com>
 
+Hi!
 
+On 31/07/25 12:55, Yuri Andriaccio wrote:
 
-On 12.08.25 10:33, Xuewen Yan wrote:
-> Now we use for_each_cpu() to traversal all pd's cpus,
-> it is in order to compute the pd_cap. This approach may
-> result in some unnecessary judgments.
-> We can simply calculate pd_cap as follows:
-> 
-> pd_cap = cpu_actual_cap * cpumask_weight(pd_cpus);
-> 
-> Then we can AND pd'scpus, sd's cpus and task's cpus_ptr
-> before traversing, which can save some unnecessary judgment.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->  kernel/sched/fair.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c..e47fe94d6889 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8330,18 +8330,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+...
 
-Just a thought ...
-
-for (; pd; pd = pd->next)
-
-  cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);    <-- (1)
-  cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask);
-
-
-  if (cpumask_empty(cpus))
-    continue;                                               <-- (2)
-
-Can you not mask cpus already early in the pd loop (1) and then profit
-from (2) in these rare cases? IIRC, the sd only plays a role here in
-exclusive cpusets scenarios which I don't thing anybody deploys with EAS?
-
->  		cpu_actual_cap = get_actual_cpu_capacity(cpu);
+> @@ -383,7 +383,7 @@ static void pull_rt_task(struct rq *);
 >  
->  		eenv.cpu_cap = cpu_actual_cap;
-> -		eenv.pd_cap = 0;
-> +		eenv.pd_cap = cpu_actual_cap * cpumask_weight(cpus);
+>  static inline void rt_queue_push_tasks(struct rq *rq)
+
+Can't the above also take an rt_rq?
+
+>  {
+> -	if (!has_pushable_tasks(rq))
+> +	if (!has_pushable_tasks(&rq->rt))
+>  		return;
 >  
-> -		for_each_cpu(cpu, cpus) {
-> -			struct rq *rq = cpu_rq(cpu);
-> -
-> -			eenv.pd_cap += cpu_actual_cap;
-> -
-> -			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-> -				continue;
-> +		cpumask_and(cpus, cpus, sched_domain_span(sd));
->  
-> -			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-> -				continue;
-> +		for_each_cpu_and(cpu, cpus, p->cpus_ptr) {
-> +			struct rq *rq = cpu_rq(cpu);
->  
->  			util = cpu_util(cpu, p, cpu, 0);
->  			cpu_cap = capacity_of(cpu);
+>  	queue_balance_callback(rq, &per_cpu(rt_push_head, rq->cpu), push_rt_tasks);
+
+Thanks,
+Juri
 
 
