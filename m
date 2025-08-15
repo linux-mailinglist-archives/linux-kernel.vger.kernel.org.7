@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-771078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F80B2829F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:07:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D12B282A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483DF6012BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5665E1BC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAAA2264A6;
-	Fri, 15 Aug 2025 15:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB7F21D58B;
+	Fri, 15 Aug 2025 15:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HElOWDL3"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUAg+EiC"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D935720297B;
-	Fri, 15 Aug 2025 15:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA5E4086A;
+	Fri, 15 Aug 2025 15:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755270367; cv=none; b=VJrNcz2jAHxwfZI0V/D+PU6WdyTtE2+BlrPdIMCA9Bbcs9b0RQ9UWCwTVkBfg89nranksTZJEkXw+S0pOfd9aC5XTDWqxdCDWDrY/pdGRo+/YNImF/t9kad2Y4vaWpZJ4RD1ep4sHEK7Guq0fuABAcTLV2exTn1IoxCu50ed9gY=
+	t=1755270410; cv=none; b=M/ZSeZFoV1HFt40qE1vEygGnahMgsaHeAeyuN/sW/Sy9LwXoDEot6i9UnXrSUWiYg5K9TpjeCP9JsLXnreLjsVx8J/B+WcIKkTerOsEo3HugVbVXQATTq8kPJ5KYlMCl3LpzDJSzdM1IJj7NNPo6z0sVrDaUM7wFBgg27iSYLOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755270367; c=relaxed/simple;
-	bh=Hv6COFjM439OcVUsu3MmySHKd9Z183npAzo+Lkk0SrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJOlqZ1mh7/82Mx7al7bcu4ZVt9QQ8Og7zzVnq4GU5BhMdEakeWJDJnQTnrQW0etGcinlhgqP3kBG2HFejRj5RzZH1Ur1SdJJPlp6cBTYswt2AiNFhM086Yl+fESR02IZMAPnh5qR+aoZr/bmE0CVtqmkzt0fx5TRVlUsyuZ/EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HElOWDL3; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+	s=arc-20240116; t=1755270410; c=relaxed/simple;
+	bh=T6KwqsaBGhkzK+M6ECYKLfiJhhW3kIteqs0A7DuoIPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E5k/24nWJJQ7aB37Ahuk2126EzmJDs4V7bT31Tv4uUUX/f5AKswqBM0i01pfNc/InDVbwr7Loj7bHXRezefTzA1+oxFlzgqREL/jKSlGb/JiHl/Oh5ZZ8Ny4vfqlo5PMrgLGBdMl/NLIRBWX6t7GRo8l5U2tTAV5EacZanmXDpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUAg+EiC; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74381dd4c61so1106991a34.0;
-        Fri, 15 Aug 2025 08:06:05 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-435de5d35d2so1347149b6e.0;
+        Fri, 15 Aug 2025 08:06:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755270365; x=1755875165; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AMU3P7S8F7Aw6uN0IIUSqn9Ly+qBjCwhp5TaPqOj3Q8=;
-        b=HElOWDL3C/1zYBi+41Tp/rAmEPkkn8kULFhXq1w0efYcfvvRNtMkSEJHfIx4yiNjzR
-         tCnCWLp4ZQa06DF89gUALJ0GZ7LwIxDoA7yObwe5aVwXJ4GAIfJeWV33Kc3vqfOetKRH
-         HzsWUS/ab2BT6pKEQLyD1dI9QAEx6cFjw0ycQRO2JJnVYx/t+gyey4nxy/SJYfoUZeLu
-         9Uo/lD1nN2xwpx+SohnrnoqK17U/qhofcKh/8EOhhl5ufgncC+mTNXP4GvGsiJ+WXOJu
-         O+NRxne3kafjWwREN/26w1tCLsIuQlfJOjw36T0kR/lt39zzxrjZ5Xxe2TFEAUD2gP+W
-         UTfw==
+        d=gmail.com; s=20230601; t=1755270408; x=1755875208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6SYyyOtudmJtM/TGrOPLm5qSPOyMATqxxGd+QdrSHmQ=;
+        b=hUAg+EiCHNfeLLJbEJe6IjxGb33HxOCpiYWAvpjxZH+5VzPUCH+I0iLd/AE0TGVSR5
+         5wqvwva5+HUhogH0vqA+d3844Lp4heqH/hPockOhmTkfU90G3j4R1n41yTQ3nX16lYWz
+         5WAIxX8Q8ziGqHPJXOYxc0w8VOym0KIKXER1/rN6hasiXvabf4NZ/VsS+kaB75MIR0sN
+         qyY9w+MavyNr+uJLIWyFQAkIldv1sW3p2ZaldE3Bw07LxB+uZ9mhff6sEBlwzh+fMy/a
+         TGrcilbHZBdfC6fYA27cWKEC1izXvpYVk2zLL/Zgvgv68Vw8317AOsoyp759Uy+3FR/Y
+         6yDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755270365; x=1755875165;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AMU3P7S8F7Aw6uN0IIUSqn9Ly+qBjCwhp5TaPqOj3Q8=;
-        b=gedPEsQsRquR0AtYmp1lvwYNzeX0a0N2rn5/FUFVBIqxLP4Nv6kGtEGdZJP7CYPMwo
-         2758cFy61kzAP2O/BrMrbw/h4Fee8aBZqAFSzhKeM2PtHB0w2efG+MqCPArGCziAPdcD
-         eTegeijDYbM8TufaUNNVCXIbVu2KE3cefr4WRT/4RpdmrMXYhHOI/vsmpcInGOpcsaN2
-         tu7jykWzN5S0VD1NhBNH/f37nUg/W8IDMFo+ul5aqSU5Om8JV//9HZI0hMrerWvpNjNv
-         T3cgNi5zQCA73Ac1Qu3W+KFTx3vsiieuTZiY8R9LI0cGTVF5n7o++Bb3BI7GqBPsXKEj
-         Jj8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBs/64NF2jLPSFMxKkk+R8X7qs0vSOdeTkfYjAVad5rSdg/Hs//1BVgw84CUthoQZYA/SkvPh6kJ4M4rpyLQ==@vger.kernel.org, AJvYcCUNBQTNiD3ba2SvpiTx3pK5mODP+vOUSVEpHOj4+mRcItPI1beC4BbysFwt5Xu1tlwOqtz9/EcEhMcD@vger.kernel.org, AJvYcCVhjqMXs+KdCr2RIxof3ixCAkxR9UPqqi56Leymk58ZqudFkgHelRtiCBEKYR7cOnguwLd4F+2ev4Y=@vger.kernel.org, AJvYcCW63xILkbyj4ruDJKwlCr7skI5fPPZ8ZMTxIxVrmAeUh209Y0Ph7P6jacLk0PAZlnEdTh5mwOhDrU8JocY/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx22IKCZp/Ii5wSm5qDayNjEg1A1VgxEytD0UhMvbj7GuLYJ06K
-	RLAFBldkXXl/UXG1SQeOoImbZJlU7m/ytg/5CtYphAeEMczzW9+tLNfQ
-X-Gm-Gg: ASbGnct1IFGI09miu0nnHFwFH0rnuv7Jwo4xqlPM+QQwGEYzUEqMxhM++PqHO5fX5XD
-	N28q+6F9bP9BJrMFV8/Vk66yqlOmJbtJQEZh4vXqrPg/wtN3jM+iB2yG331bBYw6/kzC1Tt1Ps0
-	E5Jv7CzN16OzSPkDVzfhGqPUHdyI+GoybAiNWaw1Z9MyhKN7MBMR0kwg2YHwQSMZd8T16MfFeYS
-	TP1sbHOfctWXksCxbu1s2ru5v9yIhT+KhdEqZQUv7Bzul4hZ+AINAaMKQpcLZNDTzQ/WJdEi0AN
-	fCZrx0NnO0st/NYmNJTvDj1PSjFyaYBGtQqT3Fgq4z6mdOBHMjBsvP0iBb75FipbI2EBdCuWEyJ
-	ImG0bVNpW1lyIazWLm5gdNJJHGZ9RULVG46yL
-X-Google-Smtp-Source: AGHT+IExS7Qt3BoP7WsTyBTrr1V2BYGnO3GcQJg9xqGFg1jMcr6eYkPlR3LXsnRgQW/iQZY9uRNbxw==
-X-Received: by 2002:a05:6830:448c:b0:739:f3b2:80f6 with SMTP id 46e09a7af769-743924651c2mr1338051a34.14.1755270364063;
-        Fri, 15 Aug 2025 08:06:04 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:c95b:3a76:bbcf:777c])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bec13e5c6sm145880eaf.25.2025.08.15.08.06.02
+        d=1e100.net; s=20230601; t=1755270408; x=1755875208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6SYyyOtudmJtM/TGrOPLm5qSPOyMATqxxGd+QdrSHmQ=;
+        b=g2IiTX+w+RK7en+G1rVUJ+v9lTP6N1Q+Gfula/9EmN4CZj59aYca/XOS/sILzx1Zj4
+         kC+KDgyJdxRu5so2yBqWCa9njcs1ygazUscoiMNYevddOpAbwGlhTXAkFojwVLzReHpO
+         q8KenwoNIvFEZOPuzBJfcxfaCQ+RnAJX4lCSoT6Hft6CeCHDGQEvMPUYmK01kDvyU+2b
+         4ChIvT6DHZjPP5UnvKr79XFh27XO8KdDzjxGYcmWuYfqmCfU1i5nBhI8llb4HVxFapEZ
+         ZsIEE64cT9u4K0vPStrOctFMOEV6Tmep96MJqM2rCaS/D/FPwhRBQpbbqcyiTdodgZO/
+         FKcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBEFBwB6Q73lHN0vXPsXVWC3HiWdGMDaxtWa2KBokqS0lcHYGq272g53yoFiYNf4WXlC4m0dK7V/eQ5V8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/5sxWs19UigBpx8ywmibq7JeU45PvChkD4/3Nfgq/T40pu4tK
+	cYVBtm2ouyZkyjr5pIGXVM173KksJHQcYq/F8gjZqyYjwmJisNuvWx4cZAFFVpZhQxQ=
+X-Gm-Gg: ASbGncuMaR6ISz7g9cHxjj7WD9AhHZrYayPT9XPKU3KALVWqqFLOzve/lIGsJ8ayDcT
+	oBTFqyqDF+aNDUMbhM4Csk76oEGzWv/pB908WPnh2GtlyoL6UuP5VvuHtHa5rqOnDozP7JNISUu
+	m70er48nQplnCUH+v0HGSPdYpuOzSYmaJAReaR3ZbQi+BHI2puWnYRUOAEtSwtbpCSh5DB5huM3
+	wXo2b4k/9QPutHU25lRhzwyY8HcsfJTsvPfiU0L0E+qatJYPAJkQlSVz+gCdD/jZ9doaHWmNufy
+	AgZL4NkKz3CapM9HSHuHnv3qhA2RcSZO1cuAZw28vNmie68YEtGAHDmyU2wlto/cgQSzMv6e6+z
+	ZcN8Y5NG5JylPjz33sMtG6islH8L7Ac6STd5K50kaNJd8ZCFRPH5RUCUP840qfNPPomHViv3ckR
+	Yn/PizN7yNd9RNtITZ2t0=
+X-Google-Smtp-Source: AGHT+IFmAu5VbO1038+E2YA+m5VnqkoVm51fBmwgr9JqhuNy9op1Z3zMOSlAE+ETj72RBMOusEhJHg==
+X-Received: by 2002:a05:6808:6c91:b0:40c:fe59:8405 with SMTP id 5614622812f47-435ec45db43mr1373355b6e.31.1755270407878;
+        Fri, 15 Aug 2025 08:06:47 -0700 (PDT)
+Received: from skunkerk-thinkpadp1gen4i.rdu.csb (syn-071-069-161-161.res.spectrum.com. [71.69.161.161])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e0224c1sm122738985a.6.2025.08.15.08.06.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 08:06:03 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Fri, 15 Aug 2025 10:06:01 -0500
-From: John Groves <John@groves.net>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <hd3tancdc6pgjka44nwhk6laawnasob44jqagwxawrmxtevihe@2orrcse6xyjx>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-13-john@groves.net>
- <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
- <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
- <20250814182022.GW7942@frogsfrogsfrogs>
+        Fri, 15 Aug 2025 08:06:47 -0700 (PDT)
+From: Sohan Kunkerkar <sohank2602@gmail.com>
+To: miklos@szeredi.hu,
+	amir73il@gmail.com
+Cc: linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sohan Kunkerkar <sohank2602@gmail.com>
+Subject: [PATCH] overlayfs: add FS_ALLOW_IDMAP flag to enable idmapped mounts
+Date: Fri, 15 Aug 2025 11:06:29 -0400
+Message-ID: <20250815150629.2097562-1-sohank2602@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814182022.GW7942@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On 25/08/14 11:20AM, Darrick J. Wong wrote:
-> On Thu, Aug 14, 2025 at 04:36:57PM +0200, Miklos Szeredi wrote:
-> > On Thu, 14 Aug 2025 at 15:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > 
-> > > I'm still hoping some common ground would benefit both interfaces.
-> > > Just not sure what it should be.
-> > 
-> > Something very high level:
-> > 
-> >  - allow several map formats: say a plain one with a list of extents
-> > and a famfs one
-> 
-> Yes, I think that's needed.
+OverlayFS already has comprehensive support for idmapped mounts through
+its ovl_copyattr() function and proper mnt_idmap() handling throughout
+the codebase. The infrastructure correctly maps UIDs/GIDs from idmapped
+upper and lower layers.
 
-Agreed
+However, the filesystem was missing the FS_ALLOW_IDMAP flag, which
+caused mount_setattr() calls with MOUNT_ATTR_IDMAP to fail with -EINVAL.
 
-> 
-> >  - allow several types of backing files: say regular and dax dev
-> 
-> "block device", for iomap.
-> 
-> >  - querying maps has a common protocol, format of maps is opaque to this
-> >  - maps are cached by a common facility
-> 
-> I've written such a cache already. :)
+This change enables idmapped mount support by adding the FS_ALLOW_IDMAP
+flag to the overlayfs file_system_type, allowing containers and other
+applications to use idmapped mounts with overlay filesystems.
 
-I guess I need to take a look at that. Can you point me to the right place?
+Signed-off-by: Sohan Kunkerkar <sohank2602@gmail.com>
+---
+ fs/overlayfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> >  - each type of mapping has a decoder module
-> 
-> I don't know that you need much "decoding" -- for famfs, the regular
-> mappings correspond to FUSE_IOMAP_TYPE_MAPPED.  The one goofy part is
-> the device cookie in each IO mapping: fuse-iomap maps each block device
-> you give it to a device cookie, so I guess famfs will have to do the
-> same.
-> 
-> OTOH you can then have a famfs backed by many persistent memory
-> devices.
-
-That's handled in the famfs fmaps already. When an fmap is ingested,
-if it references any previously-unknown daxdevs, they get retrieved
-(FUSE_GET_DAXDEV).
-
-Oversimplifying a bit, I assume that famfs fmaps won't really change,
-they'll just be retrieved by a more flexible method and be preceded
-by a header that identifies the payload as a famfs fmap.
-
-> 
-> >  - each type of backing file has a module for handling I/O
-> > 
-> > Does this make sense?
-> 
-> More or less.
-
-I'm nervous about going for too much generalization too soon here,
-but otherwise yeah.
-
-> 
-> > This doesn't have to be implemented in one go, but for example
-> > GET_FMAP could be renamed to GET_READ_MAP with an added offset and
-> > size parameter.  For famfs the offset/size would be set to zero/inf.
-> > I'd be content with that for now.
-> 
-> I'll try to cough up a RFC v4 next week.
-
-Darrick, let's try to chat next week to compare notes.
-
-Based on this thinking, I will keep my rework of GET_FMAP to a minimum
-since that will likely be a new shared message/response. I think that
-part can be merged later in the cycle...
-
-John
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index e19940d64..c628f9179 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1516,7 +1516,7 @@ struct file_system_type ovl_fs_type = {
+ 	.name			= "overlay",
+ 	.init_fs_context	= ovl_init_fs_context,
+ 	.parameters		= ovl_parameter_spec,
+-	.fs_flags		= FS_USERNS_MOUNT,
++	.fs_flags		= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
+ 	.kill_sb		= kill_anon_super,
+ };
+ MODULE_ALIAS_FS("overlay");
+-- 
+2.50.1
 
 
