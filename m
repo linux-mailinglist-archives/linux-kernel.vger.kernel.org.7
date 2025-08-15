@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-770653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC17B27D78
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:49:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA14B27D87
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1491A5E5E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEDA1CE1153
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6082FCBE2;
-	Fri, 15 Aug 2025 09:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38512F0689;
+	Fri, 15 Aug 2025 09:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="al+7SRBh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="F63xdi0N"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CB021FF47
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE35279DB2
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251297; cv=none; b=X9rbLkEq9Zc/+5X3BaeDMoDfhp2D+1vsEOstk0LEOizz+pnQqURKkbLYvV8Z7mxvXyrMHkgzGaBTxQmjtSlkR5tooxEfebnacL6Ro3W35kClkVwfcOddQJIOt2aJBtLl1Eqtt1AkrZLKnAuVumU9eO9iwvllk3arn8QZGmjVfHo=
+	t=1755251301; cv=none; b=ZTSb9F8kch2NyxXH5KRNa3juKhHOET7SB3Bb8XFq+2PLK87V6fh9++KiLRqQ+GSYH2cbs5fJH5fMUhAyZTgsHROTViD5VE4BpyZ8PTI8ZoYz+2hMhrLjuT1my/gvQhLTDXMLXsRFbXoUNJxqq8ajjo2ZDw4LWdI4VS7Tpri3M1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251297; c=relaxed/simple;
-	bh=8nAIQLVuv+uNTs3JE/nSTRCFU+uEWvC7cQkhBBT3sX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWis7ScoVPoVZIRBT/X5B/MOKqwA+3AW8QIVk2yvgMeT+mNy7J/rx1x1EN1AHCNaCOg1jDSzMmzWLA70Q86b9D/SnEIUxmnLpD/3voJYZJA1HA1b9afwt7JNvrTMLGNMApMUmbEUim1yu4In33/3HsCIDaYcS/4ldSgcLHVDFpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=al+7SRBh; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1755251301; c=relaxed/simple;
+	bh=+jnHmnMgWdzDige1YXWmm2ggAQHpSajMmdzsj7Uc2cw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z8QPd6J177DPy+a9L/h5vXS55CZWqOplzjLuW4g1chrjNVp/zCRsvwBDo4hY2NY45pJdZMv2vvF4yn60uOrJVK8cn3OP8m86R5BfQc3xR2CrcQOfRdPVdrU7J8lgbS32DXxCm02U0xEsbKEG3UhEF+Gu9hO2UElBxxZIiS10hvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=F63xdi0N; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so11593775e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:48:15 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso9651315e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755251294; x=1755856094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ize45qr1K04edblcCekHUAetpbN9SWdG+qC7LbOB7og=;
-        b=al+7SRBhtWrdp4DY0ZqCqVtJsd6eAwDqcpwL88clxELpMCD8sjqMSbWnlIfyPZZD/N
-         bEhhGm3LEhK72wUaqrXttoLG/LVmr/0qcyvREOzejLYzJhARUM9Uyut5jRKvkTD6uc/Z
-         Bn9kRHeVKwZe8zAhXyvOFpbyKZKALV41gSKz5sQXlYp7ZteY6cWHyvFCaZtHlmlRX3tv
-         WHgCf559Oc46kYLEtgaaAFuLjxpG96Aob/UfFBJNQ5x2cGFGnwmjaJ6IcvvJ4t7i6hAy
-         j198Y3MpbFAkCw84Hpas9xN8FUk+G8qq3vh3QXRGSUAhWySAwy/RO9n51UzJWC8qhoGY
-         kr6Q==
+        d=suse.com; s=google; t=1755251295; x=1755856095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JkhYjSpGhpByT3A/qsU1QFa3Sgv0rTw4JalekduYlpo=;
+        b=F63xdi0NrT9bVAVmWtlRvjdSEnfu82JD54SIFmN+rss5Ijg17YiUaV5jLmKkq5tuLV
+         PFf40kWgRGMl2l+Wu93KDEsJ4UxH7TT+Xj7dXIbYk/JbW/tToM4TVFXRgDMSus3s0gBN
+         YBYG7OuE4BOYkEJuvtnNE1fT0O97Yde1G49ZeLopRBwW/GSpI35kBOy1Pmg+Lv4T/vDM
+         bOqxzxT8RJNRRFUm5JzVKgswqsK3Dmb4GzIk2XmGBYpMhomvsUBbkfHfIrd45LA9sLGA
+         Af3yUtsqWs9lLWmct1yA9KTk3JlhXCcDN1cRX03FZmSQEBh5viy2FtYz3d/4bswKDYSe
+         TiJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251294; x=1755856094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ize45qr1K04edblcCekHUAetpbN9SWdG+qC7LbOB7og=;
-        b=hNmwlm1Zx/q3s4fSKRGffd2K/lmjZ0VozpxGqacKe8ItHJqxdYqvVgCsu4hu7LtLG9
-         q0JcRWQOJqbHhVYVm/4uykSPP2OGLLcg0AAy50aKj+iOtCy9DL8GR+J86+U3q13YPQFz
-         iSQ+xudmsGRgRAET9KRT5R920pDXx6PPtHPojbCqmU9YLrtuffI/0dgzYC4Ay6oSxx4d
-         w616YbR4iiMX2b+7I4H4XDZb11BqcJ/YNUeTVgR9FcM+ZRQldKbSmM6P7r3WpMw5K7h/
-         YzCdt5OWfGGKzXTPxCNz1Xyg/F0V9ZC1NM3d5T16oRXjYRi9rAvdbdOM6Uley7Q2gELP
-         yMAw==
-X-Gm-Message-State: AOJu0YymqkI7dLVCkGthntgy1+I1EW+RkgG09ZcchX7vr+f4Fma0iH+5
-	OzITJ8vBPLjt70wB1ycN9ylofhWqtb63FSh5Fi76d4mnSpIoG5Rx8oWZVBXYsLjB5q7xxZBc1+1
-	EN6dc
-X-Gm-Gg: ASbGncsHMi+F408WzBoxad+4B1DirZB3KRvzegsihm/BIjHafuW1piONxb3FaH2r4sA
-	uN9ReIzOkzmnLu9IzOcbm8UZosZsWoASn0rUd9nqabwNvsWtTkl2FxIQgCOKxu6jOOZZaL03/P9
-	9f/Gsr4u7Rq67LyF0EjESysnV7yI72cQbDlQF/2spHCi9FN33nO8AgTXkHbxpMA+TtIBRwPMnIS
-	MmtNpffM1ItyFpOwlwe6kHyUS5LEgAMzBv7eH38BtrlLLWE1iUNMG4iUTADHu5imDj/BY1iEybc
-	8jktO2yWDWD+bF/y70YSmB/FCYjJ/Rn4gmDudCU01HmMoAlmixDRV/MiCM9Wz3mUxhoymengfgB
-	cmVWrbLJ2R3BuePeae8fP5G4LpcX2ZmA5AqV9OaujMY7yYA==
-X-Google-Smtp-Source: AGHT+IEqIRYkk83qEzEPryjVf/MIHjDQNfhc+nb/NotQ5tTgS2nGZ9cNFl+Myz4yw+k1mmrOoM5lPg==
-X-Received: by 2002:a05:600c:354a:b0:458:bd2a:496f with SMTP id 5b1f17b1804b1-45a21844ba8mr12680035e9.21.1755251293522;
-        Fri, 15 Aug 2025 02:48:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755251295; x=1755856095;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JkhYjSpGhpByT3A/qsU1QFa3Sgv0rTw4JalekduYlpo=;
+        b=e2jEYLXvExJAduHsbPGxpNb884iqlHwo/zdgNLkt8feaMLFFKRgZrCkQBYKq873B6O
+         EW5rObY1g56Va78jZxVr8o9nyD7feq7jlh/u7BMcaWZAShAZVdW5rc+OEu/uE9YBduwF
+         pXed9Ui2cz1MTA7kBtGak/XC9nOVEa+A8P52NLBeukKl3ZX7VAHk9Z+YbD1k4G8I6mn3
+         oUssgm+D4vHzrsE2Bblbi5TA5SBIvjmomXqitXa8023ttyZwSdXTI0V2pldc5z9hM3Vb
+         tIp5B1ih9H6Rrsj+iLdfHUgu2hzfGRsk8NDu8zTbPhWjWHdJCvF7+ZD14RIZDego8zrq
+         R7mg==
+X-Gm-Message-State: AOJu0Yz0XOPta9PohhS8P5LZWGMy8uIQWpN/sYqx+lNFAGW32qxK0hmK
+	XIk4Oqb/KKpllFBazLdzNk8KisqrsZRur/oIu/v2cDrgvdfBxwSYZmGE79/mn6XfVWDsbagwvlc
+	EzDyE
+X-Gm-Gg: ASbGncs+YavpULVUKeywBuewMmbZj08mwtnXxWMnghT5/2DgLN/wklL54Dtd+jChr39
+	ZxkcSIKJt1NAHqdJ49+9/qa3UeWhR1ijMsM3MHZOAqW05cdFTMZ9zquoIFby0o9FlcKhmkHn/Oq
+	J1kstkxCyWVfIErooLRxdiCXljRarm/gjsQJgJqXeIWGJx44mDT2iVRT0jS82qIWAx0dgS8cF+W
+	Xb2QeXYULRHLtGoprGvgzXvlVp3vD2k9kZzyktQAzpwJLQkUwRCP7GNnBYflxQIv8AaNmB4xXno
+	CenW5EpmQ+DSn3hmbRnbYkMJKmGXHU8BLfyIExoe1qQ8JDrSeWb1t3/t0AN8pRv/s2GwLfip3MX
+	7BfvBl4cmrKbXEDEZPbHjRBpMJgGku95XPUjoHIdtk/+4SQ==
+X-Google-Smtp-Source: AGHT+IGZIsAs9dhba6VaD2J4a3wcmcNXIlyuQdtDQrR9rdEiuyznXhBhsiNkop3midfqEPECFg90tw==
+X-Received: by 2002:a05:600c:1909:b0:459:dde3:1a55 with SMTP id 5b1f17b1804b1-45a21857fe5mr13936985e9.24.1755251294938;
+        Fri, 15 Aug 2025 02:48:14 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223299ebsm12943805e9.23.2025.08.15.02.48.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223299ebsm12943805e9.23.2025.08.15.02.48.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 02:48:13 -0700 (PDT)
+        Fri, 15 Aug 2025 02:48:14 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
@@ -83,42 +85,19 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 0/2] Workqueue: net: replace use of system_wq and add WQ_PERCPU to alloc_workqueue users
-Date: Fri, 15 Aug 2025 11:48:06 +0200
-Message-ID: <20250815094808.54888-1-marco.crivellari@suse.com>
+Subject: [PATCH 1/2] Workqueue: net: replace use of system_wq with system_percpu_wq
+Date: Fri, 15 Aug 2025 11:48:07 +0200
+Message-ID: <20250815094808.54888-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250815094808.54888-1-marco.crivellari@suse.com>
+References: <20250815094808.54888-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-Hello!
-
-Below is a summary of a discussion about the Workqueue API and cpu isolation
-considerations. Details and more information are available here:
-
-        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
-        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an isolated
-CPU where "delay" value is 0 or greater then 0:
-		schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-		schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
 
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
@@ -128,109 +107,216 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-=== Plan and future plans ===
+system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+CPU affinity constraint, which is very often not required by users.
+Make it clear by adding a system_percpu_wq to all the network subsystem.
 
-This patchset is the first stone on a refactoring needed in order to
-address the points aforementioned; it will have a positive impact also
-on the cpu isolation, in the long term, moving away percpu workqueue in
-favor to an unbound model.
+The old wq will be kept for a few release cylces.
 
-These are the main steps:
-1)  API refactoring (that this patch is introducing)
-	-	Make more clear and uniform the system wq names, both per-cpu and
-		unbound. This to avoid any possible confusion on what should be
-		used.
-
-	-	Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
-		introduced in this patchset and used on all the callers that are not
-		currently using WQ_UNBOUND.
-
-		WQ_UNBOUND will be removed in a future release cycle.
-
-		Most users don't need to be per-cpu, because they don't have
-		locality requirements, because of that, a next future step will be
-		make "unbound" the default behavior.
-
-2)  Check who really needs to be per-cpu
-	-	Remove the WQ_PERCPU flag when is not strictly required.
-
-3)  Add a new API (prefer local cpu)
-	-	There are users that don't require a local execution, like mentioned
-		above; despite that, local execution yeld to performance gain.
-
-		This new API will prefer the local execution, without requiring it.
-		
-=== Introduced Changes by this patchset ===
-
-1) [P 1] replace use of system_wq with system_percpu_wq (under net)
-
-		system_wq is a per-CPU workqueue, but his name is not clear.
-		system_unbound_wq is to be used when locality is not required.
-
-		Because of that, system_wq has been renamed in system_percpu_wq in the
-		net subsystm (details in the next section).
-
-2) [P 2] add WQ_PERCPU to alloc_workqueue() users (under net)
-
-		Every alloc_workqueue() caller should use one among WQ_PERCPU or
-		WQ_UNBOUND. This is actually enforced warning if both or none of them
-		are present at the same time.
-
-		These patches introduce WQ_PERCPU in the net subsystem 
-		(details in the next section).
-
-		WQ_UNBOUND will be removed in a next release cycle.
-
-=== For net Maintainers ===
-
-If you agree with these changes, one option is pull the preparation changes from
-Tejun's wq branch [1].
-
-As an alternative, the patches can be routed through a wq branch.
-
-The preparation changes are described in the present cover letter, under the
-"main steps" section. The changes done in summary are:
-
-- add system_percpu_wq and system_dfl_wq, for now without replace the older wq(s)
-  (system_unbound_wq and system_wq).
-- add WQ_PERCPU flag, currently without removing WQ_UNBOUND; it will be removed
-  in a future release cycle.
-
-You can find the aforementioned changes reading:
-
-("Workqueue: add WQ_PERCPU, system_dfl_wq and system_percpu_wq")
-https://lore.kernel.org/all/20250614133531.76742-1-marco.crivellari@suse.com/
-
-
-- [1] git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git WQ_PERCPU
-
-Thanks!
-
-Marco Crivellari (2):
-  Workqueue: net: replace use of system_wq with system_percpu_wq
-  Workqueue: net: WQ_PERCPU added to alloc_workqueue users
-
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
  net/bridge/br_cfm.c                 | 6 +++---
  net/bridge/br_mrp.c                 | 8 ++++----
- net/ceph/messenger.c                | 3 ++-
  net/ceph/mon_client.c               | 2 +-
  net/core/skmsg.c                    | 2 +-
- net/core/sock_diag.c                | 2 +-
  net/devlink/core.c                  | 2 +-
  net/ipv4/inet_fragment.c            | 2 +-
  net/netfilter/nf_conntrack_ecache.c | 2 +-
  net/openvswitch/dp_notify.c         | 2 +-
- net/rds/ib_rdma.c                   | 3 ++-
  net/rfkill/input.c                  | 2 +-
- net/rxrpc/rxperf.c                  | 2 +-
- net/smc/af_smc.c                    | 6 +++---
- net/smc/smc_core.c                  | 4 ++--
- net/tls/tls_device.c                | 2 +-
+ net/smc/smc_core.c                  | 2 +-
  net/vmw_vsock/af_vsock.c            | 2 +-
- net/vmw_vsock/virtio_transport.c    | 2 +-
- net/vmw_vsock/vsock_loopback.c      | 2 +-
- 19 files changed, 29 insertions(+), 27 deletions(-)
+ 11 files changed, 16 insertions(+), 16 deletions(-)
 
+diff --git a/net/bridge/br_cfm.c b/net/bridge/br_cfm.c
+index a3c755d0a09d..c2c1c7d44c61 100644
+--- a/net/bridge/br_cfm.c
++++ b/net/bridge/br_cfm.c
+@@ -134,7 +134,7 @@ static void ccm_rx_timer_start(struct br_cfm_peer_mep *peer_mep)
+ 	 * of the configured CC 'expected_interval'
+ 	 * in order to detect CCM defect after 3.25 interval.
+ 	 */
+-	queue_delayed_work(system_wq, &peer_mep->ccm_rx_dwork,
++	queue_delayed_work(system_percpu_wq, &peer_mep->ccm_rx_dwork,
+ 			   usecs_to_jiffies(interval_us / 4));
+ }
+ 
+@@ -285,7 +285,7 @@ static void ccm_tx_work_expired(struct work_struct *work)
+ 		ccm_frame_tx(skb);
+ 
+ 	interval_us = interval_to_us(mep->cc_config.exp_interval);
+-	queue_delayed_work(system_wq, &mep->ccm_tx_dwork,
++	queue_delayed_work(system_percpu_wq, &mep->ccm_tx_dwork,
+ 			   usecs_to_jiffies(interval_us));
+ }
+ 
+@@ -809,7 +809,7 @@ int br_cfm_cc_ccm_tx(struct net_bridge *br, const u32 instance,
+ 	 * to send first frame immediately
+ 	 */
+ 	mep->ccm_tx_end = jiffies + usecs_to_jiffies(tx_info->period * 1000000);
+-	queue_delayed_work(system_wq, &mep->ccm_tx_dwork, 0);
++	queue_delayed_work(system_percpu_wq, &mep->ccm_tx_dwork, 0);
+ 
+ save:
+ 	mep->cc_ccm_tx_info = *tx_info;
+diff --git a/net/bridge/br_mrp.c b/net/bridge/br_mrp.c
+index fd2de35ffb3c..3c36fa24bc05 100644
+--- a/net/bridge/br_mrp.c
++++ b/net/bridge/br_mrp.c
+@@ -341,7 +341,7 @@ static void br_mrp_test_work_expired(struct work_struct *work)
+ out:
+ 	rcu_read_unlock();
+ 
+-	queue_delayed_work(system_wq, &mrp->test_work,
++	queue_delayed_work(system_percpu_wq, &mrp->test_work,
+ 			   usecs_to_jiffies(mrp->test_interval));
+ }
+ 
+@@ -418,7 +418,7 @@ static void br_mrp_in_test_work_expired(struct work_struct *work)
+ out:
+ 	rcu_read_unlock();
+ 
+-	queue_delayed_work(system_wq, &mrp->in_test_work,
++	queue_delayed_work(system_percpu_wq, &mrp->in_test_work,
+ 			   usecs_to_jiffies(mrp->in_test_interval));
+ }
+ 
+@@ -725,7 +725,7 @@ int br_mrp_start_test(struct net_bridge *br,
+ 	mrp->test_max_miss = test->max_miss;
+ 	mrp->test_monitor = test->monitor;
+ 	mrp->test_count_miss = 0;
+-	queue_delayed_work(system_wq, &mrp->test_work,
++	queue_delayed_work(system_percpu_wq, &mrp->test_work,
+ 			   usecs_to_jiffies(test->interval));
+ 
+ 	return 0;
+@@ -865,7 +865,7 @@ int br_mrp_start_in_test(struct net_bridge *br,
+ 	mrp->in_test_end = jiffies + usecs_to_jiffies(in_test->period);
+ 	mrp->in_test_max_miss = in_test->max_miss;
+ 	mrp->in_test_count_miss = 0;
+-	queue_delayed_work(system_wq, &mrp->in_test_work,
++	queue_delayed_work(system_percpu_wq, &mrp->in_test_work,
+ 			   usecs_to_jiffies(in_test->interval));
+ 
+ 	return 0;
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index ab66b599ac47..c227ececa925 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -314,7 +314,7 @@ static void __schedule_delayed(struct ceph_mon_client *monc)
+ 		delay = CEPH_MONC_PING_INTERVAL;
+ 
+ 	dout("__schedule_delayed after %lu\n", delay);
+-	mod_delayed_work(system_wq, &monc->delayed_work,
++	mod_delayed_work(system_percpu_wq, &monc->delayed_work,
+ 			 round_jiffies_relative(delay));
+ }
+ 
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 0ddc4c718833..83fc433f5461 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -855,7 +855,7 @@ void sk_psock_drop(struct sock *sk, struct sk_psock *psock)
+ 	sk_psock_stop(psock);
+ 
+ 	INIT_RCU_WORK(&psock->rwork, sk_psock_destroy);
+-	queue_rcu_work(system_wq, &psock->rwork);
++	queue_rcu_work(system_percpu_wq, &psock->rwork);
+ }
+ EXPORT_SYMBOL_GPL(sk_psock_drop);
+ 
+diff --git a/net/devlink/core.c b/net/devlink/core.c
+index 7203c39532fc..58093f49c090 100644
+--- a/net/devlink/core.c
++++ b/net/devlink/core.c
+@@ -320,7 +320,7 @@ static void devlink_release(struct work_struct *work)
+ void devlink_put(struct devlink *devlink)
+ {
+ 	if (refcount_dec_and_test(&devlink->refcount))
+-		queue_rcu_work(system_wq, &devlink->rwork);
++		queue_rcu_work(system_percpu_wq, &devlink->rwork);
+ }
+ 
+ struct devlink *devlinks_xa_find_get(struct net *net, unsigned long *indexp)
+diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
+index 470ab17ceb51..025895eb6ec5 100644
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -183,7 +183,7 @@ static void fqdir_work_fn(struct work_struct *work)
+ 	rhashtable_free_and_destroy(&fqdir->rhashtable, inet_frags_free_cb, NULL);
+ 
+ 	if (llist_add(&fqdir->free_list, &fqdir_free_list))
+-		queue_delayed_work(system_wq, &fqdir_free_work, HZ);
++		queue_delayed_work(system_percpu_wq, &fqdir_free_work, HZ);
+ }
+ 
+ int fqdir_init(struct fqdir **fqdirp, struct inet_frags *f, struct net *net)
+diff --git a/net/netfilter/nf_conntrack_ecache.c b/net/netfilter/nf_conntrack_ecache.c
+index af68c64acaab..81baf2082604 100644
+--- a/net/netfilter/nf_conntrack_ecache.c
++++ b/net/netfilter/nf_conntrack_ecache.c
+@@ -301,7 +301,7 @@ void nf_conntrack_ecache_work(struct net *net, enum nf_ct_ecache_state state)
+ 		net->ct.ecache_dwork_pending = true;
+ 	} else if (state == NFCT_ECACHE_DESTROY_SENT) {
+ 		if (!hlist_nulls_empty(&cnet->ecache.dying_list))
+-			mod_delayed_work(system_wq, &cnet->ecache.dwork, 0);
++			mod_delayed_work(system_percpu_wq, &cnet->ecache.dwork, 0);
+ 		else
+ 			net->ct.ecache_dwork_pending = false;
+ 	}
+diff --git a/net/openvswitch/dp_notify.c b/net/openvswitch/dp_notify.c
+index 7af0cde8b293..a2af90ee99af 100644
+--- a/net/openvswitch/dp_notify.c
++++ b/net/openvswitch/dp_notify.c
+@@ -75,7 +75,7 @@ static int dp_device_event(struct notifier_block *unused, unsigned long event,
+ 
+ 		/* schedule vport destroy, dev_put and genl notification */
+ 		ovs_net = net_generic(dev_net(dev), ovs_net_id);
+-		queue_work(system_wq, &ovs_net->dp_notify_work);
++		queue_work(system_percpu_wq, &ovs_net->dp_notify_work);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+diff --git a/net/rfkill/input.c b/net/rfkill/input.c
+index 598d0a61bda7..53d286b10843 100644
+--- a/net/rfkill/input.c
++++ b/net/rfkill/input.c
+@@ -159,7 +159,7 @@ static void rfkill_schedule_global_op(enum rfkill_sched_op op)
+ 	rfkill_op_pending = true;
+ 	if (op == RFKILL_GLOBAL_OP_EPO && !rfkill_is_epo_lock_active()) {
+ 		/* bypass the limiter for EPO */
+-		mod_delayed_work(system_wq, &rfkill_op_work, 0);
++		mod_delayed_work(system_percpu_wq, &rfkill_op_work, 0);
+ 		rfkill_last_scheduled = jiffies;
+ 	} else
+ 		rfkill_schedule_ratelimited();
+diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
+index ac07b963aede..ab870109f916 100644
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -85,7 +85,7 @@ static void smc_lgr_schedule_free_work(struct smc_link_group *lgr)
+ 	 * otherwise there is a risk of out-of-sync link groups.
+ 	 */
+ 	if (!lgr->freeing) {
+-		mod_delayed_work(system_wq, &lgr->free_work,
++		mod_delayed_work(system_percpu_wq, &lgr->free_work,
+ 				 (!lgr->is_smcd && lgr->role == SMC_CLNT) ?
+ 						SMC_LGR_FREE_DELAY_CLNT :
+ 						SMC_LGR_FREE_DELAY_SERV);
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index fc6afbc8d680..f8798d7b5de7 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -1569,7 +1569,7 @@ static int vsock_connect(struct socket *sock, struct sockaddr *addr,
+ 			 * reschedule it, then ungrab the socket refcount to
+ 			 * keep it balanced.
+ 			 */
+-			if (mod_delayed_work(system_wq, &vsk->connect_work,
++			if (mod_delayed_work(system_percpu_wq, &vsk->connect_work,
+ 					     timeout))
+ 				sock_put(sk);
+ 
 -- 
 2.50.1
 
