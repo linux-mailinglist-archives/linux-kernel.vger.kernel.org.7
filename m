@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-770480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ECDB27B4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:40:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52562B27B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62AB45E71DB
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36528AA67F3
 	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B532D6408;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57A02D6622;
 	Fri, 15 Aug 2025 08:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCaoseks"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wgc1fmb1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537702528FD;
-	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081DA2459F8;
+	Fri, 15 Aug 2025 08:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755247062; cv=none; b=n0jzGJX7rQ2RdEPxEHNZN/vS5fepbvMl1yuyShSF8hw4GM9K4r8foQ/LgnyRFd0w/WuQlzkouuyydQUCRWBNI1Qbnw7QdFzcJ1/rDeFOosRE4MiCrtagIMOG4C7UzzELHBCdZcODN5WqTZOKZXVMN46W3m2vmDQgJZdJHpU7snE=
+	t=1755247062; cv=none; b=DFU03qkJ/5JS1n/e6EPLr0YNlYfkKjh8J3lWK8Su4kY64hEEN6OmH5VnnaDA6HXGlhCKJjD6FFJEyMHIWp5qLmz7/8fbu52IAk9GisxnyLmpSUqU3pGLrH53uhQPS45jB4DJa8fO152yclDJnVGXGApKAtLi8K0RVrS/GNVI4xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755247062; c=relaxed/simple;
-	bh=zHm9FDgn4q6/xxPLyj5fLKXqr5ss/Uk6/ql8RR2vJxs=;
+	bh=4rHg6PbdWwvxur/Olkz+xdYjJwYQBoyJ/1e2IHkd5pE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HDXX0h79thJgEmMqy2Bwa8XcDwuJsLn3VIz2uYTvjYZRYLuxo31F7ZEtXOCm6ucI9Qxh8nuCcxOxHOjxY6t+0AJFPtugKWIRywRHWZOlDprzGZ/h5fNteQSdyc3yQ7kWE1dnIDPgkzeT5BsSzIPXHNwDkCEsr4pe0//2RChkmBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCaoseks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BDD5FC4CEEB;
+	 In-Reply-To:To:Cc; b=otu1KjPNryZs8ywB6LG6a977OygiE4fEYUG+n/L8JRebKQi9OfmKu0BlaKLYaMQG3mUUWDKx36EbNrHOJJgZl/FbNOXt5P9cYeq6aaTJ32tAFvA+Y+FOszMm6gIQPEgGR/2RZPy1KrV4j2F6837zDqKZiqgMDaixjKANaHBBk5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wgc1fmb1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CABBDC4CEF6;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755247061;
-	bh=zHm9FDgn4q6/xxPLyj5fLKXqr5ss/Uk6/ql8RR2vJxs=;
+	bh=4rHg6PbdWwvxur/Olkz+xdYjJwYQBoyJ/1e2IHkd5pE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nCaoseksLGQ42FqntIfyukpMp95F70Ks6gg2tVLDjMTkEVkQZH8XB6WC0F7vu4xQY
-	 yf7VtUDeHLLTsRXI0o64ERlcAf9401Az7G9MT+sjuJr0IuF96r9DoD21yafnQ2URSy
-	 EoVy6I22o6dkyAUjnQ7/PspAf8JWcF/RZyd0+/dTtJ47egh7SvL7Eu+1p+RtUyDM+U
-	 e7zFfbhQsZXK4YuzVM7IT3buzBb6Kcr3uPlJJ3e2SD6S9EZrrJtTdnq04HUp66Giyg
-	 Ju6Tv39tv8rd22WDhCVoA6Kzx7zQ+xwi6XsndPb/FbVzNA3aPI2NiDA2iKUFm1X+3M
-	 r0yvwYP8RSXeg==
+	b=Wgc1fmb19fj3lQCMGOnIlqh3QPjPJZgQ/Z6wwON00Gqg9XuOaWpWSlliLXna9Lva1
+	 g3ePc+uHRYHptqlixdU5BGggUfoxCcKij+4ZuaezTa07gWZueQOzQXRv1Le6O9AY8B
+	 Z2U6Mhjm/9kln9P4uNX+c2lnpUll8k+jbzlsx317xzzUHbqni4oiuxTQbLPG4d44O6
+	 PYQImwzrQgLmX/UYRnV8FPrWxo7n9yz3PsfLufxo8MoVn1Php965sb7s2MOZyOdx4k
+	 H80uN58/dMwn0TuVBPsfgMUPYMxYjl9HrJKrakbW5M5OS9tRiuA2G+Tf2NkLFoRGmX
+	 IEY/bhbRmXfdg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62ACCA0EE6;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2171CA0EE8;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 15 Aug 2025 16:37:38 +0800
-Subject: [PATCH 12/13] arm64: dts: amlogic: S7D: Add clk-measure controller
+Date: Fri, 15 Aug 2025 16:37:39 +0800
+Subject: [PATCH 13/13] arm64: dts: amlogic: S6: Add clk-measure controller
  node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-12-59f04ba67457@amlogic.com>
+Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-13-59f04ba67457@amlogic.com>
 References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -67,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=6399;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=7872;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=Vv1XnmhYWT2bsyKCicoFjDp0lmFh6QrlHLuGDXvx8XI=;
- b=JVTdbUXHo0i01T7e5acBX+rmguv7bUz3qeR6KpGdWPBzXBe3X/bijI6wn2BQ9RWIn0aNIWQ2k
- QM94obZUizJAf1UnQX/YGPACOeLuWpyCOAz0W/BHKhxynCqIWbPWxol
+ bh=JGpYLHPu4HOmr+mDeiIXrC30j92VsgQpCg8JGdcHu0A=;
+ b=sylv3HjOSOUxRyDdjkKPtqnqECv24/9zfray8sW2hRkH8c0a6IDZlEJc8fXAJVqS7Ler1D147
+ 0DzlafTi20JCRcJxAJIEXrj2sQN9uc9o53uCfGf6MD/8chNiiW+Kzc3
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -81,21 +81,22 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Add the clk-measure controller node for S7D SoC family.
+Add the clk-measure controller node for S6 SoC family.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi | 243 +++++++++++++++++++++++++++
- 1 file changed, 243 insertions(+)
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi | 312 ++++++++++++++++++++++++++++
+ 1 file changed, 312 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi
-index c4d260d5bb58..a958cde53fa1 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi
-@@ -184,6 +184,249 @@ gpiocc: gpio@300 {
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
+index 5f602f1170c0..b8dbdad91d79 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
+@@ -189,6 +189,318 @@ gpiocc: gpio@300 {
  					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_CC<<8) 2>;
  				};
  			};
++
 +			clk_msr: clock-measure@48000 {
 +				compatible = "amlogic,clk-measure";
 +				reg = <0x0 0x48000 0x0 0x1c>;
@@ -103,9 +104,11 @@ index c4d260d5bb58..a958cde53fa1 100644
 +				clkmsr-indices = <0>,
 +						 <1>,
 +						 <2>,
++						 <3>,
 +						 <4>,
 +						 <5>,
 +						 <6>,
++						 <7>,
 +						 <8>,
 +						 <9>,
 +						 <10>,
@@ -122,7 +125,10 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <24>,
 +						 <25>,
 +						 <26>,
-+						 <31>,
++						 <27>,
++						 <28>,
++						 <29>,
++						 <30>,
 +						 <32>,
 +						 <33>,
 +						 <34>,
@@ -149,9 +155,16 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <65>,
 +						 <66>,
 +						 <67>,
++						 <70>,
++						 <71>,
++						 <72>,
++						 <73>,
++						 <74>,
++						 <75>,
 +						 <76>,
 +						 <77>,
 +						 <78>,
++						 <79>,
 +						 <80>,
 +						 <81>,
 +						 <82>,
@@ -162,9 +175,10 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <88>,
 +						 <89>,
 +						 <93>,
-+						 <97>,
 +						 <99>,
 +						 <106>,
++						 <108>,
++						 <109>,
 +						 <110>,
 +						 <111>,
 +						 <113>,
@@ -175,7 +189,6 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <118>,
 +						 <121>,
 +						 <130>,
-+						 <131>,
 +						 <132>,
 +						 <133>,
 +						 <134>,
@@ -190,8 +203,14 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <143>,
 +						 <144>,
 +						 <145>,
-+						 <146>,
 +						 <147>,
++						 <148>,
++						 <149>,
++						 <150>,
++						 <151>,
++						 <152>,
++						 <153>,
++						 <154>,
 +						 <160>,
 +						 <161>,
 +						 <162>,
@@ -202,6 +221,7 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <167>,
 +						 <168>,
 +						 <169>,
++						 <175>,
 +						 <176>,
 +						 <177>,
 +						 <178>,
@@ -218,15 +238,32 @@ index c4d260d5bb58..a958cde53fa1 100644
 +						 <189>,
 +						 <190>,
 +						 <191>,
-+						 <192>;
++						 <192>,
++						 <193>,
++						 <194>,
++						 <195>,
++						 <196>,
++						 <197>,
++						 <198>,
++						 <199>,
++						 <201>,
++						 <204>,
++						 <205>,
++						 <206>,
++						 <207>,
++						 <208>,
++						 <209>,
++						 <210>;
 +				clkmsr-names = "sys_clk",
 +					       "axi_clk",
 +					       "rtc_clk",
++					       "dspa",
 +					       "mali_stack",
 +					       "mali",
 +					       "cpu_clk_div16",
-+					       "cecb_clk",
 +					       "mali_aclkm",
++					       "cecb_clk",
++					       "gp2_pll",
 +					       "fclk_div5",
 +					       "p21_usb2_ckout",
 +					       "p20_usb2_ckout",
@@ -240,8 +277,11 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "sys_pll_div16",
 +					       "ddr_dpll_pt_clk",
 +					       "mod_Tsin_A_CLK_IN",
-+					       "mod_Tsin_B_CLK_IN",
-+					       "earcrx_pll_clk_out",
++					       "ext_Tsin_B_CLK_IN",
++					       "mod_Tsin_C_CLK_IN",
++					       "mod_Tsin_D_CLK_IN",
++					       "dsi_pll_div_clk_out",
++					       "dsi_pll_clk",
 +					       "eth_125m",
 +					       "eth_rmii",
 +					       "co_clkin_to_mac",
@@ -268,9 +308,16 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "vid_lock",
 +					       "vapb",
 +					       "ge2d",
++					       "dsi_meas",
++					       "dsi_phy",
++					       "csi_phy",
++					       "cts_csi2_adapt_clk",
++					       "cts_csi2_data ",
++					       "csi_phy_out",
 +					       "hdmitx_tmds",
 +					       "hdmitx_sys",
 +					       "hdmitx_fe",
++					       "rama_clk",
 +					       "hdmitx_prif",
 +					       "hdmitx_200m",
 +					       "hdmitx_aud",
@@ -281,11 +328,12 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "htx_aes_clk",
 +					       "amfc",
 +					       "vdec",
-+					       "hcodec",
 +					       "hevcf",
 +					       "deskew_pll_clk_div32_out",
++					       "cmpr",
++					       "dewarpa",
 +					       "sc",
-+					       "saradc",
++					       "aux_adc_clk",
 +					       "sd_emmc_c",
 +					       "sd_emmc_b",
 +					       "sd_emmc_a",
@@ -294,7 +342,6 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "spicc",
 +					       "ts",
 +					       "o_vad_clk",
-+					       "au_dac_clk_x128",
 +					       "audio_locker_in_clk",
 +					       "audio_locker_out_clk",
 +					       "audio_tdmout_c_sclk",
@@ -309,8 +356,14 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "audio_spdifout_b_mst_clk",
 +					       "audio_spdifout_mst_clk",
 +					       "audio_spdifin_mst_clk",
-+					       "mod_audio_pdm_dclk_o",
 +					       "audio_resampleb_clk",
++					       "pcie_pipe_clk",
++					       "pcie_ref_clk",
++					       "pcie_upcrx_cdrclk",
++					       "pcie_upcrx_clk_sync_b20",
++					       "pcie_u3p2pll1_clk_div16",
++					       "pcie_u3p2pll0_clkout",
++					       "pcie_ref_clk_p",
 +					       "pwm_j",
 +					       "pwm_i",
 +					       "pwm_h",
@@ -325,19 +378,35 @@ index c4d260d5bb58..a958cde53fa1 100644
 +					       "rng_ring_clk[1]",
 +					       "rng_ring_clk[2]",
 +					       "rng_ring_clk[3]",
-+					       "osc_ring_clk[0](a55 core0 14_slvt)",
-+					       "osc_ring_clk[1](a55 core1 14_slvt)",
-+					       "osc_ring_clk[2](a55 core1 14_slvt)",
-+					       "osc_ring_clk[3](a55 core1 14_slvt)",
-+					       "osc_ring_clk[4](a55_pwr[0] 16_slvt)",
-+					       "osc_ring_clk[5](a55_pwr[1] 14_lvt)",
-+					       "osc_ring_clk[6](a55_pwr[2] 14_rvt)",
-+					       "osc_ring_clk[7](mali[1] 14_lvt)",
-+					       "osc_ring_clk[8](mali[1] 14_rvt)",
-+					       "osc_ring_clk[9](dos[0] 16_lvt)",
-+					       "osc_ring_clk[10](dos[1] 14_rvt)",
-+					       "osc_ring_clk[11](ddr[0] 9t_14_lvt)",
-+					       "osc_ring_clk[12](top[0] 16_rvt)";
++					       "rng_ring_clk[4]",
++					       "am_ring_osc_clk_out[0]",
++					       "am_ring_osc_clk_out[1]",
++					       "am_ring_osc_clk_out[2]",
++					       "am_ring_osc_clk_out[3]",
++					       "am_ring_osc_clk_out[4]",
++					       "am_ring_osc_clk_out[5]",
++					       "am_ring_osc_clk_out[6]",
++					       "am_ring_osc_clk_out[7]",
++					       "am_ring_osc_clk_out[8]",
++					       "am_ring_osc_clk_out[9]",
++					       "am_ring_osc_clk_out[10]",
++					       "am_ring_osc_clk_out[11]",
++					       "am_ring_osc_clk_out[12]",
++					       "am_ring_osc_clk_out[13]",
++					       "am_ring_osc_clk_out[14]",
++					       "am_ring_osc_clk_out[15]",
++					       "am_ring_osc_clk_out[16]",
++					       "nna_core",
++					       "vc9000e_aclk",
++					       "vc9000e_core",
++					       "pcie_tl",
++					       "u3p2pll1_clk_div16",
++					       "u3p2pll0_clkout",
++					       "upctx_clk_sync_b20",
++					       "upcrx_carclk",
++					       "usb_pipe_clk",
++					       "earcrx_pll_out",
++					       "mclk_pll";
 +			};
  		};
  	};
