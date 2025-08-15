@@ -1,201 +1,105 @@
-Return-Path: <linux-kernel+bounces-769875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543B0B274B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DC3B274B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C41C18910B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159F91890386
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455E8199931;
-	Fri, 15 Aug 2025 01:26:24 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ACA145B3F;
+	Fri, 15 Aug 2025 01:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qSHEoZrX"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF73F72613;
-	Fri, 15 Aug 2025 01:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23798821
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755221183; cv=none; b=Qm6cDWsl+RBCTHz18AO4TOA+IdKvCrUX397hORlYF9NiJ17v0biL8OX6hIwuRvgXe71GGerz3DzcwBT42NvBTm8I2Zj4p5bhKYxjJ9wxYVMPa9C+jeUOU5qgAt+ZKhfD8gbbQmtUJATpoMC9Pnsipd/rYylzVI2tG0ma5KL9ZDo=
+	t=1755221298; cv=none; b=dMaR0d2Gcs2xTMf1nAyR8hI0caXmWhjgp0sBXrN7jrza5SgAet3VpaQIKsz5U7wyErp0RhdKy7Ymu3pRNLPfRX1jYgbpHXk7kMfIPGzKwZIZ++Fec/EDaZMrT5hoEYqO7HnFDI6QHdcRSVWd08tbfMZ2ZL3pEMKX8U/TEkrZ/yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755221183; c=relaxed/simple;
-	bh=J64F+uSo5sGAIYQ01V6WVxWgLrdBT6BjOHJ8UJG/Sqg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tH6HTEdeA1MCDZH6LEt6xjp8OrmcPsk8DoIRQBnfyg1Skzi0RNksXqbrIgphAcCI1LW3LVXuTOeGM+Vioxcb/G8ldGVJ1oXzdWCdR9PLoSMMHXpQXdwf2a89MFtKv4CZSEZD043Mzv+uk2QIBUaq9Zdna8gmnFFx+WKGmpM/YQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c34FS456NzYQtwq;
-	Fri, 15 Aug 2025 09:26:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2DAA71A0359;
-	Fri, 15 Aug 2025 09:26:19 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3chO6jJ5o7PfeDg--.25147S3;
-	Fri, 15 Aug 2025 09:26:19 +0800 (CST)
-Subject: Re: [PATCH] md/raid1,raid10: don't broken array on failfast metadata
- write fails
-To: Kenta Akagi <k@mgml.me>, Yu Kuai <yukuai1@huaweicloud.com>,
- Song Liu <song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250812090119.153697-1-k@mgml.me>
- <36f78ba0-ac3b-5d97-89f3-2b09d49d1701@huaweicloud.com>
- <c4980d23-7a76-4c28-b9a8-5989524c1f93@mgml.me>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f9a22cef-0596-485c-b573-90d27bd3af36@huaweicloud.com>
-Date: Fri, 15 Aug 2025 09:26:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755221298; c=relaxed/simple;
+	bh=35DRTD2QmNiEIHrMkJdGrRAX4FpARNkUNcW4+F9dqbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=asdl+yIh9D40cPww93f5sVdqiAT/7FeKQO56JCsOe4/b2tB12iaKXaxpf/a/YnwZrMA7tLWHzqnLxkTJlvkOa3glQUt6JAQJrOscIuPMWc/DBOmMhK7J7SEkHup4mmPanN26zfVk9oL4P/+GfUMZEjIBuSyLTVaaYvN+UlEL8sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qSHEoZrX; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:50f9:ca46:26fb:a765] ([IPv6:2601:646:8081:9484:50f9:ca46:26fb:a765])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57F1RnL11665979
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 14 Aug 2025 18:27:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57F1RnL11665979
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755221270;
+	bh=rDmX+eT/GPUu/NzCSnBOle3sTTqwtyDdpPu80TOMnCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qSHEoZrXgB5KipHsTpEm6y266fxWwEfaHoBF60CR6viCfKTZ65QQ5YJMP7Y/QEvX8
+	 0FQN/TfiuCW2FM6qLKTz7+aWMvcPZhg3LCmJ1ChuIAjFA3a8VcDuLzOkYTx8u214wr
+	 U5sD2LT7njbn9BmoXEa1P2gkOYg5oEUKLRjcS/2sS48QavdQbQjHIvKNu6wdcWHxCs
+	 uApmCLextQmnFb0ADjpEBeYI7bws0OSuPghY8aWKP9wcAeX4iGPnsI2ln8XEipbdXY
+	 BZqGrVN7bW45C7t2p06Nyor3jmDHdPVAbS2TBs+e5EyljIsP3DRmV2WlY+JfnpfIcQ
+	 Rd8+Jc4153efQ==
+Message-ID: <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
+Date: Thu, 14 Aug 2025 18:27:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c4980d23-7a76-4c28-b9a8-5989524c1f93@mgml.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3chO6jJ5o7PfeDg--.25147S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFyrZr13CF4rJr43ZF1UJrb_yoWrKr15pF
-	WktFWYkr98tr1ktw17XFy8Wa45Gw1Ut3yUGr15Ja4xZr15Jr10gF4jgryqgryDur4rGw1D
-	Xr1UXFy7ZFyjy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUG0PhUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
+To: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
+Cc: kees@kernel.org, alyssa.milburn@intel.com, scott.d.constable@intel.com,
+        joao@overdrivepizza.com, andrew.cooper3@citrix.com,
+        samitolvanen@google.com, nathan@kernel.org,
+        alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 2025-08-14 04:17, Peter Zijlstra wrote:
+> Hi!
+> 
+> A while ago FineIBT started using the instruction 0xEA to generate #UD.
+> All existing parts will generate #UD in 64bit mode on that instruction.
+> 
+> However; Intel/AMD have not blessed using this instruction, it is on
+> their 'reserved' list for future use.
+> 
+> Peter Anvin worked the committees and got use of 0xD6 blessed, and it
+> will be called UDB (per the next SDM or so).
+> 
+> Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
+> had to switch the hash register to EAX in order to free up some bytes.
+> 
+> Per the x86_64 ABI, EAX is used to pass the number of vector registers
+> for varargs -- something that should not happen in the kernel. More so,
+> we build with -mskip-rax-setup, which should leave EAX completely unused
+> in the calling convention.
+> 
+> The code boots and passes the LKDTM CFI_FORWARD_PROTO test for various
+> combinations (non exhaustive so far).
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-在 2025/08/14 23:54, Kenta Akagi 写道:
-> On 2025/08/13 9:59, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/08/12 17:01, Kenta Akagi 写道:
->>> It is not intended for the array to fail when a metadata write with
->>> MD_FAILFAST fails.
->>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
->>> when md_error is called on the last device in RAID1/10,
->>> the MD_BROKEN flag is set on the array.
->>> Because of this, a failfast metadata write failure will
->>> make the array "broken" state.
->>>
->>> If rdev is not Faulty even after calling md_error,
->>> the rdev is the last device, and there is nothing except
->>> MD_BROKEN that prevents writes to the array.
->>> Therefore, by clearing MD_BROKEN, the array will not become
->>> "broken" after a failfast metadata write failure.
->>
->> I don't understand here, I think MD_BROKEN is expected, the last
->> rdev has IO error while updating metadata, the array is now broken
->> and you can only read it afterwards. Allow using this broken array
->> read-write might causing more severe problem like data loss.
->>
-> Thank you for reviewing.
-> 
-> I think that only when the bio has the MD_FAILFAST flag,
-> a metadata write failure to the last rdev should not make it
-> broken array at that point.
-> 
-> This is because a metadata write with MD_FAILFAST is retried after
-> failure as follows:
-> 
-> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
-> 
-> 2. In md_super_wait, which is called by the function that
-> executed md_super_write and waits for completion,
-> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
-> 
-> 3. The caller of md_super_wait (such as md_update_sb)
-> receives a negative return value and then retries md_super_write.
-> 
-> 4. The md_super_write function, which is called to perform
-> the same metadata write, issues a write bio
-> without MD_FAILFAST this time, because the rdev has LastDev flag.
-> 
-> When a bio from super_written without MD_FAILFAST fails,
-> the array is truly broken, and MD_BROKEN should be set.
-> 
-> A failfast bio, for example in the case of nvme-tcp ,
-> will fail immediately if the connection to the target is
-> lost for a few seconds and the device enters a reconnecting
-> state - even though it would recover if given a few seconds.
-> This behavior is exactly as intended by the design of failfast.
-> 
-> However, md treats super_write operations fails with failfast as fatal.
-> For example, if an initiator - that is, a machine loading the md module -
-> loses all connections for a few seconds, the array becomes
-> broken and subsequent write is no longer possible.
-> This is the issue I am currently facing, and which this patch aims to fix.
-> 
-> Should I add more context to the commit message? Please advise.
+Looks good to me (and using %eax will save one byte per call site as
+well), but as per our IRC discussion, *my understanding* is that the
+best possible performance (least branch predictor impact across
+implementations) is to use a forward branch with a 2E prefix (jcc,pn in
+GAS syntax) rather than a reverse branch, if space allows.
 
-Yes, please explain in detail in commit message.
-> 
-> Thanks,
-> AKAGI
-> 
->> Thanks,
->> Kuai
->>
->>>
->>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
->>> Signed-off-by: Kenta Akagi <k@mgml.me>
->>> ---
->>>    drivers/md/md.c | 1 +
->>>    drivers/md/md.h | 2 +-
->>>    2 files changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>> index ac85ec73a409..3ec4abf02fa0 100644
->>> --- a/drivers/md/md.c
->>> +++ b/drivers/md/md.c
->>> @@ -1002,6 +1002,7 @@ static void super_written(struct bio *bio)
->>>            md_error(mddev, rdev);
->>>            if (!test_bit(Faulty, &rdev->flags)
->>>                && (bio->bi_opf & MD_FAILFAST)) {
->>> +            clear_bit(MD_BROKEN, &mddev->flags);
-
-And I feel a beeter way is to set MD_BROKEN only if the last rdev
-failed, set it in middle and clear it is werid.
-
-Thanks,
-Kuai
-
->>>                set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->>>                set_bit(LastDev, &rdev->flags);
->>>            }
->>> diff --git a/drivers/md/md.h b/drivers/md/md.h
->>> index 51af29a03079..2f87bcc5d834 100644
->>> --- a/drivers/md/md.h
->>> +++ b/drivers/md/md.h
->>> @@ -332,7 +332,7 @@ struct md_cluster_operations;
->>>     *                   resync lock, need to release the lock.
->>>     * @MD_FAILFAST_SUPPORTED: Using MD_FAILFAST on metadata writes is supported as
->>>     *                calls to md_error() will never cause the array to
->>> - *                become failed.
->>> + *                become failed while fail_last_dev is not set.
->>>     * @MD_HAS_PPL:  The raid array has PPL feature set.
->>>     * @MD_HAS_MULTIPLE_PPLS: The raid array has multiple PPLs feature set.
->>>     * @MD_NOT_READY: do_md_run() is active, so 'array_state', ust not report that
->>>
->>
->>
-> .
-> 
+	-hpa
 
 
