@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-770922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985D7B28076
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:18:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF477B2807F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39931BC86E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:18:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0373060685A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CF92FE565;
-	Fri, 15 Aug 2025 13:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF730275E;
+	Fri, 15 Aug 2025 13:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="HlWIwWEB"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SL9kp3a5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BB61A76B1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD03327F16A
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755263896; cv=none; b=NJAEnXvXbWcM47A3CPspIQeg4q9qXjiwHEnG3qJf2+v1o1Tsuai8UPb9eJwVyHrKl8wcomYVhcgrnC76KW2AsVKDKBHM1QI4WZKKYhw9ON/KxBu5G/nveYba9NbINRvXteK1Ov1cLrGL6oz6TQymMQdsxS+OubBUZaCirfX/32g=
+	t=1755263912; cv=none; b=KE3WQp4TgMp4ylwojeyEZExSmSr/mx4RJc2EOL7YqI9qXwJ9BPZhqEcuL90zl+iKpYahS/ecQe5n3YzWMxIFdOi3zGgWj4JI25usjBKUF5djKbR60ggGYS15SW+qIyOx9Q9+XTa6Q4Zi75FySjDyD45YWelxhcSRADYHWAwIRYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755263896; c=relaxed/simple;
-	bh=n4iS5aLB5+JkPBgj69f5R+uOKA4ezjD0k0ZowyIu7d8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FznxmTXIZWFJtPOurQvK51NNVdpc0Q/zrABRqEHtlKxJE5Y46SMeQC2mIsz5ydeFkX7Dott/eHG69XP73Ew92i1TSwtB1nP5+7ldIkxbk+SXd2cfOyWOM0j7XacMhMY4ZAwzOnLdhB/1orcJxLKPNSBQ8+O9lNsnmhVbeP4JQ1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=HlWIwWEB; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=Bb0W3QreuMWhX9jUJbsxnZFTBv+9eZ2r5LVq6jjWm9M=; b=HlWIwWEBqPR/Zm0MJM4XZkTkcn
-	nDFvNRBpr4AVclJ1HxMDZaB7lsHvPZ8SoSY6VcBFQJOaT/31N47M4wsp0DPwIOPun6/tN39n0qBBo
-	pFkCEd2sUjq0EK8RWYLRZ7E37LKSb6m/5qGZmUs9SQ+LbdT86p5x87ps3DCn7OgJaKnDeen8fd137
-	CcSm4grFuU1Uodx8rRhIeR//qeUeONx6M7p9SdWEyM7kNcODf4mK4JnVzKzkHRtICC71j0zI+97fF
-	DnidqvSSuXHANejecsAWI/P78cNhci7FaeUAH29idc/mA+fxUd+cmkXdFuwakzEdZOhiha2NBjt6r
-	YIFbh+OwiMvnp+Rz6di+bhtPusP8DQTUI19c76/uuQ8Xooycg83dOHlxluXvcE5D0Iek9QJduKP0d
-	GMADli2B0dCcFOf4MRPQsbRS4mMl1+0+Xy83dEmrZkGy4k/57EVRetHYIFPUhbF61rko/0BvOao9V
-	WZDQycmLblFJDpNhws04kiB/WA2uoXPpdT7vxz1DVzjcHUt6HRbsj8ImIJZGpA2CQgP2CPE1uZYv1
-	DIUQ9PF+s5pXMe3LOkrGhcHkKA6dKniR1XQlv+Q1IthguKq1tnp8dlt4JzFtI5rdYXiw4ZxGBO91q
-	Jg7hQvvdr7x+cVuGf7f9Ynjabc+0MY4qETQc5jXjQ=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: Harry Yoo <harry.yoo@oracle.com>,
- Dominique Martinet <asmadeus@codewreck.org>
-Cc: syzbot <syzbot+3f9768ec54c86997ddfb@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com,
- david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com,
- rakie.kim@sk.com, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>, syzkaller-bugs@googlegroups.com,
- ying.huang@linux.alibaba.com, ziy@nvidia.com
-Subject: Re: [syzbot] [mm?] WARNING in alloc_frozen_pages_noprof
-Date: Fri, 15 Aug 2025 15:17:45 +0200
-Message-ID: <5288409.JjrPIszM2I@silver>
-In-Reply-To: <aJwZPq0b2rckG-ap@codewreck.org>
-References:
- <689bb893.050a0220.7f033.013b.GAE@google.com> <aJvc5m8Ocm3S_Xkc@hyeyoo>
- <aJwZPq0b2rckG-ap@codewreck.org>
+	s=arc-20240116; t=1755263912; c=relaxed/simple;
+	bh=tZvCUIV6qFGLGvVtuK5LH9xKC+z1XirS0OHevyW3A0I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q2y/rfc4rfuJd1j+Mu97ESgOQUCDp6PmMMcNvXpyd6fyjfQyuMw7tuFOveyUlcB7xGDOJIkKQlBnuDKxq34+v5e391Oryxu6aynMu8OapoO2DeOBgScCkzUINZlvPEfg7AmFEryoYNVanbLihpohjyG5PuLWV5hNBCauThnNofQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SL9kp3a5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F9lopV007571
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:18:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eNMVupg197IOFiA3FKpm30
+	vSm1X1n06imKSWoKuQpJU=; b=SL9kp3a51fm7wWCTEQthkKp2/aXb26FG/BZe2F
+	HdxN/+pP0tdBoaybs7VsHgRkw3gBHQ+XhBvfusKIOLZ2Wdoa5w1p6qm3c0NPsz20
+	fxySd2+9Bip5XSrWDuRBQVcorIuyU8VO7bC0OhVTSnxlACsEMAlsPbmPTRM7cekx
+	1JEvZ/EbFKuTFIRwg9WL5poDajADRS7tNJfaYEvo8WOOp18aGssGYUFXaKl81mBh
+	qwMDbENqEBjAgO8EDCnH1qoX/6HdrJ/LRUrAoQK/PbTvhmgfPazPesc5ezKpCyM3
+	q5UujaSq9i5rTkSFu08bdCwlVBD3UWYIfk8M17in/OR31saw==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4q1b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:18:29 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b471a0e5a33so2810442a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:18:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755263908; x=1755868708;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eNMVupg197IOFiA3FKpm30vSm1X1n06imKSWoKuQpJU=;
+        b=pjofQmk+iFkB5bCwT76amdc7nh/8ZDAAuRVdlrpXrF5TKf+wPKiPSlV6N7Jn+iQ4dB
+         fJB9JVa4tY7vBCcpZbD/GYxk+HpCkzoqxlbq0kNA5lENCdy/ZLvf0w6FVtytZH+ay6+T
+         FxEWs/kSNfVz6q3+lbwqzjBGP6R0aLUmi9aun3j+GfFvKcNeTgpFNuNdC0k43swDGuD4
+         jqOtUZWH/AdBr9WoCxSXLswwdDTnexK7cx5KpX/F62vfwWl63zQa6M2Lhb9bKr8NNr0C
+         JCkl8/DJOs65DxqYWIToerlc11ohDZmT/M2ji7ttigl9ljDZGIpK2G8MGYAvP8+DvpW6
+         R3hA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkId9JC6Dbous9ni+4Y6Ls1HAYoluel96YBa3siPgtGUF19OUEJTWeXsscUshDskDIwbyRzMvXSMz45do=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxch16P5Z4Wg30VOK/pSVLCfhvMmql/91ofodiwsIuZ5sXidSLB
+	F5HjvLpwnu4BC1DT/A+5+G6XBx6zd89wi20sH93TyKeLUovKEY+21ZeufWPzcXe6yyBc+wu1zry
+	6fIMTtAj0/TtgyppuWrcS9kefNp9bcONLYXZgpubv7gV7Y/+ynqcTpNN5G8Kw0s9ogIQ=
+X-Gm-Gg: ASbGncu4/osutB68uEhVYa/15+6alapOwEd8CAYFBrylHF7nMrdF79gr6RdkMXtSeup
+	rg7C41F2/u597GMW4wY4+VNajXmw6k3x28LShQIanTiGk/lxCXtbNTWD5xNpq1OnCffmfMvQObf
+	93+K0Bnv2f9g3Kr0fnIt6HX1fG3U1uednV1lSXAgwDLMBV3THlrVySuS60SNBuIs4QnVgeCBqg6
+	mGk/puy9XhqumG4UA+8hVO6ASbg/7xMCk3f+EXVcrGDOsobtblaR/NaNi+7mAb/c8PZKFndnCjY
+	T4HjBQz2KeuTcQ0n+Hj++6puiZqsFWtEzxy5217HG7sSZ4y++p72o5AhqA90AADWAfvG3ZVFQOE
+	1+J4gWIodrGJr35CnbD0HPA==
+X-Received: by 2002:a05:6a20:1109:b0:1f5:72eb:8b62 with SMTP id adf61e73a8af0-240d2db2d15mr2527922637.20.1755263908410;
+        Fri, 15 Aug 2025 06:18:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtqLEwY3YCUoJbxvU9hUE86eQRwJCftdQkbRQCmCifI7oOfV2iGog3bybplfqEg7vBotQR8Q==
+X-Received: by 2002:a05:6a20:1109:b0:1f5:72eb:8b62 with SMTP id adf61e73a8af0-240d2db2d15mr2527895637.20.1755263908005;
+        Fri, 15 Aug 2025 06:18:28 -0700 (PDT)
+Received: from hu-yuanfang-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d7944e6sm1256386a12.54.2025.08.15.06.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 06:18:27 -0700 (PDT)
+From: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Subject: [PATCH 0/3] coresight-tnoc: Add support for Interconnect TNOC
+Date: Fri, 15 Aug 2025 06:18:11 -0700
+Message-Id: <20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJMzn2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0NT3cySvPxkXRMzAyNz4xTDJAuDZCWg2oKi1LTMCrA50bG1tQD4+X3
+ aVwAAAA==
+X-Change-ID: 20250815-itnoc-460273d1b80c
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755263906; l=976;
+ i=yuanfang.zhang@oss.qualcomm.com; s=20250814; h=from:subject:message-id;
+ bh=tZvCUIV6qFGLGvVtuK5LH9xKC+z1XirS0OHevyW3A0I=;
+ b=/y7yCqYrQE6UiowbeO+3Y1+8kdR4PxSbc5lm7I+OXET3NFKx6udfiCilwy3Xjff35ud/O/7Zu
+ 0677fDQMCsXATGlVNEG6PABModwamaG4PE2RYi5Fya+6LMEzXMH3Oct
+X-Developer-Key: i=yuanfang.zhang@oss.qualcomm.com; a=ed25519;
+ pk=9oS/FoPW5k0CsqSDDrPlnV+kVIOUaAe0O5pr4M1wHgY=
+X-Proofpoint-GUID: iEhpSr97yiLCL_vqy5hrYIxJ_QEvEuQi
+X-Proofpoint-ORIG-GUID: iEhpSr97yiLCL_vqy5hrYIxJ_QEvEuQi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX8GXtdH/+3OwO
+ me2rkpfWEqWT9OHT07/kDGxkJ5k8fA/Tv3iDbxfKvZklaWd+2hSARq0sQbGGi1mEkYpgVVRVw9C
+ BjGS6m7g+jl3lv0nq0j+rvd7nyfxkwUstcdb9zCOaGM0zMxZxufj2/Cy34rVjU+/+LsM3+xbfdk
+ yDstYd5NgEv6qD+kU+ntRa6K/VBpfl/LL366LbgyEp1cEjmrPbZMhptgqsa3Q0xe6qe6J8LiOU7
+ vn5YTKxFmi3rqbwOPPZqvZDb/uNTqe0k+asZ+9M/Nk1Kaw5jT9j8U/Yh5TvfXV5uXp/Wq+YRSZ0
+ lFUzioVtUjgKjprRGjafi8EW6qlt+tqyf+d+Ath82wgMIeuOat4GdAcMgdUK0nivsYCmrlDYDQM
+ fNaqxlRR
+X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689f33a5 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=f40Fa9qqsm2vFiWgvDIA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
-On Wednesday, August 13, 2025 6:49:02 AM CEST Dominique Martinet wrote:
-> Harry Yoo wrote on Wed, Aug 13, 2025 at 09:31:34AM +0900:
-> > The warning is:
-> > 
-> > 	/*
-> > 	 * There are several places where we assume that the order value is sane
-> > 	 * so bail out early if the request is out of bound.
-> > 	 */
-> > 	if (WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp))
-> > 		return NULL;
-> > 
-> > There's not much the buddy allocator can do when a user requests
-> > order > MAX_PAGE_ORDER allocations.
-> > 
-> > >  alloc_pages_mpol+0x1e4/0x460 mm/mempolicy.c:2416
-> > >  alloc_frozen_pages_noprof+0xe0/0x210 mm/mempolicy.c:2487
-> > >  ___kmalloc_large_node+0xac/0x154 mm/slub.c:4306
-> > >  __kmalloc_large_node_noprof+0x2c/0x8c mm/slub.c:4337
-> > >  __do_kmalloc_node mm/slub.c:4353 [inline]
-> > >  __kmalloc_noprof+0x3bc/0x4c8 mm/slub.c:4377
-> > >  kmalloc_noprof include/linux/slab.h:909 [inline]
-> > >  kzalloc_noprof include/linux/slab.h:1039 [inline]
-> > >  v9fs_fid_get_acl+0x64/0x114 fs/9p/acl.c:32
-> > 
-> > So... 9p FS shouldn't really request that?
-> > 
-> > Cc'ing 9p FS folks.
-> 
-> Thanks for the Cc.
-> 
-> So, this comes up once in a while, everytime we discuss limiting the
-> xattr size, then someone says we should do something else or I'm using
-> the wrong define or I don't remember and then when I ask what we should
-> do never reply again.
-> 
-> See [1] or [2] for the last two time this happened.
-> [1] https://lore.kernel.org/all/20240304-xattr_maxsize-v1-1-322357ec6bdf@codewreck.org/T/#u
-> [2] https://lore.kernel.org/lkml/20240202121319.21743-1-pchelkin@ispras.ru/
-> 
-> I'll be happy to take any patch you send (or one of the older patches if
-> you tell me which is "correct"), I don't care anymore.
-> 
+This patch series adds support for the Qualcomm CoreSight Interconnect TNOC
+(Trace Network On Chip) block, which acts as a CoreSight graph link forwarding
+trace data from subsystems to the Aggregator TNOC. Unlike the Aggregator TNOC,
+this block does not support aggregation or ATID assignment.
 
-Not that I would care much either, but as nobody else responded, I still think
-the following is the way to go:
-
-diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
-index 8604e3377ee7..97f60b73bf16 100644
---- a/fs/9p/xattr.c
-+++ b/fs/9p/xattr.c
-@@ -37,8 +37,8 @@ ssize_t v9fs_fid_xattr_get(struct p9_fid *fid, const char *name,
- 	if (attr_size > buffer_size) {
- 		if (buffer_size)
- 			retval = -ERANGE;
--		else if (attr_size > SSIZE_MAX)
--			retval = -EOVERFLOW;
-+		else if (attr_size > KMALLOC_MAX_SIZE)
-+			retval = -E2BIG;
- 		else /* request to get the attr_size */
- 			retval = attr_size;
- 	} else {
-
+Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
 ---
+Yuanfang Zhang (3):
+      dt-bindings: arm: qcom: Add Coresight Interconnect TNOC
+      coresight-tnoc: add platform driver to support Interconnect TNOC
+      coresight-tnoc: Add runtime PM support for Interconnect TNOC
 
-Values > KMALLOC_MAX_SIZE are triggering the reported warning.
+ .../bindings/arm/qcom,coresight-itnoc.yaml         | 108 +++++++++++++
+ drivers/hwtracing/coresight/coresight-tnoc.c       | 179 +++++++++++++++------
+ 2 files changed, 240 insertions(+), 47 deletions(-)
+---
+base-commit: 2b52cf338d39d684a1c6af298e8204902c026aca
+change-id: 20250815-itnoc-460273d1b80c
 
-XATTR_SIZE_MAX (64k) would be much smaller than KMALLOC_MAX_SIZE (4M).
-
-The call stack in question comes from ACL handling. In this case there is no 
-XATTR_SIZE_MAX limit involved on 9p client side. If 9p server side does,
-then server responds with an error anyway. If however server does not have
-this limit then why limiting it to XATTR_SIZE_MAX on client side for all?
-
-And if OTOH the call stack comes from the general purpose xattr API (i.e. not
-ACL stuff), then there is already a XATTR_SIZE_MAX check on xattr VFS layer.
-So no need to check for XATTR_SIZE_MAX on 9p layer for a 2nd time:
-
-https://github.com/torvalds/linux/blob/d7ee5bdce7892643409dea7266c34977e651b479/fs/xattr.c#L616
-
-In the end it is merely a theoretical issue. POSIX ACLs are quite compact
-encoded into xattrs. To fill 64k you need a ridiculous large set of ACLs.
-
-/Christian
-
+Best regards,
+-- 
+Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
 
 
