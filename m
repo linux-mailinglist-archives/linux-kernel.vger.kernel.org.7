@@ -1,125 +1,211 @@
-Return-Path: <linux-kernel+bounces-769869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80DDB274A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D0BB274A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5DA5E562D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAAC1CC52ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF2D19ADBA;
-	Fri, 15 Aug 2025 01:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3052433C4;
+	Fri, 15 Aug 2025 01:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jTHMTRZN"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHqul9nR"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E23E81ACA;
-	Fri, 15 Aug 2025 01:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C34DDA9
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755220594; cv=none; b=AkPGoX2tQdQjfkXimrxiO0R3AU2Yn595qaWpMKc3M7cCmIPyljU+5Zw64NP0Ka581x0o7/MrTC8BtqNQ1Rs55FYRF4kk0ra76BFiekbBWB3+/m8LiNgeY7MdOhIo6lI+EKdltxp7gAWbSdS5mx6z3ljYPiu7Dpr8R42bhcyZZ+Q=
+	t=1755220622; cv=none; b=qo0BuwIob/vx8EIGuOATVNW+mFxDB3WDE52Z9gcXPa+EDwEx1+lWXr9kuSABwY57hF4a/KANll8QmdVBDWLBPsNOrcuEQqWTTVnkPem7qsAUOFa5EmKwZfuUiiXZ42UwLxX0FOkWdhy0ul9g/BXLoXkewwXkBSWMhVjx8bH0qiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755220594; c=relaxed/simple;
-	bh=cf6OAfKWwytDfT/RKDEyFgH/ODWfTU0kLyZHUOb9LgE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbb4ax9Zd5rBV8bUpGMqqDDbayMUZVAGiohkF4qYSGDnIk8+DNIx2rVLdruWRf85gYDO6HZ18QRnyA2yje2kH8ITVZ3Upwh9/iz4jEfLWgG9LFNX7mUN6917rEPbIzpO/rNzlxtR7x0lRnO4GCC0lGvMCzGxyZrhfrSI5I1Etcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jTHMTRZN; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57F1GMnU1996956;
-	Thu, 14 Aug 2025 20:16:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755220582;
-	bh=wdqkdGOSCAX4XC81FZy2e5EZ4V68CDUBT+I+D643hSI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=jTHMTRZN9rbmdBUrj7cy2N0cbMsuuvn/jeXGw/jLPTu7esEOW1Pcu8U3b8ttAmyJc
-	 kVnCDJ43L/RrZ+v1l+S0F/B/qiPnsIGZmXo/Q3c54AI2Xg4ZrPePr80VhqqdJgQF7l
-	 iOAWWQjeOHrr8f5SIr5g7yPR0ga0JmwHWOxQcMss=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57F1GMh82096866
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 20:16:22 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 20:16:21 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 20:16:21 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57F1GLQh572247;
-	Thu, 14 Aug 2025 20:16:21 -0500
-Date: Thu, 14 Aug 2025 20:16:21 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Randolph Sapp <rs@ti.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d-gole@ti.com>,
-        <afd@ti.com>, <bb@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <detheridge@ti.com>, <matt.coster@imgtec.com>,
-        Michael Walle
-	<mwalle@kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62p-j722s: enable the bxs-4-64
-Message-ID: <20250815011621.rrdurnk6ueexwldw@hertz>
-References: <20250808232522.1296240-1-rs@ti.com>
- <20250808232522.1296240-2-rs@ti.com>
- <20250813151721.nc5fr3qmro5grlda@steam>
- <DC1HS8D8KLIF.2MN7D9EXGQQ45@ti.com>
- <20250813184229.dhgpqvi3b6aat46g@managing>
- <DC2FWE35CXPV.YM6MK820R2PV@ti.com>
+	s=arc-20240116; t=1755220622; c=relaxed/simple;
+	bh=zZEG3LWWA08tTwdZv95X+Lpb7oI8RieN4L3FTvVfiak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=poSqPfjYwIZRf02fdQSSZujjudU3+U94jrkT787ehgW1nzi8sAlFn8TS8G20A3+Dz7lqe36pjxZ0wL7tA7i+4Xou3+SM0DBs1FCr1iX6ZOePogIY+FZI3cfsqKb0awrODR4ZXbhiVvCAXzAQnUNrBJcGTv6IgzTggVSwVxymaSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHqul9nR; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e87050b077so181137185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755220619; x=1755825419; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uICUrcke/hbJnczM3jvLZzrWTVgYoliP4x88leQjwLM=;
+        b=hHqul9nRRXDbKXXyepWIkoF+H2BbAKutOWUazbIWfBfbJsKp8JG/yHbmV2MQK+VY5U
+         yEpga7KPpVRspTqbzarda2mBpNMJiQVOra1vvaV8/9a+9m44UGksPrjdanjyWEJLFqMX
+         f419Cg/wGYyhXUDWjW1GyBt5KZn84NQRCbTQ9UIGn86RgF5LWkO5E3kPyYF+jMSJszCr
+         TzKSyNtcGdCOr+cdhG4nVi0yCyVmK6adDEAYpCAyG/bJ1Moej4WyHV3KZn2VeKylW5HM
+         oRkdHouyLoDeCmb4Es5smgXi3+cimTmOpA4NAUCkLAX3n00Kfpx4/L6SIw/D2HOWflRQ
+         MRNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755220619; x=1755825419;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uICUrcke/hbJnczM3jvLZzrWTVgYoliP4x88leQjwLM=;
+        b=DmkIfVlwVH2MjBTeajAt4PatoL2fnpRwozL5vEGVlc6ymktFPWL9G5L3hF0YR+vGHP
+         JDM3LjXW4+kplkBKC46QSm4OVUJF6ihki8bjdI/1lXEfbB+qZHFzFzCTJ3lJMlfD3Wl0
+         68UmDFNSmwhFDGcisgwKoDCXkP0ANCBM0RnR7GobtjcVskKl52u059fnZTVurOgML9Su
+         LifPBCtPDAbdOvx7FmE8Oqsu6mkhZThn9Dmj+pJmXySLCQLIlBOwCzSXzk1SBaPZ3HR0
+         ci1b6A0yTaHs77JN5gdINC756hNzS3vdivS1r6s5Qrh9r0/NcUllBvVoL+w0vEa6X1e1
+         4fPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy4Guy/GlDUEEjBI3CiZdHKu9CQP2bgiEPonD10lfmuj61wnm8Hc8NffcGQvHEBEmoy/0ZtNp1u6r6YrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS75wBoIXBK7gnBJe0tz3ao1flUkZJyQxNgtVc0a2UPijMY2no
+	+QsqYS3dIhWUMnYtMinKH+tFmoprGk2o5JMPOjIT0rqqZyj9V3g/nAqshcX4NQ==
+X-Gm-Gg: ASbGncvI4ywTCdORuWwlqADrpKen1JAiOJdvA736xmE2PlWt3T4EPcekfASGO1J/UFB
+	joMN+zaO4VXY8GPB34TWWf7lmsQInKHWxMyOjFd/6hNQZIh61+bLNr2An/EVBuc+jIlDOafB+Tl
+	nCtkEh1YthnRArcLLxC0KyzF8xiD7Ag33c8m/DWoe1FB2PQBIIkA1JH2shUAr4dpMhW6P8z1VV7
+	3j8LGS/imrVMLEazpe1/B5Gb0oc+RhIhIb2PntOC9vvxLGHVvHn3w8eEZiBod58K+XGbCaw9jK/
+	JGLz48FkOiioZMm9ZoTEljJE40a+XitXNQpgpxIncN3Ro/K0QNWQry7NwiPJ+/9vGU9/hHeKRDN
+	OBzjMLJDIbeVF3LnwoOihk0SHvyYrLwev4TzCnQG8lr67
+X-Google-Smtp-Source: AGHT+IH7W3Ef6JkK0rKgXCYBouppWE/bKrHfFHWJCyaWUvvzsWj8Q98vwwdyJ6szTQ1QnDE0+rbSUw==
+X-Received: by 2002:a05:620a:1920:b0:7e8:5a78:22f6 with SMTP id af79cd13be357-7e87e0f9cb8mr41778885a.33.1755220619278;
+        Thu, 14 Aug 2025 18:16:59 -0700 (PDT)
+Received: from [192.168.12.218] ([172.58.119.119])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e066da8sm17676885a.25.2025.08.14.18.16.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 18:16:58 -0700 (PDT)
+Message-ID: <64c66b54-f0a8-46b0-b013-c6a9f155d139@gmail.com>
+Date: Thu, 14 Aug 2025 18:16:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <DC2FWE35CXPV.YM6MK820R2PV@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/deadline: only set free_cpus for online runqueues
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+References: <20250811190536.661884-1-opendmb@gmail.com>
+ <aJtaSgXf9fkRo-Rp@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+From: Doug Berger <opendmb@gmail.com>
+In-Reply-To: <aJtaSgXf9fkRo-Rp@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 15:40-20250814, Randolph Sapp wrote:
-> On Wed Aug 13, 2025 at 1:42 PM CDT, Nishanth Menon wrote:
-> > On 12:56-20250813, Randolph Sapp wrote:
-> > [...]
-> >
-> >> >> +		reg = <0x00 0x0fd80000 0x00 0x80000>;
-> >> >> +		clocks = <&k3_clks 237 1>;
-> >> >> +		clock-names = "core";
-> >> >> +		assigned-clocks = <&k3_clks 237 1>;
-> >> >> +		assigned-clock-rates = <800000000>;
-> >
-> > btw, as per https://www.ti.com/lit/ds/symlink/tda4aen-q1.pdf (page 86)
-> > 720MHz when vdd_core is 0.75v (default)
-> > and 800MHz when vdd_core is 0.85v
-> >
-> > 0.85v is set in the board dts and higher OPPs are enabled depending on
-> > board capability.
-> >
-> > You might want to check the assigned-clock-rates based on data sheet,
-> > default should'nt need a assigned-clock-rate.
+On 8/12/2025 8:14 AM, Juri Lelli wrote:
+> Hi!
 > 
-> Are you suggesting that we set assigned-clock-rates in the board dts instead, or
-> do you just want to do away with assigned-clock-rates in general and eat the
-> perf difference?
+> On 11/08/25 12:05, Doug Berger wrote:
+>> Commit 16b269436b72 ("sched/deadline: Modify cpudl::free_cpus
+>> to reflect rd->online") introduced the cpudl_set/clear_freecpu
+>> functions to allow the cpu_dl::free_cpus mask to be manipulated
+>> by the deadline scheduler class rq_on/offline callbacks so the
+>> mask would also reflect this state.
+>>
+>> Commit 9659e1eeee28 ("sched/deadline: Remove cpu_active_mask
+>> from cpudl_find()") removed the check of the cpu_active_mask to
+>> save some processing on the premise that the cpudl::free_cpus
+>> mask already reflected the runqueue online state.
+>>
+>> Unfortunately, there are cases where it is possible for the
+>> cpudl_clear function to set the free_cpus bit for a CPU when the
+>> deadline runqueue is offline. When this occurs while a CPU is
+>> connected to the default root domain the flag may retain the bad
+>> state after the CPU has been unplugged. Later, a different CPU
+>> that is transitioning through the default root domain may push a
+>> deadline task to the powered down CPU when cpudl_find sees its
+>> free_cpus bit is set. If this happens the task will not have the
+>> opportunity to run.
+>>
+>> One example is outlined here:
+>> https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
+>>
+>> Another occurs when the last deadline task is migrated from a
+>> CPU that has an offlined runqueue. The dequeue_task member of
+>> the deadline scheduler class will eventually call cpudl_clear
+>> and set the free_cpus bit for the CPU.
+>>
+>> This commit modifies the cpudl_clear function to be aware of the
+>> online state of the deadline runqueue so that the free_cpus mask
+>> can be updated appropriately.
+>>
+>> It is no longer necessary to manage the mask outside of the
+>> cpudl_set/clear functions so the cpudl_set/clear_freecpu
+>> functions are removed. In addition, since the free_cpus mask is
+>> now only updated under the cpudl lock the code was changed to
+>> use the non-atomic __cpumask functions.
+>>
+>> Signed-off-by: Doug Berger <opendmb@gmail.com>
+>> ---
+> 
+> Thanks for this new approach, it looks good to me.
+> 
+> I would like to stress test it a little more, and have a comment below.
+> 
+Thanks for the review. I appreciate any testing you are willing to do.
 
-The higher frequency is possible unless you know that the board is setup
-for the higher voltage. So, set it board device tree file.
+>>   kernel/sched/cpudeadline.c | 34 +++++++++-------------------------
+>>   kernel/sched/cpudeadline.h |  4 +---
+>>   kernel/sched/deadline.c    |  8 ++++----
+>>   3 files changed, 14 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+>> index cdd740b3f774..d612d5c6c61a 100644
+>> --- a/kernel/sched/cpudeadline.c
+>> +++ b/kernel/sched/cpudeadline.c
+>> @@ -166,12 +166,13 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+>>    * cpudl_clear - remove a CPU from the cpudl max-heap
+>>    * @cp: the cpudl max-heap context
+>>    * @cpu: the target CPU
+>> + * @online: the online state of the deadline runqueue
+>>    *
+>>    * Notes: assumes cpu_rq(cpu)->lock is locked
+>>    *
+>>    * Returns: (void)
+>>    */
+>> -void cpudl_clear(struct cpudl *cp, int cpu)
+>> +void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+>>   {
+>>   	int old_idx, new_cpu;
+>>   	unsigned long flags;
+>> @@ -184,7 +185,7 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+>>   	if (old_idx == IDX_INVALID) {
+>>   		/*
+>>   		 * Nothing to remove if old_idx was invalid.
+>> -		 * This could happen if a rq_offline_dl is
+>> +		 * This could happen if rq_online_dl or rq_offline_dl is
+>>   		 * called for a CPU without -dl tasks running.
+>>   		 */
+>>   	} else {
+>> @@ -195,9 +196,12 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+>>   		cp->elements[new_cpu].idx = old_idx;
+>>   		cp->elements[cpu].idx = IDX_INVALID;
+>>   		cpudl_heapify(cp, old_idx);
+>> -
+>> -		cpumask_set_cpu(cpu, cp->free_cpus);
+>>   	}
+>> +	if (unlikely(!online))
+> 
+> Isn't using likely(online) more direct and cleaner? :)
+> 
+Sure! V2 on the way.>> +		__cpumask_clear_cpu(cpu, cp->free_cpus);
+>> +	else
+>> +		__cpumask_set_cpu(cpu, cp->free_cpus);
+>> +
+>>   	raw_spin_unlock_irqrestore(&cp->lock, flags);
+>>   }
+> 
+> Best,
+> Juri
+> 
 
-Look at what we did with OPP-High support on AM625 for example. That
-frequency can only be reliably achieved if vdd_core is 0.85v. And base
-SoC dtsi must assume safe default (min voltage of 0.75v) as the node is
-enabled by default.
+Thanks again,
+     Doug
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
 
