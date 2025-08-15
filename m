@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-770039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9A1B27632
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:43:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9702EB2762A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B116EA24A50
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F241CC7D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2322BD59B;
-	Fri, 15 Aug 2025 02:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EC526FA70;
+	Fri, 15 Aug 2025 02:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="PETpp5hC"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QxK7eNqy"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8B2BD583;
-	Fri, 15 Aug 2025 02:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07012586CE;
+	Fri, 15 Aug 2025 02:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225343; cv=none; b=UufSdZ39osBsu91FeznbMQXQD+m9XlIvJ8oMAMqHSfIqssFtKlMUiM7nepWSZpsqihRVXBxxmluNBnuLMGuyBIW9MKArToWKP4HNHeNpnhlpUbd45b3T+09FsIJ6/rP3yWH1cSZK/XJgDZgsDIo4q2RL65XP7QTUOxovyXxd+gA=
+	t=1755225334; cv=none; b=mWspf7sqipXQQurdw8XmGGnabwudiC0K+prnSPncbVsRdoLkuEJeu1ILRce8t1xgX/hdp64PAETHl6zvqyryskbdRzdDCQFxcl0aU9hD+QpHQ31aeP6ZqumeKch4JRzeFc3YMDeaLqJ1EskFvMJ+BEahy4V8rHGOuMpMilu22/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225343; c=relaxed/simple;
-	bh=4Q3abjEnlfrbFv9U9hz3xfSQ7/KeygdxriBkOQXkOSs=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=C+snrK+jrwkDeFiOxYgn6sK00e5uFZnR9v33X7C/gDUa/MoAc7fmReJVhx1QiHLpV0SeNYAbcVzMG4bHvZkZ14IMk6eYPbi00N99Daz3+O48IErr2j6SkiRlCZ5LcD3x/OxRQw8bDU3S3QpTcleNmad2gbHuvyn6mJlGZG6Qw90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=PETpp5hC; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1755225324;
-	bh=18Y2FqPHGv9yTsq2i+bvrkK1Nwx8p+K4AcbHDTl42W4=;
-	h=From:To:Subject:Date:Message-Id;
-	b=PETpp5hCLUcbcER3obgNFK4HJ4dRfaiQY5neZxAyGWT9oHS6C7TNOk8NGLY3YwNm2
-	 WrgWK6Xu5ak/FzdeixmMXUoY9bgcZsjX+CvwnnWAaG3ycTlY77pHz0ofnlrdtFu+Zz
-	 vk6GXv5IWZPTCjMsLxl+xFTyEhsJkQt/Nv8kFHkI=
-X-QQ-mid: zesmtpgz1t1755225322taec13901
-X-QQ-Originating-IP: EIRDYySQ/vTVoXNlfnhjpk64A+oYYEctZ9g7jsLXhaQ=
-Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 15 Aug 2025 10:35:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7637992239138858937
-From: Chaoyi Chen <kernel@airkyi.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	David Wu <david.wu@rock-chips.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy
-Date: Fri, 15 Aug 2025 10:35:15 +0800
-Message-Id: <20250815023515.114-1-kernel@airkyi.com>
-X-Mailer: git-send-email 2.17.1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NpfbsqbTlzxU0xuPeWYtNukpwE62jbX8VpEz+YiW2F01Loeu5BNit1Z7
-	0zPzpG0EyVej11uEyyyg+mUp3HEeadmg/jdKTa11Qf/R0HS7hAbW4I6aGX6OVSfu5vHrObR
-	GTqHoltcZlwGxVRutjWmsNyGkR/G8qqlg++sotMkjowx8bWX9Vp9y8SAGCSSru7Bl5GVHR5
-	PuaDAiJ8IlXs4tMkOMCYXU+ZXdziT45coXw9+cNB5rrjcPHT3+nlBjC+s3r14nJ5l8iK3/U
-	m+r5f2Lg5EZBEEbXzUjcobTXu3v8fKrwulWp4YkDXcqMIXCmp7eweiUf1PTV5otC0U8aisn
-	uLCPhCqmNu0ku66r3Eq8w+oUupxaP5XB2BKeNZhTQmN9Naqt9G4aUMODUsnZdxK6UKuW6+9
-	5/bM4yoXrrh90fFsB20+gIKnxN8+PnUFTUWiRw2uUg1ppLKb0QXBMkSvU2Vln71ceAQtYI4
-	qJZV3Mkndtqu1E6nholDMtRfuVJ23bbGOhxCg0hUzn8QLV7LjHQY1+CJFLfdBFhHCZfThlR
-	+6Ky6XW9ExZpzrzBiXeod8HDGZvNWE4YgyKFJuy8bPGn84FCJ6jv2i/cLEIwzjfQK+7Jxh0
-	z50/YM626l6VUEJmslLbnizCUpR27jPJxU7hNv6Yfvs6/uslp2eHASEkBCM7MzooREzfdMi
-	bbjWlA2wQ14CM4QkAiZIDzvn1B4VdstS0oTlNNLtpSKbRlpaWcmerysmyHqXO9J6BkMhkRo
-	QNLXBrTtm8dglsx01Zhm42xZUW5dqeTTPWWehNyzZulZxVznHhQFt7R9kWg1RWePE2z8ckN
-	ldvSci7JkOrMcpYme6hPy3NNWlKqapspnk+qFoQAQzzdadB/97Dm5jNtd8tHCOwJ6QIB6v/
-	wcofv0umlpqRnUIKNLWyy659l1ZpaxADpZu0J9ZXfB5nCvXw489j7LFIEc0TgAMcyyGkXrn
-	uB7QNfx48EvjKTtvL9qOIGoU704av5DmJFdAz1JsrvWZ0hjU7uAkB12z+
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+	s=arc-20240116; t=1755225334; c=relaxed/simple;
+	bh=ijE02Tcfqe5ihAJ1WW++yG514OgZv4UkpM5sNGyhsP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f1T8wtpggvoL4lC1GTtY+G22sXj+m1f/PDkE6W9QFEIBbbiQx1fi9SGjp5Ax11O8akA69n4bQl2tTMrLdbgGnPzx0vhQrVuoFneUkDss+HMcqtoRj5eYuHHT0OAvIrle9UjJaemHp+b8/vLIj2+0TK7IALTHHSQoXIwWLoTEWds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QxK7eNqy; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57F2ZRHi2435437;
+	Thu, 14 Aug 2025 21:35:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755225327;
+	bh=D85PRfMAhEWkK4I3NT1Wt26m3JxDAXB+XgzS4gRVg7c=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=QxK7eNqyuItCpXM4sEB7Zec/282Gx+sxzSkYkCBZqr+2DfGO3t1JC3OrNsXdMZpGL
+	 KaceHsWRf8h+Fu0OjBY0S2fJPwG76zoiDsopNKmMpa903K5NhovCoq1OJ1NFz5ACjB
+	 6DfGyZNSGmanqIK5zjpUOPP/kAysrkf+Epvk7zeE=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57F2ZRu81288354
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 21:35:27 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 21:35:26 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 21:35:26 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57F2ZLDK659070;
+	Thu, 14 Aug 2025 21:35:22 -0500
+Message-ID: <92e57929-a978-4d5f-97d4-b7779736d0db@ti.com>
+Date: Fri, 15 Aug 2025 08:05:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/33] Revert "arm64: dts: ti: k3-j721e-sk: Fix reversed
+ C6x carveout locations"
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <u-kumar1@ti.com>
+References: <20250814223839.3256046-1-b-padhi@ti.com>
+ <20250814223839.3256046-4-b-padhi@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250814223839.3256046-4-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-For external phy, clk_phy should be optional, and some external phy
-need the clock input from clk_phy. This patch adds support for setting
-clk_phy for external phy.
+On 8/15/2025 4:08 AM, Beleswar Padhi wrote:
+> This reverts commit 9f3814a7c06b7c7296cf8c1622078ad71820454b.
+>
+> The C6x carveouts are reversed intentionally. This is due to the
+> requirement to keep the DMA memory region as non-cached, however the
+> minimum granular cache region for C6x is 16MB. So, C66x_0 marks the
+> entire C66x_1 16MB memory carveouts as non-cached, and uses the DMA
+> memory region of C66x_1 as its own, and vice-versa.
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
-Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
----
+Sorry , but i failed to understand how this swap helps in making region 
+non-cached.
 
-Changes in v3:
-- Link to V2: https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
-- Rebase to net-next/main
+16MB logic is understood.
 
-Changes in v2:
-- Link to V1: https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
-- Remove get clock frequency from DT prop
-
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index ac8288301994..5d921e62c2f5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
- 		clk_set_rate(plat->stmmac_clk, 50000000);
- 	}
- 
--	if (plat->phy_node && bsp_priv->integrated_phy) {
-+	if (plat->phy_node) {
- 		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
- 		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
--		if (ret)
--			return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
--		clk_set_rate(bsp_priv->clk_phy, 50000000);
-+		/* If it is not integrated_phy, clk_phy is optional */
-+		if (bsp_priv->integrated_phy) {
-+			if (ret)
-+				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-+			clk_set_rate(bsp_priv->clk_phy, 50000000);
-+		}
- 	}
- 
- 	return 0;
--- 
-2.49.0
-
+>
+> This was also called out in the original commit which introduced these
+> reversed carveouts:
+> 	"The minimum granularity on the Cache settings on C66x DSP cores
+> 	is 16MB, so the DMA memory regions are chosen such that they are
+> 	in separate 16MB regions for each DSP, while reserving a total
+> 	of 16 MB for each DSP and not changing the overall DSP
+> 	remoteproc carveouts."
+>
+> Fixes: 9f3814a7c06b ("arm64: dts: ti: k3-j721e-sk: Fix reversed C6x carveout locations")
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j721e-sk.dts | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> index ffef3d1cfd55..9882bb1e8097 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> @@ -120,7 +120,8 @@ main_r5fss1_core1_memory_region: r5f-memory@a5100000 {
+>   			no-map;
+>   		};
+>   
+> -		c66_0_dma_memory_region: c66-dma-memory@a6000000 {
+> +		/* Carveout locations are flipped due to caching */
+> +		c66_1_dma_memory_region: c66-dma-memory@a6000000 {
+>   			compatible = "shared-dma-pool";
+>   			reg = <0x00 0xa6000000 0x00 0x100000>;
+>   			no-map;
+> @@ -132,7 +133,8 @@ c66_0_memory_region: c66-memory@a6100000 {
+>   			no-map;
+>   		};
+>   
+> -		c66_1_dma_memory_region: c66-dma-memory@a7000000 {
+> +		/* Carveout locations are flipped due to caching */
+> +		c66_0_dma_memory_region: c66-dma-memory@a7000000 {
+>   			compatible = "shared-dma-pool";
+>   			reg = <0x00 0xa7000000 0x00 0x100000>;
+>   			no-map;
 
