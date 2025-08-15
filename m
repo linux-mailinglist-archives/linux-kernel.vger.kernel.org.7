@@ -1,135 +1,90 @@
-Return-Path: <linux-kernel+bounces-771458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36A2B28788
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:14:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B913B28794
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42BE51BC8F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE2917915A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB4257841;
-	Fri, 15 Aug 2025 21:14:23 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2FF212B31;
+	Fri, 15 Aug 2025 21:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwmVXJqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599DC218AAA;
-	Fri, 15 Aug 2025 21:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64A24A00;
+	Fri, 15 Aug 2025 21:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755292462; cv=none; b=qefwn90CgCCu/9roct5hVsSCbHkJXNYHiLzyWlGBtPcEXRTrY8OquOkFPz220YkQDOkOVWG8Yow3bAK+FCAC9uMxcHh/2FLEXypP9q9FUjII0FBFnqScp48yMCYsHVHrlKNRh2nsf6whdbuaEMETt2AWn2xOe4YVXBNSyMmij5c=
+	t=1755292576; cv=none; b=lQkVpMOgYavcbfwvpwHIdUw7bOeqc43WRTerqzrZ+Mc2yHUi+qjdMipBoOaUsLHDzt1FI2nJ/SCE3vTBmu/jcM1OsmtmeSQOpgV3A9XWn0mBBfoKhGZx6TYcoW8bZYUmvfoMttvqt/3SOspY/5QI3BJfxCosN1ps2TLKZidVa5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755292462; c=relaxed/simple;
-	bh=9p9okCGYvGPHo8sJcrzTn4FAmsxYbsgLB6jhERDRiP0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=B+DF0oCQjTFGNd3sByqqZZ5egQyOLncqMSL0stCW7wU1XZ8ZjZKSH78WPIkF7xGARWxQSkrliXiDBMy0lYEg0joPQUj5ZClzZ1c0S8MkyN4QD9am12YuWUFTVcy4h/jrPpd+T1vNgHnP29CgNtPqc2gkCH+c73+rt+dJUprLFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 16AF041DE2;
-	Fri, 15 Aug 2025 21:14:08 +0000 (UTC)
+	s=arc-20240116; t=1755292576; c=relaxed/simple;
+	bh=noc6S2jH5KMwAXQAGBgXw4htFU+04vvObhFpEMTkBo8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=raFslaoXMz2N7OlsFSnUCMk0QNGpdUIaZ62Fxn0wfLeIP5evc94PDQ2j8+EFUemj01rlCynKxLZAP0P0Jh4u0JoAzFB2+lsbtcI43hXN0pXOoi1aIcHPwR0pCFglL4OKV00dRJ7Vz4qJPh4B2F0vZ/WK2oXyuvNz4EUFDb4+OvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwmVXJqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34524C4CEEB;
+	Fri, 15 Aug 2025 21:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755292576;
+	bh=noc6S2jH5KMwAXQAGBgXw4htFU+04vvObhFpEMTkBo8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=IwmVXJqWa3B45EZ0LDKyKEcd27agrxQXPQdCoI376OjQ96VabM8/4eKeQXAGDETWz
+	 5abKb7JJ0divOMK+81ty6K+/1JBfJmbVdXtODUf7H5EKhUrWwvn8Z5fDJ06ClmYCtp
+	 HsdTdrARGYcanzdPm3jUMInyGX7guB4NIjHQQau72RanY0iRcWRuMAhzcT+CcNG9c+
+	 uRY7SioKusYvKdTRNSGnTKRLQuH5KfuyihH97qzOZYwkxPHcfVyAFN7nEd/NhuuSL7
+	 9N9J1UOU3z1XTcDphE0JmbDDwSLjolYCVu+sjh6eDCNBPlcjKxukHTsBYkW9pnk60+
+	 GT0XoySFCr9QA==
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>
+In-Reply-To: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+Subject: Re: [PATCH 0/2] kbuild: userprogs: also inherit byte order and ABI
+ from kernel
+Message-Id: <175529257494.1745051.12925907473487620695.b4-ty@kernel.org>
+Date: Fri, 15 Aug 2025 14:16:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 15 Aug 2025 23:14:08 +0200
-From: Artur Rojek <contact@artur-rojek.eu>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-In-Reply-To: <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-4-contact@artur-rojek.eu>
- <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
- <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
-Message-ID: <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
-X-Sender: contact@artur-rojek.eu
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeehtdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhfkgigtgfesthejjhdttddtvdenucfhrhhomheptehrthhurhcutfhojhgvkhcuoegtohhnthgrtghtsegrrhhtuhhrqdhrohhjvghkrdgvuheqnecuggftrfgrthhtvghrnheptdejuedtgefgtdfhgfdugefgffffteetteffuddtgfefheekgedvtdekvddvtdeknecukfhppedutddrvddttddrvddtuddrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddtrddvtddtrddvtddurdduledphhgvlhhopeifvggsmhgrihhlrdhgrghnughirdhnvghtpdhmrghilhhfrhhomheptghonhhtrggtthesrghrthhurhdqrhhojhgvkhdrvghupdhnsggprhgtphhtthhopeduiedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehrohgssehlrghnughlvgihrdhnvghtpdhrtghpthhtohepjhgvfhhfsegtohhrvghsvghmihdrihhopdhrtghpthhtohepghhlrghusghithiisehphhihshhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopegrnhgurhgvf
- idonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
-X-GND-Sasl: contact@artur-rojek.eu
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev
 
-On 2025-08-15 22:52, Artur Rojek wrote:
-> On 2025-08-15 22:16, Andrew Lunn wrote:
+
+On Wed, 13 Aug 2025 07:43:39 +0200, Thomas Weißschuh wrote:
+> Make sure the byte order and ABI of the userprogs matches the one of the
+> kernel, similar to how the bit size is handled.
+> Otherwise the userprogs may not be executable.
+> This happens for example on powerpc little endian, or riscv32.
 > 
-> Hi Andrew,
-> thanks for the review!
+> These patches where originally part of my series "kunit: Introduce UAPI
+> testing framework" [0], but that isn't going anywhere right now and the
+> patches are useful on their own.
 > 
->>> +static irqreturn_t jcore_emac_irq(int irq, void *data)
->>> +{
->>> +	struct jcore_emac *priv = data;
->>> +	struct net_device *ndev = priv->ndev;
->>> +	struct sk_buff *skb;
->>> +	struct {
->>> +		int packets;
->>> +		int bytes;
->>> +		int dropped;
->>> +		int crc_errors;
->>> +	} stats = {};
->>> +	unsigned int status, pkt_len, i;
->> 
->> netdev uses 'reverse christmas tree' for local variables. They should
->> be sorted longest to shortest. This sometimes means you need to move
->> assignments into the body of the function, in this case, ndev.
+> [...]
 
-Should I move the struct stats members into stand alone variables as
-well? Or is below sorting acceptable with regards to stats vs skb:
+Applied, thanks!
 
-> 	unsigned int status, pkt_len, i;
-> 	struct jcore_emac *priv = data;
-> 	struct net_device *ndev;
-> 	struct {
-> 		int crc_errors;
-> 		int dropped;
-> 		int packets;
-> 		int bytes;
-> 	} stats = {};
-> 	struct sk_buff *skb;
+[1/2] kbuild: userprogs: avoid duplication of flags inherited from kernel
+      https://git.kernel.org/kbuild/c/c5afee88548e4
+[2/2] kbuild: userprogs: also inherit byte order and ABI from kernel
+      https://git.kernel.org/kbuild/c/478494044bb42
 
->> 
->>> +	jcore_emac_read_hw_addr(priv, mac);
->>> +	if (is_zero_ether_addr(mac)) {
->> 
->> It would be more normal to use !is_valid_ether_addr()
->> 
->> What support is there for MDIO? Normally the MAC driver would not be
->> setting the carrier status, phylink or phylib would do that.
-> 
-> From what I can tell, none. This is a very simple FPGA RTL
-> implementation of a MAC, and looking at the VHDL, I don't see any MDIO
-> registers.
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-> Moreover, the MDIO pin on the PHY IC on my dev board also
-> appears unconnected.
-
-I spoke too soon on that one. It appears to be connected through a trace
-that goes under the IC. Nevertheless, I don't think MDIO support is in
-the IP core design.
-
-> Perhaps Rob L. or Jeff can shine more light on this
-> design wise.
-> 
-> Cheers,
-> Artur
-> 
->> 
->>     Andrew
->> 
->> ---
->> pw-bot: cr
 
