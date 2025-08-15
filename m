@@ -1,138 +1,176 @@
-Return-Path: <linux-kernel+bounces-771292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CBCB2853A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1BCB2853C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CABE71C852B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:37:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838327B95B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F03317703;
-	Fri, 15 Aug 2025 17:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="LeKaBqFb"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE85317701;
+	Fri, 15 Aug 2025 17:38:03 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875E23176E2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4183176F7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279446; cv=none; b=Cizr170f/vyLH8UVu20FW8Fr18neIOK8OYkzHmd9En/qeCXAs3B0pvqpPbY612z97PZjqSSd54EjzekBjxY/pCunbT/nslnnOMRv0hzph53sS0XN7pGpIjk/ugu8Ru4tjyP3eM7kILC3XQ0gd1H8zWrxGDqiZTLo6j3k9qbFofg=
+	t=1755279483; cv=none; b=d08SDEzA0Nig2fBTWlLHkjCrTh9w4GGQrc5XKGeF+Qgz7RUfWqEts/mHhK6BwSlRwlBsZ2j0oztKgnVjHai//8rhbBJb+F6t2jC+5WfYF0iSHXY0MAj7fb2dQeqlZR0MUcIdwbFXTwr27JdkXrRkaNCJxKBRwrokZk5FkUcELsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279446; c=relaxed/simple;
-	bh=EZaKhemVJPR3sq5XowvTLO9YcYMWZSlYjjnux2apyDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vw+2vvY8zmQ2ucwQGAHDnHAINsFlFhkhLpVzGvkFp/q2MwnbSWHKn6NSmm2n9qZLn5LHiO4BM7dupzj1Yneeav0pLgDhGatlSCjvuvtnxzOAwURIkxvhLGnngUkrl/PfDax0hUbvV/uc/JLN5NGWjBoW30F4jW5G9vL5KGWe+H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=LeKaBqFb; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323266d6f57so2362192a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1755279444; x=1755884244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8VgHIJEM7JM7qYl6oFnfKU/T+pMHjuErX1yO4TYSJrk=;
-        b=LeKaBqFbSZA3wUvjGMh/OpDhJW4jjvc6uxDXT9LRCWg+ZzcXldRvSuImG1j557ukYs
-         BU6OwdS9/QisWdl87VpSw4B40qtIITCdMgs0biznP7zluXHnktQ9OgYT9Hd8nzGEt6To
-         QW5azGxjwhvQjm//G5WkwW0q5y22muDkXhSH+0Ikxp3cVHRGzl+dlfH8WaDuwugzma+7
-         Kidc0WW/6kv27Za2qQJ4ULbeii5imtZFy1FJUXNx0UGQHgiSx+UbIxkee9Apa0G/6N0C
-         i8Q93u9TDXlOwxnbIi2DfvxNUJDr8W0DqBOTNU0DF3+nA46rtgTzFvkpuIXscEaZqOHD
-         lSaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755279444; x=1755884244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8VgHIJEM7JM7qYl6oFnfKU/T+pMHjuErX1yO4TYSJrk=;
-        b=NTabU4u3Yp31lOzTVY+zc34wRR1vwQs7WfQop5WXJsXd+IlY7XNQPipiEgiOGEFha3
-         Oph62uq8+XyuYKNuGrEFZ+Ttd9dvbQYh73SWvi9p4V8YpBhCQFrRln0Msod9+/yY1ZAd
-         KcfloavOuGrL3FmbxKxsAzwnVJYezfUr53BU2rrtiDmUZr920MTpN39mIuql3+yUe697
-         kn/MiZSvgwzyoYWmTcumSnlfmE8+G3yOMP+BGYWHl4dion8f3KrJKFAC8C3MvSrFaxup
-         4aISRq/NF3OGcSkZrMNnBVGUV8tf/gi4J284//lyMmjai5nG9F3Fyxbn5GC7LGhnEwE5
-         IYPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfp9SDRXnE1zGoyyemtiADT2+5m13Eu/OZ8kL3a9Z/ooKx6WFDni96NJr0wI5Wn6I14391Sr0kFtxv4a4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr/CSBxBWlcSMBJrczqM9tTeknJHXjhKMyvQBj53KEu03izNgT
-	zRXD8nnV+5j6swbkOpxnQIneNzUhLXuHjE1zpZcKXNKCtnomWtreAQBiZgdHNIA0m+c=
-X-Gm-Gg: ASbGncvitnSdeJV4AW6YUF56z/q6uVXskD2Uqar7mQoXMW8SUmCvBq0Z/jpnNsNJbA1
-	CHbRV/6mkau296MU/TnhrrqXIROenFCRc7MH6f6TFBdcWQF35fsf8ltE2muFX0XpA/+DDLHy5h9
-	E7iLOZfUeoEnBisbIgDYz1nSLspOncu01qpNjpUVyA4fKxuptCotCwvdcJv68a/ncYeHXsNwCgw
-	YIMhV2HMMQ8fNq7zvGKBDA1T1Z3UL9qut/yuH5UVYzj1saVgs+4XY4ryZg3f7GKAOmGLKc5M0+M
-	JUTlvG+eYt0bfnaElzrms5PZ/2J0dgbqOsyuNAHfb9hznUyH/2kTliCt27h52wdBZGrM1wk4IIE
-	xl6yD79UA7xSCS2nWzFAe1Yzn
-X-Google-Smtp-Source: AGHT+IEzUlJW393LwpN228NDGcrlLOOrIrGuJW5vYjizbAfS8DKPO5gF4B6eusG0NuaiUrpfH4afSw==
-X-Received: by 2002:a17:90a:dfcc:b0:31f:eae:a7e8 with SMTP id 98e67ed59e1d1-32341ebf8a0mr4878804a91.11.1755279443694;
-        Fri, 15 Aug 2025 10:37:23 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232ae14f6dsm1947455a91.6.2025.08.15.10.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 10:37:23 -0700 (PDT)
-Date: Fri, 15 Aug 2025 10:37:20 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
-	paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <aJ9wUAZRzqX5361i@mozart.vkv.me>
-References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
- <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
- <20250814172326.18cf2d72@kernel.org>
- <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
- <20250815094217.1cce7116@kernel.org>
+	s=arc-20240116; t=1755279483; c=relaxed/simple;
+	bh=122jLdmAfkEvNJQZzQRq+OrAt1kQ0FibmKg0Lmc9H20=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u19ei9EP1vHEH3L4GrOXQL8hDzPAJ6MQMpfqvy1SwXbE0EDVkaPafJ8s6vyiB6EONg1VDFDjJzSbObalHuIbzqKdtYD/FOPbBbe6EjIf6JNhosHRC5hvvsGkHJEl01aO7PDnXrWhOgL/3JwhdKHhh3K2KmKTzfCqApnA+rPtm0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c3TpP1ZcfzYpCvG;
+	Sat, 16 Aug 2025 01:37:49 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
+ 2025 01:37:57 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
+ 2025 01:37:54 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <lorenzo.stoakes@oracle.com>
+CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
+	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <mhocko@suse.com>,
+	<mingo@redhat.com>, <npache@redhat.com>, <peterz@infradead.org>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <tglx@linutronix.de>,
+	<zhongjinji@honor.com>
+Subject: Re: [PATCH v4 3/3] mm/oom_kill: Have the OOM reaper and exit_mmap() traverse the maple tree in opposite orders
+Date: Sat, 16 Aug 2025 01:37:50 +0800
+Message-ID: <20250815173750.15323-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
+References: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815094217.1cce7116@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
+ (10.68.17.250)
 
-On Friday 08/15 at 09:42 -0700, Jakub Kicinski wrote:
-> On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
-> > On 8/15/25 01:23, Jakub Kicinski wrote:
-> > > On Thu, 14 Aug 2025 03:16:11 -0700 Breno Leitao wrote:  
-> > >>   2.2) netpoll 				// net poll will call the network subsystem to send the packet
-> > >>   2.3) lock(&fq->lock);			// Try to get the lock while the lock was already held  
-> > 
-> > The report for reference:
-> > 
-> > https://lore.kernel.org/all/fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de/> 
-> > > Where does netpoll take fq->lock ?  
-> > 
-> > the dependencies between the lock to be acquired
-> > [  107.985514]  and HARDIRQ-irq-unsafe lock:
-> > [  107.985531] -> (&fq->lock){+.-.}-{3:3} {
-> > ...
-> > [  107.988053]  ... acquired at:
-> > [  107.988054]    check_prev_add+0xfb/0xca0
-> > [  107.988058]    validate_chain+0x48c/0x530
-> > [  107.988061]    __lock_acquire+0x550/0xbc0
-> > [  107.988064]    lock_acquire.part.0+0xa1/0x210
-> > [  107.988068]    _raw_spin_lock_bh+0x38/0x50
-> > [  107.988070]    ieee80211_queue_skb+0xfd/0x350 [mac80211]
-> > [  107.988198]    __ieee80211_xmit_fast+0x202/0x360 [mac80211]
-> > [  107.988314]    ieee80211_xmit_fast+0xfb/0x1f0 [mac80211]
-> > [  107.988424]    __ieee80211_subif_start_xmit+0x14e/0x3d0 [mac80211]
-> > [  107.988530]    ieee80211_subif_start_xmit+0x46/0x230 [mac80211]
 > 
-> Ah, that's WiFi's stack queuing. Dunno whether we expect netpoll to 
-> work over WiFi. I suspect disabling netconsole over WiFi may be the 
-> most sensible way out. Johannes, do you expect mac80211 Tx to be IRQ-safe?
+> On Thu, Aug 14, 2025 at 09:55:55PM +0800, zhongjinji@honor.com wrote:
+> > From: zhongjinji <zhongjinji@honor.com>
+> >
+> > When a process is OOM killed, if the OOM reaper and the thread running
+> > exit_mmap() execute at the same time, both will traverse the vma's maple
+> > tree along the same path. They may easily unmap the same vma, causing them
+> > to compete for the pte spinlock. This increases unnecessary load, causing
+> > the execution time of the OOM reaper and the thread running exit_mmap() to
+> > increase.
+> 
+> You're not giving any numbers, and this seems pretty niche, you really
+> exiting that many processes with the reaper running at the exact same time
+> that this is an issue? Waiting on a spinlock also?
+> 
+> This commit message is very unconvincing.
 
-It'd be a bit of a shame IMHO to summarily break netconsole over wifi:
-it works well enough in practice that I've personally found it helpful
-for quick debugging across large numbers of IoT devices (user context
-OOPSes outside net/ usually seem to make it out, as do WARNs and other
-non-fatal splats).
+Thank you, I will reconfirm this issue.
 
-But if Johannes' answer is "no", maybe there's no way out :/
+> 
+> >
+> > When a process exits, exit_mmap() traverses the vma's maple tree from low to high
+> > address. To reduce the chance of unmapping the same vma simultaneously,
+> > the OOM reaper should traverse vma's tree from high to low address. This reduces
+> > lock contention when unmapping the same vma.
+> 
+> Are they going to run through and do their work in exactly the same time,
+> or might one 'run past' the other and you still have an issue?
+> 
+> Seems very vague and timing dependent and again, not convincing.
+
+well, Thank you, I should capture a perf trace for the oom reaper, not perfetto.
+
+> 
+> >
+> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> > ---
+> >  include/linux/mm.h | 3 +++
+> >  mm/oom_kill.c      | 9 +++++++--
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 0c44bb8ce544..b665ea3c30eb 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -923,6 +923,9 @@ static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
+> >  #define for_each_vma_range(__vmi, __vma, __end)				\
+> >  	while (((__vma) = vma_find(&(__vmi), (__end))) != NULL)
+> >
+> > +#define for_each_vma_reverse(__vmi, __vma)					\
+> > +	while (((__vma) = vma_prev(&(__vmi))) != NULL)
+> 
+> Please don't casually add an undocumented public VMA iterator hidden in a
+> patch doing something else :)
+
+sorry, I got it.
+
+> 
+> Won't this skip the first VMA? Not sure this is really worth having as a
+> general thing anyway, it's not many people who want to do this in reverse.
+> 
+> > +
+> >  #ifdef CONFIG_SHMEM
+> >  /*
+> >   * The vma_is_shmem is not inline because it is used only by slow
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 7ae4001e47c1..602d6836098a 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -517,7 +517,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+> >  {
+> >  	struct vm_area_struct *vma;
+> >  	bool ret = true;
+> > -	VMA_ITERATOR(vmi, mm, 0);
+> > +	VMA_ITERATOR(vmi, mm, ULONG_MAX);
+> >
+> >  	/*
+> >  	 * Tell all users of get_user/copy_from_user etc... that the content
+> > @@ -527,7 +527,12 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+> >  	 */
+> >  	set_bit(MMF_UNSTABLE, &mm->flags);
+> >
+> > -	for_each_vma(vmi, vma) {
+> > +	/*
+> > +	 * When two tasks unmap the same vma at the same time, they may contend for the
+> > +	 * pte spinlock. To avoid traversing the same vma as exit_mmap unmap, traverse
+> > +	 * the vma maple tree in reverse order.
+> > +	 */
+> 
+> Except you won't necessarily avoid anything, as if one walker is faster
+> than the other they'll run ahead, plus of course they'll have a cross-over
+> where they share the same PTE anyway.
+> 
+> I feel like maybe you've got a fairly specific situation that indicates an
+> issue elsewhere and you're maybe solving the wrong problem here?
+
+Thank you, I will reconfirm this issue.
+
+> 
+> > +	for_each_vma_reverse(vmi, vma) {
+> >  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+> >  			continue;
+> >
+> > --
+> > 2.17.1
+> >
+> >
+
+
 
