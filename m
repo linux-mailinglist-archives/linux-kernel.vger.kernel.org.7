@@ -1,75 +1,51 @@
-Return-Path: <linux-kernel+bounces-770482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E03EB27B8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F42B27B96
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A947607965
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852555A6A96
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E4B2D8DA9;
-	Fri, 15 Aug 2025 08:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Wr1ygyEm"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4E12417C6;
+	Fri, 15 Aug 2025 08:44:41 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038A02D738C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79E0225A4F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755247218; cv=none; b=gEmet9LHPVyGnQi3C6PFySRjq+YzDc/bfHSKXaZF5d+zYS11llav836V5bTfrPldqFUZnauqaeG48YDErCWRk3lzdwdrRe/QDB4lwM9auWDcgm6Q/IKTp6vp+Nd9K08b2vvWjyzK+d0+66qUI0DIcswr0VRSbeh5qDGIUSU1hFU=
+	t=1755247481; cv=none; b=T+Su7B5iCUSW+ySNkoLpJJiTGpICK3yG5nynCEfkOgPS7bMXxjrilBYAaHwYRm4CGouBq+OI9TcU4wPlZr1mMZ4ddM9IesF5Uf0H54A4G+ttw9Caev2ZaNQL/xZJe+T4vRw/Iq5PDEEGaxUBF7+Bo2YWxFJs8VPkUCPdmzpg0NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755247218; c=relaxed/simple;
-	bh=3jnTo9QP6GZBHWTgPi7c4x1BQz6npH0TtggpKdtFMl4=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=SterILFla3MF7fzfgPhBzp5nI9uPINdAyGW5qVfvZxOHCVSdfU6RzhC1vGxbN0tOd/NfubDwhpSSvS6IeqfgWZ0sRwoXyMX1A+OFEK00ADFgmvX88tyCmVGd+MLwDuKt6s9Sq/CPXN7z5rmBYlbfEyHK3q+atPK5ZKW20XvI+po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Wr1ygyEm; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755247204; bh=bHWE4AORGxV5tQB74wROjNY5YvD7d9GgkwOBcOZ8ZC4=;
-	h=From:To:Cc:Subject:Date;
-	b=Wr1ygyEmuIIZInWQD5xp9bMqo2/1MtQkhvhfh5JJ2uEzDpFJ7AFZ/u3cshhjFI/PD
-	 0Mdojj+yGsuMBL7w1/s3x8ONIp97ZL73OqQbkFGJmUiBEZhi3izjUjzQk0vIxWqJpa
-	 1/f14I2jP2XYzsLVvf4ubGKNu8kZFxMbBMiYS6qM=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszb23-0.qq.com (NewEsmtp) with SMTP
-	id 9B72EA7A; Fri, 15 Aug 2025 16:38:55 +0800
-X-QQ-mid: xmsmtpt1755247135timb70iz3
-Message-ID: <tencent_E5B1CAABB0320691EB730CDB19E55EA85E05@qq.com>
-X-QQ-XMAILINFO: Nr4sKL92GIu+vW/ICYMcGdH9uS9e6ADBfUWXi1HsqoqwfNXlNmPVV8tTT6tNHT
-	 a75U8BkZvsrfRFH7JpUHvdSfnI6+uf9NDv3Bz+MOpv94QKUBiS8+KVJPmcbuX/SXGlwDUuK5QVSV
-	 Q+R6e/Kw9ab3JAOIhzzJWuxl6VO55dvaPRWSC7G1Th0aJ03kWyftqmvqcO2fruaBCDqCz+TBtlXM
-	 PhvNMKoTr0lGgbYYNSQvPOEUPQzU3xNOTvVwAkGLF17eluRPpQdtf5IftMc1Ha+jC0HTgpVZnol3
-	 xt2QQ0e1OLJ9kbw8P0O7ZfcsK2npv+UswTG6HGypTEFn3RRveN8pp5XMTUCR4ig1RnSsKWNuamPR
-	 i2zzCZ/wP7e9uq4Ovxz/qC0+G89y+f1XqCqQYcJ6xvWcgSIQgU1U/w6S7VZOrWKFZSVzV49hV60y
-	 WV8b50uEvoR/djJH2voqdb71t54DuEKoBE0yflNR8L7tXBf9Oc3iOZIAHIJG8VypZS/tWw8Vgw6B
-	 aEfjKpltwSXyUkiHUrX8TzFRr3hbSlN7IflwtaglL8iJaRag/N7x5o9aqYyarJRW7fStE8BkB0PB
-	 OFSBsqwKMLyQbn7CFlQYed74axx1v4hNCv7pNA48D8GAgbVgStYAiBJtbFqc7Mq01JEdR2JUQIrk
-	 o6Pn62Pn59cSpd+Gb6qJMrDP6DvXYMbWKgBQAPrGfVFMRy614Ua4lKjfs6P2dvh0jiwXce3Jmmt+
-	 sjGyie+idrWmPWOKOfAMEUNa/ee8geljug5bIipLsRiF4FhHhYT3+X7eRn1xE4GCUFO5SsrPFJKp
-	 kK4jdPVX+uWOPCG7rEW6nOVTb67b+DVMGA2znTNSAjfxa+uPsFInujZqwjy6RWcOl6p10ZL8Htt4
-	 Ywd6Iij/HmuiRdU072fH6wdQtQWPNzzk1XbpH7WWSeNOjCPXRwtz+PjK6u5j/Wwdkp4amDkE9fQp
-	 AzDCN/IKAhlkZLjU13W1dBdN1XIxkJVF49aogkwhg=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: 2564278112@qq.com
-To: alex.williamson@redhat.com
-Cc: christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	sunil.khatri@amd.com,
-	alexandre.f.demers@gmail.com,
-	boyuan.zhang@amd.com,
-	jiangwang@kylinos.cn,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Fixed an issue where audio did not turn off properly after unplugging HDMI
-Date: Fri, 15 Aug 2025 16:38:51 +0800
-X-OQ-MSGID: <20250815083851.1417451-1-2564278112@qq.com>
+	s=arc-20240116; t=1755247481; c=relaxed/simple;
+	bh=vs3F8XMODuBJXP26XM8SiJiomSjtbAoSC7LNBgrpNmw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rERBgHDOIl4MG2ZKzsxhx/JVV2tFBi4USbBA5b5HgFsRF9kTblDObWg585fFg94XEawqiNuepS2lOu5GnV4dG1nh+QsbK7TXCZ6N9+PABVP1QSS0M3upxdTib75FDy1k1JshAKeQI6bkoaEK1G4xyZAif4UIjQu+qSrPn2YPYfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4c3Fys37nxzYl7Cm;
+	Fri, 15 Aug 2025 16:44:21 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Aug
+ 2025 16:44:29 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Aug
+ 2025 16:44:29 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <xiang@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <feng.han@honor.com>, wangzijie
+	<wangzijie1@honor.com>
+Subject: [PATCH] erofs-utils: avoid redundant memcpy and sha256() for dedupe
+Date: Fri, 15 Aug 2025 16:44:28 +0800
+Message-ID: <20250815084428.4157034-1-wangzijie1@honor.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,75 +54,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a011.hihonor.com
+ (10.68.31.243)
 
-From: Wang Jiang <jiangwang@kylinos.cn>
+We have already use xxh64() for filtering first for dedupe, when we
+need to skip the same xxh64 hash, no need to do memcpy and sha256(),
+relocate the code to avoid it.
 
-In commit 3c021931023a ("drm/amdgpu: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi")',
-the method for determining connector types has been modified.
-After the modification, when disconnecting the monitor, the information from the previous connection cannot be retrieved,
-because display_info.is_hdmi has been reset, resulting in the connector type returned as dvi.
-On AMD Oland and other cards, the audio driver determines whether to turn off audio based on connector type
-However, when the monitor is disconnected, the information from the previous connection cannot be obtained, resulting in the inability to turn off the audio.
-I don't understand why this is being done, I think the right thing to do is to decide whether or not to enable audio based on whether the connector has audio.
-This commit modifies the code to retrieve audio information from the connected EDID.
-Now, the decision to turn audio on/off is based on the audio information in the EDID.
-
-Signed-off-by: Wang Jiang <jiangwang@kylinos.cn>
+Signed-off-by: wangzijie <wangzijie1@honor.com>
 ---
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ lib/dedupe.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-index 276c025c4c03..c56b2027d53e 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-@@ -3253,17 +3253,22 @@ static void dce_v6_0_encoder_mode_set(struct drm_encoder *encoder,
- 			  struct drm_display_mode *adjusted_mode)
- {
- 	struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
--	int em = amdgpu_atombios_encoder_get_encoder_mode(encoder);
+diff --git a/lib/dedupe.c b/lib/dedupe.c
+index 074cae3..bdd890c 100644
+--- a/lib/dedupe.c
++++ b/lib/dedupe.c
+@@ -162,18 +162,9 @@ int z_erofs_dedupe_insert(struct z_erofs_inmem_extent *e,
+ 	if (!di)
+ 		return -ENOMEM;
+ 
+-	di->original_length = e->length;
+-	erofs_sha256(original_data, window_size, di->prefix_sha256);
 -
-+	struct drm_connector *connector;
-+	struct amdgpu_connector *amdgpu_connector = NULL;
- 	amdgpu_encoder->pixel_clock = adjusted_mode->clock;
+ 	di->prefix_xxh64 = xxh64(original_data, window_size, 0);
+ 	di->hash = erofs_rolling_hash_init(original_data,
+ 			window_size, true);
+-	memcpy(di->extra_data, original_data + window_size,
+-	       e->length - window_size);
+-	di->pstart = e->pstart;
+-	di->plen = e->plen;
+-	di->partial = e->partial;
+-	di->raw = e->raw;
  
- 	/* need to call this here rather than in prepare() since we need some crtc info */
- 	amdgpu_atombios_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
-+	connector = amdgpu_get_connector_for_encoder_init(encoder);
-+	amdgpu_connector = to_amdgpu_connector(connector);
-+	if (!amdgpu_connector) {
-+		DRM_ERROR("Couldn't find encoder's connector\n");
-+	}
- 
- 	/* set scaler clears this on some chips */
- 	dce_v6_0_set_interleave(encoder->crtc, mode);
- 
--	if (em == ATOM_ENCODER_MODE_HDMI || ENCODER_MODE_IS_DP(em)) {
-+	if (drm_detect_monitor_audio(amdgpu_connector_edid(connector))) {
- 		dce_v6_0_afmt_enable(encoder, true);
- 		dce_v6_0_afmt_setmode(encoder, adjusted_mode);
+ 	/* skip the same xxh64 hash */
+ 	p = &dedupe_tree[di->hash & (ARRAY_SIZE(dedupe_tree) - 1)];
+@@ -183,6 +174,15 @@ int z_erofs_dedupe_insert(struct z_erofs_inmem_extent *e,
+ 			return 0;
+ 		}
  	}
-@@ -3322,12 +3327,18 @@ static void dce_v6_0_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
- 	struct amdgpu_encoder_atom_dig *dig;
--	int em = amdgpu_atombios_encoder_get_encoder_mode(encoder);
-+	struct drm_connector *connector;
-+	struct amdgpu_connector *amdgpu_connector = NULL;
- 
- 	amdgpu_atombios_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
-+	connector = amdgpu_get_connector_for_encoder_init(encoder);
-+	amdgpu_connector = to_amdgpu_connector(connector);
-+	if (!amdgpu_connector) {
-+		DRM_ERROR("Couldn't find encoder's connector\n");
-+	}
- 
- 	if (amdgpu_atombios_encoder_is_digital(encoder)) {
--		if (em == ATOM_ENCODER_MODE_HDMI || ENCODER_MODE_IS_DP(em))
-+		if (drm_detect_monitor_audio(amdgpu_connector_edid(connector)))
- 			dce_v6_0_afmt_enable(encoder, false);
- 		dig = amdgpu_encoder->enc_priv;
- 		dig->dig_encoder = -1;
++
++	di->original_length = e->length;
++	erofs_sha256(original_data, window_size, di->prefix_sha256);
++	memcpy(di->extra_data, original_data + window_size,
++	       e->length - window_size);
++	di->pstart = e->pstart;
++	di->plen = e->plen;
++	di->partial = e->partial;
++	di->raw = e->raw;
+ 	di->chain = dedupe_subtree;
+ 	dedupe_subtree = di;
+ 	list_add_tail(&di->list, p);
 -- 
 2.25.1
 
