@@ -1,260 +1,225 @@
-Return-Path: <linux-kernel+bounces-770263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4F2B27917
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:24:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0740EB27910
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140081D012D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:22:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A8FEB6192E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202622C158D;
-	Fri, 15 Aug 2025 06:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767772BF3FB;
+	Fri, 15 Aug 2025 06:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBV66jTn"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y6r9bund"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74242BE636;
-	Fri, 15 Aug 2025 06:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50382BEFE2;
+	Fri, 15 Aug 2025 06:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755238829; cv=none; b=N/FKShleqzcu7i5W8kpmlgIeplYCx6/oVJ0fcNQIYNL0/E73im+bfrsLFNrfhwbcwCFbSS9ASdT7W86c6k0glJxXdWd/jXC4d0odp7nWHYGfJis3Sq/xzLmaVGTcUvFAA35AQH3HBnPqvE+tjnlvPG+B16zptkAu8PtHrSYfY4c=
+	t=1755238823; cv=none; b=rdLXE6Xng8t72j8R+crOXv4qvxuh6YN+RNNefrY/w0a4UjajmUz4mIT1SCvE9pWKJlR999sq7aENyB9SIVuwVPm9UFG9xiHY7lSva0nzdo+C+pv8074mndU6ReVzEVE2vrROZmFrf5sBuGEsL4JIyCcGagGCwfxUzQ9mFdQbq1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755238829; c=relaxed/simple;
-	bh=aPpabXhvPLpcF0X2TWoTMXPjSBp7r1Cjnc2nxsi0C3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oBVvZlUthObw2L82xyPP5HzOAoAKdQ/tDUrCNiy7BEMaxob35T/VmO2X3SDIybI5JnNrH37XQKuuQDWsB6JUtoUOj2lDsEgh8YbYwRK1+dq73Quoxo4Lk88kfRnyjgUITvDz3ITgWr1+45tftpNy9sGMuJnkeQK9YoW6WoYJWjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBV66jTn; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24457f43981so11691675ad.0;
-        Thu, 14 Aug 2025 23:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755238827; x=1755843627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDajSTBBsS5Ac37CDKkbi0GU+XErCJ9ZpxWNvqdBPqk=;
-        b=cBV66jTnDZeNujCtQcWEIZeE86WIlx7ATIRAoF62xBLxGkMc2c7YZGeZnZpZdgDS78
-         nQOQ9w8aplhJ6cs50O8GubFhNQ4XAbVAhIBTTH21VkawRPQ/U1j/y/ErmPJKyDneHG4O
-         907tI6o1GMlntdFLY/UPrmaIZ65ImvabH6sbJyFRZw89RhJax7SivSLxVsLhH47FSCbJ
-         USBrQXvSeR+BnTcsCDetcZ8iacbfn2Z7dCw/oy4KrfWAnSHTnnItszsLFfxQaW1FH3WY
-         sEcHhDrGgZh3M48T3BDpxOwkmSzYmrU2wWX2XLLej8aKEBR5IJ8JB02jaQVEHeyU+yMB
-         oZbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755238827; x=1755843627;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CDajSTBBsS5Ac37CDKkbi0GU+XErCJ9ZpxWNvqdBPqk=;
-        b=iVp/89zUOdvMgpsFR7UW9EUAQ8pOuwJRZETGcM6YJYupMRbDlljuXd5LCWvh4mRpD+
-         A9+qBcOUHgKSi/tBgtfsgZDEqlhWGLUXrPyGlNBQt3TPgR4fsOqb++8OQA59sW2dtuJM
-         xp2/QNwX/XSPRztQhsAvBalol3FjTAedRMa+AhWscT/N2Ujx3/Q6p8nH+F8ZEITsjAxN
-         Iv4xIxD7PBU8GW0E8DwsGB7APT7oFCezlH9gp/WmCVE6Qp59I2Auo/0MnReXCISOx5k3
-         gooWdcM/HX0Usj6Z4Q3eBLSRdRBEFBbro/oUuwcqvrxJuAKRA4rOPmrkeeYDbI0eX60P
-         vJqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKlLpspeNz5tSraw92/JWBGfz7YlMkBhg993IX5JeizhcAbTK8vg5JIJdVyXhebsKGlTV9YFsRuALS9Ls=@vger.kernel.org, AJvYcCXbcYnNxcGceFmLKJLrOsD+NnBoPevIYTF8DK8CxuMEt7c5NkUZWEw7hOdAOhRr2Z26LwI4Vt/eJuMbyizxsV6r@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ywOZnDwcrBH4/T7AnE/S0TICCkw0JrWrk/3x7XTlTTHBbKIK
-	AkecNQ7KKtPaFFsvd1DtquyI3Cz0cwUDLcGoSCtfYyyTY5KYPGT/aRfIBQoHeyn/
-X-Gm-Gg: ASbGncuiclpUDLviREIZxDePbABj9WHQbHehOFW1VyeZj4F6ehvPQ0A26VwPxitEWEb
-	40E/lM9WBLpcujxkdLG1erBWFru/PAFm9sd2+mLEzDWhSK0dhQnGR6cE0J7Ae34CiyZ3uMubYkK
-	TtCRn0nzH6jGGALqTCXipEFnWS6oNUrY1CCEb/Tg6S6jCcXvGWLAmuOwDV5vVKguX3A9hDjMXrJ
-	zYV460j0Auz65QOWJuI9R0QvEniPwYblkMYLATmnZ+wKm8rbaPKS18wMoRqDSL3TgOxRQEAVgh6
-	fzR53lzkXfyP0Zl+EWMwDS08ToBfciJDJY45XfP9vVbvQZSiPwlqo5tNIV46hrTr9QWHUwI62rr
-	FOfSdHYJ+YkqHjPfjSuNpG+asBAfv5XH3GWeKNPDGlQ==
-X-Google-Smtp-Source: AGHT+IESdapEWx3Im7r1+czXhOoF3VbAfyJKsPol/PczCXzt+a9RCmbqslqfXcT6tpPa1oIQT6M/Wg==
-X-Received: by 2002:a17:902:ea03:b0:235:e76c:4362 with SMTP id d9443c01a7336-2446d7010damr15765795ad.18.1755238826549;
-        Thu, 14 Aug 2025 23:20:26 -0700 (PDT)
-Received: from fedora.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d76df62sm425206a12.41.2025.08.14.23.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 23:20:26 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCHv3 net 3/3] selftests: bonding: add test for passive LACP mode
-Date: Fri, 15 Aug 2025 06:20:00 +0000
-Message-ID: <20250815062000.22220-4-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250815062000.22220-1-liuhangbin@gmail.com>
-References: <20250815062000.22220-1-liuhangbin@gmail.com>
+	s=arc-20240116; t=1755238823; c=relaxed/simple;
+	bh=GHcp5dA4rULDOFBx0PEjNx1k4ReW/CdBLRFBsLgN9zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mE7lOGYxs51VCVJvh2qLfeH1c91XT/6PrRREUoUYeyoe+IWWwChGnkExvyKSbixR9zvDXYvQNm5Rbt/qla5fyp7b6GRmEasHaRmu0UAEwsXc2DCSqDI1VL6bKtE/xl/DReUYFBISNidMTVUq918zW5Q0tQhJoR/S5CeiGffZ+NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y6r9bund; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 873A4C4CEF5;
+	Fri, 15 Aug 2025 06:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755238823;
+	bh=GHcp5dA4rULDOFBx0PEjNx1k4ReW/CdBLRFBsLgN9zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y6r9bundNNXZ0i8V0VRBCVj2L9yurJEyDhK80miA0kt9Vo2qYWCfQlRE1CEXBd4B3
+	 6UvkMrOl+BXUpS/bGEBKSKaUJttGZ/SnD3M86tmF3IVTxrEaWIw5aWto5gER6eMxd3
+	 +GwraUt9iHfXqaL5cdAh0WwG/1HCFmHgiTJOGFDQ=
+Date: Fri, 15 Aug 2025 08:20:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PM: Support aborting suspend during filesystem sync
+Message-ID: <2025081538-grappling-crewmate-8cf5@gregkh>
+References: <20250815004635.3684650-1-wusamuel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815004635.3684650-1-wusamuel@google.com>
 
-Add a selftest to verify bonding behavior when `lacp_active` is set to `off`.
+On Thu, Aug 14, 2025 at 05:46:34PM -0700, Samuel Wu wrote:
+> At the start of suspend, filesystems will sync to save the current state
+> of the device. However, the long tail of the filesystem sync can take
+> upwards of 25 seconds. If during this filesystem sync there is some
+> wakeup or abort signal, it will not be processed until the sync is
+> complete; from a user's perspective, this looks like the device is
+> unresponsive to any form of input.
+> 
+> This patch adds functionality to handle a suspend abort signal when in
+> the filesystem sync phase of suspend. This topic was first discussed by
+> Saravana Kannan at LPC 2024 [1], where the general consensus was to
+> allow filesystem sync on a parallel thread.
+> 
+> [1]: https://lpc.events/event/18/contributions/1845/
+> 
+> Suggested-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> ---
+>  drivers/base/power/wakeup.c |  8 ++++
+>  include/linux/suspend.h     |  3 ++
+>  kernel/power/process.c      |  1 -
+>  kernel/power/suspend.c      | 85 ++++++++++++++++++++++++++++++++++++-
+>  4 files changed, 95 insertions(+), 2 deletions(-)
+> 
+> v1 -> v2:
+> - Added documentation for suspend_abort_fs_sync()
+> - Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration static
+> 
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index d1283ff1080b..304368c3a55f 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_source *ws)
+>  
+>  	/* Increment the counter of events in progress. */
+>  	cec = atomic_inc_return(&combined_event_count);
+> +	/*
+> +	 * To maintain the same behavior as pm_wakeup_pending(),
+> +	 * aborting suspend will only happen if events_check_enabled. Similarly,
+> +	 * the abort during fs_sync needs the same check.
+> +	 */
+> +	if (events_check_enabled)
+> +		suspend_abort_fs_sync();
+>  
+>  	trace_wakeup_source_activate(ws->name, cec);
+>  }
+> @@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+>  void pm_system_wakeup(void)
+>  {
+>  	atomic_inc(&pm_abort_suspend);
+> +	suspend_abort_fs_sync();
+>  	s2idle_wake();
+>  }
+>  EXPORT_SYMBOL_GPL(pm_system_wakeup);
+> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+> index 317ae31e89b3..21b1ea275c79 100644
+> --- a/include/linux/suspend.h
+> +++ b/include/linux/suspend.h
+> @@ -276,6 +276,8 @@ extern void arch_suspend_enable_irqs(void);
+>  
+>  extern int pm_suspend(suspend_state_t state);
+>  extern bool sync_on_suspend_enabled;
+> +
+> +extern void suspend_abort_fs_sync(void);
+>  #else /* !CONFIG_SUSPEND */
+>  #define suspend_valid_only_mem	NULL
+>  
+> @@ -296,6 +298,7 @@ static inline bool idle_should_enter_s2idle(void) { return false; }
+>  static inline void __init pm_states_init(void) {}
+>  static inline void s2idle_set_ops(const struct platform_s2idle_ops *ops) {}
+>  static inline void s2idle_wake(void) {}
+> +static inline void suspend_abort_fs_sync(void) {}
+>  #endif /* !CONFIG_SUSPEND */
+>  
+>  static inline bool pm_suspend_in_progress(void)
+> diff --git a/kernel/power/process.c b/kernel/power/process.c
+> index dc0dfc349f22..8ff68ebaa1e0 100644
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -132,7 +132,6 @@ int freeze_processes(void)
+>  	if (!pm_freezing)
+>  		static_branch_inc(&freezer_active);
+>  
+> -	pm_wakeup_clear(0);
+>  	pm_freezing = true;
+>  	error = try_to_freeze_tasks(true);
+>  	if (!error)
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index b4ca17c2fecf..dc37ab942bcb 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/compiler.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/fs.h>
+> +#include <linux/workqueue.h>
+>  
+>  #include "power.h"
+>  
+> @@ -74,6 +75,21 @@ bool pm_suspend_default_s2idle(void)
+>  }
+>  EXPORT_SYMBOL_GPL(pm_suspend_default_s2idle);
+>  
+> +static bool suspend_fs_sync_queued;
+> +static DEFINE_SPINLOCK(suspend_fs_sync_lock);
+> +static DECLARE_COMPLETION(suspend_fs_sync_complete);
+> +
+> +/**
+> + * Triggers the completion that aborts suspend. This completion will only have
+> + * an effect if called during filesystems sync step of suspend.
+> + */
+> +void suspend_abort_fs_sync(void)
 
-The test checks the following:
-- The passive LACP bond should not send LACPDUs before receiving a partner's
-  LACPDU.
-- The transmitted LACPDUs must not include the active flag.
-- After transitioning to EXPIRED and DEFAULTED states, the passive side should
-  still not initiate LACPDUs.
+This is not kerneldoc format, I think the parser will fail on it, right?
+Have you tried building the kernel documentation with this patch
+applied?
 
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- .../selftests/drivers/net/bonding/Makefile    |   3 +-
- .../drivers/net/bonding/bond_passive_lacp.sh  | 105 ++++++++++++++++++
- .../selftests/drivers/net/bonding/config      |   1 +
- 3 files changed, 108 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
+> +{
+> +	spin_lock(&suspend_fs_sync_lock);
+> +	complete(&suspend_fs_sync_complete);
+> +	spin_unlock(&suspend_fs_sync_lock);
+> +}
+> +
+>  void s2idle_set_ops(const struct platform_s2idle_ops *ops)
+>  {
+>  	unsigned int sleep_flags;
+> @@ -403,6 +419,71 @@ void __weak arch_suspend_enable_irqs(void)
+>  	local_irq_enable();
+>  }
+>  
+> +static void sync_filesystems_fn(struct work_struct *work)
+> +{
+> +	ksys_sync_helper();
+> +
+> +	spin_lock(&suspend_fs_sync_lock);
+> +	suspend_fs_sync_queued = false;
+> +	complete(&suspend_fs_sync_complete);
+> +	spin_unlock(&suspend_fs_sync_lock);
+> +}
+> +static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
+> +
+> +/**
+> + * suspend_fs_sync_with_abort- Start filesystem sync and handle potential aborts
+> + *
+> + * Starts filesystem sync in a workqueue, while the main thread uses a
+> + * completion to wait for either the filesystem sync to finish or for a wakeup
+> + * event. In the case of filesystem sync finishing and triggering the
+> + * completion, the suspend path continues as normal. If the complete is due to a
+> + * wakeup or abort signal, the code jumps to the suspend abort path while the
+> + * filesystem sync finishes in the background.
+> + *
+> + * An aborted suspend that is followed by another suspend is a potential
+> + * scenario that complicates the sequence. This patch handles this by
+> + * serializing any filesystem sync; a subsequent suspend's filesystem sync
+> + * operation will only start when the previous suspend's filesystem sync has
+> + * finished. Even while waiting for the previous suspend's filesystem sync to
+> + * finish, the subsequent suspend will still break early if a wakeup completion
+> + * is triggered, solving the original issue of filesystem sync blocking abort.
+> + */
 
-diff --git a/tools/testing/selftests/drivers/net/bonding/Makefile b/tools/testing/selftests/drivers/net/bonding/Makefile
-index 2b10854e4b1e..44b98f17f8ff 100644
---- a/tools/testing/selftests/drivers/net/bonding/Makefile
-+++ b/tools/testing/selftests/drivers/net/bonding/Makefile
-@@ -10,7 +10,8 @@ TEST_PROGS := \
- 	mode-2-recovery-updelay.sh \
- 	bond_options.sh \
- 	bond-eth-type-change.sh \
--	bond_macvlan_ipvlan.sh
-+	bond_macvlan_ipvlan.sh \
-+	bond_passive_lacp.sh
- 
- TEST_FILES := \
- 	lag_lib.sh \
-diff --git a/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh b/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
-new file mode 100755
-index 000000000000..9c3b089813df
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
-@@ -0,0 +1,105 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test if a bond interface works with lacp_active=off.
-+
-+# shellcheck disable=SC2034
-+REQUIRE_MZ=no
-+NUM_NETIFS=0
-+lib_dir=$(dirname "$0")
-+# shellcheck disable=SC1091
-+source "$lib_dir"/../../../net/forwarding/lib.sh
-+
-+# shellcheck disable=SC2317
-+check_port_state()
-+{
-+	local netns=$1
-+	local port=$2
-+	local state=$3
-+
-+	ip -n "${netns}" -d -j link show "$port" | \
-+		jq -e ".[].linkinfo.info_slave_data.ad_actor_oper_port_state_str | index(\"${state}\") != null" > /dev/null
-+}
-+
-+check_pkt_count()
-+{
-+	RET=0
-+	local ns="$1"
-+	local iface="$2"
-+
-+	# wait 65s, one per 30s
-+	slowwait_for_counter 65 2 tc_rule_handle_stats_get \
-+		"dev ${iface} egress" 101 ".packets" "-n ${ns}" &> /dev/null
-+}
-+
-+setup() {
-+	setup_ns c_ns s_ns
-+
-+	# shellcheck disable=SC2154
-+	ip -n "${c_ns}" link add eth0 type veth peer name eth0 netns "${s_ns}"
-+	ip -n "${c_ns}" link add eth1 type veth peer name eth1 netns "${s_ns}"
-+
-+	# Add tc filter to count the pkts
-+	tc -n "${c_ns}" qdisc add dev eth0 clsact
-+	tc -n "${c_ns}" filter add dev eth0 egress handle 101 protocol 0x8809 matchall action pass
-+	tc -n "${s_ns}" qdisc add dev eth1 clsact
-+	tc -n "${s_ns}" filter add dev eth1 egress handle 101 protocol 0x8809 matchall action pass
-+
-+	ip -n "${s_ns}" link add bond0 type bond mode 802.3ad lacp_active on lacp_rate fast
-+	ip -n "${s_ns}" link set eth0 master bond0
-+	ip -n "${s_ns}" link set eth1 master bond0
-+
-+	ip -n "${c_ns}" link add bond0 type bond mode 802.3ad lacp_active off lacp_rate fast
-+	ip -n "${c_ns}" link set eth0 master bond0
-+	ip -n "${c_ns}" link set eth1 master bond0
-+
-+}
-+
-+trap cleanup_all_ns EXIT
-+setup
-+
-+# The bond will send 2 lacpdu pkts during init time, let's wait at least 2s
-+# after interface up
-+ip -n "${c_ns}" link set bond0 up
-+sleep 2
-+
-+# 1. The passive side shouldn't send LACPDU.
-+check_pkt_count "${c_ns}" "eth0" && RET=1
-+log_test "802.3ad lacp_active off" "init port"
-+
-+ip -n "${s_ns}" link set bond0 up
-+# 2. The passive side should not have the 'active' flag.
-+RET=0
-+slowwait 2 check_port_state "${c_ns}" "eth0" "active" && RET=1
-+log_test "802.3ad lacp_active off" "port state active"
-+
-+# 3. The active side should have the 'active' flag.
-+RET=0
-+slowwait 2 check_port_state "${s_ns}" "eth0" "active" || RET=1
-+log_test "802.3ad lacp_active on" "port state active"
-+
-+# 4. Make sure the connection is not expired.
-+RET=0
-+slowwait 5 check_port_state "${s_ns}" "eth0" "distributing"
-+slowwait 10 check_port_state "${s_ns}" "eth0" "expired" && RET=1
-+log_test "bond 802.3ad lacp_active off" "port connection"
-+
-+# After testing, disconnect one port on each side to check the state.
-+ip -n "${s_ns}" link set eth0 nomaster
-+ip -n "${s_ns}" link set eth0 up
-+ip -n "${c_ns}" link set eth1 nomaster
-+ip -n "${c_ns}" link set eth1 up
-+# Due to Periodic Machine and Rx Machine state change, the bond will still
-+# send lacpdu pkts in a few seconds. sleep at lease 5s to make sure
-+# negotiation finished
-+sleep 5
-+
-+# 5. The active side should keep sending LACPDU.
-+check_pkt_count "${s_ns}" "eth1" || RET=1
-+log_test "bond 802.3ad lacp_active on" "port pkt after disconnect"
-+
-+# 6. The passive side shouldn't send LACPDU anymore.
-+check_pkt_count "${c_ns}" "eth0" && RET=1
-+log_test "bond 802.3ad lacp_active off" "port pkt after disconnect"
-+
-+exit "$EXIT_STATUS"
-diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-index dad4e5fda4db..4d16a69ffc65 100644
---- a/tools/testing/selftests/drivers/net/bonding/config
-+++ b/tools/testing/selftests/drivers/net/bonding/config
-@@ -6,6 +6,7 @@ CONFIG_MACVLAN=y
- CONFIG_IPVLAN=y
- CONFIG_NET_ACT_GACT=y
- CONFIG_NET_CLS_FLOWER=y
-+CONFIG_NET_CLS_MATCHALL=m
- CONFIG_NET_SCH_INGRESS=y
- CONFIG_NLMON=y
- CONFIG_VETH=y
--- 
-2.50.1
+Shouldn't this documentation go up in the public one?
 
+thanks,
+
+greg k-h
 
