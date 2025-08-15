@@ -1,181 +1,133 @@
-Return-Path: <linux-kernel+bounces-770466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8B5B27B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDE6B27B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B653A44E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F47188E61E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466FC1F91C5;
-	Fri, 15 Aug 2025 08:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DD825332E;
+	Fri, 15 Aug 2025 08:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGKmw4Ap"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsNfre0p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACD42836F;
-	Fri, 15 Aug 2025 08:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A77220F30;
+	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755246726; cv=none; b=FCkzRitowD0OLjitKkKR0/fac6EKihHkW4FUXv/OpFT8bVEacpMFouEvb/ZjpQ8L4/TobG8RY/GmIeeVxFuIUGTMea4ql1UsXC7Tmg9q0VrEGwVZRhj+4n5qxpbSoczaYL9ok0+KBuBh5Fn69PHgMWMoRFgI93io1a1NcdZkbjY=
+	t=1755247061; cv=none; b=LcDy5eyeKWrXUYP2qvKZwWCIGUPezlQUO2uJzuuJdWFSWRZzQ8V/LmLzrF8ADIEzb4q8NKOlHvj0xc28nRjIOSxdkl29t6kz+Cr84PTZ34B2SnDdPbgXrnlfmtzGR8ot4LaZiGrMnuR9Kh6suEr/aE06PJfAr6Xzg7sJgdGCtlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755246726; c=relaxed/simple;
-	bh=9+8DBXXTptKn2ZWjjVXEiRdMpDFZWM3gMPQi3jbFQpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=T4SxRqEKs7aQzZgZmgMETsdetP9PIao+qcLMwtWvKkH7oNmgpx5o2do+p1dmk71QMO6qDan3UhYMrl6Tu0sAyOSU1lmYvgilm+qIkZ1dLi4VBlT90M8kd4nfH3LesEqfShG2zI99hi7qnqlkn9KfbJ2fApY28IZZ8iltLClhHc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGKmw4Ap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB08C4CEEB;
-	Fri, 15 Aug 2025 08:32:03 +0000 (UTC)
+	s=arc-20240116; t=1755247061; c=relaxed/simple;
+	bh=L7VZdGs5j0iAIIVV95ydOPA+CQ4L5Vw5Pc4ESRH7W5A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ojUdwDXmpUHUUeIqnqW2bfdN/deMUHCwTYpdgGwdtAcGMtRMzwaHAkhuKnHMq+ZjK0lkNre6dqb2CjkI2sefqNx6ISRb/uIfmntSfZPdXt+nqe5ttacPPT/05RVk8Kq7eFTvBk6c1uolL0dfNN9EjmVdaIGyvBdQU8z4wNokt9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsNfre0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3073EC4CEEB;
+	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755246726;
-	bh=9+8DBXXTptKn2ZWjjVXEiRdMpDFZWM3gMPQi3jbFQpo=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=gGKmw4ApnoAQgJHg1XK47rQAiNYIEjjgwwIhqNFK6ERKqG4u7IVccY2UFnrMSBStm
-	 sz5q3KxAdYXKTy0p3/TL/9sGVsMn1NNgBM6ouiShqAuSiC6guZ22DOg20vQr4P9fFW
-	 SXezbAyppmwK64z0mTKArt4u2eRAVONKUFi1YPAIMnALVbxDeksWetbZc3splGLGEK
-	 oyhLYG66x+B/TaT2jVFT/jhxX5oOmmjtrXnrJhNcT0fIrgIn9NkHgv/kZqnv/mRy8Q
-	 Y3NhUsU/A2QPeCiYFQRnUt8gMpkON08DjuZ/ZWa7p71U806+3jZbdHjxbRVKmVQfeF
-	 sRWEZeDtelq3Q==
-Message-ID: <a0a1bc99-0322-4f63-a903-12983facddc9@kernel.org>
-Date: Fri, 15 Aug 2025 10:32:01 +0200
+	s=k20201202; t=1755247061;
+	bh=L7VZdGs5j0iAIIVV95ydOPA+CQ4L5Vw5Pc4ESRH7W5A=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bsNfre0peB10P3Tz9sQE/s7htiknvrsgrvoTh5AdkXi5Ow1IE2Z2+ITr0PbTYp4LD
+	 NEL0VHCa5LOZnMOUA5hH/QHOWK8JSAz8D54gKy6GK8eybXTHB7XeQgKSdD2RQmDZ3W
+	 iUwHh7h1iiDQasMi7boWq2Kd0QqZUzw6jDNlxujZqEEz0IOizFlW7RB/F1uOveXb8z
+	 O0NMpdwWh0EnKKGKYJN89sUKnMoFqj9qAtLT7OVxNgvDSEtZpc1yZHA9EHBmejtPj4
+	 WHhgVuUuKJzAspVBgUM5dsikuWFjbSAYfnaG1aWrHNg6oph3HClfZJVsp+7voHY8Ll
+	 2t0qfBazxvPGA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF5ECA0EE4;
+	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH 00/13] soc: amlogic: clk-measure: Add more SoCs to support
+ clk-measure
+Date: Fri, 15 Aug 2025 16:37:26 +0800
+Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
- property.
-To: Yi xin Zhu <yzhu@maxlinear.com>, "vkoul@kernel.org" <vkoul@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "kees@kernel.org" <kees@kernel.org>,
- "dave.jiang@intel.com" <dave.jiang@intel.com>,
- "av2082000@gmail.com" <av2082000@gmail.com>,
- "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250808032243.3796335-1-yzhu@maxlinear.com>
- <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
- <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMfxnmgC/x2N0QrCMAwAf2Xk2UDXWUR/RURiGzXolpJsIoz9u
+ 8XH4+BuBWcTdjh1Kxh/xEWnBv2ug/yk6cEopTHEEFM4DD1SKTiqMbpmx1nRl1rVZszv13Vk8qW
+ 5W6T9kI6hJCJoqWp8l+9/c75s2w/yQ+LWdgAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247056; l=2630;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=L7VZdGs5j0iAIIVV95ydOPA+CQ4L5Vw5Pc4ESRH7W5A=;
+ b=HrV4mTTd9v5hmPvd3ShYi4GdXeIZDlANBSxOzuM4gM9XilonMTDwDrW+DuLRkddH2wFDdyUbj
+ 9cbdHjUfK2FAS1fSwzBLSODvtHVd+QKD31ItH7oLe9+kRlH/BVEwSch
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On 15/08/2025 09:07, Yi xin Zhu wrote:
-> Hi Krzysztof,
-> 
-> On 08/08/2025 14:10, Krzysztof wrote:
->>
->>
->> Where is the changelog?
->>
-> Sorry for missing the changelog.  I will include it in V3 patch.
-> 
->>> +  intel,dma-sw-desc:
->>> +    type: boolean
->>> +    description:
->>> +      Indicates that the DMA driver should operate in 
->>> + software-managed
->> mode.
->>> +      If this property is not present, it implies that DMA 
->>> + descriptors are
->> managed and generated by another hardware component that controls the 
->> DMA engine.
->>
->> Nothing improved:
->> 1. Still wrongly wrapped.
->> 2. Still SW property.
->>
->> I don't think you read the feedback. You need to describe hardware, not SW.
->>
->> Best regards,
->> Krzysztof
-> 
-> Could you please give me some advice with regarding to the device tree attribute?
-> My understanding is if I can create a phandle link to describe the DMA descriptors are provided by some HW component.  
-> That follows the comments. Something like this:
-> 
-> intel,dma-desc-provider = <&xxx_hw>;
-> 
-> Then it describes some HW component manages the DMA descriptors.
+As support for clk-measure expands across more SoCs, the current
+approach of defining all SoC-specific clk-measure table data in the
+driver .c file results in progressively larger compiled images,
+resulting in memory wastage.
 
+Move SoC-specific clk-measure tables to DTS definitions and extend
+support for additional SoCs (A4, A5, S7, S7D and S6).
 
-It is not sufficient to tell. Creating phandles representing fake
-hardware is still not hardware description.
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Chuan Liu (13):
+      dt-bindings: soc: amlogic: Add clk-measure related properties
+      soc: amlogic: clk-measure: Remove the msr_data from clk-measure
+      ARM: dts: amlogic: add clk-measure IDs and names for meson SoC family
+      arm64: dts: amlogic: add clk-measure IDs and names for Amlogic SoCs
+      dt-bindings: soc: amlogic: Unify the compatible property for clk-measure
+      soc: amlogic: clk-measure: Unify the compatible property
+      ARM: dts: amlogic: Unify the compatible property for clk-measure
+      arm64: dts: amlogic: Unify the compatible property for clk-measure
+      arm64: dts: amlogic: A4: Add clk-measure controller node
+      arm64: dts: amlogic: A5: Add clk-measure controller node
+      arm64: dts: amlogic: S7: Add clk-measure controller node
+      arm64: dts: amlogic: S7D: Add clk-measure controller node
+      arm64: dts: amlogic: S6: Add clk-measure controller node
 
-> Without it, it means SW manage the DMA descriptors.
-> Please correct me if my understanding is wrong.
-
-
-Yes, it is wrong, because you focus on syntax instead of on the hardware
-problem or hardware characteristic.
-
-> 
-> However, in the existing driver,  HW manages descriptor mode is the default mode.
-> I can't create such link in the device tree without breaking the devicetree ABI.
-> So, is it okay I create an attribute like below ?
-> 
-> Intel,dma-desc-provider = "CPU";   // it means CPU manage DMA descriptors.
-> 
-> Intel,dma-desc-provider = "XXX_HW";  // it means XX_HW manage DMA descriptors.
-
-
-And how is it not a OS policy? Bring reasoning and arguments, otherwise
-I cannot help you. Your reply above has zero hardware-related arguments,
-zero facts, zero hardware description.
+ .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  |  66 +-
+ arch/arm/boot/dts/amlogic/meson8.dtsi              |  94 ++-
+ arch/arm/boot/dts/amlogic/meson8b.dtsi             |  94 ++-
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        | 212 +++++
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        | 202 +++++
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 275 +++++-
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 312 +++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 253 ++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 243 ++++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         | 144 +++-
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi  |   2 +-
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi        | 229 +++++
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          | 136 ++-
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 301 ++++++-
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi         | 255 +++++-
+ drivers/soc/amlogic/meson-clk-measure.c            | 930 ++-------------------
+ 16 files changed, 2877 insertions(+), 871 deletions(-)
+---
+base-commit: e5624eb63c452efa753759e74eb27fe132eb577c
+change-id: 20250731-add-more-socs-to-support-clk_measure-b2a43590d5aa
 
 Best regards,
-Krzysztof
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
