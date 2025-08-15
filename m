@@ -1,163 +1,129 @@
-Return-Path: <linux-kernel+bounces-770688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1D5B27DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05C1B27DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1793ABBE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA16BA029D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510BA2FF669;
-	Fri, 15 Aug 2025 10:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DA72FCC15;
+	Fri, 15 Aug 2025 10:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaKXJR+4"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="YHpNbwYz"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C886A2FE06D;
-	Fri, 15 Aug 2025 10:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB42FE573
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755252132; cv=none; b=kEPOOqKmJTkjJyOCbFBoMmY0qInC0oQ5fRp1pVKGn12aqElg2C2sRuHBuCQE/8sJ+M5lVV/Tgxc4aRukoCFWNi3AbvG8vyIdwJrz19FqYUPczIfa/mWfHJtotDZVheNK4HLAG1tuHvyhlpdeEfH1aTyCO+auNE/Hzwikc8L33qI=
+	t=1755252158; cv=none; b=G4jhdBekAoMh3XkeaaM1ITLnDCoh4ssL8nGFXXh6bbMuZJlawI/EwF2+SyaGusnKKCj5/Qce1WN9hMQd+gc3IIkbXawjVifZlF2OqAXp6RCYcgdcXZjLtv7XBh962QYjXxbw2x6/2UQluM0wZDxJcErkyTRWqCcn4ZYxwbia0o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755252132; c=relaxed/simple;
-	bh=sw/GxrjNBfbj/4YWc+dvIqX6eB1g/so/jFMom8jSTms=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FA8HxsV2YLQyhUCGegDV8/cLbSEkoTeBsEDiDDQLrWovIxW0RrTTH2kjzMTWrMMiS8bk9XVITX0/K5IskKwTxVoTujLGKktfZC4wOMev6F+64VYnLzGFv4Co38ovKyASdr0Edjua9ZeXjU6hWZKZ4hGozt6W213j5Geoe8cFu9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UaKXJR+4; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb731caaaso245985166b.0;
-        Fri, 15 Aug 2025 03:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755252129; x=1755856929; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hSHiYv82zlQIjN/InQskDU2zSOHyGcoOeUDBehBVTYs=;
-        b=UaKXJR+4Qao7Db1GQsHwiJGhOiDFtFvdfSy0Fmtedgv5q0SfYKjAMNfbw0K+y+QJYC
-         oGaR6GLWSy5DPbmDRiU+7XOreFJ7JZ6Jyre8iyCCT2YOXEBssXVjPBZzuosJuZsYkafB
-         Ve4QnrE7MOKIRjOPsQtkqjI3L7yXF2Csoh0OMGKAiMij4oxbPyP1LB0x/uyxO8mG79rd
-         TfWJz2hln9UsChiegWe0+f205gecUvULQVl1o04as1jc0Cm2fgS08y5tK8lV58LU00+Y
-         7pAZTQOBPeMd+vOuosVMSsUy8ZOu0C2oLaKlWZynW7ZEOGAgNyTAhQopdmGRnXxDURoO
-         0ojA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755252129; x=1755856929;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hSHiYv82zlQIjN/InQskDU2zSOHyGcoOeUDBehBVTYs=;
-        b=jM6nz/xy65Xrt9F9LW5IwmtQSu3ctzk9F3fL8BBOclWCzsZmyA/W88znSuMow/Ojox
-         T0RzSDCG2hp7qYzpKl0NTucoY9jDjYw9AYdiibwRBZLVRVExwaHoJuaaCzpShbn2zPyf
-         5bBtzM7KQDXb7wZRHHQL0j1h9gURwkybkmpAOwJ1TLoGcXfo9crr3m1LTmzAFnhSrXgf
-         IWhomuRzqalXBa9R+SmA35mzC9br8xGivJqNqzqqru53BWYAEFamKjI5FOYd71nCO61W
-         xH9YAUx+pnzkTcCGRcqAEDqD5yQCq3WW9ydNzUcuyOb0Nvkln/3at76+oLl56N5ZAHF9
-         VCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/jcI+MDXTJNJSKhJ4vTPyltr4aBX3gqXiwkhlujzkEt5ScY74u3inxJ0Yt7T3k95tlnCgvmJt+ocSMsv+@vger.kernel.org, AJvYcCUz585K39GW9JfFKpF0a/WHorugpzD1qDA3wEvtC3k3znl1Ka5rcJUTWcDGiRzDRtTxgcrIxRosPcYn@vger.kernel.org, AJvYcCWOVbU/PNbug4x9KJzV6ZyK7ZxyGKxS2TDpNsexBD34wEDHDGOkbM51nWnrU+Tm9wMQhYa3Sxl7tw/P@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU/cx/+u436qYAi3G6b5RgFa/6+FndEfXhQgSlzqa37XTsM0R0
-	cfxqJx8qkGaBxoVuriYPfnO5gXH663cOH2N1RbcTY0NQYcUe7dhgmfnN
-X-Gm-Gg: ASbGnctKsrbTPfkl6ho7oBUFf1zmgoSKdunlgkorciU9tFaLMWBPqYs4UGUpGVg9sbW
-	J3QAD7Qm9skXLPESYNQhYml7TN8o8K41LRhJ4lZ0OTSdr3uuQFv2RaGLGuQaQB2BvIRp2xGc3Vv
-	+iv1xHrrMFTc8ZweiT+bKqmSyvU0Y4vCxHAkIvv7MVgmuO1rf2ObbFUOXLy1FqpagiuxkQYmPVJ
-	CWcG1k3NAtXtSH6Oesi86eqjiYrdscUkMWSUt5HNM7SvheLoWI06oW4jsM12IGl6MTRg3X9zOE4
-	W3D+9/GB3eAA6vNMg+0j3Z6RVhtXdYbmmLHIVVBDh33cc4+RmakWsma5W8+iCm7AQD1APITdujj
-	u+Vvh3mdLJuGtcc0289B5h2OnlvG2
-X-Google-Smtp-Source: AGHT+IEYbc66YvfCs6ShJHKZ/L9mKZnKgiRZcakuMlRBlVprbCd3+5uLUPKmYBIOV4eOJnJJE3XQuw==
-X-Received: by 2002:a17:907:961a:b0:afc:d5a3:90c1 with SMTP id a640c23a62f3a-afcdc3f8108mr128940366b.55.1755252128842;
-        Fri, 15 Aug 2025 03:02:08 -0700 (PDT)
-Received: from [127.0.1.1] ([185.177.137.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72d5dsm119031766b.37.2025.08.15.03.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 03:02:08 -0700 (PDT)
-From: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Date: Fri, 15 Aug 2025 12:02:04 +0200
-Subject: [PATCH v4 3/3] iio: adc: ltc2497: reorder struct members to fix
- memory holes
+	s=arc-20240116; t=1755252158; c=relaxed/simple;
+	bh=VoXVs13GDRd4xdBtQd4TpGiWCAwaVymoNAOqTKN1NcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FDPbqHX+Z2EwMFjyca99krweAJzUEu8i3ma74ur/Qd1a8NTp5prwCfYYBWaN+q/8FzHGgsLWIDd/cuj8VowpX/IDnmuj2oDkHvhR6gp+JlHRS7ignEsShzA0ZEawUJoqR341Jsc8W/33sWMwVm98i+EJMRMCsZEU9APxZIuvgPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=YHpNbwYz; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755252153;
+	bh=+iYfE5eplM8rdft956VQZNIhMkMTmyg2e+/I5gVDuNk=;
+	h=From:Subject:Date:Message-ID;
+	b=YHpNbwYzqxDBNRFuzE3egnMgHNsRlaYCYMKikbSaImiGl9ZmrnUElI23xjsOoBAyC
+	 J03c6piLiOxbxjE39Ah7BlOMBehTwWDvlS4bORFSlH4Q+/5AcW4ixZLWAJxsiJi0gR
+	 FLW61S0U1JRo8D1yIYPC40zVoT1Y1pWUYOSXAK+A=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 689F05AE00001724; Fri, 15 Aug 2025 18:02:24 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6588226292026
+X-SMAIL-UIID: 1A812D2436984CDEA8928075789959B3-20250815-180224-1
+From: Hillf Danton <hdanton@sina.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Michal Koutny <mkoutny@suse.com>,
+	tj@kernel.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com,
+	gaoyingjie@uniontech.com
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
+Date: Fri, 15 Aug 2025 18:02:07 +0800
+Message-ID: <20250815100213.4599-1-hdanton@sina.com>
+In-Reply-To: <dd1418f9-93d0-45c9-bcc2-d67f48d050f6@huaweicloud.com>
+References: <20250722112733.4113237-1-chenridong@huaweicloud.com> <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs> <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com> <20250815024020.4579-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-ltc2495-v4-3-2d04e6005468@gmail.com>
-References: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com>
-In-Reply-To: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755252124; l=1725;
- i=y.alperbilgin@gmail.com; s=20250811; h=from:subject:message-id;
- bh=sw/GxrjNBfbj/4YWc+dvIqX6eB1g/so/jFMom8jSTms=;
- b=d8g6Yo0+oXnGNBwncQwM8nzxDDbU3Xg4nhfwKFfM0Gd3Z60y0JOkJJalMl1+97MwIdolHEXkr
- XPOsP/1BqziAE0nEMLH4u/RL5aMtRxQL4RVjbRLf3QF11vrwOUecqm+
-X-Developer-Key: i=y.alperbilgin@gmail.com; a=ed25519;
- pk=FtW2oyQ0+xlYU0XmhYiJYC3lNPtPrgeE6i4WXPwaFnY=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Reorder members in the `ltc2497_chip_info` and `ltc2497core_driverdata`
-structs to eliminate memory holes identified by the `pahole` tool.
+On Fri, 15 Aug 2025 15:29:56 +0800 Chen Ridong wrote:
+>On 2025/8/15 10:40, Hillf Danton wrote:
+>> On Fri, Jul 25, 2025 at 09:42:05AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>>> On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>>>> CPU0                            CPU1
+>>>>> mount perf_event                umount net_prio
+>>>>> cgroup1_get_tree                cgroup_kill_sb
+>>>>> rebind_subsystems               // root destruction enqueues
+>>>>> 				// cgroup_destroy_wq
+>>>>> // kill all perf_event css
+>>>>>                                 // one perf_event css A is dying
+>>>>>                                 // css A offline enqueues cgroup_destroy_wq
+>>>>>                                 // root destruction will be executed first
+>>>>>                                 css_free_rwork_fn
+>>>>>                                 cgroup_destroy_root
+>>>>>                                 cgroup_lock_and_drain_offline
+>>>>>                                 // some perf descendants are dying
+>>>>>                                 // cgroup_destroy_wq max_active = 1
+>>>>>                                 // waiting for css A to die
+>>>>>
+>>>>> Problem scenario:
+>>>>> 1. CPU0 mounts perf_event (rebind_subsystems)
+>>>>> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+>>>>> 3. A dying perf_event CSS gets queued for offline after root destruction
+>>>>> 4. Root destruction waits for offline completion, but offline work is
+>>>>>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+>>>>
+>>>> What's concerning me is why umount of net_prio hierarhy waits for
+>>>> draining of the default hierachy? (Where you then run into conflict with
+>>>> perf_event that's implicit_on_dfl.)
+>>>>
+>> /*
+>>  * cgroup destruction makes heavy use of work items and there can be a lot
+>>  * of concurrent destructions.  Use a separate workqueue so that cgroup
+>>  * destruction work items don't end up filling up max_active of system_wq
+>>  * which may lead to deadlock.
+>>  */
+>> 
+>> If task hung could be reliably reproduced, it is right time to cut
+>> max_active off for cgroup_destroy_wq according to its comment.
+>
+>Hi Danton,
+>
+>Thank you for your feedback.
+>
+>While modifying max_active could be a viable solution, I’m unsure whether it might introduce other
+>side effects. Instead, I’ve proposed an alternative approach in v3 of the patch, which I believe
+>addresses the issue more comprehensively.
+>
+Given your reproducer [1], it is simple to test with max_active cut.
 
-Confirm via the `bloat-o-meter` that this change has no significant
-impact on the final code size:
+I do not think v3 is a correct fix frankly because it leaves the root cause
+intact. Nor is it cgroup specific even given high concurrency in destruction.
 
-| Object File     | Total Size Change |
-|-----------------|-------------------|
-| ltc2497-core.o  | 0 (0.00%)         |
-| ltc2497.o       | +2 (+0.10%)       |
-| ltc2496.o       | 0 (0.00%)         |
-
-Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
----
- drivers/iio/adc/ltc2497.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/adc/ltc2497.h b/drivers/iio/adc/ltc2497.h
-index dfe2d5c30017adeb3f17e57fc5bf1e0e792ff30f..48e9f74870ab489b5df6e69a39446610c6a72b93 100644
---- a/drivers/iio/adc/ltc2497.h
-+++ b/drivers/iio/adc/ltc2497.h
-@@ -5,8 +5,8 @@
- #define LTC2497_CONVERSION_TIME_MS	150ULL
- 
- struct ltc2497_chip_info {
--	u32 resolution;
- 	const char *name;
-+	u32 resolution;
- 	/*
- 	 * Represents the datasheet constant from the temperature formula:
- 	 * T_Kelvin = (DATAOUT * Vref) / temp_scale, where Vref is in Volts.
-@@ -20,15 +20,15 @@ struct ltc2497_chip_info {
- };
- 
- struct ltc2497core_driverdata {
--	struct regulator *ref;
--	ktime_t	time_prev;
- 	/* lock to protect against multiple access to the device */
- 	struct mutex lock;
-+	struct regulator *ref;
-+	ktime_t	time_prev;
- 	const struct ltc2497_chip_info	*chip_info;
--	u8 addr_prev;
- 	int (*result_and_measure)(struct ltc2497core_driverdata *ddata,
- 				  u8 address, int *val);
- 	enum iio_chan_type chan_type_prev;
-+	u8 addr_prev;
- };
- 
- int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev);
-
--- 
-2.43.0
-
+[1] https://lore.kernel.org/lkml/39e05402-40c7-4631-a87b-8e3747ceddc6@huaweicloud.com/
 
