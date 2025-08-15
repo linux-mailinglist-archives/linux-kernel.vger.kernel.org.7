@@ -1,250 +1,144 @@
-Return-Path: <linux-kernel+bounces-770177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AD4B27813
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731BAB27814
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331DF1889300
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599245A6B80
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBADD2C0F7D;
-	Fri, 15 Aug 2025 05:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEF0238C23;
+	Fri, 15 Aug 2025 05:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d/9uAyEy"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="POb9c3nA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA9A272E67;
-	Fri, 15 Aug 2025 05:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4615810942
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755234188; cv=none; b=Gj+ErXRFvRW6Co0D20bMt4f/A6I5L/nmtEJK46xPk501V3MBa1lOyNQ3q8uGvNiwWrCotHci0q0kEdmt9W72Rru/rXUBBYlOsmhjX+9NFqieNa6FYw7sCJGt5iR2/Ps3YLy4+nZXyv6DVHNWof/Kco1PSqkEdBy58Z4+MqZ7n6Y=
+	t=1755234523; cv=none; b=KbW59kyA2lJkn3vQnh/81VAZWPPArj0bMcEcZjNcPDjw1zviONYEZ5VGNuAm5slpTAmMjIzFZgnAAx9ldba5XQjWma6by9U705Y63W0EJ/FZ6TmBwI6a1ynpdtZKSuDGvlYxgL0y0fAg4YBNKtoyRz+fPKINUW9gbPtvJkcTHAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755234188; c=relaxed/simple;
-	bh=dCh75Wq3hVwvqLlJBVYMaqoz++i9yIWJwQlUb56DQME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mMukP/bbCT/TFOURIo1r1iMNxE4gWaN+MDRAECvmBFrEF0p6ZeGTYUBkqXKqbvxl73v9rwEWQwdsrzaA5BV1PpKIQzaAu02CuiNcLrfXsa5UutfEZVjKA5TMy3lKqsWe3E5jsTTqAZh9SwgeJJ46FX++TDX+CFudWbUSMnalDrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d/9uAyEy; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea6ccb7so1294308b3a.2;
-        Thu, 14 Aug 2025 22:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755234186; x=1755838986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gb3D+2Y2P+VKDJSul4hdca7kG6zpe2ME/ptwlX9aheU=;
-        b=d/9uAyEy/pk3QQDoG6CwvkbsGMbLKeThE/I3yBxDSOp4YxJwLRgixh+wkOixWwaMeK
-         ntTB7d9vyTUeNz2f0vD32Q4zjh0hlRG9oFVxBOWEiOvqosJ/0iOlKUJXpGbDvkC+w4wV
-         0pb/6sEaErm8cmlKZlPx1ct47fO0gL0LGK6qIWSBDoRv/1r0o1qKA6VqUaGTp+ICOHB1
-         fsS2Txf5ZcOTCEOjb5+QvOfoxBZAxOvsUxV0TZ6sSdDX8lh0mTyvSLDA5J0TQ4rD8HWP
-         gEk1dS+jqTiMpM9WhPyvmlY+qKM2hvhV9WNwWqIUrT742cRpS5ew+gmYIw32RLnHwnyS
-         x10A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755234186; x=1755838986;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gb3D+2Y2P+VKDJSul4hdca7kG6zpe2ME/ptwlX9aheU=;
-        b=FhPleoWWFREyg8DbKbE/45H6GImdSp59vJEyl+CTXH9WUjpFH/fh4vXjxOhMm4ywxm
-         Me+2aCh7jGaZ97FPB0JNkKPLUQwoKb4AQ2LpQcTqRWZhcclxD8RdqD5qNC6lcp7Ai+An
-         JLsF3O98DKUZwJ2SivcEoaZYTfZap7ANGMWATXoa6ZQLRwJrp46WKnoRYvw/LptoZpVz
-         snIr9fN6apGPgw7K66yK9ul4Arj9i0WcN4Wv/FNXFgM7dHNUeFTHQnK5MXPmMhXf0GdS
-         zYArBZS6Gcs/aSviqCWAR76YjxkDNavYxGkZKA7FnRp2WCk3MZPTYjKnDbFWSamqptR1
-         mWkg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6J2k7xy1J+kvqBlRlz4oPQOwGJnv1nDrBymRUp0HxuBcXawTq8NfuZtBPIg70/STUWqry7rAmeD8=@vger.kernel.org, AJvYcCU8RFqsLa5d5+f+lT+dhglE09XPtG+G2YvbS/bzu0Yfp6lv8NydhlNscridai2CEVzkNupQ4vSx@vger.kernel.org, AJvYcCV+LuO4oEu4Ei+wM3vUrROf2kj/4vLZWFqE3ldljHiFcwokR+Q7bBSxR4V8qc6n+HSSUPeCSJUTCDeRkpgf@vger.kernel.org, AJvYcCVquweRrbEoY6eSLuI6zsWYXa8TqxW8rE/FGYtgKhlRxoz/er9BjRJj8ImUgpQhSNiWm/tR4q5RVXky@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlF7qihy13PGxbEImwIRdejSJt4oxfdr/aowRU/+q/N3UUBwRK
-	qriWEI6bLDlKusXQTYtLnbztUW9XrTVtPokTXw6if1cIlYfAlA8zf8ap
-X-Gm-Gg: ASbGncvB02ZxSTjRZj3pkSWIZ54UU5eZnA1pbRHg2/a6NrT0bHk20Zhi1xzqQeCL1pQ
-	7Y28I4+s+GvOPvenmbRDR/yMA1x7X5sU9pTCxj0GtZG1zSZV2kHWFk9BoTCh6AVoDf4E7Ux/XFL
-	Dr52ZgtXhV/CckPhojKcF2ga8B3ALHqAO0Kopql/24yJWcxuTbVL5XDCrolNHFt6G2IKZKyUpSB
-	ZWkXHvVkzWJeYE6G0SHiroxzfIpBhwxvTRP27Eei+5dI8ckOZcBZDojSj4aSbJaqq12kQt+O6At
-	fzUPhXGGF2+e06ydvpuxfgRkX1L1RR9b30tQbE65db2vE8UCyGgFJVPgK9rzguoxz8jyGP6t6L9
-	SwSOpL4ZOLytekM+BWd0ShdGSFe+34HW1uoAabESKVOv2UdAlFSbJ0s9c6TsJBfkY1gnJQu+Bag
-	gvz0WX8QfUcsMpuMT/lfh/dkQXsLg=
-X-Google-Smtp-Source: AGHT+IFCN3/82QbT1VacGPyrRYv9/F/PPZnJ8Gac/QiInZA+wk35khY28zaLI33nJg2szq2eps4NcA==
-X-Received: by 2002:a17:902:e948:b0:242:3855:c77a with SMTP id d9443c01a7336-2446d8c6388mr12741515ad.34.1755234185896;
-        Thu, 14 Aug 2025 22:03:05 -0700 (PDT)
-Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53c6e1sm5128645ad.115.2025.08.14.22.03.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 22:03:05 -0700 (PDT)
-From: alistair23@gmail.com
-X-Google-Original-From: alistair.francis@wdc.com
-To: chuck.lever@oracle.com,
-	hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-nfs@vger.kernel.org
-Cc: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH 8/8] nvmet-tcp: Support KeyUpdate
-Date: Fri, 15 Aug 2025 15:02:10 +1000
-Message-ID: <20250815050210.1518439-9-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250815050210.1518439-1-alistair.francis@wdc.com>
-References: <20250815050210.1518439-1-alistair.francis@wdc.com>
+	s=arc-20240116; t=1755234523; c=relaxed/simple;
+	bh=fARppgmQLdDG+Oo817Wx/utbZjvGDXSobDfZUGHYwrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+iWVHTJHtJtSwRuoJFhk8OEiIyPgvNCHM0F/Gzk7RzCEkEOK0vSoFfT0izx+4POhr1E7tGT7SuWTnKuagDOJH3XSmokItCJDwLx7g3WD00AjAJeu2OK3rFiElrMAN6ZpgrKT87jOLrMFXnHC82qxZ6PNIWLL19GJjf4w6qKM+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=POb9c3nA; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755234523; x=1786770523;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fARppgmQLdDG+Oo817Wx/utbZjvGDXSobDfZUGHYwrU=;
+  b=POb9c3nAiNHLkCcV4uBIUBuKqg0+m+Y+52865nL7Iep9CYdM3FsVbaTk
+   cJp09UQQ6PGbsbT35TVG7ZK3i0a0zwsatE4pTzOuCPO7CBafzDe/IMIxZ
+   ZSTaRudCKqT+6xP0j3JG2A0BG/wJ2Sc7pUTkGZBi3bR6UpJncC/qOy7+m
+   ESr526VNoD9vbJ2ZDJ3kPHwlOhGpdO5e5VKLjVLMll77ADIGF6zZJ/Twu
+   FzhV2iMTnJi5/PsyRKqBu8V+muBjQGyaMstDNT4d47GKmVYKJZeLYM9nH
+   6NRNmrfSUeiSD9ve4LxP7mNCYs+LOqOMjXo3cGc5dqYV8bx4xbYBL0uTP
+   A==;
+X-CSE-ConnectionGUID: o1Dr0OMzSN6gAbIJiqx6eQ==
+X-CSE-MsgGUID: 8d6TCWxFSzm2trLnxlD1EA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="67829288"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="67829288"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:08:42 -0700
+X-CSE-ConnectionGUID: tfAlX/NuQliU2/sVdqAv1Q==
+X-CSE-MsgGUID: RAvDZ1p1R2222/UQqxT7vQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166569328"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.223.76])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:08:41 -0700
+Date: Thu, 14 Aug 2025 22:08:33 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: lirongqing <lirongqing@baidu.com>
+Cc: tglx@linutronix.de, bp@alien8.de, peterz@infradead.org,
+	jpoimboe@kernel.org, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, david.kaplan@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs without
+ ARCH_CAP_GDS_CTRL
+Message-ID: <20250815050811.gm7nxcd7wn47lshy@desk>
+References: <20250815035334.4230-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815035334.4230-1-lirongqing@baidu.com>
 
-From: Alistair Francis <alistair.francis@wdc.com>
+On Fri, Aug 15, 2025 at 11:53:34AM +0800, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> The commit 8c7261abcb7ad("x86/bugs: Add attack vector controls for GDS")
+> caused call traces during secondary CPU initialization because it didn't
+> properly handle CPUs that lack the ARCH_CAP_GDS_CTRL capability.
+> 
+> For CPUs without ARCH_CAP_GDS_CTRL support, we should set the mitigation
+> to GDS_MITIGATION_UCODE_NEEDED rather than GDS_MITIGATION_OFF, as these
+> CPUs may still be vulnerable but cannot disable mitigation.
+> 
+> Add the missing check for ARCH_CAP_GDS_CTRL to properly determine the
+> mitigation state for affected CPUs.
+> 
+> [    2.809147] unchecked MSR access error: RDMSR from 0x123 at rIP: 0xffffffffb3452807 (update_gds_msr+0x87/0xe0)
+> (update_gds_msr+0x87/0xe0)
+> [    2.809147] Call Trace:
+> [    2.809147]  <TASK>
+> [    2.809147]  identify_secondary_cpu+0x72/0x90
+> [    2.809147]  start_secondary+0x7a/0x140
+> [    2.809147]  common_startup_64+0x13e/0x141
+> [    2.809147]  </TASK>
+> [    2.809147] unchecked MSR access error: WRMSR to 0x123 (tried to write 0x0000000000000010) at rIP: 0xffffffffb34527b8
+> (update_gds_msr+0x38/0xe0)
+> [    2.809147] Call Trace:
+> [    2.809147]  <TASK>
+> [    2.809147]  identify_secondary_cpu+0x72/0x90
+> [    2.809147]  start_secondary+0x7a/0x140
+> [    2.809147]  common_startup_64+0x13e/0x141
+> [    2.809147]  </TASK>
+> [    2.809147] ------------[ cut here ]------------
+> [    2.809147] WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/bugs.c:1053 update_gds_msr+0x9b/0xe0
+> 
+> Fixes: 8c7261abcb7ad ("x86/bugs: Add attack vector controls for GDS")
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index b74bf93..3af911c 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1071,6 +1071,8 @@ static void __init gds_select_mitigation(void)
+>  			gds_mitigation = GDS_MITIGATION_FULL;
+>  		else {
+>  			gds_mitigation = GDS_MITIGATION_OFF;
+> +			if (!(x86_arch_cap_msr & ARCH_CAP_GDS_CTRL))
 
-If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
-a KeyUpdate handshake type then the underlying TLS keys need to be
-updated.
+This check is already present few lines below.
 
-If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
-allow the NVMe layer to process the KeyUpdate request and forward the
-request to userspace. Userspace must then update the key to keep the
-connection alive.
+> +				gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
+>  			return;
 
-This patch allows us to handle the NVMe host sending a KeyUpdate
-request without aborting the connection. At this time we don't support
-initiating a KeyUpdate.
+To avoid duplicating, a better fix could be to not return here, and let the
+next block DTRT:
 
-Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- drivers/nvme/target/tcp.c | 59 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-index 5eaab9c858be..1dc6fa28d08c 100644
---- a/drivers/nvme/target/tcp.c
-+++ b/drivers/nvme/target/tcp.c
-@@ -175,6 +175,7 @@ struct nvmet_tcp_queue {
- 
- 	/* TLS state */
- 	key_serial_t		tls_pskid;
-+	key_serial_t		user_key_serial;
- 	struct delayed_work	tls_handshake_tmo_work;
- 
- 	unsigned long           poll_end;
-@@ -836,6 +837,11 @@ static int nvmet_tcp_try_send_one(struct nvmet_tcp_queue *queue,
- 	return 1;
- }
- 
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+static int nvmet_tcp_try_peek_pdu(struct nvmet_tcp_queue *queue);
-+static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w);
-+#endif
-+
- static int nvmet_tcp_try_send(struct nvmet_tcp_queue *queue,
- 		int budget, int *sends)
- {
-@@ -1114,7 +1120,7 @@ static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
- 		struct msghdr *msg, char *cbuf)
- {
- 	struct cmsghdr *cmsg = (struct cmsghdr *)cbuf;
--	u8 ctype, level, description;
-+	u8 ctype, htype, level, description;
- 	int ret = 0;
- 
- 	ctype = tls_get_record_type(queue->sock->sk, cmsg);
-@@ -1135,6 +1141,29 @@ static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
- 			ret = -EAGAIN;
- 		}
- 		break;
-+	case TLS_RECORD_TYPE_HANDSHAKE:
-+		htype = tls_get_handshake_type(queue->sock->sk, cmsg);
-+
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+		if (htype == TLS_HANDSHAKE_TYPE_KEY_UPDATE) {
-+			tls_clear_err(queue->sock->sk);
-+			handshake_req_cancel(queue->sock->sk);
-+			handshake_sk_destruct_req(queue->sock->sk);
-+			queue->state = NVMET_TCP_Q_TLS_HANDSHAKE;
-+
-+			/* Restore the default callbacks before starting upcall */
-+			read_lock_bh(&queue->sock->sk->sk_callback_lock);
-+			queue->sock->sk->sk_user_data = NULL;
-+			queue->sock->sk->sk_data_ready = queue->data_ready;
-+			read_unlock_bh(&queue->sock->sk->sk_callback_lock);
-+
-+			return nvmet_tcp_tls_handshake(queue, HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED);
-+		}
-+#endif
-+		pr_err("queue %d: TLS handshake %d unhandled\n",
-+		       queue->idx, htype);
-+		ret = -EAGAIN;
-+		break;
- 	default:
- 		/* discard this record type */
- 		pr_err("queue %d: TLS record %d unhandled\n",
-@@ -1344,7 +1373,29 @@ static int nvmet_tcp_try_recv(struct nvmet_tcp_queue *queue,
- 	for (i = 0; i < budget; i++) {
- 		ret = nvmet_tcp_try_recv_one(queue);
- 		if (unlikely(ret < 0)) {
--			nvmet_tcp_socket_error(queue, ret);
-+			if (ret == -EKEYEXPIRED &&
-+				queue->state != NVMET_TCP_Q_DISCONNECTING &&
-+				queue->state != NVMET_TCP_Q_TLS_HANDSHAKE) {
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+				tls_clear_err(queue->sock->sk);
-+				handshake_req_cancel(queue->sock->sk);
-+				handshake_sk_destruct_req(queue->sock->sk);
-+				queue->state = NVMET_TCP_Q_TLS_HANDSHAKE;
-+
-+				/* Restore the default callbacks before starting upcall */
-+				read_lock_bh(&queue->sock->sk->sk_callback_lock);
-+				queue->sock->sk->sk_user_data = NULL;
-+				queue->sock->sk->sk_data_ready = queue->data_ready;
-+				read_unlock_bh(&queue->sock->sk->sk_callback_lock);
-+
-+				ret = nvmet_tcp_tls_handshake(queue,
-+							      HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED);
-+#else
-+				nvmet_tcp_socket_error(queue, ret);
-+#endif
-+			} else {
-+				nvmet_tcp_socket_error(queue, ret);
-+			}
- 			goto done;
- 		} else if (ret == 0) {
- 			break;
-@@ -1798,6 +1849,7 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
- 	}
- 	if (!status) {
- 		queue->tls_pskid = peerid;
-+		queue->user_key_serial = user_key_serial;
- 		queue->state = NVMET_TCP_Q_CONNECTING;
- 	} else
- 		queue->state = NVMET_TCP_Q_FAILED;
-@@ -1843,7 +1895,7 @@ static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
- 	int ret = -EOPNOTSUPP;
- 	struct tls_handshake_args args;
- 
--	if (queue->state != NVMET_TCP_Q_TLS_HANDSHAKE) {
-+	if (queue->state != NVMET_TCP_Q_TLS_HANDSHAKE && !keyupdate) {
- 		pr_warn("cannot start TLS in state %d\n", queue->state);
- 		return -EINVAL;
- 	}
-@@ -1856,6 +1908,7 @@ static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
- 	args.ta_data = queue;
- 	args.ta_keyring = key_serial(queue->port->nport->keyring);
- 	args.ta_timeout_ms = tls_handshake_timeout * 1000;
-+	args.user_key_serial = queue->user_key_serial;
- 
- 	ret = tls_server_hello_psk(&args, GFP_KERNEL, keyupdate);
- 	if (ret) {
--- 
-2.50.1
-
+         /* No microcode */
+         if (!(x86_arch_cap_msr & ARCH_CAP_GDS_CTRL)) {
+                 if (gds_mitigation != GDS_MITIGATION_FORCE)
+                         gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
+                 return;
+         }
 
