@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-771284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DACB28525
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAF1B28502
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A832E3AB70C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628AD5E3DA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4AF3176F8;
-	Fri, 15 Aug 2025 17:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF36B30DEC6;
+	Fri, 15 Aug 2025 17:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A86cYmj/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JPFy6QXi"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F793176E3;
-	Fri, 15 Aug 2025 17:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD1930F524
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755278955; cv=none; b=NUdHhsaJX85uAl+iRuWmtwMDT9r8uoHS6LvIssBJsuWj3pDTs8r10WoI1E4ici4JpzfcOOuicXaKNF0Uvols3akGQj3/O+C+uSpetMJX8IvutARcOQoAh72gqKRWbsVc0S+OxKTH+zabqUhOqSP/ttSckpbxacAjH9K/Rg6EArY=
+	t=1755278936; cv=none; b=fWgXmc8mwS5OKKnXcRktOovpxEwDNVnp3pu0A7pSu7UPsCzPr3O17U/SLaPId4Bn3XLaO2oDaHOpHfwY7kEUCRZs+sRfyuShzd3WcPy8nWcejYfD5XwE8dswozHZZilB1rjdGzU9wn9SPSwJ963VrvoR/xeX8gw9DYbyEnU8llg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755278955; c=relaxed/simple;
-	bh=PK26ncj1sRIqMENRXER6Zb/SJgspRGIPg5z97PYQV90=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mQQ4soKdvKM+WE5xmK4jFTGFUw+1rwqZszfIscAiy2s6aktVLPB+cKaSCidgmGDgeiBGvaRJtl8mKOUpQmke8DjGiBCwXcMeAVK0Msl9lOFJ6NdB1qUgZD8+qrdH+Ai0KZHB5g+5yg7bBm3IaV2FfwzX3fxkfcNmj012QisgJ9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A86cYmj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CAEC4CEEB;
-	Fri, 15 Aug 2025 17:29:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755278954;
-	bh=PK26ncj1sRIqMENRXER6Zb/SJgspRGIPg5z97PYQV90=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A86cYmj/HBFtAAj2CzEkcbBe9jKSWZ7H0ENkfA7ZqLkv/UaoRHpkSjCPW0va0KBQb
-	 chCDuL+Rrbtcm2OVRFrTt3eKhVFvySV0AUFQaOQBZy05QZ81wKzAYzcBSx8ZgMBKNn
-	 LBfiouBXINSjhqMyXFUFDhhZYTkpQCVaLGX9LSeUlgFOiLOd22+JBzgCP9Gx7HEQ/a
-	 L3mSYdpTJX9zbE44nmA1tVIznYNF1QUM2xpXGcEFaZUUd5EJzGYXyPu3lnyNKhVOXE
-	 3DyXWrfsKkRO/kZctZ+arUNTbxqi2G+nbqwzLPyF9MImVBvC93fd6BO0MnPbNQ17iN
-	 J7PDRmlHRoQdw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 15 Aug 2025 19:28:26 +0200
-Subject: [PATCH net 8/8] selftests: mptcp: sockopt: fix C23 extension
- warning
+	s=arc-20240116; t=1755278936; c=relaxed/simple;
+	bh=rlu8tdmhOAUdI4UELJLEF+Q1Ukrf2EpGPzu38KwC42s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=tMMOYWMJjM/hiUgme53MZCXq4ikOaW2JvHeI4Gilv5UttWF0sddtLXI0hL62HIqa31JourZhmeGu8dw2dQWl3CV9/Q3PgJtsEN7C8n44hfY+r8WGCml3MAuZeFWkXq54jhd9URKi5zPS+ZzlJieL8FqRAhRAPDohHDQOODormmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JPFy6QXi; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57FHSgXj2018221
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 15 Aug 2025 10:28:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57FHSgXj2018221
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755278923;
+	bh=rlu8tdmhOAUdI4UELJLEF+Q1Ukrf2EpGPzu38KwC42s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=JPFy6QXi7yhgozBYJN9Gt+Fjc5LRyVnoT+ZCXfnFN4/bKSfDNJD6YF7ddHlkYHzcV
+	 Y891SxFe/VxoV4Ya4YZOv7da0lZzJzccNAaVQ4EU5P5QEgWpEkaQ8FILzEMvwvl5ZR
+	 wb2g7hd+hgaHllyNNPO8od0fsXn4HTxgaLGU/d+zkdAWatwjA+9VU815UCng5K62ub
+	 JkxbiW0JEKnW0QQ9BQv4pzpn3TSV+RKJxRHEGZKh10FQaAn0vJ7JTm071DWIc4ZdGr
+	 g9TLjoww02X13cndu4IVtcgq12AhSf9CFp2QiBQ4yK8ECHpUrmNeRNmoU9VLCqvGET
+	 VXaEqPDo3RxHg==
+Date: Fri, 15 Aug 2025 10:28:43 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
+        scott.d.constable@intel.com, joao@overdrivepizza.com,
+        samitolvanen@google.com, nathan@kernel.org,
+        alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
+User-Agent: K-9 Mail for Android
+In-Reply-To: <7594ecd7-994d-4cb8-9f8a-b6c1d4b01e17@citrix.com>
+References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net> <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com> <20250815074939.GA3419281@noisy.programming.kicks-ass.net> <20250815102839.GD4068168@noisy.programming.kicks-ass.net> <20250815103055.GE4068168@noisy.programming.kicks-ass.net> <fc0715e0-42f2-4b5d-be31-ac44657afc56@citrix.com> <20250815105908.GB3245006@noisy.programming.kicks-ass.net> <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com> <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com> <7594ecd7-994d-4cb8-9f8a-b6c1d4b01e17@citrix.com>
+Message-ID: <880F0E7C-86AE-4007-863F-E58B4C3C131C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-8-521fe9957892@kernel.org>
-References: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
-In-Reply-To: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Jianguo Wu <wujianguo@chinatelecom.cn>, Shuah Khan <shuah@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, zhenwei pi <pizhenwei@bytedance.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2202; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=PK26ncj1sRIqMENRXER6Zb/SJgspRGIPg5z97PYQV90=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLm53k53Fm9pdLSzs7IPexQu1+hfEeN6WlZi4497y6dm
- vL08rzijlIWBjEuBlkxRRbptsj8mc+reEu8/Cxg5rAygQxh4OIUgIms/8Twm11tamCvUNOUL+E2
- K2p62jcvXOZlfenXrm/lwiyzKp779DH8FdL34fOYrZMn0mq87G6W1js2rgx1KZ6/nxe/FNCJmbm
- eBwA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-GCC was complaining about the new label:
+On August 15, 2025 10:21:48 AM PDT, Andrew Cooper <andrew=2Ecooper3@citrix=
+=2Ecom> wrote:
+>On 15/08/2025 6:14 pm, H=2E Peter Anvin wrote:
+>> On 2025-08-15 04:19, Andrew Cooper wrote:
+>>>> CS Jcc, decodes to Jcc,pn for non-taken
+>>>> DS Jcc, decodes to Jcc,pt for taken
+>>> Ah, thanks=2E=C2=A0 I was looking at the hex in one of the comments an=
+d still
+>>> couldn't figure it out=2E
+>>>
+>>> So with this notation, we also have the dual meaning of ,pt between th=
+e
+>>> P4 and LNC=2E=C2=A0 At least the encoding is the same=2E
+>>>
+>> What "dual meaning?"
+>
+>Well, it has different semantics now it's been reintroduced in LNC=2E=C2=
+=A0
+>(Only has any effect on a prediction miss, and causes a proactive decode
+>resteer)=2E
+>
+>Sure, it's "just perf" so can be argued as "compatible behaviour", but
+>people caring about the ,pt / ,pn properties do need to know the differen=
+t=2E
+>
+>~Andrew
 
-  mptcp_inq.c:79:2: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     79 |         int err = getaddrinfo(node, service, hints, res);
-        |         ^
+The architectural semantics are "hint to the microarchitecture that this b=
+ranch is strongly biased in one specific direction", and that has been true=
+ since the P4=2E
 
-  mptcp_sockopt.c:166:2: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-    166 |         int err = getaddrinfo(node, service, hints, res);
-        |         ^
+There are no other semantic guarantees, including, of course, that the har=
+dware will do anything at all with it=2E
 
-Simply declare 'err' before the label to avoid this warning.
-
-Fixes: dd367e81b79a ("selftests: mptcp: sockopt: use IPPROTO_MPTCP for getaddrinfo")
-Cc: stable@vger.kernel.org
-Reviewed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_inq.c     | 5 +++--
- tools/testing/selftests/net/mptcp/mptcp_sockopt.c | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_inq.c b/tools/testing/selftests/net/mptcp/mptcp_inq.c
-index 3cf1e2a612cef911028f46569563d16dd5d32129..f3bcaa48df8f22e8f4833fcc3b919d21764bf7fb 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_inq.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_inq.c
-@@ -75,9 +75,10 @@ static void xgetaddrinfo(const char *node, const char *service,
- 			 struct addrinfo *hints,
- 			 struct addrinfo **res)
- {
--again:
--	int err = getaddrinfo(node, service, hints, res);
-+	int err;
- 
-+again:
-+	err = getaddrinfo(node, service, hints, res);
- 	if (err) {
- 		const char *errstr;
- 
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_sockopt.c b/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-index 9934a68df23708ecb413c4ab26523989e3b9f158..e934dd26a59d9b50445d61e8b8013ce3c8d2a8a0 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-@@ -162,9 +162,10 @@ static void xgetaddrinfo(const char *node, const char *service,
- 			 struct addrinfo *hints,
- 			 struct addrinfo **res)
- {
--again:
--	int err = getaddrinfo(node, service, hints, res);
-+	int err;
- 
-+again:
-+	err = getaddrinfo(node, service, hints, res);
- 	if (err) {
- 		const char *errstr;
- 
-
--- 
-2.50.0
-
+Performance tuning at the uarch level changes over time and will continue =
+to do so, so if you don't distinguish between architectural behavior and pe=
+rformance you have to define pretty much every instruction as semantically =
+different in each generation=2E
 
