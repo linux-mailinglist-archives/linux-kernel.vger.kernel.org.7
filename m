@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-769960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A339BB2755E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:08:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668FAB27561
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDFD5C7AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E353BAB63
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C57E29D268;
-	Fri, 15 Aug 2025 01:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A26E29CB47;
+	Fri, 15 Aug 2025 01:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZFQcYZYN"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CC8SV4ny"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329652777F9;
-	Fri, 15 Aug 2025 01:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A1A29827C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755223168; cv=none; b=hQe2JssQHPGZETYQqqLTZaGhdEJvkeh1x//pAzr0/DA4JI1Uj6KQKrFIK0WEXxVbnrd61iM7wP+MTS5qaQLbYwgpOv7uJRXrEUICChPzEjsG51nKxeOu7cLVEwreqxZcRhWcHGqoEdFYnCKfrg0x5h8T9zYA92AJUs06v9KkNk0=
+	t=1755223156; cv=none; b=midtvN7Qf6tOEguG7py6Lwmx9IhWlYds7UEGABwIJBWEeqKzS48XWDHI9X5epGXfy2237SEt5K1eI9gSq78zph+/gX0zGBdOM8NyyDlEqvGpSOS4RPErAnxq/6ZYX/JBV/sMHcSAs1HpK/l3hFPlVfQ/l89PpIT7JDYPoUvaaWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755223168; c=relaxed/simple;
-	bh=zSUUbOPSNIlO8oema4/AtenrMEjWQHo4i6YgosHvNn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMo0urc4Y2OG5itaqdjrhw5GXr2v0cn1I+28CRpimjC3Pu+91YoSqv/STXnyWfAMPmlaFdhR7evqlr38/uaBAwMQob7kT7QIQFtnUBv0JzfSOZP/BqDKjso4kvoSbVEAHdEipTOghnVcyHc6wbIKDdhusfTsQfXU6UkJSsu+Cqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZFQcYZYN; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6UITZGCNKVQJuHjpAdvmMBezdHWOXUFmkpWZz90DmNg=; b=ZFQcYZYNoD8pmeYzItpfpqXp+q
-	ufxxGqXVrWNxYI1GFUJ968wi+ZKXsaHYmAPjQaqjnc7Uzp84flMpnhOEyImn7Q82dfdKwdngwFkX0
-	BQmg56at8A/M6YxJBuJEjdikuvGUJ4JeXk4TE+Vrkvl3sqjob4SD/OMkO4Zs3tRPUhM8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umjiQ-004m6Z-JY; Fri, 15 Aug 2025 03:58:46 +0200
-Date: Fri, 15 Aug 2025 03:58:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <00e2690c-3b26-46c3-9b27-1c1a73964326@lunn.ch>
-References: <20250814073855.1060601-1-dong100@mucse.com>
- <20250814073855.1060601-2-dong100@mucse.com>
+	s=arc-20240116; t=1755223156; c=relaxed/simple;
+	bh=pm9xR/FeoxJAb2EBsmA2hr1amByGV1Ps0KpZ8gKsQHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WC7YHy8QnGN0Z3ata7VlsHyPRPZelQIGJX3De+bYT8by03Qx0P17YT18KklTSllctfgNquq+ct5zGcqamneoadioHpT4OMAUiH9lHOg8+VeqUT2e/g+WdN+I6GQpwSB5/OmcF9Drzi+bEVhYYyTiR/nqn5FTiEZR60YimrLoL50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CC8SV4ny; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e5b381aa-33a2-4537-9f71-a95f621441a7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755223151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tzKVb+OuhpcSSRMoVYa9IuCr7Oh6acF4Qvk0wsQHiRY=;
+	b=CC8SV4nybWBdyn4sb5Ef9djH6SombrOwQmW9xgpmCO4hNoUez8LppozIaHXhYsoJlXRzpS
+	DkMzD5134Mn+VZVSjdVu7R5h8FW/yZMrUXRdIHpmRD33VcC21R2FGvVAsq/Mrhqv5jXFr7
+	8Y/hMUzHHjxNTYXur5IUPLAjuDNgWus=
+Date: Fri, 15 Aug 2025 09:59:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814073855.1060601-2-dong100@mucse.com>
+Subject: Re: [PATCH] mm/page_alloc: simplify lowmem_reserve max calculation
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250814090053.22241-1-ye.liu@linux.dev>
+ <20250814140713.GF115258@cmpxchg.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <20250814140713.GF115258@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> +static void rnpgbe_shutdown(struct pci_dev *pdev)
-> +{
-> +	bool wake;
-> +
-> +	rnpgbe_dev_shutdown(pdev, &wake);
-> +
-> +	if (system_state == SYSTEM_POWER_OFF) {
-> +		pci_wake_from_d3(pdev, wake);
-> +		pci_set_power_state(pdev, PCI_D3hot);
-> +	}
 
-I don't think you need this test of system state until you have added
-WoL support.
 
-    Andrew
+在 2025/8/14 22:07, Johannes Weiner 写道:
+> On Thu, Aug 14, 2025 at 05:00:52PM +0800, Ye Liu wrote:
+>> From: Ye Liu <liuye@kylinos.cn>
+>>
+>> Use max() macro to simplify the calculation of maximum lowmem_reserve
+>> value in calculate_totalreserve_pages(), instead of open-coding the
+>> comparison. The functionality remains identical.
+>>
+>> Signed-off-by: Ye Liu <liuye@kylinos.cn>
+> 
+> You can remove the {} from the for block as well now.
 
----
-pw-bot: cr
+I agree to delete it, but I noticed a patch has been added to the -mm 
+mm-new branch by Andrew Morton[1]. What should I do now? Send v2 ? 
+Or send a new patch? If this is my first time, please feel free to give me some advice.
+[1]：https://lore.kernel.org/all/20250815004917.03FD7C4CEED@smtp.kernel.org/
+> 
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+
+-- 
+Thanks,
+Ye Liu
+
 
