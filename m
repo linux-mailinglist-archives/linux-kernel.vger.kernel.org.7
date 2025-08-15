@@ -1,120 +1,76 @@
-Return-Path: <linux-kernel+bounces-771312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BBFB28567
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E35EB28569
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB5AD3BFC9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:52:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65AF07B65E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD2E23E356;
-	Fri, 15 Aug 2025 17:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2114C24EAB1;
+	Fri, 15 Aug 2025 17:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfbc8BHa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4KIXUh7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F61F317719;
-	Fri, 15 Aug 2025 17:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2E8317708;
+	Fri, 15 Aug 2025 17:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755280357; cv=none; b=U0ZyU8XL0sD5tJjAoLJ2Xdp1mpRxvs6QwKVSdQtildbeZ7OQA/bRB6Rb5fqlUHWE4Y7ul38uXXj8MV0jpduXMsIR6BfwM8FHe5dY8W3iSECK+G0sso9cppq5gHZox9mMZeQlMOM/SQu1Z3po3de1NnVB4FDFOZATUeK8OJNkOwY=
+	t=1755280388; cv=none; b=AsGk5blgSv0WzWvQJxoW789K2pVE+uOUPYt55uBN4J4v/aBzCWH8+96y4/VwBbALYBzORUOT8pzmyuPC2j1q+NJ1m5sJS80t/NWhkD3EUgrwuZPyT+EiRo2xicy56/R+JCoRfbdx/nJCe1PujZHC/VgA5ONFXk/F/arkpuHwDxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755280357; c=relaxed/simple;
-	bh=tSHfQko4/bqiLMtZRtdkBpP4HPUP+eNAQUQJEiHyBEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eEXRIPxw9CeDw1Vj9ON+4lCunDoeYql9jKJWFwdRArz8icLqa+Cva3oC39pFqOhZcLzHTH4WrBVvi+Rxjwj9WrpnL0FEFR48T4sVtrbxKuD95qZL0V7hFiaPOQzoVz5fq7CitY6MIbD1T8Ed5q6Je5AUgb0srf5/bE5s3S7fWmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfbc8BHa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A2FC4CEEB;
-	Fri, 15 Aug 2025 17:52:35 +0000 (UTC)
+	s=arc-20240116; t=1755280388; c=relaxed/simple;
+	bh=I0SM7tGJd1g8plMRyHpN9cdRWH3CB7GXBW84nBIpmL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W2zHusKM1gQrxlaiBqRAL23M6ajYouR3lcR9ZeoiUaQxjPYvNSJSdfH/0P4MvxQZtuNbTaBvE/DNNcoZxrqhQiAX3h483dR41RwudU427wPCkORVFhDuXc+r8qfXnd1+5KvkPmcdKjz0QwLBq9MMWGPWzJLWQ62fiJC35L02HSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4KIXUh7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9263C4CEEB;
+	Fri, 15 Aug 2025 17:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755280355;
-	bh=tSHfQko4/bqiLMtZRtdkBpP4HPUP+eNAQUQJEiHyBEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sfbc8BHacBOP1lEvUVBWDlS7/449bdzcLhHMsAZHs29O533mvjanrmi8CG98/oNLc
-	 QRnzgCGWGoBT1GhNRkx4LWDVDSklzlEv4coXuhEKlviIlhIpbo5BzBiWF+/rY0/4Sx
-	 AOOUJA05FsxJxhYC+MXe0VVgW4fzj7+byEXjJntoQybca5zs8LDd2OQZXYS1bgIVlf
-	 ouA35o8iav4vBC7DOZLXxfm3g82yJObqWacUIV0D+42CsF7CHF1RHy+IVVtUUgtzQ/
-	 afa3mKte9kn2jFMvMC83lCi7bguPpCPisDcnJymV7z0mnBsPYly41jrd9uXhYKdA1y
-	 kP0f2lDJt4dcg==
-Date: Fri, 15 Aug 2025 20:52:32 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aJ9z4OlwvFdEA2Q_@kernel.org>
-References: <20250814162252.3504279-1-cfenn@google.com>
- <aJ8iNLwlf4PAC0h1@kernel.org>
- <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
- <aJ9fy_sO6tza9qLF@iki.fi>
- <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
- <aJ9ySGv0JZ0DiNgf@kernel.org>
+	s=k20201202; t=1755280388;
+	bh=I0SM7tGJd1g8plMRyHpN9cdRWH3CB7GXBW84nBIpmL0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q4KIXUh7hkOeVYioGCWAbrslaSjhPXyLKJu9XEzjyd531HNLFq285zvlBcmvW8mSp
+	 rQ5Xq+5Yntlrcz/NMWkhQ3l7S+nrW7Eo1xn2SA6iNFvTDrPSsmqkPwi9t0JiyDn6sn
+	 PJRjzpXppDXWo4wIeo0bHu2hglMseRmrChX9QBW9p3naWyl3jrMdJ5BZQAG1LTFxqU
+	 UfvGd8WCFRzkNw+9Yvd9DWNjRbG4aJLJKZFymZiMt5QZXhUV/11ZASPIxVMfA3eoKA
+	 msLQbm/PqSApA8bwhpngBEQcXcKKhm6CjLiJLVwKgXJNWAgd5Fnw4WrR2vdIkOKIKC
+	 vq4o7SGEaMTHA==
+Message-ID: <86bd9285-e01a-412d-82e7-3927222199ee@kernel.org>
+Date: Fri, 15 Aug 2025 19:53:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJ9ySGv0JZ0DiNgf@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] Rust allocator and kvec improvements
+To: Hui Zhu <hui.zhu@linux.dev>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ vitaly.wool@konsulko.se, Hui Zhu <zhuhui@kylinos.cn>
+References: <cover.1753929369.git.zhuhui@kylinos.cn>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <cover.1753929369.git.zhuhui@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 08:45:48PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Aug 15, 2025 at 10:06:36AM -0700, Chris Fenner wrote:
-> > On Fri, Aug 15, 2025 at 9:27 AM Jarkko Sakkinen <jarkko.sakkinen@iki.fi> wrote:
-> > 
-> > > I'll with shoot another proposal. Let's delete null primary creation
-> > > code and add a parameter 'tpm.integrity_handle', which will refers to
-> > > persistent primary handle:
-> > 
-> > I'm not yet sure I understand which handle you mean, or what you're
-> > proposing to do with it. Could you elaborate?
-> 
-> Primary key persistent handle.
-> 
-> In tpm2_start_auth_session() there's
-> 
-> 	/* salt key handle */
-> 	tpm_buf_append_u32(&buf, null_key);
-> 
-> Which would become
-> 
-> 	/* salt key handle */
-> 	tpm_buf_append_u32(&buf, integrity_handle);
-> 
-> And in beginning of exported functions from tpm2-sessions.c:
-> 
-> 	if (!integrity_handle)
-> 		return 0;
-> 
-> And delete from same file:
-> 
-> 	1. tpm2_create_*()
-> 	2. tpm2_load_null()
-> 
-> That way the feature makes sense and does not disturb the user who don't
-> want it as PCRs and random numbers will be integrity proteced agains an
-> unambiguous key that can be certified.
+On 7/31/25 4:50 AM, Hui Zhu wrote:
+>    rust: alloc: kvec: add doc example for as_slice method
+>    rust: alloc: kvec: simplify KUnit test module name to "rust_kvec"
 
-E.g., for example that will unquestionably harden IMA exactly for the
-same reasons why some user space software might to choose to use HMAC
-based integrity protection.
-
-At data center, there's guards and guns but for appliences, but there
-is also the market appliances, home server products etc. They are not
-mobile but neither they are protected in the same as e.g., a data
-center is.
-
-This is not to admit that right now the feature is no good to anyone
-but in a selected set of use cases with this modification it would
-make e.g., IMA's security *worse* than it would be with the feature
-enabled.
-
-BR, Jarkko
+Applied to alloc-next, thanks!
 
