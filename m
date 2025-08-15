@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-771456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08756B28782
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:06:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4B9B28784
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9452117C182
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F45AE1474
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE12C23A9B3;
-	Fri, 15 Aug 2025 21:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98EB23C4EA;
+	Fri, 15 Aug 2025 21:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DvLML2BZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jskxi09S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F9DF71;
-	Fri, 15 Aug 2025 21:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FABD1A2C06
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755291998; cv=none; b=ZJCeju8NXgHvkPiX+nSAxe/PQLqfXTmXLpapVKzMhiE6B2jaQoLVBL2IDzDH6sI8kg2c+4qMcquoeeDUN4F5s78pCUPEnse0QU/7LZJgxg4E0UlGYHlRSG5yx2nhmEMKIfOR7je0BRqoOUtZFBIsnkQkcaSA2qom8hvht/ORETI=
+	t=1755292011; cv=none; b=YfA5bLnln8lB9ZiEn7zHjIWGErX14DsQnyIyRoHF7FMT7y4JbEOtsiSjdA5PDDdC/bczgzdUUde92HX5sDM6ivBYSiSzod9STAtZ40uzFHyANwxi22LONPjvpB9zVcLOtPy0byy1gU/+P3Zi23WI9QfSOSZsSkfpWgLpKjB+Y7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755291998; c=relaxed/simple;
-	bh=NAkG8uNPuBjiRKU2ZLHNxEhFL0M5wJph8yZCZtbRGIE=;
+	s=arc-20240116; t=1755292011; c=relaxed/simple;
+	bh=WqPBWhuU/tBcTzErmqvKOG8XsKcPwWCji6qB98coAsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z8FgM5cLgwl1cM8d0Tka89zlgoDbRwx26F27AgtXiZO730zKt1AZD3UocFpxmL1Aai7lU+C8Nnh1UkSIV8X9sVpdWVjO5kS57My4Kx/byTZZaJ64HwVTQmQoDjviVhbDoJWNp5r1eFI0nhyCWWhl6zJD5fD3e0cPefbMeAeEcLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DvLML2BZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B456D40E01AB;
-	Fri, 15 Aug 2025 21:06:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WwUoz-xiBvLy; Fri, 15 Aug 2025 21:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755291988; bh=qcmvscoEUWBdt1tu+Rr26PL+x4+QNmeO2l7jiVR3K5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DvLML2BZcoAoR0C6J2IvM8RaGRwtmW7m+CFGp4RRnWefY25aMPPnbpLL3N/lcQSZ3
-	 JBSxgbNFBOyKHVZW4cVpNLZSRfpQJv9KmTLA3CCgnC5cDYeNdvwySl8/L45Pea+y4g
-	 oQ1XoGMhOTtjxSu829OF2+xaFFR0nP7LTtB21Q/TJFLIl8Se3M4tebXb2ri/3x8KJz
-	 gBJBteL4YEEdPnxi35v3mBMj6UGRVDcJcIx8i+/qkFg/zLZLXkw4oVtMjdmOgKP67Y
-	 il9/KM+3NI3nJ3yQUdvqv4fAwE9tvzPeL99EupU9z2rMVm0bwRgYFuIC+oOWY/Tpsy
-	 UuAxbPJmeDqHqfZodp3m/puAfGnY/xfagjEALm/ydzVrznOcEm1G2NqQ4Sv/Ir0UpJ
-	 fMnPHzzxteigS7FNYzHHS1KK0kDonSaP1njoL2UpP0e6kBMkMqChrLG2rhtImKPcnC
-	 bmf9bWuWQOood+hdCkRfbegG+u35kvbQkEHDgGp8192UpjiRtw3o0dTKNHkxY82jK3
-	 GEbKIEdBS0Q1me67deK9JsuMtQGiVnRfmpyNdn8hnrC5iGtuGWQklmR1JFRtieMde2
-	 PSzgJHZwlbhVA3NZwtmwq2yb0FuyPbpN5qS2Kt4akjVUWaUNn6ya9vF/zWyfDmB/Dv
-	 omYL8OWaeze2or4RiIBOMhiU=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2081340E0176;
-	Fri, 15 Aug 2025 21:06:06 +0000 (UTC)
-Date: Fri, 15 Aug 2025 23:05:59 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 02/18] x86/apic: Initialize Secure AVIC APIC backing
- page
-Message-ID: <20250815210559.GIaJ-hN2LMGQQyqVtI@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-3-Neeraj.Upadhyay@amd.com>
- <20250815102537.GCaJ8LIZodp1yY39QA@fat_crate.local>
- <7395fc42-5af1-4e26-9e39-8e7213ac5f7b@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J921l59bP/y4ACHIWKac/25813AxEDzFZqYRtV/mum5YdvIGl6NNbXHJvIQem2FQVvw4jNuZQR2A55sUKWIYm7La4Cq5DzdDQWUpMftK3SL/rppX8eot+31CXi419VE6BnqGaeygSpv2+ArEDegM36Z+i4iDaM0VKsODSl2sOYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jskxi09S; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755292008; x=1786828008;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WqPBWhuU/tBcTzErmqvKOG8XsKcPwWCji6qB98coAsM=;
+  b=Jskxi09SwJc5GIbMuJuFq+WE7TlRKBg+nnWwVmFKjEJwYe1FbWGOkRm+
+   g9/6o+zv4S6KTQh5f6OUhT3owt2qxS3riTtLEVeJk9J6lrcNOtLPbfrcP
+   69mZddZlxAg3KCSl9BSJ7H66xcXBvI0sZnVsTV7OQaViI5rm0y8mRY7Vb
+   YciyNE2jfv/T0IXqaM36RoDchK0vxTk3sdgOHj7mP9ZFmlVOvYmlH0pEZ
+   /ldTdIF6/yfBPhqWG6SHzdbkjMj8srCfVi3T4WmFjjlna7cHvnoLxeVJi
+   FvhuGp1OPG57AABftPL00nOnC9vX6yJVVLXmjgk1V4rpBLBbjdfQOMbjB
+   g==;
+X-CSE-ConnectionGUID: Oy6Lw8TpRk+VatDO8ySnhA==
+X-CSE-MsgGUID: 5FIXzRXlQvyQeunMwpzAIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="80194091"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="80194091"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:06:48 -0700
+X-CSE-ConnectionGUID: Z/CfkqUrR66CbZADLtXfyA==
+X-CSE-MsgGUID: 7Q/mgfKgSfqjKuU99B0/3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="190811519"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Aug 2025 14:06:46 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un1dL-000CLM-2H;
+	Fri, 15 Aug 2025 21:06:43 +0000
+Date: Sat, 16 Aug 2025 05:06:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>, bleung@chromium.org
+Cc: oe-kbuild-all@lists.linux.dev, tzungbi@kernel.org, dawidn@google.com,
+	chrome-platform@lists.linux.dev, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] platform/chrome: cros_ec_chardev: Consume
+ cros_ec_device via ref_proxy
+Message-ID: <202508160456.eajfX7vH-lkp@intel.com>
+References: <20250814091020.1302888-4-tzungbi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7395fc42-5af1-4e26-9e39-8e7213ac5f7b@amd.com>
+In-Reply-To: <20250814091020.1302888-4-tzungbi@kernel.org>
 
-On Fri, Aug 15, 2025 at 06:46:55PM +0530, Upadhyay, Neeraj wrote:
-> There are four new functions. So, do I need to put them in new
-> arch/x86/coco/sev/savic.c file?
-> 
-> savic_register_gpa()
-> savic_unregister_gpa()
-> savic_ghcb_msr_read()
-> savic_ghcb_msr_write()
+Hi Tzung-Bi,
 
-Lemme go through the set first.
+kernel test robot noticed the following build errors:
 
-Those last two, for example: we're adding more MSR handling routines related
-to SEV and this is slowly getting out of hand.  But lemme look first.
+[auto build test ERROR on chrome-platform/for-next]
+[also build test ERROR on next-20250815]
+[cannot apply to chrome-platform/for-firmware-next akpm-mm/mm-nonmm-unstable akpm-mm/mm-everything linus/master v6.17-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tzung-Bi-Shih/lib-Add-ref_proxy-module/20250814-172126
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250814091020.1302888-4-tzungbi%40kernel.org
+patch subject: [PATCH 3/3] platform/chrome: cros_ec_chardev: Consume cros_ec_device via ref_proxy
+config: hexagon-randconfig-r072-20250815 (https://download.01.org/0day-ci/archive/20250816/202508160456.eajfX7vH-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160456.eajfX7vH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160456.eajfX7vH-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "ref_proxy_get" [drivers/platform/chrome/cros_ec_chardev.ko] undefined!
+>> ERROR: modpost: "ref_proxy_put" [drivers/platform/chrome/cros_ec_chardev.ko] undefined!
+>> ERROR: modpost: "ref_proxy_alloc" [drivers/platform/chrome/cros_ec_chardev.ko] undefined!
+>> ERROR: modpost: "ref_proxy_free" [drivers/platform/chrome/cros_ec_chardev.ko] undefined!
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
