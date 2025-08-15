@@ -1,213 +1,123 @@
-Return-Path: <linux-kernel+bounces-770197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FE8B2785B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:22:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBAAB2785D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ACCEAA570F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C056B60F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10312594BE;
-	Fri, 15 Aug 2025 05:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF5724EA8D;
+	Fri, 15 Aug 2025 05:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s+nKScj5"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFFcuCjN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA282236F7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ADF23ABAF;
+	Fri, 15 Aug 2025 05:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235253; cv=none; b=RtT+tTwbjxcJdryVQ+PRcbzQgp7hO06d6Q+zhtbCayt0vOywkZ6AgL4EPqyf5j82DV2Z2QZEkMHYYht/x4QDo0/GDVN412PX83bqHseSHIP0qjxs80pzyDlYEhkAzLE9Q2yRgmeh594NIQhn3xFX6TAcUfglIuNQymweyxfuWdo=
+	t=1755235343; cv=none; b=Z9pfD1V85fEN4N4q+pTYCkHa3zjD/os1WYzNgkE0ZwM7kvYbUIfRYCBNf3LuReDMQ/urG2LEr+f26AInniBDDYcvqzVaAPNvaxfeuy0h6ZBWfumDKnnU1ztwznRorGUGuqHRwnIWamAZaTQe7o0Ke/dYhJwbWQnt56+LvVESRPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235253; c=relaxed/simple;
-	bh=503SEWrEiwk4AHvc6H88byJ1joeM0iL9UAQxQ+98CZs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jum6w6OEkJ4fX8c5sQHrPG4GlabxEPUtqorUS/PZSoYoadx4e736CLqA1OPIfffvVqfABV5OXTT1CcG7dwzgT3uk7z6ntXAz/0ur9f6YkRjU6naF5RlozgsZ3e+l6u8t5AfkK+3K/AkbupKPMvF6NN+m+QlRjo/cdpWrpbCayrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s+nKScj5; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b0bf04716aso131361cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755235250; x=1755840050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nN6cY1WnXIWqH8qfrJcmPCahJeWVJ2HfC4QiO+3/8v4=;
-        b=s+nKScj5LJZNrEVsvXbbuHos36kQy2ps7WusTDOaXxn92quN7YN6BxcS2nh0Y9Xqiw
-         OH8tWGVIDomjG/N+3a3fQPLqYVsY8QRxhtm7sGU2kCa5yus0Fq/v3O4+T9ooCjnlGoTu
-         /xivnXirwdsrh86wweNJld2EkkPQ8eYTKg3xtXxz5aJgpewD1fL3JJIJ9seXGEQy6BD4
-         M70ndyzTvL35FfDo5BuQaQhO66orfqi3hjSwHbzkHBFRNthxSGOC0KHKRrI2PepT0N6s
-         Xj8VSjEe5HUA+CK360xBhE6lZbl2mAABDBqqYrOacFs1121bFiRUq7yqD1b7TbnGVt+1
-         s9Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755235250; x=1755840050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nN6cY1WnXIWqH8qfrJcmPCahJeWVJ2HfC4QiO+3/8v4=;
-        b=EXEjjNIRqvrIBi3i9TzD8aBkZIZFV/0UZ5JI05/7iOzWii0EWwr7KsuUtpp+5HPWpq
-         pe69lVhDejo7CXPHP0aoz3mv6wvmbL4LGcz4+/h/DhApkLKWrWRU8HPOlk1XrEsqfFdP
-         PZrTHRT6rwYO+Yp9wbuL2nGlBJIyVEGY/A3chzDJGYEBx/ECdDji72jsU/6c9fGxZWeg
-         jQb0Qjv9kqOfblAomNmZMAAQV7T4x31yNOaqpQtvpXhfcBeUNHcVIsPFR73Y7ksWSnGv
-         GId2DD2KCHpRWlSekGxPQz/rtU5B/NpKlY7ohNUFXMUttMTScnlkqhlWUmoOZL2MNJba
-         Ij+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkxNZTt55M9DYXgJu6gar5scY8I9Us2f6EDxMJ4d3aUPWm6o0gUNWJb/hewlQ2ug8Xt6drGOCA2q7+ETw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOBWQ3r5xitKmzAQgXeRjK0JZwsRwfclx1kKoi+gw/Rf3p16ud
-	YLXxBiVGszaVMjPvURconz1dsWVcEFtf/NWj8mLd73dpGeKZQGp/rOcsAJRK6Gxf38wJwAZm2qp
-	O1B+d7k+f4atEZelc4QpJzS+g0eA/RwxHrU3SmcjJ
-X-Gm-Gg: ASbGncvvbCWIdESCwavPd8GTWGmRZ8lBQBXYz/0QUTwdSguon/sP2IyKh+2eQApWd7e
-	UWWzYOg4pTl6WXSwheyd/udUeGUcn4ZiyGZU+o/qReWriBuOORJ3ofZRU9jvB96lglQlYDV+iRi
-	xHy9BvEZRiCAuVKpXozsvAq7aqk4DIXXryPXss8ifau2iOdnULxJx4SrqivpuoB7Cmkm192794b
-	gw+KDz59qYNcvNGjU1SM1HhKSJluziytwadl9LrD89PVo4a9cixk41p
-X-Google-Smtp-Source: AGHT+IE69f8D6srRBPVl9pKN5vZpO5F0/UnsSKswJGEAghVTRDosELHxgLTcfYcE/QjWOYfDfEWsjCzTxskkAyr2rBo=
-X-Received: by 2002:a05:622a:353:b0:4af:103d:f71 with SMTP id
- d75a77b69052e-4b119db955bmr3455771cf.2.1755235250003; Thu, 14 Aug 2025
- 22:20:50 -0700 (PDT)
+	s=arc-20240116; t=1755235343; c=relaxed/simple;
+	bh=24WP+n4nQNz5wuc3FXW6b3EmG0++IqSdStKZtqhE0Jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DZK7n93MhKp7WoUYPiJmqOIJ8+q4sKmAhwOAfav3Vzf+wuQU09gt/7V6bVI8vZV58MC8J54gkLtVLD7gHqry/EIS04PXWro+ow9SAV+4w5METg7Xrq53KuVfFU7FqzNnc8rDLPlsSedJt0ACLStwGOHZ1NVjXY5qPzJOeOGn9xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFFcuCjN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 580DAC4CEEB;
+	Fri, 15 Aug 2025 05:22:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755235342;
+	bh=24WP+n4nQNz5wuc3FXW6b3EmG0++IqSdStKZtqhE0Jw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tFFcuCjNbXhzqBoF3ireNCTrx3PtNNkETxKOwdfvddw6thKRbz8gre6dBnT9R11CS
+	 nwEuFiJtGQYoRP81N27rvsaen3s+Kb2q2/dbM7M8979ukaF1dXzwt/097E9Vs0suWt
+	 wqRlIDxiesm5NAZzxx1AEJOff3mueVPYAt4bcdtk9Mk6aGQxZd3bNCgn4mkBBVVx2K
+	 7jb1XedZ5QdcDwjg6JlVbWWpg8CbLoA8czSYsw9DnWRjonkxj7bvpUO6U5mvZs01Ys
+	 ieQuQ7A7Nb0PHhjcqt7Ly8HWzEpMfaEv2dNrQe8PcIy/DoBMoczdRAM5K5Ze5YkQgU
+	 sTYbSaDFU80VQ==
+Date: Fri, 15 Aug 2025 07:22:18 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH v2 5/7] docs: kdoc: tighten up the array-of-pointers
+ case
+Message-ID: <20250815072218.297083c7@foz.lan>
+In-Reply-To: <20250814154035.328769-6-corbet@lwn.net>
+References: <20250814154035.328769-1-corbet@lwn.net>
+	<20250814154035.328769-6-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-7-sagis@google.com>
- <aJpO_zN3buvaQoAW@google.com> <0c8d6d1c-d9e1-4ffd-bb26-a03fb87cde1f@linux.intel.com>
-In-Reply-To: <0c8d6d1c-d9e1-4ffd-bb26-a03fb87cde1f@linux.intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Fri, 15 Aug 2025 00:20:39 -0500
-X-Gm-Features: Ac12FXzFZpZpXFtVKoFfvJsHTFWvzrLQdnlQzpXmS7z6xkcHqsTDLUOB3CL7Lc8
-Message-ID: <CAAhR5DG+EMVbrdGaPoUiX3MtnVktFtdiY+dDjRhA9tugAoRTJQ@mail.gmail.com>
-Subject: Re: [PATCH v8 06/30] KVM: selftests: Add helper functions to create
- TDX VMs
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 11:22=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel.c=
-om> wrote:
->
->
->
-> On 8/12/2025 4:13 AM, Sean Christopherson wrote:
-> > On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> [...]
-> >> +
-> >> +/*
-> >> + * Boot parameters for the TD.
-> >> + *
-> >> + * Unlike a regular VM, KVM cannot set registers such as esp, eip, et=
-c
-> >> + * before boot, so to run selftests, these registers' values have to =
-be
-> >> + * initialized by the TD.
-> >> + *
-> >> + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS_G=
-PA.
-> >> + *
-> >> + * The TD boot code will read off parameters from this struct and set=
- up the
-> >> + * vCPU for executing selftests.
-> >> + */
-> >> +struct __packed td_boot_parameters {
-> > None of these comments explain why these structures are __packed, and I=
- suspect
-> > _that_ is the most interesting/relevant information for unfamiliar read=
-ers.
-> I guess because the fields defined in this structure are accessed by hard=
--coded
-> offsets in boot code.
-> But as you suggested below, replicating the functionality of the kernel's
-> OFFSET() could get rid of "__packed".
->
+Em Thu, 14 Aug 2025 09:40:33 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-I agree, I think the reason for using __packed is because of the hard
-coded offsets. I tried using OFFSET() as Sean suggested but couldn't
-make it work.
+> Simplify one gnarly regex and remove another altogether; add a comment
+> describing what is going on.  There will be no #-substituted commas in this
+> case, so don't bother trying to put them back.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
-I can't get the Kbuild scripts to work inside the kvm selftests
-Makefile. I tried adding the following rules based on a reference I
-found:
+LGTM.
 
-+include/x86/tdx/td_boot_offsets.h: lib/x86/tdx/td_boot_offsets.s
-+       $(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
-+
-+lib/x86/tdx/td_boot_offsets.s: lib/x86/tdx/td_boot_offsets.c
-+       $(call if_changed_dep,cc_s_c)
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-But I'm getting the following error when trying to generate the header:
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 29881757bf1c..7f4d95dd47d4 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -527,23 +527,21 @@ class KernelDoc:
+>                  dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+>                  self.push_parameter(ln, decl_type, param, dtype,
+>                                      arg, declaration_name)
+> -
+> +            #
+> +            # The array-of-pointers case.  Dig the parameter name out from the middle
+> +            # of the declaration.
+> +            #
+>              elif KernRe(r'\(.+\)\s*\[').search(arg):
+> -                # Array-of-pointers
+> -
+> -                arg = arg.replace('#', ',')
+> -                r = KernRe(r'[^\(]+\(\s*\*\s*([\w\[\].]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
+> +                r = KernRe(r'[^\(]+\(\s*\*\s*'		# Up to "(" and maybe "*"
+> +                           r'([\w.]*?)'			# The actual pointer name
+> +                           r'\s*(\[\s*\w+\s*\]\s*)*\)') # The [array portion]
+>                  if r.match(arg):
+>                      param = r.group(1)
+>                  else:
+>                      self.emit_msg(ln, f"Invalid param: {arg}")
+>                      param = arg
+> -
+> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+> -
+> -                self.push_parameter(ln, decl_type, param, dtype,
+> -                                    arg, declaration_name)
+> -
+> +                dtype = arg.replace(param, '')
+> +                self.push_parameter(ln, decl_type, param, dtype, arg, declaration_name)
+>              elif arg:
+>                  #
+>                  # Clean up extraneous spaces and split the string at commas; the first
 
-/bin/sh: -c: line 1: syntax error near unexpected token `;'
-/bin/sh: -c: line 1: `set -e;  ;  printf '# cannot find fixdep (%s)\n'
- > lib/x86/tdx/.td_boot_offsets.s.cmd; printf '# using basic dep
-data\n\n' >> lib/x86/tdx/.td_boot_offsets.s.cmd; cat
-lib/x86/tdx/.td_boot_offsets.s.d >>
-lib/x86/tdx/.td_boot_offsets.s.cmd; printf '\n%s\n'
-'cmd_lib/x86/tdx/td_boot_offsets.s :=3D ' >>
-lib/x86/tdx/.td_boot_offsets.s.cmd'
-make: *** [Makefile.kvm:44: lib/x86/tdx/td_boot_offsets.s] Error 2
 
-For now I can add a comment on the __packed and add a TODO to replace
-it with OFFSET. I think that making OFFSET work inside the kvm
-selftests will require more expertise in the Kbuild system which I
-don't have.
 
-> A side topic is when developers should provide comments for the uses of
-> "__packed". Is it always preferred a comment for it or a developer can sa=
-ve
-> the comment for obvious cases, e.g, the structure is defined according to
-> some hardware layout?
->
-> >
-> >> +    uint32_t cr0;
-> >> +    uint32_t cr3;
-> >> +    uint32_t cr4;
-> >> +    struct td_boot_parameters_dtr gdtr;
-> >> +    struct td_boot_parameters_dtr idtr;
-> >> +    struct td_per_vcpu_parameters per_vcpu[];
-> >> +};
-> >> +
-> ...
->
-> >> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S b/tools=
-/testing/selftests/kvm/lib/x86/tdx/td_boot.S
-> >> new file mode 100644
-> >> index 000000000000..c8cbe214bba9
-> >> --- /dev/null
-> >> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
-> >> @@ -0,0 +1,100 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0-only */
-> >> +
-> >> +#include "tdx/td_boot_asm.h"
-> >> +
-> >> +/* Offsets for reading struct td_boot_parameters. */
-> >> +#define TD_BOOT_PARAMETERS_CR0         0
-> >> +#define TD_BOOT_PARAMETERS_CR3         4
-> >> +#define TD_BOOT_PARAMETERS_CR4         8
-> >> +#define TD_BOOT_PARAMETERS_GDT         12
-> >> +#define TD_BOOT_PARAMETERS_IDT         18
-> >> +#define TD_BOOT_PARAMETERS_PER_VCPU    24
-> >> +
-> >> +/* Offsets for reading struct td_per_vcpu_parameters. */
-> >> +#define TD_PER_VCPU_PARAMETERS_ESP_GVA     0
-> >> +#define TD_PER_VCPU_PARAMETERS_LJMP_TARGET 4
-> >> +
-> >> +#define SIZEOF_TD_PER_VCPU_PARAMETERS      10
-> > Please figure out how to replicate the functionality of the kernel's OF=
-FSET()
-> > macro from  include/linux/kbuild.h, I have zero desire to maintain open=
- coded
-> > offset values.
-> >
+Thanks,
+Mauro
 
