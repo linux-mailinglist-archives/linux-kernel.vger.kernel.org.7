@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-771132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AC3B2833B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FA6B2833F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136E75C2EF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54AE1CC7D7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E522308F2D;
-	Fri, 15 Aug 2025 15:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33BF3090EB;
+	Fri, 15 Aug 2025 15:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyxV2RAB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIAhpLjd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFFD308F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109A30749E;
+	Fri, 15 Aug 2025 15:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272925; cv=none; b=QWcPkdvY0moQsflwusJx3EBEa24amB5ne0zGP54Rbdhto4VS6RF35s73U0r6cVClBQDn7td+NUHg/nZiH5kCJ+NQp1+VesaFentmZJZQ7vSy4YmcS2K/pRJ65uKZ88nOHf/+ptr0RMMrmvWUlhXuc2bZGsO0GMq9xI08t5yQtqE=
+	t=1755272929; cv=none; b=oYMp7hf9JfwJcJQ9SNwuh1C0qHrXEysFWpqw0+RDSdKMusyzw2YV/c99K32Q1LX02bXbzoJFHgQ974o2YJ/qSoFbThUCa81dAHXul6KNvkeg7ganNwxRPHG9q5jm5f9CPASmvEEP7t0ompyzmv3e/SEkozJmNduKtn2/8x8z8T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272925; c=relaxed/simple;
-	bh=W1xnZTsdTQGF1SvJSgpleG18XvKB7/YohJwt3/DLakU=;
+	s=arc-20240116; t=1755272929; c=relaxed/simple;
+	bh=dXeZ3KZjlb7yNV7W1EJTeFuhkJItJWW4QMeQLARxE0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyGvTeSmSkLynSmA3r/wqaOUKhfK9RCezoLsfTqn57iI4Li7sN/KIjQ7dk4D3vl7tT8gECvH9Rl/3/TqQl+5KAlQ0kIagiGfmsoSdihdatIl3VsaF9yRx7MkQBzSgkaHENPBV+91fmHTHoUIhyxXxaGlJySkmxWyluaO1l4ppos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyxV2RAB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 737D6C4CEEB;
-	Fri, 15 Aug 2025 15:48:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iESnrFWubdmuqKcmaman3cZ/oSmCVvHG5Q7e6fhCKxK87fiyjxYhOXeNrtepk8DbCRQzU0r7yCXYENzdWzblR0MO7Zkd4pHbseiXCYd3kSrijW/PRa3zwCZkuXKYvRe2IvQ5Gfqe9WSl6EQ8OCaXUMkZatRer9qnU4XK2ia38po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIAhpLjd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679EAC4CEEB;
+	Fri, 15 Aug 2025 15:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755272925;
-	bh=W1xnZTsdTQGF1SvJSgpleG18XvKB7/YohJwt3/DLakU=;
+	s=k20201202; t=1755272928;
+	bh=dXeZ3KZjlb7yNV7W1EJTeFuhkJItJWW4QMeQLARxE0M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MyxV2RABpiAMRi+jRu0QCaobO1B9JuFokJ9s4UOKJVX5IFX+15PbBmA0ZJbYgOyt0
-	 /e3P5XbiTxlenFxZq4e701AG1Lg9Fsa/xP7re6ngydrb5mgqSH3nigWKeZ0tHquF0Y
-	 gHRCkR8L0h+g3dbYy73vX7kAXR/v3OtubaR3vgi+NSeCGMxiI718omBe2VOsXM+UCw
-	 gEuonts36gTEnKAjoNTHr7MpZQh/cn/PgJ/12sdCPKb9YiP3D/Gi7k2FJEZO7f/g5U
-	 Gfp7sQ/MBaN3rLcwTJ9rYU9MxI9WDOdHsvdG1sz0bkv2qNafIere48b0wMKQAVfE6I
-	 yLb4enwD3un8g==
-Date: Fri, 15 Aug 2025 16:48:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Mehta, Sohil" <sohil.mehta@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"debug@rivosinc.com" <debug@rivosinc.com>
-Subject: Re: [PATCH 5/6] x86/shstk: don't create the shadow stack for
- PF_USER_WORKERs
-Message-ID: <dfdf2af0-7154-415e-96f4-3e4fefbe96dc@sirena.org.uk>
-References: <20250814101435.GA17362@redhat.com>
- <8818b456954644ce609e07d77a65714788ef9098.camel@intel.com>
- <e50065a9-d5e2-4e94-94b2-e34c5fac9720@sirena.org.uk>
- <20250815130125.GD11549@redhat.com>
- <20250815130851.GE11549@redhat.com>
- <f1a8da89-7522-429e-a4ba-4794222f1541@sirena.org.uk>
- <20250815154311.GG11549@redhat.com>
+	b=tIAhpLjdnjd7KwcPxHe/fKOEaOJM9IILyUDtcEh08BwHDL/Qr4xpEEEWpXMvKI9Mk
+	 W8cOtYXpZjP09ZQzBX+sykHJb+XQtPylWBCAIJ6L3chyorZcJODU4BbED4STxDDQGo
+	 4/R3x6OX7WTaZRAU92XFukTzVCgTkwf2WzPK7s6cGjKFePaA0Wdq1N+RWwrBIVKNJY
+	 LbbJPUM2a8jNTXCey9UQN2eWqqW0qKEKEOWwrRf8I9RXKXvRc1inLGqB9qmrjZpcRM
+	 Vy4ALkuM6htnQyqEf8KT5Mi+IYIIbCJAssLhzENhYNKdR5Zr0BYNV6MJgUa2oRFYfV
+	 YAymPSJAQG6TQ==
+Date: Fri, 15 Aug 2025 16:48:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: y@spud.smtp.subspace.kernel.org, tsbogend@alpha.franken.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mips: lantiq: Document lantiq dcdc
+ binding
+Message-ID: <20250815-kangaroo-isolating-7e1a366be8d4@spud>
+References: <20250814082705.3183231-1-olek2@wp.pl>
+ <20250814-vocation-viscous-b54bc343e8c6@spud>
+ <e327b6ce-11ad-4909-9c6f-cd833b44e15f@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,47 +60,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F79/VnOKrnE7IlBl"
+	protocol="application/pgp-signature"; boundary="Gk3TvpZT3rBa5qnL"
 Content-Disposition: inline
-In-Reply-To: <20250815154311.GG11549@redhat.com>
-X-Cookie: Tell me what to think!!!
+In-Reply-To: <e327b6ce-11ad-4909-9c6f-cd833b44e15f@wp.pl>
 
 
---F79/VnOKrnE7IlBl
-Content-Type: text/plain; charset=us-ascii
+--Gk3TvpZT3rBa5qnL
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 05:43:11PM +0200, Oleg Nesterov wrote:
-> On 08/15, Mark Brown wrote:
+On Fri, Aug 15, 2025 at 12:13:41PM +0200, Aleksander Jan Bajkowski wrote:
+> Hi Conor,
+>=20
+> On 8/14/25 22:48, Conor Dooley wrote:
+> > On Thu, Aug 14, 2025 at 10:26:56AM +0200, Aleksander Jan Bajkowski wrot=
+e:
+> > > Lantiq DCDC is a voltage converter with a voltage sensor.
+> > >=20
+> > > Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> > > ---
+> > >   .../mips/lantiq/lantiq,dcdc-xrx200.yaml       | 32 ++++++++++++++++=
++++
+> > >   1 file changed, 32 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/mips/lantiq/la=
+ntiq,dcdc-xrx200.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcd=
+c-xrx200.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-x=
+rx200.yaml
+> > > new file mode 100644
+> > > index 000000000000..5648b9676b3c
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx20=
+0.yaml
+> > > @@ -0,0 +1,32 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/mips/lantiq/lantiq,dcdc-xrx200.ya=
+ml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Lantiq DCDC (DC-DC converter with voltage sensor)
+> > > +
+> > > +maintainers:
+> > > +  - Aleksander Jan Bajkowski <olek2@wp.pl>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - lantiq,dcdc-xrx200
+> > What is "xrx2000" in this context?
+>=20
+>=20
+> =E2=80=9Cxrx200=E2=80=9D is one of the generations of Lantiq SoCs. It inc=
+ludes four part
+> numbers
+> with the same memory map. The other generations are amazon-se, danube,
+> ARX100,
+> GRX100, xRX200, xRX300, xRX330. These correspond to the internal code nam=
+es:
+> ase,
+> danube, ar9, gr9, vr9, ar10, grx390.
 
-> > Sure, but OTOH at least for arm64 there's no cost to leaving the feature
-> > enabled unless you actually execute userspace code so if we never return
-> > to userspace writing the code to disable isn't really buying us anything.
+And the dc-dc converter is part of the SoC?
+Either way, you've got this file in the wrong location probably, dc-dc
+converters are usually under the regulator directory.
 
-> The fact that a kernel thread can have the pointless ARCH_SHSTK_SHSTK is
-> the only reason I know why x86_task_fpu(PF_USER_WORKER) has to work.
-
-> I'd like to make this logic consistent with PF_KTHREAD, and in the longer
-> term change the x86 FPU code so that the kernel threads can run without
-> without "struct fpu" attached to task_struct.
-
-OK, that's entirely x86 specific - there's no reason we'd want to do
-that for arm64.
-
---F79/VnOKrnE7IlBl
+--Gk3TvpZT3rBa5qnL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmifVtYACgkQJNaLcl1U
-h9CpXQf/TFMXBdcEn9rMj7U9jz4af9K/kLd8hj/tSPP//UGU+ljgQqxYhWuvCCXs
-e3YSi/zXsRNLeI1MVe2TwjVB7nPQBcm0Y/xztgwFTfdZOYaEedlYkOlkyhpgziNS
-MZb5T8vZBfoLa8HJTSJ5QCgI0zFxS0bbOvbomDGeJ4mWjeXZuzKppjYk14fZpJUF
-xcI0GogKgkII0/W0r7fMfV7IDQKbbHrg/4zOpNVadPM2A7tUYfkl810z93f4HKWb
-ZAiA0ihCdrxV3TXstn31saz/1qmuW9QaUief81g2tp+i4G74Ewy7WeV7PMSju8X/
-5fxnSJs+gV5LG3w1WDcCg/Bbo4+H1g==
-=plvr
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ9W2gAKCRB4tDGHoIJi
+0gU0AQDWGnQAlsfUsnHcf5CuOvGvb6BnMJxzi+zek/8IRJDzsAD9FsLU7/k+cBL/
+CEsR9Y5lV2b6M6GJ7M0xSzGlxVEvIQg=
+=4KYv
 -----END PGP SIGNATURE-----
 
---F79/VnOKrnE7IlBl--
+--Gk3TvpZT3rBa5qnL--
 
