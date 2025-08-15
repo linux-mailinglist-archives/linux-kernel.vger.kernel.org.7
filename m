@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-771406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FC9B286A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56970B286AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DF574E4CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B525E5BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971CB29B8C2;
-	Fri, 15 Aug 2025 19:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4322C08B3;
+	Fri, 15 Aug 2025 19:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlrriN+4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSlnMD7L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECFB13FEE;
-	Fri, 15 Aug 2025 19:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13A426A088;
+	Fri, 15 Aug 2025 19:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755287396; cv=none; b=SXH/gZMgf0U+HQlVo1vs2Ko/NZeaZaE3/7w1jZ55vkPkz43hTAQTSQoRUfMz+ph0PQKeZ/3IQ8nJvWVyOYvMFBMwCtfgqfa4u3ZBMpIj17sf6TuiCi2qQHS/sr7PUaWztra8IkdnKj71rX+vNBOIOJSuDFkhViL/G9qRoxKiqec=
+	t=1755287405; cv=none; b=Ua1yD1rI+McZrZn4glSoDUnq96WxCNMvkdvXFgofbacuGUgsXzFOKrFVX+4SccQD+awNjscFq3UW4q/mHE+/rG6fz5lm19rC1OogUwPiEFKj1XBKV0+vx3x3kb9aZ6T5TOYtHVkM+lG7Ye9LlaM/RouHfqgha9v4Ci1k1Bjh960=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755287396; c=relaxed/simple;
-	bh=2NBDReFMZPaqYngyq37YoXOx4dlfyV21ybOewgMSFbQ=;
+	s=arc-20240116; t=1755287405; c=relaxed/simple;
+	bh=e0jzt6J6vmxwqhPeZoIbQfaTuNCk0nUAqB7/DUg091Y=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Xhi4iUeBGjxntB8bCID1g8ZtKrR7JCG2Lzue604YggZlWkYkMVt+kq+rLHE2Zox6DLLetl/iLzpapPB3ALA2zqH/uwq/moCf0dL5EtNW1Zt21HZpNVGP2H5SvaubkTQTY7JFKrlE6AI0IZft6mO9xD2NQlvroZ4sDjBxtpXPx6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlrriN+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4A5C4CEF1;
-	Fri, 15 Aug 2025 19:49:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Hw/eWwiX6+faRF95hG3ogsYvrTvEXj6/I8l1GM1zlO+/rkCN++DRp84s9vNN7XuYGie0pphUmJdf/3QUUfMo8EpA5qN9tuZmTDtIq0HUWHUsgFbqCa7pf0uZbj5bgDrOnSiU0gUE1F5bh7BHygDED7gutA1PBZ/2FrKeXqou8mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSlnMD7L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B833C4CEEB;
+	Fri, 15 Aug 2025 19:50:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755287395;
-	bh=2NBDReFMZPaqYngyq37YoXOx4dlfyV21ybOewgMSFbQ=;
+	s=k20201202; t=1755287404;
+	bh=e0jzt6J6vmxwqhPeZoIbQfaTuNCk0nUAqB7/DUg091Y=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hlrriN+4H/nPeRtwK+On2MgdSXGjvH3wCsCxujOvc3UlBDcKfFHwfbtDcwvk3iIX+
-	 J98l0PlmG1eLTJHfEeSW2M0q21gwdqmgxfD443t5fJAGl1BkY8G7SGgGYg+cc1vI/7
-	 pPKNSOFpRe43tZXwJhCO276WIZmaIXk79YjCwhntZoc0XB7rqDFl5nLsTdVbf72QQo
-	 oIKvJcl9kIArjCnSipcXahVU2+ZnsZlmUsf1ZM3vFJbIiS0QEWbk/TXEOH/H9tQsbi
-	 rcmrqXZUygbieUg1bPP6Oz3Ge8KmIT0KdS/YOSfNAjSnsg1ZvNqtkrsNoTFFWa3zDy
-	 U7CNeGACmSuUA==
+	b=qSlnMD7LbBHk6yGRSwlk7YKRQE3A+0DYlMenzLYOTDUpDSnM8TCA4nYlCM35RI5mG
+	 HrON2mQjW0T4njfTnwWArSg312Dk5gntPcCNxVM5eejYy3dG+3ewdn9pbqUzgVdaUz
+	 w94Ex8glVt5tDtwPH2pkP8sJ/6q9OBJf3jsaqaaKGbA7zSOICW8uinybnK08mL8nQd
+	 bazqcCL2WkUJheymxFZVBA7O0LIGr+nibj+PDttFZZAfr2EuIUq85XEnbAQaWFkzxw
+	 3MvX8HQKggFNyE0yXaX5gEOmpcY+16Jxys1YWG3Xu1kMfV07ZO9rs2bsGjNuh/3F7Y
+	 GXu4Y9Ol1TbMg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0CC39D0C3D;
-	Fri, 15 Aug 2025 19:50:07 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF4D39D0C3D;
+	Fri, 15 Aug 2025 19:50:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: libwx: Fix the size in RSS hash key population
+Subject: Re: [PATCH net-next 0/2] net/mlx5: Support disabling host PFs
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175528740652.1253623.15402960535177320181.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Aug 2025 19:50:06 +0000
-References: <20250814163014.613004-1-chandramohan.explore@gmail.com>
-In-Reply-To: <20250814163014.613004-1-chandramohan.explore@gmail.com>
-To: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-Cc: jiawenwu@trustnetic.com, mengyuanlou@net-swift.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
+ <175528741548.1253623.12610948985665011253.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Aug 2025 19:50:15 +0000
+References: <1755112796-467444-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1755112796-467444-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, gal@nvidia.com,
+ dtatulea@nvidia.com, danielj@nvidia.com, witu@nvidia.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 14 Aug 2025 22:00:10 +0530 you wrote:
-> While trying to fill a random RSS key, the size of the pointer
-> is being used rather than the actual size of the RSS key.
+On Wed, 13 Aug 2025 22:19:54 +0300 you wrote:
+> Hi,
 > 
-> Fix by passing an appropriate value of the RSS key.
-> This issue was reported by static coverity analyser.
+> This small series by Daniel adds support for disabling host PFs.
+> If device is capable and configured, the driver won't access vports of
+> disabled host functions.
 > 
-> Fixes: eb4898fde1de8 ("net: libwx: add wangxun vf common api")
-> Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
+> Regards,
+> Tariq
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: libwx: Fix the size in RSS hash key population
-    https://git.kernel.org/netdev/net/c/12da2b92ad50
+  - [net-next,1/2] net/mlx5: Query to see if host PF is disabled
+    https://git.kernel.org/netdev/net-next/c/9e84de72aef9
+  - [net-next,2/2] net/mlx5: Support disabling host PFs
+    https://git.kernel.org/netdev/net-next/c/520369ef43a8
 
 You are awesome, thank you!
 -- 
