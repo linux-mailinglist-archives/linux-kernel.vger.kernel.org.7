@@ -1,238 +1,187 @@
-Return-Path: <linux-kernel+bounces-771339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49F9B285B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:18:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F98B285B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2631C1B67C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFAA55E32AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA14028D84F;
-	Fri, 15 Aug 2025 18:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381E02192F4;
+	Fri, 15 Aug 2025 18:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dVOFnBS0"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="IOKTaysA"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazolkn19010000.outbound.protection.outlook.com [52.103.66.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E15C20E31B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755281909; cv=none; b=BB2t3qEv1KIDlh+UsLhtYNkk94YacNF3bm60kCSD7hwawYKwRGziMXQwKUwmOqYlCrL0vhkK12s2SFdIbGwDCbQudag0+JdsLyyLTe8mh7IBUrnRPKfWByM/82uVW+Hoz8y5YV221jw/d6Hn9L7HHQCvKcU/iW0nwCzC7rqLmEI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755281909; c=relaxed/simple;
-	bh=wY+vgsaCc43x29sy+D58GL7Km3HCFo3Oin22U4JvFBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hi7WaOVGawzMuLYkM7VyquQphOhrAJt4OAv9+/mMurNgWJbvlV4fHFbGpNq6pUMb7zCjdZm+V1kcb3mOp+ZO9jLhTc57sAW1vf2wK+O0iWemuixqAehuJtR+aQqABc/tKH1mGKGbEin8t3dZ6NpRkO3+l15p4DSHbypNGwfCdG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dVOFnBS0; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-242d3be5bdfso13595ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755281907; x=1755886707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jY3sNtwdFAAn0D3rH2WM6exJASiMf81df/QjJ9/2MSs=;
-        b=dVOFnBS0icPEpfG9PKqA7qMiu/H4KXRP+HtKEIrONAMhaobygzZvqSOrHQz67nkVoE
-         hMK0VB5LdD10IJUkDAP8BsoF43b/LJvQli5ppST56uFSkApDFQ/aya963q5xwbcD1g+I
-         xqttTZ+xC6IqrXZe0OfC8d/zWWuU8ZIz2STiQ1MwORTxqZ1ZQr+obqpiim6hk2BgGa8g
-         G+FHAHdPY79zVSu8LxxnGcPxdLey3xIwbAo7WY8nSBf61uzWwYcqiXZngpi8pG+N2JW8
-         t4TCYZIfNmjzPCYjisO0LqOWmj2QXIyMHClooQmJfmenRt7FBOl42XLtlKfhwA3ZE7i9
-         Fxjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755281907; x=1755886707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jY3sNtwdFAAn0D3rH2WM6exJASiMf81df/QjJ9/2MSs=;
-        b=bvTOiSkrN9wrZIILEtP90wbeTO4PpuFnm32XC3dvyHQXI7hZobnvgLehrTgUIso9L9
-         FqKsVHCP0JMKc2DEBZeF3CVrLtZccleg02aRmUCd0QVqnEmefrHVQnrwr1WHFWGghmCb
-         GGuAgDnaomn2T6S2JmiWGgFj5H1WDlJLMwHXdwMDI3nDxXh/PHi1OS9W1QPFYm1cwaMW
-         JMRxr3lCREPb5Au5K6CaTwt+UjNLs/4om0h1l6bKIjgt6ubXoVmbe+5duxUtt9Gk5zcL
-         Q7yFQkSSEFZaZ3SHQs0F5K6D0y9hl8396tOxmrnbpqBbSZhsPJxu6ycLvdBIUvIFv4gJ
-         33RA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHKx6aFjG9aV63GaIJDV7l5g5Xf8w5XtbTsDt4p4njek2DnbmFbjaoDBmE8ScU3g1x++BKuyNQS1sjIxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnsLGY+mhxz3P5O4+Qh8IJmj9hyfAFuawrzr/7xNY6qEKfz8dp
-	6WG++CA+NqD7neyzH95w8rWLLaOJvRbptdvM4z8SQclzv6uMYU33XcTQ/mUdtj8ePFIU86et7tM
-	uw/9I0EbpsVATQUn5+vuHAFvGyda5qHVnL6+2KHsqE/ymAmYazJWh69E9WK4=
-X-Gm-Gg: ASbGncuxCuhqKfRd57wdltu6GeSu+zvFQk7XZmQzIH+sF8NkhrAW3yS8DKqB7R5wN9W
-	IFWjdMfxgmw551Z1nIlxT1WAbvuPuba4SUNyOJ8N+THoHHmTT1XgYVdhc/d+Iq988Qs3QGBEIx6
-	Bj0/F8VcU4Jt3Mo1YeoU+gXicuVPB/tbZG9n4KHifhy36U/1jGdKJN7mBn3TX3Ln6r1NjsBgTDm
-	IcptQwa2WwHwA7Y5mXVPMAWgQTuoIZQlyhUAUmEpSM2PJWYEvcwzA==
-X-Google-Smtp-Source: AGHT+IG/MLfEHn+NUjk3JeTkvygoGYy2JeIHzIrZZHZgIjMPHcITqpps3JgVEHZ+BBPTyF9DrPEKdybZgIAFZ8JuvHo=
-X-Received: by 2002:a17:902:f709:b0:242:abac:2aae with SMTP id
- d9443c01a7336-24478e4ac08mr177905ad.12.1755281907107; Fri, 15 Aug 2025
- 11:18:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0038218EB1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755281931; cv=fail; b=YZBN7peBbLHBrV+ITIi9+dNxNbOF9pnHQ3DlXbRYB6nEA59FupB16XZe7hogaEpyla3kSsnFOA9q9CgH/2Fk0IJwNwbZeWpKJmQhpdsU1UOxFi74Grunm52VxE8dAN2yknfKclt0ETu3im8nf8nFx9WYsGr6wWxTt66HTxXZg84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755281931; c=relaxed/simple;
+	bh=LTFfnG+uMtXPYkwd4V74EwdBm8hFTdmTqJzK15s5ScY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aZZufRrTiwiT1a3EEu2tcKMCBzjodpB5p7e5aQR5mZnfW2ST5LqksR39NVf27Nqzw+mqDBs7f95MUvqp6J7Rrs+KkmScYgBXOeHuRuoowEFjP9+1J0VM4xllpsDQwBnUFo9BV5fXEr4eiW6w27TBJWzKXYnqdCyTfN38D2jvL0w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=IOKTaysA; arc=fail smtp.client-ip=52.103.66.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cU3GKqXBaad2LjBrjupAtmXVtMeqX1xFT7Ptyje2Klve1whgL9QuyrD94xV6GiDUIjavotER7ZtNnnPVQZGW7aSn5fDkf3vCLEumIS2vwpMTBx5dBSxxd1UPgfxaSwKGi1EVJBAxCehjWhskJJmlbsBCfcj9KXWAwws6+PsM8xBSxVBMecHvBkGQp2d4ONNzwguVB4pNQq4b1ASlY7JkAj/5+3n6p8kXTO6MgH/jJ+FMedzGcSgY0cC5xLdQ390TN4gW8Tgm4D4WMohSIUgQm+8+T876MYuyW97JsB45xMbgkoB1vLmNKIzdk/XgKU/XKj4S1VEGd6d+vrnPYnePCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LTFfnG+uMtXPYkwd4V74EwdBm8hFTdmTqJzK15s5ScY=;
+ b=Em5SS9N2ixb8vcFI9nxzErfB1K/4ZFDPtAUOzBt5ONDoR5eTsy7SLFibyWxz4OFejijP6iNdxB7kA2LYLiQMVQOp7dhJNxK+qt0ZdBrSatvcrXUBjNUzijSd/MBTVkVcqiOf/9sszTs5DOaSWT2N5rgqiBJh3/CIQRxkaoDrZVAzG8udfy12cOrjLW+iviEwpL0YB8i2ETpOC7Nur17V2pNJP8TPafDWZ7GSEdOEcD/nO2WxurXqDFBM/sFH7PWc6TI9buO0AeQZPNQ80ypatul9Gf9El6Sb2pycan+i/wsjk4bT1oMEQYIrrgNAK4ripNB3locYqA34BfG5eAWhuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LTFfnG+uMtXPYkwd4V74EwdBm8hFTdmTqJzK15s5ScY=;
+ b=IOKTaysA6qlp0uZxaPCPDKFOnEvn2IGCoazvmi0jIr0PTpGjR8TNTAqd7vqRlC7q+E0TKd46HCP4VT9SUCm08jF/qtq69ObpB4PUI1bw8xiRivEyyyqaaBJ4IKbszLujGk5lqQ4SjrO0NocsBZ050/QeXi7s/LNAjnu8KombhVmrmGmSx7CjMF7vGtp0jpajraJC+ysDpAFJGF8KCm+JTw2YU8DeBRw9G9xy6JkcIVfF2zz4nzwu/PmQoO8UcTx3RrHfMROH/z5IlpYiVn3XqvT2LTi738F2n8xrLcWiTqb5cFwtPgXJffEHtbThvMny8+PnzdMeZgi2zVlArPG64g==
+Received: from OS9PR01MB15202.jpnprd01.prod.outlook.com
+ (2603:1096:604:3b9::10) by OS3PR01MB10090.jpnprd01.prod.outlook.com
+ (2603:1096:604:1e6::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Fri, 15 Aug
+ 2025 18:18:46 +0000
+Received: from OS9PR01MB15202.jpnprd01.prod.outlook.com
+ ([fe80::bd40:1d2e:2d1f:e8f3]) by OS9PR01MB15202.jpnprd01.prod.outlook.com
+ ([fe80::bd40:1d2e:2d1f:e8f3%5]) with mapi id 15.20.9031.018; Fri, 15 Aug 2025
+ 18:18:45 +0000
+From: Shixuan Zhao <shixuan.zhao@hotmail.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Shixuan Zhao <shixuan.zhao@hotmail.com>
+Subject: Re: [PATCH] x86/tdx: support VM area addresses for tdx_enc_status_changed
+Date: Fri, 15 Aug 2025 14:18:34 -0400
+Message-ID:
+ <OS9PR01MB15202207C488796172F1F179B8D34A@OS9PR01MB15202.jpnprd01.prod.outlook.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+In-Reply-To: <enhnj775ryshjrqer24ki7wibngxaj5ydos7xjgone6wobuvdn@77luyq4cawva>
+References: <enhnj775ryshjrqer24ki7wibngxaj5ydos7xjgone6wobuvdn@77luyq4cawva>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH2PR05CA0019.namprd05.prod.outlook.com (2603:10b6:610::32)
+ To OS9PR01MB15202.jpnprd01.prod.outlook.com (2603:1096:604:3b9::10)
+X-Microsoft-Original-Message-ID:
+ <20250815181834.16344-1-shixuan.zhao@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611104844.245235-1-steven.price@arm.com> <20250611104844.245235-20-steven.price@arm.com>
- <CAGtprH-on3JdsHx-DyjN_z_5Z6HJoSQjJpA5o5_V6=rygMSbtQ@mail.gmail.com>
- <80c46a5c-7559-4763-bbf2-6c755a4b067c@arm.com> <CAGtprH_6DYk8POPy+sLc3RL0-5gcrTdPNcDWFTssOK5_U4B3Nw@mail.gmail.com>
- <23be7cdb-f094-4303-87ae-2fdfed80178b@arm.com>
-In-Reply-To: <23be7cdb-f094-4303-87ae-2fdfed80178b@arm.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Fri, 15 Aug 2025 11:18:15 -0700
-X-Gm-Features: Ac12FXxRfPJJ5CiXj1SEYOdMuRetA156ExPvVO3KltOm1QNQAryxM5r582UfZ7g
-Message-ID: <CAGtprH9rbW173qZyC5_cHkKT5J4YDSg8itFcR2VZvSY88fsGrQ@mail.gmail.com>
-Subject: Re: [PATCH v9 19/43] arm64: RME: Allow populating initial contents
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei <alexandru.elisei@arm.com>, 
-	Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev, 
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>, Gavin Shan <gshan@redhat.com>, 
-	Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>, 
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB15202:EE_|OS3PR01MB10090:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb0f1358-b927-444e-12c2-08dddc282c41
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|5072599009|23021999003|15080799012|19110799012|41001999006|8060799015|440099028|40105399003|3412199025|13041999003|26104999006|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lbDQANj5HJPxuaqrp8aGyRpp96EKOsIm83K634CPFMWsCZHRmeICw1TIA3nW?=
+ =?us-ascii?Q?jd4PafZIBokBaQBQflzz/hb3XSAyxA7Y2U79geseohthPCA776a7N1rNkLrY?=
+ =?us-ascii?Q?kSqfeRqgTcrZC/r9IJHseZeJ/Jjb0hMwdQc91iszjBnxhep90mtUFZQGQe+4?=
+ =?us-ascii?Q?jXF+9BDsMt6izBSuCLallt5O9buJKrTI8lyu+8Ws9Ea4NzWibLbuVCQoa09d?=
+ =?us-ascii?Q?YGvv2ugnaGCbJdcDfqODKgJYd+a7W5MQJj3EZY30AtPT1tqhq4xLAYmVI1yy?=
+ =?us-ascii?Q?t4V9uhCsI2iv8t9K/WEp17xq11h36E06mFzEP3jmRjXCyfBfDD+b9poVjBK+?=
+ =?us-ascii?Q?DW3cxCsN3377aLqQ/tEHMTAsV4tbXOu1mz9diOpKLHISKo2K4ZU9C6aRB9BY?=
+ =?us-ascii?Q?GPtBcY1qHs7ubOAI3zY8oGP8JDsyaVVctcUPfYcJg8OkIz8tvVgUB6EcpKVR?=
+ =?us-ascii?Q?7WpGLXo8AbASwEByr23+vq+a6CDxlwxgxPCN8LcIe5hZ9WVEwQwAyGQfbJ0r?=
+ =?us-ascii?Q?vbC9SSfRkMLevpdaj5g7Zu0qXNcDPzp6eHaAL37Z9Hj1O1ByHe49iYhDYDJO?=
+ =?us-ascii?Q?7F6OyqvHRKrf7OOh0xnhXsXAJ2MNdBOcJtqX4ruLRm16JuMiULrzDz17+FXl?=
+ =?us-ascii?Q?TBjEvBmUCMmjnYQoqn6o/JkuSexh8vJxAZM4ebmP/GLb/mG2+lwzsSRIxjTf?=
+ =?us-ascii?Q?/eqTr9GjBEELIiibb2oiTWOORlpFXSy1K5cVjy2F3SUL1dyUQr1mDxAwtb/p?=
+ =?us-ascii?Q?oHnYy3Dx6Q1WtWw0iT3OeSaP0in0gnPyAadY453E/1DZEWxmsBydONmZmcaY?=
+ =?us-ascii?Q?f0mepF1HAYCQBdupDLMMj7WrulsrE72hjj62z+ceo5bBOMFtfqcCX0qB9GsK?=
+ =?us-ascii?Q?Ovwzx/qaxHWMtvp5zD9X94QaHLLgqX4HZT/D4du5r2yMSP9QiGWBRiYs84oJ?=
+ =?us-ascii?Q?y35nthX8wc5HeYO32n4xjLuPwZm40JdZsr4NSvbyi1agrcSj8ZPZBWOtNcgE?=
+ =?us-ascii?Q?QbhCJeRkLmhjMhP/Ob4pzm5kxfVOn24ao2L13hT0keDJzP9NSSesPfnKNW+n?=
+ =?us-ascii?Q?NkXCFxCj33QZTuM0HIuL+YC3bRhflhVarLVCWlhiBG81BBYzNUSVR0SRMHLa?=
+ =?us-ascii?Q?lDNfAdJnqg6khM3FHI8H4Rh52vBXdhQXiOXqYjMWXYR2RQN/geP6sClgNSME?=
+ =?us-ascii?Q?4vDuLf8e1hH4NYge2xSj6QE7fHBUwDKqtmC64Ap1r7ftFiCjwVn5wHCH45xu?=
+ =?us-ascii?Q?EO32cQxzoyVOOPNNemx1FpQBL1WhW0KllMkpXQB/aA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Imp0GxqqPp/7t4OcGzz8/bp9sgdBEkhzUcPir5Uhcc/j1yLHMMu3Pwpu2Jap?=
+ =?us-ascii?Q?ZR0Yvgbc4YysvlCMnDBk4JA1M9txukHaqCYac5ySdjuRXEXWUdPcWqNM1fNI?=
+ =?us-ascii?Q?u3PVKEaNPu0km1p8yaPeHxPSwFgnUKxaRJ++G2yW93KUM8EqKe5B1K1rI4XS?=
+ =?us-ascii?Q?Rvqd3EJrqQ1jA/85v5KJaNPEsYdjiIc1dXEGkSIOwRDEDvgzmFvq3nGwvqWi?=
+ =?us-ascii?Q?4s/stiD4gBw+GICVOV6MaC0/YhU/H4INCoTXTV6ftoYKY41YQC+6/HRbyQ0r?=
+ =?us-ascii?Q?+D8OrSBLyKIaOvk58+014jeW47AaXA3Omh+6XpECQaaxs9hTMGzLXQEo7Orr?=
+ =?us-ascii?Q?kSRnPezBIqy9JZ2ZCXQheeAnqyAVikYPt6GG8Fdtv90Qe5KoQqAyBd8wZdE7?=
+ =?us-ascii?Q?92lV/+QViX5eDPnyB3HRxc3mEcrQm+lMxw4jHO7K+L1CjCs4qwILeh8WV88d?=
+ =?us-ascii?Q?ZvI+J72ePNa+PxJFSx7YVEzlkStOzDv93ZFuHhT6L+6TcquwkyTIbyoxwA2q?=
+ =?us-ascii?Q?82JhCw2PQGCvteCJ0vhwrucBRX7OqKTjDSyZLP+BFTZsMAFWVl+rjtSMJMwQ?=
+ =?us-ascii?Q?YGBVzwkl0NvQYgI/Sw1IhsuSBkV70zF4LPK8BdGfYWjZKpZhDVuos6kwzQ38?=
+ =?us-ascii?Q?jqDRLjVpUQU7oOWZq/CMuxUIYD9lkPTR3YD4GFjpLPAgwzrJ7TAQyhRoJLCh?=
+ =?us-ascii?Q?q3fFgVPpg7as34ldwldgqGUQfIRoPDMBn+vGo3uu0wDXBo2yka+DbITIxWc5?=
+ =?us-ascii?Q?6RcXXYRjh0t8DulwHwOAVSt4eLUIaItLqM3sqJunBL6Kal84DM9ma3WLse1c?=
+ =?us-ascii?Q?P1hC+R+DRekKqQo2vCMQAYL4hiyI4+HZg4rJkMesssC0h4fSOfXTkJumNUFt?=
+ =?us-ascii?Q?n7K+whIUeK6AiK9Og/Q7wNWs065ECJZJ3LrpHGMNPoU2zy2ih9OeicDw3dtJ?=
+ =?us-ascii?Q?qGUFs9IPSprHmv+XgvpFvUVeYIDBTo13cT0P4iWlfyLmT6XzMa6ZotPjv8s0?=
+ =?us-ascii?Q?WvjaWBgVtTT7gToT9pKpJ4BEVrR6gHdajn8deWkWLNUUUWXaAkcLzjfmnwDi?=
+ =?us-ascii?Q?+cgEmWOcmfpPSjd8OfYZ85kOVRNSHXrwr4yDrHLZYqd3e8f1uuk+WZ8S3i+/?=
+ =?us-ascii?Q?TidoSMpnkBXz1GPpKTZJU9TSP8yHLL22Z/v3hUnZfL7N4HSxc9eC6TEpupoF?=
+ =?us-ascii?Q?acVm85PrgNPMiodI/wdmrnw+bHCYZq8NyvY7vAlYfax6sx7f1pHgwfKZGd6/?=
+ =?us-ascii?Q?P0r5RQJzlFFtcWG+QwLHaRfJvKR3QsrUnoQfIdpjFA/yhICMq90B9T9jWxct?=
+ =?us-ascii?Q?DobeHkHoY/AcociVmLVw5zId?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-9a502.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb0f1358-b927-444e-12c2-08dddc282c41
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB15202.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 18:18:45.8183
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10090
 
-On Fri, Aug 15, 2025 at 8:48=E2=80=AFAM Steven Price <steven.price@arm.com>=
- wrote:
->
-> >>>> +static int populate_region(struct kvm *kvm,
-> >>>> +                          phys_addr_t ipa_base,
-> >>>> +                          phys_addr_t ipa_end,
-> >>>> +                          unsigned long data_flags)
-> >>>> +{
-> >>>> +       struct realm *realm =3D &kvm->arch.realm;
-> >>>> +       struct kvm_memory_slot *memslot;
-> >>>> +       gfn_t base_gfn, end_gfn;
-> >>>> +       int idx;
-> >>>> +       phys_addr_t ipa =3D ipa_base;
-> >>>> +       int ret =3D 0;
-> >>>> +
-> >>>> +       base_gfn =3D gpa_to_gfn(ipa_base);
-> >>>> +       end_gfn =3D gpa_to_gfn(ipa_end);
-> >>>> +
-> >>>> +       idx =3D srcu_read_lock(&kvm->srcu);
-> >>>> +       memslot =3D gfn_to_memslot(kvm, base_gfn);
-> >>>> +       if (!memslot) {
-> >>>> +               ret =3D -EFAULT;
-> >>>> +               goto out;
-> >>>> +       }
-> >>>> +
-> >>>> +       /* We require the region to be contained within a single mem=
-slot */
-> >>>> +       if (memslot->base_gfn + memslot->npages < end_gfn) {
-> >>>> +               ret =3D -EINVAL;
-> >>>> +               goto out;
-> >>>> +       }
-> >>>> +
-> >>>> +       if (!kvm_slot_can_be_private(memslot)) {
-> >>>> +               ret =3D -EPERM;
-> >>>> +               goto out;
-> >>>> +       }
-> >>>> +
-> >>>> +       while (ipa < ipa_end) {
-> >>>> +               struct vm_area_struct *vma;
-> >>>> +               unsigned long hva;
-> >>>> +               struct page *page;
-> >>>> +               bool writeable;
-> >>>> +               kvm_pfn_t pfn;
-> >>>> +               kvm_pfn_t priv_pfn;
-> >>>> +               struct page *gmem_page;
-> >>>> +
-> >>>> +               hva =3D gfn_to_hva_memslot(memslot, gpa_to_gfn(ipa))=
-;
-> >>>> +               vma =3D vma_lookup(current->mm, hva);
-> >>>> +               if (!vma) {
-> >>>> +                       ret =3D -EFAULT;
-> >>>> +                       break;
-> >>>> +               }
-> >>>> +
-> >>>> +               pfn =3D __kvm_faultin_pfn(memslot, gpa_to_gfn(ipa), =
-FOLL_WRITE,
-> >>>> +                                       &writeable, &page);
-> >>>
-> >>> Is this assuming double backing of guest memory ranges? Is this logic
-> >>> trying to simulate a shared fault?
-> >>
-> >> Yes and yes...
-> >>
-> >>> Does memory population work with CCA if priv_pfn and pfn are the same=
-?
-> >>> I am curious how the memory population will work with in-place
-> >>> conversion support available for guest_memfd files.
-> >>
-> >> The RMM interface doesn't support an in-place conversion. The
-> >> RMI_DATA_CREATE operation takes the PA of the already delegated
-> >> granule[1] along with the PA of a non-delegated granule with the data.
-> >
-> > Ok, I think this will need a source buffer from userspace that is
-> > outside guest_memfd once guest_memfd will support a single backing for
-> > guest memory. You might want to simulate private access fault for
-> > destination GPAs backed by guest_memfd ranges for this initial data
-> > population -> similar to how memory population works today with TDX
-> > VMs.
->
-> Yes, that might well be the best option. At the moment I'm not sure what
-> the best approach from the perspective of the VMM is. The current setup
-> is nice because the VMM can populate the VM just like a normal non-coco
-> setup, so we don't need to special-case anything. Requiring the VMM to
-> load the initial contents into some other memory for the purpose of the
-> populate call is a little ugly.
+Sorry got the Message ID wrong. Resending it.
 
-IIUC ARM CCA architecture requires two buffers for initial memory
-population irrespective of whether we do it within kernel or in
-userspace.
+> Could you tell more about use-case?
 
-IMO, doing it in the kernel is uglier than doing it in userspace.
-Baking the requirement of passing two buffers into userspace ABI for
-populate seems cleaner to me.
+So basically I'm writing a project involving a kernel module that
+communicates with the host which we plan to do it via a shared buffer.
+That shared buffer has to be marked as shared so that the hypervisor can
+read it. The shared buffer needs a fixed physical address in our case so
+we reserved a range and did ioremap for it.
 
->
-> The other option is to just return to the double-memcpy() approach of
-> emulating an in-place content-preserving populate by the kernel copying
-> the data out of guest_memfd into a temporary page before doing the
-> conversion and the RMM copying back from the temporary page. I worry
-> about the performance of this, although it doesn't prevent the first
-> option being added in the future if necessary. The big benefit is that
-> it goes back to looking like a non-coco VM (but using guest_memfd).
+> I am not sure we ever want to convert vmalloc()ed memory to shared as it
+> will result in fracturing direct mapping.
 
-Populate path is CoCo specific, I don't see the benefit of trying to
-match the behavior with non-coco VMs in userspace.
+Currently in this patch, linear mapping memory will still be handled in
+the old way so there's technically no change to existing behaviour. These
+memory ranges are still mapped in a whole chunk instead of page-by-page It
+merely added a fall back path for vmalloc'ed or ioremap'ed or whatever
+mapping that's not in the linear mapping.
 
->
-> > Note that with single backing around, at least for x86, KVM
-> > shared/private stage2 faults will always be served using guest_memfd
-> > as the source of truth (i.e. not via userspace pagetables for shared
-> > faults).
->
-> Indeed, it's not yet clear to me whether we can only support this
-> "single backing" world for CCA, or if it's going to be an option
-> alongside using guest_memfd only for protected memory. Obviously we need
-> the guest_memfd changes to land first too...
+tdx_enc_status_changed is called by set_memory_decrypted/encrypted which
+takes vmalloc'ed addresses just fine on other platforms like SEV. It would
+be an exception for TDX to not support VM area mappings.
 
-Having a dual backing support just for supporting the initial populate
-seems overkill to me. How much payload in general are we talking about
-in terms of percentage of total memory size?
+> And it seems to the wrong layer to make it. If we really need to go
+> this pass (I am not convinced) it has to be done in set_memory.c
 
-IMO, dual backing for guest_memfd was a stopgap solution and should be
-deprecated once we have single memory backing support.
-CoCo VMs should default to using single backing going forward. Mmap
-support [1] for guest_memfd is close to getting merged. In-place
-conversion support is likely to follow soon.
+set_memory_decrypted handles vmalloc'ed memory. It's just that on TDX it
+has to call the TDX-specific enc_status_change_finish which is
+tdx_enc_status_changed that does not handle vmalloc'ed memory. This
+means that when people call the set_memory_decrypted with a vmalloc'ed,
+it will fail on TDX but will succeed in other platforms (e.g., SEV).
 
-[1] https://lore.kernel.org/all/20250729225455.670324-1-seanjc@google.com/
-
->
-> At the moment I'm planning to post a v10 of this series soon, keeping
-> the same API. But we will definitely want to support the new guest_memfd
-> approach when it's ready.
->
-> Thanks,
-> Steve
->
+Thanks,
+Shixuan
 
