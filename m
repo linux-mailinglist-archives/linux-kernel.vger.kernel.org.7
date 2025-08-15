@@ -1,189 +1,98 @@
-Return-Path: <linux-kernel+bounces-770992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B079B2814E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:10:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F16B28150
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19A23AB065
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:10:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466DD7AF624
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD1B1DE4E1;
-	Fri, 15 Aug 2025 14:10:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3742D319859
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64471DE2AD;
+	Fri, 15 Aug 2025 14:11:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1371DE4C2;
+	Fri, 15 Aug 2025 14:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267009; cv=none; b=urf8s51hm966EzftHwqgtMm8HpQoTMiu8tekoEPBqjTNenAZxzGOwelYzl45r40Tg/an/TBxbrS8cP9kpoTYUMUXADqAkZoMAyYvmy3idMXJlK/0g/xa6FBtVGhkNXYyjZyDWs7W6dlpOT7aYQNz0sTEEP2iX+c6jRQ5+DHbXJU=
+	t=1755267063; cv=none; b=XX+HftHUiIYqyNhca9OVW3cfI52yIXkHmkpR7hpIs8P5Ky/OXxbZ7gfK5YDcpsY23+9qxabddtlUyX447AxM+w+jgAstxm4O7ov/gdR0VzBbauDZOEuc3WBHeQeCA6rDmX5E9e85VL2zfmVbxWX7+w4lCqVToTX9Sea3KDutxQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267009; c=relaxed/simple;
-	bh=/43Nu+cPlJfB6RDSyxcmtfGfnI9Y3OhVoDD7fffN+fE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sD/enR5LNPcK0Gh87AyxwvDgBZ4dyQUGVrkwJrdMLGodPwNj1DLdylQkKJiCoHFwMblXQhilzxI3ZFxHtLFVpWsKo/4oSAtZITqj5YTW8WlniuarhiTEz+7Gp5sL1e96vKmr8sFEO2HIj7+Ia/UXs+B1jtgBwHhDirBWYpL/LmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EACE1691;
-	Fri, 15 Aug 2025 07:09:58 -0700 (PDT)
-Received: from [10.1.29.14] (e122027.cambridge.arm.com [10.1.29.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7241A3F738;
-	Fri, 15 Aug 2025 07:10:04 -0700 (PDT)
-Message-ID: <7e495e8f-26a0-4a82-8888-b8f1e512ebef@arm.com>
-Date: Fri, 15 Aug 2025 15:10:02 +0100
+	s=arc-20240116; t=1755267063; c=relaxed/simple;
+	bh=21kBuVipaIFn4RGQka+pAPB+NDgFp3XSRK2uNhuU0yU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjVh64oxITkr+72ammumA7UonmD5V6nBXqE0ZZb3w70uDoHVanjy7cZR4F4li42LHd6pdjgK4ZGAjbeX6hzUW3LI1TEXaeRh0B5uHu8sXDnTb4eE2OX9BQE7XHoI1SfGyUPahE/phglvwi0w2ZoK/KYWRDplQwBitq01FUwuJWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCFDC4CEEB;
+	Fri, 15 Aug 2025 14:10:58 +0000 (UTC)
+Date: Fri, 15 Aug 2025 15:10:56 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>,
+	linux-trace-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
+	oleg@redhat.com, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	broonie@kernel.org, yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com, liaochang1@huawei.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Steve Capper <steve.capper@arm.com>
+Subject: Re: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
+Message-ID: <aJ8_8HO37UjH1U0d@arm.com>
+References: <20250811141010.741989-6-jeremy.linton@arm.com>
+ <202508131334.FfoZQ27h-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Simplify mmu_hw_do_operation_locked
-To: Karunika Choo <karunika.choo@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Chia-I Wu <olvaffe@gmail.com>, nd@arm.com
-References: <20250815134226.57703-1-steven.price@arm.com>
- <ee996a62-bcbf-4702-837e-85f93feb7240@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ee996a62-bcbf-4702-837e-85f93feb7240@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508131334.FfoZQ27h-lkp@intel.com>
 
-On 15/08/2025 15:01, Karunika Choo wrote:
-> On 15/08/2025 14:42, Steven Price wrote:
->> The only callers to mmu_hw_do_operation_locked() pass an 'op' of either
->> AS_COMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT. This means the code paths
->> after that are dead. Removing those paths means the
->> mmu_hw_do_flush_on_gpu_ctrl() function might has well be inlined.
->>
->> Simplify everything by having a switch statement for the type of 'op'
->> (warning if we get an unexpected value) and removing the dead cases.
->>
->> Suggested-by: Daniel Stone <daniel@fooishbar.org>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes from v1:
->>  * As well as removing dead code, inline mmu_hw_do_flush_on_gpu_ctrl
->>
->>  drivers/gpu/drm/panthor/panthor_mmu.c | 57 ++++++++++++---------------
->>  1 file changed, 26 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
->> index 367c89aca558..9d77e7c16ed2 100644
->> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
->> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
->> @@ -569,15 +569,37 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
->>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
->>  }
->>  
->> -static int mmu_hw_do_flush_on_gpu_ctrl(struct panthor_device *ptdev, int as_nr,
->> -				       u32 op)
->> +static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->> +				      u64 iova, u64 size, u32 op)
->>  {
->>  	const u32 l2_flush_op = CACHE_CLEAN | CACHE_INV;
->> -	u32 lsc_flush_op = 0;
->> +	u32 lsc_flush_op;
->>  	int ret;
->>  
->> -	if (op == AS_COMMAND_FLUSH_MEM)
->> +	lockdep_assert_held(&ptdev->mmu->as.slots_lock);
->> +
->> +	switch (op) {
->> +	case AS_COMMAND_FLUSH_MEM:
->>  		lsc_flush_op = CACHE_CLEAN | CACHE_INV;
->> +		break;
->> +	case AS_COMMAND_FLUSH_PT:
->> +		lsc_flush_op = 0;
->> +		break;
->> +	default:
->> +		drm_WARN(&ptdev->base, 1, "Unexpected AS_COMMAND: %d", op);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (as_nr < 0)
->> +		return 0;
->> +
+On Wed, Aug 13, 2025 at 02:12:30PM +0800, kernel test robot wrote:
+> Hi Jeremy,
 > 
-> Hi Steve,
+> kernel test robot noticed the following build errors:
 > 
-> Thanks for pushing this patch. I was planning to address Daniel's
-> comment next week.
+> [auto build test ERROR on arm64/for-next/core]
+> [also build test ERROR on perf-tools-next/perf-tools-next tip/perf/core perf-tools/perf-tools linus/master v6.17-rc1 next-20250812]
+> [cannot apply to acme/perf/core]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> One small nit, would it be better to move the (as_nr < 0) check just
-> after the lockdep_assert_held() (above the switch case)?
-
-I'm not sure it makes much difference, but there was a minor reason for
-my ordering:
-
-By having it after the switch statement then if someone adds a call with
-an invalid op value it will always fail (with a warning). Whereas if we
-move the (as_nr < 0) check earlier then there's a chance they won't
-notice if their testing doesn't trigger that case.
-
-Obviously there might be a (theoretical) performance impact, but I don't
-think the one extra check would be noticeable - this isn't exactly a
-major fast path. Is there something else I've missed which would justify
-switching it around?
-
-Thanks,
-Steve
-
-> Looks good to me otherwise.
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-probes-Break-ret-out-from-bl-blr/20250811-221529
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+> patch link:    https://lore.kernel.org/r/20250811141010.741989-6-jeremy.linton%40arm.com
+> patch subject: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
+> config: arm64-randconfig-r111-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 13.4.0
+> reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/reproduce)
 > 
-> Kind regards,
-> Karunika
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202508131334.FfoZQ27h-lkp@intel.com/
 > 
->> +	/*
->> +	 * If the AS number is greater than zero, then we can be sure
->> +	 * the device is up and running, so we don't need to explicitly
->> +	 * power it up
->> +	 */
->> +
->> +	lock_region(ptdev, as_nr, iova, size);
->>  
->>  	ret = wait_ready(ptdev, as_nr);
->>  	if (ret)
->> @@ -598,33 +620,6 @@ static int mmu_hw_do_flush_on_gpu_ctrl(struct panthor_device *ptdev, int as_nr,
->>  	return wait_ready(ptdev, as_nr);
->>  }
->>  
->> -static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->> -				      u64 iova, u64 size, u32 op)
->> -{
->> -	lockdep_assert_held(&ptdev->mmu->as.slots_lock);
->> -
->> -	if (as_nr < 0)
->> -		return 0;
->> -
->> -	/*
->> -	 * If the AS number is greater than zero, then we can be sure
->> -	 * the device is up and running, so we don't need to explicitly
->> -	 * power it up
->> -	 */
->> -
->> -	if (op != AS_COMMAND_UNLOCK)
->> -		lock_region(ptdev, as_nr, iova, size);
->> -
->> -	if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
->> -		return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
->> -
->> -	/* Run the MMU operation */
->> -	write_cmd(ptdev, as_nr, op);
->> -
->> -	/* Wait for the flush to complete */
->> -	return wait_ready(ptdev, as_nr);
->> -}
->> -
->>  static int mmu_hw_do_operation(struct panthor_vm *vm,
->>  			       u64 iova, u64 size, u32 op)
->>  {
+> All errors (new ones prefixed by >>):
 > 
+>    arch/arm64/kernel/probes/uprobes.c: In function 'arch_uretprobe_hijack_return_addr':
+> >> arch/arm64/kernel/probes/uprobes.c:171:33: error: implicit declaration of function 'get_user_gcs'; did you mean 'put_user_gcs'? [-Werror=implicit-function-declaration]
+>      171 |                 gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
+>          |                                 ^~~~~~~~~~~~
+>          |                                 put_user_gcs
+>    cc1: some warnings being treated as errors
 
+I guess that's explained by patch 3 not being updated.
+
+-- 
+Catalin
 
