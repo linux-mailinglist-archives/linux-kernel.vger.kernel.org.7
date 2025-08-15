@@ -1,135 +1,95 @@
-Return-Path: <linux-kernel+bounces-770722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA39AB27E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:26:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CC2B27E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA041C85C67
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165E4A261F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0972FE577;
-	Fri, 15 Aug 2025 10:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gvoJAsJJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717972FDC33;
-	Fri, 15 Aug 2025 10:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7DB2FDC21;
+	Fri, 15 Aug 2025 10:26:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435591A314E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755253583; cv=none; b=UROfcl1aj/hfeSTdCk9dF2acssi3Pnzvg1Gs0LsvFkYJC+BWrqZcnAWo7ijvkbQvkcBJQXMp3neAJpA5eqBP5em9Rpl63LOBlhNtjCbVohuNUP+oOPZYMiK1RcmtLsw2o/HDUHk4Npw+GGhsjPKZRClVgc+kCaotPQInN95JMKQ=
+	t=1755253559; cv=none; b=Bb9tjm3D36FUVuNCvrGj6Sp+IeX3Idj6zz5zLIvDaCqTRYzW6w0GB3/0TvLSiWdeyUmp2G919bxzYq98M24NifX1zcq//Rxpp1grExnQNUyRIJ3ZeRx4Qixo6g7/FINGWpugnZDrzjvSEc6G6HUFqWqRuohzwOhXiJaV4r0mI2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755253583; c=relaxed/simple;
-	bh=SuaeDpWJTY83s/+kzEFXcNK853ZafoHoZL6YPGr0/0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nl/zjpk5JZXGd13XTIM9LugJ2grAuJkNsfbF7BHe6fz3NPCqPyEy2n/b8ZiLAIhpISa66gMi45nBK7nPkbRy9VwkYF8teb4miv4+QsjWCa2AcLRTwVmDVaAot2mjYzxJxjGr0+AcN1aEPzVjCwQxhT4DDRMiGo7jcYwKY2+Jr38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gvoJAsJJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 19ACE40E00DC;
-	Fri, 15 Aug 2025 10:26:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qIGAs6e7c6FH; Fri, 15 Aug 2025 10:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755253566; bh=MWXJjrKvX4HZfZr+iE2DCfAcLn7uRQ5dmuri5NVC/7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gvoJAsJJ1pQZD83pw16a3muaEmTdZTsrkuD3P0vJpRXSVsCs4PjVuRC3oal7E4bFQ
-	 1fTg4gvd8oRSIdavBzCE8AokT6DP7Mh9c5Jyn9jZkZe4zJwH/kfNbUvEAylNezMEtP
-	 p01uE3tFtxVt1d8oTOdIPzh7QBsurv+/NjUV4y75DguXRNTzdc8R61q8SpUVlvpTEb
-	 CNNja9ud9X3bwhJi2UwvILefAKk/31tcrLrqbaqbCT6ydVHUSI5mZnUpOkQxLIhLxX
-	 4HQzkKDh/f/Wuft4wzVDm7P28sJONfLW4E/SACMQDPeapd6t3FDkyFNmFJ4gVtByAK
-	 OFeCSfHZ4A5/S3VngQviuhSnIllSe3SM7pUxM2sQgsR/CuocBBK6BVCmJkLrSh2y9f
-	 k/vupuDnXOanWVjay5kbEyedmbNupBw+id//bTLds1mPategM3IFrxMggEb5z6/euq
-	 2Gt8ZY2s5BbzS6aJrY9x7gHXE+TYwxTS1UpSPkhBgiG3rcsC54Kt2E6XwjZRxvS8go
-	 31V/ARQY1NY0hYnCB24OAi9qRWvNrZ3u1/v3ixfxbEMIUB3J6cENQaeAR1g8EKeahD
-	 KEfRJSEFdusHb9lVUBHXIhI1JkwFO2JzgCjuznu0ZcHuJPeu54zwOzFsp7dlCDU5Rt
-	 wOoG8xb9ocH7IAjFEJGdG5Ag=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6165640E023D;
-	Fri, 15 Aug 2025 10:25:44 +0000 (UTC)
-Date: Fri, 15 Aug 2025 12:25:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 02/18] x86/apic: Initialize Secure AVIC APIC backing
- page
-Message-ID: <20250815102537.GCaJ8LIZodp1yY39QA@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-3-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1755253559; c=relaxed/simple;
+	bh=WsbGjxyxR1NecPxWrz4TfjE2ShUDhJJFUUS7X4n8iok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMbgXMqk3h0u8ILRaXsA/ONN0oLq0t6Baathi+8zyQoBjBJ/dw09LNnRVdeuQZIAE+yIQWAARtI6aYODO4T8QIzhLzNk7E5Wd2OdSos/EoMAMavb03Vx/9Ux7m8IlQKZ6QL2NccuBWKV2l488Y8sfXK7tF74etnEcSJAndq9y6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A0511691;
+	Fri, 15 Aug 2025 03:25:49 -0700 (PDT)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.29.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 155723F738;
+	Fri, 15 Aug 2025 03:25:55 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Daniel Stone <daniel@fooishbar.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Karunika Choo <karunika.choo@arm.com>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Steven Price <steven.price@arm.com>
+Subject: [PATCH] drm/panthor: Remove dead code in mmu_hw_do_operation_locked
+Date: Fri, 15 Aug 2025 11:25:39 +0100
+Message-ID: <20250815102539.39711-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-3-Neeraj.Upadhyay@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 03:14:28PM +0530, Neeraj Upadhyay wrote:
-> With Secure AVIC, the APIC backing page is owned and managed by guest.
+The only callers to mmu_hw_do_operation_locked() pass an 'op' of either
+AS_COMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT. So remove the code paths
+that test for other operations and add a drm_WARN_ON() to catch the
+posibility of others appearing the future.
 
-Please use articles: "...and managed by the guest."
+Suggested-by: Daniel Stone <daniel@fooishbar.org>
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+ drivers/gpu/drm/panthor/panthor_mmu.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-Check all your text pls.
-
-> +enum es_result savic_register_gpa(u64 gpa)
-> +{
-> +	struct ghcb_state state;
-> +	struct es_em_ctxt ctxt;
-> +	enum es_result res;
-> +	struct ghcb *ghcb;
-> +
-> +	guard(irqsave)();
-> +
-> +	ghcb = __sev_get_ghcb(&state);
-> +	vc_ghcb_invalidate(ghcb);
-> +
-> +	ghcb_set_rax(ghcb, SVM_VMGEXIT_SAVIC_SELF_GPA);
-> +	ghcb_set_rbx(ghcb, gpa);
-> +	res = sev_es_ghcb_hv_call(ghcb, &ctxt, SVM_VMGEXIT_SAVIC,
-> +				  SVM_VMGEXIT_SAVIC_REGISTER_GPA, 0);
-> +
-> +	__sev_put_ghcb(&state);
-> +
-> +	return res;
-> +}
-
-I was gonna say put this into a new arch/x86/coco/sev/savic.c but ok, you're
-adding only two functions.
-
-> +struct secure_avic_page {
-> +	u8 regs[PAGE_SIZE];
-> +} __aligned(PAGE_SIZE);
-> +
-> +static struct secure_avic_page __percpu *secure_avic_page __ro_after_init;
-
-
-static struct secure_avic_page __percpu *savic_page __ro_after_init;
-
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 367c89aca558..b16f44aec725 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -612,17 +612,12 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+ 	 * power it up
+ 	 */
+ 
+-	if (op != AS_COMMAND_UNLOCK)
+-		lock_region(ptdev, as_nr, iova, size);
++	drm_WARN_ON(&ptdev->base,
++		    op != AS_COMMAND_FLUSH_MEM && op != AS_COMMAND_FLUSH_PT);
+ 
+-	if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
+-		return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
++	lock_region(ptdev, as_nr, iova, size);
+ 
+-	/* Run the MMU operation */
+-	write_cmd(ptdev, as_nr, op);
+-
+-	/* Wait for the flush to complete */
+-	return wait_ready(ptdev, as_nr);
++	return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
+ }
+ 
+ static int mmu_hw_do_operation(struct panthor_vm *vm,
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
