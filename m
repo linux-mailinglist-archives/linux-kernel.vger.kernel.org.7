@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-770903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3120EB2803A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E183B2804F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408F3605B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F367567363
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7D5301497;
-	Fri, 15 Aug 2025 12:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h4QI56Rd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06D24395C;
-	Fri, 15 Aug 2025 12:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA6F3019C5;
+	Fri, 15 Aug 2025 13:02:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D99DDAB;
+	Fri, 15 Aug 2025 13:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755262768; cv=none; b=YmSSQJNw2S2zDaBQZBF2f86HcqhGPSMtGcQc+dufNu8H87AT7wN4oMbdbZIWXjtrupbBSvRv/UCHb3EqCvUZLPTrUI9iaoTyjoSwdtUrcECU3LjRsF43x0H3vLpIWVsomTJuNO4geICTQLJhEmK2xv1jv4R9XAfsd2/wTM+oBcs=
+	t=1755262929; cv=none; b=HN/rukJlHLVaH1Fs13vwWB+C26B+cCh7t6m/q0sy0De11VCqK/1uT2SbkZOsmuFd6SgVbBsGOTm3+5vSqGKCU4LDVqWOkTkcwD/p8S6Vns80dlTg+M43p+xrMtUEHovtrc/UD4fFhCfUCaeeLjheW9ABEzMTKPbVVhOJ4auP79E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755262768; c=relaxed/simple;
-	bh=gGAyaHnJFqG3yEOMHo+9099n/xMwq45fZnZWGT3Npv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qF+itnm86M6Tb1PUdyQ8o5SjAbeXrJz0Xpg11UkodYJmlhOhPjmnkcMrEFL+3ipkcif3495LPJD2193Ty/G1qV4BhcBz/nmGEY8+i9K3mEERFAEQI/u8R06tsUM9Mgs8aJTyN13g3XwwZ+MBSSgHO5pPv31zSgw6yEYmuExswHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h4QI56Rd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=WxxMg2CpYRBJYb9noYcqcSAL3Z0uD1GOUX0iFK8kymE=; b=h4QI56RdN+OJNfEUm8boNTz1Js
-	xC2T2k6zgAT4Fp2KI51rLoYAt+siWmkmEtWlqH6rdje3QsEn5M+IlOJswPKlN6WviQfWWSR2u3+5P
-	d/uidX1zqxu61DpUYESdaRaETTSIQ/gOFJJBxXhaQaD09vLFW6Ax5iE59wQ+ZPYfiXgo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umu1Y-004ox6-Dh; Fri, 15 Aug 2025 14:59:12 +0200
-Date: Fri, 15 Aug 2025 14:59:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, max.schulze@online.de,
-	khalasa@piap.pl, o.rempel@pengutronix.de, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH] net: usb: asix: avoid to call phylink_stop() a second
- time
-Message-ID: <1c352c2f-c8b3-4cbe-9921-8ba5f0e4b433@lunn.ch>
-References: <20250806083017.3289300-1-xu.yang_2@nxp.com>
- <a28f38d5-215b-49fb-aad7-66e0a30247b9@lunn.ch>
- <e3oew536p4eghgtryz7luciuzg5wnwg27b6d3xn5btynmbjaes@dz46we4z4pzv>
- <c3e7m63qcff6dazjzualk7v2n3jtxujl43ynw7jtfuf34njt6w@5sml5vvq57gh>
+	s=arc-20240116; t=1755262929; c=relaxed/simple;
+	bh=7oJi1kiVoqD18WX1ltF3JE4FFuv8iY+yTb0nDaJeqvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E6WDh40n+/5/Ojuc35Yd051IHOUtSro1JHKXhF9k0QtV/o2M3ro8T78VMM5jXlU4uFYcIOmdMoSRoEBMKIE7HEdt59E/KjyxWUFb+bsNjjF0JPkObUe6t+6kzDLKBAab9P+UUUuQ9NJx/VzmFUr0cQo3J6JhNEbmseb87QtorNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 853EE1691;
+	Fri, 15 Aug 2025 06:01:58 -0700 (PDT)
+Received: from [10.57.1.201] (unknown [10.57.1.201])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E7183F5A1;
+	Fri, 15 Aug 2025 06:00:11 -0700 (PDT)
+Message-ID: <995e093f-7b6c-4701-87af-2f4d21b08ada@arm.com>
+Date: Fri, 15 Aug 2025 13:59:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3e7m63qcff6dazjzualk7v2n3jtxujl43ynw7jtfuf34njt6w@5sml5vvq57gh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
+To: Koichi Okuno <fj2767dz@fujitsu.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Gowthami Thiagarajan <gthiagarajan@marvell.com>,
+ Linu Cherian <lcherian@marvell.com>, linux-arm-kernel@lists.infradead.org,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
+ <20250815034751.3726963-3-fj2767dz@fujitsu.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250815034751.3726963-3-fj2767dz@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > > Looking at ax88172a.c, lan78xx.c and smsc95xx.c, they don't have
-> > > anything like this. Is asix special, or are all the others broken as
-> > > well?
-> > 
-> > I have limited USB net devices. So I can't test others now.
-> > 
-> > But based on the error path, only below driver call phy_stop() or phylink_stop()
-> > in their stop() callback:
-> > 
-> > drivers/net/usb/asix_devices.c
-> >   ax88772_stop()
-> >     phylink_stop()
-> > 
-> > drivers/net/usb/ax88172a.c
-> >   ax88172a_stop()
-> >     phy_stop()
-> > 
-> > drivers/net/usb/lan78xx.c
-> >   lan78xx_stop()
-> >     phylink_stop()
-> > 
-> > drivers/net/usb/smsc95xx.c
-> >   smsc95xx_stop()
-> >     phy_stop()
-> > 
-> > However, only asix_devices.c and lan78xx.c call phylink_suspend() in suspend()
-> > callback. So I think lan78xx.c has this issue too.
-> > 
-> > Should I change usbnet common code like below?
-> > 
-> > diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-> > index c39dfa17813a..44a8d325dfb1 100644
-> > --- a/drivers/net/usb/usbnet.c
-> > +++ b/drivers/net/usb/usbnet.c
-> > @@ -839,7 +839,7 @@ int usbnet_stop (struct net_device *net)
-> >         pm = usb_autopm_get_interface(dev->intf);
-> >         /* allow minidriver to stop correctly (wireless devices to turn off
-> >          * radio etc) */
-> > -       if (info->stop) {
-> > +       if (info->stop && !dev->suspend_count) {
-> >                 retval = info->stop(dev);
-> >                 if (retval < 0)
-> >                         netif_info(dev, ifdown, dev->net,
+On 2025-08-15 4:47 am, Koichi Okuno wrote:
+> This adds a new dynamic PMU to the Perf Events framework to program and
+> control the Uncore PCI PMUs in Fujitsu chips.
 > 
-> Do you mind sharing some suggestions on this? Thanks in advance!
+> This driver was created with reference to drivers/perf/qcom_l3_pmu.c.
+> 
+> This driver exports formatting and event information to sysfs so it can
+> be used by the perf user space tools with the syntaxes:
+> 
+> perf stat -e pci_iod0_pci0/ea-pci/ ls
+> perf stat -e pci_iod0_pci0/event=0x80/ ls
+> 
+> FUJITSU-MONAKA PMU Events Specification v1.1 URL:
+> https://github.com/fujitsu/FUJITSU-MONAKA
+> 
+> Signed-off-by: Koichi Okuno <fj2767dz@fujitsu.com>
+> ---
+>   .../admin-guide/perf/fujitsu_pci_pmu.rst      |  50 ++
+>   Documentation/admin-guide/perf/index.rst      |   1 +
+>   drivers/perf/Kconfig                          |   9 +
+>   drivers/perf/Makefile                         |   1 +
+>   drivers/perf/fujitsu_pci_pmu.c                | 536 ++++++++++++++++++
 
-It does look to be a common problem, so solving it in usbnet would be
-best.
+ From a quick side-by-side skim, this is a copy-paste of the exact same 
+driver from patch #1 with s/mac/pci/g applied. Please don't do that. If 
+the hardware is functionally the same, then it should just be a single 
+driver that can then pick which PMU name and set of event alias 
+attributes to use for a given instance based on the ACPI HID match 
+(and/or any other ID register info you may have.)
 
-	Andrew
+Thanks,
+Robin.
 
