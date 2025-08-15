@@ -1,240 +1,172 @@
-Return-Path: <linux-kernel+bounces-771344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD35B285D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:30:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07494B285D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F322B617B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:28:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301B9AE74C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC27C22A7F2;
-	Fri, 15 Aug 2025 18:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A77C22FAFD;
+	Fri, 15 Aug 2025 18:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QqtpQKBU"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="bTH84N8W"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DF28CF75
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EC131771D;
+	Fri, 15 Aug 2025 18:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755282610; cv=none; b=Jxxh64WCz4+mUlOFtrxiv8n9ripKCcsyl0L5qwjVLOlAdQenh+uRazbwrWLrBsis0s3a2AJMqnVBzFROLO6tD6B6Lm9mXGYTMbjIjttjnmkfSPq1lZ6+g5JyFqlOmI0IcxnFBBoB22RUgXTwfoor8XbcctTx2RLCD/dU0r56lwk=
+	t=1755282635; cv=none; b=Pu4WVRJ2+5Bz03HCiui6/g3pKF+TfPPszWl4bJrshiPUrNZ0uXVEpzokbVmfZY3hjSlSAge6FDqM0qwfvORtq6Cy6Hqe8/O6MaHvlCNQYlTvm14nS0/gTF3wFPr/N3K7sMrTMtfuPCBM7WRJEhe/qP3oOn4zrOytoQvegDVXYp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755282610; c=relaxed/simple;
-	bh=ONrYoJTIdgGb/5wF/dH1qo760V5msEGyARLjyAejL3Y=;
+	s=arc-20240116; t=1755282635; c=relaxed/simple;
+	bh=QVPAKAEDY5Ajw6vI4+xPvTyy6Pi156iwUX91UxHQKiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hY0EclRoHKm+X0jqrjBh9SOLxEjeJCl6RbbQrj1pBNFEYiR/1s+S/dLOh0WKmhEMzFxTbyfybeU2RPDU7u42Qz+tTvsBEg31pQSAsKCbehppayrRvpirVzr+5oXs4SmXvag3kTCsFaGXG1lIECRDo6ye/sgQDlDncpVJupbDZoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QqtpQKBU; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a077b829-7fed-4f72-a854-f17759867604@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755282594;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NTIIr6J1qWMNNwEbgzgtDoYE0QB1SAchhR4ySYVGnL4=;
-	b=QqtpQKBUtwQfDlctzpZTyRwGcr5ZmcyvMKFSx0HnX3yd5lXJj+vEIcR1GRUYd4UXStIQj1
-	DGTnmtP19u1vavolBvT++8LVUgpz6mlgPOh5BYW+Oy+InnRLVTEVrZ+l5rFIkeebaqC6BB
-	JVBeErO1m9KRFoW5z11fojYVhT9K++w=
-Date: Fri, 15 Aug 2025 11:29:38 -0700
+	 In-Reply-To:Content-Type; b=IkJCiayfqZH0fsjODtcByAhPRrZvLQeAQXOsjyB7POvg+tjz34QqcH3zE3Hnjr/5jp8yXitLJKy5yufh7bw0eB8dl6U6A7l7LqR+m7tLPiBRSO+m4HKEiwpUn+wDTdYKwYV/CGLCw6w6bl2K9AynbXf3UfwFjNecjU/h+dxB/HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=bTH84N8W; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B99EC986D;
+	Fri, 15 Aug 2025 20:30:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1755282622; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=i1lM1c2T06TGk0j3EQmUfchgEN5b1nCTvTTZHPiR7MI=;
+	b=bTH84N8W2L0LLMwMKnxQHa4i3HFrLehG8HejeImbQSCq44bHy25E0TCKFSfAgjfSOCIVkt
+	Y1ZX4gaBXPXMZbstz96ULAPSSXlkN4gtRmwDtn50CKE7AZpKtMczimbVWz+kBHrynzbczw
+	tppMiMAaBuYlRX9ssaCoAQx53gNufaTK2JFgKwk9OnPXZmRMAn60flHdXrtvW6VRexGEcP
+	Mxye7HbiniSLyHW6NqnuOPQC055Z53h95HbPDuAGhziKMVOs6l0ryPkMJrjqG+POT/nuPP
+	I0iBBb5nCOpTqX/SLa04UBhM91m+2od9T4VzT47hveQ9TTfVkjpTxQR+nnlgGg==
+Message-ID: <27ccf5c4-db66-491c-aa7c-29b83ebfca3a@fris.de>
+Date: Fri, 15 Aug 2025 20:30:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] rdma_rxe: call comp_handler without holding cq->cq_lock
-To: Daisuke Matsuda <dskmtsd@gmail.com>,
- Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250806123921.633410-1-philipp.reisner@linbit.com>
- <5a31f3ef-358f-4382-8ad1-8050569a2a23@linux.dev>
- <CADGDV=UgDb51nEtdide7k8==urCdrWcig8kBAY6k0PryR0c7xw@mail.gmail.com>
- <2b593684-4409-485b-9edf-e44a402ecf3a@linux.dev>
- <6dbc1383-0c9f-4648-ae8d-4219e89589f4@gmail.com>
- <885bb38c-4108-4fa2-a6d2-1e60d5e84af9@linux.dev>
- <620f8611-1e95-4ebd-9db2-eb7231cfb3f2@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <620f8611-1e95-4ebd-9db2-eb7231cfb3f2@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] net: dsa: microchip: Prevent overriding of HSR port
+ forwarding
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ linux-kernel@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
+ Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
+ Vladimir Oltean <olteanv@gmail.com>, Woojung Huh
+ <woojung.huh@microchip.com>, Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jesse Van Gavere <jesseevg@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Simon Horman <horms@kernel.org>, Tristram Ha <tristram.ha@microchip.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+References: <20250813152615.856532-1-frieder@fris.de>
+ <d7b430cf-7b28-49af-91f9-6b0da0f81c6a@lunn.ch>
+Content-Language: en-GB, de-DE
+From: Frieder Schrempf <frieder@fris.de>
+Autocrypt: addr=frieder@fris.de; keydata=
+ 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
+ BnPajIeNAvjJFMw88/I=
+In-Reply-To: <d7b430cf-7b28-49af-91f9-6b0da0f81c6a@lunn.ch>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-
-On 8/14/25 7:07 AM, Daisuke Matsuda wrote:
-> On 2025/08/14 14:33, Zhu Yanjun wrote:
->> 在 2025/8/12 8:54, Daisuke Matsuda 写道:
->>> On 2025/08/11 22:48, Zhu Yanjun wrote:
->>>> 在 2025/8/10 22:26, Philipp Reisner 写道:
->>>>> On Thu, Aug 7, 2025 at 3:09 AM Zhu Yanjun <yanjun.zhu@linux.dev> 
->>>>> wrote:
->>>>>>
->>>>>> 在 2025/8/6 5:39, Philipp Reisner 写道:
->>>>>>> Allow the comp_handler callback implementation to call 
->>>>>>> ib_poll_cq().
->>>>>>> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe 
->>>>>>> driver.
->>>>>>> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock 
->>>>>>> deadlock.
->>>>>>>
->>>>>>> The Mellanox and Intel drivers allow a comp_handler callback
->>>>>>> implementation to call ib_poll_cq().
->>>>>>>
->>>>>>> Avoid the deadlock by calling the comp_handler callback without
->>>>>>> holding cq->cw_lock.
->>>>>>>
->>>>>>> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
->>>>>>
->>>>>> ERROR: test_resize_cq (tests.test_cq.CQTest.test_resize_cq)
->>>>>> Test resize CQ, start with specific value and then increase and 
->>>>>> decrease
->>>>>> ---------------------------------------------------------------------- 
->>>>>>
->>>>>> Traceback (most recent call last):
->>>>>>     File "/root/deb/rdma-core/tests/test_cq.py", line 135, in 
->>>>>> test_resize_cq
->>>>>>       u.poll_cq(self.client.cq)
->>>>>>     File "/root/deb/rdma-core/tests/utils.py", line 687, in poll_cq
->>>>>>       wcs = _poll_cq(cq, count, data)
->>>>>>             ^^^^^^^^^^^^^^^^^^^^^^^^^
->>>>>>     File "/root/deb/rdma-core/tests/utils.py", line 669, in _poll_cq
->>>>>>       raise PyverbsError(f'Got timeout on polling ({count} CQEs 
->>>>>> remaining)')
->>>>>> pyverbs.pyverbs_error.PyverbsError: Got timeout on polling (1 CQEs
->>>>>> remaining)
->>>>>>
->>>>>> After I applied your patch in kervel v6.16, I got the above errors.
->>>>>>
->>>>>> Zhu Yanjun
->>>>>>
->>>>>
->>>>> Hello Zhu,
->>>>>
->>>>> When I run the test_resize_cq test in a loop (100 runs each) on the
->>>>> original code and with my patch, I get about the same failure rate.
->>>>
->>>> Add Daisuke Matsuda
->>>>
->>>> If I remember it correctly, when Daisuke and I discussed ODP 
->>>> patches, we both made tests with rxe, from our tests results, it 
->>>> seems that this test_resize_cq error does not occur.
->>>
->>> Hi Zhu and Philipp,
->>>
->>> As far as I know, this error has been present for some time.
->>> It might be possible to investigate further by capturing a memory 
->>> dump while the polling is stuck, but I have not had time to do that 
->>> yet.
->>> At least, I can confirm that this is not a regression caused by 
->>> Philipp's patch.
+Am 15.08.25 um 00:59 schrieb Andrew Lunn:
+> On Wed, Aug 13, 2025 at 05:26:12PM +0200, Frieder Schrempf wrote:
+>> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 >>
->> Hi, Daisuke
+>> The KSZ9477 supports NETIF_F_HW_HSR_FWD to forward packets between
+>> HSR ports. This is set up when creating the HSR interface via
+>> ksz9477_hsr_join() and ksz9477_cfg_port_member().
 >>
->> Thanks a lot. I’m now able to consistently reproduce this problem. I 
->> have created a commit here: 
->> https://github.com/zhuyj/linux/commit/8db3abc00bf49cac6ea1d5718d28c6516c94fb4e.
+>> At the same time ksz_update_port_member() is called on every
+>> state change of a port and reconfiguring the forwarding to the
+>> default state which means packets get only forwarded to the CPU
+>> port.
 >>
->> After applying this commit, I ran test_resize_cq 10,000 times, and 
->> the problem did not occur.
+>> If the ports are brought up before setting up the HSR interface
+>> and then the port state is not changed afterwards, everything works
+>> as intended:
 >>
->> I’m not sure if there’s a better way to fix this issue. If anyone has 
->> a better solution, please share it.
->
-> Hi Zhu,
->
-> Thank you very much for the investigation.
->
-> I agree that the issue can be worked around by adding a delay in the 
-> rxe completer path.
-> However, since the issue is easily reproducible, introducing an 
-> explicit sleep might
-> add unnecessary overhead. I think a short busy-wait would be a more 
-> desirable alternative.
->
-> The intermediate change below does make the issue disappear on my 
-> node, but I don't think
-> this is a complete solution. In particular, it appears that 
-> ibcq->event_handler() —
-> typically ib_uverbs_cq_event_handler() — is not re-entrant, so simply 
-> spinning like this
-> could be risky.
->
-> ===
-> diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c 
-> b/drivers/infiniband/sw/rxe/rxe_comp.c
-> index a5b2b62f596b..a10a173e53cf 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_comp.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_comp.c
-> @@ -454,7 +454,7 @@ static void do_complete(struct rxe_qp *qp, struct 
-> rxe_send_wqe *wqe)
->         queue_advance_consumer(qp->sq.queue, QUEUE_TYPE_FROM_CLIENT);
->
->         if (post)
-> -               rxe_cq_post(qp->scq, &cqe, 0);
-> +               while (rxe_cq_post(qp->scq, &cqe, 0) == -EBUSY);
->
->         if (wqe->wr.opcode == IB_WR_SEND ||
->             wqe->wr.opcode == IB_WR_SEND_WITH_IMM ||
-> ===
->
-> If you agree with this direction, I can take some time in the next 
-> week or so to make a
-> formal patch. Of course, you are welcome to take over this idea if you 
-> prefer.
-
-
-Thanks for building on top of my earlier proposal and for sharing your 
-findings. I appreciate the effort you’ve put into exploring this approach.
-
-That said, there are a few concerns we should address before moving forward:
-
-Busy-wait duration – It’s difficult to guarantee that the busy-wait will 
-remain short. If it lasts too long, we may hit the “CPU is locked for 
-too long” warnings, which could impact system responsiveness.
-
-Placement of busy-wait – The current implementation adds the busy-wait 
-after -EBUSY is returned, rather than at the exact location where it 
-occurs. This may hide the actual contention source and could introduce 
-side effects in other paths.
-
-Reentrancy risk – Since ibcq->event_handler() (usually 
-ib_uverbs_cq_event_handler()) is not re-entrant, spinning inside it 
-could be risky and lead to subtle bugs.
-
-I think the idea of avoiding a full sleep makes sense, but perhaps we 
-could look into alternative approaches — for example, an adaptive delay 
-mechanism or handling the -EBUSY condition closer to where it originates.
-
-If you’re interested in pursuing this further, I’d be happy to review an 
-updated patch. I believe this direction still has potential if we 
-address the above points.
-
-Thanks again for your contribution, and I look forward to your next version.
-Best regards,
-
-Yanjun.Zhu
-
->
-> Thanks,
-> Daisuke
->
+>>    ip link set lan1 up
+>>    ip link set lan2 up
+>>    ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
+>>    ip addr add dev hsr 10.0.0.10/24
+>>    ip link set hsr up
 >>
->> Thanks a lot.
->> Zhu Yanjun
+>> If the port state is changed after creating the HSR interface, this results
+>> in a non-working HSR setup:
 >>
->>>
->>> Thanks,
->>> Daisuke
->>>
->>
->
+>>    ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
+>>    ip addr add dev hsr 10.0.0.10/24
+>>    ip link set lan1 up
+>>    ip link set lan2 up
+>>    ip link set hsr up
+> 
+> So, restating what i said in a different thread, what happens if only
+> software was used? No hardware offload.
+
+Sorry, I don't understand what you are aiming at.
+
+Yes, this issue is related to hardware offloading. As far as I know 
+there is no option (for the user) to force HSR into SW-only mode. The 
+KSZ9477 driver uses hardware offloading up to the capabilities of the HW 
+by default.
+
+Yes, if I disable the offloading by modifying the driver code as already 
+described in the other thread, the issue can be fixed at the cost of 
+loosing the HW acceleration. In this case the driver consistently 
+configures the HSR ports to forward any packets to the CPU which then 
+forwards them as needed.
+
+With the driver code as-is, there are two conflicting values used for 
+the register that configures the forwarding. One is set during the HSR 
+setup and makes sure that HSR ports forward packets among each other 
+(and not only to the CPU), the other is set while changing the link 
+state of the HSR ports and causes the forwarding to only happen between 
+each port and the CPU, therefore effectively disabling the HW offloading 
+while the driver still assumes it is enabled.
+
+This is obviously a problem that should be fixed in the driver as 
+changing the link state of the ports *after* setup of the HSR is a 
+completely valid operation that shouldn't break things like it currently 
+does.
 
