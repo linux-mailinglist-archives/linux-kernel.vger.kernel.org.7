@@ -1,121 +1,183 @@
-Return-Path: <linux-kernel+bounces-771250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DB7B284AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF245B284B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68EC8B65D3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E895517E773
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7B7304BB4;
-	Fri, 15 Aug 2025 17:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82EF304BD0;
+	Fri, 15 Aug 2025 17:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd4q/7KQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BC3304BA8
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j1H1DZO6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B05304BA8;
+	Fri, 15 Aug 2025 17:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755277696; cv=none; b=koj9qGoBh4j+CLKx6vA7kr4XsnYTi7FomC4jP4dQzpF+XZXfxXL9iRvzL7lULFzY7h6B2jCMkOHv+CcbUleORZuGzxLzEOcF8M4gEYZOuM/l846qw79AiPyoAOCMP0plETMy1HATYJakkDxte4zTD0YcEcA2kijJ7uohk7dSIUg=
+	t=1755277747; cv=none; b=JEu/tUfxbmpJRGeqSFhYx+O5b+w5yFoXrzNhKTSRu/trTkZ9w+0hV0oMwZ7HFBInIdGpM/qQMJ+8lRwz3ivO4Mt5YbDx3fQWap8rajDthIRRRZxkuwK1qqAPkIR10LtgMdN1CoxlJ9czEKwV4IzGKGRMab6+7WkHim0xIx1xUmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755277696; c=relaxed/simple;
-	bh=VjuGchGOGeouZBhWWbsfEKnerA6cB2X7SkmWdg3VPPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VNX+HjZcuGeympXe+c76WPxHVBKeLGFeTvuPcsH0Mp90ct02mJNowED2mWgWafcvXCjF5gRjDWe7lK2PsqU3a6NYHQPnhczpW0JNbuV804b4gH3AUxWpycFlSIb1gffqmC/l3BhUmBec2r5uwatfvrHVRpsypzpCZ6QHyHpF9BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd4q/7KQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78087C4CEEB;
-	Fri, 15 Aug 2025 17:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755277696;
-	bh=VjuGchGOGeouZBhWWbsfEKnerA6cB2X7SkmWdg3VPPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xd4q/7KQjTj/Tzt/MpdC3nhKv3RUMrPlWeqVX4hw/a6QcJiAOSfSEuiigsw30KGZw
-	 gnMbKRrsfQig20FQlXakwnjZK+ruTaHNX91P8/F06STVRPo8dczbu+3P2dJ2K3heBq
-	 BBfZbdBj2hXHtP6CaxBEZg0DbpPtbcwJ1NLCmmEqKp9HVNKLvg3Lg58/KXQvUFxIE9
-	 MFqVuaLFtu+4MlLWuEeJ3+0nT3IoG9n2ugKdvX7JsW/r8aYwJDAE8CuU+pAOwP5RkK
-	 bsFXCkuGyVJru/VtV1xq5uXx0XO/tuP+SCubB0F6XZuigH9VTMzKQGDWU6x9Bb1b42
-	 CW9WiYt/Kn2ig==
-Date: Fri, 15 Aug 2025 18:08:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Mehta, Sohil" <sohil.mehta@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"debug@rivosinc.com" <debug@rivosinc.com>
-Subject: Re: [PATCH 5/6] x86/shstk: don't create the shadow stack for
- PF_USER_WORKERs
-Message-ID: <c66150c2-a745-48b1-8d80-1984bfa265fc@sirena.org.uk>
-References: <20250814101435.GA17362@redhat.com>
- <8818b456954644ce609e07d77a65714788ef9098.camel@intel.com>
- <e50065a9-d5e2-4e94-94b2-e34c5fac9720@sirena.org.uk>
- <20250815130125.GD11549@redhat.com>
- <20250815130851.GE11549@redhat.com>
- <f1a8da89-7522-429e-a4ba-4794222f1541@sirena.org.uk>
- <20250815154311.GG11549@redhat.com>
- <dfdf2af0-7154-415e-96f4-3e4fefbe96dc@sirena.org.uk>
- <20250815160023.GH11549@redhat.com>
+	s=arc-20240116; t=1755277747; c=relaxed/simple;
+	bh=boEF1KxrJYXx9rWPa1UaosMdgC0AncPnn9B8wz5UXW0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pCalZpzIwFpDZnIraupQ7OMSEC/57+ae4AanLhyhyzNCC2nQLz0yvdnq5O+NzuXqCNF3dgZL889+NGU33Nsedgq47+ASOF3kZSJC2Q+dd/p3qIcKtViFZ9YfHvjwnHs2GGOmx9A1VQTMJJ4Y9r9dRdyQOMhwnUFbBshMKBQr0aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j1H1DZO6; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=pJ
+	xDQfZ/ZCiKpMxGpv2ngGkeJfJGVY+hTDotS3/x6oE=; b=j1H1DZO67ev5AjQ4/p
+	Vcmifd+/n0nwt92vPmL5JcSEt92DcZenkfikaZlL/5W9/a5YV7ZJYddUT/YCYFGu
+	dC5H74efgXJtsfn99dEKm/+RPcb5N8iYv+ra6/G1F1bdcisUqBWgYgnBNfa+JL0O
+	ulz6ECZl4JdtL2fHhbfg78bfo=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgB3LYSJaZ9o8aVLAQ--.49724S2;
+	Sat, 16 Aug 2025 01:08:26 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: af_packet: Use hrtimer to do the retire operation
+Date: Sat, 16 Aug 2025 01:08:25 +0800
+Message-Id: <20250815170825.3585310-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+b6RNlXlFYONC14K"
-Content-Disposition: inline
-In-Reply-To: <20250815160023.GH11549@redhat.com>
-X-Cookie: Tell me what to think!!!
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgB3LYSJaZ9o8aVLAQ--.49724S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZw4fCr1ruryUuFWkCF4Uurg_yoWrKw1DpF
+	W5tF9rGwn7XF4jga1xZr4kZFyruw4DAr98Grs3W343A3sxJryrta929FZ0qFWfGF4qkrsF
+	vF4xZrZ8Aw1DJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK-erUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRw6qCmifZlAxoAAAs5
+
+On Fri, 2025-08-15 at 18:12 +0800, Willem wrote:
+
+> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+
+> Please clearly label PATCH net-next and include a changelog and link
+> to previous versions.
+> 
+> See also other recently sent patches and
+> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> https://docs.kernel.org/process/submitting-patches.html
+> 
+> > ---
+
+Dear Willem,
+
+I will add the details in PATCH v3.
 
 
---+b6RNlXlFYONC14K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
+> 
+> Since the hrtimer API takes ktime, and there is no other user for
+> retire_blk_tov, remove that too and instead have interval_ktime.
+> 
+> >  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
 
-On Fri, Aug 15, 2025 at 06:00:23PM +0200, Oleg Nesterov wrote:
-> On 08/15, Mark Brown wrote:
+We cannot simply remove the retire_blk_tov field, because in net/packet/diag.c 
+retire_blk_tov is being used in function pdiag_put_ring. Since there are still
+people using it, I personally prefer not to remove this variable for now. If
+you think it is still necessary, I can remove it later and adjust the logic in
+diag.c accordingly, using ktime_to_ms to convert the ktime_t format value back
+to the u32 type needed in the pdiag_put_ring function.
 
-> > OK, that's entirely x86 specific - there's no reason we'd want to do
-> > that for arm64.
 
-> Since I know nothing about arm64. Any reason we do want to have the unnecessary
-> ARCH_SHSTK_SHSTK/shstk on arm64?
+> > +	hrtimer_set_expires(&pkc->retire_blk_timer,
+> > +			    ktime_add(ktime_get(), ms_to_ktime(pkc->retire_blk_tov)));
+> 
+> More common for HRTIMER_RESTART timers is hrtimer_forward_now.
+> 
+> >  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
 
-If you mean allocating the userspace shadow stack for threads that never
-go to userspace then no, it's not needed.
+As I mentioned in my previous response, we cannot use hrtimer_forward_now here
+because the function _prb_refresh_rx_retire_blk_timer can be called not only
+when the retire timer expires, but also when the kernel logic for receiving
+network packets detects that a network packet has filled up a block and calls
+prb_open_block to use the next block. This can lead to a WARN_ON being triggered
+in hrtimer_forward_now when it checks if the timer has already been enqueued
+(WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED)).
+I encountered this issue when I initially used hrtimer_forward_now. This is the
+reason why the existing logic for the regular timer uses mod_timer instead of
+add_timer, as mod_timer is designed to handle such scenarios. A relevant comment
+in the mod_timer implementation states:
+ * Note that if there are multiple unserialized concurrent users of the
+ * same timer, then mod_timer() is the only safe way to modify the timeout,
+ * since add_timer() cannot modify an already running timer.
 
-> And... do you agree that shstk_alloc_thread_stack() without update_fpu_shstk()
-> in copy_thread() path doesn't look right? Even if nothing really bad can happen.
 
-Honestly the update_fpu_ stuff is sufficently x86 specific that it
-doesn't really register as something I'd expect to see in that path.
+> > +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
+> >  {
+> >  	struct packet_sock *po =
+> >  		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
+> > @@ -790,6 +790,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+> > 
+> >  out:
+> >  	spin_unlock(&po->sk.sk_receive_queue.lock);
+> > +	return HRTIMER_RESTART;
+> 
+> This always restart the timer. But that is not the current behavior.
+> Per prb_retire_rx_blk_timer_expired:
+> 
+>    * 1) We refresh the timer only when we open a block.
+> 
+> Look at the five different paths that can reach label out.
+> 
+> In particular, if the block is retired in this timer, and no new block
+> is available to be opened, no timer should be armed.
+> 
+> >  }
 
---+b6RNlXlFYONC14K
-Content-Type: application/pgp-signature; name="signature.asc"
+I have sorted out the logic in this area; please take a look and see if it's correct.
 
------BEGIN PGP SIGNATURE-----
+We are discussing the conditions under which we should return HRTIMER_NORESTART. We only
+need to focus on the three 'goto out' statements in this function (because if it don't
+call 'goto out', it will definitely not skip the 'refresh_timer:' label, and if it don't
+skip the refresh_timer label, it will definitely execute the _prb_refresh_rx_retire_blk_timer
+function, which expects to return HRTIMER_RESTART):
+Case 1:
+  if (unlikely(pkc->delete_blk_timer))
+    goto out;
+  This case indicates that the hrtimer has already been stopped. In this situation, it 
+  should return HRTIMER_NORESTART, and I will make this change in PATCH v3.
+Case 2:
+  if (!prb_dispatch_next_block(pkc, po))
+    goto refresh_timer;
+  else
+    goto out;
+  In this case, the execution will only reach the out label if prb_dispatch_next_block
+  returns a non-zero value. If prb_dispatch_next_block returns a non-zero value, it must
+  have executed prb_open_block, which in turn will call _prb_refresh_rx_retire_blk_timer
+  to set the new timeout for the retire timer. Therefore, in this scenario, the hrtimer
+  should return HRTIMER_RESTART.
+Case 3:
+  } else {
+     ...
+     prb_open_block(pkc, pbd);
+     goto out;
+  }
+  This goto out clearly follows a call to prb_open_block, and as mentioned in the case 2,
+  it will set a new timeout and expects the hrtimer to restart.
+Based on the analysis above, I only need to modify the situation described in case 1 in
+PATCH v3 to return HRTIMER_NORESTART. If there are any inaccuracies, please provide
+further guidance.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmifaXoACgkQJNaLcl1U
-h9A51Qf/ahL0rQDYH04kFA3M+FUhUN18pwwAjtUhkHk40v3OoNY7g7Uf9CYfO1tq
-lkgYve0cGo4xH6YvHoSpRMbjcWr9uwV5yr+XLEhMdWGfUI60LBmAjbWKCtSdtBwr
-fjbAXH77k2HnBj03A8p76OIoELji+LGcznJLaSVgHgjMWpBbQWB2NHAVh7MJ2mKW
-3gMpgiUtmeqdGM2+gSadU3RcuflR49xo3Qh6+eqA5wZjz2iJRJ1fHYmqw/oPe2JR
-Dsm0jZEO46pWxJUHqmDcM3kkvQVNN0cVbMZv0bpnry/wOod9z1vLdCidhMzS/OK6
-pgcnIvQwpC6nNWjGFAq7KVqcFhzRpw==
-=OloB
------END PGP SIGNATURE-----
 
---+b6RNlXlFYONC14K--
+Thanks
+Xin Zhao
+
 
