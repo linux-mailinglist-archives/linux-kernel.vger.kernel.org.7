@@ -1,132 +1,180 @@
-Return-Path: <linux-kernel+bounces-771555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33982B288BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:28:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8C8B288DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7861D05C70
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3254AC3EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CE12D3EC3;
-	Fri, 15 Aug 2025 23:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99D52D3234;
+	Fri, 15 Aug 2025 23:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORlsdhRQ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teuQ+iJs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445C926B747;
-	Fri, 15 Aug 2025 23:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C9526E6FF;
+	Fri, 15 Aug 2025 23:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755300520; cv=none; b=jwCBMn4um+TRwjXS23Ip/8RrqK3knHIet3HcdRL+HSNuUhtoWIvITqKfJFYD/r5CxJB3l3RH/7xEELuc4pcBtoe62YTVVT8pzpCjnqyHyWYCfEoGMlhFPacc9fIylZAOelrEXVPGZIFfPuzk7dAPe+Xe8wtj6qNn1q1Mlf8/a8E=
+	t=1755301136; cv=none; b=hd9OpmGfIWy+JZz0o1ciiOY7PchGehAAMz2mwy2ajMRK108riwa1leZ9YPT1cQugiTr5Q+sRtuTc+ZjvdY1hueSyA4I94yTRx9A0Nr1IOYuDWyP9bINwP93kwX1pphganuTRGADz/PujgL36GM1piUeiQ1W7Czp1Z35Gju+Zb+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755300520; c=relaxed/simple;
-	bh=UvoYpGdpZ518sX1C9ntrRKU5XcSUp21l1zLHFegmRU0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=QgMnsVefoqHrui7yryZ9gVV+SsJOsALGXITrJnEiS9RxQW6dba6coeYvyE4vgu6HlIG8XfIuXVKEL/EezGnvSlfp5hpxgTRUjd3iUbFm7+OxpCj9hV6riJA9av/zjILUzxkd7YmSMXcb8LEgRC2Sqblcu4lb4C1aDNU21DfNjBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORlsdhRQ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-244582738b5so21324275ad.3;
-        Fri, 15 Aug 2025 16:28:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755300516; x=1755905316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vJTHdLNFpJHwfmgbDDHn1yEdiFV4xKdd+LYG/JjzbEo=;
-        b=ORlsdhRQtkpqUdgnXT1PmdSXSyR1EDT5yUCshZpiBYcR2U8O3b/KHNqXh8IF8m6gLb
-         shWbaT2k5WIQKIdQWcaqGi7WLYB8uxd9kzwJCXtZMhb5RzVcri6H0SHU5mpN77KwqwtJ
-         ym3huelUXDyOCUmBumrvm5xY9w+w4yGX7gNVahlngTW93lUKuk+/bxM2t8tP7yjuxsVq
-         oOoxWh7wSWHL9GcUhwKPA2dDYddFrJqt5paHCFS2fCPPSs0y5ls/0qSQtBUQqa69uRxX
-         klwJH4UVCMxPp8wKl+EuyulFzNn6OgqslUTszc5zSMdWgRDJ4v9E2rrQpsD9nUSKTu69
-         0qBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755300516; x=1755905316;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vJTHdLNFpJHwfmgbDDHn1yEdiFV4xKdd+LYG/JjzbEo=;
-        b=dHl8BUfv9CS66na14GaNAxFcvGYVt0a7NJDEgZKnY2i6nitKgtMCLISiutoU/zRK4m
-         T0g2Bk4ND5EbqSjBLGJbd1qqLWzZS+2ypXfttMA54gnrQeRXGKEYy7MIDrftehgi7Zv8
-         R5Q5j4YY6pkMoOpoOLePY3L79nnHiX47eUkTL628Au3IGttC98VeRtVtGnIDRfeHfPD6
-         QhygEwcV5OYCsOGozyw+uLz2ub1sRAMUwq9oE4BJ0Ke606TrHDZubqEs8uAHjuNhceFd
-         KbpNu9TnJTdjRZh4KDI4rowknJ71jVeMSR1XWrZ57YdXaRX2jpwqHectE+wCCuvjPHjf
-         rfww==
-X-Forwarded-Encrypted: i=1; AJvYcCVtI++qQm4Pe1y/nDgVOFRNvjnc1Juz4QO98CYMzUNfhxZh49mcjUQEA9b7M8E2fl0HyoC2O7Pr4R9q@vger.kernel.org, AJvYcCX49eKExEN845wUJIROyCcHicNnNpb0cmNxnRXrl+bNI1dPr3Y5u1knT9NQlXDXwoB9jp7iPANZ7AnF5ZygjQ==@vger.kernel.org, AJvYcCXZY5NMvWhhJ77BNV+cORtz9F8eGRgAwRkydWW5qpzTrncwtD/Rm804gfoJIh9Rm4tBN/4XhPpc+GF7t36N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2rIgwgga5QCfizelmZmFPPuTt0xT33V/MpcFlXoL9QCoKqCMR
-	oDzJMbdq6N+ebBdMLZl991fqKAoOcEbvzaavnzxZH+ueJ8FQe4GFxY4p
-X-Gm-Gg: ASbGncsyXtFIdKr/XnvHUvfFqlofHEkmVBuKb/5RB9h7zRh1nLHYB/u7z+NH0wgEfHN
-	HJa95884iEksgyjkoSFG9/kF1uke8ok0CdcBIAn+aZUo4QwTSahd9EpZHo8Ib44NIv+Qc+OgRFh
-	ZfQEQuQ1Dtp8dolFBUogbKAw8AVom4FX9pymPGF/P6E4+ppzwwylVB0aFO3KvKNYxMWusW9V2E7
-	Xh1I+ee9MJeWJpCMesMRVB0WI2S96ec7D7A5FTKwDSQ+Ptlo9oIMMb4IPqJ8BpK7FX7hl+KD7Zz
-	eAwkFQqXWrhD7RS1o0uMr9sn8oh/gUD5lKt00Hfg4FkgVXy3blkucmnyAaG2KbTbERZfXa7rQPD
-	36NscRKainRTx5U02ViNzFfe1ZjVagkRt1QBFzHGH8hX1iq/hzh16UbOoj79d1CjecT4=
-X-Google-Smtp-Source: AGHT+IFzx9EtbLSYVs1fz25p0drTFKOY0IALI0Ty8HFwEEwX9LRI2JXlSWi6o2ZeRHrSFKMPMeeoLg==
-X-Received: by 2002:a17:902:cccb:b0:235:7c6:ebdb with SMTP id d9443c01a7336-2446d6dc1bemr48990105ad.10.1755300516361;
-        Fri, 15 Aug 2025 16:28:36 -0700 (PDT)
-Received: from ehlo.thunderbird.net (201-0-28-218.dsl.telesp.net.br. [201.0.28.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0101esm22696205ad.46.2025.08.15.16.28.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 16:28:35 -0700 (PDT)
-Date: Fri, 15 Aug 2025 20:28:32 -0300
-From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_2/2=5D_arm64=3A_dts=3A_qcom=3A_add_?=
- =?US-ASCII?Q?initial_support_for_Samsung_Galaxy_S20_FE?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <xmxo5uogkexiwq5zh2eza53pnl5jrqidd7an7bftjtq4wpaup5@mlekuufdbg5v>
-References: <20250815151426.32023-1-ghatto404@gmail.com> <20250815151426.32023-3-ghatto404@gmail.com> <xmxo5uogkexiwq5zh2eza53pnl5jrqidd7an7bftjtq4wpaup5@mlekuufdbg5v>
-Message-ID: <31CA09B3-E451-4EC1-8273-A1F09735D1FB@gmail.com>
+	s=arc-20240116; t=1755301136; c=relaxed/simple;
+	bh=x3QDZ47I/8OT9hBSL+4EmYWUfQlFHbDh875sGMUYuQc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=JeQkesHdLCUFRHnBhJRmJDk3dGbi94xxea3bdTX/9C7tg8lCRs/P3NMFk5ACXvScWshfeXhgICoblbDS3v3zTklVvJcdlUor9NYmRCReg/4tedCIfCmQvxxeIo/XC8Sz4WRoLDWsjgHcAMyuKCZro7R8uJsYB0/t0q21tGXhON8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teuQ+iJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E596C4AF0B;
+	Fri, 15 Aug 2025 23:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755301135;
+	bh=x3QDZ47I/8OT9hBSL+4EmYWUfQlFHbDh875sGMUYuQc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=teuQ+iJs6TC5M7TxEj8YRoNklDeYEImgUx5QraCvkXMQBNQeFc2A2P/DJNUxXp6Wq
+	 CshfdPFxt3JZ+XxEiEN4rjuLcsXtRognT8VspIwVULcZDWk9Df17Bt55CSUlXhUc/r
+	 FM9Y6x6ajBXlWfxPystbS+FfwcSZ00acog7gS5gwuALAD/SghpWoXIsZ8WzqKnWlqv
+	 3KgjV1hkP7kXr4VXubMEQdFAdRWJjbqAimLxQEIkkCE7rQyi3b7JMm1Hn7OGDCVutQ
+	 zDiKagsLthTNSng8v1tG1GGZ0Ch4Ue6ZuiTwlimen30blPEdEG5QfUS3EcToWDr0sM
+	 59c2XA+hCGIIA==
+Date: Fri, 15 Aug 2025 18:38:54 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Marc Olberding <molberding@nvidia.com>
+In-Reply-To: <20250815-mgx4u_devicetree-v1-0-66db6fa5a7e4@nvidia.com>
+References: <20250815-mgx4u_devicetree-v1-0-66db6fa5a7e4@nvidia.com>
+Message-Id: <175530106151.3523036.5305359646677111575.robh@kernel.org>
+Subject: Re: [PATCH 0/3] Adding device tree and binding for Nvidia mgx cx8
+ switchboard
+
+
+On Fri, 15 Aug 2025 12:45:54 -0700, Marc Olberding wrote:
+> Patch 1 Adds the binding for the Nvidia mgx cx8 switchboard
+> Patch 2 Adds dtsi's for the mgx cx8 switchboard itself
+> Patch 3 Adds the dts for the mgx cx8 switchboard motherboard reference implementation.
+> 
+> This is an Aspeed AST2600 based reference implementation for a BMC
+> managing an Nvidia mgx cx8 switchboard. Dtsi files are broken out for
+> managing the mgx cx8 switchboard over i2c, so that others may reuse these
+> if they choose to implement their own board. There are two dtsi files
+> since the i2c topology is not symmetric between busses going to the mgx cx8
+> switchboard.
+> 
+> Reference to Ast2600 SoC [1].
+> 
+> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+> 
+> 
+> Signed-off-by: Marc Olberding <molberding@nvidia.com>
+> ---
+> Marc Olberding (3):
+>       dt-bindings: arm: aspeed: Add Nvidia's mgx4u BMC
+>       ARM: dts: aspeed: Add device tree includes for the cx8 switchboard
+>       ARM: dts: aspeed: Add device tree for mgx4u BMC
+> 
+>  .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+>  arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+>  .../boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dts    | 1078 ++++++++++++++++++++
+>  .../dts/aspeed/nvidia-mgx-cx8-switch-north.dtsi    |   80 ++
+>  .../dts/aspeed/nvidia-mgx-cx8-switch-south.dtsi    |   80 ++
+>  5 files changed, 1240 insertions(+)
+> ---
+> base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
+> change-id: 20250813-mgx4u_devicetree-c2e130607089
+> 
+> Best regards,
+> --
+> Marc Olberding <molberding@nvidia.com>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 7bac2c97af4078d7a627500c9bcdd5b033f97718
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250815-mgx4u_devicetree-v1-0-66db6fa5a7e4@nvidia.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: spi@1e630000 (aspeed,ast2600-spi): Unevaluated properties are not allowed ('fmc-spi-user-mode' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/aspeed,ast2600-fmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e780000/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e780000/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e780000/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: fsi@1e79b000 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e790000/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: fsi@1e79b100 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e790000/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-mgx4u.dtb: /ahb/apb@1e790000/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
 
 
 
-On August 15, 2025 19:03:20 GMT-03:00, Dmitry Baryshkov <dmitry=2Ebaryshko=
-v@oss=2Equalcomm=2Ecom> wrote:
->On Fri, Aug 15, 2025 at 03:14:26PM +0000, Eric Gon=C3=A7alves wrote:
->> Add new device support for the Samsung Galaxy S20 FE 4G/5G
->>  (SM-G980/SM-G981B) phone
->>=20
->> What works:
->> - SimpleFB
->> - Pstore/ramoops
->
->While the patch is correct, are there any obstacles in enabling more
->devices on the phone? I'd say, buttons, remoteprocs, PCI and USB
->peripherals should be low hanging fruits=2E If you can read pmic_array
->from debugfs/qcom_socinfo, then you should be able to identify PMICs and
->add corresponding regulators too=2E
->
->> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile             |  1 +
->>  =2E=2E=2E/boot/dts/qcom/sm8250-samsung-r8q=2Edts      | 47 +++++++++++=
-++++++++
->>  2 files changed, 48 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/sm8250-samsung-r8q=2Edts
->
-Hello Dmitry,
 
-Recently my device's battery stopped responding and I was not able to work=
- on the DT any further, so I decided to upstream what I already have so far=
-=2E Thanks for the feedback, I'll include more features on future patches=
-=2E
 
-Best regards,
-Eric
 
