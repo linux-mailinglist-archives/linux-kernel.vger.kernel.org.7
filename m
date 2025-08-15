@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-770678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C8EB27DC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E06BB27DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C731CE6677
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2211D0441A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D642FFDEF;
-	Fri, 15 Aug 2025 09:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6DF2FE070;
+	Fri, 15 Aug 2025 10:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="Jy0V77Vr"
-Received: from mx08-007fc201.pphosted.com (mx08-007fc201.pphosted.com [91.207.212.40])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sk0FNlZn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wO9XVhVv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBBD2FCBF0;
-	Fri, 15 Aug 2025 09:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC68E227E82;
+	Fri, 15 Aug 2025 10:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251957; cv=none; b=JVd0mHBpy+BfDgPD+NlIi9cHx3cCtw7FYNX/HLyVfOwVa0fQtaRZK928kYMfKy3te/An0KFFXUgs8+Ng74N6PrKBtaciyB+BB3s22nyCRFZjUsdtP2c2XdiGRB7dSx0qyH5rLWA7NSrPkuBh5k7KNTdZwmUW63bl7eMvvNlAaOk=
+	t=1755252037; cv=none; b=urrMo1pdXYSXGXflrzFGW8C/nSMVqTBF1lKfuyCG7a/3bE/HQ481jW7knpJxKzaEXX8yOk8UcHcW3/86iIZ6bb2tJFt+PTa4cxAHSWX4/xzZGJPDMf1Ylluc/BGu/LzEfpD98l8ySu29pKEfuDpJMF53aortPTWDvryJoD4Tono=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251957; c=relaxed/simple;
-	bh=bFtem6bal3ozKFQIhj24cxDStk8G+Bf8rrvgaQg9RkU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aqbXRuXkCrsyDD2X6CuXpYD3A5Vn72a9Fzg8whs5WSRWvZQ8g5KrXc8AJ9lfRmoR5tFN1y2T4lf0a0xpl2xeBiN/dqHnrWRyRCGzu1Vz89oxCMwDrpRL8Hy7kbisMbkG79PayUNJWmQO16NsbfK9+BeAVbdjiyuGa0dkFrmEbnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=Jy0V77Vr; arc=none smtp.client-ip=91.207.212.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
-Received: from pps.filterd (m0456229.ppops.net [127.0.0.1])
-	by mx08-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57F9wt87265753;
-	Fri, 15 Aug 2025 11:58:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp-2025; bh=Ys
-	PmJmggYIdtvpY+JvdYm/4kgr5qIWEnATsmjZlXaWA=; b=Jy0V77VrkuETI8CNR/
-	TOgyuRF1jXtQw76yaJ1unQxncP2e/v2P+RwQBpWS4qCE7Y2qzxoXHwgM+0fzMoCe
-	kbkU135io0iQW5Do4h29XDxThlWtsaZmDRqfOx/1KT6hKt6EJw5nFskj93uFuwis
-	byUUZ3dNabJSnOAadGXU/oB3vDLMFlDY+0rBnLYYFfjV5Tbv9PDHES/eG+fsOomi
-	TQ2jho/ZXoSTUI5zMLsXr+1zjDqd9aR/XJVY8u+n4WtOeJ1RUaTdZcSD2YHZCeFP
-	DZe2kLWSYhhxxufsx/k8rgbEqnV2xgwYYYj0jM7zgmjlgQAxNhK2Ck32ChQS/AZS
-	6VNg==
-Received: from adranos.cab.de (adranos.cab.de [46.232.229.107])
-	by mx08-007fc201.pphosted.com (PPS) with ESMTPS id 48fqcpsbfb-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Aug 2025 11:58:56 +0200 (MEST)
-Received: from KAN23-025.cab.de (10.10.3.180) by Adranos.cab.de (10.10.1.54)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Fri, 15 Aug
- 2025 11:59:12 +0200
-From: Markus Heidelberg <m.heidelberg@cab.de>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <devicetree@vger.kernel.org>
-CC: Markus Heidelberg <m.heidelberg@cab.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Christian Eggers <ceggers@arri.de>,
-        Alexander Sverdlin
-	<alexander.sverdlin@gmail.com>,
-        Jiri Prchal <jiri.prchal@aksignal.cz>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] eeprom: at25: make FRAM device ID error message more precise
-Date: Fri, 15 Aug 2025 11:58:38 +0200
-Message-ID: <20250815095839.4219-4-m.heidelberg@cab.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250815095839.4219-1-m.heidelberg@cab.de>
-References: <20250815095839.4219-1-m.heidelberg@cab.de>
+	s=arc-20240116; t=1755252037; c=relaxed/simple;
+	bh=+XeaNJCr0AIqk7PSRgXEwTfKZRcDsaAJ5Qho1qrExlw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=pMf7CZ7udEE7Exqps7FlnNBqgf+FUb+Y8d5dhKALPVxdsIkq2KbV4xEDn78Qr06prnxE3PgswA1A7yLtxcq+3O7dS1P8ByN8PsPZ8JItwRaZx1yxMH3rBDd6G6WtS17uK5FJk0eRsUU/6y7h7vuLyHJh9BQdhAP5eDrEz6IQVW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sk0FNlZn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wO9XVhVv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 15 Aug 2025 09:58:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755252033;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lapm86iGhUHkVIee0DYR+Jfzxg5BHALDG4NRR/d40Ik=;
+	b=sk0FNlZnPXdfx0qxGY7W/faLB6Js71jBNxlxCXeVvUoaXbK+R1BUXHOxIjEGf0HHFpX3YJ
+	yQ5ASieDG25C5lbrWNpYydMox4QWZruErjwQaf495eYR3kVgfmB64FpaHuyZM77BFKr7jU
+	916474BS/Gr4IIMVdsGFacFgt0Rxtf9tGrqwpnXEp13cF9q5bIDwEQhs2MXQRYXy3kqcOY
+	qMVvFmCcALykW0D4AyC7yG+ioIu7gDjElddRH12ppWHQvvtrhNSBN8OpdDsP5GJvJYV71G
+	klFA0KejT2JSM+6Evq11fAUbFLBQCKryPuxKKkoZ/LMBAdmv63tv9mKcGVwwCA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755252033;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lapm86iGhUHkVIee0DYR+Jfzxg5BHALDG4NRR/d40Ik=;
+	b=wO9XVhVvnKdTDdlX0gMSHaByErjLn3M5fh4RzOiD8KqsrQ7d1qTtr7U5jgCCWCnyqESBfL
+	ewCU2UEXKfJtwjBg==
+From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86/build: Remove cc-option for GCC retpoline flags
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250814-x86-min-ver-cleanups-v1-1-ff7f19457523@kernel.org>
+References: <20250814-x86-min-ver-cleanups-v1-1-ff7f19457523@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Adranos.cab.de (10.10.1.54) To Adranos.cab.de (10.10.1.54)
-X-Proofpoint-ORIG-GUID: FOP4TzmLZxLnHahOUlaOhnkgUB9CJtuu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDA4MCBTYWx0ZWRfX2vxfAdB/6vLZ
- I5TCKJDPQ4SMKBypCyIQuKK9obAMoKu11pWaqZKHEX7L5mqAvQa+OSE/r/8sJCd4tbKrzG4WE14
- KdhDdclwiXB8HuhR9+j6qsz1vnYPHRhUQaiAjNyac6RgGgE+QG+PpJj8lFZiXJHffHSnHv66ov8
- q+ov8oOvLP43U9USjLhvM8L5kBonnWLnXYfkAFZFRycJ4p3TJRbbMn1rRHabtwo9zTG+f9zLKKG
- CV1jB3USGuHKL5Z7Gh5cnWXfY18gCNmrPBn3cvJcqCAXgE+3dkyHN7uH55LyhHQiChgf615nTTP
- NCLJAdmE5zsdg3HLC74IePy3ikbYtUSNvjEjrcxyFXJmhwrR8V335D2gw9uWX4=
-X-Authority-Analysis: v=2.4 cv=bctrUPPB c=1 sm=1 tr=0 ts=689f04e0 cx=c_pps
- a=LmW7qmVeM6tFdl5svFU9Cg==:117 a=LmW7qmVeM6tFdl5svFU9Cg==:17
- a=kldc_9v1VKEA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VCfmM45KO3mYAKdcRPcA:9
-X-Proofpoint-GUID: FOP4TzmLZxLnHahOUlaOhnkgUB9CJtuu
+Message-ID: <175525193734.1420.17080036868685677686.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The error description would be wrong in case the "size" Devicetree
-property is missing for an FRAM without device ID.
+The following commit has been merged into the x86/build branch of tip:
 
-Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Commit-ID:     5d6d30eca4dd1c9e8515a8d4b13106205d5c0ec4
+Gitweb:        https://git.kernel.org/tip/5d6d30eca4dd1c9e8515a8d4b13106205d5=
+c0ec4
+Author:        Nathan Chancellor <nathan@kernel.org>
+AuthorDate:    Thu, 14 Aug 2025 18:31:37 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 15 Aug 2025 11:25:48 +02:00
+
+x86/build: Remove cc-option for GCC retpoline flags
+
+The minimum supported version of GCC to build the x86 kernel was bumped
+to GCC 8.1 in
+
+  a3e8fe814ad1 ("x86/build: Raise the minimum GCC version to 8.1").
+
+'-mindirect-branch' and '-mindirect-branch-register' were first supported in
+GCC 8.1, so there is no need to call cc-option to inquire if it is supported.
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://gcc.gnu.org/git/?p=3Dgcc.git;a=3Dcommit;h=3Dda99fd4a3ca06b43b08=
+ba8d96dab84e83ac90aa7
+Link: https://gcc.gnu.org/git/?p=3Dgcc.git;a=3Dcommit;h=3Dd543c04b795f8af4ebe=
+5b3d5f38156ef4e5734f1
+Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-1-ff7f19457523=
+@kernel.org
 ---
- drivers/misc/eeprom/at25.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-index c90150f72836..e2868f7bdb03 100644
---- a/drivers/misc/eeprom/at25.c
-+++ b/drivers/misc/eeprom/at25.c
-@@ -399,7 +399,7 @@ static int at25_fram_to_chip(struct device *dev, struct spi_eeprom *chip)
- 				id[j] = tmp;
- 			}
- 		if (id[6] != 0xc2) {
--			dev_err(dev, "Error: no Cypress FRAM (id %02x)\n", id[6]);
-+			dev_err(dev, "Error: no Cypress FRAM with device ID (manufacturer ID bank 7: %02x)\n", id[6]);
- 			return -ENODEV;
- 		}
- 
--- 
-2.43.0
-
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 1913d34..ed56573 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -13,8 +13,8 @@ else
+ endif
+=20
+ ifdef CONFIG_CC_IS_GCC
+-RETPOLINE_CFLAGS	:=3D $(call cc-option,-mindirect-branch=3Dthunk-extern -min=
+direct-branch-register)
+-RETPOLINE_VDSO_CFLAGS	:=3D $(call cc-option,-mindirect-branch=3Dthunk-inline=
+ -mindirect-branch-register)
++RETPOLINE_CFLAGS	:=3D -mindirect-branch=3Dthunk-extern -mindirect-branch-reg=
+ister
++RETPOLINE_VDSO_CFLAGS	:=3D -mindirect-branch=3Dthunk-inline -mindirect-branc=
+h-register
+ endif
+ ifdef CONFIG_CC_IS_CLANG
+ RETPOLINE_CFLAGS	:=3D -mretpoline-external-thunk
 
