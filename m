@@ -1,196 +1,130 @@
-Return-Path: <linux-kernel+bounces-771296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E15B28542
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE65B28547
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54667B9B6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:37:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F9C7BA271
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351C6317712;
-	Fri, 15 Aug 2025 17:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BCA317712;
+	Fri, 15 Aug 2025 17:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIkb1UkP"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B8M++/VE"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A32A3176E0;
-	Fri, 15 Aug 2025 17:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB683176F7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279550; cv=none; b=jPt0vvkOUtvhCnMwTFGB4+OaUuV2cUcOhZM27G/0l05kW8q7Rs392RDvJViyf53t0U9LD99eQdl/Y2j9NN48cj3ldbz7Uor44uxKlmX3pfiE5iRES08ZA57sQpG4uFc428NHs+FFyUV1fyc+KgsOAL23Fy/Wb/IZGf6ax22BTz4=
+	t=1755279629; cv=none; b=qDiaEKKs9yEozfdx5EAzEOO8RvuEVTlia7aVuYPxapaPgqtmWAZ/wWwQzlY1/I5c0tIxUvEbSGiplFGYCgmAYKbPjK2eLLc00blyi4j4UTlVBU38OLsjfOSdSVtNWqZGh7AxG9Q6XeO5KNHhrgkT/EyVxXjRhYyvg074QHjHQqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279550; c=relaxed/simple;
-	bh=R51N8zUKg32JQLbS+KM21B8cVBHNR7q3s9zYeHBKcG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qL6V85gCnxBpUNF230dB9PYO1VAdcn7IpcIlXtDVqC1GY7ULA6UOkbSmuaXNNJGmBuE7fYAsF7MA6OX+ffjoYUi9fAW+p/fGz4RqzvTE8md8KFhQph6hxcAUluG/j5lUUSdb+FBLFep1C74oJ7e2C0gNxGBhZFlEKXWZdTFvOwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIkb1UkP; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-323266d2d9eso1814233a91.0;
-        Fri, 15 Aug 2025 10:39:08 -0700 (PDT)
+	s=arc-20240116; t=1755279629; c=relaxed/simple;
+	bh=B28sXvGjCFOYUvu0JiN97kvX/cAZKMehY5og6dNVKsY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SsmeOjyLN4QrPEnlQ10fvg6DRTcyEfkeuZnv4BNjXBLyeLN+eGw5KPCkhO6u5TZd1AB0Ysblrvb+ODaAUCxVmi8CMtkuSvr1EcrdBRcv7LebQliXzdSWrt0tJQG4YIvI0UTko7UbBo1cTxIc6A+9SaRRvombfH7ciLzZYVtgBRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B8M++/VE; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-743749537caso2901991a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:40:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755279548; x=1755884348; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PN8XondeG8dcSjROGBlN7jlmi+uH5B8baziZKa1shBg=;
-        b=SIkb1UkPqbTZfaLvnLVrazJav81SV8htTXDu6vLGYOWrf9QYDZGhPxF8BRemg7u3FB
-         Qkq89QPXlPBXCbUoMgvE7NT95cGArMdI4Y0Zu2n5KLADl97ed8LwbNMPxPLMLZcY60Lz
-         1cve2NxcxZXseX9KLnPP4SxF+t5i8tckKq4cxjUS+X60G7nyqhjLZTAjgjAqseicKnbl
-         xomO6XQ75AfGi1gnEhBifDGt/TR4Dfto45tIbSfRMnUY0dWPaLQz2Ui3BRf1UJ+gLxlq
-         6FqIOLDPkUPFOjHhButFA1vQhL5frv2iXWT1Qjgg/zQGJNi3LfbSAA//4Wceunx4PYJz
-         5Irw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755279625; x=1755884425; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZDQWRGa5nfehDHnGzi8kJNQaEZJ5fb4XWdRg//ziTQ=;
+        b=B8M++/VEcWS4dFNrOQ3QzYzfDQ0mwJUWjot8R/jZTMGT7eohYb06E7/BKnKA+Fl/K+
+         JJ4Ry24qb3SSgPZAJV3nXdFYyr38lzWHj1tNTNIM0dpeQRDI9FzMMjVOCjG7qxmqwKxU
+         /cIbtT8kdpXVPLxt0Y29HmMSQygqqIftq8+z9VcPNg3mwRTOO4pcGd1PzN86O1fFFXb+
+         vMgCn7ZlTsX3aoEKZlkv6cw9ypWr2KJjaO3PdvtaGbcWvEVazSzqJZx1OOF1xTxTTh7h
+         5UNeSc/Mk2PGdUH8jfY46LS6yd5VkpBpL2I+AvlSwNPs7z6AiGKOyakA2F73K5VRcvDl
+         NQLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755279548; x=1755884348;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PN8XondeG8dcSjROGBlN7jlmi+uH5B8baziZKa1shBg=;
-        b=wr81FCP/p9/vveXm/NrwbG6Bs9hHJBhaYkb0+bO/91dSkJlVk5SxEZWmctFy5CQkaO
-         mUQEWVJkRcW47IIiqJdS62TOMnFIxcjIu4HrKJgokNv9iMBQjoWTvXa884LVTKCFziUH
-         N5agQJgebTDl3IGSuquZluZ1hDu9Ly+KLqdiUTOMVtLdgHlQ0oKOfqv5sGRXHVIOEIHQ
-         kjec/5JTdJQ5M1SY0QLOAu2ormpV7wN+/ivVfCxVZ+nCqMMoNuOmghjmRT+Nv7LToBoS
-         Z/jNnVyXST2wmYcl5vIEzV83V9T8kJ1d1xgq+TWL96pWhCupmBLc/ZXIWZUHHbBNXHod
-         b6MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXN+zECy1FIxP0kTHhOZuE0y2NFw+cPypNMH14mqDzjdziRUpNsaC0E7yJDj92iRKuSOYk1PkDUEaENsQ=@vger.kernel.org, AJvYcCUa4khRlwZzaHXS10N2Isnx66sN252r8YPTJ27sdE8nEx8YGc8oMw2leBY2zucsooCyNadRuGAn2Fk=@vger.kernel.org, AJvYcCX2V0Z8kjey3Ddo2E+OnxEpXoWgtStziUkYtDqLecjNa7xeGBfJneNbrT5oKt4P8LzcvMFhCHClM6EYrkQja6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZTEZCzSXPjAzd9TX8kkkp81GbAmqxtm9guH0WSTOBFYW0wClU
-	yxQb9RML1zCNYHfzEdI+dumcyDOxHaNPfPbUW1N+FasYEqyp+NfadWlL
-X-Gm-Gg: ASbGncsJB2Si4sij2dmdHYygumOCVIalkiwKhB+POo3rcMDobCi5S7oZ15Mrnud6D94
-	hUfEewys8CkhqZK8CZ4bS7V2pqfBseIIojiufXMELvcbfKDsxhpD9Z2AmmtWti9zKMcLFvp2iOm
-	yw1x3MGl0+IbN8E/l4+R1F4RcABQTx3nP+8H6MxNEhClHYSWGhGJnK4ZmUGRWLOzyhZR334g5IV
-	D/RE4mBaBdb25dm6ORtu9dRBz4JB7EoZ2zTxrgqakaFp609z0y0xWiV9GRygF4OuqLAOkIphO1/
-	VMbOwiSR7c54ddMXyqO/k+0zSQABwEzi9Rr+yit3xXvhCAJUCjXALQgEKzhNL5ttMi66vtGpdbG
-	ytscuvHx9asJixuIn4TYCm+6sfL282hOdI3P3
-X-Google-Smtp-Source: AGHT+IHaBa4n45+MHAAyZGP1UZ9stWB2NhzExq+J1whhyj1txV3qmSSpR0wQKOLmPdA3oGagtFODRA==
-X-Received: by 2002:a17:90b:3c51:b0:312:e9bd:5d37 with SMTP id 98e67ed59e1d1-3234db714a6mr1688a91.6.1755279547957;
-        Fri, 15 Aug 2025 10:39:07 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-323311677e5sm4905882a91.26.2025.08.15.10.39.01
+        d=1e100.net; s=20230601; t=1755279625; x=1755884425;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XZDQWRGa5nfehDHnGzi8kJNQaEZJ5fb4XWdRg//ziTQ=;
+        b=HA0ibWNMVmk1ZrcHiuxnYHngHBiyFx50LxL+E1vM6T1FpHnAqlSrbX6WkZF3G2d5MI
+         34nfSMWpBMIEicq+WZ9raQxjEt7XXn+2cuKP1uunOv8xU2QFTTUuCewm6koH0NA4tiCL
+         ZFqwKZ7OtZIuZ4wyJ9dxlVVhK7ygbh7PQZr0Ilb64CJ24yl0XmVgkMO73gVuATQ8nQC0
+         FeE2fvipyQMlYTBHmKwK6QoSt08V+y/5kZdIIB+V2a21lwH0a5cCT6a1wKYYqkmaHCEU
+         Dkjq67Uvjc+UHJN0ml/s1YbVIhnkoVQsDtUMOtk6nTpBe/ioDbEa34oIIdhNAcV72bVq
+         cIMw==
+X-Gm-Message-State: AOJu0YxnH0YUrq4kBJIIPRvwFZ9lEv5VO93bnU+b2DImyir5id0aCPHv
+	ijrhpb7GqvmC2hmOki14K2j+qY8DSR4ewsOHtBonxIT8EYMR1WdH6lzwqmZbSeNPhsw=
+X-Gm-Gg: ASbGnctahJjqbABoBF/s3pIQ2ZSWQ8Q+5wbsgu4CyuSR33weCnpiTfPhe0g98G+vO4D
+	Cm/NFCBiFehmU1+Z+r9f+TY+/VzFKvfOrTWD6IWrEB2odgfyaw3ceP9XvecMbIhc53WEfeTCTNt
+	XFMRgmBE8we7JgWGr4KlsabVVJm7FaqUGaoX03f8bjVAkyI4GI8kkY9vifuAuo+3GZ6QRZ+Oxl9
+	IE1eP71RxVk1wbCUeLdJM/f0Xgh2P1FmsQaazVNst0YS7twyRNyc+wjXwwNehgBydeCUmdMeBUg
+	9GkC0y5N+oy15jLmLHYbn2+8/JJ44McJIHtztnJ3kK0Wnx/J6TOlRwY3w0tjP9pYs9LORnkfpgl
+	Tunbt6OLWUFNHGog55158PXHsH10=
+X-Google-Smtp-Source: AGHT+IFXaxzjWw+oA/KSMliexhuvKtsGdlQq86jSQO92a0BGM3xz0pCDcRhNs66WPy+CPmotDuvdfQ==
+X-Received: by 2002:a05:6830:3901:b0:743:541d:4fa3 with SMTP id 46e09a7af769-74382cb5912mr4279781a34.0.1755279625154;
+        Fri, 15 Aug 2025 10:40:25 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:677:c1a1:65b9:2b0c])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74392073439sm405826a34.48.2025.08.15.10.40.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 10:39:07 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-pm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: opp: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Fri, 15 Aug 2025 23:08:58 +0530
-Message-Id: <20250815173858.1406967-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250815173058.1398737-1-shankari.ak0208@gmail.com>
-References: <20250815173058.1398737-1-shankari.ak0208@gmail.com>
+        Fri, 15 Aug 2025 10:40:23 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] spi: axi-spi-engine: improve version checks
+Date: Fri, 15 Aug 2025 12:40:01 -0500
+Message-Id: <20250815-spi-axi-spi-enigne-improve-version-checks-v1-0-13bde357d5b6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPFwn2gC/x2NwQqDQAxEf0VybkAtK9JfKT1IdtRQXJcEFkH89
+ 249DQ/mzZzkMIXTqznJUNR1TxW6R0OyTmkBa6xMfduHduwCe1aeDr0TSZdUG1u2vYAL7K+zrJC
+ vs0QB4vwMQxyo7mXDrMf99f5c1w+HGFTKewAAAA==
+X-Change-ID: 20250815-spi-axi-spi-enigne-improve-version-checks-cdceedf356d6
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=829; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=B28sXvGjCFOYUvu0JiN97kvX/cAZKMehY5og6dNVKsY=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBon3DzHixko/YuL4pal5oD+kOQJ9ojaGqQNegoc
+ bKv4fMZUHCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaJ9w8wAKCRDCzCAB/wGP
+ wACuB/9wLFyaqAgpH8/ZlpsLfDPx2w9qfuDqkWzdAbV+ROT+8W0F9ZnLNNqwSiMbP+ogNsnJ20C
+ rKU6S/hR0H7tAzf1jCn6hvWCCBxqLQ4ogAbGuPGm6E4kit+KJXHk5OxUI8KSr92NXU5mgDpwCOH
+ BAXk84o97AE8yHdAsSjR4vMZEZjWrg9vZYftLtvqxX8AfaeJAlF3dTQEC/JS5n03ZtX/EXv0ISh
+ ord+KqztbeZsr/MO+MID/mJY+YNzVjlY78BI5cyo0ppm7Qdrgr43aJkazmav9gamfo71PRYo/rr
+ oB96AbnTyTAZ/tMYCRaEF4ZjdOHTkimYQF6058+rgIEoSwUm
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Fri, Aug 15, 2025 at 11:00:58PM +0530, Shankari Anand wrote:
-> Update call sites in drm to import ARef and
-> AlwaysRefCounted from sync::aref instead of types.
-> 
-> This aligns with the ongoing effort to move ARef and
-> AlwaysRefCounted to sync.
-> 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> ---
+We have a pending major version bump for the axi-spi-engine so to
+prepare for that, improve the existing version checks for feature
+enablement.
 
-I apologize for the mistake in the commit message, I'll fix and send a v2.
+Unless Nuno knows something I don't, it should be fine for the header
+file patch to go through the SPI tree.
 
-> It part of a subsystem-wise split series, as suggested in:
-> https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-> This split series is intended to ease review and subsystem-level maintenance.
-> 
-> The original moving patch is here: (commit 07dad44aa9a93)
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
-> 
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
-> ---
->  rust/kernel/opp.rs | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-> index 08126035d2c6..29be7d14025e 100644
-> --- a/rust/kernel/opp.rs
-> +++ b/rust/kernel/opp.rs
-> @@ -16,7 +16,8 @@
->      ffi::c_ulong,
->      prelude::*,
->      str::CString,
-> -    types::{ARef, AlwaysRefCounted, Opaque},
-> +    sync::aref::{ARef, AlwaysRefCounted},
-> +    types::Opaque,
->  };
->  
->  #[cfg(CONFIG_CPU_FREQ)]
-> @@ -162,7 +163,7 @@ fn from(power: MicroWatt) -> Self {
->  /// use kernel::device::Device;
->  /// use kernel::error::Result;
->  /// use kernel::opp::{Data, MicroVolt, Token};
-> -/// use kernel::types::ARef;
-> +/// use kernel::sync::aref::ARef;
->  ///
->  /// fn create_opp(dev: &ARef<Device>, freq: Hertz, volt: MicroVolt, level: u32) -> Result<Token> {
->  ///     let data = Data::new(freq, volt, level, false);
-> @@ -211,7 +212,7 @@ fn drop(&mut self) {
->  /// use kernel::device::Device;
->  /// use kernel::error::Result;
->  /// use kernel::opp::{Data, MicroVolt, Token};
-> -/// use kernel::types::ARef;
-> +/// use kernel::sync::aref::ARef;
->  ///
->  /// fn create_opp(dev: &ARef<Device>, freq: Hertz, volt: MicroVolt, level: u32) -> Result<Token> {
->  ///     let data = Data::new(freq, volt, level, false);
-> @@ -262,7 +263,7 @@ fn freq(&self) -> Hertz {
->  /// use kernel::clk::Hertz;
->  /// use kernel::error::Result;
->  /// use kernel::opp::{OPP, SearchType, Table};
-> -/// use kernel::types::ARef;
-> +/// use kernel::sync::aref::ARef;
->  ///
->  /// fn find_opp(table: &Table, freq: Hertz) -> Result<ARef<OPP>> {
->  ///     let opp = table.opp_from_freq(freq, Some(true), None, SearchType::Exact)?;
-> @@ -335,7 +336,7 @@ fn drop(&mut self) {
->  /// use kernel::error::Result;
->  /// use kernel::opp::{Config, ConfigOps, ConfigToken};
->  /// use kernel::str::CString;
-> -/// use kernel::types::ARef;
-> +/// use kernel::sync::aref::ARef;
->  /// use kernel::macros::vtable;
->  ///
->  /// #[derive(Default)]
-> @@ -581,7 +582,7 @@ extern "C" fn config_regulators(
->  /// use kernel::device::Device;
->  /// use kernel::error::Result;
->  /// use kernel::opp::Table;
-> -/// use kernel::types::ARef;
-> +/// use kernel::sync::aref::ARef;
->  ///
->  /// fn get_table(dev: &ARef<Device>, mask: &mut Cpumask, freq: Hertz) -> Result<Table> {
->  ///     let mut opp_table = Table::from_of_cpumask(dev, mask)?;
-> 
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585-- 
-> 2.34.1
-> 
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+David Lechner (2):
+      include: adi-axi-common: add version check function
+      spi: axi-spi-engine: use adi_axi_pcore_ver_gteq()
+
+ drivers/spi/spi-axi-spi-engine.c | 17 +++++++----------
+ include/linux/adi-axi-common.h   | 21 +++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 10 deletions(-)
+---
+base-commit: bbe4656eae2729b8ca87116defa19c568898d08f
+change-id: 20250815-spi-axi-spi-enigne-improve-version-checks-cdceedf356d6
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
