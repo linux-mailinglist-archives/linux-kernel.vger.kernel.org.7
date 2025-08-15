@@ -1,276 +1,124 @@
-Return-Path: <linux-kernel+bounces-770290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1270B27965
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:48:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC52B27966
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6237BC382
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E138D1CE4446
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEE72D23B6;
-	Fri, 15 Aug 2025 06:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B27C287273;
+	Fri, 15 Aug 2025 06:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlsWtg54"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kU0zIpuF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D892D1913;
-	Fri, 15 Aug 2025 06:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCDF27703E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755240456; cv=none; b=Q4f+R+VDkDIGQvsX4S7n+cKYq54JiQJhtjTeY6JOnwm7t7CWRepcZl4neAN8gUsatD8oZiUZpIg6fU+t8n4OkTQQhtTIWVSqaKPCdPajJWTiOw7qjB7F7TLeMI6xeCjCNK/DE6Ash+4FWAqAkWcdxQDdUBMKItXpB04zIylpgT8=
+	t=1755240483; cv=none; b=sV+CNioid8XCD7i7N0yEPPxQxx+HqZ9cVwJWEnDFALW09RKwM6cm9JiMukw2MF3Q06Grkl1UakiSqdTShHGhksFVz+ZWGGODVV4YNuxmsHI0IKeuu/F4gXh8Ylgk+8tv933TpZQW3kIJQC8QzcxsUgI9gWPsPM1bsovrNrVuBts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755240456; c=relaxed/simple;
-	bh=Y0sVgiMIvCN1tEPgiAVLe8svWdYQEvpuSTM/2lhhTGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ATy4GV8hsxTElt1NAbUyyyzEKiCwfBubp2QKCL0Sf6V1aLmouARr/hdpV9SLAVBZ0/uwsuIsCs+1+K1jXhRWBxZ4gUu1/847F+xQGWKRtgLFSlN0Gn8av+QXotqbXjnHizSto4NOBtqdZDc3+Dpb86184HjPKGTGRb2dw66Gnnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlsWtg54; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-76e2eb9ae80so1511571b3a.3;
-        Thu, 14 Aug 2025 23:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755240454; x=1755845254; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4PDMe7SP8CZO+JhWjjdFtQ1vR89wVuSvH9ObtDEfac=;
-        b=JlsWtg54GWru5oqIW9XQlViJn+k3rXg8VxFLIW9p7tqoXpTvKgki8RnIt7fUq/8+v9
-         wRBZdLznlvKCamxBqs9UoYKpvga6C4HaN2DWOeK0nEuKbqwqpkNOaMlyDSvCv+BUm43/
-         uHdOL35fxg1FHWBksEERtxMpUoXDVVN+1Wk6UzdcgjRWHZAr0SnOTO4XfonxFLB2SLA6
-         nAxqS6LJ6K9yUkuX28U78TPWYA1Pe8SP8DefxZ9Cm7zx3KoMBdBSY2bWdR6ly3uOxzg8
-         wmChigHI4TJpAvRM+csU+42IuZzSbCB2ntUcsbBiJRYoyiUdH42IXQ6As6Sau0MA/84G
-         WquQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755240454; x=1755845254;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I4PDMe7SP8CZO+JhWjjdFtQ1vR89wVuSvH9ObtDEfac=;
-        b=N2lLAzy3bEmbJjPVVysQrU4Ftc/mJBRccLoVlu0uqlrPywWtOXNoiZIBnOSj20X+Gp
-         ySHtPKXuo3Eg7B1+gKclTQtpjUMO3fW94FmgShDhopNfDf4/H59h1HZ+EPrk0eym3RrC
-         htVh9ZXQcxN/gTxDQlUGybukWNE4mtOmsRiUtjxlnnPsS7a20xJMr/V38WgJaLgo8kip
-         6y3OI1h7EHmsneaxIurUqLPZFg/dewbneqaPoVZKiB2BluDj8msH8H7A9SrHITDRi1v3
-         RiwFp2hoTgl8DQaXtyqzytBjW/P1OMAMuuM8rrRXBjOzEENlY+ufCHtq8JeHL8KeHV0C
-         nKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmbxLRVFkpJis4epm0PAmPwqihrxMF3zFoMMNbrF/iPtEwjg5kZD1sxcebQWNK7h07Lhc=@vger.kernel.org, AJvYcCW+LFjCKq8SXMDN7YD7WR/egjVqzjp7EFCuXu/wNGmILB+6LtOFAb1Hmg8Us98LKvplmCnMOn4qknb3nLU96DCHc3ff@vger.kernel.org, AJvYcCWvxUmL6ur/kDXjTEXcA3izvt4hEAFwJKerUy1chKFG48Vv7CwR1SHF7M7xYtfNzazteIRhbnRlyLTeFn2S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6uUoOvRudNyt45pg1iSERZ/eJcWjljOOnsXNz48DIEGDcFvvZ
-	OQ4SD1sBxGE7ltkj0ViNdkmXgc/ExqUyDGOq+gK5d1Bhr47tcMsFUzFj
-X-Gm-Gg: ASbGncvKB84JhoJEeJSALCiHbCGQ3NUMTSikYZdy/wT6t7ig5w0fCWwZk4gOtnVELMv
-	6I6ezyRjcQCDwm26c99GfJeqQrhdj5z5sIN4o5qVeOMnQewlUL+SGNOliwM3/48EoLKl5qew474
-	ESUkWlsqy5mH0lVN/JaHRFq6WCAnpkvyHB1/sgzRC3R0APanrgwjsesSUHLOKK2qtOmSXR71nWt
-	nRcweKLJWDyPIChthYpgUohJcTN9+kgcqAykE3LLznV/r+7ytzF6LpWEr9bD/yHJkKL0mUUq9nL
-	QHoBaekYwyvIwycpIdburkSnELlu8ut5duqAJjVNXvvw2UGf22f12wjZjfhL9pVmHiRVvvdj96P
-	SbSotG0znY4r1uVw6WROzb5Wkz/MKLA==
-X-Google-Smtp-Source: AGHT+IEpPQf+JHKjFjSgWqtn4rPpLWyc9VY7M5Q7JPqhR1Pw9ZB8mkZhnx1HbtDpf1FcmJxxiv/Cjg==
-X-Received: by 2002:a17:902:f68e:b0:240:6aad:1c43 with SMTP id d9443c01a7336-2446d905497mr14307425ad.48.1755240454201;
-        Thu, 14 Aug 2025 23:47:34 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d539032sm7161665ad.109.2025.08.14.23.47.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 23:47:33 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org,
-	olsajiri@gmail.com
-Cc: rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	hca@linux.ibm.com,
-	revest@chromium.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH bpf-next v4 4/4] selftests/bpf: add benchmark testing for kprobe-multi-all
-Date: Fri, 15 Aug 2025 14:47:10 +0800
-Message-ID: <20250815064712.771089-5-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250815064712.771089-1-dongml2@chinatelecom.cn>
-References: <20250815064712.771089-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1755240483; c=relaxed/simple;
+	bh=JoZn79aBzPPrDDr0xHM5IQgwaowZCOkP1rtnzUXddyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a90RnYmeiOkXKii/ZjOI+LCJHesnwtegdVl/nOi7BLd8KBvfZQQnysbf8gXCpQXksibb7gpgQf3C7TPkZBuerBOdo3udFsjRL4VLxePgGfLOXAuVJXVtLAeiDzcLmivj2Kd9rH6mMgayK4uVCTWCIG8dzDVLHVNTRIlKc3zT2Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kU0zIpuF; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755240482; x=1786776482;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JoZn79aBzPPrDDr0xHM5IQgwaowZCOkP1rtnzUXddyI=;
+  b=kU0zIpuFbQc8r+vVMKXSkFK2GjUakMFtkRwD+wCaR9LxHorXJ82hzKvt
+   YKUSQGoiRKo2uHABhwZwv//UwGteiHgfFQVDUg4kKjN8no1N8QK3FKjC3
+   JPiJcjEpyq1wxhYOrpfN1itypElITKn4XOEWSzWvoGWwhacIuYvYVQNiT
+   wQ/FmzmVQtpvZEfh7ho56QXTcEmCIyp1lDHbIxgEhwyjdWTSTLrRmeQRL
+   udGdi6uL6ZxhScR451v3a9q/7XQC4dljLRhSlJbaj6YJJ5eTw4mdbTtoL
+   gA2rlPTQO28E0D+egg2pC/NlQ3QswufaUbWjeedAHSITLW3F6muJN/9ZA
+   A==;
+X-CSE-ConnectionGUID: tEEGX3bJQfurtu1z4wQoow==
+X-CSE-MsgGUID: 9m49tq7JRBS/ZRTu1dVFmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57714252"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57714252"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 23:48:01 -0700
+X-CSE-ConnectionGUID: q5kEDUGMRySi7HKMbuH4gA==
+X-CSE-MsgGUID: nDLocVRPTjaBabj3cOv3kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="171083464"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 14 Aug 2025 23:47:59 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umoEG-000Bea-1u;
+	Fri, 15 Aug 2025 06:47:56 +0000
+Date: Fri, 15 Aug 2025 14:47:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
+	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
+	xuwei5@huawei.com, fanghao11@huawei.com,
+	jonathan.cameron@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
+Message-ID: <202508151456.FmgCiCK4-lkp@intel.com>
+References: <20250814093005.2040511-2-xiaqinxin@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814093005.2040511-2-xiaqinxin@huawei.com>
 
-For now, the benchmark for kprobe-multi is single, which means there is
-only 1 function is hooked during testing. Add the testing
-"kprobe-multi-all", which will hook all the kernel functions during
-the benchmark. And the "kretprobe-multi-all" is added too.
+Hi Qinxin,
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v3:
-- add testcase kretprobe-multi-all
-- attach a empty kprobe-multi/kretprobe-multi prog to all the kernel
-  functions except bpf_get_numa_node_id to make the bench result more
-  accurate
----
- tools/testing/selftests/bpf/bench.c           |  4 ++
- .../selftests/bpf/benchs/bench_trigger.c      | 54 +++++++++++++++++++
- .../selftests/bpf/benchs/run_bench_trigger.sh |  4 +-
- .../selftests/bpf/progs/trigger_bench.c       | 12 +++++
- tools/testing/selftests/bpf/trace_helpers.c   |  3 ++
- 5 files changed, 75 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..29dbf937818a 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -510,6 +510,8 @@ extern const struct bench bench_trig_kretprobe;
- extern const struct bench bench_trig_kprobe_multi;
- extern const struct bench bench_trig_kretprobe_multi;
- extern const struct bench bench_trig_fentry;
-+extern const struct bench bench_trig_kprobe_multi_all;
-+extern const struct bench bench_trig_kretprobe_multi_all;
- extern const struct bench bench_trig_fexit;
- extern const struct bench bench_trig_fmodret;
- extern const struct bench bench_trig_tp;
-@@ -578,6 +580,8 @@ static const struct bench *benchs[] = {
- 	&bench_trig_kprobe_multi,
- 	&bench_trig_kretprobe_multi,
- 	&bench_trig_fentry,
-+	&bench_trig_kprobe_multi_all,
-+	&bench_trig_kretprobe_multi_all,
- 	&bench_trig_fexit,
- 	&bench_trig_fmodret,
- 	&bench_trig_tp,
-diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-index 82327657846e..c6634a64a7c0 100644
---- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
-+++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-@@ -226,6 +226,58 @@ static void trigger_fentry_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fentry);
- }
- 
-+static void attach_ksyms_all(struct bpf_program *empty, bool kretprobe)
-+{
-+	LIBBPF_OPTS(bpf_kprobe_multi_opts, opts);
-+	char **syms = NULL;
-+	size_t cnt = 0;
-+
-+	if (bpf_get_ksyms(&syms, &cnt, true)) {
-+		printf("failed to get ksyms\n");
-+		exit(1);
-+	}
-+
-+	printf("found %zu ksyms\n", cnt);
-+	opts.syms = (const char **) syms;
-+	opts.cnt = cnt;
-+	opts.retprobe = kretprobe;
-+	/* attach empty to all the kernel functions except bpf_get_numa_node_id. */
-+	if (!bpf_program__attach_kprobe_multi_opts(empty, NULL, &opts)) {
-+		printf("failed to attach bpf_program__attach_kprobe_multi_opts to all\n");
-+		exit(1);
-+	}
-+}
-+
-+static void trigger_kprobe_multi_all_setup(void)
-+{
-+	struct bpf_program *prog, *empty;
-+
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	attach_ksyms_all(empty, false);
-+	attach_bpf(prog);
-+}
-+
-+static void trigger_kretprobe_multi_all_setup(void)
-+{
-+	struct bpf_program *prog, *empty;
-+
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kretprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kretprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	attach_ksyms_all(empty, true);
-+	attach_bpf(prog);
-+}
-+
- static void trigger_fexit_setup(void)
- {
- 	setup_ctx();
-@@ -512,6 +564,8 @@ BENCH_TRIG_KERNEL(kretprobe, "kretprobe");
- BENCH_TRIG_KERNEL(kprobe_multi, "kprobe-multi");
- BENCH_TRIG_KERNEL(kretprobe_multi, "kretprobe-multi");
- BENCH_TRIG_KERNEL(fentry, "fentry");
-+BENCH_TRIG_KERNEL(kprobe_multi_all, "kprobe-multi-all");
-+BENCH_TRIG_KERNEL(kretprobe_multi_all, "kretprobe-multi-all");
- BENCH_TRIG_KERNEL(fexit, "fexit");
- BENCH_TRIG_KERNEL(fmodret, "fmodret");
- BENCH_TRIG_KERNEL(tp, "tp");
-diff --git a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-index a690f5a68b6b..f7573708a0c3 100755
---- a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-+++ b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-@@ -6,8 +6,8 @@ def_tests=( \
- 	usermode-count kernel-count syscall-count \
- 	fentry fexit fmodret \
- 	rawtp tp \
--	kprobe kprobe-multi \
--	kretprobe kretprobe-multi \
-+	kprobe kprobe-multi kprobe-multi-all \
-+	kretprobe kretprobe-multi kretprobe-multi-all \
- )
- 
- tests=("$@")
-diff --git a/tools/testing/selftests/bpf/progs/trigger_bench.c b/tools/testing/selftests/bpf/progs/trigger_bench.c
-index 044a6d78923e..3d5f30c29ae3 100644
---- a/tools/testing/selftests/bpf/progs/trigger_bench.c
-+++ b/tools/testing/selftests/bpf/progs/trigger_bench.c
-@@ -97,6 +97,12 @@ int bench_trigger_kprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kprobe.multi/bpf_get_numa_node_id")
-+int bench_kprobe_multi_empty(void *ctx)
-+{
-+	return 0;
-+}
-+
- SEC("?kretprobe.multi/bpf_get_numa_node_id")
- int bench_trigger_kretprobe_multi(void *ctx)
- {
-@@ -104,6 +110,12 @@ int bench_trigger_kretprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kretprobe.multi/bpf_get_numa_node_id")
-+int bench_kretprobe_multi_empty(void *ctx)
-+{
-+	return 0;
-+}
-+
- SEC("?fentry/bpf_get_numa_node_id")
- int bench_trigger_fentry(void *ctx)
- {
-diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
-index 9da9da51b132..78cf1aab09d8 100644
---- a/tools/testing/selftests/bpf/trace_helpers.c
-+++ b/tools/testing/selftests/bpf/trace_helpers.c
-@@ -575,6 +575,9 @@ static bool skip_entry(char *name)
- 	if (!strcmp(name, "__rcu_read_unlock"))
- 		return true;
- 
-+	if (!strcmp(name, "bpf_get_numa_node_id"))
-+		return true;
-+
- 	return false;
- }
- 
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.17-rc1 next-20250814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250814093005.2040511-2-xiaqinxin%40huawei.com
+patch subject: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250815/202508151456.FmgCiCK4-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151456.FmgCiCK4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151456.FmgCiCK4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/io_ptdump_debugfs.c:14:13: warning: no previous prototype for 'io_ptdump_debugfs_register' [-Wmissing-prototypes]
+      14 | void __init io_ptdump_debugfs_register(const char *name)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/io_ptdump_debugfs_register +14 mm/io_ptdump_debugfs.c
+
+    13	
+  > 14	void __init io_ptdump_debugfs_register(const char *name)
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
