@@ -1,114 +1,362 @@
-Return-Path: <linux-kernel+bounces-770056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B47B27652
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:49:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AB4B27648
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261803B914F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219D8567771
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E5A2BCF72;
-	Fri, 15 Aug 2025 02:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0CE17A318;
+	Fri, 15 Aug 2025 02:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sXcGpxlG"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="csICdsra"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5466629E0FD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B46012FF69
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225928; cv=none; b=Jn0OahRnOeCwHk58UdpSpo8vYDe6f/rGA8Dd2BiJYKtqC4PdyOiAXeE7rCTfmgWYgHRWdTVrOz7pt6nM56v6sgJQRIw431m8okVmpXDx09lBwRR7Bc3xrX5s9bnp4Tql3Wi31nkHvvGzGjyJHLrYkl05N7Czd1bbMtP9mibbSkw=
+	t=1755226030; cv=none; b=Q48d/YnErIOW22EkIRUPdQUEbKAgnqtBvxjXuFEK5NszYOYwUpjFtSP/jEZL2aq9lSkhpy4C9P9oySJFl9XWiC6rNVi+seQO/vYh8WpAHpCBZCrnP6HWc8Eyr2EocHF68hsFJPKLubKFV2F5TmhJmefC2yS/nXLVWSsL98B3Tu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225928; c=relaxed/simple;
-	bh=jPvp5/YLdaw2kJJwikTj6C2nTsjRlvlI0ZFrhUimsDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vf0Inu4y5AOPbRey3LlGmLe21BECjdzXF1VxXashY3A4HPDDxjKFa5VGu3l7ra0ZljSFWMl9qWqTk24wLl1TYykO8vbH+ymSXJ9O1QJqoU8oWkc04N/yw+UPSt9DD3GCUKQIszbtdx+I+3X+d18eygUhFH7jIfpVb3evZ5Nh8b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sXcGpxlG; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755225923;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Ied7X9jQgR3h26+VkaXChRgVV0OEH9AE3P2+5XZf8hg=;
-	b=sXcGpxlGLJlXlGMqaGdOaOw37qJdpzNs2klMzvD3Lg2noAzkvPpfC87kjEHPgG9ynR8rGy
-	YUD+zNGUbmZZj/dzvZ2fvCpymFoYONIvIiTkPdK12DLRa8FsJA5Hm0fKB82xu/gF74MqKJ
-	ZFioUKEWLNxNYjOXPp3e0uSYYNz2eW4=
-From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] mm/page_alloc: simplify lowmem_reserve max calculation
-Date: Fri, 15 Aug 2025 10:45:09 +0800
-Message-ID: <20250815024509.37900-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1755226030; c=relaxed/simple;
+	bh=FgEGBlwB3ciJlGICTiEIBmOCk6trtHsuEUI/77KBQ5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbXGNvkfTAM+dBqJHfZN8cAN/nVmRdhW87whzSjAWqtXsadEL9860HaX/btbFiRp1PMwSSK7Cww4sKbvXeIZ36W5gRVEGso/xQzIKQzwLm8ir1ojqRsU7chQR8ykbgiJvzWilCrVMhbK/k5odnhBhPZ4vOANpzmJRn9bOE6AIM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=csICdsra; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-435de56f229so854135b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1755226027; x=1755830827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i22p/aw9mrQuKl9gbWNZhMqSoSRUivedkHT3ITohh0M=;
+        b=csICdsraVeI4hxkgS905p6H4zsiAIl6ycoQbLDziD6CMfJKLa9U9LV9A4Jekz2VcGT
+         gazQt5lfwUZbFGyxR5pV4pAcGksOlkZwBGxsF8A4rFwsVLCvYKW44svAXiRyJJ77NVNL
+         zyLYmziABQtkXiENIHXIFhBtLvzPK1w+xocnlwZ9AXdJnsLtjXpZ46imY1YbwWCTKhvK
+         jClQ7yZHpQgNfE0rbQrvKPW2fS+tNh6zq8KPun4VJtm/vaVorw3HNB8ac6uCuLT0lQPl
+         Z01LvqM8Xws68CRFn0LdzM85ZcSlj3UKA0gLfrZjcjnkiWgppDwckmbGmI0VIx34oXwn
+         9ieQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755226027; x=1755830827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i22p/aw9mrQuKl9gbWNZhMqSoSRUivedkHT3ITohh0M=;
+        b=cCQl1DjsaprUJBfDC58oa1PIcJsJn86dSsz+vaCUzWAnqgzCujL8FhHVs7ier6cmtP
+         36LF58zKd1shXimgpfdsMRiaXDhbcJWjXOOfh5GG+zmjccs2MxpEFfmF3J5coYdCP54M
+         j+ascFpyT5xh5w8EkVhLhKqPtNx/ecFthmVPEgFyKm/kSCP8TEiXSwjDUkd0lKgWZlVw
+         4b0wB9irTf8BVo0igjUcUlCVtSmZ166ucUk2byuDknprDZ+yCTvBz3AZfLX9ERNyeptU
+         RR9pqRISPRuhFyR9w6eQPzwLOq+V7wbe+f8fb3aS9LYTYm4aIm2+xWNtcBotf3y+qCM5
+         fhsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/QyYXhnNtqliLXV3Uh3u1pwLyJWLx4n6yP3b8vpMyt5LokRM9MldF9iT13g0JtEW/aTUZRPXDfzdonAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNVQUlo/nJLHsqRCrnD2uwEOe8xRF3tjhuSDSgGCNbqkaxWHpM
+	HJFkqhcvhPtY0d/cEGiuHm2SlTBJJcO0EJKO49iqC04BiCDwGyVbYbg6f9SYqOh2TeyP1fLgbP5
+	Lkht9YlZ8WXc1YwiKbKYfRo5V+oP3iSeSJOYgCh/DAw==
+X-Gm-Gg: ASbGncvUO2/is2n9ErNAian+O6FML1jMFXyLyBTrDte/NRS6piYOsBUJLXr3wmLeR9q
+	DZRJS0tVyheItakxkBJ4wD0leRExGRli8eaUY4Snpz3AFB8zO9Sw0bDpmHQRl6bPcpEcsbEmXuZ
+	ZeXSCs2xyhlNIYkrQ6+JoFiCmWkPC+QpICBYOt02cJYo3RggVzrg1IxiISMDaLBR6HWdgwCFLV/
+	dxmZKTLICfnUg0/NCfOVnoQ
+X-Google-Smtp-Source: AGHT+IFQ5d8tJ25Ui1eA5Dvb0jLpOC9919b2NPrp4OSov+1adrsc3N2mQy1gf8rgbrxNJwHxWsgq/SBoimc4pYFKYbQ=
+X-Received: by 2002:a05:6808:23d0:b0:433:f8ac:2eca with SMTP id
+ 5614622812f47-435ec4fb0aamr192856b6e.27.1755226027030; Thu, 14 Aug 2025
+ 19:47:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
+ <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
+ <aJtKZhvNX0p3obFw@sunil-laptop> <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
+ <aJwiXKWXik8BmpL8@sunil-laptop> <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
+ <CAK9=C2VOaAJZxCeM-5QPj5B-ie68LivJyQcM8KwKjdL9u00RJg@mail.gmail.com>
+ <CAEEQ3wmDygvLn-EK_hCumOuCkPjKWfnmwiA+kz4p9N=thG0pXA@mail.gmail.com>
+ <CAK9=C2X+6vs=Xa7XnreRs4+e5OjeJA-XtwwUM4GHq7pT=Fs-5A@mail.gmail.com>
+ <CAEEQ3wm9shktdzUeO5RczE-=qdDUS30TGASOFtnMEcuw7L7jZw@mail.gmail.com>
+ <CAK9=C2UDVnpHs04VmzmjjmTYkE--dX2NtoWXGXoX=vVm=SF_5Q@mail.gmail.com> <4A3F784D-4844-48D8-AE84-B4D25BCB78B4@jrtc27.com>
+In-Reply-To: <4A3F784D-4844-48D8-AE84-B4D25BCB78B4@jrtc27.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 15 Aug 2025 10:46:55 +0800
+X-Gm-Features: Ac12FXwPrR70zso9xdRXBCPyrDokgjQt3elf-TdGrHXD-NoX5_YBF4DYT8WvjwM
+Message-ID: <CAEEQ3wm5M9WgraQsVkoESTZ4bHYvV23yqOMvVZ3XV8zhE4Bs3w@mail.gmail.com>
+Subject: Re: [External] [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
+To: Jessica Clarke <jrtc27@jrtc27.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, aou@eecs.berkeley.edu, juwenlong@bytedance.com, 
+	alex@ghiti.fr, rafael@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	linux-riscv@lists.infradead.org, Rahul Pathak <rpathak@ventanamicro.com>, lenb@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ye Liu <liuye@kylinos.cn>
+Hi Jessica,
 
-Use max() to find the maximum lowmem_reserve value and min_t() to
-cap it to managed_pages in calculate_totalreserve_pages(), instead
-of open-coding the comparisons. No functional change.
+On Fri, Aug 15, 2025 at 12:57=E2=80=AFAM Jessica Clarke <jrtc27@jrtc27.com>=
+ wrote:
+>
+> On 14 Aug 2025, at 14:37, Anup Patel <apatel@ventanamicro.com> wrote:
+> >
+> > On Thu, Aug 14, 2025 at 11:49=E2=80=AFAM yunhui cui <cuiyunhui@bytedanc=
+e.com> wrote:
+> >>
+> >> Hi Anup,
+> >>
+> >> On Thu, Aug 14, 2025 at 1:48=E2=80=AFPM Anup Patel <apatel@ventanamicr=
+o.com> wrote:
+> >>>
+> >>> On Thu, Aug 14, 2025 at 9:08=E2=80=AFAM yunhui cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> >>>>
+> >>>> Hi Anup,
+> >>>>
+> >>>> On Wed, Aug 13, 2025 at 7:12=E2=80=AFPM Anup Patel <apatel@ventanami=
+cro.com> wrote:
+> >>>>>
+> >>>>> On Wed, Aug 13, 2025 at 12:14=E2=80=AFPM yunhui cui <cuiyunhui@byte=
+dance.com> wrote:
+> >>>>>>
+> >>>>>> Hi Sunil,
+> >>>>>>
+> >>>>>> On Wed, Aug 13, 2025 at 1:28=E2=80=AFPM Sunil V L <sunilvl@ventana=
+micro.com> wrote:
+> >>>>>>>
+> >>>>>>> Hi Yunhui,
+> >>>>>>>
+> >>>>>>> On Wed, Aug 13, 2025 at 11:23:39AM +0800, yunhui cui wrote:
+> >>>>>>>> Hi Sunil,
+> >>>>>>>>
+> >>>>>>>> On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@vent=
+anamicro.com> wrote:
+> >>>>>>>>>
+> >>>>>>> [...]
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> The purpose of cppc_ffh_csr_read() is to calculate the actua=
+l
+> >>>>>>>>>>>> frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX=
+.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> CSR_XXX should be a reference clock and does not count durin=
+g WFI
+> >>>>>>>>>>>> (Wait For Interrupt).
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Similar solutions include: x86's aperf/mperf, and ARM64's AM=
+U with
+> >>>>>>>>>>>> registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> However, we know that CSR_TIME in the current code does coun=
+t during
+> >>>>>>>>>>>> WFI. So, is this design unreasonable?
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Should we consider proposing an extension to support such a =
+dedicated
+> >>>>>>>>>>>> counter (a reference clock that does not count during WFI)? =
+This way,
+> >>>>>>>>>>>> the value can be obtained directly in S-mode without trappin=
+g to
+> >>>>>>>>>>>> M-mode, especially since reading this counter is very freque=
+nt.
+> >>>>>>>>>>>>
+> >>>>>>>>>>> Hi Yunhui,
+> >>>>>>>>>>>
+> >>>>>>>>>>> Yes, but we anticipated that vendors might define their own c=
+ustom CSRs.
+> >>>>>>>>>>> So, we introduced FFH encoding to accommodate such cases.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks,
+> >>>>>>>>>>> Sunil
+> >>>>>>>>>>
+> >>>>>>>>>> As mentioned earlier, it is best to directly read CSR_XXX (a r=
+eference
+> >>>>>>>>>> clock that does not count during WFI) and CSR_CYCLE in S-mode,=
+ rather
+> >>>>>>>>>> than trapping to SBI.
+> >>>>>>>>>>
+> >>>>>>>>> No. I meant direct CSR access itself not SBI. Please take a loo=
+k at
+> >>>>>>>>> Table 6 of RISC-V FFH spec.
+> >>>>>>>>>
+> >>>>>>>>>> drivers/acpi/riscv/cppc.c is a generic driver that is not spec=
+ific to
+> >>>>>>>>>> any vendor. Currently, the upstream code already uses CSR_TIME=
+, and
+> >>>>>>>>>> the logic of CSR_TIME is incorrect.
+> >>>>>>>>>>
+> >>>>>>> ACPI spec for "Reference Performance Register" says,
+> >>>>>>>
+> >>>>>>> "The Reference Performance Counter Register counts at a fixed rat=
+e any
+> >>>>>>> time the processor is active. It is not affected by changes to De=
+sired
+> >>>>>>> Performance, processor throttling, etc."
+> >>>>>>>
+> >>>>>>>>> CSR_TIME is just an example. It is upto the vendor how _CPC obj=
+ects are
+> >>>>>>>>> encoded using FFH. The linux code doesn't mean one should use C=
+SR_TIME
+> >>>>>>>>> always.
+> >>>>>>>>
+> >>>>>>>> First, the example of CSR_TIME is incorrect. What is needed is a
+> >>>>>>>> CSR_XXX (a reference clock that does not count during WFI).
+> >>>>>>>>
+> >>>>>>>> Second, you mentioned that each vendor can customize their own
+> >>>>>>>> implementations. But should all vendors' CSR_XXX/YYY/... be adde=
+d to
+> >>>>>>>> drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/=
+cppc.c fall
+> >>>>>>>> under the scope defined by the RISC-V architecture?
+> >>>>>>>>
+> >>>>>>> No. One can implement similar to csr_read_num() in opensbi. We di=
+dn't
+> >>>>>>> add it since there was no HW implementing such thing. What I am
+> >>>>>>> saying is we have FFH encoding to support such case.
+> >>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>> It would be best to promote a specification to support CSR_XXX=
+, just
+> >>>>>>>>>> like what has been done for x86 and arm64. What do you think?
+> >>>>>>>>>>
+> >>>>>>>>> Wouldn't above work? For a standard extension, you may have to =
+provide
+> >>>>>>>>> more data with actual HW.
+> >>>>>>>>
+> >>>>>>>> This won=E2=80=99t work. May I ask how the current upstream code=
+ can calculate
+> >>>>>>>> the actual CPU frequency using CSR_TIME without trapping to SBI?
+> >>>>>>>> This is a theoretical logical issue. Why is data needed here?
+> >>>>>>>>
+> >>>>>>> As I mentioned above, one can implement a generic CSR read withou=
+t
+> >>>>>>> trapping to SBI.
+> >>>>>>>
+> >>>>>>>> Could you take a look at the "AMU events and event numbers" chap=
+ter in
+> >>>>>>>> the ARM64 manual?
+> >>>>>>>>
+> >>>>>>> As-per ACPI spec reference performance counter is not affected by=
+ CPU
+> >>>>>>> state. The RISC-V FFH encoding is sufficiently generic to support=
+ this
+> >>>>>>> requirement, even if the standard CSR_TIME cannot be used. In suc=
+h
+> >>>>>>> cases, an alternative CSR can be encodeded, accessed via an OS-le=
+vel
+> >>>>>>> abstraction such as csr_read_num().
+> >>>>>>
+> >>>>>> So what you're saying is that we should submit a patch like this, =
+right?
+> >>>>>>
+> >>>>>> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+> >>>>>> index 440cf9fb91aab..953c259d46c69 100644
+> >>>>>> --- a/drivers/acpi/riscv/cppc.c
+> >>>>>> +++ b/drivers/acpi/riscv/cppc.c
+> >>>>>> @@ -66,16 +66,8 @@ static void cppc_ffh_csr_read(void *read_data)
+> >>>>>> {
+> >>>>>>        struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read=
+_data;
+> >>>>>>
+> >>>>>> -       switch (data->reg) {
+> >>>>>> -       /* Support only TIME CSR for now */
+> >>>>>> -       case CSR_TIME:
+> >>>>>> -               data->ret.value =3D csr_read(CSR_TIME);
+> >>>>>> -               data->ret.error =3D 0;
+> >>>>>> -               break;
+> >>>>>> -       default:
+> >>>>>> -               data->ret.error =3D -EINVAL;
+> >>>>>> -               break;
+> >>>>>> -       }
+> >>>>>> +       data->ret.value =3D csr_read_num(data->reg);
+> >>>>>> +       data->ret.error =3D 0;
+> >>>>>> }
+> >>>>>>
+> >>>>>> If that's the case, the robustness of the code cannot be guarantee=
+d,
+> >>>>>> because the range of CSRs from different vendors is unknown.
+> >>>>>
+> >>>>> ACPI FFH is allows mapping to any CSR.
+> >>>>
+> >>>> Yes, FFH can map any CSR, and this is not the point of contention.
+> >>>>
+> >>>> If that's the case, the CSR_TIME used in the current kernel code is
+> >>>> inappropriate. Some vendors may design a counter that does not count
+> >>>> during WFI, making CSR_TIME irrelevant. Even if counting continues
+> >>>> during WFI, are you planning to have one counter operate in S-mode
+> >>>> while the other traps to M-mode?
+> >>>>
+> >>>> In that case, the code would need to be modified as proposed above. =
+Do
+> >>>> you agree?
+> >>>
+> >>> I disagree.
+> >>>
+> >>> Like Sunil already explained, if an implementation has reference coun=
+ter
+> >>> which does not count during WFI state then for such implementation th=
+e
+> >>> delivered performance counter should also not increment during WFI
+> >>> to maintain the relative delta of increments. This means if an implem=
+entation
+> >>> uses TIME CSR as reference counter then for such implementation
+> >>> the delivered performance counter should increment accordingly. Ultim=
+ately,
+> >>> what matters is OS being able to correctly compute the performance le=
+vel
+> >>> using reference and delivered performance counters.
+> >>
+> >>
+> >> For calculating the actual CPU frequency, both implementations are
+> >> acceptable where either both counters continue counting during WFI or
+> >> both stop counting.
+> >> In the current code, how do you read the other counter?
+> >> Shouldn't it be modified like this to support it? This way, all
+> >> counters can be read directly in S-mode without trapping to M-mode:
+> >> +       data->ret.value =3D csr_read_num(data->reg);
+> >> +       data->ret.error =3D 0;
+> >
+> > Yes, the current switch-case needs to replaced by common
+> > csr_read_num() and csr_write_num() implemented in arch/riscv/
+> >
+> > The RISC-V CSR space is limited so with it is straightforward
+> > to implement csr_read_num() and csr_write_num() using
+> > macros where each CSR access will turn-out to be roughly
+> > 3-4 instructions.
+>
+> 12 bits, or 4096 CSRs. Are you saying you want to have a jump table
+> that dispatches to one of 4096 entry points?
+>
+> Maybe you can cut that down a bit for S-mode based on the encoding
+> convention, but that only eliminates 1/4, so you=E2=80=99re still looking=
+ at
+> 3072 entry points, perhaps also minus the few that are allocated and
+> clearly not sensible things to use for this, like stval.
+>
+> But I think that=E2=80=99s not a reasonable approach to take, and if ther=
+e is
+> no CSR in the current RISC-V spec that fits the needs of ACPI then one
+> needs to be defined so that we don=E2=80=99t need every vendor to invent =
+their
+> own. If there is a CSR already then that should be the only one that=E2=
+=80=99s
+> allowed to be used here. If you look at arm64, it hard-codes which
+> counter to use for each of the two calls it supports. That=E2=80=99s a mu=
+ch
+> better world to be in.
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Zi Yan <ziy@nvidia.com>
+Agreed. Because the second operand of the csrr instruction must be a
+constant, a switch-case conversion is therefore necessary.
 
-Changes in v3:
-- max = min_t(unsigned long, max, managed_pages);
-- Link to v2:https://lore.kernel.org/all/20250815023500.36893-1-ye.liu@linux.dev/
+>
+> Jessica
+>
 
-Changes in v2:
-- Drop unnecessary braces
-- Replace "if (max > managed_pages)" with min_t()
-- Link to v1:https://lore.kernel.org/all/20250814090053.22241-1-ye.liu@linux.dev/
----
- mm/page_alloc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 64872214bc7d..eff07323987c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6235,16 +6235,13 @@ static void calculate_totalreserve_pages(void)
- 			unsigned long managed_pages = zone_managed_pages(zone);
- 
- 			/* Find valid and maximum lowmem_reserve in the zone */
--			for (j = i; j < MAX_NR_ZONES; j++) {
--				if (zone->lowmem_reserve[j] > max)
--					max = zone->lowmem_reserve[j];
--			}
-+			for (j = i; j < MAX_NR_ZONES; j++)
-+				max = max(max, zone->lowmem_reserve[j]);
- 
- 			/* we treat the high watermark as reserved pages. */
- 			max += high_wmark_pages(zone);
- 
--			if (max > managed_pages)
--				max = managed_pages;
-+			max = min_t(unsigned long, max, managed_pages);
- 
- 			pgdat->totalreserve_pages += max;
- 
--- 
-2.43.0
-
+Thanks,
+Yunhui
 
