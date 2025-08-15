@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-770601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14672B27CA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD3AB27D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81D4A7AE98F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F554B068BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209602701CC;
-	Fri, 15 Aug 2025 09:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE9425FA29;
+	Fri, 15 Aug 2025 09:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSsVElQ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gylnJGc4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E88226E708;
-	Fri, 15 Aug 2025 09:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD2B253358;
+	Fri, 15 Aug 2025 09:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249366; cv=none; b=B0OAVJ55mkr207ifooE7rkuYKOpneWx0ikCx3p8v3GC3d3fd64XP/0y2TKmr7qA19HggMfyDCUWJUCwvz1lJ2yfeafsH27i9W66pJQe79EE2m+TVr2GQVpA8LY7OPvB0/7I2bRedINOBTOdRkJv2O6bfP3Ig/uUn6mu4ax7ZnvE=
+	t=1755249401; cv=none; b=ArsSbXW1OzhjLRu2zY3rh8ICgI7GCBzIPOyzw+B5gfsdjG0XfZsEF/+TNAaiARLHI0VIUwEbHYhJzPby/FWHfqkzSJva7ktOPulDncuEFT2OQMoTduT0RcyOWpFgFTyyrfxjLSLa7shrKrkdS0jQ8F7o0BrhskBfCKR5YfB+PIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249366; c=relaxed/simple;
-	bh=J+HxohW+Gt7vNHh8MWojAKCIWXQWxSZdX4kZ2s5hLNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxHTC07GRtu4wGRWYjxeh0b4TRSgCKbLld2VCQUTQ+g/4wSlX6FKzrP3JF5XQUH1sFbbjEQa0I2ndnxkLDGLO8a2Q5jpne+YkCfja9FA56Qou+hUZDmfIjKMhIN0/JyTnrXGGUX8oEW9NyPycCY+PO4b25B9Lae2u5okge2PMaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSsVElQ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0647FC4CEEB;
-	Fri, 15 Aug 2025 09:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755249365;
-	bh=J+HxohW+Gt7vNHh8MWojAKCIWXQWxSZdX4kZ2s5hLNE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iSsVElQ7V/NINp5P+HTu9cLLLHyl4OlmwdNuh0/9gfnEQI+YGGwoFLA6auicKqj8M
-	 qmxbA81vkgkalQQjJmb1BhPspejpmgnZKzmdDae9t+iZrEEqibNsxokN9buIUIryLQ
-	 jz1rS1D5FyaeXKhwjYchW1mdZ1L6a9ApHn6MvSmlVeAmBPX2iuyb8jgpvfBJtReK7p
-	 7vBzMwxbDP5NJmsHgLK16AMUv91YUDde/yp1jNlzJT5V8+S/ZJOWFkVZhuAAwp7ORN
-	 4wiDrWwYmGt6lec32Hn5DyupfcPLn6jXqFR6eawvlsTUPfMFwDuu6JtZDAjZJJ/KFj
-	 aR5RUCX/2IRWg==
-Message-ID: <8783e13d-65d0-4bfd-97e7-b3a0d1c7efe1@kernel.org>
-Date: Fri, 15 Aug 2025 11:15:58 +0200
+	s=arc-20240116; t=1755249401; c=relaxed/simple;
+	bh=RnALg3zNiXJMXGB95axE2CNi1u5Yu0VmjW8MGBkdvZE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EDn6dZDLm8AlGlw18Cgm26U+C1nUQ0jpfO+PIRwrzJIgcWmNdbWj9KSZqPVD3sHwm1cQiCRHDmI2LVgxZs+Ls0tAXdhn6Zotjf5/tBdR+/zspk2xESpPw1m+gOlRyucrXjy7K8FFY+enNfR55EQUqGYiryiW1xe66FXLTy8ZZbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gylnJGc4; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755249399; x=1786785399;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RnALg3zNiXJMXGB95axE2CNi1u5Yu0VmjW8MGBkdvZE=;
+  b=gylnJGc46UXG4ejIlyN4MSkIBoQ/e5QXVnuDddb2LryTJGiy1+UtRj/Y
+   8i11j7I+nFWXfCTDCQZnvUDhf1GnGnx71uzpOWoC6v3dsRqdrzSi9/MxL
+   LcKNLfiVBk2E3T/R5Fbws4vP+/lO8evWPFOGWN9phe+c40fwEw3iOo3aG
+   YqDiX7zAgvNv4+nPIzy+Vj65G0d4LrRDD3DNpURZF1h/Hr5vg0kG1uITm
+   ebypeOvmkyNMKBdnFIFjJK3TtPrFe5mfsimxYzMn6POpFTXMW2xjlpeh4
+   LVRb+0Vf5r67MxVZLtF5Y2FRnQl4YLBgGd6N/cuY1/c+btRFQMcRPSMo+
+   A==;
+X-CSE-ConnectionGUID: CfnL4v5uQjKWGzIHbotRXQ==
+X-CSE-MsgGUID: brcC6KJrQWms7a83pknSBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56780912"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="56780912"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:16:39 -0700
+X-CSE-ConnectionGUID: PTJorfpnQzO0PoBIuqFskA==
+X-CSE-MsgGUID: LRywybBFR4ehjrv9KSMe8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="204158562"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.96]) ([10.124.241.96])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:16:35 -0700
+Message-ID: <3f7a0524-75e1-447f-bdf5-db3f088a0ca9@linux.intel.com>
+Date: Fri, 15 Aug 2025 17:16:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,95 +66,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/5] pci: qcom: Add QCS8300 PCIe support
-To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
- lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
- johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
- neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
- quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
- Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-References: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
- <c931bbc5-f246-4d34-9280-0c1a551a1e7e@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: baolu.lu@linux.intel.com, "Hansen, Dave" <dave.hansen@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+ <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c931bbc5-f246-4d34-9280-0c1a551a1e7e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2025 10:51, Ziyue Zhang wrote:
+On 8/8/2025 10:57 AM, Tian, Kevin wrote:
+>> From: Jason Gunthorpe <jgg@nvidia.com>
+>> Sent: Friday, August 8, 2025 3:52 AM
 >>
->>   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  17 +-
->>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  80 +++++
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 296 +++++++++++++++++-
->>   3 files changed, 376 insertions(+), 17 deletions(-)
+>> On Thu, Aug 07, 2025 at 10:40:39PM +0800, Baolu Lu wrote:
+>>> +static void kernel_pte_work_func(struct work_struct *work)
+>>> +{
+>>> +	struct page *page, *next;
+>>> +
+>>> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
+>>> +
+>>> +	guard(spinlock)(&kernel_pte_work.lock);
+>>> +	list_for_each_entry_safe(page, next, &kernel_pte_work.list, lru) {
+>>> +		list_del_init(&page->lru);
 >>
+>> Please don't add new usages of lru, we are trying to get rid of this. :(
 >>
->> base-commit: e2622a23e8405644c7188af39d4c1bd2b405bb27
-> Hi Maintainers,
+>> I think the memory should be struct ptdesc, use that..
+>>
 > 
-> It seems the patches get reviewed tag for a long time, can you give this
+> btw with this change we should also defer free of the pmd page:
 > 
-> series further comment or help me to merge them ?
+> pud_free_pmd_page()
+> 	...
+> 	for (i = 0; i < PTRS_PER_PMD; i++) {
+> 		if (!pmd_none(pmd_sv[i])) {
+> 			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
+> 			pte_free_kernel(&init_mm, pte);
+> 		}
+> 	}
+> 
+> 	free_page((unsigned long)pmd_sv);
+> 
+> Otherwise the risk still exists if the pmd page is repurposed before the
+> pte work is scheduled.
 
+You're right that freeing high-level page table pages also requires an
+IOTLB flush before the pages are freed. But I question the practical
+risk of the race given the extremely small time window. If this is a
+real concern, a potential mitigation would be to clear the U/S bits in
+all page table entries for kernel address space? But I am not confident
+in making that change at this time as I am unsure of the side effects it
+might cause.
 
-You pinged after one day.
+> 
+> another observation - pte_free_kernel is not used in remove_pagetable ()
+> and __change_page_attr(). Is it straightforward to put it in those paths
+> or do we need duplicate some deferring logic there?
 
-I asked you to stop.
+The remove_pagetable() function is called in the path where memory is
+hot-removed from the system, right? If so, there should be no issue, as
+the threat model here is a page table page being freed and repurposed
+while it's still cached in the IOTLB. In the hot-remove case, the memory
+is removed and will not be reused, so that's fine as far as I can see.
 
-No respond. Now you pinged after 2 days.
+The same to __change_page_attr(), which only changes the attributes of a
+page table entry while the underlying page remains in use.
 
-Pinging time is 2 weeks. Read your internal guideline or kernel process
-documents. Such frequent pings are only contributing to unnecessary
-mailbox traffic.
-
-Best regards,
-Krzysztof
+Thanks,
+baolu
 
