@@ -1,108 +1,79 @@
-Return-Path: <linux-kernel+bounces-771304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFEB28556
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4056BB28559
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 159B3BA0873
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CF41CE7E5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3141F2F9C23;
-	Fri, 15 Aug 2025 17:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyHh6HdA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF001EF091;
+	Fri, 15 Aug 2025 17:46:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181B3176F0;
-	Fri, 15 Aug 2025 17:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360B23176F0;
+	Fri, 15 Aug 2025 17:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279948; cv=none; b=K5SjmsXvKDd+EnMlzJ5YJyccPsYal2uzVKNzhXPVbopLT/irOgB22T2uL40cgidjBalioCK1DrmYGdb+P1BIyI9YKVHhUuA5Xi1aE9ri6x3AOuOkzCCYS1mc0bgVjdUts4xBs/6OCbkD07f83p1AQ7LTZG0fhnrb5WD95v9P9iY=
+	t=1755279976; cv=none; b=CDbdQoZAkLC1iNty899866iObNAMuhDDUsr5UD1kahOEnge3mDfOwdLTHL2JdN5AxNmRMkIAKm2Qyp2MIMwxCLe1n93B2tUi4gCifv4B7MCRZttjpxqi07/nOJiEhydRQkzhGfKafp4yXhzmarjZjsc/Zq/8JhukLr89lBHZy+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279948; c=relaxed/simple;
-	bh=RFd0Pxe6serwGZVd/58Lm2Mj1V6BHx7Q2HMp1dP5e5Q=;
+	s=arc-20240116; t=1755279976; c=relaxed/simple;
+	bh=4ajPDOFJebfMe7XQdfZqdZ3LNlqb//08IHbAj6MwXds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlN6OcNNfVxMDS69pkmxBgBt+4UuVKgxAA9RfbXQqQ7xx/rX+fhJ2lSOEk0XP2tdUap7RGzPizh5wcBUsaMRMIY/cilSexgr4/nw7z5UyZT1+M2pP3Y86a7s8ioIcYqBQNPtn+imldCb8DWmy5hQ6B+NpPBh62sSSSbJhqdgj8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyHh6HdA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC16C4CEEB;
-	Fri, 15 Aug 2025 17:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755279948;
-	bh=RFd0Pxe6serwGZVd/58Lm2Mj1V6BHx7Q2HMp1dP5e5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hyHh6HdAFWr4CR1jmYCyz1aGmnVgOG76Q9dmz2iFigrwNo/vD80nb/zGdFr4scefh
-	 C8FoASKKLKfOC5JJ6f1l1evLyNhnGBFel9wFM1aUD2U+m28CmojT6liVdbeAuU9Z+1
-	 LZMC3vISHXCNktG5Cl0LgRm3ra89CMhudRcPkOPqoC2TsVqpt8sRuKzHPPqAU48J2D
-	 qeePlCNPXbQyfrc34ABMcwQMPcbMysBgCTl6W0oIZC3la0xDk0xJAVRTHiKwbC+Iw4
-	 +EgnM2cRe5jig7AdORFxfjuD+YZtxLOsx/+5HNGlZZJalW6EEhn9jZ/IldF6u3Rlk5
-	 HYiQw4W/ug7Ag==
-Date: Fri, 15 Aug 2025 20:45:44 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aJ9ySGv0JZ0DiNgf@kernel.org>
-References: <20250814162252.3504279-1-cfenn@google.com>
- <aJ8iNLwlf4PAC0h1@kernel.org>
- <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
- <aJ9fy_sO6tza9qLF@iki.fi>
- <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvcUDyq3vjh/fe+8m0z7I+9uRzhSrvnE974VDb3Bx6NWHd0h7yDOUpoMMHD3bhaMrWN3YNnrVgIDxAXzZfKYTtXqbtAwRMeR3NeBEUAnbx6idQBjIylplgkXTF1m2Q0OI6W8/VOoRM33OarNhGG4KRYCAXMMBI/9WVk+lmR6V58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302C4C4CEEB;
+	Fri, 15 Aug 2025 17:46:11 +0000 (UTC)
+Date: Fri, 15 Aug 2025 18:46:09 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/2] kasan/hw-tags: introduce kasan.store_only option
+Message-ID: <aJ9yYZyQtMHyS4n1@arm.com>
+References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
+ <20250813175335.3980268-2-yeoreum.yun@arm.com>
+ <aJ8WTyRJVznC9v4K@arm.com>
+ <aJ9IdVsSxppYh2QC@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
+In-Reply-To: <aJ9IdVsSxppYh2QC@e129823.arm.com>
 
-On Fri, Aug 15, 2025 at 10:06:36AM -0700, Chris Fenner wrote:
-> On Fri, Aug 15, 2025 at 9:27 AM Jarkko Sakkinen <jarkko.sakkinen@iki.fi> wrote:
+On Fri, Aug 15, 2025 at 03:47:17PM +0100, Yeoreum Yun wrote:
+> > If we do something like mte_enable_kernel_asymm(), that one doesn't
+> > return any error, just fall back to the default mode.
 > 
-> > I'll with shoot another proposal. Let's delete null primary creation
-> > code and add a parameter 'tpm.integrity_handle', which will refers to
-> > persistent primary handle:
+> But, in case of mte_enable_kernel_asymm() need return to
+> change kasan_flag_write_only = false when it doesn't support which
+> used in KASAN Kunit test.
 > 
-> I'm not yet sure I understand which handle you mean, or what you're
-> proposing to do with it. Could you elaborate?
+> If we don't return anything, when user set the write_only but HW doesn't
+> support it, KUNIT test get failure since kasan_write_only_enabled()
+> return true thou HW doesn't support it.
 
-Primary key persistent handle.
+Ah, ok, if we need this for the kunit test. I haven't checked the last
+patch.
 
-In tpm2_start_auth_session() there's
-
-	/* salt key handle */
-	tpm_buf_append_u32(&buf, null_key);
-
-Which would become
-
-	/* salt key handle */
-	tpm_buf_append_u32(&buf, integrity_handle);
-
-And in beginning of exported functions from tpm2-sessions.c:
-
-	if (!integrity_handle)
-		return 0;
-
-And delete from same file:
-
-	1. tpm2_create_*()
-	2. tpm2_load_null()
-
-That way the feature makes sense and does not disturb the user who don't
-want it as PCRs and random numbers will be integrity proteced agains an
-unambiguous key that can be certified.
-
-> 
-> Thanks
-> Chris
-
-BR, Jarkko
+-- 
+Catalin
 
