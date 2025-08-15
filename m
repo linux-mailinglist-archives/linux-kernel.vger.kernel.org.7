@@ -1,152 +1,106 @@
-Return-Path: <linux-kernel+bounces-770610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765CEB27D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6E8B27D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2816D1675EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0DA189751E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672D62C21E3;
-	Fri, 15 Aug 2025 09:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D852E1C4C;
+	Fri, 15 Aug 2025 09:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuS4jZ2k"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/WypXHC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449572BE7AC;
-	Fri, 15 Aug 2025 09:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A658E2D46D3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249900; cv=none; b=qxRdrxCylSDeY6E6RTv17iMRwxIq+LISsEHi0at35OFVbfQnkKPNYwXr6ojvfaexQy/VGh3xqfwgSZsPo9rbhNN//DBlX242tn0D2nPYuuJYs87D90dQLyn7qOE4FIZ6ucwq64Q2XwZkYcYPmCeBmHqkGHnEhGweMe1r9dQBDbk=
+	t=1755250034; cv=none; b=uu8Ed1X5zCsl6+OIU0SHsWhiqh6ztfoTXTpSZUOzNLAMsKZfn4rbVpJ+Cq5NOpjH/hunkqQ7EHEBsR/UY3LVSpYuEDNcZn6qK9Z3KPVh3rui/6bAl9JcPk/r2tJ13+j4U3mv6p089hRbrgTVTkdPZIb6pN3q3go+0RdbumlfBAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249900; c=relaxed/simple;
-	bh=5ZqmMV9CCC6/bZI3rO9zYxuPxQkdI54URe8G0jkHA6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sKKS+HaHv4XetmeBm+gXAOYA2fBUgLCZhepVgFASRXrudkJIh6ZLFPtzTUhPbkEz7YMxTX5CFUd3Dprc4sZW+mpduEgCxGf1XZ3oIqUaS68eHZSGQ4cSz3RU+K3Cql+67W62AZtkUA8nc/q1F6rLRPc9641i4dWLMxd7d8ELezU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuS4jZ2k; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b471aaa085aso862534a12.0;
-        Fri, 15 Aug 2025 02:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755249898; x=1755854698; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUSAZNhHUWclOgiLa/zpd5x9MShtdm5IEGFME8YQ2lA=;
-        b=RuS4jZ2kn6TRdDDFSlvfVpXC8HwzVeFqBylXyDmhX7K458+j++FWgSQTcNlsh9N5v4
-         yw5WYLG6yqKG842tWACEJE5NDi+sPZIgmm9tcS8xiBBXN+tF+6kUjGCJmrvh/lqqcl2c
-         MXCHMlnbaJwGGcL58uFjNoVaRN15EILffD35kqnk8co68IIRmGyrXr9ar4xi8AFjwyf1
-         Cg11mEAj1wkG6p9pArgVaAaUSLYTA70FWPrB8T7SgrKHu5c4GwFCXd1LOw3VyS0PwS8m
-         9j+5WY5fDGKzncJnMTv0wfLxqD+xyeRdbk4aAXsiFhTBQbVA8RwPIUXTldLJHPgFbObY
-         VHzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755249898; x=1755854698;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sUSAZNhHUWclOgiLa/zpd5x9MShtdm5IEGFME8YQ2lA=;
-        b=WJhznp9a5FEgwEpstNySA42jkGglLapHqsDPcUsz9AaIhFNapBkM1gBX/Od+i3ff59
-         D3ekBaqfDdRWWv6JUq+h0y7OcQRmjFGbJaK0K0yah4PORNwvtLRjVSnroD8oNV94HcBW
-         Y0/R8INVMQu86yO2Geu924j0r6HzVO5XuUjd0JdQF5oFzlHnYNe4YRiylRztqYzoZejh
-         /QbmbU7SUzM+g7s44EYaIloJRjP/1t5Y+W2eNXbn7t+R5uh2SWljuZYjS+8sultqtC1B
-         6haHw6ZdFRuP8MfarNWmdJJYgNFwb0ovPrVSez+UfeYXxk3iow4u57Ri7hEM0+DC5smV
-         yDdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzb+hLGCD3oOzLEeVmorczXdoiTJ2Z5MC7OwledDsdyj3vzIplv0pjBB0FSNEKoW0s9BZh4+Jl34Yi@vger.kernel.org, AJvYcCXRB56px6NIxA049vg7aV1dR4VoQWo3EMzovPfH4MuekKWcm+ldVkrvr4xB+9L20c77eGEC58ZqJZU/rGJD@vger.kernel.org, AJvYcCXnkw2fP/rdJ8EMfmN8A+dCkj3std0iky2XfCEc+NYeZOhFZs8vE+79kD79JGZqJeIUxxJhO62SoRawWMHC0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWeAg23W3GMYAM2WrmSaPPW2mowYqBAXvnL+m6M3t44HqTSSy9
-	RzJPfQx2Zv4YN2s72h8tFsCOvMG+SX3c2TTc2NaImLZ8wFCz/oWI5c1NQCiXGLewkBgAld3Ym0w
-	1UNK5r9akHBxoByt6cYiM0ZKSrGDSA2h6IZ0=
-X-Gm-Gg: ASbGnct9jBfpyR6bWG4ERThCNWcJr3xjyEtPlOKGauKRyW3f/KO2yoHuXw4p0pXhYsr
-	Z7LWSOwaocIBPe/EZHeNWSpHVl9P/YZEjS7wi/S2DRu89nYgUidHercyfvyJTHN6j/V8ZbTGHuM
-	jD1mxnX3TEOsg/euWxf+wmSoZ+TD4wNQ2zM6AAdz7XKZxQ3ywkOnz1GQsUzCHWMryRZMpogLe0M
-	TESR4Q=
-X-Google-Smtp-Source: AGHT+IEtIRl1Vmpdfezvm3nW6eekbTQL/dTTqJFffwLW5S5TL7I5ybUYEQz+8BAYTsvLPauEJlFEY2im3hYLZOTmd4Q=
-X-Received: by 2002:a17:90b:4a4c:b0:31c:39c2:b027 with SMTP id
- 98e67ed59e1d1-323402f3979mr2271688a91.7.1755249898151; Fri, 15 Aug 2025
- 02:24:58 -0700 (PDT)
+	s=arc-20240116; t=1755250034; c=relaxed/simple;
+	bh=RnraM+e4YFUNz/wGOUWNqAtFfY67b2WiV+P96NkbdYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ljrBCl4E97LQ2eukSUs07oAO9WBxU2fybHpecqX3K2drHbTSP8X8JWvEO9m92JRL+dzaD1YGrHZ+Lt6E+1Y3IrqVrhpbGgi26wXrDqvqiUD3cjSd9bwmhHWjkI80z4zcppU1p/BgzuawgV423hg1DknxzVAJP587dwy+1yd0ZOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/WypXHC; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755250032; x=1786786032;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=RnraM+e4YFUNz/wGOUWNqAtFfY67b2WiV+P96NkbdYI=;
+  b=V/WypXHCSCMNERanrySxGbn0TBfHDA17qSb5z032dABCMf8KyOTqDJpl
+   4skihJAH2RwACZHJzSy+WXZ5rhQ6Lg66Dj3VjIcj1Ftqhnq8RurMp2W6Z
+   f8yWv85FpR80I+Dsh6cJK5IpommM4QOaayYMhN8avK5Cgd3c90PLfGeot
+   eRO0fgBYQ1uZVlI51kPjsjpb5h7Q4t4wHEtXRwZLqA/H/dTBt817if0ZS
+   hctDM5F436sAHxZsbe61RSqMfznNTPsfjXNYoWC/wltCxRBZmn4t+tksM
+   yx6xkK4obFrHwD9kgtdPJmcZD7W6BGtbkGe8zUKk8ilYF6tMHdg6fI5Ez
+   w==;
+X-CSE-ConnectionGUID: 7fFXgt70SL6wzIBhxyArfg==
+X-CSE-MsgGUID: PCyyELMBTF2a5V9wWOPLGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68175605"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="68175605"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:27:12 -0700
+X-CSE-ConnectionGUID: CehhmC4SStSu+MG90/gMLg==
+X-CSE-MsgGUID: ltWqE78qRJOS5qzmawwsdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="190689512"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Aug 2025 02:27:09 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umqi9-000Bnv-0p;
+	Fri, 15 Aug 2025 09:26:59 +0000
+Date: Fri, 15 Aug 2025 17:25:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Subject: kismet: WARNING: unmet direct dependencies detected for SM_GCC_6350
+ when selected by SM_VIDEOCC_6350
+Message-ID: <202508151725.orPsYxfw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-x1e80100-add-edp-hpd-v1-0-a52804db53f6@linaro.org> <20250814-x1e80100-add-edp-hpd-v1-5-a52804db53f6@linaro.org>
-In-Reply-To: <20250814-x1e80100-add-edp-hpd-v1-5-a52804db53f6@linaro.org>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Fri, 15 Aug 2025 11:24:47 +0200
-X-Gm-Features: Ac12FXxXs1WIPSo3O5Qi1vZHZmRPsh7Ak--HK5Z6ELk4txLVxHj367p-QxOdBkA
-Message-ID: <CAMcHhXr2ayhVAS8gwxj2+ixq2GhSPBPdxB3swOUisstHGxufYQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] arm64: dts: qcom: x1e80100-dell-xps13-9345: Add
- missing pinctrl for eDP HPD
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Xilin Wu <wuxilin123@gmail.com>, 
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Srinivas Kandagatla <srini@kernel.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Christopher Obbard <christopher.obbard@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 14 Aug 2025 at 15:30, Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> At the moment, we indirectly rely on the boot firmware to set up the
-> pinctrl for the eDP HPD line coming from the internal display. If the boot
-> firmware does not configure the display (e.g. because a different display
-> is selected for output in the UEFI settings), then the display fails to
-> come up and there are several errors in the kernel log:
->
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:544] [dpu error]vblank timeout: 80020041
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  [drm:dpu_encoder_frame_done_timeout:2715] [dpu error]enc40 frame done timeout
->  ...
->
-> Fix this by adding the missing pinctrl for gpio119 (func1/edp0_hot and
-> bias-disable according to the ACPI DSDT).
->
-> Fixes: f5b788d0e8cd ("arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d7ee5bdce7892643409dea7266c34977e651b479
+commit: 720b1e8f20047e072b98a0931fc3e9a545fda18f clk: qcom: Add video clock controller driver for SM6350
+date:   9 weeks ago
+config: arm-kismet-CONFIG_SM_GCC_6350-CONFIG_SM_VIDEOCC_6350-0-0 (https://download.01.org/0day-ci/archive/20250815/202508151725.orPsYxfw-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250815/202508151725.orPsYxfw-lkp@intel.com/reproduce)
 
-Tested-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>    # 3K OLED
-Reviewed-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151725.orPsYxfw-lkp@intel.com/
 
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> index 6b27067f0be66b5c41fa681ff3b4f535100bdf59..6cb98197eb9c0d6e171741aa83e7f4ff77e911c9 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> @@ -900,6 +900,9 @@ &mdss_dp1_out {
->  &mdss_dp3 {
->         /delete-property/ #sound-dai-cells;
->
-> +       pinctrl-0 = <&edp_hpd_default>;
-> +       pinctrl-names = "default";
-> +
->         status = "okay";
->
->         aux-bus {
-> @@ -1080,6 +1083,12 @@ edp_bl_en: edp-bl-en-state {
->                 bias-disable;
->         };
->
-> +       edp_hpd_default: edp-hpd-default-state {
-> +               pins = "gpio119";
-> +               function = "edp0_hot";
-> +               bias-disable;
-> +       };
-> +
->         edp_reg_en: edp-reg-en-state {
->                 pins = "gpio70";
->                 function = "gpio";
->
-> --
-> 2.50.1
->
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for SM_GCC_6350 when selected by SM_VIDEOCC_6350
+   WARNING: unmet direct dependencies detected for SM_GCC_6350
+     Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
+     Selected by [y]:
+     - SM_VIDEOCC_6350 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
