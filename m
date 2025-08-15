@@ -1,47 +1,59 @@
-Return-Path: <linux-kernel+bounces-771289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E858B2852F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94547B28535
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207615E6577
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3DF6B03E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657B41F4165;
-	Fri, 15 Aug 2025 17:33:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7CD3176FA;
+	Fri, 15 Aug 2025 17:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bwiPfBJU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB550317714;
-	Fri, 15 Aug 2025 17:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D18D3176E9;
+	Fri, 15 Aug 2025 17:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279202; cv=none; b=WwiNCmOJAO8mxijV9yGbBm413QyQ2k41PJGo3cUNGIvm9aCqdgIXeg0stOfLu+jvaSVEO49WVWefZyv7f0i7lEZJdgZHAuQVuG1PFOHbtRIuwz/tmBVgPLSo26NXLCqKiFxOB5XOtLOrvu3O+p0fGicHxbX74sWPafVO0oxhSRw=
+	t=1755279260; cv=none; b=PC++XTs3EYx/gvO1UejS05stM/YQqBMnQw1YT8pd2Ru05xP0wG8epRRRu9K6d6sreZ1CkwzJfpc8E+iJevxvwTvfYrr4WTjyKUsEI6XGDwJWC3u0TfK43bJ35EABSOX8tE3dz5fZUi6/EhzaQBRgFXENcCIAWCp8ZBZ58IURXr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279202; c=relaxed/simple;
-	bh=uNXcExhIGYZE1vtxyHmmV/bddkPc9+O8TyoblnfQCXE=;
+	s=arc-20240116; t=1755279260; c=relaxed/simple;
+	bh=sr53SJkyqch1Ju+uifr+0aoIZJvubSgUF3UAqYysxsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3zC3bAezmto6CtCfSw9QLeAY1SGAB7NloprUpeIic2SGKb6PDtiUlE2b/C8TZjvHukfc3iva2kl+LEKBIkQLzCzCweIryKUqGYymprWO+HHOfoaNJbN7H0VS54leyPNW08WovR9PZe1FBvJvxIfLirSBteT7L5o/3cP7RhLAIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9769EC4CEEB;
-	Fri, 15 Aug 2025 17:33:17 +0000 (UTC)
-Date: Fri, 15 Aug 2025 18:33:15 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, shameerali.kolothum.thodi@huawei.com,
-	joey.gouly@arm.com, james.morse@arm.com, ardb@kernel.org,
-	scott@os.amperecomputing.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] arm64: cpufeature: add FEAT_LSUI
-Message-ID: <aJ9vW8SgklYByjpB@arm.com>
-References: <20250811163635.1562145-1-yeoreum.yun@arm.com>
- <20250811163635.1562145-2-yeoreum.yun@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9l5WC8ECiZigVyd6ut8UyH2mMPA6JE3e+dMrLhySiaAQCY3cFopOrRjsa4Uy4njsvRlrX/opILBkcHRognlgmlAvBFtCHpwWcNG7GUrivDIPy8eB4LXjp93PGLx0X6xY0C8mhNwQGGRgA5CYvxvIVhvtbV2pm9a8WcJtzO5yDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bwiPfBJU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=krnMUBqiW0s0OeRjQHpn11RJzlyVt3RQboGA85av57o=; b=bwiPfBJUZNbr2ZVv4DIE80GVi2
+	LAdbkiHXLeGWoeJYf1P1y7ZjbomJ1ejv/d2P+EgSMp83ixoE3PT7UKfOqcTqp1f3A+FSKrVqNtk/3
+	pn4/kBO7NauBrgdlqR0ETQgZki6fRbXqax6GNbykbJxWXFSeUBofkpzLxJtnaNTPa/zM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umyJZ-004qSG-ET; Fri, 15 Aug 2025 19:34:05 +0200
+Date: Fri, 15 Aug 2025 19:34:05 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Xu Liang <lxu@maxlinear.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: phy: mxl-86110: add basic support for
+ MxL86111 PHY
+Message-ID: <b8075cfa-599d-4648-8e33-68062b1a855f@lunn.ch>
+References: <aJ9hZ6kan3Wlhxkt@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,28 +62,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811163635.1562145-2-yeoreum.yun@arm.com>
+In-Reply-To: <aJ9hZ6kan3Wlhxkt@pidgin.makrotopia.org>
 
-On Mon, Aug 11, 2025 at 05:36:31PM +0100, Yeoreum Yun wrote:
-> @@ -3131,6 +3132,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		.matches = has_cpuid_feature,
->  		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, GCIE, IMP)
->  	},
-> +	{
-> +		.desc = "Unprivileged Load Store Instructions (LSUI)",
-> +		.capability = ARM64_HAS_LSUI,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_cpuid_feature,
-> +		ARM64_CPUID_FIELDS(ID_AA64ISAR3_EL1, LSUI, IMP)
-> +	},
->  	{},
->  };
+> +	/* For fiber forced mode, power down/up to re-aneg */
+> +	if (modes != LINK_INBAND_DISABLE) {
+> +		__phy_modify(phydev, MII_BMCR, 0, BMCR_PDOWN);
+> +		usleep_range(1000, 1050);
+> +		__phy_modify(phydev, MII_BMCR, BMCR_PDOWN, 0);
+> +	}
 
-Since this is only used in the kernel, I wonder whether we should hide
-it behind #ifdef CONFIG_AS_HAS_LSUI. Otherwise we report it as present
-and one may infer that the kernel is going to use it. Not a strong view
-and I don't think we have a precedent for this.
+Is a full power down required? To restart autoneg all you normally
+need to do it set BMCR_ANRESTART. See genphy_restart_aneg().
 
--- 
-Catalin
+> @@ -648,8 +928,24 @@ static struct phy_driver mxl_phy_drvs[] = {
+>  		.set_wol		= mxl86110_set_wol,
+>  		.led_brightness_set	= mxl86110_led_brightness_set,
+>  		.led_hw_is_supported	= mxl86110_led_hw_is_supported,
+> -		.led_hw_control_get     = mxl86110_led_hw_control_get,
+> -		.led_hw_control_set     = mxl86110_led_hw_control_set,
+> +		.led_hw_control_get	= mxl86110_led_hw_control_get,
+> +		.led_hw_control_set	= mxl86110_led_hw_control_set,
+
+That should really be in a different patch.
+
+	Andrew
 
