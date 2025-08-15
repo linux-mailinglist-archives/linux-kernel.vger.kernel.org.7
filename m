@@ -1,133 +1,230 @@
-Return-Path: <linux-kernel+bounces-771454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA66B2877D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:02:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474B0B28780
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7A11B60F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:02:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE36AB641DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3650B243946;
-	Fri, 15 Aug 2025 21:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2FF22F75C;
+	Fri, 15 Aug 2025 21:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j4YvPAqK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="K5ovvOPE"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF121E86E;
-	Fri, 15 Aug 2025 21:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E82C26AF3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755291742; cv=none; b=rSbsq9i82IXOHtp3JDzaXHjhODb2uH19DzX8KyVkIsm3AREj3y4aSy9QJ6Lpu19AMrY3hEG4z+LAyiFphwpBoKDsZIxvcGyibh4+KiYKfUQfbaSyqXdbyMk8VBbN5aJZ4Jmq/ROSLjzPa3cjkZFp6O4YumuiKU9H/eFnHK1X+lM=
+	t=1755291846; cv=none; b=olcYbXHjsVUOMzyCU7hajLRwV1qxUBBIFLiFpQwRmnjxb4dFp5xNTCikAauGTb8HB/v0QrKt0kDozj+01/qbXXLh9OKquSruE5d9L2Yajln+c9Uja+xZxTHJeiLdvzYDMSt1ckdFTOI9QHg8OwvM004nWu4gH9rkECsLdRrYa+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755291742; c=relaxed/simple;
-	bh=1YF5sy8dldm5R8DgrzVScACFRpxgR2SPXO69iZ65HFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANx7LpqDerPoEC7Qsm0LJifsXPQfy2GPGj/ej4WxHIaaHD3OfHy+wTCTPpCnay1XH1iNAsVZk3zSuCv0RnZSO/Gmk+FCPcVJ7j7DXGKJRx8YMYwG/JMhyhG80YYpQAGCuLj5Z3+15V3F7g7ACeHvgpYgLBBT9+ScdzVVnjGb6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j4YvPAqK; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755291741; x=1786827741;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1YF5sy8dldm5R8DgrzVScACFRpxgR2SPXO69iZ65HFw=;
-  b=j4YvPAqK22tCXLIUl4niL3K+RcxNvLpHjduwL8gFRY+UAdyNC23/wxjL
-   PM2MVjt53zgLmeEQWzkFxwOP3z7G5s9VLbxWJGmTeKNz7WSkNJ0S2bbQy
-   iuUgloeGkB12Ezye35lf/oPAqzwcVyDIeP2m+Qu3Wy3pY2ILZkAXSKvEE
-   S5/Ezaxq8rbiI06eh4D86xt678nhcS/6tutT9gX3tK07DaBJQdEKGod/o
-   mpxwf3k1sV62jx1b7tjpP+hVfJ1i483KjLF5LdUCgl2byB+B1eG26RskF
-   FV3OPVzpyksep1EU+oepCdXuZ5BiaE7+b08upSrIqCfrwOJppq0aqaqmr
-   A==;
-X-CSE-ConnectionGUID: ujMMsPmiSQ+BeNLNcrF+9A==
-X-CSE-MsgGUID: 8hMrxWhhQaGcoMiEuwWLCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57720360"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57720360"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:02:20 -0700
-X-CSE-ConnectionGUID: efQmceHTQlOOS6SP7fmfgw==
-X-CSE-MsgGUID: AguZBKEmRu6XOj2/yvIUFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167439454"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:02:16 -0700
-Message-ID: <a05bbfe7-dec6-4858-8f9f-9f80deda48ae@intel.com>
-Date: Fri, 15 Aug 2025 14:02:10 -0700
+	s=arc-20240116; t=1755291846; c=relaxed/simple;
+	bh=6+p+fjCuAoQ5IAm8jpXHZ66S5TM6H6hQ6gYaG/bJ6jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzQ+gZc74o49gn3pSGnZPckfLxFLK6lyl8S9PyZNehctbnpIC3xn4UB3rA6vRh3UnoACA0bHY62G4JmDLfCTyWC7lJqh3vRFCa8WNVQxiMaWHXUzA70ID68Bo+fRRMxtNH3omKARDqqe2ZH7TYb9f162Y7AU6xqEa8r+wvP8/+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=K5ovvOPE; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3e571d400e0so14717725ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755291843; x=1755896643; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ft04JZ672lT2q0D5QFWz6789EtIMwIQ1qPNZYM3WBFM=;
+        b=K5ovvOPEMkcmtGWvE+LX45tKyy0xLRuX6zgsq9X0HxDZf8FT8AvhQg8HgjU2JL3EQx
+         DflT/12dsYhdrzNhWgJ5ah76NzQfVQjyOfGgBRmT1gh9eOOmnSZUSaLhMPISCEGNTbhC
+         0/C+nDIimHRXApZMvukOa5xRQicSpWZyUFk8YyBvXfXSWVDKMr5+pr6io1veytW9Cka5
+         qjeTY8ac5sXRBj3mfih1jpM9vcuOwUfgXTByVfJ4zSGXjtcJgY1KdUH2UDqbMT7MkD6D
+         IBQEB/Kaj/xVMM52s1TiqwnHPRUO2c27wtNYMOjRi7wvZwNbJXOW3yQkTFvPJPUYB+ja
+         4akg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755291843; x=1755896643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ft04JZ672lT2q0D5QFWz6789EtIMwIQ1qPNZYM3WBFM=;
+        b=N6eYzsttPjD+bG//LSFKtQZJLhHO0TBCS/WOulq35++jGbDyfJOiaE+9mZHEwaK3OR
+         9Qlx7Ohgx7S2ObQHfod+SPq697GVNLycgDJu5sHc5mp6qH4B203fSOJr6iOfemnVTGWm
+         fQ7yG3BLgkPKv9ZguwcSfsvKLv/PNpteVL59WAVAziEclGQsUo9RIWukH30LerVCo3Nj
+         YbfJy3I4dMSJ/q5zEeBz0nJmFY2Wm2A2XtHeZ8i1O+78EDG0ICnFW4RlMERjuwpyxPlU
+         QKuSIazfJTPw7IohIkJkgd9aPvVJholovafdT3xee8drmgGYuygJyRdl/L6dFqL8aQLa
+         wokA==
+X-Forwarded-Encrypted: i=1; AJvYcCUceU8kkezLW5QOJI5RO/lREWdNx8jW0v1ru8GC8ZSx7/LeH3bvhRkHkdOkmvTcnpSLRcTEyigacntdYJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVJMDXSCze7u1AQ3LBaHnKHv8sxmNzfrtIW6Lq3JgfmWOzCkwN
+	P00OKA+MgEmDXpNZV3LHltjpxqRn797eG6MAK68+f16HQGR842qGTnPj5Ydtk9Qv2sM=
+X-Gm-Gg: ASbGncseBhDBGJw4rU8iy3/+h855/4BdQV1kSW0y3TT7YQ7eaUs5FyaEE4yqlYQT4D/
+	uRrf/NCk4LcntlpM/oWbzUfaj7HKwiK9ouVGN5T0FS1svv7SaEr86yaBsp29GZGepv9TClCXUEA
+	HB/MmTsJgc0Ulakq01XG366SnWtae5IwajfrJjJUZH/Y5Hw7N81gPQ3sirxizkqQloUUGG0fvAd
+	xcJJ00iMwfB8eeuCvdomX3/cefX+gXDzkbxRR+c0bjvWqrwek7hwhulOOQlCIa0LjlBiMRyhQ7x
+	2U+nIKNfqwb8j1EBJk2V/wkviKoktYElOtFsNdXKal01+QHGmAyBs/fPB2QOprk4tNxQccP8XEd
+	FoqVqV0/Jc7OXLR4gaRLFFbTq
+X-Google-Smtp-Source: AGHT+IEZ228tEu96gQYjWXKJgevodnNBi1s4R3eESGEOgX3ctS1gUzzAVoE7y2cbjS0nf97wxrlKjw==
+X-Received: by 2002:a05:6e02:2583:b0:3e5:66a8:3ebf with SMTP id e9e14a558f8ab-3e57e825485mr67051065ab.5.1755291843294;
+        Fri, 15 Aug 2025 14:04:03 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949a0167sm643861173.53.2025.08.15.14.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 14:04:02 -0700 (PDT)
+Date: Fri, 15 Aug 2025 16:04:02 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Atish Patra <atish.patra@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Anup Patel <anup@brainfault.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 4/6] RISC-V: KVM: Move copy_sbi_ext_reg_indices() to SBI
+ implementation
+Message-ID: <20250815-ba0f0a816fc5281383a2b988@orel>
+References: <20250814155548.457172-1-apatel@ventanamicro.com>
+ <20250814155548.457172-5-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 04/20] nvdimm/label: CXL labels skip the need for
- 'interleave-set cookie'
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
- <CGME20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e@epcas5p4.samsung.com>
- <20250730121209.303202-5-s.neeraj@samsung.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250730121209.303202-5-s.neeraj@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814155548.457172-5-apatel@ventanamicro.com>
 
-
-
-On 7/30/25 5:11 AM, Neeraj Kumar wrote:
-> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
-> set configuration instead of interleave-set cookie used in previous LSA
-> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
-> so skip its usage for CXL LSA 2.1 format
+On Thu, Aug 14, 2025 at 09:25:46PM +0530, Anup Patel wrote:
+> The ONE_REG handling of SBI extension enable/disable registers and
+> SBI extension state registers is already under SBI implementation.
+> On similar lines, let's move copy_sbi_ext_reg_indices() under SBI
+> implementation.
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->  drivers/nvdimm/namespace_devs.c | 3 ++-
->  drivers/nvdimm/region_devs.c    | 5 +++++
->  2 files changed, 7 insertions(+), 1 deletion(-)
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h |  2 +-
+>  arch/riscv/kvm/vcpu_onereg.c          | 29 ++-------------------------
+>  arch/riscv/kvm/vcpu_sbi.c             | 27 ++++++++++++++++++++++++-
+>  3 files changed, 29 insertions(+), 29 deletions(-)
 > 
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index bdf1ed6f23d8..5b73119dc8fd 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -1692,7 +1692,8 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
->  	int rc = 0;
->  	u16 i;
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> index 144c3f6d5eb9..212c31629bc8 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -78,6 +78,7 @@ void kvm_riscv_vcpu_sbi_request_reset(struct kvm_vcpu *vcpu,
+>  				      unsigned long pc, unsigned long a1);
+>  void kvm_riscv_vcpu_sbi_load_reset_state(struct kvm_vcpu *vcpu);
+>  int kvm_riscv_vcpu_sbi_return(struct kvm_vcpu *vcpu, struct kvm_run *run);
+> +int kvm_riscv_vcpu_reg_indices_sbi_ext(struct kvm_vcpu *vcpu, u64 __user *uindices);
+>  int kvm_riscv_vcpu_set_reg_sbi_ext(struct kvm_vcpu *vcpu,
+>  				   const struct kvm_one_reg *reg);
+>  int kvm_riscv_vcpu_get_reg_sbi_ext(struct kvm_vcpu *vcpu,
+> @@ -87,7 +88,6 @@ int kvm_riscv_vcpu_set_reg_sbi(struct kvm_vcpu *vcpu, const struct kvm_one_reg *
+>  int kvm_riscv_vcpu_get_reg_sbi(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+>  const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_find_ext(
+>  				struct kvm_vcpu *vcpu, unsigned long extid);
+> -bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
+>  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run);
+>  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
+> index 5843b0519224..0894ab517525 100644
+> --- a/arch/riscv/kvm/vcpu_onereg.c
+> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> @@ -1060,34 +1060,9 @@ static inline unsigned long num_isa_ext_regs(const struct kvm_vcpu *vcpu)
+>  	return copy_isa_ext_reg_indices(vcpu, NULL);
+>  }
 >  
-> -	if (cookie == 0) {
-> +	/* CXL labels skip the need for 'interleave-set cookie' */
-
-This comment doesn't make sense to me. If it's a CXL label, we continue to execute. There's no skipping. Or are you trying to say if it's CXL label, then checking of cookie value is unnecessary? But the cookie value still is being used later on. Maybe a bit more comments on what's going on here would be helpful.
-
-DJ
-
-> +	if (!ndd->cxl && cookie == 0) {
->  		dev_dbg(&nd_region->dev, "invalid interleave-set-cookie\n");
->  		return ERR_PTR(-ENXIO);
->  	}
-> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> index de1ee5ebc851..2debe60f8bf0 100644
-> --- a/drivers/nvdimm/region_devs.c
-> +++ b/drivers/nvdimm/region_devs.c
-> @@ -858,6 +858,11 @@ u64 nd_region_interleave_set_cookie(struct nd_region *nd_region,
->  	if (!nd_set)
->  		return 0;
+> -static int copy_sbi_ext_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
+> -{
+> -	unsigned int n = 0;
+> -
+> -	for (int i = 0; i < KVM_RISCV_SBI_EXT_MAX; i++) {
+> -		u64 size = IS_ENABLED(CONFIG_32BIT) ?
+> -			   KVM_REG_SIZE_U32 : KVM_REG_SIZE_U64;
+> -		u64 reg = KVM_REG_RISCV | size | KVM_REG_RISCV_SBI_EXT |
+> -			  KVM_REG_RISCV_SBI_SINGLE | i;
+> -
+> -		if (!riscv_vcpu_supports_sbi_ext(vcpu, i))
+> -			continue;
+> -
+> -		if (uindices) {
+> -			if (put_user(reg, uindices))
+> -				return -EFAULT;
+> -			uindices++;
+> -		}
+> -
+> -		n++;
+> -	}
+> -
+> -	return n;
+> -}
+> -
+>  static unsigned long num_sbi_ext_regs(struct kvm_vcpu *vcpu)
+>  {
+> -	return copy_sbi_ext_reg_indices(vcpu, NULL);
+> +	return kvm_riscv_vcpu_reg_indices_sbi_ext(vcpu, NULL);
+>  }
 >  
-> +	/* CXL labels skip the need for 'interleave-set cookie' */
-> +	if (nsindex && __le16_to_cpu(nsindex->major) == 2
-> +			&& __le16_to_cpu(nsindex->minor) == 1)
-> +		return 0;
+>  static inline unsigned long num_sbi_regs(struct kvm_vcpu *vcpu)
+> @@ -1215,7 +1190,7 @@ int kvm_riscv_vcpu_copy_reg_indices(struct kvm_vcpu *vcpu,
+>  		return ret;
+>  	uindices += ret;
+>  
+> -	ret = copy_sbi_ext_reg_indices(vcpu, uindices);
+> +	ret = kvm_riscv_vcpu_reg_indices_sbi_ext(vcpu, uindices);
+>  	if (ret < 0)
+>  		return ret;
+>  	uindices += ret;
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index 8b3c393e0c83..19e0e3d7b598 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -110,7 +110,7 @@ riscv_vcpu_get_sbi_ext(struct kvm_vcpu *vcpu, unsigned long idx)
+>  	return sext;
+>  }
+>  
+> -bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx)
+> +static bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx)
+>  {
+>  	struct kvm_vcpu_sbi_context *scontext = &vcpu->arch.sbi_context;
+>  	const struct kvm_riscv_sbi_extension_entry *sext;
+> @@ -288,6 +288,31 @@ static int riscv_vcpu_get_sbi_ext_multi(struct kvm_vcpu *vcpu,
+>  	return 0;
+>  }
+>  
+> +int kvm_riscv_vcpu_reg_indices_sbi_ext(struct kvm_vcpu *vcpu, u64 __user *uindices)
+> +{
+> +	unsigned int n = 0;
 > +
->  	if (nsindex && __le16_to_cpu(nsindex->major) == 1
->  			&& __le16_to_cpu(nsindex->minor) == 1)
->  		return nd_set->cookie1;
+> +	for (int i = 0; i < KVM_RISCV_SBI_EXT_MAX; i++) {
+> +		u64 size = IS_ENABLED(CONFIG_32BIT) ?
+> +			   KVM_REG_SIZE_U32 : KVM_REG_SIZE_U64;
+> +		u64 reg = KVM_REG_RISCV | size | KVM_REG_RISCV_SBI_EXT |
+> +			  KVM_REG_RISCV_SBI_SINGLE | i;
+> +
+> +		if (!riscv_vcpu_supports_sbi_ext(vcpu, i))
+> +			continue;
+> +
+> +		if (uindices) {
+> +			if (put_user(reg, uindices))
+> +				return -EFAULT;
+> +			uindices++;
+> +		}
+> +
+> +		n++;
+> +	}
+> +
+> +	return n;
+> +}
+> +
+>  int kvm_riscv_vcpu_set_reg_sbi_ext(struct kvm_vcpu *vcpu,
+>  				   const struct kvm_one_reg *reg)
+>  {
+> -- 
+> 2.43.0
+>
 
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
