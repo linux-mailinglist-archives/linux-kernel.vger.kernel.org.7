@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-770474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8998AB27B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1510BB27B44
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C921CC2E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF6C1CC2C4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889F92D0C88;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC9A2D0C74;
 	Fri, 15 Aug 2025 08:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+8I6vEB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpWuSp5S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF07423ABBB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFD723A9BE;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755247062; cv=none; b=CKNZ+BHvzAt1zM9FwyswaNRC4ioD5j0TYiz+ppNkiukhAQ/Uisg+hcQQVKTVUbYMmpmvV3GEjinURjV1GictZYvpxVbVnYnqX2sRM8OKTyIU72wM4Fh+7hb6KVmoAGB/dcgZI4qDuODRAfQa3l7jhrMHtXb1cO/TFEsIlzYoWF8=
+	t=1755247062; cv=none; b=jI1IqGr9no4/T5sW+Bpg9YHFFGqXuDYfsYe5oQ6rmcpSsiYudQaMSMTlbzTNxH/hNhgOh5yJvHohYHezVqAxtvMoszaNM0kmplr5ZgRrqVdb2BHVcBFtF31znlvYyRr6uCU4N00nxlUwinQpwFoNvC2hqqo+rfxDbgD6+iY3tCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755247062; c=relaxed/simple;
-	bh=nCRulO6K/H4lFvEhCNrgEuQoW1aO9yFrduMC+IOo29c=;
+	bh=qCUEoMcSiv4EArKcB1FLhUfsB2WEWl13SCaUpaPkLZI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hXiQsnqOIugMAz5kHl0oSKnmVC2oyJ1IXmgr+GCisy4Gsvndt7zc+UST8HhkwZXFUcBOn1hcBrmJPuaoFNhRKc2g8KKaHdg/sZzd3YNkKssWIK5qTBCcaU3XbWj0qWcjW5k+pZgd6kiAOP39QDJRFch22gbYk+4+tz2OY6q4fo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+8I6vEB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E585C4CEFD;
+	 In-Reply-To:To:Cc; b=hoZuFcfkbkrV9Ih/y9AZ1adWObqHBMllJscH5NBt9TkxRS2OFhjhECqe4v5g28sfyleNB5TKreGDQrm5JVhkrWKf7IZL2vTbMIPRi4r9M1j6Kc62uZ11WAWbRfXUimY/M4/w+/8FteAsgVS+BAvC4PEOqVDobmWj7MwXBcvrAfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpWuSp5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 75ED5C4CEFE;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755247061;
-	bh=nCRulO6K/H4lFvEhCNrgEuQoW1aO9yFrduMC+IOo29c=;
+	bh=qCUEoMcSiv4EArKcB1FLhUfsB2WEWl13SCaUpaPkLZI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=b+8I6vEBUOUM7Yt4lOsrIUfyux0sPT5VzNi9AGq+wOuC9W/F3hv14/aiZm6CgvU4+
-	 JQFLnMQE1aMo8T7uKT4XE+DStdC55xYhPa2PeD7sbw4p3MjS6yHwlT3dJD8DlzAkBk
-	 XCtoD4nZqVjevEzMNQf8McXCVLAPAcqLBvny9WWxI0eguvL/eTZTsYvg8ejy+5HKCX
-	 PzRKw3dKJtYcCH7lMgdBx96B30F58kUEu9TVSeOn/2iindnnn1BWvaMSHwLk5vNPXF
-	 QtINd/Sumxu/ifaNFiPD5X5+zWsEScA8QCM0DozfcWt5CTQWhdIlfNwvctqVuc8al3
-	 r7dtq10yQ9zaQ==
+	b=IpWuSp5SoLQJe/9tIsFQHf0gmPvzBJRZL4k8Em73ETJV3LVsFPpr5m2/5O91ngKmX
+	 QHZpmjsNQyFlsHQGTPzhRubSg9sUVuB1DxUNebOZlyjU4+t5NpmFkDVes7+HF7fZG1
+	 ohvl00r9NRaobfsbXDSi0HGm4XVkaa7Ed8W+vWJD5K2eEEr/ufNqxTy+aQZvVVAAuk
+	 8OzBgj0xFIuNGzQ0DQacQMubpnNVI2UJp0rQdBm2KFRRrhyRZvqnPxfZjVk50txNgK
+	 n8qyF8AuDcKJfbEqhKsJPoSic3Fc7p6/tdhReHAKerVrwc77FukyFcpGzSuELa9rNx
+	 k/dFZre/MYyoA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E89CA0EE9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2C7CA0EE4;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 15 Aug 2025 16:37:31 +0800
-Subject: [PATCH 05/13] dt-bindings: soc: amlogic: Unify the compatible
- property for clk-measure
+Date: Fri, 15 Aug 2025 16:37:32 +0800
+Subject: [PATCH 06/13] soc: amlogic: clk-measure: Unify the compatible
+ property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-5-59f04ba67457@amlogic.com>
+Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-6-59f04ba67457@amlogic.com>
 References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -67,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=1771;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=1243;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=WLsFB3kZYI5SRTtCiEJNIQMGbbEEbhu5OiVfqIrbRCU=;
- b=15BeFKwtMUW4Xf1NqNuNqnhEhMKHY/rAApALIEl3odOLL/43sqwREMcPMGqW3A7x/6AJvI4oR
- U3KLtA0rnWGCvCtUm3EXXlqWfXYYS9nC2B8xxigjirG1/dmavcx3I62
+ bh=0eEPVOYjuBKHP/v29Jhs15ySgwAKkYRM0UAoAkVVptI=;
+ b=w5p2xKfbh6z56WSYU5ZafMzFPC+EGumxKh+Ixvc4DqIg3NuGpxaEkMcSlMCGGj8XeqMlAmup6
+ tvRqqTQbYEjD0o6iaUTAx+p1HW8LJoy1QBm9o9TPulukjmKQ89dnunU
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -86,48 +86,43 @@ they can be managed with a unified compatible property.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- .../bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/soc/amlogic/meson-clk-measure.c | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-index 1c9d37eef5f0..a7927acde2fe 100644
---- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-+++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-@@ -15,15 +15,7 @@ maintainers:
+diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+index 4d91d463d2a5..6927f87b99cc 100644
+--- a/drivers/soc/amlogic/meson-clk-measure.c
++++ b/drivers/soc/amlogic/meson-clk-measure.c
+@@ -292,28 +292,7 @@ static int meson_msr_probe(struct platform_device *pdev)
  
- properties:
-   compatible:
--    enum:
--      - amlogic,meson-gx-clk-measure
--      - amlogic,meson8-clk-measure
--      - amlogic,meson8b-clk-measure
--      - amlogic,meson-axg-clk-measure
--      - amlogic,meson-g12a-clk-measure
--      - amlogic,meson-sm1-clk-measure
--      - amlogic,c3-clk-measure
--      - amlogic,s4-clk-measure
-+    const: amlogic,clk-measure
- 
-   reg:
-     maxItems: 1
-@@ -67,7 +59,7 @@ examples:
-      * offsets.
-      */
-     clock-measure@8758 {
--        compatible = "amlogic,meson-gx-clk-measure";
-+        compatible = "amlogic,clk-measure";
-         reg = <0x8758 0x10>;
-         clkmsr-indices = <0>,
-                          <1>,
-@@ -82,7 +74,7 @@ examples:
-      * Example 2: clk-measure uses V2 version register address offsets.
-      */
-     clock-measure@48000 {
--        compatible = "amlogic,c3-clk-measure";
-+        compatible = "amlogic,clk-measure";
-         reg = <0x48000 0x1c>;
-         clkmsr-reg-v2;
-         clkmsr-indices = <0>,
+ static const struct of_device_id meson_msr_match_table[] = {
+ 	{
+-		.compatible = "amlogic,meson-gx-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,meson8-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,meson8b-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,meson-axg-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,meson-g12a-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,meson-sm1-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,c3-clk-measure",
+-	},
+-	{
+-		.compatible = "amlogic,s4-clk-measure",
++		.compatible = "amlogic,clk-measure",
+ 	},
+ 	{ /* sentinel */ }
+ };
 
 -- 
 2.42.0
