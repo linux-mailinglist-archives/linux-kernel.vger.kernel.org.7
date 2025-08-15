@@ -1,176 +1,148 @@
-Return-Path: <linux-kernel+bounces-770952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E582BB280DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:50:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210AAB280DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF384B63255
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA09AE40E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF26B301496;
-	Fri, 15 Aug 2025 13:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0422DD61B;
+	Fri, 15 Aug 2025 13:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TV6jLrlp"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FjliZxpE"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1321459EA;
-	Fri, 15 Aug 2025 13:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BDC130A73;
+	Fri, 15 Aug 2025 13:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755265825; cv=none; b=ajAHWjM2l3iX/SytkAa4QK8npE7tkGpCFAPA4sBI3KtCQqcMIPr+FSYBxR3BOLWK14ub1YDCcpoFB9m+ZHYocN4uoxOT9IHBK49tr2dEGUdRM9dLvnHjeLpvVIJmHWLslkV/bCNcHrCIRAuL0I8mFM11RWitkeVWPTBrtArUltA=
+	t=1755265843; cv=none; b=e1CQSXkdVqzabsaPU+awyxKqCFTJCJ6xc81gbzPiYDfojRsrdCZaBi/DPvmS9EHkPKX3t9VZv7WZcKkeCme7W8LfB1uXSjg3lLLvPk02liPuFF+9KVIm08IGZZZqfrs0LJQn/Xel0GndaIUhdNHXM86x9T7ahmQqQU+SUQIxYCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755265825; c=relaxed/simple;
-	bh=ruLLqcVPj5eB5UaPm421/6sfiuuYnTeQz9n3ChST3qE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bWbFFq61khV8klY9p/H+mmVe3mwPSEiA1SBnzPB7+2kIwLcAisA6Ofy3RaoJujcf+bSJL7Wkjv/8pSaLtt07ZOS6rOGytFtACzn+oJ2B0aRu6iZOS47mlzUsuKGUXE+pY4H5HhSNpDYiCUAIM0OZkydXvADJHixSE4dP6b6xMeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TV6jLrlp; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso2333750a12.2;
-        Fri, 15 Aug 2025 06:50:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755265822; x=1755870622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVxKJKxkIR7rRYEMo6j3At6+uo+6R8lvs8Dlyuu9OBg=;
-        b=TV6jLrlpKGnqQwn5cFe79Jp+EMuC3rYmYrV0Bcs2Pd7FeKOdNjzOZA8G12BVeIgxaP
-         42K042lEFnZq5XhoFFROclSpHmE0X+1R6yvbXazR9OFn7PylOjsjRTGJFR8yC6HDXu+u
-         ephl1Yj/5BovjvBcNfV7yBBr8wnbTWRe3pM7S1ujwLpl2NDWLYfQZ/UfCP8+IsjChCsf
-         SvYNO1XVBa+gAYapGHw5YRKcETG3gjvThU0UB4zoDxYFMnwvbzZK+8QN6qSgrCi2sRu5
-         msA86Oik4suCAYHZrZ6FBf3TwyI8Ool+CRO+Tx2bYamk7/kclxl9IssFnexYF4MlsBX3
-         b4iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755265822; x=1755870622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVxKJKxkIR7rRYEMo6j3At6+uo+6R8lvs8Dlyuu9OBg=;
-        b=HGXK4DZwWb9cq0llwe238MQ8uKH3Q11xVXZNm22vLa+kA5lPs2LGDdH7jD8yfH13dX
-         lRzpV03UHHvt+l4QlI/ug5c30oVfRCCZ3PfCgPbeXcU7KaStbgwXwxEFjnWamiUC8JUz
-         dGf8o2Hv0OuJVEmDq98hEsBziiIcRruX9a445tuOEl5VRjjovh+Sf6kiiaDOuz4d0MFe
-         bNa+dzXk3Ij7bVBR9KbqI4bN6yuIRXeKZ/KjWMzyOgSLXBpd8pKvhYIbgAGRSMpgaAwp
-         0/g4ELUH5b+g3sYHWSv1eoysNUjVVb7XwrL1r389LvW4EaZm8S5g4A0uJlqR103dV18Y
-         rEkg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1HyfU2u1q32sRbZkxwpHvRXaJxy1Mwb0M/N5/xVCsVGhM1HwpV9G4LW/R7LrTmvbh0SM09J7CVGz5o/Aw@vger.kernel.org, AJvYcCWGRnCRGYYkS4rDRyletRawyE5VZ4MPzUxcyL7YP+127IrQVaLWTguo9VdwRelv4nVQyrmlBF2dJBQViiiv@vger.kernel.org, AJvYcCWJQ0wHpzzvn8seQNa3frU+99HNiEqnYCYbc9UuWUl2wb8bqLRrVAlrC9d5e2SjGJlig9FGWqcimFjNXkWgYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLRjcf9Qnxb3JozvAYsdYsizqKUPLinwIXo+ROEgcadDQACZyr
-	PrfE5GYpOfgLt/au7WcflT+a36PV4Odj6zHFK9RhL/gDvfGo6OngX3h+FFNckn3CM3dW11UXbpY
-	mp68a/GgKfxzu3QJbJGdWEAd5kkumnsM=
-X-Gm-Gg: ASbGnctWvMYyVc5QRW/TuPUE+w1u4o2BchxIzpsp+O7KFGfE46ELX/icU6arIbolZAO
-	6/uaIrIuW/xvRNZig0FsU0UyrxV5a+3yzXtIjFDdvYNyThYKb6QagvMrNv3YWpMngrtIOnbuE9Z
-	kb5dgTCco/iQjiyKHoTXjaDIn1KbdR4hpSaTZqi7Ovpih+req7dF8n/QXASsvuPQ/W8z1sUViAH
-	czCnqw=
-X-Google-Smtp-Source: AGHT+IH7RDqwp3AkwsGLY/rD7QWo3+30dh6mkwhKaJOOBQp7D5mfywDSZxacbyG96W5YBC4ATcXdwnm5eCVkiAWSt4o=
-X-Received: by 2002:a05:6402:13d3:b0:618:4a41:80b2 with SMTP id
- 4fb4d7f45d1cf-618b0755226mr1718508a12.33.1755265821419; Fri, 15 Aug 2025
- 06:50:21 -0700 (PDT)
+	s=arc-20240116; t=1755265843; c=relaxed/simple;
+	bh=ZtjHngrc92zWlZz4apSIcZ+8KqwiOJtKZ+ei2GD/8+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Uj6WqjMdjguf3vnqRbEkPJuRPd3fiDTT/W/tcvvJHTC+I8kTx5CVaNjPjw08ZEEJ091/VruuCJxcaNf32Fbr/EjCq/wWZUXmG5vSs4TAcXZl9Caiv9rLNrCKksTa7PBq+Z923txeQgJhi7wSrpHbJnuYaQsU7XtcAmAJloGbQEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FjliZxpE; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57FDoXoC2615996;
+	Fri, 15 Aug 2025 08:50:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755265833;
+	bh=7XQhf8b1lSnCYAFBATVY+THATyFGfb93E2LT2ShyR6U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FjliZxpEpSzKZBd2AQNXUeOJDfoHUMOUz55e1aa2zNi1Wp+6QEhy1oh68w4TCac8B
+	 Q5UeXBPq6yeA+hzaNjszbvPszkjiAcqHq+LLqCntAjJN2p4zco9PWa1qoOiqwLne9O
+	 DUCsJzg62jVtPk0Rg8iUa/HhrnOdKTFDNeJvqf3Q=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57FDoXLn2629259
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 15 Aug 2025 08:50:33 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 15
+ Aug 2025 08:50:32 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 15 Aug 2025 08:50:32 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57FDoWno1371580;
+	Fri, 15 Aug 2025 08:50:32 -0500
+Message-ID: <08eec1de-1c92-44ce-8caa-2dc43a67c514@ti.com>
+Date: Fri, 15 Aug 2025 08:50:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
- <cffb248a-87ce-434e-bd64-2c8112872a18@igalia.com> <CAOQ4uxiVFubhiC9Ftwt3kG=RoGSK7rBpPv5Z0GdZfk17dBO6YQ@mail.gmail.com>
- <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com>
-In-Reply-To: <e2238a17-3d0a-4c30-bc81-65c8c4da98e6@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 15:50:09 +0200
-X-Gm-Features: Ac12FXyMWCloJWIBnMtqLXlovfG1p6TA8JMvh2LlyfcPyxqjUIpjrP0xrZ2Q6_w
-Message-ID: <CAOQ4uxgfKcey301gZRBHf=2YfWmNg5zkj7Bh+DwVwpztMR1uOg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] ovl: Enable support for casefold layers
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com, Gabriel Krisman Bertazi <krisman@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/4] drm/bridge: it66121: Drop ftrace like dev_dbg()
+ prints
+To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, David Airlie
+	<airlied@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        <tomi.valkeinen@ideasonboard.com>, <devarsht@ti.com>
+References: <20250815034105.1276548-1-nm@ti.com>
+ <20250815034105.1276548-3-nm@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250815034105.1276548-3-nm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Aug 15, 2025 at 3:34=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> Hi Amir,
->
-> On 8/14/25 21:06, Amir Goldstein wrote:
-> > On Thu, Aug 14, 2025 at 7:30=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid=
-@igalia.com> wrote:
-> >> Em 14/08/2025 14:22, Andr=C3=A9 Almeida escreveu:
-> >>> Hi all,
-> >>>
-> >>> We would like to support the usage of casefold layers with overlayfs =
-to
-> >>> be used with container tools. This use case requires a simple setup,
-> >>> where every layer will have the same encoding setting (i.e. Unicode
-> >>> version and flags), using one upper and one lower layer.
-> >>>
-> >> Amir,
-> >>
-> >> I tried to run your xfstest for casefolded ovl[1] but I can see that i=
-t
-> >> still requires some work. I tried to fix some of the TODO's but I didn=
-'t
-> >> managed to mkfs the base fs with casefold enabled...
-> > When you write mkfs the base fs, I suspect that you are running
-> > check -overlay or something.
-> >
-> > This is not how this test should be run.
-> > It should run as a normal test on ext4 or any other fs  that supports c=
-asefold.
-> >
-> > When you run check -g casefold, the generic test generic/556 will
-> > be run if the test fs supports casefold (e.g. ext4).
-> >
-> > The new added test belongs to the same group and should run
-> > if you run check -g casefold if the test fs supports casefold (e.g. ext=
-4).
-> >
-> I see, I used `check -overlay` indeed, thanks!
->
+On 8/14/25 10:41 PM, Nishanth Menon wrote:
+> Drop the ftrace like dev_dbg() that checkpatch --strict complains about:
+> 
+> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
+> +	dev_dbg(dev, "%s\n", __func__);
+> 
+> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
+> +	dev_dbg(dev, "%s\n", __func__);
+> 
+> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
+> +	dev_dbg(dev, "%s\n", __func__);
+> 
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
 
-Yeh that's a bit confusing I'll admit.
-It's an overlayfs test that "does not run on overlayfs"
-but requires extra overlayfs:
+Reviewed-by: Andrew Davis <afd@ti.com>
 
-_exclude_fs overlay
-_require_extra_fs overlay
+> Changes in V3:
+> * New patch
+> 
+>   drivers/gpu/drm/bridge/ite-it66121.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+> index aa7b1dcc5d70..9b8ed2fae2f4 100644
+> --- a/drivers/gpu/drm/bridge/ite-it66121.c
+> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
+> @@ -1384,8 +1384,6 @@ static int it66121_audio_startup(struct device *dev, void *data)
+>   	int ret;
+>   	struct it66121_ctx *ctx = dev_get_drvdata(dev);
+>   
+> -	dev_dbg(dev, "%s\n", __func__);
+> -
+>   	mutex_lock(&ctx->lock);
+>   	ret = it661221_audio_output_enable(ctx, true);
+>   	if (ret)
+> @@ -1401,8 +1399,6 @@ static void it66121_audio_shutdown(struct device *dev, void *data)
+>   	int ret;
+>   	struct it66121_ctx *ctx = dev_get_drvdata(dev);
+>   
+> -	dev_dbg(dev, "%s\n", __func__);
+> -
+>   	mutex_lock(&ctx->lock);
+>   	ret = it661221_audio_output_enable(ctx, false);
+>   	if (ret)
+> @@ -1479,8 +1475,6 @@ static int it66121_audio_codec_init(struct it66121_ctx *ctx, struct device *dev)
+>   		.no_capture_mute = 1,
+>   	};
+>   
+> -	dev_dbg(dev, "%s\n", __func__);
+> -
+>   	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
+>   		dev_info(dev, "No \"#sound-dai-cells\", no audio\n");
+>   		return 0;
 
-Because it does the overlayfs mount itself.
-That's the easiest way to test features (e.g. casefold) in basefs
-
-You should also run check -overlay -g overlay/quick,
-but that's only to verify your patches did not regress any
-non-casefolded test.
-
-
-> >> but we might as
-> >> well discuss this in a dedicated xfstest email thread if you want to
-> >> send a RFC for the test.
-> >>
-> >> [1]
-> >> https://github.com/amir73il/xfstests/commit/03b3facf60e14cab9fc563ad54=
-893563b4cb18e4
-> >>
-> >>
-> > Can you point me to a branch with your ovl patches, so I can pull it
-> > for testing?
->
-> You can find my branch here, based on top of vfs.all:
-> https://gitlab.freedesktop.org/andrealmeid/linux/-/commits/ovl_casefold
->
-> I fixed the following minor issues:
->
-> - 4/9: dropped the `kfree(cf_name);` - 6/9: fixed kernel robot warning
-> `unused variable 'ofs'` - 8/9: change pr_warn_ratelimited() string
->
-
-Cool. Let me know when the test is passing (regardless of TODOs).
-I'll try to test it next week.
-
-Thanks,
-Amir.
 
