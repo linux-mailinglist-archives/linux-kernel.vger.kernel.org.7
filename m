@@ -1,218 +1,135 @@
-Return-Path: <linux-kernel+bounces-770113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921CEB276E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:40:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9A8B276F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746641CC31E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:40:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E635E389A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293B283153;
-	Fri, 15 Aug 2025 03:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE322BE040;
+	Fri, 15 Aug 2025 03:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Z4W9ZWX/"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013052.outbound.protection.outlook.com [52.101.127.52])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k5zVo/Iv"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A223F1E7C34;
-	Fri, 15 Aug 2025 03:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229209; cv=fail; b=QE6YEDGVPX0TKniP8nTq2qWCseRfangPtxt0ZQATroCQFJn3b9u0yrBpMhBeBdn/OnZ07wTHaqm+V8gY6D9hbmp1iLTn75FBLpS7fZLWX09A+6+0NCfkR6yX4DRQMwszz1g/VZDEy2YCEV1URFLUyoszNPOIQNU3j8TQFwVpCDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229209; c=relaxed/simple;
-	bh=ijTguShJ1i2qjNAv/cMiCMG782WoL1zUAdwOJQzhk98=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oQ2buGBpfMU2bG5D99TtwZCiGO/ncexE7gahJXBO7BF+QYlwbosof5HJn4DGZeIZQ08l7DkBWgRjFVZ5PyKGN/xqFNhyqEMC+ddRZHZPkG8Gd0ht9DmMi+riNQ4Dbm1GeoDiz3fMiTWUQW4Z2fSrpBu3pnqQpgYKFMx+rb+5nxE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Z4W9ZWX/; arc=fail smtp.client-ip=52.101.127.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TmTftzaa3rv1A5B0D3hS2Xg0a27rrecmFNA1NpbgWQSZv3Sr+zffsjewjBAMmqoMw21Jglpj7xOk2/updQhQHJktuMMuEQH5TTG0jqd6l5mPo5oCPvcJR5aZMJOpqaC9q04DusmLhLLsfig4XmJtTunAo9uaRbsSwe+SGukUpNPktCYqi+7sWhf7fe4AYybX5+pHfWuJV5vQ/Fw35ZybGT2961VtRSqfs+2G+Cfln49zbfPt5iO2v1ag5DXEqndIeEhvu+gmEIZO5CiihA93b5DcA//HGdmDBFUg/IhkX8DFErsysac4uC9QMLBnZwhZUSwvIb5LrhPxcyqjvInrwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wTvCHRa6NoYi0398gNXVbP1rv7qa8EndzhCFjIf61gI=;
- b=GOoH130KsQXezg+foj4Ly/Lq3+4yGP2PgMUruCwznzZRpgR43j0RfMA5l6Pu9y4pmrgwm8OSNtpcGhBdCq/LA+4HzwMjoLJeQfwn9yckcFMPU4aVyKT7p+CNfNkaL7aTJNR4iZ99XrunN9KwwFVqLY3wPmbkEDwN+ghD1fDsf/l1f+FZwx0lFJOqVHYSzUgCtcf3qjN1kt0ARKLw5F8S5dS+yX6MbOQbEbwhejRYZKqQtc7OIBFe1SV9L3xpmq9tm7EyLAzKapX5KilFgQI249kdtNkKfa5xsNn3bn6FDgm45iKGzrEbKEIcLKaNazO6YsUO12XpZiMtrjTR8W86wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wTvCHRa6NoYi0398gNXVbP1rv7qa8EndzhCFjIf61gI=;
- b=Z4W9ZWX/QDRLouZmEaEtNgCYH8K5Lpt3Or4kSmmMK3RBXxath+ndFF9PuIVadr09oX/AdvYQNW+9N3/1mwJEuS63zOpNGouMD7YZOIw7Vv4hLTppZNSaPT1ewO/06fY6j+SRl3v5dZ3cSKmkBxOa/0ZLbZZUaup3iZ7oBWsTjIFR0/vuVqPFzeNAFeIbt+SvVWXOZBLsxb9f1RbpbBQcDIFOu5DTPvz2q2KNKUi9mb+cgvi1JjUSpPgTA+Pzg5plm7xDot/6UuFEG4EhUzI1erHNtMr8YaC+nJD2rH1RdtrxXuXGpihdBA9JkN6JDGNlJ2crJ+0o83K6+ZNJptpIYw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- OSQPR06MB7991.apcprd06.prod.outlook.com (2603:1096:604:426::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.17; Fri, 15 Aug
- 2025 03:40:03 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 03:40:03 +0000
-Message-ID: <1ef37cd9-9aa8-4276-9b5e-f9094effbc7d@vivo.com>
-Date: Fri, 15 Aug 2025 11:39:59 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: min_addr: use max() to improve code
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814142653.283355-1-rongqianfeng@vivo.com>
- <8ab2084cc35ddc9f2a4796ff7cd88954@paul-moore.com>
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <8ab2084cc35ddc9f2a4796ff7cd88954@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGBP274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::32)
- To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC24292B4B;
+	Fri, 15 Aug 2025 03:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755229279; cv=none; b=FiFLlCkPxr/HwXtfGV0iUrbFGdtnEgeRife8vQg7lyLzzLJN68sXF6NMSZLpmXY/g+dfIGXFvKX0ZzdCNwo+WWGE/Hd1lOM2wCp5FHk5g4mXFHpPLP4B4uxnxMh3s+XRFwwDpHEQ0RJx7dqjYNqaxfdpZI1+kRWAt9mQBaK24Yw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755229279; c=relaxed/simple;
+	bh=xlTstruN7TR553TGg6aAGK2kUEYuxmRjzfUX9Qg5PCo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AVfGTafOHbZhwpjL2vcW19qhoCPOsgKIAWQKd6m0rhIGKQTuqMvxcRXPL6z8n5elG9TIK9UvuC1OD86YZxMRsSQpC4QgYQu+L5cO1LPyp/EWP5Vxm/Va2eliTfLsVIaPKxJznl+rFyl7YU7SjNLNzHySf46mLpnbuvZrz8cRKPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k5zVo/Iv; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57F3f9ut2075234;
+	Thu, 14 Aug 2025 22:41:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755229269;
+	bh=6DoGU6fuw7kJKhPDT31ltrAucunWKXI/LWYZ8mc01u8=;
+	h=From:To:CC:Subject:Date;
+	b=k5zVo/IvPEcf3R5BW+mc8Sdi5MddnE56WB1RVceIAYonW8Cj6ZAUScJtHi4HjBUuX
+	 85BTMlkwodfCGLvPJ0KlFg/DWzs7RNKCA7BgOKanujkpYGdy/0YYcIo+DJSE7ypUrP
+	 C4xatAJnSZGoRImKGqB6vFrTe3FBTADaUv8t3yV0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57F3f8mt2307931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 22:41:08 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 22:41:08 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 22:41:08 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57F3f895419038;
+	Thu, 14 Aug 2025 22:41:08 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, David Airlie
+	<airlied@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jason Kridner <jkridner@beagleboard.org>, <afd@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <devarsht@ti.com>,
+        Nishanth Menon
+	<nm@ti.com>
+Subject: [PATCH V3 0/4] drm/bridge: it66121: Add initial it66122 support
+Date: Thu, 14 Aug 2025 22:41:01 -0500
+Message-ID: <20250815034105.1276548-1-nm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|OSQPR06MB7991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60bbd7ff-278c-4e53-a743-08dddbad6b58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VWI4dENTRFZiL01HNUZNeTBTVVJBSlJuUHZHdGRZWTVmRXJsZFFQY2pSamsv?=
- =?utf-8?B?RVFSY3ZzL0dCdFU1K0hQaklTVUZKSVNNVkFlaEY0OGd0R1FXQXZXRDYrSVdL?=
- =?utf-8?B?NWNlY25aTENkS1ZkOW0wSXAybm8wd2loVG10Z2RHMDZvdVZUSFNiUWdJeloz?=
- =?utf-8?B?b0swZ2hLbTE1WnJ3bHY1MFV6blI4SnM4b2VYYjJsbDExQXlPRUV5NG1BSERw?=
- =?utf-8?B?Z0ZINWVmK3gySDkrTFM3VTcrektPcU03enB4VFFZbDIvaDRGd0VvZ3MxSHg4?=
- =?utf-8?B?cGdrQnNPV0h6ejRwcGFzU1lNd1R1RTM1TEFvdWRHRjhxYVB5Qk1BV2o2bnc3?=
- =?utf-8?B?QnlqbldvVHVWRE1TS3BZY1Zuc25MazRyTW54QVlvdERkSGF3OFBEUDU2NE40?=
- =?utf-8?B?ekpXZitZRWZHVFVjamE5UEdZR1QyTzVUZitvQmJOSmlHVnZqMklXQnMrd28v?=
- =?utf-8?B?NzdhdlQ0aDBkU0xnMUdVczVNMW5EK3pWd3pmNFlFMmVHR0JmYXNqK09nc2pr?=
- =?utf-8?B?Ymd6OEtNM2llanVwQzN6a1IxbmRMNllCOFBETUlES2VWRjduQmlTcmxlNElR?=
- =?utf-8?B?b1BvT0Y1aTd5RGVkY0R2NTBVTVNpVlJvdFNvN0MwUGJkOU40Y3JYUTdJSjhV?=
- =?utf-8?B?NFdYTGNYaHcrdjIwLzk1d21XTlg3KzZORXdldHFPcXVXVG0yRVVnSExmL2hP?=
- =?utf-8?B?bmNwVHMwc0dVSUNKbzkvY3pUcFVsaGNqOWFVa3RmcDRnWmlPRnVITmRlV041?=
- =?utf-8?B?akZxVjR5Y2NsVkxKNW1YdVRyNU1VNEJkRlQ2dHIwbCtFWnNVUlZEcEJXeVNq?=
- =?utf-8?B?VWlZbnV4NTJrbGlCK3JLQkFyQndIaGltb3g4RkNNOXVUMnUwR0Y4aTQ3UHZk?=
- =?utf-8?B?ek96am4valFzTDNTQVZZTTJvb2RYTmxSWWNrVU5FakRxYmVSNnFLUlZEOWY3?=
- =?utf-8?B?OGUveEVFY05aTGRnVnR0QkNIbkErcTgzL1hucE9XYmtwMktkUlRwT0hYMTBY?=
- =?utf-8?B?QVNlOFhybkZmd0dxa0VMZ3hjYklpNTU3QzhGSDZCUkgrdjNjRjZhV2I5RXlq?=
- =?utf-8?B?dTBwZ2FvWENhdVBtRFBoakNXWlU0M2x5ZWhMNFhvN0xCR0w3NG4xbk4xTy9t?=
- =?utf-8?B?RWw5eWxNYTVDMFZxK3BhS2ExbGhwc3E2bTRNeU14alU3MjJ5L2s4L1JaeHpo?=
- =?utf-8?B?Y1JUTGs3MEpCZE9NbnVyVEkvQ0Y1ZHJiYkN6RGFRRHlISUIxdkdqNkZjazNn?=
- =?utf-8?B?T05MUUlMNFlqdVg3SGhCd01ydWh6WXc3MHNlRHAxc0xubnZTZ3llbnlxZ1Y1?=
- =?utf-8?B?Sk1BWkg1OWprSGY1T2l1Mzl1K3VQTlhiSnM5TTU2ZW9xeTdaV21WUFh0NjdD?=
- =?utf-8?B?em1kYnFFbHlFdnZvZktzKzJIYklrVjFuWVc4SjlqNGJPT0F0NTBWUnh3czFz?=
- =?utf-8?B?c09jM2RVOXRSTnhwNWdsNE5YSkJuUVFsZEZmNHNyYnpRU2h2WlFYN3R4L1N2?=
- =?utf-8?B?S3Q2NzZoaGtlUjh0dmpEYjZZQ21VajBLNDUrUU1WeitwNlFWOTlGdEI4TUVW?=
- =?utf-8?B?b3RTQ3prdnpUbWd0QzZIczhqNDdJQy96Yk1GL1B3Yk1xRVdyMUNCMUxmd0NW?=
- =?utf-8?B?eDJtUk9ySS8xUllZRUZOQkoxbkExcDlZNHVWQVZUOStyUkFwbzA4Tjg2VlpU?=
- =?utf-8?B?MmVBZWhiTFd3MFdDdGUvRUYwWnA0WmdCaVFIK0xiRFhaSFB2aThvbFAzbGpR?=
- =?utf-8?B?Vy9uSjFlM3RkMk1KbjR2cndZSTRyTWlRZW8xQ0JzdllGK0c5bGI3VkN0TFUz?=
- =?utf-8?B?ckNuNXBDMnowTTRENk5Vd1VLSVdCMmo5U29aaVJ4Ymw4d01QOFdoUVdsUmx4?=
- =?utf-8?B?eklTTHl4UjZOb3FqcWk5Q2p2R0ZiMXAzZkFGdW1lNGhPRTNDNFpxcithWkdK?=
- =?utf-8?Q?yV0mX+yaPk0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VWRQT0hmQjFiUnJ3SkkwUGtaU2NtcGJib0pHbHJMM0NVQWJSdHh3M2lFeWdK?=
- =?utf-8?B?a05ZRExtSUs3MWtaZk1nM2RZRFpoQWFqcmd6WjdIOHVSbDRZZXE2MDZSN1F1?=
- =?utf-8?B?Y3hqa1dKSFdoUkNpQUxZK2o4OG1ucnc1VDZVZVpFSDU3cWJqRmkyN0tkZ015?=
- =?utf-8?B?aWxMVFd2K2ZPNzJrUnZvM3JhVUFMWWozVC9CZUtuSzMwbnJET1E3MzBBcGt2?=
- =?utf-8?B?TGlhUFJ2S0c4RjQzL0U1VGR5YlMxVWtQNXM3OS9YZ1hqdjlkdzg2cXNLcFl1?=
- =?utf-8?B?NkVQZ1V5MENmQnFpb1M0NFh2QkM4ellrTStWSXVmVHpRazRObjZFN3poZTBN?=
- =?utf-8?B?ZFFjTzI3NnoxM3lpYjc1aityT1B3Nmg4S1hFUE13UWhITkM1UlBCRjkvNVp5?=
- =?utf-8?B?eEVYTmpWeTBDaHpuN3BRUXdNaGZ1UkZFc3NXVmdQb2JLS2I1VEwvY0pJejNB?=
- =?utf-8?B?ckJEQTg1ZTlaVnR3ZVQyQkJibzFBY1o3ZndNR244bVBwbzE4MzJQRzFoaEl4?=
- =?utf-8?B?cjQ1VjByWVoycVA2UUZ3VktDRXhRYUFRRjVjUHpKRG9nQWdIdGk5V2pQY3kr?=
- =?utf-8?B?K2RHM0VnZmpQU28wK254QnR4QjQ4Z2I4eXNkK3VEWVhtbFgvYTNGMGtMT04v?=
- =?utf-8?B?Nk5ja1NveFVvQUxtWVFjRDNmTDNZVS91Z2FiaVZvRUx2NHVmUk43UDg0ZEcw?=
- =?utf-8?B?aStzNGZzaGs4dnU1VTZCVHkrWEtoZDRUWlgyS2xUNUZ4Z0dwbWcraXR2WGRi?=
- =?utf-8?B?ZkpIOHExOHdmTjJqV3JDNWFleVRMa0tQNkFmNkk2M0h3RTRHenpMLzdYeEw3?=
- =?utf-8?B?MjRGblNxUGZEUVdteXZjbERSRVFydkdrMitzc0ZuTnFwTWx6Vzg2N0wyNld2?=
- =?utf-8?B?Z0x0M1ZIL1doL0QvQkExTWJGYndJU3VTVnlEU2lmL1NQcy9sSXBsOGQrM25L?=
- =?utf-8?B?SkFRMTJHN2Fzb0k1LzFZdjh2SHZORlYweVhNYXk0elVUcS9URzJlVlV1Mk4y?=
- =?utf-8?B?WDIzYzNFaHlJNlNDYVBHekorSE1UQ1Vwc0puY2VEdmwrcnMwS1dDQ21OTytX?=
- =?utf-8?B?RmFQQ3piR2x6eUFZc1Y1YS9hUVU0b2tCNDI1YjVBcjBnTEFGRXE2aWZiSTVm?=
- =?utf-8?B?RzdBaHBsV0hNTW54VERiNE55dk1IRU5YQytSa05QUmIvSmZDYUd0Y29CRGxT?=
- =?utf-8?B?OHk0TmtCK2ZkYnZOMUF6TEp3bi9BelB2SUE5TGJvd3VDOFEwamM2dUxxOHpW?=
- =?utf-8?B?ZzZaaWk5ZG83Vlg4cWFDMDBPYWtXK0VSQnFtN1AwSlZTRlpZaHF4UFhuTEpv?=
- =?utf-8?B?UGxrTTQ2U0dHVGdDVVhPYzBGL21GVlpzc0hCbm5HYTAyTmhOTTJEYmkrajZB?=
- =?utf-8?B?UmF0VjE4b3BJVmlzNkhIcUtkb3p3aFNzRHorSGhsQUI4bFZaWGpRQzJmcVE4?=
- =?utf-8?B?YjZ1UFNVL1gvNWFuK0hXRDcvNWpCSjB6S0duRnUzLy9pNTFERjFla2YzMjZP?=
- =?utf-8?B?Y1RySkhrTkFDRnE4L0xhRnpkOGJtekVYVzM5Ui9WaE9Cdk1NcGh1cVpNZ1V2?=
- =?utf-8?B?RjJLZzJ5SkU0eVo2YjRvSGY1RVZ3S1pyLzhNMFVEeW5jdk1oNFoyVEx6ZFgv?=
- =?utf-8?B?Z2dlYVFlVjJ2N0pqeEcyMU5GVlhwRGhDMWc0TjFBZDJWTDhzc1ZWSDdYU1BH?=
- =?utf-8?B?Z0dxYmFnZHVkVDR5N2N0R0NKbit0WW5MTTdBSHRZdHgwSFpoeFFTd01qTFpU?=
- =?utf-8?B?R0hPM3NjRnhhdkhrd3dHL1BLRFBsN0Q4dUdhRURmeVZ1OUc3N2JJV0w3N1cr?=
- =?utf-8?B?Y2xBdTUzQmVHanA4UGQvdkRpQkdubDF3R1RwU2JPNUhZQ2N2Q3UxUWFJUnR2?=
- =?utf-8?B?eDFMQUJhNlJIdjZ0OFRMbjc5c2FFOWFvOHlKRHM0ekpjQTBzVnBDZFVOcjJn?=
- =?utf-8?B?UWNNM09MeUJKVmxXOVNlZUUxT3lwTGtqalJ4TnE5RXZxOGR5VWZ4SkZOWi9m?=
- =?utf-8?B?RHpGNWthTVFSVlErdEVlYWlGR0ZJYlVmaFRCS1M1L2I1eDBOUEZPdlhYUkhP?=
- =?utf-8?B?REF5eFVzUjdPWHo1Q3FueGlDRnpCeWxkbUppdXZnSjRaWm1lV1VST3JKelhh?=
- =?utf-8?Q?pw3NJvpZrJEDqIyrwdnOBeV/c?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60bbd7ff-278c-4e53-a743-08dddbad6b58
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 03:40:03.5345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: quB7+co+a73rGTFOJpTbF6JhAWxvQc52mbcTuwv5RRhB8DV7S7mbLKA8yKeGZj6dtxu93jgkH454k+tdzBs70g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7991
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi,
 
-在 2025/8/15 10:17, Paul Moore 写道:
-> On Aug 14, 2025 Qianfeng Rong <rongqianfeng@vivo.com> wrote:
->> Use max() to reduce the code in update_mmap_min_addr() and improve its
->> readability.
->>
->> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
->> ---
->>   security/min_addr.c | 5 +----
->>   1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/security/min_addr.c b/security/min_addr.c
->> index df1bc643d886..50035bc9281c 100644
->> --- a/security/min_addr.c
->> +++ b/security/min_addr.c
->> @@ -16,10 +16,7 @@ unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
->>   static void update_mmap_min_addr(void)
->>   {
->>   #ifdef CONFIG_LSM_MMAP_MIN_ADDR
->> -	if (dac_mmap_min_addr > CONFIG_LSM_MMAP_MIN_ADDR)
->> -		mmap_min_addr = dac_mmap_min_addr;
->> -	else
->> -		mmap_min_addr = CONFIG_LSM_MMAP_MIN_ADDR;
->> +	mmap_min_addr = max(dac_mmap_min_addr, CONFIG_LSM_MMAP_MIN_ADDR);
-> It seems like the umax() macro would be a better choice here, yes?
+Add initial support for IT66122, which seems to be compatible to it66121
+but probably has additional functionality.
 
+BeagleY-AI uses this it66122 as the old part is no longer in production
+as far as I understand.
 
-You are right, using umax() here makes the semantics clearer.
+Now, BeaglePlay uses it66121 at the moment, but at some point, it might
+end up flipping over to the new part. Additionally, it also looks like
+Revision D of BeagleBone Black switched over to it66122 as well.
 
->
-> It might also be a good idea to explicitly include the
-> include/linux/minmax.h header in this file.
+Changes in V3:
+Based on Tomi's and Devarsh's reviews, and searching online (and failing
+to find) for a public data sheet, I have refactored the series to:
+a) Detect the ID by matching vid/pid
+b) Introduce it66122 basic support which seems to work based on
+   empirical testing evidence on BeagleY-AI. This allows incremental
+   patches in the future by someone who might have access to the data
+   sheet to add additional features for the chip.
+c) Irritated by checkpatch --strict warnings, added a patch to fix
+   existing warnings as part of this series, but it could probably go
+   in independent of everything else.
+d) Stopped claiming it66122 is drop in replacement of it66121 :)
 
+Changes in V2:
+* Picked up Krystoff's binding ack
+* Switched over to a vid/pid list
 
-ok, Will do in the next version.
+V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
+V2: https://lore.kernel.org/all/20250813204106.580141-1-nm@ti.com/
 
->
->>   #else
->>   	mmap_min_addr = dac_mmap_min_addr;
->>   #endif
->> -- 
->> 2.34.1
-> --
-> paul-moore.com
-Best regards,
-Qianfeng
+Nishanth Menon (4):
+  dt-bindings: display: bridge: it66121: Add compatible string for
+    IT66122
+  drm/bridge: it66121: Drop ftrace like dev_dbg() prints
+  drm/bridge: it66121: Use vid/pid to detect the type of chip
+  drm/bridge: it66121: Add minimal it66122 support
+
+ .../bindings/display/bridge/ite,it66121.yaml  |  1 +
+ drivers/gpu/drm/bridge/ite-it66121.c          | 63 +++++++++----------
+ 2 files changed, 32 insertions(+), 32 deletions(-)
+
+-- 
+2.47.0
+
 
