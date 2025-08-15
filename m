@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-771496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6965FB287F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B713B287F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05A99B676BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C667200BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BA32620D2;
-	Fri, 15 Aug 2025 21:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E77323D7EA;
+	Fri, 15 Aug 2025 21:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvJKmlGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faNrEmUt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27882A926;
-	Fri, 15 Aug 2025 21:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9381B87C0;
+	Fri, 15 Aug 2025 21:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755294284; cv=none; b=IyWpimXuR8Pvr5U2VyPMfK85GGHpgRUvhMhGu0MqYUr4fojWfHdx4JuOI8qmaeOwfLbxqRLs4K/blSY0AX49dXq1yOnfp0IrBICF8AadHHW+aCPaTkIOGOCYFNwBGHgPrhOpBIkJzXj1kRXvvuYT/z3xdknAzKfYaZxzN+/5YMI=
+	t=1755294555; cv=none; b=svBiI53W/N+gnG8O0mFcY6H61jBXTULEaLdbgVRYvd5bG9zrE+ZfJapiGTm2e9pyBsbhD7mXoNjam6TRyuXa8SflEYXyM+vEPX2HTj1FLnRTNOKC2IHx349K2Jok4U8GQga5aQf4p1tcn/9wVzE+vVBkaxR7xNeDnz+QuCTQgLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755294284; c=relaxed/simple;
-	bh=w8bI3K06v5qE0O96wS27g3AHvYkRCqTbCUA44CgzYFw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lApIPdTD2q5pJbE8t6xF/g5XgaFu+AaHQ4Y++5j4ZCiVjr6Dre/HvjsFOaOXfe0WCvMxzInE3MX/TeNcsINoehkwKqtX+JQKzgGI00gehcfTgkCChPLRYIOdeOpIOgEfaMH7rB42cJo//U5cVs41Om9j9+B8oBqfC4Vt4PYfMh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvJKmlGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4E4C4CEEB;
-	Fri, 15 Aug 2025 21:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755294284;
-	bh=w8bI3K06v5qE0O96wS27g3AHvYkRCqTbCUA44CgzYFw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MvJKmlGoGPC3SoPcH3STEEW7WDVtuMET4SzWHzRaP99yr+4AfL17RZ0G60aMb5OsE
-	 COmi1+feMJWR91MG3PCVj/RoGLw7h5HxBcY2QwKWNzxS9SNmq3rPCD60Gdfbfs79L0
-	 zzftKzqvFWf3uHcaAchh9zYTpwkr86igzFIXGcMnYU0/ebksTGEkRXPNHeW7Xz6KQC
-	 pLu7Jz9xn7602d8cxWvHV6SpVVsdd+J/V1pMw4rfULFicjFLQx9EkodGy+PBFtpH2g
-	 zTxZERDHYKcUcu/h0uomK01YAu1Tg5SFX0Z8T4HDy3WjrRW0awlAQc2lFsEPE7n5+u
-	 N+TawuTomJMnA==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2025-08-18
-Date: Fri, 15 Aug 2025 14:44:40 -0700
-Message-Id: <20250815214440.89592-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755294555; c=relaxed/simple;
+	bh=7/DESvwD3138OtQA65/DUWMV7oCqWuC7zjK3tOXv16k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nkWifaw6K+sqA4+w+D0IqjNJZKyYu5OGqQTOM6x3Pbp+UR2m3Hs7f8yLDmOStW3mgMcC89tDT0rVnR4H8X3U5SNcQrdTYq0JXGUzaWc/vnHhRm/gTAapC172nwp4Bo5QhXKfHfT9KwL2lT/3fH/Z4NI/0FL/kCyhvh4+oTwjk4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faNrEmUt; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755294554; x=1786830554;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7/DESvwD3138OtQA65/DUWMV7oCqWuC7zjK3tOXv16k=;
+  b=faNrEmUtnTP59Ltdp3yGuxOYVUXFSGDrqMi3T0kA4Uv0ECBjL5VBlMil
+   NtT8CWPDJb8oX061NxG4NcmyTL8Nhj9SGSDyFxaOp3DLzkhIPtaTf4mwn
+   1599mXqS7MRcHkLNkwxETN9r77/nLoLdEsNivInhPucC5uwoBLCJnSpJR
+   UtgxRoJr3T65MwhI6OtENfn0+X6SP2KwrNZNjnUJkt6z7SmA5lr7JRGQm
+   TkLtO++28xHfDncK6tfvwxSDDCRTcA7wclpdz8afE6xa+HJG6K5JWzO/D
+   CCZQdCYlIbqeb9JNQkvi4V9kUVI4DLfT8IIhF0a5DmOwWMj01IQeTiaRy
+   A==;
+X-CSE-ConnectionGUID: CmdGQ7m8Rn2zdjq1mo/BqQ==
+X-CSE-MsgGUID: hg5IUbAGSY+CRdjoe7nLbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68220427"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="68220427"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:49:13 -0700
+X-CSE-ConnectionGUID: QnRETjyrRLavnrXXHKJkKg==
+X-CSE-MsgGUID: p65L7qcuScGyVUlLkIq0Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166321491"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 15 Aug 2025 14:49:10 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un2IM-000CNc-0o;
+	Fri, 15 Aug 2025 21:49:06 +0000
+Date: Sat, 16 Aug 2025 05:48:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kbusch@kernel.org,
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com,
+	alistair23@gmail.com, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH 3/8] net/handshake: Expose handshake_sk_destruct_req
+ publically
+Message-ID: <202508160510.XOTeniWX-lkp@intel.com>
+References: <20250815050210.1518439-4-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815050210.1518439-4-alistair.francis@wdc.com>
 
-Hello,
+Hi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on trondmy-nfs/linux-next]
+[also build test WARNING on net/main net-next/main linus/master linux-nvme/for-next v6.17-rc1 next-20250815]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250815-130804
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20250815050210.1518439-4-alistair.francis%40wdc.com
+patch subject: [PATCH 3/8] net/handshake: Expose handshake_sk_destruct_req publically
+config: arm-mps2_defconfig (https://download.01.org/0day-ci/archive/20250816/202508160510.XOTeniWX-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160510.XOTeniWX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160510.XOTeniWX-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   net/handshake/request.c:312:6: warning: no previous prototype for function 'handshake_req_cancel' [-Wmissing-prototypes]
+     312 | bool handshake_req_cancel(struct sock *sk)
+         |      ^
+   net/handshake/request.c:312:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     312 | bool handshake_req_cancel(struct sock *sk)
+         | ^
+         | static 
+>> net/handshake/request.c:349:6: warning: no previous prototype for function 'handshake_sk_destruct_req' [-Wmissing-prototypes]
+     349 | void handshake_sk_destruct_req(struct sock *sk)
+         |      ^
+   net/handshake/request.c:349:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     349 | void handshake_sk_destruct_req(struct sock *sk)
+         | ^
+         | static 
+   2 warnings generated.
 
 
-This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
-(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
-for the week of 2025-08-04.
+vim +/handshake_sk_destruct_req +349 net/handshake/request.c
 
-We have two time slots for meetings in the week, as usual.
+   344	
+   345	/**
+   346	 * handshake_sk_destruct_req - destroy an existing request
+   347	 * @sk: socket on which there is an existing request
+   348	 */
+ > 349	void handshake_sk_destruct_req(struct sock *sk)
 
-I will skip those for weeks of 2025-09-01 and 2025-09-15 since I will have a
-travel during the time.  Feel free to reach out in any way as usual, though!
-
-Next six time slots are as below.
-
-2025-08-18 (Mon) 18:00 PT (reserved)
-2025-08-20 (Wed) 09:30 PT (not yet reserved)
-2025-09-29 (Mon) 18:00 PT (not yet reserved)
-2025-10-01 (Wed) 09:30 PT (not yet reserved)
-2025-10-13 (Mon) 18:00 PT (not yet reserved)
-2025-10-01 (Wed) 09:30 PT (not yet reserved)
-
-Please reach out to me (sj@kernel.org or whatever) to reserve the
-not-yet-reserved time slots for your topics.  The reservation is made in a
-First-Come First-Served way, and I will send a Google Meet link to
-reservation-confirmed attendees.
-
-Please note that other time slots are also available on demands.
-
-Shared Calendar
----------------
-
-You can get the schedule via this shared Google Calendar:
-https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
-
-You can also get the past and upcoming schedules via
-https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-
-
-Thanks,
-SJ
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
