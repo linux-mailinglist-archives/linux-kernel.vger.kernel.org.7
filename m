@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-770690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05C1B27DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97C5B27DD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA16BA029D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CAA1D0395B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DA72FCC15;
-	Fri, 15 Aug 2025 10:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="YHpNbwYz"
-Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB42FE573
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116042FD1CD;
+	Fri, 15 Aug 2025 10:02:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2809D2FC89D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755252158; cv=none; b=G4jhdBekAoMh3XkeaaM1ITLnDCoh4ssL8nGFXXh6bbMuZJlawI/EwF2+SyaGusnKKCj5/Qce1WN9hMQd+gc3IIkbXawjVifZlF2OqAXp6RCYcgdcXZjLtv7XBh962QYjXxbw2x6/2UQluM0wZDxJcErkyTRWqCcn4ZYxwbia0o4=
+	t=1755252151; cv=none; b=N/H2GY/1V6sygx02tXYUwur10kjgUVAkXJnuP7Nkjo2qzpbgxTStIXyIB4mvjcGap53LY34p1+f/7d0Da6DGVQZKRjLpVqwCSLfUEpJlVxrB/9uuQmWsZlvuUyDDEEbPLD+DYV+27I3OROAY5v9eYFQ7RHLIgy5kbuRfyRVmxNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755252158; c=relaxed/simple;
-	bh=VoXVs13GDRd4xdBtQd4TpGiWCAwaVymoNAOqTKN1NcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FDPbqHX+Z2EwMFjyca99krweAJzUEu8i3ma74ur/Qd1a8NTp5prwCfYYBWaN+q/8FzHGgsLWIDd/cuj8VowpX/IDnmuj2oDkHvhR6gp+JlHRS7ignEsShzA0ZEawUJoqR341Jsc8W/33sWMwVm98i+EJMRMCsZEU9APxZIuvgPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=YHpNbwYz; arc=none smtp.client-ip=202.108.3.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755252153;
-	bh=+iYfE5eplM8rdft956VQZNIhMkMTmyg2e+/I5gVDuNk=;
-	h=From:Subject:Date:Message-ID;
-	b=YHpNbwYzqxDBNRFuzE3egnMgHNsRlaYCYMKikbSaImiGl9ZmrnUElI23xjsOoBAyC
-	 J03c6piLiOxbxjE39Ah7BlOMBehTwWDvlS4bORFSlH4Q+/5AcW4ixZLWAJxsiJi0gR
-	 FLW61S0U1JRo8D1yIYPC40zVoT1Y1pWUYOSXAK+A=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 689F05AE00001724; Fri, 15 Aug 2025 18:02:24 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6588226292026
-X-SMAIL-UIID: 1A812D2436984CDEA8928075789959B3-20250815-180224-1
-From: Hillf Danton <hdanton@sina.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Michal Koutny <mkoutny@suse.com>,
-	tj@kernel.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	gaoyingjie@uniontech.com
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
-Date: Fri, 15 Aug 2025 18:02:07 +0800
-Message-ID: <20250815100213.4599-1-hdanton@sina.com>
-In-Reply-To: <dd1418f9-93d0-45c9-bcc2-d67f48d050f6@huaweicloud.com>
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com> <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs> <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com> <20250815024020.4579-1-hdanton@sina.com>
+	s=arc-20240116; t=1755252151; c=relaxed/simple;
+	bh=jqU3SqBG7XPhIgtzSjKPmZ/lJRXF0DpiU6+ltmy6zmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6K5/Opq6pAQ5gxp0+ZfK1991HJJinQCLp8ouCB0D+J+sIPRgw3XWJgXWo8t/sl4LDsUygNYSrIzidnMouSpW2ZHMe8y57fxT571lJHY0RMgzrI68KSJHoqdar6TLdwByeSp+MvvHoK2stD+Qb4DH/sfE0P6DTbpezoNxBralaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48231168F;
+	Fri, 15 Aug 2025 03:02:21 -0700 (PDT)
+Received: from [10.1.29.14] (e122027.cambridge.arm.com [10.1.29.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70ABA3F738;
+	Fri, 15 Aug 2025 03:02:27 -0700 (PDT)
+Message-ID: <020f8735-06d0-4df3-b0bb-224692e06527@arm.com>
+Date: Fri, 15 Aug 2025 11:02:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/7] drm/panthor: Make MMU cache maintenance use
+ FLUSH_CACHES command
+To: Liviu Dudau <liviu.dudau@arm.com>, Daniel Stone <daniel@fooishbar.org>
+Cc: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org,
+ nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org, Chia-I Wu <olvaffe@gmail.com>
+References: <20250807162633.3666310-1-karunika.choo@arm.com>
+ <20250807162633.3666310-7-karunika.choo@arm.com>
+ <CAPj87rP9pETnxr_mVJ4OAwj_Vhh2yS75iQ5LDT7ddC5=a-kXkA@mail.gmail.com>
+ <aJ5qGWlbxihLTHkB@e110455-lin.cambridge.arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aJ5qGWlbxihLTHkB@e110455-lin.cambridge.arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Aug 2025 15:29:56 +0800 Chen Ridong wrote:
->On 2025/8/15 10:40, Hillf Danton wrote:
->> On Fri, Jul 25, 2025 at 09:42:05AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>>> On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>>>> CPU0                            CPU1
->>>>> mount perf_event                umount net_prio
->>>>> cgroup1_get_tree                cgroup_kill_sb
->>>>> rebind_subsystems               // root destruction enqueues
->>>>> 				// cgroup_destroy_wq
->>>>> // kill all perf_event css
->>>>>                                 // one perf_event css A is dying
->>>>>                                 // css A offline enqueues cgroup_destroy_wq
->>>>>                                 // root destruction will be executed first
->>>>>                                 css_free_rwork_fn
->>>>>                                 cgroup_destroy_root
->>>>>                                 cgroup_lock_and_drain_offline
->>>>>                                 // some perf descendants are dying
->>>>>                                 // cgroup_destroy_wq max_active = 1
->>>>>                                 // waiting for css A to die
->>>>>
->>>>> Problem scenario:
->>>>> 1. CPU0 mounts perf_event (rebind_subsystems)
->>>>> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
->>>>> 3. A dying perf_event CSS gets queued for offline after root destruction
->>>>> 4. Root destruction waits for offline completion, but offline work is
->>>>>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
->>>>
->>>> What's concerning me is why umount of net_prio hierarhy waits for
->>>> draining of the default hierachy? (Where you then run into conflict with
->>>> perf_event that's implicit_on_dfl.)
->>>>
->> /*
->>  * cgroup destruction makes heavy use of work items and there can be a lot
->>  * of concurrent destructions.  Use a separate workqueue so that cgroup
->>  * destruction work items don't end up filling up max_active of system_wq
->>  * which may lead to deadlock.
->>  */
->> 
->> If task hung could be reliably reproduced, it is right time to cut
->> max_active off for cgroup_destroy_wq according to its comment.
->
->Hi Danton,
->
->Thank you for your feedback.
->
->While modifying max_active could be a viable solution, I’m unsure whether it might introduce other
->side effects. Instead, I’ve proposed an alternative approach in v3 of the patch, which I believe
->addresses the issue more comprehensively.
->
-Given your reproducer [1], it is simple to test with max_active cut.
+On 14/08/2025 23:58, Liviu Dudau wrote:
+> On Fri, Aug 08, 2025 at 11:50:27AM +0100, Daniel Stone wrote:
+>> Hi Karunika,
+>>
+>>
+>> On Thu, 7 Aug 2025 at 17:27, Karunika Choo <karunika.choo@arm.com> wrote:
+>>> @@ -585,6 +615,9 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+>>>         if (op != AS_COMMAND_UNLOCK)
+>>>                 lock_region(ptdev, as_nr, iova, size);
+>>>
+>>> +       if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
+>>> +               return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
+>>
+>> Given that FLUSH_MEM and FLUSH_PT are the only ops which are ever
+>> used, the below becomes dead code. Could you please just inline these,
+>> so it's more clear what's actually going on? The (op !=
+>> AS_COMMAND_UNLOCK) branch can also become unconditional, perhaps with
+>> a WARN_ON() around unknown ops.
+> 
+> Hmm, the commit message says that FLUSH_MEM and FLUSH_PT are going to be
+> deprecated and replaced with FLUSH_CACHES so the first are clearly not the
+> only ones ever used (at least not in the future). I'm not sure why you
+> think this code is not correct.
 
-I do not think v3 is a correct fix frankly because it leaves the root cause
-intact. Nor is it cgroup specific even given high concurrency in destruction.
+The code is "correct" (it does the right thing), but Daniel is also
+correct that as things stand the code below that "return" is all dead.
+The only code paths call with op either AS_COMMAND_FLUSH_MEM or
+AS_COMMAND_FLUSH_PT.
 
-[1] https://lore.kernel.org/lkml/39e05402-40c7-4631-a87b-8e3747ceddc6@huaweicloud.com/
+But I think this patch set has been through enough revisions already,
+and we've now got the firmware upstream[1]. So rather than do another
+wrong, I'm going to merge this to drm-misc-next and I'll post a separate
+patch cleaning up the dead code.
+
+Thanks,
+Steve
+
+[1]
+https://gitlab.com/kernel-firmware/linux-firmware/-/commit/930ef9046e3848df688d98b7d5e68154b031dc66
+
+> Best regards,
+> Liviu
+> 
+>>
+>> Cheers,
+>> Daniel
+> 
+
 
