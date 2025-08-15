@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-769765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA114B2736D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390C3B27371
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41AA5E86A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F337B5E86CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C371CAA92;
-	Fri, 15 Aug 2025 00:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58721B040B;
+	Fri, 15 Aug 2025 00:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXQDQea9"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I1mBRpXY"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CA21B040B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE171C8631
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755216746; cv=none; b=WY6/c7FRYc7QjGMZOa/z3UP4a0P2QCPlMB4u0wT487/7uZXT2hqw2cpaJ/CPCdOIWvVxU/dSVbjIFTz5wK/Yz6KhLginRP9m99zQVu2J8Hbz7zCZquvJXNMpql7mvPfUhi3xI40GjyiE7Yqk1TMZQeHsscu4+vt1+2RFDwOcEZ8=
+	t=1755216748; cv=none; b=X7rF9f97WTZf+mA+I6gHw3z8FAI3pDq4IcJoBZNB1bZidwf63S7BTUEAg2TI5tveZmRVHufcmvLYuYmQRMGp4404o7gHcR6ZLwBvRYGuYYgsrm3i1U7BQ0ByiEQbgr+x/hJscyF0EQtduSV/mpjiYNwprra0gJeAVgG3CZ4M4vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755216746; c=relaxed/simple;
-	bh=BtM8dFTmM/9dZyw4RXoSLIMVKXsY5bNsgrn1HhBtzJo=;
+	s=arc-20240116; t=1755216748; c=relaxed/simple;
+	bh=PVWSzQsCuzhIQraDNHBUSRWbizU7d5//fml+dTGSHko=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pyJEWl5aGdxevLGgmrBWVFawIYnpVc2c2PC57PfBJMos77/ufezL7HAGfM/1p6hjYVq8ufG4oIMzl2U+0lBiHWu8MtlzRhKDldDWeRXsEvn1N6qMxcuTPcmAOzNf6mk9AlhVeA3vHHb0UVwPEGSi8OdXikd/PckaHc4EZC8FBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXQDQea9; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=rzo3luo4kq2kaO+m69E5kFDCFD065ZVML9cvJHbVnuZYncnDvIajTDHdWRRJ/IlStrlgjrAtYO4vf5J2qcc0ugpPTO3ik7z+ge9AyKbB7yNCtjVjjD59NNydYa4u67TzjxbFiIm4aUcAikoArUk3eZ0qsVSQ6KdAVuSFHjfysk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I1mBRpXY; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47174c667aso1077212a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:24 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e6c74eso1623877a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755216744; x=1755821544; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755216746; x=1755821546; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXUEX1H6LyLUJSMPiSF5Cl3sy6zgRvsqwEwkPUOpCvs=;
-        b=ZXQDQea9fO2ch2wBlP47qxH3lBvsXLDT8Q0Z8cHAYvXRkqN/An+nXX+R8jQoftaGCD
-         1PP6S5w56GQXE9L/UoZb3RtGQNDVrM9i/+RHFXs5E/u9xUkKFyi6m5smhkTOdnzKx3V4
-         s0baNyKWiiW11R2eK7yzs/XpwTNIbEWX3JwhVBlfBK1ku2uJvMaDIjvROfjAOhccYSo6
-         59smYawOQe6h9LNTe0aGqESVeGU5ulg00wkqAgma/IHV9a8LK+YvNzf1V61OxX5LfZK8
-         DI9Vu2xZ4+mZ2ZhTtJt6qw/udEgvq+de297huT0oKmdNq8aex24DfVsinnL/1dJ13+Hd
-         yQkQ==
+        bh=pVdj1r2b9ebCmTm8plsT1ommEw0GDtpTKl01m2bkq3Q=;
+        b=I1mBRpXYmzpTElUrzsKxeqOlFdytnv9oWYsRbUcgq6c2VG/Cbx8jGGY3TICHbQnEgz
+         4VdsRsxLt9lpUhzVUSOzvyXJFNJha/2DBzV191Y6uCFtprVX/+BAmVslOdQDpX3PqAVj
+         8dHs7wP4eeypyCzclJxsaJoKWRuGoBWaAkKsuShNSrACEWUZodcu0NpRDe2bQRZDwoc7
+         fcBCV2b6PjW7nnAb4K1ALv66PDBVwZ9ShRJIDgUYdZhZ8jpZqq2JqoRkL0V/eGFtMaJT
+         BB9aKEMHGgdKiRjEf+FpL8ikGPiYfXFVip0avrvj0n3mRRTBDSLytQKzTzDfCo6On8HN
+         zILQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755216744; x=1755821544;
+        d=1e100.net; s=20230601; t=1755216746; x=1755821546;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BXUEX1H6LyLUJSMPiSF5Cl3sy6zgRvsqwEwkPUOpCvs=;
-        b=Q8mGpnVk0uVJ2g8b1uYmIBssObH5wh8oDm9bHozKfanIlSSw7qC/15iZmojoGOpOIG
-         a5yY0c2XdMgMBdtAYpTOGwKrLEqBUPZ4LJc71CXNDUCrYkmEAvBGUBnkWahC9XfljtQa
-         3nXBFfrGDFtQzPoWs4I3dIeJBPqK+rODx/ijMMCZt8sfXm3/1UZePeyRZESvHtDIVAV8
-         lbCuz7tVrobBmBd/RqWkLSBaKlh2bRfR6i+soA1He4y21EHS7JukgvjleJ/S8S7OCfaL
-         ryWDm2HHzGTwtcLhyeRNr4q35ouU2EVjdMnj3NDyl39ljcMdHjRxO245C9dAXqsQrhb+
-         5S6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU30vxRg0F0TbTlRe6VLM1TtQgcs0GU13mZF54uiOGsgKgFDE0aNl788iEYtRFq4RvVDmUmK15QCn/X6f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7BSFiEpfE4hWnraF9eb7S5ltojOvJhNvx3W7JYNgLRm87JDCQ
-	y70enzdafN/vR1b3QlbsVjY50JGrv43NKZh7FnvzNf33n1GgYjdFi0SRsaeGqSfv9syi3sN3pRr
-	0EOzLLA==
-X-Google-Smtp-Source: AGHT+IEL5helDYMbTg+EjsCxZbXQyOUBux72Tc/5TNXET/7xtgbFbL1AxnUElCcBkw/pIUt2U1qDn9Z+2G0=
-X-Received: from pgg2.prod.google.com ([2002:a05:6a02:4d82:b0:b47:16f7:2be5])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9392:b0:240:252a:158e
- with SMTP id adf61e73a8af0-240d2d913d0mr350688637.3.1755216744472; Thu, 14
- Aug 2025 17:12:24 -0700 (PDT)
+        bh=pVdj1r2b9ebCmTm8plsT1ommEw0GDtpTKl01m2bkq3Q=;
+        b=dfF53/fxIDq4arhy7noT2rcMVZ4xGOwIv0Jbx670ZC0d8MsoS2GxgoXfagGPggzecl
+         qQlKuWWgWXIGrff3Uxl1ko18RtcsVkTQfLpRByufqFn40ggx+HoHEiDUBGuS/FaVdPJl
+         UYfQEJdVn7dHXQxTzxDWOj9FVii1bVH4A2frznHKOvUzWY51tz2ECs9wjEc3wD3UC181
+         maQlXQ/J4bShaxB1+TrBiTCZ0OM31n2O0mExWT8fXx3LqmYIsZdphNFhVdkg6d7+cdCW
+         mEXoOc9rMKdaV9IqPfU8VHT4csshe01ffNpe6CzA40AqDpyUiwTl8mSz7k9yKXy4XTco
+         v1ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXZFpFKPIcEdI5tWRB0rzkyTbYlqLsS5keiGqoKl/y1vkJz+zaJORK+Cldkp1fUrpgVjox7/69rTGpLNG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvt6SODYkes9NKtDqEWbKM+Q3+6ucljKNYwfYw312eIbVQ8qdd
+	HlN8R09ydRJL9WfbzrMkqFo/YulXADZnhVKUf1etYUCogNeINtO+JtBvLSRf5352GfxVGL9kgvd
+	XDo5yFg==
+X-Google-Smtp-Source: AGHT+IHCdltiMGoEmzO852wzwsXGl3QojD4i2zmqNtHwTNCqS6gRwntRjdN0Liw8X0G78BCwZg+gEODIk28=
+X-Received: from pjbsj7.prod.google.com ([2002:a17:90b:2d87:b0:312:15b:e5d1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f88:b0:31e:cdfb:5f1f
+ with SMTP id 98e67ed59e1d1-32341e11c6amr338244a91.14.1755216746371; Thu, 14
+ Aug 2025 17:12:26 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 14 Aug 2025 17:11:51 -0700
+Date: Thu, 14 Aug 2025 17:11:52 -0700
 In-Reply-To: <20250815001205.2370711-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250815001205.2370711-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-Message-ID: <20250815001205.2370711-8-seanjc@google.com>
-Subject: [PATCH 6.1.y 07/21] KVM: x86: Snapshot the host's DEBUGCTL after
- disabling IRQs
+Message-ID: <20250815001205.2370711-9-seanjc@google.com>
+Subject: [PATCH 6.1.y 08/21] KVM: x86/pmu: Gate all "unimplemented MSR" prints
+ on report_ignored_msrs
 From: Sean Christopherson <seanjc@google.com>
 To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	Sasha Levin <sashal@kernel.org>
@@ -85,43 +85,216 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-[ Upstream commit 189ecdb3e112da703ac0699f4ec76aa78122f911 ]
+[ Upstream commit e76ae52747a82a548742107b4100e90da41a624d ]
 
-Snapshot the host's DEBUGCTL after disabling IRQs, as perf can toggle
-debugctl bits from IRQ context, e.g. when enabling/disabling events via
-smp_call_function_single().  Taking the snapshot (long) before IRQs are
-disabled could result in KVM effectively clobbering DEBUGCTL due to using
-a stale snapshot.
+Add helpers to print unimplemented MSR accesses and condition all such
+prints on report_ignored_msrs, i.e. honor userspace's request to not
+print unimplemented MSRs.  Even though vcpu_unimpl() is ratelimited,
+printing can still be problematic, e.g. if a print gets stalled when host
+userspace is writing MSRs during live migration, an effective stall can
+result in very noticeable disruption in the guest.
 
-Cc: stable@vger.kernel.org
-Reviewed-and-tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
-Link: https://lore.kernel.org/r/20250227222411.3490595-6-seanjc@google.com
+E.g. the profile below was taken while calling KVM_SET_MSRS on the PMU
+counters while the PMU was disabled in KVM.
+
+  -   99.75%     0.00%  [.] __ioctl
+   - __ioctl
+      - 99.74% entry_SYSCALL_64_after_hwframe
+           do_syscall_64
+           sys_ioctl
+         - do_vfs_ioctl
+            - 92.48% kvm_vcpu_ioctl
+               - kvm_arch_vcpu_ioctl
+                  - 85.12% kvm_set_msr_ignored_check
+                       svm_set_msr
+                       kvm_set_msr_common
+                       printk
+                       vprintk_func
+                       vprintk_default
+                       vprintk_emit
+                       console_unlock
+                       call_console_drivers
+                       univ8250_console_write
+                       serial8250_console_write
+                       uart_console_write
+
+Reported-by: Aaron Lewis <aaronlewis@google.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Link: https://lore.kernel.org/r/20230124234905.3774678-3-seanjc@google.com
+Stable-dep-of: 7d0cce6cbe71 ("KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter APIs")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/hyperv.c  | 10 ++++------
+ arch/x86/kvm/svm/svm.c |  5 ++---
+ arch/x86/kvm/vmx/vmx.c |  4 +---
+ arch/x86/kvm/x86.c     | 18 +++++-------------
+ arch/x86/kvm/x86.h     | 12 ++++++++++++
+ 5 files changed, 24 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 2178f6bb8e90..0c3908544205 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4742,7 +4742,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 
- 	/* Save host pkru register if supported */
- 	vcpu->arch.host_pkru = read_pkru();
--	vcpu->arch.host_debugctl = get_debugctlmsr();
- 
- 	/* Apply any externally detected TSC adjustments (due to suspend) */
- 	if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
-@@ -10851,6 +10850,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		set_debugreg(0, 7);
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 28555bbd52e8..cb0a531e13c5 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1406,8 +1406,7 @@ static int kvm_hv_set_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 data,
+ 	case HV_X64_MSR_SYNDBG_CONTROL ... HV_X64_MSR_SYNDBG_PENDING_BUFFER:
+ 		return syndbg_set_msr(vcpu, msr, data, host);
+ 	default:
+-		vcpu_unimpl(vcpu, "Hyper-V unhandled wrmsr: 0x%x data 0x%llx\n",
+-			    msr, data);
++		kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 		return 1;
+ 	}
+ 	return 0;
+@@ -1528,8 +1527,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 			return 1;
+ 		break;
+ 	default:
+-		vcpu_unimpl(vcpu, "Hyper-V unhandled wrmsr: 0x%x data 0x%llx\n",
+-			    msr, data);
++		kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 		return 1;
  	}
  
-+	vcpu->arch.host_debugctl = get_debugctlmsr();
-+
- 	guest_timing_enter_irqoff();
+@@ -1581,7 +1579,7 @@ static int kvm_hv_get_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 	case HV_X64_MSR_SYNDBG_CONTROL ... HV_X64_MSR_SYNDBG_PENDING_BUFFER:
+ 		return syndbg_get_msr(vcpu, msr, pdata, host);
+ 	default:
+-		vcpu_unimpl(vcpu, "Hyper-V unhandled rdmsr: 0x%x\n", msr);
++		kvm_pr_unimpl_rdmsr(vcpu, msr);
+ 		return 1;
+ 	}
  
- 	for (;;) {
+@@ -1646,7 +1644,7 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 		data = APIC_BUS_FREQUENCY;
+ 		break;
+ 	default:
+-		vcpu_unimpl(vcpu, "Hyper-V unhandled rdmsr: 0x%x\n", msr);
++		kvm_pr_unimpl_rdmsr(vcpu, msr);
+ 		return 1;
+ 	}
+ 	*pdata = data;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index b922f31d1415..2c0f9c7d1242 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -3035,8 +3035,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 		break;
+ 	case MSR_IA32_DEBUGCTLMSR:
+ 		if (!lbrv) {
+-			vcpu_unimpl(vcpu, "%s: MSR_IA32_DEBUGCTL 0x%llx, nop\n",
+-				    __func__, data);
++			kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
+ 			break;
+ 		}
+ 
+@@ -3077,7 +3076,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 	case MSR_VM_CR:
+ 		return svm_set_vm_cr(vcpu, data);
+ 	case MSR_VM_IGNNE:
+-		vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data 0x%llx\n", ecx, data);
++		kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
+ 		break;
+ 	case MSR_AMD64_DE_CFG: {
+ 		struct kvm_msr_entry msr_entry;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index c24da2cff208..390af16d9a67 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2140,9 +2140,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
+ 		invalid = data & ~vmx_get_supported_debugctl(vcpu, msr_info->host_initiated);
+ 		if (invalid & (DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR)) {
+-			if (report_ignored_msrs)
+-				vcpu_unimpl(vcpu, "%s: BTF|LBR in IA32_DEBUGCTLMSR 0x%llx, nop\n",
+-					    __func__, data);
++			kvm_pr_unimpl_wrmsr(vcpu, msr_index, data);
+ 			data &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+ 			invalid &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+ 		}
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0c3908544205..e7c73360890d 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3573,7 +3573,6 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+ 
+ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ {
+-	bool pr = false;
+ 	u32 msr = msr_info->index;
+ 	u64 data = msr_info->data;
+ 
+@@ -3625,15 +3624,13 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		if (data == BIT_ULL(18)) {
+ 			vcpu->arch.msr_hwcr = data;
+ 		} else if (data != 0) {
+-			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
+-				    data);
++			kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 			return 1;
+ 		}
+ 		break;
+ 	case MSR_FAM10H_MMIO_CONF_BASE:
+ 		if (data != 0) {
+-			vcpu_unimpl(vcpu, "unimplemented MMIO_CONF_BASE wrmsr: "
+-				    "0x%llx\n", data);
++			kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 			return 1;
+ 		}
+ 		break;
+@@ -3813,16 +3810,13 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
+ 	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
+ 	case MSR_P6_PERFCTR0 ... MSR_P6_PERFCTR1:
+-		pr = true;
+-		fallthrough;
+ 	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
+ 	case MSR_P6_EVNTSEL0 ... MSR_P6_EVNTSEL1:
+ 		if (kvm_pmu_is_valid_msr(vcpu, msr))
+ 			return kvm_pmu_set_msr(vcpu, msr_info);
+ 
+-		if (pr || data != 0)
+-			vcpu_unimpl(vcpu, "disabled perfctr wrmsr: "
+-				    "0x%x data 0x%llx\n", msr, data);
++		if (data)
++			kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 		break;
+ 	case MSR_K7_CLK_CTL:
+ 		/*
+@@ -3849,9 +3843,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		/* Drop writes to this legacy MSR -- see rdmsr
+ 		 * counterpart for further detail.
+ 		 */
+-		if (report_ignored_msrs)
+-			vcpu_unimpl(vcpu, "ignored wrmsr: 0x%x data 0x%llx\n",
+-				msr, data);
++		kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+ 		break;
+ 	case MSR_AMD64_OSVW_ID_LENGTH:
+ 		if (!guest_cpuid_has(vcpu, X86_FEATURE_OSVW))
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 9de72586f406..f3554bf05201 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -331,6 +331,18 @@ extern bool report_ignored_msrs;
+ 
+ extern bool eager_page_split;
+ 
++static inline void kvm_pr_unimpl_wrmsr(struct kvm_vcpu *vcpu, u32 msr, u64 data)
++{
++	if (report_ignored_msrs)
++		vcpu_unimpl(vcpu, "Unhandled WRMSR(0x%x) = 0x%llx\n", msr, data);
++}
++
++static inline void kvm_pr_unimpl_rdmsr(struct kvm_vcpu *vcpu, u32 msr)
++{
++	if (report_ignored_msrs)
++		vcpu_unimpl(vcpu, "Unhandled RDMSR(0x%x)\n", msr);
++}
++
+ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
+ {
+ 	return pvclock_scale_delta(nsec, vcpu->arch.virtual_tsc_mult,
 -- 
 2.51.0.rc1.163.g2494970778-goog
 
