@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-771097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848C5B282DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD069B282DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0980A58139B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:21:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162A6AC120B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E532C158A;
-	Fri, 15 Aug 2025 15:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD23F2C0F9B;
+	Fri, 15 Aug 2025 15:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AKcb396S"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TIHv+2op";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WxoIyMcs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359E52C0F9F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3C4291C38;
+	Fri, 15 Aug 2025 15:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755271295; cv=none; b=U9cfstIq5lZg5I6HR/Na3uFkNbQ5IiMZEM67NmnJcNs4oHKEeo5BfzFjHZ+vogQxY2gdo1FvDySJdhmyx+1to1+FP7nZqI+bVT/Pe67RaefHQSmgKmxQs1zh9dq8TjPPKrywIqfFM4tOKS9N+esZABh0SD0KfSb++k3OWW999xE=
+	t=1755271342; cv=none; b=R7sTrCVG9yK09uCCCU9VAjLnhffD+kWzCFrqi5ClI1wOw3FQD6itwTfEm/XZsp1BJqW06oqD6pEwwmvf3rNjYanERjFuewZkAr11pMEguBZyKLdcdlLmEDLXf31wU7RAH7OyYViu4bTzr4u4hjYoaunW2BlDvT25jL1HTzoG47U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755271295; c=relaxed/simple;
-	bh=XwDrx2CrhTcxyWedOL8yAzKpK9EAtjHdT4OtJS50RGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u33mjRQ5zlODLgPVNmsZWPSsbFnf7VhCSSt3xyD9aMVCQ/v4aET8xmR8Kxux16h86jOnLcntxag/tYYn7DHjI4xFjb6QcGkxz78ka9sfZ1XrPN8fvshKGXUQrcesAyjbcrkOBTTo7ltcCjG+Z1rzMFLQZOt8pmrC47hJ3F3NaWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AKcb396S; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=ckWSyQm27ceppsDFfNgJVy7L1x6OANk8Hk0vUn3JOSQ=; b=AKcb396SU//d/ev41/4z3OEllO
-	an25qOeVMOy4sA/KMMDzLDEk4kcxAMuFwTOBbw3aBHAPWeyRueU2Tqr4gknrqGeV0IoWJYEjmu4wx
-	FJ9QeiOBX3LuwNGrnl4RiwocAJ8D6d6BhJCQBbwTbHgTLfffJ/kuycjXSQCFkWcSgFSNCDS6axWap
-	4UwaLKyGyh0HqAWLG75LXQCw9W2hsM6t0vXMXw/VyK1S9gyMQSaKgQ8Pg0yHv+YqZILX88H8+zavG
-	Kf9I5J5gpUqqi7nLejN3AMAkUFbBPvdlgfAszL8LLFOF/bkI9KJcYWBYQ/mpMl7MpqGQZKR853hYr
-	E3hRRs6w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umwFI-0000000ELoM-19fp;
-	Fri, 15 Aug 2025 15:21:32 +0000
-Date: Fri, 15 Aug 2025 16:21:32 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page-writeback: drop usage of folio_index
-Message-ID: <aJ9QfA07LTEUyhti@casper.infradead.org>
-References: <20250815121252.41315-1-ryncsn@gmail.com>
- <aJ8m42sM1NX_wEE9@casper.infradead.org>
- <CAMgjq7CYzdmt+mJbbkrskiksfvXuhOhLQ72hTnqGhc5nu8uH0g@mail.gmail.com>
+	s=arc-20240116; t=1755271342; c=relaxed/simple;
+	bh=W7duCh9vwStWYND2FGfRWdyPnr1VbWzyqp8PVEU9Y6w=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nxAEB+xpCSuczjKteR9KcuF71sdcmEgx9YTuonatxpgmvZxyq0363P71w+Ddeh0Ik9fYDV2YkmluIWRDmduZQ447vYM6UQxPzvLJeOyE0QZ5LdZo0gfvC2tNBrfllHuVJ3ekZJpROYAp6NuvbwiwPDuRwz0zYfvTon/jnOXS0kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TIHv+2op; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WxoIyMcs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 15 Aug 2025 15:22:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755271338;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sKC+2cAb2bXUpps4iXYctWhXv6D5E9MG9vfYvoBWHsI=;
+	b=TIHv+2opCaN8wxpJ4dsJxCzQLVVbrh84frB16VUDw304fCC4K5oY6G6c/9DUgHDNI1L1X4
+	ZsvMMBnNZTTjKUBFtAVzDmXoNtOrFp99/p88Z4usApsD2nnMBTz1DrLHDDOmyAP8dyUsIt
+	Ep3KvHQkxRmuSV9jKCl/gp6bmfdL0yul5JEr1UMcarFDqQaTNYDAhY4FfsmsRjw/4A5rSk
+	NR0Z9CQeIBIUlXCTbeQROIDHiHFZnGqGbcWld7tu0lphtMmqJlVT+Vje3FK5glgYjsGYEo
+	V1H7a7aZvyWKjZweTMGoxXp4F0Vpxa3YBzj/I5rq+LO4al7nBqsFJOepStaOeg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755271338;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sKC+2cAb2bXUpps4iXYctWhXv6D5E9MG9vfYvoBWHsI=;
+	b=WxoIyMcsemLYmT1+jsUaAZ4MNZTpRO0eqp8yaiT3dDIFeGs3L069AjGrcZc2JTMOVCHuI/
+	AW4RO3oydQQmpMBw==
+From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/cpuid: Remove transitional <asm/cpuid.h> header
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250815070227.19981-2-darwi@linutronix.de>
+References: <20250815070227.19981-2-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7CYzdmt+mJbbkrskiksfvXuhOhLQ72hTnqGhc5nu8uH0g@mail.gmail.com>
+Message-ID: <175527133652.1420.12101759486360166993.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 11:03:56PM +0800, Kairui Song wrote:
-> On Fri, Aug 15, 2025 at 9:48 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Aug 15, 2025 at 08:12:52PM +0800, Kairui Song wrote:
-> > > +++ b/mm/page-writeback.c
-> > > @@ -2739,8 +2739,8 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
-> > >       if (folio->mapping) {   /* Race with truncate? */
-> > >               WARN_ON_ONCE(warn && !folio_test_uptodate(folio));
-> > >               folio_account_dirtied(folio, mapping);
-> > > -             __xa_set_mark(&mapping->i_pages, folio_index(folio),
-> > > -                             PAGECACHE_TAG_DIRTY);
-> > > +             __xa_set_mark(&mapping->i_pages, folio->index,
-> > > +                           PAGECACHE_TAG_DIRTY);
-> > >       }
-> > >       xa_unlock_irqrestore(&mapping->i_pages, flags);
-> > >  }
-> >
-> > What about a shmem folio that's been moved to the swap cache?  I used
-> > folio_index() here because I couldn't prove to my satisfaction that this
-> > couldn't happen.
-> 
-> I just checked all callers of __folio_mark_dirty:
-> 
-> - block_dirty_folio
->     __folio_mark_dirty
-> 
-> - filemap_dirty_folio
->     __folio_mark_dirty
-> 
-> For these two, all their caller are from other fs not related to
-> shmem/swap cache)
-> 
-> - mark_buffer_dirty
->     __folio_mark_dirty (mapping is folio->mapping)
-> 
-> - folio_redirty_for_writepage
->     filemap_dirty_folio
->       __folio_mark_dirty (mapping is folio->mapping)
-> 
-> For these two, __folio_mark_dirty is called with folio->mapping, and
-> swap cache space is never set to folio->mapping. If the folio is a
-> swap cache here, folio_index returns its swap cache index, which is
-> not equal to its index in shmem or any other map, things will go very
-> wrong.
-> 
-> And, currently both shmem / swap cache uses noop_dirty_folio, so they
-> should never call into the helper here.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Yes, we've made quite a few changes around here and maybe it can't
-happen now.
+Commit-ID:     ed6c4b657bca3b39f7b11cba1405931aeb490f3d
+Gitweb:        https://git.kernel.org/tip/ed6c4b657bca3b39f7b11cba1405931aeb4=
+90f3d
+Author:        Ahmed S. Darwish <darwi@linutronix.de>
+AuthorDate:    Fri, 15 Aug 2025 09:01:54 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 15 Aug 2025 17:06:23 +02:00
 
-> I think I can add below sanity check here, just to clarify things and
-> for debugging:
-> 
-> /*
->  * Shmem writeback relies on swap, and swap writeback
->  * is LRU based, not using the dirty mark.
->  */
-> VM_WARN_ON(shmem_mapping(mapping) || folio_test_swapcache(folio))
+x86/cpuid: Remove transitional <asm/cpuid.h> header
 
-That might be a good idea.
+All CPUID call sites were updated at commit:
 
-> And maybe we can also have a VM_WARN_ON for `folio->mapping != mapping` here?
+    968e30006807 ("x86/cpuid: Set <asm/cpuid/api.h> as the main CPUID header")
 
-I don't think that will work.  We can definitely see folio->mapping ==
-NULL as the zap_page_range() path blocks folio freeing with the page
-table lock rather than by taking the folio lock.  So truncation can
-start but not complete (as it will wait on the PTL for mapped folios).
+to include <asm/cpuid/api.h> instead of <asm/cpuid.h>.
 
-I think it's always true that folio->mapping will be either NULL or
-equal to mapping, but maybe there's another case I've forgotten about.
+The <asm/cpuid.h> header was still retained as a wrapper, just in case
+some new code in -next started using it.  Now that everything is merged
+to Linus' tree, remove the header.
+
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250815070227.19981-2-darwi@linutronix.de
+---
+ arch/x86/include/asm/cpuid.h | 8 --------
+ 1 file changed, 8 deletions(-)
+ delete mode 100644 arch/x86/include/asm/cpuid.h
+
+diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
+deleted file mode 100644
+index d5749b2..0000000
+--- a/arch/x86/include/asm/cpuid.h
++++ /dev/null
+@@ -1,8 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-
+-#ifndef _ASM_X86_CPUID_H
+-#define _ASM_X86_CPUID_H
+-
+-#include <asm/cpuid/api.h>
+-
+-#endif /* _ASM_X86_CPUID_H */
 
