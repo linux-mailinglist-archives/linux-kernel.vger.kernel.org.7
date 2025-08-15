@@ -1,349 +1,174 @@
-Return-Path: <linux-kernel+bounces-771160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5428FB283AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617E7B283AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25860B61708
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CEB61888D40
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C373090C9;
-	Fri, 15 Aug 2025 16:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EF4308F31;
+	Fri, 15 Aug 2025 16:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDkj0LV1"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfHlGCCa"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC8224B03;
-	Fri, 15 Aug 2025 16:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E731E0DFE;
+	Fri, 15 Aug 2025 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755274586; cv=none; b=k/oGj26r8PT+fuMjd7fxx/91NLXzS5apSbgqkcnZ8CMWKtjCZsf95WMLzSVeWuTotylxZbMY+duSU8KPidshWryXXquwpvOWfUBYczbIa5EOKdb5ALVsOupmjaPjJBSZW9VJg15zeJFRWUtIbtZgGqABDQiFTUmyLS61u0itqJE=
+	t=1755274648; cv=none; b=Qei/TQV1e8hMo1LEAItAQTuhJ4oPhoy6cxef0R6WKLL4mrf0969NXy3hRSfusOY7c+WZ/SjH8Kn0NPLyrvTZ39J2srO3sDUysRPVSov/bHW+Bl9yWUzjYnt2dKTS+ULQazOlSNeSZE1YEg1jAdazWSYCyvQ9RUlXuHWU4yBaMLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755274586; c=relaxed/simple;
-	bh=CJqtRouB/zf6LLkoYjjtkKlIZ0K2T4r3DtGNwFhhH3s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rb1A95iA8Qk2mwQizYuRkuw4QvUEdJwPpHqGmTiV2fT12YPzAsOIAU+d3pty9nNTXm3fWqjlI381919Oc6NkhG5txxlvh/mTmzRqrhDXO4eT+up1c6bHEIP1oVpXTHQcTY+6k7RkPn0Or5G37b4oVNpp34deogx8rvsV28i8Rc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDkj0LV1; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1755274648; c=relaxed/simple;
+	bh=5R7pCSZabRR8WOR88qPtUBrH8rhbbLg6cjgm3pue50o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kfv43gtnsKerFl0iTpWBVrcUODq5rbTt9mNbahBQlniUlbHSR5dxMoMT6v+KN8MsT4bOzCrVMjQm+7BVZ4kf1rAmgvJjOUI7dJ4RErDATfHFmTw8BSym76+x4u77+eE8uZaaXOn4zZiuOl/id+eezrYXznPjnfF81XES9zjri9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfHlGCCa; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6188b7550c0so2834478a12.2;
-        Fri, 15 Aug 2025 09:16:24 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-323267b7dfcso2269350a91.1;
+        Fri, 15 Aug 2025 09:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755274583; x=1755879383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1W8qCWPDSlcr4LOYzMFIQnsfqXcLIE3VVjRwGLr7Hk=;
-        b=MDkj0LV1jRnJH1XUcop0di2bxwfS1l4Oo6yXSvqYf6ldfFz8DqOFYh5vs/UBp2+M4w
-         P/V6QycdgDkfG0ROtWhGxSFFaLGJaPDCRrfvxz1d7MhznAIzlSZAWFkEYc0RXGN1yGB5
-         HIAnuvpgXjmMw7iYJDiqLxK1DwCXO/xhrqrRzOjn0aOQaERXFp82P/U3g5ZtUdcE9JMy
-         cp2g00gMCLEJBIwbTvM/maAcjyp2YShh6kiRByZnxzhauc1/u99xp/L55UDvz9yCtYop
-         D1h24phJeqx6x6gIKUHCdMJwY2jF7B6mH4ZOloF4DSBrS0WFGjqZsxzP8m8loj5FCqry
-         EPyw==
+        d=gmail.com; s=20230601; t=1755274647; x=1755879447; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkWSMBvv97tE0L87n/+xzEranVDE18RxLy9xOEa9WnE=;
+        b=gfHlGCCaCSmQ95rotdzyg5ffnukqV4tNhiRJ1ooR8dkmtwUVLBiMiybt9m36w0Mc9y
+         EKsePgPUmRZJE4NFs9JLor2LGRh56QUVopBsj1LHkH6zgC58F/qKRNYGicBjtei1Ch+Z
+         AKtQVTV5QZgHD3XF6Z+7Qw3TuSBttoTklF3vv6P+tD+4cO54ictYAZ+3ANEFWvoBiuTt
+         8R0o0ik6RQWNnbo1MBXrOihsDPhhoSzAu4R6d14MZCXyShbwnGBxJjfk8fFK2uYvEoTz
+         GwI6HEl0OolnuU1GMJwoNRIrmOELzPT1S0lpa7tmQ3Fr6U2o1gvk6HwhVwyQho6rzNPY
+         qYJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755274583; x=1755879383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1W8qCWPDSlcr4LOYzMFIQnsfqXcLIE3VVjRwGLr7Hk=;
-        b=R616yPqBrEGHN2VFR+XbskyDCIKpWbKRlG95qCqrObVYf50SkE7+WyewQiVCg8mM48
-         4gvHccH0pU+h6wdFCywXfmxDw9EkTBU1ncSUPEJzrR0RJdALtJomBQhzA6iWVV6pEZov
-         2LmU94Zld6gVpgUzwakxcOCCYjA6cxZiFj2uXT9PigMF7Pkz7RI3EdK+tDGO9xgZ/Hin
-         mMNf+cXGSDAUcOIRK8VpQFBTNbjJivFsnSdOJkgtaCay29jHDR8ltiYbGStX9Gvxsvvw
-         6qkJagQeXQiZlKR4mpyTRDcoy2L+LyJu7OZu5aLnIA4BiErXTLdHAifiHH9h72r7HH/l
-         GixA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF7HnxFBkKP3GQ2rBZ2LqCIlrXX+idm0VcK0+kOqEBFpOx6LfxqlzsH0Im43qZe8Aee7l2d7T/0tD+zY3x@vger.kernel.org, AJvYcCWy55c7T1bQH91egCfPru/dTe/UWWTjjyTwAOkDTmyuluDEqwGgG57E8RyJUm622A4vPBLYd8/pFmoNhAbH@vger.kernel.org, AJvYcCWzxawBYELQueKN0ZmELBEtYk1F2/TgHsa8E9puFxlDTjKjqKYnEsB5o6PkzTYjQohzH42S8t1qGA9apZA8rQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys3wAkr2BYwDDvyqPAKorSCDqRiS1TNppvrUYUSd/HfdPWP9vj
-	HzuOfyDkzJgihlyNQ9A3OOSpH9G5Z6Drbo+x3F0ZdYTzHbeMG/pfNgulNcJ6eiskWfa+onKt9zA
-	aFAA4O3uwJYtxYSp7EU59omiJAi/raYV6FbSsB24=
-X-Gm-Gg: ASbGnctbVjWR1owsmZSPd84Yn63DqZY3owlIzxnSrBRs9xbrK/VzMk/mD4UsdPoja5f
-	6g7Lovh2x1e9gx1Arqrn8pBg07MpkVHJZ78d7lawq7Wqh8xcqdqWn22AF7gYEwkgjfp3hJzfuH3
-	qsywyhWyVu16U31K+V5mXnUcoBxffILfpIZbvuz11dGsZNFzeKHqjwwYbh22NKZvkf3fT406Man
-	H6N1yFwU1K4x49djA==
-X-Google-Smtp-Source: AGHT+IEq53CvZiK9QwqFIqqIkvSxCZLxw6WxxXTSPChXmEAA61xP7XlyJOFW+kFmv0bmdEoccnYSbMGzYVpCumTMoGc=
-X-Received: by 2002:a05:6402:234a:b0:615:7fdf:9c4f with SMTP id
- 4fb4d7f45d1cf-618b055639amr2207732a12.24.1755274582886; Fri, 15 Aug 2025
- 09:16:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755274647; x=1755879447;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xkWSMBvv97tE0L87n/+xzEranVDE18RxLy9xOEa9WnE=;
+        b=irP2rw55Bfu5eJt5NVuC4mS6QPI/qSoc5DtWgpgWih4wB/BxjCFu/hdzxsdVi8Z0kv
+         aUrHardnrNtmjj+ElTlSObXNCIRbSaRSH+AeICwr4Ne1ib123WJ2roCenYOjOzMrP5kU
+         vzgkrEx/BjlvkzWb2zvBfU/k5kjpnL1PU6ZIoPxGzrf8wZYseXZutTdbpIlyyqu71qRW
+         aRxHdQ2KvB9eI+AgbjaZBV4N3PluQxOt4aWOyscyJdNZV83s+4Spc04rghKyXSOYetf0
+         DTjNV4Q+Q4yl5NBRv4Wnos/xIONfd/hwS0JxvFPbeworwYXtXDwsfDwflCW+Thh8185N
+         crUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVspcWBsh7i1BFB7oAFT1cK8SfVCQRkCZFjnemCxA8wu//jzm1Myxj5BZyE8GUZRsZ0IhDZGQbIHaSfJVop2/0=@vger.kernel.org, AJvYcCWHY7ec/P0RpeDwjo8GYWExpL7BZmM6or11A1Q65fkyaMy8dyAT6BEhRkcWLzlylpHvH2vz2bJmwdiKOxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhPmK/wh2Fi9jILKT4bSeIAq2IGjOZ55AYqN/jtuJVdo6xOHp6
+	s0FkePUnDHUQI/JHYIbCfuSH0AlSUmE2uV6ndZPmXlHDP94h6l7B4ura
+X-Gm-Gg: ASbGnctjA0FG3b8CfZGWmiKli/HAPZv9h0vtP5+sXzcu0dra1Hcf9A1NXg5IuNql+g1
+	iivIUy4dWdRfsrTiwjXOGM/JS6ouObtB6FAIJurEaM5q+cRkDL7otX7vlryQjzGkQF+m0bAaZH6
+	RjKDKBOtrNSUMvXx50gd40+/FmFajvxxZ0s6ennLmnlumNlxCeNEHKcAGgJ4+8kLsDsiYdJgV0h
+	5iMZWJs+TPY7cD4oVElRBM14tIO/XqL262eoDgHKJa63JFv3eQLbt2aMZrTOw8Lj9dMDgbi1qEP
+	TB6J+YO6d3hkzp8oykACHzBFJmpdRe7Z28FpvfplW9EgQyUWk/kWwr9vpDhS2evqagv2b7aQAXL
+	f076xKihC9v1MOZidOiQr7RhITo2BPl41qRIq
+X-Google-Smtp-Source: AGHT+IGVoswd+Ft6FzSer0QgtETxBKAle0x+MVxXRA3yaUqXxz79J+RPMgiPQB3UuhrBDm4gvslv2Q==
+X-Received: by 2002:a17:90a:d44d:b0:321:c9e7:d9ef with SMTP id 98e67ed59e1d1-32341ee9181mr3841094a91.21.1755274646761;
+        Fri, 15 Aug 2025 09:17:26 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32328ac9010sm2156104a91.0.2025.08.15.09.17.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 09:17:26 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: [PATCH] rust: drm: update ARef and AlwaysRefCounted imports from sync::aref
+Date: Fri, 15 Aug 2025 21:47:06 +0530
+Message-Id: <20250815161706.1324860-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com> <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
-In-Reply-To: <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 18:16:11 +0200
-X-Gm-Features: Ac12FXw7HEcTxH4ly2XMMWxVMhAdyLVKkIQ0ckSe7GXTHasZi66tKFCBe0_tVXc
-Message-ID: <CAOQ4uxjVs4kKfvfp+Jgdf2BxMW8v5p0gPHujRfCHj4733ioCag@mail.gmail.com>
-Subject: Re: [PATCH v5 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 7:22=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> To add overlayfs support casefold layers, create a new function
-> ovl_casefold(), to be able to do case-insensitive strncmp().
->
-> ovl_casefold() allocates a new buffer and stores the casefolded version
-> of the string on it. If the allocation or the casefold operation fails,
-> fallback to use the original string.
->
-> The case-insentive name is then used in the rb-tree search/insertion
-> operation. If the name is found in the rb-tree, the name can be
-> discarded and the buffer is freed. If the name isn't found, it's then
-> stored at struct ovl_cache_entry to be used later.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v4:
->  - Move the consumer/free buffer logic out to the caller
->  - s/aux/c_name
->
-> Changes from v3:
->  - Improve commit message text
->  - s/OVL_NAME_LEN/NAME_MAX
->  - drop #ifdef in favor of if(IS_ENABLED)
->  - use new helper sb_encoding
->  - merged patch "Store casefold name..." and "Create ovl_casefold()..."
->  - Guard all the casefolding inside of IS_ENABLED(UNICODE)
->
-> Changes from v2:
-> - Refactor the patch to do a single kmalloc() per rb_tree operation
-> - Instead of casefolding the cache entry name everytime per strncmp(),
->   casefold it once and reuse it for every strncmp().
-> ---
->  fs/overlayfs/readdir.c | 115 +++++++++++++++++++++++++++++++++++++++++--=
-------
->  1 file changed, 97 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index b65cdfce31ce27172d28d879559f1008b9c87320..803ac6a7516d0156ae7793ee1=
-ff884dbbf2e20b0 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
->         bool is_upper;
->         bool is_whiteout;
->         bool check_xwhiteout;
-> +       const char *cf_name;
-> +       int cf_len;
->         char name[];
->  };
->
-> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
->         struct list_head *list;
->         struct list_head middle;
->         struct ovl_cache_entry *first_maybe_whiteout;
-> +       struct unicode_map *map;
->         int count;
->         int err;
->         bool is_upper;
-> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
-de(struct rb_node *n)
->         return rb_entry(n, struct ovl_cache_entry, node);
->  }
->
-> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
-n, char **dst)
-> +{
-> +       const struct qstr qstr =3D { .name =3D str, .len =3D len };
-> +       int cf_len;
-> +
-> +       if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len=
-))
-> +               return 0;
-> +
-> +       *dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
-> +
-> +       if (dst) {
-> +               cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
-> +
-> +               if (cf_len > 0)
-> +                       return cf_len;
-> +       }
-> +
-> +       kfree(*dst);
-> +       return 0;
-> +}
-> +
->  static bool ovl_cache_entry_find_link(const char *name, int len,
->                                       struct rb_node ***link,
->                                       struct rb_node **parent)
-> @@ -79,7 +103,7 @@ static bool ovl_cache_entry_find_link(const char *name=
-, int len,
->
->                 *parent =3D *newp;
->                 tmp =3D ovl_cache_entry_from_node(*newp);
-> -               cmp =3D strncmp(name, tmp->name, len);
-> +               cmp =3D strncmp(name, tmp->cf_name, tmp->cf_len);
->                 if (cmp > 0)
->                         newp =3D &tmp->node.rb_right;
->                 else if (cmp < 0 || len < tmp->len)
-> @@ -101,7 +125,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(s=
-truct rb_root *root,
->         while (node) {
->                 struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(n=
-ode);
->
-> -               cmp =3D strncmp(name, p->name, len);
-> +               cmp =3D strncmp(name, p->cf_name, p->cf_len);
->                 if (cmp > 0)
->                         node =3D p->node.rb_right;
->                 else if (cmp < 0 || len < p->len)
-> @@ -145,13 +169,16 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data =
-*rdd,
->
->  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
-ta *rdd,
->                                                    const char *name, int =
-len,
-> +                                                  const char *cf_name, i=
-nt cf_len,
->                                                    u64 ino, unsigned int =
-d_type)
->  {
->         struct ovl_cache_entry *p;
->
->         p =3D kmalloc(struct_size(p, name, len + 1), GFP_KERNEL);
-> -       if (!p)
-> +       if (!p) {
-> +               kfree(cf_name);
->                 return NULL;
-> +       }
->
->         memcpy(p->name, name, len);
->         p->name[len] =3D '\0';
-> @@ -167,6 +194,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
-truct ovl_readdir_data *rdd,
->         /* Defer check for overlay.whiteout to ovl_iterate() */
->         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
-_REG;
->
-> +       if (cf_name && cf_name !=3D name) {
-> +               p->cf_name =3D cf_name;
-> +               p->cf_len =3D cf_len;
-> +       } else {
-> +               p->cf_name =3D p->name;
-> +               p->cf_len =3D len;
-> +       }
-> +
->         if (d_type =3D=3D DT_CHR) {
->                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
->                 rdd->first_maybe_whiteout =3D p;
-> @@ -174,48 +209,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
-struct ovl_readdir_data *rdd,
->         return p;
->  }
->
-> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> -                                 const char *name, int len, u64 ino,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-> +                                 const char *name, int len,
-> +                                 const char *cf_name, int cf_len,
-> +                                 u64 ino,
->                                   unsigned int d_type)
->  {
->         struct rb_node **newp =3D &rdd->root->rb_node;
->         struct rb_node *parent =3D NULL;
->         struct ovl_cache_entry *p;
->
-> -       if (ovl_cache_entry_find_link(name, len, &newp, &parent))
-> -               return true;
-> +       if (ovl_cache_entry_find_link(cf_name, cf_len, &newp, &parent))
-> +               return 0;
->
-> -       p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
-> +       p =3D ovl_cache_entry_new(rdd, name, len, cf_name, cf_len, ino, d=
-_type);
->         if (p =3D=3D NULL) {
->                 rdd->err =3D -ENOMEM;
-> -               return false;
-> +               return -ENOMEM;
->         }
->
->         list_add_tail(&p->l_node, rdd->list);
->         rb_link_node(&p->node, parent, newp);
->         rb_insert_color(&p->node, rdd->root);
->
-> -       return true;
-> +       return 1;
->  }
->
-> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
-> +/* Return 0 for found, 1 for added, <0 for error */
-> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
->                            const char *name, int namelen,
-> +                          const char *cf_name, int cf_len,
->                            loff_t offset, u64 ino, unsigned int d_type)
->  {
->         struct ovl_cache_entry *p;
->
-> -       p =3D ovl_cache_entry_find(rdd->root, name, namelen);
-> +       p =3D ovl_cache_entry_find(rdd->root, cf_name, cf_len);
->         if (p) {
->                 list_move_tail(&p->l_node, &rdd->middle);
-> +               return 0;
->         } else {
-> -               p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type=
-);
-> +               p =3D ovl_cache_entry_new(rdd, name, namelen, cf_name, cf=
-_len,
-> +                                       ino, d_type);
->                 if (p =3D=3D NULL)
->                         rdd->err =3D -ENOMEM;
->                 else
->                         list_add_tail(&p->l_node, &rdd->middle);
->         }
->
-> -       return rdd->err =3D=3D 0;
-> +       return rdd->err ?: 1;
->  }
->
->  void ovl_cache_free(struct list_head *list)
-> @@ -223,8 +265,11 @@ void ovl_cache_free(struct list_head *list)
->         struct ovl_cache_entry *p;
->         struct ovl_cache_entry *n;
->
-> -       list_for_each_entry_safe(p, n, list, l_node)
-> +       list_for_each_entry_safe(p, n, list, l_node) {
-> +               if (p->cf_name !=3D p->name)
-> +                       kfree(p->cf_name);
->                 kfree(p);
-> +       }
->
->         INIT_LIST_HEAD(list);
->  }
-> @@ -260,12 +305,38 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
- const char *name,
->  {
->         struct ovl_readdir_data *rdd =3D
->                 container_of(ctx, struct ovl_readdir_data, ctx);
-> +       struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
-> +       char *cf_name =3D NULL;
-> +       int c_len =3D 0;
-> +       int ret;
-> +
-> +       const char *c_name =3D NULL;
-> +
+Update call sites in drm to import `ARef` and
+`AlwaysRefCounted` from `sync::aref` instead of `types`.
 
-Another nit:
-Pls move up next to cf_name =3D NULL line in your branch
+This aligns with the ongoing effort to move `ARef` and
+`AlwaysRefCounted` to sync.
 
-No need to repost.
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1173
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+---
+It part of a subsystem-wise split series, as suggested in:
+https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+This split series is intended to ease review and subsystem-level maintenance.
 
-Thanks,
-Amir.
+The original moving patch is here: (commit 07dad44aa9a93)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+
+Gradually the re-export from types.rs will be eliminated in the
+future cycle.
+---
+ rust/kernel/drm/device.rs  | 3 ++-
+ rust/kernel/drm/driver.rs  | 2 +-
+ rust/kernel/drm/gem/mod.rs | 3 ++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+index 3bb7c83966cf..4a62f9fd88b7 100644
+--- a/rust/kernel/drm/device.rs
++++ b/rust/kernel/drm/device.rs
+@@ -10,7 +10,8 @@
+     error::from_err_ptr,
+     error::Result,
+     prelude::*,
+-    types::{ARef, AlwaysRefCounted, Opaque},
++    sync::aref::{ARef, AlwaysRefCounted},
++    types::Opaque,
+ };
+ use core::{mem, ops::Deref, ptr, ptr::NonNull};
+ 
+diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
+index fe7e8d06961a..8fefae41bcc6 100644
+--- a/rust/kernel/drm/driver.rs
++++ b/rust/kernel/drm/driver.rs
+@@ -8,7 +8,7 @@
+     bindings, device, devres, drm,
+     error::{to_result, Result},
+     prelude::*,
+-    types::ARef,
++    sync::aref::ARef,
+ };
+ use macros::vtable;
+ 
+diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+index b71821cfb5ea..a822aedee949 100644
+--- a/rust/kernel/drm/gem/mod.rs
++++ b/rust/kernel/drm/gem/mod.rs
+@@ -10,7 +10,8 @@
+     drm::driver::{AllocImpl, AllocOps},
+     error::{to_result, Result},
+     prelude::*,
+-    types::{ARef, AlwaysRefCounted, Opaque},
++    sync::aref::{ARef, AlwaysRefCounted},
++    types::Opaque,
+ };
+ use core::{mem, ops::Deref, ptr::NonNull};
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.34.1
+
 
