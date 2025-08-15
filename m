@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-770204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3355CB2786C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 292B3B27874
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CA77BFA32
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:26:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FA5CB63882
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EEC2561C9;
-	Fri, 15 Aug 2025 05:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C329E0E6;
+	Fri, 15 Aug 2025 05:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="j0CBVXJf"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTvHZwL4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4741548C;
-	Fri, 15 Aug 2025 05:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E5825A32C;
+	Fri, 15 Aug 2025 05:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235694; cv=none; b=Ctu017W8AMJHOeVcuOdYuCim/nGNry3dXHteR8DJePt3vq533/MLDfiDnWHowlCGCCr9qSSPe5g7BC0uREehRqSF4bnKPZRTiRq6mqXaBq30NyVVhhbGnJ7BCra2dxWLcBi9Zaaj2gMfH4vqiSCT2+yjRMIVSgJ+Nb02gJYIcCs=
+	t=1755235817; cv=none; b=jSz0amgfpWaPNlO3J+sMcmpOh/P5Wrhx7Wvj9cXvSTC3l8YHBLtD80vQdJoew/svvYbIIdsCMR7ucV5KAl3rXJ/L3t982QSxQlMxmMenAJnqlQN4MMMUsD/Vl5/iExE5UXGDC71dmJTbDmgWAZnbYrNk9aiiCfd82jQ/WEIiC8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235694; c=relaxed/simple;
-	bh=KazDKBICrXtV75odgrNMBAXSnSzflp28EnqPkDX6/4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czoXK6VbpfrqsokCX4v5lVQk2Yr1qyS3ZS5ddWtA+em5F2LsBY4oek3CwO9gHf3CH4Jn7U+U94yfZ+cJ2Ktvkc7H2gKjI3sXQkZnv8GHsgmNc/Iqu1uxKpa8nn319AGB+snnqkxOckQ8F9JW2BHcRhm0StwYclX0M9NWSIzAdk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=j0CBVXJf; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ekkS1ZWS+pzycnB1GVKq4SzJlmTvcVcs3EVUltOGUlY=; b=j0CBVXJfcqI74bfbvH0tEreTBg
-	uGXoDBgkX2iFqTuj8sNfCHcw5GWQ2DBDZodIUtmym1xP63ToEoWUDbMyHd+ZsHwAIn9+Zf3W4ZilS
-	QzGz7UbITEWnb8/8jhmKXtdHhIco4MOqwCZujOJs1IGeo+FpXa6nBQxvF5PHTovRUvnOhIlVn+Rf6
-	lU9QCxj3L+6Ord18B/C+iW/yqUDyB4kwzgn74XigyN/8Q7f+O40a7NQm0tsdWjT7Aj0EsAmFYUzpb
-	307jsIMlm9iLhSk537sPKFOqWkjpn0kyg6E0M9byB8IjFZmgB97+NblQ/D3rNEkhiXMri7cZ6T/ej
-	tMsjNxZg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ummj6-00ETY7-3D;
-	Fri, 15 Aug 2025 13:27:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Aug 2025 13:27:37 +0800
-Date: Fri, 15 Aug 2025 13:27:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	hannes@cmpxchg.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
-	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
-	senozhatsky@chromium.org, linux-crypto@vger.kernel.org,
-	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
-	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com,
-	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com
-Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
- iaa_crypto driver
-Message-ID: <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
+	s=arc-20240116; t=1755235817; c=relaxed/simple;
+	bh=y0xyaJyPtcDPNLHhbPevkPLJ5VRQZj0+f0qVNL2ihWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQ8dEV1R/t+Plulya+WP7oAabE+WGg1bg+wpF/Fm0pIYP+p8lT+LJh2qwgDI1Tkm64Ln0QJwUC8PQSnPVya2KlF6gqiJPg3srZ9/CJP4ZpEqqVD3CvkmWGTf7idSXPBIMlQXbfvRUYAqQHNn0bKfHMo6s1CXWCPPSyrdICH0DsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTvHZwL4; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755235817; x=1786771817;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y0xyaJyPtcDPNLHhbPevkPLJ5VRQZj0+f0qVNL2ihWc=;
+  b=HTvHZwL45+KtXDJ45o+AG3CJZ4UW52eqxcfL67DmmoI+Lev6gofkSV++
+   uGbKZFSk7u3Pv41dr0KfbvIPa2YchRC9jo2y01xQZy5GBfwqPLcc/Aacj
+   9ac7KzoxhkoERBSLWKsIvwSWp2q7rW14p6Bq2Mou6JOwzwpNt84p5G/LW
+   ZLwijLe0oUtR7E5jPozk34MIP16XIpYR7h0xpwYPARLxgYbQ26WIlS0Hd
+   RRlqPVkMWYQ9X7jn24ev43Zva/d3iU/dZHPNoy7H9JVU5bdQQkR3yDfyD
+   L5CrKKmHhcmFqq1sExwAOIAwIvuAXKEqQ14k1N6IRugy1zcDKCgq2Y8EU
+   A==;
+X-CSE-ConnectionGUID: FSuL+xs/Q6ySAaxV7am/0w==
+X-CSE-MsgGUID: 47aJqn6SSXKXyplPyuwQkQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="82994979"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="82994979"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:30:15 -0700
+X-CSE-ConnectionGUID: RseyzJmKT36kWr3vroMtQg==
+X-CSE-MsgGUID: a9/KIfTrTBati7fQxiXAIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166914870"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:30:08 -0700
+Message-ID: <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
+Date: Fri, 15 Aug 2025 13:28:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+To: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
+ joro@8bytes.org, bhelgaas@google.com, jgg@nvidia.com
+Cc: will@kernel.org, robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
+ yi.l.liu@intel.com, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
+ vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 08, 2025 at 04:51:14PM -0700, Nhat Pham wrote:
+On 8/12/25 06:59, Nicolin Chen wrote:
+> There is a need to attach a PCI device that's under a reset to temporally
+> the blocked domain (i.e. detach it from its previously attached domain),
+> and then to reattach it back to its previous domain (i.e. detach it from
+> the blocked domain) after reset.
 > 
-> Can we get some comments from crypto tree maintainers as well? I feel
-> like this patch series is more crypto patch than zswap patch, at this
-> point.
+> During the reset stage, there can be races from other attach/detachment.
+> To solve this, a per-gdev reset flag will be introduced so that all the
+> attach functions will bypass the driver-level attach_dev callbacks, but
+> only update the group->domain pointer. The reset recovery procedure will
+> attach directly to the cached pointer so things will be back to normal.
 > 
-> Can we land any zswap parts without the crypto API change? Grasping at
-> straws here, in case we can parallelize the reviewing and merging
-> process.
+> On the other hand, the iommu_get_domain_for_dev() API always returns the
+> group->domain pointer, and several IOMMMU drivers call this API in their
+> attach_dev callback functions to get the currently attached domain for a
+> device, which will be broken for the recovery case mentioned above:
+>   1. core asks the driver to attach dev from blocked to group->domain
+>   2. driver attaches dev from group->domain to group->domain
+> 
+> So, iommu_get_domain_for_dev() should check the gdev flag and return the
+> blocked domain if the flag is set. But the caller of this API could hold
+> the group->mutex already or not, making it difficult to add the lock.
+> 
+> Introduce a new iommu_get_domain_for_dev_locked() helper to be used by
+> those drivers in a context that is already under the protection of the
+> group->mutex, e.g. those attach_dev callback functions. And roll out the
+> new helper to all the existing IOMMU drivers.
 
-My preference is for a unified interface that caters to both
-software compression as well as parallel hardware compression.
+Given that iommu_group->mutex is transparent to the iommu driver, how
+about
 
-The reason is that there is clear advantage in passing a large
-batch of pages to the Crypto API even for software compression,
-the least we could do is to pack the compressed result together
-and avoid the unnecessary copying of the compressed output that
-is currently done in zswap.
-
-However, since you guys are both happy with this patch-set,
-I'm not going stand in the way.
-
-But I do want some changes made to the proposed Crypto API interface
-so that it can be reused for IPComp.
-
-In particular, instead of passing an opaque pointer (kernel_data)
-to magically turn on batching, please add a new helper that enables
-batching.
-
-I don't think we need any extra fields in struct acomp_req apart
-from a new field called unit_size.  This would be 4096 for zswap,
-it could be the MTU for IPsec.
-
-So add something like this and document that it must be called
-after acmop_request_set_callback (which should set unit_size to 0):
-
-static inline void acomp_request_set_unit_size(struct acomp_req *req,
-					       unsigned int du)
-{
-	req->unit = du;
-}
-
-static inline void acomp_request_set_callback(struct acomp_req *req, ...)
+/*
+  * Called only by iommu drivers in the callback context where
+  * group->mutex has already been held by the core.
+  */
+struct iommu_domain *iommu_get_domain_for_dev_internal(struct device *dev)
 {
 	...
-+	req->unit = 0;
+	lockdep_assert_held(&group->mutex);
+	...
 }
 
-For the source, nothing needs to be done because the folio could
-be passed in as is.
+?
 
-For the destination, construct an SG list for them and pass that in.
-The rule should be that the SG list must contain a sufficient number
-of pages for the compression output based on the given unit size.
+> 
+> Add a lockdep_assert_not_held to the existing iommu_get_domain_for_dev()
+> to note that it would be only used outside the group->mutex.
+> 
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
 
-For the output lengths, just set the lengths in the destination
-SG list after compression.  If a page is incompressible (including
-an error), just set the length to a negative value (-ENOSPC could
-be used for incompressible input, as we already do).  Even though
-struct scatterlist->length is unsigned, there should be no issue
-with storing a negative value there.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+baolu
 
