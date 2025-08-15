@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-770570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CC9B27C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299FBB27CDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15791D07AC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C616625139
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD2B26CE2F;
-	Fri, 15 Aug 2025 09:08:10 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6138F271459;
+	Fri, 15 Aug 2025 09:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkNesCAs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC65248891;
-	Fri, 15 Aug 2025 09:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EB2270553;
+	Fri, 15 Aug 2025 09:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248889; cv=none; b=n413eoO4c9Nkci6Tnnm0VM5U6OaKq38e2KQuJjNyRP0AzjLxDFQ7ftU/AmP0oLeONJKPYGAWodp/6DYT4skwNfpi7aVC1uy/BYofgUsIqhkN4YgEA81gn8Ck7r+MvGAbWF+wxdxEucHIZdfLQrQeinJyFyqNLtM8qtUHoRdQN6I=
+	t=1755249038; cv=none; b=R4KwqP+0+RxnUjqS6WmmkbY6ssLXgQFZk9EglrzXJC6PComQh3/DJMReWF8uVCFtGP713vrLnwiGJt6h+JBebzS4S34YNH2ERnlCJfT6O1Kx69AK8YX2jX0lNWeb6HsMC+c1kYu1HMwylBfGGmtrI1a4Rm9UvAoVkXcslyGj090=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248889; c=relaxed/simple;
-	bh=0O9r5hlK1wdjjDzKZTV39IN26xTdiAJx/BRLVpWcoQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HH2USZuFuHSl0w6UlTI69j305amdG8OwvMPA7UlirWNCZdLV7uuPlOpZIskOsNqlXW9j584e7npxvDcp/LPdHCmgGs/qZrWMjCPUbedMLCjDtZi4x+gKES5/DYfi+8braiMTZLYPFAz3uVWMKluvwE5FvA4vWKDKh7AroySpduM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3GVG0Np9zYQvCh;
-	Fri, 15 Aug 2025 17:08:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A2E691A1B08;
-	Fri, 15 Aug 2025 17:08:04 +0800 (CST)
-Received: from [10.67.109.184] (unknown [10.67.109.184])
-	by APP4 (Coremail) with SMTP id gCh0CgCHUBHz+J5ogLYDDw--.38943S2;
-	Fri, 15 Aug 2025 17:08:04 +0800 (CST)
-Message-ID: <381def4c-ebe1-4dc1-a301-72cdc7f9176a@huaweicloud.com>
-Date: Fri, 15 Aug 2025 17:08:03 +0800
+	s=arc-20240116; t=1755249038; c=relaxed/simple;
+	bh=1Ha9xTn3T01Z4w9TlI+3LodHQqvdp4I2XLyHH/S4Gkg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TkFhKubWy8VzxyvPwK8EUrt5AnT20c2aSx6t2/5ug9V1kydyVubPZMCDyPwkOdGD02oL4OUCtUkiOdfwXR8NvkJJsEyEXZK7fdesIe3HF5AOkoKTPsAE99Oat8AaR6g+31fe1hxAEQHVmpUKst7f9kz68JGf/4oAuYxhmeCGVk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkNesCAs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B89C4CEF4;
+	Fri, 15 Aug 2025 09:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755249036;
+	bh=1Ha9xTn3T01Z4w9TlI+3LodHQqvdp4I2XLyHH/S4Gkg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WkNesCAskg/QW2w1/FQNss4Hvhyeo1cnDm4vhZ1e8fHwu5HbEu77kiCxKax7CVTWL
+	 SQqYQFFy/7REIced2yy5XNSP+8FkcOUHISBZJuOfikgXY4PL0sVw4IxQTRudC6WPIC
+	 ihFFSy669LVtWhnHeDzGfi8x1MMaqoG8t/5R2JKnfShIpr6FxjDXfaMhJ1oBneM/D3
+	 XsHvXZpgU82rs4Z1LUsQ+espPx+BUmvjBRzwcafMbLGq3otLPGFssSKaotaWoPi8KP
+	 lrNVDwW4TSCJmb68ZIpF4qkL89yNBw7gjtPhdkzcE+23B7SBPi2PXRkgYCBe6dUTiW
+	 eL2nSEGTQW+CQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 15/18] rust: block: add `GenDisk` private data support
+In-Reply-To: <aJ7tcmOHfFmHgrY9@google.com>
+References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org>
+ <20250815-rnull-up-v6-16-v5-15-581453124c15@kernel.org>
+ <Addn5RH8T6dPmcfVeF6HXK4Q3rVuAz-0N8es2JtgnRl3UhXIJhicxoB5Ns_F8aD2-sflnPXC6oeBQDLtCfXtLA==@protonmail.internalid>
+ <aJ7tcmOHfFmHgrY9@google.com>
+Date: Fri, 15 Aug 2025 11:08:59 +0200
+Message-ID: <87cy8xdk9g.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 00/10] Add support arena atomics for RV64
-Content-Language: en-US
-To: Daniel Borkmann <daniel@iogearbox.net>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Pu Lehui <pulehui@huawei.com>
-References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
- <87v7n21deu.fsf@all.your.base.are.belong.to.us>
- <00538107-08e3-4ba3-a11a-19fa9fd0a496@huaweicloud.com>
- <8ef2259d-eb58-4c66-a27a-3ee0b85aa639@iogearbox.net>
-From: Pu Lehui <pulehui@huaweicloud.com>
-In-Reply-To: <8ef2259d-eb58-4c66-a27a-3ee0b85aa639@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHUBHz+J5ogLYDDw--.38943S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur1xGF1xKw17tw17Cr1rJFb_yoW5JFWfpw
-	s5CasIyrWrCr1fAwnrtr18JryfKr48Jw15Xr1UJFy8Arsrtr4jgF4xX3Wj9r1DJrWrXr15
-	Cr1YyrnxZw15ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
 
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-
-On 2025/8/15 16:55, Daniel Borkmann wrote:
-> On 8/5/25 8:52 AM, Pu Lehui wrote:
->> On 2025/8/5 14:38, Björn Töpel wrote:
->>> Pu Lehui <pulehui@huaweicloud.com> writes:
->>>
->>>> From: Pu Lehui <pulehui@huawei.com>
->>>>
->>>> patch 1-3 refactor redundant load and store operations.
->>>> patch 4-7 add Zacas instructions for cmpxchg.
->>>> patch 8 optimizes exception table handling.
->>>> patch 9-10 add support arena atomics for RV64.
->>>>
->>>> Tests `test_progs -t atomic,arena` have passed as shown bellow,
->>>> as well as `test_verifier` and `test_bpf.ko` have passed.
->>>
->>> [...]
->>>
->>>> Pu Lehui (10):
->>>>    riscv, bpf: Extract emit_stx() helper
->>>>    riscv, bpf: Extract emit_st() helper
->>>>    riscv, bpf: Extract emit_ldx() helper
->>>>    riscv: Separate toolchain support dependency from RISCV_ISA_ZACAS
->>>>    riscv, bpf: Add rv_ext_enabled macro for runtime detection 
->>>> extentsion
->>>>    riscv, bpf: Add Zacas instructions
->>>>    riscv, bpf: Optimize cmpxchg insn with Zacas support
->>>>    riscv, bpf: Add ex_insn_off and ex_jmp_off for exception table
->>>>      handling
->>>>    riscv, bpf: Add support arena atomics for RV64
->>>>    selftests/bpf: Enable arena atomics tests for RV64
->>>>
->>>>   arch/riscv/Kconfig                            |   1 -
->>>>   arch/riscv/include/asm/cmpxchg.h              |   6 +-
->>>>   arch/riscv/kernel/setup.c                     |   1 +
->>>>   arch/riscv/net/bpf_jit.h                      |  70 ++-
->>>>   arch/riscv/net/bpf_jit_comp64.c               | 516 
->>>> +++++-------------
->>>>   .../selftests/bpf/progs/arena_atomics.c       |   9 +-
->>>>   6 files changed, 214 insertions(+), 389 deletions(-)
->>>
->>> What a nice series! The best kind of changeset -- new feature, less
->>> code! Thank you, Lehui! Again, apologies for the horrible SLA. The
->>> weather in Sweden was simply Too Good this summer!
+> On Fri, Aug 15, 2025 at 09:30:50AM +0200, Andreas Hindborg wrote:
+>> Allow users of the rust block device driver API to install private data in
+>> the `GenDisk` structure.
 >>
->> Sounds like a great vacation!
-> 
-> Thanks for working on this! I just took this into bpf-next, please also
-> make sure to address the small follow-up request from Bjorn.
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>
+>>          self,
+>>          name: fmt::Arguments<'_>,
+>>          tagset: Arc<TagSet<T>>,
+>> +        queue_data: T::QueueData,
+>>      ) -> Result<GenDisk<T>> {
+>> +        let data = queue_data.into_foreign();
+>> +        let recover_data = ScopeGuard::new(|| {
+>> +            // SAFETY: T::QueueData was created by the call to `into_foreign()` above
+>> +            drop(unsafe { T::QueueData::from_foreign(data) });
+>> +        });
+>> +
+>>          // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
+>>          let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
+>>
+>> @@ -113,7 +121,7 @@ pub fn build<T: Operations>(
+>>              bindings::__blk_mq_alloc_disk(
+>>                  tagset.raw_tag_set(),
+>>                  &mut lim,
+>> -                core::ptr::null_mut(),
+>> +                data.cast(),
+>
+> Is the cast necessary?
 
-Hi Daniel,
+Not any longer, no.
 
-Already explained and aligned with Bjorn, no further processing is 
-required. Thanks.
 
-> 
->>> Tested-by: Björn Töpel <bjorn@rivosinc.com> # QEMU only
->>> Acked-by: Björn Töpel <bjorn@kernel.org>
-> 
-> Thanks,
-> Daniel
+Best regards,
+Andreas Hindborg
+
 
 
