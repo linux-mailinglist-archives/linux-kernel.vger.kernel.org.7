@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-769770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8AB27382
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577C8B27385
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3229E3FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85951736B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0BB20299B;
-	Fri, 15 Aug 2025 00:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027C220CCE4;
+	Fri, 15 Aug 2025 00:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K5iFbDKN"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TvqmdVpv"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BF71F561D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E279B1FF1D1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755216755; cv=none; b=hScMG0kj0KibRi9KajNO2QtlippALKq3tZeue6YvdhQ35YhvTHwhESm8fV3mrwL7tKjS7wlnpCSALL1YUz+Rx4mxMR9H72LKzB8luR5rNvEmcHNWfjlfA/RFi+OBxfHMFIz2C+10wm8ehxYwF2CtBaMixZR5z1qd9FnKzm1+XO0=
+	t=1755216757; cv=none; b=OfkgNIRmxpryyUYqT2gETcjpuw4Cxjlyjv6Vj0OGsktYnuLm/bqsfOVONDeJQxj7Htb4Wrnn+cJ7U4xKo/ySij3T6qCjfc8F0vfwMxPzD5urJoglO7wtjalRWkUPYtq3tglHgId8Bn+uAuveKMMDfoqNH6yJFQh96jokKs7p0v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755216755; c=relaxed/simple;
-	bh=J5bjGgVJv9hmsbY0pSYL5E2uFR0Opy+IWAryQkIYkd0=;
+	s=arc-20240116; t=1755216757; c=relaxed/simple;
+	bh=K45y4oY618XxqPpW0fSd+M48YvCVJ5OhxcpoKJCPJLU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qetrvaIrweOkacnLGEFt3Jx+a/wCtleefPbNMUGzwbPA++22etPT4ZXYgMcvORqt04epN73+Es41oalfVnfyduXVcpqdHbaEkWrPpZA4f3u620HyrRBCdeSlEik9sXoYAjzU567H5JJgJy5NDK56kYkw4OC4iMcJQtNOdBNBNEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K5iFbDKN; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=fIFyDK6Aju3Z65M/1PKkn55IFgVhKrLgHhhcOMuS/MwG5hCTHp9m4b4fZf66dckipXU6+MaKXMLEDs4dMmaTNzNnZspIJoANJ4FpMhORtd2cMye5sGy+E9TzEM58ZrWA2OQENyFG40+3bMAc+avxqi571Dd3pr/tRRL/uNZnV/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TvqmdVpv; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4716fb7f2aso983219a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:34 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323266d8396so1503018a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755216753; x=1755821553; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755216755; x=1755821555; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wMy9TJhpZES3QcM2QFYJyQalMsJ3q38AGM7XgsPeU0=;
-        b=K5iFbDKNiuvqtn2yUuJONz8cPEPByRqTrosxRvmAVp/RUDlzbr7WWcVlQ76mL1wKPs
-         N9JSPirjGDQC9tpGRlv0H2+gI4bZKN4F6nyFc2CtDLT0pXw+jCWRxwzMGjlKmsx5c1fh
-         qqBtPezgy2ptM1KbEdhI5952rG0g3csv+o15i7ZiYTRKEYlzmX5rAsHCjb3drF/gxDlT
-         ikFi1WfbDN75GKFmrxTu9oSxfq/kNPciBwUNcvMs+Y5VYj7sLOu6WPNEHhXtqQ08CwEW
-         3r9Xafi2LVQiMWZEudmujWpbvwCjeQGdaFM6WSZ49VTQ5dfq4wlzADV8EDqgKdeaKMYt
-         IUkA==
+        bh=A081K7Vxl6mjJzXEGmaHtEMcM0O3QUXdDAu/aDF05mY=;
+        b=TvqmdVpvY/zWAxyxp+LBS78F/dqrCLAIpPNVxEBDvgOtf27t6irErUMg0vqp7BHHym
+         XQBtVNP3raT1m7x3iu7VHCA+kbchYgOkOLU6JTgaGKofTjcn8Ns5E46Edq0/SKd1C+oj
+         WlURRKFt/OLJFmlWIekzk2svqgB+QACHkunewOINHnyWebx+MT9ngR15A97nzGzp6mkx
+         cNjDnDOCBw54pSg4oSAqDSXapefr+jMb5BUjuXm+7Noe/SI0TGBVMwmEjU1IzGJNVEcG
+         +VfCF3HRYZKP4icpnDbpo6mOFULGhqs3rGe3jP+gI2P4Z4AAvM+2606i/9Qe3+l6pPPy
+         RClw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755216753; x=1755821553;
+        d=1e100.net; s=20230601; t=1755216755; x=1755821555;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2wMy9TJhpZES3QcM2QFYJyQalMsJ3q38AGM7XgsPeU0=;
-        b=Vqrb9PbVeCp30v0lrspDWBstPHvzQjpqItqDhC8/unF9ZioWkNL7Uzf2+sLEs3rX1K
-         kAQiTKvbFn71GAkpiXe16ddoezViaV/KqiU7OEp/P3o0gPkR9C8QBk8/FJELwVOwErp7
-         VEDl4Vl/Bt1PjFWs8x+5YboUsNPZjwPmYl9C4fTt4n1+/jC25q6vQhtrH6+XU9qKfNSZ
-         TT0EokvBDtTKdbTdyYthglfPKicUjfVWXBd6/4ltDFZOJs4MrKLItJ8TSSx3Igan3pHR
-         dap/I8QmK/EUaeEIUqcPlK2CDavRq6mnSGebbnT3MV26IfACZ0DEGUsWN4jSdRL20xhH
-         8nyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlqmYyzdIpXD4Hmr27tz1QfrmR/QpGHZdOVk9g2FkCAzwSlhZ3aBHS/6jyat6QAd4rWrW+qp/VVlGs7Q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyblWlyirbkLw2UInAopYhK3z6ZrhMLdvQr3SxIFB5uZ8MafLAo
-	n5xSi9iMLX9j7c15RY05KaIf0AZloKI/8RPdvLi6JLya2eaB8Z6iXyIGOFPLiPajW7SnbaJgsQ0
-	e/FHH7g==
-X-Google-Smtp-Source: AGHT+IEgo7vJgzcLT1RHaYoSqGTHO6Al4/b0zR+cP3g/V7QzZ9vp0b/qWYdJWt1FD0Lbuih760/NY1kEXkU=
-X-Received: from pjbnc16.prod.google.com ([2002:a17:90b:37d0:b0:312:dbc:f731])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c6f:b0:23f:df56:c74c
- with SMTP id d9443c01a7336-2446d715b0bmr1607785ad.14.1755216753639; Thu, 14
- Aug 2025 17:12:33 -0700 (PDT)
+        bh=A081K7Vxl6mjJzXEGmaHtEMcM0O3QUXdDAu/aDF05mY=;
+        b=oazVNllgQisibkwn+HiqnT4qbcV254q/pSvznH1QEfdy04dpksQQfZmDjbHXdDArdS
+         jveEtywm/Q8GOiezo1Io7Houj6Ho8n3drfArIlXpP+ncyQJ8wkv79lcq3dhIF3rErjv6
+         XdeXEs8wA5zBHkfpQeCqzyjaBKaLI1LXW4rqsRXbgTozLD6/Hv1po3F3/l02zy+Ti+cN
+         n2FzJohVluhR5KtwRKkC86ZGMPZ3faE376aHdq/PBv37XWDCrYzrie5I8LPL6ndi1AYY
+         nmsirTyz6MaeT4vxB85VX8HVhhvEr9eji+8zJETv/mOVx1pwX073MIUgFm28ULyoPA4U
+         dDlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbfhIZ662GnU/aoYivBmZSe5TCGzoKWyidiIWo/Eb6FqkDLZi335Z2VtPmEmqZPpqKip2J2BZnlSJB3Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA5SDdGdpQ5hN4WTKpEIkPFkl11N++oujtHSCjSk1Tleb/7rVZ
+	4yLhFFTMML8d86CzWTkBzHjG1dv5JdYxwOaiVmPSqjW8vfomE5U3xQYoaqPZ719Ar97r5IBC9+A
+	i1bWBQQ==
+X-Google-Smtp-Source: AGHT+IHyQTBLqAZEkEEr74CWBCFhJKsIaas1PzPmgFEdWLst5iOyF6eTrA8Q7itvt8DfCaBEBiBohqtDZ/4=
+X-Received: from pjbst7.prod.google.com ([2002:a17:90b:1fc7:b0:321:6ddc:33a0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:278a:b0:323:28ac:3c59
+ with SMTP id 98e67ed59e1d1-32341ec4ad6mr240224a91.13.1755216755117; Thu, 14
+ Aug 2025 17:12:35 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 14 Aug 2025 17:11:56 -0700
+Date: Thu, 14 Aug 2025 17:11:57 -0700
 In-Reply-To: <20250815001205.2370711-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250815001205.2370711-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-Message-ID: <20250815001205.2370711-13-seanjc@google.com>
-Subject: [PATCH 6.1.y 12/21] KVM: x86: Move handling of is_guest_mode() into
- fastpath exit handlers
+Message-ID: <20250815001205.2370711-14-seanjc@google.com>
+Subject: [PATCH 6.1.y 13/21] KVM: VMX: Handle KVM-induced preemption timer
+ exits in fastpath for L2
 From: Sean Christopherson <seanjc@google.com>
 To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	Sasha Levin <sashal@kernel.org>
@@ -85,76 +85,68 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-[ Upstream commit bf1a49436ea37b98dd2f37c57608951d0e28eecc ]
+[ Upstream commit 7b3d1bbf8d68d76fb21210932a5e8ed8ea80dbcc ]
 
-Let the fastpath code decide which exits can/can't be handled in the
-fastpath when L2 is active, e.g. when KVM generates a VMX preemption
-timer exit to forcefully regain control, there is no "work" to be done and
-so such exits can be handled in the fastpath regardless of whether L1 or
-L2 is active.
+Eat VMX treemption timer exits in the fastpath regardless of whether L1 or
+L2 is active.  The VM-Exit is 100% KVM-induced, i.e. there is nothing
+directly related to the exit that KVM needs to do on behalf of the guest,
+thus there is no reason to wait until the slow path to do nothing.
 
-Moving the is_guest_mode() check into the fastpath code also makes it
-easier to see that L2 isn't allowed to use the fastpath in most cases,
-e.g. it's not immediately obvious why handle_fastpath_preemption_timer()
-is called from the fastpath and the normal path.
+Opportunistically add comments explaining why preemption timer exits for
+emulating the guest's APIC timer need to go down the slow path.
 
-Link: https://lore.kernel.org/r/20240110012705.506918-5-seanjc@google.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-[sean: resolve syntactic conflict in svm_exit_handlers_fastpath()]
+Link: https://lore.kernel.org/r/20240110012705.506918-6-seanjc@google.com
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/svm.c | 6 +++---
- arch/x86/kvm/vmx/vmx.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx/vmx.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index b4283c2358a6..337a304d211b 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -3964,6 +3964,9 @@ static fastpath_t svm_exit_handlers_fastpath(struct kvm_vcpu *vcpu)
- {
- 	struct vmcb_control_area *control = &to_svm(vcpu)->vmcb->control;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 18ceed9046a9..4db9d41d988c 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5948,13 +5948,26 @@ static fastpath_t handle_fastpath_preemption_timer(struct kvm_vcpu *vcpu)
+ 	if (vmx->req_immediate_exit)
+ 		return EXIT_FASTPATH_EXIT_HANDLED;
  
++	/*
++	 * If L2 is active, go down the slow path as emulating the guest timer
++	 * expiration likely requires synthesizing a nested VM-Exit.
++	 */
 +	if (is_guest_mode(vcpu))
 +		return EXIT_FASTPATH_NONE;
 +
- 	/*
- 	 * Note, the next RIP must be provided as SRCU isn't held, i.e. KVM
- 	 * can't read guest memory (dereference memslots) to decode the WRMSR.
-@@ -4127,9 +4130,6 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
- 
- 	svm_complete_interrupts(vcpu);
- 
--	if (is_guest_mode(vcpu))
--		return EXIT_FASTPATH_NONE;
--
- 	return svm_exit_handlers_fastpath(vcpu);
+ 	kvm_lapic_expired_hv_timer(vcpu);
+ 	return EXIT_FASTPATH_REENTER_GUEST;
  }
  
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c804ad001a79..18ceed9046a9 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7138,6 +7138,9 @@ void noinstr vmx_spec_ctrl_restore_host(struct vcpu_vmx *vmx,
+ static int handle_preemption_timer(struct kvm_vcpu *vcpu)
+ {
+-	handle_fastpath_preemption_timer(vcpu);
++	/*
++	 * This non-fastpath handler is reached if and only if the preemption
++	 * timer was being used to emulate a guest timer while L2 is active.
++	 * All other scenarios are supposed to be handled in the fastpath.
++	 */
++	WARN_ON_ONCE(!is_guest_mode(vcpu));
++	kvm_lapic_expired_hv_timer(vcpu);
+ 	return 1;
+ }
+ 
+@@ -7138,7 +7151,12 @@ void noinstr vmx_spec_ctrl_restore_host(struct vcpu_vmx *vmx,
  
  static fastpath_t vmx_exit_handlers_fastpath(struct kvm_vcpu *vcpu)
  {
-+	if (is_guest_mode(vcpu))
-+		return EXIT_FASTPATH_NONE;
-+
- 	switch (to_vmx(vcpu)->exit_reason.basic) {
- 	case EXIT_REASON_MSR_WRITE:
- 		return handle_fastpath_set_msr_irqoff(vcpu);
-@@ -7337,9 +7340,6 @@ static fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
- 	vmx_recover_nmi_blocking(vmx);
- 	vmx_complete_interrupts(vmx);
- 
 -	if (is_guest_mode(vcpu))
--		return EXIT_FASTPATH_NONE;
--
- 	return vmx_exit_handlers_fastpath(vcpu);
- }
++	/*
++	 * If L2 is active, some VMX preemption timer exits can be handled in
++	 * the fastpath even, all other exits must use the slow path.
++	 */
++	if (is_guest_mode(vcpu) &&
++	    to_vmx(vcpu)->exit_reason.basic != EXIT_REASON_PREEMPTION_TIMER)
+ 		return EXIT_FASTPATH_NONE;
  
+ 	switch (to_vmx(vcpu)->exit_reason.basic) {
 -- 
 2.51.0.rc1.163.g2494970778-goog
 
