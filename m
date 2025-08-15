@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-770766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C47B27EA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AA5B27EA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771AE7B8977
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:47:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B158A7B6D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74792FFDEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5553002B7;
 	Fri, 15 Aug 2025 10:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="W9iw0BPn"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59311DF24F;
-	Fri, 15 Aug 2025 10:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909802750F2
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755254913; cv=none; b=ReswvTSLFtfRtb2Nkrnu38W4/HnMnW4mh8Ekpb5JsR/XwwQVtDgkof7J0cpexTr0/gcwtMdIW4AFCcw+OiCOnsAbuILUMy/oD2ZQdH+JHoECxkNpBIu4ERhP14A63VnoAuZSSFQCQ1+Fx2G04wjXpzwBUR/LHrhZNwHIgGwrxQI=
+	t=1755254913; cv=none; b=Mqwc+/S999Ww2UL59ePFIhhn3W33iKeYwdQJyVB2BVBxrGXoJajTHBK+5qztJ+QTyYLuLJh23ZP7ok7vJZJg5ksH05enNdPv79WVli5ZbuEW/fbuvgS9Zg87IFLcwRMlofzoCZaK8HW25yT8pEhL1V8LG702B0XiB4HimyHXx2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755254913; c=relaxed/simple;
-	bh=G1edQCNuacWPxWwIea/30FqFc+UX9B4+0teA0JgdIRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qc4Pi1tmWMSEUHTiuoC76xcE1ARIXT0NWoZetAxKot9Mmt5fFMJJwWsuOuQhEnyE8l3ge+ajwd+AT1ljskWkCNCcWyse802AvKi40wf3pXk5es3xIRE2PUMPnI+jxYzW39IQCrvpAdRCJyauqDwZCE2acznIKf+jJGNsb9d47Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=W9iw0BPn; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 86D5324E0A;
-	Fri, 15 Aug 2025 12:48:22 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id SyKGABv6NFZd; Fri, 15 Aug 2025 12:48:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755254900; bh=G1edQCNuacWPxWwIea/30FqFc+UX9B4+0teA0JgdIRo=;
-	h=From:To:Cc:Subject:Date;
-	b=W9iw0BPno5o8NOL0V8LNhfHfl5armoo9r66RuZGE4y1ImOyqLtIWM8qUsuZBEhfe5
-	 kixnIHsrNfajaya+gpOmsjxV67sxur+BoRiSVgPAhvGK4Ty0uOFPVeRpAFkQzN2abu
-	 3fdiKjMX71Ra+umb9W/m7oP726h2ETceZJ6HRvyT04YA90jHq84enWsb5J1oJlOf8i
-	 8dDFPFPiczTUBsVnbBMK2kp+Y+B1BhdwBfhJOwX3sxdUbf5QDzSA89kXgz2p/6O8Bw
-	 2IDdB2X5r2DVaXua8wo3EsUEeqmrUYx2arxq6yvPuf+/FcrQ9gu0qqj1WyVnd8Kqf2
-	 zGOLsmCDMgotw==
-From: Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Cc: nux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Han Gao <rabenda.cn@gmail.com>,
-	Han Gao <gaohan@iscas.ac.cn>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH net v3] net: stmmac: thead: Enable TX clock before MAC initialization
-Date: Fri, 15 Aug 2025 10:48:03 +0000
-Message-ID: <20250815104803.55294-1-ziyao@disroot.org>
+	bh=ospka4PVjRg/pgAvcMaczaoSNCIOhmeFc7wb06Pd6kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACdhS7FiktIE/jh/FK+BXylDPXaW5dwwTOY3GkRjXPnjK0TWirbur0wRgy5UbrPUanZHRIrin+4UkpkSjOegYfJ9tpZTK0elTxZ0k7GzQxgODoZU51RG7zzKZQ8OjW97o0k1+CC5rjN2Fahn4PYK6iYiL8+k8g/czAgo7+VT6h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A65411691;
+	Fri, 15 Aug 2025 03:48:22 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F0693F738;
+	Fri, 15 Aug 2025 03:48:27 -0700 (PDT)
+Date: Fri, 15 Aug 2025 11:48:24 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Jeremy Linton <jeremy.linton@arm.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
+	will@kernel.org, patches@amperecomputing.com,
+	Shubhang@os.amperecomputing.com, krzysztof.kozlowski@linaro.org,
+	bjorn.andersson@oss.qualcomm.com, geert+renesas@glider.be,
+	arnd@arndb.de, nm@ti.com, ebiggers@kernel.org,
+	nfraprado@collabora.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: enable CONFIG_SCHED_CLUSTER
+Message-ID: <20250815-pheasant-of-eternal-tact-6f9bbc@sudeepholla>
+References: <20250808025533.6422-1-shijie@os.amperecomputing.com>
+ <e47757c3-6091-43b5-ba28-52e11de7d86a@arm.com>
+ <cb383a76-8848-44cd-6f32-fd30478d9ebd@gentwo.org>
+ <2d9259e4-1b58-435d-bf02-9c4badd52fd9@arm.com>
+ <20250813-gifted-nimble-wildcat-6cdf65@sudeepholla>
+ <d172f30d-28ad-dd46-1385-f010107bc789@gentwo.org>
+ <c45b13b9-52ae-a52b-ce39-77f7ebe09507@gentwo.org>
+ <aJ20imoeRL_tifky@bogus>
+ <97278200-b877-47a6-84d4-34ea9dda4e6b@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <97278200-b877-47a6-84d4-34ea9dda4e6b@gentwo.org>
 
-The clk_tx_i clock must be supplied to the MAC for successful
-initialization. On TH1520 SoC, the clock is provided by an internal
-divider configured through GMAC_PLLCLK_DIV register when using RGMII
-interface. However, currently we don't setup the divider before
-initialization of the MAC, resulting in DMA reset failures if the
-bootloader/firmware doesn't enable the divider,
+On Thu, Aug 14, 2025 at 09:30:06AM -0700, Christoph Lameter (Ampere) wrote:
+> On Thu, 14 Aug 2025, Sudeep Holla wrote:
+> 
+> >   |  Different architectures use different terminology to denominate logically
+> >   |  associated processors, but terms such as package, cluster, module, and
+> >   |  socket are typical examples.
+> >
+> > So how can one use these across architectures ? Package/Socket is quite
+> > standard. Cluster can be group of processors or it can also be group of
+> > processor clusters. One of the Arm vendors call it super cluster or something.
+> > All these makes it super hard for a generic OS to interpret that information.
+> > Just CONFIG_SCHED_CLUSTER was added with one notion of cluster which was soon
+> > realised doesn't match with some other notion of it.
+> 
+> What the cluster actually is used for is up to the hardware. The linux
+> scheduler provides this functionality. How and when this feature is used
+> by firmware is a vendor issue. There was never a clear definition.
+> 
 
-[    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-[    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
-[    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
-[    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
-[    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
+Sure, since it is left to architecture to define what it means, it could
+work. But what happens if we have multiple chiplet inside a socket and
+each chiplet has multiple cluster. Do you envision using this SCHED_CLUSTER
+at chiplet level if that works best on the platform ?
 
-Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
-divider before MAC initialization. Note that for reconfiguring the
-divisor, the divider must be disabled first and re-enabled later to make
-sure the new divisor take effect.
+That could work, but we need to document all these with the best of our
+knowledge now so that it is easy to revisit in the future.
 
-The exact clock rate doesn't affect MAC's initialization according to my
-test. It's set to the speed required by RGMII when the linkspeed is
-1Gbps and could be reclocked later after link is up if necessary.
+> > We can enable it and I am sure someone will report a regression on their
+> > platform and we need to disable it again. The benchmark doesn't purely
+> > depend on just the "notion" of cluster but it is often related to the
+> > private resource and how they are shared in the system. So even if you
+> > strictly follow the notion of cluster as supported by CONFIG_SCHED_CLUSTER
+> > it will fail on systems where the private resources are shared across the
+> > "cluster" boundaries or some variant configuration.
+> 
+> That is not our problem. If the vendor provides clustering information and
+> the scheduler uses that then the vendor can modify the firmware to not
+> enable clustering.
+> 
 
-Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
+That is pure wrong. ACPI is describing the hardware. Deciding to put
+clustering information in these tables only if it provides performance or
+not hinder performance seem complete non-sense to me. That covering policy
+in ACPI hardware description. Does ACPI spec mention anything about it ?
+I mean remove some hardware description even if it is 100% accurate if it
+hinders performance on one of the OSPM ? Doesn't sound correct at all.
 
-Note that the DMA reset failures cannot be reproduced with the vendor
-U-Boot, which always enables the divider, regardless whether the port is
-used[1].
+> As mentioned before: We could create a blacklist to override the ACPI info
+> from the vendor to ensure that clustering is off.
+> 
 
-[1]: https://github.com/revyos/thead-u-boot/blob/93ff49d9f5bbe7942f727ab93311346173506d27/board/thead/light-c910/light.c#L581-L582
+Not a bad idea. We can see if allow or blocklist works as we start with one.
 
-Changed from v2
-- Explain the special process for changing divider's rate in commit
-  message
-- Fix the typo where ';' is mistyped as ','
-- Link to v2: https://lore.kernel.org/all/20250808103447.63146-2-ziyao@disroot.org/
-Changed from v1
-- Initialize the divisor to a well-known value (producing the clock rate
-  required by RGMII link at 1Gbps)
-- Write zero to GMAC_PLLCLK_DIV before writing the configuration, as
-  required by the TRM
-- Link to v1: https://lore.kernel.org/netdev/20250801094507.54011-1-ziyao@disroot.org/
+> What we should not do is disabling clustering for all.
+> 
 
- drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Not completely against it but I have concerns on how all these scale with
+multiple chiplets within a socket or any such variants.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-index f2946bea0bc2..6c6c49e4b66f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-@@ -152,7 +152,7 @@ static int thead_set_clk_tx_rate(void *bsp_priv, struct clk *clk_tx_i,
- static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
- {
- 	struct thead_dwmac *dwmac = plat->bsp_priv;
--	u32 reg;
-+	u32 reg, div;
- 
- 	switch (plat->mac_interface) {
- 	case PHY_INTERFACE_MODE_MII:
-@@ -164,6 +164,13 @@ static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
- 	case PHY_INTERFACE_MODE_RGMII_RXID:
- 	case PHY_INTERFACE_MODE_RGMII_TXID:
- 		/* use pll */
-+		div = clk_get_rate(plat->stmmac_clk) / rgmii_clock(SPEED_1000);
-+		reg = FIELD_PREP(GMAC_PLLCLK_DIV_EN, 1) |
-+		      FIELD_PREP(GMAC_PLLCLK_DIV_NUM, div);
-+
-+		writel(0, dwmac->apb_base + GMAC_PLLCLK_DIV);
-+		writel(reg, dwmac->apb_base + GMAC_PLLCLK_DIV);
-+
- 		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
- 		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
- 		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
+> > > We could add a blacklist for those platforms to avoid regressions but we
+> > > should not allow that to hinder us to enable full support for clustering
+> > > on ARM64.
+> > >
+> >
+> > Sure, but we need to improve the "cluster" definition in the ACPI and Arm
+> > specification, get an agreement on what it means for other architecture
+> > first IMO. We don't want to revisit the same topic again without these as
+> > IIRC this is the second time we are discussion around this topic.
+> 
+> The vendors need flexibility to use this feature when it makes sense.
+> 
+
+Sure, but too much flexibility might also hinder future changes when adding
+some other feature(chiplet again is one thing I can think of now)
+
+> Having a clear definition would limit the use of clustering feature and
+> limits innovation. Vendors can control the clustering via ACPI and the
+> firmware they provide with their system.
+> 
+
+Not sure if that should be right direction TBH, but again not against the
+idea of enabling the feature on some platforms if we are going to enable it
+by default.
+
+> We could change definition but that but that would be a decadelong
+> process which will encounter resistance from vendors that make uses of the
+> clustering feature that does not fall into the stricter definition.
+> 
+
+I understand and get the point, but decadelong is bit of an exaggeration 😉.
+Not discussing these in ACPI or similar forum is not a good idea as we know
+there are new h/w features that are being added and current specification
+may not provide ways to express all of those.
+
 -- 
-2.50.1
-
+Regards,
+Sudeep
 
