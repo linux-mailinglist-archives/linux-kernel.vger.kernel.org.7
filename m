@@ -1,160 +1,152 @@
-Return-Path: <linux-kernel+bounces-770362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA9AB279FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:21:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C241FB27A02
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DFA171634
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:18:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83211CC19EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD952BD5A1;
-	Fri, 15 Aug 2025 07:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0fP0n19"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0581B960;
+	Fri, 15 Aug 2025 07:20:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0F31F1921;
-	Fri, 15 Aug 2025 07:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC061219EB;
+	Fri, 15 Aug 2025 07:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755242330; cv=none; b=KCGyGfRM4rI8gKz6xud/v1KCsvmqGCCr0lxosZ0H6i6X6XTy8Zqp6ZtfE5A4cHdP6y9YPlduW2+3GAMpg5nL728HPR22Probn1uG7fjgToAT9andzo2skTDGvesLrLSPKam/u/bhf2tq4bLDVi0d7WHS4gqFZdpGOH2FMeC3F+8=
+	t=1755242440; cv=none; b=PMWy/Kj2u6fb5myxm8I0w+oZJ8QzgKbYIG/eXbtQgGfDkvxeRKYBstcJr2iyCnhmHNzb+R62ljG+wfw00elY5ldxkX8O/1Cof4eB0DL8EKnBHbd1ogV2GkAKf0BnM24bACg7eM49ZxWENhAOO03+krc7q7KEm+KwdEw36dNNZYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755242330; c=relaxed/simple;
-	bh=Rz4uCSh5tIRgeZutDu1RjAsYU3kitky0kF/nmleGpDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUrdnpnOp6/nfNvH1TJ3q2/8LnBbxj9PB/uLIx8FHyhSqF7Ftyb44oJWT4OVuufbZiGePJsceryGXMs9OlPW14eljSrIzANZcI3NRASmMAsLOPLYY6ocG3AdeAP1/SHmm9tb1osemAmYGjohzRMoLFxWOGQsaxMOtF/CR6hsHkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0fP0n19; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755242329; x=1786778329;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Rz4uCSh5tIRgeZutDu1RjAsYU3kitky0kF/nmleGpDo=;
-  b=P0fP0n19MiYDzPcOLjA1MxTcwTNQWma/9QGmcdzjxz72vEtZUpgbBgZt
-   ob36bRqxva5xNEXyCGlSbIEpMQzYHBBDSdgkTWQqXjHU+GcyGZyIZeA8w
-   FUIfaCR6amA7tIrPtPBBgtRjKg8UQhPGV036mCvZ5BOT+d9WvZT3HNvyj
-   JdCVO+1luqKCcc3a2QUt/5FMk/+O4X+ECmG4Q5rXFSSC9RElIdltbYVT9
-   NHLztRU9633WljY5cnF8S5087gfKR2AXYS8woZjGqpFhdd5JKVoBplQEE
-   yR2ldwHgAxHvkkHBoxc7mN/YST7RM/8Y5/TI4fC6DipMnxDTUYratJqP4
-   g==;
-X-CSE-ConnectionGUID: jftD8A3FR0GdQKrMUd7yQw==
-X-CSE-MsgGUID: fs87vGJFSM+sSrmppvqwqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="83000016"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="83000016"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 00:18:48 -0700
-X-CSE-ConnectionGUID: f034IAboTnKvDIID/HQNOA==
-X-CSE-MsgGUID: jhuxWzuqRtiZtjlHYvaqBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="197806750"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 00:18:44 -0700
-Message-ID: <d554355c-f678-4f90-a56b-675877be01e9@linux.intel.com>
-Date: Fri, 15 Aug 2025 15:18:42 +0800
+	s=arc-20240116; t=1755242440; c=relaxed/simple;
+	bh=LJ5hwcVtv8L4QJbMAkLE+n3yrJ6SMbNWpVFjDzuDzAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kU3W2VVH0SipnG7GGD85RPHklH9G2fH5EXVFVIJ0bKi+Gcsawm7d/DKYiGh5qiLDA+1Gb+4cUfbvGM29VZCfhSzqZZ2RSExynxN7BCjLOSWnMHLNbIaReaBMuvxAg0CSjpCDIaNWqLJjj5UnWVr9hZiveSlx5yt4BnAaK5dTTUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5395d6ae79a811f0b29709d653e92f7d-20250815
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:612345b8-8f28-4ac7-88c9-7afc108cde8f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:8d7f38ea3075bad0b42d9549ab5de2cc,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5395d6ae79a811f0b29709d653e92f7d-20250815
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <zhaoguohan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1737500474; Fri, 15 Aug 2025 15:20:31 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id F3E90B8258E7;
+	Fri, 15 Aug 2025 15:20:30 +0800 (CST)
+X-ns-mid: postfix-689EDFBE-875798283
+Received: from localhost.localdomain (unknown [10.42.12.87])
+	by node2.com.cn (NSMail) with ESMTPA id BD49CB812916;
+	Fri, 15 Aug 2025 07:20:28 +0000 (UTC)
+From: zhaoguohan@kylinos.cn
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	thomas.falcon@intel.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	GuoHan Zhao <zhaoguohan@kylinos.cn>
+Subject: [PATCH v2] perf parse-events: Prevent null pointer dereference in __add_event()
+Date: Fri, 15 Aug 2025 15:20:08 +0800
+Message-ID: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 29/30] KVM: selftests: TDX: Add TDX UPM selftests for
- implicit conversion
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-30-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807201628.1185915-30-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+From: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
+In the error handling path of __add_event(), if evsel__new_idx() fails
+and returns NULL, the subsequent calls to zfree(&evsel->name) and
+zfree(&evsel->metric_id) will cause null pointer dereference.
 
-On 8/8/2025 4:16 AM, Sagi Shahar wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
->
-> This tests the use of guest memory without explicit TDG.VP.VMCALL<MapGPA>
-> calls.
->
-> Provide a 2MB memory region to the TDX guest with a 40KB focus area at
-> offset 1MB intended to be shared between host and guest. The guest does
-> not request memory to be shared or private using TDG.VP.VMCALL<MapGPA> but
-> instead relies on memory to be converted automatically based on its
-> access via shared or private mapping. The host automatically
-> converts the memory when guest exits with KVM_EXIT_MEMORY_FAULT.
->
-> The 2MB region starts out as private with the guest filling it with a
-> pattern, followed by a check from the host to ensure the host is not able
-> to see the pattern. The guest then accesses the 40KB focus area via
-> its shared mapping to trigger implicit conversion followed by checks that
-> the host and guest has the same view of the memory. Finally the guest
-> accesses the 40KB memory via its private mapping to trigger the implicit
-> conversion to private followed by checks to confirm this is the case.
->
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->   .../testing/selftests/kvm/x86/tdx_upm_test.c  | 88 ++++++++++++++++---
->   1 file changed, 76 insertions(+), 12 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/x86/tdx_upm_test.c b/tools/testing/selftests/kvm/x86/tdx_upm_test.c
-> index 387258ab1a62..2ea5bf6d24b7 100644
-> --- a/tools/testing/selftests/kvm/x86/tdx_upm_test.c
-> +++ b/tools/testing/selftests/kvm/x86/tdx_upm_test.c
-> @@ -150,10 +150,10 @@ enum {
->    * Does vcpu_run, and also manages memory conversions if requested by the TD.
->    */
->   void vcpu_run_and_manage_memory_conversions(struct kvm_vm *vm,
-> -					    struct kvm_vcpu *vcpu)
-> +					    struct kvm_vcpu *vcpu, bool handle_conversions)
->   {
->   	for (;;) {
-> -		vcpu_run(vcpu);
-> +		_vcpu_run(vcpu);
-Why this change?
+Extend the goto chain to properly handle the case where evsel allocation
+fails, avoiding unnecessary cleanup operations on a NULL pointer.
 
+Fixes: cd63c2216825 ("perf parse-events: Minor __add_event refactoring")
+Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
->   		if (vcpu->run->exit_reason == KVM_EXIT_HYPERCALL &&
->   		    vcpu->run->hypercall.nr == KVM_HC_MAP_GPA_RANGE) {
->   			uint64_t gpa = vcpu->run->hypercall.args[0];
-> @@ -164,6 +164,13 @@ void vcpu_run_and_manage_memory_conversions(struct kvm_vm *vm,
->   						  KVM_MAP_GPA_RANGE_ENCRYPTED);
->   			vcpu->run->hypercall.ret = 0;
->   			continue;
-> +		} else if (handle_conversions &&
-> +			vcpu->run->exit_reason == KVM_EXIT_MEMORY_FAULT) {
-> +			handle_memory_conversion(vm, vcpu->id, vcpu->run->memory_fault.gpa,
-> +						 vcpu->run->memory_fault.size,
-> +						 vcpu->run->memory_fault.flags ==
-> +						  KVM_MEMORY_EXIT_FLAG_PRIVATE);
-> +			continue;
->   		} else if (vcpu->run->exit_reason == KVM_EXIT_IO &&
->   			   vcpu->run->io.port == TDX_UPM_TEST_ACCEPT_PRINT_PORT) {
->   			uint64_t gpa = tdx_test_read_64bit(vcpu,
-> @@ -241,8 +248,48 @@ static void guest_upm_explicit(void)
->   	tdx_test_success();
->   }
->   
->
-[...]
+Changes in V2:
+- Extended the goto chain with separate error handling labels instead of =
+using null pointer check
+- Reordered jump targets to avoid accessing NULL evsel members
+- Added Fixes tag
+- Updated commit subject to use "Prevent" instead of "Fix"
+---
+ tools/perf/util/parse-events.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+index 8282ddf68b98..8a1fc5d024bf 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -277,18 +277,18 @@ __add_event(struct list_head *list, int *idx,
+=20
+ 	evsel =3D evsel__new_idx(attr, *idx);
+ 	if (!evsel)
+-		goto out_err;
++		goto out_free_cpus;
+=20
+ 	if (name) {
+ 		evsel->name =3D strdup(name);
+ 		if (!evsel->name)
+-			goto out_err;
++			goto out_free_evsel;
+ 	}
+=20
+ 	if (metric_id) {
+ 		evsel->metric_id =3D strdup(metric_id);
+ 		if (!evsel->metric_id)
+-			goto out_err;
++			goto out_free_evsel;
+ 	}
+=20
+ 	(*idx)++;
+@@ -310,12 +310,15 @@ __add_event(struct list_head *list, int *idx,
+ 		evsel__warn_user_requested_cpus(evsel, user_cpus);
+=20
+ 	return evsel;
+-out_err:
+-	perf_cpu_map__put(cpus);
+-	perf_cpu_map__put(pmu_cpus);
++
++out_free_evsel:
+ 	zfree(&evsel->name);
+ 	zfree(&evsel->metric_id);
+ 	free(evsel);
++out_free_cpus:
++	perf_cpu_map__put(cpus);
++	perf_cpu_map__put(pmu_cpus);
++
+ 	return NULL;
+ }
+=20
+--=20
+2.43.0
+
 
