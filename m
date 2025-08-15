@@ -1,166 +1,169 @@
-Return-Path: <linux-kernel+bounces-771267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE387B284DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DB3B284E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAAFC7AFAED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:20:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2A47B37A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABECF5464F;
-	Fri, 15 Aug 2025 17:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7282309DDF;
+	Fri, 15 Aug 2025 17:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="iLEkY89z"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NFttS+lY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0392F9C3A
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6692A5464F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755278513; cv=none; b=c3q6Hr0PA7ajLV4RuT9MhsecbGy9nWWicw3XSe1fJhvi7KmNw+gko6NOIpslqKJIdtI7HxK5QjGPVDaMoeHgPykuJKx6oJd/HLkSQJtpn6esQvz86oKw8ihXMG7X+gOlRy12bJKStKuE98QNC5xYaIEqSekNXwjXX4fBwdl1kis=
+	t=1755278667; cv=none; b=bhhxrGFPUFG9LuHD1gEbTnyNL1DDJkBatjJLi4UBPSDyxBVMrILDCJadBpHMwBOMTtGyvKriN77wShPBYdzB7Dl+prf+2zsCi7r8P5bqRvuIM6wmug38oxVqiFxV1RuXQliZDkJi/SFkFFNXeSrbxFF6RcgHAIHs7ZMCa8vvJQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755278513; c=relaxed/simple;
-	bh=4ZL0bRDd8O9uSHfWegdNoycSbwD4KpHOyXInfbC9h7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p6mDItTq8hzTmnWVEnmBLzbx21KAmny24+IlUiCHGou9GQXWtAzHP1OyHgUoC0xYx8fe3iVqw72G0iX/oDqUTQwpgWJAtxZmTk+oIk+shqFRdgY/NIu1PBx+g1pHDDUNOkPfGyIzce3mRo0wqUA4dAhFKS7aJtY98/F3ASYNYEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=iLEkY89z; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso14783925e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:21:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1755278510; x=1755883310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZL0bRDd8O9uSHfWegdNoycSbwD4KpHOyXInfbC9h7k=;
-        b=iLEkY89ziLc+D0yfDM4njI5FxTsbqqteLb/msTh3o2JYS3ijlhuwzs1O8FMXVyKyDi
-         ubmkawJRwPRwc7jXu1ZSqYEIvJxXfmeNMWSAkm5nu7XWEdDD8umuS4FW+aipCgCZ7KsD
-         Ku3XVIk0Lk7E81FLcNyuW5rSd0WoQ2oJvexBs=
+	s=arc-20240116; t=1755278667; c=relaxed/simple;
+	bh=/LB1x4MuYCAm4u9ZYS/2Z2F9Vv22NA/IaCMMGFomePc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T1gJTViIZsfwWu6LJmgEuyp1JLSBzKqm3957Z2fiedUoXFsOJkZxZ1jRM4sC1nexxxH6BVZXsemRar5yTo+ayN7cUagFW1AaoF250tJhJxaBrv5wBX7hqceVAR33BsRDUFBMzcZJrL6fAG/o6923jDWpRsOqKW3xBuFda+rsTPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NFttS+lY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FEJFZV022210
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:24:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=3x6BuZcuYvtL28nrF1fEIU06Y2Cx3qSZPx1
+	q+SLHa/I=; b=NFttS+lYGJ4HkhxFyLnAE9QA7jZYFyR7yQpMmE5ox3E+eJyMzkc
+	JGm9yyHNHpzQKBFALNPvNrMKDGJEkc4Ho1rrHsd7P8VOTv+3ph5meiUHmK8pUuZc
+	y9rrfGskjdJIp8bPEsvV43cs2nIpKvF/uulAm95Gjfy2/iNoaY/3+sho3UtLtFaC
+	BLUAVvLe6G0MCT5p/804a6UOVKNq2witAroElcVUg/JfwXJt3XjhaJmzpidqEUVR
+	QBmS6Jlgl5AmcVNUHAf1nwKnFcLSDkTpLxb3ieZpF+Bw4cgl1RIGegvISJRuDBhQ
+	hMOBkvQBDFlr3P4+NXr/Eo+KOCrX7CPyxDw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g5hmknkw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:24:24 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24458274406so45908295ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:24:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755278510; x=1755883310;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ZL0bRDd8O9uSHfWegdNoycSbwD4KpHOyXInfbC9h7k=;
-        b=MG/2z1XItLpuqzOoHO8brwlpmoOcj6K2HnxysNs4yWQ9w4ynpYZcURKXtZE2pB74W5
-         1RubYOCjIkQOQlwcfU0S1+M2/1vLg3+G4jzeraWbqdFtthxgGqRYjvO+Q/ZJq/+w1SK+
-         TzXL72iwQEBNpNn5BdtKFrNaY2HrjUNdD1+BtMuHeQ0R/bIZJmP3Xh7v04SUWwKuYvgb
-         fLHC9toSHCT4IYDYETTXas1IU5+oj9VTuj+TEQg6XgY79lh276J4DGmTHYFEOzDttOYe
-         BaT7te021gGibcAS55gjyAYEP5U0oDW0elEod3MQtRyiipec5Kmj+s1C6aFSPc/Lxz6J
-         +kPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWivdS0pTljxlcogVpGsWMt7TmG1IEsPDVLSsUDnAo9gM9aNEbs75Sit4hxY2lXwxuNagk068AWqJ/RbnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySY3xVp9lYCSUDd/RXiPQCyphsrGuJOPUP4Ehm5M/5EWVcuKFj
-	ObFIc5rMM9VaA7OQdmbclasbDSEkQSnjyJRUNir8rm7EgrSN/d/4Wx9CgmLTK6hBXIM=
-X-Gm-Gg: ASbGncv0VvzqSfdUNnzgorJyJzTfmn5hIfOoqWQtBtHN0TmFnfLEkKzR8Ap2CC7E+4q
-	UTFixflzxmIBU46ZrBXRS8M+thYN/FaYCBKjFIrNXXOIGu08dM1ZMjyLf+Tj8RTF/BQcAaHjmNd
-	pub2XAhN+LedfIxzVUCqwVQCgiYEfOWjPRvjEWPuPaggsLiz+4A0XcbT1ZYcRLr89KuKibXbrQy
-	wH8jemg4L0WYSv7A+yaG6HDlrEmU6Hg2edw7GoAay0DlDEQbNMGiEJ4o3EtJ9CIYsvSxjNoyLSi
-	iAkIPFI0ijZvC3ZMPibcI2JyuVPCOphxo9vQopCd6RCPeP7hCyeDLEtL/OXpdn4bKT8hqvUzAvX
-	uD523HtFJdE0OWRVoH9bI+k7zWeIWtuXkw6zV27km1ipdxCU9lic0XQsCci03ajFBISor
-X-Google-Smtp-Source: AGHT+IFLpF5jMiMYrRRBHdAiBCob7Fl8EGquPFWrJyKnNndR/zM6RtCW2pKmmcymsSU333i3DF1edQ==
-X-Received: by 2002:a05:600c:19d3:b0:459:df25:b839 with SMTP id 5b1f17b1804b1-45a2186e2c2mr20864005e9.33.1755278509683;
-        Fri, 15 Aug 2025 10:21:49 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a21aa51cesm18029915e9.1.2025.08.15.10.21.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 10:21:49 -0700 (PDT)
-Message-ID: <7594ecd7-994d-4cb8-9f8a-b6c1d4b01e17@citrix.com>
-Date: Fri, 15 Aug 2025 18:21:48 +0100
+        d=1e100.net; s=20230601; t=1755278663; x=1755883463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3x6BuZcuYvtL28nrF1fEIU06Y2Cx3qSZPx1q+SLHa/I=;
+        b=GDQ6H45kHyYqfGyyWxiz9koHq2751AFTuYoL8Z9pPFYb6/DhACyL9jTgYcLvJiNhc3
+         8TsOQMLeNWlCBXCjy8n2x4LSqd/C/cNw7yTOv9WD06Fq+iRptTR9+JI6Hzw+ikNRmq9w
+         R5jYyymRI27iEChUNuYoV86o9XNJ2l3oRA4Y6TCQaoQocWyCPckeCw/U3djcH9EY60Y4
+         GCYvmRDeEt2JKkkoK8ssdmmt2XGC8bPpd8j/miFgkOzRUdaL0/4zvYQc6OmjvAbFmJqB
+         nqK1IoMyIj4BKQ8ZsHUv2t75U2n5EMTHDZI+hWjZSDw5BesG4vjmX7tAkTbI0GFIGG6S
+         nd3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZLduSDgBez4X9IbTiTIGWg+YsHfN5cE+9RGuIiyEqN5f/ARAiQGgER9ho6YNKaJzCPkavJqqDjnzWjws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXYGTuZGmlZdBCdV7fvmjF4MdqLeAC6m8PRdyNf5VoaCO/8QP
+	lZZggrnh9aPp9Qo1PDOLm5AydJ7SiwmjU9VUCf0Y+xsfLwlTV889xGxlYVPNTQXKf8M29ul/diV
+	Xu89OUPcOXUjVamXTvrZHXOFub9vYt5khYv84GUmg2YYdOomiilOw/fYU9pAZMGrzdAw=
+X-Gm-Gg: ASbGncs74LDQUwkZcVT44S8+9I/6QfMhm4cuSe5yJ+UMh3YXqin8LeIJ0aL2/9fO7SM
+	HLbWHPgbzSomLp1RvwlaqpvCkmJ6biLiDFTJ1OFXWHSQxBZ3+nr+zp0okjGuXM/WaDxXHla25Qx
+	gtWt8y3La19Tmu+02QXG1cMqFxbSE6pwmHecfy9eL5OsNcL4m8YHqt+Vn3s4aYvqPGTM0tp2YA6
+	1YNSF2vV3r8JRk802an8p/Qr5MqxbMkfQCwE6+aPHZe33n91p4cFSZ4VrC2ZnBgXX5qR2ctojMJ
+	sMeoKAN4+yMqSuYVByjaN6L5y5h1YckWTkeqBjxiiN4NS0LLfd7JzSY3zOtK/MMZyzT5hgKu48Z
+	O
+X-Received: by 2002:a17:902:d485:b0:242:c66f:9f75 with SMTP id d9443c01a7336-2446d9827b2mr40064975ad.55.1755278663138;
+        Fri, 15 Aug 2025 10:24:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5M8anx90Lfv7XqfVtWP0jnq8FQcm1RoCJc/Do3JlKqE7ilXwZ5DRXQ5mWQJWHelWdjx8PWA==
+X-Received: by 2002:a17:902:d485:b0:242:c66f:9f75 with SMTP id d9443c01a7336-2446d9827b2mr40064585ad.55.1755278662684;
+        Fri, 15 Aug 2025 10:24:22 -0700 (PDT)
+Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cadff5asm18404025ad.42.2025.08.15.10.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 10:24:22 -0700 (PDT)
+From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+To: Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, kernel@oss.qualcomm.com
+Subject: [PATCH v5 0/2] Handle shared reset GPIO for WSA883x speakers
+Date: Fri, 15 Aug 2025 22:53:51 +0530
+Message-Id: <20250815172353.2430981-1-mohammad.rafi.shaik@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-To: "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
- scott.d.constable@intel.com, joao@overdrivepizza.com,
- samitolvanen@google.com, nathan@kernel.org, alexei.starovoitov@gmail.com,
- mhiramat@kernel.org, ojeda@kernel.org, linux-kernel@vger.kernel.org
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
- <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
- <20250815074939.GA3419281@noisy.programming.kicks-ass.net>
- <20250815102839.GD4068168@noisy.programming.kicks-ass.net>
- <20250815103055.GE4068168@noisy.programming.kicks-ass.net>
- <fc0715e0-42f2-4b5d-be31-ac44657afc56@citrix.com>
- <20250815105908.GB3245006@noisy.programming.kicks-ass.net>
- <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com>
- <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDExOSBTYWx0ZWRfXwZRggjCj50R8
+ q0cD8UaJdsbu+aoojrhqo7LNNHV+oG/5TaLtGjODCdPH7MeHUU1Wh535Y9EK+WeneAlTEy3VQd+
+ YQ8ZT1kDVTCmHT35YZapeMrC76GMBzpRPvVQUm23Xa2kxM3BBs8WJIDY841zT7ePtXRgw+l3QYh
+ OsHUeoVbD0yuArTgugSI63lw6SirRC+BcKOgXpOuVyyox8UwVt1jw+i6VTyB7O/qLABgh74Bj5d
+ rI2sK+VWUgnJsb7vrf2HVJQGh0pdbXitGR51sDVCWzezraVgbejEQTSAjgsemOnHx222AxNHnLH
+ BEbCNPUGCMgxfS9zBlBu66gQ2/a+HyDfRXZDyKEl3zSXJIPs0gzqDgo4VxZ8j+J/zXLNi9pDmHK
+ cWs1Crzl
+X-Proofpoint-GUID: OMdxQ_dj3LIU6qUk4-adgUpWN2xVBekw
+X-Proofpoint-ORIG-GUID: OMdxQ_dj3LIU6qUk4-adgUpWN2xVBekw
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=689f6d48 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=fihhyCgpykPbXYUG4mgA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_06,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120119
 
-On 15/08/2025 6:14 pm, H. Peter Anvin wrote:
-> On 2025-08-15 04:19, Andrew Cooper wrote:
->>> CS Jcc, decodes to Jcc,pn for non-taken
->>> DS Jcc, decodes to Jcc,pt for taken
->> Ah, thanks.  I was looking at the hex in one of the comments and still
->> couldn't figure it out.
->>
->> So with this notation, we also have the dual meaning of ,pt between the
->> P4 and LNC.  At least the encoding is the same.
->>
-> What "dual meaning?"
+On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
+WSA8830/WSA8835 speakers share a common reset (shutdown) GPIO.
+To handle such cases, use the reset controller framework along with the
+"reset-gpio" driver.
 
-Well, it has different semantics now it's been reintroduced in LNC. 
-(Only has any effect on a prediction miss, and causes a proactive decode
-resteer).
+Tested on:
+	- QCS6490-RB3Gen2
 
-Sure, it's "just perf" so can be argued as "compatible behaviour", but
-people caring about the ,pt / ,pn properties do need to know the different.
+changes in [v5]:
+	- Removed multiple error logs and used proper shared reset API.
+	- Link to V4: https://lore.kernel.org/linux-sound/20250806181818.2817356-1-mohammad.rafi.shaik@oss.qualcomm.com/
 
-~Andrew
+changes in [v4]:
+	- Dropped v3-0002 patch, which is not required.
+	  Fixed with proper error handling for failure cases.
+	- Link to V3: https://lore.kernel.org/linux-arm-msm/20250727083117.2415725-1-mohammad.rafi.shaik@oss.qualcomm.com/
+
+changes in [v3]:
+	- Created separate patch for devm action to safely disable
+	  regulator.
+	- cleanup the v2-0002 patch.
+	- Link to V2: https://lore.kernel.org/linux-sound/20250718104628.3732645-1-mohammad.rafi.shaik@oss.qualcomm.com/
+
+changes in [v2]:
+	- Addressed the review comments from Krzysztof, Dmitry, Philipp.
+	- Used devm_reset_control_get_optional_shared_deasserted() api.
+	- created deasserts/asserts functions to handle reset gpios.
+	- Register devm action to safely disable the regulator on device removal.
+	- Link to V1: https://lore.kernel.org/linux-sound/20250620103012.360794-1-mohammad.rafi.shaik@oss.qualcomm.com/	
+
+Mohammad Rafi Shaik (2):
+  ASoC: dt-bindings: qcom,wsa8830: Add reset-gpios for shared line
+  ASoC: codecs: wsa883x: Handle shared reset GPIO for WSA883x speakers
+
+ .../bindings/sound/qcom,wsa883x.yaml          | 11 +++-
+ sound/soc/codecs/wsa883x.c                    | 57 ++++++++++++++++---
+ 2 files changed, 59 insertions(+), 9 deletions(-)
+
+
+base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
+-- 
+2.34.1
+
 
