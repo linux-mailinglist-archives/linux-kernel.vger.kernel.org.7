@@ -1,218 +1,220 @@
-Return-Path: <linux-kernel+bounces-770268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1186B2791D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D4B27927
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6284AB63CD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC85AA3B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355442BDC0C;
-	Fri, 15 Aug 2025 06:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FF52BD5A7;
+	Fri, 15 Aug 2025 06:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUM1IxY4"
-Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="R5gE+b+q"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazolkn19013082.outbound.protection.outlook.com [52.103.35.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB53B293C42;
-	Fri, 15 Aug 2025 06:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755239052; cv=none; b=hr57pHLYCBwIbDsMMTkfFLdwTr9kQcEFrJ32x4en102tRoL7H1wQ/kbdddbwy2odl3IstfXbHBiV9QB0Qsw+J2WW4ZjF8Pp5CLLcuotwkU+EonqHEP6tqQd7/+NlfBXjS/L+iMWxYBdmjKPhnVDubrw3TTQX/Ofx/uo/wbaI3Eo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755239052; c=relaxed/simple;
-	bh=iIOcKGg0BZdG2Y1y8FQghjQJrB5hQv30DjYqir25x1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NGotRKv7F4eY8dHBXlK8VkKxXwI5gMD1sDU93/q/eR9MpE5sxUjifeuHaJe7CBKYScwicpt7H12VU8zCHT97NbhAI1LJOICQuitOrpqp2o/VBI7TUIls5TQPFFlhr5iOg+V+pd0QYl/vXsG7agSe2qPeJ8ybhujf4qHBq5JA0CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUM1IxY4; arc=none smtp.client-ip=209.85.219.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e931cae27c5so1696547276.1;
-        Thu, 14 Aug 2025 23:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755239050; x=1755843850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+GoQBPhmL2f6FsydtPjyCuCttyD7KlTP/GQ+sRZqNZE=;
-        b=mUM1IxY45rb7aH6loKT1L8GEuS5FOM5Nox2uRu9GjKjct/W1jHERt+KwrwWxOLKmu6
-         J94KlxWSFVffjWrxvhDWSJvGt9QpjZiMezp2S4Q4Y0uihXmGKzbnuCba24uoIw+ERJEB
-         ji6gokZZ1NuQxS8uoMXuIUKJXQrARDfV/9NGOrXyVuoKIKAMuAiUtB0Wsh99WCIpDP3b
-         4mDO8pxmKVSDs7sMkGzhAn3Lrulzu1fY1qQpuN+vND5JIkdbQ1f5fziZOmvXxI0lhZQ1
-         K0Oy14Kd1ztaK2PQKSQyKSoLXbjabd8hkjmt5zhScXLrJpgJCI/4HDlHXsXaoiUOixVq
-         xy4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755239050; x=1755843850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+GoQBPhmL2f6FsydtPjyCuCttyD7KlTP/GQ+sRZqNZE=;
-        b=awyaNuWWMHHLoavh/vz5SxZXsq0N8rgsCDutOSNdG/Q48p8MpwxqHP/0K1f3ApJpwU
-         Hb9xPGPiV4EWpg5KUWgwTXJBtG4Q6bWygNoMq1oSGxKBjKVXVO8Y+50/O8SQBhtOufIP
-         fD7dheXANDi2Ad/YLF9TrjxQ1h7GIMh8YGxuNjBLmIyt/XHZEEeBccBXAwQBv80AXRRI
-         n1TIwxnwr/6wDNzXuohK0R5U3OPjHfOcJxh9p1SkHF15qz0I93SZJs3OzzfPQNV5okLq
-         k2wGGVKfX8Qd48sqfii1KUj4sXj1PqcpncNrs8GDsrPPRTxUHdUmLgxX9OeVcerSzmaD
-         dYDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUl27BFMphA69tROjnkHd7t0/EHTONMAF+Eq0zE6funo1dPu8G86Z8+DTGtB0RStHBCEusOkJa5GjXp0CCTx3YLCMxJ@vger.kernel.org, AJvYcCW+qSeImsYonvBJXv9nURz2utq7JCPQlUYfLEdVGR1arO0xr1jVUVIjuMfauFZAvHDS+Pw=@vger.kernel.org, AJvYcCWqh3LIJ2D2OsYUGeZy8tERRtFEGzHckWHGQmstN2O5kVut+1W8dMczk6kCDwd1hwm/ni69QT0SXnAMnUPY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQiltMk/oMx/CZCSX8mOLIP/fTvbXeO5TqAoaFJsrAm8T2m6Rr
-	Gk41ayiepbczvXReZkmOavrLlgzGP7CAQt6++Lg2J5boiV2y1GErQeU0elPiF/SDjuyXsk7AnHp
-	C0ytIib6iRuJ88WeMmI/2XNQ2lPjujkHLRm+KbtI=
-X-Gm-Gg: ASbGncsvWfkp4E9rkFXylMKSi+wAOvGRCE2grGQc2mRpRkeKLHFALbT8YTNRI1Jki6V
-	QkTqjA3kiyBiHgfQwps3EYwkBaW2tCxHwpbZ3Q0i5PL20Zpx/LDbGPDsxJNxokBM8Yo9PPZ1k8B
-	nGTIAAOawrbFN4CfDfEDfKXlVzjNXiwHjOkqOp9LM9Ql/DlHKbmqgzhRKCWbLaO12lp9U6c513+
-	KCt3nE=
-X-Google-Smtp-Source: AGHT+IGRT3oY2R2FJjFrJeAdKNlWxRKqtSPewDT0Fts3pT57ovruUEca55cDWIJcF9IGePWNDHaUwKRB5gUYneoFpOk=
-X-Received: by 2002:a05:690c:48c6:b0:71c:4271:c4e3 with SMTP id
- 00721157ae682-71e6d90e441mr12082407b3.0.1755239049835; Thu, 14 Aug 2025
- 23:24:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A651A1EE03B;
+	Fri, 15 Aug 2025 06:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.35.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755239067; cv=fail; b=REymrkZf4t8b+3NEmzdVEL4FnDwuI8rUpiUHxA2T/wPUa3772wMU0kOHmhbVDjxcWaw/cb3ih7YJ8OmWjsCxyueT0kmK7BdGiFRfTqMvNUIsoxdG9PXPdFWuKDDJpRNLdmaGrDLPAa9STkO7/b3GDTdUmXGaGkqd1IIvH9dmrb8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755239067; c=relaxed/simple;
+	bh=KWAHbxVGZzvaH6AvMkY9jxe+moqN5aVnLTY4AFGYYXU=;
+	h=Message-ID:Date:To:Cc:References:Subject:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bQZNEmvwvCDS+B05f6eb4fQnskjTo+Ujrxk3ofrTyVlKcU10tr4q9MO+3yVWlEs4FmC0a/K5cZxTRaW29pvMmN6/u5dFmysx5SBi7cqEA+m8NzUsXHQXJnsq4AkwTmOidDjheI2bz8fjAM3Q9f264k+QZ8medN9hAMRVuatlyc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=R5gE+b+q; arc=fail smtp.client-ip=52.103.35.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sTHjvc0RHdo4vyNWXB+b1838k+RyqW5Ia01ET8j70zOSMukvovdtSyHY0zzSNqdaOxCrWxM48hAYyvdBqiy3nOcI6l5/JdChsGbWOSjMQ5DwHTiklaHhS6av7Z9xyR/jt9kAHKnhztMJ0XPhHAbMD8njj2kNiUYAeUIklwgfpHEtHv/v/r14qu9TFKRqjB9WFxb0kCGol0EYG4EczA8ndLyJ/u7654PxszokEVUBDq/KvDRTYocMIzDSFokHgyZUNL1X/1BdZ+YAwKUfjsDUDPTIfF3TFo6Z9DN68wyn2nEfWzOyKsWQBA2LmbzochpqAOrIvAljYoNQxJ0uAEvoFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v3NXaY5U2VScmWaLDxqpvCZ2T6yktsy9JCQGsBGCMQw=;
+ b=TFJVRBnOHK9yvajdQJPXjFmgg/imX6vSd6p7AxGBHnCRRwqUCAMM1LWQydOYWqEdcWTtxPnmVaUz7dCqZws2DUODPwNdtoHPu1RvfpYT3L0YM8mXKWU/mhuuYZedR2t7pHU1gNStADMG36KcOryDe7V+OTqq3B1cxVoG6G9PqG0rRUkhE13eETVW/uYzgt1xFAZ/4b4ntiq3SHC6lXH/X4o1nA+9RznsgsLlQRN6ouyp0rtIFpgAhG/7YePHlK7z2dMpCXl/M1AtM09E628Oyka1N+rXCR/QtwHDKXAQr8uQNQdNzsI24zObtyUuLx5lC1rrqIoxufaSXwRQeVRnAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v3NXaY5U2VScmWaLDxqpvCZ2T6yktsy9JCQGsBGCMQw=;
+ b=R5gE+b+q3zPBhGpQD2NheRHp8BQIKkCXdrT3cEIfmYqfHhpJ0sbx3pDq1VwhDH6gcxUZWrRg9Os3hcgqZZjgSlmPw37F+MsyjEu3k+X14aYdNmDXLpd+sy8T2VnBil64z8durdivZJEWmUfwXVH5thN+5twdXTe57xaKchHx0G3jlbBnY6bIOFmyBy6Fp3VHTUWDoWrlI+iyBYOOC8+Nv1nQPo9FJxk2j3IsFoinCWAztuD18bqV1F+HrmEndIDgUZRmN3Gl+bPCQs//yFrV8TFpx6Ev2FO2Je/Z1JV0yW/XfzP0yPiC688PTKR7xc9RUiWbYF/3D1ZopuIw7tgegg==
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:175::17)
+ by AS2P189MB2605.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5e5::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 06:24:23 +0000
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::5756:694d:1641:3b13]) by AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::5756:694d:1641:3b13%4]) with mapi id 15.20.9009.018; Fri, 15 Aug 2025
+ 06:24:23 +0000
+Message-ID:
+ <AM7P189MB1009D309CC3B36B4A4082BA1E334A@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Date: Fri, 15 Aug 2025 08:24:21 +0200
+User-Agent: Mozilla Thunderbird
+To: stephan.gerhold@linaro.org
+Cc: abel.vesa@linaro.org, alex.vinarskis@gmail.com, andersson@kernel.org,
+ christopher.obbard@linaro.org, devicetree@vger.kernel.org,
+ jens.glathe@oldschoolsolutions.biz, johan@kernel.org,
+ konradybcio@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_rjendra@quicinc.com,
+ quic_sibis@quicinc.com, srini@kernel.org, wuxilin123@gmail.com
+References: <20250814-x1e80100-add-edp-hpd-v1-4-a52804db53f6@linaro.org>
+Subject: Re: [PATCH 4/9] arm64: dts: qcom: x1e80100-asus-vivobook-s15: Add
+ missing pinctrl for eDP HPD
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@hotmail.com>
+In-Reply-To: <20250814-x1e80100-add-edp-hpd-v1-4-a52804db53f6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P190CA0005.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5de::17) To AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:175::17)
+X-Microsoft-Original-Message-ID:
+ <f25fb8b4-d6a4-42a3-9d35-18139f4c34f2@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731092433.49367-1-dongml2@chinatelecom.cn>
- <20250731092433.49367-2-dongml2@chinatelecom.cn> <20250815004023.144cfbd9ae39fac9ce80ee98@kernel.org>
-In-Reply-To: <20250815004023.144cfbd9ae39fac9ce80ee98@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Fri, 15 Aug 2025 14:23:58 +0800
-X-Gm-Features: Ac12FXzrFeWoMvqbnjqtW4VN89JarCpfhXGP3yEjG-Q_tJXUzlSuExWxW7z0KlU
-Message-ID: <CADxym3YxHOYxZxrdd4vkU_sj8p7VNW=HjLOo9nQgO3jkAAfjng@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] fprobe: use rhltable for fprobe_ip_table
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: olsajiri@gmail.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
-	hca@linux.ibm.com, revest@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7P189MB1009:EE_|AS2P189MB2605:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2352a417-0e74-4ddc-157e-08dddbc45f76
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|6090799003|461199028|21061999006|19110799012|8060799015|15080799012|23021999003|3412199025|440099028|52005399003|40105399003|18061999006;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkhzZ3A1WHFqUWxETnVjbTBtaXl1VGhkQmwxb1ZnNkQxSy9reks0WFBxT0l4?=
+ =?utf-8?B?UFBoblcyL05laVVFck9CY2s5VVc2VmxQTGxzNmZlNGZPbmZsSTZVMU5TelBB?=
+ =?utf-8?B?Q2xmS0NFWW9xdjQ3Ylg0UXE5VjkrTDVUcWRoMmV0THhteVgwWCt3T2QrTXhF?=
+ =?utf-8?B?QWo2K3dHYjRDblFuUktRTDhDcVMvT0NTM3d0a0cvYTJsUkNIN2NyN3NwUWRl?=
+ =?utf-8?B?cGFRMWJWeW45UWk5NXRYOEpkc1J2OGxIWTZxeWFJeURrNytKaGh4dGg0MStU?=
+ =?utf-8?B?Kzk0em5ETG04LzR3WDFDSW9QZE1wdXR0cDloRmdJbTVVN3NRakZmQ0FRSHJ5?=
+ =?utf-8?B?MzJPM1FQQW1aUHJyc0YreGVwSDFTdEhNdk9jM0JDN1lWOU1OQStvQTc5S1lJ?=
+ =?utf-8?B?MlppVXMzamVrUXRmTlFtQUxRYUlxT3J2blVIemF1RFEwajRqUXhyTFNrK3pr?=
+ =?utf-8?B?SGlkdDM1L2ZLMWd1SXh6bE1vZHJ6RE9mVjlSQmhYUGUvUlJyWXROQnk1cFN0?=
+ =?utf-8?B?eEdPMlJxY2FlUlhVTUZFOU90cEUzdUgvVkltODJoNG5WUkRNNk93Y2FUazlY?=
+ =?utf-8?B?YnkzdXlNM0lYam5ISDNmVXd5WkpOallXWlgrZnlOdmVjYi95djZSVmdhRERw?=
+ =?utf-8?B?NG1yaFVWUTBCd1ZoUy9EbDZHOHlIZ3Q5aHE5ZUdpSnIzOGF5M3laQTBnN1c5?=
+ =?utf-8?B?ZlFmNEpDWTh5VDduZVd1eHFwcStNUEVxWTVEZ0dqUjgxeHNTbm0yeVVwTGxk?=
+ =?utf-8?B?QVc1R2hEOXZxZS9wTHN3Sk5TS2pEUXQxQkpLNTFPN3RIOHhNb0t4U1pwNmNq?=
+ =?utf-8?B?Y0dSS2tJNlE3YlAyY0M2ZWZBVGZ0bkJIMm5HVzJRR3A3WDY1VmpZOW4vc0JL?=
+ =?utf-8?B?QmR6TVViNllscVBIcGdUeDYyRVhQOC9DMlpBNU5CTitSZmp4S0pZNlV1K29s?=
+ =?utf-8?B?R2R1NVdWVGVQU1NPeUtxNngyMEx4c3RHbkw0RlNUc0JFTERJWVA0NmVyL0lN?=
+ =?utf-8?B?NnRvbzM0MjlUcWEvNG9hRzl1cGVGdVdVRmlsbFhxWWtrd3ZVbm1HemgvSXZL?=
+ =?utf-8?B?OVFyd01OclpkWlB0VkduR0pRUFVQSFlOVVlWSUpQbmFnZlBJZlRDczdqbjlI?=
+ =?utf-8?B?Y09aaUMyRUVGdTJOcmkvTEJQeklDVHhuNDlGZERYMWVXTXErdUVJR1g1K3pp?=
+ =?utf-8?B?M2dIMDdhcEF1WHozZ2dydmlCZHNZVVl2cGRHTEk2S0NlYUpuZ0JUUWhpUnBu?=
+ =?utf-8?B?dXd3QnhrUU54L0Yxdkx2V1Ywa1RyTWQvR21ObDRQdFVZNlVYemg4YWtXMlc2?=
+ =?utf-8?B?SjNWRXJyR0NrSkR0OUt4UHpDQ2h0WC9wcGx5eUcxQ2xVTFIwVlhHaVNUY1BN?=
+ =?utf-8?B?SE5CYUVQaXZ5dGU2d2FPcWRqdVR4OFBkSkVjdDVkY0NmK09wMDBXRUFJTTk2?=
+ =?utf-8?B?RUNZcUhKSmRwZkZ1SjcycWJ2bm1IWjVkcThrQWNicmhIWTJQY2RxNytoTDhx?=
+ =?utf-8?B?SXl0MGIxUzRSMTlmcVlnb3lFblQ5QVRscDAxbXlEN3VRWWY0ZHZyNUU4Qisw?=
+ =?utf-8?B?MUlTakhHSXhHWkVncm42VkVhU2ZUZ05VZTJoakRGd3RLdnRuUHZlM003S2Mv?=
+ =?utf-8?B?WVFNU3JDa0s1N2R3MllpWGlNNlUvWS8vbjdHa3dsNWJUM25WcW9IYmlrWFdS?=
+ =?utf-8?B?Yi9TMG1wbW8xWS82VjdCRmhCbm1ZK1R2SkpEVk5OOEE0UTgvRXc5K3VRPT0=?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eFB5WDhHSmZVNEU4NFp6SDRKR2ZSU3pQVkZ4VEErRUNVSnRQV3A1dk5jc0k5?=
+ =?utf-8?B?YytFY3VlWnYzb3NxSTd3SFQzT0cwWXVSNTdiS2tWWXJWQ1d4ZU9MUTBIVUdH?=
+ =?utf-8?B?Q05qZ1NGSG5PQUxXbEJQVjlIM2MyS09TazkrVWZJbnBYMjdlMGRWNWZZUjg2?=
+ =?utf-8?B?b3VNZXV5MU01Rk5yS1BZcStoOUFZNno5ckdSYU5ybjBnTjVNK1V2cmxGb201?=
+ =?utf-8?B?WDFzV1A3VC9KVDNaZjEvbHo3UU5tbEhNVytrRkxNdlljYjNOV1poTXF5ejdD?=
+ =?utf-8?B?anpaSktwZDg4S0hNVGE4azFib0Jkdm1yM0l6NjJPQVdjeVozRTc3ZU12WEM1?=
+ =?utf-8?B?dEo2ZGpjV3V6ZGpxY3ppdzc1TzlBMWpuR1M4Z1ZkUVFYTGovNGNBaHM0SStG?=
+ =?utf-8?B?RW9TOEtIM2gyOUVTVGVMNGpRV2pPcDNjTzd3QmZQeUNNM0cwalRRZkZEdzNw?=
+ =?utf-8?B?NUtIT1VPcTlQNHN1K2Q0OFdPcWpmbXNaLzJzakd2SmtKc2oyNGRLR0p4YStp?=
+ =?utf-8?B?bFlETFR5QldBcFhYM0ZhSkhHU3YxOWNucUJibldnVU9jMUlJUzJOcmtBTVBH?=
+ =?utf-8?B?KzdkZ1UvMmxVVE8yRjBXSTAzZVhNWXhLZDJoNzVIcFhKK054d3Zyc2d0MjBE?=
+ =?utf-8?B?RGtPbXRUSHl6b1lEbFFEYXpXWjlDRjlFSnpGQW5ucFZyN2hGUDB1YmVIU3Za?=
+ =?utf-8?B?aHFDYTlWTGRrcjFTMkgyOFdzOGc4NkRBY3BDdDZUcVBZWk5nUWJGcHBvdmR1?=
+ =?utf-8?B?UDFmaXZkVTJ0NFhlYUVmczFkcVd2NDV3c2U5V2lwYnN2b3ROR05YTnhIK1dL?=
+ =?utf-8?B?c0VhMUs3N0xvTHdjaklxU0JCdXlkMzNPQTkzMERYeE9wWXE0L0pyQmpLSjlR?=
+ =?utf-8?B?OFFxQkhQTlhRUE04TXlUTHlmelBNOE9jR1pTRWhaQmtuVlhmVTVvK1NDVzl2?=
+ =?utf-8?B?WEppM0p6UUFzeVhpVndFaG5GS05kQ05MWDZiMTJtZC9EOTVsNEcya2JZL1RM?=
+ =?utf-8?B?Yi9wUnhPZzdSYUQ4MWE4cDZVcGZXVzFLekpHV3F2aWdDZmtzdHYyOHV0aktX?=
+ =?utf-8?B?SXlqOGtIeFdXSHVSYWEzQXYvcUw3a0dGclZTRklDQ2xEbVd5Y0RqK0ZZVUpW?=
+ =?utf-8?B?Ymo2T2pJOEdyNTAzemRSMGJEajRyUUJOOXQ5YVZLR3hnVGdxcEMvTURaU09Y?=
+ =?utf-8?B?OHBIY3VyQUhaL3E4OWJvYSs0bmRGTGNSZUZURkpSdDlhTGNNc0pOczV6ai94?=
+ =?utf-8?B?SHBLVmlHYzVMZ09oTHNaaEdFTUsvV01tM1kwdkxpK0xtbGtEc0JCd3NIVUQx?=
+ =?utf-8?B?WnNxQkxQZ25mbk5nMTBPNjVYeWVBM01zY3VuejJJRllEdEdmVlRkVEp3VFAz?=
+ =?utf-8?B?STdyYktVQlE5RWhXbGZWUnZEM2pMOGJnVzl2OEZzMzZRQnByeGczemhKUnFk?=
+ =?utf-8?B?b2hEMHc0SnJqNjg1ek45WkpuSXhWOEFQNXZ2M1UweEl5VUNqQnpGdUJwTTFP?=
+ =?utf-8?B?aWRyQXVUd3c4V3UzKy9hRDBLeUZFb1J0bkJNcGRKUm4xMlVsMUJlYVgvZ0VD?=
+ =?utf-8?B?M3kyUjV0QXoyVVY3VGhuMnVBM0pZK25UQWd1ZTFGOTlnRG5CQUdSU0tkYXNJ?=
+ =?utf-8?B?NlppUGI4OFZRcnNtc1pSTUFTSmsxd0g0N01aVFV6YXM4a1dUL0lNZVQ4KzEr?=
+ =?utf-8?B?TGNWTEpHeWM2UEhrTFFDQ0Nvb1AyVTFDbTZTU0ttcEVlaEZDeXVUWVRma1l6?=
+ =?utf-8?Q?hs0ze8ROmIjSXwb9EMjeI+SBUzj+hRk6p3eRECC?=
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-2ef4d.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2352a417-0e74-4ddc-157e-08dddbc45f76
+X-MS-Exchange-CrossTenant-AuthSource: AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 06:24:22.9718
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2P189MB2605
 
-On Thu, Aug 14, 2025 at 11:40=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.=
-org> wrote:
->
-> On Thu, 31 Jul 2025 17:24:24 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
->
-> > For now, all the kernel functions who are hooked by the fprobe will be
-> > added to the hash table "fprobe_ip_table". The key of it is the functio=
-n
-> > address, and the value of it is "struct fprobe_hlist_node".
-> >
-> > The budget of the hash table is FPROBE_IP_TABLE_SIZE, which is 256. And
-> > this means the overhead of the hash table lookup will grow linearly if
-> > the count of the functions in the fprobe more than 256. When we try to
-> > hook all the kernel functions, the overhead will be huge.
-> >
-> > Therefore, replace the hash table with rhltable to reduce the overhead.
-> >
->
-> Hi Menglong,
->
-> Thanks for update, I have just some nitpicks.
->
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> > v3:
-> > - some format optimization
-> > - handle the error that returned from rhltable_insert in
-> >   insert_fprobe_node
-> > ---
-> >  include/linux/fprobe.h |   3 +-
-> >  kernel/trace/fprobe.c  | 154 +++++++++++++++++++++++------------------
-> >  2 files changed, 90 insertions(+), 67 deletions(-)
-> >
-> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-> > index 702099f08929..f5d8982392b9 100644
-> > --- a/include/linux/fprobe.h
-> > +++ b/include/linux/fprobe.h
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/ftrace.h>
-> >  #include <linux/rcupdate.h>
-> >  #include <linux/refcount.h>
-> > +#include <linux/rhashtable.h>
->
-> nit: can you also include this header file in fprobe.c ?
+> At the moment, we indirectly rely on the boot firmware to set up the
+> pinctrl for the eDP HPD line coming from the internal display. If the boot
+> firmware does not configure the display (e.g. because a different display
+> is selected for output in the UEFI settings), then the display fails to
+> come up and there are several errors in the kernel log:
+> 
+>  [drm:dpu_encoder_phys_vid_wait_for_commit_done:544] [dpu error]vblank timeout: 80020041
+>  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
+>  [drm:dpu_encoder_frame_done_timeout:2715] [dpu error]enc40 frame done timeout
+>  ...
+> 
+> Fix this by adding the missing pinctrl for gpio119 (func1/edp0_hot and
+> bias-disable according to the ACPI DSDT).
+> 
+> Fixes: d0e2f8f62dff ("arm64: dts: qcom: Add device tree for ASUS Vivobook S 15")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-OK!
+Tested-by: Maud Spierings <maud_spierings@hotmail.com>
 
->
-> >  #include <linux/slab.h>
-> >
-[......]
-> >
-> >       mutex_lock(&fprobe_mutex);
-> > -     for (i =3D 0; i < FPROBE_IP_TABLE_SIZE; i++)
-> > -             fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &a=
-list);
-> > +     rhashtable_walk_enter(&fprobe_ip_table.ht, &iter);
->
-> nit: Use rhltable_walk_enter() instead.
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> index 62eba17cdc87c088ca471b4cbf5b44af06400fe4..312d754df18cc71aede13f77b07846ad04d06eaa 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> @@ -593,6 +593,9 @@ &mdss {
+>  &mdss_dp3 {
+>  	/delete-property/ #sound-dai-cells;
+>  
+> +	pinctrl-0 = <&edp_hpd_default>;
+> +	pinctrl-names = "default";
+> +
+>  	status = "okay";
+>  
+>  	aux-bus {
+> @@ -741,6 +744,12 @@ &tlmm {
+>  			       <44 4>, /* SPI (TPM) */
+>  			       <238 1>; /* UFS Reset */
+>  
+> +	edp_hpd_default: edp-hpd-default-state {
+> +		pins = "gpio119";
+> +		function = "edp0_hot";
+> +		bias-disable;
+> +	};
+> +
+>  	edp_reg_en: edp-reg-en-state {
+>  		pins = "gpio70";
+>  		function = "gpio";
+> 
+> -- 
+> 2.50.1
 
-OK!
-
-I'll send the V4 later with these nitpicks fixed.
-
-Thanks!
-Menglong Dong
-
->
-> Others looks good to me.
->
-> Thank you,
->
-> > +     do {
-> > +             rhashtable_walk_start(&iter);
-> > +
-> > +             while ((node =3D rhashtable_walk_next(&iter)) && !IS_ERR(=
-node))
-> > +                     fprobe_remove_node_in_module(mod, node, &alist);
-> > +
-> > +             rhashtable_walk_stop(&iter);
-> > +     } while (node =3D=3D ERR_PTR(-EAGAIN));
-> > +     rhashtable_walk_exit(&iter);
-> >
-> >       if (alist.index < alist.size && alist.index > 0)
-> >               ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> > @@ -722,8 +729,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigne=
-d long *addrs, int num)
-> >       ret =3D fprobe_graph_add_ips(addrs, num);
-> >       if (!ret) {
-> >               add_fprobe_hash(fp);
-> > -             for (i =3D 0; i < hlist_array->size; i++)
-> > -                     insert_fprobe_node(&hlist_array->array[i]);
-> > +             for (i =3D 0; i < hlist_array->size; i++) {
-> > +                     ret =3D insert_fprobe_node(&hlist_array->array[i]=
-);
-> > +                     if (ret)
-> > +                             break;
-> > +             }
-> > +             /* fallback on insert error */
-> > +             if (ret) {
-> > +                     for (i--; i >=3D 0; i--)
-> > +                             delete_fprobe_node(&hlist_array->array[i]=
-);
-> > +             }
-> >       }
-> >       mutex_unlock(&fprobe_mutex);
-> >
-> > @@ -819,3 +834,10 @@ int unregister_fprobe(struct fprobe *fp)
-> >       return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(unregister_fprobe);
-> > +
-> > +static int __init fprobe_initcall(void)
-> > +{
-> > +     rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
-> > +     return 0;
-> > +}
-> > +late_initcall(fprobe_initcall);
-> > --
-> > 2.50.1
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
