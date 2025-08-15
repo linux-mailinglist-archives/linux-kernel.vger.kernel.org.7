@@ -1,109 +1,146 @@
-Return-Path: <linux-kernel+bounces-770593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46FAB27CE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30739B27CE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4038B621A0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0311B17FFD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64412727E5;
-	Fri, 15 Aug 2025 09:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9678E261594;
+	Fri, 15 Aug 2025 09:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikFCxz3v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k64qKfJ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77950253B71;
-	Fri, 15 Aug 2025 09:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0834248891;
+	Fri, 15 Aug 2025 09:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249046; cv=none; b=TcaqCg+ToPwiz+vp3WQqPSv5qkqlBT3DyA+LLJUeJGNDh1tZsNwNQm2/ynMDF53KlHZG9FFJwpc4Rqra+R4QNFN8hmIKCjKnnq80qSloU5YFUYJGNM1LZbCkMxdxjaIWyv5Fo05eegVhTrFsp75O0Xu67Dj9c0MLSDxCc3mBT/Y=
+	t=1755249157; cv=none; b=JI+V65cY2eHHojZ/e8wuICqipEHoBbCAGh3TCstVa2569FJ5Cb/ivHAzoJVxjfBfASyYtMjrgTwIL9Vmh2afBxvU9U4YiQUMWXi27pWjrxzQMGJGyXdK3V64We+YJ+PPNdXmaYav1mOBgJtAEwRONw8MB0MpvZwntajCQrkj9+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249046; c=relaxed/simple;
-	bh=BfdXrBj0UmYvzxano54Wp1l/E3jXjigLAPd4mfQS0g4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ogxKe+oXuhzcn1/Vi6mAjwGDql5hZn9yVwy8TQrzHJN0M8oOODgURAb/7C6rMZ1vDXN+WbSGCDky6cI1gyTBpOUb08/7sD2i59jQMvvsY35tTyNVeYtNKM13an+sTl2257wQPq+3o2Y1jItFRQ/tla6dG3JFEAje1/dLpZpmAKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikFCxz3v; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755249045; x=1786785045;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BfdXrBj0UmYvzxano54Wp1l/E3jXjigLAPd4mfQS0g4=;
-  b=ikFCxz3vaksRTQNXeYi3ZY+GPLX/2gafsjOoTw9V/GObXwLTpDlGOLXW
-   REyCVOL5Ph3LS0o3w18YzWGigBgoTHcMmpCqNo04dsrfKvUd8E4X0WDB/
-   JZbzZqqp9pEjdqnAAt7AxSxGLBhxY9q/RxweoJyE1CL3vogyXrp0MDttY
-   pWo/J6eRBR4AZIBdTWJPblleDbwxI6qMJo7P4IVPiS/4lC1WyMmTqVLO5
-   SwMRPuE3ySZ7PmAzoyxyYXoaJeUCDqKbp1tNMvto99xCf6+6V4umFXLci
-   nfylRzCjGD009gLOyTjtfhvCNmHRFbW8FEFOwMHUOhVVufpAm2LVWGvHZ
-   w==;
-X-CSE-ConnectionGUID: eTWJwL18QhqHI2EMSxm2XA==
-X-CSE-MsgGUID: 5aI2O12JSwywUQk8aYyvEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57681939"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57681939"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:10:43 -0700
-X-CSE-ConnectionGUID: bCQw11EBTkygZtcb355a5w==
-X-CSE-MsgGUID: OfYXrsb/RpyK4IBQ83cLKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="172313110"
-Received: from ly-workstation.sh.intel.com ([10.239.182.53])
-  by orviesa005.jf.intel.com with ESMTP; 15 Aug 2025 02:10:40 -0700
-From: Yi Lai <yi1.lai@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	wad@chromium.org,
-	luto@amacapital.net,
-	kees@kernel.org,
-	thomas.weissschuh@linutronix.de,
-	usama.anjum@collabora.com,
-	yi1.lai@intel.com
-Subject: [PATCH] selftests/kselftest_harness: Add harness-selftest.expected to TEST_FILES
-Date: Fri, 15 Aug 2025 17:10:32 +0800
-Message-ID: <20250815091032.802171-1-yi1.lai@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755249157; c=relaxed/simple;
+	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JniuZN8wD8ZYubEAW3MoKWWtH4KH4YnhpEw7tpgG3rFPrs94cPAlUijpv+sAj8lpkoniQhk4qT3Z2iQY0Yp5B43M9WEiPcg25uu5MBL6CoYcIFGlj6UG9b1ne4+KxVqbUehk1sXgRcmjs5gJAMozrIvOmbHMl+lE0BiT41sCQRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k64qKfJ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ED2C4CEEB;
+	Fri, 15 Aug 2025 09:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755249154;
+	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k64qKfJ6zNJDhsnuWxR0fgqX3BVaqQwvdZElR/klQAEoCxi1g56cxeHTAZN0/wswK
+	 Pq+3GThmFMau+x8U6BogKChu5yqp5BwT3RbxGdJVY+yxVsA/3n3361XvguUQYtAzo0
+	 CwsxkbStJHs9RAUy1BQLHDF5j08YA23EQWtialVtSTBmcZtV4ZgvbsnBJMyvgGhChp
+	 CJH00Qs5o00iwlgrtxYWMVa2jp4VjDFoGjgtjzcCsiVePDp+01FqKPujeYxhNnJ5cJ
+	 L4zaOZ7N9WkPfF3VfgjAaCkkSQpngOXjnWintiz60FKc8w0raVBwqKL8kvbukYzLFm
+	 Bt1jthD93yq4g==
+Date: Fri, 15 Aug 2025 12:12:10 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
+	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
+	witu@nvidia.com
+Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
+ physical memory ranges
+Message-ID: <aJ756q-wWJV37fMm@kernel.org>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-8-pasha.tatashin@soleen.com>
+ <20250814132233.GB802098@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814132233.GB802098@nvidia.com>
 
-The harness-selftest.expected is not installed in INSTALL_PATH.
-Attempting to execute harness-selftest.sh shows warning:
+On Thu, Aug 14, 2025 at 10:22:33AM -0300, Jason Gunthorpe wrote:
+> On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
+> > +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
+> > +{
+> 
+> Why are we adding phys apis? Didn't we talk about this before and
+> agree not to expose these?
+> 
+> The places using it are goofy:
+> 
+> +static int luo_fdt_setup(void)
+> +{
+> +       fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> +                                          get_order(LUO_FDT_SIZE));
+> 
+> +       ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
+> 
+> +       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
+> 
+> It literally allocated a page and then for some reason switches to
+> phys with an open coded __pa??
+> 
+> This is ugly, if you want a helper to match __get_free_pages() then
+> make one that works on void * directly. You can get the order of the
+> void * directly from the struct page IIRC when using GFP_COMP.
+> 
+> Which is perhaps another comment, if this __get_free_pages() is going
+> to be a common pattern (and I guess it will be) then the API should be
+> streamlined alot more:
+> 
+>  void *kho_alloc_preserved_memory(gfp, size);
+>  void kho_free_preserved_memory(void *);
 
-diff: ./kselftest_harness/harness-selftest.expected: No such file or
-directory
+This looks backwards to me. KHO should not deal with memory allocation,
+it's responsibility to preserve/restore memory objects it supports.
 
-Add harness-selftest.expected to TEST_FILES.
+For __get_free_pages() the natural KHO API is kho_(un)preserve_pages().
+With struct page/mesdesc we always have page_to_<specialized object> from
+one side and page_to_pfn from the other side.
 
-Signed-off-by: Yi Lai <yi1.lai@intel.com>
----
- tools/testing/selftests/kselftest_harness/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Then folio and phys/virt APIS just become a thin wrappers around the _page
+APIs. And down the road we can add slab and maybe vmalloc. 
 
-diff --git a/tools/testing/selftests/kselftest_harness/Makefile b/tools/testing/selftests/kselftest_harness/Makefile
-index 0617535a6ce4..d2369c01701a 100644
---- a/tools/testing/selftests/kselftest_harness/Makefile
-+++ b/tools/testing/selftests/kselftest_harness/Makefile
-@@ -2,6 +2,7 @@
+Once folio won't overlap struct page, we'll have a hard time with only
+kho_preserve_folio() for memory that's not actually folio (i.e. anon and
+page cache)
  
- TEST_GEN_PROGS_EXTENDED := harness-selftest
- TEST_PROGS := harness-selftest.sh
-+TEST_FILES := harness-selftest.expected
- EXTRA_CLEAN := harness-selftest.seen
- 
- include ../lib.mk
+> Which can wrapper the get_free_pages and the preserve logic and gives
+> a nice path to possibly someday supporting non-PAGE_SIZE allocations.
+> 
+> Jason
+> 
+
 -- 
-2.43.0
-
+Sincerely yours,
+Mike.
 
