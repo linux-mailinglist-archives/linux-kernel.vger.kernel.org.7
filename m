@@ -1,94 +1,56 @@
-Return-Path: <linux-kernel+bounces-769954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D350DB27550
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F95B274DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A9A189DD83
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8CA3B25C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556FA2980DB;
-	Fri, 15 Aug 2025 01:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG+EwLlE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC156292B53;
+	Fri, 15 Aug 2025 01:49:07 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8940C2951B3;
-	Fri, 15 Aug 2025 01:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9341459F7;
+	Fri, 15 Aug 2025 01:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755222973; cv=none; b=nNgxVUXt/X5NK8dms7r/6yqzXfJCk/LVWyzwPBUI1QS1Ib7irw3sgBgNiItOlPIN9Aqw2qSpF7S1Tp5+/YkGwKluq1It1T26rU+d4U8nn/EB1pXeb+XeLB9f0Ep1ftR/mCyGTSjuAYxOM0SYoU29DniKbYE4+vgt+hP+bDMbXIE=
+	t=1755222547; cv=none; b=imMBUgffzw7r3BOz5fiiZgd+ER0EDFfR0SoPlCpmZdnSJ9od7P0wAvd8714dVEvVCobfcqgAbtPtymm31W1Nlc3x3xRS2uErSAaZ86xg/Ld9lcy4K+hV23Vw7Z1hJwqcddx4U5XTbu/KSlUxoNqA5XAN2E6tFyHL3MjYHMQiMS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755222973; c=relaxed/simple;
-	bh=r/j8FaIOvHUYrSEe5Yr0T8P9WzL2BKrKUkvkK+hcizQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=La4ypF1gTexseIl+z/z12xbPtVYLMnn1hAQSoNDyGzvOnvoEL4PN66x//7v8WlHI+/pfXisppbEzG8gzk2mvYs0Va7KPCV8itKvMAslyByVap/IeuaHqJ5yNG3er2q+6ZyojN1+B76bPTzHmd63HVARrNeLG6c6cUgd/4gAW6k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG+EwLlE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811A0C4CEF5;
-	Fri, 15 Aug 2025 01:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755222973;
-	bh=r/j8FaIOvHUYrSEe5Yr0T8P9WzL2BKrKUkvkK+hcizQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nG+EwLlEJOhkwuCwR6X5CqG6huU2//edIzsEpPaK5k27aHrGoBksw17Y4x53bOrOQ
-	 Ex/wVnzSdM55Lu49HULItlCvlvdkc8S63fdLwIO4UFNHJDxnl2pFKaDaigC61tV8km
-	 9Ogophhy4DWeXTr/804dsoMvXp2clmI44j52XUUepDa6ud7Ty50aT0pHOo9k1nicoP
-	 r4HAb3RzaK71qbLu9GRxQeN3LtV3DVp2GuHaqy4Yf6iDKyp8SdPWa0h7Q8S38YvwbJ
-	 v2/2QX92Aox72R1uFo19SfbUnph3UD8V8MGb+I5ouwNU1TGQMHkveZxGneDAdqRx2S
-	 Y9HAjH4avYWaQ==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Manuel Lauss <manuel.lauss@gmail.com>,
-	=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Ben Dooks <ben-linux@fluff.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Alexey Charkov <alchark@gmail.com>
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 38/38] mmc: dw_mmc-rockchip: use modern PM macros
-Date: Fri, 15 Aug 2025 09:34:13 +0800
-Message-ID: <20250815013413.28641-39-jszhang@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250815013413.28641-1-jszhang@kernel.org>
-References: <20250815013413.28641-1-jszhang@kernel.org>
+	s=arc-20240116; t=1755222547; c=relaxed/simple;
+	bh=Z54yWXBe1NRvXtU74+14GPnATXdRJmNE1S2qdqNFXjg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IqqQb5gHljyDqqBIMgUqSjEzeUZrXA6xruaO3YjajgQmSNGiVTJibBj0+bjnWk/NnLY23+oCb9XNGo5zrAiNh+kyuw2ADtJyBxDiohHaR/RVTPfFYiz4++kgxoXNA/E8rOMGScuKAON4g/omhzwIl45bEhrzR7ZEiOBHhexGFz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c34ld3bgBzKHMtl;
+	Fri, 15 Aug 2025 09:49:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id CB02C1A07BB;
+	Fri, 15 Aug 2025 09:49:00 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgBHwNoCkp5oaw2bDg--.60271S2;
+	Fri, 15 Aug 2025 09:49:00 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: gregkh@linuxfoundation.org,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	peterz@infradead.org,
+	zhouchengming@bytedance.com
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
+Date: Fri, 15 Aug 2025 01:34:29 +0000
+Message-Id: <20250815013429.1255241-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,48 +58,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBHwNoCkp5oaw2bDg--.60271S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF4rKryxWw1UCr1UtF43Wrg_yoW5uFy7pa
+	n8Ary8G395Xr1DCrs7ta409F1rCan7Xay7Wan7G39ay3W3tr1vywn29r1Yqr1kAFs3JrZF
+	qF9I93yjkw4YyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Use the modern PM macros for the suspend and resume functions to be
-automatically dropped by the compiler when CONFIG_PM or
-CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
+From: Chen Ridong <chenridong@huawei.com>
 
-This has the advantage of always compiling these functions in,
-independently of any Kconfig option. Thanks to that, bugs and other
-regressions are subsequently easier to catch.
+A use-after-free (UAF) vulnerability was identified in the PSI (Pressure
+Stall Information) monitoring mechanism:
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+BUG: KASAN: slab-use-after-free in psi_trigger_poll+0x3c/0x140
+Read of size 8 at addr ffff3de3d50bd308 by task systemd/1
+
+psi_trigger_poll+0x3c/0x140
+cgroup_pressure_poll+0x70/0xa0
+cgroup_file_poll+0x8c/0x100
+kernfs_fop_poll+0x11c/0x1c0
+ep_item_poll.isra.0+0x188/0x2c0
+
+Allocated by task 1:
+cgroup_file_open+0x88/0x388
+kernfs_fop_open+0x73c/0xaf0
+do_dentry_open+0x5fc/0x1200
+vfs_open+0xa0/0x3f0
+do_open+0x7e8/0xd08
+path_openat+0x2fc/0x6b0
+do_filp_open+0x174/0x368
+
+Freed by task 8462:
+cgroup_file_release+0x130/0x1f8
+kernfs_drain_open_files+0x17c/0x440
+kernfs_drain+0x2dc/0x360
+kernfs_show+0x1b8/0x288
+cgroup_file_show+0x150/0x268
+cgroup_pressure_write+0x1dc/0x340
+cgroup_file_write+0x274/0x548
+
+Reproduction Steps:
+1. Open test/cpu.pressure and establish epoll monitoring
+2. Disable monitoring: echo 0 > test/cgroup.pressure
+3. Re-enable monitoring: echo 1 > test/cgroup.pressure
+
+The race condition occurs because:
+1. When cgroup.pressure is disabled (echo 0 > cgroup.pressure), it:
+   - Releases PSI triggers via cgroup_file_release()
+   - Frees of->priv through kernfs_drain_open_files()
+2. While epoll still holds reference to the file and continues polling
+3. Re-enabling (echo 1 > cgroup.pressure) accesses freed of->priv
+
+epolling			disable/enable cgroup.pressure
+fd=open(cpu.pressure)
+while(1)
+...
+epoll_wait
+kernfs_fop_poll
+kernfs_get_active = true	echo 0 > cgroup.pressure
+...				cgroup_file_show
+				kernfs_show
+				// inactive kn
+				kernfs_drain_open_files
+				cft->release(of);
+				kfree(ctx);
+				...
+kernfs_get_active = false
+				echo 1 > cgroup.pressure
+				kernfs_show
+				kernfs_activate_one(kn);
+kernfs_fop_poll
+kernfs_get_active = true
+cgroup_file_poll
+psi_trigger_poll
+// UAF
+...
+end: close(fd)
+
+Fix this by adding released flag check in kernfs_fop_poll(), which is
+treated as kn is inactive.
+
+Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enable interface")
+Reported-by: Zhang Zhantian <zhangzhaotian@huawei.com>
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- drivers/mmc/host/dw_mmc-rockchip.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/kernfs/file.c       | 2 +-
+ kernel/cgroup/cgroup.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index baa23b517731..d2aec6cf9773 100644
---- a/drivers/mmc/host/dw_mmc-rockchip.c
-+++ b/drivers/mmc/host/dw_mmc-rockchip.c
-@@ -568,11 +568,8 @@ static void dw_mci_rockchip_remove(struct platform_device *pdev)
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index a6c692cac616..d5d01f0b9392 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -852,7 +852,7 @@ static __poll_t kernfs_fop_poll(struct file *filp, poll_table *wait)
+ 	struct kernfs_node *kn = kernfs_dentry_node(filp->f_path.dentry);
+ 	__poll_t ret;
+ 
+-	if (!kernfs_get_active(kn))
++	if (of->released || !kernfs_get_active(kn))
+ 		return DEFAULT_POLLMASK|EPOLLERR|EPOLLPRI;
+ 
+ 	if (kn->attr.ops->poll)
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8b55bb..d8b82afed181 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4159,6 +4159,7 @@ static void cgroup_file_release(struct kernfs_open_file *of)
+ 		cft->release(of);
+ 	put_cgroup_ns(ctx->ns);
+ 	kfree(ctx);
++	of->priv = NULL;
  }
  
- static const struct dev_pm_ops dw_mci_rockchip_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
--	SET_RUNTIME_PM_OPS(dw_mci_runtime_suspend,
--			   dw_mci_runtime_resume,
--			   NULL)
-+	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
-+	RUNTIME_PM_OPS(dw_mci_runtime_suspend, dw_mci_runtime_resume, NULL)
- };
- 
- static struct platform_driver dw_mci_rockchip_pltfm_driver = {
-@@ -582,7 +579,7 @@ static struct platform_driver dw_mci_rockchip_pltfm_driver = {
- 		.name		= "dwmmc_rockchip",
- 		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
- 		.of_match_table	= dw_mci_rockchip_match,
--		.pm		= &dw_mci_rockchip_dev_pm_ops,
-+		.pm		= pm_ptr(&dw_mci_rockchip_dev_pm_ops),
- 	},
- };
- 
+ static ssize_t cgroup_file_write(struct kernfs_open_file *of, char *buf,
 -- 
-2.50.0
+2.34.1
 
 
