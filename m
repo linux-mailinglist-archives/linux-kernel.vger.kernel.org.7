@@ -1,176 +1,117 @@
-Return-Path: <linux-kernel+bounces-769812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C12B273FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:33:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D79B273F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D85A056B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4995B63A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AAA1E89C;
-	Fri, 15 Aug 2025 00:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0E19CCF5;
+	Fri, 15 Aug 2025 00:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="nUJUSTOA"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjZ+AfUf"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B481B960
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95305A41;
+	Fri, 15 Aug 2025 00:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217621; cv=none; b=Fvey7hm8b9b13oYAuyNy3k8H37y8DnOlzCvedBnfduX6N0UQtm1QLKTMvjJ+dgwZLP7ibkQOTBHojvt0WGGkPNG4tYaUrOAI6BQeCyCs67sqqbNMVSwOmArwwWqzgC40Rwo9bpMygFydnICBa/Syird0rvqFZBJBYrH2JawlUz4=
+	t=1755217642; cv=none; b=TSLe7TiKHWOm40H1IB3K9YyWyqgVMRjelyIkl2LPH8z1no7KPMphnqMJiXh84g6cB0H0uE6Y4j06b/zXn61kedgwvFudWh8+stXcFvnqeCcYIcOuGw1sw5ARFVT8jb8H5PKKWLRUO35C5Q8mZsagk3DOx7dqOITWMSz7Cv5c1TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217621; c=relaxed/simple;
-	bh=zqCXdHxKTeKB9ROaf4knn6ibcDXe7aVLUkOaaUaIpUs=;
+	s=arc-20240116; t=1755217642; c=relaxed/simple;
+	bh=M7dS2He6qJHDfyev4NVDw/0eEREJOc9PH8qqwnKXWXc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pOg8wAcesiGOmNZzhWkaI+OYI5F9u/eSpjJv90HjtQ+26Ugwvl9zVa8Fuu3LwnaWSFMIU1Rvo044qEE58TNejDThDpUA62wTd7MiHXMdd1piv51D6Q+LTEzMK61EwOeinTVh0LZJXJW4o1v3v6e/NyMK+OAWk34iAs6zKbdLBSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=nUJUSTOA; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e931c858dbbso1503999276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:26:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=D04fNxDdJg9VmMP+Gw3x/gVL3wxRTMtAQ1+reSf+hwwbfD38Ys56PmbdK0mJ5Ya/84g6MHTMaJq4Mt5Z7oJvQ+rmMIHIWyhk7xx4AlgWkVtjkuQ+Ka7dUJKTwoKD+wVXlRONGsyU7yVgnAkkeBYuGzu6hCS3YG3NJuJo4uH6+S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjZ+AfUf; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-70a927f38deso8846926d6.1;
+        Thu, 14 Aug 2025 17:27:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755217619; x=1755822419; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755217639; x=1755822439; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=chtqaOACUmcKvoVs4ArIxzTVDCSfAD6YVqxbH3Chc5Y=;
-        b=nUJUSTOAs8ofB9Chw42tcJx+26/UsXLyGbUe/8K6vMo/Lct98PHXgZZfZvtMJqSbPR
-         6tg/8fegJ+48xpl1f7sXIyQaR+rd9cWXYgC8iG1Vb2mNvqpANDU9+hi/s1fi9ZhjA0Qg
-         XGSPXFfAvwJmZOJjF1yvDBuuAEZekIwFeiU3+3rwba6e4KDqQxNJeM8nU8XVpVAjdM0H
-         KRJqWAMg/Ge2zMR3ejIH5HTXUIEjrpPE8dRSfep+tF66exgkZUSr7sW6qWNj2rybNTmf
-         s6mHP8Yqf0Xunh+m7UOhZFmrHDavWpxsMgHs/3DiSFG7zj7AOfqx4KgSkQZwv3DD5OzE
-         xHzA==
+        bh=qwi4JbtBgHoq6oxpOqrxMsCU9YQdPYpTIrVUxknq7wg=;
+        b=BjZ+AfUfA6f0O4HNN0x1AWi5heJHq8P9jucNpEuMiFwVKgcO6uFkZu+L3E+uDyBOh5
+         XBS3PqvGDhmD8Dfztxy6yC1cXHu/iIKEZ01Do8jQPveRDUYN9nN0LK0ckxTlmUW6bT3j
+         vsVDwxmbrihi55+Z9Bf8X7fDElw2ybB9t1I7ASgOCM+o9vKKYOq/r1xA6JNPcfRYJQsf
+         4zZX62H2LYNAPGazjXrwmHT1V8E7uCzZ17TZmEHwvmQlp0SlAUyCYwYGI1UlGkKeC+Jj
+         GCUvEvo55s/4OfYQ+Xy++gri2uYtt1ZBy+70QyzJ9LDono9SEGyKbX9ZJf/asMWcqJ9T
+         p3pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755217619; x=1755822419;
+        d=1e100.net; s=20230601; t=1755217639; x=1755822439;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=chtqaOACUmcKvoVs4ArIxzTVDCSfAD6YVqxbH3Chc5Y=;
-        b=Ku9h8uVjAtjb721dQqpI9qLkdNprsi9w33Xof9C8lZ9uM0s1/oxY7WwzYAB7Gvz5c3
-         QdzOjcGNBuongRYj2Qs1Z7+Pchyc0O2rSILT2agAhTnap0B00BukaUHhUmbctjFsLk4s
-         Z6Qv6sTXBiJbTkITbWi4Np36BFoayMHew+ikr6C7NgQjzlBrKdaeZaMaQfIW2SXBAxaD
-         CcxpKZgXwXM9HhuJgLYYox3OIraUEgfOs4MEG5/MN8GTBfjwF3IXS+JIPRjq8xtpbdc8
-         N+r/rUnm4UEw+ZBaxCLWeMV+m/8WsnKD+bIXblH5yc3GcUJLxYHWAGpYPTbECopEvUkD
-         FGkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmTZYvyy8vdOZBHtLnh61GSjsE66nn1HNKBgHxSiaNPmu6MbJHcuI6UdmOKCNP+Nfg7lhKf/wsXdMsW28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfHsnOPe+WM9WSo6/vQafCUSXQ70/6vpmTS5CFmGU5FhF9gl8h
-	4bw2FmW/6t+HBWV9ZHRXD+ZtrQxtDEqO/6vKXzrtgpqJFyknOXs8y2y6AjjFheYFWNOlqHV7NIc
-	gJnnlx7xy/+dUOWM9m85T1yom19BjMKMiOeqtITG+Ug==
-X-Gm-Gg: ASbGncuodOZhz51nZHFkj2tbps4sdNAaup5pw32tjotPJ/46o84LoGuRbd3H9Vsmd7g
-	EASzts1K9yNSbjdWhqE+d5zbol2kg3VdS+lRkZ7WdjPcApI1OjMwY5YVawNPHxqEAnlzJJrNUxJ
-	OuQuT5w85gyvhWeI5vBzY/9KKvssJS1y/ncrZvTXRr65pN9ttcUk2fjvDWwNUoh4rTvSNHv3Wsq
-	TTvjsEq
-X-Google-Smtp-Source: AGHT+IFyC6XchyD488oOCFrdXunJc7qGIapZSIGWdcX99KZIq/zeH1vE8qmFombtGx4qUvJV13AHJXqkXJEjvfp+pqA=
-X-Received: by 2002:a05:6902:2b8b:b0:e90:637a:cb36 with SMTP id
- 3f1490d57ef6-e933235e5e4mr362916276.6.1755217618710; Thu, 14 Aug 2025
- 17:26:58 -0700 (PDT)
+        bh=qwi4JbtBgHoq6oxpOqrxMsCU9YQdPYpTIrVUxknq7wg=;
+        b=JVZ/1Yc8gk6fgKlLyxvIghq/klQmIOJD8urIctUtLqtVyXA4MKn5zOLWHxZeB6Mqnw
+         juDpH/NdDdu5su+ZPRxoTKaO1T7E1PGUvY17gJYMq8FFM/GGoflLh3DAoy3pXGSoBEoF
+         ATSY/1XRJ5kuw+oFriWAp+c4vsnbUeRIx87Zw/sdr8A/VeOhI4l9BJo8FAOtKZUkQfSZ
+         Z2SoF/t0LfLiCk1JAZVn6jMDUCcld48qnhhNCnEr4hkwodjnkdgppDIorUK45htDUCCz
+         lTkDfGwAlrAZwmBBuasbvHFWrCtqplNL/t5VFyo6kyGIMetoj9RzsEuUH3wT2MbDqBQO
+         2Qcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIOLZH4JpQTCqEGfI2paCmHbCHXDYKYW+Hu3o1qf80ehTeHT4jOjfq28GLUibCFLrCO3HebBFXqimc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW5My/R8z7kJ1UTGEM690/zeNsQvGQp2EA6tSUIgC9zIYXbvlv
+	nvhigzxp9mzrrjj6UYQpXpMcUmea7+TpDJL2F0exj5JP6u2UOf+xogAR8szIYzaor6SWDmcrdWq
+	8cc7f9w3WfN/W9rIe1MYGzfMVM3ys4B/WOA==
+X-Gm-Gg: ASbGncuTMfromtUaJcGw1F2BDGVuVjvwWUo9MKxS8+ahGKR/K1NWlyZ0J8YbB2Z2NXj
+	Kd4+UhoDu5vWoDbo1LEsuPhLwQhtqBiOWQmx1L8gCdcG7xSci13mvnAwE1bpshlHdco59I1BLzs
+	wJsuz0Fh5L+VhGkUmjNDKqmpUXadx/0yLiMdA5DN3mdchJQUkRq8rFR2zzH3aATZWePrOQ122NI
+	SiOY9+5Cfo3GO5j7K+1xe9ZnOFACfgigI8di5PnTg==
+X-Google-Smtp-Source: AGHT+IHLi/+00G1TKJDoAI0bcsXiCjri1Ys6hfQHuXSVR7hBrQUbYGB6Tw2W8btKDTopZo0aoFdOZeNgIZ5XI2Udvv0=
+X-Received: by 2002:ad4:5be5:0:b0:707:69ad:d85f with SMTP id
+ 6a1803df08f44-70af5e64b43mr77212846d6.51.1755217639368; Thu, 14 Aug 2025
+ 17:27:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
- <20250714-working_dma_0701_v2-v3-6-8b0f5cd71595@riscstar.com> <20250724121916-GYA748228@gentoo>
-In-Reply-To: <20250724121916-GYA748228@gentoo>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Fri, 15 Aug 2025 08:26:47 +0800
-X-Gm-Features: Ac12FXyMVuK9-KHf4Hpw5gXtsQxmq2I0BGB7NnpjNngaho2sXqjxjvKEDgl5mV0
-Message-ID: <CAH1PCMZejR5AxmJC1mRi7KSAXEtOQzfSD99G8+0PFbbASJxW-A@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] riscv: dts: spacemit: Add PDMA0 node for K1 SoC
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Alex Elder <elder@riscstar.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+References: <20250815093223.0ad56629@canb.auug.org.au>
+In-Reply-To: <20250815093223.0ad56629@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 14 Aug 2025 19:27:06 -0500
+X-Gm-Features: Ac12FXwPQB8A95cDV0RbA5z48J4HxreLC6AZCGzECZ7p0kMDtL8rz9j8oF3bydQ
+Message-ID: <CAH2r5msUVf8HOVDr24EN9rpzsgDM=mTtza6A+2zskOPd0Hst9Q@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the ksmbd tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 8:19=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
+Fixed the author in the commit, and updated cifs-2.6.git for-next
+
+On Thu, Aug 14, 2025 at 6:32=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
 >
-> Hi Guodong,
+> Hi all,
 >
-> On 17:39 Mon 14 Jul     , Guodong Xu wrote:
-> > Add PDMA0 dma-controller node under dma_bus for SpacemiT K1 SoC.
-> >
-> > The PDMA0 node is marked as disabled by default, allowing board-specifi=
-c
-> > device trees to enable it as needed.
-> >
-> > Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> > ---
-> > v3:
-> > - adjust pdma0 position, ordering by device address
-> > - update properties according to the newly created schema binding
-> > v2:
-> > - Updated the compatible string.
-> > - Rebased. Part of the changes in v1 is now in this patchset:
-> >    - "riscv: dts: spacemit: Add DMA translation buses for K1"
-> >    - Link: https://lore.kernel.org/all/20250623-k1-dma-buses-rfc-wip-v1=
--0-c0144082061f@iscas.ac.cn/
-> > ---
-> >  arch/riscv/boot/dts/spacemit/k1.dtsi | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts=
-/spacemit/k1.dtsi
-> > index abde8bb07c95c5a745736a2dd6f0c0e0d7c696e4..46dc002af947893cc2c234e=
-e61e63c371cd966ca 100644
-> > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > @@ -660,6 +660,17 @@ dma-bus {
-> >                       dma-ranges =3D <0x0 0x00000000 0x0 0x00000000 0x0=
- 0x80000000>,
-> >                                    <0x1 0x00000000 0x1 0x80000000 0x3 0=
-x00000000>;
-> >
-> > +                     pdma0: dma-controller@d4000000 {
-> does K1 has more than one pdma controller? No? as I checked..
-> so, I'd suggest simply naming it as 'pdma' - which clear the confusion
-> that there will be more than one pdma nodes..
+> Commit
 >
-
-Thanks Yixun. I will name it 'pdma'.
-
-> > +                             compatible =3D "spacemit,k1-pdma";
-> > +                             reg =3D <0x0 0xd4000000 0x0 0x4000>;
-> ..
-> > +                             interrupts =3D <72>;
-> for consistency in this dtsi file, I'd suggest moving "interrupts" after =
-"clocks",
-> or even after "resets"? leave "clocks & resets" together..
+>   862d28dc8b48 ("smb: server: split ksmbd_rdma_stop_listening() out of ks=
+mbd_rdma_destroy()")
 >
-
-That makes sense. Will do.
-
-Thanks.
-Guodong
-
-
-> > +                             clocks =3D <&syscon_apmu CLK_DMA>;
-> > +                             resets =3D <&syscon_apmu RESET_DMA>;
-> > +                             dma-channels =3D <16>;
-> > +                             #dma-cells=3D <1>;
-> > +                             status =3D "disabled";
-> > +                     };
-> > +
-> >                       uart0: serial@d4017000 {
-> >                               compatible =3D "spacemit,k1-uart",
-> >                                            "intel,xscale-uart";
-> >
-> > --
-> > 2.43.0
-> >
+> is missing a Signed-off-by from its author.
+>
+> Actually this is another case of a mailing list replacing the sender's
+> address. :-(
 >
 > --
-> Yixun Lan (dlan)
+> Cheers,
+> Stephen Rothwell
+
+
+
+--=20
+Thanks,
+
+Steve
 
