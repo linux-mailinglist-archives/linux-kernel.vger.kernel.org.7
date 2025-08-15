@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-770037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0E9B27626
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:41:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9A1B27632
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428DF189DB07
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B116EA24A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57052874ED;
-	Fri, 15 Aug 2025 02:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2322BD59B;
+	Fri, 15 Aug 2025 02:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mYJHcHKS"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="PETpp5hC"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D86218FC91
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8B2BD583;
+	Fri, 15 Aug 2025 02:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225316; cv=none; b=tgB6hqhU7cmuADaTrzbtMiv/uW+k++86HzCIGhGDMOpdy9rUXXQ3FgXusQJ9NvOMPpd/6Au2dEOXjRkOVAa6hJVCGN/6Utjiw8h1fzVwR5nxQ9g2hiUi+wq2+o+qzKhIKG1sXrglqZBT20855VK5SFyb0g5T4FEqfRw4wAadlK0=
+	t=1755225343; cv=none; b=UufSdZ39osBsu91FeznbMQXQD+m9XlIvJ8oMAMqHSfIqssFtKlMUiM7nepWSZpsqihRVXBxxmluNBnuLMGuyBIW9MKArToWKP4HNHeNpnhlpUbd45b3T+09FsIJ6/rP3yWH1cSZK/XJgDZgsDIo4q2RL65XP7QTUOxovyXxd+gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225316; c=relaxed/simple;
-	bh=k6gycqIN8rqOWrZmcMYGbAztEUnrcz0Ck7pe4fgO5LE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fMdjyNAyXBcOFa2oz06gnnCZ0CukdUWm3BouwVzkvpcWQ8s5+Ur9QJn5C14aFdvgx9wgBrqjvgJVPt2pf/nEwmEDyPW6cvGZYb3NxEC6mcA+zstJFrwDXdwKDB4PURGRszHSp6htqWiXCZhbteiOFu7bs1i9hmFLF75nCMIolcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mYJHcHKS; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755225311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=I3OfKRQ9kR8yywxEX4JYhqedZi/JoNJ9IgE4wWghJgI=;
-	b=mYJHcHKSACHhcXhwvjCuKD4K746qCqm1M/+qN0J263/FLzzf4yzl4OWbgaO9H/W9LtjXRS
-	JGIkZLQrAN9jVqgN/TGJw4yi4MkCTTyPDYvYwW1dopDmqRMyk8PoAqLbZO5ZohAgs947RC
-	3QvJhPq1fq/wpFQsroWdJFo01HEkz1s=
-From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm/page_alloc: simplify lowmem_reserve max calculation
-Date: Fri, 15 Aug 2025 10:34:59 +0800
-Message-ID: <20250815023500.36893-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1755225343; c=relaxed/simple;
+	bh=4Q3abjEnlfrbFv9U9hz3xfSQ7/KeygdxriBkOQXkOSs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=C+snrK+jrwkDeFiOxYgn6sK00e5uFZnR9v33X7C/gDUa/MoAc7fmReJVhx1QiHLpV0SeNYAbcVzMG4bHvZkZ14IMk6eYPbi00N99Daz3+O48IErr2j6SkiRlCZ5LcD3x/OxRQw8bDU3S3QpTcleNmad2gbHuvyn6mJlGZG6Qw90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=PETpp5hC; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
+	s=altu2504; t=1755225324;
+	bh=18Y2FqPHGv9yTsq2i+bvrkK1Nwx8p+K4AcbHDTl42W4=;
+	h=From:To:Subject:Date:Message-Id;
+	b=PETpp5hCLUcbcER3obgNFK4HJ4dRfaiQY5neZxAyGWT9oHS6C7TNOk8NGLY3YwNm2
+	 WrgWK6Xu5ak/FzdeixmMXUoY9bgcZsjX+CvwnnWAaG3ycTlY77pHz0ofnlrdtFu+Zz
+	 vk6GXv5IWZPTCjMsLxl+xFTyEhsJkQt/Nv8kFHkI=
+X-QQ-mid: zesmtpgz1t1755225322taec13901
+X-QQ-Originating-IP: EIRDYySQ/vTVoXNlfnhjpk64A+oYYEctZ9g7jsLXhaQ=
+Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 15 Aug 2025 10:35:19 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7637992239138858937
+From: Chaoyi Chen <kernel@airkyi.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	David Wu <david.wu@rock-chips.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Subject: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy
+Date: Fri, 15 Aug 2025 10:35:15 +0800
+Message-Id: <20250815023515.114-1-kernel@airkyi.com>
+X-Mailer: git-send-email 2.17.1
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: NpfbsqbTlzxU0xuPeWYtNukpwE62jbX8VpEz+YiW2F01Loeu5BNit1Z7
+	0zPzpG0EyVej11uEyyyg+mUp3HEeadmg/jdKTa11Qf/R0HS7hAbW4I6aGX6OVSfu5vHrObR
+	GTqHoltcZlwGxVRutjWmsNyGkR/G8qqlg++sotMkjowx8bWX9Vp9y8SAGCSSru7Bl5GVHR5
+	PuaDAiJ8IlXs4tMkOMCYXU+ZXdziT45coXw9+cNB5rrjcPHT3+nlBjC+s3r14nJ5l8iK3/U
+	m+r5f2Lg5EZBEEbXzUjcobTXu3v8fKrwulWp4YkDXcqMIXCmp7eweiUf1PTV5otC0U8aisn
+	uLCPhCqmNu0ku66r3Eq8w+oUupxaP5XB2BKeNZhTQmN9Naqt9G4aUMODUsnZdxK6UKuW6+9
+	5/bM4yoXrrh90fFsB20+gIKnxN8+PnUFTUWiRw2uUg1ppLKb0QXBMkSvU2Vln71ceAQtYI4
+	qJZV3Mkndtqu1E6nholDMtRfuVJ23bbGOhxCg0hUzn8QLV7LjHQY1+CJFLfdBFhHCZfThlR
+	+6Ky6XW9ExZpzrzBiXeod8HDGZvNWE4YgyKFJuy8bPGn84FCJ6jv2i/cLEIwzjfQK+7Jxh0
+	z50/YM626l6VUEJmslLbnizCUpR27jPJxU7hNv6Yfvs6/uslp2eHASEkBCM7MzooREzfdMi
+	bbjWlA2wQ14CM4QkAiZIDzvn1B4VdstS0oTlNNLtpSKbRlpaWcmerysmyHqXO9J6BkMhkRo
+	QNLXBrTtm8dglsx01Zhm42xZUW5dqeTTPWWehNyzZulZxVznHhQFt7R9kWg1RWePE2z8ckN
+	ldvSci7JkOrMcpYme6hPy3NNWlKqapspnk+qFoQAQzzdadB/97Dm5jNtd8tHCOwJ6QIB6v/
+	wcofv0umlpqRnUIKNLWyy659l1ZpaxADpZu0J9ZXfB5nCvXw489j7LFIEc0TgAMcyyGkXrn
+	uB7QNfx48EvjKTtvL9qOIGoU704av5DmJFdAz1JsrvWZ0hjU7uAkB12z+
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Ye Liu <liuye@kylinos.cn>
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Use max() to find the maximum lowmem_reserve value and min_t() to
-cap it to managed_pages in calculate_totalreserve_pages(), instead
-of open-coding the comparisons. No functional change.
+For external phy, clk_phy should be optional, and some external phy
+need the clock input from clk_phy. This patch adds support for setting
+clk_phy for external phy.
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Zi Yan <ziy@nvidia.com>
+Signed-off-by: David Wu <david.wu@rock-chips.com>
+Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+---
+
+Changes in v3:
+- Link to V2: https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
+- Rebase to net-next/main
 
 Changes in v2:
-- Drop unnecessary braces
-- Replace "if (max > managed_pages)" with min_t()
-- Link to v1:https://lore.kernel.org/all/20250814090053.22241-1-ye.liu@linux.dev/
----
- mm/page_alloc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+- Link to V1: https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
+- Remove get clock frequency from DT prop
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 64872214bc7d..2617fd2f4b73 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6235,16 +6235,13 @@ static void calculate_totalreserve_pages(void)
- 			unsigned long managed_pages = zone_managed_pages(zone);
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index ac8288301994..5d921e62c2f5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
+ 		clk_set_rate(plat->stmmac_clk, 50000000);
+ 	}
  
- 			/* Find valid and maximum lowmem_reserve in the zone */
--			for (j = i; j < MAX_NR_ZONES; j++) {
--				if (zone->lowmem_reserve[j] > max)
--					max = zone->lowmem_reserve[j];
--			}
-+			for (j = i; j < MAX_NR_ZONES; j++)
-+				max = max(max, zone->lowmem_reserve[j]);
+-	if (plat->phy_node && bsp_priv->integrated_phy) {
++	if (plat->phy_node) {
+ 		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+ 		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+-		if (ret)
+-			return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+-		clk_set_rate(bsp_priv->clk_phy, 50000000);
++		/* If it is not integrated_phy, clk_phy is optional */
++		if (bsp_priv->integrated_phy) {
++			if (ret)
++				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
++			clk_set_rate(bsp_priv->clk_phy, 50000000);
++		}
+ 	}
  
- 			/* we treat the high watermark as reserved pages. */
- 			max += high_wmark_pages(zone);
- 
--			if (max > managed_pages)
--				max = managed_pages;
-+			min_t(unsigned long, max, managed_pages);
- 
- 			pgdat->totalreserve_pages += max;
- 
+ 	return 0;
 -- 
-2.43.0
+2.49.0
 
 
