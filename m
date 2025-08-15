@@ -1,99 +1,212 @@
-Return-Path: <linux-kernel+bounces-770880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA93EB27FE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365C1B27FC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405775C63FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEF75669AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328C305E29;
-	Fri, 15 Aug 2025 12:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38B2FD7B5;
+	Fri, 15 Aug 2025 12:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="1ol/K+Dk"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hoxy82CV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B7B304979
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B62301000
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755260209; cv=none; b=geWBEhNtPY1pwDBu81Erxvwi2n30Yl7iz9RjRFRZi7IecucwMG0cYQP6wNK7S0roGMj8IXr3FsCOwPoA0bV8GNItkr/+uz1jg4wO/oozt0I5Q6o7P0QeQEbBVXS9njgqHj4HFJkIJqBZOkr3CAXm6wc4/c3HMrXbG8swoV3H/+I=
+	t=1755259966; cv=none; b=EAWXXEQa6YmCfFN9xvWhxmjSg1fu3z6ljXy+X1K35Zk2fA8DpJTJA3B3uUE241mRP8d8I8PCXfhWVCUsznX/mvhc7vIzt1/tqxypqs8VN/U1YeFW60I2xS3UE9PLgOTnpOIP1rjqCwLB74yUYP2Vox3zERQ2DsWtm2xzfto5Tlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755260209; c=relaxed/simple;
-	bh=NbbnhG7V+vl5U1+YJnrVj1ogrs9erTio/i//AGOZzOA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FuVVPoi+qUfPPmKkebwPn3H80DmnDzSvUJEi2xyc4di4EwsiYnUB1XdOsHmE7MTS5ga9hkrZora/sgSWoRje7xzBfdqOHnULwM65259Dz9BRIu42wAEAOUVZlLHN5/S5yRiL3tv0KLiO5rdlD3E1ABrWFIJtXGQXtOfW3dS4eFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=1ol/K+Dk; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 1332 invoked from network); 15 Aug 2025 14:16:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755260204; bh=XottfDTJ3G6nJndrCm4cjXt23u+R3hnCONSdUmC/xL0=;
-          h=From:To:Subject;
-          b=1ol/K+Dkzo87hZWbOz8D/zVVNgTlTXA9a5zl+beMVsLvB2DKrvpldfV9cEQCPGq78
-           F4LgpMX8WiCEV1lmyHsPfjGBOITHNweNCFv1RgkuUK3badfy5wEkt9QBb7d0lNWXpL
-           kaCoXO6u+uSX2p9ml5Y++VufNbol2RQWE7xYObUP0WQIB/gTrZShP04QtxCj+uVanU
-           HqfWjZovFgLMkDm2gC8qQaXEmeG6Fszb8TfOUOuXPCLZs+RQysLoM95VzzCsQ6kekU
-           LqOJZ+Yp4AjlB/ZY4fuSPdrmP7ujPBWC0HcCTWj7TCJyK1rMf8/1j55tk6vtFtsz+5
-           jebYOpuUuNIfg==
-Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <john@phrozen.org>; 15 Aug 2025 14:16:44 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: john@phrozen.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	olek2@wp.pl,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mips: lantiq: danube: rename stp node on EASY50712 reference board
-Date: Fri, 15 Aug 2025 14:12:24 +0200
-Message-ID: <20250815121635.3397802-3-olek2@wp.pl>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250815121635.3397802-1-olek2@wp.pl>
-References: <20250815121635.3397802-1-olek2@wp.pl>
+	s=arc-20240116; t=1755259966; c=relaxed/simple;
+	bh=RupsilpKIyJKD6xVBtFhDOFiNYQdWmcA4JoYQiiXKxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X5zrKIscoA6CQsKzjdr4hQFxUUjKlj1nQk9xr0b76ATVW2rjreW8Wd9F/t8knbTzJJkMYxyojQ5MB3CVrGIuuQIv6IeuyCrrksehfEhWJrMzpwQ39hFzkcNfLB5NnSlF4+bFO80AIEsHjRXvCIP2gVfp3qfueLWxohJXUfWAJWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hoxy82CV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755259963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpW1qwORrP/cLl209Z3R2SRZq+lx8ZmrbQjvosYUqoI=;
+	b=hoxy82CV9FAs5gKYh8QPnV7WGxhnxPZA4RWosfSpVscst11mrfSE9ODC34kHI1ov/bMGWu
+	Hx397doHdiu2pQTyhYiLb4AbOBrM9wv4GhSBBrrl3LnQ9Q+Xw7hWz8/GXwRDvC36zCSrKe
+	1RGbv2nSZ27khLzOBIb11hRqJJl0thQ=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-616-BPGGyOsGM42yLvd57ZlwHQ-1; Fri, 15 Aug 2025 08:12:42 -0400
+X-MC-Unique: BPGGyOsGM42yLvd57ZlwHQ-1
+X-Mimecast-MFC-AGG-ID: BPGGyOsGM42yLvd57ZlwHQ_1755259961
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109c382aaso56099191cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:12:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755259961; x=1755864761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qpW1qwORrP/cLl209Z3R2SRZq+lx8ZmrbQjvosYUqoI=;
+        b=rsB5zWj29esoY6dIR7xLN/NsvKLJucKSru2FPgl80ZrVAaoohmpxyIyzSmI8KpLOyb
+         +NJoyHIMvz/wJdoOQ0vh+cV4+JyY9lXv4I3xYecKxHYEUzcYojNugqoUm2eS24M4bvoK
+         N5d5vW2qowS2cJY4C9ntpX7WUV1Kk8juWqTcJmnXiHDMxqgDl7/pouTM5/p0vjM1fchB
+         IaCu9PB1hKD4nICN4V6x779DJh06vpDdP9JIVuH6wANEssSpv+avbz0MXtManMHczDye
+         T8bs5LSBpM18xV8DLF3T/9wJSohr/mc7p23M4Rd7HkjU4HPPlBqtW6a/6Vcm3GvNOST5
+         lThw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ5UEIWDIlq+Dv9JSQZJ+z6/sdvtjTHlcKdX4cohV/Xuho0StHYW0mdUt6LMHgYoYLV/Uu6qlwAghrcgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBfEsPAn5+RN5AroDCD2Mwe7l1tovumqxOYfpDVtzblhk0Y3az
+	EuIIYX+k6Cr2YIjR7XUSAn/wQWFCuIbh7slKfdZOjPV4xdpV1ZVBvlT5Mb6sTGf/kOG8wKc2I3o
+	BdH8jmXy40v//9xc8ET3ryyWTi+Mcd8ub6YlNlrr3eCAG+uRfOqXRlJJRnW2NP8TAKKdv3I5Hin
+	pTuZH9sYXfz/BXMFgiU7MPN6gnx5ApGuUdDoIkdsEdJJK2zS2vQgzXhQ==
+X-Gm-Gg: ASbGncujiL2sbjtqhP2YSu5bLkPLr3+DiQuB2JFyqjVfw2GCrvg4AMN9vvFX9fzuJPk
+	Kkvi/tpAHsQ7bM4EV+p3lzn9j+VUgq7+5023YsPD2c3sGx3TGZIFhm7jvDp/6+a86xSapCoJpX+
+	mU4zGCcLKa92Kx0aa99rx8S9SHXGboCZExAN5d7Jy785HLFBs//8Fc
+X-Received: by 2002:ac8:58d6:0:b0:4b0:6d72:58da with SMTP id d75a77b69052e-4b11e27e336mr21594001cf.40.1755259961363;
+        Fri, 15 Aug 2025 05:12:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUnPnvMwLbNdtzAW+0roAeIZqivH1p27UtKqFsGOF6SNMkniTfnNu9dyNXw9EPSCCREzSVauEw0aVkW+ujZac=
+X-Received: by 2002:ac8:58d6:0:b0:4b0:6d72:58da with SMTP id
+ d75a77b69052e-4b11e27e336mr21593341cf.40.1755259960870; Fri, 15 Aug 2025
+ 05:12:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 66a8a3946718ff3d7fc98a32b19a6db2
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000001 [URJh]                               
+References: <20250814103424.3287358-2-lichliu@redhat.com> <dd25041f-98e0-4bb5-bcd5-ba3507262c76@infradead.org>
+In-Reply-To: <dd25041f-98e0-4bb5-bcd5-ba3507262c76@infradead.org>
+From: Lichen Liu <lichliu@redhat.com>
+Date: Fri, 15 Aug 2025 20:12:30 +0800
+X-Gm-Features: Ac12FXz8u1gnW3sWaPY_5ktKOWU5Gtqqb7XQcSSDytiYY6c-gGJc-TBLcG6Iyzc
+Message-ID: <CAPmSd0O=f24o0J6Q202qFv09YrvvAtVryLk68RbU9ncfMTS0Vw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] fs: Add 'rootfsflags' to set rootfs mount options
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	safinaskar@zohomail.com, kexec@lists.infradead.org, rob@landley.net, 
+	weilongchen@huawei.com, cyphar@cyphar.com, linux-api@vger.kernel.org, 
+	zohar@linux.ibm.com, stefanb@linux.ibm.com, initramfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This fixes the following warning:
-arch/mips/boot/dts/lantiq/danube_easy50712.dtb: stp@e100bb0 (lantiq,gpio-stp-xway): $nodename:0: 'stp@e100bb0' does not match '^gpio@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-stp-xway.yaml#
+Thanks Randy,
 
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
----
- arch/mips/boot/dts/lantiq/danube_easy50712.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will send a v2 with documentation.
 
-diff --git a/arch/mips/boot/dts/lantiq/danube_easy50712.dts b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-index 1ce20b7d05cb..aa7256ddd529 100644
---- a/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-+++ b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-@@ -91,7 +91,7 @@ etop@e180000 {
- 			mac-address = [ 00 11 22 33 44 55 ];
- 		};
- 
--		stp0: stp@e100bb0 {
-+		stp0: gpio@e100bb0 {
- 			#gpio-cells = <2>;
- 			compatible = "lantiq,gpio-stp-xway";
- 			gpio-controller;
--- 
-2.47.2
+On Fri, Aug 15, 2025 at 12:27=E2=80=AFAM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
+>
+> Hi,
+>
+> On 8/14/25 3:34 AM, Lichen Liu wrote:
+> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > By default, a tmpfs mount is limited to using 50% of the available RAM
+> > for its content. This can be problematic in memory-constrained
+> > environments, particularly during a kdump capture.
+> >
+> > In a kdump scenario, the capture kernel boots with a limited amount of
+> > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
+> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+> > memory must be available for the mount. This leads to an OOM failure
+> > during the early boot process, preventing a successful crash dump.
+> >
+> > This patch introduces a new kernel command-line parameter, rootfsflags,
+> > which allows passing specific mount options directly to the rootfs when
+> > it is first mounted. This gives users control over the rootfs behavior.
+> >
+> > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow t=
+he
+> > tmpfs to use up to 75% of the available memory. This can significantly
+> > reduce the memory pressure for kdump.
+> >
+> > Consider a practical example:
+> >
+> > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
+> > the default 50% limit, this requires a memory pool of 96MB to be
+> > available for the tmpfs mount. The total memory requirement is therefor=
+e
+> > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacke=
+d
+> > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
+> >
+> > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48M=
+B
+> > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
+> > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
+> > smaller crashkernel size, such as 192MB.
+> >
+> > An alternative approach of reusing the existing rootflags parameter was
+> > considered. However, a new, dedicated rootfsflags parameter was chosen
+> > to avoid altering the current behavior of rootflags (which applies to
+> > the final root filesystem) and to prevent any potential regressions.
+> >
+> > This approach is inspired by prior discussions and patches on the topic=
+.
+> > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
+> > Ref: https://landley.net/notes-2015.html#01-01-2015
+> > Ref: https://lkml.org/lkml/2021/6/29/783
+> > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-in=
+itramfs.html#what-is-rootfs
+> >
+> > Signed-off-by: Lichen Liu <lichliu@redhat.com>
+> > Tested-by: Rob Landley <rob@landley.net>
+> > ---
+> > Hi VFS maintainers,
+> >
+> > Resending this patch as it did not get picked up.
+> > This patch is intended for the VFS tree.
+> >
+> >  fs/namespace.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 8f1000f9f3df..e484c26d5e3f 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+> >  }
+> >  __setup("mphash_entries=3D", set_mphash_entries);
+> >
+> > +static char * __initdata rootfs_flags;
+> > +static int __init rootfs_flags_setup(char *str)
+> > +{
+> > +     rootfs_flags =3D str;
+> > +     return 1;
+> > +}
+> > +
+> > +__setup("rootfsflags=3D", rootfs_flags_setup);
+>
+> Please document this option (alphabetically) in
+> Documentation/admin-guide/kernel-parameters.txt.
+>
+> Thanks.
+>
+> > +
+> >  static u64 event;
+> >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+> >  static DEFINE_IDA(mnt_group_ida);
+> > @@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
+> >       struct mnt_namespace *ns;
+> >       struct path root;
+> >
+> > -     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+> > +     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags=
+);
+> >       if (IS_ERR(mnt))
+> >               panic("Can't create rootfs");
+> >
+>
+> --
+> ~Randy
+>
+>
 
 
