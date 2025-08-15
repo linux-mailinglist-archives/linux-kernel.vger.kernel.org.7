@@ -1,122 +1,176 @@
-Return-Path: <linux-kernel+bounces-770729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D183B27E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:31:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C982B27E4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0011416F06B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9261D03966
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8BB23956A;
-	Fri, 15 Aug 2025 10:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C952FE04A;
+	Fri, 15 Aug 2025 10:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b9ueQWk/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V7Ysf9D5"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A582279788
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCBB27604E;
+	Fri, 15 Aug 2025 10:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755253861; cv=none; b=SRTGTHRjr4wgkjsz3cU2T8QfajFNloANVXpTNeX3KZoH7xqK1m4Pw8k47NbVk1lBp/+bHGKyxmaghVvu+fwgzHLqFYXCR2xpFEiBtuJ7q75ndVXJbeRHHsNsok7L7lupdnj2LoQYpjnU7cSaM48N9XhvxDMZbc/xDPKCIolsm+A=
+	t=1755253951; cv=none; b=JOsfwKMS6ZPORP6+wfwVqKfNHMPU8qBOBihTflvhogmB0dDLGsKCIaA0S6NUwgw5gXL0n3pWfZHkNycyZZcQ0h82gLiz17RRs4t+TD5tQCITOb7BdJJYzPhJO17s6+dc03+Tx52IIlEQNSZ0yna1C65gmv6d4a+yvyIq0ebwZLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755253861; c=relaxed/simple;
-	bh=8Zho9W9mjH3VRv/uqFPx0jWzohoX0UEZCoz8IDn7o/w=;
+	s=arc-20240116; t=1755253951; c=relaxed/simple;
+	bh=Tf06S22oGZwz4QF7IIkMPTnPInylNOcha5gpHU9syJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BEnUVml5JzwHxbn0WvqbPvi/sVVCPbFP6SS7URUlQ/SdQvvX4hrpZSbBYJgU6B7GA3cMN+XekvtAUt9xP1Kt9c67J1Xn+KAai3E6uixZ/BH+pPmGILYNoDZk1xF8FhRTkEbHtpPNrKA4bBKAtasFGZQEh04C2Y+jOtvr8mV2WZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b9ueQWk/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YST5mFlMzRQ1Dyw5VZzGJhlspjKG9SDS5kg8mQIxDK8=; b=b9ueQWk/HrCcXzas5+/EejGzev
-	RG2PM1On1jvN8lOrh9U7/n4HuyAqDdY1kFFImWsCf+c+u0KEJfQdobnFVrCQSDOI6pZP1acp8XvHO
-	QKfGZUe8oov+yzhrleJYa/TKgNH3ZY6K2xEtjBT7iNvjutZYCN3mvkcCJv76vh01g0H687KFViY16
-	wsUzAS3LgJV8VKqf3nFQxeGhCLA06Aem4UP9T7G11Q+vmuWgl3LMnGLzln3zysVAAVx6S1xEcPrgD
-	/HqMs+CtshMNOdxFB+jTWeLLGdTaJ4Sw1tT7jVPTKKPA7pwnO+ELSyxw2oZ8uG3hPfIfxDFLG5igv
-	lXZOKa+A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umri2-0000000BV79-3jWK;
-	Fri, 15 Aug 2025 10:30:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1C72D3002ED; Fri, 15 Aug 2025 12:30:55 +0200 (CEST)
-Date: Fri, 15 Aug 2025 12:30:55 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, samitolvanen@google.com,
-	nathan@kernel.org, alexei.starovoitov@gmail.com,
-	mhiramat@kernel.org, ojeda@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-Message-ID: <20250815103055.GE4068168@noisy.programming.kicks-ass.net>
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
- <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
- <20250815074939.GA3419281@noisy.programming.kicks-ass.net>
- <20250815102839.GD4068168@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qL26yLtAyO+2+G+2IoOL9KNwWioGEzCHGLfPfut0+bTR4NKhpUgK9y1M0XXjj3iFPfYTUylybzaT8Xu9XEjqFH5Rzc8TVMN1J0hoCGyw5tX7jOwLWgtS/JedO4boT62XIVpMJ2I5NlhVy5O0sm/FF4sDt/xnOqaZt2gPFDBv6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V7Ysf9D5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id ECEBD56D;
+	Fri, 15 Aug 2025 12:31:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755253891;
+	bh=Tf06S22oGZwz4QF7IIkMPTnPInylNOcha5gpHU9syJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V7Ysf9D5tktEaio/i6U2xspkdXxnp5hU0YBvOeLUAdQMu23AJ3fFGyWF1x2D9mK4Y
+	 U3/AgvCR06LNwzwhJf4TgGDJw1E1EYmvLXVCeriW6EdevB68Dyj/f3xZM1RWE6dL/2
+	 +hmQixZP0RPM/VmfoTG98thARprSrbdTcnQGySmk=
+Date: Fri, 15 Aug 2025 13:32:05 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
+	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
+ mbus_config
+Message-ID: <20250815103205.GJ6201@pendragon.ideasonboard.com>
+References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
+ <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815102839.GD4068168@noisy.programming.kicks-ass.net>
+In-Reply-To: <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
 
-On Fri, Aug 15, 2025 at 12:28:39PM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 15, 2025 at 09:49:39AM +0200, Peter Zijlstra wrote:
-> > On Thu, Aug 14, 2025 at 06:27:44PM -0700, H. Peter Anvin wrote:
-> > > On 2025-08-14 04:17, Peter Zijlstra wrote:
-> > > > Hi!
-> > > > 
-> > > > A while ago FineIBT started using the instruction 0xEA to generate #UD.
-> > > > All existing parts will generate #UD in 64bit mode on that instruction.
-> > > > 
-> > > > However; Intel/AMD have not blessed using this instruction, it is on
-> > > > their 'reserved' list for future use.
-> > > > 
-> > > > Peter Anvin worked the committees and got use of 0xD6 blessed, and it
-> > > > will be called UDB (per the next SDM or so).
-> > > > 
-> > > > Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
-> > > > had to switch the hash register to EAX in order to free up some bytes.
-> > > > 
-> > > > Per the x86_64 ABI, EAX is used to pass the number of vector registers
-> > > > for varargs -- something that should not happen in the kernel. More so,
-> > > > we build with -mskip-rax-setup, which should leave EAX completely unused
-> > > > in the calling convention.
-> > > > 
-> > > > The code boots and passes the LKDTM CFI_FORWARD_PROTO test for various
-> > > > combinations (non exhaustive so far).
-> > > > 
-> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > 
-> > > Looks good to me (and using %eax will save one byte per call site as
-> > > well), but as per our IRC discussion, *my understanding* is that the
-> > > best possible performance (least branch predictor impact across
-> > > implementations) is to use a forward branch with a 2E prefix (jcc,pn in
-> > > GAS syntax) rather than a reverse branch, if space allows.
+On Fri, Aug 15, 2025 at 09:18:13AM +0000, Sakari Ailus wrote:
+> On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
+> > Although 4 lanes may be physically available, we may not be using all of
+> > them. Get the number of configured lanes in the case a driver has
+> > implemented the get_mbus_config op.
 > > 
-> > Oh right. I did see that comment on IRC and them promptly forgot about
-> > it again :/ I'll have a poke. Scott, do you agree? You being responsible
-> > for the backward jump and such.
-> 
-> On top of the other, to show the delta.
-> 
-> If we want a fwd branch, we can stick the D6 in the endbr poison nop.
-> That frees up more bytes again, but also that matches what I already did
-> for the bhi1 case, so less special cases is more better.
-> 
-> I've had to use cs prefixed jcc.d32, because our older toolchains don't
-> like the ,pn notation.
+> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > 
+> > ---
+> > 
+> > Currently, the imx-mipi-csis driver parses the device tree to determine
+> > the number of configured lanes for the CSI receiver. This may be
+> > incorrect in the case that the connected device only uses a subset of
+> > lanes, for example. Allow the drivers for these cameras to create a
+> > mbus_config to configure the number of lanes that are actually being
+> > used.
+> > 
+> > If the driver does not support the get_mbus_config op, this patch will
+> > have no functional change.
+> > 
+> > Compile tested against media-master (v6.17-rc1)
+> > ---
+> >  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
+> >  1 file changed, 41 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > index 2beb5f43c2c0..efe4e2ad0382 100644
+> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
+> >  	return container_of(sdev, struct mipi_csis_device, sd);
+> >  }
+> >  
+> > +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
+> > +{
+> > +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > +	struct v4l2_mbus_config mbus_config = { 0 };
+> > +	int ret;
+> > +
+> > +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
+> > +			       0, &mbus_config);
+> > +	if (ret == -ENOIOCTLCMD) {
+> > +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (ret) {
+> > +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
+> > +		dev_err(csis->dev, "Unsupported media bus type %u\n",
+> > +			mbus_config.type);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
+> > +		dev_err(csis->dev,
+> > +			"Unsupported mbus config: too many data lanes %u\n",
+> > +			mbus_config.bus.mipi_csi2.num_data_lanes);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
 
-And then I forgot to move that cs prefix around in the bhi1 case...
-fixed that.
+There's a bug here, you override the number of lanes retrieved from DT,
+which is the number of connected lanes, with the number of lanes used by
+the source for its particular configuration. You will never be able to
+then use more lanes in a different source configuration.
+
+> > +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
+> 
+> None of the above is really specific to this driver. Could you instead
+> implement a function that parses the information from the fwnode endpoint
+> and uses mbus configuration on top?
+
+That would need to parse the endpoint every time we start streaming, it
+doesn't sound ideal.
+
+> The function could take struct media_pad pointer as an argument, or struct
+> v4l2_subdev pointer and the pad number.
+> 
+> I wonder if any other parameters could change dynamically but I can't think
+> of that now, so perhaps just the number of lanes is what the function
+> should indeed return.
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> >  {
+> >  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+> >  	csis_fmt = find_csis_format(format->code);
+> >  
+> > +	ret = mipi_csis_get_active_lanes(sd);
+> > +	if (ret < 0)
+> > +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
+> > +
+> >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
+> >  	if (ret < 0)
+> >  		goto err_unlock;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
