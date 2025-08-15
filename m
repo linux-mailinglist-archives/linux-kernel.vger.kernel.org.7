@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-771443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B55CB28766
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:50:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E593B28769
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516B55E1DDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0131B65F0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9629A309;
-	Fri, 15 Aug 2025 20:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE/u80At"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C97329BDA3;
+	Fri, 15 Aug 2025 20:52:22 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D797C26AF3;
-	Fri, 15 Aug 2025 20:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AFA26AF3;
+	Fri, 15 Aug 2025 20:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755291028; cv=none; b=WIY9K44QostXrGF7Ckm+dhmNhh6XTWk/rZ+xweMjr0cZLaoq4CMz6LxWEXtkBq+Ua41Da64PviIHL80rN2Q/3rgcfX0Mttzw/NfnwMcsYpNcrqq5iJjqQa0v3YyrAgvQOarXAsw8xLTK+JU1XF6e288nYat8PC/8vhGyDpRLoFQ=
+	t=1755291141; cv=none; b=sDcxltmiqmmSfRVD3oxAa/VcKHBusTLljFwKEtBjH0pre3AUL5z16bJu2vgVPgqZlls9qIl88hSJjIaASjb7cd+NEP9zV4n4+1mrNVZj2Y3oaZ+jxw0810fN4EZ9/ibJYVcKHAwJ79BfXV5umjvxLeotmgIga4mGI6+f6/KPyis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755291028; c=relaxed/simple;
-	bh=kQ/MNknMyEBxL80+GJlpjiBLs8Klx1adKhEFRMdC8Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqhtkydiLOQ47uWFgolpmlidLcq3STRWhEMVBnKu3D1CxPGpkQC8PEokhTwWIHRIPVRM7tz7ALvtfEj0Y1uKlApy3ln8l4xQS//yAmYOwMO2ba0KGjOv02+aXNsOm5geHSkwmHqlpKFaYCK0igU+3UhbYs9d6p8UsNNjmC8xi1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE/u80At; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A492BC4CEEB;
-	Fri, 15 Aug 2025 20:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755291027;
-	bh=kQ/MNknMyEBxL80+GJlpjiBLs8Klx1adKhEFRMdC8Rw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oE/u80AtTrhTCD7mnU29Ik01JB0iw13f7xTae6zJgqcGnfM85mzeT6x60Crk91738
-	 ioy1kcvnTNw01Ukd9AEhN+RcnWY/7gEUn00ZSKZ3LU/c1TA4tAKD0ZI2/2B80PWo3E
-	 oEoQFvRRbIHI6NyAzVcilRHGbIPqJDtcC6tdLCANcLw1u+udKbmjRz+RKhN76mjX0v
-	 7RjR1zc0jYgwNbwJJrYeYUaBzgOvXW5zrOTm27EasQi4pO+WRtCteHdVC+aF0kI+zI
-	 Cwm00O1i2c7Mc58dr+O21JfF9TmxB4E+h3lQ8WbDgJexZXtKBpRa9O0b1p+HhE3+Ms
-	 ZWjmcqEsnzpFw==
-Date: Fri, 15 Aug 2025 15:50:24 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Gaurav Kohli <quic_gkohli@quicinc.com>, daniel.lezcano@linaro.org
-Cc: amitk@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	robh@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	quic_manafm@quicinc.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: thermal: tsens: Add QCS615 compatible
-Message-ID: <ozyej4oryyylk7a7jvx2x2jtfz3i7bq6cvcoev2ub2ni6jf2gl@rwldpauze5fw>
-References: <20250702082311.4123461-1-quic_gkohli@quicinc.com>
- <20250702082311.4123461-2-quic_gkohli@quicinc.com>
+	s=arc-20240116; t=1755291141; c=relaxed/simple;
+	bh=3/t9Nj77xUmviwQe4XdqVzXk0hYy88KvnKXP+2T3MaU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=qOQ/tU5CRF+/kAKRmlygIF/zmSY63/HmDT8RCfWHkL8abHxxACn732MpP7x0N5tjFaw25YG6e1K2h/6U9cU92sNIrlh5sVkMlXmkcOpBHsibdx663rRX4j+0oKkTlcsS+pXZHF3aSl6JfwBiGdjPvm9pvWnrMbmfrd1/WmTc2k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 095071F47A;
+	Fri, 15 Aug 2025 20:52:04 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702082311.4123461-2-quic_gkohli@quicinc.com>
+Date: Fri, 15 Aug 2025 22:52:04 +0200
+From: Artur Rojek <contact@artur-rojek.eu>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+In-Reply-To: <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-4-contact@artur-rojek.eu>
+ <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
+Message-ID: <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeegleejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhfkgigtgfesthejjhdttddtvdenucfhrhhomheptehrthhurhcutfhojhgvkhcuoegtohhnthgrtghtsegrrhhtuhhrqdhrohhjvghkrdgvuheqnecuggftrfgrthhtvghrnheptdejuedtgefgtdfhgfdugefgffffteetteffuddtgfefheekgedvtdekvddvtdeknecukfhppedutddrvddttddrvddtuddrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddtrddvtddtrddvtddurdduledphhgvlhhopeifvggsmhgrihhlrdhgrghnughirdhnvghtpdhmrghilhhfrhhomheptghonhhtrggtthesrghrthhurhdqrhhojhgvkhdrvghupdhnsggprhgtphhtthhopeduiedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehrohgssehlrghnughlvgihrdhnvghtpdhrtghpthhtohepjhgvfhhfsegtohhrvghsvghmihdrihhopdhrtghpthhtohepghhlrghusghithiisehphhihshhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopegrnhgurhgvf
+ idonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+X-GND-Sasl: contact@artur-rojek.eu
 
-On Wed, Jul 02, 2025 at 01:53:10PM +0530, Gaurav Kohli wrote:
-> Add compatibility string for the thermal sensors on QCS615 platform.
+On 2025-08-15 22:16, Andrew Lunn wrote:
+
+Hi Andrew,
+thanks for the review!
+
+>> +static irqreturn_t jcore_emac_irq(int irq, void *data)
+>> +{
+>> +	struct jcore_emac *priv = data;
+>> +	struct net_device *ndev = priv->ndev;
+>> +	struct sk_buff *skb;
+>> +	struct {
+>> +		int packets;
+>> +		int bytes;
+>> +		int dropped;
+>> +		int crc_errors;
+>> +	} stats = {};
+>> +	unsigned int status, pkt_len, i;
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
+> netdev uses 'reverse christmas tree' for local variables. They should
+> be sorted longest to shortest. This sometimes means you need to move
+> assignments into the body of the function, in this case, ndev.
+> 
+>> +	jcore_emac_read_hw_addr(priv, mac);
+>> +	if (is_zero_ether_addr(mac)) {
+> 
+> It would be more normal to use !is_valid_ether_addr()
+> 
+> What support is there for MDIO? Normally the MAC driver would not be
+> setting the carrier status, phylink or phylib would do that.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+ From what I can tell, none. This is a very simple FPGA RTL
+implementation of a MAC, and looking at the VHDL, I don't see any MDIO
+registers. Moreover, the MDIO pin on the PHY IC on my dev board also
+appears unconnected. Perhaps Rob L. or Jeff can shine more light on this
+design wise.
 
-@Daniel, can you please pick this binding?
+Cheers,
+Artur
 
-Regards,
-Bjorn
-
+> 
+>     Andrew
+> 
 > ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> index 0e653bbe9884..c8cc67b65f73 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> @@ -53,6 +53,7 @@ properties:
->                - qcom,msm8996-tsens
->                - qcom,msm8998-tsens
->                - qcom,qcm2290-tsens
-> +              - qcom,qcs615-tsens
->                - qcom,sa8255p-tsens
->                - qcom,sa8775p-tsens
->                - qcom,sar2130p-tsens
-> -- 
-> 2.34.1
-> 
+> pw-bot: cr
 
