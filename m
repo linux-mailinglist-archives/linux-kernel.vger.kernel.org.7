@@ -1,570 +1,458 @@
-Return-Path: <linux-kernel+bounces-771438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4766B28752
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:45:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF85B28755
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96BF6A26C88
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9778AA4976
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DBE2E092F;
-	Fri, 15 Aug 2025 20:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B0B2BE040;
+	Fri, 15 Aug 2025 20:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="rm4sVz3Q"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ro4UTBox"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69B02BDC3E;
-	Fri, 15 Aug 2025 20:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF1C1CEAA3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 20:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755290534; cv=pass; b=S2nqJ4B5tB0VfbuvSyQdemKwuTAK4/dQBi7h1o3e1BSlBDxDq0jLzquslYVI6JhQlwr/ugSTIrDOD9n1QRQOINuwmtJuWPpV35lKCyeXjwfJV5cXfSa4jGf9T9QVfmyS5mOGrf5FbC0r6ykZ+XNjgz+WPwsRyyRr4niZ8iAHFkQ=
+	t=1755290610; cv=fail; b=V5+CAe6Ayc8O7UTbRt6CPXxPBucoI2eIPcoaYmBeCZ5Ohrt7uCXiz5QA+EA78EDfESgJ8ERBbEtsNd1QHWqLxCqoNEI9Dl9i1rxf5SjNNhVS8V6/NBeHiHS+UvWbhyrnoY5r28CBb3dqd/iT5HOFe17OwO9kltuteWnjSuMlq9M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755290534; c=relaxed/simple;
-	bh=A8rPWgk+6FhM3qlSrFPAFvdyvExZe/sw3qcOQVATgAw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=U50AAc8M4d+w/41QYdogJqK5Tt2WrsJmcJoaPP26jdBk+oeuMYPzUkFWR9TNUL7kbosux4fN6aySThwkn+w0YZmJ8aCFMEeJRqMLHjtWq/c1tUgfaQPCK4k8yQImaiIaGrNIqHlPn8DL5/+TGEOyedE7LiwGCdjbgfxPjEtpnSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=rm4sVz3Q; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1755290517; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=m0te/3NH/2qACYSfUsJEzZ3h4jnK7vp76bYuH9P/wjYa1DYGKhZesWn+sprhffT2oWUpEPMcT+nalw+13SGfsJWh2BOALKxJFnTy+4f8Ndth/fAe06vIedgP/nZzAeRyJr53qCEAFPh0gUAzLNzM8+LpMgFSs/vdJ6rV7XDIVlk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755290517; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BFVLLmSCb3ejuYxMMOD5XzM6WldxR2pv0Kx/uk69Wrk=; 
-	b=GeXP0EFkFZB9jmchepoA7yDRg9/DiRiyXw3p3p3fddBWZ9YcDFuic6R1wlmrLXNsX2sS1CC5akwmfrdrV8Yb5xWGiE+4U0aH+qT1gG+f62hJ2EFt5xw2WVFf96gxEoAqZQJrSuMyqkbqyvJ1xMj+Eb2SuO4F28KP6znxBPhROOo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755290517;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=BFVLLmSCb3ejuYxMMOD5XzM6WldxR2pv0Kx/uk69Wrk=;
-	b=rm4sVz3Q6Wxs0uCzFHQJ3xYBUaA4+74K3CdZ1uU6khV72OIElqlL1cR3rvGzKNYk
-	nk1p9LqVgr3wSVu/pVTlFtic3RnMKhKJskVwuLuaL54KEDInmMQqw4F6SwpJIBLI8kS
-	vwsUGaDmxDSxy20HtTibFG0myK3qxnY0OncGlG1I=
-Received: by mx.zohomail.com with SMTPS id 175529051460026.599473595199242;
-	Fri, 15 Aug 2025 13:41:54 -0700 (PDT)
-Message-ID: <8a132e7473655ca0119af10339c63beb4df7c201.camel@rong.moe>
-Subject: Re: [PATCH 2/2] platform/x86: ideapad-laptop: Fully support auto
- kbd backlight
-From: Rong Zhang <i@rong.moe>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Mark
- Pearson	 <mpearson-lenovo@squebb.ca>
-Cc: Ike Panhc <ikepanhc@gmail.com>, "Derek J . Clark"
-	 <derekjohn.clark@gmail.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	 <ilpo.jarvinen@linux.intel.com>, Hans de Goede <hansg@kernel.org>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-In-Reply-To: <0210f27b-ac6f-4d4a-91cc-6a79eda89d15@app.fastmail.com>
-References: <20250805140131.284122-1-i@rong.moe>
-			 <20250805140131.284122-3-i@rong.moe>
-			 <08580ec5-1d7b-4612-8a3f-75bc2f40aad2@app.fastmail.com>
-			 <a90584179f4c90cd58c03051280a6dda63f6cc1d.camel@rong.moe>
-			 <0210f27b-ac6f-4d4a-91cc-6a79eda89d15@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 16 Aug 2025 04:36:48 +0800
+	s=arc-20240116; t=1755290610; c=relaxed/simple;
+	bh=gt1QuQR740hFx92V+9Ds3AC81PhOElyjEoVIOZmX4r8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lNxBZjD9IeYGgxgqChG0A7Rf8KZieAEkPtTet42F/bX2bur5Zi8xnJsSXZ+ipjMvik49XMSvcNexieteaELTBhLgKOctvIJs8sosvGpJaW981+AptbY7xornGUzSJrmh+Ix91vMOkyhEpbxF1FpUp0JPl2e4oRxf82u34DzhqSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ro4UTBox; arc=fail smtp.client-ip=40.107.236.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dnD2JmUcTHGrEDJReNSRbxyCzx/sT7yAYtyaIKXLBHF7UKQDv8xajVxiC0ctLkxwg2tV+oY7HfRw6blYHvESyH4ub8fgPPr904boE7pqzK6Xae/cGheanZdTywBQxhSOwiMKWgrj1YyoUNsO0bnKEP/g4KKU7HDp+R9nMZjFoumfFMoSPO/ZIc/uTAhNyvnM1UPEIaSOA7U9YdS+e6jw/f6UdsO97eD3YTw1ofero/fmc9LJ4dTeRUrux9luiHya+G7ZpvhJujWLTSXhz9WcE3bDo9+Z6UaLzvr2RWPWoqYUf9Ri5qvuH7w3KbwgnTeFKBX3EUvHD4tcVXeji2gYLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gt1QuQR740hFx92V+9Ds3AC81PhOElyjEoVIOZmX4r8=;
+ b=AQvHbKs8T3MyyeeIaDMT52WwVKsKLEDX1kDdVfjnHfdaZ26KKq9dDU6aqJOP8ruUcqXALZu4PoDWqJLXeR6IO6drLD4e9ufsv+Y6gHCpj62FweeIX/VzsewICYKXL1iz89WD1DTT9xWNWN2rkV/ERK6KTE/2pRJEJM7eUfwZ8fuSrFyJZL6wt5LN/XReRUgv2TK51O+6gFjEZOcSNbZk8YG6Y9bIwDz9duzsrOA56HTyn//i5hrGPgflbjdz/oDRDgsi/a7PgJxt96KP4jvccVUsvjkrGyYdp2Bfwj+m6+EdlfqnQFDyrc6Bzv5hmmyw8kc2otXPCMrhuNXV6OCpOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gt1QuQR740hFx92V+9Ds3AC81PhOElyjEoVIOZmX4r8=;
+ b=Ro4UTBoxuYtUpKCh3unWLPHGH7NICyt8FxCI3CalmHr0L/7Whx+9T7Gsh1xoUDns/L7sGK7Hjn3Pe67I3KNCeplzbrhifzbovXa4Zki6JVBF1uCF/2JWB4KcUC5MBK5FjatscPVmt2HG1bHPQK0ppHyL2zZbb9l2vCdEOCXKBIo=
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CH3PR12MB9099.namprd12.prod.outlook.com (2603:10b6:610:1a5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 20:43:24 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 20:43:24 +0000
+From: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+To: "Hou, Lizhi" <lizhi.hou@amd.com>, "ogabbay@kernel.org"
+	<ogabbay@kernel.org>, "quic_jhugo@quicinc.com" <quic_jhugo@quicinc.com>,
+	"jacek.lawrynowicz@linux.intel.com" <jacek.lawrynowicz@linux.intel.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhen, Max"
+	<Max.Zhen@amd.com>, "Santan, Sonal" <sonal.santan@amd.com>
+Subject: Re: [PATCH V2] accel/amdxdna: Add a function to walk hardware
+ contexts
+Thread-Topic: [PATCH V2] accel/amdxdna: Add a function to walk hardware
+ contexts
+Thread-Index: AQHcDght6yLyS6wqlEyj+F8feF4gO7RkLmwA
+Date: Fri, 15 Aug 2025 20:43:24 +0000
+Message-ID: <bc4d34db-ad0c-409a-b6ff-0e16b36e1cd2@amd.com>
+References: <20250815171634.3417487-1-lizhi.hou@amd.com>
+In-Reply-To: <20250815171634.3417487-1-lizhi.hou@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB6101:EE_|CH3PR12MB9099:EE_
+x-ms-office365-filtering-correlation-id: 616b6b9f-1f59-44e6-5783-08dddc3c616c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Mmdxb0ZlNUp6YWpRT252ckJSUGs1ZHJHYmNBQk45QkpGMEo1c2lsc0hMY1RH?=
+ =?utf-8?B?bHpLcEFSVEpwMzZMZXlDZG5qQjJIZlBDZm55WEZja0M3MlZlTFFFQkkrMm5o?=
+ =?utf-8?B?ekd5V0RiNU8rRzZEWE9heTZ5L2NKRE9SY3ZGMlhQTVVNUDNGMmoyT3J3bXIv?=
+ =?utf-8?B?NlBmVHQySEwrQTIxRkxiRytmc24rdjlHOExJZU1oTFN5a09Vb0djY0Z1NlNH?=
+ =?utf-8?B?TW94ZDNnOG9wZEZ4TnFxZk40eXhqUUpvcDNPckFiWTMxQTJ2L0c2Y2FKTWE5?=
+ =?utf-8?B?bHlQR1hZYUdQUjI2bXRRSjlvYlZvWHJ3QVRLUEcvTTJvSDJsQUNzanA0ZTZw?=
+ =?utf-8?B?L2JnK3BPbDNmaDUxd0krWE5OdFJVL2VrMC9lenJhWUxKODRld05DejExak0v?=
+ =?utf-8?B?MGpucWZVeU9QMkhIK1BQQmRGZTVJa0xBZjFwV1BBeURTbURWbnRUcDRsUWtU?=
+ =?utf-8?B?anZMK3YxUXVzNEh1WERxNWczejBWUkp2M1BmeXQ3N0hjMFZMdjFjczJIVE80?=
+ =?utf-8?B?aXFaZWhseTlYUmJXUDY2S2dsdzVDcmFBdTNqQm81VDZUSWhPdjNaNFlkc0tV?=
+ =?utf-8?B?RmlUdlJkcGhxOTh0WVM2RWJ6MkZkcDdBbTdDZlBFRUgrMHR3RnFsNnF4NkJa?=
+ =?utf-8?B?VkF5WHhMVGl5VU9TNXBMc1RJL3RGbnBzUDhsa1hyT2NMaUpOUmhKZW5PK1NO?=
+ =?utf-8?B?L2lCdEhZc1pMekFsL1JRYjc0MTQ1Zk5sSTJKTjV6YmlYSDRQSHBnRWNOVWs5?=
+ =?utf-8?B?T2o2ZSthMnlxKzJyTS9XYTVTcC9YTmczU1ZPM05HeURyWGZxL1p5a0JvQVYy?=
+ =?utf-8?B?NThRQmlSb0hWMTdMYnd2NXRTcXBENGRjdjc2MjJpNXhLNFdXSkw3WHZLVEYz?=
+ =?utf-8?B?S0U5OFpySjZkQUZtOUE5VUVwdzhtR2RSNVhVV3U5bHM4bkRUWHpRaUl1U3NN?=
+ =?utf-8?B?Q3VhZGxEcG1LY0FIc3hnUTZsVkhDTndjOEtTSG1DMlIzVm41VGFoaWY1Mm9E?=
+ =?utf-8?B?Y0JMNlloMnVCcktKTGljZWFCYUl2SWx5bDJuVHFlbThZYmdrSHhwYno1VENP?=
+ =?utf-8?B?YjlLbUVwRy9ldzhRR1ZkR0l0RTNsME94bGlXdU1iaDFJUEtoVHM1dWZyN0N6?=
+ =?utf-8?B?Z1dYeWFuTTF1UVIrWi9GZkgxYmdIQm5TQUthWTRzL2tKVHZhNWJkendmSEhS?=
+ =?utf-8?B?WlU5L0NtZ0FMUFpGWEhhaG5xZlJlMFdjMml1OGIvdlY0YXVnNW1GZjh6VHBv?=
+ =?utf-8?B?b08xM2VDOFNMT3h0eG5tT0wweTBDVjNYWnJlNXllT2RoeFh5TnhXVStWaXZp?=
+ =?utf-8?B?cmJITkJJWWRIcHE3aGFodlJ0QUx1WXFGbFRWVXM2a2svTldoYnNybjJRVlhq?=
+ =?utf-8?B?NnpLbEcrQmhpQ3IvV1JrZVN3eFhhdGR4aDFxVDBNdEM0RlJ6amRKUHgvdjEr?=
+ =?utf-8?B?STczV2NTaTJnckVER0gzeGdxMHFFVm1VMTVIeURMYktMNGRoYmJ1ZnliV1pR?=
+ =?utf-8?B?dnNKdDYvbnV2Tm03RVRGa3Q1UGtQYkR5bGVxejRTQnpmR0ZrblVTTlZNQVM3?=
+ =?utf-8?B?MkNrbUJYZGY4TE16c3ZKMEVtdkQvc1NKeHpVd3BJVTZqbG94MFptOXovdFZy?=
+ =?utf-8?B?eU55bWxCN3RQUDVkZ0Q2YUNMZFVPdlBSTGx3OW5mSStEOG11Y1VJRWY4dVNV?=
+ =?utf-8?B?NHVsMTZFWGVLdmxtalQrZURuVTUyZUZVMXpXWno2WXZhRFpGWXpvMTRieDhY?=
+ =?utf-8?B?VHF4dzd2aVVIeG12QXQ2cnZWSE5vN2FVVGhHTjdZT3JhaERKaTZsWkRsSERq?=
+ =?utf-8?B?TWw1VldEbThnZCtWU3JIMmQ1MWRiWVZZU3NCTVpjNXVBN0VaUVFmcHlUN0JF?=
+ =?utf-8?B?cG8rcUFNalN2VUN1WGxBVnFVSWEyc2prQzNqdE43UGw5RE44RlVMa0gxVEdJ?=
+ =?utf-8?B?YlI5ZXU3b3h4ZnMxUWtiZUNXNjdiNDlWcnVvQitLWjZmOXVNZmJPcVErT0ZN?=
+ =?utf-8?B?RHBaalM3WG5BPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?U3kzenI0TEQ2WGhxamNTWG42dUpkbEhjUFFtNXJwc294UDFMbHVId3RJQkE4?=
+ =?utf-8?B?Vmk3c0pqWkhIZGN0QUFCcFg3SlFtcXF4RHFzdlhYZGtMS3M3TndFbWx1dCs5?=
+ =?utf-8?B?ZXZlMWlkNHByVk4xWlJmdnZSQUljQlNFd1BvZm1LVTN6ZEZkekdUclloWGdC?=
+ =?utf-8?B?QWpISGVHa0lNZElLUnRZVGpQUTV6LzBicGJWdlRaU1ZvY1hiN2ZMVDkyeE15?=
+ =?utf-8?B?cDhlc1UyKzQ1YjlTMmZMVWJibXlBMzQwckgyVjZTOU9iQWdZYTVEd3BvK0RY?=
+ =?utf-8?B?MEtaOFU4NExlajVkYzI3WmFaSTNvNDBDUEg4cHZzQ1BBWGcvTlE5Uko1Rk8r?=
+ =?utf-8?B?RlNBRCtYN1JiNkRxa0dPSTRSSmZ2OHBkVDY3b3hGOEIvTmpnVTZLWWIxSkE3?=
+ =?utf-8?B?OUVObUFiS1RnaW03KzRBUkMzVVZXN3JjbW0ya2NqOG8rNFV1T21RUHBnaGlo?=
+ =?utf-8?B?WEN4RWxVd1NQaFJjVWFIK1FDc0lvQ3AyVGxjQ0cwNk5tRTNOenhFcS9nN25F?=
+ =?utf-8?B?WVd4eStIVXdpbDE1SHJ2UjB5aWZlOUp0aERUSWxwa3B3R2hTMTFkSmE1YnQr?=
+ =?utf-8?B?V3RpRkpGMzM0YVNuSERqNmVHbURDbVFhM1ZsWlVQZzF1SnZGYjdEdEljS2lW?=
+ =?utf-8?B?SW5USVJsWk56TkNPeU8vWUhlc3N1TkVDNlYxanRraXBPQTlrKzJsOXVGN2ZR?=
+ =?utf-8?B?blNqS1dPU1FvaFZYNUNNSTEwdEdyUXBFSE9zUGZ3MGs4N3JvaE8zN1ZROXA0?=
+ =?utf-8?B?NHFNbHRRMTRKeGNwNE0rakllRE1zTWJHcWk1VDJMVW1pVjU3bGJQNUNuSDN5?=
+ =?utf-8?B?TXVSRXI5SU9VTkRQUFpGci9qY1k3b2lIT3ZJcFd2bENTWlBwWCtzY3JXakNz?=
+ =?utf-8?B?ejdSMWJLY0RsL1NCRjJpSTBKWGhyUVhWOVVuSGpjOHFsNHBTQ3VWY2hqYnZN?=
+ =?utf-8?B?NmRoZWJheEtYWlNMY1ZrK1JPdk9pR0p1RjFuVmRSZk80Z0RqK2dRRjJIYW91?=
+ =?utf-8?B?Q0VFdUdtNG1haHJEREtscHRsS1MreUUrUnEvL0dYbDdtNVYvNzlQWGZtR096?=
+ =?utf-8?B?aURxbzlvbVJ4S1VVL2c0MjRZMnZwaTFtODU5M2VFeU9PSlZSem9rOUd3RlFC?=
+ =?utf-8?B?WjBiZlRZNDRLejVvcUFCdFNvR1FCZEErMHJodytpVElnNWtKVVR6a2NHczVm?=
+ =?utf-8?B?YzRLSEZzTldUbE53QWR0VFRRNit5dnV5NUlsajN6Mk9abUw0SXB4RHRmdTZQ?=
+ =?utf-8?B?Zm10SDV2TXdaUGNsNkVZT1pwQmlrVWxJYndONW1JdEpSdEZheWxUOVlqaTV1?=
+ =?utf-8?B?MjV0Uk5KYUlFbjQxKzBZYy9WdTZBcTJoNHM2TDdJem9GUUxUeU9YaCtJZFRG?=
+ =?utf-8?B?a0xvUUpEOHJOdWhSV1Fsa3hpamZMdWM3am5PNG9UTUJXUDI0R05GbmRLNmxN?=
+ =?utf-8?B?Vktpd0RYMzgycnhLcmx0eG5FR250ZlpuZmE3T25acEJubnVKR3BMdWFZeXJK?=
+ =?utf-8?B?b3RuT253UlRSRnZTaWVxanRpY1U3bkVYMUJiL29mb1lVcU5yTTFmSFYrLy9l?=
+ =?utf-8?B?UkZSM01INjhLZmoyaDY2NFFITjQ2dDFrRDdmYkN1dlVicmp1Rjk1T0NjSFh3?=
+ =?utf-8?B?b0NWS2xvU3VZR0VwcnV0TVBIQllNQUUwRUtUa0REdVdUZDlRV2ZteUpIZWRI?=
+ =?utf-8?B?TGV6bXpVczVLbHk0M1RmV2lFek9TTjlCWE5KVTFVbVhFK0ZqMHpTTHpMdURS?=
+ =?utf-8?B?Y1Z5TEF3bGh4OGlIdWhoOU5KVXZjR25nYVpuZWZSWDhVQWtmaHBNRXlIeXlp?=
+ =?utf-8?B?Mk5YRXZtSGNyRlZHQm02bG9lcURaRkdkQzdUVFB1QlFHNC8xK0VWcGJKZXY1?=
+ =?utf-8?B?NTdOby9hKzB4MTFVTkRJWFZhM0xKcU5PWXZpNWFqN0ZubzYvQ1dtSHRlZDhh?=
+ =?utf-8?B?MytQaU52TjgzTGpFNkI0VnpYbDZ0eFN1YzNDTnV3RTVRNHJQMUU1dEdnYVIy?=
+ =?utf-8?B?YnJZQ0xRbVJyRUQzRE5BR2hTQUlhWkQ3SE5BdU04dVloTzFsUmltRlF2T0Rk?=
+ =?utf-8?B?MHNBQmg5Y0RJcDJOSmZuYWFsQzRVbVhsMU5hWUY1bEZvQlg0T0tlNVVETnFW?=
+ =?utf-8?Q?5+Kg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5C0F84785F566A458566BA4F7D945BDB@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2-2 
-X-ZohoMailClient: External
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 616b6b9f-1f59-44e6-5783-08dddc3c616c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 20:43:24.7074
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OdhPzbnW15grDyiIkcLwedCdRY5O2lTWfUfILPjKYqg7NQt3/hEhPNfMscIwT867S04KHUnyOt3ek8uLmtP/pg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9099
 
-Hi All,
-
-On Fri, 2025-08-08 at 13:57 -0400, Mark Pearson wrote:
-> Thanks Rong,
->=20
-> On Thu, Aug 7, 2025, at 10:50 AM, Rong Zhang wrote:
-> > Hi Mark,
-> >=20
-> > On Wed, 2025-08-06 at 15:02 -0400, Mark Pearson wrote:
-> > > Hi Rong,
-> > >=20
-> > > On Tue, Aug 5, 2025, at 10:01 AM, Rong Zhang wrote:
-> > > > Currently, the auto brightness mode of keyboard backlight maps to
-> > > > brightness=3D0 in LED classdev. The only method to switch to such a=
- mode
-> > > > is by pressing the manufacturer-defined shortcut (Fn+Space). Howeve=
-r, 0
-> > > > is a multiplexed brightness value; writing 0 simply results in the
-> > > > backlight being turned off.
-> > > >=20
-> > > > With brightness processing code decoupled from LED classdev, we can=
- now
-> > > > fully support the auto brightness mode. In this mode, the keyboard
-> > > > backlight is controlled by the EC according to the ambient light se=
-nsor
-> > > > (ALS).
-> > > >=20
-> > > > To utilize this, a sysfs node is exposed to the userspace:
-> > > > /sys/class/leds/platform::kbd_backlight/als_enabled. The name is ch=
-osen
-> > > > to align with dell-laptop, which provides a similar feature.
-> > > >=20
-> > > > Signed-off-by: Rong Zhang <i@rong.moe>
-> > > > ---
-> > > >  .../ABI/testing/sysfs-platform-ideapad-laptop | 12 ++++
-> > > >  drivers/platform/x86/lenovo/ideapad-laptop.c  | 65 +++++++++++++++=
-+++-
-> > > >  2 files changed, 75 insertions(+), 2 deletions(-)
-> > > >=20
-> > > > diff --git a/Documentation/ABI/testing/sysfs-platform-ideapad-lapto=
-p=20
-> > > > b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > > > index 5ec0dee9e707..a2b78aa60aaa 100644
-> > > > --- a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > > > +++ b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > > > @@ -50,3 +50,15 @@ Description:
-> > > >  		Controls whether the "always on USB charging" feature is
-> > > >  		enabled or not. This feature enables charging USB devices
-> > > >  		even if the computer is not turned on.
-> > > > +
-> > > > +What:		/sys/class/leds/platform::kbd_backlight/als_enabled
-> > > > +Date:		July 2025
-> > > > +KernelVersion:	6.17
-> > > > +Contact:	platform-driver-x86@vger.kernel.org
-> > > > +Description:
-> > > > +		This file allows to control the automatic keyboard
-> > > > +		illumination mode on some systems that have an ambient
-> > > > +		light sensor. Write 1 to this file to enable the auto
-> > > > +		mode, 0 to disable it. In this mode, the actual
-> > > > +		brightness level is not available and reading the
-> > > > +		"brightness" file always returns 0.
-> > > > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c=20
-> > > > b/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > > > index 5014c1d0b633..49f2fc68add4 100644
-> > > > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > > > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > > > @@ -1712,6 +1712,57 @@ static void ideapad_kbd_bl_notify(struct=20
-> > > > ideapad_private *priv)
-> > > >  	ideapad_kbd_bl_notify_known(priv, brightness);
-> > > >  }
-> > > >=20
-> > > > +static ssize_t als_enabled_show(struct device *dev,
-> > > > +				struct device_attribute *attr,
-> > > > +				char *buf)
-> > > > +{
-> > > > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > > > +	struct ideapad_private *priv =3D container_of(led_cdev, struct=
-=20
-> > > > ideapad_private, kbd_bl.led);
-> > > > +	int hw_brightness;
-> > > > +
-> > > > +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
-> > > > +	if (hw_brightness < 0)
-> > > > +		return hw_brightness;
-> > > > +
-> > > > +	return sysfs_emit(buf, "%d\n", hw_brightness =3D=3D=20
-> > > > KBD_BL_AUTO_MODE_HW_BRIGHTNESS);
-> > > > +}
-> > > > +
-> > > > +static ssize_t als_enabled_store(struct device *dev,
-> > > > +				 struct device_attribute *attr,
-> > > > +				 const char *buf, size_t count)
-> > > > +{
-> > > > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > > > +	struct ideapad_private *priv =3D container_of(led_cdev, struct=
-=20
-> > > > ideapad_private, kbd_bl.led);
-> > > > +	bool state;
-> > > > +	int err;
-> > > > +
-> > > > +	err =3D kstrtobool(buf, &state);
-> > > > +	if (err)
-> > > > +		return err;
-> > > > +
-> > > > +	/*
-> > > > +	 * Auto (ALS) mode uses a predefined HW brightness value. It is
-> > > > +	 * impossible to disable it without setting another brightness va=
-lue.
-> > > > +	 * Set the brightness to 0 when disabling is requested.
-> > > > +	 */
-> > > > +	err =3D ideapad_kbd_bl_hw_brightness_set(priv, state ?=20
-> > > > KBD_BL_AUTO_MODE_HW_BRIGHTNESS : 0);
-> > > > +	if (err)
-> > > > +		return err;
-> > > > +
-> > > > +	/* Both HW brightness values map to 0 in the LED classdev. */
-> > > > +	ideapad_kbd_bl_notify_known(priv, 0);
-> > > > +
-> > > > +	return count;
-> > > > +}
-> > > > +
-> > > > +static DEVICE_ATTR_RW(als_enabled);
-> > > > +
-> > > > +static struct attribute *ideapad_kbd_bl_als_attrs[] =3D {
-> > > > +	&dev_attr_als_enabled.attr,
-> > > > +	NULL,
-> > > > +};
-> > > > +ATTRIBUTE_GROUPS(ideapad_kbd_bl_als);
-> > > > +
-> > > >  static int ideapad_kbd_bl_init(struct ideapad_private *priv)
-> > > >  {
-> > > >  	int brightness, err;
-> > > > @@ -1722,10 +1773,20 @@ static int ideapad_kbd_bl_init(struct=20
-> > > > ideapad_private *priv)
-> > > >  	if (WARN_ON(priv->kbd_bl.initialized))
-> > > >  		return -EEXIST;
-> > > >=20
-> > > > -	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type)) {
-> > > > +	switch (priv->kbd_bl.type) {
-> > > > +	case KBD_BL_TRISTATE_AUTO:
-> > > > +		/* The sysfs node will be=20
-> > > > /sys/class/leds/platform::kbd_backlight/als_enabled */
-> > > > +		priv->kbd_bl.led.groups =3D ideapad_kbd_bl_als_groups;
-> > > > +		fallthrough;
-> > > > +	case KBD_BL_TRISTATE:
-> > > >  		priv->kbd_bl.led.max_brightness =3D 2;
-> > > > -	} else {
-> > > > +		break;
-> > > > +	case KBD_BL_STANDARD:
-> > > >  		priv->kbd_bl.led.max_brightness =3D 1;
-> > > > +		break;
-> > > > +	default:
-> > > > +		/* This has already been validated by ideapad_check_features(). =
-*/
-> > > > +		unreachable();
-> > > >  	}
-> > > >=20
-> > > >  	brightness =3D ideapad_kbd_bl_brightness_get(priv);
-> > > > --=20
-> > > > 2.50.1
-> > >=20
-> > > We're looking to implement this feature on the Thinkpads, so this cha=
-nge is timely :)
-> >=20
-> > Whoo, it's good to hear that.
-> >=20
-> > > I did wonder if we should be making changes at the LED class level? S=
-omething similar to LED_BRIGHT_HW_CHANGED maybe as a way to advertise that =
-auto mode is supported and some hooks to support that in sysfs?
-> >=20
-> > To the best of my knowledge, there is already an ideal model to fit the
-> > auto brightness mode, which is private LED trigger.
-> >=20
-> > To utilize it, these are four pieces of the puzzle:
-> >=20
-> > (1) implement a private LED trigger (see leds-cros_ec and
-> >     leds-turris-omnia, for example)
-> > (2) turn on/off the auto brightness mode when the activate/deactivate
-> >     hooks are called
-> > (3) switch to the private LED trigger/the "none" trigger when such mode
-> >     is turned on/off by the HW (i.e., when Fn+Space is pressed)
-> > (4) notifying the userspace of the HW-triggered LED trigger change
-> >=20
-> > I'd finished (1) and (2) in my early experiments and verified their
-> > functionality. However, I eventually realized the dilemma that pressing
-> > Fn+Space would bring everything into an inconsistent state because of
-> > the lack of (3).
-> >=20
-> > For (3), when the HW turns on the auto brightness mode, we need:
-> >=20
-> >    mutex_lock(&led_cdev->led_access);
-> >  =20
-> >    down_write(&led_cdev->trigger_lock);
-> >    led_trigger_set(led_cdev, <THE PRIVATE LED TRIGGER>);
-> >    up_write(&led_cdev->trigger_lock);
-> >  =20
-> >    mutex_unlock(&led_cdev->led_access);
-> >=20
-> > When off, we need:
-> >=20
-> >    mutex_lock(&led_cdev->led_access);
-> >  =20
-> >    led_trigger_remove(led_cdev);
-> >  =20
-> >    mutex_unlock(&led_cdev->led_access);
-
-After some careful consideration, I propose a new API for this:
-
-static int __led_trigger_set(struct led_classdev *led_cdev, struct led_trig=
-ger *trig,
-			     bool hw_triggered)
-{
-	[...]
-	if (led_cdev->trigger) {
-	[...]
-		if (trig || !hw_triggered)
-			led_set_brightness(led_cdev, LED_OFF);
-	}
-	[...]
-}
-
-int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig=
-)
-{
-	return __led_trigger_set(led_cdev, trig, false);
-}
-
-void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev, b=
-ool activate)
-{
-	/* Callers are expected to acquire led_cdev->led_access first. */
-	/* Hold led_cdev->trigger_lock, release when finish. */
-
-	hc_trig =3D /* Search for the trigger named after led_cdev->hw_control_tri=
-gger. */
-
-	/* We have 6 possible situations to handle: */
-
-	/* Hardware just activated hw control mode, while "none" is active */
-	if (activate && !led_cdev->trigger)
-		__led_trigger_set(led_cdev, hc_trig, true);
-
-	/* Hardware just deactivated hw control mode, while hc_trig is active */
-	else if (!activate && led_cdev->trigger =3D=3D hc_trig)
-		__led_trigger_set(led_cdev, NULL, true);
-
-	/* Hardware just activated hw control mode, while hc_trig is active */
-	/* Hardware just activated hw control mode, while another trigger is activ=
-e */
-	/* Hardware just deactivated hw control mode, while "none" is active */
-	/* Hardware just deactivated hw control mode, while another trigger is act=
-ive */
-}
-
-void led_trigger_notify_hw_control_changed_fast(struct led_classdev *led_cd=
-ev,
-						struct led_trigger *hc_trig, bool activate)
-{
-	/*
-	 * LED drivers with private trigger may call this, eliminating the need
-	 * to search for hc_trig. Everything else is the same as
-	 * led_trigger_notify_hw_control_changed.
-	 */
-}
-
-I will send an RFC patchset for this when ready (probably in the next
-week). For now, let me explain the new API:
-
-1. If a keyboard is capable of adjusting its backlight automatically
-according to ALS, a private trigger can excellently represent this
-capability. However, most keyboards with auto backlight can also switch
-it on and off upon user input, making the activation state of such
-private triggers meaningless noise. This is a major blocker. If we
-provide an API for HW-triggered LED trigger transition, I expect
-various (future or existing) drivers for keyboards/laptops can adopt
-it.
-
-2. When HW deactivates hw control mode on its own, it may choose a
-specific brightness instead of simply turning off the LED. We must keep
-it unchanged, or else brightness cycling will be broken. In the case of
-my ThinkBook, pressing Fn+Space cycles the keyboard backlight in the
-following order: auto =3D> low =3D> high =3D> off =3D> auto. @Mark, how is =
-the
-case for IdeaPad/ThinkPad?
-
-3. Only "hc_trig <=3D> none" transition is possible. Should we also
-reactivate the current trigger if it is neither hw control trigger nor
-"none"?
-
-4. The API are void functions, since LED drivers are always responsible
-for participating in the (de)activation sequence of hw control mode and
-should collect enough information about the current status during their
-participation.
-
-5. The LED driver needs to be able to handle the activation sequence
-even if the hardware is currently under hw control mode, and vice
-versa. This shouldn't be a big problem since I suppose most LED
-hardware is capable of entering/leaving hw control mode idempotently.
-In case any driver needs it, the new API doesn't touch
-led_cdev->led_access so that LED drivers can protect their housekeeping
-work, preparing for the idempotence.
-
-6. I am not very familiar with ledtrig-netdev. In my glance, it always
-checks the HW state and initializes its options accordingly on
-activation, so it is apparently non-idempotent. I think this is not a
-big deal since there shouldn't be any NIC that would switch hw control
-state for its LED on its own.
-
-> > I never thought of (4) at that moment. Therefore, I eventually doubted
-> > whether it was worth so much overhead and turned to the method in the
-> > current patch.
-> >=20
-> > Think twice now, I think it is worth implementing (1)-(3) as long as
-> > (4) can be addressed. I just found that both led_trigger_set() and
-> > led_trigger_remove() send a uevent once the trigger is changed [1], and
-> > verified this using `udevadm monitor'. We have collected all four
-> > pieces of the puzzle, hooray!
-> >=20
-> > If you are OK with the private LED trigger approach, I will adopt it in
-> > [PATCH v2].
-> >=20
-> > [1]: commit 52c47742f79d ("leds: triggers: send uevent when changing
-> > triggers")
-> >=20
-> I'm not a LED expert, but your proposal (including details below) looks s=
-ensible to me.
-
-I will first incorporate this patch into the RFC patch mentioned above
-to provide a reference usage and demonstrate the simplicity of this API
-in use. When the discussion is settled, I will submit them separately.
-
-> > > I know it would be more work, but I'm guessing this is going to be a =
-common feature across multiple vendors it might need doing at a common laye=
-r.
-> >=20
-> > CC'ing LED class maintainers.
-> >=20
-> excellent idea :)
->=20
-> > Private LED triggers currently have two users: leds-cros_ec and leds-
-> > turris-omnia. Their private triggers are respectively named "chromeos-
-> > auto" and "omnia-mcu".
-> >=20
-> > I agree that this is going to be a common feature. A generic name for
-> > such a feature helps userspace [2] identify it. What about introducing
-> > a namespace for private LED triggers, so that we can name these
-> > triggers like "hw-driven:driver-specific-name"?
-> >=20
-> > [2]: AFAIK, KDE Plasma already includes kbd_backlight in its battery
-> > panel (Plasma 5) or brightness panel (Plasma 6).
-
-When designing the above API, I realized that such a simple naming
-trick has inherent flaws: it doesn't make sense for dual-role triggers.
-
-The "netdev" trigger is either a software trigger or a hardware-driven
-trigger, depending on the underlying LED hardware and trigger options.
-It has an attribute "offloaded" for its dual-role capability.
-
-Thus, I propose a read-only attribute "trigger_may_offload". It is
-exposed when led_cdev->hw_control_trigger is defined. Its value depends
-on the state of the hw control trigger:
-
-- Offloaded: "[hw_control_trigger]"
-- Active but not offloaded: "<hw_control_trigger>"
-- Inactive: "hw_control_trigger"
-
-In this way, it perfectly answers two questions (Which trigger? What is
-its state?) from userspace at once. It can also be easily extended if
-we (unfortunately) meet some HW with more than one possible hw control
-trigger.
-
-A new method led_trigger->offloaded() also needs to be introduced to
-make the attribute useful. This should be easy.
-
-I will send another RFC patchset for this when ready. This should be
-independent of the one for led_trigger_notify_hw_control_changed since
-their functionalities are orthogonal.
-
-> > > As a note - on the Thinkpads we've had to look at getting the correct=
- Intel ISH firmware loaded (and we're working on getting that upstream to l=
-inux-firmware). Is that needed on the Ideapads for the feature to work well=
- or not?
-> >=20
-> > My device (ThinkBook 14 G7+ ASP) has an AMD Ryzen CPU, so the answer
-> > about Intel ISH firmware is apparent :P
-> >=20
-> Ah...yeah - that won't apply.
->=20
-> > It has two sensor hubs [3]. The ALS sensor is under the AMD Sensor
-> > Fusion Hub (SFH). The auto brightness mode=C2=A0requires the amd_sfh dr=
-iver
-> > to be loaded to work properly, but does *not* need the kernel to load
-> > the firmware. More details below.
-> >=20
-> > * AMD Sensor Fusion Hub 1.1 (1022:164a, driver: amd_sfh -> hid-sensor-
-> > hub):
-> > `` amd_sfh registers=C2=A0a standard HID sensor hub virtual device, whi=
-ch is
-> > then used by hid-sensor-hub.
-> > `` Checking the source code of amd_sfh,=C2=A0it doesn't use the firmwar=
-e
-> > subsystem, so SFH1.1 seems to have the firmware built into the
-> > platform.
-> > `` Firmware version: 0xb000026.
-> >=20
-> > -- Ambient Light Sensor (ALS, driver: hid-sensor-als):
-> > ``` hid-sensor-als registers an IIO device. It can be monitored via
-> > iio-sensor-proxy [4].
-> > ``` The EC can't collect data from it until amd_sfh is loaded. Manually
-> > unloading (rmmod) amd_sfh also breaks the data availability.
-> >=20
-> > * Ideapad HID sensor hub (IDEA5003/048D:5003, driver: i2c-hid-acpi
-> > -> hid-sensor-hub):
-> > `` No IIO sensor is registered because all HID Usages used to pass
-> > sensor values are vendor-specific.
-> > `` The only way to monitor it is HIDRAW.
-> >=20
-> > -- Human Presence Detection sensor (HPD, driver: hid-sensor-custom):
-> > ``` sensor-model=3DBIOMETRIC_HUMAN_DETECTION
-> > ``` friendly-name=3DAMS_TMF882X HOD V2010 Sensor
-> > ``` sensor-description=3D2.4 HOR0.0.19
-> > ``` The EC uses it to wake the device from S0ix (s2idle) on human
-> > approach.
-> > ``` I've managed to figure out how to parse its reports to get the
-> > distance between the human body=C2=A0and the device, as well as its
-> > confidence.
-> >=20
-> > -- Unknown sensor (driver: hid-sensor-custom):
-> > ``` sensor-model=3DLENOVO
-> > ``` friendly-name=3DLenovo AMS_HPD V0302 Sensor
-> > ``` sensor-manufacturer=3DLENOVO
-> > ``` It reports an increasing number periodically.
-> >=20
-> > -- Unknown sensor (driver: hid-sensor-custom):
-> > ``` sensor-model=3DLenovo Customized Gest
-> > ``` friendly-name=3DLenovo AMS_GESTRUE V0209 Sensor
-> > ``` sensor-manufacturer=3DLENOVO
-> > ``` It never sends any HID report.
-> >=20
-> I'll double check if/when we have any of this on the Thinkpads...I don't =
-think we do, but I'm sure we will at some point.
->=20
-> > [3]: Maybe this is a workaround so that the EC can collect data from
-> > the HPD sensor in S0ix, otherwise this is so weird to have two separate
-> > sensor hubs since AMD SFH also supports HPD sensors. But the wake-on-
-> > human-presence feature is already weird anyway - my device wakes itself
-> > when I am napping at the desk :-/ Zzz...
-> > [4]: https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
-> >=20
-> > I will just stop here as this somehow becomes off-topic. If you need
-> > more information about my device (or if you can provide some
-> > information for me, big thanks \o/), feel free to email me in private.
-> >=20
-
-Hi Mark,
-
-> As side notes
->  - we are looking at the HPD stuff too...but that's a topic for another t=
-hread ;)
-
-So glad to hear that. I definitely want to write a driver for IDEA5003
-sensor hub, but due to the lack of documentation and time, I put it
-aside for the time being.
-
->  - If your system is waking itself - try the AMD debug tool (https://git.=
-kernel.org/pub/scm/linux/kernel/git/superm1/amd-debug-tools.git) and you mi=
-ght be able to figure out which device is waking you up.
-> I'll discuss the sensorhubs with the AMD folk too to get their input - I'=
-m a bit behind on that. I'll ping you off thread if we can do something the=
-re (and feel free to directly nag me if I don't send anything in the next c=
-ouple of weeks...it's a bit hectic right now)
-
-Thanks for your information. I had done some tests with amd-debug-tools
-before, so I knew the wakeup interrupt was from EC due to=C2=A0the wake-on-
-human-presence feature. I've disabled it somehow with Lenovo BaiYing[1]
-and it's persistent. I didn't mention these in the previous reply
-because I thought these were just trivial details. But again, thanks
-for your information.
-
-[1]: I suppose writing 0 to
-/sys/bus/acpi/devices/IDEA5003:00/physical_node/0018:048D:5003.0002/HID
--SENSOR-*/enable_sensor can achieve the same effect.
-
-> Thanks for all the details
-> Mark
-
-Thanks,
-Rong
+T24gOC8xNS8yNSAxMjoxNiBQTSwgTGl6aGkgSG91IHdyb3RlOg0KPiBXYWxraW5nIGhhcmR3YXJl
+IGNvbnRleHRzIGNyZWF0ZWQgYnkgYSBwcm9jZXNzIGlzIGR1cGxpY2F0ZWQgaW4gbXVsdGlwbGUN
+Cj4gc3BvdHMuIEFkZCBhIGZ1bmN0aW9uLCBhbWR4ZG5hX2h3Y3R4X3dhbGsoKSwgYW5kIHJlcGxh
+Y2UgYWxsIHNwb3RzLg0KPiANCj4gaHdjdHhfc3JjdSBhbmQgZGV2X2xvY2sgYXJlIGdvb2QgZW5v
+dWdoIHRvIHByb3RlY3QgaGFyZHdhcmUgY29udGV4dCBsaXN0Lg0KPiBSZW1vdmUgaHdjdHhfbG9j
+ay4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IExpemhpIEhvdSA8bGl6aGkuaG91QGFtZC5jb20+DQpS
+ZXZpZXdlZC1ieTogTWFyaW8gTGltb25jaWVsbG8gPG1hcmlvLmxpbW9uY2llbGxvQGFtZC5jb20+
+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2FpZTJfY3R4LmMgICAgICAgIHwg
+MzggKysrKystLS0tLQ0KPiAgIGRyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX21lc3NhZ2UuYyAg
+ICB8IDIxICsrKy0tLQ0KPiAgIGRyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX3BjaS5jICAgICAg
+ICB8IDkzICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0NCj4gICBkcml2ZXJzL2FjY2VsL2FtZHhk
+bmEvYWllMl9wY2kuaCAgICAgICAgfCAgMiArLQ0KPiAgIGRyaXZlcnMvYWNjZWwvYW1keGRuYS9h
+bWR4ZG5hX2N0eC5jICAgICB8IDI2ICsrKysrLS0NCj4gICBkcml2ZXJzL2FjY2VsL2FtZHhkbmEv
+YW1keGRuYV9jdHguaCAgICAgfCAgOCArLS0NCj4gICBkcml2ZXJzL2FjY2VsL2FtZHhkbmEvYW1k
+eGRuYV9wY2lfZHJ2LmMgfCAgNyArLQ0KPiAgIGRyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5h
+X3BjaV9kcnYuaCB8ICAyIC0NCj4gICA4IGZpbGVzIGNoYW5nZWQsIDEwMiBpbnNlcnRpb25zKCsp
+LCA5NSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjY2VsL2FtZHhk
+bmEvYWllMl9jdHguYyBiL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX2N0eC5jDQo+IGluZGV4
+IDkxMGZmYjcwNTFmNC4uNDIwNDY3YTUzMjVjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2FjY2Vs
+L2FtZHhkbmEvYWllMl9jdHguYw0KPiArKysgYi9kcml2ZXJzL2FjY2VsL2FtZHhkbmEvYWllMl9j
+dHguYw0KPiBAQCAtMTMzLDExICsxMzMsMjAgQEAgc3RhdGljIHZvaWQgYWllMl9od2N0eF93YWl0
+X2Zvcl9pZGxlKHN0cnVjdCBhbWR4ZG5hX2h3Y3R4ICpod2N0eCkNCj4gICAJZG1hX2ZlbmNlX3B1
+dChmZW5jZSk7DQo+ICAgfQ0KPiAgIA0KPiArc3RhdGljIGludCBhaWUyX2h3Y3R4X3N1c3BlbmRf
+Y2Ioc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4LCB2b2lkICphcmcpDQo+ICt7DQo+ICsJc3Ry
+dWN0IGFtZHhkbmFfZGV2ICp4ZG5hID0gaHdjdHgtPmNsaWVudC0+eGRuYTsNCj4gKw0KPiArCWFp
+ZTJfaHdjdHhfd2FpdF9mb3JfaWRsZShod2N0eCk7DQo+ICsJYWllMl9od2N0eF9zdG9wKHhkbmEs
+IGh3Y3R4LCBOVUxMKTsNCj4gKwlhaWUyX2h3Y3R4X3N0YXR1c19zaGlmdF9zdG9wKGh3Y3R4KTsN
+Cj4gKw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICAgdm9pZCBhaWUyX2h3Y3R4X3N1c3Bl
+bmQoc3RydWN0IGFtZHhkbmFfY2xpZW50ICpjbGllbnQpDQo+ICAgew0KPiAgIAlzdHJ1Y3QgYW1k
+eGRuYV9kZXYgKnhkbmEgPSBjbGllbnQtPnhkbmE7DQo+IC0Jc3RydWN0IGFtZHhkbmFfaHdjdHgg
+Kmh3Y3R4Ow0KPiAtCXVuc2lnbmVkIGxvbmcgaHdjdHhfaWQ7DQo+ICAgDQo+ICAgCS8qDQo+ICAg
+CSAqIENvbW1hbmQgdGltZW91dCBpcyB1bmxpa2VseS4gQnV0IGlmIGl0IGhhcHBlbnMsIGl0IGRv
+ZXNuJ3QNCj4gQEAgLTE0NSwxOSArMTU0LDIwIEBAIHZvaWQgYWllMl9od2N0eF9zdXNwZW5kKHN0
+cnVjdCBhbWR4ZG5hX2NsaWVudCAqY2xpZW50KQ0KPiAgIAkgKiBhbmQgYWJvcnQgYWxsIGNvbW1h
+bmRzLg0KPiAgIAkgKi8NCj4gICAJZHJtX1dBUk5fT04oJnhkbmEtPmRkZXYsICFtdXRleF9pc19s
+b2NrZWQoJnhkbmEtPmRldl9sb2NrKSk7DQo+IC0JZ3VhcmQobXV0ZXgpKCZjbGllbnQtPmh3Y3R4
+X2xvY2spOw0KPiAtCWFtZHhkbmFfZm9yX2VhY2hfaHdjdHgoY2xpZW50LCBod2N0eF9pZCwgaHdj
+dHgpIHsNCj4gLQkJYWllMl9od2N0eF93YWl0X2Zvcl9pZGxlKGh3Y3R4KTsNCj4gLQkJYWllMl9o
+d2N0eF9zdG9wKHhkbmEsIGh3Y3R4LCBOVUxMKTsNCj4gLQkJYWllMl9od2N0eF9zdGF0dXNfc2hp
+ZnRfc3RvcChod2N0eCk7DQo+IC0JfQ0KPiArCWFtZHhkbmFfaHdjdHhfd2FsayhjbGllbnQsIE5V
+TEwsIGFpZTJfaHdjdHhfc3VzcGVuZF9jYik7DQo+ICAgfQ0KPiAgIA0KPiAtdm9pZCBhaWUyX2h3
+Y3R4X3Jlc3VtZShzdHJ1Y3QgYW1keGRuYV9jbGllbnQgKmNsaWVudCkNCj4gK3N0YXRpYyBpbnQg
+YWllMl9od2N0eF9yZXN1bWVfY2Ioc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4LCB2b2lkICph
+cmcpDQo+ICt7DQo+ICsJc3RydWN0IGFtZHhkbmFfZGV2ICp4ZG5hID0gaHdjdHgtPmNsaWVudC0+
+eGRuYTsNCj4gKw0KPiArCWFpZTJfaHdjdHhfc3RhdHVzX3Jlc3RvcmUoaHdjdHgpOw0KPiArCXJl
+dHVybiBhaWUyX2h3Y3R4X3Jlc3RhcnQoeGRuYSwgaHdjdHgpOw0KPiArfQ0KPiArDQo+ICtpbnQg
+YWllMl9od2N0eF9yZXN1bWUoc3RydWN0IGFtZHhkbmFfY2xpZW50ICpjbGllbnQpDQo+ICAgew0K
+PiAgIAlzdHJ1Y3QgYW1keGRuYV9kZXYgKnhkbmEgPSBjbGllbnQtPnhkbmE7DQo+IC0Jc3RydWN0
+IGFtZHhkbmFfaHdjdHggKmh3Y3R4Ow0KPiAtCXVuc2lnbmVkIGxvbmcgaHdjdHhfaWQ7DQo+ICAg
+DQo+ICAgCS8qDQo+ICAgCSAqIFRoZSByZXN1bWUgcGF0aCBjYW5ub3QgZ3VhcmFudGVlIHRoYXQg
+bWFpbGJveCBjaGFubmVsIGNhbiBiZQ0KPiBAQCAtMTY1LDExICsxNzUsNyBAQCB2b2lkIGFpZTJf
+aHdjdHhfcmVzdW1lKHN0cnVjdCBhbWR4ZG5hX2NsaWVudCAqY2xpZW50KQ0KPiAgIAkgKiBtYWls
+Ym94IGNoYW5uZWwsIGVycm9yIHdpbGwgcmV0dXJuLg0KPiAgIAkgKi8NCj4gICAJZHJtX1dBUk5f
+T04oJnhkbmEtPmRkZXYsICFtdXRleF9pc19sb2NrZWQoJnhkbmEtPmRldl9sb2NrKSk7DQo+IC0J
+Z3VhcmQobXV0ZXgpKCZjbGllbnQtPmh3Y3R4X2xvY2spOw0KPiAtCWFtZHhkbmFfZm9yX2VhY2hf
+aHdjdHgoY2xpZW50LCBod2N0eF9pZCwgaHdjdHgpIHsNCj4gLQkJYWllMl9od2N0eF9zdGF0dXNf
+cmVzdG9yZShod2N0eCk7DQo+IC0JCWFpZTJfaHdjdHhfcmVzdGFydCh4ZG5hLCBod2N0eCk7DQo+
+IC0JfQ0KPiArCXJldHVybiBhbWR4ZG5hX2h3Y3R4X3dhbGsoY2xpZW50LCBOVUxMLCBhaWUyX2h3
+Y3R4X3Jlc3VtZV9jYik7DQo+ICAgfQ0KPiAgIA0KPiAgIHN0YXRpYyB2b2lkDQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2FjY2VsL2FtZHhkbmEvYWllMl9tZXNzYWdlLmMgYi9kcml2ZXJzL2FjY2Vs
+L2FtZHhkbmEvYWllMl9tZXNzYWdlLmMNCj4gaW5kZXggODI0MTJlZWM5YTRiLi45Y2FhZDA4MzU0
+M2QgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX21lc3NhZ2UuYw0K
+PiArKysgYi9kcml2ZXJzL2FjY2VsL2FtZHhkbmEvYWllMl9tZXNzYWdlLmMNCj4gQEAgLTI5MCwx
+OCArMjkwLDI1IEBAIGludCBhaWUyX21hcF9ob3N0X2J1ZihzdHJ1Y3QgYW1keGRuYV9kZXZfaGRs
+ICpuZGV2LCB1MzIgY29udGV4dF9pZCwgdTY0IGFkZHIsIHU2DQo+ICAgCXJldHVybiAwOw0KPiAg
+IH0NCj4gICANCj4gK3N0YXRpYyBpbnQgYW1keGRuYV9od2N0eF9jb2xfbWFwKHN0cnVjdCBhbWR4
+ZG5hX2h3Y3R4ICpod2N0eCwgdm9pZCAqYXJnKQ0KPiArew0KPiArCXUzMiAqYml0bWFwID0gYXJn
+Ow0KPiArDQo+ICsJKmJpdG1hcCB8PSBHRU5NQVNLKGh3Y3R4LT5zdGFydF9jb2wgKyBod2N0eC0+
+bnVtX2NvbCAtIDEsIGh3Y3R4LT5zdGFydF9jb2wpOw0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9
+DQo+ICsNCj4gICBpbnQgYWllMl9xdWVyeV9zdGF0dXMoc3RydWN0IGFtZHhkbmFfZGV2X2hkbCAq
+bmRldiwgY2hhciBfX3VzZXIgKmJ1ZiwNCj4gICAJCSAgICAgIHUzMiBzaXplLCB1MzIgKmNvbHNf
+ZmlsbGVkKQ0KPiAgIHsNCj4gICAJREVDTEFSRV9BSUUyX01TRyhhaWVfY29sdW1uX2luZm8sIE1T
+R19PUF9RVUVSWV9DT0xfU1RBVFVTKTsNCj4gICAJc3RydWN0IGFtZHhkbmFfZGV2ICp4ZG5hID0g
+bmRldi0+eGRuYTsNCj4gICAJc3RydWN0IGFtZHhkbmFfY2xpZW50ICpjbGllbnQ7DQo+IC0Jc3Ry
+dWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4Ow0KPiAtCXVuc2lnbmVkIGxvbmcgaHdjdHhfaWQ7DQo+
+ICAgCWRtYV9hZGRyX3QgZG1hX2FkZHI7DQo+ICAgCXUzMiBhaWVfYml0bWFwID0gMDsNCj4gICAJ
+dTggKmJ1ZmZfYWRkcjsNCj4gLQlpbnQgcmV0LCBpZHg7DQo+ICsJaW50IHJldDsNCj4gICANCj4g
+ICAJYnVmZl9hZGRyID0gZG1hX2FsbG9jX25vbmNvaGVyZW50KHhkbmEtPmRkZXYuZGV2LCBzaXpl
+LCAmZG1hX2FkZHIsDQo+ICAgCQkJCQkgIERNQV9GUk9NX0RFVklDRSwgR0ZQX0tFUk5FTCk7DQo+
+IEBAIC0zMDksMTIgKzMxNiw4IEBAIGludCBhaWUyX3F1ZXJ5X3N0YXR1cyhzdHJ1Y3QgYW1keGRu
+YV9kZXZfaGRsICpuZGV2LCBjaGFyIF9fdXNlciAqYnVmLA0KPiAgIAkJcmV0dXJuIC1FTk9NRU07
+DQo+ICAgDQo+ICAgCS8qIEdvIHRocm91Z2ggZWFjaCBoYXJkd2FyZSBjb250ZXh0IGFuZCBtYXJr
+IHRoZSBBSUUgY29sdW1ucyB0aGF0IGFyZSBhY3RpdmUgKi8NCj4gLQlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5KGNsaWVudCwgJnhkbmEtPmNsaWVudF9saXN0LCBub2RlKSB7DQo+IC0JCWlkeCA9IHNyY3Vf
+cmVhZF9sb2NrKCZjbGllbnQtPmh3Y3R4X3NyY3UpOw0KPiAtCQlhbWR4ZG5hX2Zvcl9lYWNoX2h3
+Y3R4KGNsaWVudCwgaHdjdHhfaWQsIGh3Y3R4KQ0KPiAtCQkJYWllX2JpdG1hcCB8PSBhbWR4ZG5h
+X2h3Y3R4X2NvbF9tYXAoaHdjdHgpOw0KPiAtCQlzcmN1X3JlYWRfdW5sb2NrKCZjbGllbnQtPmh3
+Y3R4X3NyY3UsIGlkeCk7DQo+IC0JfQ0KPiArCWxpc3RfZm9yX2VhY2hfZW50cnkoY2xpZW50LCAm
+eGRuYS0+Y2xpZW50X2xpc3QsIG5vZGUpDQo+ICsJCWFtZHhkbmFfaHdjdHhfd2FsayhjbGllbnQs
+ICZhaWVfYml0bWFwLCBhbWR4ZG5hX2h3Y3R4X2NvbF9tYXApOw0KPiAgIA0KPiAgIAkqY29sc19m
+aWxsZWQgPSAwOw0KPiAgIAlyZXEuZHVtcF9idWZmX2FkZHIgPSBkbWFfYWRkcjsNCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX3BjaS5jIGIvZHJpdmVycy9hY2NlbC9h
+bWR4ZG5hL2FpZTJfcGNpLmMNCj4gaW5kZXggNmZjMzE5MWMzMDk3Li4xNmFjMGNhYjRmNDQgMTAw
+NjQ0DQo+IC0tLSBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX3BjaS5jDQo+ICsrKyBiL2Ry
+aXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX3BjaS5jDQo+IEBAIC0xMCw2ICsxMCw3IEBADQo+ICAg
+I2luY2x1ZGUgPGRybS9kcm1fbWFuYWdlZC5oPg0KPiAgICNpbmNsdWRlIDxkcm0vZHJtX3ByaW50
+Lmg+DQo+ICAgI2luY2x1ZGUgPGRybS9ncHVfc2NoZWR1bGVyLmg+DQo+ICsjaW5jbHVkZSA8bGlu
+dXgvY2xlYW51cC5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9lcnJuby5oPg0KPiAgICNpbmNsdWRl
+IDxsaW51eC9maXJtd2FyZS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9pb21tdS5oPg0KPiBAQCAt
+NDY1LDggKzQ2NiwxMSBAQCBzdGF0aWMgaW50IGFpZTJfaHdfcmVzdW1lKHN0cnVjdCBhbWR4ZG5h
+X2RldiAqeGRuYSkNCj4gICAJCXJldHVybiByZXQ7DQo+ICAgCX0NCj4gICANCj4gLQlsaXN0X2Zv
+cl9lYWNoX2VudHJ5KGNsaWVudCwgJnhkbmEtPmNsaWVudF9saXN0LCBub2RlKQ0KPiAtCQlhaWUy
+X2h3Y3R4X3Jlc3VtZShjbGllbnQpOw0KPiArCWxpc3RfZm9yX2VhY2hfZW50cnkoY2xpZW50LCAm
+eGRuYS0+Y2xpZW50X2xpc3QsIG5vZGUpIHsNCj4gKwkJcmV0ID0gYWllMl9od2N0eF9yZXN1bWUo
+Y2xpZW50KTsNCj4gKwkJaWYgKHJldCkNCj4gKwkJCWJyZWFrOw0KPiArCX0NCj4gICANCj4gICAJ
+cmV0dXJuIHJldDsNCj4gICB9DQo+IEBAIC03NzksNjUgKzc4Myw1NiBAQCBzdGF0aWMgaW50IGFp
+ZTJfZ2V0X2Nsb2NrX21ldGFkYXRhKHN0cnVjdCBhbWR4ZG5hX2NsaWVudCAqY2xpZW50LA0KPiAg
+IAlyZXR1cm4gcmV0Ow0KPiAgIH0NCj4gICANCj4gK3N0YXRpYyBpbnQgYWllMl9od2N0eF9zdGF0
+dXNfY2Ioc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4LCB2b2lkICphcmcpDQo+ICt7DQo+ICsJ
+c3RydWN0IGFtZHhkbmFfZHJtX3F1ZXJ5X2h3Y3R4IF9fdXNlciAqYnVmLCAqdG1wIF9fZnJlZShr
+ZnJlZSkgPSBOVUxMOw0KPiArCXN0cnVjdCBhbWR4ZG5hX2RybV9nZXRfaW5mbyAqZ2V0X2luZm9f
+YXJncyA9IGFyZzsNCj4gKw0KPiArCWlmIChnZXRfaW5mb19hcmdzLT5idWZmZXJfc2l6ZSA8IHNp
+emVvZigqdG1wKSkNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKwl0bXAgPSBremFsbG9j
+KHNpemVvZigqdG1wKSwgR0ZQX0tFUk5FTCk7DQo+ICsJaWYgKCF0bXApDQo+ICsJCXJldHVybiAt
+RU5PTUVNOw0KPiArDQo+ICsJdG1wLT5waWQgPSBod2N0eC0+Y2xpZW50LT5waWQ7DQo+ICsJdG1w
+LT5jb250ZXh0X2lkID0gaHdjdHgtPmlkOw0KPiArCXRtcC0+c3RhcnRfY29sID0gaHdjdHgtPnN0
+YXJ0X2NvbDsNCj4gKwl0bXAtPm51bV9jb2wgPSBod2N0eC0+bnVtX2NvbDsNCj4gKwl0bXAtPmNv
+bW1hbmRfc3VibWlzc2lvbnMgPSBod2N0eC0+cHJpdi0+c2VxOw0KPiArCXRtcC0+Y29tbWFuZF9j
+b21wbGV0aW9ucyA9IGh3Y3R4LT5wcml2LT5jb21wbGV0ZWQ7DQo+ICsNCj4gKwlidWYgPSB1NjRf
+dG9fdXNlcl9wdHIoZ2V0X2luZm9fYXJncy0+YnVmZmVyKTsNCj4gKw0KPiArCWlmIChjb3B5X3Rv
+X3VzZXIoYnVmLCB0bXAsIHNpemVvZigqdG1wKSkpDQo+ICsJCXJldHVybiAtRUZBVUxUOw0KPiAr
+DQo+ICsJZ2V0X2luZm9fYXJncy0+YnVmZmVyICs9IHNpemVvZigqdG1wKTsNCj4gKwlnZXRfaW5m
+b19hcmdzLT5idWZmZXJfc2l6ZSAtPSBzaXplb2YoKnRtcCk7DQo+ICsNCj4gKwlyZXR1cm4gMDsN
+Cj4gK30NCj4gKw0KPiAgIHN0YXRpYyBpbnQgYWllMl9nZXRfaHdjdHhfc3RhdHVzKHN0cnVjdCBh
+bWR4ZG5hX2NsaWVudCAqY2xpZW50LA0KPiAgIAkJCQkgc3RydWN0IGFtZHhkbmFfZHJtX2dldF9p
+bmZvICphcmdzKQ0KPiAgIHsNCj4gLQlzdHJ1Y3QgYW1keGRuYV9kcm1fcXVlcnlfaHdjdHggX191
+c2VyICpidWY7DQo+ICAgCXN0cnVjdCBhbWR4ZG5hX2RldiAqeGRuYSA9IGNsaWVudC0+eGRuYTsN
+Cj4gLQlzdHJ1Y3QgYW1keGRuYV9kcm1fcXVlcnlfaHdjdHggKnRtcDsNCj4gKwlzdHJ1Y3QgYW1k
+eGRuYV9kcm1fZ2V0X2luZm8gaW5mb19hcmdzOw0KPiAgIAlzdHJ1Y3QgYW1keGRuYV9jbGllbnQg
+KnRtcF9jbGllbnQ7DQo+IC0Jc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4Ow0KPiAtCXVuc2ln
+bmVkIGxvbmcgaHdjdHhfaWQ7DQo+IC0JYm9vbCBvdmVyZmxvdyA9IGZhbHNlOw0KPiAtCXUzMiBy
+ZXFfYnl0ZXMgPSAwOw0KPiAtCXUzMiBod19pID0gMDsNCj4gLQlpbnQgcmV0ID0gMDsNCj4gLQlp
+bnQgaWR4Ow0KPiArCWludCByZXQ7DQo+ICAgDQo+ICAgCWRybV9XQVJOX09OKCZ4ZG5hLT5kZGV2
+LCAhbXV0ZXhfaXNfbG9ja2VkKCZ4ZG5hLT5kZXZfbG9jaykpOw0KPiAgIA0KPiAtCXRtcCA9IGt6
+YWxsb2Moc2l6ZW9mKCp0bXApLCBHRlBfS0VSTkVMKTsNCj4gLQlpZiAoIXRtcCkNCj4gLQkJcmV0
+dXJuIC1FTk9NRU07DQo+ICsJaW5mb19hcmdzLmJ1ZmZlciA9IGFyZ3MtPmJ1ZmZlcjsNCj4gKwlp
+bmZvX2FyZ3MuYnVmZmVyX3NpemUgPSBhcmdzLT5idWZmZXJfc2l6ZTsNCj4gICANCj4gLQlidWYg
+PSB1NjRfdG9fdXNlcl9wdHIoYXJncy0+YnVmZmVyKTsNCj4gICAJbGlzdF9mb3JfZWFjaF9lbnRy
+eSh0bXBfY2xpZW50LCAmeGRuYS0+Y2xpZW50X2xpc3QsIG5vZGUpIHsNCj4gLQkJaWR4ID0gc3Jj
+dV9yZWFkX2xvY2soJnRtcF9jbGllbnQtPmh3Y3R4X3NyY3UpOw0KPiAtCQlhbWR4ZG5hX2Zvcl9l
+YWNoX2h3Y3R4KHRtcF9jbGllbnQsIGh3Y3R4X2lkLCBod2N0eCkgew0KPiAtCQkJcmVxX2J5dGVz
+ICs9IHNpemVvZigqdG1wKTsNCj4gLQkJCWlmIChhcmdzLT5idWZmZXJfc2l6ZSA8IHJlcV9ieXRl
+cykgew0KPiAtCQkJCS8qIENvbnRpbnVlIGl0ZXJhdGluZyB0byBnZXQgdGhlIHJlcXVpcmVkIHNp
+emUgKi8NCj4gLQkJCQlvdmVyZmxvdyA9IHRydWU7DQo+IC0JCQkJY29udGludWU7DQo+IC0JCQl9
+DQo+IC0NCj4gLQkJCW1lbXNldCh0bXAsIDAsIHNpemVvZigqdG1wKSk7DQo+IC0JCQl0bXAtPnBp
+ZCA9IHRtcF9jbGllbnQtPnBpZDsNCj4gLQkJCXRtcC0+Y29udGV4dF9pZCA9IGh3Y3R4LT5pZDsN
+Cj4gLQkJCXRtcC0+c3RhcnRfY29sID0gaHdjdHgtPnN0YXJ0X2NvbDsNCj4gLQkJCXRtcC0+bnVt
+X2NvbCA9IGh3Y3R4LT5udW1fY29sOw0KPiAtCQkJdG1wLT5jb21tYW5kX3N1Ym1pc3Npb25zID0g
+aHdjdHgtPnByaXYtPnNlcTsNCj4gLQkJCXRtcC0+Y29tbWFuZF9jb21wbGV0aW9ucyA9IGh3Y3R4
+LT5wcml2LT5jb21wbGV0ZWQ7DQo+IC0NCj4gLQkJCWlmIChjb3B5X3RvX3VzZXIoJmJ1Zltod19p
+XSwgdG1wLCBzaXplb2YoKnRtcCkpKSB7DQo+IC0JCQkJcmV0ID0gLUVGQVVMVDsNCj4gLQkJCQlz
+cmN1X3JlYWRfdW5sb2NrKCZ0bXBfY2xpZW50LT5od2N0eF9zcmN1LCBpZHgpOw0KPiAtCQkJCWdv
+dG8gb3V0Ow0KPiAtCQkJfQ0KPiAtCQkJaHdfaSsrOw0KPiAtCQl9DQo+IC0JCXNyY3VfcmVhZF91
+bmxvY2soJnRtcF9jbGllbnQtPmh3Y3R4X3NyY3UsIGlkeCk7DQo+IC0JfQ0KPiAtDQo+IC0JaWYg
+KG92ZXJmbG93KSB7DQo+IC0JCVhETkFfRVJSKHhkbmEsICJJbnZhbGlkIGJ1ZmZlciBzaXplLiBH
+aXZlbjogJXUgTmVlZDogJXUuIiwNCj4gLQkJCSBhcmdzLT5idWZmZXJfc2l6ZSwgcmVxX2J5dGVz
+KTsNCj4gLQkJcmV0ID0gLUVJTlZBTDsNCj4gKwkJcmV0ID0gYW1keGRuYV9od2N0eF93YWxrKHRt
+cF9jbGllbnQsICZpbmZvX2FyZ3MsIGFpZTJfaHdjdHhfc3RhdHVzX2NiKTsNCj4gKwkJaWYgKHJl
+dCkNCj4gKwkJCWJyZWFrOw0KPiAgIAl9DQo+ICAgDQo+IC1vdXQ6DQo+IC0Ja2ZyZWUodG1wKTsN
+Cj4gLQlhcmdzLT5idWZmZXJfc2l6ZSA9IHJlcV9ieXRlczsNCj4gKwlhcmdzLT5idWZmZXJfc2l6
+ZSA9ICh1MzIpKGluZm9fYXJncy5idWZmZXIgLSBhcmdzLT5idWZmZXIpOw0KPiAgIAlyZXR1cm4g
+cmV0Ow0KPiAgIH0NCj4gICANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9h
+aWUyX3BjaS5oIGIvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2FpZTJfcGNpLmgNCj4gaW5kZXggNDg4
+ZDhlZTU2OGViLi45MWE4ZTk0OGY4MmEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvYWNjZWwvYW1k
+eGRuYS9haWUyX3BjaS5oDQo+ICsrKyBiL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9haWUyX3BjaS5o
+DQo+IEBAIC0yODksNyArMjg5LDcgQEAgaW50IGFpZTJfaHdjdHhfaW5pdChzdHJ1Y3QgYW1keGRu
+YV9od2N0eCAqaHdjdHgpOw0KPiAgIHZvaWQgYWllMl9od2N0eF9maW5pKHN0cnVjdCBhbWR4ZG5h
+X2h3Y3R4ICpod2N0eCk7DQo+ICAgaW50IGFpZTJfaHdjdHhfY29uZmlnKHN0cnVjdCBhbWR4ZG5h
+X2h3Y3R4ICpod2N0eCwgdTMyIHR5cGUsIHU2NCB2YWx1ZSwgdm9pZCAqYnVmLCB1MzIgc2l6ZSk7
+DQo+ICAgdm9pZCBhaWUyX2h3Y3R4X3N1c3BlbmQoc3RydWN0IGFtZHhkbmFfY2xpZW50ICpjbGll
+bnQpOw0KPiAtdm9pZCBhaWUyX2h3Y3R4X3Jlc3VtZShzdHJ1Y3QgYW1keGRuYV9jbGllbnQgKmNs
+aWVudCk7DQo+ICtpbnQgYWllMl9od2N0eF9yZXN1bWUoc3RydWN0IGFtZHhkbmFfY2xpZW50ICpj
+bGllbnQpOw0KPiAgIGludCBhaWUyX2NtZF9zdWJtaXQoc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3
+Y3R4LCBzdHJ1Y3QgYW1keGRuYV9zY2hlZF9qb2IgKmpvYiwgdTY0ICpzZXEpOw0KPiAgIHZvaWQg
+YWllMl9obW1faW52YWxpZGF0ZShzdHJ1Y3QgYW1keGRuYV9nZW1fb2JqICphYm8sIHVuc2lnbmVk
+IGxvbmcgY3VyX3NlcSk7DQo+ICAgDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjY2VsL2FtZHhk
+bmEvYW1keGRuYV9jdHguYyBiL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX2N0eC5jDQo+
+IGluZGV4IGI0N2E3ZjhlOTAxNy4uNGJmZTRlZjIwNTUwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L2FjY2VsL2FtZHhkbmEvYW1keGRuYV9jdHguYw0KPiArKysgYi9kcml2ZXJzL2FjY2VsL2FtZHhk
+bmEvYW1keGRuYV9jdHguYw0KPiBAQCAtNjgsMTQgKzY4LDMwIEBAIHN0YXRpYyB2b2lkIGFtZHhk
+bmFfaHdjdHhfZGVzdHJveV9yY3Uoc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4LA0KPiAgIAlz
+eW5jaHJvbml6ZV9zcmN1KHNzKTsNCj4gICANCj4gICAJLyogQXQgdGhpcyBwb2ludCwgdXNlciBp
+cyBub3QgYWJsZSB0byBzdWJtaXQgbmV3IGNvbW1hbmRzICovDQo+IC0JbXV0ZXhfbG9jaygmeGRu
+YS0+ZGV2X2xvY2spOw0KPiAgIAl4ZG5hLT5kZXZfaW5mby0+b3BzLT5od2N0eF9maW5pKGh3Y3R4
+KTsNCj4gLQltdXRleF91bmxvY2soJnhkbmEtPmRldl9sb2NrKTsNCj4gICANCj4gICAJa2ZyZWUo
+aHdjdHgtPm5hbWUpOw0KPiAgIAlrZnJlZShod2N0eCk7DQo+ICAgfQ0KPiAgIA0KPiAraW50IGFt
+ZHhkbmFfaHdjdHhfd2FsayhzdHJ1Y3QgYW1keGRuYV9jbGllbnQgKmNsaWVudCwgdm9pZCAqYXJn
+LA0KPiArCQkgICAgICAgaW50ICgqd2Fsaykoc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4LCB2
+b2lkICphcmcpKQ0KPiArew0KPiArCXN0cnVjdCBhbWR4ZG5hX2h3Y3R4ICpod2N0eDsNCj4gKwl1
+bnNpZ25lZCBsb25nIGh3Y3R4X2lkOw0KPiArCWludCByZXQgPSAwLCBpZHg7DQo+ICsNCj4gKwlp
+ZHggPSBzcmN1X3JlYWRfbG9jaygmY2xpZW50LT5od2N0eF9zcmN1KTsNCj4gKwlhbWR4ZG5hX2Zv
+cl9lYWNoX2h3Y3R4KGNsaWVudCwgaHdjdHhfaWQsIGh3Y3R4KSB7DQo+ICsJCXJldCA9IHdhbGso
+aHdjdHgsIGFyZyk7DQo+ICsJCWlmIChyZXQpDQo+ICsJCQlicmVhazsNCj4gKwl9DQo+ICsJc3Jj
+dV9yZWFkX3VubG9jaygmY2xpZW50LT5od2N0eF9zcmN1LCBpZHgpOw0KPiArDQo+ICsJcmV0dXJu
+IHJldDsNCj4gK30NCj4gKw0KPiAgIHZvaWQgKmFtZHhkbmFfY21kX2dldF9wYXlsb2FkKHN0cnVj
+dCBhbWR4ZG5hX2dlbV9vYmogKmFibywgdTMyICpzaXplKQ0KPiAgIHsNCj4gICAJc3RydWN0IGFt
+ZHhkbmFfY21kICpjbWQgPSBhYm8tPm1lbS5rdmE7DQo+IEBAIC0xMjYsMTYgKzE0MiwxMiBAQCB2
+b2lkIGFtZHhkbmFfaHdjdHhfcmVtb3ZlX2FsbChzdHJ1Y3QgYW1keGRuYV9jbGllbnQgKmNsaWVu
+dCkNCj4gICAJc3RydWN0IGFtZHhkbmFfaHdjdHggKmh3Y3R4Ow0KPiAgIAl1bnNpZ25lZCBsb25n
+IGh3Y3R4X2lkOw0KPiAgIA0KPiAtCW11dGV4X2xvY2soJmNsaWVudC0+aHdjdHhfbG9jayk7DQo+
+ICAgCWFtZHhkbmFfZm9yX2VhY2hfaHdjdHgoY2xpZW50LCBod2N0eF9pZCwgaHdjdHgpIHsNCj4g
+ICAJCVhETkFfREJHKGNsaWVudC0+eGRuYSwgIlBJRCAlZCBjbG9zZSBIVyBjb250ZXh0ICVkIiwN
+Cj4gICAJCQkgY2xpZW50LT5waWQsIGh3Y3R4LT5pZCk7DQo+ICAgCQl4YV9lcmFzZSgmY2xpZW50
+LT5od2N0eF94YSwgaHdjdHgtPmlkKTsNCj4gLQkJbXV0ZXhfdW5sb2NrKCZjbGllbnQtPmh3Y3R4
+X2xvY2spOw0KPiAgIAkJYW1keGRuYV9od2N0eF9kZXN0cm95X3JjdShod2N0eCwgJmNsaWVudC0+
+aHdjdHhfc3JjdSk7DQo+IC0JCW11dGV4X2xvY2soJmNsaWVudC0+aHdjdHhfbG9jayk7DQo+ICAg
+CX0NCj4gLQltdXRleF91bmxvY2soJmNsaWVudC0+aHdjdHhfbG9jayk7DQo+ICAgfQ0KPiAgIA0K
+PiAgIGludCBhbWR4ZG5hX2RybV9jcmVhdGVfaHdjdHhfaW9jdGwoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwgdm9pZCAqZGF0YSwgc3RydWN0IGRybV9maWxlICpmaWxwKQ0KPiBAQCAtMjI1LDYgKzIz
+Nyw3IEBAIGludCBhbWR4ZG5hX2RybV9kZXN0cm95X2h3Y3R4X2lvY3RsKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIHZvaWQgKmRhdGEsIHN0cnVjdCBkDQo+ICAgCWlmICghZHJtX2Rldl9lbnRlcihk
+ZXYsICZpZHgpKQ0KPiAgIAkJcmV0dXJuIC1FTk9ERVY7DQo+ICAgDQo+ICsJbXV0ZXhfbG9jaygm
+eGRuYS0+ZGV2X2xvY2spOw0KPiAgIAlod2N0eCA9IHhhX2VyYXNlKCZjbGllbnQtPmh3Y3R4X3hh
+LCBhcmdzLT5oYW5kbGUpOw0KPiAgIAlpZiAoIWh3Y3R4KSB7DQo+ICAgCQlyZXQgPSAtRUlOVkFM
+Ow0KPiBAQCAtMjQxLDYgKzI1NCw3IEBAIGludCBhbWR4ZG5hX2RybV9kZXN0cm95X2h3Y3R4X2lv
+Y3RsKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEsIHN0cnVjdCBkDQo+ICAgDQo+
+ICAgCVhETkFfREJHKHhkbmEsICJQSUQgJWQgZGVzdHJveWVkIEhXIGNvbnRleHQgJWQiLCBjbGll
+bnQtPnBpZCwgYXJncy0+aGFuZGxlKTsNCj4gICBvdXQ6DQo+ICsJbXV0ZXhfdW5sb2NrKCZ4ZG5h
+LT5kZXZfbG9jayk7DQo+ICAgCWRybV9kZXZfZXhpdChpZHgpOw0KPiAgIAlyZXR1cm4gcmV0Ow0K
+PiAgIH0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX2N0eC5o
+IGIvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2FtZHhkbmFfY3R4LmgNCj4gaW5kZXggYzY1MjIyOTU0
+N2EzLi43Y2Q3YTU1OTM2ZjAgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9h
+bWR4ZG5hX2N0eC5oDQo+ICsrKyBiL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX2N0eC5o
+DQo+IEBAIC0xMzksMTQgKzEzOSwxMCBAQCBhbWR4ZG5hX2NtZF9nZXRfc3RhdGUoc3RydWN0IGFt
+ZHhkbmFfZ2VtX29iaiAqYWJvKQ0KPiAgIHZvaWQgKmFtZHhkbmFfY21kX2dldF9wYXlsb2FkKHN0
+cnVjdCBhbWR4ZG5hX2dlbV9vYmogKmFibywgdTMyICpzaXplKTsNCj4gICBpbnQgYW1keGRuYV9j
+bWRfZ2V0X2N1X2lkeChzdHJ1Y3QgYW1keGRuYV9nZW1fb2JqICphYm8pOw0KPiAgIA0KPiAtc3Rh
+dGljIGlubGluZSB1MzIgYW1keGRuYV9od2N0eF9jb2xfbWFwKHN0cnVjdCBhbWR4ZG5hX2h3Y3R4
+ICpod2N0eCkNCj4gLXsNCj4gLQlyZXR1cm4gR0VOTUFTSyhod2N0eC0+c3RhcnRfY29sICsgaHdj
+dHgtPm51bV9jb2wgLSAxLA0KPiAtCQkgICAgICAgaHdjdHgtPnN0YXJ0X2NvbCk7DQo+IC19DQo+
+IC0NCj4gICB2b2lkIGFtZHhkbmFfc2NoZWRfam9iX2NsZWFudXAoc3RydWN0IGFtZHhkbmFfc2No
+ZWRfam9iICpqb2IpOw0KPiAgIHZvaWQgYW1keGRuYV9od2N0eF9yZW1vdmVfYWxsKHN0cnVjdCBh
+bWR4ZG5hX2NsaWVudCAqY2xpZW50KTsNCj4gK2ludCBhbWR4ZG5hX2h3Y3R4X3dhbGsoc3RydWN0
+IGFtZHhkbmFfY2xpZW50ICpjbGllbnQsIHZvaWQgKmFyZywNCj4gKwkJICAgICAgIGludCAoKndh
+bGspKHN0cnVjdCBhbWR4ZG5hX2h3Y3R4ICpod2N0eCwgdm9pZCAqYXJnKSk7DQo+ICAgDQo+ICAg
+aW50IGFtZHhkbmFfY21kX3N1Ym1pdChzdHJ1Y3QgYW1keGRuYV9jbGllbnQgKmNsaWVudCwNCj4g
+ICAJCSAgICAgICB1MzIgY21kX2JvX2hkbHMsIHUzMiAqYXJnX2JvX2hkbHMsIHUzMiBhcmdfYm9f
+Y250LA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2FtZHhkbmFfcGNpX2Ry
+di5jIGIvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2FtZHhkbmFfcGNpX2Rydi5jDQo+IGluZGV4IGZi
+Y2E5NDE4M2Y5Ni4uOGVmNWU0ZjI3ZjVlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2FjY2VsL2Ft
+ZHhkbmEvYW1keGRuYV9wY2lfZHJ2LmMNCj4gKysrIGIvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2Ft
+ZHhkbmFfcGNpX2Rydi5jDQo+IEBAIC04MSw3ICs4MSw2IEBAIHN0YXRpYyBpbnQgYW1keGRuYV9k
+cm1fb3BlbihzdHJ1Y3QgZHJtX2RldmljZSAqZGRldiwgc3RydWN0IGRybV9maWxlICpmaWxwKQ0K
+PiAgIAkJcmV0ID0gLUVOT0RFVjsNCj4gICAJCWdvdG8gdW5iaW5kX3N2YTsNCj4gICAJfQ0KPiAt
+CW11dGV4X2luaXQoJmNsaWVudC0+aHdjdHhfbG9jayk7DQo+ICAgCWluaXRfc3JjdV9zdHJ1Y3Qo
+JmNsaWVudC0+aHdjdHhfc3JjdSk7DQo+ICAgCXhhX2luaXRfZmxhZ3MoJmNsaWVudC0+aHdjdHhf
+eGEsIFhBX0ZMQUdTX0FMTE9DKTsNCj4gICAJbXV0ZXhfaW5pdCgmY2xpZW50LT5tbV9sb2NrKTsN
+Cj4gQEAgLTExNiw3ICsxMTUsNiBAQCBzdGF0aWMgdm9pZCBhbWR4ZG5hX2RybV9jbG9zZShzdHJ1
+Y3QgZHJtX2RldmljZSAqZGRldiwgc3RydWN0IGRybV9maWxlICpmaWxwKQ0KPiAgIA0KPiAgIAl4
+YV9kZXN0cm95KCZjbGllbnQtPmh3Y3R4X3hhKTsNCj4gICAJY2xlYW51cF9zcmN1X3N0cnVjdCgm
+Y2xpZW50LT5od2N0eF9zcmN1KTsNCj4gLQltdXRleF9kZXN0cm95KCZjbGllbnQtPmh3Y3R4X2xv
+Y2spOw0KPiAgIAltdXRleF9kZXN0cm95KCZjbGllbnQtPm1tX2xvY2spOw0KPiAgIAlpZiAoY2xp
+ZW50LT5kZXZfaGVhcCkNCj4gICAJCWRybV9nZW1fb2JqZWN0X3B1dCh0b19nb2JqKGNsaWVudC0+
+ZGV2X2hlYXApKTsNCj4gQEAgLTE0Miw4ICsxNDAsOCBAQCBzdGF0aWMgaW50IGFtZHhkbmFfZmx1
+c2goc3RydWN0IGZpbGUgKmYsIGZsX293bmVyX3QgaWQpDQo+ICAgDQo+ICAgCW11dGV4X2xvY2so
+JnhkbmEtPmRldl9sb2NrKTsNCj4gICAJbGlzdF9kZWxfaW5pdCgmY2xpZW50LT5ub2RlKTsNCj4g
+LQltdXRleF91bmxvY2soJnhkbmEtPmRldl9sb2NrKTsNCj4gICAJYW1keGRuYV9od2N0eF9yZW1v
+dmVfYWxsKGNsaWVudCk7DQo+ICsJbXV0ZXhfdW5sb2NrKCZ4ZG5hLT5kZXZfbG9jayk7DQo+ICAg
+DQo+ICAgCWRybV9kZXZfZXhpdChpZHgpOw0KPiAgIAlyZXR1cm4gMDsNCj4gQEAgLTMzMCwxMSAr
+MzI4LDggQEAgc3RhdGljIHZvaWQgYW1keGRuYV9yZW1vdmUoc3RydWN0IHBjaV9kZXYgKnBkZXYp
+DQo+ICAgCQkJCQkgIHN0cnVjdCBhbWR4ZG5hX2NsaWVudCwgbm9kZSk7DQo+ICAgCXdoaWxlIChj
+bGllbnQpIHsNCj4gICAJCWxpc3RfZGVsX2luaXQoJmNsaWVudC0+bm9kZSk7DQo+IC0JCW11dGV4
+X3VubG9jaygmeGRuYS0+ZGV2X2xvY2spOw0KPiAtDQo+ICAgCQlhbWR4ZG5hX2h3Y3R4X3JlbW92
+ZV9hbGwoY2xpZW50KTsNCj4gICANCj4gLQkJbXV0ZXhfbG9jaygmeGRuYS0+ZGV2X2xvY2spOw0K
+PiAgIAkJY2xpZW50ID0gbGlzdF9maXJzdF9lbnRyeV9vcl9udWxsKCZ4ZG5hLT5jbGllbnRfbGlz
+dCwNCj4gICAJCQkJCQkgIHN0cnVjdCBhbWR4ZG5hX2NsaWVudCwgbm9kZSk7DQo+ICAgCX0NCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX3BjaV9kcnYuaCBiL2Ry
+aXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX3BjaV9kcnYuaA0KPiBpbmRleCA0MGJiYjNjMDYz
+MjAuLmI2YjNiNDI0ZDFkNSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9hY2NlbC9hbWR4ZG5hL2Ft
+ZHhkbmFfcGNpX2Rydi5oDQo+ICsrKyBiL2RyaXZlcnMvYWNjZWwvYW1keGRuYS9hbWR4ZG5hX3Bj
+aV9kcnYuaA0KPiBAQCAtMTE2LDggKzExNiw2IEBAIHN0cnVjdCBhbWR4ZG5hX2RldmljZV9pZCB7
+DQo+ICAgc3RydWN0IGFtZHhkbmFfY2xpZW50IHsNCj4gICAJc3RydWN0IGxpc3RfaGVhZAkJbm9k
+ZTsNCj4gICAJcGlkX3QJCQkJcGlkOw0KPiAtCXN0cnVjdCBtdXRleAkJCWh3Y3R4X2xvY2s7IC8q
+IHByb3RlY3QgaHdjdHggKi8NCj4gLQkvKiBkbyBOT1Qgd2FpdCB0aGlzIHNyY3Ugd2hlbiBod2N0
+eF9sb2NrIGlzIGhlbGQgKi8NCj4gICAJc3RydWN0IHNyY3Vfc3RydWN0CQlod2N0eF9zcmN1Ow0K
+PiAgIAlzdHJ1Y3QgeGFycmF5CQkJaHdjdHhfeGE7DQo+ICAgCXUzMgkJCQluZXh0X2h3Y3R4aWQ7
+DQoNCg==
 
