@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-770477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA02B27B4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:39:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4F6B27B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5EA1A24064
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C929D7A07F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CB42D23B6;
-	Fri, 15 Aug 2025 08:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2A72D12E6;
+	Fri, 15 Aug 2025 08:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG1Ie9jT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LipGcAHL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0052D24466C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80C2242D6A;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755247062; cv=none; b=Jwqhd5odLJXeVmTb2aufzyna2n+rMLwqcykAZzmJYeZa+ME02DVKnzIuM9ytKKHkdcx7g2W9zOQ8v+AsiIhn0BVgQpi3ZxI3r1SQvrwYD99x62W9AWQ9FpZL46kfIbA+KqHo7WtDQ3hFwAjFktTblQbdiUF08mxxvHJl4Bk2w+A=
+	t=1755247062; cv=none; b=C9FhapBN8Opoh9P8RuwkhkoqYmcevrDVuL3qv9xSAzAYLJHW3BL85sdtSrdKQXpngQRGSZ4k2AGzb/Kqjeq0dLRgabQtEcu1dCf7uecKr6+eTiGCR9j/EKc0PR62CvQybGDGRYHe1d6Cr7LTePTcPH0cOMovzRqfORR1LCGxyPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755247062; c=relaxed/simple;
-	bh=VFGd5hRIkRHvzlQy80MpxiKKkC07jgnJaMdRjA7K6w4=;
+	bh=ZE9QZXldOA2fAz/Jp9Rj+ACinn8pv88gC+RHGtrNOgc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Eh+0IARCI6qdBf/6efPN5dRdCBXYC4XWTutSd7NP3XnBaBzna3I66yCXNC6lfuaGiRVEDHVvE9ft78dtA1mO1zMSig4/XqV8BlkvDCZvJd+ARrZRClZCvObeRQFZhzozQ1QFooesA5/PSt8hBGeXEW8w1BpW6GGbDsqW+htiS5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG1Ie9jT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 982DDC19424;
+	 In-Reply-To:To:Cc; b=T/wdbA9E6ssu3QUBmpS79NYia4g1nnuOUUVY4511pfgHJp1snmAP3WO63AaT2PZvWkjAF0GGQ5STXHi8mACVCNEzY+CCIyWq8Iqju5L8ETKG70F8UDuSoEs6PLtTYlB/lcZioAVDNfYo+QFmDpxZOLqkZXbjd8pSVRQ+WujqiWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LipGcAHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A4698C19425;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755247061;
-	bh=VFGd5hRIkRHvzlQy80MpxiKKkC07jgnJaMdRjA7K6w4=;
+	bh=ZE9QZXldOA2fAz/Jp9Rj+ACinn8pv88gC+RHGtrNOgc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=GG1Ie9jTwDKhOS4SsBEhMfLscvhIJRDyDLL6yAHAg45liuMjDsPHKalqlOBylHAGv
-	 r5pVn3ok9JF5z0OhCQ2i/ZNScsvTne7c2xkZAhy8hhqxQV5no3xjcE+EF4zF/pTxmP
-	 mBrxyRmMshfFpROvSNZ/gmNNlezod3xJcpHxdD+MSoh/BoDTYy1C8/Ysw8/RkPtWq8
-	 p/7+YN8f78/sCrsMJWZ3g6hv+9FbpjNfXtpfazTVt8uZSgCDHvKtHjuAAAyEb+GzWw
-	 4/Mqb3/zgXGt51FjmJ0ADIfuOrKUlbn9vpmbAVdB55BOtfUV6j8r25xrbLTOCniBI0
-	 a497iJbNsG7KA==
+	b=LipGcAHL3pQsOu63SdsbGhO2+N7EYeC/+86EeZeB+5r/wZ7TOg0/4CgAlpvEz179d
+	 vBPCZo3SASzYwoK7tDFYoY5zdU+7dJtEOyDZ1ETvlgAQbpu14ica2cJcfDp2kgDQFB
+	 jBxOzRY4PoV/zEb5oeCJGSSP4cNzIQ2O4sQJvHPqAXKfVvAqzjqKsP71IJsEBBYVWZ
+	 /2STKpZvH5d0KB6xJPLkktJhxNTJE09R99Rm5F1+yciB1qzEcFkLKFWPz4M0V74KFx
+	 H7R0ubFpMu7uhpkyhwjPgeRop8NgAQhwFihR/nuRFar3FYWhvOXAtx7Nb6v4hUaTT8
+	 C22WH8yxA8mDQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9196DCA0EE8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D05ACA0EE4;
 	Fri, 15 Aug 2025 08:37:41 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 15 Aug 2025 16:37:35 +0800
-Subject: [PATCH 09/13] arm64: dts: amlogic: A4: Add clk-measure controller
+Date: Fri, 15 Aug 2025 16:37:36 +0800
+Subject: [PATCH 10/13] arm64: dts: amlogic: A5: Add clk-measure controller
  node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-9-59f04ba67457@amlogic.com>
+Message-Id: <20250815-add-more-socs-to-support-clk_measure-v1-10-59f04ba67457@amlogic.com>
 References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -67,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=5269;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755247057; l=4959;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=X0XY9aZjdMBy/BejERaULKB1+6dEiqZglq+Tq7M/WTk=;
- b=r7nrSwjawPgfJtx0VHM0LteREbh/rLUqECbuzDuRObH93zlbrdxKoHYaVrS33WF3uPmy86T+3
- tAQjLfMTPz9CuYpGDyRCoMp91fHSeBCv0ATINdpo3wpoBmJQBrSvH5m
+ bh=+rNhxW5k+895xe8+dWTUbJTXjfJCo6DlrCn7/3Oc7eA=;
+ b=3tf/QeTEs7Rnm4u+NO5CEpipA5qttEyM8fZzYxsaHoHpoc3j5zJngsaeFQ1MMnMExrV39Nl42
+ 14hJ8lqPF7EAXLtsjOXo9FZcfejmRqiZ9OFyOVq720u1UY8dTS0yGxW
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -81,21 +81,22 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Add the clk-measure controller node for A4 SoC family.
+Add the clk-measure controller node for A5 SoC family.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 212 ++++++++++++++++++++++++++++
- 1 file changed, 212 insertions(+)
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi | 202 ++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-index 563bc2e662fa..471a4bd24bfb 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-@@ -170,6 +170,218 @@ gpio_intc: interrupt-controller@4080 {
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
+index b1da8cbaa25a..4db3ff4a0522 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
+@@ -67,4 +67,206 @@ gpio_intc: interrupt-controller@4080 {
+ 		amlogic,channel-interrupts =
  			<10 11 12 13 14 15 16 17 18 19 20 21>;
  	};
- 
++
 +	clk_msr: clock-measure@48000 {
 +		compatible = "amlogic,clk-measure";
 +		reg = <0x0 0x48000 0x0 0x1c>;
@@ -104,36 +105,28 @@ index 563bc2e662fa..471a4bd24bfb 100644
 +				 <1>,
 +				 <2>,
 +				 <3>,
-+				 <4>,
-+				 <5>,
 +				 <6>,
-+				 <8>,
 +				 <10>,
++				 <11>,
++				 <12>,
++				 <13>,
++				 <14>,
 +				 <15>,
 +				 <16>,
 +				 <17>,
++				 <18>,
 +				 <19>,
 +				 <20>,
 +				 <21>,
-+				 <22>,
 +				 <23>,
 +				 <24>,
++				 <25>,
++				 <26>,
 +				 <27>,
 +				 <28>,
 +				 <30>,
 +				 <31>,
-+				 <32>,
-+				 <33>,
-+				 <34>,
 +				 <35>,
-+				 <36>,
-+				 <37>,
-+				 <38>,
-+				 <39>,
-+				 <40>,
-+				 <41>,
-+				 <51>,
-+				 <52>,
 +				 <79>,
 +				 <106>,
 +				 <111>,
@@ -202,43 +195,38 @@ index 563bc2e662fa..471a4bd24bfb 100644
 +				 <183>,
 +				 <184>,
 +				 <185>,
-+				 <186>;
++				 <186>,
++				 <187>,
++				 <188>,
++				 <189>;
 +		clkmsr-names = "sys_clk",
 +			       "axi_clk",
 +			       "rtc_clk",
-+			       "p22_usb2_ckout",
-+			       "p21_usb2_ckout",
-+			       "p20_usb2_ckout",
++			       "dspa",
 +			       "cpu_clk_div16",
-+			       "eth_mpll_test",
 +			       "fclk_div5",
++			       "mpll0",
++			       "mpll1",
++			       "mpll2",
++			       "mpll3",
 +			       "fclk_50m",
 +			       "sys_oscin32k_i",
 +			       "rtc_pll",
++			       "mpll_clk_test_out",
 +			       "hifi_pll",
 +			       "gp0_pll",
 +			       "gp1_pll",
-+			       "eth_fclk_50m_clkout",
 +			       "sys_pll_div16",
 +			       "ddr_dpll_pt_clk",
++			       "nna_axi",
++			       "nna_core",
 +			       "rtc_sec_pulse_out",
 +			       "rtc_osc_clk_out",
 +			       "mod_eth_phy_ref_clk",
 +			       "mod_eth_tx_clk",
-+			       "eth_125m",
-+			       "eth_rmii",
-+			       "co_clkin_to_mac",
 +			       "mod_eth_rx_clk_rmii",
-+			       "co_rx_clk",
-+			       "co_tx_clk",
-+			       "eth_phy_rxclk",
-+			       "eth_phy_plltxclk",
-+			       "ephy_test_clk",
-+			       "audio_core_clk",
-+			       "vout_venc_clk_ph",
-+			       "vout_venc_clk",
 +			       "rama_clk",
-+			       "deskew_pll_test_clk",
++			       "deskew_pll_clk_div32_out",
 +			       "saradc",
 +			       "ts",
 +			       "sd_emmc_c",
@@ -254,7 +242,7 @@ index 563bc2e662fa..471a4bd24bfb 100644
 +			       "earcrx_dmac_clk",
 +			       "earcrx_cmdc_clk",
 +			       "earctx_dmac_clk",
-+			       "earctx_cmdc_clk",
++			       "earctx_dmdc_clk",
 +			       "tohdmitx_bclk",
 +			       "tohdmitx_mclk",
 +			       "tohdmitx_spdif_clk",
@@ -299,18 +287,18 @@ index 563bc2e662fa..471a4bd24bfb 100644
 +			       "rng_ring_osc_clk[1]",
 +			       "rng_ring_osc_clk[2]",
 +			       "rng_ring_osc_clk[3]",
++			       "dmc_osc_ring(LVT16)",
++			       "dsp_osc_ring(SVT16)",
++			       "axi_srama_osc_ring(SVT16)",
++			       "nna_osc_ring[0](ULVT20)",
++			       "nna_osc_ring[1](LVT16)",
 +			       "sys_cpu_osc_ring[0](ULVT16)",
 +			       "sys_cpu_osc_ring[1](ULVT20)",
 +			       "sys_cpu_osc_ring[2](ULVT16)",
-+			       "sys_cpu_osc_ring[3](ULVT16)",
-+			       "sys_cpu_osc_ring[4](ULVT16)",
-+			       "am_ring_osc_clk_out_top[0](SVT16)",
-+			       "am_ring_osc_clk_out_top[1](LVT20)";
++			       "sys_cpu_osc_ring[3](LVT16)",
++			       "axi_sramb_osc_ring(SVT16)";
 +	};
-+
- 	ao_pinctrl: pinctrl@8e700 {
- 		compatible = "amlogic,pinctrl-a4";
- 		#address-cells = <2>;
+ };
 
 -- 
 2.42.0
