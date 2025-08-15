@@ -1,170 +1,208 @@
-Return-Path: <linux-kernel+bounces-769780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09660B273A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E95A8B273A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7435C1CE1B79
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:19:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BCA16FF5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849AE21348;
-	Fri, 15 Aug 2025 00:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692863398B;
+	Fri, 15 Aug 2025 00:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="E71loKq4"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFexyq4o"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561826AEC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4AAD2C;
+	Fri, 15 Aug 2025 00:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217028; cv=none; b=emwrqs4t6GUtfcuhPE0SaTTcrIVIry2aavQEWm2SbUP/CScGNXS2jP3PH3D1enFUtd06uLnL+pN+iDUrBxRwmFkCWUKNVPyoG9EQlCWEoIJQkzj8gSKpf7ScYGmPnP+igfgo0E4u8ob/XZzRrLwaLKKmIPv4gxz96IolMcuaQCg=
+	t=1755217126; cv=none; b=oJj7v5bgOeIySRkOdTlzXjrIraBOIaucFYF0qs3PDxvlyy/YYN1yc3fyPgmhZ+xVw7aIHp/9oMzR23kSZpoeDr86dydg2DZ3u4DMWukr+Z9kTj/A4w9MtmVQILgGF8IDS7B8DtTuttsKNtN68auqLwVNK+zVp8BtU9zIYNmALC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217028; c=relaxed/simple;
-	bh=b/7uJluNZ2Dq5dHQa5IRA6PESh3vzrY/KnYcV2sm3Mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s626iHrDyIh90TZoICYXXCY3dYCYpvMpCiOc3APu1KjusDfegVetyW5nozaMI/lKx+LskmNPsW5nrkSfbHSsgsYLrVLkcO+A52jKNUEdo4uxJhFOkt7ftZlmslk/dS64gZKyjXjziJY+fOZ7uyyzLoNCl92pJTJuw8lpl2XeQEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=E71loKq4; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e931cc1c442so1490398276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:17:06 -0700 (PDT)
+	s=arc-20240116; t=1755217126; c=relaxed/simple;
+	bh=YSHQ0nHVRPFsB93Dabwiu8ozEATJ/8Mr0PnXcpCB98s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uvkhhDFAQda5cdgEGqIp8WaFNkgFhLATKhSFTQ86XwTd56a7vRJIo5/oAkjsPvgwwmXtdoQDrsDHalqTKQ733TewL8JzgVwDzahCiPivB0YX74qiDSHfmwSGml3Y40XwFTxvJjTAU3oWJd4knCZlV74jgYN8jIDopH2ocHRm0K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFexyq4o; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2445806c2ddso12760205ad.1;
+        Thu, 14 Aug 2025 17:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755217026; x=1755821826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755217124; x=1755821924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GIb4DEw47nTG0SaTMqagi62gcLVr/AwhogL/DWZeO9k=;
-        b=E71loKq4zRKkHkuI+oWoYwGajT/lswwJxZbqYvfH8sIYI2/aeC0YmCrld5WqHsMMCI
-         /g0fttnYFU38rWJUF6whTadQWVTXlLlgInpVoH8vZS30hnynEHti5qgnGT3aNVGrV960
-         Fl6sSG4VQsxU3A+e/QLK3sgLAKo31X1vdtXX6Ny+1bewCTzPAN3pQEktgVCFxNtVQRYA
-         1JXYuYFdG6aGDM26xJP9qNQ7BeEo/B7pJdmzINQ9aqJROX07f1xVRQZc1TN7omW4FiWe
-         cCfSWnvGYJ4z6ZbWkm+gFi2Rud6+joavUL++Q+NOl5gzTkrMpi4swKWTWXW/3MPcYklr
-         ztEA==
+        bh=VHJYqmfxyB1ZtjnaSlG3/Xthq2PX+hi9aHfPk8z27kw=;
+        b=WFexyq4oXTNdVCrZZiWbVQWICwor/oZkoM5a+veKqbKqwurJx7uhZ1lYL7puFPtM97
+         T9rvtKBJAsYbiHPn63d3J5+bbBiw3JOkp2I5WjT65ulmhzGK7EPEuPIluAK96iDejfhv
+         V2zPkZOtGQJTbHBBVMZWjBWl4Pwh2CJmtMfswCXNMjjAr13b7E8NqO6PpeUZkbigKcoU
+         KCx41nRvW9HWFqPnSbMqwTM+3kzZD/gCo404E1fvkLfi33sR6GkzSP8tpcwhRB/jGulr
+         CrQI7Hy6dkYHh94XLaJXUeZxntwpyC4mGACMvVe2w2BJWsbrQngtjjNb2jxDouVocTW6
+         N1kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755217026; x=1755821826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755217124; x=1755821924;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GIb4DEw47nTG0SaTMqagi62gcLVr/AwhogL/DWZeO9k=;
-        b=is0fsZIY7xR3cInQmZ2qX1twZaUhHadSB++0vWxsycUzbgeSHQ9+1yUrOzqX3Ssx5S
-         850crRsCnG6c5bzjMjBOrdju+7ceedCkArE1KNw4yU6TlbYxtjnLMwOjiqXnL8Cw+qQi
-         K3dN0r6wnezGoyhviHIViC+/x69jkQqSWewzl1WLi03OBD5pzb3FkoWDpeIEjGkH2YGO
-         UTvxMXb3coFv64OvuLixsw580H+/4j5pL4SB+rmg5egqMyPR1LIC/iRD/Ik9eYy4N/gO
-         d4LM+CIVJOd+WJKOH4WcBn8/eQmR+DmWLOZOEz+ONunVaw5dSjuGY43wHE6M1sHG8YoI
-         8pgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9nCE2AVBgk2OGyZnUrfv/qGa1nErYgXX+rLNQTrjeL1cxCHW9Q3SCJGx8ufTNrchSL41nq6/1KmeBVfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUgLFAI7fyQKNoNWDAYKVody4OwMQFvI6R+JiQyqYHXzZ+f5N5
-	KWq/waU2ERlPMtAzhiJTkVu4KMZL0rDDdTjGMfAaZ2u+OOt6M1ykRVnvPAL3PG36tuQlEMr4tMl
-	Usg0gkTNp9UFK/5vIcTsNMdYvBBQqt5kB5JHLY2WJJA==
-X-Gm-Gg: ASbGncuODeooXwCm36uqoyyr5DcpSK14DIQz3U1bww9/eXN46QDUWIgkvXd9Mo95H6y
-	X8c4WG81En0j+nJBXz/hqQXf2mW3lz92qqPWQ0bYGwFao8HysOVqtCAqc///+iB7KuDhEE7v71N
-	7Ha2PGvjyLIM5xcAt8nZTXrn1IcODjBTQgp0T6LSjOoN94xzoIJY+CXTfkKn9+ZN7lIGjOBZXqy
-	Nu5R3tz
-X-Google-Smtp-Source: AGHT+IFNcAELmZCtW5xlsegSitNsfdTcRTdgg7kL6zgWJQdycJdLaDsFEfIH4/zktV/oPQX112UV7cBIiymlf91sbEo=
-X-Received: by 2002:a05:6902:706:b0:e8e:120b:acc7 with SMTP id
- 3f1490d57ef6-e9332110bd4mr348314276.0.1755217025789; Thu, 14 Aug 2025
- 17:17:05 -0700 (PDT)
+        bh=VHJYqmfxyB1ZtjnaSlG3/Xthq2PX+hi9aHfPk8z27kw=;
+        b=fv/h0ZocVsAzylqVdIiVCJm7Njf9CO019WUyVyf9YCGzUOtnpykH48Aav8HJdBlE6f
+         t4SSn8CLHdNrgjKfBd51EKcfDT6DAu/jdBHPx8sEpynKgwiScaJlojXyVFBuWFj8RyFZ
+         Xg/ZrJkZtOcYpLGVoEDpvvJ/CEOcc7E8F3SsfMx2ypHzgX7ayK/QB6ZXqptCCoiVBoYt
+         KudqcbL3QKThCHiEJN6vAl1sHVrP9/eSLeIrBdLQRc0QGzGiaNKj49fBSOwA5ACbFZ7x
+         Uki4GpRVrst+npYdau/uS34yFRg/I05X0iMwLrRcnAfaVKNYLBOzFwJarsJ3nZptbLEg
+         Kz5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUgsoaZJDIKYGuq2Q0DHSy5umr7lfOGavRJnrK4/oJjDZ7yjktXO7NcY6rhIYsjGOiSHwQvW42d@vger.kernel.org, AJvYcCV4waBbTfD4Kkdkk1wnxhUSzyamXEVXdNwXaBz8niylaEdA1hyX3tPda6NrdXoXPReb4pfHbUjP/tMEt30=@vger.kernel.org, AJvYcCXLZjodCsSgcUl8tE8iPs1zu3sq8ChXlADdwlsC9A+Cbed9JXOF+UMfQJzc/fQXBVAWkdnDsxtNUrc0AmBbLb3w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7/w21cXwyEVBgu190U6EzyxA9H1Z/4kYLIzhuN13gmeGj9bNW
+	LLv3CqJoEzQg21bP+qLPQdoNNPEm/vN2vejvp+i8IZatxaJu0CtjrVq35nSHUjk/2aY=
+X-Gm-Gg: ASbGncu7B24+ECxypbG1xrmTpi2ibcWRBw3zgypmr3tllKzAmXxAUwJ9KS9aRUwYFFT
+	F44g6BfJ0Rw3WKTbb3FhR+2BP57aPdzgcSC1fjI3xgz9zerEvKCHtmT0p8F1SLkyeNIkFxGoklR
+	5CFu2oQnUdfTp94GnB4v/a/dGPxSVJuToiAadL7vs2vyv/fokyR+NR10Um1eHprpNUl4JA7XU4n
+	KB1tDlAfnWPhXZ2XyrZBtVV25aNPTRCr6SZLZExYDxzjlXLO/BWo+Ujzo43lAMN3TR8g6XMjg9I
+	AeXb11/kPnwlDBOBj6kt8ucmr05XIXq87X5EbXBUb7MTAfjaw5UaUG/jKUFd/hubthmsn6EEY62
+	dtmFvQ7WvT99kd6t2ipeqSw7Hvw64yx2i7ms/k2ty3Q==
+X-Google-Smtp-Source: AGHT+IFxzhdphiJBS2G/UPMPzKz6foyjIJZMPLW6JxLo23pShrslemm4KTOWFETkoXre0puhmLRAcQ==
+X-Received: by 2002:a17:902:c947:b0:240:aa0:1584 with SMTP id d9443c01a7336-2446d8db8f0mr2125065ad.38.1755217123642;
+        Thu, 14 Aug 2025 17:18:43 -0700 (PDT)
+Received: from soham-laptop.. ([103.182.158.111])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5a451esm700745ad.165.2025.08.14.17.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 17:18:43 -0700 (PDT)
+From: Soham Metha <sohammetha01@gmail.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Soham Metha <sohammetha01@gmail.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 2/6] setftests: net: netfilter: fix spelling mistakes in output
+Date: Fri, 15 Aug 2025 05:47:59 +0530
+Message-Id: <20250815001803.112924-1-sohammetha01@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250815000859.112169-1-sohammetha01@gmail.com>
+References: <20250815000859.112169-1-sohammetha01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
- <20250714-working_dma_0701_v2-v3-2-8b0f5cd71595@riscstar.com> <20250724123128-GYB748228@gentoo>
-In-Reply-To: <20250724123128-GYB748228@gentoo>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Fri, 15 Aug 2025 08:16:54 +0800
-X-Gm-Features: Ac12FXypsuzBkicYnVbqoq7E_JzqM7nw1pio2gCMjc_eN9bFRW8TFMqF6u8aHzA
-Message-ID: <CAH1PCMZ7VbLxJbHQt4Ox_nO7yDSBMzTYiczC3FGBbG_oXgjLXw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] dmaengine: mmp_pdma: Add optional clock support
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Alex Elder <elder@riscstar.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 8:31=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
->
-> Hi Guodong,
->
-> I personally find the word 'optional' introducing some confusions..
-> I can understand from driver perspective, it's kind of optional,
-> but from SpacemiT K1 perspective, it's mandatory for this driver
-> (the 'clocks' property of DT is in 'required' section)
->
-> feel free to improve the commit message, maybe add some motivation
-> hehind this
+found/fixed following typos
 
-Thanks Yixun for your advice. I will improve it.
+- add add -> add
+- cannnot -> cannot
+- fowarded -> forwarded
 
--
-Guodong
+in `tools/testing/selftests/net/netfilter/nft_nat.sh`
 
->
-> On 17:39 Mon 14 Jul     , Guodong Xu wrote:
-> > Add support for retrieving and enabling an optional clock during
-> > mmp_pdma_probe().
-> >
-> > Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> > ---
-> > v3: No change.
-> > v2: No change.
-> > ---
-> >  drivers/dma/mmp_pdma.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
-> > index a95d31103d3063a1d11177a1a37b89ac2fd213e9..4a6dbf55823722d26cc6937=
-9d22aaa88fbe19313 100644
-> > --- a/drivers/dma/mmp_pdma.c
-> > +++ b/drivers/dma/mmp_pdma.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/device.h>
-> >  #include <linux/platform_data/mmp_dma.h>
-> >  #include <linux/dmapool.h>
-> > +#include <linux/clk.h>
-> >  #include <linux/of_dma.h>
-> >  #include <linux/of.h>
-> >
-> > @@ -1019,6 +1020,7 @@ static int mmp_pdma_probe(struct platform_device =
-*op)
-> >  {
-> >       struct mmp_pdma_device *pdev;
-> >       struct mmp_dma_platdata *pdata =3D dev_get_platdata(&op->dev);
-> > +     struct clk *clk;
-> >       int i, ret, irq =3D 0;
-> >       int dma_channels =3D 0, irq_num =3D 0;
-> >       const enum dma_slave_buswidth widths =3D
-> > @@ -1037,6 +1039,10 @@ static int mmp_pdma_probe(struct platform_device=
- *op)
-> >       if (IS_ERR(pdev->base))
-> >               return PTR_ERR(pdev->base);
-> >
-> > +     clk =3D devm_clk_get_optional_enabled(pdev->dev, NULL);
-> > +     if (IS_ERR(clk))
-> > +             return PTR_ERR(clk);
-> > +
-> >       if (pdev->dev->of_node) {
-> >               /* Parse new and deprecated dma-channels properties */
-> >               if (of_property_read_u32(pdev->dev->of_node, "dma-channel=
-s",
-> >
-> > --
-> > 2.43.0
-> >
->
-> --
-> Yixun Lan (dlan)
+Signed-off-by: Soham Metha <sohammetha01@gmail.com>
+---
+ .../testing/selftests/net/netfilter/nft_nat.sh | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/tools/testing/selftests/net/netfilter/nft_nat.sh b/tools/testing/selftests/net/netfilter/nft_nat.sh
+index a954754b99b3..44a8fdf5c19c 100755
+--- a/tools/testing/selftests/net/netfilter/nft_nat.sh
++++ b/tools/testing/selftests/net/netfilter/nft_nat.sh
+@@ -164,7 +164,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family dnat hook"
++		echo "SKIP: Could not add $family dnat hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -239,7 +239,7 @@ EOF
+ 			test_inet_nat=false
+ 			return $ksft_skip
+ 		fi
+-		echo "SKIP: Could not add add $family dnat hook"
++		echo "SKIP: Could not add $family dnat hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -418,7 +418,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family masquerade hook"
++		echo "SKIP: Could not add $family masquerade hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -509,7 +509,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family masquerade hook"
++		echo "SKIP: Could not add $family masquerade hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -569,7 +569,7 @@ test_redirect6()
+ 	ip netns exec "$ns0" sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
+ 
+ 	if ! ip netns exec "$ns2" ping -q -c 1 dead:1::99 > /dev/null;then
+-		echo "ERROR: cannnot ping $ns1 from $ns2 via ipv6"
++		echo "ERROR: cannot ping $ns1 from $ns2 via ipv6"
+ 		lret=1
+ 	fi
+ 
+@@ -598,7 +598,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family redirect hook"
++		echo "SKIP: Could not add $family redirect hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -673,7 +673,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family redirect hook"
++		echo "SKIP: Could not add $family redirect hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -844,7 +844,7 @@ table $family nat {
+ }
+ EOF
+ 	if [ $? -ne 0 ]; then
+-		echo "SKIP: Could not add add $family masquerade hook"
++		echo "SKIP: Could not add $family masquerade hook"
+ 		return $ksft_skip
+ 	fi
+ 
+@@ -859,7 +859,7 @@ EOF
+ 	# from router:service bypass connection tracking.
+ 	test_port_shadow_notrack "$family"
+ 
+-	# test nat based mitigation: fowarded packets coming from service port
++	# test nat based mitigation: forwarded packets coming from service port
+ 	# are masqueraded with random highport.
+ 	test_port_shadow_pat "$family"
+ 
+-- 
+2.34.1
+
 
