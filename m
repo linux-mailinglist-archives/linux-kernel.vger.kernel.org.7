@@ -1,304 +1,124 @@
-Return-Path: <linux-kernel+bounces-771155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E58B2839F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBDFB283A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A027CAE0E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3CD5C832D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2AC3090C7;
-	Fri, 15 Aug 2025 16:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0248C3090FC;
+	Fri, 15 Aug 2025 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sWLUPg1n"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="It1UEdng"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E07A308F1C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755274308; cv=fail; b=Hdw5156Sq+8zOaC+RO9zgZ2fRTO0YR+FSeYTIfDQQ05w7w1f5AsqyJLd4DcqkRkdftciiURrQOg5jIEbpIDEwkgB0w0vcZT/to7KuZG9yYD5zmyaIbgaIIXiwNZU4J+YssCShckuqZK8684vpDAo1KYrBnwqi8EaB+viBUP9kvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755274308; c=relaxed/simple;
-	bh=LmBe+XJ54rkuAFX5e1PKI1kDgxi8jYjUWsC3OKQ3RdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ABIB7EbJkNuBJl1O1wUVTFEWsFSC5eWbn8SM8PExlcr+yi2qmEtRFt1UERpgfsNuOD9TvRTANx7KgUyyZpWDQSBvi1JQpphXxsmJ3V1jMmwYkWoLhh49VJXqxhIvICN7hPXVTK0TxYK5fJ1NUzgaAL+UcUnhmj/hxISu8f6X8D0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sWLUPg1n; arc=fail smtp.client-ip=40.107.244.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wa2Ju5D8+OyZdaBvDya51/pNULG2cmLi+YbVcRL5FtzwLGHiOZbn9cGBa7wwitjRK0c3WFVn2ZlFPHzh4nSfK6c2rb5ja1KPoU5/n70bCPUykoH4kTxTLqwa/SaVeAU0iBBb4VSjqgSgV1wYgfscFuaDdxVpYYyK8I2Pwu4nFl+lZn/WdcV19mOmzbhPnZT1nItn1Hy+Msuflfoa+2jY1zSvCeqDCE+6YqDZz0SWelZmq7X5INJVZ4j6pNkx8kCuPdsImhYvWtac4rlhh6lv7+nGeYfSPRjAUbPLs64+cWnoSwhaf86//cj8viccl4n3woNI1e1Xz6LTN9KMNvjIRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fk6Kf/9Ca3TAlFi6uqG8aJjMi6uVfBgR0Q6U+rjcKHA=;
- b=NUrsJKCt4A7koHxN4CqkuyniDiesvfE/yieuTEveZfWmd45gptCVcRTmzz9jC7O/Xp5Tctf5+lxG67Pkt9rLx0LOhzZi+Zme420/EzUlvr6pSWDctB6AtnAVxI+F0aa+F1hr6jzg1qQmMQ4wCaHprexiTd+OAi1mFapfktdRZGoEeKj9vf+1mMNdVGeu41vwVHBPA2NzdLBhJ13fOt6k/nizlSg0dZgLZ+sKKJHf+DWa660JqBnoTNx4rn/9HldwydQ60ZrBP7gbRM6RF6kmmzybz5bF469t/KjcJ4TRXIWccBb/ujop8sdcnvutLdtVqnGp/8GpGT+17mPAUCsYFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kode54.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fk6Kf/9Ca3TAlFi6uqG8aJjMi6uVfBgR0Q6U+rjcKHA=;
- b=sWLUPg1nhZ/zggEJDBqZKcpRKl+H3KNHqN+lZG8lzH4ltZWeIxQzM8ghe+w7Rkbgmz8KArfsIR0cuRPolLvxklqCAHnrQzBnO9r+KO+u3crCJOkAaJYee7qeBiudmPE+tMRNS0terYh5n/rby76PqdgLSr95ZVcSJVM+xID57u8=
-Received: from DS7P220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:1ca::17) by
- SJ5PPFABE38415D.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::99e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Fri, 15 Aug
- 2025 16:11:43 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:8:1ca:cafe::38) by DS7P220CA0003.outlook.office365.com
- (2603:10b6:8:1ca::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.19 via Frontend Transport; Fri,
- 15 Aug 2025 16:11:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Fri, 15 Aug 2025 16:11:43 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Aug
- 2025 11:11:42 -0500
-Received: from [10.4.13.140] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 15 Aug 2025 11:11:42 -0500
-Message-ID: <1b7fb3d2-1df4-42eb-90ae-d032feadaae2@amd.com>
-Date: Fri, 15 Aug 2025 12:11:42 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040FD3090CB
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755274459; cv=none; b=d0KJSo2IanPt+r41Krnd+ZVqD8PtCn0jXTPIKoxGlJC1tVuYhhYHnMt+Xb5QvGk047nl6uLIPN7xqqaCY/jrl9JulSMxu/Ord06KgGidyE0TqAtPUg6Qark5VQqAzNameG3Sz89quVNnjvFBh3/A08JJ8uTlvG8BtDdlyarrGBM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755274459; c=relaxed/simple;
+	bh=Kf2iBK1D431xQGY0jRZ1wlkj6AG2/CAeQT2ykycOP6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jt0NgRfO5upl6N09j0t4U+JGscU7Jpk3pOsUTE2PxFHmyqLnkBVORpym4UYrK0czmuN3xn+NXjOXFjV/GxM8JUay+t41/V/wM9O5BVSmKTSrH72M3xBD8F5/YeB5xH6B7xH1fAKFZiOML/QOVzZmMp6DJss1B2pa4CgFOoN6iJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=It1UEdng; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47173a03ffso1338115a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:14:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755274457; x=1755879257; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vcATQ/iyLXq2WCAG+QWp7/wBNzzyT/wwSXwFvJK/wvw=;
+        b=It1UEdngIm6CZdD4F/XCtQiyb+fJlwVULGLVdc84XD9s51SBS+9UQ7a0UKXLXOaX68
+         y/MgiJH4OMO1x2/XFiC/M4wb6ccwWzlpPCjnFhWkTiGDcstDrBXiRLPvkzuLFVW83htQ
+         fm7AbnJcyTskSrIWbFNvLl45Mx8cIIOywo3NHjSVvTDoiyhfRKVxV2QRXqQa5drH0yiI
+         uqWKn6t9YZv80osm+EFA9fi2prQuRrqD67QKZ3ARsICkRSiec6egmkDzWHnlz+qiPkr1
+         ZLSSRBpU7ftj5E3eTDbPmNcpv7NejH3ksxhrkuk69XYX7vqtTPgOEIx0V8af5j3ci4jN
+         Ub8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755274457; x=1755879257;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vcATQ/iyLXq2WCAG+QWp7/wBNzzyT/wwSXwFvJK/wvw=;
+        b=N1Tc1dej8eAyATaN/fUTOgTUNMJMAaIJgWiBCLRRj7C52UkaaLHwIA/eGIdk4DQTBW
+         oN8l6QUM/5JNtFSn2SIybOadx67Qd6EwqxX+oEmCead1aeXmyN6atcVbjnIHo4QR4yd8
+         87qCY/JE3Mfp6f+mtO1WZojzhu3DQhIxM87FHpKkVneeKyGoG3H1eeVAbNJRicDLmboy
+         4QrWqhoetfNE/SLkYXLpTThJPXl5X7Fmd13HtHip0Qcwp8IrQ+mhyiGHZiBTMM+/e3n+
+         L+XzEfIELugnJvy7wk+9irB7a8CnSqYhZw5BvHH/OqCJLPju8SgISYcYgJzN/fmbvXL+
+         ADvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR8UXHicgMzEYMt/3r/ZjQ3TrUCEdezrjHXFe//PQtcCM55kj9W27pg3589t6FaHFxNj1TBTRzBbHNeeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7uxIlZ/Wt6HPhFxH68gD7w+c/sQsBaRyozPD0PsYOwOapCovV
+	RexkYWc4pNTl6ul1kf8Tc8UKrg+pTmFp5iXBknGI36wuUC0dRVScXHHwK6FqmmIL7KM=
+X-Gm-Gg: ASbGnctEu2pdRtwtdvTiNF2FscCtpu3lyx38q/GbTfPfMXz4j/tm3D01DtoFZknxP6n
+	PEyYfllJ6WC5Q+ALC3fX3KtKhZccNanB8TshUYnopJ5FfVyyTN9FOZEVNmdsVmPPpl5yQfgWzdn
+	b3JPDJmjrvkWEERbs8WUSN6sIxQZ6Rq+QzCu+5vJoUWWDjDRGe2XduW3k6/n9Hi4uTcOPSKxbL1
+	580U7MoheezhKdU5EoSHH2caoX0GCtbs2mg/ywkxbrX60coRIPUFecSKgkm0qhPKSwyz1hv5UHl
+	fudePXkN5ab3v+6mWFwLeUPHTOfvbjBk/bHNZtv0elpeHqUtc3Qo4CkKjT3oFUT6Ihr4sehO8Ya
+	ki9YAaZyfXaiAn24hA4DxG4PYLc3+XhyxBo6F0GXGeXX4Ev3xQr9moLY=
+X-Google-Smtp-Source: AGHT+IHperFQi/7YSivsAfePkj2it+rOxXUM7GZDi3LaWPilgY2XPCaqL9OvKCM03IrF3xh8S5y5iw==
+X-Received: by 2002:a17:90b:2d4e:b0:31e:d9f0:9b92 with SMTP id 98e67ed59e1d1-32341ec09f9mr4429507a91.14.1755274457311;
+        Fri, 15 Aug 2025 09:14:17 -0700 (PDT)
+Received: from localhost.localdomain ([122.171.17.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32331123409sm4645605a91.20.2025.08.15.09.14.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 09:14:16 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Sunil V L <sunilvl@ventanamicro.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Len Brown <lenb@kernel.org>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH 0/2] Common csr_read_num() and csr_write_num() for RISC-V
+Date: Fri, 15 Aug 2025 21:44:04 +0530
+Message-ID: <20250815161406.76370-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm/amdgpu: Enable async flip for cursor planes
-To: Christopher Snowhill <chris@kode54.net>, Christopher Snowhill
-	<kode54@gmail.com>, <amd-gfx@lists.freedesktop.org>
-CC: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250619125507.54384-1-kode54@gmail.com>
- <DARA1U86AS72.QOIEVZWCFPYC@kode54.net>
- <DATUOZZD8316.2INSL3KL5RA80@kode54.net>
- <DATV4CAOHVGV.1UJ803EX21II6@gmail.com> <DATYCMWH1X28.NE3M8KJ3SPV9@kode54.net>
-Content-Language: en-US
-From: Leo Li <sunpeng.li@amd.com>
-In-Reply-To: <DATYCMWH1X28.NE3M8KJ3SPV9@kode54.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB04.amd.com: sunpeng.li@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|SJ5PPFABE38415D:EE_
-X-MS-Office365-Filtering-Correlation-Id: 500aebf1-37d2-4540-b9ab-08dddc166d2b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|42112799006|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TXRVT2tLQ1RPNnFONlZBcnRYem9XZWczVVNFNWNBK1EyaEZZWnpLbEV5U1JN?=
- =?utf-8?B?dDRGREIzbGIzMEoxNUxXZDZQZjdhL0lDaWtzUmQ5TllUSXdCTndSUTFzNTQ3?=
- =?utf-8?B?bmpaV20yamlJcU5PQlgycWhpRUhXaHN4NjdhRk1YMlc3ZC9ydFRUMzBzZjlQ?=
- =?utf-8?B?ODgxbmwxSUdMbXk1QjVKZHovUUNocnAzVm1YNzFwRlc0dEI2ci90aFJGN3JC?=
- =?utf-8?B?ZGlLb1FmZW1iRmZlc0RhdVhuUWM0ZXNnbFBGRXltNnlteldUdjhIM2tjNG1H?=
- =?utf-8?B?clZjUnEyTWYwbm5oNlM5bk1pbmZUeTBMeG95UENJNUVOV01LTGpwdWcvVDRh?=
- =?utf-8?B?UkNWaCtMaHMyZUFNTHAxV0hNYVZ3dDJjVkpQR01zd2MyaUt5ZGtuSVE4WExw?=
- =?utf-8?B?RE0rVUFKSzVGOVhIYWgwdTVSeUcyRGt1OGFDVW5iTndwUUhGRk90dG84a2tV?=
- =?utf-8?B?NkgreVA0SmN5MXdlUTNSdmF6a2d5clZWYTNLQWZmK01NZjh4S0NHTXdPSmw2?=
- =?utf-8?B?T2RXVHN5V2RhUHM3YnFxSkVKSzNnMG5VWk1ITkgwVmNHbXZSWS9sTjhGdktn?=
- =?utf-8?B?bFZHUkd0WCtCMUtSR0RnNmF5SEtVRlpiUC9TRS82bWZRU3R5MFZyQTBCMFg4?=
- =?utf-8?B?MEx1dnI0aDcvOVNBRVovbllzOExMTEExQlQxQWdqTy9KUjFxZ0phSE1sSmNx?=
- =?utf-8?B?WFgxcWZRd25xVENrNTlXS0cxc3lQVU9nZnp4d0R2YzdURUNMS3Jhd1ZheTdp?=
- =?utf-8?B?eFRrb3RlS3NiZEcxUm8reStKNWZVYlJHM2hrdC9WU0Zkb3RwS00wNjJnM2tQ?=
- =?utf-8?B?SlRmdDJBUTJRaW83VEhvMk8xK0ZmK0xoTGFlem1GUkhncmszM25VdTZrejJ5?=
- =?utf-8?B?Y0orbUhMSHdEOFJFRzhCYnNZbXFyR05ib1hZU202OGM1L2sxMlMxTTlDUDZ4?=
- =?utf-8?B?bVZ5eVh6eUhtbDFMaUs5UlJ4UXdWMUh4TEYrN2xFc2ZTcENZZkZqQloxQUlm?=
- =?utf-8?B?eTRycVB1dzVubGc1ZURuRUJSQU9jWGE3S3NXUncyOEY5YnpjSEpuMXhCakxF?=
- =?utf-8?B?Zms0blJtY0JMOUM5dmFDZkErMEtPb3dzOC9hSTZxaHRNK3hkSTNpZFJ6RUFZ?=
- =?utf-8?B?VVRjdkRhQnBQNGx4Y1daQjIvUlBsMU5BOU42VWowaFNpTU1WczJjNnR0c3pL?=
- =?utf-8?B?MUltZWk0L2Y1RWFKeHNqazBpdTluUjRvVE9sN2hXWHRodXlxVU5iR0pkUE1C?=
- =?utf-8?B?UVZ0SE5tYnI2VitXS3hRVEVoZUhWVXJNQVo1QnJ4WXdLRHEySE9GRHJqOTVG?=
- =?utf-8?B?YUtEWVE1Uk03ZzdjT1R6bW5ZUzVXL2NhTlZmUlJkQnlHR1FEVEllZlgvMlVE?=
- =?utf-8?B?c2Z4TytMa0t1OVl0Nkk2VUUrNzJubVJSSk5JVVh0MkQrbS9tbEkrbWtmajV1?=
- =?utf-8?B?Uk5TTUt4SU9Rcjh5cG5pR2lpNHVNSjFXM1lxaThKYU1QbEhBSTltV0V4T3Jn?=
- =?utf-8?B?NmNhVlFyVmNUT0NNUTRRZHlnVjFJcUVwa2hoR2EyZEZ6dXZZak9yVTlWV0tv?=
- =?utf-8?B?NGRkQkJvOVJnRExqVDFtR1g1N09qN1JEaWptMm9iY2k1dDBROGJ0UmJncmxI?=
- =?utf-8?B?UWxkaHhnV1ljazhjMkxrY1JoSUE2WjJxYVlYN0pFbmRaUlpVS1JiTDZTVm0w?=
- =?utf-8?B?bGlzU0dPV3llK2d6WEFIclI2M0tyZnA2UzZqTkNycU1JMm9tWW1lemk5dzBx?=
- =?utf-8?B?czFpdmxjVGhXaDZ5RmJyRnlEVFZsSDIxS2ZuMUpTQWZNYXA2TjFoSGRnWWs2?=
- =?utf-8?B?dzBPRXdjNklIaVo4czBTMCtaUVdKWWR5ZGRrQjlRZGRaMkp6MkpDTUhQSGp5?=
- =?utf-8?B?Nk9ZSXB1QjhPSzc3eW5YbFVTNFg5R1J3YUE5elNKSjNyRFF4TS82QXlNTW96?=
- =?utf-8?B?Ty9YTGxPZkNVMi9sZHNJaTdzZmhnT2xuZ0ZhSDUvRWIvNlVxVlVDNHlqU0Fp?=
- =?utf-8?Q?6lpkUkLt8e5ksMxeGmGR8pINEmaOWM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(42112799006)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 16:11:43.4636
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 500aebf1-37d2-4540-b9ab-08dddc166d2b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFABE38415D
+Content-Transfer-Encoding: 8bit
 
+Some of the RISC-V drivers (such as RISC-V PMU and ACPI CPPC) need to
+access CSR based on CSR number discovered from somewhere. Add common
+RISC-V csr_read_num() and csr_write_num() functions under arch/riscv
+for such drivers.
 
+These patches can be found in the riscv_csr_read_num_v1 branch at:
+https://github.com/avpatel/linux.git
 
-On 2025-06-23 09:38, Christopher Snowhill wrote:
-> On Mon Jun 23, 2025 at 4:06 AM PDT, Christopher Snowhill wrote:
->> On Mon Jun 23, 2025 at 3:46 AM PDT, Christopher Snowhill wrote:
->>> On Fri Jun 20, 2025 at 3:10 AM PDT, Christopher Snowhill wrote:
->>>> Here's another alternative change, which may be more thorough. It does
->>>> seem to fix the issue, at least. The issue does indeed appear to be
->>>> no-op plane changes sent to the cursor plane.
->>>>
->>>> If anyone wants to propose style changes, and suggest a proper commit
->>>> message, if this is indeed a welcome fix for the problem, please let me
->>>> know.
->>>>
->>>> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
->>>> index c2726af6698e..b741939698e8 100644
->>>> --- a/drivers/gpu/drm/drm_atomic_uapi.c
->>>> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
->>>> @@ -1087,17 +1087,22 @@ int drm_atomic_set_property(struct drm_atomic_state *state,
+Anup Patel (2):
+  ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
+  RISC-V: Add common csr_read_num() and csr_write_num() functions
 
-Hi Christopher,
+ arch/riscv/include/asm/csr.h |   3 +
+ arch/riscv/kernel/Makefile   |   1 +
+ arch/riscv/kernel/csr.c      | 177 +++++++++++++++++++++++++++++++++++
+ drivers/acpi/riscv/cppc.c    |  21 ++---
+ drivers/perf/riscv_pmu.c     |  43 +--------
+ 5 files changed, 191 insertions(+), 54 deletions(-)
+ create mode 100644 arch/riscv/kernel/csr.c
 
-Adding some additional context lines here:
-
->>>>		if (async_flip) {
->>>>			/* check if the prop does a nop change */
->>>>			if ((prop != config->prop_fb_id &&
->>>>			     prop != config->prop_in_fence_fd &&
->>>>			     prop != config->prop_fb_damage_clips)) {
->>>>				ret = drm_atomic_plane_get_property(plane, plane_state,
->>>>								    prop, &old_val);
->>>>				ret = drm_atomic_check_prop_changes(ret, old_val, prop_value, prop);## end of additional context ##>>>>  			}
->>>>
->>>>  			/* ask the driver if this non-primary plane is supported */
->>>> -			if (plane->type != DRM_PLANE_TYPE_PRIMARY) {
->>>> -				ret = -EINVAL;
-
-Firstly, apologies for the delay, and thanks for the patch.
-
-The original code definitely looks fishy. The value of `ret =
-drm_atomic_check_prop_changes` is not used afterwards and is ignored.
-
-Looking at the history (v6.14), it seems the original intention was:
-* For PRIMARY planes
-    * Allow modifying of properties fb_id, in_fence_fd, and fb_damage_clips
-    * Allow setting same value for all other properties
-* For OVERLAY and CURSOR planes :
-    * Allow setting same value for all properties
-
-(https://elixir.bootlin.com/linux/v6.14.11/source/drivers/gpu/drm/drm_atomic_uapi.c#L1078)
-
-
-Then, the behavior changed in v6.15:
-* For PRIMARY planes
-    * Allow modifying of (including setting same value for) **all** properties
-* For OVERLAY and CURSOR planes
-    * **Allow modifying of all properties** if `atomic_async_check` callback
-      exists and passes
-    * **Setting same value can fail**, as behavior is now driver-specific.
-
-(https://elixir.bootlin.com/linux/v6.15-rc1/source/drivers/gpu/drm/drm_atomic_uapi.c#L1081)
-
-
-But IIUC, the desired behavior is actually:
-* For PRIMARY planes
-    * Allow modifying of properties fb_id, in_fence_fd, and fb_damage_clips
-    * Allow setting same value for all other properties
-* For OVERLAY and CURSOR planes :
-    * **Allow setting same value on all properties**
-    * Allow modifying of all properties if `atomic_async_check` callback exists
-      and passes
-
-
-Is this the desired behavior? If so, I think it makes sense, but the existing
-conditions need some cleaning up.
-
-Thanks,
-Leo
-
->>>> +			else if (plane->type != DRM_PLANE_TYPE_PRIMARY) {
->>>> +				ret = drm_atomic_plane_get_property(plane, plane_state,
->>>> +								    prop, &old_val);
->>>> +
->>>> +				if (ret || old_val != prop_value) {
->>>> +					ret = -EINVAL;
->>>>
->>>> -				if (plane_funcs && plane_funcs->atomic_async_check)
->>>> -					ret = plane_funcs->atomic_async_check(plane, state, true);
->>>> +					if (plane_funcs && plane_funcs->atomic_async_check)
->>>> +						ret = plane_funcs->atomic_async_check(plane, state, true);
->>>>
->>>> -				if (ret) {
->>>> -					drm_dbg_atomic(prop->dev,
->>>> -						       "[PLANE:%d:%s] does not support async flips\n",
->>>> -						       obj->id, plane->name);
->>>> -					break;
->>>> +					if (ret) {
->>>> +						drm_dbg_atomic(prop->dev,
->>>> +							       "[PLANE:%d:%s] does not support async flips\n",
->>>> +							       obj->id, plane->name);
->>>> +						break;
->>>> +					}
->>>>  				}
->>>>  			}
->>>>  		}
->>>
->>> Upon further testing and reflection, I have come to the conclusion that
->>> this is indeed best handled by a kernel fix, rather than breaking user
->>> space.
->>>
->>> I attempted to work around this in wlroots, adjusting 0.18, 0.19, and
->>> 0.20 git with similar patches. First I attempted to stash all the
->>> written properties for the atomic code, storing an initial value of all
->>> 0xFE so it was always likely to write the first time, and only setting a
->>> property if it changed from the last commit.
->>>
->>> This resulted in whole commits breaking for one or both framebuffers
->>> until I ctrl-alt-fx switched to a tty and back again, and this would
->>> work again temporarily.
->>>
->>> So I went back to the drawing board and only withheld seemingly
->>> duplicate plane properties. This "worked", until I attempted to play a
->>> game, and then it started glitching spectacularly, and not updating at
->>> all if the game was doing direct scanout and vrr.
->>>
->>> Clearly this is wrong.
->>>
->>> The wlroots library queues up properties for each commit. On every
->>> commit where the cursor is disabled, it queues up both fb_id=0 and
->>> crtc_id=0. Every commit. Is this wrong? Should it only be queueing up
->>> the disablement properties once? It also queues up the full plane and
->>> hotspot properties when enabled, even if the cursor doesn't change
->>> position or appearance.
->>
->> Probably should have CC'd the drm misc maintainers when I started poking
->> drm misc instead of amdgpu. Pity there isn't a list for that...
-> 
-> I am a dumbass, I didn't notice get_maintainer.pl. Added more people,
-> and the correct list. Not sure if I should remove amd-gfx, since this
-> affects them, somewhat...
-> 
-> However, the intention of this thread was to seek commentary on the
-> situation as it is.
+-- 
+2.43.0
 
 
