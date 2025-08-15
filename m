@@ -1,88 +1,78 @@
-Return-Path: <linux-kernel+bounces-771418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6E7B286DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA34AB286DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DB916CF89
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F5C1D01E24
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE6D298CDA;
-	Fri, 15 Aug 2025 20:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287A92BE034;
+	Fri, 15 Aug 2025 20:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B6fgctbJ"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IJb3AlOk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B312561C9
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 20:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2426F44D;
+	Fri, 15 Aug 2025 20:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755288193; cv=none; b=u2E9a46AgWGx1q/Jo3o5x5RrccQpJ1ncjLPWnYn2qI/TBwTxGjxpZJYQh/i3G4Nagq535zALiGN8Hk3PgCrsQN4Mx8xL56VjGI7y06or7Mf31vs/5QEUF7ZdpLE3rA+g30IStkjaN6WS8bX493N+Sc5t9/hw66Q65xG15OAtNkk=
+	t=1755288248; cv=none; b=MT83VmRL7YJxNT53B//zls0RTev9YM+oSdUDMjHUFBE4sVQmIahjNZgoSq2yv602dYWnRYcZGr5fHwoICFf/qfA1AkYAA8F5qoIOb4dPbdgCKQ+zKrmyk6DO5BNsZ4HYhXLjkuvKih63pKum5B9YatAPgqCuxen7Fa9dQ2glcnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755288193; c=relaxed/simple;
-	bh=4STIYGI/Iyf15/bs41CGx8JzbIlb5YFgaQssWbnWL0g=;
+	s=arc-20240116; t=1755288248; c=relaxed/simple;
+	bh=KdoNFM0JyALmDBeXeK9bjvyngTHO5qk2sJ3MRHhIr5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cv7MBzxullNNKVj4yOOCxyrDJGqJ4uz8azTiZnlvqaj5WQAAHiBek6iYuz6I4yeQvzcb8oA+hQqiQiFHJ7Q0wUARmhhposxuqovBdvhGNEORmmacvWJyeUcDQNXpZqiPJVsq4a3JBr/y2sDDwLKHQP2UeO7wCgqtbBZycAv3Lfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B6fgctbJ; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b004954so15554495e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755288190; x=1755892990; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l2kePfzDvFml6EXYBDwWfTvZ++1LxjVURGwo9pFDf5U=;
-        b=B6fgctbJFJ1lVivEsP8Ula+orcSNHuUNSyjrx32PeHIZT+wCXp5IQlFG21LfbE28+K
-         xN3XowFM2EsdlGIuXDbLlbEQCguLZ24X+Zwl3b0oDM31SNBlnrH5OabPWXB+yoF9eASd
-         YGxKdpTIlSFam1xZ+PjW1JSs2y1i3nuurwfDSLjawkTRXODFZPm/gqbsqw1AHHbYy7HA
-         4T6rk2NuNM7NUmrhpLE3RHzvplfD9VmZu76yiyGSFWKliJfeoU92cZpZRcTfyRVBxDPC
-         OtVNDvPIIaMxCkzJTWSvx2f9aiieogexAL2cBnnJjmW1uKPxxxbpbodeVV2tl1HahmSQ
-         KO3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755288190; x=1755892990;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l2kePfzDvFml6EXYBDwWfTvZ++1LxjVURGwo9pFDf5U=;
-        b=NwXp1Nq17vqAw4D9eDbN1bo3713Gx5+HZO5wmHD0/v9mdqkRbnMpo4jJDCEZ39njDh
-         Da4JahDJxPpM/0hlSw5OZy714eHb6Qtyormmn+8rlPnGS+4a11uJjTPCiQlYWx0Fup7C
-         89AyHy7eC82tKO1EY//kSWSmaMcSYuhQ4nh2rv39lLXR8VGAwee3SMTzdNad49nXp87V
-         44+s+n4RyQZeGBGSPY9D/TkqfCalbkNbl7iWpCNnY7rgL2w7B2Ye6no128EiLZe3O5P6
-         kPOZD8WFOoVirGN/B4N9d0lggvzPpAp4jBVmUMrXTGsLzickWJt8Fo4s037z/qx9Uncn
-         EFJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGyZlgYOEbAzfdOxmPCjcLeQLPl2f+FjBppk8ZC32bgDHhlBLiJtG7aeXNMeJYJk3NlD2GirQNJfjuQuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkokbbreIcwEQfimCtgrUx/NyfD/t9/a1rqAu2egVO6gwX8vNo
-	NkIaY0mQDhdg51zQlNtLa+HExWYlT6DoW1AXiCN36YpHpU/9N/TJxIGjwWZDr+ALVPE=
-X-Gm-Gg: ASbGncsw705h9UPlPijsrzMV8BZ3vZZ/GZyQQ8X1MaUYbvL+REVEfQqKmbqoiZWdY9Y
-	GG7RHfWviNlg5c1eavS5zfpCxZCa60eWcO3QRjeDhrGl43i7/mUOgtu6CauexqcOqg+l8h823o3
-	Oj0JmPf6yHi7oyhsS1xEVwIT4RMmI3QVjUF+Vak/rYyt6PPv81NXJB4Y8aoCF+t3fblbnMueuFK
-	yo3fEDEB0zhduLVrP40qDpCneeKYZRaBEz/Y7Z0fJGO6usTlLZiOQ2FVCkTqXvaCYoErOd5iyjA
-	3gWLKoIhc0jkV4vsAR/9uv6gONB20TjSPfXbu//JnFJ5LY5heMRZ9iUiywPhqyaECF/szzuvIHc
-	T6+gKvA8UOPGEUI2UCwk8ErJt//s=
-X-Google-Smtp-Source: AGHT+IHT14axeSHSDRiAFlW7o6Ist04KA+jLa97KTahHyBEMOM06qghEr+qt8YTS6r4n7TbhWi5LXg==
-X-Received: by 2002:a5d:5d09:0:b0:3b7:899c:e867 with SMTP id ffacd0b85a97d-3bc6a83c6a5mr227506f8f.59.1755288190201;
-        Fri, 15 Aug 2025 13:03:10 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb652f9debsm3174669f8f.28.2025.08.15.13.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 13:03:09 -0700 (PDT)
-Date: Fri, 15 Aug 2025 23:03:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-	andy@kernel.org, gregkh@linuxfoundation.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] staging: media: atomisp: Add lock asserts for mutex
- protection
-Message-ID: <aJ-Sept8uMm2Opeq@stanley.mountain>
-References: <20250815170901.32105-1-abdelrahmanfekry375@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2KGvfEMNCBSwPhrQCwwdNKXDJ2LXzrjXSd/0il+YdWce6JrxYc4xM8tWNUlFL8IGUIwk+mPxPOV+tKEVXmR0ZRChBI2KRtpwberGPuAvR+I5D8X7m5Ha624454FaATMNvUdHqNlz6Uc+46G47GWrHi4+JufSFoea6/H3uVv+UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IJb3AlOk; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755288247; x=1786824247;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KdoNFM0JyALmDBeXeK9bjvyngTHO5qk2sJ3MRHhIr5Y=;
+  b=IJb3AlOkwuwTKo2lScWfnVce0Lqy6O0lB2Cr+LTB74a86UVpLM27/C0o
+   stH6XifF8Ezm2BreCe5VF4z0pP3h4vBbScP6QOrDb+YW4Ykg0zd0TwhGV
+   IkP6ZbdkdTPWS6IAyqlO4RGSXGqvnGXCoa+FKn2xyjaNl+8F6pQeYdwjM
+   Xay4SXTjdriMdwl+/wRIQzO3wbYSf3vz8qd3BcY4Az0D8vYP4FHrlW5nS
+   b6pa/7O4EHkWW6l1TuIA31mS0oel9Xois5NynKc+XXdhZCwKY8I+2sD8A
+   Cotzu+2FIjnBLRL2A6uwTreYJV4XOstgxTZZlYVmTAGfnWxZ33ob3M6fP
+   g==;
+X-CSE-ConnectionGUID: 4lWAmQuqTHK/B2aGtTZcaA==
+X-CSE-MsgGUID: lthB33xtSbyt5pYTu4gsiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57716990"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57716990"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 13:04:06 -0700
+X-CSE-ConnectionGUID: p62lv+19RGmetwWyYZhq1A==
+X-CSE-MsgGUID: ipz8qSBhSIme0DYb3mWaXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167048938"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 15 Aug 2025 13:04:02 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un0eZ-000CIy-2g;
+	Fri, 15 Aug 2025 20:03:57 +0000
+Date: Sat, 16 Aug 2025 04:03:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kbusch@kernel.org,
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com,
+	alistair23@gmail.com, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH 2/8] net/handshake: Make handshake_req_cancel public
+Message-ID: <202508160354.iNoLUr4h-lkp@intel.com>
+References: <20250815050210.1518439-3-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,64 +81,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815170901.32105-1-abdelrahmanfekry375@gmail.com>
+In-Reply-To: <20250815050210.1518439-3-alistair.francis@wdc.com>
 
-On Fri, Aug 15, 2025 at 08:09:01PM +0300, Abdelrahman Fekry wrote:
-> Add lockdep_assert_held(&isp->mutex) to critical functions accessing
-> shared device state. This enforces proper locking and detects violations.
-> 
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-> ---
->  .../staging/media/atomisp/pci/atomisp_cmd.c   |  3 ++
->  .../media/atomisp/pci/atomisp_compat_css20.c  | 31 +++++++++++++++++++
->  2 files changed, 34 insertions(+)
-> 
-> diff --git a/drivers/staging/media/atomisp/pci/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
-> index 3a4eb4f6d3be..48ca33e1c92d 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp_cmd.c
-> +++ b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
-> @@ -3794,6 +3794,7 @@ int atomisp_try_fmt(struct atomisp_device *isp, struct v4l2_pix_format *f,
->  		    const struct atomisp_format_bridge **fmt_ret,
->  		    const struct atomisp_format_bridge **snr_fmt_ret)
->  {
-> +	lockdep_assert_held(&isp->mutex);
+Hi,
 
-This should go after the declarations.
+kernel test robot noticed the following build warnings:
 
->  	const struct atomisp_format_bridge *fmt, *snr_fmt;
->  	struct atomisp_sub_device *asd = &isp->asd;
->  	struct v4l2_mbus_framefmt ffmt = { };
-> @@ -4324,6 +4325,8 @@ static int atomisp_set_fmt_to_snr(struct video_device *vdev, const struct v4l2_p
->  int atomisp_set_fmt(struct video_device *vdev, struct v4l2_format *f)
->  {
->  	struct atomisp_device *isp = video_get_drvdata(vdev);
-> +	lockdep_assert_held(&isp->mutex);
+[auto build test WARNING on trondmy-nfs/linux-next]
+[also build test WARNING on net/main net-next/main linus/master linux-nvme/for-next v6.17-rc1 next-20250815]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Same.  Etc...
+url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250815-130804
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20250815050210.1518439-3-alistair.francis%40wdc.com
+patch subject: [PATCH 2/8] net/handshake: Make handshake_req_cancel public
+config: arm-mps2_defconfig (https://download.01.org/0day-ci/archive/20250816/202508160354.iNoLUr4h-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160354.iNoLUr4h-lkp@intel.com/reproduce)
 
-> +
->  	struct atomisp_video_pipe *pipe = atomisp_to_video_pipe(vdev);
->  	struct atomisp_sub_device *asd = pipe->asd;
->  	const struct atomisp_format_bridge *format_bridge;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160354.iNoLUr4h-lkp@intel.com/
 
-[ snip ]
+All warnings (new ones prefixed by >>):
 
-> @@ -1726,6 +1746,10 @@ int atomisp_css_input_configure_port(
->  {
->  	int i;
->  	struct atomisp_stream_env *stream_env;
-> +
+>> net/handshake/request.c:312:6: warning: no previous prototype for function 'handshake_req_cancel' [-Wmissing-prototypes]
+     312 | bool handshake_req_cancel(struct sock *sk)
+         |      ^
+   net/handshake/request.c:312:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     312 | bool handshake_req_cancel(struct sock *sk)
+         | ^
+         | static 
+   1 warning generated.
 
-No blank line here.
 
-> +	struct atomisp_device *isp = asd->isp;
-> +
-> +	lockdep_assert_held(&isp->mutex);
->  	/*
->  	 * Calculate rx_count as follows:
->  	 * Input: mipi_freq                 : CSI-2 bus frequency in Hz
+vim +/handshake_req_cancel +312 net/handshake/request.c
 
-regards,
-dan carpenter
+3b3009ea8abb71 Chuck Lever 2023-04-17  300  
+3b3009ea8abb71 Chuck Lever 2023-04-17  301  /**
+3b3009ea8abb71 Chuck Lever 2023-04-17  302   * handshake_req_cancel - Cancel an in-progress handshake
+3b3009ea8abb71 Chuck Lever 2023-04-17  303   * @sk: socket on which there is an ongoing handshake
+3b3009ea8abb71 Chuck Lever 2023-04-17  304   *
+3b3009ea8abb71 Chuck Lever 2023-04-17  305   * Request cancellation races with request completion. To determine
+3b3009ea8abb71 Chuck Lever 2023-04-17  306   * who won, callers examine the return value from this function.
+3b3009ea8abb71 Chuck Lever 2023-04-17  307   *
+3b3009ea8abb71 Chuck Lever 2023-04-17  308   * Return values:
+3b3009ea8abb71 Chuck Lever 2023-04-17  309   *   %true - Uncompleted handshake request was canceled
+3b3009ea8abb71 Chuck Lever 2023-04-17  310   *   %false - Handshake request already completed or not found
+3b3009ea8abb71 Chuck Lever 2023-04-17  311   */
+3b3009ea8abb71 Chuck Lever 2023-04-17 @312  bool handshake_req_cancel(struct sock *sk)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
