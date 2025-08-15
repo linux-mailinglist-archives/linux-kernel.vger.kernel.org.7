@@ -1,150 +1,170 @@
-Return-Path: <linux-kernel+bounces-770741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B15B27E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F51B27E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4080189E7F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C332A56728B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDE72FE061;
-	Fri, 15 Aug 2025 10:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185202FF652;
+	Fri, 15 Aug 2025 10:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGRo76Af"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O9hRCXFw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BzbDdsds"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F1821FF5D;
-	Fri, 15 Aug 2025 10:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4422E06D7;
+	Fri, 15 Aug 2025 10:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755254410; cv=none; b=CQW3OIFheAlIzewkhrnUi46M2dMXqiKauw2njY/qTzHsVMjq2W9l4nl9zAcAMb2FLyLuiYzpGlB8qjfRecLCZ6irWQb7NVq1zQhCUUrYQ0eLAA09hzyZPYm2e+HLkpq2NQ9QdfQm/St5XP7YZ1ulPdY23TYAyoahuu28JvSHUiA=
+	t=1755254513; cv=none; b=Lwr3ZPF07w1uTegYkI99qdnFYFhi+FhaKmehlxRHYgN6MHXgF78e0wLToH6G0QKGSxwdYJfq5mt0nIfPHpKM36uen130cQrY0xv0JFa1hXFb6c/1O/EMugoBuOK/5Z6v29xZG2EHjq5HxQZ4jm+Dxw7d8E/xZRE9jVayNyVu800=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755254410; c=relaxed/simple;
-	bh=Ct27mU41pfXJjbfXAua8KPuWWwcYZNmzQ8Y9xDz9c8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PC7NYS52GQQPzNkpDoy05DxnQWN4nmL6SQl5wPiA1F+9qjQpmzfI1Yy2R+7iOQoc2citMty1PaPQgZOWCeyMck95oyLGA6J8AywnEeH7F9pOmK/ZKe02dgE2/lrC7J78EkLaOE624M7/GJbaSo5I8Sq38XAqFaojWa9n7FyZu5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGRo76Af; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D35C4CEEB;
-	Fri, 15 Aug 2025 10:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755254409;
-	bh=Ct27mU41pfXJjbfXAua8KPuWWwcYZNmzQ8Y9xDz9c8U=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dGRo76AfF1EwNWh1K9yaORGl/cYQXqEGSNH4faz4Sj9SGI/6/aZNI4jfVC4GrMk6g
-	 vVgvp4wgPdtIX0oVGxuAZdsrRmh3OHknZ5XdIjoB/tI0zoE+J6p/WOnF8nRPw73mFN
-	 lUq7ufjz6pT69aSPx5CXp/ZDw3f6RynH5soZDFFZ+4GHbwOirAZFnve7ked4b1U2O4
-	 PiGWEsAme7oA5qoWLKd9m/uK89UR1i+aPSbGWzVqizIdf29DOQVi6ed8l0sHO38KzM
-	 8LG+znW10BE5VS0UtF8DuCqfMd8uJaxo/AJ3OASGuFEY8nOxpu/eu4/mG91uXDWpJa
-	 mQItiG1q5ojSQ==
-Message-ID: <1826bd7a-621d-49d0-b6ff-7ff723ec9f2c@kernel.org>
-Date: Fri, 15 Aug 2025 12:40:04 +0200
+	s=arc-20240116; t=1755254513; c=relaxed/simple;
+	bh=GezbE6Javv5lzzHLNiiYIvpbKO7h3akyX18C4XKG/gA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uo4bUudK+dHL8V8+C3Xdko3z+dKhq3gDx2n4LFYL+3p110W7yl/azKPwcFUt1pQIZsA4YQ5ZEvjNBH0WvYHP8AeBIt3g9FbTfSUsHTztABao0JjineBYHk1/tH4aOGkjWtwBFSOH9BvVMWC2yyVqrtqcag/FR7B0olged0vUz+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O9hRCXFw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BzbDdsds; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755254509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GmIxZUwWpxDPsHJfwq3XHDhpbjvVVIixs7jU2J99Av0=;
+	b=O9hRCXFwmKPM3e3BNfMk4sAxb58LgQzJvlbr2/5XWPLNvz7WhOElKKh/3+67mwVin0zFZs
+	aLtIu4JtOyCgbjN2sE7cO2GL8Q9c/bGOYejsIpz6LoVDBLyfVIfnmVLa/eoUibALUMnAhy
+	i3rSChXl3UsJnnfTKEhRidXvVSioUaeLtM7Ka8x2Wac1H78atbi8E+f/M11wfjUz/lGAnu
+	jZFjY4rbotrYeYymPvYbesJ12POeWClw8X4V8C4Kw5oeZlQ8y0HAmhjVX7FZmVSNRAQD0i
+	e/Hl+sFaWEXeSbUdD4fKY4koURFumi5xDGa48Oz93h6T29ajoE2rGlo66j7ijg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755254509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GmIxZUwWpxDPsHJfwq3XHDhpbjvVVIixs7jU2J99Av0=;
+	b=BzbDdsds+S+2USi582Es3P5yA0Ydhtc/iYll5zj1qSSB7VoHOfIPepWXDt/L+RMHBE0a/A
+	YmFiPi2LeKiuWrDQ==
+Subject: [PATCH v2 00/13] sparc64: vdso: Switch to generic vDSO library
+Date: Fri, 15 Aug 2025 12:41:09 +0200
+Message-Id: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
- property.
-To: Yi xin Zhu <yzhu@maxlinear.com>, "vkoul@kernel.org" <vkoul@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "kees@kernel.org" <kees@kernel.org>,
- "dave.jiang@intel.com" <dave.jiang@intel.com>,
- "av2082000@gmail.com" <av2082000@gmail.com>,
- "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250808032243.3796335-1-yzhu@maxlinear.com>
- <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
- <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
- <a0a1bc99-0322-4f63-a903-12983facddc9@kernel.org>
- <SA1PR19MB4909BA87E8CE98B5A6389349C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <SA1PR19MB4909BA87E8CE98B5A6389349C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMUOn2gC/3WNyw6CMBBFf4XM2jFleCkr/8OwwHaASUxLWmwwh
+ H+3krh0eW5yzt0gsBcO0GYbeI4SxNkEdMpAT70dGcUkBlJUqYYIowkOw9x7XZc4sk26RkKqBmJ
+ VXfhKGpI8ex5kPcL3LvEkYXH+ffzE/Lv+kuW/ZMxRIRdN3RcPQ6XJb0+xr8U7K+vZMHT7vn8AH
+ Qiqe8AAAAA=
+X-Change-ID: 20250722-vdso-sparc64-generic-2-25f2e058e92c
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, 
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
+ Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Arnd Bergmann <arnd@kernel.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755254507; l=3767;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=GezbE6Javv5lzzHLNiiYIvpbKO7h3akyX18C4XKG/gA=;
+ b=qUnSyKpPr0qgERf5kY0sGviGxVTv+0pxOTTYFS6rDLaA88QM1n2W75Vgsmf+v1b4YmLs/aXLv
+ obIdMPjv7EZCiEZHny/D7tJmKFX4Xw8yBvDXfVfqOY3ECHU0ULbr6yh
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 15/08/2025 12:06, Yi xin Zhu wrote:
-> Hi Krzysztof,
-> On 15/08/2025 16:32, Krzysztof wrote:
->>
->>
->> And how is it not a OS policy? Bring reasoning and arguments, otherwise I
->> cannot help you. Your reply above has zero hardware-related arguments, zero
->> facts, zero hardware description.
->>
->> Best regards,
->> Krzysztof
-> 
-> Let me first describe the DMA hardware capability.  The DMA IP is designed with two control paths.
-> 1. Hardware descriptor mode.  The DMA can be connected to another HW component that provides
-> Descriptors to DMA to automate DMA transfers.
-> 2. Software descriptor mode.  The DMA IP also has interface to CPU via registers to allow CPU to
-> manage the DMA transfers.
-> 
-> Which mode DMA works in depends on SoC level configuration.  In the SoC, it could be some
+The generic vDSO provides a lot common functionality shared between
+different architectures. SPARC is the last architecture not using it,
+preventing some necessary code cleanup.
 
-What is a "SoC level configuration"?
+Make use of the generic infrastructure.
 
-From your explanation 1+2 it feels like consumer chooses it. Where is a
-full DTS showing all this?
+Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
 
+Only tested on QEMU.
 
-> of the DMA instances work in hardware descriptor mode while other DMA instances work in
-> software descriptor mode or all in HW/SW mode.
-> 
+This has a semantic conflict with my series "vdso: Reject absolute
+relocations during build". The last patch of this series expects all users
+of the generic vDSO library to use the vdsocheck tool.
+This is not the case (yet) for SPARC64. I do have the patches for the
+integration, the specifics will depend on which series is applied first.
+
+[0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Rebase on v6.17-rc1
+- Drop RFC state
+- Fix typo in commit message
+- Drop duplicate 'select GENERIC_TIME_VSYSCALL'
+- Merge "sparc64: time: Remove architecture-specific clocksource data" into the
+  main conversion patch. It violated the check in __clocksource_register_scale()
+- Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
+
+---
+Arnd Bergmann (1):
+      clocksource: remove ARCH_CLOCKSOURCE_DATA
+
+Thomas Weißschuh (12):
+      vdso: Add struct __kernel_old_timeval forward declaration to gettime.h
+      sparc64: vdso: Link with -z noexecstack
+      sparc64: vdso: Remove obsolete "fake section table" reservation
+      sparc64: vdso: Replace code patching with runtime conditional
+      sparc64: vdso: Move hardware counter read into header
+      sparc64: vdso: Move syscall fallbacks into header
+      sparc64: vdso: Introduce vdso/processor.h
+      sparc64: vdso: Switch to the generic vDSO library
+      sparc64: vdso2c: Drop sym_vvar_start handling
+      sparc64: vdso2c: Remove symbol handling
+      sparc64: vdso: Implement clock_gettime64()
+      sparc64: vdso: Implement clock_getres()
+
+ arch/sparc/Kconfig                         |   4 +-
+ arch/sparc/include/asm/clocksource.h       |   9 -
+ arch/sparc/include/asm/processor.h         |   3 +
+ arch/sparc/include/asm/processor_32.h      |   2 -
+ arch/sparc/include/asm/processor_64.h      |  25 --
+ arch/sparc/include/asm/vdso.h              |   2 -
+ arch/sparc/include/asm/vdso/clocksource.h  |  10 +
+ arch/sparc/include/asm/vdso/gettimeofday.h | 208 ++++++++++++++++
+ arch/sparc/include/asm/vdso/processor.h    |  41 ++++
+ arch/sparc/include/asm/vdso/vsyscall.h     |  10 +
+ arch/sparc/include/asm/vvar.h              |  75 ------
+ arch/sparc/kernel/Makefile                 |   1 -
+ arch/sparc/kernel/time_64.c                |   6 +-
+ arch/sparc/kernel/vdso.c                   |  69 ------
+ arch/sparc/vdso/Makefile                   |   8 +-
+ arch/sparc/vdso/vclock_gettime.c           | 382 +++--------------------------
+ arch/sparc/vdso/vdso-layout.lds.S          |  26 +-
+ arch/sparc/vdso/vdso.lds.S                 |   4 +-
+ arch/sparc/vdso/vdso2c.c                   |  24 --
+ arch/sparc/vdso/vdso2c.h                   |  45 +---
+ arch/sparc/vdso/vdso32/vdso32.lds.S        |   6 +-
+ arch/sparc/vdso/vma.c                      | 274 ++-------------------
+ include/linux/clocksource.h                |   6 +-
+ include/vdso/gettime.h                     |   1 +
+ kernel/time/Kconfig                        |   4 -
+ 25 files changed, 343 insertions(+), 902 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
 
 Best regards,
-Krzysztof
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
