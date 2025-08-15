@@ -1,238 +1,139 @@
-Return-Path: <linux-kernel+bounces-771147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1015B2836B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:00:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBF3B2836E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7E1B0841D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A3F7BAC5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37BC308F33;
-	Fri, 15 Aug 2025 15:56:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A208308F23;
+	Fri, 15 Aug 2025 16:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKNkWAb0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DB0308F23;
-	Fri, 15 Aug 2025 15:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B43E14A0BC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755273407; cv=none; b=ln1FMJaE1O1DdZmlN9C2jUHHHjkIBqIryC1/0EbWM1pYkn2yl3iAEUOyysGCzO17AuYSec/LfLywoD6iSyzGmQFeEBPyylIS1FRb4rpZ5zZwqvEl4gEE4nVhjxZDHFALc22DczjFUbq2NUjbiLNEsrlSkCSRembwNJig1N3ZMac=
+	t=1755273600; cv=none; b=Mw/9O36Ldx/Lnk8iNIu9heHybQ6CMf03aJootcQ+qQG8VHVphv6Uexjbud4pbqfeixQ7eNa4QiXiiTD4Pfws2MoHWDCh1NgXuI2jr3Hh5lI4ektZOkl0ZQOigcFR5h77Eb4CynkOQdhBGYe2+Pv3IxCdb7XaFcKINiREVmSyEE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755273407; c=relaxed/simple;
-	bh=/s+I42joGHjOoMWBW7NGxThAdVg3XgwcYYGyK4Q+cVY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RXXVSYpscvTwsIBUZp6VZvF1jcvj8S+twnR5mD4Mot+w+PNu7Vcm9T7dYuRIIyV+K2S5iRlRlnmhz1W5J+ihPqPVO1bkugId5MvF9UTJFkgqOoqejSU8K5Ca5biAizxlA8nve/8eoQu+jJKJhFSOF5VfdG5IeuC4Icijo4Wwdh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c3RVV4Yr7z6L5LL;
-	Fri, 15 Aug 2025 23:53:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 371701400F4;
-	Fri, 15 Aug 2025 23:56:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Aug
- 2025 17:56:41 +0200
-Date: Fri, 15 Aug 2025 16:56:39 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Dave Jiang <dave.jiang@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <dakr@kernel.org>, <dave@stgolabs.net>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
-	<marc.herbert@linux.intel.com>, <akpm@linux-foundation.org>,
-	<david@redhat.com>
-Subject: Re: [PATCH 3/4] cxl, acpi/hmat: Update CXL access coordinates
- directly instead of through HMAT
-Message-ID: <20250815165639.00007354@huawei.com>
-In-Reply-To: <01108362-8273-4291-bebe-379006e7908d@intel.com>
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
-	<20250814171650.3002930-4-dave.jiang@intel.com>
-	<20250815143125.000074d5@huawei.com>
-	<01108362-8273-4291-bebe-379006e7908d@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755273600; c=relaxed/simple;
+	bh=2C73W0lR65qDoxH8uEtSLpuuzdls0CZW/cKJd9qHHrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJy9+NmCdUnZch+TeL+fcJ2zJQkONG9PB1YPLvIeD5thXRFktQC04xxXCZjBDHXLs6EfbpbCGNCrYleZSzVuYfS+6B6Zye/8YZVDFRF+bX+ALA/RKN20I2NW/kolh55W4+dXT4fy0HZoo3rPWcCN9yF51Fsmfu3mUOCH8vP/jYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKNkWAb0; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755273599; x=1786809599;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2C73W0lR65qDoxH8uEtSLpuuzdls0CZW/cKJd9qHHrA=;
+  b=mKNkWAb0Q8DuqTsCwvhX7571iK+Ti7zmx73lpEfISeCzqYfCWfn5fc5S
+   bHyP1S+yqwFPKBzNTBzNUa0gl8B2/jQaVBgh47JWCKpQWSh1IVe1rjrA6
+   mdtjKayTXMF6HmNYgJsGelV2BZpj6sdMNnncvA8xGB0DjJFzkqEx6DCL5
+   nJPbB0Bw7TD/dYctWYN1o4nYIh41gyAs1Px8Vp+UPpZo0TlxCi0Itgbo5
+   TbrTxeD4aena1V6daOamakPu443/q5BR433Atftp6FN5Z4bLwFfsH53rw
+   2R+BzZIrheAh2Z4PhO74gB/0bJVCdIvzoEObxFG4brKmdY71b96Yw8o6E
+   w==;
+X-CSE-ConnectionGUID: xadMexFbS763YN2Mmzf1HQ==
+X-CSE-MsgGUID: hYDn3/wrRcKFkZ5yHo6LPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61407496"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="61407496"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 08:59:58 -0700
+X-CSE-ConnectionGUID: PTz1fJUWTJe7Mfu/W0yo/g==
+X-CSE-MsgGUID: q9U9k1qvRZy+qCDHvZBIJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166535903"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.111.211]) ([10.125.111.211])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 08:59:57 -0700
+Message-ID: <d74b6f8b-2662-47f4-8221-2d2e6e7fe580@intel.com>
+Date: Fri, 15 Aug 2025 08:59:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER) in
+ .regset_get() paths
+To: Oleg Nesterov <oleg@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Sohil Mehta <sohil.mehta@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Mark Brown <broonie@kernel.org>
+References: <20250814101340.GA17288@redhat.com>
+ <20250815155220.GA3702@redhat.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250815155220.GA3702@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 15 Aug 2025 08:35:31 -0700
-Dave Jiang <dave.jiang@intel.com> wrote:
-
-> On 8/15/25 6:31 AM, Jonathan Cameron wrote:
-> > On Thu, 14 Aug 2025 10:16:49 -0700
-> > Dave Jiang <dave.jiang@intel.com> wrote:
-> >   
-> >> The current implementation of CXL memory hotplug notifier gets called
-> >> before the HMAT memory hotplug notifier. The CXL driver calculates the
-> >> access coordinates (bandwidth and latency values) for the CXL end to
-> >> end path (i.e. CPU to endpoint). When the CXL region is onlined, the CXL
-> >> memory hotplug notifier writes the access coordinates to the HMAT target
-> >> structs. Then the HMAT memory hotplug notifier is called and it creates
-> >> the access coordinates for the node sysfs attributes.
-> >>
-> >> The original intent of the 'ext_updated' flag in HMAT handling code was to
-> >> stop HMAT memory hotplug callback from clobbering the access coordinates
-> >> after CXL has injected its calculated coordinates and replaced the generic
-> >> target access coordinates provided by the HMAT table in the HMAT target
-> >> structs. However the flag is hacky at best and blocks the updates from
-> >> other CXL regions that are onlined in the same node later on.   
-> > 
-> > After all removed, or when a second region onlined in that node whilst the
-> > first is still online?  In that second case I think we should not update
-> > the access properties as that would surprise anything already using the
-> > earlier one.  
+On 8/15/25 08:52, Oleg Nesterov wrote:
+> Dave, Sohil, what do you think?
 > 
-> Are you thinking we'll need some sort of ref counting on the node?
-
-Was more a question on the intent, but indeed some sort of refcount would be
-needed to tear down cleanly. Might get messy though as what do we do if
-two regions are added with different characteristics then the first one
-is removed. Do we update?
-
-Meh. This is a corner case and if we get different properties in one CFMWS
-as a common thing then we need to figure out how to spin more NUMA nodes.
-So I'm not sure this isn't a 'won't fix until the case turns out to matter'
-thing.
-
-Jonathan
-
-> 
-> DJ
-> > 
-> > Jonathan
-> >   
-> >> Remove the
-> >> 'ext_updated' flag usage and just update the access coordinates for the
-> >> nodes directly without touching HMAT target data.
-> >>
-> >> The hotplug memory callback ordering is changed. Instead of changing CXL,
-> >> move HMAT back so there's room for the levels rather than have CXL share
-> >> the same level as SLAB_CALLBACK_PRI. The change will resulting in the CXL
-> >> callback to be executed after the HMAT callback.
-> >>
-> >> With the change, the CXL hotplug memory notifier runs after the HMAT
-> >> callback. The HMAT callback will create the node sysfs attributes for
-> >> access coordinates. The CXL callback will write the access coordinates to
-> >> the now created node sysfs attributes directly and will not pollute the
-> >> HMAT target values.
-> >>
-> >> Fixes: debdce20c4f2 ("cxl/region: Deal with numa nodes not enumerated by SRAT")
-> >> Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
-> >> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> >> ---
-> >>  drivers/acpi/numa/hmat.c  |  6 ------
-> >>  drivers/cxl/core/cdat.c   |  5 -----
-> >>  drivers/cxl/core/core.h   |  1 -
-> >>  drivers/cxl/core/region.c | 10 ++--------
-> >>  include/linux/memory.h    |  2 +-
-> >>  5 files changed, 3 insertions(+), 21 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> >> index 4958301f5417..5d32490dc4ab 100644
-> >> --- a/drivers/acpi/numa/hmat.c
-> >> +++ b/drivers/acpi/numa/hmat.c
-> >> @@ -74,7 +74,6 @@ struct memory_target {
-> >>  	struct node_cache_attrs cache_attrs;
-> >>  	u8 gen_port_device_handle[ACPI_SRAT_DEVICE_HANDLE_SIZE];
-> >>  	bool registered;
-> >> -	bool ext_updated;	/* externally updated */
-> >>  };
-> >>  
-> >>  struct memory_initiator {
-> >> @@ -391,7 +390,6 @@ int hmat_update_target_coordinates(int nid, struct access_coordinate *coord,
-> >>  				  coord->read_bandwidth, access);
-> >>  	hmat_update_target_access(target, ACPI_HMAT_WRITE_BANDWIDTH,
-> >>  				  coord->write_bandwidth, access);
-> >> -	target->ext_updated = true;
-> >>  
-> >>  	return 0;
-> >>  }
-> >> @@ -773,10 +771,6 @@ static void hmat_update_target_attrs(struct memory_target *target,
-> >>  	u32 best = 0;
-> >>  	int i;
-> >>  
-> >> -	/* Don't update if an external agent has changed the data.  */
-> >> -	if (target->ext_updated)
-> >> -		return;
-> >> -
-> >>  	/* Don't update for generic port if there's no device handle */
-> >>  	if ((access == NODE_ACCESS_CLASS_GENPORT_SINK_LOCAL ||
-> >>  	     access == NODE_ACCESS_CLASS_GENPORT_SINK_CPU) &&
-> >> diff --git a/drivers/cxl/core/cdat.c b/drivers/cxl/core/cdat.c
-> >> index c0af645425f4..c891fd618cfd 100644
-> >> --- a/drivers/cxl/core/cdat.c
-> >> +++ b/drivers/cxl/core/cdat.c
-> >> @@ -1081,8 +1081,3 @@ int cxl_update_hmat_access_coordinates(int nid, struct cxl_region *cxlr,
-> >>  {
-> >>  	return hmat_update_target_coordinates(nid, &cxlr->coord[access], access);
-> >>  }
-> >> -
-> >> -bool cxl_need_node_perf_attrs_update(int nid)
-> >> -{
-> >> -	return !acpi_node_backed_by_real_pxm(nid);
-> >> -}
-> >> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-> >> index 2669f251d677..a253d308f3c9 100644
-> >> --- a/drivers/cxl/core/core.h
-> >> +++ b/drivers/cxl/core/core.h
-> >> @@ -139,7 +139,6 @@ long cxl_pci_get_latency(struct pci_dev *pdev);
-> >>  int cxl_pci_get_bandwidth(struct pci_dev *pdev, struct access_coordinate *c);
-> >>  int cxl_update_hmat_access_coordinates(int nid, struct cxl_region *cxlr,
-> >>  				       enum access_coordinate_class access);
-> >> -bool cxl_need_node_perf_attrs_update(int nid);
-> >>  int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
-> >>  					struct access_coordinate *c);
-> >>  
-> >> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> >> index 71cc42d05248..1580e19f13a5 100644
-> >> --- a/drivers/cxl/core/region.c
-> >> +++ b/drivers/cxl/core/region.c
-> >> @@ -2442,14 +2442,8 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
-> >>  
-> >>  	for (int i = 0; i < ACCESS_COORDINATE_MAX; i++) {
-> >>  		if (cxlr->coord[i].read_bandwidth) {
-> >> -			rc = 0;
-> >> -			if (cxl_need_node_perf_attrs_update(nid))
-> >> -				node_set_perf_attrs(nid, &cxlr->coord[i], i);
-> >> -			else
-> >> -				rc = cxl_update_hmat_access_coordinates(nid, cxlr, i);
-> >> -
-> >> -			if (rc == 0)
-> >> -				cset++;
-> >> +			node_update_perf_attrs(nid, &cxlr->coord[i], i);
-> >> +			cset++;
-> >>  		}
-> >>  	}
-> >>  
-> >> diff --git a/include/linux/memory.h b/include/linux/memory.h
-> >> index 02314723e5bd..b41872c478e3 100644
-> >> --- a/include/linux/memory.h
-> >> +++ b/include/linux/memory.h
-> >> @@ -120,8 +120,8 @@ struct mem_section;
-> >>   */
-> >>  #define DEFAULT_CALLBACK_PRI	0
-> >>  #define SLAB_CALLBACK_PRI	1
-> >> -#define HMAT_CALLBACK_PRI	2
-> >>  #define CXL_CALLBACK_PRI	5
-> >> +#define HMAT_CALLBACK_PRI	6
-> >>  #define MM_COMPUTE_BATCH_PRI	10
-> >>  #define CPUSET_CALLBACK_PRI	10
-> >>  #define MEMTIER_HOTPLUG_PRI	100  
-> >   
-> 
-> 
-
+> OK, it seems that 5/6 (and thus 6/6) needs more discussion, but what
+> about 1-3 for the start?
+They kinda need fleshed out changelogs first, don't you think?
+Especially 1/6. It also needs an actual cover letter explaining what
+it's trying to do and the larger context. Ideally, it's self-contained
+and as opposed to links to previous discussions.
 
