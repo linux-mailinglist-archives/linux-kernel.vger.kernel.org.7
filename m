@@ -1,167 +1,262 @@
-Return-Path: <linux-kernel+bounces-770857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97205B27FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:04:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C027FB27FB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4151896C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3466A2155B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EE428540F;
-	Fri, 15 Aug 2025 12:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE36D288C0F;
+	Fri, 15 Aug 2025 12:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQpSX9sh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PaVQzuX+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE551E9B37;
-	Fri, 15 Aug 2025 12:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755259448; cv=none; b=OScmu8ow8XJPChO/rs+8Tb0zjDWfIwnFVBNzMtSjdIlaEC+zsU5xxgBWVei39ER3VssW3ErGA6HtZ2Cd9cpgErPwha+xP4Lw0uGzi7LT4AakKH1cKfBcv+5h58LXP/g0XBdTbf5ymnbHewXL0YHYPmPee4l9hRNsXsscqTjBoLA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755259448; c=relaxed/simple;
-	bh=HZeCyCbCW8BPc1UqJ/9xLPYFm/CNn5koe8rojNXfI4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQUSFSHfcDrcafQn+eSk3Zok9nk4HL+yv8OvACgNVpIP2kbvj3bBNtFEh2OripO51XfMZuElkvFMmJWTTJN00DK5jYPXzZNbKHjrQOc2MB2S8uyxKCaK0Hx58ZlFMqabQwHufzXr0IEboTQeR90q+pSCA1kURgnsv6zzCX3E3FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQpSX9sh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C551C4CEEB;
-	Fri, 15 Aug 2025 12:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755259448;
-	bh=HZeCyCbCW8BPc1UqJ/9xLPYFm/CNn5koe8rojNXfI4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQpSX9shqX50rgSFEZ4/cxfqQuGRDcQAzWYTFrGCpxMYNKy4N9qDjIy7JMihJD/jN
-	 X+ATwPMHuoKyTJSNSYYu3iFFewu285ZPxiLftQ9p+XxuFdfxWs0bJFHeyYte6IUi9i
-	 DucVMwyzdvubPvQJpr61jkxEz8RN9MfCfUm9bJRN3SK1+RntfR4tInrYC7RXumg3Q2
-	 yTPGV3pgtYe0nKEz45Jl7PI7TCMHlYUkZ3dOYiOGGPtFjO+3PmnnLl7TB4CO9iL0l9
-	 ip+dC0K9XAjw43zqkkHq9wg+CFzKsfW5p8h7g2z0bpJUGsTJd8YuCjm/hAY7T3zTIy
-	 G8FJ7uNNIuixA==
-Date: Fri, 15 Aug 2025 15:04:04 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aJ8iNLwlf4PAC0h1@kernel.org>
-References: <20250814162252.3504279-1-cfenn@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3962B25DCF0;
+	Fri, 15 Aug 2025 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755259548; cv=fail; b=CoQy1hgZei1IOO7kTXTpD/aKTMZPOXaz4h4NQs6gz4UbBTDgSoOL2gkP19E8EIr3Uk92VItVxe9RSVyE82ZXEdHbQ9QCksKHAGMymyJmBnRdCRz8Ww5DMmZQNX/f73DkLc/AVmaJ7LWkBnECTze9NHGz/xJev8TxBoGCfJZ8zt0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755259548; c=relaxed/simple;
+	bh=wA6Sb9eQaW4sr40ejinVOSu7jQ34LT5VuFli8HRGENE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dMngHZfGWldc949J4xCM+ba+/gywNo58oQ0zl9NKXpZD9bu5hA3pICNAH9O8wpPdRZb9mTW5XaBCpUyBeT5aUGHJyyZ0cAuZk/Ln78AWC0av44niFY7u4RPDnIYlt/kB6o5v9tFf96tLI3zJHpfzaFvXf87mDWFJy7idy6zo5wA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PaVQzuX+; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755259548; x=1786795548;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=wA6Sb9eQaW4sr40ejinVOSu7jQ34LT5VuFli8HRGENE=;
+  b=PaVQzuX+GB/ClMCrYDxbSaNkJgwBD8MJDfaTuwJpPNgo42C43TZwsF+7
+   3kd4ZwlePoaOWg4rGOaZiKj2n1CSkSf2DwOHtAI7FUOX7TdmN4+PoElP7
+   4oaC7poIIDNAwydsjWF7WUsNYjcEi4yd2ihbXyZcqnsG5+MHgH5CE+d3l
+   k6K88U2SNKee3t3htg/Fh0Ik+KDaF5dJQgkhsbao6D2NvMfHpESJfDQzU
+   Jd0Ocgvb6gNb61GcQhLQam7taqT1zRiwe7PJECv2YiQ4n2rdWCNzKk8UX
+   F8fjtgKHOA032/WUbyHIpSs/FQtv1zQGHtgtTNHiftoaS32HK382fsC0a
+   Q==;
+X-CSE-ConnectionGUID: S+57vOZMQ2qq2OoFptsSkg==
+X-CSE-MsgGUID: rp4pCxlwRg2ZulmF6kLycg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="69028833"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="69028833"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 05:05:47 -0700
+X-CSE-ConnectionGUID: PhdTntVzRkWiOa7hIQf+kw==
+X-CSE-MsgGUID: eEaDqQGfQ2+E8tPZ4tpBYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166188263"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 05:05:46 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 15 Aug 2025 05:05:46 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 15 Aug 2025 05:05:46 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.46)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 15 Aug 2025 05:05:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tkjO7sttb/BV69gvkR0TaNrAsplzi3FvGm186Yhl0jTII17e5yM1Q460WaWZoaObH/w261RDEAOUCFJEq88xk3rlJhfGThCrSHWt7lwoTU0VcqlNkgRm/wn2PMU0JuLaiN/2Y4ml03UuxcQrZe7PCp4vbxenVnU8HCuF+nx5mYnSxWhWzXSwvWgPmIa4Dh9JREUdtjgUv0luP7hKXN8MoSFI6WYPiZS5fjQddSnOKDueD0fAugStFABotHBSClCVvBcl0blcgfzIIhyY5Hd3XOm6JS8rNiwtv2K7V6lmvk8TgPiog/v+deyYmTQWhwx+dce3/43Jq2wgTujxAgDdkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wA6Sb9eQaW4sr40ejinVOSu7jQ34LT5VuFli8HRGENE=;
+ b=cu4P7m0Grh2/V45Qqq3+IPseP8+S4eqRRZQmEo+2dNBOe9S+A8qrhM0tKJgdj+928fYSklX886bd/y3L33lGNxG3oDuz8vjHOdu84osi3NKzkDS7w4EnKs2aizPG0H7kxD8OCHQZj4ypSoO5OEspBolFAQuW7fjCsspIDJxYhdMyG8yH63R3bQdpj0cK3QfnXnlJAa9Q/72j2QjH1scujV4ULXPAW5vRHMS9FdaCR1oM0/fFYmmrpDTcZT/RQTUNGRhFchwgAZB+F9IYtRbV0qnwsWW4fMXchEmeMNYNi0GbGROgYurzUtO7oXN7m6PBpLNOP71bQ8ZoBM83YaNyZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM8PR11MB5750.namprd11.prod.outlook.com (2603:10b6:8:11::17) by
+ PH7PR11MB7513.namprd11.prod.outlook.com (2603:10b6:510:270::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.17; Fri, 15 Aug
+ 2025 12:05:42 +0000
+Received: from DM8PR11MB5750.namprd11.prod.outlook.com
+ ([fe80::4df9:c236:8b64:403a]) by DM8PR11MB5750.namprd11.prod.outlook.com
+ ([fe80::4df9:c236:8b64:403a%3]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 12:05:42 +0000
+From: "Reshetova, Elena" <elena.reshetova@intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>
+CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"mingo@kernel.org" <mingo@kernel.org>, "Scarlata, Vincent R"
+	<vincent.r.scarlata@intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
+	"Bondarevska, Nataliia" <bondarn@google.com>, "seanjc@google.com"
+	<seanjc@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
+Subject: RE: [PATCH v14 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
+Thread-Topic: [PATCH v14 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
+Thread-Index: AQHcDO5KNGBQKN56qk6Tqt+5dMDdJbRh47qAgAAk8eCAALOwAIAA44AA
+Date: Fri, 15 Aug 2025 12:05:42 +0000
+Message-ID: <DM8PR11MB57500E1E866CCB986CDEDA32E734A@DM8PR11MB5750.namprd11.prod.outlook.com>
+References: <20250814073640.1507050-1-elena.reshetova@intel.com>
+		 <20250814073640.1507050-5-elena.reshetova@intel.com>
+	 <a74ede5f4466572e33c92fceb69136b82c042d7e.camel@intel.com>
+	 <DM8PR11MB5750E0E7EE14FA87E9C48336E735A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <f5e9a2fc1b3f11ed8bf1525a53d0f7ce830200c5.camel@intel.com>
+In-Reply-To: <f5e9a2fc1b3f11ed8bf1525a53d0f7ce830200c5.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM8PR11MB5750:EE_|PH7PR11MB7513:EE_
+x-ms-office365-filtering-correlation-id: 4d102bd5-6f07-4c30-5ee3-08dddbf40ec7
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?a1dLYnlwOGM3VEhEM2ZEZHB5SXRCVTVtSExCcnR5UGgrTUdTcnpQUjI0UlEy?=
+ =?utf-8?B?TVpTMmxScjk0Yk0yRHpzZWZEYlZiMG5oYjI3cVcyYktjWXBGb2NzbGtHMms0?=
+ =?utf-8?B?cndqMWJVTXhET0p4bm54Qk90M1g3QVRtQ3BTV0tqWG4rZzNNTEx4bTJJU3Zn?=
+ =?utf-8?B?K3ZEN0xEUWZuVTUzQWdxRSt2ZnlGUFFVVzVvS2lpbWE2RHpYWHMvYk5vTG5u?=
+ =?utf-8?B?eE0zWkl6Um1hUVdWelJsdmpiZXcyTHpuTVRNMDR6SkY3akVNYkdRQVhHR21S?=
+ =?utf-8?B?QzJEUlJlQm1ZNmtVSGxBeGp5WGE1NWZoeTFqNDNSU2I2a2NIU1NQSVFnMXZ4?=
+ =?utf-8?B?OWxlYkdQVlhQTjdNN1N4cUtrYkkzVTlWSVFJWmlhOVVzZjVRN1B1SlNPRDNx?=
+ =?utf-8?B?eGtGSFA1TG9JcGV0RUk0d0dDVXdnMTRrdnRaK3RQaytFNnhobnc2RDVJdXg2?=
+ =?utf-8?B?L0JON2o1MEl6U2ZBZG8ySFZRb3k0U2oxeW1iNHNlYlRMOUFoSDk3YTF0U3g1?=
+ =?utf-8?B?VFg4NkZ0dzlGN0NkRWlBYUc0ZWJIWkQ3Yzlrdk5PaGgxYmpWWEl3dUZLNklO?=
+ =?utf-8?B?R3RkRXU3QU9TZGR3b3ZobHdNZDBmL3ZzNkRDTmFPbDB1YVBiL0V2R3hWdUh0?=
+ =?utf-8?B?U3I5eTQxZmI4MUM4ZThFRmFXSXRlYzRrZzc4TXo5c3FWaFU2MmZldzhlZmht?=
+ =?utf-8?B?TnZxQzc4WXZaRW11bUFOVWg2VHBIcUFJaFM0TXc0K25WNEo3dGQ3Qk4wdWVC?=
+ =?utf-8?B?NkVsdFFjMUNvNTh2VXhQMDBicFNlUW8vZS9mNVM2VWcyQlU0MXRFS0x2dDdE?=
+ =?utf-8?B?WjU3VUZNLzF6eHJ1eHNmaEJuRDF4cWhldFQyczlBRnhsR3QveHlnRGZwYlBY?=
+ =?utf-8?B?WXkwVHNENWI5SzFjMUQ0VTJrRE5EOURQb3gvYUQ5cmdsVmMydWR1aUdKOTJm?=
+ =?utf-8?B?UGNKMVhqSG5TMmROV0M1bVFVdUhkcm1GV0pMYnNGSjVwbllZUWpYSWdmWHIz?=
+ =?utf-8?B?aFZ2NHJXdGxOSTdxU3BBbW5jdjdsK0dYOUEzZEQrbHYzcVA5UXFJb2I3OERu?=
+ =?utf-8?B?T3IyUUsxcnJxMzJDVFQ0alc3NER6V3lRanBybStjUEN2NzB3K2Zad0Uvc3A4?=
+ =?utf-8?B?ZU0rMHJhT3NrSWs5bmtZd1M2MEE3azg3MWFpaUZuNU5IYlRxNGJVNDIxTlhS?=
+ =?utf-8?B?cC9UeXZIeVNvdFhyWFpUbXovaklTM0xuVWtMMmw4Kzlud1pRdzJ0TDJqSlk0?=
+ =?utf-8?B?RjVocjZwcm1YdE1KUGd5Zmozenc3akQ0UXVrTHZhQ2dmN1dKYzJKc2V6bjg2?=
+ =?utf-8?B?ekhWK2QzcERNNDE0ZDlUMzdMelozVS9mUDhYRE1MaEY2L0dKZE52RkQ1QXY0?=
+ =?utf-8?B?Y3NBbWFDaXRFM3J1SmxPaGtqa1FpSVBlSDErZ1NrbDJvbUJPUmMvVHV3OXBT?=
+ =?utf-8?B?YUN4SVRUVDc5L0pnVjdQRnBUZENzOEVobHBKSFVKcGcxT3dJTW1wNjNTckJw?=
+ =?utf-8?B?R3FNZytaanEyZHc1TGExUVhNMk9OYlpid3c1aFlNMUxVb1drenZ1YXBDMEU4?=
+ =?utf-8?B?SmxVaGl3UW1XTnI2RlFoMmdleFl0OUtrL1dUc09yWkJwcnR0KzFjVG1jUWlQ?=
+ =?utf-8?B?UTJOOHdNQ2JjTi9mQk84MGRSNmNTMzFtU21hQXNwMCtsSnFSWFBxL1pmUGxQ?=
+ =?utf-8?B?aVMxTDd3VGlxRVVza2JOckwyV2RqZGNLN2NIc2hvWEE0TmZQRGt6cFlJaW82?=
+ =?utf-8?B?MnVtcXhyUVJFOTJwRDExNE9UcGMyWjBuOFl1Y0lMQUJ4bmVoMGZkbGIvSkx4?=
+ =?utf-8?B?K2NFa2xmeE5sVUpYMVJncThoSENSU3VjcU5CMkxBR0ZudDV5VGlOTjNpYVcv?=
+ =?utf-8?B?MXJ5bjl2RVUvcTlyYU1TR0dlZTZITGFITjkxTnRrYmZLeHpxVTZvR2lITFhn?=
+ =?utf-8?B?ckZ3VURRckZlUGpER09takdaZThJUlNhUStBT1QrN3ExeFlHQkYrWHR6TGJ4?=
+ =?utf-8?Q?DdQ2c8J7paJOy5nFA0HMkAJp70TM6A=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5750.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NDUvVjkwT2dBMnllMGdnTW5pTzM0NlRCRlhUYkJjWVhzV09FaTNpVEg3YTk5?=
+ =?utf-8?B?c3FiYnNnWWozeUx1dzNHRy96elZGY25QMW9ORFBhWW96ci9TQmM3TG5CdmIr?=
+ =?utf-8?B?and3Sm5IcVRrMTBZVEROTjFkbnI5QitLbnUvMXZ0Q1lSYzNlSGtMc0Q0L0pk?=
+ =?utf-8?B?dzJDN1ltZGpJRFk5cm9KZVRqNW9qWk15MEFLT3lCSGVRc2FBTTNHTkZBMnpP?=
+ =?utf-8?B?WDJTbUxQelc1UjhyZlcwUmoyRzJXSG5wYlVwODJ1SEtRNXhSQWJaYmZDdkVk?=
+ =?utf-8?B?d1J0dGwxN0ZEM1B6R0VlK3luT1dTR2hQRUtYR3pPdTI1bmw2djd4YytCYzZp?=
+ =?utf-8?B?QWF2RjExT3Y5UnBUMlN0L1YrM0lIak1ha21MeW50VHc2ZGZBREdLSkg3bXFS?=
+ =?utf-8?B?OGovcnk4NkJiRnY3THV3ZHVVM2txVXVyQnZoRGhGNm9XZjU5dWZscWFFVVVL?=
+ =?utf-8?B?ekZ3NUlJZHNJSlZHQzhoMkc4bVdZTHZkQytuL001RGt5Vzg1SW1rWlR4RlFI?=
+ =?utf-8?B?U1ZpZ3VDd25La3VzcGpJRzlHQjVycFVMNFNmaU1iUnN0czZvUXcyait6aUtu?=
+ =?utf-8?B?b21HdUZBdWJGenZUNXo1eEwzR3BlU0wzWjB6Ky9Xb0JnZ0hTTi9JcENqNEFv?=
+ =?utf-8?B?by9yYVdVYnU3UHN4UE5sYnlSVllxTEd6ZDJqRTJsbFVrTlo5T2xzTW5xZjE0?=
+ =?utf-8?B?ZmUvK3NST05EcWw4MDN2NmlPRVhKd2d1blFaVVlodFlZMWZmSzhwa09zeldo?=
+ =?utf-8?B?L2FJVGhlVDhGUCtVR2FoVzBSaDNvTmd1dUF5ZjQvbzdYS3lQNjNWOGlRMGYy?=
+ =?utf-8?B?SkFrcGlDNXdnVGtLd002b2R2Vkh2VDFSZmNNUmh5STU1YUphd3hQQUN2cm90?=
+ =?utf-8?B?Q1JOTGpFWit6VW43ZVBHbDBPcFB4dFJKRkJuRXdqalhhTTIvc0RQaXlBRVlv?=
+ =?utf-8?B?VHEyY05wdy9iVUtLRm9FaXJHWmJKb2FLNWNOd3lVWUpMOVpBMlU4eFdqRGdo?=
+ =?utf-8?B?QW5zSXl0OEM0K010Q0NYaERiai81cmoyWmt1dWJkMnBoNTNBQ2RZNmIzOGpS?=
+ =?utf-8?B?OTJWREkvbGh4KzVTRmpzeUhTbnBiYjlVTHE5RzZwR0s0Yms1Wlk5UkhZMkZm?=
+ =?utf-8?B?Z1FxWS9HZkdCSEp1SWd0RHJ4T0Q2WFVIa2w5VzVPVDcvUWRSaWJWUm1mVWtR?=
+ =?utf-8?B?WGhKNEdXTWgzYVRFTU9tRGsraEtZVDNwRmhPeEpZQ3p5L3FCbTlpYjVKZm0z?=
+ =?utf-8?B?dTlkbWVRYThKK3pZRzZXTTZzTFVZbDIxeVUrZFNsYXZTTHUvODg0NGw0M0cv?=
+ =?utf-8?B?MWthcGF2WkxaTEsxTURTek5yWTNwNy93Z1ppNGthbjVBT3R6cGtmWk4vZER0?=
+ =?utf-8?B?ZVNxU3oySmVWSjd1bVc2RHMzUElmMFhvU1ZIWkhJcDhBNUQ3RnE0Zi9DREdZ?=
+ =?utf-8?B?RHg0VzNySFFrbTNkekdDK3JxRkNUTlUzcVoxN09FL2JOd1NNNHpGcENEWHNV?=
+ =?utf-8?B?aWJHb2RlMXMyTDJQQkVVcFFTWno1OFJKU2ZQTzN2dExjWEFWbWJoa1RHa0sy?=
+ =?utf-8?B?amwxVlRheXJSU2J3SHRwc3ZSd3VBeDFIcXVNVEpBWU9lNzhqSmVXeHZyWndJ?=
+ =?utf-8?B?ajJvc3M5NVB5TjM5dHlENytScXI4VE5WY2dWNVFYZUs0by9qdlp0MHVPanJG?=
+ =?utf-8?B?Vlhya2szTFFwUUkxSnZyNGpjdXdNUjJIdlJNZlFEbkxIL1krOXgybmhCSEsy?=
+ =?utf-8?B?cjdFUERZNU01QjV2cG5hVkFvMjdrbEJMWnBJYmFqS3dHVnZCcXJjWXdWOWo5?=
+ =?utf-8?B?S1NyL0o5VTY3NVdDOEZOdk5TZkIwQTlndlVVQUhEek4waEUydHNPL01vaEp4?=
+ =?utf-8?B?YXBVUVlneEI4YmNOK3pBOXZXSzNrQW9yY3Nka1hyT0l2VFFCVTZNNElMWXk4?=
+ =?utf-8?B?ZkJDNmlYeGJPTUROelJwS09Nb3lUOXZHKy9mcW5MUHRhd2NFbnVwM3dEN0hC?=
+ =?utf-8?B?enVkTWxaaVNIUnA2WEJ1SUJ1eVdvQjNPR1NFZFBZWU0wY2NoM3pPTEU2U2sv?=
+ =?utf-8?B?bFdKZVU2VWgwNHB2eWV4cVgzQkswN1I0QUgwMHZ0ZVhsdmU5RFRtR1NiSmR1?=
+ =?utf-8?B?YVlKYW44cmlQVk1GQ0FMaXZuNWtuN2FrVFN1d2ZLc2lXNXY1WFRaYnBJUjZR?=
+ =?utf-8?B?dUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814162252.3504279-1-cfenn@google.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5750.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d102bd5-6f07-4c30-5ee3-08dddbf40ec7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 12:05:42.2736
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EpE3fHWh5mHhqh7ExS/hKifmamNY6OQgcM/esuglikW6Wvc7H/Pv4eBaHTeJFuTxChQfV9FekSNJO/sGB7d+KbTbvekiaFd1KCH8Vyie0z8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7513
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 14, 2025 at 09:22:52AM -0700, Chris Fenner wrote:
-> This change disables the TCG_TPM2_HMAC feature by default to resolve
-> some driver initialization failures (with certain TPMs) and performance
-> regressions (with all TPMs). See "Security remarks" below for why this
-> does not meaningfully downgrade security.
-> 
-> When the TCG_TPM2_HMAC feature fails to initialize the "null key" (see
-> tpm-security.rst), it will cause tpm_tis_core_init to bail out early and
-> skip device registration, causing all userspace requests to /dev/tpm0 to
-> return ENODEV ("No such device").
-> 
-> TCG_TPM2_HMAC depends on the following being implemented in the TPM:
-> 
-> - TPM_RH_NULL
-> - TPM2_CreatePrimary
-> - TPM2_ContextSave
-> - ECDH-P256
-> - AES-128-CFB
-> 
-> While the majority of TPMs in the ecosystem conform to the PC Client
-> Platform TPM Profile, which currently mandates most of these, not all
-> versions of that profile did, and not all other TPM profiles (e.g.,
-> Mobile, Automotive, Server) will. The TPM 2.0 specification itself is a
-> "Library" specification and does not mandate any particular commands
-> (and very few features) in order to maximize flexibility for
-> implementors.
-> 
-> The TPM driver should not break userspace for a TPM that conforms to an
-> atypical profile, therefore this change makes TCG_TPM2_HMAC disabled by
-> default. It also adds a remark about what will happen if this feature is
-> enabled and used with a non-supporting TPM to the Kconfig.
-> 
-> Some real-world public examples of problems posed by this feature:
-> 
-> TPMs that do not support the feature result in broken userspace starting
-> from 6.10:
-> 
-> https://wiki.archlinux.org/title/Trusted_Platform_Module\
-> 
-> Significant (around 200%) boot up latency due to all the added TPM
-> private key operations:
-> 
-> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2080322
-> 
-> Security remarks:
-> 
-> tpm-security.rst describes the threat model of the TPM2_HMAC feature,
-> wherein an active interposer adversary on the TPM (e.g., SPI) bus
-> tampers with TPM commands and/or responses to interfere with the booting
-> or running system. The TPM2_HMAC feature uses something called "salted
-> sessions" to establish per-request keys that can be used to protect TPM
-> traffic.
-> 
-> Because the kernel does not have a priori knowledge of a cryptographic
-> identity for the correct TPM for the system, and because the kernel does
-> not have any cryptographic identity of its own with which to
-> authenticate itself to the TPM, the session is established using a
-> one-sided, unauthenticated key establishment protocol, wherein the
-> kernel asks the TPM for the so-called "null key" and uses it to
-> establish the shared session secret.
-> 
-> This poses a serious problem for the threat model of the TCG_TPM2_HMAC
-> feature, which it resolves by asserting that userspace will attest to
-> the "null key" using the EK after boot and compare it to the contents of
-> /sys/class/tpm/tpm0/null_name, exposed by the TPM driver. However, this
-> creates a trust cycle: we do not trust userspace to perform this action
-> correctly, because we do not trust that kernel correctly measured
-> userspace, because nobody has checked the null key yet. An implicitly
-> trusted remote attestation verifier also cannot be relied upon to do
-> this check, because it has no way of knowing for certain which key the
-> kernel actually used to establish the TPM sessions during the boot.
-
-All we care here is actually the external verifier scenario because most
-of this type of crypto where software must attest breaks without that,
-including all confidential computing technologies.
-
-It's true that in the current form the whole feature is at most defense
-in depth. It could be e.g. extended with persistent keys and productized
-more in the future (e.g., trusted keys were mostly useless for multiple
-years).
-
-I'd personally would like to keep it on at least on my own laptop and
-there's a risk that there's a group of people who would either:
-
-1. want to have that small amount defense in depth.
-2. want to refine the feature.
-
-It's by practical means already "relaxed" but outcomes are objectively
-plain wrong (as you stated) so I'd take a bit more conservative approach
-on changing the mainline and propose three state option:
-
-1. off: fully turn off
-2. relaxed: mark just a info or at most marning to klog that hmac
-   encryption is not enable. Keep timeout short as ECC generation
-   does not take long (if it is working) (at least according to
-   my tests). It should also address the lack of TPM2_ContextSave.
-   We really should probe that anyhow in the driver init and
-   disable also /dev/tpmrm0 accordingly.
-3. strict: enforce. This is good to have albeit now not really
-   useful
-
-The 'relaxed' is of course default.
-
-BR, Jarkko
-
- 
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSHVhbmcsIEthaSA8a2Fp
+Lmh1YW5nQGludGVsLmNvbT4NCj4gU2VudDogRnJpZGF5LCBBdWd1c3QgMTUsIDIwMjUgMTozMSBB
+TQ0KPiBUbzogUmVzaGV0b3ZhLCBFbGVuYSA8ZWxlbmEucmVzaGV0b3ZhQGludGVsLmNvbT47IEhh
+bnNlbiwgRGF2ZQ0KPiA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPg0KPiBDYzogbGludXgtc2d4QHZn
+ZXIua2VybmVsLm9yZzsgbWluZ29Aa2VybmVsLm9yZzsgU2NhcmxhdGEsIFZpbmNlbnQgUg0KPiA8
+dmluY2VudC5yLnNjYXJsYXRhQGludGVsLmNvbT47IHg4NkBrZXJuZWwub3JnOyBqYXJra29Aa2Vy
+bmVsLm9yZzsNCj4gQW5uYXB1cnZlLCBWaXNoYWwgPHZhbm5hcHVydmVAZ29vZ2xlLmNvbT47IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IE1hbGxpY2ssIEFzaXQgSyA8YXNpdC5rLm1h
+bGxpY2tAaW50ZWwuY29tPjsgQWt0YXMsIEVyZGVtDQo+IDxlcmRlbWFrdGFzQGdvb2dsZS5jb20+
+OyBDYWksIENob25nIDxjaG9uZ2NAZ29vZ2xlLmNvbT47IEJvbmRhcmV2c2thLA0KPiBOYXRhbGlp
+YSA8Ym9uZGFybkBnb29nbGUuY29tPjsgc2VhbmpjQGdvb2dsZS5jb207IFJheW5vciwgU2NvdHQN
+Cj4gPHNjb3R0LnJheW5vckBpbnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjE0IDQv
+NV0geDg2L3NneDogSW1wbGVtZW50IEVOQ0xTW0VVUERBVEVTVk5dDQo+IA0KPiANCj4gPiA+DQo+
+ID4gPiA+DQo+ID4gPiA+ICsgKiBSZXR1cm46DQo+ID4gPiA+ICsgKiAqICUwOgkJLSBTdWNjZXNz
+IG9yIG5vdCBzdXBwb3J0ZWQNCj4gPiA+ID4gKyAqICogJS1FQUdBSU46CQktIENhbiBiZSBzYWZl
+bHkgcmV0cmllZCwgZmFpbHVyZSBpcyBkdWUgdG8gbGFjayBvZg0KPiA+ID4gPiArICogKgkJCWVu
+dHJvcHkgaW4gUk5HDQo+ID4gPg0KPiA+ID4gTml0OiBpZiBhbm90aGVyIHZlcnNpb24gaXMgZXZl
+ciBuZWVkZWQsIEkgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIG1ha2UNCj4gPiA+IHRoZSB0
+ZXh0IHZlcnRpY2FsIGFsaWduZWQgdy9vIHRoZSBsZWFkaW5nICctJywgaS5lLiwNCj4gPiA+DQo+
+ID4gPiAJKiAlLUVBR0FJTjoJLSBDYW4gYmUgLi4uLg0KPiA+ID4gCQkJICBlbnRyb3B5IGluIFJO
+Ry4NCj4gPiA+DQo+ID4gPiAuLiBpbnN0ZWFkIG9mDQo+ID4gPg0KPiA+ID4gCSogJS1FQUdBSU46
+CS0gQ2FuIGJlIC4uLi4NCj4gPiA+IAkJCWVudHJvcHkgaW4gUk5HLg0KPiA+DQo+ID4gT0ssIHll
+cywgdGhpcyBjYW4gYmUgZml4ZWQsIGluZGVlZC4NCj4gPg0KPiANCj4gSSBkb3dubG9hZGVkIHRo
+b3NlIHBhdGNoZXMgYW5kIGNoZWNrZWQgbG9jYWxseS4gIEkgZm91bmQgdGhlcmUncyBhbg0KPiB1
+bm5lY2Vzc2FyeSAndGFiJyBiZXR3ZWVuIHRoZSBlcnJvciBjb2RlcyBhbmQgdGhlIGRlc2NyaXB0
+aW9ucywgbWFraW5nIHRoZQ0KPiB3aGl0ZXNwYWNlIGJldHdlZW4gdGhlbSB1bm5lY2Vzc2FyaWx5
+IHRvbyBsb25nLg0KPiANCj4gUGxlYXNlIHNlZSBiZWxvdyBkaWZmIEkgY2FtZSB1cCB3aXRoOg0K
+PiANCj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KPiBiL2Fy
+Y2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KPiBpbmRleCBjZmY1YzRkMjJhYzIuLmM2NDY3
+NjI4ZGEwNCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jDQo+
+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KPiBAQCAtOTI5LDEwICs5Mjks
+MTAgQEAgc3RhdGljIGludCBzZ3hfdXNhZ2VfY291bnQ7DQo+ICAgKiBjcnlwdG9ncmFwaGljIGFz
+c2V0cy4NCj4gICAqDQo+ICAgKiBSZXR1cm46DQo+IC0gKiAqICUwOiAgICAgICAgICAgICAgIC0g
+U3VjY2VzcyBvciBub3Qgc3VwcG9ydGVkDQo+IC0gKiAqICUtRUFHQUlOOiAgICAgICAgIC0gQ2Fu
+IGJlIHNhZmVseSByZXRyaWVkLCBmYWlsdXJlIGlzIGR1ZSB0byBsYWNrIG9mDQo+IC0gKiAqICAg
+ICAgICAgICAgICAgICAgIGVudHJvcHkgaW4gUk5HDQo+IC0gKiAqICUtRUlPOiAgICAgICAgICAg
+IC0gVW5leHBlY3RlZCBlcnJvciwgcmV0cmllcyBhcmUgbm90IGFkdmlzYWJsZQ0KPiArICogKiAl
+MDogICAgICAgLSBTdWNjZXNzIG9yIG5vdCBzdXBwb3J0ZWQNCj4gKyAqICogJS1FQUdBSU46IC0g
+Q2FuIGJlIHNhZmVseSByZXRyaWVkLCBmYWlsdXJlIGlzIGR1ZSB0byBsYWNrIG9mDQo+ICsgKiAq
+ICAgICAgICAgICAgIGVudHJvcHkgaW4gUk5HDQo+ICsgKiAqICUtRUlPOiAgICAtIFVuZXhwZWN0
+ZWQgZXJyb3IsIHJldHJpZXMgYXJlIG5vdCBhZHZpc2FibGUNCj4gICAqLw0KPiAgc3RhdGljIGlu
+dCBzZ3hfdXBkYXRlX3N2bih2b2lkKQ0KPiAgew0KDQpUaGFuayB5b3UsIEkgd2lsbCB1c2Ugd2ls
+bCByZW5kZXJpbmchDQo=
 
