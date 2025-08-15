@@ -1,196 +1,116 @@
-Return-Path: <linux-kernel+bounces-770279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161B5B2794C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67380B2794F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7AE627A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E810C5C4C41
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4832BE640;
-	Fri, 15 Aug 2025 06:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyR+u99D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777C52BD5A1;
+	Fri, 15 Aug 2025 06:37:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F5319845;
-	Fri, 15 Aug 2025 06:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAF0275105;
+	Fri, 15 Aug 2025 06:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755239832; cv=none; b=EM4356WN0LVsZHjJyEcYayIJyrim7sZmH8rp+CSSatEesj5RPfN7XvEsALcuPUjQL2+MJbUEpoVZLNWdW9+ZEE8ifIxYp6C4dUEqxppe/cSW761LJ0MPhdGRlag+zvehppvDKkq67qL7hfLnKTO7vrg6H86nA/s83VTVVrSDxFw=
+	t=1755239862; cv=none; b=gqyMGbr+QGELjuZOlu3Bui1kS6yZjH5hq3uHYyqYU8GyRD94lZiPNEvWDaCEDEsIK38PkEGC1wFCIIsuRP8r3ChX/CemRoQvWiHRZJ58qrCdn+M2udzV8H0HaomEWsXTlT0k3Fp9Tdn/nTBmpvd3vyetcHKcPI1gzGfbzFQwMqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755239832; c=relaxed/simple;
-	bh=tra7rydiILTcSEb0lcmhsy/l1DqMq2O1S4BfXAk8GfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUhredvG6xugl9YgWRl8eiwvDv1ilFeSuIljyBRHaAmv8BfqoHz2uuunt4B1XlMi4S0bep31+YFImyMbvOA+RFrItGbSyoCeDPOYgqb21MXk8874hLOBqP+kbcv0VvbAmWy3Q1eTGqzFlQp4WAs/5coy9GSTV7hia0jS5X+taMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyR+u99D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4556EC4CEEB;
-	Fri, 15 Aug 2025 06:37:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755239831;
-	bh=tra7rydiILTcSEb0lcmhsy/l1DqMq2O1S4BfXAk8GfM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PyR+u99DIpsbAwmgoZioxJE5kxVgtixCUFqDQeoUevZ+0SY34EUDxER/2uGlmpYME
-	 d/uiGR30L5dwI6u4qSdrygdM+QnmgzkXd1WsXRmMd6fR7QZutUaDXWakFaNaHcRZTr
-	 1WqVoAM3riy0pw4j9FJe+s2qoxGLVveQWjjLUFJK5h+OcCcNudfla0K5yk9VZr+J6d
-	 D3IGS9+Dt4kHCaBH4iiIa2zPx1fL/t621lYhikG7kUUiqSSSKyhjhLth5M0f+jmcKT
-	 wGBHkMC6pF2Z/TykJ7moSVSAMPECGi18WMAg6SXu6vFqGymkWAdUQqO33j7zARzLOX
-	 snc2NOEsRwOUg==
-Message-ID: <5ee0656b-136b-480f-9555-26ccdbff3eda@kernel.org>
-Date: Fri, 15 Aug 2025 07:37:06 +0100
+	s=arc-20240116; t=1755239862; c=relaxed/simple;
+	bh=Rlct5+Q0ZGH8lCuU7PfBrhC179DbtJp3plmz5CFltRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rqZTTTDUASVn4dpA250HH3H4rxfWne9ouzkB+cMR0NQFg5GjOtqsjTUiNsC7/2lCM4jcnlO5/kyxwWPgX4fnrpzadjdRehP8kmnEivV+l9OUM2vXe83lU0rAteEGbhObZMwDcLaUwGqN1rgzFjVjCMJyzKrpiLKA0j+VqnrJEUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 515e614a79a211f0b29709d653e92f7d-20250815
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:6ca49ea5-18c3-4f92-98d2-d0ab16a4e523,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6493067,CLOUDID:4cdbe8e7204f19b9662f85ef8a02fbbc,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 515e614a79a211f0b29709d653e92f7d-20250815
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <tanzheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 231800575; Fri, 15 Aug 2025 14:37:30 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 54FAF16001A03;
+	Fri, 15 Aug 2025 14:37:30 +0800 (CST)
+X-ns-mid: postfix-689ED5AA-1417051848
+Received: from localhost.localdomain (unknown [10.42.20.101])
+	by node4.com.cn (NSMail) with ESMTPA id D6B1516001A01;
+	Fri, 15 Aug 2025 06:37:29 +0000 (UTC)
+From: tanzheng <tanzheng@kylinos.cn>
+To: martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zheng Tan <tanzheng@kylinos.cn>
+Subject: [PATCH v1] scsi: target: Use helper function IS_ERR_OR_NULL() to simplify the code
+Date: Fri, 15 Aug 2025 14:37:25 +0800
+Message-Id: <20250815063725.1061672-1-tanzheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
- for WSA883x speakers
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
- kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-References: <20250806181818.2817356-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250806181818.2817356-3-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <20250806181818.2817356-3-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+From: Zheng Tan <tanzheng@kylinos.cn>
 
-On 8/6/25 7:18 PM, Mohammad Rafi Shaik wrote:
-> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> 
-> On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
-> WSA8830/WSA8835 speaker amplifiers share a common reset (shutdown) GPIO.
-> 
-> To handle such scenario, use the reset controller framework and its
-> "reset-gpio" driver to handle such case. This allows proper handling
-> of all WSA883x speaker amplifiers on QCS6490-RB3Gen2 board.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
->  sound/soc/codecs/wsa883x.c | 57 +++++++++++++++++++++++++++++++++-----
->  1 file changed, 50 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
-> index 188363b03b93..ec7a55d88576 100644
-> --- a/sound/soc/codecs/wsa883x.c
-> +++ b/sound/soc/codecs/wsa883x.c
-> @@ -14,6 +14,7 @@
->  #include <linux/printk.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
->  #include <linux/slab.h>
->  #include <linux/soundwire/sdw.h>
->  #include <linux/soundwire/sdw_registers.h>
-> @@ -468,6 +469,7 @@ struct wsa883x_priv {
->  	struct sdw_stream_runtime *sruntime;
->  	struct sdw_port_config port_config[WSA883X_MAX_SWR_PORTS];
->  	struct gpio_desc *sd_n;
-> +	struct reset_control *sd_reset;
->  	bool port_prepared[WSA883X_MAX_SWR_PORTS];
->  	bool port_enable[WSA883X_MAX_SWR_PORTS];
->  	int active_ports;
-> @@ -1546,6 +1548,46 @@ static const struct hwmon_chip_info wsa883x_hwmon_chip_info = {
->  	.info	= wsa883x_hwmon_info,
->  };
->  
-> +static void wsa883x_reset_assert(void *data)
-> +{
-> +	struct wsa883x_priv *wsa883x = data;
-> +
-> +	if (wsa883x->sd_reset)
-> +		reset_control_assert(wsa883x->sd_reset);
-> +	else
-> +		gpiod_direction_output(wsa883x->sd_n, 1);
-> +}
-> +
-> +static void wsa883x_reset_deassert(struct wsa883x_priv *wsa883x)
-> +{
-> +	if (wsa883x->sd_reset)
-> +		reset_control_deassert(wsa883x->sd_reset);
-> +	else
-> +		gpiod_direction_output(wsa883x->sd_n, 0);
-> +}
-> +
-> +static int wsa883x_get_reset(struct device *dev, struct wsa883x_priv *wsa883x)
-> +{
-> +	wsa883x->sd_reset = devm_reset_control_get_optional_shared_deasserted(dev, NULL);
-why deasserted ? we are already doing wsa883x_reset_deassert(wsa883x)
-just after calling this.
+Use IS_ERR_OR_NULL() to simplify the code.
 
-> +	if (IS_ERR(wsa883x->sd_reset))
-> +		return dev_err_probe(dev, PTR_ERR(wsa883x->sd_reset),
-> +				     "Failed to get reset\n");
-> +	/*
-> +	 * if sd_reset: NULL, so use the backwards compatible way for powerdown-gpios,
-> +	 * which does not handle sharing GPIO properly.
-> +	 */
-> +	if (!wsa883x->sd_reset) {
-> +		wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
-> +							GPIOD_FLAGS_BIT_NONEXCLUSIVE |
-> +							GPIOD_OUT_HIGH);
-> +		if (IS_ERR(wsa883x->sd_n))
-> +			return dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
-> +					     "Shutdown Control GPIO not found\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int wsa883x_probe(struct sdw_slave *pdev,
->  			 const struct sdw_device_id *id)
->  {
-> @@ -1566,11 +1608,9 @@ static int wsa883x_probe(struct sdw_slave *pdev,
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to enable vdd regulator\n");
->  
-> -	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
-> -						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
-> -	if (IS_ERR(wsa883x->sd_n)) {
-> -		ret = dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
-> -				    "Shutdown Control GPIO not found\n");
-> +	ret = wsa883x_get_reset(dev, wsa883x);
-> +	if (ret) {
-> +		dev_dbg(dev, "Failed to get reset powerdown GPIO: %d\n", ret);
-this is redundant we already have failure messages from wsa883x_get_reset().
+Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
+---
+ drivers/target/target_core_fabric_configfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
---srini
->  		goto err;
->  	}
->  
-> @@ -1595,11 +1635,14 @@ static int wsa883x_probe(struct sdw_slave *pdev,
->  	pdev->prop.simple_clk_stop_capable = true;
->  	pdev->prop.sink_dpn_prop = wsa_sink_dpn_prop;
->  	pdev->prop.scp_int1_mask = SDW_SCP_INT1_BUS_CLASH | SDW_SCP_INT1_PARITY;
-> -	gpiod_direction_output(wsa883x->sd_n, 0);
-> +
-> +	wsa883x_reset_deassert(wsa883x);
-> +	ret = devm_add_action_or_reset(dev, wsa883x_reset_assert, wsa883x);
-> +	if (ret)
-> +		return ret;
->  
->  	wsa883x->regmap = devm_regmap_init_sdw(pdev, &wsa883x_regmap_config);
->  	if (IS_ERR(wsa883x->regmap)) {
-> -		gpiod_direction_output(wsa883x->sd_n, 1);
->  		ret = dev_err_probe(dev, PTR_ERR(wsa883x->regmap),
->  				    "regmap_init failed\n");
->  		goto err;
+diff --git a/drivers/target/target_core_fabric_configfs.c b/drivers/targe=
+t/target_core_fabric_configfs.c
+index 7156a4dc1ca7..1448a7ab0491 100644
+--- a/drivers/target/target_core_fabric_configfs.c
++++ b/drivers/target/target_core_fabric_configfs.c
+@@ -479,7 +479,7 @@ static struct config_group *target_fabric_make_np(
+ 	}
+=20
+ 	se_tpg_np =3D tf->tf_ops->fabric_make_np(se_tpg, group, name);
+-	if (!se_tpg_np || IS_ERR(se_tpg_np))
++	if (IS_ERR_OR_NULL(se_tpg_np))
+ 		return ERR_PTR(-EINVAL);
+=20
+ 	se_tpg_np->tpg_np_parent =3D se_tpg;
+@@ -937,7 +937,7 @@ static struct config_group *target_fabric_make_tpg(
+ 	}
+=20
+ 	se_tpg =3D tf->tf_ops->fabric_make_tpg(wwn, name);
+-	if (!se_tpg || IS_ERR(se_tpg))
++	if (IS_ERR_OR_NULL(se_tpg))
+ 		return ERR_PTR(-EINVAL);
+=20
+ 	config_group_init_type_name(&se_tpg->tpg_group, name,
+@@ -1112,7 +1112,7 @@ static struct config_group *target_fabric_make_wwn(
+ 	}
+=20
+ 	wwn =3D tf->tf_ops->fabric_make_wwn(tf, group, name);
+-	if (!wwn || IS_ERR(wwn))
++	if (IS_ERR_OR_NULL(wwn))
+ 		return ERR_PTR(-EINVAL);
+=20
+ 	wwn->cmd_compl_affinity =3D SE_COMPL_AFFINITY_CPUID;
+--=20
+2.25.1
 
 
