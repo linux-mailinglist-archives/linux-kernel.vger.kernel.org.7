@@ -1,219 +1,238 @@
-Return-Path: <linux-kernel+bounces-770640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DB7B27D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:45:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F386FB27D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E490188EB47
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA52B61030
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6A0270572;
-	Fri, 15 Aug 2025 09:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCAB2FB96E;
+	Fri, 15 Aug 2025 09:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tZctfxco"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jf++to9C";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="KM6M32jY"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F29F227B9F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251008; cv=none; b=Xq51IcpjMHsccb+NvksSeVdXORng1C1H66hfa3btWMnrwFsCH+2dBtRTLL0pRcs0j4rzYWCV/uEJpOjtX9BFMons+WDQXCatnCGe+UW6GNqgZbAojPFl/iD1bm4VcYV7hmVj0UMjRTbLQTCtuc+Kg0KGmcGEOmTmhMMYsNQODLI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251008; c=relaxed/simple;
-	bh=2pTS2cWoGM5QBMr8+Ze0ofqW86cOR5J1fqEoI1at9Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZ424mQZpFlQ2SQvzF3cb3LFKRZcyT3Fs64wFpPaDBqH1q4eqySxw8regaipgD4uziGthBkYvZxaXgNpvBb7nVwAXWvq63gmPQw0q/0w+C7S/0UsjbzTZHMJDypV1Aiuv3p0nZsr6I+IC7PZTo2IJginTCHajpRAEjk7dmNE01s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tZctfxco; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61868d83059so4856066a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:43:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5799E274670
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755251049; cv=fail; b=bnLJ/uvFaZEimuEmNL+yXu7iXwrjfO2a4aVcMC2RWPxcX+Q0xtg/7Zyi9opIHTXn2OiKJrOgcXtnLROoe3RoQe70byVpdJEtr24IJbcA4IEPO877AJPoVdSOJ0fHiN7KykmfqakEDB5LnXdOsUiJ29CKlOEKlQRvHIDt5yPPDh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755251049; c=relaxed/simple;
+	bh=a7j0RqQZP3Glq+JnDzFeFOU5AP7H8HB6sjp3CvV8wMI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eSXETfqSWsTWuR8OgTxTmYjCxHleXkPS0/kbKfRZ+6/C/pvZyhZS/c7FKCuLZPeVD2e3kitrNOtGn5TzlYw0TronVcaSRVufgShbNBhlKNZDZ71BawukSdgGMfB8aR31nrkHeZv4R1D/tfInANR3m4Xt8PgGAJN9Fy9k92b5ne8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jf++to9C; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=KM6M32jY; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5f2fa77479bc11f08729452bf625a8b4-20250815
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=a7j0RqQZP3Glq+JnDzFeFOU5AP7H8HB6sjp3CvV8wMI=;
+	b=jf++to9Cnh6ssoVASG0EOpGqfYRzLOtVez0lVtO/PaxYK6cDtbO4r1qfcDnyQZlHXQP83vE+SP0TJ3eelJL/oGGv8oRKun6duEowhuQqzJ6lmnZiqIYHkS2buvGvNjew4rjzgmsSWtLxe6gn96QkAl+GEP/jSUXCsK/Xrzco6Wk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:a979bba3-787a-4916-b7e0-586899648b71,IP:0,UR
+	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:100
+X-CID-META: VersionHash:f1326cf,CLOUDID:9d05426d-c2f4-47a6-876f-59a53e9ecc6e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|801,TC:-5,Co
+	ntent:3|15|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 5f2fa77479bc11f08729452bf625a8b4-20250815
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 477134639; Fri, 15 Aug 2025 17:44:00 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 15 Aug 2025 17:43:59 +0800
+Received: from SEYPR02CU001.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 15 Aug 2025 17:43:58 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o540z7ItOaiRYlcxXhmb6Z4ryGxGxsip2vOUi4CMMhlcT2hkoqKmMpxZVmECXYw2IP/YXaIuwpLjAt1cmgMKZCDesG2YkT1twLLHp+b/OF1Z5QN9dBrl4vX7tkG/EOtoAGfdUtLiWW/ZNi2k6wdrdRVEwrvEEUbe6MCBzsapYhm38co80H8JEGCfJtaI56eYheBMMUyZBTX/U6wp4swq7YosNF/XAhR9pyHvbkRjHPbuic7w62TB4p7aSGDLHjeneQwSaBepe/zU+fBCFRX2T2sMre/cIVmb840sksxui//igPIGcyvsqkrUv152yzZWgnPTCRPeZgudO9iN+92vaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a7j0RqQZP3Glq+JnDzFeFOU5AP7H8HB6sjp3CvV8wMI=;
+ b=yjTcSfjJFDxl/rA/yeZOvcRVYvNPO4byKwDF9O2OWw/ZZLJ7qNS8fjvIVfuecglzFSWXgXXdxTzyJO6xHg9fdlL0c4ZPEGL8/nnE9zJc/ySq+bYA7azz6Cj6swSuUqPsUG0XbS8kD8QWgIO+WvrznYslNOZlls71o62KQVBDX78h5ObEkI89A9mmI1/BVDcnxyWYIBUlZugR3ICsXDl3HMpKuNT6rPDCIOhGyk0tGNYtZKrmi6UI6ZCncAiNRD0aNR7/f7RwtIjNqM64jETd/tqRjB5tK0yTQoqrrF1w/QkampWw5z7dN646n/QySxYWuCDm4EzhTBxAV+9tB51UNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755251004; x=1755855804; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIr+uIGhy3/hPvKk8/B9PmGr5pRUF0q2I5T786hltSY=;
-        b=tZctfxcoKti3pVZAEpLp5Qjk2No0LW4tB/brpVXnb7zZhKwng+9cY9ksGi3h/SBjfo
-         zYPHKkqRBhp644rMqEXLILBoxvK37FFYuzh1pRP82wmZ/8r/Fclvh8BosHS5zGnc0VVL
-         tSN00U3sAxX6V+H2o3qFCOqDkje+BbN/6m+YaUEZT6wtWEyvqpDy+DynrMBjpkHbNobM
-         IdgLlD4DnsbpbitH9uJ7HJjmtMYLwpDGwTwTyXjRb/PXSGnrApoyQykyH+5/VQvegNfa
-         OEqeoJjtsdKBVJl6SV02EJ0PC65tWtw4KaJBRkHZeEjo89BtvUwurmYg1F6lQY5MyNpx
-         VYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251004; x=1755855804;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jIr+uIGhy3/hPvKk8/B9PmGr5pRUF0q2I5T786hltSY=;
-        b=sKuwv0TqbJXku2mafYlf5N+Ux3rZJ92XY6ZHghi4M0oZhmHFGM4GQBWynh6ZcsKd5d
-         j9xse3VnhI9G0lnEvIXsvZOJ0qd//TA/4d7gIQF7o81tdycxpZr/GuclobRGRgDHhabv
-         wbY0Q/Awj8L8akoeLK9Fpl8mP7JgfRMeF6PrEGqkg/CEgIOr++ciiouCeYECZ2T7O/fP
-         gFPkjtxjjEMdUbPgZPUfJ+yq+Immv1mbKeN8R/xGOpMvx+Zht0PeC7fVDt0qZMq+t2yM
-         O2nSbOrVEQkASXd3Ne2C9/1+x1Ct9az4Q6PYDs3E5rdKw0Ds3kbB23etFmgoyzSMBx7v
-         emhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl8JevyQJUzgTb3P+z+XRZJnKdI/8WZFJxC6BRvdFnOa/kg+UJy+ZyH9Fb4UowR8WaOm/dkxylYa3GPh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8EopK/cH9YIpERD1rLSQDoULNCkdPpbEhJy3Dyi6qPu3j182w
-	eypbvQlQFj/rdBcX5z9hllwG+V/+dWz8mEhB/WLoU8VgJKf35O7LX0eqH+rgh9Z+Z+0=
-X-Gm-Gg: ASbGnct4iFcCLflHG+uH55JasFpV/HfeHZb9e+coIfPH9vqGXdQnTZw4uVrrHONy3Y0
-	Eh+K7peqU9JbJqawxawz5CPrRotaNKQe+Ek7bEL+fRNyzavLJt59DRouluzgnWhUfID8MPOpIFL
-	jQLrko2Z8sylcC9zyno5EWfYKwzx4zUj3ZqVvOWLCqFkK499awHU7/azxKRc3PpkbkXrLXtWL6P
-	qkkvGI/wJ5hgw9swLCxlG1N6tQLj/KWRlLuW2Y5xLicH8aLC/X557sImnvpJSDLR72tnpE6NVpa
-	ngahNcuwRhGjYfIbXlJ3DYODL7FStyS4mNaeQDKofYrN8KLX/kOa+PWUIvWxFBGFcz1DIpVtcgl
-	1l6NzARHCREmc8dV/8D0Bo414GljZTrnOyg==
-X-Google-Smtp-Source: AGHT+IG3FtBw8Sw50EV/ShR8IgGNVLCbfdP5Y/YJBpfd6Jr9H+5a0yrsFxM506Jl/2wK+oZGIgZH4Q==
-X-Received: by 2002:a17:906:7310:b0:af8:fded:6b7a with SMTP id a640c23a62f3a-afcbd80b8bemr620525866b.17.1755251004118;
-        Fri, 15 Aug 2025 02:43:24 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:68bb:56a:7ad6:2647])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53f37sm105301066b.21.2025.08.15.02.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 02:43:23 -0700 (PDT)
-Date: Fri, 15 Aug 2025 11:43:18 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Wenbin Yao <quic_wenbyao@quicinc.com>,
-	Qiang Yu <qiang.yu@oss.qualcomm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v2] phy: qcom: qmp-pcie: Fix PHY initialization when
- powered down by firmware
-Message-ID: <aJ8BNq7NLgYzzOMA@linaro.org>
-References: <20250814-phy-qcom-qmp-pcie-nocsr-fix-v2-1-fe562b5d02a1@linaro.org>
- <e5hn42qxz2eqgjanyoxb2456wvuw6zy55ibbg6fh33jma7utvq@mlq2a57owz4g>
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a7j0RqQZP3Glq+JnDzFeFOU5AP7H8HB6sjp3CvV8wMI=;
+ b=KM6M32jYNrNtUxfob73mV8Rq12jiYyYD3NVChdAFLnQtOLJqwBwkWRZpXFHs+h9UwOWG4k2tyZsmtGxUbASjOcHZasHNuclXhIXQAFlYLeiwKVbLy3ItOEiuKwJ+EWnrhIXo/ew7X57LxaxqwxZjvXTdN4uoOoCW0IruuAxlRHo=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by KL1PR03MB7826.apcprd03.prod.outlook.com (2603:1096:820:f2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 09:43:57 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 09:43:55 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "vkoul@kernel.org" <vkoul@kernel.org>,
+	=?utf-8?B?Q2h1bmZlbmcgWXVuICjkupHmmKXls7Ap?= <Chunfeng.Yun@mediatek.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "AngeloGioacchino Del
+ Regno" <angelogioacchino.delregno@collabora.com>,
+	=?utf-8?B?UGF5bmUgTGluICjmnpfkuo7lubMp?= <Payne.Lin@mediatek.com>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "kishon@kernel.org" <kishon@kernel.org>
+CC: =?utf-8?B?SmggSHN1ICjoqLHluIzlrZwp?= <Jh.Hsu@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?utf-8?B?VmluY2UtV0wgTGl1ICjlionmlofpvo0p?= <Vince-WL.Liu@mediatek.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	=?utf-8?B?QmluY2FpIExpdSAo5YiY5b2s5omNKQ==?= <Bincai.Liu@mediatek.com>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
+Subject: Re: [PATCH] phy: mediatek: Modify mipi clk upper bound to 2.5Gbps
+Thread-Topic: [PATCH] phy: mediatek: Modify mipi clk upper bound to 2.5Gbps
+Thread-Index: AQHcDSpNsT4jYiJHhkGnv/UD83gEjrRjd+aA
+Date: Fri, 15 Aug 2025 09:43:55 +0000
+Message-ID: <94672a94c59bd6b65317044f070129446b5ec8cb.camel@mediatek.com>
+References: <20250814125406.4161220-1-payne.lin@mediatek.com>
+In-Reply-To: <20250814125406.4161220-1-payne.lin@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|KL1PR03MB7826:EE_
+x-ms-office365-filtering-correlation-id: 63b5c3d8-6ac3-4971-a720-08dddbe04091
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|42112799006|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?Zi9sK1dIL2dvWlFxd2h3SXlUcXR3eHVYNktGUENCaWt5RVRBN25aaWFsRFJT?=
+ =?utf-8?B?bkxqL014WlpML29ILy9uZHBQTjFIMjBoQzhqUU10ZFFlOFIvYzFqcGZMSjJV?=
+ =?utf-8?B?eVdtTGZ5ZnZNMEU0QzVZZFlBNzJMS2QzVVlYa212T3Z4V0psbExVdFEwaVoz?=
+ =?utf-8?B?UW9EQktqc0MwNXJxOWVKTWRiZGR0ZnpVbDdFQWg0NVlSWGNzaThQMmgrbUtm?=
+ =?utf-8?B?Zmc2K3kxeEIyZTNOdUhZY1RMZFhuY3prUHIyL05YNmY1MjRIVUtYWDBwU01Z?=
+ =?utf-8?B?WmhJQzBsRGZSV3hpdGdDSFhWNFRWL2ltYzlaS3FlWkloQUdNVHFua1pURWhr?=
+ =?utf-8?B?Wkdtd3hNRU1qNWJ2c281OS9aRUNncjFmRVZUTjM1akFlZDRncEdzN0ZkY0t1?=
+ =?utf-8?B?SytxVjJMdVd2UGdoUm5xNUFWdnRJTHhQNW5DNktIZDY0aitReFJ6cnhMU1lC?=
+ =?utf-8?B?M0pmaVl1YWRTT3Q4RFYvei84UG9LOEF1VU52YmZVTjNrZEtQc3E3eURqV3Qr?=
+ =?utf-8?B?YWJ5cHhVekp6TnZTZ2VvWnRoYXp2WWJXWXBCZ3RVRzNGZ1NIYkxHKzFQdTlY?=
+ =?utf-8?B?dENGOEh1RzdVWExoVy9IMkF5aDVjRVFXc1pPbURnK1p1MGpCTHhCZURHYWE0?=
+ =?utf-8?B?RTluTE1heWxoRnVOVDd5SkRFZ1BGWTc5UDk5S3NpemNtZTJpMlhrRitZTk1U?=
+ =?utf-8?B?MlNaNGJZU0JkKzJaSTZ4bFpCTFNldzhCUUpTOHQ2enhFcG4yV0x4MGJ3TU0x?=
+ =?utf-8?B?QktQd3lwQzFjYlpmNXdVWGRNZXZES1pmazIrRGxzTEQzSlI2TCsrV1Z1Tlh5?=
+ =?utf-8?B?YVZFYUUwSHdFaTI1aXZWemQvMnZuQ2hUTmxNZ25BdzFnL3lPVGY2NlpzcnJS?=
+ =?utf-8?B?bkxJWXNsNDFKSUdyRUNaSGRMWTFNQWF3c3h6Yi9Vc3ZpMG1BVUwxNUU3L2ho?=
+ =?utf-8?B?ZlNNaVR5VFBBcDJYSHpTSmRaL0lYLzZseVBDbXZkTkpoSGM2NjlhRW4zcXNs?=
+ =?utf-8?B?YUJqL1Z4YkpuY2JGZ29HbTRkZTYwSk52UzlwVDNrT1dGVk1lSmZFYTV1clkr?=
+ =?utf-8?B?eVZnc2k5dE1xUHMwckowaFI5SW82VDVkcFFjY2tLUGJmZlBPb3MxOGR2NnBT?=
+ =?utf-8?B?ZkFUVW5kQ0RJZU5DbVJvQ3NpRFFYbWhsY090d1R1QVFBL1JFZ2hTbDBLSWZM?=
+ =?utf-8?B?UFo1azhpVXRBSGtxeERGQTdSeFpUUnFwN1dodEVpOFFLbWxGS1BmRzlLVk5t?=
+ =?utf-8?B?UmdCd2lZSFc3N2d2bHBWOGZHT0pWWlRqRktIbmx6d3lpT0hLbXVxcHB6ZEdQ?=
+ =?utf-8?B?UzNXeTNaQnZFcmdqZlVybDhpYWVOc2VkdlYxb2gvNnJFbjZGNU5wTWZXNDh5?=
+ =?utf-8?B?N010WTZGbEttbktrM3Q5RE5ZM2Q2SDdNb3lyUkJ0emozaWZoblkrMVRlNTdE?=
+ =?utf-8?B?anVhNnVxZHJ4ZUh5Mzc4eFBVcmxJYkQ1RXhNWWlMWjQ0a3hMeEhJZEhOSmNs?=
+ =?utf-8?B?empNRkdwZnkxaWFRK3pvUmROSHpBNGdkZSt0bEE1Y0lrSkxGT1JjbVNBWklU?=
+ =?utf-8?B?YmxqUWlCbmlqZnoyWFBzTzBWNnkvTVhzTXc0c2tKL3BMQWpaeWs0cjVERHV3?=
+ =?utf-8?B?cmpvSVpMU2xPUEJyc1R4U1FoNkRkWHI4Qk5EaFFGb053UTRjUFNjdE44d3E2?=
+ =?utf-8?B?ZEpPSE41Y3dxak5aZC9mejFlUk11cmMzZzRvYmxRV0NWVlEvUlpDZEZMbEtq?=
+ =?utf-8?B?am5NZFA2NEdqOTNNMGU2WFNNeFh6cmlXMnRkVllZYUkyQ2U1MTU0ajlrM2d6?=
+ =?utf-8?B?WUhuSDJwek05dUMzaEIxRWNrVUUyYlEyUnRiV3dPRDNlMWpYK2xIR2d1NGVC?=
+ =?utf-8?B?Y2t0ei9xalpla0hKUkNXR0xqcENkaGp1U0EwZzhoRUhCZTUxcFFBR0VtNk5C?=
+ =?utf-8?B?Uk1ZMlhORnB6TXk5Wjgwem4ySGZxY0w5RUU1THlZdGdYTnZUWkE4Q3prZEIv?=
+ =?utf-8?Q?0r6kBS2F25s9wXfzDeemuPKx0qUBs0=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(42112799006)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZEpqZ01CNmlDQmVFbmtHbG1mdGhSNjdwcndNcHRobzZhTVBoQnVEaEFDSGRI?=
+ =?utf-8?B?c2F0bkphTytUOUJ3LytQL3NRenNvQjJBNFdla3ZuaHR6aXpZa1ZVNXplSm9W?=
+ =?utf-8?B?eDlNTHVGOC9pWnllZVh4dkhycFN0Mldpa0x4Y2xaM2tNMmVmWVlQZE9HdTBM?=
+ =?utf-8?B?ZnlqWGE4N1ZKTFNlNHNJSXFtY21YQTl6cFJVRi8yeC9oUlQwMitPdUVXT1Jp?=
+ =?utf-8?B?SDdybWxvNkdoM2tpMVZVRm9wU0VqOHptYjBkN3VEZGYwdDJKZS9IbWs2ajND?=
+ =?utf-8?B?aW9UR0w1MkU5b2o5RWlNc21sTWg5YWJuS01xM2FVSnFJbGtwWmJNOFNPYnIz?=
+ =?utf-8?B?SWZzNzlmaEZpbmhXaW56TDhPTlJBSkV0b29WL0VmK2lrcnRMeVB2cHhxMThU?=
+ =?utf-8?B?dEZCVlQrK28vNW9jeG9ueXNQRDhsZjl5ekpSenlwUlJDTFYxbXVMK25oYWt4?=
+ =?utf-8?B?ZUxGQjg5VGxhNENtNzdFdnZrWFFqdzg1Y2NUR3JTMHAvNFBHRXBITVp3VVky?=
+ =?utf-8?B?YkRtV2dNK1FjNlF4c1BrM3hwZ2hIQWJyUmpFbWl1T0J2bmc3bU9xMzlyeGov?=
+ =?utf-8?B?TWplU1dod2g5Mi9hUmoya1lkOXRicmVYblY0bHdIRkl5Z3VVV1pTZkdxRFRs?=
+ =?utf-8?B?aHZ6dDE1SExhZlgwMnh1RzYyZHdjM0N2bS9xNkpoWUYxK2cyQ3RKSjJIL2h3?=
+ =?utf-8?B?bmZvZnFzdFpkVFBNYTZxekp6NHk3cTBJVEJpYmR2ZDBkUzh1ZlJJMzhNZ1Nx?=
+ =?utf-8?B?cjBoUVIrdWlCcVI0Q2RORUhiOVdYK2lNR1hTTzRMZFJGQ2UrTTZ1SE4xakpQ?=
+ =?utf-8?B?aUxnSldNWHIyNHc2UVpJSGpsRk5xQTNBK3VSd2N0bmVJdVRHakozWFgvdlFG?=
+ =?utf-8?B?dGZVN0ZzSHI5NXp3UXVvRWh2Z0xuWXl6c1dWdmFrdFMrdVRld1ZCZ3pqbUxM?=
+ =?utf-8?B?MzlMSHBnNklnbVdPOWM0UWZGZFo1WG1VcjAxbG80MVlrb042S25iN29xazFP?=
+ =?utf-8?B?K3dFci9LWDdZV29wdjNBSEcyN3RTQ0NrU3Zhb0tDYk5rUUs1Z25QZkszN1Fl?=
+ =?utf-8?B?NzhCMnZrT0loTWxFMVRZRHdMaUhVdk9yVStnNXAzNENDazNFTGptZm1QUnBB?=
+ =?utf-8?B?QjZ2aDFRRTNxYlFlaFZIK1JCWCtxMUdpSjNkUlRYMmRCUkdjMWdFWDRYQzFy?=
+ =?utf-8?B?NWQ4azVzYkxmczJqZjJOQ1RocHc4c2xHTnpSMjZ5ZzFCSkVnUjY4Uy9CN0RJ?=
+ =?utf-8?B?MnpPSFdrY0dTVnU1Wm1QYmpIR3FGNFdiV0kzM1M0dkx1NlpIRW11SDF0Tk14?=
+ =?utf-8?B?QTFDVnZtQlRGZTY0THN6ZzErTWZtYWZLVEhWRCtkdWV1Uy82YTNxWUF4RG1I?=
+ =?utf-8?B?dzNCSUZNSjlxczV6ZDhkWmRBa0pOSGhVZmRJenI3Q1Z2NVMvQU1HRmN2ZjMx?=
+ =?utf-8?B?Ny9BN295QkwyVXZiRzFBd2hOVHVINGhadVl2dFJwTmJnVEM0TlJ3NTkrdDVX?=
+ =?utf-8?B?d3ZncTNkWVhzZkRHSmU5SHMzMXhqTVkvTHA3V3BsaGRSR2pnd1ZxUVJlOUtq?=
+ =?utf-8?B?TWlVNnZta2E2WVl1RjFnQ1h2WXZraTd1d202emp5WnJJcDl0S21EdENnM3dq?=
+ =?utf-8?B?My9tUlVMeVJQMHRiNjRHS3AzelREaXk3VzM5bTJYS1grZU1JR1RyclVPRk9D?=
+ =?utf-8?B?RzdsNUpCY21QTU5PSXFZa2oyNXhGMUxGYVRzRWZ4amZNK1Q1M1ZSUERzcnJy?=
+ =?utf-8?B?SGFtSzhzMXpobXFOZG5PZllsUVdJcHRobXlybHhkejhpREpTMno4RngySm5J?=
+ =?utf-8?B?ZTdJWW5XOFczNndJS1lNYXJiZzZjemJnTlRqSjU2RlhmVmVPMW5UR3J2V0Q1?=
+ =?utf-8?B?VjFzOG95U3htbFY0UG1lK3BHM2wxU0VQY3NwRzN4WGMwcklLVHI1dUpoREwx?=
+ =?utf-8?B?MXZmcDR3dGRHanBjZDVMY3BnVzBpL080dFl3UHJXNGlOKzVjQzRqemsrMS9J?=
+ =?utf-8?B?NnI5T0NaMEZiOXRiV3RNczRUZkZqL01XQ3ZCV0JSNXNjd1ZnTWVRdDFpUlVU?=
+ =?utf-8?B?ck5hTzVvSnlEUmZRVXV6b0E4MHRqN2YySVBhK1BlY3lqeCs4Snh2ZjNsbmZM?=
+ =?utf-8?Q?DpgJBjmFHy49RG+mdsgHCZE3H?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9F302D0C6B41F74195CFE8FBB2F8DD2E@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5hn42qxz2eqgjanyoxb2456wvuw6zy55ibbg6fh33jma7utvq@mlq2a57owz4g>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63b5c3d8-6ac3-4971-a720-08dddbe04091
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 09:43:55.8525
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MtQPJbfMsdnfqidQM/RyXMBZPRvKabXhbZpT+rgaiYU34rIao9t9jRSq9zdGMm/tkt2/0FhGHPBWigf5lWTK3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7826
 
-On Thu, Aug 14, 2025 at 05:26:05PM -0500, Bjorn Andersson wrote:
-> On Thu, Aug 14, 2025 at 11:27:10AM +0200, Stephan Gerhold wrote:
-> > Commit 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention
-> > support") added support for using the "no_csr" reset to skip configuration
-> > of the PHY if the init sequence was already applied by the boot firmware.
-> > The expectation is that the PHY is only turned on/off by using the "no_csr"
-> > reset, instead of powering it down and re-programming it after a full
-> > reset.
-> > 
-> > The boot firmware on X1E does not fully conform to this expectation: If the
-> > PCIe3 link fails to come up (e.g. because no PCIe card is inserted), the
-> > firmware powers down the PHY using the QPHY_PCS_POWER_DOWN_CONTROL
-> > register. The QPHY_START_CTRL register is kept as-is, so the driver assumes
-> > the PHY is already initialized and skips the configuration/power up
-> > sequence. The PHY won't come up again without clearing the
-> > QPHY_PCS_POWER_DOWN_CONTROL, so eventually initialization fails:
-> > 
-> >   qcom-qmp-pcie-phy 1be0000.phy: phy initialization timed-out
-> >   phy phy-1be0000.phy.0: phy poweron failed --> -110
-> >   qcom-pcie 1bd0000.pcie: cannot initialize host
-> >   qcom-pcie 1bd0000.pcie: probe with driver qcom-pcie failed with error -110
-> > 
-> > This can be reliably reproduced on the X1E CRD, QCP and Devkit when no card
-> > is inserted for PCIe3.
-> > 
-> > Fix this by checking the QPHY_PCS_POWER_DOWN_CONTROL register in addition
-> > to QPHY_START_CTRL. If the PHY is powered down with the register, it
-> > doesn't conform to the expectations for using the "no_csr" reset, so we
-> > fully re-initialize with the normal reset sequence.
-> > 
-> > Also check the register more carefully to ensure all of the bits we expect
-> > are actually set. A simple !!(readl()) is not enough, because the PHY might
-> > be only partially set up with some of the expected bits set.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention support")
-> > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > ---
-> > Changes in v2:
-> > - Ensure that all expected bits are set (Konrad)
-> > - Link to v1: https://lore.kernel.org/r/20250812-phy-qcom-qmp-pcie-nocsr-fix-v1-1-9a7d0a5d2b46@linaro.org
-> > ---
-> >  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> > index 95830dcfdec9b1f68fd55d1cc3c102985cfafcc1..80973527fafcb294273dff1864828532dab738db 100644
-> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> > @@ -3067,6 +3067,14 @@ struct qmp_pcie {
-> >  	struct clk_fixed_rate aux_clk_fixed;
-> >  };
-> >  
-> > +static bool qphy_checkbits(const void __iomem *base, u32 offset, u32 val)
-> > +{
-> > +	u32 reg;
-> > +
-> > +	reg = readl(base + offset);
-> > +	return (reg & val) == val;
-> > +}
-> > +
-> >  static inline void qphy_setbits(void __iomem *base, u32 offset, u32 val)
-> >  {
-> >  	u32 reg;
-> > @@ -4339,10 +4347,12 @@ static int qmp_pcie_init(struct phy *phy)
-> >  	struct qmp_pcie *qmp = phy_get_drvdata(phy);
-> >  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> >  	void __iomem *pcs = qmp->pcs;
-> > -	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
-> >  	int ret;
-> >  
-> > -	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
-> > +	qmp->skip_init = qmp->nocsr_reset &&
-> > +		qphy_checkbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START) &&
-> > +		qphy_checkbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], cfg->pwrdn_ctrl);
-> 
-> IMHO the "phy_initialized" variable does provide valuable context to
-> what those (now) two lines represents. That is particularly relevant as
-> the second one is active low...so at least I need to think a bit extra
-> to understand what's going on.
-> 
-
-I dropped the "phy_initialized" variable mainly because it didn't "look
-good" together with the line wrapping of the two new longer lines. :-)
-
-Perhaps it would already help to reuse and clarify the comment block
-below, like this?
-
-Thanks,
-Stephan
-
-@@ -4339,16 +4347,21 @@ static int qmp_pcie_init(struct phy *phy)
- 	struct qmp_pcie *qmp = phy_get_drvdata(phy);
- 	const struct qmp_phy_cfg *cfg = qmp->cfg;
- 	void __iomem *pcs = qmp->pcs;
--	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
- 	int ret;
- 
--	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
- 	/*
--	 * We need to check the existence of init sequences in two cases:
--	 * 1. The PHY doesn't support no_csr reset.
--	 * 2. The PHY supports no_csr reset but isn't initialized by bootloader.
--	 * As we can't skip init in these two cases.
-+	 * We can skip PHY initialization if all of the following conditions
-+	 * are met:
-+	 *  1. The PHY supports the nocsr_reset that preserves the PHY config.
-+	 *  2. The PHY was started (and not powered down again) by the
-+	 *     bootloader, with all of the expected bits set correctly.
-+	 * In this case, we can continue without having the init sequence
-+	 * defined in the driver.
- 	 */
-+	qmp->skip_init = qmp->nocsr_reset &&
-+		qphy_checkbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START) &&
-+		qphy_checkbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], cfg->pwrdn_ctrl);
-+
- 	if (!qmp->skip_init && !cfg->tbls.serdes_num) {
- 		dev_err(qmp->dev, "Init sequence not available\n");
- 		return -ENODATA;
+T24gVGh1LCAyMDI1LTA4LTE0IGF0IDIwOjU0ICswODAwLCBwYXluZS5saW4gd3JvdGU6DQo+IEZy
+b206IEJpbmNhaSBMaXUgPGJpbmNhaS5saXVAbWVkaWF0ZWsuY29tPg0KPiANCj4gTWlwaSBkcGh5
+IGNhbiBzdXBwb3J0IHVwIHRvIDRrMzAgd2l0aG91dCBkc2MuDQoNClJldmlld2VkLWJ5OiBDSyBI
+dSA8Y2suaHVAbWVkaWF0ZWsuY29tPg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCaW5jYWkgTGl1
+IDxiaW5jYWkubGl1QG1lZGlhdGVrLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogUGF5bmUgTGluIDxw
+YXluZS5saW5AbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvcGh5L21lZGlhdGVrL3Bo
+eS1tdGstbWlwaS1kc2ktbXQ4MTgzLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
+cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BoeS9t
+ZWRpYXRlay9waHktbXRrLW1pcGktZHNpLW10ODE4My5jIGIvZHJpdmVycy9waHkvbWVkaWF0ZWsv
+cGh5LW10ay1taXBpLWRzaS1tdDgxODMuYw0KPiBpbmRleCA1NTM3MjVlMTI2OWMuLmI4MjMzYzQ5
+NjA3MCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waHkvbWVkaWF0ZWsvcGh5LW10ay1taXBpLWRz
+aS1tdDgxODMuYw0KPiArKysgYi9kcml2ZXJzL3BoeS9tZWRpYXRlay9waHktbXRrLW1pcGktZHNp
+LW10ODE4My5jDQo+IEBAIC0xMDAsNyArMTAwLDcgQEAgc3RhdGljIHZvaWQgbXRrX21pcGlfdHhf
+cGxsX2Rpc2FibGUoc3RydWN0IGNsa19odyAqaHcpDQo+ICBzdGF0aWMgbG9uZyBtdGtfbWlwaV90
+eF9wbGxfcm91bmRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5zaWduZWQgbG9uZyByYXRlLA0K
+PiAgCQkJCSAgICAgICB1bnNpZ25lZCBsb25nICpwcmF0ZSkNCj4gIHsNCj4gLQlyZXR1cm4gY2xh
+bXBfdmFsKHJhdGUsIDEyNTAwMDAwMCwgMTYwMDAwMDAwMCk7DQo+ICsJcmV0dXJuIGNsYW1wX3Zh
+bChyYXRlLCAxMjUwMDAwMDAsIDI1MDAwMDAwMDApOw0KPiAgfQ0KPiAgDQo+ICBzdGF0aWMgY29u
+c3Qgc3RydWN0IGNsa19vcHMgbXRrX21pcGlfdHhfcGxsX29wcyA9IHsNCg0K
 
