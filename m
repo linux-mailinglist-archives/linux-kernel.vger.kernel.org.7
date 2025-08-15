@@ -1,144 +1,160 @@
-Return-Path: <linux-kernel+bounces-770461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171D5B27B08
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:30:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5573B27AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67622A28A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04485C5BAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002D247293;
-	Fri, 15 Aug 2025 08:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EF4246BB3;
+	Fri, 15 Aug 2025 08:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR/8qZrq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5JAoE2z"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F4924635E;
-	Fri, 15 Aug 2025 08:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7AD10E0;
+	Fri, 15 Aug 2025 08:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755246578; cv=none; b=HXJwFV8camhG01AMbo9f+rwVd1kRAKwPTPRS+O0cZRNg3dILNsoQKuMJFhduiTCkFJO8Lie9orkgJYW9IjQ21b5H23nvJm0Mp5Zi/jPrTE20mcr5+T6UsaJ8H4Sn47FWhVBd4Nboed7fekkAwXkD28M8J5CownRpZ73RYbt9Cio=
+	t=1755246524; cv=none; b=JgdjhH3WxZrHeqCalsh+rt/UYUyEH+ALJdtb4cAe9QUTpqDG1rLRYF3IY9sw675lE1LBKAdvKw5+cu5jHqwLhXurlYXP0Z7AiSiHZA6jOq7yNJ5vA5VngZwgr7dQzJzNWIKatTR2Vvb6WpSEcLfxX+Rr46pvG/Q3g+5IOjl+XyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755246578; c=relaxed/simple;
-	bh=Xyye2AF1wmSsP0D40BarzXd3YLVHTSI2Ehw/u8Z/TTg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jUs7DACyzZbChtFMxzWPKRVBUXFXtcLB0osEPwH5XjCfzEXctU4MIsNHYgiAjd5AxWKDt8IN96rJ2ptBASSptU15PAhRa6FOvCMpMIxO61OWrt2uz6qEBfhHqatvCCHIs2Q9G3GFueoIiiVBp0RpB+Kjlqp4sQKDZKvDAwQlnHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR/8qZrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0353FC4CEF4;
-	Fri, 15 Aug 2025 08:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755246574;
-	bh=Xyye2AF1wmSsP0D40BarzXd3YLVHTSI2Ehw/u8Z/TTg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CR/8qZrqwjQwjYJ0phriw9y4I1wwIB+XpdSacoRPLLaJoe3dvbg2UXioDbTd4f/2u
-	 ozX88f2vzdFFPy0FOaFC88ZxeQJjSw9VB2HysXyS9LPObXl6amgDdI8xipldKZBZti
-	 A+JHDPvspYPKp0RKc1O2coa1J5xA5Fg8Geh3lfUXnaJYLqi3+TbzUaeFfGlk0761jK
-	 fge08BleYeouq/bnYTswDhgmJsobxoO0LdjxGXxupNX/zVSqgpfYjbKDbEQ9WfoXO9
-	 M4IrKllrRKBjTgYp5B36hrTU0SzdyXQ3OJOtLRIOOfhs9lav8gUghRlWE3y3PUK5Bm
-	 HGZIKAakMtiIA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
- <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/18] rust: str: add `bytes_to_bool` helper function
-In-Reply-To: <aJ7r_W0BzdSYMfT6@google.com>
-References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org>
- <20250815-rnull-up-v6-16-v5-6-581453124c15@kernel.org>
- <zsaOdCKnN1sVET34FMYvITPQpgAkfL_JPF6FtL4MUbyubgqSNo5PsO6bgIyzmMP2bhkEAbXEyui3iTqZEkrx0g==@protonmail.internalid>
- <aJ7r_W0BzdSYMfT6@google.com>
-Date: Fri, 15 Aug 2025 10:28:32 +0200
-Message-ID: <87ldnldm4v.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755246524; c=relaxed/simple;
+	bh=NN6C5l0rVunPBrtoVVaud5WgDSIvEVNhjhOIo8RFW00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exdCKOncm3xua8ns4c7HLefyu6cmM0iOyamCn/Uii65xXrq5C2uPpXbDt8LMwtqUi9t5pKE8II6Vk7CZxbKzAxHGh72rMf2si3pnIxlIW0OTzJC+yiR24mqMb6fNGH6ETXlNkVeRE7FBNgu4nC7sZe6Dkrf33ayviQVBXfhhIN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5JAoE2z; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b47156b3b79so1326089a12.0;
+        Fri, 15 Aug 2025 01:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755246522; x=1755851322; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PfRZT3luDRUVJDud4XE6LTrUmu/cuJxbL82BBBAAuco=;
+        b=f5JAoE2zJ8/3t+cWv9M5WyCWaBBnlJvHkzjQYM3UQs6wATwD0WcHyteGAlu2ocpCp8
+         LCPgyqnaeJhRusqe8qvRUL4xsbkZiQ9cBQ2PVPCif5BBiXbmkM04RwIJX8t3FRiknqz/
+         RfIc4LZ8FcQ5+MTpFjFem3mVIwP2Vp8JglAEIr6/NVy4cazGFHLjo7+FnECrv/36sQKB
+         1OvtNMbSX9OR9XMFHW1PMNbTS3HOiAlgmTsp8HzZuKMuHbV5fI2tLScaulInAxrtp+Jf
+         o3bWmRjRdSXR/hdhvZiFwj6td8st4UbhLHm3yqb9bTtNSZMGYL6PPLdLeP1EsB16AaaG
+         Ul8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755246522; x=1755851322;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PfRZT3luDRUVJDud4XE6LTrUmu/cuJxbL82BBBAAuco=;
+        b=Ui9oRBPbyAvtsoW9ZmWcN5mJGHG7e6OYuNmqWhJvBjKiiotzHT9kz0yGofzW86V9S6
+         9bQcLY37x416EvDToMCS21tLJ7EQiechERLIBYsVuQumEHi3AAaFGdS3rY/F+Dd7ivtL
+         fbXsYe4ingRUp/3VbxZcvRSdZod2GMvQOBC8dNHXcw9F/UDuuWk79zdwFbg4WON744Nk
+         DzdEYsgO1ZwpWbSuRG7asjLcFRC9v8nYWNchAqofQKzrij6bHZbvLDTdrbqG2GShUMPM
+         nopQhrsCn4KlbKjEqErhy+Lq/UBko3ie8r+9Tht+Xj0Md5VT/Q3Ss72r9YBbmfExbWpG
+         zfTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUU6/kUVG91fwexuWSL0Y3a7DWDoSJ/dnCRlXjZhJd7F+H1YmGdn12nBVizBCPw/riqfNEgHMD5Hen2Lvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVPi8obqKJ7NdXWrv1rQ3Z0eMbpdT3km0WCdJNWdYSSTqnbxth
+	11PZO2GmBVsHNgNt4p0XlFfdnxzY3bLTMpOavQxbwdbYA5Lh/JgjeiLe
+X-Gm-Gg: ASbGnctbC6xJzpIvT6TIJO1esGySAzhykvipj7z/uWLVqQ6gvUNVEqyui7WdZBLOyVd
+	JeVlag76JSQuMbfVaFKvDzReODzFjHDPd6NK4z7PMI48H4QlclKtbA6b/3sSM/sxfML0UefOsiB
+	Fr5+vmENMO4E8Ymw2hcs3h30BE9Z5PsO+5A+rzoU3opOfOaIq5UbaD/OkGlo8Zq61ZB1/chZz0c
+	u9KXPoOKG3R5d2xoGtE6OETQzVEoEpP6Phfu1jpiqzoUhGpFfDNkGtpz/JcEHXhtfx8pXXSDl9x
+	gBwme6OAKWa73uiIeD32MBUI63Plt2JW+t5FKqLQv1Qx59AvQuprwx8O8HQfXpZKjp6goBphQex
+	KxJPW7TBHUHAplJTbwrql0BNS0yk1KUwIO3o=
+X-Google-Smtp-Source: AGHT+IGn0aYWmBZAoWhh9Os2/5vPmDMjXyG9fAC2ArGZXBHisz1NrRDiecrq8Kzfdj3zT8cZ/2UddA==
+X-Received: by 2002:a17:902:cccb:b0:243:b81:ac14 with SMTP id d9443c01a7336-2446bd273c6mr22434045ad.11.1755246521844;
+        Fri, 15 Aug 2025 01:28:41 -0700 (PDT)
+Received: from [10.22.68.127] ([122.11.166.8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb07554sm9121345ad.56.2025.08.15.01.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 01:28:41 -0700 (PDT)
+Message-ID: <26657aee-588e-41c1-9208-316916e3ce58@gmail.com>
+Date: Fri, 15 Aug 2025 16:28:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
+To: Peter Zijlstra <peterz@infradead.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Kees Cook <kees@kernel.org>, alyssa.milburn@intel.com,
+ scott.d.constable@intel.com, Joao Moreira <joao@overdrivepizza.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Nathan Chancellor <nathan@kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, ojeda@kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
+ <CAADnVQLyahEsFereM_-Y-MUdWm2mLHNKfffwNKX5Fvy+EaH-Nw@mail.gmail.com>
+ <20250815075708.GB3419281@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Leon Hwang <hffilwlqm@gmail.com>
+In-Reply-To: <20250815075708.GB3419281@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
 
-> On Fri, Aug 15, 2025 at 09:30:41AM +0200, Andreas Hindborg wrote:
->> Add a convenience function to convert byte slices to boolean values by
->> wrapping them in a null-terminated C string and delegating to the
->> existing `kstrtobool` function. Only considers the first two bytes of
->> the input slice, following the kernel's boolean parsing semantics.
+
+On 15/8/25 15:57, Peter Zijlstra wrote:
+> On Fri, Aug 15, 2025 at 08:42:39AM +0300, Alexei Starovoitov wrote:
+>> On Thu, Aug 14, 2025 at 2:17 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>>>
+>>> Hi!
+>>>
+>>> A while ago FineIBT started using the instruction 0xEA to generate #UD.
+>>> All existing parts will generate #UD in 64bit mode on that instruction.
+>>>
+>>> However; Intel/AMD have not blessed using this instruction, it is on
+>>> their 'reserved' list for future use.
+>>>
+>>> Peter Anvin worked the committees and got use of 0xD6 blessed, and it
+>>> will be called UDB (per the next SDM or so).
+>>>
+>>> Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
+>>> had to switch the hash register to EAX in order to free up some bytes.
+>>>
+>>> Per the x86_64 ABI, EAX is used to pass the number of vector registers
+>>> for varargs -- something that should not happen in the kernel. More so,
+>>> we build with -mskip-rax-setup, which should leave EAX completely unused
+>>> in the calling convention.
 >>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/str.rs | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> index 5611f7846dc0..ced1cb639efc 100644
->> --- a/rust/kernel/str.rs
->> +++ b/rust/kernel/str.rs
->> @@ -978,6 +978,16 @@ pub fn kstrtobool(string: &CStr) -> Result<bool> {
->>      kernel::error::to_result(ret).map(|()| result)
->>  }
->>
->> +/// Convert `&[u8]` to `bool` by deferring to [`kernel::str::kstrtobool`].
->> +///
->> +/// Only considers at most the first two bytes of `bytes`.
->> +pub fn bytes_to_bool(bytes: &[u8]) -> Result<bool> {
->> +    // `ktostrbool` only considers the first two bytes of the input.
->> +    let nbuffer = [*bytes.first().unwrap_or(&0), *bytes.get(1).unwrap_or(&0), 0];
->> +    let c_str = CStr::from_bytes_with_nul(nbuffer.split_inclusive(|c| *c == 0).next().unwrap())?;
->> +    kstrtobool(c_str)
->> +}
->
-> Ouch. That's unpleasant. I would probably suggest this instead to avoid
-> the length computation:
->
-> /// # Safety
-> /// `string` is a readable NUL-terminated string
-> unsafe fn kstrtobool_raw(string: *const c_char) -> Result<bool> {
->     let mut result: bool = false;
->     let ret = unsafe { bindings::kstrtobool(string, &raw mut result) };
->     kernel::error::to_result(ret).map(|()| result)
-> }
->
-> pub fn kstrtobool(string: &CStr) -> Result<bool> {
->     // SAFETY: Caller ensures that `string` is NUL-terminated.
->     unsafe { kstrtobool_cstr(string.as_char_ptr()) }
-> }
->
-> pub fn kstrtobool_bytes(string: &[u8]) -> Result<bool> {
->     let mut stack_string = [0u8; 3];
->
->     if let Some(first) = string.get(0) {
+>> rax is used to pass tail_call count.
+>> See diagram in commit log:
+>> https://lore.kernel.org/all/20240714123902.32305-2-hffilwlqm@gmail.com/
+>> Before that commit rax was used differently.
+>> Bottom line rax was used for a long time to support bpf_tail_calls.
+>> I'm traveling atm. So cc-ing folks for follow ups.
+> 
+> IIRC the bpf2bpf tailcall doesn't use CFI at the moment. But let me
+> double check.
+> 
+> So emit_cfi() is called at the very start of emit_prologue() and
+> __arch_prepare_bpf_trampoline() in the BPF_TRAMP_F_INDIRECT case.
+> 
+> Now, emit_prologue() starts with the CFI bits, but the tailcall lands at
+> X86_TAIL_CALL_OFFSET, at which spot we only have EMIT_ENDBR(), nothing
+> else. So RAX should be unaffected at that point.
+> 
+> So, AFAICT, we're good on that point. It is just the C level indirect
+> function call ABI that is affected, BPF internal conventions are
+> unaffected.
+> 
 
-Clippy will complain about `string.get(0)` suggesting `string.first()`.
+RAX is used for propagating tail_call_cnt_ptr from caller to callee for
+bpf2bpf+tailcall on x86_64.
 
->         stack_string[0] = *first;
->     }
->     if let Some(second) = string.get(1) {
->         stack_string[1] = *second;
->     }
+Before the aforementioned commit, RAX is used for propagating
+tail_call_cnt from caller to callee for the case.
 
-I don't really think this procedural assignment is better or worse than assigning
-at declaration.
-
->
->     // SAFETY: stack_string[2] is zero, so the string is NUL-terminated.
->     unsafe { kstrtobool_cstr(stack_string.as_ptr()) }
-
-I'll split it up.
-
-
-Best regards,
-Andreas Hindborg
-
-
+Thanks,
+Leon
 
 
