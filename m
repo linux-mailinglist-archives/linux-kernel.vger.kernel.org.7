@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-770982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564D0B2813B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E264B28140
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B05603A73
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:03:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812581639A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A0E1A5BBC;
-	Fri, 15 Aug 2025 14:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664FD1A9B53;
+	Fri, 15 Aug 2025 14:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrWi6Ady"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGCV6epN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D571E868;
-	Fri, 15 Aug 2025 14:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC29A926;
+	Fri, 15 Aug 2025 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755266587; cv=none; b=JprSdOl8BgSXcJ+56ByXToGLp4wliuvK+J0s69XRHZ5W8gF5UDKJ04ukIAbalDHr/Z9Rt2aZkq2rNCtvyVMxWPkEf4CzxXiG3VvRg2NUT4nILYdSsBbnR+sDZxBo1cu06ZvrDPuLnQ5PP2NOCS+O06G+CVq07VmHCrvsofwOVzc=
+	t=1755266753; cv=none; b=edK7KA0wE1SBR0uZILM2OlncSIspU/5zA+4XXb6CTWU6P3K/uo03fSZHN41WzgfeN0fJS5d1c2uUUsYuELEgUHN5DY+YG6M7Um0vrRB+3Q00ByBzxDr3KeBZTnGljpQZeWOziXhtZID/2EgWMiSMUYg2qSRQK5Ji5TXi4nnpKSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755266587; c=relaxed/simple;
-	bh=rV8qprK2ejAjYWwOvpWArObtGsyxdPoh2ua2HwE9lPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LoXXNrz57aVLYKdNTz31It+nW1nx8ipGYeUs/mCzQTMrWcvYf8Vnjfjy1/ovztzruLNRLaJKn8Pz4XtsLnxwEyiu4KkfnN+cUq6d4/slsGvB0prgO5/Z5K3oGVU9SZ70gMdtZmn2FwDVrMaXNo38/BJCm9FazfPFaJigxdGnoN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrWi6Ady; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AC4C4CEEB;
-	Fri, 15 Aug 2025 14:03:03 +0000 (UTC)
+	s=arc-20240116; t=1755266753; c=relaxed/simple;
+	bh=Qjn3miaSSWjGbZifrmCykBjvck0/NI6OeGEqHIax6Ok=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mzZm2Czk5pOQVw4oMyyjTU/TbSD4PJ9UyMMch/qv1kTkO1WHdngGjVr0qYsCbK0vhP9UIk2O/Lf+/HJjK7gMc/p03tXBwEVHYlNnDOwUCdL9iKWJpY2X3CPszVIN9Z2FBUu9K7gnJ4dvnL2q6lH5fJ7X5seNFs/oQS+BwMRm+5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGCV6epN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962B7C4CEEB;
+	Fri, 15 Aug 2025 14:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755266586;
-	bh=rV8qprK2ejAjYWwOvpWArObtGsyxdPoh2ua2HwE9lPQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jrWi6Ady7AhRyDUETW8pwgeS0wEnCdiKn2TPDPVM4awMy7YmsZCI3x0Gs0lsTeiIB
-	 rQ41kfWbqM8x0twOOYg9NYuPZjyFpI2Xy4UTLIBk/g6IY2LN3zuFwxy9trzCAk8Rgn
-	 uueI4dvuHelL8kklhRfmIfsqA6mygupn1+7cSKFIpJoAiMXPlgEvJQhj3hyrjsYWLd
-	 yAiEJ7xQNcVzIgzaMhk9NpzHFECn0DD3hGo160RydW8MclHwrHPu5uIQfbIWbeU708
-	 3fNqUyElE4y9S9hF6MYcx/K8oDkip+ZcxueLbUaAm23I8lMBEQHWc16l/Lud460RFr
-	 BnwkGawVBR3iQ==
-From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J . Wong" <djwong@kernel.org>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	linux-xfs@vger.kernel.org,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] iomap: use largest_zero_folio() in iomap_dio_zero()
-Date: Fri, 15 Aug 2025 16:02:58 +0200
-Message-ID: <20250815-gauner-brokkoli-1855864a9dff@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250814142137.45469-1-kernel@pankajraghav.com>
-References: <20250814142137.45469-1-kernel@pankajraghav.com>
+	s=k20201202; t=1755266753;
+	bh=Qjn3miaSSWjGbZifrmCykBjvck0/NI6OeGEqHIax6Ok=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=XGCV6epN6MWVCGkmFkMsW+z0RzvdYZBqdSHq3bgXBR/fhWVmsWDMXJxGA9qKE8gVT
+	 rGKmP/gPYzt4Pjn1zukN09/LIDEYXwafhcE7EEPZoBsrQT9v4RwLa3MA5CdhidRcMX
+	 LnULsQXMjgsdNQZCjznAb5j8nQIRPAh1rSMRdWae0VYIzC/WvXFIk9Wah2lRb994Gd
+	 413alaTsJYvr/j/hnxiNEfMm2i2P6gF5adEmzKbRmo66C6b8VyJC+whwRNUGNS/67F
+	 jVN9f6KUbBhFMQVuL7WFbi9m2QFeDdtL/4bqrnTlMungTpAdfMd5B61Hov/Me4Z/WD
+	 vf8wTQiubB+bw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB40B39D0C3D;
+	Fri, 15 Aug 2025 14:06:05 +0000 (UTC)
+Subject: Re: [GIT PULL] pmdomain fixes for v6.17-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250815080816.282648-1-ulf.hansson@linaro.org>
+References: <20250815080816.282648-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <20250815080816.282648-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.17-rc1
+X-PR-Tracked-Commit-Id: b6bcbce3359619d05bf387d4f5cc3af63668dbaa
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 66ba63d4d87bb3b1c3b5f0f09610c4c16748bbf0
+Message-Id: <175526676447.1083334.1395206172249648683.pr-tracker-bot@kernel.org>
+Date: Fri, 15 Aug 2025 14:06:04 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1356; i=brauner@kernel.org; h=from:subject:message-id; bh=rV8qprK2ejAjYWwOvpWArObtGsyxdPoh2ua2HwE9lPQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTMtxOZmV6fMvf3ERGBmFOyvmGtW5yestupOB+feb52k dOyPNWAjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl4bmdkeCD+SijArGMSx+pj E9aovxW/fMp8630Gu9sintOO7La5fYnhf5X+Z9+u29eDBfjsJCyip7MZzWHblHdWKJEpsOg6z0U 7LgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Aug 2025 16:21:37 +0200, Pankaj Raghav (Samsung) wrote:
-> iomap_dio_zero() uses a custom allocated memory of zeroes for padding
-> zeroes. This was a temporary solution until there was a way to request a
-> zero folio that was greater than the PAGE_SIZE.
-> 
-> Use largest_zero_folio() function instead of using the custom allocated
-> memory of zeroes. There is no guarantee from largest_zero_folio()
-> function that it will always return a PMD sized folio. Adapt the code so
-> that it can also work if largest_zero_folio() returns a ZERO_PAGE.
-> 
-> [...]
+The pull request you sent on Fri, 15 Aug 2025 10:08:16 +0200:
 
-Applied to the vfs-6.18.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.iomap branch should appear in linux-next soon.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.17-rc1
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/66ba63d4d87bb3b1c3b5f0f09610c4c16748bbf0
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Thank you!
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.iomap
-
-[1/1] iomap: use largest_zero_folio() in iomap_dio_zero()
-      https://git.kernel.org/vfs/vfs/c/5589673e8d8d
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
