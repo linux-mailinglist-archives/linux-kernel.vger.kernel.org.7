@@ -1,95 +1,67 @@
-Return-Path: <linux-kernel+bounces-771107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A25DB282FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70402B282FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5861D02CCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7CD1CE43A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32962D0C77;
-	Fri, 15 Aug 2025 15:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39CC2AD13;
+	Fri, 15 Aug 2025 15:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1LTMd4A"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNTWQ230"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932882AD13;
-	Fri, 15 Aug 2025 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB9302745;
+	Fri, 15 Aug 2025 15:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755271869; cv=none; b=Qtr9WU7wCGC9MZpqeY8UdSz2t93Tk0wCSDGzlQMvIKqjoY1OVoRdk1LLaIq6VGYT4Q2vjJ1I+2x7pokHUWsf45z/L/I2FeOvw+wQ2Q+x443f+P215OHaW9EG0Pl4V5r49Zn+CsjYvlaolUnmf1+EFZSCfpgs2UoFCjIqgfuCezQ=
+	t=1755271879; cv=none; b=kEL3ZFMru1cgzNUH3+WxYF63odwyE3cuDCePHTPsvgJmi5N1WL3LWFzJQXYHryL4POTeC/RtNsnhL5c2SdQ6nfObXjjEbmKFhycerZtNfNhFZaVFpekf1+roUyPSLinIGCwILSGhLVtYYNflgLERNavzD099QqivfaQykI9gehg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755271869; c=relaxed/simple;
-	bh=IRqI8fHDMdsh55e0Tx0NBB8lE6UkIbtfrdJC3dNGRJs=;
+	s=arc-20240116; t=1755271879; c=relaxed/simple;
+	bh=/jvMp/guKLSHe+yxsr6XthvTtUUPzj4tZ+6lXJrq+Ws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TA3YwY87mkYxiLWmP01EAheJ+eQ+vIW2GlUvUHDES0IdPqrR3xB39Uya7Xcxsm1fUqafnO0xeT1ZSG9LYfDmJiXh6Nf19K+2DxPlTVkm1UizaJecqfCEAUKPuxbqIOBeH8Ye5QIxuC0/Fi4QnGZSE6uKiHxT6c3V/LJr/OKDLU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1LTMd4A; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24458242b33so19880725ad.3;
-        Fri, 15 Aug 2025 08:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755271867; x=1755876667; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSt0o4DAYQoZCN08JDMbTQeP9CBWq8tSRkUO5qbJiM8=;
-        b=V1LTMd4AUo/6uEDuSOR7DdqYPYBc46Dx5DRMaBCRBSrC/UxTvmzCa7C06wb0AspC5j
-         8x57o2WIAhurSOvT32DKoLlDXwI2ThRku9THBpgj7lUtPQS/KiOFdPqx2P9z+cxrUK7I
-         WT9UiUXoHp+cKtozCISb0aLj2ZtJ7md+dLmSzT1f2+VnbGiboh9/yWORX7/AaqbG2lIz
-         huz5m5xeIae6/qNfgAvyhQ4k5PaWPhIDwT1Ml5Z4WG/Oo3+0s1Ze+dytpEKQbNohOWhe
-         JsQoDaXUBjMeOzyFGJfNJqb/JfDiNei2pPaE9YxbueMt61/SdDA/ZcWM0TezRC9AHhXa
-         eiQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755271867; x=1755876667;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NSt0o4DAYQoZCN08JDMbTQeP9CBWq8tSRkUO5qbJiM8=;
-        b=vLN3IJrDrke6OMKgFkkzIwmN/Ef7duN2H6i0FxvU2TxFJFSBt38MjwiRRMEsJd9Lol
-         Ivvu/w6ZX3j3y9hyh8VJOVE9NvM7hi2MrK+8LNlD/2YSvtRS/fpcvY219PAMmTKIwAN9
-         1L8MXP4iWoidOEv2nKrKW+/GsPwlAid7fTRWaXBxSqBRnUAtINWxJiPaB82M9cloNOw0
-         7v47sXFwoCKShyQKyLcrYuK7xHodSeOPV3jcVuqkIPTpwqoIHIDif+1mXjGhmW35g/MK
-         oOAeCAXJ9dhtgNROYWJxxjVLByUMMnRJikfdyX3holrLqg/pYk45gOBLrncUERn2aId1
-         3euA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaqpw/YVPxGM4dXaH3KfnWsEMfDYsA3cHGIyosrdhoQPOlFieihgpV0o2fCUQVrxNzk8qwJ2h5WKKrrtPf@vger.kernel.org, AJvYcCV9b3KNOoXklQGYNns2B1pk+ufKpOutXDW3ZEuWYR6k5NNrz8ZeNiRASNSJRQxUEjo9BAb9ZcKtpg==@vger.kernel.org, AJvYcCXhacvJFWZsHm6vHG+pxhIe6xaACaWvk5TTE42nbG/gvuXrJhEp/VyXIKF3yPcDOGDC2hGhgN1i@vger.kernel.org, AJvYcCXj4YKCsSbW4QFxyE9js/3ibcnJu84iZArrAR4nDMZP8gWO4fseNl+7PGUA4nMswv6wwqHks3PKKuL+MQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhMu5Nmwb1VW2/9o0rmV0H0q98XDP5t+ibeVF4iDoh0vivp6hy
-	ysa9/6tcm1aEEOIELdSVAnbgllMC3yioFXd8eE4ie+9mIGPRTUpjt40=
-X-Gm-Gg: ASbGncvIGugJLXt49RGp9O6MXaasZUAaab3anW87gHwwhJ5rMg33tlayKVWEq57AX9z
-	CTafbEdEaDMrYOocif4dZ3oYt7CDwuBadD2RsOx0x3X6MNyz3ljORRlcTUK5TIxNEUr1mpFJbYh
-	HS298u6T7b8sh8ZUhvjT9UwXrs9LTGh4QrywOSMRLqV1C428uuB3OAIpswHq7uDtsnL2ZWZEfYV
-	CGb2idBPQkxhFSCnOBR24am1lQWidIDpBK1WLmMpTq4pRdDjtjd67hOjHww9vT7kOha+Mk7s1kJ
-	uPp/ITFvyTqVGfZwvg9gtfe7mRFB8SHpQTCDFYj8Qaz2bB5jmTXKRk41SCwFu7ql9GA/tR29zKI
-	BAt+hng00U9PT979/WwaCzQn5j7ICQMutwX9wUWBIKkJX3hthO4WwA0+1x2U=
-X-Google-Smtp-Source: AGHT+IFuIiW/HvU2DvdjMihkEix7W9hPl4GUhJNG8esujMO8U+GyUJ45blWSl0KpxoQv2EfYq5Npmw==
-X-Received: by 2002:a17:903:37c7:b0:23f:ed09:f7b with SMTP id d9443c01a7336-2446d95078amr40125455ad.48.1755271866678;
-        Fri, 15 Aug 2025 08:31:06 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2446cb0dd5bsm16573385ad.63.2025.08.15.08.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 08:31:06 -0700 (PDT)
-Date: Fri, 15 Aug 2025 08:31:05 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: almasrymina@google.com, asml.silence@gmail.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, cratiu@nvidia.com,
-	parav@nvidia.com, Christoph Hellwig <hch@infradead.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC net-next v3 0/7] devmem/io_uring: allow more flexibility
- for ZC DMA devices
-Message-ID: <aJ9SuemoS6n0GIBs@mini-arch>
-References: <20250815110401.2254214-2-dtatulea@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/Mr/6HyFk+QheCxL8/DgYJvWHjrefku7AbpRc0GyMKXA8XrGkAs+7AGL9HUKtTo6TZFAeygiezfPglQbeGhcRUXA65HknWvW/m7vHScHlVJZ9Gc9eYY02Nia778U3jyeqSRPkw+1sR4WCIIfh/n2AiqFGJP/zJnhM5zUHwiCw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNTWQ230; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2F5C4CEEB;
+	Fri, 15 Aug 2025 15:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755271879;
+	bh=/jvMp/guKLSHe+yxsr6XthvTtUUPzj4tZ+6lXJrq+Ws=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=eNTWQ230HNQDLCZPyyrGOXSNjpesnhlV280U2+vvvc7Meqb4LSG8o74PRS8igrwK5
+	 CiLgOxbyWw4rBmbaHnK1a5ZtGVRP9AIEFBem9N0EYngiOS21gIKb242jDvIlxeN5Q3
+	 0xxch+lZghGVAQKZQFkWyvr190/Ci9nBhaUeURUX0ky06TL7H42Wa/w2nTlRo/+Tgk
+	 xRZR4Rikpr0uwswxyDjeo6mUFLs3dXYqCcjlEqGBSIh51h9T57VMVcz0YUDHtB9xs+
+	 XNv4Jam0CO+c8bkf0GrkbdDIlaWsVnC7D83/G+BgbSMXD7kT80qGLYt+yrakd3JzCA
+	 1i/En66p5pJsw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 8BB3BCE0ADB; Fri, 15 Aug 2025 08:31:17 -0700 (PDT)
+Date: Fri, 15 Aug 2025 08:31:17 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 1/7] rcu: add rcu_migrate_enable and
+ rcu_migrate_disable
+Message-ID: <eb93f12d-2232-4b7e-a7c6-71082a69f1f6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250815061824.765906-1-dongml2@chinatelecom.cn>
+ <20250815061824.765906-2-dongml2@chinatelecom.cn>
+ <CAADnVQKA98hBSsb02djL-zMsaXQDCjn4Ytck+WP3SWfvgXqDYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,63 +70,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815110401.2254214-2-dtatulea@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKA98hBSsb02djL-zMsaXQDCjn4Ytck+WP3SWfvgXqDYg@mail.gmail.com>
 
-On 08/15, Dragos Tatulea wrote:
-> For TCP zerocopy rx (io_uring, devmem), there is an assumption that the
-> parent device can do DMA. However that is not always the case:
-> - Scalable Function netdevs [1] have the DMA device in the grandparent.
-> - For Multi-PF netdevs [2] queues can be associated to different DMA
->   devices.
+On Fri, Aug 15, 2025 at 04:02:14PM +0300, Alexei Starovoitov wrote:
+> On Fri, Aug 15, 2025 at 9:18 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+> >
+> > migrate_disable() is called to disable migration in the kernel, and it is
+> > used togather with rcu_read_lock() oftenly.
+> >
+> > However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock()
+> > will disable preemption, which will also disable migration.
+> >
+> > Introduce rcu_migrate_enable() and rcu_migrate_disable(), which will do
+> > the migration enable and disable only when the rcu_read_lock() can't do
+> > it.
+> >
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > ---
+> >  include/linux/rcupdate.h | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> > index 120536f4c6eb..0d9dbd90d025 100644
+> > --- a/include/linux/rcupdate.h
+> > +++ b/include/linux/rcupdate.h
+> > @@ -72,6 +72,16 @@ static inline bool same_state_synchronize_rcu(unsigned long oldstate1, unsigned
+> >  void __rcu_read_lock(void);
+> >  void __rcu_read_unlock(void);
+> >
+> > +static inline void rcu_migrate_enable(void)
+> > +{
+> > +       migrate_enable();
+> > +}
 > 
-> The series adds an API for getting the DMA device for a netdev queue.
-> Drivers that have special requirements can implement the newly added
-> queue management op. Otherwise the parent will still be used as before.
+> Interesting idea.
+> I think it has to be combined with rcu_read_lock(), since this api
+> makes sense only when used together.
 > 
-> This series continues with switching to this API for io_uring zcrx and
-> devmem and adds a ndo_queue_dma_dev op for mlx5.
+> rcu_read_lock_dont_migrate() ?
 > 
-> The last part of the series changes devmem rx bind to get the DMA device
-> per queue and blocks the case when multiple queues use different DMA
-> devices. The tx bind is left as is.
-> 
-> [1] Documentation/networking/device_drivers/ethernet/mellanox/mlx5/switchdev.rst
-> [2] Documentation/networking/multi-pf-netdev.rst
-> 
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> 
-> ----
-> Changes sice v2 [3]:
-> - Downgraded to RFC status until consensus is reached.
-> - Implemented more generic approach as discussed during
->   v2 review.
-> - Refactor devmem to get DMA device for multiple rx queues for
->   multi PF netdev support.
-> - Renamed series with a more generic name.
-> 
-> Changes since v1 [2]:
-> - Dropped the Fixes tag.
-> - Added more documentation as requeseted.
-> - Renamed the patch title to better reflect its purpose.
-> 
-> Changes since RFC [1]:
-> - Upgraded from RFC status.
-> - Dropped driver specific bits for generic solution.
-> - Implemented single patch as a fix as requested in RFC.
-> - Handling of multi-PF netdevs will be handled in a subsequent patch
->   series.
-> 
-> [1] RFC: https://lore.kernel.org/all/20250702172433.1738947-2-dtatulea@nvidia.com/
-> [2]  v1: https://lore.kernel.org/all/20250709124059.516095-2-dtatulea@nvidia.com/
-> [3]  v2: https://lore.kernel.org/all/20250711092634.2733340-2-dtatulea@nvidia.com/
-> ---
-> Dragos Tatulea (7):
->   queue_api: add support for fetching per queue DMA dev
+> It will do rcu_read_lock() + migrate_disalbe() in PREEMPT_RCU
+> and rcu_read_lock() + preempt_disable() otherwise?
 
-[..]
+That could easily be provided.  Or just make one, and if it starts
+having enough use cases, it could be pulled into RCU proper.
 
->   io_uring/zcrx: add support for custom DMA devices
+> Also I'm not sure we can rely on rcu_read_lock()
+> disabling preemption in all !PREEMPT_RCU cases.
+> iirc it's more nuanced than that.
 
-Did something happen to 2/7? I don't see it in my mailbox and in the
-lore..
+For once, something about RCU is non-nuanced.  But don't worry, it won't
+happen again.  ;-)
+
+In all !PREEMPT_RCU, preemption must be disabled across all RCU read-side
+critical sections in order for RCU to work correctly.
+
+							Thanx, Paul
 
