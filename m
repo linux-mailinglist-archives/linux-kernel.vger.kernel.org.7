@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-770592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299FBB27CDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CBBB27CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C616625139
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4679E1CC1CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6138F271459;
-	Fri, 15 Aug 2025 09:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkNesCAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EB2270553;
-	Fri, 15 Aug 2025 09:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2272BE7AC;
+	Fri, 15 Aug 2025 09:09:28 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCA620D50C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249038; cv=none; b=R4KwqP+0+RxnUjqS6WmmkbY6ssLXgQFZk9EglrzXJC6PComQh3/DJMReWF8uVCFtGP713vrLnwiGJt6h+JBebzS4S34YNH2ERnlCJfT6O1Kx69AK8YX2jX0lNWeb6HsMC+c1kYu1HMwylBfGGmtrI1a4Rm9UvAoVkXcslyGj090=
+	t=1755248966; cv=none; b=e6NjYCBRbKZCJ1Jo/XA1gvsOKo+TKdqmRRHdWh1ELFMXeV4IhX2TVA64Ve8G6w1V6RrP7cn9d/5ZP+FInk45uCFgE0cwcn365562U5pk7Bv1CL7maAzwTWHJ3+6r5HNifeqEXF7025HXzXu21F1nuFMU8hT1Di4q7+rCHG35Nh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249038; c=relaxed/simple;
-	bh=1Ha9xTn3T01Z4w9TlI+3LodHQqvdp4I2XLyHH/S4Gkg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TkFhKubWy8VzxyvPwK8EUrt5AnT20c2aSx6t2/5ug9V1kydyVubPZMCDyPwkOdGD02oL4OUCtUkiOdfwXR8NvkJJsEyEXZK7fdesIe3HF5AOkoKTPsAE99Oat8AaR6g+31fe1hxAEQHVmpUKst7f9kz68JGf/4oAuYxhmeCGVk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkNesCAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B89C4CEF4;
-	Fri, 15 Aug 2025 09:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755249036;
-	bh=1Ha9xTn3T01Z4w9TlI+3LodHQqvdp4I2XLyHH/S4Gkg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=WkNesCAskg/QW2w1/FQNss4Hvhyeo1cnDm4vhZ1e8fHwu5HbEu77kiCxKax7CVTWL
-	 SQqYQFFy/7REIced2yy5XNSP+8FkcOUHISBZJuOfikgXY4PL0sVw4IxQTRudC6WPIC
-	 ihFFSy669LVtWhnHeDzGfi8x1MMaqoG8t/5R2JKnfShIpr6FxjDXfaMhJ1oBneM/D3
-	 XsHvXZpgU82rs4Z1LUsQ+espPx+BUmvjBRzwcafMbLGq3otLPGFssSKaotaWoPi8KP
-	 lrNVDwW4TSCJmb68ZIpF4qkL89yNBw7gjtPhdkzcE+23B7SBPi2PXRkgYCBe6dUTiW
-	 eL2nSEGTQW+CQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
- <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 15/18] rust: block: add `GenDisk` private data support
-In-Reply-To: <aJ7tcmOHfFmHgrY9@google.com>
-References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org>
- <20250815-rnull-up-v6-16-v5-15-581453124c15@kernel.org>
- <Addn5RH8T6dPmcfVeF6HXK4Q3rVuAz-0N8es2JtgnRl3UhXIJhicxoB5Ns_F8aD2-sflnPXC6oeBQDLtCfXtLA==@protonmail.internalid>
- <aJ7tcmOHfFmHgrY9@google.com>
-Date: Fri, 15 Aug 2025 11:08:59 +0200
-Message-ID: <87cy8xdk9g.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755248966; c=relaxed/simple;
+	bh=IiOXunXG6Wpt4Dt7F+FTN1G6+TjBVJhYZCdnhrxDbc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W+qAkFtofo6O5lJgnRPPAH5JZkQkUFBNHC5jxJIrwgc6k7qAhroqz4DbS+NaMKjgGVVf7hQLuyqtfLy0L++jNFcpnKvgOdcZmfEURZ+g2DPzeyAOI84rStTNy1Z4sPIMYrUSNrZuzY/TvfHl5SyFBW+NBjOBMKhi2Kxf2d3de0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.45])
+	by gateway (Coremail) with SMTP id _____8AxbeI8+Z5o_TpAAQ--.17953S3;
+	Fri, 15 Aug 2025 17:09:16 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.45])
+	by front1 (Coremail) with SMTP id qMiowJAx_8E2+Z5oYrlNAA--.33158S2;
+	Fri, 15 Aug 2025 17:09:16 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Hanlu Li <lihanlu@loongson.cn>
+Subject: [PATCH] LoongArch: Save LBT before FPU in setup_sigcontext()
+Date: Fri, 15 Aug 2025 17:09:02 +0800
+Message-ID: <20250815090902.1587392-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAx_8E2+Z5oYrlNAA--.33158S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ArW5CFykGF4fWFWrKr13KFX_yoW8Wr43pF
+	srCrn2yrW8G3Z3AFyDt348u3y5uryvqa4DW3Z2k34Fkr1qvrn8Gr1Iy3WvvFy5Xas3Jr40
+	vFs5K3WayF1UK3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
+	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
+	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE
+	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
+	C2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
+	nUUI43ZEXa7IU8EeHDUUUUU==
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Now if preemption happens between protected_save_fpu_context() and
+protected_save_lbt_context(), FTOP context is lost. Because FTOP is
+saved by protected_save_lbt_context() but protected_save_fpu_context()
+disables TM before that. So save LBT before FPU in setup_sigcontext()
+to avoid this potential risk.
 
-> On Fri, Aug 15, 2025 at 09:30:50AM +0200, Andreas Hindborg wrote:
->> Allow users of the rust block device driver API to install private data in
->> the `GenDisk` structure.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->
->>          self,
->>          name: fmt::Arguments<'_>,
->>          tagset: Arc<TagSet<T>>,
->> +        queue_data: T::QueueData,
->>      ) -> Result<GenDisk<T>> {
->> +        let data = queue_data.into_foreign();
->> +        let recover_data = ScopeGuard::new(|| {
->> +            // SAFETY: T::QueueData was created by the call to `into_foreign()` above
->> +            drop(unsafe { T::QueueData::from_foreign(data) });
->> +        });
->> +
->>          // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
->>          let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
->>
->> @@ -113,7 +121,7 @@ pub fn build<T: Operations>(
->>              bindings::__blk_mq_alloc_disk(
->>                  tagset.raw_tag_set(),
->>                  &mut lim,
->> -                core::ptr::null_mut(),
->> +                data.cast(),
->
-> Is the cast necessary?
+Signed-off-by: Hanlu Li <lihanlu@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/signal.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Not any longer, no.
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/arch/loongarch/kernel/signal.c b/arch/loongarch/kernel/signal.c
+index 4740cb5b2388..c9f7ca778364 100644
+--- a/arch/loongarch/kernel/signal.c
++++ b/arch/loongarch/kernel/signal.c
+@@ -677,6 +677,11 @@ static int setup_sigcontext(struct pt_regs *regs, struct sigcontext __user *sc,
+ 	for (i = 1; i < 32; i++)
+ 		err |= __put_user(regs->regs[i], &sc->sc_regs[i]);
+ 
++#ifdef CONFIG_CPU_HAS_LBT
++	if (extctx->lbt.addr)
++		err |= protected_save_lbt_context(extctx);
++#endif
++
+ 	if (extctx->lasx.addr)
+ 		err |= protected_save_lasx_context(extctx);
+ 	else if (extctx->lsx.addr)
+@@ -684,11 +689,6 @@ static int setup_sigcontext(struct pt_regs *regs, struct sigcontext __user *sc,
+ 	else if (extctx->fpu.addr)
+ 		err |= protected_save_fpu_context(extctx);
+ 
+-#ifdef CONFIG_CPU_HAS_LBT
+-	if (extctx->lbt.addr)
+-		err |= protected_save_lbt_context(extctx);
+-#endif
+-
+ 	/* Set the "end" magic */
+ 	info = (struct sctx_info *)extctx->end.addr;
+ 	err |= __put_user(0, &info->magic);
+-- 
+2.47.3
 
 
