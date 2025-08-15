@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-770750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17ACB27E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:43:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944B3B27E8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6145D189E4FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7EB1D00474
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A851301498;
-	Fri, 15 Aug 2025 10:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA753019CE;
+	Fri, 15 Aug 2025 10:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pKbG/KPV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MmIT1xov"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d5UBW8a7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qFzyUqXz"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0092C3002DA;
-	Fri, 15 Aug 2025 10:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940063009EE;
+	Fri, 15 Aug 2025 10:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755254517; cv=none; b=IGpGzYFsBzcnHArJPuwgtjz7HKxsRndOOJsqT4dl7zSRIG91LSNyeNH7WfBjIqGAkP7FiLAowfE7IoCnJPWMtgZc+ebybvKUKwsJUzUPvyeFA9yw9fyqyVbhkfp000JvMptofIjaT/P3AnQZ0jQfO/vGnSE5ZPMusbCLr6vA60k=
+	t=1755254518; cv=none; b=Uumv8Uq+YQ1CF3yeBQWV83PnOakjW2R1zD7T5ks48NOZkbKOzxFsjWaSHo9nv1r3ytdNBgwfzS4otaotGI9vBt3ippyUzBsjNEp3fR1Bcp+lsuxYEo7ChR+uwpJHfHRo+qQPNa60B2iOPb+fGhUt278cv73dZcyA3qfo0JvdiiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755254517; c=relaxed/simple;
-	bh=fxgNwbguzm19mxOl+d1yMzx0FAgO/SMJ+Tt1yKD0hgU=;
+	s=arc-20240116; t=1755254518; c=relaxed/simple;
+	bh=AINOaxBuP5Ch3/2w2tbR7UDCA6saGXXKtrrH821ccA0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sHTwFjCTHdUK+OM6qBCAPj4jHmgLup4L26CuSYAmNabSgBoZLgsieWAZ+x1ssU0XyEKWkntbY51zPB5Ukg3tGS/em84y1O/SG+sf+s2yEZLHe/u9AnLihraQm2iNG7p6lNi8HOXM7eqasPEXhi1aWNvlvPImaZweDBLpnqYTxdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pKbG/KPV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MmIT1xov; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=dL/tXvYwq7YA+yzGuWmmflM5TKaOnMvVJAPyi76B/E/bbULnss0BsiwqnCakfe0XFoco6L658dsy03SsA6SaQeAZA7OCGH+enLQQQO7Dp66ND3cBk5yEL6sOfXurkFMHC5weHtn78huZZ4bwzP401ww/o/Nn9a2Y/zmCx7EwtEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d5UBW8a7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qFzyUqXz; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755254514;
+	s=2020; t=1755254515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G7Fn8+v2ScBzJFYv6AzzkLmPfAu+RY8HxbLfk2DOx3Y=;
-	b=pKbG/KPV4AcW6a4MHsxtxnNGo9s8AGwrJmeAEc9Y10Md+v4M/CqzVMHZqbBedGsDsTMSk9
-	qgy7OO08iG+/164uyIvY2SawYhoxW3wXdBvnJtcmm7y/ZkTyIrX5251RmfQ6aaRzqVL//j
-	knkvOri+hRuJh1+NvnlrMinno8l98B5UsemfEQl0djtSL+Y7Lj3mktPXHwXvCub/3+e/bU
-	pYTAGIi2/codoU2uKraofLNKhuNdsJz9smirs546bMLcqA6Ew1xjliJtC5mHoZnZ7k+MVc
-	KDKIORxozI1+7GMpqGf0G/qVVeh/2+376/SyUFWxSGFz8bVlwXZaT/OtW0NQlA==
+	bh=p3StxZg3wmTP4B25eUsgepw4UWcf1hLlH7xU6a+2F/k=;
+	b=d5UBW8a7wShWkX6durmn/CuIHyYbNfdxCyh+IqFYQB+6pETdxCUmEgNxnjfHxAA4VtZb+b
+	IXnzpiU8EZevoALiEYifymveigUG2k6vWe6cnu58txR35Hp2gocnBLACmvoDEVg2HxYvvr
+	6kXvnXMkxLAv7h4FxIuGTn+PWSkPNoxqgHwPDrdNh7M8kd2x6eMUNO4FGn8YdsrLG6cZnr
+	IeNL56DthZhlKrW0Iw37u0GNhSF/g/BxbkrSpQbd5k/Symuq9KGr+ZQFcLr+zWolpPhcDo
+	0hTaUdBTpDBP+NTKtSJr1XndXiw1/Vi86nx9VH4oPg5Lz25xkUsJR5+BvbmCYQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755254514;
+	s=2020e; t=1755254515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G7Fn8+v2ScBzJFYv6AzzkLmPfAu+RY8HxbLfk2DOx3Y=;
-	b=MmIT1xovdGZgu6/SYnBuI4EhM6ozIshd3NnNwg2gTI7eLpO+Rq9tLvW2BpPCLL6iPYkYVa
-	7tggsKc6AqC+4yBQ==
-Date: Fri, 15 Aug 2025 12:41:18 +0200
-Subject: [PATCH v2 09/13] sparc64: vdso2c: Drop sym_vvar_start handling
+	bh=p3StxZg3wmTP4B25eUsgepw4UWcf1hLlH7xU6a+2F/k=;
+	b=qFzyUqXzZb5Olxw5BtauIwwp7UKx69nM/guirCNmvlw1mqQRxdjerFrdEG+Ouod5yGtc4z
+	HoZUHzuRFsGdpcDg==
+Date: Fri, 15 Aug 2025 12:41:19 +0200
+Subject: [PATCH v2 10/13] sparc64: vdso2c: Remove symbol handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250815-vdso-sparc64-generic-2-v2-9-b5ff80672347@linutronix.de>
+Message-Id: <20250815-vdso-sparc64-generic-2-v2-10-b5ff80672347@linutronix.de>
 References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
 In-Reply-To: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
 To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -76,76 +76,117 @@ To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
  John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755254507; l=1958;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755254507; l=3432;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=fxgNwbguzm19mxOl+d1yMzx0FAgO/SMJ+Tt1yKD0hgU=;
- b=Qr98k0yOx1r9l0av8wZs8vCGw2a873vDWjVuiZmYNGk/0sT6xQpDZXxiA3n2lyRUJiAX2JJU2
- ey+ReVrjCeIBnt8XHvJgxHwm+2DxkNFl3oVNTrA2o8Ezczi+7w9SWQ9
+ bh=AINOaxBuP5Ch3/2w2tbR7UDCA6saGXXKtrrH821ccA0=;
+ b=2Pmj9kFveft4Z3odgxK2smbl+8Tb5fJ19ALPpH5ZfwdYSXe8Noq57SbhdhIvUW67qfBnfpTai
+ 3ZEsTekkvC2B1V1ovUAk/l/c2Tu7nxN2lpRalORyMeZ2ZYPgyyT6ESu
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-After the adoption of the generic vDSO library this symbol does not exist.
-
-The alignment invariant is now guaranteed by the generic code.
+There are no handled symbols left.
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/sparc/include/asm/vdso.h | 2 --
- arch/sparc/vdso/vdso2c.c      | 6 ------
- arch/sparc/vdso/vdso2c.h      | 4 ----
- 3 files changed, 12 deletions(-)
+ arch/sparc/vdso/vdso2c.c | 10 ----------
+ arch/sparc/vdso/vdso2c.h | 41 +----------------------------------------
+ 2 files changed, 1 insertion(+), 50 deletions(-)
 
-diff --git a/arch/sparc/include/asm/vdso.h b/arch/sparc/include/asm/vdso.h
-index 59e79d35cd7384e2dd752e92d20bc599e38cb8b0..f08562d10215bd3e9a2d4eaa0aadc8400b40e256 100644
---- a/arch/sparc/include/asm/vdso.h
-+++ b/arch/sparc/include/asm/vdso.h
-@@ -8,8 +8,6 @@
- struct vdso_image {
- 	void *data;
- 	unsigned long size;   /* Always a multiple of PAGE_SIZE */
--
--	long sym_vvar_start;  /* Negative offset to the vvar area */
- };
- 
- #ifdef CONFIG_SPARC64
 diff --git a/arch/sparc/vdso/vdso2c.c b/arch/sparc/vdso/vdso2c.c
-index b97af5ec9f35c01f2a976b6213b1768b677ad231..70b14a436fe2297ab446f778ab0d43155c272421 100644
+index 70b14a436fe2297ab446f778ab0d43155c272421..e5c61214a0e285547ac57c9997542546464bde23 100644
 --- a/arch/sparc/vdso/vdso2c.c
 +++ b/arch/sparc/vdso/vdso2c.c
-@@ -58,18 +58,12 @@
+@@ -58,14 +58,6 @@
  
  const char *outfilename;
  
--/* Symbols that we need in vdso2c. */
--enum {
--	sym_vvar_start,
+-struct vdso_sym {
+-	const char *name;
+-	int export;
 -};
 -
- struct vdso_sym {
- 	const char *name;
- 	int export;
- };
- 
- struct vdso_sym required_syms[] = {
--	[sym_vvar_start] = {"vvar_start", 1},
- };
- 
+-struct vdso_sym required_syms[] = {
+-};
+-
  __attribute__((format(printf, 1, 2))) __attribute__((noreturn))
+ static void fail(const char *format, ...)
+ {
+@@ -105,8 +97,6 @@ static void fail(const char *format, ...)
+ #define PUT_BE(x, val)					\
+ 	PBE(x, val, 64, PBE(x, val, 32, PBE(x, val, 16, LAST_PBE(x, val))))
+ 
+-#define NSYMS ARRAY_SIZE(required_syms)
+-
+ #define BITSFUNC3(name, bits, suffix) name##bits##suffix
+ #define BITSFUNC2(name, bits, suffix) BITSFUNC3(name, bits, suffix)
+ #define BITSFUNC(name) BITSFUNC2(name, ELF_BITS, )
 diff --git a/arch/sparc/vdso/vdso2c.h b/arch/sparc/vdso/vdso2c.h
-index 60d69acc748f2401156a730027fe34abfb9fb6bc..ba0794659eb5af53b8c86b24f3221a5d0b3f74ab 100644
+index ba0794659eb5af53b8c86b24f3221a5d0b3f74ab..bad6a0593f4ca293feca201a6343833268ad1cb8 100644
 --- a/arch/sparc/vdso/vdso2c.h
 +++ b/arch/sparc/vdso/vdso2c.h
-@@ -104,10 +104,6 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 		}
- 	}
+@@ -17,11 +17,9 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	unsigned long mapping_size;
+ 	int i;
+ 	unsigned long j;
+-	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr;
++	ELF(Shdr) *symtab_hdr = NULL;
+ 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
+ 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
+-	INT_BITS syms[NSYMS] = {};
+-
+ 	ELF(Phdr) *pt = (ELF(Phdr) *)(raw_addr + GET_BE(&hdr->e_phoff));
  
--	/* Validate mapping addresses. */
--	if (syms[sym_vvar_start] % 8192)
--		fail("vvar_begin must be a multiple of 8192\n");
+ 	/* Walk the segment table. */
+@@ -72,38 +70,6 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	if (!symtab_hdr)
+ 		fail("no symbol table\n");
+ 
+-	strtab_hdr = raw_addr + GET_BE(&hdr->e_shoff) +
+-		GET_BE(&hdr->e_shentsize) * GET_BE(&symtab_hdr->sh_link);
+-
+-	/* Walk the symbol table */
+-	for (i = 0;
+-	     i < GET_BE(&symtab_hdr->sh_size) / GET_BE(&symtab_hdr->sh_entsize);
+-	     i++) {
+-		int k;
+-
+-		ELF(Sym) *sym = raw_addr + GET_BE(&symtab_hdr->sh_offset) +
+-			GET_BE(&symtab_hdr->sh_entsize) * i;
+-		const char *name = raw_addr + GET_BE(&strtab_hdr->sh_offset) +
+-			GET_BE(&sym->st_name);
+-
+-		for (k = 0; k < NSYMS; k++) {
+-			if (!strcmp(name, required_syms[k].name)) {
+-				if (syms[k]) {
+-					fail("duplicate symbol %s\n",
+-					     required_syms[k].name);
+-				}
+-
+-				/*
+-				 * Careful: we use negative addresses, but
+-				 * st_value is unsigned, so we rely
+-				 * on syms[k] being a signed type of the
+-				 * correct width.
+-				 */
+-				syms[k] = GET_BE(&sym->st_value);
+-			}
+-		}
+-	}
 -
  	if (!name) {
  		fwrite(stripped_addr, stripped_len, 1, outfile);
  		return;
+@@ -129,10 +95,5 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	fprintf(outfile, "const struct vdso_image %s_builtin = {\n", name);
+ 	fprintf(outfile, "\t.data = raw_data,\n");
+ 	fprintf(outfile, "\t.size = %lu,\n", mapping_size);
+-	for (i = 0; i < NSYMS; i++) {
+-		if (required_syms[i].export && syms[i])
+-			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
+-				required_syms[i].name, (int64_t)syms[i]);
+-	}
+ 	fprintf(outfile, "};\n");
+ }
 
 -- 
 2.50.1
