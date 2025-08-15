@@ -1,247 +1,153 @@
-Return-Path: <linux-kernel+bounces-770897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AEDB2801E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F12B28027
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B58603FD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C434BAE57FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8D630146F;
-	Fri, 15 Aug 2025 12:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0791D63D3;
+	Fri, 15 Aug 2025 12:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a621F5wb"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="MSexeHfc"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F6B2C3264;
-	Fri, 15 Aug 2025 12:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BBB1E4AE;
+	Fri, 15 Aug 2025 12:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755261883; cv=none; b=Ssc0NBDJFkX+4XJbMUY2fFODzGzqBrKKOMZ3VdArVklAxLG8+YFOpKEgjqNoa3NG4EWtudDo/v2mZTDg/we7Rm9HZRMUuBkF3214yK4PfLG/dMDiWXtEOFS0rj8G0k+T5Dn1SZCMlfbOsdY/wo0MwFUgHJgewvF4M69X2jZz51Y=
+	t=1755261953; cv=none; b=D3Yjj6jalqEDBeS+SBpik67ts6KT3Vh2E1FI+JoJdZzIqxmVz38BG47vrRr4TJSyQSs/2gGyeVMJYHx4rgpF/GehXi+qmhZbwEjoT5Ul3upQmVYNo4i7dfZ8vFZ9KMM8wyTUy2MZOd3G9999LwPdiyt86WzRQPX5CFkPVvk2Nbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755261883; c=relaxed/simple;
-	bh=gdXFBB295mBNGVsJgAbR1vP0UTgaD4mZH6tytmxhwnQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpuIfTxZzsxARCC8Ene5DxHChVo9JFcIOoJvAY6n6/1FvAwBFH62aVCkQyVudBxow7Ayi6puHg7V/W+9bWVVzmngLz36RmyMF3luiB/8j6KiD3zZgJXZvnobHyB/fP7lw8xA+gU5+4zWbScZ1Ejx1voXd6Nus74AJeKDoxoW43s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a621F5wb; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7347e09so306522366b.0;
-        Fri, 15 Aug 2025 05:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755261880; x=1755866680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjeBt9GCyvF4EZYxj/on9NBWCQ0HQWui55lR9+/qkb0=;
-        b=a621F5wbZ7lOLge1xfuqFv4jc0tNRqysphcZwt9hlYCIIuFH+3D82hNbcYhrEPZTbX
-         8HrEIsnpWxIN06ZHqbltnXhhiPfUCfLqyRjUCOKTgZOuKn/qmiQrTX0PzzZ9Bm8GtU1i
-         m82J/Cz6Qyhbr+WcgLmwUeF6lSvRgqq4WoPrW80JdhS4F9yAq0BCszMQIJsZP6jzkxPp
-         e1vkD+CLdW3G94bKjLUAAKbtrU/9UY6qBCQhrmaykTAE8KxbZ0dd1KfeUhkkqOUIEp8n
-         +t39q47kYwHd59hveWflMOoCdfOh7KZZhk8Wh2Xe2CQejyBo5FJrADSLoLrpVhS5hQnc
-         W//Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755261880; x=1755866680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjeBt9GCyvF4EZYxj/on9NBWCQ0HQWui55lR9+/qkb0=;
-        b=c8v2TrcxsrBiXD7BdH8oZJ7ejl9P+l2v2xbvAvYOAqC2PdeCR6DvV5GVW6rYGvRH7N
-         eAJp7HLrP7368QzZn+rQ+IxIBGezosgokiCK73kpFbo9w0Rq66ttOAGgAb4JURc5cG/f
-         WPbLYTTZ6dwuDFctjOg7Nkw+IoLydTBACV/3c6aA2EmSzrkm1TPQtlQrAciJOw4n+ak3
-         94S1FiLjpvUCbIv4967gPRXnFZjAPCslmX8Xb9vI5Ub7bTI8Oxmw4hn13BN+DZWB8lDd
-         8EpCRsGsTlAvb5py0Vuq98S/lnese3bWvGRjJHeFLmW++aVCIEsHC6kxaHqvqryxqc/d
-         /i7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoeINI+mIFDOs9Qg9t2w6R4EvbQFFbVUKsliuKrL713BtIXMl0fUp/ThVrsQKhKQlrQAi5Ijxl09hq72qPQToW@vger.kernel.org, AJvYcCVldQkL7nuwn+fBWJYBMI5/23E9nIBQzbvNWWdb3Yz1YFXA9D8rAKK/+isezLKMbl+1TC8jFIRKOullG9RG@vger.kernel.org, AJvYcCXrkA2d1JVXsZbuFPaeqo5DmM+fRRa8au2iXR0HiGu2iV4WVS6ZsgGkeXFW+vd1gv90oTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVW+dxTBXYOq86BxqAquiv5nk59jCuaJ/B68MdAQMeg8+rfZvU
-	kGIbn+9o/xf1t48DFV6Tm2qa0nCG8f40T+l1H2GPF8h+FvzBcIOrGd28
-X-Gm-Gg: ASbGncuYMRCsAeBu8phKgBbglEGGxIeGhIaALugP1iw3qbykhNAYzX9hLbRHb3siBiy
-	cLrk+MW1HDRFVSTKuT+PIq7BOieHr0oHtVJ0a8sSV9wsmaRjuWRstBV5IWqvzL4AI5fQdy+DO5P
-	XEmSRI4YDsn/GcTPjtey4qzY6zn/SfuPEyrap3YIdMYCrgeF0Bi2VcBpUE6UY2sYjjEws8tsgbf
-	J6yGfZaFzybHWqJa5r085OQoh2ftWt2Ww/MyFydFub5aHATuHKCb1FIhaqkfIwJUUt8b93oGQ8a
-	hiqTJvTWSwWO+Ogp7dRrwv9kpGAsI6KANgw6/vDnVSom+nZ7DQd5CKrmYDJL5oFC94cw1S72RQL
-	u6wPo/mUowg==
-X-Google-Smtp-Source: AGHT+IHG+YotOlvULIwtil5MjsG5WCy1TrbFl0wpQ0pvXdVu8f9TwR47lcgTFQCHv+6evIR/26cmdw==
-X-Received: by 2002:a17:907:3e9f:b0:afa:2672:8c49 with SMTP id a640c23a62f3a-afcdc1d40cbmr180056266b.18.1755261879931;
-        Fri, 15 Aug 2025 05:44:39 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618af9d3112sm1413205a12.9.2025.08.15.05.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 05:44:39 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 15 Aug 2025 14:44:32 +0200
-To: Jiawei Zhao <phoenix500526@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yonghong.song@linux.dev, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v10 3/3] selftests/bpf: make usdt_o2 reliably
- generate SIB USDT arg spec
-Message-ID: <aJ8rsK2-XcPXNX7h@krava>
-References: <20250814160740.96150-1-phoenix500526@163.com>
- <20250814160740.96150-4-phoenix500526@163.com>
+	s=arc-20240116; t=1755261953; c=relaxed/simple;
+	bh=8+6TpdYdDqe96tSoh53cUrd5tfr5n0Cr+vCH/HHUPGo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i88559TbfeLzCVVBKMv5ab2joKb/TMFOo8qSWB6vOZbHIzZcTHqhL8I+SvfvrFEhqupukSgF2kChClPEUk0zlHW+RMAcNokG42I4g7EmKV/30hkoVQnDRhy0r0EVnByljspQXbjEsGswVKUWeT8UepVCBz5OBfbh+QfjgfKO6bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=MSexeHfc; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1755261949; x=1755866749; i=efault@gmx.de;
+	bh=JIEZbu1irSsV2ya34Xpmlcjm0pikfLY9034CibdQhko=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MSexeHfcaklpJcPJWiT6+KuqWstG/VspxYpsgul+w51c/hpTljcFcyOBVLug8rcy
+	 wOZbZcyABHNzyrfmA8e7l+5M7mYT29SiB1Xzfqafr/NKYWi4RKFm4GTxV8WcvecGK
+	 ZSdC8q4KIjPQ6yYl2SpBbeIm8Ee/xegJM5shZe0RhtmyrNNowhCPuoOy+6418vwgE
+	 yvy4ai0b4f2xq4XjCwFp8bgIL3Xudg0aMJCOU+pItb0iqiNqmDzxZuyNlvlaC9TGp
+	 n9YpnKJEepkRv4WP46171uYaY3saLW75JrUBASl6TDyBb0hhvMcseUPF6ZsNXcQ3g
+	 v7T32JARhGzXi0ab2w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([185.146.50.53]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mz9Un-1uQIM33NZL-00zLT6; Fri, 15
+ Aug 2025 14:45:48 +0200
+Message-ID: <27d3c0140bcec8698d7496687bcfe4382fbcccd6.camel@gmx.de>
+Subject: Re: netconsole:  HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+From: Mike Galbraith <efault@gmx.de>
+To: Jakub Kicinski <kuba@kernel.org>, Breno Leitao <leitao@debian.org>
+Cc: paulmck@kernel.org, asml.silence@gmail.com, LKML
+ <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, boqun.feng@gmail.com
+Date: Fri, 15 Aug 2025 14:45:48 +0200
+In-Reply-To: <20250814172326.18cf2d72@kernel.org>
+References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
+	 <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+	 <20250814172326.18cf2d72@kernel.org>
+Autocrypt: addr=efault@gmx.de;
+ keydata=mQGiBE/h0fkRBACJWa+2g5r12ej5DQZEpm0cgmzjpwc9mo6Jz7PFSkDQGeNG8wGwFzFPKQrLk1JRdqNSq37FgtFDDYlYOzVyO/6rKp0Iar2Oel4tbzlUewaYWUWTTAtJoTC0vf4p9Aybyo9wjor+XNvPehtdiPvCWdONKZuGJHKFpemjXXj7lb9ifwCg7PLKdz/VMBFlvbIEDsweR0olMykD/0uSutpvD3tcTItitX230Z849Wue3cA1wsOFD3N6uTg3GmDZDz7IZF+jJ0kKt9xL8AedZGMHPmYNWD3Hwh2gxLjendZlcakFfCizgjLZF3O7k/xIj7Hr7YqBSUj5Whkbrn06CqXSRE0oCsA/rBitUHGAPguJfgETbtDNqx8RYJA2A/9PnmyAoqH33hMYO+k8pafEgXUXwxWbhx2hlWEgwFovcBPLtukH6mMVKXS4iik9obfPEKLwW1mmz0eoHzbNE3tS1AaagHDhOqnSMGDOjogsUACZjCJEe1ET4JHZWFM7iszyolEhuHbnz2ajwLL9Ge8uJrLATreszJd57u+NhAyEW7QeTWlrZSBHYWxicmFpdGggPGVmYXVsdEBnbXguZGU+iGIEExECACIFAk/h0fkCGyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEMYmACnGfbb41A4AnjscsLm5ep+DSi7Bv8BmmoBGTCRnAJ9oXX0KtnBDttPkgUbaiDX56Z1+crkBDQRP4dH5EAQAtYCgoXJvq8VqoleWvqcNScHLrN4LkFxfGkDdqTyQe/79rDWr8su+8TH1ATZ/k+lC6W+vg7ygrdyOK7egA5u+T/GBA1VN+KqcqGqAEZqCLvjorKVQ6mgb5FfXouSGvtsblbRMireEEhJqIQPndq3DvZbKXHVkKrUBcco4MMGDVucABAsEAKXKCwGVEVuYcM/KdT2htDpziRH4JfUn3Ts2EC6F7rXIQ4NaIA6gAvL6HdD3q
+	y6yrWaxyqUg8CnZF/J5HR+IvRK+vu85xxwSLQsrVONH0Ita1jg2nhUW7yLZer8xrhxIuYCqrMgreo5BAA3+irHy37rmqiAFZcnDnCNDtJ4sz48tiEkEGBECAAkFAk/h0fkCGwwACgkQxiYAKcZ9tvgIMQCeIcgjSxwbGiGn2q/cv8IvHf1r/DIAnivw+bGITqTU7rhgfwe07dhBoIdz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814160740.96150-4-phoenix500526@163.com>
+X-Provags-ID: V03:K1:xR8VEE4wwQ4QoqEX+z0tLalRf+W5iiP982pK8lCbEUiAX39F7x3
+ l0xodJ9AXT1h505nCUOzrskE4OvapbxodwXtFJezAzWBWGBFaUp7BUTNLsnd6cmAZb0lgGP
+ scNbOaoN86YqFl0zKh7/MkR/WmCjAo6Y9D2DO8CTmhwhOXdXvsnxhD+5DuRztG38b0mvLGg
+ W/LSX6NG+G9tBmKvNcAFQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9FpfpfFoYxA=;9BTXjtCEYJIFiIPIPNmJDOVOrf0
+ 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
+ Pu5Po3kcAPWjrsB2v5QJYXr3U=
 
-On Thu, Aug 14, 2025 at 04:07:39PM +0000, Jiawei Zhao wrote:
-> usdt_o2 is intended to exercise the SIB (Scale-Index-Base) argument
-> handling in libbpf's USDT path. With GCC 13 this reliably produced a
-> SIB-form argument (e.g. 8@(%rdx,%rax,8)), but with newer GCC (e.g. 15)
-> the compiler frequently optimizes the probe argument into a plain
-> register (e.g. 8@%rax) or a stack slot, so the test stops covering the
-> SIB code path and becomes flaky across toolchains.
-> 
-> Force a SIB memory operand in the probe by:
-> * placing the base pointer into %rdx and the index into %rax using an
->   empty inline asm with output constraints ("=d", "=a") and matching
->   inputs
-> * immediately passing base[idx] to STAP_PROBE1.
-> * only enable on x86 platform.
-> 
-> This makes the compiler encode the operand as SIB (base + index8),
-> which in .note.stapsdt shows up as 8@(%rdx,%rax,8) regardless of GCC
-> version. A memory clobber and noinline prevent reordering/re-allocation
-> around the probe site.
-> 
-> This change is x86_64-specific and does not alter program semantics; it
-> only stabilizes the USDT argument shape so the test consistently
-> validates SIB handling. Clang historically prefers stack temporaries for
-> such operands, but the selftests build with GCC, and this keeps behavior
-> stable across GCC versions without introducing a separate .S file.
-> 
-> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
-> ---
->  .../selftests/bpf/prog_tests/usdt_o2.c        | 20 ++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-> index f02dcf5188ab..e46d5743ad24 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-> @@ -15,11 +15,19 @@ __attribute__((optimize("O2")))
->  int lets_test_this(int);
->  static volatile __u64 array[1] = {test_value};
->  
-> -static __always_inline void trigger_func(void)
-> +static noinline void trigger_func(void)
->  {
-> +#if defined(__x86_64__) || defined(__i386__)
->  	/* Base address + offset + (index * scale) */
-> -	for (volatile int i = 0; i <= 0; i++)
-> -		STAP_PROBE1(test, usdt1, array[i]);
-> +	/* Force SIB addressing with inline assembly */
-> +	const __u64 *base;
-> +	__u32 idx;
-> +	/* binding base to %rdx and idx to %rax */
-> +	asm volatile("" : "=d"(base), "=a"(idx) : "0"(array), "1"((__u32)0) : "memory");
-> +	STAP_PROBE1(test, usdt1, base[idx]);
+On Thu, 2025-08-14 at 17:23 -0700, Jakub Kicinski wrote:
+>=20
+> We started hitting this a lot in the CI as well, lockdep must have
+> gotten more sensitive in 6.17.
 
-hum, I still end up with
+FWIW, the issues wireless lappy reported aren't merge window arrivals.
+6.12.41+lockdep behaved as master, wired ran clean, wireless grumbled.
 
-	  stapsdt              0x0000002a       NT_STAPSDT (SystemTap probe descriptors)
-	    Provider: test
-	    Name: usdt1
-	    Location: 0x00000000007674c9, Base: 0x00000000035bc698, Semaphore: 0x0000000000000000
-	    Arguments: 8@%rax
-
-disasm being:
-
-	static noinline void trigger_func(void)
-	{
-	  76749f:       55                      push   %rbp
-	  7674a0:       48 89 e5                mov    %rsp,%rbp
-		/* Base address + offset + (index * scale) */
-		/* Force SIB addressing with inline assembly */
-		const __u64 *base;
-		__u32 idx;
-		/* binding base to %rdx and idx to %rax */
-		asm volatile("" : "=d"(base), "=a"(idx) : "0"(array), "1"((__u32)0) : "memory");
-	  7674a3:       ba 20 49 9c 03          mov    $0x39c4920,%edx
-	  7674a8:       b8 00 00 00 00          mov    $0x0,%eax
-	  7674ad:       48 89 55 f8             mov    %rdx,-0x8(%rbp)
-	  7674b1:       89 45 f4                mov    %eax,-0xc(%rbp)
-		STAP_PROBE1(test, usdt1, base[idx]);
-	  7674b4:       8b 45 f4                mov    -0xc(%rbp),%eax
-	  7674b7:       48 8d 14 c5 00 00 00    lea    0x0(,%rax,8),%rdx
-	  7674be:       00
-	  7674bf:       48 8b 45 f8             mov    -0x8(%rbp),%rax
-	  7674c3:       48 01 d0                add    %rdx,%rax
-	  7674c6:       48 8b 00                mov    (%rax),%rax
-	  7674c9:       90                      nop
-	#else
-		STAP_PROBE1(test, usdt1, array[0]);
-	#endif
-	}
-	  7674ca:       90                      nop
-	  7674cb:       5d                      pop    %rbp
-	  7674cc:       c3                      ret
-
-
-I wonder we could also try to bring in Andrii's usdt.h [1] and overload usdt
-arguments like outlined in the hack below (full code in [1])
-
-we will probably need smarter and sustainable change, but you I guess you get
-the idea
-
-jirka
-
-
-[1] https://github.com/anakryiko/usdt
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git usdt_hack
----
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-index e46d5743ad24..7bb098c37de5 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-@@ -4,6 +4,8 @@
- 
- #include "../sdt.h"
- #include "test_usdt_o2.skel.h"
-+#define USDT_ARGS ".asciz \"(,%%rax,8)\"\n"
-+#include "usdt.h"
- 
- #if defined(__GNUC__) && !defined(__clang__)
- __attribute__((optimize("O2")))
-@@ -28,6 +30,7 @@ static noinline void trigger_func(void)
- #else
- 	STAP_PROBE1(test, usdt1, array[0]);
- #endif
-+	USDT(krava, test1, 1, 2);
- }
- 
- static void basic_sib_usdt(void)
-diff --git a/tools/testing/selftests/bpf/usdt.h b/tools/testing/selftests/bpf/usdt.h
-index 549d1f774810..960ebd6aa88b 100644
---- a/tools/testing/selftests/bpf/usdt.h
-+++ b/tools/testing/selftests/bpf/usdt.h
-@@ -403,6 +403,10 @@ struct usdt_sema { volatile unsigned short active; };
- 	__asm__ __volatile__ ("" :: "m" (sema));
- #endif
- 
-+#ifndef USDT_ARGS
-+#define USDT_ARGS __usdt_asm_args(__VA_ARGS__)
-+#endif
-+
- /* main USDT definition (nop and .note.stapsdt metadata) */
- #define __usdt_probe(group, name, sema_def, sema, ...) do {					\
- 	sema_def(sema)										\
-@@ -418,7 +422,7 @@ struct usdt_sema { volatile unsigned short active; };
- 	__usdt_asm1(		__usdt_asm_addr sema)						\
- 	__usdt_asm_strz(group)									\
- 	__usdt_asm_strz(name)									\
--	__usdt_asm_args(__VA_ARGS__)								\
-+	USDT_ARGS										\
- 	__usdt_asm1(		.ascii "\0")							\
- 	__usdt_asm1(994:	.balign 4)							\
- 	__usdt_asm1(		.popsection)							\
+	-Mike
 
