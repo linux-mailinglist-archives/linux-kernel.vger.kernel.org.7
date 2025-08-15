@@ -1,193 +1,201 @@
-Return-Path: <linux-kernel+bounces-770120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC38AB276FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53D7B276EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D6E5E3F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C161CC5D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E0F1E7C34;
-	Fri, 15 Aug 2025 03:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0E2280308;
+	Fri, 15 Aug 2025 03:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n6P0IZ3d"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JiJmgiJx"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011060.outbound.protection.outlook.com [52.101.70.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397D921ABCF
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229341; cv=none; b=qRLBp27opgB18EWTr/IFhvUMuE++qVU5YBpSxJ50UtrWcY/EU0kD82lmsUAaPDoOOmaXla6cYP7TxGzWscSUZgfM9f1k60YmeVe4z5PNyB44Mf62u7DVvC3wkyDAimrxKgf9c3yafpn8JJySkHysVBxurN+kNw/5hJHCrfxCzPE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229341; c=relaxed/simple;
-	bh=vsQ52WTwmO3+8ssw1w1cMYYmcVawrOSq6WzepbrpO70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tJc+f/QPzdBdabgV5+r9zrmdHodFPEF61GRL/3guLIl6dAz2NeJ1c5tN3/AcA6nram3MALlIz9aiblARZjPtGs9Io9q3lzpCTfAJCQv7CF+RqFcFaLftkyCAX6/eAs51XJJUcshxXMByV1q6BbuF5OiIBqUiNWkaHTtG8uRGjfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n6P0IZ3d; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55ce4d3b746so1993582e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755229337; x=1755834137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLAZnsZy8mysFSYeQu/zRgcIgupbd8f4aYQXFFI2MWI=;
-        b=n6P0IZ3dVwDyLuzIVnFEG9e8AzVR+RUueC+3GZKs95LqUkbTrECHkRIKM74+Q0KBfE
-         IaXH4cTmi6cQ5ePzxrRKjW24eg6mn/tfbtZBy8BLLzZBU8+OA4WjUcpM/PIA114pFehW
-         WCKday2Y/RZxYJoSYcI8ZSUe/4+RCpKFcy8rk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755229337; x=1755834137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HLAZnsZy8mysFSYeQu/zRgcIgupbd8f4aYQXFFI2MWI=;
-        b=oOY3+M7Rzpa5hpJz8rdwnMa9eRjQ6Cc8nZvl2jwgXK/ld4VfcwaxEb6j8MjXQwslVt
-         c+ZMD9kB6IuqXBjZK9EJI1PHvBGadRiwNRNemPCwt0cy8P8f7gpPd2QOQF317jsUXmZI
-         eQCT+8TaJ2iQJ3Q68f8anbE/fAUqyeP/iRnnItuHE2r+IDDTaQ2cUGyHVL4N/0ngZY2D
-         usRbYeT2JfoG4Ch4yElnvPthxkRESJUQb5F3Orqm49OTZy2DZ+a4OKdw9U+5mK4mOwbR
-         RFw5/D7aE9DBk1Rai1NVDmLIZdA+qj+sJwA/wiYckae1QlWRHdFtKKMBvE6SUCJxT2WU
-         ahig==
-X-Forwarded-Encrypted: i=1; AJvYcCW9cOxcntKsrjMscvcxR/LHSqshBILVkPU+Mwgl6eg/ZQtQgZtZjEW/qC4cz0eQhmjLgGPOCQ1p3NcBcuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrlgNsoJBbrMGLPsTiP2pdSJMsRQFDkwcYpHn7fYOtn3bXhbeL
-	NpTZrRyzAew7kS2fJvXe46h5pxKTVdTVwCohuc4Qp4kxxVG7hHaqa6SRymAcDUK2sRIHL9RL/Xg
-	SBRiMk9J4TdHpaR6nZbkjXgR+IqdX7yffo82PWpl1
-X-Gm-Gg: ASbGnct7vekVuFffk1xTalJ6l3EtOpH7bWw6sJI9b+LqsDexFBCXLslB6OxLIk5G+bA
-	7IWN0EkS/Itl+jHBWC8M1on10xyn789CCi3banjz18uYFqIUMchtM8RqSrpj6QHMJJCpgQ6DjgT
-	sMuI982XoWNuSIK7mFM0WPpJMAW4ZxhIS+c3USAKf7Kc9C4v9Bd496asGoGeyIwzT9kT+U1Jci4
-	paODARIZFO+5V58kXwWddB9n/VfBrnTVkekxg==
-X-Google-Smtp-Source: AGHT+IG4MHT9xlQA8q+aRzeI2TOWcXJ3eWM4zAEjXRmpGzb6++EC3UVO4G2WwSWQHvNm7WXOwl7nEj1UnHJTPSq8Yys=
-X-Received: by 2002:a05:6512:230a:b0:55c:d6c9:38df with SMTP id
- 2adb3069b0e04-55ce62cd258mr1499674e87.21.1755229337315; Thu, 14 Aug 2025
- 20:42:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345431EE7DC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755229276; cv=fail; b=WAQHZBoxs30on/MM7xwFfk3o/yyfYGrdxK98lSMU6yOyII44R9aejpKVrrmb7AMuwACQBT9qHdIYKl1Mwo9vsSCEMqAC683xLu30AdUFUtpUWqvMmxrM0nurktqHQ0cDpV42FXPsnHKCneU/ES6G0XvmOg+kVXDuyKfzJiJMC34=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755229276; c=relaxed/simple;
+	bh=zp0Bs26Zahl2muJ1KU/U6oSPFVj4ZNhfFJyWWNNiP4s=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q9LDCXTDgtYt+4BCs8+Llkswsjdt39qXqpMd6oVDdLH1DbjCm0YXkPphfwhQNxI0fX4JuuOA+YJt84K0SV4fwFu0mvCCxiXEe8Y1mhhWu8MP9CnO7lIz/32/Of27FP5C1bNJHRPWOmlK3fgdyQK8EZtv7WnPoeLpprKdu1UmDZA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JiJmgiJx; arc=fail smtp.client-ip=52.101.70.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GK8/Nmm+3CYxqLejIOfHnepJDLjjlHTTl+5HhEPam2kgOJxd9GG728AkyQE33ABRM/2KS5beIveS/FZzkj8x4Io/f6LZGfPqBfLuaxViJLr2BRdUCxQnIQ0laqxsxzRXJJLChL1tmBSQqM7Dz72T5jRENCchZQ9dB/RjuMmWCQXB3jC2GX1Hg4m2hP+atMcyovYUOOHUu5IXltcOomnOHq1tBa4TjsCR3IfAgx/W7UL3Gwpwp0G97Rrw3A0XCnYmNHf1vqC03eAwkEigKJzX70Ympo68dTDzKQyEyHSR3sG4uCzEElYk1bBVDBsvNeLwRjYlk8N4R+UseLj6iTtTlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4vV0N8UPqpEf/SfyUcV88qmehZc/FWVM6TOVeFaeBWo=;
+ b=SqdLHvjq9TJ7/KCsvVfRC8lBtdpVXfLL/1ff0o6Z84MDSw6nbWqu9WkKpbi6xtCdB0OpDSmwPFk/WxHUhUyM4OypPuBEeZ1vHYB/jF+ATaYY/Z3JXF/uxkTLX1o1TyDTPEGn0rAQWp6jUFxCRkC253QTVz8dvFvRsW3RunMwG8ohYgmy9ibEmDT8DO22JfeeWPt7u/TFstkRss4mSpRGMkGRAnAFI1q1GIUrbCMYlbCLRei7DD26dUpBf+dD1Xhz+kFzS/N+FmRt46M2nTa3iqYi78kEFyRmvJBbIoFabs9CcOWHf62uJ0Zduj6gDvOYcTIGjtlICwVn/eW3WJA/AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4vV0N8UPqpEf/SfyUcV88qmehZc/FWVM6TOVeFaeBWo=;
+ b=JiJmgiJx7WId+QnwiPCeFWN9rv9jwXZ2e23k21V+JbTyCh7fYiVkocwnDY1U+gWDJneRVf1KSqUwU8hp1MsdYudq/pFmN/SydhWYtdbJITE4qyfTsjtdsg6jFbrVEsLC2AfwMqZXrTRy/Mhlhn5XLpdJ1yXoCjweTBcfR5Fge0HOr8b3vEk7QyLEaOyvfAdD0L/rG55zgtpMjW8NPm9ZUWMlUr4BIK+DnPiXCWoJTua2XldBNWCfzk50YSZTx1KR8jSQzpcqjCQEiPVFrubMMJSr0ogTGW/VMYD8th0xTogN6GRM74GUY5yVc10bMso4tB9BoWKLE3fNkxcgtYyrjA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU4PR04MB11435.eurprd04.prod.outlook.com (2603:10a6:10:5ee::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.7; Fri, 15 Aug
+ 2025 03:41:11 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9052.006; Fri, 15 Aug 2025
+ 03:41:11 +0000
+Message-ID: <980a05f3-42dc-4767-82be-42f181e9ae8e@nxp.com>
+Date: Fri, 15 Aug 2025 11:42:44 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/bridge: analogix_dp: Fix bailout for
+ devm_drm_bridge_alloc()
+From: Liu Ying <victor.liu@nxp.com>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
+ damon.ding@rock-chips.com, m.szyprowski@samsung.com,
+ luca.ceresoli@bootlin.com
+References: <20250806095224.527938-1-victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250806095224.527938-1-victor.liu@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR06CA0010.apcprd06.prod.outlook.com
+ (2603:1096:4:186::6) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-7-laura.nao@collabora.com>
-In-Reply-To: <20250805135447.149231-7-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 15 Aug 2025 12:42:06 +0900
-X-Gm-Features: Ac12FXy2dCuPlbnz3eN56WS0B1sITUha0hiPx6j9G95oILsqMsxPgE4MrEBU4UM
-Message-ID: <CAGXv+5GxJs03EcMt0jm-x_fDuy_RtCrnOmyJvVVgAP9O9R6E2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 06/27] clk: mediatek: clk-gate: Refactor
- mtk_clk_register_gate to use mtk_gate struct
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB11435:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71214515-ba06-444a-5c69-08dddbad9391
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|19092799006|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?cTh0T2RYdnlFNnNPUlozMnAxOUQ3elZMV3p5R2doUzlIKzRYeFQwNVRWeWJ6?=
+ =?utf-8?B?TnlzZk9UdjFuR2svTElVWHpERXZEU25aa0Q1SUErYklITEdKeXgxdW9sQS9K?=
+ =?utf-8?B?bXFURzY1R1R1b3l4dC9CUnpoLzRjUUQwbTNBMFlObzk5RWdpOTd5RTQ0bkxX?=
+ =?utf-8?B?bGt6N3kyd2RHSExxbXArTUt4YzhFYVNPNS9hUk1lSDBackJkcFdZcTJwRHl1?=
+ =?utf-8?B?Ri9ma2JNR05ZSEpDZnBHa1puVzBGK2tGUDJ4NS9jVGk3QlBiTy9sOEMyZGVF?=
+ =?utf-8?B?NHJ5M0h2VjA0ZWt1OXJzd21URFU3WlNjblBVT01NdmpySVhUSlVDTVB1QmR5?=
+ =?utf-8?B?L1d6UStUVTd1NG5NSDNyMjdNeE54UWFHSUlXYm1qRmUxdHhXWXVweXI4NlBC?=
+ =?utf-8?B?em9GZ01KSUdUOW4yTjNIS3FjWE5HMy9lZ3RzTTB5enRncVUyazNqTDdDMkVm?=
+ =?utf-8?B?K050Q2ZSNmZnTHphWWIrRHREUVNXTEpxV3JCZUYvY2Y3aGdGbG1ON1ZKYSs0?=
+ =?utf-8?B?SHpKWTc5TU1aZGV1OWRPV3pVUy9qcDIxOWdGZmF3OHFrbGtLTE0xUkRObWZR?=
+ =?utf-8?B?SHg3MUpYdy9ZOUFydWFrZ01jNnAxMnRrc1pLNUxZVEtGSExTYURiQ3RIVUdu?=
+ =?utf-8?B?QUlpcDUrcGRuY2dXUjNZdGR2aEo1VDdlVFcyLy9oN1VwT0duNnZIclpDeWI4?=
+ =?utf-8?B?QTdldFExWGw5TkQ2V0JLdFdoS1BxcE93QVZxR3VQRjhVckcyNFlGSktyRVpK?=
+ =?utf-8?B?K0ZwbjhDSXF0akxuK3lrM3F0SUNQUzNBejU4dGFCYUVKc0hJUHRGdmE2eC9s?=
+ =?utf-8?B?SVo3QmRBazJKTXV2WlpKZC9HUHhRWllFWEhSMnE1OHZYdTNYTHcxTStQS1lh?=
+ =?utf-8?B?ZElkdE03SEo1aExUREkwM05XWE45aEtmaGgwT25KZXNIa1B0clQ1SDEwdTdn?=
+ =?utf-8?B?aDNIYmxQdjdKdnRrYXJWcHEwT1pnbHN3WnV5elo3YkZ2TDd4aTN3bzU2M1BY?=
+ =?utf-8?B?OU5vUmtsMUtKWUU5NElrbmpQL3lEa1NMcThZamw3NkRJN01weTMvVHduNVZJ?=
+ =?utf-8?B?VDNra2JXR2V5UzRWQWV0aHRpcTgxQUJtYW1nWlpmK0F6aDBoaGRYaG5CR2Ny?=
+ =?utf-8?B?T0UrR3h5Ti93TGVIaU9kei9JWGxqTnFtTGpoNXBnQTRzOXkrSXVOem4zNVdY?=
+ =?utf-8?B?ZlgxckIvQU1PeDlyWFNxVHRUbE93dUh4ekZsbmp2Wi9SOGxYbUZpOEorWVN2?=
+ =?utf-8?B?eWJuZnlpbklTVUd4dWNLOWYzZG4rNjBFMFpTS1pLb052WmtvazBERUZReVF1?=
+ =?utf-8?B?M1VtT3V0TEphdEhva3hyVk15Y2xsK3hKZ1kvNUptYnlHMWRSY0ZiK3hPRU9I?=
+ =?utf-8?B?Nkt4Z09uTkxBWk42UnlRL0R5M09SRk5aWEYxL1dwWDFOak9GNTF0b1RMWjZq?=
+ =?utf-8?B?NkhCOVhvQ084amU2U0V3bFZQUnlIcEdXNDZFNHJON0ZuTUVYWmR6RHEzeHNO?=
+ =?utf-8?B?Ui9RUDl4eEI5ZExaYmVZQjZ0aE1oTnZhdnBaNjVaNGlBSHRlM2U1QnVsMjZ6?=
+ =?utf-8?B?d3NzOFhWZTU2aTU2blVMSEZhd3JTYk1Fa1puTmIzS0FVb3N6OGZFUGZsVFgr?=
+ =?utf-8?B?VU9keW9JNkI2aEJpeHEzOWluRExKTnVQMituSDloRG92YldZWkpsZnFCUmtR?=
+ =?utf-8?B?UUdiWFRsMG1YZUp3MWpYdk5LdnlseVI2UEhNdXZpdDNkM3RaSi9rNHBQMFpt?=
+ =?utf-8?B?WmRHMUpuUGI2K1l0Y05KWWx0czdrakRNdk82K1NJNmtLaUhLbXFMdHJQVmRC?=
+ =?utf-8?B?YTRjWkQ2d1ZJa1FZN0JOa2JibjgwTTdNNW8rY29RdXZqNGpJM0NPNXlEMGdB?=
+ =?utf-8?B?TXFYR2pSU0NuVTRBa2NqUHlIcytacUx5MDBNVnY4VnN6dnphamFacGMvc0Fn?=
+ =?utf-8?Q?sdzvTE6R2hw=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(19092799006)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?UUpmQ0hUYUZXalJEdkZaL2gvcFBoVVdVeGVtWG50RmcvMWlWZ0liNzdaZXBh?=
+ =?utf-8?B?SWtTVEhhc1NjTm9ZdDZBL3B4LytBMUFSNyszNTRWenNrcG9VU2pMV25xdlo3?=
+ =?utf-8?B?NzF6bmNRT094RVlxaW1XckIzZUg1M2xxZE5MRnhIejdKekVXQ0R1SnlsSFV2?=
+ =?utf-8?B?Q0tyWFRlUUhlc1UvODFwb1phQ2YrNC81dTJQUWRSUllrc0xxSVNId2R3RCtL?=
+ =?utf-8?B?cVpzcDR4RVFTZUo5bE9EL2kzSTdOUy9vRzkwMzB1ZmZ3K2VXTXllOTd3VEJn?=
+ =?utf-8?B?bmxmSERPbUxFdks0a0NYeHdoZ3hLTmsvZFNWT3pKRms5U1BsUWpFcDVIMlZR?=
+ =?utf-8?B?WnhzWkpKWEhXZ09Zb1YvOERLbE1QMlgzekhLQnNEMkwwWlVvdnlYa2g2TmU2?=
+ =?utf-8?B?UlNxZnMwbE5aY25IcFlYcDZhYS9qYnpQcmpXZHN4bjlnTlRXVngvRG5Udndw?=
+ =?utf-8?B?Z0E0S1pzc1dFcEo2Y0YvN0FJWU4zOWc1QnlvZzZwVno1QjlZaHZDWitPc25v?=
+ =?utf-8?B?NXZNODdJa3pkcUlmRUxjdjhNMTBRS28xelYxdnVJdmdBblhPUnROSjVEUWg3?=
+ =?utf-8?B?cFRwQ29BZ2hIVzdkVk9CNUxaYlkxWjVtSlVEMzVud3ZKYWdUcVFsc0ZPSFg3?=
+ =?utf-8?B?Q2xDZGRmSVE3enBGUElQeFlZc2hTZkNINFh4N2t4NHY4empvOVdOV1ZjaDdE?=
+ =?utf-8?B?MXoxZCtYU3l3QXlKeXJmKzdaMVRLcDBYeG5SQlZJWUZYSnIxdko4L1VJTTB3?=
+ =?utf-8?B?eUp6NUgycVVjNGhDT0pvMllUM2YyREFuWHFaVjQ3aWt6NXRuOUNRdDA1MGJB?=
+ =?utf-8?B?T1F3di9VUUhkcTVEbEZUVVgxcUZrNWpwR3dBMnptaDNtZzNnK2NubStjRDdt?=
+ =?utf-8?B?R0FlRW5oY3pFZm9WMjdUT2hSeW05S092c2lybnkvQWM2UTZubExNTW9UU0w0?=
+ =?utf-8?B?TWFsMjFNcVJ4OElnVlkra3QwaUFpTkQ1RmJLR3Q1alMraVI3ckkrQXM1bng5?=
+ =?utf-8?B?cHQ2aHh3a3djU0g1NlJJeFlCb3IzSTJNWUFQRTJtRkZkLy9vTGUyQzF2NUh0?=
+ =?utf-8?B?Y2VoT0pYNXFKQmYzbVhacG1BUmZLNVJicllMdDBNMFplV0xlLzkxaTRWOUpO?=
+ =?utf-8?B?UENvbjFFYXlYSjU5bVVuZS9mV2hGNUNUQmo4Y3UwZ205MzI1dDZNc1oyRk8x?=
+ =?utf-8?B?N0YzbGxJaU1TK1hEVTRRM0dJTEZXbWJLSDdYb1gzQ2F2T1VTTjgvUVJhQmFj?=
+ =?utf-8?B?SHN5Y3VtU2NYeW83Q3l3L050eW1TYSt6c24yWmtZZ3JwZkNNbm15UHpzOXgr?=
+ =?utf-8?B?eENCOHF6WWdIRnF5bXZ6cVA5S3NYL1d5Y2JscGljM3o4YXpOYjJ6SE1vNndH?=
+ =?utf-8?B?bVRQWEhQakQ5cHRNZVIxRkpIaS80eGZYZHo5S2xHMUplK1Q3aG8zemtLamhL?=
+ =?utf-8?B?VjlLbW5xOFVsN1lUVEU4QnpKMmcxMXA2R0RMbnlYSmZJQjJDQ1hvZW5vU0FP?=
+ =?utf-8?B?UGx2WHAwelBMMENmQUVINFFORHJZZGVpU1dIWlBTL0kzU0huSDBVYThzbzN6?=
+ =?utf-8?B?K1l5UUxxbGd0U1p6SjJnb1BKS1I4dW5SUXFTSjVZbDVmUll2dnJuWE9aMGdt?=
+ =?utf-8?B?eldCUkpzK3RJdUczL2o1eXg2ZGFxUkJLcWtPVFdGS0FVZStrM1ROVDh3b3Vs?=
+ =?utf-8?B?VE1WemJzcVZlSkZIbDZ0MEtEeGZLQ0dtRkJld3ptbjN1blpUeHlIVEsyVHRs?=
+ =?utf-8?B?Um5RMUovNmNOQ0FSKy9hWWFtYW1VWHZpSTRlYklPRUozU1BrbHlWRjdHaWRN?=
+ =?utf-8?B?NkhCa0RWZlRRSGcyVWtRQm1vZk9DTldxL1pURlNSU3VmUmJEcHp4cTJIbEVU?=
+ =?utf-8?B?TDZTZ0w5ZTc3SDZVZis1dkYvQ25pMGVqSFBIVWwvaWxwZVlOaU5MSWdlR013?=
+ =?utf-8?B?NWhpcTFGNndkWk9UVUhkM3ZTNzFiL0tBRjdJRnNLUmpYcUdjLzdEQzZaeHJZ?=
+ =?utf-8?B?WmlqTDlrSmVFUjBnN1ZGRXBRMzhnOU1Vdm10SnA0R3loeGNzYytSL3VidDli?=
+ =?utf-8?B?UDJBRVRVWnVTeHp2OFB2d3pQd0VraHVacWh3RHN1OXcyVmVMb2RGV3NOa2VF?=
+ =?utf-8?Q?l+Ezc0NQDHuuSWrqNfJMPW4wX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71214515-ba06-444a-5c69-08dddbad9391
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 03:41:11.2371
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ojs2nPoBk6v5w8SNE0Am7kM+moi5bCZFPwMK3dn0705dJaOlS6f4z12vHIcXupE1pRglVFPjJCOgTh+mVQfraw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11435
 
-On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
->
-> MT8196 uses a HW voter for gate enable/disable control, with
-> set/clr/sta registers located in a separate regmap. Refactor
-> mtk_clk_register_gate() to take a struct mtk_gate instead of individual
-> parameters, avoiding the need to add three extra arguments to support
-> HW voter register offsets.
->
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+On 8/6/25 17:52, Liu Ying wrote:
+> devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
+> NULL pointer, so use IS_ERR() to check the returned pointer.
+> While at it, on failure, return ERR_CAST(dp) instead of
+> ERR_PTR(-ENOMEM) in order not to depend on devm_drm_bridge_alloc()
+> error code implementation.
+> 
+> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
->  drivers/clk/mediatek/clk-gate.c | 35 ++++++++++++---------------------
->  1 file changed, 13 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-g=
-ate.c
-> index 67d9e741c5e7..0375ccad4be3 100644
-> --- a/drivers/clk/mediatek/clk-gate.c
-> +++ b/drivers/clk/mediatek/clk-gate.c
-> @@ -152,12 +152,9 @@ const struct clk_ops mtk_clk_gate_ops_no_setclr_inv =
-=3D {
->  };
->  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_no_setclr_inv);
->
-> -static struct clk_hw *mtk_clk_register_gate(struct device *dev, const ch=
-ar *name,
-> -                                        const char *parent_name,
-> -                                        struct regmap *regmap, int set_o=
-fs,
-> -                                        int clr_ofs, int sta_ofs, u8 bit=
-,
-> -                                        const struct clk_ops *ops,
-> -                                        unsigned long flags)
-> +static struct clk_hw *mtk_clk_register_gate(struct device *dev,
-> +                                               const struct mtk_gate *ga=
-te,
-> +                                               struct regmap *regmap)
->  {
->         struct mtk_clk_gate *cg;
->         int ret;
-> @@ -167,17 +164,17 @@ static struct clk_hw *mtk_clk_register_gate(struct =
-device *dev, const char *name
->         if (!cg)
->                 return ERR_PTR(-ENOMEM);
->
-> -       init.name =3D name;
-> -       init.flags =3D flags | CLK_SET_RATE_PARENT;
-> -       init.parent_names =3D parent_name ? &parent_name : NULL;
-> -       init.num_parents =3D parent_name ? 1 : 0;
-> -       init.ops =3D ops;
-> +       init.name =3D gate->name;
-> +       init.flags =3D gate->flags | CLK_SET_RATE_PARENT;
-> +       init.parent_names =3D gate->parent_name ? &gate->parent_name : NU=
-LL;
-> +       init.num_parents =3D gate->parent_name ? 1 : 0;
-> +       init.ops =3D gate->ops;
->
->         cg->regmap =3D regmap;
-> -       cg->set_ofs =3D set_ofs;
-> -       cg->clr_ofs =3D clr_ofs;
-> -       cg->sta_ofs =3D sta_ofs;
-> -       cg->bit =3D bit;
-> +       cg->set_ofs =3D gate->regs->set_ofs;
-> +       cg->clr_ofs =3D gate->regs->clr_ofs;
-> +       cg->sta_ofs =3D gate->regs->sta_ofs;
-> +       cg->bit =3D gate->shift;
+> v2:
+> - Return ERR_CAST(dp) on failure.  (Luca)
+> 
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'd rather see |struct mtk_clk_gate| (the runtime data) gain a pointer
-to the static data |struct mtk_gate| instead of doing all the copying.
-This is just needless duplication.
+Applied to misc/kernel.git (drm-misc-fixes).
 
-ChenYu
-
->         cg->hw.init =3D &init;
->
-> @@ -228,13 +225,7 @@ int mtk_clk_register_gates(struct device *dev, struc=
-t device_node *node,
->                         continue;
->                 }
->
-> -               hw =3D mtk_clk_register_gate(dev, gate->name, gate->paren=
-t_name,
-> -                                           regmap,
-> -                                           gate->regs->set_ofs,
-> -                                           gate->regs->clr_ofs,
-> -                                           gate->regs->sta_ofs,
-> -                                           gate->shift, gate->ops,
-> -                                           gate->flags);
-> +               hw =3D mtk_clk_register_gate(dev, gate, regmap);
->
->                 if (IS_ERR(hw)) {
->                         pr_err("Failed to register clk %s: %pe\n", gate->=
-name,
-> --
-> 2.39.5
->
+-- 
+Regards,
+Liu Ying
 
