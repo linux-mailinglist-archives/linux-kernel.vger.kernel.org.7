@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-770810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F503B27F2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A54B27F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4448AE5E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD0EAC7F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912533002BA;
-	Fri, 15 Aug 2025 11:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48032882A1;
+	Fri, 15 Aug 2025 11:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="MIyfn7dr"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="APAZaaJ5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4111225A4F;
-	Fri, 15 Aug 2025 11:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E00283130;
+	Fri, 15 Aug 2025 11:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257394; cv=none; b=ldnIHNg+OfrZe3hdlhsV8H9yMrGD5UOaRYvfBLfePhPjPr6y8rFG99x7JwSeYZRIjABLWgncigyen8ZmAilG8gzmp05P1dCYjrpe/UsrHghzn63sriszK5ck9+iY09IDSpDzCJlrYW6gXRbZ5arrfPXci6HUZykon2cauU9NWkc=
+	t=1755257549; cv=none; b=n8NPl551thMZVjucVBu6R14RnFHPbL3l3isIWCKk4j04FYRR9HuMt+8VVJdTHsQAZOodXrPWYhpw6Ga6umrituIRrNrGetXQzuTRNqXdYOyFnRePBSXyzNtMSmuCtvEphRWgcu/UnDEmMojOmTCMjR/RqEdAP/PGSJ5eeZbKe0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257394; c=relaxed/simple;
-	bh=gI06Gz3ALf3dHDSvJ+NUQiHzyaRnSA/3F1NlwQM+LHs=;
+	s=arc-20240116; t=1755257549; c=relaxed/simple;
+	bh=2h1fMYeROE4yIGF+CgZnPkm/+lHpvohrDgo1Bzz9TFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqBbmzInpEJczFr9Hz7jpJlydVwlPUIkX9qmM0FFS2Psq7/MkyhQEf86JrC4JK+KFK/YOZFF3o0g9WgDE/6VbUQfX5MG8iALevdGU3TcIOBrFjVGCYFHbFS1POvg7Iw9x0FhNnDHT2W8yjZ3cfMkvJ/EsLwuyVUpMk42VxH8JEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=MIyfn7dr; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=gpGmTL9oaWZkJzI5RpIpiQ3peZ9wkoO5yOEMyS33WzU=; b=MIyfn7drCOtZB+Q+
-	ID96jCrka8HnkfzAgyC6thDNtJlN9X9jdar/cknzvjnUmMliIwQnPfEzj59ywi/MeEl/dHCEA/0OJ
-	ovsi0kSGtBWADnSapYYMsrRTE2wMQjXUrue6CF+bu6njSEyuuJcFLn3jM17P7eJ+JgqgxrBjFxWsr
-	JycoEkuBNyCcWng+h9ieNBF1AJCPhWbarvjnHQWob4DoXEGt3RaZgsJmCgtH/K8B71C3FIlw4MSnC
-	U2tRybIl44FUY2oZQXUWs7QpH00rcVoqScIXTdGLOFx3nvGvvWu92S4fD6ppmBfy1Uq2GyAxattr0
-	3evEWQDqPHMTZ5+JYg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1umscz-004AXS-2P;
-	Fri, 15 Aug 2025 11:29:45 +0000
-Date: Fri, 15 Aug 2025 11:29:45 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: arnd@arndb.de, lee@kernel.org, mchehab@kernel.org, lgirdwood@gmail.com,
-	perex@perex.cz, tiwai@suse.com, linux-media@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] Remove the wl1273 FM Radio
-Message-ID: <aJ8aKbW65eYvHZ-0@gallifrey>
-References: <20250625133258.78133-1-linux@treblig.org>
- <175520208626.152171.10554357200062278681.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5+BX8TAwNMnQbcR8bADa8niY9ZNsoNgHUq74WNpLDq/vmNU/YikeiwRUFQX3APE4OMnJhtu02EOwkijYJIgf2Vp39FtQ4jWcRGZc1eV5b6RoyWzCrK7w/dcsDTo+PzT8J3Tv2zXeMrG/i1TxTzUI9bOVcEzL0/6bZsML/Yzg+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=APAZaaJ5; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755257547; x=1786793547;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2h1fMYeROE4yIGF+CgZnPkm/+lHpvohrDgo1Bzz9TFk=;
+  b=APAZaaJ54WL/7bnb1qKWPOyrS30rC+jRveFvtjo79aNd8VrhuXrqMcFw
+   z25NMmjhThoSb5QkNNYvHe9MoDvv2jAI4zLLEVIqKjeyjq0K+Ir6deY2g
+   8idOwb1pgr6eashRxmOTH9vpu+X1F6YxdFAhMPuCBvl7YtSrMQYYctQYm
+   rusV1gi4Jy1cgRVyaAvBXiIhXbU/UzyUcX1KqH4QQn0OQQwOPxyJJszaC
+   dn/Fgieno9lNdEfUxcMIW7/CANCnfJceBbkWiaaI1UPv2hp9zNc/CkaBX
+   2rPDUj/8l2KMwZkPUjGVN3Ohbcz943QmVAfJ6kMsfoausaXD3yNbblJVn
+   w==;
+X-CSE-ConnectionGUID: aGDD8SLMSeevbnCxzywxMw==
+X-CSE-MsgGUID: 14UdNFFjSXKKKyAG1dtxCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="61211987"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="61211987"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 04:32:27 -0700
+X-CSE-ConnectionGUID: pufAPPvqSiyqv3iaBbtgAg==
+X-CSE-MsgGUID: ZdipE9jNR6KpldVQlQvDdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="197990603"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 15 Aug 2025 04:32:24 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umsfU-000Buu-2l;
+	Fri, 15 Aug 2025 11:32:20 +0000
+Date: Fri, 15 Aug 2025 19:31:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Peter Seiderer <ps.report@gmx.net>,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: pktgen: Use min() to simplify
+ pktgen_finalize_skb()
+Message-ID: <202508151939.AA9PxPv1-lkp@intel.com>
+References: <20250814172242.231633-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <175520208626.152171.10554357200062278681.b4-ty@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 11:28:35 up 109 days, 19:42,  1 user,  load average: 0.01, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20250814172242.231633-2-thorsten.blum@linux.dev>
 
-* Mark Brown (broonie@kernel.org) wrote:
-> On Wed, 25 Jun 2025 14:32:54 +0100, linux@treblig.org wrote:
-> > I noticed that the wl1273 radio had an unused symbol, but then noticed
-> > it is on Arnd's unused driver list:
-> >   https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
-> > 
-> > So, delete it.
-> > The components seem pretty separable, except for Kconfig dependencies.
-> > 
-> > [...]
-> 
-> Applied to
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Hi Thorsten,
 
-Thanks! I see that in next; so Lee can do 3/4-4/4 maybe in the following cycle
-or later in this one.
+kernel test robot noticed the following build errors:
 
-Dave
+[auto build test ERROR on net-next/main]
 
-> Thanks!
-> 
-> [2/4] ASoC: wl1273: Remove
->       commit: a46e95c81e3a28926ab1904d9f754fef8318074d
-> 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
-> 
-> Thanks,
-> Mark
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Thorsten-Blum/net-pktgen-Use-min-to-simplify-pktgen_finalize_skb/20250815-012951
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250814172242.231633-2-thorsten.blum%40linux.dev
+patch subject: [PATCH net-next] net: pktgen: Use min() to simplify pktgen_finalize_skb()
+config: arc-randconfig-002-20250815 (https://download.01.org/0day-ci/archive/20250815/202508151939.AA9PxPv1-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151939.AA9PxPv1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151939.AA9PxPv1-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   net/core/pktgen.c: In function 'pktgen_finalize_skb':
+>> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_853' declared with attribute error: min(datalen / frags, ((1UL) << 12)) signedness error
+     572 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                      ^
+   include/linux/compiler_types.h:553:4: note: in definition of macro '__compiletime_assert'
+     553 |    prefix ## suffix();    \
+         |    ^~~~~~
+   include/linux/compiler_types.h:572:2: note: in expansion of macro '_compiletime_assert'
+     572 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |  ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:93:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      93 |  BUILD_BUG_ON_MSG(!__types_ok(ux, uy),  \
+         |  ^~~~~~~~~~~~~~~~
+   include/linux/minmax.h:98:2: note: in expansion of macro '__careful_cmp_once'
+      98 |  __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+         |  ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:105:19: note: in expansion of macro '__careful_cmp'
+     105 | #define min(x, y) __careful_cmp(min, x, y)
+         |                   ^~~~~~~~~~~~~
+   net/core/pktgen.c:2845:14: note: in expansion of macro 'min'
+    2845 |   frag_len = min(datalen / frags, PAGE_SIZE);
+         |              ^~~
+
+
+vim +/__compiletime_assert_853 +572 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  558  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  559  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  560  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  561  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  562  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  563   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  564   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  565   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  566   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  567   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  568   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  569   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  570   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  571  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @572  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  573  
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
