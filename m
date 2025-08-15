@@ -1,69 +1,58 @@
-Return-Path: <linux-kernel+bounces-770847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C35B27F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E251CB27F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D81FEB632E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3931B64614
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB155304960;
-	Fri, 15 Aug 2025 11:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AC301469;
+	Fri, 15 Aug 2025 11:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pz2ke7K1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j25J8fVx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA62FCBE1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3624D287279;
 	Fri, 15 Aug 2025 11:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755258666; cv=none; b=pdunVbrezGR4DIkkZywB9sqOk0IgkJm0Id5a+neMvPnJVh2ST91bUNmJpd7Upg7bShQHXHuXyuh68fVMEUMPM7EvQEPOEIFOkJEiqcLixJGrZqAEtdxNVmUGLRHzKwiihSD94Pt7Jljuv5oveZqUiJmxj2oC8XCmY+imo0QYXwk=
+	t=1755258666; cv=none; b=fM0dOWlyX83uQFjVwebvarE3Xmv0W8KT8+EPhhLFybl0Xv0WRl7l38SVkOSaoE5753YS6INOzUzsCMH8poiaUt42IP9JLe9nrDqRaRtYQsCGxrOZ75n2puYkihSFmuoaoUmOxCTdcl7mP3BG2opLHuTVxjr1CVSydllOu75ec0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755258666; c=relaxed/simple;
-	bh=GYr8tmb4fF6RXpmQJmwNpnesZAm+FKFpIMMt22zUWek=;
+	bh=sYk4mJd+UWrLz9Ei9ZPyoYmT4cWG5qlsc0OeM9aNUz8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ERYhz0+qNFOg6NBblDKNFvbZNA2wg7WKefhktowoHqyA1DG8XTn88VwPIlKeqdVLcbJfN4OddWGIBJpWF26NlCznEmVlRlsnbLsKgYeZdvz2neoKr228iTZgBMDifxEgjKabgCt/XrGvdGBFrOq8HVTZsAbjDYCwbst9GBP+t0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pz2ke7K1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB17FC4CEF7;
+	 MIME-Version; b=lhxpKC5scaEXSkTj8S70lWffMla6KSuVx7+aq2QE/rsVrbWt+5BmMPUlUCjHgD7OtUFSNySmUBPFTnVwCreufRUND1ARDGDYtBrgJQe3kNtVBmkmIbNyWUuddMDwrFDbyjp0v0a/UTu1HvRzqLls1xJot0N/HLP7SfDxVuv7f9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j25J8fVx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D41E7C4CEF9;
 	Fri, 15 Aug 2025 11:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755258666;
-	bh=GYr8tmb4fF6RXpmQJmwNpnesZAm+FKFpIMMt22zUWek=;
+	s=k20201202; t=1755258665;
+	bh=sYk4mJd+UWrLz9Ei9ZPyoYmT4cWG5qlsc0OeM9aNUz8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pz2ke7K1JrytdVdkFRYd5y6b7sTYFT+c70cN4MoXzaSP/KAqidpInRrAdKsYMyAYd
-	 DYhcBdf4l5lcZetXKlZZaWKOM5cK3izEsxvQXJhldYV1Qez57Z0Q4f7upOXCfaaXYr
-	 hGzNOxn5SCaleubtPX9Qaj99SvfjNAB2oeQGmd0DQ4Tkzc0wrCVy9Wt9Lmkt4LUEVb
-	 lveu373kP/gmvjlqvFAOdI7UjxNt1XrhIfcM9psgmyDk16rxFdjvgHidZiFtnq84Od
-	 6FdPyNm0NtyfKilirzxuOEE8a+26fIVJWgPEqpb6d0TnPnmp5uLvGDWXBUMK4Q0F3x
-	 P4GkfLp+ND43g==
+	b=j25J8fVxjsK4GpVhTMfuFJSURqWFBKvVoxk1POR/DNfXU8Bz7X8i+spGhVPlG2++u
+	 v4KcXVzNMacLYDoeB4A4ARH4pRPnDjRfb98kB63zcO5ZTEeiG0Rhooz0OTPwDONYER
+	 NwuVGiy9q0HtUaaik6i+nJ3EV6G1aq5gKbDDbxk7vBMqXr3W8vs9vBxnRGKBswoEsV
+	 8PTUZ9FQYzlSsqdp8og5ilIGslKUu8mIdgYXmz0BMOswZzT4jueF7p5jUSjDdJ8kaF
+	 W31BQhwbKZYViO43q8C1/DOfn46xtq79nBjq+ZDx41gejJ7+ew4rnilHcDsHutTdK+
+	 POGfgiAm4+7uw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1umsxc-000000042oW-0RQD;
+	id 1umsxc-000000042oa-0YFn;
 	Fri, 15 Aug 2025 13:51:04 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <mchehab+huawei@kernel.org>,
-	Benno Lossin <mchehab+huawei@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <mchehab+huawei@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH 05/11] docs: Makefile: cleanup the logic by using sphinx-build-wrapper
-Date: Fri, 15 Aug 2025 13:50:33 +0200
-Message-ID: <3a62c847a812905f3a4c85f6b984d021ae88188d.1755258303.git.mchehab+huawei@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 06/11] docs: parallel-wrapper.sh: remove script
+Date: Fri, 15 Aug 2025 13:50:34 +0200
+Message-ID: <fe3bf7324d275ab1cb096ec792e4f8b34af7c2b6.1755258303.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755258303.git.mchehab+huawei@kernel.org>
 References: <cover.1755258303.git.mchehab+huawei@kernel.org>
@@ -76,184 +65,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Now that we have a sphinx-build-wrapper capable of handling
-all the needed step to build the supported build targets,
-cleanup the Makefile.
+The only usage of this script was docs Makefile. Now that
+it is using the new sphinx-build-wrapper, which has inside
+the code from parallel-wrapper.sh, we can drop this script.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/Makefile | 127 ++++++++++-------------------------------
- 1 file changed, 29 insertions(+), 98 deletions(-)
+ Documentation/sphinx/parallel-wrapper.sh | 33 ------------------------
+ 1 file changed, 33 deletions(-)
+ delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 2ed334971acd..4013286bef04 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -19,7 +19,6 @@ endif
- 
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
--SPHINXOPTS    =
- SPHINXDIRS    = .
- DOCS_THEME    =
- DOCS_CSS      =
-@@ -29,14 +28,14 @@ PAPER         =
- BUILDDIR      = $(obj)/output
- PDFLATEX      = xelatex
- LATEXOPTS     = -interaction=batchmode -no-shell-escape
-+BUILD_WRAPPER = $(srctree)/scripts/sphinx-build-wrapper
-+
-+PYTHONPYCACHEPREFIX ?= $(abspath $(BUILDDIR)/__pycache__)
- 
- # For denylisting "variable font" files
- # Can be overridden by setting as an env variable
- FONTS_CONF_DENY_VF ?= $(HOME)/deny-vf
- 
--ifeq ($(findstring 1, $(KBUILD_VERBOSE)),)
--SPHINXOPTS    += "-q"
--endif
- 
- # User-friendly check for sphinx-build
- HAVE_SPHINX := $(shell if which $(SPHINXBUILD) >/dev/null 2>&1; then echo 1; else echo 0; fi)
-@@ -51,62 +50,37 @@ ifeq ($(HAVE_SPHINX),0)
- 
- else # HAVE_SPHINX
- 
--# User-friendly check for pdflatex and latexmk
--HAVE_PDFLATEX := $(shell if which $(PDFLATEX) >/dev/null 2>&1; then echo 1; else echo 0; fi)
--HAVE_LATEXMK := $(shell if which latexmk >/dev/null 2>&1; then echo 1; else echo 0; fi)
-+# Common documentation targets
-+infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
-+	$(Q)@$(srctree)/scripts/sphinx-pre-install --version-check
-+	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
-+		--sphinxdirs="$(SPHINXDIRS)" \
-+		--conf=$(SPHINX_CONF) \
-+		--theme=$(DOCS_THEME) \
-+		--css=$(DOCS_CSS) \
-+		--paper=$(PAPER)
- 
--ifeq ($(HAVE_LATEXMK),1)
--	PDFLATEX := latexmk -$(PDFLATEX)
--endif #HAVE_LATEXMK
+diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphinx/parallel-wrapper.sh
+deleted file mode 100644
+index e54c44ce117d..000000000000
+--- a/Documentation/sphinx/parallel-wrapper.sh
++++ /dev/null
+@@ -1,33 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0+
+-#
+-# Figure out if we should follow a specific parallelism from the make
+-# environment (as exported by scripts/jobserver-exec), or fall back to
+-# the "auto" parallelism when "-jN" is not specified at the top-level
+-# "make" invocation.
 -
--# Internal variables.
--PAPEROPT_a4     = -D latex_elements.papersize=a4paper
--PAPEROPT_letter = -D latex_elements.papersize=letterpaper
--ALLSPHINXOPTS   = -D kerneldoc_srctree=$(srctree) -D kerneldoc_bin=$(KERNELDOC)
--ALLSPHINXOPTS   += $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
--ifneq ($(wildcard $(srctree)/.config),)
--ifeq ($(CONFIG_RUST),y)
--	# Let Sphinx know we will include rustdoc
--	ALLSPHINXOPTS   +=  -t rustdoc
--endif
-+# Special handling for pdfdocs
-+ifeq ($(shell which $(PDFLATEX) >/dev/null 2>&1; echo $$?),0)
-+pdfdocs: DENY_VF = XDG_CONFIG_HOME=$(FONTS_CONF_DENY_VF)
-+else
-+pdfdocs:
-+	$(warning The '$(PDFLATEX)' command was not found. Make sure you have it installed and in PATH to produce PDF output.)
-+	@echo "  SKIP    Sphinx $@ target."
- endif
--# the i18n builder cannot share the environment and doctrees with the others
--I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+-sphinx="$1"
+-shift || true
 -
--# commands; the 'cmd' from scripts/Kbuild.include is not *loopable*
--loop_cmd = $(echo-cmd) $(cmd_$(1)) || exit;
--
--# $2 sphinx builder e.g. "html"
--# $3 name of the build subfolder / e.g. "userspace-api/media", used as:
--#    * dest folder relative to $(BUILDDIR) and
--#    * cache folder relative to $(BUILDDIR)/.doctrees
--# $4 dest subfolder e.g. "man" for man pages at userspace-api/media/man
--# $5 reST source folder relative to $(src),
--#    e.g. "userspace-api/media" for the linux-tv book-set at ./Documentation/userspace-api/media
--
--PYTHONPYCACHEPREFIX ?= $(abspath $(BUILDDIR)/__pycache__)
- 
--quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
--      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/userspace-api/media $2 && \
--	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
--	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(src)/$5/$(SPHINX_CONF)) \
--	$(PYTHON3) $(srctree)/scripts/jobserver-exec \
--	$(CONFIG_SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \
--	$(SPHINXBUILD) \
--	-b $2 \
--	-c $(abspath $(src)) \
--	-d $(abspath $(BUILDDIR)/.doctrees/$3) \
--	-D version=$(KERNELVERSION) -D release=$(KERNELRELEASE) \
--	$(ALLSPHINXOPTS) \
--	$(abspath $(src)/$5) \
--	$(abspath $(BUILDDIR)/$3/$4) && \
--	if [ "x$(DOCS_CSS)" != "x" ]; then \
--		cp $(if $(patsubst /%,,$(DOCS_CSS)),$(abspath $(srctree)/$(DOCS_CSS)),$(DOCS_CSS)) $(BUILDDIR)/$3/_static/; \
+-parallel="$PARALLELISM"
+-if [ -z "$parallel" ] ; then
+-	# If no parallelism is specified at the top-level make, then
+-	# fall back to the expected "-jauto" mode that the "htmldocs"
+-	# target has had.
+-	auto=$(perl -e 'open IN,"'"$sphinx"' --version 2>&1 |";
+-			while (<IN>) {
+-				if (m/([\d\.]+)/) {
+-					print "auto" if ($1 >= "1.7")
+-				}
+-			}
+-			close IN')
+-	if [ -n "$auto" ] ; then
+-		parallel="$auto"
 -	fi
-+infodocs: texinfodocs
- 
-+# HTML main logic is identical to other targets. However, if rust is enabled,
-+# an extra step at the end is required to generate rustdoc.
- htmldocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var)))
-+	$(Q)@$(srctree)/scripts/sphinx-pre-install --version-check
-+	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
-+		--sphinxdirs="$(SPHINXDIRS)" \
-+		--conf=$(SPHINX_CONF) \
-+		--theme=$(DOCS_THEME) \
-+		--css=$(DOCS_CSS) \
-+		--paper=$(PAPER)
- 
- # If Rust support is available and .config exists, add rustdoc generated contents.
- # If there are any, the errors from this make rustdoc will be displayed but
-@@ -118,49 +92,6 @@ ifeq ($(CONFIG_RUST),y)
- endif
- endif
- 
--texinfodocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,texinfo,$(var),texinfo,$(var)))
+-fi
+-# Only if some parallelism has been determined do we add the -jN option.
+-if [ -n "$parallel" ] ; then
+-	parallel="-j$parallel"
+-fi
 -
--# Note: the 'info' Make target is generated by sphinx itself when
--# running the texinfodocs target define above.
--infodocs: texinfodocs
--	$(MAKE) -C $(BUILDDIR)/texinfo info
--
--linkcheckdocs:
--	@$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,linkcheck,$(var),,$(var)))
--
--latexdocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,latex,$(var),latex,$(var)))
--
--ifeq ($(HAVE_PDFLATEX),0)
--
--pdfdocs:
--	$(warning The '$(PDFLATEX)' command was not found. Make sure you have it installed and in PATH to produce PDF output.)
--	@echo "  SKIP    Sphinx $@ target."
--
--else # HAVE_PDFLATEX
--
--pdfdocs: DENY_VF = XDG_CONFIG_HOME=$(FONTS_CONF_DENY_VF)
--pdfdocs: latexdocs
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	$(foreach var,$(SPHINXDIRS), \
--	   $(MAKE) PDFLATEX="$(PDFLATEX)" LATEXOPTS="$(LATEXOPTS)" $(DENY_VF) -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/scripts/check-variable-fonts.sh || exit; \
--	   mkdir -p $(BUILDDIR)/$(var)/pdf; \
--	   mv $(subst .tex,.pdf,$(wildcard $(BUILDDIR)/$(var)/latex/*.tex)) $(BUILDDIR)/$(var)/pdf/; \
--	)
--
--endif # HAVE_PDFLATEX
--
--epubdocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,epub,$(var),epub,$(var)))
--
--xmldocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
--	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,xml,$(var),xml,$(var)))
--
- endif # HAVE_SPHINX
- 
- # The following targets are independent of HAVE_SPHINX, and the rules should
+-exec "$sphinx" $parallel "$@"
 -- 
 2.50.1
 
