@@ -1,218 +1,179 @@
-Return-Path: <linux-kernel+bounces-770784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356A4B27EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D291AB27EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA88C1D02525
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:12:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D197B74FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD763002BB;
-	Fri, 15 Aug 2025 11:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SJpm/oAw"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C879728643D;
+	Fri, 15 Aug 2025 11:13:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523C02798E1;
-	Fri, 15 Aug 2025 11:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755256303; cv=fail; b=e6k49U7lGYOUdkEjtFMC7lcbu8YwWrSWYUPY79emP50ZRdzhsbWMAeBBTpSL3Uz2LLor8AgUsmXZ8KM/HKdsMZwv1u85WN79e26rlFxbvzfCVg3+ioxPjq/NQdarxYjMyom1p7vTki/1NzhPCDzVknVHpTbDvh1bNOXnTG/0bZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755256303; c=relaxed/simple;
-	bh=yihez3eyo8+/NwGFKZ5gLLxi/zMjR0x/lNYUEmBb/RY=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=EzTIkSQ9YLVwMdcABnO/J0tv8AmkIlLeGfRsPdRJ1cIEljReNm47RzQxryMs1F8cPI4EprzIFiLQR6g8qEnGUZKJVpqX7SoXBlZf6Zux0y1uCgpF3Vq5ewDDn9NGSwUR0Ibu6i88ZcUoR6oB7xRXRuGs2Jp/Uy7e1bJ936VXDdo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SJpm/oAw; arc=fail smtp.client-ip=40.107.94.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bXOc6YFVVBwmfB5O6KVWCNQgbtlbc6H6jFR1qFI4Ba94GhxhbgpU+6nFETTtnIb0SP9OtjJWlThSXciwVzfnXa4yLtIPWAn8oTEGsyd5k68PJGzJWaGIO6NTplXn4KgLdjidAVrkNlX8XcMCfgaDzXxTuSLubza88+a08YBLTR7JBarINFsT1KusV8Pya7cXZoe3wT9TNkA2YpTlukl99MjDYRDf04/8pidgHx8vY/aeE76hUhT0THvcd3RamJe5qWe8O39yyQmXDObCsvPBTHofbjvMKMylYgSolEvM2hghRZJVy3Yjz5JwmeWkZMaX8CIx60RUhmCg57qGmAgskA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yihez3eyo8+/NwGFKZ5gLLxi/zMjR0x/lNYUEmBb/RY=;
- b=LL3NDhw0jMFkkwgjGbusPnvhSlwqfgh5I4eebb1Vf21V1lITFCvAP8FL79j6oATzTiQ3q2q2liVgbP0zw8dNc8vZwrQSus8Yhgtk+N8ETQzOQe5CfYTGTc1MJEwib/p/Y8JyQzxvFt3G3eKS22kG3JG2E2tv10kGm2xsWQgcoVPBPB2iMzmvBrPpFtiuilRCa5ryoEdXeJIkkH6ea00q4h2WxqlEKLtnVJF4h3RlD3S7DGYSn1bLV2ETAcTuYc7R8oIPXDjG5iEn9ggBD/N5pjwl7UcfUkaHAIIwY8GD/472hqCeKShHG0Pe/Ehuz+9zb+ECfOTvy6JLVvR8ataYvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yihez3eyo8+/NwGFKZ5gLLxi/zMjR0x/lNYUEmBb/RY=;
- b=SJpm/oAwW5HimXMfwBC+4DYDCkfH/B9Nl0BBtORLl8hRAbq1aGFtQ4HC5ernja3xtHfgWsTXmS4EpTylu8yKd212mXbJU1p9jMBXnhamzSVPMP6ztWLt4LFSCoKzX1y2/twJLL4O2VqHkM6zBVV2S319hoYlRwe40+hMxIzPXS+Vjs5sA6F8i8LqNOv53FcFUMD22n3Ggs0VvNe+4w/5ZQQDVYOhMZO8PPKc7337YNdL/2hhuXekbV5KSS5o6iyLe9RoZras7f/rn5pMT8EVf1lbazCofWklaV4ZxES80Mb6rH7gSx9fJBovd/IoI6sM9L2ggmm6fbMwtBIkErl5Gw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA0PR12MB8714.namprd12.prod.outlook.com (2603:10b6:208:488::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Fri, 15 Aug
- 2025 11:11:39 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 11:11:39 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 15 Aug 2025 20:11:34 +0900
-Message-Id: <DC2YFDSUSTT8.1K6K6M8OY7LUY@nvidia.com>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 02/19] gpu: nova-core: replace `kernel::c_str!` with
- C-Strings
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "FUJITA Tomonori"
- <fujita.tomonori@gmail.com>, "Andrew Lunn" <andrew@lunn.ch>, "Heiner
- Kallweit" <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, "Eric Dumazet"
- <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni"
- <pabeni@redhat.com>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Breno Leitao" <leitao@debian.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Dave Ertman"
- <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
- Romanovsky" <leon@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "Brendan Higgins" <brendan.higgins@linux.dev>,
- "David Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Jens
- Axboe" <axboe@kernel.dk>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>, "Liam
- Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
- <20250813-core-cstr-cstrings-v2-2-00be80fc541b@gmail.com>
-In-Reply-To: <20250813-core-cstr-cstrings-v2-2-00be80fc541b@gmail.com>
-X-ClientProxiedBy: TYCP301CA0063.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::8) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63903192D97;
+	Fri, 15 Aug 2025 11:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755256406; cv=none; b=gS/XOvqAKtjluAZ5GFnbjCLOz+X0OJy7WgdUf1upHtLCEPfX7TbVhKFR09lKrlvLCorjSiQPoCBktlofD2oerXrHStCOnFpcUMqrfGdMfOfY3ZgOCbNZLi7xWu/Y2aX4EToiRa9CkjFqaFXM4GXwterOzab9+Qs7jzTS2yZcOhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755256406; c=relaxed/simple;
+	bh=kZa8XaiNRy3Y5ddm4zbiVPAGgDC6F4xh5I/4z3Z0IQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MIxYv3vcgbKRC7kPUGai3uHQICAeCEVWr9LymVPFTRJS7wxy3x6ed4h8g+bXQBBz5QoBvBG6NyOVoRbgH5901Ux8Y/d5luP0YnHKUkxkp+XeSbE8XnriGLOOogGwhwQqNtF1zYxffpRRZy/jl8kw8zVZ+uHJY0gDB6vPXVEbeYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B8BC4CEEB;
+	Fri, 15 Aug 2025 11:13:21 +0000 (UTC)
+Date: Fri, 15 Aug 2025 12:13:19 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/2] kasan/hw-tags: introduce kasan.store_only option
+Message-ID: <aJ8WTyRJVznC9v4K@arm.com>
+References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
+ <20250813175335.3980268-2-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA0PR12MB8714:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b9acb7e-1242-47f4-bb80-08dddbec811c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|7416014|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cENnNHhCeUJGZGlnZmhUeGl3N2xyV1M4d25vb1haempJNTFZWmsyZlJsQW5w?=
- =?utf-8?B?R3ZnK2x1Yy93aHM3c0RtMnRCV1ZhWVdUMnhCT005ZE54TGFIQi82c3RmUVNz?=
- =?utf-8?B?Rm1Nd1pab0pMZFNvR1pDRnRENXp2YWo3V0RyYzZ5SVBCQlByL3FGdUZ3TVdM?=
- =?utf-8?B?SkRRdlNXclJqb0p6M1FpK2xIZ0crMjNBcjhnS2V0SmMrenlCK2U3YnF3M1dH?=
- =?utf-8?B?R0tKRzZHYzE2aVowUmkwTG0xZWNrL05QQnlWRzZKWGFyQVlSbjN2K01nenN4?=
- =?utf-8?B?SXZ5OXNacWpYbmhPdlczZzdGckIydzNwQVVXS043K0VxQ0NhRHJicWZyTkJr?=
- =?utf-8?B?T0xscndveFhGZzcxVXNRaUZFbmxaTVhrZjNxRWlRdmlBcDVKYytKT3lTZW9R?=
- =?utf-8?B?Wlp4dGFPUTJUNHRreHFZYnlPdFBKUU4wSG40U1dxSHFWWVdLc3JrVFV4Wm9I?=
- =?utf-8?B?bnAyU3F0WVdYc001MVp1aUpUbVVyTDBvN2txNDJ6YjU2WFFuSVZoVGpKd2l2?=
- =?utf-8?B?Z2VkWm1xNEExUnh3V1Bkam5XNTVEamY1RlJwM2UrWDExaEZ4QUt2MTNtZG16?=
- =?utf-8?B?cW5TMlkxL01xR3JqNTF3ZEVZS201bUNkcGgvYzlWMnF5ZUp1V3ZFelZ2WkNU?=
- =?utf-8?B?QUFxR0xqM2w1SHArellIZXVhaWJmTE5uTHczN25WVmJGOVcvWGJRSEdaRUJj?=
- =?utf-8?B?UkdzV0FuQW5EQnc1YzJVUjdlQWE0TlVNV1NJbHFBNEF1RmFLMHUvN0xhYm9L?=
- =?utf-8?B?T3BjYTVadFNZK29OUmNGdkFZb3FmM0hYSEhMYkpyWkRGSC91b0dOSGFBSWor?=
- =?utf-8?B?emdHTzdzNlMzRUFBTW1kb0tVdXdXTlBlMTNURktFR3B6cHVTUXhub3BSU09M?=
- =?utf-8?B?djc2RVRzQW05N1Z1TmhSbHdINTAxY0szQVJRVmt1dzhieUJoay9sRzN2eTdx?=
- =?utf-8?B?ajk0MWpBRkhva2lTQkljVFRVZFgrYUYwQnl2elNsM1BJS2R5UHk4cm5pM25k?=
- =?utf-8?B?MEprSXZ2VU55bHd5bGpBTnZsNkkwNmdJSHhSOWl1ak9OZnA1R3lUM2pkVzgr?=
- =?utf-8?B?R25xY2VkbFp5VDFQY3loeWY4a3M3NjV2RUV1WjZIT3NHbXZtaVA2RUJ4SHpH?=
- =?utf-8?B?dXNUTzNsai9TM0liZkppNzJzVjNYcGk3Y0Rmc3kvd2hsT2twLzNLR0hiMzdo?=
- =?utf-8?B?OVBwdXFxU2lYZXIyTjdxbFdKV3BzdW93MFFoSlN2d1hYZnF3c2pZbTlzTWJP?=
- =?utf-8?B?UDNJSGF5L1YzaHJwZU1pTEhKZXlVTWlaUGZMcC9rRFBOaXQyWXVaOXFrTnJC?=
- =?utf-8?B?bXVhYS93TjlrZGh4VkFwd2VBOHlFL01sNVNZQkx6dnlsTlA1cEI1TDNoa0Y0?=
- =?utf-8?B?cDRCS3ZHVzFudGx3R3NSeUg5YkxOc3g2Q0dVUFAvNXQzaVRONkh0b3hWTFhY?=
- =?utf-8?B?N0VFajJRSGJIUTFaYWJTS0V5Mmt6L2EyWDY3WXJRelVlVnlTelFHeGJub3Fn?=
- =?utf-8?B?MVVGUWNmQWJFTndQT2tZVEprYTdMUXlIUUJoTTdmQXltYk1rRldDTTZDVUFK?=
- =?utf-8?B?QjFuVmVyYVk3Qm5MR1FtWTRHa2JBYlVURzlKWFQ5ZkdKL2MyNUVVNmd3ZVNN?=
- =?utf-8?B?SVB0Vlk1ZmNtRkRwOGZQYmMvZFk4aUhEQ3E2M0RyWncwa0haV2F6ZmxrdVoz?=
- =?utf-8?B?aGFPZ2hzUFVacEVPbTZRdUE5N2l6TTR6SkJhVmh6TzNpQUtUQVZUOExZcm1E?=
- =?utf-8?B?SEVpT2RPaVNkdDQ1cndxVDM2N2pMdk9la1l4c3VldWFJME9BZStKTVZ2S3Bz?=
- =?utf-8?B?TXVEWnJUK3dxT3hNdlpKQjJZYVJkRkNIT2xFYWNybG9mbWZuRWtGaUhBQUFq?=
- =?utf-8?B?dFlpLzFQUUVWMzBVaWhnVnAwV0FvbHVNL1Z4MEY3S24rZmNHZDVxRk10eGxh?=
- =?utf-8?B?U2tQeUpxWTFQeXE4RmNtdnlnN0d5d1VzVkFpOHZvdFJjZWpnMHQxdDZIL2Z0?=
- =?utf-8?B?KytGWE0zdUpRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(7416014)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TWpLUG9kMjExaG1tNlNkNGFIdVkwaVlIRCtQWkMyeTdUTXNyVUUvN01UTVlH?=
- =?utf-8?B?Y0NWdXk0cVladXpUL2V3aThIYXhPVHNpdlpjd3NYSEIzd2NNbGZrSERRZFJt?=
- =?utf-8?B?VVg5Rjg2ZlpZc2tDZjltSzFtWnYybG1reFU0ajNGZUtuSUdldWZ0TGpSa2VC?=
- =?utf-8?B?QTJMa2lxYTRxSktpdkxYVW5wdmFFaDgwREFKYkd4RnlmOGZRampCWXR3VFhM?=
- =?utf-8?B?U21VcnR3bFhJWVphOGtsUW43akdWYnRQOGZqVlZmUFM1UGdza1BxRy9NMHRE?=
- =?utf-8?B?WUxDVTZtcmVBbzFpTUdISlZKdkFvTDJ5NkJFSEQrbHhNY2tYaXNERXBKb3JG?=
- =?utf-8?B?cFc1RUQrOHVUNCtOdkNKZ1VBenJqcWhjaktvRVpxcm84eFl0R09IUW1sTmt4?=
- =?utf-8?B?TTV4M2lIUWlpeUI3TW1hdDJBYzZyUDFic2RsVU5KOWJ3TUNwL1RzU3oyRU02?=
- =?utf-8?B?akRKYUtVQjNnQUtNbG5WbEM3STE4U01DOVpVY0hPUW9oaDRtVjJicFVoVWY3?=
- =?utf-8?B?aWRid0J6bDFPRDJjNXlJMXc1RFdXdjdTQmZBZVNQekdpK2wvZ25LOXp5UE1l?=
- =?utf-8?B?WEFjZjdEd1ZPUmFLVGhEaU54TDJiRXE0UjQ0UGJvVnBQQldickJKMTNTNDlE?=
- =?utf-8?B?V3RIcW5hWklXWVBsNytMdDJ1V1MzK0Y1Mld1c3BwaXp5UTdKS05nVklDRFVO?=
- =?utf-8?B?R1JhR3VkNjNSRmZURDA3TW5BSDFNZTIwVG5sS0NhNGI1TGZYUU1PNGFhMjFY?=
- =?utf-8?B?TGhkc05tTXJFN0dNQ2tnNXkyQ0h0VnYzNWo3OXVzeklxVlZkK0Q2aDgrM3pq?=
- =?utf-8?B?UGlqQlMwUHV3SjEzVXJYNVpPSzl1MTF3dFdyS2VxdVJuV0hSUzlRTy9aVTlj?=
- =?utf-8?B?QjZrZVhTQmtFMlEzUGdOMWJ5bGpZdk40NXZWcjEydG03aHRVdExGZkRnQUNW?=
- =?utf-8?B?eVR0K2FsdkJKL1ZIUGxYay9XVUZHaGdFNWd6eEZ4Qm5hR2pkbGp5SXVxOExz?=
- =?utf-8?B?OEFkbHZoN05zTW1vVHF4UUdBRWZiVXhoSC9vczJySUh6cWNTK0hiNU9RdWVn?=
- =?utf-8?B?UEhkZEcyR3dyQUl4OGtZQXBFbVRCNXVCR3grbFBLNS9nUGYyZTdvMWZnajVn?=
- =?utf-8?B?M0Nidzd3YWVta0s0UTN0YzlPVk5RNmYzdVcwd09vckdEWWN4TlkyMlBRVDl6?=
- =?utf-8?B?ZU9hMFpoVjRzS0IyaS9jdlFtc0NtTStuTHY2bWpidFlFamZXK2xvTVFDNlZp?=
- =?utf-8?B?VEVFcHJrRWwwSkJ4MWpZM2cxZWFPNkQ5Ty9rOFBteUlmK1YzYTc2aDdDeDRN?=
- =?utf-8?B?RldTZm5Qb2ZnRU9vclFLQStMdVI2Tm1aTXpKeWRzQ3NHVUlCbXZjVFIvT2J3?=
- =?utf-8?B?S0h2R0xoMUphcW1zZ0QwRWlFd3N2Q2xEV3paeTJpaTRFYVNOanVzbWhBc1NF?=
- =?utf-8?B?QW0xRmVZdEM4YXpTcVlHNEdrYlBDMmxKeHFIMjkzQWpTQS9QSlArVHZRRGRX?=
- =?utf-8?B?OWpmQ0M3U0RsNUw3Tk1xRUJzS2paTFMyK0xXZmFSK2c2M0dNSmY0VXg4UnQw?=
- =?utf-8?B?bzNIY284TDhKM3hrU09PMWlqSGtqak5xbkVXMDRlUHR0dUkxT1o4RmdoNUlY?=
- =?utf-8?B?V1N3K1A0SG1YL3JLeDVxVUJqZmI3RWlONURtZzdUZzY3MHEwL2Rsei9lUVYv?=
- =?utf-8?B?Q2dweTI2a0c3N05VM3poamd3Q2cxdTI1T01VY3ZaOEpKK1V0a1ZEQitVeFh0?=
- =?utf-8?B?dENCK2tPcTlBWFV2OUIyN0xoYWdqM05BRlJwRUp3ZjRaeG5ManRjQnh0Q0Vi?=
- =?utf-8?B?WVhlQUYzV24rT1BvMjRPRUtTWnBETmFDSXZ2K2RNVEd0b1FEbittQjBUUU5u?=
- =?utf-8?B?OHVhVXNhNHZEeGpoOVJWWDFkTVVWbVl6YnRqK2JEOThMM0IzUjdTU2JGa1lR?=
- =?utf-8?B?TGdhNlVjNTNnMnBnQkZ0VWJUKzk2L3JjcE1iM3JFUGFrcFVGWGprUldzU2dZ?=
- =?utf-8?B?RHBLVlNZMzBHU25nam5DczJtVUErbUhvb2lDZyt0d25WcmlKeGlsay84TXBG?=
- =?utf-8?B?SjZzTTJlcEN2VkEwWWNqY3cyR2JQMFJlMWJSZGYwcFlmanRQMm5GakxCRXNC?=
- =?utf-8?B?cUFkb3k4M0hHV0JRc3BJdnhSSmQwM0tEYnduNVcxK2ptVkRsam0zVHlRMEZw?=
- =?utf-8?Q?ZPpeq9nNj6326kp6nBQnhx+QgxF4GbyDhJgQ1KUUzt8G?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9acb7e-1242-47f4-bb80-08dddbec811c
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 11:11:39.5847
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZbHFvGyCRGmg7MGMx8njWWHRnixiLERfGlLNUvVmcVitUSt1bIk8IuWxsipxZGuPK7bMMw1wU693kys8/inQmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8714
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813175335.3980268-2-yeoreum.yun@arm.com>
 
-On Thu Aug 14, 2025 at 12:59 AM JST, Tamir Duberstein wrote:
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Wed, Aug 13, 2025 at 06:53:34PM +0100, Yeoreum Yun wrote:
+> diff --git a/arch/arm64/include/asm/mte-kasan.h b/arch/arm64/include/asm/mte-kasan.h
+> index 2e98028c1965..3e1cc341d47a 100644
+> --- a/arch/arm64/include/asm/mte-kasan.h
+> +++ b/arch/arm64/include/asm/mte-kasan.h
+> @@ -200,6 +200,7 @@ static inline void mte_set_mem_tag_range(void *addr, size_t size, u8 tag,
+>  void mte_enable_kernel_sync(void);
+>  void mte_enable_kernel_async(void);
+>  void mte_enable_kernel_asymm(void);
+> +int mte_enable_kernel_store_only(void);
+>  
+>  #else /* CONFIG_ARM64_MTE */
+>  
+> @@ -251,6 +252,11 @@ static inline void mte_enable_kernel_asymm(void)
+>  {
+>  }
+>  
+> +static inline int mte_enable_kenrel_store_only(void)
+				^^^^^^
+This won't build with MTE disabled (check spelling).
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> +{
+> +	return -EINVAL;
+> +}
+> +
+>  #endif /* CONFIG_ARM64_MTE */
+>  
+>  #endif /* __ASSEMBLY__ */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 9ad065f15f1d..7b724fcf20a7 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -2404,6 +2404,11 @@ static void cpu_enable_mte(struct arm64_cpu_capabilities const *cap)
+>  
+>  	kasan_init_hw_tags_cpu();
+>  }
+> +
+> +static void cpu_enable_mte_store_only(struct arm64_cpu_capabilities const *cap)
+> +{
+> +	kasan_late_init_hw_tags_cpu();
+> +}
+>  #endif /* CONFIG_ARM64_MTE */
+>  
+>  static void user_feature_fixup(void)
+> @@ -2922,6 +2927,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  		.capability = ARM64_MTE_STORE_ONLY,
+>  		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>  		.matches = has_cpuid_feature,
+> +		.cpu_enable = cpu_enable_mte_store_only,
+
+I don't think we should add this, see below.
+
+>  		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTESTOREONLY, IMP)
+>  	},
+>  #endif /* CONFIG_ARM64_MTE */
+> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+> index e5e773844889..8eb1f66f2ccd 100644
+> --- a/arch/arm64/kernel/mte.c
+> +++ b/arch/arm64/kernel/mte.c
+> @@ -157,6 +157,20 @@ void mte_enable_kernel_asymm(void)
+>  		mte_enable_kernel_sync();
+>  	}
+>  }
+> +
+> +int mte_enable_kernel_store_only(void)
+> +{
+> +	if (!cpus_have_cap(ARM64_MTE_STORE_ONLY))
+> +		return -EINVAL;
+> +
+> +	sysreg_clear_set(sctlr_el1, SCTLR_EL1_TCSO_MASK,
+> +			 SYS_FIELD_PREP(SCTLR_EL1, TCSO, 1));
+> +	isb();
+> +
+> +	pr_info_once("MTE: enabled stonly mode at EL1\n");
+> +
+> +	return 0;
+> +}
+>  #endif
+
+If we do something like mte_enable_kernel_asymm(), that one doesn't
+return any error, just fall back to the default mode.
+
+> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+> index 9a6927394b54..c2f90c06076e 100644
+> --- a/mm/kasan/hw_tags.c
+> +++ b/mm/kasan/hw_tags.c
+> @@ -219,6 +246,20 @@ void kasan_init_hw_tags_cpu(void)
+>  	kasan_enable_hw_tags();
+>  }
+>  
+> +/*
+> + * kasan_late_init_hw_tags_cpu_post() is called for each CPU after
+> + * all cpus are bring-up at boot.
+
+Nit: s/bring-up/brought up/
+
+> + * Not marked as __init as a CPU can be hot-plugged after boot.
+> + */
+> +void kasan_late_init_hw_tags_cpu(void)
+> +{
+> +	/*
+> +	 * Enable stonly mode only when explicitly requested through the command line.
+> +	 * If system doesn't support, kasan checks all operation.
+> +	 */
+> +	kasan_enable_store_only();
+> +}
+
+There's nothing late about this. We have kasan_init_hw_tags_cpu()
+already and I'd rather have it all handled via this function. It's not
+that different from how we added asymmetric support, though store-only
+is complementary to the sync vs async checking.
+
+Like we do in mte_enable_kernel_asymm(), if the feature is not available
+just fall back to checking both reads and writes in the chosen
+async/sync/asymm way. You can add some pr_info() to inform the user of
+the chosen kasan mode. It's really mostly an performance choice.
+
+-- 
+Catalin
 
