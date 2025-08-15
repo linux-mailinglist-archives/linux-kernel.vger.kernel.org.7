@@ -1,64 +1,40 @@
-Return-Path: <linux-kernel+bounces-770068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C810CB2766A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:58:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B17B27673
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D03600704
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:58:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD885567475
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028CF29D298;
-	Fri, 15 Aug 2025 02:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D218029B8C6;
+	Fri, 15 Aug 2025 03:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D35Eohqg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CbGPxtlS"
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C881A0BF1;
-	Fri, 15 Aug 2025 02:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17AE189BB0;
+	Fri, 15 Aug 2025 03:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755226710; cv=none; b=XHWFbqwOYFCqruh7sWYxPwjDqPYoJ8xd5EPOw7Uj7Bx8fqXZqeKJ7+nh94EDih7qfERKhA4WAFVNjjBQB9YlDy/LOrBFV6JDeMsJe5fa7NgHP0GBqoNVHPnXSan94rdbv/wMTWfbV1+eksty8RZ3Eq7Q422fUaJlg+tZZi5B/90=
+	t=1755227089; cv=none; b=m6L6KZp+ilGDC1Slc/kYopmLwq95KVtM5EQGT7CFpI3sB77iQmllwiG815qgMdv1pkf9WWTjLjp+CoXSw0RGOA1ruLXH1irRFhvYAl6jPIOrEWpovBY/n0STyO+szTbTOxGXsrB3wIFHYTno94IhdQCWZJMsa5A5nw6nziaTbx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755226710; c=relaxed/simple;
-	bh=ZoHCRo69UbHgHx5mAQdVdvvPlidj+UaNVfMUMcDCleg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OwVenmE9IrnoE7HpEokJeT5XBHNXAHaCVMLRhujwNLGEbh7WxDzWfjg1W0+WQj7AqO+aehh7SYCqVnXGmn0ip8hmRhCZ4Lr4J9S4vrC9LUjeDW2pkaP0IooooB9MdJMcrwdVv6fhMnmeSnrAM9aiDqvywutxlRH0GPNw8rVrmPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D35Eohqg; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755226708; x=1786762708;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=ZoHCRo69UbHgHx5mAQdVdvvPlidj+UaNVfMUMcDCleg=;
-  b=D35EohqgYVXl13FX5gpH42JGNcrcu6jUDHfmyBV+yRTgZPVSNDcoshvX
-   Su5R3lfVVP2f+PTcr6cFBpzoINSzXoUa5uj7CH/SYxM77phyj/+Nr2uYm
-   HGu8+Sja6FHTB7dKYRjRTSLQ21d+ym1RjdeE06V3O7/20wbjTptB00mcK
-   xgpCwHiobhD6mmnUfey3xvxBLWSsE5XkGSbOzV2CHx8Vy3PE2ffhROiZl
-   VrdQGLSfducR9jkHMYGcmGODVimc0AhN3ERhXgOesBEVThgJ1m1KdauQS
-   sJYmgTkcXbGnwGqyUlmEj9VQS96F0sG526Ay7ciOW4O+kQYxLdWHjvyDn
-   Q==;
-X-CSE-ConnectionGUID: D+BdQh7YScCzHybbncs/oA==
-X-CSE-MsgGUID: 8ide1veTR2WjK5p6WXiwXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="80132903"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="80132903"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:58:27 -0700
-X-CSE-ConnectionGUID: I56/f9bIRuyvq90j8cNzCA==
-X-CSE-MsgGUID: 8pwU93maQr605Wmrss5oBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166827050"
-Received: from hmao3-mobl1.ccr.corp.intel.com (HELO [10.238.0.213]) ([10.238.0.213])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:58:24 -0700
-Message-ID: <aee6539f-528e-46c7-98c6-e740e4c30a5f@intel.com>
-Date: Fri, 15 Aug 2025 10:58:22 +0800
+	s=arc-20240116; t=1755227089; c=relaxed/simple;
+	bh=nnlZY7uW14ujVJ+hApXPEl7ncrr/jP4pdhuBEXApWs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K0Yy0CWzt/GwlAea9jSfOO6ztq+Zqb/7COiVTyClwmkOgik0DhuJN6hFhHQkRttQRfCaUxH0u6pi/V6ZPkX6bDJy85Dfie4twyAjApq61lM5Cvr0sideSeJgED9OXGqAzYxdFXuMlmx5hi9Mg+K/rk+BaV4tqo0XkD4+mfjHqZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CbGPxtlS; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1f749d277;
+	Fri, 15 Aug 2025 10:59:31 +0800 (GMT+08:00)
+Message-ID: <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+Date: Fri, 15 Aug 2025 10:59:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,93 +42,201 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][v2] x86/kvm: Prefer native qspinlock for dedicated vCPUs
- irrespective of PV_UNHALT
-To: lirongqing <lirongqing@baidu.com>, seanjc@google.com,
- pbonzini@redhat.com, vkuznets@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250722110005.4988-1-lirongqing@baidu.com>
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+ <20250814104753.195255-1-damon.ding@rock-chips.com>
+ <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+ <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
 Content-Language: en-US
-From: "Guo, Wangyang" <wangyang.guo@intel.com>
-In-Reply-To: <20250722110005.4988-1-lirongqing@baidu.com>
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98abab119c03a3kunm1448aade49cd3b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0NOGFZMTE5DH0hLGEtOSR5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=CbGPxtlSAL/bz4Zd0Ffltqa0Et/5QfhcDj9ONLF/N0BH5Nd3FmkMlOM/fCYPP+WBERcgKBR2GT0GvbeEuF7VcEpbgbJ7lCVd6UWPEqJYJfLy9NxLPr6VwgWWd7sgGngPT67y3E/PUMauppDgp/23XAPPqK27RCVKhmw8BHpFn64=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=dg6E2ecDLCPyC2BxxmXmYEeUBWon1a9PjvZIHATCs4k=;
+	h=date:mime-version:subject:message-id:from;
 
-On 7/22/2025 7:00 PM, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
-> 
-> The commit b2798ba0b876 ("KVM: X86: Choose qspinlock when dedicated
-> physical CPUs are available") states that when PV_DEDICATED=1
-> (vCPU has dedicated pCPU), qspinlock should be preferred regardless of
-> PV_UNHALT.  However, the current implementation doesn't reflect this: when
-> PV_UNHALT=0, we still use virt_spin_lock() even with dedicated pCPUs.
-> 
-> This is suboptimal because:
-> 1. Native qspinlocks should outperform virt_spin_lock() for dedicated
->     vCPUs irrespective of HALT exiting
-> 2. virt_spin_lock() should only be preferred when vCPUs may be preempted
->     (non-dedicated case)
-> 
-> So reorder the PV spinlock checks to:
-> 1. First handle dedicated pCPU case (disable virt_spin_lock_key)
-> 2. Second check single CPU, and nopvspin configuration
-> 3. Only then check PV_UNHALT support
-> 
-> This ensures we always use native qspinlock for dedicated vCPUs, delivering
-> pretty performance gains at high contention levels.
-> 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> 
-> diff with v1: rewrite the changelog
-> 
->   arch/x86/kernel/kvm.c | 20 ++++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 921c1c7..9cda79f 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -1073,16 +1073,6 @@ static void kvm_wait(u8 *ptr, u8 val)
->   void __init kvm_spinlock_init(void)
->   {
->   	/*
-> -	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
-> -	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
-> -	 * preferred over native qspinlock when vCPU is preempted.
-> -	 */
-> -	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
-> -		pr_info("PV spinlocks disabled, no host support\n");
-> -		return;
-> -	}
-> -
-> -	/*
->   	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
->   	 * are available.
->   	 */
-> @@ -1101,6 +1091,16 @@ void __init kvm_spinlock_init(void)
->   		goto out;
->   	}
->   
-> +	/*
-> +	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
-> +	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
-> +	 * preferred over native qspinlock when vCPU is preempted.
-> +	 */
-> +	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
-> +		pr_info("PV spinlocks disabled, no host support\n");
-> +		return;
-> +	}
-> +
->   	pr_info("PV spinlocks enabled\n");
->   
->   	__pv_init_lock_hash();
+Hi Marek,
 
-For non-overcommit VM, we may add `-overcommit cpu-pm=on` options to 
-qemu-kvm and let guest to handle idle by itself and reduce the latency. 
-Current kernel will fallback to virt_spin_lock, even kvm-hint-dedicated 
-is provided. With this patch, it can fix this problem and use mcs queue 
-spinlock for better performance.
+On 2025/8/15 5:16, Marek Szyprowski wrote:
+> 
+> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>> On 14.08.2025 12:47, Damon Ding wrote:
+>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
+>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>> PATCH 13 is to apply the panel_bridge helper.
+>>
+>> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig,
+>> so it causes build break:
+>>
+>> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
+>> `drm_bridge_connector_init'
+>> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>>
+>> After adding this dependency, the Exynos DP driver stops working. On
+>> Samsung Snow Chromebook I observed following issue:
+>>
+>> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
+>> following panel or bridge (-16)
+>> [    4.543428] exynos-drm exynos-drm: failed to bind
+>> 145b0000.dp-controller (ops exynos_dp_ops): -16
+>> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+>> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
+>> exynos-dp failed with error -16
+>>
+>> I will investigate details later in the evening.
+> 
+> The failure is caused by trying to add plat_data->next_bridge twice
+> (from exynos_dp's .attach callback, and from analogix' ->bind callback).
+> 
+> 
+> Best regards
 
-Tested-by: Wangyang Guo <wangyang.guo@intel.com>
+I see. The bridge attachment for the next bridge was not well thought 
+out. It may be better to move panel_bridge addition a little forward and 
+remove next_bridge attachment on the Analogix side. Then, the Rockchip 
+side and Exynos side can do their own next_bridge attachment in 
+&analogix_dp_plat_data.attach() as they want.
+
+Could you please help test the following modifications(they have been 
+tested on my RK3588S EVB1 Board) on the Samsung Snow Chromebook? ;-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
+b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 0529bfb02884..8a9ce1f31678 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1573,6 +1573,15 @@ int analogix_dp_bind(struct analogix_dp_device 
+*dp, struct drm_device *drm_dev)
+                 return ret;
+         }
+
++       if (dp->plat_data->panel) {
++               dp->plat_data->next_bridge = 
+devm_drm_panel_bridge_add(dp->dev,
++ 
+dp->plat_data->panel);
++               if (IS_ERR(dp->plat_data->next_bridge)) {
++                       ret = PTR_ERR(bridge);
++                       goto err_unregister_aux;
++               }
++       }
++
+         bridge->ops = DRM_BRIDGE_OP_DETECT |
+                       DRM_BRIDGE_OP_EDID |
+                       DRM_BRIDGE_OP_MODES;
+@@ -1588,22 +1597,6 @@ int analogix_dp_bind(struct analogix_dp_device 
+*dp, struct drm_device *drm_dev)
+                 goto err_unregister_aux;
+         }
+
+-       if (dp->plat_data->panel) {
+-               dp->plat_data->next_bridge = 
+devm_drm_panel_bridge_add(dp->dev,
+- 
+dp->plat_data->panel);
+-               if (IS_ERR(dp->plat_data->next_bridge)) {
+-                       ret = PTR_ERR(bridge);
+-                       goto err_unregister_aux;
+-               }
+-       }
+-
+-       ret = drm_bridge_attach(dp->encoder, dp->plat_data->next_bridge, 
+bridge,
+-                               DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+-       if (ret) {
+-               dev_err(dp->dev, "failed to attach following panel or 
+bridge (%d)\n", ret);
+-               goto err_unregister_aux;
+-       }
+-
+         return 0;
+
+  err_unregister_aux:
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c 
+b/drivers/gpu/drm/exynos/exynos_dp.c
+index 80ba700d2964..d0422f940249 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -104,7 +104,7 @@ static int exynos_dp_bridge_attach(struct 
+analogix_dp_plat_data *plat_data,
+         /* Pre-empt DP connector creation if there's a bridge */
+         if (plat_data->next_bridge) {
+                 ret = drm_bridge_attach(&dp->encoder, 
+plat_data->next_bridge, bridge,
+-                                       0);
++                                       DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+                 if (ret)
+                         return ret;
+         }
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c 
+b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 0862b09a8be2..dfd32a79b94f 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -164,6 +164,24 @@ static int rockchip_dp_powerdown(struct 
+analogix_dp_plat_data *plat_data)
+         return 0;
+  }
+
++static int rockchip_dp_attach(struct analogix_dp_plat_data *plat_data,
++                                    struct drm_bridge *bridge)
++{
++       struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
++       int ret;
++
++       if (plat_data->next_bridge) {
++               ret = drm_bridge_attach(&dp->encoder.encoder, 
+plat_data->next_bridge, bridge,
++                                       DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++               if (ret) {
++                       dev_err(dp->dev, "failed to attach following 
+panel or bridge (%d)\n", ret);
++                       return ret;
++               }
++       }
++
++       return 0;
++}
++
+  static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+                                  struct drm_connector *connector)
+  {
+@@ -478,6 +496,7 @@ static int rockchip_dp_probe(struct platform_device 
+*pdev)
+         dp->plat_data.dev_type = dp->data->chip_type;
+         dp->plat_data.power_on = rockchip_dp_poweron;
+         dp->plat_data.power_off = rockchip_dp_powerdown;
++       dp->plat_data.attach = rockchip_dp_attach;
+         dp->plat_data.get_modes = rockchip_dp_get_modes;
+         dp->plat_data.ops = &rockchip_dp_component_ops;
+
+
+Best regards,
+Damon
+
 
