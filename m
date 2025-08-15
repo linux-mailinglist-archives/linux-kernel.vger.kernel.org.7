@@ -1,90 +1,81 @@
-Return-Path: <linux-kernel+bounces-771353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C52B285EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94995B285ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154505E7134
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:43:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F7F5E7711
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43469253932;
-	Fri, 15 Aug 2025 18:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAF8244664;
+	Fri, 15 Aug 2025 18:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GTeAPr8g"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WSGj1qdF"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20593317714;
-	Fri, 15 Aug 2025 18:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37353176E2
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755283370; cv=none; b=Z5vFhXgnjwYtxhfloKjpCsjGu5UJTrFR1aW6M3CZcrDRvZiUMejqTMSmb8cmGTElruk64rNuLTTzwYyhLIgk91TT2+tcwwlxBDEx2h13mSe/ABkZcgZ7uIB2g5MRFhioAmBHyrOot3WogQBm9OZdlv58VDml7hQKSmhTeEiSr1E=
+	t=1755283415; cv=none; b=nabeOE92bBQJEgcXkL0lN24ejqX44RFY/I1hWcCF/Sx0pZK5neRQLS655MdhjNRicGaeRfx3qRPbF5Glz7p3dhc2udEaFGWI7nskT+yTz+1t5gFZcws7S5c/pYRbPBncFqqkIMv6X8KyoKgd2hU9eznHeXkbr8X/GeeaHJ/2tHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755283370; c=relaxed/simple;
-	bh=BgbitYwqALEt/YYM1kuQOWc5srz0g9nkyyToP19KYgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TET8T36KaOFNtEgEDd9Mku1tvRrOJsYCjHv2YbacakLPwKRqdQFBPS0euz4iT+vndvmPl4pJupD4mcrroZ4kQqfGR+sw2AmiznMRejoXyIicAx4/IZDWl/cHC8o28C16HHpC7AHqdn0hzERMWMJ+2huhNrhC48efu1yQCZFXUhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GTeAPr8g; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NFEat3zirg8C2/2oLxu6X/ZdyOC05vJhFKTQnZhl0cg=; b=GTeAPr8gn7YNZKVQbSxG+bF1QA
-	CtBH83Hd9XObTUvCNk45wDj5dQNcibQ7ra2s4ipaVsEQqMj7iguXuby5CTgruIH7T60llxk4xKsQ5
-	+Nh+55C3QG53q0Kaj2eiMYJmqtcEyE5S+tvSg6m7oWR4pTBfDE7tNVHxQKRDffL+EBxI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umzNj-004qvW-Bo; Fri, 15 Aug 2025 20:42:27 +0200
-Date: Fri, 15 Aug 2025 20:42:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Po-Yu Chuang <ratbert@faraday-tech.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	taoren@meta.com, bmc-sw2@aspeedtech.com
-Subject: Re: [net-next v2 0/4] Add AST2600 RGMII delay into ftgmac100
-Message-ID: <a9ef3c51-fe35-4949-a041-81af59314522@lunn.ch>
-References: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1755283415; c=relaxed/simple;
+	bh=flsyiKxUh1QJGZG+IWRoapG2HI3Ae9rWebBZjAboWqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TwKu1M5D3qHIBM5pSPqHHHGJMwdu91REiieP3DJBSfPm3vrrXWN2SYK6TFuz1TT38nwtpaaOkSPK2lljbfy8CdTXQnHHIgtQm+v73jTnVRzek0ZJIOhP4hq7Ciogp+0ViA4CC5GmeLTMxTs0uf43FsFhAVbwzZjMfh0ahRy9zrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WSGj1qdF; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755283410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=flsyiKxUh1QJGZG+IWRoapG2HI3Ae9rWebBZjAboWqM=;
+	b=WSGj1qdFdt6XMJ6aEMN+XRFSirVkjZ3TePNBUTpTk1X3ow7p1z9BkNDRMKp3S4EHbe2rlE
+	rABR15iV8X82IXKQk9qAr6nY/OCtU7lAeknrUW/3kesrgcYfogey+Krmz8NV586/3JAfw3
+	rDXX7YtWEWHO11VuFAlHbbJb5ijF/Ic=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Regression caused by commit 4687fdbb805a ("mm/filemap: Support
+ VM_HUGEPAGE for file mappings")
+Date: Fri, 15 Aug 2025 11:43:25 -0700
+Message-ID: <87plcw8lyq.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 13, 2025 at 02:32:57PM +0800, Jacky Chou wrote:
-> This patch series adds support for configuring RGMII internal delays for the 
-> Aspeed AST2600 FTGMAC100 Ethernet MACs.
+Hello!
 
-So i think you are doing things in the wrong order. You first need to
-sort out the mess of most, if not all, AST2600 have the wrong
-phy-mode, because the RGMII delay configuration is hidden, and set
-wrongly.
+The commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file
+mappings") causes a regression in our production for containers
+which are running short on memory. In some cases they are getting
+stuck for hours in a vicious reclaim cycle. Reverting this commit
+fixes the problem.
 
-Please fix that first.
+As I understand, the intention of the commit is to allocate large folios
+whenever possible, and the idea is to ignore device-specific readahead
+settings and the mmap_miss logic to achieve that, which makes total
+sense.
 
-Then consider how you can add fine tuning of the delays. Maybe that
-needs to wait for AST2700.
+However under a heavy memory pressure there must be a mechanism to
+revert to order-0 folios, otherwise the memory pressure is inevitable
+increased. Maybe mmap_miss heuristics should still be applied? Any other
+ideas how to fix it?
 
-	Andrew
+Also, a side question: I wonder if it makes sense to allocate 1-2
+PMD-sized folios if mapping_large_folio_support() is not there?
+
+Thanks!
 
