@@ -1,72 +1,167 @@
-Return-Path: <linux-kernel+bounces-769790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671B5B273BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF03B273BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E27170CE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B72B178C90
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1E1DA23;
-	Fri, 15 Aug 2025 00:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143AE27455;
+	Fri, 15 Aug 2025 00:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ns1BwATl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3ahrOL6o"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED88288D6;
-	Fri, 15 Aug 2025 00:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9143A41
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217408; cv=none; b=YJADIz6baOZBElYUWYsUauTYe3FzM2BZlfTtKf4PLBB9EgB2UOt4WJmWvklc9hxlNy9x0MY7UFxKq3j3nJ392igIe/vdMvSacqVByVZTFdKtqkiYgmUMvuN1lREKgM2NT13Us0eX2lfefnhx/mUpVnrveo5jA86XtKIik7VsVj8=
+	t=1755217546; cv=none; b=TGVKUSN2lWAgT8hh/p6XpCoUphGvVbSh8X2YIx4PrFyDP144TFb0pC72/W+9naAnBK2nPCYLIJwyrQD59frSHvAqE/XUK+YEeFHC0//JyuN0Qreznd07HbyqCWbhkuk6C5Mz1wyhMspNejkWMMRCnTXC35mPV05eNO4LJ4aBqtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217408; c=relaxed/simple;
-	bh=WVeyY9LgABja4jiKaiRJMSLw7UOd2yNQ9bR/C2MNRBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QX9GQ6datGwggij8qgGJ2rNz28pxmwLjrGyABjzgxu4ZZdK1ntAc1NQKTgOPnGWi/konSHMbQcBbY5o/E15XnQiVKWDizApfDMjNDl4j/KkTo5nt5GrZrY6wejxkCxs4C2od19SV5tLtxFZd9eQdKMk8flCp8jR0PnXnKl07CNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ns1BwATl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB95C4CEED;
-	Fri, 15 Aug 2025 00:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755217408;
-	bh=WVeyY9LgABja4jiKaiRJMSLw7UOd2yNQ9bR/C2MNRBc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ns1BwATliYk8zlxHu+Mpic3f+m/k4ZC1yYBzzF7R0ZbYjLZ63/mTNapyqJr3sLH41
-	 XdPJ8UmDyISFQg3zQiCadCHbQrflFSa1MMwn+e8ql16yuXd6v20WqHfQGrJYo0i0eL
-	 Us8QAfQcsmA0XjE7kmc4vx7ZPDOmPzcfloC12EYk1zEgnhuGYIiQrZdcy/t39F4nrH
-	 Cfn/5H1b4OplxHNh62v3jMyKGgzik5X7K2OPN5NxxuOvrA1KRXeVDQPHRYsK2Wp/cO
-	 8b54hIpPVtcLrFpaI7d9P80TY91mLk2KoR/gO5syki04d+48P039ghV0n527TRnx9S
-	 A7qGWIS40l67A==
-Date: Thu, 14 Aug 2025 17:23:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Mike Galbraith <efault@gmx.de>, paulmck@kernel.org,
- asml.silence@gmail.com, LKML <linux-kernel@vger.kernel.org>,
- netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole:  HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <20250814172326.18cf2d72@kernel.org>
-In-Reply-To: <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
-References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
-	<oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+	s=arc-20240116; t=1755217546; c=relaxed/simple;
+	bh=JKI720vt7QEil30Jfj6xnkXSugJaBGfS5qsvBzopfBs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LFLFnWUrGj3pSm3YgVqj0svYU3D1+tEg5UrWXp2axta1oy8vBVMHX+ilWemX0cxe8nI7zDHuMTn8tCi59hLZWkZiwisZy0fxr2r3rjrX+Eef/HHjP1xMkT9SotUQw3nC+5lyn/DI9cDwXWNhIwXeK1ncvs6yoTVukoKCJaO/+rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3ahrOL6o; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47173ae5b9so1015017a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755217544; x=1755822344; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WZJJF6wTF+BZ7erSZwQoxWh2GZlvEJtjYuPdirsln1Y=;
+        b=3ahrOL6otjAnYf3vv6cV9OXiqQTOm/HrUrmsEAdf9qCK9IgDjp0KOaRTAQtbi/1Zqv
+         FjKtd0y4tPtqy4JHk8/05bhCmGdxVQBYAnO0dDuqxpGSjnR2G8/WMgUtTqnh2nuC9iJC
+         tbjrvTRcmkx2yFIruh+7D4Vj+9uuu5HEbyJqugNq3Y4uz1mkegjCGu+rxz536k9nw25u
+         ft8ksVK6+3OARYZwtSKFSRLfQOJ/SieUeBGh5ywAl3xLii0RUZ+xLImdW6mgs3CnwJyU
+         g+bkyDmIrVOLXkVGsvEEBOSFeynAhOfP402oImajyxPKkBInsd3KWJXRXXpDlw9cFQ4E
+         cHlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755217544; x=1755822344;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZJJF6wTF+BZ7erSZwQoxWh2GZlvEJtjYuPdirsln1Y=;
+        b=xPZmyyAZei1XzV+DPiRKoK9146Mrju+t+8jw8sibcpD8D05PzSPMm4CcwkOyGfQqXr
+         7MC3M53yveFhH17dJR8IGiw6yEJHZsMyRTlllY1OKpAnFVqFrRreR3QHHZEk9TjIxfRP
+         1V1yWlQ317dM4lTNzrBId/XvdYOlW+g2OAOB7ACk0AJYuVl5T5S6ZaGIeEx26XknmZLU
+         ATgph49zXHq1WMDLmKj/kiBRyGFSoF1OjtDHDhGWGmKSpH0cBfhhaX2TajE1QkJohyB8
+         T0cU/NtYgP2E83JWa89QN7WF+npSLJpghoQs77t87fZSEly1zfVjm4kNM+Yk0Zb372kw
+         4Ieg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxO3ztdvu2PsQEFXSDMDU8+O5oBHwiN+x4jNfSBeF1OHggYW47GwYQjLjgwXjIm04nx9I2UZq13JMfLJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0I1gfnteqgglvrRHlDOUJ9sNKv6zlKCJSkkzmslHMD2pORRtR
+	xRHx031LGq0RDN7TUlqcpExNwg2qymdLt1WEQNehSoRszuUo4EtK+eeQeslhbpdAItGsG7d4fB9
+	7A84TKQ==
+X-Google-Smtp-Source: AGHT+IGnXGGMRhOfG2atnAVCAAEYr2mCt7hhg4jO3kMfdxsXlK8f1c0VzuyQn6W5n2cG3fj5Bn5EGFZtl8E=
+X-Received: from plwp11.prod.google.com ([2002:a17:903:248b:b0:244:661d:4a19])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1aac:b0:240:cd3e:d860
+ with SMTP id d9443c01a7336-2446d927d92mr1841645ad.41.1755217544123; Thu, 14
+ Aug 2025 17:25:44 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 14 Aug 2025 17:25:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250815002540.2375664-1-seanjc@google.com>
+Subject: [PATCH 6.6.y 00/20] KVM: x86: Backports for 6.6.y
+From: Sean Christopherson <seanjc@google.com>
+To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sasha Levin <sashal@kernel.org>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 14 Aug 2025 03:16:11 -0700 Breno Leitao wrote:
->  2.2) netpoll 				// net poll will call the network subsystem to send the packet
->  2.3) lock(&fq->lock);			// Try to get the lock while the lock was already held
+Same spiel as the 6.1.y collection...
 
-Where does netpoll take fq->lock ?
+This is a collection of backports for patches that were Cc'd to stable,
+but failed to apply, along with their dependencies.
 
-We started hitting this a lot in the CI as well, lockdep must have
-gotten more sensitive in 6.17. Last I checked lockdep didn't understand
-that we manually test for nesting with netif_local_xmit_active().
+Note, Sasha already posted[1][2] these (and I acked them):
+
+  KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported
+  KVM: x86/pmu: Gate all "unimplemented MSR" prints on report_ignored_msrs
+  KVM: VMX: Extract checking of guest's DEBUGCTL into helper
+  KVM: nVMX: Check vmcs12->guest_ia32_debugctl on nested VM-Enter
+  KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter APIs
+
+I'm including them here to hopefully make life easier for y'all, and because
+the order they are presented here is the preferred ordering, i.e. should be
+the same ordering as the original upstream patches.
+
+But, if you end up grabbing Sasha's patches first, it's not a big deal as the
+only true dependencies is that the DEBUGCTL.RTM_DEBUG patch needs to land
+before "Check vmcs12->guest_ia32_debugctl on nested VM-Enter".
+
+Many of the patches to get to the last patch (the DEBUGCTLMSR_FREEZE_IN_SMM
+fix) are dependencies that arguably shouldn't be backported to LTS kernels.
+I opted to do the backports because none of the patches are scary (if it was
+1-3 dependency patches instead of 8 I wouldn't hesitate), and there's a decent
+chance they'll be dependencies for future fixes.
+
+[1] https://lore.kernel.org/all/20250813183728.2070321-1-sashal@kernel.org
+[2] https://lore.kernel.org/all/20250814131146.2093579-1-sashal@kernel.org
+
+Chao Gao (1):
+  KVM: nVMX: Defer SVI update to vmcs01 on EOI when L2 is active w/o VID
+
+Manuel Andreas (1):
+  KVM: x86/hyper-v: Skip non-canonical addresses during PV TLB flush
+
+Maxim Levitsky (3):
+  KVM: nVMX: Check vmcs12->guest_ia32_debugctl on nested VM-Enter
+  KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter APIs
+  KVM: VMX: Preserve host's DEBUGCTLMSR_FREEZE_IN_SMM while running the
+    guest
+
+Sean Christopherson (15):
+  KVM: SVM: Set RFLAGS.IF=1 in C code, to get VMRUN out of the STI
+    shadow
+  KVM: x86: Plumb in the vCPU to kvm_x86_ops.hwapic_isr_update()
+  KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
+  KVM: x86: Snapshot the host's DEBUGCTL in common x86
+  KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs
+  KVM: x86: Plumb "force_immediate_exit" into kvm_entry() tracepoint
+  KVM: VMX: Re-enter guest in fastpath for "spurious" preemption timer
+    exits
+  KVM: VMX: Handle forced exit due to preemption timer in fastpath
+  KVM: x86: Move handling of is_guest_mode() into fastpath exit handlers
+  KVM: VMX: Handle KVM-induced preemption timer exits in fastpath for L2
+  KVM: x86: Fully defer to vendor code to decide how to force immediate
+    exit
+  KVM: x86: Convert vcpu_run()'s immediate exit param into a generic
+    bitmap
+  KVM: x86: Drop kvm_x86_ops.set_dr6() in favor of a new KVM_RUN flag
+  KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported
+  KVM: VMX: Extract checking of guest's DEBUGCTL into helper
+
+ arch/x86/include/asm/kvm-x86-ops.h |   2 -
+ arch/x86/include/asm/kvm_host.h    |  22 ++--
+ arch/x86/include/asm/msr-index.h   |   1 +
+ arch/x86/kvm/hyperv.c              |   3 +
+ arch/x86/kvm/lapic.c               |  19 +++-
+ arch/x86/kvm/lapic.h               |   1 +
+ arch/x86/kvm/svm/svm.c             |  42 +++++---
+ arch/x86/kvm/svm/vmenter.S         |   9 +-
+ arch/x86/kvm/trace.h               |   9 +-
+ arch/x86/kvm/vmx/nested.c          |  26 ++++-
+ arch/x86/kvm/vmx/pmu_intel.c       |   8 +-
+ arch/x86/kvm/vmx/vmx.c             | 164 +++++++++++++++++++----------
+ arch/x86/kvm/vmx/vmx.h             |  31 +++++-
+ arch/x86/kvm/x86.c                 |  46 +++++---
+ 14 files changed, 265 insertions(+), 118 deletions(-)
+
+
+base-commit: 3a8ababb8b6a0ced2be230b60b6e3ddbd8d67014
+-- 
+2.51.0.rc1.163.g2494970778-goog
+
 
