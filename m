@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-771196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBDDB28405
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:42:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D4DB2840D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76171163D41
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A34C1CC3A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315D530F81F;
-	Fri, 15 Aug 2025 16:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585E13101B9;
+	Fri, 15 Aug 2025 16:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVHlx27Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Usb42rLs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909DC30F814
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CB53101AA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276007; cv=none; b=QaRSYEas6X0wScMDujoPSjwPHBzZIQek0yeCFDXJB04CwaAaeMYFRWUvKzI3tc7bZMYkijqjq3tM2MyYe1FGJy/s1s+hL4Kf/UOIY0B6H/5MH/4TbbYgYDZ69sGQxxBFeRZgBaJL7LpRo7rLMIkrwqtliq1ierlbzR8py8T6T9E=
+	t=1755276008; cv=none; b=mOkQvzRnh5WnLAR1C/JRpxxfhEi6TlXPHmHar1LPCAi95lznhn/od2l7MkjPeGxwh1nQd91DBIXrOkqUz//4l61pAoouIyDDqCm1BP4UfjXmzHFi+rKtyCRmw2oEhRhcxIa3hTIKj2cQ+Af/KldQs5nnxkub/f6FDs0UKL1TV7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276007; c=relaxed/simple;
-	bh=S1ZmvEXjwv258ofLF72c0v+Zz594gSNk95FiMJ1gzP8=;
+	s=arc-20240116; t=1755276008; c=relaxed/simple;
+	bh=RhBMzittFhmG7ktz9MBDQLEthMJkvOD/tT2dKiafvtM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Y1EdupBItlggG4HtWQZ54GjNMhuJMnBu6YgZGyxQkVlNHYkg1QeetVVqlPyQMmi6exI88aRXdSz2eYU7sUyuOwf5lu9J5swTwHf+rGrz8059ska+ng+RvMWtpk5lQuzmGnoh1qyKozKX5cusb60Ja517ixuxXQ3QLBSjjyNYpCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVHlx27Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26736C4CEF7;
-	Fri, 15 Aug 2025 16:40:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=GgMISCOrj5f25vhK0aA2CFofPSWupVzLPesWoEBkPRVL013RaU7j5/HzsH/C760pFOWHZCpLR0TUr2sLreiLEuwBy/EgMcSUQQcom39+8Js8EFxTDQ+12OIm0zUzoaoksXeGX/MgjjpJUV69Gmuq+cDW0vsE6UMWy+gews+aWu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Usb42rLs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C532C4CEEB;
+	Fri, 15 Aug 2025 16:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755276007;
-	bh=S1ZmvEXjwv258ofLF72c0v+Zz594gSNk95FiMJ1gzP8=;
+	s=k20201202; t=1755276008;
+	bh=RhBMzittFhmG7ktz9MBDQLEthMJkvOD/tT2dKiafvtM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=oVHlx27YHSwXBrpYAcHK3BykupW5vDbkDkVI7BNOc3OCslrC9cKrVlYc29Sh2bpqi
-	 oG1k4W0a8eFbGaOFXHCJjPCDZChSWVpgw4urY9sBPhwPjzUDpGlaZYl8sWRNAquf8u
-	 5ZutAqcPRz7yxN4ju5rCABm+2Lh3oaHH/b4I/aN2K5nKhNueqkP8Kr2wSw5F+ZSWdS
-	 OtidMx9DtTIsV/czyU3SAxMXiDJK56rnbcGQDz4cAIVg9XO+MyObcwYYkHdFVZY87R
-	 i5xG1fGW4EVNK9PXCQDJqH60tmBAXqL6lf2CX1eAX98RybwPELT8QhAhb929d47x7u
-	 x4AEX9+eMV92w==
+	b=Usb42rLsJ9pyDlv1rhmuuQXoNkNRRimTnGuy1Qc0xN7qFH/aXuUIdwYrN+24r5hKB
+	 Acdqv0BF8o7X1vRWhcJx49vWFL3sDaRK/2tojpx+Zry1ZhibDwgTQy6pTGRUt8cn2C
+	 YIYKyPNsmZfAm/BK8O///4btqVDze9uY6czWuVEekMaPbVxTnn+Bbo0VVLYZP2JeX7
+	 EHvliz/osyIo/mc8NMj92XWhmNapZoEdoee9USx0mAAZyQ7PnH0dOjuqF1gjQJX/AL
+	 fFNaFi1uAgkhZY04Kd2HpDPbYwN4bqOTtu2qE9jdlCkx7cRcGY76ASl9HtxGlV7jPc
+	 PfYobG2faibrA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B9439D0C3D;
-	Fri, 15 Aug 2025 16:40:19 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC8839D0C3D;
+	Fri, 15 Aug 2025 16:40:20 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,16 +51,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix condition in
- __allow_reserved_blocks()
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: add reserved nodes for privileged
+ users
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <175527601823.1161945.11181817879105775454.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Aug 2025 16:40:18 +0000
-References: <20250731060338.1136086-1-chao@kernel.org>
-In-Reply-To: <20250731060338.1136086-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ <175527601949.1161945.7999749862771332410.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Aug 2025 16:40:19 +0000
+References: <20250807133501.551848-1-guochunhai@vivo.com>
+In-Reply-To: <20250807133501.551848-1-guochunhai@vivo.com>
+To: Chunhai Guo <guochunhai@vivo.com>
+Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
@@ -68,19 +68,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 31 Jul 2025 14:03:38 +0800 you wrote:
-> If reserve_root mount option is not assigned, __allow_reserved_blocks()
-> will return false, it's not correct, fix it.
+On Thu,  7 Aug 2025 21:35:01 +0800 you wrote:
+> This patch allows privileged users to reserve nodes via the
+> 'reserve_node' mount option, which is similar to the existing
+> 'reserve_root' option.
 > 
-> Fixes: 7e65be49ed94 ("f2fs: add reserved blocks for root user")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> "-o reserve_node=<N>" means <N> nodes are reserved for privileged
+> users only.
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix condition in __allow_reserved_blocks()
-    https://git.kernel.org/jaegeuk/f2fs/c/e75ce117905d
+  - [f2fs-dev,v6] f2fs: add reserved nodes for privileged users
+    https://git.kernel.org/jaegeuk/f2fs/c/a3b0697610ba
 
 You are awesome, thank you!
 -- 
