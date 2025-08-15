@@ -1,98 +1,88 @@
-Return-Path: <linux-kernel+bounces-770893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C11B28014
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BEDB28013
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442BEAE11D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D0A1D00BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228483002DC;
-	Fri, 15 Aug 2025 12:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE52A3009ED;
+	Fri, 15 Aug 2025 12:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOyBYyV3"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kZnsp9eN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C6B28E00;
-	Fri, 15 Aug 2025 12:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF3D2571C9;
+	Fri, 15 Aug 2025 12:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755261437; cv=none; b=NUXeuG/rCz0atS2LKTvO6g60Y1OFXVY8r2as92xynOuUWDOs+TLG11hPycx2SyP5rgw1zteBZRWKHl7U4VPXdapzd9yz7ibdvWPcBpvNZDbLc/2BZ3vkMvrCXM7VVQEZAnOoAToKN7Xt4f1CDPfGFxa4EEhjchWYW6t3z+OLLSs=
+	t=1755261553; cv=none; b=DAIxO6QxgQKi6fDxSBuQNH+Gqn7l5t/034kNkN0W0l+Rmdsh6t7Ts4PsKd4CZaduoCULxLlmO+178XUdFgwrUtP3TwQUe3a21DB50ZrvKQt2BzAyKKpB/ZV8JHYfaZvajxMxjWdvUwh1riZ5vh2VB69Fk7EBwZlU0rXMDXSeZbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755261437; c=relaxed/simple;
-	bh=x+TXeZu/c7crNaU6bjOA+WBFpG0+Z2nzZboW9ou43Pw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZqELZ3MBP+pQTxG/PRlA3dtHwgSOBkO/DkE6ujRY86ep3Ev0zp+zk00cmY8L7GdX2suVuYQO6/1u2noswxt/tuSwgZ3eDyFMMydcD3NzdEYXl9EuVV9ZKRo994A/t493fw2Ka3feaKwlJWOKp27M+5EJGtB400PxXQdqgg+xMNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOyBYyV3; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2e614b83so1467751b3a.0;
-        Fri, 15 Aug 2025 05:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755261435; x=1755866235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9W+fnxRKwsiMPh8XZgEaL8gtXChF0KhdZKmxea7Uvw=;
-        b=ZOyBYyV3dXrKZYUquNkd2K6htZsNdD7LHQykxXD+vGZfs+2+OSwX6wjAPerubcQcf/
-         K286tCycST7gtSZ2dsBfexTBAUtq+zfkaO2H/SqMEtrsZkh13Fa52iQgon1C3frfevKh
-         HZkLK+xciXXqY5nmtDcNx7tknR/jVHPybsQsov+W66lxXjBwaLsv1WUj2SH6dJPw/YOu
-         hutG3E7JiDXpJ9bTO/m6bnEwZ2y97BN7m59LX62IQhifVB8XF7WnlgzKGUM4ERNAdMPj
-         92nMOznm3QLimiF2FMAEMiEXhkpcZ3TYnQZZUUD6zGmAmDErxK+1zoHh1cp4XbSArrBK
-         Z67A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755261435; x=1755866235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A9W+fnxRKwsiMPh8XZgEaL8gtXChF0KhdZKmxea7Uvw=;
-        b=FwOBHnSv2z1fKNft9dv420IDMAkOWqyBQy02wz2mLQRhKBhg078l+RBHTBoySFXkrc
-         iSYeIvYpQpa6IxeJzZVlMAavatVKzpgiLWhOF/mCQUO6kKw+U+Iq+aCAuW+e4F5omAaj
-         24ovIAyffTOeGFA1v3BD0QmLEevYd5/vNL/7fNbjPNaXSbzsEVR6PR4cYMKcgAs7+eR/
-         UXxyZSnMmlBZ45hBN9anR16btOLw8xk0wHQyhVJwit7F9810SXYcQshGFrcGldg+Cz82
-         0iLZzkdtahfsqzWCM7RJPp7c1Hce2s1B3gFb6CYX97JgDYI/WshrZlW4E7j3nLLsi3Na
-         JLqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1yS7sCle6WXmc63R2/rPKleZuOqQYuQVuXa0F1pX3OuRTbD3hE9RugU1Nzqbrom/dFyzRdPAYTswKVGFcLaw=@vger.kernel.org, AJvYcCX1CdELS8/hqp/pv2a+6JzXEVKMpS1CKnjqMgBBZYuRT9mSbbIrUDS9Jqf7M1ToxSNt3HiSRuiFZybqNYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmdM3eyd3o7Mglrq3+aAFx6C8i3/WhK3Rt+B8cZLnMtJFCwpdY
-	U3WGZx0g35yPvxAzlokKXAstGcv04w3Xy/Ed3AKQNdMR21S6pNdAnjeU
-X-Gm-Gg: ASbGnctfUaiCtECJ/IVsfOi2QLyLYL2v+HFEFqSG/7MJC3sAcGkMWF3tBJ8sWHqtQ4N
-	Ck16Wf/6slnhhwaoKo7YB8OciZHYZJBYDWoTuIA5HLY4UJqhG8akm3Gm6q3LYXpZSwvuZ6Eq7P9
-	lvopr8lDuX5xi9oZZ9d8gER+4cwuMl0TYr2RtICzb38pR23UcskPoixPPQkamtvm/HIzYmTqgjz
-	RjAqZ85ptqxAZltPRfHVfIJzhGZyCptl2sAfTCE+vTjyi15xb72sGcevsvG4CUR24VAy14eW8rg
-	hodaL4ZIJk602SuSUZgcTosvk19B1agbzOHRFUU6Ttf2EbbyNEYVoyeN+Wn2D49+nOrJfCHsTKV
-	SNu6V0VLETMgyio/+kspIU5X8Fbzp/ai5wC4E
-X-Google-Smtp-Source: AGHT+IEA0GkTTJ82kY9ggqEwGUcTFOq51FxV7ZwuTQOxC2M5K/4CxQawTsg90p6ITStzzYjYIZKHng==
-X-Received: by 2002:a05:6a00:7094:b0:76b:ef44:1fa4 with SMTP id d2e1a72fcca58-76e447c29cemr2164608b3a.14.1755261435174;
-        Fri, 15 Aug 2025 05:37:15 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4528c812sm1081370b3a.45.2025.08.15.05.37.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 05:37:14 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] rust: mm: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Fri, 15 Aug 2025 18:07:03 +0530
-Message-Id: <20250815123703.1256338-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250716091158.812860-1-shankari.ak0208@gmail.com>
-References: <20250716091158.812860-1-shankari.ak0208@gmail.com>
+	s=arc-20240116; t=1755261553; c=relaxed/simple;
+	bh=UY/L2tRKcOALJRVQf2k9KAYHGNaFT19Gm20vR020zPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AOxEipGyfTRoEjV6+rvgql50q9iS7JVxODc1aJsuoKUcPehrd83yORVS3R72LKcwRCzx/yeh/Imltve45pPC6XJeYvzRaMbYg2JDKamMNvMdFdkIUnSTOBefpDhAotfjZ+uw7j88qhBbHMKvCLv7LlFjOGBc3TOwees3Lj1DYB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kZnsp9eN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F2Lfmo008486;
+	Fri, 15 Aug 2025 12:39:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=HJ26CL98BAEdjjPC26V3xabEO8vZWHtSFpQwDNtDX
+	ak=; b=kZnsp9eNR7fW/fSp5UaUlHst9E11INJ5PE+ylB5LwbwvvZOGsC2e8TAmw
+	AbQQdbouyBnPnwIQwuIiaOu9FepFjWwK5i/5sJ1peSfpmo+FVonmJzRA+nw7F+HP
+	nLtBkeFgpxYELw5B8X+13yigq4RrvzsHbork+cHbNH6BwmezJAOqFMqmY/x70thd
+	iy/mOOkdZyEDWbnDVl1yeEfT665V3z8TY5bgq6DJeQCd58BNooAqs+igyltqdIT4
+	f/U9ac5LmVUXQSzHVE5ZEYC6/0ETwF4AorqsyPGyuk52in3OeoDxUoKhf+0Qi5Or
+	LDkboselH3URuyCI9DaRWbA4OnXAw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaakgx6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 12:39:08 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57FCa3AQ019986;
+	Fri, 15 Aug 2025 12:39:07 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaakgx5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 12:39:07 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57F7rKmh028585;
+	Fri, 15 Aug 2025 12:39:07 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5ngs4w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 12:39:07 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57FCd3wD49611252
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Aug 2025 12:39:03 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0447720043;
+	Fri, 15 Aug 2025 12:39:03 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D2DDF20040;
+	Fri, 15 Aug 2025 12:39:02 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 15 Aug 2025 12:39:02 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        blakejones@google.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, japo@linux.ibm.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf test: Checking BPF metadata collection fails on version string
+Date: Fri, 15 Aug 2025 14:38:49 +0200
+Message-ID: <20250815123849.935274-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,69 +90,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689f2a6c cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=1XWaLZrsAAAA:8 a=UquQ6J-m-umW9Fh778UA:9
+X-Proofpoint-ORIG-GUID: SCST5W-sIl6xC2R9346ZXrtI4WkpVVAt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX6BLwN84Zxhex
+ hP/Vxn9BfyJhdwU3TO7VR9I2aDYoS7ZrhQqcQFeM0zf9GWssaz6/s5JAwo1A9ztjbe4FZiD+iYy
+ 2Xn66mSyvqWqfo4rDf4S3o0Ckt+n02KZiaZXTA4gJYq8XHemKyUeoO10Htak83A2suEU8Z5Cdno
+ i/un78sDsZauW0Ig4fbBUnvG0aOiYk0q+HEKu+cAq8BaJzO/oQu1as7yKNL2aZF7ZlDqcemsMVS
+ wgI1c2F4HTEOH4qxMxnu+rNUuuJUJOMK/+EYM9AOzR+FMBrxBamsSH1kSVH4Aa5URGWLvr5jCNq
+ DYoJlclMdvgsSipfsTGL9buEKl0NOPqUgIpjVSDvT+OjAbBzwcMJMsc96kkygnKNY4cgPXwPJZ8
+ vQ63wqT4
+X-Proofpoint-GUID: CO206c7FNn2KiZsjmKqB0bqsvHKdsvEe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
 
-On Wed, Jul 16, 2025 at 02:41:58PM +0530, Shankari Anand wrote:
-> Update call sites in the mm subsystem to import `ARef` and
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
-> 
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to sync.
-> 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> ---
-> It part of a subsystem-wise split series, as suggested in:
-> https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-> This split series is intended to ease review and subsystem-level maintenance.
-> 
-> The original moving patch is here:
-> https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.ak0208@gmail.com/
-> 
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
-> ---
->  rust/kernel/mm.rs             | 3 ++-
->  rust/kernel/mm/mmput_async.rs | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-> index 43f525c0d16c..4764d7b68f2a 100644
-> --- a/rust/kernel/mm.rs
-> +++ b/rust/kernel/mm.rs
-> @@ -13,7 +13,8 @@
->  
->  use crate::{
->      bindings,
-> -    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
-> +    sync::aref::{ARef, AlwaysRefCounted},
-> +    types::{NotThreadSafe, Opaque},
->  };
->  use core::{ops::Deref, ptr::NonNull};
->  
-> diff --git a/rust/kernel/mm/mmput_async.rs b/rust/kernel/mm/mmput_async.rs
-> index 9289e05f7a67..b8d2f051225c 100644
-> --- a/rust/kernel/mm/mmput_async.rs
-> +++ b/rust/kernel/mm/mmput_async.rs
-> @@ -10,7 +10,7 @@
->  use crate::{
->      bindings,
->      mm::MmWithUser,
-> -    types::{ARef, AlwaysRefCounted},
-> +    sync::aref::{ARef, AlwaysRefCounted},
->  };
->  use core::{ops::Deref, ptr::NonNull};
->  
-> -- 
-> 2.34.1
-> 
+commit edf2cadf01e8f ("perf test: add test for BPF metadata collection")
 
-Hello, can this be picked for review?
+fails consistently on the version string check. The perf version
+string on some of the constant integration test machines contains
+characters with special meaning in grep's extended regular expression
+matching algorithm. The output of perf version is:
 
-The initial patch which moves ARef and AlwaysRefCounted to sync/aref.rs is upstream (commit 07dad44aa9a93) [1]
+ # perf version
+ perf version 6.17.0-20250814.rc1.git20.24ea63ea3877.63.fc42.s390x+git
+ #
 
-Thanks,
-Shankari
+and the '+' character has special meaning in egrep command.
+Also the use of egrep is deprecated.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+Change the perf version string check to fixed character matching
+and get rid of egrep's warning being deprecated. Use grep -F instead.
+
+Output before:
+ # perf test -F 102
+ Checking BPF metadata collection
+ egrep: warning: egrep is obsolescent; using grep -E
+ Basic BPF metadata test [Failed invalid output]
+ 102: BPF metadata collection test             : FAILED!
+ #
+
+Output after:
+ # perf test -F 102
+ Checking BPF metadata collection
+ Basic BPF metadata test [Success]
+ 102: BPF metadata collection test             : Ok
+ #
+
+Fixes: edf2cadf01e8f ("perf test: add test for BPF metadata collection")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Blake Jones <blakejones@google.com>
+---
+ tools/perf/tests/shell/test_bpf_metadata.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tests/shell/test_bpf_metadata.sh
+index 69e3c2055134..be67d56e0f09 100755
+--- a/tools/perf/tests/shell/test_bpf_metadata.sh
++++ b/tools/perf/tests/shell/test_bpf_metadata.sh
+@@ -61,7 +61,7 @@ test_bpf_metadata() {
+ 		/perf_version/ {
+ 			if (entry) print $NF;
+ 		}
+-	' | egrep "$VERS" > /dev/null
++	' | grep -qF "$VERS"
+ 	then
+ 		echo "Basic BPF metadata test [Failed invalid output]"
+ 		err=1
+-- 
+2.50.1
+
 
