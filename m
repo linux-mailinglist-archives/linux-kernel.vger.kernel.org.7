@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-769890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBD9B274CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:37:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD69B274CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1139E1CC28B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:37:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DD97AED3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEED25A2D1;
-	Fri, 15 Aug 2025 01:37:11 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09856277C9A;
+	Fri, 15 Aug 2025 01:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Rv7j8MQ3"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45059475;
-	Fri, 15 Aug 2025 01:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EA019ABD8
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755221831; cv=none; b=dayBGlvyZ0Ul8PkpHTHWpzv8lujUlmOogwiGXoJROjH0NMerd/VvG7bxyf3iBnrMFuw9IdSt9y8dcbJffH99Kkwhai69K9P6OyQm27Bozvti7u6QM0gp6hAnO7M1/xZCxJIgdjbtPlTmGELxzZnjDT5kmrmCkRxAKvn2Q/VYbHI=
+	t=1755221914; cv=none; b=XGX/s1jtl8Ft3lQ9EPNGjcFaVMXbLfTXB8dXYw5blUI0M/j5pTEZkIfqkB8K1BYWn0hahaHakkqVx6wKeVZqddHjI2ePkJzsOY31Jqth079/be6hPBM97PbC5C29Sdrc4aTbVtWh7oG7UD+5GEinG2tOfT+wAUC34U3L3oMd88w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755221831; c=relaxed/simple;
-	bh=W49tmC8pMPCmtFcn3qEiXKG1KBDWgCmX4g9K7vu18jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CXHnVtr2x66xRXniUM44WG9xWEr8E2Fbny/7Ueu/cg9qlTbt9kmfjdd9g9KpqfV1vrB3nqGZnrfNRrDDa9TasmXAjK8NRZygYIbt3+33SAEubpg5J0kQ3AbZf6WO1VF2l5CpVPcApqbjsgr7zQcxb9MbTEmMjEm567xCzFffhhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz8t1755221820tf5699c30
-X-QQ-Originating-IP: tlNQ7+NHEjaXcRky/Tvj9nySe0eW04M+BZV9Y0tdcD4=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 15 Aug 2025 09:36:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9320296151560598808
-Date: Fri, 15 Aug 2025 09:36:58 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <AC9522804BA5F115+20250815013658.GB1129045@nic-Precision-5820-Tower>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-5-dong100@mucse.com>
- <eafb8874-a7a3-4028-a4ad-d71fc5689813@linux.dev>
- <9A6132D78B40DAFD+20250813095214.GA979548@nic-Precision-5820-Tower>
- <9af5710c-e465-4e21-8705-4698e544c649@lunn.ch>
+	s=arc-20240116; t=1755221914; c=relaxed/simple;
+	bh=bTs4Gl0zj2aTUwfLbuEPcGK9gSHi74I9ri2KM9DxhGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kjPxzRC+bF/BA4xV8fJMcX1oO9Ak2KN0NfNxiEL5i0alK9D5Fw2hgW2bPQrCGr5GTkt/WKFVcSBNYHN04j0pYj9a+POTbxhEZyYhg2zxFSR9Qk2oUnPoWWPBVtYV/QA4RyEOBGryzjGVGQ+Y4gq0VMpJ9+mAsq+Os9TjZiMhNmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Rv7j8MQ3; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0032c975-1e37-484f-9b7b-a3f0fea0401a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755221905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FvIK9iJ7V8SHnncWDIUPYMTGNncr21um3VSz5HwThLw=;
+	b=Rv7j8MQ3/UNGwwdvhntFdBWKEAHI300ZJy5nVbhPaQxP2lu1/Xv6QTPG/vsbkanIXvGX0v
+	Gch2UTO+opI2CgstTS5Yq8HjzJWUE64pYMaswUN/0i1GK+1eJ5QD9hbCdcCiY1GLb9bJqV
+	ZXEStufgTaSGJR+4CsA+mCz6bpgR/ME=
+Date: Fri, 15 Aug 2025 09:38:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9af5710c-e465-4e21-8705-4698e544c649@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mf2c2cXG8XEiQMetGMQwjHFRz3d1mTlEqgChonH+LMVTfGtqcMKhYJqA
-	RfFeG5nC/kUqDkIIFcRU+8FBjJqqNUowxQ4x6nJMS+GKncHBLlyD6eVVQkkQIkK0GxU9Vqp
-	YUB+lADqqGLInqT8xu/8RODmrJN/kIe0DJz6ASzz9hcLd99u1S7WQNIQBXAdPCvmykt3wRK
-	F4dmqDbfzK8Sj+L+l94DowLlBnpocPKZM7Jd4wTbO3r3q+XMAafy2zifucHMZ9MV3rkSrQn
-	KQ3MzLujzXI/U47WlN6nPU6GCekCAMvWdRGzDD4KQrIjzYkJQr07zd2ZlFBzcLx4mWI2D2X
-	cW6EfY4JK2mSu8K10lUmFC4epMgiMMS3ASTTP7oLpRY1QqKI6l5kG9TyRQps3bMg90NA9AY
-	68XBA7ug2snJmHe5IOdawqXS0tKd6HLmLIPtspcEBEtyuXit0OKwTRMck9kiAiHnE2gvgOq
-	Lty+g5RlcIuA2p+bBD6X2HS6RKWTfTi6Q6jMZTW+tqQaxEZSKlKueFb8W8tQJjtiLCSpC25
-	fxzoC2BKxOzPWSL/lSl1HpjvBkVlqk6YtBEqGFTRjRXq80Pa36Z/LhMKEtjUIhvAKES+wmR
-	AXzQddM43v0rYROWfaFGFayBecNQHSaz5xGvCuK/tQvwDKp1/hIncGsqFoRNH8vVBjV5seA
-	wEllzqwKmq5k1erp6atEnb8QCX5+ijzT2kUzBhYerRhLQFTmN03ptyDKuCXnrUCGIZlPw7H
-	ZRN/oelfe7yEUok7zS9/zXusqf8aaEgwTqxNmt6JQ0iaTM5lrpvMVtccbvjr4slqBqHIp9o
-	Q3WB+4zEiG7fPETQNcrShZqEcxZt5XM3C00LSz57qWQ5+zEcp2jWzbEJruXsdTtQ1fXFRWe
-	yccW0KRdJwpTTGAtmuSslwU6a9XxFOrnuQOx+yjzATYTqR3nCl5nhKkOtJMr8X9wX/PbIXw
-	viDJ+gdphOr7epFFNI4l/qUbGc2GouJJUXIOOctK9r8S9dA5R/GG622FQ/Q1Yv0HmTE3Gmf
-	sSTYqNJ83DEgw5vj6t
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Subject: Re: [PATCH] mm/page_alloc: simplify lowmem_reserve max calculation
+To: Zi Yan <ziy@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250814090053.22241-1-ye.liu@linux.dev>
+ <EF575A1E-6AE2-45D7-9AC0-49C462A0CE5C@nvidia.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <EF575A1E-6AE2-45D7-9AC0-49C462A0CE5C@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 15, 2025 at 02:04:57AM +0200, Andrew Lunn wrote:
-> > If it is more cleaner bellow?
-> > 
-> > static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-> >                                   struct mbx_fw_cmd_req *req,
-> >                                   struct mbx_fw_cmd_reply *reply)
-> > {
-> >         int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
-> >         int retry_cnt = 3;
-> >         int err;
-> > 
-> >         err = mutex_lock_interruptible(&hw->mbx.lock);
-> >         if (err)
-> >                 return err;
-> >         err = hw->mbx.ops->write_posted(hw, (u32 *)req,
-> >                                         L_WD(len));
-> >         if (err)
-> >                 goto quit;
-> >         do {
-> >                 err = hw->mbx.ops->read_posted(hw, (u32 *)reply,
-> >                                                L_WD(sizeof(*reply)));
-> >                 if (err)
-> >                         goto quit;
-> >         } while (--retry_cnt >= 0 && reply->opcode != req->opcode);
-> > 
-> >         mutex_unlock(&hw->mbx.lock);
-> >         if (retry_cnt < 0)
-> >                 return -ETIMEDOUT;
-> >         if (reply->error_code)
-> >                 return -EIO;
-> >         return 0;
-> > quit:
-> >         mutex_unlock(&hw->mbx.lock);
-> >         return err;
-> > }
-> 
-> You might want a read a few other drivers in mailine. Look at the
-> naming. I doubt you will find many using "quit" for a label. "out" or
-> "unlock" is more popular.
-> 
-> When it comes to locks, it is better to have one lock statement and
-> one unlock statement. It then becomes easy to see all paths lead to
-> the unlock.
-> 
-> 	Andrew
-> 
 
-Got it, I will change label 'quit' to 'out'.
-And I will try to keep 'one lock statement and one unlock statement'
-principle in mind.
 
-Thanks for your feedback.
+在 2025/8/14 22:47, Zi Yan 写道:
+> On 14 Aug 2025, at 5:00, Ye Liu wrote:
+> 
+>> From: Ye Liu <liuye@kylinos.cn>
+>>
+>> Use max() macro to simplify the calculation of maximum lowmem_reserve
+>> value in calculate_totalreserve_pages(), instead of open-coding the
+>> comparison. The functionality remains identical.
+>>
+>> Signed-off-by: Ye Liu <liuye@kylinos.cn>
+>> ---
+>>  mm/page_alloc.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 64872214bc7d..8a55a4951d19 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -6236,8 +6236,7 @@ static void calculate_totalreserve_pages(void)
+>>
+>>  			/* Find valid and maximum lowmem_reserve in the zone */
+>>  			for (j = i; j < MAX_NR_ZONES; j++) {
+>> -				if (zone->lowmem_reserve[j] > max)
+>> -					max = zone->lowmem_reserve[j];
+>> +				max = max(max, zone->lowmem_reserve[j]);
+>>  			}
+> 
+> There is a “if (max > managed_pages)” below. Maybe convert that as well?
+
+I should use min() here, but I noticed the two variables have different types: 
+one is 'long' and the other is 'unsigned long'. So, I should use min_t(). 
+But then again, why is lowmem_reserve of type 'long'? 
+It should be a non-negative number, right? 
+Is it possible to change the type of lowmem_reserve to 'unsigned long' and 
+change all uses of it at the same time? Is it necessary?
+
+> 
+> Feel free to add Acked-by: Zi Yan <ziy@nvidia.com>.
+> 
+> Best Regards,
+> Yan, Zi
+
+-- 
+Thanks,
+Ye Liu
 
 
