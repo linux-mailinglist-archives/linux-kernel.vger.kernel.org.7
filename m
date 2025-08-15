@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-771462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E238EB2879F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:19:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B78B287A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969511D02E22
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690C7AE5B4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A5A25F7B5;
-	Fri, 15 Aug 2025 21:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBBC2C08A8;
+	Fri, 15 Aug 2025 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsEt8QSy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H86O9bnz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC4257431;
-	Fri, 15 Aug 2025 21:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5085E2BE044;
+	Fri, 15 Aug 2025 21:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755292750; cv=none; b=Lg8IJfnAnIekl8bVII9dgq4Ig8ju9LKuelehnW47wfm1xq77/Q8sbyGEfZqS4QGrvqg34V8FOpyh+A9bhkPf8R8m5JdC2LqzmsS//czMjTLOThPMLWVnXkFys9um4CweEwdAJRNgTN+9o0uPUJmmJzjx8eJvffbvSttkJRetclc=
+	t=1755292752; cv=none; b=aJ6VbK3d95AQnSzv5efoLi3qm10V69ZnmAU6XhEw//PwcycimVAu37IgjZElsrouSjpW7lx+qbJo+xTvLx6I0pfIh/eSwy49zYfYNZGKWY81U3HeKX/HDUFbGGLURuuXwotlGI9XIl2Kt94TXqKoPhlEisE8WIsGVtFECgPC/Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755292750; c=relaxed/simple;
-	bh=K+r06jLu5/QfCZbN9piqdk/fiyOGa1TyF6QkY5xklXQ=;
+	s=arc-20240116; t=1755292752; c=relaxed/simple;
+	bh=cJhl0OslGGxuBTiQrTRj+9aBCfXCW2Jm4WVhzEwl87Y=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mNtbjFMmWENcuWdvzu2E6y0ijkRQrl73EBxuJuGBTNNelGdJtQiII50ubUpWLd3+H73K3Z19XAuspp6nI8FXbw39cOpd/ug4DU6OlzmxbehEHvIP1LFQGV2R3DglIGi4Xz4yBsdrwxl+r0YcqnQ3EwXQ6qrIlyoBUUyzcdAUIEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsEt8QSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C7EC4CEF8;
-	Fri, 15 Aug 2025 21:19:09 +0000 (UTC)
+	 Message-Id:Subject; b=baKNowSYc2OdxN5tt6GFFgbTEcpHaRLpe0RFfyXuJtSW7V7I0/i9+03K+wLQcBL+mob47D3p8/x8gFTzKK8C3ssSoYb72hyboAZivxegl13HQ7aS8d39Kz423/Ez3rV8YGfyyuH246XiF6WP4vDaZX83qOpTxEAlQ2AeI9SRoDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H86O9bnz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B913CC4CEF8;
+	Fri, 15 Aug 2025 21:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755292750;
-	bh=K+r06jLu5/QfCZbN9piqdk/fiyOGa1TyF6QkY5xklXQ=;
+	s=k20201202; t=1755292751;
+	bh=cJhl0OslGGxuBTiQrTRj+9aBCfXCW2Jm4WVhzEwl87Y=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=IsEt8QSynFtXD1ppIMy6AyN46/r047g46cJcO6Fnm0A0yh+84FoNWyizkrNntmYrF
-	 ATInUU6ByuKliIMsIlocgSgfhe3f9NlYYwlHwfqu2l38TqT3oNT5wjjLvFz+ZXFzC2
-	 2fCGv0bWrWRoWzkMr4mrdHq2+Zt0OWylWuHhgrAgWXxSyQGGz1ijTdIV92JC3bm4oL
-	 GEokvA1QfeE6WIhntjac/k65bxdohAqh+eu6Dl1yGHAsfueEViFyG4JeH4OgelV5Pf
-	 A+rmN0XB4RvY314InNBPak8WyZCgfHH0D7XfYVfoT8jdVlGDAWvmrOXO4gEFKfMC0a
-	 yu7t2cPtj11Ew==
-Date: Fri, 15 Aug 2025 16:19:09 -0500
+	b=H86O9bnz9X1b8H1xu/xBQtEiPymWyHyurxwQ884fE4MynR5nygyGrARiRtqulgDrM
+	 4oz5B2gxZsExmYQYX/T4LcpD1h7Y8lFeTqLG9ofIcy8k6lmuuFpJc5tZfM60f3bxZ1
+	 RufZaGvs9OfPz4z8Dm6Zp/y7cTI+RpIe7lM1evnwvhMYSMh8MGNmVQTKUmeaBSE14m
+	 dlTfAtjLgbtH5S2pHCgKz7b5QhhtOHTPc5Gu7SPNocR8d+/LbREeeQP2jorVB1vu6G
+	 b34hE7GpoD7V/kIaRl8rgy6UAsEgy/++Yr96cyrWb4IRG1dd2R48GXWBsHYprCrvQ+
+	 vdLN2LNqTzoow==
+Date: Fri, 15 Aug 2025 16:19:11 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,45 +50,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
+Cc: imx@lists.linux.dev, Fabio Estevam <festevam@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Shawn Guo <shawnguo@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-aspeed@lists.ozlabs.org, 
- linux-arm-kernel@lists.infradead.org, Joel Stanley <joel@jms.id.au>
-To: Fred Chen <fredchen.openbmc@gmail.com>
-In-Reply-To: <20250814131706.1567067-1-fredchen.openbmc@gmail.com>
-References: <20250814131706.1567067-1-fredchen.openbmc@gmail.com>
-Message-Id: <175529259974.3212367.16366822597087067588.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] Revise Meta Santabarbara devicetree
+ Csaba Buday <buday.csaba@prolan.hu>, linux-arm-kernel@lists.infradead.org
+To: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
+References: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
+Message-Id: <175529260064.3212410.10009645356875369525.robh@kernel.org>
+Subject: Re: [PATCH] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
+ `phy-reset-gpios`
 
 
-On Thu, 14 Aug 2025 21:16:56 +0800, Fred Chen wrote:
-> Summary:
-> Revise linux device tree entry related to Meta (Facebook) Santabarbara.
+On Fri, 15 Aug 2025 17:17:37 +0200, Bence Csókás wrote:
+> The Ethernet PHY's reset GPIO should be specified in the node of the PHY
+> itself, instead of the MAC (`fec`). The latter is deprecated, and was an
+> i.MX-specific extension, incompatible with the new reset controller
+> subsystem.
 > 
-> Change log
-> v1 -> v2:
->   - add 'bmc_ready_noled' LED and update commit message
->   - add sgpio line name for leak detection
-> v1:
->   - add sensor nodes for extension board
->   - add mctp node for NIC
->   - adjust LED configuration
-> 
-> Fred Chen (4):
->   ARM: dts: aspeed: santabarbara: add sensor support for extension
->     boards
->   ARM: dts: aspeed: santabarbara: Enable MCTP for frontend NIC
->   ARM: dts: aspeed: santabarbara: Adjust LED configuration
->   ARM: dts: aspeed: santabarbara: add sgpio line name for leak detection
-> 
->  .../aspeed-bmc-facebook-santabarbara.dts      | 857 +++++++++++++++++-
->  1 file changed, 853 insertions(+), 4 deletions(-)
-> 
-> --
-> 2.49.0
-> 
-> 
+> Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> ---
+>  arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
 
 
@@ -107,16 +95,21 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.17-rc1-9-g8e4021078863 (exact match)
+ Base: using specified base-commit 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250814131706.1567067-1-fredchen.openbmc@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nxp/' for 20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dtb: mctp@10 (mctp-i2c-controller): 'label' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/net/mctp-i2c-controller.yaml#
+arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul-0011.dtb: / (karo,imx6ul-tx6ul): i2c-gpio: {'compatible': ['i2c-gpio'], '#address-cells': 1, '#size-cells': 0, 'pinctrl-names': ['default'], 'pinctrl-0': [[69]], 'sda-gpios': [[48, 1, 0]], 'scl-gpios': [[48, 0, 0]], 'clock-frequency': 400000, 'status': ['okay'], 'rtc@68': {'compatible': ['dallas,ds1339'], 'reg': [[104]], 'status': ['disabled']}} is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
+arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul-0010.dtb: / (karo,imx6ul-tx6ul): i2c-gpio: {'compatible': ['i2c-gpio'], '#address-cells': 1, '#size-cells': 0, 'pinctrl-names': ['default'], 'pinctrl-0': [[68]], 'sda-gpios': [[48, 1, 0]], 'scl-gpios': [[48, 0, 0]], 'clock-frequency': 400000, 'status': ['okay'], 'rtc@68': {'compatible': ['dallas,ds1339'], 'reg': [[104]], 'status': ['disabled']}} is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
+arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul-0011.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): 'resets' is a dependency of 'reset-names'
+	from schema $id: http://devicetree.org/schemas/reset/reset.yaml#
+arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul-0010.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): 'resets' is a dependency of 'reset-names'
+	from schema $id: http://devicetree.org/schemas/reset/reset.yaml#
 
 
 
