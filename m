@@ -1,240 +1,292 @@
-Return-Path: <linux-kernel+bounces-771084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E61FB282B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBA2B282B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193181CC353A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424A31CE45AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310BD28D845;
-	Fri, 15 Aug 2025 15:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F1828CF7C;
+	Fri, 15 Aug 2025 15:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJNyW0os"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FArBhRyR";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FArBhRyR"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011055.outbound.protection.outlook.com [52.101.65.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5236F21CC54
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755270622; cv=none; b=fXwV2nDtJW60VMuorsVIjhuiVrEfm9N7vHmxgQE/HkNRtZdbtvW14Tptdo7fGQF0iMXGGFzohObE4l1bI9qGYqdBcnjy0XJdlKo1v/u0PrfDhQEr1SQUBDp1/BsEiW6aAFx0XmXg4qSTJ+5qhb5xTzHdtiVc9EL0jVjsl8W3ZLQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755270622; c=relaxed/simple;
-	bh=fGDwaVSvPH8pm2BAhxS+J5h/sgd3Il31C8JSmXIzOUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cX5tOCqTm5t/2Byhw4+gQDzm98KlGnb3n9Gyy6ECXePyllOAfIxYDWnzu2POx06Kqmv5bV0uQMQVI18uK1K2QL573UqrLQTJHOf8zA3xm/6mwKa3IxYzojVqYpcLm0lvhw+5XgLBAm8lX1NAsecmrCsWvsigVqGvEm9mCtutgl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJNyW0os; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAF8C4CEFA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755270621;
-	bh=fGDwaVSvPH8pm2BAhxS+J5h/sgd3Il31C8JSmXIzOUc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XJNyW0os+xxrhkJvYpZsokPkFKsGLhk47WqtFAIrqesvSAaZr18FTX3x6QBLz1+jn
-	 cpQoPNPcJFlJwzjxvlBpGpE6e63WDAlg1CdXqQiwx9tUu+neTcZ4wQqO+8J3Zkvlmf
-	 5rB+oPsYATfeLP9t/A6HfqGlhgFrvNbwnKgMjeEk+68xPqMrAT+EGzFZY35vzrGs2r
-	 pRtMVKRLedR7oYImdff6nJAN/UbYgmluYC9b8PZ+llFIH9/1sSbnSx5+6VkC/3QG1M
-	 H83CuPaY2fuJCAgEjcsP6SVLPbJZ9D24jJ7OEclcDmPk5DrmPd6XEZKk0wsbYEecDP
-	 ESCY4XMCYCEyg==
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so73185e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:10:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWoghjDQy5bPQS0tDaN5zP5/+ZbXT/zBLyOAplcneFuFsk0tAtnQfSvo55Svs6b8h9Mb8CEYITN1yhFX9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytF0/tjsBc2ySKwgTkDiPYpbXMZh8PUkTPiq1gfbc8GQxBBtCV
-	TzOEqDfRGAxzuw5Te+HZ966sFPa3VloCdMsSP0uPJgsgGYM/MxtUZ1nyfr9W04Vzd052Xa6yAXY
-	/E24vdfg0PQO8HFeUZH8ZrqZPDcAvDsMOXXlupAt/
-X-Google-Smtp-Source: AGHT+IG/Z8MebvAbTWGT9RmBQgvG1DLMFgUD0Xtc1EusOb89eQmpS0MfrZue4XkJq0FF4+vgGgs58TCUtMWhT5S+eqQ=
-X-Received: by 2002:a05:600c:18a3:b0:439:8f59:2c56 with SMTP id
- 5b1f17b1804b1-45a20980c41mr1461135e9.2.1755270620316; Fri, 15 Aug 2025
- 08:10:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7621DF74F;
+	Fri, 15 Aug 2025 15:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.55
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755270702; cv=fail; b=BE0+Gcgq+WIRRqicC324flSJhfHRCk0FpdS7kpJiR4bMREMFUHyvWw6+5O5Es07tZAH0kTNJZ1SNGE1Ms8FbuU8vWU98mGxq2YbkFU34YUPePP/GA3YL0Pp98VG6aHYRRodqSHLKHkGxwfzQPNgRM2CaRBXGcSJTNBXDBESMoY8=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755270702; c=relaxed/simple;
+	bh=JRhf4CSgDZHDzyqUwItdL64comGfTSFsqfkQoNw0fqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oeRHu21lL7Lx7GT0Ey1UdYvz5lrXZD61QpZDWdOM2JI9/DB4koeithJJPfZONRI2QqWU4s+jYfz3/uD23U9eD9blbqVJeepwPrF/9/cKWak6EiaT2Wl63hMCTCue2zKaAkbL4BYCrbtiOCEKUnEUKLXfokqi1/0ztmAkZKnSIAA=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FArBhRyR; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FArBhRyR; arc=fail smtp.client-ip=52.101.65.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=uMSs2Rp97sHDj7k9n3a3i/nVvijwwiHuw7eyKaomiiJfCOuM4F+rTyFNzs97RwsE2jCrQ6NcTb+YsezjJh3gzcv2D4d9j8AcfU999GdLiVooP4TY1uA0PaW++mRs55h4Tvo1zv6SDOk1nG8iMIIaCjvLbn06LVTJ9QlIjgpEriPrUHcxEJnezICyzUB5zx6zZz4QFXSciesCREwWnfnm5tMPCDLSlUISJSVSDgrtJ0pTMTEBNXXBsn9Ae3VNbgxOjbP7rTqAl7/jgsKqhj4Xam//ny0ZDTQIFbz7WC4e/RXMv/v/iRxf0xirzQdOLVxWJJpP20qBomYyUgp73UCJEA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9LyzwvjqH8zDyBmgBULVL1FOqczlPPa6/80Ho9a3qv8=;
+ b=MsjTawyQ/qKON5F/KdWkQ/yugWdGhoNS84tMV4PJf2gsAB0QhbNuf45CnV5suu6rZ211kM8Q2lbN4QAF2JOepVyFTJ4zTMd9WBr9sjYNf9Pgqek2dm0JxBDp/sY6yj1MgLdOcZK7Qy/YTAM0leMNOuHL7FJwf0dELBYvQ+sn0e9WGCKAhPx2BAASQtK/sWUCkCNoHVLDHJjg8Qcy1D4whW9k0w03pOnoPIgJlMTojiyCECFXUe9MR4m0S66X9CCIKgnm9WJsn+bVl7rapgzjoY98V3HUfruRpEWE2IimuLLRSRWrRbCzXBIIMFKUrz/mjDy6uEhVX2xrNW8wWKR6Ow==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=gmail.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9LyzwvjqH8zDyBmgBULVL1FOqczlPPa6/80Ho9a3qv8=;
+ b=FArBhRyRG9sD8w6+g5uD1SfZgYp0R49HTWooTC5tVzMdHbrGSzWoZZnK0PvjaVycRgqiBmfS1dvt+ymUiw/+rvdF5poGQNpwlI311ZVElMHSEobPIaSp7rhj/2Csm5l9iC3EHR76Up1Rf9QVfuP8YYayfYRtpiRjsjRMmCLPQKs=
+Received: from AM0PR04CA0092.eurprd04.prod.outlook.com (2603:10a6:208:be::33)
+ by DB9PR08MB7675.eurprd08.prod.outlook.com (2603:10a6:10:37e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Fri, 15 Aug
+ 2025 15:11:37 +0000
+Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
+ (2603:10a6:208:be:cafe::b4) by AM0PR04CA0092.outlook.office365.com
+ (2603:10a6:208:be::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.18 via Frontend Transport; Fri,
+ 15 Aug 2025 15:11:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.11
+ via Frontend Transport; Fri, 15 Aug 2025 15:11:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tWf7GIEX3Bk2CeYPCNzwpDIPmTOSvdMNaRhIzwCJ02TRyB1VT+gBPzA2s5gtt7S3wp5cQuSCR30ZxKY4Ie8ixGC85eE7qDAkEMzZrVLG8K7kSnw7xXG2fIwQhLKjrBYmh2vbmp6K9mB5QUguqRiOsPosgRhvSGXqq/ZgYCxARurl7axuMi4VZouyA8B3fNQzQGu1/RGm6uI1ScQ2ioYyoYHXL5GEb4tTCvbmBxrSe7yRxw+StyDxnHXcsn0a7fh09FA3HabaD6wSEEptg2gSljejJo+o8ZqbEd+708SmQoFXEigduAXWSQst+hv0gtRWgKwWxC4kHAEFcN8ZbhBWdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9LyzwvjqH8zDyBmgBULVL1FOqczlPPa6/80Ho9a3qv8=;
+ b=KKcqlo+iCE+pmOSGrJQG3HRw5J1KcA6FKpGf+kRyyO/aWzQQOnN/lR/biyEra7e6gL5OoYDWSrjvK9r+lkVuge1exw9dk2m9LLrJ5mGH0Q/GlEZXHJuMNQZB2FGs5Pr7/iYigyKiMLZdCTqiXQ7nLMPSwexWPWgBLGzV+bhYy8ylA+87gPLhbECj9WsC4Wc3Qi5aqe8JoWaI1aHrLL/1u50T3FkvgryuSBy+bgkg9h1yE9f5cjslEA/07yjdeCdUJfKw59QRJp4Sf4/HfW30+zxFRNC77H2112ris156tetPa5FxiAwE9dtryqc6CJR8eQkJJEI6AqtSNmRnMWOQRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9LyzwvjqH8zDyBmgBULVL1FOqczlPPa6/80Ho9a3qv8=;
+ b=FArBhRyRG9sD8w6+g5uD1SfZgYp0R49HTWooTC5tVzMdHbrGSzWoZZnK0PvjaVycRgqiBmfS1dvt+ymUiw/+rvdF5poGQNpwlI311ZVElMHSEobPIaSp7rhj/2Csm5l9iC3EHR76Up1Rf9QVfuP8YYayfYRtpiRjsjRMmCLPQKs=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by VI1PR08MB5423.eurprd08.prod.outlook.com
+ (2603:10a6:803:133::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.17; Fri, 15 Aug
+ 2025 15:11:03 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 15:11:03 +0000
+Date: Fri, 15 Aug 2025 16:10:59 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/2] kasan/hw-tags: introduce kasan.store_only option
+Message-ID: <aJ9OA/cHk1iFUPyH@e129823.arm.com>
+References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
+ <20250813175335.3980268-2-yeoreum.yun@arm.com>
+ <aJ8WTyRJVznC9v4K@arm.com>
+ <aJ87cZC3Cy3JJplT@e129823.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJ87cZC3Cy3JJplT@e129823.arm.com>
+X-ClientProxiedBy: LO2P265CA0374.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::26) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716202006.3640584-1-youngjun.park@lge.com>
- <20250716202006.3640584-2-youngjun.park@lge.com> <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
- <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330> <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
- <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
-In-Reply-To: <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 15 Aug 2025 08:10:09 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
-X-Gm-Features: Ac12FXxaQMgJCxryg4vXQEsqpIxPtgndj7TaEMxwJoTPbnI-r8lKXY393MbSlPo
-Message-ID: <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: YoungJun Park <youngjun.park@lge.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, shikemeng@huaweicloud.com, kasong@tencent.com, 
-	nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
-	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|VI1PR08MB5423:EE_|AM4PEPF00027A69:EE_|DB9PR08MB7675:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7db7fe2f-280d-4677-c312-08dddc0e07b5
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?SmhXaGhRVTdObVF0akRHc2psbWJ1OWpCVjlPZGV0ajloL3JmcEIxeHdKYVh0?=
+ =?utf-8?B?R3NGTkVxQXhzZitFZVM5d3E0eHBqMVhZa0wyVkM3bEZpKzRoQTVxM2hiZjM2?=
+ =?utf-8?B?ejhWRjVpQVZsTGcxaGRyVHV5M2NudmNIeUlLS3M0UVkxMEc5THpCMkdxMFBq?=
+ =?utf-8?B?ak5IZGZiTUlFWmFqQnAwUE1aZ2xlQ1pYaWJVZG1nMG5Sb0RLOG5LbkFvTjBO?=
+ =?utf-8?B?dlpKNCtYaHpQNnU3SFlqUFRWbEJWdEpBNngyQi9nWkNMZmtYelhBUU95VFFn?=
+ =?utf-8?B?L0xnZW03OEdsOXNpRlAzS2pzSFpGOVJhZ1dNZk9iNU16VzVSWmRyWVhCa3NJ?=
+ =?utf-8?B?aTlvZWNWVzQ2T0RmTDZ0WmVMMHZ3MDdkZ0c1bmRHSldEUENXdnNVMG1Eam1T?=
+ =?utf-8?B?SnVZZ1FCOTNJUzl5MFJVNVo2VEQ1K2N6UG8rOWxLN3VobDhNeGRxSnUwTnll?=
+ =?utf-8?B?ekFwcys2WlFUNkRkSnlVNFdvNzg2aUExQmVtRmxQWFhaYUJiUHNKODJ3L1Uz?=
+ =?utf-8?B?NUxLMDU4S1V4N0t3Y1VMYmhoMzBGMDgvQ1hKSkZMQWJOek1jbFpjWEhxcmxh?=
+ =?utf-8?B?U05JUENnby9TZyt4dWw2NWVjZHVhVFdIMkZOeUlyQUZJNXNzeEtZc0I1em9h?=
+ =?utf-8?B?Nm9RV1I5TWNrQTYwQ2ZydDhiNnNCVmpPcHVTOUlseWhKQUFZbUkvSTBKQkNX?=
+ =?utf-8?B?TEU1NkNZUVRNc28rSmRGOTREYmZ5VFFyeEFyRzlhaWlVMjVUS0IvYU41SEtU?=
+ =?utf-8?B?aDh5dGd3YlpGSGRZUjVZbTBMQXZKRWhGMGJhL1VWOGlEbTRROGluTEFUMmsr?=
+ =?utf-8?B?WHc2QVFzQktZRzUrV09ZNzBGb3Z3ajJFZE9YNnpzelJiWUFNRXl1cjdaNGNR?=
+ =?utf-8?B?NVk4NTdvYWNiTzQ1dER1WUNOYkVVVG5QUjArdWNaOTduWlR1ZUhjRTlMTmF2?=
+ =?utf-8?B?RVhZcjQ1NVQ2UzI4MEdSZmpJbVpDdzdWd3h3eHY0TFpuNU1uNGVuRG9ZTktL?=
+ =?utf-8?B?eFRULzhLWS9SZGlva3N5ekNXTHZ0bmV2bzZYc01xbFR2MWFBN2lHMDFmODZK?=
+ =?utf-8?B?OE9HTDZTTW9ISE9WdzQvajU1TGNjRDFGdStEenNucmZiOGc2cFdkcm56TkU4?=
+ =?utf-8?B?MkUrdXk4VUNta2ZkQS9JaDJmbDcxOVNJYXdmdEwra2VNbmtib20xdSsxTk9Q?=
+ =?utf-8?B?WTQxOGFaS0VrM2dMYXBDcWFWdE51WWFDOWwzZk9jMXgyc1lKRVRUNExpbzEr?=
+ =?utf-8?B?eDBIYkpWL1hCWmNWY0orQ2JNYUtvZmcvTENuWDhUSm9CbS9hdlVjLytDSEhB?=
+ =?utf-8?B?U3VzejJqd0hHaEpSYnFkcTZLTjhWSDJWVXVjVi9YSEU4eFpEeVRialpDZFRF?=
+ =?utf-8?B?UUI1ekdzYVpLdlJLQUhITnR1NXMvelZHa1VpaG9JY2xPdGxacjJpamoxTm5Y?=
+ =?utf-8?B?bG1yMllFbTFnQjRUUXQxN2N6cFpvYVkvdlpQb25xRFBqejJjSVg2Y25OaDFl?=
+ =?utf-8?B?aXp0WlpYT0VEQ2pIbi9wSDZmdkFQbzhnNkZvZWwvMVk5YXZmSFJ2NXlRRzFX?=
+ =?utf-8?B?M3RBQkMvNmFlWThvMTdkZ21rcUZ6bXBhUmc1Zlk1SWFNN2hBckx6MDd2VTBS?=
+ =?utf-8?B?Y09LemtzQkdTdFVTNlNKMmUyS2ZvMHppT2VhWWRoNHBTNkcyRDdFell1UHgw?=
+ =?utf-8?B?ci91NG84SlBHMlVtWCsxUisxeU43K0hpZEp0Yy9NUkxtVjdoelVOTjN6SzRP?=
+ =?utf-8?B?Y3kxb29SZURJNDltTmRrMkFpTUl5S2hoc1E4ZmcrT3AzUDVYYTRiZjF3WVN2?=
+ =?utf-8?B?YzJ3cFd3V0wwMWR6MFZhSjFCN2dQaHYzSEtycDZqdXBFVjVkNjVjOFE1U2My?=
+ =?utf-8?B?N0RJYVhSKzJ4T2hMcnJVZTVJRjM0a0t6Ymhjd0p6clhEN3NDY05mcmh5NE5W?=
+ =?utf-8?Q?pC9rMKmxgx0=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5423
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM4PEPF00027A69.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	3248e2de-d1a7-4b1b-5eb6-08dddc0df38e
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|36860700013|1800799024|82310400026|7416014|376014|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?enZsZ0FmZ2NkckVaNy9YcGVTWWo4R2xHb0d5TFhVUW5xaFJmbVExLzBBQndG?=
+ =?utf-8?B?V2N1anYvaTNZaDFJTEp1SVlZV05zdEFRMGQ2RWVvUUhUdVdRdnJKWWhIYjg0?=
+ =?utf-8?B?Tnh0MkJlS2R2T3JCb0Z5NmRXOUwva0lmVWdXdWszM2R5WkR2VlNEV0dGR0dP?=
+ =?utf-8?B?bUNCUEg2YzJtL0V2Njcwd2xwalFDWEozWFBFNjhOb1QvcEkwRjF6Wmh2YUNL?=
+ =?utf-8?B?L3NIVkt1dlRaK3E0bE5zNThVV1ViRjk5YnRjckVzeldLaG1BcUZxbnZTdFZp?=
+ =?utf-8?B?dkFKM1lvdDVuSzc0SHg0TUt2bUNjRDZCdG90aktwOE8vWUJrWE92WTc3RVhG?=
+ =?utf-8?B?VE1Hd2xWdFArb0xObm5yMndGd0ZoNXRtbDR3WFRDWVB2ZnpqMmdTenJxdEkx?=
+ =?utf-8?B?SnNNMFdnenpsNEFVNVpXa2FNV0N4MWUxYzc4czhOMXBERTdYc0M2SE1uMGFn?=
+ =?utf-8?B?SUgxaHl0RmdzbitrU2RwQkY0OG9COFJmcGJCNDRWaURTbWlMdmVCZlhzRDc2?=
+ =?utf-8?B?L0VqSVBydjd2ZVdPS2tUMURoaGcwTmg3eW0yYU1QZXRITlJQQmtEUW91ZmpG?=
+ =?utf-8?B?QUExUnByTkc0OU5mOHhicUJMM3VSTDZmTnRvclV4ZGM1UFV0cWxRSGpnMi9w?=
+ =?utf-8?B?NTVCR213VnhEWlUyalNUMW42S050MXdma1ZFUzJ1cHRCM2tjUDJobGw0K1ZS?=
+ =?utf-8?B?WUZ1UldKTHBsTXltOGpoUEtNOVlrVkNjNnFTOEZYSjBpZ0RRNFU2d0dxMHlF?=
+ =?utf-8?B?dFN2OWZGRjU0b052YWx1b3ZPU3ExUG5ENjZ6dEM0T3JEN2xhYmx4UFgwK3kx?=
+ =?utf-8?B?ZytQQXYrUm5rMktleDQyVjVxRXZ2cmxCamcyazU4VmVHbmlPQ2c2TDdoV1RZ?=
+ =?utf-8?B?SXIvK1czOG0ydS9COEx5RVBsV1NGZFMyTFN3UlN5M0xTWnRuTFovbjR4RUtC?=
+ =?utf-8?B?THpBTmEraUtSeGMxZFlscnZRTVVFa0w3UXdGOU5IRm9WVXNPdkszU2J1UVM5?=
+ =?utf-8?B?N25wOUxweVdkM2htRGNSc2VnTEt2Y1NSaVMwVXVBMndLaUhEYkM0dVBzaGZm?=
+ =?utf-8?B?NlI3TWZtcmlyNlVTTGxVMVlnbEJHeGNKdWxmMG83bHlSSythTW14aGs0V2d5?=
+ =?utf-8?B?RW5HdUxEcldhWURTcnNGVjRNaTV5TTJOUFRqRVRJVVByRC8rK2l1QzNvbU9j?=
+ =?utf-8?B?QlpCRHdES1laV213Z3Jhd2YwdXkwZTdvTldWc25NQ3BRcU9xaUdoSzd0bm9B?=
+ =?utf-8?B?RVF1cDY2N0VWNTFJTW9GVllUa2hKUXJMM0dwUWpJRGZmTEVsbjNxS0Q4L1JV?=
+ =?utf-8?B?dXVzdmMyd2pOSGx3NnBHWXJudEVZV2crRTFqSjU0VVNFN2piQzR4eStaTENo?=
+ =?utf-8?B?dWt3eDNqWFNZUjFhY1hVYzdWOTdINHdWMW5lWm1oM0NEd1AwdDZ2dVVucytF?=
+ =?utf-8?B?ek83NFpDRXRvZXdRU25kK3MreDRWVWw3YU9rL3NRMjlxY1BTL1Q1M0lGcVlT?=
+ =?utf-8?B?SlZvZ1I3MU56MVAzczU4SzNHLzc0VWg3VTF1cTJSL1FKQ3ZqczlOR3JDdkV2?=
+ =?utf-8?B?YkZHek05WmV2RTZMVnJOUnRKZHZxbmR5YndaNDJMTHhQYnhLVjRTZkNRNmpr?=
+ =?utf-8?B?M05jSnR5NFAycG5XcGUzMHV2VGJkYy9zTkJMOVBWTU9vY3NhYU9rbVFCMmVX?=
+ =?utf-8?B?M0xiaTNCT2xjWko0Yk9uWlMveHhTSWRhNW15VFRyeE5YbG9yUUJqZGhvYUFU?=
+ =?utf-8?B?VTBiT3Q4Vjc1YkRKQW1sYXE4VGhIalVBMzFHdFkwbDhseWY4Mm1ENFBTYWpt?=
+ =?utf-8?B?MTRJUkcrN1VNWEZlNnJKZ3dnY2JZbUw4c1BZSkRROVBpZXJxN042UEx3bGlE?=
+ =?utf-8?B?SGdhSUNOQzBRUG5GV0VpQUt2MFRQOTFMMFp0YU9oZzVmTGdQZkJabXRlbjFN?=
+ =?utf-8?B?dXR4WFZtdG1qSnZXNEJkdDcwVjNtdys4ejV6aHdoeHFvU01zY00vSGdaRk9x?=
+ =?utf-8?B?YzVqbWZ2MDdtajJPcG1jblgwN0RyZmppa2tkbU03RGVOZ0cxVW1LL1dYcTZ6?=
+ =?utf-8?Q?ZkDYew?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(36860700013)(1800799024)(82310400026)(7416014)(376014)(35042699022);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 15:11:36.1249
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7db7fe2f-280d-4677-c312-08dddc0e07b5
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00027A69.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7675
 
-Hi Michal and YoungJun,
-
-I am sorry for the late reply. I have briefly read through the patches
-series the overall impression:
-1)  Priority is not the best way to select which swap file to use per cgrou=
-p.
-The priority is assigned to one device, it is a per swap file local
-change. The effect you want to see is actually a global one, how this
-swap device compares to other devices. You actually want  a list at
-the end result. Adjusting per swap file priority is backwards. A lot
-of unnecessary usage complexity and code complexity come from that.
-2)  This series is too complicated for what it does.
-
-I have a similar idea, "swap.tiers," first mentioned earlier here:
-https://lore.kernel.org/linux-mm/CAF8kJuNFtejEtjQHg5UBGduvFNn3AaGn4ffyoOrEn=
-XfHpx6Ubg@mail.gmail.com/
-
-I will outline the line in more detail in the last part of my reply.
-
-BTW, YoungJun and Michal, do you have the per cgroup swap file control
-proposal for this year's LPC? If you want to, I am happy to work with
-you on the swap tiers topic as a secondary. I probably don't have the
-time to do it as a primary.
-
-On Thu, Aug 14, 2025 at 7:03=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> On Wed, Jul 23, 2025 at 03:41:47AM +0900, YoungJun Park <youngjun.park@lg=
-e.com> wrote:
+[...]
 > >
-> > After thinking through these tradeoffs, I'm inclined to think that
-> > preserving the NUMA autobind option might be the better path forward.
-> > What are your thoughts on this?
-
-The swap allocator has gone through a complete rewrite. We need to
-revisit whether the NUMA autobinding thing is still beneficial in the
-new swap allocator. We need more data points. Personally I would like
-to decouple the NUMA to the swap device. If the swap device needs more
-sharding, we can do more sharding without NUMA nodes. Using NUMA nodes
-is just one way of sharding. Should not be the only way to do
-sharding. Coupling the swap device with NUMA nodes makes things really
-complicated. It would need a lot of performance difference to justify
-that kind of complexity.
-
-> > Thank you again for your helpful feedback.
+> > > + * Not marked as __init as a CPU can be hot-plugged after boot.
+> > > + */
+> > > +void kasan_late_init_hw_tags_cpu(void)
+> > > +{
+> > > +	/*
+> > > +	 * Enable stonly mode only when explicitly requested through the command line.
+> > > +	 * If system doesn't support, kasan checks all operation.
+> > > +	 */
+> > > +	kasan_enable_store_only();
+> > > +}
+> >
+> > There's nothing late about this. We have kasan_init_hw_tags_cpu()
+> > already and I'd rather have it all handled via this function. It's not
+> > that different from how we added asymmetric support, though store-only
+> > is complementary to the sync vs async checking.
+> >
+> > Like we do in mte_enable_kernel_asymm(), if the feature is not available
+> > just fall back to checking both reads and writes in the chosen
+> > async/sync/asymm way. You can add some pr_info() to inform the user of
+> > the chosen kasan mode. It's really mostly an performance choice.
 >
-> Let me share my mental model in order to help forming the design.
+> But MTE_STORE_ONLY is defined as a SYSTEM_FEATURE.
+> This means that when it is called from kasan_init_hw_tags_cpu(),
+> the store_only mode is never set in system_capability,
+> so it cannot be checked using cpus_have_cap().
 >
-> I find these per-cgroup swap priorities similar to cpuset -- instead of
-> having a configured cpumask (bitmask) for each cgroup, you have
-> weight-mask for individual swap devices (or distribution over the
-> devices, I hope it's not too big deviation from priority ranking).
-
-+1. The swap tiers I have in mind is very close to what you describe
-
-> Then you have the hierarchy, so you need a method how to combine
-> child+parent masks (or global/root) to obtain effective weight-mask (and
-> effective ranking) for each cgroup.
-
-Yes, swap tiers has a hierarchy module story as well. Will talk about
-that in a later part of the email.
-
+> Although the MTE_STORE_ONLY capability is verified by
+> directly reading the ID register (seems ugly),
+> my concern is the potential for an inconsistent state across CPUs.
 >
-> Furthermore, there's the NUMA autobinding which adds another weight-mask
-> to the game but this time it's not configured but it depends on "who is
-> asking". (Tasks running on node N would have autobind shifted towards
-> devices associated to node N. Is that how autobinding works?)
-
-Again, I really wish the swap file selection decouples from the NUMA nodes.
-
-> From the hierarchy point of view, you have to compound weight-masks in
-> top-down preference (so that higher cgroups can override lower) and
-> autobind weight-mask that is only conceivable at the very bottom
-> (not a cgroup but depending on the task's NUMA placement).
-
-I want to abandon weight adjusting, focus on opt in or out.
-
-> There I see conflict between the ends a tad. I think the attempted
-> reconciliation was to allow emptiness of a single slot in the
-
-I think adjusting a single swap file to impact the relative order is backwa=
-rds.
-
-> weight-mask but it may not be practical for the compounding (that's why
-> you came up with the four variants). So another option would be to allow
-> whole weight-mask being empty (or uniform) so that it'd be identity in
-> the compounding operation.
-> The conflict exists also in the current non-percg priorities -- there
-> are the global priorities and autobind priorities. IIUC, the global
-> level either defines a weight (user prio) or it is empty (defer to NUMA
-> autobinding).
+> For example, in the case of ASYMM, which is a BOOT_CPU_FEATURE,
+> all CPUs operate in the same mode —
+> if ASYMM is not supported, either
+> all CPUs run in synchronous mode, or all run in asymmetric mode.
 >
-> [I leveled rankings and weight-masks of devices but I left a loophole of
-> how the empty slots in the latter would be converted to (and from)
-> rankings. This e-mail is already too long.]
+> However, for MTE_STORE_ONLY, CPUs that support the feature will run in store-only mode,
+> while those that do not will run with full checking for all operations.
+>
+> If we want to enable MTE_STORE_ONLY in kasan_init_hw_tags_cpu(),
+> I believe it should be reclassified as a BOOT_CPU_FEATURE.x
+> Otherwise, the cpu_enable_mte_store_only() function should still be called
+> as the enable callback for the MTE_STORE_ONLY feature.
+> In that case, kasan_enable_store_only() should be invoked (remove late init),
+> and if it returns an error, stop_machine() should be called to disable
+> the STORE_ONLY feature on all other CPUs
+> if any CPU is found to lack support for MTE_STORE_ONLY.
+>
+> Am I missing something?
 
-OK. I want to abandon the weight-adjustment approach. Here I outline
-the swap tiers idea as follows. I can probably start a new thread for
-that later.
+So, IMHO like the ASYMM feature, it would be good to change
+MTE_STORE_ONLY as BOOT_CPU_FEATURE.
+That would makes everything as easiler and clear.
 
-1) No per cgroup swap priority adjustment. The swap file priority is
-global to the system.
-Per cgroup swap file ordering adjustment is bad from the LRU point of
-view. We should make the swap file ordering matching to the swap
-device service performance. Fast swap tier zram, zswap store hotter
-data, slower tier hard drive store colder data.  SSD in between. It is
-important to maintain the fast slow tier match to the hot cold LRU
-ordering.
-
-2) There is a simple mapping of global swap tier names into priority range
-The name itself is customizable.
-e.g. 100+ is the "compress_ram" tier. 50-99 is the "SSD" tier, 0-55 is
-the "hdd" tier.
-The detailed mechanization and API is TBD.
-The end result is a simple tier name lookup will get the priority range.
-By default all swap tiers are available for global usage without
-cgroup. That matches the current global swap on behavior.
-
-3) Each cgroup will have "swap.tiers" (name TBD) to opt in/out of the tier.
-It is a list of tiers including the default tier who shall not be named.
-
-Here are a few examples:
-e.g. consider the following cgroup hierarchy a/b/c/d, a as the first
-level cgroup.
-a/swap.tiers: "- +compress_ram"
-it means who shall not be named is set to opt out,  optin in
-compress_ram only, no ssd, no hard.
-Who shall not be named, if specified, has to be the first one listed
-in the "swap.tiers".
-
-a/b/swap.tiers: "+ssd"
-For b cgroup, who shall not be named is not specified, the tier is
-appended to the parent "a/swap.tiers". The effective "a/b/swap.tiers"
-become "- +compress_ram +ssd"
-a/b can use both zswap and ssd.
-
-Every time the who shall not be named is changed, it can drop the
-parent swap.tiers chain, starting from scratch.
-
-a/b/c/swap.tiers: "-"
-
-For c, it turns off all swap. The effective "a/b/c/swap.tiers" become
-"- +compress_ram +ssd -" which simplify as "-", because the second "-"
-overwrites all previous optin/optout results.
-In other words, if the current cgroup does not specify the who shall
-not be named, it will walk the parent chain until it does. The global
-"/" for non cgroup is on.
-
-a/b/c/d/swap.tiers: "- +hdd"
-For d, only hdd swap, nothing else.
-
-More example:
- "- +ssd +hdd -ssd" will simplify to: "- +hdd", which means hdd only.
- "+ -hdd": No hdd for you! Use everything else.
-
-Let me know what you think about the above "swap.tiers"(name TBD) proposal.
-
-Chris
+--
+Sincerely,
+Yeoreum Yun
 
