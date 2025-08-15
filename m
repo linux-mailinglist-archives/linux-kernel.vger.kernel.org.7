@@ -1,84 +1,118 @@
-Return-Path: <linux-kernel+bounces-770529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE003B27C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:06:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF1DB27C1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A2AA27A2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FCD1891719
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBDA2F49FA;
-	Fri, 15 Aug 2025 08:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADAB2F60B7;
+	Fri, 15 Aug 2025 08:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1REpBiW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulM83OMw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FBC2F39DC;
-	Fri, 15 Aug 2025 08:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0B82F49E1;
+	Fri, 15 Aug 2025 08:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248198; cv=none; b=ZVnT9KXVNPUbXW5RV/U1rPORRH3xhq1tRmR51iXDuCLc1b2o5P+xann9tc6Go3sUZ0zq9TBsCP5g8fj+xL28tH/DN4pllL4GCsTZijzRMc0PBwkcf49OU8gpJLgY3aP5sYrdfnvuu+5N3vK/lp/QS2jOgqnCJ5+FKpWlsYswAiw=
+	t=1755248200; cv=none; b=RsIM0rcCRedm0OoeUkZzjSUPe+bgfn4l6t9/qUuQdg4qnn8TOcF6o0OcOkYXRbfRuQa2sAkdo0K1gIksaPs+GRWhxMygvVh0esiIvG7t9ReAyBHUVl8pbuy5/CBTIXb90QTO/PhqYx7VNj3/TrUcdVppPb3ht5sz7/GU2Emfdrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248198; c=relaxed/simple;
-	bh=RGMlpvpTQSMExozJzkOz6BmL8Zte6c4xFpuKD3X1WCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SazMiw7fFMAKdOcxFFAQrvZlKqMBV7kc22EaokLvkXl0x1Ap8Qn5lE3FD9q3FtqlEHbOrycJz7EGLOOr3L4+F6s0/41LCm7UCSG1mdxwwgghX+EYeE6ercUyf9s9QcRh4W6RlRoWU4tTDriEQUrI2g7NSqgGPZUWcw1z1lACw/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1REpBiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E35C4CEEB;
-	Fri, 15 Aug 2025 08:56:36 +0000 (UTC)
+	s=arc-20240116; t=1755248200; c=relaxed/simple;
+	bh=8s1RWUEDTVGm4h3m+AVbG9qZVr/HNG9Xzjq84v8RjyU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=l25Xh8cm3VdGgaKpNGLQTpiKiZjVbr9LiHhMOuSCSj4xRFK0zRRqA+0qZ1gCv8BsYkgV+2+LqQ3l0tIAC8a70PJuNr5jBB2czMaVRu8ckpytXHV2hPlKCVTaCQgCr0EchbsXBqg5RVqTkVTdK5GOxE3Md//jbiE+sK+VV/jj9Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulM83OMw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43FC4C4CEF4;
+	Fri, 15 Aug 2025 08:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755248197;
-	bh=RGMlpvpTQSMExozJzkOz6BmL8Zte6c4xFpuKD3X1WCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r1REpBiWgG5VdeqpNssMMVddtGbUpE/J9q2bwmIf62sJrU/040C4ElbC4kzVGv9AM
-	 u6XoLHEkgyQyp10zBo1tGxSI06xDy/ihEeoiF4/pfw9xTcQ7vaybHGGut2YPtbB0pI
-	 Qm5FOz2CcMVU9KkxPD29Yxo4zjUScjHUwXgW2LxnFZY/6sG4u5XfOW47fUBUPJFkBl
-	 J5He+KrXV55zzrBl9NgSBlb0Bt4LgTlH6hDA7IFLzG3QAAWiV6yFhop7qjF1/Ad/re
-	 dMQSkPWAIEx4cygELyWQf5lGvocEjlVVl/AHXwHM43J9j7RBcwpFBID6sdcYI8SS6u
-	 mh6Q4vxYOyClw==
-Date: Fri, 15 Aug 2025 10:56:34 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Beguin <liambeguin@gmail.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] iio: adc: ltc2497: add temperature sensor support
-Message-ID: <20250815-agile-crafty-labradoodle-227dfb@kuoka>
-References: <20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com>
- <20250814-ltc2495-v3-3-c2a6cecd6b99@gmail.com>
+	s=k20201202; t=1755248200;
+	bh=8s1RWUEDTVGm4h3m+AVbG9qZVr/HNG9Xzjq84v8RjyU=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ulM83OMwAIfYozyuCs4JKqkxIIVJsEiGNQPZ5reZgflsmG4WPfsvP0PU8KsqlErYI
+	 eRV19Wah6hUai3XZuxyKZcW7OxNawP4oKfrZFSnsz3Gq2k3RJj04NG+pfl38vs6PKi
+	 M3QuezB8YRiTIpOZp6+7n+31d03ac+XCq7fujvrN/KQAn8iix9d6jxDDlWEnmoXVUJ
+	 olPVAUtEHj3F9wpB5hfHEAd5FtgMfg0QEIbTxi9Pszsahotx/s5qO4DKHln6l5Afbv
+	 +SOgdkjP1VhmOjiX+hkywLFVOWsEC4/chvSHQSfbouRpKGVAjfEmv1ye8wZVr+uldo
+	 zbQc5x4OOfc7A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314F1CA0EE4;
+	Fri, 15 Aug 2025 08:56:40 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Fri, 15 Aug 2025 16:56:39 +0800
+Subject: [PATCH] ACPICA: add more parameter validation for
+ acpi_walk_namespace()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250814-ltc2495-v3-3-c2a6cecd6b99@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250815-acpi_fix-v1-1-a05ebfe1b8ac@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAEb2nmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0NT3cTkgsz4tMwKXWNzI5NUs2STlEQDIyWg8oKiVKAw2Kjo2NpaAKq
+ N1oJaAAAA
+X-Change-ID: 20250815-acpi_fix-3724e6c4da02
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, wangyuli@uniontech.com, 
+ guanwentao@uniontech.com, niecheng1@uniontech.com, zhanjun@uniontech.com, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755248199; l=1219;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=TsnirmhdVe95wU+g+49Bvoj0s1Au2GOZZ9diwqQO6Lc=;
+ b=sdZiZROQGQifna8Wfyn1Q9udujXPJBP3+KY88fRSul/V+zzMEqmEK6+0L2CgrbIC0AD/2g8sL
+ fRoZUvajx4oCPt7xrDmguQSeIxaJutZUblGtKdK3xHjwupTMI6Yzr3C
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
-On Thu, Aug 14, 2025 at 01:00:19PM +0200, Yusuf Alper Bilgin wrote:
-> Support for reading the internal temperature sensor on LTC2495 and
-> LTC2499 via a standard IIO temperature channel.
-> 
-> Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-> ---
->  drivers/iio/adc/ltc2497-core.c | 141 ++++++++++++++++++++++++++++++-----------
->  drivers/iio/adc/ltc2497.c      |  28 +++++++-
->  drivers/iio/adc/ltc2497.h      |  15 +++++
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-Thus should be squashed with previous patch, otherwise previous patch is
-just incomplete and broken. Unless... your binding is incorrect (I will
-comment there).
+On the Honor FMB-P-PCB laptop, an incorrect ACPI table causes
+sdw_intel_acpi_scan to pass a NULL pointer as start_object to
+acpi_walk_namespace() when calling it, which eventually causes the
+kernel to report a NULL pointer dereference[1].
+
+1. https://gist.github.com/Cryolitia/a860ffc97437dcd2cd988371d5b73ed7
+
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+ drivers/acpi/acpica/nsxfeval.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpica/nsxfeval.c b/drivers/acpi/acpica/nsxfeval.c
+index f9d059647cc52e94ce013af3382addba338820e8..c1f318ea7d5fcd846dc158b155286a6f5bba4cff 100644
+--- a/drivers/acpi/acpica/nsxfeval.c
++++ b/drivers/acpi/acpica/nsxfeval.c
+@@ -564,7 +564,7 @@ acpi_walk_namespace(acpi_object_type type,
+ 
+ 	/* Parameter validation */
+ 
+-	if ((type > ACPI_TYPE_LOCAL_MAX) ||
++	if ((type > ACPI_TYPE_LOCAL_MAX) || (start_object == NULL) ||
+ 	    (!max_depth) || (!descending_callback && !ascending_callback)) {
+ 		return_ACPI_STATUS(AE_BAD_PARAMETER);
+ 	}
+
+---
+base-commit: 24ea63ea387714634813359e2c8e0e6c36952f73
+change-id: 20250815-acpi_fix-3724e6c4da02
 
 Best regards,
-Krzysztof
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
+
 
 
