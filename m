@@ -1,116 +1,108 @@
-Return-Path: <linux-kernel+bounces-771149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4F8B28372
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06451B2837D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3FB2176835
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CCEAC4E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE013090F2;
-	Fri, 15 Aug 2025 16:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCAB308F31;
+	Fri, 15 Aug 2025 16:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jn4b1wBC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fynFi1g0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B16B1607A4;
-	Fri, 15 Aug 2025 16:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE81F291C18
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755273662; cv=none; b=KuxLZ2oh7tpMtSsP/U3Aa2XYN6+6ycqtXnuWRyMMPLEsz5naErONTkoS5cCiyFKgDZRcUQKd0EImOuRCLQDdf3T5z5BBZ4iwYmvRvSc2ZM/JuVgPG5SGsnAw8ggJhnWk/1wZuU2XIP7d8QcJrDseNpxISf+RcdCzpi0zeIhovNU=
+	t=1755273855; cv=none; b=RlkLY0IlNmxXsVAwjur3zxTE7QUG9UnhgitMBMUFlKXMm8c1VnmtcN0l6Q25nqzaQ1kbYA/mGNanGzP62ofREhQdITFfNpT1K4WerUgCElaI+/GyS4LFnDmFEM9RU0EXyXGAc5SFBLkmmdjnIoUss5xdb8ituUu23tWYwR/kmZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755273662; c=relaxed/simple;
-	bh=eRUDrce47BqPOp008rZcmDRCQAYL6tsCtMgmCQUcvvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6B1hAiq0Y7XgHgoR+7BHqIvDVkxzqMVI/hf0JU1WmDDui72H48HeeYqZXgctBrQwYEvYpJnr2SKYMUvO/LlLwI4fR7I4DLGlcywXhFwvpZsFTSJXhn8jfl2tPHZxg+82UMxQJlSlmRbyeS5UYsaSjIcnhZ9m71msxPUm6DakR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jn4b1wBC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D42F8C4CEF6;
-	Fri, 15 Aug 2025 16:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755273661;
-	bh=eRUDrce47BqPOp008rZcmDRCQAYL6tsCtMgmCQUcvvg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Jn4b1wBCxht7szwJHKXRgZSepWqfAksQvhvy7AQNC4S39e1YrrCW7N0bnWtn4U/tS
-	 E+0hmcICrjeoO9QLHxkRK+MABPxVLhAPZr6o7x3/VhOCqWx2aMdhZbZHkgNSdsPOW4
-	 r1uUYmQcU0G75stxmb9D9IQvnATsoFHpGAHM+2F1cNH/B3aocL/U1fa3UG12lyMAct
-	 0DG4FD2Qli3FZz2GqQ7Pd7iUwr+jYV1bUlwvdLSt4Iuhu4i5gHxNYF1r7920jNhbzZ
-	 fGK/bfmtQ+Mg2YuyDprnqkQE4yz1j2pXeLP5+T8QhWlKkOoVO5ojoqzsQaN645yiM5
-	 EgpeHMrJ8qBUQ==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f92b4072so15634361fa.3;
-        Fri, 15 Aug 2025 09:01:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgS5fZ2A1CLKWPyoezYl1SDW17ZNhl59UOq4mhP2ZjBvWHUT6noWVw2NljyXF6DFwfTZ73FJdB7Ho+M7hV@vger.kernel.org, AJvYcCWVhiaYhwoDvdL3v+CfRMZfdM5inimFRDqiRN2+sE+s8XVvPgKeyGx5AjUYqmU6ay0/4HTNwFHjuixCfqp626Fc@vger.kernel.org, AJvYcCWw5JWjFlxFj44qmJMwsEmmvdNuLs/CVTSwAsvMiznNqB483DxW2rPV8P0cgTwtyzcXPcIlGMks0yQQ@vger.kernel.org, AJvYcCXy6VxntFs4Rc4tzqnZ9PN3QshY9oFt2aFQfSmLLVaBNkDdg1+1MeROrF78Yxz0JE5szfDc0rpp+Sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjCvE7PqwT9GrF900YXwa8dDgwEtcn2beOQgkhhLnxdhA9amd7
-	zqO4U4LevNbVhg65y8dVaMx9dVewPICI3vBYXNyKF3dUUF7tc8+MT7Ru+zqTChnSFcRz+KYmaoH
-	TmBPX/RTn5yRGsINi8iu2qN3G5kWe7NE=
-X-Google-Smtp-Source: AGHT+IHEwrCso4h5YUSQfaAEPA8TR44kQ6AFZDpMvO0IXNauVtw+BfZ3azkucV1+vYX0CKjal7kHhwo3GJXj3q4Nscc=
-X-Received: by 2002:a05:651c:19ac:b0:32b:3689:8d87 with SMTP id
- 38308e7fff4ca-3340988a1c5mr7693321fa.17.1755273660445; Fri, 15 Aug 2025
- 09:01:00 -0700 (PDT)
+	s=arc-20240116; t=1755273855; c=relaxed/simple;
+	bh=lKMogr4ajRlJk619aEelHGKAjLdqaDJr87j1olYJqJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfcEiZICJVGejJcP8VexghzbWQcPZXqShM+5uWUh1V+Usxw08bfGl8YC0S/OFJiqfLF4hHPAaBVBF88IXcsgEBQaLr60bCcXbWTQsm9M/SEdo9okVKuFN8px9w/Hc/u2+QFnZeyqHf3DMAQUYeSsx6fkGTGV1Wod0R/roqFzDEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fynFi1g0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755273852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lKMogr4ajRlJk619aEelHGKAjLdqaDJr87j1olYJqJc=;
+	b=fynFi1g062tkUEWSQKesK5nQ1kbhyDxlqoezoaXbUeUDP6dRCeQ/qK8cYReUecGprMqsuD
+	jhBK4pPfF17Y1VBDTz7N5DWIK59CcGYEW8KEIn+diPsKkkPAEeKDDbiNCFo8nXtI3w+I3f
+	+N6jMWvdHOZoo8U97v3s0netNvuC/KQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-zliQYkXHOyqrvZrgwfCzhA-1; Fri,
+ 15 Aug 2025 12:04:09 -0400
+X-MC-Unique: zliQYkXHOyqrvZrgwfCzhA-1
+X-Mimecast-MFC-AGG-ID: zliQYkXHOyqrvZrgwfCzhA_1755273847
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 60F3518002CF;
+	Fri, 15 Aug 2025 16:04:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.47])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A1B52180035C;
+	Fri, 15 Aug 2025 16:04:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 15 Aug 2025 18:02:50 +0200 (CEST)
+Date: Fri, 15 Aug 2025 18:02:44 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/6] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER) in
+ .regset_get() paths
+Message-ID: <20250815160244.GI11549@redhat.com>
+References: <20250814101340.GA17288@redhat.com>
+ <20250815155220.GA3702@redhat.com>
+ <d74b6f8b-2662-47f4-8221-2d2e6e7fe580@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815064430.work.772-kees@kernel.org>
-In-Reply-To: <20250815064430.work.772-kees@kernel.org>
-From: Tamir Duberstein <tamird@kernel.org>
-Date: Fri, 15 Aug 2025 12:00:23 -0400
-X-Gmail-Original-Message-ID: <CAJ-ks9=HYFEEENpZRADiA0y=EzLUc42ZCQLwGA0oVR6MGcP-Nw@mail.gmail.com>
-X-Gm-Features: Ac12FXxobgu3WoXyaE05TcLbi8v8k13iVBNLRABs05eAFOJkKxXsLcsQqjxFvQo
-Message-ID: <CAJ-ks9=HYFEEENpZRADiA0y=EzLUc42ZCQLwGA0oVR6MGcP-Nw@mail.gmail.com>
-Subject: Re: [PATCH] .gitignore: Add Coding Assistants section
-To: Kees Cook <kees@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Steven Rostedt <rostedt@goodmis.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	Sami Tolvanen <samitolvanen@google.com>, Gary Guo <gary@garyguo.net>, 
-	Kris Van Hees <kris.van.hees@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Li Zhijian <lizhijian@fujitsu.com>, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	workflows@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d74b6f8b-2662-47f4-8221-2d2e6e7fe580@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Aug 15, 2025 at 2:44=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+On 08/15, Dave Hansen wrote:
 >
-> Both Claude and Gemini save locally personalized configurations in their
-> respective .md files and dot-directories. Since these are continuously
-> updated by the developer (and agent) when working on projects, these
-> files must be ignored, much like how we ignore the debian/ directory, etc=
-.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> On 8/15/25 08:52, Oleg Nesterov wrote:
+> > Dave, Sohil, what do you think?
+> >
+> > OK, it seems that 5/6 (and thus 6/6) needs more discussion, but what
+> > about 1-3 for the start?
+> They kinda need fleshed out changelogs first, don't you think?
+> Especially 1/6. It also needs an actual cover letter explaining what
+> it's trying to do and the larger context. Ideally, it's self-contained
+> and as opposed to links to previous discussions.
 
-Reviewed-by: Tamir Duberstein <tamird@kernel.org>
+I agree about the cover letter, but what else do you think the changelog
+in 1/6 could say? ;)
 
-> ---
->  .gitignore | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/.gitignore b/.gitignore
-> index bf5ee6e01cd4..0459a44a3d64 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -182,3 +182,11 @@ sphinx_*/
->
->  # Rust analyzer configuration
->  /rust-project.json
-> +
-> +#
-> +# Coding assistants
-> +#
-> +/CLAUDE.md
-> +/.claude/
-> +/GEMINI.md
-> +/.gemini/
-> --
-> 2.34.1
->
+OK, I'll try to improve and resend.
+
+Oleg.
+
 
