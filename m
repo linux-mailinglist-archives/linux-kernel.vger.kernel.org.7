@@ -1,83 +1,204 @@
-Return-Path: <linux-kernel+bounces-770599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E37EB27C94
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:17:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A1B27CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A85B4E330F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3371D21FBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13723A9A0;
-	Fri, 15 Aug 2025 09:15:41 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FEC272E51;
+	Fri, 15 Aug 2025 09:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5ZVmyll"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EDE20013A;
-	Fri, 15 Aug 2025 09:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307682737E1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249341; cv=none; b=QxOhUMKIYF5lNJsVgRoxhNRzoq8zyQMTlgSz1JpMrMqWz7clx4XnjPbPlHELX+3KajJ4kTJaInuf/c2DaL6+Gku0zo1/H/wfeTj489++8I9h7OWE2o343PXq70HJdmiSYjw5ksj3bOkOwH//EYa7BL6RsYabNEvtvQ6DcUl4r0M=
+	t=1755249342; cv=none; b=JMvGGlNGq8oE1OY/zCVnZx0GVy6CTI7fN9gZjT3OKCSuL6YQPLoYW1ubfaBKCeuxQ1ZtK2SqgKRHdAJpSblTKRNuaxVdx0TeMqODvNnI9mmVRU1CO11eoLMjEUEm1g75K898PDkNPYVvEHta/AKrEXTgXa96YUMvgbEjekQHGas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249341; c=relaxed/simple;
-	bh=nVIvDBy/Jm3WR2xeA1aZWmOPqonh3tIFG7Otxlac60o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cWhomrzgt0zh1qmgTR6xyfphxsGaCS/UOaZzi+F81gDq8uYzXuGn9WPwATto2J16WaytfSoHtiW7U5G0sCdI+8GABywRzTykq0+QuiYZqcQqKBP/ISmgFqRnTteXfm85KiHKxmxHowiYpp6FdBL9wiruTtUUGA6765w8vyA7ntE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <tj@kernel.org>, <hannes@cmpxchg.org>, <mkoutny@suse.com>,
-	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH] cgroup: Remove redundant rcu_read_lock() in spin_lock_irq() section
-Date: Fri, 15 Aug 2025 17:14:30 +0800
-Message-ID: <20250815091430.8694-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1755249342; c=relaxed/simple;
+	bh=hfZcgn0nzW9uuIxs2763lW2p3DkRL5Fx4+ceg0IC1a0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARMWKfsDAH7QvgiAeCY2VvRh0d0XnzumLQUQ0KQ9RnQyTL9ff5Go4NjBkc+Mevc/5wqjNW/b86XumpxflBgJYTnaTyGo1QFeSNFsTpOZP2k1w1HP7WQnDxNUSK+yxNjgMRzLq5acc9j4dBMTbebO2lk6ruCVBnJRTm/aP7USJGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5ZVmyll; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755249341; x=1786785341;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hfZcgn0nzW9uuIxs2763lW2p3DkRL5Fx4+ceg0IC1a0=;
+  b=e5ZVmyllPvFXKOZhBuQaXHUDkzmZbwkwGnmnSEbL8iIHzpyBOzKJZdqr
+   qfPwJNZgSjMcTbbFBzcDMfFn5V5yx11a0zvU454N/6fM44nMH93DcLiIO
+   xzXIIGst9DAg6XJ4ZPWzM55CQFNMZcmI6p9/5K4aVV1s4xmciniG8NrHl
+   j4kXpKixuyqfHYi/YQjPDqzXCd6MDtvOmqJNW5h3aZ/gQ6plxMhOm7LrW
+   /SVVzf9CZ+WNqHwxP/fwru0l3NhpLsupmHPn1lDn/muzklQQHZqe/7Wx5
+   v2bwR0i+JMGz+mekyA8fGur6a3ESaGpvbH5luPEWHRIG1l5ccfbxv1HJp
+   Q==;
+X-CSE-ConnectionGUID: vRLhrnauQoOji3dGoD7MWQ==
+X-CSE-MsgGUID: ZMkIjwTjRSywxnSr6OJbhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57528785"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57528785"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:15:41 -0700
+X-CSE-ConnectionGUID: ZJZH2PX4RoeJ1J/lxbGQOA==
+X-CSE-MsgGUID: I0vJDqLSS+eG3dAfYgKucg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="172199692"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 15 Aug 2025 02:15:37 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umqX9-000BnI-0P;
+	Fri, 15 Aug 2025 09:15:35 +0000
+Date: Fri, 15 Aug 2025 17:14:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
+	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
+	xuwei5@huawei.com, fanghao11@huawei.com,
+	jonathan.cameron@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 2/2] iommu/io-pgtable: Add ARM SMMUv3 page table dump
+ support
+Message-ID: <202508151641.JHlhcDRk-lkp@intel.com>
+References: <20250814093005.2040511-3-xiaqinxin@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc2.internal.baidu.com (172.31.3.12) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814093005.2040511-3-xiaqinxin@huawei.com>
 
-From: Li RongQing <lirongqing@baidu.com>
+Hi Qinxin,
 
-Since spin_lock_irq() already disables preemption and task_css_set()
-is protected by css_set_lock, the rcu_read_lock() calls are unnecessary
-within the critical section. Remove them to simplify the code.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- kernel/cgroup/cgroup.c | 2 --
- 1 file changed, 2 deletions(-)
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 312c6a8..db9e00a 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2944,14 +2944,12 @@ int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
- 
- 	/* look up all src csets */
- 	spin_lock_irq(&css_set_lock);
--	rcu_read_lock();
- 	task = leader;
- 	do {
- 		cgroup_migrate_add_src(task_css_set(task), dst_cgrp, &mgctx);
- 		if (!threadgroup)
- 			break;
- 	} while_each_thread(leader, task);
--	rcu_read_unlock();
- 	spin_unlock_irq(&css_set_lock);
- 
- 	/* prepare dst csets and commit */
+url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250814093005.2040511-3-xiaqinxin%40huawei.com
+patch subject: [PATCH 2/2] iommu/io-pgtable: Add ARM SMMUv3 page table dump support
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250815/202508151641.JHlhcDRk-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151641.JHlhcDRk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151641.JHlhcDRk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/s390/include/asm/bug.h:69,
+                    from include/linux/bug.h:5,
+                    from include/linux/mmdebug.h:5,
+                    from arch/s390/include/asm/cmpxchg.h:11,
+                    from arch/s390/include/asm/atomic.h:16,
+                    from include/linux/atomic.h:7,
+                    from drivers/iommu/io-pgtable-arm.c:12:
+   drivers/iommu/io-pgtable-arm.c: In function 'dump_prot':
+>> include/linux/kern_levels.h:5:25: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
+     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/iommu/io-pgtable-arm.c:882:25: note: in expansion of macro 'pr_err'
+     882 |                         pr_err("len = %zu, attr = %s, i =%d\n", length, attr, i);
+         |                         ^~~~~~
+>> include/linux/kern_levels.h:5:25: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' {aka 'long unsigned int'} [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
+     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/iommu/io-pgtable-arm.c:882:25: note: in expansion of macro 'pr_err'
+     882 |                         pr_err("len = %zu, attr = %s, i =%d\n", length, attr, i);
+         |                         ^~~~~~
+   drivers/iommu/io-pgtable-arm.c: In function 'arm_lpae_dump_iova_prot':
+>> drivers/iommu/io-pgtable-arm.c:911:32: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long unsigned int' [-Wformat=]
+     911 |         seq_printf(s, "%lx - %lx    lvl %d  stage %s ",
+         |                              ~~^
+         |                                |
+         |                                long unsigned int
+         |                              %llx
+
+
+vim +911 drivers/iommu/io-pgtable-arm.c
+
+   891	
+   892	static size_t arm_lpae_dump_iova_prot(struct seq_file *s, struct io_pgtable_ops *ops,
+   893									   unsigned long iova)
+   894	{
+   895		struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+   896		struct iova_to_phys_data d;
+   897		int ret;
+   898	
+   899		struct io_pgtable_walk_data walk_data = {
+   900			.data = &d,
+   901			.visit = visit_iova_to_phys,
+   902			.addr = iova,
+   903			.end = iova + 1,
+   904		};
+   905	
+   906		/* Only the mapped iova will be output */
+   907		ret = __arm_lpae_iopte_walk(data, &walk_data, data->pgd, data->start_level);
+   908		if (ret)
+   909			return ARM_LPAE_GRANULE(data);
+   910	
+ > 911		seq_printf(s, "%lx - %lx    lvl %d  stage %s ",
+   912				   iova, iova + ARM_LPAE_BLOCK_SIZE(d.lvl, data),
+   913				   d.lvl, io_pgtable_fmt_names[data->iop.fmt]);
+   914	
+   915		/* TODO: The dump prot is incomplete and will be supplemented later... */
+   916		dump_prot(s, d.pte);
+   917		seq_puts(s, "\n");
+   918	
+   919		return ARM_LPAE_BLOCK_SIZE(d.lvl, data);
+   920	}
+   921	#endif
+   922	
+
 -- 
-2.9.4
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
