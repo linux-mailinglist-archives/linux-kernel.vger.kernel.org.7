@@ -1,128 +1,239 @@
-Return-Path: <linux-kernel+bounces-771541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE4FB28892
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F08B28894
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447541D0595C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E586605411
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6756E28688C;
-	Fri, 15 Aug 2025 22:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF3127FB2A;
+	Fri, 15 Aug 2025 22:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0JMnMesD"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RbO9+zGp"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694D01FF60A
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A251527F18F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755298346; cv=none; b=aferhU5vW2MWd2CIS9wn3IEce4E7keXKKBKODoQfNa5GVMcN9X/EbpGXTvU/2TjoZVoMwkj/KBsuQgiD0N2UNHIzF4zk3Pbcx6RTA4IgoNNrOvPPHVLzav7YHHVrTtr056Cej/fwt9bhhTMUJ8GxddUU0IbGDJwZ8zH+2aGLXMc=
+	t=1755298405; cv=none; b=JRoDdBiFVatR8w8g2oHv0EdzJo/1RmWzRWZjzLL7K99kxeAbJH8WmRtJ0cWMVIUSmasWdxJ1po24j6/Y6jTIeI4TGqyq3J4of+YmEozI0HaXOdqw45X3Pl01TJru/zXoiWJ2IxlcFnEdS97HvwRcOPlsaHnFNTtYdImaecTW7UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755298346; c=relaxed/simple;
-	bh=K/wYqwonycmklyJ5/DgqlS1Uy+2TdihuiWzWz12ccbw=;
+	s=arc-20240116; t=1755298405; c=relaxed/simple;
+	bh=IO2RxDt6ZIFbbcEW5ySBkmxEqOyDNZUQ+LtuP3NzRGw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H5Q5+prkFZ2m3nVYfBN3Aewqd2Kq+dVaJwircxDcMy3wTrfKXo2TQWAWT0K/Thb5ncuBse1rYNg/xiBOkySBiUmd2l1wcRNebNi6wGBnW9YwF9s1RAFj8Ag30toOhsiUeZXPoDN1WlkEQKBIl7NTRGsfQQyrsWSUgz6Swbc7Ezc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0JMnMesD; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=XcIScDmGO2i1FOosOGD8Rj2wrsjtv+J8cLk3Vvuq+FVVVLKxlevICR5EIKQBpwaNnYiMg5UBaNONaStiYP51vyF8yhmLsEFOagXYF5IEfsDSQf6vAnAw+SVJSxdcjCtG+fdc4uBbH158rrEqBMVjCx63UTPpvBj6nYQtvX1OP18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RbO9+zGp; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323267915ebso4621238a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:52:25 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24458027f67so48436655ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755298345; x=1755903145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N+Te5pIYiAmG0oRIPBD1Z6ejvqQFlWYw672ZGrfsn94=;
-        b=0JMnMesDMC6V4mt3HJ7A427nO7IlUZ4ukfDoG5M6Y+g6pliALlS59Es1cTZ+pWe6cp
-         FLynaHEbH/Z5onZGJwpmt/xODXIrtBQmjvGbxiGC2lRNSPLDOfuODRfk11jKfK3nmx4r
-         ZGkK55QLGguH9g0haF6BIIz/mr+NXzlg+9gYNIGdj5xfK4dGFSysI3ApRU/2JdkutZSu
-         hKHjnRphxfFB0DzyPQW1wewVI29rfa/3Caz54dgZm2dxzEu+oZ2ew/lxw6M5s+tc9/Lg
-         WdhDw1+X2d3rk1libTSOm/aLEhGPOPrdqbHCd/qs2XagM6ndPifxdipbm+uhZFnurJlS
-         XT/A==
+        d=google.com; s=20230601; t=1755298403; x=1755903203; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFMLvpP6SQOf3Z5/hje0uPsmcH8OWRP/M8qsuDbYAZA=;
+        b=RbO9+zGp9w5GrdBp9JQYI8J3o8Yu1DxCtLOERJk79L6jn7BCBv1p7rlWCYzChttPMv
+         jI/URBvANm4M90oE3ixPR9b6z/iX/hhuBrcIeUaDyD3I+zXquxqgK+2fL1h6MP+GYT06
+         yfVxB2kYd4yQ80bgDtBnNujZN39iHB438UZYpPtW2bNgRCBe3+mA2AHwk/LA4cSpPMEP
+         ECDHR83axcQTxGWuI7FlNLrP9pX7Qyzvsex27f9cMAL6vYQan09XlQSrLvNSQg9xd2BN
+         t2a46IKkyQNfB9hlstBw2JLuqIxmVblCIuEszUsGLqGo5BBqTmw98AlOhkmh4D5msPVh
+         TiEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755298345; x=1755903145;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N+Te5pIYiAmG0oRIPBD1Z6ejvqQFlWYw672ZGrfsn94=;
-        b=ON4w1TYYhEijQP9yuvyv2uuBa5fAtSNZmbn1wgXkjsL1JLVepkk1FICHvf2vZ/JKTW
-         jcMmnrua/OlsJB75oPzZlQfZhXT9qwIn6sdHdaiIk5gP8Q2ikX/AUxxwKTMZfPvZmAAU
-         xeWfTqDnzcf/P0UAedB66fMbIOXojw2Nve66N3zdBL+YlqG9zhLJ8lHAkUqgoFBWFDXM
-         OAKI11zPGAvNvmbs0KQzqMooje0TXuY5udhQP++Pk+ak8mJ/7gCTHy4bQUvhEqrgbNZo
-         I2T2+H4L5nVbRGYN3/e6TIbg9/Pni6eVam+DtrWCTLXuBgQa7MnYrbnR+JvYSqRktNO9
-         ReFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUITu+eTno0M4a0cE9L0KbVMi57w8cZVLjV0u2+hzmdIIJ2KQ3T/By5DVaM31IUD8KfJZTmQQebl2TXHIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1+Gme4W6i6u37wUKJF0aXCSG0KDap1zLn91kNw8l995XOQ+D5
-	Xa+4il2HTY/tfnb5rw3LrYitMVY8/LXFk9+wZm5vygFSXIPUmEp2ny6uWBXAtNJX3JPi0uHZsSX
-	D521A1g==
-X-Google-Smtp-Source: AGHT+IEv+UJAB/6+TZfmF8Xh+vBJ3l/eBNjM0pOlbutUgEhFPbzx0x5t1mtIyCzUBXElTaWSG/PR3FTxuRM=
-X-Received: from pjbqx15.prod.google.com ([2002:a17:90b:3e4f:b0:31f:d4f:b20d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55d0:b0:31e:94d2:c36f
- with SMTP id 98e67ed59e1d1-32341e0e6efmr6091256a91.8.1755298344805; Fri, 15
- Aug 2025 15:52:24 -0700 (PDT)
-Date: Fri, 15 Aug 2025 15:52:22 -0700
-In-Reply-To: <CAAhR5DFFRRV9hH3VOmZqb6TArcZL0=893oi3M2rZgVC5Bu-vJg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1755298403; x=1755903203;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFMLvpP6SQOf3Z5/hje0uPsmcH8OWRP/M8qsuDbYAZA=;
+        b=YUyOyq6zUakeQeF101xrSKBk758fNebhS6bSYvK9o5/laUThkdUppedCGAMIe7Ibgz
+         SyjP+rs+Jr48wSirFQypuTRg+t5Qp7NI6o8hCC6cOWOhSg1JN59OPyqKfagZBCMMyvmc
+         QrO4B1gf7CMDAedG91DVaw/cmtPMqqSJTl26PMeyNpybmeLi67ZDt+SLceNNqdIQZu80
+         xbn6WWhMmpcHFmYzrlaVER8QqQSc2wV006OcEZay75zjC4ZBT6lbnqPAZVU46Jdl7p6k
+         UBZcIZKJL6TK2ptqwv9lNmASZ3CUTEYumBpcmINQsE+XQ9v7ha8K+GGyFd4aCG/VgAgc
+         Qebw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFhLHDacPIjFXtDHY//ST/RW5Yo+kLf2Ni2AlNnodcmhfs15k8+EYq9/l8jnFXQI2qm1ABTvjYscZrybs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHcJjxz5h5Y+FK4u3/akjAReqtve9osLij9dnEWQ0hdx4F3ZHf
+	pezrKJR3AoknVCgU3yErQdNMWmMP3PTVZObNnaqQM3c43a0/JqetAqy23uzDa0DavqvmeUpv/na
+	nb1bSrFFqdadoUUswQw==
+X-Google-Smtp-Source: AGHT+IH7JBK049AunCZUq+7FOlhgfZ1QYyvLcXJcq8h6JxKHDaYqMNRfr1A1z7pyw1f+47LqRRmiZD6Bg10U5YM=
+X-Received: from plcm7.prod.google.com ([2002:a17:902:f207:b0:243:31a:f8e2])
+ (user=sudarsanm job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ce0c:b0:243:8f:6d7d with SMTP id d9443c01a7336-2446d93d241mr44547495ad.50.1755298402798;
+ Fri, 15 Aug 2025 15:53:22 -0700 (PDT)
+Date: Fri, 15 Aug 2025 15:53:00 -0700
+In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <aJoqqTM9zdcSx1Fi@google.com>
- <0976e0d50b1620c0118b8a5020b90f3959d47b4a.camel@intel.com>
- <aJpYWVvNXjsewl-b@google.com> <CAAhR5DFFRRV9hH3VOmZqb6TArcZL0=893oi3M2rZgVC5Bu-vJg@mail.gmail.com>
-Message-ID: <aJ-6JpHD6xhAvZPy@google.com>
-Subject: Re: [PATCH v8 00/30] TDX KVM selftests
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "shuah@kernel.org" <shuah@kernel.org>, 
-	Ryan Afranji <afranji@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"pratikrajesh.sampat@amd.com" <pratikrajesh.sampat@amd.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Roger Wang <runanwang@google.com>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250815225259.3012455-2-sudarsanm@google.com>
+Subject: Re: [PATCH v5 00/14] SLUB percpu sheaves
+From: Sudarsan Mahendran <sudarsanm@google.com>
+To: vbabka@suse.cz
+Cc: Liam.Howlett@oracle.com, cl@gentwo.org, harry.yoo@oracle.com, 
+	howlett@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, rcu@vger.kernel.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, surenb@google.com, urezki@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 14, 2025, Sagi Shahar wrote:
-> On Mon, Aug 11, 2025 at 3:53=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Mon, Aug 11, 2025, Rick P Edgecombe wrote:
-> > > But Sean, if you want to save some time I think we can just accelerat=
-e this
-> > > other reviewing. As far as new-fangled features, having this upstream=
- is
-> > > important even for that, because we are currently having to keep thes=
-e tests
-> > > plus follow on tests in sync across various development branches. So =
-yea, it's
-> > > time to get this over the line.
-> >
-> > Yes please.  The unspoken threat in my response is that at some point I=
- will just
-> > start NAKing KVM TDX patches :-D
->=20
-> I'm making good progress and the massive refactor is mostly complete.
-> I believe I should have the patches ready to review next week.
->=20
-> I'm also thinking that it would be easier if I split the series in 2
-> or possibly 3 patchset. The first one including the setup code and the
-> basic lifecycle test and then the rest of the tests with possibly the
-> guest_memfd tests in a separate series. What do you think?
+Hi Vlastimil,
 
-Yes, please.  Even if we end up having to tweak a few APIs when the fancier=
- tests
-come along, I think it'll be easier and faster overall to hammer out the co=
-re
-support first.
+I ported this patch series on top of v6.17.
+I had to resolve some merge conflicts because of 
+fba46a5d83ca8decb338722fb4899026d8d9ead2
+
+The conflict resolution looks like:
+
+@@ -5524,20 +5335,19 @@ EXPORT_SYMBOL_GPL(mas_store_prealloc);
+ int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp)
+ {
+        MA_WR_STATE(wr_mas, mas, entry);
+-       int ret = 0;
+-       int request;
+
+        mas_wr_prealloc_setup(&wr_mas);
+        mas->store_type = mas_wr_store_type(&wr_mas);
+-       request = mas_prealloc_calc(&wr_mas, entry);
+-       if (!request)
++       mas_prealloc_calc(&wr_mas, entry);
++       if (!mas->node_request)
+                goto set_flag;
+
+        mas->mas_flags &= ~MA_STATE_PREALLOC;
+-       mas_node_count_gfp(mas, request, gfp);
++       mas_alloc_nodes(mas, gfp);
+        if (mas_is_err(mas)) {
+-               mas_set_alloc_req(mas, 0);
+-               ret = xa_err(mas->node);
++               int ret = xa_err(mas->node);
++
++               mas->node_request = 0;
+                mas_destroy(mas);
+                mas_reset(mas);
+                return ret;
+@@ -5545,7 +5355,7 @@ int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp)
+
+ set_flag:
+        mas->mas_flags |= MA_STATE_PREALLOC;
+-       return ret;
++       return 0;
+ }
+ EXPORT_SYMBOL_GPL(mas_preallocate);
+
+
+
+When I try to boot this kernel, I see kernel panic
+with rcu_free_sheaf() doing recursion into __kmem_cache_free_bulk()
+
+Stack trace:
+
+[    1.583673] Oops: stack guard page: 0000 [#1] SMP NOPTI
+[    1.583676] CPU: 103 UID: 0 PID: 0 Comm: swapper/103 Not tainted 6.17.0-smp-sheaves2 #1 NONE
+[    1.583679] RIP: 0010:__kmem_cache_free_bulk+0x57/0x540
+[    1.583684] Code: 48 85 f6 0f 84 b8 04 00 00 49 89 d6 49 89 ff 48 85 ff 0f 84 fe 03 00 00 49 83 7f 08 00 0f 84 f3 03 00 00 0f 1f 44 00 00 31 c0 <48> 89 44 24 18 65 8b 05 6d 26 dc 02 89 44 24 2c 31 ff 89 f8 c7 44
+[    1.583685] RSP: 0018:ff40dbc49b048fc0 EFLAGS: 00010246
+[    1.583687] RAX: 0000000000000000 RBX: 0000000000000012 RCX: ffffffff939e8640
+[    1.583687] RDX: ff2afe75213e6c90 RSI: 0000000000000012 RDI: ff2afe750004ad00
+[    1.583688] RBP: ff40dbc49b049130 R08: ff2afe75368c2500 R09: ff2afe75368c3b00
+[    1.583689] R10: ff2afe75368c2500 R11: ff2afe75368c3b00 R12: ff2aff31ba00b000
+[    1.583690] R13: ffffffff939e8640 R14: ff2afe75213e6c90 R15: ff2afe750004ad00
+[    1.583690] FS:  0000000000000000(0000) GS:ff2aff31ba00b000(0000) knlGS:0000000000000000
+[    1.583691] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.583692] CR2: ff40dbc49b048fb8 CR3: 0000000017c3e001 CR4: 0000000000771ef0
+[    1.583692] PKRU: 55555554
+[    1.583693] Call Trace:
+[    1.583694]  <IRQ>
+[    1.583696]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583698]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583700]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583702]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583703]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583705]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583707]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583708]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583710]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583711]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583713]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583715]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583716]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583718]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583719]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583721]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583723]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583724]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583726]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583727]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583729]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583731]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583732]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583734]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583735]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583737]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583739]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583740]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583742]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583743]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583745]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583747]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583748]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583750]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583751]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583753]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583755]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583756]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583758]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583759]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583761]  ? update_group_capacity+0xad/0x1f0
+[    1.583763]  ? sched_balance_rq+0x4f6/0x1e80
+[    1.583765]  __kmem_cache_free_bulk+0x2c7/0x540
+[    1.583767]  ? update_irq_load_avg+0x35/0x480
+[    1.583768]  ? __pfx_rcu_free_sheaf+0x10/0x10
+[    1.583769]  rcu_free_sheaf+0x86/0x110
+[    1.583771]  rcu_do_batch+0x245/0x750
+[    1.583772]  rcu_core+0x13a/0x260
+[    1.583773]  handle_softirqs+0xcb/0x270
+[    1.583775]  __irq_exit_rcu+0x48/0xf0
+[    1.583776]  sysvec_apic_timer_interrupt+0x74/0x80
+[    1.583778]  </IRQ>
+[    1.583778]  <TASK>
+[    1.583779]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[    1.583780] RIP: 0010:cpuidle_enter_state+0x101/0x290
+[    1.583781] Code: 85 f4 ff ff 49 89 c4 8b 73 04 bf ff ff ff ff e8 d5 44 d4 ff 31 ff e8 9e c7 37 ff 80 7c 24 04 00 74 05 e8 12 45 d4 ff fb 85 ed <0f> 88 ba 00 00 00 89 e9 48 6b f9 68 4c 8b 44 24 08 49 8b 54 38 30
+[    1.583782] RSP: 0018:ff40dbc4809afe80 EFLAGS: 00000202
+[    1.583782] RAX: ff2aff31ba00b000 RBX: ff2afe75614b0800 RCX: 000000005e64b52b
+[    1.583783] RDX: 000000005e73f761 RSI: 0000000000000067 RDI: 0000000000000000
+[    1.583783] RBP: 0000000000000002 R08: fffffffffffffff6 R09: 0000000000000000
+[    1.583784] R10: 0000000000000380 R11: ffffffff908c38d0 R12: 000000005e64b535
+[    1.583784] R13: 000000005e5580da R14: ffffffff92890b10 R15: 0000000000000002
+[    1.583784]  ? __pfx_read_tsc+0x10/0x10
+[    1.583787]  cpuidle_enter+0x2c/0x40
+[    1.583788]  do_idle+0x1a7/0x240
+[    1.583790]  cpu_startup_entry+0x2a/0x30
+[    1.583791]  start_secondary+0x95/0xa0
+[    1.583794]  common_startup_64+0x13e/0x140
+[    1.583796]  </TASK>
+[    1.583796] Modules linked in:
+[    1.583798] ---[ end trace 0000000000000000 ]---
+[    1.583798] RIP: 0010:__kmem_cache_free_bulk+0x57/0x540
+[    1.583800] Code: 48 85 f6 0f 84 b8 04 00 00 49 89 d6 49 89 ff 48 85 ff 0f 84 fe 03 00 00 49 83 7f 08 00 0f 84 f3 03 00 00 0f 1f 44 00 00 31 c0 <48> 89 44 24 18 65 8b 05 6d 26 dc 02 89 44 24 2c 31 ff 89 f8 c7 44
+[    1.583800] RSP: 0018:ff40dbc49b048fc0 EFLAGS: 00010246
+[    1.583801] RAX: 0000000000000000 RBX: 0000000000000012 RCX: ffffffff939e8640
+[    1.583801] RDX: ff2afe75213e6c90 RSI: 0000000000000012 RDI: ff2afe750004ad00
+[    1.583801] RBP: ff40dbc49b049130 R08: ff2afe75368c2500 R09: ff2afe75368c3b00
+[    1.583802] R10: ff2afe75368c2500 R11: ff2afe75368c3b00 R12: ff2aff31ba00b000
+[    1.583802] R13: ffffffff939e8640 R14: ff2afe75213e6c90 R15: ff2afe750004ad00
+[    1.583802] FS:  0000000000000000(0000) GS:ff2aff31ba00b000(0000) knlGS:0000000000000000
+[    1.583803] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.583803] CR2: ff40dbc49b048fb8 CR3: 0000000017c3e001 CR4: 0000000000771ef0
+[    1.583803] PKRU: 55555554
+[    1.583804] Kernel panic - not syncing: Fatal exception in interrupt
+[    1.584659] Kernel Offset: 0xf600000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
 
