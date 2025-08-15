@@ -1,182 +1,230 @@
-Return-Path: <linux-kernel+bounces-770101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD39DB276BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2491BB276C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88070A047A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560153AFDC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147512BD036;
-	Fri, 15 Aug 2025 03:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D2729D284;
+	Fri, 15 Aug 2025 03:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJmjePcs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vdx4aj5+"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5EE274B59;
-	Fri, 15 Aug 2025 03:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5548A29B793;
+	Fri, 15 Aug 2025 03:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755228393; cv=none; b=a0bGeka3cyUYnhaU8jGOpsIw4TseSXjjB/zVt+h9J1x0DnYT1oaCItnyli6Pl8vZGjAJLp1eAq/0s+b0yrZvSHfToGlLLaSTqQo7qUeQKCX44tEbur5d7OSdaTzxdaqVq1dY7voIMF/rMgwqglQgaRnaKyPtw7kaP8/+1lHZb8I=
+	t=1755228424; cv=none; b=i29SskyJmUwcWEXDUAlyKKa5Kjqbc2Hi58VuEgh3w5hartX5SedNmGSirV/6Ba3boUBoaGuKpSrCGftKmaFRXASd9rCFglMEL20o6goEb75zNry5B4uCLxSSx5mwGDiGgeSKzb5Ft2YXn0WeayCFatR5RxPldoaFCcSO9z1VfsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755228393; c=relaxed/simple;
-	bh=5CtCyWuTgP/8clYLR9mQb2RLKdITFXhoF9CEAmqsi5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmrpcg8AKT4RYSae+DCpQnFOpoXdMUT37+RPWWHZ397RtnUtW11WR0YftqZxR/7KvyaSDFAsnteovtpAS5fQT2P3kPnMGjUnXT40QS+tLYxdoqrf1ys2bfre8VPNTdnmPRzAT8zmlW5+thOTmpTCwTH/hWz9fu3LPFMcLWhzInM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJmjePcs; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755228392; x=1786764392;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5CtCyWuTgP/8clYLR9mQb2RLKdITFXhoF9CEAmqsi5s=;
-  b=NJmjePcs/mhbFZRKmWBh7g8+FoLPJtrS8FkYtyA9wd+DX4QWC48yV1FD
-   tUV6acLkiP+cYNesgvHtdvxRJCYv8NQ7wYK5eMBlnnRUj4qI+XBeV2krt
-   TKYryQs4u48H9Cx9oeciMSzo4I5uU3JqVoC0vn+nFfuG2HvK8hch1mUlQ
-   GVtufrFaS8lZTlyIvnF92gkhLUD8829hMhERH+/mZuqpcSRQ8W/ODbTVb
-   8izH0y5eJcvkE/WecjqIcwzLBfHbWQYWrp4fFctLNSPKeGjOQniZ7Cva3
-   sySt/a1F/y/Th77bRg0ycdf6iLS2sDVu2NuIuvTbZY8IEvtobCrAzZ8ku
-   g==;
-X-CSE-ConnectionGUID: /LwyjmUcSbOSsp7cyaA1gA==
-X-CSE-MsgGUID: aZU7XggRS2C8vz+UUBUnSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57465781"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57465781"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:26:31 -0700
-X-CSE-ConnectionGUID: NPGfBA5+Th+3cPDrRLUODQ==
-X-CSE-MsgGUID: oGTsP8FHQlCdwpSczOAxDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="197916558"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 14 Aug 2025 20:26:25 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uml4v-000BVU-2v;
-	Fri, 15 Aug 2025 03:26:10 +0000
-Date: Fri, 15 Aug 2025 11:25:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH net-next v11 08/16] net: phy: Introduce generic SFP
- handling for PHY drivers
-Message-ID: <202508151058.jqJsn9VB-lkp@intel.com>
-References: <20250814135832.174911-9-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1755228424; c=relaxed/simple;
+	bh=IJwE1h9uU2c1oLtU42D4nkbltWBeOiGbzJ0JulKnEDM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=VUsUqtgABD08W3+ynAEkDFD8NayQ6CsueNPyuKXnka8amRweX+rciwuR+Kt3HcAvLKJ4492y/s/RUV7sgRj/0a3nhrJtwxarDNQ8ba4fKlaRGmnt0BYkvU3jd95iGdCihXmuOnHxFldP2TUI8q1DF5nHYZL6llHhXdOjx0Z4mEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vdx4aj5+; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2e618a98so1301135b3a.0;
+        Thu, 14 Aug 2025 20:27:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755228422; x=1755833222; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i4clEhlACsA0tDdg/T9dMN1cKs24lEi4PWd19tCjEwc=;
+        b=Vdx4aj5+OuWmknByNwyVVS6MCQxgz1nbGDDdWwGPhyNjXfJDpcJUXAttGoggTmzW0m
+         j7iLMrs/ESv004PqR9kDNyT+cu7newyaKOtM3vfbc/iML61eePs2a2qK3Eh6nlgWQ8DP
+         2wxNt06YFy2CK+7uQfvADiwCKMRR1exNlFm9rna1vuvWCaw0A9b0W0Q1bpozeVLpv8Da
+         I3FvOQU4z4s6XDMn+CHeoE732K1vlGmgbCzjs6h6UVE75nMEHEWMxEBWmGonnvOgDPwz
+         8CCMGVNdqwWecFRZexhpPhWCsu5sT188JCO01+1e9t5skNTX8Ve1lXc/IRGuShDy+2cq
+         t8jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755228422; x=1755833222;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i4clEhlACsA0tDdg/T9dMN1cKs24lEi4PWd19tCjEwc=;
+        b=gk5o8rFR3SZsd8BdPocpvYZKnhFSXPgw+FFLInf8koPWWFlrYpg7qHDiunl0HjjRv+
+         y37eukGPXI92suLOuJFaqrMW6Tv1tqNNjqAmd/2o1Wd0YuFLXxt3LGR/jZ8+52RjiPRc
+         /Gu5t64fb0+2gW6DZNzRtBTkCNlXOPfrhWJJw7EMSkqfoKIjvewjK9+9BJvi2KlQEE+B
+         2XCG0SReVtlZ/W+XSMfFvb3+VWs28aA1a1B9H2CRzCFWgHdP1YLoEeaTbc2gWKNjj8vI
+         +mDAE80eKWJ/tBe1kx9OwLMWm6XfarJgKJyC6Cm7tXZ0XQJKv7EHU4+uH84EVXxNxSmM
+         xVXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+vyXvPMaqjJRK481zVVtSeY3uj8ed+Mjt/V+f05saBGN/EBeG7/vUH/KDczoiYX5LmAXm7HHjD+U0IERGJZEc@vger.kernel.org, AJvYcCUh5whu4yRCvN7AhmvqZTJsmpaL/nE793C2ULp7jT1KnmGCpIupY2vRhuZ0/nHI6+MihH+wILFifD4FbaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhgVFrp6JlqQRP/KAV4XmntzZkoeVKT4f2fZ/lMFUyEZlR0vmy
+	oxs1crwD+p6x3N9JuDQ5DIz2+gZO8I1v+auxfsIZ+TwVpV/4T8kJZndP
+X-Gm-Gg: ASbGncvwqfkfAgVjXGgu0JddRMJsmAyR4pEWgveLHMTjRb0+JXbzWY34iOEqDTFK6Im
+	AJp3TgoWTrTWTO/uospPbQR4KaFpqw11NK1Qa2pv08CHYSa1bVAFzWyoUFAaAsbkyVq43AkXr8U
+	xIeAYFJAN0SuzitH7977VbAhWvQQhLMNyRdnHlEB/cL6NUx+GmaUt4RsIOxnnxIXgFtt6Razbn2
+	6zNkhU9lPegw7v22gI512e0Efhw2vvYUcz0WKQ9z2H8aQXurFZiotU81ed+wYQpHBQfhZWqJWjv
+	82SFuCEufPR9FcI3WonCfABGR4Qc97S+YVDL4+XlIHSJzrUmyvmNrHoGWzCvTJl7iTylYsq4lHu
+	ihQClTHnIi+8=
+X-Google-Smtp-Source: AGHT+IEWmNmS0mZB+sG7vmnApcWmG90xfM+LSnDAqr9fergPICvDpFzevhiBxYKw6Ow5a6S6XPe5Qw==
+X-Received: by 2002:a05:6a00:1793:b0:76b:e561:9e1b with SMTP id d2e1a72fcca58-76e446c8803mr593207b3a.1.1755228422508;
+        Thu, 14 Aug 2025 20:27:02 -0700 (PDT)
+Received: from smtpclient.apple ([2402:1f00:8001:567::104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4528c28csm153092b3a.29.2025.08.14.20.26.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Aug 2025 20:27:02 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814135832.174911-9-maxime.chevallier@bootlin.com>
-
-Hi Maxime,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Chevallier/dt-bindings-net-Introduce-the-ethernet-connector-description/20250814-221559
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250814135832.174911-9-maxime.chevallier%40bootlin.com
-patch subject: [PATCH net-next v11 08/16] net: phy: Introduce generic SFP handling for PHY drivers
-config: i386-randconfig-013-20250815 (https://download.01.org/0day-ci/archive/20250815/202508151058.jqJsn9VB-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151058.jqJsn9VB-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151058.jqJsn9VB-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/phy/phy_device.c:1625:47: warning: variable 'iface' is uninitialized when used here [-Wuninitialized]
-    1625 |                 return port->ops->configure_mii(port, true, iface);
-         |                                                             ^~~~~
-   drivers/net/phy/phy_device.c:1597:2: note: variable 'iface' is declared here
-    1597 |         phy_interface_t iface;
-         |         ^
-   1 warning generated.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v4 2/5] selftests/mm: mark all functions static in
+ split_huge_page_test.c
+From: wang lian <lianux.mm@gmail.com>
+In-Reply-To: <20250815023915.1394655-3-ziy@nvidia.com>
+Date: Fri, 15 Aug 2025 11:26:43 +0800
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ David Hildenbrand <david@redhat.com>,
+ linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>,
+ Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <219CDAAB-2571-4F47-815C-96A41F8D4410@gmail.com>
+References: <20250815023915.1394655-1-ziy@nvidia.com>
+ <20250815023915.1394655-3-ziy@nvidia.com>
+To: Zi Yan <ziy@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
 
-vim +/iface +1625 drivers/net/phy/phy_device.c
 
-  1589	
-  1590	static int phy_sfp_module_insert(void *upstream, const struct sfp_eeprom_id *id)
-  1591	{
-  1592		struct phy_device *phydev = upstream;
-  1593		struct phy_port *port;
-  1594	
-  1595		__ETHTOOL_DECLARE_LINK_MODE_MASK(sfp_support);
-  1596		DECLARE_PHY_INTERFACE_MASK(interfaces);
-  1597		phy_interface_t iface;
-  1598	
-  1599		linkmode_zero(sfp_support);
-  1600	
-  1601		port = phy_get_sfp_port(phydev);
-  1602		if (!port)
-  1603			return -EINVAL;
-  1604	
-  1605		sfp_parse_support(phydev->sfp_bus, id, sfp_support, interfaces);
-  1606	
-  1607		if (phydev->n_ports == 1)
-  1608			phydev->port = sfp_parse_port(phydev->sfp_bus, id, sfp_support);
-  1609	
-  1610		linkmode_and(sfp_support, port->supported, sfp_support);
-  1611		linkmode_and(interfaces, interfaces, port->interfaces);
-  1612	
-  1613		if (linkmode_empty(sfp_support)) {
-  1614			dev_err(&phydev->mdio.dev, "incompatible SFP module inserted, no common linkmode\n");
-  1615			return -EINVAL;
-  1616		}
-  1617	
-  1618		/* Check that this interface is supported */
-  1619		if (!test_bit(iface, port->interfaces)) {
-  1620			dev_err(&phydev->mdio.dev, "PHY %s does not support the SFP module's requested MII interfaces\n", phydev_name(phydev));
-  1621			return -EINVAL;
-  1622		}
-  1623	
-  1624		if (port->ops && port->ops->configure_mii)
-> 1625			return port->ops->configure_mii(port, true, iface);
-  1626	
-  1627		return 0;
-  1628	}
-  1629	
+> On Aug 15, 2025, at 10:39, Zi Yan <ziy@nvidia.com> wrote:
+>=20
+> All functions are only used within the file.
+>=20
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+> .../selftests/mm/split_huge_page_test.c       | 22 +++++++++----------
+> 1 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c =
+b/tools/testing/selftests/mm/split_huge_page_test.c
+> index 5d07b0b89226..89d3dc08fe4c 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -38,7 +38,7 @@ uint64_t pmd_pagesize;
+> #define KPF_THP      (1UL<<22)
+> #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
+>=20
+> -int is_backed_by_thp(char *vaddr, int pagemap_file, int =
+kpageflags_file)
+> +static int is_backed_by_thp(char *vaddr, int pagemap_file, int =
+kpageflags_file)
+> {
+> 	uint64_t paddr;
+> 	uint64_t page_flags;
+> @@ -136,7 +136,7 @@ static void =
+verify_rss_anon_split_huge_page_all_zeroes(char *one_page, int nr_hp
+> 		       rss_anon_before, rss_anon_after);
+> }
+>=20
+> -void split_pmd_zero_pages(void)
+> +static void split_pmd_zero_pages(void)
+> {
+> 	char *one_page;
+> 	int nr_hpages =3D 4;
+> @@ -148,7 +148,7 @@ void split_pmd_zero_pages(void)
+> 	free(one_page);
+> }
+>=20
+> -void split_pmd_thp_to_order(int order)
+> +static void split_pmd_thp_to_order(int order)
+> {
+> 	char *one_page;
+> 	size_t len =3D 4 * pmd_pagesize;
+> @@ -182,7 +182,7 @@ void split_pmd_thp_to_order(int order)
+> 	free(one_page);
+> }
+>=20
+> -void split_pte_mapped_thp(void)
+> +static void split_pte_mapped_thp(void)
+> {
+> 	char *one_page, *pte_mapped, *pte_mapped2;
+> 	size_t len =3D 4 * pmd_pagesize;
+> @@ -265,7 +265,7 @@ void split_pte_mapped_thp(void)
+> 	close(kpageflags_fd);
+> }
+>=20
+> -void split_file_backed_thp(int order)
+> +static void split_file_backed_thp(int order)
+> {
+> 	int status;
+> 	int fd;
+> @@ -365,7 +365,7 @@ void split_file_backed_thp(int order)
+> 	ksft_exit_fail_msg("Error occurred\n");
+> }
+>=20
+> -bool prepare_thp_fs(const char *xfs_path, char *thp_fs_template,
+> +static bool prepare_thp_fs(const char *xfs_path, char =
+*thp_fs_template,
+> 		const char **thp_fs_loc)
+> {
+> 	if (xfs_path) {
+> @@ -381,7 +381,7 @@ bool prepare_thp_fs(const char *xfs_path, char =
+*thp_fs_template,
+> 	return true;
+> }
+>=20
+> -void cleanup_thp_fs(const char *thp_fs_loc, bool created_tmp)
+> +static void cleanup_thp_fs(const char *thp_fs_loc, bool created_tmp)
+> {
+> 	int status;
+>=20
+> @@ -394,8 +394,8 @@ void cleanup_thp_fs(const char *thp_fs_loc, bool =
+created_tmp)
+> 				   strerror(errno));
+> }
+>=20
+> -int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, =
+int *fd,
+> -		char **addr)
+> +static int create_pagecache_thp_and_fd(const char *testfile, size_t =
+fd_size,
+> +		int *fd, char **addr)
+> {
+> 	size_t i;
+> 	unsigned char buf[1024];
+> @@ -461,8 +461,8 @@ int create_pagecache_thp_and_fd(const char =
+*testfile, size_t fd_size, int *fd,
+> 	return -1;
+> }
+>=20
+> -void split_thp_in_pagecache_to_order_at(size_t fd_size, const char =
+*fs_loc,
+> -		int order, int offset)
+> +static void split_thp_in_pagecache_to_order_at(size_t fd_size,
+> +		const char *fs_loc, int order, int offset)
+> {
+> 	int fd;
+> 	char *addr;
+> --=20
+> 2.50.1
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+LGTM.
+Reviewed-by: wang lian <lianux.mm@gmail.com>
+
 
