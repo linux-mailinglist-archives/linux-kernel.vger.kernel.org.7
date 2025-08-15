@@ -1,216 +1,99 @@
-Return-Path: <linux-kernel+bounces-770808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F9FB27F24
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9EC3B27F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AFCAAE1724
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AC91C85DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9770E2FFDEC;
-	Fri, 15 Aug 2025 11:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9E3286D42;
+	Fri, 15 Aug 2025 11:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="hzujG3oQ"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ROnwqb24"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9459521422B;
-	Fri, 15 Aug 2025 11:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257188; cv=pass; b=BTh1QwmGKjIrV+W2GQZUHSK2bprkgezF/sF4TockFO/Mf2+JiCnUgFkF2wjZgZrXFXuA2wZa48zgLgDDy/FWOxHnsGSZHg+CPSoL3gA04mEnf1t9GFOiwJJTQzq+m/PQUA7eyrdQro9kvrvVnJPmt6LzUc7DO+sBHfX6ubjYNI8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257188; c=relaxed/simple;
-	bh=bhzPRVHYbmtluN/IPh7GhJ6L0pwLcPcFqdB2gnLUhqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmiuIXC0c70OyhVdYMGTeLJZLOjru8wqAX9VkF9/b9EUcM5Q6fPjvBDGs9Lx7uFsD8kAA4OmDjMy5fuhWOwrXn7eEwy8GOV6Ax9OMy1Q0N0pqU0q9zBmw+0a9cFynMaqDv0nCbDqqQMQ+/EVRtqTQzGadEuTJEmMnS16Zj8YDY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=hzujG3oQ; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4c3KYp6mS5zyQq;
-	Fri, 15 Aug 2025 14:26:22 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1755257184;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FB3225A4F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755257310; cv=none; b=uMngTwyFi0R8urSHPtOeH+ej9pidsP9EGU2tGMxwJ9/grY2Fsmfuds2xIPLD8mvD9b84+sFi9ETBihORzPYtfV2hHN3NGvbAAM7LSMoxqZleK1//VzAngVALkv9iumdhPZX+mPTAaqSFAw5Pv5VhJ9VJOyvRT0wnBWYSjczGAc8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755257310; c=relaxed/simple;
+	bh=i18PFWJvJyUVxvyf0I1d5XFMqv+8G//fSu9a0eWFQvM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gRmqYcSIEWkdsSXkCyRLWI/Xkc0aglGVr6fxqk4xx3gQt+m4hsKkG0gJ1tWQh/MmlAVjjEmj2+2oaruneXwdbVpRsLwzY+pBGZ9nMfLKFu3diigg52X1BjvBHJs1FMUlxxmQczyyxpkWBuP9+GkSJ9ADJtyxokQtVlEMEcJ2Nno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ROnwqb24; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755257296;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ys2vKnTb6cJREp0qwzs1Izhfo3++EtDqp5GeKI75fvM=;
-	b=hzujG3oQAB1dNQRmpyQy0aBbDRC4UkwnOZB6zKVfoll/mkd0vN8ACfPrZyY/Xdyl2qDIoZ
-	BcvlXDhUmDCPl3ojuPy5VsgFGbWQIAm2YYKQPoBC9i4AvTd9UdkxVQz9rmYc52m+yKivKY
-	5wailclwvDVJVMmHobgEoTW6lZLZkr8=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1755257184; a=rsa-sha256; cv=none;
-	b=vBlEjvcrooXrywqyWFErSTdFxG7s41RMaDvkZbEt0z5mnjOGGXVl2YEJrfwVvb3yYlVpmm
-	5jFDOysiXTB2Ewu2e+yUyraC46q2GQaqcqy2X9EkKS0wuActqCuDEGw5hhi6WfOeUPSaRJ
-	3e6sPBxkvP/4vIS3Nzc91FLbIyZHwhI=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1755257184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ys2vKnTb6cJREp0qwzs1Izhfo3++EtDqp5GeKI75fvM=;
-	b=VkEd/6RlyiH18u/l3Vd4PtvMATZ5OFHr0Fp1es9Vu+flhCSW9VqD3drqS2caRjLC22RKTO
-	f5qoM4VMvT/2hRG0KuqAInyeRBjUlMkMLD1cubDrYOaH7Q8q/bFoAS9awwR/Bin56jN2o/
-	s7qN6R/mLNo75M1mSYbSR7QrHFnBj5A=
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 3DEBA634C93;
-	Fri, 15 Aug 2025 14:25:23 +0300 (EEST)
-Date: Fri, 15 Aug 2025 11:25:24 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
-	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
- mbus_config
-Message-ID: <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
-References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
- <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
- <20250815103205.GJ6201@pendragon.ideasonboard.com>
+	bh=i18PFWJvJyUVxvyf0I1d5XFMqv+8G//fSu9a0eWFQvM=;
+	b=ROnwqb24+gaJ7csqiETiu1sNod6Py4u4m8Huq9Iis5g8n3RD2XFkpcuhAaApzvbf6p+diA
+	bQQlszxVZ3AT7MyJNNTkNg432j2xcY6YGOgookvyNiepzUzrET0xDHRx9k9YzTspzWY+Kl
+	f+xOvxfvVz+SMQ0JNX4kQ33QecehFsY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815103205.GJ6201@pendragon.ideasonboard.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3] kdb: Replace deprecated strcpy() with strscpy() and
+ memcpy()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <aJ72XZ0VkrCkKFNy@aspen.lan>
+Date: Fri, 15 Aug 2025 13:28:01 +0200
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+ Daniel Thompson <danielt@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>,
+ Nir Lichtman <nir@lichtman.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yuran Pereira <yuran.pereira@hotmail.com>,
+ linux-hardening@vger.kernel.org,
+ kgdb-bugreport@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <710CDE93-89CC-4B60-A582-5F9B2916ED72@linux.dev>
+References: <20250814220130.281187-2-thorsten.blum@linux.dev>
+ <aJ72XZ0VkrCkKFNy@aspen.lan>
+To: Daniel Thompson <daniel@riscstar.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Laurent,
+Hi Daniel,
 
-On Fri, Aug 15, 2025 at 01:32:05PM +0300, Laurent Pinchart wrote:
-> On Fri, Aug 15, 2025 at 09:18:13AM +0000, Sakari Ailus wrote:
-> > On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
-> > > Although 4 lanes may be physically available, we may not be using all of
-> > > them. Get the number of configured lanes in the case a driver has
-> > > implemented the get_mbus_config op.
-> > > 
-> > > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > > 
-> > > ---
-> > > 
-> > > Currently, the imx-mipi-csis driver parses the device tree to determine
-> > > the number of configured lanes for the CSI receiver. This may be
-> > > incorrect in the case that the connected device only uses a subset of
-> > > lanes, for example. Allow the drivers for these cameras to create a
-> > > mbus_config to configure the number of lanes that are actually being
-> > > used.
-> > > 
-> > > If the driver does not support the get_mbus_config op, this patch will
-> > > have no functional change.
-> > > 
-> > > Compile tested against media-master (v6.17-rc1)
-> > > ---
-> > >  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
-> > >  1 file changed, 41 insertions(+)
-> > > 
-> > > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > index 2beb5f43c2c0..efe4e2ad0382 100644
-> > > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
-> > >  	return container_of(sdev, struct mipi_csis_device, sd);
-> > >  }
-> > >  
-> > > +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
-> > > +{
-> > > +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > > +	struct v4l2_mbus_config mbus_config = { 0 };
-> > > +	int ret;
-> > > +
-> > > +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
-> > > +			       0, &mbus_config);
-> > > +	if (ret == -ENOIOCTLCMD) {
-> > > +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	if (ret) {
-> > > +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-> > > +		dev_err(csis->dev, "Unsupported media bus type %u\n",
-> > > +			mbus_config.type);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
-> > > +		dev_err(csis->dev,
-> > > +			"Unsupported mbus config: too many data lanes %u\n",
-> > > +			mbus_config.bus.mipi_csi2.num_data_lanes);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
-> 
-> There's a bug here, you override the number of lanes retrieved from DT,
-> which is the number of connected lanes, with the number of lanes used by
-> the source for its particular configuration. You will never be able to
-> then use more lanes in a different source configuration.
-> 
-> > > +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
-> > 
-> > None of the above is really specific to this driver. Could you instead
-> > implement a function that parses the information from the fwnode endpoint
-> > and uses mbus configuration on top?
-> 
-> That would need to parse the endpoint every time we start streaming, it
-> doesn't sound ideal.
+> On 15. Aug 2025, at 10:57, Daniel Thompson wrote:
+> Sorry but a strscpy() where the length of the destination buffer has
+> been calculated from the source string is way too much of a red flag
+> for me.
+>=20
+> Put another way if there are "no functional changes intended" then =
+there
+> cannot possibly be any security benefit from replacing the "unsafe"
+> strcpy() with the "safe" strscpy(). Likewise abusing the destination
+> length argument to truncate a string makes the code shorter but *not*
+> clearer because it's too easy to misread.
 
-Perhaps not, but does that matter in practice? Parsing the endpoint is,
-after all, fairly trivial. The advantage would be simplifying drivers.
+Deliberately truncating the source using strscpy() is a valid use case.
+strscpy() allows the size argument to be smaller than the destination
+buffer, so this is an intended use of the size argument, not an abuse.
 
-Alternatively we could think of caching this information somewhere but I
-don't think it's worth it.
+=46rom the strscpy() function comment in linux/string.h:
 
-> 
-> > The function could take struct media_pad pointer as an argument, or struct
-> > v4l2_subdev pointer and the pad number.
-> > 
-> > I wonder if any other parameters could change dynamically but I can't think
-> > of that now, so perhaps just the number of lanes is what the function
-> > should indeed return.
-> > 
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> > >  {
-> > >  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> > >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
-> > >  	csis_fmt = find_csis_format(format->code);
-> > >  
-> > > +	ret = mipi_csis_get_active_lanes(sd);
-> > > +	if (ret < 0)
-> > > +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
-> > > +
-> > >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
-> > >  	if (ret < 0)
-> > >  		goto err_unlock;
-> 
+* The size argument @... is only required when @dst is not an array, or
+* when the copy needs to be smaller than sizeof(@dst).
 
--- 
-Regards,
+Thanks,
+Thorsten
 
-Sakari Ailus
 
