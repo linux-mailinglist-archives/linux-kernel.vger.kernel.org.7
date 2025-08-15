@@ -1,196 +1,140 @@
-Return-Path: <linux-kernel+bounces-770158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D95B277C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECDFB277CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0393AC69A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4699B1C24E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D3E2185B8;
-	Fri, 15 Aug 2025 04:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262E212B31;
+	Fri, 15 Aug 2025 04:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jb03uXgm"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mj9ZpvrV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEEF481B1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB15E481B1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755232329; cv=none; b=bjWGy7zzwNoI93i6tf5pmkdbAQrCviNVOueXUMfLs5sqpuu4QYt6KBCgtrldnEgJj9Rb/1kTcf8+BO/fgFv69AYwH1dxP4qNA+1ykVRZQ0XtgVGgfqAAGyerIbMuEL21vx5ufVqs5wZly2zhmaLAJPXyG7natstljfenWwS28ig=
+	t=1755232538; cv=none; b=ikU0evWntP/rKJLazeNtGM5w6i6dqpbMyruUN0u0f2c6fE3AyMH4IpiYs2DWneYyl/mlxv3m8RAJxoKaowe9JcGbgyGlz1hoqKhEEkk+Vte13FnbGIs2QwnFWmDVRZj2kDEmDLwovvHKMxBE8e5aHAr245hp9fcBudHBFowExMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755232329; c=relaxed/simple;
-	bh=ZrNGdDa3ue2pXZ7p4mCgz63fzMgbaYzPSvRgN66XhtM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pgrAdaY6j3TD1lQeDEVW6nuCMf3q15dPGi2OBvwdRocFE57Xham12kDqWbZb0CGPySrxeQVh5CeSdvaQEhD37gLcIrrlsUjI/rTkFeV30cWYNsSWlh/P/WIXFzRuxTOC3+5KaGPS4HODB4/6SJwH6x0QKLD3T7pNDgfDc22ZoDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jb03uXgm; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b0bf08551cso143251cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755232326; x=1755837126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vphq+KdVGQBHDleeYMXLhEN4hWNJK2UKgGf0Gk0kNNA=;
-        b=jb03uXgm3WzytuhEHVyuOFqcC9m/Qsf9DWsPR+uomXYkAyZqQyw289KD0vpHV74hfE
-         NT8tuo2dNy+kHmqyTWFAaAZn+GLVHa6u3tQe4T6CiGvVMJfKGXLdKSy5xoGg+cN1hA+A
-         dl5sH3SSEGnW9LF3C3VZI59nRX7nkk3aHKpeUUgtTDTyLf4yhLN8wtswMom6zFBdpJHY
-         nFcjPKgzsA/HiutyYgKHJD0oeZOriRh6CGftM+H7I8TfD4bYYRa+izwrA/IXCoSPOihV
-         3L6Dw+PBzzGtyIw7HzEhQGp/rMMFKZQZLfIRPlke51zBaRRmO+AnjMCNnMcrvAyp9I/N
-         R64Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755232326; x=1755837126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vphq+KdVGQBHDleeYMXLhEN4hWNJK2UKgGf0Gk0kNNA=;
-        b=gStIR7hRmt0DBvMp2k9hJk2BsouDiLBBjt0iMaDLzhy1AsVJOzNwZHzDFdt+KQYOo9
-         u2WSTaDvz4VlfpiyMjWIec6PFqpYR1zsOqx4a1F3ZVbXhAwP3zo3+eq1WQX9fiCtGFGO
-         caHZ8juNoxtuXGWlhrmjCEUJe6XhphnTugoqJo285bJedoTXtdOtRb35uYLJgvBSJNbL
-         Y7MAJpQhpDZTNeV1+dypUY16MkBGbbyvcM6SDX6ff/uk2nTrMwfbQaekPPg01RRJ5nT3
-         iHHd2lYCEogTc4No8YJFsNQnE4qd0cT3PN+qLe/X06gtyJ4o+rE5F/uNP4v3131e5PfI
-         piqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQApwlKz54oe5Nw48Lg/ZuroMVF0dCK7w3eC57QqOXaXyyFl/rofI5YkN9YEYoTji+EGvgGduFzLkTid8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylmzS1rve17hyAfgXhfF7iBrAgY5AEkEfmikQpVAIK0iIdAEJ7
-	C4CRcHaVPJ2VraavXUsA3tOsOcpaLPeLTR5NFoxqbQ+LQGtZUpdStZykdE3+tjtAsqmhXQ/A6OA
-	gJvGSB7aKsxWHeHGSUtdNFWLA0ipTLzbfvAmv8Yn+
-X-Gm-Gg: ASbGncvRmZDe0G4lzmdlU2yGWqP7mcAS374LwvEDCdQRhChdnaXC1U/gyOqZN0RZU8t
-	L4dNBgfS2f4M1zsaVpdbKF6vtk/veyQez6LyFEPZ8BI7YDhcL2pzp8ZuHOsEAcT1SA8xsICsNXm
-	pZoyFiMtkLl7l6y2PwrLQk6Ee7/8w3Zt0B7G5ci2XYRwnFaGrw77XZ9OO75qGYsWIDEpa0Il9ZY
-	FNeToZ7AVSxQe8rw5OD+5Sbf9z4mNvHm+5vIhsoMfokAA==
-X-Google-Smtp-Source: AGHT+IFnROl57LOIo9VPRxxOkeG5UUxFhM748VBrThhMVODn1XycukQQxmqkPtifgt9g/+IDrdCECfZfwFk25dWIj7k=
-X-Received: by 2002:a05:622a:1194:b0:4b0:f1f3:db94 with SMTP id
- d75a77b69052e-4b11b73e747mr1445661cf.5.1755232325910; Thu, 14 Aug 2025
- 21:32:05 -0700 (PDT)
+	s=arc-20240116; t=1755232538; c=relaxed/simple;
+	bh=9eQLcCfJKHZzqpoRSejOUwJu3t+rEcFE1zLLnuifpPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FpzFbZ5FD8fqzANXMJQg6UOF3dXAFuWwYsH98q6lhbaTExetmKAaYKWJ+YP7CrnsxyNtze8QYL15cDhS+5ll5X2DDiHHNw2GhYObNjWi8JOkQHlMP+AZ8ARBNEjtuwXAtvfbUZABeIK5Y8VahtI4fmvqFuqlzf86RGSBhmEGEeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mj9ZpvrV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E209EC4CEEB;
+	Fri, 15 Aug 2025 04:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755232538;
+	bh=9eQLcCfJKHZzqpoRSejOUwJu3t+rEcFE1zLLnuifpPY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Mj9ZpvrV34fzsb9HIQeQwFGHisFMXcjpnkweu6v8htuqLPbblqeFlxwJQ9Y/2WUiM
+	 XAktlw/VfcHLxuPgXYuydw3E91tnEOP1q6Uuy42fKbtCrd2VyrW6gQMROutygvrW7/
+	 DV5KnE3zKzb6k/HxM+qZPD9Q5krtHWF9XFpVffNn2wWQarY0UxraRT4MbOnl+qcikQ
+	 nfMzk9U4U9cjEx/tbnj4znAPKz//gMhBn9wCDRzRCQs0G1tHW5TIW9yFKPdvC8IqJU
+	 1M0jhhRsK5fsuQp9vjAPJB1hRbT7k2fpN42MqzXMbUnD3P1A0D2zvTrB/gFSJCQ6jr
+	 GXGnCIVX6ZpZg==
+Message-ID: <bb52ebe6-a3b0-428e-8c97-d7366dedae92@kernel.org>
+Date: Fri, 15 Aug 2025 06:35:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-6-sagis@google.com>
- <aJo3ww82Ln-PxgGL@google.com>
-In-Reply-To: <aJo3ww82Ln-PxgGL@google.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Thu, 14 Aug 2025 23:31:55 -0500
-X-Gm-Features: Ac12FXxKl3jb58UGowv2eTWXkzgtsssQat3t2ZOfCXUQ1j88a7mXr-l44I61YfE
-Message-ID: <CAAhR5DF5RTT8nF6mwLQPePL01k-bXBLapZZ3uNLH01j1W4UjSQ@mail.gmail.com>
-Subject: Re: [PATCH v8 05/30] KVM: selftests: Update kvm_init_vm_address_properties()
- for TDX
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] sched/deadline: Fix RT task potential starvation
+ when expiry time passed
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Kuyo Chang <kuyo.chang@mediatek.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ jstultz <jstultz@google.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250615131129.954975-1-kuyo.chang@mediatek.com>
+ <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 1:34=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> >
-> > Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_ma=
-sk}
-> > similar to SEV.
-> >
-> > Set shared bit position based on guest maximum physical address width
-> > instead of maximum physical address width, because that is what KVM
-> > uses,
->
-> "because KVM does it" is not an acceptable explanation.
->
-> > refer to setup_tdparams_eptp_controls(), and because maximum physical
-> > address width can be different.
-> >
-> > In the case of SRF, guest maximum physical address width is 48 because =
-SRF
-> > does not support 5-level EPT, even though the maximum physical address
-> > width is 52.
->
-> Referencing a specific Intel microarchitecture is not proper justificatio=
-n for
-> why something is supported/legal/correct.  Using its three-letter acronym=
- is
-> just icing on the cake.
->
-> > Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > Signed-off-by: Sagi Shahar <sagis@google.com>
-> > ---
-> >  tools/testing/selftests/kvm/lib/x86/processor.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/te=
-sting/selftests/kvm/lib/x86/processor.c
-> > index d082d429e127..5718b5911b0a 100644
-> > --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> > +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> > @@ -1166,10 +1166,19 @@ void kvm_get_cpu_address_width(unsigned int *pa=
-_bits, unsigned int *va_bits)
-> >
-> >  void kvm_init_vm_address_properties(struct kvm_vm *vm)
-> >  {
-> > +     uint32_t gpa_bits =3D kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY=
-_ADDR);
-> > +
-> >       if (is_sev_vm(vm)) {
-> >               vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
-> >               vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
-_SEV_C_BIT));
-> >               vm->gpa_tag_mask =3D vm->arch.c_bit;
-> > +     } else if (vm->type =3D=3D KVM_X86_TDX_VM) {
->
-> Please add an is_tdx_vm() helper.
->
-> > +             TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
-> > +                         "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
-ue: %u", gpa_bits);
-> > +             vm->arch.sev_fd =3D -1;
-> > +             vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
-> > +             vm->arch.c_bit =3D 0;
->
-> The VM is zero-initialized, no need to set c_bit.
->
-> > +             vm->gpa_tag_mask =3D vm->arch.s_bit;
-> >       } else {
-> >               vm->arch.sev_fd =3D -1;
->
-> I think it makes sense to set sev_fd to -1 by default instead of duplicat=
-ing the
-> non-SEV logic into all non-SEV paths.  SEV VMs will write it twice, but t=
-hat's a
-> non-issue.  E.g.
->
->         vm->arch.sev_fd =3D -1;
->
->         if (is_sev_vm(vm)) {
->                 vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
->                 vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
-_SEV_C_BIT));
->                 vm->gpa_tag_mask =3D vm->arch.c_bit;
->         } else if (is_tdx_vm(vm)) {
->                 TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
->                             "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
-ue: %u", gpa_bits);
->                 vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
->                 vm->gpa_tag_mask =3D vm->arch.s_bit;
->         }
->
+On 30. 07. 25, 12:06, Geert Uytterhoeven wrote:
+>> [Proposed Solution]:
+>> ------------------
+>> Instead of immediately re-enqueuing the DL entity on timer registration
+>> failure, this change ensures the DL entity is properly replenished and
+>> the timer is restarted, preventing RT potential starvation.
+>>
+>> Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
+> 
+> Thanks, this fixes the issue I was seeing!
+> 
+> Closes: https://lore.kernel.org/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com
+> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Thanks for all the suggestions. I will incorporate them in the next version=
-.
+As well as:
+Closes: 
+https://lore.kernel.org/all/58c46200-95b0-4cd8-bb5e-44f963a66875@kernel.org/
+Tested-by: Jiri Slaby <jirislaby@kernel.org>
+
+thanks,
+-- 
+js
+suse labs
+
 
