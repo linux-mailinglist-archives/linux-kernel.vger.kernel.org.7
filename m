@@ -1,81 +1,94 @@
-Return-Path: <linux-kernel+bounces-770832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99023B27F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:43:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68622B27F6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1691E1C28EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED611706C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D873B3009D4;
-	Fri, 15 Aug 2025 11:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E742882AB;
+	Fri, 15 Aug 2025 11:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3ilS2jy"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NQk1pLDQ"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C7D28851B;
-	Fri, 15 Aug 2025 11:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99204288526
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755258004; cv=none; b=FWgq+IJIROqzB7b3MNCVq2UaohpvUZOeHVstEvfhunBrwANBV4qXGupbUjs20Zy0ftcV7q+LwY36WZ3rZG8EF5nWXFTBl4VdL+PhR91MYWszDf44Z0MQr4XopH3FHSpbxc16dZfBy9vF4MYOtg2t2HLeApz9xI5jGci4R2tF/3w=
+	t=1755258063; cv=none; b=TY3ZmOzSBBUMe/LemIRcc5bKk9XUJMIn0ZrH4czI1YxHPkbGz482WG3MDvKhF6aaM+uBZnmfeiU8aX9wvPt16piFZNaR2s332CSFnMYIOKuIfCpoe1WT7acyE7JpjTBjAI4ff0QBFeBtM5+SSm/Q/ItzP2MDsSK2beT09esMOz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755258004; c=relaxed/simple;
-	bh=C0oqbcfX48QjFch6cP3OL9Hcj4yxxWdACAmpuRqOXXg=;
+	s=arc-20240116; t=1755258063; c=relaxed/simple;
+	bh=AgGFqXqrJ/VhBFHuGF8h1y5X7Jyy+ypna8Zk7EKgm3A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jglev1DmALDJHto87a1lE+Mi9xj8mg3cxAwE4Ar1lD23owThyZfnSVApcQ0yVGk7qU6YtLnlGd1LkYfItoRY8bNov1Z9UjBywnNddBPpYZBFBk43QNfiXinObKz0nMb3B17e3K5STYAwBpQ6f2WU6OUSoIpCDqH6Vr4WHNfbmsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d3ilS2jy; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xjeTweJ3rpt6YpKV/vEnlA7rHRaCcvmve7oDl2/k04A=; b=d3ilS2jyupRTcEOmUlOqZKAjGM
-	0Qpsy+V+NIZ7r6wlbtVd3Bs2iHwdCFkGwOzPWg/E2TAHZ67IJq2YhPzRZLCrutdbF3TTo6Ag01Y2W
-	1nm6Ojyl7/9b6VntcO58DVhpiGFVPl2ElJHVYxgEeTGc8hwoxm/DVbquUrLBrlRCd8IxRmRpiSCGk
-	BCnawrZK+2z68e1v28tE9DnwMzqA2hI+I/uT3IoQAQMiZw9XSrIWuzhqt23Vw4AXDCCgR5yHUbRaG
-	NjrBmHQQaGA99TukqezyXSwAkPtTSWNAPQvvxlXehSLtU2ZtPtGN1X2zSR6LZZPcTEdzcBYYoOc+w
-	rt1YgSRw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umsmm-0000000GhAl-3JcF;
-	Fri, 15 Aug 2025 11:39:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C287B3002ED; Fri, 15 Aug 2025 13:39:51 +0200 (CEST)
-Date: Fri, 15 Aug 2025 13:39:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Xin Li <xin@zytor.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yongwei Ma <yongwei.ma@intel.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Xiong Zhang <xiong.y.zhang@linux.intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v5 09/44] perf/x86: Switch LVTPC to/from mediated PMI
- vector on guest load/put context
-Message-ID: <20250815113951.GC4067720@noisy.programming.kicks-ass.net>
-References: <20250806195706.1650976-1-seanjc@google.com>
- <20250806195706.1650976-10-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TU5/3zNnBkalj/VM0l5EwF0JRbnzq1Tnc/G+8m6i8VUeXB7jNpfMx9D0Rm177WVBsVLk3mr9HhpYD0BC2fQxVRnYpObaPRqjIYac1McVcOMCjckSOkPHUPFobC0tAftG+fWtcSk0pGWLfI5DVVONbpsiOCGXzDguC2716gBMfkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NQk1pLDQ; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9d41bfa35so1572391f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:41:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755258060; x=1755862860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AgGFqXqrJ/VhBFHuGF8h1y5X7Jyy+ypna8Zk7EKgm3A=;
+        b=NQk1pLDQyDRXY67LVGOcER/4j6syqY9DMq7WCVAveye6pKu9KememyJtwgXXZNYs0h
+         tvjtTVszpLKd3Lep+p5m3D/J0HzjmEFHRFUFpLHh1boXFXpy3JeS3DmTgWTcMAzd/3FE
+         otMKeXgRwWmLNbFvg7k3dr96mOGxyZH+ZzOjyuTKMcPZth1uU7S06JFs1f59BRhzEtmg
+         n670J8vXWgLhS+ryD33m0Ak6Ste3BbR33G0O79MV/Ck5XKnBthS90YUDzjarirrFFbBP
+         9xFgHVp9/xGM/ii4NW84OElmsDS+AqjMdMlMXc0d9MZkiIaNNYhxodydzE7NBA/QDqN3
+         qKQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755258060; x=1755862860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AgGFqXqrJ/VhBFHuGF8h1y5X7Jyy+ypna8Zk7EKgm3A=;
+        b=cCf8HOXAxZBrPt7APxK33XJdUHbGVCL6EN9ppZ21+oZiLKEnlhnqNRpnTDYau/WN6J
+         Mu9xFfQ+lvXqbJZtKU7GiZ//WQgXtId+DztGj+0T40sdyKLf7X6VSFcisHCkwN/THTQD
+         9j2JUf/ltFOrYs449RF5iJFHpMIrJ8T1+yF9Rw5wIg2dRk+/R1wjrSdN0Sd9Vxxy2wBy
+         RUkHI7dX6NL3Y1calZ/CJ2umaWr9fHpl0E0ZmjrrLOtNWHSPPa6tI71dTjpJznvi/OS2
+         Wue/vvxUZIK6ebKTi472V976wumQJ+OzunG6mjScACGggiABl2H5hXYjiyyupcOIzSRU
+         JSeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRpVbutxHr8qGRgjYXto/LlxpZKv8mg5KwcCP5b4+ORdPzo6iLHWhUA0OJDlkILh/g/ugMAgqH/bddlx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7uSkCM6akofSdjrtSNK6DdvYf6xeWI0rGOd403FSIZRukBl9f
+	JtINSc6eL/VN9ixDmcXKLPOME3LGv0HLAf9oFU/O02ivSufqDMooPQGbhuzHXPjCZPo=
+X-Gm-Gg: ASbGncuoo8X2JZu2k94G+8GYDnK3EKe3+NbJU0ojXiaed5T25Ua8U5ayE+8xJnCc7YU
+	ZS8F9XhSfsLFQwGozLPQPs6ob8GtxNR1fRlTfx6cE2pAyHuIqf05nmueEOifn6QmCOMvVr7bln2
+	LhfZ+QC6y6tw4FjsYpokZ9qL0bXsKBeUA9gsG/YBWJcp7MVwJcQu27Cb87Zz5/c4xpz3hvgvs29
+	UlcaAawMob4eW3qWDOHjSGCiGrCP/v+m0oEkE9E9zrzKnyRt68nwfxjB8YOZje5hpZVceeR61UV
+	pyxPbHffsSH/0RrCn1N2kNI1j8rjku5BRH8DBeAS+8NWZsNirzuaEfSydN9HkF2u4ZxMy38PcEd
+	OIwqhE9mepNZtlbs8f53hBcrf7oQGTHooyObhpyTd6frvDQ9DRHX0La2PKApvkHjUOChpSsYQIK
+	wOdNU3w91q6GOjoSFl
+X-Google-Smtp-Source: AGHT+IEZLgCHpz2MKgcW37YJtcjLjMyMA+YA7eK+FAPxHUA+IxdCMDYin/UkgjRqTGXMK5VFnVqjvA==
+X-Received: by 2002:a5d:5887:0:b0:3b9:15eb:6464 with SMTP id ffacd0b85a97d-3bb66f11537mr1399812f8f.15.1755258059879;
+        Fri, 15 Aug 2025 04:40:59 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6816ef48sm1607789f8f.58.2025.08.15.04.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 04:40:59 -0700 (PDT)
+Date: Fri, 15 Aug 2025 12:40:57 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-hardening@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kdb: Replace deprecated strcpy() with strscpy() and
+ memcpy()
+Message-ID: <aJ8cyXzMaa9b7ppN@aspen.lan>
+References: <20250814220130.281187-2-thorsten.blum@linux.dev>
+ <aJ72XZ0VkrCkKFNy@aspen.lan>
+ <710CDE93-89CC-4B60-A582-5F9B2916ED72@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,108 +97,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250806195706.1650976-10-seanjc@google.com>
+In-Reply-To: <710CDE93-89CC-4B60-A582-5F9B2916ED72@linux.dev>
 
-On Wed, Aug 06, 2025 at 12:56:31PM -0700, Sean Christopherson wrote:
-> Add arch hooks to the mediated vPMU load/put APIs, and use the hooks to
-> switch PMIs to the dedicated mediated PMU IRQ vector on load, and back to
-> perf's standard NMI when the guest context is put.  I.e. route PMIs to
-> PERF_GUEST_MEDIATED_PMI_VECTOR when the guest context is active, and to
-> NMIs while the host context is active.
-> 
-> While running with guest context loaded, ignore all NMIs (in perf).  Any
-> NMI that arrives while the LVTPC points at the mediated PMU IRQ vector
-> can't possibly be due to a host perf event.
-> 
-> Signed-off-by: Xiong Zhang <xiong.y.zhang@linux.intel.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Mingwei Zhang <mizhang@google.com>
-> [sean: use arch hook instead of per-PMU callback]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/events/core.c     | 27 +++++++++++++++++++++++++++
->  include/linux/perf_event.h |  3 +++
->  kernel/events/core.c       |  4 ++++
->  3 files changed, 34 insertions(+)
-> 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 7610f26dfbd9..9b0525b252f1 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -55,6 +55,8 @@ DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
->  	.pmu = &pmu,
->  };
->  
-> +static DEFINE_PER_CPU(bool, x86_guest_ctx_loaded);
-> +
->  DEFINE_STATIC_KEY_FALSE(rdpmc_never_available_key);
->  DEFINE_STATIC_KEY_FALSE(rdpmc_always_available_key);
->  DEFINE_STATIC_KEY_FALSE(perf_is_hybrid);
-> @@ -1756,6 +1758,16 @@ perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
->  	u64 finish_clock;
->  	int ret;
->  
-> +	/*
-> +	 * Ignore all NMIs when a guest's mediated PMU context is loaded.  Any
-> +	 * such NMI can't be due to a PMI as the CPU's LVTPC is switched to/from
-> +	 * the dedicated mediated PMI IRQ vector while host events are quiesced.
-> +	 * Attempting to handle a PMI while the guest's context is loaded will
-> +	 * generate false positives and clobber guest state.
-> +	 */
-> +	if (this_cpu_read(x86_guest_ctx_loaded))
-> +		return NMI_DONE;
-> +
->  	/*
->  	 * All PMUs/events that share this PMI handler should make sure to
->  	 * increment active_events for their events.
-> @@ -2727,6 +2739,21 @@ static struct pmu pmu = {
->  	.filter			= x86_pmu_filter,
->  };
->  
-> +void arch_perf_load_guest_context(unsigned long data)
-> +{
-> +	u32 masked = data & APIC_LVT_MASKED;
-> +
-> +	apic_write(APIC_LVTPC,
-> +		   APIC_DM_FIXED | PERF_GUEST_MEDIATED_PMI_VECTOR | masked);
-> +	this_cpu_write(x86_guest_ctx_loaded, true);
-> +}
-> +
-> +void arch_perf_put_guest_context(void)
-> +{
-> +	this_cpu_write(x86_guest_ctx_loaded, false);
-> +	apic_write(APIC_LVTPC, APIC_DM_NMI);
-> +}
-> +
->  void arch_perf_update_userpage(struct perf_event *event,
->  			       struct perf_event_mmap_page *userpg, u64 now)
->  {
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 0c529fbd97e6..3a9bd9c4c90e 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1846,6 +1846,9 @@ static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
->  # define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
->  #endif
->  
-> +extern void arch_perf_load_guest_context(unsigned long data);
-> +extern void arch_perf_put_guest_context(void);
-> +
->  static inline bool needs_branch_stack(struct perf_event *event)
->  {
->  	return event->attr.branch_sample_type != 0;
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index e1df3c3bfc0d..ad22b182762e 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -6408,6 +6408,8 @@ void perf_load_guest_context(unsigned long data)
->  		task_ctx_sched_out(cpuctx->task_ctx, NULL, EVENT_GUEST);
->  	}
->  
-> +	arch_perf_load_guest_context(data);
+On Fri, Aug 15, 2025 at 01:28:01PM +0200, Thorsten Blum wrote:
+> Hi Daniel,
+>
+> > On 15. Aug 2025, at 10:57, Daniel Thompson wrote:
+> > Sorry but a strscpy() where the length of the destination buffer has
+> > been calculated from the source string is way too much of a red flag
+> > for me.
+> >
+> > Put another way if there are "no functional changes intended" then there
+> > cannot possibly be any security benefit from replacing the "unsafe"
+> > strcpy() with the "safe" strscpy(). Likewise abusing the destination
+> > length argument to truncate a string makes the code shorter but *not*
+> > clearer because it's too easy to misread.
+>
+> Deliberately truncating the source using strscpy() is a valid use case.
+> strscpy() allows the size argument to be smaller than the destination
+> buffer, so this is an intended use of the size argument, not an abuse.
 
-So I still don't understand why this ever needs to reach the generic
-code. x86 pmu driver and x86 kvm can surely sort this out inside of x86,
-no?
+Sorry, I didn't phrase that especially well. I regard the abuse to be
+deriving the length of the destination buffer exclusively from the
+state of the source buffer.
 
+As mentioned, it would be much cleaner to eliminate the string copy entirely
+than to translate it into something so similar to the original strcpy().
+
+
+Daniel.
 
