@@ -1,77 +1,57 @@
-Return-Path: <linux-kernel+bounces-770397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC4DB27A49
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6D9B27A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C803B08F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5AD5582E6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352CE22A4F4;
-	Fri, 15 Aug 2025 07:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YPDOcRAq";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YPDOcRAq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C5929D26C;
+	Fri, 15 Aug 2025 07:53:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA242253E9
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7ED10E0;
+	Fri, 15 Aug 2025 07:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755243660; cv=none; b=Y2yGz9AFZonypX9ij+J1WvDAF8LpidM73aqHbsmysqH9FP7/tUI8Q71JJ+BlEHvJio26FMWeDUc2FNsE+Etg1ai3hcGdKpSPKG17tI+BVeH7dXufvBdPV+hrMUUjHDkwgvvjf+xpp8/QbiRnKwivsylmt5xacFsrC21pSmoDHkg=
+	t=1755244393; cv=none; b=hJtnrSYj9PjSX1WteElfDIwr9zsHLTfhkf8Nq1OnVbWffP1PJsJ43X6YJVaeDVpaPYKFGadG0yoJ0T+kW8rj9yGV4KKe8baospsq5qWVglPLedELN3kHDrbtwOMNeHRC6mR84loWx02NQvSYoRzQtgv89gVUFxVWlLf7tmMN90g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755243660; c=relaxed/simple;
-	bh=T0K0SUC2ViLOQ/1YnV/9UMLt+zepT9xejrrXcsB8MGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l1gbA/dGipwJ0rL24pn8g2y6EBi+gyofRUCJvc3mKBzBMlFgePfjUmLCMswYmNQ3hqtAYQaXeZRx8omJM8mA/sAVCgOEoEE/qFhor2aYszL1aGBWatcGjXdSmTXDWnrVoDeO3OnjqplckCbWHBbnQX2Zhh+E4IUkEyr1EDI3FeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YPDOcRAq; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YPDOcRAq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 699EA1F840;
-	Fri, 15 Aug 2025 07:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1755243655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=VlazP9btikB8NJpiu0YBPgFKLXh5P4NJfwM/KmYNni0=;
-	b=YPDOcRAqIO/Irub2iFSLUb3I8osWAfM7JgI2sbx4rlr8mjKsI2u8MLbMf+Aox4gqjOHEb8
-	PBi9wdjlu7shKPe0CTcCg7W/f2MSmcCwwbQtkUQsZeAxz1KWHvIl7u5zRGpx/hAygq1jhl
-	BIUGJFvQONNka5x0nSTifBbtYxf4QSU=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=YPDOcRAq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1755243655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=VlazP9btikB8NJpiu0YBPgFKLXh5P4NJfwM/KmYNni0=;
-	b=YPDOcRAqIO/Irub2iFSLUb3I8osWAfM7JgI2sbx4rlr8mjKsI2u8MLbMf+Aox4gqjOHEb8
-	PBi9wdjlu7shKPe0CTcCg7W/f2MSmcCwwbQtkUQsZeAxz1KWHvIl7u5zRGpx/hAygq1jhl
-	BIUGJFvQONNka5x0nSTifBbtYxf4QSU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3090B13876;
-	Fri, 15 Aug 2025 07:40:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g7mKCYfknmiiDAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Fri, 15 Aug 2025 07:40:55 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH] drivers/xen/xenbus: remove quirk for Xen 3.x
-Date: Fri, 15 Aug 2025 09:40:52 +0200
-Message-ID: <20250815074052.13792-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755244393; c=relaxed/simple;
+	bh=E/nbNwfWlTTVzsAK1l2kL2cE73vo/5eDQGqNnWJ1A7Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZXdZkhRQ35l5xGt6SzCBPkbbBsXDD+BdrYRh6KTTNnhMqPOJBWR+AyXHujSeuQ6+/yrKw9CVSeMGh6lxPkuBfMaKpUbmSb+vyeGjlNtRYQ8rkRCXvutTGEV7Eyhr7klxcsXG5wDpfW/BelBBYGXu9cFaB3ype95JZX9u1mtoJXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3Dqn0l9DzYQv7h;
+	Fri, 15 Aug 2025 15:53:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A9A191A0359;
+	Fri, 15 Aug 2025 15:53:07 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDnrxBh555oQLj9Dg--.33563S4;
+	Fri, 15 Aug 2025 15:53:07 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: nilay@linux.ibm.com,
+	ming.lei@redhat.com,
+	axboe@kernel.dk,
+	bvanassche@acm.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH] blk-mq: fix elevator depth_updated method
+Date: Fri, 15 Aug 2025 15:45:17 +0800
+Message-Id: <20250815074517.367896-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,89 +59,261 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,suse.com:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 699EA1F840
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+X-CM-TRANSID:gCh0CgDnrxBh555oQLj9Dg--.33563S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF4xWFyfGF4fZFyUKr17KFg_yoWfJr4UpF
+	W5tanrKryrtF4UuFWjy39xXw43K39agry2yFs3t34rKrZFgFs3XF1rGFyxXFWIqrZ5CFsr
+	Zr4kta4DXr1Iq3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The kernel is not supported to run as a Xen guest on Xen versions
-older than 4.0.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Remove xen_strict_xenbus_quirk() which is testing the Xen version to be
-at least 4.0.
+Current depth_updated has some problems:
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
+1) depth_updated() will be called for each hctx, while all elevators
+will update async_depth for the disk level, this is not related to hctx;
+2) In blk_mq_update_nr_requests(), if previous hctx update succeed and
+this hctx update failed, q->nr_requests will not be updated, while
+async_depth is already updated with new nr_reqeuests in previous
+depth_updated();
+3) All elevators are using q->nr_requests to calculate async_depth now,
+however, q->nr_requests is still the old value when depth_updated() is
+called from blk_mq_update_nr_requests();
+
+Fix those problems by:
+
+- pass in request_queue instead of hctx;
+- move depth_updated() after q->nr_requests is updated in
+  blk_mq_update_nr_requests();
+- add depth_updated() call in blk_mq_init_sched();
+- remove init_hctx() method for mq-deadline and bfq that is useless now;
+
+Fixes: 77f1e0a52d26 ("bfq: update internal depth state when queue depth changes")
+Fixes: 39823b47bbd4 ("block/mq-deadline: Fix the tag reservation code")
+Fixes: 42e6c6ce03fd ("lib/sbitmap: convert shallow_depth from one word to the whole sbitmap")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/xen/xenbus/xenbus_xs.c | 23 -----------------------
- 1 file changed, 23 deletions(-)
+ block/bfq-iosched.c   | 21 ++++-----------------
+ block/blk-mq-sched.c  |  3 +++
+ block/blk-mq-sched.h  | 11 +++++++++++
+ block/blk-mq.c        | 23 ++++++++++++-----------
+ block/elevator.h      |  2 +-
+ block/kyber-iosched.c | 10 ++++------
+ block/mq-deadline.c   | 15 ++-------------
+ 7 files changed, 37 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 3c9da446b85d..528682bf0c7f 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -718,26 +718,6 @@ int xs_watch_msg(struct xs_watch_event *event)
- 	return 0;
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 50e51047e1fe..c0c398998aa1 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -7109,9 +7109,10 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
+  * See the comments on bfq_limit_depth for the purpose of
+  * the depths set in the function. Return minimum shallow depth we'll use.
+  */
+-static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
++static void bfq_depth_updated(struct request_queue *q)
+ {
+-	unsigned int nr_requests = bfqd->queue->nr_requests;
++	struct bfq_data *bfqd = q->elevator->elevator_data;
++	unsigned int nr_requests = q->nr_requests;
+ 
+ 	/*
+ 	 * In-word depths if no bfq_queue is being weight-raised:
+@@ -7143,21 +7144,8 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+ 	bfqd->async_depths[1][0] = max((nr_requests * 3) >> 4, 1U);
+ 	/* no more than ~37% of tags for sync writes (~20% extra tags) */
+ 	bfqd->async_depths[1][1] = max((nr_requests * 6) >> 4, 1U);
+-}
+-
+-static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
+-{
+-	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
+-	struct blk_mq_tags *tags = hctx->sched_tags;
+ 
+-	bfq_update_depths(bfqd, &tags->bitmap_tags);
+-	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
+-}
+-
+-static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
+-{
+-	bfq_depth_updated(hctx);
+-	return 0;
++	blk_mq_set_min_shallow_depth(q, 1);
  }
  
--/*
-- * Certain older XenBus toolstack cannot handle reading values that are
-- * not populated. Some Xen 3.4 installation are incapable of doing this
-- * so if we are running on anything older than 4 do not attempt to read
-- * control/platform-feature-xs_reset_watches.
-- */
--static bool xen_strict_xenbus_quirk(void)
--{
--#ifdef CONFIG_X86
--	uint32_t eax, ebx, ecx, edx, base;
--
--	base = xen_cpuid_base();
--	cpuid(base + 1, &eax, &ebx, &ecx, &edx);
--
--	if ((eax >> 16) < 4)
--		return true;
--#endif
--	return false;
--
--}
- static void xs_reset_watches(void)
- {
- 	int err;
-@@ -745,9 +725,6 @@ static void xs_reset_watches(void)
- 	if (!xen_hvm_domain() || xen_initial_domain())
- 		return;
+ static void bfq_exit_queue(struct elevator_queue *e)
+@@ -7628,7 +7616,6 @@ static struct elevator_type iosched_bfq_mq = {
+ 		.request_merged		= bfq_request_merged,
+ 		.has_work		= bfq_has_work,
+ 		.depth_updated		= bfq_depth_updated,
+-		.init_hctx		= bfq_init_hctx,
+ 		.init_sched		= bfq_init_queue,
+ 		.exit_sched		= bfq_exit_queue,
+ 	},
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index e2ce4a28e6c9..bf7dd97422ec 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -585,6 +585,9 @@ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e,
+ 			}
+ 		}
+ 	}
++
++	if (e->ops.depth_updated)
++		e->ops.depth_updated(q);
+ 	return 0;
  
--	if (xen_strict_xenbus_quirk())
--		return;
+ out:
+diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
+index b554e1d55950..fe83187f41db 100644
+--- a/block/blk-mq-sched.h
++++ b/block/blk-mq-sched.h
+@@ -92,4 +92,15 @@ static inline bool blk_mq_sched_needs_restart(struct blk_mq_hw_ctx *hctx)
+ 	return test_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state);
+ }
+ 
++static inline void blk_mq_set_min_shallow_depth(struct request_queue *q,
++						unsigned int depth)
++{
++	struct blk_mq_hw_ctx *hctx;
++	unsigned long i;
++
++	queue_for_each_hw_ctx(q, hctx, i)
++		sbitmap_queue_min_shallow_depth(&hctx->sched_tags->bitmap_tags,
++						depth);
++}
++
+ #endif
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index b67d6c02eceb..9c68749124c6 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -4951,20 +4951,21 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+ 						      false);
+ 		}
+ 		if (ret)
+-			break;
+-		if (q->elevator && q->elevator->type->ops.depth_updated)
+-			q->elevator->type->ops.depth_updated(hctx);
++			goto out;
+ 	}
+-	if (!ret) {
+-		q->nr_requests = nr;
+-		if (blk_mq_is_shared_tags(set->flags)) {
+-			if (q->elevator)
+-				blk_mq_tag_update_sched_shared_tags(q);
+-			else
+-				blk_mq_tag_resize_shared_tags(set, nr);
+-		}
++
++	q->nr_requests = nr;
++	if (q->elevator && q->elevator->type->ops.depth_updated)
++		q->elevator->type->ops.depth_updated(q);
++
++	if (blk_mq_is_shared_tags(set->flags)) {
++		if (q->elevator)
++			blk_mq_tag_update_sched_shared_tags(q);
++		else
++			blk_mq_tag_resize_shared_tags(set, nr);
+ 	}
+ 
++out:
+ 	blk_mq_unquiesce_queue(q);
+ 
+ 	return ret;
+diff --git a/block/elevator.h b/block/elevator.h
+index adc5c157e17e..c4d20155065e 100644
+--- a/block/elevator.h
++++ b/block/elevator.h
+@@ -37,7 +37,7 @@ struct elevator_mq_ops {
+ 	void (*exit_sched)(struct elevator_queue *);
+ 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
+ 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
+-	void (*depth_updated)(struct blk_mq_hw_ctx *);
++	void (*depth_updated)(struct request_queue *);
+ 
+ 	bool (*allow_merge)(struct request_queue *, struct request *, struct bio *);
+ 	bool (*bio_merge)(struct request_queue *, struct bio *, unsigned int);
+diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+index 70cbc7b2deb4..49ae52aa20d9 100644
+--- a/block/kyber-iosched.c
++++ b/block/kyber-iosched.c
+@@ -440,13 +440,12 @@ static void kyber_ctx_queue_init(struct kyber_ctx_queue *kcq)
+ 		INIT_LIST_HEAD(&kcq->rq_list[i]);
+ }
+ 
+-static void kyber_depth_updated(struct blk_mq_hw_ctx *hctx)
++static void kyber_depth_updated(struct request_queue *q)
+ {
+-	struct kyber_queue_data *kqd = hctx->queue->elevator->elevator_data;
+-	struct blk_mq_tags *tags = hctx->sched_tags;
++	struct kyber_queue_data *kqd = q->elevator->elevator_data;
+ 
+-	kqd->async_depth = hctx->queue->nr_requests * KYBER_ASYNC_PERCENT / 100U;
+-	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, kqd->async_depth);
++	kqd->async_depth = q->nr_requests * KYBER_ASYNC_PERCENT / 100U;
++	blk_mq_set_min_shallow_depth(q, kqd->async_depth);
+ }
+ 
+ static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+@@ -493,7 +492,6 @@ static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+ 	khd->batching = 0;
+ 
+ 	hctx->sched_data = khd;
+-	kyber_depth_updated(hctx);
+ 
+ 	return 0;
+ 
+diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+index b9b7cdf1d3c9..578bc79c5654 100644
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -507,22 +507,12 @@ static void dd_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+ }
+ 
+ /* Called by blk_mq_update_nr_requests(). */
+-static void dd_depth_updated(struct blk_mq_hw_ctx *hctx)
++static void dd_depth_updated(struct request_queue *q)
+ {
+-	struct request_queue *q = hctx->queue;
+ 	struct deadline_data *dd = q->elevator->elevator_data;
+-	struct blk_mq_tags *tags = hctx->sched_tags;
+ 
+ 	dd->async_depth = q->nr_requests;
 -
- 	if (!xenbus_read_unsigned("control",
- 				  "platform-feature-xs_reset_watches", 0))
- 		return;
+-	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
+-}
+-
+-/* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
+-static int dd_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+-{
+-	dd_depth_updated(hctx);
+-	return 0;
++	blk_mq_set_min_shallow_depth(q, 1);
+ }
+ 
+ static void dd_exit_sched(struct elevator_queue *e)
+@@ -1048,7 +1038,6 @@ static struct elevator_type mq_deadline = {
+ 		.has_work		= dd_has_work,
+ 		.init_sched		= dd_init_sched,
+ 		.exit_sched		= dd_exit_sched,
+-		.init_hctx		= dd_init_hctx,
+ 	},
+ 
+ #ifdef CONFIG_BLK_DEBUG_FS
 -- 
-2.43.0
+2.39.2
 
 
