@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-771230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C2DB28476
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:57:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFF5B28478
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D9116448F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB185188F6D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BABD257821;
-	Fri, 15 Aug 2025 16:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8242E5D38;
+	Fri, 15 Aug 2025 16:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAClpBLc"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aUWB8O66"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE302E5D2A;
-	Fri, 15 Aug 2025 16:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510192E5D39;
+	Fri, 15 Aug 2025 16:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276801; cv=none; b=BfbNqUW8DBKWeH1IIoOuiuT7kJx25CoGpMTvMKMDsunKFFFxf7tyQr5MsQ9/dP9IcwBo5TXUyPB0RKADBE5vY+qUmyymAPUDtzTYoBSCGOZTILbqitgGV8oIYKmhc6cY9g8v+uINQ3Bd9C/RcS/iQ7TrebmEdUH8085b9AWzC4s=
+	t=1755276826; cv=none; b=o82zxVuQjGnZ4ADpIdgizS1afqJbHytMfpivUFtikn2cwxz3dPeQN01OVIhL4t+s1DlszgL7IRfSFXkLC9N+FjNa60+mgYEeJROM7FEocIl2qI+sZnr0ex0KBO3u5TFEG7Yw33YeGIwIfeXKXLQ+Ks6gADLCS4cHhTd1IHiioN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276801; c=relaxed/simple;
-	bh=ncsZMcaEaRyKrG7bCrmhKqxgcGm35QtHCgV+5Alx7ik=;
+	s=arc-20240116; t=1755276826; c=relaxed/simple;
+	bh=kRaulFfm6o1dK9XZcvujWMGvLmV1wMAk/3iHRG5dBdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6UQHgHIg9HayVJkIk9tw/8EVG6zKFw1Fcl1iY1MhQmPAtNqUoA/vph/oR8708FamWVPsiHQS1lnAe1An9bdoD9MhfmaemL0pCpY3FX9UJEhizNxHUQLvzSXcsfDUSc5uZOGq98+idZZOfwIbBSavaZAHG7WV6hdRpRvSecujB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dAClpBLc; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74381e0a227so1536369a34.0;
-        Fri, 15 Aug 2025 09:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755276799; x=1755881599; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M1YfSXIbwb8SN2s4kprGpkOdh2b7v2KrGx+xJwdVO5E=;
-        b=dAClpBLcYa4tzwsNFpw/fEJgFQBIzcnTEpibvytbj1c4YO4hpLHebu0duiBT2c9b70
-         23d31tl7t0vdU6dE3MoKe4SsRgOPKVrxGVOE7Ln9hqdspHec7cKcN0d/kYOxCI9K+PlZ
-         q1MP292YOBL0GOGykAjcJNYdTiWLoUob+clzY+Pyd2ZDRVjGbplZ44aRoJHWSogOeHk5
-         YzaCRvOQfNUmKjtLsEfsGWtRJBjfv+I4SojMvfywZIESaIFhvRVBBbjfgQIMRutStYzI
-         ACohHlasjTAETE1CfB+syoQWoTiLQe1wLUIooT5qId8qlsLjrZ9MCOQYt8lU5zYD7gNl
-         wSMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755276799; x=1755881599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M1YfSXIbwb8SN2s4kprGpkOdh2b7v2KrGx+xJwdVO5E=;
-        b=plfVWbp0XZ5IKi7wOMEpF2FJXE1YP74ry3+p6alvAaUQNic2YFIm4mJHU/DhrHVAJi
-         SNr/7MFJqUEk8WEwrc7KH5XHvBT6C0Uhh9Lji/XI9vVvlA8jmWdQ5Y/IaGQ0jFue/LPx
-         9Tb2r0MrQfHnd46ZG/OiRw8hvAMITRsypPSi2HvjNuyDDiP33yYrfDFqngiKW6kqRvs0
-         gVneNZFfmq71nqnpOI+rXBbZt45UyL2gyZNzBdw6ZGp9S2BaJvlzBW0+Hg7+28y66vaP
-         MIxHauDo/u73gFFvF89ZMU8/w50D2Qsprny7hCKEWB9r832JXCuR6xwW+NNJNWbK0UDk
-         tmZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZc9pqHdF7q0SQziWHlf3UHplusRXUyAGjEpMtfUq4bhjl+zeNUI0xABAy3Yi7NYnUKVbk1vOVrWw1FRfpUA==@vger.kernel.org, AJvYcCV/7/MY2XWqasYHVixVi+4Y+hH7Fq2lI7VQ4riSFTmZX2ltVM29RNhzUMHv4O1VRW0E0AUG1dZzuXA=@vger.kernel.org, AJvYcCX39WZA3z00B5eaD0nRYyzqMB0UCsM5rfhqDcrnoDbAjlGd+oOPIzWjYs3zy7w+Cuao0HbGLKKc+JsvSPTN@vger.kernel.org, AJvYcCXuMMnkDMgBRO8ZbKxIy5uKQ/12Q1zM0/HwKA/9O2nxdMBWrBeTo4cEWlL3/EaWk5K/hW3BkbiAk1PR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2xxw1tdxO0abbYAh1KjQejC8DCPdYocbZGgEWAfmdfHJqaVHJ
-	p9i8Ai/2eYt3FZLzkvGEuZqEfS+T8KFii3R6u6dquKO0MBIS1ZxzWpGQ
-X-Gm-Gg: ASbGncu1z7sKIV4oHIOl2Mu0L+a5ghSTqYE9n0qB2jgNsU6lLA8SkH8rXftJIGovWQz
-	pE0Z58D6zjFPNhUUTfCJbMua1jWK2p0sTqc8ZjV6eYdsjtEKwKsQIflRri9M8ldQaSp8xmvoKH0
-	EYSXeoCpc+xw09xjjSReEz0/B5BipIwb7RAcpE0fpcehKEkYgxzc9Sjrf4d9CeMbtLU8qYz7FPu
-	gnT52//Of9WIwLxNzlOCG6KlYFErRXFNVG57oKwVeZe2fSq44Ov1JoxtcJ2hBAh1SPC02dw0yzx
-	us40SCmRgw6ITZgOIeZgiGARRYORRz47JpXh/u++66nkYLYmkjDuKSUYQeq/vrC75SjTBJOB+ZA
-	4uLFtQpBx5yg9BbxkwI1xymbP9nhunUYN2yJe
-X-Google-Smtp-Source: AGHT+IHh7gvLqat09ID5S5eotjMgSZM/1+QH28GoD8XLJ484jicmNbL1KHnEftKM0DAmNzUxwWibZg==
-X-Received: by 2002:a9d:7c8a:0:b0:73e:5cb9:e576 with SMTP id 46e09a7af769-743924963b0mr1268395a34.27.1755276798837;
-        Fri, 15 Aug 2025 09:53:18 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:c95b:3a76:bbcf:777c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74392073461sm377891a34.49.2025.08.15.09.53.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 09:53:18 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Fri, 15 Aug 2025 11:53:16 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
-Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <mwnzafopjjpcgf3mznua3nphgmhdpiaato5pvojz7uz3bdw57n@zl7x2uz2hkfj>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-13-john@groves.net>
- <CAJfpegv6wHOniQE6dgGymq4h1430oc2EyV3OQ2S9DqA20nZZUQ@mail.gmail.com>
- <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b15x9Y73IzYwae0QJVSgXXpCIPiMqT7kjQFmXKCT2yd72ARz9TOjQ7G0i8CKqjDB92CWw+rx5jXc5PRqWoN9PPIOUyMEzIQ/BvIn6nzfJUjV/VPoSOSiDRpYYemwXI294JXKW73WnAyC8fTwVMuWH6tyxxY3fGeIKuBXEiDeYkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aUWB8O66; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D79C4CEF1;
+	Fri, 15 Aug 2025 16:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755276821;
+	bh=kRaulFfm6o1dK9XZcvujWMGvLmV1wMAk/3iHRG5dBdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUWB8O66N8a0q0t0LIr4Lw9qsCEEkUcwKTb7XP+lmSomRQ1h0eDsSlP6DLSodSbWM
+	 Ot1DcAeaS+lo2a73lVggJq7N6Ar3enZYK95E1Io4SG3rzISAu0UkfyvJ8rr3GhBSAF
+	 7RlnaVFEBxNweFh8Nq1DfC3LF2/vsL88RhaNUrGE=
+Date: Fri, 15 Aug 2025 18:53:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: achill@achill.org, akpm@linux-foundation.org, broonie@kernel.org,
+	conor@kernel.org, f.fainelli@gmail.com, hargar@microsoft.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux@roeck-us.net, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, patches@lists.linux.dev, pavel@denx.de,
+	rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+	stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re:
+Message-ID: <2025081517-observer-equivocal-7219@gregkh>
+References: <b892ae8b-c784-4e8c-a5aa-006e0a9c9362@rnnvmail205.nvidia.com>
+ <20250813172545.310023-1-jonathanh@nvidia.com>
+ <2025081451-afloat-raisin-7cee@gregkh>
+ <91238bb8-cc10-4816-948e-eb14cf385f89@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegv=ACZchaG-xt0k481W1ZUKb3hWmLi-Js-aKg92d=yObw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <91238bb8-cc10-4816-948e-eb14cf385f89@nvidia.com>
 
-On 25/08/14 04:36PM, Miklos Szeredi wrote:
-> On Thu, 14 Aug 2025 at 15:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Fri, Aug 15, 2025 at 05:20:34PM +0100, Jon Hunter wrote:
+> On 14/08/2025 16:36, Greg KH wrote:
+> > On Wed, Aug 13, 2025 at 06:25:32PM +0100, Jon Hunter wrote:
+> > > On Wed, Aug 13, 2025 at 08:48:28AM -0700, Jon Hunter wrote:
+> > > > On Tue, 12 Aug 2025 19:43:28 +0200, Greg Kroah-Hartman wrote:
+> > > > > This is the start of the stable review cycle for the 6.15.10 release.
+> > > > > There are 480 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > > 
+> > > > > Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+> > > > > Anything received after that time might be too late.
+> > > > > 
+> > > > > The whole patch series can be found in one patch at:
+> > > > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
+> > > > > or in the git tree and branch at:
+> > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> > > > > and the diffstat can be found below.
+> > > > > 
+> > > > > thanks,
+> > > > > 
+> > > > > greg k-h
+> > > > 
+> > > > Failures detected for Tegra ...
+> > > > 
+> > > > Test results for stable-v6.15:
+> > > >      10 builds:	10 pass, 0 fail
+> > > >      28 boots:	28 pass, 0 fail
+> > > >      120 tests:	119 pass, 1 fail
+> > > > 
+> > > > Linux version:	6.15.10-rc1-g2510f67e2e34
+> > > > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> > > >                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+> > > >                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+> > > >                  tegra210-p2371-2180, tegra210-p3450-0000,
+> > > >                  tegra30-cardhu-a04
+> > > > 
+> > > > Test failures:	tegra194-p2972-0000: boot.py
+> > > 
+> > > I am seeing the following kernel warning for both linux-6.15.y and linux-6.16.y …
+> > > 
+> > >   WARNING KERN sched: DL replenish lagged too much
+> > > 
+> > > I believe that this is introduced by …
+> > > 
+> > > Peter Zijlstra <peterz@infradead.org>
+> > >      sched/deadline: Less agressive dl_server handling
+> > > 
+> > > This has been reported here: https://lore.kernel.org/all/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com/
+> > 
+> > I've now dropped this.
+> > 
+> > Is that causing the test failure for you?
 > 
-> > I'm still hoping some common ground would benefit both interfaces.
-> > Just not sure what it should be.
-> 
-> Something very high level:
-> 
->  - allow several map formats: say a plain one with a list of extents
-> and a famfs one
->  - allow several types of backing files: say regular and dax dev
->  - querying maps has a common protocol, format of maps is opaque to this
->  - maps are cached by a common facility
->  - each type of mapping has a decoder module
->  - each type of backing file has a module for handling I/O
-> 
-> Does this make sense?
-> 
-> This doesn't have to be implemented in one go, but for example
-> GET_FMAP could be renamed to GET_READ_MAP with an added offset and
-> size parameter.  For famfs the offset/size would be set to zero/inf.
-> I'd be content with that for now.
+> Yes that is causing the test failure. Thanks!
 
-Maybe GET_FILE_MAP or GET_FILE_IOMAP if we want to keep overloading 
-the term iomap. Maps are to backing-dev for regular file systems,
-and to device memory (devdax) for famfs - in all cases both read
-and write (when write is allowed).
+Is the test just noticing the warning message?  Or is it a functional
+failure?  Does it also fail on Linus's tree?
 
-Thanks,
-John
+thanks,
 
+greg k-h
 
