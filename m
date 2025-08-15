@@ -1,204 +1,143 @@
-Return-Path: <linux-kernel+bounces-770600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A1B27CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:24:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14672B27CA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3371D21FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81D4A7AE98F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FEC272E51;
-	Fri, 15 Aug 2025 09:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209602701CC;
+	Fri, 15 Aug 2025 09:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5ZVmyll"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSsVElQ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307682737E1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E88226E708;
+	Fri, 15 Aug 2025 09:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249342; cv=none; b=JMvGGlNGq8oE1OY/zCVnZx0GVy6CTI7fN9gZjT3OKCSuL6YQPLoYW1ubfaBKCeuxQ1ZtK2SqgKRHdAJpSblTKRNuaxVdx0TeMqODvNnI9mmVRU1CO11eoLMjEUEm1g75K898PDkNPYVvEHta/AKrEXTgXa96YUMvgbEjekQHGas=
+	t=1755249366; cv=none; b=B0OAVJ55mkr207ifooE7rkuYKOpneWx0ikCx3p8v3GC3d3fd64XP/0y2TKmr7qA19HggMfyDCUWJUCwvz1lJ2yfeafsH27i9W66pJQe79EE2m+TVr2GQVpA8LY7OPvB0/7I2bRedINOBTOdRkJv2O6bfP3Ig/uUn6mu4ax7ZnvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249342; c=relaxed/simple;
-	bh=hfZcgn0nzW9uuIxs2763lW2p3DkRL5Fx4+ceg0IC1a0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARMWKfsDAH7QvgiAeCY2VvRh0d0XnzumLQUQ0KQ9RnQyTL9ff5Go4NjBkc+Mevc/5wqjNW/b86XumpxflBgJYTnaTyGo1QFeSNFsTpOZP2k1w1HP7WQnDxNUSK+yxNjgMRzLq5acc9j4dBMTbebO2lk6ruCVBnJRTm/aP7USJGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5ZVmyll; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755249341; x=1786785341;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hfZcgn0nzW9uuIxs2763lW2p3DkRL5Fx4+ceg0IC1a0=;
-  b=e5ZVmyllPvFXKOZhBuQaXHUDkzmZbwkwGnmnSEbL8iIHzpyBOzKJZdqr
-   qfPwJNZgSjMcTbbFBzcDMfFn5V5yx11a0zvU454N/6fM44nMH93DcLiIO
-   xzXIIGst9DAg6XJ4ZPWzM55CQFNMZcmI6p9/5K4aVV1s4xmciniG8NrHl
-   j4kXpKixuyqfHYi/YQjPDqzXCd6MDtvOmqJNW5h3aZ/gQ6plxMhOm7LrW
-   /SVVzf9CZ+WNqHwxP/fwru0l3NhpLsupmHPn1lDn/muzklQQHZqe/7Wx5
-   v2bwR0i+JMGz+mekyA8fGur6a3ESaGpvbH5luPEWHRIG1l5ccfbxv1HJp
-   Q==;
-X-CSE-ConnectionGUID: vRLhrnauQoOji3dGoD7MWQ==
-X-CSE-MsgGUID: ZMkIjwTjRSywxnSr6OJbhg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57528785"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57528785"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:15:41 -0700
-X-CSE-ConnectionGUID: ZJZH2PX4RoeJ1J/lxbGQOA==
-X-CSE-MsgGUID: I0vJDqLSS+eG3dAfYgKucg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="172199692"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 15 Aug 2025 02:15:37 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umqX9-000BnI-0P;
-	Fri, 15 Aug 2025 09:15:35 +0000
-Date: Fri, 15 Aug 2025 17:14:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
-	robin.murphy@arm.com, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
-	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
-	xuwei5@huawei.com, fanghao11@huawei.com,
-	jonathan.cameron@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH 2/2] iommu/io-pgtable: Add ARM SMMUv3 page table dump
- support
-Message-ID: <202508151641.JHlhcDRk-lkp@intel.com>
-References: <20250814093005.2040511-3-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1755249366; c=relaxed/simple;
+	bh=J+HxohW+Gt7vNHh8MWojAKCIWXQWxSZdX4kZ2s5hLNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxHTC07GRtu4wGRWYjxeh0b4TRSgCKbLld2VCQUTQ+g/4wSlX6FKzrP3JF5XQUH1sFbbjEQa0I2ndnxkLDGLO8a2Q5jpne+YkCfja9FA56Qou+hUZDmfIjKMhIN0/JyTnrXGGUX8oEW9NyPycCY+PO4b25B9Lae2u5okge2PMaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSsVElQ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0647FC4CEEB;
+	Fri, 15 Aug 2025 09:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755249365;
+	bh=J+HxohW+Gt7vNHh8MWojAKCIWXQWxSZdX4kZ2s5hLNE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iSsVElQ7V/NINp5P+HTu9cLLLHyl4OlmwdNuh0/9gfnEQI+YGGwoFLA6auicKqj8M
+	 qmxbA81vkgkalQQjJmb1BhPspejpmgnZKzmdDae9t+iZrEEqibNsxokN9buIUIryLQ
+	 jz1rS1D5FyaeXKhwjYchW1mdZ1L6a9ApHn6MvSmlVeAmBPX2iuyb8jgpvfBJtReK7p
+	 7vBzMwxbDP5NJmsHgLK16AMUv91YUDde/yp1jNlzJT5V8+S/ZJOWFkVZhuAAwp7ORN
+	 4wiDrWwYmGt6lec32Hn5DyupfcPLn6jXqFR6eawvlsTUPfMFwDuu6JtZDAjZJJ/KFj
+	 aR5RUCX/2IRWg==
+Message-ID: <8783e13d-65d0-4bfd-97e7-b3a0d1c7efe1@kernel.org>
+Date: Fri, 15 Aug 2025 11:15:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814093005.2040511-3-xiaqinxin@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 0/5] pci: qcom: Add QCS8300 PCIe support
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
+ lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+ johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+ neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+ quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+ Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+References: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
+ <c931bbc5-f246-4d34-9280-0c1a551a1e7e@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c931bbc5-f246-4d34-9280-0c1a551a1e7e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Qinxin,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250814093005.2040511-3-xiaqinxin%40huawei.com
-patch subject: [PATCH 2/2] iommu/io-pgtable: Add ARM SMMUv3 page table dump support
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250815/202508151641.JHlhcDRk-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151641.JHlhcDRk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151641.JHlhcDRk-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/asm-generic/bug.h:22,
-                    from arch/s390/include/asm/bug.h:69,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from arch/s390/include/asm/cmpxchg.h:11,
-                    from arch/s390/include/asm/atomic.h:16,
-                    from include/linux/atomic.h:7,
-                    from drivers/iommu/io-pgtable-arm.c:12:
-   drivers/iommu/io-pgtable-arm.c: In function 'dump_prot':
->> include/linux/kern_levels.h:5:25: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'int' [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
-     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
-      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~
-   drivers/iommu/io-pgtable-arm.c:882:25: note: in expansion of macro 'pr_err'
-     882 |                         pr_err("len = %zu, attr = %s, i =%d\n", length, attr, i);
-         |                         ^~~~~~
->> include/linux/kern_levels.h:5:25: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' {aka 'long unsigned int'} [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
-     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
-      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~
-   drivers/iommu/io-pgtable-arm.c:882:25: note: in expansion of macro 'pr_err'
-     882 |                         pr_err("len = %zu, attr = %s, i =%d\n", length, attr, i);
-         |                         ^~~~~~
-   drivers/iommu/io-pgtable-arm.c: In function 'arm_lpae_dump_iova_prot':
->> drivers/iommu/io-pgtable-arm.c:911:32: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long unsigned int' [-Wformat=]
-     911 |         seq_printf(s, "%lx - %lx    lvl %d  stage %s ",
-         |                              ~~^
-         |                                |
-         |                                long unsigned int
-         |                              %llx
+On 15/08/2025 10:51, Ziyue Zhang wrote:
+>>
+>>   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  17 +-
+>>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  80 +++++
+>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 296 +++++++++++++++++-
+>>   3 files changed, 376 insertions(+), 17 deletions(-)
+>>
+>>
+>> base-commit: e2622a23e8405644c7188af39d4c1bd2b405bb27
+> Hi Maintainers,
+> 
+> It seems the patches get reviewed tag for a long time, can you give this
+> 
+> series further comment or help me to merge them ?
 
 
-vim +911 drivers/iommu/io-pgtable-arm.c
+You pinged after one day.
 
-   891	
-   892	static size_t arm_lpae_dump_iova_prot(struct seq_file *s, struct io_pgtable_ops *ops,
-   893									   unsigned long iova)
-   894	{
-   895		struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-   896		struct iova_to_phys_data d;
-   897		int ret;
-   898	
-   899		struct io_pgtable_walk_data walk_data = {
-   900			.data = &d,
-   901			.visit = visit_iova_to_phys,
-   902			.addr = iova,
-   903			.end = iova + 1,
-   904		};
-   905	
-   906		/* Only the mapped iova will be output */
-   907		ret = __arm_lpae_iopte_walk(data, &walk_data, data->pgd, data->start_level);
-   908		if (ret)
-   909			return ARM_LPAE_GRANULE(data);
-   910	
- > 911		seq_printf(s, "%lx - %lx    lvl %d  stage %s ",
-   912				   iova, iova + ARM_LPAE_BLOCK_SIZE(d.lvl, data),
-   913				   d.lvl, io_pgtable_fmt_names[data->iop.fmt]);
-   914	
-   915		/* TODO: The dump prot is incomplete and will be supplemented later... */
-   916		dump_prot(s, d.pte);
-   917		seq_puts(s, "\n");
-   918	
-   919		return ARM_LPAE_BLOCK_SIZE(d.lvl, data);
-   920	}
-   921	#endif
-   922	
+I asked you to stop.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+No respond. Now you pinged after 2 days.
+
+Pinging time is 2 weeks. Read your internal guideline or kernel process
+documents. Such frequent pings are only contributing to unnecessary
+mailbox traffic.
+
+Best regards,
+Krzysztof
 
