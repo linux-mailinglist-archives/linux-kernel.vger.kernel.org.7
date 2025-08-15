@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-770679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B16B27DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98513B27DCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB03AE58E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF6DAE5448
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFA12FFDF0;
-	Fri, 15 Aug 2025 09:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FCE2FF65D;
+	Fri, 15 Aug 2025 09:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="BHVkfmRH"
+	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="2iKRGpDU"
 Received: from mx08-007fc201.pphosted.com (mx08-007fc201.pphosted.com [91.207.212.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB3C2FCBEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944AA2D3A71;
 	Fri, 15 Aug 2025 09:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251957; cv=none; b=Oi6u7gl42H86Xi7HTf9EdQaY2nBHGFgfvRC0zLc3UGHCa6UgIn/ScGxI+lu4jR0o0S5PTx2J/28BpVuH4wXswBU22LK7y+CE887bwnzMVPOQyTy8HvCuqMADjOXuQ245NKqI856+4at5knr9cN/uxhw9gCytZguluL6FO/NAaeg=
+	t=1755251956; cv=none; b=QMNHIdOsg2dn86tmqQni55jAGinPFxO368QN9lK1DTNT+Awg+ueFGZVWqBivddcjR3ArS/TTbAKcNMPbWwcaCj1BXPAt7o4OFtYGmzNnTdAWx2prRfeLrw+z9SuSc/bSiPYgyj6FOFJYAJ4wsxAxWW6Q6vuyEj0HLs3L/5js1GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251957; c=relaxed/simple;
-	bh=JrZBB9SjSEr3RHgKI0yjaY++p4/8sPNT9N7zdkldrT4=;
+	s=arc-20240116; t=1755251956; c=relaxed/simple;
+	bh=ON0kCnNAKPyE0hvO/awFtYwGiNRCQmLNTY6HMQbjTq4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eycBiiSkFAvXJ9q5gJJ66unzr/BtXkDA3hGQ++aa/9YlhbTye1ghjJ+DBhZCG5dyhoAcvtTKNDxzxnrqhwZlK0Ocd+Tmwr2KQMSfsS4WTuYYr1R/zC6beMBBs3MW8/qZJIpnsKm2dN/nVFOel0awfDQM1J/UqntIAaNKv5rWKPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=BHVkfmRH; arc=none smtp.client-ip=91.207.212.40
+	 MIME-Version:Content-Type; b=JkorGmzFwk0KmWVSF+s9XltmOnwLIf5h7xKzZQVs3W6n4c5uiMbk58uF5s5rk6N2Kh0ZDYHjRkL3WoRQZXGOjr8ul1fsTAkq0z4D2TsPjNXHy50q3OO90RaK3umHZZuUIrncr4s+QN+kgKTMP7R3WEHG5/pmqeev24elJKO0NFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=2iKRGpDU; arc=none smtp.client-ip=91.207.212.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
 Received: from pps.filterd (m0456229.ppops.net [127.0.0.1])
-	by mx08-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57F9wt85265753;
+	by mx08-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57F9wt86265753;
 	Fri, 15 Aug 2025 11:58:56 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp-2025; bh=ws
-	dFspxcJ7fT6GiwQeEWt/cQe22eZH3hxAMd5rKDcBQ=; b=BHVkfmRHJKg4eyRlXI
-	Ty5U+k72lnVs63h4rr55WUCy0w2FfvBpVGl3sLJD45FvefMjrmiWvTlrwNwaEjkW
-	cV95Z928DP8/FVyIGA+JujMthNpRRupgPrErMAxP1HuDbPvXL5SHahAcAIJW4p7C
-	7vrQ/EaldVpKQNu1s7h5PH6Kw4eh+E4BnDoT11WxARtfx7w6vrWcNF/h87MnlqvZ
-	sIQGS3f8hLGPQAIBX5qR6vyN0K1lQkVVXbsn4QkVPam4MNUVhRGASwhhHp8watr8
-	Apu19SmeN0G7z/u2q1hnu4AXDnZ5g2VZAWUSZejX/+yyPWfrsrtudIMFeMHHGqEo
-	7A6A==
+	:message-id:mime-version:references:subject:to; s=pp-2025; bh=w+
+	XeOnLX9GOfAbfcK2+8jxCZSldesJ5OP2+IrSmHnzc=; b=2iKRGpDUnW1anVRlHR
+	mMvZZxCD/KT6T46TBQqg/cVyj3KFeohhWeihON2hT5bSZ9DvwJiAulxCQINBxRXV
+	CBr1S3f0YIvYYy6KUOsf9hY04B93mWYuRN6s0rNMhgkRGgMBlfLzm5qem8lWrKj0
+	QpCMk0fAa9Fu+94rff4368O2UAbAPLyNBsewDR4peMMHriA13e+iNusuV+5DIE1L
+	hDWrK/9Kxrtihdm2/KuvK8cMSCzVtYDthN8vjSn4KCl5e3V5WxGergrtBbJ4uqs9
+	zlMH3Hll0Mctt/skMPs7moa/qyvhY8WRCUlemuaV3/Pa7gqciylE7MiHM4Wt2a0D
+	8mcA==
 Received: from adranos.cab.de (adranos.cab.de [46.232.229.107])
-	by mx08-007fc201.pphosted.com (PPS) with ESMTPS id 48fqcpsbfb-2
+	by mx08-007fc201.pphosted.com (PPS) with ESMTPS id 48fqcpsbfb-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 15 Aug 2025 11:58:56 +0200 (MEST)
 Received: from KAN23-025.cab.de (10.10.3.180) by Adranos.cab.de (10.10.1.54)
@@ -62,9 +62,9 @@ CC: Markus Heidelberg <m.heidelberg@cab.de>, Rob Herring <robh@kernel.org>,
         Alexander Sverdlin
 	<alexander.sverdlin@gmail.com>,
         Jiri Prchal <jiri.prchal@aksignal.cz>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/3] dt-bindings: eeprom: at25: use "size" for FRAMs without device ID
-Date: Fri, 15 Aug 2025 11:58:36 +0200
-Message-ID: <20250815095839.4219-2-m.heidelberg@cab.de>
+Subject: [PATCH v2 2/3] eeprom: at25: support Cypress FRAMs without device ID
+Date: Fri, 15 Aug 2025 11:58:37 +0200
+Message-ID: <20250815095839.4219-3-m.heidelberg@cab.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250815095839.4219-1-m.heidelberg@cab.de>
 References: <20250815095839.4219-1-m.heidelberg@cab.de>
@@ -77,52 +77,154 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: Adranos.cab.de (10.10.1.54) To Adranos.cab.de (10.10.1.54)
-X-Proofpoint-ORIG-GUID: xJzdvML5RlH9LQ9zc2t49L7GhaIygMk1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDA4MCBTYWx0ZWRfXxh0tlf4dDdSC
- ODfMyG0CSXhG6+iqanpSqdlnkR7+hzxYxRpMmNmEIDBmJmLyTJBXU0uPO3AjfNdRZ6sEToIIp5n
- GE0yMhkvPV4dSP5tJwOUAFvrre6dGpfd2oUDJwQbqqxWUAODobDcq4AjLvDYkqjuj6pC7V1WF2C
- CfrZm2AhLxSr/vo+R5eyWJvUs3FSTjST54KVEdHgS0rF7+8X6Qhe8EtAOaagJlpUlYseM8f5Gwt
- C7YVA5S9acuda5NNj43GikC/Wb/OKQ2OMfBVGJR6GjADKA8zyjok/X4Sq1ADC8TDZ2U9NY+uYFu
- mgp0DVwuy6qVRmkwWfBLiREvVudPNXYBRO3afXujJ4zLCyfJpnHIhcLFZWyBaI=
+X-Proofpoint-ORIG-GUID: qZxtB2SIk1Ug5wOySF0goSb8YTMCAJlL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDA4MCBTYWx0ZWRfX5fDhVwC1vkc4
+ 5/uX/vlxl3BocfzLj0fvrTtETeRDTugYGgy9ay7fO6/xCc6qi4mKZzo6F1rZv6vIHhMMcEgtdTT
+ H0PVrRWJVhdEFQvDFBfEzUur52/qB0a5E69AZod7HUqaoP0eES4NIl9A8fAOqMd90FMhP3u65kv
+ NnpF0Yqa4o5gEgP75FSBs86g3hoomAkdaXPaDpiBLCa0x5cr04Klg9qOoF6um+lnzEski1hH8ch
+ HySNguPG7iThequXkJAbCCrBPzREOBDtizBrimkrhSuY5yVD8Wi/Qw2WSvZjIxhMEL9/MNvNeu4
+ eKVTCYhNTGiqssiZgjkVVTM3mEFnZuZD4h18x5+fEcFJs573QVXDajMW3+slsI=
 X-Authority-Analysis: v=2.4 cv=bctrUPPB c=1 sm=1 tr=0 ts=689f04e0 cx=c_pps
  a=LmW7qmVeM6tFdl5svFU9Cg==:117 a=LmW7qmVeM6tFdl5svFU9Cg==:17
- a=kldc_9v1VKEA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=WIdweGkvO5YuuAzG6HcA:9
-X-Proofpoint-GUID: xJzdvML5RlH9LQ9zc2t49L7GhaIygMk1
+ a=kldc_9v1VKEA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+ a=rCJ37w5iS5YF4Iu26g0A:9
+X-Proofpoint-GUID: qZxtB2SIk1Ug5wOySF0goSb8YTMCAJlL
 
 Not all FRAM chips have a device ID and implement the corresponding read
-command. Thus the memory size, which is contained in the device ID,
-cannot be detected and has to be set manually as it is done for EEPROMs.
+command. For such chips this led to the following error on module
+loading:
+
+    at25 spi2.0: Error: no Cypress FRAM (id 00)
+
+The device ID contains the memory size, so devices without this ID are
+supported now by setting the size manually in Devicetree using the
+"size" property.
+
+Tested with FM25L16B and "size = <2048>;":
+
+    at25 spi2.0: 2 KByte fm25 fram, pagesize 4096
+
+According to Infineon/Cypress datasheets, these FRAMs have a device ID:
+
+    FM25V01A
+    FM25V02A
+    FM25V05
+    FM25V10
+    FM25V20A
+    FM25VN10
+
+but these do not:
+
+    FM25040B
+    FM25640B
+    FM25C160B
+    FM25CL64B
+    FM25L04B
+    FM25L16B
+    FM25W256
+
+So all "FM25V*" FRAMs and only these have a device ID. The letter after
+"FM25" (V/C/L/W) only describes the voltage range, though.
 
 Link: https://lore.kernel.org/all/20250401133148.38330-1-m.heidelberg@cab.de/
 Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 ---
- Documentation/devicetree/bindings/eeprom/at25.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/misc/eeprom/at25.c | 67 ++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 31 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at25.yaml b/Documentation/devicetree/bindings/eeprom/at25.yaml
-index c31e5e719525..00e0f07b44f8 100644
---- a/Documentation/devicetree/bindings/eeprom/at25.yaml
-+++ b/Documentation/devicetree/bindings/eeprom/at25.yaml
-@@ -56,6 +56,7 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-       Total eeprom size in bytes.
-+      Also used for FRAMs without device ID where the size cannot be detected.
+diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
+index 2d0492867054..c90150f72836 100644
+--- a/drivers/misc/eeprom/at25.c
++++ b/drivers/misc/eeprom/at25.c
+@@ -379,37 +379,49 @@ static int at25_fram_to_chip(struct device *dev, struct spi_eeprom *chip)
+ 	struct at25_data *at25 = container_of(chip, struct at25_data, chip);
+ 	u8 sernum[FM25_SN_LEN];
+ 	u8 id[FM25_ID_LEN];
++	u32 val;
+ 	int i;
  
-   address-width:
-     $ref: /schemas/types.yaml#/definitions/uint32
-@@ -146,4 +147,11 @@ examples:
-             reg = <1>;
-             spi-max-frequency = <40000000>;
-         };
+ 	strscpy(chip->name, "fm25", sizeof(chip->name));
+ 
+-	/* Get ID of chip */
+-	fm25_aux_read(at25, id, FM25_RDID, FM25_ID_LEN);
+-	/* There are inside-out FRAM variations, detect them and reverse the ID bytes */
+-	if (id[6] == 0x7f && id[2] == 0xc2)
+-		for (i = 0; i < ARRAY_SIZE(id) / 2; i++) {
+-			u8 tmp = id[i];
+-			int j = ARRAY_SIZE(id) - i - 1;
++	if (!device_property_read_u32(dev, "size", &val)) {
++		chip->byte_len = val;
++	} else {
++		/* Get ID of chip */
++		fm25_aux_read(at25, id, FM25_RDID, FM25_ID_LEN);
++		/* There are inside-out FRAM variations, detect them and reverse the ID bytes */
++		if (id[6] == 0x7f && id[2] == 0xc2)
++			for (i = 0; i < ARRAY_SIZE(id) / 2; i++) {
++				u8 tmp = id[i];
++				int j = ARRAY_SIZE(id) - i - 1;
 +
-+        fram@2 {
-+            compatible = "cypress,fm25", "atmel,at25";
-+            reg = <2>;
-+            spi-max-frequency = <20000000>;
-+            size = <2048>;
-+        };
-     };
++				id[i] = id[j];
++				id[j] = tmp;
++			}
++		if (id[6] != 0xc2) {
++			dev_err(dev, "Error: no Cypress FRAM (id %02x)\n", id[6]);
++			return -ENODEV;
++		}
+ 
+-			id[i] = id[j];
+-			id[j] = tmp;
++		switch (id[7]) {
++		case 0x21 ... 0x26:
++			chip->byte_len = BIT(id[7] - 0x21 + 4) * 1024;
++			break;
++		case 0x2a ... 0x30:
++			/* CY15B116QN ... CY15B116QN */
++			chip->byte_len = BIT(((id[7] >> 1) & 0xf) + 13);
++			break;
++		default:
++			dev_err(dev, "Error: unsupported size (id %02x)\n", id[7]);
++			return -ENODEV;
+ 		}
+-	if (id[6] != 0xc2) {
+-		dev_err(dev, "Error: no Cypress FRAM (id %02x)\n", id[6]);
+-		return -ENODEV;
+-	}
+ 
+-	switch (id[7]) {
+-	case 0x21 ... 0x26:
+-		chip->byte_len = BIT(id[7] - 0x21 + 4) * 1024;
+-		break;
+-	case 0x2a ... 0x30:
+-		/* CY15B116QN ... CY15B116QN */
+-		chip->byte_len = BIT(((id[7] >> 1) & 0xf) + 13);
+-		break;
+-	default:
+-		dev_err(dev, "Error: unsupported size (id %02x)\n", id[7]);
+-		return -ENODEV;
++		if (id[8]) {
++			fm25_aux_read(at25, sernum, FM25_RDSN, FM25_SN_LEN);
++			/* Swap byte order */
++			for (i = 0; i < FM25_SN_LEN; i++)
++				at25->sernum[i] = sernum[FM25_SN_LEN - 1 - i];
++		}
+ 	}
+ 
+ 	if (chip->byte_len > 64 * 1024)
+@@ -417,13 +429,6 @@ static int at25_fram_to_chip(struct device *dev, struct spi_eeprom *chip)
+ 	else
+ 		chip->flags |= EE_ADDR2;
+ 
+-	if (id[8]) {
+-		fm25_aux_read(at25, sernum, FM25_RDSN, FM25_SN_LEN);
+-		/* Swap byte order */
+-		for (i = 0; i < FM25_SN_LEN; i++)
+-			at25->sernum[i] = sernum[FM25_SN_LEN - 1 - i];
+-	}
+-
+ 	chip->page_size = PAGE_SIZE;
+ 	return 0;
+ }
 -- 
 2.43.0
 
