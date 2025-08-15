@@ -1,158 +1,198 @@
-Return-Path: <linux-kernel+bounces-770602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD3AB27D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:26:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2A4B27D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F554B068BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AE71D22DD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE9425FA29;
-	Fri, 15 Aug 2025 09:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5425F995;
+	Fri, 15 Aug 2025 09:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gylnJGc4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="j3b6Eb0e"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD2B253358;
-	Fri, 15 Aug 2025 09:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249401; cv=none; b=ArsSbXW1OzhjLRu2zY3rh8ICgI7GCBzIPOyzw+B5gfsdjG0XfZsEF/+TNAaiARLHI0VIUwEbHYhJzPby/FWHfqkzSJva7ktOPulDncuEFT2OQMoTduT0RcyOWpFgFTyyrfxjLSLa7shrKrkdS0jQ8F7o0BrhskBfCKR5YfB+PIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249401; c=relaxed/simple;
-	bh=RnALg3zNiXJMXGB95axE2CNi1u5Yu0VmjW8MGBkdvZE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EDn6dZDLm8AlGlw18Cgm26U+C1nUQ0jpfO+PIRwrzJIgcWmNdbWj9KSZqPVD3sHwm1cQiCRHDmI2LVgxZs+Ls0tAXdhn6Zotjf5/tBdR+/zspk2xESpPw1m+gOlRyucrXjy7K8FFY+enNfR55EQUqGYiryiW1xe66FXLTy8ZZbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gylnJGc4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755249399; x=1786785399;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RnALg3zNiXJMXGB95axE2CNi1u5Yu0VmjW8MGBkdvZE=;
-  b=gylnJGc46UXG4ejIlyN4MSkIBoQ/e5QXVnuDddb2LryTJGiy1+UtRj/Y
-   8i11j7I+nFWXfCTDCQZnvUDhf1GnGnx71uzpOWoC6v3dsRqdrzSi9/MxL
-   LcKNLfiVBk2E3T/R5Fbws4vP+/lO8evWPFOGWN9phe+c40fwEw3iOo3aG
-   YqDiX7zAgvNv4+nPIzy+Vj65G0d4LrRDD3DNpURZF1h/Hr5vg0kG1uITm
-   ebypeOvmkyNMKBdnFIFjJK3TtPrFe5mfsimxYzMn6POpFTXMW2xjlpeh4
-   LVRb+0Vf5r67MxVZLtF5Y2FRnQl4YLBgGd6N/cuY1/c+btRFQMcRPSMo+
-   A==;
-X-CSE-ConnectionGUID: CfnL4v5uQjKWGzIHbotRXQ==
-X-CSE-MsgGUID: brcC6KJrQWms7a83pknSBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56780912"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="56780912"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:16:39 -0700
-X-CSE-ConnectionGUID: PTJorfpnQzO0PoBIuqFskA==
-X-CSE-MsgGUID: LRywybBFR4ehjrv9KSMe8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="204158562"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.96]) ([10.124.241.96])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:16:35 -0700
-Message-ID: <3f7a0524-75e1-447f-bdf5-db3f088a0ca9@linux.intel.com>
-Date: Fri, 15 Aug 2025 17:16:32 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC4D1E2312;
+	Fri, 15 Aug 2025 09:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755249564; cv=pass; b=LOlNATvLn33rg6n9+k9QSqRZjYqwKbv9VrNST8BTY3XxznxQ+mO5bIuFgiUp3oTXZQBby7zE8DoUUFwZ4PZ8RjG+Yzh8HirTZEF6voXK6ijJ6Z6t4YRxwY8rrpaRVXN5V7/0rFxfam0vcyMzGXKNyI2FZBw+825S8X2HXb70Loo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755249564; c=relaxed/simple;
+	bh=S655IPnldNjmatwhWKh+tqjNPWVJxcyuKkH8RPT7Bf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gw37myXk7k9V3GoENMgAmwxfE48axgI6frGqlLUm0oOCaEgVrwAjqLfeNKGIaVRVbjDbaC+M2Si7mFWSA0hwAomLQlbJPHa+XbC+nvKOldU3Xu15HXSPamuuJD+zvFY8sPTGBkXwInwiytMlH/NX3W2gnxZF4S0ByoXN+6pItro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=j3b6Eb0e; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4c3Gl23xpBzyTF;
+	Fri, 15 Aug 2025 12:19:10 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1755249553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD4o17qvx1E5SCsxlqbpRYGrDXPxx4Nan8mqO9dt8j0=;
+	b=j3b6Eb0eXExInSrvffulTJxS4/N5TE3zeKFBNo93DzhbTPQHSOZREzdRyyRfZYVvDKhnfp
+	2VMkpoOmc2FytiUHV9dujAwyl8xuXjRIhox+Lep/3ndqH/eCIKk6Xyo16+LWY0XRiEQgtC
+	Hec/a8dP7Mfshymy2u7YCS9fdMMAGI0=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1755249553; a=rsa-sha256; cv=none;
+	b=jF+rxq3ET9Xhqtw4D+v3xbpInVI+UFjFh5fgT9fkWJTIu0A5aTDqDnQ/kIWYffO+7sp1Tr
+	PQArqD6tgG8qq/Q1kEltCpW1YVAOHJHQYHa+bJxxs9LgWv8vkVNBm9mS7N6/yyi/lXF02g
+	hn1iWU1jT818AiFWraPcaWgJ6Gb9gSg=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1755249553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD4o17qvx1E5SCsxlqbpRYGrDXPxx4Nan8mqO9dt8j0=;
+	b=Gjv7iR31M+ZJ9fECxdx+WbKwwuYGbWwMxrCYpyd+az3+kntNEBCRTP/kd7d7tXRMsH7FmP
+	qklCBbZMFJVq0qzLKSutQBFsuM/7viPuCjocSPufhUWeuDGxAXvZIqkVvto6EKeGpqQCux
+	8vR0xtXCWQ6bvcH4PftdIoUbBt7LLAQ=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id D834C634C93;
+	Fri, 15 Aug 2025 12:18:12 +0300 (EEST)
+Date: Fri, 15 Aug 2025 09:18:13 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
+ mbus_config
+Message-ID: <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "Hansen, Dave" <dave.hansen@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "security@kernel.org" <security@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
- <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
 
-On 8/8/2025 10:57 AM, Tian, Kevin wrote:
->> From: Jason Gunthorpe <jgg@nvidia.com>
->> Sent: Friday, August 8, 2025 3:52 AM
->>
->> On Thu, Aug 07, 2025 at 10:40:39PM +0800, Baolu Lu wrote:
->>> +static void kernel_pte_work_func(struct work_struct *work)
->>> +{
->>> +	struct page *page, *next;
->>> +
->>> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->>> +
->>> +	guard(spinlock)(&kernel_pte_work.lock);
->>> +	list_for_each_entry_safe(page, next, &kernel_pte_work.list, lru) {
->>> +		list_del_init(&page->lru);
->>
->> Please don't add new usages of lru, we are trying to get rid of this. :(
->>
->> I think the memory should be struct ptdesc, use that..
->>
+Hi Isaac,
+
+Thanks for the patch.
+
+On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
+> Although 4 lanes may be physically available, we may not be using all of
+> them. Get the number of configured lanes in the case a driver has
+> implemented the get_mbus_config op.
 > 
-> btw with this change we should also defer free of the pmd page:
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
 > 
-> pud_free_pmd_page()
-> 	...
-> 	for (i = 0; i < PTRS_PER_PMD; i++) {
-> 		if (!pmd_none(pmd_sv[i])) {
-> 			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
-> 			pte_free_kernel(&init_mm, pte);
-> 		}
-> 	}
+> ---
 > 
-> 	free_page((unsigned long)pmd_sv);
+> Currently, the imx-mipi-csis driver parses the device tree to determine
+> the number of configured lanes for the CSI receiver. This may be
+> incorrect in the case that the connected device only uses a subset of
+> lanes, for example. Allow the drivers for these cameras to create a
+> mbus_config to configure the number of lanes that are actually being
+> used.
 > 
-> Otherwise the risk still exists if the pmd page is repurposed before the
-> pte work is scheduled.
-
-You're right that freeing high-level page table pages also requires an
-IOTLB flush before the pages are freed. But I question the practical
-risk of the race given the extremely small time window. If this is a
-real concern, a potential mitigation would be to clear the U/S bits in
-all page table entries for kernel address space? But I am not confident
-in making that change at this time as I am unsure of the side effects it
-might cause.
-
+> If the driver does not support the get_mbus_config op, this patch will
+> have no functional change.
 > 
-> another observation - pte_free_kernel is not used in remove_pagetable ()
-> and __change_page_attr(). Is it straightforward to put it in those paths
-> or do we need duplicate some deferring logic there?
+> Compile tested against media-master (v6.17-rc1)
+> ---
+>  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> index 2beb5f43c2c0..efe4e2ad0382 100644
+> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
+>  	return container_of(sdev, struct mipi_csis_device, sd);
+>  }
+>  
+> +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
+> +{
+> +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> +	struct v4l2_mbus_config mbus_config = { 0 };
+> +	int ret;
+> +
+> +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
+> +			       0, &mbus_config);
+> +	if (ret == -ENOIOCTLCMD) {
+> +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
+> +		return 0;
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
+> +		return ret;
+> +	}
+> +
+> +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
+> +		dev_err(csis->dev, "Unsupported media bus type %u\n",
+> +			mbus_config.type);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
+> +		dev_err(csis->dev,
+> +			"Unsupported mbus config: too many data lanes %u\n",
+> +			mbus_config.bus.mipi_csi2.num_data_lanes);
+> +		return -EINVAL;
+> +	}
+> +
+> +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+> +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
 
-The remove_pagetable() function is called in the path where memory is
-hot-removed from the system, right? If so, there should be no issue, as
-the threat model here is a page table page being freed and repurposed
-while it's still cached in the IOTLB. In the hot-remove case, the memory
-is removed and will not be reused, so that's fine as far as I can see.
+None of the above is really specific to this driver. Could you instead
+implement a function that parses the information from the fwnode endpoint
+and uses mbus configuration on top?
 
-The same to __change_page_attr(), which only changes the attributes of a
-page table entry while the underlying page remains in use.
+The function could take struct media_pad pointer as an argument, or struct
+v4l2_subdev pointer and the pad number.
 
-Thanks,
-baolu
+I wonder if any other parameters could change dynamically but I can't think
+of that now, so perhaps just the number of lanes is what the function
+should indeed return.
+
+> +
+> +	return 0;
+> +}
+> +
+>  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+>  {
+>  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+>  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+>  	csis_fmt = find_csis_format(format->code);
+>  
+> +	ret = mipi_csis_get_active_lanes(sd);
+> +	if (ret < 0)
+> +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
+> +
+>  	ret = mipi_csis_calculate_params(csis, csis_fmt);
+>  	if (ret < 0)
+>  		goto err_unlock;
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
