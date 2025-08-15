@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-771363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF6BB28611
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD88B28617
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C312717D576
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D614EB05CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CEF304BCA;
-	Fri, 15 Aug 2025 18:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D6B2F9C57;
+	Fri, 15 Aug 2025 18:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vaEn0Ywi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNZOkHKY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D54886334;
-	Fri, 15 Aug 2025 18:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF0A317714
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755283961; cv=none; b=pTbwE2lkvPnG2CVZiBU1HsmtBTKQFYMI832zyKJaYPKJX1dO17kepnZtj1o1dmp5/qqirWYTCGMkhcgttc5wIOrAYBgXxmF8EJW7yMGYGk5SRDOsiTrHOHZMSMduAbXESJACrF7sh/TcYr7OBexTLOLNVwes6E/byJEU7HgoIVM=
+	t=1755284014; cv=none; b=h6McLWd3BfERNEoS+eNpFGC2VWJb0SdAYKW7YPnqCHicCG4b9ZPXK1vhjHPCsWsMof1o+h00UIko9Ob1wBCTCxnSivYpywQcEflSrjU636rwLAL9cfBPf161i4/T5RoNLbPF+9BZDrIjM258C+UHjxhZ9+V5BqApOI17w4c2zUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755283961; c=relaxed/simple;
-	bh=sEqMk8QHFf4hgeELrdnV10/xmgW7eUSzcsK0TAupUiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBUzd2GZRevrCc5ROp/FNZChwUDG3ly0ScrjEa9LKHHmrmKi/Ti8zSAk1CeeP/4khXxVMwz6FwQxyTlaa2jnkXZandltTmEEGpgASUWpwPu3mS0krcDHj1kguJ20HOa5ejA5EboDY+jV3ZKXgM/l2za0rQQkiQpIRYbmv5FUO2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vaEn0Ywi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GOvpen0NiUbx4wI+F57v+/bYnzNTSnRwHD9BnDvg8Ao=; b=vaEn0YwifeDwk9+Yk6E+8B3uhz
-	yxQJMnUwG13F+g7p++Ae/CbIIX3iH2p3GT4pHLXR29vATOgSx5GoCBjvCCNGFmHBD6o4hSsTgI1KU
-	cQMlSI27JIPoblZWNp2zTXeAEy7iFJbLCmY0KCXFe1ThUWZtIVJKUo99S3KnD68hwEg8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umzXa-004r2o-I2; Fri, 15 Aug 2025 20:52:38 +0200
-Date: Fri, 15 Aug 2025 20:52:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 5/5] arm64: dts: broadcom: Enable RP1 ethernet for
- Raspberry Pi 5
-Message-ID: <bd395120-c6e4-4a77-9979-caa722685263@lunn.ch>
-References: <20250815135911.1383385-1-svarbanov@suse.de>
- <20250815135911.1383385-6-svarbanov@suse.de>
+	s=arc-20240116; t=1755284014; c=relaxed/simple;
+	bh=88A8SsAWlEkSBITeV1u5QVhR5tRMTyKUnag0c/Hm5iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8+6w9GATjz0NohFSD6uvduM9vBrjXHROw03POJY9ZaFUDz3tGpW9T8FS6FE8wGmebJv41EDhyYiBL7ESYNcLV5GvheixmL3G17Cp6SDgwIoq1CPMWImT+g+el4XCQmFwjrvfnZtwPx3OnM+dG6LqjxBXUvZaXLnfEt4PalPcqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNZOkHKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E20C4CEF5;
+	Fri, 15 Aug 2025 18:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755284013;
+	bh=88A8SsAWlEkSBITeV1u5QVhR5tRMTyKUnag0c/Hm5iA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FNZOkHKY7WcR1aE2fILAlDHtK4Ln/hCOrZPlGbDn8ZPv49T7LM9zf6YHKbOr1TSYf
+	 JanVedJY9glCi2I7qcKcp7HXZx+zZyDbLx0B2pujOA+dm0Wz+OAHLOTPjIPC4Y3JQL
+	 X7zVF9xbwJSsQRIr87pPdS0M+keXPH0ocn0R30axL72i9C8uLMUQQvyPtVlnutMAjH
+	 J4XCzaN9lPS4667TWDgaLWiEXuWKBIekYobQKX25RdsA7O3qfhEFP/3l6dULDSRWB3
+	 pSu/HIjxaV+Cn5pJ3bkf/q9HqMOQ2KyW9Cgf11gf+4EXkB1OyBHOcRfAzyn+bn0pfw
+	 CdC8P0OcuMZTQ==
+Message-ID: <f3b13797-07a0-4b2f-897a-e4ef2a11d6cc@kernel.org>
+Date: Fri, 15 Aug 2025 20:53:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815135911.1383385-6-svarbanov@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm: Add directive to format code in comment
+To: Javier Garcia <rampxxxx@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ robin.clark@oss.qualcomm.com, antomani103@gmail.com,
+ dmitry.baryshkov@oss.qualcomm.com, me@brighamcampbell.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <DBYS3FAEVMHC.178SXO45NIBI8@kernel.org>
+ <20250810150706.305040-1-rampxxxx@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250810150706.305040-1-rampxxxx@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 04:59:11PM +0300, Stanimir Varbanov wrote:
-> Enable RP1 ethernet DT node for Raspberry Pi 5.
+On 8/10/25 5:07 PM, Javier Garcia wrote:
+> Add formating directive line in function `drm_gpuvm_sm_map_exec_lock()`
+> comment to clear warning messages shown bellow that appears generating
+> documentation `make htmldocs`.
 > 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2444: Unexpected indentation.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2446: Block quote ends without a blank line; unexpected unindent.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2450: Definition list ends without a blank line; unexpected unindent.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2451: Definition list ends without a blank line; unexpected unindent.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2455: Unexpected indentation.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2456: Definition list ends without a blank line; unexpected unindent.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2457: Definition list ends without a blank line; unexpected unindent.
+>    Warning: ./drivers/gpu/drm/drm_gpuvm.c:2458: Definition list ends without a blank line; unexpected unindent.
+> 
+> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+> Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Applied to drm-misc-fixes, thanks!
 
