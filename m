@@ -1,89 +1,67 @@
-Return-Path: <linux-kernel+bounces-769757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852FAB27359
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:10:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9093B273A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261D868551B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:10:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378C11CE1892
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3244A28;
-	Fri, 15 Aug 2025 00:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABDB224F3;
+	Fri, 15 Aug 2025 00:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXAmW4XY"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="EaBfpehO"
+Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5563CF;
-	Fri, 15 Aug 2025 00:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D51B960
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755216603; cv=none; b=IlDIL6mj/JfuDBJ7EqaaDfQX2FP+MaWHLjdN2aTrEB8y/p5KoGTLel8qpNEC3lhBIvzHCFTTbwJv8bTyG5cOmWBPZolzLGrX35bthRrgAAJ3XZUTfUdBfsdmP/mTGNI7BB03Gr8bxr/QucKYUmmm2xkD8Y4y/Dy99t9KgCvbyG8=
+	t=1755217030; cv=none; b=ByX6UXnnRAg38tTs0WvtJKbYezUJyfwPdkG1dyPeWW750ileT4GbRlkIP51v7kHe96djhQnt7DwNPOOW3jriA/uFRlbLvZ/RaO4CP6OMEynk06PhAjZRbnTSx1ItxE9i+lWP5WvMjQGZ0XGxPaxxB03woX4gpTO/OUBUKotkpqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755216603; c=relaxed/simple;
-	bh=LeLrLXcF4B2D/r502SwuoJI5Jqp2w+Ye/rStaLUoDi0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oeGiV+EmgPgje185Sqd6udc4UDRVXujwjUx4B5JRfhI5siuswsrVXy0F2GOZu++TNAsTGnq7S83QT7aAVC52BIIeVpxiqRvBViWUFMJlpz2YZxwpY2i3RGQbjOaXDJ8Ov1jDltB+dqWdQ0vZ7kT2Sn4UYy8WilhwipQszcZG3ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXAmW4XY; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2ea79219so1787048b3a.2;
-        Thu, 14 Aug 2025 17:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755216599; x=1755821399; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DlLxjN4pkp49jDBSQ7gXFAZ4FdqJj7SbFZCOba3BMhc=;
-        b=DXAmW4XYNP2pZmKg5Jc20qvwsJqYXg31cgoOGg+zZrOynWsjg9eNumVmtEDofOWrsj
-         mnmTTYUcwqNq+vSjsW/eTij+lMh9hYp9rN3696i/Rdh8mVXWVWzp7TiLfvx6qc03Ay1+
-         THCUBQGjopBU5TMtC+EIYesEvizj8pH86Akzi8jbuL77B2TvK1JKKKa3/X5t0PZfePSu
-         edAyD7rPWl+l9Uvff7LP4J3gr70E9cXAHOmOAW7xJL8ZMinSjCo2lo31pLA5F0q27tff
-         wo7xumxfdvsvQ+v/bN+Mcmwv4qvIHIdHP+1/fsPBJbICorrjsoSyKPm0wMrqAPYkLdsf
-         k1VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755216599; x=1755821399;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DlLxjN4pkp49jDBSQ7gXFAZ4FdqJj7SbFZCOba3BMhc=;
-        b=JEjtlaweEFPLf3NaXaGJEC6f6x+aJOOwYCmThTy2NgEKssgh9Laecd4xqFHBfZ773o
-         OFzg92pJoman8C+Q4RuWy4dVzjqCecAjdRDhik0oHOL6YHmD9iV4QlYQx1GF9S5Pc004
-         DNE7WZkC5tSjuPh+hgaTtrhvE6P3v9jd2NXAUMKWqVzYa4hkEErKDSwvhcIuwBYOKT21
-         2qa/kgNJeLHFnLfwVI444al1qdcahMU0pKtewAIp5WIR87J86rEbchcIpmiLaFY1cwhU
-         01U7CugwephkCT6J9e9ZZZqPU8O1B0Zz9xH0c6wbmK2N/4thK4PtV3NTMeIisaGjMrZ3
-         6fmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAQLi6yceSJWMOQ9OCjHOcqu4iZsbofET/yHOPIXXat6vQxXguwWN8wwolzIcwqlgGHtMbpB32LVs6E1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrJ1NqugixUA12QfVQpoO6dvD7TS4Vu5nlJ5RDNWSsrw6aa8nu
-	u1pe9wh6anQvdXnxy+E6gZqZIXqbz0T4jPNoLmXIoOfAezVbcQH/TTaSWWe9DpJG
-X-Gm-Gg: ASbGncuvlK9dXZoazXh31HjY+GG9Iyu4IXu+w1tRzdIQ11cP+h0DRfbD5B1RT0HN6pV
-	/0fIVdGsdTmBRZL3obvPirpL1Uy1+zhCuhzb2vNAlMdrzAjwKpp6uMqI7C2VIJLORklCTUB6g2h
-	FloF4f6/keXlTLpqISceOhsJvwHx3F0efbIjDTwWyEA6Sbj8r5UZpfDYZV66Iprp+54P/VyS80j
-	/x1NKJ4NcyY+Iz8phb2bgwB7A/UU6efCpD3r7pkI3MqQ/JXfu7xhiUZ0UCtWb4hE0Y4r6XW98aD
-	OBdex7KyVu5CU69PcgkKGNQv3I7zXNtFjWlSW66ecBtiH8JWrSpB54t5G/iR9TJGKTUQRSM84hA
-	DpqsiLn3Ppu46SmCKNgCgaDeX7PTt2t0=
-X-Google-Smtp-Source: AGHT+IH4yIyU5+Vw7X3ZhdEpMKKKSLOLoQRegPY6V7frOv02QTJ899n6OOmUfl2yHMF7rrVED6sj5A==
-X-Received: by 2002:a05:6a20:3c90:b0:23d:665b:cefe with SMTP id adf61e73a8af0-240d2d7d707mr315324637.9.1755216599521;
-        Thu, 14 Aug 2025 17:09:59 -0700 (PDT)
-Received: from soham-laptop.. ([103.182.158.109])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c2efd89aesm21367854b3a.106.2025.08.14.17.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 17:09:59 -0700 (PDT)
-From: Soham Metha <sohammetha01@gmail.com>
-To: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
+	s=arc-20240116; t=1755217030; c=relaxed/simple;
+	bh=M7/awrwFW0+lfKMbyVgOnxo2z+jj8zWoxElZ250hLBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tthmgjdlszbpBfjHi9cOO9sczwCRx9JINz4ri3Mf0l9bWmKaNR2quxbBxyVOxdLodzxc0craLDXdWeTv6d3YjUJXiLkHRB0Ku8E1D5CZ6I8daHHimMu6O59xOxQpa+w5ykaDIruF8Z6DR5kXofY3Nn5Iv+fx+4LD+/lzw49oRsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=EaBfpehO; arc=none smtp.client-ip=61.135.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755217022;
+	bh=fDqRyFA+mjlN2QT1Fq9xh052KYDrnE6/QdvHVjXFdsg=;
+	h=From:Subject:Date:Message-ID;
+	b=EaBfpehO+1zlm7YJwztOIchQAZtL1NeIiAw715OCpq9hN72Sn7s/KXnV4JdYSMfdH
+	 OcJLdevk5GdEkwz3Xt4AnYW+HQtLeI/kHJvmgGh91NhOnBTxW15hJRfA+A1KxQkdVT
+	 2lhaFIV3+wSN2bPjJSTwRsbh7QKoxNG5Yh4hz3js=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 689E7B3300004D9A; Fri, 15 Aug 2025 08:11:34 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1152966816373
+X-SMAIL-UIID: B585CA0F583C4A35B1986E2EFF5354D0-20250815-081134-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
+Cc: edumazet@google.com,
 	linux-kernel@vger.kernel.org,
-	Soham Metha <sohammetha01@gmail.com>
-Subject: [PATCH 1/6] selftests: filesystems: statmout: fix spelling mistake in output
-Date: Fri, 15 Aug 2025 05:38:59 +0530
-Message-Id: <20250815000859.112169-2-sohammetha01@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250815000859.112169-1-sohammetha01@gmail.com>
-References: <20250815000859.112169-1-sohammetha01@gmail.com>
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nfc?] [net?] WARNING in nfc_rfkill_set_block
+Date: Fri, 15 Aug 2025 08:11:21 +0800
+Message-ID: <20250815001123.4558-1-hdanton@sina.com>
+In-Reply-To: <689e6bba.050a0220.e29e5.0003.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,31 +70,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-found/fixed the following typo:
+On Thu, 14 Aug 2025 16:05:30 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16c80af0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
+> dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/46150b6d2447/disk-8f5ae30d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1c604b2b2258/vmlinux-8f5ae30d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9c542f0972de/bzImage-8f5ae30d.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> rtmutex deadlock detected
 
-- didnt't -> didn't
+Even given the lockdep_set_novalidate_class() in device_initialize(),
+rtmutex can detect deadlock (the ABBA one [1]?), weird.
 
-in `tools/testing/selftests/filesystems/statmount/statmount_test.c`
+[1] Subject: [PATCH] net/nfc: Fix A-B/B-A deadlock between nfc_unregister_device and rfkill_fop_write
+https://lore.kernel.org/lkml/20250814173142.632749-2-ysk@kzalloc.com/
 
-Signed-off-by: Soham Metha <sohammetha01@gmail.com>
----
- tools/testing/selftests/filesystems/statmount/statmount_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test.c b/tools/testing/selftests/filesystems/statmount/statmount_test.c
-index f048042e53e9..1278259231fc 100644
---- a/tools/testing/selftests/filesystems/statmount/statmount_test.c
-+++ b/tools/testing/selftests/filesystems/statmount/statmount_test.c
-@@ -545,7 +545,7 @@ static void test_statmount_mnt_opts(void)
- 		return;
- 	}
- 
--	ksft_test_result_fail("didnt't find mount entry\n");
-+	ksft_test_result_fail("didn't find mount entry\n");
- 	free(sm);
- 	free(line);
- }
--- 
-2.34.1
-
+> WARNING: CPU: 1 PID: 9725 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 9725 Comm: syz.8.874 Tainted: G        W           6.17.0-rc1-syzkaller #0 PREEMPT_{RT,(full)} 
+> Tainted: [W]=WARN
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> RIP: 0010:rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
+> Code: 90 90 41 57 41 56 41 55 41 54 53 83 ff dd 0f 85 8c 00 00 00 48 89 f7 e8 c6 2c 01 00 90 48 c7 c7 a0 08 0b 8b e8 79 08 8b f6 90 <0f> 0b 90 90 4c 8d 3d 00 00 00 00 65 48 8b 1c 25 08 b0 f5 91 4c 8d
+> RSP: 0018:ffffc900043a7950 EFLAGS: 00010246
+> RAX: 89021558f1df5a00 RBX: ffffc900043a79e0 RCX: ffff888025bb3b80
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffc900043a7b00 R08: 0000000000000000 R09: 0000000000000000
+> R10: dffffc0000000000 R11: ffffed1017124863 R12: 1ffff92000874f38
+> R13: ffffffff8af82119 R14: ffff888036e55098 R15: dffffc0000000000
+> FS:  00007fec70d5e6c0(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fce013b0000 CR3: 000000003ebbc000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+>  __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+>  rt_mutex_slowlock+0x692/0x6e0 kernel/locking/rtmutex.c:1800
+>  __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+>  __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+>  mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+>  device_lock include/linux/device.h:911 [inline]
+>  nfc_dev_down net/nfc/core.c:143 [inline]
+>  nfc_rfkill_set_block+0x50/0x2e0 net/nfc/core.c:179
+>  rfkill_set_block+0x1e5/0x450 net/rfkill/core.c:346
+>  rfkill_fop_write+0x44e/0x580 net/rfkill/core.c:1301
+>  vfs_write+0x287/0xb40 fs/read_write.c:684
+>  ksys_write+0x14b/0x260 fs/read_write.c:738
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fec72afebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fec70d5e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007fec72d25fa0 RCX: 00007fec72afebe9
+> RDX: 0000000000000008 RSI: 0000200000000080 RDI: 0000000000000003
+> RBP: 00007fec72b81e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fec72d26038 R14: 00007fec72d25fa0 R15: 00007ffe1f71d718
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
