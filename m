@@ -1,176 +1,444 @@
-Return-Path: <linux-kernel+bounces-771414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F4CB286CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:59:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F635B286D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74145560F96
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:59:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28E2B7A3F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A5129B768;
-	Fri, 15 Aug 2025 19:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C003F29B768;
+	Fri, 15 Aug 2025 20:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bzF0Py6M"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DKId6Znk"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C923221265;
-	Fri, 15 Aug 2025 19:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755287985; cv=fail; b=MuBpIJVIGY/QEkH+rQAabe6z90mrRdFdaWq5qEFjQ6oQaa7qQm6wQOWJWhY05NAJeqR31l8oFG8TLZcHsIGce4fB1x/7qV279uKNubHuzIhK4OcwBLOcKzntVg0V73fRCQUY3vOGL11E1K0q64oT5gSITo/SANK9QzAzQPugqjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755287985; c=relaxed/simple;
-	bh=ERMsXUlox6MAVzqWwbqWPAG3riS+Lir5dOyKFb0Fs7s=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SEG6cddUvC1ksmE00prnwO9EA+QPdEkQ3ZyjvCojIs7PKf3tbEz2E/VIR4U6ychA1rCBiBSNtcjHTMn9tNjrLTPp1lsvziFB7wFJ+vudFa5luQ96vqpXfyFknj5A/pjk61HN1iXucaIKQ8woQvutvIOhsXVx3uR5P5nn1DXGTu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bzF0Py6M; arc=fail smtp.client-ip=40.107.244.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kUAo9cmZwvDB+OpGmp3IPy1o9Awh6v0T4zNmWGEvOZvHgCPhuR0Bh+NJIrt5KbCNbsMUgoJdJfNnFhrKlMXsj1IwvW/w2ZaDQ/h+cRuvFThUv79Lg/CxKg4zWSANFSJWowjzXAnzviionmsCNCLmKRCSiXef624NA8yXCM8PWOLLQcvR5DCt1lDlJlq+sc8agbfYAukyaoTHkmYb1pFLP20vJgxx2uOjF8Ob33ymWDgnNDAFT/XCu2b4Qawx7jyGi5f1JzPktc8X76Tr45nrKjf5LQa0w5fVAKs5QVAXifQ+b7aw2ZOLW141DnY+rldXPH4yrs2DhqWXYBMA/W3KtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ERMsXUlox6MAVzqWwbqWPAG3riS+Lir5dOyKFb0Fs7s=;
- b=TgfCcN80ywTo1LotqXFhulCdBuZDTxJFgLcegisOlnWssVpqdm0n0dxGWvWheKv13fM3CSKRhH/pHF56ZvHgKTBWeOJU9LwcQxPHyV6cdHbjGdI7twHA4xTNxvVjM5pGEm/Eebi27L3cE/ZXpboguMK3KSwnYI9b5KjU1BRcskNKe/Luf3NsTOHqqYXo6emQ1PshzRCm2ORetgb+bloQ58MLdOnG0RzdiGvlqMXIF4FCNPunuLCTMyV0tmQ2Shpz2/86yA6LOvB1YieDmeyWX5xE+1EYL+Nhuq8PL/ETDB+sUpjNQU4EVaOSR0IwiTqbwhF6jFg6kAsS4BMwSJjkXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ERMsXUlox6MAVzqWwbqWPAG3riS+Lir5dOyKFb0Fs7s=;
- b=bzF0Py6MMkjq8cjt7jRO2oh/eStJ6FLWwKLuCmcRsnOHY7KC7idNm4ySTjI/cy0toIhuiPXOxKf8PLCV7fNkaPPmOXC98adjmo03jpPwUwPREO/y7qJzqiu1r0OY9zBt5r9qIQvViJ3FNYbVcBSIhBUNGuQBrIgrD8+rqnUmW7tjVWBiRyEJR6og0/V26TGlxHAOIn2L8G/Vf8raKVeiH1QEfHC83zFuDtJT7Qn+HQn0xjZ8zFvqAWEKIdRrQhijdBcaWE0NVBCyTrLdanr58mf8TMjOW3NYeQ7iHdFCxGKXsX9l490rzoz4W7F/nNpLE0xGS2HUr1S+IPEzYyoi2g==
-Received: from SJ2PR11MB8369.namprd11.prod.outlook.com (2603:10b6:a03:53d::16)
- by PH0PR11MB5207.namprd11.prod.outlook.com (2603:10b6:510:32::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Fri, 15 Aug
- 2025 19:59:40 +0000
-Received: from SJ2PR11MB8369.namprd11.prod.outlook.com
- ([fe80::4db1:768a:9a46:3628]) by SJ2PR11MB8369.namprd11.prod.outlook.com
- ([fe80::4db1:768a:9a46:3628%4]) with mapi id 15.20.9031.018; Fri, 15 Aug 2025
- 19:59:40 +0000
-From: <Don.Brace@microchip.com>
-To: <rongqianfeng@vivo.com>, <James.Bottomley@HansenPartnership.com>,
-	<martin.petersen@oracle.com>, <storagedev@microchip.com>,
-	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] scsi: hpsa: use min()/min_t() to improve code
-Thread-Topic: [PATCH 2/6] scsi: hpsa: use min()/min_t() to improve code
-Thread-Index: AQHcDd5ykpIBbsf4y0Ohanr7I4cGULRkH5DU
-Date: Fri, 15 Aug 2025 19:59:40 +0000
-Message-ID:
- <SJ2PR11MB836949CCAE5EC72772790233E134A@SJ2PR11MB8369.namprd11.prod.outlook.com>
-References: <20250815121609.384914-1-rongqianfeng@vivo.com>
- <20250815121609.384914-3-rongqianfeng@vivo.com>
-In-Reply-To: <20250815121609.384914-3-rongqianfeng@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR11MB8369:EE_|PH0PR11MB5207:EE_
-x-ms-office365-filtering-correlation-id: 7f7deddb-fe58-472b-fd05-08dddc364558
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?x4md3zL9bJWijLgymt4HvRRobGBS2aFumK9ndOfBXaPXV+i4LsPe8pfznp?=
- =?iso-8859-1?Q?CuUztHOAJpX6zfZ8S9jnTrLnCgyvWXnnZq0AqNOKNR1j4Z4nqcLEi00LZC?=
- =?iso-8859-1?Q?WEAYCQ7i0RxpRaACSFXi8TgOMWPBU96k3jGZ2plRhSXIiIhlb8Z+d1dwlX?=
- =?iso-8859-1?Q?/wHyjI/NYhMdGBwF0dpSTMeXWs/W2pJoWrUvwqo7CTyOiN/7qAsW+pyG9Y?=
- =?iso-8859-1?Q?OCZfADV03y+VTQTKF0LkMyRuD2C0q/SVaXkkYNIQ66o4WyPBmic+9Byr/n?=
- =?iso-8859-1?Q?l7RRWNSlXy48zK85JqF1xlwgdP6Ns3uzCwvkIS6HJ+pdqdgaDMKiT+ggbT?=
- =?iso-8859-1?Q?NdVS0ALNhBgKT95/aLt3NFlu8px6WNPeRfdjttyYVwF59IYePHPS2Dr1TQ?=
- =?iso-8859-1?Q?fg0xFRSRxnbS+RYmXE9rNfq2hE/FFUxn1TaMpp2gu5zSOlHyI7Hz9Q9YBY?=
- =?iso-8859-1?Q?VI6d1NTGpmRBCZUXEYvsaUbyyXuOOypiKD81Wbq5Fr6BqlFDatRB+AOb4e?=
- =?iso-8859-1?Q?SSTvbS8g3KBPNftsO5q3BoPL+7HTWhbRWqnT5ouaRtW+GTM4pdOb1ipY6Z?=
- =?iso-8859-1?Q?417qdyob1dZSeeNZ935xcfG5uuXBwHyyORGnjWSScOyV529nJYBmd8NPFt?=
- =?iso-8859-1?Q?CsKn6NF6ChubmOK/Sc3pB0MCqa/4d7V5z03S04YbjbmsJvTdXoi3WNmdJt?=
- =?iso-8859-1?Q?ZT8XADlKz1zTAHhltIgMAtbikqvUaDtnDRgftJX+0ek6K8KoZRhPy/6ThG?=
- =?iso-8859-1?Q?Ck1vg9ruYiSXtkjFaedC/UvZclvC9qexJsoSxEtFlQF/3hA1nVGDLmlUyd?=
- =?iso-8859-1?Q?fzcwu+Dve0urkKSBhJ3qg+dxOrvgm54DD4/LnvsS2/4nI+EviKrnAlHHM/?=
- =?iso-8859-1?Q?Hnbjqw9x21TMccInXWRnUc27AmIR2xebOdzO36kwAEXMtzK9K1jS8zdvFO?=
- =?iso-8859-1?Q?/G+LBATauWpf3pxZb8dhIGdlykOMGq3wPWMHEVokbj12qIK19rq/9gAFPZ?=
- =?iso-8859-1?Q?DXwa7DnSCMLcm4F79vod/cZFkgBwkvSRwNrZ3rZejZw4SASocAKcZdGDRb?=
- =?iso-8859-1?Q?SSSkywd+vDrQ3oTQStJJVAlZsKSCphWIbC6jBLcDak9ApBdtEtvf26wW5N?=
- =?iso-8859-1?Q?SuxzYpOL+JjefNKZuizjAHo05P7fzRTWq9t9dzGtq/DiTFXTdSinGNxHnU?=
- =?iso-8859-1?Q?kpeNnLaOAoG9O+jBKgkC3xruiIDjT9qcGZubpbNsD3Y/ah2CaJfBXLc68e?=
- =?iso-8859-1?Q?2qbApgE6peusrBJZqsXKduyT439RYhwVe5ZceBlxgMTKl5MMCN4ACiqI5i?=
- =?iso-8859-1?Q?itVdkiHPBOzgnREkokpJ/0DdJkRufrTKj8rLVdJY5c604mzn7LtbkKODnH?=
- =?iso-8859-1?Q?m10UhAuvSeRBx5sSyaqDuJv/murh9VWCtIJXg//luWByr3f/kp/RH0Iu+j?=
- =?iso-8859-1?Q?5H1T/NUG8pPA9x/jZYvI/sH08ZOiQ6jXRjHFMGzVRcqRdQZZod+2N31Nyh?=
- =?iso-8859-1?Q?0VxvAdUw5YRnlN25v+Whzs76NfgZMkWxlMVu0+dyFnxA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB8369.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?jqVvYxzIxsI+bYOtxCjuXyZqHRP8hfcY36uuS/6Z5OfJqznBppbsnLJ3B9?=
- =?iso-8859-1?Q?o24AK7UIwrfcuehLlZCh+BCCF4GMPccIEmCTR4kqaHqfmEVvcelG3Xp0P+?=
- =?iso-8859-1?Q?e9jCQ4TjkZ/ib5fF2IH3Bangkyr7lUsW5phmmOwcxlXttQNwbwB0utzqiQ?=
- =?iso-8859-1?Q?26Rllc4q2kPfeJMg8yitwz192KcKmz49zItg1pINQ9NnYduqnQutxL4Mw0?=
- =?iso-8859-1?Q?nrc7lvkKSI3TuhZmIcZjtM9AzpYvVlkEehK+3IqR9F9Z+6G98MUTPRj9M+?=
- =?iso-8859-1?Q?Ds8tJzRINaDm+Kx8FmJnTfQetIeKgv+NxWbjirLuK8kD7mKKjvseDeZmvA?=
- =?iso-8859-1?Q?kaMMHgsbGDL32eeno6nYghEEJlyYJg+0BQtRJ7+5CUbjJgPzgiSxANBTA/?=
- =?iso-8859-1?Q?DhMLVCoV0lfCimvvelsInsCPc92/uPrySpQYh+rCVjiUr4OMevxhu4u5ji?=
- =?iso-8859-1?Q?ldrNYwqvVgXwwkgo0+w5UQwcU4vVTsbQ8JLeZUIEd+qMPdGG/GTZ476Tn4?=
- =?iso-8859-1?Q?DuL9uXtRgtKc5Sppqx2vf4qZ/2Bci2CSzD8IPN+t1OFeP5y6yaTJYe7A8k?=
- =?iso-8859-1?Q?7r8Jsbo9noCEtpP6ejerxl/dsiWDKUe+PFGhCUY5JJlSL2/adBNiGsMgPw?=
- =?iso-8859-1?Q?h4NYtPoyuQUMm5hL710rsISWQKFwWLal4sy0pE0OsfVMbv4WM1zuujbvCA?=
- =?iso-8859-1?Q?7hxMyzyymjlb0aAI4GXoGN2wjzYv+tUaqlfIRsVBKYMM+141z4BCm6vN6j?=
- =?iso-8859-1?Q?N4VSpu1jdojUHIXxt6LJvUyuZIj+Jhz5v3kl5Q5eIIcdnmkqc7gQ1wXGtq?=
- =?iso-8859-1?Q?CEMa/9Seo60QIErmwctMR2xMXTgRwnNrK/JkL9QR4nZkvRoyYRTwR7ZRMg?=
- =?iso-8859-1?Q?TilpzAu0pUyiEYZkskENIkTYoIQKHodjyXkydLs9uBqgD2Lpdk4dlHVubr?=
- =?iso-8859-1?Q?pAzWarEAhJ55RpXJCJM9XId9l24WtWH+9TdqiQNGou7g0Lzzn9d7jMOcyy?=
- =?iso-8859-1?Q?7Jp6+WcKzTillBKQAooxAahhMzPAimotByNm8+g+csBN4ElVf4P4C30uUk?=
- =?iso-8859-1?Q?UIMzHZs+bj3IcDfpG+he+CKBLb9M1ToHe3d1FHW4mYa1CfhkNqHoSlG/X7?=
- =?iso-8859-1?Q?X1TAEJBV7WYDlk8ND80FkQX1nLjONYDfNBIpi51b+sWsB0rF/dp8jjgmcW?=
- =?iso-8859-1?Q?6pOm4Q801rNyxnDeGRqcgmcBJy5NSwp0qzqOytwWKkGee08Px7G6Dvraiu?=
- =?iso-8859-1?Q?m3rWdOjbELvwnuSvjnfkNOMcv6LDGqmxJobaFf7x40r5154crMCnNVUSWK?=
- =?iso-8859-1?Q?xZs/eZw3IjSkHjORaDQNshqia1jhytgXI6480C/3UizRyzoN/SjBqZO/Xe?=
- =?iso-8859-1?Q?l3y5U6wcUVncdN5GhjRCR2JlRphtkO+gFvqhmt4kg6HC/VBf+1G+/TlYir?=
- =?iso-8859-1?Q?M9u6n2qtG+Penyj3WKlNze7FddnhE8VQAtLOH6oMLlBOSDtf3rksLyeO5a?=
- =?iso-8859-1?Q?9AkO8ODokq7QfpbOW27nRUdLaPuGRHBUaV6/xd/W+cPeWSa5eQRo85I3vE?=
- =?iso-8859-1?Q?RWsSGkcrM2asMK9seeLYZdvzwebtHM8I3HRzuspOP+i1lJRfjzF8djqqSf?=
- =?iso-8859-1?Q?MvpfvOvn8xAlSlutt3jBY6G+uyuSU7v4/U?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52FE287267
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 20:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755288126; cv=none; b=RRkXomka4FuICH9cGCZmLGa4Gn6V9Xtor4qzG0ri3mys0s+MtEKeC/+5A4euTtBMGaAFgW9y60Fat92UOdwC1RmxpveTnkFfsxiHRrhWpyvgmRCAbIdGRrHS6+2iEboIgNpy3J/oDhi4Ir72Xm/mjWRt1mKnKie5uK+Y05ZSQZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755288126; c=relaxed/simple;
+	bh=VQzmMcgy25baAW7bo3luXKb7dIqwNw4IKclK8IMOAxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dK7/RC1zhZm0q5/T9VKbfd1au1M35ZG5Qji18yj4ssqRloga988oLWTnSkhxBj/AD7l1IS4YoyrbwD1hSy1+G+J8RG8THYGY02FZ+Vdve2DvleetYuSvKUNP0c63euDKhawxI0NikucUo6u+20Hvjs1msEKJNOG213MOYEv7Y4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DKId6Znk; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cceaaecd8so929348fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755288124; x=1755892924; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pcuxVVhwBqk6/ThFcilXJFO7I/Y8OkGOhPu8yVAUZTE=;
+        b=DKId6Znk8SQx9oud4z5pt7S4oxkteNCe2e7RuSWDBubOUCg+YdxLv3wVvE2sDXv1Lm
+         NitRpnDMlZomC0dY2MU3jOsWOrOJTrxUoQMf7Q2korpxnaZ327RcVAxvqlgPWyz9nzLV
+         rjR6ZUNb8aXZKshMSQPGOWUJ2xa/0E2YSsQSg2wjPr/iTb+zCGSFGt8lro+AL2Fz47OT
+         dACJmRm/fEp2R/UosRcOG7gu9sFBkFfaSyX0YR73oeqjFRN42CGIZin6DtrzSz+AwTen
+         CfP0L17iNwddNSyhbUSppFgJs0yaehEOMj9sfh6/oAM9jexKNbxGVrto9FO/VoYk9WV1
+         083A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755288124; x=1755892924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pcuxVVhwBqk6/ThFcilXJFO7I/Y8OkGOhPu8yVAUZTE=;
+        b=qpSZkEUv9sOWXef8jZOvT7j7kNOCTjiBQhfvn2Lj4ZTdExmAl+7/Yps9zQ1aBndxlw
+         +rn2p2zeRJviS3hazVBJSbyU/79M8PeJNxCQgo/HINDnVXLRXbmsVBSgEIYhw/et1Zye
+         A2fUpuhqyUs+g3zzyRETjjmO5WMqAxrFyFVFol4r8VauDexyXbkrSIcHcN8ps0rTq3u9
+         MHvt+Ti5/U8qPFFxXkDx9UyKd+AC93UGv3FecaB98I585m3Y7sh1BD5IYeNqus/7QMLc
+         1aw8Uepi+M2AHjkgbcwnTZPhxWo0tzbIqJjOE5tm0lRUPpXgYW0l4U/oBlL9MF1bltN+
+         vmBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTXsUSUhp/nP/T+19msf4lGQb8IwTF3WoJxLOLiOECKjIPiG6gekI6lHDQLlD9RlrhacVgZa6Kr6R+U6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVDF+IcxQ2AiRVmL6t968pP6VlR/h8fuaipKWigyTkmseetSZE
+	2ZKhCVvVZ+vdTXBwkWKYLwI+kkmA3r3rwkaL7R0AVYZRHv4QMGkOAfq3lfCst+F5LJ0=
+X-Gm-Gg: ASbGncsxPz9wG2leSlKY0uSa1WQviYeVnUwnAsta2sMTpIc3m1shigIzAFPDsFJh166
+	P4Xyjd4HVeDNQGTwUrGUF/prtn1o9wjL5WgniidePKLJSFA0CCWjqep6FlPJ7EkPwAc95r0w94N
+	mqzjLmObZQuWLHnNidD+wMFxV+4uff0xugkAT3MOBEKbndNNV/G061bghcY/sVQAOEgN5SyCsts
+	ZmhN2Kztw24nlDRlp/sYr2Tq1p7oQJVFCNiANosD9+3rg9/N0pRNSh87UFpeDh1h9FNQpI7cUeR
+	dL2xfRSiSeS7t1Wbl1q5Td4EbfH32gR+V3lIRyrXbMMkqqPo5qa3W9yq8DwNRePzbEkbLk61f6G
+	zfCqvlAq+xwZoY27Dy+2YNuQR
+X-Google-Smtp-Source: AGHT+IH6UijrJj9CokQ7LeOZUer1dBOG0/ag/iMKh5MHL6K68xaBLTbERAAjBI3+UFgVXTVGT2cXIw==
+X-Received: by 2002:a05:6808:3a0e:b0:435:8501:2b96 with SMTP id 5614622812f47-435ec540455mr1913900b6e.21.1755288123755;
+        Fri, 15 Aug 2025 13:02:03 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949f85b6sm589160173.67.2025.08.15.13.02.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 13:02:03 -0700 (PDT)
+Date: Fri, 15 Aug 2025 15:02:02 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Sunil V L <sunilvl@ventanamicro.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, 
+	Atish Patra <atish.patra@linux.dev>, Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] RISC-V: Add common csr_read_num() and
+ csr_write_num() functions
+Message-ID: <20250815-e69bdc695cf78e6ce07e580c@orel>
+References: <20250815161406.76370-1-apatel@ventanamicro.com>
+ <20250815161406.76370-3-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8369.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f7deddb-fe58-472b-fd05-08dddc364558
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 19:59:40.5786
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 38BuEB5Y3jBkqkeybdv3uOt6Klbx+z71vwpft3eKkmTMCyUTdUL1Kh4mGTlK//G3yc6/3rXybt9wzkLC6of9TQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5207
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815161406.76370-3-apatel@ventanamicro.com>
 
-=0A=
-Use min()/min_t() to reduce the code in complete_scsi_command() and=0A=
-hpsa_vpd_page_supported(), and improve readability.=0A=
-=0A=
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>=0A=
----=0A=
-=A0=0A=
-Acked-by: Don Brace <don.brace@microchip.com>=0A=
-=0A=
-Thanks for your patch. We do not normally update hpsa anymore.=0A=
-But this change looks OK.=0A=
-=0A=
-Thanks,=0A=
-Don Brace=
+On Fri, Aug 15, 2025 at 09:44:06PM +0530, Anup Patel wrote:
+> In RISC-V, there is no CSR read/write instruction which takes CSR
+> number via register so add common csr_read_num() and csr_write_num()
+> functions which allow accessing certain CSRs by passing CSR number
+> as parameter. These common functions will be first used by the
+> ACPI CPPC driver and RISC-V PMU driver.
+> 
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/include/asm/csr.h |   3 +
+>  arch/riscv/kernel/Makefile   |   1 +
+>  arch/riscv/kernel/csr.c      | 177 +++++++++++++++++++++++++++++++++++
+>  drivers/acpi/riscv/cppc.c    |  17 ++--
+>  drivers/perf/riscv_pmu.c     |  43 +--------
+>  5 files changed, 189 insertions(+), 52 deletions(-)
+>  create mode 100644 arch/riscv/kernel/csr.c
+> 
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 6fed42e37705..1540626b3540 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -575,6 +575,9 @@
+>  			      : "memory");			\
+>  })
+>  
+> +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
+> +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
+
+My preference would be for an interface with the return/err parameters the
+other way around, i.e.
+
+int csr_read_num(unsigned long csr_num, unsigned long *val);
+int csr_write_num(unsigned long csr_num, unsigned long val);
+
+and then ensure all callers always check that the return value is zero
+before proceeding to use val or assume val was written.
+
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif /* _ASM_RISCV_CSR_H */
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index c7b542573407..0a75e20bde18 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -50,6 +50,7 @@ obj-y	+= soc.o
+>  obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
+>  obj-y	+= cpu.o
+>  obj-y	+= cpufeature.o
+> +obj-y	+= csr.o
+>  obj-y	+= entry.o
+>  obj-y	+= irq.o
+>  obj-y	+= process.o
+> diff --git a/arch/riscv/kernel/csr.c b/arch/riscv/kernel/csr.c
+> new file mode 100644
+> index 000000000000..f7de45bb597c
+> --- /dev/null
+> +++ b/arch/riscv/kernel/csr.c
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Ventana Micro Systems Inc.
+> + */
+> +
+> +#define pr_fmt(fmt) "riscv: " fmt
+> +#include <linux/err.h>
+> +#include <linux/export.h>
+> +#include <linux/printk.h>
+> +#include <linux/types.h>
+> +#include <asm/csr.h>
+> +
+> +#define CSR_CUSTOM0_U_RW_BASE		0x800
+> +#define CSR_CUSTOM0_U_RW_COUNT		0x100
+> +
+> +#define CSR_CUSTOM1_U_RO_BASE		0xCC0
+> +#define CSR_CUSTOM1_U_RO_COUNT		0x040
+> +
+> +#define CSR_CUSTOM2_S_RW_BASE		0x5C0
+> +#define CSR_CUSTOM2_S_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM3_S_RW_BASE		0x9C0
+> +#define CSR_CUSTOM3_S_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM4_S_RO_BASE		0xDC0
+> +#define CSR_CUSTOM4_S_RO_COUNT		0x040
+> +
+> +#define CSR_CUSTOM5_HS_RW_BASE		0x6C0
+> +#define CSR_CUSTOM5_HS_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM6_HS_RW_BASE		0xAC0
+> +#define CSR_CUSTOM6_HS_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM7_HS_RO_BASE		0xEC0
+> +#define CSR_CUSTOM7_HS_RO_COUNT		0x040
+> +
+> +#define CSR_CUSTOM8_M_RW_BASE		0x7C0
+> +#define CSR_CUSTOM8_M_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM9_M_RW_BASE		0xBC0
+> +#define CSR_CUSTOM9_M_RW_COUNT		0x040
+> +
+> +#define CSR_CUSTOM10_M_RO_BASE		0xFC0
+> +#define CSR_CUSTOM10_M_RO_COUNT		0x040
+> +
+> +unsigned long csr_read_num(unsigned long csr_num, int *out_err)
+> +{
+> +#define switchcase_csr_read(__csr_num)				\
+> +	case (__csr_num):					\
+> +		return csr_read(__csr_num)
+> +#define switchcase_csr_read_2(__csr_num)			\
+> +	switchcase_csr_read(__csr_num + 0);			\
+> +	switchcase_csr_read(__csr_num + 1)
+> +#define switchcase_csr_read_4(__csr_num)			\
+> +	switchcase_csr_read_2(__csr_num + 0);			\
+> +	switchcase_csr_read_2(__csr_num + 2)
+> +#define switchcase_csr_read_8(__csr_num)			\
+> +	switchcase_csr_read_4(__csr_num + 0);			\
+> +	switchcase_csr_read_4(__csr_num + 4)
+> +#define switchcase_csr_read_16(__csr_num)			\
+> +	switchcase_csr_read_8(__csr_num + 0);			\
+> +	switchcase_csr_read_8(__csr_num + 8)
+> +#define switchcase_csr_read_32(__csr_num)			\
+> +	switchcase_csr_read_16(__csr_num + 0);			\
+> +	switchcase_csr_read_16(__csr_num + 16)
+> +#define switchcase_csr_read_64(__csr_num)			\
+> +	switchcase_csr_read_32(__csr_num + 0);			\
+> +	switchcase_csr_read_32(__csr_num + 32)
+> +#define switchcase_csr_read_128(__csr_num)			\
+> +	switchcase_csr_read_64(__csr_num + 0);			\
+> +	switchcase_csr_read_64(__csr_num + 64)
+> +#define switchcase_csr_read_256(__csr_num)			\
+> +	switchcase_csr_read_128(__csr_num + 0);			\
+> +	switchcase_csr_read_128(__csr_num + 128)
+> +
+> +	if (out_err)
+> +		*out_err = 0;
+> +
+> +	switch (csr_num) {
+> +	switchcase_csr_read_32(CSR_CYCLE);
+> +	switchcase_csr_read_32(CSR_CYCLEH);
+> +	switchcase_csr_read_256(CSR_CUSTOM0_U_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM1_U_RO_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM2_S_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM3_S_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM4_S_RO_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM5_HS_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM6_HS_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM7_HS_RO_BASE);
+> +#ifdef CONFIG_RISCV_M_MODE
+> +	switchcase_csr_read_64(CSR_CUSTOM8_M_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM9_M_RW_BASE);
+> +	switchcase_csr_read_64(CSR_CUSTOM10_M_RO_BASE);
+> +#endif
+> +	default:
+> +		if (out_err)
+> +			*out_err = -EINVAL;
+> +		else
+> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +#undef switchcase_csr_read_256
+> +#undef switchcase_csr_read_128
+> +#undef switchcase_csr_read_64
+> +#undef switchcase_csr_read_32
+> +#undef switchcase_csr_read_16
+> +#undef switchcase_csr_read_8
+> +#undef switchcase_csr_read_4
+> +#undef switchcase_csr_read_2
+> +#undef switchcase_csr_read
+> +}
+> +EXPORT_SYMBOL_GPL(csr_read_num);
+> +
+> +void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err)
+> +{
+> +#define switchcase_csr_write(__csr_num, __val)			\
+> +	case (__csr_num):					\
+> +		csr_write(__csr_num, __val);			\
+> +		break
+> +#define switchcase_csr_write_2(__csr_num, __val)		\
+> +	switchcase_csr_write(__csr_num + 0, __val);		\
+> +	switchcase_csr_write(__csr_num + 1, __val)
+> +#define switchcase_csr_write_4(__csr_num, __val)		\
+> +	switchcase_csr_write_2(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_2(__csr_num + 2, __val)
+> +#define switchcase_csr_write_8(__csr_num, __val)		\
+> +	switchcase_csr_write_4(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_4(__csr_num + 4, __val)
+> +#define switchcase_csr_write_16(__csr_num, __val)		\
+> +	switchcase_csr_write_8(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_8(__csr_num + 8, __val)
+> +#define switchcase_csr_write_32(__csr_num, __val)		\
+> +	switchcase_csr_write_16(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_16(__csr_num + 16, __val)
+> +#define switchcase_csr_write_64(__csr_num, __val)		\
+> +	switchcase_csr_write_32(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_32(__csr_num + 32, __val)
+> +#define switchcase_csr_write_128(__csr_num, __val)		\
+> +	switchcase_csr_write_64(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_64(__csr_num + 64, __val)
+> +#define switchcase_csr_write_256(__csr_num, __val)		\
+> +	switchcase_csr_write_128(__csr_num + 0, __val);		\
+> +	switchcase_csr_write_128(__csr_num + 128, __val)
+> +
+> +	if (out_err)
+> +		*out_err = 0;
+> +
+> +	switch (csr_num) {
+> +	switchcase_csr_write_256(CSR_CUSTOM0_U_RW_BASE, val);
+> +	switchcase_csr_write_64(CSR_CUSTOM2_S_RW_BASE, val);
+> +	switchcase_csr_write_64(CSR_CUSTOM3_S_RW_BASE, val);
+> +	switchcase_csr_write_64(CSR_CUSTOM5_HS_RW_BASE, val);
+> +	switchcase_csr_write_64(CSR_CUSTOM6_HS_RW_BASE, val);
+> +#ifdef CONFIG_RISCV_M_MODE
+> +	switchcase_csr_write_64(CSR_CUSTOM8_M_RW_BASE, val);
+> +	switchcase_csr_write_64(CSR_CUSTOM9_M_RW_BASE, val);
+> +#endif
+> +	default:
+> +		if (out_err)
+> +			*out_err = -EINVAL;
+> +		else
+> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
+> +		break;
+> +	}
+> +#undef switchcase_csr_write_256
+> +#undef switchcase_csr_write_128
+> +#undef switchcase_csr_write_64
+> +#undef switchcase_csr_write_32
+> +#undef switchcase_csr_write_16
+> +#undef switchcase_csr_write_8
+> +#undef switchcase_csr_write_4
+> +#undef switchcase_csr_write_2
+> +#undef switchcase_csr_write
+> +}
+> +EXPORT_SYMBOL_GPL(csr_write_num);
+> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+> index 42c1a9052470..fe491937ed25 100644
+> --- a/drivers/acpi/riscv/cppc.c
+> +++ b/drivers/acpi/riscv/cppc.c
+> @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
+>  static void cppc_ffh_csr_read(void *read_data)
+>  {
+>  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
+> +	int err;
+>  
+> -	switch (data->reg) {
+> -	/* Support only TIME CSR for now */
+> -	case CSR_TIME:
+> -		data->ret.value = csr_read(CSR_TIME);
+> -		data->ret.error = 0;
+> -		break;
+> -	default:
+> -		data->ret.error = -EINVAL;
+> -		break;
+> -	}
+> +	data->ret.value = csr_read_num(data->reg, &err);
+> +	data->ret.error = err;
+>  }
+>  
+>  static void cppc_ffh_csr_write(void *write_data)
+>  {
+>  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)write_data;
+> +	int err;
+>  
+> -	data->ret.error = -EINVAL;
+> +	csr_write_num(data->reg, data->val, &err);
+> +	data->ret.error = err;
+>  }
+>  
+>  /*
+> diff --git a/drivers/perf/riscv_pmu.c b/drivers/perf/riscv_pmu.c
+> index 7644147d50b4..aa053254448d 100644
+> --- a/drivers/perf/riscv_pmu.c
+> +++ b/drivers/perf/riscv_pmu.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/smp.h>
+>  #include <linux/sched_clock.h>
+>  
+> +#include <asm/csr.h>
+>  #include <asm/sbi.h>
+>  
+>  static bool riscv_perf_user_access(struct perf_event *event)
+> @@ -88,46 +89,6 @@ void arch_perf_update_userpage(struct perf_event *event,
+>  	userpg->cap_user_time_short = 1;
+>  }
+>  
+> -static unsigned long csr_read_num(int csr_num)
+> -{
+> -#define switchcase_csr_read(__csr_num, __val)		{\
+> -	case __csr_num:					\
+> -		__val = csr_read(__csr_num);		\
+> -		break; }
+> -#define switchcase_csr_read_2(__csr_num, __val)		{\
+> -	switchcase_csr_read(__csr_num + 0, __val)	 \
+> -	switchcase_csr_read(__csr_num + 1, __val)}
+> -#define switchcase_csr_read_4(__csr_num, __val)		{\
+> -	switchcase_csr_read_2(__csr_num + 0, __val)	 \
+> -	switchcase_csr_read_2(__csr_num + 2, __val)}
+> -#define switchcase_csr_read_8(__csr_num, __val)		{\
+> -	switchcase_csr_read_4(__csr_num + 0, __val)	 \
+> -	switchcase_csr_read_4(__csr_num + 4, __val)}
+> -#define switchcase_csr_read_16(__csr_num, __val)	{\
+> -	switchcase_csr_read_8(__csr_num + 0, __val)	 \
+> -	switchcase_csr_read_8(__csr_num + 8, __val)}
+> -#define switchcase_csr_read_32(__csr_num, __val)	{\
+> -	switchcase_csr_read_16(__csr_num + 0, __val)	 \
+> -	switchcase_csr_read_16(__csr_num + 16, __val)}
+> -
+> -	unsigned long ret = 0;
+> -
+> -	switch (csr_num) {
+> -	switchcase_csr_read_32(CSR_CYCLE, ret)
+> -	switchcase_csr_read_32(CSR_CYCLEH, ret)
+> -	default :
+> -		break;
+> -	}
+> -
+> -	return ret;
+> -#undef switchcase_csr_read_32
+> -#undef switchcase_csr_read_16
+> -#undef switchcase_csr_read_8
+> -#undef switchcase_csr_read_4
+> -#undef switchcase_csr_read_2
+> -#undef switchcase_csr_read
+> -}
+> -
+>  /*
+>   * Read the CSR of a corresponding counter.
+>   */
+> @@ -139,7 +100,7 @@ unsigned long riscv_pmu_ctr_read_csr(unsigned long csr)
+>  		return -EINVAL;
+>  	}
+>  
+> -	return csr_read_num(csr);
+> +	return csr_read_num(csr, NULL);
+>  }
+>  
+>  u64 riscv_pmu_ctr_get_width_mask(struct perf_event *event)
+> -- 
+> 2.43.0
+>
+
+Other than the suggestion to flip the interface,
+
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
