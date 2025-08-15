@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-770649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AD8B27D74
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6422DB27D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224BA1714AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F6DAA695F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115381C6FFA;
-	Fri, 15 Aug 2025 09:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A6421FF47;
+	Fri, 15 Aug 2025 09:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bX1tfScW"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PECbCfN1"
 Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9E21C1ADB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8A01EBA14
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251249; cv=none; b=CPgoYYlBqIkCSFk7TgWTMlUbzXAgRU94hP17LI+zFflJHYbSEJxhwNnfCC/vuHJUUX/clOekOuV0H83+YuNRS5l2ObrUd3PxkWqIzeJ2gI5LkStrpzsfiDL9cvxmvz3yi+MKgigsf62FmQmyTKaY0UlS3yWdW17625KE1fsRoSg=
+	t=1755251250; cv=none; b=rfpwR8VgVcHN2LaO6dZKWUV6nHeSLe09umzV0x0qDhAe46/XH+aaZremTRJYlNu8YXI6+9w4KUxT1LlUb0bN2+Z6kIXAglTmymcYTHTgJxRVvhFwClC2wKR92Kc1mlj+qhgOhFTVF3tyFOE8q/Cdy8lk+Ysp5Ee9w3U1AQafSDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251249; c=relaxed/simple;
-	bh=WwKOiiKIiYnmIu+LlT3Q9wSfQA5kAmWGSW2Rrn2HYec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TYnpb7213t50V9TWCygJbAfWQvuu1WR38JpQ79VpxMEllQJ1kdPcAgCs2tD4ti3w3vkqanzGD/YxixWrbphkP7XOOLtxPYJHSpuEwtVxeiQlFh4ZEfue65Fqsw79dbP3ZN/nH6Ewq7nGDoMynr+T/GsR4YZQ23vOmKqDof2v8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bX1tfScW; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1755251250; c=relaxed/simple;
+	bh=lTQ5tpiaUIBr6tU7mj0dwA/6Z4MoV1fHePe29ZV8Y5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QYOYzAE2JfB8Rn9/MEz0zRNj1Usiqs0AdfMzQq4qDlHtKpoSb1fXNbWCk11V2wggA8ET1oJLObFmvO2e3iYetLIHHDRtn/9QrWrvN+ekw8iL5AqIpUDVSM+Li+4RM6zzOO7mpE/GgPcrEs2bnpaMxVQSX9LdLyTEFewm7ZRYLnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PECbCfN1; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so9130715e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:47:27 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b065d58so12325315e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:47:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755251245; x=1755856045; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMwFCHUMF+OJtcZoZN8E7Av8Dx87kERB9UUx8xTRQHw=;
-        b=bX1tfScWPy6dTC7GPQ2sIWW3fXYN2MN58Yvy9m7/NUA47QT+VzV37Twhp2HM+uTBNC
-         h5N/jQzov9dN/d5lIkJkbImPpL+beOyOO1xPY3YAgj7/2HL6wW1g9zBqHMtgg0Mtb7Gn
-         LJWfaa0KPu2TAoU54AKrEPZExsEM6Y8PCuwR8RfdzF5FKudBFUKeP1x4ZHNBAlyTmSB0
-         PkOhQ9clfjUu+IPk/1mHbXKmEq9RUSog/feOHtm5VQiVVen5mlFhSW0xKrCJ89YXNi+W
-         GlHYhnCzEDNm6udAhcZDOKqDLRME0l9d96AThMt/1KC+TdEmfnODaZrWKR/9zJZEMemZ
-         2Pmw==
+        d=suse.com; s=google; t=1755251247; x=1755856047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ivrbru2LNxSs8CTXNjbMj9DkY8mGo4uquvi8+ow7/88=;
+        b=PECbCfN15pXN7Yg+fS1aAdCgB7Agq0bk5ZiT8YpcqOq5LMdYOp1dHoVTVjMKyBVDqQ
+         9TTz8k2fUjrOcLDFC9OBWPCyA4hRmZKo56xnjdjR46g8+CdltlpJdVAY3OuJpdlPykbK
+         CnXi7QQGeVM2FGxD8L/2LKtG/sWpEH6OUdR2JLd/jdmYKzP4cID3wAzfM9XjEmp4UhRW
+         fGkgD5RfLS6gBAhNTJCIFIykxOlbWKAn7c2PbXxEvkcU06dZRiC738+whU5dSuJNeq1m
+         JsmTwi+/k7rPdKio0lK5R79etgvWmyL5D5Q//VsnX+G5jnUNwUZ6yBCuB31c6w4cDLqT
+         zeGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251245; x=1755856045;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nMwFCHUMF+OJtcZoZN8E7Av8Dx87kERB9UUx8xTRQHw=;
-        b=Xcui/x4l38xy4QzyGh4UYcp2TILuiRU9FyAYfhu70KKG4t1e/Xk0aCkkdfguOxURct
-         mE72D1Ea6VVy/5rt8BrC9YNkKXklBPTmmXgifvXHOaLUnj0JPZjTZDV3e2vG30SRqSmZ
-         5B+MlhTMMk9MsFPxDy+UPrHBY2+QDCiwXwDmE3DPBJ+nBDvUTMgAmHDkzqfFF0GPywjy
-         wN2GyOTnDSKg9ibcZpmiUoBL6eydcHia+tyQN7jxzaQWu5183jLdCP4Le36zonxRoN4f
-         Ec1ehVvuIRTg8P4z9yVDgLkn5cEglmsJGJJpwoqPjMrUHAJwTknNn7yxkuomzQ/jNVBs
-         XNkw==
-X-Gm-Message-State: AOJu0YyVHUuRv6RMCaKVbJ7zC6jWhaRXc/WoQzjfd0X6wXXIfHKDgKdb
-	Wd5/hWBBOMqh6dTNzpHDKBfOS18buSO/MWJCnvxoZegFTdrXzo6JgR2igxgb2zmIgHIC0qsk7Iq
-	OqgnP
-X-Gm-Gg: ASbGnct4gvj6oEkP4+xb/q7j99Y92ljdpEMPd3lvZ2zGqN6LFoT/yZCpT+PTc2TXvnX
-	WXRKDkFsHwVy4mJqjCEFnZ9t20wiShCfNl8qjq+4JDBeYCM52nwWQI3BwHc+uEQQXekok+3C4ZN
-	0lvp8XkxKyfWknDlC+67aUxWehygrt9l3OeRg1fpiI/Y78LUIfRE7Dv+hC2NDIw8Pa9m5ilXhZ3
-	Cb4mIuXV+qmQ7baP2xtKAopOkgDvgSfF+jBy/ZSKzoHH+26Z4Zxqnm7qEITmnqokwvrykWJACsl
-	Ag+w9e2Db5iDKM1lgzcixE7mgCpD/cKAnp9vBaHnTJYxxIih7fs5OPEjMs9iOXgIyvKo8rytMlB
-	oxJkLV7bwa75A72yc/XPxdiKsdbnhizAGZrNWj6JUYJfiZQ==
-X-Google-Smtp-Source: AGHT+IErHn2TyulguFlSAg8WRREyBgk4z8RvseYRNyYTwI0rXzvCi/eT+b8WlK0IZTm0/MgvkRnz7g==
-X-Received: by 2002:a05:600c:695:b0:458:bbed:a812 with SMTP id 5b1f17b1804b1-45a21ef1329mr9272145e9.17.1755251245311;
-        Fri, 15 Aug 2025 02:47:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755251247; x=1755856047;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ivrbru2LNxSs8CTXNjbMj9DkY8mGo4uquvi8+ow7/88=;
+        b=SpKg3WvFv2gsxUdJPVSlHl5d4aHdcvQWUiIT0marstkOPwotM3HKjJ+oqlj3N8IuCn
+         H6keIMKkyVsb+R9Slw9+r5+JH98CX842BuOnma2giuCrGaHbFmEbwaN8dHpsVq+aTcox
+         UONeJGhEWCtptDcGZDS+GHQc87KGAjCmxfKeGVPDn/R0XszTan1Pn7O7ARJRUYsaung+
+         EAkZ5/4xwuyMaKCL+31BqNxHJy51GeGkFZxwI8kSXZ79waKQan5p9ZKGV8S+kTOApXUZ
+         9sOqMY3lalHE/fOFxBl47Qu5YRx3w9zVfsPwqAyTYOu+zJQTgY1ifWyU1Rek3hsdqBfV
+         lY4Q==
+X-Gm-Message-State: AOJu0YzcLhDKXj2GCwMjRtkR3IOJmsjM2QR8e/z2BA62DCdxXbbo2ByH
+	4/lE/GZPMFEcTxQFNQkhmxkP979kR0MKEcyy/VxkguqRqdgf1VzRog60+9E4RSb/ZUKRarJVfyk
+	nGfzg
+X-Gm-Gg: ASbGncvE8kp6gApsawvjEiJORQTlECB4YyzTCJ7gc1w0T8ugGbaHJqB8nMUaI64JhRX
+	PuzSjxFVIw/jP8FSNYLqnrCL8H5CB7GHuC//pNa51RQbfuvjFVqsrZLEQfBrG4Ql5yn36+IstC0
+	K/JA033MUOgVUMakmtgbm4Zg2WB6dcK0DiobdHKZ+JO+bOrpi1wX9SkHKsT3WPXbyJilVtrbyDF
+	b/3QeDzR2tmlnKwViyb2TQs49n0IbR4xevGFQQm86jCR3PQ5WXgrYnUO14n/LrxnZiHDT88QdsO
+	h6xMRhvCejZyC5s+cmt8FwUzPYPeBvk6XtmbWNTU4QrqlsNFKiZLYOUvLS/LQ8Tt+Q4o6BlQ3RA
+	UugBFNnf8oy1kS8DTk3b+yI9pcA6F6S7R+2m/pK8azfDZeQ==
+X-Google-Smtp-Source: AGHT+IEWWcyeWf2RawrfispWFJ4ayT853diB9diyYZjKJIx+rPP6kPEBfuT4cX+69xNA9OsBoXwvGQ==
+X-Received: by 2002:a05:600c:a43:b0:459:a1c7:99ad with SMTP id 5b1f17b1804b1-45a21839edbmr12813255e9.22.1755251246585;
+        Fri, 15 Aug 2025 02:47:26 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a209c25a1sm23241755e9.22.2025.08.15.02.47.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a209c25a1sm23241755e9.22.2025.08.15.02.47.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 02:47:24 -0700 (PDT)
+        Fri, 15 Aug 2025 02:47:25 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
@@ -81,42 +83,19 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Michal Hocko <mhocko@suse.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/2] Workqueue: fs: replace use of system_wq and add WQ_PERCPU to alloc_workqueue users
-Date: Fri, 15 Aug 2025 11:47:13 +0200
-Message-ID: <20250815094715.54121-1-marco.crivellari@suse.com>
+Subject: [PATCH 1/2] Workqueue: fs: replace use of system_wq with system_percpu_wq
+Date: Fri, 15 Aug 2025 11:47:14 +0200
+Message-ID: <20250815094715.54121-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250815094715.54121-1-marco.crivellari@suse.com>
+References: <20250815094715.54121-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-Hello!
-
-Below is a summary of a discussion about the Workqueue API and cpu isolation
-considerations. Details and more information are available here:
-
-        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
-        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an isolated
-CPU where "delay" value is 0 or greater then 0:
-		schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-		schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
 
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
@@ -126,115 +105,101 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-=== Plan and future plans ===
+system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+CPU affinity constraint, which is very often not required by users.
+Make it clear by adding a system_percpu_wq to all the fs subsystem.
 
-This patchset is the first stone on a refactoring needed in order to
-address the points aforementioned; it will have a positive impact also
-on the cpu isolation, in the long term, moving away percpu workqueue in
-favor to an unbound model.
+The old wq will be kept for a few release cylces.
 
-These are the main steps:
-1)  API refactoring (that this patch is introducing)
-	-	Make more clear and uniform the system wq names, both per-cpu and
-		unbound. This to avoid any possible confusion on what should be
-		used.
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ fs/aio.c            | 2 +-
+ fs/fs-writeback.c   | 2 +-
+ fs/fuse/dev.c       | 2 +-
+ fs/fuse/inode.c     | 2 +-
+ fs/nfs/namespace.c  | 2 +-
+ fs/nfs/nfs4renewd.c | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-	-	Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
-		introduced in this patchset and used on all the callers that are not
-		currently using WQ_UNBOUND.
-
-		WQ_UNBOUND will be removed in a future release cycle.
-
-		Most users don't need to be per-cpu, because they don't have
-		locality requirements, because of that, a next future step will be
-		make "unbound" the default behavior.
-
-2)  Check who really needs to be per-cpu
-	-	Remove the WQ_PERCPU flag when is not strictly required.
-
-3)  Add a new API (prefer local cpu)
-	-	There are users that don't require a local execution, like mentioned
-		above; despite that, local execution yeld to performance gain.
-
-		This new API will prefer the local execution, without requiring it.
-		
-=== Introduced Changes by this patchset ===
-
-1) [P 1] replace use of system_wq with system_percpu_wq (under fs)
-
-		system_wq is a per-CPU workqueue, but his name is not clear.
-		system_unbound_wq is to be used when locality is not required.
-
-		Because of that, system_wq has been renamed in system_percpu_wq in the
-		fs subsystm (details in the next section).
-
-2) [P 2] add WQ_PERCPU to alloc_workqueue() users (under fs)
-
-		Every alloc_workqueue() caller should use one among WQ_PERCPU or
-		WQ_UNBOUND. This is actually enforced warning if both or none of them
-		are present at the same time.
-
-		These patches introduce WQ_PERCPU in the fs subsystem 
-		(details in the next section).
-
-		WQ_UNBOUND will be removed in a next release cycle.
-
-=== For fs Maintainers ===
-
-If you agree with these changes, one option is pull the preparation changes from
-Tejun's wq branch [1].
-
-As an alternative, the patches can be routed through a wq branch.
-
-The preparation changes are described in the present cover letter, under the
-"main steps" section. The changes done in summary are:
-
-- add system_percpu_wq and system_dfl_wq, for now without replace the older wq(s)
-  (system_unbound_wq and system_wq).
-- add WQ_PERCPU flag, currently without removing WQ_UNBOUND; it will be removed
-  in a future release cycle.
-
-You can find the aforementioned changes reading:
-
-("Workqueue: add WQ_PERCPU, system_dfl_wq and system_percpu_wq")
-https://lore.kernel.org/all/20250614133531.76742-1-marco.crivellari@suse.com/
-
-
-- [1] git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git WQ_PERCPU
-
-Thanks!
-		
-Marco Crivellari (2):
-  Workqueue: fs: replace use of system_wq with system_percpu_wq
-  Workqueue: fs: WQ_PERCPU added to alloc_workqueue users
-
- fs/afs/main.c                  |  4 ++--
- fs/aio.c                       |  2 +-
- fs/bcachefs/super.c            | 10 +++++-----
- fs/btrfs/async-thread.c        |  3 +--
- fs/btrfs/disk-io.c             |  2 +-
- fs/ceph/super.c                |  2 +-
- fs/dlm/lowcomms.c              |  2 +-
- fs/dlm/main.c                  |  2 +-
- fs/fs-writeback.c              |  4 ++--
- fs/fuse/dev.c                  |  2 +-
- fs/fuse/inode.c                |  2 +-
- fs/gfs2/main.c                 |  5 +++--
- fs/gfs2/ops_fstype.c           |  6 ++++--
- fs/nfs/namespace.c             |  2 +-
- fs/nfs/nfs4renewd.c            |  2 +-
- fs/ocfs2/dlm/dlmdomain.c       |  3 ++-
- fs/ocfs2/dlmfs/dlmfs.c         |  3 ++-
- fs/smb/client/cifsfs.c         | 16 +++++++++++-----
- fs/smb/server/ksmbd_work.c     |  2 +-
- fs/smb/server/transport_rdma.c |  3 ++-
- fs/super.c                     |  3 ++-
- fs/verity/verify.c             |  2 +-
- fs/xfs/xfs_log.c               |  3 +--
- fs/xfs/xfs_mru_cache.c         |  3 ++-
- fs/xfs/xfs_super.c             | 15 ++++++++-------
- 25 files changed, 58 insertions(+), 45 deletions(-)
-
+diff --git a/fs/aio.c b/fs/aio.c
+index 7b976b564cfc..747e9b5bba23 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -636,7 +636,7 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
+ 
+ 	/* Synchronize against RCU protected table->table[] dereferences */
+ 	INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
+-	queue_rcu_work(system_wq, &ctx->free_rwork);
++	queue_rcu_work(system_percpu_wq, &ctx->free_rwork);
+ }
+ 
+ /*
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index cc57367fb641..cf51a265bf27 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2442,7 +2442,7 @@ static int dirtytime_interval_handler(const struct ctl_table *table, int write,
+ 
+ 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ 	if (ret == 0 && write)
+-		mod_delayed_work(system_wq, &dirtytime_work, 0);
++		mod_delayed_work(system_percpu_wq, &dirtytime_work, 0);
+ 	return ret;
+ }
+ 
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 6dcbaa218b7a..64b623471a09 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -118,7 +118,7 @@ void fuse_check_timeout(struct work_struct *work)
+ 	    goto abort_conn;
+ 
+ out:
+-	queue_delayed_work(system_wq, &fc->timeout.work,
++	queue_delayed_work(system_percpu_wq, &fc->timeout.work,
+ 			   fuse_timeout_timer_freq);
+ 	return;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index fd48e8d37f2e..6a608ea77d09 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1268,7 +1268,7 @@ static void set_request_timeout(struct fuse_conn *fc, unsigned int timeout)
+ {
+ 	fc->timeout.req_timeout = secs_to_jiffies(timeout);
+ 	INIT_DELAYED_WORK(&fc->timeout.work, fuse_check_timeout);
+-	queue_delayed_work(system_wq, &fc->timeout.work,
++	queue_delayed_work(system_percpu_wq, &fc->timeout.work,
+ 			   fuse_timeout_timer_freq);
+ }
+ 
+diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+index 973aed9cc5fe..0689369c8a63 100644
+--- a/fs/nfs/namespace.c
++++ b/fs/nfs/namespace.c
+@@ -336,7 +336,7 @@ static int param_set_nfs_timeout(const char *val, const struct kernel_param *kp)
+ 			num *= HZ;
+ 		*((int *)kp->arg) = num;
+ 		if (!list_empty(&nfs_automount_list))
+-			mod_delayed_work(system_wq, &nfs_automount_task, num);
++			mod_delayed_work(system_percpu_wq, &nfs_automount_task, num);
+ 	} else {
+ 		*((int *)kp->arg) = -1*HZ;
+ 		cancel_delayed_work(&nfs_automount_task);
+diff --git a/fs/nfs/nfs4renewd.c b/fs/nfs/nfs4renewd.c
+index db3811af0796..18ae614e5a6c 100644
+--- a/fs/nfs/nfs4renewd.c
++++ b/fs/nfs/nfs4renewd.c
+@@ -122,7 +122,7 @@ nfs4_schedule_state_renewal(struct nfs_client *clp)
+ 		timeout = 5 * HZ;
+ 	dprintk("%s: requeueing work. Lease period = %ld\n",
+ 			__func__, (timeout + HZ - 1) / HZ);
+-	mod_delayed_work(system_wq, &clp->cl_renewd, timeout);
++	mod_delayed_work(system_percpu_wq, &clp->cl_renewd, timeout);
+ 	set_bit(NFS_CS_RENEWD, &clp->cl_res_state);
+ 	spin_unlock(&clp->cl_lock);
+ }
 -- 
 2.50.1
 
