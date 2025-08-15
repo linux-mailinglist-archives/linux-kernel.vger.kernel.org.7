@@ -1,84 +1,145 @@
-Return-Path: <linux-kernel+bounces-770203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3ABAB27869
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:24:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3355CB2786C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626D7AA5F5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CA77BFA32
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55962256C81;
-	Fri, 15 Aug 2025 05:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EEC2561C9;
+	Fri, 15 Aug 2025 05:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhGE6E+J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="j0CBVXJf"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A891F12F5A5;
-	Fri, 15 Aug 2025 05:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4741548C;
+	Fri, 15 Aug 2025 05:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235467; cv=none; b=mb4BoITSUOyeQ9jMSXKgbep6/GQau8eQTDWXawAQCQh3OjkfhfUBOM20Blf8Q2cM9cRcjkoLNKyQZaTYSSvMkQEs55tB5s+8wipLZqCSIBE710fJa4XBGrbHlI4Xm2Xk0JllDadtSaMoHFW+CVuV3a0h4LGRPMrDNNMR9bcElAQ=
+	t=1755235694; cv=none; b=Ctu017W8AMJHOeVcuOdYuCim/nGNry3dXHteR8DJePt3vq533/MLDfiDnWHowlCGCCr9qSSPe5g7BC0uREehRqSF4bnKPZRTiRq6mqXaBq30NyVVhhbGnJ7BCra2dxWLcBi9Zaaj2gMfH4vqiSCT2+yjRMIVSgJ+Nb02gJYIcCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235467; c=relaxed/simple;
-	bh=Pjp7K7C025lM3fgFxcQhJ/BxADo+k1Hy/bOjhJjK2gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S9JiJ767uS57fYBKcBGt706L9tsTcHQkGbFgnFGHu8tvfZlRp+PaGm3OBMYO7Upx0FzrlIfvXZxf2hgfr0zKJAH9nhNzjeIGdl8lQd12vq0VUY/XKcW/84Qm8bV5XHVCjuRag1wmdBH/3eTzObravuApmK4Va24olyFwm1Y2ZuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhGE6E+J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AA5C4CEEB;
-	Fri, 15 Aug 2025 05:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755235467;
-	bh=Pjp7K7C025lM3fgFxcQhJ/BxADo+k1Hy/bOjhJjK2gk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AhGE6E+JJpzohVkUy5l1jziBG74qVuyF3RA2562fZlDnyOX6vyj97dHU2QXopks5B
-	 DmdLAEawZGyXgTXQB1Bhf3B82Qc5c56GmxUO0JNfUlog4gPj3aOghxZ+Qf9Rv/o03+
-	 B13x98IKfHrNmtcgI2svKV5b16D5Xen/fePdYSC/jkXpEAENFZv+vQRcSO7fv4JF/8
-	 0izY3qSLRkFxXUqCWicpUet4d/7jZZNCz5vYI6I9zIJe7eiRAkLgB4j7Bl3Wt2deZI
-	 oLErdgCSPP2QynpK3FMpwdTkx8meVHj3bbArYbZx6riuD6/ZfpO6PIsarhdCE067hV
-	 WaOI657QI/JCw==
-Date: Fri, 15 Aug 2025 07:24:23 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH v2 0/7]
-Message-ID: <20250815072423.4c7477b8@foz.lan>
-In-Reply-To: <20250814154035.328769-1-corbet@lwn.net>
-References: <20250814154035.328769-1-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755235694; c=relaxed/simple;
+	bh=KazDKBICrXtV75odgrNMBAXSnSzflp28EnqPkDX6/4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czoXK6VbpfrqsokCX4v5lVQk2Yr1qyS3ZS5ddWtA+em5F2LsBY4oek3CwO9gHf3CH4Jn7U+U94yfZ+cJ2Ktvkc7H2gKjI3sXQkZnv8GHsgmNc/Iqu1uxKpa8nn319AGB+snnqkxOckQ8F9JW2BHcRhm0StwYclX0M9NWSIzAdk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=j0CBVXJf; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ekkS1ZWS+pzycnB1GVKq4SzJlmTvcVcs3EVUltOGUlY=; b=j0CBVXJfcqI74bfbvH0tEreTBg
+	uGXoDBgkX2iFqTuj8sNfCHcw5GWQ2DBDZodIUtmym1xP63ToEoWUDbMyHd+ZsHwAIn9+Zf3W4ZilS
+	QzGz7UbITEWnb8/8jhmKXtdHhIco4MOqwCZujOJs1IGeo+FpXa6nBQxvF5PHTovRUvnOhIlVn+Rf6
+	lU9QCxj3L+6Ord18B/C+iW/yqUDyB4kwzgn74XigyN/8Q7f+O40a7NQm0tsdWjT7Aj0EsAmFYUzpb
+	307jsIMlm9iLhSk537sPKFOqWkjpn0kyg6E0M9byB8IjFZmgB97+NblQ/D3rNEkhiXMri7cZ6T/ej
+	tMsjNxZg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ummj6-00ETY7-3D;
+	Fri, 15 Aug 2025 13:27:38 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Aug 2025 13:27:37 +0800
+Date: Fri, 15 Aug 2025 13:27:37 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
+	senozhatsky@chromium.org, linux-crypto@vger.kernel.org,
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com,
+	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com
+Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
+ iaa_crypto driver
+Message-ID: <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
+ <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
 
-Em Thu, 14 Aug 2025 09:40:28 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+On Fri, Aug 08, 2025 at 04:51:14PM -0700, Nhat Pham wrote:
+> 
+> Can we get some comments from crypto tree maintainers as well? I feel
+> like this patch series is more crypto patch than zswap patch, at this
+> point.
+> 
+> Can we land any zswap parts without the crypto API change? Grasping at
+> straws here, in case we can parallelize the reviewing and merging
+> process.
 
-> docs: kdoc: tidy up create_parameter_list() somewhat
-> 
-> A relatively brief series to straighten up the code in
-> create_parameter_list(), remove unneeded operations, and add a few
-> comments.  No changes to the generated output.
-> 
-> Changes since v1:
-> 
-> - Put split regexes onto multiple lines for improved readability
-> - Simplify one overly complex regex
-> - Improve the patch 5 changelog
-> 
-> Mauro, I've added your tags from the first round - scream if that's not
-> what you wanted!
+My preference is for a unified interface that caters to both
+software compression as well as parallel hardware compression.
 
-Good enough for me. IMO the series is ready to be merged.
+The reason is that there is clear advantage in passing a large
+batch of pages to the Crypto API even for software compression,
+the least we could do is to pack the compressed result together
+and avoid the unnecessary copying of the compressed output that
+is currently done in zswap.
 
-Thanks,
-Mauro
+However, since you guys are both happy with this patch-set,
+I'm not going stand in the way.
+
+But I do want some changes made to the proposed Crypto API interface
+so that it can be reused for IPComp.
+
+In particular, instead of passing an opaque pointer (kernel_data)
+to magically turn on batching, please add a new helper that enables
+batching.
+
+I don't think we need any extra fields in struct acomp_req apart
+from a new field called unit_size.  This would be 4096 for zswap,
+it could be the MTU for IPsec.
+
+So add something like this and document that it must be called
+after acmop_request_set_callback (which should set unit_size to 0):
+
+static inline void acomp_request_set_unit_size(struct acomp_req *req,
+					       unsigned int du)
+{
+	req->unit = du;
+}
+
+static inline void acomp_request_set_callback(struct acomp_req *req, ...)
+{
+	...
++	req->unit = 0;
+}
+
+For the source, nothing needs to be done because the folio could
+be passed in as is.
+
+For the destination, construct an SG list for them and pass that in.
+The rule should be that the SG list must contain a sufficient number
+of pages for the compression output based on the given unit size.
+
+For the output lengths, just set the lengths in the destination
+SG list after compression.  If a page is incompressible (including
+an error), just set the length to a negative value (-ENOSPC could
+be used for incompressible input, as we already do).  Even though
+struct scatterlist->length is unsigned, there should be no issue
+with storing a negative value there.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
