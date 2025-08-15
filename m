@@ -1,50 +1,59 @@
-Return-Path: <linux-kernel+bounces-769991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A3CB275B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7648B275C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D39AA5988
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:28:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BF26040C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418FE29D268;
-	Fri, 15 Aug 2025 02:26:35 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0CA29B23B;
-	Fri, 15 Aug 2025 02:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048A229B217;
+	Fri, 15 Aug 2025 02:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="biwp2D5m"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C995529ACF5;
+	Fri, 15 Aug 2025 02:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755224794; cv=none; b=WDG/69iAsjxbqdQDy719u9Gq8Lonn03JLnAZSuDwfadJXuppdQyOk5EFdQKY0kKcpovEzk93/LVS1+VW3N40+nxaMS4R+axejrw44kWCX2ZkVVIddFOCtuUvPxfF/oOEGXgc/HwsAGUtJBGBEYjzD4GTArqZzBd548rmK1D+wX4=
+	t=1755224845; cv=none; b=glfM30qPJlgCwhv9H0BvoFR1KalSD+y81bN78qXBhj0tmLQqGVRyXmxmekT1quplDnJvxUrtAMVuVQ8QfsaPf00vj4+aYcSqjoxMqKLaDQlrCO2t1EnwyWggdG/dHpKCz9IwORjlK3nnEtTLJxxXPZI2SH5NKG5df1C8mr93dCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755224794; c=relaxed/simple;
-	bh=PesLW11khJRpGmSVJfT+LbNggq4Xf0R0wDY67UVzXGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=clLwzIG7gWjL3+bHfYfb7oMnZPdd4gwGXNJjXUcoUXzna8lyLx5BtZbLSgzgn9b6zkSylrV/U/tHDWT/BzHiJBG4dXSHB8YBzj5Ma42H+3giY1Z28bm7u2FSAMeQ2BkCtKmYjenJrn9qduksCVeVBVoxmTxzFwbz6/Qqh9SdAKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxQK3Ump5oUhpAAQ--.39061S3;
-	Fri, 15 Aug 2025 10:26:28 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAxQMLOmp5oMPRMAA--.26771S6;
-	Fri, 15 Aug 2025 10:26:28 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xianglai Li <lixianglai@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] LoongArch: KVM: Make function kvm_own_lbt() robust
-Date: Fri, 15 Aug 2025 10:26:21 +0800
-Message-Id: <20250815022621.508174-5-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250815022621.508174-1-maobibo@loongson.cn>
-References: <20250815022621.508174-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1755224845; c=relaxed/simple;
+	bh=SPUlJAsxeVPh1fluBxtH3c61kgFUGjCAecrMFG14XYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nuG8mzFQbSCD/1+m1gpy50nGyuTuhKP9126gyKmi3dMXZGIKmv9jI5c4cWrm2yG5aiBY9SwNvhlexOajGT3Hz1+ALTvWFQVBh4sYZuXB9qUJnf4hzG8wbFhMqwbqrsPK5uuoqpUMws3F045bLqmH3P0BmUSImcQwib/Ydc6vdLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=biwp2D5m; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=jAFtE/ePYGuWutoDVCGDOUO0gMQwmxqZYGhlQERZi2w=; b=biwp2D5m6oX9/fMc52nhqyh4sd
+	n9NKvKXWSTA6WXhODo0AbrZ0pdfwG1Qkhm5e+DIJcWiLsMjZ1XpgNLA2/gcmwxANYvoHIhNH3Sg+c
+	QmnOWQP2Sv5Sv3TF48nTAMIXyvgJcFRaX+5UEC8pXDaJT+IVWyeP2ewHWUedGun6GtgTKCoDrP5zR
+	JCBux6Zf0o6CroQbXxbCMjYlqE45LXRC6Pfkcm0wMSNtMGo3KUyu249SEgUb4FKc2pCD4ma1M3iYw
+	geqv6oJuUvOgROK7ifG8At5gs3Lw5DIEn46upftnghUM8fX0zbVSmppVwqYuucU+DwkPtRXyPRipE
+	puk/qQ/A==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umkA6-000000019Ra-18ui;
+	Fri, 15 Aug 2025 02:27:22 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Amelie Delaunay <amelie.delaunay@st.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] pintctl: STMFX: add missing HAS_IOMEM dependency
+Date: Thu, 14 Aug 2025 19:27:21 -0700
+Message-ID: <20250815022721.1650885-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,40 +61,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxQMLOmp5oMPRMAA--.26771S6
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Add flag KVM_LARCH_LBT checking in function kvm_own_lbt(), so that
-it can be called safely rather than duplicated enabling again.
+When building on ARCH=um (which does not set HAS_IOMEM), kconfig
+reports an unmet dependency caused by PINCTRL_STMFX. It selects
+MFD_STMFX, which depends on HAS_IOMEM. To stop this warning,
+PINCTRL_STMFX should also depend on HAS_IOMEM.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+kconfig warning:
+WARNING: unmet direct dependencies detected for MFD_STMFX
+  Depends on [n]: HAS_IOMEM [=n] && I2C [=y] && OF [=y]
+  Selected by [y]:
+  - PINCTRL_STMFX [=y] && PINCTRL [=y] && I2C [=y] && OF_GPIO [=y]
+
+Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- arch/loongarch/kvm/vcpu.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Cc: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index d1b8c50941ca..ce478151466c 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -1283,9 +1283,11 @@ int kvm_own_lbt(struct kvm_vcpu *vcpu)
- 		return -EINVAL;
- 
- 	preempt_disable();
--	set_csr_euen(CSR_EUEN_LBTEN);
--	_restore_lbt(&vcpu->arch.lbt);
--	vcpu->arch.aux_inuse |= KVM_LARCH_LBT;
-+	if (!(vcpu->arch.aux_inuse & KVM_LARCH_LBT)) {
-+		set_csr_euen(CSR_EUEN_LBTEN);
-+		_restore_lbt(&vcpu->arch.lbt);
-+		vcpu->arch.aux_inuse |= KVM_LARCH_LBT;
-+	}
- 	preempt_enable();
- 
- 	return 0;
--- 
-2.39.3
+ drivers/pinctrl/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
+--- linux-next-20250814.orig/drivers/pinctrl/Kconfig
++++ linux-next-20250814/drivers/pinctrl/Kconfig
+@@ -539,6 +539,7 @@ config PINCTRL_STMFX
+ 	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+ 	depends on I2C
+ 	depends on OF_GPIO
++	depends on HAS_IOMEM
+ 	select GENERIC_PINCONF
+ 	select GPIOLIB_IRQCHIP
+ 	select MFD_STMFX
 
