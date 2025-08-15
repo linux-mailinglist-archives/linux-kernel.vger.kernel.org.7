@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-770767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22AFB27EB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:52:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 116A0B27EB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450D7188C35F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FA51BC81AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0432FF16D;
-	Fri, 15 Aug 2025 10:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C22E06D7;
+	Fri, 15 Aug 2025 10:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b="Qnzmt7t+"
-Received: from mail.as201155.net (mail.as201155.net [185.84.6.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IQ+QY05c"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD73425A35D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.84.6.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A4722576C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755255006; cv=none; b=u6k08tyHiNguKXgAn83jxp82TuV3GZNuBX5lA+gZrzicGypcs0CDr6lblSkEIZX08v/uwKqKk+cjiOpt0c11jKCZzQgXzfA+o3fp8CDlIpRzBvefIoebvOj/EtHKaT7Doa1yRq8ZpLMk9q4jiBo2QE2knQc3VZmk2YqVmpvuO6E=
+	t=1755255090; cv=none; b=ac5y9cpXpCQ7GU1GlxyaLFK2E1+Kc5Q48dLWtKFoEu0d2zGl1yB4X/LGL+Tbm8XpVsXizW1RkFqqSEDSwoVOiuMyj3Ukd6h4bsmglCfX8ykoBHIhu9oC9GyfVSxWDgG4RFFU8B4Pvw4stETxetcXCBoryb2JXxKL/4OMwUg9hrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755255006; c=relaxed/simple;
-	bh=CYab7EsKk/l6a5apcJHMEhHZFSDP2DfGPh1VWRQn3/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=STLHHrt/E0mnsv1ZIJXQc2MWOtfGfAkb9uHOpbMIKzG/VRw83bH/8DSyhLCk1+wFEi2c839aF4L9Dmxg/bZBfpTAJSWHS8V6NSuQdIiuE6D0OZxMKc8XrXIF5BW04C/s4SYnWiiz5zNvmHOwCREWZ/41ckqnDBQRQ1gI/Nh4aOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dd-wrt.com; spf=pass smtp.mailfrom=dd-wrt.com; dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b=Qnzmt7t+; arc=none smtp.client-ip=185.84.6.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dd-wrt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dd-wrt.com
-Received: from smtps.newmedia-net.de ([2a05:a1c0:0:de::167]:41772 helo=webmail.newmedia-net.de)
-	by mail.as201155.net with esmtps  (TLS1) tls TLS_RSA_WITH_AES_256_CBC_SHA
-	(Exim 4.97.1)
-	(envelope-from <s.gottschall@dd-wrt.com>)
-	id 1ums0X-00000000536-0wF6;
-	Fri, 15 Aug 2025 12:50:01 +0200
-X-SASI-Hits: BODYTEXTP_SIZE_3000_LESS 0.000000, BODY_SIZE_2000_2999 0.000000,
-	BODY_SIZE_5000_LESS 0.000000, BODY_SIZE_7000_LESS 0.000000,
-	CTE_8BIT 0.000000, DKIM_ALIGNS 0.000000, DKIM_SIGNATURE 0.000000,
-	HTML_00_01 0.050000, HTML_00_10 0.050000, IN_REP_TO 0.000000,
-	LEGITIMATE_SIGNS 0.000000, MSGID_SAMEAS_FROM_HEX_844412 0.100000,
-	MSG_THREAD 0.000000, MULTIPLE_RCPTS 0.100000, MULTIPLE_REAL_RCPTS 0.000000,
-	NO_FUR_HEADER 0.000000, OUTBOUND 0.000000, OUTBOUND_SOPHOS 0.000000,
-	REFERENCES 0.000000, SENDER_NO_AUTH 0.000000, SINGLE_URI_IN_BODY 0.000000,
-	SUSP_DH_NEG 0.000000, URI_WITH_PATH_ONLY 0.000000, USER_AGENT 0.000000,
-	__ANY_URI 0.000000, __BODY_NO_MAILTO 0.000000,
-	__BOUNCE_CHALLENGE_SUBJ 0.000000, __BOUNCE_NDR_SUBJ_EXEMPT 0.000000,
-	__BULK_NEGATE 0.000000, __CC_NAME 0.000000, __CC_NAME_DIFF_FROM_ACC 0.000000,
-	__CC_REAL_NAMES 0.000000, __CP_URI_IN_BODY 0.000000, __CT 0.000000,
-	__CTE 0.000000, __CT_TEXT_PLAIN 0.000000, __DKIM_ALIGNS_1 0.000000,
-	__DKIM_ALIGNS_2 0.000000, __DQ_NEG_DOMAIN 0.000000, __DQ_NEG_HEUR 0.000000,
-	__DQ_NEG_IP 0.000000, __FORWARDED_MSG 0.000000,
-	__FROM_DOMAIN_NOT_IN_BODY 0.000000, __FUR_RDNS_SOPHOS 0.000000,
-	__HAS_CC_HDR 0.000000, __HAS_FROM 0.000000, __HAS_MSGID 0.000000,
-	__HAS_REFERENCES 0.000000, __HEADER_ORDER_FROM 0.000000,
-	__HIGHBIT_ASCII_MIX 0.000000, __HTTPS_URI 0.000000, __IN_REP_TO 0.000000,
-	__MAIL_CHAIN 0.000000, __MIME_BOUND_CHARSET 0.000000,
-	__MIME_TEXT_ONLY 0.000000, __MIME_TEXT_P 0.000000, __MIME_TEXT_P1 0.000000,
-	__MIME_VERSION 0.000000, __MOZILLA_USER_AGENT 0.000000,
-	__MSGID_HEX_844412 0.000000, __MULTIPLE_RCPTS_CC_X2 0.000000,
-	__NO_HTML_TAG_RAW 0.000000, __OUTBOUND_SOPHOS_FUR 0.000000,
-	__OUTBOUND_SOPHOS_FUR_IP 0.000000, __OUTBOUND_SOPHOS_FUR_RDNS 0.000000,
-	__RCVD_PASS 0.000000, __REFERENCES 0.000000, __SANE_MSGID 0.000000,
-	__SCAN_D_NEG 0.000000, __SCAN_D_NEG2 0.000000, __SCAN_D_NEG_HEUR 0.000000,
-	__SCAN_D_NEG_HEUR2 0.000000, __SINGLE_URI_TEXT 0.000000,
-	__SUBJ_ALPHA_END 0.000000, __SUBJ_ALPHA_NEGATE 0.000000,
-	__SUBJ_REPLY 0.000000, __TO_MALFORMED_2 0.000000, __TO_NAME 0.000000,
-	__TO_NAME_DIFF_FROM_ACC 0.000000, __TO_REAL_NAMES 0.000000,
-	__URI_ENDS_IN_SLASH 0.000000, __URI_HAS_HYPHEN_USC 0.000000,
-	__URI_IN_BODY 0.000000, __URI_MAILTO 0.000000, __URI_NOT_IMG 0.000000,
-	__URI_NO_WWW 0.000000, __URI_NS 0.000000, __URI_WITH_PATH 0.000000,
-	__USER_AGENT 0.000000, __X_MAILSCANNER 0.000000
-X-SASI-Probability: 8%
-X-SASI-RCODE: 200
-X-SASI-Version: Antispam-Engine: 5.1.4, AntispamData: 2025.8.15.95719
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID; bh=Clxuag8DPQyWryjyc1kmj+AUwV3NpiSsh6+EWAw8Fak=;
-	b=Qnzmt7t+jLcTLK26nOUlTyEvLYABIhbzOPXYMRvJzUQ3B7A2/tt8CgTjrwxNKX9fu2VzpgBQFGt+Q5rjmK+tkM6IGIX7Dw9aEZlHbCcJbEjvEuISoOeAne4Nj2JZK8pQuPwAVGTw6vU69RkKJdr5mu6WXdd0wU59x9SCekAqUiw=;
-Message-ID: <5ce28473-0fab-4fbe-9668-0042ff7d86c4@dd-wrt.com>
-Date: Fri, 15 Aug 2025 12:50:00 +0200
+	s=arc-20240116; t=1755255090; c=relaxed/simple;
+	bh=5856zXIPk9IgqnEkrq9a7ikopP8h2OIrgLDCAzSSICg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSaW7p9oCipU+dlYrTqdWcdjLAfZ7Ysf0vwMLQkix8N88su/4aSWsHs7DiljqlWOHOOg/SuV98dkdgugSJh6jp0S6w4oKQRp8qo5ezg/4iffEFC3tHQSXXaL2Ryeg/OfrA1Nfoh6IWA4ex0SOW0ni10EjiVQ7HavJ25DMEubK0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IQ+QY05c; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2430c5b1b32so20223115ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:51:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755255088; x=1755859888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dix/CPpSMGWXSWO0Y4aNEfoYpWHiRGQqO96WVTnVXQ0=;
+        b=IQ+QY05cviOzbYXd1UPOuwVpj9LmvcuwLWQ4wyIWQWr4bdyg6jaEjE1gtQ8oaBRfW5
+         6noxC8tGbdI2HQ9IMCF18bQmbWCGCs+VdX8FdI/Rgltl6C6rlqyWEiSp1Al9j0Jswdtu
+         +0uH7iF1WeH6ar4odHB8p3GWpmILtSVYekjW2VLYkDaJx24dGKipi+pmQGPTOoBrkC+q
+         7WlwOffYGHHkyZX2orK+Ay+ZYWhqQX0uUDFUnx1GwCP9AQjh4Sh4+TM/g94b2wq7u7gf
+         BiewxbUZw2sQb6a9sDUgs6uAnGsPEt4sHJLynxQPnt20nqCNZ2dARUPJVCW1X6Crlsyv
+         UMXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755255088; x=1755859888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dix/CPpSMGWXSWO0Y4aNEfoYpWHiRGQqO96WVTnVXQ0=;
+        b=BsS1ys30BQRDsAAH4vSGArkIjWf1Tc8rF/SuFnaPe8auph03XyCZK9YZ47Tn3aFPh8
+         UZ2gO6yfFwgO/htwCdrnZ59hSDq0au0V2Wzpih/BcvCQleg1XIQ22Nzfsi+fzChhMF+L
+         BXVjpQyh8UZUOGnJ/uktfbKyi2F68XVUD6K2xLdiwoVl4VzvK37zaVIqNDlYZGp0gbkQ
+         dz/hdyjMZlNtd/atVlsT6IG1FKIvu0Xqvy0fl1bw7mO2unC2DhIRekhBF5ahzCvdgF+F
+         gMaa8IOmtrB+P/ATZA/ex0KH2oRU7jLc1gf2LmDN0XFR6vriwK1qn0NUmrqEooV/7sbZ
+         SOvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLQ9Z//BipFZt/h83D8mfFOMywgH7ENBCJoVZfL42Rm1hec/WvapNd5JqNAhQ1aIsV/sr9B8NBdJuUqAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvG6hKL9MOqkB9AM6Ht8T97XYwEXk9nfTBsucbY7EQVqDnwow8
+	JlTYsMkUQWKb5zKr+BrJuPFT1lyd6QW7q39fCvxfy6nHJ3vso6+fkSliIEcheW0hXmQ=
+X-Gm-Gg: ASbGncur328/K2NBBMQHDDh7xkKJfa2jVvA2diPL7InxoglR47PuShyyEhg10logssD
+	Yn7S42ZmzDZriVwX/NS3EbMf3o/DJVivs6EDQTgpZ6Z9YxspKkDyqTET7N9Bh13wFQiP2HsWuOs
+	TtfH5xIpMnajGNvUEyqyIF7IFeZIzsAoqM4ODIXKGfDHcqLu7HiW5/hLoLtk0GMk4tiYrBwa+Zf
+	/SmRDTmQ6Z78AFZ/D7+3HmTrhgPs9XH3jH4T9Tn10n7AG+xNvp1J4IMC8SoxM6an7zdx97a90T/
+	Ll4Jc+cWJ5FYea7jScwkv1684HCeEFzH0RiET7bNHEBWGa+bZiPxel5e+yFzgyLda9hGNd2dZXu
+	S82TvJWpLjkTzC/sZogBZLvT0P4w=
+X-Google-Smtp-Source: AGHT+IEmNprlP3EyYzXw2mJxg75wrJzN+aQ6IJA3e06q3ZiRiLLueRHZsG1qP8n+zVyH+f5AwDAHpw==
+X-Received: by 2002:a17:903:1252:b0:240:1ed3:fc28 with SMTP id d9443c01a7336-2446bd2d05fmr30011465ad.12.1755255088359;
+        Fri, 15 Aug 2025 03:51:28 -0700 (PDT)
+Received: from sunil-laptop ([106.51.199.3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9ee0esm11563455ad.8.2025.08.15.03.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 03:51:27 -0700 (PDT)
+Date: Fri, 15 Aug 2025 16:21:16 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: XianLiang Huang <huangxianliang@lanxincomputing.com>
+Cc: ajones@ventanamicro.com, alex@ghiti.fr, anup@brainfault.org,
+	apatel@ventanamicro.com, atishp@rivosinc.com, iommu@lists.linux.dev,
+	joro@8bytes.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com, paul.walmsley@sifive.com, rafael@kernel.org,
+	robin.murphy@arm.com, tjeznach@rivosinc.com, will@kernel.org
+Subject: Re: [PATCH v5 1/3] ACPI: RISC-V: Add support for RIMT
+Message-ID: <aJ8RJCFM8p_GrFXk@sunil-laptop>
+References: <20250716104059.3539482-2-sunilvl@ventanamicro.com>
+ <20250815075541.29941-1-huangxianliang@lanxincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: ath12k: REO status on PPC does not work
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>, ath12k@lists.infradead.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <aJ7sDOoWmf4jLpjo@FUE-ALEWI-WINX>
- <573c76a8-c2a0-4b9c-b5a8-762b8d094b81@dd-wrt.com>
- <aJ8LYj+NGaX8cwge@FUE-ALEWI-WINX>
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-In-Reply-To: <aJ8LYj+NGaX8cwge@FUE-ALEWI-WINX>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: pass (webmail.newmedia-net.de: localhost is always allowed.) client-ip=127.0.0.1; envelope-from=s.gottschall@dd-wrt.com; helo=webmail.newmedia-net.de;
-X-SA-Exim-Connect-IP: 127.0.0.1
-X-SA-Exim-Mail-From: s.gottschall@dd-wrt.com
-X-SA-Exim-Scanned: No (on webmail.newmedia-net.de); SAEximRunCond expanded to false
-X-NMN-MailScanner-Information: Please contact the ISP for more information
-X-NMN-MailScanner-ID: 1ums0W-000Aoo-4E
-X-NMN-MailScanner: Found to be clean
-X-NMN-MailScanner-From: s.gottschall@dd-wrt.com
-X-Received:  from localhost ([127.0.0.1] helo=webmail.newmedia-net.de)
-	by webmail.newmedia-net.de with esmtp (Exim 4.72)
-	(envelope-from <s.gottschall@dd-wrt.com>)
-	id 1ums0W-000Aoo-4E; Fri, 15 Aug 2025 12:50:00 +0200
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815075541.29941-1-huangxianliang@lanxincomputing.com>
 
-i just can say. the changes i had to make for ath11k to get big endian 
-somwhat working where massive. alot of endian handling in ath11k is 
-simply not considered. the firmware is little endian and alot of fields 
-must be converted to host endian order. but at end end i struggled with 
-dma transactions and gave up since it was not resolvable. the patch i 
-made for ath11k was massive at the end and ath12k is not much different
-technically ath11k and ath12k can be merged at the end. i dont know why 
-there are 2 drivers maintained which are technically very similar at the 
-end. alot of patches for ath12k can be applied to ath11k which i do 
-sometimes if its a usefull patch. but ath11k itself is abadoned for 
-maintainance as it seems (at least if you look for qualcomm supplied 
-patches)
+On Fri, Aug 15, 2025 at 03:55:41PM +0800, XianLiang Huang wrote:
+> Hi Sunil,
+> 
+> On Wed, 16 Jul 2025 16:10:57 +0530, Sunil V L wrote:
+> > +	parent = ACPI_ADD_PTR(struct acpi_rimt_node, rimt_table, map->dest_offset);
+> > +
+> > +	if (node->type == ACPI_RIMT_NODE_TYPE_PLAT_DEVICE ||
+> > +	    node->type == ACPI_RIMT_NODE_TYPE_PCIE_ROOT_COMPLEX) {
+> > +		*id_out = map->dest_offset;
+> > +		return parent;
+> > +	}
+> 
+> Why do we assign dest_offset to id_out? The dest_offset is the iommu offset, not
+> a valid deviceid required for platform device in rimt_plat_iommu_map?
+> 
+Good catch!. Thanks!. It should be dest_id_base. Let me fix it in next
+revision.
 
-Am 15.08.2025 um 12:26 schrieb Alexander Wilhelm:
-> Am Fri, Aug 15, 2025 at 11:55:14AM +0200 schrieb Sebastian Gottschall:
->> i played already with big endian platforms and ath11k (not ath12k) for
->> months. there is also a problem with the dma descriptors. the firmware
->> simply doesnt support big endian with host communication at the end even if
->> there is a endian flag for the firmware.  dont get into this rabit hole. (i
->> worked 3 months on it and gave up)
->> at the end (i was working on a cavium octeon platform at that time) i just
->> switched the kernel boot to little endian which is possible on many ppc
->> platforms too.
-> The 'ath11k' driver works a bit differently. The endian swap is implemented in
-> the firmware and was never properly tested. My investigations show that the
-> firmware does not handle the swap consistently. According to 'kvalo', different
-> firmware versions treat the swap differently. See [1].
->
-> With 'ath12k', the situation looks better. Unfortunately, there are still some
-> memcpys from u32 to u8 or similar. Also, reading from DMA memory is not swapped.
-> I already have ath12k running, I get ping responses and can transmit data.
-> However, not in all modes, and there are still some bugs I’m trying to iron out.
->
->
-> Best regards
-> Alexander Wilhelm
->
-> ---
-> [1] https://lore.kernel.org/ath11k/68290980-5bfb-c88c-be78-954f9591c135@westermo.com/T/#u
->
+Thanks!
+Sunil
 
