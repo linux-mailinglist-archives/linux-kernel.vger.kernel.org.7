@@ -1,212 +1,144 @@
-Return-Path: <linux-kernel+bounces-771487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4596B287D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:39:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5400FB287DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61333175CB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CD7B2023A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2045B29ACDD;
-	Fri, 15 Aug 2025 21:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EB12C0F7F;
+	Fri, 15 Aug 2025 21:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2A9s5SO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeVh3YIB"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F50427FB2D;
-	Fri, 15 Aug 2025 21:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017BF2BE623;
+	Fri, 15 Aug 2025 21:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755293793; cv=none; b=ur8+fvGpKPl9uvIwEZl/I3r87xj1fb9evGDoLbeCXO5CPRY7h4zzIcxSRTGgLcrJ2+IBxrfFcZyc9kpGPdQKOh+Bs+9OZyxr7KeM/3oOpUvi8vSPrDg0JFgtKEM+2fCX8+W8r3fJJ3ON4jv8jMUYIdHy/eCTuEMdQHnkd1No2j0=
+	t=1755293800; cv=none; b=kxVxOhm7bHyjVaq0KOvtDrQ0vOlcE0kEao8MHOfzIDwFvPHzG5Bi70lrjVCxBOo6DiIXQGbDA1WjDxD3QIxOF8rWG0C4jB2SSycFy6RJJHeDk7fnu9D2xWgTgAf99tiI/LClfIj5KsGzx/Se2Np1/OgAXNupj5a4rhmxIgKmE9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755293793; c=relaxed/simple;
-	bh=U0tpozaKDQBPba9WDp+NiZ8JiSwtUymVIkmMJFBx268=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mui+FSoKHTGQN8BCf4gfvI+ci1W7GmgJqbjhXTVYbBUpPL0FEMXFePmEHH3zUXSlAsGv71OH1riNX6Y2RzZj8qdJC0GQZNcYl0RjrjeTc90hQK28D4JuX9cN5buWNbiKdUgy90uH06e6Vyg5yX3n+odvdDcPvEeBspBqbzotY3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2A9s5SO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7353C4CEF6;
-	Fri, 15 Aug 2025 21:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755293791;
-	bh=U0tpozaKDQBPba9WDp+NiZ8JiSwtUymVIkmMJFBx268=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u2A9s5SOh0Xn7c07Jk6kYr5WnS+j1MhD4i3MBJJZGBxAu49VawaAquZQHjf8zdZAa
-	 6JeYu6Vh1f3A2cXfgupqVE9vQ4VBLkTHNDkKHm1WYKaO8n7sYP4pY/2p0a4jniXuK5
-	 vkPjet1vsi/KNFD19x2gI4c/5MMgf1yWvV4ExUsC9j3JCtQtjTLcaBtbHrDatK1509
-	 0PZYckymAyG776qQO4xc5xIrGj4ZWyMueO5sSIMvdjTXPFj6sYqu0bVhQN94a88RqO
-	 Z/xgem4ozYg3xZbI2O94V5vAeDpQRbqPEje8BRT/KetJuHK3egosh1LnQob3do2LAp
-	 LDSjzjtH8EbQw==
-Date: Fri, 15 Aug 2025 23:36:26 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] man/man2/mremap.2: describe previously
- undocumented shrink behaviour
-Message-ID: <uvh2e2jjdk44tdwrhmnd46atwgdzwwmny4kczxqv2vm33gjqpp@63lsupn6y2u6>
-References: <cover.1754924278.git.lorenzo.stoakes@oracle.com>
- <ab2264d8c29d103d400c028f0417cada002ffc11.1754924278.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1755293800; c=relaxed/simple;
+	bh=6BNhWrgb46K2BcPeMibABt0hCBRBy4UQHIkL40DBYlM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JHAVfEDetXlFHnej8/Esp+CBhTMaY9yakFkeduIl1UhbaJYp1idL9pJRwgv0W5T+sOFZ2qWrbVPcy35Gex8oemtX0R+VLbD54uZkxSxCmX47Mgrhzf5WxAGsLw9m9nnghnWr8dHnlszViDE3KGrkJMFneBqj/rdpeTQ4nVDw7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeVh3YIB; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-619998ac812so232927a12.1;
+        Fri, 15 Aug 2025 14:36:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755293796; x=1755898596; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=znB6OfSmgiQgkNBDu248ncGoeWin88JYU8iYW48f+KI=;
+        b=UeVh3YIBzBJWRzYBr5rxe1SLPurVB8CSEmAdJ185vi6byk//NgD+JJ/9cV1ADIpog8
+         dWGKrQL8+on59jqdABs/ZV6iTOJfPRuhvd526vvyv9ENveJV01/Reue9nRNJ3piM7zs1
+         SrMB/02ZYDJI8wBTvou41RPOKRhZC6Sykc/+3/YzKHsh8ar1cXt/zvzQuhqC7qsfOqZV
+         rhHxPWs9hw4HmKkQyFjeMsK8h8KzkY8/cpkDPvamWdt9e+QUYxGLFaRZN6tQeQbj1po6
+         lrNNy0H4+6BFq57JPuPVe6xaQfnTlcxOtYH+7IZGSsXsEm684RHhU7F/YGNyLmKOz+5z
+         J2KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755293796; x=1755898596;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=znB6OfSmgiQgkNBDu248ncGoeWin88JYU8iYW48f+KI=;
+        b=iItryksy8cK7ZfMKEOv4JAH8IszQYCHxkzYuOkApWheSnIZRHdeokNFkcZ+DGziEpk
+         Wwa8l6lqJVqlQXp6iB1FC7QFiidjMhFsmVICBl+HuhjXE71EEwNNvzAKBCVBOIO+m2np
+         uFCsgI9BqYnkPYGp0MgTZlH1eG2mup6FSap67TpImeo/WoBIIW3Dj5XPowxw1YgYD2JQ
+         6+qef4z6/oN0nftcvy+n0AJtpMgVDBlYiE2zkmTuPKwNbWsHRVDRsSfp9JQZGR9oLpz+
+         wNQ+o2E7DHxR7k3wgrTYZrTIBAqed/Dgf7VdPS5aaTzsKSwuEtY1aq5tTmXd6U3ytuyK
+         q+Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtYcbZb/bA6n/oQ5dNybeoCLoGlUF5Vmrnd5zHNEzh1FDFLQzfrBTcqyyKYY+DP+wIGYqPiG2Enlp/IZc=@vger.kernel.org, AJvYcCX0o2xtDJiBiZaA4IwIldztfQOqJY8tekYra2NpmsuNH4qpYXwrBXV//BqqVn14/xzbVMI2Op2ZGCUO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzebIfX/cF50aj7XK9U6b5yOG5ZKFViwPekKlpPFd1wY9Tj8bO3
+	rrHv2vjtLfK4YRL8F6C9Ocwggtz1jE04CpPmoZk5Xy3NAjPlKlQxjzyaIQgR4Q==
+X-Gm-Gg: ASbGncvKalyEE16UAAkuFiDVqGpFfv4mGQHVATr3pCyPtn19MCFC5pAFMueo7N0L9IS
+	kpL/bDhWsTBc2Sh1R99lsK3YnMlrkrWTHmvPsSZt7PvJSi0dIJCAdPTXXQJgLJsZpgFxz4gHXJv
+	70OueExUhNBCRDELCYeXJRT05vEkno5Erjffwu6+7irM1g+TLKXUCKrUXAeuV3kJh/AtpV5/7JP
+	d603W28TxlG+d1/eBM8bDeyKPfrzjkTRN/Zh4M3pP3ToRN8FWRHTXpo6m0jDjTYgRHJXr5tugSf
+	CDeJubBnvMC+GxSd2BgZReLQJWmMefLFzonmB5ghO+k0mYaAlBlBlseG3AnnC9g3pVxX05RfBwc
+	8LC4mx8aSRzKUKLkpW1TZfUNuWdDcvJu6q2vr0ChTYQ==
+X-Google-Smtp-Source: AGHT+IEapIHw7oqPtglN47JWdiu+NaUwB1uhKNeLct2ng9HJc09BM8QKbWtTg0IrOuDL8WrPyRQ62w==
+X-Received: by 2002:a05:6402:518c:b0:612:dfdd:46fc with SMTP id 4fb4d7f45d1cf-618b053af72mr2860516a12.11.1755293795935;
+        Fri, 15 Aug 2025 14:36:35 -0700 (PDT)
+Received: from giga-mm-2.home ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618af9da4bdsm2156450a12.17.2025.08.15.14.36.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 14:36:35 -0700 (PDT)
+Message-ID: <ba6fba79de06543dc3adc09eabbfdaa6a5eeacb4.camel@gmail.com>
+Subject: Re: [PATCH] rtc: pcf85063: hide an unused variable
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>, Alexandre Belloni	
+ <alexandre.belloni@bootlin.com>, Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+ Lukas Stockmann <lukas.stockmann@siemens.com>, Maud Spierings
+ <maudspierings@gocontroll.com>, Oleksij Rempel	 <o.rempel@pengutronix.de>,
+ linux-rtc@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Fri, 15 Aug 2025 23:36:46 +0200
+In-Reply-To: <20250725090709.2505113-1-arnd@kernel.org>
+References: <20250725090709.2505113-1-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="buoh4y3nl2ltwkym"
-Content-Disposition: inline
-In-Reply-To: <ab2264d8c29d103d400c028f0417cada002ffc11.1754924278.git.lorenzo.stoakes@oracle.com>
 
+On Fri, 2025-07-25 at 11:07 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The newly introduced configuration is only used by code that is
+> inside of an #ifdef block, cauing a warning when that block is
+> disabled by the configuration is still there:
+>=20
+> drivers/rtc/rtc-pcf85063.c:566:37: error: 'config_rv8063' defined but not=
+ used [-Werror=3Dunused-const-variable=3D]
+>=20
+> Add the same #ifdef here.
+>=20
+> Fixes: a3c7f7e16ea8 ("rtc: pcf85063: add support for RV8063")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
---buoh4y3nl2ltwkym
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] man/man2/mremap.2: describe previously
- undocumented shrink behaviour
-References: <cover.1754924278.git.lorenzo.stoakes@oracle.com>
- <ab2264d8c29d103d400c028f0417cada002ffc11.1754924278.git.lorenzo.stoakes@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <ab2264d8c29d103d400c028f0417cada002ffc11.1754924278.git.lorenzo.stoakes@oracle.com>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-Hi Lorenzo,
-
-On Mon, Aug 11, 2025 at 03:59:39PM +0100, Lorenzo Stoakes wrote:
-> There is pre-existing logic that appears to be undocumented for an mremap=
-()
-> shrink operation, where it turns out that the usual 'input range must span
-> a single mapping' requirement no longer applies.
->=20
-> In fact, it turns out that the input range specified by [old_address,
-> old_address + old_size) may span any number of mappings.
->=20
-> If shrinking in-place (that is, neither the MREMAP_FIXED nor
-> MREMAP_DONTUNMAP flags are specified), then the new span may also span any
-> number of VMAs - [old_address, old_address + new_size).
->=20
-> If shrinking and moving, the range specified by [old_address, old_address=
- +
-> new_size) must span a single VMA.
->=20
-> There must be at least one VMA contained within the [old_address,
-> old_address + old_size) range, and old_address must be within the range of
-> a VMA.
->=20
-> Explicitly document this.
->=20
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->  man/man2/mremap.2 | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
+> =C2=A0drivers/rtc/rtc-pcf85063.c | 2 ++
+> =C2=A01 file changed, 2 insertions(+)
 >=20
-> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
-> index 6d14bf627..53d4eda29 100644
-> --- a/man/man2/mremap.2
-> +++ b/man/man2/mremap.2
-> @@ -47,8 +47,35 @@ The
->  .B MREMAP_DONTUNMAP
->  flag may also be specified.
->  .P
-> -If the operation is not
-> -simply moving mappings,
-> +Equally, if the operation performs a shrink,
-> +that is if
-
-Missing comma.
-
-> +.I old_size
-> +is greater than
-> +.IR new_size ,
-> +then
-> +.I old_size
-> +may also span multiple mappings
-> +which do not have to be
-> +adjacent to one another.
-
-I'm wondering if there's a missing comma or not before 'which'.
-The meaning of the sentence would be different.
-
-So, I should ask:
-
-Does old_size > new_size mean that old_size may span multiple mappings
-and you're commenting that multiple mappings need not be adjacent?
-
-Or are multiple mappings always allowed and old_size > new_size allows
-non-adjacent ones?
-
-I suspect it's the former, right?  Then, it's missing a comma, right?
-
-
-Other than this, the patch looks good.
-
-
-Have a lovely night!
-Alex
-
-> +If this shrink is performed
-> +in-place,
-> +that is,
-> +neither
-> +.BR MREMAP_FIXED ,
-> +nor
-> +.B MREMAP_DONTUNMAP
-> +are specified,
-> +.I new_size
-> +may also span multiple VMAs.
-> +However, if the range is moved,
-> +then
-> +.I new_size
-> +must span only a single mapping.
-> +.P
-> +If the operation is neither a
-> +.B MREMAP_FIXED
-> +move
-> +nor a shrink,
->  then
->  .I old_size
->  must span only a single mapping.
-> --=20
-> 2.50.1
->=20
+> diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
+> index d9b67b959d18..41e4a5a16574 100644
+> --- a/drivers/rtc/rtc-pcf85063.c
+> +++ b/drivers/rtc/rtc-pcf85063.c
+> @@ -563,6 +563,7 @@ static const struct pcf85063_config config_rv8263 =3D=
+ {
+> =C2=A0	.force_cap_7000 =3D 1,
+> =C2=A0};
+> =C2=A0
+> +#if IS_ENABLED(CONFIG_SPI_MASTER)
+> =C2=A0static const struct pcf85063_config config_rv8063 =3D {
+> =C2=A0	.regmap =3D {
+> =C2=A0		.reg_bits =3D 8,
+> @@ -574,6 +575,7 @@ static const struct pcf85063_config config_rv8063 =3D=
+ {
+> =C2=A0	.has_alarms =3D 1,
+> =C2=A0	.force_cap_7000 =3D 1,
+> =C2=A0};
+> +#endif
+> =C2=A0
+> =C2=A0static int pcf85063_probe(struct device *dev, struct regmap *regmap=
+, int irq,
+> =C2=A0			=C2=A0 const struct pcf85063_config *config)
 
 --=20
-<https://www.alejandro-colomar.es/>
-
---buoh4y3nl2ltwkym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmifqFMACgkQ64mZXMKQ
-wqnXURAAmhC7nlLe2VS4LJ2byHc2MqG2Eedkuvp/uWEx1SzqdTojtI/Yl6n6uvQa
-JF/vI4VMca73f2g6FjXoW05aSTmVqmSV/ozGgNnzLI42rPSBBNmj4cmCL2ohabYO
-Ellsndg1F1QEBscQzpjNcb0SXdjopomMBC1mtBnY8lEYSfqzS0PBOUyLwx3IjAzP
-qjUQKmjHb0vrLFywkTwJ1PME48DlSrJV+R87Vpw6B6HVTNjDQGs9UnQEyDYZPnPk
-3UtJZpeZJzo8FV0qqfLKfeO7RTWZz3p0abzL0K3mMfJiYExyBeUEKOAHRi8qskrU
-4oq+aqPXX0OioXC8Wooro5d2QWCifwAZ+KKPGJ2C9v3z9fmk0xMruZifm8G1YFFr
-5BpxVExXZm1f9eyg+M9iVuFEYQ5nnRXx9tLGNNdq2UsoCI20sSmR3TJ1O9tEoVnf
-cHd9XaZjwowAWypj4QXmficy8O8daf64h9aTxrWLF90ebzkUuAIZfd8vQ2xSO49t
-++GPqZLNRG8qLC8Is3rNwxNksaMo+qoFYM0fyPkMjppcMo0iaNPmp1gC+QSIkVgN
-thD36RsVD2U5JidQl756IjZoOgVZrDFxUjT+RMPFYN6j4qrMkUob2V/WdWPVmb3L
-yEW9hUpV15jgCzgvJ4rGiNtnaO4+Q7LlSfmDc9YthFgS/Nwi8KU=
-=IxjY
------END PGP SIGNATURE-----
-
---buoh4y3nl2ltwkym--
+Alexander Sverdlin.
 
