@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-771236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6215B28483
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:59:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B028B2846D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA775840A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D99B61930
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A7D25785B;
-	Fri, 15 Aug 2025 16:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A406D257820;
+	Fri, 15 Aug 2025 16:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juVHBy2N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="Iw14CfU1"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A6A225791;
-	Fri, 15 Aug 2025 16:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276926; cv=none; b=AJiabJiB2Y571fvlHGWJQr6GLO86kD4O6o6XzX0swtJM2VFNpBtf67nqQ3C5/tU+jjhV4dmmdVGJD/7x317lLCAsp+r0iHcAb6r4UeELGlSW0ZmAeUjWyqVtJmTWRGC/Mvt0xCAkT3GJxX5kaTb34YPvnazxZSpM02YT3S7t1jc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276926; c=relaxed/simple;
-	bh=55kubHT3CJFxFuq24D29Jn26nVbHxHRFemaSWvj8LQI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dMl7vD2Jsj072i1sYDaYSNxa50di63tAZvl8SGYG5Zp2H0GVI/c977bgHKkbN3urtCWitTmQqojDfqejuLWna7rmLBDEsGxIzmc9kZk1iLmwcH/rlbj4NuvGkS3o5nw01CVYhfI231fg4o2tdJdX6I1CV/7NHY+Ulw43lbi+9eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juVHBy2N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E826DC4CEF7;
-	Fri, 15 Aug 2025 16:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755276925;
-	bh=55kubHT3CJFxFuq24D29Jn26nVbHxHRFemaSWvj8LQI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=juVHBy2NniTI8XXEZLofsypYZ8qJxEgdBugSKMIc7wWAyYCFEwN49xMWEnxCqznoW
-	 AiUc2Zep3keHBWeM4QDotUPPIY7eOSC4KH+Pf8LHO9RdnTElf0+cSbT5gykGhZJJoP
-	 zk956u9MRbblCaICmlVg+2RUOyq1DaKuP6eClq27Wmcc7wIhXEs9e6XCXFVhienw0W
-	 wQMWkhyTKAawXCAi+oFly0QKhS1elAk4509UZb1l0r1VVQIqM/4vUpbt+0XH99bmV/
-	 oa1sd+0U0xailsbEtDGvd3TRitoK2ImXmDbMLAITNhe0b1VFDC6HsxiW+W9bDYVSBI
-	 0rX8ZUkOyKUCA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B52CA0EE6;
-	Fri, 15 Aug 2025 16:55:25 +0000 (UTC)
-From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
-Date: Sat, 16 Aug 2025 00:55:25 +0800
-Subject: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
- queues with COE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E652E5D34;
+	Fri, 15 Aug 2025 16:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755277002; cv=pass; b=X6zur27wV+sKLcmmRhX3cGNLiOIvNI9KEEfqJWmduMDZ6Q1xv2LE/9n6i+BSpy5pEfrqb90wkk46teMW/MLQd3G/EAHgU62fsQfVkGb9ZHVkUTd4Jxi3IPwcU89y22WPqFi2QiuGJSya/SE3SRlqO9ifR0+S5Py8QlHB31KydeM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755277002; c=relaxed/simple;
+	bh=gC5qM8Cx4LZKmph+qExp4Xp+Dwg1SSgnweE6z3hBj74=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D6kqEpSeX18bJ7uG49LL/Euyr3+l4yNKiSHuFPWGYrihYy7v/K0eTQ0Sw4vEBJ+lzolxvOTj0BdxSFWS6isyxLaD5LJ1VCF6d8ZqwaDIiMoHloSiWedRiLAd16E7Ydp4xGkIlkgCpNFz+xo8HdzbRzD1UbhRjC9X2eXJjykxSIc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=Iw14CfU1; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755276951; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=I1KZnk3WfWu1cQ1jxo1VsRmVlsIU6YWwRBnQ+f+2yAaXYuT1GF06HaMm1bYWgIykWQ3ejH8CVF9lxpbJyrekzjd/BMgRd+dyf2MFw2VWhEbBUy282KwR8JwYFjeiC+0XJRWFSrg8d1Lb8Cd/O7596VadBC0dXGsr8HG3IE0iCtc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755276951; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gC5qM8Cx4LZKmph+qExp4Xp+Dwg1SSgnweE6z3hBj74=; 
+	b=ECGfifXF8LeZ11Fbrw7CIdhDs13TS94oxcGQIT4lhe+9BLYzR8fdeZzIbaUEfOeHsuniaMFNnBdkD11Em0bqxEYfB+g7+2VV3hfq/WQtT+P1ChgC2RMZazVoO5Mq8lf/zN95INDIm56czekmyvGrFe5sqvHhn8GMLFR1WVJtShg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755276951;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=gC5qM8Cx4LZKmph+qExp4Xp+Dwg1SSgnweE6z3hBj74=;
+	b=Iw14CfU1QZEZi+0aTWkSK3gHhPyKKe4IiLXbJYkbjoLfA0MZA2KDOgkOvD7X/b92
+	1Cnp7M+S5JGnp1c7BES11OzTUcekZv3zvAkJt5+mv24ERxQWt+/LAu8fGdKT6DBn/2/
+	sPoKWxcIAeepUpnklcvR5i0jz/8BHKmzuZWU86Pme78sSmm654pDeDH1SzwjsxSRps1
+	0uapNW+dtYwiAxjtklUCNrxPgcu+yUBc6f1HoQ1dK1kOqzOoAaIoZnvCO/2NbX4v/FD
+	NioOsiRHXUJe7h3pK9GnM5bulOgMYxsmX4uNnn5d8fzX9w0p5ftvSrH9Kb1CXChmvdw
+	QY9Rh5cP1Q==
+Received: by mx.zohomail.com with SMTPS id 1755276948014489.74805819275286;
+	Fri, 15 Aug 2025 09:55:48 -0700 (PDT)
+Message-ID: <d07fa80e65949c4f0a5200cee1daf4783f038e37.camel@icenowy.me>
+Subject: Re: [RFC PATCH 2/8] dt-bindings: display: add versilicon,dc
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini
+ <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>,  Philipp Zabel <p.zabel@pengutronix.de>, Heiko Stuebner
+ <heiko@sntech.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Michal
+ Wilczynski <m.wilczynski@samsung.com>, Han Gao <rabenda.cn@gmail.com>, Yao
+ Zi <ziyao@disroot.org>, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org
+Date: Sat, 16 Aug 2025 00:55:34 +0800
+In-Reply-To: <4655d43b17c732947246f0e0deac14265fa07ca1.camel@icenowy.me>
+References: <20250814164048.2336043-1-uwu@icenowy.me>
+	 <20250814164048.2336043-3-uwu@icenowy.me>
+	 <20250814220444.GA3988176-robh@kernel.org>
+	 <5af90b60-d65b-4e80-9a27-44938bbd450b@kernel.org>
+	 <4655d43b17c732947246f0e0deac14265fa07ca1.camel@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-In-Reply-To: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Serge Semin <fancer.lancer@gmail.com>, 
- Romain Gantois <romain.gantois@bootlin.com>, 
- Jose Abreu <Jose.Abreu@synopsys.com>, 
- Ong Boon Leong <boon.leong.ong@intel.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Rohan G Thomas <rohan.g.thomas@altera.com>, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755276924; l=2589;
- i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
- bh=yd3hqIo3OLgBTjQIzdKCEjVqydvJBVOrIiCiUuaG6/c=;
- b=+cHw+nFGJfkWJlSFZ0NXzeGjhVaWsNuNMNLqh7oqYs4wwZmPAZeL0M6lamXsjwyeBJ1m02nwF
- iIh/OnEkKBpBCP1P/iBNCeG/zFdrap4rauGxuqJwia0FXrG8Ix4p64N
-X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
- pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
-X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
- with auth_id=494
-X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reply-To: rohan.g.thomas@altera.com
+X-ZohoMailClient: External
 
-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+=E5=9C=A8 2025-08-15=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 17:53 +0800=EF=BC=
+=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A8 2025-08-15=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 11:09 +0200=EF=
+=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+> > On 15/08/2025 00:04, Rob Herring wrote:
+> > > > +
+> > > > +maintainers:
+> > > > +=C2=A0 - Icenowy Zheng <uwu@icenowy.me>
+> > > > +
+> > > > +properties:
+> > > > +=C2=A0 $nodename:
+> > > > +=C2=A0=C2=A0=C2=A0 pattern: "^display@[0-9a-f]+$"
+> > > > +
+> > > > +=C2=A0 compatible:
+> > > > +=C2=A0=C2=A0=C2=A0 const: verisilicon,dc
+> > >=20
+> > > If the clocks or resets varies by platform, then you need an SoC=20
+> > > specific compatible still. If these clocks/resets are straight
+> > > from
+> > > the=20
+> > > RTL and any other number of clocks/resets is wrong, then we can
+> > > stick=20
+> > > with just this compatible.
+> >=20
+> > Shouldn't we have here always SoC compatible? Can it be ever used
+> > alone,
+> > outside of given SoC?
+> >=20
+> > I could imagine now:
+> >=20
+> > items:
+> > =C2=A0 - {}
+> > =C2=A0 - const: verisilicon,dc
+>=20
+> I followed the `vivante,gc` situation here, because the registers
+> before 0x1400 (where real display-related things start) seems to
+> follow
+> the same scheme with GC-series GPUs, including the identification
+> registers.
 
-Currently, in the AF_XDP transmit paths, the CIC bit of
-TX Desc3 is set for all packets. Setting this bit for
-packets transmitting through queues that don't support
-checksum offloading causes the TX DMA to get stuck after
-transmitting some packets. This patch ensures the CIC bit
-of TX Desc3 is set only if the TX queue supports checksum
-offloading.
+An example here: the customer id (0x0030) register value read out on T-
+Head TH1520 is 0x30a, but on StarFive JH6110 it's 0x30e instead.
 
-Fixes: 132c32ee5bc0 ("net: stmmac: Add TX via XDP zero-copy socket")
-Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+(Both are DC8200 rev 5720, so the 0x0020 reg is 0x8200 and 0x0024 reg
+is 0x5720.)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 9a77390b7f9da4199ad6ac15a2149e2c703900ce..88b7e0aed14428c1884f4c3610c4112e9be8fd59 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2584,6 +2584,7 @@ static bool stmmac_xdp_xmit_zc(struct stmmac_priv *priv, u32 queue, u32 budget)
- 	struct netdev_queue *nq = netdev_get_tx_queue(priv->dev, queue);
- 	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
- 	struct stmmac_txq_stats *txq_stats = &priv->xstats.txq_stats[queue];
-+	bool csum = !priv->plat->tx_queues_cfg[queue].coe_unsupported;
- 	struct xsk_buff_pool *pool = tx_q->xsk_pool;
- 	unsigned int entry = tx_q->cur_tx;
- 	struct dma_desc *tx_desc = NULL;
-@@ -2671,7 +2672,7 @@ static bool stmmac_xdp_xmit_zc(struct stmmac_priv *priv, u32 queue, u32 budget)
- 		}
- 
- 		stmmac_prepare_tx_desc(priv, tx_desc, 1, xdp_desc.len,
--				       true, priv->mode, true, true,
-+				       csum, priv->mode, true, true,
- 				       xdp_desc.len);
- 
- 		stmmac_enable_dma_transmission(priv, priv->ioaddr, queue);
-@@ -4983,6 +4984,7 @@ static int stmmac_xdp_xmit_xdpf(struct stmmac_priv *priv, int queue,
- {
- 	struct stmmac_txq_stats *txq_stats = &priv->xstats.txq_stats[queue];
- 	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
-+	bool csum = !priv->plat->tx_queues_cfg[queue].coe_unsupported;
- 	unsigned int entry = tx_q->cur_tx;
- 	struct dma_desc *tx_desc;
- 	dma_addr_t dma_addr;
-@@ -5034,7 +5036,7 @@ static int stmmac_xdp_xmit_xdpf(struct stmmac_priv *priv, int queue,
- 	stmmac_set_desc_addr(priv, tx_desc, dma_addr);
- 
- 	stmmac_prepare_tx_desc(priv, tx_desc, 1, xdpf->len,
--			       true, priv->mode, true, true,
-+			       csum, priv->mode, true, true,
- 			       xdpf->len);
- 
- 	tx_q->tx_count_frames++;
-
--- 
-2.32.0
-
+>=20
+> >=20
+> >=20
+> > Best regards,
+> > Krzysztof
+>=20
 
 
