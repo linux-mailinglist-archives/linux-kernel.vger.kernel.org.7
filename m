@@ -1,96 +1,83 @@
-Return-Path: <linux-kernel+bounces-771261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0909B284CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E462AB284D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D255F178C0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADEE1CE1AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5413E321430;
-	Fri, 15 Aug 2025 17:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C3A2F9C40;
+	Fri, 15 Aug 2025 17:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="PUMPiO8R"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2IryycX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B41304BDE
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AEE2F9C24;
+	Fri, 15 Aug 2025 17:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755278121; cv=none; b=V6uCQQaPyKspdc5yjNDsJlyptAqriXj9E1HdYVwfZVV0rZZoNXa5whmbnfAe+bb98mvSWUoD3Nqbg0Lk59x31A4JttWUu9h9V/ftlsuPE6HnLqZYOVzGKDmkCaHP3+psuJvyYmu6lHOe8rTWgR+YYBpyv4sTnhxtx2/c/62I3Zw=
+	t=1755278188; cv=none; b=Y5FSxGTUiZpqIKqyFnvBJ4hx0ulmD/HbUy5DYp5wfAi3dtganyi0/DXNjcX9yLfCqBGsmpBKzHM4+uqe3iOXXsds8R+6wE5YCeO2dgXzeAGSzduiafdg2XbGO9GIz2PjHKxg+N3ohR5TCVB4NrNKY77GfPitm2LcnwQqf7pnB9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755278121; c=relaxed/simple;
-	bh=Q9VDTyPsJ1nrsJ9IPGQ/uH24LWZk1d50M/ALSVgVhkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F5dblKPwqI8Ff79Nw9yXgKBj6KaGwv6A1WDNuhREkl7xgW5yhRjtQedLHCT2EbhO/hpz/b1tnSAH2nhQ42aNTSZg4qeRJhgq7+XeqkTx7+MIGgyQt/lpqwaAaSGXpQT6sY1H0lp2B1QLFgTgUbXEasOdE8EBJRg885R3MUSnPzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=PUMPiO8R; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9484:50f9:ca46:26fb:a765] ([IPv6:2601:646:8081:9484:50f9:ca46:26fb:a765])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57FHF2ON2012703
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 15 Aug 2025 10:15:03 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57FHF2ON2012703
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755278104;
-	bh=xMvjS3Kd5v0VRPHOeHrYngN+OKw4RRNU/wrppPGKZ7U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PUMPiO8RbYAmd3BO2Gb40KMQ8esEioA/r32CoRljiSql0GrlTlOWkDSmcN6ovbTQ0
-	 tutde6nkhOHwTobfcv8Sj3JmiahVAE32ToleR2IGuDLMfjJRPv41Clitk5yTmmgkWV
-	 jn6W7JHygJLtyukV9UcuzPML0k0iN7fdLkcx362GnbKToeVNx7hueYavitqNVEljLM
-	 mIiNbcFqyz1UsiCDI6yXge1Cq9xYzobj21GRjYHq29wT0zwmOLaodQHsFfL33jbsyi
-	 WbT05zyCsHz68/o56kaDqmBUZSYJfANueAwexY3+IpZGb7pjNRKJ1ili9j+gxnGbJL
-	 LkXgkBjXrpdUQ==
-Message-ID: <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com>
-Date: Fri, 15 Aug 2025 10:14:57 -0700
+	s=arc-20240116; t=1755278188; c=relaxed/simple;
+	bh=vUSlgNbostwDHn7HetcT1k1vd03/2QSR/Hejw5tNUz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BYhT7HvygJV0u02jD8I6lQ2v7jBg3nMC/HcFv1GxAzoph9U8leQ326OTaOM6cK6OyZz4zQHjZM3Xm4AJZLtFCNRGRIjnyDCs+qVGiskdjTtU3UJL8+K4y1g853xbajWnWOyx6Y6MBuzQACVynyeL+ay7N88A3u9mvp1jAKk+iSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2IryycX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4D2C4CEEB;
+	Fri, 15 Aug 2025 17:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755278188;
+	bh=vUSlgNbostwDHn7HetcT1k1vd03/2QSR/Hejw5tNUz8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M2IryycXkmA/OqUaHz2j7xUV83YCDH4tDaM8iHMdrkGYlj/28iHyS9Svgq6Ho1Cx6
+	 ANcsPXPP7ciOZo47Qp1QLrbdBCbOSlbvp/GF2cmtst4e/Y5LUjzyB1G49DC8bkXrwj
+	 YsZ2b2PnpwrUw94qXlKHpL4wv+s+gjmBQSQEcb6EThto1PXvDq5whpBQPOY8OyuDW0
+	 o+2iOyt01ir2AXmbFlkt9UT41UZbWjgTPG3cVAHctx3bKQaayiGmehHI3tMCTbIN2w
+	 RJvTtlP1spSIRKenJwGtplnh5Yq9lk+qyqKCABdak5lxQDh5IoYnyGD+cBic1onoeq
+	 dViKS/ov7YLFw==
+Date: Fri, 15 Aug 2025 10:16:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: <almasrymina@google.com>, <asml.silence@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, <cratiu@nvidia.com>,
+ <tariqt@nvidia.com>, <parav@nvidia.com>, Christoph Hellwig
+ <hch@infradead.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v3 1/7] queue_api: add support for fetching per
+ queue DMA dev
+Message-ID: <20250815101627.3c0bc59d@kernel.org>
+In-Reply-To: <20250815110401.2254214-3-dtatulea@nvidia.com>
+References: <20250815110401.2254214-2-dtatulea@nvidia.com>
+	<20250815110401.2254214-3-dtatulea@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-To: Andrew Cooper <andrew.cooper3@citrix.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
-        scott.d.constable@intel.com, joao@overdrivepizza.com,
-        samitolvanen@google.com, nathan@kernel.org,
-        alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
- <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
- <20250815074939.GA3419281@noisy.programming.kicks-ass.net>
- <20250815102839.GD4068168@noisy.programming.kicks-ass.net>
- <20250815103055.GE4068168@noisy.programming.kicks-ass.net>
- <fc0715e0-42f2-4b5d-be31-ac44657afc56@citrix.com>
- <20250815105908.GB3245006@noisy.programming.kicks-ass.net>
- <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-15 04:19, Andrew Cooper wrote:
->>
->> CS Jcc, decodes to Jcc,pn for non-taken
->> DS Jcc, decodes to Jcc,pt for taken
-> 
-> Ah, thanks.  I was looking at the hex in one of the comments and still
-> couldn't figure it out.
-> 
-> So with this notation, we also have the dual meaning of ,pt between the
-> P4 and LNC.  At least the encoding is the same.
-> 
+On Fri, 15 Aug 2025 14:03:42 +0300 Dragos Tatulea wrote:
+> +static inline struct device *
+> +netdev_queue_get_dma_dev(struct net_device *dev, int idx)
+> +{
+> +	const struct netdev_queue_mgmt_ops *queue_ops = dev->queue_mgmt_ops;
+> +	struct device *dma_dev;
+> +
+> +	if (queue_ops && queue_ops->ndo_queue_get_dma_dev)
+> +		dma_dev = queue_ops->ndo_queue_get_dma_dev(dev, idx);
+> +	else
+> +		dma_dev = dev->dev.parent;
+> +
+> +	return dma_dev && dma_dev->dma_mask ? dma_dev : NULL;
+> +}
 
-What "dual meaning?"
-
-	-hpa
-
+This really does not have to live in the header file.
 
