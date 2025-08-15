@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-771109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70402B282FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31C6B2831A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7CD1CE43A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF39AA0BA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39CC2AD13;
-	Fri, 15 Aug 2025 15:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F039306D5C;
+	Fri, 15 Aug 2025 15:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNTWQ230"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uIPcYaWT"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB9302745;
-	Fri, 15 Aug 2025 15:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69425306D54
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755271879; cv=none; b=kEL3ZFMru1cgzNUH3+WxYF63odwyE3cuDCePHTPsvgJmi5N1WL3LWFzJQXYHryL4POTeC/RtNsnhL5c2SdQ6nfObXjjEbmKFhycerZtNfNhFZaVFpekf1+roUyPSLinIGCwILSGhLVtYYNflgLERNavzD099QqivfaQykI9gehg=
+	t=1755272503; cv=none; b=VUKtmoy4S70Kjt6I/iwOmChmvf5HQ8RA73a/2+T6seUZMW7DXDDqkVq0QWegMb4po2ujoMpzYRQ8smW3rwPfpdAcvKImPsg6x5N1PUvL5H3riLn2jHJu6+FCfMJKNre8yWCS3O84IsgvwJ+pg32ifA1b+OyR4A/bDMPSxxZtXpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755271879; c=relaxed/simple;
-	bh=/jvMp/guKLSHe+yxsr6XthvTtUUPzj4tZ+6lXJrq+Ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/Mr/6HyFk+QheCxL8/DgYJvWHjrefku7AbpRc0GyMKXA8XrGkAs+7AGL9HUKtTo6TZFAeygiezfPglQbeGhcRUXA65HknWvW/m7vHScHlVJZ9Gc9eYY02Nia778U3jyeqSRPkw+1sR4WCIIfh/n2AiqFGJP/zJnhM5zUHwiCw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNTWQ230; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2F5C4CEEB;
-	Fri, 15 Aug 2025 15:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755271879;
-	bh=/jvMp/guKLSHe+yxsr6XthvTtUUPzj4tZ+6lXJrq+Ws=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=eNTWQ230HNQDLCZPyyrGOXSNjpesnhlV280U2+vvvc7Meqb4LSG8o74PRS8igrwK5
-	 CiLgOxbyWw4rBmbaHnK1a5ZtGVRP9AIEFBem9N0EYngiOS21gIKb242jDvIlxeN5Q3
-	 0xxch+lZghGVAQKZQFkWyvr190/Ci9nBhaUeURUX0ky06TL7H42Wa/w2nTlRo/+Tgk
-	 xRZR4Rikpr0uwswxyDjeo6mUFLs3dXYqCcjlEqGBSIh51h9T57VMVcz0YUDHtB9xs+
-	 XNv4Jam0CO+c8bkf0GrkbdDIlaWsVnC7D83/G+BgbSMXD7kT80qGLYt+yrakd3JzCA
-	 1i/En66p5pJsw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8BB3BCE0ADB; Fri, 15 Aug 2025 08:31:17 -0700 (PDT)
-Date: Fri, 15 Aug 2025 08:31:17 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 1/7] rcu: add rcu_migrate_enable and
- rcu_migrate_disable
-Message-ID: <eb93f12d-2232-4b7e-a7c6-71082a69f1f6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250815061824.765906-1-dongml2@chinatelecom.cn>
- <20250815061824.765906-2-dongml2@chinatelecom.cn>
- <CAADnVQKA98hBSsb02djL-zMsaXQDCjn4Ytck+WP3SWfvgXqDYg@mail.gmail.com>
+	s=arc-20240116; t=1755272503; c=relaxed/simple;
+	bh=kWIeKW/3+LZqeCGlBxC1tJztJxOj/OGJgM+qI//Vx9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hUJHKaVasrg/hh++YWdWzUVLbRjEVYvcnsbso1WQZCGzmTMlajU1+NuztjTQtCAoY2t33JDXRlUtaM2rp0friI20Tl6vIqbW1Y8sjnO93VLd43WDT0F/h1WdVA8gNgXJIFFB4VQPHI70O4QStCLwduE7ILxg4jfR4VdM1tJ4TlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uIPcYaWT; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755272498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XoTQC/MqUTM2TQEXO9Dy4N6Bkcqbv/50Gl4TO7GZo+k=;
+	b=uIPcYaWTHp3Ue8B4JNxoYifSJQXbTMFYo9VBbbhuUTSstk5ZvuJdzCAtUuFfOurlsrUn3c
+	+K51SfEV+p6egayGXTyYZc6XuCNDDCg7z2eA4M3TrXfYExajEDUOl/nPNByW2irNW20+Ks
+	+xwwM/CUWKRjRbiQ5cAqOTW74MUjhDc=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Peter Seiderer <ps.report@gmx.net>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2] net: pktgen: Use min()/min_t() to improve pktgen_finalize_skb()
+Date: Fri, 15 Aug 2025 17:33:33 +0200
+Message-ID: <20250815153334.295431-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKA98hBSsb02djL-zMsaXQDCjn4Ytck+WP3SWfvgXqDYg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 15, 2025 at 04:02:14PM +0300, Alexei Starovoitov wrote:
-> On Fri, Aug 15, 2025 at 9:18 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
-> >
-> > migrate_disable() is called to disable migration in the kernel, and it is
-> > used togather with rcu_read_lock() oftenly.
-> >
-> > However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock()
-> > will disable preemption, which will also disable migration.
-> >
-> > Introduce rcu_migrate_enable() and rcu_migrate_disable(), which will do
-> > the migration enable and disable only when the rcu_read_lock() can't do
-> > it.
-> >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  include/linux/rcupdate.h | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> > index 120536f4c6eb..0d9dbd90d025 100644
-> > --- a/include/linux/rcupdate.h
-> > +++ b/include/linux/rcupdate.h
-> > @@ -72,6 +72,16 @@ static inline bool same_state_synchronize_rcu(unsigned long oldstate1, unsigned
-> >  void __rcu_read_lock(void);
-> >  void __rcu_read_unlock(void);
-> >
-> > +static inline void rcu_migrate_enable(void)
-> > +{
-> > +       migrate_enable();
-> > +}
-> 
-> Interesting idea.
-> I think it has to be combined with rcu_read_lock(), since this api
-> makes sense only when used together.
-> 
-> rcu_read_lock_dont_migrate() ?
-> 
-> It will do rcu_read_lock() + migrate_disalbe() in PREEMPT_RCU
-> and rcu_read_lock() + preempt_disable() otherwise?
+Use min() and min_t() to improve pktgen_finalize_skb() and avoid
+calculating 'datalen / frags' twice.
 
-That could easily be provided.  Or just make one, and if it starts
-having enough use cases, it could be pulled into RCU proper.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Use min_t(int,,) to prevent a signedness error
+- Link to v1: https://lore.kernel.org/lkml/20250814172242.231633-2-thorsten.blum@linux.dev/
+---
+ net/core/pktgen.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> Also I'm not sure we can rely on rcu_read_lock()
-> disabling preemption in all !PREEMPT_RCU cases.
-> iirc it's more nuanced than that.
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 0ebe5461d4d9..d41b03fd1f63 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -114,6 +114,7 @@
+ 
+ #include <linux/sys.h>
+ #include <linux/types.h>
++#include <linux/minmax.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/kernel.h>
+@@ -2841,8 +2842,7 @@ static void pktgen_finalize_skb(struct pktgen_dev *pkt_dev, struct sk_buff *skb,
+ 		}
+ 
+ 		i = 0;
+-		frag_len = (datalen/frags) < PAGE_SIZE ?
+-			   (datalen/frags) : PAGE_SIZE;
++		frag_len = min_t(int, datalen / frags, PAGE_SIZE);
+ 		while (datalen > 0) {
+ 			if (unlikely(!pkt_dev->page)) {
+ 				int node = numa_node_id();
+@@ -2859,8 +2859,7 @@ static void pktgen_finalize_skb(struct pktgen_dev *pkt_dev, struct sk_buff *skb,
+ 			if (i == (frags - 1))
+ 				skb_frag_fill_page_desc(&skb_shinfo(skb)->frags[i],
+ 							pkt_dev->page, 0,
+-							(datalen < PAGE_SIZE ?
+-							 datalen : PAGE_SIZE));
++							min(datalen, PAGE_SIZE));
+ 			else
+ 				skb_frag_fill_page_desc(&skb_shinfo(skb)->frags[i],
+ 							pkt_dev->page, 0, frag_len);
+-- 
+2.50.1
 
-For once, something about RCU is non-nuanced.  But don't worry, it won't
-happen again.  ;-)
-
-In all !PREEMPT_RCU, preemption must be disabled across all RCU read-side
-critical sections in order for RCU to work correctly.
-
-							Thanx, Paul
 
