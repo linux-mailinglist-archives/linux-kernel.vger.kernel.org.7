@@ -1,153 +1,290 @@
-Return-Path: <linux-kernel+bounces-771464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A6EB287A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67678B287AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCCB60327A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873D21C803C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB2B2C0F99;
-	Fri, 15 Aug 2025 21:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1918C1FF1C7;
+	Fri, 15 Aug 2025 21:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phFJpywg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="apu3m6Xb"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471E32C08C3;
-	Fri, 15 Aug 2025 21:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66747218AAA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755292753; cv=none; b=XNyTB6UuaGPMiWfs8uQUjq6yAaPODAa42yLYUAF9BwfPo615/JPg7F2GXpRdLKhNoJPdLJD84e3HgSXgzhp8rEEO04PE2Wtp6MHV9DD7X+8EuxxGjTzrhXm+eb8GpPUV2yU+P7WZCADmHzsGgbXQiDtDAOPWRH4MGhj0FsTdXVU=
+	t=1755292965; cv=none; b=F5yNLP/1dsEh4xRniNgl9zjO7A4iXbZqLD1SEDs/SMh74Uc0N9f/EoDfLArcH8MmcZs6N5kDOMCwxrmyWvWbgp8a3sPPcFuWdvBMaoI6yZ4rIVwMpy91bXlUaZRMnpnIxk3yUhyy2hYHBXq78bNDB7qhAp+N8GgbMzLuBv/G6ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755292753; c=relaxed/simple;
-	bh=SFuIvMcXySzIx6yuydmTiDrtSS+EI5n+sZ5HoAj+x0k=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=jyzZNOvaGbiq64FmAp66rdHYDDJN75ydYPB8/1j3WpmetP0fnV95/G6nPDC1wgQaf3FL5O8L1Kis9GRgBXunZdEvcv38cKj22TyrrdxJp2R1xHMC0+GubDQelGu2yuvLHQxauW3qQ7jv11AbLD5awoSQ2ydo/C1/NqJviOTH50Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phFJpywg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CF7C4CEEB;
-	Fri, 15 Aug 2025 21:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755292752;
-	bh=SFuIvMcXySzIx6yuydmTiDrtSS+EI5n+sZ5HoAj+x0k=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=phFJpywgeyQwzIyKIk+4Lh/bDlBiKZByUqRnjnYbPYVk3PX00e2+cGH6SyKH9x5Is
-	 L4ejGwt/Kgi9F/PAdXPi6kq39L+a6NmqapYkKNXC4lvrZgaRTlVVyXQ9Sn1lPDPxkc
-	 BuefW1nj6RUGcTz4yvJkk3VR/V5bv23/iEdTrs6uusRqFU9eyS+2ae5LZQ6dIV9RL5
-	 eaLFEQgwYKgNjFXCLNDGuFg/CFbvlwXQrrA7fFZZAlWnDMFxL8VF+M8I/i6xLPGXVQ
-	 jtkf6CPdG6AVQaJRZMT1yH6oRaxHi76MJbj5x4fwJOnBx0PnGpNiJApxyPTthU6zWX
-	 x4V/MBF2+d+gw==
-Date: Fri, 15 Aug 2025 16:19:12 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1755292965; c=relaxed/simple;
+	bh=tbNrbbxz33YIC14fjQwOzIXwofKRc168Ypdx9Z8IPfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iz4G57UYwwvy9vo4Scd0GAltf7ytfDVsTBGBF9QeboD/kafZEK98iR39Pbq+ryQJBocZGX3paDanbQa4PE4azQfX/lz07S0lNUBFg+AwIC+8wkQHDPj0TkKew/XLZrlysVL1sfQghue2B1ZC/1dBO8BU4r3LH5e1PgB2HT4nHwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=apu3m6Xb; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e87068760bso280715585a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1755292961; x=1755897761; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFO9JNDJtAEz1XcsMaClD4jgQZO2qiePHkbNZBiq2Uo=;
+        b=apu3m6XbWQlXuqBD+mAW6dYcZtfZKwgMUElbDo4pN3V/Tv2kBQI1LM8ZzUkooFRDUm
+         J7WkT5FOCN01z/vLwk8S0Sc1/m0y7wKq2SYyLC+fZJMHrkIL2vINbnzGdYikyy+qCK+N
+         GV1yUczTXgBmWED3qH4x4UM4YwjK4IXS8Tz9E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755292961; x=1755897761;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yFO9JNDJtAEz1XcsMaClD4jgQZO2qiePHkbNZBiq2Uo=;
+        b=J4CsOEpWVOsMza6U4Lr1ZB23wA1npYXJzQEaQoxg9IQaF6OVcYEdEXLcEeWVlV+rmo
+         PTw8SmB1oioMTPKvliJfCrgu+c/7yGuGWbftX7YIXALKstZYl4qgPGNCH8Pk+jhIAIX0
+         Z2WW/wngB+EKrmn/tmXqwKHmnVzM6nuKl+sv6nTDrnHY0/2kUNs37Uac9fHHmPhQZ97r
+         1FIzmqvW5kvg/WVuwky4aYea29Aw9xR8nvVVUqgOtPdCAXcaItRqEEYJF3OAejLp7WQw
+         08KR4N48TPEanbpHROkLdFH4TGpkoReeQdJbvB9Rgsttm5OIHl9UOy1qx6inJPXk8KZH
+         dhxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXemetTDjT6wlOZhUXsCsPEShtiuihb5mT6HrfwhOCI75pVRxNM5BIwisIa1p5gkD2eZ6yc7ScT6PwD5As=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5PF9+14ZoIo9bZO+op5NdwJ67jali78ra45/h3lNndMhGobFS
+	jKwWYj/K+4V8+4b0QndruOBpM+jzTVxy2g+qruJIl+HLQdE3kkzGUNXnZFN6slRSoQ==
+X-Gm-Gg: ASbGncvGFlDw8KgYeo8760v2OCSFHrZSBsZPuzzRBqYw6rh+aPaFnUYhYxgwbIEBz1v
+	s6eaI5WSyYqg7ZQTBpohIhQPc2Uf4MOeLhQ8Z7SRgPEG1V7PDHRltxLXeTlHPNy95pXxt1UTI89
+	VGgFWoasw/7WhBGsI/8ov1PxJtH2bF9Hg3TaEXXLTZsQePBki+IOn616thOCSGfRMLt9xpPV770
+	WMcXtAf5AFoAldoBZnA2hXN82ylicPsGOcFjq9c2wddmSOyK/1+QSBTvNuWO56x0tWEpaD/q96L
+	KqmsJ1RwJktGiCBXZ5qW37slEUe6CGhF2Zo6TuCUI6GtNabaGqxyr1bbaUMyHUmQdXBhhSTnODw
+	bIsReXYzaLvmH0ze5H0gMpB2ORLjUE3A5bEKbDXmZ6WaSHNQQpLJNd2Yl8G/GIWvkeisBjgc56d
+	tN81+95cs=
+X-Google-Smtp-Source: AGHT+IG5/wy7olanUD0/3s8raSF3C2tVecAtdouylTy8v/DZAJb47CuKQ8lqePsd2KKCCqrNMJZ27Q==
+X-Received: by 2002:a05:620a:f11:b0:7e0:9f9b:c1f9 with SMTP id af79cd13be357-7e87df695d6mr488733385a.3.1755292961252;
+        Fri, 15 Aug 2025 14:22:41 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e06a913sm173610585a.26.2025.08.15.14.22.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 14:22:40 -0700 (PDT)
+Message-ID: <02e181ae-ee76-4f38-a217-a8ba9296e72f@broadcom.com>
+Date: Fri, 15 Aug 2025 14:22:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Luke Wang <ziniu.wang_1@nxp.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, Joy Zou <joy.zou@nxp.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Frank Li <Frank.Li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-In-Reply-To: <20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com>
-References: <20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com>
-Message-Id: <175529260128.3212429.5776706257290268748.robh@kernel.org>
-Subject: Re: [PATCH 00/13] arm64: dts: imx95: various updates
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 00/10] Implement vendor resets for PSCI SYSTEM_RESET2
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Stephen Boyd <swboyd@chromium.org>, Andre Draszik
+ <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Elliot Berman <elliot.berman@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Fri, 15 Aug 2025 17:03:46 +0800, Peng Fan wrote:
-> This patchset is to upstream various downstream changes.
-> - Correct edma channel for lpuart7/8
-> - Add System Counter, SCMI LMM/CPU, V2X MU, coresight nodes
-> - Update alias
-> - Add phy supply for netc, pca9632, pf09/pf53 thermal, spidev, cma nodes
->   and etc.
+On 8/15/25 07:35, Shivendra Pratap wrote:
+> The PSCI SYSTEM_RESET2 call allows vendor firmware to define
+> additional reset types which could be mapped to the reboot
+> argument.
 > 
-> dtbs_check will report a few failures, such as linux,code, db suffix.
-> The failures are not related to this patchset.
+> User-space should be able to reboot a device into different
+> operational boot-states supported by underlying bootloader and
+> firmware. Generally, some HW registers need to be written, based
+> on which the bootloader and firmware decide the next boot state
+> of device, after the reset. For example, a requirement on
+> Qualcomm platforms may state that reboot with "bootloader"
+> command, should reboot the device into bootloader flashing mode
+> and reboot with “edl” command, should reboot the device into an
+> Emergency flashing mode.  Setting up such reboots on Qualcomm
+> devices can be inconsistent across SoC platforms and may require
+> setting different HW registers, where some of these registers may
+> not be accessible to HLOS. These knobs evolve over product
+> generations and require more drivers.  PSCI defines a
+> vendor-specific reset in SYSTEM_RESET2 spec, which enables the
+> firmware to take care of underlying setting for any such
+> supported vendor-specific reboot. Qualcomm firmwares are
+> beginning to support and expose PSCI SYSTEM_RESET2
+> vendor-specific reset types to simplify driver requirements from
+> Linux. With such support added in the firmware, we now need a
+> Linux interface which can make use of the firmware calls for PSCI
+> vendor-specific resets. This will align such reboot requirement
+> across platforms and vendors.
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Joy Zou (1):
->       arm64: dts: imx95: Correct the lpuart7 and lpuart8 srcid
+> The current psci driver supports two types of resets –
+> SYSTEM_RESET2 Arch warm-reset and SYSTEM_RESET cold-reset. The
+> patchset introduces the PSCI SYSTEM_RESET2 vendor-specific reset
+> into the reset path of the psci driver and aligns it to work with
+> reboot system call - LINUX_REBOOT_CMD_RESTART2, when used along
+> with a supported string-based command in “*arg”.
 > 
-> Luke Wang (1):
->       arm64: dts: imx95-15x15-evk: Change pinctrl settings for usdhc2
+> The patchset uses reboot-mode based commands, to define the
+> supported vendor reset-types commands in psci device tree node
+> and registers these commands with the reboot-mode framework.
 > 
-> Peng Fan (10):
->       arm64: dts: imx95: Add System Counter node
->       arm64: dts: imx95: Add LMM/CPU nodes
->       arm64: dts: imx95: Add more V2X MUs
->       arm64: dts: imx95: Add OCOTP node
->       arm64: dts: imx95: Add coresight nodes
->       arm64: dts: imx95-evk: Update alias
->       arm64: dts: imx95-19x19-evk: Add phy supply for netc
->       arm64: dts: imx95-19x19-evk: Add pca9632 node
->       arm64: dts: imx95-19x19-evk: Add pf09 and pf53 thermal zones
->       arm64: dts: imx95-19x19-evk: Add spidev0
+> The PSCI vendor-specific reset takes two arguments, being,
+> reset_type and cookie as defined by the spec. To accommodate this
+> requirement, enhance the reboot-mode framework to support two
+> 32-bit arguments by switching to 64-bit magic values.
 > 
-> Richard Zhu (1):
->       arm64: dts: imx95-19x19-evk: Add Tsettle delay in m2 regulator
+> Along this line, the patchset also extends the reboot-mode
+> framework to add a non-device-based registration function, which
+> will allow drivers to register using device tree node, while
+> keeping backward compatibility for existing users of reboot-mode.
+> This will enable psci driver to register for reboot-mode and
+> implement a write function, which will save the magic and then
+> use it in psci reset path to make a vendor-specific reset call
+> into the firmware. In addition, the patchset will expose a sysfs
+> entry interface within reboot-mode which can be used by userspace
+> to view the supported reboot-mode commands.
 > 
->  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts |  29 +++-
->  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts | 120 ++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx95.dtsi          | 165 +++++++++++++++++++++-
->  3 files changed, 306 insertions(+), 8 deletions(-)
-> ---
-> base-commit: ff837884a4642382a24d10fd503acf2c3a472f10
-> change-id: 20250813-imx9-dts-664f7ba66ae7
+> The list of vendor-specific reset commands remains open due to
+> divergent requirements across vendors, but this can be
+> streamlined and standardized through dedicated device tree
+> bindings.
 > 
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
+> Currently three drivers register with reboot-mode framework -
+> syscon-reboot-mode, nvmem-reboot-mode and qcom-pon. Consolidated
+> list of commands currently added across various vendor DTs:
+>   mode-loader
+>   mode-normal
+>   mode-bootloader
+>   mode-charge
+>   mode-fastboot
+>   mode-reboot-ab-update
+>   mode-recovery
+>   mode-rescue
+>   mode-shutdown-thermal
+>   mode-shutdown-thermal-battery
 > 
+> On gs101 we also pass kernel-generated modes from kernel_restart()
+> or panic(), specifically DM verity's 'dm-verity device corrupted':
+> 	mode-dm-verity-device-corrupted = <0x50>;
 > 
+> - thanks Andre' for providing this.
 > 
+> Detailed list of commands being used by syscon-reboot-mode:
+>      arm64/boot/dts/exynos/exynosautov9.dtsi:
+> 	mode-bootloader = <EXYNOSAUTOV9_BOOT_BOOTLOADER>;
+> 	mode-fastboot = <EXYNOSAUTOV9_BOOT_FASTBOOT>;
+> 	mode-recovery = <EXYNOSAUTOV9_BOOT_RECOVERY>;
+> 
+>      arm64/boot/dts/exynos/google/gs101.dtsi:
+>      	mode-bootloader = <0xfc>;
+>      	mode-charge = <0x0a>;
+>      	mode-fastboot = <0xfa>;
+>      	mode-reboot-ab-update = <0x52>;
+>      	mode-recovery = <0xff>;
+>      	mode-rescue = <0xf9>;
+>      	mode-shutdown-thermal = <0x51>;
+>      	mode-shutdown-thermal-battery = <0x51>;
+> 
+>      arm64/boot/dts/hisilicon/hi3660-hikey960.dts:
+>      	mode-normal = <0x77665501>;
+>      	mode-bootloader = <0x77665500>;
+>      	mode-recovery = <0x77665502>;
+> 
+>      arm64/boot/dts/hisilicon/hi6220-hikey.dts:
+>      	mode-normal = <0x77665501>;
+>      	mode-bootloader = <0x77665500>;
+>      	mode-recovery = <0x77665502>;
+> 
+>      arm64/boot/dts/rockchip/px30.dtsi:
+>      	mode-bootloader = <BOOT_BL_DOWNLOAD>;
+>      	mode-fastboot = <BOOT_FASTBOOT>;
+>      	mode-loader = <BOOT_BL_DOWNLOAD>;
+>      	mode-normal = <BOOT_NORMAL>;
+>      	mode-recovery = <BOOT_RECOVERY>;
+> 
+>      arm64/boot/dts/rockchip/rk3308.dtsi:
+>      	mode-bootloader = <BOOT_BL_DOWNLOAD>;
+>      	mode-loader = <BOOT_BL_DOWNLOAD>;
+>      	mode-normal = <BOOT_NORMAL>;
+>      	mode-recovery = <BOOT_RECOVERY>;
+>      	mode-fastboot = <BOOT_FASTBOOT>;
+> 
+>      arm64/boot/dts/rockchip/rk3566-lckfb-tspi.dts:
+>      	mode-normal = <BOOT_NORMAL>;
+>      	mode-loader = <BOOT_BL_DOWNLOAD>;
+> 			mode-recovery = <BOOT_RECOVERY>;
+> 			mode-bootloader = <BOOT_FASTBOOT>;
+> 
+> Detailed list of commands being used by nvmem-reboot-mode:
+>      arm64/boot/dts/qcom/pmXXXX.dtsi:(multiple qcom DTs)
+> 			mode-recovery = <0x01>;
+> 			mode-bootloader = <0x02>;
+> 
+> Previous discussions around SYSTEM_RESET2:
+> - https://lore.kernel.org/lkml/20230724223057.1208122-2-quic_eberman@quicinc.com/T/
+> - https://lore.kernel.org/all/4a679542-b48d-7e11-f33a-63535a5c68cb@quicinc.com/
+> 
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
 
+On ARCH_BRCMSTB:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: base-commit ff837884a4642382a24d10fd503acf2c3a472f10 not known, ignoring
- Base: attempting to guess base-commit...
- Base: tags/next-20250815 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com:
-
-arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dtb: scmi (arm,scmi): Unevaluated properties are not allowed ('protocol@80', 'protocol@81', 'protocol@82', 'protocol@84' were unexpected)
-	from schema $id: http://devicetree.org/schemas/firmware/arm,scmi.yaml#
-arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: mdio@0,0 (pci1131,ee00): Unevaluated properties are not allowed ('phy-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
-arch/arm64/boot/dts/freescale/imx95-19x19-evk-sof.dtb: mdio@0,0 (pci1131,ee00): Unevaluated properties are not allowed ('phy-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
-
-
-
-
-
+Thanks!
+-- 
+Florian
 
