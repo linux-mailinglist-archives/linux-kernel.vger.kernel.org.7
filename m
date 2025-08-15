@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-771215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A74B2843A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:49:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F982B28453
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73B13AFD59
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:45:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58515E02A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EDD310798;
-	Fri, 15 Aug 2025 16:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZSegJ9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D9B31812D;
+	Fri, 15 Aug 2025 16:47:24 +0000 (UTC)
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5FA30E0C9;
-	Fri, 15 Aug 2025 16:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172E3112C4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276328; cv=none; b=uZc8z87BE8LfWiMI5zpnTwWwAHfJ1UIygolkzkcfmAhHiLWGzAcYZPVSN8ubtS8f8D/Qbg57rDPDc+g5SycWf+DBq19HZxxixVlXxx+Yy2c/dh8aS10eSzoolBYSn/jpIJ2D+YulIX6uUp5YFjrEnWQdcyIELA1bMGjPjuP6kBM=
+	t=1755276444; cv=none; b=jSjZ47h94XzH1UowLnzy8ElpXRHZZhyZZwcOdBXUBDOvIwcfcp+hYs0J2qPmVO91NGmRVMm3Je5n6D/igpU/GtH8SK/mkATWkq5RYgZ1F1IPkzBqy78kYiRWfA89HiEJIJgvvoEPHOatFSw2P5FpgMbhPSPVc26oSILY+VFrLc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276328; c=relaxed/simple;
-	bh=WF2QYFUO9jba47tJ+t4Jyic/JqPDgTw2qJmqktEND/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UxML3aK4Lbb6HMk0abVYL7fOiUWMVlacuBAYZ8+YpGdBj6MxKmdlkGFV8cwRRjvFAqtUtLqrpmWpXeUL63kcvYiDb1d4GQTtV2Qs3kHDPQA1pfj6VNNAU7/++jyh5x0D3qrX2vTPXvhLeYBnZhdgj5RbhCQJVAneQrI483pTBJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZSegJ9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F42C4CEEB;
-	Fri, 15 Aug 2025 16:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755276327;
-	bh=WF2QYFUO9jba47tJ+t4Jyic/JqPDgTw2qJmqktEND/4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XZSegJ9dctJhF2K7y1rpPXh/BoV+TnLIKHx7w4d4SElFFgj0R4CEzwLVF+YzbdYZc
-	 pcnCbnSbWf10MD2D9FHZic2rh5FdHpgujjwTaw9QsyTLlMLUNxtNL+hswtpiuojeRP
-	 nrNjF1Y9SWMkrN/zLiohHza3YI9rzrhN+WkKOsiVuMT3VBoekOBPIUpxoU14WgCGIB
-	 cEtX24yJDQcQBvFwON2F2xftj0F53W6QQvWFEtwhoja5mur+g6PydibDqqyYkC+9Zl
-	 qKwkRdLErIlOiOJPqkyPnjdQN6689y67E4g9CUNigRHt9HsNNvvYo3xBMRBs83armL
-	 oCkkbXGcg5kVw==
-Date: Fri, 15 Aug 2025 09:45:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: kernel test robot <lkp@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Peter Seiderer
- <ps.report@gmx.net>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?=
- <toke@redhat.com>, oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: pktgen: Use min() to simplify
- pktgen_finalize_skb()
-Message-ID: <20250815094526.46ec0fe2@kernel.org>
-In-Reply-To: <9CDBDFFA-DFE3-42B6-8C5C-7F4E2AFEDB9B@linux.dev>
-References: <20250814172242.231633-2-thorsten.blum@linux.dev>
-	<202508151939.AA9PxPv1-lkp@intel.com>
-	<9CDBDFFA-DFE3-42B6-8C5C-7F4E2AFEDB9B@linux.dev>
+	s=arc-20240116; t=1755276444; c=relaxed/simple;
+	bh=x7tndlkYkK0f+ND5GLHBi0hV+UtOcv3u6wqalLlGpYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iDYNkw+jYX+VPlfqrqgdcbxViG+6GvwH1A/6eh60TT/kVHRJ5mVZscoWg8HQVoOLT0ED8yc+DqRrYxB/b98Um7Q4pvmSh1m5rnbR/QQ/CIvO52q50iqaonhSMUk8Jz5EmHWHYgN+rREPIFEpJD+w3F2j/KmTSmNJ15viJ+IQVuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=watter.com; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=watter.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@watter.com>
+To: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ben Collins <bcollins@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>
+Subject: [PATCH 0/5] iio: mcp9600: Features and improvements
+Date: Fri, 15 Aug 2025 16:46:02 +0000
+Message-ID: <20250815164627.22002-1-bcollins@watter.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 15 Aug 2025 13:46:57 +0200 Thorsten Blum wrote:
-> On 15. Aug 2025, at 13:31, kernel test robot wrote:
-> > kernel test robot noticed the following build errors:
-> > 
-> > [auto build test ERROR on net-next/main]  
-> 
-> I thought I compile-tested it, but I must have forgotten to enable
-> CONFIG_NET_PKTGEN. Sorry about that.
+From: Ben Collins <bcollins@kernel.org>
 
-FTR I don't think the min()/clamp() conversions are particularly
-useful. I'll TAL at v2, but I'd appreciate if you stop sending
-such patches to code under net/ and drivers/net/
+ChangeLog:
+v2 -> v3:
+  - Improve changelogs in each patch
+  - Based on feedback from Andy Shevchenko <andy.shevchenko@gmail.com>
+    * Set register offsets to fixed width
+    * Fix typos
+    * Future-proof Kconfig changes
+    * Convert to using chip_info paradigm
+    * Verbiage: dt -> firmware description
+    * Use proper specifiers and drop castings
+    * Fix register offset to be fixed-width
+    * u8 for cfg var
+    * Fix % type for u32 to be %u
+    * Make blank lines consistent between case statements
+    * FIELD_PREP -> FIELD_MODIFY
+    * Remove explicit setting of 0 value in filter_level
+  - Based on feedback from David Lechner <dlechner@baylibre.com>
+    * Rework IIR values exposed to sysfs. Using the ratios, there was no
+      way to represent "disabled" (i.e. infinity). Based on the bmp280
+      driver I went with using the power coefficients (e.g. 1, 2, 4, 8,
+      ...) where 1 is disabled (n=0).
+
+v1 -> v2:
+  - Break into individual patches
+
+v1:
+  - Initial patch to enable IIR and thermocouple-type
+  - Recognize mcp9601
+
+Ben Collins (5):
+  dt-bindings: iio: mcp9600: Add compatible for microchip,mcp9601
+  iio: mcp9600: White space cleanup for tab alignment
+  iio: mcp9600: Recognize chip id for mcp9601
+  iio: mcp9600: Add support for thermocouple-type
+  iio: mcp9600: Add support for IIR filter
+
+ .../iio/temperature/microchip,mcp9600.yaml    |   6 +-
+ drivers/iio/temperature/Kconfig               |   8 +-
+ drivers/iio/temperature/mcp9600.c             | 209 ++++++++++++++++--
+ 3 files changed, 201 insertions(+), 22 deletions(-)
+
+-- 
+2.50.1
+
 
