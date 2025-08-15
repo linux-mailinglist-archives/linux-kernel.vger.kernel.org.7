@@ -1,76 +1,64 @@
-Return-Path: <linux-kernel+bounces-770458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D966DB27AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E31B27B03
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C677B0D1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:28:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06781BC6665
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0B62475C3;
-	Fri, 15 Aug 2025 08:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B142C2AA2;
+	Fri, 15 Aug 2025 08:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RcMw9aYy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBit8ylj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056AD10E0;
-	Fri, 15 Aug 2025 08:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7684274656;
+	Fri, 15 Aug 2025 08:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755246560; cv=none; b=K3KA9uVQcgjWMFJn5VDoY4o4GPpd2hGQy1LanP4iSEgIT+DDjP4TaBUsoJzvk2ki9lqiUxspiaD8F/MOcutPc2gacaqW3xfzBwTygBVo0hLqBzZHq75w4zBulrX9ycMRTDRcdmosQ5ZOiOqo9gh5NnKAQR6xMpzNHzYG/nGV+lA=
+	t=1755246568; cv=none; b=X5PBsE2CpXs2uGkep4+fDLtvhFL7pMtB6E3GY5SDHqndmhBVI3w8TGgTfFt3rqIOW/8X3UxjG1qDB05fc1AI4NSYJMGFW2ZW7GWrSSPuO6uY2QZSyPsNPYwnK3St38dD8drA1ZTTMTE+3olNWKLWv97OCQZC0eXlD+tCcfBFgR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755246560; c=relaxed/simple;
-	bh=8k1nPSWczSYuLZc+h4QPqdu/jttIuO/RCgCR6g3i8Dw=;
+	s=arc-20240116; t=1755246568; c=relaxed/simple;
+	bh=04WDM1P3dI298aPORjuUEvo2ZzH5WcrdlgbcYAXeKik=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jaJVXxU9a/FiBU7AoFwcgfsufg3IqLWnKcwrivLPglGeHkSKiKIFjKhpQ2K1puFsULfa7IAkoH+KabKCatxQNVkrRF8XjKfywlrisgf2oMUcstNeq/JfnfQRiOXK4YJD5+B0gXwU1lTYZo1uLb1oPZPb+cpcIMl/OuH73jwTiPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RcMw9aYy; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755246559; x=1786782559;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=8k1nPSWczSYuLZc+h4QPqdu/jttIuO/RCgCR6g3i8Dw=;
-  b=RcMw9aYyBLYVE1yTafQcEmAtXVCf2blAKGc3EGciPhIj+e21hCtrUeJP
-   SYS22fULfBKcriOBf8xbVYCL5ykIUMOc8Q1NqVD3t7S8EBMlBRzSy9xCX
-   zHv0OSM2m1kd1hWG17Rapo3yIXz2I/dVEBGo4LOjZyejj9REZRy88RdSx
-   r7isKmIy4snTdT6P2SiG85JUpt6Zxy+lbVqSe0vlT7ymSU9pOReOIjAKJ
-   mkrCg7C+LqY4XPMC10rF/X8dFBGGgGN6puK9wJyMeAxXmq1Uzwg8CXfeB
-   uoy6kQKxEefujpr3whraU8i3rt5mtfAdjdK2CGZJUWl+jOSM5JhXyxsW0
-   w==;
-X-CSE-ConnectionGUID: SdHLiinORj6Hdsub2d13dw==
-X-CSE-MsgGUID: mwy6/98NS5yzOhz5Bz2ySg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57645282"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57645282"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 01:29:19 -0700
-X-CSE-ConnectionGUID: C1MLpPdWQPWV/kIBo+WJsw==
-X-CSE-MsgGUID: oL817FOoS9eCwKr/6HHJyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="167229240"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.142])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 01:29:16 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH RFC 00/13] Collect documention-related tools under
- tools/doc
-In-Reply-To: <b63fb30a-5d33-42bd-bdf3-b8dfb960bdf5@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250813213218.198582-1-corbet@lwn.net>
- <e84e288af0536cdc406c787301bc6b9b11c0be0a@intel.com>
- <b63fb30a-5d33-42bd-bdf3-b8dfb960bdf5@infradead.org>
-Date: Fri, 15 Aug 2025 11:29:13 +0300
-Message-ID: <5a17445f2ebb4a1290df1d046f0752f7fd8742d1@intel.com>
+	 MIME-Version:Content-Type; b=tCpkDf9r1bHW7RFhjrux33E7Ocvub43nWrkxbmw6n0yVdxSVwavkj2bobqsVaB7dlanIuspXdm0kuVUhtKP75+1N6mSp/nhmH8CAh0XVY+TVzCPOt0x4DbpxeqK32GPZmYBohFmDRc7ihdQROx0Ub80qEpJknzFP5Q5bZeolhd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBit8ylj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DC6C4CEEB;
+	Fri, 15 Aug 2025 08:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755246568;
+	bh=04WDM1P3dI298aPORjuUEvo2ZzH5WcrdlgbcYAXeKik=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WBit8ylj2asPwx1SZmIFbsQd/tWKfh9JYqqMUSZJTl48dxx/VAvCETS9frLuvtsb7
+	 oxxt8wenkSVCW9DqEReRzVrXLgz/YiMrC7L1L9pI1OFGLjeEAgKpnrbtNJ9/IZ1yrW
+	 NOMUP0uL5Leddg804Fsb2Z/spoNOl30CXuGGBOX/ucDFdlFzMeyqGPQ8s9VfADHSnG
+	 fgKomVzFp4J4sigCpbxMAqcTQjsaCbW07zrnBY9DCDeOiAp1YIsjx8id6VY52vSarE
+	 X+hJlBcY4DmcnmqxXC46XjDh8Nf0A+Rpb7uxNV2Vl5Gq5CBxDO8fpIOkLz+b8PN4Wd
+	 z8nvDYDwSSV7Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 07/18] rust: configfs: re-export `configfs_attrs`
+ from `configfs` module
+In-Reply-To: <aJ7sQF6ObVlwX3U0@google.com>
+References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org>
+ <20250815-rnull-up-v6-16-v5-7-581453124c15@kernel.org>
+ <UNKR4V3pgHcYGU76GBf8aBKpJPgL7tf5Ct7oM0C_JEiL6Hq2uewAuV3yQCcJ55QSQJ-0_bMM3zA7f_zmAIGHjg==@protonmail.internalid>
+ <aJ7sQF6ObVlwX3U0@google.com>
+Date: Fri, 15 Aug 2025 10:29:15 +0200
+Message-ID: <87ikipdm3o.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,21 +67,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Thu, 14 Aug 2025, Randy Dunlap <rdunlap@infradead.org> wrote:
-> Would tools/docs/lib be OK?
-> I wouldn't tie it up to a specific language,
-> but I don't have a strong opinion either way.
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-I think the question is, is the directory for libraries used by
-documentation tools *or* for python libraries used by tools in general?
+> On Fri, Aug 15, 2025 at 09:30:42AM +0200, Andreas Hindborg wrote:
+>> Re-export `configfs_attrs` from `configfs` module, so that users can import
+>> the macro from the `configfs` module rather than the root of the `kernel`
+>> crate.
+>>
+>> Also update users to import from the new path.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>
+>>  rust/kernel/configfs.rs       | 2 ++
+>>  samples/rust/rust_configfs.rs | 2 +-
+>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+>> index 2736b798cdc6..0ca35ca8acb8 100644
+>> --- a/rust/kernel/configfs.rs
+>> +++ b/rust/kernel/configfs.rs
+>> @@ -121,6 +121,8 @@
+>>  use core::cell::UnsafeCell;
+>>  use core::marker::PhantomData;
+>>
+>> +pub use crate::configfs_attrs;
+>
+> In other re-exports of macros, we've placed it immediately after the
+> macro_rules! declaration.
 
-I would lean towards the latter, to not create another dilemma when a
-library is used by both documentation and other tools.
+Ok, makes sense. I'll move it.
 
 
-BR,
-Jani.
+Best regards,
+Andreas Hindborg
 
--- 
-Jani Nikula, Intel
+
+
 
