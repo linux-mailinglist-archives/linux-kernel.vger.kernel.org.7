@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-770413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE358B27A76
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C67DB27A6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A65D1C24D24
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F7D5C1154
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10922D2393;
-	Fri, 15 Aug 2025 07:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794002C325D;
+	Fri, 15 Aug 2025 07:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olvlv3eR"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3TicxVS"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6152C3264;
-	Fri, 15 Aug 2025 07:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627452BDC09;
+	Fri, 15 Aug 2025 07:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755244610; cv=none; b=EhVCoew4rvO6FJdFR+jmS0gH8IZnSJwvg+2XpBKxKQJnqZ+0yhoNFepaslTJF62bFqc7nNGEqgWi65wt26+P0TYLMxV6f+9al42PqpNCxf0BJ0gP79sgELvjxSUYvw4phRXsPElsRMezvksJKd9FQ+p4zoS4lnil6Xb09RyovoQ=
+	t=1755244608; cv=none; b=aDRiD9UI2uSlJuTNnEj7OxAYzM9P5siFxi1XGnxeD17s22/F2iQCNYLpYzwoZxL3jq2ZRc5UC0POzopFT+c3rh3KbWcnA+svulw54+xTGDrSZoV0Hf+qEILPuvJiL9aeqZ64RnegGm7YUVZ4JM5h4bqVi/rUW/Xb2c2oAIQgL0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755244610; c=relaxed/simple;
-	bh=LhTo5cCdwQe8pulukYwJ1m6eHZbBpd52JQDpSBVReeY=;
+	s=arc-20240116; t=1755244608; c=relaxed/simple;
+	bh=BSdi2w3mGBfqx7vQ62yyAGKSjWZXG1QSCbm15ZVydcE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k6Bl7DK1PDyU/frcCRWGKXLuOPuZzRhLaA36Xlnkz1mmRZPFmxr9GZex342o+6t5vtEb4usBnLiLDDoVZyP/22CopN0WfThCbyZBkkomP9kNGUrNS45XF2fdmutG8NIS+H4bwvZqDXyK3Wigqi3aQAuEqEp+qwf2KRMho5v1LuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olvlv3eR; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version:Content-Type; b=FqmUZR1e+0dhv7hG8W+ExJauS/TbQducVKViYfSQfnndFd07bgRpeSyHFbZdoVBX2rF9c9IEltbT8AX7QS40YIfKbjG5tIgOObSV2TLtQ+XvaTtSxYz2U8gA141u5opXn1fdgZ2UEGlP+Dky8PyLmRIvx6QSL1vFhdnVsqtat2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3TicxVS; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2e60433eso1416135b3a.0;
-        Fri, 15 Aug 2025 00:56:49 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2e614b84so1826594b3a.0;
+        Fri, 15 Aug 2025 00:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755244609; x=1755849409; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755244606; x=1755849406; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+F9NmXtez3GpQw5LIS9Oo9You3cZ7+F/dZD1WEotmBQ=;
-        b=Olvlv3eRPjbyaxlmiY/KydZ6YuteKczH0Le1idMo5PL1Jh7XTEI+7RhX0KfSs/puZ0
-         iSq+TKtrx7bRTXnuVVbH0dTp3m5i30V6NxmKNQuQ3rcWVnwXabOhZS9JG97faexrl+5Y
-         sqYNRLBvOb1/G7oyvVcO+H49oRCboCVCIriuNjZEopGDHahFbvnLGsowPIlibamKjNvD
-         Tkytzwo5juseNlTiq4lvhcFOTv1IiGxCKBXSQeadVIKWiBY6xsGOTaT0ETnW4CyN/qA0
-         JONnI6VYjWdULDmoEn+unHJqgPh89mjH8nMmbC567F+fmTRwWOo8MoxWZ2tpQ2Nq5Dmz
-         z1Bw==
+        bh=4SqBwk/eT0E+fNoZp9YX9tGh8FiPKp3ALbCTa/kbWN8=;
+        b=e3TicxVSX7l2Brq0uuZj1xw8FeDIwxSZZjwRtq72jdiEpjHyBc0a3JSie8ORzUI/bu
+         zkYx8/6ia+5Vau/KhVHWMWSIJIdxQ0fAcxaK2junhk+4/EvMi2rjr2GOeoPRq2oF/tFf
+         9eQXVcqVZmr1Ra+ABsjm3JuljmMJpUzEq/QEo5d8OD0p1YhnThaqveYYAzQ/ZI1pAK8h
+         NNB9AUZCUB+mxYrll5sI+KyUhCplVv8fhuXt0a2QdLCdY2f49t27VcSID+pyz+Lwad+6
+         xmLtgmF9P+lk2gGDt/DrRX2sHyU/GakE9heKpeoz3TWNZyz/2pi/2glZgBtYV1w9TPoy
+         WMxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755244609; x=1755849409;
+        d=1e100.net; s=20230601; t=1755244606; x=1755849406;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+F9NmXtez3GpQw5LIS9Oo9You3cZ7+F/dZD1WEotmBQ=;
-        b=tljQ83vgpUOe4vmKMxKlTki2TZ7CrdK8RtU/Xrc/GTT0SvHI6BtiIiIERCQ4jnGVNv
-         3zbW37iy2DY+nCCPrkAnKRB3JIQeyysoRzNTankwFeA5Aew/LqLYvZssz4KqvwwAVKk+
-         YFgTG6x86YgTYeIbLDy/utHraU7gHrWd5pRLLhpxF/WoMCTTkWzby0+Un87xup62i+M2
-         04ozcYrbGENsDxkvfQp/iS74ctSvSgLScjWyN/c3wRq7zw+8PVFn/99zrOqzAECGs7Vc
-         a/4CiEnVHIbFdcnQa2FngBJe2piIB0pNn71FuLZbnnWf7uy9+f4h33D3IbpH6BxFZlJ3
-         Qazw==
-X-Forwarded-Encrypted: i=1; AJvYcCXL6DX7C2zoPa9ZkqAOb+rcitUFJsXFjm7xrMnNUJ+jkeg09AQ4a9mX56J5O4YWiqJTkderot3BO88=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc342472dtv8BmUtmQl0pvOWiEhaFyiUMBAWONjNduJLAuL90s
-	w9bdkcwJGS19rKW8RRXEEx65hnE5qk302oqDJfvMhTA67r8YWlwV6UQE
-X-Gm-Gg: ASbGncvC+J1tD2/EJ+jAUP5LcK3n7ucE/H6K4ExYfsA6xVyJ08h9unHGvcyVSyosbWR
-	iBbbmjm00eA6ZDkN8SARPuxveOqblXBYDqLzXB6Sa/lYVnm9bzHoQXrvMG07zqlci8lnBpmjev9
-	ZCZ6oL+5aHDTuc2GBLPiWUcmetKAaGUJblggxJAeRTCWkhL8nLqtBsBUNlI951AJ2bi3fX64mg7
-	s+i9kukYTWEQ+Qt0S0/QuyiBxWwJDdYYA0g9+vODuF6qS5nhoeC9ShygMdfWjqYDswR7V8w7KQk
-	l++GFxVoTVvkdGsgPHf6ivLE9pjhbkW/GVxpMi4MJSBFMonXjksa5BFEjVMsXn4NktrH5ociOJ1
-	Tuq9Mm4vSTzUGzj7Q7GLiZg==
-X-Google-Smtp-Source: AGHT+IG2n5h40h0uXDvhOaYG1ODrl6MH66mS0Kg0YJ2Fc6MbnZC5W+akAaB8uZW/JgLmbU+Z8yK1Xw==
-X-Received: by 2002:a05:6a00:993:b0:76b:fd9d:853d with SMTP id d2e1a72fcca58-76e447bf915mr1371167b3a.14.1755244608609;
-        Fri, 15 Aug 2025 00:56:48 -0700 (PDT)
+        bh=4SqBwk/eT0E+fNoZp9YX9tGh8FiPKp3ALbCTa/kbWN8=;
+        b=FUBLxuIkLWvHuiJ73Cpn8D5fc4MzMnG0EzZT2wfgKoUClXpZa++MJILBGXMZF0AE80
+         /Tn919f6SqYAcQcoB+9r/kzKpbWM9O9bMaL66hJpTzDvRBDCvR40hf2ThhQ92qwO6b3f
+         L9tJO64mI4issqhSwjsuBXVsPHgmnzWFcQb+0vbOxBKhPfE2u7aZxyeH/2rZQ3M+KGI2
+         lknAfE0maZ07lWPYdApb8OSE/U9Qm+y42KM+hBAhBeimISBgYA0S1id6LKfvo81iQmnz
+         JSFT7+4i819/jqkwoQMBjIyGOR7vpc0CWF53QIFTrtjNwBagKjHjL6+A4LCByZ1/YOhe
+         nLIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLXtmX4D6GFT8GDvWHENYTt41KajDiklNubx1gU22JQOGZJXRXAuvupYoOh1jZpVbad5Pf+TmsbXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydCUFUBuvCTz28OO0xZlhHR4I7ku5GCFFjpeByNNz6tIUgdnWE
+	kjYGTXwvZ6o06PMpDM6247s48tIGEEkGDWTKu3tdcXYwjZdS8BXN6fdc
+X-Gm-Gg: ASbGnct6uFSmMwJNL+WXUepmwtrIhVEeIpmqXWAN86vKaA6/3ONuJ4P29Df+4YjCwdr
+	HACblrsQHz6vhl025ihZewTpCSfUowgA1ct/g+FwKW3c2dFMdDLmc1utJhVHpPhTwg/q2bXdu10
+	eTvqfMBt91vKdDgaQQAx83d3oqz2k4bhtXez3fj/HUDWL56n4wtOiCzBIGePKy2Q3I3kg4KfpNr
+	KhmWegFmEXYwlaF3P52PdSaBz62g5chuQY6gyXLgVap2s+9m9chXbagX3xhpBHTkTi3h/Zf7X4t
+	DRho9mUTh+LN80mKe4jNeI0YNl8YWQMEErfmDnUcxc5CU4xsq+JaVoSIns3Yc3LcXNydZ1DydUE
+	sIZp6p2mG13LyLqQewGAJgQ==
+X-Google-Smtp-Source: AGHT+IF9ucjW/KtwwO3q2uYVf9EFn3Mg/zyi7hUeanmOPhSmnzBBOZt2Q3XjmVtqygSPlYAgPovRow==
+X-Received: by 2002:a17:902:d488:b0:234:a139:11fb with SMTP id d9443c01a7336-2446d8b1f78mr16115555ad.27.1755244606499;
+        Fri, 15 Aug 2025 00:56:46 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45292dc1sm587699b3a.50.2025.08.15.00.56.46
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54f8b9sm8483715ad.130.2025.08.15.00.56.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 00:56:47 -0700 (PDT)
+        Fri, 15 Aug 2025 00:56:45 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 2B3EB42BF64F; Fri, 15 Aug 2025 14:56:40 +0700 (WIB)
+	id 3A2C142D95C7; Fri, 15 Aug 2025 14:56:41 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -85,9 +85,9 @@ Cc: Dongsheng Yang <dongsheng.yang@linux.dev>,
 	Mikulas Patocka <mpatocka@redhat.com>,
 	Bagas Sanjaya <bagasdotme@gmail.com>,
 	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 1/3] dm-pcache: Remove unnecessary line breaks
-Date: Fri, 15 Aug 2025 14:56:14 +0700
-Message-ID: <20250815075622.23953-3-bagasdotme@gmail.com>
+Subject: [PATCH 2/3] dm-pcache: Use bullet list for data_crc constructor argument
+Date: Fri, 15 Aug 2025 14:56:15 +0700
+Message-ID: <20250815075622.23953-4-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250815075622.23953-2-bagasdotme@gmail.com>
 References: <20250815075622.23953-2-bagasdotme@gmail.com>
@@ -97,100 +97,44 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3370; i=bagasdotme@gmail.com; h=from:subject; bh=LhTo5cCdwQe8pulukYwJ1m6eHZbBpd52JQDpSBVReeY=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnznq9XeaPT6ddyxvznDt+WUuX/07Z5cE+YENi4cufF2 jXZquqFHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjI+lyGf/pbZkxcdY+ff7Xm 0vMFG9oTpi0tzT3Lfl3geHvzYeN9N/gY/nCs/fxc/TBncZFI1oe4ac8iHrQ8vvOE+ev1PHfD+hm Ld7IDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1798; i=bagasdotme@gmail.com; h=from:subject; bh=BSdi2w3mGBfqx7vQ62yyAGKSjWZXG1QSCbm15ZVydcE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnznq+fdHNXPKfJo/Se5TdDNSUC+2WSz+Q9dHljJ3fI2 t1r67ajHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjID0FGhs4d39cL3bu/wzi4 Rtt8jb25+P0ktTNhU/1spt44sqC+7yQjwye7tXwp126sCzNKE+rjfPnGNjSFc8K6u2rXVz/M87/ 5jgEA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Sphinx confuses line breaks that are placed right before section
-headings with title heading overline. This causes htmldocs build to spit
-out markup error:
+Sphinx reports indentation warnings on data_crc argument description:
 
-Documentation/admin-guide/device-mapper/dm-pcache.rst:27: CRITICAL: Title overline & underline mismatch.
+Documentation/admin-guide/device-mapper/dm-pcache.rst:44: ERROR: Unexpected indentation. [docutils]
+Documentation/admin-guide/device-mapper/dm-pcache.rst:46: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
 
--------------------------------------------------------------------------------
-Constructor
-=========== [docutils]
-
-reStructuredText markup error!
-
-Remove line breaks to keep htmldocs building.
+Fix the warning by using proper bullet list syntax.
 
 Fixes: 6fb8fbbaf147 ("dm-pcache: add persistent cache target in device-mapper")
 Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250815130543.3112144e@canb.auug.org.au/
+Closes: https://lore.kernel.org/linux-next/20250815131115.45518c74@canb.auug.org.au/
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/admin-guide/device-mapper/dm-pcache.rst | 8 --------
- 1 file changed, 8 deletions(-)
+ Documentation/admin-guide/device-mapper/dm-pcache.rst | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/admin-guide/device-mapper/dm-pcache.rst b/Documentation/admin-guide/device-mapper/dm-pcache.rst
-index e6433fab7bd64b..ecd015be798243 100644
+index ecd015be798243..02cea738ae131b 100644
 --- a/Documentation/admin-guide/device-mapper/dm-pcache.rst
 +++ b/Documentation/admin-guide/device-mapper/dm-pcache.rst
-@@ -24,7 +24,6 @@ Quick feature summary
- * Pure *DAX path* I/O – no extra BIO round-trips
- * *Log-structured write-back* that preserves backend crash-consistency
+@@ -40,9 +40,10 @@ Constructor
+ ``cache_mode``              Optional, Only ``writeback`` is accepted at the moment.
  
---------------------------------------------------------------------------------
- Constructor
- ===========
+ ``data_crc``                Optional, default to ``false``
+-                            ``true``  – store CRC32 for every cached entry and
+-                                      verify on reads
+-                            ``false`` – skip CRC (faster)
++
++                            * ``true``  – store CRC32 for every cached entry and
++                              verify on reads
++                            * ``false`` – skip CRC (faster)
+ =========================  ====================================================
  
-@@ -57,7 +56,6 @@ Example
- The first time a pmem device is used, dm-pcache formats it automatically
- (super-block, cache_info, etc.).
- 
---------------------------------------------------------------------------------
- Status line
- ===========
- 
-@@ -97,7 +95,6 @@ Field meanings
- ``key_tail``                     First key-set that may be reclaimed by GC.
- ===============================  =============================================
- 
---------------------------------------------------------------------------------
- Messages
- ========
- 
-@@ -107,7 +104,6 @@ Messages
- 
-    dmsetup message <dev> 0 gc_percent <0-90>
- 
---------------------------------------------------------------------------------
- Theory of operation
- ===================
- 
-@@ -151,7 +147,6 @@ If ``data_crc is enabled`` dm-pcache computes a CRC32 over every cached data
- range when it is inserted and stores it in the on-media key.  Reads
- validate the CRC before copying to the caller.
- 
---------------------------------------------------------------------------------
- Failure handling
- ================
- 
-@@ -163,7 +158,6 @@ Failure handling
-   rebuild the in-core trees; every segment’s generation guards against
-   use-after-free keys.
- 
---------------------------------------------------------------------------------
- Limitations & TODO
- ==================
- 
-@@ -172,7 +166,6 @@ Limitations & TODO
- * Table reload is not supported currently.
- * Discard planned.
- 
---------------------------------------------------------------------------------
- Example workflow
- ================
- 
-@@ -196,6 +189,5 @@ Example workflow
-    umount /mnt
-    dmsetup remove pcache_sdb
- 
---------------------------------------------------------------------------------
- ``dm-pcache`` is under active development; feedback, bug reports and patches
- are very welcome!
+ Example
 -- 
 An old man doll... just what I always wanted! - Clara
 
