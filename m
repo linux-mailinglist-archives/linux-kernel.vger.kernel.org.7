@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-769917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3151EB27508
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF73B2750A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EAFB1891497
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6039C18936EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C1129A303;
-	Fri, 15 Aug 2025 01:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E367E29A332;
+	Fri, 15 Aug 2025 01:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLZuYmwt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWJWeBFq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13DC29344F;
-	Fri, 15 Aug 2025 01:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B66E29344F;
+	Fri, 15 Aug 2025 01:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755222815; cv=none; b=MOYQdkKL21uy93q22wa1DeE6AkTQ3T7/iNEv3K6SBddjeh8pOOhaxIfcy83x0gs6/MD8+Q1so62jOXmXr2VLI0JLzKYubuMqykycnE6A59dzaItAQPwzQL2ZplWYAuw0NtoTxhNT7hRSZTQM4wa2+zqd8fCsMAznYRkQ19wZRqc=
+	t=1755222823; cv=none; b=Jx65N1ZnGgOOzCxF+YarpCcTSWH8O3cXB0La+MmK5WNhExVgWGHGPOnG6feW+NFYiP/pBUkb7Tyx9zGPwpB01+iY62AvmU3C/FUhJEWjhp3uOoTkc/HpsOBLtiVLawCQAnTrx1XbgVKz7csLPcR8C1ocSr3AuAd6581f4ZxHicE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755222815; c=relaxed/simple;
-	bh=iJdqm6fChWwedp2Qg212RxFmubV9KbL+zQFWdcThFmU=;
+	s=arc-20240116; t=1755222823; c=relaxed/simple;
+	bh=GKhcDi4HWFWwr3pajLQPCJLuDx+zYQo5xPViOOs7nCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V7KzbZgd0i510EGo74rJNUpYatJ4Fi3Wa2NWLxKHiRQGTYvcErjDTKmZB9+1S19bIktJ1PpoKiuM6phACIcY2zgZTvYI6FGFyhO/AyqPbknr6bj5wfKK3vvmiARBs3x7jBbafG7UrNVL/H3j1gz9HE4BZVaRW0yiBBJreaCwFiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLZuYmwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2EDC4CEF1;
-	Fri, 15 Aug 2025 01:53:27 +0000 (UTC)
+	 MIME-Version; b=fEomxWNi3R5nDmx9iT/TBnplPCLL0RyEc+ebxpYZfmAGmToERQ+rr8q+ktL95b9nQrp6qCpj1uh7SSCBdecMUBQXAq7zEoJueQHylM+O9teEo0zx4Ah9hVdsEY5/k/yP1rIU40J4MgLe6yNFBNUEKV8JbseZni019x/osN9s8Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWJWeBFq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A78AC4CEED;
+	Fri, 15 Aug 2025 01:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755222814;
-	bh=iJdqm6fChWwedp2Qg212RxFmubV9KbL+zQFWdcThFmU=;
+	s=k20201202; t=1755222822;
+	bh=GKhcDi4HWFWwr3pajLQPCJLuDx+zYQo5xPViOOs7nCs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XLZuYmwtHOgawZHbrs8le8MEYR/bhrslLCuXmTzmlh9ePiBAwNmn8qWKi2OT3qvt1
-	 DIduGIQOWIVFcR8lxBqFd1fCQqMrRV7aURdAEqTmofgMh6OSJ/6TBBUmZdbKfWKYK9
-	 L6MGwudUvFaN+mwX/1j8hbar75j07GD1qlz29unB+KABOegvBADlds6VHSkKv1wjg9
-	 GvssvpcQ545H62GkC+1qy4LAdEc9CnyuoknqFM+0+TfDfxbOkQypiMVMrLbbGxfkGe
-	 1Nu2vgjF/7e4r007hcFP7499UWdnBvwx21LhqHTHKO0lwo3eY5BqZRDKSByJRa7yYi
-	 a/+Iufw2UGzBg==
+	b=kWJWeBFq7eKqnGcMu+sIhicxUZxbUaeM6ba6RccfbF/2dBSBC3rUY+Z7OAkD5OXpi
+	 hdi/j2S5jjvEVAQY/d0VbBxi7TjMvCZhey0dtD3PgsgdpSHYbgrDyb55paio6w71kZ
+	 nPB6HcSHLF0X/+HEQAURNW3Y1XDMm5wpkxtGaV8AHXog6sJO0q0Z9ynSCiw4lUb6fH
+	 RobI31dstAdof/57F/Rc+pLnmieKT/zjBTMrbEYz008rtvMhV9gl+AT7wd5ucNhmrr
+	 iT8nN3Pw45SPsHNfIZcU6UhrAGQQRka/wRfy/RUrWpIsJ2tgoUI1kax0SB5YKAyIKO
+	 THkc2wda48foQ==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
 	Aubin Constans <aubin.constans@microchip.com>,
@@ -83,9 +83,9 @@ To: Ulf Hansson <ulf.hansson@linaro.org>,
 	Alexey Charkov <alchark@gmail.com>
 Cc: linux-mmc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 17/38] mmc: sdhci-brcmstb: use modern PM macros
-Date: Fri, 15 Aug 2025 09:33:52 +0800
-Message-ID: <20250815013413.28641-18-jszhang@kernel.org>
+Subject: [PATCH 18/38] mmc: sdhci-esdhc-imx: use modern PM macros
+Date: Fri, 15 Aug 2025 09:33:53 +0800
+Message-ID: <20250815013413.28641-19-jszhang@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250815013413.28641-1-jszhang@kernel.org>
 References: <20250815013413.28641-1-jszhang@kernel.org>
@@ -107,41 +107,71 @@ regressions are subsequently easier to catch.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/mmc/host/sdhci-brcmstb.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/mmc/host/sdhci-esdhc-imx.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
-index efc2f3bdc631..15705e85417f 100644
---- a/drivers/mmc/host/sdhci-brcmstb.c
-+++ b/drivers/mmc/host/sdhci-brcmstb.c
-@@ -496,7 +496,6 @@ static void sdhci_brcmstb_shutdown(struct platform_device *pdev)
- 
- MODULE_DEVICE_TABLE(of, sdhci_brcm_of_match);
+diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+index a040c0896a7b..a7a5df673b0f 100644
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -1650,7 +1650,6 @@ static void sdhci_esdhc_imx_hwinit(struct sdhci_host *host)
+ 	}
+ }
  
 -#ifdef CONFIG_PM_SLEEP
- static int sdhci_brcmstb_suspend(struct device *dev)
+ static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -1707,7 +1706,6 @@ static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
+ 		       host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
+ 	}
+ }
+-#endif
+ 
+ static void esdhc_cqe_enable(struct mmc_host *mmc)
+ {
+@@ -2016,7 +2014,6 @@ static void sdhci_esdhc_imx_remove(struct platform_device *pdev)
+ 		cpu_latency_qos_remove_request(&imx_data->pm_qos_req);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int sdhci_esdhc_suspend(struct device *dev)
  {
  	struct sdhci_host *host = dev_get_drvdata(dev);
-@@ -540,17 +539,14 @@ static int sdhci_brcmstb_resume(struct device *dev)
+@@ -2112,9 +2109,7 @@ static int sdhci_esdhc_resume(struct device *dev)
  
  	return ret;
  }
 -#endif
  
--static const struct dev_pm_ops sdhci_brcmstb_pmops = {
--	SET_SYSTEM_SLEEP_PM_OPS(sdhci_brcmstb_suspend, sdhci_brcmstb_resume)
--};
-+static DEFINE_SIMPLE_DEV_PM_OPS(sdhci_brcmstb_pmops, sdhci_brcmstb_suspend, sdhci_brcmstb_resume);
+-#ifdef CONFIG_PM
+ static int sdhci_esdhc_runtime_suspend(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+@@ -2188,12 +2183,10 @@ static int sdhci_esdhc_runtime_resume(struct device *dev)
+ 		cpu_latency_qos_remove_request(&imx_data->pm_qos_req);
+ 	return err;
+ }
+-#endif
  
- static struct platform_driver sdhci_brcmstb_driver = {
- 	.driver		= {
- 		.name	= "sdhci-brcmstb",
+ static const struct dev_pm_ops sdhci_esdhc_pmops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
+-	SET_RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
+-				sdhci_esdhc_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
++	RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend, sdhci_esdhc_runtime_resume, NULL)
+ };
+ 
+ static struct platform_driver sdhci_esdhc_imx_driver = {
+@@ -2201,7 +2194,7 @@ static struct platform_driver sdhci_esdhc_imx_driver = {
+ 		.name	= "sdhci-esdhc-imx",
  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
--		.pm	= &sdhci_brcmstb_pmops,
-+		.pm	= pm_sleep_ptr(&sdhci_brcmstb_pmops),
- 		.of_match_table = of_match_ptr(sdhci_brcm_of_match),
+ 		.of_match_table = imx_esdhc_dt_ids,
+-		.pm	= &sdhci_esdhc_pmops,
++		.pm	= pm_ptr(&sdhci_esdhc_pmops),
  	},
- 	.probe		= sdhci_brcmstb_probe,
+ 	.probe		= sdhci_esdhc_imx_probe,
+ 	.remove		= sdhci_esdhc_imx_remove,
 -- 
 2.50.0
 
