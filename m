@@ -1,218 +1,158 @@
-Return-Path: <linux-kernel+bounces-770830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAA9B27F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E55B27F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1943DAE6EBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90139AE7C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3873002A5;
-	Fri, 15 Aug 2025 11:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E993009F0;
+	Fri, 15 Aug 2025 11:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV+N/jRt"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/IDUZvo"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB42285CBF;
-	Fri, 15 Aug 2025 11:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CD23009D4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257931; cv=none; b=HnfTM1FT8JufBfcZKAkZaD5MxdtZh92Ot6JV+xKIDmSboAKvbPTqVKT2mVEGHYQ8bopeXp7WsD9SAj7Ql8h9d9EW9qTc/P7uPVuswQKGtMbFlnWiO1MpGiiRyvktfjfOH0VBOBf+EZOyaWrdO7pPmR6z6iyCQksjNXIcxqwkQ4c=
+	t=1755257967; cv=none; b=LNqFjZ6D1j/SGslB0N/ulicvtm4oG4YvImh+leTBfsFQXG31XRTtpVVDhJV3kkLJKGK6HaWPZKzIuYIBPJlg1vdsQG2BlMfosKMBfiKNGg66eMj+xJgAmOQlPTQYYIai83yY7UVIO0uYqmmEu7PNQ2DDQkug4FqRCOssOhGVtok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257931; c=relaxed/simple;
-	bh=3/XDT/Wjm/E0x/KfIBkufkuKiKbnqCecNkQYBevU9WE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZQhBFp0p5sqhF3erDaJogYvou/qS0xxbz4Uvqob9H4wflHmvi9dww93EcbsdX9DmTxOEk2umFcnChuI8nf0sZoDuFLTF9kkdNuPF0U5yX5Vh218L9ZbKnRARviy74FTUNPKvwQaQpyd9mnjz03nrObwCHaIHJ2e+OKQ3RwuuOQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cV+N/jRt; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso1798214b3a.3;
-        Fri, 15 Aug 2025 04:38:49 -0700 (PDT)
+	s=arc-20240116; t=1755257967; c=relaxed/simple;
+	bh=TOUVdqm7mQx3pyxgpuavzmM5bjtretRp24F0LUMdPps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qiIx5wfm47OkO3hdbxS9zJ1mcezpb7Oel6vv/ZuMq/41gYAoCwNQAYaVcN6r1HNmDRQesDpeDWt/vVDxrr9Hl+aWqj2LfBe8oYXkoRLK3CDOOr4OXGz2SJZ1SnUCpVa+Rg4PhK2lI2K2yl0D6FrSBQPFd8b7olwSUKZmerU5B30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/IDUZvo; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb78d5e13so28334966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755257929; x=1755862729; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755257963; x=1755862763; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnAvNpYK/d4feWDnZ2eneoT0hUG01qbZEZ4vonbJ2yA=;
-        b=cV+N/jRtQ2YV8iTMvLRq1oITwoc58qg0moliM+sNsJmWFwLBSB7cg74kZAT4HM7W6b
-         0a49+GdQK319or7b04qkN21RCSdyAK5arVZ5myhYyzy8+rw2xhK4isSAc9v4v6dO3HFT
-         4XqllTaJ6aoNNJd90sxb2w5P1/Ojr2mOWPXUP5CVvGZAzLfyunWkwc4WGxBfRS+DVuol
-         Dhf1ThjvPuOB+QWOOxWNmnII/bn8z61rdtVCCVeCkHZR8jGxhQmpEEe12k4ZZ0SmOBEY
-         31GB8wrjbW3aSd5pfIyZn+O8Zr6+6P8Aa3MA9RnAXOZHplom7Cuo8hRdckwU/d1jtvmU
-         iaEQ==
+        bh=x2PuPJpMglgU/pqE3sPu/yNVHdTRzSvgqfdxSlclOhI=;
+        b=I/IDUZvocmiCnc/AsQ5R5ES12XEogwqBahE75ZQlvObEuJYcnvZyE9cu93Bw/kgW3U
+         ZUBraPjDhx60jJXkWxfYhsw5VUEXL4rAl+jwB+7X/9w9IOC+r6akbdBsD2HB7J101VpZ
+         cfC7GNGDf0PQVvB70u2sssK6r6HFQErAd5jk+k7GLs3aXxrovHlr7BZZecpNIgDQ3JD0
+         vIzLd+CPkdVcX/iqIqFSXFBNHkz3BjsXCUNbYgb5gNhi2GQwcDZFKGoLUk/DKS09OPuV
+         YodXZSVaZQ0hw5iabZrMoQhSs1ELYBFEKn2Lw4S0gMR/3DkvyxCGMce6hyRr9OpmA9Oy
+         yoyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755257929; x=1755862729;
+        d=1e100.net; s=20230601; t=1755257963; x=1755862763;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xnAvNpYK/d4feWDnZ2eneoT0hUG01qbZEZ4vonbJ2yA=;
-        b=Xe3zl9KkSgB5pHwCCNRvS9XWmnjIPJRvJ0uo0BOiGhGsnITlRhu2srQzaFmHqCSvmb
-         k2/Fe5OG3nSVRVo/wKokfC6Pcw5Uql2SAeu6H8SyPGIWA2COgTIlVaTnsqyitGObOod3
-         XZBGp7XFTifusg/Q8gaUFLaH7l6cDfUAi+1b9tDlgIisJT4U22/8mUApjkGDVW3oczKo
-         X+vAoyelbobn2+P27K6z5l+ToHnhGJN0h9Npgo/am94ruHdK6svqlAZqGhhDcd1pMY+g
-         oLX18RZHYCTUaDGxRBApf5NOts+4o5STfDWm6e2lOTjsga5hLPWPR1qukJQCgc3MxQ9g
-         hldQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ctkwayiiSU5PSztGiR24/kw7M2mhPlfXdct38OhV/yspmIm9dSJVgIuO3B57GOvzG3C60eCMNF2KcOI=@vger.kernel.org, AJvYcCVdcxv1IAEgj/9D/BLZcKa/C6NhRPdqtQa9viPToTQk9+s8zx7rTM9Ka9EufClPRCsJSBggOqP4j8J8P8CuI3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDrlw7SQGa/USSc8JHjvF6jSFdTUchpQQKaiNfUf727AECixjM
-	MahVJIskdtQ2mJattXhpqEG05O7qHtGmgGFnK2j28DdIBCFN4STMEOGW
-X-Gm-Gg: ASbGnctL5nxDRLIPw3a00XrhDEU/5T6C6zrc0NInjdVoVP6+mz5xbp39T2oCc01pG3Y
-	4p3mZSFRuDIvexnRNIGNSCSo978uf5EYnu8UmnJw8HDHXIcmCfL5sOVsLY+FG0OnJeQwXVB027x
-	DH8H9FDDWs1T2zswTlntoQOCDKFVeDISVdiLBAhY9YRJiwiwiD5N3R6UbYMVnG5SPUi7SyuosK+
-	MPrymMIhs9oF87UUUF7j1pCzRQutsUp2gTnKAVC9Odog1+jXQGpmrr9YHMUwOApSesYyLz14cI3
-	QBd456RaDyWok9y7PtclDDUka8j60d+kT+rKZijXHSqr/RQHlE1fpbFqWfDByeuwd6ACPzRU+os
-	RXh+JjHdXBrTVd8C352IJH2Py
-X-Google-Smtp-Source: AGHT+IHH4PJEowdDXJzHwyolvlXgEZ5kmrKE9H2KRS66QaWxWvWwmU9oBfkpHtMch29KNsj5ZRm1cA==
-X-Received: by 2002:a05:6a00:2183:b0:76b:cadf:5dbe with SMTP id d2e1a72fcca58-76e4455a32cmr2286850b3a.0.1755257928853;
-        Fri, 15 Aug 2025 04:38:48 -0700 (PDT)
-Received: from fedora ([2405:201:5501:4085:eece:e0ff:6b68:de2e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45e278f1sm864917b3a.103.2025.08.15.04.38.44
+        bh=x2PuPJpMglgU/pqE3sPu/yNVHdTRzSvgqfdxSlclOhI=;
+        b=bEio5NEo/WObUXg1c2mz85WIvbScqc179sj8wAMP/pOlUA8/qPam+A/UKJtnVVI9On
+         h7uoZD073cTz6eu5AMPx5idkbpD8xjj1/pYmKU7eH8AmD9bDGwuc9ybfZIfqJf9CaDXu
+         XLli4wGeFMuMRgCrO7w3Ent7083KJgtUfyyrSZ0WiCb94IaevgNeRa8Pz0R+grr3YCNo
+         43zVxlDQz94rLWV1ijeFJt+9jFND8TXTSiC/muoAr5n1qMS8yctm0B5gAP+En1zAVMSz
+         zrN0q57JBJ/BWmCdL/1iiLPqYPuOYK82XmS2lj2eFe7/Y/6ANQNHbWFNaAuBolsh569F
+         HC0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX2qrLKsEXIARl5s8EcXzuGdmc8775xTmX0sIhfMd3d9RziaKYfiJFkjyp0jWRWsUaTLxlW4r6/GvtfA+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn1x7Lx2UHNWPZdRzYc3HwYsraTM5fFrD/LC+uOHXJg75Abkcg
+	dpYFplGcwAdNpm/fXbc8Y3Rcm3B0nu5ZlwnWPpgjEH99wNjckIExTcJYbNnBJtzn+Mk=
+X-Gm-Gg: ASbGncvAVXYXJ8I0EdXGqtXengaPFDkzAY8HwGftETvyfeYtjwQGwyHGgzMPTk9e47V
+	sY7Uidr71T/MeG0tlWqurF0sJM5ICP+mb9Qld9iPQUXINzkqXtCKX1glVwE8ExoF3HPSDqOQFRP
+	dJUwZLSxYXGG05K/iIvY8sxPhQexkgFKLuQ2aypmzV4BfAmz3WplUWdwmVWXBg27HKaY7BXieya
+	pdqaLY1edAX8VPgxC+mhioxMu8Ybr7uB9Ah6JvC3uClbWqV7kCxGYHaPFGxlrVoMLiY2LAVAJs1
+	+skb4+LFG1B4fgW5hC/rzZUZnoRf118pz9OvOujdJ9ZbGnBRDXsLpJRU6IdMEbBqEe5aGy6eLV8
+	B5QOefRdDOB6cPBZpUTGQJeLlJ5UEGvThrw==
+X-Google-Smtp-Source: AGHT+IG3is9XPNoMvbvLw+fw8hEwF+57P+gasZWIKWJ8zpvGPShYlYN+17VhXnG/gz0Yg6JMVLiT5Q==
+X-Received: by 2002:a17:907:3c8e:b0:adb:5985:5b58 with SMTP id a640c23a62f3a-afcdc062423mr65771566b.1.1755257962753;
+        Fri, 15 Aug 2025 04:39:22 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd050b32sm125285366b.112.2025.08.15.04.39.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 04:38:48 -0700 (PDT)
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v5] rust: kernel: introduce `unsafe_precondition_assert!` macro
-Date: Fri, 15 Aug 2025 17:08:34 +0530
-Message-ID: <20250815113836.138071-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Fri, 15 Aug 2025 04:39:21 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: qcom: q6apm-lpass-dais: Fix NULL pointer dereference if source graph failed
+Date: Fri, 15 Aug 2025 13:39:16 +0200
+Message-ID: <20250815113915.168009-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1908; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=TOUVdqm7mQx3pyxgpuavzmM5bjtretRp24F0LUMdPps=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBonxxjFL3sVlJ7mhEF9BvOAVoVIk0y3Oq7cCtUT
+ GlCjUpnV2mJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaJ8cYwAKCRDBN2bmhouD
+ 1/MmD/0cOIalRyUB+JR//1Cs3p5cLxSOEBSxH9CJO113MV4+gBkBuStuw2DEdoQnq7fr8vyL+IK
+ QuNwPkWybfb18XiuVZg9q9+BuoTenfqK+/e9sx8sPPHkNS7iB/IEHFvgtxiK1AchY3AUjqA3U69
+ yCNR+L+u1UefH/sDLj2MzsRWvAeFdy+m7KCGTrKXFOcge4uAIEafMI4C1zUyv9XXWbfL92hQRXP
+ HcE0CsotyBiAH6aSJxTxh+V1IgkCQBrerCkA9Uu5ibAXQDJ49G8P9LHYj7YPHzuA/1Gu0+STM6g
+ m/bbvqUaYCCg4unlJ4KYLa336VdTxPe/PSEwfAlCH/BioY9G9g9wNjZsUIdATaqHpH7lTXDcjui
+ AkqF/WHsI7GwuamJV34jmqj5sZCRBdBr4dGfAX3vpipABnOagkNPuhXeeLmknSzLIuxdK6tqK5e
+ AD0ZOLv6IHsWwFMq6nW7JiNjnRpsFRPnckz1/yynbV39YCZGnrjj21bg1hEtSgu2wruxHkPMby/
+ YHdnyLf4gW3XNXb9tedwnl6Tw0xnFb8GwVp/bFTedQVSZcf7Jm9guIKatde/XJZL2u0C1tfI5vh
+ 914u+fedhGhaPo5GwCrHjIRVVbtloWI0EescCBnQLt7S8G07XK1sW+DswoHJq7DhIA5/cwFqoTm uJFOc2R2JX3xSvA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Introduce a new `safety` module containing `unsafe_precondition_assert!`
-macro. It is a wrapper around `debug_assert!`, intended for validating
-pre-conditions of unsafe function.
+If earlier opening of source graph fails (e.g. ADSP rejects due to
+incorrect audioreach topology), the graph is closed and
+"dai_data->graph[dai->id]" is assigned NULL.  Preparing the DAI for sink
+graph continues though and next call to q6apm_lpass_dai_prepare()
+receives dai_data->graph[dai->id]=NULL leading to NULL pointer
+exception:
 
-When `CONFIG_RUST_DEBUG_ASSERTIONS` flag is enabled, this macro performs
-runtime checks to ensure that the preconditions for unsafe function hold.
-Otherwise, the macro is a no-op.
+  qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+  qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+  q6apm-lpass-dais 30000000.remoteproc:glink-edge:gpr:service@1:bedais: fail to start APM port 78
+  q6apm-lpass-dais 30000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on TX_CODEC_DMA_TX_3: -22
+  Unable to handle kernel NULL pointer dereference at virtual address 00000000000000a8
+  ...
+  Call trace:
+   q6apm_graph_media_format_pcm+0x48/0x120 (P)
+   q6apm_lpass_dai_prepare+0x110/0x1b4
+   snd_soc_pcm_dai_prepare+0x74/0x108
+   __soc_pcm_prepare+0x44/0x160
+   dpcm_be_dai_prepare+0x124/0x1c0
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1162
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library/topic/.60unsafe_precondition_assert.60.20macro/with/528457452
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
+Fixes: 30ad723b93ad ("ASoC: qdsp6: audioreach: add q6apm lpass dai support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Changes in v5:
- - Change doc example
- - Use re-exported `kernel::prelude::fmt!` instead of `core::format_args!`
- - Link to v4: https://lore.kernel.org/rust-for-linux/20250808192005.209188-1-ritvikfoss@gmail.com/
-
-Changes in v4:
- - Change doc example
- - Add `no_run` attribute to the doc example
- - Link to v3: https://lore.kernel.org/rust-for-linux/20250731111234.28602-1-ritvikfoss@gmail.com/
-
-Changes in v3:
- - Change doc example
- - Link to v2: https://lore.kernel.org/all/20250730181420.6979b4f1@eugeo/T/#m9cd35a8fc02a18bd03934c7ecdcffe8667b5fbbd
-
-Changes in v2:
- - Wrap `debug_assert!` internally instead of using `pr_err!` with `assert!` + `cfg!(debug_assertions)
- - Print “unsafe precondition(s) violated” only on assertion failure (no longer always printed)
- - Use `# Safety` section instead of comment in the example
- - Rename module-level doc
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250716045957.39732-1-ritvikfoss@gmail.com/
-
----
- rust/kernel/lib.rs    |  1 +
- rust/kernel/safety.rs | 54 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 rust/kernel/safety.rs
-
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ed53169e795c..5eb301685ce8 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -113,6 +113,7 @@
- pub mod rbtree;
- pub mod regulator;
- pub mod revocable;
-+pub mod safety;
- pub mod security;
- pub mod seq_file;
- pub mod sizes;
-diff --git a/rust/kernel/safety.rs b/rust/kernel/safety.rs
-new file mode 100644
-index 000000000000..e78d49e3e7c8
---- /dev/null
-+++ b/rust/kernel/safety.rs
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Safety related APIs.
-+
-+/// Checks that preconditions of an unsafe function are followed.
-+///
-+/// The check is enabled at runtime if debug assertions (`CONFIG_RUST_DEBUG_ASSERTIONS`)
-+/// are enabled. Otherwise, this macro is no-op.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::unsafe_precondition_assert;
-+///
-+/// struct RawBuffer<T: Copy, const N: usize> {
-+///     data: [T; N],
-+/// }
-+///
-+/// impl<T: Copy, const N: usize> RawBuffer<T, N> {
-+///     /// # Safety
-+///     ///
-+///     /// The caller must ensure that `index` is less than `N`
-+///     unsafe fn set_unchecked(&mut self, index: usize, value: T) {
-+///         unsafe_precondition_assert!(
-+///             index < N,
-+///             "RawBuffer::set_unchecked requires index ({}) < N ({})",
-+///             index,
-+///             N,
-+///         );
-+///
-+///         // SAFETY: By the safety requirements of this function, `index` is valid
-+///         unsafe {
-+///             *self.data.get_unchecked_mut(index) = value;
-+///         }
-+///     }
-+/// }
-+/// ```
-+///
-+/// # Panics
-+///
-+/// Panics if the expression is evaluated to `false` at runtime.
-+#[macro_export]
-+macro_rules! unsafe_precondition_assert {
-+    ($cond:expr $(,)?) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, ::core::stringify!($cond))
-+    };
-+
-+    ($cond:expr, $($arg:tt)+) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, $crate::prelude::fmt!($($arg)+))
-+    };
-+
-+    (@inner $cond:expr, $msg:expr) => {
-+        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {}", $msg) };
-+}
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+index f90628d9b90e..7520e6f024c3 100644
+--- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
++++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+@@ -191,6 +191,12 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
+ 			return rc;
+ 		}
+ 		dai_data->graph[graph_id] = graph;
++	} else if (!dai_data->graph[dai->id]) {
++		/*
++		 * Loading source graph failed before, so abort loading the sink
++		 * as well.
++		 */
++		return -EINVAL;
+ 	}
+ 
+ 	cfg->direction = substream->stream;
 -- 
-2.50.1
+2.48.1
 
 
