@@ -1,200 +1,114 @@
-Return-Path: <linux-kernel+bounces-771346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DCFB285DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:34:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FCCB285D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4692FB04AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E6F1CC7721
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1171B29614F;
-	Fri, 15 Aug 2025 18:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7943D218EB1;
+	Fri, 15 Aug 2025 18:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llEhxguw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OQHyAjmD"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AF9946A;
-	Fri, 15 Aug 2025 18:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD4244664
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755282736; cv=none; b=D2Y4+1X67QtSBICQbgoPsaU1p1q7qtHX8XFE27gQin7EM1gvGu2mkGQTubUDpx1GB4l9ov7IV9EEXyIi0nvFBJorjMbY6irFawFvbU4OSfwh/uCiquqhyXk4ciWKlLOrGYnx6SX5QNMvd/7TUPlefZAu6CycpB2WtCtqG866SuI=
+	t=1755282753; cv=none; b=ZPVYUC4A8eWlDy6LSSv18me314wr8I84bJ+C3MQn2XSe11bPO2YY0/hyRal0Hc3U4QA5jvgs5F8HODtAYmdonkDIfGamVyBZ5ykrND6qVEAd2n+dPifvijS3cs3I70Z9XMFkgopul+9ktuQbM47Qm49tLrXKQlfepl9FPZoCnUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755282736; c=relaxed/simple;
-	bh=k/hVQtPf/YplLXIDsqdhaq22mUPS3WD/l1OuxiARJfs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZQ32JENA+Jt9gFGwUsoseSwLivbcIXeTXQrv4rn76YuYaTN24ItrJeaUoXQmmVfTQv57yye+mRwUYkASMMzYxqDy2uo9+MOT3mCVeiEnQBJyKy03HpMoi2yCUZ/i3imQyKPfuRKdVMSPrA88EhM2++6X5O/okwMw6CGeq9sFBjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llEhxguw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3233BC4CEF6;
-	Fri, 15 Aug 2025 18:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755282736;
-	bh=k/hVQtPf/YplLXIDsqdhaq22mUPS3WD/l1OuxiARJfs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=llEhxguwOjaJnGKxqOz7buWLcmS2BPO/DgX2TWj/sN5uiA3n52m60vivhsOwXRCBW
-	 dFjhcwuhExDWY1ZkLrHE3DiGClLfjKvWOBizeGN4+D1gS6J4MBlyxBZGZddoNHkijW
-	 9KqR2myRCd2iTIznblPxtrziJ4bPS3YSGHOUQOSYTOAA4KRYgxHs3l2C4g2l9UvEw1
-	 cLZzQD1G98BrIM1GEyVQ9pd7kv+6tSxkjNlmJ92CJijCkKqng24C2Kt6BL10Q3peK9
-	 8zRykc73gg+9PPeYHUnv1af4kHYXsIyWAlGpXV3mRDp2JZq3IONHQqluJbCK8PoviP
-	 WbtXhuHDfXCbQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275E4CA0ED1;
-	Fri, 15 Aug 2025 18:32:16 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Fri, 15 Aug 2025 11:31:52 -0700
-Subject: [PATCH v2 2/2] usb: typec: maxim_contaminant: re-enable cc toggle
- if cc is open and port is clean
+	s=arc-20240116; t=1755282753; c=relaxed/simple;
+	bh=FRMJ9GqZkF67OCdEASezeNWRBm6vTVuej4qizQOVcDY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EgA/+BO3h5qF7YLLzFy+nonag7Ujcd71X1SN8Hyxi5OjMQFvk2RWFZdrAk0I3xHpiJtxS20dtFRpFxmswECeWWnGoKmnIPtk/Bb5vRdcEAEPumUUnJ1XBcAgeAYuFYmKc9wDWBtpCOxsvVmocB1gdn7C37xOc3zZgCKeedv065o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OQHyAjmD; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755282749;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RGiW9xodm88LtvD4f0t7A8bHKFkprv0GEx+rqU3fk04=;
+	b=OQHyAjmDXZ8JJLOEWYTMJ8xPOE1Y8uO/5Y0m65SNAWzDG1SkK076HwYsRANqvY6PgZRgld
+	inpGCtor1197U3a+mQepP5nA2LYhuBueL7jrPc7wikf8OsPveL6o3vSPcQMPBNkvpqOUXi
+	w2JqpNZO1OKcQGPZ3kpLgpbx6FvrZkM=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] mm: readahead: improve mmap_miss heuristic for concurrent faults
+Date: Fri, 15 Aug 2025 11:32:24 -0700
+Message-ID: <20250815183224.62007-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-fix-upstream-contaminant-v2-2-6c8d6c3adafb@google.com>
-References: <20250815-fix-upstream-contaminant-v2-0-6c8d6c3adafb@google.com>
-In-Reply-To: <20250815-fix-upstream-contaminant-v2-0-6c8d6c3adafb@google.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Badhri Jagan Sridharan <badhri@google.com>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, RD Babiera <rdbabiera@google.com>, 
- Kyle Tso <kyletso@google.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Amit Sunil Dhamne <amitsd@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755282735; l=3851;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=EWnT1ifJAgl1Osv4yGiXsCaYOzDaaQyWwT/7zjrH7aQ=;
- b=rvbTFbaa4EqrfOIvMfO9ErfjvRxt6r3Sdvwn+i6BHgY7mrPr8wRcqwe4dtWipx1UX8lSKPRhY
- oAlPewPQ5ChCkfnXYhJI4SjTta/ErnBkXDKnVYD43mj5OnenRIoxDNx
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Amit Sunil Dhamne <amitsd@google.com>
+If two or more threads of an application faulting on the same folio,
+the mmap_miss counter can be decreased multiple times. It breaks the
+mmap_miss heuristic and keeps the readahead enabled even under extreme
+levels of memory pressure.
 
-Presently in `max_contaminant_is_contaminant()` if there's no
-contaminant detected previously, CC is open & stopped toggling and no
-contaminant is currently present, TCPC.RC would be programmed to do DRP
-toggling. However, it didn't actively look for a connection. This would
-lead to Type-C not detect *any* new connections. Hence, in the above
-situation, re-enable toggling & program TCPC to look for a new
-connection.
+It happens often if file folios backing a multi-threaded application
+are getting evicted and re-faulted.
 
-Also, return early if TCPC was looking for connection as this indicates
-TCPC has neither detected a potential connection nor a change in
-contaminant state.
+Fix it by skipping decreasing mmap_miss if the folio is locked.
 
-In addition, once dry detection is complete (port is dry), restart
-toggling.
+This change was evaluated on several hundred thousands hosts in Google's
+production over a couple of weeks. The number of containers being
+stuck in a vicious reclaim cycle for a long time was reduced several
+fold (~10-20x), as well as the overall fleet-wide cpu time spent in
+direct memory reclaim was meaningfully reduced. No regressions were
+observed.
 
-Fixes: 02b332a06397e ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
-Cc: stable@vger.kernel.org
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org
 ---
- drivers/usb/typec/tcpm/maxim_contaminant.c | 53 ++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ mm/filemap.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
-index 818cfe226ac7716de2fcbce205c67ea16acba592..af8da6dc60ae0bc5900f6614514d51f41eded8ab 100644
---- a/drivers/usb/typec/tcpm/maxim_contaminant.c
-+++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
-@@ -329,6 +329,39 @@ static int max_contaminant_enable_dry_detection(struct max_tcpci_chip *chip)
- 	return 0;
- }
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c21e98657e0b..983ba1019674 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3324,9 +3324,17 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+ 	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
+ 		return fpin;
  
-+static int max_contaminant_enable_toggling(struct max_tcpci_chip *chip)
-+{
-+	struct regmap *regmap = chip->data.regmap;
-+	int ret;
-+
-+	/* Disable dry detection if enabled. */
-+	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
-+				 FIELD_PREP(CCLPMODESEL,
-+					    LOW_POWER_MODE_DISABLE));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL1, CCCONNDRY, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = max_tcpci_write8(chip, TCPC_ROLE_CTRL, TCPC_ROLE_CTRL_DRP |
-+			       FIELD_PREP(TCPC_ROLE_CTRL_CC1,
-+					  TCPC_ROLE_CTRL_CC_RD) |
-+			       FIELD_PREP(TCPC_ROLE_CTRL_CC2,
-+					  TCPC_ROLE_CTRL_CC_RD));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(regmap, TCPC_TCPC_CTRL,
-+				 TCPC_TCPC_CTRL_EN_LK4CONN_ALRT,
-+				 TCPC_TCPC_CTRL_EN_LK4CONN_ALRT);
-+	if (ret)
-+		return ret;
-+
-+	return max_tcpci_write8(chip, TCPC_COMMAND, TCPC_CMD_LOOK4CONNECTION);
-+}
-+
- bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect_while_debounce,
- 				    bool *cc_handled)
- {
-@@ -345,6 +378,12 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
- 	if (ret < 0)
- 		return false;
- 
-+	if (cc_status & TCPC_CC_STATUS_TOGGLING) {
-+		if (chip->contaminant_state == DETECTED)
-+			return true;
-+		return false;
+-	mmap_miss = READ_ONCE(ra->mmap_miss);
+-	if (mmap_miss)
+-		WRITE_ONCE(ra->mmap_miss, --mmap_miss);
++	/*
++	 * If the folio is locked, we're likely racing against another fault.
++	 * Don't touch the mmap_miss counter to avoid decreasing it multiple
++	 * times for a single folio and break the balance with mmap_miss
++	 * increase in do_sync_mmap_readahead().
++	 */
++	if (likely(!folio_test_locked(folio))) {
++		mmap_miss = READ_ONCE(ra->mmap_miss);
++		if (mmap_miss)
++			WRITE_ONCE(ra->mmap_miss, --mmap_miss);
 +	}
-+
- 	if (chip->contaminant_state == NOT_DETECTED || chip->contaminant_state == SINK) {
- 		if (!disconnect_while_debounce)
- 			msleep(100);
-@@ -377,6 +416,12 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
- 				max_contaminant_enable_dry_detection(chip);
- 				return true;
- 			}
-+
-+			ret = max_contaminant_enable_toggling(chip);
-+			if (ret)
-+				dev_err(chip->dev,
-+					"Failed to enable toggling, ret=%d",
-+					ret);
- 		}
- 	} else if (chip->contaminant_state == DETECTED) {
- 		if (!(cc_status & TCPC_CC_STATUS_TOGGLING)) {
-@@ -384,6 +429,14 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
- 			if (chip->contaminant_state == DETECTED) {
- 				max_contaminant_enable_dry_detection(chip);
- 				return true;
-+			} else {
-+				ret = max_contaminant_enable_toggling(chip);
-+				if (ret) {
-+					dev_err(chip->dev,
-+						"Failed to enable toggling, ret=%d",
-+						ret);
-+					return true;
-+				}
- 			}
- 		}
- 	}
-
+ 
+ 	if (folio_test_readahead(folio)) {
+ 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
 -- 
-2.51.0.rc1.167.g924127e9c0-goog
-
+2.50.1
 
 
