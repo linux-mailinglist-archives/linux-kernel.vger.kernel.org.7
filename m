@@ -1,132 +1,83 @@
-Return-Path: <linux-kernel+bounces-770598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D18DB27CE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:23:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E37EB27C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96BF017B6B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:17:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A85B4E330F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284BE2D63E6;
-	Fri, 15 Aug 2025 09:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8YFn/S3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13723A9A0;
+	Fri, 15 Aug 2025 09:15:41 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADF02D4B75;
-	Fri, 15 Aug 2025 09:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EDE20013A;
+	Fri, 15 Aug 2025 09:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249280; cv=none; b=XH5/3Pti5Xxr5LEEqovOFOx3+ZM4CJPrfLnT7pqCQ+wC2UpUvZVX4e7JxX/nlPCkZUsncWGSJ98O+jjAsNDa9HG8lGegyWhE5xqBtnGZy2klzGwagn+d8dfDVczZ9sPXFgft/pp5MLMLALj3pLxTdS/c+1uNYObYI4XC0o0Cv2I=
+	t=1755249341; cv=none; b=QxOhUMKIYF5lNJsVgRoxhNRzoq8zyQMTlgSz1JpMrMqWz7clx4XnjPbPlHELX+3KajJ4kTJaInuf/c2DaL6+Gku0zo1/H/wfeTj489++8I9h7OWE2o343PXq70HJdmiSYjw5ksj3bOkOwH//EYa7BL6RsYabNEvtvQ6DcUl4r0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249280; c=relaxed/simple;
-	bh=QZjvCZwPx47dYvhGTHPDlNi0jae0uoi4YRRACk1E9qw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E4UaVsSOaWpAoJz8q3bj2F6mnv5i0kXwxPPckY25Iq/ME/SRtUfiuuVKgRhz0SJeAHudYtL43LWyMYojpq3gny+UZerbDFgLWfljAGFgfcQqDOytF/12Z4xR1QSxgFRsPcg1wHX2+We2U4sW8p1oZZrJnekpaAOcL/xf14zpMIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8YFn/S3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E6E65C4CEEB;
-	Fri, 15 Aug 2025 09:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755249279;
-	bh=QZjvCZwPx47dYvhGTHPDlNi0jae0uoi4YRRACk1E9qw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=a8YFn/S3P61J8sbJi4SrFh1yUqhu3tvXfSF9eG3PBFA3pNMcEOvVAgbYT3VuP85j8
-	 p72KTPzXUro2zcJXh6pP+So83BZiff9iE7BOpGF+r6Eq1bMnd0Jy9yDjDfMDAXNgWS
-	 /nD75tos7QJtj2E+QA1gBjtQ+GO1zIsQBycLRtKouu8Jdz9bugfpHg0nLl++OLmAn9
-	 3X8uyAarvxuiaH6FdqZgqlYRjkU8jLwgQMcS/TxIRMIUA05vDjLwvluIY4XR9qM1G6
-	 bf/62jQtZE/l1c/uJFEJGewIvnIB/bx7/IYs2bNmOXTohmW1eEY7cBn1rypz+HHHEV
-	 Ryrys5xpV3qTA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D4ACA0ED1;
-	Fri, 15 Aug 2025 09:14:39 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+	s=arc-20240116; t=1755249341; c=relaxed/simple;
+	bh=nVIvDBy/Jm3WR2xeA1aZWmOPqonh3tIFG7Otxlac60o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cWhomrzgt0zh1qmgTR6xyfphxsGaCS/UOaZzi+F81gDq8uYzXuGn9WPwATto2J16WaytfSoHtiW7U5G0sCdI+8GABywRzTykq0+QuiYZqcQqKBP/ISmgFqRnTteXfm85KiHKxmxHowiYpp6FdBL9wiruTtUUGA6765w8vyA7ntE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <tj@kernel.org>, <hannes@cmpxchg.org>, <mkoutny@suse.com>,
+	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] cgroup: Remove redundant rcu_read_lock() in spin_lock_irq() section
 Date: Fri, 15 Aug 2025 17:14:30 +0800
-Subject: [PATCH v2] cpupower: fix mangled powercap comment
+Message-ID: <20250815091430.8694-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-mangled_cpupower-v2-1-6ec877145c47@uniontech.com>
-X-B4-Tracking: v=1; b=H4sIAHX6nmgC/32OTQ6CMBCFr0JmbU1bUiyuuIchBspgm0hLWkAN6
- d0dOYB5q+8l72eHhNFhgmuxQ8TNJRc8gTwVYGznH8jcQAySS8U1r9hE5hOHu5nXObwwMiV0ddH
- 1qHvZA8XmiKN7H5W3lti6tIT4ORY28XP/lG2CkTqlalHyUlZ9s3p6tKCxZxMmaHPOX+9rdBC0A
- AAA
-X-Change-ID: 20250806-mangled_cpupower-5186789f8b2b
-To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
- "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Wangyuli@uniontech.com, Guanwentao@uniontech.com, Zhanjun@uniontech.com, 
- Niecheng1@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755249278; l=1825;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=9ykgyTgoh2lTXbqw1zH4abC6aqqZU7uyOJ0J1/86iV8=;
- b=ifh4iMw6UDBi/MHxRQzpTQPSYx63sosgOtlReVx/ZxojPljMaonehGX2QF4yF/FLEpUHwMGnM
- 3P9GbJMxTUDAwHUGvoQstp0otfJbvjTPQv53pMe0RsZ5AXS5LGrsrL+
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc2.internal.baidu.com (172.31.3.12) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-Remove leading dashes from current comments and clarify its semantics
+Since spin_lock_irq() already disables preemption and task_css_set()
+is protected by css_set_lock, the rcu_read_lock() calls are unnecessary
+within the critical section. Remove them to simplify the code.
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
-The current comment exhibits a clear failed patch application artifact:
-1. A stray '-' prefix indicating failed line removal
-2. Broken sentence structure from improper context patching
-
-For those interested in archaeology:
-
-What appears to be version control residue has persisted since its
-initial introduction and through the 2022 kernel submission[1]. While
-my archaeological efforts only trace back to the 2017 openSUSE patch[2],
-the corrupted syntax suggests even older origins that remain elusive -
-perhaps maintainers with longer institutional memory could shed light
-on its provenance.
-
-1. https://lore.kernel.org/all/20221123111810.16017-2-trenn@suse.de/
-2. https://build.opensuse.org/request/show/535512
----
-Changes in v2:
-- Simplify expression
-- Link to v1: https://lore.kernel.org/r/20250806-mangled_cpupower-v1-1-1a559130326b@uniontech.com
----
- tools/power/cpupower/lib/powercap.c | 2 --
+ kernel/cgroup/cgroup.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
-index 94a0c69e55ef5e4291b13a4218e706fa8d14e6a7..609943c829efce8045d97097b5f5e9ec86d0f519 100644
---- a/tools/power/cpupower/lib/powercap.c
-+++ b/tools/power/cpupower/lib/powercap.c
-@@ -87,8 +87,6 @@ int powercap_set_enabled(int mode)
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8..db9e00a 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -2944,14 +2944,12 @@ int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
  
- /*
-  * Hardcoded, because rapl is the only powercap implementation
--- * this needs to get more generic if more powercap implementations
-- * should show up
-  */
- int powercap_get_driver(char *driver, int buflen)
- {
-
----
-base-commit: 6bcdbd62bd56e6d7383f9e06d9d148935b3c9b73
-change-id: 20250806-mangled_cpupower-5186789f8b2b
-
-Best regards,
+ 	/* look up all src csets */
+ 	spin_lock_irq(&css_set_lock);
+-	rcu_read_lock();
+ 	task = leader;
+ 	do {
+ 		cgroup_migrate_add_src(task_css_set(task), dst_cgrp, &mgctx);
+ 		if (!threadgroup)
+ 			break;
+ 	} while_each_thread(leader, task);
+-	rcu_read_unlock();
+ 	spin_unlock_irq(&css_set_lock);
+ 
+ 	/* prepare dst csets and commit */
 -- 
-Cryolitia PukNgae <cryolitia@uniontech.com>
-
+2.9.4
 
 
