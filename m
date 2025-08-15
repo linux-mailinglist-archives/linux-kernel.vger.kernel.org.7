@@ -1,176 +1,125 @@
-Return-Path: <linux-kernel+bounces-770272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2D0B27935
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08979B27946
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C36625DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB121CE23BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E223D7F6;
-	Fri, 15 Aug 2025 06:35:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5217328137E;
+	Fri, 15 Aug 2025 06:36:41 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0091548C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857521E5B72
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755239735; cv=none; b=aRNedBnIzF563nTO5i9g6qXh4mXB/WZh9LaccW2ZsC/H73XELCu+oo//48IORinUb/NOhFypnf1V/FcyveNJpDk/Ko7kxqPoPpQ5wenkp4bHqs6XB4/ZknSlWQzCex0cHGAzUWbE8xQ1ciiSOkP0DN1RAoPIAIGaPAKimZoxCJY=
+	t=1755239801; cv=none; b=PZwvuGeAYZgduT0Ngfp1oyW5h85w2vHsAypGLQpi8gTyotk/1RB8DHo4cAN4iATgwBVtbHUNu9zpL69d4LWCFUU259OBf7sXH0R4fbeowtkcyeZl8OC+eRKrQw3K5+QWu7rnqslqLtzFTRUeaIN8pOQxsjxR+VmgxWQ9Vj4N9J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755239735; c=relaxed/simple;
-	bh=34LTcszKLeYDmHdbnh9rrfPNBpaMAPrseZ4WCws0Ieg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pk95nO/17Mz9zkJ2IRkDkLvs1DXDJIwM2Qhzkm6a6TRYl2QzK8ScYxgUPtU6c32q5LhEWF4E3MyOq4iTqEOYsv9tDzvvTkZd/W4P9JhivbZIP6J4IrqTySN2QT27eGJNpcMN5Q5Eys/J+tur+Uz1ERnf01sDBmH/XMT/daqyRwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umo1z-0000hp-T3; Fri, 15 Aug 2025 08:35:15 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umo1u-000NPk-15;
-	Fri, 15 Aug 2025 08:35:10 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umo1u-0037Vy-0h;
-	Fri, 15 Aug 2025 08:35:10 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v2 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Fri, 15 Aug 2025 08:35:09 +0200
-Message-Id: <20250815063509.743796-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250815063509.743796-1-o.rempel@pengutronix.de>
-References: <20250815063509.743796-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755239801; c=relaxed/simple;
+	bh=6Rtu/CdUq/Hx2zMuHV1h5Xi6nfiGUJnVVRJ2IT9KMnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZIpexYoWrIaiqpQvb5lrsmDiPrF1YpqzESucTasXuvUUDt9OlP3adF17dcxnHogdSv0aQ1oz695XeRXkprZI6YdqJD+DvLkuzxfCNtjPFnIdH9manDp3jO9OfBGD+Jpv9bBdfQGoQbH6+UvcrMaBFDxxcXzcwyxfBHKQ5escvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2d30b4c679a211f0b29709d653e92f7d-20250815
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:34147249-89f6-4dd7-b116-f0a979552ea8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:19bee8621f5915e0662f88090b96b99a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2d30b4c679a211f0b29709d653e92f7d-20250815
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <zhaoguohan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1605522595; Fri, 15 Aug 2025 14:36:29 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id C9514B8258E7;
+	Fri, 15 Aug 2025 14:36:28 +0800 (CST)
+X-ns-mid: postfix-689ED56C-618075172
+Received: from localhost.localdomain (unknown [10.42.12.87])
+	by node2.com.cn (NSMail) with ESMTPA id 20BFAB812916;
+	Fri, 15 Aug 2025 06:36:25 +0000 (UTC)
+From: zhaoguohan@kylinos.cn
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: badal.nilawar@intel.com,
+	karthik.poosa@intel.com,
+	riana.tauro@intel.com,
+	intel-xe@lists.freedesktop.org (open list:INTEL DRM XE DRIVER (Lunar Lake and newer)),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	GuoHan Zhao <zhaoguohan@kylinos.cn>
+Subject: [PATCH v2] drm/xe/hwmon: Return early on power limit read failure
+Date: Fri, 15 Aug 2025 14:36:23 +0800
+Message-ID: <20250815063623.18162-1-zhaoguohan@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Implement get_mse_config() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
+From: GuoHan Zhao <zhaoguohan@kylinos.cn>
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+In xe_hwmon_pcode_rmw_power_limit(), when xe_pcode_read() fails,
+the function logs the error but continues to execute the subsequent
+logic. This can result in undefined behavior as the values val0 and
+val1 may contain invalid data.
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
+Fix this by adding an early return after logging the read failure,
+ensuring that we don't proceed with potentially corrupted data.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Fixes: 8aa7306631f0 ("drm/xe/hwmon: Fix xe_hwmon_power_max_write")
+
+V2:
+- Change 'drm_dbg' to 'drm_err'
+- Added the Fixes tag in commit message
+
+Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
 ---
- drivers/net/phy/dp83td510.c | 44 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/gpu/drm/xe/xe_hwmon.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..094c070f3f96 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -249,6 +249,47 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
- 
-+static int dp83td510_get_mse_config(struct phy_device *phydev,
-+				    struct phy_mse_config *config)
-+{
-+	/* The DP83TD510E datasheet does not specify peak MSE values.
-+	 * It only provides a single MSE value which is used to derive SQI.
-+	 * Therefore, we only support the average MSE capability.
-+	 */
-+	config->supported_caps = PHY_MSE_CAP_AVG | PHY_MSE_CAP_LINK |
-+		PHY_MSE_CAP_CHANNEL_A;
-+	config->max_average_mse = 0xFFFF;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BaseT1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	config->refresh_rate_ps = 1000000000; /* 1 ms */
-+	config->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
+diff --git a/drivers/gpu/drm/xe/xe_hwmon.c b/drivers/gpu/drm/xe/xe_hwmon.=
+c
+index f08fc4377d25..8e29fa155d7e 100644
+--- a/drivers/gpu/drm/xe/xe_hwmon.c
++++ b/drivers/gpu/drm/xe/xe_hwmon.c
+@@ -190,9 +190,11 @@ static int xe_hwmon_pcode_rmw_power_limit(const stru=
+ct xe_hwmon *hwmon, u32 attr
+ 						  READ_PL_FROM_PCODE : READ_PL_FROM_FW),
+ 						  &val0, &val1);
+=20
+-	if (ret)
+-		drm_dbg(&hwmon->xe->drm, "read failed ch %d val0 0x%08x, val1 0x%08x, =
+ret %d\n",
++	if (ret) {
++		drm_err(&hwmon->xe->drm, "read failed ch %d val0 0x%08x, val1 0x%08x, =
+ret %d\n",
+ 			channel, val0, val1, ret);
 +		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +934,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
- 
-+	.get_mse_config	= dp83td510_get_mse_config,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
--- 
-2.39.5
++	}
+=20
+ 	if (attr =3D=3D PL1_HWMON_ATTR)
+ 		val0 =3D (val0 & ~clr) | set;
+--=20
+2.43.0
 
 
