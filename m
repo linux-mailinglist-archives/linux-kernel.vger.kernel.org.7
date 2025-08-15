@@ -1,332 +1,220 @@
-Return-Path: <linux-kernel+bounces-770939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D28B280B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4566B280B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175CC1CE15C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1363E189028F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600073019BD;
-	Fri, 15 Aug 2025 13:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7699302CD2;
+	Fri, 15 Aug 2025 13:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OTdG9oFV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RlM+X+hS"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012051.outbound.protection.outlook.com [52.101.126.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BF28724D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755265058; cv=none; b=s6Kab/V7jQw/1Q2NZ2q/RsDq/WyNhYPx2BFpmx8MmN5W49J4oFiEIG3x5reG2i8VrsBpvMyoCAyR7bs4P75Ql6slTjr4GeNQiUGxsmUCFOwcR0WeKg/78rfNWYYo21F1nmwHFT9zpsb9Gu/h7m/73VCIZgNUP7f+mD+aoqkM+ns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755265058; c=relaxed/simple;
-	bh=EkukpV3FFtELRil9qkr6l2IlP8xkLNYzLp7/fC83roE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RMyuwNdKQbjJSorgEtkW+PmqrXdIRKJhM+wLXTJkD4o4LlffA8ZFHAOY1CRewmmm0KLdDrTyyiQHqH5FK2rhm1U/RJFxa5g682mO9+g/RBckXMm9I3xnNqFjCFCN9E+Kmofg8WAO3VDVcuyZ5jP9DHs63r9gH7gJHDRDdsZGDlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OTdG9oFV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755265055;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HAr1AlxPa2PLnBvFUB2yr2b+jA2FCI9CNGMzin6U/SU=;
-	b=OTdG9oFVAQWJrmm92f63eWBKufJhtXYUVTm7U+XwdY7Rw5ZD0+kxE0vD/6P+eBn3FyE9uS
-	PEXcUJEiycJDlmCcILyXV3UgzW5E5McAIfILOOgGVfOuUOWilzepVSRLWc060uGRTd4KyA
-	mGBvrYb622iTvLUXL0zoWapzNIRxXUo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-mYOouCPNMmae2ZzeMIP0fg-1; Fri,
- 15 Aug 2025 09:37:32 -0400
-X-MC-Unique: mYOouCPNMmae2ZzeMIP0fg-1
-X-Mimecast-MFC-AGG-ID: mYOouCPNMmae2ZzeMIP0fg_1755265051
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E000A1954194;
-	Fri, 15 Aug 2025 13:37:30 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.44.32.222])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2DC2919327C0;
-	Fri, 15 Aug 2025 13:37:26 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: linux-hyperv@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Tianyu Lan <tiala@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Li Tian <litian@redhat.com>,
-	Philipp Rudo <prudo@redhat.com>
-Subject: [PATCH] x86/hyperv: Fix kdump on Azure CVMs
-Date: Fri, 15 Aug 2025 15:37:25 +0200
-Message-ID: <20250815133725.1591863-1-vkuznets@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67851302CA6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755265063; cv=fail; b=raSMmNPcZ3HZiwiL6V9cKzKXBcTinVJNYBflSqwVub/o7hmiap/LYxJnFkIzZT/LN07MVQ+gEUtbC7dCzhkiKaZI03aifuo/t67lGXV8RrlslpPdaHwQMWaypVq9/b3tOL4NlsbPezCiuzZvC2J4XsMjOqa7gE4gAk1w1B/qvds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755265063; c=relaxed/simple;
+	bh=H7vi/ckwBGor9hGj91ELXbPFKR0DKHH4VBxdU1ho+pU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=LjmCE9NwQ6J5EbBX7jmTosm/zQkl0yXLX22xGugQ7la0x+WiIQ0fvYzCdssspjXb6aBO2iUWZ5LnCCdwgLgOaijQuYovTEYj4ketBaIowLlVMTkavHEonseXLa+3KDR4oSQhHDM1oI6RreP6xjYMx2iCM86b5m1yrKnP7laE8OY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RlM+X+hS; arc=fail smtp.client-ip=52.101.126.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KPIFYPA3TzEY0mDM3Engg4k9NCrqz36meoDCbKB02echUN0KjNmhbo5mVpgwcaTSGXt0TCQkPudZnn3E9oFStJXQWyW5RV5IJxvt5SgytzcCpUzou00bksrT7APU+ZhXrW4dYMoBbG/UxS2MXqJykoS0RXxi503bqu9GrTr1T+FNW5EtqAnkPSMH93k5xFNbyChkFDR1x5P92vmoZikiKRVOZisAtL8JPT9FUeYNiuVG4Z11rsWQCC2/japOy2Qh27f0Mn/AYJBmQqg/d8pbwXM1ToTwaS5zBPrOeN/igdkaW8YLXui5LEy8B0swrx4yq/HxvX2m6O3ZRbzz/LU41Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yPjVaJkUdi5nIK4gBnvJPhcqMh/96ajKzmEPzZ1O3KA=;
+ b=EkVAxb3pCn3DGa2y7gkALDrMutDl3CjpVyk5ZC1Y8ymdaR7QxHxVLzXMkZQNt96HNxhBdE38VbM+QsbtSOhFPpiVJRZCSAackBiEkVUZqb0TlmEeLw9uQr4ywlXlBEoOLHBMCBsElDjmDRKZXOyeiPzPWb4mu4AaVEhyQngIn59WUcqT2N7UxrrmNW720jUCyJ0w1MwEJYwEYxrYo7eQWo6NaEXvFJgp+/Ocm4hxwUVLDLCHjTkTMivAB6J8OFSt3pEa6hBez523gcnqmRMI2GKaZ7qaNFv2FD/p4PEA7azQv3CAXAMgCZ72zO5Dgx5H5tVwgg5vQ8YtuR/mAyYkoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yPjVaJkUdi5nIK4gBnvJPhcqMh/96ajKzmEPzZ1O3KA=;
+ b=RlM+X+hSOKTpRdkddOs+RMU2jp055vXaH/ZDrOL0v2rzFzjmISXmq2Pia9vQ4LoTW6zDyitrMmbaKfRgzWkq66gFtZUU/S7dXtIKmoFGFDsDSteilKZGA/BQc5sdstya91SDk8bHbiohPXuBDXF5G4agpXJLezDnSef1VVUUVJuD66Kddra1ya6r8SbPCHHU65BemOlM13oLYNIAT6USvCYoW5FsMpTW8FAULNtBlIoqyg7djKsCJ2WtYRupM8U103e1UZK8z/R7o+nXxK3b24SJZMtl+4j2NxPsqXV5vJoZ0GEhB+gFx6qgeh2tlGGbPTQBgQqR3AsfgUJHcxtVkg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by OSQPR06MB7277.apcprd06.prod.outlook.com (2603:1096:604:29a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 13:37:38 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 13:37:38 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Maxime Ripard <mripard@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER A10),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi SoC support),
+	linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] drm/sun4i: Replace redundant return value judgment with PTR_ERR_OR_ZERO()
+Date: Fri, 15 Aug 2025 21:37:27 +0800
+Message-Id: <20250815133727.418204-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR03CA0017.apcprd03.prod.outlook.com
+ (2603:1096:404:14::29) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|OSQPR06MB7277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63798f0d-ea38-46d4-6276-08dddc00e6aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BwrZUanwmcPmooAQTiDde+krs5JY13+ZXrE57L92tdmdETjrEnntbwF+A96T?=
+ =?us-ascii?Q?xBGGmEN3HaIhVGn2jMJfr82P+ZHFnTbUavXVj52JTYTEdQN/TCVJnxAge3sW?=
+ =?us-ascii?Q?25SSlJEEoS0ai7g0lCG3pd7h5ZPXx8J9cn0tzWt3YKMOPf2luaOYZzuqY0gR?=
+ =?us-ascii?Q?pNAZSOf4u/45laKWxwp9Wn0Xdy7WC8WlmvPoB+/SEaCnKYH41QFmTqPU1RQ1?=
+ =?us-ascii?Q?6tENvvRj6wMzCRW+p68T7Qw38XSMtuA15zYVUAjfEJW1H0fzuIaQkCbQLVmu?=
+ =?us-ascii?Q?0JaRZSdjxhD1a8OqukTfLuUkWTE9f6rn3BzwVb5qbdhjzrClR6gw4nZs4H1V?=
+ =?us-ascii?Q?yOMcMcOGCS78BIfE/cWRI4GfAn1aGPMzfV8RNeJsrjxMIW+SGl802AkQtqKb?=
+ =?us-ascii?Q?v6j0vANFUMQH3RTZGee/XTpbksOIolgpDr4I27Ck8yxcK0ScniP+jeMrKtfr?=
+ =?us-ascii?Q?VLmgaqLzyOzSHiCBwpNzIQDkOdWtHVrxq0hurN28arYYmxrXGufAJZ5/shca?=
+ =?us-ascii?Q?WaAFbzrWEgS36h6hI2loHqjttSlrJ7PCNMVC5xIHPfiHqT848bbM6Z+xOxeE?=
+ =?us-ascii?Q?ue7FnDqssmePc4NVdYclHkT6sAjiw28ezxpMltyB6UlA/CaLyxg3uifRifv+?=
+ =?us-ascii?Q?m/JO+rYbVTklL9s/iqHvzQxS99bRYT4nHUD2LV+Iyh0wCCodwUVMi+h+v4R7?=
+ =?us-ascii?Q?P4ZeQ5IczDkjhZgx6+MsswwQjTsOzyvTq1wZqS6bqrqt1RRekv8AYb7WkElP?=
+ =?us-ascii?Q?V9G8ruzZ1oCUl9hH1KcID+PB6MxWgwmCLLtWRDuqAupuDvDnwMZTyU+0Ooh7?=
+ =?us-ascii?Q?PsXlN64xAImvzJ1Mk66vZkwPA5Yy2M/9uIBa931jxKJWLLAPEH6qML7nBaT8?=
+ =?us-ascii?Q?8nEJeVCeVMZepnvdBJ/Je5XLQlWeWPlWzK1FE4JYcu4o/bRpSk5OyJKQ9k2R?=
+ =?us-ascii?Q?Uf/qc5yFxEtJMQJqXV0+enRKI1eLvCq8PgougfCp1DLDwf29ykvUM4VeoJXa?=
+ =?us-ascii?Q?EY5QXKqYzlMjg4PJ+dkCyfWfH8ZAJ0LayBc1xVLLd4ZL49BBnCM5/ygDqBO7?=
+ =?us-ascii?Q?G/m9o6bxBLA72sQiZdI74/iesRdUniuME0hfO3UyPEljTuRHRTKsWzwSo0WW?=
+ =?us-ascii?Q?SG+FBZDwLYSaisNKstSzYcyOLEPlmVvtjOIoNU0hl9ifNKkVi8Hp8phHOXwf?=
+ =?us-ascii?Q?HPJM60n3LYvFHSS9cXncibU8S6vZt3+yL0o7ESLJu3UsV3cYLB/meCr/QE0m?=
+ =?us-ascii?Q?6Iw1XcDEOtCKoFrBUoDRfyaA8K37SjEYofIU8MAHwiNsgTZgsJIlQJ+tA8O0?=
+ =?us-ascii?Q?p9MuCsTGwVyIcParGEBTVPg7mkgEprhCwiT/cAO5SjiTS74hPx29azUlB6ux?=
+ =?us-ascii?Q?EF0Av+xI3t24NMspx0qdPAkHSWqAfEbA8BdT+ArjtAZGiDM7wbc5bQ/UAD+k?=
+ =?us-ascii?Q?04kO8F/vWFV7A4WRc1ZqFWnmJQJODkJVbo9HmdyGADy/C7crAUoV+FmQlE6K?=
+ =?us-ascii?Q?36OQyJJtEI13b2E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CBztGzt+xABm3aMzOcZo9VnjQfGjO1wZff2lCpvYkVb6vdp8GT+AGIp9kObA?=
+ =?us-ascii?Q?eJIgr50Ly+yeG1uexRhdAcb7aXt1bBse0O1JsiZhTfgsY6hgq+zMKj0Oghbf?=
+ =?us-ascii?Q?HvhkqO4O2Q8swpW3MZ5VdFxDpK9YzwyRqhYshJcyiN92EUBcb3/YC32eZN08?=
+ =?us-ascii?Q?wtsnL6H5X5pXF5aByIvBPQKi3QhI2VSrM7k6FXxr0oRSszXk2zCKHiDhvJiS?=
+ =?us-ascii?Q?UNC507BsrjRhaESskZ8EXGhBV168MgeUsIqx/IJUnd7Wllw647dIZ6CyRvwz?=
+ =?us-ascii?Q?K0fXLt9tUK7HJO1FPE/X0buFVEljx81IVOVmsG5jDAyNyhZy/DkEr/aUUn+9?=
+ =?us-ascii?Q?fthbI77rRG2xm+UQMeK7tQRJikK4ck34D49oS/fMDiiiXtYnMQ/6xiJjrcC2?=
+ =?us-ascii?Q?I8jEdsvtwgMD0orbVzzgEHmt4ay/bCS4Utf5ENKVtc1bGUbkzmNyBEh9sEpj?=
+ =?us-ascii?Q?TQB5Qy8bfbuAKOB6+z5SrM/zWIBPaoCzyVW2v87+zyorSRvWnLVPb5cfRZPj?=
+ =?us-ascii?Q?jWg8aP2UT5y+SBl6lM2ochuqrRMj6mzSh19c/0iycP540/HeECcy7VL3OgV0?=
+ =?us-ascii?Q?/RBMiI7JO6AitTkDpmGZLuMIAl7E8QyMxi0mkW0Oty4clDIpCEIWTgPdpokr?=
+ =?us-ascii?Q?ZkHodDEtYv/2MWJbQzNL4WP+W4lRxV0R/X1X4n+Rlmkfc9cjVuTNxjNhXY+y?=
+ =?us-ascii?Q?LA4Mh/Vxe96zRYn/PauKnD8SoymUr5tZ8C+eznWqA35Dbd7/8rtWX8k3A5bq?=
+ =?us-ascii?Q?FOdn1lGoudap9lMdQhT0RB/FOoxAhZHGXBWn75iiv+mSTp6YMLNKJTcfF1DO?=
+ =?us-ascii?Q?K4tfugVT/bg3r7oC9u+IaZfMXxNypTUh4Qy0uVvEhUx0OL2MSED/jx0xh300?=
+ =?us-ascii?Q?7V6hmYppvEx1rpwraGKYcf4+CHpkKkZJh8+SIBgcEzTh6pZksQ5y6+D+e1u5?=
+ =?us-ascii?Q?liqiM8+FCZfYb65BvIrHvdJOfo2OOjxhatV7UibV/Um7lShguu7zSjzUpR97?=
+ =?us-ascii?Q?4dewyjyHe5yGrY6mkHCpZ6OqLUcwx80uXmrxPGtlAz7a+GhKThuJiORVyuW2?=
+ =?us-ascii?Q?Jq4AAgsFBI1d+07oPneeG+Qgmi6xzGP2g+FGZRtZyuXd4jRGzhPVDrEtaU9X?=
+ =?us-ascii?Q?x7d9d+G8JeEw7YmljFjmF9PCI0gKtsZfdIHTtdgMVZdE8QfHbDUdXR3+AxG5?=
+ =?us-ascii?Q?HeVz9aAKtADaHy9WUS2ehRLE+tSosUm1nnaMSLd40Yr5p0EAKJIXOF6LeulR?=
+ =?us-ascii?Q?69Qysj/uYEXEFleEUonX9yfVtpUjo3CY453/7ncxbexhtiEo+rSqilZtTvOo?=
+ =?us-ascii?Q?C6w6T5tufqQ37K+PxF+dfMKDyDON3gx+tTLkI5xnRaWvfhwIeS4j1IrltQOc?=
+ =?us-ascii?Q?PbdkJjmOIIGk8j9kKBCuQYdVSEIIdcYyeKN+fsCL0Rug5goeQ75foSkcnsKf?=
+ =?us-ascii?Q?zyYwXR/FOrxZHP4SuLrw5YLcM5EDFb5W3Pa+fDhpVypMKof+1mJAuxxqs5FO?=
+ =?us-ascii?Q?x27vlUjSY+3sEiolzhDWLhq4/ISV8tMlhsjQ6oWNMEr0hoAlaGrGjQTUlrP/?=
+ =?us-ascii?Q?EHBO8oM0OH87XSCZTFyFgaRWeXCPCjkelYG3myOb?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63798f0d-ea38-46d4-6276-08dddc00e6aa
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 13:37:38.6867
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5Mc3mEu8pW+o1ZA4QG64VG+73TbHZREa88g3WkVanaESIhJ5uV4EQTCPnaduF8ZS61822/3frh2soIeyy2v7Aw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7277
 
-Azure CVM instance types featuring a paravisor hang upon kdump. The
-investigation shows that makedumpfile causes a hang when it steps on a page
-which was previously share with the host
-(HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY). The new kernel has no
-knowledge of these 'special' regions (which are Vmbus connection pages,
-GPADL buffers, ...). There are several ways to approach the issue:
-- Convey the knowledge about these regions to the new kernel somehow.
-- Unshare these regions before accessing in the new kernel (it is unclear
-if there's a way to query the status for a given GPA range).
-- Unshare these regions before jumping to the new kernel (which this patch
-implements).
+Replace redundant return value judgment with PTR_ERR_OR_ZERO() to
+enhance code readability.
 
-To make the procedure as robust as possible, store PFN ranges of shared
-regions in a linked list instead of storing GVAs and re-using
-hv_vtom_set_host_visibility(). This also allows to avoid memory allocation
-on the kdump/kexec path.
-
-The patch skips implementing weird corner case in hv_list_enc_remove()
-when a PFN in the middle of a region is unshared. First, it is unlikely
-that such requests happen. Second, it is not a big problem if
-hv_list_enc_remove() doesn't actually remove some regions as this will
-only result in an extra hypercall doing nothing upon kexec/kdump; there's
-no need to be perfect.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
- arch/x86/hyperv/ivm.c           | 153 ++++++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h |   2 +
- drivers/hv/vmbus_drv.c          |   2 +
- 3 files changed, 157 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 5 +----
+ drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c     | 5 +----
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c  | 5 +----
+ 3 files changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index ade6c665c97e..a6e614672836 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -462,6 +462,150 @@ void hv_ivm_msr_read(u64 msr, u64 *value)
- 		hv_ghcb_msr_read(msr, value);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index fbf7da9d9592..c90dd0ad040f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -229,8 +229,5 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
+ 	tmds->div_offset = hdmi->variant->tmds_clk_div_offset;
+ 
+ 	hdmi->tmds_clk = devm_clk_register(hdmi->dev, &tmds->hw);
+-	if (IS_ERR(hdmi->tmds_clk))
+-		return PTR_ERR(hdmi->tmds_clk);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(hdmi->tmds_clk);
  }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c b/drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c
+index 03d7de1911cd..49fde4418820 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c
+@@ -191,10 +191,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
+ 	dclk->hw.init = &init;
  
-+/*
-+ * Keep track of the PFN regions which were shared with the host. The access
-+ * must be revoked upon kexec/kdump (see hv_ivm_clear_host_access()).
-+ */
-+struct hv_enc_pfn_region {
-+	struct list_head list;
-+	u64 pfn;
-+	int count;
-+};
-+
-+static LIST_HEAD(hv_list_enc);
-+static DEFINE_RAW_SPINLOCK(hv_list_enc_lock);
-+
-+static int hv_list_enc_add(const u64 *pfn_list, int count)
-+{
-+	struct hv_enc_pfn_region *ent;
-+	unsigned long flags;
-+	bool found = false;
-+	u64 pfn;
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		pfn = pfn_list[i];
-+
-+		found = false;
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_for_each_entry(ent, &hv_list_enc, list) {
-+			if ((ent->pfn <= pfn) && (ent->pfn + ent->count - 1 >= pfn)) {
-+				/* Nothin to do - pfn is already in the list */
-+				found = true;
-+			} else if (ent->pfn + ent->count == pfn) {
-+				/* Grow existing region up */
-+				found = true;
-+				ent->count++;
-+			} else if (pfn + 1 == ent->pfn) {
-+				/* Grow existing region down */
-+				found = true;
-+				ent->pfn--;
-+				ent->count++;
-+			}
-+		};
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+
-+		if (found)
-+			continue;
-+
-+		/* No adajacent region found -- creating a new one */
-+		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
-+		if (!ent)
-+			return -ENOMEM;
-+
-+		ent->pfn = pfn;
-+		ent->count = 1;
-+
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_add(&ent->list, &hv_list_enc);
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static void hv_list_enc_remove(const u64 *pfn_list, int count)
-+{
-+	struct hv_enc_pfn_region *ent, *t;
-+	unsigned long flags;
-+	u64 pfn;
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		pfn = pfn_list[i];
-+
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_for_each_entry_safe(ent, t, &hv_list_enc, list) {
-+			if (pfn == ent->pfn + count - 1) {
-+				/* Removing tail pfn */
-+				ent->count--;
-+				if (!ent->count) {
-+					list_del(&ent->list);
-+					kfree(ent);
-+				}
-+			} else if (pfn == ent->pfn) {
-+				/* Removing head pfn */
-+				ent->count--;
-+				ent->pfn++;
-+				if (!ent->count) {
-+					list_del(&ent->list);
-+					kfree(ent);
-+				}
-+			}
-+
-+			/*
-+			 * Removing PFNs in the middle of a region is not implemented; the
-+			 * list is currently only used for cleanup upon kexec and there's
-+			 * no harm done if we issue an extra unneeded hypercall making some
-+			 * region encrypted when it already is.
-+			 */
-+		};
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+	}
-+}
-+
-+void hv_ivm_clear_host_access(void)
-+{
-+	struct hv_gpa_range_for_visibility *input;
-+	struct hv_enc_pfn_region *ent;
-+	unsigned long flags;
-+	u64 hv_status;
-+	int cur, i;
-+
-+	if (!hv_is_isolation_supported())
-+		return;
-+
-+	raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+
-+	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-+	if (!input)
-+		goto unlock;
-+
-+	list_for_each_entry(ent, &hv_list_enc, list) {
-+		for (i = 0, cur = 0; i < ent->count; i++) {
-+			input->gpa_page_list[cur] = ent->pfn + i;
-+			cur++;
-+
-+			if (cur == HV_MAX_MODIFY_GPA_REP_COUNT || i == ent->count - 1) {
-+				input->partition_id = HV_PARTITION_ID_SELF;
-+				input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
-+				input->reserved0 = 0;
-+				input->reserved1 = 0;
-+				hv_status = hv_do_rep_hypercall(
-+					HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
-+					cur, 0, input, NULL);
-+				WARN_ON_ONCE(!hv_result_success(hv_status));
-+				cur = 0;
-+			}
-+		}
-+
-+	};
-+
-+unlock:
-+	raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+}
-+EXPORT_SYMBOL_GPL(hv_ivm_clear_host_access);
-+
- /*
-  * hv_mark_gpa_visibility - Set pages visible to host via hvcall.
-  *
-@@ -475,6 +619,7 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
- 	struct hv_gpa_range_for_visibility *input;
- 	u64 hv_status;
- 	unsigned long flags;
-+	int ret;
+ 	tcon->dclk = clk_register(dev, &dclk->hw);
+-	if (IS_ERR(tcon->dclk))
+-		return PTR_ERR(tcon->dclk);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(tcon->dclk);
+ }
+ EXPORT_SYMBOL(sun4i_dclk_create);
  
- 	/* no-op if partition isolation is not enabled */
- 	if (!hv_is_isolation_supported())
-@@ -486,6 +631,14 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+index a4d31fe3abff..fb0d77db8b84 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+@@ -171,8 +171,5 @@ int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
+ 	priv->hw.init = &init;
  
-+	if (visibility == VMBUS_PAGE_NOT_VISIBLE) {
-+		hv_list_enc_remove(pfn, count);
-+	} else {
-+		ret = hv_list_enc_add(pfn, count);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	local_irq_save(flags);
- 	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
- 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index abc4659f5809..6a988001e46f 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -263,10 +263,12 @@ static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip,
- void hv_vtom_init(void);
- void hv_ivm_msr_write(u64 msr, u64 value);
- void hv_ivm_msr_read(u64 msr, u64 *value);
-+void hv_ivm_clear_host_access(void);
- #else
- static inline void hv_vtom_init(void) {}
- static inline void hv_ivm_msr_write(u64 msr, u64 value) {}
- static inline void hv_ivm_msr_read(u64 msr, u64 *value) {}
-+static inline void hv_ivm_clear_host_access(void) {}
- #endif
- 
- static inline bool hv_is_synic_msr(unsigned int reg)
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 2ed5a1e89d69..2e891e108218 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -2784,6 +2784,7 @@ static void hv_kexec_handler(void)
- 	/* Make sure conn_state is set as hv_synic_cleanup checks for it */
- 	mb();
- 	cpuhp_remove_state(hyperv_cpuhp_online);
-+	hv_ivm_clear_host_access();
- };
- 
- static void hv_crash_handler(struct pt_regs *regs)
-@@ -2799,6 +2800,7 @@ static void hv_crash_handler(struct pt_regs *regs)
- 	cpu = smp_processor_id();
- 	hv_stimer_cleanup(cpu);
- 	hv_synic_disable_regs(cpu);
-+	hv_ivm_clear_host_access();
- };
- 
- static int hv_synic_suspend(void)
+ 	phy->clk_phy = devm_clk_register(dev, &priv->hw);
+-	if (IS_ERR(phy->clk_phy))
+-		return PTR_ERR(phy->clk_phy);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(phy->clk_phy);
+ }
 -- 
-2.50.0
+2.34.1
 
 
