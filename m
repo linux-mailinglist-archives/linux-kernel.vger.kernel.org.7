@@ -1,155 +1,362 @@
-Return-Path: <linux-kernel+bounces-770234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1909AB278C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E8AB278BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DBD1CE7723
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0561D1CE3336
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39852256C81;
-	Fri, 15 Aug 2025 06:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4144A256C81;
+	Fri, 15 Aug 2025 06:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="AN4l+0qC"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xn8wxahO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pN1r1fmu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xn8wxahO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pN1r1fmu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2988A2192F9;
-	Fri, 15 Aug 2025 06:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2908924467E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755237914; cv=none; b=b+uny3MS/Q55CRA6M4pe5EaaA+LxzS2biB/9QlIF+rkQdrBHcRwIptxp4O0XC855AFAqMIu134lcNM3YX8P3+h3B2BPP5RTY4T+9QReGtLPKZLcICLX2gk1DaFwDbFZq0m9afsgQ9E83LJFuapNB8PTko9EPCXJTNMlayeaDCP4=
+	t=1755237753; cv=none; b=IyyMA6lpqoTH2j9XjtDxaaKY4VkuyP1Ip45iTxypg1ymhanxP8rqQkCjpe0L+aDd4xtvZ3a2iltV58ig+r1lWmIxaiRvvhQ9PqMmVTyEMAjft3mkQlNP8OZ/B4E31qpy+E74ZGED8+r+qCghOeFWOgXGJTKFNEnmjhDZv3pNcMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755237914; c=relaxed/simple;
-	bh=sEAPkLK/x86g1f+WwcdgXDEqeVxbXUsDWRXIIu529Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQ6nDNpLGwE7MgdyHGBp4bEYsfQjnPjonpnDw9gca4z7jYbA1044pA/YfWiKmaknvcgZfl7GwD7ecOSa0N/sJLOpUqzQgsS4H3b6kcsspTq9OafXqkIUWg/i7KQJeihkfaxdiHfEPgdLX50gRJ8sfQD0gkescdnXV/9OXiRznK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=AN4l+0qC; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755237722;
-	bh=x1N3D6/VxKcATBuZmB7CNiYmp7p5XE6OMaGosmRFbxU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=AN4l+0qCzp1RzPoeXXfPENTHMbSIMEj0BshDNEzAf6oQRM/94Sge18g2i+icH3Vu+
-	 I3fiIfLZw02VXhL1b+qzNq+Y+sSZjZ2nDyaIwNLl8gHkKzr9SczmfFXZlIBIVdC722
-	 ywAEC6pZzwdnYrAkQsctFaAtv5LhxHTYaUUuJbl0=
-X-QQ-mid: zesmtpgz1t1755237720taae2885a
-X-QQ-Originating-IP: Awd2VcLVbmDqB933ZLJHIsPxY4Y//B/JRsothqN1eyI=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 15 Aug 2025 14:01:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2894032038564909273
-EX-QQ-RecipientCnt: 20
-Date: Fri, 15 Aug 2025 14:01:57 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Guodong Xu <guodong@riscstar.com>, Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	duje@dujemihanovic.xyz
-Cc: Alex Elder <elder@riscstar.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v4 6/8] riscv: dts: spacemit: Add PDMA node for K1 SoC
-Message-ID: <34485B93B03EAD10+aJ7NVbe8aqjWBFd-@LT-Guozexi>
-References: <20250815-working_dma_0701_v2-v4-0-62145ab6ea30@riscstar.com>
- <20250815-working_dma_0701_v2-v4-6-62145ab6ea30@riscstar.com>
+	s=arc-20240116; t=1755237753; c=relaxed/simple;
+	bh=hPlSyHB8sn856cEsegAQ/XIHSI2iD1D8BDvAHlgpXB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pQxoaDf1Ua9L9Icr8+hfBrW1oqewMv5auodyEOIxY5FAYU0Iv9Y/OjaKTigtLX1Lhu0zVv27allEwRwAIs2dmdMNbpnEOCMgFS7qE6ionfQhhZjm/XjJJ5g3wOyd0uK+xRIj8xEOBOn37eHfblGFeTKWVXkPyyasJ15lBTmNo8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xn8wxahO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pN1r1fmu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xn8wxahO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pN1r1fmu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D1E7218F6;
+	Fri, 15 Aug 2025 06:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755237748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5fdVPJgjqgMwrHBwrguMhkMv5hR5ga0ejFIXl+W9T+Q=;
+	b=Xn8wxahOXtVLdIbiSjfB+XV7fyDB1+Nrfi6qXO2jJFH6lWshs8JK7v2qkADa+hh2+9C6Sm
+	3X0u2yDCUtyu2M3Q0eGOKPD2JusxrV+iAytgOcQKqSaFvD/XXIZ4YurlESTGjDCPvfpr0C
+	SzwLZg2pc0/E5SsPFisU1wwRMgdiCrk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755237748;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5fdVPJgjqgMwrHBwrguMhkMv5hR5ga0ejFIXl+W9T+Q=;
+	b=pN1r1fmuu/8O2/KItQTm2KrgQOUJEmwODXixqXfrN3t3TdZ0cHcJ045hRMHBK6KGr2QlQG
+	NU0cLtSKOGj/zNCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Xn8wxahO;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pN1r1fmu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755237748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5fdVPJgjqgMwrHBwrguMhkMv5hR5ga0ejFIXl+W9T+Q=;
+	b=Xn8wxahOXtVLdIbiSjfB+XV7fyDB1+Nrfi6qXO2jJFH6lWshs8JK7v2qkADa+hh2+9C6Sm
+	3X0u2yDCUtyu2M3Q0eGOKPD2JusxrV+iAytgOcQKqSaFvD/XXIZ4YurlESTGjDCPvfpr0C
+	SzwLZg2pc0/E5SsPFisU1wwRMgdiCrk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755237748;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5fdVPJgjqgMwrHBwrguMhkMv5hR5ga0ejFIXl+W9T+Q=;
+	b=pN1r1fmuu/8O2/KItQTm2KrgQOUJEmwODXixqXfrN3t3TdZ0cHcJ045hRMHBK6KGr2QlQG
+	NU0cLtSKOGj/zNCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA1D013876;
+	Fri, 15 Aug 2025 06:02:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TtQkMHPNnmhYcgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 15 Aug 2025 06:02:27 +0000
+Message-ID: <790da31e-b20c-4ad3-a534-de55cd741519@suse.de>
+Date: Fri, 15 Aug 2025 08:02:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-working_dma_0701_v2-v4-6-62145ab6ea30@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MsXD3WsHXmxXiGeeLocpRz3B53KmNsAf5gcMA8ombNJDntx/8yfeD8tY
-	AwPiwgJDg9Tx0stKB8oIL4gyH8aPI5B6xAp2tBggtU43exhAUiOwYhox/+reWl28BlnOGCA
-	B2wX+lSrTERodhn7X9OdPVnH39WZ+JS+bEZSf85TaHEhAtSNPagKE0vPDwnl+28BGUD8Dfy
-	nR4ZMWcHE+5SLji3DK+7n0a/AlVeHp4CSwEFfZsvt15t4WS1zfDagZxiSDOoJILvLQqIO29
-	01vYky6jFsFlM5Gn1AO733+l4nkC9G1awYecFBhe2j+hsWZSWKWAySLd835LPYPObMHAQg8
-	gd2+JHNqKF2fu5QCDYPC4K0gUsR2phUvKszjl5K+XmD1Teq4bjwVC5Bm/MH1ZJSc7idiRBG
-	IoBhL/nFHVjg0ZN7zhgnd7kpjZlSx8QvWwhBV5Tb4rXXgj5Ow14UkMi0bL9CqbBhSvhM1pB
-	Odqs9Tpw7FqDrz96HJ2ZXHpM5skmnyKXMIBlRjxmgo0+Vka+pgnDiYDkta0lHdtCidSNweJ
-	T6EjtCm4vKJoDOxkIELHCy9/PJXQjpWMz+q9tY08rP7FYFiJSgNsTeM3YXmxMspTn9vSuSc
-	SLJp+L7nIfnnEz3UWQHPgG1Zt4eSV0SLv3uT7KCyWzoZZ2uAcwpQVqC+bIbkF4teNhJ1x6U
-	m8jblalvB4EECF2bIA5WOHt0O1eptyjq+l1XRLUQZ7BiA6pmOR3qYL/zHHnRRTtE4AWu0Py
-	iMWExMVDCZWUvR1rBC+UrYUyAnxa8/KqsX1vVQRIrMSN6FD1DdvCgFA5CoGBsZT1v6pMR6X
-	SsRMlC3sa6IowX4VWqh5Y3ZW/CZEB7/73focYwCRpZJlpUCOBAQN6ye1a13Q7ql2m1OysEp
-	XRrht7cjdDC0ulo0ZVD0DQs6jtKUKcD3PPlxcZo6fg6DkTlfAgpv5kC5izQ+D1QAfQfOSiz
-	V164n//JOjbyWQrzUPmpovAqrHZxB8pnfr4rI/JqsoCihAglGDdn+QUZgkjTZk14ZXMRuUd
-	eyEkuaypuzkVQyvTAK4toTKtnHtZ+MlvrMzuF7WkR+Kub2y6GrL9SkElthtsbkq36VsDXlg
-	CWbO39OpOp9/JAVrdTbHVVXHBpVZahC1G+seIqpp9rvtR6UX5tvSXWFuBGyRJsa5V9qjPcC
-	wxt5
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/gem-shmem: Pin and unpin buffers when importing w/o
+ S/G table
+To: sumit.semwal@linaro.org, christian.koenig@amd.com, oushixiong@kylinos.cn,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+References: <20250814073507.18587-1-tzimmermann@suse.de>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250814073507.18587-1-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1D1E7218F6
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[linaro.org,amd.com,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-Thanks.
+FYI this patch got feedback at
 
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+https://lore.kernel.org/dri-devel/805acaca-3b91-438d-b842-25c055fd898c@amd.com/
 
-On Fri, Aug 15, 2025 at 01:16:28PM +0800, Guodong Xu wrote:
-> Add PDMA dma-controller node under dma_bus for SpacemiT K1 SoC.
-> 
-> The PDMA node is marked as disabled by default, allowing board-specific
-> device trees to enable it as needed.
-> 
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+Preferably the problem should be addressed on GEM/PRIME code instead of 
+dma-buf.
+
+Best regards
+Thomas
+
+Am 14.08.25 um 09:34 schrieb Thomas Zimmermann:
+> Imported dma-buf objects need to be pinned while being vmap'ed into
+> kernel address space. This used to be done before while creating an
+> S/G table.
+>
+> GEM-SHMEN can import dma-buf objects without creating the S/G table,
+> but the pin/unpin is now missing. Leads to page-mapping errors such
+> as the one shown below.
+>
+> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
+> [...]
+> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+> [...]
+> [  102.243250] Call Trace:
+> [  102.245695]  <TASK>
+> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
+> [  102.251805]  ? __lock_acquire+0x568/0xae0
+> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
+> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
+> [  102.265379]  ? local_clock_noinstr+0xb/0x100
+> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
+> [  102.274246]  ? mark_held_locks+0x40/0x70
+> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
+> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
+> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
+> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
+> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
+> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
+> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
+> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
+> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
+> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
+> [  102.333622]  commit_tail+0x204/0x330
+> [...]
+> [  102.529946] ---[ end trace 0000000000000000 ]---
+> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+>
+> Support pin/unpin in drm_buf_map_attachment() without creating an S/G
+> table. Passing DMA_NONE for the DMA direction will only pin. Do the
+> inverse for unmap_attachment(). Modify GEM-SHMEM accordingly, so that
+> it pins the imported dma-buf.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
+> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
+> Cc: Shixiong Ou <oushixiong@kylinos.cn>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linaro-mm-sig@lists.linaro.org
 > ---
-> v4:
-> - rename the node from pdma0 to pdma
-> - for consistnecy, put the "interrupts" after "clocks" and "resets"
-> v3:
-> - adjust pdma0 position, ordering by device address
-> - update properties according to the newly created schema binding
-> v2:
-> - Updated the compatible string.
-> - Rebased. Part of the changes in v1 is now in this patchset:
->    - "riscv: dts: spacemit: Add DMA translation buses for K1"
->    - Link: https://lore.kernel.org/all/20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn/
-> ---
->  arch/riscv/boot/dts/spacemit/k1.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index abde8bb07c95c5a745736a2dd6f0c0e0d7c696e4..861f0fe18083fa158da51bd3be2808609f6233f4 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -660,6 +660,17 @@ dma-bus {
->  			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>,
->  				     <0x1 0x00000000 0x1 0x80000000 0x3 0x00000000>;
->  
-> +			pdma: dma-controller@d4000000 {
-> +				compatible = "spacemit,k1-pdma";
-> +				reg = <0x0 0xd4000000 0x0 0x4000>;
-> +				clocks = <&syscon_apmu CLK_DMA>;
-> +				resets = <&syscon_apmu RESET_DMA>;
-> +				interrupts = <72>;
-> +				dma-channels = <16>;
-> +				#dma-cells= <1>;
-> +				status = "disabled";
-> +			};
+>   drivers/dma-buf/dma-buf.c              | 16 +++++++++++++---
+>   drivers/gpu/drm/drm_gem_shmem_helper.c | 11 ++++++++++-
+>   drivers/gpu/drm/drm_prime.c            |  2 ++
+>   3 files changed, 25 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 2bcf9ceca997..f1e1385ce630 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -1086,7 +1086,8 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_unpin, "DMA_BUF");
+>    * @direction:	[in]	direction of DMA transfer
+>    *
+>    * Returns sg_table containing the scatterlist to be returned; returns ERR_PTR
+> - * on error. May return -EINTR if it is interrupted by a signal.
+> + * on error. May return -EINTR if it is interrupted by a signal. Returns NULL
+> + * on success iff direction is DMA_NONE.
+>    *
+>    * On success, the DMA addresses and lengths in the returned scatterlist are
+>    * PAGE_SIZE aligned.
+> @@ -1122,6 +1123,8 @@ struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
+>   		if (ret)
+>   			return ERR_PTR(ret);
+>   	}
+> +	if (!valid_dma_direction(direction))
+> +		return NULL; /* only pin; don't map */
+>   
+>   	sg_table = attach->dmabuf->ops->map_dma_buf(attach, direction);
+>   	if (!sg_table)
+> @@ -1216,14 +1219,21 @@ void dma_buf_unmap_attachment(struct dma_buf_attachment *attach,
+>   {
+>   	might_sleep();
+>   
+> -	if (WARN_ON(!attach || !attach->dmabuf || !sg_table))
+> +	if (WARN_ON(!attach || !attach->dmabuf))
+>   		return;
+>   
+>   	dma_resv_assert_held(attach->dmabuf->resv);
+>   
+> +	if (!valid_dma_direction(direction))
+> +		goto unpin;
 > +
->  			uart0: serial@d4017000 {
->  				compatible = "spacemit,k1-uart",
->  					     "intel,xscale-uart";
-> 
-> -- 
-> 2.43.0
-> 
-> 
+> +	if (WARN_ON(!sg_table))
+> +		return;
+> +
+>   	mangle_sg_table(sg_table);
+>   	attach->dmabuf->ops->unmap_dma_buf(attach, sg_table, direction);
+>   
+> +unpin:
+>   	if (dma_buf_pin_on_map(attach))
+>   		attach->dmabuf->ops->unpin(attach);
+>   }
+> @@ -1245,7 +1255,7 @@ void dma_buf_unmap_attachment_unlocked(struct dma_buf_attachment *attach,
+>   {
+>   	might_sleep();
+>   
+> -	if (WARN_ON(!attach || !attach->dmabuf || !sg_table))
+> +	if (WARN_ON(!attach || !attach->dmabuf))
+>   		return;
+>   
+>   	dma_resv_lock(attach->dmabuf->resv, NULL);
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index 5d1349c34afd..1b66501420d3 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -817,6 +817,7 @@ struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct drm_device *dev,
+>   							 struct dma_buf *dma_buf)
+>   {
+>   	struct dma_buf_attachment *attach;
+> +	struct sg_table *sgt;
+>   	struct drm_gem_shmem_object *shmem;
+>   	struct drm_gem_object *obj;
+>   	size_t size;
+> @@ -838,12 +839,18 @@ struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct drm_device *dev,
+>   
+>   	get_dma_buf(dma_buf);
+>   
+> +	sgt = dma_buf_map_attachment_unlocked(attach, DMA_NONE);
+> +	if (IS_ERR(sgt)) {
+> +		ret = PTR_ERR(sgt);
+> +		goto fail_detach;
+> +	}
+> +
+>   	size = PAGE_ALIGN(attach->dmabuf->size);
+>   
+>   	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
+>   	if (IS_ERR(shmem)) {
+>   		ret = PTR_ERR(shmem);
+> -		goto fail_detach;
+> +		goto fail_unmap;
+>   	}
+>   
+>   	drm_dbg_prime(dev, "size = %zu\n", size);
+> @@ -853,6 +860,8 @@ struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct drm_device *dev,
+>   
+>   	return &shmem->base;
+>   
+> +fail_unmap:
+> +	dma_buf_unmap_attachment_unlocked(attach, sgt, DMA_NONE);
+>   fail_detach:
+>   	dma_buf_detach(dma_buf, attach);
+>   	dma_buf_put(dma_buf);
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index 43a10b4af43a..b3b070868e3b 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -1109,6 +1109,8 @@ void drm_prime_gem_destroy(struct drm_gem_object *obj, struct sg_table *sg)
+>   	attach = obj->import_attach;
+>   	if (sg)
+>   		dma_buf_unmap_attachment_unlocked(attach, sg, DMA_BIDIRECTIONAL);
+> +	else
+> +		dma_buf_unmap_attachment_unlocked(attach, NULL, DMA_NONE);
+>   	dma_buf = attach->dmabuf;
+>   	dma_buf_detach(attach->dmabuf, attach);
+>   	/* remove the reference */
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
