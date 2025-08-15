@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-770291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC52B27966
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E20CB27967
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E138D1CE4446
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C775876A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B27C287273;
-	Fri, 15 Aug 2025 06:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kU0zIpuF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6472C15BA;
+	Fri, 15 Aug 2025 06:48:49 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCDF27703E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D194315F;
+	Fri, 15 Aug 2025 06:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755240483; cv=none; b=sV+CNioid8XCD7i7N0yEPPxQxx+HqZ9cVwJWEnDFALW09RKwM6cm9JiMukw2MF3Q06Grkl1UakiSqdTShHGhksFVz+ZWGGODVV4YNuxmsHI0IKeuu/F4gXh8Ylgk+8tv933TpZQW3kIJQC8QzcxsUgI9gWPsPM1bsovrNrVuBts=
+	t=1755240529; cv=none; b=oj4HDHgyiWeKmU08dtM9qJlT+bhVb7O7pxmM9kMtxDwEplSp0a0HpVicG/tbjq930rAcpUZqrEMGi69fxcBnkJL4802N8Cr0XCKk6Giji3v3QgXg1FxyCoA1/dx5LA2y+vVAggucmmi3wpgJQJ/mo2JT5XlfmZ0WeeflzeDQqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755240483; c=relaxed/simple;
-	bh=JoZn79aBzPPrDDr0xHM5IQgwaowZCOkP1rtnzUXddyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a90RnYmeiOkXKii/ZjOI+LCJHesnwtegdVl/nOi7BLd8KBvfZQQnysbf8gXCpQXksibb7gpgQf3C7TPkZBuerBOdo3udFsjRL4VLxePgGfLOXAuVJXVtLAeiDzcLmivj2Kd9rH6mMgayK4uVCTWCIG8dzDVLHVNTRIlKc3zT2Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kU0zIpuF; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755240482; x=1786776482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JoZn79aBzPPrDDr0xHM5IQgwaowZCOkP1rtnzUXddyI=;
-  b=kU0zIpuFbQc8r+vVMKXSkFK2GjUakMFtkRwD+wCaR9LxHorXJ82hzKvt
-   YKUSQGoiRKo2uHABhwZwv//UwGteiHgfFQVDUg4kKjN8no1N8QK3FKjC3
-   JPiJcjEpyq1wxhYOrpfN1itypElITKn4XOEWSzWvoGWwhacIuYvYVQNiT
-   wQ/FmzmVQtpvZEfh7ho56QXTcEmCIyp1lDHbIxgEhwyjdWTSTLrRmeQRL
-   udGdi6uL6ZxhScR451v3a9q/7XQC4dljLRhSlJbaj6YJJ5eTw4mdbTtoL
-   gA2rlPTQO28E0D+egg2pC/NlQ3QswufaUbWjeedAHSITLW3F6muJN/9ZA
-   A==;
-X-CSE-ConnectionGUID: tEEGX3bJQfurtu1z4wQoow==
-X-CSE-MsgGUID: 9m49tq7JRBS/ZRTu1dVFmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57714252"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57714252"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 23:48:01 -0700
-X-CSE-ConnectionGUID: q5kEDUGMRySi7HKMbuH4gA==
-X-CSE-MsgGUID: nDLocVRPTjaBabj3cOv3kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="171083464"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 14 Aug 2025 23:47:59 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umoEG-000Bea-1u;
-	Fri, 15 Aug 2025 06:47:56 +0000
-Date: Fri, 15 Aug 2025 14:47:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
-	robin.murphy@arm.com, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
-	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
-	xuwei5@huawei.com, fanghao11@huawei.com,
-	jonathan.cameron@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
-Message-ID: <202508151456.FmgCiCK4-lkp@intel.com>
-References: <20250814093005.2040511-2-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1755240529; c=relaxed/simple;
+	bh=hLM0Y1Cn9S272hTRWQPAqYuL88qsD6mxQE18qPcdLmA=;
+	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
+	 In-Reply-To:Content-Type; b=LtGq4mX60/knRKEny644HXnRosULpK5q30ER7pAnTw3fXDhZiVTx5L1cpomFkJXbSCerEqxcDIJnQ52vbrQWjK6IdPiXpRz3Dy+uDoA6kO+Pmj3kxm4cM2/B6eCPTiTIwJRpLA3cykNy8qXSt7B2gCtuoYQNbtAv3otlY1xep4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c3CLH4Hglz2TSx0;
+	Fri, 15 Aug 2025 14:45:59 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 33ACD140123;
+	Fri, 15 Aug 2025 14:48:42 +0800 (CST)
+Received: from kwepemq100003.china.huawei.com (7.202.195.72) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 15 Aug 2025 14:48:42 +0800
+Received: from [10.67.113.98] (10.67.113.98) by kwepemq100003.china.huawei.com
+ (7.202.195.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Aug
+ 2025 14:48:41 +0800
+Message-ID: <689ED849.3060800@hisilicon.com>
+Date: Fri, 15 Aug 2025 14:48:41 +0800
+From: Wei Xu <xuwei5@hisilicon.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814093005.2040511-2-xiaqinxin@huawei.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: <devicetree@vger.kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Conor
+ Dooley" <conor+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert hisilicon,mbigen-v2
+ to DT schema
+References: <20250812203327.730393-1-robh@kernel.org> <175519583586.3483838.3438060375809789110.robh@kernel.org>
+In-Reply-To: <175519583586.3483838.3438060375809789110.robh@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq100003.china.huawei.com (7.202.195.72)
 
-Hi Qinxin,
+Hi Rob,
 
-kernel test robot noticed the following build warnings:
+On 2025/8/15 2:23, Rob Herring (Arm) wrote:
+> 
+> On Tue, 12 Aug 2025 15:33:25 -0500, Rob Herring (Arm) wrote:
+>> Convert the HiSilicon MBIGEN binding to DT schema format. It's a
+>> straight-forward conversion.
+>>
+>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>> ---
+>>  .../hisilicon,mbigen-v2.txt                   | 84 -------------------
+>>  .../hisilicon,mbigen-v2.yaml                  | 76 +++++++++++++++++
+>>  2 files changed, 76 insertions(+), 84 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.txt
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.yaml
+>>
+> 
+> Applied, thanks!
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.17-rc1 next-20250814]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250814093005.2040511-2-xiaqinxin%40huawei.com
-patch subject: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250815/202508151456.FmgCiCK4-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151456.FmgCiCK4-lkp@intel.com/reproduce)
+Best Regards,
+Wei
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151456.FmgCiCK4-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/io_ptdump_debugfs.c:14:13: warning: no previous prototype for 'io_ptdump_debugfs_register' [-Wmissing-prototypes]
-      14 | void __init io_ptdump_debugfs_register(const char *name)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/io_ptdump_debugfs_register +14 mm/io_ptdump_debugfs.c
-
-    13	
-  > 14	void __init io_ptdump_debugfs_register(const char *name)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> 
+> .
+> 
 
