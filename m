@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-771082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA965B282A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:07:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D57B282AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9F3B7A624B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A958F1CC16F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D63634;
-	Fri, 15 Aug 2025 15:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB32128A3F2;
+	Fri, 15 Aug 2025 15:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="V1V8vZLL"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="C1RVc9on"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B32137C2A
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51DE289803
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755270457; cv=none; b=sFJ3VRLR1p6h5Z6dwqED2UKBoWIIkF8Ob9I/elvSMkkhp1DerMzzfFxPfCjADly2gnSFOY4ejmgrmFmymPTSYHtg9PYZKdxcXtas64hwwA/m+R5OJB28eA6w7IvGIUh3z2xYdqV41ywkW4id9KYJyZIUjEO0FQFmiXYlzR2ulfo=
+	t=1755270521; cv=none; b=J2Zplrqx9wfCghkr3WVOkyNbZj7klAPFtnzX1BegG64OCotkfIGzf8cSJj8BX68UdpNPlfDrNHduczqfZSU7d8NesnNotP8nsnh78umFK6t4dOUH8G0qIIi314iFcZ+0Dc+CyW0galyAsPUxvenE4naqdFS/TDuCfm1RLy0fCSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755270457; c=relaxed/simple;
-	bh=k91CyiH72FbwUJJuYjdfRL6Li8iR2YI2J5hUcfGbFcw=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=LJWFchTCocDHyCiBFROjrN0YZ6AGb5bqK0VsBUUIyG/NDMUJ0gC73r1fWzwAQCJXH5JNDXGm4X4xVs4nangx3SO1YspGgJKeaXKhEIzZd0VMpSve4UkdLZix/pdFhliU58YegHqdcd+6UbSDtaDu1vHLIT4UM4lLt5fIfDcQ/oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=V1V8vZLL; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2e614b84so2125195b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:07:34 -0700 (PDT)
+	s=arc-20240116; t=1755270521; c=relaxed/simple;
+	bh=wxXY4tEGwganMnpiKU8Ayd+L73yT/MpiUpiLzweyTx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZDk6WMk//OM6AxdfKM5tzjbKOsExkVuB/s2LjT+SVlRGSzoEI7GnsbZjN6RnhNhKxRvqdNPEV0l8YEgvqjScXCKt5hRBqY6o/0ejwAInNyGhH0ZIx0B89IvYF2PL35LK+imL4Z5GWunxIEJqMQ4mQD7k0ploS93+r1OGR8qdE4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=C1RVc9on; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-618896b3ff9so4283131a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1755270454; x=1755875254; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HSuqWusYtC3hY8ploe0KH7jPL7SusiQWfMM3CIlvAWY=;
-        b=V1V8vZLLC3XqTr5BY3aRTEy/7FEkb4phsfSv2eD/3zEGMqChM2sM7tvO/hNvReJWav
-         J25J7BRcBMcU9omfdYApgtZxoVi+oPHI7vD7eHOmwQfBl3+cnheLfl8QeBN9odBm0gqW
-         sOjtA+pqXn3sgT8EjL5rCARFhCb5jnRNt9MLf80mP4luYaAGPLBMGUAcWzYrIOq/Ht3+
-         v/o/W2zseX6QrVKidYWLJjMHZvfqo2Zb6kBqiZzDsX4W6fWwHzTrK9iWknEzPqsw/x7J
-         7EXxmC6H68/kce/RywkOZYliG3qecHFSg0ly51rydhuOi4rIBIuER5UrDqihzZozUJS0
-         761w==
+        d=blackwall.org; s=google; t=1755270514; x=1755875314; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DvYymIzLnJigupjUPWkbrLGydSeNzR7fRIJx+eQRmEI=;
+        b=C1RVc9onz/M86sN91Ek7JRoEF86dRLnQdhY0FShJL5A9YAlHQ2ClSsbsvxzmosqedL
+         kAEfrg81xKdPsfwcgf6XXePHbdulXFyTM583GPWP1mtlrFzYQohhm80NXZE9vKKUbikf
+         gO//ln37Tbu9sigNmftbwrX8AOea2gHz7XlB5Je9gRJLoo0a8uyUHsmCsjhWLh+kXtw4
+         UnH7HxAuy0oZ7I/ggSwU/Qu/N3IY3uaLl0H4H3W/SsWvNm4zBmSDybu3XORN7j2bgmnO
+         Avtj8e1Wal6qB/4kNpX49EhJw4RZ2WnlQRaCKuDXvkbTBGH8RFy/N1I4DaVgv4wHUNd9
+         tteA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755270454; x=1755875254;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HSuqWusYtC3hY8ploe0KH7jPL7SusiQWfMM3CIlvAWY=;
-        b=ua7Px5DNNjZXUdAvRDB+uCnGmCD7eTVQiyIPb50aMXRQa+U/Jskv4TK6wqkI2+oNsi
-         nQlQZ6TLnK14Ad9NTghbuC8jkbfzeoahqA8M06hHe6vaMlJiu9VgQjCMk1M/EpM3XREq
-         JbHGC6uRSjMPYWU8jIiU3TMZyh2io/wVePL8yGbraCZYO0ERjxu8kiZNCRtOmBkPZC5k
-         TsJpHW/RWRLDbCHJqeropj/0cGJhJ9AUO5FBG7/O0Xt7uM9wKF5rPSEYfkQdKmUjdFQ5
-         jcmOen9MBzjogKAR9n8/UgF8P+Nq+JCm2zVnQYnFvUfqX/4YVnam9rpZYKMO9v2uohXR
-         UuZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUny5/05OOHlTcGr6z5fgePoZpJa7iI8+HAL9a5MQ/iwe+5/iHFS2YUrSCdrZowUXo0S/RWcyhPeIHpVLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKIi2pCrzTYYlOqYvZT+Z/6kJh/i25E5j1fuPO2qgxBe/STWiK
-	7piOGGCD0eai70aSMFFmPKiiVsY/3W9umJFBuzdU2RDnLSYEGAp1YC4Ziayihgz7qhQ=
-X-Gm-Gg: ASbGncu/xcpN1rDRJ6CyYzG1Hu0jAcAlw+p1xwoyTd3n4y/YUGD5F51TFRz5IVIyvnn
-	7i2SYW8+ncqCFYOiy2cq3+8zGlnsbEAMLv2AExTYxRpccCZrurz0jZvqogyHJYB+P0uQlAAhFnt
-	dVFLJBtXfkaG2b3n37Y6+EXt9Bnx7SZ/hMKDLD+gmAkGHEMvbwvrROcraaeERbOPdLrUmrO04c1
-	xk5kSvBNxiGnqSWwsQG6rd3sM25jg2kC5p3q3Iri2qkFC3v0//3Aow/x8nwgBt5oNEOak9n5s3W
-	Xdia2IQG2UEWy56lxkPsM2O/fice2eJ0XL4UdmMoMihVwp/QW4ZKkIj/hn/IgdGC+ALtRGNJvGg
-	WCivSUFa6EEXaCJIgrMwSwulgj+uXIcHandY=
-X-Google-Smtp-Source: AGHT+IGQbGMaqUCBVjgHpE03NJ6lUtJGuN0cfMPLFV18k27l43zYHixLrnt22lRnZXhrjts5z9io5w==
-X-Received: by 2002:a05:6a20:1611:b0:23f:f5bf:35d7 with SMTP id adf61e73a8af0-240d3039205mr3462386637.45.1755270453673;
-        Fri, 15 Aug 2025 08:07:33 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b472d5e58d0sm1499710a12.23.2025.08.15.08.07.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 08:07:33 -0700 (PDT)
-Date: Fri, 15 Aug 2025 08:07:33 -0700 (PDT)
-X-Google-Original-Date: Fri, 15 Aug 2025 08:07:29 PDT (-0700)
-Subject:     Re: [PATCH v4 18/24] riscv: vdso: Disable LTO for the vDSO
-In-Reply-To: <20250812-vdso-absolute-reloc-v4-18-61a8b615e5ec@linutronix.de>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-  Alexandre Ghiti <alex@ghiti.fr>, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
-  justinstitt@google.com, luto@kernel.org, tglx@linutronix.de, vincenzo.frascino@arm.com,
-  kees@kernel.org, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-  hpa@zytor.com, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-  linux@armlinux.org.uk, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-  maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-  chenhuacai@kernel.org, kernel@xen0n.name, hca@linux.ibm.com, gor@linux.ibm.com,
-  agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, tsbogend@alpha.franken.de,
-  ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-  bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-  tmgross@umich.edu, dakr@kernel.org, nicolas.schier@linux.dev, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-mm@kvack.org, linux-um@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-  linux-s390@vger.kernel.org, linux-mips@vger.kernel.org, rust-for-linux@vger.kernel.org,
-  linux-kbuild@vger.kernel.org, jstancek@redhat.com, acme@redhat.com, alexghiti@rivosinc.com,
-  thomas.weissschuh@linutronix.de
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: thomas.weissschuh@linutronix.de
-Message-ID: <mhng-146EE95D-951E-41BB-898C-033437B27EA3@Palmers-Mini.rwc.dabbelt.com>
+        d=1e100.net; s=20230601; t=1755270514; x=1755875314;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DvYymIzLnJigupjUPWkbrLGydSeNzR7fRIJx+eQRmEI=;
+        b=AivP3bNM/QQe8gSQptDlVjuVxaT9KCqvtwxgAs17T9O4rmeKkUqp/NjFCYVwbMue74
+         QFyKnRNOSv5Wb9WTDFrGPDHBRCZBn7Cs2p+7ktracSO8PI4/GVmGIOnOe5twNkZmzlMp
+         fZjg0EP76nlINoxWT8wXXdihgQnbXSDf5/3MkEvm7zhLKnblS+9FMyhrkzVIEuWDkLe/
+         1v1MeLAuxfc51cUmq2xHFbxMFqHKBNZOKfJMF57WIHkHaxWh7WRi28+rD0GhJRvYixif
+         c+u/2y5trgr3mVA8AWp7El+8LNT1kPCGgh8yfLFFEkGRq4N0ogaqeIHf/0CGqNzyX9wk
+         v8DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzYK9OwwYYBSwhOb4BsFyTKTXTShVVthRiUcDbGlX0MRsy6SLTicN5aWRM4zr4q1Kv1u9KmgR5vmzqjiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFEGfPcK0xzHCPI52IZ9L/EBHxiO7o8i0W8R60gDY2jJkJCnEr
+	PDmYyGXJ02nds/3bvQcT8GtyNtgXcDDYAB1c9MZwEPAlxOqFz1yaJmqRh8HafXDIXbo=
+X-Gm-Gg: ASbGncsPCO073OPoxA7xmrUCZJFOJB5MNcBnyKKVavt3QvCQ5x24+/8fR4xS03X1s7I
+	K16Wop4laPXG4TiLUIruBCo3QkqmDEJNayEUN/Z6hthepaOO1Eaw0Zt6N6ANw9/JnEt20Cq/RNm
+	+2sFh7n7VBG0ZCu7sVpso37CtrL4ACk/pWP2QiMQgebAr0HQADfmQI5hOlqBTsScYX4TYWlxWPJ
+	ZegmlTokmm/8WOdLh+RHDvPdFAqs6dkL7HMzQHr1MOyTcZUNIIe7YBAye58RxxkuXGeZeYWGljm
+	pki0UUYYvs93+HqtoLVaeSgLfBZI4EO2xh3ZCmz8M5ZZhv+alAaBz+MQTirKw4DHlM0uv7LzQtE
+	+2N2P1PlUy1TN4dgyJu7Vlocjsg4Nc9vEqrcPzV8=
+X-Google-Smtp-Source: AGHT+IGg3ipRv25chD0V0TpD5T6M8dl0rPLRTtfh63vVqHF23z3Qpb+K6dK+mPlUqX6NaiNGb1oPjA==
+X-Received: by 2002:a05:6402:2188:b0:618:780f:e89d with SMTP id 4fb4d7f45d1cf-6189199fa41mr6105149a12.3.1755270513688;
+        Fri, 15 Aug 2025 08:08:33 -0700 (PDT)
+Received: from [100.115.92.205] ([149.62.209.203])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01ae5casm1791561a12.36.2025.08.15.08.08.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 08:08:33 -0700 (PDT)
+Message-ID: <9680221e-e702-41b6-8401-9e940e2f3290@blackwall.org>
+Date: Fri, 15 Aug 2025 18:08:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: bridge: remove unused argument of
+ br_multicast_query_expired()
+To: Wang Liang <wangliang74@huawei.com>, idosch@nvidia.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org
+Cc: bridge@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yuehaibing@huawei.com,
+ zhangchangzhong@huawei.com
+References: <20250814042355.1720755-1-wangliang74@huawei.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250814042355.1720755-1-wangliang74@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Aug 2025 22:44:31 PDT (-0700), thomas.weissschuh@linutronix.de wrote:
-> All the other architectures supporting LTO (x86, arm64, loongarch) do not
-> use it for the vDSO.
->
-> Its is problematic for some upcoming compile-time validation of the
-> generated object code.
-> The LTO object files do not contain the necessary relocation information
-> and -flto-fat-objects is not compatible with clang < 16.
->
-> For consistency and to enable the mentioned compile-time checks,
-> disable LTO for the vDSO.
-> The vDSO heavily uses __always_inline anyways.
->
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Jan Stancek <jstancek@redhat.com>
+On 8/14/25 07:23, Wang Liang wrote:
+> Since commit 67b746f94ff3 ("net: bridge: mcast: make sure querier
+> port/address updates are consistent"), the argument 'querier' is unused,
+> just get rid of it.
+> 
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
 > ---
->  arch/riscv/kernel/vdso/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
-> index c19c3c76f7c9f6b2f7523a59269de3b683656323..9f1bf5bae9bd473e43d9fd3022e9e1a185128b73 100644
-> --- a/arch/riscv/kernel/vdso/Makefile
-> +++ b/arch/riscv/kernel/vdso/Makefile
-> @@ -49,7 +49,7 @@ CPPFLAGS_vdso.lds += -DHAS_VGETTIMEOFDAY
->  endif
->
->  # Disable -pg to prevent insert call site
-> -CFLAGS_REMOVE_VDSO = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
-> +CFLAGS_REMOVE_VDSO = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS) $(CC_FLAGS_LTO)
->  CFLAGS_REMOVE_vgettimeofday.o = $(CFLAGS_REMOVE_VDSO)
->  CFLAGS_REMOVE_getrandom.o = $(CFLAGS_REMOVE_VDSO)
->  CFLAGS_REMOVE_hwprobe.o = $(CFLAGS_REMOVE_VDSO)
+>   net/bridge/br_multicast.c | 9 +++------
+>   1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
+> index 1377f31b719c..4dc62d01e2d3 100644
+> --- a/net/bridge/br_multicast.c
+> +++ b/net/bridge/br_multicast.c
+> @@ -4049,8 +4049,7 @@ int br_multicast_rcv(struct net_bridge_mcast **brmctx,
+>   }
+>   
+>   static void br_multicast_query_expired(struct net_bridge_mcast *brmctx,
+> -				       struct bridge_mcast_own_query *query,
+> -				       struct bridge_mcast_querier *querier)
+> +				       struct bridge_mcast_own_query *query)
+>   {
+>   	spin_lock(&brmctx->br->multicast_lock);
+>   	if (br_multicast_ctx_vlan_disabled(brmctx))
+> @@ -4069,8 +4068,7 @@ static void br_ip4_multicast_query_expired(struct timer_list *t)
+>   	struct net_bridge_mcast *brmctx = timer_container_of(brmctx, t,
+>   							     ip4_own_query.timer);
+>   
+> -	br_multicast_query_expired(brmctx, &brmctx->ip4_own_query,
+> -				   &brmctx->ip4_querier);
+> +	br_multicast_query_expired(brmctx, &brmctx->ip4_own_query);
+>   }
+>   
+>   #if IS_ENABLED(CONFIG_IPV6)
+> @@ -4079,8 +4077,7 @@ static void br_ip6_multicast_query_expired(struct timer_list *t)
+>   	struct net_bridge_mcast *brmctx = timer_container_of(brmctx, t,
+>   							     ip6_own_query.timer);
+>   
+> -	br_multicast_query_expired(brmctx, &brmctx->ip6_own_query,
+> -				   &brmctx->ip6_querier);
+> +	br_multicast_query_expired(brmctx, &brmctx->ip6_own_query);
+>   }
+>   #endif
+>   
 
-Acked-by: Palmer Dabbelt <palmer@dabbelt.com>
+Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
-Also assuming this goes with the others.  Thanks!
 
