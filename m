@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-771139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA6DB28350
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:53:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E80B28352
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004963A8225
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D06EA1887660
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C30F3090E7;
-	Fri, 15 Aug 2025 15:51:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8B6308F2D;
+	Fri, 15 Aug 2025 15:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MlA582lc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB27308F2B;
-	Fri, 15 Aug 2025 15:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FDD308F10
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755273117; cv=none; b=aAnxortwN/55b3F2vygOkBZDQVLGkLtGojb/WS0Sx9YcMqJ0Qu996P3R0mE0+Qy8rYB1SyRy91HCBptvjjNT4upinDyYMRCAwEbCpNOW3HvxK1upbkUWeg7t+oE3+1P+l89tFeBJ2oF1E5A8bMCsAierRAjeAcO33cJX440WviQ=
+	t=1755273230; cv=none; b=KKLeJ/WHJh2t9pV33wGsMXvucFoXRe5sCCzEW21uE9qLuddKPSbSeHfJ7TQIgiMLbE2Ac1VhGL1/tLj78nHfUXFiqluxcxVjjkyDpUNQk3fFz/Gg82R/67ecS7FciyUIFC5fRmFWYFVUdeK7Cg5y8URxZe0ohWEMsDMuaf9bGH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755273117; c=relaxed/simple;
-	bh=0bO6C3bPDqcBN0lGRqXIhg8z/Rx87SNP9KLtOI9K9QE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dDHQYgtwgrAn/FPVAf/z7YxqQPEv4ljFrXG+qBUv/a+OFEYNlGnJkxWohL/224ZtBU2E0XBU6uIhOJnuEl7IMnUDfwhSLwedQr1BuwIBAV3NJ9/Ue2zPeEbjlMM9gFM5whU+PQzuMEamGNZGtQz624byP+U2rbztv6sBkjIuEXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c3RNw16jZz6L5R0;
-	Fri, 15 Aug 2025 23:49:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B3A4C1400CA;
-	Fri, 15 Aug 2025 23:51:51 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Aug
- 2025 17:51:50 +0200
-Date: Fri, 15 Aug 2025 16:51:49 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robin Murphy <robin.murphy@arm.com>
-CC: Koichi Okuno <fj2767dz@fujitsu.com>, Will Deacon <will@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Catalin
- Marinas <catalin.marinas@arm.com>, Gowthami Thiagarajan
-	<gthiagarajan@marvell.com>, Linu Cherian <lcherian@marvell.com>,
-	<linux-arm-kernel@lists.infradead.org>, Bjorn Andersson
-	<quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Konrad Dybcio
-	<konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "=?ISO-8859-1?Q?N=EDcolas?= F. R. A. Prado"
-	<nfraprado@collabora.com>, Thomas Gleixner <tglx@linutronix.de>, "Peter
- Zijlstra" <peterz@infradead.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/2] perf: Fujitsu: Add the Uncore MAC PMU driver
-Message-ID: <20250815165149.00004d60@huawei.com>
-In-Reply-To: <ea3fda8c-2b7d-4902-9bda-d97d7b090cff@arm.com>
-References: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
-	<20250815034751.3726963-2-fj2767dz@fujitsu.com>
-	<ea3fda8c-2b7d-4902-9bda-d97d7b090cff@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755273230; c=relaxed/simple;
+	bh=gqD7SU7h+xVAvW0IT3ZNJz9KQr11WGoV8KmETbPm2mE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhPSnJnoKhD6QSsIoubgo/PZQsmJwQ9S+k/Ddl8C3Q+AzjK1WOotDCkpzG7rDqSdZax2OKT1E3KFh4ueR6h2VBYDu8pPWYSbaV1/CRkNMB13cCE7KJYCSFXVi+dqptBooJkitOyM8iMMPXZLc/GRdaDDT2gmCol27pmDIJYDoxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MlA582lc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755273227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OecSMFjrQyYkoOnaDbuyx/zIPtpsczdNnMN88HkBMt8=;
+	b=MlA582lcqcQuUnJG50gh14doj/ibrmFlnqKHa5sXAifLOlUWb3f7Ka4LVj65Akg0uU7NpT
+	34UVkuVNWZTJ+aBOXTHwhzDWu376fZ364RqKC6nLoZGf23Q1xOtcVDwVAokoIPJoQLTil0
+	Yq3SRG7RvHTR/k3yvIStgdJ2hf0/r44=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-580-sjLHOPajP62l1GuK_YGW9A-1; Fri,
+ 15 Aug 2025 11:53:45 -0400
+X-MC-Unique: sjLHOPajP62l1GuK_YGW9A-1
+X-Mimecast-MFC-AGG-ID: sjLHOPajP62l1GuK_YGW9A_1755273223
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA80519560AF;
+	Fri, 15 Aug 2025 15:53:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.47])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6B8E630001B5;
+	Fri, 15 Aug 2025 15:53:37 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 15 Aug 2025 17:52:26 +0200 (CEST)
+Date: Fri, 15 Aug 2025 17:52:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/6] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER) in
+ .regset_get() paths
+Message-ID: <20250815155220.GA3702@redhat.com>
+References: <20250814101340.GA17288@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814101340.GA17288@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+Dave, Sohil, what do you think?
 
-> > +static struct attribute *fujitsu_mac_pmu_events[] = {
-> > +	MAC_EVENT_ATTR(cycles, MAC_EVENT_CYCLES),
-> > +	MAC_EVENT_ATTR(read-count, MAC_EVENT_READ_COUNT),
-> > +	MAC_EVENT_ATTR(read-count-request, MAC_EVENT_READ_COUNT_REQUEST),
-> > +	MAC_EVENT_ATTR(read-count-return, MAC_EVENT_READ_COUNT_RETURN),
-> > +	MAC_EVENT_ATTR(read-count-request-pftgt, MAC_EVENT_READ_COUNT_REQUEST_PFTGT),
-> > +	MAC_EVENT_ATTR(read-count-request-normal, MAC_EVENT_READ_COUNT_REQUEST_NORMAL),
-> > +	MAC_EVENT_ATTR(read-count-return-pftgt-hit, MAC_EVENT_READ_COUNT_RETURN_PFTGT_HIT),
-> > +	MAC_EVENT_ATTR(read-count-return-pftgt-miss, MAC_EVENT_READ_COUNT_RETURN_PFTGT_MISS),
-> > +	MAC_EVENT_ATTR(read-wait, MAC_EVENT_READ_WAIT),
-> > +	MAC_EVENT_ATTR(write-count, MAC_EVENT_WRITE_COUNT),
-> > +	MAC_EVENT_ATTR(write-count-write, MAC_EVENT_WRITE_COUNT_WRITE),
-> > +	MAC_EVENT_ATTR(write-count-pwrite, MAC_EVENT_WRITE_COUNT_PWRITE),
-> > +	MAC_EVENT_ATTR(memory-read-count, MAC_EVENT_MEMORY_READ_COUNT),
-> > +	MAC_EVENT_ATTR(memory-write-count, MAC_EVENT_MEMORY_WRITE_COUNT),
-> > +	MAC_EVENT_ATTR(memory-pwrite-count, MAC_EVENT_MEMORY_PWRITE_COUNT),
-> > +	MAC_EVENT_ATTR(ea-mac, MAC_EVENT_EA_MAC),
-> > +	MAC_EVENT_ATTR(ea-memory, MAC_EVENT_EA_MEMORY),
-> > +	MAC_EVENT_ATTR(ea-memory-mac-write, MAC_EVENT_EA_MEMORY_MAC_WRITE),
-> > +	MAC_EVENT_ATTR(ea-ha, MAC_EVENT_EA_HA),  
-> I firmly maintain my opinion that if this is the only place the event 
-> numbers are referenced then the extra layer of macros actually makes it 
-> *harder* to read and follow, compared to simply:
-> 
-> 	MAC_EVENT_ATTR(ea-ha, 0xa0),
-> 
-> but that is very much just one reviewer's personal opinion :)
+OK, it seems that 5/6 (and thus 6/6) needs more discussion, but what
+about 1-3 for the start?
 
-I'll second this suggestion!  I failed to notice they were only used here.
+These changes simply shift x86_task_fpu() and sync_fpstate() from
+.regset_get() paths into the single helper, get_fpstate(). To me this
+makes sense...
 
-Jonathan
+Oleg.
+
+On 08/14, Oleg Nesterov wrote:
+>
+> Sorry, I have no idea how to test these changes, please review. Especially
+> 4/6 and 5/6, I don't really understand shstk.c.
+>
+> If you are fine with these changes, I'll try to update the fpregs_soft_get()
+> and user_regset.set() paths as well.
+>
+> Oleg.
+> ---
+>
+>  arch/x86/include/asm/shstk.h |  8 ++++----
+>  arch/x86/kernel/fpu/regset.c | 46 ++++++++++++++++++++++++++------------------
+>  arch/x86/kernel/fpu/xstate.c | 12 ++++++------
+>  arch/x86/kernel/fpu/xstate.h |  4 ++--
+>  arch/x86/kernel/process.c    |  2 +-
+>  arch/x86/kernel/process_64.c |  2 +-
+>  arch/x86/kernel/shstk.c      | 19 +++++++++++++-----
+>  7 files changed, 55 insertions(+), 38 deletions(-)
+
 
