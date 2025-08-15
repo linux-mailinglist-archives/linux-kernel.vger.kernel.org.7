@@ -1,46 +1,53 @@
-Return-Path: <linux-kernel+bounces-771257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405BEB284C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:14:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0909B284CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633D4601136
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D255F178C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7D830E27A;
-	Fri, 15 Aug 2025 17:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5413E321430;
+	Fri, 15 Aug 2025 17:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dlrwTkyb"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9023A3DAC02;
-	Fri, 15 Aug 2025 17:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="PUMPiO8R"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B41304BDE
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755277878; cv=none; b=QMRW3MqnskOmV3ClY/kyMYi/RVylUBpV/aQvXG/2TJUHtLRTsLF3l5Hk1vbw2D3/Ey8OiZfNs6UX5nPu7+vUVfgzIP1WeeeCncvD08EboBivJLCvUWARDUHlrjcpskk2btqkl60vBvI6zRnD5NWHpwjL5rF9tITM/Mig+iKAvNA=
+	t=1755278121; cv=none; b=V6uCQQaPyKspdc5yjNDsJlyptAqriXj9E1HdYVwfZVV0rZZoNXa5whmbnfAe+bb98mvSWUoD3Nqbg0Lk59x31A4JttWUu9h9V/ftlsuPE6HnLqZYOVzGKDmkCaHP3+psuJvyYmu6lHOe8rTWgR+YYBpyv4sTnhxtx2/c/62I3Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755277878; c=relaxed/simple;
-	bh=oL165kMhdL7SBcUYTxkBLep6xaK04HUB/ocynpH08P8=;
+	s=arc-20240116; t=1755278121; c=relaxed/simple;
+	bh=Q9VDTyPsJ1nrsJ9IPGQ/uH24LWZk1d50M/ALSVgVhkY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j5cYTdQvY4eDORWrd2LTpsU9YHkcJGvDOoRgFoMP+Tb3OptdijtpRno9gE20OeItbt0kS9THMVZWSrFhmHpHZpDHxRGNmi5ggzDz5aoliwe+45m2TKeAlD+6WQezuj6HDyiHjt8T3TlZ333AZT19G8laFPgd0tcWlRtdCc5kwq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dlrwTkyb; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.65.3] (unknown [40.65.108.177])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A6CC32113342;
-	Fri, 15 Aug 2025 10:11:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A6CC32113342
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1755277875;
-	bh=SAotWXRdJ4GwPTDfcSrqVIfHspaIFddFM5//f09eJ6Y=;
+	 In-Reply-To:Content-Type; b=F5dblKPwqI8Ff79Nw9yXgKBj6KaGwv6A1WDNuhREkl7xgW5yhRjtQedLHCT2EbhO/hpz/b1tnSAH2nhQ42aNTSZg4qeRJhgq7+XeqkTx7+MIGgyQt/lpqwaAaSGXpQT6sY1H0lp2B1QLFgTgUbXEasOdE8EBJRg885R3MUSnPzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=PUMPiO8R; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:50f9:ca46:26fb:a765] ([IPv6:2601:646:8081:9484:50f9:ca46:26fb:a765])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57FHF2ON2012703
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 15 Aug 2025 10:15:03 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57FHF2ON2012703
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755278104;
+	bh=xMvjS3Kd5v0VRPHOeHrYngN+OKw4RRNU/wrppPGKZ7U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dlrwTkyby66/ulJGMUzfUPi9tbkf3955WraEZ82/BBBvXYxHYKm1MstgxjCKmcMAs
-	 UzVAVg1EvzxdpCTAItvmVKBfhUPlQJvDW/sEZkBeZt9dBD51w5rlY89gM0QhJhoDRC
-	 kWJ5t3+WustA2QQ4QkVVi6SuLZYej8XBP8cX0FVE=
-Message-ID: <4ebde68b-1e39-4650-9f57-500843fa8aea@linux.microsoft.com>
-Date: Fri, 15 Aug 2025 10:11:15 -0700
+	b=PUMPiO8RbYAmd3BO2Gb40KMQ8esEioA/r32CoRljiSql0GrlTlOWkDSmcN6ovbTQ0
+	 tutde6nkhOHwTobfcv8Sj3JmiahVAE32ToleR2IGuDLMfjJRPv41Clitk5yTmmgkWV
+	 jn6W7JHygJLtyukV9UcuzPML0k0iN7fdLkcx362GnbKToeVNx7hueYavitqNVEljLM
+	 mIiNbcFqyz1UsiCDI6yXge1Cq9xYzobj21GRjYHq29wT0zwmOLaodQHsFfL33jbsyi
+	 WbT05zyCsHz68/o56kaDqmBUZSYJfANueAwexY3+IpZGb7pjNRKJ1ili9j+gxnGbJL
+	 LkXgkBjXrpdUQ==
+Message-ID: <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com>
+Date: Fri, 15 Aug 2025 10:14:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,72 +55,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hyperv: Add missing field to
- hv_output_map_device_interrupt
-To: Wei Liu <wei.liu@kernel.org>, Michael Kelley <mhklinux@outlook.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "decui@microsoft.com" <decui@microsoft.com>
-References: <1755109257-6893-1-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB4157B75073B1E6ACDB6405C1D435A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <aJ5SOFR8HNqPxBKN@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
+        scott.d.constable@intel.com, joao@overdrivepizza.com,
+        samitolvanen@google.com, nathan@kernel.org,
+        alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
+ <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
+ <20250815074939.GA3419281@noisy.programming.kicks-ass.net>
+ <20250815102839.GD4068168@noisy.programming.kicks-ass.net>
+ <20250815103055.GE4068168@noisy.programming.kicks-ass.net>
+ <fc0715e0-42f2-4b5d-be31-ac44657afc56@citrix.com>
+ <20250815105908.GB3245006@noisy.programming.kicks-ass.net>
+ <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com>
 Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <aJ5SOFR8HNqPxBKN@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/14/2025 2:16 PM, Wei Liu wrote:
-> On Thu, Aug 14, 2025 at 06:57:22PM +0000, Michael Kelley wrote:
->> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, August 13, 2025 11:21 AM
->>>
->>> This field is unused, but the correct structure size is needed
->>> when computing the amount of space for the output argument to
->>> reside, so that it does not cross a page boundary.
->>>
->>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->>> ---
->>>  include/hyperv/hvhdk_mini.h | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
->>> index 42e7876455b5..858f6a3925b3 100644
->>> --- a/include/hyperv/hvhdk_mini.h
->>> +++ b/include/hyperv/hvhdk_mini.h
->>> @@ -301,6 +301,7 @@ struct hv_input_map_device_interrupt {
->>>  /* HV_OUTPUT_MAP_DEVICE_INTERRUPT */
->>>  struct hv_output_map_device_interrupt {
->>>  	struct hv_interrupt_entry interrupt_entry;
->>> +	u64 ext_status_deprecated[5];
+On 2025-08-15 04:19, Andrew Cooper wrote:
 >>
->> Your email identifying the problem said that without this
->> change, struct hv_output_map_device_interrupt is 0x10
->> bytes in size, which matches what I calculate from the definition.
->> This change adds 0x28 bytes, making the struct size now 0x38
->> bytes. But your other email said Hyper-V expects the size to be
->> 0x58 bytes. Is array size "5" correct, or is there some other
->> cause of the discrepancy?
->>
+>> CS Jcc, decodes to Jcc,pn for non-taken
+>> DS Jcc, decodes to Jcc,pt for taken
+> 
+> Ah, thanks.  I was looking at the hex in one of the comments and still
+> couldn't figure it out.
+> 
+> So with this notation, we also have the dual meaning of ,pt between the
+> P4 and LNC.  At least the encoding is the same.
+> 
 
-Ah, it looks like the *input* struct size (0x50) plus the size of
-1 cpu bank is 0x58. The output struct size should indeed be 0x38.
+What "dual meaning?"
 
-I got them mixed up somehow when writing the email.
-> 
-> FWIW the array size 5 here is correct.
-> 
-> Wei
-> 
->> Michael
->>
->>>  } __packed;
->>>
->>>  /* HV_INPUT_UNMAP_DEVICE_INTERRUPT */
->>> --
->>> 2.34.1
->>
->>
+	-hpa
 
 
