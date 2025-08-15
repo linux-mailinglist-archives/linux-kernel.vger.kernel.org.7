@@ -1,91 +1,58 @@
-Return-Path: <linux-kernel+bounces-770283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BC7B27955
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67F6B2795E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4105A52C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D0EA0475E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1B299AB5;
-	Fri, 15 Aug 2025 06:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJh+5Le6"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BE52C0F95;
+	Fri, 15 Aug 2025 06:45:43 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE2342AA1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8D22C3240;
+	Fri, 15 Aug 2025 06:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755240211; cv=none; b=oONlz7JhU4NW82QYocXxkg2jjQqveWcqF/F4DfZ/rU8pY2WIsdrVGqGGJa+/yriSAP+/u9/xjQtnZiYNFhm847uXe3oDIPXwm+YtbdNxX9P32tQb2sLaZmAO9j36A6G0ZLxzDeAp351z93KEZdnHBiK6hxUVzUCUellvDeaKPHs=
+	t=1755240343; cv=none; b=q0mn46d1aZkpz8HSKq/duB9TTzC+6WguvtNTUTZUtJQuLW4vtHTkvlmx4GCjRxkdILTD2BBVzR0yuqwMieK+8yLiT4yBFZfebjsIVDJGIo7PqyXYB6C4z1U9YVGvcfC1DMPJm+YlcN+x+p3liJ3EoMAdCz7JC9A/FE/JM/F9N3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755240211; c=relaxed/simple;
-	bh=xkCLba4G6E1+UldU9eajjTFLYGvxB4goimC/qTArDEg=;
+	s=arc-20240116; t=1755240343; c=relaxed/simple;
+	bh=tEYwNdWsfaPWhqRUsz8dOddZWJIw9qXs0jEIMUzQHJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3hO2r/qaIa5DFlVGuL8+xrLFoik0fkl34Hp4b7EWAqoy5Ylzhvc9RZ4fOEh0KTcUhK5hqI1Z2nDgaTKohSdxvHud8wZ7oeLbQcQlN00f9vf9YmqMKO5molHUuYVeiYm9LSuWIpYcwkBiCtaUH1LEQ5aTOwL+Y6CKLEgMG4+s0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJh+5Le6; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b656412so2518071a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755240208; x=1755845008; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQ+FKPOPxHYzBg0qRiV9WQnD66XSjRAhVwtd58VUZ+w=;
-        b=OJh+5Le6YOoYjHQX8q7F3xyTN6cQJO7nDg/CsZH+fXWZnyeDOAPoRFI6QiEZu/hSRm
-         7XfpdmZ4AKu/U9RbCGsuyvz9PutJPfNXAef0u4JCS9uHu2f35OZCEq3wl/qUmHQvXVmM
-         J6vZNGuNJZJyemLvyZu51+IboJwm/bWct1uHdBSFWgaLD9/MffyKCM/SaQILpS1VuWFj
-         l5eGSrZ3ULkivr4mJDHO58YvLakyXcO0+5V9geQ1SwU/+0Ynf3QkfBjYmdc5GZ4b/oIk
-         5FKd0FwNuHNcWVOCojpJPWsTwmDa5qugPtFjFnKzEDhH21ZLaesilEcAPxgPSGyFoiTl
-         dZ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755240208; x=1755845008;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RQ+FKPOPxHYzBg0qRiV9WQnD66XSjRAhVwtd58VUZ+w=;
-        b=hEgLvmfq7e4pqvVKJRbNiOYNFrgsAvW5HYfw+NJCPdLWXLoeeZSy9iT3GNUQhX/oP3
-         3JqC2X677OPQRgTtfBd8X6Cdtq+z/BdQcClsRtR58zFIYF/aZrk4GIEPgYA712XKjwnZ
-         eE91aY4S/A3gsWpNV3jkTb3BD01RiIsGxU0gsU6T19IBdu/e4/3Cmia/oXAyBPL9nMyc
-         meqlc8NN2z/MIyNLjXvdq4qxAyIMDf6TYzvVuLkjT82zo0KxerR9DQuvHtuGc2qN4seX
-         ZbartihGTYOKTg6JU0F2JP8Am2V/2HI3XImzHBo+nnN66VZoqQrjnLcW42eb0x0GVvVE
-         G03A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8lm5sMQrL1hHoL0Vaq933Vicr5e05P2iqiCGLDrX6BV7vGqoXU6EzkYmN4cltovUvWD9xEIo49B8ZBR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8YS3bhApES8rulOkxRNvzYubi88V12Qxpr75GGmo1X9me1Jyr
-	GdR4yAgTHjynibjorOymE/WZJRdahcyojL1RSVmSAvKTXvGGlPgg16kHkyBn2zzO
-X-Gm-Gg: ASbGncuFQyfQeiUgbjqREX5UVp1AC0MKtG5xF6bb9JSrDmIEbOSGcrBuck2ov3Cp4ka
-	9xOcpBtA2Do1WnVIwDY86FWWcQTRAd7R2YOZVSWNUW4hAfBDJyweLhhECNUyh2Ilekv5M7ORviY
-	HK5ITUuFDfWxp9TyB3U7hK1U4+q80PM6Ekom0uEaBkuMztefViARRFA7HOsCDqBMbugn18eXd5y
-	L4mnnM6s2cJQFBiKlJLoVSXxbFJALkf5pUUwpkK4TQ9Ep8yZZ/zOQHpZ0HUpZNGQCxbgEGDXPZf
-	GJEyQ1VYychGwhrH6ZBAwL5KRHeMM+15ITmlPZS3cimQF47lvZ5v7YS/7ZQXtDQvTgJ4UGtwEc+
-	aNt9mOfvhYkkMtHiKk14IQQ==
-X-Google-Smtp-Source: AGHT+IGPFk4+EoYus2GiJezFDslbVAG50BHI7St5CSnh5npe7++NmJQ+qpasnKnRTuGEMgD6zS98Qw==
-X-Received: by 2002:a05:6402:2713:b0:618:1485:3749 with SMTP id 4fb4d7f45d1cf-618b056089fmr728966a12.18.1755240207429;
-        Thu, 14 Aug 2025 23:43:27 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01b5facsm727726a12.41.2025.08.14.23.43.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Aug 2025 23:43:27 -0700 (PDT)
-Date: Fri, 15 Aug 2025 06:43:26 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>, linux-mm@kvack.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=h12ZEgVXbJH5deUzDpkDhYA6KNaSqwD8evVLyWgMxFWF6t+A2kV0sR8XTRQngVVizrw9cKGf9Pko+0cfzuWyyMd24o3dPZSUjkhY+tJ3onTSTQ6fdlAfo2gqXwsHXRB98Ydwy0JXuynx09yMF6EzS14EW70k/O3FXu0KHtDUCig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz16t1755240284t3a0337c4
+X-QQ-Originating-IP: 4PXFKC6B5UuvqH9rvC/iz4N+iXgh6lVYJYQxy9vEjCc=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 15 Aug 2025 14:44:41 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8016404537619868178
+Date: Fri, 15 Aug 2025 14:44:41 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm/page_alloc: simplify lowmem_reserve max calculation
-Message-ID: <20250815064326.itngdnefuoihlk2j@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250815024509.37900-1-ye.liu@linux.dev>
+Subject: Re: [PATCH v4 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <CFAA902406A8215F+20250815064441.GB1148411@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-6-dong100@mucse.com>
+ <099a6006-02e4-44f0-ae47-7de14cc58a12@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,23 +61,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815024509.37900-1-ye.liu@linux.dev>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <099a6006-02e4-44f0-ae47-7de14cc58a12@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NfCiKUdyqwvY1p6EZlxf1G2ylesouvYupwV+u6lXixLM87RhXco1e+Yx
+	QPEEKLAe+GqRGiRq+YljQmzQJzDQ7N/410Wg2EaSDS+WYe+e2u41TkSVrR2PJJa7Ztb0OuY
+	W9Kar0w1d7QeZtnLOC7DPKJPCMNC9ArEF1EBJL/7w6+JFC4WYFHoX9Ovp2oDt0L9m28QaZI
+	4TNMGUKfpuLtn4ji6/98B76E3MOIybqbGoZSv5HyXr4kGuodnqzLbMVDRDLIAc0b9z6/2lv
+	tSYJErLjXBf9GeE31/ss62b3XjtrZFTZzNAKqGWq6BM7C1aH29lDxmmfRXlRU7nvm3lQYdj
+	RVC6oBmroMIx/ry8QjerwKNXAvoupnTvBDnIk4rZEekT7TFKorZdfKHHNWmN3CtqdvLIyAx
+	QXIHf+3uLejiOWNZZI991S8ZfSqeL8fNHfsBgFcSUt6U4XrxayZ+sQi1sCOf5etwlvXsIzL
+	cowDIlx75itt/ypDyODhOYefgSDlDvwD4c1ZkHtAaLj6d4TgFzDXklRgkwPW6A1IUGQ27at
+	9KkLeMNOSh45AoV6i8PWMeW5k93S4gQR+nKE20CbksAvEsKcLotO1JH/7/jYeywxF+3QPtu
+	+rTSOosa2jAkMo6F50+UzpwUP3BwXOrvjgI9Bg8v2eFvfxjAo1Cyjab6RMIdcDY3/eLfN34
+	esjKRS3KFccSMnmLBjkPlJLfj4uFbvzavWnVAWt/MGj7bx/wNF6W9vlnDbZkWug/w99c/4p
+	3vb3y14aRJC326JTQaUeqH8FK+bW3a9VVRdTDAfdswHBUMK57PzQgJeRDqMv+mMlkIkzoUe
+	JZaMy9rXRqzzzz/UvoOYF5CVOu57mSSUPvhMTsP2bz0Wz8DwzONxVFofxXJtDzIggU1ehcW
+	mbrU4sEvl4nLm2KgF56Rrx+t1d6MJKskTp8yMVYOhTwHx6TnvML+0qv3vqDRnvFO7tKACCR
+	PwDq4voqmFkb13CH8WYaB8sVtJYSpAmO9ch1e4RCG75SH63bVGgbAP4IQHidJ9uWX2F9ufG
+	A/UJX70289OFhtORK1VosPocl8eqgUpmiRueuP1ZaDSWJBsFUhn03fYxKAFzc=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Aug 15, 2025 at 10:45:09AM +0800, Ye Liu wrote:
->From: Ye Liu <liuye@kylinos.cn>
->
->Use max() to find the maximum lowmem_reserve value and min_t() to
->cap it to managed_pages in calculate_totalreserve_pages(), instead
->of open-coding the comparisons. No functional change.
->
->Signed-off-by: Ye Liu <liuye@kylinos.cn>
->Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->Acked-by: Zi Yan <ziy@nvidia.com>
+On Fri, Aug 15, 2025 at 05:42:05AM +0200, Andrew Lunn wrote:
+> > +struct mucse_hw_operations {
+> > +	int (*reset_hw)(struct mucse_hw *hw);
+> > +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
+> > +};
+> 
+> Again, there is only one instance of this. Will there be more?
+> 
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+It is one instance now, but maybe more hw in the furture.
+I want to keep this...
 
--- 
-Wei Yang
-Help you, Help me
+> > + * rnpgbe_get_permanent_mac - Get permanent mac
+> > + * @hw: hw information structure
+> > + * @mac_addr: pointer to store mac
+> > + *
+> > + * rnpgbe_get_permanent_mac tries to get mac from hw.
+> > + * It use eth_random_addr if failed.
+> > + **/
+> > +static void rnpgbe_get_permanent_mac(struct mucse_hw *hw,
+> > +				     u8 *mac_addr)
+> > +{
+> > +	struct device *dev = &hw->pdev->dev;
+> > +
+> > +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->lane) ||
+> > +	    !is_valid_ether_addr(mac_addr)) {
+> > +		dev_warn(dev, "Failed to get valid MAC from FW, using random\n");
+> > +		eth_random_addr(mac_addr);
+> > +	}
+> 
+> With a function named rnpgbe_get_permanent_mac(), i would not expect
+> it to return a random MAC address. If there is no permanent MAC
+> address, return -EINVAL, and let the caller does with the error.
+> 
+
+Ok, I will update this.
+
+> > +static int rnpgbe_reset_hw_ops(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_dma_info *dma = &hw->dma;
+> > +	int err;
+> > +
+> > +	dma_wr32(dma, RNPGBE_DMA_AXI_EN, 0);
+> > +	err = mucse_mbx_fw_reset_phy(hw);
+> > +	if (err)
+> > +		return err;
+> > +	/* Store the permanent mac address */
+> > +	if (!(hw->flags & M_FLAGS_INIT_MAC_ADDRESS))
+> 
+> What do this hw->flags add to the driver? Why is it here?
+> 
+
+It is used to init 'permanent addr' only once.
+rnpgbe_reset_hw_ops maybe called when netdev down or hw hang, no need
+try to get 'permanent addr' more times.
+
+> >  static void rnpgbe_rm_adapter(struct pci_dev *pdev)
+> >  {
+> >  	struct mucse *mucse = pci_get_drvdata(pdev);
+> > +	struct mucse_hw *hw = &mucse->hw;
+> >  	struct net_device *netdev;
+> >  
+> >  	if (!mucse)
+> >  		return;
+> >  	netdev = mucse->netdev;
+> > +	if (netdev->reg_state == NETREG_REGISTERED)
+> > +		unregister_netdev(netdev);
+> 
+> Is that possible?
+> 
+
+Maybe probe failed before register_netdev? Then rmmod the driver.
+
+> >  	mucse->netdev = NULL;
+> > +	hw->ops->driver_status(hw, false, mucse_driver_insmod);
+> >  	free_netdev(netdev);
+> >  }
+> >  
+> > -- 
+> > 2.25.1
+> > 
+> 
 
