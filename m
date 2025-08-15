@@ -1,140 +1,92 @@
-Return-Path: <linux-kernel+bounces-770762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE117B27EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BB4B27EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09BA3B26F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1829B3B3F13
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C812FFDD3;
-	Fri, 15 Aug 2025 10:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41F42FC89A;
+	Fri, 15 Aug 2025 10:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GG8TmNAL"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="GRcUo7e8"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EA9319874;
-	Fri, 15 Aug 2025 10:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECC122576C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755254798; cv=none; b=GrRjmf/gYc4ivOtq2vtK6RI69NuUwDrJALf/IRHtMCEZQli44KKdVk6Us+cN73f0va3v5eSUzB/SzrSBFSASBVdWFqutEGiKgN3JokFNJtbCBOuZh/qOwDUJV6QkcBMttd0RhxK0gys7y6wpaYADuqZ/PF4ssZkQ5bSBFY+QivE=
+	t=1755254912; cv=none; b=Hsm7E/D3Ia/QcOmduvnNp+EMukyQLgkyvxGkiHHIF1b12hrcsJ3s2ox2+Bm+7EFLCXS2u7J3rQBMgyO67Hu6NDuAMkm5z3AT/8/jYZxbh8e91RYpbaJHNJU491jRkw8Z39cWWJi9QdU+VwplkjcPg/fzQIq/1g8P69x1JqO63lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755254798; c=relaxed/simple;
-	bh=QIEf4bRjqwdIw7O9CtQqLo46rfzzGgRT2EkmUSxC7q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dy29RcqhPRthpq0NPGDF1Y6B2l6QqNQoiv8KpHqe/3Sl25IeNLnf9WIuXOl5DPQFgWTd29p5TQ43v2XIeJ7VHy9PpHcn8pC2uxpRhF2UzypJ7LoGG+TpauwfUyBEMBkLe5Ad+MMZ9XJa2cDcx1TuEtmQOuMt7uLNlQZ9UW0sMgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GG8TmNAL; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8579C40E0289;
-	Fri, 15 Aug 2025 10:46:34 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vm8n5Tjcabrr; Fri, 15 Aug 2025 10:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755254790; bh=6sREfrXQXF1MMRVVqb2jaK8lR1Iy0sA+7FMnu50q+UU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GG8TmNALwllVrwNnhCHD2Jgguz/nL0ZTL+O/ziw1OVMu3vVceJQsrFfghPYNmTbzY
-	 x66LZaEyDRve40AA149+SRe4uIxJimfNVykL6Kkzh3priJXSF7tp/JxQ9R4fhI2EBu
-	 ou+9OLF9L5ZjZWcgtRSChpldt2LSEk7TBPUugQFbv/kru3dYr3XmKoE+NInGnHH2dX
-	 2x1rIqVUMBQWuTyKQvYe02XaTUOKd5y4GEiPtzWq/Fal8JPnQoYglKoj8xRAqk/ImV
-	 5qY7se9EU//4QhDsNLwWRZ712z8IZDmqoNhj9IplTf5xJWSJhwsNlT4XttXlE08vLu
-	 qohx6k8lqyQCY7IR454G7U2rgdNh0oB9v1Rg8ZlzqgFZrUKm6236tw+L8FgMHWWNP7
-	 MtKwTzsjiNTl6Q3BXPXzukF0lAGhX6Jo0Aoc3/DX3R8PpVssf2FJPKQluS25+9oXjn
-	 jM77khAYByN3fc1oSNH3u4awvIf7onJEm9Z4AHWuSmBZKr4dt6sS1FyvPNtYIbAtrE
-	 t8BtQUw+S2G3eJFgV99thRo5rT+KutkDfYf1OMzL6nZKYlVkSlcciRbO8cRvoiNErA
-	 ZsZfd7bPJILKHTWUzgT5VqSPs1YPZIcu55FtCos24gKrNmkUja4BjAeF2tFhN2XbnD
-	 6GBquVELfue/VcI1cbSlb35E=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1435F40E0254;
-	Fri, 15 Aug 2025 10:46:07 +0000 (UTC)
-Date: Fri, 15 Aug 2025 12:46:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kai Huang <kai.huang@intel.com>
-Cc: dave.hansen@intel.com, tglx@linutronix.de, peterz@infradead.org,
-	mingo@redhat.com, hpa@zytor.com, thomas.lendacky@amd.com,
-	x86@kernel.org, kas@kernel.org, rick.p.edgecombe@intel.com,
-	dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
-	reinette.chatre@intel.com, isaku.yamahata@intel.com,
-	dan.j.williams@intel.com, ashish.kalra@amd.com,
-	nik.borisov@suse.com, chao.gao@intel.com, sagis@google.com,
-	farrah.chen@intel.com
-Subject: Re: [PATCH v6 1/7] x86/kexec: Consolidate relocate_kernel() function
- parameters
-Message-ID: <20250815104601.GDaJ8P6efRLzRTD-2i@fat_crate.local>
-References: <cover.1755126788.git.kai.huang@intel.com>
- <b88c6a54174a757f44e2f44492a21756be05dcda.1755126788.git.kai.huang@intel.com>
+	s=arc-20240116; t=1755254912; c=relaxed/simple;
+	bh=42OCUCCiMqcxTgQxr3TgBWmcEl7+262s4gsEOcebIbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VF+j+O06YZyOn4IfNoI7ZVnhYOR19sOIaUEHs/vR+OP6ZEwX2QbaoMveTGAVxDxDu/Gn4eSB20ZSN0GI74ta9/5uyKXOGNBd4r94/e/aqoxBs3ex5TTYCeR1t2Yx33BG/brNaByob/xC0U7FBhYuPopqdoakOFVMuCte/RTmP5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=GRcUo7e8; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755254898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PJd4mKAX6RdUpjrrwmUXazuqsCN2PZfrowEzcn0Hg5M=;
+	b=GRcUo7e8ncadhrPZPmqSKbQBPcnbagqMUaNukDVPLohMx/EgcWoP+S1SAmrw3ZH7wJlwxq
+	/x7+9s/aIOlalGm/ZFhCDNbV/I4dHZzxxE4uz0NKFjotzvv/6iGtkSA3wuav+M5Ssf6z5G
+	rcJY7MdOL6jbSRN5BW9CwquNsFPaZwc1mFLsumV/xOLzglLjTa5RGJyo/jKy3e6ptyinG5
+	eDJe31rFJ2ev/mjNnNs46LBrjXH+/s6uw1yRaztJZUG4ukNK9LzNJN9FV+qe8FrvAPorRC
+	tV71LF7msadNyAmRpiXbdDN/l0tsS/KQVzhSwQ9ktUjimUir8J+Ki/Ykm3DCCw==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] dt-bindings: leds: Clearly mark label property as deprecated
+Date: Fri, 15 Aug 2025 12:47:46 +0200
+Message-ID: <20250815104805.405009-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b88c6a54174a757f44e2f44492a21756be05dcda.1755126788.git.kai.huang@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 14, 2025 at 11:59:01AM +1200, Kai Huang wrote:
-> During kexec, the kernel jumps to the new kernel in relocate_kernel(),
-> which is implemented in assembly and both 32-bit and 64-bit have their
-> own version.
-> 
-> Currently, for both 32-bit and 64-bit, the last two parameters of the
-> relocate_kernel() are both 'unsigned int' but actually they only convey
-> a boolean, i.e., one bit information.  The 'unsigned int' has enough
-> space to carry two bits information therefore there's no need to pass
-> the two booleans in two separate 'unsigned int'.
-> 
-> Consolidate the last two function parameters of relocate_kernel() into a
-> single 'unsigned int' and pass flags instead.
-> 
-> Only consolidate the 64-bit version albeit the similar optimization can
-> be done for the 32-bit version too.  Don't bother changing the 32-bit
-> version while it is working (since assembly code change is required).
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
-> 
->  v5 -> v6:
->   - Add Tom's RB.
-> 
->  v4 -> v5:
->   - RELOC_KERNEL_HOST_MEM_ACTIVE -> RELOC_KERNEL_HOST_MEM_ENC_ACTIVE
->     (Tom)
->   - Add a comment to explain only RELOC_KERNEL_PRESERVE_CONTEXT is
->     restored after jumping back from peer kernel for preserved_context
->     kexec (pointed out by Tom).
->   - Use testb instead of testq when comparing the flag with R11 to save
->     3 bytes (Hpa).
-> 
->  v4:
->   - new patch
-> 
-> 
-> ---
->  arch/x86/include/asm/kexec.h         | 12 ++++++++++--
->  arch/x86/kernel/machine_kexec_64.c   | 22 +++++++++++++---------
->  arch/x86/kernel/relocate_kernel_64.S | 25 +++++++++++++++----------
->  3 files changed, 38 insertions(+), 21 deletions(-)
+The text description already mentioned the label property was
+deprecated, but using the 'deprecated' property makes is clearer and
+more explicit.
 
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ Documentation/devicetree/bindings/leds/common.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index 3e8319e44339..45ce9e13c7ff 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -58,6 +58,7 @@ properties:
+       no other LED class device can be assigned the same label. This property is
+       deprecated - use 'function' and 'color' properties instead.
+       function-enumerator has no effect when this property is present.
++    deprecated: true
+ 
+   default-state:
+     description:
 -- 
-Regards/Gruss,
-    Boris.
+2.50.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
