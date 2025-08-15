@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-770364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C241FB27A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9805FB27A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83211CC19EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617591CC1C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0581B960;
-	Fri, 15 Aug 2025 07:20:40 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C86C24A066;
+	Fri, 15 Aug 2025 07:22:38 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC061219EB;
-	Fri, 15 Aug 2025 07:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219CE824A3;
+	Fri, 15 Aug 2025 07:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755242440; cv=none; b=PMWy/Kj2u6fb5myxm8I0w+oZJ8QzgKbYIG/eXbtQgGfDkvxeRKYBstcJr2iyCnhmHNzb+R62ljG+wfw00elY5ldxkX8O/1Cof4eB0DL8EKnBHbd1ogV2GkAKf0BnM24bACg7eM49ZxWENhAOO03+krc7q7KEm+KwdEw36dNNZYs=
+	t=1755242558; cv=none; b=StaxDewdKHU2k04Ycga11NeXORr8dNqzO8RIROROTXaWDsAvuM0zsOYC9ZDiW6fK6RQUCBOK2XJ+WeVdNEiyDmSv8G/AFwzdRQx8APCJ9guAYq9FeqJWB608bSUEOPwPDi579qhe3DeLhngtomUFy6Mx2lc6xFDMltY4hOyIzs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755242440; c=relaxed/simple;
-	bh=LJ5hwcVtv8L4QJbMAkLE+n3yrJ6SMbNWpVFjDzuDzAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kU3W2VVH0SipnG7GGD85RPHklH9G2fH5EXVFVIJ0bKi+Gcsawm7d/DKYiGh5qiLDA+1Gb+4cUfbvGM29VZCfhSzqZZ2RSExynxN7BCjLOSWnMHLNbIaReaBMuvxAg0CSjpCDIaNWqLJjj5UnWVr9hZiveSlx5yt4BnAaK5dTTUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5395d6ae79a811f0b29709d653e92f7d-20250815
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:612345b8-8f28-4ac7-88c9-7afc108cde8f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:8d7f38ea3075bad0b42d9549ab5de2cc,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5395d6ae79a811f0b29709d653e92f7d-20250815
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zhaoguohan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1737500474; Fri, 15 Aug 2025 15:20:31 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id F3E90B8258E7;
-	Fri, 15 Aug 2025 15:20:30 +0800 (CST)
-X-ns-mid: postfix-689EDFBE-875798283
-Received: from localhost.localdomain (unknown [10.42.12.87])
-	by node2.com.cn (NSMail) with ESMTPA id BD49CB812916;
-	Fri, 15 Aug 2025 07:20:28 +0000 (UTC)
-From: zhaoguohan@kylinos.cn
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	thomas.falcon@intel.com,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	GuoHan Zhao <zhaoguohan@kylinos.cn>
-Subject: [PATCH v2] perf parse-events: Prevent null pointer dereference in __add_event()
-Date: Fri, 15 Aug 2025 15:20:08 +0800
-Message-ID: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755242558; c=relaxed/simple;
+	bh=Zr9P2ndnhX3SK5UWWH9OdT0pfil/s2pLoN+1J1CRKnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmPb7q01o+FsXxnNXQrDgHqzcne0D5N9jMB8OcTB18SVkAlOSWF0Yd1gM3osRvSPpV6YJV1Ks9L/8Un0pcwW1ImWgaihOaoUFxdsoFA30dZ+IVXwarN+hWXjfULO7OAbCOrAJOfhiYp7sleeGzqRpU8Wt4Q6ZL6opC7M7OJZ+WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz13t1755242466td134eb93
+X-QQ-Originating-IP: P8B29TxqAIjtw9rcUWdGPOj/UlpMvPoKRSUDmw0C7LM=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 15 Aug 2025 15:21:03 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5156444352730471506
+Date: Fri, 15 Aug 2025 15:21:03 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <67844B7C9238FBFB+20250815072103.GC1148411@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-3-dong100@mucse.com>
+ <a0553f1d-46dd-470c-aabf-163442449e19@lunn.ch>
+ <F74E98A5E4BF5DA4+20250815023836.GB1137415@nic-Precision-5820-Tower>
+ <63af9ff7-0008-4795-a78b-9bed84d75ae0@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63af9ff7-0008-4795-a78b-9bed84d75ae0@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NyID+twfxCOjBl5qGI5kvatijftQftb6jgAw36eIBtExXbZEhO08dH0M
+	6jdA1imzV9Di15d94kRKAonCByyy1f0qefbskuz5dksMWrdSqrtboqJRxqaTWLccQTCHNNc
+	7ouMJSRqL6tz2mhabbs8cTBmiVyjXbcW5fgtmo/5d6EmuVb9ZeDzIOp9NKhm+ConLHzit4H
+	KuQvTZDFhnjCM7ahO4K/bGva+bom/N1byNZPn+pXrhN+6wtAMye0zKG56icvduee6xNHY6W
+	AFFbPRKM0GvIpBULixJhs9zM3ZKFQHMrTwZsY4CtKYT7eLt7gqcGKZM4RWJNY6bPVtcdcB+
+	p0DJ31yfDL8uNfuOdjkACsvasI+A6plm5MPZ57RFcnGdN+pSqpunKyjaj8/P+CAR/2CZPhv
+	Tqw+Spdpi/iiZ/BYifjBPCMDlqMCBniLxsrHfflmCiHZLeJrd9SWn6yQbIXPJcX6hf+s8w3
+	jtihLB/2lpE/neHcWjDSnSz+/6nSsvrrsbbZgjlD4vgQVGW82Q0cohvjt3UDMn1dXSsfeOa
+	Xd68iKsKymGXa726/vMAOXc/Vfgv1QKjtVKwo1kJubjbeLqAdLHgPg4xNJX/LVvlu7g96YC
+	PA1CrcXBvNPt4jVRj1ATauHR/2lXjHixiRH2OkthqnDCnWkP0HN4LHHkXttGm4Q11eC0oJK
+	tWRJ/RJ5HfplDoOQgFTvNultLOweyIEqvTtHDvvMajWDF8JJu9rltrX11Exgn1tgRLmn7Cp
+	gBKHn51o9Wm6QM5fNqLjOUWKNU/cDwF44Va9XLu1DTH7IvYPIV9rhqaUvebcRdAnTfpEaqX
+	5tzU99QJXEzEKiuwq2M2/R77qQQXtBhNtVVPBboSas385Uv6kwhiOuDqW/U2OhFjujmJ1GO
+	iG/dJn4gEpjfyZIUJxYW6EypNI5/xEVkYZMdki8qOlvkk0FzgAksDjjNZpIJrn/PnzKe56z
+	QHK7MZzVz/NcPCTXet86xe+LIg8KVLgyjC57axqz7fX1EbZqIUTIDrGgtEsWqE2+vTsmIGE
+	Kn9PHb6TuanjYkScFHkIBQ/23rpUe8UWAicSOQjlpPgOOlYG2hb+PWWqwje5bxd3i+hFlO2
+	buYS4ubOeTP4tbjiR2bJtY=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-From: GuoHan Zhao <zhaoguohan@kylinos.cn>
+On Fri, Aug 15, 2025 at 05:56:30AM +0200, Andrew Lunn wrote:
+> > It means driver version 0.2.4.16.
+> 
+> And what does that mean?
+> 
+> > I used it in 'mucse_mbx_ifinsmod'(patch4, I will move this to that patch),
+> > to echo 'driver version' to FW. FW reply different command for different driver.
+> 
+> There only is one driver. This driver.
+> 
+> This all sounds backwards around. Normally the driver asks the
+> firmware what version it is. From that, it knows what operations the
+> firmware supports, and hence what it can offer to user space.
+> 
+> So what is your long terms plan? How do you keep backwards
+> compatibility between the driver and the firmware?
+> 
+> 	Andrew
+> 
 
-In the error handling path of __add_event(), if evsel__new_idx() fails
-and returns NULL, the subsequent calls to zfree(&evsel->name) and
-zfree(&evsel->metric_id) will cause null pointer dereference.
+To the driver, it is the only driver. It get the fw version and do
+interactive with fw, this is ok.
+But to the fw, I think it is not interactive with only 'this driver'?
+Chips has been provided to various customers with different driver
+version......
 
-Extend the goto chain to properly handle the case where evsel allocation
-fails, avoiding unnecessary cleanup operations on a NULL pointer.
+More specific, our FW can report link state with 2 version:
+a: without pause status (to driver < 0.2.1.0)
+b: with pause status (driver >= 0.2.1.0)
 
-Fixes: cd63c2216825 ("perf parse-events: Minor __add_event refactoring")
-Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+Then the driver update the status to reg to confirm info to fw.
+fw check reg status to decide whether report state again or not.
 
-Changes in V2:
-- Extended the goto chain with separate error handling labels instead of =
-using null pointer check
-- Reordered jump targets to avoid accessing NULL evsel members
-- Added Fixes tag
-- Updated commit subject to use "Prevent" instead of "Fix"
----
- tools/perf/util/parse-events.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+'Driver < 0.2.1.0' only support 'version a', it will not update
+pause status to reg. Then, fw will report status again, again...
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-index 8282ddf68b98..8a1fc5d024bf 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -277,18 +277,18 @@ __add_event(struct list_head *list, int *idx,
-=20
- 	evsel =3D evsel__new_idx(attr, *idx);
- 	if (!evsel)
--		goto out_err;
-+		goto out_free_cpus;
-=20
- 	if (name) {
- 		evsel->name =3D strdup(name);
- 		if (!evsel->name)
--			goto out_err;
-+			goto out_free_evsel;
- 	}
-=20
- 	if (metric_id) {
- 		evsel->metric_id =3D strdup(metric_id);
- 		if (!evsel->metric_id)
--			goto out_err;
-+			goto out_free_evsel;
- 	}
-=20
- 	(*idx)++;
-@@ -310,12 +310,15 @@ __add_event(struct list_head *list, int *idx,
- 		evsel__warn_user_requested_cpus(evsel, user_cpus);
-=20
- 	return evsel;
--out_err:
--	perf_cpu_map__put(cpus);
--	perf_cpu_map__put(pmu_cpus);
-+
-+out_free_evsel:
- 	zfree(&evsel->name);
- 	zfree(&evsel->metric_id);
- 	free(evsel);
-+out_free_cpus:
-+	perf_cpu_map__put(cpus);
-+	perf_cpu_map__put(pmu_cpus);
-+
- 	return NULL;
- }
-=20
---=20
-2.43.0
+So, I add 'echo driver version to fw in driver 0.2.1.0' to solve
+this condition. fw consider it an old driver if driver not 'echo
+version to it'.
+
+1. Old driver with old fw, it works fine.
+2. Old driver with new fw, fw knows the driver is old, it works fine with
+version a.
+3. New driver with new fw, fw knows the driver is new, it works fine with
+version b.
+4. New driver with old fw, fw echo state without pause, and it never check
+it in reg, it also works fine.
+
+And I think it is a way to make compatibility more easy. Driver know fw
+version, and fw also know driver version. Fw can easy edit existing cmd,
+not only add new ones since it can support old cmd for old driver,
+'edited cmd' to new driver.
+
+Also, hw->driver_version is not useful to driver. I can use a macro in
+mucse_mbx_ifinsmod.
+
+Thanks for your feedback.
 
 
