@@ -1,274 +1,169 @@
-Return-Path: <linux-kernel+bounces-770182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1438B2782E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3909DB2782F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D642603846
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB53603CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF4324169D;
-	Fri, 15 Aug 2025 05:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751FA23C4F4;
+	Fri, 15 Aug 2025 05:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TtbvZXFb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cARFP1fa"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2120622DFB1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2591C84C7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755234761; cv=none; b=VECwBpOgOomWET803dDqA5WhajkK+kCeDszWp7lObsI7NE/HLSmYDCSltcMhznF7I2QLmuQnhGFVPNd23lrP0MyHA2S6/k48IbEDeT4aIfAA6GAyPZnZAN6wkFxONsEklowQ1oWinv0XXhqWWS0oEM7v1fJZjOnsnbGnMSrXPZw=
+	t=1755234785; cv=none; b=Jkz1brWAXM1d7G462dUMocaGSv+mnzkc21ZOVcvYH2gsoKEshVcsCFtmExWbJgs4j8JRuxxrHS90dE+Kl8Jtiys0Q3fSK1L1RDKNeeo/d2OOJlxKwwb8IuBSuG22RC1zk2Rsak7ODrjHhPhAKYtHHJhpWG9+7T5TJbWoBIfkDtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755234761; c=relaxed/simple;
-	bh=McLdgNQ0UHTP+K3nrEWRJGT+gcj5jy8rw3LhbVPqvsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EELeKsL2c7Lf1wBAl4TXOgGB/VxaUnmL5vfBGMkwVSM8WaZaowjt+jtZf8Yp8RepmXKUgh1BzmCBSsTKegjIDWz2q0sFnz4W9DDF1dVKwxwB4yR3/UaWkQMcIeia7wQap6r9VwLLiLU5KMCHiDBa77CciTBJNtRldPLu8MR1PAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TtbvZXFb; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7a2befdso248059566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:12:38 -0700 (PDT)
+	s=arc-20240116; t=1755234785; c=relaxed/simple;
+	bh=asbWxOoHojySmFrLx18w24R1Ongn6WuKn2LRn6DzLwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctAMn7aAy/6Hc3x2iweQ4/NYGqC8wSSzLGD8YDsW3fIpmvWXQjjsd4D3uUH9SH8eAsY0E7xAIZiaCWmT6irt283R9Ggt6ooGFbP6ib5k0jAZOMwCvN2x0YA8HZnlSMOaydKI7WlrtHsugy5kmcCwtBW58q5zzuNKbZCz7uljj4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cARFP1fa; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-242d1e947feso119195ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755234757; x=1755839557; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=McLdgNQ0UHTP+K3nrEWRJGT+gcj5jy8rw3LhbVPqvsA=;
-        b=TtbvZXFbf1DjB7p1TLW1FQiDpBruONF3pjPFI8B0a9qbgGfXlPraE1L6a70REdRbZW
-         VCXnua7ggi4lz+N0ENX+4gnSjfYLujCr/dH9Ivzw1aOJqhEvv6fPu3lXYnAnzTAwwzaX
-         Qv4IGiisrVGa8Yj0g3l8k1UWuZeqmylukiLuQez2pWiYjZqOCGn7eZqunwjyE9+kQKNY
-         WwQo2GWudFvgkBJSawhx0ilYuukNL/fbelGkofj0BOkisZfbjGdwJ8pabctht6xWuOgl
-         hL4oZkl/vwOtKHiBiNAzVN1OwKAxYjfJ1HUIke9HMMpOTAwxdjLAuD3y9WSm88a5khgz
-         gxtw==
+        d=google.com; s=20230601; t=1755234784; x=1755839584; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGQ20RTBx/tdgXgITELcfzTQixi9kkZ3YBoW/JTOkqo=;
+        b=cARFP1faZkVBxBXO9+RSiy43ibFc14tF136V8MhKZ/yVUF5FZK954m4P8Dvdkolosc
+         DwIzYdRrsQeZwASr/4lBWBfUvIY33FJ9qfhDdL6frZz7zWyqFnxHGyCLOys3eHsO5LMi
+         WqSbxG1T7n/KGxYCJC3ycxnOSt/CmuXnU2kpjWjIwMlV5G/bKYyo4akBrCzBYxSYb9lO
+         T9oMVy7qoW++G/QVVyr2f9zp3NLkNIpJuJGc3BmrW8pXA9vEYXY7dUeq5PxRxCrtXgHX
+         PvOAXDg2AleD4iSg0/8sG/cQlWxy7Soe2LCC8wan07MfbFtvsFCy9l3vfGCsYsnoWosB
+         bKXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755234757; x=1755839557;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=McLdgNQ0UHTP+K3nrEWRJGT+gcj5jy8rw3LhbVPqvsA=;
-        b=oph939ASnZs1aLua1q7lyU4ptH803EQUzsvv67/EahiSR4ae+JmcXMmmZwB4D8kXvw
-         HUv0gEZnP//quQhiS3oScC7BT4kRHUInB9WWVMo4NUzT/he4zwQLRKf+4j/9UgKiENUw
-         gUAJrmtmH3638zRYXOI9tqs56cq5qDi2KMM4MNheRNzy+qoGTO8uYL+ibBmZfePV9Kqt
-         gVa2S73TBHdRGkTLOaPnBGtNYNdgiN9ggy3sfjBUKJkGhQqEULQF4XP8RLH2+ACmfDVl
-         /bkXQyn3J6fs47nNota1jP94v0nBFgtPF67/tez+88Cp3wTOV9kax5+eIu9lY4Yc0A0G
-         biRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRVgaRWingXbStdf7HOUdyUJtA9P2qi/mMWJRYFk0X3zmKlmMSj7aKXC1FZmcGoNPf6vf8eYZT/RtUcZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNHPaYhJp/HYCRrT+M55jOv/OmJ8YgPeDQipoGu6EmochB9lKM
-	Ip0A2aWzX9gX789VsQTJemtOw4uVpC7gmJk2crepxbECwSdaiR1ibAnQe7TsFn47s1c=
-X-Gm-Gg: ASbGncv8GcIuNEHv/P8Xw0ZmdBCn5JRnWM4Z4iuWWaafcz5rHTyM8AM9L/7y5O37IWp
-	H9rnNLKlz2AJLJJ2QkT+rnMHcuNbn9WWDXTKFv1Ju+7nxtqiqJMZ+Wz3vylkUbpAeTSf3CUE7wI
-	SHJy6t+9iUw5izXwUMmcPfk0Yhxnsn7DW+8Ac6VToLlFwJuPllsE2nShY+1PBqiDxcLjKZ1yfah
-	ZFlXGYs1bkS+TbvPRQ258uPmF1zp7orFehvxVgZR9pSMq/ibdYgc5Cby45LE3oRfmtx1Lo3mOJm
-	JzebJ+jIoUiLKqcPztP80CsPhcqhJ5VsHpAU9iY2RSAOB3Yd69kIYCjUPTSpfP8mpZ5oYxEtHXk
-	8ZL/HCNdz9VseUFG8Z3X5e/+24G1oTw/TacwEsrGsnfKQTlCLsLhs0xjKDh811olhgfn+aehJ1e
-	B+yS1IrGRMukKrXLlcdVkfLPKAVp/sEpRgZH+LofugmIRkJ2JGID1u7IOHWGWHWYx/l+GS
-X-Google-Smtp-Source: AGHT+IH6RL+UYk9eXXiqf/2WHHs101Br/d9JtfFbTA1uN2J85tzv604BGxlwSoNOiF9FL27kkFNuHA==
-X-Received: by 2002:a17:906:6a0f:b0:af9:67ef:96d5 with SMTP id a640c23a62f3a-afcdc32cc31mr62306866b.52.1755234757442;
-        Thu, 14 Aug 2025 22:12:37 -0700 (PDT)
-Received: from ?IPV6:2003:e5:872d:6400:8c05:37ee:9cf6:6840? (p200300e5872d64008c0537ee9cf66840.dip0.t-ipconnect.de. [2003:e5:872d:6400:8c05:37ee:9cf6:6840])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53f2bsm50564066b.4.2025.08.14.22.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 22:12:37 -0700 (PDT)
-Message-ID: <3823aae9-34cd-430f-8cf5-873d354c52ac@suse.com>
-Date: Fri, 15 Aug 2025 07:12:36 +0200
+        d=1e100.net; s=20230601; t=1755234784; x=1755839584;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGQ20RTBx/tdgXgITELcfzTQixi9kkZ3YBoW/JTOkqo=;
+        b=DRaJbf0pfOqzPIJpEZ4pWdUw/ZJcYVfoBoJIM2TLRJ7qmQSMx6m/Pbiy1SHEtMzWJK
+         S91jW5PuIyNC/3XflCm3BWfG3O5dkihXgJZ2Uk17/Yq2Urn8FcM5qcQh3PRHHWt3yPS2
+         xkQILj6wowVrp7T0kJDC9u71eEABR6gi7/OgRfs8bn52YPy36Glpm8mWeRMOh+Sy8tPZ
+         TWsmrXl+bmwLGFcHZyI1CjBmenvFh47xCVwOgwyvInGJLLtFYYijr9yx24e9GaTUt4w3
+         3YvdaCoFSYGo/jA4i0BByS3t1jEmdQzWtOkoHfgFqksABDOMa9nMKhRJ56obgdxsFIhn
+         zEzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs93W0GtFKd/0uVrBFFG1Cx14cPou2CWYTAr8+A2xvHkDVxqTUNrhyzql7EhS9/hrS3HG54ofxzrDkeX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfptn8USqRm63KKLASOGTHiuWXtQVZEy8SIVrliE6g7u5hyJHr
+	kHvcfr6K1Eb7RbSF9dWzNCbGUY0/FOJBeD7Sm9d4BFSGLju2n0NYZetaUX2sECkyag==
+X-Gm-Gg: ASbGncsFxeLAGVqFEDnYGX7rjxa1rPOQjIyM092BsGVlTEiYzzohrkZCEW6kyArylPG
+	uvTz9cVWJWnjWL4Xt93in08bQJTQJxGH9g9DgNHu9rcqEH/kYa9nNg6Eggs77EtAKMAEmgY038U
+	I8XskO2MdmrTamEmWeCnBKF/DkAlhqlDG304C4r4mtyrJiMK788L8M3wTdPn9waLlmF5C/Yx5QS
+	P2aToF/82UWkEdHuTVfinuCw73xWm+2eXJXmbF6Y0ZBw4CXBip8Ebm24OMFHsBh7d8MFi2O6bWZ
+	D/qxT6i0BTTcAKVFSVYd3WZGg3KMFGPWi1QOjRs3XI9zJW99hj+0zfUKERXm3ScCY2uMCoKFJPV
+	ODIxCyeR+gsPuI/nMC6Fo7qcsIt+RlWCANXUCc0FLgho2gpz1YxU+2CdFPfrs9eBRh8ZRpge8de
+	baq68=
+X-Google-Smtp-Source: AGHT+IHveQGN41PwPlfYDxUUUwq2EqsHNQwAF3RAIPfs5cqhD+TK20yYEi9P/XIeXarW3cFWaQnS/w==
+X-Received: by 2002:a17:902:c94c:b0:240:2bd3:861 with SMTP id d9443c01a7336-24469a6a864mr2555385ad.10.1755234783271;
+        Thu, 14 Aug 2025 22:13:03 -0700 (PDT)
+Received: from google.com (167.212.233.35.bc.googleusercontent.com. [35.233.212.167])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32331191102sm3463989a91.30.2025.08.14.22.13.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 22:13:02 -0700 (PDT)
+Date: Fri, 15 Aug 2025 05:12:58 +0000
+From: Prashant Malani <pmalani@google.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Jie Zhan <zhanjie9@hisilicon.com>,
+	Ionela Voinescu <ionela.voinescu@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+Message-ID: <aJ7B2labaxza9duY@google.com>
+References: <aIso4kLtChiQkBjH@arm.com>
+ <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
+ <aIvQvLL34br6haQi@arm.com>
+ <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+ <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
+ <20250811060551.ylc6uutni4x6jqtg@vireshk-i7>
+ <aJo5vP_mfBn_vxSF@google.com>
+ <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com>
+ <aJpMHkrWJIyHtHL5@google.com>
+ <CAJZ5v0hXUoqmxwjH0CN8gGDj=qnC3ZWrJc5VarkqRfh=0SCUWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Chris Wright <chrisw@sous-sol.org>,
- Jeremy Fitzhardinge <jeremy@xensource.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-References: <20250812190041.23276-1-jason.andryuk@amd.com>
- <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
- <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
- <238b2fd0-33ab-4279-9205-de58332fa944@amd.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <238b2fd0-33ab-4279-9205-de58332fa944@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------qv29XdA3S4CPXDXpJem8TU1B"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0hXUoqmxwjH0CN8gGDj=qnC3ZWrJc5VarkqRfh=0SCUWw@mail.gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------qv29XdA3S4CPXDXpJem8TU1B
-Content-Type: multipart/mixed; boundary="------------NWazRfyTV0cxBaTWpf0ZP2x3";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Chris Wright <chrisw@sous-sol.org>,
- Jeremy Fitzhardinge <jeremy@xensource.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-Message-ID: <3823aae9-34cd-430f-8cf5-873d354c52ac@suse.com>
-Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-References: <20250812190041.23276-1-jason.andryuk@amd.com>
- <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
- <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
- <238b2fd0-33ab-4279-9205-de58332fa944@amd.com>
-In-Reply-To: <238b2fd0-33ab-4279-9205-de58332fa944@amd.com>
+Thanks a lot for taking a look at this, Rafael.
 
---------------NWazRfyTV0cxBaTWpf0ZP2x3
-Content-Type: multipart/mixed; boundary="------------HJPRokk2UZjLy6HwgH9d4q8C"
+On Aug 14 13:48, Rafael J. Wysocki wrote:
+> 
+> First off, AFAICS, using idle_cpu() for reliable detection of CPU
+> idleness in a sysfs attribute code path would be at least
+> questionable, if not outright invalid.  By the time you have got a
+> result from it, there's nothing to prevent the CPU in question from
+> going idle or waking up from idle. 
 
---------------HJPRokk2UZjLy6HwgH9d4q8C
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+This is a heuristic-based optimization. The observation is that when
+the CPU is idle (or near-idle/lightly loaded, since FFH actually wakes
+up an idle CPU), the AMU counters as read from the kernel are unreliable.
+It is fine if the CPU wakes up from idle immediately after the check.
+In that case, we'd return the desired frequency (via PCC reg read), which
+is what the frequency would be anyway (if the AMU measurement was
+actually taken).
 
-T24gMTQuMDguMjUgMjM6MDQsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+IE9uIDIwMjUtMDgt
-MTQgMDM6MDUsIErDvHJnZW4gR3Jvw58gd3JvdGU6DQo+PiBPbiAxMy4wOC4yNSAxNzowMywg
-SmFzb24gQW5kcnl1ayB3cm90ZToNCj4+PiBPbiAyMDI1LTA4LTEyIDE1OjAwLCBKYXNvbiBB
-bmRyeXVrIHdyb3RlOg0KPj4+PiBWSVJRcyBjb21lIGluIDMgZmxhdm9ycywgcGVyLVZQVSwg
-cGVyLWRvbWFpbiwgYW5kIGdsb2JhbC7CoCBUaGUgZXhpc3RpbmcNCj4+Pj4gdHJhY2tpbmcg
-b2YgVklSUXMgaXMgaGFuZGxlZCBieSBwZXItY3B1IHZhcmlhYmxlcyB2aXJxX3RvX2lycS4N
-Cj4+Pj4NCj4+Pj4gVGhlIGlzc3VlIGlzIHRoYXQgYmluZF92aXJxX3RvX2lycSgpIHNldHMg
-dGhlIHBlcl9jcHUgdmlycV90b19pcnEgYXQNCj4+Pj4gcmVnaXN0cmF0aW9uIHRpbWUgLSB0
-eXBpY2FsbHkgQ1BVIDAuwqAgTGF0ZXIsIHRoZSBpbnRlcnJ1cHQgY2FuIG1pZ3JhdGUsDQo+
-Pj4+IGFuZCBpbmZvLT5jcHUgaXMgdXBkYXRlZC7CoCBXaGVuIGNhbGxpbmcgdW5iaW5kX2Zy
-b21faXJxKCksIHRoZSBwZXItY3B1DQo+Pj4+IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQgZm9y
-IGEgZGlmZmVyZW50IGNwdS7CoCBJZiBiaW5kX3ZpcnFfdG9faXJxKCkgaXMNCj4+DQo+PiBU
-aGlzIGlzIHdoYXQgbmVlZHMgdG8gYmUgZml4ZWQuIEF0IG1pZ3JhdGlvbiB0aGUgcGVyX2Nw
-dSB2aXJxX3RvX2lycSBvZiB0aGUNCj4+IHNvdXJjZSBhbmQgdGhlIHRhcmdldCBjcHUgbmVl
-ZCB0byBiZSB1cGRhdGVkIHRvIHJlZmxlY3QgdGhhdCBtaWdyYXRpb24uDQo+IA0KPiBJIGNv
-bnNpZGVyZWQgdGhpcywgYW5kIGV2ZW4gaW1wbGVtZW50ZWQgaXQsIGJlZm9yZSBjaGFuZ2lu
-ZyBteSBhcHByb2FjaC4gwqBNeSANCj4gY29uY2VybiB3YXMgdGhhdCB0aGUgc2luZ2xlIFZJ
-UlEgaXMgbm93IGluIG9uZSBvZiB0aGUgTiBwZXJfY3B1IHZpcnFfdG9faXJxIA0KPiBhcnJh
-eXMuwqAgQSBzZWNvbmQgYXR0ZW1wdCB0byByZWdpc3RlciBvbiBDUFUgMCB3aWxsIHByb2Jh
-Ymx5IGZpbmQgLTEgYW5kIA0KPiBjb250aW51ZSBhbmQgaXNzdWUgdGhlIGh5cGVyY2FsbC4N
-Cg0KVGhlIGh5cGVydmlzb3Igd291bGQgcmVqZWN0IHRoZSBhdHRlbXB0LCByaWdodD8gU28g
-aW4gdGhlIGVuZCBubyBwcm9ibGVtLg0KDQo+IEl0IGxvb2tzIGxpa2UgWGVuIHRyYWNrcyB2
-aXJxIG9uIHRoZSBiaW5kX3ZpcnEgdmNwdSwgc28gcGVyLWRvbWFpbi9nbG9iYWwgc3RheXMg
-DQo+IG9uIHZjcHUwLsKgIEJpbmRpbmcgYWdhaW4gd291bGQgcmV0dXJuIC1FRVhJU1RTLiBm
-aW5kX3ZpcnEoKSB3b3VsZCBub3QgbWF0Y2ggdGhlIA0KPiB2aXJxIGlmIGl0IHdhcyByZS1i
-b3VuZCB0byBhIGRpZmZlcmVudCB2Y3B1Lg0KDQpXZSBwcm9iYWJseSB3b3VsZCB3YW50IHRv
-IG1vZGlmeSBmaW5kX3ZpcnEoKSBhbmQgYmluZF92aXJxX3RvX2lycSgpIHRvIG5vdA0KcmVz
-dWx0IGluIGEgQlVHKCkgaWYgYSBub24tcGVyY3B1IHZpcnEgaXMgYm91bmQgdG8gYW5vdGhl
-ciBjcHUuIFRoaXMgY291bGQNCmJlIGRvbmUgYnkgcGFzc2luZyB0aGUgcGVyY3B1IGZsYWcg
-dG8gZmluZF92aXJxKCkgYW5kIGxldCBmaW5kX3ZpcnEoKSByZXR1cm4NCmUuZy4gLUVFWElT
-VCBpZiBhIG5vbi1wZXJjcHUgdmlycSBpcyBmb3VuZCB0byBiZSBib3VuZCB0byBhbm90aGVy
-IGNwdS4NCg0KDQpKdWVyZ2VuDQo=
---------------HJPRokk2UZjLy6HwgH9d4q8C
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+In a sense, the assumption here is no worse than what is there at
+present; currently the samples are taken across 2us, and (theoretically)
+if the difference between them is 0, we take the fallback path. There is
+nothing to prevent the CPU from waking up immediately after that 2us
+sample period.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+> Moreover, the fact that the given
+> CPU is idle from the scheduler perspective doesn't actually mean that
+> it is in an idle state and so it has no bearing on whether or not its
+> performance counters can be accessed etc.
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+The idle check isn't meant to guard against accessing the counters.
+AFAICT it is perfectly valid to access the counters even when the CPU is
+actually idle.
 
---------------HJPRokk2UZjLy6HwgH9d4q8C--
+> 
+> The way x86 deals with this problem is to snapshot the counters in
+> question periodically (actually, in scheduler ticks) and fall back to
+> cpu_khz if the interval between the two consecutive updates is too
+> large (see https://elixir.bootlin.com/linux/v6.16/source/arch/x86/kernel/cpu/aperfmperf.c#L502).
+> I think that this is the only reliable way to handle it, but I may be
+> mistaken.
 
---------------NWazRfyTV0cxBaTWpf0ZP2x3--
+This is interesting. I think it may not work for the CPPC case, since
+the registers in question are in some cases accessed through PCC reads
+which require semaphores. I think it would be untenable to do that in
+the tick handler (but I may be mistaken here). It's easier on x86
+since those are always just MSRs.
+We could probably do it for the FFH case, but then we're bifurcating
+the computation method and IMO that's not worth the hassle.
 
---------------qv29XdA3S4CPXDXpJem8TU1B
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Perhaps some of the ARM experts here can think of ways to do this that
+I haven't considered.
 
------BEGIN PGP SIGNATURE-----
+Best regards,
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmiewcQFAwAAAAAACgkQsN6d1ii/Ey9U
-dwf+JQ8ngZHuOyMPboD3OIdWJ5UeTzUd+CWSxX/m1aJo/f3gK1XCtKjF1ibbb0UILsS0EBkW33DP
-WE0oZ6j/o6JgNy0VCaRO6Q46+5J4wPHlQ1GcPwWNTO/rQRznf3DQYbzTbnD1mnoGbP7as6nJFDVZ
-bvVKSA9X/tk7cE0G0o1ksdEak3ZXXK3SkDkjUbuXl8P8emnwAqpLlekIxqocNGsJTTKx3NRkZ3g0
-8GRPdGsxlxb4G3kD/rqlE35pK9owUtyzFkUAYFD6cypTEAGgEQLB97g0ENPTWh5GaBeYlS3lpAQG
-yNhrN7dYqAAjX1MWmK1ShMI+AI522nM7eofBE78c1g==
-=WKZ2
------END PGP SIGNATURE-----
-
---------------qv29XdA3S4CPXDXpJem8TU1B--
+-Prashant
 
