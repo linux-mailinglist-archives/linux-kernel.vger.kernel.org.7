@@ -1,243 +1,331 @@
-Return-Path: <linux-kernel+bounces-770363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C19B279FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:20:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB61BB279B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEC53A457A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7CF1CC3BCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1180D25F97C;
-	Fri, 15 Aug 2025 07:20:01 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E16D2D46BC;
+	Fri, 15 Aug 2025 07:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="G7AOIC6V"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023129.outbound.protection.outlook.com [52.101.127.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9421016CD33;
-	Fri, 15 Aug 2025 07:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755242400; cv=none; b=SkHKZVgxKigfHo7Jk0X1WQIIecxcpVL/g3ok0LmAl+hcU8AQX0/xBH9o3vH8gh7gnZpPUFr7npnI7XkwN/EU3jdtmIqb51rl5dxGt/fFuamBuTomKNwJ8zzL0Fk5RlM9LrLAVOaaoQVkdC3Wi5c3vMUKFmqr5XeuPimHJGDg48A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755242400; c=relaxed/simple;
-	bh=i9y0M6PJQuhMG/WWP0zJwScWVZ7i9otIXltFKi0rXic=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q/TITlgzIxJ5GUISSuWZT4r4Q0JiEVxJpHtsy5yGiq1Ey5FhG4Fm8wPBY2441q38cV2PV6aDcvlVPf046T0LGk5yUozRNXcB/fX6z7qVeGS9fsYD+UOwJ5gJ7jkHfr6585z1+yDoRgOr73I39cDel18haCqHtCHpd54eO3cAs/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c3D5R0SWszKHLvc;
-	Fri, 15 Aug 2025 15:19:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5DDB81A0CC1;
-	Fri, 15 Aug 2025 15:19:54 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgA3ARKK355ovg_7Dg--.13866S2;
-	Fri, 15 Aug 2025 15:19:52 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	lizefan@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	hdanton@sina.com
-Subject: [PATCH v3] cgroup: cgroup: drain specific subsystems when mounting/destroying a root
-Date: Fri, 15 Aug 2025 07:05:18 +0000
-Message-Id: <20250815070518.1255842-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D3F2EA74F;
+	Fri, 15 Aug 2025 07:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755241578; cv=fail; b=Tdf8a6n4srn847nhILCXL6jfXO7btP/JL864MPJzlToabzbIZXfcKT2+cdgB1Yu1Uuu0MfhJtrwZAMKYb4v5nbksgyxx5q0ZuTnmVqUDH6NeKcDFAhQ66IqXCKPbcaykkKy1UMWl0gH2a8Ne7dkgeJyVVYzoEVccAj+ptOWnmcA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755241578; c=relaxed/simple;
+	bh=rku75tLJmbTgrdz628XSTPxLLWvX3rvqs4HXY1hyrDY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=g4lkAI4ylglzbfbzJs6fYjuc5Ny24JHuk+9FeFngZGkEs0pOhZwlLnJiW4H7CNvQroRT/mLv+7wWrFf3q3AUtHfnZcR0PIMtT41kJnjJ0UR11jc4/6a6XE06yHyAffz7CjXVsozUQnh6o//0A3mo9LXgDrLw79QWB12pZZ+iumo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=G7AOIC6V; arc=fail smtp.client-ip=52.101.127.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uvlCC/uMDtSNP27Bc2zAoLguc/tTv5HzwRmCcJC2KT1SjqLuWd46wmhdCotJ2Yo6jdWQuQ2da3j/6qGPTqJK13Gbtnpo4S0ZH3eK6Q9ejvzOteVErz05hRsfrkP5JJweZnsK2GVkcN0fcM/meaXbUV9VGoWV7wNlkqgVbe5Sdm3wePJdvyqRt9oc+aeEzQO2Q1MJl8PuMSvGvM7KsDbKkSZHMKFIDkJ3s2ZQUx+5MC0HbA+IRtUiPvaGUxQJTItbSgNMF4f5BV4pEcHPh21MENgwdISWxgDZIcMrxvWsmm2xI2zk7N6Xu249f87hj9utMYw/GX2LhkTYQetQczv6pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wcl4eNAVzJbZ77QXzSSRRpiJ+TTy/LeaGuNR2vnkSZ4=;
+ b=ecK0VTNB6QtH1IBgDEyD+NqZw/NWFK1m5F5lF0PN7kDQUCsxaidxQi8rJjbBsj6MUN2ikSlCh+fVfB5/h9NGDvgxbcnZHgRVTwMexwYIrWqqdkcY/GicM3lirRsD8hjH5ZTtmKtdSRMI2yQ/mqVqoMPWrIKml4+4qcrDGIg8Cznsp349JxOWTeauj04rkpcpV6OjfucagyqrH1WPao540Ub8sZ4Za5lesYbiDfkocyCaoB7XDu0KYcSx9Fm9z1EhxCbekLsjoiI0EopnBbwsG169SnAronbxRmqv7sn2q7+DusxbvgO6lkgRqfVnlb25dRpHhru1uHOF0cTQhSTxQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wcl4eNAVzJbZ77QXzSSRRpiJ+TTy/LeaGuNR2vnkSZ4=;
+ b=G7AOIC6Vpt+svdQNxclE0jxT990U62n1EE8uRLaBYCkUQF5AiwHMMGPVMqG0qrjJqi1OEQuScZN14CVQeDpneXerLHJUpixbG9xIsiYC4TyJAzt5URp5Hqvoda+k/CsueQRWz5k4DzpAbcIPU5ISVtkVhvsJuPrHz67LRNEGvcjHqdYzCpG1hbokhDWg8X34/adr6QFRqXqrPUVA5A5xP1sE/0Hfs2rD4afAYdj7R98cjojSdFoJ5hv/hbZvtWQvlUuu7756B9R41P/iqN3I3QMOIw8NjqfraTKw1C72lHcWngg2YBqUBlSgy6O9DWQExzR7M0kf8b8TLdea7Si+kQ==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by SEYPR06MB5467.apcprd06.prod.outlook.com (2603:1096:101:b6::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Fri, 15 Aug
+ 2025 07:06:11 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 07:06:11 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Rob Herring <robh@kernel.org>
+CC: "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "joel@jms.id.au"
+	<joel@jms.id.au>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "naresh.solanki@9elements.com"
+	<naresh.solanki@9elements.com>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v17 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
+ transfer-mode and global-regs properties and update example
+Thread-Topic: [PATCH v17 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
+ transfer-mode and global-regs properties and update example
+Thread-Index: AQHcDPdPoOp1+xBxEkuXgv6kGrdxSLRivEAAgACDtCA=
+Date: Fri, 15 Aug 2025 07:06:11 +0000
+Message-ID:
+ <OS8PR06MB75410910BC7AD0BAF9866E3FF234A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250814084156.1650432-1-ryan_chen@aspeedtech.com>
+ <20250814084156.1650432-2-ryan_chen@aspeedtech.com>
+ <20250814223052.GA4004307-robh@kernel.org>
+In-Reply-To: <20250814223052.GA4004307-robh@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|SEYPR06MB5467:EE_
+x-ms-office365-filtering-correlation-id: d143ba72-fb84-4a32-2b76-08dddbca3762
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?drLciwgpiIdtxlm60gGVRPuAzX+VvvlyueaJRNaEjGBV/K1et0qNgXs/nx6W?=
+ =?us-ascii?Q?QescwsV6kmYiFG1Uz17tKQU5rjr2MvjzqAi3hvpUV1NR9nRFEw9oJtA1jeRB?=
+ =?us-ascii?Q?D0FUVWBK7ORCvfQL4nGr0aNhAhz5CRktOfuaod50LwmI2qgyMxyDGCfsYCup?=
+ =?us-ascii?Q?Xu/K9+ZqJ7xmJ3ZTbV/xyHW/a3ehZPil6oh3gYtVQrUBLB93zxTldO/tid2L?=
+ =?us-ascii?Q?1pi+3MIbsU8iDJq3e8BBfD5h7wlqRqafQR5u+mGs5rjpHmewVoIigRDeVrMe?=
+ =?us-ascii?Q?DIPpjACbGGv3AJaCzIPmBjGSv4t+KWgLvf4Ca+wCL3Xxab9tX5zo0MVDCyNT?=
+ =?us-ascii?Q?/e2mD4fbbAO8GafPuImbOi3L9YsQq+f6/luq9P/ByM+TGu+VYG3YR0npX53R?=
+ =?us-ascii?Q?Ax4cEzNMW+z9BUt4QciSDeOJG4YpCzyc7dPV/s8KPgtATe1DskSbC3j6mbEa?=
+ =?us-ascii?Q?VDLnu0Brdi80GkXCy17MToTIQnBAGeP4bqKpBZI0CQXGoqKcXkIr9OBBuEqE?=
+ =?us-ascii?Q?GPbcKM8Z2EvEXXGSzQBl4aqXNiL0JO6gMXDNlRpMvtmX61pp/X2uvQKfNJ7g?=
+ =?us-ascii?Q?K2ctiZ0ChHSS0esv9X3fhIpRl/5JkHacsQLVT3w4PBbBqvbk0RVDWn66rqzH?=
+ =?us-ascii?Q?y8dEoGKaAoBstuMVrNbrRhwo0IjfD5Gjn1i2xAem1EQMXqeJzPPu4gzaa0dC?=
+ =?us-ascii?Q?pWe9Am3VfFrRxpVLEcOn1FGWzQQWrpbAUqOBYxpgnE5tQwVuXA8E0QM2dlqF?=
+ =?us-ascii?Q?ga63h4AXm2wACI+PsDrw8XKwNnjjURiA7ZrjizwRPybc1cFnqpDexBuerqhs?=
+ =?us-ascii?Q?gjSvovYmr8MDGFS/3q77tEV56sp/223vZ2GKznDwB9egNpZMgnUDB5ybsVh2?=
+ =?us-ascii?Q?qrO5wTfuEJ2POdTmIKvzcXm4KPbYgxa9486j4NVoIJw5oU7Z0eRWHE2+jMBz?=
+ =?us-ascii?Q?AnErZdKbyPy/SVgspssTFmxnFjlurz/9PtuOBgmntMzFl001vX3uskTzpOSD?=
+ =?us-ascii?Q?srJxx0vu5BGLQmArRaVUP5qkqvrDmt5+D7BpwJZJYl9S6DtdhL2/bWKobuQt?=
+ =?us-ascii?Q?Yoafr2xWk6IHpY47JB+0QlhNW8eD1TR3eCY0bYIVCULWVhGdppxv1jlmeC0Q?=
+ =?us-ascii?Q?i2j/exODcPlHwisSC2CQuSPPePwBu2YGmSoOHD4/O6RzMPB7q6GGZQa6446E?=
+ =?us-ascii?Q?sMFxT4JY28dGGN0M7imBIEEPQ2WWa1L11NKvM8R6zAj2rYKZ0x7Oqb2zJBsi?=
+ =?us-ascii?Q?rrqlevNxvvqGit6IlYu9R+bKXRBsoFh3RRxGbJDhwgeWiAInsXi3/YaVehMX?=
+ =?us-ascii?Q?0Zy3sUCerbF3kBarnt3w2CCjJRT10gK9nrhsHR7BfG2IYO374AlPy48Jxnde?=
+ =?us-ascii?Q?2K5Wf3PFJ3indlAs3GxPEzqlPFT+ah1iFR6HrRHPlVUTJuHOJujcPIEwP+5G?=
+ =?us-ascii?Q?qDT7PXKn3PE=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?4nZfSq3GjcDk8SGRqjYDl3ZTUjjc1IBYA380LddpGjUsT5ee5ZbLitFiTLGa?=
+ =?us-ascii?Q?m6m53oS2Il68327CLsuolLvVCprr1/g/THOxh+OsTrab6QQsa2VX8i+LpHlQ?=
+ =?us-ascii?Q?xgWY+zijmyOpP2bKrIFLvd/xiS8U0vDooHsYlhquMA2S+1uGfSBmbDfGVeFu?=
+ =?us-ascii?Q?AWtuCwp2oMUBcvjqYGI4E/iJMsA0yHUc8oHigv94mXy1/xZG/6iR2mWaCEyr?=
+ =?us-ascii?Q?iLidrw5rP+lj0jQszwXHqQC8oK0w7ZC3AGu2vCP6d1JoJS7Y4ACctEqiBO1p?=
+ =?us-ascii?Q?6hhiBbh16J2Ybq7pD73qCNE6tI5PfSlAE0YfXmTWpBKuO/j4us9s8WqsVpdw?=
+ =?us-ascii?Q?p4S4fMYBupUGMZHaLATwh1Ql7ca9h4NDajRzo1jyhPyN2NKeO2EjFMwZGPOT?=
+ =?us-ascii?Q?I78PA1dbLT2uT4ot2DOyVZdU3Ca8f0e+pNrhYH4V+w2Sdk0zFe/JEyqv/rHf?=
+ =?us-ascii?Q?kclW1BxXUdPW7bXjHjYy5iC3pe8nfy3ou8U2rUeal6nwE1aICEC8g+01PG/w?=
+ =?us-ascii?Q?tmlB80ZejF6m1TAEUQetuzRth+cpoFqcdSHFVhfG6SpRg3/kecF5cwSLuYXL?=
+ =?us-ascii?Q?ZB6VJkhWQRKZsLVojExvCTuTREWaOmFqd04TI/GWv0R415LERf1uXHSSqpjH?=
+ =?us-ascii?Q?kMDPebbXl+3GEtmW9zu+jkJbhlC1uvLYHzUaAjvwOjRX9i5pKfT+BqENiH3V?=
+ =?us-ascii?Q?qqqZ6b+ESYVYdfH3HBuEAOfSvK4GSRBARabwtb5MrCeWxQ2a9lxbLZG3UDJ0?=
+ =?us-ascii?Q?4EawshI690yYDgCLefS5QnUG4mt5QQJZdZXWO6WoVeX+zVH8Qho6isd+8Rmx?=
+ =?us-ascii?Q?5IpowT970BP7oNTAIeAjhxPINDPCsmquYKjnR/L9XPlRheZFv0WKHm9PQnye?=
+ =?us-ascii?Q?3BmdilO+Q1zExwcKcHooS0ox60g8C3v7bWCip5p4nI6CQJaE7kP1JdblpBKx?=
+ =?us-ascii?Q?4XEEXS7Mg8OydNDCsLIuzIKD8U6SX6GHDxDhbwhNqBLAHRwvVOoPzNZQBarQ?=
+ =?us-ascii?Q?AKbd0u/dXSNTFmCXImP2V2wJ9YLdAmJK2oUPID5tgmB7Mut4WFjV6odnZnCr?=
+ =?us-ascii?Q?h1Uf30DHYYk5WQ56f/hXI5gWKcjYY2/JBxmiUaSzhoUQbNb5VjMAapb+ElRn?=
+ =?us-ascii?Q?Zhia55IZHqDLs9Sk6eYPgSu4ysaUBlTwcViKr1xRu5aIwhYTJkeqaTSvZt8S?=
+ =?us-ascii?Q?weAJgYpCmsKRTXez1/i5SFpBTlIe+9Mucx37zgAvJYTaPmyNOzFzAe3oMGEb?=
+ =?us-ascii?Q?9D1eEo2Wgr38OGaP8VK4gfBsIQRw0UIjIOJKUwOvCloaCxexHEExuOsC0JNW?=
+ =?us-ascii?Q?KzCCKyb111nZsZjgQAIs1EJGJrNnZMPlHH7Q+8jB2AP5WTj/cKHnEaXfLS/9?=
+ =?us-ascii?Q?BfHkkyHtTjGA/t2DovzVxIOJfuRD6B7y4nbZHXrJRCwYgbsjZ1eqh/7sdlB/?=
+ =?us-ascii?Q?HkcIYJuXmE7503unl+RosJgToQ/cYr45+9trLvU6ZaMPtaKkavh9xddORyNE?=
+ =?us-ascii?Q?7Bvp6gIQKGyO2ZZclLKO1aPtviM9D3zKvK/WO3/9FRDvympbBafOeBxt8Rr8?=
+ =?us-ascii?Q?JhNFgNJ4q2RWhGJmc4zIEWNM6dk4Rk5JMprcfBrn?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3ARKK355ovg_7Dg--.13866S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ar1DCry8XF48ArWfuw4xtFb_yoWxAF13pF
-	4DCw1ayw4rKF1DK34kta40gFySga1vqw4UK34xJ348Ar17X34jq3WI9F17ZF1jyFsrCFy2
-	yrZYvw1j9w1jyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d143ba72-fb84-4a32-2b76-08dddbca3762
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 07:06:11.4758
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t649ffaGn/FPPk0ao66IyBJHXX7MhkynKc7Q4m7NScUMhxMys2xZoILRtRcsBMsFFySQHun1T9f1azqcdP9M3P27dsryWHsV3OZBK46QWk0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5467
 
-From: Chen Ridong <chenridong@huawei.com>
+> Subject: Re: [PATCH v17 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
+> transfer-mode and global-regs properties and update example
+>=20
+> On Thu, Aug 14, 2025 at 04:41:54PM +0800, Ryan Chen wrote:
+> > - Add property "aspeed,global-regs" to get phandle set global
+> > register, for register mode selection and clock divider control.
+> > - Add an optional property "aspeed,transfer-mode" to allow device tree
+> > to specify the desired transfer method used by each I2C controller
+> > instance.
+> > - Update example to demonstrate usage of 'aspeed,global-regs' and
+> > 'aspeed,transfer-mode' for AST2600 I2C controller.
+>=20
+> All of this is evident reading the patch. Explain here why you need this =
+change.
 
-A hung task can occur during [1] LTP cgroup testing when repeatedly
-mounting/unmounting perf_event and net_prio controllers with
-systemd.unified_cgroup_hierarchy=1. The hang manifests in
-cgroup_lock_and_drain_offline() during root destruction.
+The AST2600 I2C controller supports three transfer modes: byte, buffer, and=
+ DMA.
+To allow board designers and firmware to explicitly select the preferred tr=
+ansfer mode
+for each controller instance, this patch introduces the aspeed,transfer-mod=
+e property
+in the device tree binding.
+On AST2600, each I2C controller can operate in either the legacy or the new
+register mode and clock divider control, selectable by a global register se=
+tting.=20
 
-Related case:
-cgroup_fj_function_perf_event cgroup_fj_function.sh perf_event
-cgroup_fj_function_net_prio cgroup_fj_function.sh net_prio
+>=20
+> >
+> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > ---
+> >  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 39 +++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> > b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> > index 5b9bd2feda3b..2a9f7d1d2ea1 100644
+> > --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> > +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> > @@ -44,6 +44,34 @@ properties:
+> >      description: frequency of the bus clock in Hz defaults to 100 kHz =
+when
+> not
+> >        specified
+> >
+> > +  aspeed,transfer-mode:
+> > +    description: |
+> > +      ASPEED ast2600 platform equipped with 16 I2C controllers each i2=
+c
+> controller
+> > +      have 1 byte transfer buffer(byte mode), 32 bytes buffer(buffer m=
+ode),
+> and
+> > +      share a DMA engine.
+> > +      Select I2C transfer mode for this controller. Supported values a=
+re:
+> > +        - "byte": Use 1 byte for i2c transmit (1-byte buffer).
+> > +        - "buffer": Use buffer (32-byte buffer) for i2c transmit. (def=
+ault)
+> > +                    Better performance then byte mode.
+>=20
+> If no 'aspeed,transfer-mode' property defaults to buffer mode, you never =
+need
+> 'aspeed,transfer-mode =3D "buffer"'.
+>=20
+> When would you ever use "byte" mode? Sometimes you want worse
+> performance? That makes no sense.
+>=20
+> I feel like we already discussed this, but I'm not going to dig thru 17 v=
+ersions to
+> see.
 
-Call Trace:
-	cgroup_lock_and_drain_offline+0x14c/0x1e8
-	cgroup_destroy_root+0x3c/0x2c0
-	css_free_rwork_fn+0x248/0x338
-	process_one_work+0x16c/0x3b8
-	worker_thread+0x22c/0x3b0
-	kthread+0xec/0x100
-	ret_from_fork+0x10/0x20
+Yes, my original through is dma and buffer property selection at v15, v16.
+The reason for keeping "byte" mode is to support use cases reported by=20
+other users (for example, as raised by Yikai in the above thread),
+where certain I2C devices or board configurations only function
+correctly in byte mode. This is not a common case, but providing
+this flexibility avoids the need for downstream patches or hacks.
 
-Root Cause:
+https://patchwork.ozlabs.org/project/linux-aspeed/patch/20241007035235.2254=
+138-3-ryan_chen@aspeedtech.com/#3412650
+Yikai yikai.tsai.wiwynn@gmail.com
 
-CPU0                            CPU1
-mount perf_event                umount net_prio
-cgroup1_get_tree                cgroup_kill_sb
-rebind_subsystems               // root destruction enqueues
-				// cgroup_destroy_wq
-// kill all perf_event css
-                                // one perf_event css A is dying
-                                // css A offline enqueues cgroup_destroy_wq
-                                // root destruction will be executed first
-                                css_free_rwork_fn
-                                cgroup_destroy_root
-                                cgroup_lock_and_drain_offline
-                                // some perf descendants are dying
-                                // cgroup_destroy_wq max_active = 1
-                                // waiting for css A to die
+>=20
+> > +        - "dma": Each controller DMA mode is shared DMA engine. The
+> AST2600 SoC
+> > +                 provides a single DMA engine shared for 16 I2C
+> controllers,
+> > +                 so only a limited number of controllers can use DMA
+> simultaneously.
+> > +                 Therefore, the DTS must explicitly assign which
+> controllers are
+> > +                 configured to use DMA.
+> > +      Only one mode can be selected per controller.
+>=20
+> The only thing that really makes sense is dma, and you need 1 boolean
+> property for that. IOW, what you had on v10 which we gave reviewed-by 2+
+> years ago.
+>=20
+> Do you have any actual test results or usecase that show DMA is useful he=
+re?
+> Typical I2C xfers are not streaming large amounts of data to justify the =
+setup
+> costs of DMA. It wouldn't surprise me if DMA was actually slower.
+>=20
+For AST2600 used in server platforms, MCTP over I2C often requires transfer=
+ring large
+data blocks (e.g., 512 bytes per message). In buffer mode, this results in =
+32 interrupts
+per transaction, while DMA mode reduces this to a single interrupt, signifi=
+cantly
+lowering CPU load. We have observed measurable CPU utilization improvements
+when using DMA mode for such use cases.
 
-Problem scenario:
-1. CPU0 mounts perf_event (rebind_subsystems)
-2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
-3. A dying perf_event CSS gets queued for offline after root destruction
-4. Root destruction waits for offline completion, but offline work is
-   blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+> > +      On AST2600, each controller supports all three modes.
+> > +      If not specified, buffer mode is used by default.
+> > +    enum:
+> > +      - byte
+> > +      - buffer
+> > +      - dma
+> > +
+> > +  aspeed,global-regs:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: |
+>=20
+> Don't need '|'. Read the documentation about when it is needed or not
+> needed.
 
-Solution:
-Introduce ss_mask for cgroup_lock_and_drain_offline() to selectively drain
-specific subsystems rather than all subsystems.
+Thanks, will remove it.
 
-There are two primary scenarios requiring offline draining:
-1. Root Operations - Draining all subsystems in cgrp_dfl_root when mounting
-   or destroying a cgroup root
-2. Draining specific cgroup when modifying cgroup.subtree_control or
-   cgroup.threads
-
-For case 1 (Root Operations), it only need to drain the specific subsystem
-being mounted/destroyed, not all subsystems. The rationale for draining
-cgrp_dfl_root is explained in [2].
-
-For case 2, it's enough to drain subsystems enabled in the cgroup. Since
-other subsystems cannot have descendants in this cgroup, adding ss_mask
-should not have a hurt.
-
-[1] https://github.com/linux-test-project/ltp/blob/master/runtest/controllers
-[2] https://lore.kernel.org/cgroups/39e05402-40c7-4631-a87b-8e3747ceddc6@huaweicloud.com/T/#t
-Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
-Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
-
-v2->v3: add ss_mask for cgroup_lock_and_drain_offline to fix this issue.
-
-v2: https://lore.kernel.org/cgroups/20250815024020.4579-1-hdanton@sina.com/T/#t
-
- kernel/cgroup/cgroup-internal.h |  2 +-
- kernel/cgroup/cgroup-v1.c       |  4 ++--
- kernel/cgroup/cgroup.c          | 11 ++++++++---
- 3 files changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index b14e61c64a34..3c7443d8b3b7 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -257,7 +257,7 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
- void cgroup_procs_write_finish(struct task_struct *task, bool locked)
- 	__releases(&cgroup_threadgroup_rwsem);
- 
--void cgroup_lock_and_drain_offline(struct cgroup *cgrp);
-+void cgroup_lock_and_drain_offline(struct cgroup *cgrp, u16 ss_mask);
- 
- int cgroup_mkdir(struct kernfs_node *parent_kn, const char *name, umode_t mode);
- int cgroup_rmdir(struct kernfs_node *kn);
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 2a4a387f867a..1be439c62fbe 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -1096,7 +1096,7 @@ int cgroup1_reconfigure(struct fs_context *fc)
- 	int ret = 0;
- 	u16 added_mask, removed_mask;
- 
--	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-+	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp, root->subsys_mask);
- 
- 	/* See what subsystems are wanted */
- 	ret = check_cgroupfs_options(fc);
-@@ -1261,7 +1261,7 @@ int cgroup1_get_tree(struct fs_context *fc)
- 	if (!ns_capable(ctx->ns->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-+	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp, ctx->subsys_mask);
- 
- 	ret = cgroup1_root_to_use(fc);
- 	if (!ret && !percpu_ref_tryget_live(&ctx->root->cgrp.self.refcnt))
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index d8b82afed181..c76c23186fd3 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
- 
- 	trace_cgroup_destroy_root(root);
- 
--	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-+	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp, root->subsys_mask);
- 
- 	BUG_ON(atomic_read(&root->nr_cgrps));
- 	BUG_ON(!list_empty(&cgrp->self.children));
-@@ -1681,7 +1681,7 @@ struct cgroup *cgroup_kn_lock_live(struct kernfs_node *kn, bool drain_offline)
- 	kernfs_break_active_protection(kn);
- 
- 	if (drain_offline)
--		cgroup_lock_and_drain_offline(cgrp);
-+		cgroup_lock_and_drain_offline(cgrp, cgrp->subtree_ss_mask);
- 	else
- 		cgroup_lock();
- 
-@@ -3147,12 +3147,14 @@ static int cgroup_update_dfl_csses(struct cgroup *cgrp)
- /**
-  * cgroup_lock_and_drain_offline - lock cgroup_mutex and drain offlined csses
-  * @cgrp: root of the target subtree
-+ * @ss_mask: bitmask of subsystem to be drained
-  *
-  * Because css offlining is asynchronous, userland may try to re-enable a
-  * controller while the previous css is still around.  This function grabs
-  * cgroup_mutex and drains the previous css instances of @cgrp's subtree.
-  */
--void cgroup_lock_and_drain_offline(struct cgroup *cgrp)
-+
-+void cgroup_lock_and_drain_offline(struct cgroup *cgrp, u16 ss_mask)
- 	__acquires(&cgroup_mutex)
- {
- 	struct cgroup *dsct;
-@@ -3168,6 +3170,9 @@ void cgroup_lock_and_drain_offline(struct cgroup *cgrp)
- 			struct cgroup_subsys_state *css = cgroup_css(dsct, ss);
- 			DEFINE_WAIT(wait);
- 
-+			if (!(ss_mask & 1U << ssid))
-+				continue;
-+
- 			if (!css || !percpu_ref_is_dying(&css->refcnt))
- 				continue;
- 
--- 
-2.34.1
-
+>=20
+> > +      The phandle of i2c global register node, For control the i2c reg=
+ister
+> > +      define selection, clock divider mode selection and clock divider
+> control.
+> > +
+> >  required:
+> >    - reg
+> >    - compatible
+> > @@ -66,3 +94,14 @@ examples:
+> >        interrupts =3D <0>;
+> >        interrupt-parent =3D <&i2c_ic>;
+> >      };
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    i2c1: i2c@80 {
+> > +      compatible =3D "aspeed,ast2600-i2c-bus";
+> > +      reg =3D <0x80 0x80>, <0xc00 0x20>;
+> > +      aspeed,global-regs =3D <&i2c_global>;
+> > +      clocks =3D <&syscon ASPEED_CLK_APB>;
+> > +      resets =3D <&syscon ASPEED_RESET_I2C>;
+> > +      interrupts =3D <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> > +      aspeed,transfer-mode =3D "buffer";
+> > +    };
+> > --
+> > 2.34.1
+> >
 
