@@ -1,89 +1,70 @@
-Return-Path: <linux-kernel+bounces-770768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116A0B27EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F41B27EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FA51BC81AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 475C7563694
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C22E06D7;
-	Fri, 15 Aug 2025 10:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DABF2FF16D;
+	Fri, 15 Aug 2025 10:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IQ+QY05c"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LMQpZwT6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A4722576C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236B32C3264;
+	Fri, 15 Aug 2025 10:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755255090; cv=none; b=ac5y9cpXpCQ7GU1GlxyaLFK2E1+Kc5Q48dLWtKFoEu0d2zGl1yB4X/LGL+Tbm8XpVsXizW1RkFqqSEDSwoVOiuMyj3Ukd6h4bsmglCfX8ykoBHIhu9oC9GyfVSxWDgG4RFFU8B4Pvw4stETxetcXCBoryb2JXxKL/4OMwUg9hrk=
+	t=1755255381; cv=none; b=fT38TkK0lN6A/GzgFUawFhKTaqof/Bd0/Rno4xLpeo3sQyITI+vbfTT0fqLyaq8eSwmrxqfbiu898PheNoXA5KJf3Rc9sy7KvF4vqbHyk9WfR5PeHUyr1tXbRzxfGJte1W+covJ5UHiZWAfvzQc9yomU4gVNWYsPW7oTnAxk27k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755255090; c=relaxed/simple;
-	bh=5856zXIPk9IgqnEkrq9a7ikopP8h2OIrgLDCAzSSICg=;
+	s=arc-20240116; t=1755255381; c=relaxed/simple;
+	bh=tzXbTWV8qNFqQb2QpXq90iV5Cbg9kO1VG9m6vpVQ65U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSaW7p9oCipU+dlYrTqdWcdjLAfZ7Ysf0vwMLQkix8N88su/4aSWsHs7DiljqlWOHOOg/SuV98dkdgugSJh6jp0S6w4oKQRp8qo5ezg/4iffEFC3tHQSXXaL2Ryeg/OfrA1Nfoh6IWA4ex0SOW0ni10EjiVQ7HavJ25DMEubK0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IQ+QY05c; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2430c5b1b32so20223115ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755255088; x=1755859888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dix/CPpSMGWXSWO0Y4aNEfoYpWHiRGQqO96WVTnVXQ0=;
-        b=IQ+QY05cviOzbYXd1UPOuwVpj9LmvcuwLWQ4wyIWQWr4bdyg6jaEjE1gtQ8oaBRfW5
-         6noxC8tGbdI2HQ9IMCF18bQmbWCGCs+VdX8FdI/Rgltl6C6rlqyWEiSp1Al9j0Jswdtu
-         +0uH7iF1WeH6ar4odHB8p3GWpmILtSVYekjW2VLYkDaJx24dGKipi+pmQGPTOoBrkC+q
-         7WlwOffYGHHkyZX2orK+Ay+ZYWhqQX0uUDFUnx1GwCP9AQjh4Sh4+TM/g94b2wq7u7gf
-         BiewxbUZw2sQb6a9sDUgs6uAnGsPEt4sHJLynxQPnt20nqCNZ2dARUPJVCW1X6Crlsyv
-         UMXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755255088; x=1755859888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dix/CPpSMGWXSWO0Y4aNEfoYpWHiRGQqO96WVTnVXQ0=;
-        b=BsS1ys30BQRDsAAH4vSGArkIjWf1Tc8rF/SuFnaPe8auph03XyCZK9YZ47Tn3aFPh8
-         UZ2gO6yfFwgO/htwCdrnZ59hSDq0au0V2Wzpih/BcvCQleg1XIQ22Nzfsi+fzChhMF+L
-         BXVjpQyh8UZUOGnJ/uktfbKyi2F68XVUD6K2xLdiwoVl4VzvK37zaVIqNDlYZGp0gbkQ
-         dz/hdyjMZlNtd/atVlsT6IG1FKIvu0Xqvy0fl1bw7mO2unC2DhIRekhBF5ahzCvdgF+F
-         gMaa8IOmtrB+P/ATZA/ex0KH2oRU7jLc1gf2LmDN0XFR6vriwK1qn0NUmrqEooV/7sbZ
-         SOvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLQ9Z//BipFZt/h83D8mfFOMywgH7ENBCJoVZfL42Rm1hec/WvapNd5JqNAhQ1aIsV/sr9B8NBdJuUqAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvG6hKL9MOqkB9AM6Ht8T97XYwEXk9nfTBsucbY7EQVqDnwow8
-	JlTYsMkUQWKb5zKr+BrJuPFT1lyd6QW7q39fCvxfy6nHJ3vso6+fkSliIEcheW0hXmQ=
-X-Gm-Gg: ASbGncur328/K2NBBMQHDDh7xkKJfa2jVvA2diPL7InxoglR47PuShyyEhg10logssD
-	Yn7S42ZmzDZriVwX/NS3EbMf3o/DJVivs6EDQTgpZ6Z9YxspKkDyqTET7N9Bh13wFQiP2HsWuOs
-	TtfH5xIpMnajGNvUEyqyIF7IFeZIzsAoqM4ODIXKGfDHcqLu7HiW5/hLoLtk0GMk4tiYrBwa+Zf
-	/SmRDTmQ6Z78AFZ/D7+3HmTrhgPs9XH3jH4T9Tn10n7AG+xNvp1J4IMC8SoxM6an7zdx97a90T/
-	Ll4Jc+cWJ5FYea7jScwkv1684HCeEFzH0RiET7bNHEBWGa+bZiPxel5e+yFzgyLda9hGNd2dZXu
-	S82TvJWpLjkTzC/sZogBZLvT0P4w=
-X-Google-Smtp-Source: AGHT+IEmNprlP3EyYzXw2mJxg75wrJzN+aQ6IJA3e06q3ZiRiLLueRHZsG1qP8n+zVyH+f5AwDAHpw==
-X-Received: by 2002:a17:903:1252:b0:240:1ed3:fc28 with SMTP id d9443c01a7336-2446bd2d05fmr30011465ad.12.1755255088359;
-        Fri, 15 Aug 2025 03:51:28 -0700 (PDT)
-Received: from sunil-laptop ([106.51.199.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9ee0esm11563455ad.8.2025.08.15.03.51.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 03:51:27 -0700 (PDT)
-Date: Fri, 15 Aug 2025 16:21:16 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: XianLiang Huang <huangxianliang@lanxincomputing.com>
-Cc: ajones@ventanamicro.com, alex@ghiti.fr, anup@brainfault.org,
-	apatel@ventanamicro.com, atishp@rivosinc.com, iommu@lists.linux.dev,
-	joro@8bytes.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com, paul.walmsley@sifive.com, rafael@kernel.org,
-	robin.murphy@arm.com, tjeznach@rivosinc.com, will@kernel.org
-Subject: Re: [PATCH v5 1/3] ACPI: RISC-V: Add support for RIMT
-Message-ID: <aJ8RJCFM8p_GrFXk@sunil-laptop>
-References: <20250716104059.3539482-2-sunilvl@ventanamicro.com>
- <20250815075541.29941-1-huangxianliang@lanxincomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgRqYoNPSMX3etW9l0NiAf41eD/Equ4J0td7HI+bpBAWeQ7QnZQJ5GAn3ySCuuzc0eRFHMaa2ZcUpb4+Ov99tLb5wGZOoE8lUlJKzIOv7ZHahGXenvy9Ce496VDdah15bzY1A0WJ0T7xJ2D3W7n0td6rltWXGF4wFkf8U463v8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LMQpZwT6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=I9wd9JD5yaWspOFUNaW5j2BV7yycEibPeUF2FP6pZ7w=; b=LMQpZwT6yw/fL2wv0AFCPtHWs0
+	GrQ9WJEZJtI48c8epzwgaidC5KYSR732nI3AhY7lHDYs9i0Vkah8ng70rwmUuKSpwlBLOYqEi17ju
+	656rA6NVfX8Ar0KW9QjXs+Erh26UaMMzlCrTSz3ZI4haiw7VqMrHp8vny9MmzyPOiMwbfCxbyk4IC
+	46P7eqsbu11tsR+edLjyNmYyoch5Ktd6zyf3GMzgYRgz9nKlpsM72y1jnUmERldbuZISbftbxlAty
+	As4diWfbDvxG+whcoplG6kujMwcXjt6dDst9uUAgYKDjOxzLamSN1V/vsxxJGIMJ2vHwcyXG/L6dd
+	lqceHwyQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ums6Q-0000000Ggbl-32FU;
+	Fri, 15 Aug 2025 10:56:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 57DB03002ED; Fri, 15 Aug 2025 12:56:05 +0200 (CEST)
+Date: Fri, 15 Aug 2025 12:56:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Yunseong Kim <ysk@kzalloc.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: [PATCH v3] perf: Avoid undefined behavior from stopping/starting
+ inactive events
+Message-ID: <20250815105605.GA3245006@noisy.programming.kicks-ass.net>
+References: <20250812181046.292382-2-ysk@kzalloc.com>
+ <922f69f6-e290-46f6-af6f-5a71e4508cf0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,26 +73,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815075541.29941-1-huangxianliang@lanxincomputing.com>
+In-Reply-To: <922f69f6-e290-46f6-af6f-5a71e4508cf0@linux.intel.com>
 
-On Fri, Aug 15, 2025 at 03:55:41PM +0800, XianLiang Huang wrote:
-> Hi Sunil,
+On Tue, Aug 12, 2025 at 04:51:28PM -0700, Liang, Kan wrote:
 > 
-> On Wed, 16 Jul 2025 16:10:57 +0530, Sunil V L wrote:
-> > +	parent = ACPI_ADD_PTR(struct acpi_rimt_node, rimt_table, map->dest_offset);
-> > +
-> > +	if (node->type == ACPI_RIMT_NODE_TYPE_PLAT_DEVICE ||
-> > +	    node->type == ACPI_RIMT_NODE_TYPE_PCIE_ROOT_COMPLEX) {
-> > +		*id_out = map->dest_offset;
-> > +		return parent;
-> > +	}
 > 
-> Why do we assign dest_offset to id_out? The dest_offset is the iommu offset, not
-> a valid deviceid required for platform device in rimt_plat_iommu_map?
+> On 2025-08-12 11:10 a.m., Yunseong Kim wrote:
+> > Calling pmu->start()/stop() on perf events in PERF_EVENT_STATE_OFF can
+> > leave event->hw.idx at -1. When PMU drivers later attempt to use this
+> > negative index as a shift exponent in bitwise operations, it leads to UBSAN
+> > shift-out-of-bounds reports.
+> > 
+> > The issue is a logical flaw in how event groups handle throttling when some
+> > members are intentionally disabled. Based on the analysis and the
+> > reproducer provided by Mark Rutland (this issue on both arm64 and x86-64).
+> > 
+> > The scenario unfolds as follows:
+> > 
+> >  1. A group leader event is configured with a very aggressive sampling
+> >     period (e.g., sample_period = 1). This causes frequent interrupts and
+> >     triggers the throttling mechanism.
+> >  2. A child event in the same group is created in a disabled state
+> >     (.disabled = 1). This event remains in PERF_EVENT_STATE_OFF.
+> >     Since it hasn't been scheduled onto the PMU, its event->hw.idx remains
+> >     initialized at -1.
+> >  3. When throttling occurs, perf_event_throttle_group() and later
+> >     perf_event_unthrottle_group() iterate through all siblings, including
+> >     the disabled child event.
+> >  4. perf_event_throttle()/unthrottle() are called on this inactive child
+> >     event, which then call event->pmu->start()/stop().
+> >  5. The PMU driver receives the event with hw.idx == -1 and attempts to
+> >     use it as a shift exponent. e.g., in macros like PMCNTENSET(idx),
+> >     leading to the UBSAN report.
+> > 
+> > The throttling mechanism attempts to start/stop events that are not
+> > actively scheduled on the hardware.
+> > 
+> > Move the state check into perf_event_throttle()/perf_event_unthrottle() so
+> > that inactive events are skipped entirely. This ensures only active events
+> > with a valid hw.idx are processed, preventing undefined behavior and
+> > silencing UBSAN warnings. The corrected check ensures true before
+> > proceeding with PMU operations.
+> > 
+> > The problem can be reproduced with the syzkaller reproducer:
+> > Link: https://lore.kernel.org/lkml/714b7ba2-693e-42e4-bce4-feef2a5e7613@kzalloc.com/
+> > 
+> > Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
 > 
-Good catch!. Thanks!. It should be dest_id_base. Let me fix it in next
-revision.
+> Thanks for the fix.
+> 
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
-Thanks!
-Sunil
+Thanks both!
 
