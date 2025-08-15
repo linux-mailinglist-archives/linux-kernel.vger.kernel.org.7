@@ -1,125 +1,144 @@
-Return-Path: <linux-kernel+bounces-770455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10802B27AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171D5B27B08
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B851CE4814
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67622A28A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE0B29B78D;
-	Fri, 15 Aug 2025 08:27:35 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002D247293;
+	Fri, 15 Aug 2025 08:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR/8qZrq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341A710E0;
-	Fri, 15 Aug 2025 08:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F4924635E;
+	Fri, 15 Aug 2025 08:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755246455; cv=none; b=U7I3UwP4C0jiroLSAz8gGh4K+RYYnIGETJMIbVpY9UlHHkgliNsUK/xFI0O+gsXZabe62xNhLjGb0SrQrBoU3qUt06cjiAPRBK0NK6lITeNIixEs3iK+lbWlLk3uJtY1P3UpddJuaMzwY9A1noc8GWgMIpSJwLIQix3txN75OBM=
+	t=1755246578; cv=none; b=HXJwFV8camhG01AMbo9f+rwVd1kRAKwPTPRS+O0cZRNg3dILNsoQKuMJFhduiTCkFJO8Lie9orkgJYW9IjQ21b5H23nvJm0Mp5Zi/jPrTE20mcr5+T6UsaJ8H4Sn47FWhVBd4Nboed7fekkAwXkD28M8J5CownRpZ73RYbt9Cio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755246455; c=relaxed/simple;
-	bh=RcZMl5K/x5WJWGxz7wXDHxJSURQrTCmZO/JmwgRl6B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mlcrAzbmh81A+K8U5Fep+KPWBrcj3prYcbaL86xlstg83M5JywQ9C4Pti3CErLT4aR3Y6IHQ2mKu3/tfoSTABMENd7eQ0msBoWgjLx1MaoKeIfyGy+44jujAjdg8ayIp6/v6A0Yd53uRx3tACvd8IFsBQUkdnre2ReuF676H3Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: abff620279b111f0b29709d653e92f7d-20250815
-X-CID-CACHE: Type:Local,Time:202508151617+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:339357e6-611c-4c45-9af4-4b0f9ad93f29,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:bc8e9e1cfca9223f5b74cc50e33c6883,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
-	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: abff620279b111f0b29709d653e92f7d-20250815
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1281589497; Fri, 15 Aug 2025 16:27:25 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A5724E008FA4;
-	Fri, 15 Aug 2025 16:27:24 +0800 (CST)
-X-ns-mid: postfix-689EEF6C-527582324
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id B8201E008FA3;
-	Fri, 15 Aug 2025 16:27:18 +0800 (CST)
-Message-ID: <bef49dcb-8619-4448-b8d7-6dca3a6cb456@kylinos.cn>
-Date: Fri, 15 Aug 2025 16:27:18 +0800
+	s=arc-20240116; t=1755246578; c=relaxed/simple;
+	bh=Xyye2AF1wmSsP0D40BarzXd3YLVHTSI2Ehw/u8Z/TTg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jUs7DACyzZbChtFMxzWPKRVBUXFXtcLB0osEPwH5XjCfzEXctU4MIsNHYgiAjd5AxWKDt8IN96rJ2ptBASSptU15PAhRa6FOvCMpMIxO61OWrt2uz6qEBfhHqatvCCHIs2Q9G3GFueoIiiVBp0RpB+Kjlqp4sQKDZKvDAwQlnHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR/8qZrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0353FC4CEF4;
+	Fri, 15 Aug 2025 08:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755246574;
+	bh=Xyye2AF1wmSsP0D40BarzXd3YLVHTSI2Ehw/u8Z/TTg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CR/8qZrqwjQwjYJ0phriw9y4I1wwIB+XpdSacoRPLLaJoe3dvbg2UXioDbTd4f/2u
+	 ozX88f2vzdFFPy0FOaFC88ZxeQJjSw9VB2HysXyS9LPObXl6amgDdI8xipldKZBZti
+	 A+JHDPvspYPKp0RKc1O2coa1J5xA5Fg8Geh3lfUXnaJYLqi3+TbzUaeFfGlk0761jK
+	 fge08BleYeouq/bnYTswDhgmJsobxoO0LdjxGXxupNX/zVSqgpfYjbKDbEQ9WfoXO9
+	 M4IrKllrRKBjTgYp5B36hrTU0SzdyXQ3OJOtLRIOOfhs9lav8gUghRlWE3y3PUK5Bm
+	 HGZIKAakMtiIA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 06/18] rust: str: add `bytes_to_bool` helper function
+In-Reply-To: <aJ7r_W0BzdSYMfT6@google.com>
+References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org>
+ <20250815-rnull-up-v6-16-v5-6-581453124c15@kernel.org>
+ <zsaOdCKnN1sVET34FMYvITPQpgAkfL_JPF6FtL4MUbyubgqSNo5PsO6bgIyzmMP2bhkEAbXEyui3iTqZEkrx0g==@protonmail.internalid>
+ <aJ7r_W0BzdSYMfT6@google.com>
+Date: Fri, 15 Aug 2025 10:28:32 +0200
+Message-ID: <87ldnldm4v.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Oleg Nesterov
- <oleg@redhat.com>, David Hildenbrand <david@redhat.com>,
- Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250814143717.GY4067720@noisy.programming.kicks-ass.net>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250814143717.GY4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-=E5=9C=A8 2025/8/14 22:37, Peter Zijlstra =E5=86=99=E9=81=93:
-> On Thu, Aug 07, 2025 at 08:14:09PM +0800, Zihuan Zhang wrote:
+> On Fri, Aug 15, 2025 at 09:30:41AM +0200, Andreas Hindborg wrote:
+>> Add a convenience function to convert byte slices to boolean values by
+>> wrapping them in a null-terminated C string and delegating to the
+>> existing `kstrtobool` function. Only considers the first two bytes of
+>> the input slice, following the kernel's boolean parsing semantics.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/str.rs | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index 5611f7846dc0..ced1cb639efc 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -978,6 +978,16 @@ pub fn kstrtobool(string: &CStr) -> Result<bool> {
+>>      kernel::error::to_result(ret).map(|()| result)
+>>  }
+>>
+>> +/// Convert `&[u8]` to `bool` by deferring to [`kernel::str::kstrtobool`].
+>> +///
+>> +/// Only considers at most the first two bytes of `bytes`.
+>> +pub fn bytes_to_bool(bytes: &[u8]) -> Result<bool> {
+>> +    // `ktostrbool` only considers the first two bytes of the input.
+>> +    let nbuffer = [*bytes.first().unwrap_or(&0), *bytes.get(1).unwrap_or(&0), 0];
+>> +    let c_str = CStr::from_bytes_with_nul(nbuffer.split_inclusive(|c| *c == 0).next().unwrap())?;
+>> +    kstrtobool(c_str)
+>> +}
 >
->> Freeze Window Begins
->>
->>      [process A] - epoll_wait()
->>          =E2=94=82
->>          =E2=96=BC
->>      [process B] - event source (already frozen)
->>
-> Can we make epoll_wait() TASK_FREEZABLE? AFAICT it doesn't hold any
-> resources, it just sits there waiting for stuff.
+> Ouch. That's unpleasant. I would probably suggest this instead to avoid
+> the length computation:
+>
+> /// # Safety
+> /// `string` is a readable NUL-terminated string
+> unsafe fn kstrtobool_raw(string: *const c_char) -> Result<bool> {
+>     let mut result: bool = false;
+>     let ret = unsafe { bindings::kstrtobool(string, &raw mut result) };
+>     kernel::error::to_result(ret).map(|()| result)
+> }
+>
+> pub fn kstrtobool(string: &CStr) -> Result<bool> {
+>     // SAFETY: Caller ensures that `string` is NUL-terminated.
+>     unsafe { kstrtobool_cstr(string.as_char_ptr()) }
+> }
+>
+> pub fn kstrtobool_bytes(string: &[u8]) -> Result<bool> {
+>     let mut stack_string = [0u8; 3];
+>
+>     if let Some(first) = string.get(0) {
 
-Based on the code, it=E2=80=99s ep_poll() that puts the task into the D s=
-tate,=20
-most likely due to I/O or lower-level driver behavior. In fs/eventpoll.c:
+Clippy will complain about `string.get(0)` suggesting `string.first()`.
 
-Line:2097 __set_current_state=20
-<https://elixir.bootlin.com/linux/v6.16/C/ident/__set_current_state>(TASK=
-_INTERRUPTIBLE=20
-<https://elixir.bootlin.com/linux/v6.16/C/ident/TASK_INTERRUPTIBLE>);
+>         stack_string[0] = *first;
+>     }
+>     if let Some(second) = string.get(1) {
+>         stack_string[1] = *second;
+>     }
 
-Simply changing the task state may not actually address the root cause.=20
-Currently, our approach is to identify tasks that are more likely to=20
-cause such issues and freeze them earlier or later in the process to=20
-avoid conflicts.
+I don't really think this procedural assignment is better or worse than assigning
+at declaration.
+
+>
+>     // SAFETY: stack_string[2] is zero, so the string is NUL-terminated.
+>     unsafe { kstrtobool_cstr(stack_string.as_ptr()) }
+
+I'll split it up.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
