@@ -1,163 +1,192 @@
-Return-Path: <linux-kernel+bounces-771505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962ACB28826
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:05:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C199B2882A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1255E0674
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733F13ADCE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1892233733;
-	Fri, 15 Aug 2025 22:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBE325B687;
+	Fri, 15 Aug 2025 22:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FWxQIV/B"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hQbe3/TI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA1228399
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E27212B31
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755295496; cv=none; b=fxUcHlFyDJDiYB+IcAuCYkEd1IgqOUPU3m7OrofMPTa7S3DqKzUCqbf9EtiRe2aP9Cy85R25WV/viF3tnNC0XNNT+kftAZFKGzQLedZGCDmIaxK6KJJ89Bo8eC+/4tbKSc8Sd3OEWiX8w2ehAzwa0GUsKE9s89FC120mNt5LhU0=
+	t=1755295618; cv=none; b=KNLcRS88rT5rItdK3Wb4mjB+BvB/PSJzNN3GqDt1577Bhnl2Z8+/4JKt9WvTODlR7g5R/ZvSNF4u7YJveRX00yCGzz3kt0JC+yvzymFMBBivaowc5BmaBmH96gTtZcsefsf+qpld5J53HDBPRzpxOXdK0e/frKJE6XzIqavzt80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755295496; c=relaxed/simple;
-	bh=TZurvUUFSPgNH6z5/czyUnwttfzqM+6JAE14E6s/fKw=;
+	s=arc-20240116; t=1755295618; c=relaxed/simple;
+	bh=uNKzVkNJFpozNWtvy1jhRUT5jNUMWuz7qE+T0XvLyk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiSbF0R+06TYyHqIGH8MXkbRHRRBSnWhi46j6A6j6UuB/RUapMcjvZgPbuvkPRPFSQSOaUk3dv3j4cdaDL0MHAqyLQtVngcFWi3MVPGxfuC/8DNny8aSvD9xG8dOJXL+zxef4CnFQjMFxAzLXJvsYdkVKv5st6zY69nWRDn0vrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FWxQIV/B; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4E16840E0176;
-	Fri, 15 Aug 2025 22:04:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JhQ0q_gkX7Vp; Fri, 15 Aug 2025 22:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755295489; bh=MG+WMSSjDbak1gqRkbJAj+pCePOB4PVWM1wVQaAZYZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FWxQIV/B6xObUI61b2gxzV2VNT8eGYHSzPklG0/OQXJdc46LY/EvcDbwQLrMWaPxR
-	 sRDibXQIrsSpTaF+eJyhZ5em8UKNQWJpLTFEyWRfXiVL6snNjEjBHYVO1Pq1Oj96C+
-	 Aoac1VqoELnvHyLaFg0ECZxr5V2QrkGYgp1quNbZL8BLe89Fs7yPQcBzx09dPNS02X
-	 AbHGSBgFbTorJybcacAvozsGd0BoxQTfGn1itQohs+3KV+yBe7fH3vhbU63U0gRcag
-	 Atei6tQtU2aTUK1yC9OEcp6ZOcIJ8/6rU8iZw+eeV0Y6vrzr69q6tLHa7V3M76NdXl
-	 HPsspBhTGM2LAcJ//kQ4+RYee9CY0cXnFo6xj5Y+U2GnfuKnKzcryW4miUTR+eYpfk
-	 40yMuL6uNDMVnuYcWST4SBwvJPVDNyzNajAww1V8pWCtZha5ruhEx3Q1sR3iiqnZY+
-	 dA7du1lbC+XG4X3+9qoxcL6dmW0nJYj6rJcgNm8fr3xTESWtkx7vXlrERyWnZ2j9Tu
-	 rjiyYVmcFgMmV2BhKmdxvWv5n6nmIwLtIa6TejBilSWT8ilUpMTUu6t3bEs0fueTyp
-	 /E0BU0ktGAq5sSkuUjE9B/h5PhLcXKjQiGhIutZ1jJUg4gauHuaHbm0gp8DIjYifxR
-	 Gp8ao37Tg6nDNXCN3G7JCqKE=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CEC6740E00DA;
-	Fri, 15 Aug 2025 22:04:41 +0000 (UTC)
-Date: Sat, 16 Aug 2025 00:04:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
-	David Arcari <darcari@redhat.com>
-Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
-Message-ID: <20250815220436.GJaJ-u9FUVTmjyaaua@fat_crate.local>
-References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
- <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local>
- <20250723183426.GA1158000@yaz-khff2.amd.com>
- <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
- <aIKehTDgP-Nu36ol@google.com>
- <3cc16f7d-c650-43f2-b0ca-d99c427cd69b@amd.com>
- <aIKmeclza-9TDe4U@google.com>
- <20250725065009.GAaIMpIVgAKi0kMBVv@renoirsky.local>
- <aJ-pJvrPyHyPI0qS@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2WIqRBu2TX57LKPziR/lSnjQZjwAnTlxSZMF+v/g/3ClnpBxlCEs6vX2mR2TkhbUpmEufR7SgSjDgT2bpGHZtywP8oK0qL4gubSAOCTfjgepusnaqphJFHiZ0y50g3+xVQ7rAtpQGFMPPoAOqq/hDZm78AjzKLTl1ZWXSPsIVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hQbe3/TI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FLmOEq001422
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:06:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=VOBIKSyTfLYVpO5P26VZ5Tfy
+	QvJf2A+s0orIIhlOTIw=; b=hQbe3/TIh+Lx92wl90eOtXPQKSM0HZOoEu4cJ4xR
+	fpf8n/RoDtHl3iPO7262sn+6mMNyyJWrAju9JRRwXquA68rRhVLM4hGTy9x3IACn
+	p5BGUOrJhGs7s82uXVo2hMh+8PsMKNrf47Vwmm9r0FNcSESzE7RfsNREJLu9iesa
+	KpQbKBztmQDLZNuDJdwCaKpHgnrI3sX6oW4ETIHbKwe2X16d7u+njg9YlQphjDcY
+	+WTPnGX+zhSySjSni3w7pcs78tkACQ3vrbBgD3CXXilaMxfKGQOlNhWyz6jsqrmN
+	ajcIrilAo2hQtW69VBbWmpJCOPZkr6wPlWO0ahMo/s0JkA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vy5s5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:06:56 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a9f6346f8so48414456d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:06:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755295614; x=1755900414;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VOBIKSyTfLYVpO5P26VZ5TfyQvJf2A+s0orIIhlOTIw=;
+        b=GjV0KGh+78X+w+wfNU2cHuhEClcBvL1r9ALdEHem+Hk7iNfBzsJUEvQVfFLIu0vKt7
+         ne3Ros6obiskh6kuvNAQu39Q+hMfsXKtMUU5L+AuKqGYht0qvGXzDQanASm71h5A5tkf
+         UTfrAAKYNVZ9NPcctuVmrg4/uYNc2CNrX+bEzngmo9xJxWhYqlCpPuLO2ZPUkKlR400u
+         TNwXZSe+gYyZFoEGuz0bkJL3OnrzFVgPC1NZHpHOCFVqziBCtho1ULp44pgpW2jDNjDN
+         sTzxJhQX2iA5oMsawE1DsoQSRsriJZxMUmA5p+0AkgFSkR8dBqldTsGN2DbaZ/cV/Szm
+         FHbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGfMPE+xf62j5jk/xkqKpix6c6GPjq2N3eGJbnWyOcTVudSQCv0yc939MGhu0KEelkneFslzE+/jJ+vhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLAJdN9APH4Kkp9XTheL29u1ivjT1I99TxRVd1HS75BCznpPuY
+	4X32pYMVsaZzeMY16ugRJbk9K3b8bZ3/8SY1PO7p+1KbkvTQEQf/IeMHzHGzX8FR9czz8rLDwSv
+	1vuwnzuGpFpos+zn6k/dkzo1JybY+JYLDR6/Eb5AzG1V81jdxa1EaUzlM+UWIDHCXtTA=
+X-Gm-Gg: ASbGncsvaWHltGlg1QL9zORf56KIifwNUmaNbVzCWnBG/KAwxivAnuGq+LY77erNFUv
+	fTTb7hYdvMKtnYyRpVY1CpLcMKxde8CmUu9L9kFrqpxlLvgGG7kWbUT/P7AIUlG8tPOcCIhglOJ
+	cWAya9GQQZIcl33HSDIifBnnjyhd+o4YegcNyj9rM//M2ehz5+T7QQZUZ+D8mxjh8g2sS2nCjG5
+	X+loRyxsXk7DYnntNxhsYC5kJxD8LItT6pZdXwSY5Xdd23bR1cT0iMVmwJBBGQgAwjW6Ri6GkZZ
+	m+y0+iJZoRyzK08y8SN+cLA6BARSA3zjUeoLM5V3ryLwmzKpFEb0JhlOmo1gr5gs/hnMm/oPyi/
+	6gdqP343U6+HjPyEu/H2fQMv/UIxyL4tpxvoMXMugoSGXS2Y1Sr3N
+X-Received: by 2002:ad4:5bca:0:b0:709:c997:a81c with SMTP id 6a1803df08f44-70ba7a9a7e9mr46893216d6.17.1755295613526;
+        Fri, 15 Aug 2025 15:06:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9G6CXo1SoIyR7ep7jAxw2tGGksasdF1FtsJDXuZig6dOv6C+t0MATUifhC4YEo48+4WrwAA==
+X-Received: by 2002:ad4:5bca:0:b0:709:c997:a81c with SMTP id 6a1803df08f44-70ba7a9a7e9mr46892696d6.17.1755295612991;
+        Fri, 15 Aug 2025 15:06:52 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3cc6a3sm517416e87.102.2025.08.15.15.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 15:06:52 -0700 (PDT)
+Date: Sat, 16 Aug 2025 01:06:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+        Abel Vesa <abel.vesa@linaro.org>, Xilin Wu <wuxilin123@gmail.com>,
+        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Christopher Obbard <christopher.obbard@linaro.org>
+Subject: Re: [PATCH 1/9] arm64: dts: qcom: x1-asus-zenbook-a14: Add missing
+ pinctrl for eDP HPD
+Message-ID: <pmhy2ogyorelllgandehtzlen64tzegp5pc6fkg7al7xzjcb2h@lq4lpaaavr6j>
+References: <20250814-x1e80100-add-edp-hpd-v1-0-a52804db53f6@linaro.org>
+ <20250814-x1e80100-add-edp-hpd-v1-1-a52804db53f6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJ-pJvrPyHyPI0qS@google.com>
+In-Reply-To: <20250814-x1e80100-add-edp-hpd-v1-1-a52804db53f6@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX1v7Wxhhy1DTJ
+ KE1a/K2g6vZN37tRc/daLwHSme3fEwCY3O/xjhidfc43JXxrzT0T23/Y9BeIVWvNyHG87r39YWT
+ tdZkeDDej++OE8lqx4iQue7HqClPN2XnJHOtcbf5hu+QBRlymOipkeqdQb7g3R6Q+1WKPIOckrS
+ 18uyAmghXhMVFscJWAt+NOATQAoX9n3w0fKySouTh/wBWrmZ4eXultsyGVBjMaXh0uKl4EkX3ec
+ AStwadPZsoZkU+wA+xC1AEid1i267Hr9BzhSbfhlyQ3Ifajzd7XW2oaoYQ2kjp8+OHQ4IVV89H2
+ csqxG7gGvsOXYsWR9FVpV7OLhXmyYkhi2DP8nhiXei5YdK5ZtBMrsRAPHx29fCJSwyIwbQa0kM/
+ xVUK+2H7
+X-Proofpoint-GUID: J8k5YhUlF7OEiCXgsyglM52qwfP9ub7A
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689faf80 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=18jjl7SCHLW6QrnkuXEA:9 a=CjuIK1q_8ugA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: J8k5YhUlF7OEiCXgsyglM52qwfP9ub7A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_08,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-On Fri, Aug 15, 2025 at 02:39:50PM -0700, Sean Christopherson wrote:
-> You're conflating running under (on?) a hypervisor with being a guest in the
-> traditional model of virtualization.  Running a privileged, host-owned software
-> stack in a virtual machine is beneficial/desirable for a variety of use cases,
-> and I expect the number of such use cases to grow in the near future.
+On Thu, Aug 14, 2025 at 03:30:28PM +0200, Stephan Gerhold wrote:
+> At the moment, we indirectly rely on the boot firmware to set up the
+> pinctrl for the eDP HPD line coming from the internal display. If the boot
+> firmware does not configure the display (e.g. because a different display
+> is selected for output in the UEFI settings), then the display fails to
+> come up and there are several errors in the kernel log:
 > 
-> E.g. as mentioned earlier, pKVM uses virtualization to de-privilege the kernel,
-> and Hyper-V's VBS uses virtualization to monitor accesses to sensitive state.
+>  [drm:dpu_encoder_phys_vid_wait_for_commit_done:544] [dpu error]vblank timeout: 80020041
+>  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
+>  [drm:dpu_encoder_frame_done_timeout:2715] [dpu error]enc40 frame done timeout
+>  ...
 > 
-> Future use cases could use virtualization:
+> Fix this by adding the missing pinctrl for gpio119 (func1/edp0_hot and
+> bias-disable according to the ACPI DSDT).
 > 
->  - to improve system stability/uptime, e.g. restart the VM if the kernel crashes
->    as opposed to rebooting the entire host
->  - to isolate different software components, e.g. to run post-boot functionality
->    in a separate VM to limit the impact of an escape/flaw/bug
->  - to limit the amount of code that has direct access to system physical resources
->  - to partion a system into multiple machines (each running their own kernel)
->    for performance reason; e.g. AIUI, kernel-wide locks are becomming more and
->    more problematic as the number of cores continues to go up
+> Fixes: 6516961352a1 ("arm64: dts: qcom: Add support for X1-based Asus Zenbook A14")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Not all of those use cases will want to access "bare metal" features, but my
-> point is that inferring anything about the system setup based solely on the
-> HYPERVISOR flag is all but guaranteed to break sooner or later.
+> diff --git a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+> index 16d045cf64c08c02c420787e000f4f45cfc2c6ff..613c675aac296f931293a1ba3d8506c6663bad21 100644
+> --- a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+> @@ -1001,6 +1001,9 @@ &mdss_dp1_out {
+>  &mdss_dp3 {
+>  	/delete-property/ #sound-dai-cells;
+>  
+> +	pinctrl-0 = <&edp_hpd_default>;
+> +	pinctrl-names = "default";
+> +
+>  	status = "okay";
+>  
+>  	aux-bus {
+> @@ -1236,6 +1239,12 @@ cam_indicator_en: cam-indicator-en-state {
+>  		bias-disable;
+>  	};
+>  
+> +	edp_hpd_default: edp-hpd-default-state {
+> +		pins = "gpio119";
+> +		function = "edp0_hot";
+> +		bias-disable;
+> +	};
 
-No, that's *exactly* why I will want to check HYPERVISOR. Because I don't know
-what any of that virt zoo of paravisors, smaller layers, this and that layers
-are hiding from me.
+I think this is common enough. Let's maybe push this into the SoC dtsi
+instead of copying it to all devices?
 
-That's exactly why I cannot trust that register anymore.
-
-Or do you have a better suggestion how am I to know in the kernel whether the
-values I read from that register actually come from the hardware the feature
-support was added for? Or not some funky layer in-between.
-
-Hell, I can't even trust HYPERVISOR. Because some sneaky layer might not even
-set it.
-
-Which makes this even worse.
-
-> That seems like a gigantic waste of time/effort.  E.g. imagine the pain/churn if
-> MONITOR/MWAIT had been limited to !HYPERVISOR simply because early VM setups
-> didn't support executing MONITOR/MWAIT natively.
-
-No, that's called enablement. You test the kernel on your new hw or HV env and
-then you send patches and claim support. And we support it.
-
-> Patch loading is exceptional because, AFAIK, neither Intel nor AMD officially
-> support ucode updates while running as a guest.  Though FWIW, I do expect that
-> sooner or later someone will indeed want to do patch loads in a VM.
-
-Oh, ofc. If you give the non-rebooting clouders a finger, they'll bite off the
-whole hand if they can.
-
-> I don't mind HYPERVISOR per se, what I don't like is disabling code (or going
-> down different paths) based solely on historical use cases, i.e. based on the
-> assumption that "no one will ever do xyz!".  I have no objection to pivoting
-> on HYPERVISOR if there is an explicitly documented limitation, or for cases where
-> there's a very high probability of making a bad decision, e.g. using FMS to
-> enumerate features.
-
-I don't think you're reading me here: it is not "no one will ever do". It is
-"off until someone really says she will do it. And do it according to the hw
-spec."
-
-Because if she does it differently, then also crap.
-
-So until she does it right, it is off.
+> +
+>  	edp_reg_en: edp-reg-en-state {
+>  		pins = "gpio70";
+>  		function = "gpio";
+> 
+> -- 
+> 2.50.1
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+With best wishes
+Dmitry
 
