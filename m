@@ -1,156 +1,237 @@
-Return-Path: <linux-kernel+bounces-771111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC238B28301
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B23B2830B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0908117651D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C36F1894822
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03E72D0281;
-	Fri, 15 Aug 2025 15:34:33 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E92E30277D;
+	Fri, 15 Aug 2025 15:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3nwaPxB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF27428B7F9
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081DA3009EE;
+	Fri, 15 Aug 2025 15:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272073; cv=none; b=Tjc80in+ozaUII/yhzW9zUkAfXfPYNyCT649iVcJDwpAx4LB+GKf3IZySKbR4owtXEkDA1qNaR/sjWAWD/+f/3KAU0bYNKoWl8r/ea9Aoxrn2Ub3ta/sKEnQ51QB9YU/i6BNm/HdyfYn3znxa3ONBrXjFSS7ssK6x9G0mC8Czz0=
+	t=1755272146; cv=none; b=uXZta/f5MLqu+G3+AaBnTovI6ukmyyLQaOukI6I0824XM9gM29glulbyM0X1MqPiYVhgaNvo9IEUpnYLqVyv+p5dJo+Tgvr9oEyL91IYMovCVDJuZ+S03lokYopUXvU3M5FVgrBHuqh3/4kpgjUTdHAsd/ChxDfpRt4DW9sxTIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272073; c=relaxed/simple;
-	bh=v1WKoz9xUGwYHrvTBjW5q7JHZzJGq7yhgX2nxSlbwsI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B86U/bPKAQrBVZKTQ5WYt2/YpuxY9Yx4sJVsnE+EyaUemMYmM2R4WwRoFY6kfEVwynnW2d2rFrPeC7MNBmfwq2FkzXxWmrSG4gv+pLwps2SjkjG5c1+XAQqoWc4X9so1RMkQ0nAoeVW7Dpjss91khQaxZ+4H1CCIbH2wBR0GIIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e580be9806so4994265ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:34:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755272071; x=1755876871;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4UBBw7L5NC+UoNNtVsBVt3nBBNgpwnO+Xo1HV/zu+i4=;
-        b=mTv3wL8zUiCDgiu00xUjYzYCyC/iWfb1oCV9gw3osIv1QlSxJPpgJPyGExynR2T8YN
-         zJ4XXfoOFxw8DxhJs6GxMXHLBjoEmdkZwV3bPsg4OfZnWqPutSOmyBPfT++3mpTYcNov
-         eSDFm0r118it8Hr37ctPlKE91qB1TYQVrhY0/bW2lkupfbg8GkPxWqDDDwlvbvVZOS6F
-         bvTCxgJJrnzaKb5x4M+mz6IpwS4iDe3YwItG0c/B99crfXes6NYK3+mfTrBGE49EJ8YK
-         DkUf5BXEiM1kfYCp0b0O2Z3A+SnbY5PncHvSRA8/s5Ogr/2qXGmXrGlVWEZA+up3nNg5
-         yPBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0I9fhGK+BJ6ie+00/VXcWpKnYF3brJHDEJgVIundoXucg8qAvB7QTZcqjBPFRRsjwPmeBisahV9OjUnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2cFPHHemEgPKaBzT51Q8Rvn8K6aLKdrBxszXkUZ/uBzgc+1ju
-	vNrybLvVhDiI1WiI2X5aRrW2FbNuFUDlDq6o5KIplXBNybGGczzY89F/6U/20pWZ7VFz4b6cLuY
-	1VSctIOprLPV594wrIUxhEK3xqHYVt+GclOMBR7wTP+nMp4CopHVfJmG3zuw=
-X-Google-Smtp-Source: AGHT+IHQoo+abLPqcmAewudmcI5c1OLdi/lygZI83wNwmtArrInvX3MFB19TPtHHNoFldZzz+xEf4PrZB5oaDLrBzd/gWznEyRxm
+	s=arc-20240116; t=1755272146; c=relaxed/simple;
+	bh=jOivhveyzsCvx9P8rYl0O96QCHPn263d2yGCWiRYuOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BzDe93aYpwYbzrQfQyseVwXRrM2m9fDRGX1sCNFTdDFQgyeiWxgwArwFBuDhV0kwM0CvZ8SX2tUvH7tGc7ca7ZkspE2hKx9LTjYrwNntaCftBzeY/s0RNr1UYCxB74437rq2JfBjM32Oc3uG8iv2h2DXVCZRhw/P3OHQth21bXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3nwaPxB; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755272145; x=1786808145;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jOivhveyzsCvx9P8rYl0O96QCHPn263d2yGCWiRYuOU=;
+  b=F3nwaPxBuoB7lh371SLIGebBEXx/WeBHGa3UTxujws30Nb8SxAafBUyy
+   Cmea6UaI+p+PfnJY9nHFrZwmyKmMnzHxmv1CUc2Zl/+ndlR7QQXQDapwF
+   Eh0iBHLA7buy5NWrGrGLs2bAHUMbRVwwEwBU5BQ3bTyU/NfZjfsB/mIEz
+   vvcdGL35IRDJs2+2iLsh2NnwVWSQQxomhdEybpXrMCRL0PvFhY4z2s3wD
+   hOfxSo4ubQb483+w9/g8NJHXvbpoh5hu3bliy2yMdy3zl3MBeYnwtUfVz
+   BpD2koW3C5W4lNDuriGFgp+2OsqXVCQ1ZfqdnQgcF6aEOUEPGwsvjkcVx
+   Q==;
+X-CSE-ConnectionGUID: d5oG2DmESZKNEwVLW8/c4A==
+X-CSE-MsgGUID: 35qALkriTki/Q13DnfYM0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68195504"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="68195504"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 08:35:44 -0700
+X-CSE-ConnectionGUID: UFkcyKMNRoyaeHViQHPSnQ==
+X-CSE-MsgGUID: sW6JCJmyScK35hkpV+fdpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166950818"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 08:35:36 -0700
+Message-ID: <01108362-8273-4291-bebe-379006e7908d@intel.com>
+Date: Fri, 15 Aug 2025 08:35:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16ce:b0:3e5:4eb2:73db with SMTP id
- e9e14a558f8ab-3e57e80df84mr41721855ab.5.1755272066506; Fri, 15 Aug 2025
- 08:34:26 -0700 (PDT)
-Date: Fri, 15 Aug 2025 08:34:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689f5382.050a0220.e29e5.001b.GAE@google.com>
-Subject: [syzbot] [kernel?] KMSAN: uninit-value in process_timeout
-From: syzbot <syzbot+2a895bf937943f1666cc@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    0cc53520e68b Merge tag 'probes-fixes-v6.17-rc1' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=168dbc34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=80850d07adb04ea2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2a895bf937943f1666cc
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cad3c74a9bc2/disk-0cc53520.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7b87febcb296/vmlinux-0cc53520.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0dd5c054303b/bzImage-0cc53520.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2a895bf937943f1666cc@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in process_timeout+0x59/0x60 kernel/time/sleep_timeout.c:27
- process_timeout+0x59/0x60 kernel/time/sleep_timeout.c:27
- call_timer_fn+0x4c/0x520 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1798 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x80f/0xd90 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0x3a/0x80 kernel/time/timer.c:2403
- handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0x84/0x90 arch/x86/kernel/apic/apic.c:1050
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
- __nr_to_section include/linux/mmzone.h:1937 [inline]
- __pfn_to_section include/linux/mmzone.h:2079 [inline]
- pfn_valid include/linux/mmzone.h:2161 [inline]
- kmsan_virt_addr_valid arch/x86/include/asm/kmsan.h:94 [inline]
- virt_to_page_or_null+0x99/0x180 mm/kmsan/shadow.c:75
- kmsan_get_metadata+0xfb/0x160 mm/kmsan/shadow.c:141
- kmsan_get_shadow_origin_ptr+0x4a/0xb0 mm/kmsan/shadow.c:102
- get_shadow_origin_ptr mm/kmsan/instrumentation.c:38 [inline]
- __msan_metadata_ptr_for_load_8+0x24/0x40 mm/kmsan/instrumentation.c:94
- batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:409 [inline]
- batadv_nc_worker+0x11f/0x1aa0 net/batman-adv/network-coding.c:719
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Local variable timer created at:
- schedule_timeout+0x44/0x240 kernel/time/sleep_timeout.c:63
- kcompactd+0x470/0x2340 mm/compaction.c:3187
-
-CPU: 1 UID: 0 PID: 3876 Comm: kworker/u8:20 Tainted: G        W           6.17.0-rc1-syzkaller-00038-g0cc53520e68b #0 PREEMPT(none) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: bat_events batadv_nc_worker
-
-=====================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] cxl, acpi/hmat: Update CXL access coordinates
+ directly instead of through HMAT
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+ dakr@kernel.org, dave@stgolabs.net, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ marc.herbert@linux.intel.com, akpm@linux-foundation.org, david@redhat.com
+References: <20250814171650.3002930-1-dave.jiang@intel.com>
+ <20250814171650.3002930-4-dave.jiang@intel.com>
+ <20250815143125.000074d5@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250815143125.000074d5@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 8/15/25 6:31 AM, Jonathan Cameron wrote:
+> On Thu, 14 Aug 2025 10:16:49 -0700
+> Dave Jiang <dave.jiang@intel.com> wrote:
+> 
+>> The current implementation of CXL memory hotplug notifier gets called
+>> before the HMAT memory hotplug notifier. The CXL driver calculates the
+>> access coordinates (bandwidth and latency values) for the CXL end to
+>> end path (i.e. CPU to endpoint). When the CXL region is onlined, the CXL
+>> memory hotplug notifier writes the access coordinates to the HMAT target
+>> structs. Then the HMAT memory hotplug notifier is called and it creates
+>> the access coordinates for the node sysfs attributes.
+>>
+>> The original intent of the 'ext_updated' flag in HMAT handling code was to
+>> stop HMAT memory hotplug callback from clobbering the access coordinates
+>> after CXL has injected its calculated coordinates and replaced the generic
+>> target access coordinates provided by the HMAT table in the HMAT target
+>> structs. However the flag is hacky at best and blocks the updates from
+>> other CXL regions that are onlined in the same node later on. 
+> 
+> After all removed, or when a second region onlined in that node whilst the
+> first is still online?  In that second case I think we should not update
+> the access properties as that would surprise anything already using the
+> earlier one.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Are you thinking we'll need some sort of ref counting on the node?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+DJ
+> 
+> Jonathan
+> 
+>> Remove the
+>> 'ext_updated' flag usage and just update the access coordinates for the
+>> nodes directly without touching HMAT target data.
+>>
+>> The hotplug memory callback ordering is changed. Instead of changing CXL,
+>> move HMAT back so there's room for the levels rather than have CXL share
+>> the same level as SLAB_CALLBACK_PRI. The change will resulting in the CXL
+>> callback to be executed after the HMAT callback.
+>>
+>> With the change, the CXL hotplug memory notifier runs after the HMAT
+>> callback. The HMAT callback will create the node sysfs attributes for
+>> access coordinates. The CXL callback will write the access coordinates to
+>> the now created node sysfs attributes directly and will not pollute the
+>> HMAT target values.
+>>
+>> Fixes: debdce20c4f2 ("cxl/region: Deal with numa nodes not enumerated by SRAT")
+>> Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
+>> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>> ---
+>>  drivers/acpi/numa/hmat.c  |  6 ------
+>>  drivers/cxl/core/cdat.c   |  5 -----
+>>  drivers/cxl/core/core.h   |  1 -
+>>  drivers/cxl/core/region.c | 10 ++--------
+>>  include/linux/memory.h    |  2 +-
+>>  5 files changed, 3 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+>> index 4958301f5417..5d32490dc4ab 100644
+>> --- a/drivers/acpi/numa/hmat.c
+>> +++ b/drivers/acpi/numa/hmat.c
+>> @@ -74,7 +74,6 @@ struct memory_target {
+>>  	struct node_cache_attrs cache_attrs;
+>>  	u8 gen_port_device_handle[ACPI_SRAT_DEVICE_HANDLE_SIZE];
+>>  	bool registered;
+>> -	bool ext_updated;	/* externally updated */
+>>  };
+>>  
+>>  struct memory_initiator {
+>> @@ -391,7 +390,6 @@ int hmat_update_target_coordinates(int nid, struct access_coordinate *coord,
+>>  				  coord->read_bandwidth, access);
+>>  	hmat_update_target_access(target, ACPI_HMAT_WRITE_BANDWIDTH,
+>>  				  coord->write_bandwidth, access);
+>> -	target->ext_updated = true;
+>>  
+>>  	return 0;
+>>  }
+>> @@ -773,10 +771,6 @@ static void hmat_update_target_attrs(struct memory_target *target,
+>>  	u32 best = 0;
+>>  	int i;
+>>  
+>> -	/* Don't update if an external agent has changed the data.  */
+>> -	if (target->ext_updated)
+>> -		return;
+>> -
+>>  	/* Don't update for generic port if there's no device handle */
+>>  	if ((access == NODE_ACCESS_CLASS_GENPORT_SINK_LOCAL ||
+>>  	     access == NODE_ACCESS_CLASS_GENPORT_SINK_CPU) &&
+>> diff --git a/drivers/cxl/core/cdat.c b/drivers/cxl/core/cdat.c
+>> index c0af645425f4..c891fd618cfd 100644
+>> --- a/drivers/cxl/core/cdat.c
+>> +++ b/drivers/cxl/core/cdat.c
+>> @@ -1081,8 +1081,3 @@ int cxl_update_hmat_access_coordinates(int nid, struct cxl_region *cxlr,
+>>  {
+>>  	return hmat_update_target_coordinates(nid, &cxlr->coord[access], access);
+>>  }
+>> -
+>> -bool cxl_need_node_perf_attrs_update(int nid)
+>> -{
+>> -	return !acpi_node_backed_by_real_pxm(nid);
+>> -}
+>> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+>> index 2669f251d677..a253d308f3c9 100644
+>> --- a/drivers/cxl/core/core.h
+>> +++ b/drivers/cxl/core/core.h
+>> @@ -139,7 +139,6 @@ long cxl_pci_get_latency(struct pci_dev *pdev);
+>>  int cxl_pci_get_bandwidth(struct pci_dev *pdev, struct access_coordinate *c);
+>>  int cxl_update_hmat_access_coordinates(int nid, struct cxl_region *cxlr,
+>>  				       enum access_coordinate_class access);
+>> -bool cxl_need_node_perf_attrs_update(int nid);
+>>  int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>>  					struct access_coordinate *c);
+>>  
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 71cc42d05248..1580e19f13a5 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -2442,14 +2442,8 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+>>  
+>>  	for (int i = 0; i < ACCESS_COORDINATE_MAX; i++) {
+>>  		if (cxlr->coord[i].read_bandwidth) {
+>> -			rc = 0;
+>> -			if (cxl_need_node_perf_attrs_update(nid))
+>> -				node_set_perf_attrs(nid, &cxlr->coord[i], i);
+>> -			else
+>> -				rc = cxl_update_hmat_access_coordinates(nid, cxlr, i);
+>> -
+>> -			if (rc == 0)
+>> -				cset++;
+>> +			node_update_perf_attrs(nid, &cxlr->coord[i], i);
+>> +			cset++;
+>>  		}
+>>  	}
+>>  
+>> diff --git a/include/linux/memory.h b/include/linux/memory.h
+>> index 02314723e5bd..b41872c478e3 100644
+>> --- a/include/linux/memory.h
+>> +++ b/include/linux/memory.h
+>> @@ -120,8 +120,8 @@ struct mem_section;
+>>   */
+>>  #define DEFAULT_CALLBACK_PRI	0
+>>  #define SLAB_CALLBACK_PRI	1
+>> -#define HMAT_CALLBACK_PRI	2
+>>  #define CXL_CALLBACK_PRI	5
+>> +#define HMAT_CALLBACK_PRI	6
+>>  #define MM_COMPUTE_BATCH_PRI	10
+>>  #define CPUSET_CALLBACK_PRI	10
+>>  #define MEMTIER_HOTPLUG_PRI	100
+> 
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
