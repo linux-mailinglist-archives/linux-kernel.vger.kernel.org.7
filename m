@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-771208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C38B2842E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:47:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3E0B28431
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE85F620D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77518B072B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6C730E0EC;
-	Fri, 15 Aug 2025 16:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C471430E0F0;
+	Fri, 15 Aug 2025 16:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="RlpDpQfH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bzao0zTI"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oKCu43NV"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13FD30E0DA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F192E30E0E3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755276195; cv=none; b=PyzXgqqxxqTPfSjPd5tvPMD00Mu5chQVTPhGJ7fU11WMmOaARNvJuVxRMteV7y0BcGlxoBtPiS65Tijb+XIamEbiVoD+zSp/hDUe2+CM0LGqEm/MwXWiagE/lgViF6x6Nm+EByFeGDSmK75AFb/9JJstOay4vdffTd9zu8BayH8=
+	t=1755276266; cv=none; b=MS2I3qXEIIqTmpFG96bnDU1NbL8djXgSiDW5Z413Jcer4Se7/yPKqGlD/tES4hxiZxBX15LTlEZu7eSgSKUIvrzlwivAF/MDS4T0cr/lFNIv6n5+Iq1djr44vYSyksBISp+ku8ulddmRyFGVyfrb1mAuuwIcA5kNZCXXO6a2yOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755276195; c=relaxed/simple;
-	bh=+FlQG/DjIKUOkKdcfEq45/ooGCmI5NprdmTHEjpyt+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUFbqp+9gPmKwOOWk4/nJSsRFj1t2cPXhuoE9BrmiPg5pha92+XPGdro42h3ngxQxhL5vNqyfYJPc32r3MU8XLFj0OeBbaSwPA5XMbJlqt9HkCIdRdhVYNgWZZjOhDGg9Lq8MGK3rS03FnDyKnUr/LPwdUYoeVuncQILB4M2GEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=RlpDpQfH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bzao0zTI; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DEC32140005A;
-	Fri, 15 Aug 2025 12:43:12 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Fri, 15 Aug 2025 12:43:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1755276192; x=
-	1755362592; bh=93jxO6hkXxhXRNYS0TAjxURrekS8HQ7iFocClvyhMK8=; b=R
-	lpDpQfHrYOR3d6Z2XMjx/7r2cNAVHJ6HXwZFUk4G3s/bAt9/snbujhcMHe4Dfc4C
-	BebS5VmyXW/0lyQmXVL9r+kZl1f9tWvceNL0z/LdbwJl4q89EaF3YkLvTGsSVBle
-	YTlpsvYYUylwJN1nkNY6kkfoRsbm6h1NxLH61g7uZSv2VeE54yj0GVs5CGecENtc
-	F/mi7+htfB8eyU3vXutthLeNcye7ZZ2f8lEn+XNbZnFGFfitHn+Y1Vk1p8lnGm8x
-	BRsWOQNpeZhaSn/Y6T98T4fnzjgDSppUncm1HUqphYY7B+nLGpfz1JFdbN8K8S2D
-	jvNWoSs7VAmUV0G+K++GA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755276192; x=1755362592; bh=93jxO6hkXxhXRNYS0TAjxURrekS8HQ7iFoc
-	ClvyhMK8=; b=bzao0zTITYu2LPq3hW9I2x+oJybYCyBPc0s1wHq2EIBI6TvWN7T
-	4dax9UlatqVpXnZhg8GxxEIb3sAmHGg/r7vyx5daCyy25s6+YaYoQTh7a0vzvv+Z
-	qZcpWd1vdctzLIggr2t5/bqG2ZzK469AJ58qOBcXn9MQ7XQiIVfxTZ7Y130jQ9zI
-	V5zttNp3wl4x4gqAh9ww40I1eKEZzk0SP0yKvnPxHD/k+0gR+U7CbFsiyK2tgIIb
-	4ivFRuhANylCHyAcXUSr73J1Vy2k99eq0095IQU5dVJm7STfpMOra5cnp8flfuxJ
-	kmeO3/xBs+k0V70EqYHv82Vry1LdsE2IC+Q==
-X-ME-Sender: <xms:n2OfaBB40LuAl31DQQ9A_BTsHkK8Q6FWGC8dbuDqYBtaPReG5EvwNQ>
-    <xme:n2OfaKiPPUQFx8o4salKdXstSmCLpLEJf303RDfHm0DqiXTZS2MsUcPXkGEbIXe3k
-    hTLyJ2DMpaMPkpyCIw>
-X-ME-Received: <xmr:n2OfaDNt70qjb0Rsvsaxdnia3DQE4ouETo2qEidqj8dYHi0a2-VwOxyM-etf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeeggeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhhihiguhgrnhdriihhrghose
-    hhohhtmhgrihhlrdgtohhmpdhrtghpthhtohepshgrthhhhigrnhgrrhgrhigrnhgrnhdr
-    khhuphhpuhhsfigrmhihsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepkh
-    hirhhilhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphht
-    thhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpth
-    htohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhgohes
-    rhgvughhrghtrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpth
-    htohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdr
-    tghomh
-X-ME-Proxy: <xmx:n2OfaJZiWujIfqqU0mlYVzj3q01T3GW0fso9A0jdXXIsEru2-gcQrg>
-    <xmx:n2OfaA_kR2m5o-yvhZbsrf_FKX4qjQnOXEz8f35GYrh6a09RNPXteg>
-    <xmx:n2OfaE3D9wILjCNHbp8ne-D0f9uJhDx5aaKdXalRa0NawL3uhJDV6g>
-    <xmx:n2OfaB2iO9ZBQs24VqW_b4im5VErWS8mUAFhGTBO5TAFmsLm5gpaJg>
-    <xmx:oGOfaMCP18kHZ1eGA15VOD-EoFeGTI7XikzGfkXdmCnWjYC6uWUoCeaA>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 15 Aug 2025 12:43:10 -0400 (EDT)
-Date: Fri, 15 Aug 2025 17:43:07 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Shixuan Zhao <shixuan.zhao@hotmail.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/tdx: support VM area addresses for
- tdx_enc_status_changed
-Message-ID: <enhnj775ryshjrqer24ki7wibngxaj5ydos7xjgone6wobuvdn@77luyq4cawva>
-References: <OS9PR01MB15202A41CF04F0BBF8CE244B48D34A@OS9PR01MB15202.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1755276266; c=relaxed/simple;
+	bh=4mSg7/FJF+dNCJc9keQwuNfI4XYRtRidKb+j1+8mh8g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ohUeLNdyi80ULMRgHDZwsi5sVT9IvU5791QzAEUUW9lbdrv3iLsged+MfO+bzNCkQnmkxVUQhjaqfHlJ4aGPzfOZUHiEIQ/VpeXBMY7V2NQ9++sodt/4GEE/OW+3u7lHPUq2NzItIO+21n9iDq+td/yl3UXr/L72R6t/OM3m3A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oKCu43NV; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-435de7ab175so224705b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755276263; x=1755881063; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeTCzOhB8KlIbjBAM+JfgXZgHbqV4L9r/ttlxrn63B4=;
+        b=oKCu43NVt953zlSg1P5W1H3Kvf/mnpyXZhDyqd+sJiKSf27o5q9CNPI7DVeQbPLsaJ
+         xfJxSXaySzuDmLVOM3lXjhhi7d3PS/LhIYOHNorx4GMfOAqbflOXTBv0GanK7ZRWkfb2
+         +OuEKcem1aY2YZHcJ9wu7muphRpaBOwvFrbRrQf/8/VB4KKrnQFC9kIUt87H+3kV5+QT
+         SoVJxAHrHwhIsXWzFD6vYyGQ4n+kVkYyyJvVpSfo6LCOYfYkk9g0jrr5GH2D8nXl0i1J
+         GCm9gqNsv0oV8rDi30P2jjV2WbbcRhcJgkfWj3rxpH/yLhZUcW7Vm1N6mWRqLGbXiGMU
+         OMOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755276263; x=1755881063;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jeTCzOhB8KlIbjBAM+JfgXZgHbqV4L9r/ttlxrn63B4=;
+        b=uqT4UBZ68bz2Esff0VNYXGQf4HMgzgO0DfJfQ0z41s54EnZ+SutdyZbWgDb9eperKq
+         ChxSE3R7yMIni78EjEYHER1yo6FbBCknD6tjZTA5vCVTT475yR2EEjIjERky2/22Ebv3
+         Eanueg0itTuGxwIzsPOL9dMYD9Y2Od113zPLyE6eEW3dMBLfRqUP3ysCgRPIIh6+6M4X
+         PeWIEym1l0hBl3Dti257Jed/AuKwVG8N8nwATiXLffurXs5y13HQRiBr7SzqEETpvvwL
+         BqhoAn5FNgayExC0U5ZxzBpZp9IfxnMfYVJN8/zEMlZR92fdDj3A+3koje0v/rFftyUe
+         TBXg==
+X-Gm-Message-State: AOJu0YwYvcb6utM2u1/bU2xMkwCSbePkiFp5UBMS+2tuhTjLGaJLykFn
+	Ji0XQ8QbvRIUQ6cOBdEO+0aIRAecz6sDxg8vZy7Ff+e78bB+z480YKv55fBGY0wb4NZrp+UpIt5
+	Hsov5
+X-Gm-Gg: ASbGncsDciwRNhoqUruEf3H2c5UchCO2IhZ62nLv7+tgCRD6+YVR70bblwDdUy+TYxX
+	BJxf5bmAXit9xKci2/GV+qS2uqfy5NNcTcnnmFmMw09Akztj5I1IijCBcsqVJviE7a3uSNtzx1B
+	vsSgloeCxXigxulIGNsn/gMEHauJyypwEb7E6H7H6C361Qd8Aabc3B2Fs8VJSAYHQbuIHqLXSQP
+	k6GqpEIh8dVmtnwvGraSq2g5/PnyXYbLe4NccTDjvhKGGJcY84KSMSNZIqUDGcxdjH5KESRrDBD
+	b23laMinKN7WTowrjlVAHj7el3CL9P/S2QH6nNRZ52pyO2giFQ2nhxNxm08Dp4IV2uo7zN8laju
+	GMTOIQ8H9brplbw6U7PsLjeZPT8A=
+X-Google-Smtp-Source: AGHT+IEo11i/uc/Hufr9lPF4hwWNBHjn9+ucSXTQlaalqfaTXDcHGp7UsewwnkPTdi+uu/hMcbjDYg==
+X-Received: by 2002:a05:6808:10d6:b0:434:d39:63bf with SMTP id 5614622812f47-435ec48ee26mr1198739b6e.14.1755276262853;
+        Fri, 15 Aug 2025 09:44:22 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:677:c1a1:65b9:2b0c])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ed1b186bsm305263b6e.21.2025.08.15.09.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 09:44:22 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] spi: offload-trigger: followup
+Date: Fri, 15 Aug 2025 11:43:59 -0500
+Message-Id: <20250815-spi-offload-trigger-followup-v1-0-8ec5413a8383@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS9PR01MB15202A41CF04F0BBF8CE244B48D34A@OS9PR01MB15202.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM9jn2gC/x3MzQqDMAwA4FeRnBewrYruVcYOsiZdoJiS7g/Ed
+ 7fs+F2+HSqZUIVrt4PRR6ro1uAuHTye65YIJTaD7/3Yz27EWgSVOesa8WWSEhmy5qzfd8EYAvs
+ puGmJA7SiGLH8/v3tfhwnv5GMMm4AAAA=
+X-Change-ID: 20250815-spi-offload-trigger-followup-d33f263169d4
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>, 
+ Andy Shevchenko <andriy.shevchenko@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=797; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=4mSg7/FJF+dNCJc9keQwuNfI4XYRtRidKb+j1+8mh8g=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBon2PRmJwQLsyKooC72AoFETjaYLn/XzO2yFqLJ
+ Hs5xJ1Xfi6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaJ9j0QAKCRDCzCAB/wGP
+ wG8eCACd/wPlJUMamVDnAuTfSpA3J7dv4WgxloBtOsquEjQrCO3X0cBW/ug7R6HkXzAow5IzJqE
+ 0Ww0VVJlRZnkiROVGOo5XA4cuCfD4J26plTtoCuK87UQU5MAYdT1USCqP0BF5HudhGybKNo5Vrn
+ hSgygwu0YSWDzyGWwrhPddJSr9ZlE7l3CTefIq4BN6z1E9D5h+RDtdtAEFAzZ6BosU1T8Mhmrk4
+ cldwTn5U1oY3QPL4+irBqLP3l3Y80fHMcKdmxQfROgoQviSUH6aOQuUr+zmgf9vQ91ZdFSni1/E
+ +DpUqPfrXX4IwNknygJazce9M7w17W5KbUMs3OyYbwDf8e9j
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Thu, Aug 14, 2025 at 10:34:02PM -0400, Shixuan Zhao wrote:
-> Currently tdx_enc_status_changed uses __pa which will only accept
-> addresses within the linear mapping. This patch allows memory allocated
-> in the VM area to be used.
-> 
-> For VM area addresses, we do it page-by-page since there's no guarantee
-> that the physical pages are contiguous. If, however, the entire range
-> falls within the linear mapping, we provide a fast path that do the
-> entire range just like the current version so that the performance
-> would remain roughly the same as current.
-> 
-> Signed-off-by: Shixuan Zhao <shixuan.zhao@hotmail.com>
-> ---
-> Hi,
-> 
-> I recently ran into a problem where tdx_enc_status_changed was not
-> implemented to handle memory mapped in the kernel VM area (e.g., ioremap
-> or vmalloc). I have created a patch that tries to fix this problem. The
-> overall idea is to keep a fast path for the current __pa-based routine
-> if the range falls within the linear mapping, otherwise fall to a page-by-
-> page page table walk for those in the VM area.
+This cleans up a few loose ends from the series that added the ADI Util
+Sigma-Delta SPI driver [1].
 
-Could you tell more about use-case?
+[1]: https://lore.kernel.org/linux-spi/20250701-iio-adc-ad7173-add-spi-offload-support-v3-0-42abb83e3dac@baylibre.com/
 
-I am not sure we ever want to convert vmalloc()ed memory to shared as it
-will result in fracturing direct mapping.
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+David Lechner (2):
+      MAINTAINERS: merge TRIGGER SOURCE sections
+      spi: offload trigger: adi-util-sigma-delta: clean up imports
 
-And it seems to the wrong layer to make it. If we really need to go
-this pass (I am not convinced) it has to be done in set_memory.c
+ MAINTAINERS                                            | 8 +-------
+ drivers/spi/spi-offload-trigger-adi-util-sigma-delta.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 8 deletions(-)
+---
+base-commit: bbe4656eae2729b8ca87116defa19c568898d08f
+change-id: 20250815-spi-offload-trigger-followup-d33f263169d4
 
-Sathya, I remember you did something similar for REPORT, right?
-
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+David Lechner <dlechner@baylibre.com>
+
 
