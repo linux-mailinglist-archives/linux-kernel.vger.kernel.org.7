@@ -1,143 +1,127 @@
-Return-Path: <linux-kernel+bounces-770207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292B3B27874
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:30:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A117CB2786F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FA5CB63882
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7478B634D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C329E0E6;
-	Fri, 15 Aug 2025 05:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTvHZwL4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454FC292B38;
+	Fri, 15 Aug 2025 05:29:21 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E5825A32C;
-	Fri, 15 Aug 2025 05:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99456242D66
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235817; cv=none; b=jSz0amgfpWaPNlO3J+sMcmpOh/P5Wrhx7Wvj9cXvSTC3l8YHBLtD80vQdJoew/svvYbIIdsCMR7ucV5KAl3rXJ/L3t982QSxQlMxmMenAJnqlQN4MMMUsD/Vl5/iExE5UXGDC71dmJTbDmgWAZnbYrNk9aiiCfd82jQ/WEIiC8s=
+	t=1755235760; cv=none; b=E3vKm7Yu5gC+SA20DlfnuszVQeurdRx3uGlIAeURGPOsOLq2MpdRD96k96fvmwwzq5VZVakBkrL3HF9GnnQWsu+Uj/YafIMzitohXZCpc2QN/7vHaIh+HdAHcd74/YNRLahnD3v14nliexllVxmo4V3F938039tt55qg4kgIqKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235817; c=relaxed/simple;
-	bh=y0xyaJyPtcDPNLHhbPevkPLJ5VRQZj0+f0qVNL2ihWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQ8dEV1R/t+Plulya+WP7oAabE+WGg1bg+wpF/Fm0pIYP+p8lT+LJh2qwgDI1Tkm64Ln0QJwUC8PQSnPVya2KlF6gqiJPg3srZ9/CJP4ZpEqqVD3CvkmWGTf7idSXPBIMlQXbfvRUYAqQHNn0bKfHMo6s1CXWCPPSyrdICH0DsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTvHZwL4; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755235817; x=1786771817;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=y0xyaJyPtcDPNLHhbPevkPLJ5VRQZj0+f0qVNL2ihWc=;
-  b=HTvHZwL45+KtXDJ45o+AG3CJZ4UW52eqxcfL67DmmoI+Lev6gofkSV++
-   uGbKZFSk7u3Pv41dr0KfbvIPa2YchRC9jo2y01xQZy5GBfwqPLcc/Aacj
-   9ac7KzoxhkoERBSLWKsIvwSWp2q7rW14p6Bq2Mou6JOwzwpNt84p5G/LW
-   ZLwijLe0oUtR7E5jPozk34MIP16XIpYR7h0xpwYPARLxgYbQ26WIlS0Hd
-   RRlqPVkMWYQ9X7jn24ev43Zva/d3iU/dZHPNoy7H9JVU5bdQQkR3yDfyD
-   L5CrKKmHhcmFqq1sExwAOIAwIvuAXKEqQ14k1N6IRugy1zcDKCgq2Y8EU
-   A==;
-X-CSE-ConnectionGUID: FSuL+xs/Q6ySAaxV7am/0w==
-X-CSE-MsgGUID: 47aJqn6SSXKXyplPyuwQkQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="82994979"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="82994979"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:30:15 -0700
-X-CSE-ConnectionGUID: RseyzJmKT36kWr3vroMtQg==
-X-CSE-MsgGUID: a9/KIfTrTBati7fQxiXAIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166914870"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:30:08 -0700
-Message-ID: <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
-Date: Fri, 15 Aug 2025 13:28:02 +0800
+	s=arc-20240116; t=1755235760; c=relaxed/simple;
+	bh=VURvw+k590gCXeGUBglVj+/8RkSid+pcYUblRadhAI4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QHLgG4UpWqguMX2rQueVuwEt3BYNw9OeYheg9jM0dAAEMVsokpP+4tiCkWANSMHO6In/SDdXOmvFI8BOnMho/CY2ys/jbDKzXdiPCtQTNvudHU7NvVBupNmRQGp1XgZVKWj8ivBMrbpWBe/O/TPPN7I/JG3nZ5VWrZb1l4PRhlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>,
+	"peterz@infradead.org" <peterz@infradead.org>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "david.kaplan@amd.com"
+	<david.kaplan@amd.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs
+ without ARCH_CAP_GDS_CTRL
+Thread-Topic: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs
+ without ARCH_CAP_GDS_CTRL
+Thread-Index: AQHcDaVol6m8kQbUoUCDZWrxRnEWbA==
+Date: Fri, 15 Aug 2025 05:28:18 +0000
+Message-ID: <8caaa7fabf2446ffbac922dafaed3dc9@baidu.com>
+References: <20250815035334.4230-1-lirongqing@baidu.com>
+ <20250815050811.gm7nxcd7wn47lshy@desk>
+In-Reply-To: <20250815050811.gm7nxcd7wn47lshy@desk>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
- helper
-To: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
- joro@8bytes.org, bhelgaas@google.com, jgg@nvidia.com
-Cc: will@kernel.org, robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
- yi.l.liu@intel.com, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
- vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On 8/12/25 06:59, Nicolin Chen wrote:
-> There is a need to attach a PCI device that's under a reset to temporally
-> the blocked domain (i.e. detach it from its previously attached domain),
-> and then to reattach it back to its previous domain (i.e. detach it from
-> the blocked domain) after reset.
-> 
-> During the reset stage, there can be races from other attach/detachment.
-> To solve this, a per-gdev reset flag will be introduced so that all the
-> attach functions will bypass the driver-level attach_dev callbacks, but
-> only update the group->domain pointer. The reset recovery procedure will
-> attach directly to the cached pointer so things will be back to normal.
-> 
-> On the other hand, the iommu_get_domain_for_dev() API always returns the
-> group->domain pointer, and several IOMMMU drivers call this API in their
-> attach_dev callback functions to get the currently attached domain for a
-> device, which will be broken for the recovery case mentioned above:
->   1. core asks the driver to attach dev from blocked to group->domain
->   2. driver attaches dev from group->domain to group->domain
-> 
-> So, iommu_get_domain_for_dev() should check the gdev flag and return the
-> blocked domain if the flag is set. But the caller of this API could hold
-> the group->mutex already or not, making it difficult to add the lock.
-> 
-> Introduce a new iommu_get_domain_for_dev_locked() helper to be used by
-> those drivers in a context that is already under the protection of the
-> group->mutex, e.g. those attach_dev callback functions. And roll out the
-> new helper to all the existing IOMMU drivers.
-
-Given that iommu_group->mutex is transparent to the iommu driver, how
-about
-
-/*
-  * Called only by iommu drivers in the callback context where
-  * group->mutex has already been held by the core.
-  */
-struct iommu_domain *iommu_get_domain_for_dev_internal(struct device *dev)
-{
-	...
-	lockdep_assert_held(&group->mutex);
-	...
-}
-
-?
-
-> 
-> Add a lockdep_assert_not_held to the existing iommu_get_domain_for_dev()
-> to note that it would be only used outside the group->mutex.
-> 
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-
-Thanks,
-baolu
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF3YW4gR3VwdGEgPHBh
+d2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbT4NCj4gU2VudDogMjAyNcTqONTCMTXI1SAx
+MzowOQ0KPiBUbzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBDYzogdGds
+eEBsaW51dHJvbml4LmRlOyBicEBhbGllbjguZGU7IHBldGVyekBpbmZyYWRlYWQub3JnOw0KPiBq
+cG9pbWJvZUBrZXJuZWwub3JnOyBtaW5nb0ByZWRoYXQuY29tOyBkYXZlLmhhbnNlbkBsaW51eC5p
+bnRlbC5jb207DQo+IHg4NkBrZXJuZWwub3JnOyBocGFAenl0b3IuY29tOyBkYXZpZC5rYXBsYW5A
+YW1kLmNvbTsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbPz8/
+P10gUmU6IFtQQVRDSF0geDg2L2J1Z3M6IEZpeCBHRFMgbWl0aWdhdGlvbiBjaGVjayBmb3IgQ1BV
+cyB3aXRob3V0DQo+IEFSQ0hfQ0FQX0dEU19DVFJMDQo+IA0KPiBPbiBGcmksIEF1ZyAxNSwgMjAy
+NSBhdCAxMTo1MzozNEFNICswODAwLCBsaXJvbmdxaW5nIHdyb3RlOg0KPiA+IEZyb206IExpIFJv
+bmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPg0KPiA+IFRoZSBjb21taXQgOGM3MjYx
+YWJjYjdhZCgieDg2L2J1Z3M6IEFkZCBhdHRhY2sgdmVjdG9yIGNvbnRyb2xzIGZvcg0KPiA+IEdE
+UyIpIGNhdXNlZCBjYWxsIHRyYWNlcyBkdXJpbmcgc2Vjb25kYXJ5IENQVSBpbml0aWFsaXphdGlv
+biBiZWNhdXNlDQo+ID4gaXQgZGlkbid0IHByb3Blcmx5IGhhbmRsZSBDUFVzIHRoYXQgbGFjayB0
+aGUgQVJDSF9DQVBfR0RTX0NUUkwgY2FwYWJpbGl0eS4NCj4gPg0KPiA+IEZvciBDUFVzIHdpdGhv
+dXQgQVJDSF9DQVBfR0RTX0NUUkwgc3VwcG9ydCwgd2Ugc2hvdWxkIHNldCB0aGUNCj4gPiBtaXRp
+Z2F0aW9uIHRvIEdEU19NSVRJR0FUSU9OX1VDT0RFX05FRURFRCByYXRoZXIgdGhhbg0KPiA+IEdE
+U19NSVRJR0FUSU9OX09GRiwgYXMgdGhlc2UgQ1BVcyBtYXkgc3RpbGwgYmUgdnVsbmVyYWJsZSBi
+dXQgY2Fubm90DQo+IGRpc2FibGUgbWl0aWdhdGlvbi4NCj4gPg0KPiA+IEFkZCB0aGUgbWlzc2lu
+ZyBjaGVjayBmb3IgQVJDSF9DQVBfR0RTX0NUUkwgdG8gcHJvcGVybHkgZGV0ZXJtaW5lIHRoZQ0K
+PiA+IG1pdGlnYXRpb24gc3RhdGUgZm9yIGFmZmVjdGVkIENQVXMuDQo+ID4NCj4gPiBbICAgIDIu
+ODA5MTQ3XSB1bmNoZWNrZWQgTVNSIGFjY2VzcyBlcnJvcjogUkRNU1IgZnJvbSAweDEyMyBhdCBy
+SVA6DQo+IDB4ZmZmZmZmZmZiMzQ1MjgwNyAodXBkYXRlX2dkc19tc3IrMHg4Ny8weGUwKQ0KPiA+
+ICh1cGRhdGVfZ2RzX21zcisweDg3LzB4ZTApDQo+ID4gWyAgICAyLjgwOTE0N10gQ2FsbCBUcmFj
+ZToNCj4gPiBbICAgIDIuODA5MTQ3XSAgPFRBU0s+DQo+ID4gWyAgICAyLjgwOTE0N10gIGlkZW50
+aWZ5X3NlY29uZGFyeV9jcHUrMHg3Mi8weDkwDQo+ID4gWyAgICAyLjgwOTE0N10gIHN0YXJ0X3Nl
+Y29uZGFyeSsweDdhLzB4MTQwDQo+ID4gWyAgICAyLjgwOTE0N10gIGNvbW1vbl9zdGFydHVwXzY0
+KzB4MTNlLzB4MTQxDQo+ID4gWyAgICAyLjgwOTE0N10gIDwvVEFTSz4NCj4gPiBbICAgIDIuODA5
+MTQ3XSB1bmNoZWNrZWQgTVNSIGFjY2VzcyBlcnJvcjogV1JNU1IgdG8gMHgxMjMgKHRyaWVkIHRv
+IHdyaXRlDQo+IDB4MDAwMDAwMDAwMDAwMDAxMCkgYXQgcklQOiAweGZmZmZmZmZmYjM0NTI3YjgN
+Cj4gPiAodXBkYXRlX2dkc19tc3IrMHgzOC8weGUwKQ0KPiA+IFsgICAgMi44MDkxNDddIENhbGwg
+VHJhY2U6DQo+ID4gWyAgICAyLjgwOTE0N10gIDxUQVNLPg0KPiA+IFsgICAgMi44MDkxNDddICBp
+ZGVudGlmeV9zZWNvbmRhcnlfY3B1KzB4NzIvMHg5MA0KPiA+IFsgICAgMi44MDkxNDddICBzdGFy
+dF9zZWNvbmRhcnkrMHg3YS8weDE0MA0KPiA+IFsgICAgMi44MDkxNDddICBjb21tb25fc3RhcnR1
+cF82NCsweDEzZS8weDE0MQ0KPiA+IFsgICAgMi44MDkxNDddICA8L1RBU0s+DQo+ID4gWyAgICAy
+LjgwOTE0N10gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+ID4gWyAgICAy
+LjgwOTE0N10gV0FSTklORzogQ1BVOiAxIFBJRDogMCBhdCBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1
+Z3MuYzoxMDUzDQo+IHVwZGF0ZV9nZHNfbXNyKzB4OWIvMHhlMA0KPiA+DQo+ID4gRml4ZXM6IDhj
+NzI2MWFiY2I3YWQgKCJ4ODYvYnVnczogQWRkIGF0dGFjayB2ZWN0b3IgY29udHJvbHMgZm9yIEdE
+UyIpDQo+ID4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29t
+Pg0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyB8IDIgKysNCj4gPiAg
+MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2Fy
+Y2gveDg2L2tlcm5lbC9jcHUvYnVncy5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4g
+PiBpbmRleCBiNzRiZjkzLi4zYWY5MTFjIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5l
+bC9jcHUvYnVncy5jDQo+ID4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4gPiBA
+QCAtMTA3MSw2ICsxMDcxLDggQEAgc3RhdGljIHZvaWQgX19pbml0IGdkc19zZWxlY3RfbWl0aWdh
+dGlvbih2b2lkKQ0KPiA+ICAJCQlnZHNfbWl0aWdhdGlvbiA9IEdEU19NSVRJR0FUSU9OX0ZVTEw7
+DQo+ID4gIAkJZWxzZSB7DQo+ID4gIAkJCWdkc19taXRpZ2F0aW9uID0gR0RTX01JVElHQVRJT05f
+T0ZGOw0KPiA+ICsJCQlpZiAoISh4ODZfYXJjaF9jYXBfbXNyICYgQVJDSF9DQVBfR0RTX0NUUkwp
+KQ0KPiANCj4gVGhpcyBjaGVjayBpcyBhbHJlYWR5IHByZXNlbnQgZmV3IGxpbmVzIGJlbG93Lg0K
+PiANCj4gPiArCQkJCWdkc19taXRpZ2F0aW9uID0gR0RTX01JVElHQVRJT05fVUNPREVfTkVFREVE
+Ow0KPiA+ICAJCQlyZXR1cm47DQo+IA0KPiBUbyBhdm9pZCBkdXBsaWNhdGluZywgYSBiZXR0ZXIg
+Zml4IGNvdWxkIGJlIHRvIG5vdCByZXR1cm4gaGVyZSwgYW5kIGxldCB0aGUgbmV4dA0KPiBibG9j
+ayBEVFJUOg0KDQpCdXQgaWYgY3B1IGhhcyBBUkNIX0NBUF9HRFNfQ1RSTCwgdGhlIG5leHQgYmxv
+Y2sgd2lsbCBiZSBza2lwcGVkLCBhbmQgdGhlIGNvZGVzIGFmdGVyIGNoZWNraW5nIEFSQ0hfQ0FQ
+X0dEU19DVFJMIGJsb2NrIHdpbGwgYmUgcnVuLCB0aGlzIGlzIG5vdCBleHBlY3RlZA0KDQpTbyBJ
+IGFkZCBhIGR1cGxpY2F0aW5nIGNoZWNrDQoNCkJyDQoNCi1MaQ0KDQoNCj4gDQo+ICAgICAgICAg
+IC8qIE5vIG1pY3JvY29kZSAqLw0KPiAgICAgICAgICBpZiAoISh4ODZfYXJjaF9jYXBfbXNyICYg
+QVJDSF9DQVBfR0RTX0NUUkwpKSB7DQo+ICAgICAgICAgICAgICAgICAgaWYgKGdkc19taXRpZ2F0
+aW9uICE9IEdEU19NSVRJR0FUSU9OX0ZPUkNFKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+Z2RzX21pdGlnYXRpb24gPQ0KPiBHRFNfTUlUSUdBVElPTl9VQ09ERV9ORUVERUQ7DQo+ICAgICAg
+ICAgICAgICAgICAgcmV0dXJuOw0KPiAgICAgICAgICB9DQo=
 
