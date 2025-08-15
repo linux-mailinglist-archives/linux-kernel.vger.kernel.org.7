@@ -1,141 +1,234 @@
-Return-Path: <linux-kernel+bounces-770566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5C0B27C6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:15:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F79B27C6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C791B04326
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CB31D04849
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B70270575;
-	Fri, 15 Aug 2025 09:05:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8BA23A9A0;
-	Fri, 15 Aug 2025 09:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE9F270ED9;
+	Fri, 15 Aug 2025 09:06:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A1A25B1D8
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248743; cv=none; b=rJEM+jo3TBIoXznLUinYK4kmETGOP5B0K12dfvpqEqkhu0mGxdQrWcDGrNtzfE5CzGaM6KNGetW+Mm0xa4jiIkHSh1lx+9UJaKHet1cZZyfMK2JVunu0wZAz3UadAf6OkIbksXojEAyFXjDGYYCydfaMavWLO8opkwI/OpUdwE8=
+	t=1755248759; cv=none; b=aLc4mbHneEpMRRV4OXIHtIOGdBVkaKiLtp9jpPL1jBsjRnk0UofH7W4+8F0AVnoNhcPhofX1IByPfocIl0lDmUQZEA8DpjZuV6fyGlDF2Z7U7upBliLIH6sIThvsN5yND+z3e2Op9TZNs5jAT6TeWFvpzpN4wqrf7LmfbtOq45s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248743; c=relaxed/simple;
-	bh=mKc1P53XG+rCnhVoLPZgdTOwUUOpQ4S+OcCGACdQcfo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PCs3lRrE4tSB2nZrpyxZE9jYG6JLpNbR/sdmEs0w6MPQdiBCrIlmj0d4inarOhfOX3tSRLvDvixdLhvyLoCO7mG3au9FbEjMyDBoFlTZ676KIVCApVQWJEE7p5KtRr5vSGMYUh+qS4gXYPjB4pWCRKCpdRynN1h/821TLVEwseY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3GRP4dy4zYQvDL;
-	Fri, 15 Aug 2025 17:05:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 426D61A06D7;
-	Fri, 15 Aug 2025 17:05:36 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHwhJe+J5oBoQDDw--.54303S3;
-	Fri, 15 Aug 2025 17:05:36 +0800 (CST)
-Subject: Re: [PATCH 00/10] blk-mq: fix blk_mq_tags double free while
- nr_requests grown
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, hare@suse.de, nilay@linux.ibm.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
- <aJ7wMFkuTewlyx1P@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <abde1955-d634-29d4-d229-df8c6ebdc582@huaweicloud.com>
-Date: Fri, 15 Aug 2025 17:05:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755248759; c=relaxed/simple;
+	bh=g32Hr6XVP9GwpLwAAUQhn9kUg4UCXMomOMdAWoH8gi4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S2iJFS/Uwaa4xtt+1ZDZYIhh0uKiduGtwL3vA4Q2od5qAKfAdjPwQeg32jJEgGcu963cAPBjZ5mfXhYgBOV7eB1iKtV+vLJy4VU7u2MeD1vNUGYYgSphtGy9Osmz3f7GaZYSCPgb3ImODtoykjld7fSo7+jpywhnStkqvCnT4TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.45])
+	by gateway (Coremail) with SMTP id _____8Axx2lx+J5owzpAAQ--.21961S3;
+	Fri, 15 Aug 2025 17:05:53 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.45])
+	by front1 (Coremail) with SMTP id qMiowJDx7sFs+J5olLdNAA--.32429S2;
+	Fri, 15 Aug 2025 17:05:51 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+Date: Fri, 15 Aug 2025 17:05:39 +0800
+Message-ID: <20250815090539.1578484-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aJ7wMFkuTewlyx1P@fedora>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHwhJe+J5oBoQDDw--.54303S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF1kJr4fGF4fWr4rur4fuFg_yoW8ZrWUpw
-	4rWayakrs0qw18Jw4xJ34Fqw10yw4v9ryagryFyry8G3Z8XFWIvr4FqFsFqF97ur93GFsF
-	9FZ7Xan7ZFZrZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CM-TRANSID:qMiowJDx7sFs+J5olLdNAA--.32429S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKF4xGF4kWFWrWF1fAr43Jwc_yoWxCFykpF
+	48Jr48Gr48JrWUJr17AF1UAry5Wws7uF48Jr9rGr1UZr1rXw17JFyUtFW7Ars8Wr15JF17
+	JFnrtw1Yyr4UJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8_gA5UUUUU==
 
-Hi,
+After commit 84caf98838a3e5f4bdb34 ("mm: stop storing migration_ops in
+page->mapping") we get such an error message if CONFIG_ZSMALLOC=m:
 
-ÔÚ 2025/08/15 16:30, Ming Lei Ð´µÀ:
-> On Fri, Aug 15, 2025 at 04:02:06PM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> In the case user trigger tags grow by queue sysfs attribute nr_requests,
->> hctx->sched_tags will be freed directly and replaced with a new
->> allocated tags, see blk_mq_tag_update_depth().
->>
->> The problem is that hctx->sched_tags is from elevator->et->tags, while
->> et->tags is still the freed tags, hence later elevator exist will try to
->> free the tags again, causing kernel panic.
->>
->> patch 1-6 are prep cleanup and refactor patches for updating nr_requests
->> patch 7,8 are the fix patches for the regression
->> patch 9 is cleanup patch after patch 8
->> patch 10 fix the stale nr_requests documentation
-> 
-> Please do not mix bug(regression) fix with cleanup.
-> 
-> The bug fix for updating nr_requests should have been simple enough in single
-> or two patches, why do you make 10-patches for dealing with the regression?
+ WARNING: CPU: 3 PID: 42 at mm/migrate.c:142 isolate_movable_ops_page+0xa8/0x1c0
+ CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
+ pc 9000000000540bd8 ra 9000000000540b84 tp 9000000100420000 sp 9000000100423a60
+ a0 9000000100193a80 a1 000000000000000c a2 000000000000001b a3 ffffffffffffffff
+ a4 ffffffffffffffff a5 0000000000000267 a6 0000000000000000 a7 9000000100423ae0
+ t0 00000000000000f1 t1 00000000000000f6 t2 0000000000000000 t3 0000000000000001
+ t4 ffffff00010eb834 t5 0000000000000040 t6 900000010c89d380 t7 90000000023fcc70
+ t8 0000000000000018 u0 0000000000000000 s9 ffffff00010eb800 s0 ffffff00010eb800
+ s1 000000000000000c s2 0000000000043ae0 s3 0000800000000000 s4 900000000219cc40
+ s5 0000000000000000 s6 ffffff00010eb800 s7 0000000000000001 s8 90000000025b4000
+    ra: 9000000000540b84 isolate_movable_ops_page+0x54/0x1c0
+   ERA: 9000000000540bd8 isolate_movable_ops_page+0xa8/0x1c0
+  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+  PRMD: 00000004 (PPLV0 +PIE -PWE)
+  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+ ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
+  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+ CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
+ Stack : 90000000021fd000 0000000000000000 9000000000247720 9000000100420000
+         90000001004236a0 90000001004236a8 0000000000000000 90000001004237e8
+         90000001004237e0 90000001004237e0 9000000100423550 0000000000000001
+         0000000000000001 90000001004236a8 725a84864a19e2d9 90000000023fcc58
+         9000000100420000 90000000024c6848 9000000002416848 0000000000000001
+         0000000000000000 000000000000000a 0000000007fe0000 ffffff00010eb800
+         0000000000000000 90000000021fd000 0000000000000000 900000000205cf30
+         000000000000008e 0000000000000009 ffffff00010eb800 0000000000000001
+         90000000025b4000 0000000000000000 900000000024773c 00007ffff103d748
+         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
+         ...
+ Call Trace:
+ [<900000000024773c>] show_stack+0x5c/0x190
+ [<90000000002415e0>] dump_stack_lvl+0x70/0x9c
+ [<90000000004abe6c>] isolate_migratepages_block+0x3bc/0x16e0
+ [<90000000004af408>] compact_zone+0x558/0x1000
+ [<90000000004b0068>] compact_node+0xa8/0x1e0
+ [<90000000004b0aa4>] kcompactd+0x394/0x410
+ [<90000000002b3c98>] kthread+0x128/0x140
+ [<9000000001779148>] ret_from_kernel_thread+0x28/0xc0
+ [<9000000000245528>] ret_from_kernel_thread_asm+0x10/0x88
 
-Ok, in short, my solution is:
+The reason is that defined(CONFIG_ZSMALLOC) evaluates to 1 only when
+CONFIG_ZSMALLOC=y, we should use IS_ENABLED(CONFIG_ZSMALLOC) instead.
+But when I use IS_ENABLED(CONFIG_ZSMALLOC), page_movable_ops() cannot
+access zsmalloc_mops because zsmalloc_mops is in a module.
 
-- serialize switching elevator with updating nr_requests
-- check the case that nr_requests will grow and allocate elevator_tags
-before freezing the queue.
-- for the grow case, switch to new elevator_tags.
+To solve this problem, we define a movable_ops[] array in mm/migrate.c,
+initialise its elements at mm/balloon_compaction.c & mm/zsmalloc.c, and
+let the page_movable_ops() function return elements from movable_ops[].
 
-I do tried and I can't find a easy way to fix this without making
-related code uncomfortable. Perhaps because I do the cleanups and
-refactor first and I can't think outside the box...
+Fixes: 84caf98838a3e5f ("mm: stop storing migration_ops in page->mapping")
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ include/linux/migrate.h |  6 ++++++
+ mm/balloon_compaction.c |  7 +++++++
+ mm/migrate.c            | 16 ++++++++++------
+ mm/zsmalloc.c           |  6 ++++++
+ 4 files changed, 29 insertions(+), 6 deletions(-)
 
-> 
-> Not mention this way is really unfriendly for stable tree backport.
-
-I checked the last time related code to queue_requests_store() was
-changed is commit 3efe7571c3ae ("block: protect nr_requests update using
-q->elevator_lock"), and I believe this is what the fixed patch relied
-on, so I think backport will not have much conflicts.
-
-Whatever stbale branch that f5a6604f7a44 ("block: fix lockdep warning
-caused by lock dependency in elv_iosched_store") is backported, I can
-make sure a proper fix is backported as well.
-
-Thanks,
-Kuai
-
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index acadd41e0b5c..58fac171e4d5 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -57,6 +57,12 @@ struct movable_operations {
+ 	void (*putback_page)(struct page *);
+ };
+ 
++#define MOVABLE_BALLOON		0
++#define MOVABLE_ZSMALLOC	1
++#define MOVABLE_MAX		2
++
++extern const struct movable_operations *movable_ops[MOVABLE_MAX];
++
+ /* Defined in mm/debug.c: */
+ extern const char *migrate_reason_names[MR_TYPES];
+ 
+diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+index 2a4a649805c1..a1d2625b5c39 100644
+--- a/mm/balloon_compaction.c
++++ b/mm/balloon_compaction.c
+@@ -254,4 +254,11 @@ const struct movable_operations balloon_mops = {
+ 	.putback_page = balloon_page_putback,
+ };
+ 
++static int __init balloon_init(void)
++{
++	movable_ops[MOVABLE_BALLOON] = &balloon_mops;
++	return 0;
++}
++core_initcall(balloon_init);
++
+ #endif /* CONFIG_BALLOON_COMPACTION */
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 425401b2d4e1..92918fab3e1a 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -53,6 +53,10 @@
+ #include "internal.h"
+ #include "swap.h"
+ 
++const struct movable_operations *movable_ops[MOVABLE_MAX];
++
++EXPORT_SYMBOL(movable_ops);
++
+ static const struct movable_operations *page_movable_ops(struct page *page)
+ {
+ 	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
+@@ -62,15 +66,15 @@ static const struct movable_operations *page_movable_ops(struct page *page)
+ 	 * it as movable, the page type must be sticky until the page gets freed
+ 	 * back to the buddy.
+ 	 */
+-#ifdef CONFIG_BALLOON_COMPACTION
++#if IS_ENABLED(CONFIG_BALLOON_COMPACTION)
+ 	if (PageOffline(page))
+ 		/* Only balloon compaction sets PageOffline pages movable. */
+-		return &balloon_mops;
+-#endif /* CONFIG_BALLOON_COMPACTION */
+-#if defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION)
++		return movable_ops[MOVABLE_BALLOON];
++#endif /* IS_ENABLED(CONFIG_BALLOON_COMPACTION) */
++#if IS_ENABLED(CONFIG_ZSMALLOC) && IS_ENABLED(CONFIG_COMPACTION)
+ 	if (PageZsmalloc(page))
+-		return &zsmalloc_mops;
+-#endif /* defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION) */
++		return movable_ops[MOVABLE_ZSMALLOC];
++#endif /* IS_ENABLED(CONFIG_ZSMALLOC) && IS_ENABLED(CONFIG_COMPACTION) */
+ 	return NULL;
+ }
+ 
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 2c5e56a65354..052fcc0d29e5 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -2246,6 +2246,9 @@ EXPORT_SYMBOL_GPL(zs_destroy_pool);
+ 
+ static int __init zs_init(void)
+ {
++#ifdef CONFIG_MIGRATION
++	movable_ops[MOVABLE_ZSMALLOC] = &zsmalloc_mops;
++#endif
+ #ifdef CONFIG_ZPOOL
+ 	zpool_register_driver(&zs_zpool_driver);
+ #endif
+@@ -2255,6 +2258,9 @@ static int __init zs_init(void)
+ 
+ static void __exit zs_exit(void)
+ {
++#ifdef CONFIG_MIGRATION
++	movable_ops[MOVABLE_ZSMALLOC] = NULL;
++#endif
+ #ifdef CONFIG_ZPOOL
+ 	zpool_unregister_driver(&zs_zpool_driver);
+ #endif
+-- 
+2.47.3
 
 
