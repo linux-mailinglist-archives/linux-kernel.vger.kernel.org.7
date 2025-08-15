@@ -1,451 +1,196 @@
-Return-Path: <linux-kernel+bounces-770281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93315B2794E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161B5B2794C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB281CE7B39
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7AE627A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BF929CB32;
-	Fri, 15 Aug 2025 06:38:11 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4832BE640;
+	Fri, 15 Aug 2025 06:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyR+u99D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD9318C011;
-	Fri, 15 Aug 2025 06:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F5319845;
+	Fri, 15 Aug 2025 06:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755239890; cv=none; b=rOzMlxa2J6XYT7YYUUAFIQIw7uRjjwzE6xfDYqHTVeOkGvzOV92NabmrU61RKdG6Zzxw1MB9olrnaATHkxO4Neo9ch4xoPYv0/eaT0A9VYsHiunAS+70agBIYjABG2uG20L/P5ZUmlZDHp8uecWirDjvKEibnSqYOS8MucRdk9U=
+	t=1755239832; cv=none; b=EM4356WN0LVsZHjJyEcYayIJyrim7sZmH8rp+CSSatEesj5RPfN7XvEsALcuPUjQL2+MJbUEpoVZLNWdW9+ZEE8ifIxYp6C4dUEqxppe/cSW761LJ0MPhdGRlag+zvehppvDKkq67qL7hfLnKTO7vrg6H86nA/s83VTVVrSDxFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755239890; c=relaxed/simple;
-	bh=OcUIEGP5JZHbmx+eJwa2JEAcTaGD5r9WofCSLd01LS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nmr1yddue1v5dWhpDNF7lgLLSSuYatrYxJLuZPvl6rKa7JuU6rKINmQlFd83UBv5GIAXQYxPZQ0+YfSt9Hl0gTs2OBfcSNRtnA6Ar8k0Zue7mLc+yekD3niowumMmW7ZEwgYr4rcq1kMTvfGhxrlPKBJjpQyJvoGOGq+bYIuYRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz9t1755239818t95974af1
-X-QQ-Originating-IP: Xz02paZz0XrOCFh68IMTXGqO/MHmiqMrvwmI8qYoZQU=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 15 Aug 2025 14:36:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5358240259395925756
-Date: Fri, 15 Aug 2025 14:36:56 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <3A381A779EB97B74+20250815063656.GA1148411@nic-Precision-5820-Tower>
-References: <20250814073855.1060601-1-dong100@mucse.com>
- <20250814073855.1060601-5-dong100@mucse.com>
- <eebc7ed8-f6c5-4095-b33e-251411f26f0a@lunn.ch>
+	s=arc-20240116; t=1755239832; c=relaxed/simple;
+	bh=tra7rydiILTcSEb0lcmhsy/l1DqMq2O1S4BfXAk8GfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uUhredvG6xugl9YgWRl8eiwvDv1ilFeSuIljyBRHaAmv8BfqoHz2uuunt4B1XlMi4S0bep31+YFImyMbvOA+RFrItGbSyoCeDPOYgqb21MXk8874hLOBqP+kbcv0VvbAmWy3Q1eTGqzFlQp4WAs/5coy9GSTV7hia0jS5X+taMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyR+u99D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4556EC4CEEB;
+	Fri, 15 Aug 2025 06:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755239831;
+	bh=tra7rydiILTcSEb0lcmhsy/l1DqMq2O1S4BfXAk8GfM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PyR+u99DIpsbAwmgoZioxJE5kxVgtixCUFqDQeoUevZ+0SY34EUDxER/2uGlmpYME
+	 d/uiGR30L5dwI6u4qSdrygdM+QnmgzkXd1WsXRmMd6fR7QZutUaDXWakFaNaHcRZTr
+	 1WqVoAM3riy0pw4j9FJe+s2qoxGLVveQWjjLUFJK5h+OcCcNudfla0K5yk9VZr+J6d
+	 D3IGS9+Dt4kHCaBH4iiIa2zPx1fL/t621lYhikG7kUUiqSSSKyhjhLth5M0f+jmcKT
+	 wGBHkMC6pF2Z/TykJ7moSVSAMPECGi18WMAg6SXu6vFqGymkWAdUQqO33j7zARzLOX
+	 snc2NOEsRwOUg==
+Message-ID: <5ee0656b-136b-480f-9555-26ccdbff3eda@kernel.org>
+Date: Fri, 15 Aug 2025 07:37:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eebc7ed8-f6c5-4095-b33e-251411f26f0a@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NXuG9LpMsvaKdvzIlMB6hB0peVA8flQa0A3k0mMfO/WhKndXf/6ssUob
-	wZLG6zWUmha/w7CTB2n+ncbBN288SnoGdpHHVNYiaBs6DaLSUy6HCNVRDRZL2DYMa3wNsDy
-	ZnWHxMZSLFOj1TZRbrX6l4BXO2MwEZIYgYgUlju48MVOQVTEyFdsimyjfqAmS2/ZGEp6GHT
-	ulQBGeQigHteDy6zHIVTG+y876dDiNQoMlw0MZeJVDG0n7UvmEzIA7SFTLJnSU3M3RzIBzs
-	tfqBwXGtOayoy3KRA1ZpxH0QFjlhxKCxMQFxGweU1+z/0I/AQ45/oDpCNa4iHlnku+1QYgc
-	zbwHXci5kPB/P0yzP9ScSV3dzElrmxYExtqyLJfaawGEJd7Vc8sF7n86s6wVyC0t2AsqNMj
-	diDStDukNfMo+/7ADUhhjmbhSSZKp7ep8LZOFufFJiTg51wF9WzKEl8qxKMxnURQfM7mRxz
-	7+54yG7UKTccTTbS6ZlQb8Yx22B0v1jvN2dJXBHrC88YQpUhTdCKL5tf5HO7yTkmP9K3hTZ
-	veOraWkBgB32yIHIDPRGV5F6XhP7E5VNQzQM6b+BZeufukWQMB7MW+/StCKnJPCZXScJ1XY
-	BP/b6vNaAHBVUCfRZej3ucLkHRIDITyn06EEK7926TwRMWkSeKf5FeRMqieyDJvt59+/3Y1
-	0m0KrmNpyJeX6NjV4vAyPQ9mYpdbMXlBPi/LTJ+aBYJ/5YDwMp/azBt1Gfiwf7Zck6ogwog
-	rkWJnuyMtLn/V0g4dNJWOoNK6sgF+cIpg6NamFDk6bnWkJnJYiCreW0QdBBGefRmytXGQrC
-	v1iH1Er16PwYT2KqUGcCNevl0hm14vTeKJB9PV3NNu/RvCAM/97t9F/0rLDyqJnwaL4RrWp
-	+PruPCoj8Gj3K6XcF8bv51QplHa28BL4dqeOQlDVCIzSxqH4p94nQgcMdCbzWR0rvFRBSC1
-	CoOAOgXtBYdBugL7RlDV1MKSI2dni3gPSygtwhfTv1GtVZCO/sbeCBtJPdi3r3HMJXQW1Qw
-	aVjRMJ6nOAk4e46r/tdI9uQ3Jr82WSrF6LPbYLZazgULNCPw4RaYn5VbBQmZNWRjLq8m6P/
-	Q==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
+ for WSA883x speakers
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
+ kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250806181818.2817356-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250806181818.2817356-3-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <20250806181818.2817356-3-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 05:27:51AM +0200, Andrew Lunn wrote:
-> >  struct mucse_hw {
-> > +	u8 pfvfnum;
-> >  	void __iomem *hw_addr;
-> >  	void __iomem *ring_msix_base;
-> >  	struct pci_dev *pdev;
-> > +	u32 fw_version;
-> > +	u32 axi_mhz;
-> > +	u32 bd_uid;
-> >  	enum rnpgbe_hw_type hw_type;
-> >  	struct mucse_dma_info dma;
-> >  	struct mucse_eth_info eth;
-> 
-> Think about alignment of these structures. The compiler is going to
-> put in padding after the u8 phvfnum. The 3 pointers are all the same
-> size, no padding. The u32 probably go straight after the pointers. The
-> enum it might represent as a single byte, so there is will be padding
-> before dma. So consider moving the u8 next to the enum.
-> 
-> pahole(1) will tell you what the compiler really did, but you will
-> find more experienced engineers try to minimise padding, or
-> deliberately group hot items on a cache line, and document that.
-> 
 
-Got it, I will update this.
+On 8/6/25 7:18 PM, Mohammad Rafi Shaik wrote:
+> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> 
+> On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
+> WSA8830/WSA8835 speaker amplifiers share a common reset (shutdown) GPIO.
+> 
+> To handle such scenario, use the reset controller framework and its
+> "reset-gpio" driver to handle such case. This allows proper handling
+> of all WSA883x speaker amplifiers on QCS6490-RB3Gen2 board.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> ---
+>  sound/soc/codecs/wsa883x.c | 57 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 50 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+> index 188363b03b93..ec7a55d88576 100644
+> --- a/sound/soc/codecs/wsa883x.c
+> +++ b/sound/soc/codecs/wsa883x.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/printk.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/soundwire/sdw.h>
+>  #include <linux/soundwire/sdw_registers.h>
+> @@ -468,6 +469,7 @@ struct wsa883x_priv {
+>  	struct sdw_stream_runtime *sruntime;
+>  	struct sdw_port_config port_config[WSA883X_MAX_SWR_PORTS];
+>  	struct gpio_desc *sd_n;
+> +	struct reset_control *sd_reset;
+>  	bool port_prepared[WSA883X_MAX_SWR_PORTS];
+>  	bool port_enable[WSA883X_MAX_SWR_PORTS];
+>  	int active_ports;
+> @@ -1546,6 +1548,46 @@ static const struct hwmon_chip_info wsa883x_hwmon_chip_info = {
+>  	.info	= wsa883x_hwmon_info,
+>  };
+>  
+> +static void wsa883x_reset_assert(void *data)
+> +{
+> +	struct wsa883x_priv *wsa883x = data;
+> +
+> +	if (wsa883x->sd_reset)
+> +		reset_control_assert(wsa883x->sd_reset);
+> +	else
+> +		gpiod_direction_output(wsa883x->sd_n, 1);
+> +}
+> +
+> +static void wsa883x_reset_deassert(struct wsa883x_priv *wsa883x)
+> +{
+> +	if (wsa883x->sd_reset)
+> +		reset_control_deassert(wsa883x->sd_reset);
+> +	else
+> +		gpiod_direction_output(wsa883x->sd_n, 0);
+> +}
+> +
+> +static int wsa883x_get_reset(struct device *dev, struct wsa883x_priv *wsa883x)
+> +{
+> +	wsa883x->sd_reset = devm_reset_control_get_optional_shared_deasserted(dev, NULL);
+why deasserted ? we are already doing wsa883x_reset_deassert(wsa883x)
+just after calling this.
 
-> > +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-> > +				  struct mbx_fw_cmd_req *req,
-> > +				  struct mbx_fw_cmd_reply *reply)
-> > +{
-> > +	int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
-> > +	int retry_cnt = 3;
-> > +	int err;
-> > +
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +	err = hw->mbx.ops->write_posted(hw, (u32 *)req,
-> > +					L_WD(len));
-> 
-> This L_WD macro is not nice. It seems like a place bugs will be
-> introduced, forgetting to call it here. Why not have write_posted()
-> take bytes, and have the lowest layer convert to 32 bit words.
-> 
-> It also seems odd you are adding MBX_REQ_HDR_LEN here but not that
-> actual header. Why not increase the length at the point the header is
-> actually added? Keep stuff logically together.
-> 
+> +	if (IS_ERR(wsa883x->sd_reset))
+> +		return dev_err_probe(dev, PTR_ERR(wsa883x->sd_reset),
+> +				     "Failed to get reset\n");
+> +	/*
+> +	 * if sd_reset: NULL, so use the backwards compatible way for powerdown-gpios,
+> +	 * which does not handle sharing GPIO properly.
+> +	 */
+> +	if (!wsa883x->sd_reset) {
+> +		wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> +							GPIOD_FLAGS_BIT_NONEXCLUSIVE |
+> +							GPIOD_OUT_HIGH);
+> +		if (IS_ERR(wsa883x->sd_n))
+> +			return dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
+> +					     "Shutdown Control GPIO not found\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int wsa883x_probe(struct sdw_slave *pdev,
+>  			 const struct sdw_device_id *id)
+>  {
+> @@ -1566,11 +1608,9 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to enable vdd regulator\n");
+>  
+> -	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> -						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
+> -	if (IS_ERR(wsa883x->sd_n)) {
+> -		ret = dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
+> -				    "Shutdown Control GPIO not found\n");
+> +	ret = wsa883x_get_reset(dev, wsa883x);
+> +	if (ret) {
+> +		dev_dbg(dev, "Failed to get reset powerdown GPIO: %d\n", ret);
+this is redundant we already have failure messages from wsa883x_get_reset().
 
-Ok, I will have write_posted() take bytes like you suggestion, and try
-to improve len here.
 
-> > +	if (err)
-> > +		goto quit;
-> > +	do {
-> > +		err = hw->mbx.ops->read_posted(hw, (u32 *)reply,
-> > +					       L_WD(sizeof(*reply)));
-> > +		if (err)
-> > +			goto quit;
-> > +	} while (--retry_cnt >= 0 && reply->opcode != req->opcode);
-> > +quit:
-> 
-> Maybe add some documentation about what is actually going on here. I
-> assume you are trying to get the driver and firmware into sync after
-> one or other has crashed, burned, and rebooted. You need to flush out
-> old replies. You allow up to three old replies to be in the queue, and
-> then give up. Since you don't retry the write, you don't expect writes
-> to be lost?
-> 
-> 
-
-write_posted return 0 only after fw acked it, so no need to write.
-It is a sync mechanism, tries to get the correct response opcode.
-
-Maybe comment link this?
-/* write_posted return 0 means fw has received request, wait for
- * the expect opcode reply with 'retry_cnt' times.
- */
-
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	if (!err && retry_cnt < 0)
-> > +		return -ETIMEDOUT;
-> > +	if (!err && reply->error_code)
-> > +		return -EIO;
-> > +	return err;
-> > +}
-> > +
-> > +/**
-> > + * mucse_fw_get_capability - Get hw abilities from fw
-> > + * @hw: pointer to the HW structure
-> > + * @abil: pointer to the hw_abilities structure
-> > + *
-> > + * mucse_fw_get_capability tries to get hw abilities from
-> > + * hw.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int mucse_fw_get_capability(struct mucse_hw *hw,
-> > +				   struct hw_abilities *abil)
-> > +{
-> > +	struct mbx_fw_cmd_reply reply = {};
-> > +	struct mbx_fw_cmd_req req = {};
-> > +	int err;
-> > +
-> > +	build_phy_abilities_req(&req, &req);
-> 
-> Passing the same parameter twice? Is that correct? It looks very odd.
-> 
-
-Got it, I will fix it.
-
-> > +/**
-> > + * mbx_cookie_zalloc - Alloc a cookie structure
-> > + * @priv_len: private length for this cookie
-> > + *
-> > + * @return: cookie structure on success
-> > + **/
-> > +static struct mbx_req_cookie *mbx_cookie_zalloc(int priv_len)
-> > +{
-> > +	struct mbx_req_cookie *cookie;
-> > +
-> > +	cookie = kzalloc(struct_size(cookie, priv, priv_len), GFP_KERNEL);
-> > +	if (cookie) {
-> > +		cookie->timeout_jiffes = 30 * HZ;
-> > +		cookie->magic = COOKIE_MAGIC;
-> > +		cookie->priv_len = priv_len;
-> > +	}
-> > +	return cookie;
-> 
-> > +struct mbx_req_cookie {
-> > +	int magic;
-> > +#define COOKIE_MAGIC 0xCE
-> > +	cookie_cb cb;
-> > +	int timeout_jiffes;
-> > +	int errcode;
-> > +	wait_queue_head_t wait;
-> > +	int done;
-> > +	int priv_len;
-> > +	char priv[];
-> > +};
-> 
-> 
-> Using struct_size() makes me think this is supposed to be a flexible
-> array? I've never used them myself, but shouldn't be some markup so
-> the compiler knows priv_len is the len of priv?
-> 
-
-Maybe link this?
-struct mbx_req_cookie {
-....
-	int priv_len;
-	char priv[] __counted_by(priv_len);
-}
-
-> > +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-> > +				 struct mbx_fw_cmd_req *req,
-> > +				 struct mbx_req_cookie *cookie)
-> > +{
-> > +	int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
-> > +	int err;
-> > +
-> > +	cookie->errcode = 0;
-> > +	cookie->done = 0;
-> > +	init_waitqueue_head(&cookie->wait);
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +	err = mucse_write_mbx(hw, (u32 *)req,
-> > +			      L_WD(len));
-> > +	if (err) {
-> > +		mutex_unlock(&hw->mbx.lock);
-> 
-> Please try to put the unlock at the end of the function, with a goto
-> on error.
-> 
-
-Got it, I will fix it.
-
-> > +		return err;
-> > +	}
-> > +	do {
-> > +		err = wait_event_interruptible_timeout(cookie->wait,
-> > +						       cookie->done == 1,
-> > +						       cookie->timeout_jiffes);
-> > +	} while (err == -ERESTARTSYS);
-> 
-> This needs a comment, because i don't understand it.
-> 
-> 
-
-wait_event_interruptible_timeout return -ERESTARTSYS if it was interrupted
-by a signal, which will cause misjudgement about cookie->done is timeout. 
-In this case, just wait for timeout.
-Maybe comment link this?
-/* If it was interrupted by a signal (-ERESTARTSYS), it is not true timeout,
- * just wait again.
- */
-
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	if (!err)
-> > +		err = -ETIME;
-> 
-> I _think_ ETIMEDOUT would be more normal.
-> 
-
-Got it, I will update it. 
-
-> > +	else
-> > +		err = 0;
-> > +	if (!err && cookie->errcode)
-> > +		err = cookie->errcode;
-> > +
-> > +	return err;
-> > +}
-> > +int mucse_fw_get_macaddr(struct mucse_hw *hw, int pfvfnum,
-> > +			 u8 *mac_addr,
-> > +			 int lane)
-> > +{
-> > +	struct mbx_fw_cmd_reply reply = {};
-> > +	struct mbx_fw_cmd_req req = {};
-> > +	int err;
-> > +
-> > +	build_get_macaddress_req(&req, 1 << lane, pfvfnum, &req);
-> > +	err = mucse_fw_send_cmd_wait(hw, &req, &reply);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	if ((1 << lane) & le32_to_cpu(reply.mac_addr.lanes))
-> 
-> BIT(). And normally the & would be the other way around.
-> 
-
-Maybe changed link this?
-...
-if (le32_to_cpu(reply.mac_addr.ports) & BIT(lane))
-...
-
-> What exactly is a lane here? Normally we would think of a lane is
-> -KR4, 4 SERDES lanes making one port. But the MAC address is a
-> property of the port, not the lane within a port.
-> 
-
-lane is the valid bit in 'reply.mac_addr.ports'.
-Maybe change it to 'port', that is more appropriate.
-
-> > +		memcpy(mac_addr, reply.mac_addr.addrs[lane].mac, 6);
-> 
-> There is a macro for 6, please use it.
-> 
-
-Got it, I will use ETH_ALEN.
-
-> > +struct hw_abilities {
-> > +	u8 link_stat;
-> > +	u8 lane_mask;
-> > +	__le32 speed;
-> > +	__le16 phy_type;
-> > +	__le16 nic_mode;
-> > +	__le16 pfnum;
-> 
-> Another example of a bad structure layout. It would of been much
-> better to put the two u8 after speed.
-> 
-> > +} __packed;
-> 
-> And because this is packed, and badly aligned, you are forcing the
-> compiler to do a lot more work accessing these members.
-> 
-
-Yes, It is bad. But FW use this define, I can only follow the define...
-Maybe I can add comment here?
-/* Must follow FW define here */ 
-
-> > +
-> > +static inline void ability_update_host_endian(struct hw_abilities *abi)
-> > +{
-> > +	u32 host_val = le32_to_cpu(abi->ext_ability);
-> > +
-> > +	abi->e_host = *(typeof(abi->e_host) *)&host_val;
-> > +}
-> 
-> Please add a comment what this is doing, it is not obvious.
-> 
-> 
-
-Maybe link this?
-/* Converts the little-endian ext_ability field to host byte order,
- * then copies the value into the e_host field by reinterpreting the
- * memory as the type of e_host (likely a bitfield or structure that
- * represents the extended abilities in a host-friendly format).
- */
-
-> > +
-> > +#define FLAGS_DD BIT(0)
-> > +#define FLAGS_ERR BIT(2)
-> > +
-> > +/* Request is in little-endian format. Big-endian systems should be considered */
-> 
-> So the code now sparse clean? If it is, you can probably remove this
-> comment.
-> 
-
-Yes, sparse clean. I will remove this.
-
-> > +static inline void build_phy_abilities_req(struct mbx_fw_cmd_req *req,
-> > +					   void *cookie)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(GET_PHY_ABALITY);
-> > +	req->datalen = 0;
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +	req->cookie = cookie;
-> > +}
-> > +
-> > +static inline void build_ifinsmod(struct mbx_fw_cmd_req *req,
-> > +				  unsigned int lane,
-> > +				  int status)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(DRIVER_INSMOD);
-> > +	req->datalen = cpu_to_le16(sizeof(req->ifinsmod));
-> > +	req->cookie = NULL;
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +	req->ifinsmod.lane = cpu_to_le32(lane);
-> > +	req->ifinsmod.status = cpu_to_le32(status);
-> > +}
-> > +
-> > +static inline void build_reset_phy_req(struct mbx_fw_cmd_req *req,
-> > +				       void *cookie)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(RESET_PHY);
-> > +	req->datalen = 0;
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +	req->cookie = cookie;
-> > +}
-> > +
-> > +static inline void build_get_macaddress_req(struct mbx_fw_cmd_req *req,
-> > +					    int lane_mask, int pfvfnum,
-> > +					    void *cookie)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(GET_MAC_ADDRES);
-> > +	req->datalen = cpu_to_le16(sizeof(req->get_mac_addr));
-> > +	req->cookie = cookie;
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +	req->get_mac_addr.lane_mask = cpu_to_le32(lane_mask);
-> > +	req->get_mac_addr.pfvf_num = cpu_to_le32(pfvfnum);
-> > +}
-> 
-> These are rather large for inline functions in a header. Please move
-> them into a .c file.
-> 
-> 	Andrew
-> 
-
-Got it. I will update it.
-
-Thanks for your feedback.
+--srini
+>  		goto err;
+>  	}
+>  
+> @@ -1595,11 +1635,14 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>  	pdev->prop.simple_clk_stop_capable = true;
+>  	pdev->prop.sink_dpn_prop = wsa_sink_dpn_prop;
+>  	pdev->prop.scp_int1_mask = SDW_SCP_INT1_BUS_CLASH | SDW_SCP_INT1_PARITY;
+> -	gpiod_direction_output(wsa883x->sd_n, 0);
+> +
+> +	wsa883x_reset_deassert(wsa883x);
+> +	ret = devm_add_action_or_reset(dev, wsa883x_reset_assert, wsa883x);
+> +	if (ret)
+> +		return ret;
+>  
+>  	wsa883x->regmap = devm_regmap_init_sdw(pdev, &wsa883x_regmap_config);
+>  	if (IS_ERR(wsa883x->regmap)) {
+> -		gpiod_direction_output(wsa883x->sd_n, 1);
+>  		ret = dev_err_probe(dev, PTR_ERR(wsa883x->regmap),
+>  				    "regmap_init failed\n");
+>  		goto err;
 
 
