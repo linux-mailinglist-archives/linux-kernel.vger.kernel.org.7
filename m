@@ -1,210 +1,147 @@
-Return-Path: <linux-kernel+bounces-770072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F427B27678
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:07:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58537B27677
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8130B1CC7E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95AA175B3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244D29B8FE;
-	Fri, 15 Aug 2025 03:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F529BD93;
+	Fri, 15 Aug 2025 03:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mLEHdXck"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCm+kYpZ"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E203526AF3;
-	Fri, 15 Aug 2025 03:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535526AF3;
+	Fri, 15 Aug 2025 03:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227158; cv=none; b=N2xc8WblWE/PuWKq4pQSxdOk92FE45o5mFzbPravg16W+adMSkVtB2OeEKetEQYZY08LjxhNpd8rJHnGlfAJJMqEGzNiREPgIofH67y040opTuY95AIqdxSbrz66YwJFnIMghsGEIyee2b4qsPeHj5xERXB+w1uP81nG5A454uo=
+	t=1755227187; cv=none; b=lo1vc0pe8a6wLC5SbmRtIRb0eHq0XvVaLW1AoiIn5N81DLmj2jRua7ythyRc3KzbMdu7mlo3ZVDPPQPiJUsUpYpiiEyKUIvJS0y0ZYuljhgq/O7YuSkhw6CjzI4vqj8WpwJ43ckPjLa8uJajxw4eVRVbf+y8FTUiIXJolpqM31A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227158; c=relaxed/simple;
-	bh=b4zHBI2+pf27VFS+Vi8naqMys1qCuA8w3Yvh9ogNlgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=svjkCuGARfZArSZ7cW7f9qfy4h36DcVlgU10L4sucQNPD3bAdnmgzUljQho/+pYURsLGvaPHKwJahuOW+UbG70AEzymfpGKglmQqTIOl7xYzZ+LgEoS4fGUMbXhhB4qwfT6MgelSyTUJ1HhmH8X/9Rtl2bmbAVJ/8pXQ5gMNIjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mLEHdXck; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755227144;
-	bh=sai+f5ZM+SaZrB5rzQ6nDiet5Sd8Fwy/41BiKNKv4xY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mLEHdXckvfEXPR7XLVknALmuRSSANBA2gyOdY5AxylJgc22Gdko0NcTi73pXeXe4i
-	 TYM9dN0lU0s9VUZuCHudml7VuwQ0MkLxyRyiu21uas0thPnvZa9yj0RizgxRWSF5Wb
-	 RuZoOLLJbBpZ0rtN5t+2a+JWo5PZN/JKFA3Itt7+Vwv3kdR8vaCOjevdhRRFjyViTm
-	 1zezO27ErbxCoZT4NS+kdhTDp9U3OVvf8/TqnGaWmfiAYxvSo+3oDYsHt3q18GUc7L
-	 /i/3yQkX2XwstJSIT79L37b7bHXh1cA27zwUdAOUK45Wb6CK2ObhlTDSsY3LvYgcGt
-	 ZUdszYH/nBFng==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c36S83Vzlz4wbn;
-	Fri, 15 Aug 2025 13:05:44 +1000 (AEST)
-Date: Fri, 15 Aug 2025 13:05:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
-Cc: Dongsheng Yang <dongsheng.yang@linux.dev>, Mikulas Patocka
- <mpatocka@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Message-ID: <20250815130543.3112144e@canb.auug.org.au>
+	s=arc-20240116; t=1755227187; c=relaxed/simple;
+	bh=UbtTd5cDnA+tL0Z4ZPtN97UkW1xDXL+wKRfOIrUF1Fo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hh9qlXizwO2NftF0eR0niziwQ0TngNBzTU9Wmds0Jd/CiYiuwLeSffGe1/zS37XhB/kvDD/rLxUrdCCG8q+76R4IaUmcSX3FZISqhzJ3oZL20d/vMAB04N5gsyjO8VmCaMpWTPMWv+Huf+/xE5avKVLmzDBC/YVOFJ9SgJ8jEFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCm+kYpZ; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70a928cca6aso9161176d6.2;
+        Thu, 14 Aug 2025 20:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755227185; x=1755831985; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y/msescSO6DjiLygH5SQxhYUOUBz7dEiXRHXJI+7dv8=;
+        b=CCm+kYpZVQAwhkuSO1loAdg+V4WBnTktqoTS0dR+wlg6rFBMvqfVhPv9MO1TRAKfKi
+         +sLPRIqO7bYUmyHoEXq2316/AyyR/S4Bw15R+c+BzxuUz+iF8zb3vrN8VBJLWi+dDehR
+         kFRdCZGyx2uAuGY/x+f2mYjUiq0yF94/nlVi1CLw6inwNs14SqVxce22KEa2BOmlU1l5
+         wIHR57XU78hasbcDM/MiWrH455rMbfbIB+6O+1YZbSdVXcApCiEE4XZWOD2kcL3/RMYl
+         b1w9m+Hbq/veEy33/QHtEgNu+vNsqXGXykSMPZ54V+6B6KihByxvDZaD34nwPR0cx5/V
+         rtWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755227185; x=1755831985;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y/msescSO6DjiLygH5SQxhYUOUBz7dEiXRHXJI+7dv8=;
+        b=oij8udTXGUVhKouY0asOYKQd5FESNTf3rwemga7AcdFZtQl9ZL/ipuQbaq9JntD0nT
+         9yHNxWtLoF9Eg3brmVokDPgiCG4F5mR97cIGPod4yUnlROTYGbd3FesbMbC8pSCkj9fP
+         NLCqFipvGLERVFvKd5ZHr4l9z6KChrR4HFtVYAnB1CPem/WAUmRSvPz1N+ewyq+rLHHC
+         +5n1pEn2YnBXEn4hCVWhxLW3bVOOZIhaSp8IOr87fFgOCvJrgjlEB8T5B2d7OZr9obi8
+         A29k8SU9U3IRosPa04sKX/rjCHE3ul/Y2GHS4FEDfxt3G5t6qhyvC3cAI6QS4F5W+B3/
+         CH1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8eUZDNYtWnWomkLcsXBBeehl1n0fY+S8lr5Kw2ggxkfN4mKR6ekaNkCxuWoFG67CN3KKrBmZCKq/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/66r2VSRS0EJG0XRhHXVZIs0cFGCXRm4D4HXxtFvDL/SIvlVN
+	5mrnHqnT4I+5rGMU465t0Iqz3cqJ18RHbpv5pl/1IwzEefaao7c0/uezVfIwrUT6m4jwDAWL4W5
+	D2ZJ2f+pqcV1NMFIpSZ51iiFVt5LLEu39GQ==
+X-Gm-Gg: ASbGncvLFLBnZq9NWDMta0qeSXyhpdGuZ9Yfx4ndi7yMHXu1wgZeHsFFHyQbczCnjf6
+	GnaG8zofRAqMSUzuoTsDoGMVazYdrZB+CLKXq0MEY6x2z+lE6qpwrnYO6UWP9nb8c9gP+Iq7jVc
+	EGgxXpGxf68Rwk8/aQY16lTqfX79uB9yqOZTvSm+HflhUycBo2WAJxrjVD6v5j6P9oIxgeEPybf
+	zTC59zsDHwEceorScOVhu1jF8GdtV33zYDyiJDOeyUCGYg7jN7a
+X-Google-Smtp-Source: AGHT+IG/1pXVT5fuud5x3Oo/+E1+MALLJEWdNuFJJRMGFx0JokLcZ+B1zIJyQq4KPAwIYE2Vxz648vFKk0BSyvBNtPk=
+X-Received: by 2002:a05:6214:20c5:b0:709:31f8:fd9a with SMTP id
+ 6a1803df08f44-70ba7c02df1mr3600896d6.27.1755227184960; Thu, 14 Aug 2025
+ 20:06:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nYzBKBF7BSRP70jifWY8Kfq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 14 Aug 2025 22:06:13 -0500
+X-Gm-Features: Ac12FXxeH_6vd5VjaiU_viR1KykxMXTGxBa6cz6cDdEZKa3m_F-CiLpsrEJ1Wc0
+Message-ID: <CAH2r5mtRBY-kVFHxA+w2mgvyG_f5cnbtMqxDgAQjDeecC1jyKQ@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/nYzBKBF7BSRP70jifWY8Kfq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Please pull the following changes since commit
+8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Hi all,
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-After merging the device-mapper tree, today's linux-next build (htmldocs)
-failed like this:
+are available in the Git repository at:
 
-Sphinx parallel build error:
-docutils.utils.SystemMessage: Documentation/admin-guide/device-mapper/dm-pc=
-ache.rst:27: (SEVERE/4) Title overline & underline mismatch.
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc1-smb3-client-fixes
 
----------------------------------------------------------------------------=
-----
-Constructor
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+for you to fetch changes up to e19d8dd694d261ac26adb2a26121a37c107c81ad:
 
-Caused by commit
+  smb: client: remove redundant lstrp update in negotiate protocol
+(2025-08-13 11:36:24 -0500)
 
-  6fb8fbbaf147 ("dm-pcache: add persistent cache target in device-mapper")
+----------------------------------------------------------------
+Nine smb3 client fixes
+- Fix unlink race and rename races
+- SMB3.1.1 compression fix
+- Avoid unneeded strlen calls in cifs_get_spnego_key
+- Fix slab out of bounds in parse_server_interfaces()
+- Fix mid leak and server buffer leak
+- smbdirect send error path fix
+- update internal version #
+- Fix unneeded response time update in negotiate protocol
 
-I have applied the following fix patch for today (there may be better).
+----------------------------------------------------------------
+David Howells (1):
+      cifs: Fix collect_sample() to handle any iterator type
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 15 Aug 2025 13:01:51 +1000
-Subject: [PATCH] fix up for "dm-pcache: add persistent cache target in
- device-mapper"
+Dmitry Antipov (1):
+      cifs: avoid extra calls to strlen() in cifs_get_spnego_key()
 
-Sphinx parallel build error:
-docutils.utils.SystemMessage: Documentation/admin-guide/device-mapper/dm-pc=
-ache.rst:27: (SEVERE/4) Title overline & underline mismatch.
+Paulo Alcantara (2):
+      smb: client: fix race with concurrent opens in unlink(2)
+      smb: client: fix race with concurrent opens in rename(2)
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- Documentation/admin-guide/device-mapper/dm-pcache.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Stefan Metzmacher (1):
+      smb: client: don't wait for info->send_pending == 0 on error
 
-diff --git a/Documentation/admin-guide/device-mapper/dm-pcache.rst b/Docume=
-ntation/admin-guide/device-mapper/dm-pcache.rst
-index e6433fab7bd6..550026219a6f 100644
---- a/Documentation/admin-guide/device-mapper/dm-pcache.rst
-+++ b/Documentation/admin-guide/device-mapper/dm-pcache.rst
-@@ -25,6 +25,7 @@ Quick feature summary
- * *Log-structured write-back* that preserves backend crash-consistency
-=20
- --------------------------------------------------------------------------=
------
-+
- Constructor
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -58,6 +59,7 @@ The first time a pmem device is used, dm-pcache formats i=
-t automatically
- (super-block, cache_info, etc.).
-=20
- --------------------------------------------------------------------------=
------
-+
- Status line
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -98,6 +100,7 @@ Field meanings
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-=20
- --------------------------------------------------------------------------=
------
-+
- Messages
- =3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -108,6 +111,7 @@ Messages
-    dmsetup message <dev> 0 gc_percent <0-90>
-=20
- --------------------------------------------------------------------------=
------
-+
- Theory of operation
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -152,6 +156,7 @@ range when it is inserted and stores it in the on-media=
- key.  Reads
- validate the CRC before copying to the caller.
-=20
- --------------------------------------------------------------------------=
------
-+
- Failure handling
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -164,6 +169,7 @@ Failure handling
-   use-after-free keys.
-=20
- --------------------------------------------------------------------------=
------
-+
- Limitations & TODO
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -173,6 +179,7 @@ Limitations & TODO
- * Discard planned.
-=20
- --------------------------------------------------------------------------=
------
-+
- Example workflow
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -197,5 +204,6 @@ Example workflow
-    dmsetup remove pcache_sdb
-=20
- --------------------------------------------------------------------------=
------
-+
- ``dm-pcache`` is under active development; feedback, bug reports and patch=
-es
- are very welcome!
---=20
-2.50.1
+Steve French (2):
+      smb3: fix for slab out of bounds on mount to ksmbd
+      cifs: update internal version number
 
---=20
-Cheers,
-Stephen Rothwell
+Wang Zhaolong (2):
+      smb: client: fix mid_q_entry memleak leak with per-mid locking
+      smb: client: remove redundant lstrp update in negotiate protocol
 
---Sig_/nYzBKBF7BSRP70jifWY8Kfq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ fs/smb/client/cifs_spnego.c   | 47 +++++++++++-----------------
+ fs/smb/client/cifsfs.h        |  4 +--
+ fs/smb/client/cifsglob.h      | 21 +++++++++++++
+ fs/smb/client/cifstransport.c | 19 ++++++-----
+ fs/smb/client/compress.c      | 71 +++++++++++++-----------------------------
+ fs/smb/client/connect.c       |  9 +++---
+ fs/smb/client/inode.c         | 34 ++++++++++++++++++--
+ fs/smb/client/smb2ops.c       | 15 +++++++--
+ fs/smb/client/smb2transport.c |  1 +
+ fs/smb/client/smbdirect.c     | 10 +++---
+ fs/smb/client/transport.c     |  7 ++---
+ 11 files changed, 128 insertions(+), 110 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+--
+Thanks,
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiepAcACgkQAVBC80lX
-0GzJyQf9GgfxFmFvN9sKgIEi9K4S8GZ8iGAclxTlsm4Rh9aqKVSvDiy3dgMqKjwP
-pzwTNyaji3FdGfzhpbiA/gdUb6wXX3cUC3ac2ECyhSTUdM/Bj4IIP/A0M1sqfv5u
-T7GmZtGNAwapTHSWJJ+48bi/PYfYJgJmLi46FpQcLmxLVsMxK7kDeomOhwacn+hV
-0EyVl6b/obBFuIjMhGjP+Z5xws1z+bCiFdcdHQDXmceclu49gFAm7MFUPINHwy79
-sF/WvuF2zmwpRrYlUdpoxyDml6xei4vkpu/mGsyvzI1rQHuL4pbFB2djyt2YHpK8
-CgLWXbE+KfJiUxxpkZd9tOmkWz39mA==
-=E7hz
------END PGP SIGNATURE-----
-
---Sig_/nYzBKBF7BSRP70jifWY8Kfq--
+Steve
 
