@@ -1,247 +1,201 @@
-Return-Path: <linux-kernel+bounces-770891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E743B2800D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:35:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701E0B28006
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4507A7BC778
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:33:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 644327BAF3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C0C3009FB;
-	Fri, 15 Aug 2025 12:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22D63009C2;
+	Fri, 15 Aug 2025 12:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="GlNwJ9iB"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pftKXj6j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Wo/Zp3I5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0b6K2XDb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1QhShcHr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF90D278157;
-	Fri, 15 Aug 2025 12:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755261295; cv=pass; b=dkR9m+wo2CjYiOZ282q+I1tgZBnks85ftzoLCNPw3pta2b0tXxZpUBlxWg8NYOqsVJXOvsVcmhxwKbTm+f3mLyweT+usBnGW1x2jDEzKLWOoncAka2DdZyV5kgZucV3uEoN6JLZCEqDSejFvT3HQsHDFzspoUSWAq0BRfcMEnFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755261295; c=relaxed/simple;
-	bh=tntn9cbIgPUt1BursIk5NYzmJyQ1zyzXYOnVlKbw8OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2dPULVp3WzmWdYyvzDO9kJBp9ZZ+qgFYo+yJVK/zV+wD4fC44o2ljUHk9/N4CYaGW7dnMW36d/DvKAokAtEJO3aadSX0bAHJ00GXrB+Oqfb7zDmIUZqzRGfIb79WoLq61TaKxZxgu/+KrEjbdHL712MYoHcAwI03U4opVMDlCo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=GlNwJ9iB; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5712D052
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755261248; cv=none; b=ctZQJW+ey+8rAW5Nxr1HdXO45VBhkk+98mjB3NZ4DKCObD53cek7HgYiH3ehJ/71yiGaajos/WQkfo4Xjx8yxIi7bU++RkCr+RVkXTHkJHrIOhIIrKltyPdIH5rxOSX8ENBGYyZBvoT4a/fhmL+aO9goHbZL+m2qzbr5bb8gcCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755261248; c=relaxed/simple;
+	bh=S7/XPMO0d+W6nIw8W5IyAf52ou3icGbH/Rx+JGDtyGI=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5FUaJ2YkX5uD/mTRWedHjn+ay0OzaQSOdaNkGVBGbZ5MyKnASsCyyMdMclDbBbsFZTTO409ozOVfyZBHXRBeOvxQtH6w4m9vQw9OsoFtTLul55MrODHWPXfl7qmYI3qaAeOhjUU68kEvElWBZtbZH51+igfUNCPUT7SOQyDRxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pftKXj6j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Wo/Zp3I5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0b6K2XDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1QhShcHr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4c3M4h4gHNz49PyD;
-	Fri, 15 Aug 2025 15:34:44 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1755261286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 545001F83E;
+	Fri, 15 Aug 2025 12:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755261243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j/6Mcw8r3LsssT5hKIfF2I2kyTfi7DM26e0QtcBjbYI=;
-	b=GlNwJ9iBkw3glbp0ymIiCl63fTe5CZCe5pJslQbr1vG/kkI6fxWrY35JpmCqwJM/nz16Fm
-	xaO4q+bYwr8bKDJpEKt9Bvu0jD7j0PIIS8ivY6qOkq2o/C1sN6VdWjgUpg7whIbSqZzxna
-	FMpKOUZB1p2uopOxN+j7K+DU98KiqSerX3UkAqzN8OA5cv30EJw1ZEovF9LMAMRulfWy1h
-	9Nj51K92Df2RCEoiy0jUZMG1OtIIlLFgqkxwjgty5u03Y+olIueRWSgqsa01iNZjJDg4UV
-	9OcuGbzWCHKZJo+8tORvWJF+T3E84YvHGjnp7afMmpZEElhwOlBTaWqsRLLsRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1755261286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=pftKXj6j6PflFjz2In7gvs+RV0Y8qhkGDb6PZ4y7+rzDZrIxXULvojkcqqPh8iwTzEdno0
+	t0fkPgA4nkv5qshCOFXPS9L0fwIG+maJ0tAJBrbr3S2Fouy4camlszFTG8rqjB6VERTg6t
+	eqGTGeGjoHhl7T695DNEWBJPIjZrprU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755261243;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j/6Mcw8r3LsssT5hKIfF2I2kyTfi7DM26e0QtcBjbYI=;
-	b=kCSurF1hkNHj6s7D5U303HsLuULSF6jJxI0QR8Z760AtTzH2wH/1ziX34RATtcTI3JsWnp
-	c7mbgno8qs7Cib4xDHD7dt2PY5XsZ+U3wC5MFytag8YBNefdASUH5cLFebqlbcYFurUxCE
-	nL5aLhJ5xfb9ck9KRZckUHHttQKPMFNN57UBwaqLx1nDrUtf64I7sLWJwGP7+3bq9WlV3Z
-	Z46w/oq221jc+bVWPIsxEJI6aI+EI7hR/T/gihUGJecpFLY1IVfaGlCafAlE76zzJETe8a
-	IYiVbtm3m7LKNgjoeYYnfqIOp7hfWeIgF1TRCqB6V71EjUh7hr7RfntS1qYJKg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1755261286; a=rsa-sha256;
-	cv=none;
-	b=pef/pESmcs78EUdIVq28pz9/x/msj/tjvZJmM31B5rDcbrfLkPuYfFKBgocj7pffI6UBmX
-	6T/4H592XkX/LWtJJzbqNr87hTY3SMeZonwBikXXrrDPUpIBS1FyafXOb/fsAhtc0J6RYy
-	Hlw7K0JPH+qUzxvYGdJGHHmQ3bPuFuKrXI1+FaZ+yr5V+4Nn3i5anqq0ORdONI9ISjT9hW
-	b8LtQFgQNwHXMPvIJUcJj2XCoC2nfYU1cCDaSjhFaM3QEQPlSWbOY37lNW87rWnJfDIwY5
-	kPHyMOLL6Hjdrrch9pKVm5MQfeeGwdXDVYGs22vNwYG3vdblP6hhP5a3/p6c5g==
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=Wo/Zp3I5Sgxy1iMwvGxmiNjWV9Gfgb6MOxL/pPJ9FiTS5D6rmJmYExVUZXvuvJxD/7saaQ
+	liN2MD3wVE3KiIAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755261241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=0b6K2XDbFirJwyeNjzVe/NtQ2QWdZPG8fwGIo/40zzhCHxFLewXI2GmrpQfPPlaPRO54Ys
+	SsiLlTw4OF4g/UkdjoBKbpkZFQGD3NH7KhlvTRQIr51CNqQw5PXa34XFkOasU8H9PD7Hok
+	AFfK1Mf76dM/RaMkfPi2uB/OYlr99ns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755261241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
+	b=1QhShcHrjb+96XnMqazaYYsnkahj8edGVGHZGhwGL0Iu59wGl7xBM3cbXktVrJpRhaELXf
+	B/zOwfneMk60jfDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id CBFB4634C93;
-	Fri, 15 Aug 2025 15:33:45 +0300 (EEST)
-Date: Fri, 15 Aug 2025 12:33:46 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
-	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
- mbus_config
-Message-ID: <aJ8pKs_6YpAiPjlq@valkosipuli.retiisi.eu>
-References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
- <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
- <20250815103205.GJ6201@pendragon.ideasonboard.com>
- <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
- <20250815113633.GM6201@pendragon.ideasonboard.com>
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A137F13876;
+	Fri, 15 Aug 2025 12:34:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R7KUIzgpn2hMYwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 15 Aug 2025 12:34:00 +0000
+Date: Fri, 15 Aug 2025 13:34:02 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] testing/radix-tree/maple: hack around kfree_rcu not
+ existing
+Message-ID: <fcbr3lvd2aa6m4cjl666ksbf5px25htnh5slahj4pk2id54ygn@llqqfn5urq52>
+References: <20250814064927.27345-1-lorenzo.stoakes@oracle.com>
+ <kq3y4okddkjpl3yk3ginadnynysukiuxx3wlxk63yhudeuidcc@pu5gysfsrgrb>
+ <20250814180217.da2ab57d5b940b52aa45b238@linux-foundation.org>
+ <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250815113633.GM6201@pendragon.ideasonboard.com>
+In-Reply-To: <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hi Laurent,
-
-On Fri, Aug 15, 2025 at 02:36:33PM +0300, Laurent Pinchart wrote:
-> On Fri, Aug 15, 2025 at 11:25:24AM +0000, Sakari Ailus wrote:
-> > Hi Laurent,
+On Thu, Aug 14, 2025 at 10:09:15PM -0400, Liam R. Howlett wrote:
+> * Andrew Morton <akpm@linux-foundation.org> [250814 21:02]:
+> > On Thu, 14 Aug 2025 13:40:03 +0100 Pedro Falcato <pfalcato@suse.de> wrote:
 > > 
-> > On Fri, Aug 15, 2025 at 01:32:05PM +0300, Laurent Pinchart wrote:
-> > > On Fri, Aug 15, 2025 at 09:18:13AM +0000, Sakari Ailus wrote:
-> > > > On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
-> > > > > Although 4 lanes may be physically available, we may not be using all of
-> > > > > them. Get the number of configured lanes in the case a driver has
-> > > > > implemented the get_mbus_config op.
-> > > > > 
-> > > > > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > Currently, the imx-mipi-csis driver parses the device tree to determine
-> > > > > the number of configured lanes for the CSI receiver. This may be
-> > > > > incorrect in the case that the connected device only uses a subset of
-> > > > > lanes, for example. Allow the drivers for these cameras to create a
-> > > > > mbus_config to configure the number of lanes that are actually being
-> > > > > used.
-> > > > > 
-> > > > > If the driver does not support the get_mbus_config op, this patch will
-> > > > > have no functional change.
-> > > > > 
-> > > > > Compile tested against media-master (v6.17-rc1)
-> > > > > ---
-> > > > >  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
-> > > > >  1 file changed, 41 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > > > index 2beb5f43c2c0..efe4e2ad0382 100644
-> > > > > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > > > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > > > > @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
-> > > > >  	return container_of(sdev, struct mipi_csis_device, sd);
-> > > > >  }
-> > > > >  
-> > > > > +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
-> > > > > +{
-> > > > > +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > > > > +	struct v4l2_mbus_config mbus_config = { 0 };
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
-> > > > > +			       0, &mbus_config);
-> > > > > +	if (ret == -ENOIOCTLCMD) {
-> > > > > +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
-> > > > > +		return 0;
-> > > > > +	}
-> > > > > +
-> > > > > +	if (ret) {
-> > > > > +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
-> > > > > +		return ret;
-> > > > > +	}
-> > > > > +
-> > > > > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-> > > > > +		dev_err(csis->dev, "Unsupported media bus type %u\n",
-> > > > > +			mbus_config.type);
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > > +
-> > > > > +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
-> > > > > +		dev_err(csis->dev,
-> > > > > +			"Unsupported mbus config: too many data lanes %u\n",
-> > > > > +			mbus_config.bus.mipi_csi2.num_data_lanes);
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > > +
-> > > > > +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
-> > > 
-> > > There's a bug here, you override the number of lanes retrieved from DT,
-> > > which is the number of connected lanes, with the number of lanes used by
-> > > the source for its particular configuration. You will never be able to
-> > > then use more lanes in a different source configuration.
-> > > 
-> > > > > +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
+> > > On Thu, Aug 14, 2025 at 07:49:27AM +0100, Lorenzo Stoakes wrote:
+> > > > From: Pedro Falcato <pfalcato@suse.de>
 > > > > 
-> > > > None of the above is really specific to this driver. Could you instead
-> > > > implement a function that parses the information from the fwnode endpoint
-> > > > and uses mbus configuration on top?
+> > > > liburcu doesn't have kfree_rcu (or anything similar). Despite that, we can
+> > > > hack around it in a trivial fashion, by adding a wrapper.
+> > > > 
+> > > > This wrapper only works for maple_nodes, and not anything else (due to us
+> > > > not being able to know rcu_head offsets in any way), and thus we take
+> > > > advantage of the type checking to avoid future silent breakage.
+> > > > 
+> > > > This fixes the build for the VMA userland tests.
+> > > > 
+> > > > Additionally remove the existing implementation in maple.c, and have
+> > > > maple.c include the maple-shared.c header.
+> > > > 
+> > > > Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> > > > Tested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > ---
+> > > > 
+> > > > Andrew - please attribute this as Pedro's patch (Pedro - please mail to
+> > > > confirm), as this is simply an updated version of [0], pulled out to fix the
+> > > > VMA tests which remain broken.
+> > > >
 > > > 
-> > > That would need to parse the endpoint every time we start streaming, it
-> > > doesn't sound ideal.
+> > > ACK, this is fine. The future of the series is still unclear, so if this fixes
+> > > the build then all good from my end :)
 > > 
-> > Perhaps not, but does that matter in practice? Parsing the endpoint is,
-> > after all, fairly trivial. The advantage would be simplifying drivers.
+> > Well, can we have this as a standalone thing, rather than as a
+> > modification to a patch whose future is uncertain?
+> > 
+> > Then we can just drop "testing/radix-tree/maple: hack around kfree_rcu
+> > not existing", yes?
+> > 
+> > Some expansion of "fixes the build for the VMA userland tests" would be
+> > helpful.
 > 
-> It's trivial from a code point of view, but it's not a cheap operation.
-> I'd like to avoid making starting streaming more expensive.
+> Ah, this is somewhat messy.
+> 
+> Pedro removed unnecessary rcu calls with the newer slab reality as you
+> can directly call kfree instead of specifying the kmem_cache.
+> 
+> But the patch is partially already in Vlastimil's sheaves work and we'd
+> like his work to go through his branch, so the future of this particular
+> patch is a bit messy.
+> 
+> Maybe we should just drop the related patches that caused the issue from
+> the mm-new branch?  That way we don't need a fix at all.
+> 
+> And when Vlastimil is around, we can get him to pick up the set
+> including the fix.
+> 
+> Doing things this way will allow Vlastimil the avoid conflicts on
+> rebase, and restore the userspace testing in mm-new.
+> 
+> Does that make sense to everyone?
+>
 
-How cheap is "not cheap"? I'd be surprised if parsing an endpoint took more
-time than e.g. an I²C register write. Of course it depends on the CPU...
-
-> 
-> > Alternatively we could think of caching this information somewhere but I
-> > don't think it's worth it.
-> 
-> Drivers likely need to parse endpoints for other reasons. I'd cache the
-> value in drivers, like done today, and pass it to a get_active_lanes
-> helper.
-
-Then drivers presumably would also validate this against the endpoint
-configuration, wouldn't they? That's extra code in every CSI-2 receiver
-driver.
-
-> 
-> > > > The function could take struct media_pad pointer as an argument, or struct
-> > > > v4l2_subdev pointer and the pad number.
-> > > > 
-> > > > I wonder if any other parameters could change dynamically but I can't think
-> > > > of that now, so perhaps just the number of lanes is what the function
-> > > > should indeed return.
-> > > > 
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> > > > >  {
-> > > > >  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > > > > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> > > > >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
-> > > > >  	csis_fmt = find_csis_format(format->code);
-> > > > >  
-> > > > > +	ret = mipi_csis_get_active_lanes(sd);
-> > > > > +	if (ret < 0)
-> > > > > +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
-> > > > > +
-> > > > >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
-> > > > >  	if (ret < 0)
-> > > > >  		goto err_unlock;
-> 
+I agree. This sounds sensible. I don't think it makes much sense to let the
+patchset rot in mm-new.
 
 -- 
-Regards,
-
-Sakari Ailus
+Pedro
 
