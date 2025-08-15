@@ -1,236 +1,191 @@
-Return-Path: <linux-kernel+bounces-771323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD85B2857D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:06:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0972B2857E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48481B01335
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71A61BC00C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC38B272E67;
-	Fri, 15 Aug 2025 18:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729AB309DCD;
+	Fri, 15 Aug 2025 18:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WkbT/spB"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MqI4eLjT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3241F317702
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF326308F19;
+	Fri, 15 Aug 2025 18:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755281173; cv=none; b=nxwtslkOXW7SDQHcDJHAlHyVvPrOsAqNtNBWNshQoSFWgiyJ02vd+UTvms6OPEotTbMpOGYFjsoOFpf4MqUl0R025CKdVqlErUEGNXFX02Yw5EK58ejfNM9ncxyr2LzhjOT1Bgj0zwwqo4XtwL/ezExV4ygIXpfsWrpYE+L+FSM=
+	t=1755281178; cv=none; b=V9qb+03Hc3cWL5nt2++ETxWS3VRUXXbq7BiRODpjw9bq6zaozyk1tokD3gljO61N3k8CxpFfTmgSThTccpP/OEoZ9Kaf1f8a+qJUdijHc436+KxAZcRAsa5vSf2zg53I/4YFOoRzsBWo8tuuAakiKyI0j/N2mVNsdIxCc1TWI2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755281173; c=relaxed/simple;
-	bh=o4C/K9kuN6SgsaiX120leGhtiDj5AYur9LGTfIBJbFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1Sq7Kn4nm+Q0Dyiczf1t3zrzqSU/y09wnVwrZxVYCULvWW9hVnb5mqXxEmlKuoDFr/Hf+BhBVwLRcF5Pq4uNUVJQ0qMI1UL2U7fLmnJYvYUFZCvZ9TCvQihuEz7fNlWgVLojpY4hAHB8SWhDiLPIGz2Df363nnEPBK0MCEzxNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WkbT/spB; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55cc715d0easo935e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755281169; x=1755885969; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x2ZpF6Xhf8sdc8cGQINUdzwJi6gGpHKzkLkR6iShE+Q=;
-        b=WkbT/spBkMopPaD+1dTaPGQL8wR17y1VrZwCpPr2UuWLhTVCDIahEGV7LNv5fFBWAU
-         BxiVYsPfEYu0sTEF5iFbr5lp6dExH2VQYTYpXo7Gq43JzrmTJbyugIFXLhWma4oTtAR9
-         0JXVFtiLDQ4WCFTZ2BH/V+tF88LoNh1Aw8soWJZm/IkFATyKZv+RxLDhx0BNr0AqErwd
-         sznPjmhGDHDMQRKdthDfGTLWHOwfbMmRLUNRy9EmvTZrggUmHEvOIoRUfsQ4bUY9z1b2
-         j5KIZ5q8Okj7YynZYqWz6P/APUVU70kYUTC81aGG8CsbKJWlOmxfSQGHqE821DlMYbWa
-         lvfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755281169; x=1755885969;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x2ZpF6Xhf8sdc8cGQINUdzwJi6gGpHKzkLkR6iShE+Q=;
-        b=bQ2IASLS5PTELFSlG5SjElRIU30TLCl6u3oAws4JWQAtyazPePYdmzEH7hBZLseZbd
-         Bp473ydXidCyts8T0fwtSD99jVuUwsnBPing+MOUk/qebL3bXXfSQqfZhIEYuGmcB5AW
-         pwqPt+7tJWpSe/S+XD9eZnT95vgncepW6Inw/Zjab/qSkwc+YNcg4oZ1pz41Y0lLbyfk
-         p/sBZ2ovqinH5TSkqwYZ8vVIZOpXtCzFPJrA03NuvKPS4yMgkiwbvXcbBFme7RQIna1g
-         vNJYxDUBjqVejHmScO1Q8VmWL5MOwzY6OQPCOEGP4GZcG3jMUy2k1mIMQN7oebiQhxcV
-         8kJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo+dVenDhIZqMztDKtAdvEdQ2cEaWCBtxiHkmY5dOitJi93U2xU+4jbYTV819sWUVlOfr/wTwV/2BL0C0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRBHleWHQWeNqWsZeFwz6J07t1ZBHl5rSx3lzVXdVJcJdQpM2P
-	qlEFkrc+INJjHSysHzftThhBGPscCpZk2+o9HhsfpUkvt0ROJdi3uGKH0f/JFh7qlTq7+E9xyNP
-	6d4POCCRHf+DajHNi9A+ITyLadbKGAmdnZBX8wgNb
-X-Gm-Gg: ASbGncv0YxB8doH+8vTFUP4KMPAVvYjj6CFUPgXX+a9LaPc7wa8/Zot4Sg3gs2OsWMV
-	1KquKeJkUm+Po1cOu6/6RIfEoafbs/uCk0fvKZHti0g6bLriTRfCpkyN+KZCiY9D0CA9aaGr6ND
-	FaZj7IEhnT30qSqUghbryG+U/QHXvHqWgq6F8ct2nBWtF6GmQzJgw6W1FKSh+dONO1INIBLAz8y
-	+iVuKLpvetvU02u0fx+Y5KOmFY6tfsJOw7//TdTGjUSarx2UQukkrc=
-X-Google-Smtp-Source: AGHT+IFGSTnIS2inxo+YJAG3r8YTvJEGqU3WbEHhFKAzadPtmeB1iGjqbaomkoD956j6CwjFpMNrBS/wnMzF/mqZTHk=
-X-Received: by 2002:a05:6512:1356:b0:558:fd83:bac6 with SMTP id
- 2adb3069b0e04-55cf2c27bc3mr17545e87.4.1755281169063; Fri, 15 Aug 2025
- 11:06:09 -0700 (PDT)
+	s=arc-20240116; t=1755281178; c=relaxed/simple;
+	bh=SJDcsSJXahvK6w3PVLzUoWHXDtQZ5aGGi+KFg2tF+4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CU/mdYRA4jh/xwWe4KRiRsHPT4J+I0WaoRISiOsysYRAquVHfgeymJ6xq/z8xX75AtMFGHFuXQtih6hjjfrtpyiQDo1IZb7D5ckgVROJ1LtcdRG7o6CGtlwZfmKpK6X6sP9UozC0gIiG3D6GhvikDuVY8sWMOF0Q1WK0Rww2a7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MqI4eLjT; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755281176; x=1786817176;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SJDcsSJXahvK6w3PVLzUoWHXDtQZ5aGGi+KFg2tF+4s=;
+  b=MqI4eLjTnsA/z9PALk2BhWPYqsDomep9zlXByBtH5QB5763ea+XNeNNG
+   tfeJp+lC7dCHQl/JtQSL/vHURiRojcqkgrDwh/CcrQOFWpgvS/ssZzTIi
+   4Y2XLx/cF4RW35c1PnnvysXGCoHiM60xFrMyqDfKueII40Iqgi74mzhyc
+   TlHVcM9bG34btPi1qIlWIeNdmWqCg2JQ8kOINPZ3TL6FNqBNNch6O8SPl
+   B7wyI45d58PcfHXB1wpID4Ha3tYLT7OfJXqcCXGQ3rWt3dDxU+Ru5MBAE
+   kvyVmPSabxNuFqMvLXpQGCmsSVOOWvliVBWnRRxHUVd2k69/jbjKaPoRk
+   Q==;
+X-CSE-ConnectionGUID: E+K3w4dORy+8MKVcSV3vRw==
+X-CSE-MsgGUID: JDzpJ2ubTcWKMj7GWxHYIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61417153"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61417153"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 11:06:15 -0700
+X-CSE-ConnectionGUID: 9vGjZEVGRQaT9wmWLRC5eA==
+X-CSE-MsgGUID: McxF2AsDSm+AEHvcC7cKrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171318698"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 11:06:09 -0700
+Message-ID: <7ff8b51b-7263-4d9c-99f8-1b507cf46262@intel.com>
+Date: Fri, 15 Aug 2025 11:06:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-8-dtatulea@nvidia.com>
-In-Reply-To: <20250815110401.2254214-8-dtatulea@nvidia.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 15 Aug 2025 11:05:56 -0700
-X-Gm-Features: Ac12FXxQwQ1cmsO0KKkfg_zt7FzaquXwK6n4R84VsjkJSWUt974nWptkz-wAvtw
-Message-ID: <CAHS8izM-2vdudZeRu51TNCRzVPQVBKmrj0YoK80nNgWvR-ft3g@mail.gmail.com>
-Subject: Re: [RFC net-next v3 6/7] net: devmem: pre-read requested rx queues
- during bind
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, tariqt@nvidia.com, parav@nvidia.com, 
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> Instead of reading the requested rx queues after binding the buffer,
-> read the rx queues in advance in a bitmap and iterate over them when
-> needed.
->
-> This is a preparation for fetching the DMA device for each queue.
->
-> This patch has no functional changes.
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> ---
->  net/core/netdev-genl.c | 76 +++++++++++++++++++++++++++---------------
->  1 file changed, 49 insertions(+), 27 deletions(-)
->
-> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> index 3e2d6aa6e060..3e990f100bf0 100644
-> --- a/net/core/netdev-genl.c
-> +++ b/net/core/netdev-genl.c
-> @@ -869,17 +869,50 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb=
-,
->         return err;
->  }
->
-> -int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> +static int netdev_nl_read_rxq_bitmap(struct genl_info *info,
-> +                                    unsigned long *rxq_bitmap)
->  {
->         struct nlattr *tb[ARRAY_SIZE(netdev_queue_id_nl_policy)];
-> +       struct nlattr *attr;
-> +       int rem, err =3D 0;
-> +       u32 rxq_idx;
-> +
-> +       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
-> +                              genlmsg_data(info->genlhdr),
-> +                              genlmsg_len(info->genlhdr), rem) {
-> +               err =3D nla_parse_nested(
-> +                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1, at=
-tr,
-> +                       netdev_queue_id_nl_policy, info->extack);
-> +               if (err < 0)
-> +                       return err;
-> +
-> +               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QU=
-EUE_ID) ||
-> +                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QU=
-EUE_TYPE))
-> +                       return -EINVAL;
-> +
-> +               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) !=3D NETDEV_QUEU=
-E_TYPE_RX) {
-> +                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_T=
-YPE]);
-> +                       return -EINVAL;
-> +               }
-> +
-> +               rxq_idx =3D nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
-> +
-> +               bitmap_set(rxq_bitmap, rxq_idx, 1);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> +{
->         struct net_devmem_dmabuf_binding *binding;
->         u32 ifindex, dmabuf_fd, rxq_idx;
->         struct netdev_nl_sock *priv;
->         struct net_device *netdev;
-> +       unsigned long *rxq_bitmap;
->         struct device *dma_dev;
->         struct sk_buff *rsp;
-> -       struct nlattr *attr;
-> -       int rem, err =3D 0;
-> +       int err =3D 0;
->         void *hdr;
->
->         if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
-> @@ -922,37 +955,22 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, str=
-uct genl_info *info)
->                 goto err_unlock;
->         }
->
-> +       rxq_bitmap =3D bitmap_alloc(netdev->num_rx_queues, GFP_KERNEL);
-> +       if (!rxq_bitmap) {
-> +               err =3D -ENOMEM;
-> +               goto err_unlock;
-> +       }
-> +       netdev_nl_read_rxq_bitmap(info, rxq_bitmap);
-> +
->         dma_dev =3D netdev_queue_get_dma_dev(netdev, 0);
->         binding =3D net_devmem_bind_dmabuf(netdev, dma_dev, DMA_FROM_DEVI=
-CE,
->                                          dmabuf_fd, priv, info->extack);
->         if (IS_ERR(binding)) {
->                 err =3D PTR_ERR(binding);
-> -               goto err_unlock;
-> +               goto err_rxq_bitmap;
->         }
->
-> -       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
-> -                              genlmsg_data(info->genlhdr),
-> -                              genlmsg_len(info->genlhdr), rem) {
-> -               err =3D nla_parse_nested(
-> -                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1, at=
-tr,
-> -                       netdev_queue_id_nl_policy, info->extack);
-> -               if (err < 0)
-> -                       goto err_unbind;
-> -
-> -               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QU=
-EUE_ID) ||
-> -                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QU=
-EUE_TYPE)) {
-> -                       err =3D -EINVAL;
-> -                       goto err_unbind;
-> -               }
-> -
-> -               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) !=3D NETDEV_QUEU=
-E_TYPE_RX) {
-> -                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_T=
-YPE]);
-> -                       err =3D -EINVAL;
-> -                       goto err_unbind;
-> -               }
-> -
-> -               rxq_idx =3D nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
-> -
-> +       for_each_set_bit(rxq_idx, rxq_bitmap, netdev->num_rx_queues) {
-
-Is this code assuming that netdev->num_rx_queues (or
-real_num_rx_queues) <=3D BITS_PER_ULONG? Aren't there devices out there
-that support more than 64 hardware queues? If so, I guess you need a
-different data structure than a bitmap (or maybe there is arbirary
-sized bitmap library somewhere to use).
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 01/20] nvdimm/label: Introduce NDD_CXL_LABEL flag to
+ set cxl label format
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Neeraj Kumar <s.neeraj@samsung.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+ a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121223epcas5p1386bdf99a0af820dd4411fbdbd413cd5@epcas5p1.samsung.com>
+ <20250730121209.303202-2-s.neeraj@samsung.com>
+ <20250813141218.0000091f@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250813141218.0000091f@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
---=20
-Thanks,
-Mina
+On 8/13/25 6:12 AM, Jonathan Cameron wrote:
+> On Wed, 30 Jul 2025 17:41:50 +0530
+> Neeraj Kumar <s.neeraj@samsung.com> wrote:
+> 
+>> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
+>> introduced in CXL 2.0 Spec, which contain region label along with
+>> namespace label.
+>>
+>> NDD_LABELING flag is used for namespace. Introduced NDD_CXL_LABEL
+>> flag for region label. Based on these flags nvdimm driver performs
+>> operation on namespace label or region label.
+>>
+>> NDD_CXL_LABEL will be utilized by cxl driver to enable LSA2.1 region
+>> label support
+>>
+>> Accordingly updated label index version
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Hi Neeraj,
+> 
+> A few comments inline.
+> 
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 04f4a049599a..7a011ee02d79 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -688,11 +688,25 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
+>>  		- (unsigned long) to_namespace_index(ndd, 0);
+>>  	nsindex->labeloff = __cpu_to_le64(offset);
+>>  	nsindex->nslot = __cpu_to_le32(nslot);
+>> -	nsindex->major = __cpu_to_le16(1);
+>> -	if (sizeof_namespace_label(ndd) < 256)
+>> +
+>> +	/* Set LSA Label Index Version */
+>> +	if (ndd->cxl) {
+>> +		/* CXL r3.2 Spec: Table 9-9 Label Index Block Layout */
+>> +		nsindex->major = __cpu_to_le16(2);
+>>  		nsindex->minor = __cpu_to_le16(1);
+>> -	else
+>> -		nsindex->minor = __cpu_to_le16(2);
+>> +	} else {
+>> +		nsindex->major = __cpu_to_le16(1);
+>> +		/*
+>> +		 * NVDIMM Namespace Specification
+>> +		 * Table 2: Namespace Label Index Block Fields
+>> +		 */
+>> +		if (sizeof_namespace_label(ndd) < 256)
+>> +			nsindex->minor = __cpu_to_le16(1);
+>> +		else
+>> +		 /* UEFI Specification 2.7: Label Index Block Definitions */
+> 
+> Odd comment alignment. Either put it on the else so
+> 		else /* UEFI 2.7: Label Index Block Defintions */
+> 
+> or indent it an extra tab
+> 
+> 		else
+> 			/* UEFI 2.7: Label Index Block Definitions */
+> 			
+>> +			nsindex->minor = __cpu_to_le16(2);
+>> +	}
+>> +
+>>  	nsindex->checksum = __cpu_to_le64(0);
+>>  	if (flags & ND_NSINDEX_INIT) {
+>>  		unsigned long *free = (unsigned long *) nsindex->free;
+> 
+>> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+>> index e772aae71843..0a55900842c8 100644
+>> --- a/include/linux/libnvdimm.h
+>> +++ b/include/linux/libnvdimm.h
+>> @@ -44,6 +44,9 @@ enum {
+>>  	/* dimm provider wants synchronous registration by __nvdimm_create() */
+>>  	NDD_REGISTER_SYNC = 8,
+>>  
+>> +	/* dimm supports region labels (LSA Format 2.1) */
+>> +	NDD_CXL_LABEL = 9,
+> 
+> This enum is 'curious'.  It combined flags from a bunch of different
+> flags fields and some stuff that are nothing to do with flags.
+> 
+> Anyhow, putting that aside I'd either rename it to something like
+> NDD_REGION_LABELING (similar to NDD_LABELING that is there for namespace labels
+> or just have it a meaning it is LSA Format 2.1 and drop the fact htat
+> also means region labels are supported.
+
+I agree. I had a conversation with Dan about it where I mentioned calling it CXL to describe LSA 2.1 just doesn't seem quite right. He also offered up something like NDD_REGION_LABELING instead of NDD_CXL_LABEL. So +1 to this comment.
+
+DJ 
+
+> 
+> Combination of a comment that talks about one thing and a definition name
+> that doesn't associate with it seems confusing to me.
+> 
+> Jonathan
+> 
+> 
+>> +
+>>  	/* need to set a limit somewhere, but yes, this is likely overkill */
+>>  	ND_IOCTL_MAX_BUFLEN = SZ_4M,
+>>  	ND_CMD_MAX_ELEM = 5,
+> 
+> 
+
 
