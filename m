@@ -1,319 +1,188 @@
-Return-Path: <linux-kernel+bounces-770406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6D9B27A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8699EB27A55
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5AD5582E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:53:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3121C24EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C5929D26C;
-	Fri, 15 Aug 2025 07:53:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771C429AB18;
+	Fri, 15 Aug 2025 07:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YI7wFaKc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7ED10E0;
-	Fri, 15 Aug 2025 07:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34230277818;
+	Fri, 15 Aug 2025 07:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755244393; cv=none; b=hJtnrSYj9PjSX1WteElfDIwr9zsHLTfhkf8Nq1OnVbWffP1PJsJ43X6YJVaeDVpaPYKFGadG0yoJ0T+kW8rj9yGV4KKe8baospsq5qWVglPLedELN3kHDrbtwOMNeHRC6mR84loWx02NQvSYoRzQtgv89gVUFxVWlLf7tmMN90g=
+	t=1755244116; cv=none; b=A5ZLOZ7h40m8EnC0WSSzuA1XGemALqezu+qTooVNDJ6zB0Ribrq2HENZDlZMQTq786L/4Jk3e+bUZhDtr6Bq4/fLTAdP+UZbXTGd3ecRMrXubExNVY+CwahP6yzXHJa8elN+RM/9aonX30OdrNieLEf/ZOnU9YRZ9gEYW+Y43So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755244393; c=relaxed/simple;
-	bh=E/nbNwfWlTTVzsAK1l2kL2cE73vo/5eDQGqNnWJ1A7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZXdZkhRQ35l5xGt6SzCBPkbbBsXDD+BdrYRh6KTTNnhMqPOJBWR+AyXHujSeuQ6+/yrKw9CVSeMGh6lxPkuBfMaKpUbmSb+vyeGjlNtRYQ8rkRCXvutTGEV7Eyhr7klxcsXG5wDpfW/BelBBYGXu9cFaB3ype95JZX9u1mtoJXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3Dqn0l9DzYQv7h;
-	Fri, 15 Aug 2025 15:53:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A9A191A0359;
-	Fri, 15 Aug 2025 15:53:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDnrxBh555oQLj9Dg--.33563S4;
-	Fri, 15 Aug 2025 15:53:07 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: nilay@linux.ibm.com,
-	ming.lei@redhat.com,
-	axboe@kernel.dk,
-	bvanassche@acm.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] blk-mq: fix elevator depth_updated method
-Date: Fri, 15 Aug 2025 15:45:17 +0800
-Message-Id: <20250815074517.367896-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1755244116; c=relaxed/simple;
+	bh=tNF0o99QKcDpQ8fe1vWdc2LTzNFJfqvpB0zorJHYEKI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jJej2a8mTNSRlPVM/fMyRXGPYcHDxeBzq2iUNGWhDlMQ4o3rKOo+Y4ysqMTF9LKzxsfI7ENCTM3zrL3EGOFeWOieCDgD1dWkbY+Ga8tBLwLNQ5p/c1U4KweOIwMh1gn70wxqRYiUPxYq23BtiEEzRhnMUBnE2uWs1CmEYSHJseo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YI7wFaKc; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755244115; x=1786780115;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tNF0o99QKcDpQ8fe1vWdc2LTzNFJfqvpB0zorJHYEKI=;
+  b=YI7wFaKc8pDXmh443XJ1Dz8hqLxbRWxZbDJXgyhBq5KYFx7o0ilaFQ8j
+   BkD057kZ59Cimst+NmFfgA5dsIo5lo/LLQjph9bQRAi/cWfytqg0l6ild
+   DOO+kmWgWNX2VI8E+tjfmD7AXcixAnnVgyjTckse/3yKjsObGUnrONCii
+   22QNFYxGamDfbkDwl+hQIQt9vEQ+L7PMeZRBppxhWXwsbFkkeWqQJbGRq
+   5G/H/Z06FYB3UuZmS4HXMzair/MFi+h4trMYOoGNwi/jWmF2Gt16KTu5S
+   b0vXY+P1Tn2sv6w7RYHIXBTLiIBUZJsHQCmtnb/VgbdRXXrAibmiBN6Xp
+   A==;
+X-CSE-ConnectionGUID: TCMKPHz9QEKBTdrucWUU1g==
+X-CSE-MsgGUID: 93OI3vkPR6iig882xHhLNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56776141"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="56776141"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 00:48:34 -0700
+X-CSE-ConnectionGUID: WNX4u1PESKWAnE7QLwAACg==
+X-CSE-MsgGUID: dJi2sKmCT/6pKE79EYStiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="167338723"
+Received: from yongfeih-mobl5.ccr.corp.intel.com (HELO [10.124.241.96]) ([10.124.241.96])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 00:48:30 -0700
+Message-ID: <206ed579-fba7-4329-a0a1-6bd287b9a54c@linux.intel.com>
+Date: Fri, 15 Aug 2025 15:48:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev, security@kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Ethan Zhao <etzhao1900@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Dave Hansen <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <6a61f3af-2d17-4261-8e54-c1117dbc289b@gmail.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <6a61f3af-2d17-4261-8e54-c1117dbc289b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnrxBh555oQLj9Dg--.33563S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3AF4xWFyfGF4fZFyUKr17KFg_yoWfJr4UpF
-	W5tanrKryrtF4UuFWjy39xXw43K39agry2yFs3t34rKrZFgFs3XF1rGFyxXFWIqrZ5CFsr
-	Zr4kta4DXr1Iq3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 8/14/2025 12:48 PM, Ethan Zhao wrote:
+> 
+> 
+> On 8/6/2025 1:25 PM, Lu Baolu wrote:
+>> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+>> shares and walks the CPU's page tables. The Linux x86 architecture maps
+>> the kernel address space into the upper portion of every process’s page
+>> table. Consequently, in an SVA context, the IOMMU hardware can walk and
+>> cache kernel space mappings. However, the Linux kernel currently lacks
+>> a notification mechanism for kernel space mapping changes. This means
+>> the IOMMU driver is not aware of such changes, leading to a break in
+>> IOMMU cache coherence.
+>>
+>> Modern IOMMUs often cache page table entries of the intermediate-level
+>> page table as long as the entry is valid, no matter the permissions, to
+>> optimize walk performance. Currently the iommu driver is notified only
+>> for changes of user VA mappings, so the IOMMU's internal caches may
+>> retain stale entries for kernel VA. When kernel page table mappings are
+>> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+>> entries, Use-After-Free (UAF) vulnerability condition arises.
+>>
+>> If these freed page table pages are reallocated for a different purpose,
+>> potentially by an attacker, the IOMMU could misinterpret the new data as
+>> valid page table entries. This allows the IOMMU to walk into attacker-
+>> controlled memory, leading to arbitrary physical memory DMA access or
+>> privilege escalation.
+>>
+>> To mitigate this, introduce a new iommu interface to flush IOMMU caches.
+>> This interface should be invoked from architecture-specific code that
+>> manages combined user and kernel page tables, whenever a kernel page 
+>> table
+>> update is done and the CPU TLB needs to be flushed.
+>>
+>> Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
+>> Cc: stable@vger.kernel.org
+>> Suggested-by: Jann Horn <jannh@google.com>
+>> Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+>> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+>> Tested-by: Yi Lai <yi1.lai@intel.com>
+>> ---
+>>   arch/x86/mm/tlb.c         |  4 +++
+>>   drivers/iommu/iommu-sva.c | 60 ++++++++++++++++++++++++++++++++++++++-
+>>   include/linux/iommu.h     |  4 +++
+>>   3 files changed, 67 insertions(+), 1 deletion(-)
+>>
+>> Change log:
+>> v3:
+>>   - iommu_sva_mms is an unbound list; iterating it in an atomic context
+>>     could introduce significant latency issues. Schedule it in a kernel
+>>     thread and replace the spinlock with a mutex.
+>>   - Replace the static key with a normal bool; it can be brought back if
+>>     data shows the benefit.
+>>   - Invalidate KVA range in the flush_tlb_all() paths.
+>>   - All previous reviewed-bys are preserved. Please let me know if there
+>>     are any objections.
+>>
+>> v2:
+>>   - https://lore.kernel.org/linux-iommu/20250709062800.651521-1- 
+>> baolu.lu@linux.intel.com/
+>>   - Remove EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
+>>   - Replace the mutex with a spinlock to make the interface usable in the
+>>     critical regions.
+>>
+>> v1: https://lore.kernel.org/linux-iommu/20250704133056.4023816-1- 
+>> baolu.lu@linux.intel.com/
+>>
+>> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+>> index 39f80111e6f1..3b85e7d3ba44 100644
+>> --- a/arch/x86/mm/tlb.c
+>> +++ b/arch/x86/mm/tlb.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/task_work.h>
+>>   #include <linux/mmu_notifier.h>
+>>   #include <linux/mmu_context.h>
+>> +#include <linux/iommu.h>
+>>   #include <asm/tlbflush.h>
+>>   #include <asm/mmu_context.h>
+>> @@ -1478,6 +1479,8 @@ void flush_tlb_all(void)
+>>       else
+>>           /* Fall back to the IPI-based invalidation. */
+>>           on_each_cpu(do_flush_tlb_all, NULL, 1);
+>> +
+>> +    iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
+> Establishing such a simple one-to-one connection between CPU TLB flush
+> and IOMMU TLB flush is debatable. At the very least, not every process
+> is attached to an IOMMU SVA domain. Currently, devices and IOMMU 
+> operating in scalable mode are not commonly applied to every process.
 
-Current depth_updated has some problems:
+You're right. As discussed, I'll defer the IOTLB invalidation to a
+scheduled kernel work in pte_free_kernel(). The
+sva_invalidation_kva_range() function on the IOMMU side is actually a
+no-op if there's no SVA domain in use.
 
-1) depth_updated() will be called for each hctx, while all elevators
-will update async_depth for the disk level, this is not related to hctx;
-2) In blk_mq_update_nr_requests(), if previous hctx update succeed and
-this hctx update failed, q->nr_requests will not be updated, while
-async_depth is already updated with new nr_reqeuests in previous
-depth_updated();
-3) All elevators are using q->nr_requests to calculate async_depth now,
-however, q->nr_requests is still the old value when depth_updated() is
-called from blk_mq_update_nr_requests();
-
-Fix those problems by:
-
-- pass in request_queue instead of hctx;
-- move depth_updated() after q->nr_requests is updated in
-  blk_mq_update_nr_requests();
-- add depth_updated() call in blk_mq_init_sched();
-- remove init_hctx() method for mq-deadline and bfq that is useless now;
-
-Fixes: 77f1e0a52d26 ("bfq: update internal depth state when queue depth changes")
-Fixes: 39823b47bbd4 ("block/mq-deadline: Fix the tag reservation code")
-Fixes: 42e6c6ce03fd ("lib/sbitmap: convert shallow_depth from one word to the whole sbitmap")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/bfq-iosched.c   | 21 ++++-----------------
- block/blk-mq-sched.c  |  3 +++
- block/blk-mq-sched.h  | 11 +++++++++++
- block/blk-mq.c        | 23 ++++++++++++-----------
- block/elevator.h      |  2 +-
- block/kyber-iosched.c | 10 ++++------
- block/mq-deadline.c   | 15 ++-------------
- 7 files changed, 37 insertions(+), 48 deletions(-)
-
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 50e51047e1fe..c0c398998aa1 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -7109,9 +7109,10 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
-  * See the comments on bfq_limit_depth for the purpose of
-  * the depths set in the function. Return minimum shallow depth we'll use.
-  */
--static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
-+static void bfq_depth_updated(struct request_queue *q)
- {
--	unsigned int nr_requests = bfqd->queue->nr_requests;
-+	struct bfq_data *bfqd = q->elevator->elevator_data;
-+	unsigned int nr_requests = q->nr_requests;
- 
- 	/*
- 	 * In-word depths if no bfq_queue is being weight-raised:
-@@ -7143,21 +7144,8 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
- 	bfqd->async_depths[1][0] = max((nr_requests * 3) >> 4, 1U);
- 	/* no more than ~37% of tags for sync writes (~20% extra tags) */
- 	bfqd->async_depths[1][1] = max((nr_requests * 6) >> 4, 1U);
--}
--
--static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
--{
--	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
--	struct blk_mq_tags *tags = hctx->sched_tags;
- 
--	bfq_update_depths(bfqd, &tags->bitmap_tags);
--	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
--}
--
--static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
--{
--	bfq_depth_updated(hctx);
--	return 0;
-+	blk_mq_set_min_shallow_depth(q, 1);
- }
- 
- static void bfq_exit_queue(struct elevator_queue *e)
-@@ -7628,7 +7616,6 @@ static struct elevator_type iosched_bfq_mq = {
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
- 		.depth_updated		= bfq_depth_updated,
--		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
- 	},
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index e2ce4a28e6c9..bf7dd97422ec 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -585,6 +585,9 @@ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e,
- 			}
- 		}
- 	}
-+
-+	if (e->ops.depth_updated)
-+		e->ops.depth_updated(q);
- 	return 0;
- 
- out:
-diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-index b554e1d55950..fe83187f41db 100644
---- a/block/blk-mq-sched.h
-+++ b/block/blk-mq-sched.h
-@@ -92,4 +92,15 @@ static inline bool blk_mq_sched_needs_restart(struct blk_mq_hw_ctx *hctx)
- 	return test_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state);
- }
- 
-+static inline void blk_mq_set_min_shallow_depth(struct request_queue *q,
-+						unsigned int depth)
-+{
-+	struct blk_mq_hw_ctx *hctx;
-+	unsigned long i;
-+
-+	queue_for_each_hw_ctx(q, hctx, i)
-+		sbitmap_queue_min_shallow_depth(&hctx->sched_tags->bitmap_tags,
-+						depth);
-+}
-+
- #endif
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index b67d6c02eceb..9c68749124c6 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -4951,20 +4951,21 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
- 						      false);
- 		}
- 		if (ret)
--			break;
--		if (q->elevator && q->elevator->type->ops.depth_updated)
--			q->elevator->type->ops.depth_updated(hctx);
-+			goto out;
- 	}
--	if (!ret) {
--		q->nr_requests = nr;
--		if (blk_mq_is_shared_tags(set->flags)) {
--			if (q->elevator)
--				blk_mq_tag_update_sched_shared_tags(q);
--			else
--				blk_mq_tag_resize_shared_tags(set, nr);
--		}
-+
-+	q->nr_requests = nr;
-+	if (q->elevator && q->elevator->type->ops.depth_updated)
-+		q->elevator->type->ops.depth_updated(q);
-+
-+	if (blk_mq_is_shared_tags(set->flags)) {
-+		if (q->elevator)
-+			blk_mq_tag_update_sched_shared_tags(q);
-+		else
-+			blk_mq_tag_resize_shared_tags(set, nr);
- 	}
- 
-+out:
- 	blk_mq_unquiesce_queue(q);
- 
- 	return ret;
-diff --git a/block/elevator.h b/block/elevator.h
-index adc5c157e17e..c4d20155065e 100644
---- a/block/elevator.h
-+++ b/block/elevator.h
-@@ -37,7 +37,7 @@ struct elevator_mq_ops {
- 	void (*exit_sched)(struct elevator_queue *);
- 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
- 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
--	void (*depth_updated)(struct blk_mq_hw_ctx *);
-+	void (*depth_updated)(struct request_queue *);
- 
- 	bool (*allow_merge)(struct request_queue *, struct request *, struct bio *);
- 	bool (*bio_merge)(struct request_queue *, struct bio *, unsigned int);
-diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
-index 70cbc7b2deb4..49ae52aa20d9 100644
---- a/block/kyber-iosched.c
-+++ b/block/kyber-iosched.c
-@@ -440,13 +440,12 @@ static void kyber_ctx_queue_init(struct kyber_ctx_queue *kcq)
- 		INIT_LIST_HEAD(&kcq->rq_list[i]);
- }
- 
--static void kyber_depth_updated(struct blk_mq_hw_ctx *hctx)
-+static void kyber_depth_updated(struct request_queue *q)
- {
--	struct kyber_queue_data *kqd = hctx->queue->elevator->elevator_data;
--	struct blk_mq_tags *tags = hctx->sched_tags;
-+	struct kyber_queue_data *kqd = q->elevator->elevator_data;
- 
--	kqd->async_depth = hctx->queue->nr_requests * KYBER_ASYNC_PERCENT / 100U;
--	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, kqd->async_depth);
-+	kqd->async_depth = q->nr_requests * KYBER_ASYNC_PERCENT / 100U;
-+	blk_mq_set_min_shallow_depth(q, kqd->async_depth);
- }
- 
- static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
-@@ -493,7 +492,6 @@ static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
- 	khd->batching = 0;
- 
- 	hctx->sched_data = khd;
--	kyber_depth_updated(hctx);
- 
- 	return 0;
- 
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index b9b7cdf1d3c9..578bc79c5654 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -507,22 +507,12 @@ static void dd_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
- }
- 
- /* Called by blk_mq_update_nr_requests(). */
--static void dd_depth_updated(struct blk_mq_hw_ctx *hctx)
-+static void dd_depth_updated(struct request_queue *q)
- {
--	struct request_queue *q = hctx->queue;
- 	struct deadline_data *dd = q->elevator->elevator_data;
--	struct blk_mq_tags *tags = hctx->sched_tags;
- 
- 	dd->async_depth = q->nr_requests;
--
--	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
--}
--
--/* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
--static int dd_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
--{
--	dd_depth_updated(hctx);
--	return 0;
-+	blk_mq_set_min_shallow_depth(q, 1);
- }
- 
- static void dd_exit_sched(struct elevator_queue *e)
-@@ -1048,7 +1038,6 @@ static struct elevator_type mq_deadline = {
- 		.has_work		= dd_has_work,
- 		.init_sched		= dd_init_sched,
- 		.exit_sched		= dd_exit_sched,
--		.init_hctx		= dd_init_hctx,
- 	},
- 
- #ifdef CONFIG_BLK_DEBUG_FS
--- 
-2.39.2
-
+Thanks,
+baolu
 
