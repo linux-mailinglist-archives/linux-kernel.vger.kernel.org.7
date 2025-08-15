@@ -1,135 +1,172 @@
-Return-Path: <linux-kernel+bounces-770199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E892B27861
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:23:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B345B27864
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9308962280B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 005FBB61ECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1788F2236F7;
-	Fri, 15 Aug 2025 05:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEA4293C42;
+	Fri, 15 Aug 2025 05:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xtuuhoFu"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdBtJLVI"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFAE1E32D7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7492A38FB9;
+	Fri, 15 Aug 2025 05:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235401; cv=none; b=vF7ESvWiEK50/xW/DNoC+XNWpAiLwt04i/CI9sOyaIJEERKUbEi36+7P/k0kmwkXXwjQPgfal/eQ+pTM/g0968w1Az6XmlRkv6YXqNQwX6RZYSnpF1ihnipn4DQ7cf5HkIbR9lFBtY3duw0G51OXJui7+mGEjiDWyZCgFntCqTk=
+	t=1755235403; cv=none; b=JQ5l8yOZLGIBci6mpjg282S3OmYgDR9MpkBalJMLCeopa0Zyc8Q/51uHtJSrliYeorkyUsSwEIk4SZpBf0xcEuESNwJHkBI8SopQ40s+fo3FpLFBwq1DLRigZmWahVWyg+JECjeNzb2GsL25uHKMYStQvXNEOL2UsVhQP8zJM8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235401; c=relaxed/simple;
-	bh=V8Ueiz1xSXHXEvy644YzyjPt8VCpS+xcVARVvP0U8mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huXILgwiuwQHqszHZNQ+5ZAAKQXv9lyDw3ZK51l+H8V6uKVVxlqDDmB38VFACwMnxa6PkuXkz6408Vuy/EqecbrhJaGAzcV/JuLSYTfiDGOJnWuxgbD+ZHNMC83wLGn0MZDTTRPOgR4L0jylZFkGroUKFfqKzrht1X3eEn2j2W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xtuuhoFu; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1abf5466so9224495e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:23:19 -0700 (PDT)
+	s=arc-20240116; t=1755235403; c=relaxed/simple;
+	bh=MTFecpPPCPbUkZL8jf5i93249tFE3tGa3UD3woMkHI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fX6kjvPpteS9wxhtk3bPmQI7WnIe70toniuPiP7wXeT05IbOfDbesliRbxIpSpAdrVI3a8PDQ3qcVdgruEzhu4i9O/3pn9/BIME26RwsyShiKuiG2gQ9ExTJSw8V7FYkJHpTdOHFgUxqyEPU1wmfy3bTa3zsEPI2ti7AD4ecfwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdBtJLVI; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-333f92a69d4so12849061fa.2;
+        Thu, 14 Aug 2025 22:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755235398; x=1755840198; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aLn6FEN7TpsXc1h2u3bLPPOQktvvlCLchBVsgnE1xvM=;
-        b=xtuuhoFuSK0LVpxWBSNYcavSVu3GYNnd74SrfkD2wQjKhlAsrHl+pVUSbaCdBgtNDr
-         YKfdKFrzGBw2wmODl/ibp+ilud4hPWrTdrB49mpoQVxwo8mbgyMVFzIf46PvM19KvUsk
-         hhDWVFIv6HhHc+6V3F9S/XdGoz2dhOl9hzbuMLPQZhzbvUKeqRoADnAgDWzLImTGvex+
-         7zkoMfeCu5gbb2XUaylN3HAHGv3dRkHEguRf3ChLw0HsHKh10eS81OSD8MyX6yjl/Qpz
-         1m5OJ6Bp0idmKRfQtzV6rwlHJ+KjR3xltHghPt4Wdu1YgHAj57jkCqzoK/0YVHLl8y7n
-         9Liw==
+        d=gmail.com; s=20230601; t=1755235399; x=1755840199; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Vj1KPFsbq/RlaOOlkDBH66m6Sda7aTjtiK8NBu/QXw=;
+        b=hdBtJLVIojxn4KRnxp0+0ZPMeoTywDv2e2QjQ7CRgbEFgU4BRgRiGEMSYPLIPhG6t/
+         TiuLsGBmhl+tzyXZEHh9yofvXrDUOBtI3NWg/0odV6R8mErZMXwol/taFCcnE/9YHscN
+         RQ8zB3hgmRu7VEG+afmzzBABUra5kdqu1tOG0dyncOy5jcsFYmejKx8b0jvq5ey5LeJn
+         mRSCxsKp1ltqK3Wk44gBJcoLI9ICOJm03TBqCF5/WXfGNY/lQrOddv2ZacvTDvlC/3M2
+         uE851IbA+K45d3LIHt0TdxpwCtTdu+10gQgEUNJ+XI+4M+Ei3kLkqIlXP2u5UPAC7AJN
+         m1Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755235398; x=1755840198;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aLn6FEN7TpsXc1h2u3bLPPOQktvvlCLchBVsgnE1xvM=;
-        b=mwNpWth6md/daW4HEszhdtrYeUBc7HuwO/+LbHkfhkkcAgtU1UvonhGrzLIqantpzZ
-         oh5W7KOnOaWre1WlEIIaz8fUJtoPIMFRnCQlxQWv3gwiDWpSKndhO6i+2mUKi/sK0Rv9
-         Jz6iXh6v8yHJkCCOd25ggSciykazeLD2XW0AJwFWcAyvayLtsi1qpVsM076E7TdPWFCo
-         pFUperHvPdn0HxxQ5OI/Dfj0JtOqGqwlVoVpsj5jT+LMi/soWla2Zmj8ko87HBdgxG0O
-         rFNb2mARVwcufskhonKi4c1rpxtxxSThii3d5fj53PW5t1oYfKWVTWsp1jDdO717rv6m
-         IHJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwkkGMsgOZPHHEZ45F1vKphHbK8gkoMq6I7PzN3yJWF1HojqiR+RMlrjkJZWIeB2n2bAoI6jxwgqU4hVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9oqsbfMdECC5BiffJE33l+qt9p6W1h2CD3Vpo+D+gEhvXwHF5
-	cqXpsuqAGWJ1EEu2jk34Im88vEAOGyygrLBf4j54yrv+8G/+FmqWXDIgenIcG3muVrY=
-X-Gm-Gg: ASbGncuNAzRCdYg3eMF5tU08AYzrLIt21eLKIRXQdHMytQX8sWsSsmvwj7+50HVptZ1
-	i1nAyv1epUqcDUEFSY9RPWV04fzP4NJZEtCxAcq5oMcqqEcEa10X2D0Oqo9lr1XRW9AP1xk6rei
-	P3fAYJv+q4nbfNdnt6GXanG9EhupUeXicPzHEyE+GWQWHh9RH2m65P/Pd6vZ81mtbRaLuIFL1tL
-	EdrRfeeFof3RuNszTz7/AdH8EHHP7hagA+X5LMNX3PYCF+HN44ubEghMz7SoOvXckXtjRX4jajA
-	5OEviSYe17gi4Q+atEvNfsvJN6bOrpdGjp2/UVmyC0plxBu3GSgkQoS8iSqei2gwuqS8e7myD3O
-	EB/vSQ7I/5CjBm+Cn7+XN0TPObJxGLzwm+qCjwKzpb6oMs7ALjJOmiQ==
-X-Google-Smtp-Source: AGHT+IGFNhJOx/G+JoNt5kMjzVx46v4txqtKecbS9qJlHx4GlX6Evp2HRHELTQibK/pD8aO0fgDabg==
-X-Received: by 2002:a05:600c:6095:b0:458:6f13:aa4a with SMTP id 5b1f17b1804b1-45a1b66e4b5mr46968775e9.6.1755235398079;
-        Thu, 14 Aug 2025 22:23:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb5d089e07sm678141f8f.0.2025.08.14.22.23.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1755235399; x=1755840199;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Vj1KPFsbq/RlaOOlkDBH66m6Sda7aTjtiK8NBu/QXw=;
+        b=GUVm2TMohh7JH7NSYmOTKV11KPEUsrfZKYgkcz+40KNbukmy6xku2nwZB3lVbU9/To
+         pp5cuiSJMCiFvo5t3VJM+OaTJLk34a2I4O9lpVoLsve9ak+cwMdVV0KJQsKezn6Hy9nc
+         Vxg5AdvQYVLESwgPhRW5H9tyG8I4WmA6Ek0swYBQSp0iOY4L4F4BorYqa1O5c9oQCK1F
+         f64NXeA0u2Vt2fSYqY+g+cXlQB28PK4PVOxG1fB7N8tsrVQ/1a4Aqr/4tvLnMf377BB/
+         aB+eIEges5MloipSRyVsMhrDyIyhLffyFaBrqUnKl0IiZMTtybP1t1gcQrzRTgNiTrvH
+         OJQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXFd54HPL/WUFsJBstraI2aH6w4zzVa+oe9X+ft7+Wt7JA/uUIS1fxzbHqmKtRuPr2mSbxL3sHYWi+@vger.kernel.org, AJvYcCVcx57/OatmDWNaVC7tSJNdmMseiMaHXLK9PfaGTMW1zkXQFgKppxPfs5qhJlbtf6BFtC8EcVuKVL4cFqia@vger.kernel.org, AJvYcCXi6XFpPP56M87yoxLv8A1Zmwlp562DA2fy3EtgleZg4blTk62iomBnVmqM6sclXpZ+HNqkd6ZzBp9B@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP2v6CoiERk6Nid4TQ2dxSfEECnGvN/epfVpR7u6gkpinH+VN6
+	79Eshbz1CwQfVjnYaRPF0aHCb1m/GxChNI1Acn62c2jnn9hz/xRo/WWW
+X-Gm-Gg: ASbGnctTi+VNABt07LorZlKbJiUcr9g2JNxA/aozk1F5+FdJnARky8UxtaS6/mlvWfr
+	IuVGraYgO+SrvZhAc8Y4OvHA0IfCopcWCfwxClEVh8FnlioedCYa2+BC0AqbnOrXChr2AfbzLRu
+	bHECTCQS+zCuDV4t4K0/vB8+6pRd6INmy3v7zlvtQ1amKTaFOdN5dXdy+KJiXtjJ2QWL8bUN3DP
+	z58k0uHDREOdkHZ33J0EdkwueVBmau7HqM3oDcXOWiOp8mVs9MVgtNcoZO0o7G/MnnVlXXAqBjv
+	Sx1f5V8miDcHaEwMAvvbiW0Nmh4V66B8cpM2yXHgr51UDY8xO+BMQEKn9qjyjIA1+/iK/ywmVEJ
+	5mVW55H2X2GuKVm2znAdAeEmUOnXWgZRBhodSem8Bcz6+qtC+7VswO9cuA4beKhp2vc1XhnpB4N
+	cCxW8=
+X-Google-Smtp-Source: AGHT+IH9+pyxeVQJuWJ7xU8GiuE3ts6G80OQ7UFSgxSDjeJeDwup2vWcuq9x3CeqT9yzy8Qmtkn1Mw==
+X-Received: by 2002:a05:651c:4112:20b0:331:eb47:69fc with SMTP id 38308e7fff4ca-3340997aa36mr1417371fa.29.1755235399127;
+        Thu, 14 Aug 2025 22:23:19 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3340a43b7b2sm1353031fa.22.2025.08.14.22.23.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 14 Aug 2025 22:23:17 -0700 (PDT)
-Date: Fri, 15 Aug 2025 08:23:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Kalle Valo <kvalo@kernel.org>,
-	Aditya Kumar Singh <quic_adisi@quicinc.com>,
-	Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-	Roopni Devanathan <quic_rdevanat@quicinc.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Bert Karwatzki <spasswolf@web.de>, Jeff Chen <jeff.chen_1@nxp.con>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"John W. Linville" <linville@tuxdriver.com>,
-	Cathy Luo <cluo@marvell.com>, Xinmin Hu <huxm@marvell.com>,
-	Avinash Patil <patila@marvell.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] wifi: mwifiex: Initialize the chan_stats array to zero
-Message-ID: <aJ7EQZFT4rx2Tnj_@stanley.mountain>
-References: <20250815023055.477719-1-rongqianfeng@vivo.com>
+Message-ID: <3024c64b-48e4-4a28-bbab-b80cdaec4a9a@gmail.com>
+Date: Fri, 15 Aug 2025 08:23:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815023055.477719-1-rongqianfeng@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
+To: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sukrut Bellary <sbellary@baylibre.com>,
+ Lothar Rubusch <l.rubusch@gmail.com>
+References: <cover.1755159847.git.mazziesaccount@gmail.com>
+ <e43c184fc6aa5c768045fc772b64d812fdb06254.1755159847.git.mazziesaccount@gmail.com>
+ <014487e4-f8c7-42e6-a68a-9e984002fd46@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <014487e4-f8c7-42e6-a68a-9e984002fd46@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 10:30:50AM +0800, Qianfeng Rong wrote:
-> The adapter->chan_stats[] array is initialized in
-> mwifiex_init_channel_scan_gap() with vmalloc(), which doesn't zero out
-> memory.  The array is filled in mwifiex_update_chan_statistics()
-> and then the user can query the data in mwifiex_cfg80211_dump_survey().
+On 14/08/2025 18:01, David Lechner wrote:
+> On 8/14/25 3:35 AM, Matti Vaittinen wrote:
+>> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
+>> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
+>> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
+>> and, based on the data sheets, they seem identical from the software
+>> point-of-view.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> ---
 > 
-> There are two potential issues here.  What if the user calls
-> mwifiex_cfg80211_dump_survey() before the data has been filled in.
-> Also the mwifiex_update_chan_statistics() function doesn't necessarily
-> initialize the whole array.  Since the array was not initialized at
-> the start that could result in an information leak.
+> One small suggestion. With that:
 > 
-> Also this array is pretty small.  It's a maximum of 900 bytes so it's
-> more appropriate to use kcalloc() instead vmalloc().
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: bf35443314ac ("mwifiex: channel statistics support for mwifiex")
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
+>> ---
+>>   drivers/iio/adc/ti-adc128s052.c | 36 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>
+>> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+>> index 81153253529e..2f2ed438cf4e 100644
+>> --- a/drivers/iio/adc/ti-adc128s052.c
+>> +++ b/drivers/iio/adc/ti-adc128s052.c
+>> @@ -122,6 +122,10 @@ static const struct iio_chan_spec adc124s021_channels[] = {
+>>   	ADC128_VOLTAGE_CHANNEL(3),
+>>   };
+>>   
+>> +static const struct iio_chan_spec bd79100_channels[] = {
+> 
+> Even though the driver doesn't support it yet, there is a
+> adc121s021 [1] so would be nice to use that instead of bd79100
+> to keep the naming consistent.
 
-Thanks so much!
+I have to disagree on this one. For people who don't use the TI ADCs, 
+the TI numbering does not bring any clarity. Furthermore, I don't like 
+preparing for the support added somewhere in the future - because future 
+is uncertain. It could be this TI's variant never gets added here. If 
+this series gets merged now, then there is only one IC using this 
+channel spec - the bd79100. Naming it after unsupported TI's IC would be 
+plain confusing.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+In my opinion, structs should get either named based on the IC model 
+which is using them first - or based on the functionality. And actually, 
+when the design of the IC is not too obscure, I would prefer naming 
+based on the functionality, which should help others to re-use the 
+driver. Hence, I wouldn't object someone re-naming all these channel 
+structs based on functionality though - for example something like:
 
-regards,
-dan carpenter
+static const struct iio_chan_spec simple_adc_channels1 {}
+static const struct iio_chan_spec simple_adc_channels2 {}
+static const struct iio_chan_spec simple_adc_channels4 {}
+static const struct iio_chan_spec simple_adc_channels8 {}
+
+This which should be clear(ish) for developer no matter which of the 
+supported IC(s) were used. But if we stick with the IC based naming, 
+then we should use naming by supported IC.
+
+> 
+> [1]: https://www.ti.com/product/ADC121C021
+> 
+>> +	ADC128_VOLTAGE_CHANNEL(0),
+>> +};
+>> +
+
+Yours,
+	-- Matti
 
 
