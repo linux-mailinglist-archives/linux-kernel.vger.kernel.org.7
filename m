@@ -1,117 +1,210 @@
-Return-Path: <linux-kernel+bounces-770070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDC4B27674
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F427B27678
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CB86225DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8130B1CC7E13
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEDF2BDC35;
-	Fri, 15 Aug 2025 03:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244D29B8FE;
+	Fri, 15 Aug 2025 03:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfVgry8J"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mLEHdXck"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAD42BDC1D;
-	Fri, 15 Aug 2025 03:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E203526AF3;
+	Fri, 15 Aug 2025 03:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227038; cv=none; b=JbYas5syZd3vomj1xt1iPny0t+/cyc7jImo7bMdQmK7bDDjIbDbFVt9iVtd5Wor7HHufgsHahIfF0mN9ImgfGFHUARk6k36gdA68Bx+2v4JVnJIQbIEgfBTU7f9zi6g9NSypz1gZpYWb4yKiEJ+JV9uu+q0Zg2dxB4FcDlSNaaU=
+	t=1755227158; cv=none; b=N2xc8WblWE/PuWKq4pQSxdOk92FE45o5mFzbPravg16W+adMSkVtB2OeEKetEQYZY08LjxhNpd8rJHnGlfAJJMqEGzNiREPgIofH67y040opTuY95AIqdxSbrz66YwJFnIMghsGEIyee2b4qsPeHj5xERXB+w1uP81nG5A454uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227038; c=relaxed/simple;
-	bh=/o3GwDWqV5hH1v+H6gx3dIPP8Y+EaJ4kCVPvHOuM6+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kK/hLssyDGi0PFwo9H81GrJqkZk54coMxrH6B5JwwfqHMrrulQmsDDZCztj28nuH5CIlYe/mSn+C++J+xEXqHcgwVIcB4a1DmMQpRlzj9/CVdgfr3Vs3mAbsbNMQp+t6bHn5WOfGK1CKb1LdElu8G2ddS7D9uo0KbfpgbCFFOgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfVgry8J; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb78ead12so230727566b.1;
-        Thu, 14 Aug 2025 20:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755227035; x=1755831835; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i3d/p98av+5p9WSBdtxvzNDj+UN/95Nc/p87bn2DC6M=;
-        b=YfVgry8JCk6ultoXKaJJIThrg0w+FxIK93Gs0Aw0Prrv8F6/Z6+jrn89cfPhvSOXWb
-         P4anjcu7FAMU03DYR9Xpvl9UEBrXAUEzykdDCGsHewJdvqjJ6TLinJW5DQvhfXMKKLzt
-         Vsl/QudQ4xhQLSkos0hM6iB7ywS183oPanl5G5EOzO/svcccF1L0iZ7fHAXfNB7gOIIu
-         WKMaLSsyEKq910lmTke2z6kHK0KQpkkZ71pGh6f69c64QMmvN46PGAuZOlV7KBxpzzoU
-         /5zRWq6iZL4P4h4dB6Ia7X62Q910xOLQi3C4AF4KSyASXMfmE6NCrNHUnp/MR58/AbQp
-         PXBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755227035; x=1755831835;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i3d/p98av+5p9WSBdtxvzNDj+UN/95Nc/p87bn2DC6M=;
-        b=nUj47yeN5oRYzG7UOqJP8OhlXv+ZnnqKMthRCM/Or77NX9CXQtb7t66Ld5l8KxzTAA
-         DPiuX9xi8FOCVPwdHavFgth13y+nLKmKpZUycMeznqAFQNKaRgpZ3yEQsydIC0ZLOBr1
-         yVFhdNawjNwXSikKexHOGAybEmb4VrM/HJOFWt/dOHaanVw6GO1xMosrzEr0Xe++Nimw
-         SbgNbEWW6G04u9l30xYNozDxdfJU8kHSXeyY9KRS/YkzqKDL+KAVckgAdHkGlglx0owr
-         vXjDCc9v850QAv8I3Ehw+tRr9bpfnqGXQ7CtdID7SPzl8Rs9e8B5URUW5ACUlafWY898
-         Akig==
-X-Forwarded-Encrypted: i=1; AJvYcCVQZa9xYbLVhuYA4DnKEXykC0d/YqFNSpAkwy3x4SZ86+8aqsqrDqAKS5rPRtT1NFLgtZ9xLOHadTfnXDY=@vger.kernel.org, AJvYcCXSpYrfbJGeVGtfObSe4Cfwa2UDhBe5DhCNv9W4XuKEkiqE9rr29SAW/aLKt6odbOa9NxjHxnDwbuE0dEFIRYGa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ewFrCf2mkFA3O6fnkZtjVpbinfUssMnXRTxaAzhXIfF5bCNg
-	uhH7iXqAHzycTCPQBLdcaZCHAtCM+OtP7iBmcww4z2KdAWK+KDdcqYMb
-X-Gm-Gg: ASbGnctWOOaZCJ3qJNn9doUHEJjySE3XGdvZrnzwnJmVMi1RPrlVV2OiiHtOyLbWjgF
-	fDuIa5JgJY0gbJSo4MR2qIVX6hCVq7Yro6lXOWkDBCINWIUuLLL1Zqym8P5aXI9MCHlj+hcIpel
-	G98ZnVpaldhtnlsuXkPBoHEtaUKopZMX10r+olP5IjE8j06LA2hlFFe4GGoGMJZ9ZHCtrBlO4lr
-	wbGJpReGp04f/sTP23LcFlax2lYKomizVQBDh+TIReFwuXJq2kU/j+QeES2NGy1xbtsgzpEk41n
-	U9hOGB0/Ohu/QfYnVj9NlwtxJbkyVUiU1TrQ9nki/cvtqg2t2bm2LCryTq1ao3iSqhdQaLGdzCF
-	BmV91nO9lUnallla4ARWTIA==
-X-Google-Smtp-Source: AGHT+IF+lAZM91ReYPwNbswbCM5l5ckkM05Jg+DyCanBBq8z5Gts5vNv6UzeXlo4zmJYRRx+LGwLnQ==
-X-Received: by 2002:a17:907:3f22:b0:afa:12c6:26f with SMTP id a640c23a62f3a-afcdc1bf1dcmr37711966b.26.1755227034718;
-        Thu, 14 Aug 2025 20:03:54 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfcb2c6sm23132566b.60.2025.08.14.20.03.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Aug 2025 20:03:54 -0700 (PDT)
-Date: Fri, 15 Aug 2025 03:03:53 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] selftests/mm: mark all functions static in
- split_huge_page_test.c
-Message-ID: <20250815030353.rdppdwizz3b2btb6@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250815023915.1394655-1-ziy@nvidia.com>
- <20250815023915.1394655-3-ziy@nvidia.com>
+	s=arc-20240116; t=1755227158; c=relaxed/simple;
+	bh=b4zHBI2+pf27VFS+Vi8naqMys1qCuA8w3Yvh9ogNlgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=svjkCuGARfZArSZ7cW7f9qfy4h36DcVlgU10L4sucQNPD3bAdnmgzUljQho/+pYURsLGvaPHKwJahuOW+UbG70AEzymfpGKglmQqTIOl7xYzZ+LgEoS4fGUMbXhhB4qwfT6MgelSyTUJ1HhmH8X/9Rtl2bmbAVJ/8pXQ5gMNIjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mLEHdXck; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755227144;
+	bh=sai+f5ZM+SaZrB5rzQ6nDiet5Sd8Fwy/41BiKNKv4xY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mLEHdXckvfEXPR7XLVknALmuRSSANBA2gyOdY5AxylJgc22Gdko0NcTi73pXeXe4i
+	 TYM9dN0lU0s9VUZuCHudml7VuwQ0MkLxyRyiu21uas0thPnvZa9yj0RizgxRWSF5Wb
+	 RuZoOLLJbBpZ0rtN5t+2a+JWo5PZN/JKFA3Itt7+Vwv3kdR8vaCOjevdhRRFjyViTm
+	 1zezO27ErbxCoZT4NS+kdhTDp9U3OVvf8/TqnGaWmfiAYxvSo+3oDYsHt3q18GUc7L
+	 /i/3yQkX2XwstJSIT79L37b7bHXh1cA27zwUdAOUK45Wb6CK2ObhlTDSsY3LvYgcGt
+	 ZUdszYH/nBFng==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c36S83Vzlz4wbn;
+	Fri, 15 Aug 2025 13:05:44 +1000 (AEST)
+Date: Fri, 15 Aug 2025 13:05:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: Dongsheng Yang <dongsheng.yang@linux.dev>, Mikulas Patocka
+ <mpatocka@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Message-ID: <20250815130543.3112144e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815023915.1394655-3-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: multipart/signed; boundary="Sig_/nYzBKBF7BSRP70jifWY8Kfq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Aug 14, 2025 at 10:39:11PM -0400, Zi Yan wrote:
->All functions are only used within the file.
->
->Signed-off-by: Zi Yan <ziy@nvidia.com>
+--Sig_/nYzBKBF7BSRP70jifWY8Kfq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Hi all,
 
--- 
-Wei Yang
-Help you, Help me
+After merging the device-mapper tree, today's linux-next build (htmldocs)
+failed like this:
+
+Sphinx parallel build error:
+docutils.utils.SystemMessage: Documentation/admin-guide/device-mapper/dm-pc=
+ache.rst:27: (SEVERE/4) Title overline & underline mismatch.
+
+---------------------------------------------------------------------------=
+----
+Constructor
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Caused by commit
+
+  6fb8fbbaf147 ("dm-pcache: add persistent cache target in device-mapper")
+
+I have applied the following fix patch for today (there may be better).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 15 Aug 2025 13:01:51 +1000
+Subject: [PATCH] fix up for "dm-pcache: add persistent cache target in
+ device-mapper"
+
+Sphinx parallel build error:
+docutils.utils.SystemMessage: Documentation/admin-guide/device-mapper/dm-pc=
+ache.rst:27: (SEVERE/4) Title overline & underline mismatch.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ Documentation/admin-guide/device-mapper/dm-pcache.rst | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/Documentation/admin-guide/device-mapper/dm-pcache.rst b/Docume=
+ntation/admin-guide/device-mapper/dm-pcache.rst
+index e6433fab7bd6..550026219a6f 100644
+--- a/Documentation/admin-guide/device-mapper/dm-pcache.rst
++++ b/Documentation/admin-guide/device-mapper/dm-pcache.rst
+@@ -25,6 +25,7 @@ Quick feature summary
+ * *Log-structured write-back* that preserves backend crash-consistency
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Constructor
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -58,6 +59,7 @@ The first time a pmem device is used, dm-pcache formats i=
+t automatically
+ (super-block, cache_info, etc.).
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Status line
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -98,6 +100,7 @@ Field meanings
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Messages
+ =3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -108,6 +111,7 @@ Messages
+    dmsetup message <dev> 0 gc_percent <0-90>
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Theory of operation
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -152,6 +156,7 @@ range when it is inserted and stores it in the on-media=
+ key.  Reads
+ validate the CRC before copying to the caller.
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Failure handling
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -164,6 +169,7 @@ Failure handling
+   use-after-free keys.
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Limitations & TODO
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -173,6 +179,7 @@ Limitations & TODO
+ * Discard planned.
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ Example workflow
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -197,5 +204,6 @@ Example workflow
+    dmsetup remove pcache_sdb
+=20
+ --------------------------------------------------------------------------=
+-----
++
+ ``dm-pcache`` is under active development; feedback, bug reports and patch=
+es
+ are very welcome!
+--=20
+2.50.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nYzBKBF7BSRP70jifWY8Kfq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiepAcACgkQAVBC80lX
+0GzJyQf9GgfxFmFvN9sKgIEi9K4S8GZ8iGAclxTlsm4Rh9aqKVSvDiy3dgMqKjwP
+pzwTNyaji3FdGfzhpbiA/gdUb6wXX3cUC3ac2ECyhSTUdM/Bj4IIP/A0M1sqfv5u
+T7GmZtGNAwapTHSWJJ+48bi/PYfYJgJmLi46FpQcLmxLVsMxK7kDeomOhwacn+hV
+0EyVl6b/obBFuIjMhGjP+Z5xws1z+bCiFdcdHQDXmceclu49gFAm7MFUPINHwy79
+sF/WvuF2zmwpRrYlUdpoxyDml6xei4vkpu/mGsyvzI1rQHuL4pbFB2djyt2YHpK8
+CgLWXbE+KfJiUxxpkZd9tOmkWz39mA==
+=E7hz
+-----END PGP SIGNATURE-----
+
+--Sig_/nYzBKBF7BSRP70jifWY8Kfq--
 
