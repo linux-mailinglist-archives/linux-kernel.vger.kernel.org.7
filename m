@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-770248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FC8B278F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8EB278F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593643B740F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61FD36003C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E99F21FF58;
-	Fri, 15 Aug 2025 06:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A65721CC4B;
+	Fri, 15 Aug 2025 06:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OirAeXRJ"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hD/UfmUT"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2265A31985B;
-	Fri, 15 Aug 2025 06:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DAA31984A;
+	Fri, 15 Aug 2025 06:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755238636; cv=none; b=WvWbZWH2Gzgz5Ny2+BNsn2UFlufobTHyUe6OHuAO+a5C5+ovdLDraQXdcuqm38V1j8K8Nd7ta0gIhl3L3IK+O2AIjLp6LQyTBakx7UPHRulLaJlqULre4Ihxttn7EKzXEUe7gXcN+nDhp4nUCoYzpDMeAf1IBvfNlWlhif7saXE=
+	t=1755238683; cv=none; b=ilmRHzugIget8elsI/3537MIaOXUb0rcPpuoAg8PWWVUS2+NgVTde/avO5Nw+DsOtAJ+Vl+pRQbzcxFoQeuf5dYTbihG/lfrlzjLciL/AkoyUIWobxTE2ZMI1dJbxKRy5R1VqohRAdLGHR1ECmBn7Bue2y4Fr9YhIFu6EUFKoow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755238636; c=relaxed/simple;
-	bh=/KDEoxlZvjb0Z6uihzeAzpeqr0RhkGZsDZFZiSKbGcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5wbuw6hIO67W6RFIIsf4aQzoXn1hwT1zZKlzz1FV4GORaBCebs+oHPABzZRI2iPhB0SCF+5W9qJ4CiEZLXqd4wuLv2z0ITlOvdCD+YsKLOQVgfm0Y/6zZyP94WUJsV72fUg5hkeqLGXwUnrTtFWhSRVouJTVU9Zxc1Nl3PZo+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OirAeXRJ; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1755238683; c=relaxed/simple;
+	bh=or1gFPD0V4lwe/vE2EB4NaLKRa35Pt7cFPpKpGb7EhY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LpWB3+swWwDxNxAi7GZ1hxrDJblHT0F/g3pHs+7sSQJ9EU9zpSNuB8EXiiYbVZRxbMQVkCMbi0V2wiaixIDIw4MZ70c2KXfQ7wwfN5WgJ1to3FTo1u3lNuUjuhAv35xbS7t+2poXIhy5iShkzlabIJ3F2oVIuEaAR4qFi+0esCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hD/UfmUT; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326789e06so1527006a91.1;
-        Thu, 14 Aug 2025 23:17:14 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24457f53d2eso20021085ad.0;
+        Thu, 14 Aug 2025 23:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755238634; x=1755843434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGmhR3eE/KutZ5tTndwU0D7V2yrLWDVr0mRfiGse/PY=;
-        b=OirAeXRJOAmySlXhv0fyxr3CNZtYz3E2/eKL6YmUy7DooNguRDSRAEp1OWqyIBWZyQ
-         aQ1w7ntzJ7yVvQ1B+unmzFCB+d5/2K/ptXMLO0z6fLregbaMp6Z63HKpzYLbxnqSmMwd
-         EwkK4SvGqMuZLkzYrCXqDGn1wmVt0tz1CB9LdBd032EUc2HxLdbbR8GHPe96S1dN6fhs
-         DtNYPFB5NP0IJOJ7KbOny6tMOj9mo6bl9tnpbf9vCOhjq2rAI0L4/+bvsL9N0e3nnyTf
-         IiNzsr9f8JGpDJRmmy6Zd+9ptwHzS0IhhZnf4IRrZzC/0HkJ/zRx/v9saenMk+fFTO4b
-         HHVQ==
+        d=gmail.com; s=20230601; t=1755238682; x=1755843482; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OZvYx3j5DdHLNXjIS+xh8bbsRGB+lm+tb1R0Is/CiNg=;
+        b=hD/UfmUToiu51dWOgO8zztn/v/cs8uSRKZDMsEghJCiJRabFLQnGGCzxDqoxQP9hMi
+         DVUA/6iVEcuJZ14J8OYeR/Na2z/1N39Cw8zwbv+w/RK7JTXRzNuRaeKnSTJRljOs1cUB
+         Cf+pjvIM/fNzla8D04GX0Orx6oUIQjuTnQhmvDVd66F8m786SUZMi55r1E2O/ilopeSi
+         B6cMc5CnRJXoZ0M7Ew/p9QmcZskf7xMPkQ42eW+sCODERZwZuVyV0voO1czuwED5NdXm
+         inMYEx96YvZ0elr0QpsW8bVBK5f6GxPRY/zqMGXcdtswILORlgSmUzhbErJX6u6TVw6m
+         FPrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755238634; x=1755843434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGmhR3eE/KutZ5tTndwU0D7V2yrLWDVr0mRfiGse/PY=;
-        b=IG1u0E6QTbMaeGTIs8hy9Gb2ei/TcsNItN5ZXJuhMu/bjloztg07X3LrxLolBKRGhI
-         zqT1ajbAn2EKYt9Tr7MoQckh2jiqud8Stb01NOARAoAJipyppy9RXs1dCU+TtAw4jJjO
-         N3bvDs7alux6xvvcXteTbfHLeWIny+KuB2Budh1df6jjtR2lpjlfK5VCiDQyN2xTzZ0a
-         RKpFrEM7KwAynZRBoIP5wke+R1/B2YuKyc9kyCoKnapT5caZRkAIn29U5UAM5GhZfLPm
-         MBXlpqmHsZgLm0OiWUMx78pAqTTgI7vwb2gVLVuOlnkn0d4uSOIkvGmxRpIVt2X6c1Gf
-         vvHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLXy74dz1bJ6ks0smYLrJZKZstER6Sed50Av/Vukk0dhxHe0q5NORrIW91IbeV4LZDQT6CJT1j8yA14r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRPbWYj+fmBhYYCC75wldBqpQhnO6vsMPkEQxGftiNY7NAILXO
-	I3AfRQ1jGS619R6RnkVuca2w12dPq0yyRSmAPnVB2pNlspXztfiKryHH
-X-Gm-Gg: ASbGnctwN+vbIr2mDib8w++3IQW7ZtuPiUAj7ehP1wk6hTzVZzzVOP8YyJHvhxpSrR8
-	kV4nda8WyT4FnQaFSgMt5/jbd1lcBQRcgTnVkMyFQzGYRBLrLaSQiOrids1nN8ZuFP9snTyi5VM
-	NyIkJBs1Ps7x3uQr2tNk17vHgqjHgFiuVt373jHG9+aVWhidjeR2oprd63cVpKdExfoSLi8rTeP
-	5/57Vq8cPvs87K5jpJ0cujcmpSd/kEBd40CLHD91uAw0E6Q1mYzbFmvV1qo/62ptRHTg+P2ldr5
-	Ono2QlKuDoHtQSHM/uj60H31y8cvKulSL1aV4USFt6j2jl0kEYZeXLim2epBL9lKc98poKijwjO
-	SuglIjq2TL6gxoL8Q+aLYjQ==
-X-Google-Smtp-Source: AGHT+IF70Lheb7c+uHnvLNkSjmCuMaFdEeN3otVkmRbjbDz4XiK8jFRLMEOf5LsZb4VaMWosSsczoA==
-X-Received: by 2002:a17:90b:134f:b0:311:ed2:b758 with SMTP id 98e67ed59e1d1-32341ea22a7mr1402947a91.3.1755238634028;
-        Thu, 14 Aug 2025 23:17:14 -0700 (PDT)
-Received: from localhost ([2001:250:5800:1000::968a])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b472d5a6df6sm433532a12.1.2025.08.14.23.17.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 23:17:13 -0700 (PDT)
-Date: Fri, 15 Aug 2025 14:17:10 +0800
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Han Gao <rabenda.cn@gmail.com>
-Subject: Re: [PATCH 4/4] riscv: dts: sophgo: Enable SPI NOR node for
- SG2042_EVB_V2
-Message-ID: <aJ7Q5tQ3oa8DBpfO@calculate>
-References: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
- <20250813-sfg-spidts-v1-4-99b7e2be89d9@gmail.com>
- <MAUPR01MB11072CB6BD1EC94B752AA1F8BFE34A@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
+        d=1e100.net; s=20230601; t=1755238682; x=1755843482;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OZvYx3j5DdHLNXjIS+xh8bbsRGB+lm+tb1R0Is/CiNg=;
+        b=JHj+yytEEArcop9N+CXnmKEkFnCltClcN/+4zYBOmH34Ivf86v4CjZzMJgLC350a7A
+         JFNnX/oe2p8TZieI/SgAauHSR/rupmbjrSq4vvfwDspW8/fI7h81XoiYpqrsQWiBMcuc
+         AOjQRUFqz7EcCJkTJQ93oUfR60dqiyAvJm6GR8yHrUobzgOvYnnXh1ix9sET5Q6FuMSj
+         G30Lz5DkBY+Zc5ebxXhy2djZ4fFyPrFzn48S1IZ1Gv3cfn+58BYCxDGle5TsZMoEQr66
+         4SozFvqzK0DzyZkw418QFvXANE1v1V7A+lciTTXMOouBBXx130YR10I5cgvSPCa9zgoT
+         kUYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXk875PgCUZSq7tBZqRP5U2fT/j7hsjdqQQLYSG07gfVNNP9puuiLJX08vxagXNharv17tpMkA1H4/N8IM/HqyftC7wjg==@vger.kernel.org, AJvYcCXnT6Iu6ATyHb+G9JQnX9PlNdl81MvhnBZYQ+HxYtAGtOZlnuFmTyld1NyKJvY5YE9iEj77E+uSpIUYhoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk6V0SkSy7Pp4nJzwzYo6EaNv2ycc2CoqKiLvg6Xl6bTV2XRIn
+	txGkMLLB9PCe0QPNZ2Xq2kHe06ZZ+HIBZ1k5qCH/NNbNJk7+TRAVlYE+NgnrIIYL
+X-Gm-Gg: ASbGncvAnWwnQmrUKiHg1Zle4mF27Nr+TSkHBdnpXgsHtZsvCSzaHakDQBoVgKufXO6
+	0CUSb6KmRwfWbcW0HhWiV8ufJDbmr1pfwQNDeqCpEYKdt9W/VgPogIz0P+yG4mMq+Su1lRq0mKt
+	itfpBzWrkNDLT3YjsTM9YilTwVFZf2+aKxioYWPQSGOz0UKdsrDUxP6KoeA2Dvx9bZhZX1cVI/F
+	t1xBWCtJilAYCS5+WFDqbM+hKI+LcCEZ3Tju5eSEMYLyXMP9/79d81vWbktPMW6tB5GvTPbm+4s
+	jwCKqgNs8+9e03g/Ie+zAA1BpjAGTXipyxkiuHU9HP33M+hOjJ50p0tq1qoqBLCDi6cYYBn8ucC
+	YyjHyUVnnGdrDV41HYGVfL29vXnU0OKxIyueU3p4dXStr86I=
+X-Google-Smtp-Source: AGHT+IH+ACi0IWROk9RO76JWIO72hBL92ShYEv9kD+tQWA+Qk/Yhp1y2PpWWxDxD++a8fYF/kyB1ng==
+X-Received: by 2002:a17:903:384b:b0:240:678c:d2b7 with SMTP id d9443c01a7336-2446d72d0c9mr15244495ad.15.1755238681774;
+        Thu, 14 Aug 2025 23:18:01 -0700 (PDT)
+Received: from [192.168.0.195] ([111.94.128.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53a2bbsm6572405ad.110.2025.08.14.23.17.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 23:18:01 -0700 (PDT)
+Message-ID: <81e92b2d-825d-4455-9042-474c66c91120@gmail.com>
+Date: Fri, 15 Aug 2025 13:17:57 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <MAUPR01MB11072CB6BD1EC94B752AA1F8BFE34A@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+To: w_armin@gmx.de
+Cc: basak.sb2006@gmail.com, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com, jlee@suse.com, kuurtb@gmail.com,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ rayanmargham4@gmail.com
+References: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
+Subject: Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control
+ support
+Content-Language: en-US
+From: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
+In-Reply-To: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 11:56:22AM +0800, Chen Wang wrote:
-> 
-> On 8/13/2025 4:33 PM, Zixian Zeng wrote:
-> > Enable SPI NOR node for SG2042_EVB_V2 device tree
-> >
-> > Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-> > Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
-> > ---
-> >   arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts | 12 ++++++++++++
-> >   1 file changed, 12 insertions(+)
-> >
-> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-> > index 46980e41b886ce17dacce791fa5f2cef14cfa214..7001d8ffdc3e04c5a5cd5da85a4fb1c0351eb9a5 100644
-> > --- a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-> > +++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-> > @@ -226,6 +226,18 @@ &sd {
-> >   	status = "okay";
-> >   };
-> >   
-> > +&spifmc1 {
-> > +	status = "okay";
-> > +
-> > +	flash@0 {
-> > +		compatible = "jedec,spi-nor";
-> > +		reg = <0>;
-> > +		spi-max-frequency = <100000000>;
-> > +		spi-tx-bus-width = <4>;
-> > +		spi-rx-bus-width = <4>;
-> > +	};
-> > +};
-> > +
-> 
-> Only spifmc1 on EVB_V2? What about spifmc0?
-> 
-Yes, EVB_V2 has only one spifmc1.
-I have checked schematics which can be opened by OrCAD:
-https://github.com/sophgo/sophgo-hardware/blob/master/SG2042/SG2042-x4-EVB/sch/SG2042_EVB_V2_20230302A_BOM.DSN
-https://github.com/sophgo/sophgo-hardware/blob/master/SG2042/SG2042-x8-EVB/SG2042_EVB_V11_20220902_BOM.DSN
+> > This experimental patch series aims to add fan control support to the > acer-wmi driver. The patches are compile-tested only and need to be 
+> > tested on real hardware to verify that they actually work. > > I 
+> CCed two users who requested support for this feature. I would be > 
+> very happy if both of you could test those patches and report back. > 
+> > I am ready to help you both with compiling a custom linux kernel for 
+> > testing this series.
+> Any updates from the two people with Acer hardware?
+>
+> Thanks,
+> Armin Wolf
 
-For your convenience, I have exported them to PDF:
-https://github.com/sycamoremoon/linux-riscv/tree/schematic
-> Otherwise:
-> 
-> Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+Hello, I've tried your patch on my Predator Helios Neo 16 (PHN16-72)
+using quirks from PH16-72 and it looks like fan control works just fine.
+On other note, can you please add PHN16-72 to the quirk table?
+if you need anything to test please do notify.
 
-Thanks for your reviewing.
+Thanks,
+Fa-Iz Faadhillah Ibrahim
 
-Best Regards,
-Zixian
+>
+> > Changes since v2: > - remove duplicate include and replace hwmon_pwm_mode with > 
+> hwmon_pwm_enable in second patch > > Armin Wolf (3): > platform/x86: 
+> acer-wmi: Fix setting of fan behavior > platform/x86: acer-wmi: Add 
+> fan control support > platform/x86: acer-wmi: Enable fan control for 
+> PH16-72 and PT14-51 > > drivers/platform/x86/acer-wmi.c | 298 
+> +++++++++++++++++++++++++++++--- > 1 file changed, 273 insertions(+), 
+> 25 deletions(-) > > -- > 2.39.5 > >
+> ------------------------------------------------------------------------
+
 
