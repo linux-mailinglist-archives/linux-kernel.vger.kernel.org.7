@@ -1,151 +1,112 @@
-Return-Path: <linux-kernel+bounces-771548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314D8B288A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4AEB288A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7605A5ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D588AA4B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048582D0C81;
-	Fri, 15 Aug 2025 23:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1693E261581;
+	Fri, 15 Aug 2025 23:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nq6tGWlC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T0CNXYot"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819282D063C;
-	Fri, 15 Aug 2025 23:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBF420B800
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755299552; cv=none; b=icHM+Sqa+G8uE+0NNgFpfKRXkymDmvisfzxyVTdNWJyLhqb1IEGGCASwi77VFaDwKIaaAcUFks1AQB2HX1CPf/b2Pd2DFY/Prq1/7saAB22I/q2gNPuTLG+xBppbM4bViksX8QYqtxaIu377xTozvohKvG9uyUp1jJAD7AVu4qU=
+	t=1755299595; cv=none; b=cx6RbHtthrYF0oGhkBcCoSogR6CpTSuM8H7Kvb4B+OCiZhvMIjHaP/HoOaDrcSnyZU0nHSQ6yndNRJsRWkUkNZPCXsBs44hfq1iaKWauEuneot8QQFdPPolmvFiWFcGTkjmvVVpcVdXOdR6D8bs1lT85QHnVi5OHry7m2ADf93Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755299552; c=relaxed/simple;
-	bh=RRuR3OFQf2n2yx2B3a0IxNF6FGX2OPl0/6D+nmHh0Ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8cQvmtKqcKPmRIHDvQ5B9RSqliy3ynboCEAOfi7m6vNfE+PaFztLLjtub2U+0x176aI1Ek1wtEbWL2Xx9+QI8DYaZv2bo7RuKDcGhkldsvgP0/DPlF1PIoYE42i4Ac6MCPnXfoYxy5Vfk+O1ARu3dzIlvEkfBz3upz+0wW5DhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nq6tGWlC; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755299550; x=1786835550;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RRuR3OFQf2n2yx2B3a0IxNF6FGX2OPl0/6D+nmHh0Ho=;
-  b=nq6tGWlC81Gcw5AdDIVFAAS/QEcRb50f6HG1uEjEwqg79wGLdbAbNuTd
-   EkmISxnx/j6ATPwq9VxhTPK41NNJV9c3m4zvEOS++cqvolZickYRS5Hw9
-   zrfiMyOFgp3G7ayTQnOt1fpsp2cGTj0/XPBZc2/9gUki8grYrjlCHetY5
-   ULva/53et0UniSpXybXsVhtfuaSPKxDY4Vw/e1OhC+ahQrJJv7ThZl2uz
-   E31P1Aoy7EeI/NgckExU8gybWAf+KB++psnq23E5XVaukQAhFPi572Fus
-   b9RscjJz+4rVNaKvZD9oLnJ4fAGA8B33bxHGa7O9FkW3efHtAWdKH6RHZ
-   g==;
-X-CSE-ConnectionGUID: e/XSz46jSQuMtyGNCU/y5Q==
-X-CSE-MsgGUID: IbxZEfoFTO28eJOldTXnug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57483605"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57483605"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 16:12:30 -0700
-X-CSE-ConnectionGUID: KXLnnIUuQ7GWWcMvzSHD1Q==
-X-CSE-MsgGUID: E2jR7i5FTrqgIAiI4pxzEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166336943"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 16:12:25 -0700
-Message-ID: <9966a586-8ad2-4724-a37b-298ac0257985@intel.com>
-Date: Fri, 15 Aug 2025 16:12:20 -0700
+	s=arc-20240116; t=1755299595; c=relaxed/simple;
+	bh=Bv2mT6y6eipGmMPrkdcDjuhqZ6EWUt74KE/ntV3qnDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FzDp6TrMnZsvH7WFNB9SywxR05LD0iT1gre67g5uMDGYtHwCmmrO3MSnhkboNeAxQsprNNMVGtOd9RqiRWrdL68KPfoP81shOmQZgtXsNTj38yngYcVkoSiFqs/dOTvN3aRymD+5ucg7sy8NvlAh+RH1W7LtJpR00Q9D8y2bs20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T0CNXYot; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 15 Aug 2025 16:13:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755299589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxM4nv7eHd9SuH5ros1aBkbmXIdblLOqlo44TIn88VI=;
+	b=T0CNXYoth9mLqTfFPM/Rn13mKGw2USAyatawX6LT3DYDqjfVxRg7exGcvzKhNTH0lOq9Vn
+	+aamORjVx3GYUlKkfhq/FZ2okstmDVIDDb/X7QH6YmrRGOejvRByAehLmO/SjOGFBULwco
+	0onk0x04unL9ucdTRJp0qNiZiPGLYmM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Axel Rasmussen <axelrasmussen@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: mark MGLRU as maintained
+Message-ID: <7a46f7jwlwgkbdjvbxjaalrrdamgtxkptmytllhkr2qv4ovbge@nbugfzavwh5w>
+References: <20250815215914.3671925-1-axelrasmussen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
- <CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
- <20250730121209.303202-6-s.neeraj@samsung.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815215914.3671925-1-axelrasmussen@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 7/30/25 5:11 AM, Neeraj Kumar wrote:
-<snip>
-
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index 651847f1bbf9..15d94e3937f0 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-> @@ -322,6 +322,26 @@ static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
->  		export_uuid(ns_label->cxl.region_uuid, uuid);
->  }
+On Fri, Aug 15, 2025 at 02:59:14PM -0700, Axel Rasmussen wrote:
+> The three folks being added here are actively working on MGLRU within
+> Google, so we can review patches for this feature and plan to contribute
+> some improvements / extensions to it on an ongoing basis.
+> 
+> With three of us we may have some hope filling Yu Zhao's shoes, since he
+> has moved on to other projects these days.
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  MAINTAINERS | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index daf520a13bdf..8e987f2668cd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16058,6 +16058,23 @@ F:	mm/mempolicy.c
+>  F:	mm/migrate.c
+>  F:	mm/migrate_device.c
 >  
-> +static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
-> +				  const uuid_t *uuid)
-> +{
-> +	uuid_t tmp;
-> +
-> +	import_uuid(&tmp, rg_label->uuid);
-> +	return uuid_equal(&tmp, uuid);
+> +MEMORY MANAGEMENT - MGLRU (MULTI-GEN LRU)
 
-Why the extra copy via import_uuid() rather than directly compare rg_labe->uuid vs the uuid param?
+Why not just add yourselves (and the missing files) to the existing
+reclaim section? Eventually we want a single reclaim solution, so why
+not start with single reviewer section?
 
-DJ
-
-> +}
+> +M:	Andrew Morton <akpm@linux-foundation.org>
+> +M:	Axel Rasmussen <axelrasmussen@google.com>
+> +M:	Yuanchu Xie <yuanchu@google.com>
+> +R:	Wei Xu <weixugc@google.com>
+> +L:	linux-mm@kvack.org
+> +S:	Maintained
+> +W:	http://www.linux-mm.org
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> +F:	Documentation/admin-guide/mm/multigen_lru.rst
+> +F:	Documentation/mm/multigen_lru.rst
+> +F:	include/linux/mm_inline.h
+> +F:	include/linux/mmzone.h
+> +F:	mm/swap.c
+> +F:	mm/vmscan.c
+> +F:	mm/workingset.c
 > +
-> +static inline u64 rgl_get_checksum(struct cxl_region_label *rg_label)
-> +{
-> +	return __le64_to_cpu(rg_label->checksum);
-> +}
-> +
-> +static inline void rgl_set_checksum(struct cxl_region_label *rg_label,
-> +				    u64 checksum)
-> +{
-> +	rg_label->checksum = __cpu_to_le64(checksum);
-> +}
-> +
->  bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
->  			    struct nd_namespace_label *nd_label, guid_t *guid);
->  enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index 0a55900842c8..b06bd45373f4 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -115,6 +115,13 @@ struct nd_interleave_set {
->  	u64 altcookie;
->  
->  	guid_t type_guid;
-> +
-> +	/* v2.1 region label info */
-> +	uuid_t uuid;
-> +	int interleave_ways;
-> +	int interleave_granularity;
-> +	struct resource *res;
-> +	int nr_targets;
->  };
->  
->  struct nd_mapping_desc {
-> @@ -302,6 +309,7 @@ int nvdimm_has_flush(struct nd_region *nd_region);
->  int nvdimm_has_cache(struct nd_region *nd_region);
->  int nvdimm_in_overwrite(struct nvdimm *nvdimm);
->  bool is_nvdimm_sync(struct nd_region *nd_region);
-> +int nd_region_label_update(struct nd_region *nd_region);
->  
->  static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
->  		unsigned int buf_len, int *cmd_rc)
-
+>  MEMORY MANAGEMENT - MISC
+>  M:	Andrew Morton <akpm@linux-foundation.org>
+>  M:	David Hildenbrand <david@redhat.com>
+> -- 
+> 2.51.0.rc1.163.g2494970778-goog
+> 
 
