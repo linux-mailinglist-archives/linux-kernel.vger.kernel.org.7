@@ -1,126 +1,78 @@
-Return-Path: <linux-kernel+bounces-770986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42487B28144
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:08:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD495B2813E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86AFA1D01B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DF97B60C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFF11C860E;
-	Fri, 15 Aug 2025 14:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19431BD9F0;
+	Fri, 15 Aug 2025 14:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FORdYRj+"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCfdTwFP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1031A262D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573951A3A80;
 	Fri, 15 Aug 2025 14:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755266782; cv=none; b=bGJ7sTZSAiV258uqyHYvP3CJeuA8Y8AZatSD11AekovylMPEa2RgxkCyv2a222JK3piNyVZq//sx4LTnvJ/BhEKkATiz2GyFitCSBR+gJSmXylZpz8hCIDulasf+dSm9oDhuq6ny4p8If1BbaHQ4VfcpaMc14Mo/iTJKHZsHxoI=
+	t=1755266781; cv=none; b=Mj6MMZgNmlFmdsD7EVQIF/C2hYK7etHa9Dm1w4xLvv3tNq+W96pPktsL76JwqJd6YGRrlHuRiYzstMcKzieScDxU+9nRxXjR2LX+U6SE+SnXxp55TSfDjeptaNl44HXaS3sFuE7F0k3gLcZuRVZVu8nCXcb1NyDA8DaP7AMpwkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755266782; c=relaxed/simple;
-	bh=CqiTid4pNN3W+ULrEQG68THPXuGhAkKq4wAnz7BZ/Ao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bg1+5jYybr1XQsWrVnBr3Ec2CYUzR8PchwGzx7LzAOxWiA1sxBbmAxeO2mzr4m50ZaiFd90itiGWwfTaLelktXIhEfuSM1PQMZ+I+VLxxQGo02Ag1XTuPp+22gtzpUkPlG9zJ/xau7efyfznHkxYC/SsU0q9fZVXwVMLv1sCsM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FORdYRj+; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2e618a98so1577901b3a.0;
-        Fri, 15 Aug 2025 07:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755266779; x=1755871579; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqiTid4pNN3W+ULrEQG68THPXuGhAkKq4wAnz7BZ/Ao=;
-        b=FORdYRj+zeNquOoZVrJfUazKmwVZYFAiTiqVEcCr0lbNwE0d4UvrKGuGvRb0UR4G/C
-         g9TVHWDc12BhQgqSg5BYUclt52Iw0/Oatkyze2OEOCgV1Yv+S7rH3nHdCYeWkFjcm+IW
-         fdAUDJIz60XX1N1jCepVlvZAD0SgLUacYaNSwtlDlv/l6vk0seB0mS43ojCMyULDKODN
-         Rvo3L2GwPoFxZm+tKvpVXOtKktSJ2cFOwnZmJVURUJ79DXdOBFITJMF9LDRwHSLldKB7
-         kled8ZjCVS7opzAu2/c3a8ZzHqYKHqfoAgyK6xD6iW7XhMt9woCMkqbemlUQD9nuBw+a
-         7qTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755266779; x=1755871579;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CqiTid4pNN3W+ULrEQG68THPXuGhAkKq4wAnz7BZ/Ao=;
-        b=dHghgBd+iE4csHUzXPLLkTDsEzjz6eCflmLtFaqd0tfvUyNbPmtGz1cUt2G488cZGH
-         s3phMkkFpCr9OCuglVGBjKy5f0ZVSCK6ovJOxBd2dZu64dNp/Y8S+uoB8fl8WXvXM+su
-         uOZcEkIt4U7M4LXThQ2QjSPCDOxLhCtdynmMOhISOab7uZfHrp75tYdAijNFfcjhJgP2
-         Zn6hrsz9BZLZLrg6K9+xPBc5Ce889BqZl59CU7krYTZqdDRR6GLw5tt4PIq/xgYcIiSx
-         oSLG70VvoWsob7YjCzcjVZMERrFlwig2IIe9b4idkU8s9ktG5VGnZRPvUhCb86or0u4Z
-         G5Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDu6DEFBq5Ik2mTFIyriQzGHDBm8gkNXvsSmsqahmmSB1DWqRX9zWeQS3Epv4f+kb1UDAzs7tTUZX1GdjC@vger.kernel.org, AJvYcCXSmlpE3TrUB0ywrhZomc1zJsZQwv6Yn2tSfTZNOndKaqFYQLk+jS1/c89Zhdww6oot33LiYMZdoHU=@vger.kernel.org, AJvYcCXqLeTQW+earo2+b7c4cZE0QMKuzCda8FMkDjOFBAXd36snNCXxp2+bIxl1K5TcW/0Y3NY0DiVeNzMZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYTkPVGTzZi9QIg15hMoHwyD5fbzMCUBmlfGzjKPJp0NOLofSJ
-	JHYusegDIyOrGmQYwZR8GohSWb6cqJy/A9CqCIPDVQBlj2CTXRWn6XXm
-X-Gm-Gg: ASbGncveQqd1+ldPk1we36Rdo740l4nwlUV4q3WaIJfMmcRr+6tVoaC6UaczZaGYlIH
-	ptfBbJOYj0OCRe0OsHUv+da8slFOJCVKzDmZ2EevawGjlq+pp0FB6ID3HXnsIO26uJfnCzD7/Qm
-	peU0DcXch3szOXhdsJQ8MvA3a7+BZmHE690afGAmj3OGOzrmQt2n500/buUNjMCrFmpjqzdBxQO
-	1Xlufz+gPZxr1RABLEtFhYU573CD0j8OWqIFQqcvAJlnxiw9asQkasGIhoTXUlJo3yeDsqX0tlw
-	kTPUltwgedKSMHU/McFmYZgW9d0cewsvV0zqw00dMxN8HudhB0UIyUt8a5JdylIVXUpreQxOhMp
-	jZaSduh1HCok4HRpoW7TdbA==
-X-Google-Smtp-Source: AGHT+IGUBfSwcmRDZE+tanvnB1WTuwEMQwR/R7Q1oiogmNFE8jXio6mf05OIZBi4bGXXGiyvENDiQQ==
-X-Received: by 2002:a17:902:d603:b0:240:99f7:6c10 with SMTP id d9443c01a7336-2446d5afb9fmr40542235ad.1.1755266778612;
-        Fri, 15 Aug 2025 07:06:18 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5775eesm14870765ad.150.2025.08.15.07.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 07:06:16 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 4065241D3396; Fri, 15 Aug 2025 21:06:11 +0700 (WIB)
-Date: Fri, 15 Aug 2025 21:06:10 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Erick Setubal Bacurau <erick.setubal@gmx.de>, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	corbet@lwn.net, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org
-Subject: Re: [PATCH] docs: iio: bno055: Correct wording in driver
- documentation
-Message-ID: <aJ8-0gzc_XJ_1YoI@archie.me>
-References: <20250815070001.55185-1-erick.setubal@gmx.de>
+	s=arc-20240116; t=1755266781; c=relaxed/simple;
+	bh=mz8BcQAidgZTzJpEETP27hLPaHrcJ0D2ABt3tlYl4Ow=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GG9qgz/O8ho8AiguNLkdgReQ3FIU91WSUWk7WtowHhGzbBSlbNxgC08VeOOL7BFzYAySyrC212Rk98wv4FGduZ26yMMctvhvcVx1MYYeRNowu1evaRFglfMwYDaxF9WcY1KZ9lnBMbKThSxKDhBQI6kVygbQhq0sBBJWRlYNEgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCfdTwFP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2942C4CEF0;
+	Fri, 15 Aug 2025 14:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755266779;
+	bh=mz8BcQAidgZTzJpEETP27hLPaHrcJ0D2ABt3tlYl4Ow=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=PCfdTwFPET0NWdOR0+zktiuyP+1wKtJ9zWfqOwtt4xIYZLq/XbtiGx6Nhvi5Fd9tX
+	 36mPJG5ao14qyc8t4XKf+UaQBLBdBf/jO1CG596Kr4WQwUi2dXt/A16T67ZeNQr3OC
+	 6xVYr6yCrTxhQXNUurYkshEsY3EjHS6HQHOWnjr+azrbTlwYtSxcm+SOcUFfsEDmDl
+	 oYjmgEwneV3GZhP4HhoxvXpU4Qtq/5cTDgyOxSAqX5cgknARdBT8taF43WFFCUOX2+
+	 z2fAJ93yiMsRtFEMzr6A+WYaPxafGGKQw2xq4+g1EyrjS5AkrctvqJpDdT9pV5bR8E
+	 P6lfFfTBBhgzA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3415C39D0C3D;
+	Fri, 15 Aug 2025 14:06:32 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mtRBY-kVFHxA+w2mgvyG_f5cnbtMqxDgAQjDeecC1jyKQ@mail.gmail.com>
+References: <CAH2r5mtRBY-kVFHxA+w2mgvyG_f5cnbtMqxDgAQjDeecC1jyKQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mtRBY-kVFHxA+w2mgvyG_f5cnbtMqxDgAQjDeecC1jyKQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc1-smb3-client-fixes
+X-PR-Tracked-Commit-Id: e19d8dd694d261ac26adb2a26121a37c107c81ad
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 55ddcff7358aa7cb20ff71fd2ec3131133b1fc3d
+Message-Id: <175526679088.1083334.10659189674454812210.pr-tracker-bot@kernel.org>
+Date: Fri, 15 Aug 2025 14:06:30 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ry8EOtcKYwNErLhj"
-Content-Disposition: inline
-In-Reply-To: <20250815070001.55185-1-erick.setubal@gmx.de>
 
+The pull request you sent on Thu, 14 Aug 2025 22:06:13 -0500:
 
---Ry8EOtcKYwNErLhj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc1-smb3-client-fixes
 
-On Fri, Aug 15, 2025 at 09:00:01AM +0200, Erick Setubal Bacurau wrote:
-> Fix typos and improve wording in the bno055 driver documentation.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/55ddcff7358aa7cb20ff71fd2ec3131133b1fc3d
 
-Looks good, thanks!
+Thank you!
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---Ry8EOtcKYwNErLhj
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaJ8+zgAKCRD2uYlJVVFO
-o019AP97cIwuMcKDt6izMysmB8ee/SFzqwZFPzLqn6tJrdv3GQEA8v3mycRowGP3
-cREnsqSBEGqTzOCBb5OAPCqsX39tFQI=
-=NcVQ
------END PGP SIGNATURE-----
-
---Ry8EOtcKYwNErLhj--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
