@@ -1,255 +1,177 @@
-Return-Path: <linux-kernel+bounces-770167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE70DB277E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BF2B277EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029341CC5E50
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277CFA286AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983C221B8F8;
-	Fri, 15 Aug 2025 04:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CA62356D2;
+	Fri, 15 Aug 2025 05:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ek+k+Mdq"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010020.outbound.protection.outlook.com [52.101.84.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hndl5ASm"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00881A0BD6
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755233554; cv=fail; b=fB1yFPJImPOGW2xRqOhAsfe83aCR6ZdKfjQf57bu8aljmlQIvkHakRErpG567sSGDe1bHuwL8G+RQPVeBNQP8qbH1pWoLLA+cHW5mg2BRNDXkU9RbrgmGoZVoUVBsVkI0TsQehvrxEyD5DeRzCFCmz2QyHnixuIWU0Ag95ccXCA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755233554; c=relaxed/simple;
-	bh=K8w1+HPM11vtgAu41io5RUYtWSFFWCv3ns6XlfMe1hw=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=nOPF8GfEv4Eb+fs2pnTn4h8zS1fn/24gx3hrHd/Q11FNy61SFU0LKW7onLGO/mT7Rxi9mOS6XNeSZnY9hCjMtec6hDfz86nOU1Rk3eHZwkDHa68UHuJmLdaDxRyrBRnBR7ZDIwHEAOkSYLqXGKoTduaBiLLTRqankqacdL/n5yU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ek+k+Mdq; arc=fail smtp.client-ip=52.101.84.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mg+xfRxihG9UCY1C7ncdX8lmTJ5SwsR20KtNYfC1tNXDT83uiCrXPDNGAI6CPOmfr8bSfUzzkOX/9cq2lE40O6GCRRl7NA28109+N6xBRGzmeHBetNRMOycz67L3XVu9+E6vkRaSYOd7YIljqcByOEsj+iJC4VWkTrBeB5qPqSYva4DkExrrUss3ovkK+23CXh1Tsg7FTlgVmI9AwsgFvwL0JAmFfQA51eUCpNzbYlrGe8lCDftHKbIcbf27AJaIjVBvqL+Ic7Ru9p6ek1iJoHscf64OHIRdPhgLgbwocMeRzr2oBJKX85/exE1i217Whf754XQxSOK0/mX20aJN6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LfPGjrvfNwQVOelD744msQ5Zatj7IC7uNzVGlRBiDuY=;
- b=kds04W2e1ORJ1goMPpt9nWVOhab4Y1dCTXXTLikQYAx0QwzUQmYpOjVYAhN/rHxodLYrU+QnWJEEJC1kP8YWXRoZPYQBmmgCbcoiNmLtpz3hhDyLsKFSzETK6PGES4SS8G1ETW41e1d0XL/To1jHPExklS7mATqrgRKDxBzF2eIQoTMX8RyKMHjQMPH6Ole2SlhJSdPFmfeyK2TalxQE7FtOY/7iTLL+dA3M0yH3tcMScXBGrOFQqZjFod9ltdRQRhIwABT32+DyuEG52L7eGCY9K+qx8C3P7If/cDrZakvpHDatF1UYyjurV7mtA8oxLXrbhRJ2TG0+3oPgGXvkWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LfPGjrvfNwQVOelD744msQ5Zatj7IC7uNzVGlRBiDuY=;
- b=Ek+k+MdqlNH0pwqvMmw/K78rguDA60TEskYnmMcZIkQOt8R43EgQl6qZfje3dSkgbnZ8uXkypCfThkAamss6JOxytG6x1My8A6WOqupTBrASXlsPW0VZ75p/Yyqcp6ZsuYZ/uhbEwBQ6PuJgIlAY9CyQVnitAPU11HG9bViKHpX1FindRn+IEUegUX883deY7XFKq0owJW7MMWEmw6Q6gx15nLvFFsUGNW45mDl3NylkvQB7mKemids4hDk+7sMB5jdRyv46FS6tghOOPt6Oa3DvPiPFeA7+sErCgz26/r7AvC+vp6L67zkyyohdWgesR/JRyy3qsh8EZWyWIZr5Tw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI0PR04MB10101.eurprd04.prod.outlook.com (2603:10a6:800:24a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.7; Fri, 15 Aug
- 2025 04:52:28 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 04:52:27 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Fri, 15 Aug 2025 12:52:09 +0800
-Subject: [PATCH] regulator: pca9450: Use devm_register_sys_off_handler
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-pca9450-v1-1-7748e362dc97@nxp.com>
-X-B4-Tracking: v=1; b=H4sIAPi8nmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0NT3YLkREsTUwPdVPNEc+PUJEvTJFMzJaDqgqLUtMwKsEnRsbW1AIP
- 4ucVZAAAA
-X-Change-ID: 20250815-pca9450-e7a73eb95b56
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Paul Geurts <paul.geurts@prodrive-technologies.com>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755233545; l=2757;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=K8w1+HPM11vtgAu41io5RUYtWSFFWCv3ns6XlfMe1hw=;
- b=NfaXpM+042kRMPJi/GC7Sj2iCxBrUT9HZH4PWyiD9Dw1YgfxmGPW5+b0z62vSM/fvnKW4HNDr
- JMo0OMkXJ62CDJ/L6/LfF3S93XBymDyRWGLD26DstkAkghWJZ3EBVhF
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SI2PR02CA0039.apcprd02.prod.outlook.com
- (2603:1096:4:196::9) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395071E502;
+	Fri, 15 Aug 2025 05:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755234029; cv=none; b=OnfY5z7psssz7gXoIUW68JH5jOxCxQU/5rePG0NgoEiQQZLgqWaQFHfYaDUQSDb4+37ULiY85uwN9oSNCdU1HzeazIqbC2tmaWd2TDJ5OWpOGfWE7WogPHiYfCHX4lnbBNj84I0dnAUk3ZrpiWx1cJz1mRlFwoOi+zExCFhp0i4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755234029; c=relaxed/simple;
+	bh=BdXI9uDWb7s6Nrk7XG//Z7OFsqMRPHqalYnUc4lXmwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJOI/+c7brNPvSB/Uy+M6uv3LPVauHlrwICugDJKMgWfr/XlqwXef1mVJJvj6gYnXkfU/zFKmw6orwqTjTsWUm/k010MHMEpg4V5A4o/pqGNnIn/ac+o+JtybahMRFGkhcPlx3O3p1vhXPsjUcr7/jHfolwE9OjKRZytkxC0DTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hndl5ASm; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55ce5287a47so1482793e87.3;
+        Thu, 14 Aug 2025 22:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755234025; x=1755838825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ibYV2DXy3yJ+JImrUWfFgpWrleNjyaOJiO783aX8k0M=;
+        b=hndl5ASmhFn0ORJVS9H8//T31Pi1+HXJBOjnuQUGl0eBNei0Cf2NaI7JDg/LdSHCmP
+         c+wAL3/Rn+ih+sTTNlvPayEjrqHt5sNPtC4NN7VSrxQqeZwCdqohL2snND2AmXrXmbn/
+         506M/+VptmHnao1z/oCNfrmRcmpDi75O/a/tSlN4RzQTbhWXry42X/+cspUx5BggYPyw
+         uEPdkwFt5f3QBe779ufSCdPXV97eWt6xW6gP7C1YTrQfoMHYyneOKGYrpnFyLN/rmnUV
+         LY5vCBeU5CUZsl89j/SdmSu13Tz/4g2QzmD/RijTb8MtmLMeDNp80d6rb5711FSWvnPl
+         zf+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755234025; x=1755838825;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibYV2DXy3yJ+JImrUWfFgpWrleNjyaOJiO783aX8k0M=;
+        b=TUlCBieGZdViqh3qWZCmFUG/y1XWublofVvpD8ZwCB83PCxrDetUgYaNupMsrAeUto
+         EJ6MC8IDqtLqWLSTNSi+KQWacJs41u4lQkSDBF/D1sgdQvmxMrqh8fUMvHICVYK6Euyo
+         WRoepdTLJk7L+7nITPTCtW2/StTwTQn9trd3ljE2HSY8Xpyq7HRJqzlNK8CghamB7XSD
+         nX58POq9rFKvIzZA4/v2x5flxx5iGXiJIK6AdGiqaPqrgQeXCysPQY/Xz3e9kMErPS9E
+         rSGvcrH2KCvuMub4n2a9D382RQONOdRyMMaKe4rJcVBhQzw46cfXyqZlwEWV56X2rjRe
+         xGog==
+X-Forwarded-Encrypted: i=1; AJvYcCWii6DFR+opnzHMx2k/oZ2FHdFGIkSuSQJerAY1Ufsi8CVv6CmLSmq45Zhq/DjelhALSDa0aroZCsme@vger.kernel.org, AJvYcCWyrhnnL8fQudECSUjWc8jLEptOqDPQv0vCl8S3rzVHhecjiIF+ntaSDzwuV4OmuiF/6/jrqe/K9C4g@vger.kernel.org, AJvYcCXeyksVeNvgt6mec1CHG0oMhAg2Qs089iEjDqNidfH6wElCZbsGIHRfjlPy2JkN1KQ+HH4GVHtRyGkdwazH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5I4sV9btFmkf1r+YotaNdVCLZt5G5vqJ3UyaP8o3zIREh9Yq
+	ig9O6XQC7RQ2i6aD5fb5qqBHJYLeLY7jWcy57i5MZpCNClkrGjayFzhn
+X-Gm-Gg: ASbGncvP48LqP4iS22Z+DRIv7XSJGLGDa+NtQ3T5+atCoCz0I0g/MorhRuWegCBbSfs
+	ly5icGKn/MD7RGIDVZE9ULjoralA8RtjMJbLi6MtaT6hd7cmpQJpjzNZtgA8QHRrVohhBTJREz2
+	sJI3KzQigd5g1+6mieq/vuxBwSlAD02z63lGhG2ixO5tKvFy9YjWaDiUnjAUJjd/PF4EhH1uE52
+	dY//MH+z7XyVqEB5XTcia3nxCPIVz+OIgbFMa41Qe57Ou7IK1IOlasikt7nRD+ywfpbyfD3LaAh
+	5xNIhy+gf0TN+UeYbh8yppQoN9dqtggrPC8HfhPjQL0dCKTqxgkPs35oZlEeSGb8MtNqHTRSMrC
+	Qt7nv8UyfElk+mtQ/USpAof6PCSdwc6Lqr2WGIBqDRDFV1ZYv/Cq8x02XluFzi+7OwcMFcFvPOc
+	RQQd1331XwTLAgdw==
+X-Google-Smtp-Source: AGHT+IEdtb+aXAX0+qkW3BXed4xKLSwz6zWlk3z6/Lm5JIc0U6agAFpFu98uH0yqHouY6nnMyIkPng==
+X-Received: by 2002:a05:6512:1383:b0:55c:e988:9440 with SMTP id 2adb3069b0e04-55ceeaa185bmr176750e87.6.1755234024976;
+        Thu, 14 Aug 2025 22:00:24 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351646sm79928e87.17.2025.08.14.22.00.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 22:00:24 -0700 (PDT)
+Message-ID: <2a757c8d-4ac5-47b7-920b-96575213d6e1@gmail.com>
+Date: Fri, 15 Aug 2025 08:00:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI0PR04MB10101:EE_
-X-MS-Office365-Filtering-Correlation-Id: f47ae1a2-ca88-4629-1472-08dddbb788ac
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|52116014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?RzNEanNLZDdKaVdtZlhuZGl0ZXdoZFR3TTlyYUhaTnBCakoxZllUVHVUMTBl?=
- =?utf-8?B?NkNPcWVpVTFtUW1NczhuekJaU05sVzk2VHZGNldrU0toc01ZU0F5VGIzcXBD?=
- =?utf-8?B?OFJwUC9ha1VhYUY3SmREUDBGOWlzbGhLTDRzZUpKaHN3Q1JMb2FZMXBnUE1O?=
- =?utf-8?B?a2hzNVV1ZTFjelArblQ5UDNGMFlrc3oyblN2WkRPWVpkNHhwSW5DNWVPYzd4?=
- =?utf-8?B?aEFOZHo1NmJ4bkFId0Vmb1ZLM0dWcW1FVUpjRE5UR3hZMHFyRkw3V2VodVht?=
- =?utf-8?B?K2JISFRoTXdibzhNNVlvRU11dnd3cXUxZUV2a0haMFFhM3FDUDNKeWp6REN2?=
- =?utf-8?B?VWt2VXF4a0p1aGo5RDhnNHUybkxXeDFCNFF1dXJ4ak9mQVpMMWlCbmJRa20z?=
- =?utf-8?B?L0pDT3ZMNW1wUUZQTUwzT3B1NW15UmZIR01iU3lySDF5blFPR0ZUMjNnWjlW?=
- =?utf-8?B?ajBpODZpaGN6V1l5Q3NWN3loODR3QmhxdU5MOWlISmgvVzhyOXgvMTkrT1JI?=
- =?utf-8?B?TnhRRVZYaldwSlZySHNsM3hNN0R1My9nRUVXNXowWkpGVzVVRDZsY3k4QXpo?=
- =?utf-8?B?cjRaTWNGVGVVL1RHbmp4N2hHa0UwZ0NEMDZOVGRUTkdFRThENHJJQ21yOHJh?=
- =?utf-8?B?aW9SVGkzSHNqdlZMakp2ZnMwSU0yclcySWFJYU84OHVsbzl5QnFEYjgxaFhp?=
- =?utf-8?B?SU5Nc2hhM3ZKNzZCdHI4RFhKT3lFR3ptSTMyOXRLWFA5U1B5cTFwS2ZhdThV?=
- =?utf-8?B?TGgwSTViNUIxZVoxYzJJbmc5STkzdlUxd1ZHdWFQOHZqOThhMXBTQU9GK2cr?=
- =?utf-8?B?dGNXalpwbHBleDBiQ2pSZHNGUmg5OEJBOERkNEtZelNrVXIvZ0o2TG95dm9N?=
- =?utf-8?B?L285dVVCeTh3ZVNnczMwUzNpYldwRk5oS3BiNEszMzd2VmJOWUNXWmc0eGU3?=
- =?utf-8?B?bERSTGZJSFIvdkZUQktET2xKTXRHbVJpR3ZvV2phY3pOVXZWUER5RnR1QUNy?=
- =?utf-8?B?dEJscUhjNndGL1dhZmVJMVpBdW5DRDJxenNZRkN0YXhpV1NpNlFUNmJFV2RE?=
- =?utf-8?B?L0R3NDMydGNMdzJIWDZINGZnZ2NHTkdOVmo4aDNXOW5TWVF6OWhmanR4cUNK?=
- =?utf-8?B?RDRIYkJhTDQ3ejBBKzNBRWY4eHRYWVg3bEVVWXgwbFpVelBQbVVGa01uQ3Zp?=
- =?utf-8?B?RDQyMGlFNkJHWFJQMDZvSG8yc01jU1BXMGhFTnhjWVVkNU95TlJpYktKamF0?=
- =?utf-8?B?YTVwSzRhWUdmZDdrRlVTcFVxK05yalpvVTB6UFFHTzhZUDRtVG96YWkyVTF5?=
- =?utf-8?B?VUladkE1VDV4M3l0cXhBWk1JNmsxMlg1ZjIyK3VwSWxiWGVycndpWmNsYWhX?=
- =?utf-8?B?STVaUW1IbWUrTitBTEdDTmV2Sy9uS2kvcjluRXluUGxmZU1ONy9QZ0pEN2Vn?=
- =?utf-8?B?b2l0bStYZFRTcU9Ba2syeTlJUlV2T24xWFh1V1JvWE11b1lybng2VnJja1V2?=
- =?utf-8?B?aXlDL3J6bzdFaEV6WEZGSEF0NUl2OUtmRUNCQmRKUVU1cXZYdGdJbFM2M0dS?=
- =?utf-8?B?UE54ZzNjSUJ4VlJjWnQ2ZkZpUzFybnkzZE9DUU83MG56ZUMvQWpDelByUkE3?=
- =?utf-8?B?WVBERXdncnRDQ0V3ZisrMm5JTnBKOXFSTXovTjNNOWVmRzE1MjNaeUxrMjAv?=
- =?utf-8?B?ZithRkJiOFZwZkZWU09EdU1Xd216ZTRRYUl2OWNrbk9vaW5HZHlZak9DVTRR?=
- =?utf-8?B?V0RJYlNUSjN4eHRDTnFaQVBxTTdJaU9PbkpPV2I5c3RGRWMwTFN3N0ZJUVZR?=
- =?utf-8?B?MzQza0Z5Sk5mL3hOalB2ZTdOS3lOV0hZa3ZQZnZTUEJTOUZSMDBhTFhVSURv?=
- =?utf-8?B?b0FNREVqNUpPZ20zY2l5bVAzNXVQTTlpc0RoeElTS0FYcDhibFlIMG5LWjRE?=
- =?utf-8?B?bVhvOHR2WTV3enAwdiswRWIzZTJJVFZ3aEV3ZEM1a1FBMEJGa1gybi9CeUZy?=
- =?utf-8?B?QThqMUxscTB3PT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Wi95OERnemF2Z0hackgyZDhCNjd2ZmNDNWJETG52eU14ZWdlbm1IMDlmZjJk?=
- =?utf-8?B?eDdiODJOSlppQzhjWjNUcVd0ZTBOalNzK2UyOEYrZFZySGhHcjZnbGZiUGhB?=
- =?utf-8?B?a3h2OUw2KzduNHRGcDJ4TmZNRjJUK0U0VDVWYXlYZnRtUmd4bXBJNkdMS3pt?=
- =?utf-8?B?MUJxYVdIRjRmd1dRUlZxdkpqTkljS1E5VURBdS9vZzZGVkhXUSthT0NoMUFK?=
- =?utf-8?B?ak0vbTJLMlZqR2RzVVRXLzRZUEpFNlFUOVFSTHF6TC9jTGxzL2I1c2VtZUJ5?=
- =?utf-8?B?cGgwVVVHZWVheFN3bGVNUTlKamxrYXBlekg4aUJNY2RRSzc2a0x0ZWFNekdS?=
- =?utf-8?B?S09BVkwyYzNQell1VmJkZmNuQkxGRURsSzg1REdwcUJmRTNtamFhcW1RV2NN?=
- =?utf-8?B?Y0ljRnk5S1BwN0R0MXI5UE9EdFpTTWxKTVhubnVEMnVROFVOSDZXRUpvajM1?=
- =?utf-8?B?bkoyOUw4NFplL3BEelBaQTEySithaDZ5dDJmTGJwNlh6OGNoUGpHWWszRGhK?=
- =?utf-8?B?VDhtZTB4U2dTWnRkcG5CLzUyMFNFZzArclEzY0xmK2hCb2JVQjRDZVNnM0RP?=
- =?utf-8?B?OTJZcFBhZmJPVmx6dWptZGw5anVKUnU1VzRJSStURG9OenNTV29BbjQyYk1j?=
- =?utf-8?B?aDVnc3JXM1YrVGlqeHhHT3JNNHg2NnFTemFtVGpBejJJU3FxeDBmVFkxbkJ6?=
- =?utf-8?B?R1p1NXVqME9xMTdHeUZobFhPOURzdWN4SDNVT0hpd2lCU0ZVYUl2dEFlSkdJ?=
- =?utf-8?B?SktNM0xJWDM0eEpLUFI1WGZURk5CQ2NyMSs5U2ZXeUZyS2dYS1JzSDY1V1NR?=
- =?utf-8?B?VndEUjByZ3FTYTY1M3orb0NyM3JJWG52YTltYVkwQTFmazdmWndTQkJLNlJa?=
- =?utf-8?B?ZDhWc3M2WjFiZ1NrZTZFNTcvN1pOd1ZaeUNnd3FkV3ArT01PL1VqaUE0RE9h?=
- =?utf-8?B?S21RSGVCNmRmSnBRTlFiaXdqUUdvRTR1RDVXMWNVQ2ZNd2dLdlYvdk1wMTB1?=
- =?utf-8?B?YWFTazJNY2JmS3ZqNFl0cFpEK2pTWXFXVk5IckZSVWI4QnJTbGFoQ0NIcFYw?=
- =?utf-8?B?Y1lJbWJqc3BnSHZhODhyRUNnTmZDSVphL0JPbWN1OGJKMUM1ZHpXK3BBa3Jh?=
- =?utf-8?B?d2pLV2pvRUhVOHp2MjRtcjFpM0Q3SXFvRCtxcTVLNFp1VVdOZ2t5bUxyVFhU?=
- =?utf-8?B?NW44TFAwSWwrWkhYNWdFQXBCa2hKeFgwQmFGeUY3UkM3cXJUWlNuV1pybWRE?=
- =?utf-8?B?YlNzVjNGZXk1eU45dFp6NTJ5QnFtcW1RWXhobm0vOHdWRTJVK2YrbkJkL2dC?=
- =?utf-8?B?ZTRBeHY1OHQxeG9WSm53ZXR6dTB6Q2lHSjZScCt2UUk2b1NtZER5M1lJTWVw?=
- =?utf-8?B?S1R1d3Z6OU5SUm56MGlxYm41R0M4anpCd25RNS8wdmRyRGlzVDFzMlhIeldF?=
- =?utf-8?B?emRTZGRDSGtjV2hPanJ4ZzAwUElJSWtjckxBR29ndFBtZ2RPQ2w3c3pRVEp6?=
- =?utf-8?B?QWhvNGVBN254T2JVUGtpOXowQWVvY2ZidHluVHM3YlhaSnNsMzFDR2owQ0VO?=
- =?utf-8?B?bjh6ek1xYTNuYmF5c2NGTjg0MFJWRXNDU1RiblBDdDVmVm5VNzI0S0NWVzBF?=
- =?utf-8?B?VGY0M2diOUppMG5iRENoU1hoa2RrSjViTWpMWXdYVFJMbnp2TE03UVp2RzFz?=
- =?utf-8?B?NU9lUVdWZnRSRDVsUmtSandOQ0dNeVBRaWhoazErQWE0VzVVYkVvVnk1cnAr?=
- =?utf-8?B?c0Vpd2pPWWh1bFliaDNrSlV5NGM2bnYvcDNrRUlGVUgycmVlQWpoY3E3eWJz?=
- =?utf-8?B?eFJoUy9UV1Y0RzJmZlpQQllnaERUWUErVWhxUW9oNi83T0JWc2hiZktmR2py?=
- =?utf-8?B?NlpQY1BLNnZJcWQzSnlxT00vOXI2YnFDamxBSFhFMHJTdnVVZnlEc0NGSzNY?=
- =?utf-8?B?NHRaeDVuKzViUHBYaTZJWC80dXM3T25LelBucTQwUkdwY1NyOXVaaUxRaVpO?=
- =?utf-8?B?eVlPSy8rZVZtdFBmT1BsdUM0T0x1T3pWczN5WWdDa05BakU3Q1Y1ZXdTdzA0?=
- =?utf-8?B?SGd1RkxSWXBXUXFIVmo2eGhlenFhaEw1UUlpVTJPNU85SFhKM0V3NVhlSFdn?=
- =?utf-8?Q?UTtBIYNYz92NphJqzMv8Ae1Fm?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f47ae1a2-ca88-4629-1472-08dddbb788ac
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 04:52:27.8510
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IK1hw+rNoSgRYIDYYSLtKfbR1vwKNUo3NNFBnFpHSoi1LrmVnUezl20TxP+RGpKi97DXzGMIAB9AVA3pz7nxbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10101
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add BD7910[0,1,2,3]
+To: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1755159847.git.mazziesaccount@gmail.com>
+ <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
+ <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
+ <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-With module test, there is error dump:
-------------[ cut here ]------------
-  notifier callback pca9450_i2c_restart_handler already registered
-  WARNING: kernel/notifier.c:23 at notifier_chain_register+0x5c/0x88,
-  CPU#0: kworker/u16:3/50
-  Call trace:
-  notifier_chain_register+0x5c/0x88 (P)
-  atomic_notifier_chain_register+0x30/0x58
-  register_restart_handler+0x1c/0x28
-  pca9450_i2c_probe+0x418/0x538
-  i2c_device_probe+0x220/0x3d0
-  really_probe+0x114/0x410
-  __driver_probe_device+0xa0/0x150
-  driver_probe_device+0x40/0x114
-  __device_attach_driver+0xd4/0x12c
+On 14/08/2025 17:51, David Lechner wrote:
+> On 8/14/25 4:57 AM, Matti Vaittinen wrote:
+>> On 14/08/2025 11:35, Matti Vaittinen wrote:
+>>> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
+>>> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
+>>> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
+> 
+> Is it just a difference in max sample rate? or pinout?
 
-So use devm_register_sys_off_handler to let kernel handle the resource
-free to avoid kernel dump.
+The BD79104 comes in 2 different packages (BD79104MUF - VQFN16FV3030 and 
+BD79104FV - SSOP-B16).
 
-Fixes: 6157e62b07d9 ("regulator: pca9450: Add restart handler")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/regulator/pca9450-regulator.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+BD79103MUF pins seem identical to the BD79104MUF pins. Not sure if there 
+is (or will be) BD79103FV. (Both the MUF and FV have identically named 
+pins, with same functionality. Only the pin positioning and potentially 
+amount of unused pins differ).
 
-diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
-index feadb21a8f30712b514aa45824e61dde72abb7f7..4be270f4d6c35a37bb26ccf16918ff897146e80f 100644
---- a/drivers/regulator/pca9450-regulator.c
-+++ b/drivers/regulator/pca9450-regulator.c
-@@ -40,7 +40,6 @@ struct pca9450 {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct gpio_desc *sd_vsel_gpio;
--	struct notifier_block restart_nb;
- 	enum pca9450_chip_type type;
- 	unsigned int rcnt;
- 	int irq;
-@@ -1100,10 +1099,9 @@ static irqreturn_t pca9450_irq_handler(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static int pca9450_i2c_restart_handler(struct notifier_block *nb,
--				unsigned long action, void *data)
-+static int pca9450_i2c_restart_handler(struct sys_off_data *data)
- {
--	struct pca9450 *pca9450 = container_of(nb, struct pca9450, restart_nb);
-+	struct pca9450 *pca9450 = data->cb_data;
- 	struct i2c_client *i2c = container_of(pca9450->dev, struct i2c_client, dev);
- 
- 	dev_dbg(&i2c->dev, "Restarting device..\n");
-@@ -1261,10 +1259,9 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
- 	pca9450->sd_vsel_fixed_low =
- 		of_property_read_bool(ldo5->dev.of_node, "nxp,sd-vsel-fixed-low");
- 
--	pca9450->restart_nb.notifier_call = pca9450_i2c_restart_handler;
--	pca9450->restart_nb.priority = PCA9450_RESTART_HANDLER_PRIORITY;
--
--	if (register_restart_handler(&pca9450->restart_nb))
-+	if (devm_register_sys_off_handler(&i2c->dev, SYS_OFF_MODE_RESTART,
-+					  PCA9450_RESTART_HANDLER_PRIORITY,
-+					  pca9450_i2c_restart_handler, pca9450))
- 		dev_warn(&i2c->dev, "Failed to register restart handler\n");
- 
- 	dev_info(&i2c->dev, "%s probed.\n",
+So, looking at the functionality, the pinout is same. Looking at the 
+physical IC, they may use different packaging for these ICs.
 
----
-base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
-change-id: 20250815-pca9450-e7a73eb95b56
+Finally, the only difference between BD79104 and BD79103 I have been 
+able to find from the data-sheet is the differential nonlinearity.
 
-Best regards,
--- 
-Peng Fan <peng.fan@nxp.com>
+For BD79104 it is said to be:
+DNL: +1.2 / -0.99 LSB @ VDD = 3 V (Typ)
 
+For BD79103 it is said to be:
+DNL: ±0.99 LSB @ VDD = 3 V (Typ)
+
+> 
+>>> and, based on the data sheets, they seem identical from the software
+>>> point-of-view.
+>>>
+>>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>> ---
+>>>    .../devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 11 ++++++++++-
+>>>    1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>>> index f0a1347ba4db..6a6e6ab4aca3 100644
+>>> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>>> @@ -14,7 +14,16 @@ description: |
+>>>      properties:
+>>>      compatible:
+>>> -    const: rohm,bd79104
+>>> +    oneOf:
+>>> +      - items:
+> 
+> You can drop the items: here since there is only one item.
+
+Thanks.
+
+> 
+>>> +          - enum:
+>>> +              - rohm,bd79100
+>>> +              - rohm,bd79101
+>>> +              - rohm,bd79102
+>>> +              - rohm,bd79104
+>>> +      - items:
+>>> +          - const: rohm,bd79104
+>>> +          - const: rohm,bd79103
+>>
+>> Oops. I believe the order of the compatibles is wrong for the fallback.
+> 
+> Indeed.
+
+Probably needless to say, but I'll fix this for the next version :)
+
+Thanks for the review David!
+
+Yours,
+	-- Matti
 
