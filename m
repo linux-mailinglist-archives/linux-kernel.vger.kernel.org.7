@@ -1,104 +1,192 @@
-Return-Path: <linux-kernel+bounces-770701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBCDB27E02
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:12:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DEDB27E14
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FBE1C8151B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A38A02728
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBB82FD7C4;
-	Fri, 15 Aug 2025 10:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BF32FFDC4;
+	Fri, 15 Aug 2025 10:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eT8QeuIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAEXNv80"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE580279DAA;
-	Fri, 15 Aug 2025 10:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016F2D3238
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755252571; cv=none; b=MH/ww9XU4je3c52mHnM8nAKD5/lEnLJ1SbFfVPX9YQV3MtwNOSfmq5iDXIJKScm2JL+jcjNnZ4IB31tDuSMrzuW4ni36LtCbmfx6B3/8yfCI6KvkaWwN2Gc91Z7giPUgG6YwDP/0efm1DBmAIOqLqrNxnSDd+dyU10RP/y8k58Y=
+	t=1755252698; cv=none; b=Rq8ja2VA7ZuKJm2ONQKtkyfsqApUx3cITGeD9iZwX7EDJYkoI6uKKLzAeJ9Q50hHvymmqfyfA6Z4geKTKLvUMQWJwmlNSDtjpGZ8Qkmaw20ItV1wz13VhqgCX2/jp4XXk14ii+xps8nRgRzGAEFTCyHooc5c9d5zu9jPxLwQ1n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755252571; c=relaxed/simple;
-	bh=4F6G06c4lwRmjRxDA3kCpdM0Fpzl2wgfCSFO8ncYib4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N+t4SwBJZkd2wzUCfSzXnIVglBco151MXU1TiUxAXjmwg7Jc2X7rUZJ3SJzu6B5KO7PqJB9ISIMOE7TLiK+N42IK7yLtFBuZZ1k6sXe64JHK3fzdebrxNibrFIfLKMOuQzg71dkJSL92q5Ru0EQzqIjix+dE9TeDkiS83zzToq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eT8QeuIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E8AC4CEF5;
-	Fri, 15 Aug 2025 10:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755252570;
-	bh=4F6G06c4lwRmjRxDA3kCpdM0Fpzl2wgfCSFO8ncYib4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eT8QeuImN6Mc0M1N8IPUm86ATESY2jDh0jxkLdPIjuGK8mAZmv5TpZTtKrziii0BK
-	 iD4JcFBmZ+82M6OZlZj7XpbT8ro/alnxe9WxMgx1GTGwV3Caeh7PSIIDZoDzahXIju
-	 eEGaJN277PxU+EIbTJzqPAA9qTxytkAviEc/bXpbkO0Mlv/m83XUnyuROb21Jrgf3m
-	 /wOVlwFzaFELgaexErcumbgtSSmbyVbRoVeV26Z+7j29CHtlOLa2qkJnGJ3wU0a4RJ
-	 PbCIsd1AupDwoRKhwl2PvHb2CH0jKsuXlTR8yE5DXNfq3uFPDWqGBfIWM0IWQ0lOhl
-	 OWc75fokBhfDg==
-Date: Fri, 15 Aug 2025 11:09:24 +0100
-From: Will Deacon <will@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>,
-	davem@davemloft.net, edumazet@google.com, eperezma@redhat.com,
-	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com, sgarzare@redhat.com,
-	stefanha@redhat.com, syzkaller-bugs@googlegroups.com,
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in
- virtio_transport_send_pkt_info
-Message-ID: <aJ8HVCbE-fIoS1U4@willie-the-truck>
-References: <20250812052645-mutt-send-email-mst@kernel.org>
- <689b1156.050a0220.7f033.011c.GAE@google.com>
- <20250812061425-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1755252698; c=relaxed/simple;
+	bh=82MME80llOO5PUh/slmozG/9lFyGZAx89iSR6BNXaKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BskvfHlfbewZCIgh3ErcjKhix0OcnwSNtxxtiGGplbn0KpooDuSm1Ju79qXuhizTkMdpMsoX9DTZwao0Jq/pdbq3yBwKiU9JzQ/WwPN+m8oFVOEPuLC0Eo6PjTW0BY4l6S86oLuRbBBLhCYXBfSPYUMXkdE91UhA+uQzMsms/B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAEXNv80; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53b173aa4a9so1307813e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755252696; x=1755857496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrP1RqrQrE+CCMDK7L29Lp1vhVh6WWRUdC6cwnE/mfA=;
+        b=bAEXNv80z02X8Ns6n4Z081yqopYI6eQcF9cFd4Ol4RlU6Mad0eNH5tsR0L+7/aFQqw
+         vM7BIkUohQy/26+fxZKcRe+eIsnbZEoqWBHbu55G/3iP5Ujny7pP0OSwt+bRlibVgrZB
+         Ib5hxsRhWjWsTCqbR5ZFpYLgx4yqex//ZhT+P89W9A7d8wVKllcKDyAHf70MPQw2b9FM
+         1tbzHVXeCuThPc9RbslFMcqkcrfXSirn5lyRL3jr7zjJVAevxzAXI69v83XGGyGqfwbK
+         g8itYv1EF1OTRIFmqASXU2IgXQZprZftU1O9AArNNg5ILRm2ZT+vPSj3/CFVa3htbyuK
+         0S7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755252696; x=1755857496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CrP1RqrQrE+CCMDK7L29Lp1vhVh6WWRUdC6cwnE/mfA=;
+        b=Iiz3arpvpWU+xqBHHd3hYns0PvMzjq1wlttnWwiaTdqyA0bacjT+hzM+QAKmIEoZwN
+         Onbvky+jk0nfQIyYAGj29f/koBwzv9xwjdXIAFs0iBP4Zw3LzDfcmRtQg57DyPviZ14L
+         P3+hYxTgcWdCXl0xwISfaABXwuTLv6EDkWnDGWvACzsTp1AXQzgOqNs8OMNzEuF8+cbx
+         xoHXrSl3lCcwTw7l4ACPO3MfmEzJxGxy7m9H/2AbNQz7zXa421Jcz1ULMaVFE6NYc1XD
+         xcyOT4B8E0+fYWaJmHReJR/FSAcipmr0DktUBzZegKroGv//7kMt0JIYOexwNarW05jh
+         IQYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIBI4HiHN8c/nuombdtzAcrxxK5z7+P3a8SDlKbq7wn7oci8yeuFltkXgeo9I4CXHFDvDkkXw6PFy+oos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQl6A67Sgl4/UkNg4XkVS6wH/yfO1siDR92tk631vBCmsliT4J
+	WZCp+1niZQiIbffgIoTOvi8YbqUBse5PaKlEV8ErfU8czs6uyBAoA/WENVHCDDcW+38kI8Miz/f
+	81WqXbG22ryi5SX4wL5tgFUrflXUcK+A=
+X-Gm-Gg: ASbGncs0BzVOB5kLnE7kN4POUwYAEsJOjUvS+YkU2AhSUfD/Fadgn5VE8NeDnscLPHO
+	RSNlCghJmn9AAQCckCNwyr9BtF6lrZ/AumIBRuLiXau6fEcxhabg9+DChhDKGkOlqQt0rpFQVNN
+	RedLavXMvtZjcli68fMq3OHDMQTNBECElzTl2GbEGWFVLBADkaEKOOuDfBwOj/PGVazzEBIDL3B
+	HKYihw=
+X-Google-Smtp-Source: AGHT+IECBZnTmPM/nQEDW9y3twNaByBLA0nvasb656eSYR4D1TwoU4UEw/SNZt9fDLmfjZvtmjPsBcSSy+1Vk1LmRk4=
+X-Received: by 2002:a05:6122:8c6:b0:534:765a:8c3c with SMTP id
+ 71dfb90a1353d-53b2b76a0afmr362427e0c.5.1755252695644; Fri, 15 Aug 2025
+ 03:11:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812061425-mutt-send-email-mst@kernel.org>
+References: <20250813193024.2279805-1-lokeshgidra@google.com> <CAGsJ_4w5bAJHyBrwb5+n_EANqzhz4cFSX+9yZacmOiXVJZ_Dkw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4w5bAJHyBrwb5+n_EANqzhz4cFSX+9yZacmOiXVJZ_Dkw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 15 Aug 2025 22:11:24 +1200
+X-Gm-Features: Ac12FXyaxQVPiABbs0kk2SIpgx7aAzdVcSx5eE7DyS2AoekcEk8ObJBnRsYHtE8
+Message-ID: <CAGsJ_4wt_30C82B9_ZoOB2umBi-u_kE441ARvYoJVjkLtLqFCg@mail.gmail.com>
+Subject: Re: [PATCH v5] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, ngeoffray@google.com, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 06:15:46AM -0400, Michael S. Tsirkin wrote:
-> On Tue, Aug 12, 2025 at 03:03:02AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> > WARNING in virtio_transport_send_pkt_info
-> 
-> OK so the issue triggers on
-> commit 6693731487a8145a9b039bc983d77edc47693855
-> Author: Will Deacon <will@kernel.org>
-> Date:   Thu Jul 17 10:01:16 2025 +0100
-> 
->     vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
->     
-> 
-> but does not trigger on:
-> 
-> commit 8ca76151d2c8219edea82f1925a2a25907ff6a9d
-> Author: Will Deacon <will@kernel.org>
-> Date:   Thu Jul 17 10:01:15 2025 +0100
-> 
->     vsock/virtio: Rename virtio_vsock_skb_rx_put()
->     
-> 
-> 
-> Will, I suspect your patch merely uncovers a latent bug
-> in zero copy handling elsewhere.
-> Want to take a look?
+On Fri, Aug 15, 2025 at 9:44=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Thu, Aug 14, 2025 at 7:30=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.=
+com> wrote:
+> >
+> > MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
+> > for moving present pages. Mitigate this cost by opportunistically
+> > batching present contiguous pages for TLB flushing.
+> >
+> > Without batching, in our testing on an arm64 Android device with UFFD G=
+C,
+> > which uses MOVE ioctl for compaction, we observed that out of the total
+> > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
+> > ~20% in vm_normal_folio().
+> >
+> > With batching, the proportion of vm_normal_folio() increases to over
+> > 70% of move_pages_pte() without any changes to vm_normal_folio().
+> > Furthermore, time spent within move_pages_pte() is only ~20%, which
+> > includes TLB-flush overhead.
+> >
+> > When the GC intensive benchmark, which was used to gather the above
+> > numbers, is run on cuttlefish (qemu android instance on x86_64), the
+> > completion time of the benchmark went down from ~45mins to ~20mins.
+> >
+> > Furthermore, system_server, one of the most performance critical system
+> > processes on android, saw over 50% reduction in GC compaction time on a=
+n
+> > arm64 android device.
+> >
+> > Cc: Suren Baghdasaryan <surenb@google.com>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Barry Song <v-songbaohua@oppo.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Peter Xu <peterx@redhat.com>
+> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+>
+> Reviewed-by: Barry Song <baohua@kernel.org>
+>
+> [...]
+> > +static long move_present_ptes(struct mm_struct *mm,
+> > +                             struct vm_area_struct *dst_vma,
+> > +                             struct vm_area_struct *src_vma,
+> > +                             unsigned long dst_addr, unsigned long src=
+_addr,
+> > +                             pte_t *dst_pte, pte_t *src_pte,
+> > +                             pte_t orig_dst_pte, pte_t orig_src_pte,
+> > +                             pmd_t *dst_pmd, pmd_t dst_pmdval,
+> > +                             spinlock_t *dst_ptl, spinlock_t *src_ptl,
+> > +                             struct folio **first_src_folio, unsigned =
+long len,
+> > +                             struct anon_vma *src_anon_vma)
+> > +{
+> > +       int err =3D 0;
+> > +       struct folio *src_folio =3D *first_src_folio;
+> > +       unsigned long src_start =3D src_addr;
+> > +       unsigned long src_end;
+> > +
+> > +       if (len > PAGE_SIZE) {
+> > +               len =3D pmd_addr_end(dst_addr, dst_addr + len) - dst_ad=
+dr;
+> > +               src_end =3D pmd_addr_end(src_addr, src_addr + len);
+> > +       } else
+> > +               src_end =3D src_addr + len;
+>
+> Nit:
+>
+> Look at Documentation/process/coding-style.rst.
+>
+> This does not apply if only one branch of a conditional statement is a si=
+ngle
+> statement; in the latter case use braces in both branches:
+>
+> .. code-block:: c
+>
+>     if (condition) {
+>         do_this();
+>         do_that();
+>     } else {
+>         otherwise();
+>     }
+>
+> By the way, what about the following for both cases? Would it impact
+> performance in the `PAGE_SIZE` cases?
+>
+> len =3D pmd_addr_end(dst_addr, dst_addr + len) - dst_addr;
+> src_end =3D pmd_addr_end(src_addr, src_addr + len);
 
-Sorry for the delay, I was debugging something else!
+By the way, do src and dst always have the same offset within a
+single PMD? I don=E2=80=99t think so. If not, how can we verify that if
+src=E2=80=99s PMD is not overflowing, dst is safe as well?
 
-I see Hillf already tried some stuff in the other thread, but I can take
-a look as well.
+Have you only checked src? And for src, since you are already using
+pmd_addr_end(), is src_end =3D src_addr + len fine? Why are you calling
+pmd_addr_end twice after your first pmd_addr_end has already limited
+the range?
 
-Will
+Thanks
+Barry
 
