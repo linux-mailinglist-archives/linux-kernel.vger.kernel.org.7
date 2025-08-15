@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-771482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE7FB287CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF361B287D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F0B620655
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2109DAC0098
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1F530F542;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB8630F54D;
 	Fri, 15 Aug 2025 21:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NFRbLJIe"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJnxo00t"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C7B304BD2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E793090F5
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755293756; cv=none; b=kf6ot/bJZAr8Ok/oErzXCn1Oiq/ssWZ5ErtB+I6mgE7S9NToHqC2FnSaY0IIxd5msK3AaKhFo4Y3PHSlbYAfMLTgXxoToKhHciAqDiwtC0ZCywhbEqhgckTMfPOAcUlAqb9XPp1k4q6iVYV7WN4ZkOqAbszcygCfbDmozrk7vJc=
+	t=1755293756; cv=none; b=BmCNHRm8M+Sumw40vi7S+muran2s5lJXMwxrlOFmo44QaqZPzSBeSlgx/ony0j0K4+IOGy5tWjFSt/i/7DRS0IdmDJkEsiL2Uu1YsTK7LphWCio9sPThYoanzjW92powz9kB7Doq9e+zCszrES6SCogL3PcqMc7M8gzwIFgGL5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755293756; c=relaxed/simple;
-	bh=WT+twm8Uf99k768qpKBOGZ1/ZhOFLPhGU/CEE7PFnPw=;
+	bh=LhzVdwsZBUx/g6yYRHBqACDVKMw4oc5Q0hwku9mvBbI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u7xZFRHn5rAkHajhhni8vUKKFU8LVqhtVl2AQJN6oE/kORsV6bqlp68e/GKklIDRaczuOsZCekhBLgfa3kckg3huZpEjiyvyhLzld1wkQnM3fCnDVhWAfbw1QynU7F05r1tjCmOOdhOXQdE5MnkxIDBKtnGA2HJ1aMCtNg4L8LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NFRbLJIe; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=FtpfqofXJfHuhtsavVTiAnpxa93QI9am7Yf713yXaN55k6vbxdTK2MzVpuim1tNh2tLrmNeuIH3SNeOwgy3+a/5MGVuAjpGWfEzWZgiYL9o85v98WPd4Gei2gu2bi22/PAOK6ev9+fSU1+eThtjQkTqZCLn2YGjqkIrhV+rBrBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJnxo00t; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755293754; x=1786829754;
+  t=1755293755; x=1786829755;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=WT+twm8Uf99k768qpKBOGZ1/ZhOFLPhGU/CEE7PFnPw=;
-  b=NFRbLJIeSoWFZ1PkQrGffxrb+FhR/B1gxKGdIKhCRdktaj+ILxYYl8t9
-   XPzyCJ6djOAzHtiZNSYcV39uF7qMZlL3yvRhR9F4BZ0mU3MfCbokLlTEA
-   otW/kapHHZl8cliGCNGxOcKu1bUOGFkOALceYfTKJnHJwsnCwD9ZvQDxG
-   pRzodOppGz5mVmp3kY57Oo8jVGU1GTKMIGEBsYVOK5o9uZgstH/rEsLle
-   aLJDroFdFC3Fh+gVZhozDgGgzy++1hVpgJyGjGZBhJFThnliB1IOi7C9m
-   tYskdRQhb++KqOEd24JRIWKDckSU0q4WDTRWJcYyNjX/eLKhZ90HMkFQs
+  bh=LhzVdwsZBUx/g6yYRHBqACDVKMw4oc5Q0hwku9mvBbI=;
+  b=NJnxo00tn9jyZ2Y+aEAgc/GRwfFXBBS1XGNqak5LbP8c16/MtONPJxkV
+   CKH663EL7AtFjKJD9ZgT5nmIXUrd6l35YTfdXEO8DXvcUS9WHEBq1A2xY
+   o+RF6Qn8iRzq8/7nMbK5cW3BZIvkHSr3zvdhXlyRkGIoZpjS8i8Z5E26Z
+   vYnX+1qJ/v82qQS3eR52peyFfy4JnhDI4jkX+CpmVXe5w8N9MRc7Jtkd8
+   ozMJ3912n/CklpxMu5fMcLsl0HdyIPY/iQEb+GoOXIuGvvAPdqSkob2i7
+   iETxYPxqsFDrxJEpVZ5ZttIL+yp/ZnyWjLvvLFzeW//VMoyIJJI4EMkzl
    g==;
-X-CSE-ConnectionGUID: /3To17/KSLiJyG0DqsCCTQ==
-X-CSE-MsgGUID: pWbkKZiBRQOV++LKnol6nw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68707459"
+X-CSE-ConnectionGUID: 1fAi0ZdOT7qAqqhPJXH07A==
+X-CSE-MsgGUID: goPDCqSTQBuJcrglQx9BiA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68707467"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68707459"
+   d="scan'208";a="68707467"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:35:47 -0700
-X-CSE-ConnectionGUID: lhaK5i9lQli2SWhlr0ynvA==
-X-CSE-MsgGUID: +GXMbuktRMqMnyURUgzQLw==
+X-CSE-ConnectionGUID: i86zaBbSTBqHF6mU9C0KsQ==
+X-CSE-MsgGUID: bFNnfVn7S4KUuaTFbPwqRw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166319621"
+   d="scan'208";a="166319624"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa010.jf.intel.com with ESMTP; 15 Aug 2025 14:35:48 -0700
 From: kan.liang@linux.intel.com
@@ -77,9 +77,9 @@ Cc: dapeng1.mi@linux.intel.com,
 	ravi.bangoria@amd.com,
 	eranian@google.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 13/17] perf/x86/intel: Enable PERF_PMU_CAP_SIMD_REGS
-Date: Fri, 15 Aug 2025 14:34:31 -0700
-Message-Id: <20250815213435.1702022-14-kan.liang@linux.intel.com>
+Subject: [POC PATCH 14/17] perf/x86/regs: Only support legacy regs for the PT and PERF_REGS_MASK for now
+Date: Fri, 15 Aug 2025 14:34:32 -0700
+Message-Id: <20250815213435.1702022-15-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250815213435.1702022-1-kan.liang@linux.intel.com>
 References: <20250815213435.1702022-1-kan.liang@linux.intel.com>
@@ -93,81 +93,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Enable PERF_PMU_CAP_SIMD_REGS if there is XSAVES support for YMM, ZMM,
-OPMASK, eGPRs, or SSP.
-
-Disable large PEBS for these registers since PEBS HW doesn't support
-them yet.
+The PERF_REG_X86_64_MAX is going to be updated to support more regs,
+e.g., eGPRs.
+However, the PT and PERF_REGS_MASK will not be touched in the POC.
+Using the PERF_REG_X86_R15 + 1 to replace PERF_REG_X86_64_MAX.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/intel/core.c | 46 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ tools/perf/arch/x86/include/perf_regs.h | 2 +-
+ tools/perf/util/intel-pt.c              | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index bd16f91dea1c..c09176400377 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4033,8 +4033,30 @@ static unsigned long intel_pmu_large_pebs_flags(struct perf_event *event)
- 		flags &= ~PERF_SAMPLE_TIME;
- 	if (!event->attr.exclude_kernel)
- 		flags &= ~PERF_SAMPLE_REGS_USER;
--	if (event->attr.sample_regs_user & ~PEBS_GP_REGS)
--		flags &= ~(PERF_SAMPLE_REGS_USER | PERF_SAMPLE_REGS_INTR);
-+	if (event->attr.sample_simd_regs_enabled) {
-+		u64 nolarge = PERF_X86_EGPRS_MASK | BIT_ULL(PERF_REG_X86_SSP);
-+
-+		/*
-+		 * PEBS HW can only collect the XMM0-XMM15 for now.
-+		 * Disable large PEBS for other vector registers, predicate
-+		 * registers, eGPRs, and SSP.
-+		 */
-+		if (event->attr.sample_regs_user & nolarge ||
-+		    fls64(event->attr.sample_simd_vec_reg_user) > PERF_X86_H16ZMM_BASE ||
-+		    event->attr.sample_simd_pred_reg_user)
-+			flags &= ~PERF_SAMPLE_REGS_USER;
-+
-+		if (event->attr.sample_regs_intr & nolarge ||
-+		    fls64(event->attr.sample_simd_vec_reg_intr) > PERF_X86_H16ZMM_BASE ||
-+		    event->attr.sample_simd_pred_reg_intr)
-+			flags &= ~PERF_SAMPLE_REGS_INTR;
-+
-+		if (event->attr.sample_simd_vec_reg_qwords > PERF_X86_XMM_QWORDS)
-+			flags &= ~(PERF_SAMPLE_REGS_USER | PERF_SAMPLE_REGS_INTR);
-+	} else {
-+		if (event->attr.sample_regs_user & ~PEBS_GP_REGS)
-+			flags &= ~(PERF_SAMPLE_REGS_USER | PERF_SAMPLE_REGS_INTR);
-+	}
- 	return flags;
- }
+diff --git a/tools/perf/arch/x86/include/perf_regs.h b/tools/perf/arch/x86/include/perf_regs.h
+index f209ce2c1dd9..793fb597b03f 100644
+--- a/tools/perf/arch/x86/include/perf_regs.h
++++ b/tools/perf/arch/x86/include/perf_regs.h
+@@ -17,7 +17,7 @@ void perf_regs_load(u64 *regs);
+ 		       (1ULL << PERF_REG_X86_ES) | \
+ 		       (1ULL << PERF_REG_X86_FS) | \
+ 		       (1ULL << PERF_REG_X86_GS))
+-#define PERF_REGS_MASK (((1ULL << PERF_REG_X86_64_MAX) - 1) & ~REG_NOSUPPORT)
++#define PERF_REGS_MASK (((1ULL << (PERF_REG_X86_R15 + 1)) - 1) & ~REG_NOSUPPORT)
+ #define PERF_SAMPLE_REGS_ABI PERF_SAMPLE_REGS_ABI_64
+ #endif
  
-@@ -5295,6 +5317,26 @@ static void intel_extended_regs_init(struct pmu *pmu)
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 9b1011fe4826..a9585524f2e1 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -2181,7 +2181,7 @@ static u64 *intel_pt_add_gp_regs(struct regs_dump *intr_regs, u64 *pos,
+ 	u32 bit;
+ 	int i;
  
- 	x86_pmu.ext_regs_mask |= XFEATURE_MASK_SSE;
- 	x86_get_pmu(smp_processor_id())->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
-+
-+	if (boot_cpu_has(X86_FEATURE_AVX) &&
-+	    cpu_has_xfeatures(XFEATURE_MASK_YMM, NULL))
-+		x86_pmu.ext_regs_mask |= XFEATURE_MASK_YMM;
-+	if (boot_cpu_has(X86_FEATURE_APX) &&
-+	    cpu_has_xfeatures(XFEATURE_MASK_APX, NULL))
-+		x86_pmu.ext_regs_mask |= XFEATURE_MASK_APX;
-+	if (boot_cpu_has(X86_FEATURE_AVX512F)) {
-+		if (cpu_has_xfeatures(XFEATURE_MASK_OPMASK, NULL))
-+			x86_pmu.ext_regs_mask |= XFEATURE_MASK_OPMASK;
-+		if (cpu_has_xfeatures(XFEATURE_MASK_ZMM_Hi256, NULL))
-+			x86_pmu.ext_regs_mask |= XFEATURE_MASK_ZMM_Hi256;
-+		if (cpu_has_xfeatures(XFEATURE_MASK_Hi16_ZMM, NULL))
-+			x86_pmu.ext_regs_mask |= XFEATURE_MASK_Hi16_ZMM;
-+	}
-+	if (cpu_feature_enabled(X86_FEATURE_USER_SHSTK))
-+		x86_pmu.ext_regs_mask |= XFEATURE_MASK_CET_USER;
-+
-+	if (x86_pmu.ext_regs_mask != XFEATURE_MASK_SSE)
-+		x86_get_pmu(smp_processor_id())->capabilities |= PERF_PMU_CAP_SIMD_REGS;
- }
+-	for (i = 0, bit = 1; i < PERF_REG_X86_64_MAX; i++, bit <<= 1) {
++	for (i = 0, bit = 1; i < PERF_REG_X86_R15 + 1; i++, bit <<= 1) {
+ 		/* Get the PEBS gp_regs array index */
+ 		int n = pebs_gp_regs[i] - 1;
  
- static void update_pmu_cap(struct pmu *pmu)
 -- 
 2.38.1
 
