@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-770217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B265EB2788D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:36:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001B9B27890
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39A51CE6D96
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B305A1ADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044DC28689A;
-	Fri, 15 Aug 2025 05:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4BA287268;
+	Fri, 15 Aug 2025 05:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uT7KRW8k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KY7QO2ug"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6174E1E32D7;
-	Fri, 15 Aug 2025 05:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7FE26A1D0;
+	Fri, 15 Aug 2025 05:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755236150; cv=none; b=WM7W2H4r9DezUPW4cLyofAwmne6BHopWPNdDmAJc9uLl9eP8N68EGPRVHeiGsAiZYXPN66ZpNkA80Z1ouW+4WEEiAUHNigSIAwyQJrZh8fg9HcP/sySz70FUgUPwAeIM5bJCCJJ7VAVzYVjPPldDckaR88G89D6drQJ8Pe2EzZ8=
+	t=1755236180; cv=none; b=deaFZBuA+Wm/UDeBSkqksoVR2VOCjm5nTWTFrt/c2vJhtHtEG3bVJLdXG3paJUk2wvxwepH1114lkdPndGEceD126wxzrCl2b0632Fbsb9yrl/YmUtqs5RLFuO9szPZYDfYu0UkrjBH9Y5EjZ+m2qQZ8dExurqW9t1ij68y5Pjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755236150; c=relaxed/simple;
-	bh=/tVVY8INZaKcMRZMjDZBIuTxOqPqw3SIElaeI18TSE8=;
+	s=arc-20240116; t=1755236180; c=relaxed/simple;
+	bh=VczQSDc1Si/YxRFdmkWr80lFlzyH1yI4TPitDkCbbVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EiPkPj6ZJ6jyTJsxCc3s5OJwfMy5VC+kjhxnesbA/A4Icl52PR6y58/4PqhSYMGhwMjy0s26XYCbQ/Oc57UNaZT+MigZGDhbcLf+Vl1NKy6tBwLYtjaW1y8WdbAZYDytc8E6T9yz3aLYWz+MlUd3fmBf9p+ukrCdDyy3bY3C+w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uT7KRW8k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA5FC4CEEB;
-	Fri, 15 Aug 2025 05:35:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FdY00Gx90hzuQ5nWR2nlsvVSy8Uw4lgYtqwJztt88ggDWY1wfeEQ6d0FjtwjReu3hErYlD3EGtOohyunYjLpVfpug1aK5nV7X7aLs+VGAjKM8FGWFW7Cjyzyt5eAQmSu/fsuZgpitL4qO6b8dLVjKXgrJaXjecaGci8MEZ+hey4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KY7QO2ug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62702C4CEEB;
+	Fri, 15 Aug 2025 05:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755236150;
-	bh=/tVVY8INZaKcMRZMjDZBIuTxOqPqw3SIElaeI18TSE8=;
+	s=k20201202; t=1755236179;
+	bh=VczQSDc1Si/YxRFdmkWr80lFlzyH1yI4TPitDkCbbVU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uT7KRW8kJwR/h7l9A9F9HRqm+9NRAAC3gdRmI6EFXJSM4m2eXjvTNUdhEg0m5Emvp
-	 hYylF53I32bE1PYC4+DIyQ9NyUIUWx5QbWF+MzkQNv7bO1CVFxeHuTrRkllL1v31Hg
-	 RLrOD/vThlY89VuyQ8SKnNnG+JTKz1GYqXviahAZECjpX8n1t5VsBPrj2hrbPMMTW0
-	 SkxrHWG+Qtn0OMnmrFIFQH4+UC+erMVjykxUU/6V7Q3uuCKiRaZXAhqItwk3JL9pR3
-	 +dVnbVJp6YUpQQaHdStUVxx3Kc7ApEO6CtwgOiJNcuYd7grGYdfYvbraU88uGHzvFt
-	 uWwIRY8n/MJKg==
-Date: Fri, 15 Aug 2025 05:35:46 +0000
+	b=KY7QO2ugfCDbIlNQKWJeiDfrdUVEOJh6CYvQQFnIpkM2N085QmZPYtaU7KrWBIPTD
+	 3fd8nLIRQAiDo7xD/mTio0M6hTUjyz/VqKdt2EaSPLb2qBYRU82rp5XVzpRc7Tkskz
+	 eWJXrrr6fjaGK/PPn5IzbU1SAad2jKMqge4us2KY+DXJFQg9vkO/NMywQn+VpIHq0K
+	 6Rq+4Ze6UT5kOklaCd5EiJKeoWa32H9eOvAxD5CUJ0cU9nhQLUImbGJDn1MoPAxRky
+	 UKebBogfSmGJUW/6Z67TnCT+WeZOTazWV1/3uJWCSHo8U7baAhmeC/UwRAtlLiRW1J
+	 aYpkPpvk0ZxUg==
+Date: Fri, 15 Aug 2025 05:36:16 +0000
 From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
 Cc: bleung@chromium.org, dawidn@google.com, chrome-platform@lists.linux.dev,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/3] lib: Add ref_proxy module
-Message-ID: <aJ7HMvh14kQsHjh-@google.com>
+Message-ID: <aJ7HUJ0boqYndbtD@google.com>
 References: <20250814091020.1302888-1-tzungbi@kernel.org>
  <20250814091020.1302888-2-tzungbi@kernel.org>
- <2025081408-fracture-happening-dda6@gregkh>
+ <DC23GUWD2MYC.1RXVDA2RN7WH3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,51 +59,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025081408-fracture-happening-dda6@gregkh>
+In-Reply-To: <DC23GUWD2MYC.1RXVDA2RN7WH3@kernel.org>
 
-On Thu, Aug 14, 2025 at 12:03:11PM +0200, Greg KH wrote:
-> On Thu, Aug 14, 2025 at 09:10:18AM +0000, Tzung-Bi Shih wrote:
-> > +/**
-> > + * devm_ref_proxy_provider_alloc() - Dev-managed ref_proxy_provider_alloc().
-> > + * @dev: The device.
-> > + * @ref: The pointer of resource.
+On Thu, Aug 14, 2025 at 12:55:55PM +0200, Danilo Krummrich wrote:
+> On Thu Aug 14, 2025 at 11:10 AM CEST, Tzung-Bi Shih wrote:
+> As mentioned in a sub-thread [1], this is pretty much what we already do in Rust
+> with Revocable [2].
+> 
+> The Rust struct Devres [3] is built on Revocable, such that a device resource is
+> only accessible for drivers as long as the device is actually bound to the
+> driver. Once the device is unbound the resource is "revoked" and drivers are
+> prevented from subsequent accesses.
+> 
+> I think it's be good to have a common naming scheme for this, hence I propose to
+> name this struct revocable instead.
+
+Sure, will address all review comments and fix in the next version.
+
+> Besides that, I'm not exactly sure I understand why we need two structs for this.
+> struct ref_proxy seems unnecessary. I think we should remove it and rename
+> struct ref_proxy_provider to struct revocable. Or do I miss anything?
+
+srcu_read_lock() returns an index [4].  The struct ref_proxy is necessary
+for tracking the index for leaving the critical section.
+
+[4] https://elixir.bootlin.com/linux/v6.16/source/kernel/rcu/srcutree.c#L750
+
 > > + *
 > > + * This holds an initial refcount to the struct.
 > > + *
 > > + * Return: The pointer of struct ref_proxy_provider.  NULL on errors.
 > > + */
-> > +struct ref_proxy_provider *devm_ref_proxy_provider_alloc(struct device *dev,
-> > +							 void *ref)
-> > +{
-> > +	struct ref_proxy_provider *rpp;
-> > +
-> > +	rpp = ref_proxy_provider_alloc(ref);
-> > +	if (rpp)
-> > +		if (devm_add_action_or_reset(dev, devm_ref_proxy_provider_free,
-> > +					     rpp))
-> > +			return NULL;
-> > +
-> > +	return rpp;
-> > +}
-> > +EXPORT_SYMBOL(devm_ref_proxy_provider_alloc);
+> > +struct ref_proxy_provider *ref_proxy_provider_alloc(void *ref)
 > 
-> Do we really need a devm version?  That feels odd as this should be
-> doing almost the same thing that devm does, right?  How do they interact
-> properly?
+> The ref_proxy_provider owns the resource now, so when the ref_proxy_provider
+> gets revoked (through the devres callback) the resource must be released, right?
+> Where is this done? Who is responsible to do so? Shouldn't this function take a
+> release callback that is called once the ref_proxy_provider is revoked?
 
-ref_proxy is similar to devm.  The key difference is their lifetime: a
-devm resource is freed when the device detaches, whereas a
-ref_proxy_provider persists as long as it has references from ref_proxy.
+Thank you, that's a valuable suggestion.  While both approaches are valid,
+the current implementation is based on a clear separation of ownership.
 
-Since the resource in my use case is provided by the device, it's more
-intuitive to tie the resource's lifetime to the device's.
+The design is that struct ref_proxy_provider doesn't own the resource.
+Instead, the resource provider (e.g., cros_ec_spi) is responsible for the
+full lifecycle:
+* It owns and ultimately releases the resource (e.g., [5]).
+* It calls ref_proxy_provider_alloc() to expose the resource.
+* It calls ref_proxy_provider_free() to revoke access to the resource.
 
-This devm helper further simplifies the provider code.  Otherwise, the
-provider needs to call ref_proxy_provider_free() at its error handling
-paths or device .remove() callback.
+By doing so, the resource provider doesn't need to create a bunch of
+void (*release)(void *) callbacks (if multiple resources are exposing).
 
-> And do you have a selftest for this thing anywhere?
-
-Will address all review comments and add tests using kselftest and/or KUnit
-in the next version.
+[5] https://elixir.bootlin.com/linux/v6.16/source/drivers/platform/chrome/cros_ec_spi.c#L752
 
