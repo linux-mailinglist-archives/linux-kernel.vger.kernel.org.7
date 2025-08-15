@@ -1,175 +1,2608 @@
-Return-Path: <linux-kernel+bounces-770814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9763BB27F3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:33:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CC1B27F67
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 835C07B0C5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CBF5E8CA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFD6287255;
-	Fri, 15 Aug 2025 11:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09453306D30;
+	Fri, 15 Aug 2025 11:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xPurUWsc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5XmK2lc6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xPurUWsc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5XmK2lc6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuhYaVgp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF2E2868AC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E553E3009C1;
+	Fri, 15 Aug 2025 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257618; cv=none; b=DXQfk8sWFhr8hTpAHX+FimiMLziCDtNriC5NgBoOd9w8Hqijq67U3oowIthXO8vFchFwK2CWveMxRrfFAhHKiINnfTm74JQk+Gys+uC5VQFhamTzVBmyKNmrR15WO4MLuCuDxrZDhj6D6z+CV6zGxakV8SfhL6i5yu0SVm+Htkg=
+	t=1755257847; cv=none; b=qAnjHBTKlcWSB70SGAmjdew5g0eXPseL+sQ32Da0ePW9S+OWWACeClRf5ULmM89wmeC0c12Toy+KBtwVs4lFdvbI/6XwdwiZ2VCbOQaGbg6u8UeskkRflve+jZiKlwKNhnMPqHvVsFt4490Dw7dRLijKbrsY5/BIioK0rg1mIfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257618; c=relaxed/simple;
-	bh=9oDjtyDt5EJbwhsh3gZIG0RVajVKgHnyrfDJlO6eaec=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J+tYSUCIukoA36V9ybe4ZoYebsmIv7vojqMh5NxjkVr8YvO1Bx0BU5KQ2jP7nj0Qdp17hYprEs6hmxbi1C+Mh7okrYOWR5H/MvDCdUTCzfRk29dTewidawS0g1B7erC+f2ClKagLkRdIfH/IN2nC68bNI7YFTQ2DhQ73xf/Ez8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xPurUWsc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5XmK2lc6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xPurUWsc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5XmK2lc6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BFD2D1F83C;
-	Fri, 15 Aug 2025 11:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755257608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iDHlB238DMOoqzjCGx6+MZYPKvDLXTivDPn8V8OQS5o=;
-	b=xPurUWsclpUEOiXQygn6iHfHsaeL+xkBwLRkbtkJmXME8ku0JywkxhW54cI3um0iw0F7yx
-	fwyuk4Qo00jRWFNidG9np9FcMKlKSgNLJHVsinPJqtOevSk4AXpgacIJNlIHsB/e/i89wF
-	Qih7amPjBb3hrjQ9zaqma93hlC6QcJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755257608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iDHlB238DMOoqzjCGx6+MZYPKvDLXTivDPn8V8OQS5o=;
-	b=5XmK2lc6PZlnpYpAgTzXXeRZOGTMpvvq1qBAgGiU5epilaUyTCo4SkVgLxSrG8UhwS7JSY
-	5DPn3/fQ3024A6Aw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xPurUWsc;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5XmK2lc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755257608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iDHlB238DMOoqzjCGx6+MZYPKvDLXTivDPn8V8OQS5o=;
-	b=xPurUWsclpUEOiXQygn6iHfHsaeL+xkBwLRkbtkJmXME8ku0JywkxhW54cI3um0iw0F7yx
-	fwyuk4Qo00jRWFNidG9np9FcMKlKSgNLJHVsinPJqtOevSk4AXpgacIJNlIHsB/e/i89wF
-	Qih7amPjBb3hrjQ9zaqma93hlC6QcJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755257608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iDHlB238DMOoqzjCGx6+MZYPKvDLXTivDPn8V8OQS5o=;
-	b=5XmK2lc6PZlnpYpAgTzXXeRZOGTMpvvq1qBAgGiU5epilaUyTCo4SkVgLxSrG8UhwS7JSY
-	5DPn3/fQ3024A6Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2A5B1368C;
-	Fri, 15 Aug 2025 11:33:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YrIzKwgbn2jQUAAAD6G6ig
-	(envelope-from <fvogt@suse.de>); Fri, 15 Aug 2025 11:33:28 +0000
-From: Fabian Vogt <fvogt@suse.de>
-To: Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: hvc_console: Call hvc_kick in hvc_write unconditionally
-Date: Fri, 15 Aug 2025 13:33:28 +0200
-Message-ID: <2011735.PYKUYFuaPT@fvogt-thinkpad>
+	s=arc-20240116; t=1755257847; c=relaxed/simple;
+	bh=e/GWfa7jB63V9+sGmrcryDLa3aXefEjXKZgdZQ09M8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mfmJ/fxM+NyYJC85SvGtO0qz506ZXatIi0zfkfrSQ9ntclMiEzJYGSrtxrqvuueEIlcnHQbFBU0EFY9PyCJPLh71jG83zooOElJa6GNaKvp59/jZvymVoLbzNuGwADc9mEVN7we65Om5vq3UIUoU5V3HGfl/KvePcZxBxnfsF58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuhYaVgp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5495C4CEF7;
+	Fri, 15 Aug 2025 11:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755257846;
+	bh=e/GWfa7jB63V9+sGmrcryDLa3aXefEjXKZgdZQ09M8c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PuhYaVgp6iTbARMYVQn3AYdemRm4oJ9l0t2mNvcaVyt4q76anVjVi7dHxOWRVZa1v
+	 tLO+xKt59EHMHK/oOz60UuMoHVvsP6YZLtUU2LaZ9mHeltSj0F+qU4GeSvqaPg/2BE
+	 Y07uFxWhlBHfySL1ibd0IITKiEn71tKKTsdX9MuoN0R85xGmX7NOTdkDtLQLY4a5cC
+	 GnzuOQcAiACXvzrDqUT6YzSB9ONgpB5EzDQ0bsSASN59PEcRznFBvuWerH2xtCmYlj
+	 7CuXnF8WQuXvICxNP6+r9Ap30wbNy4KWwcMOHvqo5JdS7rWpHUJYpxLGxm6MXTFoV2
+	 6JRZAKg6bv/dw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1umskN-000000042Su-3uWB;
+	Fri, 15 Aug 2025 13:37:23 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <mchehab+huawei@kernel.org>,
+	Benno Lossin <mchehab+huawei@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <mchehab+huawei@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	Miguel Ojeda <mchehab+huawei@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	bpf@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH 00/11] Fix PDF doc builds on major distros
+Date: Fri, 15 Aug 2025 13:36:16 +0200
+Message-ID: <cover.1755256868.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: BFD2D1F83C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	CTE_CASE(0.50)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email,opensuse.org:url]
-X-Spam-Score: -3.51
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-After hvc_write completes, call hvc_kick also in the case the output
-buffer has been drained, to ensure tty_wakeup gets called.
+Hi Jon,
 
-This fixes that functions which wait for a drained buffer got stuck
-occasionally.
+This series touch only on three files, and have a small diffstat:
 
-Cc: stable@vger.kernel.org
-Closes: https://bugzilla.opensuse.org/show_bug.cgi?id=1230062
-Signed-off-by: Fabian Vogt <fvogt@suse.de>
----
- drivers/tty/hvc/hvc_console.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+   Documentation/Makefile     |    4 -
+   Documentation/conf.py      |  106 +++++++++++++++++++++----------------
+   scripts/sphinx-pre-install |   41 +++++++++++---
+   3 files changed, 96 insertions(+), 55 deletions(-)
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index cd1f657f782d..13c663a154c4 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -543,10 +543,10 @@ static ssize_t hvc_write(struct tty_struct *tty, const u8 *buf, size_t count)
- 	}
- 
- 	/*
--	 * Racy, but harmless, kick thread if there is still pending data.
-+	 * Kick thread to flush if there's still pending data
-+	 * or to wakeup the write queue.
- 	 */
--	if (hp->n_outbuf)
--		hvc_kick();
-+	hvc_kick();
- 
- 	return written;
- }
+Yet, it took a lot of my time.  Basically, it addresses lots of problems  related
+with building PDF docs:
+
+- Makefile has a wrong set of definitions for paper size. It was
+  using pre-1.7 Sphinx nomenclature for some conf vars;
+- The LaTeX options a conf.py had lots of issues;
+- Finally, some PDF package dependencies for distros were wrong.
+
+I wrote an entire testbench to test this and doing builds on every
+platform mentioned at sphinx-pre-install. 
+
+After the change *most* PDF files are built on *most* platforms. 
+
+
+Summary
+=======
+  PASSED - AlmaLinux release 9.6 (Sage Margay) (7 tests)
+  PASSED - Amazon Linux release 2023 (Amazon Linux) (7 tests)
+  FAILED - archlinux (1 tests)
+  PASSED - CentOS Stream release 9 (7 tests)
+  PARTIAL - Debian GNU/Linux 12 (7 tests)
+  PARTIAL - Devuan GNU/Linux 5 (7 tests)
+  PASSED - Fedora release 42 (Adams) (7 tests)
+  PARTIAL - Gentoo Base System release 2.17 (7 tests)
+  PASSED - Kali GNU/Linux 2025.2 (7 tests)
+  PASSED - Mageia 9 (7 tests)
+  PARTIAL - Linux Mint 22 (7 tests)
+  PARTIAL - openEuler release 25.03 (7 tests)
+  PARTIAL - OpenMandriva Lx 4.3 (7 tests)
+  PASSED - openSUSE Leap 15.6 (7 tests)
+  PASSED - openSUSE Tumbleweed (7 tests)
+  PARTIAL - Oracle Linux Server release 9.6 (7 tests)
+  FAILED - Red Hat Enterprise Linux release 8.10 (Ootpa) (7 tests)
+  PARTIAL - Rocky Linux release 8.9 (Green Obsidian) (7 tests)
+  PARTIAL - Rocky Linux release 9.6 (Blue Onyx) (7 tests)
+  FAILED - Springdale Open Enterprise Linux release 9.2 (Parma) (7 tests)
+  PARTIAL - Ubuntu 24.04.2 LTS (7 tests)
+  PASSED - Ubuntu 25.04 (7 tests)
+
+The failed distros are:
+
+- archlinux. This is some problem on recent lxc containers. Unrelated
+  with pdf builds;
+- RHEL 8: paywall issue: some packages required by Sphinx require a repository
+  that it is not openly available. I might have using CentOS repos, but, as we're
+  already testing it, I opted not do do it;
+- Springdale 9.2: some broken package dependency.
+
+Now, if you look at the full logs below, you'll see that some distros come with
+XeLaTeX or LaTeX troubles, causing bigger and/or more complex docs to
+fail. It is possible to fix those, but they depend on addressing distro-specific
+LaTeX issues like increasing maximum memory limits and maximum number
+of idented paragraphs.
+
+It follows full results per distro.
+
+Please notice that I'm testing this after applying the next series which adds
+a sphinx-build-wrapper. The rationale is that, on such series, the logic can
+check what PDF files are missed. Currently, on upstream, PDF always return
+an error, even when everything suceeds.
+
+Regards,
+Mauro
+
+AlmaLinux release 9.6 (Sage Margay):
+------------------------------------
+    PASSED: OS detection: AlmaLinux release 9.6 (Sage Margay)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:56, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:44, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Amazon Linux release 2023 (Amazon Linux):
+-----------------------------------------
+    PASSED: OS detection: Amazon Linux release 2023 (Amazon Linux)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:59, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:12, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+archlinux:
+----------
+    FAILED: Build failed at package installation (
+            Failed to setup distrolib.distro_manager.CustomError: Failed to setup distro
+            File "~/bin/doc-build-container.py", line 264, in <module>
+            asyncio.run(main())
+            /usr/lib64/python3.13/asyncio/runners.py, line 195, in run
+            return runner.run(main)
+            /usr/lib64/python3.13/asyncio/runners.py, line 118, in run
+            return self._loop.run_until_complete(task)
+            /usr/lib64/python3.13/asyncio/base_events.py, line 712, in run_until_complete
+            self.run_forever()
+            /usr/lib64/python3.13/asyncio/base_events.py, line 683, in run_forever
+            self._run_once()
+            /usr/lib64/python3.13/asyncio/base_events.py, line 2050, in _run_once
+            handle._run()
+            /usr/lib64/python3.13/asyncio/events.py, line 89, in _run
+            self._context.run(self._callback, *self._args)
+            File "distro_manager.py", line 617, in run_manager
+            return await manager.serial_run()
+            File "distro_manager.py", line 598, in serial_run
+            await self.run_distro(distro)
+            File "distro_manager.py", line 523, in run_distro
+            self.record_status(
+            )
+
+CentOS Stream release 9:
+------------------------
+    PASSED: OS detection: CentOS Stream release 9
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:55, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:40, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Debian GNU/Linux 12:
+--------------------
+    PASSED: OS detection: Debian GNU/Linux 12
+    SKIPPED (Sphinx Sphinx 5.3.0): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:46, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 10:31, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Devuan GNU/Linux 5:
+-------------------
+    PASSED: OS detection: Devuan GNU/Linux 5
+    SKIPPED (Sphinx Sphinx 5.3.0): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:46, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 10:30, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Fedora release 42 (Adams):
+--------------------------
+    PASSED: OS detection: Fedora release 42 (Adams)
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:47, return code: 0
+    PASSED: Build PDF documentation: Build time: 10:33, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Gentoo Base System release 2.17:
+--------------------------------
+    PASSED: OS detection: Gentoo Base System release 2.17
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.2.3
+    PASSED: Sphinx package: Sphinx Sphinx 8.2.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 3:43, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 10:03, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Kali GNU/Linux 2025.2:
+----------------------
+    PASSED: OS detection: Kali GNU/Linux 2025.2
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:21, return code: 0
+    PASSED: Build PDF documentation: Build time: 12:23, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Mageia 9:
+---------
+    PASSED: OS detection: Mageia 9
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.1.3
+    PASSED: Sphinx package: Sphinx Sphinx 6.1.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:34, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:42, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Linux Mint 22:
+--------------
+    PASSED: OS detection: Linux Mint 22
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.1.3
+    PASSED: Sphinx package: Sphinx Sphinx 4.3.2
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:08, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 10:41, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+openEuler release 25.03:
+------------------------
+    PASSED: OS detection: openEuler release 25.03
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.2.3
+    PASSED: Sphinx package: Sphinx Sphinx 8.1.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:04, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 0:04, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+OpenMandriva Lx 4.3:
+--------------------
+    PASSED: OS detection: OpenMandriva Lx 4.3
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 4.3.2
+    PASSED: Sphinx package: Sphinx Sphinx 4.3.2
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:00, return code: 0
+    FAILED: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 0)
+
+openSUSE Leap 15.6:
+-------------------
+    PASSED: OS detection: openSUSE Leap 15.6
+    SKIPPED (Sphinx Sphinx 7.2.6): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:29, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:35, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+openSUSE Tumbleweed:
+--------------------
+    PASSED: OS detection: openSUSE Tumbleweed
+    SKIPPED (Sphinx Sphinx 8.2.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:26, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:09, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Oracle Linux Server release 9.6:
+--------------------------------
+    PASSED: OS detection: Oracle Linux Server release 9.6
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:06, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 0:07, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Red Hat Enterprise Linux release 8.10 (Ootpa):
+----------------------------------------------
+    PASSED: OS detection: Red Hat Enterprise Linux release 8.10 (Ootpa)
+    FAILED: System packages:  Error: Unable to find a match: google-noto-sans-cjk-ttc-fonts librsvg2-tools texlive-amscls texlive-amsfonts texlive-amsmath texlive-anyfontsize texlive-capt-of texlive-cmap texlive-collection-fontsrecommended texlive-collection-latex texlive-ec texlive-eqparbox texlive-euenc texlive-fancybox texlive-fancyvrb texlive-float texlive-fncychap texlive-framed texlive-luatex85 texlive-mdwtools texlive-multirow texlive-needspace texlive-oberdiek texlive-parskip texlive-polyglossia texlive-psnfss texlive-tabulary texlive-threeparttable texlive-titlesec texlive-tools texlive-ucs texlive-upquote texlive-wrapfig texlive-xecjk texlive-xetex-bin
+    FAILED: Sphinx on venv: No Sphinx version detected
+    FAILED: Sphinx package: No Sphinx version detected
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    FAILED: Build HTML documentation: Test failed (Build time: 0:00, return code: 2)
+    FAILED: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 2)
+
+Rocky Linux release 8.9 (Green Obsidian):
+-----------------------------------------
+    PASSED: OS detection: Rocky Linux release 8.9 (Green Obsidian)
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 7.4.7
+    FAILED: Sphinx package: No Sphinx version detected
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:33, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:17, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Rocky Linux release 9.6 (Blue Onyx):
+------------------------------------
+    PASSED: OS detection: Rocky Linux release 9.6 (Blue Onyx)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:07, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 0:07, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Springdale Open Enterprise Linux release 9.2 (Parma):
+-----------------------------------------------------
+    PASSED: OS detection: Springdale Open Enterprise Linux release 9.2 (Parma)
+    FAILED: System packages:  Error:   Problem: package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickCore-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickWand-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires ImageMagick-libs(x86-64) = 6.9.13.25-1.el9, but none of the providers can be installed   - conflicting requests   - nothing provides libraw_r.so.23()(64bit) needed by ImageMagick-libs-6.9.13.25-1.el9.x86_64
+    PASSED: Sphinx on venv: Sphinx Sphinx 7.4.7
+    PASSED: Sphinx package: Sphinx Sphinx 3.4.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:25, return code: 0
+    FAILED: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 0)
+
+Ubuntu 24.04.2 LTS:
+-------------------
+    PASSED: OS detection: Ubuntu 24.04.2 LTS
+    SKIPPED (Sphinx Sphinx 7.2.6): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:05, return code: 0
+    FAILED: Build PDF documentation: Test failed (Build time: 0:05, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Ubuntu 25.04:
+-------------
+    PASSED: OS detection: Ubuntu 25.04
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 3:42, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:44, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Summary
+=======
+  PASSED - AlmaLinux release 9.6 (Sage Margay) (7 tests)
+  PASSED - Amazon Linux release 2023 (Amazon Linux) (7 tests)
+  FAILED - archlinux (1 tests)
+  PASSED - CentOS Stream release 9 (7 tests)
+  FAILED - Debian GNU/Linux 12 (7 tests)
+  FAILED - Devuan GNU/Linux 5 (7 tests)
+  PASSED - Fedora release 42 (Adams) (7 tests)
+  FAILED - Gentoo Base System release 2.17 (7 tests)
+  PASSED - Kali GNU/Linux 2025.2 (7 tests)
+  PASSED - Mageia 9 (7 tests)
+  FAILED - Linux Mint 22 (7 tests)
+  FAILED - openEuler release 25.03 (7 tests)
+  FAILED - OpenMandriva Lx 4.3 (7 tests)
+  PASSED - openSUSE Leap 15.6 (7 tests)
+  PASSED - openSUSE Tumbleweed (7 tests)
+  FAILED - Oracle Linux Server release 9.6 (7 tests)
+  FAILED - Red Hat Enterprise Linux release 8.10 (Ootpa) (7 tests)
+  FAILED - Rocky Linux release 8.9 (Green Obsidian) (7 tests)
+  FAILED - Rocky Linux release 9.6 (Blue Onyx) (7 tests)
+  FAILED - Springdale Open Enterprise Linux release 9.2 (Parma) (7 tests)
+  FAILED - Ubuntu 24.04.2 LTS (7 tests)
+  PASSED - Ubuntu 25.04 (7 tests)
+(base) mchehab@foz /new_devel/docs $ ktap_reader.py /tmp/build_logs/*
+
+AlmaLinux release 9.6 (Sage Margay):
+------------------------------------
+    PASSED: OS detection: AlmaLinux release 9.6 (Sage Margay)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:56, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:44, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Amazon Linux release 2023 (Amazon Linux):
+-----------------------------------------
+    PASSED: OS detection: Amazon Linux release 2023 (Amazon Linux)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:59, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:12, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+archlinux:
+----------
+    FAILED: Build failed at package installation (
+            Failed to setup distrolib.distro_manager.CustomError: Failed to setup distro
+            File "~/bin/doc-build-container.py", line 264, in <module>
+            asyncio.run(main())
+            /usr/lib64/python3.13/asyncio/runners.py, line 195, in run
+            return runner.run(main)
+            /usr/lib64/python3.13/asyncio/runners.py, line 118, in run
+            return self._loop.run_until_complete(task)
+            /usr/lib64/python3.13/asyncio/base_events.py, line 712, in run_until_complete
+            self.run_forever()
+            /usr/lib64/python3.13/asyncio/base_events.py, line 683, in run_forever
+            self._run_once()
+            /usr/lib64/python3.13/asyncio/base_events.py, line 2050, in _run_once
+            handle._run()
+            /usr/lib64/python3.13/asyncio/events.py, line 89, in _run
+            self._context.run(self._callback, *self._args)
+            File "distro_manager.py", line 617, in run_manager
+            return await manager.serial_run()
+            File "distro_manager.py", line 598, in serial_run
+            await self.run_distro(distro)
+            File "distro_manager.py", line 523, in run_distro
+            self.record_status(
+            )
+
+CentOS Stream release 9:
+------------------------
+    PASSED: OS detection: CentOS Stream release 9
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:55, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:40, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Debian GNU/Linux 12:
+--------------------
+    PASSED: OS detection: Debian GNU/Linux 12
+    SKIPPED (Sphinx Sphinx 5.3.0): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:46, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 10:31, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Devuan GNU/Linux 5:
+-------------------
+    PASSED: OS detection: Devuan GNU/Linux 5
+    SKIPPED (Sphinx Sphinx 5.3.0): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:46, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 10:30, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Fedora release 42 (Adams):
+--------------------------
+    PASSED: OS detection: Fedora release 42 (Adams)
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:47, return code: 0
+    PASSED: Build PDF documentation: Build time: 10:33, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Gentoo Base System release 2.17:
+--------------------------------
+    PASSED: OS detection: Gentoo Base System release 2.17
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.2.3
+    PASSED: Sphinx package: Sphinx Sphinx 8.2.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 3:43, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 10:03, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Kali GNU/Linux 2025.2:
+----------------------
+    PASSED: OS detection: Kali GNU/Linux 2025.2
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:21, return code: 0
+    PASSED: Build PDF documentation: Build time: 12:23, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Mageia 9:
+---------
+    PASSED: OS detection: Mageia 9
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.1.3
+    PASSED: Sphinx package: Sphinx Sphinx 6.1.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:34, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:42, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Linux Mint 22:
+--------------
+    PASSED: OS detection: Linux Mint 22
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.1.3
+    PASSED: Sphinx package: Sphinx Sphinx 4.3.2
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:08, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 10:41, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      FAILED: userspace-api: Build failed (FAILED)
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      FAILED: translations: Build failed (FAILED)
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      FAILED: doc-guide: Build failed (FAILED)
+      PASSED: cdrom: pdf/cdrom.pdf
+      FAILED: gpu: Build failed (FAILED)
+      FAILED: i2c: Build failed (FAILED)
+      FAILED: RCU: Build failed (FAILED)
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      FAILED: arch: Build failed (FAILED)
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      FAILED: core-api: Build failed (FAILED)
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+openEuler release 25.03:
+------------------------
+    PASSED: OS detection: openEuler release 25.03
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 8.2.3
+    PASSED: Sphinx package: Sphinx Sphinx 8.1.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:04, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 0:04, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+OpenMandriva Lx 4.3:
+--------------------
+    PASSED: OS detection: OpenMandriva Lx 4.3
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 4.3.2
+    PASSED: Sphinx package: Sphinx Sphinx 4.3.2
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:00, return code: 0
+    PARTIAL: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 0)
+
+openSUSE Leap 15.6:
+-------------------
+    PASSED: OS detection: openSUSE Leap 15.6
+    SKIPPED (Sphinx Sphinx 7.2.6): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:29, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:35, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+openSUSE Tumbleweed:
+--------------------
+    PASSED: OS detection: openSUSE Tumbleweed
+    SKIPPED (Sphinx Sphinx 8.2.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 4:26, return code: 0
+    PASSED: Build PDF documentation: Build time: 13:09, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Oracle Linux Server release 9.6:
+--------------------------------
+    PASSED: OS detection: Oracle Linux Server release 9.6
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:06, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 0:07, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Red Hat Enterprise Linux release 8.10 (Ootpa):
+----------------------------------------------
+    PASSED: OS detection: Red Hat Enterprise Linux release 8.10 (Ootpa)
+    FAILED: System packages:  Error: Unable to find a match: google-noto-sans-cjk-ttc-fonts librsvg2-tools texlive-amscls texlive-amsfonts texlive-amsmath texlive-anyfontsize texlive-capt-of texlive-cmap texlive-collection-fontsrecommended texlive-collection-latex texlive-ec texlive-eqparbox texlive-euenc texlive-fancybox texlive-fancyvrb texlive-float texlive-fncychap texlive-framed texlive-luatex85 texlive-mdwtools texlive-multirow texlive-needspace texlive-oberdiek texlive-parskip texlive-polyglossia texlive-psnfss texlive-tabulary texlive-threeparttable texlive-titlesec texlive-tools texlive-ucs texlive-upquote texlive-wrapfig texlive-xecjk texlive-xetex-bin
+    PARTIAL: Sphinx on venv: No Sphinx version detected
+    PARTIAL: Sphinx package: No Sphinx version detected
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PARTIAL: Build HTML documentation: Test failed (Build time: 0:00, return code: 2)
+    PARTIAL: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 2)
+
+Rocky Linux release 8.9 (Green Obsidian):
+-----------------------------------------
+    PASSED: OS detection: Rocky Linux release 8.9 (Green Obsidian)
+    PASSED: System packages: Packages installed
+    PASSED: Sphinx on venv: Sphinx Sphinx 7.4.7
+    PARTIAL: Sphinx package: No Sphinx version detected
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:33, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:17, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+Rocky Linux release 9.6 (Blue Onyx):
+------------------------------------
+    PASSED: OS detection: Rocky Linux release 9.6 (Blue Onyx)
+    SKIPPED (Sphinx Sphinx 3.4.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:07, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 0:07, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Springdale Open Enterprise Linux release 9.2 (Parma):
+-----------------------------------------------------
+    PASSED: OS detection: Springdale Open Enterprise Linux release 9.2 (Parma)
+    FAILED: System packages:  Error:   Problem: package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickCore-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickWand-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires ImageMagick-libs(x86-64) = 6.9.13.25-1.el9, but none of the providers can be installed   - conflicting requests   - nothing provides libraw_r.so.23()(64bit) needed by ImageMagick-libs-6.9.13.25-1.el9.x86_64
+    PASSED: Sphinx on venv: Sphinx Sphinx 7.4.7
+    PASSED: Sphinx package: Sphinx Sphinx 3.4.3
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 5:25, return code: 0
+    PARTIAL: Build PDF documentation: PDF build didn't produce any results (Build time: 0:00, return code: 0)
+
+Ubuntu 24.04.2 LTS:
+-------------------
+    PASSED: OS detection: Ubuntu 24.04.2 LTS
+    SKIPPED (Sphinx Sphinx 7.2.6): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 0:05, return code: 0
+    PARTIAL: Build PDF documentation: Test failed (Build time: 0:05, return code: 2)
+
+  PDF docs:
+  ---------
+      PASSED: latex: FAILED (no .tex)
+
+Ubuntu 25.04:
+-------------
+    PASSED: OS detection: Ubuntu 25.04
+    SKIPPED (Sphinx Sphinx 8.1.3): System packages
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx on venv
+    SKIPPED (Sphinx already installed either as venv or as native package): Sphinx package
+    PASSED: Clean documentation: Build time: 0:00, return code: 0
+    PASSED: Build HTML documentation: Build time: 3:42, return code: 0
+    PASSED: Build PDF documentation: Build time: 11:44, return code: 0
+
+  PDF docs:
+  ---------
+      PASSED: dev-tools: pdf/dev-tools.pdf
+      PASSED: tools: pdf/tools.pdf
+      PASSED: filesystems: pdf/filesystems.pdf
+      PASSED: w1: pdf/w1.pdf
+      PASSED: maintainer: pdf/maintainer.pdf
+      PASSED: process: pdf/process.pdf
+      PASSED: isdn: pdf/isdn.pdf
+      PASSED: fault-injection: pdf/fault-injection.pdf
+      PASSED: iio: pdf/iio.pdf
+      PASSED: scheduler: pdf/scheduler.pdf
+      PASSED: staging: pdf/staging.pdf
+      PASSED: fpga: pdf/fpga.pdf
+      PASSED: power: pdf/power.pdf
+      PASSED: leds: pdf/leds.pdf
+      PASSED: edac: pdf/edac.pdf
+      PASSED: PCI: pdf/PCI.pdf
+      PASSED: firmware-guide: pdf/firmware-guide.pdf
+      PASSED: cpu-freq: pdf/cpu-freq.pdf
+      PASSED: mhi: pdf/mhi.pdf
+      PASSED: wmi: pdf/wmi.pdf
+      PASSED: timers: pdf/timers.pdf
+      PASSED: accel: pdf/accel.pdf
+      PASSED: hid: pdf/hid.pdf
+      PASSED: userspace-api: pdf/userspace-api.pdf
+      PASSED: spi: pdf/spi.pdf
+      PASSED: networking: pdf/networking.pdf
+      PASSED: virt: pdf/virt.pdf
+      PASSED: nvme: pdf/nvme.pdf
+      PASSED: translations: pdf/translations.pdf
+      PASSED: input: pdf/input.pdf
+      PASSED: tee: pdf/tee.pdf
+      PASSED: doc-guide: pdf/doc-guide.pdf
+      PASSED: cdrom: pdf/cdrom.pdf
+      PASSED: gpu: pdf/gpu.pdf
+      PASSED: i2c: pdf/i2c.pdf
+      PASSED: RCU: pdf/RCU.pdf
+      PASSED: watchdog: pdf/watchdog.pdf
+      PASSED: usb: pdf/usb.pdf
+      PASSED: rust: pdf/rust.pdf
+      PASSED: crypto: pdf/crypto.pdf
+      PASSED: kbuild: pdf/kbuild.pdf
+      PASSED: livepatch: pdf/livepatch.pdf
+      PASSED: mm: pdf/mm.pdf
+      PASSED: locking: pdf/locking.pdf
+      PASSED: infiniband: pdf/infiniband.pdf
+      PASSED: driver-api: pdf/driver-api.pdf
+      PASSED: bpf: pdf/bpf.pdf
+      PASSED: devicetree: pdf/devicetree.pdf
+      PASSED: block: pdf/block.pdf
+      PASSED: target: pdf/target.pdf
+      PASSED: arch: pdf/arch.pdf
+      PASSED: pcmcia: pdf/pcmcia.pdf
+      PASSED: scsi: pdf/scsi.pdf
+      PASSED: netlabel: pdf/netlabel.pdf
+      PASSED: sound: pdf/sound.pdf
+      PASSED: security: pdf/security.pdf
+      PASSED: accounting: pdf/accounting.pdf
+      PASSED: admin-guide: pdf/admin-guide.pdf
+      PASSED: core-api: pdf/core-api.pdf
+      PASSED: fb: pdf/fb.pdf
+      PASSED: peci: pdf/peci.pdf
+      PASSED: trace: pdf/trace.pdf
+      PASSED: misc-devices: pdf/misc-devices.pdf
+      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
+      PASSED: hwmon: pdf/hwmon.pdf
+
+
+
+Mauro Carvalho Chehab (11):
+  docs: Makefile: Fix LaTeX paper size settings
+  docs: conf.py: better handle latex documents
+  docs: conf.py: fix doc name with SPHINXDIRS
+  docs: conf.py: rename some vars at latex_documents logic
+  docs: conf.py: fix some troubles for LaTeX output
+  scripts: sphinx-pre-install: fix PDF build issues on Ubuntu
+  scripts: sphinx-pre-install: add missing gentoo pdf dependencies
+  scripts: sphinx-pre-install: fix PDF dependencies for openSuse
+  scripts: sphinx-pre-install: fix dependencies for OpenMandriva
+  scripts: sphinx-pre-install: fix pdf dependencies for Mageia 9
+  scripts: sphinx-pre-install: fix PDF dependencies for gentoo
+
+ Documentation/Makefile     |   4 +-
+ Documentation/conf.py      | 106 ++++++++++++++++++++++---------------
+ scripts/sphinx-pre-install |  41 ++++++++++----
+ 3 files changed, 96 insertions(+), 55 deletions(-)
+
 -- 
 2.50.1
-
-
-
-
 
 
 
