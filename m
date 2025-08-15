@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-770668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54213B27DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108D3B27DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93367AA2195
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C8D1D0231F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25252FE049;
-	Fri, 15 Aug 2025 09:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F10C2FDC34;
+	Fri, 15 Aug 2025 09:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="msJfzHkQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6Ytgd+R"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DEE2FCBE6
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BE62FDC38;
+	Fri, 15 Aug 2025 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251869; cv=none; b=fWEHm0mCXFFwdRB7pUDb5fPz25Ii48RFnVopQjBvQUs3Rvui0BQ0MQio2306FLZdUFZsL3vCyk5bE7hPX3bn9tNFA1MRHByWZCM3EGoKA/JIXxVOUMorpmnYfatWHeVE4TXH/wmgGVj5hAS1N71yPYnOXxEcqlnjP9edMIBk8Lg=
+	t=1755251914; cv=none; b=nXicTs1wqiW/Lcp2iMsq2gS7gAb1BYHDDOPWUBvtWOHBAzzWZUEwoSAMXqA2oy6F+CgsPsQAZK9sT0ZLPFVmdw44fk50UtnV6W4tFQNYiJ2iPH3CFyw8YKUF6IScE5JOiNJ6wBx661klVoPQGbdfB71KE9FsidQ7rvxVc3E+hNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251869; c=relaxed/simple;
-	bh=cRwd0xAh9h5E7sVoqCJod5qdMXXF26YfR10Uhew0+Jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rcear8JzC98zvUG+DoBmj/AZSvnenZsK37Q0hjvSeuoriqrqEGyQEjKPN1Kqe0ZVI97NxDQAw7I6uSWisiPGyIMvKz2kXPyugEq/mEsVJ+ofXJoq6bP9tqVlkdvCmZvSff00jrB8msEQ1KShOmmEKu1YelbIkcVYdNmVG/Va/eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=msJfzHkQ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755251867; x=1786787867;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cRwd0xAh9h5E7sVoqCJod5qdMXXF26YfR10Uhew0+Jg=;
-  b=msJfzHkQzgoRI2Jq6zzxakROEzaWdukeqHrN8OjerPYvTyXNazpgupfb
-   F8FFklF3mJJzMkeJQ3LT7Btgo14IhinU+6bb7r4+Zf4CXfTZ68uNxt8Qb
-   Pizn2Rpac0YUZ70akp3lmnTJVW/WB1BNUA3HILB7bwZ/Tqb7+oXqbXkVG
-   x1C0v2qkVD1xJSM5rldIyLZbPYirujrMpoYd74owvV1nAhvRXzjKv9337
-   kdxbeCTBUKVBMHItcgSftvVzzKyDH2S2MYJBfYDhyIx7Bo9Owu9pBXGv7
-   3cbjclW1VjqxbEagRHYtB6KGHy9gSQAwWixkiwGeU+quHWhSDV5CxpUxd
-   A==;
-X-CSE-ConnectionGUID: kjpqPFA8SwiqUfSQ6cbAZQ==
-X-CSE-MsgGUID: 7xZmFJ2CTVaAILXPsyJqug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="61207236"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="61207236"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:57:46 -0700
-X-CSE-ConnectionGUID: DXmdI5xFRa+CIQ9bGOnzvQ==
-X-CSE-MsgGUID: RtOQGOPiTKarUpJGcI93LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="171112789"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Aug 2025 02:57:42 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umrBs-000Bpk-2c;
-	Fri, 15 Aug 2025 09:57:40 +0000
-Date: Fri, 15 Aug 2025 17:57:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
-	robin.murphy@arm.com, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
-	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
-	xuwei5@huawei.com, fanghao11@huawei.com,
-	jonathan.cameron@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
-Message-ID: <202508151711.pZGu9jac-lkp@intel.com>
-References: <20250814093005.2040511-2-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1755251914; c=relaxed/simple;
+	bh=T3fvT6cqiRtg8VkXda+nr0X098QvveYJ98jWMz10JgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e6RcFC/yhpWi0OG/XG7LcAEky3dVaSW5x6S5rwH3ssHaLnu5xIpSMZ/YcpHwFMS2YghFmuUR/OvyKrMYn/Cixv62ifl0L+O3gsic//6pcWFEgVqgfEXdwxj8QU3jYQ2d+UJ9DkUFIYlkD1fehIcaX7LCm2gBGBYw6KxkLDpDVSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6Ytgd+R; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb732eee6so319476966b.0;
+        Fri, 15 Aug 2025 02:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755251911; x=1755856711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=defRDf7dOJ+KjDDaWE1Qxe1OYNCRXDIpIxdlBIOy/yQ=;
+        b=C6Ytgd+RTzoK4wxN1W85RFVWH+UdNUIH616zV9t1j9T0SCLqPQIImCeynsg1hB4Pbb
+         GWtCNCJ8rOjaPVfO2G/8Gay3m+IBDqqsquYGWPJdSVQQwYE8RdmnbsRSh9jkqR80laSB
+         HxDY4sen4nXx3kPj0JXXN9z/bho6jj8TQxRMXyJOhMcpEBoBBzdxTMyX4xxoaHetXPJo
+         tTLlpA5xAXnZ9u33dDwq8GYa7DuN/j3d7PgElpwLwk0WZI54+adW07oDKmuvcfudUG/G
+         BFKO2FE/8XAm3wEK1cpp5op5UmW+Bw4hM3C17bGP5N7JR8OdfiNN1mcKs+ZCICEWiT1q
+         OecA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755251911; x=1755856711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=defRDf7dOJ+KjDDaWE1Qxe1OYNCRXDIpIxdlBIOy/yQ=;
+        b=VKhOxc9mv4RFxDIMMoNYWOaAMkuk+yE1eMjB0PlPICD6nXBFT9I4XxsQhcM2N60kjJ
+         g8QXa/GrgRE37Yk/GGVTzaIWw2HgGGKH2oVuQ7BeQsDKLCmYON+4E7WM89qx1WSKlVIp
+         1PkPxCoaDDQjbmzKLDBBOKoj3YlJ1u9BA8UZT4IqPjed2RXfwYTvn9IrmJtqHFrhoHVK
+         2RQ8WaL7Sw9yXX9It7dtstc6stJ53aR32TnOGJVAVyUEO9NAlVzJXRQhMqqqrrKHwytA
+         wANj3KCv87jPDhfhtYkFKorrA2uGuuzpGV/GIHkk7568wCftkQLoWjbBI3HtKS/xEKYb
+         8QiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3zY9rE+t6wFjs6+S6EjwQb8DhTDOTcVN1W2l8X2CYpCYNd7OkReo+PHWQ+a7JG3dan5WKQU8w@vger.kernel.org, AJvYcCXJ8wlJ1TmHCevpbeaazrv1emU+KzF0/3luUjb2s3spsx8kXDN0hC8aQbuyeJgFNK3R4IAwvnnAiPHpydA=@vger.kernel.org, AJvYcCXLKhMbA4S63CIYZl300X4mrIQGyD7HzyORi7N5Sk0SzzYC2EpXhVpa2XOW2xLIghGRNTQR3mj4xgHQPG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySul3711GL72Cst5fIIekxEDywhSBe4nt7Itc7dhIZM8SDBTNh
+	Y8WEu+4Ni6pf80UjsPVA8hxLRm4xV7RnhgaxkNN7Yu5KBZ8IUSB9Ee+2
+X-Gm-Gg: ASbGncuJVP16uYYiPMYlCi8nU3KzEagGxwXpiLn9QDok4oANWjiP/rzOOw7gH8VNWwQ
+	bBZMJGxcJI0zTVjRoolw5xPNX6QlqjLbhH1qQE9wRHh4KwYaMMSVCYPTMujZI8EeUj6h4Bf7Ps9
+	xa6sYaNnOf+iPxz8CjrH/ju+nZK5sLO9U/e4IXY+QqKxiyyDnRE3F6LkrcQ3Hs6msMe1yUwK8fE
+	LaUjYudr/1cNVkrr0NOE0WquUZTzWZ5V4oradN8uwQ/2VeR5ZEoBrXHH7SHwmbsrIfQkCg+Wt99
+	DhTUFrs29BJ9zeEudokdlvLZPTkF9veFXbL1S11nrH3ugagAtZQAo5PH7yIjFpYDabNci1EygEO
+	tsVAiTN/TDW94MCjIAB6zl/cPchM0rUKSAniut5Bbq2uq1YDii1LWrAnVQeEgsHrC77n2tzzAY8
+	a8fQJD3cBBtR8=
+X-Google-Smtp-Source: AGHT+IFVQzneXrv2zh8rAn9rwZO/YjjYao2qjx9GCbqCyb8eWubzJrNL+tLxC3FVmE6LOECxhvB5fQ==
+X-Received: by 2002:a17:907:3e1a:b0:ad4:f517:ca3 with SMTP id a640c23a62f3a-afcdc1a3d54mr141098066b.20.1755251910891;
+        Fri, 15 Aug 2025 02:58:30 -0700 (PDT)
+Received: from evgeniy-hpelitebookx360830g6 (v1532649.hosted-by-vdsina.ru. [88.210.12.244])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72d8asm112854766b.36.2025.08.15.02.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 02:58:30 -0700 (PDT)
+From: Evgeniy Harchenko <evgeniyharchenko.dev@gmail.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	chris.chiu@canonical.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Evgeniy Harchenko <evgeniyharchenko.dev@gmail.com>
+Subject: [PATCH] ALSA: hda/realtek: Add support for HP EliteBook x360 830 G6 and EliteBook 830 G6
+Date: Fri, 15 Aug 2025 12:58:14 +0300
+Message-ID: <20250815095814.75845-1-evgeniyharchenko.dev@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814093005.2040511-2-xiaqinxin@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Qinxin,
+The HP EliteBook x360 830 G6 and HP EliteBook 830 G6 have
+Realtek HDA codec ALC215. It needs the ALC285_FIXUP_HP_GPIO_LED
+quirk to enable the mute LED.
 
-kernel test robot noticed the following build errors:
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Evgeniy Harchenko <evgeniyharchenko.dev@gmail.com>
+---
+ sound/hda/codecs/realtek/alc269.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250814093005.2040511-2-xiaqinxin%40huawei.com
-patch subject: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250815/202508151711.pZGu9jac-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151711.pZGu9jac-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151711.pZGu9jac-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iommu/iommu.c: In function 'iommu_iova_info_dump':
->> drivers/iommu/iommu.c:1093:17: error: implicit declaration of function 'iommu_domain_to_iovad'; did you mean 'iommu_domain_type_str'? [-Wimplicit-function-declaration]
-    1093 |         iovad = iommu_domain_to_iovad(domain);
-         |                 ^~~~~~~~~~~~~~~~~~~~~
-         |                 iommu_domain_type_str
->> drivers/iommu/iommu.c:1093:15: error: assignment to 'struct iova_domain *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    1093 |         iovad = iommu_domain_to_iovad(domain);
-         |               ^
-
-
-vim +1093 drivers/iommu/iommu.c
-
-  1078	
-  1079	/**
-  1080	 * iova_info_dump - dump iova alloced
-  1081	 * @s - file structure used to generate serialized output
-  1082	 * @iovad: - iova domain in question.
-  1083	 */
-  1084	static int iommu_iova_info_dump(struct seq_file *s, struct iommu_domain *domain)
-  1085	{
-  1086		struct iova_domain *iovad;
-  1087		unsigned long long pfn;
-  1088		unsigned long i_shift;
-  1089		struct rb_node *node;
-  1090		unsigned long flags;
-  1091		size_t prot_size;
-  1092	
-> 1093		iovad = iommu_domain_to_iovad(domain);
-  1094		if (!iovad)
-  1095			return -ENOMEM;
-  1096	
-  1097		i_shift = iova_shift(iovad);
-  1098	
-  1099		/* Take the lock so that no other thread is manipulating the rbtree */
-  1100		spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-  1101		assert_spin_locked(&iovad->iova_rbtree_lock);
-  1102	
-  1103		for (node = rb_first(&iovad->rbroot); node; node = rb_next(node)) {
-  1104			struct iova *iova = rb_entry(node, struct iova, node);
-  1105	
-  1106			if (iova->pfn_hi <= iova->pfn_lo)
-  1107				continue;
-  1108	
-  1109			for (pfn = iova->pfn_lo; pfn <= iova->pfn_hi; ) {
-  1110				prot_size = domain->ops->dump_iova_prot(s, domain, pfn << i_shift);
-  1111				pfn = ((pfn << i_shift) + prot_size) >> i_shift;
-  1112			}
-  1113		}
-  1114	
-  1115		spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
-  1116		return 0;
-  1117	}
-  1118	
-
+diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
+index e27a36e4e92a..bc82f48c69ce 100644
+--- a/sound/hda/codecs/realtek/alc269.c
++++ b/sound/hda/codecs/realtek/alc269.c
+@@ -6368,6 +6368,8 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x84e7, "HP Pavilion 15", ALC269_FIXUP_HP_MUTE_LED_MIC3),
+ 	SND_PCI_QUIRK(0x103c, 0x8519, "HP Spectre x360 15-df0xxx", ALC285_FIXUP_HP_SPECTRE_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x8537, "HP ProBook 440 G6", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
++	SND_PCI_QUIRK(0x103c, 0x8548, "HP EliteBook x360 830 G6", ALC285_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x854a, "HP EliteBook 830 G6", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x85c6, "HP Pavilion x360 Convertible 14-dy1xxx", ALC295_FIXUP_HP_MUTE_LED_COEFBIT11),
+ 	SND_PCI_QUIRK(0x103c, 0x85de, "HP Envy x360 13-ar0xxx", ALC285_FIXUP_HP_ENVY_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x860f, "HP ZBook 15 G6", ALC285_FIXUP_HP_GPIO_AMP_INIT),
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
 
