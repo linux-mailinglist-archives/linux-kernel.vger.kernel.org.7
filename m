@@ -1,186 +1,109 @@
-Return-Path: <linux-kernel+bounces-771494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FD7B287E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:42:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67691B287E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8261D0404C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:41:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0432CBA0C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143272BE040;
-	Fri, 15 Aug 2025 21:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7F82C0F7F;
+	Fri, 15 Aug 2025 21:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWxvIKU8"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bYzmAyX0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9469025CC40
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA1925DB0D;
+	Fri, 15 Aug 2025 21:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755293994; cv=none; b=gyHKBH8e1eKHCuU41KRRX9CfbbCDLetf0DCB1i4Zymr6I2m/MnvNcDVmW819UTMh3TetiC66I34LBTjOSbeB/+6YVPScxyWJR5D6dTA0MkiBQQ8BgTlhaHvAfx5ipre3WTCxbibweokGO3FCDZeA/eHDTh6GC0pxMdMKcVS/QuA=
+	t=1755294028; cv=none; b=RdWP0PDXMxxYFx5eXNdNY9XownX5gmx3PPa9wHk59D5wCKDppnnW2CcBZcUW8CZqgZIqHvTvUb7Pqld7kvgQ5fmQV2WO1ZgTeNAh/VxMB87dAn4qon9sCpjfAf12ot+8sCDR9xbNarAnOAN7zTW45MEN/VXN6pgSkLmZguTFs6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755293994; c=relaxed/simple;
-	bh=YB3rAKCgagsVKrqJKoqNJ7K30Dr+290pPCNLX6i/qpg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lT6DwfrkwpjVzxm0TixFsTMLBLU+Pes2r1t9lsmux3w3bD6lINUqkgzFRACX3DleLMmhzmUm+11Y071cfQ0aEHkxuF9fOzl8Yn+CeedyaHJsoNdiQbkvGUrgQK2Yuj3u+t0AXUNtnXS3hEhyVLZhaAikOva3w7UWlA76vyvOKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VWxvIKU8; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47174c667aso1905750a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755293992; x=1755898792; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqwBeT1f/L2NrAA+F6JogCzBCowUmKSnA9zvOmZMIDI=;
-        b=VWxvIKU8I7LHV7ngeEJKN0ZDXZ1co+emMSXfZtIF7s8f2DCOG/MpMksO3njNF3nnfV
-         EsjpJet/scvob2B0Hd6vZqFrDVoQFiXRgOV0Mem7Cvgh+6WRUYRABP0vv+U/n8cqlq3B
-         9ZRm6DoiFkIgGp4hdhHxZhzafN7hOGovaTbqBav6TeBuJjPnPZFbYKWdKMsWCyC7zHgj
-         mylT712szsADi/V18H+Na4SiYUg5FbbNAQfVHNYAvUCB6aAYKComtYi9tHIEfPi5AdHv
-         +pNSNd+PGY9VvCqyEEvf56qXHt0ozBU3vNfbqlGg7hQ5F9n7UVJiWnssnPVrQLgMl48M
-         2bEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755293992; x=1755898792;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqwBeT1f/L2NrAA+F6JogCzBCowUmKSnA9zvOmZMIDI=;
-        b=Zk3O7G9nCTFYxfmH1pXiKYOEzRS5slRR07SgBNStylBksEouVg7RhsjdMrRcpniW9p
-         EI6ZBggSCAUVLIodUjzzIo1weLm9ck9mp6V6jMJOwzxh9xKvBJ9SpVktAsOCGT+QoNTL
-         yv/zPiLc43CTT4qc44nKbwvNIwETFOGHOze7Zz3S43QTvotmyl1uasxE4oMWp9x9e2Ei
-         KebjeMesu9psc2IFGgFBMM/HsG9HuILMoC1QP1F7mt9ImczB23ATWD91uep6LpAmhz0g
-         nHUoVCe4Osq22LgZl82YiGkQWd0g9L4y2fxxo1S39T4/xJE1OjOcve1Y0cMVUjGQpULD
-         lXCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVf91vcyBymYSTJ7hEAWlvcvaS4Dt9M/Vula+UZ6n4lgFQFIqSD6aGS98LUcZxcw9c+eRJppnvYr3mFKNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhRFubERPE6Yj6JeYWtvUFWUqIg7wAqAeQOBXHmDD+RA6/dlie
-	ijYNcHAKYWefizYjH5AVf2F+emvjawUaGWdXDtC7xsLEuUxKniYL8ncmxAAYGg9a0RCsqxyyhqf
-	1Xv9KTw==
-X-Google-Smtp-Source: AGHT+IHlU7I+sDLgbQ5PnUP/tHwPn8TgiyEdcowGEu9d7+tdmHeZ+pFe0JefyOgZZFoVLr/VMTR+B1uI0A0=
-X-Received: from pjbtd11.prod.google.com ([2002:a17:90b:544b:b0:31f:2a78:943])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:134f:b0:311:ed2:b758
- with SMTP id 98e67ed59e1d1-32341ea22a7mr4975504a91.3.1755293991935; Fri, 15
- Aug 2025 14:39:51 -0700 (PDT)
-Date: Fri, 15 Aug 2025 14:39:50 -0700
-In-Reply-To: <20250725065009.GAaIMpIVgAKi0kMBVv@renoirsky.local>
+	s=arc-20240116; t=1755294028; c=relaxed/simple;
+	bh=Kz5awZAkv2YD8wFJHXT86Ks9LAGny5DKjG0LKo2prwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4Ck+GZHCCpz1zCWoilrG1CYUaMs3M9Uihr47UXT9ey6umufYWxdF6IMz04hi9i/Ve8c8OfAgL7JTJzRsJWGJS4GqPjsevKUNfnpolYdcU/cWV7HBtz3z5VBy5PgFgcbwFJ3eSDZiGevLn4LpI3mfe2UuJpue2S9ZceG72/jtgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bYzmAyX0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0737D40E00DA;
+	Fri, 15 Aug 2025 21:40:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PdTgR2bIKi-Z; Fri, 15 Aug 2025 21:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755294018; bh=sYVcs6nOzvmVwfS8iCLy10NycA/vpvuTnA3nbJODvsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bYzmAyX0c8k3r7yfMt/N01mnJMH4JK58PhVedhvq0+rNIxdfwZ3GT6xNym90w0bnX
+	 KxrQ6JRer7nSDyJm2pclAQWh3x8d1D/VEgK4jrRbReFOrQDZmFTDbuiA4MCarN52yR
+	 oGiZ/RMyDq0vl9eAOAcAuMEaPYQ51jc59GrGGi7h3ayuhYtjyF8qxGj2bUq+0tTZW/
+	 wPntndPfId7i+OQ6FEXqwBDowowqZSHuod5o17JuCU8Q1AfIYQVl85m5VrE7kzvTX6
+	 1ZjN+w00E0vsm3A8WvaNR7JyHSqh9/TxOyxBRpsz4Unt3znnrW/h5zoRyKAOU4Urvg
+	 ABqTt2/EXXjoPF0Q+7DYpNiZDQsh1peIBa1GxTvtZi2lmizGA4qD/0fmUGUCXMH7s3
+	 cjzMIcUPgdDF/3Wzx7T1W/JUvzY6JLrVbQbse7HDbMWX2V/QH9WA9aEnVQMM5yjYrS
+	 SFUSqSqmtyYdY+Pl4/6kRLxjqnFI7UiCJYH9IehD3R83yNHwwHWqoSC8JnBAh2aEv1
+	 2fmnikZ3kuNCFn55vnks8MosKvMmEUu7+CROW2n5HzqO0K6XlZQBlV7rlZJNA1T1uS
+	 8uF96nzlOAPVZSjb/kaHL9lSz6vyuZNKxy+JW5q7X6zrIr/qTcvrnCxTyvSpP1MYFc
+	 OkGCo8F9QGvRjxkBwXM6qdsw=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7485340E0176;
+	Fri, 15 Aug 2025 21:40:03 +0000 (UTC)
+Date: Fri, 15 Aug 2025 23:39:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Vijay Balakrishna <vijayb@linux.microsoft.com>
+Cc: Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [v12 PATCH 0/2] Add L1 and L2 error detection for A72
+Message-ID: <20250815213957.GEaJ-pLa_GupE3DUfj@fat_crate.local>
+References: <1752714390-27389-1-git-send-email-vijayb@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
- <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local> <20250723183426.GA1158000@yaz-khff2.amd.com>
- <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de> <aIKehTDgP-Nu36ol@google.com>
- <3cc16f7d-c650-43f2-b0ca-d99c427cd69b@amd.com> <aIKmeclza-9TDe4U@google.com> <20250725065009.GAaIMpIVgAKi0kMBVv@renoirsky.local>
-Message-ID: <aJ-pJvrPyHyPI0qS@google.com>
-Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>, 
-	David Arcari <darcari@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1752714390-27389-1-git-send-email-vijayb@linux.microsoft.com>
 
-On Fri, Jul 25, 2025, Borislav Petkov wrote:
-> On Thu, Jul 24, 2025 at 02:32:41PM -0700, Sean Christopherson wrote:
-> > Not necessarily.  There are a variety of use cases for doing nearly-full passthrough
-> > of bare metal state into a VM, e.g. to deprivilege the "main" OS, interpose and/or
-> > isolate select resources, etc.  I don't think it's too far fetched to imagine one
-> > or more such use cases exposing this range of MMIO to the guest _and_ also setting
-> > the HYPERVISOR bit in CPUID.
+On Wed, Jul 16, 2025 at 06:06:28PM -0700, Vijay Balakrishna wrote:
+> Sascha Hauer (2):
+>   EDAC: Add EDAC driver for ARM Cortex A72 cores
+>   dt-bindings: arm: cpus: Add edac-enabled property
 > 
-> What would be that use case?
-> 
-> To tell the guest why the hypervisor rebooted?
-> 
-> Sounds weird to me but virt does weird things sometimes. :-P
-> 
-> > But whether or not there's a legitimate use case is beside the point.  I'm not
-> > arguing this is at all useful for VMs.  I'm arguing _against_ splattering
-> > X86_FEATURE_HYPERVISOR checks all over the place just because an error was first
-> > (or only) observed while running in a VM.
-> 
-> We use X86_FEATURE_HYPERVISOR to gate purely-hw-only features behind it.
+>  .../devicetree/bindings/arm/cpus.yaml         |  17 ++
+>  MAINTAINERS                                   |   7 +
+>  drivers/edac/Kconfig                          |   8 +
+>  drivers/edac/Makefile                         |   1 +
+>  drivers/edac/a72_edac.c                       | 230 ++++++++++++++++++
+>  5 files changed, 263 insertions(+)
+>  create mode 100644 drivers/edac/a72_edac.c
 
-And I'm advocating that we stop doing that (with maybe a few exceptions), because
-there are very, very few features that are truly bare metal only.  Some things,
-e.g. SEV-SNP, might require proxying certain actions, but even SEV-SNP can be
-exposed to a virtual machine.
+Applied, thanks.
 
-> Because they don't make any sense for guests. Just like this one.
+-- 
+Regards/Gruss,
+    Boris.
 
-You're conflating running under (on?) a hypervisor with being a guest in the
-traditional model of virtualization.  Running a privileged, host-owned software
-stack in a virtual machine is beneficial/desirable for a variety of use cases,
-and I expect the number of such use cases to grow in the near future.
-
-E.g. as mentioned earlier, pKVM uses virtualization to de-privilege the kernel,
-and Hyper-V's VBS uses virtualization to monitor accesses to sensitive state.
-
-Future use cases could use virtualization:
-
- - to improve system stability/uptime, e.g. restart the VM if the kernel crashes
-   as opposed to rebooting the entire host
- - to isolate different software components, e.g. to run post-boot functionality
-   in a separate VM to limit the impact of an escape/flaw/bug
- - to limit the amount of code that has direct access to system physical resources
- - to partion a system into multiple machines (each running their own kernel)
-   for performance reason; e.g. AIUI, kernel-wide locks are becomming more and
-   more problematic as the number of cores continues to go up
-
-Not all of those use cases will want to access "bare metal" features, but my
-point is that inferring anything about the system setup based solely on the
-HYPERVISOR flag is all but guaranteed to break sooner or later.
-
-> And even if this one makes sense for some virt scenario, we want those
-> folks to *actually* explain why removing the HV check for that feature
-> makes sense. And why the kernel needs to support it.
-
-That seems like a gigantic waste of time/effort.  E.g. imagine the pain/churn if
-MONITOR/MWAIT had been limited to !HYPERVISOR simply because early VM setups
-didn't support executing MONITOR/MWAIT natively.
-
-> Just like loading microcode in a guest, for example. There's a reason we
-> don't do that.  And when some day, someone appears and wants to do that, I
-> would like there to be an explicit patch removing that HV check in the loader
-> and explaining *why* it is doing so.
-
-Patch loading is exceptional because, AFAIK, neither Intel nor AMD officially
-support ucode updates while running as a guest.  Though FWIW, I do expect that
-sooner or later someone will indeed want to do patch loads in a VM.
-
-And even if Intel/AMD never support doing the actual patch load from guest code,
-I can definitely see a trap-and-execute scheme, e.g. where the bare metal kernel
-doesn't have network or file system access, and so the ucode patch needs to be
-routed through a highly privileged VM.
-
-> And until that day, that feature is hw-only. Just like this one.
-> 
-> And yeah, I know you don't like X86_FEATURE_HYPERVISOR 
-
-I don't mind HYPERVISOR per se, what I don't like is disabling code (or going
-down different paths) based solely on historical use cases, i.e. based on the
-assumption that "no one will ever do xyz!".  I have no objection to pivoting
-on HYPERVISOR if there is an explicitly documented limitation, or for cases where
-there's a very high probability of making a bad decision, e.g. using FMS to
-enumerate features.
-
-The odds of _this_ particular code patch being problematic/interesting are low,
-but I really don't want to set a precedent that it's ok to gate code on !HYPERVISOR
-without a strong, documented technical reason for doing so.
-
-> but I would like to save some of my sanity when looking at a bug report which
-> says that the reboot reason reporting is talking crap, only to find out that
-> a HV underneath is doing something silly, muddying up the waters.
-
-That cuts both ways though, e.g. I don't want to debug issues due to Linux not
-behaving as expected because someone incorrectly assumed a feature would never
-be exposed to a virtual machine.
-
-IMO, if you're regularly spending more than a few seconds sussing out the
-environment from a bug report, then we need to improve reporting processes and/or
-infrastructure.
+https://people.kernel.org/tglx/notes-about-netiquette
 
