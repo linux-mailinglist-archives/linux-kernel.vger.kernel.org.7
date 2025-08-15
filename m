@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-771560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837A4B288EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:45:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2891B288EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DC3AE2ACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9295E4CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1039E27F18F;
-	Fri, 15 Aug 2025 23:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA41285079;
+	Fri, 15 Aug 2025 23:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAocX+1X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uk1L9gAA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B94202963;
-	Fri, 15 Aug 2025 23:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D68EEAB;
+	Fri, 15 Aug 2025 23:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755301537; cv=none; b=DdRsoMB7ygBJQPRaKeIZCoG99wIwOFr9XJQQt1X/6ZCZyVHpV+CTRnn7o7kWqJ4h3uV9NaWzJ/EnNrVKiPkwI1sm/XQ+gKq5mQlQkiPQf9zLouaoN+w6iiZONYsjpjOBCz8Wzt6dPTh9+wDL9Cw12XnKqbV7eAATxbR/ybk90Kk=
+	t=1755301795; cv=none; b=erlv3gMPtJ4JuZ3r/b1GMrPdrUs7hESkEwl641oU0Qm8EPKZj3+EEtahDhtF+E0ndgJ7Ipch75tvDQAidG9u9OApZwSNjRxG8RqX3sOQ+iZWawS7rz81UV87T1aHEq5pFtzmnCbLcrt5Hz9640BysQWbxtrXzoLP0i2/22q5K4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755301537; c=relaxed/simple;
-	bh=g68O3WmYOhk4y5L79Ofa0c3kpmvbkMRbUGdK4BAXSrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIpcBBsizvSeEbJB+vDUDhIlvV4bA88i7Y/DIXEKKIa1kZUBm597KQm/sg51kGDofqFR7SRVqZQ21cW0D/CzWoclWebTv30OEOo8xV4PKYdokd3tQkB0HMQgV7cNsLPfVM97fXpAYTHdaXpTtGcSvaM9QZ73TbioMttC+XrF/FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAocX+1X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB8FC4CEEB;
-	Fri, 15 Aug 2025 23:45:36 +0000 (UTC)
+	s=arc-20240116; t=1755301795; c=relaxed/simple;
+	bh=lho2GXN+NFhJNZdZMJYB5RafrXPERVjeLKyMmyzoK0w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Qa3dL60b6K59HGZLjGsAcqYXF0THModmYcVN/I9OHQ3Mpy+D2GV6yGq186uniHH4s6QC6sRisC62xhlfx+m7JuCl3wvewhBszI++KPoYwIUUPNBommAXFvqB00CzUnWSt+M4EfRN8v9qHIttA/Ouz5nOe0zA79vjL8rP4WXhS+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uk1L9gAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E74C4CEEB;
+	Fri, 15 Aug 2025 23:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755301537;
-	bh=g68O3WmYOhk4y5L79Ofa0c3kpmvbkMRbUGdK4BAXSrM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AAocX+1XJ55zDaEfebP8eiItlhPcEHOFkcM8AAnOFUHjfUQZjIHRIu54XvhsRnYLW
-	 X248Ua9VPnXnKIUrafSn3+h7l/XhKWoB4eLmAX5wlpzfaH8/0vS0X8czOTA+ASzB0f
-	 dm9xpwP9Wdn64dMZkMJQEse9JfdW+abCZXscpSSmwI47YRqgevHpFPs/baByOAIR5M
-	 woPb7GKTEm6uWNDgjZJCvIHjGIwfpmBBhrLZGm/7y6YtqpHEDSkU42I1Vx8b+gTZUd
-	 bWFtBe7D41YF2EzFcuR1zVWK3CTOoM+L43sG72lVF7tuTGVc+OP56Es5BGtG0Kp9cQ
-	 gbHrpTQN6a2Pw==
-Date: Fri, 15 Aug 2025 16:45:35 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: thead: th1520-ap: describe gate clocks with
- clk_gate
-Message-ID: <aJ/Gn2BeN4w2Yy9y@x1>
-References: <20250813171136.2213309-1-uwu@icenowy.me>
- <20250813171136.2213309-2-uwu@icenowy.me>
+	s=k20201202; t=1755301795;
+	bh=lho2GXN+NFhJNZdZMJYB5RafrXPERVjeLKyMmyzoK0w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uk1L9gAADANSaY+p4muVA++1KSzfw15sm0lFtmpnfwfGJq/kK0kH3f9guw+LvzXQp
+	 OIgpBG9AXeYcP739+cEn9R63zgsqsE5tri/E0Kh+SkOZUCiZYxRue03uQK52fxvE/A
+	 DIHYfsqReazVuUHiDCMT43SK+4t/n4h8KiIQeluHqhwXQ/hsQlO0XOjJ/NihJUkoev
+	 NusDyjU9sQCYaqvPYDqPHSeTS+/67Qs4up7CHnY+do9DLbKSjB7JrzTw2luXYxd6uZ
+	 Rjao8aepLkX+z1coH0dDJSUXaEKT2QfcNxovJU/GB+GMvQK1/hmifF1O7xb1e1yyAD
+	 J4qO7Gdvfy4+w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3400939D0C3D;
+	Fri, 15 Aug 2025 23:50:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813171136.2213309-2-uwu@icenowy.me>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 bpf-next] bpf: Remove migrate_disable in
+ kprobe_multi_link_prog_run
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175530180603.1311304.15839903815773107101.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Aug 2025 23:50:06 +0000
+References: <20250814121430.2347454-1-chen.dylane@linux.dev>
+In-Reply-To: <20250814121430.2347454-1-chen.dylane@linux.dev>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, mattbobrowski@google.com,
+ rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
 
-On Thu, Aug 14, 2025 at 01:11:35AM +0800, Icenowy Zheng wrote:
-> Similar to previous situation of mux clocks, the gate clocks of
-> clk-th1520-ap drivers are also using a helper that creates a temporary
-> struct clk_hw and abandons the struct clk_hw in struct ccu_common, which
-> prevents clock gates to be clock parents.
-> 
-> Do the similar refactor of dropping struct ccu_common and directly use
-> struct clk_gate here.
-> 
-> This patch mimics the refactor done on struct ccu_mux at [1].
-> 
-> [1] https://lore.kernel.org/all/20250722080535.60027-2-ziyao@disroot.org/
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
->  drivers/clk/thead/clk-th1520-ap.c | 382 +++++++++++++++---------------
->  1 file changed, 185 insertions(+), 197 deletions(-)
+Hello:
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Thu, 14 Aug 2025 20:14:29 +0800 you wrote:
+> Graph tracer framework ensures we won't migrate, kprobe_multi_link_prog_run
+> called all the way from graph tracer, which disables preemption in
+> function_graph_enter_regs, as Jiri and Yonghong suggested, there is no
+> need to use migrate_disable. As a result, some overhead may will be reduced.
+> And add cant_sleep check for __this_cpu_inc_return.
+> 
+> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v3,bpf-next] bpf: Remove migrate_disable in kprobe_multi_link_prog_run
+    https://git.kernel.org/bpf/bpf-next/c/abdaf49be542
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
