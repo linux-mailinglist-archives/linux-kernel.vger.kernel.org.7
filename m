@@ -1,74 +1,50 @@
-Return-Path: <linux-kernel+bounces-770545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2813EB27C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF64DB27C4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD915A2E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87375B02B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A412D8380;
-	Fri, 15 Aug 2025 09:00:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107292D77FC;
-	Fri, 15 Aug 2025 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFD429C341;
+	Fri, 15 Aug 2025 09:01:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5287D245022;
+	Fri, 15 Aug 2025 09:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248447; cv=none; b=ovpdpEPtbcKW6X7IuxVjFGEY3mVkkMawYWUS2hF/2Qx5ht2B3XIiw/3JkMDVTj/ta7ObpKFm1PirZb+8SHNfc8X7cbIZR9UR3MsHAkxO/3P8fEyYWNoLBgwkkWKFjO6BrNSzw2gtCrmDJ1lqcYU6B8cIRjg02eSxaeIlxgbH1DE=
+	t=1755248518; cv=none; b=XSIFqXrYyPBfX1lXY2FywvvnBpr0DZWvN+dbQbKfyrc3/9GF9R1ZNwkbMpUmzRSKbFlz0V0BOGtxWdKtPHABgQ6BlD3GPXMX3BZbIfjyyT3f95i2HbNzl8VW88iB1kFaQSTTnyyB798gCYo0E5FLWR4BKISCEdRGFUoXFxlWd7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248447; c=relaxed/simple;
-	bh=zGULMEeUfZazzhoJ7TSekE/SSLTUH4C5lJRFqnn8B/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K9D/PMqnb1+uaJL+G2m02tcWu1s1LZ+LeNSKb0WIAKKHamcPZr1xXSECcULPKVJed7OPKJBIHR+AtGcMiHGVVv7yNrexBpH79QeK8PT9vC2mB6c01dZiFzAodHHbt4c1GTznlvrN60ZswvE4pHhE4Q5yuEeRy2xhWefSxxuYOWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43FF02D8E;
-	Fri, 15 Aug 2025 02:00:37 -0700 (PDT)
-Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AC283F63F;
-	Fri, 15 Aug 2025 02:00:40 -0700 (PDT)
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: linux-hardening@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Howells <dhowells@redhat.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Maxwell Bland <mbland@motorola.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pierre Langlois <pierre.langlois@arm.com>,
-	Quentin Perret <qperret@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org,
-	x86@kernel.org
-Subject: [RFC PATCH v2 8/8] mm: Add basic tests for kpkeys_hardened_cred
-Date: Fri, 15 Aug 2025 10:00:00 +0100
-Message-ID: <20250815090000.2182450-9-kevin.brodsky@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250815090000.2182450-1-kevin.brodsky@arm.com>
-References: <20250815090000.2182450-1-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1755248518; c=relaxed/simple;
+	bh=4nhuPMpQH1XDW7lT9b2rrcPbTF2+KzidHExpR5owANk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cjq56OY+DzNsG9MXswQwsD39Ir2+NQzUVvy0z7K194FGTZpQnTxZkHTF8Ptsv+q1S8gC7/sM6JHehAY6nitCEfnTlMMJ6EfUJ1JrOA0/hkOVoyhQYfJZSBkOy9o4QWDeSrh6QV/rqrSfABOH0fZVjeJEuNNFscwDcf6KbxRH2oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.45])
+	by gateway (Coremail) with SMTP id _____8DxzOJ5955oBjpAAQ--.55780S3;
+	Fri, 15 Aug 2025 17:01:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.45])
+	by front1 (Coremail) with SMTP id qMiowJBxD8Jx955oUrVNAA--.32978S2;
+	Fri, 15 Aug 2025 17:01:44 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH V4] init: Handle bootloader identifier in kernel parameters
+Date: Fri, 15 Aug 2025 17:01:20 +0800
+Message-ID: <20250815090120.1569947-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,137 +52,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxD8Jx955oUrVNAA--.32978S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tw4fCr1rCFW3GF1xXr17XFc_yoW8Kw1xpF
+	Z7tr9xWaykGws8Cw48Wr4vga4Sywn3Aa17JanrWanxXFn0qFy0v3yftF1agas3trWfKF42
+	gF1DZF10k3W7CFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
+	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
+	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jepB-UUUUU=
 
-Add basic tests for the kpkeys_hardened_pgtables feature: try to
-perform a direct write to current->{cred,real_cred} and ensure it
-fails. Also check that prepare_creds, protect_creds,
-prepare_protected_creds behave as expected.
+BootLoader (Grub, LILO, etc) may pass an identifier such as "BOOT_IMAGE=
+/boot/vmlinuz-x.y.z" to kernel parameters. But these identifiers are not
+recognized by the kernel itself so will be passed to user space. However
+user space init program also doesn't recognized it.
 
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+KEXEC/KDUMP (kexec-tools) may also pass an identifier such as "kexec" on
+some architectures.
+
+We cannot change BootLoader's behavior, because this behavior exists for
+many years, and there are already user space programs search BOOT_IMAGE=
+in /proc/cmdline to obtain the kernel image locations:
+
+https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
+(search getBootOptions)
+https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
+(search getKernelReleaseWithBootOption)
+
+So the the best way is handle (ignore) it by the kernel itself, which
+can avoid such boot warnings (if we use something like init=/bin/bash,
+bootloader identifier can even cause a crash):
+
+Kernel command line: BOOT_IMAGE=(hd0,1)/vmlinuz-6.x root=/dev/sda3 ro console=tty
+Unknown kernel command line parameters "BOOT_IMAGE=(hd0,1)/vmlinuz-6.x", will be passed to user space.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 ---
- mm/Makefile                           |  1 +
- mm/tests/kpkeys_hardened_cred_kunit.c | 79 +++++++++++++++++++++++++++
- security/Kconfig.hardening            | 11 ++++
- 3 files changed, 91 insertions(+)
- create mode 100644 mm/tests/kpkeys_hardened_cred_kunit.c
+V2: Update comments and commit messages.
+V3: Document bootloader identifiers.
+V4: Use strstarts() instead of strncmp().
 
-diff --git a/mm/Makefile b/mm/Makefile
-index b1e6cf7f753c..c79af57c0aa5 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -149,3 +149,4 @@ obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
- obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
- obj-$(CONFIG_KPKEYS_HARDENED_PGTABLES) += kpkeys_hardened_pgtables.o
- obj-$(CONFIG_KPKEYS_HARDENED_PGTABLES_KUNIT_TEST) += tests/kpkeys_hardened_pgtables_kunit.o
-+obj-$(CONFIG_KPKEYS_HARDENED_CRED_KUNIT_TEST) += tests/kpkeys_hardened_cred_kunit.o
-diff --git a/mm/tests/kpkeys_hardened_cred_kunit.c b/mm/tests/kpkeys_hardened_cred_kunit.c
-new file mode 100644
-index 000000000000..ed07469b504c
---- /dev/null
-+++ b/mm/tests/kpkeys_hardened_cred_kunit.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <kunit/test.h>
-+#include <linux/cred.h>
-+#include <linux/sched.h>
-+
-+static int increment_cred_uid_nofault(struct cred *cred)
-+{
-+	uid_t val = __kuid_val(cred->uid) + 1;
-+
-+	return copy_to_kernel_nofault(&cred->uid, &val, sizeof(cred->uid));
-+}
-+
-+static void write_current_creds(struct kunit *test)
-+{
-+	int ret;
-+
-+	if (!arch_kpkeys_enabled())
-+		kunit_skip(test, "kpkeys are not supported");
-+
-+	ret = increment_cred_uid_nofault((struct cred *)current->cred);
-+	KUNIT_EXPECT_EQ_MSG(test, ret, -EFAULT,
-+			    "Write to current->cred wasn't prevented");
-+
-+	ret = increment_cred_uid_nofault((struct cred *)current->real_cred);
-+	KUNIT_EXPECT_EQ_MSG(test, ret, -EFAULT,
-+			    "Write to current->real_cred wasn't prevented");
-+}
-+
-+static void write_new_creds(struct kunit *test)
-+{
-+	struct cred *cred, *protected_cred;
-+	int ret;
-+
-+	if (!arch_kpkeys_enabled())
-+		kunit_skip(test, "kpkeys are not supported");
-+
-+	/* prepare_creds() + protect_creds() */
-+	cred = prepare_creds();
-+	KUNIT_ASSERT_NOT_NULL(test, cred);
-+
-+	ret = increment_cred_uid_nofault(cred);
-+	KUNIT_EXPECT_EQ_MSG(test, ret, 0,
-+			    "Failed to write to unprotected creds");
-+
-+	protected_cred = protect_creds(cred);
-+	KUNIT_EXPECT_PTR_NE_MSG(test, cred, protected_cred,
-+				"protect_creds() failed to move creds to protected memory");
-+
-+	ret = increment_cred_uid_nofault(protected_cred);
-+	KUNIT_EXPECT_EQ_MSG(test, ret, -EFAULT,
-+			    "Write to protected_cred wasn't prevented");
-+
-+	put_cred(protected_cred);
-+
-+	/* prepare_protected_creds() */
-+	protected_cred = prepare_protected_creds();
-+
-+	ret = increment_cred_uid_nofault(protected_cred);
-+	KUNIT_EXPECT_EQ_MSG(test, ret, -EFAULT,
-+			    "Write to protected_cred wasn't prevented");
-+
-+	put_cred(protected_cred);
-+
-+}
-+
-+static struct kunit_case kpkeys_hardened_cred_test_cases[] = {
-+	KUNIT_CASE(write_current_creds),
-+	KUNIT_CASE(write_new_creds),
-+	{}
-+};
-+
-+static struct kunit_suite kpkeys_hardened_cred_test_suite = {
-+	.name = "Hardened credentials using kpkeys",
-+	.test_cases = kpkeys_hardened_cred_test_cases,
-+};
-+kunit_test_suite(kpkeys_hardened_cred_test_suite);
-+
-+MODULE_DESCRIPTION("Tests for the kpkeys_hardened_cred feature");
-+MODULE_LICENSE("GPL");
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index cb494448c7ae..7ceb1e6846f2 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -302,6 +302,17 @@ config KPKEYS_HARDENED_CRED
- 	  This option has no effect if the system does not support
- 	  kernel pkeys.
+ init/main.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/init/main.c b/init/main.c
+index 0ee0ee7b7c2c..9b5150166bcf 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -544,6 +544,12 @@ static int __init unknown_bootoption(char *param, char *val,
+ 				     const char *unused, void *arg)
+ {
+ 	size_t len = strlen(param);
++	/*
++	 * Well-known bootloader identifiers:
++	 * 1. LILO/Grub pass "BOOT_IMAGE=...";
++	 * 2. kexec/kdump (kexec-tools) pass "kexec".
++	 */
++	const char *bootloader[] = { "BOOT_IMAGE=", "kexec", NULL };
  
-+config KPKEYS_HARDENED_CRED_KUNIT_TEST
-+	tristate "KUnit tests for kpkeys_hardened_cred" if !KUNIT_ALL_TESTS
-+	depends on KPKEYS_HARDENED_CRED
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Enable this option to check that the kpkeys_hardened_cred feature
-+	  functions as intended, i.e. prevents arbitrary writes to live credentials.
-+
-+	  If unsure, say N.
-+
- endmenu
+ 	/* Handle params aliased to sysctls */
+ 	if (sysctl_is_alias(param))
+@@ -551,6 +557,12 @@ static int __init unknown_bootoption(char *param, char *val,
  
- config CC_HAS_RANDSTRUCT
+ 	repair_env_string(param, val);
+ 
++	/* Handle bootloader identifier */
++	for (int i = 0; bootloader[i]; i++) {
++		if (strstarts(param, bootloader[i]))
++			return 0;
++	}
++
+ 	/* Handle obsolete-style parameters */
+ 	if (obsolete_checksetup(param))
+ 		return 0;
 -- 
-2.47.0
+2.47.3
 
 
