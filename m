@@ -1,148 +1,161 @@
-Return-Path: <linux-kernel+bounces-770953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210AAB280DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:51:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8185B280E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA09AE40E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:50:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0735B637C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0422DD61B;
-	Fri, 15 Aug 2025 13:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECD3301490;
+	Fri, 15 Aug 2025 13:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FjliZxpE"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HAcXOuqO"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BDC130A73;
-	Fri, 15 Aug 2025 13:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836BC1B5EB5
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755265843; cv=none; b=e1CQSXkdVqzabsaPU+awyxKqCFTJCJ6xc81gbzPiYDfojRsrdCZaBi/DPvmS9EHkPKX3t9VZv7WZcKkeCme7W8LfB1uXSjg3lLLvPk02liPuFF+9KVIm08IGZZZqfrs0LJQn/Xel0GndaIUhdNHXM86x9T7ahmQqQU+SUQIxYCI=
+	t=1755265907; cv=none; b=lF+GGIbtPtGpnLL0723n24YtrK9x0dioVYCPW6k2U5Jv8M5Mp4gI9+yjds5XpFJd6sttEts2nuUE6o2P4w/IyVkKj/XK5lTZxoIUa1S7gVKW74+jdJQ1ni5h+ymcOk/MHG6m/Rbj4b0VWZGbHgcjmjv+4p7T7pNoTJb5iiONX+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755265843; c=relaxed/simple;
-	bh=ZtjHngrc92zWlZz4apSIcZ+8KqwiOJtKZ+ei2GD/8+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Uj6WqjMdjguf3vnqRbEkPJuRPd3fiDTT/W/tcvvJHTC+I8kTx5CVaNjPjw08ZEEJ091/VruuCJxcaNf32Fbr/EjCq/wWZUXmG5vSs4TAcXZl9Caiv9rLNrCKksTa7PBq+Z923txeQgJhi7wSrpHbJnuYaQsU7XtcAmAJloGbQEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FjliZxpE; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57FDoXoC2615996;
-	Fri, 15 Aug 2025 08:50:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755265833;
-	bh=7XQhf8b1lSnCYAFBATVY+THATyFGfb93E2LT2ShyR6U=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FjliZxpEpSzKZBd2AQNXUeOJDfoHUMOUz55e1aa2zNi1Wp+6QEhy1oh68w4TCac8B
-	 Q5UeXBPq6yeA+hzaNjszbvPszkjiAcqHq+LLqCntAjJN2p4zco9PWa1qoOiqwLne9O
-	 DUCsJzg62jVtPk0Rg8iUa/HhrnOdKTFDNeJvqf3Q=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57FDoXLn2629259
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 15 Aug 2025 08:50:33 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 15
- Aug 2025 08:50:32 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 15 Aug 2025 08:50:32 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57FDoWno1371580;
-	Fri, 15 Aug 2025 08:50:32 -0500
-Message-ID: <08eec1de-1c92-44ce-8caa-2dc43a67c514@ti.com>
-Date: Fri, 15 Aug 2025 08:50:32 -0500
+	s=arc-20240116; t=1755265907; c=relaxed/simple;
+	bh=py+vR187Mqp8I13kFA3nYONIl/30zwbVxkeEOKXSt8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bm8iizgbeaGD2i0TdecWGXsBSc6SBemt7UYPWFruftVKEj3fKOynyj0u45kNCJfvSZAh4Gak6xAFQ0WPq5y9KPqBMDfp5qtDyfpgYa23lba0nfuqy9vlhFmBl5jUIcadwDONSL+Ef3A0UZDq+ickaBvGI8y/OfgE2442JA2nQMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HAcXOuqO; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9edf0e4efso1184704f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755265904; x=1755870704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=093IlVQTdAFvs60Lglv1mh61RWoRsNADFmPT6VwOqcw=;
+        b=HAcXOuqOXn9qZ8CdlcIxvcb6NrliQ29xlXjO7356A6nxuDw9zUAahslqc1yZIq+mHi
+         S+r5yxS8rdY/B0fiRkBOcpYkIaRwT/R+Yyg1ZNg4YGAa+v5WLJh6+EXyl8X7UpwDw6SC
+         Fv8O7WdHMjdvCTHrrN5FXXpnHSZrl56QHRtDvmC2iD5Sm8gPFLnhHjxHDli6oEBVmKBz
+         WESG84K7LAsnDV3DAj4tF+Be6mdH3mwdOMamVP30t2rcUxpqiSdfsQ7sYBVCGxq9SJlu
+         PWU/szR3SGiDiOZ/9kOw6Or3lsS6UP1+FIBPI/HBxFIW05KA2Q0ruJ4QiNtxS3Lfn4Yc
+         kD6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755265904; x=1755870704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=093IlVQTdAFvs60Lglv1mh61RWoRsNADFmPT6VwOqcw=;
+        b=jE0FrBtpafBV0vZf5cY2OS0pCpjGZNm6Tkqu2veKwXfeMTRNzOGZYOja+TgatOItHj
+         J+c4grY4mUDV9F9CTUinCvwldih+mTHSXkJpA0TQK1I5bnj4M4VtS+sHBKHE5QwJmC5Q
+         9KRtyI5k6S1OMP+YF5wTwo2k0Toj7FxwHtWsDpkvpx+W58DtOvDsR7j2OJfpermoxRx7
+         uNOYkhetSL+5PM1JaTZ1Ek/sUzPPvleI7j2uNujB71eeZb/wUlAPhbh1LHNewVRdIjrj
+         4m/4dCyE8/LUkZGi5JnKtn9QeagUf2gJIw+s0XaZrFwueHVSAZMFs/37jT1KqzmJsy9Q
+         op1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEylvl0p9qMVFRqz/nywrjf/707HESx8mbldQjfFswF+SkIU/62GcPsuD2Ld5aodSHaVgybIqoe3ffwrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyICuIkX46N7XxCyMpQiOWoekK1UC7/sqXuwLXsM2Qw9+1k3af/
+	EdjjDw1r5pOo9Cp0j2W1mm+BfLwWqVyESDBdl1cEhVdk8QixSVgcpMJ6J1f6kDMkWi5o4wJWrx9
+	UmMQ6HfXnM2gPWInepBlWeyGa03NWRNvVgsyxjgIE
+X-Gm-Gg: ASbGnct02GaJ138n1K/HnRRlAZL5ET/FOZxmLkdawuHDEezO3X6rgAANP342KDdoSrh
+	zFYpyEp1WPtfrWi45efOw/sRPI4hFHnrCb9VEI8KRqmTztsnVm+iUXG4lzxsWa8/2n3L8G9a890
+	wahcuJUrAY+OmrN4tbA6uYcocOd1VFuWeMdQXs0Rg1cDCjfTcXqtzYGolwFLRDTBsuEsyQJ8sez
+	0Y4QbsHAtZBa1BQwDmGkre/kxAJQf8r7C/tE33CtveEasCxdyzhS/w=
+X-Google-Smtp-Source: AGHT+IFv6jZ3CYzc8+DB8tcb3iOZ0eSeAMRULpcmDGXTdj1HKyqd8QladLBnI4IfXS+FlzQLbMsVXltn+AO6gJPqM/U=
+X-Received: by 2002:a05:6000:2481:b0:3b5:f93a:bcc with SMTP id
+ ffacd0b85a97d-3bb68a17993mr1756183f8f.35.1755265903498; Fri, 15 Aug 2025
+ 06:51:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/4] drm/bridge: it66121: Drop ftrace like dev_dbg()
- prints
-To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, David Airlie
-	<airlied@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        <tomi.valkeinen@ideasonboard.com>, <devarsht@ti.com>
-References: <20250815034105.1276548-1-nm@ti.com>
- <20250815034105.1276548-3-nm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250815034105.1276548-3-nm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250716091158.812860-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250716091158.812860-1-shankari.ak0208@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 15 Aug 2025 15:51:31 +0200
+X-Gm-Features: Ac12FXzFwpjZfyVT_iQ3XLEvKiGOnwXqbtcp9YGn_MuwLv_LAEO4d7-XhWxUDaA
+Message-ID: <CAH5fLgiUfZG4e0k6ajkkKo+iaidWHu4dTRfBbgm4Y_CQPGLHpg@mail.gmail.com>
+Subject: Re: [PATCH 3/7] rust: mm: update ARef and AlwaysRefCounted imports
+ from sync::aref
+To: Shankari Anand <shankari.ak0208@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/14/25 10:41 PM, Nishanth Menon wrote:
-> Drop the ftrace like dev_dbg() that checkpatch --strict complains about:
-> 
-> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
-> +	dev_dbg(dev, "%s\n", __func__);
-> 
-> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
-> +	dev_dbg(dev, "%s\n", __func__);
-> 
-> WARNING: Unnecessary ftrace-like logging - prefer using ftrace
-> +	dev_dbg(dev, "%s\n", __func__);
-> 
-> Signed-off-by: Nishanth Menon <nm@ti.com>
+On Wed, Jul 16, 2025 at 11:16=E2=80=AFAM Shankari Anand
+<shankari.ak0208@gmail.com> wrote:
+>
+> Update call sites in the mm subsystem to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+
+Andrew, would you be able to pick up this patch? Thanks!
+
+Acked-by: Alice Ryhl <aliceryhl@google.com>
+
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
+=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintena=
+nce.
+>
+> The original moving patch is here:
+> https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.a=
+k0208@gmail.com/
+>
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
 > ---
-
-Reviewed-by: Andrew Davis <afd@ti.com>
-
-> Changes in V3:
-> * New patch
-> 
->   drivers/gpu/drm/bridge/ite-it66121.c | 6 ------
->   1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-> index aa7b1dcc5d70..9b8ed2fae2f4 100644
-> --- a/drivers/gpu/drm/bridge/ite-it66121.c
-> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
-> @@ -1384,8 +1384,6 @@ static int it66121_audio_startup(struct device *dev, void *data)
->   	int ret;
->   	struct it66121_ctx *ctx = dev_get_drvdata(dev);
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	mutex_lock(&ctx->lock);
->   	ret = it661221_audio_output_enable(ctx, true);
->   	if (ret)
-> @@ -1401,8 +1399,6 @@ static void it66121_audio_shutdown(struct device *dev, void *data)
->   	int ret;
->   	struct it66121_ctx *ctx = dev_get_drvdata(dev);
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	mutex_lock(&ctx->lock);
->   	ret = it661221_audio_output_enable(ctx, false);
->   	if (ret)
-> @@ -1479,8 +1475,6 @@ static int it66121_audio_codec_init(struct it66121_ctx *ctx, struct device *dev)
->   		.no_capture_mute = 1,
->   	};
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
->   		dev_info(dev, "No \"#sound-dai-cells\", no audio\n");
->   		return 0;
-
+>  rust/kernel/mm.rs             | 3 ++-
+>  rust/kernel/mm/mmput_async.rs | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
+> index 43f525c0d16c..4764d7b68f2a 100644
+> --- a/rust/kernel/mm.rs
+> +++ b/rust/kernel/mm.rs
+> @@ -13,7 +13,8 @@
+>
+>  use crate::{
+>      bindings,
+> -    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
+> +    sync::aref::{ARef, AlwaysRefCounted},
+> +    types::{NotThreadSafe, Opaque},
+>  };
+>  use core::{ops::Deref, ptr::NonNull};
+>
+> diff --git a/rust/kernel/mm/mmput_async.rs b/rust/kernel/mm/mmput_async.r=
+s
+> index 9289e05f7a67..b8d2f051225c 100644
+> --- a/rust/kernel/mm/mmput_async.rs
+> +++ b/rust/kernel/mm/mmput_async.rs
+> @@ -10,7 +10,7 @@
+>  use crate::{
+>      bindings,
+>      mm::MmWithUser,
+> -    types::{ARef, AlwaysRefCounted},
+> +    sync::aref::{ARef, AlwaysRefCounted},
+>  };
+>  use core::{ops::Deref, ptr::NonNull};
+>
+> --
+> 2.34.1
+>
 
