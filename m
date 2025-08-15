@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-770123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB44AB27709
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:44:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E486FB27717
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBA51CC8BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF85E78C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2A42BDC07;
-	Fri, 15 Aug 2025 03:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D641222B8BD;
+	Fri, 15 Aug 2025 03:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kwvNuP2C"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="alvq1nAV"
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB441A9F9D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DB11514F7;
+	Fri, 15 Aug 2025 03:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229404; cv=none; b=a7o663GN48cCpO4hWQ0ttMKbLsccWrhOLKrC3Sde0kZUZUTOq9hMb2zKl5/MKcYQSuhoxKvlPmsCy1QqFa/DTfBvaeELnGdbA1BWlINKwT1BorFpPY1fuIlsDiK7a3GJgkkR4iVQ0OZO9j1GmOnDgyxzzJbzk5l4WPL7twxiTIo=
+	t=1755229765; cv=none; b=A1DTa+dWPQI94YVp094oy36OoMfGhqHqUR90z3mSh8w69oWxqb/PVV7J2qtF7T9g2WXOwn9AaisCtIY8w8tqZ/ytKlKjv/7MPyVW4vjCTwWad4T+J23MePSBcjtSzUqrYxOvqLG3jN/ueO8UplJ8ueal/CE7ikvicG24MGonato=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229404; c=relaxed/simple;
-	bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nd19yGwi9Ez5kmO7aJ0WBfAm1dNkUtVTpk8Ej6w0iDYHD+AYxlDBlFkiEkgSfL7MDUEUV95+EKXmhjBVdQ1QeH0E5PD9cpr3l62CNulIXIRA+1DWfx6UWgts54uhThXmEVlpoArc8k5JzKLK7uzTwZrgxLes81Ov2BMWhdyJPxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kwvNuP2C; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55ce508cfe0so1553256e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755229401; x=1755834201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
-        b=kwvNuP2CIZOJMuv6JQVxGZF7wCgfvL/cCINTMjR+jI/e/I80srcqTzD2IdB5OTKOMh
-         EjKdYYT91g00ngvRlnd9VdncuLw6ZyCiOPuAYcgMit/ol2jw6VcOU90uXEEYkqmcO70+
-         g1GFtDCE8xJdE7Nmm3IKuPmbxweVaak5KzfD8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755229401; x=1755834201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
-        b=HUFw4XOQ/Dw8bfHqBDresVmX29KKlpA23xdgRncfrC/PMYMHnpK9DYnoTs1i32dc3k
-         t09siQOl15XMTC/KAr1RXl5peiv7mNZV5Uhtivbip0FRZtGUxfUX+lAhKNuf5s21euQJ
-         y8SJY0flib/PBzLIqONbu3+U/+lWqtPGqCww+tobx7mbstG+YhcSr55xhYiWjJh6ibqg
-         5Ty45BqKKLrJuqj0SCNt801Bh2Z5DyykDF7qvwpsStEEYbg7f097BgFOsR0XjzBC93RU
-         58K8TIMzqGEgyIbsCbnCxQTJZmcWtxS1tGcqqaohe3yjppvfPr/zfJQLKLq53blmO1jC
-         oPhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIbF3beY6iU2akP5++zMIQpcbGHMV3y2tIuoZeZpc3kuthxMmrcVNSYYzVOq171cwqtsPXHSgp2/igbgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7wsZYLD5SkZzfH302LREPeQKOZynP/5Or4DkYBq479d8b/D6i
-	v+ah66kDzUUwh0zFCgxeBnpLdFSC8CWUzCwLsvEFt84kVJai+ljYj6eBfc6NFWMSsRPqxukzC5W
-	V7iZ+uEukVAnsKS1WAIYdxXK0+Yt8Ctd3epJt7h5f
-X-Gm-Gg: ASbGncsLT7ZS6sVLmlyRm/oYelj0DF5YL1eqTd2dt2xWzjYN5xHuzdSrHOapTitI3xg
-	32gmLJDDgvS7CMUS4tYZLFifgrH+yxHMHvCsERfpYD57WrOsi3CK+yeSWUspv3iuZ07l8Aer5Mn
-	BuJonVYDn9SsysF+GSCDNwd9dEjUXVhf/PYs6qU8sVwEMsPkMbqhvvRuq8cX++3Tp4EK02JqHki
-	1wLbeFJ3W4NNhmcQBZ8Q97XAUZ8YG7IdD3ONg==
-X-Google-Smtp-Source: AGHT+IEqCwdjtNotzKv7k6sNon11epPQ9Q7yaZt1pImrKpO8J5PSviVGiMjVATClFXgSR2SA/yoBT6p78Ov7Q+2gotM=
-X-Received: by 2002:a05:6512:3e0d:b0:55b:84e7:e14a with SMTP id
- 2adb3069b0e04-55ceeb42b0fmr131122e87.25.1755229401420; Thu, 14 Aug 2025
- 20:43:21 -0700 (PDT)
+	s=arc-20240116; t=1755229765; c=relaxed/simple;
+	bh=vb+8+cI/6mN9k6R4rO9pApJyDljK42JSjMf6BVyNR6M=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=r8nVZ+CX3FTrj3B3ed3Qwhsyn8Wtlb7HjCHk9ogRGkBXNDOOjfdQrpuOsOVYviQNdffbbrDHhTukEJu8u80J9G0LYKSiHleCrS/X4EhU65yIDXaIwcsUapcHVieyhW4Yat0SZltie97N7Kg/INBHsHtIcewRotEIkqqoBO4j7PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=alvq1nAV; arc=none smtp.client-ip=68.232.139.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1755229764; x=1786765764;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vb+8+cI/6mN9k6R4rO9pApJyDljK42JSjMf6BVyNR6M=;
+  b=alvq1nAVfQOUNU2+vrxvWGvPo93HRgNGbSNxV7+xVtni6zkU5hCX8a2k
+   fLo+s2277fTXaniNDzRUBanu8WJ0BT+qRXHMkwvrXKu/29zezYTb43XTT
+   18gQuZowdXCaJKkQd3+P/6+iglXSft5jcTzyx+AYfTwAWMGruDjG+XKpr
+   EcaPYD6fcYsThOWbUZtFvnORLbueg8aWS6HGWfq+lEQ4UM5n3paIPzoMV
+   1SU+ltkfFLJ6z+Hfon5duJNEUnonGVeLwk/Br2lofuyx8CQ8qlcMjf0xt
+   ONsNTJKM+GHH8oEYeSDQU3yYm/Gvb56pHDE42jJpZ2T3tJKBnVQnQmWzS
+   g==;
+X-CSE-ConnectionGUID: IORzhdfbS3yqLEvLmmHhAw==
+X-CSE-MsgGUID: l7AKp4JeS32A2x+UEUaj0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="212714369"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747666800"; 
+   d="scan'208";a="212714369"
+Received: from unknown (HELO az2nlsmgr1.o.css.fujitsu.com) ([20.61.8.234])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 12:48:12 +0900
+Received: from az2nlsmgm3.fujitsu.com (unknown [10.150.26.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmgr1.o.css.fujitsu.com (Postfix) with ESMTPS id 2FCF11C00099;
+	Fri, 15 Aug 2025 03:48:12 +0000 (UTC)
+Received: from az2nlsmom1.o.css.fujitsu.com (az2nlsmom1.o.css.fujitsu.com [10.150.26.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmgm3.fujitsu.com (Postfix) with ESMTPS id DBB651810851;
+	Fri, 15 Aug 2025 03:48:11 +0000 (UTC)
+Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by az2nlsmom1.o.css.fujitsu.com (Postfix) with ESMTP id ED482829192;
+	Fri, 15 Aug 2025 03:48:03 +0000 (UTC)
+From: Koichi Okuno <fj2767dz@fujitsu.com>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Gowthami Thiagarajan <gthiagarajan@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Koichi Okuno <fj2767dz@fujitsu.com>
+Subject: [PATCH v7 0/2] perf: Fujitsu: Add Uncore MAC/PCI PMU driver
+Date: Fri, 15 Aug 2025 12:47:27 +0900
+Message-ID: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-9-laura.nao@collabora.com>
-In-Reply-To: <20250805135447.149231-9-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 15 Aug 2025 12:43:10 +0900
-X-Gm-Features: Ac12FXzyZO_yczjiRVwJ_XiOUJ7K7LAiS8kN-QE11MKfkqUjTCK5j2sczcKt2tQ
-Message-ID: <CAGXv+5FwV1YuBoefMAX1UvOd1=cg9Ld1ZawyNts1BR8YMezhKQ@mail.gmail.com>
-Subject: Re: [PATCH v4 08/27] clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
->
-> On MT8196, some clocks use one register for parent selection and
-> gating, and a separate register for frequency division. Since composite
-> clocks can combine a mux, divider, and gate in a single entity, add a
-> macro to simplify registration of such clocks by combining parent
-> selection, frequency scaling, and enable control into one definition.
->
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+This adds two new dynamic PMUs to the Perf Events framework to program
+and control the Uncore MAC/PCI PMUs in Fujitsu chips.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+These drivers were created with reference to drivers/perf/qcom_l3_pmu.c.
+
+These drivers export formatting and event information to sysfs so they can
+be used by the perf user space tools with the syntaxes:
+
+perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+perf stat -e mac_iod0_mac0_ch0/event=0x80/ ls
+
+perf stat -e pci_iod0_pci0/ea-pci/ ls
+perf stat -e pci_iod0_pci0/event=0x80/ ls
+
+FUJITSU-MONAKA PMU Events Specification v1.1 URL:
+https://github.com/fujitsu/FUJITSU-MONAKA
+
+Changes in v7:
+- Modify the code as suggested. (Jonathan Cameron)
+  - Renamed the macros name to make it clear which register it applies to.
+  - Deleted unused macro.
+  - Changed some programming styles as suggested.
+  - I tested using v6.17-rc1 and confirmed that I get the same results
+    as before the macro name change.
+- Link to v6:https://lore.kernel.org/all/20250711071404.2138816-1-fj2767dz@fujitsu.com/
+
+Signed-off-by: Koichi Okuno <fj2767dz@fujitsu.com>
+
+Koichi Okuno (2):
+  perf: Fujitsu: Add the Uncore MAC PMU driver
+  perf: Fujitsu: Add the Uncore PCI PMU driver
+
+ .../admin-guide/perf/fujitsu_mac_pmu.rst      |  73 +++
+ .../admin-guide/perf/fujitsu_pci_pmu.rst      |  50 ++
+ Documentation/admin-guide/perf/index.rst      |   2 +
+ drivers/perf/Kconfig                          |  18 +
+ drivers/perf/Makefile                         |   2 +
+ drivers/perf/fujitsu_mac_pmu.c                | 552 ++++++++++++++++++
+ drivers/perf/fujitsu_pci_pmu.c                | 536 +++++++++++++++++
+ 7 files changed, 1233 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/fujitsu_mac_pmu.rst
+ create mode 100644 Documentation/admin-guide/perf/fujitsu_pci_pmu.rst
+ create mode 100644 drivers/perf/fujitsu_mac_pmu.c
+ create mode 100644 drivers/perf/fujitsu_pci_pmu.c
+
+-- 
+2.43.0
+
 
