@@ -1,546 +1,266 @@
-Return-Path: <linux-kernel+bounces-770651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFDCB27D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:48:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7987CB27D76
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C709DB64667
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF85B6482D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667EA2FCC07;
-	Fri, 15 Aug 2025 09:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8982FA0F8;
+	Fri, 15 Aug 2025 09:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fGh1deQC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cwfKlMGQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mrQpk8aE"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A275D23D7F5
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251252; cv=none; b=ffmdfppKkIOj0t/WZw4ZaADpkwg6kr4DqxS5oyEN3OMWj44Q4Eup75Kr62IOIiwqfPlsE0EZCLT7TR8hUn3o+N84UoYFyipzlk58uFk06Lk/Er8zgI2dcBGMh2iYBYYxJygU5Hmg4D/w5iZDTKOCrx5BJxFLaPqiD1ux8p06u1o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251252; c=relaxed/simple;
-	bh=Sjltf4lbT1xeHxUqYYiGssqzD6gzaQw3aJ9n0Tvd8pQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pH6jBATat3ZxHbvg1kMrXUJATxoG0xY8QxeUweTskOBUpOihTc115GsjeHq++KsyIMryp15nRFBrBXBwj7ylHY3NZ1PqkRS0e3+Nwo4yE42i4j907QecHy6wllzci/IpBkU0WGxOjGKBxgr6qHXzDXAIMcjaKIbzup59udMPf8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fGh1deQC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so10240865e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:47:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E868A27147F;
+	Fri, 15 Aug 2025 09:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755251295; cv=fail; b=r37Qs6cP/GKLx9+XG7mrcupGIIUGNlV6VZeD375r+E0XPneIMtonyNxM1FcFPK0kMAg6t+GmiMY42tQZ2/YrHtkTcjQTWefnC7N7SDtQBw7RrVM33RBgeSOKWlOo4DmYaT39GPGvqwnxVyDpB9iK6RKzpgZy2LXpVFzx8ylslJs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755251295; c=relaxed/simple;
+	bh=1KOKpHDOKIAbNlrZn+cI1IFVSfxytra2cwiJ1VR/l9g=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EKEx0ASOtveyIG+J8SnJ9Ijr0St8SxjMTsB0cl/CsDT8yTTwPnb8a3afMHu2qu8NrkYg8MSpBaSexrqQUbB5X3RcFAnMUt08UvdEgBW5B3ZUR624EH7shprb9EBupRttTrq5loUlmQ5+57fM+kkBtP0bPH1xzURJexJPxN8XUVc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cwfKlMGQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mrQpk8aE; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F8g5sO010379;
+	Fri, 15 Aug 2025 09:47:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=W3Xrc/DVc/S92zw2x2
+	Y8LGP9Rz9xq6nPlwiy5UW19UA=; b=cwfKlMGQLghIA/EaXvEqBcSR+CxBj6PK0B
+	kRpJJA8s9Q1gJ5zMDQEJO3IQoluqwVBgZhZFm22w760WJOUHGU3bfee173AmMM5/
+	boUEX4/CIIychQMUPKWfT1Jx1Pl/HU4u1BSrVg26J8OzjbGbRjk9r8Zn520MixxP
+	rQTdPWfNy0280mo3lxquSwaxxFuHHPlB0dZu/uxLKOFoGYhjBjaOdvM+xICet5pa
+	LA7UBUKxwiutDLetM4RjJFQ5UwEvyOTPiCkklipY9gGJ38bJfkA0UK4YzTz0zkvZ
+	41auv2kC59rFEetp5DTla7vl1lGAK7jAb1twOZayK7RQ/eXiEdww==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dxvx3k47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Aug 2025 09:47:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57F7J5kq030396;
+	Fri, 15 Aug 2025 09:47:57 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsdteyj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Aug 2025 09:47:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AD1nMITJN3KWGtyzqwbfiWuGXQ5h6HhYIv3LzBEIZZmBBPaXoU46V3v0lFfQKpys54MdpgX0Ta1fZeKVd+LObP2Y+mVLPJ2ZTRvSNkIvMX2mW/clHw1+zSrJm3LHpNTLZ0FE4UEssLj07CYuiQAIcFOyLY5ha3Ree2MR0NNuV/SYhAw2WcZquurPRN4W/tpsXDgXClVrzS1GaHW8hq+7rOWffIWSGloDks6duIstSeC40R12KR+mJ/eer2JrzXgtUzbk6tWkJNnSyhrSWYXAqJTxRRuiEDcDzakZcKd5I1dUGWpvksQPDjRQpdeGrNLHAM/xOPdJFETpmmwiKY169Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W3Xrc/DVc/S92zw2x2Y8LGP9Rz9xq6nPlwiy5UW19UA=;
+ b=lN2coCK3k0tP2qTVPZ43JJDu/JnOTA6FYVmhhvk28RgJQC6Rh4XGPgTFu5nxyJTwgoFeQ2mGBN88O08XQ5luNKqEAypzjPdBEj1V5tUeskH6fseTq4uaCovwcf1doJj6V42mtdsnseIopt4BzQPqzlj1ZnyCPzVAdfCMnD0YBNiHwxx+wNb0ffn9oNjGat7adDe465R3wrnW2KHeMp1Y+fEURsEdOYhjzxq5f0L/Rpd809ysvyckciGhe49mSZgYSU0P3KyL0AtS/V0Yf+ppaasbwpJpFyi+g4TzlLDWgu2sAq4JObp9iuUBk6mXKclTcxtUFIoL000DmkLA5IDR0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755251248; x=1755856048; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IHgW/v2rphjPVW4+m0icKl7UCxz9a6G/MjNtmzOvLpY=;
-        b=fGh1deQCUnBZSVISMVU+47NMHWlleDizPlh78ppAUXYaTi3/X5pOpad1Lnbq6vHHE1
-         bUpaH69H1jBWwUArx2GPUdIA9KKzfJ4M7VaZJ9zUmmJgYLa9Xss5P5MhunKLQJHPpa2J
-         8Y5yoLvV2rMDwY9lj0JNro4p8NA9tHpJq1ZvpBrKNRcK+JUZ+UZLLb2s5IDfgaeX8LG9
-         YgpmbQsoqWcwxUE8Kk2UwNrZexyb5ZyS12hEG4qh538VvUSJ2yV2MbfW3WsdaStPlhFJ
-         fsHGcpGTRNnnuuft0DsvYMjG75pTWZoBS4LvJnssJ2hRowsdqCv3Yl4/0gTV7qWlVQqU
-         /NUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251248; x=1755856048;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IHgW/v2rphjPVW4+m0icKl7UCxz9a6G/MjNtmzOvLpY=;
-        b=WnX9OUegi6hiixqHj5J8H3KyJLAFs2W1Z2i/A15XMUzolzILGuiKTzKfOUS8Otiuct
-         phg6lItquBtofNwY2eSk5ndhPMzyCir/XjZhYC2C2qo1CmxBRteHjTeQ734vJYtEURZV
-         v0VRJv7OpaRWSGBgyEHS3sEWjq9c3uhbMHGetMfWwvgSKebwW4DZvJnE/6U/E0iBiYHt
-         J/JZxeWdB3tp5pCHfpFCTy7pFxBt2YTMRONEWl1DJg7Sa/ZPW9LuV7yZnrdfd3OOw95B
-         k3uHffhlmCXdGc7H9F7E+/sMbAHSFcoXnq1cc0YpcvNxxz3hoPrdPv2IlHuJQ0hY+G55
-         BvvA==
-X-Gm-Message-State: AOJu0Yw+QY1lSV4u7uWaMo8zegO9Gv6V0d/KMuOQny8z5o50AvpK7O7E
-	oA9jEz4fxlgAf5VGRonaO9/1vIHjD0brJ9l4TUF98YsiV6eRddH9+U5xVEaZJYquBL8yUtj7HfZ
-	LB8Q3
-X-Gm-Gg: ASbGncvPSh0D4b3baBS7rbQ6FlA+eC4fSi8cA9Kmo3ITya+qoeyUGPlIuUPAPF5etee
-	EoIBntghaWAJxmFXRoA0v5AeZKqk6WvTTmfP/CIXWkE/ncvnGMi849unWYZIc3Z+Kob5nU8iCjo
-	atv49fybXhk2n0lWTuAWkLIv/a9p3c33m8Js/mMTEwfpy5F3QenPcc4IQo0G+7kYbI8fZpGYVNc
-	y1QrlNJ2myC+ynQhH5U2GKchVsRK/PRyzC4umcBKq+J0c1y+VTxuWnqd50y07snYQOWHhulCoAK
-	dpdBjL4tjP27QAa5Sir8Ptr6jH+P2iSUCe/1ByGN6mptnqo0QCf8B9CfPs6quXigOX/55T34KGc
-	MvG2bHazfgM6E/82AbPX/lh/gsmhBJU+n2wlyOIEQ7uJu2g==
-X-Google-Smtp-Source: AGHT+IHPDuN+irQhMdQ/bmAH5lirjP/2l9rpl6KQYiklLUgpb54ghtizrPhMAM+iD9kK9IhTjH9kaw==
-X-Received: by 2002:a05:600c:474a:b0:456:189e:223a with SMTP id 5b1f17b1804b1-45a2183e163mr12767425e9.10.1755251247757;
-        Fri, 15 Aug 2025 02:47:27 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a209c25a1sm23241755e9.22.2025.08.15.02.47.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 02:47:27 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 2/2] Workqueue: fs: WQ_PERCPU added to alloc_workqueue users
-Date: Fri, 15 Aug 2025 11:47:15 +0200
-Message-ID: <20250815094715.54121-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250815094715.54121-1-marco.crivellari@suse.com>
-References: <20250815094715.54121-1-marco.crivellari@suse.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W3Xrc/DVc/S92zw2x2Y8LGP9Rz9xq6nPlwiy5UW19UA=;
+ b=mrQpk8aESonKAiy5FSDnpZ16zqLRdgcn2gFGYUSaA1Wr0zFUaxSElo0K6LpNLygHnoJHqXxDEwa8cPJPuyH05V0ae6vXJa+2IuNPyJj02TXeW314w8jVtyEmXaGERiT8rybCLs6f7gCqbhJa+2ISAA3wjSeuPOXyeheaBFv1kEs=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SN7PR10MB6667.namprd10.prod.outlook.com (2603:10b6:806:299::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Fri, 15 Aug
+ 2025 09:47:53 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 09:47:53 +0000
+Date: Fri, 15 Aug 2025 10:47:50 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] testing/radix-tree/maple: hack around kfree_rcu not
+ existing
+Message-ID: <0a3e9837-0e45-47db-9e24-2f9099ea6075@lucifer.local>
+References: <20250814064927.27345-1-lorenzo.stoakes@oracle.com>
+ <kq3y4okddkjpl3yk3ginadnynysukiuxx3wlxk63yhudeuidcc@pu5gysfsrgrb>
+ <20250814180217.da2ab57d5b940b52aa45b238@linux-foundation.org>
+ <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
+ <97e3a596-ca5c-41ec-b6b2-8b7afafca88f@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97e3a596-ca5c-41ec-b6b2-8b7afafca88f@lucifer.local>
+X-ClientProxiedBy: MM0P280CA0028.SWEP280.PROD.OUTLOOK.COM (2603:10a6:190:a::8)
+ To DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SN7PR10MB6667:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb3a7743-e2e5-4a08-e0f8-08dddbe0ce24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?j6jmnOSXAU8s+FZA5ej8XaK/jhSN9ei9t1YXoBRhWseJRfrV90/7/OTQqS+l?=
+ =?us-ascii?Q?uVR3cnCDRVW+Vtwa2Ji4SZvWM7AMOo6Zs61btlYPjVaiMsJNGeOGojFLFk/D?=
+ =?us-ascii?Q?L5jc36drnrOB6W5AQafcFntVIXbWpgCVZJ85C0t7Hv880ACZCj1yH6r8Rgvk?=
+ =?us-ascii?Q?LV2uAFzJgOTcINuTqbvGVJK8Gcm8753Lh6KsHzZDKDRoxXcJYf+Mw87zuBvn?=
+ =?us-ascii?Q?BqYv6MJy5IBIzk0LLVh6gQRNFU6pdCyVpQB4giuta62PCLSYigF8cH2DCQQZ?=
+ =?us-ascii?Q?3KwsGRUoYdiB1jgkTFIlAi9+q3HLOml5/2bN4XV5IvUOW+MLu4FvEVTDU81M?=
+ =?us-ascii?Q?SX4BiymeErcQlr5OlspoYRfvL+U/YmpJaUPprqwpHyrUre8w1od8/9XoyV/5?=
+ =?us-ascii?Q?IaHNEV2O76FuR8+Q2x6/zEvjiXkp7JciFHrQuoy4f6KTAJCR7PJPVZDtFbh8?=
+ =?us-ascii?Q?NOReOCOxekpSBopEpbsHD5GdOe+O8oBZMr+tEA1uV/oylt1Yj/lzb8I5pUWT?=
+ =?us-ascii?Q?bSRkSmh5YiIWiMni462MLDRnzn1T0g7jzRdsv8fWxpNjqFgRUUGpdF/4sBle?=
+ =?us-ascii?Q?5usR0/mG1mWbJviB9URhEq1rBsjry+H2iscRplFnZHsDukFJH599PfLuoXuv?=
+ =?us-ascii?Q?/OjEKYkdIzqMojnvw8hy3uyspruBkbiubJ6LQzz7qXkxwaRDmxZaUmlrezBO?=
+ =?us-ascii?Q?K16+0Q3fHI1LjhxM1gtA+57WGUk1IY8iSiQm0AqsWRHckuWe2+kwn1a2yYFn?=
+ =?us-ascii?Q?YsSYWn2qLTL6BdjFSahd4LbeTps/QEk7r1wT9ddFJH5RGYAfBU4w+qftBK1w?=
+ =?us-ascii?Q?f9OkcJaLKpkGCuB6e9h7oq4xlT4RM3vAvam26ZWUc/cG0JJNhfgaNTHESu8M?=
+ =?us-ascii?Q?fS6a6e2JI8z3rvyUxs8tMGu/6cJ+i/GcGw4385CoXceNKbPDTTAmSo6Q7SPC?=
+ =?us-ascii?Q?bsT1tcdEg4PiANSTl+defULuneWgYJqMqSittvAR/Y09KJRpOlLV5hTVoqc3?=
+ =?us-ascii?Q?0wgQCE0BbxNpCsS0dA4G3YVWAJI8jm8Q5qyBWF1pLJxnJulOTVp6pzIY5yRI?=
+ =?us-ascii?Q?1wcoft4ceN0YdpyXVQBJqpRhEz4klG7irdvKHKH6DRaG9eWjBXKmesEvBcHr?=
+ =?us-ascii?Q?ZISZnKsDUv/Y1B4dKZSlErFbYQ6LOMWFXfLPrjD72HHhKOh3OFcLcwv8m6qB?=
+ =?us-ascii?Q?Bf3Aqu37tM35fpjLNTmJ/kJ8TX6uCYnVvfT8Eb6aXGXA6s0e3LA5a01K+h4N?=
+ =?us-ascii?Q?i5bBEUL9jkj6cWdcEm7L0DNSbL/oJh5jQftpvFd2rZKG3NhkksQC18luR/LD?=
+ =?us-ascii?Q?IyHpsOXvdidfeBMjvoQRgos+Zalc/OCbP4Iw6OINACfNUxGqQX8Oen/1c3+f?=
+ =?us-ascii?Q?qdlh3Af6lCEXkPgXv3OsTbYbVbw+mw+hHy44DJOkPhd3eMnTNUVvmQ8PlOcQ?=
+ =?us-ascii?Q?eSOEZsAhm5MTY9XP+z4SXI8Fy8Ak04/ZfyZaSOMBQqknpMGZZvDkAkzO/UKt?=
+ =?us-ascii?Q?GgTEa2KAOmraw9Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?T9/YBb4toS8mDK+9NlEvUZeXse6wlGLeCDl0IEyxhmFzlX1vbSSgDXzazIY/?=
+ =?us-ascii?Q?lOFg/4Odvf8e5amBDlcwSO6ms7JRH5Z7BvMwgG814Yl0rwYt2MtvhOJgXhJL?=
+ =?us-ascii?Q?xTmuYFBDgIE539SGLuXEH51mCBY4tUzr/V4/s87/m8YwkSKOa+ga2b2JSRmg?=
+ =?us-ascii?Q?CunNjBbzgIYgkTiFmRptgvzdArYGmzesIRo3kDdvtvNlcuDB0hA2jWGyve6v?=
+ =?us-ascii?Q?smTEyGcY8A1Bi4lz0H4aHNS4whv/eOgEkV6hHZYI+acfyav7m2MVmVT8bRny?=
+ =?us-ascii?Q?KSh1jSbMGochMFTyOxvyUMsDxza0sl5wIIVNvhsuGEmpYh/sIoMkB1o0q4mu?=
+ =?us-ascii?Q?nAwXjsud9h/lvmBCyDeFa4YWd00CRq3Q1kgyGQRczTSvCNh7vVwIxPHh3LOL?=
+ =?us-ascii?Q?zpFgvTrurRnZsaplUGhLzzkdgblAb1Gv/gIdhdnrZCXFqqsbpaAdk6ZWOMik?=
+ =?us-ascii?Q?mBsbXa385tDMg8mFtMlknX9JKYTsbTwi2DumilsSTqsjprzMj4bPM8uBZYH7?=
+ =?us-ascii?Q?TDQgu5aKZ5ebL5DwT3tamOi5y7L4FCvohaKDq40kt7BLQNSBkpfoBCyWoBDo?=
+ =?us-ascii?Q?GvllkBkK5QRN4nl3i8fmZcwB9265iKunx5jrvfq761etPKPRP/XyJDwItZxq?=
+ =?us-ascii?Q?L+iqr6rP18hGQdOOzF299IyFWm77qRIRgGHAvzMHF7BRb4jnv9Fz13ylnEOY?=
+ =?us-ascii?Q?/ECqHWiMkhIuQYh+8DjjCEuQBD/Hc/ftnOIUhiPs9w1LalL5WZxzJao8meus?=
+ =?us-ascii?Q?whVfQIp5BBtO551+xmcYmzGHDBzhpVZqNkaHKgwiFWWaEB9bubluKaRu2RX9?=
+ =?us-ascii?Q?5vLJ3xtIdlhhSE+kZvqye8HIlQR5kddZlzY+AgAjINPDXotpecQF33aTMUSM?=
+ =?us-ascii?Q?RD7o7t1sgH9IxwLFQTCG7WxvPtPumgDhjcFUI85n2s8Otye80Dckg66ABhte?=
+ =?us-ascii?Q?Bzg8pQkOMxXLnLgHYzFyEwOvvtnfFpMyO6E/PhW/b5AVcXBu37ZuzpIyIOle?=
+ =?us-ascii?Q?Knmaochu+gN6ZpdHyKWHF1OpKmg+PdTVX+DhLpEmQekEzHWKTxwiZR8pd8Ll?=
+ =?us-ascii?Q?gosf7u70NG207fikWz0gUsylcz/mOhVSHAEOD5IkvzdwfH7F+bxTQGlQEd5o?=
+ =?us-ascii?Q?KAoD9NjAKRnuQVZAYR3BecNUJR+/4TTxYfKXgdTbIbDkEwRApU8zs+ZOR09Q?=
+ =?us-ascii?Q?hl9EvN0xOmM5qUSCu2USfOUk8cs+EeN0yR1HBDl/PrQOB0/Pt+SCOszaL7GB?=
+ =?us-ascii?Q?P86qArbUzLeKk4K/ocLBVk570lsRBXI6ekukbcw3O0SG9vwLIrDn8gPSB0bx?=
+ =?us-ascii?Q?Jjx2fNsFdYGi8msLNd6Amf3Qbbl3xr0LVVTZg53Ibq/ocrLpjc8TAxEuwt65?=
+ =?us-ascii?Q?J7uBdp1pys+QOEXievIRgRt4rGc2hTLAj4mu40535MnCUIKQ3iR0URxma1UM?=
+ =?us-ascii?Q?L3LzNPEA/p4Mp6t02OsdkmHcavsfkbNY91b/l66btnr8nexaK02z98v9o+iH?=
+ =?us-ascii?Q?YxCSyc8QFnlG9WD9IiyX2nLCtYvFhQLmP6bNqOQD52QiwSVEARqqQzxES2fl?=
+ =?us-ascii?Q?imaGjGJb+h1xGqp8nhT5PVMKOV1znWMW6czYaanqTX7iKzhp+DDDvCXHferY?=
+ =?us-ascii?Q?+w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	qnykYZML41JNjS9vEd5pKspIfh/2j2AN+M6KiLaj1hMPg8a+Al/RintNEMm7tXS6W5TijAns/P+qFKs9806Hc3uyHIG6hNf5R/AOWm4A1dwtXo8LAXvyJyguy90Ia4+9NB1K8yAbk0VzsAfxsfODF6sgv0vOqHnc6H2xpHEcxr+tgm21PIjsr2JBz+fZQR99o0tXHD4Nek8EFqUR765LnkcjuprBmieiIkSzrVZqV9UUw23p4ZaP4CdLCWSGI3CuWONRz2OpP5Tdq7ILGtzl//fe1t9KYA8zCoh806/3I+tPweQexaRHNfq3jDh1CYPnnEY6e+dfl6yT3RMxS0Mqf4RiSpY0m7OWwfN8vFWMezefw2pRc0FwjLKUvYzLuNQEWljSK9y88W4CkFgyClcrYUv2Eb6S8HmWRTOf83WRf8uysj7XFJCIKQTvtExws0vomaGVYTXab7B3GNkGhrp/2O/dl8r2GheVoAtKDE57RuYdpLX603gkZkrh5bcIAwBeDFBMtl4lIMuPG5Q7BDV2cCkRUtVCP1rHhoRXwT5dxs6Ed92aRXjnmLUwbQ0IMR51qsW/nBZy3kERrqfDtm/Y3q2dRawZAXzha1OdkeD3DJE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb3a7743-e2e5-4a08-e0f8-08dddbe0ce24
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 09:47:53.4759
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LZlpraM+I+kgr+6ZbQI7r+V88rWXRVv2odr98wB2+QbYeGXyTOWH/IZ2ubHchR22dE2j3MTO7/axqzFbFBRkoa4VI5bz8mWWgpFT2Yg/f6I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6667
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ adultscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508150078
+X-Proofpoint-GUID: rA59Gxm28YTgY3MNpaHZnynNlwyK63a_
+X-Proofpoint-ORIG-GUID: rA59Gxm28YTgY3MNpaHZnynNlwyK63a_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDA3OSBTYWx0ZWRfX2iNUWbX6b4su
+ 49dhnntBlhmehnmHtOrZOt+QsHH8NBQUv9Sjf+sNlCW9X2Wu5qDnnhVfiXGZusorrzkh2Y/5BEf
+ EKyvxw9F9mBWf/liAZizqvuPtI9isaCDOBIfgVfgU9Bj5aN4lN1duaG3ovH+x/4anUBzJ91jOln
+ 2Y7hY9pZfWi0urgkpzhnzVknkakv8WZm9iAu7TjLyruCOkrV68mHMAQTXKfkGBtB9rJCrfANu0A
+ CR3JOtU/VINMrTjlWVVkAnnCEwWmNw4csS3nW6D/gqHixaUiToMfMaq9GCKxKnpoD1KM+J0CHOJ
+ I7Axt4MSC5OZ9yy87XHa2vQ6LWSfY3xGTpQ2tUkPuxDYbgMb4WY5soqWDaVv1D8Ap9MW6XU2bBZ
+ 12ZnvjBCeiHo3PqAIYVU+116QRdeC323OGyDeLPgnTbufP+lT+muamrfveWdsmetZ/jpetZj
+X-Authority-Analysis: v=2.4 cv=dpnbC0g4 c=1 sm=1 tr=0 ts=689f024d cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8
+ a=APn3Q-FPb2jb5AWkj-YA:9 a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
+On Fri, Aug 15, 2025 at 05:28:02AM +0100, Lorenzo Stoakes wrote:
+> On Thu, Aug 14, 2025 at 10:09:15PM -0400, Liam R. Howlett wrote:
+> > * Andrew Morton <akpm@linux-foundation.org> [250814 21:02]:
+> > > Well, can we have this as a standalone thing, rather than as a
+> > > modification to a patch whose future is uncertain?
+> > >
+> > > Then we can just drop "testing/radix-tree/maple: hack around kfree_rcu
+> > > not existing", yes?
+> > >
+> > > Some expansion of "fixes the build for the VMA userland tests" would be
+> > > helpful.
+> >
+> > Ah, this is somewhat messy.
+> >
+> > Pedro removed unnecessary rcu calls with the newer slab reality as you
+> > can directly call kfree instead of specifying the kmem_cache.
+> >
+> > But the patch is partially already in Vlastimil's sheaves work and we'd
+> > like his work to go through his branch, so the future of this particular
+> > patch is a bit messy.
+> >
+> > Maybe we should just drop the related patches that caused the issue from
+> > the mm-new branch?  That way we don't need a fix at all.
+> >
+> > And when Vlastimil is around, we can get him to pick up the set
+> > including the fix.
+> >
+> > Doing things this way will allow Vlastimil the avoid conflicts on
+> > rebase, and restore the userspace testing in mm-new.
+> >
+> > Does that make sense to everyone?
+>
+> Sounds good to me, I didn't realise that both the original series at [0])
+> (which introduced the test fail) and the follow up at [1] were intended to
+> be dropped, I thought only [1] but dropping [0] obviously also fixes it!
+>
+> And it looks like Andrew's done so and tests now fully working in mm-new
+> again so I'm happy :)
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+OK this isn't the case.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Can you clarify that you want to drop [0] and explicitly reply there asking
+Andrew to drop it just so all is certain?
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Because right now VMA tests are still broken in mm-new :(
 
-This patch adds a new WQ_PERCPU flag to all the fs subsystem users to
-explicitly request the use of the per-CPU behavior. Both flags coexist
-for one release cycle to allow callers to transition their calls.
+>
+> Cheers, Lorenzo
+>
+> [0]:https://lore.kernel.org/all/20250718172138.103116-1-pfalcato@suse.de/
+> [1]:https://lore.kernel.org/all/20250812162124.59417-1-pfalcato@suse.de/
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-All existing users have been updated accordingly.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- fs/afs/main.c                  |  4 ++--
- fs/bcachefs/super.c            | 10 +++++-----
- fs/btrfs/async-thread.c        |  3 +--
- fs/btrfs/disk-io.c             |  2 +-
- fs/ceph/super.c                |  2 +-
- fs/dlm/lowcomms.c              |  2 +-
- fs/dlm/main.c                  |  2 +-
- fs/fs-writeback.c              |  2 +-
- fs/gfs2/main.c                 |  5 +++--
- fs/gfs2/ops_fstype.c           |  6 ++++--
- fs/ocfs2/dlm/dlmdomain.c       |  3 ++-
- fs/ocfs2/dlmfs/dlmfs.c         |  3 ++-
- fs/smb/client/cifsfs.c         | 16 +++++++++++-----
- fs/smb/server/ksmbd_work.c     |  2 +-
- fs/smb/server/transport_rdma.c |  3 ++-
- fs/super.c                     |  3 ++-
- fs/verity/verify.c             |  2 +-
- fs/xfs/xfs_log.c               |  3 +--
- fs/xfs/xfs_mru_cache.c         |  3 ++-
- fs/xfs/xfs_super.c             | 15 ++++++++-------
- 20 files changed, 52 insertions(+), 39 deletions(-)
-
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index c845c5daaeba..6b7aab6abd78 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -168,13 +168,13 @@ static int __init afs_init(void)
- 
- 	printk(KERN_INFO "kAFS: Red Hat AFS client v0.1 registering.\n");
- 
--	afs_wq = alloc_workqueue("afs", 0, 0);
-+	afs_wq = alloc_workqueue("afs", WQ_PERCPU, 0);
- 	if (!afs_wq)
- 		goto error_afs_wq;
- 	afs_async_calls = alloc_workqueue("kafsd", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
- 	if (!afs_async_calls)
- 		goto error_async;
--	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM, 0);
-+	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!afs_lock_manager)
- 		goto error_lockmgr;
- 
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index a58edde43bee..8bba5347a36e 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -909,15 +909,15 @@ static struct bch_fs *bch2_fs_alloc(struct bch_sb *sb, struct bch_opts opts)
- 	if (!(c->btree_update_wq = alloc_workqueue("bcachefs",
- 				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_UNBOUND, 512)) ||
- 	    !(c->btree_io_complete_wq = alloc_workqueue("bcachefs_btree_io",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 1)) ||
- 	    !(c->copygc_wq = alloc_workqueue("bcachefs_copygc",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_CPU_INTENSIVE | WQ_PERCPU, 1)) ||
- 	    !(c->btree_read_complete_wq = alloc_workqueue("bcachefs_btree_read_complete",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 512)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 512)) ||
- 	    !(c->btree_write_submit_wq = alloc_workqueue("bcachefs_btree_write_sumit",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 1)) ||
- 	    !(c->write_ref_wq = alloc_workqueue("bcachefs_write_ref",
--				WQ_FREEZABLE, 0)) ||
-+				WQ_FREEZABLE | WQ_PERCPU, 0)) ||
- #ifndef BCH_WRITE_REF_DEBUG
- 	    percpu_ref_init(&c->writes, bch2_writes_disabled,
- 			    PERCPU_REF_INIT_DEAD, GFP_KERNEL) ||
-diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
-index f3bffe08b290..0a84d86a942d 100644
---- a/fs/btrfs/async-thread.c
-+++ b/fs/btrfs/async-thread.c
-@@ -109,8 +109,7 @@ struct btrfs_workqueue *btrfs_alloc_workqueue(struct btrfs_fs_info *fs_info,
- 		ret->thresh = thresh;
- 	}
- 
--	ret->normal_wq = alloc_workqueue("btrfs-%s", flags, ret->current_active,
--					 name);
-+	ret->normal_wq = alloc_workqueue("btrfs-%s", flags, ret->current_active, name);
- 	if (!ret->normal_wq) {
- 		kfree(ret);
- 		return NULL;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 3dd555db3d32..f817b29a43de 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1963,7 +1963,7 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
- {
- 	u32 max_active = fs_info->thread_pool_size;
- 	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
--	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE;
-+	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU;
- 
- 	fs_info->workers =
- 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index f3951253e393..a0302a004157 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -862,7 +862,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
- 	if (!fsc->inode_wq)
- 		goto fail_client;
--	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
-+	fsc->cap_wq = alloc_workqueue("ceph-cap", WQ_PERCPU, 1);
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index 70abd4da17a6..6ced1fa90209 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1702,7 +1702,7 @@ static int work_start(void)
- 		return -ENOMEM;
- 	}
- 
--	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH, 0);
-+	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH | WQ_PERCPU, 0);
- 	if (!process_workqueue) {
- 		log_print("can't start dlm_process");
- 		destroy_workqueue(io_workqueue);
-diff --git a/fs/dlm/main.c b/fs/dlm/main.c
-index 4887c8a05318..a44d16da7187 100644
---- a/fs/dlm/main.c
-+++ b/fs/dlm/main.c
-@@ -52,7 +52,7 @@ static int __init init_dlm(void)
- 	if (error)
- 		goto out_user;
- 
--	dlm_wq = alloc_workqueue("dlm_wq", 0, 0);
-+	dlm_wq = alloc_workqueue("dlm_wq", WQ_PERCPU, 0);
- 	if (!dlm_wq) {
- 		error = -ENOMEM;
- 		goto out_plock;
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index cf51a265bf27..4b1a53a3266b 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1180,7 +1180,7 @@ void cgroup_writeback_umount(struct super_block *sb)
- 
- static int __init cgroup_writeback_init(void)
- {
--	isw_wq = alloc_workqueue("inode_switch_wbs", 0, 0);
-+	isw_wq = alloc_workqueue("inode_switch_wbs", WQ_PERCPU, 0);
- 	if (!isw_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index 0727f60ad028..9d65719353fa 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -151,7 +151,8 @@ static int __init init_gfs2_fs(void)
- 
- 	error = -ENOMEM;
- 	gfs2_recovery_wq = alloc_workqueue("gfs2_recovery",
--					  WQ_MEM_RECLAIM | WQ_FREEZABLE, 0);
-+					  WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU,
-+					  0);
- 	if (!gfs2_recovery_wq)
- 		goto fail_wq1;
- 
-@@ -160,7 +161,7 @@ static int __init init_gfs2_fs(void)
- 	if (!gfs2_control_wq)
- 		goto fail_wq2;
- 
--	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", 0, 0);
-+	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", WQ_PERCPU, 0);
- 
- 	if (!gfs2_freeze_wq)
- 		goto fail_wq3;
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index e83d293c3614..0dccb5882ef6 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1189,13 +1189,15 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	error = -ENOMEM;
- 	sdp->sd_glock_wq = alloc_workqueue("gfs2-glock/%s",
--			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE, 0,
-+			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE | WQ_PERCPU,
-+			0,
- 			sdp->sd_fsname);
- 	if (!sdp->sd_glock_wq)
- 		goto fail_free;
- 
- 	sdp->sd_delete_wq = alloc_workqueue("gfs2-delete/%s",
--			WQ_MEM_RECLAIM | WQ_FREEZABLE, 0, sdp->sd_fsname);
-+			WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU, 0,
-+			sdp->sd_fsname);
- 	if (!sdp->sd_delete_wq)
- 		goto fail_glock_wq;
- 
-diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-index 2018501b2249..2347a50f079b 100644
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -1876,7 +1876,8 @@ static int dlm_join_domain(struct dlm_ctxt *dlm)
- 	dlm_debug_init(dlm);
- 
- 	snprintf(wq_name, O2NM_MAX_NAME_LEN, "dlm_wq-%s", dlm->name);
--	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM, 0);
-+	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM | WQ_PERCPU,
-+					  0);
- 	if (!dlm->dlm_worker) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
-diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-index 5130ec44e5e1..0b730535b2c8 100644
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -595,7 +595,8 @@ static int __init init_dlmfs_fs(void)
- 	}
- 	cleanup_inode = 1;
- 
--	user_dlm_worker = alloc_workqueue("user_dlm", WQ_MEM_RECLAIM, 0);
-+	user_dlm_worker = alloc_workqueue("user_dlm",
-+					  WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!user_dlm_worker) {
- 		status = -ENOMEM;
- 		goto bail;
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index a08c42363ffc..3d3a76fa7210 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1883,7 +1883,9 @@ init_cifs(void)
- 		cifs_dbg(VFS, "dir_cache_timeout set to max of 65000 seconds\n");
- 	}
- 
--	cifsiod_wq = alloc_workqueue("cifsiod", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+	cifsiod_wq = alloc_workqueue("cifsiod",
-+				     WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				     0);
- 	if (!cifsiod_wq) {
- 		rc = -ENOMEM;
- 		goto out_clean_proc;
-@@ -1911,28 +1913,32 @@ init_cifs(void)
- 	}
- 
- 	cifsoplockd_wq = alloc_workqueue("cifsoplockd",
--					 WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					 WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					 0);
- 	if (!cifsoplockd_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_fileinfo_put_wq;
- 	}
- 
- 	deferredclose_wq = alloc_workqueue("deferredclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!deferredclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_cifsoplockd_wq;
- 	}
- 
- 	serverclose_wq = alloc_workqueue("serverclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!serverclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_deferredclose_wq;
- 	}
- 
- 	cfid_put_wq = alloc_workqueue("cfid_put_wq",
--				      WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+				      WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				      0);
- 	if (!cfid_put_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_serverclose_wq;
-diff --git a/fs/smb/server/ksmbd_work.c b/fs/smb/server/ksmbd_work.c
-index 72b00ca6e455..4a71f46d7020 100644
---- a/fs/smb/server/ksmbd_work.c
-+++ b/fs/smb/server/ksmbd_work.c
-@@ -78,7 +78,7 @@ int ksmbd_work_pool_init(void)
- 
- int ksmbd_workqueue_init(void)
- {
--	ksmbd_wq = alloc_workqueue("ksmbd-io", 0, 0);
-+	ksmbd_wq = alloc_workqueue("ksmbd-io", WQ_PERCPU, 0);
- 	if (!ksmbd_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/smb/server/transport_rdma.c b/fs/smb/server/transport_rdma.c
-index 4998df04ab95..43b7062335fa 100644
---- a/fs/smb/server/transport_rdma.c
-+++ b/fs/smb/server/transport_rdma.c
-@@ -2198,7 +2198,8 @@ int ksmbd_rdma_init(void)
- 	 * for lack of credits
- 	 */
- 	smb_direct_wq = alloc_workqueue("ksmbd-smb_direct-wq",
--					WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
-+					WQ_HIGHPRI | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					0);
- 	if (!smb_direct_wq)
- 		return -ENOMEM;
- 
-diff --git a/fs/super.c b/fs/super.c
-index 97a17f9d9023..0a9af48f30dd 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2174,7 +2174,8 @@ int sb_init_dio_done_wq(struct super_block *sb)
- {
- 	struct workqueue_struct *old;
- 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
--						      WQ_MEM_RECLAIM, 0,
-+						      WQ_MEM_RECLAIM | WQ_PERCPU,
-+						      0,
- 						      sb->s_id);
- 	if (!wq)
- 		return -ENOMEM;
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4fcad0825a12..b8f53d1cfd20 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -357,7 +357,7 @@ void __init fsverity_init_workqueue(void)
- 	 * latency on ARM64.
- 	 */
- 	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
--						  WQ_HIGHPRI,
-+						  WQ_HIGHPRI | WQ_PERCPU,
- 						  num_online_cpus());
- 	if (!fsverity_read_workqueue)
- 		panic("failed to allocate fsverity_read_queue");
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 6493bdb57351..3fecb066eeb3 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1489,8 +1489,7 @@ xlog_alloc_log(
- 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
- 
- 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
--				    WQ_HIGHPRI),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!log->l_ioend_workqueue)
- 		goto out_free_iclog;
-diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
-index d0f5b403bdbe..152032f68013 100644
---- a/fs/xfs/xfs_mru_cache.c
-+++ b/fs/xfs/xfs_mru_cache.c
-@@ -293,7 +293,8 @@ int
- xfs_mru_cache_init(void)
- {
- 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			1);
- 	if (!xfs_mru_reap_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index b2dd0c0bf509..38584c5618f4 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -565,19 +565,19 @@ xfs_init_mount_workqueues(
- 	struct xfs_mount	*mp)
- {
- 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_buf_workqueue)
- 		goto out;
- 
- 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_unwritten_workqueue)
- 		goto out_destroy_buf;
- 
- 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_reclaim_workqueue)
- 		goto out_destroy_unwritten;
-@@ -589,13 +589,14 @@ xfs_init_mount_workqueues(
- 		goto out_destroy_reclaim;
- 
- 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_inodegc_wq)
- 		goto out_destroy_blockgc;
- 
- 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_PERCPU), 0,
-+			mp->m_super->s_id);
- 	if (!mp->m_sync_workqueue)
- 		goto out_destroy_inodegc;
- 
-@@ -2499,8 +2500,8 @@ xfs_init_workqueues(void)
- 	 * AGs in all the filesystems mounted. Hence use the default large
- 	 * max_active value for this workqueue.
- 	 */
--	xfs_alloc_wq = alloc_workqueue("xfsalloc",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
-+	xfs_alloc_wq = alloc_workqueue("xfsalloc", XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			0);
- 	if (!xfs_alloc_wq)
- 		return -ENOMEM;
- 
--- 
-2.50.1
-
+Thanks, Lorenzo
 
