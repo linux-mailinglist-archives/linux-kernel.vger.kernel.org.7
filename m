@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-770345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE2B279BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A50B279D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2191E4E2015
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:12:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014AE5E0E22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0022F659E;
-	Fri, 15 Aug 2025 07:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647592F83CA;
+	Fri, 15 Aug 2025 07:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oBZXma/e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Oy/hprgt"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WolOd4bg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mmZh6UEo"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5D02F49FA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C20C2F7450
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755241610; cv=none; b=EIp/gxCu55IeDz8/R+1F4c8eTWUFZRY8ZN5WhOV/FX2IDRfsuvMjoRK+X+QTsPAk2r0rO4DcjouLEYH+ugMTpz5JL/ODX5H8vxq9Ei4V2+gvozlS45CrUISln1q2zDWUgL0/7WUKCOic61iAB3gS2PxgAdGQbCJB6NdNaQcQTW8=
+	t=1755241613; cv=none; b=dle96hhR0xXK5wS37P5fiaCMWekA9hMYBhixlHVmvGBC2thFAUg/+glKOG3XWg4Uq7OSVjdztasrErV2kKiiQeKAqvVHMUNY8gC13FPR9cW58Qf8RF8+11LjZu77faRBe6GfLw0aVnL8bBpDhRahu8tcQ5PJU13vFupotCatvNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755241610; c=relaxed/simple;
-	bh=bs6ID0keeNxIWVK/mx/m/477rleOKy/Zl9acDnCWP6I=;
+	s=arc-20240116; t=1755241613; c=relaxed/simple;
+	bh=9z1Sdq4BhIr3DLajt8jgfRyN+bMto1EjY0iFvW8JoCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hh7tfjhCnvV4qDxp+5s90QYLEJFD5QvooYCXpT7lJlVOmdSLOJYO9ykqBARi++dL7oAE5R8uKnn+gRCCSDSBFYCM3JSJRgcpVvzyyD1kkTwHwlcL0A92t1OLlbkrpn6BqdA+0w0b+k8QXgGfiwq8u46XDN//qzPzybiexiRxM7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oBZXma/e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Oy/hprgt; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=O/BrnKPt1yBGX8H6IuJzjR/RTU7gqhLLX9fpl45wVHdp09eSgXWrcSfGcSmMp+SmPidZhnHQKwqFu1GOEQ7mUzoA00q0mlvzBgYbqbRKLq3mpM2n8wtn+gb3YvUzXbqyx7cq1nErXYfPDcjggCOdNy6+2FaTy14x23FeBTJlQmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WolOd4bg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mmZh6UEo; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755241608;
+	s=2020; t=1755241611;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZO2vKfKqIpHayIxNLlexjRsodB8SjGkLch6hqDcDpc8=;
-	b=oBZXma/e+4JJ2F9n/FthtEMbNP/CblXrHHTmTgQxj0i86YpiuEw1zgMez/lsmsjysERgsV
-	t82lnDmOeAswGoihHsepC+fvyoZZQyni8MX80WpICE0yrQ564TEpZ1Gi5YsPk3FqCMaFNY
-	gzVNRRkMoM3DHqPNLIGaV9OgV3buAEXk4u7Gc/ed3aBD5pDUA3RI04TqdH63chb5O3HnBR
-	inDyCqbwQP7cHLeAUEZmK+lJWlHfrKUK20ncIiMV5FpvOazTrKzEslbDtUJSx0cflzWoDz
-	qxmPA+aWdRrBoDhyHFlYXXuiXkJ2fa29BzDAv49ALxEbRZeZYJGR0XEIYufizg==
+	bh=1eI8/xjW0UInlljX8bsLjNZVb1yWs78XL5H+yDv/aJc=;
+	b=WolOd4bgfgXM9cpwd1QF1ILPnG14HQ1Xz/t2kKbCiiSYKBCnqFeSORX3N8rzD04MWUEcHw
+	mS6HZlnj7kT05MraFGbbDnUA3ZdekTP7qjckkryd57/M7+gf96NbLBIm3ZGVl1kzpUrxPS
+	0LwH1uX2Sw7gJqGZu4luPOpa3s0AnRrv9zb7QhqJ7caS5EqsabO64c+8OS6zP91Eox4ATB
+	pImrR0nszenPDlz8fBpWCiUy37TrA7c3SqVz5nH1Anp+nyZMBnkLxO/BUuQjlSxi7ylJGC
+	atrZ40aqPcN0gKKva//7+cPu76EbGHc3DBXp0iDN6wHL2/RsvNgrGwuRYLZmVw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755241608;
+	s=2020e; t=1755241611;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZO2vKfKqIpHayIxNLlexjRsodB8SjGkLch6hqDcDpc8=;
-	b=Oy/hprgtnkREdloitUOr4mrA0lkegN7eba9Tr5LZBEwO2yNVTHuvJIptAcc5Pwk84cl0Dq
-	oWyheW/6xdTQWwDg==
+	bh=1eI8/xjW0UInlljX8bsLjNZVb1yWs78XL5H+yDv/aJc=;
+	b=mmZh6UEoE10CqUL+DODgmESD2vK0Sm7qwztJQvtvmN0zjWatRr9MV4RWeXUjzJfpJEmOzn
+	H7WaFpkZ+pWWsHCw==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v4 32/34] x86/cpu: Rescan CPUID table after unlocking full CPUID range
-Date: Fri, 15 Aug 2025 09:02:25 +0200
-Message-ID: <20250815070227.19981-33-darwi@linutronix.de>
+Subject: [PATCH v4 33/34] x86/cpuid: Parse CPUID(0x16)
+Date: Fri, 15 Aug 2025 09:02:26 +0200
+Message-ID: <20250815070227.19981-34-darwi@linutronix.de>
 In-Reply-To: <20250815070227.19981-1-darwi@linutronix.de>
 References: <20250815070227.19981-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,42 +81,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Intel CPUs have an MSR bit to limit CPUID enumeration to leaf two, which
-can be set by old BIOSen before booting Linux.
+Add CPUID(0x16) support to the CPUID parser.  It enumerates processor
+frequency information.  Query the leaf only for Intel machines, as this
+is where it is supported.
 
-Rescan the CPUID table after unlocking the CPU's full CPUID range.  Use
-parsed CPUID(0x0) access, instead of a direct CPUID query, afterwards.
+This allows converting CPUID(0x16) call sites to the new CPUID parser
+APIs next.
 
-References: 066941bd4eeb ("x86: unmask CPUID levels on Intel CPUs")
-References: 0c2f6d04619e ("x86/topology/intel: Unlock CPUID before evaluating anything")
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/intel.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpuid/types.h | 1 +
+ arch/x86/kernel/cpu/cpuid_parser.h | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 06c249110c8b..fe4d1cf479c2 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -192,11 +192,14 @@ void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
- 		return;
+diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
+index 63d2569e2821..c044f7bc7137 100644
+--- a/arch/x86/include/asm/cpuid/types.h
++++ b/arch/x86/include/asm/cpuid/types.h
+@@ -217,6 +217,7 @@ struct cpuid_leaves {
+ 	CPUID_LEAF(0x1,		0,		1);
+ 	CPUID_LEAF(0x2,		0,		1);
+ 	CPUID_LEAF(0x4,		0,		8);
++	CPUID_LEAF(0x16,	0,		1);
+ 	CPUID_LEAF(0x80000000,	0,		1);
+ 	CPUID_LEAF(0x80000005,	0,		1);
+ 	CPUID_LEAF(0x80000006,	0,		1);
+diff --git a/arch/x86/kernel/cpu/cpuid_parser.h b/arch/x86/kernel/cpu/cpuid_parser.h
+index 1d0d1a3c2bb8..9ac66abeae81 100644
+--- a/arch/x86/kernel/cpu/cpuid_parser.h
++++ b/arch/x86/kernel/cpu/cpuid_parser.h
+@@ -129,6 +129,7 @@ struct cpuid_parse_entry {
+ 	/*		  Leaf		Subleaf		Reader function */		\
+ 	CPUID_PARSE_ENTRY(0x2,		0,		0x2),				\
+ 	CPUID_PARSE_ENTRY(0x4,		0,		deterministic_cache),		\
++	CPUID_PARSE_ENTRY(0x16,		0,		generic),			\
+ 	CPUID_PARSE_ENTRY(0x80000000,	0,		0x80000000),			\
+ 	CPUID_PARSE_ENTRY(0x80000005,	0,		generic),			\
+ 	CPUID_PARSE_ENTRY(0x80000006,	0,		generic),			\
+@@ -167,6 +168,7 @@ struct cpuid_vendor_entry {
+  	/*		   Leaf		Vendor list */					\
+ 	CPUID_VENDOR_ENTRY(0x2,		X86_VENDOR_INTEL, X86_VENDOR_CENTAUR, X86_VENDOR_ZHAOXIN),\
+ 	CPUID_VENDOR_ENTRY(0x4,		X86_VENDOR_INTEL, X86_VENDOR_CENTAUR, X86_VENDOR_ZHAOXIN),\
++	CPUID_VENDOR_ENTRY(0x16,	X86_VENDOR_INTEL),				\
+ 	CPUID_VENDOR_ENTRY(0x8000001d,	X86_VENDOR_AMD, X86_VENDOR_HYGON),		\
  
- 	/*
--	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
--	 * enumeration. Unlock it and update the maximum leaf info.
-+	 * Intel CPUs have an MSR bit to limit CPUID enumeration to CPUID(0x2),
-+	 * which can be set by old BIOSes before booting Linux.  If enabled,
-+	 * unlock the CPU's full CPUID range and rescan its CPUID table.
- 	 */
--	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
--		c->cpuid_level = cpuid_eax(0);
-+	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
-+		cpuid_parser_scan_cpu(c);
-+		c->cpuid_level = cpuid_leaf(c, 0x0)->max_std_leaf;
-+	}
- }
- 
- static void early_init_intel(struct cpuinfo_x86 *c)
+ #endif /* _ARCH_X86_CPUID_PARSER_H */
 -- 
 2.50.1
 
