@@ -1,63 +1,76 @@
-Return-Path: <linux-kernel+bounces-770403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F83B27A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:49:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61957B27A5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99FD1C24DFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB3B05647DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC1D299A87;
-	Fri, 15 Aug 2025 07:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DBA29AB1B;
+	Fri, 15 Aug 2025 07:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m7vvAPFi"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YYMv7CWX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1991553A3
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6721E1553A3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755244186; cv=none; b=afgSXemPIGa17iGkz/lSAYlH8cGCQgyZgdYzhPhLiy9CtNdSxMohrn0fgqDur6bmtoKp6bHYS0R+JA7vlpDQ38ipJJ0I23ohA4JkypjiSu9vXb9pSVuG7UNYacVBKowLE8glmXvFjXND/KSr1HIzHMGVJvcFCD6KbcDpNrrkuDI=
+	t=1755244283; cv=none; b=dMszk0mwxO+yUdVFsFLcasTnP29pvdeKsmKy05yD7Do0wsQBoGQrWCMCNexIlvIa7ndouXCjK3AqyHLjArJMqhk9ZdY5evfXkfduarfIT4LeTYcG1wFqbp1wcHk3rskXZ2nSh4LkNLdELBYQs/QkOfoSR3sWK72Ql/130lC59/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755244186; c=relaxed/simple;
-	bh=1xKi1gkLVZmCTXUbS8F1+qjOgb76aPPKPRhO1m+NqbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjxoJ2yzN04lmmhIv+BEEm9LhEzN9A0prQbiBNZX+oSlPZLLcGm0kCC9Dizjh5LNhDKh5O5bM1NlUPnDqlVg5206iA9nvUaczPMEaBl7RgLA5i1uymRAYELV/4olYc957mksIccx02y/XTCMFHMqL2dTypVPWvFBP5GueD+uHZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m7vvAPFi; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Me8O43WKUcrfvWnG7HG4/nfPriw+TSMDV/5heVJ1RL0=; b=m7vvAPFildK13YCwNPmbtMbmCV
-	q4LCKLa3j6nYQKlAp5M9SW+EuWhD3VLREClt9/UY8uPsTiy3QqpWoOR75ubLap2cP9tNM9zr6pRiS
-	KbUF3xTf5sgMCcwCIgEZJWO5PHZ+NArIjO1MYvund6LAgv70TCiFKs8rRsc4YusViMyM1iXmdN1EW
-	SJHuUtR+p/G6UpMfV3KPUwIh/N+tJ6C4LRf4PD/MwmIolqAsOQE8lhOpGJ3c6bcra4MnMlkwRwNd+
-	neJI6k8BHQCm46sbxGbZMa1dIWZ+RN2SPM1OKZ5D2pG75CgtcmuKeShzfwSNLe/12T4JqiVV2yYht
-	/0VuiVPw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umpBz-00000009yQT-4B1o;
-	Fri, 15 Aug 2025 07:49:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 367013002ED; Fri, 15 Aug 2025 09:49:39 +0200 (CEST)
-Date: Fri, 15 Aug 2025 09:49:39 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, samitolvanen@google.com,
-	nathan@kernel.org, alexei.starovoitov@gmail.com,
-	mhiramat@kernel.org, ojeda@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-Message-ID: <20250815074939.GA3419281@noisy.programming.kicks-ass.net>
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
- <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
+	s=arc-20240116; t=1755244283; c=relaxed/simple;
+	bh=yCi0y5C1AdrH8qfRQCZ8ewKN8DVm8Tax3hNTKd/guSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iql5Cv1/5mA5wGxKNF0GAgpNHti6TndkBNTk94pJeTW9S1CH4j/Y/D1GINMMizD1x5dEEnU1jPKi24huL1lK8U4VOr+VEWtGptINd84FlDfOb72da7Uaa2V2fJswoTBnLbIyUGylJLWCOQ98BxPOE2Lmzj7+ATIoWBMQVAM9BCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YYMv7CWX; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755244282; x=1786780282;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yCi0y5C1AdrH8qfRQCZ8ewKN8DVm8Tax3hNTKd/guSU=;
+  b=YYMv7CWX6Ui7NLiurhaiXaiJMo/m9h0si1ALkcicBRCeMM+bq29jyiiJ
+   7PmPtaVl6K9ToWmUx3J+EcFtd87HSAjmHCOPvCp0vQan1yeoJSaU6mfkb
+   sHPsOv2VpcBxvgu5WXbfLYO8AxviHwNG4ihJa7YtJsQ6HBWxJKHO3Rxg3
+   fwToH3rZtmihJNc19dLLoFYIvKZ45aVlDYsFgJMC+GRkFR8nhO3zpjaHg
+   7VLUzUH14IfrhmTsefSWNMp8XN9ibPAaA+KHmRh8UiqpPrQNe63GST9Vn
+   DTnpK1QX89SFv4tRn7H7Z2FUulCHnd1rt6Py2qMZ8GrpiO2raBFdPuxGp
+   Q==;
+X-CSE-ConnectionGUID: w9YSAY4bR66CG4y4qrvUTg==
+X-CSE-MsgGUID: DqgCrNJPS1qYPSJbn/qJOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57677826"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57677826"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 00:51:22 -0700
+X-CSE-ConnectionGUID: q2JjhX4qQi2cu0HJNAThTg==
+X-CSE-MsgGUID: pr+ZKuM9Rdi8YhY8yF1lIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166173849"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 15 Aug 2025 00:51:20 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umpDZ-000BhU-1R;
+	Fri, 15 Aug 2025 07:51:17 +0000
+Date: Fri, 15 Aug 2025 15:50:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: kismet: WARNING: unmet direct dependencies detected for I2C_GPIO
+ when selected by VIDEO_MMP_CAMERA
+Message-ID: <202508151548.USSyv44H-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,41 +79,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com>
 
-On Thu, Aug 14, 2025 at 06:27:44PM -0700, H. Peter Anvin wrote:
-> On 2025-08-14 04:17, Peter Zijlstra wrote:
-> > Hi!
-> > 
-> > A while ago FineIBT started using the instruction 0xEA to generate #UD.
-> > All existing parts will generate #UD in 64bit mode on that instruction.
-> > 
-> > However; Intel/AMD have not blessed using this instruction, it is on
-> > their 'reserved' list for future use.
-> > 
-> > Peter Anvin worked the committees and got use of 0xD6 blessed, and it
-> > will be called UDB (per the next SDM or so).
-> > 
-> > Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
-> > had to switch the hash register to EAX in order to free up some bytes.
-> > 
-> > Per the x86_64 ABI, EAX is used to pass the number of vector registers
-> > for varargs -- something that should not happen in the kernel. More so,
-> > we build with -mskip-rax-setup, which should leave EAX completely unused
-> > in the calling convention.
-> > 
-> > The code boots and passes the LKDTM CFI_FORWARD_PROTO test for various
-> > combinations (non exhaustive so far).
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> Looks good to me (and using %eax will save one byte per call site as
-> well), but as per our IRC discussion, *my understanding* is that the
-> best possible performance (least branch predictor impact across
-> implementations) is to use a forward branch with a 2E prefix (jcc,pn in
-> GAS syntax) rather than a reverse branch, if space allows.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d7ee5bdce7892643409dea7266c34977e651b479
+commit: 1eb07e99ef39808612e12edaac6ef10f27485a27 arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+date:   5 weeks ago
+config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20250815/202508151548.USSyv44H-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250815/202508151548.USSyv44H-lkp@intel.com/reproduce)
 
-Oh right. I did see that comment on IRC and them promptly forgot about
-it again :/ I'll have a poke. Scott, do you agree? You being responsible
-for the backward jump and such.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151548.USSyv44H-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
+   WARNING: unmet direct dependencies detected for I2C_GPIO
+     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
