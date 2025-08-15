@@ -1,144 +1,90 @@
-Return-Path: <linux-kernel+bounces-770672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E15B27DA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5CFB27D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3071A7B5FAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61672A0019C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA972FF657;
-	Fri, 15 Aug 2025 09:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66362FCBF2;
+	Fri, 15 Aug 2025 09:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b="Rm7iApXJ"
-Received: from mail.as201155.net (mail.as201155.net [185.84.6.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bB5hfu78"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DBB2FD7A2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.84.6.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C14A185B67;
+	Fri, 15 Aug 2025 09:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251888; cv=none; b=ks361pblRMSlpZRO/ykkxiFA3CaaGb+/3Vs9F/GS61VnlTjA+GYGaH4dcexA+HXuUtU8E5mKrogs3A87q7dUogiLd0jfn3TLmMcj90B8vWIyfzVoHZXq28GlWBtSxOzwsr42ctjNCpp7AoqTcni0iC4W9glVJ58P81EQrDV1NgM=
+	t=1755251850; cv=none; b=Um0FMvjBOLR/FsVCVaVOAyCNNLpRs72T2LIwUAbo7V9c11xOCM33ouS2Ca7wo7ByrWzk9ox4+jKNMeAn07nixmxPI+6kJyixsCanVIZbSewB3hncSQsobyiQewzyUZuTnMXi58PzhCD34NsJCqd8b/KkrLp/xExxMWNp4N3FB9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251888; c=relaxed/simple;
-	bh=ZMu8zKFvzteV22JrMqO4hwGpCxpD8VV1+4U6K+9q3rM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUu7JRL5Jny7oxwWvCTRizdTy0pHtYNT795qI+mhoJaQSpUQQYvGTenm0/FDBUn1LIQOX7t6xu2bHwaAaXZQ1WWxuCHqsZtdkEXmApfPWMgq4GwFGSNssOhDPFahQeujVxuf4SbNDCKSBvFdxcQMmkYD5leX4fI1TtEeolhdQ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dd-wrt.com; spf=pass smtp.mailfrom=dd-wrt.com; dkim=pass (1024-bit key) header.d=dd-wrt.com header.i=@dd-wrt.com header.b=Rm7iApXJ; arc=none smtp.client-ip=185.84.6.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dd-wrt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dd-wrt.com
-Received: from smtps.newmedia-net.de ([2a05:a1c0:0:de::167]:36976 helo=webmail.newmedia-net.de)
-	by mail.as201155.net with esmtps  (TLS1) tls TLS_RSA_WITH_AES_256_CBC_SHA
-	(Exim 4.97.1)
-	(envelope-from <s.gottschall@dd-wrt.com>)
-	id 1umr9X-000000002zK-0vox;
-	Fri, 15 Aug 2025 11:55:15 +0200
-X-SASI-Hits: BODYTEXTP_SIZE_3000_LESS 0.000000, BODY_SIZE_1400_1499 0.000000,
-	BODY_SIZE_2000_LESS 0.000000, BODY_SIZE_5000_LESS 0.000000,
-	BODY_SIZE_7000_LESS 0.000000, CTE_8BIT 0.000000, DKIM_ALIGNS 0.000000,
-	DKIM_SIGNATURE 0.000000, HTML_00_01 0.050000, HTML_00_10 0.050000,
-	IN_REP_TO 0.000000, LEGITIMATE_SIGNS 0.000000,
-	MSGID_SAMEAS_FROM_HEX_844412 0.100000, MSG_THREAD 0.000000,
-	MULTIPLE_RCPTS 0.100000, MULTIPLE_REAL_RCPTS 0.000000, NO_CTA_FOUND 0.000000,
-	NO_CTA_URI_FOUND 0.000000, NO_FUR_HEADER 0.000000, NO_URI_HTTPS 0.000000,
-	OUTBOUND 0.000000, OUTBOUND_SOPHOS 0.000000, REFERENCES 0.000000,
-	SENDER_NO_AUTH 0.000000, SUSP_DH_NEG 0.000000, USER_AGENT 0.000000,
-	__ANY_URI 0.000000, __BODY_NO_MAILTO 0.000000,
-	__BOUNCE_CHALLENGE_SUBJ 0.000000, __BOUNCE_NDR_SUBJ_EXEMPT 0.000000,
-	__BULK_NEGATE 0.000000, __CT 0.000000, __CTE 0.000000,
-	__CT_TEXT_PLAIN 0.000000, __DKIM_ALIGNS_1 0.000000, __DKIM_ALIGNS_2 0.000000,
-	__DQ_NEG_DOMAIN 0.000000, __DQ_NEG_HEUR 0.000000, __DQ_NEG_IP 0.000000,
-	__FORWARDED_MSG 0.000000, __FROM_DOMAIN_NOT_IN_BODY 0.000000,
-	__FROM_NAME_NOT_IN_BODY 0.000000, __FUR_RDNS_SOPHOS 0.000000,
-	__HAS_CC_HDR 0.000000, __HAS_FROM 0.000000, __HAS_MSGID 0.000000,
-	__HAS_REFERENCES 0.000000, __HEADER_ORDER_FROM 0.000000,
-	__IN_REP_TO 0.000000, __MAIL_CHAIN 0.000000, __MIME_BOUND_CHARSET 0.000000,
-	__MIME_TEXT_ONLY 0.000000, __MIME_TEXT_P 0.000000, __MIME_TEXT_P1 0.000000,
-	__MIME_VERSION 0.000000, __MOZILLA_USER_AGENT 0.000000,
-	__MSGID_HEX_844412 0.000000, __MULTIPLE_RCPTS_CC_X2 0.000000,
-	__MULTIPLE_RCPTS_TO_X2 0.000000, __NO_HTML_TAG_RAW 0.000000,
-	__OUTBOUND_SOPHOS_FUR 0.000000, __OUTBOUND_SOPHOS_FUR_IP 0.000000,
-	__OUTBOUND_SOPHOS_FUR_RDNS 0.000000, __RCVD_PASS 0.000000,
-	__REFERENCES 0.000000, __SANE_MSGID 0.000000, __SCAN_D_NEG 0.000000,
-	__SCAN_D_NEG2 0.000000, __SCAN_D_NEG_HEUR 0.000000,
-	__SCAN_D_NEG_HEUR2 0.000000, __SUBJ_ALPHA_END 0.000000,
-	__SUBJ_ALPHA_NEGATE 0.000000, __SUBJ_REPLY 0.000000,
-	__TO_MALFORMED_2 0.000000, __TO_NAME 0.000000,
-	__TO_NAME_DIFF_FROM_ACC 0.000000, __TO_REAL_NAMES 0.000000,
-	__URI_NO_MAILTO 0.000000, __URI_NO_WWW 0.000000, __USER_AGENT 0.000000,
-	__X_MAILSCANNER 0.000000
-X-SASI-Probability: 8%
-X-SASI-RCODE: 200
-X-SASI-Version: Antispam-Engine: 5.1.4, AntispamData: 2025.8.15.92719
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID; bh=4vBUeuXNDIqoWiMlVcX7q5VBbBd1IYHnZHLNnL49+N4=;
-	b=Rm7iApXJ2z8XcI7Jyc9tKHcV7DuAC+8jeKdrW8aQU+1cCYcnxoTAKsl8rAE0z2C1qhFX+80W38Q7a3NxEtIexf0/u2SBDtlSA97J59oZ9thwU5UnbH3e4Rk8RkJKRT7qmptFHFZhHjE0eKyjIzrjHmI0sCqCnIB7SmqeEayRSqQ=;
-Message-ID: <573c76a8-c2a0-4b9c-b5a8-762b8d094b81@dd-wrt.com>
-Date: Fri, 15 Aug 2025 11:55:14 +0200
+	s=arc-20240116; t=1755251850; c=relaxed/simple;
+	bh=RgLFbY4jHkH/C9SvqiRlo8daIkl3Wuk3ugPbeyDWZS4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cYLpxHav0+CqRLLf8bejTZjjGzvix1eDIZ2egfIU58r+0bsebPyEx3mG0MlySM0p9pUNjROn84AYZwv1psyJZxhB5CRNx7c52mvSwexaQoMJI3faSUmJqb4eFE1npEKEt3PFt9zPStuf6xQGrl/1GPgxyDmpCtislwbD350cIts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bB5hfu78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79AC5C4CEEB;
+	Fri, 15 Aug 2025 09:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755251849;
+	bh=RgLFbY4jHkH/C9SvqiRlo8daIkl3Wuk3ugPbeyDWZS4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bB5hfu78xRGG777SAsIcoy7cZdM4vU7VFDJlGPD+DLptjDr6ikUXlYn9J7XkTK9w1
+	 jaOAlgP7Aiinve4qofq90eyualvjgg6dsKEeXSMIUFUXG5gtZ/sxwuyBonFD39ue4v
+	 zw7KH127+zi3IFYsMCR7/s2YNKsqg0eLfkOYXW0FtQSsw0X7SfFA7CG4zS0+pikk35
+	 BS0E0YXczPePrZjeFehjnGlUebKjWKzVHIaau0RQhakB47PZLnPGvWSI4btYejHX7n
+	 EQaIBlM32ezLHuzSn5f4cyrfHspihztPqlkToBBPcks0oMbYo3bakc0kW5FYQdwbqf
+	 bK9VOII05SMiQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>,
+ Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Alice
+ Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>, Christian
+ Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 3/4] rust: miscdevice: Provide additional
+ abstractions for iov_iter and kiocb structures
+In-Reply-To: <20250813-iov-iter-v4-3-c4f1932b05ef@google.com>
+References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
+ <Sd3bJSuDzeRFp6pLZtpfMiGff84ipBGWbOcD4IvCarSRysWHcLxyMrudQ5qDRzusozgTLGzsFH-ODocf-iqzKQ==@protonmail.internalid>
+ <20250813-iov-iter-v4-3-c4f1932b05ef@google.com>
+Date: Fri, 15 Aug 2025 11:56:07 +0200
+Message-ID: <878qjkewnc.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: ath12k: REO status on PPC does not work
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
- Jeff Johnson <jjohnson@kernel.org>
-Cc: ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <aJ7sDOoWmf4jLpjo@FUE-ALEWI-WINX>
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-In-Reply-To: <aJ7sDOoWmf4jLpjo@FUE-ALEWI-WINX>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: pass (webmail.newmedia-net.de: localhost is always allowed.) client-ip=127.0.0.1; envelope-from=s.gottschall@dd-wrt.com; helo=webmail.newmedia-net.de;
-X-SA-Exim-Connect-IP: 127.0.0.1
-X-SA-Exim-Mail-From: s.gottschall@dd-wrt.com
-X-SA-Exim-Scanned: No (on webmail.newmedia-net.de); SAEximRunCond expanded to false
-X-NMN-MailScanner-Information: Please contact the ISP for more information
-X-NMN-MailScanner-ID: 1umr9W-000ATi-TP
-X-NMN-MailScanner: Found to be clean
-X-NMN-MailScanner-From: s.gottschall@dd-wrt.com
-X-Received:  from localhost ([127.0.0.1] helo=webmail.newmedia-net.de)
-	by webmail.newmedia-net.de with esmtp (Exim 4.72)
-	(envelope-from <s.gottschall@dd-wrt.com>)
-	id 1umr9W-000ATi-TP; Fri, 15 Aug 2025 11:55:14 +0200
+Content-Type: text/plain
 
-i played already with big endian platforms and ath11k (not ath12k) for 
-months. there is also a problem with the dma descriptors. the firmware 
-simply doesnt support big endian with host communication at the end even 
-if there is a endian flag for the firmware.  dont get into this rabit 
-hole. (i worked 3 months on it and gave up)
-at the end (i was working on a cavium octeon platform at that time) i 
-just switched the kernel boot to little endian which is possible on many 
-ppc platforms too.
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Am 15.08.2025 um 10:13 schrieb Alexander Wilhelm:
-> Hello devs,
+> These will be used for the read_iter() and write_iter() callbacks, which
+> are now the preferred back-ends for when a user operates on a char device
+> with read() and write() respectively.
 >
-> I'm currently working on getting the 'ath12k' driver running on a big endian
-> PowerPC platform and have encountered the following issue.
->
-> In the function 'ath12k_dp_rx_process_reo_status', the REO status is determined
-> by inspecting memory that the hardware has previously written via DMA.
-> Specifically, during the call to 'ath12k_hal_srng_access_begin', the driver
-> reads the value of 'hp_addr' for the destination ring (in my case, always with
-> ID 21). On the big endian platform, this value is consistently 0, which prevents
-> the REO status from being updated.
->
-> Interestingly, DMA read/write accesses work fine for other rings, just not for
-> this one. What makes the REO status ring so special? I couldn’t find anything in
-> the initialization routine that would explain the difference.
->
-> Could anyone give me a hint on what I should be looking for?
->
->
-> Best regards
-> Alexander Wilhelm
->
->
+> Cc: Christian Brauner <brauner@kernel.org>
+> Co-developed-by: Lee Jones <lee@kernel.org>
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
