@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-771291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B5EB28538
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:36:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC62B2853B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 891EE7B7CE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:34:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1729D7B8E28
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC7E3176FA;
-	Fri, 15 Aug 2025 17:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5B3176FB;
+	Fri, 15 Aug 2025 17:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4BOyRdJ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wkb0R+eh"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146F3176F2;
-	Fri, 15 Aug 2025 17:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6831F1518
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279374; cv=none; b=PxPB0mg37Ge7Vd6pWv8h8eFG4jMFHWgV4XFkahgpA3BoUIzp140Kpl/n+TG3pm8LhQ+jvT0hAyJ35OHxkfpOzv0a9FHa/VveEHereHCWaXcZhTkrAtO3OVlSZ/zPYKrSiyqcCQ3TFdLoTNZOU271C+doBN6tq+7UaDWKJ6nBjmc=
+	t=1755279451; cv=none; b=Vu92bmCVN5aGh4FzmwCf35cB1FD0gSyGYpFk8j70asKe/srX/nPwTKIt/QpEUCMy7ut1Ysz1W82LseVFu1f5DRjjjNfKaibSTXyqFt29RNYw5Z+afoPJVULEiGlqLRO3Sn8Od2oclAujbe52pO3tJqTcW2ZdPf3ju9y7lMKCq9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279374; c=relaxed/simple;
-	bh=OGLzyamRHTQAbugQGENHpZ4fLejLOyzRM7YBzN6tyKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ngMjdjKonkpGYMu2EMo4uBuUAAXuEq1zvW/EB44Y4usS7A3t+MGMKERlz8tO6bGq71lrCGRWmxa8EBovPFX/HR39BgQOjXo3ho4yTPvreumRQkriy2JfZq1Cv5tr86FeJe6ORIYrdSMoR47eXgvWXDtGsclatjWamh8ZSjIPRqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4BOyRdJ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-244580523a0so20459595ad.1;
-        Fri, 15 Aug 2025 10:36:12 -0700 (PDT)
+	s=arc-20240116; t=1755279451; c=relaxed/simple;
+	bh=KIXaRrabWkI94cBABbOOQhZm5gakqOBxiKGhfpvK4bU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W0W+7jjmiDb0TCG08ZKny+nX3xKiTYbNlnsTnXSomo6jm2uSq0tI3Q3c/jjfmg8pGjXDZc6JYfXYFWf0NE90Q0pgKgNafweXmhzdOLsshPb8YhbGinAkvqmYozJtDDG7RrlQv7yVQtama4dSCkblZAUvBcckUcOrEfebW8a1ZUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wkb0R+eh; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55cd07a28e0so603e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:37:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755279372; x=1755884172; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6AY8C+q6c90Fpaihu28D66lvtwrk1G9GkmyWnx4PXZo=;
-        b=R4BOyRdJhttGLU3qFGZuOgOgecgx4ztwaH3Av1kPquezrlxuvCnLHFp17+Njlk65np
-         wIb0Bpsjgn6UBE3tUom5QPuGItcbGZ+EFDRVXdNMggw8u220NfPsGFqwA0s+4wOgcocz
-         O/5deocfYeMrzmx3bue1gX8quIYG1ml41LbENKO2B8nL8oNVCAh3QHeTPVEkPT/rYjvw
-         IGyxzA7affnM4fPVxM/TV/Rr4ASmCv463GvNNZt9Jxym+5RqVrSe8wlTdRF2y/siTKlt
-         lnBqB2u3Fdp6r9plPTvRcmFtCWaZj47d3ttO+8P1qLlpLiyzQ6pnl7HsTKNSEo+NyM5/
-         nT1Q==
+        d=google.com; s=20230601; t=1755279448; x=1755884248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UVkGL7jBRLKf6+d6hhcuO3q92nCLqGME9TaVEfeECYI=;
+        b=wkb0R+ehUO23VlC7TenvD+t2JKaQJteL++RmRCRofUjTsmunzO7PL4GNwuVi7lPcIt
+         JIAF2unaTtJKmB5RxkCoOnFq19ybhgRKBvpdHTfnu1ISZYtGrEKOosBVme+wkyZuuPMg
+         Ewz6RQCYyRRveKTq5taNZKJXJ0f34vdqAtR8Xah5xasOZC1DDC48g/EV8t4a992TELnd
+         pX4gtUkWLLSVpE3G1F0XdqTeVmznbJl+KWWYbK6+Xkrz5V87mpWi3vC1ftbsPUzaZf8b
+         O9+QeBllX7yzHgj/cD3AuJnNKOX9ECt8nPUL5YGrfrFnPzQJTIOuVZo//9BT5VobYsBU
+         wWNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755279372; x=1755884172;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AY8C+q6c90Fpaihu28D66lvtwrk1G9GkmyWnx4PXZo=;
-        b=GKNKbzTReBVVp77m/C2dESi99qLCdOAQ9CdNdoH3SKXCNNenI0MYcH9ipi8AyqZJEJ
-         M1ridg1Ee9zkf8+PMDn0Rvj6Ecvh2idm6WEFo0xbvSZrFTMPCc5CY3WyXqelZM5scPGY
-         jN22OzPQZJQnhj6t14wvlH3jx7ATiV+RzTXug4+hUGJ96cqq8UOvGYY+kMv+v18m8R/C
-         mFIKuILIGIfdoBAxWGcVg/FaY98Bcn+0qWFN46D4J95TanJ1X1y8+JqhEdEpt93fOsmd
-         miBxIvgRT3HsHaDlKheX5ODs3QARNe5MW2RUr7j6G5kbRJKbNL5bCLISq+T0XrThLAGZ
-         4mMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrDX9OGmZCz9utC0Bsp3K8rBNocyr/8m59vHqIL4/tk4pnS6C0V6LAa4rfVuN8BKYd82wQlEakErqyP+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOQibXlGWcCZB6ZzMxzwiWyAwo6Y6nVnmUUilcwUb0ehu87z4E
-	w4GgR0EIu4bmLQC8dTPLducPws7oW856GygtSYmRKcOUL90FTgQclv/ldy7qvw==
-X-Gm-Gg: ASbGncvMb7CSaZPJYpUd6CTApWtCVXNGfqUH0N3mRIosYsrJJUT74qCS7EacPG0k17q
-	cmFQ+WpXNjlhIY2QoIn75rtfmVr0V0TGc6rbWecCdW7nMQzbdVEMnZigqKO6QsSp1EC+ykkiTrV
-	noGfOy6LNa0ITwZPmB10sUyhHBFemteut5Eaipz+8sNpRTr/jMlYzDHaFMhXfXWe8sAsOb2AQG0
-	91MIsKouN2uiVgzkW/ZbUR9CZ2uQ0pIxF2F6jx1FFducpZ30qYho7k5lmIYBUGt81yr0pC6Smk9
-	Pt6c1Dhw0XsJb1p+3uWxrjJMNDrQpMJuh7Z+Qhkm3uq62u3ByCUAsiMJzZaDbyDWbu2juIlgL8x
-	CaXO3Ca24jiH3tq6gY2Uv+Qo=
-X-Google-Smtp-Source: AGHT+IF1otiCElf9iLJc2Ocd4HqYWx3LehBUen1nhXeeCHjn5N4I9ecnTrAK2kComkRsXGpAJLS0vQ==
-X-Received: by 2002:a17:902:c952:b0:240:3c51:1063 with SMTP id d9443c01a7336-2446d78f6e0mr40089335ad.23.1755279371766;
-        Fri, 15 Aug 2025 10:36:11 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6f7f:8c7a:d4f6:cd0a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d538e0bsm18279185ad.107.2025.08.15.10.36.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 10:36:11 -0700 (PDT)
-Date: Fri, 15 Aug 2025 10:36:09 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>, 
-	Jihed Chaibi <jihed.chaibi.dev@gmail.com>, Tony Lindgren <tony@atomide.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: twl4030_keypad - drop support for platform data
-Message-ID: <tica7ol7xwv5tqb7hlkzu6wkiv4quxwrpqv6croe4wfnwvj6wv@4ob6ktqqi3cr>
+        d=1e100.net; s=20230601; t=1755279448; x=1755884248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UVkGL7jBRLKf6+d6hhcuO3q92nCLqGME9TaVEfeECYI=;
+        b=tOQfc10Qet8nDU1jpKo45CofF2PQtqCumGIJoK4GeRqMQ3ecD1QldCpKHJklDKQacY
+         3XNrl5fkNRK/PfH8oKhGmrnXVkErnDQHNn8e61a4h/Wbk3TCeVC1wpo5XaThQP9HYkTo
+         qfoPASkKmb5o4rIg5jijynIkMvXdTKolqeMtAGL3WEgpn15LoC8Nsc5cf658IYQRfJAP
+         bN6CkYq/pJy2Q5OG8+yJwHPnHXHP4eTJnBIIHK1DMWXcj+xhU35IoINKoqOu1bG/vEhu
+         uyoAOhKaVkggHPH4Jmg/iRqRZ9v41O7JCXmeipcbL9ke77b1AtcXyH6r9tT2j4wtuRQE
+         GlKA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9bEVS2n6Shy9MBonmZ81Vi7quLCDkAJClmNqgaWvX7M/+YdK3yk+jWXN41HB4+L1I0Njp4se9Xj44zEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYLHmx19KEmw2iJ1wcPprYqlAVkEWpDQf28V0Y9pdcRrMLVw78
+	2wNKnZl68HQVO6fXtu0+xpzHUicsJaf6xxi1pCGQy+YDoK93jmgmIjIuWpcU6BAaATcgbf4UiRX
+	hq2I3wtTJOXvz7jl4dEWnclg3vkhqZIIbCg8Z7hDM
+X-Gm-Gg: ASbGncutpoc9mK0crD6GkFDO+m8JJc31diNO3rbM0NHp/JcK24O0L/sdhahqI92JWW0
+	lzkKs5AeIKQ3yJe8Z8czyC0ccVI8VtqBRMFfMb5kLwy1pygHsxItwf7K0/ouAcInZpRH8jf9KW1
+	EgHTKAbPvfRmbNNtOLz1hB0xH3uzHCJRzRn2fxAC0wdHX6vYYgkpls4ENnL0zOSVl+5zHA/APq7
+	WhdEVLR7S2ZwaN/m6Nuohw+HjRJVSgc8ai9oLvV01oY
+X-Google-Smtp-Source: AGHT+IF815aVMWdvRLDwiej+y4Cx3WJIQ4E2duZu4/2qWl0QtPxHw64kH4aIcMw784zTTXX6YinwEhcRSU5ux9YqIKo=
+X-Received: by 2002:a05:6512:1291:b0:55c:f06b:e042 with SMTP id
+ 2adb3069b0e04-55cf06be062mr142027e87.1.1755279447479; Fri, 15 Aug 2025
+ 10:37:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-6-dtatulea@nvidia.com>
+In-Reply-To: <20250815110401.2254214-6-dtatulea@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 15 Aug 2025 10:37:15 -0700
+X-Gm-Features: Ac12FXz0bX47lSXrHztHZ5UkfOYR_EvbTsCS-UKorkPh-bL-sJzn-Nb-eZJOYk0
+Message-ID: <CAHS8izO327v1ZXnpqiyBRyO1ntgycVBG9ZLGMdCv4tg_5wBWng@mail.gmail.com>
+Subject: Re: [RFC net-next v3 4/7] net/mlx5e: add op for getting netdev DMA device
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: asml.silence@gmail.com, Saeed Mahameed <saeedm@nvidia.com>, 
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	cratiu@nvidia.com, parav@nvidia.com, Christoph Hellwig <hch@infradead.org>, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Support for platform data from dropped from twl in 4a346a03a63c ("mfd:
-twl: Remove platform data support") and board files were dropped even
-earlier. There are no in-kernel users of twl4030_keypad_data in the
-kernel, and the driver supports configuration via generic device
-properties.
+On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> For zero-copy (devmem, io_uring), the netdev DMA device used
+> is the parent device of the net device. However that is not
+> always accurate for mlx5 devices:
+> - SFs: The parent device is an auxdev.
+> - Multi-PF netdevs: The DMA device should be determined by
+>   the queue.
+>
+> This change implements the DMA device queue API that returns the DMA
+> device appropriately for all cases.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> ---
+>  .../net/ethernet/mellanox/mlx5/core/en_main.c | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/=
+net/ethernet/mellanox/mlx5/core/en_main.c
+> index 21bb88c5d3dc..0e48065a46eb 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@ -5625,12 +5625,36 @@ static int mlx5e_queue_start(struct net_device *d=
+ev, void *newq,
+>         return 0;
+>  }
+>
+> +static struct device *mlx5e_queue_get_dma_dev(struct net_device *dev,
+> +                                             int queue_index)
+> +{
+> +       struct mlx5e_priv *priv =3D netdev_priv(dev);
+> +       struct mlx5e_channels *channels;
+> +       struct device *pdev =3D NULL;
+> +       struct mlx5e_channel *ch;
+> +
+> +       channels =3D &priv->channels;
+> +
+> +       mutex_lock(&priv->state_lock);
+> +
+> +       if (queue_index >=3D channels->num)
+> +               goto out;
+> +
+> +       ch =3D channels->c[queue_index];
+> +       pdev =3D ch->pdev;
 
-Drop support of static platform data from the keypad driver.
+This code assumes priv is initialized, and probably that the device is
+up/running/registered. At first I thought that was fine, but now that
+I look at the code more closely, netdev_nl_bind_rx_doit checks if the
+device is present but doesn't seem to check that the device is
+registered.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/twl4030_keypad.c | 35 +++++--------------------
- 1 file changed, 6 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/input/keyboard/twl4030_keypad.c b/drivers/input/keyboard/twl4030_keypad.c
-index 852f107e8e05..3a5ab61d5347 100644
---- a/drivers/input/keyboard/twl4030_keypad.c
-+++ b/drivers/input/keyboard/twl4030_keypad.c
-@@ -28,10 +28,6 @@
-  * an internal state machine that decodes pressed keys, including
-  * multi-key combinations.
-  *
-- * This driver lets boards define what keycodes they wish to report for
-- * which scancodes, as part of the "struct twl4030_keypad_data" used in
-- * the probe() routine.
-- *
-  * See the TPS65950 documentation; that's the general availability
-  * version of the TWL5030 second generation part.
-  */
-@@ -47,7 +43,6 @@
- struct twl4030_keypad {
- 	unsigned short	keymap[TWL4030_KEYMAP_SIZE];
- 	u16		kp_state[TWL4030_MAX_ROWS];
--	bool		autorepeat;
- 	unsigned int	n_rows;
- 	unsigned int	n_cols;
- 	int		irq;
-@@ -322,8 +317,6 @@ static int twl4030_kp_program(struct twl4030_keypad *kp)
-  */
- static int twl4030_kp_probe(struct platform_device *pdev)
- {
--	struct twl4030_keypad_data *pdata = dev_get_platdata(&pdev->dev);
--	const struct matrix_keymap_data *keymap_data = NULL;
- 	struct twl4030_keypad *kp;
- 	struct input_dev *input;
- 	u8 reg;
-@@ -350,24 +343,10 @@ static int twl4030_kp_probe(struct platform_device *pdev)
- 	input->id.product	= 0x0001;
- 	input->id.version	= 0x0003;
- 
--	if (pdata) {
--		if (!pdata->rows || !pdata->cols || !pdata->keymap_data) {
--			dev_err(&pdev->dev, "Missing platform_data\n");
--			return -EINVAL;
--		}
--
--		kp->n_rows = pdata->rows;
--		kp->n_cols = pdata->cols;
--		kp->autorepeat = pdata->rep;
--		keymap_data = pdata->keymap_data;
--	} else {
--		error = matrix_keypad_parse_properties(&pdev->dev, &kp->n_rows,
--						       &kp->n_cols);
--		if (error)
--			return error;
--
--		kp->autorepeat = true;
--	}
-+	error = matrix_keypad_parse_properties(&pdev->dev,
-+					       &kp->n_rows, &kp->n_cols);
-+	if (error)
-+		return error;
- 
- 	if (kp->n_rows > TWL4030_MAX_ROWS || kp->n_cols > TWL4030_MAX_COLS) {
- 		dev_err(&pdev->dev,
-@@ -379,7 +358,7 @@ static int twl4030_kp_probe(struct platform_device *pdev)
- 	if (kp->irq < 0)
- 		return kp->irq;
- 
--	error = matrix_keypad_build_keymap(keymap_data,
-+	error = matrix_keypad_build_keymap(NULL,
- 					   TWL4030_MAX_ROWS,
- 					   1 << TWL4030_ROW_SHIFT,
- 					   kp->keymap, input);
-@@ -389,9 +368,7 @@ static int twl4030_kp_probe(struct platform_device *pdev)
- 	}
- 
- 	input_set_capability(input, EV_MSC, MSC_SCAN);
--	/* Enable auto repeat feature of Linux input subsystem */
--	if (kp->autorepeat)
--		__set_bit(EV_REP, input->evbit);
-+	__set_bit(EV_REP, input->evbit);
- 
- 	error = input_register_device(input);
- 	if (error) {
--- 
-2.51.0.rc1.163.g2494970778-goog
+I wonder if we should have a generic check in netdev_nl_bind_rx_doit
+for NETDEV_REGISTERED, and if not, does this code handle unregistered
+netdev correctly (like netdev_priv and priv->channels are valid even
+for unregistered mlx5 devices)?
 
 
--- 
-Dmitry
+--=20
+Thanks,
+Mina
 
