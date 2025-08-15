@@ -1,92 +1,167 @@
-Return-Path: <linux-kernel+bounces-770862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78ED1B27FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97205B27FAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4A61C865F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4151896C8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE4730101C;
-	Fri, 15 Aug 2025 12:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EE428540F;
+	Fri, 15 Aug 2025 12:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CE5lmPqr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQpSX9sh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E73928C2D1;
-	Fri, 15 Aug 2025 12:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE551E9B37;
+	Fri, 15 Aug 2025 12:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755259672; cv=none; b=ORF2QoDaEcNoAXxalGKObeZ79y6mY3vX2zLreOSaMPkssi66od42nNy3MiOjgMsLiQpo4UMtb8Il+4CpCuw3oCM2arj4l5GYSOTf40cpfcQfVaMTWrURBjVmld5liD5XieDmPiy58qItEdSQmdEF202uNdK3U0ujpGdp0EkrLSc=
+	t=1755259448; cv=none; b=OScmu8ow8XJPChO/rs+8Tb0zjDWfIwnFVBNzMtSjdIlaEC+zsU5xxgBWVei39ER3VssW3ErGA6HtZ2Cd9cpgErPwha+xP4Lw0uGzi7LT4AakKH1cKfBcv+5h58LXP/g0XBdTbf5ymnbHewXL0YHYPmPee4l9hRNsXsscqTjBoLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755259672; c=relaxed/simple;
-	bh=w/1NYHzKPiJ6Ykf5EvlcG+mpnVFELfM3RBiTz54s/e8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jJSjkK0L3DSq8PBeMGMdc4L/xXGxcglLipLEcnTpUehddUq7a05I9fqX23UFimbH5crPUf/kR7z9Mp2uiJlv1SvPdsMhwuYSoE73t6xLBjaeTGnE5/IiYDGV3sqF8g495HCNeMz1+mqGVTP/YQtz9CGZ1PwqKRh6j1hzynrfcx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CE5lmPqr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA2DC4CEF0;
-	Fri, 15 Aug 2025 12:07:47 +0000 (UTC)
+	s=arc-20240116; t=1755259448; c=relaxed/simple;
+	bh=HZeCyCbCW8BPc1UqJ/9xLPYFm/CNn5koe8rojNXfI4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQUSFSHfcDrcafQn+eSk3Zok9nk4HL+yv8OvACgNVpIP2kbvj3bBNtFEh2OripO51XfMZuElkvFMmJWTTJN00DK5jYPXzZNbKHjrQOc2MB2S8uyxKCaK0Hx58ZlFMqabQwHufzXr0IEboTQeR90q+pSCA1kURgnsv6zzCX3E3FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQpSX9sh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C551C4CEEB;
+	Fri, 15 Aug 2025 12:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755259671;
-	bh=w/1NYHzKPiJ6Ykf5EvlcG+mpnVFELfM3RBiTz54s/e8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CE5lmPqrxR2QIrfHBRxSo9NSBNdvUMl0OMa9web5NQIQkWAaeeQqCt48qeP+6AZj7
-	 ST8kMoiKh19DJTqsPLw5Hf4YvcuStRUTuKnYqeBMsyg2rSLtDzNSn4cnChn2g/4+LZ
-	 ZthBGzBwkTa6czF2fG+S0Rw++kypK7qeZg/LCobX7LAYltMOUKFzRdWYDYCNMAPNYb
-	 UfqWQjRx88ucyZnqWDZnKn/hFeK6/CK5O7wkpDJ+EfXgwbE5ijR80PPnKxhbvfmRLa
-	 fa3WM9Gf9OiLFpasJ2faamJGgpm9TcZTsHpTnNPPWgxwF3uECm5VdKf046MXYr3xim
-	 vJscr9fUfWEvw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas
- <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>, Dirk
- Behme <dirk.behme@de.bosch.com>, Daniel Almeida
- <daniel.almeida@collabora.com>
-Subject: Re: [PATCH v9 1/7] rust: irq: add irq module
-In-Reply-To: <20250811-topics-tyr-request_irq2-v9-1-0485dcd9bcbf@collabora.com>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
- <5J2HACgtf13EIyol1Y7WVkA9WmIkndC_1Zjuu1itq_KQjmc8xdbDGxR0_8YVeYXVtfqwbkbDllcXSSAPQ073cw==@protonmail.internalid>
- <20250811-topics-tyr-request_irq2-v9-1-0485dcd9bcbf@collabora.com>
-Date: Fri, 15 Aug 2025 14:02:55 +0200
-Message-ID: <87zfc0dc7k.fsf@t14s.mail-host-address-is-not-set>
+	s=k20201202; t=1755259448;
+	bh=HZeCyCbCW8BPc1UqJ/9xLPYFm/CNn5koe8rojNXfI4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cQpSX9shqX50rgSFEZ4/cxfqQuGRDcQAzWYTFrGCpxMYNKy4N9qDjIy7JMihJD/jN
+	 X+ATwPMHuoKyTJSNSYYu3iFFewu285ZPxiLftQ9p+XxuFdfxWs0bJFHeyYte6IUi9i
+	 DucVMwyzdvubPvQJpr61jkxEz8RN9MfCfUm9bJRN3SK1+RntfR4tInrYC7RXumg3Q2
+	 yTPGV3pgtYe0nKEz45Jl7PI7TCMHlYUkZ3dOYiOGGPtFjO+3PmnnLl7TB4CO9iL0l9
+	 ip+dC0K9XAjw43zqkkHq9wg+CFzKsfW5p8h7g2z0bpJUGsTJd8YuCjm/hAY7T3zTIy
+	 G8FJ7uNNIuixA==
+Date: Fri, 15 Aug 2025 15:04:04 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Chris Fenner <cfenn@google.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
+Message-ID: <aJ8iNLwlf4PAC0h1@kernel.org>
+References: <20250814162252.3504279-1-cfenn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814162252.3504279-1-cfenn@google.com>
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+On Thu, Aug 14, 2025 at 09:22:52AM -0700, Chris Fenner wrote:
+> This change disables the TCG_TPM2_HMAC feature by default to resolve
+> some driver initialization failures (with certain TPMs) and performance
+> regressions (with all TPMs). See "Security remarks" below for why this
+> does not meaningfully downgrade security.
+> 
+> When the TCG_TPM2_HMAC feature fails to initialize the "null key" (see
+> tpm-security.rst), it will cause tpm_tis_core_init to bail out early and
+> skip device registration, causing all userspace requests to /dev/tpm0 to
+> return ENODEV ("No such device").
+> 
+> TCG_TPM2_HMAC depends on the following being implemented in the TPM:
+> 
+> - TPM_RH_NULL
+> - TPM2_CreatePrimary
+> - TPM2_ContextSave
+> - ECDH-P256
+> - AES-128-CFB
+> 
+> While the majority of TPMs in the ecosystem conform to the PC Client
+> Platform TPM Profile, which currently mandates most of these, not all
+> versions of that profile did, and not all other TPM profiles (e.g.,
+> Mobile, Automotive, Server) will. The TPM 2.0 specification itself is a
+> "Library" specification and does not mandate any particular commands
+> (and very few features) in order to maximize flexibility for
+> implementors.
+> 
+> The TPM driver should not break userspace for a TPM that conforms to an
+> atypical profile, therefore this change makes TCG_TPM2_HMAC disabled by
+> default. It also adds a remark about what will happen if this feature is
+> enabled and used with a non-supporting TPM to the Kconfig.
+> 
+> Some real-world public examples of problems posed by this feature:
+> 
+> TPMs that do not support the feature result in broken userspace starting
+> from 6.10:
+> 
+> https://wiki.archlinux.org/title/Trusted_Platform_Module\
+> 
+> Significant (around 200%) boot up latency due to all the added TPM
+> private key operations:
+> 
+> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2080322
+> 
+> Security remarks:
+> 
+> tpm-security.rst describes the threat model of the TPM2_HMAC feature,
+> wherein an active interposer adversary on the TPM (e.g., SPI) bus
+> tampers with TPM commands and/or responses to interfere with the booting
+> or running system. The TPM2_HMAC feature uses something called "salted
+> sessions" to establish per-request keys that can be used to protect TPM
+> traffic.
+> 
+> Because the kernel does not have a priori knowledge of a cryptographic
+> identity for the correct TPM for the system, and because the kernel does
+> not have any cryptographic identity of its own with which to
+> authenticate itself to the TPM, the session is established using a
+> one-sided, unauthenticated key establishment protocol, wherein the
+> kernel asks the TPM for the so-called "null key" and uses it to
+> establish the shared session secret.
+> 
+> This poses a serious problem for the threat model of the TCG_TPM2_HMAC
+> feature, which it resolves by asserting that userspace will attest to
+> the "null key" using the EK after boot and compare it to the contents of
+> /sys/class/tpm/tpm0/null_name, exposed by the TPM driver. However, this
+> creates a trust cycle: we do not trust userspace to perform this action
+> correctly, because we do not trust that kernel correctly measured
+> userspace, because nobody has checked the null key yet. An implicitly
+> trusted remote attestation verifier also cannot be relied upon to do
+> this check, because it has no way of knowing for certain which key the
+> kernel actually used to establish the TPM sessions during the boot.
 
-> Add the IRQ module. Future patches will then introduce support for IRQ
-> registrations and handlers.
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Tested-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+All we care here is actually the external verifier scenario because most
+of this type of crypto where software must attest breaks without that,
+including all confidential computing technologies.
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+It's true that in the current form the whole feature is at most defense
+in depth. It could be e.g. extended with persistent keys and productized
+more in the future (e.g., trusted keys were mostly useless for multiple
+years).
 
+I'd personally would like to keep it on at least on my own laptop and
+there's a risk that there's a group of people who would either:
 
-Best regards,
-Andreas Hindborg
+1. want to have that small amount defense in depth.
+2. want to refine the feature.
 
+It's by practical means already "relaxed" but outcomes are objectively
+plain wrong (as you stated) so I'd take a bit more conservative approach
+on changing the mainline and propose three state option:
 
+1. off: fully turn off
+2. relaxed: mark just a info or at most marning to klog that hmac
+   encryption is not enable. Keep timeout short as ECC generation
+   does not take long (if it is working) (at least according to
+   my tests). It should also address the lack of TPM2_ContextSave.
+   We really should probe that anyhow in the driver init and
+   disable also /dev/tpmrm0 accordingly.
+3. strict: enforce. This is good to have albeit now not really
+   useful
 
+The 'relaxed' is of course default.
+
+BR, Jarkko
+
+ 
 
