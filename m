@@ -1,139 +1,109 @@
-Return-Path: <linux-kernel+bounces-771301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1EEB2854E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5DEB28550
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5568F7BC57A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12B1AE8724
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A58317715;
-	Fri, 15 Aug 2025 17:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYYLqtn8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F99031771A;
+	Fri, 15 Aug 2025 17:45:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84B3176E1;
-	Fri, 15 Aug 2025 17:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4343176EB;
+	Fri, 15 Aug 2025 17:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279881; cv=none; b=AeQL8aIrbPL7wI/CBX3cm979pu/j+RxFjVSiAGv78+LrWeQPjI6jy6NDQUC1BnAjJMtSEQ8RWY0UsDffoqr6D3Aqors/i9YpMRJcaf0ErSBehrNvyxuZPo7ODa1eKzrUR2Ph8kzFCF/dhg8B6zFyiC4lzE2zJ6QskMDZmZ/pdGo=
+	t=1755279900; cv=none; b=ojYcIfw/Nj9dThPnj+wsgXfGAiRwE9V7qYL0SQeikapZ5lTWhfgQ2QLkicpipiWI1NBeSrssvINudXbacLybjhtZXyrViuu9BueS+8Luzr9LG6G8YACmUR8SC+/jPAFJ3eGHJtplAPg5ltSxlYse+mJfA0wVJe8NuKMGoc8mJZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279881; c=relaxed/simple;
-	bh=we/QScQ7I7+PlC5lGeWKArOIu6DFge1Eo5D2lzXYZlg=;
+	s=arc-20240116; t=1755279900; c=relaxed/simple;
+	bh=RHqKw7XS72Z1iYiuqOd8YdRwnOhWkgqU6B1xQq+3GVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XdrbJdpqTSoHoq2S6KOkFbzOY5MPxQ0xGcWQ0sBdmj044TTeUS41IYC3K4MwygrvETrQZJLK57bDXm8zbCp90lYtou6rCaa1J9wC1FCoE9Te+HmrpBPQ2b/gDyXBpzlAW/CLcSwKplHDkBq4NGd8KCUX1JMRz3J1oRcDL4wna4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYYLqtn8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51847C4CEEB;
-	Fri, 15 Aug 2025 17:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755279880;
-	bh=we/QScQ7I7+PlC5lGeWKArOIu6DFge1Eo5D2lzXYZlg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jYYLqtn8G2Yi1vhi9THC4I0jh+nOqh8cE+GqF8j5XFYhalvcFh8q5yQz2yhbSH0wO
-	 pXhOqfr/vCwb1U6DUr8UG0jqxEMOCUASgfFssRzTZsV9g8BOXskcOOpqxMTWQin5Qr
-	 D11d+p9Ur06LZqnwMyVFosrR/bgT0m+X5V8okzlFgRC/lWZSc1s3U5autdfEbGc3cC
-	 SGu7I3t/3y3BNlKn4vd9DPWUND69lLKRs6+qGAC8M2cl+X77JwbbyzTyvkyrGXxET1
-	 YlXD4GWf9k83PwqZRsDL4iXBMBScrEwc/3AgU1IshH4z28jaEi6hnF/KmaNTC7Du2l
-	 j9JAFlRiJzMKg==
-Date: Fri, 15 Aug 2025 07:44:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, lizefan@huawei.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com, chenridong@huawei.com, hdanton@sina.com
-Subject: Re: [PATCH v3] cgroup: cgroup: drain specific subsystems when
- mounting/destroying a root
-Message-ID: <aJ9yBuDnUu2jIgYT@slm.duckdns.org>
-References: <20250815070518.1255842-1-chenridong@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ai3g3X9EJ8n/Z6+nHYXhgmiMPd6e6pzZRc864tkRya+QU31PfsY3Zht2FehxSPaWKxWSHe3QlLzWiZKfOuhVFfIAuKogCoPexzj00kgFp+YJA125hfh3ybB9wf/Dvkg5XYLYEo0Er+gMGXHvRH9wVpsIjiVTTRnsjOSBwtug4vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A235BC4CEF1;
+	Fri, 15 Aug 2025 17:44:55 +0000 (UTC)
+Date: Fri, 15 Aug 2025 18:44:53 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/2] kasan/hw-tags: introduce kasan.store_only option
+Message-ID: <aJ9yFZ0aobVUPDip@arm.com>
+References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
+ <20250813175335.3980268-2-yeoreum.yun@arm.com>
+ <aJ8WTyRJVznC9v4K@arm.com>
+ <aJ87cZC3Cy3JJplT@e129823.arm.com>
+ <aJ9OA/cHk1iFUPyH@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815070518.1255842-1-chenridong@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJ9OA/cHk1iFUPyH@e129823.arm.com>
 
-Hello, Chen.
+On Fri, Aug 15, 2025 at 04:10:59PM +0100, Yeoreum Yun wrote:
+> > > Like we do in mte_enable_kernel_asymm(), if the feature is not available
+> > > just fall back to checking both reads and writes in the chosen
+> > > async/sync/asymm way. You can add some pr_info() to inform the user of
+> > > the chosen kasan mode. It's really mostly an performance choice.
+> >
+> > But MTE_STORE_ONLY is defined as a SYSTEM_FEATURE.
+> > This means that when it is called from kasan_init_hw_tags_cpu(),
+> > the store_only mode is never set in system_capability,
+> > so it cannot be checked using cpus_have_cap().
+> >
+> > Although the MTE_STORE_ONLY capability is verified by
+> > directly reading the ID register (seems ugly),
+> > my concern is the potential for an inconsistent state across CPUs.
+> >
+> > For example, in the case of ASYMM, which is a BOOT_CPU_FEATURE,
+> > all CPUs operate in the same mode —
+> > if ASYMM is not supported, either
+> > all CPUs run in synchronous mode, or all run in asymmetric mode.
+> >
+> > However, for MTE_STORE_ONLY, CPUs that support the feature will run in store-only mode,
+> > while those that do not will run with full checking for all operations.
+> >
+> > If we want to enable MTE_STORE_ONLY in kasan_init_hw_tags_cpu(),
+> > I believe it should be reclassified as a BOOT_CPU_FEATURE.x
+> > Otherwise, the cpu_enable_mte_store_only() function should still be called
+> > as the enable callback for the MTE_STORE_ONLY feature.
+> > In that case, kasan_enable_store_only() should be invoked (remove late init),
+> > and if it returns an error, stop_machine() should be called to disable
+> > the STORE_ONLY feature on all other CPUs
+> > if any CPU is found to lack support for MTE_STORE_ONLY.
+> >
+> > Am I missing something?
 
-On Fri, Aug 15, 2025 at 07:05:18AM +0000, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
-> 
-> A hung task can occur during [1] LTP cgroup testing when repeatedly
-> mounting/unmounting perf_event and net_prio controllers with
-> systemd.unified_cgroup_hierarchy=1. The hang manifests in
-> cgroup_lock_and_drain_offline() during root destruction.
-> 
-> Related case:
-> cgroup_fj_function_perf_event cgroup_fj_function.sh perf_event
-> cgroup_fj_function_net_prio cgroup_fj_function.sh net_prio
-> 
-> Call Trace:
-> 	cgroup_lock_and_drain_offline+0x14c/0x1e8
-> 	cgroup_destroy_root+0x3c/0x2c0
-> 	css_free_rwork_fn+0x248/0x338
-> 	process_one_work+0x16c/0x3b8
-> 	worker_thread+0x22c/0x3b0
-> 	kthread+0xec/0x100
-> 	ret_from_fork+0x10/0x20
-> 
-> Root Cause:
-> 
-> CPU0                            CPU1
-> mount perf_event                umount net_prio
-> cgroup1_get_tree                cgroup_kill_sb
-> rebind_subsystems               // root destruction enqueues
-> 				// cgroup_destroy_wq
-> // kill all perf_event css
->                                 // one perf_event css A is dying
->                                 // css A offline enqueues cgroup_destroy_wq
->                                 // root destruction will be executed first
->                                 css_free_rwork_fn
->                                 cgroup_destroy_root
->                                 cgroup_lock_and_drain_offline
->                                 // some perf descendants are dying
->                                 // cgroup_destroy_wq max_active = 1
->                                 // waiting for css A to die
-> 
-> Problem scenario:
-> 1. CPU0 mounts perf_event (rebind_subsystems)
-> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
-> 3. A dying perf_event CSS gets queued for offline after root destruction
-> 4. Root destruction waits for offline completion, but offline work is
->    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+Good point.
 
-Thanks for the analysis, so this is caused by css free path waiting for css
-offline.
+> So, IMHO like the ASYMM feature, it would be good to change
+> MTE_STORE_ONLY as BOOT_CPU_FEATURE.
+> That would makes everything as easiler and clear.
 
-> Solution:
-> Introduce ss_mask for cgroup_lock_and_drain_offline() to selectively drain
-> specific subsystems rather than all subsystems.
-> 
-> There are two primary scenarios requiring offline draining:
-> 1. Root Operations - Draining all subsystems in cgrp_dfl_root when mounting
->    or destroying a cgroup root
-> 2. Draining specific cgroup when modifying cgroup.subtree_control or
->    cgroup.threads
-> 
-> For case 1 (Root Operations), it only need to drain the specific subsystem
-> being mounted/destroyed, not all subsystems. The rationale for draining
-> cgrp_dfl_root is explained in [2].
-> 
-> For case 2, it's enough to drain subsystems enabled in the cgroup. Since
-> other subsystems cannot have descendants in this cgroup, adding ss_mask
-> should not have a hurt.
-
-Hmm... this seems a bit fragile. Would splitting cgroup_destroy_wq into two
-separate workqueues - e.g. cgroup_offline_wq and cgroup_free_wq - work?
-
-Thanks.
+Yeah, let's do this. If people mix different features, we'll revisit at
+that time. The asymmetric tag checking is also a boot CPU feature.
 
 -- 
-tejun
+Catalin
 
