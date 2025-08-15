@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-770246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE587B278ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:14:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AACB278EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B398AA0422
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F8A5E5B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1372829614F;
-	Fri, 15 Aug 2025 06:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D04E2BDC21;
+	Fri, 15 Aug 2025 06:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWLVMX/z"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bn+KwkaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57CF280037;
-	Fri, 15 Aug 2025 06:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0172BD58C;
+	Fri, 15 Aug 2025 06:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755238472; cv=none; b=MlV9dIRMtLYFgPeGp8m/Infl9F/YzxlNbUgRHynRo1N/ba3WwI+haUV3J8jpdD88IVylf98yco/KoC2dFGMhkELGu5pwKtbE0rkBZosPvyTVwCa5QuANwa+3vyhQCahgy36We7KlfVwEhURjz3aQMYMakbxAobL5n3omtC9NCJE=
+	t=1755238478; cv=none; b=NUJrsq+P/x3GgSd+sVVUGABaKG5XPAwRsmnAl9CpRv4bx3b1kW3GTJdjMdkxabgM7Pq1xBC5S9CmFwLAIVB44t5foeu75We8wrtWnVesr9t93BIecN7w584FcfVDfX9FrRW6UmVNBmA338y0m7+0nJmskWR/yWvQ1xLImfRg1Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755238472; c=relaxed/simple;
-	bh=juAK6C8QbNuY02ZQECecfitY90SDBcEZK0IXBgIcZ3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1z4lYyuur21xJyiRb2kOtKjYbbTj8pX+D9DaKFm+TQw2li66V5KXjC9/ZHWPU2E+0NolGRCAWImmcs2aSitV1gEVDeQQdxxXSmkGM7ISrAOogIbHwFk7p4okiNsZ4EzKGkxhYrE6xUv+JkQLATA0J1CzHknVlcdjASNj/UUgcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWLVMX/z; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso1356118f8f.3;
-        Thu, 14 Aug 2025 23:14:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755238469; x=1755843269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RC3G8Ydq/hH7/R8jIdeAziyUg1MV8Z+nvGhUkoaFFOw=;
-        b=KWLVMX/zx8Ny5wi4Svf3ECDkq0Lw7Qk26VLi8gRX5xiiuuyURlIAoh5CH0uvwMtDWv
-         Us37HOcAN673jqNE7WEMP6yU+3qK/dshj6XKKoxWODz4rPMxDgqsMExRUUsKm5RMGIpk
-         mTXvVGFqV6tkLaKFleCcIU7YLhhPoB3qUdzBHdpnwHLU7kJlKtWP8ZdTuLltOh+WEMw3
-         DCG2dLzZ1cARi/rTaydosxgkKi+rmWc0q9zODLb3ROtfaS7ouHdVEu4LWzdwUsxldJsT
-         mxmSvPRSYJE8MS+Mc4clVNERx6i59s2gRMfaNIbsxyEwv2r7ccMAXn1f7Us2+cwrHlPW
-         rRgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755238469; x=1755843269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RC3G8Ydq/hH7/R8jIdeAziyUg1MV8Z+nvGhUkoaFFOw=;
-        b=OenzhbUPTyNSKtKHRxk59r+2kSmaKo9Ewj1qEKMoPnyPG/8sHArZ8HXGddZoOCqtIY
-         XewfRMXkdcQRp9a4+xJLOM7GM4eWpq3PJM84hiRu7wcJK7brVFT10NFbj4n0fp14Eh+E
-         mqh1gpW1IIt9/u6SeGpU6kr5OgWXgLzOKlsx4xecetoliRZXwnZyy6DiAYb6Ev8ARNUF
-         v95GtOiYf5Xft553IdzGdVyhSjonHTwFGytoiIAOnvWai4HtUXcwNFt1cvA1iAjN4/YV
-         Z7Qpz9hk+wuDPKNk3E/koYojUIcRGSySEdkTf/n3AlrZHGWifM36dX9Khyu4yIEVeYqj
-         M13g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZibmmAmJO7c/6iSYcHrWi48jr4TpJoCKQr0rrEAR1881u3zNonqXsrBVf7n9GsK0YFIY91w40/1q0tn9r@vger.kernel.org, AJvYcCX4pYEwQoXjsDhRzX3xFcYxhRg1dvuVjFVTgL4loWuhIlV1SjLhcEMpJN6z7w55EyI+S5W7jlUeb3tj@vger.kernel.org, AJvYcCXwJGlnGaarzp4FeRN2x9t1m2BkFDtga+yvfhzrAeByb4voZqZN57PkrBq4xD37sSsrzqa1s9mn1jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjAYNPePEks3GFih+J7A2rq8w8vyCXOa+HpeLYiyyfmKji6yw4
-	S5YIMAyExUrgVY70AeWsFkB5Qd/m/o/qkPV1zz7sg2UYpXH1fI2smz/aUN8pElZxa/TAX2CfErN
-	pT/g7+QEiyr6ALIEZGgiYu9QBuraYlmE=
-X-Gm-Gg: ASbGncuis7ZhMPevvPtxkhKvNu/xAZiNwK2kvWAGXDUQzkVk3DfNwbqmysihQTzcRsT
-	9Ve4JdcmjJb9TIQBJ+GsC3JfZ4suMjYvVb7395mK2m7AcMVY7rE5y0Elt0+U67nT13be99UBXP6
-	mCAzNQ+6jticPm7at984UhUi+7+f8v3nwk4rpJ1XQYaaj0rQLhtjTIj5LRShxKOIMl0cJn5I1cj
-	bIf28Ni
-X-Google-Smtp-Source: AGHT+IGcfJRbvVjPwlmwrtipABpPT2k1A2y354zwiag+PFS0u1nqei6MBVPlvAO14bH2h8cPLQmeAXffrbKgUI/mnik=
-X-Received: by 2002:a05:6000:2584:b0:3b7:8a49:eed0 with SMTP id
- ffacd0b85a97d-3bb671f56demr475473f8f.22.1755238468843; Thu, 14 Aug 2025
- 23:14:28 -0700 (PDT)
+	s=arc-20240116; t=1755238478; c=relaxed/simple;
+	bh=BV60D2QJ9EpbBzyTAPJEV/IYllLD/I3nj0o+FEOJJD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxTrjHLg/lrkcL8LMSTUgJlU3hyZIQkC1MKvr0tk4twdzFFTgpzzvNl20oPPVvldKYI/9ufaUiMHZfzyHYJYkY2udx7QqqY9wkGJFHct605E+DGN0aZpKB/usjIB+zEQ/j8SaMAG5fOdlVMYtLFQxIyNpUJbPTtC2slLcjL/AY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bn+KwkaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4887C4CEF7;
+	Fri, 15 Aug 2025 06:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755238478;
+	bh=BV60D2QJ9EpbBzyTAPJEV/IYllLD/I3nj0o+FEOJJD0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bn+KwkaYkXcflJGGwbROf6xOlWGsoIwCLZ6V/2Qj7PgeeeRqu0UvwWlzYwD9WFXpJ
+	 /7qQYuU8yqJv5326uMZESNku3JoYgoe9IrRR/4FXa9yq0Mir3CVig3IsHhWoG3c+rA
+	 ozQ2Iu/a50D0zGx/ZFIPjF7Ogq/8UD7rgn6ByYCdY485Mnqo4r1tgfAfQ2LlN6qcFC
+	 x4A6qmf3RbajpFwK6GBo4pMuX9LfttnnuVDArJmwLEz5wb7NBHSq4Zd43dCKTKrIUk
+	 vweCfHJySeTjnPEUcuPeSaBJQp6aqxE0yrwSdK0Kh+c8w+S+DiRI8Eb5JFXZVy77Vw
+	 CFQLgJ2S7SHUA==
+Message-ID: <8dfc4020-975d-40fb-960b-539a2923c81c@kernel.org>
+Date: Fri, 15 Aug 2025 08:14:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813175335.3980268-1-yeoreum.yun@arm.com> <20250813175335.3980268-3-yeoreum.yun@arm.com>
- <CA+fCnZeT2J7W62Ydv0AuDLC13wO-VrH1Q_uqhkZbGLqc4Ktf5g@mail.gmail.com> <aJ3E7u5ENWTjC4ZM@e129823.arm.com>
-In-Reply-To: <aJ3E7u5ENWTjC4ZM@e129823.arm.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Fri, 15 Aug 2025 08:14:18 +0200
-X-Gm-Features: Ac12FXzA1cRDanNY9nNRCdMRqZ-71xbNZTcaUrUR9hUEP-TJh9C4NEiHu1Mi5Xw
-Message-ID: <CA+fCnZdFVxmSBO9WnhwcuwggqxAL-Z2JB4BONWNd0rkfUem1pQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kasan: apply store-only mode in kasan kunit testcases
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com, 
-	will@kernel.org, akpm@linux-foundation.org, scott@os.amperecomputing.com, 
-	jhubbard@nvidia.com, pankaj.gupta@amd.com, leitao@debian.org, 
-	kaleshsingh@google.com, maz@kernel.org, broonie@kernel.org, 
-	oliver.upton@linux.dev, james.morse@arm.com, ardb@kernel.org, 
-	hardevsinh.palaniya@siliconsignals.io, david@redhat.com, 
-	yang@os.amperecomputing.com, kasan-dev@googlegroups.com, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/4] dt-bindings: firmware: thead,th1520-aon: add a
+ mailbox name for SBI
+To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, Inochi Amaoto <inochiama@gmail.com>,
+ Yao Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250814070757.2267325-1-uwu@icenowy.me>
+ <20250814070757.2267325-3-uwu@icenowy.me>
+ <d0d4c9e7-c350-4996-a53b-09b13bdb9409@kernel.org>
+ <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
+ <026419bc-c0f8-4891-a348-311f51cb999f@kernel.org>
+ <ec0a7543f9feb5dc096f3030c8b3d73d71834a36.camel@icenowy.me>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ec0a7543f9feb5dc096f3030c8b3d73d71834a36.camel@icenowy.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 14, 2025 at 1:14=E2=80=AFPM Yeoreum Yun <yeoreum.yun@arm.com> w=
-rote:
->
-> > > +/*
-> > > + * KUNIT_EXPECT_KASAN_SUCCESS - check that the executed expression d=
-oesn't
-> > > + * produces a KASAN report; causes a KUnit test failure otherwise.
-> >
-> > Should be no need for this, the existing functionality already checks
-> > that there are no reports outside of KUNIT_EXPECT_KASAN_FAIL().
->
-> This is function's purpose is to print failure situtations:
->   - KASAN should reports but no report is found.
->   - KASAN shouldn't report but there report is found.
->
-> To print the second error, the "TEMPLATE" macro is added.
-> not just checking the no report but to check whether report was
-> generated as expected.
+On 14/08/2025 10:04, Icenowy Zheng wrote:
+>>
+>>>
+>>> Or should I explicitly say "minItems: 1" here?
+>>
+>> Yes, but you should clearly explain the impact. Is it working? Not
+>> working? Are you fixing something?
+> 
+> The jsonschema draft says "Omitting this keyword has the same behavior
+> as a value of 0." for minItems. [1]
 
-There's no need to an explicit wrapper for detecting the second case.
-If there's a KASAN report printed outside of
-KUNIT_EXPECT_KASAN_FAIL(), either the next KUNIT_EXPECT_KASAN_FAIL()
-or kasan_test_exit() will detect this.
+No, omitting this means it is implied by maxItems, see fixups.py:130.
+
+Best regards,
+Krzysztof
 
