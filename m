@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-770993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F16B28150
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEFFB28151
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466DD7AF624
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5323AD563
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64471DE2AD;
-	Fri, 15 Aug 2025 14:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788D21DF256;
+	Fri, 15 Aug 2025 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaacuJaE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1371DE4C2;
-	Fri, 15 Aug 2025 14:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D309A1C8631;
+	Fri, 15 Aug 2025 14:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267063; cv=none; b=XX+HftHUiIYqyNhca9OVW3cfI52yIXkHmkpR7hpIs8P5Ky/OXxbZ7gfK5YDcpsY23+9qxabddtlUyX447AxM+w+jgAstxm4O7ov/gdR0VzBbauDZOEuc3WBHeQeCA6rDmX5E9e85VL2zfmVbxWX7+w4lCqVToTX9Sea3KDutxQs=
+	t=1755267076; cv=none; b=Ltc1TGNEodnj2WWfOC0xrvW69U0WDBxfkdE5+xHG0guYBasJRlTJPxxRnnRS/HQR47Ojy5Ir2iWFC1iZpyn4nDJ8ywfh0lHOUoDg8cfeKHAFtoPhRARM+v8riuZ8qDQeh5RE76mJ7Ru0d+1ap3wA0fpYzTpM2o1ONb5v7wGIw4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267063; c=relaxed/simple;
-	bh=21kBuVipaIFn4RGQka+pAPB+NDgFp3XSRK2uNhuU0yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjVh64oxITkr+72ammumA7UonmD5V6nBXqE0ZZb3w70uDoHVanjy7cZR4F4li42LHd6pdjgK4ZGAjbeX6hzUW3LI1TEXaeRh0B5uHu8sXDnTb4eE2OX9BQE7XHoI1SfGyUPahE/phglvwi0w2ZoK/KYWRDplQwBitq01FUwuJWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCFDC4CEEB;
-	Fri, 15 Aug 2025 14:10:58 +0000 (UTC)
-Date: Fri, 15 Aug 2025 15:10:56 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
-	oleg@redhat.com, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	broonie@kernel.org, yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com, liaochang1@huawei.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Steve Capper <steve.capper@arm.com>
-Subject: Re: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
-Message-ID: <aJ8_8HO37UjH1U0d@arm.com>
-References: <20250811141010.741989-6-jeremy.linton@arm.com>
- <202508131334.FfoZQ27h-lkp@intel.com>
+	s=arc-20240116; t=1755267076; c=relaxed/simple;
+	bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G+tdNJOiKGJvMxLB/ECf4/XG4044YvUeWz3jqaZCcLohBFTcWKmC9dal8Hyu4sCORYdOm8lZwa4KExHEu2FhngKqJJXEfP+QHr4mhj+xlLbwfmIpFLDX16Ll2mRsWGky8vI0/XpjEZqElbu2/NNdr7Lo1V5xehV5dVkrt2dBZKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaacuJaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAD6C4CEEB;
+	Fri, 15 Aug 2025 14:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755267076;
+	bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OaacuJaEj9rY5QRIklO3nzpD/AVM+K8X1Z5ZDaBqawuvI7aTZsvBl9VYQkKE8THmp
+	 86jOb1JhB6Y16fzYIxYMOqoMGpb8Iq0RibCwwHT+beJj5JxgeE5kfXKOylrhHeDu7/
+	 t14AibxzyDmdU2I5tGQMrCy4A3Y97Bof0AVFiYsgEvOK+XBGGQyLTpel76+2k6HqdS
+	 3kg978Y26VX9Qcw12bzguf4j/6w+m6ODMURSQcUUbjt3ri2WW5aRHp9WPuJfy+82jr
+	 hYdCPqlr4DG807jWCrOuanqKE9np1FvoxrV4733F9sMopg2OH6aT40MUEzDtvYCJFA
+	 idmg46g7iyQUg==
+From: Christian Brauner <brauner@kernel.org>
+To: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 1/1] pidfs: Fix memory leak in pidfd_info()
+Date: Fri, 15 Aug 2025 16:11:00 +0200
+Message-ID: <20250815-avocado-schalldicht-f3c2c0720bcc@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250814094453.15232-1-adrianhuang0701@gmail.com>
+References: <20250814094453.15232-1-adrianhuang0701@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202508131334.FfoZQ27h-lkp@intel.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2228; i=brauner@kernel.org; h=from:subject:message-id; bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=; b=kA0DAAoWkcYbwGV43KIByyZiAGifP/+ieKJMzvCGgMqs6SaDz5YXsfAL26q03/+wPWTwspBlk 4h1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmifP/8ACgkQkcYbwGV43KKcXwD+PuSM ldEABph929HKwJuzVWAoqxHlctswjdkr9F/uOOQBAIQAdeTLOavxwIBePElAGNDKRV1OILsFuQI ZHs3N23QP
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 02:12:30PM +0800, kernel test robot wrote:
-> Hi Jeremy,
+On Thu, 14 Aug 2025 17:44:53 +0800, Adrian Huang (Lenovo) wrote:
+> After running the program 'ioctl_pidfd03' of Linux Test Project (LTP) or
+> the program 'pidfd_info_test' in 'tools/testing/selftests/pidfd' of the
+> kernel source, kmemleak reports the following memory leaks:
 > 
-> kernel test robot noticed the following build errors:
+>   # cat /sys/kernel/debug/kmemleak
+>   unreferenced object 0xff110020e5988000 (size 8216):
+>     comm "ioctl_pidfd03", pid 10853, jiffies 4294800031
+>     hex dump (first 32 bytes):
+>       02 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
+>       00 00 00 00 af 01 00 00 80 00 00 00 00 00 00 00  ................
+>     backtrace (crc 69483047):
+>       kmem_cache_alloc_node_noprof+0x2fb/0x410
+>       copy_process+0x178/0x1740
+>       kernel_clone+0x99/0x3b0
+>       __do_sys_clone3+0xbe/0x100
+>       do_syscall_64+0x7b/0x2c0
+>       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   ...
+>   unreferenced object 0xff11002097b70000 (size 8216):
+>   comm "pidfd_info_test", pid 11840, jiffies 4294889165
+>   hex dump (first 32 bytes):
+>     06 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
+>     00 00 00 00 b5 00 00 00 80 00 00 00 00 00 00 00  ................
+>   backtrace (crc a6286bb7):
+>     kmem_cache_alloc_node_noprof+0x2fb/0x410
+>     copy_process+0x178/0x1740
+>     kernel_clone+0x99/0x3b0
+>     __do_sys_clone3+0xbe/0x100
+>     do_syscall_64+0x7b/0x2c0
+>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   ...
 > 
-> [auto build test ERROR on arm64/for-next/core]
-> [also build test ERROR on perf-tools-next/perf-tools-next tip/perf/core perf-tools/perf-tools linus/master v6.17-rc1 next-20250812]
-> [cannot apply to acme/perf/core]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-probes-Break-ret-out-from-bl-blr/20250811-221529
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-> patch link:    https://lore.kernel.org/r/20250811141010.741989-6-jeremy.linton%40arm.com
-> patch subject: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
-> config: arm64-randconfig-r111-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 13.4.0
-> reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202508131334.FfoZQ27h-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    arch/arm64/kernel/probes/uprobes.c: In function 'arch_uretprobe_hijack_return_addr':
-> >> arch/arm64/kernel/probes/uprobes.c:171:33: error: implicit declaration of function 'get_user_gcs'; did you mean 'put_user_gcs'? [-Werror=implicit-function-declaration]
->      171 |                 gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
->          |                                 ^~~~~~~~~~~~
->          |                                 put_user_gcs
->    cc1: some warnings being treated as errors
+> [...]
 
-I guess that's explained by patch 3 not being updated.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
--- 
-Catalin
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] pidfs: Fix memory leak in pidfd_info()
+      https://git.kernel.org/vfs/vfs/c/0b2d71a7c826
 
