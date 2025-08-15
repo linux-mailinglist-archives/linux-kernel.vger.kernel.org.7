@@ -1,120 +1,196 @@
-Return-Path: <linux-kernel+bounces-770159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED76B277CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D95B277C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B03FB620D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0393AC69A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C85D21B91D;
-	Fri, 15 Aug 2025 04:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D3E2185B8;
+	Fri, 15 Aug 2025 04:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="SzorFoQt"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jb03uXgm"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B74184E;
-	Fri, 15 Aug 2025 04:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEEF481B1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755232383; cv=none; b=Wbm9k4xzX3CodBUDAoRBEsoRrqRSZKFjWJy6LHqCYwSr8hLsvNyZ2gS/rNfVsnMW8WegCFh49kQCAHz18HW/jAVrLTFsRfOV8e97/4CKMn47Mac+3JyHnss/uuiqD4+Wjh8PKHlnqy4Kiu7nj74YkP9iuqLCiqNuDUPsm4j3uBk=
+	t=1755232329; cv=none; b=bjWGy7zzwNoI93i6tf5pmkdbAQrCviNVOueXUMfLs5sqpuu4QYt6KBCgtrldnEgJj9Rb/1kTcf8+BO/fgFv69AYwH1dxP4qNA+1ykVRZQ0XtgVGgfqAAGyerIbMuEL21vx5ufVqs5wZly2zhmaLAJPXyG7natstljfenWwS28ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755232383; c=relaxed/simple;
-	bh=q7UvJdsMzjG/34LxSKbYRnNhNGY0pN9Ki6l0mvw8PVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XeIECQyPOg6T9g3MC2IwZAgbA1qbWdU3bt44LDaeOE1/7/COdjq4LlVVJT55fCd7497DiRgtUAnDH5cIjW9Vfo2Cby3rptCQbA/KBMhvN3P6SH1Hzw+blO6MJPJ47LLfF18kGNzFJBRK8YSUP0sz6b34kyj7aUOidCHkjyfLmPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=SzorFoQt; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=93
-	VcQzgpbl4Du+IaucieEQcX0w+7qtFnVJnT8ClmGfs=; b=SzorFoQtRXu99q8ZgR
-	iLhduDDEX0+0nZcQo7pAGpfsiRNGwG0HrhEy/FWN+ffI3N04O75yy2sd8zdBzd95
-	NVLYBpzVBfmbPBq6PFJS+D/krr/WhVNLEBGjSfVvSJ5vdrqcaA450azhWv5gFWVA
-	jheqXvDbP20elgizXLrk1zXAU=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3L4b3t55oIiHABQ--.58302S4;
-	Fri, 15 Aug 2025 12:30:59 +0800 (CST)
-From: Genjian <zhanggenjian@126.com>
-To: axboe@kernel.dk,
-	dlemoal@kernel.org,
-	shinichiro.kawasaki@wdc.com,
-	johannes.thumshirn@wdc.com,
-	kch@nvidia.com,
-	zhengqixing@huawei.com,
-	willy@infradead.org,
-	namcao@linutronix.de,
-	vincent.fu@samsung.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanggenjian@126.com,
-	Genjian Zhang <zhanggenjian@kylinos.cn>
-Subject: [PATCH] null_blk: Fix correct parameter desc for the module
-Date: Fri, 15 Aug 2025 12:30:33 +0800
-Message-Id: <20250815043033.1534949-1-zhanggenjian@126.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755232329; c=relaxed/simple;
+	bh=ZrNGdDa3ue2pXZ7p4mCgz63fzMgbaYzPSvRgN66XhtM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pgrAdaY6j3TD1lQeDEVW6nuCMf3q15dPGi2OBvwdRocFE57Xham12kDqWbZb0CGPySrxeQVh5CeSdvaQEhD37gLcIrrlsUjI/rTkFeV30cWYNsSWlh/P/WIXFzRuxTOC3+5KaGPS4HODB4/6SJwH6x0QKLD3T7pNDgfDc22ZoDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jb03uXgm; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b0bf08551cso143251cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755232326; x=1755837126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vphq+KdVGQBHDleeYMXLhEN4hWNJK2UKgGf0Gk0kNNA=;
+        b=jb03uXgm3WzytuhEHVyuOFqcC9m/Qsf9DWsPR+uomXYkAyZqQyw289KD0vpHV74hfE
+         NT8tuo2dNy+kHmqyTWFAaAZn+GLVHa6u3tQe4T6CiGvVMJfKGXLdKSy5xoGg+cN1hA+A
+         dl5sH3SSEGnW9LF3C3VZI59nRX7nkk3aHKpeUUgtTDTyLf4yhLN8wtswMom6zFBdpJHY
+         nFcjPKgzsA/HiutyYgKHJD0oeZOriRh6CGftM+H7I8TfD4bYYRa+izwrA/IXCoSPOihV
+         3L6Dw+PBzzGtyIw7HzEhQGp/rMMFKZQZLfIRPlke51zBaRRmO+AnjMCNnMcrvAyp9I/N
+         R64Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755232326; x=1755837126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vphq+KdVGQBHDleeYMXLhEN4hWNJK2UKgGf0Gk0kNNA=;
+        b=gStIR7hRmt0DBvMp2k9hJk2BsouDiLBBjt0iMaDLzhy1AsVJOzNwZHzDFdt+KQYOo9
+         u2WSTaDvz4VlfpiyMjWIec6PFqpYR1zsOqx4a1F3ZVbXhAwP3zo3+eq1WQX9fiCtGFGO
+         caHZ8juNoxtuXGWlhrmjCEUJe6XhphnTugoqJo285bJedoTXtdOtRb35uYLJgvBSJNbL
+         Y7MAJpQhpDZTNeV1+dypUY16MkBGbbyvcM6SDX6ff/uk2nTrMwfbQaekPPg01RRJ5nT3
+         iHHd2lYCEogTc4No8YJFsNQnE4qd0cT3PN+qLe/X06gtyJ4o+rE5F/uNP4v3131e5PfI
+         piqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQApwlKz54oe5Nw48Lg/ZuroMVF0dCK7w3eC57QqOXaXyyFl/rofI5YkN9YEYoTji+EGvgGduFzLkTid8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylmzS1rve17hyAfgXhfF7iBrAgY5AEkEfmikQpVAIK0iIdAEJ7
+	C4CRcHaVPJ2VraavXUsA3tOsOcpaLPeLTR5NFoxqbQ+LQGtZUpdStZykdE3+tjtAsqmhXQ/A6OA
+	gJvGSB7aKsxWHeHGSUtdNFWLA0ipTLzbfvAmv8Yn+
+X-Gm-Gg: ASbGncvRmZDe0G4lzmdlU2yGWqP7mcAS374LwvEDCdQRhChdnaXC1U/gyOqZN0RZU8t
+	L4dNBgfS2f4M1zsaVpdbKF6vtk/veyQez6LyFEPZ8BI7YDhcL2pzp8ZuHOsEAcT1SA8xsICsNXm
+	pZoyFiMtkLl7l6y2PwrLQk6Ee7/8w3Zt0B7G5ci2XYRwnFaGrw77XZ9OO75qGYsWIDEpa0Il9ZY
+	FNeToZ7AVSxQe8rw5OD+5Sbf9z4mNvHm+5vIhsoMfokAA==
+X-Google-Smtp-Source: AGHT+IFnROl57LOIo9VPRxxOkeG5UUxFhM748VBrThhMVODn1XycukQQxmqkPtifgt9g/+IDrdCECfZfwFk25dWIj7k=
+X-Received: by 2002:a05:622a:1194:b0:4b0:f1f3:db94 with SMTP id
+ d75a77b69052e-4b11b73e747mr1445661cf.5.1755232325910; Thu, 14 Aug 2025
+ 21:32:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3L4b3t55oIiHABQ--.58302S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFyUury7GFyrWrWrJw1kXwb_yoW8XFW3pr
-	ZrAF18JrZF9F109a1DGws3XFy5Ja48GFZ0g3yak34Yvr4fXryxA3Zrtas8urWUK3y7Ar4f
-	ZF93Xas3WFykCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zib18dUUUUU=
-X-CM-SenderInfo: x2kd0wxjhqyxldq6ij2wof0z/1tbi5RKqfmieqIGbfAABsa
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-6-sagis@google.com>
+ <aJo3ww82Ln-PxgGL@google.com>
+In-Reply-To: <aJo3ww82Ln-PxgGL@google.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Thu, 14 Aug 2025 23:31:55 -0500
+X-Gm-Features: Ac12FXxKl3jb58UGowv2eTWXkzgtsssQat3t2ZOfCXUQ1j88a7mXr-l44I61YfE
+Message-ID: <CAAhR5DF5RTT8nF6mwLQPePL01k-bXBLapZZ3uNLH01j1W4UjSQ@mail.gmail.com>
+Subject: Re: [PATCH v8 05/30] KVM: selftests: Update kvm_init_vm_address_properties()
+ for TDX
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Genjian Zhang <zhanggenjian@kylinos.cn>
+On Mon, Aug 11, 2025 at 1:34=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Thu, Aug 07, 2025, Sagi Shahar wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> >
+> > Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_ma=
+sk}
+> > similar to SEV.
+> >
+> > Set shared bit position based on guest maximum physical address width
+> > instead of maximum physical address width, because that is what KVM
+> > uses,
+>
+> "because KVM does it" is not an acceptable explanation.
+>
+> > refer to setup_tdparams_eptp_controls(), and because maximum physical
+> > address width can be different.
+> >
+> > In the case of SRF, guest maximum physical address width is 48 because =
+SRF
+> > does not support 5-level EPT, even though the maximum physical address
+> > width is 52.
+>
+> Referencing a specific Intel microarchitecture is not proper justificatio=
+n for
+> why something is supported/legal/correct.  Using its three-letter acronym=
+ is
+> just icing on the cake.
+>
+> > Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
+> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > ---
+> >  tools/testing/selftests/kvm/lib/x86/processor.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/te=
+sting/selftests/kvm/lib/x86/processor.c
+> > index d082d429e127..5718b5911b0a 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> > @@ -1166,10 +1166,19 @@ void kvm_get_cpu_address_width(unsigned int *pa=
+_bits, unsigned int *va_bits)
+> >
+> >  void kvm_init_vm_address_properties(struct kvm_vm *vm)
+> >  {
+> > +     uint32_t gpa_bits =3D kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY=
+_ADDR);
+> > +
+> >       if (is_sev_vm(vm)) {
+> >               vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
+> >               vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
+_SEV_C_BIT));
+> >               vm->gpa_tag_mask =3D vm->arch.c_bit;
+> > +     } else if (vm->type =3D=3D KVM_X86_TDX_VM) {
+>
+> Please add an is_tdx_vm() helper.
+>
+> > +             TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
+> > +                         "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
+ue: %u", gpa_bits);
+> > +             vm->arch.sev_fd =3D -1;
+> > +             vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
+> > +             vm->arch.c_bit =3D 0;
+>
+> The VM is zero-initialized, no need to set c_bit.
+>
+> > +             vm->gpa_tag_mask =3D vm->arch.s_bit;
+> >       } else {
+> >               vm->arch.sev_fd =3D -1;
+>
+> I think it makes sense to set sev_fd to -1 by default instead of duplicat=
+ing the
+> non-SEV logic into all non-SEV paths.  SEV VMs will write it twice, but t=
+hat's a
+> non-issue.  E.g.
+>
+>         vm->arch.sev_fd =3D -1;
+>
+>         if (is_sev_vm(vm)) {
+>                 vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
+>                 vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
+_SEV_C_BIT));
+>                 vm->gpa_tag_mask =3D vm->arch.c_bit;
+>         } else if (is_tdx_vm(vm)) {
+>                 TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
+>                             "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
+ue: %u", gpa_bits);
+>                 vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
+>                 vm->gpa_tag_mask =3D vm->arch.s_bit;
+>         }
+>
 
-When executing modinfo null_blk, there is an error in the description
-of module parameter mbps, and the output information of cache_size is
-incomplete.The output of modinfo before and after applying this patch
-is as follows:
-
-Before:
-[...]
-parm:           cache_size:ulong
-[...]
-parm:           mbps:Cache size in MiB for memory-backed device.
-		Default: 0 (none) (uint)
-[...]
-
-After:
-[...]
-parm:           cache_size:Cache size in MiB for memory-backed device.
-		Default: 0 (none) (ulong)
-[...]
-parm:           mbps:Limit maximum bandwidth (in MiB/s).
-		Default: 0 (no limit) (uint)
-[...]
-
-Fixes: 058efe000b31 ("null_blk: add module parameters for 4 options")
-
-Signed-off-by: Genjian Zhang <zhanggenjian@kylinos.cn>
----
- drivers/block/null_blk/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index 91642c9a3b29..f982027e8c85 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -223,7 +223,7 @@ MODULE_PARM_DESC(discard, "Support discard operations (requires memory-backed nu
- 
- static unsigned long g_cache_size;
- module_param_named(cache_size, g_cache_size, ulong, 0444);
--MODULE_PARM_DESC(mbps, "Cache size in MiB for memory-backed device. Default: 0 (none)");
-+MODULE_PARM_DESC(cache_size, "Cache size in MiB for memory-backed device. Default: 0 (none)");
- 
- static bool g_fua = true;
- module_param_named(fua, g_fua, bool, 0444);
--- 
-2.25.1
-
+Thanks for all the suggestions. I will incorporate them in the next version=
+.
 
