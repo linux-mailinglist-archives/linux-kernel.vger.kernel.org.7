@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-770835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E50B27F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:44:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD148B27F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB0A622119
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2904B622399
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E692F2882A1;
-	Fri, 15 Aug 2025 11:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895C02FC86D;
+	Fri, 15 Aug 2025 11:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSLqYkzB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TzpN/hjP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBD6226D1B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1550A23956A
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755258260; cv=none; b=O85F0/mFJv5SeXyvEuaAC3k+jNhEjIAFFpvei6RwhMgDru5i1Zyj3HztCk2e+GtHirC8UX8SPmhx65NAbSrlHbbd7+gWsBvcRj9FPIUr892cH4BxB2O6BDWAX+bjLj/Q2bEn5iUlxB7FznwSQRVzUGLjzIR9I+kRdxN0oySABc4=
+	t=1755258302; cv=none; b=QuGtJwLajXQo5Ll+nHjDoQ9+mv86ASC/RMVmu6XHZ1uxy0/7Xgd3Nl2fSHrkzcrdden7ruMg5lDdo0h6zwhTMO0KhVgVSPwYWsqe/jnPT0Tkh64F+pVH1hLWp7SVB6NkTN1GAMmeefFPKws3HRavaI3gr05YnkdSfnevYWBWZgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755258260; c=relaxed/simple;
-	bh=w59mJ6B7WckgiftUA88D8QerNPfvLhIekK/6CJewm2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMc9QbZqr6Qtg7au+dcv/xoSZ1597M/4wu0VoOJR2r3Nc4sgHSFL5yOq2YFySTFK0K0BpMMbqIax0O0MJKPK+zmDbmxQpsbAeg8Os0L5hUIUSvJItMvFppapG2WauIb4NSO2JQe//yOP7c/l3k/x2T7df6E1Bhb9DXDK5uYDZ1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSLqYkzB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 373E9C4CEEB;
-	Fri, 15 Aug 2025 11:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755258259;
-	bh=w59mJ6B7WckgiftUA88D8QerNPfvLhIekK/6CJewm2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rSLqYkzBsKDXKPgyQT5tdy25hyrQYWXpuHJkg5gCqgH2hLcpwSlPNqd8lWUerG3pQ
-	 RCHjgTPgZSwIGxzWX0AWsibeOUKeY4mmWRNy6c8KxOZcr0YksuLnL3KxlQ72XHoc2V
-	 DHO0Adthh88Ulba0ctU1GCOMYmjFxM6FXChpU0m/bnHCWWg3+QZ7xifw6RLJg2zK+X
-	 9Dfkqx6SxY94Hria7eWW4aX5cgRKdzHRZKoeaPHbr7cLDZ1KTcgxv+iAZ8mNvZ2FkX
-	 jvRCcfQ6HEtcdtVBaq+rHrY2DqClS9Mo8dbYFYq00D4Rr5eSLfLuAitrvRhs6PtbZG
-	 m0/bE0WBuV1qg==
-Date: Fri, 15 Aug 2025 12:44:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "debug@rivosinc.com" <debug@rivosinc.com>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"Mehta, Sohil" <sohil.mehta@intel.com>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 5/6] x86/shstk: don't create the shadow stack for
- PF_USER_WORKERs
-Message-ID: <6abf383f-2756-4de6-a951-6121f51263e2@sirena.org.uk>
-References: <20250814101435.GA17362@redhat.com>
- <8818b456954644ce609e07d77a65714788ef9098.camel@intel.com>
- <e50065a9-d5e2-4e94-94b2-e34c5fac9720@sirena.org.uk>
- <78b04d05b94b605f287b9a594cd2aa9f1cda10df.camel@intel.com>
+	s=arc-20240116; t=1755258302; c=relaxed/simple;
+	bh=hdys7JHtHWpJhsHJmaiNOaZ3mnS/PRE9lEfAg6d+ZL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJdmiXYsi7aPdS+deLGe7TV/gWf9VWjR8gPx2vZ7eQM32P13fNsaN4Ew7RgqCnR4xdpwgW5LP6rtEXJKoHirf9tXSksZk3NS1y6pAEHyXBazazOksPTrG2ELDjcB1UoOH4vUIPTLNJSfOAV5BEKSIIDLXeK4Y8+H8qx+I1b+MEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TzpN/hjP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755258299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YoWrtxZKHP46PuU52n+MBoU/cYPThUo0BkEpIvYfLjk=;
+	b=TzpN/hjP9a2FWJIfws37n9FhLRX3y+OtT50PF28GE32e0vc62v6xCk/u/A0NvUnheohSAL
+	vwPzBzy09o9fxkefJjorrkRMZyIx4SEeTQD++YIaqFWwJ53In8Z35cjGRrynzdBseZXx51
+	YKi2Nvs7sebH3puGa+Q2iRaXO3+Kgwo=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-426-iLgZ6lmvP0-bDmu1sols-Q-1; Fri, 15 Aug 2025 07:44:58 -0400
+X-MC-Unique: iLgZ6lmvP0-bDmu1sols-Q-1
+X-Mimecast-MFC-AGG-ID: iLgZ6lmvP0-bDmu1sols-Q_1755258297
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-333f9150cedso7617841fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:44:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755258297; x=1755863097;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YoWrtxZKHP46PuU52n+MBoU/cYPThUo0BkEpIvYfLjk=;
+        b=MHyqrCYre0REY9pESFyVPZIFTYuax+JsAuZ2IjCSQe+oJbeSry8nxkqnoYpCOZ9ZJF
+         ud6YSqUGI1+96A6dOmRD68r8iJliisj8WC/O4YYk9KXAo8Uu+D3pBSHK8bxAg7PPnn5z
+         nGK76xTQp6v79xLGad20XSEYpXgYq1EmXGRoUpUDVA/0IneKbUqLoY2+rLbeyVfZSlWS
+         2khaeqd7FFaiZPk0oH2fX2kcfUKzdtlTkKB30VLGhryWc/6Q30y57mGsbH2LSlztHHLL
+         QrPexOagSx/2eTVQreBbg3mue4Yn+BrWFO2jYUMHyJ852ZI+1m5Y/h3QCUVLaCOUPezJ
+         TDEA==
+X-Gm-Message-State: AOJu0Yxk7t1PWbIPzd5zpEraqyoLnBGdqTre9Zsmm5uEYsQObmVAmk/z
+	x4bkCmL2p3uZxS30WVWkJIHURN3fwqtaRkNJo68SzTq4Bs33mds+DN5Ds3r7TY4HLVC0DM9e8Oi
+	LyCUJ4nnDh4x6b2t2m2IrHFX1lWZJfvBMMigynP2NzKP1HWg+wV8ULegSjSqW6y/L
+X-Gm-Gg: ASbGncuD2wdwSda4rbYR+iIN0j1nT/ny2rQ8BrUIjMLfc/AuQpUvHp/O5ywt8Wyc0FT
+	MMMDjvJeeRXSVcfdotfCHNI8SwX2A76wvL33LMvSFRRzVnif6aU+ojawH7sy3ATp494JHgNADi+
+	+RUF6xBpfmdDibDdUvk6jrWyRtwfQMou7EczBp4bualEnFTpVuNzM1F9F13hlvz3JZ0l+m5NqBa
+	lkllNhhwmupWALSE0BGIDp4DFuOt4u5d1tEh3GdaGv0QVbXJp+pO6QmtR9Fas7e0i79ZQkd4gOk
+	Lizwp0YYq2wg+1HhHP/k1h4UnHxX8Ix+tlabX9Q/LdXkQDFYixkdIcRhH8dX3A8g+g==
+X-Received: by 2002:a05:6512:3b96:b0:55c:e6be:d632 with SMTP id 2adb3069b0e04-55ceea3faebmr400610e87.1.1755258296827;
+        Fri, 15 Aug 2025 04:44:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3D3NMqi0KpJZph6yZf3k5y3mxGkKOd0EHNuLEzJEbyBl6SKYpmYQlIaH9LALZ3KS2+RknGg==
+X-Received: by 2002:a05:6512:3b96:b0:55c:e6be:d632 with SMTP id 2adb3069b0e04-55ceea3faebmr400602e87.1.1755258296301;
+        Fri, 15 Aug 2025 04:44:56 -0700 (PDT)
+Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35fb71sm240902e87.53.2025.08.15.04.44.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 04:44:55 -0700 (PDT)
+Message-ID: <c629f600-94c9-4cda-990c-83e429a2b9a1@redhat.com>
+Date: Fri, 15 Aug 2025 14:44:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BQ7yUjIAMsKx+Dve"
-Content-Disposition: inline
-In-Reply-To: <78b04d05b94b605f287b9a594cd2aa9f1cda10df.camel@intel.com>
-X-Cookie: Tell me what to think!!!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Migrate on fault for device pages
+To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>
+References: <20250814072045.3637192-1-mpenttil@redhat.com>
+ <e57cfe5e-2031-422f-9c50-f5a03a467cb3@nvidia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
+In-Reply-To: <e57cfe5e-2031-422f-9c50-f5a03a467cb3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---BQ7yUjIAMsKx+Dve
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/15/25 14:36, Balbir Singh wrote:
 
-On Thu, Aug 14, 2025 at 10:43:45PM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2025-08-14 at 19:33 +0100, Mark Brown wrote:
+> On 8/14/25 17:19, Mika Penttilä wrote:
+>> As of this writing, the way device page faulting and migration
+>> works is not optimal, if you want to do both fault handling
+>> and migration at once.
+>>
+>> Being able to migrate not present pages (or pages mapped with incorrect
+>> permissions, eg. COW) to the GPU requires doing either of the following
+>> sequences:
+>>
+>> 1. hmm_range_fault() - fault in non-present pages with correct
+>>    permissions,etc.
+>> 2. migrate_vma_*() - migrate the pages
+>>
+>> Or:
+>>
+>> 1. migrate_vma_*() - migrate present pages
+>> 2. If non-present pages detected by migrate_vma_*():
+>>    a) call hmm_range_fault() to fault pages in
+>>    b) call migrate_vma_*() again to migrate now present pages
+>>
+>> The problem with the first sequence is that you always have to do two
+>> page walks even when most of the time the pages are present or zero page
+>> mappings so the common case takes a performance hit.
+>>
+>> The second sequence is better for the common case, but far worse if
+>> pages aren't present because now you have to walk the page tables three
+>> times (once to find the page is not present, once so hmm_range_fault()
+>> can find a non-present page to fault in and once again to setup the
+>> migration). It also tricky to code correctly.
+>>
+>> We should be able to walk the page table once, faulting
+>> pages in as required and replacing them with migration entries if
+>> requested.
+>>
+> The use case makes sense to me, but isn't the sequence always going
+> to be racy, by the time the pages are faulted in, there could be
+> others that have been marked non-present or do you intend to lock
+> all pages during this operation?
+>
+> Balbir
 
-> > Perhaps we should factor the logic for deciding if we need to allocate a
-> > userspace shadow stack out into the arch independent code and do
-> > something like set a flag in kernel_clone_args that the arches can
-> > check?=A0 I think the logic is the same for all arches at the minute and
-> > don't see a reason why it'd diverge.
+Yes the pages are "collected", so locked and ref taken as soon as faulted in.
 
-> Sounds good. Like a little start to this:
-> https://lore.kernel.org/lkml/20241010-shstk_converge-v1-0-631beca676e7@ri=
-vosinc.com/
+--Mika
 
-Yes, exactly.
+>
 
-> > =A0 That'd collide a bit with my
-> > clone3() series, there's some overlap there with that creating another
-> > reason why the decision would change.=A0 Reducing the duplication would=
- be
-> > nice.
-
-> Argh, I need to test the latest of that still.
-
-Yury pointed me at some newer x86 systems I was able to get access to so
-I was finally able to test that one myself before sending it out,
-confirmation would be good but hopefully it's fine.  I've been holding
-back on sending a rebased version out since Deepak was going to help me
-get set up to test it on RISC-V.  Though I see now that the RISC-V code
-has vanished from -next (I guess due to fallout from the issues with the
-merge to Linus, it looks like there's almost nothing in the branch
-currently), not sure what the plan is there?
-
-Perhaps I should just send it out, but given the difficulty getting
-anyone to pay attention I was trying to avoid issues with missing
-updates for newly added RISC-V shadow stacks.
-
---BQ7yUjIAMsKx+Dve
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmifHY0ACgkQJNaLcl1U
-h9B7Fgf9GoV8jK2DImTOHAAe8FZPqUayD2/i++GIjDTQpPJvZTDLiLfYPMZBrWr1
-enl42UHraNeoscQgXa0tORlr37nkgQCdDt+aAz18LFi7+GbC3JdR//6N3mx/H2Hr
-lgzLXQSQvp+uu11NAltdfUQ7dczXKipNic4a6+3zDgw57oExWz9QrSx013eI3chl
-FW0VjEENyZo707w3/6mXXtqDsU1iuSn2tP2fAqxHp3PCGg3FD3MEbOHBrL2AS3id
-3iOTU1CYH+rXJxlE/2/l8qPYzHXTiDFdWbQkXZXy1iW5eJsKAF9FDdNX1HNaRZWY
-46zplRrD40Xg8CNF5WxHWJLFdoetgg==
-=DHtU
------END PGP SIGNATURE-----
-
---BQ7yUjIAMsKx+Dve--
 
