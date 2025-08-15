@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-770050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07738B2763C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17595B27642
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D36F175187
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:41:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8821CC6E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C52F25B66A;
-	Fri, 15 Aug 2025 02:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DD2292B53;
+	Fri, 15 Aug 2025 02:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mOpxZTSb"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RxjyzX1G"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031C626B0BE
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA8B25B1F4;
+	Fri, 15 Aug 2025 02:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225687; cv=none; b=JR1D3+Ynnz7b25vnsxDUY5ww6rW9R2q30qDvRvUWk9WFVAZXNPcQpiMHFlX+DCG2DigdyVCJBPam1OQyMsFPIO8VXRJCWF1F+O5w1iGINpQ5IpfP9fwu0UgNcygtlputk2BWaQdFI6PmuzJ5XRIMtn0M7zhwRohpopks46THBU8=
+	t=1755225733; cv=none; b=c9iZ/Bsf5lX6l47jXaOlwiIhB9wUZ2OK0byZD1HiOqJYLUZ7zN/NtTkTa5nCSuxwh73brw06Qevt6tySbB8PZE8yodCgPFFAG+iGVXbBiJI5V4pzklnGo7Vy/qK97rqNNdF+3+AounsXaG7bGo+1Lu2wPaLvZkDo8VW0OUaD7FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225687; c=relaxed/simple;
-	bh=zQRre9DT9JNXqEojg7ut6X62UsRlcQSj4aRSK05gUkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSpb1CT+itZIcXUKWywepiuvFxZLTRY5Cl4X83vQGWowcoOtqfOEveVauucGb3EnAaQb5Wi3Fh9w7vKHzbMlEwfkCkk8sOG/f499mu07WBmp3q8dv2d/gtxgrjlJa4EE2gFEmfUuJQdmvyZ+tbuZOC/262GB9LONhRRmxcVOwjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mOpxZTSb; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <be1a8882-fb43-4038-a500-01c3e1a6d577@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755225682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=waVzgAtOi12GgE5yS/99lkSoGQsnDE3UwmJZtXxGlEI=;
-	b=mOpxZTSbLfxNoXp5e2h13cpSn1859H5ulR05HsjEyQA5K+tfvtP5JtlCf5X2GxoErJr5sE
-	OUTgM7JscK5L2uLEBj+jv2FfpktYyHI0SihUTRvqrkjh/S25sfz8qOj+AXqJiqAgD/FM21
-	bn0apTMTP65b6yIoSuCGHjV6S3jkVI8=
-Date: Fri, 15 Aug 2025 10:41:16 +0800
+	s=arc-20240116; t=1755225733; c=relaxed/simple;
+	bh=8Jnwog2oz4VwDiCj8F3rlocE1pPuSsttCobur+qqLvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g/id2Ttukf0XnyyvQs7S7LZb5dyCQakSogTx1PAg92CyW6alzvoeYOy2Lj7gEiSUrvPvv9/MbIvoKC7ab4KOcRP2FGaYvVyRMYOLIVlK8PsCTSy9oo7hjqGqa4VWD+PEARXRha2BeKX8AuU7mu8UaubC+zNOSeSwYLylvuodHs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RxjyzX1G; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57F2g5SR2436546;
+	Thu, 14 Aug 2025 21:42:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755225725;
+	bh=wUO/5xkUeyV8DJVK1z5fhVBOB3vtOs7Z91loZr+p2WE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RxjyzX1GBZYGYFGlpvl9RDJrEnOgEmnDtuElW+1H5grwk9I0peQVpgi+fRRHOGx5r
+	 vgRCEnVSw/G5Ner1+Sm1nADbBxmq5D3T3S4axIUu5yqVGpsWWeMbQsZ7EnBoHdRR58
+	 6gbmQqooLwbJeLUXu2CGi5kwvU6Rlr6PuuzQsYuE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57F2g5aH2279690
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 21:42:05 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 21:42:05 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 21:42:04 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57F2fxG9357354;
+	Thu, 14 Aug 2025 21:42:00 -0500
+Message-ID: <f49bf01b-6704-4a03-9b3d-7f7495e544e0@ti.com>
+Date: Fri, 15 Aug 2025 08:11:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm/page_alloc: simplify lowmem_reserve max calculation
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
- Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250815023500.36893-1-ye.liu@linux.dev>
- <E5434A0E-3125-48C7-BD25-185CDA4D9FAC@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/33] arm64: dts: ti: k3-j7*-ti-ipc-firmware: Switch MCU
+ R5F cluster to Split-mode
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250814223839.3256046-1-b-padhi@ti.com>
+ <20250814223839.3256046-34-b-padhi@ti.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ye Liu <ye.liu@linux.dev>
-In-Reply-To: <E5434A0E-3125-48C7-BD25-185CDA4D9FAC@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250814223839.3256046-34-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
+On 8/15/2025 4:08 AM, Beleswar Padhi wrote:
+> Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
+> R5F cluster in the MCU domain which is configured for LockStep mode at
+> the moment. The necessary support to use MCU R5F cluster in split mode
+> was added in the bootloader. And the TI IPC firmware for the split
+> processors is already available public.
 
-在 2025/8/15 10:36, Zi Yan 写道:
-> On 14 Aug 2025, at 22:34, Ye Liu wrote:
-> 
->> From: Ye Liu <liuye@kylinos.cn>
->>
->> Use max() to find the maximum lowmem_reserve value and min_t() to
->> cap it to managed_pages in calculate_totalreserve_pages(), instead
->> of open-coding the comparisons. No functional change.
->>
->> Signed-off-by: Ye Liu <liuye@kylinos.cn>
->> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->> Acked-by: Zi Yan <ziy@nvidia.com>
->>
->> Changes in v2:
->> - Drop unnecessary braces
->> - Replace "if (max > managed_pages)" with min_t()
->> - Link to v1:https://lore.kernel.org/all/20250814090053.22241-1-ye.liu@linux.dev/
->> ---
->>  mm/page_alloc.c | 9 +++------
->>  1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 64872214bc7d..2617fd2f4b73 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -6235,16 +6235,13 @@ static void calculate_totalreserve_pages(void)
->>  			unsigned long managed_pages = zone_managed_pages(zone);
->>
->>  			/* Find valid and maximum lowmem_reserve in the zone */
->> -			for (j = i; j < MAX_NR_ZONES; j++) {
->> -				if (zone->lowmem_reserve[j] > max)
->> -					max = zone->lowmem_reserve[j];
->> -			}
->> +			for (j = i; j < MAX_NR_ZONES; j++)
->> +				max = max(max, zone->lowmem_reserve[j]);
->>
->>  			/* we treat the high watermark as reserved pages. */
->>  			max += high_wmark_pages(zone);
->>
->> -			if (max > managed_pages)
->> -				max = managed_pages;
->> +			min_t(unsigned long, max, managed_pages);
-> 
-> Should be
-> 
-> max = min_t(unsigned long, max, managed_pages);
-> 
-> ;)
+It will be better to mention sha id of bootloader with links, may be 
+below tear-line
 
-Haha I forgot to git add after I modified it ;)
 
-> 
->>
->>  			pgdat->totalreserve_pages += max;
->>
->> -- 
->> 2.43.0
-> 
-> 
-> Best Regards,
-> Yan, Zi
+> Therefore, Switch this R5F cluster to Split mode by default in all the
+> boards using TI IPC Firmware config (k3-j7*-ti-ipc-firmware). This
+> gives out an extra general purpose R5F core free to run any applications
+> as required. Lockstep mode remains default in the SoC level dtsi, so
+> downstream board dts which do not use TI IPC Firmware config should not
+> be impacted by this switch.
+>
+> Users who prefer to use the fault-tolerant lockstep mode with TI IPC
+> firmware config, can do that by setting `ti,cluster-mode` property to 1.
 
--- 
-Thanks,
-Ye Liu
+IMO,  you need to change boot-loader as well for this,
+
+
+>
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi             | 1 +
+>   arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi             | 1 +
+>   arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi            | 1 +
+>   .../boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi     | 1 +
+>   4 files changed, 4 insertions(+)
+> [..]
 
 
