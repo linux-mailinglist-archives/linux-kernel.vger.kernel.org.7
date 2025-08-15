@@ -1,170 +1,166 @@
-Return-Path: <linux-kernel+bounces-769781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9093B273A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307F0B2735F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378C11CE1892
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE4268581A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABDB224F3;
-	Fri, 15 Aug 2025 00:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A2F9C0;
+	Fri, 15 Aug 2025 00:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="EaBfpehO"
-Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O00/ThVO"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D51B960
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CE95661
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217030; cv=none; b=ByX6UXnnRAg38tTs0WvtJKbYezUJyfwPdkG1dyPeWW750ileT4GbRlkIP51v7kHe96djhQnt7DwNPOOW3jriA/uFRlbLvZ/RaO4CP6OMEynk06PhAjZRbnTSx1ItxE9i+lWP5WvMjQGZ0XGxPaxxB03woX4gpTO/OUBUKotkpqs=
+	t=1755216734; cv=none; b=W62eZEL9V4x6AxrnHvzvCaIpF8WwZUVKvzT7jBpWx1/CEh7LCw4pb9KA5f2Ye9srCKdEb0wlugDqqaQQhSk/eRRUklNu9FxFxXyY0mgvwph8ikGSIOFC9X5Mb5R4yjcahtPCuCg9w/+H4UiN2DTZKQhq1RHsgCm+vD2vWtXwyww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217030; c=relaxed/simple;
-	bh=M7/awrwFW0+lfKMbyVgOnxo2z+jj8zWoxElZ250hLBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tthmgjdlszbpBfjHi9cOO9sczwCRx9JINz4ri3Mf0l9bWmKaNR2quxbBxyVOxdLodzxc0craLDXdWeTv6d3YjUJXiLkHRB0Ku8E1D5CZ6I8daHHimMu6O59xOxQpa+w5ykaDIruF8Z6DR5kXofY3Nn5Iv+fx+4LD+/lzw49oRsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=EaBfpehO; arc=none smtp.client-ip=61.135.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755217022;
-	bh=fDqRyFA+mjlN2QT1Fq9xh052KYDrnE6/QdvHVjXFdsg=;
-	h=From:Subject:Date:Message-ID;
-	b=EaBfpehO+1zlm7YJwztOIchQAZtL1NeIiAw715OCpq9hN72Sn7s/KXnV4JdYSMfdH
-	 OcJLdevk5GdEkwz3Xt4AnYW+HQtLeI/kHJvmgGh91NhOnBTxW15hJRfA+A1KxQkdVT
-	 2lhaFIV3+wSN2bPjJSTwRsbh7QKoxNG5Yh4hz3js=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 689E7B3300004D9A; Fri, 15 Aug 2025 08:11:34 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1152966816373
-X-SMAIL-UIID: B585CA0F583C4A35B1986E2EFF5354D0-20250815-081134-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
-Cc: edumazet@google.com,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nfc?] [net?] WARNING in nfc_rfkill_set_block
-Date: Fri, 15 Aug 2025 08:11:21 +0800
-Message-ID: <20250815001123.4558-1-hdanton@sina.com>
-In-Reply-To: <689e6bba.050a0220.e29e5.0003.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755216734; c=relaxed/simple;
+	bh=PSbWRkWDWAXRqvMTOsM61pdFwGMhyKjB571cV/kv8gk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cuzlMvLwLrasNCpOfjDtCJIlnMtES5ZJ6HRJ4O24wHfQQ/joCB5B7B5iRUoIuIesSiiHd/BWwWWftgo+Ug448vdMVCMsjYTCv4NinGaqTYmD8xdnW/l7Z93rFhEaqExQeBOuLRrcpEZgpZkJC80PT+spC5gouQJncRx/fd5/vw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O00/ThVO; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323267b6c8eso2956379a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755216732; x=1755821532; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ok+I0st58RMtMAstkKTeaepbV94MPcGrW0RKMyU13Ko=;
+        b=O00/ThVO29qy41qNtO0xAnntDSKFIovVaDrG+hIL7fQ0yGVrWRf39emeqSDmjDrvL7
+         rDyLipV0H1karhxEzWlQ/gZEQpXjixfC4jQFsnWXF4ex1gtABnxrXt6iquhGOOaNr7w9
+         7pCtk+DcQZiQsth8vezxYYtQ+LasX7s9o/PRaUVYKK6DOg2Csd3V5p12REpHY4zKytg5
+         T0Sl/nOr4ds+LEW+zsz6JRgicFgIGW4o1ZAnzy4eNZ+cnL4/xR7MkZMNBDEPgBMV9RwS
+         FlY1zn5y6DOT1VIkvHGqZaXmu7VvjCdgYXy3EteDCLWX8sFJAZ/VAnr4jj1vKNRUsEn5
+         iYZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755216732; x=1755821532;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ok+I0st58RMtMAstkKTeaepbV94MPcGrW0RKMyU13Ko=;
+        b=apdPCIrEzpeJR6GSBWtJt6GcUMwmPM59+0dlAyGWCRYAn1y/qCR5ISIf51MID1HJpZ
+         OJlGBSiI0jvs7Zm4N3WjkglnvZM+bB/quVgehaPbLIN7PA4iYCIFhDgjnzW5CeJi2Ts/
+         EBS2gf//DtEk4UuZyWhzGd2fO5H23tXnPW5h4E+NGw34yMjgBYCsUHg1xS/eO5mTLY12
+         bb+qIMr3sUo70H3rAGSgdH+jdpi4rOLTqiFt47MYlsUk87AsT6qqYnLSGW6ceyqcWjW7
+         HDsniXKYyU/UA/2SxrnKZUWFICRiiPcDa/qAR4rB3Mc/TEwINPeN0MdTak8hGBAlMwXT
+         l0gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOCJjq+UlZy8SFv1v7qk1B/ewEo9RMHPCF2+4IR/uu4OUfrxYJWiN0E1BmHI9J48mJ4Z5ppfJbhnraJuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygRAVxBSm+JoIqq8klgv9ky6ofKuPWmIm83+5ObAGlyr3sIMBo
+	11cUKzrUy8dDhcqV/07l97vA9pOCkP9fPSaAOI/hk1SIaMFB3nxWDYr01q5eI0QiGr3JyXj26ou
+	LtTXUYg==
+X-Google-Smtp-Source: AGHT+IEovMyoSfSioeHKNfE3Jd4ijY+9Qv2Y1NAtxOWL1a07qluKCMa2m5T3612U71zudeIGN424nmHt4PE=
+X-Received: from pjbta5.prod.google.com ([2002:a17:90b:4ec5:b0:2e0:915d:d594])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2683:b0:31f:59d1:85be
+ with SMTP id 98e67ed59e1d1-3234215846bmr274941a91.24.1755216732615; Thu, 14
+ Aug 2025 17:12:12 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 14 Aug 2025 17:11:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250815001205.2370711-1-seanjc@google.com>
+Subject: [PATCH 6.1.y 00/21] KVM: x86: Backports for 6.1.y
+From: Sean Christopherson <seanjc@google.com>
+To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sasha Levin <sashal@kernel.org>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 14 Aug 2025 16:05:30 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c80af0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
-> dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/46150b6d2447/disk-8f5ae30d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/1c604b2b2258/vmlinux-8f5ae30d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9c542f0972de/bzImage-8f5ae30d.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> rtmutex deadlock detected
+This is a collection of backports for patches that were Cc'd to stable,
+but failed to apply, along with their dependencies.
 
-Even given the lockdep_set_novalidate_class() in device_initialize(),
-rtmutex can detect deadlock (the ABBA one [1]?), weird.
+Note, Sasha already posted[1][2] these (and I acked them):
 
-[1] Subject: [PATCH] net/nfc: Fix A-B/B-A deadlock between nfc_unregister_device and rfkill_fop_write
-https://lore.kernel.org/lkml/20250814173142.632749-2-ysk@kzalloc.com/
+  KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported
+  KVM: x86/pmu: Gate all "unimplemented MSR" prints on report_ignored_msrs
+  KVM: VMX: Extract checking of guest's DEBUGCTL into helper
+  KVM: nVMX: Check vmcs12->guest_ia32_debugctl on nested VM-Enter
+  KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter APIs
 
-> WARNING: CPU: 1 PID: 9725 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 9725 Comm: syz.8.874 Tainted: G        W           6.17.0-rc1-syzkaller #0 PREEMPT_{RT,(full)} 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
-> Code: 90 90 41 57 41 56 41 55 41 54 53 83 ff dd 0f 85 8c 00 00 00 48 89 f7 e8 c6 2c 01 00 90 48 c7 c7 a0 08 0b 8b e8 79 08 8b f6 90 <0f> 0b 90 90 4c 8d 3d 00 00 00 00 65 48 8b 1c 25 08 b0 f5 91 4c 8d
-> RSP: 0018:ffffc900043a7950 EFLAGS: 00010246
-> RAX: 89021558f1df5a00 RBX: ffffc900043a79e0 RCX: ffff888025bb3b80
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc900043a7b00 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: ffffed1017124863 R12: 1ffff92000874f38
-> R13: ffffffff8af82119 R14: ffff888036e55098 R15: dffffc0000000000
-> FS:  00007fec70d5e6c0(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fce013b0000 CR3: 000000003ebbc000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
->  __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
->  rt_mutex_slowlock+0x692/0x6e0 kernel/locking/rtmutex.c:1800
->  __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
->  __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
->  mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
->  device_lock include/linux/device.h:911 [inline]
->  nfc_dev_down net/nfc/core.c:143 [inline]
->  nfc_rfkill_set_block+0x50/0x2e0 net/nfc/core.c:179
->  rfkill_set_block+0x1e5/0x450 net/rfkill/core.c:346
->  rfkill_fop_write+0x44e/0x580 net/rfkill/core.c:1301
->  vfs_write+0x287/0xb40 fs/read_write.c:684
->  ksys_write+0x14b/0x260 fs/read_write.c:738
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fec72afebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fec70d5e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007fec72d25fa0 RCX: 00007fec72afebe9
-> RDX: 0000000000000008 RSI: 0000200000000080 RDI: 0000000000000003
-> RBP: 00007fec72b81e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007fec72d26038 R14: 00007fec72d25fa0 R15: 00007ffe1f71d718
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
+I'm including them here to hopefully make life easier for y'all, and because
+the order they are presented here is the preferred ordering, i.e. should be
+the same ordering as the original upstream patches.
+
+But, if you end up grabbing Sasha's patches first, it's not a big deal as the
+only true dependencies is that the DEBUGCTL.RTM_DEBUG patch needs to land
+before "Check vmcs12->guest_ia32_debugctl on nested VM-Enter".
+
+Many of the patches to get to the last patch (the DEBUGCTLMSR_FREEZE_IN_SMM
+fix) are dependencies that arguably shouldn't be backported to LTS kernels.
+I opted to do the backports because none of the patches are scary (if it was
+1-3 dependency patches instead of 8 I wouldn't hesitate), and there's a decent
+chance they'll be dependencies for future fixes.
+
+[1] https://lore.kernel.org/all/20250813184918.2071296-1-sashal@kernel.org
+[2] https://lore.kernel.org/all/20250814132434.2096873-1-sashal@kernel.org
+
+Chao Gao (1):
+  KVM: nVMX: Defer SVI update to vmcs01 on EOI when L2 is active w/o VID
+
+Maxim Levitsky (3):
+  KVM: nVMX: Check vmcs12->guest_ia32_debugctl on nested VM-Enter
+  KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter APIs
+  KVM: VMX: Preserve host's DEBUGCTLMSR_FREEZE_IN_SMM while running the
+    guest
+
+Sean Christopherson (17):
+  KVM: SVM: Set RFLAGS.IF=1 in C code, to get VMRUN out of the STI
+    shadow
+  KVM: x86: Re-split x2APIC ICR into ICR+ICR2 for AMD (x2AVIC)
+  KVM: x86: Plumb in the vCPU to kvm_x86_ops.hwapic_isr_update()
+  KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
+  KVM: x86: Snapshot the host's DEBUGCTL in common x86
+  KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs
+  KVM: x86/pmu: Gate all "unimplemented MSR" prints on
+    report_ignored_msrs
+  KVM: x86: Plumb "force_immediate_exit" into kvm_entry() tracepoint
+  KVM: VMX: Re-enter guest in fastpath for "spurious" preemption timer
+    exits
+  KVM: VMX: Handle forced exit due to preemption timer in fastpath
+  KVM: x86: Move handling of is_guest_mode() into fastpath exit handlers
+  KVM: VMX: Handle KVM-induced preemption timer exits in fastpath for L2
+  KVM: x86: Fully defer to vendor code to decide how to force immediate
+    exit
+  KVM: x86: Convert vcpu_run()'s immediate exit param into a generic
+    bitmap
+  KVM: x86: Drop kvm_x86_ops.set_dr6() in favor of a new KVM_RUN flag
+  KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported
+  KVM: VMX: Extract checking of guest's DEBUGCTL into helper
+
+ arch/x86/include/asm/kvm-x86-ops.h |   2 -
+ arch/x86/include/asm/kvm_host.h    |  24 +++--
+ arch/x86/include/asm/msr-index.h   |   1 +
+ arch/x86/kvm/hyperv.c              |  10 +-
+ arch/x86/kvm/lapic.c               |  61 ++++++++---
+ arch/x86/kvm/lapic.h               |   1 +
+ arch/x86/kvm/svm/svm.c             |  49 ++++++---
+ arch/x86/kvm/svm/vmenter.S         |   9 +-
+ arch/x86/kvm/trace.h               |   9 +-
+ arch/x86/kvm/vmx/nested.c          |  26 ++++-
+ arch/x86/kvm/vmx/pmu_intel.c       |   8 +-
+ arch/x86/kvm/vmx/vmx.c             | 168 ++++++++++++++++++-----------
+ arch/x86/kvm/vmx/vmx.h             |  31 +++++-
+ arch/x86/kvm/x86.c                 |  65 ++++++-----
+ arch/x86/kvm/x86.h                 |  12 +++
+ 15 files changed, 322 insertions(+), 154 deletions(-)
+
+
+base-commit: 3594f306da129190de25938b823f353ef7f9e322
+-- 
+2.51.0.rc1.163.g2494970778-goog
+
 
