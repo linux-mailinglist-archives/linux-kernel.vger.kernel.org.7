@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-771251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF245B284B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9C0B284B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E895517E773
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD374600C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82EF304BD0;
-	Fri, 15 Aug 2025 17:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1413112B6;
+	Fri, 15 Aug 2025 17:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j1H1DZO6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B05304BA8;
-	Fri, 15 Aug 2025 17:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtdF0KCS"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E83E304BBC;
+	Fri, 15 Aug 2025 17:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755277747; cv=none; b=JEu/tUfxbmpJRGeqSFhYx+O5b+w5yFoXrzNhKTSRu/trTkZ9w+0hV0oMwZ7HFBInIdGpM/qQMJ+8lRwz3ivO4Mt5YbDx3fQWap8rajDthIRRRZxkuwK1qqAPkIR10LtgMdN1CoxlJ9czEKwV4IzGKGRMab6+7WkHim0xIx1xUmA=
+	t=1755277756; cv=none; b=aR9X4CkPmLtmIB49EYhVhm0DtGTOVSGvKU/fpX7clK3TPkC9qCNpLspbJiBmvW2JYpvBLOatWYhCN6iA8Jd1rFT+LFT0d6RxZdyYHDxLjBgw6LbttRMTdghTtJoU2z1Mbp1mI4jTw0ihbG3/mEX9f77VPus7doYeSl6y/tavw8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755277747; c=relaxed/simple;
-	bh=boEF1KxrJYXx9rWPa1UaosMdgC0AncPnn9B8wz5UXW0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pCalZpzIwFpDZnIraupQ7OMSEC/57+ae4AanLhyhyzNCC2nQLz0yvdnq5O+NzuXqCNF3dgZL889+NGU33Nsedgq47+ASOF3kZSJC2Q+dd/p3qIcKtViFZ9YfHvjwnHs2GGOmx9A1VQTMJJ4Y9r9dRdyQOMhwnUFbBshMKBQr0aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j1H1DZO6; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=pJ
-	xDQfZ/ZCiKpMxGpv2ngGkeJfJGVY+hTDotS3/x6oE=; b=j1H1DZO67ev5AjQ4/p
-	Vcmifd+/n0nwt92vPmL5JcSEt92DcZenkfikaZlL/5W9/a5YV7ZJYddUT/YCYFGu
-	dC5H74efgXJtsfn99dEKm/+RPcb5N8iYv+ra6/G1F1bdcisUqBWgYgnBNfa+JL0O
-	ulz6ECZl4JdtL2fHhbfg78bfo=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgB3LYSJaZ9o8aVLAQ--.49724S2;
-	Sat, 16 Aug 2025 01:08:26 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: af_packet: Use hrtimer to do the retire operation
-Date: Sat, 16 Aug 2025 01:08:25 +0800
-Message-Id: <20250815170825.3585310-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755277756; c=relaxed/simple;
+	bh=i39aS+ObywOPyCHHVYemcnYSe1Eb0V7lSuSL0TimfzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WilDw0J3H/VfphN/VE/pHXs6IrddyzTvq+TlMTkwMpqvqgTsstlMqDa5vTPtCt6dPKaW5zROSxVH/kiojPyoWhKFpTAtp0yQuTfnRSH5TTQRFYrui75ffYEy/qqbY3oFiCRi7+Kto6MQ2Tie20fwUEcH2qUmkh4wmp7MxKkScis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtdF0KCS; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9dc5641f9so363733f8f.1;
+        Fri, 15 Aug 2025 10:09:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755277753; x=1755882553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S9f02u3GqmQB3JIkPAoqZ4J3n/9mgpEYVfExN7OiRrE=;
+        b=YtdF0KCSkIbtJGzF6seIz0lQaZL/Ru3P1ElLC6mdBqd4aMb2wzHnmB7seYwVUEOUB7
+         GzT/4d31LqEPQQHF5umJX+CtH3XyKu5nZqHxYNbGz14VSvHHkKPolA51FW9sMF98oC9c
+         ugry1z1PZtz7Di3G6VgeZCAkZoZQpEUA/oR5uiTbSbUhHdXEOqB3a44jW7ZatlCgHEo/
+         EtvNF4wfEeVob4OnWcssEp4b0PziWj2pd9r6+RlagyTrq0yvKOH/kzX8tO1/QfmeG+8k
+         b2kqm3wdBqTsK7wWwi2kNqwf11eDVV2MIgeac/3RY5YC6bVQZ+kQKSbrwhJ6Cwz+P1u5
+         P6dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755277753; x=1755882553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S9f02u3GqmQB3JIkPAoqZ4J3n/9mgpEYVfExN7OiRrE=;
+        b=ueeoq6ZR64UhuB/HgZD4/F7Hj6uWrCfaBN8i8vPfwRJUEelZ9mztbJ6tcMnz6fvfGh
+         1iDmD9b0GC2bkmqP+FQwGrLiz7CtJ39/DCyTwij7yJHCykXiDe7UfP6Reb18WrtvUkXk
+         D5NY9QiU6YCkghuG6fAKjfyQlDWiiQSv/zIUrKCqxlgN/dQMtUhhZ/2edsZs/DsUYiI5
+         YVH3zAmxxWTZDFNo7ddsSxT1G8fV09kldCT0D9dQN9kkR25NRZ5ywBqIuwxyj7ydyEYv
+         vPMzDf3cEAVPDu0B6yLi7rct1d1DAXiGnh8cYJduWs/Mj7R2sT/Oall7QFkpbyPORpIE
+         Ac3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWlgeib45LgQq2e6S18iGAi4zvW4iEIFbJlziWYyKA9iyTyFHOhyI3XdkNsxZSuairXsS6zscIbNSQg4xE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeSp5dav1ssbDRBF1Ty5VSG9Q1PRNFXhr3LQ16u6U1xDocZWgK
+	UVTa39FVxXLzGzF+iKGaOBWZ3/DfAB/Cfj0kZ3/p1XNzii/5bmTMjxIS
+X-Gm-Gg: ASbGncuChVUKgDnRprO/oCPxnaiJM/T4iAhX93UgYQtMwR3EYXL1ZZ5MJIFw0tgN+9N
+	g52+/9ME5scS0ujFuK9KMqBTDj7hCPLySJ2J6jXUe+pEI12rDOpLImechtPkeVoFpf2rAxXZ9o0
+	Aj8X2wF0jgbwEi3pvxwjWlz5j/DZj65FlZ1xuj48srjr9cJn99p2rR6MSQhCZgNmQxDF3RNribd
+	rtqysYVc0jPew+9rZzAqzh638zgaC2DjlHyhNhRl6PNyrqzvhHzeDAbmRoEa9s97D4NtIGPTRd4
+	AHX9uQzR0yXef3ZOh36RbSHPLaSluyPxrMTbSdvdBjEUR2gxyzd9tDn4iCPM3KbycJAkZTvw/Kf
+	LToFm2qXfqy03onVz8GQkQfsyaPqmyzL0yV/1eTdG6Vns3Oi+K+n2M7ZUwrRGBetGAQNpU8vZfE
+	sf9l8zvg==
+X-Google-Smtp-Source: AGHT+IH2T8ITBmcU5I7J7F7gTLljdMAJMBGBNIMMZJDwQwmChaogZZpltoGJRKW+LVoQwndbI+PSsg==
+X-Received: by 2002:a05:6000:3113:b0:3b7:87be:d9fa with SMTP id ffacd0b85a97d-3bb63ac9bd3mr942743f8f.0.1755277752496;
+        Fri, 15 Aug 2025 10:09:12 -0700 (PDT)
+Received: from localhost.localdomain ([154.182.175.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6863fc29sm2760083f8f.66.2025.08.15.10.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 10:09:12 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	andy@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH] staging: media: atomisp: Add lock asserts for mutex protection
+Date: Fri, 15 Aug 2025 20:09:01 +0300
+Message-Id: <20250815170901.32105-1-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,127 +96,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgB3LYSJaZ9o8aVLAQ--.49724S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZw4fCr1ruryUuFWkCF4Uurg_yoWrKw1DpF
-	W5tF9rGwn7XF4jga1xZr4kZFyruw4DAr98Grs3W343A3sxJryrta929FZ0qFWfGF4qkrsF
-	vF4xZrZ8Aw1DJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK-erUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRw6qCmifZlAxoAAAs5
 
-On Fri, 2025-08-15 at 18:12 +0800, Willem wrote:
+Add lockdep_assert_held(&isp->mutex) to critical functions accessing
+shared device state. This enforces proper locking and detects violations.
 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+Suggested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+---
+ .../staging/media/atomisp/pci/atomisp_cmd.c   |  3 ++
+ .../media/atomisp/pci/atomisp_compat_css20.c  | 31 +++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-> Please clearly label PATCH net-next and include a changelog and link
-> to previous versions.
-> 
-> See also other recently sent patches and
-> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
-> https://docs.kernel.org/process/submitting-patches.html
-> 
-> > ---
-
-Dear Willem,
-
-I will add the details in PATCH v3.
-
-
-> > -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-> 
-> Since the hrtimer API takes ktime, and there is no other user for
-> retire_blk_tov, remove that too and instead have interval_ktime.
-> 
-> >  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
-
-We cannot simply remove the retire_blk_tov field, because in net/packet/diag.c 
-retire_blk_tov is being used in function pdiag_put_ring. Since there are still
-people using it, I personally prefer not to remove this variable for now. If
-you think it is still necessary, I can remove it later and adjust the logic in
-diag.c accordingly, using ktime_to_ms to convert the ktime_t format value back
-to the u32 type needed in the pdiag_put_ring function.
-
-
-> > +	hrtimer_set_expires(&pkc->retire_blk_timer,
-> > +			    ktime_add(ktime_get(), ms_to_ktime(pkc->retire_blk_tov)));
-> 
-> More common for HRTIMER_RESTART timers is hrtimer_forward_now.
-> 
-> >  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
-
-As I mentioned in my previous response, we cannot use hrtimer_forward_now here
-because the function _prb_refresh_rx_retire_blk_timer can be called not only
-when the retire timer expires, but also when the kernel logic for receiving
-network packets detects that a network packet has filled up a block and calls
-prb_open_block to use the next block. This can lead to a WARN_ON being triggered
-in hrtimer_forward_now when it checks if the timer has already been enqueued
-(WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED)).
-I encountered this issue when I initially used hrtimer_forward_now. This is the
-reason why the existing logic for the regular timer uses mod_timer instead of
-add_timer, as mod_timer is designed to handle such scenarios. A relevant comment
-in the mod_timer implementation states:
- * Note that if there are multiple unserialized concurrent users of the
- * same timer, then mod_timer() is the only safe way to modify the timeout,
- * since add_timer() cannot modify an already running timer.
-
-
-> > +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
-> >  {
-> >  	struct packet_sock *po =
-> >  		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
-> > @@ -790,6 +790,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-> > 
-> >  out:
-> >  	spin_unlock(&po->sk.sk_receive_queue.lock);
-> > +	return HRTIMER_RESTART;
-> 
-> This always restart the timer. But that is not the current behavior.
-> Per prb_retire_rx_blk_timer_expired:
-> 
->    * 1) We refresh the timer only when we open a block.
-> 
-> Look at the five different paths that can reach label out.
-> 
-> In particular, if the block is retired in this timer, and no new block
-> is available to be opened, no timer should be armed.
-> 
-> >  }
-
-I have sorted out the logic in this area; please take a look and see if it's correct.
-
-We are discussing the conditions under which we should return HRTIMER_NORESTART. We only
-need to focus on the three 'goto out' statements in this function (because if it don't
-call 'goto out', it will definitely not skip the 'refresh_timer:' label, and if it don't
-skip the refresh_timer label, it will definitely execute the _prb_refresh_rx_retire_blk_timer
-function, which expects to return HRTIMER_RESTART):
-Case 1:
-  if (unlikely(pkc->delete_blk_timer))
-    goto out;
-  This case indicates that the hrtimer has already been stopped. In this situation, it 
-  should return HRTIMER_NORESTART, and I will make this change in PATCH v3.
-Case 2:
-  if (!prb_dispatch_next_block(pkc, po))
-    goto refresh_timer;
-  else
-    goto out;
-  In this case, the execution will only reach the out label if prb_dispatch_next_block
-  returns a non-zero value. If prb_dispatch_next_block returns a non-zero value, it must
-  have executed prb_open_block, which in turn will call _prb_refresh_rx_retire_blk_timer
-  to set the new timeout for the retire timer. Therefore, in this scenario, the hrtimer
-  should return HRTIMER_RESTART.
-Case 3:
-  } else {
-     ...
-     prb_open_block(pkc, pbd);
-     goto out;
-  }
-  This goto out clearly follows a call to prb_open_block, and as mentioned in the case 2,
-  it will set a new timeout and expects the hrtimer to restart.
-Based on the analysis above, I only need to modify the situation described in case 1 in
-PATCH v3 to return HRTIMER_NORESTART. If there are any inaccuracies, please provide
-further guidance.
-
-
-Thanks
-Xin Zhao
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
+index 3a4eb4f6d3be..48ca33e1c92d 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
+@@ -3794,6 +3794,7 @@ int atomisp_try_fmt(struct atomisp_device *isp, struct v4l2_pix_format *f,
+ 		    const struct atomisp_format_bridge **fmt_ret,
+ 		    const struct atomisp_format_bridge **snr_fmt_ret)
+ {
++	lockdep_assert_held(&isp->mutex);
+ 	const struct atomisp_format_bridge *fmt, *snr_fmt;
+ 	struct atomisp_sub_device *asd = &isp->asd;
+ 	struct v4l2_mbus_framefmt ffmt = { };
+@@ -4324,6 +4325,8 @@ static int atomisp_set_fmt_to_snr(struct video_device *vdev, const struct v4l2_p
+ int atomisp_set_fmt(struct video_device *vdev, struct v4l2_format *f)
+ {
+ 	struct atomisp_device *isp = video_get_drvdata(vdev);
++	lockdep_assert_held(&isp->mutex);
++
+ 	struct atomisp_video_pipe *pipe = atomisp_to_video_pipe(vdev);
+ 	struct atomisp_sub_device *asd = pipe->asd;
+ 	const struct atomisp_format_bridge *format_bridge;
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+index be5f37f4a6fd..915c4c9ea9e2 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+@@ -1447,6 +1447,9 @@ int atomisp_css_input_set_resolution(struct atomisp_sub_device *asd,
+ 				     enum atomisp_input_stream_id stream_id,
+ 				     struct v4l2_mbus_framefmt *ffmt)
+ {
++	struct aromisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	struct ia_css_stream_config *s_config =
+ 		    &asd->stream_env[stream_id].stream_config;
+ 
+@@ -1519,6 +1522,10 @@ int atomisp_css_set_default_isys_config(struct atomisp_sub_device *asd,
+ 					enum atomisp_input_stream_id stream_id,
+ 					struct v4l2_mbus_framefmt *ffmt)
+ {
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
++
+ 	int i;
+ 	struct ia_css_stream_config *s_config =
+ 		    &asd->stream_env[stream_id].stream_config;
+@@ -1621,6 +1628,9 @@ void atomisp_css_input_set_two_pixels_per_clock(
+ 
+ void atomisp_css_enable_dz(struct atomisp_sub_device *asd, bool enable)
+ {
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	int i;
+ 
+ 	for (i = 0; i < IA_CSS_PIPE_ID_NUM; i++)
+@@ -1631,6 +1641,9 @@ void atomisp_css_enable_dz(struct atomisp_sub_device *asd, bool enable)
+ void atomisp_css_capture_set_mode(struct atomisp_sub_device *asd,
+ 				  enum ia_css_capture_mode mode)
+ {
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	struct atomisp_stream_env *stream_env =
+ 		    &asd->stream_env[ATOMISP_INPUT_STREAM_GENERAL];
+ 
+@@ -1646,6 +1659,9 @@ void atomisp_css_capture_set_mode(struct atomisp_sub_device *asd,
+ void atomisp_css_input_set_mode(struct atomisp_sub_device *asd,
+ 				enum ia_css_input_mode mode)
+ {
++	struct aromisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	unsigned int size_mem_words;
+ 	int i;
+ 
+@@ -1690,6 +1706,10 @@ void atomisp_css_input_set_mode(struct atomisp_sub_device *asd,
+ void atomisp_css_capture_enable_online(struct atomisp_sub_device *asd,
+ 				       unsigned short stream_index, bool enable)
+ {
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
++
+ 	struct atomisp_stream_env *stream_env =
+ 		    &asd->stream_env[stream_index];
+ 
+@@ -1726,6 +1746,10 @@ int atomisp_css_input_configure_port(
+ {
+ 	int i;
+ 	struct atomisp_stream_env *stream_env;
++
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	/*
+ 	 * Calculate rx_count as follows:
+ 	 * Input: mipi_freq                 : CSI-2 bus frequency in Hz
+@@ -1760,6 +1784,10 @@ int atomisp_css_input_configure_port(
+ 
+ void atomisp_css_stop(struct atomisp_sub_device *asd, bool in_reset)
+ {
++	struct atomisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
++
+ 	unsigned long irqflags;
+ 	unsigned int i;
+ 
+@@ -1815,6 +1843,9 @@ void atomisp_css_continuous_set_num_raw_frames(
+      struct atomisp_sub_device *asd,
+      int num_frames)
+ {
++	struct aromisp_device *isp = asd->isp;
++
++	lockdep_assert_held(&isp->mutex);
+ 	if (asd->enable_raw_buffer_lock->val) {
+ 		asd->stream_env[ATOMISP_INPUT_STREAM_GENERAL]
+ 		.stream_config.init_num_cont_raw_buf =
+-- 
+2.25.1
 
 
