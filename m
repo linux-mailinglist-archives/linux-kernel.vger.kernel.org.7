@@ -1,399 +1,179 @@
-Return-Path: <linux-kernel+bounces-770107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C42B276CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:32:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CF1B276D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D194E5FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:32:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44837B9ED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AF82139B5;
-	Fri, 15 Aug 2025 03:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oVNpZtZF"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439CA20E31B;
+	Fri, 15 Aug 2025 03:32:47 +0000 (UTC)
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022101.outbound.protection.outlook.com [52.101.126.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44E313AA2D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755228720; cv=none; b=ijEptPd/WkSbMzJmcByZY5IdyK/7KOmq0LWb8sCLP87jvOTRvPhLOxZo+nLUZqJSZCAlQql4b2ICTM7pB20/6VFAG/enXdki+adpKKgEbUMpZmef6yKKFCC4hCgykXFCZkTNeInuToGMxNnNgZGnfkiKFSIMi0du6BnRhKgglMo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755228720; c=relaxed/simple;
-	bh=t4sCd6SU0XHoj2dL0cnUUxmsOLyiXKpxC6ZEETxGIUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uUivhZl6uz8a62ifI46hsdCwIoQV0M0ylc4j+eXW5AhapWV8X5JCT/aqlNPQ9pibQzpODN1Sfc6oBjUTJQnxHKmcjNu35OvlavFc2Qp2gWLSLt1SVi3ywXsDI53R6CasbaSqXw7DkNVP72qYA9rVnTsAohOHgq7HtjjtWbXKR34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oVNpZtZF; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55ce521e3f4so1675948e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755228717; x=1755833517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tkOnmECKdIXpe7kvGy3HCvL3tY+gG4hSspl5RFat98s=;
-        b=oVNpZtZF/EgaGDgSYu2P6MOzvcY0hHSjVHRRqksQtHs7VN4mLr6SlkMMG74cyp8Ri3
-         040pktoCOFKayH6BZ3XjGADtzpiZLmrI6xyFq44GptWuY2qH1RGjwnmr6UScuAU+SMIe
-         7d6rK4emZtxLqq7rjubkKbyYwaWcnS8iEybsc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755228717; x=1755833517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tkOnmECKdIXpe7kvGy3HCvL3tY+gG4hSspl5RFat98s=;
-        b=ABH89w06vhIfZcR3AOnxdQA3US+fqensHp+LBQx+gAcYFN+KuRzy8+kZhZgysuZK4r
-         XibWRmdnPdDFa6MidxMeU7O49IA967Uc+CPbW7HB/ClKaJPg9UapECgCmzTLXUC6kjSW
-         Kpz9+Ncgce+5cWsUOojYLFy2Y4KT3lB4YN3JfnQKEzYuWMNhnxIB38NUWzC6UmrECNha
-         mGvCMgs6kih2NLJ0gPqfFdFKuuJRXk8R6wYjFGnIqL4Gbre2ek1AAZ9xG3qQmbnLhLSn
-         EPfA5LPX75KJMBPnnbZXVriyZyCS4pmzV4e+NhJFODBMhinl7ElzN1+ZtoCcAV8G5Kta
-         lFaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2mspwBgsIWeLJOmV7gfHRLuEToc6rJHPAvCDzcKtehLpvYMYWarI/nKa7weHIHMMDOJl+KkfzOWZqbeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ2JuE2MxB2F9q1bpZbYr2lBffS+rd4CyxJzT4Ql67dt5BAGGJ
-	pe7nLJT8fCiETmCg9ijnrRr0blAN0V4tD2bOxWAVczjG3YPDc2HBDMXIe6yenm5HAoa2tNeoswx
-	G4pZLUNGIw+u1QikqnM2zYuj1pcqvs0atqoWoOmfE
-X-Gm-Gg: ASbGncv2NqN9de04wJAzC5N6URox/OxFh+3eNW9PWG9KkkqN34P7QisOQV3ZgR7woBi
-	bmDUtkc+fe0RhbAVSvncjpvN4xUbjOv+koY3qIA4lLwQ3dFFpdU2NeR7sHybWHcDn57lV0Cy397
-	+fyYleLTLQe8RlmQS3c0jMIlm+Z2prtLzJq2HpzuTxOYQOOJoy86Fr4vMSSgzZ+UI3ZDb7wslU0
-	+ju0vBNdpwJ2HlogdZBB4xOBjsfhiIUEwx9gA==
-X-Google-Smtp-Source: AGHT+IFEkG7F2FPmykcTuHH9WIPtHmDR2L1zneT15//w/ex0g7ZbcY2+Wlc/9dIFVrAYjTi990SfzORTybrEMHJhZPA=
-X-Received: by 2002:a05:6512:23a7:b0:55b:8328:d2b6 with SMTP id
- 2adb3069b0e04-55ceeb7ba6amr145952e87.37.1755228717004; Thu, 14 Aug 2025
- 20:31:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7735D1311AC;
+	Fri, 15 Aug 2025 03:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.101
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755228766; cv=fail; b=rmkCVL4cYFYRecs01OytHZP+iaObfkoGLYPc/l7bSlsJoB/sCtaHV8fU2wMuQ4eHYn7yL9STVEkkMz2Ng/gPpzPpZrd3XL0L225bSArLXtA1spBPjmr53sMptbJ6nQZqIuHaoItVf+SvVtrnSLeyL1KRTJUpL4rQER+HM4X4EU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755228766; c=relaxed/simple;
+	bh=Q66HTFaMULyAbRbl33u03Xct/wAknZt6XG0HkItsTvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDpCFhE3cS0mTrBRpT+118mFUKkWz3hKp+BHY5+L3oofDM6zVhzJJN1qbSNVRmW7EXidAloTeePCl0D3ab7/vzdVkecf3ZGJpoAijRHAH5ZjwbF0GA+t+FOk14d7RDwn4G34+dAe/Lha2BTCtvm26xYfxzhY74bb+mCMQbk79+8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DxCqiViWgBYvKZFl8Ho8cncQd2ODtgGGNfMvZtvFW9kGXuoqJq+P2wjXwjMvLvVwuTNyo3iF/YNRLhs5Ffmm3Q0AoeU/HC9Px2QxGY1N3Bhh2vp/KS+W4zginNtO+OPwF9lxMEsmJ/d/IWk5HelbSQv+43h2MpclnAN9kPchst4N5QS7uUDevlBujzn4G/CPcEfpfE5wWAPZAQ3D6vr2upuE9SwXu7WD62+2HmiFaX1JG+cpU6jJLDEGfSTBbhd/Iqnloa6C3j8lAh1BHdxN+RnyTKawqE40rxrLr2Y9cXrXhi9XXnx4mtN51GV2JjUbr3fDJ6Zbi8/MT7KcFpIWFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UEw2TGSfoqpAKSdLNMhmi98zujzXhh9VhwbGbjDjzsM=;
+ b=uTDriMttQCzcBcc1gr1H8yKFd07Hly6iHFpn9eKuTtFSvdYo4NjdsQKWJA0pSsgx9CXy5NIFouAMZzinekN0sC8Z6tDlwY+np1sVLMyx+MjMx4qTRSVBrcw44H7QmUkphx3j0s5cE6ACCFgoHc0b59MAM8dWOIGu1dH6CRNcKpbUB6p2+CAOEp/Oa56X+IJde8yTJNtFop1Di3Ctmo1R9FBD3O7cExAJMTl6b9uVXZM9XmgOZIvvRVxdzZvSynaj32xB6U6rNMmFFAyFj8Y+M1fC9vACJnO/kxapcvSTcI/VEboRpaH5cgr47DqAeY3oAQ8HTAZpoJG79G0W8+5wgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG2PR02CA0085.apcprd02.prod.outlook.com (2603:1096:4:90::25) by
+ JH0PR06MB6938.apcprd06.prod.outlook.com (2603:1096:990:67::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.16; Fri, 15 Aug 2025 03:32:37 +0000
+Received: from SG2PEPF000B66CB.apcprd03.prod.outlook.com
+ (2603:1096:4:90:cafe::a4) by SG2PR02CA0085.outlook.office365.com
+ (2603:1096:4:90::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.18 via Frontend Transport; Fri,
+ 15 Aug 2025 03:32:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CB.mail.protection.outlook.com (10.167.240.24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Fri, 15 Aug 2025 03:32:36 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id D9B1F4115DE1;
+	Fri, 15 Aug 2025 11:32:34 +0800 (CST)
+Date: Fri, 15 Aug 2025 11:32:29 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: hans.zhang@cixtech.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, mani@kernel.org, robh@kernel.org,
+	kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mpillai@cadence.com, fugang.duan@cixtech.com,
+	guoyin.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 09/13] PCI: Add Cix Technology Vendor and Device ID
+Message-ID: <aJ6qTdA1f21SAr_l@nchen-desktop>
+References: <20250813042331.1258272-10-hans.zhang@cixtech.com>
+ <20250814222358.GA352330@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-6-laura.nao@collabora.com>
-In-Reply-To: <20250805135447.149231-6-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 15 Aug 2025 12:31:46 +0900
-X-Gm-Features: Ac12FXxT1q0ZEW1iDMIpjFwzWEmvHvJf-jGJRFBsvaXUJtX0wZXUQd-7lspgBCI
-Message-ID: <CAGXv+5GyKoTb3iQTuQPWEc5Ewa+kr4dJUET8sAFRZ7T5RyNzLQ@mail.gmail.com>
-Subject: Re: [PATCH v4 05/27] clk: mediatek: clk-mux: Add ops for mux gates
- with HW voter and FENC
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814222358.GA352330@bhelgaas>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CB:EE_|JH0PR06MB6938:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3e1a52d-5eae-4a01-daaa-08dddbac60ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QvZFBtobBAhvPNekrO+K9QOLe6DEv1f4wlCR1ukpSK01q+w/lPZmyd9Dx150?=
+ =?us-ascii?Q?P76MhoQnf+BjamwggtejHaaZqWbU8TZJhhfDKYFVA/SmLe5WDd0UMyJjU0ru?=
+ =?us-ascii?Q?jZEpKRu7ZkJH4C/d5ewqjTCaijJN4WfLpjrHiqe0ov1s7/7avPLUhYOJvj4W?=
+ =?us-ascii?Q?ZIHvzTW7U9SVUOc6RVnzIy9xdQUmjlgKbHauRSYsO20oHdarPXOzPyNb98DG?=
+ =?us-ascii?Q?NWc//Qil2h+MYtSdNwbw4/hJWXULi1aDCj6zZTn1m3JFq7hTaG23ll1pCX6C?=
+ =?us-ascii?Q?JgPFs+N8+aFirr31rsZ+rDrcRb5k/EBc2YDraSXQ17HJ+2DYxt7n57jZtcts?=
+ =?us-ascii?Q?jkyYivoMijpPwP9Gx9oXIpvhptz4IwzBk3nqC6y3u6c41WAfq2HJiWQJe9qY?=
+ =?us-ascii?Q?nRsrzS6FJ0IIxPsFWxOav+QH84LfCbD8ajzC22FIBvT/J5v42r8EwKcdo26J?=
+ =?us-ascii?Q?BDjsUzUGT00Ilr4ZgvwZlVjXQUX31wjkEok41G4KGIz2aGfRMCpfGZwgx9LJ?=
+ =?us-ascii?Q?RLAuNJjWO/crPnA1HTVBDZDkBMq61jkZgBGDCV4RbIiVIGWXHM5s1chLSxfz?=
+ =?us-ascii?Q?2WlFtHTcTXUWU71zJmSs0NumHA3mntvq6jHGho3q/0WOefgCA3bX4NVfvtLU?=
+ =?us-ascii?Q?PGiEY7QRvGioEThx7w1BwVTKV5EAOm8OMH1i1TvYAM9yetSDed+fFyFw04MQ?=
+ =?us-ascii?Q?Bs5UhBu2tRNmw5jw6BtfVSqAgTBrfJ4QGMN0u3gf8RoGsJQFm/KQZMeRK09Z?=
+ =?us-ascii?Q?obggkFntZ712zIc3Zkkq+Aw9MMzcAxL6X4S1YHm1O33IThtm1EdpK1qKUURa?=
+ =?us-ascii?Q?9pZHLwh9wwhCl6ysCf8+feaVFJTGQa/AI37AcIAwASHgfpgmDmnszMdJv6vo?=
+ =?us-ascii?Q?7LMxx0Vpab9aLkvJjqgFyuZAxgPxnS62Z8jbH7hwEhL8zfTG8v7FR+YAFy/c?=
+ =?us-ascii?Q?+xNhiUxg9UOEnAe/ezplb+Qxuhlgb8sHW0ApKk0PAUr0oBC4vtJvNjVnWUz3?=
+ =?us-ascii?Q?l/jgPV6PJ8OftTNrbVsx7a3s7j5bwaOB1c1vXbbxGBBkbFOXEBg24wkh757q?=
+ =?us-ascii?Q?USqsStd5PCdwKeSQ0Inj64nfuZFRiVaS+cisijIcy35aUYwDAQYwqQBa1dDM?=
+ =?us-ascii?Q?DgGyZq2c0glcFto9eH1ElgkfZbhlxrCRh5FK4hLZUxmRtRPJ4XnlvzrLQS+f?=
+ =?us-ascii?Q?X+py497WBCFm2Bi6RSwrkhalLALIcKVYa6azRQiaMMkf5DsItBi6j7nYPT5l?=
+ =?us-ascii?Q?vS4v4MpSVcle6iXjMUiBjLzU0T42JGfTanYQViGcuNXsKFUjtmGzG7GmIZ2V?=
+ =?us-ascii?Q?7f86/6qZZbh5TNakkXYHIn1av9ZDBL9e9MTWBTAiJ2uB409FeBvhYIK8Anpk?=
+ =?us-ascii?Q?AIdr5fUrn2Mj7iCp+ytVcaypBDUzOTlGqesJUEjdTosY6ZnKcyR7ZkAAmgeP?=
+ =?us-ascii?Q?eUSOeUl9uKbU85IHGivrJlgGVoz++PfeUekhofs5V4HsbdpCIEK4OLZdWWrM?=
+ =?us-ascii?Q?hxgnqfJQGHz2Q59ByXLFwfrbCEqowceVUIKk?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 03:32:36.1829
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3e1a52d-5eae-4a01-daaa-08dddbac60ee
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66CB.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6938
 
-On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
->
-> MT8196 use a HW voter for mux gate enable/disable control, along with a
-> FENC status bit to check the status. Voting is performed using
-> set/clr/upd registers, with a status bit used to verify the vote state.
-> Add new set of mux gate clock operations with support for voting via
-> set/clr/upd regs and FENC status logic.
->
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mtk.h |  1 +
->  drivers/clk/mediatek/clk-mux.c | 71 +++++++++++++++++++++++++++++++++-
->  drivers/clk/mediatek/clk-mux.h | 42 ++++++++++++++++++++
->  3 files changed, 113 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
-k.h
-> index 8ed2c9208b1f..e2cefd9bc5b8 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -20,6 +20,7 @@
->
->  #define MHZ (1000 * 1000)
->
-> +#define MTK_WAIT_HWV_DONE_US   30
->  #define MTK_WAIT_FENC_DONE_US  30
->
->  struct platform_device;
-> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mu=
-x.c
-> index b1b8eeb0b501..65889fc6a3e5 100644
-> --- a/drivers/clk/mediatek/clk-mux.c
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -8,6 +8,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/compiler_types.h>
->  #include <linux/container_of.h>
-> +#include <linux/dev_printk.h>
->  #include <linux/err.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> @@ -21,6 +22,7 @@
->  struct mtk_clk_mux {
->         struct clk_hw hw;
->         struct regmap *regmap;
-> +       struct regmap *regmap_hwv;
->         const struct mtk_mux *data;
->         spinlock_t *lock;
->         bool reparent;
-> @@ -118,6 +120,41 @@ static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
->         return (val & BIT(mux->data->gate_shift)) =3D=3D 0;
->  }
->
-> +static int mtk_clk_mux_hwv_fenc_enable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> +       u32 val;
-> +       int ret;
-> +
-> +       regmap_write(mux->regmap_hwv, mux->data->hwv_set_ofs,
-> +                    BIT(mux->data->gate_shift));
-> +
-> +       ret =3D regmap_read_poll_timeout_atomic(mux->regmap_hwv, mux->dat=
-a->hwv_sta_ofs,
-> +                                             val, val & BIT(mux->data->g=
-ate_shift), 0,
-> +                                             MTK_WAIT_HWV_DONE_US);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D regmap_read_poll_timeout_atomic(mux->regmap, mux->data->f=
-enc_sta_mon_ofs,
-> +                                             val, val & BIT(mux->data->f=
-enc_shift), 1,
-> +                                             MTK_WAIT_FENC_DONE_US);
-> +
-> +       return ret;
-> +}
-> +
-> +static void mtk_clk_mux_hwv_disable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> +       u32 val;
-> +
-> +       regmap_write(mux->regmap_hwv, mux->data->hwv_clr_ofs,
-> +                    BIT(mux->data->gate_shift));
-> +
-> +       regmap_read_poll_timeout_atomic(mux->regmap_hwv, mux->data->hwv_s=
-ta_ofs,
-> +                                       val, (val & BIT(mux->data->gate_s=
-hift)),
-> +                                       0, MTK_WAIT_HWV_DONE_US);
-> +}
-> +
->  static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
->  {
->         struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> @@ -189,6 +226,14 @@ static int mtk_clk_mux_determine_rate(struct clk_hw =
-*hw,
->         return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
->  }
->
-> +static bool mtk_clk_mux_uses_hwv(const struct clk_ops *ops)
-> +{
-> +       if (ops =3D=3D &mtk_mux_gate_hwv_fenc_clr_set_upd_ops)
-> +               return true;
-> +
-> +       return false;
-> +}
-> +
->  const struct clk_ops mtk_mux_clr_set_upd_ops =3D {
->         .get_parent =3D mtk_clk_mux_get_parent,
->         .set_parent =3D mtk_clk_mux_set_parent_setclr_lock,
-> @@ -216,9 +261,20 @@ const struct clk_ops mtk_mux_gate_fenc_clr_set_upd_o=
-ps =3D {
->  };
->  EXPORT_SYMBOL_GPL(mtk_mux_gate_fenc_clr_set_upd_ops);
->
-> +const struct clk_ops mtk_mux_gate_hwv_fenc_clr_set_upd_ops =3D {
-> +       .enable =3D mtk_clk_mux_hwv_fenc_enable,
-> +       .disable =3D mtk_clk_mux_hwv_disable,
-> +       .is_enabled =3D mtk_clk_mux_fenc_is_enabled,
-> +       .get_parent =3D mtk_clk_mux_get_parent,
-> +       .set_parent =3D mtk_clk_mux_set_parent_setclr_lock,
-> +       .determine_rate =3D mtk_clk_mux_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(mtk_mux_gate_hwv_fenc_clr_set_upd_ops);
-> +
->  static struct clk_hw *mtk_clk_register_mux(struct device *dev,
->                                            const struct mtk_mux *mux,
->                                            struct regmap *regmap,
-> +                                          struct regmap *regmap_hwv,
->                                            spinlock_t *lock)
->  {
->         struct mtk_clk_mux *clk_mux;
-> @@ -234,8 +290,13 @@ static struct clk_hw *mtk_clk_register_mux(struct de=
-vice *dev,
->         init.parent_names =3D mux->parent_names;
->         init.num_parents =3D mux->num_parents;
->         init.ops =3D mux->ops;
-> +       if (mtk_clk_mux_uses_hwv(init.ops) && !regmap_hwv) {
-> +               dev_err(dev, "regmap not found for hardware voter clocks\=
-n");
-> +               return ERR_PTR(-ENXIO);
-> +       }
->
->         clk_mux->regmap =3D regmap;
-> +       clk_mux->regmap_hwv =3D regmap_hwv;
->         clk_mux->data =3D mux;
->         clk_mux->lock =3D lock;
->         clk_mux->hw.init =3D &init;
-> @@ -268,6 +329,7 @@ int mtk_clk_register_muxes(struct device *dev,
->                            struct clk_hw_onecell_data *clk_data)
->  {
->         struct regmap *regmap;
-> +       struct regmap *regmap_hwv;
->         struct clk_hw *hw;
->         int i;
->
-> @@ -277,6 +339,13 @@ int mtk_clk_register_muxes(struct device *dev,
->                 return PTR_ERR(regmap);
->         }
->
-> +       regmap_hwv =3D mtk_clk_get_hwv_regmap(node);
-> +       if (IS_ERR(regmap_hwv)) {
-> +               pr_err("Cannot find hardware voter regmap for %pOF: %pe\n=
-",
-> +                      node, regmap_hwv);
-> +               return PTR_ERR(regmap_hwv);
+On 25-08-14 17:23:58, Bjorn Helgaas wrote:
+> EXTERNAL EMAIL
+> 
+> On Wed, Aug 13, 2025 at 12:23:27PM +0800, hans.zhang@cixtech.com wrote:
+> > From: Hans Zhang <hans.zhang@cixtech.com>
+> >
+> > Add Cixtech P1 (internal name sky1) as a vendor and device ID for PCI
+> > devices. This ID will be used by the CIX Sky1 PCIe host controller driver.
+> >
+> > Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> > ---
+> >  include/linux/pci_ids.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> > index 92ffc4373f6d..24b04d085920 100644
+> > --- a/include/linux/pci_ids.h
+> > +++ b/include/linux/pci_ids.h
+> > @@ -2631,6 +2631,9 @@
+> >
+> >  #define PCI_VENDOR_ID_CXL            0x1e98
+> >
+> > +#define PCI_VENDOR_ID_CIX            0x1f6c
+> > +#define PCI_DEVICE_ID_CIX_SKY1               0x0001
+> 
+> I only see these used once in this series, so they probably should be
+> defined in the file that uses them, per the comment at the top of this
+> file.
+> 
+> Also, https://pcisig.com/membership/member-companies?combine=0x1f6c
+> doesn't show 0x1f6c as assigned to CIX.  That database often seems
+> incomplete, but please double check to make sure the ID is actually
+> reserved.
 
-Is there a reason why we aren't using dev_err() or even dev_err_probe()
-here?
+Hi Bjorn,
 
-The rest looks OK.
+Would you please check below:
+https://pcisig.com/membership/member-companies?combine=1f6c
 
-ChenYu
+-- 
 
-> +       }
-> +
->         for (i =3D 0; i < num; i++) {
->                 const struct mtk_mux *mux =3D &muxes[i];
->
-> @@ -286,7 +355,7 @@ int mtk_clk_register_muxes(struct device *dev,
->                         continue;
->                 }
->
-> -               hw =3D mtk_clk_register_mux(dev, mux, regmap, lock);
-> +               hw =3D mtk_clk_register_mux(dev, mux, regmap, regmap_hwv,=
- lock);
->
->                 if (IS_ERR(hw)) {
->                         pr_err("Failed to register clk %s: %pe\n", mux->n=
-ame,
-> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mu=
-x.h
-> index c65cfb7f8fc3..fb6f7951379c 100644
-> --- a/drivers/clk/mediatek/clk-mux.h
-> +++ b/drivers/clk/mediatek/clk-mux.h
-> @@ -28,6 +28,10 @@ struct mtk_mux {
->         u32 set_ofs;
->         u32 clr_ofs;
->         u32 upd_ofs;
-> +
-> +       u32 hwv_set_ofs;
-> +       u32 hwv_clr_ofs;
-> +       u32 hwv_sta_ofs;
->         u32 fenc_sta_mon_ofs;
->
->         u8 mux_shift;
-> @@ -80,6 +84,7 @@ struct mtk_mux {
->  extern const struct clk_ops mtk_mux_clr_set_upd_ops;
->  extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
->  extern const struct clk_ops mtk_mux_gate_fenc_clr_set_upd_ops;
-> +extern const struct clk_ops mtk_mux_gate_hwv_fenc_clr_set_upd_ops;
->
->  #define MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,     \
->                         _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
-> @@ -121,6 +126,43 @@ extern const struct clk_ops mtk_mux_gate_fenc_clr_se=
-t_upd_ops;
->                         0, _upd_ofs, _upd, CLK_SET_RATE_PARENT,         \
->                         mtk_mux_clr_set_upd_ops)
->
-> +#define MUX_GATE_HWV_FENC_CLR_SET_UPD_FLAGS(_id, _name, _parents,       =
-               \
-> +                               _mux_ofs, _mux_set_ofs, _mux_clr_ofs,    =
-               \
-> +                               _hwv_sta_ofs, _hwv_set_ofs, _hwv_clr_ofs,=
-               \
-> +                               _shift, _width, _gate, _upd_ofs, _upd,   =
-               \
-> +                               _fenc_sta_mon_ofs, _fenc, _flags) {      =
-               \
-> +                       .id =3D _id,                                     =
-                 \
-> +                       .name =3D _name,                                 =
-                 \
-> +                       .mux_ofs =3D _mux_ofs,                           =
-                 \
-> +                       .set_ofs =3D _mux_set_ofs,                       =
-                 \
-> +                       .clr_ofs =3D _mux_clr_ofs,                       =
-                 \
-> +                       .hwv_sta_ofs =3D _hwv_sta_ofs,                   =
-                 \
-> +                       .hwv_set_ofs =3D _hwv_set_ofs,                   =
-                 \
-> +                       .hwv_clr_ofs =3D _hwv_clr_ofs,                   =
-                 \
-> +                       .upd_ofs =3D _upd_ofs,                           =
-                 \
-> +                       .fenc_sta_mon_ofs =3D _fenc_sta_mon_ofs,         =
-                 \
-> +                       .mux_shift =3D _shift,                           =
-                 \
-> +                       .mux_width =3D _width,                           =
-                 \
-> +                       .gate_shift =3D _gate,                           =
-                 \
-> +                       .upd_shift =3D _upd,                             =
-                 \
-> +                       .fenc_shift =3D _fenc,                           =
-                 \
-> +                       .parent_names =3D _parents,                      =
-                 \
-> +                       .num_parents =3D ARRAY_SIZE(_parents),           =
-                 \
-> +                       .flags =3D  _flags,                              =
-                 \
-> +                       .ops =3D &mtk_mux_gate_hwv_fenc_clr_set_upd_ops, =
-                 \
-> +               }
-> +
-> +#define MUX_GATE_HWV_FENC_CLR_SET_UPD(_id, _name, _parents,             =
-               \
-> +                               _mux_ofs, _mux_set_ofs, _mux_clr_ofs,    =
-               \
-> +                               _hwv_sta_ofs, _hwv_set_ofs, _hwv_clr_ofs,=
-               \
-> +                               _shift, _width, _gate, _upd_ofs, _upd,   =
-               \
-> +                               _fenc_sta_mon_ofs, _fenc)                =
-               \
-> +                       MUX_GATE_HWV_FENC_CLR_SET_UPD_FLAGS(_id, _name, _=
-parents,       \
-> +                               _mux_ofs, _mux_set_ofs, _mux_clr_ofs,    =
-               \
-> +                               _hwv_sta_ofs, _hwv_set_ofs, _hwv_clr_ofs,=
-               \
-> +                               _shift, _width, _gate, _upd_ofs, _upd,   =
-               \
-> +                               _fenc_sta_mon_ofs, _fenc, 0)
-> +
->  #define MUX_GATE_FENC_CLR_SET_UPD_FLAGS(_id, _name, _parents, _paridx,  =
-       \
->                         _num_parents, _mux_ofs, _mux_set_ofs, _mux_clr_of=
-s,     \
->                         _shift, _width, _gate, _upd_ofs, _upd,           =
-       \
-> --
-> 2.39.5
->
+Best regards,
+Peter
 
