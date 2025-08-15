@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-770630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE96B27D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C58EB27D58
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532A21CC6D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D50602D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACE22F83DA;
-	Fri, 15 Aug 2025 09:38:00 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BE42F9989;
-	Fri, 15 Aug 2025 09:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064772F9989;
+	Fri, 15 Aug 2025 09:38:23 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBAB191F91;
+	Fri, 15 Aug 2025 09:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755250678; cv=none; b=P8/bLS+EWD5ZvwpDuji/N5wCb8lU+U24EhJruSd/5AqXmA0A+dTdYXFbY4TCnUuxuf/dPdll00KydWyhGIJ+aLLeu8XGToc8n9tuZckSEFaIA3wjnIEdxj1zX682lPgPJd4MXanURff+R7yAvLRmWT4puMDSTdqxfBHrOZWvMfo=
+	t=1755250699; cv=none; b=UxRsABXgrp5UP8qPNvJ3es2NhDKatGXSAmTfiCQg8d6aFH92cIMKZnIRMdPhYLJ0zeFe+jrFqcyFLrhBaPbbozzwJ3rljX/VfcNCUb0702/5Exm8Gztq5uvCi4+ggeC1+sI6aBo1bZLObFAwzhO74DJMELZUi8qwTYzsTML7dbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755250678; c=relaxed/simple;
-	bh=hXt9yJVd6saz0iNFQuYvfPBZJzZenuWy0eh/Hz9Zz90=;
+	s=arc-20240116; t=1755250699; c=relaxed/simple;
+	bh=aE3RNCdREZrcPAZgkYMBGTu6ejb912R7H9GkfJPUxII=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BHPisS8L8YUByhZ07hOIUlJHDrcITvH0fyKwpiGB+X08+/WSAFGEmqaC05SRuWxF8Ni/kVE5NsrDcBNsSgiwfV8wwYI5DO2fFTxJADw0LaIolq0EbenAUuDSthYRs50/HRGjGXp2MnU2ZWNUtrc7G7nbDSI3aX6uw3BMs4BJGuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+	 MIME-Version; b=o/nkxOy6RH5uhwb2fRpgZjAjFvhBR0ZxNYdkOJfJRZZRlkPMJ2VcRJp07Fckwz9TAmf2I60g1C5iDhjVldEDSlg5432a4WVolDq191D8unhxTjp7P4prjXt+4hECgsTzg5oWTfwbQz+cG2OTkgEA+wfe0IsXuwPu71GfA2Y9UYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.205.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
 Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app2 (Coremail) with SMTP id TQJkCgDHWZPX_55oJQm_AA--.16307S2;
-	Fri, 15 Aug 2025 17:37:29 +0800 (CST)
+	by app2 (Coremail) with SMTP id TQJkCgD3lpX0_55oLgm_AA--.28243S2;
+	Fri, 15 Aug 2025 17:37:58 +0800 (CST)
 From: dongxuyang@eswincomputing.com
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -48,9 +48,9 @@ Cc: ningyu@eswincomputing.com,
 	huangyifeng@eswincomputing.com,
 	pinkesh.vaghela@einfochips.com,
 	Xuyang Dong <dongxuyang@eswincomputing.com>
-Subject: [PATCH v4 2/3] clock: eswin: Add eic7700 clock driver
-Date: Fri, 15 Aug 2025 17:37:20 +0800
-Message-Id: <20250815093720.1088-1-dongxuyang@eswincomputing.com>
+Subject: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
+Date: Fri, 15 Aug 2025 17:37:54 +0800
+Message-Id: <20250815093754.1143-1-dongxuyang@eswincomputing.com>
 X-Mailer: git-send-email 2.31.1.windows.1
 In-Reply-To: <20250815093539.975-1-dongxuyang@eswincomputing.com>
 References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
@@ -61,968 +61,2325 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgDHWZPX_55oJQm_AA--.16307S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfAFyktF43Jr17WrWxKF4kJFb_yoW5GrW3Go
-	WfGrs0qFs5Kr1xCrZ7uw13K3Wagw1ktayfGa15WrsFkF18uryavw1kCrW3ZryxZFy8uFn5
-	Z392v3s7Jr47Xas7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID:TQJkCgD3lpX0_55oLgm_AA--.28243S2
+X-Coremail-Antispam: 1UD129KBjvAXoWDGw48KFy5Zw4DWF1UAF43KFg_yoWxZr1fKo
+	W2k39xGF17GFy8KayDX34rG34akrZ3JF43Cr4DZF4fXw47Wr43J3s7J3W5WasaqryjkFyv
+	qwn7J3WDJF4q9a1xn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
 	AaLaJ3UjIYCTnIWjp_UUUYN7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
 	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
 	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
 	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
 	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
 	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
 	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42
 	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
 	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI4
 	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4U
 	JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcV
-	C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiBT5PUUUUU==
+	C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRihF4tUUUUU==
 X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
 From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-This driver depends on the CCF framework implementation.
-  Based on this driver, other modules in the SoC can use the APIs
-  provided by CCF to perform clock-related operations.
-  The driver supports eic7700 series chips.
+Add clock device tree support for eic7700 SoC.
 
 Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
 Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 ---
- drivers/clk/Kconfig             |   1 +
- drivers/clk/Makefile            |   1 +
- drivers/clk/eswin/Kconfig       |  10 +
- drivers/clk/eswin/Makefile      |   8 +
- drivers/clk/eswin/clk-eic7700.c |  44 ++
- drivers/clk/eswin/clk.c         | 734 ++++++++++++++++++++++++++++++++
- drivers/clk/eswin/clk.h         |  69 +++
- 7 files changed, 867 insertions(+)
- create mode 100644 drivers/clk/eswin/Kconfig
- create mode 100644 drivers/clk/eswin/Makefile
- create mode 100644 drivers/clk/eswin/clk-eic7700.c
- create mode 100644 drivers/clk/eswin/clk.c
- create mode 100644 drivers/clk/eswin/clk.h
+ arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi | 2283 +++++++++++++++++
+ 1 file changed, 2283 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4d56475f94fc..184b76a406d7 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -505,6 +505,7 @@ source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-+source "drivers/clk/eswin/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
- source "drivers/clk/imx/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 18ed29cfdc11..42c61e216511 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -120,6 +120,7 @@ obj-$(CONFIG_CLK_BAIKAL_T1)		+= baikal-t1/
- obj-y					+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
-+obj-$(CONFIG_ARCH_ESWIN)		+= eswin/
- obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
- obj-y					+= imgtec/
- obj-y					+= imx/
-diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
+diff --git a/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
 new file mode 100644
-index 000000000000..f2284c2d790d
+index 000000000000..405d06f9190e
 --- /dev/null
-+++ b/drivers/clk/eswin/Kconfig
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config COMMON_CLK_EIC7700
-+	bool "EIC7700 Clock Driver"
-+	depends on ARCH_ESWIN
-+	help
-+	  Build the Eswin EIC7700 SoC clock driver based on the
-+	  common clock framework. This driver provides support
-+	  for the clock control on the Eswin EIC7700 SoC,
-+	  which is essential for managing clock rates and power management.
-diff --git a/drivers/clk/eswin/Makefile b/drivers/clk/eswin/Makefile
-new file mode 100644
-index 000000000000..a3139e34ee22
---- /dev/null
-+++ b/drivers/clk/eswin/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Eswin Clock specific Makefile
-+#
-+
-+obj-y	+= clk.o
-+
-+obj-$(CONFIG_COMMON_CLK_EIC7700)	+= clk-eic7700.o
-diff --git a/drivers/clk/eswin/clk-eic7700.c b/drivers/clk/eswin/clk-eic7700.c
-new file mode 100644
-index 000000000000..278b256b4c52
---- /dev/null
-+++ b/drivers/clk/eswin/clk-eic7700.c
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+@@ -0,0 +1,2283 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * ESWIN EIC7700 CLK Provider Driver
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
++ * Copyright (c) 2025, Beijing ESWIN Computing Technology Co., Ltd.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include "clk.h"
++/ {
++	clock-controller@51828000 {
++		compatible = "eswin,eic7700-clock";
++		reg = <0x000000 0x51828000 0x000000 0x80000>;
++		#clock-cells = <0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+static void __init eic7700_clk_pll_init(struct device_node *np)
-+{
-+	eswin_clk_pll_register(np);
-+}
-+
-+static void __init eic7700_clk_mux_init(struct device_node *np)
-+{
-+	eswin_clk_mux_register(np);
-+}
-+
-+static void __init eic7700_clk_div_init(struct device_node *np)
-+{
-+	eswin_clk_div_register(np);
-+}
-+
-+static void __init eic7700_clk_gate_init(struct device_node *np)
-+{
-+	eswin_clk_gate_register(np);
-+}
-+
-+CLK_OF_DECLARE(eic7700_clk_pll, "eswin,pll-clock", eic7700_clk_pll_init);
-+CLK_OF_DECLARE(eic7700_clk_mux, "eswin,mux-clock", eic7700_clk_mux_init);
-+CLK_OF_DECLARE(eic7700_clk_div, "eswin,divider-clock", eic7700_clk_div_init);
-+CLK_OF_DECLARE(eic7700_clk_gate, "eswin,gate-clock", eic7700_clk_gate_init);
-diff --git a/drivers/clk/eswin/clk.c b/drivers/clk/eswin/clk.c
-new file mode 100644
-index 000000000000..e227cc4664ca
---- /dev/null
-+++ b/drivers/clk/eswin/clk.c
-@@ -0,0 +1,734 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/math.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/slab.h>
-+#include <linux/util_macros.h>
-+#include "clk.h"
-+
-+enum pll_clk {
-+	CLK_APLL_FOUT1 = 1,
-+	CLK_PLL_CPU
++		/* fixed clock */
++		fixed_rate_clk_apll_fout2: fixed-rate-apll-fout2 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "fixed_rate_clk_apll_fout2";
++		};
++		fixed_rate_clk_apll_fout3: fixed-rate-apll-fout3 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "fixed_rate_clk_apll_fout3";
++		};
++		fixed_rate_clk_spll0_fout1: fixed-rate-spll0-fout1 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <1600000000>;
++			clock-output-names = "fixed_rate_clk_spll0_fout1";
++		};
++		fixed_rate_clk_spll0_fout2: fixed-rate-spll0-fout2 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <800000000>;
++			clock-output-names = "fixed_rate_clk_spll0_fout2";
++		};
++		fixed_rate_clk_spll0_fout3: fixed-rate-spll0-fout3 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <400000000>;
++			clock-output-names = "fixed_rate_clk_spll0_fout3";
++		};
++		fixed_rate_clk_spll1_fout1: fixed-rate-spll1-fout1 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <1500000000>;
++			clock-output-names = "fixed_rate_clk_spll1_fout1";
++		};
++		fixed_rate_clk_spll1_fout2: fixed-rate-spll1-fout2 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <300000000>;
++			clock-output-names = "fixed_rate_clk_spll1_fout2";
++		};
++		fixed_rate_clk_spll1_fout3: fixed-rate-spll1-fout3 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <250000000>;
++			clock-output-names = "fixed_rate_clk_spll1_fout3";
++		};
++		fixed_rate_clk_spll2_fout1: fixed-rate-spll2-fout1 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <2080000000>;
++			clock-output-names = "fixed_rate_clk_spll2_fout1";
++		};
++		fixed_rate_clk_spll2_fout2: fixed-rate-spll2-fout2 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <1040000000>;
++			clock-output-names = "fixed_rate_clk_spll2_fout2";
++		};
++		fixed_rate_clk_spll2_fout3: fixed-rate-spll2-fout3 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <416000000>;
++			clock-output-names = "fixed_rate_clk_spll2_fout3";
++		};
++		fixed_rate_clk_vpll_fout1: fixed-rate-vpll-fout1 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <1188000000>;
++			clock-output-names = "fixed_rate_clk_vpll_fout1";
++		};
++		fixed_rate_clk_vpll_fout2: fixed-rate-vpll-fout2 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <594000000>;
++			clock-output-names = "fixed_rate_clk_vpll_fout2";
++		};
++		fixed_rate_clk_vpll_fout3: fixed-rate-vpll-fout3 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <49500000>;
++			clock-output-names = "fixed_rate_clk_vpll_fout3";
++		};
++		fixed_rate_clk_xtal_24m: fixed-rate-xtal-24m {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <24000000>;
++			clock-output-names = "fixed_rate_clk_xtal_24m";
++		};
++		fixed_rate_clk_xtal_32k: fixed-rate-xtal-32K {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "fixed_rate_clk_xtal_32k";
++		};
++		fixed_rate_ext_mclk: fixed-rate-ext-mclk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "fixed_rate_ext_mclk";
++		};
++		fixed_rate_lpddr_ref_bak: fixed-rate-lpddr {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <50000000>;
++			clock-output-names = "fixed_rate_lpddr_ref_bak";
++		};
++		/* pll */
++		clk_apll_fout1: clk-apll-fout1-pll@50 {
++			compatible = "eswin,pll-clock";
++			reg = <0x50>, <0x54>, <0x58>, <0xa4>;
++			#clock-cells = <0>;
++			enable-shift = <0>;
++			enable-width = <1>;
++			refdiv-shift = <12>;
++			refdiv-width = <6>;
++			fbdiv-shift = <20>;
++			fbdiv-width = <12>;
++			frac-shift = <4>;
++			frac-width = <24>;
++			postdiv1-shift = <1>;
++			postdiv1-width = <3>;
++			postdiv2-shift = <16>;
++			postdiv2-width = <3>;
++			lock-shift = <4>;
++			lock-width = <1>;
++			clock-output-names = "clk_apll_fout1";
++		};
++		clk_pll_cpu: clk-cpu-pll@64 {
++			compatible = "eswin,pll-clock";
++			reg = <0x64>, <0x68>, <0x6c>, <0xa4>;
++			#clock-cells = <0>;
++			enable-shift = <0>;
++			enable-width = <1>;
++			refdiv-shift = <12>;
++			refdiv-width = <6>;
++			fbdiv-shift = <20>;
++			fbdiv-width = <12>;
++			frac-shift = <4>;
++			frac-width = <24>;
++			postdiv1-shift = <1>;
++			postdiv1-width = <3>;
++			postdiv2-shift = <16>;
++			postdiv2-width = <3>;
++			lock-shift = <5>;
++			lock-width = <1>;
++			clock-output-names = "clk_pll_cpu";
++		};
++		/* fixed factor clock */
++		fixed_factor_clk_1m_div24: fixed-factor-clk-1m-div24 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			clock-div = <24>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_clk_1m_div24";
++		};
++		fixed_factor_cpu_div2: fixed-factor-cpu-div2 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_cpu_div2";
++		};
++		fixed_factor_hsp_rmii_ref_div6: fixed-factor-hsp-rmii-ref-div6 {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&fixed_rate_clk_spll1_fout2>;
++			clock-div = <6>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_hsp_rmii_ref_div6";
++		};
++		fixed_factor_lpcpu_bus_div2: fixed-factor-lpcpu-bus-div2 {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&mux_lpcpu_core_clk_2mux1>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_lpcpu_bus_div2";
++		};
++		fixed_factor_mipi_txesc_div10: fixed-factor-mipi-txesc-div10 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			clock-div = <10>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_mipi_txesc_div10";
++		};
++		fixed_factor_pcie_aux_div4: fixed-factor-pcie-aux-div4 {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			clock-div = <4>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_pcie_aux_div4";
++		};
++		fixed_factor_pcie_cr_div2: fixed-factor-pcie-cr-div2 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_pcie_cr_div2";
++		};
++		fixed_factor_pvt_div20: fixed-factor-pvt-div20 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			clock-div = <20>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_pvt_div20";
++		};
++		fixed_factor_scpu_bus_div2: fixed-factor-scpu-bus-div2 {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clocks = <&mux_scpu_core_clk_2mux1>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_scpu_bus_div2";
++		};
++		fixed_factor_u84_core_lp_div2: fixed-factor-u84-core-lp-div2 {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&gate_clk_spll0_fout2>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "fixed_factor_u84_core_lp_div2";
++		};
++		/* mux clock */
++		mux_bootspi_clk_2mux1: bootspi-clk-2mux1-mux@104 {
++			compatible = "eswin,mux-clock";
++			reg = <0x104>;
++			#clock-cells = <0>;
++			clocks = <&divider_bootspi_div>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_bootspi_clk_2mux1";
++		};
++		mux_scpu_core_clk_2mux1: scpu-core-clk-2mux1-mux@10c {
++			compatible = "eswin,mux-clock";
++			reg = <0x10c>;
++			#clock-cells = <0>;
++			clocks = <&divider_scpu_core_div>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_scpu_core_clk_2mux1";
++		};
++		mux_lpcpu_core_clk_2mux1: lpcpu-core-clk-2mux1-mux@114 {
++			compatible = "eswin,mux-clock";
++			reg = <0x114>;
++			#clock-cells = <0>;
++			clocks = <&divider_lpcpu_core_div>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_lpcpu_core_clk_2mux1";
++		};
++		mux_ddr_aclk_root_2mux1: ddr-aclk-root-2mux1-mux@124 {
++			compatible = "eswin,mux-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <16>;
++			width = <1>;
++			clock-output-names = "mux_ddr_aclk_root_2mux1";
++		};
++		mux_dsp_aclk_root_2mux1: dsp-aclk-root-2mux1-mux@138 {
++			compatible = "eswin,mux-clock";
++			reg = <0x138>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_dsp_aclk_root_2mux1";
++		};
++		mux_d2d_aclk_root_2mux1: d2d-aclk-root-2mux1-mux@140 {
++			compatible = "eswin,mux-clock";
++			reg = <0x140>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_d2d_aclk_root_2mux1";
++		};
++		mux_sata_phy_2mux1: sata-phy-2mux1-mux@154 {
++			compatible = "eswin,mux-clock";
++			reg = <0x154>;
++			#clock-cells = <0>;
++			clocks = <&divider_sata_phy_ref_div>,
++				 <&fixed_rate_lpddr_ref_bak>;
++			shift = <9>;
++			width = <1>;
++			clock-output-names = "mux_sata_phy_2mux1";
++		};
++		mux_eth_core_2mux1: eth-core-2mux1-mux@158 {
++			compatible = "eswin,mux-clock";
++			reg = <0x158>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll1_fout3>,
++				 <&fixed_rate_lpddr_ref_bak>;
++			shift = <1>;
++			width = <1>;
++			clock-output-names = "mux_eth_core_2mux1";
++		};
++		mux_rmii_ref_2mux1: rmii-ref-2mux1-mux@158 {
++			compatible = "eswin,mux-clock";
++			reg = <0x158>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_hsp_rmii_ref_div6>,
++				 <&fixed_rate_lpddr_ref_bak>;
++			shift = <2>;
++			width = <1>;
++			clock-output-names = "mux_rmii_ref_2mux1";
++		};
++		mux_mshcore_root_3mux1_0: mshcore0-root-3mux1-mux@160 {
++			compatible = "eswin,mux-clock";
++			reg = <0x160>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout3>,
++				 <&fixed_rate_clk_spll2_fout3>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_mshcore_root_3mux1_0";
++		};
++		mux_mshcore_root_3mux1_1: mshcore1-root-3mux1-mux@164 {
++			compatible = "eswin,mux-clock";
++			reg = <0x164>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout3>,
++				 <&fixed_rate_clk_spll2_fout3>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_mshcore_root_3mux1_1";
++		};
++		mux_mshcore_root_3mux1_2: mshcore2-root-3mux1-mux@168 {
++			compatible = "eswin,mux-clock";
++			reg = <0x168>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout3>,
++				 <&fixed_rate_clk_spll2_fout3>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_mshcore_root_3mux1_2";
++		};
++		mux_npu_llclk_3mux1: npu-llclk-3mux1-mux@17c {
++			compatible = "eswin,mux-clock";
++			reg = <0x17c>;
++			#clock-cells = <0>;
++			clocks = <&divider_npu_llc_src0_div>,
++				 <&divider_npu_llc_src1_div>,
++				 <&fixed_rate_clk_vpll_fout1>;
++			shift = <0>;
++			width = <2>;
++			clock-output-names = "mux_npu_llclk_3mux1";
++		};
++		mux_npu_core_3mux1: npu-core-3mux1-mux@180 {
++			compatible = "eswin,mux-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll1_fout1>,
++				 <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll2_fout2>;
++			shift = <0>;
++			width = <2>;
++			clock-output-names = "mux_npu_core_3mux1";
++		};
++		mux_npu_e31_3mux1: npu-e31-3mux1-mux@180 {
++			compatible = "eswin,mux-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll1_fout1>,
++				 <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll2_fout2>;
++			shift = <8>;
++			width = <2>;
++			clock-output-names = "mux_npu_e31_3mux1";
++		};
++		mux_vi_dw_root_2mux1: vi-dw-root-2mux1-mux@184 {
++			compatible = "eswin,mux-clock";
++			reg = <0x184>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vi_dw_root_2mux1";
++		};
++		mux_vi_aclk_root_2mux1: vi-aclk-root-2mux1-mux@188 {
++			compatible = "eswin,mux-clock";
++			reg = <0x188>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>,
++				 <&fixed_rate_clk_spll2_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vi_aclk_root_2mux1";
++		};
++		mux_vi_dig_isp_root_2mux1: vi-dig-isp-root-2mux1-mux@18c {
++			compatible = "eswin,mux-clock";
++			reg = <0x18c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vi_dig_isp_root_2mux1";
++		};
++		mux_vi_dvp_root_2mux1: vi-dvp-root-2mux1-mux@190 {
++			compatible = "eswin,mux-clock";
++			reg = <0x190>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll0_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vi_dvp_root_2mux1";
++		};
++		mux_vo_aclk_root_2mux1: vo-aclk-root-2mux1-mux@1b0 {
++			compatible = "eswin,mux-clock";
++			reg = <0x1b0>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>,
++				 <&fixed_rate_clk_spll2_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vo_aclk_root_2mux1";
++		};
++		mux_vo_pixel_root_2mux1: vo-pixel-root-2mux1-mux@1b8 {
++			compatible = "eswin,mux-clock";
++			reg = <0x1b8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout1>,
++				 <&fixed_rate_clk_spll2_fout2>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vo_pixel_root_2mux1";
++		};
++		mux_vo_mclk_2mux_ext_mclk: vo-mclk-2mux-ext-mclk-mux@1bc {
++			compatible = "eswin,mux-clock";
++			reg = <0x1bc>;
++			#clock-cells = <0>;
++			clocks = <&divider_vo_mclk_div>,
++				 <&fixed_rate_ext_mclk>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vo_mclk_2mux_ext_mclk";
++		};
++		mux_vcaclk_root_2mux1: vcaclk-root-2mux1-mux@1c4 {
++			compatible = "eswin,mux-clock";
++			reg = <0x1c4>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>,
++				 <&fixed_rate_clk_spll2_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vcaclk_root_2mux1";
++		};
++		mux_vcdec_root_2mux1: vcdec-root-2mux1-mux@1c8 {
++			compatible = "eswin,mux-clock";
++			reg = <0x1c8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>,
++				 <&fixed_rate_clk_spll2_fout1>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_vcdec_root_2mux1";
++		};
++		mux_aondma_axi2mux1: aondma-axi2mux1-mux@1e4 {
++			compatible = "eswin,mux-clock";
++			reg = <0x1e4>;
++			#clock-cells = <0>;
++			clocks = <&divider_aondma_axi_div>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <20>;
++			width = <1>;
++			clock-output-names = "mux_aondma_axi2mux1";
++		};
++		mux_cpu_aclk_2mux1: cpu-aclk-2mux1-mux@208 {
++			compatible = "eswin,mux-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_cpu_div2>,
++				 <&mux_cpu_root_3mux1>;
++			shift = <20>;
++			width = <1>;
++			clock-output-names = "mux_cpu_aclk_2mux1";
++		};
++		mux_cpu_root_3mux1: cpu-root-3mux1-mux@208 {
++			compatible = "eswin,mux-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&clk_pll_cpu>,
++				 <&fixed_factor_u84_core_lp_div2>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <0>;
++			width = <2>;
++			clock-output-names = "mux_cpu_root_3mux1";
++		};
++		mux_syscfg_clk_root_2mux1: syscfg-clk-root-2mux1-mux@20c {
++			compatible = "eswin,mux-clock";
++			reg = <0x20c>;
++			#clock-cells = <0>;
++			clocks = <&divider_sys_cfg_div>,
++				 <&fixed_rate_clk_xtal_24m>;
++			shift = <0>;
++			width = <1>;
++			clock-output-names = "mux_syscfg_clk_root_2mux1";
++		};
++		/* div clock */
++		divider_noc_nsp_div: noc-nsp-div@100 {
++			compatible = "eswin,divider-clock";
++			reg = <0x100>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout1>;
++			shift = <0>;
++			width = <3>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_noc_nsp_div";
++		};
++		divider_bootspi_div: bootspi-div@104 {
++			compatible = "eswin,divider-clock";
++			reg = <0x104>;
++			#clock-cells = <0>;
++			clocks = <&gate_clk_spll0_fout2>;
++			shift = <4>;
++			width = <6>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_bootspi_div";
++		};
++		divider_scpu_core_div: scpu-core-div@10c {
++			compatible = "eswin,divider-clock";
++			reg = <0x10c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_scpu_core_div";
++		};
++		divider_lpcpu_core_div: lpcpu-core-div@114 {
++			compatible = "eswin,divider-clock";
++			reg = <0x114>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_lpcpu_core_div";
++		};
++		divider_ddr_aclk_div: ddr-aclk-div@124 {
++			compatible = "eswin,divider-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&mux_ddr_aclk_root_2mux1>;
++			shift = <20>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_ddr_aclk_div";
++		};
++		divider_gpu_aclk_div: gpu-aclk-div@12c {
++			compatible = "eswin,divider-clock";
++			reg = <0x12c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_gpu_aclk_div";
++		};
++		divider_dsp_aclk_div: dsp-aclk-div@138 {
++			compatible = "eswin,divider-clock";
++			reg = <0x138>;
++			#clock-cells = <0>;
++			clocks = <&mux_dsp_aclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_dsp_aclk_div";
++		};
++		divider_dsp_0_aclk_div: dsp-0-aclk-div@13c {
++			compatible = "eswin,divider-clock";
++			reg = <0x13c>;
++			#clock-cells = <0>;
++			clocks = <&gate_dspt_aclk>;
++			shift = <19>;
++			width = <1>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_dsp_0_aclk_div";
++		};
++		divider_dsp_1_aclk_div: dsp-1-aclk-div@13c {
++			compatible = "eswin,divider-clock";
++			reg = <0x13c>;
++			#clock-cells = <0>;
++			clocks = <&gate_dspt_aclk>;
++			shift = <20>;
++			width = <1>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_dsp_1_aclk_div";
++		};
++		divider_dsp_2_aclk_div: dsp-2-aclk-div@13c {
++			compatible = "eswin,divider-clock";
++			reg = <0x13c>;
++			#clock-cells = <0>;
++			clocks = <&gate_dspt_aclk>;
++			shift = <21>;
++			width = <1>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_dsp_2_aclk_div";
++		};
++		divider_dsp_3_aclk_div: dsp-3-aclk-div@13c {
++			compatible = "eswin,divider-clock";
++			reg = <0x13c>;
++			#clock-cells = <0>;
++			clocks = <&gate_dspt_aclk>;
++			shift = <22>;
++			width = <1>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_dsp_3_aclk_div";
++		};
++		divider_d2d_aclk_div: d2d-aclk-div@140 {
++			compatible = "eswin,divider-clock";
++			reg = <0x140>;
++			#clock-cells = <0>;
++			clocks = <&mux_d2d_aclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_d2d_aclk_div";
++		};
++		divider_hsp_aclk_div: hsp-aclk-div@148 {
++			compatible = "eswin,divider-clock";
++			reg = <0x148>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_hsp_aclk_div";
++		};
++		divider_sata_phy_ref_div: sata-phy-ref-div@154 {
++			compatible = "eswin,divider-clock";
++			reg = <0x154>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll1_fout2>;
++			shift = <0>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_sata_phy_ref_div";
++		};
++		divider_eth_txclk_div_0: eth-0-txclk-div@158 {
++			compatible = "eswin,divider-clock";
++			reg = <0x158>;
++			#clock-cells = <0>;
++			clocks = <&mux_eth_core_2mux1>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_eth_txclk_div_0";
++		};
++		divider_eth_txclk_div_1: eth-1-txclk-div@15c {
++			compatible = "eswin,divider-clock";
++			reg = <0x15c>;
++			#clock-cells = <0>;
++			clocks = <&mux_eth_core_2mux1>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_eth_txclk_div_1";
++		};
++		divider_mshc_core_div_0: mshc-0-core-div@160 {
++			compatible = "eswin,divider-clock";
++			reg = <0x160>;
++			#clock-cells = <0>;
++			clocks = <&mux_mshcore_root_3mux1_0>;
++			shift = <4>;
++			width = <12>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_mshc_core_div_0";
++		};
++		divider_mshc_core_div_1: mshc-1-core-div@164 {
++			compatible = "eswin,divider-clock";
++			reg = <0x164>;
++			#clock-cells = <0>;
++			clocks = <&mux_mshcore_root_3mux1_1>;
++			shift = <4>;
++			width = <12>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_mshc_core_div_1";
++		};
++		divider_mshc_core_div_2: mshc-2-core-div@168 {
++			compatible = "eswin,divider-clock";
++			reg = <0x168>;
++			#clock-cells = <0>;
++			clocks = <&mux_mshcore_root_3mux1_2>;
++			shift = <4>;
++			width = <12>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_mshc_core_div_2";
++		};
++		divider_pcie_aclk_div: pcie-aclk-div@170 {
++			compatible = "eswin,divider-clock";
++			reg = <0x170>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout2>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_pcie_aclk_div";
++		};
++		divider_npu_aclk_div: npu-aclk-div@178 {
++			compatible = "eswin,divider-clock";
++			reg = <0x178>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_npu_aclk_div";
++		};
++		divider_npu_llc_src0_div: npu-llc-src0-div@17c {
++			compatible = "eswin,divider-clock";
++			reg = <0x17c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_npu_llc_src0_div";
++		};
++		divider_npu_llc_src1_div: npu-llc-src1-div@17c {
++			compatible = "eswin,divider-clock";
++			reg = <0x17c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll2_fout1>;
++			shift = <8>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_npu_llc_src1_div";
++		};
++		divider_npu_coreclk_div: npu-coreclk-div@180 {
++			compatible = "eswin,divider-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&mux_npu_core_3mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_npu_coreclk_div";
++		};
++		divider_npu_e31_div: npu-e31-div@180 {
++			compatible = "eswin,divider-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&mux_npu_e31_3mux1>;
++			shift = <12>;
++			width = <4>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_npu_e31_div";
++		};
++		divider_vi_dw_div: vi-dw-div@184 {
++			compatible = "eswin,divider-clock";
++			reg = <0x184>;
++			#clock-cells = <0>;
++			clocks = <&mux_vi_dw_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_dw_div";
++		};
++		divider_vi_aclk_div: vi-aclk-div@188 {
++			compatible = "eswin,divider-clock";
++			reg = <0x188>;
++			#clock-cells = <0>;
++			clocks = <&mux_vi_aclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_aclk_div";
++		};
++		divider_vi_dig_isp_div: vi-dig-isp-div@18c {
++			compatible = "eswin,divider-clock";
++			reg = <0x18c>;
++			#clock-cells = <0>;
++			clocks = <&mux_vi_dig_isp_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_dig_isp_div";
++		};
++		divider_vi_dvp_div: vi-dvp-div@190 {
++			compatible = "eswin,divider-clock";
++			reg = <0x190>;
++			#clock-cells = <0>;
++			clocks = <&mux_vi_dvp_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_dvp_div";
++		};
++		divider_vi_shutter_div_0: vi-shutter-0-div@194 {
++			compatible = "eswin,divider-clock";
++			reg = <0x194>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_0";
++		};
++		divider_vi_shutter_div_1: vi-shutter-1-div@198 {
++			compatible = "eswin,divider-clock";
++			reg = <0x198>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_1";
++		};
++		divider_vi_shutter_div_2: vi-shutter-2-div@19c {
++			compatible = "eswin,divider-clock";
++			reg = <0x19c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_2";
++		};
++		divider_vi_shutter_div_3: vi-shutter-3-div@1a0 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1a0>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_3";
++		};
++		divider_vi_shutter_div_4: vi-shutter-4-div@1a4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1a4>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_4";
++		};
++		divider_vi_shutter_div_5: vi-shutter-5-div@1a8 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1a8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <4>;
++			width = <7>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vi_shutter_div_5";
++		};
++		divider_vo_aclk_div: vo-aclk-div@1b0 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1b0>;
++			#clock-cells = <0>;
++			clocks = <&mux_vo_aclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vo_aclk_div";
++		};
++		divider_iesmclk_div: iesmclk-div@1b4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1b4>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout3>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_iesmclk_div";
++		};
++		divider_vo_pixel_div: vo-pixel-div@1b8 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1b8>;
++			#clock-cells = <0>;
++			clocks = <&mux_vo_pixel_root_2mux1>;
++			shift = <4>;
++			width = <6>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vo_pixel_div";
++		};
++		divider_vo_mclk_div: vo-mclk-div@1bc {
++			compatible = "eswin,divider-clock";
++			reg = <0x1bc>;
++			#clock-cells = <0>;
++			clocks = <&clk_apll_fout1>;
++			shift = <4>;
++			width = <8>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vo_mclk_div";
++		};
++		divider_vo_cec_div: vo-cec-div@1c0 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1c0>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout2>;
++			shift = <16>;
++			width = <16>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_vo_cec_div";
++		};
++		divider_vc_aclk_div: vc-aclk-div@1c4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1c4>;
++			#clock-cells = <0>;
++			clocks = <&mux_vcaclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vc_aclk_div";
++		};
++		divider_g2d_div: g2d-div@1cc {
++			compatible = "eswin,divider-clock";
++			reg = <0x1cc>;
++			#clock-cells = <0>;
++			clocks = <&mux_dsp_aclk_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_g2d_div";
++		};
++		divider_aondma_axi_div: aondma-axi-div@1e4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1d4>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_aondma_axi_div";
++		};
++		divider_je_div: je-div@1d4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1d4>;
++			#clock-cells = <0>;
++			clocks = <&mux_vcdec_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_je_div";
++		};
++		divider_jd_div: jd-div@1d8 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1d8>;
++			#clock-cells = <0>;
++			clocks = <&mux_vcdec_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_jd_div";
++		};
++		divider_vd_div: vd-div@1dc {
++			compatible = "eswin,divider-clock";
++			reg = <0x1dc>;
++			#clock-cells = <0>;
++			clocks = <&mux_vcdec_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_vd_div";
++		};
++		divider_ve_div: ve-div@1e0 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1e0>;
++			#clock-cells = <0>;
++			clocks = <&mux_vcdec_root_2mux1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_ve_div";
++		};
++		divider_aon_rtc_div: aon-rtc-div@1ec{
++			compatible = "eswin,divider-clock";
++			reg = <0x1ec>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_clk_1m_div24>;
++			shift = <21>;
++			width = <11>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_aon_rtc_div";
++		};
++		divider_u84_rtc_toggle: u84-rtc-toggle-div@1ec {
++			compatible = "eswin,divider-clock";
++			reg = <0x1ec>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			shift = <16>;
++			width = <5>;
++			div-flags = <0x5>;
++			clock-output-names = "divider_u84_rtc_toggle";
++		};
++		divider_crypto_div: crypto-div@1f4 {
++			compatible = "eswin,divider-clock";
++			reg = <0x1f4>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout1>;
++			shift = <4>;
++			width = <4>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_crypto_div";
++		};
++		divider_sys_cfg_div: sys-cfg-div@20c {
++			compatible = "eswin,divider-clock";
++			reg = <0x20c>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout3>;
++			shift = <4>;
++			width = <3>;
++			div-flags = <0x1>;
++			clock-output-names = "divider_sys_cfg_div";
++		};
++		/* gate clock */
++		gate_clk_spll0_fout2: clk-spll0-fout2-gate@8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll0_fout2>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_spll0_fout2";
++		};
++		gate_noc_nsp_clk: noc-nsp-clk-gate@100 {
++			compatible = "eswin,gate-clock";
++			reg = <0x100>;
++			#clock-cells = <0>;
++			clocks = <&divider_noc_nsp_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_noc_nsp_clk";
++		};
++		gate_clk_bootspi: clk-bootspi-gate@104 {
++			compatible = "eswin,gate-clock";
++			reg = <0x104>;
++			#clock-cells = <0>;
++			clocks = <&mux_bootspi_clk_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_bootspi";
++		};
++		gate_clk_bootspi_cfg: clk-bootspi-cfg-gate@108 {
++			compatible = "eswin,gate-clock";
++			reg = <0x108>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_bootspi_cfg";
++		};
++		gate_clk_scpu_core: clk-scpu-core-gate@10c {
++			compatible = "eswin,gate-clock";
++			reg = <0x10c>;
++			#clock-cells = <0>;
++			clocks = <&mux_scpu_core_clk_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_scpu_core";
++		};
++		gate_clk_scpu_bus: clk-scpu-bus-gate@110 {
++			compatible = "eswin,gate-clock";
++			reg = <0x110>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_scpu_bus_div2>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_scpu_bus";
++		};
++		gate_clk_lpcpu_core: clk-lpcpu-core-gate@114 {
++			compatible = "eswin,gate-clock";
++			reg = <0x114>;
++			#clock-cells = <0>;
++			clocks = <&mux_lpcpu_core_clk_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_lpcpu_core";
++		};
++		gate_clk_lpcpu_bus: clk-lpcpu-bus-gate@118 {
++			compatible = "eswin,gate-clock";
++			reg = <0x118>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_lpcpu_bus_div2>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_lpcpu_bus";
++		};
++		gate_tcu_aclk: tcu-aclk-gate@11c {
++			compatible = "eswin,gate-clock";
++			reg = <0x11c>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_tcu_aclk";
++		};
++		gate_tcu_cfg_clk: tcu-cfg-clk-gate@120 {
++			compatible = "eswin,gate-clock";
++			reg = <0x120>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_tcu_cfg_clk";
++		};
++		gate_ddrt_cfg_clk: ddrt-cfg-clk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <9>;
++			clock-output-names = "gate_ddrt_cfg_clk";
++		};
++		gate_ddrt0_p0_aclk: ddrt0-p0-aclk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <4>;
++			clock-output-names = "gate_ddrt0_p0_aclk";
++		};
++		gate_ddrt0_p1_aclk: ddrt0-p1-aclk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <5>;
++			clock-output-names = "gate_ddrt0_p1_aclk";
++		};
++		gate_ddrt0_p2_aclk: ddrt0-p2-aclk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <6>;
++			clock-output-names = "gate_ddrt0_p2_aclk";
++		};
++		gate_ddrt0_p3_aclk: ddrt0-p3-aclk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <7>;
++			clock-output-names = "gate_ddrt0_p3_aclk";
++		};
++		gate_ddrt0_p4_aclk: ddrt0-p4-aclk-gate@124 {
++			compatible = "eswin,gate-clock";
++			reg = <0x124>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <8>;
++			clock-output-names = "gate_ddrt0_p4_aclk";
++		};
++		gate_ddrt1_p0_aclk: ddrt1-p0-aclk-gate@128 {
++			compatible = "eswin,gate-clock";
++			reg = <0x128>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <4>;
++			clock-output-names = "gate_ddrt1_p0_aclk";
++		};
++		gate_ddrt1_p1_aclk: ddrt1-p1-aclk-gate@128 {
++			compatible = "eswin,gate-clock";
++			reg = <0x128>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <5>;
++			clock-output-names = "gate_ddrt1_p1_aclk";
++		};
++		gate_ddrt1_p2_aclk: ddrt1-p2-aclk-gate@128 {
++			compatible = "eswin,gate-clock";
++			reg = <0x128>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <6>;
++			clock-output-names = "gate_ddrt1_p2_aclk";
++		};
++		gate_ddrt1_p3_aclk: ddrt1-p3-aclk-gate@128 {
++			compatible = "eswin,gate-clock";
++			reg = <0x128>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <7>;
++			clock-output-names = "gate_ddrt1_p3_aclk";
++		};
++		gate_ddrt1_p4_aclk: ddrt1-p4-aclk-gate@128 {
++			compatible = "eswin,gate-clock";
++			reg = <0x128>;
++			#clock-cells = <0>;
++			clocks = <&divider_ddr_aclk_div>;
++			bit-index = <8>;
++			clock-output-names = "gate_ddrt1_p4_aclk";
++		};
++		gate_gpu_aclk: gpu-aclk-gate@12c {
++			compatible = "eswin,gate-clock";
++			reg = <0x12c>;
++			#clock-cells = <0>;
++			clocks = <&divider_gpu_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_gpu_aclk";
++		};
++		gate_gpu_cfg_clk: gpu-cfg-clk-gate@130 {
++			compatible = "eswin,gate-clock";
++			reg = <0x130>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_gpu_cfg_clk";
++		};
++		gate_gpu_gray_clk: gpu-gray-clk-gate@134 {
++			compatible = "eswin,gate-clock";
++			reg = <0x134>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <31>;
++			clock-output-names = "gate_gpu_gray_clk";
++		};
++		gate_dspt_aclk: dspt-aclk-gate@138 {
++			compatible = "eswin,gate-clock";
++			reg = <0x138>;
++			#clock-cells = <0>;
++			clocks = <&divider_dsp_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_dspt_aclk";
++		};
++		gate_dspt_cfg_clk: dspt-cfg-clk-gate@13c {
++			compatible = "eswin,gate-clock";
++			reg = <0x13c>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_dspt_cfg_clk";
++		};
++		gate_d2d_aclk: d2d-aclk-gate@140 {
++			compatible = "eswin,gate-clock";
++			reg = <0x140>;
++			#clock-cells = <0>;
++			clocks = <&divider_d2d_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_d2d_aclk";
++		};
++		gate_d2d_cfg_clk: d2d-cfg-clk-gate@144 {
++			compatible = "eswin,gate-clock";
++			reg = <0x144>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_d2d_cfg_clk";
++		};
++		gate_clk_hsp_aclk: clk-hsp-aclk-gate@148 {
++			compatible = "eswin,gate-clock";
++			reg = <0x148>;
++			#clock-cells = <0>;
++			clocks = <&divider_hsp_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_hsp_aclk";
++		};
++		gate_hsp_dma0_clk: hsp-dma0-clk-gate@148 {
++			compatible = "eswin,gate-clock";
++			reg = <0x148>;
++			#clock-cells = <0>;
++			clocks = <&gate_clk_hsp_aclk>;
++			bit-index = <0>;
++			clock-output-names = "gate_hsp_dma0_clk";
++		};
++		gate_hsp_dma0_clk_test: hsp-dma0-clk-test-gate@148 {
++			compatible = "eswin,gate-clock";
++			reg = <0x148>;
++			#clock-cells = <0>;
++			clocks = <&gate_clk_hsp_aclk>;
++			bit-index = <1>;
++			clock-output-names = "gate_hsp_dma0_clk_test";
++		};
++		gate_clk_hsp_cfgclk: clk-hsp-cfgclk-gate@14c {
++			compatible = "eswin,gate-clock";
++			reg = <0x14c>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_hsp_cfgclk";
++		};
++		gate_hsp_sata_rbc_clk: hsp-sata-rbc-clk-gate@150 {
++			compatible = "eswin,gate-clock";
++			reg = <0x150>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_spll1_fout2>;
++			bit-index = <0>;
++			clock-output-names = "gate_hsp_sata_rbc_clk";
++		};
++		gate_hsp_sata_oob_clk: hsp-sata-oob-clk-gate@154 {
++			compatible = "eswin,gate-clock";
++			reg = <0x154>;
++			#clock-cells = <0>;
++			clocks = <&mux_sata_phy_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_hsp_sata_oob_clk";
++		};
++		gate_hsp_eth0_core_clk: hsp-eth0-core-clk-gate@158 {
++			compatible = "eswin,gate-clock";
++			reg = <0x158>;
++			#clock-cells = <0>;
++			clocks = <&divider_eth_txclk_div_0>;
++			bit-index = <0>;
++			clock-output-names = "gate_hsp_eth0_core_clk";
++		};
++		gate_hsp_rmii_ref_0: hsp-rmii-ref-0-gate@158 {
++			compatible = "eswin,gate-clock";
++			reg = <0x158>;
++			#clock-cells = <0>;
++			clocks = <&mux_rmii_ref_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_hsp_rmii_ref_0";
++		};
++		gate_hsp_eth1_core_clk: hsp-eth1-core-clk-gate@15c {
++			compatible = "eswin,gate-clock";
++			reg = <0x15c>;
++			#clock-cells = <0>;
++			clocks = <&divider_eth_txclk_div_1>;
++			bit-index = <0>;
++			clock-output-names = "gate_hsp_eth1_core_clk";
++		};
++		gate_hsp_rmii_ref_1: hsp-rmii-ref-1-gate@15c {
++			compatible = "eswin,gate-clock";
++			reg = <0x15c>;
++			#clock-cells = <0>;
++			clocks = <&mux_rmii_ref_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_hsp_rmii_ref_1";
++		};
++		gate_hsp_mshc0_core_clk: hsp-mshc0-core-clk-gate@160 {
++			compatible = "eswin,gate-clock";
++			reg = <0x160>;
++			#clock-cells = <0>;
++			clocks = <&divider_mshc_core_div_0>;
++			bit-index = <16>;
++			clock-output-names = "gate_hsp_mshc0_core_clk";
++		};
++		gate_hsp_mshc1_core_clk: hsp-mshc1-core-clk-gate@164 {
++			compatible = "eswin,gate-clock";
++			reg = <0x164>;
++			#clock-cells = <0>;
++			clocks = <&divider_mshc_core_div_1>;
++			bit-index = <16>;
++			clock-output-names = "gate_hsp_mshc1_core_clk";
++		};
++		gate_hsp_mshc2_core_clk: hsp-mshc2-core-clk-gate@168 {
++			compatible = "eswin,gate-clock";
++			reg = <0x168>;
++			#clock-cells = <0>;
++			clocks = <&divider_mshc_core_div_2>;
++			bit-index = <16>;
++			clock-output-names = "gate_hsp_mshc2_core_clk";
++		};
++		gate_pciet_aclk: pciet-aclk-gate@170 {
++			compatible = "eswin,gate-clock";
++			reg = <0x170>;
++			#clock-cells = <0>;
++			clocks = <&divider_pcie_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_pciet_aclk";
++		};
++		gate_pciet_aux_clk: pciet-aux-clk-gate@174 {
++			compatible = "eswin,gate-clock";
++			reg = <0x174>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_pcie_aux_div4>;
++			bit-index = <1>;
++			clock-output-names = "gate_pciet_aux_clk";
++		};
++		gate_pciet_cfg_clk: pciet-cfg-clk-gate@174 {
++			compatible = "eswin,gate-clock";
++			reg = <0x174>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_pciet_cfg_clk";
++		};
++		gate_pciet_cr_clk: pciet-cr-clk-gate@174 {
++			compatible = "eswin,gate-clock";
++			reg = <0x174>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_pcie_cr_div2>;
++			bit-index = <0>;
++			clock-output-names = "gate_pciet_cr_clk";
++		};
++		gate_npu_aclk: npu-aclk-gate@178 {
++			compatible = "eswin,gate-clock";
++			reg = <0x178>;
++			#clock-cells = <0>;
++			clocks = <&divider_npu_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_npu_aclk";
++		};
++		gate_npu_cfg_clk: npu-cfg-clk-gate@178 {
++			compatible = "eswin,gate-clock";
++			reg = <0x178>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_npu_cfg_clk";
++		};
++		gate_npu_llc_aclk: npu-llc-aclk-gate@17c {
++			compatible = "eswin,gate-clock";
++			reg = <0x17c>;
++			#clock-cells = <0>;
++			clocks = <&mux_npu_llclk_3mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_npu_llc_aclk";
++		};
++		gate_npu_clk: npu-clk-gate@180 {
++			compatible = "eswin,gate-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&divider_npu_coreclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_npu_clk";
++		};
++		gate_npu_e31_clk: npu-e31-clk-gate@180 {
++			compatible = "eswin,gate-clock";
++			reg = <0x180>;
++			#clock-cells = <0>;
++			clocks = <&divider_npu_e31_div>;
++			bit-index = <30>;
++			clock-output-names = "gate_npu_e31_clk";
++		};
++		gate_vi_dig_dw_clk: vi-dig-dw-clk-gate@184 {
++			compatible = "eswin,gate-clock";
++			reg = <0x184>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_dw_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_dig_dw_clk";
++		};
++		gate_vi_aclk: vi-aclk-gate@188 {
++			compatible = "eswin,gate-clock";
++			reg = <0x188>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_aclk";
++		};
++		gate_vi_cfg_clk: vi-cfg-clk-gate@188 {
++			compatible = "eswin,gate-clock";
++			reg = <0x188>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_vi_cfg_clk";
++		};
++		gate_vi_dig_isp_clk: vi-dig-isp-clk-gate@18c {
++			compatible = "eswin,gate-clock";
++			reg = <0x18c>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_dig_isp_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_dig_isp_clk";
++		};
++		gate_vi_dvp_clk: vi-dvp-clk-gate@190 {
++			compatible = "eswin,gate-clock";
++			reg = <0x190>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_dvp_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_dvp_clk";
++		};
++		gate_vi_shutter_0: vi-shutter-0-gate@194 {
++			compatible = "eswin,gate-clock";
++			reg = <0x194>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_0>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_0";
++		};
++		gate_vi_shutter_1: vi-shutter-1-gate@198 {
++			compatible = "eswin,gate-clock";
++			reg = <0x198>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_1>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_1";
++		};
++		gate_vi_shutter_2: vi-shutter-2-gate@19c {
++			compatible = "eswin,gate-clock";
++			reg = <0x19c>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_2>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_2";
++		};
++		gate_vi_shutter_3: vi-shutter-3-gate@1a0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1a0>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_3>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_3";
++		};
++		gate_vi_shutter_4: vi-shutter-4-gate@1a4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1a4>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_4>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_4";
++		};
++		gate_vi_shutter_5: vi-shutter-5-gate@1a8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1a8>;
++			#clock-cells = <0>;
++			clocks = <&divider_vi_shutter_div_5>;
++			bit-index = <31>;
++			clock-output-names = "gate_vi_shutter_5";
++		};
++		gate_vi_phy_cfg: vi-phy-cfg-gate@1ac {
++			compatible = "eswin,gate-clock";
++			reg = <0x1ac>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <1>;
++			clock-output-names = "gate_vi_phy_cfg";
++		};
++		gate_vi_phy_txclkesc: vi-phy-txclkesc-gate@1ac {
++			compatible = "eswin,gate-clock";
++			reg = <0x1ac>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_mipi_txesc_div10>;
++			bit-index = <0>;
++			clock-output-names = "gate_vi_phy_txclkesc";
++		};
++		gate_vo_aclk: vo-aclk-gate@1b0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1b0>;
++			#clock-cells = <0>;
++			clocks = <&divider_vo_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vo_aclk";
++		};
++		gate_vo_cfg_clk: vo-cfg-clk-gate@1b0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1b0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_vo_cfg_clk";
++		};
++		gate_vo_hdmi_iesmclk: vo-hdmi-iesmclk-gate@1b4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1b4>;
++			#clock-cells = <0>;
++			clocks = <&divider_iesmclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vo_hdmi_iesmclk";
++		};
++		gate_vo_pixel_clk: vo-pixel-clk-gate@1b8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1b8>;
++			#clock-cells = <0>;
++			clocks = <&divider_vo_pixel_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vo_pixel_clk";
++		};
++		gate_vo_i2s_mclk: vo-i2s-mclk-gate@1bc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1bc>;
++			#clock-cells = <0>;
++			clocks = <&mux_vo_mclk_2mux_ext_mclk>;
++			bit-index = <31>;
++			clock-output-names = "gate_vo_i2s_mclk";
++		};
++		gate_vo_cr_clk: vo-cr-clk-gate@1c0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1c0>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_mipi_txesc_div10>;
++			bit-index = <1>;
++			clock-output-names = "gate_vo_cr_clk";
++		};
++		gate_vc_aclk: vc-aclk-gate@1c4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1c4>;
++			#clock-cells = <0>;
++			clocks = <&divider_vc_aclk_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vc_aclk";
++		};
++		gate_g2d_aclk: g2d-aclk-gate@1cc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1cc>;
++			#clock-cells = <0>;
++			clocks = <&divider_g2d_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_g2d_aclk";
++		};
++		gate_g2d_cfg_clk: g2d-cfg-clk-gate@1cc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1cc>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <28>;
++			clock-output-names = "gate_g2d_cfg_clk";
++		};
++		gate_g2d_clk: g2d-clk-gate@1cc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1cc>;
++			#clock-cells = <0>;
++			clocks = <&divider_g2d_div>;
++			bit-index = <30>;
++			clock-output-names = "gate_g2d_clk";
++		};
++		gate_vc_cfg_clk: vc-cfg-clk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <0>;
++			clock-output-names = "gate_vc_cfg_clk";
++		};
++		gate_vc_jd_pclk: vc-jd-pclk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <1>;
++			clock-output-names = "gate_vc_jd_pclk";
++		};
++		gate_vc_je_pclk: vc-je-pclk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <2>;
++			clock-output-names = "gate_vc_je_pclk";
++		};
++		gate_vc_mon_pclk: vc-mon-pclk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <3>;
++			clock-output-names = "gate_vc_mon_pclk";
++		};
++		gate_vc_vd_pclk: vc-vd-pclk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <4>;
++			clock-output-names = "gate_vc_vd_pclk";
++		};
++		gate_vc_ve_pclk: vc-ve-pclk-gate@1d0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <5>;
++			clock-output-names = "gate_vc_ve_pclk";
++		};
++		gate_vc_je_clk: vc-je-clk-gate@1d4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d4>;
++			#clock-cells = <0>;
++			clocks = <&divider_je_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vc_je_clk";
++		};
++		gate_vc_jd_clk: vc-jd-clk-gate@1d8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1d8>;
++			#clock-cells = <0>;
++			clocks = <&divider_jd_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vc_jd_clk";
++		};
++		gate_vc_vd_clk: vc-vd-clk-gate@1dc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1dc>;
++			#clock-cells = <0>;
++			clocks = <&divider_vd_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vc_vd_clk";
++		};
++		gate_vc_ve_clk: vc-ve-clk-gate@1e0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e0>;
++			#clock-cells = <0>;
++			clocks = <&divider_ve_div>;
++			bit-index = <31>;
++			clock-output-names = "gate_vc_ve_clk";
++		};
++		gate_aondma_aclk: aondma-aclk-gate@1e4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e4>;
++			#clock-cells = <0>;
++			clocks = <&mux_aondma_axi2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_aondma_aclk";
++		};
++		gate_aon_aclk: aon-aclk-gate@1e4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e4>;
++			#clock-cells = <0>;
++			clocks = <&mux_aondma_axi2mux1>;
++			bit-index = <29>;
++			clock-output-names = "gate_aon_aclk";
++		};
++		gate_clk_aondma_cfg: clk-aondma-cfg-gate@1e4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e4>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_clk_aondma_cfg";
++		};
++		gate_timer3_clk8: timer3-clk8-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_vpll_fout3>;
++			bit-index = <8>;
++			clock-output-names = "gate_timer3_clk8";
++		};
++		gate_timer_pclk_0: timer-pclk-0-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <4>;
++			clock-output-names = "gate_timer_pclk_0";
++		};
++		gate_timer_pclk_1: timer-pclk-1-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <5>;
++			clock-output-names = "gate_timer_pclk_1";
++		};
++		gate_timer_pclk_2: timer-pclk-2-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <6>;
++			clock-output-names = "gate_timer_pclk_2";
++		};
++		gate_timer_pclk_3: timer-pclk-3-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <7>;
++			clock-output-names = "gate_timer_pclk_3";
++		};
++		gate_time_clk_0: time-clk-0-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <0>;
++			clock-output-names = "gate_time_clk_0";
++		};
++		gate_time_clk_1: time-clk-1-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <1>;
++			clock-output-names = "gate_time_clk_1";
++		};
++		gate_time_clk_2: time-clk-2-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <2>;
++			clock-output-names = "gate_time_clk_2";
++		};
++		gate_time_clk_3: time-clk-3-gate@1e8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1e8>;
++			#clock-cells = <0>;
++			clocks = <&fixed_rate_clk_xtal_24m>;
++			bit-index = <3>;
++			clock-output-names = "gate_time_clk_3";
++		};
++		gate_clk_rtc: clk-rtc-gate@1ec {
++			compatible = "eswin,gate-clock";
++			reg = <0x1ec>;
++			#clock-cells = <0>;
++			clocks = <&divider_aon_rtc_div>;
++			bit-index = <1>;
++			clock-output-names = "gate_clk_rtc";
++		};
++		gate_clk_rtc_cfg: clk-rtc-cfg-gate@1ec {
++			compatible = "eswin,gate-clock";
++			reg = <0x1ec>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <2>;
++			clock-output-names = "gate_clk_rtc_cfg";
++		};
++		gate_clk_pka_cfg: clk-pka-cfg-gate@1f0 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1f0>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_pka_cfg";
++		};
++		gate_clk_crypto: clk-crypto-gate@1f4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1f4>;
++			#clock-cells = <0>;
++			clocks = <&divider_crypto_div>;
++			bit-index = <30>;
++			clock-output-names = "gate_clk_crypto";
++		};
++		gate_clk_spacc_cfg: clk-spacc-cfg-gate@1f4 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1f4>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_spacc_cfg";
++		};
++		gate_clk_trng_cfg: clk-trng-cfg-gate@1f8 {
++			compatible = "eswin,gate-clock";
++			reg = <0x1f8>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_trng_cfg";
++		};
++		gate_clk_otp_cfg: clk-otp-cfg-gate@1fc {
++			compatible = "eswin,gate-clock";
++			reg = <0x1fc>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_clk_otp_cfg";
++		};
++		gate_i2c0_pclk: i2c0-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <7>;
++			clock-output-names = "gate_i2c0_pclk";
++		};
++		gate_i2c1_pclk: i2c1-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <8>;
++			clock-output-names = "gate_i2c1_pclk";
++		};
++		gate_i2c2_pclk: i2c2-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <9>;
++			clock-output-names = "gate_i2c2_pclk";
++		};
++		gate_i2c3_pclk: i2c3-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <10>;
++			clock-output-names = "gate_i2c3_pclk";
++		};
++		gate_i2c4_pclk: i2c4-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <11>;
++			clock-output-names = "gate_i2c4_pclk";
++		};
++		gate_i2c5_pclk: i2c5-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <12>;
++			clock-output-names = "gate_i2c5_pclk";
++		};
++		gate_i2c6_pclk: i2c6-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <13>;
++			clock-output-names = "gate_i2c6_pclk";
++		};
++		gate_i2c7_pclk: i2c7-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <14>;
++			clock-output-names = "gate_i2c7_pclk";
++		};
++		gate_i2c8_pclk: i2c8-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <15>;
++			clock-output-names = "gate_i2c8_pclk";
++		};
++		gate_i2c9_pclk: i2c9-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <16>;
++			clock-output-names = "gate_i2c9_pclk";
++		};
++		gate_lsp_fan_pclk: lsp-fan-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <0>;
++			clock-output-names = "gate_lsp_fan_pclk";
++		};
++		gate_lsp_pvt_pclk: lsp-pvt-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <1>;
++			clock-output-names = "gate_lsp_pvt_pclk";
++		};
++		gate_lsp_ssi0_pclk: lsp-ssi0-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <26>;
++			clock-output-names = "gate_lsp_ssi0_pclk";
++		};
++		gate_lsp_ssi1_pclk: lsp-ssi1-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <27>;
++			clock-output-names = "gate_lsp_ssi1_pclk";
++		};
++		gate_lsp_timer_pclk: lsp-timer-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <25>;
++			clock-output-names = "gate_lsp_timer_pclk";
++		};
++		gate_lspart0_pclk: lsp-uart0-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <17>;
++			clock-output-names = "gate_lsp_uart0_pclk";
++		};
++		gate_lsp_uart1_pclk: lsp-uart1-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <18>;
++			clock-output-names = "gate_lsp_uart1_pclk";
++		};
++		gate_lsp_uart2_pclk: lsp-uart2-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <19>;
++			clock-output-names = "gate_lsp_uart2_pclk";
++		};
++		gate_lsp_uart3_pclk: lsp-uart3-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <20>;
++			clock-output-names = "gate_lsp_uart3_pclk";
++		};
++		gate_lsp_uart4_pclk: lsp-uart4-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <21>;
++			clock-output-names = "gate_lsp_uart4_pclk";
++		};
++		gate_lsp_wdt0_pclk: lsp-wdt0-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <28>;
++			clock-output-names = "gate_lsp_wdt0_pclk";
++		};
++		gate_lsp_wdt1_pclk: lsp-wdt1-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <29>;
++			clock-output-names = "gate_lsp_wdt1_pclk";
++		};
++		gate_lsp_wdt2_pclk: lsp-wdt2-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_lsp_wdt2_pclk";
++		};
++		gate_lsp_wdt3_pclk: lsp-wdt3-pclk-gate@200 {
++			compatible = "eswin,gate-clock";
++			reg = <0x200>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_lsp_wdt3_pclk";
++		};
++		gate_clk_mailbox_0: clk-mailbox-0-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <0>;
++			clock-output-names = "gate_clk_mailbox_0";
++		};
++		gate_clk_mailbox_1: clk-mailbox-1-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <1>;
++			clock-output-names = "gate_clk_mailbox_1";
++		};
++		gate_clk_mailbox_2: clk-mailbox-2-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <2>;
++			clock-output-names = "gate_clk_mailbox_2";
++		};
++		gate_clk_mailbox_3: clk-mailbox-3-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <3>;
++			clock-output-names = "gate_clk_mailbox_3";
++		};
++		gate_clk_mailbox_4: clk-mailbox-4-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <4>;
++			clock-output-names = "gate_clk_mailbox_4";
++		};
++		gate_clk_mailbox_5: clk-mailbox-5-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <5>;
++			clock-output-names = "gate_clk_mailbox_5";
++		};
++		gate_clk_mailbox_6: clk-mailbox-6-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <6>;
++			clock-output-names = "gate_clk_mailbox_6";
++		};
++		gate_clk_mailbox_7: clk-mailbox-7-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <7>;
++			clock-output-names = "gate_clk_mailbox_7";
++		};
++		gate_clk_mailbox_8: clk-mailbox-8-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <8>;
++			clock-output-names = "gate_clk_mailbox_8";
++		};
++		gate_clk_mailbox_9: clk-mailbox-9-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <9>;
++			clock-output-names = "gate_clk_mailbox_9";
++		};
++		gate_clk_mailbox_10: clk-mailbox-10-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <10>;
++			clock-output-names = "gate_clk_mailbox_10";
++		};
++		gate_clk_mailbox_11: clk-mailbox-11-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <11>;
++			clock-output-names = "gate_clk_mailbox_11";
++		};
++		gate_clk_mailbox_12: clk-mailbox-12-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <12>;
++			clock-output-names = "gate_clk_mailbox_12";
++		};
++		gate_clk_mailbox_13: clk-mailbox-13-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <13>;
++			clock-output-names = "gate_clk_mailbox_13";
++		};
++		gate_clk_mailbox_14: clk-mailbox-14-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <14>;
++			clock-output-names = "gate_clk_mailbox_14";
++		};
++		gate_clk_mailbox_15: clk-mailbox-15-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <15>;
++			clock-output-names = "gate_clk_mailbox_15";
++		};
++		gate_pvt0_clk: pvt0-clk-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_pvt_div20>;
++			bit-index = <16>;
++			clock-output-names = "gate_pvt0_clk";
++		};
++		gate_pvt1_clk: pvt1-clk-gate@204 {
++			compatible = "eswin,gate-clock";
++			reg = <0x204>;
++			#clock-cells = <0>;
++			clocks = <&fixed_factor_pvt_div20>;
++			bit-index = <17>;
++			clock-output-names = "gate_pvt1_clk";
++		};
++		gate_cpu_ext_src_core_0: cpu-ext-src-core-0-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <28>;
++			clock-output-names = "gate_cpu_ext_src_core_0";
++		};
++		gate_cpu_ext_src_core_1: cpu-ext-src-core-1-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <29>;
++			clock-output-names = "gate_cpu_ext_src_core_1";
++		};
++		gate_cpu_ext_src_core_2: cpu-ext-src-core-2-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <30>;
++			clock-output-names = "gate_cpu_ext_src_core_2";
++		};
++		gate_cpu_ext_src_core_3: cpu-ext-src-core-3-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_cpu_ext_src_core_3";
++		};
++		gate_clk_cpu_trace_clk_0: clk-cpu-trace-clk-0-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <24>;
++			clock-output-names = "gate_clk_cpu_trace_clk_0";
++		};
++		gate_clk_cpu_trace_clk_1: clk-cpu-trace-clk-1-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <25>;
++			clock-output-names = "gate_clk_cpu_trace_clk_1";
++		};
++		gate_clk_cpu_trace_clk_2: clk-cpu-trace-clk-2-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <26>;
++			clock-output-names = "gate_clk_cpu_trace_clk_2";
++		};
++		gate_clk_cpu_trace_clk_3: clk-cpu-trace-clk-3-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_root_3mux1>;
++			bit-index = <27>;
++			clock-output-names = "gate_clk_cpu_trace_clk_3";
++		};
++		gate_clk_cpu_trace_com_clk: clk-cpu-trace-com-clk-gate@208 {
++			compatible = "eswin,gate-clock";
++			reg = <0x208>;
++			#clock-cells = <0>;
++			clocks = <&mux_cpu_aclk_2mux1>;
++			bit-index = <23>;
++			clock-output-names = "gate_clk_cpu_trace_com_clk";
++		};
++		gate_aon_i2c0_pclk: aon-i2c0-pclk-gate@210 {
++			compatible = "eswin,gate-clock";
++			reg = <0x210>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_aon_i2c0_pclk";
++		};
++		gate_aon_i2c1_pclk: aon-i2c1-pclk-gate@214 {
++			compatible = "eswin,gate-clock";
++			reg = <0x214>;
++			#clock-cells = <0>;
++			clocks = <&mux_syscfg_clk_root_2mux1>;
++			bit-index = <31>;
++			clock-output-names = "gate_aon_i2c1_pclk";
++		};
++	};
 +};
-+
-+static enum pll_clk str_to_pll_clk(const char *str)
-+{
-+	if (!strcmp(str, "clk_apll_fout1"))
-+		return CLK_APLL_FOUT1;
-+	else if (!strcmp(str, "clk_pll_cpu"))
-+		return CLK_PLL_CPU;
-+	else
-+		return 0;
-+}
-+
-+static void __iomem *parent_base;
-+
-+static void __init get_parent_base(struct device_node *parent_np)
-+{
-+	if (!parent_base) {
-+		parent_base = of_iomap(parent_np, 0);
-+		if (IS_ERR(parent_base)) {
-+			pr_err("%s: Failed to map registers\n", __func__);
-+			parent_base = NULL;
-+		}
-+	}
-+}
-+
-+/**
-+ * eswin_calc_pll - calculate PLL values
-+ * @frac_val: fractional divider
-+ * @fbdiv_val: feedback divider
-+ * @rate: reference rate
-+ *
-+ *   Calculate PLL values for frac and fbdiv
-+ */
-+static void eswin_calc_pll(u32 *frac_val, u32 *fbdiv_val, u64 rate)
-+{
-+	u32 rem, tmp1, tmp2;
-+
-+	rate = rate * 4;
-+	rem = do_div(rate, 1000);
-+	if (rem)
-+		tmp1 = rem;
-+
-+	rem = do_div(rate, 1000);
-+	if (rem)
-+		tmp2 = rem;
-+
-+	rem = do_div(rate, 24);
-+	/* fbdiv = rate * 4 / 24000000 */
-+	*fbdiv_val = rate;
-+	/* frac = rate * 4 % 24000000 * (2 ^ 24) */
-+	*frac_val = ((1000 * (1000 * rem + tmp2) + tmp1) << 21) / 3 / 1000000;
-+}
-+
-+static inline struct eswin_clk_pll *to_pll_clk(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct eswin_clk_pll, hw);
-+}
-+
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct eswin_clk_pll *clk = to_pll_clk(hw);
-+	const char *clk_name = clk_hw_get_name(&clk->hw);
-+
-+	if (!clk_name)
-+		return -ENOMEM;
-+
-+	u32 frac_val = 0, fbdiv_val, refdiv_val = 1, postdiv1_val = 0;
-+	u32 val;
-+	int ret;
-+	struct clk *clk_cpu_mux = NULL;
-+	struct clk *clk_cpu_lp_pll = NULL;
-+	struct clk *clk_cpu_pll = NULL;
-+	int try_count = 0;
-+	bool lock_flag = false;
-+
-+	eswin_calc_pll(&frac_val, &fbdiv_val, (u64)rate);
-+
-+	/* Must switch the CPU to other CLK before we change the CPU PLL. */
-+	if (str_to_pll_clk(clk_name) == CLK_PLL_CPU) {
-+		clk_cpu_mux = __clk_lookup("mux_cpu_root_3mux1");
-+		if (!clk_cpu_mux) {
-+			pr_err("%s %d, failed to get %s\n", __func__, __LINE__,
-+			       "mux_cpu_root_3mux1");
-+			return -EINVAL;
-+		}
-+		clk_cpu_lp_pll = __clk_lookup("fixed_factor_u84_core_lp_div2");
-+		if (!clk_cpu_lp_pll) {
-+			pr_err("%s %d, failed to get %s\n", __func__, __LINE__,
-+			       "fixed_factor_u84_core_lp_div2");
-+			return -EINVAL;
-+		}
-+		ret = clk_prepare_enable(clk_cpu_lp_pll);
-+		if (ret) {
-+			pr_err("%s %d, failed to enable %s, ret %d\n",
-+			       __func__, __LINE__,
-+			       "fixed_factor_u84_core_lp_div2", ret);
-+			return ret;
-+		}
-+		clk_cpu_pll = __clk_lookup("clk_pll_cpu");
-+		if (!clk_cpu_pll) {
-+			pr_err("%s %d, failed to get %s\n", __func__, __LINE__,
-+			       "clk_pll_cpu");
-+			clk_disable_unprepare(clk_cpu_lp_pll);
-+			return -EINVAL;
-+		}
-+
-+		ret = clk_set_parent(clk_cpu_mux, clk_cpu_lp_pll);
-+		if (ret) {
-+			pr_err("%s %d, failed to switch %s to %s, ret %d\n",
-+			       __func__, __LINE__, "mux_cpu_root_3mux1",
-+			       "fixed_factor_u84_core_lp_div2", ret);
-+			clk_disable_unprepare(clk_cpu_lp_pll);
-+			return -EPERM;
-+		}
-+	}
-+
-+	/* first disable PLL */
-+	val = readl_relaxed(clk->ctrl_reg0);
-+	val &= ~(((1 << clk->pllen_width) - 1) << clk->pllen_shift);
-+	val |= 0 << clk->pllen_shift;
-+	writel_relaxed(val, clk->ctrl_reg0);
-+
-+	val = readl_relaxed(clk->ctrl_reg0);
-+	val &= ~(((1 << clk->fbdiv_width) - 1) << clk->fbdiv_shift);
-+	val &= ~(((1 << clk->refdiv_width) - 1) << clk->refdiv_shift);
-+	val |= refdiv_val << clk->refdiv_shift;
-+	val |= fbdiv_val << clk->fbdiv_shift;
-+	writel_relaxed(val, clk->ctrl_reg0);
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val &= ~(((1 << clk->frac_width) - 1) << clk->frac_shift);
-+	val |= frac_val << clk->frac_shift;
-+	writel_relaxed(val, clk->ctrl_reg1);
-+
-+	val = readl_relaxed(clk->ctrl_reg2);
-+	val &= ~(((1 << clk->postdiv1_width) - 1) << clk->postdiv1_shift);
-+	val |= postdiv1_val << clk->postdiv1_shift;
-+	writel_relaxed(val, clk->ctrl_reg2);
-+
-+	/* at last, enable PLL */
-+	val = readl_relaxed(clk->ctrl_reg0);
-+	val &= ~(((1 << clk->pllen_width) - 1) << clk->pllen_shift);
-+	val |= 1 << clk->pllen_shift;
-+	writel_relaxed(val, clk->ctrl_reg0);
-+
-+	/* usually the PLL would lock in 50us */
-+	do {
-+		usleep_range(refdiv_val * 80, refdiv_val * 80 * 2);
-+		val = readl_relaxed(clk->status_reg);
-+		if (val & 1 << clk->lock_shift) {
-+			lock_flag = true;
-+			break;
-+		}
-+	} while (try_count++ < 10);
-+
-+	if (!lock_flag) {
-+		pr_err("%s %d, failed to lock the cpu pll", __func__, __LINE__);
-+		return -EBUSY;
-+	}
-+
-+	if (str_to_pll_clk(clk_name) == CLK_PLL_CPU) {
-+		ret = clk_set_parent(clk_cpu_mux, clk_cpu_pll);
-+		if (ret) {
-+			pr_err("%s %d, failed to switch %s to %s, ret %d\n",
-+			       __func__, __LINE__, "mux_cpu_root_3mux1",
-+			       "clk_pll_cpu", ret);
-+			return -EPERM;
-+		}
-+		clk_disable_unprepare(clk_cpu_lp_pll);
-+	}
-+	return ret;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct eswin_clk_pll *clk = to_pll_clk(hw);
-+	const char *clk_name = clk_hw_get_name(&clk->hw);
-+
-+	if (!clk_name)
-+		return -ENOMEM;
-+
-+	u64 frac_val, fbdiv_val, refdiv_val, tmp, rem;
-+	u32 postdiv1_val;
-+	u32 val;
-+	u64 rate = 0;
-+
-+	val = readl_relaxed(clk->ctrl_reg0);
-+	val = val >> clk->fbdiv_shift;
-+	val &= ((1 << clk->fbdiv_width) - 1);
-+	fbdiv_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg0);
-+	val = val >> clk->refdiv_shift;
-+	val &= ((1 << clk->refdiv_width) - 1);
-+	refdiv_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val = val >> clk->frac_shift;
-+	val &= ((1 << clk->frac_width) - 1);
-+	frac_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg2);
-+	val = val >> clk->postdiv1_shift;
-+	val &= ((1 << clk->postdiv1_width) - 1);
-+	postdiv1_val = val;
-+
-+	/* rate = 24000000 * (fbdiv + frac / (2 ^ 24)) / 4 */
-+	if (str_to_pll_clk(clk_name)) {
-+		tmp = 1000 * frac_val;
-+		rem = do_div(tmp, BIT(24));
-+		if (rem)
-+			rate = (u64)(6000 * (1000 * fbdiv_val + tmp) +
-+				    ((6000 * rem) >> 24) + 1);
-+		else
-+			rate = (u64)(6000 * 1000 * fbdiv_val);
-+	}
-+
-+	return rate;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	struct eswin_clk_pll *clk = to_pll_clk(hw);
-+	const char *clk_name = clk_hw_get_name(&clk->hw);
-+
-+	if (!clk_name)
-+		return -ENOMEM;
-+
-+	int index;
-+	u64 round_rate = 0;
-+
-+	/* Must be sorted in ascending order */
-+	u64 apll_clk[] = { APLL_LOW_FREQ, APLL_HIGH_FREQ };
-+	u64 cpu_pll_clk[] = { CLK_FREQ_100M,  CLK_FREQ_200M,  CLK_FREQ_400M,
-+			      CLK_FREQ_500M,  CLK_FREQ_600M,  CLK_FREQ_700M,
-+			      CLK_FREQ_800M,  CLK_FREQ_900M,  CLK_FREQ_1000M,
-+			      CLK_FREQ_1200M, CLK_FREQ_1300M, CLK_FREQ_1400M,
-+			      CLK_FREQ_1500M, CLK_FREQ_1600M, CLK_FREQ_1700M,
-+			      CLK_FREQ_1800M };
-+
-+	switch (str_to_pll_clk(clk_name)) {
-+	case CLK_APLL_FOUT1:
-+		index = find_closest(rate, apll_clk, ARRAY_SIZE(apll_clk));
-+		round_rate = apll_clk[index];
-+		break;
-+	case CLK_PLL_CPU:
-+		index = find_closest(rate, cpu_pll_clk,
-+				     ARRAY_SIZE(cpu_pll_clk));
-+		round_rate = cpu_pll_clk[index];
-+		break;
-+	default:
-+		pr_err("%s %d, unknown clk %s\n", __func__, __LINE__,
-+		       clk_name);
-+		break;
-+	}
-+	return round_rate;
-+}
-+
-+static const struct clk_ops eswin_clk_pll_ops = {
-+	.set_rate = clk_pll_set_rate,
-+	.recalc_rate = clk_pll_recalc_rate,
-+	.round_rate = clk_pll_round_rate,
-+};
-+
-+void __init eswin_clk_gate_register(struct device_node *np)
-+{
-+	struct clk_hw *clk_hw;
-+	struct device_node *parent_np;
-+	const char *clk_name;
-+	const char *parent_name;
-+	u32 idx_bit;
-+	u32 reg;
-+	int ret;
-+
-+	parent_np = of_get_parent(np);
-+	if (!parent_np) {
-+		pr_err("%s: Failed to get parent node\n", __func__);
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(parent_np, "eswin,eic7700-clock"))
-+		get_parent_base(parent_np);
-+	else
-+		return;
-+
-+	if (IS_ERR(parent_base)) {
-+		pr_err("%s: Failed to map registers\n", __func__);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_string(np, "clock-output-names", &clk_name);
-+	if (ret) {
-+		pr_err("%s: Missing clock-output-names\n", __func__);
-+		goto put_node;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	if (!parent_name)
-+		goto put_node;
-+
-+	ret = of_property_read_u32(np, "bit-index", &idx_bit);
-+	if (ret) {
-+		pr_err("%s: Missing bit-index for gate %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "reg", &reg);
-+	if (ret) {
-+		pr_err("%s: Missing reg for gate %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	clk_hw = clk_hw_register_gate(NULL, clk_name, parent_name,
-+				      CLK_SET_RATE_PARENT,
-+				      parent_base + reg, idx_bit, 0, NULL);
-+
-+	if (IS_ERR(clk_hw)) {
-+		pr_err("%s: Failed to register gate clock %s: %ld\n",
-+		       __func__, clk_name, PTR_ERR(clk_hw));
-+		goto put_node;
-+	}
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, clk_hw);
-+	if (ret) {
-+		pr_err("%s: Failed to add clock provider: %d\n", __func__, ret);
-+		clk_hw_unregister_gate(clk_hw);
-+	}
-+
-+put_node:
-+	of_node_put(parent_np);
-+}
-+
-+void __init eswin_clk_mux_register(struct device_node *np)
-+{
-+	struct clk *clk;
-+	const char *clk_name = NULL;
-+	const char **parent_names = NULL;
-+	struct device_node *parent_np;
-+	u32 shift, width;
-+	u32 reg;
-+	u8 num_parents;
-+	u32 mask = 0;
-+	int ret, i;
-+
-+	parent_np = of_get_parent(np);
-+	if (!parent_np) {
-+		pr_err("%s: Failed to get parent node\n", __func__);
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(parent_np, "eswin,eic7700-clock"))
-+		get_parent_base(parent_np);
-+	else
-+		return;
-+
-+	if (IS_ERR(parent_base)) {
-+		pr_err("%s: Failed to map registers\n", __func__);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_string(np, "clock-output-names", &clk_name);
-+	if (ret) {
-+		pr_err("%s: Missing clock-output-names\n", __func__);
-+		goto put_node;
-+	}
-+
-+	num_parents = of_clk_get_parent_count(np);
-+	if (!num_parents) {
-+		pr_err("%s: No parents for mux %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	parent_names = kcalloc(num_parents, sizeof(*parent_names),
-+			       GFP_KERNEL);
-+	if (!parent_names)
-+		goto put_node;
-+
-+	for (i = 0; i < num_parents; i++) {
-+		parent_names[i] = of_clk_get_parent_name(np, i);
-+		if (!parent_names[i]) {
-+			pr_err("%s: Failed to get parent name %d for %s\n",
-+			       __func__, i, clk_name);
-+			goto free_parents;
-+		}
-+	}
-+
-+	ret = of_property_read_u32(np, "shift", &shift);
-+	if (ret) {
-+		pr_err("%s: Missing shift for mux %s\n", __func__, clk_name);
-+		goto free_parents;
-+	}
-+
-+	ret = of_property_read_u32(np, "width", &width);
-+	if (ret) {
-+		pr_err("%s: Missing width for mux %s\n", __func__, clk_name);
-+		goto free_parents;
-+	}
-+
-+	ret = of_property_read_u32(np, "reg", &reg);
-+	if (ret) {
-+		pr_err("%s: Missing reg for mux %s\n", __func__, clk_name);
-+		goto free_parents;
-+	}
-+
-+	mask = BIT(width) - 1;
-+	clk = clk_register_mux_table(NULL, clk_name, parent_names, num_parents,
-+				     CLK_SET_RATE_PARENT, parent_base + reg,
-+				     shift, mask, 0, NULL, NULL);
-+
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: Failed to register mux clock %s: %ld\n", __func__,
-+		       clk_name, PTR_ERR(clk));
-+		goto free_parents;
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, clk);
-+	if (ret) {
-+		pr_err("%s: Failed to add clock provider: %d\n", __func__, ret);
-+		clk_unregister_mux(clk);
-+	}
-+
-+free_parents:
-+	kfree(parent_names);
-+put_node:
-+	of_node_put(parent_np);
-+}
-+
-+void __init eswin_clk_div_register(struct device_node *np)
-+{
-+	struct clk_hw *clk_hw;
-+	struct device_node *parent_np;
-+	const char *clk_name;
-+	const char *parent_name;
-+	u32 shift, width, div_flags;
-+	u32 reg;
-+	int ret;
-+
-+	parent_np = of_get_parent(np);
-+	if (!parent_np) {
-+		pr_err("%s: Failed to get parent node\n", __func__);
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(parent_np, "eswin,eic7700-clock"))
-+		get_parent_base(parent_np);
-+	else
-+		return;
-+
-+	if (IS_ERR(parent_base)) {
-+		pr_err("%s: Failed to map registers\n", __func__);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_string(np, "clock-output-names", &clk_name);
-+	if (ret) {
-+		pr_err("%s: Missing clock-output-names\n", __func__);
-+		goto put_node;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	if (!parent_name) {
-+		pr_err("%s: No parent for div %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "shift", &shift);
-+	if (ret) {
-+		pr_err("%s: Missing shift for div %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "width", &width);
-+	if (ret) {
-+		pr_err("%s: Missing width for div %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "div-flags", &div_flags);
-+	if (ret) {
-+		pr_err("%s: Missing div-flags for div %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "reg", &reg);
-+	if (ret) {
-+		pr_err("%s: Missing reg for div %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	clk_hw = clk_hw_register_divider(NULL, clk_name, parent_name, 0,
-+					 parent_base + reg, shift, width,
-+					 div_flags, NULL);
-+
-+	if (IS_ERR(clk_hw)) {
-+		pr_err("%s: Failed to register divider clock %s: %ld\n",
-+		       __func__, clk_name, PTR_ERR(clk_hw));
-+		goto put_node;
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, clk_hw);
-+	if (ret) {
-+		pr_err("%s: Failed to add clock provider: %d\n", __func__, ret);
-+		clk_hw_unregister_divider(clk_hw);
-+	}
-+
-+put_node:
-+	of_node_put(parent_np);
-+}
-+
-+void __init eswin_clk_pll_register(struct device_node *np)
-+{
-+	struct eswin_clk_pll *p_clk = NULL;
-+	struct clk *clk = NULL;
-+	struct clk_init_data init = {};
-+	struct device_node *parent_np;
-+	const char *clk_name;
-+	const char *parent_name;
-+	int ret;
-+	u32 reg[4];
-+	u32 en_shift, en_width;
-+	u32 refdiv_shift, refdiv_width;
-+	u32 fbdiv_shift, fbdiv_width;
-+	u32 frac_shift, frac_width;
-+	u32 postdiv1_shift, postdiv1_width;
-+	u32 postdiv2_shift, postdiv2_width;
-+	u32 lock_shift, lock_width;
-+
-+	parent_np = of_get_parent(np);
-+	if (!parent_np) {
-+		pr_err("%s: Failed to get parent node\n", __func__);
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(parent_np, "eswin,eic7700-clock"))
-+		get_parent_base(parent_np);
-+	else
-+		return;
-+
-+	if (IS_ERR(parent_base)) {
-+		pr_err("%s: Failed to map registers\n", __func__);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_string(np, "clock-output-names", &clk_name);
-+	if (ret) {
-+		pr_err("%s: Missing clock-output-names\n", __func__);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "enable-shift", &en_shift);
-+	if (ret) {
-+		pr_err("%s: Missing enable-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "enable-width", &en_width);
-+	if (ret) {
-+		pr_err("%s: Missing enable-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "refdiv-shift", &refdiv_shift);
-+	if (ret) {
-+		pr_err("%s: Missing refdiv-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "refdiv-width", &refdiv_width);
-+	if (ret) {
-+		pr_err("%s: Missing refdiv-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "fbdiv-shift", &fbdiv_shift);
-+	if (ret) {
-+		pr_err("%s: Missing fbdiv-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "fbdiv-width", &fbdiv_width);
-+	if (ret) {
-+		pr_err("%s: Missing fbdiv-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "frac-shift", &frac_shift);
-+	if (ret) {
-+		pr_err("%s: Missing frac-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "frac-width", &frac_width);
-+	if (ret) {
-+		pr_err("%s: Missing frac-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "postdiv1-shift", &postdiv1_shift);
-+	if (ret) {
-+		pr_err("%s: Missing postdiv1-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "postdiv1-width", &postdiv1_width);
-+	if (ret) {
-+		pr_err("%s: Missing postdiv1-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "postdiv2-shift", &postdiv2_shift);
-+	if (ret) {
-+		pr_err("%s: Missing postdiv2-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "postdiv2-width", &postdiv2_width);
-+	if (ret) {
-+		pr_err("%s: Missing postdiv2-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "lock-shift", &lock_shift);
-+	if (ret) {
-+		pr_err("%s: Missing lock-shift for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32(np, "lock-width", &lock_width);
-+	if (ret) {
-+		pr_err("%s: Missing lock-width for pll %s\n", __func__,
-+		       clk_name);
-+		goto put_node;
-+	}
-+
-+	ret = of_property_read_u32_array(np, "reg", reg, 4);
-+	if (ret) {
-+		pr_err("%s: Missing reg for pll %s\n", __func__, clk_name);
-+		goto put_node;
-+	}
-+
-+	p_clk = kzalloc(sizeof(*p_clk), GFP_KERNEL);
-+	if (!p_clk)
-+		goto put_node;
-+
-+	p_clk->ctrl_reg0 = parent_base + reg[0];
-+	p_clk->pllen_shift = en_shift;
-+	p_clk->pllen_width = en_width;
-+	p_clk->refdiv_shift = refdiv_shift;
-+	p_clk->refdiv_width = refdiv_width;
-+	p_clk->fbdiv_shift = fbdiv_shift;
-+	p_clk->fbdiv_width = fbdiv_width;
-+
-+	p_clk->ctrl_reg1 = parent_base + reg[1];
-+	p_clk->frac_shift = frac_shift;
-+	p_clk->frac_width = frac_width;
-+
-+	p_clk->ctrl_reg2 = parent_base + reg[2];
-+	p_clk->postdiv1_shift = postdiv1_shift;
-+	p_clk->postdiv1_width = postdiv1_width;
-+	p_clk->postdiv2_shift = postdiv2_shift;
-+	p_clk->postdiv2_width = postdiv2_width;
-+
-+	p_clk->status_reg = parent_base + reg[3];
-+	p_clk->lock_shift = lock_shift;
-+	p_clk->lock_width = lock_width;
-+
-+	init.name = clk_name;
-+	init.flags = 0;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+	init.ops = &eswin_clk_pll_ops;
-+	p_clk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &p_clk->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: Failed to register pll clock %s: %ld\n", __func__,
-+		       clk_name, PTR_ERR(clk));
-+		kfree(p_clk);
-+		goto put_node;
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, clk);
-+	if (ret) {
-+		pr_err("%s: Failed to add clock provider: %d\n", __func__, ret);
-+		clk_unregister(clk);
-+	}
-+
-+put_node:
-+	of_node_put(parent_np);
-+}
-diff --git a/drivers/clk/eswin/clk.h b/drivers/clk/eswin/clk.h
-new file mode 100644
-index 000000000000..1302540f9e24
---- /dev/null
-+++ b/drivers/clk/eswin/clk.h
-@@ -0,0 +1,69 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#ifndef __ESWIN_CLK_H__
-+#define __ESWIN_CLK_H__
-+
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+
-+#define CLK_FREQ_1800M 1800000000
-+#define CLK_FREQ_1700M 1700000000
-+#define CLK_FREQ_1600M 1600000000
-+#define CLK_FREQ_1500M 1500000000
-+#define CLK_FREQ_1400M 1400000000
-+#define CLK_FREQ_1300M 1300000000
-+#define CLK_FREQ_1200M 1200000000
-+#define CLK_FREQ_1000M 1000000000
-+#define CLK_FREQ_900M 900000000
-+#define CLK_FREQ_800M 800000000
-+#define CLK_FREQ_700M 700000000
-+#define CLK_FREQ_600M 600000000
-+#define CLK_FREQ_500M 500000000
-+#define CLK_FREQ_400M 400000000
-+#define CLK_FREQ_200M 200000000
-+#define CLK_FREQ_100M 100000000
-+#define CLK_FREQ_24M 24000000
-+
-+#define APLL_HIGH_FREQ 983040000
-+#define APLL_LOW_FREQ 225792000
-+
-+struct eswin_clk_pll {
-+	struct clk_hw hw;
-+	void __iomem *ctrl_reg0;
-+	u8 pllen_shift;
-+	u8 pllen_width;
-+	u8 refdiv_shift;
-+	u8 refdiv_width;
-+	u8 fbdiv_shift;
-+	u8 fbdiv_width;
-+
-+	void __iomem *ctrl_reg1;
-+	u8 frac_shift;
-+	u8 frac_width;
-+
-+	void __iomem *ctrl_reg2;
-+	u8 postdiv1_shift;
-+	u8 postdiv1_width;
-+	u8 postdiv2_shift;
-+	u8 postdiv2_width;
-+
-+	void __iomem *status_reg;
-+	u8 lock_shift;
-+	u8 lock_width;
-+};
-+
-+void __init eswin_clk_gate_register(struct device_node *np);
-+void __init eswin_clk_mux_register(struct device_node *np);
-+void __init eswin_clk_div_register(struct device_node *np);
-+void __init eswin_clk_pll_register(struct device_node *np);
-+
-+#endif /* __ESWIN_CLK_H__ */
 --
 2.17.1
 
