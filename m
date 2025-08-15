@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-771068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FC9B2826E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7789B2826D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E793D188968D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:49:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C55F27ABB54
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA8D277C86;
-	Fri, 15 Aug 2025 14:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42711212560;
+	Fri, 15 Aug 2025 14:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dstUBnNF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="2MqRVx4h";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="hxi4WG0X"
+Received: from e3i331.smtp2go.com (e3i331.smtp2go.com [158.120.85.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461C22ACFA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BD323AB94
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755269293; cv=none; b=B2Hcp5ZHNHH3Avwo6aKz3/rEjvFn6uZ/SSL1pwbjwMvMzHkZVAlhgsV53GTBwAiJjPlpnkWuvLNOrwNRCooYyJMuCvTKgrVFtOSNaaaojNIRPeKfvPuYE+dCmYmJwHas7aHodWRfrS9RmpmTzmUtBeTcvzz706KIyqe1Fxbr6oU=
+	t=1755269414; cv=none; b=udNL/TRkTpm+++lKWlst5BGKh6L1I/BscJTVvNxmOmr2ZGENOEWCwlkCZvH6Z/BTZDTI+FPqlmbxBUDfzzXBtXw0ccgqWZqlVqJdQKLf4e6iocykZe9noYvQJwB8swYw9EFjg/0ohA3+N0JPcpHtnfJ1FFeId+m7RkZheghUl9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755269293; c=relaxed/simple;
-	bh=6p3tH5dyDYB5dW9LDS2LWwvBo8AewBArfanZDC9eIx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYNe8I24irbGV+kvxs9WBpJdwbTC/uxEz0zBFBfMmd8LNEolwLORPO4khRvC8SbkKkRGWOS3m8cTI54Q/KdvweQSBFBAOlTSBgV8iksfJ0Xzkgt3Yeumrbw1DYfT7QImU00r0saHVq3eUYNHtPF0OATk5k1kS0LJvsU4aq+8etw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dstUBnNF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755269290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B0lsi7uNi+Pjd1zai/fmB5p40xmZGFkcZlTsakj032U=;
-	b=dstUBnNFD5lnB5GgcoNOpxBmRToRn5LEwjGyfyDOLY5LFN0rJEg6npqKWHwVWnMwTgsfvM
-	M8Wq3yl/oMyrzdPa+7IBi29Hb0W/rXoeIEGIKbbgbbyxihu0iHPZmVkpyYZdo6sfQ8rI+v
-	3G+eYgnhbEdNBWl2eIDkExyjb9N7+UQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-GSw4hUj6M9W3qPpdmb6ZOQ-1; Fri,
- 15 Aug 2025 10:48:07 -0400
-X-MC-Unique: GSw4hUj6M9W3qPpdmb6ZOQ-1
-X-Mimecast-MFC-AGG-ID: GSw4hUj6M9W3qPpdmb6ZOQ_1755269285
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 22526180035F;
-	Fri, 15 Aug 2025 14:48:05 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.16])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A17541955E89;
-	Fri, 15 Aug 2025 14:47:56 +0000 (UTC)
-Date: Fri, 15 Aug 2025 22:47:47 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, hare@suse.de, nilay@linux.ibm.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: Re: [PATCH 04/10] blk-mq: serialize updating nr_requests with
- update_nr_hwq_lock
-Message-ID: <aJ9IkylydqSNZqwC@fedora>
-References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
- <20250815080216.410665-5-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1755269414; c=relaxed/simple;
+	bh=vBbph5dHkhutdCTVkxJyDj2PavT5WvspsYrnw8x0n+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YlMZ+JHKmXug9EHi/bbdZE/Ye+Dy3DZSqcVjBEJKISOBQancfJBMKsOC9CsTRmV0fZJFnaikLBW17ZzsklSCs6JL924k4ELeEOq0uGj3ldNT25x2z2dWpU4vm96maOuOye0teZjO27Dq8hlfzL0/yyHmcq07QpAgI2PyCrdv+A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=2MqRVx4h; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=hxi4WG0X; arc=none smtp.client-ip=158.120.85.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1755269411; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=wULHCv+96eZLnevpHZpeudlEQ8kLugY9ap1N6Mw6mS8=;
+ b=2MqRVx4h67iikXyG76tyMahA7MzcEqEOrKr+809ehXuRtWOqDZByL1r3DVE3uzI4ELTPV
+ DW04noz75nctn/z2m8EgvK6KVPJtEllVUfjcF+DnERU7SUx5Gr8M1GeWDCaFQCneV9/99SC
+ swjCDLPxz07Hnf5sumQqFPsVxKn5mMArEZMjshkweABxNOyJ1IgNIS/6JTzoFaEdQdSJtue
+ I1nbeCyf1bs+dRXz36FBLng3U39dkZKoT4w5RH2Qdrx5hYUcx1VqbGioDGQCt6mbtb+JxkO
+ Z3SAXXfAi0P/53fWnNPnbX1FsSntnWP+CzoFjbXjZoHlbqviS5No/ziModhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1755269411; h=from : subject :
+ to : message-id : date;
+ bh=wULHCv+96eZLnevpHZpeudlEQ8kLugY9ap1N6Mw6mS8=;
+ b=hxi4WG0XmnUhIddOSWWjxaSWwipO+NgCAIjulFIX7vdG2K+YmxfKS2tQVmUs9JNvEZUKp
+ iTKCHdIxZ0LXDqdzPLvAi153Wq7kxgAR5RGRkmXnI/aLTdBHcg+rCRS5KZF5eEGLlaa0jNy
+ fkQ9EYjIDxTXkZ6vntQFDjVkUb1HMYd7Y9gMZkm8zdeq2Zw/zQ4dH+WAxqLx62v26S7ZrcZ
+ HikAk2b4RWVwLZ0DoGJaMxX0nwey+W+KNRnx2Klg/CTs4/iXEMi05+4Fvvzg996r2JPaTXd
+ OD61ynBk3dQL4EZ33xXqV5cZEP9YVyx8GJITNSwbniFDm3tUP4Jt6N8hB7Lw==
+Received: from [10.152.250.198] (helo=vilez.localnet)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1umvkm-4o5NDgrs3MH-eLYV;
+	Fri, 15 Aug 2025 14:50:00 +0000
+From: Edip Hazuri <edip@medip.dev>
+To: dmitry.torokhov@gmail.com, jikos@kernel.org
+Reply-To: 20250802212149.16707-2-edip@medip.dev
+Cc: bentiss@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Edip Hazuri <edip@medip.dev>
+Subject: Re: [PATCH 1/2] Input: Add key event code for Fn + P
+Date: Fri, 15 Aug 2025 17:49:55 +0300
+Message-ID: <1965589.tdWV9SEqCh@vilez>
+In-Reply-To: <20250802212149.16707-2-edip@medip.dev>
+References: <20250802212149.16707-2-edip@medip.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815080216.410665-5-yukuai1@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854sNJGsZfqxx
+X-smtpcorp-track: l0D8v9taiQIA.F8cYfbaEOw8w.Xd84bQ4CYVc
 
-On Fri, Aug 15, 2025 at 04:02:10PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> request_queue->nr_requests can be changed by:
-> 
-> a) switching elevator by update nr_hw_queues
-> b) switching elevator by elevator sysfs attribute
-> c) configue queue sysfs attribute nr_requests
+On Sunday, August 3, 2025 12:21:50=E2=80=AFAM GMT+03:00 edip@medip.dev wrot=
+e:
+> From: Edip Hazuri <edip@medip.dev>
+>=20
+> Newer Victus (and probably newer omen) laptops contains a "Fn + P"
+> Shortcut. This is intended to use with Omen Gaming Hub, Which is
+> changing the performance profile when this shortcut triggered. This
+> shortcut is shown on performance control page, see [1]
+>=20
+> Currently there is no key definition to handle this. So add a KEY_FN_P
+> keycode define to be able to use this shortcut.
+>=20
+> [1]: https://jpcdn.it/img/adadf6c927ffeb75afd8038f95db400a.png
+>=20
+> Signed-off-by: Edip Hazuri <edip@medip.dev>
+> ---
+>  drivers/hid/hid-debug.c                | 2 +-
+>  include/uapi/linux/input-event-codes.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+> index 4424c0512ba..2bcf7b24801 100644
+> --- a/drivers/hid/hid-debug.c
+> +++ b/drivers/hid/hid-debug.c
+> @@ -3342,7 +3342,7 @@ static const char *keys[KEY_MAX + 1] =3D {
+>  	[KEY_FN_1] =3D "Fn+1",			[KEY_FN_2] =3D=20
+"Fn+2",
+>  	[KEY_FN_B] =3D "Fn+B",			[KEY_FN_D] =3D "Fn+D",
+>  	[KEY_FN_E] =3D "Fn+E",			[KEY_FN_F] =3D=20
+"Fn+F",
+> -	[KEY_FN_S] =3D "Fn+S",
+> +	[KEY_FN_S] =3D "Fn+S",			[KEY_FN_P] =3D "Fn+P",
+>  	[KEY_FN_F1] =3D "Fn+F1",			[KEY_FN_F2] =3D=20
+"Fn+F2",
+>  	[KEY_FN_F3] =3D "Fn+F3",			[KEY_FN_F4] =3D=20
+"Fn+F4",
+>  	[KEY_FN_F5] =3D "Fn+F5",			[KEY_FN_F6] =3D=20
+"Fn+F6",
+> diff --git a/include/uapi/linux/input-event-codes.h
+> b/include/uapi/linux/input-event-codes.h index 3b2524e4b66..2fc79b32425
+> 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -548,6 +548,7 @@
+>  #define KEY_FN_S		0x1e3
+>  #define KEY_FN_B		0x1e4
+>  #define KEY_FN_RIGHT_SHIFT	0x1e5
+> +#define KEY_FN_P		0x1e6
+>=20
+>  #define KEY_BRL_DOT1		0x1f1
+>  #define KEY_BRL_DOT2		0x1f2
 
- ->elevator_lock is grabbed for updating ->nr_requests except for queue
-initialization, so what is the real problem you are trying to solve?
+Hello,
+
+Please don't merge this. I made a v2 of this patch and this is no longer=20
+needed.=20
+
+Thanks!
 
 
-Thanks,
-Ming
 
 
