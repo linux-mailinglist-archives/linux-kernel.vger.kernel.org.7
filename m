@@ -1,261 +1,485 @@
-Return-Path: <linux-kernel+bounces-771125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED1BB28328
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CE8B2832C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA89C3B18F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AC33B48DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23DB308F10;
-	Fri, 15 Aug 2025 15:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F76292917;
+	Fri, 15 Aug 2025 15:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d+lXkgku"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jaGRIs3S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB536308F23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BF419F12D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272725; cv=none; b=jSDqif1Z4Fd0kPvbSM3GfNPIkDys27XQCkd4Ka0nq3xxY+f1T7hWxu8ssmJ2o8ppZPQHz9mWeTS7/x9ZKz6J10HL6CPOGkxkTRz9icKevrkMQ74Ybc/HasXd2Q9GRLUFdkueiDW1YXrrYEzLXrkkTHQ2NVFKAQCweNA0bgqCHdo=
+	t=1755272773; cv=none; b=i+hjyixYusioSQgzgz/FSBEadfdpddzAT2LTAKo/VM3KYdbF7VUtbvDoTcTpJV0kwCC5CpWc/rgHwPUuLOuxt68QXB9kRBN7RBbXflkwxFKKJLje3lHwV422UYKZJw6XFCKe4AbpGfp+ml6jSzEkIugnKe9T9W9Nkh49Dni5HN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272725; c=relaxed/simple;
-	bh=+3I80yhydYWASTAsGzbCh7I+Hc87GBAqCuiWOJrapxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JNSeDO4nOp5xHppQNBs9NWSmb9dHjMxfM/GzZrCzWdMBs8UIi2UXO7qVzgoMqMbZm3hzwqUWNF8SdrCEQVMyvTNauQE1MxggWFfm32a0cNGeoWL4IiGvK13A2bXxmvlrp6jGqGdCWpXFSRDp+rXvL5Rn8JwexUBPGaz2aEOwZaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d+lXkgku; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55ce510e769so2163593e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755272721; x=1755877521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BkJuyXAciH/8/iDD4LG9SPwRCgzsmG2xUR336CxdJe4=;
-        b=d+lXkgkubfntayKp0QjDnp5e79cXtgZu9DB0T7NnXOpwNy53zqbmDn41Ngg4nrRmcY
-         LnypaBik/KqBulubs/9mIEuu67wOQBBYHs0rHmP1vpLZBGU7CQtnzfwmRadv46Ux51+O
-         qhNrJ9sehKypOsq0LhURGtVMO2FGxP//UFW6KvL3jYVP9eUtkwwbdjho4eg1gq5VMmZk
-         ZPFnjrV7gH5p04EMgnVsvLbJLOMJbpE9G3IJuHZVrkJZPLxhp+sfA60gNsd2go7iM3ew
-         3drx4qiNO1eDtVV2gmzwWNOhEhTn7+D2z7F4jTBGAIH16ifAjtKiV0YA7jzxGK0n0VqL
-         IOrQ==
+	s=arc-20240116; t=1755272773; c=relaxed/simple;
+	bh=AdyPZspn9jpl/n4EThew4HeSZsm3OTTzCIE9ywRTBiw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jnSoiq7BrFsxERbsQQwqboC6WTQhtB13EcFEXKsVjbJU5ogCTZ3fqWMyWEfCpYIvWOxQor3cOI7Q0BHIgfi/Fm1lr2pVp0RWsAr92bznXA+V1k/0cKjlmjw7faqoDZiSe4K26dds6EgH2PCOizsC3epFORFOrTOn17OND4lTV7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jaGRIs3S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FEJ2HQ018247
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:46:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JeU8hefHW3uk9caYXaFowl
+	+wyNewewpbgOtBogE/RUo=; b=jaGRIs3StWainalYBGQhXbQmmoy3H5Gjf9751c
+	UM0V0J0KV6mi8FvYH49NFW6/bx5LQCYiKsU2BVZ7l5OHc3asNn462JVTB3/xHMYC
+	1e9YQR/7VOBUSFqqqvaytJpkfnlExWApMjlEOU9WfI4zOZQf6Ifof80IppZIUVSI
+	q8rDwqa8WPXhFGOLbUypxo09Qp7uws9JqeYMW+muoDTX5OXJerHI2EqtjYGOn5WX
+	HTRZZk1O1R38ZXAjQksuZOriHKxburiyEZYn1+CYKFF2jHt77r0WHvC6/IAEUZCw
+	3EnxkTmla2g7CeHAeKX3vWO+NkdEBm+Vt8C2lFj19AW6tPIQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxhn9k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:46:10 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a8b32a6e3so41019806d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:46:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755272721; x=1755877521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BkJuyXAciH/8/iDD4LG9SPwRCgzsmG2xUR336CxdJe4=;
-        b=TBwBEfHfyT5N8jTwhw7SA/lnI+772lQZTjsmVCez1+LsGh71Nc3iIOAesuO3AhwUJR
-         q+GO8FwDIUuy6wrUdeFzA8w2ArDwjivenh1l8rxnIGjo48sg0jgRaKDL/XpsmYYqvosB
-         /PTFn1mHOLPwU9GgLSaNFj1GsvGZb0QGXJ932Et2y+YTakekCPkBUZU7W4EC1wZdVlNI
-         s+W4Udg8vvDBuR/A+BP324Pkm+75IM83m7A/sQHao/frLDf5Th4xJtQtkHBQE4UheHXH
-         IW+ydtag4gy9tCDxOJclBjR04Svy6q3uCckPZVXLB2i3tmQUwYE+RGAux+OnfCCc0Xnp
-         UEnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdhUDarhTkumW58nbZjMR0ACJkuGCosVkhTNv2t2NkyEncp0L7zIbkoEQEmjcrFVuaizU63emFa5/ebQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfRlKvhOOTJ0E24qzffFjBzbmcqYXcnr8knqDMmtb6iApWD+WO
-	slBwtD10auh6RrgEVZhh3KhZUjgyfbbjxUi4QDds+/tdH/xWMLmLl3VICAG0JN0ZaiOz0u81E/B
-	n7jd4Ec5TjmF1v08sgos5rqCWFFOfmYaD8zJVNdX9TO4n/GCaMt+vtTo/Xn4=
-X-Gm-Gg: ASbGncvI02KAidJsIq0XXF/n1I6mjRe7xoKoUQSThQZHABTJwYwzMJCajGS+NAVfKpW
-	xE01P3YOkk4ewH32yyjczskaG8I1c14n3LCjL7iSysg2DjK63+klflor75MRLOUIfGyibnkxHVZ
-	EEhx3Z9qgoACvzRzCzgR4exqE95vqoPTK9fR3Vlit72DIMugJMsNI/9ReMKFWlU7Ry42E9tyOpa
-	3bNpAmSxrxznkaGHsC1gDA=
-X-Google-Smtp-Source: AGHT+IHoUFUHs//SPTxeubB1wws/VR/cpYf2jq9guM4+F0Lgc2jiIll1Ixu0aj4hL6zgMqosy6FJALEoU8vCtGB4YI4=
-X-Received: by 2002:a05:6512:3d29:b0:55c:c937:111a with SMTP id
- 2adb3069b0e04-55ceeb7d4famr765325e87.35.1755272720612; Fri, 15 Aug 2025
- 08:45:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755272768; x=1755877568;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JeU8hefHW3uk9caYXaFowl+wyNewewpbgOtBogE/RUo=;
+        b=ppFrY4y2jlRY+xyj1tJMOMlIHed+Jk5w03KLqF1VbqcdutawnXIWiEpwrSzUk4taJn
+         bMh0wwhaRFSlMuEhW0+qgbl81/Guh/gx4br1S8USEWZD4bkRw98WKjV7Zd55xtU/R/RV
+         GUyO+ak/F/JXqndU/XOnj/ocXVxxuRrCLgqExBmCRj5T51DaHoTRTaNDmwOa7xKKTQsz
+         nm4IUTDqe77pAJLFqbCcsBOGkD/iL/L1AsTAL0L3P1/j/QmslRW5AVqdTP2kjJWHaYXJ
+         2r94VLiIItV/wB4hNhGKEI7hrJQTz2OxGM8UjNJvNkA8CQdsE/paOeX+eLnM6tDt940+
+         63Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1p3XRmoyMSKUNn8mu8xecCZp8gDlldJSb5qRzxpZ7mOQ7yoN0MMrUfqyf/OKo16c/xw2LGYhw9TeKQ50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLTDU1WAzcm6ukilX0Jth58SxhGbTrHrUYinKOJvq5VqsQnmSp
+	/M0A6NxcvMBUNaTk92+wHxRLaUvRiBMxVLiVGPZR4ZQ8Jy+ERbCP+2FF+XmmQ/7tF21NRkiwWxa
+	fP3Sj0BvVtgxB+n5zPeh19qgeaN4jJ3X1PWTSOURTy3Ypr9Xfjg7nB0pFRbV2gQ7/TFI=
+X-Gm-Gg: ASbGnctDtryQjmJaU3OEURYtquWItN4KSr2O+NnIzVy6HUbAOpxzVN9WHhD/uJNGx7X
+	A0oDXjjpUZgS6P2k23fUlPILuWWV982Avxd4m0lUyzlDlZB5+nzm8OpYROtZte/PiH+bwZOYeKF
+	mJiv7XppLux4/Iu4he0Du2D1tbctVmKcxwXJ6DJEjuGvZ9z9fq0dt/5HIb+mjQNxaKWKCqBF0/w
+	qIBTYVCTTruJ9gT1tMef0aymskVMyeeNsplGRNu7UHf6djQpfrvgYky0za60cROHc8BLOWQl1r5
+	s533lRRlZJ1wg2I03SRtH6WFS+mbWf6PIOwJX6iG2QluQCJJbtnQI0isgoC1y0sS46ymtAhSWL2
+	nD4kqzUsdzNEoSvfn5BBD39C8n4gtbA+5sbmUV1PlsYuIKpElzjJZ
+X-Received: by 2002:a05:6214:528a:b0:707:7090:5400 with SMTP id 6a1803df08f44-70ba7ae85bfmr28039796d6.17.1755272768439;
+        Fri, 15 Aug 2025 08:46:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRYLaK7tDeymqSjMuecb9APSDwBwGnwNEXCRuRxqk2zC0HT2M9Xfu1AiO5sN8hjfEaAL8SQQ==
+X-Received: by 2002:a05:6214:528a:b0:707:7090:5400 with SMTP id 6a1803df08f44-70ba7ae85bfmr28039266d6.17.1755272767838;
+        Fri, 15 Aug 2025 08:46:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef368eb8sm346967e87.59.2025.08.15.08.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 08:46:05 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Fri, 15 Aug 2025 18:46:04 +0300
+Subject: [PATCH v2] arm64: dts: qcom: use DT label for DSI outputs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814162252.3504279-1-cfenn@google.com> <aJ8iNLwlf4PAC0h1@kernel.org>
-In-Reply-To: <aJ8iNLwlf4PAC0h1@kernel.org>
-From: Chris Fenner <cfenn@google.com>
-Date: Fri, 15 Aug 2025 08:45:06 -0700
-X-Gm-Features: Ac12FXyc0wnfWnQIcqGBAtmirRVKc85vzbeMWwmIrLl029870yED6L63LTkgz6U
-Message-ID: <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250815-msm-dsi-outs-v2-1-3662704e833f@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIADtWn2gC/1WOzQqDMBCEX0X23FgTtf6c+h7FQ9S1BhpTs1Es4
+ rs3ai9lYWGG2W92BUKrkKAMVrA4K1Jm8EJcAmh6OTyRqdZrEJFIo0wkTJNmLSlmJkesbXMsbln
+ NMc7Bn7wtdmo5cI/q1BbHyVPdaUItCVljtFauDAZc3FVLcmhhj/eKnLGf45mZH/lfb/rfO3PmJ
+ 08i3tVF16Tx3RCF4yRfOzr0C6pt275biPvb3gAAAA==
+X-Change-ID: 20250724-msm-dsi-outs-dd8e967b1e38
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9101;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=AdyPZspn9jpl/n4EThew4HeSZsm3OTTzCIE9ywRTBiw=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBon1Y9Ydl8N2on6D7hVo6GoM1ZpeVTOw9tpy+tr
+ 6A/n9MM6GmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaJ9WPQAKCRCLPIo+Aiko
+ 1VQoB/931zHPkfIzBRvpcX9t5//9EnKXMe9w/9YWLSm0ctKWGDwgbrZ42g4pEwKa+lfB3RrfRzY
+ Yoblcr3loQC0tcu1lx0rVMn//6HSunKBUjgdrCJlXHtQKiuksRyGqBbyD1wzGXeSwHd6WM9xbm0
+ Xa1Zfj14xD08MjF+cQxVSRhm9Xql1xwq8Oc8pL4wf4OzOXOWMaEMGAM4hoaYUQ7aO1oih4RlQ0r
+ TNedGA4uAXddzbZBuyH+gcIKy0wWsCwsWKZcK6upBPm3OUD8DDqcFSFdV/XpA8+Th2JMykOTfei
+ RcYv23FsFFyn12l02mqC6VMOThgZ3m2YX3+2P5ldD8JBUyKk
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfXwRiAUNebxUGB
+ 8g88jfSjPNHzI3ewwWTu4sGhDnZtAoTyWkrBzpiYniAeUtk9YiGtLkICkQAdOP3DRg+3Yq5OdN5
+ l/kHBUy9zGcFxI+xr2Cz+Nv5bPuZ0ci/5QJhSAAnqeoPhdwhVJrZXllA/JC4lSG/9jBqHFzjB66
+ xyDP5Wh84rH9j5g6+QurC19Af+kRi4Jg+t9klNkngtnbyU79hqnXNLe31vB1yb6P5kN18ihn99V
+ 1dSP90SyLzM6Pgz7QtENvxtwxYBDnmfPqvEuZphEQCb62alEp9svhCWY0YYixbRa75n1NscvLt+
+ LdYgmCnT5v2hqX+DSbbGdlqgQyiq0+qhR21R8YgxU5bCrz2HqvWFpNszoDI9vucK6/aCM3CccaT
+ ATN3MGr0
+X-Proofpoint-GUID: 15IX9hNoimK4yx44eNEED9Kug9aJ3XtL
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689f5642 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=EQR83U5SduvbdnQy2FAA:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-ORIG-GUID: 15IX9hNoimK4yx44eNEED9Kug9aJ3XtL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_05,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-Thanks Jarkko,
+Instead of keeping a copy of the DT tree going down to the DSI output
+endpoint use the label to reference it directly, making DTs less
+error-prone.
 
-By the way, I noticed you and James (in your earlier version of this
-patch from 2024, see [1]) both characterized the TCG_TPM2_HMAC feature
-as being cheap or free, since ECC primary key generation is pretty
-fast (few hundred ms depending on the TPM). I think this analysis
-might be missing some of the hidden costs of the feature. Under the
-hood, it looks to me like the kernel is doing an ECDH session
-establishment with the TPM on _each_ PCR extension (see the call to
-tpm2_start_auth_session inside tpm2_pcr_extend). Each ECDH handshake
-means the TPM is performing an ECC private key operation, which is
-significantly slower than the PCR extension itself. On top of that,
-you have the overhead of shuffling the context around.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+Changes in v2:
+- Rebased on top of linux-next, solving the conflict.
+- Link to v1: https://lore.kernel.org/r/20250725-msm-dsi-outs-v1-1-18401fb9fc53@oss.qualcomm.com
+---
+ arch/arm64/boot/dts/qcom/qrb5165-rb5.dts           | 12 ++++------
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts            | 12 ++++------
+ .../dts/qcom/sc7180-trogdor-quackingstick.dtsi     | 12 ++++------
+ .../boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi  | 12 ++++------
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts         | 24 +++++++-------------
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts            | 26 ++++++++--------------
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 12 ++++------
+ arch/arm64/boot/dts/qcom/sm8150-hdk.dts            | 24 +++++++-------------
+ arch/arm64/boot/dts/qcom/sm8350-hdk.dts            | 12 ++++------
+ .../boot/dts/qcom/sm8650-hdk-display-card.dtso     | 15 +++----------
+ 10 files changed, 52 insertions(+), 109 deletions(-)
 
-To illustrate some of the hidden costs of the TCG_TPM2_HMAC solution
-(and perhaps explain why people are complaining about severe boot time
-impact), I created a small tool at [2] that you can use to profile
-salted session PCR extension on any TPM.
+diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+index 33ecbc81997c5ecb5606c7555adefd1a53634b80..d99448a0732d9d165be1b5a1b1e15b2424b98b55 100644
+--- a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
++++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+@@ -725,15 +725,11 @@ &mdss_dsi0 {
+ 	qcom,dual-dsi-mode;
+ 	qcom,master-dsi;
+ #endif
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_a>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&lt9611_a>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 0146fb0036d44893237520aae5449931f17f1cc2..19cf419cf531f353f17b83b89ec57dac697d5134 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -323,15 +323,11 @@ panel0_in: endpoint {
+ 			};
+ 		};
+ 	};
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&panel0_in>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&panel0_in>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
+index ff8996b4de4e1e66a0f2aac0180233640602caf3..4bea97e4246e160bbd4497551a15a9abe50167e3 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
+@@ -90,15 +90,11 @@ panel_in: endpoint {
+ 			};
+ 		};
+ 	};
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&panel_in>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&panel_in>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &sdhc_2 {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi
+index 17908c93652011d69a2d04b980f45f6732f16977..6078308694ac2085b7958704335dd81dc7109e27 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi
+@@ -148,15 +148,11 @@ panel_in: endpoint {
+ 			};
+ 		};
+ 	};
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&panel_in>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&panel_in>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &pm6150_adc {
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+index 3ec2c7864f1ebb596f1ac2644de58d2f7a2b6faa..8abf3e909502f3c3b82c0ca3d7509fdaf23d882c 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+@@ -534,15 +534,11 @@ &mdss_dsi0 {
+ 
+ 	qcom,dual-dsi-mode;
+ 	qcom,master-dsi;
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_a>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&lt9611_a>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy {
+@@ -560,15 +556,11 @@ &mdss_dsi1 {
+ 				 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>;
+ 
+ 	status = "okay";
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_b>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi1_out {
++	remote-endpoint = <&lt9611_b>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi1_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index a98756e8b965fe7aa475271f72c0b73b20fbceaa..63d2993536ade229a84da16e811e8bc83c46bd15 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -445,15 +445,6 @@ &mdss_dsi0 {
+ 	qcom,dual-dsi-mode;
+ 	qcom,master-dsi;
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&truly_in_0>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
+-
+ 	panel@0 {
+ 		compatible = "truly,nt35597-2K-display";
+ 		reg = <0>;
+@@ -483,6 +474,11 @@ truly_in_1: endpoint {
+ 	};
+ };
+ 
++&mdss_dsi0_out {
++	remote-endpoint = <&truly_in_0>;
++	data-lanes = <0 1 2 3>;
++};
++
+ &mdss_dsi0_phy {
+ 	status = "okay";
+ 	vdds-supply = <&vdda_mipi_dsi0_pll>;
+@@ -497,15 +493,11 @@ &mdss_dsi1 {
+ 	/* DSI1 is slave, so use DSI0 clocks */
+ 	assigned-clock-parents = <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
+ 				 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>;
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&truly_in_1>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi1_out {
++	remote-endpoint = <&truly_in_1>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi1_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+index 480192c86fb7c6981011923ef619b83b7460c78f..90efbb7e3799b9aa75ac4df84fe0006d470ae131 100644
+--- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
++++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+@@ -598,15 +598,11 @@ &mdss {
+ &mdss_dsi0 {
+ 	status = "okay";
+ 	vdda-supply = <&vreg_l26a_1p2>;
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&sn65dsi86_in_a>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&sn65dsi86_in_a>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+index e1e294f0f462ac824bffe96615b36ddcd8996d80..0339a572f34d01633ebf09e473d6fdff9005682d 100644
+--- a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
++++ b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+@@ -478,15 +478,11 @@ &mdss_dsi0 {
+ 
+ 	qcom,dual-dsi-mode;
+ 	qcom,master-dsi;
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_a>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&lt9611_a>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy {
+@@ -504,15 +500,11 @@ &mdss_dsi1 {
+ 				 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>;
+ 
+ 	status = "okay";
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_b>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi1_out {
++	remote-endpoint = <&lt9611_b>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi1_phy {
+diff --git a/arch/arm64/boot/dts/qcom/sm8350-hdk.dts b/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
+index f9de0e49fa249af52cb3cbdfdabb394815ce82d3..24a8c91e9f70f40247fde6eb63aa5ce58e258139 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
++++ b/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
+@@ -385,15 +385,11 @@ &cdsp {
+ &mdss_dsi0 {
+ 	vdda-supply = <&vreg_l6b_1p2>;
+ 	status = "okay";
++};
+ 
+-	ports {
+-		port@1 {
+-			endpoint {
+-				remote-endpoint = <&lt9611_a>;
+-				data-lanes = <0 1 2 3>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&lt9611_a>;
++	data-lanes = <0 1 2 3>;
+ };
+ 
+ &mdss_dsi0_phy  {
+diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk-display-card.dtso b/arch/arm64/boot/dts/qcom/sm8650-hdk-display-card.dtso
+index cb102535838def8c9a354675545d4f4c988ccd0d..5a594d7311a71f6c5a106683c1b7376f8978cc8b 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650-hdk-display-card.dtso
++++ b/arch/arm64/boot/dts/qcom/sm8650-hdk-display-card.dtso
+@@ -60,19 +60,10 @@ panel0_in: endpoint {
+ 			};
+ 		};
+ 	};
++};
+ 
+-	ports {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		port@1 {
+-			reg = <1>;
+-
+-			mdss_dsi0_out: endpoint {
+-				remote-endpoint = <&panel0_in>;
+-			};
+-		};
+-	};
++&mdss_dsi0_out {
++	remote-endpoint = <&panel0_in>;
+ };
+ 
+ &spi4 {
 
-I have a Linux machine with a standard off-the-shelf Infineon SLB9670
-TPM. Without the session salting, each PCR extension takes just 4-5
-ms. With session salting, it takes:
-* 30ms to load the null key from its context blob
-* 108ms to start the auth session and extend the PCR inside it
-* 1ms to flush the null key
+---
+base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
+change-id: 20250724-msm-dsi-outs-dd8e967b1e38
 
-for an overhead of about 2880%. Depending on the configuration of the
-kernel/IMA and how many PCR measurements it's making, this could add
-up to a good chunk of time and explain reports like [3] where people
-are noting that turning this feature on adds minutes to or triples the
-boot time.
+Best regards,
+-- 
+With best wishes
+Dmitry
 
-Personally, I would recommend disabling the feature by default until
-someone finds the time to fix it (perhaps as you described, with a
-tri-state; perhaps the performance characteristics can be improved as
-well). I am personally skeptical of any defense-in-depth benefits
-since it is not hard for the interposer attacker to also interpose the
-session salting, but everyone's threat model varies.
-
-Since the feature breaks userspace (for atypical TPM hardware), slows
-down boot (for all TPM hardware), and has unclear security value,
-Google has already disabled the feature in our Kconfigs. I sent this
-patch in case it can help save others some trouble. Understood if
-that's not the way the team would prefer to go with this.
-
-[1] https://lore.kernel.org/linux-integrity/aJ8iNLwlf4PAC0h1@kernel.org/T/#=
-t
-[2] https://github.com/chrisfenner/salty
-[3] https://lore.kernel.org/linux-integrity/bf67346ef623ff3c452c4f968b7d900=
-911e250c3.camel@gmail.com/#t
-
-Thanks
-Chris
-
-
-On Fri, Aug 15, 2025 at 5:04=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Thu, Aug 14, 2025 at 09:22:52AM -0700, Chris Fenner wrote:
-> > This change disables the TCG_TPM2_HMAC feature by default to resolve
-> > some driver initialization failures (with certain TPMs) and performance
-> > regressions (with all TPMs). See "Security remarks" below for why this
-> > does not meaningfully downgrade security.
-> >
-> > When the TCG_TPM2_HMAC feature fails to initialize the "null key" (see
-> > tpm-security.rst), it will cause tpm_tis_core_init to bail out early an=
-d
-> > skip device registration, causing all userspace requests to /dev/tpm0 t=
-o
-> > return ENODEV ("No such device").
-> >
-> > TCG_TPM2_HMAC depends on the following being implemented in the TPM:
-> >
-> > - TPM_RH_NULL
-> > - TPM2_CreatePrimary
-> > - TPM2_ContextSave
-> > - ECDH-P256
-> > - AES-128-CFB
-> >
-> > While the majority of TPMs in the ecosystem conform to the PC Client
-> > Platform TPM Profile, which currently mandates most of these, not all
-> > versions of that profile did, and not all other TPM profiles (e.g.,
-> > Mobile, Automotive, Server) will. The TPM 2.0 specification itself is a
-> > "Library" specification and does not mandate any particular commands
-> > (and very few features) in order to maximize flexibility for
-> > implementors.
-> >
-> > The TPM driver should not break userspace for a TPM that conforms to an
-> > atypical profile, therefore this change makes TCG_TPM2_HMAC disabled by
-> > default. It also adds a remark about what will happen if this feature i=
-s
-> > enabled and used with a non-supporting TPM to the Kconfig.
-> >
-> > Some real-world public examples of problems posed by this feature:
-> >
-> > TPMs that do not support the feature result in broken userspace startin=
-g
-> > from 6.10:
-> >
-> > https://wiki.archlinux.org/title/Trusted_Platform_Module\
-> >
-> > Significant (around 200%) boot up latency due to all the added TPM
-> > private key operations:
-> >
-> > https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2080322
-> >
-> > Security remarks:
-> >
-> > tpm-security.rst describes the threat model of the TPM2_HMAC feature,
-> > wherein an active interposer adversary on the TPM (e.g., SPI) bus
-> > tampers with TPM commands and/or responses to interfere with the bootin=
-g
-> > or running system. The TPM2_HMAC feature uses something called "salted
-> > sessions" to establish per-request keys that can be used to protect TPM
-> > traffic.
-> >
-> > Because the kernel does not have a priori knowledge of a cryptographic
-> > identity for the correct TPM for the system, and because the kernel doe=
-s
-> > not have any cryptographic identity of its own with which to
-> > authenticate itself to the TPM, the session is established using a
-> > one-sided, unauthenticated key establishment protocol, wherein the
-> > kernel asks the TPM for the so-called "null key" and uses it to
-> > establish the shared session secret.
-> >
-> > This poses a serious problem for the threat model of the TCG_TPM2_HMAC
-> > feature, which it resolves by asserting that userspace will attest to
-> > the "null key" using the EK after boot and compare it to the contents o=
-f
-> > /sys/class/tpm/tpm0/null_name, exposed by the TPM driver. However, this
-> > creates a trust cycle: we do not trust userspace to perform this action
-> > correctly, because we do not trust that kernel correctly measured
-> > userspace, because nobody has checked the null key yet. An implicitly
-> > trusted remote attestation verifier also cannot be relied upon to do
-> > this check, because it has no way of knowing for certain which key the
-> > kernel actually used to establish the TPM sessions during the boot.
->
-> All we care here is actually the external verifier scenario because most
-> of this type of crypto where software must attest breaks without that,
-> including all confidential computing technologies.
->
-> It's true that in the current form the whole feature is at most defense
-> in depth. It could be e.g. extended with persistent keys and productized
-> more in the future (e.g., trusted keys were mostly useless for multiple
-> years).
->
-> I'd personally would like to keep it on at least on my own laptop and
-> there's a risk that there's a group of people who would either:
->
-> 1. want to have that small amount defense in depth.
-> 2. want to refine the feature.
->
-> It's by practical means already "relaxed" but outcomes are objectively
-> plain wrong (as you stated) so I'd take a bit more conservative approach
-> on changing the mainline and propose three state option:
->
-> 1. off: fully turn off
-> 2. relaxed: mark just a info or at most marning to klog that hmac
->    encryption is not enable. Keep timeout short as ECC generation
->    does not take long (if it is working) (at least according to
->    my tests). It should also address the lack of TPM2_ContextSave.
->    We really should probe that anyhow in the driver init and
->    disable also /dev/tpmrm0 accordingly.
-> 3. strict: enforce. This is good to have albeit now not really
->    useful
->
-> The 'relaxed' is of course default.
->
-> BR, Jarkko
->
->
 
