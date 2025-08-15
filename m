@@ -1,170 +1,97 @@
-Return-Path: <linux-kernel+bounces-771066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFCFB28261
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FC9B2826E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6D07AA660
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E793D188968D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E662882A9;
-	Fri, 15 Aug 2025 14:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA8D277C86;
+	Fri, 15 Aug 2025 14:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MeZKVwGi"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dstUBnNF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4382627EF;
-	Fri, 15 Aug 2025 14:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461C22ACFA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755269275; cv=none; b=lgLu6O5InuonJYjBpbZVb08X1y9pZGgjKonDN6lxE7aofG29jOhC8d5DjgDdWfyNOkzlMYGbdM0/t8PkyATgMLhrEAwGSgmW7IaDShgg7shIon8C3IJU2iFQasSPylqyTcOkRjSTBQvoNRDJfcktcaoxc5Ura5JfSi/dOYhAFsQ=
+	t=1755269293; cv=none; b=B2Hcp5ZHNHH3Avwo6aKz3/rEjvFn6uZ/SSL1pwbjwMvMzHkZVAlhgsV53GTBwAiJjPlpnkWuvLNOrwNRCooYyJMuCvTKgrVFtOSNaaaojNIRPeKfvPuYE+dCmYmJwHas7aHodWRfrS9RmpmTzmUtBeTcvzz706KIyqe1Fxbr6oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755269275; c=relaxed/simple;
-	bh=VPXhJyGiz+xRJjzFrG3qdqfpmo8BvKMDWN1+m5VIYbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XQazHNJQTI5MYmUQNkOpwRBKkeZN1b5+TgeCYfezgsgN9qGnm9whO4aKCNow4VIPci6rIS/qU0cWKEssIIMhECHGN+GjKoqdyO+3sINrnrR2WhFFkjVY+KZlinM6Y8gyzvhee35e5U/o693TfIBHklJ8Fi0r01d0Eqq6IIjIKyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MeZKVwGi; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso12507295e9.0;
-        Fri, 15 Aug 2025 07:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755269272; x=1755874072; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/giwtKrBPupjmtQ7aVhl0CWOaN9MgEDJXD9+UP5su30=;
-        b=MeZKVwGi/1JV4Dxc/kzk7fJMIEOpE4t0MBCjjiV7J4PUf1PJFXgkrbR6M/ybY9TQX6
-         SQOnMQEJiATZgdcNnciMk80xxNgMqNOFUdB6XgOP+cEviaDpUNAXFZysfls5V1J1pu9p
-         ObA4Y1DQG/7eAegz+QE6Xa9l8Ff3kbVd/8zYG6+mcoIvxspKJtD5hm1LKVTLpkIylYDA
-         5AuapCUwYDSw5FdzhFgEaddDAXFD2zdktiD6LuCwskE5PddqBczieiZCf3sUAzRUombD
-         doWj77NmGAa3yNudp1nnlhMNcg84cCAsicqqbUA51QJ830iHm9uRjhAJIH28W2/UH36l
-         DXKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755269272; x=1755874072;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/giwtKrBPupjmtQ7aVhl0CWOaN9MgEDJXD9+UP5su30=;
-        b=GOkz3LwMINxer/cMyU4EG8hKvNCOMemsEaFKOTFRTilGfP/P6TA9AJEMWiEvPxKV5Y
-         T8pBjggXLE2JM0tQt09Yyk5w+S52gkIV3ObS6XVPoZay1WoSkgIp3JNku0oekZ/zr4Mr
-         sEp+9MVwk2wTgCHz1l+w5IQ2oI3EnvaGkk+Vsis+L9jKsCW3llDrvkNvMMrp0Mb3s3vc
-         TTONw9wxwcAEe/086Cuqz0ro2TB3OTJQ9lqy8iEAzEz7QEJlFZRr/j7rdfb2JuiHZQiy
-         +yr2RoqAfcB/Rraw1U7NPxW7MgVkR6K11y+hq5f0cgJyj7rwQlk9rrseA+C8WWmQM8kw
-         1tPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/xsVvmGkUqQTo6I4DMFnVO7HiZj6FbC7KjpebH4vsRsDOlKuAn3aYHlUGLxw2SlE6H9mj7bCQzXIG@vger.kernel.org, AJvYcCU9g3xZlfnUf/Wk8ISmVhSkH8UIINYT6enG9f6h1pxST0wESKQ+SOUCUvplDrV8Gxp1l3I2TiNRUxQ0HKCvcPBPzVk=@vger.kernel.org, AJvYcCXSTSFUlMUQjGMOO3p8J3bp4Hh4O/qeCMvj52F5TWEM0haHV+jIXJVzAzG1jwI5Sy+xYO2u4bR/2vQfsTdq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLuaJayCNUDjoBSvPMJVYhLQCi6opMrBTySSF5NWMUlZ+ZTxnR
-	veV62yxbyz1YF4HOqdbqeh3s56vP1feHFiiH0Aw9zzRjj3jjcHFpSb0S
-X-Gm-Gg: ASbGncsUgwmLjDNmcB0svJC/8e6cCM+tDd873bRz1joyIWkw5dOoL/06roxYNTz1nuP
-	Rw3FYC4yNZfb2ykXDZQXstUtTOlETmnnLDbqTH/VYD5AZAF9Zu8aHF6T7jmbg6vVZlK1uXpAz7k
-	DRus69i0DO/sMecq5AXgas/Zcfh4C5PtsIa2U0Yo2s11CWSjU83lmtFbkyjZZ6QPMzrDby1YXl1
-	hSWUKPCFHZtvTHnPCMRenL3MFkWvw4cYQWse5ggJd+qGGOAcvIhoEjoBxSU3+/F0ET/5WGbLYGE
-	FQy/cLlX4uqs2xTPlbIwQPQnIrok/1Z2HaoWJ78ILf8Z4sqwDN5JyGtCsz93RKbJD8JhEBa82ly
-	g6WTqlPgemXnfVONg+tOUy9MvEmPkAzmbR3aqsLeKjS2H3fa+ITR7r3SXKjpquzOljF4pv70Dqg
-	==
-X-Google-Smtp-Source: AGHT+IEDx4ZypH+jNjoSslTKWg80k+9kqAIMiPE/inwLA5CyZ3cMf8v2l8nvUldJHof0VIiDHfvwhA==
-X-Received: by 2002:a05:600c:3b20:b0:459:e06b:afbd with SMTP id 5b1f17b1804b1-45a2185e958mr21947525e9.29.1755269271844;
-        Fri, 15 Aug 2025 07:47:51 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6c324fsm59523755e9.1.2025.08.15.07.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 07:47:51 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/2] pinctrl: renesas: rzg2l: Don't reconfigure the pin if it is same as reset values
-Date: Fri, 15 Aug 2025 15:47:45 +0100
-Message-ID: <20250815144749.143832-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250815144749.143832-1-biju.das.jz@bp.renesas.com>
-References: <20250815144749.143832-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1755269293; c=relaxed/simple;
+	bh=6p3tH5dyDYB5dW9LDS2LWwvBo8AewBArfanZDC9eIx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYNe8I24irbGV+kvxs9WBpJdwbTC/uxEz0zBFBfMmd8LNEolwLORPO4khRvC8SbkKkRGWOS3m8cTI54Q/KdvweQSBFBAOlTSBgV8iksfJ0Xzkgt3Yeumrbw1DYfT7QImU00r0saHVq3eUYNHtPF0OATk5k1kS0LJvsU4aq+8etw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dstUBnNF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755269290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B0lsi7uNi+Pjd1zai/fmB5p40xmZGFkcZlTsakj032U=;
+	b=dstUBnNFD5lnB5GgcoNOpxBmRToRn5LEwjGyfyDOLY5LFN0rJEg6npqKWHwVWnMwTgsfvM
+	M8Wq3yl/oMyrzdPa+7IBi29Hb0W/rXoeIEGIKbbgbbyxihu0iHPZmVkpyYZdo6sfQ8rI+v
+	3G+eYgnhbEdNBWl2eIDkExyjb9N7+UQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-GSw4hUj6M9W3qPpdmb6ZOQ-1; Fri,
+ 15 Aug 2025 10:48:07 -0400
+X-MC-Unique: GSw4hUj6M9W3qPpdmb6ZOQ-1
+X-Mimecast-MFC-AGG-ID: GSw4hUj6M9W3qPpdmb6ZOQ_1755269285
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 22526180035F;
+	Fri, 15 Aug 2025 14:48:05 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.16])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A17541955E89;
+	Fri, 15 Aug 2025 14:47:56 +0000 (UTC)
+Date: Fri, 15 Aug 2025 22:47:47 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, hare@suse.de, nilay@linux.ibm.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH 04/10] blk-mq: serialize updating nr_requests with
+ update_nr_hwq_lock
+Message-ID: <aJ9IkylydqSNZqwC@fedora>
+References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
+ <20250815080216.410665-5-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815080216.410665-5-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Fri, Aug 15, 2025 at 04:02:10PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> request_queue->nr_requests can be changed by:
+> 
+> a) switching elevator by update nr_hw_queues
+> b) switching elevator by elevator sysfs attribute
+> c) configue queue sysfs attribute nr_requests
 
-Don't reconfigure the pin if the pin's configuration values are same as
-reset values during resume() to avoid spurious IRQ. E.g: For NMI function
-the PS0 pin configuration are PMC = 1 and PFC = 0 and is same as that of
-reset values. Currently during resume the pin is already in NMI function.
-But the code is forcefully setting it to GPIO HI-Z state and then again
-reconfiguring to NMI function leading to spurious IRQ.
+ ->elevator_lock is grabbed for updating ->nr_requests except for queue
+initialization, so what is the real problem you are trying to solve?
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 34 +++++++++++++++----------
- 1 file changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 2b5d16594bb7..086fcb18c6d8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -3103,27 +3103,35 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
- 		pm = readw(pctrl->base + PM(off));
- 		for_each_set_bit(pin, &pinmap, max_pin) {
- 			struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
-+			u32 pfc_mask;
-+			u32 pfc_val;
- 
- 			/* Nothing to do if PFC was not configured before. */
- 			if (!(cache->pmc[port] & BIT(pin)))
- 				continue;
- 
--			/* Set pin to 'Non-use (Hi-Z input protection)' */
--			pm &= ~(PM_MASK << (pin * 2));
--			writew(pm, pctrl->base + PM(off));
-+			pfc_val = readl(pctrl->base + PFC(off));
-+			pfc_mask = PFC_MASK << (pin * 4);
- 
--			/* Temporarily switch to GPIO mode with PMC register */
--			pmc &= ~BIT(pin);
--			writeb(pmc, pctrl->base + PMC(off));
-+			/* Nothing to do if reset value of the pin is same as cached value */
-+			if ((cache->pfc[port] & pfc_mask) != (pfc_val & pfc_mask)) {
-+				/* Set pin to 'Non-use (Hi-Z input protection)' */
-+				pm &= ~(PM_MASK << (pin * 2));
-+				writew(pm, pctrl->base + PM(off));
- 
--			/* Select Pin function mode. */
--			pfc &= ~(PFC_MASK << (pin * 4));
--			pfc |= (cache->pfc[port] & (PFC_MASK << (pin * 4)));
--			writel(pfc, pctrl->base + PFC(off));
-+				/* Temporarily switch to GPIO mode with PMC register */
-+				pmc &= ~BIT(pin);
-+				writeb(pmc, pctrl->base + PMC(off));
- 
--			/* Switch to Peripheral pin function. */
--			pmc |= BIT(pin);
--			writeb(pmc, pctrl->base + PMC(off));
-+				/* Select Pin function mode. */
-+				pfc &= ~pfc_mask;
-+				pfc |= cache->pfc[port] & pfc_mask;
-+				writel(pfc, pctrl->base + PFC(off));
-+
-+				/* Switch to Peripheral pin function. */
-+				pmc |= BIT(pin);
-+				writeb(pmc, pctrl->base + PMC(off));
-+			}
- 		}
- 	}
- 
--- 
-2.43.0
+Thanks,
+Ming
 
 
