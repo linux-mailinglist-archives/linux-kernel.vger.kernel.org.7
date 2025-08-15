@@ -1,130 +1,168 @@
-Return-Path: <linux-kernel+bounces-770669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74041B27DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:58:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54213B27DAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2596958812A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93367AA2195
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955AF2FF153;
-	Fri, 15 Aug 2025 09:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25252FE049;
+	Fri, 15 Aug 2025 09:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ofQgVmnB"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="msJfzHkQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C692FDC32;
-	Fri, 15 Aug 2025 09:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DEE2FCBE6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251870; cv=none; b=MLfbiqe9fDojs7AJNDZSpDN9YSRc3jpzpQvdnd12NtXZW3NvMW5Yj/o5Aa5HqILDltN6yi146r0gAhb6FacR1Djt8Y6J4TVi8aKUKpWq34BMXV1AgSy+bqhmmQDl6qMmGnf5Cd9njMZD9yUH/vxUD0gDijmrh4x6c1vn63oqMxo=
+	t=1755251869; cv=none; b=fWEHm0mCXFFwdRB7pUDb5fPz25Ii48RFnVopQjBvQUs3Rvui0BQ0MQio2306FLZdUFZsL3vCyk5bE7hPX3bn9tNFA1MRHByWZCM3EGoKA/JIXxVOUMorpmnYfatWHeVE4TXH/wmgGVj5hAS1N71yPYnOXxEcqlnjP9edMIBk8Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251870; c=relaxed/simple;
-	bh=Q1UBPkWMlzZipcMrvvaZw+zth4fxYWAALQUS+9HbCKc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c05wMCQtZEi6IITMdHMKxeUikF36ugOFlYzqFudln39IcmgJ7AUJsdtwMVlVmitvxPRLqjLm7Qrm7xiS/UxFYX4atC/jmbDYm/1otlIk6x1Aa5wFVqNbydQ2bt9QPS29EXw+Y693a8kbtkzDKpL06HaNkRGinR4O95J0GRM+5Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ofQgVmnB; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F8oJFK006855;
-	Fri, 15 Aug 2025 05:57:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=zJxsD
-	CATAb2E2uCWzu1Gcil7LGV3F+sWNQe5nju9lw0=; b=ofQgVmnB0ivfetHuwzYYv
-	ZoJlXcg1MNk/lgr9pO11rTyxMX23TjKFzjHjw3Vo4syFABCAQGC/PD6bMyJ77m//
-	MmOhaWwJDP39rhYOtXxS1pUCKUWu+Q1J8xHc8hZEUGaE5vOJC/InXIExuXJKa0rf
-	n4D3thV4SIt4wTwutzT37mtKwHtXBqBbJno0Vx8b9OoVtpOtrmVswmMFOe1bO+hu
-	8MLkAoLbJF5E7GOVaH6sYAl/QKlrT7NDv2vUK/mMn4Q0XsMwIwwVnFks3ADIjZXU
-	qX7YUdAU6yAIfVzaQYgY7W94jiz2gYMOf8HFQWhIwsiR0LB8Y9dntQteWGkoZU+i
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48h58mgfgg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Aug 2025 05:57:35 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57F9vYLB034257
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 15 Aug 2025 05:57:34 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 15 Aug
- 2025 05:57:34 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 15 Aug 2025 05:57:34 -0400
-Received: from Ubuntu.ad.analog.com (AMICLAUS-L01.ad.analog.com [10.48.65.226])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57F9vJix027486;
-	Fri, 15 Aug 2025 05:57:30 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v4 5/5] Documentation: ABI: iio: add sinc4+lp
-Date: Fri, 15 Aug 2025 09:56:38 +0000
-Message-ID: <20250815095713.9830-6-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250815095713.9830-1-antoniu.miclaus@analog.com>
-References: <20250815095713.9830-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1755251869; c=relaxed/simple;
+	bh=cRwd0xAh9h5E7sVoqCJod5qdMXXF26YfR10Uhew0+Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rcear8JzC98zvUG+DoBmj/AZSvnenZsK37Q0hjvSeuoriqrqEGyQEjKPN1Kqe0ZVI97NxDQAw7I6uSWisiPGyIMvKz2kXPyugEq/mEsVJ+ofXJoq6bP9tqVlkdvCmZvSff00jrB8msEQ1KShOmmEKu1YelbIkcVYdNmVG/Va/eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=msJfzHkQ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755251867; x=1786787867;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cRwd0xAh9h5E7sVoqCJod5qdMXXF26YfR10Uhew0+Jg=;
+  b=msJfzHkQzgoRI2Jq6zzxakROEzaWdukeqHrN8OjerPYvTyXNazpgupfb
+   F8FFklF3mJJzMkeJQ3LT7Btgo14IhinU+6bb7r4+Zf4CXfTZ68uNxt8Qb
+   Pizn2Rpac0YUZ70akp3lmnTJVW/WB1BNUA3HILB7bwZ/Tqb7+oXqbXkVG
+   x1C0v2qkVD1xJSM5rldIyLZbPYirujrMpoYd74owvV1nAhvRXzjKv9337
+   kdxbeCTBUKVBMHItcgSftvVzzKyDH2S2MYJBfYDhyIx7Bo9Owu9pBXGv7
+   3cbjclW1VjqxbEagRHYtB6KGHy9gSQAwWixkiwGeU+quHWhSDV5CxpUxd
+   A==;
+X-CSE-ConnectionGUID: kjpqPFA8SwiqUfSQ6cbAZQ==
+X-CSE-MsgGUID: 7xZmFJ2CTVaAILXPsyJqug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="61207236"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="61207236"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:57:46 -0700
+X-CSE-ConnectionGUID: DXmdI5xFRa+CIQ9bGOnzvQ==
+X-CSE-MsgGUID: RtOQGOPiTKarUpJGcI93LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="171112789"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Aug 2025 02:57:42 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umrBs-000Bpk-2c;
+	Fri, 15 Aug 2025 09:57:40 +0000
+Date: Fri, 15 Aug 2025 17:57:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qinxin Xia <xiaqinxin@huawei.com>, will@kernel.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, xiaqinxin@huawei.com, yangyicong@huawei.com,
+	wangzhou1@hisilicon.com, prime.zeng@hisilicon.com,
+	xuwei5@huawei.com, fanghao11@huawei.com,
+	jonathan.cameron@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
+Message-ID: <202508151711.pZGu9jac-lkp@intel.com>
+References: <20250814093005.2040511-2-xiaqinxin@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDAwMSBTYWx0ZWRfX8vALX7gwalnF
- H7QCAT55FepCGsjCi36cXKCsN9BYWzcE0Yguvl7e1gvagCSpw7H0z33EfCwsrRaRrlkAz1LMWgQ
- 6cu0zLtxEpk55bu5EAaTaVWF8VFvdynydYBxsD/3abVhB0Ce1U7f/MVzXGijpZCJ9jop09rVcoQ
- xCFpqhweVuLzm/XcekngoE7QdRJhIfehTchrOxoDDa5caF3/bwaoCNllhwy1rVM0GLys5ZHe2sm
- Bw1APdTUFY2p3wKtG5qszdmAcAUISOvED8M8c98b+HQpbGikHb1dNiVJQzACcGldfRN6DnEv7PB
- zgVDRjccbnVi7QCDLeAdxBluovnvP9sUXmStbriO0YU+BLIoiBla0s5SelOBfZ5zCgJIUtW53+z
- 7e2G2s+n
-X-Authority-Analysis: v=2.4 cv=BsGdwZX5 c=1 sm=1 tr=0 ts=689f048f cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=rzIQo91_iFM3IlyHPcMA:9
-X-Proofpoint-ORIG-GUID: 0t2LfOpmXPTOBwU4lbj271mT4zjXaHtm
-X-Proofpoint-GUID: 0t2LfOpmXPTOBwU4lbj271mT4zjXaHtm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-15_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 spamscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508140001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814093005.2040511-2-xiaqinxin@huawei.com>
 
-Add new filter type to the sysfs-bus-iio ABI documentation:
-- "sinc4+lp" for Sinc4 + Low Pass Filter
+Hi Qinxin,
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-changes in v4:
- - reorder placement of sinc4+lp
- Documentation/ABI/testing/sysfs-bus-iio | 1 +
- 1 file changed, 1 insertion(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 9d283b23d3c0..53289c085e0a 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2317,6 +2317,7 @@ Description:
- 		  time.
- 		* "sinc4" - Sinc 4. Excellent noise performance. Long
- 		  1st conversion time.
-+		* "sinc4+lp" - Sinc4 + Low Pass Filter.
- 		* "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
- 		  time.
- 		* "sinc5" - The digital sinc5 filter. Excellent noise
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Qinxin-Xia/iommu-debug-Add-IOMMU-page-table-dump-debug-facility/20250814-173720
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250814093005.2040511-2-xiaqinxin%40huawei.com
+patch subject: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250815/202508151711.pZGu9jac-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151711.pZGu9jac-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151711.pZGu9jac-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iommu/iommu.c: In function 'iommu_iova_info_dump':
+>> drivers/iommu/iommu.c:1093:17: error: implicit declaration of function 'iommu_domain_to_iovad'; did you mean 'iommu_domain_type_str'? [-Wimplicit-function-declaration]
+    1093 |         iovad = iommu_domain_to_iovad(domain);
+         |                 ^~~~~~~~~~~~~~~~~~~~~
+         |                 iommu_domain_type_str
+>> drivers/iommu/iommu.c:1093:15: error: assignment to 'struct iova_domain *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    1093 |         iovad = iommu_domain_to_iovad(domain);
+         |               ^
+
+
+vim +1093 drivers/iommu/iommu.c
+
+  1078	
+  1079	/**
+  1080	 * iova_info_dump - dump iova alloced
+  1081	 * @s - file structure used to generate serialized output
+  1082	 * @iovad: - iova domain in question.
+  1083	 */
+  1084	static int iommu_iova_info_dump(struct seq_file *s, struct iommu_domain *domain)
+  1085	{
+  1086		struct iova_domain *iovad;
+  1087		unsigned long long pfn;
+  1088		unsigned long i_shift;
+  1089		struct rb_node *node;
+  1090		unsigned long flags;
+  1091		size_t prot_size;
+  1092	
+> 1093		iovad = iommu_domain_to_iovad(domain);
+  1094		if (!iovad)
+  1095			return -ENOMEM;
+  1096	
+  1097		i_shift = iova_shift(iovad);
+  1098	
+  1099		/* Take the lock so that no other thread is manipulating the rbtree */
+  1100		spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+  1101		assert_spin_locked(&iovad->iova_rbtree_lock);
+  1102	
+  1103		for (node = rb_first(&iovad->rbroot); node; node = rb_next(node)) {
+  1104			struct iova *iova = rb_entry(node, struct iova, node);
+  1105	
+  1106			if (iova->pfn_hi <= iova->pfn_lo)
+  1107				continue;
+  1108	
+  1109			for (pfn = iova->pfn_lo; pfn <= iova->pfn_hi; ) {
+  1110				prot_size = domain->ops->dump_iova_prot(s, domain, pfn << i_shift);
+  1111				pfn = ((pfn << i_shift) + prot_size) >> i_shift;
+  1112			}
+  1113		}
+  1114	
+  1115		spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+  1116		return 0;
+  1117	}
+  1118	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
