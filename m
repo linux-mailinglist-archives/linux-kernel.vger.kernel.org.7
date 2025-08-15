@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-770178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731BAB27814
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:08:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37589B2781E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599245A6B80
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E7B1CE6451
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEF0238C23;
-	Fri, 15 Aug 2025 05:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039F6275846;
+	Fri, 15 Aug 2025 05:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="POb9c3nA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8h1RDPw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4615810942
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F28245020;
+	Fri, 15 Aug 2025 05:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755234523; cv=none; b=KbW59kyA2lJkn3vQnh/81VAZWPPArj0bMcEcZjNcPDjw1zviONYEZ5VGNuAm5slpTAmMjIzFZgnAAx9ldba5XQjWma6by9U705Y63W0EJ/FZ6TmBwI6a1ynpdtZKSuDGvlYxgL0y0fAg4YBNKtoyRz+fPKINUW9gbPtvJkcTHAE=
+	t=1755234725; cv=none; b=E2yBgV+VCK3xr3mSU8BbYMII9pLqLMPP8zMmQDodQMLWlWn0yUly2VYHjrZDW9iGfVZhdi2qimhXUTTjceAXRamfH6R+qDu4uPl+3F8NXf2LQBrNpdtzDv0K4jTdwVJxo0BBiMYxdSTfIIcqta/zkwaq0WOAEV1pXmnyO2Ica/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755234523; c=relaxed/simple;
-	bh=fARppgmQLdDG+Oo817Wx/utbZjvGDXSobDfZUGHYwrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+iWVHTJHtJtSwRuoJFhk8OEiIyPgvNCHM0F/Gzk7RzCEkEOK0vSoFfT0izx+4POhr1E7tGT7SuWTnKuagDOJH3XSmokItCJDwLx7g3WD00AjAJeu2OK3rFiElrMAN6ZpgrKT87jOLrMFXnHC82qxZ6PNIWLL19GJjf4w6qKM+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=POb9c3nA; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1755234725; c=relaxed/simple;
+	bh=piFJDMoWgMoAcz5ZrOxOxHNp2cNxC29xMo9DwzCJmRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dsE92wQ1fA7XtsdgP/vcxWzR00/dlf8Nmx/raXF8dlMUiLWgTljL9eVsEYcvTFWLjSUL7ARCHR/np7hqoWPf6E9J3AmB8dsZSVe6CqQqARrm9xuxp9mV3xfxE3Z+BG2NkLY790eqB78dWDHUpd9ENJ7COrTv/pn8+5uOH5bXr/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8h1RDPw; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755234523; x=1786770523;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fARppgmQLdDG+Oo817Wx/utbZjvGDXSobDfZUGHYwrU=;
-  b=POb9c3nAiNHLkCcV4uBIUBuKqg0+m+Y+52865nL7Iep9CYdM3FsVbaTk
-   cJp09UQQ6PGbsbT35TVG7ZK3i0a0zwsatE4pTzOuCPO7CBafzDe/IMIxZ
-   ZSTaRudCKqT+6xP0j3JG2A0BG/wJ2Sc7pUTkGZBi3bR6UpJncC/qOy7+m
-   ESr526VNoD9vbJ2ZDJ3kPHwlOhGpdO5e5VKLjVLMll77ADIGF6zZJ/Twu
-   FzhV2iMTnJi5/PsyRKqBu8V+muBjQGyaMstDNT4d47GKmVYKJZeLYM9nH
-   6NRNmrfSUeiSD9ve4LxP7mNCYs+LOqOMjXo3cGc5dqYV8bx4xbYBL0uTP
-   A==;
-X-CSE-ConnectionGUID: o1Dr0OMzSN6gAbIJiqx6eQ==
-X-CSE-MsgGUID: 8d6TCWxFSzm2trLnxlD1EA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="67829288"
+  t=1755234724; x=1786770724;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=piFJDMoWgMoAcz5ZrOxOxHNp2cNxC29xMo9DwzCJmRM=;
+  b=n8h1RDPwgubFjM4uC5h8bpQqxyknnlL0YxZBHxqITuri/5B+A0OhXw41
+   uqHyDeExnn5TRa3fDn3zIILalV8IWxOKFc8rcSQ7HhtjVQn7jsYNn4dk5
+   EdUdRfRNiHzXr8ZAj7hWYsY3/1Qk1iPYBSwQHK6Z4xGW1qBqxA3pbu4v/
+   l36EnTHiJX1psKU5wGPkmduARKNBcyZi/gphB2PHbpXTfeLMYDHCO+Fmc
+   Frq+M/j66QIDWJ7DAsNiRJVLK8WQcq3/Q6LpHD9S6EodzbrLjgOGNSkW2
+   Eb9GsiK4436Td1ci950LXAF0Hbxjfwb0K39f7UI/0irc+ygxrqf2mv3hX
+   w==;
+X-CSE-ConnectionGUID: vW3KyP2FSg6f25rN1OVg1w==
+X-CSE-MsgGUID: KVABhgCgTnq2Vqx9wXLJqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68646434"
 X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="67829288"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:08:42 -0700
-X-CSE-ConnectionGUID: tfAlX/NuQliU2/sVdqAv1Q==
-X-CSE-MsgGUID: RAvDZ1p1R2222/UQqxT7vQ==
+   d="scan'208";a="68646434"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:12:03 -0700
+X-CSE-ConnectionGUID: z3XLWN8JSkSewaRE53xizA==
+X-CSE-MsgGUID: k+jCi0MrTzK5WA2i0FqSdQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166569328"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.223.76])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:08:41 -0700
-Date: Thu, 14 Aug 2025 22:08:33 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: lirongqing <lirongqing@baidu.com>
-Cc: tglx@linutronix.de, bp@alien8.de, peterz@infradead.org,
-	jpoimboe@kernel.org, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, david.kaplan@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs without
- ARCH_CAP_GDS_CTRL
-Message-ID: <20250815050811.gm7nxcd7wn47lshy@desk>
-References: <20250815035334.4230-1-lirongqing@baidu.com>
+   d="scan'208";a="197786291"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:11:57 -0700
+Message-ID: <eb248b73-7fb6-47cd-9e10-5c54ca2391b2@linux.intel.com>
+Date: Fri, 15 Aug 2025 13:09:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815035334.4230-1-lirongqing@baidu.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] iommu: Lock group->mutex in iommu_deferred_attach
+To: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
+ joro@8bytes.org, bhelgaas@google.com, jgg@nvidia.com
+Cc: will@kernel.org, robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
+ yi.l.liu@intel.com, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
+ vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <44783ca52e17a9ca0ce7acfe8daae3edc3d7b45b.1754952762.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <44783ca52e17a9ca0ce7acfe8daae3edc3d7b45b.1754952762.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 11:53:34AM +0800, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
+On 8/12/25 06:59, Nicolin Chen wrote:
+> The iommu_deferred_attach() is a runtime asynchronous function called by
+> iommu-dma function, which could race against other attach functions if it
+> accesses something in the dev->iommu_group.
 > 
-> The commit 8c7261abcb7ad("x86/bugs: Add attack vector controls for GDS")
-> caused call traces during secondary CPU initialization because it didn't
-> properly handle CPUs that lack the ARCH_CAP_GDS_CTRL capability.
+> So, grab the mutex to guard __iommu_attach_device() like other callers.
 > 
-> For CPUs without ARCH_CAP_GDS_CTRL support, we should set the mitigation
-> to GDS_MITIGATION_UCODE_NEEDED rather than GDS_MITIGATION_OFF, as these
-> CPUs may still be vulnerable but cannot disable mitigation.
-> 
-> Add the missing check for ARCH_CAP_GDS_CTRL to properly determine the
-> mitigation state for affected CPUs.
-> 
-> [    2.809147] unchecked MSR access error: RDMSR from 0x123 at rIP: 0xffffffffb3452807 (update_gds_msr+0x87/0xe0)
-> (update_gds_msr+0x87/0xe0)
-> [    2.809147] Call Trace:
-> [    2.809147]  <TASK>
-> [    2.809147]  identify_secondary_cpu+0x72/0x90
-> [    2.809147]  start_secondary+0x7a/0x140
-> [    2.809147]  common_startup_64+0x13e/0x141
-> [    2.809147]  </TASK>
-> [    2.809147] unchecked MSR access error: WRMSR to 0x123 (tried to write 0x0000000000000010) at rIP: 0xffffffffb34527b8
-> (update_gds_msr+0x38/0xe0)
-> [    2.809147] Call Trace:
-> [    2.809147]  <TASK>
-> [    2.809147]  identify_secondary_cpu+0x72/0x90
-> [    2.809147]  start_secondary+0x7a/0x140
-> [    2.809147]  common_startup_64+0x13e/0x141
-> [    2.809147]  </TASK>
-> [    2.809147] ------------[ cut here ]------------
-> [    2.809147] WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/bugs.c:1053 update_gds_msr+0x9b/0xe0
-> 
-> Fixes: 8c7261abcb7ad ("x86/bugs: Add attack vector controls for GDS")
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
->  arch/x86/kernel/cpu/bugs.c | 2 ++
->  1 file changed, 2 insertions(+)
+>   drivers/iommu/iommu.c | 13 ++++++++++---
+>   1 file changed, 10 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index b74bf93..3af911c 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -1071,6 +1071,8 @@ static void __init gds_select_mitigation(void)
->  			gds_mitigation = GDS_MITIGATION_FULL;
->  		else {
->  			gds_mitigation = GDS_MITIGATION_OFF;
-> +			if (!(x86_arch_cap_msr & ARCH_CAP_GDS_CTRL))
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 060ebe330ee16..1e0116bce0762 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -2144,10 +2144,17 @@ EXPORT_SYMBOL_GPL(iommu_attach_device);
+>   
+>   int iommu_deferred_attach(struct device *dev, struct iommu_domain *domain)
+>   {
+> -	if (dev->iommu && dev->iommu->attach_deferred)
+> -		return __iommu_attach_device(domain, dev);
+> +	/*
+> +	 * This is called on the dma mapping fast path so avoid locking. This is
+> +	 * racy, but we have an expectation that the driver will setup its DMAs
 
-This check is already present few lines below.
+Why not making it like this,
 
-> +				gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
->  			return;
+int iommu_deferred_attach(struct device *dev, struct iommu_domain *domain)
+{
+         /* Caller must be a probed driver on dev */
+         if (!dev->iommu_group)
+                 return 0;
 
-To avoid duplicating, a better fix could be to not return here, and let the
-next block DTRT:
+         guard(mutex)(&dev->iommu_group->mutex);
+         if (!dev->iommu->attach_deferred)
+                 return 0;
 
-         /* No microcode */
-         if (!(x86_arch_cap_msr & ARCH_CAP_GDS_CTRL)) {
-                 if (gds_mitigation != GDS_MITIGATION_FORCE)
-                         gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
-                 return;
-         }
+         return __iommu_attach_device(domain, dev);
+}
+
+?
+
+> +	 * inside probe while being single threaded to avoid racing.
+> +	 */
+> +	if (!dev->iommu || !dev->iommu->attach_deferred)
+> +		return 0;
+>   
+> -	return 0;
+> +	guard(mutex)(&dev->iommu_group->mutex);
+> +
+> +	return __iommu_attach_device(domain, dev);
+>   }
+>   
+>   void iommu_detach_device(struct iommu_domain *domain, struct device *dev)
+
+Thanks,
+baolu
 
