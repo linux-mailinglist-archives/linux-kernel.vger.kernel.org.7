@@ -1,327 +1,167 @@
-Return-Path: <linux-kernel+bounces-770214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05D7B2787E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E193B27884
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F1D5A5D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86328AC100A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F062F2BE7AF;
-	Fri, 15 Aug 2025 05:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E466A2BDC3D;
+	Fri, 15 Aug 2025 05:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M39SLHOE"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b2uQ4AlC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C5C2BE65B;
-	Fri, 15 Aug 2025 05:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EC928724C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235976; cv=none; b=IFRON3AQHjoICxcMXx1TBYFTy8b0+0DGg5+TyLMzD/z/FXLYQxvNi4t8YRVc9nBkPe1PpVhgM1IQ4DsSHMVVTVq1KAQh2BILGxowN2/gZ+ImN8WbTpGa8cfxD51BSsi5Q/7OzNRGwOm+cCOl7CMcmNiDQlZzOkrOmkGuxga/YU0=
+	t=1755235984; cv=none; b=DE5TXe+17+O7utY+q7cI4HVkCO/U3ksm//96WbeI7Hc9Mz6rYzbSXH4Q/BNaeLiHYk40vBWm7mfcB4p8WzoAxQ9yKCsOjDbzYioBj6uRYbR1jrw0V2rL7cq8cyKhqYzZsMyhXVAOa6OIPswad9thhjzz3v4P7Nv86T5oLqrIcHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235976; c=relaxed/simple;
-	bh=BQlAO40Fkf8jj/Luuxq4Hy8WbOuf4ZzAo8KvzU12f5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TqavWEMIlqSjSOC/tMq4+7PkOs1/gpkgm0JB/mSn6gUTCVNaNCMoo1xEKKYqS+59kNuEWZtHlhUcGNFNJbTaje3dWxePTwdWGDPk9yJjZXh6W2avmM5gcvUSWhM2nPROPe6stvhYmxVGH6OPjMIbmpBtAOKgFZTMQGIZQO3XHpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M39SLHOE; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2ea94c7dso2178910b3a.2;
-        Thu, 14 Aug 2025 22:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755235973; x=1755840773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QTd2SnS44QbWRezmUmEtQLo0ES7cL0NdhN8U5PrZ/34=;
-        b=M39SLHOEIIf9JpZ1OFFToOnBh9PfbbAm1Zz+YLhalBzCJUcq5tI0XbTXLYmggUM0qS
-         H5eJgmgdofX51sdFDNoqnbdjFsZvqHCFgDNq4YiYEfxiDefLZvvab22+oBeaKZbdvL/3
-         MG3cKTRZv+MdJ3xoTnMWdnN+ZkOgBR7dCwJu9EZXJfhbevvemxzEcanHsBTIOsqkeT94
-         TAWUazgeA4M21zjUoI+mWyU8J//nFKoob64qYSq5xEmoO0TM+0UnP/R1EwH/yR+2maoS
-         S0Aa5mXz303DNyQGOKv5s4lgiZA78IT5XXgUhiqFNLDu5oaHmL6gbzoDbqFzwaJ4QbzQ
-         +m2A==
+	s=arc-20240116; t=1755235984; c=relaxed/simple;
+	bh=URdpp/WxyhUfI/Ae6q8F7A21mqxWZYGH4gH7+ePLRoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nHbU6BCBSHocI6MFbjMoClG4zy/Z6/bFlreK7I4KRS0FfE/KRJ1NurjxmM3BeNweEhdxOJ7CPw0WLSDoUfj4yHwfdwNyk4n0NeORubDW/xVaicMce6UOQhfMFdCORgduefJ1H6fQUYV2D6LBdNfBZyxu6iVoc8+WJdWEN9CM4ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b2uQ4AlC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EHYHuh002802
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:33:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ovqL3ACv+kUZfn7O+wK3v6Lc3iCZ+BawVyVb9IBebzo=; b=b2uQ4AlCYcKxl4lY
+	zTEMrPcXuNqswTaxa89jZcOvtvEzi1+asa5ZPT1z8Y3TYlnWxnVqpMI8ozzqVbR3
+	ayEY9QMAHQRZOcyzvXpMnTj9O3PGswsNZ64VN/ylRiZCmyLTFqCHvwe4qOW8yDsF
+	KOOgCJPlED5sajWGkoupvW77S/mqEbEYvgyFRscuazYbRb0xU8xWPItKyrUm4GtD
+	EoMItrk+OGhgFi1eE4TDQKU9SVQUtBVqbkJS1HWemvxoij5Y7acT7/G2UazGwXFv
+	3MhfJaMO1pNX+sEyQsoQuoG6zzksNpXNkPbFNFZRtFY5mhVe6STW3jcD69zC1cDF
+	1lT03A==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxdva3b7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:33:01 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a88daeb18so37695866d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:33:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755235973; x=1755840773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QTd2SnS44QbWRezmUmEtQLo0ES7cL0NdhN8U5PrZ/34=;
-        b=feu458C4YjbRz7UGFrmqZQQ488kMb6q6fqyCL7nkAOqGJV1/j3zZXOY18JaZiuBhob
-         a/PBYyBeeuGV6GM+n3Pto5hd8WJYXSXKlad+H60ctVG+8QB5a6MMtEtX9JAiqC9kzMYR
-         qw56fiwCkR0wME52IEt3cNQ1Got/XToH3Hqw4sWPRyGddziZGyStciw5Pz1HAvlIrC7+
-         TW2ryvlnhuyOSgsA3yYD2j+zyEVoXW/dmUtQgxMQrUzQ+YyRsxFZE3ODz8Z+n7tIx/xg
-         FtihFc8jfOmOcIZ6IaUh4+9tU1+RAJbmhjlf6s5ZWLDBHHG5PgeqKL2Q7KO0nyPCamsg
-         HSzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJkgGHpZ3Pmv8TMgajWNTHCUHT/TMNYE7Lx0LfZAPTrk2SgsjkeS5pniz84w0Twf2Lyzptpdk4JTTIqeLM+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyewN7J4mwDf/IGU7x19yaDP6f1rSs+LzzWkoxPx4ZyGh4cTSqp
-	ndIXw1Mki4jI9JHERY0YGE3+IZUpVQWJSW/MKHB0mFu0IuPz3jRinL7w
-X-Gm-Gg: ASbGncuAm7HqdZUaLdA7q+D4L7hPIeFgESn15LmZx1xiGk0LU1ApCqKV01EZ0hd3bAt
-	3cq9KifjfE7F6AMUggSZ4hR9Hsxj7IxolAjRpyvHQ/P20lk6b+D1VsdmrWxYttccnE/+US0uglV
-	vrUb1FhaczY3D97tYO14WkdclraBT/HhyhHqU+Cg7bLkORT/2JSScP+vo5bdd+ppVH/15i1glvj
-	rucGXgG6J51y33B733hqI0mbn1ldonenpP2NnvAUEo21U+BN0YSn6mbT/BtJ+XmRhU4EVZoScnm
-	RyXQ6gsVJ/qzQRRd2eQR2ulVsrMu7APEbkYcJJ/pXt3T5Num89fOX/dxeMzKCe9HUU1SWymE9yQ
-	bZVhopUp070tZ6VA3wPZJ0/Yvn3tTEPqP2NPGBcRBuCc=
-X-Google-Smtp-Source: AGHT+IHuZOMmR+ZHN6RawSbyEcHlvGHloyTnjAjRuRVJt3T79TKeciymvac/iLTdRF79wIc9l0ITyA==
-X-Received: by 2002:a05:6a00:1acd:b0:748:e585:3c42 with SMTP id d2e1a72fcca58-76e447ab3b2mr978211b3a.15.1755235972528;
-        Thu, 14 Aug 2025 22:32:52 -0700 (PDT)
-Received: from localhost.localdomain ([112.149.32.52])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4556692bsm335234b3a.61.2025.08.14.22.32.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 22:32:52 -0700 (PDT)
-From: Jesung Yang <y.j3ms.n@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	Jesung Yang <y.j3ms.n@gmail.com>
-Subject: [PATCH v2 5/5] rust: macros: add derive macro for `Into`
-Date: Fri, 15 Aug 2025 05:32:15 +0000
-Message-Id: <042f8ba119337b090e8774355fc77478d86ea8ef.1755235180.git.y.j3ms.n@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <cover.1755235180.git.y.j3ms.n@gmail.com>
-References: <cover.1755235180.git.y.j3ms.n@gmail.com>
+        d=1e100.net; s=20230601; t=1755235980; x=1755840780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ovqL3ACv+kUZfn7O+wK3v6Lc3iCZ+BawVyVb9IBebzo=;
+        b=ZrghpArqVOe6G++7qt1SuPSYILlw1095SVUuGdjSNRWNMmKzxxxnj9loaOuXyNdues
+         BLV7dAWPlb2ZHcvraLixNN5REEzMqhhHaXwXbjotHVRL4/9RIQ/isdCI928WMp44WTEK
+         Vc3au1R91o1W8YqzBLaCOPxz1i3+ALm9oXm6G3x7wWjxWlEax8/D9i7bx8KZxWx1fYo5
+         alknurUxs1VMr0zZJdGYOXfJvfLD/V3pKUmt9em6qBAK5tYwfSzWYfmb7w6CsjMeS8Zi
+         zZSzOqadEWzktIAaa+XvI+4MsypHB9aeorhBILaIBbV5IxUrm9Q0tZ/lSYIgcy8LLhuY
+         AL8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUMK+ckBQih+SPsoFv+I8VaY00iVGof7NGRhsTw8Sq3lg3+EIjalqlTe6fIc7a89rKrdGL9usG1VZ7RN6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/FyvufcZDHXiEe4wQQG+tvCWwEhqEycgaU3NVjJ8JJGiiWacu
+	/c3hMPSQzYr/igdDKUNsnpPlFgexV53ldBVoDbp0ZEc4rBm3HLOgx2nPBaFKl8cypMlCpE/C2av
+	0HF0hNsO/P1keKnpxJ2e0nJw12ZN6dSTqQGvrB6XeeJrQSUftKhn1GmmmdoUI6Yop9GA2jVufmd
+	o=
+X-Gm-Gg: ASbGncsy99j/1UEfZa2j9jrXlWqbGhuLDFcxx8VhPxg2W1IwdAz9ZB3LYUQcfETT7Iq
+	90ZcXkEHf+Eu0qgpEfZtDcYuIBP82i5oPyaTLervw43e11BVdZvI8h8MC4IiHtRwbKgVO645Nki
+	hp4NWLinKOAkndROp/zXdjtLGW0d5icaXeTZh+j+FMFs17bqpYN8baz34HYViX2syZ7Otjmd/HR
+	ZJ46K94ZRqq4zkOrR5xQTGuUij8+L7LDI11HhHFHY/ZvakSlwvtXar/Zi2F2ZHxb0+U/Vp8skV6
+	/CcYBjDl+jkQ5X69THgiqz/t9ItAlr0DGbRulR0pqV/9PW+/fy7o7RQFnTzm/cg8yvI=
+X-Received: by 2002:a05:6214:2465:b0:709:f4f6:7efc with SMTP id 6a1803df08f44-70ba7c0d99emr5540356d6.29.1755235980546;
+        Thu, 14 Aug 2025 22:33:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxfir1wXxaU83tmZ/aq1nahL0CTNuUHTP9k/Q8uSYSN41izFNRaLdK4c1petYIvpY4X2AnhA==
+X-Received: by 2002:a05:6214:2465:b0:709:f4f6:7efc with SMTP id 6a1803df08f44-70ba7c0d99emr5540206d6.29.1755235980122;
+        Thu, 14 Aug 2025 22:33:00 -0700 (PDT)
+Received: from [192.168.68.118] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3bb652f90casm635115f8f.26.2025.08.14.22.32.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 22:32:59 -0700 (PDT)
+Message-ID: <19494b00-a5b9-4490-bddb-48f48e73b0ac@oss.qualcomm.com>
+Date: Fri, 15 Aug 2025 06:32:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] ASoC: codecs: wcd937x/8x/9x: cleanup
+To: vkoul@kernel.org, broonie@kernel.org
+Cc: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250704121218.1225806-1-srinivas.kandagatla@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20250704121218.1225806-1-srinivas.kandagatla@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689ec68d cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=me_V05VD0Eq9TF5rt4AA:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: dgbv2jqTP6_l6celcVMGhHJG061x5hTj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfXzgGNZQkQhxhQ
+ NmTE98yKG5jnCVp+eVUlGiHTAQAV6WjpoOeWvoc4QcMJn6sewPIEAQlIbmQNP2LMoRdR7Ibug9b
+ fadIxcaCJPgyzvN6OcW6tNArEnXflvbuCtKNXoMtX/vYrYoNIYG9I18qYVls+yMiwkoNWCfz1zI
+ qvv4D46McFcvcmtm+z//Ea1EPTEhqioLY6Y1V5sPhYtgIHGzCjMiv344a88VrKRuIZZjiMlANer
+ Ps9DGGd0/CZ0PrioKSOvjmvR1dLQxkcmNmbKx3+g3WiXoxe2Q95i6b+K2MFqyXqrteGF0PH1w86
+ 3wQNtskbEIsRRonXWCz4nGoYkAn2VxTFASre+h2qH1hm56nbzlY+5f/IFN/MQfHXT9uAytq0ljV
+ EFHy3v8p
+X-Proofpoint-GUID: dgbv2jqTP6_l6celcVMGhHJG061x5hTj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090025
 
-Introduce a procedural macro `Into` to automatically implement the
-`Into` trait for unit-only enums.
+Hi Vinod,
+On 7/4/25 1:12 PM, srinivas.kandagatla@oss.qualcomm.com wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> 
+> All these 3 codecs have been duplicating two of the soundwire
+> functions. Noticed another new driver starting to do the same, its time
+> to make some helpers so that we do not duplicate these functions.
+> 
+> I have added two helpers of_sdw_find_device_by_node() and
+> sdw_slave_get_current_bank() in soundwire layer for the codecs to use them.
+> 
+> Changes since v1:
+> 	- updated sdw_slave_get_current_bank do error checks on read
+> 
+> Srinivas Kandagatla (4):
+>   soundwire: bus: add of_sdw_find_device_by_node helper
+>   soundwire: bus: add sdw_slave_get_current_bank helper
 
-This reduces boilerplate in cases where enum variants need to be
-interpreted as relevant numeric values. A concrete example can be
-found in nova-core, where the `register!()` macro requires enum types
-used within it to be convertible via `u32::from()` [1].
 
-Note that the macro actually generates `From<E> for T` implementations,
-where `E` is an enum identifier and `T` is an arbitrary integer type.
-This automatically provides the corresponding `Into<T> for E`
-implementations through the blanket implementation.
+Do you have any comments these two soundwire patches in this series?
 
-Tested-by: Alexandre Courbot <acourbot@nvidia.com>
-Link: https://lore.kernel.org/rust-for-linux/20250624132337.2242-1-dakr@kernel.org/ [1]
-Signed-off-by: Jesung Yang <y.j3ms.n@gmail.com>
----
- rust/macros/convert.rs |  36 ++++++++++---
- rust/macros/lib.rs     | 115 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 145 insertions(+), 6 deletions(-)
+--srini
 
-diff --git a/rust/macros/convert.rs b/rust/macros/convert.rs
-index 0084bc4308c1..a6ef67ba27c7 100644
---- a/rust/macros/convert.rs
-+++ b/rust/macros/convert.rs
-@@ -3,6 +3,12 @@
- use proc_macro::{token_stream, Delimiter, Ident, Span, TokenStream, TokenTree};
- use std::iter::Peekable;
- 
-+#[derive(Debug)]
-+enum DeriveTarget {
-+    TryFrom,
-+    Into,
-+}
-+
- #[derive(Debug)]
- struct TypeArgs {
-     helper: Vec<Ident>,
-@@ -13,13 +19,20 @@ struct TypeArgs {
-     "u8", "u16", "u32", "u64", "u128", "usize", "i8", "i16", "i32", "i64", "i128", "isize",
- ];
- 
-+pub(crate) fn derive_into(input: TokenStream) -> TokenStream {
-+    derive(input, DeriveTarget::Into)
-+}
-+
- pub(crate) fn derive_try_from(input: TokenStream) -> TokenStream {
--    derive(input)
-+    derive(input, DeriveTarget::TryFrom)
- }
- 
--fn derive(input: TokenStream) -> TokenStream {
--    let derive_target = "TryFrom";
--    let derive_helper = "try_from";
-+fn derive(input: TokenStream, target: DeriveTarget) -> TokenStream {
-+    type ImplFn = fn(&Ident, &Ident, &[Ident]) -> TokenStream;
-+    let (derive_target, derive_helper, impl_trait) = match target {
-+        DeriveTarget::TryFrom => ("TryFrom", "try_from", impl_try_from as ImplFn),
-+        DeriveTarget::Into => ("Into", "into", impl_into as ImplFn),
-+    };
- 
-     let mut tokens = input.into_iter().peekable();
- 
-@@ -85,12 +98,12 @@ fn derive(input: TokenStream) -> TokenStream {
-         let ty = type_args
-             .repr
-             .unwrap_or_else(|| Ident::new("isize", Span::mixed_site()));
--        impl_try_from(&ty, &enum_ident, &variants)
-+        impl_trait(&ty, &enum_ident, &variants)
-     } else {
-         let impls = type_args
-             .helper
-             .iter()
--            .map(|ty| impl_try_from(ty, &enum_ident, &variants));
-+            .map(|ty| impl_trait(ty, &enum_ident, &variants));
-         quote! { #(#impls)* }
-     }
- }
-@@ -335,3 +348,14 @@ fn try_from(#param: #ty) -> Result<Self, Self::Error> {
-         }
-     }
- }
-+
-+fn impl_into(ty: &Ident, enum_ident: &Ident, _: &[Ident]) -> TokenStream {
-+    quote! {
-+        #[automatically_derived]
-+        impl ::core::convert::From<#enum_ident> for #ty {
-+            fn from(value: #enum_ident) -> #ty {
-+                value as #ty
-+            }
-+        }
-+    }
-+}
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index 569198f188f7..374c1bdb696a 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -427,6 +427,121 @@ pub fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
-     kunit::kunit_tests(attr, ts)
- }
- 
-+/// A derive macro for providing an impl of the [`Into`] trait.
-+///
-+/// This macro automatically derives [`Into`] trait for a given enum by generating
-+/// the relevant [`From`] implementation. Currently, it only supports [unit-only enum]s
-+/// without generic parameters.
-+///
-+/// [unit-only enum]: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.unit-only
-+///
-+/// # Notes
-+///
-+/// Unlike its name suggests, the macro actually generates [`From`] implementations
-+/// which automatically provide corresponding [`Into`] implementations.
-+///
-+/// The macro uses the `into` custom attribute or `repr` attribute to generate [`From`]
-+/// implementations. `into` always takes precedence over `repr`.
-+///
-+/// # Caveats
-+///
-+/// Ensure that every integer type specified in `#[into(...)]` is large enough to cover
-+/// all enum discriminants. Otherwise, the internal `as` casts may overflow.
-+///
-+/// # Examples
-+///
-+/// ## Without Attributes
-+///
-+/// Since [the default `Rust` representation uses `isize` for the discriminant type][repr-rs],
-+/// the macro implements `From<Foo>` for `isize`:
-+///
-+/// [repr-rs]: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.repr-rust
-+///
-+/// ```rust
-+/// use kernel::macros::Into;
-+/// use kernel::prelude::*;
-+///
-+/// #[derive(Debug, Default, Into)]
-+/// enum Foo {
-+///     #[default]
-+///     A,
-+///     B = 0x17,
-+/// }
-+///
-+/// assert_eq!(0isize, Foo::A.into());
-+/// assert_eq!(0x17isize, Foo::B.into());
-+/// ```
-+///
-+/// ## With `#[repr(T)]`
-+///
-+/// The macro implements `From<Foo>` for `T`:
-+///
-+/// ```rust
-+/// use kernel::macros::Into;
-+/// use kernel::prelude::*;
-+///
-+/// #[derive(Debug, Default, Into)]
-+/// #[repr(u8)]
-+/// enum Foo {
-+///     #[default]
-+///     A,
-+///     B = 0x17,
-+/// }
-+///
-+/// assert_eq!(0u8, Foo::A.into());
-+/// assert_eq!(0x17u8, Foo::B.into());
-+/// ```
-+///
-+/// ## With `#[into(...)]`
-+///
-+/// The macro implements `From<Foo>` for each `T` specified in `#[into(...)]`,
-+/// which always overrides `#[repr(...)]`:
-+///
-+/// ```rust
-+/// use kernel::macros::Into;
-+/// use kernel::prelude::*;
-+///
-+/// #[derive(Debug, Default, Into)]
-+/// #[into(u8, u16)]
-+/// #[repr(u8)]
-+/// enum Foo {
-+///     #[default]
-+///     A,
-+///     B = 0x17,
-+/// }
-+///
-+/// assert_eq!(0u16, Foo::A.into());
-+/// assert_eq!(0x17u16, Foo::B.into());
-+/// ```
-+///
-+/// ## Unsupported Cases
-+///
-+/// The following examples do not compile:
-+///
-+/// ```compile_fail
-+/// # use kernel::macros::Into;
-+/// // Generic parameters are not allowed.
-+/// #[derive(Into)]
-+/// enum Foo<T> {
-+///     A,
-+/// }
-+///
-+/// // Tuple-like enums or struct-like enums are not allowed.
-+/// #[derive(Into)]
-+/// enum Bar {
-+///     A(u8),
-+///     B { inner: u8 },
-+/// }
-+///
-+/// // Structs are not allowed.
-+/// #[derive(Into)]
-+/// struct Baz(u8);
-+/// ```
-+#[proc_macro_derive(Into, attributes(into))]
-+pub fn derive_into(input: TokenStream) -> TokenStream {
-+    convert::derive_into(input)
-+}
-+
- /// A derive macro for generating an impl of the [`TryFrom`] trait.
- ///
- /// This macro automatically derives [`TryFrom`] trait for a given enum. Currently,
--- 
-2.39.5
+>   ASoC: codecs: wcdxxxx: use of_sdw_find_device_by_node helper
+>   ASoC: codecs: wcdxxxx: use sdw_slave_get_current_bank helper
+> 
+>  drivers/soundwire/bus.c        | 12 ++++++++++++
+>  drivers/soundwire/slave.c      |  6 ++++++
+>  include/linux/soundwire/sdw.h  | 17 +++++++++++++++++
+>  sound/soc/codecs/wcd937x-sdw.c |  6 ------
+>  sound/soc/codecs/wcd937x.c     |  4 ++--
+>  sound/soc/codecs/wcd937x.h     |  2 --
+>  sound/soc/codecs/wcd938x-sdw.c | 17 -----------------
+>  sound/soc/codecs/wcd938x.c     |  7 +++----
+>  sound/soc/codecs/wcd938x.h     | 13 -------------
+>  sound/soc/codecs/wcd939x-sdw.c | 13 -------------
+>  sound/soc/codecs/wcd939x.c     |  6 +++---
+>  sound/soc/codecs/wcd939x.h     | 13 -------------
+>  12 files changed, 43 insertions(+), 73 deletions(-)
+> 
 
 
