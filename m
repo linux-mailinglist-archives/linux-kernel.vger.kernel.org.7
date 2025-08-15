@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-769896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9C0B274D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0BDB274D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A5C568232
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4DB41CE26EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB39288C32;
-	Fri, 15 Aug 2025 01:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D84288C38;
+	Fri, 15 Aug 2025 01:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EgSM5PxS"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fd03oLg3"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBE42877F1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16072877D9
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755222325; cv=none; b=IaynzLXP4L6jls8uIf1Xbwo4uSpefGssOoR6DQLAkfROpDA69DNV0QG/2iQzvGwbB5gMudSRS+wRZvM0lKOIEq/YvNw+RyI3KpkPmcMmtuv9P1ofcZYETUnarschQtUexwXIrDVT6u16sXxurmIXWRwuuFISDK7vpfBh+0z+O9Q=
+	t=1755222328; cv=none; b=kEdT5LEl2TbZlfLrG66Aqb8KTj8UiOwcgek+0Ra4OmJPNviek/PScpMxV0V5S/jOhb2b1vyYOrii+GLuQfi3fwQ0lLC2Tz684eyItb7Ib1Cn1XtELGG+k9Vnk5SRumVAEdLJiUyAsVNYkH71NJw/v4h6zVLnw4l9ykHxg5fdInM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755222325; c=relaxed/simple;
-	bh=Ddu7QujtO4Q6hfp1GuZr8ES+Bm9lIQeS5W0/PaWsaOE=;
+	s=arc-20240116; t=1755222328; c=relaxed/simple;
+	bh=rlydFC+d2bX9ULKW8mN9KviQO2RPvRtnZWR6YiURGYk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OMc9PmxO4AFmVqLybH0e3+zzoUGXCn4MS/WPQefm1HjnFftMlRjkhu9BfyUf4NSbh6rRBo7AQu67b4aU8NKaltSkMV+z0Dg/n90jIjKhEY5z9tfDmfNt3wXMJ6VgMHF4zuUiqlHiZ6EA7LUpOkkhV5ksDuD+gjK4Ia7G/9RC2Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EgSM5PxS; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=mv90nwQccPMQvUerdwIKf72sIDgkzBHNgpYGRglLZ6yI8n6KowsA7MGnJAqf+XNX5vddeFb7YiZylMDREefWaowWIIgej7IV2svO/T190e46Ub3ALuAsi58jCrwHl2/TfadTW6CMU7NzXg0pSmntpjxPoRmHpR5Y05MTO4YmSdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fd03oLg3; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EITVQF020726
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:22 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EIRGEI012963
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kxYCF6nACau5/iqJnJgpcLYWSFZCwi7it4PbOasdPHM=; b=EgSM5PxS9S52676e
-	gr39z/Y+zJqcax4+6Mu1IB5gYTTb30zEpnXeH/97wK9CWV9UrxxC2wNIhtVhHUet
-	MReBct0n4WQlCksmNam2iwpdckpnjTH7QN2b9AfyhcTfh1tvE19Z5fYLwuC94rzO
-	lBaRSxDcpXDwALplPpCYMcxFKojrTwycsK7tq5iCYuOVtpS0mflrBe33M/+UyL13
-	TqOkJjiH3XmxJQp5Pz3l/84Ncl8Lq5sefQSgwN1dR0yu4Tg+HBg46Ln9MAQ7IcrV
-	hSN4GnUHqfq6DR8gF8eA6MWUyOxACkeI5RH3OiKy1oPwTasHxDkFHLHGwwsC8tQ6
-	R7Tiuw==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9t1vjb-1
+	zlsOJK5oVN3gW0ovDjkscdY5GxIZWuWXxKFxu34qXhg=; b=fd03oLg3y6Izcc+W
+	BLyxaO7osrOdVreAQhjHOBb6GhsBuVA4cWyhIk5ocH0aY9b38jRJlIFJkxTuJG6P
+	Ee2MKkKfvg2GA0t4Iqkl9/vqJ2K5YvwAOoBzs8WQl7Gl4+i6VPrljH8BXk12iEL5
+	xdjBO/ymfts83GSNuHuPILo2TRkSfAzq5+/2s4QjJmxNZ+vIe4qkVhkkgxIE13IA
+	KXdh4WxKoHoijmCOME0VmuVRQBhCB2789HTEXBxFZR3X5p8jzSLxJwDlLjXHt5M+
+	DSO78aXZBxlYv2pUyuek9y38NV0C2iPJsaKAuOBY4LFbT3QobQruNIJWf8EF+JhL
+	bMK+KA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6whpq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:22 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-323266dcf3bso1504742a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:45:22 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:45:25 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4716fc56a9so1844397a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:45:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755222322; x=1755827122;
+        d=1e100.net; s=20230601; t=1755222325; x=1755827125;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kxYCF6nACau5/iqJnJgpcLYWSFZCwi7it4PbOasdPHM=;
-        b=xUYbW4ztylxy0YUZ88YmcJABKeRKCkHS0FO39DyCCQJSLerX+MYv7M9iTLxnAc1fLM
-         ljyFaVTy2T3XaR9ah3B9dR3Ddv0kQWNk6ohB6t4oyjlV5ee4vEDIr+yBPNrg/Mcnzody
-         3/VYc4T7n8GmgDfc6aQG7gZbrOUvUwEOPGDB9MRQyCCco9RFKFC4718YvleVZjjTAXe8
-         QO3veBDBA1qmIfpoKxsOH0MVaMYip/7qEg+Wu9y5QJufStXiM+JkqyGbc+POmpMA6IY/
-         uusT9ssWimvVuX0E3iO6nkQPL+MXAnTyVs2zB6Yt+f23JpCtC/rF7WFJU/FUflgGGSjE
-         tw2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wgOAdFJOR6QXNCZVkpP2W+qUAuGORXL2Gils4IrPtOGQ3/hFc4sTbExAadYp0eY4swz7yOFjpX6pIo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsJfxknyT+HpE9qmCzTNhV6yC9x2FqBq655slb4JRVxEV4rxfw
-	ueSRbiEVWf5IpY3hiupjy1WeCiJ/cAkrdpErynZw7dSAOie2lv6LdqmacJO0RKasArpIxiLXzoT
-	ZF6zVgTRXvxlC8EHc2hzH5HKSObaJTC9OeTULK4x1P3jvSZA+E+vnEqr1jk+sQyu6ps8=
-X-Gm-Gg: ASbGncsNd0B6g81EFIgP/WoR9AdcjwMJUnNi0zbrwXHiYJ1Ok5Irv2wIlKA8OYMKn6Z
-	eozm7yVttz/ms3VBkezEHS2nvqyMGm5G/2RnngFh7U9V/BBwkbUQvXTlb8MtnAxd2EGk71Ref/T
-	rrbgztpck+/liFzD41EvXJkNyMTXDPeGrFbq5KcUt4U+IeDZnMRGrdhyzJg9icJj68TdvfdfT8I
-	aMisvBu8fEVunUkcj9loKuynhG2Y1WjugAxIwVTHeAPGH3/vGvSZRSscjBekY/il88Hzpn8yBKA
-	RxaHMy5wpBbw2JNR8Ewa4PMsofZ/jWekw7XQv15Rq5+4rtcC+ryH10X9L/YRtqaUa7bP5xxL86Y
-	VCP/9UhVruFru3nd6
-X-Received: by 2002:a17:90b:2542:b0:31f:150:e045 with SMTP id 98e67ed59e1d1-3234224bd01mr480284a91.32.1755222321534;
-        Thu, 14 Aug 2025 18:45:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHp4WB24m89Yhcn0ioUDH1nUmYAvdRLnZOaTdAnGSAHnM7xxPbWq3Z6LhNQhmBtmQrugKO+wg==
-X-Received: by 2002:a17:90b:2542:b0:31f:150:e045 with SMTP id 98e67ed59e1d1-3234224bd01mr480246a91.32.1755222321004;
-        Thu, 14 Aug 2025 18:45:21 -0700 (PDT)
+        bh=zlsOJK5oVN3gW0ovDjkscdY5GxIZWuWXxKFxu34qXhg=;
+        b=aKZbo8KqnbyxTkgGun+U50meCMnQjmJFSnLbEHgsvw7qEYvDqAApqJyX5k517j28FA
+         ScW4LTj689/mnbl9mmcxkPXy6OZqUyvxA8bvVtL+pytFpKKqUFOxDMGboOtLHuHlaTsW
+         QQv/WRUzxSaioVk5CZMh+73U2MNhvGVb//sShL+Ajcz135PCf1WLhIQPI62bLX62dGKc
+         ZVl9NCB/NdA+RXEiqnPdBJt1iKyAyCd8Qp1F9oaXbakp7v7F3sk/eWdVurDRCHZ/ZXic
+         U/6R8Vk9pL015fC0Ys7zsXlilR2aiAtrI34T43SC3nfRFfbp6sYEPyiSO0MSzLXGlv3t
+         Kb1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnXosSaEn4XFrC8MPLjYGLJ1jvFiqQCk7lZHlmFPLSxnaXh8otFDFctzIa/l2+0589wwVV9D6QDp/lyQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVh5DAVOBY8blubCR2GNc7uz9GllVEX7+CGHkqLZvXX6UlybWC
+	MZlcgDZAaswJphRCeu5F0Pmk6be2QM1pZwxJEQed9i+W95YJMxXPFNat2jfcwZF8v2B5Q3hlmdE
+	uufqQ5QiAVXv5lhsekJNhtQbDG/O3qfJVML2D6LRy7Dl9gjhChk3+bPQF1pDshNdaV6o=
+X-Gm-Gg: ASbGncvlQn9WZghiorfJWSP2WqptYyqKm/ByKIWHCsFbeS++OJX09VZLsQ9p9Tm78Y9
+	O80cvAf480oupkJJWYN0mq+PDEBt2fGa0ANGXeC01ilzsE4LHLuZznRQdEF8DWVww6WQm1ZJtwM
+	ZIzOZgSkOIvN8C//NdOr/Zvh1y6MjHeHIm3rjOUofGfXoX4MYxNOXQp96KOjhIX93q0QQJAhbrL
+	C+6X1d83Z4BNJ5aMyZ6/yVicJKS+/JHgoK+8/P2ZTqA6YKWv/lAlbkRPMxen2rB4HukJe01FH9u
+	E8uwPSi0nimUWVZirWHfiyi0v8MORRAf57ZsfxVpRJqsUbv6bC4xlkDCsRUrJCQzyJeBawo+pHb
+	MEOWjswMsktfTUjiI
+X-Received: by 2002:a05:6a20:430d:b0:238:351a:6437 with SMTP id adf61e73a8af0-240d2f3f71bmr628324637.43.1755222324999;
+        Thu, 14 Aug 2025 18:45:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcAx/TsRQqAm4kbPDgVI2KzEGpjPVvzLo1WQbeY5Z9fq04iIy5aj3QYJ7X0o5DKPHyKP5YAQ==
+X-Received: by 2002:a05:6a20:430d:b0:238:351a:6437 with SMTP id adf61e73a8af0-240d2f3f71bmr628291637.43.1755222324516;
+        Thu, 14 Aug 2025 18:45:24 -0700 (PDT)
 Received: from [127.0.1.1] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d7735f4sm20273a12.48.2025.08.14.18.45.17
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d7735f4sm20273a12.48.2025.08.14.18.45.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 18:45:20 -0700 (PDT)
+        Thu, 14 Aug 2025 18:45:24 -0700 (PDT)
 From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Date: Fri, 15 Aug 2025 09:44:57 +0800
-Subject: [PATCH ath-next 2/3] wifi: ath12k: fix wrong logging ID used for
- CE
+Date: Fri, 15 Aug 2025 09:44:58 +0800
+Subject: [PATCH ath-next 3/3] wifi: ath12k: downgrade log level for CE
+ buffer enqueue failure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-2-f955ddc3ba7a@oss.qualcomm.com>
+Message-Id: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-3-f955ddc3ba7a@oss.qualcomm.com>
 References: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
 In-Reply-To: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
 To: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
@@ -108,65 +108,72 @@ Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
         ath12k@lists.infradead.org,
         Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689e9132 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=fHvqFdtNKkU2r1BsT3EA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-ORIG-GUID: 5NyJLJsB4wC0H-KRfPw5Nv4yuf_9l8Tt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfXxkECpRgqWRvs
- bKuSXwVGtDYQk+Q7tyQw7/xUZO0tJUOjmNMNk2Wgc1w4ZGoFmdOabVdKKMAyFPKhgVV82hqynVV
- jwE/3IWVTUDPHnXyuUKOL+POlHFdAg6/7bf6y6tJyvarYiJghbY9M2PRFIoHdawnRrAbmk0J2Zs
- x7B50/dxGAtIVAJoazGagdK9bMgo4JRKkiK1l0FwRpEtUE1hLl0Eu687nMTe+2bumo5308Jy4bn
- Nz0seOSXmYVFNWhsSRQJzeDhFUHfdM5wUHhxuAxJKtuqyNgAegAeUp9/36Zg4ofQUdpjLEV8ouX
- +YcvhCgV8+aovQZbLF34cOQwAM17KaC3n0+QZbJB60zVjVwTf33O4tlpVZwqrh9qhyxcvL0zL7g
- yX2RayyY
-X-Proofpoint-GUID: 5NyJLJsB4wC0H-KRfPw5Nv4yuf_9l8Tt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX2uYtjphLEfF8
+ lPkHTikKELPNg1O2m2hDcFtAwG7zhOdfAPOGIc6otLSGiyeYuAKHYAqhzAppKc/153oDROIBgMh
+ XcF9i591V33IB6G3oVicDg/00ojz/OzuyOp+zoZmmPbMn9QFMRfoQopsMykiOy5ir91P8sj55Px
+ C6QP7MgMzSMdRRpECyfsxeu+LNhkfDQIew2dhE+dMErzsggblpamzlyF2sO5zBbgn0DBTpED51/
+ 9NvQ4ha75AGB+HiMCHvzGr0Oe5ruSlUk/yjYHWgiGtLC6u2ANRwDPXX7o51kTc+ZeiemXln5ICp
+ celc19AIMnIJQN5J2VK9FGm00UFrwj16TNYccdlv42eJhJTv/myda0zmSZMhvCWmEopA9L2l+LN
+ TUu0YgVr
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689e9135 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=4avV6w9vhD41MOPHW_EA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-GUID: XQGAguEeSBE4_yVe3eqOP9CenoIr0UlS
+X-Proofpoint-ORIG-GUID: XQGAguEeSBE4_yVe3eqOP9CenoIr0UlS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-15_01,2025-08-14_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
-ATH12K_DBG_AHB is used for CE logging which is not proper. Add
-ATH12K_DBG_CE and replace ATH12K_DBG_AHB with it.
+There are two rings involved in the Copy Engine (CE) receive path
+handling, the CE status (STS) ring and the CE destination (DST) ring.
+Each time CE hardware needs to send an event (e.g. WMI event) to host,
+CE hardware finds a buffer (to which the tail pointer (TP) points) in
+DST ring and fills it with payload, then hardware fills meta data in
+STS ring and fires interrupt to host. Please note the TP of DST ring is
+expected to be advanced by CE hardware before interrupting host. While
+handling the interrupt, host finds that DST ring buffers are used hence
+increases rx_buf_needed to record the number of buffers to be replenished.
+Note before that, host compares TP and head pointer (HP) of DST ring to
+see if there is available space. Normally rx_buf_needed simply equals
+available space. But sometimes CE hardware doesn't (for whatever reason)
+update TP timely, making the comparison fails, then enqueue is cancelled
+and a warning is logged.
+
+However even enqueue fails this time, rx_buf_needed still records the
+numbers of needed buffers. Later when TP gets updated correctly, the
+missing buffer will be eventually replenished. And there is no doubt on
+the late update, it always comes (or lots of such warnings should be seen).
+
+Since this won't cause any functional issue, downgrade logging level to
+avoid misleading.
 
 Compile tested only.
 
-Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
 Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 ---
- drivers/net/wireless/ath/ath12k/ce.c    | 2 +-
- drivers/net/wireless/ath/ath12k/debug.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath12k/ce.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/wireless/ath/ath12k/ce.c b/drivers/net/wireless/ath/ath12k/ce.c
-index f93a419abf65ec6e9b31e22c78c8c2cdd7bdbc76..c5aadbc6367ce0d18080bb0e15a88d3ddf2e34ff 100644
+index c5aadbc6367ce0d18080bb0e15a88d3ddf2e34ff..9a63608838ace31587691dd53c1d4aa8f081cb6f 100644
 --- a/drivers/net/wireless/ath/ath12k/ce.c
 +++ b/drivers/net/wireless/ath/ath12k/ce.c
-@@ -478,7 +478,7 @@ static void ath12k_ce_recv_process_cb(struct ath12k_ce_pipe *pipe)
- 	}
+@@ -392,7 +392,8 @@ static int ath12k_ce_rx_post_pipe(struct ath12k_ce_pipe *pipe)
  
- 	while ((skb = __skb_dequeue(&list))) {
--		ath12k_dbg(ab, ATH12K_DBG_AHB, "rx ce pipe %d len %d\n",
-+		ath12k_dbg(ab, ATH12K_DBG_CE, "rx ce pipe %d len %d\n",
- 			   pipe->pipe_num, skb->len);
- 		pipe->recv_cb(ab, skb);
- 	}
-diff --git a/drivers/net/wireless/ath/ath12k/debug.h b/drivers/net/wireless/ath/ath12k/debug.h
-index 48916e4e1f6014055bbd56d5c71ef9182c78f3b6..bf254e43a68d08f97171d9baffd0ebc3aabfb3e4 100644
---- a/drivers/net/wireless/ath/ath12k/debug.h
-+++ b/drivers/net/wireless/ath/ath12k/debug.h
-@@ -26,6 +26,7 @@ enum ath12k_debug_mask {
- 	ATH12K_DBG_DP_TX	= 0x00002000,
- 	ATH12K_DBG_DP_RX	= 0x00004000,
- 	ATH12K_DBG_WOW		= 0x00008000,
-+	ATH12K_DBG_CE		= 0x00010000,
- 	ATH12K_DBG_ANY		= 0xffffffff,
- };
- 
+ 		ret = ath12k_ce_rx_buf_enqueue_pipe(pipe, skb, paddr);
+ 		if (ret) {
+-			ath12k_warn(ab, "failed to enqueue rx buf: %d\n", ret);
++			ath12k_dbg(ab, ATH12K_DBG_CE, "failed to enqueue rx buf: %d\n",
++				   ret);
+ 			dma_unmap_single(ab->dev, paddr,
+ 					 skb->len + skb_tailroom(skb),
+ 					 DMA_FROM_DEVICE);
 
 -- 
 2.25.1
