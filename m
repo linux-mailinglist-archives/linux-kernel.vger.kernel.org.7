@@ -1,167 +1,157 @@
-Return-Path: <linux-kernel+bounces-771321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A22EB28579
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8212CB2857A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78893AAD0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D2187B1ADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A22B3090D6;
-	Fri, 15 Aug 2025 18:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C7A184E;
+	Fri, 15 Aug 2025 18:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="vhdLnbBA"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="madUyDYm"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06921D9A5D;
-	Fri, 15 Aug 2025 18:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755281082; cv=pass; b=Iqu3R5XtXkGFdq5zmvVjiKJX0PRjv7jttbAXFng+4sey7wabVdiU5SC/3DRdSz/j4ioHER1nOTaiN6nfgfQJQDjXHyviZUDcrOjOT1U6vyHMYEaqUwtrzLneEAT2B0J/ToQfvbHMaR/bNJpOn9161W2yl/oqx0xBCNY0XMdObXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755281082; c=relaxed/simple;
-	bh=N/68Fbwxd3zb5cagkcweb7ryFa2TrDUnrhkJZ9v3sJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LenjxkXwTFwVHaYmFS2rv80SazrVYYBqj+AUrY+teGOql75QIZZbiuNt6OG0XGFreh3yCK32oiMW98flF7DRpHzVDZFbtSETM6UpLp6Kq7bTvufOtTAAe1j2umJ3bAb4efbZwGfMTOLg8zgkctwaZsQNDhwIEM2Ju5wr+pF8Dro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=vhdLnbBA; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (83-245-197-149.elisa-laajakaista.fi [83.245.197.149])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4c3VP83B2hz49Q5H;
-	Fri, 15 Aug 2025 21:04:28 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1755281068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pAhnMtIGVio/fL69TSSu91JNUUbAIp6omknr7h9bO4=;
-	b=vhdLnbBASZwSC4HziNYP6aK29YTBiYEBcemLCi6keAJYTANzverQlFsjNOOgaUD1//2jm2
-	YqRriHhBknUbo94AoQVRpI0pDafuCQ7udb5e9oZBX3Of4ittfG7+min+42etFsITasXyAJ
-	+GWEi7mNRp18E85FhudQVOPq6N5LdFccbCK69YS1QfBlT4g893n1fh3lqJCUMkalBQxAML
-	yW7y6a7cijQ3kaPUlPlzXE+fZaIKZbAc0h7qT1BGrJG5MDDt1g2U+O1BAiMZFSzReVFSDF
-	iG3O3mxTpdgLuatZ3gQ0ky1xmvlBCB+VbQ2TUpHZFVwEbgjw1OjJmrolO7Dcdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1755281068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pAhnMtIGVio/fL69TSSu91JNUUbAIp6omknr7h9bO4=;
-	b=Ugp9DTLH/Lefi1IG/1GVSOuE4IzNt1M+TxZKXyjMzvqpUvmfuxMVzQvjVzVEGB76ohtIT/
-	LZkYved2TtPs8PUbTnShiNnOI+QCr/N+Wb1/UETJnkYIWu0cmgrvJnthxbBkhmhbeE6T9/
-	QH2sQljJox5AcP098rP4LDvfXn1VJBP5H0CiTylzuO/dw2eQemH1m3RU+d6RD8R5JuA4Vx
-	HYy4m2OddZRrcCkePnYtI5LycPRfsLaAFO9KREtdrzPnI3F+u1Ih6VPiQh0lOwSaOG0vAp
-	/dPkv55CFmVg70r250ggtS/XQO6jA7DGWRsZrGIDDT/eqqzYlIKq1Gz15c5dzg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1755281068; a=rsa-sha256;
-	cv=none;
-	b=PuPGtYSuz1o4ve2WhhaqbxG/EIl+0/1DRlwPzVsW4QJc+kmdnPdkHJgLHfpVNizXqQduFt
-	n4i8r4fG98mxQavajmhJv1hfzf1eC9OWCVTP7EtRQN3hlEhhZj9zhG6sfuAIGm2M3JjoMa
-	J93SFDEtKv1m8C8hkvqNIgyR1k4licD5zMQCO8ez3gmrgaOtx0L0HKrR0wv5Qcz3ehxC01
-	0kGHvxZZm+Pzz9bSEi/fGm2IZYTj+tdOdX7kHhMYadbo5y1jaEnOeRwTWlVpfg0dzKZdDb
-	NoLuAu36c4VzRRx4b3CwQgMXPi7Z+mjpDll7H7hmnv9Veax2YKLSWnO2yHWJeg==
-Date: Fri, 15 Aug 2025 21:04:26 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Chris Fenner <cfenn@google.com>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aJ92qt6oSYyRYPZG@iki.fi>
-References: <20250814162252.3504279-1-cfenn@google.com>
- <aJ8iNLwlf4PAC0h1@kernel.org>
- <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
- <aJ9fy_sO6tza9qLF@iki.fi>
- <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
- <aJ9ySGv0JZ0DiNgf@kernel.org>
- <aJ9z4OlwvFdEA2Q_@kernel.org>
- <aJ91KX97WVOQ3nVk@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D919AD8B
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755281081; cv=none; b=CZdhK5PNjUAbknx+zBQrt5Njjfm+y1I/xxjHamm4T1NgZUq5kecWGSwwc7WBlj8CORvr1bGiAcp/+kZxcALXMsddCIXfkQSDkwEznfDZn73it1td1ot6rwqsHZ9nZMRd9oCXKh9UTqMS3++ovYWMAzw+XYFoAjYhbyS2+H79JW0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755281081; c=relaxed/simple;
+	bh=8tUVEOHCd6vgZOjmZ6wGCyZD35jdxuSt3593rFQJiRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOKLT7cSp12bCC+lhIihnoFxjQUh61Gem8yyUKBfFPZ2y+dLCHFfFWDKlL62I+iALT4Ejhl0iL7qyi+J6qyg7Bgix1gTRYZ8F5E1KG3qnp3e0+Q8sRUPILgSQ/l9etqXTMBo5JjJAlamVC9bAJQZL9TJgVD2Mm5sOaOSYJTWaPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=madUyDYm; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e39ec6e05so1218769b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755281079; x=1755885879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjnd6OOtdW9yy47zlEw4IHguBzP7Muvi9jj9yhTRBOE=;
+        b=madUyDYmR7WVgPeED2ipdUE3PKqWxiTKGT4FYvN4rYXcBJxxFZkOL24e5L/Pcwbg7u
+         OmjQHqBAUlDd/UeI/jx72qUH5zudsnX8il3gJi6K4wesashvADDhKEo4XWraW3dMjoGw
+         UGwmAgdeRbVij5O4LHH6O1SF4Vp3PnIKvYa9I2g09C8URC9WkPTnx2qmO2tYZElxBYkQ
+         SNEgyOwpZ7gD1swAb2u6597CADZBWxUJWAlTccjFyTHxLfwLQV2NFrO7N5Ckf+FOFkoW
+         zs6bhIvRkEygExnwMngMmnTfopTIGRzM0UhZX0M+YkkjEFc94N6cOsqn76Hds9fHbmxT
+         DvLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755281079; x=1755885879;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zjnd6OOtdW9yy47zlEw4IHguBzP7Muvi9jj9yhTRBOE=;
+        b=pQTt/jwWsd4EjJ+6T8RvsVLfXlqk5rDl7cG0LV5Ho8UN42fKDQi9jiOLJtzxg0DeHt
+         qT6uZ3s67tcU5DI4PVwEzl7f0uyzGfP2KpUtoOXzMYsDeIh6MWB0ygIwDmr7XKJJxtap
+         EW3ME8HVWjhhHLQGVeG8VzHZ/cxApmIHGkW8EPls/e/buzw7pLuHxvrmGxvv6W3NzcB6
+         DJAI1TIwxqo81xQJZD55Gbm+g24ybLvYh68yV9GwUAAbDL8zO5TNWwvajOnzkhnNmd8F
+         W0b6DAZNESAakqEkdRgKcKUR7iAgjY8Rek88Tog6Tfbi2bEm+NbllI7wTmbavQphoqYR
+         +T7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIMaD9q8vl0IRAUDK7Jbhxu32mcJhph2wLwygoyOm5QO1P84I9qMwB5hp3vgDkKxPJmkHW6HhwSHNIKNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2X9Ygz8BpgK43OAZszy64SznntWabpjdFGkjM3gZalV+FLYiL
+	O51v5R6psaD1ogja5FHDRryOnU0RkJ1u3WYWTWfWdDEExyjKCBG9+ckOXuKyGjCR
+X-Gm-Gg: ASbGncvlG1rlhdXGUPVL/Rs7TNWAJdGToJ9nHoXx/BYqTf3wygIw3U3fIIuinOVBEAK
+	VM54kgJyE/nrAUjwMctdqrByCECcOty7d6Ccyc6WEUxv9bziOUh+sUd16LmPPhGlVH6XX6mgYHK
+	+NyDge9TBrjz8kszde+Fg/iMgTMALYW0Dvq5QTWuIaIP+isQLpkLEBlRwBng8ca5XSWCIpKbo5H
+	zU3cQqBE49vgVmYyZWplke0VMEqnsX3Cl/x0YBsABBkRNyLdbkK4qa4jNI3dNQEQm0eqOTr3bHg
+	QJClz/zocNlTNbCh1tHK4Uz53emGTOWcApVC4WUkSfzz8qybheI8gGv1+pimmKmE6JvzAx4mN3o
+	elMOJA13Nk5/qNgBDmmjxEMo10jvHT2oSMJJzNQHmvik=
+X-Google-Smtp-Source: AGHT+IHdqRPTyIcttlXcxE7oZJD/Rxum8jhYUpDfRRXcp+yZKhKHRlr4U8LI87W+kih1ENq9zMjiOg==
+X-Received: by 2002:a05:6a00:4fcf:b0:748:e1e4:71de with SMTP id d2e1a72fcca58-76e447dcb34mr3824537b3a.14.1755281078642;
+        Fri, 15 Aug 2025 11:04:38 -0700 (PDT)
+Received: from archlinux ([2401:4900:93f2:6a91:9b6f:8f9d:11b:d64a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4526cde0sm1579049b3a.23.2025.08.15.11.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 11:04:38 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH v3 RESEND] checkpatch: suppress strscpy warnings for userspace tools
+Date: Fri, 15 Aug 2025 23:34:28 +0530
+Message-ID: <20250815180428.37795-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJ91KX97WVOQ3nVk@kernel.org>
 
-On Fri, Aug 15, 2025 at 08:58:06PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Aug 15, 2025 at 08:52:35PM +0300, Jarkko Sakkinen wrote:
-> > On Fri, Aug 15, 2025 at 08:45:48PM +0300, Jarkko Sakkinen wrote:
-> > > On Fri, Aug 15, 2025 at 10:06:36AM -0700, Chris Fenner wrote:
-> > > > On Fri, Aug 15, 2025 at 9:27 AM Jarkko Sakkinen <jarkko.sakkinen@iki.fi> wrote:
-> > > > 
-> > > > > I'll with shoot another proposal. Let's delete null primary creation
-> > > > > code and add a parameter 'tpm.integrity_handle', which will refers to
-> > > > > persistent primary handle:
-> > > > 
-> > > > I'm not yet sure I understand which handle you mean, or what you're
-> > > > proposing to do with it. Could you elaborate?
-> > > 
-> > > Primary key persistent handle.
-> > > 
-> > > In tpm2_start_auth_session() there's
-> > > 
-> > > 	/* salt key handle */
-> > > 	tpm_buf_append_u32(&buf, null_key);
-> > > 
-> > > Which would become
-> > > 
-> > > 	/* salt key handle */
-> > > 	tpm_buf_append_u32(&buf, integrity_handle);
-> > > 
-> > > And in beginning of exported functions from tpm2-sessions.c:
-> > > 
-> > > 	if (!integrity_handle)
-> > > 		return 0;
-> > > 
-> > > And delete from same file:
-> > > 
-> > > 	1. tpm2_create_*()
-> > > 	2. tpm2_load_null()
-> > > 
-> > > That way the feature makes sense and does not disturb the user who don't
-> > > want it as PCRs and random numbers will be integrity proteced agains an
-> > > unambiguous key that can be certified.
-> > 
-> > E.g., for example that will unquestionably harden IMA exactly for the
-> > same reasons why some user space software might to choose to use HMAC
-> > based integrity protection.
-> > 
-> > At data center, there's guards and guns but for appliences, but there
-> > is also the market appliances, home server products etc. They are not
-> > mobile but neither they are protected in the same as e.g., a data
-> > center is.
-> > 
-> > This is not to admit that right now the feature is no good to anyone
-> > but in a selected set of use cases with this modification it would
-> > make e.g., IMA's security *worse* than it would be with the feature
-> > enabled.
-> 
-> One product example would be "blockchain node as a box" i.e., it carries
-> momentary value inside. I could imagine this type of products exist or
-> to be created (especially given proof-of-stake blockchains).
-> 
-> In such product, you don't have much to measure but you wan to take all
-> of the security that you have to harden the protection of that small
-> amount of data.
+The checkpatch.pl script currently warns against the use of strcpy,
+strlcpy, and strncpy, recommending strscpy as a safer alternative.
+However, these warnings are also triggered for code under tools/ and
+scripts/, which are userspace utilities where strscpy is not available.
+This patch suppresses these warnings for files in tools/ and scripts/.
 
-I'm happy to make patch next week for this change too. So probably this
-where I align myself to. It's just the best average IMHO. Everyone gets
-exactly what they want, right?
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
 
-BR, Jarkko
+Changes since v1:
+- Create is_userspace function to check if the file is in userspace
+  directories
+
+Changes since v2:
+- Change regex pattern to match top level directories only
+
+ scripts/checkpatch.pl | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e722dd6fa8ef..fe580b0810f9 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2636,6 +2636,11 @@ sub exclude_global_initialisers {
+ 		$realfile =~ m@/bpf/.*\.bpf\.c$@;
+ }
+ 
++sub is_userspace {
++    my ($realfile) = @_;
++    return ($realfile =~ m@^tools/@ || $realfile =~ m@^scripts/@);
++}
++
+ sub process {
+ 	my $filename = shift;
+ 
+@@ -7018,21 +7023,20 @@ sub process {
+ #				}
+ #			}
+ #		}
+-
+ # strcpy uses that should likely be strscpy
+-		if ($line =~ /\bstrcpy\s*\(/) {
++		if ($line =~ /\bstrcpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRCPY",
+ 			     "Prefer strscpy over strcpy - see: https://github.com/KSPP/linux/issues/88\n" . $herecurr);
+ 		}
+ 
+ # strlcpy uses that should likely be strscpy
+-		if ($line =~ /\bstrlcpy\s*\(/) {
++		if ($line =~ /\bstrlcpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRLCPY",
+ 			     "Prefer strscpy over strlcpy - see: https://github.com/KSPP/linux/issues/89\n" . $herecurr);
+ 		}
+ 
+ # strncpy uses that should likely be strscpy or strscpy_pad
+-		if ($line =~ /\bstrncpy\s*\(/) {
++		if ($line =~ /\bstrncpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRNCPY",
+ 			     "Prefer strscpy, strscpy_pad, or __nonstring over strncpy - see: https://github.com/KSPP/linux/issues/90\n" . $herecurr);
+ 		}
+-- 
+2.50.1
+
 
