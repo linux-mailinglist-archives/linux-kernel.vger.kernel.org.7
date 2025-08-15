@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-771277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAF1B28502
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4ACB28513
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628AD5E3DA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31B5AE479D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF36B30DEC6;
-	Fri, 15 Aug 2025 17:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JPFy6QXi"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0620311599;
+	Fri, 15 Aug 2025 17:29:06 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD1930F524
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEEB310659;
+	Fri, 15 Aug 2025 17:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755278936; cv=none; b=fWgXmc8mwS5OKKnXcRktOovpxEwDNVnp3pu0A7pSu7UPsCzPr3O17U/SLaPId4Bn3XLaO2oDaHOpHfwY7kEUCRZs+sRfyuShzd3WcPy8nWcejYfD5XwE8dswozHZZilB1rjdGzU9wn9SPSwJ963VrvoR/xeX8gw9DYbyEnU8llg=
+	t=1755278946; cv=none; b=gGwZI1sz8+UWE488VhoxwjGHEmNXz8B3bRXHse7aN0V8DATWTpHZexbE85Dn48OAIuVRro9I81vyn0Px7Hwa6B1cJI5M7UHpa86zrpvA9EbnF7tPJuxpw67Rta9dWt4sJpLjslsotWPQXeH04pNeTfHC93K46FvfioCO7Q1AuTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755278936; c=relaxed/simple;
-	bh=rlu8tdmhOAUdI4UELJLEF+Q1Ukrf2EpGPzu38KwC42s=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tMMOYWMJjM/hiUgme53MZCXq4ikOaW2JvHeI4Gilv5UttWF0sddtLXI0hL62HIqa31JourZhmeGu8dw2dQWl3CV9/Q3PgJtsEN7C8n44hfY+r8WGCml3MAuZeFWkXq54jhd9URKi5zPS+ZzlJieL8FqRAhRAPDohHDQOODormmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JPFy6QXi; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57FHSgXj2018221
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 15 Aug 2025 10:28:42 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57FHSgXj2018221
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755278923;
-	bh=rlu8tdmhOAUdI4UELJLEF+Q1Ukrf2EpGPzu38KwC42s=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=JPFy6QXi7yhgozBYJN9Gt+Fjc5LRyVnoT+ZCXfnFN4/bKSfDNJD6YF7ddHlkYHzcV
-	 Y891SxFe/VxoV4Ya4YZOv7da0lZzJzccNAaVQ4EU5P5QEgWpEkaQ8FILzEMvwvl5ZR
-	 wb2g7hd+hgaHllyNNPO8od0fsXn4HTxgaLGU/d+zkdAWatwjA+9VU815UCng5K62ub
-	 JkxbiW0JEKnW0QQ9BQv4pzpn3TSV+RKJxRHEGZKh10FQaAn0vJ7JTm071DWIc4ZdGr
-	 g9TLjoww02X13cndu4IVtcgq12AhSf9CFp2QiBQ4yK8ECHpUrmNeRNmoU9VLCqvGET
-	 VXaEqPDo3RxHg==
-Date: Fri, 15 Aug 2025 10:28:43 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC: x86@kernel.org, kees@kernel.org, alyssa.milburn@intel.com,
-        scott.d.constable@intel.com, joao@overdrivepizza.com,
-        samitolvanen@google.com, nathan@kernel.org,
-        alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-User-Agent: K-9 Mail for Android
-In-Reply-To: <7594ecd7-994d-4cb8-9f8a-b6c1d4b01e17@citrix.com>
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net> <2c121572-8fde-4288-80ca-ab79f2b22cce@zytor.com> <20250815074939.GA3419281@noisy.programming.kicks-ass.net> <20250815102839.GD4068168@noisy.programming.kicks-ass.net> <20250815103055.GE4068168@noisy.programming.kicks-ass.net> <fc0715e0-42f2-4b5d-be31-ac44657afc56@citrix.com> <20250815105908.GB3245006@noisy.programming.kicks-ass.net> <055f4c2b-0e7f-44ae-92ff-a1025a217208@citrix.com> <78bd985a-a59e-4469-a84d-a0eb7faa20c3@zytor.com> <7594ecd7-994d-4cb8-9f8a-b6c1d4b01e17@citrix.com>
-Message-ID: <880F0E7C-86AE-4007-863F-E58B4C3C131C@zytor.com>
+	s=arc-20240116; t=1755278946; c=relaxed/simple;
+	bh=zPE0BwiWcsCBLDGiGu9+tzW5QyV0y6NSps2QWgJakeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiPXkckEBiNfAUCPkPsWJBfndfQ792fagiiuTcvMzfQRDli48WKEeNbMijpgBHiHYEFII1YWps2+yQpcCWsMfEz4ZT9UiKs5FUfQS+8p7UB0Ay8S66EJi9ZMdZfOg9A/cSZxux54ByNOmprS1yuf4r/ZG42rwaN4iZh31ajqToM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b7949f6so4282755a12.3;
+        Fri, 15 Aug 2025 10:29:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755278943; x=1755883743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZgPCKk/G6zEWeVJtk/ASmzqqce4JADX4N70XQavqkQ=;
+        b=EqjyFie3xQrCL9ERZPpCrTCGYWJ3Cl5bMHP4wsSL5o85Xr2Urj4sO7XD/Xu2DqTsly
+         2XdacnoixXhfpikepnjOCqCPxftdN2CadAqwaF3rBmmxjVURvZnBAVfin+/1V79B7LHt
+         SGHLswpvYPMntYbwS9Ihm1ZKxtfUtBTnB+y2WvaR5LMSXWEq5WVwIRslXSe2ZBULmYqh
+         R8sxQIA62ZBO/poRwSPrJOXlCkIhnNcfhJUXktrEvKfwRGbj6MXAnmbLUJ37aWg1f53T
+         miD53WRshoTRbinhDbQC/PGj8uqwnUj1r2wcd5YURVhMGR/ZT3ntXon4nGt39jUHIoul
+         pCYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmBQLe89cOgxPAqhBJtHbmUBq84QaatRg4IkXJJ7EOukYjnWJzFGW19SF8i87czGihjOea68o8@vger.kernel.org, AJvYcCW+p4xTFwwkfR/i780bqXTb8hKgCbVzaEYU/5PRFaVtuG4vpBCW1x5TjckcRSXItxVTgr75SuQZ45Ajs24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoBs1TUE1o4sS6ld8AHqbY5IHVTSZes+hY5TVBVHBkePzZ1Xm6
+	w3uG8gakanAGqmE1+xpR2xKFid059T6qPfHKvZyo/G7dGOSB8wore9qb
+X-Gm-Gg: ASbGncvaj4PPFAQfTGpzwcxQ7KVLZtZmyfIpe+N8ghGwWYtEHDkAWNWD2Iz0/ORKwsd
+	1bWo7oBne34G5LgQPMAzpRUYN6R7uvtSAbXUkl9Pxz4ATHe1sZvr/lK7fRFJ5hcZmUpn30kA4gX
+	wHi8YgEXJC5O/8rO+x6j9KMN+Mdp3S5TdWeMUbc9xSmD775oyrhUcHaK1yvz3rEemNPh3Nvvpmu
+	2GpUH2mdCcerDCVE7S7wIUvgYWRr8cZyPOIURB3g/7cyYW27Upc1Tqcyr5/m3fy1rfC0FFjZ9cW
+	JrAVApP10XIXSfCpsvmjLS3S+0OOwR7WVOkAoSbmhMssb+Q1WGbLhdvdvMAbzSB7f6NgD0SyFbA
+	fJF3QDd/nnZoA3pScCcItZIjRx2zKkXX6Pg==
+X-Google-Smtp-Source: AGHT+IGvVHQ5IvbO8v1pTkOOvzQo0J6+0Wz1rwsusVD8gUeMNY/qKMdX3C6J4YCERD/lwhmm91QQ9Q==
+X-Received: by 2002:a05:6402:5111:b0:615:6a10:f048 with SMTP id 4fb4d7f45d1cf-618b0752bbamr2178239a12.33.1755278942972;
+        Fri, 15 Aug 2025 10:29:02 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01ae6b1sm1787874a12.33.2025.08.15.10.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 10:29:02 -0700 (PDT)
+Date: Fri, 15 Aug 2025 10:29:00 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Mike Galbraith <efault@gmx.de>, paulmck@kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, boqun.feng@gmail.com
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+Message-ID: <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
+References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
+ <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+ <20250814172326.18cf2d72@kernel.org>
+ <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
+ <20250815094217.1cce7116@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815094217.1cce7116@kernel.org>
 
-On August 15, 2025 10:21:48 AM PDT, Andrew Cooper <andrew=2Ecooper3@citrix=
-=2Ecom> wrote:
->On 15/08/2025 6:14 pm, H=2E Peter Anvin wrote:
->> On 2025-08-15 04:19, Andrew Cooper wrote:
->>>> CS Jcc, decodes to Jcc,pn for non-taken
->>>> DS Jcc, decodes to Jcc,pt for taken
->>> Ah, thanks=2E=C2=A0 I was looking at the hex in one of the comments an=
-d still
->>> couldn't figure it out=2E
->>>
->>> So with this notation, we also have the dual meaning of ,pt between th=
-e
->>> P4 and LNC=2E=C2=A0 At least the encoding is the same=2E
->>>
->> What "dual meaning?"
->
->Well, it has different semantics now it's been reintroduced in LNC=2E=C2=
-=A0
->(Only has any effect on a prediction miss, and causes a proactive decode
->resteer)=2E
->
->Sure, it's "just perf" so can be argued as "compatible behaviour", but
->people caring about the ,pt / ,pn properties do need to know the differen=
-t=2E
->
->~Andrew
+On Fri, Aug 15, 2025 at 09:42:17AM -0700, Jakub Kicinski wrote:
+> On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
+> > On 8/15/25 01:23, Jakub Kicinski wrote:
+> 
+> I suspect disabling netconsole over WiFi may be the most sensible way out.
 
-The architectural semantics are "hint to the microarchitecture that this b=
-ranch is strongly biased in one specific direction", and that has been true=
- since the P4=2E
+I believe we might be facing a similar issue with virtio-net.
+Specifically, any network adapter where TX is not safe to use in IRQ
+context encounters this problem.
 
-There are no other semantic guarantees, including, of course, that the har=
-dware will do anything at all with it=2E
+If we want to keep netconsole enabled on all TX paths, a possible
+solution is to defer the transmission work when netconsole is called
+inside an IRQ.
 
-Performance tuning at the uarch level changes over time and will continue =
-to do so, so if you don't distinguish between architectural behavior and pe=
-rformance you have to define pretty much every instruction as semantically =
-different in each generation=2E
+The idea is that netconsole first checks if it is running in an IRQ
+context using in_irq(). If so, it queues the skb without transmitting it
+immediately and schedules deferred work to handle the transmission
+later.
+
+A rough implementation could be:
+
+static void send_udp(struct netconsole_target *nt, const char *msg, int len) {
+
+	/* get the SKB that is already populated, with all the headers
+	 * and ready to be sent
+	 */
+	struct sk_buff = netpoll_get_skb(&nt->np, msg, len);
+
+	if (in_irq()) {
+		skb_queue_tail(&np->delayed_queue, skb);
+		schedule_delayed_work(flush_delayed_queue, 0);
+		return;
+	}
+
+	return __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+}
+
+This approach does not require additional memory or extra data copying,
+since copying from the printk buffer to the skb must be performed
+regardless.
+
+The main drawback is a slight delay for messages sent from within an IRQ
+context, though I believe such cases are infrequent.
+
+We could potentially also perform the flush from softirq context, which
+would help reduce this latency further.
 
