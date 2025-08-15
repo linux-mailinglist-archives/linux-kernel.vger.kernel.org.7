@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-770092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB9FB276A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35335B276A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A7A189FC6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:15:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B1517290C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ABE2820BF;
-	Fri, 15 Aug 2025 03:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kF4AR4Hm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB24270548;
+	Fri, 15 Aug 2025 03:16:28 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D418C011;
-	Fri, 15 Aug 2025 03:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2999B277C86;
+	Fri, 15 Aug 2025 03:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227728; cv=none; b=M1AoK895o51J6zdu8P7ftkTll8GkTADis3aEA5erh0m57QlSmjThX2c+cnvHbXRYKPwUpGDdgQvE134BilLrTKVX5D3ig2+cEc2BkD+Q569MWHFAsvZwVM1WsEWP9ckwtF6wyaiiraLxW6yWEcddOZKX+SS/eldRRabjBykzDtk=
+	t=1755227787; cv=none; b=H2zq9MCG9uLKWXIaurgV4UGcKSJptnZdpwvsqTIfUN5dcYg7G+F+3rxIKHwZWE490DMHJqM5eHa26gkBZ+YtbHpglsqKMoUINdUfLLXTLxMnmSjZ1iNjxNjQ52LuPPbIW4JNPqvatGBbpKnlBGJ445vAISRb5ohjc1Rx0fKyD40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227728; c=relaxed/simple;
-	bh=fC1mrUytUG74MKUNflCkOvX5lW6hkNqnNNZ7FyLjNIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFqugJSGyaCYwBrg3ZJ8men8CprDvUpqM16idRKwq0ot5i+PBvlRtfu1R+uUqNdY9OkVaOqgMxEW8tu5zzzTAs5p/kKa7rKMn+oA2u+Jl+mlIilRlFRozKn1/C4hd95XmDST7ckdxBRZGi5tAG6WZJTFSDyNAQltxDA6Qw3C3w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kF4AR4Hm; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755227727; x=1786763727;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fC1mrUytUG74MKUNflCkOvX5lW6hkNqnNNZ7FyLjNIk=;
-  b=kF4AR4HmpnP0KjgcbW6BuHcyyJ8+CKKyjFT/2a+aSkPEA+Dfg+2DbovR
-   w5gebYf1D5mCRhl60Lrocs8MGW45TjVbWkwZAW74fNkY0uLMQ0TU6f4nB
-   I7wod7D29H1Vo5TUed1YjbQhTSSNxArka77mPAnmBywA1RkgVHyBiBVfi
-   opHhKkvgkQNiocrXn8hYSkzUxfvZV+A/D0IZNk0PyebwVeNZ8Fd6Kyh0k
-   FjnE4PPJ3qnR8VXRWXuaj29a1L+204+01Tz9XvgomguMTw+Adsn7Rhklq
-   d31q/4yWEAt8PJN2vu4tVbejRbPsWYt6HzXZmf+gnM8wBMiexua77rLSE
-   A==;
-X-CSE-ConnectionGUID: OjLVpetZRVWiitcFTxvUBg==
-X-CSE-MsgGUID: 1xQXv2FtTVOr9WdEqygXNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="80134704"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="80134704"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:15:26 -0700
-X-CSE-ConnectionGUID: gWE2MD7FSsO1FMn9GpkNvw==
-X-CSE-MsgGUID: 7azx2Hb7QE2UY2Q4NI5dPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166834945"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:15:21 -0700
-Message-ID: <8b76b1d7-edc9-4677-8069-a428e1067050@linux.intel.com>
-Date: Fri, 15 Aug 2025 11:15:19 +0800
+	s=arc-20240116; t=1755227787; c=relaxed/simple;
+	bh=T1sh+P7hG/l43OUvLJm9SoI62WnK76nbGCjSpnoUIhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ce3wRMi3ktZ/13/cWc3OAdhXeDXlhJtliZGvvbYPGpcA1ukQu55IorgBQRUiIV0fWgJ2CUbrVzBsU28leKZVwG3pQUIm0tEzVUs4Ztv7ugBdWjVdW+u3j1skNFbr3E2Rkioa4pjj3MasohZGW5Xx1G9btX8FdqdlMK34hQkMTEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz21t1755227724tda874541
+X-QQ-Originating-IP: SYs96dYgVOR/5RRgXZvpgPmZ38GjwJyNFCQsbJZuGLE=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 15 Aug 2025 11:15:22 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17237872932614161195
+Date: Fri, 15 Aug 2025 11:15:22 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <047254CB5E8480A1+20250815031522.GA1138819@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-4-dong100@mucse.com>
+ <edf9be27-fdbf-44c9-8ce8-86ba25147f02@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 25/30] KVM: selftests: KVM: selftests: Expose new
- vm_vaddr_alloc_private()
-To: Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>,
- Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-26-sagis@google.com> <aJpbhBO53ujqkbPT@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aJpbhBO53ujqkbPT@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <edf9be27-fdbf-44c9-8ce8-86ba25147f02@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M8X+OvqqReHCn4jzLQWtt6Lv92biL8EhsWSc67NU58me8hNecZbX9Gjf
+	arX84nGGHqjQsAodYgp6pemoZ9XpYNsvXJyw5ZpVXo1nuVpn9lRrVr00PciGjxToBKYsu3K
+	xVzSEEucuifaQ+oFKowlNMWNXFVC6mzqZYWtZI9WA31+ydKefNRs1bIBS3h9P8vx62m5u3k
+	Nb9jlZCMht5OEk2MKiibClpQT0uyOLAjcj8kRgcNeAMUve2EUcOHEUBYJTaMnU4M4WNLlpL
+	74OQGuv2xbsxlcIyrUJSsFtB4V7WMWqNrOQWQoUA2DdxThLXY2RDIqb40+KBveB/pT/QK3H
+	7WMcLjiM2mK7ppOHaHbrbkaZz3ywLX4EYo+ynR+dT1T1zxPNqHwdSpDnzQ7bX9litVI1Qor
+	IIJ5D2RFIVvzSL06mPhRqqomESjFTv31+xqT5PejzyelK73ScxkUf81zgqOSY57hDEUrVS2
+	u2/QFB8GsDCM4KHVPdQcf2jVUyXn5dMgTPjqoK3a5ntwh/xysyrbjpp6PCoX1Jj3PdZTzvl
+	sC7A+qNSIdRzOaXxWi+bP45qsQ8B8rR+FEUaUsfFRz8bxyYH3wlQlWui0Gjb2wmrbZQtb/c
+	TxuCrtF9Hqx0eQ51CwgpPoWlDvznitcTJiUCU9mfNRuD3c2umE+x+KtnvJwhj90d+hQ2dEy
+	bxdoYfQ/aDV9T1uOlD4O1d+1+QLtYCipWswEojbxsXgGpedgQS9/4eUmYH9sKDsZ43PvDd/
+	/7IrmZuw9OCy9Ipf43wYkKk81ARByFMydtowJrUfAx4RiCYG/XfGPioJbVh3O8JtoF0KYNm
+	YBac/3UPxty5Ln6OVCeZd5++XyUT6y3PPK1MAJfZ63YrhHB+265Ay2yvFNcyX9zgZP9N7+x
+	wLvSuTp7am67bq+oE/z8QfnJCruMdzpTzwAkNUxCckB32IhUriohUXoZKXzO61phjUUMEl2
+	Ya9BeBDgAyzLrw3+jCFjX4IVeCGlsVZHbWNVGiGhBClhfV7HvlFdRPWQx9aNT03yOvukncM
+	bM8xd7ScXeU50rGQvfIxHjhbjmaNR4h7gPNJsKukzYbvPCuYOl5hl+dF3oIp/XWx0k3Au9u
+	O2v2KdqT4Lep4RPTyL70KUJ9TXvY18zNbexIxQaowdUoIKnsiicv4TICu0JJM5Rhg==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
+On Fri, Aug 15, 2025 at 04:29:28AM +0200, Andrew Lunn wrote:
+> > +#define MUCSE_MAILBOX_WORDS 14
+> > +#define MUCSE_FW_MAILBOX_WORDS MUCSE_MAILBOX_WORDS
+> > +#define FW_PF_SHM(mbx) ((mbx)->fw_pf_shm_base)
+> > +#define FW2PF_COUNTER(mbx) (FW_PF_SHM(mbx) + 0)
+> > +#define PF2FW_COUNTER(mbx) (FW_PF_SHM(mbx) + 4)
+> > +#define FW_PF_SHM_DATA(mbx) (FW_PF_SHM(mbx) + 8)
+> 
+> There seems to be quite a bit of obfuscation here. Why is both
+> MUCSE_MAILBOX_WORDS and MUCSE_FW_MAILBOX_WORDS needed?
+> 
 
+I will remove MUCSE_MAILBOX_WORDS.
 
-On 8/12/2025 5:07 AM, Sean Christopherson wrote:
-> On Thu, Aug 07, 2025, Sagi Shahar wrote:
->> From: Ackerley Tng <ackerleytng@google.com>
->>
->> vm_vaddr_alloc_private allow specifying both the virtual and physical
->> addresses for the allocation.
-> Why?
->
-Yeah, this is not needed.
-vm_vaddr_alloc() will handle it as private memory by default if the vm has
-protected memory.
+> Why not
+> 
+> #define FW2PF_COUNTER(mbx) (mbx->fw_pf_shm_base + 0)
+> 
+> Or even better
+> 
+> #define MBX_FW2PF_COUNTER	0
+> #define MBX_W2PF_COUNTER	4
+> #define MBX_FW_PF_SHM_DATA	8
+> 
+> static u32 mbx_rd32(struct mbx *mbx, int reg) {
+> 
+>        return readl(mbx->hw->hw_addr + reg);
+> }
+> 
+> 	u32 val = mbx_rd32(mbx, MBX_FW2PF_COUNTER);
+> 
+> Look at what other drivers do. They are much more likely to define a
+> set of offset from the base address, and let the read/write helper do
+> the addition to the base.
+> 
+> 	Andrew
+> 
+
+Ok, I will use 'static u32 mbx_rd32(struct mbx *mbx, int reg)' way.
+
+Thanks for your feedback.
+
 
