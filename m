@@ -1,444 +1,158 @@
-Return-Path: <linux-kernel+bounces-771416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F635B286D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF55AB286D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28E2B7A3F92
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9F81C277EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C003F29B768;
-	Fri, 15 Aug 2025 20:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FE429A32D;
+	Fri, 15 Aug 2025 20:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DKId6Znk"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTaDgpa+"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52FE287267
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 20:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF3950276;
+	Fri, 15 Aug 2025 20:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755288126; cv=none; b=RRkXomka4FuICH9cGCZmLGa4Gn6V9Xtor4qzG0ri3mys0s+MtEKeC/+5A4euTtBMGaAFgW9y60Fat92UOdwC1RmxpveTnkFfsxiHRrhWpyvgmRCAbIdGRrHS6+2iEboIgNpy3J/oDhi4Ir72Xm/mjWRt1mKnKie5uK+Y05ZSQZY=
+	t=1755288075; cv=none; b=dTCXQiVCOAe2mLtfHV3w0OQrN7V9HAWYY7XXEwDwlHhV11bdhcSp4A6ENYjYMVJ8ZYXnrMpsUQAFncpdYBtyrpMAG9YiYGhyDqR9NsfoMvH4fG6fwKLiXM81vqwqLkFn8S2y+uouwS6G8mbnMxUv6zBnXGzew1vtYyN5tCKHhWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755288126; c=relaxed/simple;
-	bh=VQzmMcgy25baAW7bo3luXKb7dIqwNw4IKclK8IMOAxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dK7/RC1zhZm0q5/T9VKbfd1au1M35ZG5Qji18yj4ssqRloga988oLWTnSkhxBj/AD7l1IS4YoyrbwD1hSy1+G+J8RG8THYGY02FZ+Vdve2DvleetYuSvKUNP0c63euDKhawxI0NikucUo6u+20Hvjs1msEKJNOG213MOYEv7Y4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DKId6Znk; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cceaaecd8so929348fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:02:04 -0700 (PDT)
+	s=arc-20240116; t=1755288075; c=relaxed/simple;
+	bh=6+LmKr2YP0pGP/eJQZgqSIGXevYjsw5ECpIPORp7Bl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEvJXoMmfR9h7IgM/ktEWdbbBcSV0hZFmIzTGtHWpx71wESBWx1aSccJcDvFXw0NAuEt4tYK2ZalOXHczeD92ugutyRmZXLP23p4roLHVYoccodrRR4zbHU0z9Zc2smNTZGbn9eydvYwLUimZKMARWFYWaGrpHF045KYJd0wguk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTaDgpa+; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb78c77ebso370940366b.1;
+        Fri, 15 Aug 2025 13:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755288124; x=1755892924; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcuxVVhwBqk6/ThFcilXJFO7I/Y8OkGOhPu8yVAUZTE=;
-        b=DKId6Znk8SQx9oud4z5pt7S4oxkteNCe2e7RuSWDBubOUCg+YdxLv3wVvE2sDXv1Lm
-         NitRpnDMlZomC0dY2MU3jOsWOrOJTrxUoQMf7Q2korpxnaZ327RcVAxvqlgPWyz9nzLV
-         rjR6ZUNb8aXZKshMSQPGOWUJ2xa/0E2YSsQSg2wjPr/iTb+zCGSFGt8lro+AL2Fz47OT
-         dACJmRm/fEp2R/UosRcOG7gu9sFBkFfaSyX0YR73oeqjFRN42CGIZin6DtrzSz+AwTen
-         CfP0L17iNwddNSyhbUSppFgJs0yaehEOMj9sfh6/oAM9jexKNbxGVrto9FO/VoYk9WV1
-         083A==
+        d=gmail.com; s=20230601; t=1755288072; x=1755892872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QJ3m6kWmuzmZpkxa5qzINXaMzNRW1w5l7/WQfkLOFVU=;
+        b=XTaDgpa+j32c50YtD5D+44YuWKMRfRWXv/oU00VTL6/9fZqZ9RVMiT7WJz5aUbb6LB
+         0JmLwTny3NfjXhSZ4ZwNAMGtRRvcz4TzcYXIs7R1nOJUpX5ZdIlNyqDXgcoHphOhFulM
+         3GJspJGM2JFBrgkauZBLuL/4TxZtE1rUR6KLkgY1XMBBJb8v02eI+ozHdYH0jft6HLL2
+         nt5aCc7S8AUW9CpHiT/+UeuFGj1Xs/INaHAPVwUvlaiq/vLG4jSkhUx31ghV//dEJWwZ
+         ixIPu1SMW5o/MGNRX+Q2xB+86GLGlqPSqIlV3bRDMxxUVirM3NcqhwmHoEQQZudt0c3i
+         sUzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755288124; x=1755892924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pcuxVVhwBqk6/ThFcilXJFO7I/Y8OkGOhPu8yVAUZTE=;
-        b=qpSZkEUv9sOWXef8jZOvT7j7kNOCTjiBQhfvn2Lj4ZTdExmAl+7/Yps9zQ1aBndxlw
-         +rn2p2zeRJviS3hazVBJSbyU/79M8PeJNxCQgo/HINDnVXLRXbmsVBSgEIYhw/et1Zye
-         A2fUpuhqyUs+g3zzyRETjjmO5WMqAxrFyFVFol4r8VauDexyXbkrSIcHcN8ps0rTq3u9
-         MHvt+Ti5/U8qPFFxXkDx9UyKd+AC93UGv3FecaB98I585m3Y7sh1BD5IYeNqus/7QMLc
-         1aw8Uepi+M2AHjkgbcwnTZPhxWo0tzbIqJjOE5tm0lRUPpXgYW0l4U/oBlL9MF1bltN+
-         vmBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTXsUSUhp/nP/T+19msf4lGQb8IwTF3WoJxLOLiOECKjIPiG6gekI6lHDQLlD9RlrhacVgZa6Kr6R+U6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVDF+IcxQ2AiRVmL6t968pP6VlR/h8fuaipKWigyTkmseetSZE
-	2ZKhCVvVZ+vdTXBwkWKYLwI+kkmA3r3rwkaL7R0AVYZRHv4QMGkOAfq3lfCst+F5LJ0=
-X-Gm-Gg: ASbGncsxPz9wG2leSlKY0uSa1WQviYeVnUwnAsta2sMTpIc3m1shigIzAFPDsFJh166
-	P4Xyjd4HVeDNQGTwUrGUF/prtn1o9wjL5WgniidePKLJSFA0CCWjqep6FlPJ7EkPwAc95r0w94N
-	mqzjLmObZQuWLHnNidD+wMFxV+4uff0xugkAT3MOBEKbndNNV/G061bghcY/sVQAOEgN5SyCsts
-	ZmhN2Kztw24nlDRlp/sYr2Tq1p7oQJVFCNiANosD9+3rg9/N0pRNSh87UFpeDh1h9FNQpI7cUeR
-	dL2xfRSiSeS7t1Wbl1q5Td4EbfH32gR+V3lIRyrXbMMkqqPo5qa3W9yq8DwNRePzbEkbLk61f6G
-	zfCqvlAq+xwZoY27Dy+2YNuQR
-X-Google-Smtp-Source: AGHT+IH6UijrJj9CokQ7LeOZUer1dBOG0/ag/iMKh5MHL6K68xaBLTbERAAjBI3+UFgVXTVGT2cXIw==
-X-Received: by 2002:a05:6808:3a0e:b0:435:8501:2b96 with SMTP id 5614622812f47-435ec540455mr1913900b6e.21.1755288123755;
-        Fri, 15 Aug 2025 13:02:03 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949f85b6sm589160173.67.2025.08.15.13.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 13:02:03 -0700 (PDT)
-Date: Fri, 15 Aug 2025 15:02:02 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Sunil V L <sunilvl@ventanamicro.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, 
-	Atish Patra <atish.patra@linux.dev>, Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-Message-ID: <20250815-e69bdc695cf78e6ce07e580c@orel>
-References: <20250815161406.76370-1-apatel@ventanamicro.com>
- <20250815161406.76370-3-apatel@ventanamicro.com>
+        d=1e100.net; s=20230601; t=1755288072; x=1755892872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJ3m6kWmuzmZpkxa5qzINXaMzNRW1w5l7/WQfkLOFVU=;
+        b=h3l6cipSVnI/sZeFI1BtKwm27geEVotKn4pNzbZH0xiicDDE7xx53X2TPUC6pLVcN3
+         c9SfZUvZVZkyPvKj/RODWeCeEFlsjZo52p0NIjONYRsAs7tVduJpc1W5XA1su9KhBigE
+         1L42fnwaKbghJgV386iCVYM9MX9kTMpIWP60ld2ffKyYjT+7Vx9HP23V0rTgSlKDiSeX
+         YMapiMaYT50qNwhY3O+G3O4w+llgoLXdFlE3mO2pXAMYJooH3HbqyM7ADLXEFJwRwXJn
+         UgQ2SKThOOXoBAmK/F1b20dm9jeaLkYLz4O62bOSlvBScEbtBLW3jTE/OJ5AC3fV/LD0
+         W7nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgVA3Pww6cim2K8HWgXcVeagTUBmDw+O5DjEMhFTJOgye3VFLq4nFHtVxdZ/MovyD+dbLnXRDr@vger.kernel.org, AJvYcCUwBJOZzpgl5YdmlcXN1iVlLcbiZda/0nE3F9w7mrO3z/t2XcupuOmjHCHL1Bfyk/yrO9HzsNEUS23Rkjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLGnmsAZoRPi6gg/9I1rz5d0D50KARNvEXnIwm69sjLuk3YR06
+	rlMKBGXNRhRPkzbRncEPf0Rlw5mKzxdezv0+UTqYsCdLMFvXTS36Wikv
+X-Gm-Gg: ASbGnctdvmBKpigzsiS4DaaNlMl01HZ+mhHffF23WfeUnz206cHvbRN4VpK+azSB0Hr
+	wmn8FtoChyGYxV5myLxIBPZw7msOtJ6N3fYzHmkMkgWhOf6SugFrdWTfMRnj3fkYzMVFUwgwJ48
+	zf3xJPmSL7rDuidDmPR3kcNIdErrmfhxZNWPB6PiNmWJud2PCIthXFQ2igIcRnfObVu+E/A6PhK
+	U/LBOCcDtVA1mB5hwStXCJJ2ZMT6xzUBQrDX9FAyV+BNUFiFPO/WI6aPYUEhmBi8zmXDZToRmPg
+	5ukh6U/UGfVBD5cZa5Rq/h7VFjR4MJC85IfIGEqv40674V/jnMZqMkBr4c2Zwo76GLczNOMqCjT
+	OQFuA5ewnuCg0wKLvnpjWRvPNkLdxOTqq
+X-Google-Smtp-Source: AGHT+IGPPPKhW/xav02lZiADLlNsDo5PyvNUJXqYDQ74MG+hoLNbCFM4yKLAOmjs9ElOXbXs5nuHdg==
+X-Received: by 2002:a17:907:9446:b0:ae4:a17:e6d2 with SMTP id a640c23a62f3a-afcdc22768amr269948766b.24.1755288070831;
+        Fri, 15 Aug 2025 13:01:10 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.132.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd010e7dsm207430166b.89.2025.08.15.13.01.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 13:01:10 -0700 (PDT)
+Message-ID: <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
+Date: Fri, 15 Aug 2025 21:02:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815161406.76370-3-apatel@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+To: Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Mike Galbraith
+ <efault@gmx.de>, paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ netdev@vger.kernel.org, boqun.feng@gmail.com
+References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
+ <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+ <20250814172326.18cf2d72@kernel.org>
+ <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
+ <20250815094217.1cce7116@kernel.org>
+ <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 09:44:06PM +0530, Anup Patel wrote:
-> In RISC-V, there is no CSR read/write instruction which takes CSR
-> number via register so add common csr_read_num() and csr_write_num()
-> functions which allow accessing certain CSRs by passing CSR number
-> as parameter. These common functions will be first used by the
-> ACPI CPPC driver and RISC-V PMU driver.
+On 8/15/25 18:29, Breno Leitao wrote:
+> On Fri, Aug 15, 2025 at 09:42:17AM -0700, Jakub Kicinski wrote:
+>> On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
+>>> On 8/15/25 01:23, Jakub Kicinski wrote:
+>>
+>> I suspect disabling netconsole over WiFi may be the most sensible way out.
 > 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/csr.h |   3 +
->  arch/riscv/kernel/Makefile   |   1 +
->  arch/riscv/kernel/csr.c      | 177 +++++++++++++++++++++++++++++++++++
->  drivers/acpi/riscv/cppc.c    |  17 ++--
->  drivers/perf/riscv_pmu.c     |  43 +--------
->  5 files changed, 189 insertions(+), 52 deletions(-)
->  create mode 100644 arch/riscv/kernel/csr.c
+> I believe we might be facing a similar issue with virtio-net.
+> Specifically, any network adapter where TX is not safe to use in IRQ
+> context encounters this problem.
 > 
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 6fed42e37705..1540626b3540 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -575,6 +575,9 @@
->  			      : "memory");			\
->  })
->  
-> +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
-> +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
+> If we want to keep netconsole enabled on all TX paths, a possible
+> solution is to defer the transmission work when netconsole is called
+> inside an IRQ.
+> 
+> The idea is that netconsole first checks if it is running in an IRQ
+> context using in_irq(). If so, it queues the skb without transmitting it
+> immediately and schedules deferred work to handle the transmission
+> later.
+> 
+> A rough implementation could be:
+> 
+> static void send_udp(struct netconsole_target *nt, const char *msg, int len) {
+> 
+> 	/* get the SKB that is already populated, with all the headers
+> 	 * and ready to be sent
+> 	 */
+> 	struct sk_buff = netpoll_get_skb(&nt->np, msg, len);
+> 
+> 	if (in_irq()) {
 
-My preference would be for an interface with the return/err parameters the
-other way around, i.e.
+It's not just irq handlers but any context that has irqs disabled, and
+since it's nested under irq-safe console_owner it'd need to always be
+deferred or somehow moved out of the console_owner critical section.
+Maybe there is printk lock trickery I don't understand, however.
 
-int csr_read_num(unsigned long csr_num, unsigned long *val);
-int csr_write_num(unsigned long csr_num, unsigned long val);
+> 		skb_queue_tail(&np->delayed_queue, skb);
+> 		schedule_delayed_work(flush_delayed_queue, 0);
+> 		return;
+> 	}
+> 
+> 	return __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+> }
+> 
+> This approach does not require additional memory or extra data copying,
+> since copying from the printk buffer to the skb must be performed
+> regardless.
+> 
+> The main drawback is a slight delay for messages sent from within an IRQ
+> context, though I believe such cases are infrequent.
+> 
+> We could potentially also perform the flush from softirq context, which
+> would help reduce this latency further.
 
-and then ensure all callers always check that the return value is zero
-before proceeding to use val or assume val was written.
+-- 
+Pavel Begunkov
 
-> +
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* _ASM_RISCV_CSR_H */
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index c7b542573407..0a75e20bde18 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -50,6 +50,7 @@ obj-y	+= soc.o
->  obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
->  obj-y	+= cpu.o
->  obj-y	+= cpufeature.o
-> +obj-y	+= csr.o
->  obj-y	+= entry.o
->  obj-y	+= irq.o
->  obj-y	+= process.o
-> diff --git a/arch/riscv/kernel/csr.c b/arch/riscv/kernel/csr.c
-> new file mode 100644
-> index 000000000000..f7de45bb597c
-> --- /dev/null
-> +++ b/arch/riscv/kernel/csr.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Ventana Micro Systems Inc.
-> + */
-> +
-> +#define pr_fmt(fmt) "riscv: " fmt
-> +#include <linux/err.h>
-> +#include <linux/export.h>
-> +#include <linux/printk.h>
-> +#include <linux/types.h>
-> +#include <asm/csr.h>
-> +
-> +#define CSR_CUSTOM0_U_RW_BASE		0x800
-> +#define CSR_CUSTOM0_U_RW_COUNT		0x100
-> +
-> +#define CSR_CUSTOM1_U_RO_BASE		0xCC0
-> +#define CSR_CUSTOM1_U_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM2_S_RW_BASE		0x5C0
-> +#define CSR_CUSTOM2_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM3_S_RW_BASE		0x9C0
-> +#define CSR_CUSTOM3_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM4_S_RO_BASE		0xDC0
-> +#define CSR_CUSTOM4_S_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM5_HS_RW_BASE		0x6C0
-> +#define CSR_CUSTOM5_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM6_HS_RW_BASE		0xAC0
-> +#define CSR_CUSTOM6_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM7_HS_RO_BASE		0xEC0
-> +#define CSR_CUSTOM7_HS_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM8_M_RW_BASE		0x7C0
-> +#define CSR_CUSTOM8_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM9_M_RW_BASE		0xBC0
-> +#define CSR_CUSTOM9_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM10_M_RO_BASE		0xFC0
-> +#define CSR_CUSTOM10_M_RO_COUNT		0x040
-> +
-> +unsigned long csr_read_num(unsigned long csr_num, int *out_err)
-> +{
-> +#define switchcase_csr_read(__csr_num)				\
-> +	case (__csr_num):					\
-> +		return csr_read(__csr_num)
-> +#define switchcase_csr_read_2(__csr_num)			\
-> +	switchcase_csr_read(__csr_num + 0);			\
-> +	switchcase_csr_read(__csr_num + 1)
-> +#define switchcase_csr_read_4(__csr_num)			\
-> +	switchcase_csr_read_2(__csr_num + 0);			\
-> +	switchcase_csr_read_2(__csr_num + 2)
-> +#define switchcase_csr_read_8(__csr_num)			\
-> +	switchcase_csr_read_4(__csr_num + 0);			\
-> +	switchcase_csr_read_4(__csr_num + 4)
-> +#define switchcase_csr_read_16(__csr_num)			\
-> +	switchcase_csr_read_8(__csr_num + 0);			\
-> +	switchcase_csr_read_8(__csr_num + 8)
-> +#define switchcase_csr_read_32(__csr_num)			\
-> +	switchcase_csr_read_16(__csr_num + 0);			\
-> +	switchcase_csr_read_16(__csr_num + 16)
-> +#define switchcase_csr_read_64(__csr_num)			\
-> +	switchcase_csr_read_32(__csr_num + 0);			\
-> +	switchcase_csr_read_32(__csr_num + 32)
-> +#define switchcase_csr_read_128(__csr_num)			\
-> +	switchcase_csr_read_64(__csr_num + 0);			\
-> +	switchcase_csr_read_64(__csr_num + 64)
-> +#define switchcase_csr_read_256(__csr_num)			\
-> +	switchcase_csr_read_128(__csr_num + 0);			\
-> +	switchcase_csr_read_128(__csr_num + 128)
-> +
-> +	if (out_err)
-> +		*out_err = 0;
-> +
-> +	switch (csr_num) {
-> +	switchcase_csr_read_32(CSR_CYCLE);
-> +	switchcase_csr_read_32(CSR_CYCLEH);
-> +	switchcase_csr_read_256(CSR_CUSTOM0_U_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM1_U_RO_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM2_S_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM3_S_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM4_S_RO_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM5_HS_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM6_HS_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM7_HS_RO_BASE);
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	switchcase_csr_read_64(CSR_CUSTOM8_M_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM9_M_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM10_M_RO_BASE);
-> +#endif
-> +	default:
-> +		if (out_err)
-> +			*out_err = -EINVAL;
-> +		else
-> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +#undef switchcase_csr_read_256
-> +#undef switchcase_csr_read_128
-> +#undef switchcase_csr_read_64
-> +#undef switchcase_csr_read_32
-> +#undef switchcase_csr_read_16
-> +#undef switchcase_csr_read_8
-> +#undef switchcase_csr_read_4
-> +#undef switchcase_csr_read_2
-> +#undef switchcase_csr_read
-> +}
-> +EXPORT_SYMBOL_GPL(csr_read_num);
-> +
-> +void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err)
-> +{
-> +#define switchcase_csr_write(__csr_num, __val)			\
-> +	case (__csr_num):					\
-> +		csr_write(__csr_num, __val);			\
-> +		break
-> +#define switchcase_csr_write_2(__csr_num, __val)		\
-> +	switchcase_csr_write(__csr_num + 0, __val);		\
-> +	switchcase_csr_write(__csr_num + 1, __val)
-> +#define switchcase_csr_write_4(__csr_num, __val)		\
-> +	switchcase_csr_write_2(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_2(__csr_num + 2, __val)
-> +#define switchcase_csr_write_8(__csr_num, __val)		\
-> +	switchcase_csr_write_4(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_4(__csr_num + 4, __val)
-> +#define switchcase_csr_write_16(__csr_num, __val)		\
-> +	switchcase_csr_write_8(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_8(__csr_num + 8, __val)
-> +#define switchcase_csr_write_32(__csr_num, __val)		\
-> +	switchcase_csr_write_16(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_16(__csr_num + 16, __val)
-> +#define switchcase_csr_write_64(__csr_num, __val)		\
-> +	switchcase_csr_write_32(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_32(__csr_num + 32, __val)
-> +#define switchcase_csr_write_128(__csr_num, __val)		\
-> +	switchcase_csr_write_64(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_64(__csr_num + 64, __val)
-> +#define switchcase_csr_write_256(__csr_num, __val)		\
-> +	switchcase_csr_write_128(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_128(__csr_num + 128, __val)
-> +
-> +	if (out_err)
-> +		*out_err = 0;
-> +
-> +	switch (csr_num) {
-> +	switchcase_csr_write_256(CSR_CUSTOM0_U_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM2_S_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM3_S_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM5_HS_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM6_HS_RW_BASE, val);
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	switchcase_csr_write_64(CSR_CUSTOM8_M_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM9_M_RW_BASE, val);
-> +#endif
-> +	default:
-> +		if (out_err)
-> +			*out_err = -EINVAL;
-> +		else
-> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
-> +		break;
-> +	}
-> +#undef switchcase_csr_write_256
-> +#undef switchcase_csr_write_128
-> +#undef switchcase_csr_write_64
-> +#undef switchcase_csr_write_32
-> +#undef switchcase_csr_write_16
-> +#undef switchcase_csr_write_8
-> +#undef switchcase_csr_write_4
-> +#undef switchcase_csr_write_2
-> +#undef switchcase_csr_write
-> +}
-> +EXPORT_SYMBOL_GPL(csr_write_num);
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 42c1a9052470..fe491937ed25 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
->  static void cppc_ffh_csr_read(void *read_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
-> +	int err;
->  
-> -	switch (data->reg) {
-> -	/* Support only TIME CSR for now */
-> -	case CSR_TIME:
-> -		data->ret.value = csr_read(CSR_TIME);
-> -		data->ret.error = 0;
-> -		break;
-> -	default:
-> -		data->ret.error = -EINVAL;
-> -		break;
-> -	}
-> +	data->ret.value = csr_read_num(data->reg, &err);
-> +	data->ret.error = err;
->  }
->  
->  static void cppc_ffh_csr_write(void *write_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)write_data;
-> +	int err;
->  
-> -	data->ret.error = -EINVAL;
-> +	csr_write_num(data->reg, data->val, &err);
-> +	data->ret.error = err;
->  }
->  
->  /*
-> diff --git a/drivers/perf/riscv_pmu.c b/drivers/perf/riscv_pmu.c
-> index 7644147d50b4..aa053254448d 100644
-> --- a/drivers/perf/riscv_pmu.c
-> +++ b/drivers/perf/riscv_pmu.c
-> @@ -16,6 +16,7 @@
->  #include <linux/smp.h>
->  #include <linux/sched_clock.h>
->  
-> +#include <asm/csr.h>
->  #include <asm/sbi.h>
->  
->  static bool riscv_perf_user_access(struct perf_event *event)
-> @@ -88,46 +89,6 @@ void arch_perf_update_userpage(struct perf_event *event,
->  	userpg->cap_user_time_short = 1;
->  }
->  
-> -static unsigned long csr_read_num(int csr_num)
-> -{
-> -#define switchcase_csr_read(__csr_num, __val)		{\
-> -	case __csr_num:					\
-> -		__val = csr_read(__csr_num);		\
-> -		break; }
-> -#define switchcase_csr_read_2(__csr_num, __val)		{\
-> -	switchcase_csr_read(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read(__csr_num + 1, __val)}
-> -#define switchcase_csr_read_4(__csr_num, __val)		{\
-> -	switchcase_csr_read_2(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_2(__csr_num + 2, __val)}
-> -#define switchcase_csr_read_8(__csr_num, __val)		{\
-> -	switchcase_csr_read_4(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_4(__csr_num + 4, __val)}
-> -#define switchcase_csr_read_16(__csr_num, __val)	{\
-> -	switchcase_csr_read_8(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_8(__csr_num + 8, __val)}
-> -#define switchcase_csr_read_32(__csr_num, __val)	{\
-> -	switchcase_csr_read_16(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_16(__csr_num + 16, __val)}
-> -
-> -	unsigned long ret = 0;
-> -
-> -	switch (csr_num) {
-> -	switchcase_csr_read_32(CSR_CYCLE, ret)
-> -	switchcase_csr_read_32(CSR_CYCLEH, ret)
-> -	default :
-> -		break;
-> -	}
-> -
-> -	return ret;
-> -#undef switchcase_csr_read_32
-> -#undef switchcase_csr_read_16
-> -#undef switchcase_csr_read_8
-> -#undef switchcase_csr_read_4
-> -#undef switchcase_csr_read_2
-> -#undef switchcase_csr_read
-> -}
-> -
->  /*
->   * Read the CSR of a corresponding counter.
->   */
-> @@ -139,7 +100,7 @@ unsigned long riscv_pmu_ctr_read_csr(unsigned long csr)
->  		return -EINVAL;
->  	}
->  
-> -	return csr_read_num(csr);
-> +	return csr_read_num(csr, NULL);
->  }
->  
->  u64 riscv_pmu_ctr_get_width_mask(struct perf_event *event)
-> -- 
-> 2.43.0
->
-
-Other than the suggestion to flip the interface,
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
