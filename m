@@ -1,123 +1,91 @@
-Return-Path: <linux-kernel+bounces-770865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F419B27FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7501DB27FE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC7777B4E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863251CE3990
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487432FCC0B;
-	Fri, 15 Aug 2025 12:12:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60912137E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D8A30498A;
+	Fri, 15 Aug 2025 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="TFIfiBUf"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAED304964
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755259931; cv=none; b=jKBT7bFMnn+z9KbeSpLzHSHNRKdxz4EtUqJDx2XQuXXQuyuNqSpF+ntWL4QAcYBH1MX2FuNBmhXdJD5+3jxDHuHtSAoe4q5dOBvycde9YY7HRbuqxrvcfi8wS6aB9J7kkDkl5vYKTaNQF5K1rSwNgvfWt5xYMfvcG9nCYz72rrI=
+	t=1755260207; cv=none; b=AGhIgizSlo0Arnx9A18ckgZ1ntmdMGXJKVtFiz8amYNbU+v/e9GeJoGoZJPJqnppeR1/sMkOWCWRoK8BNIBkZiANnFzQCBrOxAZ1PypZvmocWmanTc8C6I5b7G5u37PC87ivoGBmPx1aCGWOoQt5zXqV9VpqsMzmbFyPmOfkxuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755259931; c=relaxed/simple;
-	bh=k7djlgJKB5AbdLDRTA3sa6y8E/p7KUfRcePniXyQOCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IWXX2PX4Do0hOI/sq7cu0CTtB9lxmgOlrLu69Z6UghDBLY+CVGVFsL60+Ttm6O/nTcue80fUM59dVk/CFlq3dZ5agfTbNddRBEEPZqOdxWCEmIZfpE+sh8HPfLsAzLKNL3M1xrDy8h5hr8wxgx4hmV9LxJfxIUiqkCVR041tUSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C3731691;
-	Fri, 15 Aug 2025 05:12:01 -0700 (PDT)
-Received: from [10.57.56.228] (unknown [10.57.56.228])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CD4A3F738;
-	Fri, 15 Aug 2025 05:12:06 -0700 (PDT)
-Message-ID: <f53dd685-4e05-4fd3-a49d-0074b69a8ce1@arm.com>
-Date: Fri, 15 Aug 2025 14:12:03 +0200
+	s=arc-20240116; t=1755260207; c=relaxed/simple;
+	bh=jfCSf6p9tA9bj+JTPbqnBT/qYxj3EM1PzKEg4HLZ9Ds=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fNUXKIgEI8WJVK6TwdBsx/iOqzXEttHBuKivJFEp6ltkensFbpxuuHrYehfLHVI6b0TuBimSsISdA0vl2nCqOSIqN6t6Sd0K9Lzto/0lTr7Pj7PZ3Zvxtn4gAgiy2SXAuAHJ6guDh7Wf5i6dScrm24Kc0L+BN28eDwSB2ojz7Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=TFIfiBUf; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 30380 invoked from network); 15 Aug 2025 14:16:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1755260197; bh=XxsT9u/bn2Cw8UI50kEntS3WVMhKzCrN+NMcu5/psSw=;
+          h=From:To:Subject;
+          b=TFIfiBUf+I9LUmajccLU982GiMY1xuXEdH4tcZHTLSaMPFljPPMQUewWfLVTtGr/I
+           UpPD3ylI7q6CIiXEROh7h395G3zgjicA5VBeOCJfFiY0Ui0nHoO755PxBwutdP4wc8
+           jex2qQmcJvciPiTlFM5cNMQlUYB3S1dI+wDIhUNOwIt4BMDAiW2zFCv5Iy6AhK7+mD
+           zjn/TTtU/zNv/ItgJ4hU8fz2GNbaga9CqKtmbRM82YaibQIgYWNYSAi8Oz1eDJa0vo
+           kSY+7RwRS1iS6NVeHCNdBCG/0ixOk6L4nc+iiUuWd+hfIiZ7aGI5h4KcByLU3mFbm+
+           aFVemOBlHYQsQ==
+Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <john@phrozen.org>; 15 Aug 2025 14:16:36 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: john@phrozen.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	olek2@wp.pl,
+	devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] mips: lantiq: danube: rename stp node on EASY50712 reference board
+Date: Fri, 15 Aug 2025 14:12:22 +0200
+Message-ID: <20250815121635.3397802-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64/mm: Allow __create_pgd_mapping() to propagate
- pgtable_alloc() errors
-To: Dev Jain <dev.jain@arm.com>,
- Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>
-References: <20250813145607.1612234-1-chaitanyas.prakash@arm.com>
- <20250813145607.1612234-2-chaitanyas.prakash@arm.com>
- <683f9f4e-c027-4165-a8aa-b561e304e132@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <683f9f4e-c027-4165-a8aa-b561e304e132@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-WP-MailID: cd1bfe4adf4b0c912587650974b9f7e1
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [IUOE]                               
 
-On 15/08/2025 09:30, Dev Jain wrote:
->
-> On 13/08/25 8:26 pm, Chaitanya S Prakash wrote:
->> [-------snip-------------]
->>   -static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->> +static int __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->>                    unsigned long virt, phys_addr_t size,
->>                    pgprot_t prot,
->>                    phys_addr_t (*pgtable_alloc)(enum pgtable_type),
->>                    int flags)
->>   {
->> +    int ret = 0;
->> +
->>       mutex_lock(&fixmap_lock);
->> -    __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
->> -                    pgtable_alloc, flags);
->> +    ret = __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
->> +                      pgtable_alloc, flags);
->>       mutex_unlock(&fixmap_lock);
->> +
->> +    return ret;
->> +}
->> +
->> +static void ___create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->> +                  unsigned long virt, phys_addr_t size,
->> +                  pgprot_t prot,
->> +                  phys_addr_t (*pgtable_alloc)(enum pgtable_type),
->> +                  int flags)
->> +{
->> +    int ret = 0;
->> +
->> +    ret = __create_pgd_mapping(pgdir, phys, virt, size, prot,
->> pgtable_alloc,
->> +                   flags);
->> +    BUG_ON(ret);
->>   }
->
-> A triple underscore calling a double underscore isn't natural to
-> reason about.
+  This fixes the following warning:
+arch/mips/boot/dts/lantiq/danube_easy50712.dtb: stp@e100bb0 (lantiq,gpio-stp-xway): $nodename:0: 'stp@e100bb0' does not match '^gpio@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-stp-xway.yaml#
 
-Also not the most readable (easy to confuse the two).
+---
+Changes in v2:
+- added sysctrl patch
+---
+Aleksander Jan Bajkowski (2):
+  mips: lantiq: xway: sysctrl: rename stp clock
+  mips: lantiq: danube: rename stp node on EASY50712 reference board
 
-> Since this is the function which must succeed, how does
-> "must_create_pgd_mapping()"
-> sound?
+ arch/mips/boot/dts/lantiq/danube_easy50712.dts | 2 +-
+ arch/mips/lantiq/xway/sysctrl.c                | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-"must" isn't a prefix that is commonly used in that sense, not sure this
-is very clear.
+-- 
+2.47.2
 
-Another idea that comes to mind is early_create_pgd_mapping() - the
-BUG_ON() being justified by the fact that early errors are not recoverable.
-
-On a related note, it would be possible to return an error from
-create_pgd_mapping() and create_mapping_noalloc() as their callers
-already have error paths. That would be a bit cleaner but I don't know
-if it's worth the hassle.
-
-- Kevin
 
