@@ -1,227 +1,85 @@
-Return-Path: <linux-kernel+bounces-770024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1164DB27602
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E69B27585
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7876B188AA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1CD1BC0FE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3130F2BDC0C;
-	Fri, 15 Aug 2025 02:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBBA2877C6;
+	Fri, 15 Aug 2025 02:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmoYewln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xCnzggWm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3B82BDC02;
-	Fri, 15 Aug 2025 02:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A443147;
+	Fri, 15 Aug 2025 02:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225025; cv=none; b=r02h3m4F5vrV/Jo5ajKBdhPnVOFJ6a6W4zy83uk+HIGeNT9pMZ1eBF9oP02XZIFaNi7dr75EiJX7nxEVhmg6ip9eSlB1fHcTkT5G51/dWinv/3F7dCTdKjxuq4UxNwrzbHRUQMXRfmtGzSk9rBqk6Ve9BMvF1OZlPXlwD1jvjVs=
+	t=1755224067; cv=none; b=OWAqI64iVe9xFBfe/V7boo+lt1vld3HnAUoc8PM6DQF2EYwXEX8Lw0hAxEDg3zqic9DzU8FkxBU3Ge0FPUd2VZEAEqr3JKlWbMypDCyH5FH6upwvnP/EuqObp56lGqACOOlxL9ZMEq7HshtkvvPzwLSq6SufrdfAMlqHxzvJwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225025; c=relaxed/simple;
-	bh=9o/PwWHLbtBHKua80XVpSesiBY2zS2akYvQYX2b65+A=;
+	s=arc-20240116; t=1755224067; c=relaxed/simple;
+	bh=Th77REqXVBmzE4qEf1WOOV/6nUIotghbT3Hd0KGHxKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTSrKZYVls976b75iDqtNJ/rJnWRLip6IQpCaYbgCJl7XHuCrosH1anx/amp+77fcau67smd9qzt1pzZ67MD9g+UtXgD+75k1DnLyTQVjRM+3W6Ve0DaOMCae7HjjEO3BpTOqmid8hq37gbMUOtnVxaAY4o5fxil0fuQIyKfBac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmoYewln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8657C4CEF1;
-	Fri, 15 Aug 2025 02:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755225024;
-	bh=9o/PwWHLbtBHKua80XVpSesiBY2zS2akYvQYX2b65+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmoYewlnfx/vvwW7Mri7XrToC43bkIhNGdgrA45PGJYANHfDg1Fm/TtPV/FaTlgnp
-	 EWejj4IEHJGQvPhG9ZdjH7a5IDK7X6iXkQQ7ZcWIhqiXU0+cBYWpFNCQPweymRlBaF
-	 A7yncuVkX/m+iGHIXFG03k5MDxgdjf/rZySIvVsXsTaxA2+36xyNJhHpq0GYKevzLQ
-	 Do+q5lop1eXQOeaFDvYg4zfUOc7MLseWV6uVHcsU8c6C9hfOFKW9NsQohIwFxLreS+
-	 0jjMOtnoyZMG+aacmf4Fzv19kFAsCjVgDTsg4Ii9o2pPqYKtbNTNwPFJdLPkQOI6v0
-	 uWLMUgN0p0ewg==
-Date: Fri, 15 Aug 2025 10:13:13 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMifSZ/A6XakTrYN5odWIhPqa4cIDDZdIPZNKUfOzsXPv8U7skyXc27kH+BF5FVHbBtk3BnKKctViEdv8As+/GaEL5eaL21+uPP5fnJgP3/7kre9vBqick9soP0S4CqJCl6LVqGQPt+T8pW8/99G0hN8Js9t1okrTU6GI65XJq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xCnzggWm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7QD3hEDmIZHvSF1csNi4PMhYkkxHST540XMLEV+g+K8=; b=xCnzggWmH4BtyLsPbSkKfPV/sX
+	QXJVF5/wfT6aqowPq9gfFMBFagKCObqRaR7RTO8ChKD2RgLOXLSbRye5Sy1a8q7uVqeIt4KAfoiNa
+	h1n1UjwROsE+IE6HFEM4IE1UtL56w5KkUrUFj24VuJ9XFof2AG2BK2nn5muJXrzpLfRs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umjx2-004mD8-LW; Fri, 15 Aug 2025 04:13:52 +0200
+Date: Fri, 15 Aug 2025 04:13:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: Convert marvell,berlin to DT schema
-Message-ID: <aJ6XuVZbJo8uUbIw@xhacker>
-References: <20250806212733.1633662-1-robh@kernel.org>
+Subject: Re: [PATCH v4 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <fa273889-f96e-4ca8-9d19-ff3b226e2e29@lunn.ch>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-4-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250806212733.1633662-1-robh@kernel.org>
+In-Reply-To: <20250814073855.1060601-4-dong100@mucse.com>
 
-On Wed, Aug 06, 2025 at 04:27:32PM -0500, Rob Herring (Arm) wrote:
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> +const struct mucse_mbx_operations mucse_mbx_ops_generic = {
+> +	.init_params = mucse_init_mbx_params_pf,
+> +	.read = mucse_read_mbx_pf,
+> +	.write = mucse_write_mbx_pf,
+> +	.read_posted = mucse_read_posted_mbx,
+> +	.write_posted = mucse_write_posted_mbx,
+> +	.check_for_msg = mucse_check_for_msg_pf,
+> +	.check_for_ack = mucse_check_for_ack_pf,
+> +	.configure = mucse_mbx_configure_pf,
+> +};
 
-Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
+As far as i can see, this is the only instance of
+mucse_mbx_operations. Will there be other instances of this structure?
 
-BTW: can you please directly take this patch in dt pr? It's likely no other
-patches for next window.
-
-Thanks
-> ---
->  .../bindings/arm/marvell,berlin.yaml          | 45 ++++++++++
->  .../devicetree/bindings/arm/syna.txt          | 89 -------------------
->  2 files changed, 45 insertions(+), 89 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell,berlin.yaml
->  delete mode 100644 Documentation/devicetree/bindings/arm/syna.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/marvell,berlin.yaml b/Documentation/devicetree/bindings/arm/marvell,berlin.yaml
-> new file mode 100644
-> index 000000000000..4e8442980dcb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/marvell,berlin.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/marvell,berlin.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synaptics/Marvell Berlin SoC
-> +
-> +maintainers:
-> +  - Jisheng Zhang <jszhang@kernel.org>
-> +
-> +description:
-> +  According to https://www.synaptics.com/company/news/conexant-marvell
-> +  Synaptics has acquired the Multimedia Solutions Business of Marvell, so
-> +  Berlin SoCs are now Synaptics' SoCs.
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - sony,nsz-gs7
-> +          - const: marvell,berlin2
-> +          - const: marvell,berlin
-> +      - items:
-> +          - enum:
-> +              - google,chromecast
-> +              - valve,steamlink
-> +          - const: marvell,berlin2cd
-> +          - const: marvell,berlin
-> +      - items:
-> +          - enum:
-> +              - marvell,berlin2q-dmp
-> +          - const: marvell,berlin2q
-> +          - const: marvell,berlin
-> +      - items:
-> +          - enum:
-> +              - marvell,berlin4ct-dmp
-> +              - marvell,berlin4ct-stb
-> +          - const: marvell,berlin4ct
-> +          - const: marvell,berlin
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/arm/syna.txt b/Documentation/devicetree/bindings/arm/syna.txt
-> deleted file mode 100644
-> index f53c430f648c..000000000000
-> --- a/Documentation/devicetree/bindings/arm/syna.txt
-> +++ /dev/null
-> @@ -1,89 +0,0 @@
-> -Synaptics SoC Device Tree Bindings
-> -
-> -According to https://www.synaptics.com/company/news/conexant-marvell
-> -Synaptics has acquired the Multimedia Solutions Business of Marvell, so
-> -berlin SoCs are now Synaptics' SoCs now.
-> -
-> ----------------------------------------------------------------
-> -
-> -Boards with a SoC of the Marvell Berlin family, e.g. Armada 1500
-> -shall have the following properties:
-> -
-> -* Required root node properties:
-> -compatible: must contain "marvell,berlin"
-> -
-> -In addition, the above compatible shall be extended with the specific
-> -SoC and board used. Currently known SoC compatibles are:
-> -    "marvell,berlin2"      for Marvell Armada 1500 (BG2, 88DE3100),
-> -    "marvell,berlin2cd"    for Marvell Armada 1500-mini (BG2CD, 88DE3005)
-> -    "marvell,berlin2ct"    for Marvell Armada ? (BG2CT, 88DE????)
-> -    "marvell,berlin2q"     for Marvell Armada 1500-pro (BG2Q, 88DE3114)
-> -    "marvell,berlin3"      for Marvell Armada ? (BG3, 88DE????)
-> -
-> -* Example:
-> -
-> -/ {
-> -	model = "Sony NSZ-GS7";
-> -	compatible = "sony,nsz-gs7", "marvell,berlin2", "marvell,berlin";
-> -
-> -	...
-> -}
-> -
-> -* Marvell Berlin CPU control bindings
-> -
-> -CPU control register allows various operations on CPUs, like resetting them
-> -independently.
-> -
-> -Required properties:
-> -- compatible: should be "marvell,berlin-cpu-ctrl"
-> -- reg: address and length of the register set
-> -
-> -Example:
-> -
-> -cpu-ctrl@f7dd0000 {
-> -	compatible = "marvell,berlin-cpu-ctrl";
-> -	reg = <0xf7dd0000 0x10000>;
-> -};
-> -
-> -* Marvell Berlin2 chip control binding
-> -
-> -Marvell Berlin SoCs have a chip control register set providing several
-> -individual registers dealing with pinmux, padmux, clock, reset, and secondary
-> -CPU boot address. Unfortunately, the individual registers are spread among the
-> -chip control registers, so there should be a single DT node only providing the
-> -different functions which are described below.
-> -
-> -Required properties:
-> -- compatible:
-> -	* the first and second values must be:
-> -		"simple-mfd", "syscon"
-> -- reg: address and length of following register sets for
-> -  BG2/BG2CD: chip control register set
-> -  BG2Q: chip control register set and cpu pll registers
-> -
-> -* Marvell Berlin2 system control binding
-> -
-> -Marvell Berlin SoCs have a system control register set providing several
-> -individual registers dealing with pinmux, padmux, and reset.
-> -
-> -Required properties:
-> -- compatible:
-> -	* the first and second values must be:
-> -		"simple-mfd", "syscon"
-> -- reg: address and length of the system control register set
-> -
-> -Example:
-> -
-> -chip: chip-control@ea0000 {
-> -	compatible = "simple-mfd", "syscon";
-> -	reg = <0xea0000 0x400>;
-> -
-> -	/* sub-device nodes */
-> -};
-> -
-> -sysctrl: system-controller@d000 {
-> -	compatible = "simple-mfd", "syscon";
-> -	reg = <0xd000 0x100>;
-> -
-> -	/* sub-device nodes */
-> -};
-> -- 
-> 2.47.2
-> 
+	Andrew
 
