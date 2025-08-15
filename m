@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-771288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C11B28534
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:35:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E858B2852F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E15B0666E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:33:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207615E6577
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB90B3176FA;
-	Fri, 15 Aug 2025 17:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyleoRpL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657B41F4165;
+	Fri, 15 Aug 2025 17:33:22 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541063176E1;
-	Fri, 15 Aug 2025 17:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB550317714;
+	Fri, 15 Aug 2025 17:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279190; cv=none; b=tKquJ0oc5ou5yZFl1cC4eCumxIKRf7RfYJ2qwkXPNlHw/cZ1wFDMDrDL3lon3fJcGyzIvbO8FBLPqy7r9h5W3umAV42wOpCEPVqVZLOyrxWmDLEzt3DgusZSfbOFvVoej2Jj5fUvO9J12BI/IJ7c6zuzb9StRNKtJl4XsxTN4XQ=
+	t=1755279202; cv=none; b=WwiNCmOJAO8mxijV9yGbBm413QyQ2k41PJGo3cUNGIvm9aCqdgIXeg0stOfLu+jvaSVEO49WVWefZyv7f0i7lEZJdgZHAuQVuG1PFOHbtRIuwz/tmBVgPLSo26NXLCqKiFxOB5XOtLOrvu3O+p0fGicHxbX74sWPafVO0oxhSRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279190; c=relaxed/simple;
-	bh=KqrFhdDJ23bZRVUJJNDTEr4LLORQRqcHvKSMPEDqTi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V96Lh1NL55beN+cFEQKpnUvJsZ1cfFv8gC92RwbOsaSH7csqIEHG6BNIKfVk7qHrKxwIEJJJaks3Q5pkFKE39EPbk5rcqDNbw+4FgUPkvhE6mj95MjcWPLf6olIgbNWCE4/0X+CIoLC2I1vAqg6pe4gAKMssvmm9zfA5LQAZ7mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyleoRpL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88DF8C4CEF1;
-	Fri, 15 Aug 2025 17:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755279189;
-	bh=KqrFhdDJ23bZRVUJJNDTEr4LLORQRqcHvKSMPEDqTi8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YyleoRpL50JxYpJoOnz5OgM6M7T0x89HfYoD+vaK6HQ8pdpoijBcmlFapQGRtPEaN
-	 TnzyJc5mZTRBRTcycup5Y/PRlGytS5IkxAYWIfT4b9tRVNv2rRBoXADh4bPVnJuNe8
-	 07JsiI1QfqEKxolZ2B6LIm1NpPUQ+tierm8GLuyDCXw+iqE3E2xjs9EhzvIhT3MJ+r
-	 pRSYfLC3YIUgL3sNzZS0YMQXIb+iXUqXriF5OQxFQPN5Smh9UHXAbMpekGxQKzjEki
-	 X51Ch2nigJER1nyGvDBcYCEqeM+3X43IRhoxVpJOrEQtPYzlGSxmDdGn849FBLe0OT
-	 EfLw5Jo4sEdvg==
-Date: Fri, 15 Aug 2025 10:33:08 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Johannes Berg
- <johannes@sipsolutions.net>, Mike Galbraith <efault@gmx.de>,
- paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <20250815103308.4993df04@kernel.org>
-In-Reply-To: <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
-References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
-	<oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
-	<20250814172326.18cf2d72@kernel.org>
-	<3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
-	<20250815094217.1cce7116@kernel.org>
-	<isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
+	s=arc-20240116; t=1755279202; c=relaxed/simple;
+	bh=uNXcExhIGYZE1vtxyHmmV/bddkPc9+O8TyoblnfQCXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3zC3bAezmto6CtCfSw9QLeAY1SGAB7NloprUpeIic2SGKb6PDtiUlE2b/C8TZjvHukfc3iva2kl+LEKBIkQLzCzCweIryKUqGYymprWO+HHOfoaNJbN7H0VS54leyPNW08WovR9PZe1FBvJvxIfLirSBteT7L5o/3cP7RhLAIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9769EC4CEEB;
+	Fri, 15 Aug 2025 17:33:17 +0000 (UTC)
+Date: Fri, 15 Aug 2025 18:33:15 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, shameerali.kolothum.thodi@huawei.com,
+	joey.gouly@arm.com, james.morse@arm.com, ardb@kernel.org,
+	scott@os.amperecomputing.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] arm64: cpufeature: add FEAT_LSUI
+Message-ID: <aJ9vW8SgklYByjpB@arm.com>
+References: <20250811163635.1562145-1-yeoreum.yun@arm.com>
+ <20250811163635.1562145-2-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811163635.1562145-2-yeoreum.yun@arm.com>
 
-On Fri, 15 Aug 2025 10:29:00 -0700 Breno Leitao wrote:
-> On Fri, Aug 15, 2025 at 09:42:17AM -0700, Jakub Kicinski wrote:
-> > On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:  
-> > > On 8/15/25 01:23, Jakub Kicinski wrote:  
-> > 
-> > I suspect disabling netconsole over WiFi may be the most sensible way out.  
-> 
-> I believe we might be facing a similar issue with virtio-net.
+On Mon, Aug 11, 2025 at 05:36:31PM +0100, Yeoreum Yun wrote:
+> @@ -3131,6 +3132,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  		.matches = has_cpuid_feature,
+>  		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, GCIE, IMP)
+>  	},
+> +	{
+> +		.desc = "Unprivileged Load Store Instructions (LSUI)",
+> +		.capability = ARM64_HAS_LSUI,
+> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.matches = has_cpuid_feature,
+> +		ARM64_CPUID_FIELDS(ID_AA64ISAR3_EL1, LSUI, IMP)
+> +	},
+>  	{},
+>  };
 
-I could be misremembering but I thought virtio-net try_lock()s.
+Since this is only used in the kernel, I wonder whether we should hide
+it behind #ifdef CONFIG_AS_HAS_LSUI. Otherwise we report it as present
+and one may infer that the kernel is going to use it. Not a strong view
+and I don't think we have a precedent for this.
+
+-- 
+Catalin
 
