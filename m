@@ -1,153 +1,447 @@
-Return-Path: <linux-kernel+bounces-771500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59228B28804
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:53:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5E6B28806
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F74B5C71F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:52:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1960EBA148C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAF625A633;
-	Fri, 15 Aug 2025 21:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745E125F988;
+	Fri, 15 Aug 2025 21:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dSsfgeBq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVejDo+f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2EB24C68B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1B9202987;
+	Fri, 15 Aug 2025 21:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755294770; cv=none; b=oEKVyT1D1LDW9qNE2K42Cjh2jRZj4i2bPqHGQtYycAKD/XrluSTUhtyRIsnjwaeESfgOls4hBfDA+wU9YjzkfOrDCrj+jUbVzq7I36IBt16LgjOittOUysImaJ5YNNpdKj3fVETk13b88uQrKuv6jL/r9ul5z9Q7sTvWMvhWddA=
+	t=1755294952; cv=none; b=NvrSlKI27nOESwrGehLKTzH5swwkODSby+lpTl28NxhQ2CvkKAf9yMUmA5GtLHHwaq1CkgTmFJ/acrGQ4PHZUbmtV8dmH0zDLcjsC6AwK/lVm2wtvAo+SZVE8c63lv5NjI/hn9Wz8jzpNzIuoi/GbB+cSFsjds+p6T1ERRF6Gu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755294770; c=relaxed/simple;
-	bh=gSjoCkpGQO2hO7lhbivtChUUCThBql0jPA14fGQjWzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMDfJu4F3Ei99dTRzmQ/i3hsWusxujLlGOtmgRl9jeUY6/7kYOxaDSkUgNYuEmx+/WX9AE4xx1xBsPfi5uSz7DtEl24VAaCJSEGel+sNnnhl9RdpF5CufskT9G3uaC4vfilZIzEnwbIqFR5eKtsE9MvLz+rpmrdScZxlCkhF0cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dSsfgeBq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FEIpqU027226
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:52:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+ucY422Zv59eyle/8tIZ1eTA
-	qJLZoYCyEZljqLnbYhE=; b=dSsfgeBqib3EBhRt3kCVLvF94VAfd6AttarohzKV
-	HK8kwYNAjZHr/WFdDzsar1Tra8fUJp0w2rMBGVvcRUmgogsDaB5wEQr+mIbRQ7z6
-	S9cOhsQVStI4TFY4GypCDxtBkZgYitxH97DI1aWTrDyQSVDJlAR+Nw9dsw8fgmsP
-	YuGo2q8QOqYUXygBX9lRKXhDXZ/m8y0KOl0mRsXYDQvutj3GFbjbWFzEFPcUQh/B
-	rdxfmIqKm+hvuHK3/pCnnOCbuObrYg5c3zqiHmHN7C7c7RIyEfAXO2blQhJvqw+X
-	oFatoJMO6mdwjqq5M2NJvcznsaabWhEzZLAOh/dSflNtNw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9t4gjc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:52:48 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a9f57f950so49108766d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:52:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755294767; x=1755899567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ucY422Zv59eyle/8tIZ1eTAqJLZoYCyEZljqLnbYhE=;
-        b=dXWqAB+cQd76Q7Vtwm+oKyTmB+/sXsnBwJKtG57cDlNlWW8i1vrv9NqS6R9TRUIN1c
-         A04sGGBdyUYjKcQuOkZu0lrLMS9SpRWpgGyszDGErzX9rGbh0brI6zEN88nSpln5rqwK
-         KddFt86ThJGlW01sMkev2yXC/UnuZ3mGXz5xtHH9Bu5c7QM+Xt0ycOHwa5gMlnqgAQgp
-         +xyUh+CEyZsBUBkaRVqIzZeabKSiMHG+FDdJd0CmgtCU4yHSCUjfKUlLCmC8fQsoh5GV
-         +7U4L7Or8oxEvUQZ7AIqzYONKOSf4GrUl9xS7u+fb8zpruoo0O5Bwm5IJeU0ZiaTLjrP
-         bsOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6jv8cnI++u65lOuqm+vOl/bZ0gGkQa1IKJ6o3OtV3r0eg7z2a8TwNemmp7yAJFNkR9b1qc1Bikt/rewk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbMBpv1ESqkFawd62o3Ugugspcm0YeOQ2RERv4/WuYvuNvVfaJ
-	qLUWqUS0d9o4XXPHjhLatGluOGrMshtqsrWMa6DTtRk6K8ZhssBEyNr2Ssy4tGlJRfxFB5WhXPr
-	svY3MCTvbPq0UnyejoRP5uDaaRAaRWQI1Nn2+QLht7BYcDT6jpz5mESiEVWYUGT+u+Ac=
-X-Gm-Gg: ASbGnct/ZK1rOaaLlcECWElUW3ESmIUTOkTA+4qsWgzNo1nnMRDI06OTcGqfj8WZIPK
-	qB+p2+r4VrekhrTmUngu83aQH4dJtoAIgQYjgCztI/yRDC8BX4YfQzY0AZMGI+60yGm25zFci0u
-	EVLnu/Q2v++brZdMLq3GmFocN5SLY7IMhT1u3RvzFp7r0WNOJ7zx9/7sTTDOUoIplI+ea5b+dF9
-	UnafroEh1QWhOZzLrmPeTLaHThfBh0NN0un++mwPizrMUsfJTzulHUfi8ZG93DjEWri/Cn6osNd
-	Y/xWsoddLxFP9C4qDxJnSFqHD4B5VYWyBpjdTcl6kCTazJVoSqEtl/t0Dxo6y4oJ/pHQPjAG32k
-	glzih6LId3iYDzSqxomrgaXb6UUgGJpNHiOmesnJhkKysYh6iwk5o
-X-Received: by 2002:a05:6214:c8b:b0:707:a430:e01b with SMTP id 6a1803df08f44-70ba7a5ebe0mr42596326d6.3.1755294766972;
-        Fri, 15 Aug 2025 14:52:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyBgvbgFRklSHyhj3CH97naQZBMoVWHYIh+7R80r7kXCtbNHUMb1dOMvYdSmX8rEDFDg6bNQ==
-X-Received: by 2002:a05:6214:c8b:b0:707:a430:e01b with SMTP id 6a1803df08f44-70ba7a5ebe0mr42596136d6.3.1755294766500;
-        Fri, 15 Aug 2025 14:52:46 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3ffb0esm495523e87.135.2025.08.15.14.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 14:52:45 -0700 (PDT)
-Date: Sat, 16 Aug 2025 00:52:43 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: setotau@yandex.ru
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sdm660: Add missing LPASS/CDSP vote
- clocks
-Message-ID: <gg3pzvlxgvcfqkl4ko65dgyf4jv7umsdthcpyrb3orgmix6xfm@3obaewnzgat2>
-References: <20250815-gcc-sdm660-vote-clocks-and-gdscs-v1-0-c5a8af040093@yandex.ru>
- <20250815-gcc-sdm660-vote-clocks-and-gdscs-v1-2-c5a8af040093@yandex.ru>
+	s=arc-20240116; t=1755294952; c=relaxed/simple;
+	bh=BRxZ4aaVXr1kfd3C51FL5+HkJFyIOVkiMPFljwsl9BY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJlmH0x8Y8S+c9HurW5bj/nRm9Pshrib8UZ/nPjl7nEIWiX5/HbL4UauN3kCOQtc5oOHqjmGjjPsiL04FluiiKy42ictrIh1FQqotIyaSpDd4PE2MTufxa0xbtS0tQtKz7cAQtnoVBe02y9khI6uQVeTuYbAPjIrkFoXbFXecI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVejDo+f; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755294951; x=1786830951;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BRxZ4aaVXr1kfd3C51FL5+HkJFyIOVkiMPFljwsl9BY=;
+  b=EVejDo+fLIfZK872OoIaZTUcqyd3nrPOlznFlJCVWvGlrqKtklJYQL8n
+   eTfMa+S/kzQ/l2dWDTRJiLjqENBmOGZmaspbZutnfGT2JLfKwsJ0l49fg
+   XQVxWmfu/KReifUierjWmGYZJCPhGVjvKOvY0YEyS9C+JaRBcQ+euuA6P
+   zUhBUGl/P+ReoVIN2XpliJloGmkRJBS+Dc+uPALtjjEatweS31LWyfEvL
+   URaYRyCO9+SlNvFKB4Kz/HlQ4t+hT9RS0Or5ugULuQ3K5+BmxatL5mSi/
+   6NZzlfPe39KBOEUzxcJt5Mt9gKrmOjfiN/TmILeLo0JJqOWH0rl1WCwCK
+   g==;
+X-CSE-ConnectionGUID: dNkx44avQjK0FaaShFQcjw==
+X-CSE-MsgGUID: ppYFzYzgTqaq7rU1+r3YKA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="60245832"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="60245832"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:55:50 -0700
+X-CSE-ConnectionGUID: vVkipP31SKmRQa2QqleLWA==
+X-CSE-MsgGUID: 31kdCV52RMyx6eWyfcKnpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167068007"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:55:45 -0700
+Message-ID: <534936cc-4ecc-46e5-8196-bc3992e086ab@intel.com>
+Date: Fri, 15 Aug 2025 14:55:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-gcc-sdm660-vote-clocks-and-gdscs-v1-2-c5a8af040093@yandex.ru>
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689fac30 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=vaJtXVxTAAAA:8 a=EUspDBNiAAAA:8 a=FM-fRCrO_02lKpoybmcA:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-ORIG-GUID: s89OFabUfXR7A7ucQdmx4Yh6tGh_ZzCI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX2cwMuFsacX3m
- fnKmx+1EAIkftg+Z7aCi8t/20bipHKvYP6YwbdrmMGSkabJf8fsrF+7nFSYbm01bznkzbwapr1f
- NBNQs0UUdImDDkPd2rEMedkgbk2jJZLScsTqfgdQoHsl0GUTxIH9JuBD57MyrxinEXTtDmJBpcA
- h1NuMbKv6VXUnps1Vd76yMqpttYXzGKEmzhdOTuAOdjHQ6uV8ln01FZjvjhZ27BxXLRGDJZzI95
- joemLQq2RrRPpHY0eGyL/36l+2DSucEIypqLpZ5Owj5H/IBvW0Fuj6X6fmdXqkwDdmUzVjFM5gw
- +oQfK5ybxi3SNshxC5owzB5WynFzvHyHbP2bFcKl08r2Fw5pACRKcte2nsXRL2HIAAvSwAb/1HR
- HZM/fUGr
-X-Proofpoint-GUID: s89OFabUfXR7A7ucQdmx4Yh6tGh_ZzCI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-15_08,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
+ routine
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
+ <20250730121209.303202-6-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 07:56:52PM +0300, Nickolay Goppen via B4 Relay wrote:
-> From: Nickolay Goppen <setotau@yandex.ru>
+
+
+On 7/30/25 5:11 AM, Neeraj Kumar wrote:
+> Added __pmem_region_label_update region label update routine to update
+> region label.
 > 
-> For the proper functioning of SMMUs related to the audio/compute DSPs,
-> it makes sense that the clocks and power domains they rely on for
-> communication should be online.
+> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
+> mutex_unlock()
 > 
-> Add the vote clocks & GDSCs that, when enabled, ensure all such
-> requirements are met, through various internal mechanisms.
-> 
-> Co-developed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+
+Subject, s/updation/update/ ?
+
 > ---
->  drivers/clk/qcom/gcc-sdm660.c | 72 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
+>  drivers/nvdimm/label.c          | 171 +++++++++++++++++++++++++++++---
+>  drivers/nvdimm/label.h          |   2 +
+>  drivers/nvdimm/namespace_devs.c |  12 +++
+>  drivers/nvdimm/nd.h             |  20 ++++
+>  include/linux/libnvdimm.h       |   8 ++
+>  5 files changed, 198 insertions(+), 15 deletions(-)
 > 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 3f8a6bdb77c7..94f2d0ba7aca 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -381,6 +381,16 @@ static void nsl_calculate_checksum(struct nvdimm_drvdata *ndd,
+>  	nsl_set_checksum(ndd, nd_label, sum);
+>  }
+>  
+> +static void rgl_calculate_checksum(struct nvdimm_drvdata *ndd,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+region_label_checksum()? rgl/rg is just a bit jarring to read even though I get nvdimm already has nd and nsl etc.
 
+> +				   struct cxl_region_label *rg_label)
 
--- 
-With best wishes
-Dmitry
+Prefer just spell out region_label
+
+> +{
+> +	u64 sum;
+> +
+> +	rgl_set_checksum(rg_label, 0);
+> +	sum = nd_fletcher64(rg_label, sizeof_namespace_label(ndd), 1);
+> +	rgl_set_checksum(rg_label, sum);
+> +}
+> +
+>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+>  		struct nd_lsa_label *lsa_label, u32 slot)
+>  {
+> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  		return rc;
+>  
+>  	/* Garbage collect the previous label */
+> -	mutex_lock(&nd_mapping->lock);
+> +	guard(mutex)(&nd_mapping->lock);
+>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>  		if (!label_ent->label)
+>  			continue;
+> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	/* update index */
+>  	rc = nd_label_write_index(ndd, ndd->ns_next,
+>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> -	if (rc == 0) {
+> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> -			if (!label_ent->label) {
+> -				label_ent->label = lsa_label;
+> -				lsa_label = NULL;
+> -				break;
+> -			}
+> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+> -				"failed to track label: %d\n",
+> -				to_slot(ndd, lsa_label));
+> -		if (lsa_label)
+> -			rc = -ENXIO;
+> -	}
+> -	mutex_unlock(&nd_mapping->lock);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = lsa_label;
+> +			lsa_label = NULL;
+> +			break;
+> +		}
+
+Would've preferred the original code to look like:
+
+list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+	if (label_ent->label)
+		continue;
+
+	label_ent->label = lsa_label;
+	lsa_label = NULL;
+	break;
+}
+
+But ah well....
+
+> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,> +			"failed to track label: %d\n",
+> +			to_slot(ndd, lsa_label));
+> +	if (lsa_label)
+> +		rc = -ENXIO;
+
+Just return here as Jonathan already mentioned. guard() helps with cleaning that up.
+
+>  
+>  	return rc;
+>  }
+> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  	return 0;
+>  }
+>  
+> +static int __pmem_region_label_update(struct nd_region *nd_region,
+> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
+> +{
+> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +	struct nd_lsa_label *nd_label;
+> +	struct cxl_region_label *rg_label;
+> +	struct nd_namespace_index *nsindex;> +	struct nd_label_ent *label_ent;
+> +	unsigned long *free;
+> +	u32 nslot, slot;
+> +	size_t offset;
+> +	int rc;
+> +	uuid_t tmp;
+
+uuid instead of tmp would make the variable clearer to read
+
+Also please arrange variable ordering in reverse xmas tree. 
+
+> +
+> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
+> +		return -ENXIO;
+> +
+> +	/* allocate and write the label to the staging (next) index */
+> +	slot = nd_label_alloc_slot(ndd);
+> +	if (slot == UINT_MAX)
+> +		return -ENXIO;
+> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
+> +
+> +	nd_label = to_label(ndd, slot);
+> +
+> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
+> +	rg_label = &nd_label->rg_label;
+> +
+> +	/* Set Region Label Format identification UUID */
+> +	uuid_parse(CXL_REGION_UUID, &tmp);
+> +	export_uuid(nd_label->rg_label.type, &tmp);
+> +
+> +	/* Set Current Region Label UUID */
+> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
+> +
+> +	rg_label->flags = __cpu_to_le32(flags);
+> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
+> +	rg_label->position = __cpu_to_le16(pos);
+> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
+> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
+> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
+> +	rg_label->slot = __cpu_to_le32(slot);
+> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
+> +	rg_label->align = __cpu_to_le16(0);
+> +
+> +	/* Update fletcher64 Checksum */
+> +	rgl_calculate_checksum(ndd, rg_label);
+> +
+> +	/* update label */
+> +	offset = nd_label_offset(ndd, nd_label);
+> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
+> +			sizeof_namespace_label(ndd));
+> +	if (rc < 0) {
+> +		nd_label_free_slot(ndd, slot);
+> +		return rc;
+> +	}
+> +
+> +	/* Garbage collect the previous label */
+> +	guard(mutex)(&nd_mapping->lock);
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+> +		if (!label_ent->label)
+> +			continue;
+> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
+> +			reap_victim(nd_mapping, label_ent);
+> +	}
+> +
+> +	/* update index */
+> +	rc = nd_label_write_index(ndd, ndd->ns_next,
+> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = nd_label;
+> +			nd_label = NULL;
+> +			break;
+> +		}
+> +	dev_WARN_ONCE(&nd_region->dev, nd_label,
+> +			"failed to track label: %d\n",
+> +			to_slot(ndd, nd_label));
+> +	if (nd_label)
+> +		rc = -ENXIO;
+just return here
+
+> +
+> +	return rc;
+> +}
+> +
+> +int nd_pmem_region_label_update(struct nd_region *nd_region)
+> +{
+> +	int i, rc;
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* No need to update region label for non cxl format */
+> +		if (!ndd->cxl)
+> +			continue;
+
+Would there be a mix of different nd mappings? I wonder if you can just 'return 0' if you find ndd->cxl on the first one and just skip everything.
+
+> +
+> +		/* Init labels to include region label */
+> +		rc = init_labels(nd_mapping, 1);
+> +
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i,
+> +					NSLABEL_FLAG_UPDATING);
+> +
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* No need to update region label for non cxl format */
+> +		if (!ndd->cxl)
+> +			continue;
+> +> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i, 0);
+> +
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int __init nd_label_init(void)
+>  {
+>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
+> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+> index 4883b3a1320f..0f428695017d 100644
+> --- a/drivers/nvdimm/label.h
+> +++ b/drivers/nvdimm/label.h
+> @@ -190,6 +190,7 @@ struct nd_namespace_label {
+>  struct nd_lsa_label {
+>  	union {
+>  		struct nd_namespace_label ns_label;
+> +		struct cxl_region_label rg_label;
+>  	};
+>  };
+>  
+> @@ -233,4 +234,5 @@ struct nd_region;
+>  struct nd_namespace_pmem;
+>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		struct nd_namespace_pmem *nspm, resource_size_t size);
+> +int nd_pmem_region_label_update(struct nd_region *nd_region);
+>  #endif /* __LABEL_H__ */
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 5b73119dc8fd..02ae8162566c 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -232,6 +232,18 @@ static ssize_t __alt_name_store(struct device *dev, const char *buf,
+>  	return rc;
+>  }
+>  
+> +int nd_region_label_update(struct nd_region *nd_region)
+> +{
+> +	int rc;
+> +
+> +	nvdimm_bus_lock(&nd_region->dev);
+> +	rc = nd_pmem_region_label_update(nd_region);
+> +	nvdimm_bus_unlock(&nd_region->dev);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(nd_region_label_update);
+> +
+>  static int nd_namespace_label_update(struct nd_region *nd_region,
+>  		struct device *dev)
+>  {
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 651847f1bbf9..15d94e3937f0 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -322,6 +322,26 @@ static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
+>  		export_uuid(ns_label->cxl.region_uuid, uuid);
+>  }
+>  
+> +static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
+> +				  const uuid_t *uuid)
+
+region_label_uuid_equal() and region_label
+
+> +{
+> +	uuid_t tmp;
+
+tmp_uuid
+
+> +
+> +	import_uuid(&tmp, rg_label->uuid);
+> +	return uuid_equal(&tmp, uuid);
+> +}
+> +
+> +static inline u64 rgl_get_checksum(struct cxl_region_label *rg_label)
+
+region_label_get_checksum()
+
+> +{
+> +	return __le64_to_cpu(rg_label->checksum);
+> +}
+> +
+> +static inline void rgl_set_checksum(struct cxl_region_label *rg_label,
+region_label_set_checksum()
+
+> +				    u64 checksum)
+> +{
+> +	rg_label->checksum = __cpu_to_le64(checksum);
+> +}
+> +
+>  bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
+>  			    struct nd_namespace_label *nd_label, guid_t *guid);
+>  enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 0a55900842c8..b06bd45373f4 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -115,6 +115,13 @@ struct nd_interleave_set {
+>  	u64 altcookie;
+>  
+>  	guid_t type_guid;
+> +
+> +	/* v2.1 region label info */
+> +	uuid_t uuid;
+> +	int interleave_ways;
+> +	int interleave_granularity;
+> +	struct resource *res;
+> +	int nr_targets;
+>  };
+>  
+>  struct nd_mapping_desc {
+> @@ -302,6 +309,7 @@ int nvdimm_has_flush(struct nd_region *nd_region);
+>  int nvdimm_has_cache(struct nd_region *nd_region);
+>  int nvdimm_in_overwrite(struct nvdimm *nvdimm);
+>  bool is_nvdimm_sync(struct nd_region *nd_region);
+> +int nd_region_label_update(struct nd_region *nd_region);
+>  
+>  static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+>  		unsigned int buf_len, int *cmd_rc)
+
 
