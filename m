@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-771497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B713B287F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B71B287FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C667200BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A31726015
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E77323D7EA;
-	Fri, 15 Aug 2025 21:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A529C1B87C0;
+	Fri, 15 Aug 2025 21:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faNrEmUt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="agBVXIn3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9381B87C0;
-	Fri, 15 Aug 2025 21:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582E7221FDC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755294555; cv=none; b=svBiI53W/N+gnG8O0mFcY6H61jBXTULEaLdbgVRYvd5bG9zrE+ZfJapiGTm2e9pyBsbhD7mXoNjam6TRyuXa8SflEYXyM+vEPX2HTj1FLnRTNOKC2IHx349K2Jok4U8GQga5aQf4p1tcn/9wVzE+vVBkaxR7xNeDnz+QuCTQgLo=
+	t=1755294639; cv=none; b=W8Hz3ZoY9HP7XJDF/3vJCpYaQ8WMgMsEe/rGiG05MvQGwVZ2R/qM+GiyOKzNYy6/a9Id2aJyPnA4K3EDpaU6HVrXFv783iRLOm3FKLQp1e7vNeIW2RQKfA4p2iZJW2PyA1ORvJZf9Ct7izec4EDFgMD5pAnQhg4Yr/ymtVBVgnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755294555; c=relaxed/simple;
-	bh=7/DESvwD3138OtQA65/DUWMV7oCqWuC7zjK3tOXv16k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkWifaw6K+sqA4+w+D0IqjNJZKyYu5OGqQTOM6x3Pbp+UR2m3Hs7f8yLDmOStW3mgMcC89tDT0rVnR4H8X3U5SNcQrdTYq0JXGUzaWc/vnHhRm/gTAapC172nwp4Bo5QhXKfHfT9KwL2lT/3fH/Z4NI/0FL/kCyhvh4+oTwjk4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faNrEmUt; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1755294639; c=relaxed/simple;
+	bh=FX31Dr4raEflRkKyJdaMBZxQojI+0lLRSkT9HNPz+84=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nLCx74Fd/nBiEaoyp6G9yql5KAwIuEOrcYfH3id6/itxObeAYKrViJdIxk+lMWFQdXZzNwSk2PJL9AmJ4UT7sb+WF7083Sy1TVsVGWDlHgCZWXTtSbT/jFIzm8QlZurVYlBj4JeX/jwbBFNczGZIOZ6SpYQjN+57Jiq5/ctiPbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=agBVXIn3; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755294554; x=1786830554;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7/DESvwD3138OtQA65/DUWMV7oCqWuC7zjK3tOXv16k=;
-  b=faNrEmUtnTP59Ltdp3yGuxOYVUXFSGDrqMi3T0kA4Uv0ECBjL5VBlMil
-   NtT8CWPDJb8oX061NxG4NcmyTL8Nhj9SGSDyFxaOp3DLzkhIPtaTf4mwn
-   1599mXqS7MRcHkLNkwxETN9r77/nLoLdEsNivInhPucC5uwoBLCJnSpJR
-   UtgxRoJr3T65MwhI6OtENfn0+X6SP2KwrNZNjnUJkt6z7SmA5lr7JRGQm
-   TkLtO++28xHfDncK6tfvwxSDDCRTcA7wclpdz8afE6xa+HJG6K5JWzO/D
-   CCZQdCYlIbqeb9JNQkvi4V9kUVI4DLfT8IIhF0a5DmOwWMj01IQeTiaRy
-   A==;
-X-CSE-ConnectionGUID: CmdGQ7m8Rn2zdjq1mo/BqQ==
-X-CSE-MsgGUID: hg5IUbAGSY+CRdjoe7nLbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68220427"
+  t=1755294638; x=1786830638;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=FX31Dr4raEflRkKyJdaMBZxQojI+0lLRSkT9HNPz+84=;
+  b=agBVXIn3ibj+z/rWlke7EyRsKPh09eMVPxoQxJfB6Rb6AjP3YnlvzAyF
+   eLRBEGtAxOS55QXSpJ5IqNcAKIvwxzO08VmaU/isN9cBiupV9Z/uF4R0R
+   4QiyKmj03Ibpq3z4cyQ1j6sRL3+ZatbisR3noeZ6WJZZLK7IbUi8q3O+G
+   lWFIUZBePf43x7UaRJTyC+/IUaXgFZUodLjKOXfTXzb6Ho4OEizy7d3KP
+   JTxs3D22TxueVHJkMPTpzLch3JQ+FOuX+37F81I+LMKJR21mrQAfyaEXV
+   Kb/NMuP8QCypiVIaEh8N71dG1tVkdhFj/ncECDATHi3045t8INTqmBoXz
+   g==;
+X-CSE-ConnectionGUID: vVnECe34RXu2GVPmcOKCAg==
+X-CSE-MsgGUID: sFN0REDbSd+T5/hrH3pXMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="68708488"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68220427"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:49:13 -0700
-X-CSE-ConnectionGUID: QnRETjyrRLavnrXXHKJkKg==
-X-CSE-MsgGUID: p65L7qcuScGyVUlLkIq0Mg==
+   d="scan'208";a="68708488"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 14:50:38 -0700
+X-CSE-ConnectionGUID: kw0e7wfFQlOJjfunyDBo6w==
+X-CSE-MsgGUID: ouj59SOhQemMmR6Nwkesbg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166321491"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 15 Aug 2025 14:49:10 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+   d="scan'208";a="167914046"
+Received: from igk-lkp-server01.igk.intel.com (HELO ca260db0ef79) ([10.91.175.65])
+  by fmviesa010.fm.intel.com with ESMTP; 15 Aug 2025 14:50:36 -0700
+Received: from kbuild by ca260db0ef79 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1un2IM-000CNc-0o;
-	Fri, 15 Aug 2025 21:49:06 +0000
-Date: Sat, 16 Aug 2025 05:48:51 +0800
+	id 1un2Jl-0000aF-2b;
+	Fri, 15 Aug 2025 21:50:33 +0000
+Date: Fri, 15 Aug 2025 23:50:14 +0200
 From: kernel test robot <lkp@intel.com>
-To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kbusch@kernel.org,
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com,
-	alistair23@gmail.com, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH 3/8] net/handshake: Expose handshake_sk_destruct_req
- publically
-Message-ID: <202508160510.XOTeniWX-lkp@intel.com>
-References: <20250815050210.1518439-4-alistair.francis@wdc.com>
+To: Sascha Bischoff <Sascha.Bischoff@arm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
+	Timothy Hayes <timothy.hayes@arm.com>
+Subject: arch/arm64/kvm/vgic/vgic-mmio.c:1094:3: warning: variable 'len' is
+ used uninitialized whenever 'if' condition is false
+Message-ID: <202508152354.FWDol8gs-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,59 +77,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815050210.1518439-4-alistair.francis@wdc.com>
 
-Hi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on trondmy-nfs/linux-next]
-[also build test WARNING on net/main net-next/main linus/master linux-nvme/for-next v6.17-rc1 next-20250815]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250815-130804
-base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
-patch link:    https://lore.kernel.org/r/20250815050210.1518439-4-alistair.francis%40wdc.com
-patch subject: [PATCH 3/8] net/handshake: Expose handshake_sk_destruct_req publically
-config: arm-mps2_defconfig (https://download.01.org/0day-ci/archive/20250816/202508160510.XOTeniWX-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160510.XOTeniWX-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d0efc9e4276cda07c2f76652d240b165c30b05b8
+commit: c017e49ed1381001ba7a6521daae8f968b11cf09 KVM: arm64: gic-v5: Support GICv3 compat
+date:   5 weeks ago
+config: arm64-randconfig-2002-20250814 (https://download.01.org/0day-ci/archive/20250815/202508152354.FWDol8gs-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7d886fab74d4037d654d02bed24dd97c0ba863d6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508152354.FWDol8gs-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508160510.XOTeniWX-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508152354.FWDol8gs-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   net/handshake/request.c:312:6: warning: no previous prototype for function 'handshake_req_cancel' [-Wmissing-prototypes]
-     312 | bool handshake_req_cancel(struct sock *sk)
-         |      ^
-   net/handshake/request.c:312:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     312 | bool handshake_req_cancel(struct sock *sk)
-         | ^
-         | static 
->> net/handshake/request.c:349:6: warning: no previous prototype for function 'handshake_sk_destruct_req' [-Wmissing-prototypes]
-     349 | void handshake_sk_destruct_req(struct sock *sk)
-         |      ^
-   net/handshake/request.c:349:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     349 | void handshake_sk_destruct_req(struct sock *sk)
-         | ^
-         | static 
-   2 warnings generated.
+>> arch/arm64/kvm/vgic/vgic-mmio.c:1094:3: warning: variable 'len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    1094 |                 BUG_ON(1);
+         |                 ^~~~~~~~~
+   include/asm-generic/bug.h:71:36: note: expanded from macro 'BUG_ON'
+      71 | #define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+         |                                    ^~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:47:23: note: expanded from macro 'unlikely'
+      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/arm64/kvm/vgic/vgic-mmio.c:1102:12: note: uninitialized use occurs here
+    1102 |                                        len, &io_device->dev);
+         |                                        ^~~
+   arch/arm64/kvm/vgic/vgic-mmio.c:1094:3: note: remove the 'if' if its condition is always true
+    1094 |                 BUG_ON(1);
+         |                 ^
+   include/asm-generic/bug.h:71:32: note: expanded from macro 'BUG_ON'
+      71 | #define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+         |                                ^
+   arch/arm64/kvm/vgic/vgic-mmio.c:1084:18: note: initialize the variable 'len' to silence this warning
+    1084 |         unsigned int len;
+         |                         ^
+         |                          = 0
+   1 warning generated.
 
 
-vim +/handshake_sk_destruct_req +349 net/handshake/request.c
+vim +1094 arch/arm64/kvm/vgic/vgic-mmio.c
 
-   344	
-   345	/**
-   346	 * handshake_sk_destruct_req - destroy an existing request
-   347	 * @sk: socket on which there is an existing request
-   348	 */
- > 349	void handshake_sk_destruct_req(struct sock *sk)
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1079  
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1080  int vgic_register_dist_iodev(struct kvm *kvm, gpa_t dist_base_address,
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1081  			     enum vgic_type type)
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1082  {
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1083  	struct vgic_io_device *io_device = &kvm->arch.vgic.dist_iodev;
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1084  	unsigned int len;
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1085  
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1086  	switch (type) {
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1087  	case VGIC_V2:
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1088  		len = vgic_v2_init_dist_iodev(io_device);
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1089  		break;
+ed9b8cefa91695 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2015-12-01  1090  	case VGIC_V3:
+ed9b8cefa91695 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2015-12-01  1091  		len = vgic_v3_init_dist_iodev(io_device);
+ed9b8cefa91695 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2015-12-01  1092  		break;
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26  1093  	default:
+fb848db39661a1 virt/kvm/arm/vgic/vgic-mmio.c Andre Przywara 2016-04-26 @1094  		BUG_ON(1);
+
+:::::: The code at line 1094 was first introduced by commit
+:::::: fb848db39661a1243f6ae939ef7e9251a765b972 KVM: arm/arm64: vgic-new: Add GICv2 MMIO handling framework
+
+:::::: TO: Andre Przywara <andre.przywara@arm.com>
+:::::: CC: Christoffer Dall <christoffer.dall@linaro.org>
 
 -- 
 0-DAY CI Kernel Test Service
