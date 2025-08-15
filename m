@@ -1,95 +1,96 @@
-Return-Path: <linux-kernel+bounces-771442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79606B28763
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:50:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B55CB28766
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777E2AC5FE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516B55E1DDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B502BDC3F;
-	Fri, 15 Aug 2025 20:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9629A309;
+	Fri, 15 Aug 2025 20:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="MMS4D2j+"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5B01E2602;
-	Fri, 15 Aug 2025 20:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE/u80At"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D797C26AF3;
+	Fri, 15 Aug 2025 20:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755290972; cv=none; b=B8Ucy1Miv/cIBOJXkucXDZ9aKJvJBf7ywi7m1YdFKePC57w8tHCNwTeMWyBlBUBXW0u0VgVp6vcbIDoAO6kconlhy9v95hjY9mmTmxuIaNWKtVapNkhboIXkrmCTp7Pfou3YOKoETaiFP1wjqIpCkWja4h2q4EqHasXGxBQCBI4=
+	t=1755291028; cv=none; b=WIY9K44QostXrGF7Ckm+dhmNhh6XTWk/rZ+xweMjr0cZLaoq4CMz6LxWEXtkBq+Ua41Da64PviIHL80rN2Q/3rgcfX0Mttzw/NfnwMcsYpNcrqq5iJjqQa0v3YyrAgvQOarXAsw8xLTK+JU1XF6e288nYat8PC/8vhGyDpRLoFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755290972; c=relaxed/simple;
-	bh=vT+tDKPxo0KUw1Hlfw/M0wJ3peG5bCfuumo+RuHxKIQ=;
+	s=arc-20240116; t=1755291028; c=relaxed/simple;
+	bh=kQ/MNknMyEBxL80+GJlpjiBLs8Klx1adKhEFRMdC8Rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUacox0R+TktWVDTlwDu0BEkBTsQTtQWiccE8IeKuOa2giQFzItfWXZGog7K5/ySzwuE+Wye2rK3WgnfcDME9YQxQDaom1Vpxb/B/i9lfzMcYDhc2MP48WWrmmAnrBjfFyBW4bIn+g8tMiAcc13OaBTddn85NPjs1EIpYtkbN5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=MMS4D2j+; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id D9E2114C2D3;
-	Fri, 15 Aug 2025 22:49:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1755290967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HPhmjiq2J+FT0At5wfNjodTVpwV1k67zDG95jY/AKZ8=;
-	b=MMS4D2j+8VfPogQzJhPQ/qZsnXDDqFtkYhMZftHUqiHD4X4qDinuqmUQp/zCIsiEwmUEk/
-	9DRUVXWt+g2TFpoXQhRIE9z3ynUwVCXoKRGKeXkfPkTmke6j6SjilzR/5NWuAgGuY3dcqx
-	9SSfsYcsMStsAjoh3VcGKGv4v2dkxWO9L6yTqQHPxMnNsSufOo8cFS2eG1MTACb9CjzKgu
-	difj1EbNtsztIuWjJhtHYHqi73sdCFeWUy9GQz07BEn+fd14GfrZRk82sH22TARd4k/25d
-	jASAKr6M/EaqwbGowyU1ik6GxKlMMAPEd5krghOTWB5alSstdJ4+mmMSrWp0Kw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c855c45e;
-	Fri, 15 Aug 2025 20:49:22 +0000 (UTC)
-Date: Sat, 16 Aug 2025 05:49:07 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Maximilian Bosch <maximilian@mbosch.me>, Ryan Lahfa <ryan@lahfa.xyz>,
-	Christian Theune <ct@flyingcircus.io>,
-	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 0/2] iterate_folioq bug when offset==size (Was:
- [REGRESSION] 9pfs issues on 6.12-rc1)
-Message-ID: <aJ-dQ2QN26h24Nz9@codewreck.org>
-References: <20250813-iot_iter_folio-v3-0-a0ffad2b665a@codewreck.org>
- <20250815-scheckig-depesche-5de55f7855d1@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqhtkydiLOQ47uWFgolpmlidLcq3STRWhEMVBnKu3D1CxPGpkQC8PEokhTwWIHRIPVRM7tz7ALvtfEj0Y1uKlApy3ln8l4xQS//yAmYOwMO2ba0KGjOv02+aXNsOm5geHSkwmHqlpKFaYCK0igU+3UhbYs9d6p8UsNNjmC8xi1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE/u80At; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A492BC4CEEB;
+	Fri, 15 Aug 2025 20:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755291027;
+	bh=kQ/MNknMyEBxL80+GJlpjiBLs8Klx1adKhEFRMdC8Rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oE/u80AtTrhTCD7mnU29Ik01JB0iw13f7xTae6zJgqcGnfM85mzeT6x60Crk91738
+	 ioy1kcvnTNw01Ukd9AEhN+RcnWY/7gEUn00ZSKZ3LU/c1TA4tAKD0ZI2/2B80PWo3E
+	 oEoQFvRRbIHI6NyAzVcilRHGbIPqJDtcC6tdLCANcLw1u+udKbmjRz+RKhN76mjX0v
+	 7RjR1zc0jYgwNbwJJrYeYUaBzgOvXW5zrOTm27EasQi4pO+WRtCteHdVC+aF0kI+zI
+	 Cwm00O1i2c7Mc58dr+O21JfF9TmxB4E+h3lQ8WbDgJexZXtKBpRa9O0b1p+HhE3+Ms
+	 ZWjmcqEsnzpFw==
+Date: Fri, 15 Aug 2025 15:50:24 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Gaurav Kohli <quic_gkohli@quicinc.com>, daniel.lezcano@linaro.org
+Cc: amitk@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	robh@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	quic_manafm@quicinc.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: thermal: tsens: Add QCS615 compatible
+Message-ID: <ozyej4oryyylk7a7jvx2x2jtfz3i7bq6cvcoev2ub2ni6jf2gl@rwldpauze5fw>
+References: <20250702082311.4123461-1-quic_gkohli@quicinc.com>
+ <20250702082311.4123461-2-quic_gkohli@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815-scheckig-depesche-5de55f7855d1@brauner>
+In-Reply-To: <20250702082311.4123461-2-quic_gkohli@quicinc.com>
 
-Hi Christian,
+On Wed, Jul 02, 2025 at 01:53:10PM +0530, Gaurav Kohli wrote:
+> Add compatibility string for the thermal sensors on QCS615 platform.
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
 
-Christian Brauner wrote on Fri, Aug 15, 2025 at 04:16:33PM +0200:
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-I'm not sure which is better as this is halfway between vfs and mm,
-but Andrew seems to have picked this up in the mm tree:
-- patch1 to mm-hotfixes-unstable
-https://lkml.kernel.org/r/20250813231639.B7E61C4CEEB@smtp.kernel.org
-- patch2 to mm-nonmm-unstable
-https://lkml.kernel.org/r/20250813231515.7AADEC4CEF5@smtp.kernel.org
+@Daniel, can you please pick this binding?
 
-(and both patches are in -next right now, so I expect you'll get pinged
-by Stephen in a bit...)
+Regards,
+Bjorn
 
-
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index 0e653bbe9884..c8cc67b65f73 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -53,6 +53,7 @@ properties:
+>                - qcom,msm8996-tsens
+>                - qcom,msm8998-tsens
+>                - qcom,qcm2290-tsens
+> +              - qcom,qcs615-tsens
+>                - qcom,sa8255p-tsens
+>                - qcom,sa8775p-tsens
+>                - qcom,sar2130p-tsens
+> -- 
+> 2.34.1
+> 
 
