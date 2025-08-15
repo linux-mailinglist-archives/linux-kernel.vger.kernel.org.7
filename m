@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-770997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD81B2815D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1344EB2815A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580D4AE6427
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CD4189C6FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3300F1E8337;
-	Fri, 15 Aug 2025 14:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC53A1F03EF;
+	Fri, 15 Aug 2025 14:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UlLIlLen"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qhwLGjI8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107E91DF755
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABFA1CFBA;
+	Fri, 15 Aug 2025 14:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267153; cv=none; b=frBiZwmT06yz32t5cF9mqReLf9qhy88KUEyPLN5o3rF670nLbwqXKwPNa+Z3lRxnKu1wHu0o83eUe0rQvg0RTEOiPQETncwwKydzuIwBysMGnDpBjL3kq36UnBkBXkjqNA78WLxXSXKuOJ6+RrK4awTxkS35HonlYAEHeyPd9eo=
+	t=1755267235; cv=none; b=nD+OG8C1cxmkrhrQveIEnUu7KvpLxy7khmOShmUaCnrLCFy1Ozh1g2HyrnslCDTG/Cr5Eibw5NW1zYVDnBi7DDRHBa/iD+5IJYTZ3EvF6KBtcAqhJxE/KbL8vyWP/lGgfZ0bBpFl3T2XghH8DWCLKpGoxazV9cc5/Yc7EEY8hoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267153; c=relaxed/simple;
-	bh=Ys+oneiDmhfbSorAOTOMl93fEW5CDf2p/1hA9u/SrZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BQc+vvB1H6iIDaTxJOQZwx2Ok8gaTV1NFSSsSPnTjd4JYugC0V+aYfG006gXixmJEkXJV/mGuuYswyFw+0NxX/KuoHyOrwyCA3KzJ99BBFMkToAKWkXO+P/wdT1ABM7I5BCLPznASUlVrVohyNDcqgO0mhswV8S4IlJVAwtrNMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UlLIlLen; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso1208399b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755267151; x=1755871951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GSNwVo+foGrqxtDIaBkJMFB12vMpB+ZeRSiJiXS17MA=;
-        b=UlLIlLenJeK49QmdA0Iq9oe+qzxfqL6PXBrhrlFPwM0zqvjtBOvg09kxLaEo6bAusz
-         T1YJSxGNgzPF4y5U3pzb6xqYcGx2n6NgMK6GEVH1b3qJsCl7R+9d9sSyJV7RTuQAb/jd
-         moajXH6p2iuKAub89FjrNkJN8x7lT5Nxq2XuNBfS2TKdmNvTqUzlCW3TxQ1SBxBiGlAh
-         E+oSI+WZyWPQ25bPfT9NTMm/JlRNAG9o7O+yUW1E6sQo5BG89Yg5+ith9KriAtTv4GKy
-         xd0duu47M/aSFDf0wKbUKzpPp9pzFmOAUsp6I5Csm0kO0ShP0x6C8zEu/sPEkUG+DOVp
-         E1Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755267151; x=1755871951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GSNwVo+foGrqxtDIaBkJMFB12vMpB+ZeRSiJiXS17MA=;
-        b=sHJPwW9qhKUXj7Mfp30Ii2l7/O2Jd6MdLwDTIKJApHs5we3XGyDpTZT/nIHS5w5dNl
-         oeMjP7/K+3oOkDrzBW9Jmk771MIGPjCEHLixRP8Bfoev6HvdN7PnifgQCDNYUHNvFilQ
-         q5DwimjUqpSFuRseUsfMEhtd/nyGnz8cd6aJI7zy3HdGftVhCxL37xqYb0lQwQwNNTvE
-         boWCMPdv2AnMVmnC4cA/JR5ukWYQshIPtKP+WRO5Zl7I1dGBikLMK21zPL4pNlgsk6/1
-         Gqd1TcokpBxI9HIF5FRJMOmajJxzP+1Z3UyRJU1O+M4KeptPlD0GRpAcdn7+gWIFVEGS
-         HU7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/6mTygRBsgtwar8XBghGHMRi54J0KFhh1U11WBa8ZQSfeVtIsUNnpbww/pjHS9EUYjjnGYfsneVSQoGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgQ9496SBDKToDS+TYK5sSAHLCkhxPYr1qM7W/Zah9vSW5IzRx
-	VEWZMsz1YPMslAdyZBhl625qPMtNqrQTYoHmf2STqI6kySI99JebxWsrgK9g1NojDImuHD6dWrE
-	U0DRvIienYPiXIS2Uow8vkdy/XE+bX0Yz8F2Nd8F9
-X-Gm-Gg: ASbGncuqceqMArOZ6aJN8S0cTrEhiIG5DDUuPE7ZyZ1NeH1IsjLlLb39/uj7eP5cWF7
-	AGOVNnQppUGghpfVz7zoTAguUKOHnSLQKc92E25MKNE/7VdwfGhY44fiYZ3XQQKAWm1NE7ozWm7
-	VYxz+/mFGurYPFAbKAMWOJU768evyQIcXM6MQ8TYisJQ0xuOT13+Bf+BEhW6gZ4+WeBt2RByy1z
-	kfwjT0=
-X-Google-Smtp-Source: AGHT+IHZq87aTV2sDiSoIWzGjDI+X0kBjD2MtNl2nJmB9n8IEJQ2H+W6gTh1ML5Er6EysEcIv95tzQvcLKzQ6DmnBSs=
-X-Received: by 2002:a17:902:fc8e:b0:23f:cd4d:a91a with SMTP id
- d9443c01a7336-2446d8b5f2fmr32266165ad.30.1755267151279; Fri, 15 Aug 2025
- 07:12:31 -0700 (PDT)
+	s=arc-20240116; t=1755267235; c=relaxed/simple;
+	bh=owKp8khZ3/434hY987Aee15l7sTapMbz56wqu0UgfC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YNcK8Hp7NOLezhKbWi5hNu0dWJMBjd99ZU5Btncl53X4AoEXuMHNKtEodjfXOb1MmiKiWGvUW5Wbx/fP6/ONAzQYvU2uDjzg2etwLh3HVDzE+h+Br+Uc1hCKzz9MPv92MFg65AdciUnH/LpQtblvIPiX0R+n5G+4Mdtg7OHPTFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qhwLGjI8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FAe7ml024819;
+	Fri, 15 Aug 2025 14:13:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=owKp8k
+	hZ3/434hY987Aee15l7sTapMbz56wqu0UgfC0=; b=qhwLGjI8r1b9aM2/E0IzCI
+	6zJiMbURwrbm2wUbMFvEdGnQzPPOQLJflvQ3hlN+PV/Zab8U9cGOHumZKZFy0h5x
+	dIZgaUOywv39kk3JpZeoJFTptUeWxXeUz/JUS5sVs7z2s73Xf22EcX/J7AZBLPLW
+	vJChAb1EEBydwD4eKtZ+vkjqXrFpm+XsrQK44FId7dFGtmNo42nGuPHgT5WHycJ8
+	QLh0kTSSlfVF/piZmOzhILU+5+A5OMzbWKFn6RzauupxmiZhbPMETc8JYfq3wQvt
+	xqodcKGUIoVS3pIG8G71+8pXRcxrT4yKOf96FQ0pOdLMYNWCC6RVBDAUajEYAP+g
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwudqstn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 14:13:47 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57FDqP5k017588;
+	Fri, 15 Aug 2025 14:13:46 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc40v3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 14:13:46 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57FEDh2559572638
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Aug 2025 14:13:43 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AF6420043;
+	Fri, 15 Aug 2025 14:13:43 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A525620040;
+	Fri, 15 Aug 2025 14:13:42 +0000 (GMT)
+Received: from [9.87.144.27] (unknown [9.87.144.27])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 15 Aug 2025 14:13:42 +0000 (GMT)
+Message-ID: <a08d68e5-6fea-4913-859d-7c6f3e6a2f04@linux.ibm.com>
+Date: Fri, 15 Aug 2025 16:13:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704054824.1580222-1-kuniyu@google.com> <20250808-parent-noise-53b1edaa@mheyne-amazon>
- <CAAVpQUAi6sQ+=S-5oYOPkuPEFk68g2zG81YOA3MYVnTSvTxcjg@mail.gmail.com>
- <CAHC9VhRbLSJhz=5Wuyi1RE8xxXPAGcEVXMUyTevawhAFPUvUoA@mail.gmail.com> <20250815-herons-fair-c5f3b931@mheyne-amazon>
-In-Reply-To: <20250815-herons-fair-c5f3b931@mheyne-amazon>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 15 Aug 2025 10:12:21 -0400
-X-Gm-Features: Ac12FXwr0fHM_Tc80tAdDEFOaLCy-u3hTEfEHXzorZt-p5EGqGwTtNfC-IWK3_E
-Message-ID: <CAHC9VhRDyiNnULse4yfi7=K27VFxpVxfnGdY-E2Y+21F7YOfxQ@mail.gmail.com>
-Subject: Re: [PATCH v1 net] netlink: Fix wraparounds of sk->sk_rmem_alloc.
-To: "Heyne, Maximilian" <mheyne@amazon.de>
-Cc: Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuni1840@gmail.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	"Ahmed, Aaron" <aarnahmd@amazon.com>, "Kumar, Praveen" <pravkmr@amazon.de>, Eric Paris <eparis@redhat.com>, 
-	"linux-audit@redhat.com" <linux-audit@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/dasd: Use IS_ERR_OR_NULL() to simplify code
+To: Liao Yuanhong <liaoyuanhong@vivo.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "open list:S390 DASD DRIVER" <linux-s390@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Yang Xiuwei <yangxiuwei@kylinos.cn>
+References: <20250814131201.230724-1-liaoyuanhong@vivo.com>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20250814131201.230724-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX34mGjZlDSHbc
+ auOx0ZDIX2UDbQhA2eZjR7JllucwuUeGGWEx/CtzyMTTwrqem2nCH2tf6A+fw1K0Ur1saWe7Ous
+ B0JhT5zrUUGWB6LwUWHX+NjddY7qis/oIokySiuthZt4G1JvDGAOA3/Bo82kjIwHZuYihyKDCT0
+ mnY3pWCIF9F6hb0v2PIwnWN9VwGbXjiIBcIE5RsGU+96hnrXctqP2le/BxMWV1qMyWv/wi6Lacy
+ J1xDZ/Lntj6ea915FQo7LV5CeYDUkqLXSvvMrQJupi0Ix7oaTC/YXxlEjHrUfUIVkwygdyVrNze
+ 9m1TQDineGrI083xk0X/FUQzsHpm6Fypvi9TeF/gIF1PienrjrR1F+ng0wVzZQBu5h3y7UPXDDl
+ GjXimsqn
+X-Authority-Analysis: v=2.4 cv=d/31yQjE c=1 sm=1 tr=0 ts=689f409b cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=1WtWmnkvAAAA:8 a=J-4uBMWTTScMImwlSVwA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 94ncwvRzWzi_KKUTE91EyKtMqWMlhdZ6
+X-Proofpoint-ORIG-GUID: 94ncwvRzWzi_KKUTE91EyKtMqWMlhdZ6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ spamscore=0 adultscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120224
 
-On Fri, Aug 15, 2025 at 6:00=E2=80=AFAM Heyne, Maximilian <mheyne@amazon.de=
-> wrote:
-> On Wed, Aug 13, 2025 at 03:00:29PM -0400, Paul Moore wrote:
 
-...
-
-> > Hopefully that resolves the problem, Maximilian?
+Am 14.08.25 um 15:12 schrieb Liao Yuanhong:
+> Use IS_ERR_OR_NULL() instead of the original !xxx || IS_ERR(xxx) logic.
+> This will simplify the code and enhance readability.
 >
-> sorry for the late reply. Just tested the commit yesterday and I can
-> confirm that this fixes our issues.
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> ---
 
-Great, thanks for confirming that.
+The exact same patch was already submitted by Yang Xiuwei <yangxiuwei@kylinos.cn> before.
 
-> > Normally the audit subsystem is reasonably robust when faced with
-> > significant audit loads.  An example I use for testing is to enable
-> > logging for *every* syscall (from the command line, don't make this
-> > persist via the config file!) and then shutdown the system; the system
-> > will obviously slow quite a bit under the absurd load, but it should
-> > shutdown gracefully without any lockups.
->
-> Thank you for suggesting this. Will add something like this to our
-> internal testing.
 
-I wish I could say I regularly stress the audit subsystem in that way,
-but I typically only do that when I make a related change or happen to
-notice something in a related subsystem which might have an impact.
-Additional testing is always welcome!
-
-> Do you know whether there is already some stress test
-> that covers the audit subsystem ...
-
-Aside from the manual test that I already mentioned, which is my
-preferred mechanism for stressing the logging/queuing mechanism, there
-are two (?) contributed stress tests in the audit-testsuite, but I
-don't run them and I doubt anyone does on a regular basis (look in the
-tests_manual directory).
-
-* https://github.com/linux-audit/audit-testsuite
-
-> ... or would have any selftest found this issue?
-
-Not having looked at the root cause, as that work was done before I
-dug into this thread, I honestly can't say.
-
---=20
-paul-moore.com
 
