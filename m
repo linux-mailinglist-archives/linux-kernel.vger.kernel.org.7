@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-771517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1A4B28854
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:23:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DD4B28858
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305F31CE084F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91BDBAE214B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310F925DB06;
-	Fri, 15 Aug 2025 22:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEEB246766;
+	Fri, 15 Aug 2025 22:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ESstAl4r"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bgjyUAi1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC561245022;
-	Fri, 15 Aug 2025 22:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0B1244690
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755296561; cv=none; b=QhvWhld2nZ5d9mWdEwZSZMYCRKTqIXb2O8ZKH2N4rTbSuNuV2IcMncDpQi5E90rCdssq/pS1qIdZ9YCs0JosmfUK3e4N8JzRM10e1xHwsQWnt85ByQToSMErTqwiklqV+9dUtzsOz0mtY1TzEIfSstUVkvGwKAF+5pmaYNIwwcE=
+	t=1755296587; cv=none; b=RNUgauoiJZznEf3H4bTvchTKNDqz6sTap57uEQBfN9BKze+CdeEVaLJ/eSRd+3Qb7o1OpfenQQhvRCe67++eSe+h+qiYqW6gVDUAHUZg9swB4YwPtQZPLZhatBTtwlWQF9HFROBJVPCwyeTWFFAjER6q5WbXAijPnOMNLVjJEn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755296561; c=relaxed/simple;
-	bh=aXCY1lGZXU4wb1kzg6itn4oaYVR+j3HG37VQ140BkI8=;
+	s=arc-20240116; t=1755296587; c=relaxed/simple;
+	bh=z5y1xrIOBWXl6IIalqIL8dvPoAZYICW3mCEt+J0KDfU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQLFCpCcf9TPqc3B58Jufk8y6Aui9qgM/DVd9aPseYFwXnr8Q29j2yVG8wYjlkCXZv3oBRpEXZVZQZYlBzNroY3/xgiX4h3zBZEwNYCUUKuArZJqcP/RBGDpAJLv9fn1nvFGkzb3uNK0134dL2FaUk691MHJsAVvuz4Nya2kT1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ESstAl4r; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755296560; x=1786832560;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aXCY1lGZXU4wb1kzg6itn4oaYVR+j3HG37VQ140BkI8=;
-  b=ESstAl4rs+wTIXyFNDaQ3EoVGaKhhY/urfgyWOIRcw5sK+Jz+0kJhcMr
-   83psQm/GLCZNmDykaUMi8i+g1+IKa6NgkG9c3yAXYmdFc9FURbvQJUQHz
-   Bt8bZ9kmwG5Ft1dI1eDjgyVaonZBmFbl5f5RRdf3VCu27oLFAszkHmPop
-   2lw1w1OAsg+d283ono5Iq5/ZL3HY1aiynFgtzXmcTtTq7OI1Yrd8ta8tb
-   2pgJXnNLezVBpPMzYzTvupzSaBWJfnzYtu74e6SoQp24kb6HdNA7A371c
-   2OVCXuy4FJuDJlneSastiWiO4MhXNyIwIEPUETLSVhQ8MahLRSZtsk/yu
-   Q==;
-X-CSE-ConnectionGUID: gevagbGKRV+rROfYpdIcvQ==
-X-CSE-MsgGUID: 3uK4XVINR/ORvbyQ8Ntrsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="45192249"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="45192249"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 15:22:39 -0700
-X-CSE-ConnectionGUID: kzZFNrRPQceQ4XFlQ/kU9A==
-X-CSE-MsgGUID: 9MCNFcF7QwCnmGGPX3jotQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166598725"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 15:22:34 -0700
-Message-ID: <4de40bdd-4ef3-4eea-8f11-43d71a6369cc@intel.com>
-Date: Fri, 15 Aug 2025 15:22:29 -0700
+	 In-Reply-To:Content-Type; b=GcMw5Ol0SsO1+8pIxfgrV20Vc5b43h6DZSoeOHEmeWC67Hc2MnYMckGL7gEL0jK8xQr4qWYRXXxR9hiMMvQKYUO3h8PPAuSk6FSEMISX46XRwHxzZx7BAMV+VGF7+uKs8S9a/sJEiMMvi3Xw5FHmX7RZgmZwLC4VkiALCel6/8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bgjyUAi1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FEIqMs005706
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:23:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JPoqrG76Fa+IJ69XT6fD+NUhuJLanbuSb1J5gF7obvU=; b=bgjyUAi1oWHVp/Jx
+	8+Tz+gwEf2MKAx+ZsTVEKOTKcqL/MUqWcbHpC7FH1+FfXTRSWAS3BTpEzo0xOmKj
+	Z741Z0P6eAoFegyjXV28v9NMfIb89usjBV57HhgYAwRKiU9Qliw66EeKPQt5uzQf
+	fi4amw34pK/R2X45JyFCnbe8i55Qk1dOWYauH4Nv4tTfZhS19RW6xpYCRVYJ0OyD
+	z9nvvGdd2hxsxs3bt4lmC8dsYf8ZgHpOXsgBfm2wO0yZlHawC7IX0nJXxyNbVIv4
+	LCsQUc5cH3gnkvwW6S0gQ7onmwnRMuoHgxrSj2D51jtWfMzZjdEm5uTrt0UfygvT
+	/yMMig==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxbqhur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:23:04 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a9f55836dso53973466d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:23:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755296583; x=1755901383;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPoqrG76Fa+IJ69XT6fD+NUhuJLanbuSb1J5gF7obvU=;
+        b=i2A/Wl0xPUKuBoWhv483RSQV/UF8d/ZwD76XBqFTPSXT/U/4Ek0c5aBjw+VzLlytXa
+         v4nLIrTYgsgqHrjCK/+3P8HxFb0nVdISUZiXPjOjEuYmwAmtwbGYzWL5uhRZARtJko4N
+         LguFW4/P3jlyu606sD7SUvT+3ldlg45sFHvCtbkWZlyUYQ4sjm6dQ2lTy4BlGY2guuaO
+         OPPHvmJ4dYEdiLmJXBOW0STjFpRchwHBkY9TFMN00ftFCgEuU3ejzn8RN82xNsLBjxQo
+         P0sTHhlhs0LmAcpcZG0tNGPE3jv0sZ2bj/JPTFzFXZxZrhcvMQMplPhZeSq476xls3mK
+         Y7VA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNJuP7QiRrg6CtxpwdYNuirBdKsOxn3Azy3NB80W7EM/ZiOvdlmvLOGpbEJnzjs2zgv8mlbiMMHWPKL/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzX/rYOllr27AYAwAPVGbCZLM69iasc3luJLO1cMHOl2DeE7aV
+	IpormKQGTQhNxn8fyzU/kX7lmGTuaNEQFJmfhqXObOgwc8GLO2TYFRKN+hxDp16u2p3h/TaxLhD
+	YIvTu7To6Bq5QuA1uca5S7TYteDC+SYU8pJ5iqK+D7CsZ4MWmxZv682Sm36aOkqsshkY=
+X-Gm-Gg: ASbGncusqyKeUhv8xIDoJh/emc53v/CORMyQRd/igsE2c/2i3IdvoRvNiDbYaoIHdBc
+	FBt65/DvI4JbPVLtTHLq5ZUP+vRc8rHotidHju+KSoGjrZhRXI0IpRyqemV04hNYYsqd0izWTE5
+	Mlf1V2Przko257TRzLRIjXGdZi1PD0k+7sN6F3mxMgu49xS3WLwSL2kV+/xIDwvc+mo/Awcc3FP
+	8y7Nw9VoSZ0eVnq35R2fnMEjgtAO/plfZWBC82hHZRXVHVM+DE5kJscdk2j7IhyY5KXB4BSMYll
+	TDQ2WOM5KWKpHpg1yU98Ya1zLEUfB14odrfSRYQPbWyjEHnC985RVmMf5IqpfYRuMLCld8kDQnQ
+	E6/bqshNuTq9uWbBzLQ==
+X-Received: by 2002:ad4:5f0b:0:b0:707:71d9:d6de with SMTP id 6a1803df08f44-70ba7c3ad53mr53884196d6.36.1755296583121;
+        Fri, 15 Aug 2025 15:23:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFleBuWAy5mTXP7RbCTDkEBzEH4bx4YRYK1jQyBfG2qlZcDy/NOHJR86cvYBPpQ4zK6w/3KsQ==
+X-Received: by 2002:ad4:5f0b:0:b0:707:71d9:d6de with SMTP id 6a1803df08f44-70ba7c3ad53mr53883776d6.36.1755296582437;
+        Fri, 15 Aug 2025 15:23:02 -0700 (PDT)
+Received: from [10.178.110.229] (37-33-152-67.bb.dnainternet.fi. [37.33.152.67])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3cc6c5sm510042e87.106.2025.08.15.15.23.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 15:23:01 -0700 (PDT)
+Message-ID: <3d796f6c-d1d0-4499-8e63-bd37bfcc7c3a@oss.qualcomm.com>
+Date: Sat, 16 Aug 2025 01:23:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,236 +89,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 06/20] nvdimm/region_label: Add region label deletion
- routine
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
- <CGME20250730121230epcas5p11650f090de55d0a2db541ee32e9a6fee@epcas5p1.samsung.com>
- <20250730121209.303202-7-s.neeraj@samsung.com>
+Subject: Re: [PATCH v2 01/14] phy: hdmi: Add HDMI 2.1 FRL configuration
+ options
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+References: <20250805-phy-hdptx-frl-v2-0-d118bd4b6e0b@collabora.com>
+ <20250805-phy-hdptx-frl-v2-1-d118bd4b6e0b@collabora.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250730121209.303202-7-s.neeraj@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <20250805-phy-hdptx-frl-v2-1-d118bd4b6e0b@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689fb348 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=bUxD0lY5qGftl71vRM2jGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=QX4gbG5DAAAA:8 a=Wdy89XEDvX1HR8FnkzIA:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX91noAGb3ArSH
+ SO/NfYeWOOQTJougYZAdw8KnK5+ZqA0l3zVMbWzipOGWJAJXps7e7dFRgQha2U31HPZghGzOyir
+ t53gBHnzCrM8Ydp8E2mhrTeDhsLPSGtpQMLbTXM/q5jG6xV6zObtdfXsy7UKzz4UYLH04e/VIWA
+ tHNp3kfovi+H5gTkqNq3ua15d907bkHs+xRfSmMOE+EctdYU8Pk1Vwr8vk2I40YFJGE3gFQWImW
+ Nio+LQphUxMdjBYhF+n7ya6+tZzzIQZtC348naDcEWymvMejaF3GLCk78qZ1g/Y+Jl+rvu498u7
+ zZLIQm16KxeCso0JCfW6xE9Y0XNEIEX279N43+g4rYf0YuMuENHOWZNyI/PGB6oqgPfjLUQ3Vc+
+ F5ZaZh6U
+X-Proofpoint-ORIG-GUID: VWahGsUq7_ye_Kix7LkWTGGI76O54FKD
+X-Proofpoint-GUID: VWahGsUq7_ye_Kix7LkWTGGI76O54FKD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_08,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
 
-
-
-On 7/30/25 5:11 AM, Neeraj Kumar wrote:
-> Added cxl v2.1 format region label deletion routine. This function is
-> used to delete region label from LSA
+On 05/08/2025 14:56, Cristian Ciocaltea wrote:
+> Add support for configuring the Fixed Rate Link (FRL) mode for HDMI
+> PHYs.
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> For improved clarity, also rename existing HDMI mode to HDMI_TMDS.
+> Since this mode is currently not being used explicitly, no further
+> changes are needed.
+
+
+I'd say, this need some explanation, especially for those who don't have 
+access to the HDMI standard. Please mention that FRL is an alternative 
+to the traditional TMDS mode, etc.
+
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
->  drivers/nvdimm/label.c          | 77 ++++++++++++++++++++++++++++++---
->  drivers/nvdimm/label.h          |  6 +++
->  drivers/nvdimm/namespace_devs.c | 12 +++++
->  drivers/nvdimm/nd.h             |  9 ++++
->  include/linux/libnvdimm.h       |  1 +
->  5 files changed, 100 insertions(+), 5 deletions(-)
+>   include/linux/phy/phy-hdmi.h | 14 ++++++++++++--
+>   include/linux/phy/phy.h      |  3 ++-
+>   2 files changed, 14 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 94f2d0ba7aca..be18278d6cea 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -1044,7 +1044,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
->  	return max(num_labels, old_num_labels);
->  }
->  
-> -static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
-> +static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid,
-> +		enum label_type ltype)
->  {
->  	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->  	struct nd_label_ent *label_ent, *e;
-> @@ -1068,8 +1069,23 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  		if (!nd_label)
->  			continue;
->  		active++;
-> -		if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
-> -			continue;
+> diff --git a/include/linux/phy/phy-hdmi.h b/include/linux/phy/phy-hdmi.h
+> index f0ec963c6e84f1b7728acafc824dff191c6b873d..0b26472d8defcc9ded142d4283e29861dc2b3746 100644
+> --- a/include/linux/phy/phy-hdmi.h
+> +++ b/include/linux/phy/phy-hdmi.h
+> @@ -6,16 +6,26 @@
+>   #ifndef __PHY_HDMI_H_
+>   #define __PHY_HDMI_H_
+>   
+> +#include <linux/types.h>
 > +
-> +		switch (ltype) {
-> +		case NS_LABEL_TYPE:
-> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
-> +				continue;
-> +
-> +			break;
-> +		case RG_LABEL_TYPE:
-> +			if (!rgl_uuid_equal(&nd_label->rg_label, uuid))
-> +				continue;
-> +
-> +			break;
-> +		default:
-> +			dev_err(ndd->dev, "Invalid label type\n");
-> +			return 0;
-> +		}
-> +
->  		active--;
->  		slot = to_slot(ndd, nd_label);
->  		nd_label_free_slot(ndd, slot);
-> @@ -1079,7 +1095,7 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  	}
->  	list_splice_tail_init(&list, &nd_mapping->labels);
->  
-> -	if (active == 0) {
-> +	if ((ltype == NS_LABEL_TYPE) && (active == 0)) {
->  		nd_mapping_free_labels(nd_mapping);
->  		dev_dbg(ndd->dev, "no more active labels\n");
->  	}
-> @@ -1101,7 +1117,8 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  		int count = 0;
->  
->  		if (size == 0) {
-> -			rc = del_labels(nd_mapping, nspm->uuid);
-> +			rc = del_labels(nd_mapping, nspm->uuid,
-> +					NS_LABEL_TYPE);
->  			if (rc)
->  				return rc;
->  			continue;
-> @@ -1268,6 +1285,56 @@ int nd_pmem_region_label_update(struct nd_region *nd_region)
->  	return 0;
->  }
->  
-> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
-> +{
-> +	int i, rc;
-> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
-> +	struct nd_label_ent *label_ent;
-> +	int ns_region_cnt = 0;
+>   /**
+>    * struct phy_configure_opts_hdmi - HDMI configuration set
+> - * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
+>    * @bpc: Bits per color channel.
+> + * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
+> + * @frl.rate_per_lane: HDMI FRL Rate per Lane in Gbps.
+> + * @frl.lanes: HDMI FRL lanes count.
+>    *
+>    * This structure is used to represent the configuration state of a HDMI phy.
+>    */
+>   struct phy_configure_opts_hdmi {
+> -	unsigned long long tmds_char_rate;
+>   	unsigned int bpc;
+> +	union {
+> +		unsigned long long tmds_char_rate;
+> +		struct {
+> +			u8 rate_per_lane;
+> +			u8 lanes;
+> +		} frl;
+> +	};
+>   };
+>   
+>   #endif /* __PHY_HDMI_H_ */
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 13add0c2c40721fe9ca3f0350d13c035cd25af45..04c84c1dbd6dac55fd04c54203cff4f9d939d970 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -44,7 +44,8 @@ enum phy_mode {
+>   	PHY_MODE_SATA,
+>   	PHY_MODE_LVDS,
+>   	PHY_MODE_DP,
+> -	PHY_MODE_HDMI,
+> +	PHY_MODE_HDMI_TMDS,
+> +	PHY_MODE_HDMI_FRL,
 
-reverse xmas tree pls
+I'd maybe suggest keeping PHY_MODE_HDMI and having two submodes: one for 
+TMDS (default), one for FRL.
 
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +
-> +		/* Find non cxl format supported ndr_mappings */
-> +		if (!ndd->cxl) {
-> +			dev_info(&nd_region->dev, "Region label unsupported\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* Find if any NS label using this region */
-> +		mutex_lock(&nd_mapping->lock);
-> +		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
-> +			if (!label_ent->label)
-> +				continue;
-> +
-> +			/*
-> +			 * Check if any available NS labels has same
-> +			 * region_uuid in LSA
-> +			 */
-> +			if (nsl_region_uuid_equal(&label_ent->label->ns_label,
-> +						  &nd_set->uuid))
-> +				ns_region_cnt++;
-> +		}
-> +		mutex_unlock(&nd_mapping->lock);
-> +	}
-> +
-> +	if (ns_region_cnt) {
-> +		dev_dbg(&nd_region->dev, "Region/Namespace label in use\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +
-> +		rc = del_labels(nd_mapping, &nd_set->uuid, RG_LABEL_TYPE);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int __init nd_label_init(void)
->  {
->  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
-> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
-> index 0f428695017d..cc14068511cf 100644
-> --- a/drivers/nvdimm/label.h
-> +++ b/drivers/nvdimm/label.h
-> @@ -30,6 +30,11 @@ enum {
->  	ND_NSINDEX_INIT = 0x1,
->  };
->  
-> +enum label_type {
-> +	RG_LABEL_TYPE,
+>   };
+>   
+>   enum phy_media {
+> 
 
-REGION_LABEL_TYPE preferred
 
-> +	NS_LABEL_TYPE,
-> +};
-> +
->  /**
->   * struct nd_namespace_index - label set superblock
->   * @sig: NAMESPACE_INDEX\0
-> @@ -235,4 +240,5 @@ struct nd_namespace_pmem;
->  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  		struct nd_namespace_pmem *nspm, resource_size_t size);
->  int nd_pmem_region_label_update(struct nd_region *nd_region);
-> +int nd_pmem_region_label_delete(struct nd_region *nd_region);
->  #endif /* __LABEL_H__ */
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index 02ae8162566c..e5c2f78ca7dd 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -244,6 +244,18 @@ int nd_region_label_update(struct nd_region *nd_region)
->  }
->  EXPORT_SYMBOL_GPL(nd_region_label_update);
->  
-> +int nd_region_label_delete(struct nd_region *nd_region)
-> +{
-> +	int rc;
-> +
-> +	nvdimm_bus_lock(&nd_region->dev);
-> +	rc = nd_pmem_region_label_delete(nd_region);
-> +	nvdimm_bus_unlock(&nd_region->dev);
-> +
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(nd_region_label_delete);
-> +
->  static int nd_namespace_label_update(struct nd_region *nd_region,
->  		struct device *dev)
->  {
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index 15d94e3937f0..6585747154c2 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-> @@ -322,6 +322,15 @@ static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
->  		export_uuid(ns_label->cxl.region_uuid, uuid);
->  }
->  
-> +static inline bool nsl_region_uuid_equal(struct nd_namespace_label *ns_label,
-> +				  const uuid_t *uuid)
-> +{
-> +	uuid_t tmp;
-
-s/tmp/uuid/
-
-> +
-> +	import_uuid(&tmp, ns_label->cxl.region_uuid);
-> +	return uuid_equal(&tmp, uuid);
-> +}
-> +
->  static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
->  				  const uuid_t *uuid)
->  {
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index b06bd45373f4..b2e16914ab52 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -310,6 +310,7 @@ int nvdimm_has_cache(struct nd_region *nd_region);
->  int nvdimm_in_overwrite(struct nvdimm *nvdimm);
->  bool is_nvdimm_sync(struct nd_region *nd_region);
->  int nd_region_label_update(struct nd_region *nd_region);
-> +int nd_region_label_delete(struct nd_region *nd_region);
->  
->  static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
->  		unsigned int buf_len, int *cmd_rc)
-
+-- 
+With best wishes
+Dmitry
 
