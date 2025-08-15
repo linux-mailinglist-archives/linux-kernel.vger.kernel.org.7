@@ -1,347 +1,234 @@
-Return-Path: <linux-kernel+bounces-770098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7288B276B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8C6B276A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88575C02AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:24:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9EC260186E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF42280308;
-	Fri, 15 Aug 2025 03:24:21 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAC29C326;
+	Fri, 15 Aug 2025 03:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HI0Pl2H6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A4217A310;
-	Fri, 15 Aug 2025 03:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755228260; cv=none; b=GOrYdlniUXtQWhlfa4E9PKwzPX4+a1DmtctqF8VXrMged9+7N2CJ6nV3eTu8QUgpSSsJZBIn/G0z1NseaCW9wf8/xrnOFrVG9LJYExdR6fw4Gsya2gVCcLnxLtkubts6T05BTm2QIpIHJAK5TDSWuyDT5FPv2Q8ZFfw5CPIR+Q8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755228260; c=relaxed/simple;
-	bh=7CDzsalSvM+eE9NmMVshPuJKnICEntU14YPizv9tMAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jyLC8T/ezfMkaqylHVQsnbUYNfpNwndH9FpqqtTDN9Lh3zDqTT7BBbLsXobftx4Kf2mM37LLvc0Wka/xMuQOd3pyjKkOITJlTTYj86Wtmp8WgeDOwESXlRDVUkm5atXLyE1JeqEe9kA/1JQJ53PIzPPA9SYc2wNj0jiFf8ZgTEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c36sN2Tf3zKHMnb;
-	Fri, 15 Aug 2025 11:24:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A5C441A17BA;
-	Fri, 15 Aug 2025 11:24:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHzw9VqJ5oB1PoDg--.58085S4;
-	Fri, 15 Aug 2025 11:24:07 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: sfrench@samba.org,
-	pc@manguebit.org
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v4] smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect
-Date: Fri, 15 Aug 2025 11:16:18 +0800
-Message-Id: <20250815031618.3758759-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBE72BE034
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755227898; cv=fail; b=usvFgR4VAdVknaMMvtMoTMn6e0otT1PeXPxkupg1i/OqncWvOV00z1MauisM91Kv34WuI8gDu4wsIR7lB7Av1NDMUuiW2Zi6vsiO4nKM31qhpmfHIuqpG/iklb0ucXqMY0ztb0tRtysjUQk/QdHwDmaDLoAyEdAvD4e9rMZLoco=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755227898; c=relaxed/simple;
+	bh=LyuC1dPrQ9O5xKesJEb3zN/xO0ni6Opcl9UyiSwWf7w=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ye+3TCdhneiEvHs23PHe0S9cjuVakDqANEQglRCZuGygdwa5QQJKEcvJvGwC9g6s7O1F1a+LsqXdDJz774OFD0YdXwQJQsEDXk/gT+FMYTg/ctDkV6Ey5EuN8GdpXaQotfpuHu3EzIGRkLlz22GRaGAp+0iuxCkaKC1r5NoytNo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HI0Pl2H6; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755227898; x=1786763898;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LyuC1dPrQ9O5xKesJEb3zN/xO0ni6Opcl9UyiSwWf7w=;
+  b=HI0Pl2H6t4yEQ0rwE4AFeOhRyfvF54d8Q32mRfbe6qTD9VCpLJw70KJc
+   XcaIYi17cJwCdSmGLS7ixBg8Em7hFZEYAk9wFXgWcLnOZInphbYVY/As3
+   ogQ+VH+U1H1GqiwtMlld5dUkqqV6mIriMRREFmdI50M44V+E270wR97io
+   A2lmuDZ91NsxtefFyBXjpsdD7eYGbr0l4w3MmSCANW7QRKkLYWNYMmhBS
+   9fWu7oQ+PuitvCBw67nSmiuGu3x9IO+6GJGc57F0ZwW7uDrWTDUrdHhnd
+   dU1iIKNA6hfgrZZVUwgKkZ32UmOxqIO4fe6FSpgiNGZkhNuncZDenJ/OO
+   A==;
+X-CSE-ConnectionGUID: YJwWooezSB2A1+NIM75qBw==
+X-CSE-MsgGUID: Qg9Yx+zWQHezwufsyecUPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="67823873"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="67823873"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:18:18 -0700
+X-CSE-ConnectionGUID: iwleZipGSQeUDJx3/dLVqA==
+X-CSE-MsgGUID: Pxg7WPD6RxywcTja+7erhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="172145369"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:18:16 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 14 Aug 2025 20:18:16 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 20:18:16 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.40) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 14 Aug 2025 20:18:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=osWTMGm61/NVwZUhHl+KnszRjPX/eMlSWqHZniRnufMssgh+ukKIPzpnpd575e9Lp1PSVf4AToobYYTJrsp6x2VlyAS6XqV6bBspJMiEXNkGYc8gWqh1SxjP10RwxUPfM/z2i5UJXmUS85QJuYm1hVY2LvVS0m65OIHO4xWdIFIgHuPAlWOmlOecJ4XJ1cwuy3esYeONbCKltH09dCh44CdmkTnjdRynsp7zLgdr2OXoEd/mcISwHkqc4LbyFzq1UY4J+MBll/9Wwn0RDoQSzHXrFLe7l4uyg1iv2A4L6erDq7vnMuiSIjX65ZlpEiutXWj+2aKX2NKRJMokvdWBew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLqJYHxl916RSa8Q5KOL2/Xws9fnzNUcURqGlbscOhk=;
+ b=b0a0cTLocs2CRMr9gRFaRMjF1P/lwrANEEv4UJxxMulbrnOS82k2CfKujULmeCcsjTdk2TNJodUrVieB3VMONxuLpvATMM0a1bAAa6dawx+/g6nB+Ujql5hYw+UfgcW7kkOJCDW4FvG3ZiVUlvaZvQnBh7oklvYuwBQa/CDhxkAd25aUXkDjga744iFwQribwmmY0JFbWYKu53SwbXHCXW61K4AY+X84vruajEsGW/ESXUZWSWvQBWSUKlM6IZR6NWsMVX6FyPFo75T8ISB/foF2gFRohoLOyjkiVcZr87zuXdezfP7xxsx2Hlt9GT0WYSgfYN4Girk0KMscGSfoCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ IA1PR11MB8224.namprd11.prod.outlook.com (2603:10b6:208:44f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 03:18:14 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 03:18:14 +0000
+Message-ID: <4b552080-5299-4234-b101-eab04b21bb74@intel.com>
+Date: Fri, 15 Aug 2025 11:18:04 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [sched/fair] 155213a2ae: unixbench.throughput
+ 23.2% regression
+To: kernel test robot <oliver.sang@intel.com>, Chris Mason <clm@fb.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot
+	<vincent.guittot@linaro.org>, <pan.deng@intel.com>, <yu.ma@intel.com>,
+	<aubrey.li@linux.intel.com>
+References: <202508150416.d7153a48-lkp@intel.com>
+Content-Language: en-US
+From: "Chen, Yu C" <yu.c.chen@intel.com>
+In-Reply-To: <202508150416.d7153a48-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0035.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::13) To DM4PR11MB6020.namprd11.prod.outlook.com
+ (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHzw9VqJ5oB1PoDg--.58085S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3XrWUuF4fWrWktFyxZrb_yoW3KFW8pF
-	ySyrWSgr48Gr1UWws7JF4ku34F934kCFy5Cr4xG3WvqayDZrWIgFWqkF1j9FySyayDt3s3
-	Wr4Dt3y29F18ua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|IA1PR11MB8224:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ba1e8cf-de12-4eaa-8a3a-08dddbaa5e98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cEhCU25kejE0RFMxRHNDcitmOG8rei9TQldnNlplRjJPb24zMVJ0Q0p4aGJI?=
+ =?utf-8?B?Sno1VFZ0THMrMVR6MXlRZkc4Yjhjc3dwUFl4Z0JydTMralB0TGx3YXRmMnZS?=
+ =?utf-8?B?UVFsajY1eXhHaHlCZkFPNTJFdVpxc2xiQ0dqbDUvRFVRTGsxYU9hZ3dYeGl1?=
+ =?utf-8?B?STlpaTU0aVFIUVZTOFY4Vi9lNExjMXJTaXhZNkZVT0tuTUpDVGVNeE94WTBB?=
+ =?utf-8?B?WHpMbFdjcUlSQzZGbTlxTnNUZVBCVEp2TEdhcm14cVF3L0lRamk4c2F0MVUv?=
+ =?utf-8?B?VlZMdUtrOHVNWFlaOWV4dE9SYm10V21ZWFI4dFIvekVSQnVOYTNHN2pOcjNL?=
+ =?utf-8?B?alE0a0dBSE04MklCVEpCUWZqeCtQNXJRYlVBZHZaWEU1RXBwWlAvS1lHRTV0?=
+ =?utf-8?B?TjkvT0dVQUFDWWEvU1BSQm1idEZJb3YyM2Zqd1ppaXVPeFd3T3U2SDdVVHli?=
+ =?utf-8?B?N1oyMGJVQ1BGcjZNZ1BEM1BQQnJOTEZINkkxVUVEa1VRbWwxUnVmSXpsN1pE?=
+ =?utf-8?B?K0NTWkZlL0F0cFFWVFpxaHoyVTFxTUpvSHRvWDgzZXFoT2NRN2Judzh4ZVVw?=
+ =?utf-8?B?U3lyb3F1eVJuYWgvN2F2bEVRd0M4R0sxenZKUHY3R1N4ZFp4UDJZUXAzK0t4?=
+ =?utf-8?B?b0E1YjVWbU9IUkQyb081RGJqdWp6UjFiejBrUFJxWFlLZG44Y2NZWWM5Nmcr?=
+ =?utf-8?B?eEF4OUo2QzNIejEzQkU5emFmZ1hoMVJucXlic0pOTkI4UEFKbE9kVURPRnB5?=
+ =?utf-8?B?eEJheisxVXhvb0xaNjFsR2E1N0RVRElwY3p4ZHQ0ZWphL1dWa29FZS91bmhq?=
+ =?utf-8?B?Q0VGWkZ6Q0RMTzZLb3FFWTRPTmR6MmIySElBaHgvdjFwK1lIZ2VidEJKbjlo?=
+ =?utf-8?B?Z1ViTmtGNEgvaU93dmNwNHh0a3RBaGJrck8xaitJRzNCbjBTNjJBZmdBQ1dH?=
+ =?utf-8?B?TE8wTG5rbmFXaDJjaFBrTE0zbjZvSHRYckNqRXhhVU5VTk5zSFhIUzd4SmlL?=
+ =?utf-8?B?b1FnenlXcnlxN1c2Qzc0Q2ltYlkwNVd3STV3SUtxZVpCWlBROTl4UFBPcmxq?=
+ =?utf-8?B?bUJ0L2dyeHdzZ1RoL00vWlA4RFd5N2R0NFBTbEZXMGFsSGc3VUdCQ0F6dnBX?=
+ =?utf-8?B?NVBwdjcwQXQ0UkJlUzdtamVMYjNNbE1JOUFPRGtyMEluNDE0ZFd5M3o4NDZS?=
+ =?utf-8?B?STlhcTF0T3A3L3dIK3F3SzR1WGdRR0Z3NzJWUWMzZDRENHI5bGplaFBVcmtQ?=
+ =?utf-8?B?V1RSWmxtMkE2aGp4NkgyK1lPNEcveGNBNy9VU25BSjltaWdxWWZ6dVJrNnEz?=
+ =?utf-8?B?STA1SGNlWk44V0NHa01nNjJBdFk3V1RqQ1Y5OGV0M1UwdTRrSHB0czJXdzdt?=
+ =?utf-8?B?bGtkMUpuc3pyS29jK0hCZ2NpVHpKc2JrR0FZQit4aGdJSjRSSC9RSW9VWlpS?=
+ =?utf-8?B?a0RhSjhGYXp6c1I2R1UxQVlvMkxXZk5Hd0dVejBUT2ptbnpuSEdZTTE3dUln?=
+ =?utf-8?B?ZTNmUmlzVmQ5SWxzUFgzOEp6VEJ5cXE5b24xaWlQZU5vWFNTNGVGY0RHejZJ?=
+ =?utf-8?B?WHMxeCtCWnR5ZWc0L3NuMUprZFlXb1pLYXNWVzJTdG9UMHRvZ1JGWjg1cXY1?=
+ =?utf-8?B?YXZGS3VNUUl6bVRKdm9WVXdOOUpZUGxBNUxOMzJLdzRRSUY1UktHejM1QWNk?=
+ =?utf-8?B?dXIyMVA3K2ZIU21MSnhLcHNYWTRiR25XMXB3ZnZoOWlqdnpoZldDMjZlUkVo?=
+ =?utf-8?B?NkNwQzl2c1doRUU1NEtXMS9NTGxwRHZsbFFKR1B4VDVzS0tlZVhaRXdrWkVv?=
+ =?utf-8?B?NkdUcVFXMEtCem9YSDdRazlxbTd2eG15MnpkZm9xaWJSbkxPTnNTYk1HK0d6?=
+ =?utf-8?B?Ky9nQU4rblIxNWw5UEIxZEdTMlFxbjBKNFUwMGNYd0xpSU04dmxNZkJTdnBY?=
+ =?utf-8?Q?ETnrsOmUH/w=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bXhmYWgrUEJBTjhCRXpsRTVvVjVIaE5IQkVHS2lWOVFkdWtScnMwWGV3MzBa?=
+ =?utf-8?B?SXRvK1FHK2ZVMGRBYlRqbk15TGxselR3NW1HeFowMHdqT256cHNWNFhCZmg2?=
+ =?utf-8?B?a0JaeVgzM00xUDJwOGVxVVEzWUFLVlo1eklBYjVuUytBSmhkRWU1QjVxL1FH?=
+ =?utf-8?B?WTYzdHI1V3NFaHB2b3hZK1FZZHdNUjhKaWxCMEFtT09RTFFVdi9ObGM4d0oz?=
+ =?utf-8?B?ZlF2OVVpTDN2d0hLaVBoVjRLSjVwV2dBbHplMURqajBxUFRqUkVjdXl3ZTZQ?=
+ =?utf-8?B?Z3hiOTFuaUZPaDM5OGZ6NCtjTE1OVDl0MTkxc2VDemJxR3ZTQm8zcWJJM0c3?=
+ =?utf-8?B?Q1pKUFdqTmJtOXcrd2JWOU5FcmRPOTJkZ1BxcDl2Y1B5aWtjNDFGaS93L01D?=
+ =?utf-8?B?UU5CbnVlU25XME9JdTJURG51aDNIQnpBcGdxc25ISWovajRVcWNRa3VtVVlG?=
+ =?utf-8?B?RTgya3QxMk5xTWcraXBxN0IweWV1eEMyaktXL1ptMmpwbGYzeVNwa0IyY25k?=
+ =?utf-8?B?YjRUNFE1dHZOT0VGeHpEYm8zRUNyWElqWHBQdnNLdXBsUHdMNW0xMFcycHRn?=
+ =?utf-8?B?d05LTTBHMEMwZCtkdmhvbTdKVXJ4T0cyZ01zZmNwdzkzT3czSHdOdDR4aTc3?=
+ =?utf-8?B?MkxVUWF6S1hnbngwZldoeXVGTUdoZjYxdDdkS1BQWUZINTRIR3FoRlpUc0J0?=
+ =?utf-8?B?UzRlMFNOWGR2SHhSQjRteWhEYzU1OXRHNE44aHVqMTZvUkdJTnlzU2FMa21K?=
+ =?utf-8?B?ZmIzVnpyY1Z3V1U1SjVZaXhPZmhOODB2MDlBL2JJUm5aVUtkMjRlZVZnWmZ2?=
+ =?utf-8?B?NU05M3BDOXU2Ri9YMzBqUWYvdGQwRURhcUxTV2l2bXhBYStMQUxFSHlCeGdU?=
+ =?utf-8?B?VnRqRFNwU0RVWXg5cUk3andZTmxuajJHeWI2NFJRRUV6TXBZbjY4ZXNGM0Ur?=
+ =?utf-8?B?dE84K3FTaXRhYzIyeHd1Q2E2VTNxUlNtUTZxRS9TWitaKzB4YnBIMzJIajJs?=
+ =?utf-8?B?UnYrK3o0N2pEUytIRXp2OVhmSCt3UzZzTnlLeUh2d2ticzJrczBaMVZwdVps?=
+ =?utf-8?B?N3RUZVg5UldXeE5ZTk5oRDErSFhLV2V2YjJPaHlQQ3hCNjkvYk5pamNiSUZ4?=
+ =?utf-8?B?V2hZbGdFNy8vWlpEcUQwLzFSNDdSalhMcmFBL2MxWVE5RjdLeHBJbjN5eWlj?=
+ =?utf-8?B?MTVCVWZHc3ZrTGE2M092TURvZGU4cjNKeCs2RGRxTWtQL0h0TDZteW10a0JV?=
+ =?utf-8?B?bFdaOXhUd1l1UVE2WmZCS0tiYmJxQjBxOEwxdmtXcnlDN0I1a2pJcjdtMmVM?=
+ =?utf-8?B?TFBLUGwyZU1RajEzZE1ldGNFeUtVUDg1aEdQNGVUZEpVeFBLWTZKOFI0bm9s?=
+ =?utf-8?B?d1BzRG5oNC8zSE42aUV0TG9QYjJLaTUwVyt3TEgvYURsV2Zxa0dhcjhZZ1VS?=
+ =?utf-8?B?ajRsbGlQUkl6c0lZZUF5OU94T1A2NXVQYTQ2MDJDS043cVo3MHFaMFJ2d0I0?=
+ =?utf-8?B?dlBlcks2cHhFU210VjBKNmdZVW5hTlk3bE9HaFBKdisvV3dSME41YnRGVGI1?=
+ =?utf-8?B?Um1FR1ppS0hvRmNXallLS1lVb3BoVmphclFHZmljam9rNXJmSExJMjJsMXpu?=
+ =?utf-8?B?SmIzVmJhaFphZFpycHRQOWtUNU5XZU80VVlTUWhUQlFCRGlSYjlxMUxHN2M5?=
+ =?utf-8?B?SUlKYWVyc2N6Ri9yMFdsQzBiZzF4V1ZoZXp0dE8rcmhCcklPWWhYbWIycHVZ?=
+ =?utf-8?B?L2EyR09ONll6UHdQZ1FIVGtJUVE2U2UzL0VYSlBWZkl0TklOZkExbEk5Y3E2?=
+ =?utf-8?B?NHNrOVRtdUlMcDFXd3RTZEx1VXRLd2RSY2M0a2hYSFlDdUU2UEVkM1dpa1FH?=
+ =?utf-8?B?cVZWQUxrVnExamJ4R3p0KzJHOTV3UE9pV2UrTS94WFJSRGFyK25CSWtMUlFh?=
+ =?utf-8?B?RUsrTDZxMFp0bUVwUlVOSTlYSE5NSi9vaDc3UWdIdVd1U1hQSEFRU0ZrN3hq?=
+ =?utf-8?B?R3dJeXR1MzRYbmFSekVjRjdodUFJMnZiVmQwS3NvT2E0MUgwWHRlZjZBSTg2?=
+ =?utf-8?B?RFBDamhUMlZHQmVSTFpueFVYYVNDemJzVkVmMS83U1RYVVJvcHR1aytxTytB?=
+ =?utf-8?Q?pgatvc+rsNckkzxGZo4Mi7QcO?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ba1e8cf-de12-4eaa-8a3a-08dddbaa5e98
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 03:18:13.8406
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bt5JMmAApdOK5QgipjSK/gGhzUC9fbdj5VfIa+7AIdKbrwcjVlpWAXnjMKgci/M7332FXG7O0KXLzyWfV9wqsw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8224
+X-OriginatorOrg: intel.com
 
-An AA deadlock occurs when network interruption during mount triggers
-DFS reconnection logic that calls iterate_supers_type().
+Hi Oliver,
 
-The detailed call process is as follows:
+On 8/15/2025 11:14 AM, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> 
+> we reported a "22.9% regression of unixbench.throughput" for this patch in
+> https://lore.kernel.org/all/202507150846.538fc133-lkp@intel.com/
+> where there are some discussions.
+> 
+> later we also reported
+> "[tip:sched/core] [sched/fair]  155213a2ae:  unixbench.throughput 20.2% regression"
+> in
+> https://lore.kernel.org/all/202507281046.e71b853a-lkp@intel.com/
+> 
+> 
+> since now the commit is in mainline, we rebuild the kernel and rerun the tests,
+> still observed similar regression. below full report is just FYI.
+> 
 
-      mount.cifs
--------------------------
-path_mount
-  do_new_mount
-    vfs_get_tree
-      smb3_get_tree
-        cifs_smb3_do_mount
-          sget
-            alloc_super
-              down_write_nested(&s->s_umount, ..);  // Hold lock
-          cifs_root_iget
-            cifs_get_inode_info
-              smb2_query_path_info
-                smb2_compound_op
-                  SMB2_open_init
-                    smb2_plain_req_init
-                      smb2_reconnect           // Trigger reconnection
-                        cifs_tree_connect
-                          cifs_get_dfs_tcon_super
-                            __cifs_get_super
-                              iterate_supers_type
-                                down_read(&sb->s_umount); // Deadlock
-    do_new_mount_fc
-      up_write(&sb->s_umount);  // Release lock
+Peter has suggested some directions for the fix, will take a look next week.
 
-During mount phase, if reconnection is triggered, the foreground mount
-process may enter smb2_reconnect prior to the reconnect worker being
-scheduled, leading to a deadlock when subsequent DFS tree connect
-attempts reacquire the s_umount lock.
-
-The essential condition for triggering the issue is that the API
-iterate_supers_type() reacquires the s_umount lock. Therefore, one
-possible solution is to avoid using iterate_supers_type() and instead
-directly access the superblock through internal data structures.
-
-This patch fixes the problem by:
-- Add vfs_sb back-pointer to cifs_sb_info for direct access
-- Protect list traversal with existing tcon->sb_list_lock
-- Use atomic operations to safely manage super block references
-- Remove complex callback-based iteration in favor of simple loop
-- Rename cifs_put_tcp_super() to cifs_put_super() to avoid confusion
-
-Fixes: 3ae872de4107 ("smb: client: fix shared DFS root mounts with different prefixes")
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
-
-V4:
- - Perform a null pointer check on the return value of cifs_get_dfs_tcon_super()
-   to prevent NULL ptr dereference with DFS multiuser mount
-
-V3:
- - Adjust the trace diagram for the super_lock_shared() section to align with
-   the latest mainline call flow. 
-V2:
- - Adjust the trace diagram in the commit message to indicate when the lock
-   is released
-
- fs/smb/client/cifs_fs_sb.h |  1 +
- fs/smb/client/cifsfs.c     |  1 +
- fs/smb/client/cifsproto.h  |  2 +-
- fs/smb/client/dfs.c        |  4 +-
- fs/smb/client/misc.c       | 84 ++++++++++++++------------------------
- 5 files changed, 35 insertions(+), 57 deletions(-)
-
-diff --git a/fs/smb/client/cifs_fs_sb.h b/fs/smb/client/cifs_fs_sb.h
-index 5e8d163cb5f8..8c513e4c0efe 100644
---- a/fs/smb/client/cifs_fs_sb.h
-+++ b/fs/smb/client/cifs_fs_sb.h
-@@ -49,10 +49,11 @@
- 
- struct cifs_sb_info {
- 	struct rb_root tlink_tree;
- 	struct list_head tcon_sb_link;
- 	spinlock_t tlink_tree_lock;
-+	struct super_block *vfs_sb;
- 	struct tcon_link *master_tlink;
- 	struct nls_table *local_nls;
- 	struct smb3_fs_context *ctx;
- 	atomic_t active;
- 	unsigned int mnt_cifs_flags;
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 3bd85ab2deb1..383f651eb43f 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -939,10 +939,11 @@ cifs_get_root(struct smb3_fs_context *ctx, struct super_block *sb)
- 
- static int cifs_set_super(struct super_block *sb, void *data)
- {
- 	struct cifs_mnt_data *mnt_data = data;
- 	sb->s_fs_info = mnt_data->cifs_sb;
-+	mnt_data->cifs_sb->vfs_sb = sb;
- 	return set_anon_super(sb, NULL);
- }
- 
- struct dentry *
- cifs_smb3_do_mount(struct file_system_type *fs_type,
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index c34c533b2efa..6415bb961c1e 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -678,11 +678,11 @@ int copy_path_name(char *dst, const char *src);
- int smb2_parse_query_directory(struct cifs_tcon *tcon, struct kvec *rsp_iov,
- 			       int resp_buftype,
- 			       struct cifs_search_info *srch_inf);
- 
- struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon);
--void cifs_put_tcp_super(struct super_block *sb);
-+void cifs_put_super(struct super_block *sb);
- int cifs_update_super_prepath(struct cifs_sb_info *cifs_sb, char *prefix);
- char *extract_hostname(const char *unc);
- char *extract_sharename(const char *unc);
- int parse_reparse_point(struct reparse_data_buffer *buf,
- 			u32 plen, struct cifs_sb_info *cifs_sb,
-diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
-index f65a8a90ba27..37d83aade843 100644
---- a/fs/smb/client/dfs.c
-+++ b/fs/smb/client/dfs.c
-@@ -429,11 +429,11 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
- 				       tcon, tcon->ses->local_nls);
- 		goto out;
- 	}
- 
- 	sb = cifs_get_dfs_tcon_super(tcon);
--	if (!IS_ERR(sb))
-+	if (!IS_ERR_OR_NULL(sb))
- 		cifs_sb = CIFS_SB(sb);
- 
- 	/* Tree connect to last share in @tcon->tree_name if no DFS referral */
- 	if (!server->leaf_fullpath ||
- 	    dfs_cache_noreq_find(server->leaf_fullpath + 1, &ref, &tl)) {
-@@ -446,11 +446,11 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
- 				     &tl);
- 	free_dfs_info_param(&ref);
- 
- out:
- 	kfree(tree);
--	cifs_put_tcp_super(sb);
-+	cifs_put_super(sb);
- 
- 	if (rc) {
- 		spin_lock(&tcon->tc_lock);
- 		if (tcon->status == TID_IN_TCON)
- 			tcon->status = TID_NEED_TCON;
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index da23cc12a52c..3b6920a52daa 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -1108,84 +1108,60 @@ int copy_path_name(char *dst, const char *src)
- 	/* we count the trailing nul */
- 	name_len++;
- 	return name_len;
- }
- 
--struct super_cb_data {
--	void *data;
--	struct super_block *sb;
--};
--
--static void tcon_super_cb(struct super_block *sb, void *arg)
-+static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
- {
--	struct super_cb_data *sd = arg;
-+	struct super_block *sb;
- 	struct cifs_sb_info *cifs_sb;
--	struct cifs_tcon *t1 = sd->data, *t2;
- 
--	if (sd->sb)
--		return;
-+	if (!tcon)
-+		return NULL;
- 
--	cifs_sb = CIFS_SB(sb);
--	t2 = cifs_sb_master_tcon(cifs_sb);
--
--	spin_lock(&t2->tc_lock);
--	if ((t1->ses == t2->ses ||
--	     t1->ses->dfs_root_ses == t2->ses->dfs_root_ses) &&
--	    t1->ses->server == t2->ses->server &&
--	    t2->origin_fullpath &&
--	    dfs_src_pathname_equal(t2->origin_fullpath, t1->origin_fullpath))
--		sd->sb = sb;
--	spin_unlock(&t2->tc_lock);
--}
-+	spin_lock(&tcon->sb_list_lock);
-+	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
- 
--static struct super_block *__cifs_get_super(void (*f)(struct super_block *, void *),
--					    void *data)
--{
--	struct super_cb_data sd = {
--		.data = data,
--		.sb = NULL,
--	};
--	struct file_system_type **fs_type = (struct file_system_type *[]) {
--		&cifs_fs_type, &smb3_fs_type, NULL,
--	};
--
--	for (; *fs_type; fs_type++) {
--		iterate_supers_type(*fs_type, f, &sd);
--		if (sd.sb) {
--			/*
--			 * Grab an active reference in order to prevent automounts (DFS links)
--			 * of expiring and then freeing up our cifs superblock pointer while
--			 * we're doing failover.
--			 */
--			cifs_sb_active(sd.sb);
--			return sd.sb;
--		}
-+		if (!cifs_sb->vfs_sb)
-+			continue;
-+
-+		sb = cifs_sb->vfs_sb;
-+
-+		/* Safely increment s_active only if it's not zero.
-+		 *
-+		 * When s_active == 0, the super block is being deactivated
-+		 * and should not be used. This prevents UAF scenarios
-+		 * where we might grab a reference to a super block that's
-+		 * in the middle of destruction.
-+		 */
-+		if (!atomic_add_unless(&sb->s_active, 1, 0))
-+			continue;
-+
-+		spin_unlock(&tcon->sb_list_lock);
-+		return sb;
- 	}
--	pr_warn_once("%s: could not find dfs superblock\n", __func__);
--	return ERR_PTR(-EINVAL);
--}
-+	spin_unlock(&tcon->sb_list_lock);
- 
--static void __cifs_put_super(struct super_block *sb)
--{
--	if (!IS_ERR_OR_NULL(sb))
--		cifs_sb_deactive(sb);
-+	return NULL;
- }
- 
- struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
- {
- 	spin_lock(&tcon->tc_lock);
- 	if (!tcon->origin_fullpath) {
- 		spin_unlock(&tcon->tc_lock);
- 		return ERR_PTR(-ENOENT);
- 	}
- 	spin_unlock(&tcon->tc_lock);
--	return __cifs_get_super(tcon_super_cb, tcon);
-+
-+	return cifs_get_tcon_super(tcon);
- }
- 
--void cifs_put_tcp_super(struct super_block *sb)
-+void cifs_put_super(struct super_block *sb)
- {
--	__cifs_put_super(sb);
-+	if (!IS_ERR_OR_NULL(sb))
-+		deactivate_super(sb);
- }
- 
- #ifdef CONFIG_CIFS_DFS_UPCALL
- int match_target_ip(struct TCP_Server_Info *server,
- 		    const char *host, size_t hostlen,
--- 
-2.39.2
+thanks,
+Chenyu
 
 
