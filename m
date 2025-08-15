@@ -1,100 +1,301 @@
-Return-Path: <linux-kernel+bounces-771513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA559B2884C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1A4B28854
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558741CE09BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305F31CE084F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64784244186;
-	Fri, 15 Aug 2025 22:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310F925DB06;
+	Fri, 15 Aug 2025 22:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="otoMbQN3"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ESstAl4r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE5F2036F3
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC561245022;
+	Fri, 15 Aug 2025 22:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755296503; cv=none; b=A7YXdXeMzaDBYAs30yTJtlu2w0jUBbhhhptNdTpy4PqxyJJDdqAdU00IYJzIKi2ueDdZF52DvIVbFfMGZ1TTy5KsigCdwJmoTmPP7lvlt08DnihH2kbx0jU0/qRgfE2tbMbTnL/W3KruVW9bBIYUPMh5AReSErdSoYYBRFCJo3U=
+	t=1755296561; cv=none; b=QhvWhld2nZ5d9mWdEwZSZMYCRKTqIXb2O8ZKH2N4rTbSuNuV2IcMncDpQi5E90rCdssq/pS1qIdZ9YCs0JosmfUK3e4N8JzRM10e1xHwsQWnt85ByQToSMErTqwiklqV+9dUtzsOz0mtY1TzEIfSstUVkvGwKAF+5pmaYNIwwcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755296503; c=relaxed/simple;
-	bh=4Ez0WKG/3WuzadLVXsjs8HTllh4A7LEq9nEOCJvMRVI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eL/Rb5W28A+Ncx+vgi6xCGvuF9CZ8j5Cy4HaKuo4OCmOB2J1Lk4hipeoajP3xlIPcsz6dlz+c5V9PCTXouNZVgg/IrSws7nrWbjEFL4CKYHfKB79f3GK4XIaQ7L3Hq7PNPYe4ui55FooTsYFt1osV/RkoA+fm6LMVU4QKS27EYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=otoMbQN3; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755296499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rgYtSz7R5teKnHMH10nhKu0C+pGzCAV4oleJjtCiZtI=;
-	b=otoMbQN3GkVTU0l/Rh3ZMBeC1r1PX/FjhMh9v/jmTvz7zJkTG+nf02A3nyaSN3V526/+f+
-	6fSHjQqp7Qi6g+uNEhTUBDjxZOFxIbwdL0bYSmJUS8sD8wp19zOsANFntwx1bbUJ5o2zJ4
-	v6k+sHg3pk3N+F6igLB4JuAc1xtJwb4=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  "linux-mm@kvack.org"
- <linux-mm@kvack.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by commit 4687fdbb805a ("mm/filemap: Support
- VM_HUGEPAGE for file mappings")
-In-Reply-To: <87plcwdyjs.fsf@linux.dev> (Roman Gushchin's message of "Fri, 15
-	Aug 2025 15:12:39 -0700")
-References: <87plcw8lyq.fsf@linux.dev> <aJ-gGXNwOMeLBs0W@casper.infradead.org>
-	<87plcwdyjs.fsf@linux.dev>
-Date: Fri, 15 Aug 2025 15:21:35 -0700
-Message-ID: <87bjogdy4w.fsf@linux.dev>
+	s=arc-20240116; t=1755296561; c=relaxed/simple;
+	bh=aXCY1lGZXU4wb1kzg6itn4oaYVR+j3HG37VQ140BkI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KQLFCpCcf9TPqc3B58Jufk8y6Aui9qgM/DVd9aPseYFwXnr8Q29j2yVG8wYjlkCXZv3oBRpEXZVZQZYlBzNroY3/xgiX4h3zBZEwNYCUUKuArZJqcP/RBGDpAJLv9fn1nvFGkzb3uNK0134dL2FaUk691MHJsAVvuz4Nya2kT1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ESstAl4r; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755296560; x=1786832560;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aXCY1lGZXU4wb1kzg6itn4oaYVR+j3HG37VQ140BkI8=;
+  b=ESstAl4rs+wTIXyFNDaQ3EoVGaKhhY/urfgyWOIRcw5sK+Jz+0kJhcMr
+   83psQm/GLCZNmDykaUMi8i+g1+IKa6NgkG9c3yAXYmdFc9FURbvQJUQHz
+   Bt8bZ9kmwG5Ft1dI1eDjgyVaonZBmFbl5f5RRdf3VCu27oLFAszkHmPop
+   2lw1w1OAsg+d283ono5Iq5/ZL3HY1aiynFgtzXmcTtTq7OI1Yrd8ta8tb
+   2pgJXnNLezVBpPMzYzTvupzSaBWJfnzYtu74e6SoQp24kb6HdNA7A371c
+   2OVCXuy4FJuDJlneSastiWiO4MhXNyIwIEPUETLSVhQ8MahLRSZtsk/yu
+   Q==;
+X-CSE-ConnectionGUID: gevagbGKRV+rROfYpdIcvQ==
+X-CSE-MsgGUID: 3uK4XVINR/ORvbyQ8Ntrsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="45192249"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="45192249"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 15:22:39 -0700
+X-CSE-ConnectionGUID: kzZFNrRPQceQ4XFlQ/kU9A==
+X-CSE-MsgGUID: 9MCNFcF7QwCnmGGPX3jotQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166598725"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 15:22:34 -0700
+Message-ID: <4de40bdd-4ef3-4eea-8f11-43d71a6369cc@intel.com>
+Date: Fri, 15 Aug 2025 15:22:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 06/20] nvdimm/region_label: Add region label deletion
+ routine
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121230epcas5p11650f090de55d0a2db541ee32e9a6fee@epcas5p1.samsung.com>
+ <20250730121209.303202-7-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250730121209.303202-7-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Roman Gushchin <roman.gushchin@linux.dev> writes:
 
-> Matthew Wilcox <willy@infradead.org> writes:
->
->> On Fri, Aug 15, 2025 at 11:43:25AM -0700, Roman Gushchin wrote:
->>> The commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file
->>> mappings") causes a regression in our production for containers
->>> which are running short on memory. In some cases they are getting
->>> stuck for hours in a vicious reclaim cycle. Reverting this commit
->>> fixes the problem.
->>> 
->>> As I understand, the intention of the commit is to allocate large folios
->>> whenever possible, and the idea is to ignore device-specific readahead
->>> settings and the mmap_miss logic to achieve that, which makes total
->>> sense.
->>> 
->>> However under a heavy memory pressure there must be a mechanism to
->>> revert to order-0 folios, otherwise the memory pressure is inevitable
->>> increased. Maybe mmap_miss heuristics should still be applied? Any other
->>> ideas how to fix it?
->>
->> What's supposed to happen is that we should have logic like:
->>
->>                         if (order > min_order)
->>                                 alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
->>
->> so we try a little bit to free memory if we can't allocate an order-9
->> folio immediately, but we shouldn't be retrying for hours.  Maybe
->> that got lost somewhere along the line because I don't see it now.
->
-> Yeah, I see it in __filemap_get_folio(), but not in ra_alloc_folio().
-> I'll prepare a fix for this.
 
-Actually I'm wrong. It's there, hidden in readahead_gfp_mask(), and it's
-not conditional on the folio order. However it's not helping/not enough.
+On 7/30/25 5:11 AM, Neeraj Kumar wrote:
+> Added cxl v2.1 format region label deletion routine. This function is
+> used to delete region label from LSA
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c          | 77 ++++++++++++++++++++++++++++++---
+>  drivers/nvdimm/label.h          |  6 +++
+>  drivers/nvdimm/namespace_devs.c | 12 +++++
+>  drivers/nvdimm/nd.h             |  9 ++++
+>  include/linux/libnvdimm.h       |  1 +
+>  5 files changed, 100 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 94f2d0ba7aca..be18278d6cea 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -1044,7 +1044,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>  	return max(num_labels, old_num_labels);
+>  }
+>  
+> -static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+> +static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid,
+> +		enum label_type ltype)
+>  {
+>  	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>  	struct nd_label_ent *label_ent, *e;
+> @@ -1068,8 +1069,23 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>  		if (!nd_label)
+>  			continue;
+>  		active++;
+> -		if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+> -			continue;
+> +
+> +		switch (ltype) {
+> +		case NS_LABEL_TYPE:
+> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+> +				continue;
+> +
+> +			break;
+> +		case RG_LABEL_TYPE:
+> +			if (!rgl_uuid_equal(&nd_label->rg_label, uuid))
+> +				continue;
+> +
+> +			break;
+> +		default:
+> +			dev_err(ndd->dev, "Invalid label type\n");
+> +			return 0;
+> +		}
+> +
+>  		active--;
+>  		slot = to_slot(ndd, nd_label);
+>  		nd_label_free_slot(ndd, slot);
+> @@ -1079,7 +1095,7 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>  	}
+>  	list_splice_tail_init(&list, &nd_mapping->labels);
+>  
+> -	if (active == 0) {
+> +	if ((ltype == NS_LABEL_TYPE) && (active == 0)) {
+>  		nd_mapping_free_labels(nd_mapping);
+>  		dev_dbg(ndd->dev, "no more active labels\n");
+>  	}
+> @@ -1101,7 +1117,8 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		int count = 0;
+>  
+>  		if (size == 0) {
+> -			rc = del_labels(nd_mapping, nspm->uuid);
+> +			rc = del_labels(nd_mapping, nspm->uuid,
+> +					NS_LABEL_TYPE);
+>  			if (rc)
+>  				return rc;
+>  			continue;
+> @@ -1268,6 +1285,56 @@ int nd_pmem_region_label_update(struct nd_region *nd_region)
+>  	return 0;
+>  }
+>  
+> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
+> +{
+> +	int i, rc;
+> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+> +	struct nd_label_ent *label_ent;
+> +	int ns_region_cnt = 0;
+
+reverse xmas tree pls
+
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* Find non cxl format supported ndr_mappings */
+> +		if (!ndd->cxl) {
+> +			dev_info(&nd_region->dev, "Region label unsupported\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Find if any NS label using this region */
+> +		mutex_lock(&nd_mapping->lock);
+> +		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+> +			if (!label_ent->label)
+> +				continue;
+> +
+> +			/*
+> +			 * Check if any available NS labels has same
+> +			 * region_uuid in LSA
+> +			 */
+> +			if (nsl_region_uuid_equal(&label_ent->label->ns_label,
+> +						  &nd_set->uuid))
+> +				ns_region_cnt++;
+> +		}
+> +		mutex_unlock(&nd_mapping->lock);
+> +	}
+> +
+> +	if (ns_region_cnt) {
+> +		dev_dbg(&nd_region->dev, "Region/Namespace label in use\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +
+> +		rc = del_labels(nd_mapping, &nd_set->uuid, RG_LABEL_TYPE);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int __init nd_label_init(void)
+>  {
+>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
+> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+> index 0f428695017d..cc14068511cf 100644
+> --- a/drivers/nvdimm/label.h
+> +++ b/drivers/nvdimm/label.h
+> @@ -30,6 +30,11 @@ enum {
+>  	ND_NSINDEX_INIT = 0x1,
+>  };
+>  
+> +enum label_type {
+> +	RG_LABEL_TYPE,
+
+REGION_LABEL_TYPE preferred
+
+> +	NS_LABEL_TYPE,
+> +};
+> +
+>  /**
+>   * struct nd_namespace_index - label set superblock
+>   * @sig: NAMESPACE_INDEX\0
+> @@ -235,4 +240,5 @@ struct nd_namespace_pmem;
+>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		struct nd_namespace_pmem *nspm, resource_size_t size);
+>  int nd_pmem_region_label_update(struct nd_region *nd_region);
+> +int nd_pmem_region_label_delete(struct nd_region *nd_region);
+>  #endif /* __LABEL_H__ */
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 02ae8162566c..e5c2f78ca7dd 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -244,6 +244,18 @@ int nd_region_label_update(struct nd_region *nd_region)
+>  }
+>  EXPORT_SYMBOL_GPL(nd_region_label_update);
+>  
+> +int nd_region_label_delete(struct nd_region *nd_region)
+> +{
+> +	int rc;
+> +
+> +	nvdimm_bus_lock(&nd_region->dev);
+> +	rc = nd_pmem_region_label_delete(nd_region);
+> +	nvdimm_bus_unlock(&nd_region->dev);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(nd_region_label_delete);
+> +
+>  static int nd_namespace_label_update(struct nd_region *nd_region,
+>  		struct device *dev)
+>  {
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 15d94e3937f0..6585747154c2 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -322,6 +322,15 @@ static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
+>  		export_uuid(ns_label->cxl.region_uuid, uuid);
+>  }
+>  
+> +static inline bool nsl_region_uuid_equal(struct nd_namespace_label *ns_label,
+> +				  const uuid_t *uuid)
+> +{
+> +	uuid_t tmp;
+
+s/tmp/uuid/
+
+> +
+> +	import_uuid(&tmp, ns_label->cxl.region_uuid);
+> +	return uuid_equal(&tmp, uuid);
+> +}
+> +
+>  static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
+>  				  const uuid_t *uuid)
+>  {
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index b06bd45373f4..b2e16914ab52 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -310,6 +310,7 @@ int nvdimm_has_cache(struct nd_region *nd_region);
+>  int nvdimm_in_overwrite(struct nvdimm *nvdimm);
+>  bool is_nvdimm_sync(struct nd_region *nd_region);
+>  int nd_region_label_update(struct nd_region *nd_region);
+> +int nd_region_label_delete(struct nd_region *nd_region);
+>  
+>  static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+>  		unsigned int buf_len, int *cmd_rc)
+
 
