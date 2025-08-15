@@ -1,153 +1,184 @@
-Return-Path: <linux-kernel+bounces-770927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329ACB2807D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E479B2808B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BBAF1BC8A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E961C877AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4003019DB;
-	Fri, 15 Aug 2025 13:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EB030275E;
+	Fri, 15 Aug 2025 13:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Oz2w6BgX"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aJfIyd7+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1EF3019C4;
-	Fri, 15 Aug 2025 13:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D606C31987C;
+	Fri, 15 Aug 2025 13:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755263940; cv=none; b=WrYKTG3P65pGyldzrQLAucdvh+CNhtF6M73BeSGNYeFvZLDP3brIC+YcdZELTCL/FvhkBha7+U2it08wWzEaEtivj2lCd0foO7w4I+AzJC8LV95KDXPmKsHiBMWn8ot15XcByYEfY8jDMZsSiZUE0CfotQGwyVeHl57ZY7JJ2nU=
+	t=1755264144; cv=none; b=uJODTlWFXJV6KMTY/ei+uWR/skMB9KvRvzk4IMW1NQsVW7gwzPUYZKU16zV6me9CmR9N6EZxxCh9v+ae6Is5s2aXwQBegflxsRYdJNhriARgAcXoUXwg2S3a/XmrvdDeKetKqetSyhJsxwx3feR/nYbX//nRF5gol7OvkyWpGhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755263940; c=relaxed/simple;
-	bh=t8N+HXNl2JNKsVXxcJ8ZFOUyTihZhTb77YL1GHR13ik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hbmGGXGhPf2uHIpPr20JnCsHmOvU7y8smUs4OTaLTSICh6dnl6XJMhyLbCVXheYfjJhMt+jVDC74LttsimN8eeqkMG7iUEUmwxZS+71eD3GalN6BkZYluHmj/jQYW6si3WbWAhwQj4hrLNH/dY9sw+1o1GDaQ8k9myvkWIj9YR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Oz2w6BgX; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 509E840AE3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755263932; bh=PM+Z8veN76HmwT0wGJKQE7XB5+VdNOMJ+QMOyijcm4A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Oz2w6BgXxN0rGkWlLrHuSLutQadCVcFyJYxTH4YwY5iz8gzlzD7fvbf28KM69tW3I
-	 qra2U0BouviWaC0dfpJ8GQJxK7kW7FtQIGOKPfCGmW2KI7T3Aytf5qDit0PtCSmk8k
-	 uqN5F3xsepQiKp9mcgVs0tsbZYcBoT4upLH87YysdxQYb+I6QbxoXZaXENfa3G9sCc
-	 8rJegfFF83x6IKqSmTiF1wY5Zc4sVdtCbbzyF2onh/goO5s124Mmpkm3owZ2S7vhon
-	 nao492nGv5aRH5kMqoDcC9jsBcoZuV41prROw99h32nE4zqN5MuT93HExDfwHNLfa4
-	 zxiK0EmtDNbvw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 509E840AE3;
-	Fri, 15 Aug 2025 13:18:52 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 07/13] docs: move sphinx-pre-install to tools/doc
-In-Reply-To: <20250815071829.3d5163fc@foz.lan>
-References: <20250813213218.198582-1-corbet@lwn.net>
- <20250813213218.198582-8-corbet@lwn.net> <20250814013600.5aec0521@foz.lan>
- <871ppehcod.fsf@trenco.lwn.net> <20250814080539.2218eb4e@foz.lan>
- <87wm76f1t5.fsf@trenco.lwn.net> <20250815071829.3d5163fc@foz.lan>
-Date: Fri, 15 Aug 2025 07:18:51 -0600
-Message-ID: <87sehsen9g.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755264144; c=relaxed/simple;
+	bh=TfRo+RKmzkvcaGeTXFWsE1hFRrENeo7bSrrFiJCg38g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVZCPOmHzdbKyLm49IlkfHjtBGQFoP+Ev+/ZnoOfqFduhnmFAmj9Bs8b69Iioppr23TLBHBZE1pc6r5qbWoQQqFtkC7uri5WFUtMh+inMBEfXcV6TAT21dGblAPK+9XsI07W/4vJS6vkZNuqmAqGcLdsBFjC23aJMrDn/yeLMSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aJfIyd7+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=W/QI2uZJ6US+l70enzqsMEc0EYrK9urXPYV9W0/9cHY=; b=aJfIyd7+1CN9QkCn1dhPYfREe9
+	nkvZpCbWmigTLWXncFxslUXDrmZORQEMNAMiLpnqievxuwCDAP5lRtagYFVeMJZ8w6El1ex17te/b
+	UhxMUmz6db7E9XCPvFaZvvswiathvXndx8hzmheSEO36iuXdi89GQAVfDBi2+iENv6eo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umuNB-004p31-MM; Fri, 15 Aug 2025 15:21:33 +0200
+Date: Fri, 15 Aug 2025 15:21:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <0890f9e0-1115-4fa3-8c1c-0f2e8e5625de@lunn.ch>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-5-dong100@mucse.com>
+ <eebc7ed8-f6c5-4095-b33e-251411f26f0a@lunn.ch>
+ <3A381A779EB97B74+20250815063656.GA1148411@nic-Precision-5820-Tower>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3A381A779EB97B74+20250815063656.GA1148411@nic-Precision-5820-Tower>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> > Using struct_size() makes me think this is supposed to be a flexible
+> > array? I've never used them myself, but shouldn't be some markup so
+> > the compiler knows priv_len is the len of priv?
+> > 
+> 
+> Maybe link this?
+> struct mbx_req_cookie {
+> ....
+> 	int priv_len;
+> 	char priv[] __counted_by(priv_len);
+> }
 
->> Between "tools/doc" and "tools/docs" I don't really have overly strong
->> feelings; if you work has the latter we can just stick with that.  If
->> you propose "tools/Documentation", though, expect resistance :)
->
-> <joke>
-> Heh, I'm tempted to propose:
-> 	/Documentation -> /docs
-> or
-> 	/Documentation -> /Docs
-> </joke>
+Yes, that looks correct.
 
-I proposed the former at a maintainers summit a few years ago ... the
-response was less than fully positive.  I guess the fact that docs have
-the longest and only capitalized top-level directory name shows their
-relative importance :)
+> > > +		return err;
+> > > +	}
+> > > +	do {
+> > > +		err = wait_event_interruptible_timeout(cookie->wait,
+> > > +						       cookie->done == 1,
+> > > +						       cookie->timeout_jiffes);
+> > > +	} while (err == -ERESTARTSYS);
+> > 
+> > This needs a comment, because i don't understand it.
+> > 
+> > 
+> 
+> wait_event_interruptible_timeout return -ERESTARTSYS if it was interrupted
+> by a signal, which will cause misjudgement about cookie->done is timeout. 
+> In this case, just wait for timeout.
+> Maybe comment link this?
+> /* If it was interrupted by a signal (-ERESTARTSYS), it is not true timeout,
+>  * just wait again.
+>  */
 
-> Ok, so let's keep tools/docs then. We need to decide about python
-> lib. On my series, I'm placing at tools/docs/lib, but I guess we
-> can change it later.
->
-> From my side, I would prefer to have a single directory for tools,
-> as we may place there things that aren't specific to docs.
->
-> For instance, I have my own class that I use for command execution,
-> using asyncio. The rationale is that it allows output messages in
-> real time without needing to wait for the entire process to end(*).
->
-> (*) I recently discovered a way to do that without needing asyncio,
->     which makes the code a little bit simpler.
+But why use wait_event_interruptible_timout() if you are going to
+ignore all interrupts, a.k.a. signals? Why not use
+wait_event_timeout()?
 
-This is just flushing the output buffer?  Asyncio seems like a heavy
-tool for that; I guess I'm missing something.
+> > > +	if ((1 << lane) & le32_to_cpu(reply.mac_addr.lanes))
+> > 
+> > BIT(). And normally the & would be the other way around.
+> > 
+> 
+> Maybe changed link this?
+> ...
+> if (le32_to_cpu(reply.mac_addr.ports) & BIT(lane))
 
-> Either using asyncio or not, a class for such purpose is something
-> that multiple tools could use. So, a generic dir like tools/lib, 
-> lib/python, ... IMO makes sense.
+Yes, that is better.
 
-I agree with this, anyway.  "tools/python" might end up as the winning
-suggestion. 
+> > What exactly is a lane here? Normally we would think of a lane is
+> > -KR4, 4 SERDES lanes making one port. But the MAC address is a
+> > property of the port, not the lane within a port.
+> > 
+> 
+> lane is the valid bit in 'reply.mac_addr.ports'.
+> Maybe change it to 'port', that is more appropriate.
 
->> As I said, my series was an RFC to see what it would look like; it did't
->> take all that long the first time around, and will be even quicker to
->> redo on top of a new base, whatever that turns out to be.
->
-> With regards to the RFC, IMO we still may need to discuss how we'll end 
-> placing libraries under a LIBDIR. IMO, your RFC should also propose
-> a directory structure. I mean, we could have something like:
->
-> 	LIBDIR     # either tools/docs/lib, tools/lib, lib/python or whatever
-> 	|
-> 	+---> common
-> 	\---> docs
-> 		|
-> 	    	+---> kdoc
-> 	    	\---> abi
->
-> We could instead do:
-> 	- flatten "common" to LIBDIR; or:
-> 	- flatten "docs" to LIBDIR; or:
-> 	- flatten both but keeping kdoc, abi, ... directories inside
-> 	  LIBDIR; or:
-> 	- have a completely flatten directory with everything
-> 	  under LIBDIR.
+You need to be careful with your terms. I read in another patch, that
+there is a dual version and a quad version. I've not yet seen how you
+handle this, but i assume they are identical, and appear on the PCI
+bus X number of times, and this driver will probe X times, once per
+instance. We would normally refer to each instance as an
+interface. But this driver also mentions PF, so i assume you also have
+VFs? And if you have VF, i assume you have an embedded switch which
+each of the VFs are connected to. Each VF would normally be connected
+to a port of the switch.
 
-I'm not sure we need the common/docs intermediate directory.
+So even though you don't have VF support yet, you should be thinking
+forward. In the big picture architecture, what does this lane/port
+represent? What do other drivers call it?
 
-Meanwhile, I had a related, possibly unpopular idea...  Start with
-.../tools/python/kernel and put a basic __init__.py file there;
-everything else would go into that directory or before.  The imports
-would then read something like:
+> > Another example of a bad structure layout. It would of been much
+> > better to put the two u8 after speed.
+> > 
+> > > +} __packed;
+> > 
+> > And because this is packed, and badly aligned, you are forcing the
+> > compiler to do a lot more work accessing these members.
+> > 
+> 
+> Yes, It is bad. But FW use this define, I can only follow the define...
+> Maybe I can add comment here?
+> /* Must follow FW define here */ 
 
-  from kernel import abi_parser
+No need. When somebody sees __packed, it becomes obvious this is ABI
+and cannot be changed. Just think about it for any future extensions
+to the firmware ABI.
 
-That would make it clear which modules are ours and which come from
-elsewhere.
+> 
+> > > +
+> > > +static inline void ability_update_host_endian(struct hw_abilities *abi)
+> > > +{
+> > > +	u32 host_val = le32_to_cpu(abi->ext_ability);
+> > > +
+> > > +	abi->e_host = *(typeof(abi->e_host) *)&host_val;
+> > > +}
+> > 
+> > Please add a comment what this is doing, it is not obvious.
+> > 
+> > 
+> 
+> Maybe link this?
+> /* Converts the little-endian ext_ability field to host byte order,
+>  * then copies the value into the e_host field by reinterpreting the
+>  * memory as the type of e_host (likely a bitfield or structure that
+>  * represents the extended abilities in a host-friendly format).
+>  */
 
-I was planning to toss together another RFC with that scheme, again to
-see what it would look like in practice.
+This explains what you are doing, but why? Why do you do this only to
+this field? What about all the others?
 
-Thoughts?
-
-jon
+     Andrew
 
