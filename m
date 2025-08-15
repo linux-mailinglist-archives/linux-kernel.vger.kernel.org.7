@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-770435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8697BB27AA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:13:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD2FB27A83
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84B477B54C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00D457A96B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77D42DFA34;
-	Fri, 15 Aug 2025 08:10:16 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF602242D97;
+	Fri, 15 Aug 2025 08:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWFKQ1V+"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6BB2D47E9;
-	Fri, 15 Aug 2025 08:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FDA31986D;
+	Fri, 15 Aug 2025 08:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755245416; cv=none; b=TqjADBrnoBjcmH84VBQLqLGUTa+NhSuTwEyghR26s00rmfvxhCxx+T9QJ0sEHeDFRMcZq0bA+OUkVYm2xAfPRubfGD9Q+FcmH6AMtARsEIrFxBEtr0xGPzHAd6HXv+PWo2yJahR91Bb6wsRxBFAJn1LMQYCisP4yIbDBdE7XuxE=
+	t=1755245001; cv=none; b=gialeDDRELccppTA9xrK7DomqCD6hvudLslzE/wBq6J7PGe+nr1Gx8gBwU4K6HivCjPgNIOTBnafNNSOVKV63D6yFRIjq6wrSkl3ZndZwCJkXqZqai7uiANbB5IepSyGOCTmaIOkbcHF68K57ZJxEiaBuWNiLw+o9NjW04+J3vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755245416; c=relaxed/simple;
-	bh=SJDQlr8kYnUVXlqjG3XTlvRhDl2Ax+wgpIYELK54IoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LUlq68b666/jNiO1TSpGMVILE83HpT2Ze7v8L0CF4EWgRp7KrKxT4I29nPdGTTsFcHBg0A6optaWHLyK9EN7p5cakD806g8tg6PCtyXkyN2NtWZh5XMIaMjEgOkQjQF8qh6JUvBYRuiVbhDlYGF3/gY17dSSH7nrH64zzwGfeno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c3FCR6dnszKHMlk;
-	Fri, 15 Aug 2025 16:10:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3C3911A0F83;
-	Fri, 15 Aug 2025 16:10:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHjxBc655o+xX_Dg--.53834S14;
-	Fri, 15 Aug 2025 16:10:11 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	hare@suse.de,
-	nilay@linux.ibm.com,
-	ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH 10/10] blk-mq: fix stale nr_requests documentation
-Date: Fri, 15 Aug 2025 16:02:16 +0800
-Message-Id: <20250815080216.410665-11-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250815080216.410665-1-yukuai1@huaweicloud.com>
-References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1755245001; c=relaxed/simple;
+	bh=qyzLs/0CDjVeqzhntZR/bU1gU8V1Hv1zEYSr2oMjvt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r/IzBWg09gJAtkSP4NZpu7n3l60s0Iptblkwz09xmmDURJrkvkxQNqZUSMpG7P5FpmVWwk7QHlTIdDlJ/UCo22XBUAoiVKOYxYCsJ+2xlHFcScPwJv1WGZ2xYLAU/6LO4sZptVgeLJkMcrXUfitzH6LOGBn9x8O6WZqm+o7roVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWFKQ1V+; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2eb4a171so2441562b3a.3;
+        Fri, 15 Aug 2025 01:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755244998; x=1755849798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sxpExqIp6ahjSppu7+evxPdtuZCZlQ03AYV1e06qBjk=;
+        b=QWFKQ1V+/nUeaFhqMvmkog2Mi3rbm6udpSLkzMcMVXmNAw2jX4d2I0u8ekYSH1ynSt
+         CY9CsKEyAMBAyNrroC+9gMSCerH//nQmkb8nlH9OhEm/q4ARVChUAV8zhTtitvERkCeB
+         5lDCg0QVxMhxhsXeRzQA9lj9wyoHAJCKms5wk2AooqjUBP1l4nA9iyZ7bxDmV6oqhybM
+         z7ovKCPyeu7SZgoPU8uE0E9fy+i8zpukxfHV8wYRorI8PgYboX3f38Dftt/4FdLjgDn5
+         3kICXp3WEzXpf+yrk+/c1MpjtPnR9WvZzUQU3KEKs+sL00xE8+mne7gWcLlGhgb3ox2i
+         xurw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755244998; x=1755849798;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sxpExqIp6ahjSppu7+evxPdtuZCZlQ03AYV1e06qBjk=;
+        b=P4qak828P/+2s4gHiBcBfXIDOEPpqiCbqo5UwmXx+z0GYPK0YUkj+yUY7a1NQ1+kU/
+         gmug/3b0797VuZF8kYyn5j7S+NKE6TH+wUt2YUYFhmKTt7ySN1SUWEgsSQD8VrqCq06r
+         gl80T0qKksdpCmHQVyEuz5/GLccXm8PARDevJoxSvk/ic8p2q+liMQOyYW5OcYzSjlGM
+         V6gN4EFhyMAL7HJj6EIFdcfAUAznDQZPO/nwD0s/Rd0lazySthwMdCUnxljB4GShsFk6
+         CDKDlRrbB6N2ayntjEf1uG3Gcemrl7eTG4aLMuOuCTSV8iOzxj9/5sUhCfvCDrQvGhjN
+         x3Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0sQwICS5ILOM4MCxlmTgGs/Tsxeh11SiuvE8YerAB7VROTsmEz4ErIb/Rm8DFoRPkHnw6ItOVxjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd2mYmcZfgzRZpQ6Z7Fd+BJAOr6F0zHVXm0igoAhUADuHgfSsw
+	Stjv/GaqSesOmclQABuS2Z9Qfnfc6gc4WlU7barRhykOLVZBkV4Zc9Mj
+X-Gm-Gg: ASbGncvwTOSIuFr5HBQWbe2wwaaejro47nZHz0YptPRK54y+j+TW5eEgiE56ez+7ZQx
+	2pWyHTRYQdb8CqDJ4iyt40sfYKa7nuDmPy9boRgZj+bxejMBl3UV3RBrbbNYSK0begCW8oAV9qU
+	tDJKuMWHI5ROXu6P8AFN2JXlFGvEOr4TpXFUc5e97ag9kbxqkzcCKrw8oRFynljz5jFPrDouDSY
+	ZXxs1KaO82Q6MJda56nQrGRlkYGPioTTMawlniaXVUHB7R6FMNO1rw3gigJ/q4QiwoulRuMiLDr
+	9th2WEGSyySd4rG2Zg/eFMkFQZAzyEha6pNVLSnJzxH3RsURXhCmqJuK5hC3zmxKdQOYvcVlH7Y
+	kVxrIti6zzGJbgv2rV/LNJQ==
+X-Google-Smtp-Source: AGHT+IEC/iECvqFVBZ/+AEQhSpvCcYT2CGj6Zpm39HK2GsyEvn3tILjlf0yUe0BJhhZakucB/H8rvQ==
+X-Received: by 2002:a17:903:3bc6:b0:220:c164:6ee1 with SMTP id d9443c01a7336-2446d8f17c0mr18321535ad.32.1755244998248;
+        Fri, 15 Aug 2025 01:03:18 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d517e18sm8527155ad.74.2025.08.15.01.03.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 01:03:17 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 706E34278709; Fri, 15 Aug 2025 15:03:15 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Device Mapper <dm-devel@lists.linux.dev>
+Cc: Matthew Sakai <msakai@redhat.com>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"J. corwin Coburn" <corwin@hurlbutnet.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] dm-vdo: Promote dm-vdo title to title heading
+Date: Fri, 15 Aug 2025 15:03:13 +0700
+Message-ID: <20250815080313.25132-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=928; i=bagasdotme@gmail.com; h=from:subject; bh=qyzLs/0CDjVeqzhntZR/bU1gU8V1Hv1zEYSr2oMjvt0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnzXnza/uOJzUa/EyW7WcQu8z+U6Pm63lXgk2Tzwt9ny tZsXnN3TUcpC4MYF4OsmCLLpES+ptO7jEQutK91hJnDygQyhIGLUwAmcvkaI8NHmbJjLYekOLQ7 jh13FWDjkr0Z8lLsvegilqs/BIoPnp7J8IdbYLev7du93m5NmU+KW415//w5U5z8c16379H603d FD7EAAA==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHjxBc655o+xX_Dg--.53834S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWDCryfKr15Zw1xKFWfZrb_yoW8Xw1Dp3
-	yft39Fgwn5Zw18Wr10yay8tF13Aa95Aw43Jr4DKF1rtr98Awn29Fs2qr1rXF4xZrZ7AFWU
-	urZ29r98Aa1qva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+dm-vdo docs currently has no explicit title heading but instead there
+are multiple section headings as top-level heading. As such, these
+sections are rendered as titles and inflates number of entries in the
+toctree index.
 
-The nr_requests documentation is still the removed single queue, remove
-it and update to current blk-mq.
+Promote the first section heading ("dm-vdo") to title heading.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Fixes: 04bf7ac646ab ("dm: add documentation for dm-vdo target")
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/ABI/stable/sysfs-block | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ Documentation/admin-guide/device-mapper/vdo.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-index 0ddffc9133d0..0ed10aeff86b 100644
---- a/Documentation/ABI/stable/sysfs-block
-+++ b/Documentation/ABI/stable/sysfs-block
-@@ -603,16 +603,10 @@ Date:		July 2003
- Contact:	linux-block@vger.kernel.org
- Description:
- 		[RW] This controls how many requests may be allocated in the
--		block layer for read or write requests. Note that the total
--		allocated number may be twice this amount, since it applies only
--		to reads or writes (not the accumulated sum).
--
--		To avoid priority inversion through request starvation, a
--		request queue maintains a separate request pool per each cgroup
--		when CONFIG_BLK_CGROUP is enabled, and this parameter applies to
--		each such per-block-cgroup request pool.  IOW, if there are N
--		block cgroups, each request queue may have up to N request
--		pools, each independently regulated by nr_requests.
-+		block layer. Noted this value only represents the quantity for a
-+		single blk_mq_tags instance. The actual number for the entire
-+		device depends on the hardware queue count, whether elevator is
-+		enabled, and whether tags are shared.
+diff --git a/Documentation/admin-guide/device-mapper/vdo.rst b/Documentation/admin-guide/device-mapper/vdo.rst
+index a14e6d3e787c91..8a67b320a97b58 100644
+--- a/Documentation/admin-guide/device-mapper/vdo.rst
++++ b/Documentation/admin-guide/device-mapper/vdo.rst
+@@ -1,5 +1,6 @@
+ .. SPDX-License-Identifier: GPL-2.0-only
  
++======
+ dm-vdo
+ ======
  
- What:		/sys/block/<disk>/queue/nr_zones
 -- 
-2.39.2
+An old man doll... just what I always wanted! - Clara
 
 
