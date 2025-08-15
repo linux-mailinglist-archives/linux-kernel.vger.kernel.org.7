@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-769958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435F2B27560
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:09:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29E7B2755B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5EA3B783E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BF11CE54C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7F2989BC;
-	Fri, 15 Aug 2025 01:58:33 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC56529C33A;
+	Fri, 15 Aug 2025 01:56:37 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA352951A0;
-	Fri, 15 Aug 2025 01:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916E4295529
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755223112; cv=none; b=rDo6StjOF9wn7ikfrSgTM79DYwaraDt5UTU4FAu5ySXSIwdp/acB80T4GPa9LTRdUKzIGIIYZoSiuxKrMLNjuk+b65xDsWThPDNvVA32TSNOI0uhWDoMjopuCncpW6pQx74JEGZAx+eXSLfnPrRTWuMEjpOn8RAsI4+5uk5iaag=
+	t=1755222997; cv=none; b=BkglbLgDtPQpqa+dTXijORbJsi0Qz4TJe4jZ8rHMZm0N8z1bF9HBCZVnAhEFeM4tw3gO1+DAU2FyOHavPidwcakY5W2Y0ecj44LXjRtFtYx+oQp9qUA6BlXNM3tEu52pCDf4EsCinmOCLGWskqaERE4qG6Jb9XUdC5sOfMhI9sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755223112; c=relaxed/simple;
-	bh=Hq7PmO/kPSl7BVcZCHFImQ6aYZBnb/NFt/FZT31ElCA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IoZTFkYYFp67U+MNtAToTxRPzeUPbcbEVa5fvjd/uo3kHz9KuDp61MSqsYVgZifsp/cBDMeOBnQzBfzAf6oacpc03+cuHHqB8fcR//b3cDExTvk9LA8sivnNgLTXM95+c3Q/L/XBPxzDG39Xu3gPqUnyNfEqJ6V3Ic1yGANnXbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <kuba@kernel.org>, <horms@kernel.org>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<lirongqing@baidu.com>, <vladimir.oltean@nxp.com>,
-	<florian.fainelli@broadcom.com>, <julian@outer-limits.org>,
-	<csander@purestorage.com>, <oss-drivers@corigine.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH][net-next] eth: nfp: Remove u64_stats_update_begin()/end() for stats fetch
-Date: Fri, 15 Aug 2025 09:56:19 +0800
-Message-ID: <20250815015619.2713-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1755222997; c=relaxed/simple;
+	bh=TUQNN1Kv+1X10EcPeWMf4uHXW/ASsJWKag7OpbHP7No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fUW0QAS3mkIsnKCTlZRAYXZCEA3LiFlU+LOt+oMPe8XpnWmIdKaUMr5WbpbcQ+9qws28arqoU2b23AzjQJCy6e8vQ+ztNbrSrOEyX6/1H03HaVw6wr2z/pOMDHt98IfKrf+Xd4QmdK/olOkh40367LczaINJecgHAd/9fsejHZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c34s007t4z2gL48;
+	Fri, 15 Aug 2025 09:53:40 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id B9A72140123;
+	Fri, 15 Aug 2025 09:56:30 +0800 (CST)
+Received: from kwepemq200012.china.huawei.com (7.202.194.183) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 15 Aug 2025 09:56:30 +0800
+Received: from [10.174.178.57] (10.174.178.57) by
+ kwepemq200012.china.huawei.com (7.202.194.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 15 Aug 2025 09:56:29 +0800
+Message-ID: <40fa16cf-950b-4ca7-9935-dbce75e46eb9@huawei.com>
+Date: Fri, 15 Aug 2025 09:56:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc4.internal.baidu.com (172.31.50.48) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] driver core: Fix concurrent problem of
+ deferred_probe_extend_timeout()
+To: Saravana Kannan <saravanak@google.com>, Greg KH
+	<gregkh@linuxfoundation.org>
+CC: <rafael@kernel.org>, <dakr@kernel.org>, <robh@kernel.org>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>, <chenjun102@huawei.com>
+References: <20250814122949.9024-1-wangwensheng4@huawei.com>
+ <2025081451-police-playlist-3f9b@gregkh>
+ <CAGETcx_-otRyDknVs4SFVWzf5-Zi07TiKUEpetDJJ3r0BTVqmw@mail.gmail.com>
+From: "wangwensheng (C)" <wangwensheng4@huawei.com>
+In-Reply-To: <CAGETcx_-otRyDknVs4SFVWzf5-Zi07TiKUEpetDJJ3r0BTVqmw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200012.china.huawei.com (7.202.194.183)
 
-From: Li RongQing <lirongqing@baidu.com>
 
-This place is fetching the stats, u64_stats_update_begin()/end()
-should not be used, and the fetcher of stats is in the same
-context as the updater of the stats, so don't need any protection
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- drivers/net/ethernet/netronome/nfp/nfd3/dp.c | 16 ++++------------
- drivers/net/ethernet/netronome/nfp/nfdk/dp.c | 16 ++++------------
- 2 files changed, 8 insertions(+), 24 deletions(-)
+在 2025/8/15 2:16, Saravana Kannan 写道:
+> On Thu, Aug 14, 2025 at 7:20 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Thu, Aug 14, 2025 at 08:29:49PM +0800, Wang Wensheng wrote:
+>>> The deferred_probe_timeout_work may be canceled forever unexpected when
+>>> deferred_probe_extend_timeout() executes concurrently. Start with
+>>> deferred_probe_timeout_work pending, and the problem would
+>>> occur after the following sequence.
+>>>
+>>>           CPU0                                 CPU1
+>>> deferred_probe_extend_timeout
+>>>    -> cancel_delayed_work => true
+>>>                                       deferred_probe_extend_timeout
+>>>                                         -> cancel_delayed_wrok
+>>>                                           -> __cancel_work
+>>>                                             -> try_grab_pending
+>>>    -> schedule_delayed_work
+>>>     -> queue_delayed_work_on
+>>> since pending bit is grabbed,
+>>> just return without doing anything
+>>>                                          -> set_work_pool_and_clear_pending
+>>>                                       this __cancel_work return false and
+>>>                                       the work would never be queued again
+>>>
+>>> The root cause is that the PENDING_BIT of the work_struct would be set
+>>> temporaily in __cancel_work and this bit could prevent the work_struct
+>>> to be queued in another CPU.
+> 
+> This feels more like a workqueue API issue (this isn't too obvious
+> from the documentation) or me misusing the workqueue API.
+> 
+> Is this issue still there if you use cancel_delayed_work_sync()
+> instead of cancel_delayed_work()? If so, just switch to that and add
+> proper comment on why it needs to by "sync".
+> 
+> -Saravana
+> 
+cancel_delayed_work_sync() cannot solve the issue. Becasue this issue is 
+to do with the interaction between cancel and queue operations for a 
+work. The synchronization of the single cancel operation doesn't matter.
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-index 08086eb..91a2279 100644
---- a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-@@ -1169,14 +1169,10 @@ int nfp_nfd3_poll(struct napi_struct *napi, int budget)
- 
- 	if (r_vec->nfp_net->rx_coalesce_adapt_on && r_vec->rx_ring) {
- 		struct dim_sample dim_sample = {};
--		unsigned int start;
- 		u64 pkts, bytes;
- 
--		do {
--			start = u64_stats_fetch_begin(&r_vec->rx_sync);
--			pkts = r_vec->rx_pkts;
--			bytes = r_vec->rx_bytes;
--		} while (u64_stats_fetch_retry(&r_vec->rx_sync, start));
-+		pkts = r_vec->rx_pkts;
-+		bytes = r_vec->rx_bytes;
- 
- 		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
- 		net_dim(&r_vec->rx_dim, &dim_sample);
-@@ -1184,14 +1180,10 @@ int nfp_nfd3_poll(struct napi_struct *napi, int budget)
- 
- 	if (r_vec->nfp_net->tx_coalesce_adapt_on && r_vec->tx_ring) {
- 		struct dim_sample dim_sample = {};
--		unsigned int start;
- 		u64 pkts, bytes;
- 
--		do {
--			start = u64_stats_fetch_begin(&r_vec->tx_sync);
--			pkts = r_vec->tx_pkts;
--			bytes = r_vec->tx_bytes;
--		} while (u64_stats_fetch_retry(&r_vec->tx_sync, start));
-+		pkts = r_vec->tx_pkts;
-+		bytes = r_vec->tx_bytes;
- 
- 		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
- 		net_dim(&r_vec->tx_dim, &dim_sample);
-diff --git a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-index ab3cd06..ee0db3d 100644
---- a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-@@ -1279,14 +1279,10 @@ int nfp_nfdk_poll(struct napi_struct *napi, int budget)
- 
- 	if (r_vec->nfp_net->rx_coalesce_adapt_on && r_vec->rx_ring) {
- 		struct dim_sample dim_sample = {};
--		unsigned int start;
- 		u64 pkts, bytes;
- 
--		do {
--			start = u64_stats_fetch_begin(&r_vec->rx_sync);
--			pkts = r_vec->rx_pkts;
--			bytes = r_vec->rx_bytes;
--		} while (u64_stats_fetch_retry(&r_vec->rx_sync, start));
-+		pkts = r_vec->rx_pkts;
-+		bytes = r_vec->rx_bytes;
- 
- 		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
- 		net_dim(&r_vec->rx_dim, &dim_sample);
-@@ -1294,14 +1290,10 @@ int nfp_nfdk_poll(struct napi_struct *napi, int budget)
- 
- 	if (r_vec->nfp_net->tx_coalesce_adapt_on && r_vec->tx_ring) {
- 		struct dim_sample dim_sample = {};
--		unsigned int start;
- 		u64 pkts, bytes;
- 
--		do {
--			start = u64_stats_fetch_begin(&r_vec->tx_sync);
--			pkts = r_vec->tx_pkts;
--			bytes = r_vec->tx_bytes;
--		} while (u64_stats_fetch_retry(&r_vec->tx_sync, start));
-+		pkts = r_vec->tx_pkts;
-+		bytes = r_vec->tx_bytes;
- 
- 		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
- 		net_dim(&r_vec->tx_dim, &dim_sample);
--- 
-2.9.4
+>>>
+>>> Use deferred_probe_mutex to protect the cancel and queue operations for
+>>> the deferred_probe_timeout_work to fix this problem.
+>>>
+>>> Fixes: 2b28a1a84a0e ("driver core: Extend deferred probe timeout on driver registration")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
+>>> ---
+>>>   drivers/base/dd.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>> index 13ab98e033ea..00419d2ee910 100644
+>>> --- a/drivers/base/dd.c
+>>> +++ b/drivers/base/dd.c
+>>> @@ -323,6 +323,7 @@ static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_
+>>>
+>>>   void deferred_probe_extend_timeout(void)
+>>>   {
+>>> +     guard(mutex)(&deferred_probe_mutex);
+>>
+>> But if you grab the lock here, in the probe timeout function, the lock
+>> will be grabbed again, causing a deadlock, right?  If not, why not?
+>>
+>> Have you run this patch with lockdep enabled?
+>>
+>> This feels broken to me, what am I missing?
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
 
 
