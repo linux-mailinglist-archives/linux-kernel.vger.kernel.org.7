@@ -1,186 +1,86 @@
-Return-Path: <linux-kernel+bounces-770424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FC4B27A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:09:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C78B27AC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14BC97B62A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131475E8834
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D79729B78C;
-	Fri, 15 Aug 2025 08:08:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304027713;
-	Fri, 15 Aug 2025 08:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E92459FA;
+	Fri, 15 Aug 2025 08:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsC81QYL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AFF241103;
+	Fri, 15 Aug 2025 08:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755245332; cv=none; b=FdY4ld1hNUjSr6QelmIa4N8vfoWAlJqAMwXY6idSuTNSL2NUsCq86AJ405vQ7LyE2gzRMjlygeWiBzgw7PSlEtYwCCIqdRsH3jYxwDF9STxjuqTYyBO6GasKN2dfPi6jfnFlnbSwhmBe2mnpLsrxXnnYu7+h86EpnWqNjZJba/g=
+	t=1755245893; cv=none; b=ORFjvbOAn1HP3tS6nk/vtTLq5pVpTNgT3Y1nevsHzQcvIYoizlzeAmvRbxRCFn2u0AgKjEHmKX//9pxdiLJyTdEYkpbc6WIc6NJ4+kXNAgF41O5Y+RGCnfUVPtidOeXjPnMEDJaHhrjM/Q1l97Q3Io4qhohX62GQa2+1wC7kK78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755245332; c=relaxed/simple;
-	bh=40fD8nbq/dWtvqI1KOI36Ogw4sIwgQnynO/0TfAhQsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GquU5SYSOQHNVWP9XcbHrbyVIywahQkEFi0NyFzAYLUcW7DEuoQtxqSBaSprkWygvs5V3w2kiyLSkQvdWpx5Zbr94oUidATf9OegFOooqWmwGw0jVg1XdxsISsSStWWXsFcpxD04AzK9gbwI9ZHvth5f3exmxFTXuk2Jf9m/eQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3E1C1C25;
-	Fri, 15 Aug 2025 01:08:40 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B89E3F738;
-	Fri, 15 Aug 2025 01:08:46 -0700 (PDT)
-Date: Fri, 15 Aug 2025 09:08:38 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, james.quinlan@broadcom.com,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, Peng Fan <peng.fan@nxp.com>,
-	Mike Tipton <quic_mdtipton@quicinc.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: scmi: Add quirk to disable checks in
- scmi_dev_used_by_cpus()
-Message-ID: <aJ7rBgce5eWSkkk3@pluto>
-References: <20250814225155.3519000-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1755245893; c=relaxed/simple;
+	bh=zcUsgqtwck0vJoyHH7aREYeOs6qKr1S6WoXjnCNIOGE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ODgPI9XIUTtTQREkxMKfUaLlGj6X6aBgjUDwpoFqywlasd6DYs9/d6hnowAJ09wIic40o1IjttAvBSwHQLJELv31Qh7TQLnAz0ZNxs9utlNRinFBqtKrskCyk8MsX48Of0y4Es57lzlfIZN5U6hUHSucxH7j63Zy9/uN2R4ETIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsC81QYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86FF6C4CEF4;
+	Fri, 15 Aug 2025 08:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755245893;
+	bh=zcUsgqtwck0vJoyHH7aREYeOs6qKr1S6WoXjnCNIOGE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dsC81QYL0ftqjtmTLFFRkAED0Y+GmWSPJ2nPhHV+7xxDW6VQnY+05rakk3HGwauOT
+	 NM309QXfYjI0H/MT9PslfYMjmONfGVrNjLUe4RSngeiGZbi1Hcowt6+PDf/Vmwpd/X
+	 l1JgyxsGsjJkkxqk/mMgEifjaHv1T0aD0SUDqoCjbbOcffVhqcpQdRhlZhyx+mif3v
+	 VWUyrKSf8Rn+RDjnX/n3J6C2Asc4Fo/g6fzfPsgW7ye6yg5PI2nZWji7WxbBnlboVx
+	 jeGjmQaHkuIedOE4klFSn/LmcUwK6X8T+CcW4L/ohW6hEecH+0cSug3mD/ugK1lDTG
+	 bU4VcbGCoOuow==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, FUJITA
+ Tomonori <fujita.tomonori@gmail.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz
+ <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v7 6/7] rust: time: Add Instant::from_nanos()
+In-Reply-To: <20250813224240.3799325-7-lyude@redhat.com>
+References: <20250813224240.3799325-1-lyude@redhat.com>
+ <qhskgOLluo5Q7Ug_Uox4HQdV-bMNVmbCn6OwxFpTKviNdDjlLONxr9WcYXT5-kHQMCSV-lNIdDOxPvA246_zwA==@protonmail.internalid>
+ <20250813224240.3799325-7-lyude@redhat.com>
+Date: Fri, 15 Aug 2025 10:11:19 +0200
+Message-ID: <87tt29dmxk.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814225155.3519000-1-florian.fainelli@broadcom.com>
+Content-Type: text/plain
 
-On Thu, Aug 14, 2025 at 03:51:55PM -0700, Florian Fainelli wrote:
-> Broadcom STB platforms were early adopters of the SCMI framework and as
-> a result, not all deployed systems have a Device Tree entry where SCMI
-> protocol 0x13 (PERFORMANCE) is declared as a clock provider, nor are the
-> CPU Device Tree node(s) referencing protocol 0x13 as their clock
-> provider.
-> 
-> Leverage the quirks framework recently introduce to match on the
-> Broadcom SCMI vendor and in that case, disable the Device Tree
-> properties checks being done by scmi_dev_used_by_cpus().
-> 
+"Lyude Paul" <lyude@redhat.com> writes:
 
-Hi,
+> For implementing Rust bindings which can return a point in time.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-> Suggested-by: Cristian Marussi <cristian.marussi@arm.com>
-> Fixes: 6c9bb8692272 ("cpufreq: scmi: Skip SCMI devices that aren't used by the CPUs")
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/cpufreq/scmi-cpufreq.c     | 13 +++++++++++++
->  drivers/firmware/arm_scmi/quirks.c |  2 ++
->  drivers/firmware/arm_scmi/quirks.h |  1 +
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index ef078426bfd5..80647511d3c3 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -22,6 +22,8 @@
->  #include <linux/types.h>
->  #include <linux/units.h>
->  
-> +#include "../drivers/firmware/arm_scmi/quirks.h"
-> +
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-I will post a patch to move this header up to avoid the uglyness of this
-include....
 
->  struct scmi_data {
->  	int domain_id;
->  	int nr_opp;
-> @@ -34,6 +36,7 @@ struct scmi_data {
->  static struct scmi_protocol_handle *ph;
->  static const struct scmi_perf_proto_ops *perf_ops;
->  static struct cpufreq_driver scmi_cpufreq_driver;
-> +static bool __maybe_unused scmi_cpufreq_dt_props_check_disable;
->  
+Best regards,
+Andreas Hindborg
 
-Not sure why you introduce an intermediate global bool to check...this
-defeats a bit the whole idea of the quirks framework which is based on
-static_keys and is supposed to be mostly transarent when quirks are not
-enabled....
 
-Couldn't you just move the quirk inside the get_rate ?
-(maybe I am missing something around compiler behaviours..)
- 
-#define QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS		\
-({							\
-	if (true)					\
-		return true;				\
-})
-
->  static unsigned int scmi_cpufreq_get_rate(unsigned int cpu)
->  {
-> @@ -400,6 +403,9 @@ static bool scmi_dev_used_by_cpus(struct device *scmi_dev)
->  	struct device *cpu_dev;
->  	int cpu, idx;
->  
-
-+	SCMI_QUIRK(scmi_cpufreq_no_check_dt_props, QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS);
-
->  	if (!scmi_np)
->  		return false;
->  
-> @@ -427,12 +433,19 @@ static bool scmi_dev_used_by_cpus(struct device *scmi_dev)
->  	return false;
->  }
->  
-> +#define QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS			\
-> +	({							\
-> +		scmi_cpufreq_dt_props_check_disable = true;	\
-> +	})
-> +
->  static int scmi_cpufreq_probe(struct scmi_device *sdev)
->  {
->  	int ret;
->  	struct device *dev = &sdev->dev;
->  	const struct scmi_handle *handle;
->  
-
-> +	SCMI_QUIRK(scmi_cpufreq_no_check_dt_props, QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS);
-> +
-
-...removing this of course
-
->  	handle = sdev->handle;
->  
->  	if (!handle || !scmi_dev_used_by_cpus(dev))
-> diff --git a/drivers/firmware/arm_scmi/quirks.c b/drivers/firmware/arm_scmi/quirks.c
-> index 03960aca3610..aafc7b4b3294 100644
-> --- a/drivers/firmware/arm_scmi/quirks.c
-> +++ b/drivers/firmware/arm_scmi/quirks.c
-> @@ -171,6 +171,7 @@ struct scmi_quirk {
->  /* Global Quirks Definitions */
->  DEFINE_SCMI_QUIRK(clock_rates_triplet_out_of_spec, NULL, NULL, NULL);
->  DEFINE_SCMI_QUIRK(perf_level_get_fc_force, "Qualcomm", NULL, "0x20000-");
-> +DEFINE_SCMI_QUIRK_EXPORTED(scmi_cpufreq_no_check_dt_props, "brcm-scmi", NULL, "0x2");
-
-Also, are you sure about using version as "0x2" ? That is supposed to
-indicate the (optional) SCMI FW Version to which this quirk will
-apply...and with that it means whatever FW versioning you use in
-Broadcom to identify build versions....it is NOT the SCMI Protocol
-Version, so that also means that if/when you will change the advertised
-version, this quirk wont apply anymore...or equally if there are older
-version than 0x2 that are buggy they wont be quirked...
-
-One more doubt I have (despite me having suggested this solution) is
-that here you are quirking against a malformed deployed DT really,
-not against some SCMI FW anomaly in the Broadcom FW, but using the
-SCMI Quirks framework you are tying the quirk to the SCMI FW Vendor
-and maybe some specific SCMI FW Version....
-
-...so what will happen when you will update/fix your DT in the future ?
-Will you also take care to bump the BRCM SCMI FW version to disable the
-quirk in the DT deployed by your FW binary ?
-
-Thanks,
-Cristian
 
