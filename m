@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-771315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B504B2856F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:58:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264ADB28570
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE5D1CC3235
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:58:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDECB7A8D97
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B06C2D8382;
-	Fri, 15 Aug 2025 17:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9807B2F9C28;
+	Fri, 15 Aug 2025 17:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dw3/uWez"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ePfxfxXT"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9683D24DD11;
-	Fri, 15 Aug 2025 17:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D231253932
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755280686; cv=none; b=InGDNydJ9aJ5s/BUhypmI1eZ100nkcsWtEBylr0C4dQw0k0D2AZcQ9bDeAJWel88Ne0Bsbb+6Hw1LbJ+UHhB4mTzye8C3I8x/O5j2ChcQ43RZO0YsdGnSBS5GzL0Sp8upvWY1Wb7D/V6/F5ufhVFxCQWXmuCRQtW7h5DyyYxkZU=
+	t=1755280713; cv=none; b=dpSnc4hxaGgHMrhKa4CW1QvsGHPiELtCoGyC4Eq2yitz3rYAqs19rIajYb9k/smj/adRs5vI5ikyP+IsEI3Z8dAHKKLNvNGal5ay+WyFWbiPohEWLuJaa+z4OmkAv5uHNXuWOWs9jh/EZbcSqEKFYaSKgYoNVV9nGKc2YysbGdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755280686; c=relaxed/simple;
-	bh=3hVu27Zupu98kxe36FCGzKn0QhZ3NlHERGCP3SmLo70=;
+	s=arc-20240116; t=1755280713; c=relaxed/simple;
+	bh=J0td2zoouhF31o7H+9b7gH8qiWkTQPnLC9UtUQImk4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=it1arwsIE4eU+qsQUhTbcYcNZRGhEYt/YI5hR/BWfXUEdKdW4/3NPqpdeB1QDgScBPDC7qQjE+KXHq83npkZ27exDPTDK3zBq7TN43zH6Kar5/x5Ysy6QrA7Ni/Csu5GDUk4Cz0z7rNQHJEne1kWhykMsfHLGTQUx50DvCA+BZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dw3/uWez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D04C4CEEB;
-	Fri, 15 Aug 2025 17:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755280686;
-	bh=3hVu27Zupu98kxe36FCGzKn0QhZ3NlHERGCP3SmLo70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dw3/uWezA9w7GMsE8jW9iG0jj81CHLIA3t/eK8gKQrB05AdWv3t31dqES/3vaY7Q6
-	 VK+gWZbeMUItT7tWtTJD1AvVEUTr3XL6ausV3z18jiXtroAuP0NFpOv2KXLdw0nwmY
-	 LqIKFATCPETCyGhueD1EnQanbWWRXC7ZJjOoI/UmvjsWYxyBhNNWdd5NNKlONeSycA
-	 bfg2NjXjoUqGu5FfRqqoH+wjM9mnxm5xyKeFLd26K9YLNMF/s1m48pdpfIFlqi/w9P
-	 YRMHsN4sAwT1NHNZClqklbcZ5QnIcLzQYzTw50LPbF5hN9w7tVPSsJqoJrSf1fu+FS
-	 X3jmhH7vnrV/A==
-Date: Fri, 15 Aug 2025 20:58:01 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aJ91KX97WVOQ3nVk@kernel.org>
-References: <20250814162252.3504279-1-cfenn@google.com>
- <aJ8iNLwlf4PAC0h1@kernel.org>
- <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
- <aJ9fy_sO6tza9qLF@iki.fi>
- <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
- <aJ9ySGv0JZ0DiNgf@kernel.org>
- <aJ9z4OlwvFdEA2Q_@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+wUW7elBew6YdN7K7g8LB+jVUQ2Kc5MGhwhKg04gSR10gHMZFAtR/5xJadcQ7e9DmBonNxw6dQctZN6wc3LkCvS0bZ8j03MXj/e5bMK9I6SEC9vkuGrBBfe9bSaQpyrOj8uvOZ94oOv0bkEW8kjdXbM42njglE4rKg+VLAyEKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ePfxfxXT; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2eb4a171so3005962b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755280712; x=1755885512; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYP+7rbjuySHNq9ed5xHyLOGuxCWsmhv7zYPas8pOCQ=;
+        b=ePfxfxXTKfarE/Hb/5EpneBWNUZyRSrVO2r6yh46ZW1PO3o19yEdPEODCnCCLUmK4C
+         sGBkSaUhTxiSHTDt+7I8WOE/SA6kfcF9DZbd9Xou4xtffxfI908DI5vM1wQc5QXrxuh/
+         7GH19kdeH9KqYjE+fvcG07DCjIcCNEU8FOEeA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755280712; x=1755885512;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SYP+7rbjuySHNq9ed5xHyLOGuxCWsmhv7zYPas8pOCQ=;
+        b=lLSugypiAYADH1dFaqARtfHU8rveQp3vpjM6XSZcqnMZseLOzcCm1owoEB3cmTMMxA
+         ZTEUtDQlrEetFZP5Hto+3L/uo44Lub5+4NJSifZztDiwVPW0Xm4IGMOQ3ZzUZhwnTZiJ
+         BvRrFqiGFhtPWprrp02JUFC3xwroZn/OM8YPEZWnG81DQ5Npfi4xLWD0VmDNAfXZyaeo
+         aE8dR94gWS2d43LKB63TOoQjApLsemlfCh7Vsb2Vc/Hr2TDp5hWtWoiSP66Ih5PPgSYD
+         y6LhRoYMJ3jYDZZRF6qGCJsFQuJBwl9cGw3AjhK817QduGOuZA5TCyR8rsJ+aG1V6ziG
+         et3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7EVqtAUUeTbY7A4h4OUmQKDpeplwiSn+rm7fJnscjxRxWYn0EdvUqb3kLfFaflRmrj1k3EoSmTEhhnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlFy53h5/ojqugwpjcVK9d4kJoJFnM0DNO77pD66co39j7AHj1
+	E9AI9+qHBoNwKI0CrXwqzqWA/+xhqEES3jcWeoQl4AAJd7FyfFkOUy2z5qcfhiFPDQ==
+X-Gm-Gg: ASbGnctBLfO5eYSoZhBkGUofIEtNSRB5lQNn2yDMErdiZVQqPa4bDnMTLCTKjlW6G9b
+	n5fzakKEDvxQ7/qK5poqbDLq/sm2Po6jR1PKyVBl5F49xdSGCdtLv3kV82vMszp79ddJlHX9nho
+	OOoa6npnSqzrdHQQ7gtG2zkhnV7NmZjPZu0mAMQPFj/lHPHT32rXF8eLYaypP+VyWi7PLrf/wWq
+	8TQp7ge1f6KvjGmuKgf8H1ADQ5mT+99DSMXoRRyloMLX3Jsz/jcqLT0M9mzj0dzytxwlJjC8Xrk
+	+2psr4TAEagpCfFII1WpdKUX9ET8v7HOAp+dIZdeCPYKtCWGkgQ9E4foxf9I8BR/vFpqtQReCqX
+	5Z8VWoK/kMJTvVhDDhvTomKeOr4U4pSVnQ2eHG8bW84Mw8Dwl1sPcWdwJr4oM
+X-Google-Smtp-Source: AGHT+IEWwayBN2jYiBq6EgZL44fhRP2FJzOV3pSNvcqowgzPQ4YYHIc8jaIJM8lFWkDpamntCEnzVA==
+X-Received: by 2002:a05:6a20:549d:b0:239:1c1e:3edf with SMTP id adf61e73a8af0-240d2f3c2famr4794369637.40.1755280711731;
+        Fri, 15 Aug 2025 10:58:31 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:eaff:25b5:2a27:51d9])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76e4528bca0sm1597349b3a.34.2025.08.15.10.58.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 10:58:31 -0700 (PDT)
+Date: Fri, 15 Aug 2025 10:58:29 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Tsai Sung-Fu <danielsftsai@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] genirq: Add kunit tests for depth counts
+Message-ID: <aJ91RRsMB-duD2yR@google.com>
+References: <20250522210837.4135244-1-briannorris@chromium.org>
+ <ded44edf-eeb7-420c-b8a8-d6543b955e6e@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJ9z4OlwvFdEA2Q_@kernel.org>
+In-Reply-To: <ded44edf-eeb7-420c-b8a8-d6543b955e6e@roeck-us.net>
 
-On Fri, Aug 15, 2025 at 08:52:35PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Aug 15, 2025 at 08:45:48PM +0300, Jarkko Sakkinen wrote:
-> > On Fri, Aug 15, 2025 at 10:06:36AM -0700, Chris Fenner wrote:
-> > > On Fri, Aug 15, 2025 at 9:27 AM Jarkko Sakkinen <jarkko.sakkinen@iki.fi> wrote:
-> > > 
-> > > > I'll with shoot another proposal. Let's delete null primary creation
-> > > > code and add a parameter 'tpm.integrity_handle', which will refers to
-> > > > persistent primary handle:
-> > > 
-> > > I'm not yet sure I understand which handle you mean, or what you're
-> > > proposing to do with it. Could you elaborate?
-> > 
-> > Primary key persistent handle.
-> > 
-> > In tpm2_start_auth_session() there's
-> > 
-> > 	/* salt key handle */
-> > 	tpm_buf_append_u32(&buf, null_key);
-> > 
-> > Which would become
-> > 
-> > 	/* salt key handle */
-> > 	tpm_buf_append_u32(&buf, integrity_handle);
-> > 
-> > And in beginning of exported functions from tpm2-sessions.c:
-> > 
-> > 	if (!integrity_handle)
-> > 		return 0;
-> > 
-> > And delete from same file:
-> > 
-> > 	1. tpm2_create_*()
-> > 	2. tpm2_load_null()
-> > 
-> > That way the feature makes sense and does not disturb the user who don't
-> > want it as PCRs and random numbers will be integrity proteced agains an
-> > unambiguous key that can be certified.
+On Sun, Aug 10, 2025 at 12:37:31PM -0700, Guenter Roeck wrote:
+> The new code calls irq_domain_alloc_descs(), making it dependent
+> on IRQ_DOMAIN. However, specifying that dependency directly is not
+> possible:
 > 
-> E.g., for example that will unquestionably harden IMA exactly for the
-> same reasons why some user space software might to choose to use HMAC
-> based integrity protection.
+>  config IRQ_KUNIT_TEST
+>         bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
+>         depends on KUNIT=y
+> +       depends on IRQ_DOMAIN
+>         default KUNIT_ALL_TESTS
+>         imply SMP
+>         help
 > 
-> At data center, there's guards and guns but for appliences, but there
-> is also the market appliances, home server products etc. They are not
-> mobile but neither they are protected in the same as e.g., a data
-> center is.
+> results in:
 > 
-> This is not to admit that right now the feature is no good to anyone
-> but in a selected set of use cases with this modification it would
-> make e.g., IMA's security *worse* than it would be with the feature
-> enabled.
+> *** Default configuration is based on 'defconfig'
+> error: recursive dependency detected!
+> 	symbol SMP is implied by IRQ_KUNIT_TEST
+> 	symbol IRQ_KUNIT_TEST depends on IRQ_DOMAIN
+> 	symbol IRQ_DOMAIN is selected by IRQ_DOMAIN_HIERARCHY
+> 	symbol IRQ_DOMAIN_HIERARCHY is selected by GENERIC_IRQ_IPI
+> 	symbol GENERIC_IRQ_IPI depends on SMP
+> 
+> This is seen with alpha configurations such as alpha:defconfig after
+> adding the IRQ_DOMAIN dependency.
+> 
+> I have no idea how to resolve this. For now I disabled IRQ_KUNIT_TEST
+> for my alpha test builds.
 
-One product example would be "blockchain node as a box" i.e., it carries
-momentary value inside. I could imagine this type of products exist or
-to be created (especially given proof-of-stake blockchains).
+How about 'select'? That's the usual way IRQ_DOMAIN is managed anyway.
 
-In such product, you don't have much to measure but you wan to take all
-of the security that you have to harden the protection of that small
-amount of data.
+It builds for me, but my distro doesn't provide an Alpha QEMU, so I
+can't test it.
 
-BR, Jarkko
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -148,6 +148,7 @@ config IRQ_KUNIT_TEST
+ 	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT=y
+ 	default KUNIT_ALL_TESTS
++	select IRQ_DOMAIN
+ 	imply SMP
+ 	help
+ 	  This option enables KUnit tests for the IRQ subsystem API. These are
 
