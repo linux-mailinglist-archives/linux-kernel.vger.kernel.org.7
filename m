@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-770613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6E8B27D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7213BB27D21
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0DA189751E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39843B2FF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D852E1C4C;
-	Fri, 15 Aug 2025 09:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41B52D3721;
+	Fri, 15 Aug 2025 09:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/WypXHC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LfhCM6nX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A658E2D46D3
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956842D0C71;
+	Fri, 15 Aug 2025 09:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755250034; cv=none; b=uu8Ed1X5zCsl6+OIU0SHsWhiqh6ztfoTXTpSZUOzNLAMsKZfn4rbVpJ+Cq5NOpjH/hunkqQ7EHEBsR/UY3LVSpYuEDNcZn6qK9Z3KPVh3rui/6bAl9JcPk/r2tJ13+j4U3mv6p089hRbrgTVTkdPZIb6pN3q3go+0RdbumlfBAE=
+	t=1755249948; cv=none; b=c3qUWYrp05G3ZVbiz5WYoULVJEhWS/fhIF9WBVro5VLnvfUzAaORzrsfM7RRXkBmKgB0PEZ7LHnfhuUKs3Qbg8sMMI3YYFAKe3MvOBNXynnH3EM/iiRaNZeHDCDRVc9A8iiWgDwfYEAYxKAV4gSm2s8fSZ4iThaN0XQj1zDpN+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755250034; c=relaxed/simple;
-	bh=RnraM+e4YFUNz/wGOUWNqAtFfY67b2WiV+P96NkbdYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ljrBCl4E97LQ2eukSUs07oAO9WBxU2fybHpecqX3K2drHbTSP8X8JWvEO9m92JRL+dzaD1YGrHZ+Lt6E+1Y3IrqVrhpbGgi26wXrDqvqiUD3cjSd9bwmhHWjkI80z4zcppU1p/BgzuawgV423hg1DknxzVAJP587dwy+1yd0ZOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/WypXHC; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755250032; x=1786786032;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=RnraM+e4YFUNz/wGOUWNqAtFfY67b2WiV+P96NkbdYI=;
-  b=V/WypXHCSCMNERanrySxGbn0TBfHDA17qSb5z032dABCMf8KyOTqDJpl
-   4skihJAH2RwACZHJzSy+WXZ5rhQ6Lg66Dj3VjIcj1Ftqhnq8RurMp2W6Z
-   f8yWv85FpR80I+Dsh6cJK5IpommM4QOaayYMhN8avK5Cgd3c90PLfGeot
-   eRO0fgBYQ1uZVlI51kPjsjpb5h7Q4t4wHEtXRwZLqA/H/dTBt817if0ZS
-   hctDM5F436sAHxZsbe61RSqMfznNTPsfjXNYoWC/wltCxRBZmn4t+tksM
-   yx6xkK4obFrHwD9kgtdPJmcZD7W6BGtbkGe8zUKk8ilYF6tMHdg6fI5Ez
-   w==;
-X-CSE-ConnectionGUID: 7fFXgt70SL6wzIBhxyArfg==
-X-CSE-MsgGUID: PCyyELMBTF2a5V9wWOPLGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68175605"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="68175605"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 02:27:12 -0700
-X-CSE-ConnectionGUID: CehhmC4SStSu+MG90/gMLg==
-X-CSE-MsgGUID: ltWqE78qRJOS5qzmawwsdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="190689512"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Aug 2025 02:27:09 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umqi9-000Bnv-0p;
-	Fri, 15 Aug 2025 09:26:59 +0000
-Date: Fri, 15 Aug 2025 17:25:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Subject: kismet: WARNING: unmet direct dependencies detected for SM_GCC_6350
- when selected by SM_VIDEOCC_6350
-Message-ID: <202508151725.orPsYxfw-lkp@intel.com>
+	s=arc-20240116; t=1755249948; c=relaxed/simple;
+	bh=SKzsQ5kDdbEdWpeRFn3oezKFQhkL/mEcXsebwxwrWbg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O5LC5T9wyb00JEzbuSoFt+hnIZSe7+xD8ccimZQJc7JWlPSssOvWPq7oUBY4ir8tEE6SQQaB42UCcIMB97l+z1xsYM32iwUim94Bld9bPYprruAcNz4eIyLHnrGyCweSkyM9luJJ+1UmMnFtVYNNN6H9qFA+SVTNVn08VVSyUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LfhCM6nX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755249943;
+	bh=SKzsQ5kDdbEdWpeRFn3oezKFQhkL/mEcXsebwxwrWbg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=LfhCM6nXrQz55JnV+NwdQhFNHKH/Lut19NhlzJkW3XDhPcBweh/uMfbaBSl2y8gKb
+	 WzAaD3W4aOPygIpVmN/GkV1QVN1JtshloLN4bT6mh2nUwGqNssU20cd9BJ4VBsMf1I
+	 Y7QmT1pbrkw4Yih9XAGUxWb4aAHNy/3hZ9yDek0B80OjJz5cQjGskQvOb2O8xSXqQo
+	 FNEv4g85YGPtbENMBVCFR0qBXSlcTrK2+g/xeKvnG/xsDc3gDOLVM2Mj2k2SpuAxiZ
+	 R8azZPozKQRaae++AMAb3MPhwzHkp6H0Ee5eH7gwAMvIWXsTGFPPT8d3KNtnVPBXCx
+	 RVIPi7ybyflWw==
+Received: from [192.168.100.50] (unknown [103.151.43.82])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0C5CB17E0020;
+	Fri, 15 Aug 2025 11:25:41 +0200 (CEST)
+Message-ID: <96edb039-1bb8-480b-b871-754bdab6fb8b@collabora.com>
+Date: Fri, 15 Aug 2025 14:25:40 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com
+Subject: Re: [PATCH] selftests/kselftest_harness: Add
+ harness-selftest.expected to TEST_FILES
+To: Yi Lai <yi1.lai@intel.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, shuah@kernel.org, wad@chromium.org,
+ luto@amacapital.net, kees@kernel.org, thomas.weissschuh@linutronix.de
+References: <20250815091032.802171-1-yi1.lai@intel.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250815091032.802171-1-yi1.lai@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d7ee5bdce7892643409dea7266c34977e651b479
-commit: 720b1e8f20047e072b98a0931fc3e9a545fda18f clk: qcom: Add video clock controller driver for SM6350
-date:   9 weeks ago
-config: arm-kismet-CONFIG_SM_GCC_6350-CONFIG_SM_VIDEOCC_6350-0-0 (https://download.01.org/0day-ci/archive/20250815/202508151725.orPsYxfw-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250815/202508151725.orPsYxfw-lkp@intel.com/reproduce)
+On 8/15/25 2:10 PM, Yi Lai wrote:
+> The harness-selftest.expected is not installed in INSTALL_PATH.
+> Attempting to execute harness-selftest.sh shows warning:
+> 
+> diff: ./kselftest_harness/harness-selftest.expected: No such file or
+> directory
+This is a bug. Please try to find which patch had broken this and
+add a fixes tag?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151725.orPsYxfw-lkp@intel.com/
+> 
+> Add harness-selftest.expected to TEST_FILES.
+> 
+> Signed-off-by: Yi Lai <yi1.lai@intel.com>
+> ---
+>  tools/testing/selftests/kselftest_harness/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness/Makefile b/tools/testing/selftests/kselftest_harness/Makefile
+> index 0617535a6ce4..d2369c01701a 100644
+> --- a/tools/testing/selftests/kselftest_harness/Makefile
+> +++ b/tools/testing/selftests/kselftest_harness/Makefile
+> @@ -2,6 +2,7 @@
+>  
+>  TEST_GEN_PROGS_EXTENDED := harness-selftest
+>  TEST_PROGS := harness-selftest.sh
+> +TEST_FILES := harness-selftest.expected
+>  EXTRA_CLEAN := harness-selftest.seen
+>  
+>  include ../lib.mk
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for SM_GCC_6350 when selected by SM_VIDEOCC_6350
-   WARNING: unmet direct dependencies detected for SM_GCC_6350
-     Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
-     Selected by [y]:
-     - SM_VIDEOCC_6350 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+Thanks,
+Usama
 
