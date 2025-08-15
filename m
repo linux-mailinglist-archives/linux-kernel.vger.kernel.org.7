@@ -1,174 +1,218 @@
-Return-Path: <linux-kernel+bounces-769971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F24B2757B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:13:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4126B27569
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF07168D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C08168B04
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E07277C84;
-	Fri, 15 Aug 2025 02:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A87298CD5;
+	Fri, 15 Aug 2025 02:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hfZpv8zW"
-Received: from mail-m158203.netease.com (mail-m158203.netease.com [47.251.158.203])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aJ24+SUb"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33B027455;
-	Fri, 15 Aug 2025 02:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.251.158.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E85294A10
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 02:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755223770; cv=none; b=TDPfeQG1cfWv9NjtkGEeF5AkJwXAWDz2w5twE0/EaqVJWZGyESGyGnIF0h0uYB4cW0dZ34Mlg6enDv0bNVuzDazs6OHIqtgd109skQZeGrwKaTqfHr68sf5J8GqYR/gxciiQvRYXY+2NFciks4w2MV6VNEYcWNthnu6c28mb5jM=
+	t=1755223523; cv=none; b=irBIz6Gq1GPHO/j7ZQbVnQldBGwklqKx8Ryt87ORbZEAve+x1gNWppzuSlaq7T3mZjzWtfsX7hsbDQWu+PYNWjD99VN+jnY+vOWrXNbM2Ns4V1MP2M4AOO1byb69Tt1XHLbYrPoz0nsvVOEJ/l+0Ki2IIGel6A4IMZevqcafFwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755223770; c=relaxed/simple;
-	bh=WbpBqdVln/8wj0cDLNMD771Zdo35BnkqRz8qFJrul0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gyyw3GbTBmnEyzX0Rz9I7HycL6UIQtoLA+nNbFbbPObmHDsNU4QI14fu5Iq/REWtE2l3FpYfqil9MlZJh9+4w2fFDBIIzuGGiXXi/Pal/AZ6sPiAhRr3VGfn5SBjeCPq2QKAo/R5jh19eyBFXq2RVCOmdU6g0eZr+10UDnVn88M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hfZpv8zW; arc=none smtp.client-ip=47.251.158.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1f727517b;
-	Fri, 15 Aug 2025 10:04:05 +0800 (GMT+08:00)
-Message-ID: <6ec86839-2d81-491b-a9fa-b44bb6db8fbf@rock-chips.com>
-Date: Fri, 15 Aug 2025 10:04:05 +0800
+	s=arc-20240116; t=1755223523; c=relaxed/simple;
+	bh=qORkR3wVopq+YUsdTjTIGDl/nDcPEBniGidcjDhySDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=irwAsShk0HJWHdQECKzNyx4hPstmWadhCZwtlG7VAoJOALHiRNJsli0Vk3g4uv5dh+ul7TWToJyxn627qDEVYfHZ3URWqSLfs3klpOJuNRknm7vPs1KpXg0JBxFxEYu2U8CelRDb8fEl5G1jyqAjVD4vVVZ6unXKcST4bNwwHRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aJ24+SUb; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1583624b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:05:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755223516; x=1755828316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=czq9Z+KET/jVXs/EzDrGbxQ/5L+K1L0esuJSVThSc10=;
+        b=aJ24+SUbcLOVVK2saXNFltoEkTWFsxp5REUSk4pQGmWF6GCDnAnkS0ydcvI5gGULsC
+         iojD87RDfJ8R524DHdu5k8QxHEr5gQrg3R+l/wqxSS/tQt6lDvmnEg+gNdK1Ui9zPDky
+         Aa1Dh+NypKnbEwrGcka16gAL55zbhbfWrDtLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755223516; x=1755828316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=czq9Z+KET/jVXs/EzDrGbxQ/5L+K1L0esuJSVThSc10=;
+        b=It3yy0wL74WXk80XJpwA0NQDN8tgjUvV5jtbGu1RBM4bkqIgPoaI2MmBSjyY4eJhed
+         ReQ+BT2cy/a6/xWgjkH+4JcOobV503YagNVXeBzXKinmuOcC5awLTruni5aUIcF/ETDa
+         bznnidM6M92qfAzNXckEhnHLpDRrf6XGJPDBmqO4QckCj2PSTFeeTaXU3RbvLhYmuCsd
+         9zO9tZ/QuymqrwOBneJNUH1RnYsDcQ8T/KYNf1ijXDx2qGKU4+8lDlMLCosWJp8ylH93
+         /oIY9wCoaqLOIMFonNLwTIVDH4HPonuDHgM3bXwol9lFs+3MV6fIyApntcz/1bYbI9F4
+         yJuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWe0TG0+PgC9oc/gInN7A4tWBOd2mKaK19j7DcB4lWLSKxaFc5An+IivQv1RzzFDJDSlzkL/Z/Vw2cu/ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP0mZ0rZilkq9/9bYsP4qvlEhNwxTAnqg1BCF/4MXhqWKydeB3
+	Esvi5mKRC9gDIUCD2Ri69e/12DvQngkF2paju7AEz43AOUROrrJbX94Af8yQoEm7CuOdqfF2yub
+	NrU8=
+X-Gm-Gg: ASbGnctXjS88MInjDTzQHaJ1gIOMEFwAUh9FL9DGQxXb7Ju7uanhofROrgucnX51WfH
+	oW3hO/AoU1RV+GgYauvkMqReZ/kX/oKEUz8DEY+9dh7QjU+qQDDUWcHuhAL04AY1tzN7GqN7147
+	QYq69apC83RgmNkbuuE52OmQzNWk1Ey6yjDYe07JEqoSVXyh+1MytinICEaJ7DkJMIPeKc4Akj9
+	FNNicuHks/ePPCPclsIpRW5ThOOoXA//uKT6AlO6BqoR8ZSr/cazaVOZUH/pnmWuBwDJwiEQCDz
+	jlOe+WyskKxrhs3xGQ3MsPaDpoVAmjFH0pmAuonEgN+qNX4lapC6XqjnSVPHnHmLD8JyD8rauOG
+	TKfZ0w4kS4oJQltdEKNh3GEwHF26VBJCRP60zoaeSiiW4oMF1qUe2Rf5Q4N2V2IfBIA==
+X-Google-Smtp-Source: AGHT+IHdMDVQ+z63KgBx6hQxmO5QlcJG2cmn+kwerjcC7fSBxR3CRL8Q11bQeMdUYK+B85yyc0I2LQ==
+X-Received: by 2002:a05:6a00:4649:b0:76b:3ae7:37a8 with SMTP id d2e1a72fcca58-76e324a87edmr6599455b3a.7.1755223516463;
+        Thu, 14 Aug 2025 19:05:16 -0700 (PDT)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com. [209.85.215.170])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4558cdabsm35390b3a.94.2025.08.14.19.05.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 19:05:15 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b471aaa085aso732538a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:05:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNja/cR/Wx6LKEAiWfC18jew4Dlq6qp50ISEK2n52+IZP9ceLgV1dV76TpV8HLqnBG+zvYQ5LSL2lgPGc=@vger.kernel.org
+X-Received: by 2002:a17:902:d50b:b0:242:b138:8110 with SMTP id
+ d9443c01a7336-244598679d7mr74419825ad.24.1755223514160; Thu, 14 Aug 2025
+ 19:05:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
- <20250814104753.195255-1-damon.ding@rock-chips.com>
- <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98ab784e4f03a3kunm0571d7eb485c79
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0sfSFZDTU1KSh1OTBpMQxlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=hfZpv8zW2uys6mdORyNcGO+jdR1oTSbgWly42v2Rwxejwtr8GjoEWt+bKnpVT5e1nF9OU25agMwG6zgxwEy5aXBeJJbfAWzI1hPnuAIXyKEeGphMhrobsGe4y0AoA1OiKSEHNipCW+hLlPA5j66L+lShxrMP06AecHT8i7KL0uc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=DFpzt96SH7zrjIwGrhgfwPhUMLgjWOGWlrIeC6OmdkA=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250814220130.281187-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250814220130.281187-2-thorsten.blum@linux.dev>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 14 Aug 2025 19:05:02 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Udf3pZjhpPxEuHsFynP7GoHnZ7RG=NYZ2gLzm=E_4V4A@mail.gmail.com>
+X-Gm-Features: Ac12FXyz0N6lYfN0uKFzb67JigmIfAX8HYG9O649Ly1mqN7DuMLlThvvJiVlxQE
+Message-ID: <CAD=FV=Udf3pZjhpPxEuHsFynP7GoHnZ7RG=NYZ2gLzm=E_4V4A@mail.gmail.com>
+Subject: Re: [PATCH v3] kdb: Replace deprecated strcpy() with strscpy() and memcpy()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
+	Nir Lichtman <nir@lichtman.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Yuran Pereira <yuran.pereira@hotmail.com>, linux-hardening@vger.kernel.org, 
+	Daniel Thompson <daniel@riscstar.com>, kgdb-bugreport@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marek,
+Hi,
 
-On 2025/8/14 22:33, Marek Szyprowski wrote:
-> On 14.08.2025 12:47, Damon Ding wrote:
->> PATCH 1 is a small format optimization for struct analogid_dp_device.
->> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
->> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
->> PATCH 7 is to apply the drm_bridge_connector helper.
->> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
->> PATCH 11-12 are preparations for apply panel_bridge helper.
->> PATCH 13 is to apply the panel_bridge helper.
-> 
-> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig,
-> so it causes build break:
-> 
+On Thu, Aug 14, 2025 at 3:02=E2=80=AFPM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
+>
+> strcpy() is deprecated; use strscpy() and memcpy() instead and remove
+> several manual NUL-terminations.
+>
+> In parse_grep(), we can safely use memcpy() because we already know the
+> length of the source string 'cp' and that it is guaranteed to be
+> NUL-terminated within the first KDB_GREP_STRLEN bytes.
+>
+> No functional changes intended.
+>
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+> Changes in v3:
+> - Extract the strscpy() changes into a separate patch and focus on
+>   replacing the deprecated strcpy() calls as suggested by Greg
+> - Link to v2: https://lore.kernel.org/lkml/20250814163237.229544-2-thorst=
+en.blum@linux.dev/
+>
+> Changes in v2:
+> - Use memcpy() instead of strscpy() in parse_grep() as suggested by Greg
+> - Compile-tested only so far
+> - Link to v1: https://lore.kernel.org/lkml/20250814120338.219585-2-thorst=
+en.blum@linux.dev/
+> ---
+>  kernel/debug/kdb/kdb_main.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 7a4d2d4689a5..40de0ece724b 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -727,14 +727,10 @@ static int kdb_defcmd(int argc, const char **argv)
+>         mp->help =3D kdb_strdup(argv[3], GFP_KDB);
+>         if (!mp->help)
+>                 goto fail_help;
+> -       if (mp->usage[0] =3D=3D '"') {
+> -               strcpy(mp->usage, argv[2]+1);
+> -               mp->usage[strlen(mp->usage)-1] =3D '\0';
+> -       }
+> -       if (mp->help[0] =3D=3D '"') {
+> -               strcpy(mp->help, argv[3]+1);
+> -               mp->help[strlen(mp->help)-1] =3D '\0';
+> -       }
+> +       if (mp->usage[0] =3D=3D '"')
+> +               strscpy(mp->usage, argv[2] + 1, strlen(argv[2]) - 1);
+> +       if (mp->help[0] =3D=3D '"')
+> +               strscpy(mp->help, argv[3] + 1, strlen(argv[3]) - 1);
 
-> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
-> `drm_bridge_connector_init'
-> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
-> 
-> After adding this dependency, the Exynos DP driver stops working. On
-> Samsung Snow Chromebook I observed following issue:
-> 
-> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
-> following panel or bridge (-16)
-> [    4.543428] exynos-drm exynos-drm: failed to bind
-> 145b0000.dp-controller (ops exynos_dp_ops): -16
-> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
-> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
-> exynos-dp failed with error -16
-> 
-> I will investigate details later in the evening.
-> 
+Let's think about some test cases...
 
-Thanks for your review and test. :-)
+Old code:
+mp->usage =3D kdb_strdup(argv[2], GFP_KDB);
+if (mp->usage[0] =3D=3D '"') {
+  strcpy(mp->usage, argv[2]+1);
+  mp->usage[strlen(mp->usage)-1] =3D '\0';
+}
 
-I found the Rockchip side also lacks 'select DRM_BRIDGE_CONNECTOR' in 
-ROCKCHIP_ANALOGIX_DP's Kconfig. I will add the DRM_BRIDGE_CONNECTOR 
-selection for both of them in the next version.
+New code:
+mp->usage =3D kdb_strdup(argv[2], GFP_KDB);
+if (mp->usage[0] =3D=3D '"')
+  strscpy(mp->usage, argv[2] + 1, strlen(argv[2]) - 1);
 
->> Damon Ding (13):
->>     drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
->>     drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
->>       &drm_bridge_funcs.atomic_enable
->>     drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
->>     drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
->>     drm/bridge: exynos_dp: Remove unused &exynos_dp_device.connector
->>     drm/bridge: analogix_dp: Remove redundant
->>       &analogix_dp_plat_data.skip_connector
->>     drm/bridge: analogix_dp: Apply drm_bridge_connector helper
->>     drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
->>     drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
->>     drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
->>     drm/bridge: analogix_dp: Remove panel disabling and enabling in
->>       analogix_dp_set_bridge()
->>     drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
->>       in analogix_dp_unbind()
->>     drm/bridge: analogix_dp: Apply panel_bridge helper
->>
->>    .../drm/bridge/analogix/analogix_dp_core.c    | 384 ++++++++++--------
->>    .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
->>    drivers/gpu/drm/exynos/exynos_dp.c            |  48 +--
->>    .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  49 +--
->>    include/drm/bridge/analogix_dp.h              |   7 +-
->>    5 files changed, 248 insertions(+), 245 deletions(-)
->>
->> ---
->>
->> Changes in v2:
->> - Update Exynos DP driver synchronously.
->> - Move the panel/bridge parsing to the Analogix side.
->>
->> Changes in v3:
->> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
->> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
->> - Squash all commits related to skip_connector deletion in both Exynos and
->>     Analogix code into one.
->> - Apply panel_bridge helper to make the codes more concise.
->> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
->> - Remove unnecessary parameter struct drm_connector* for callback
->>     &analogix_dp_plat_data.attach().
->> - In order to decouple the connector driver and the bridge driver, move
->>     the bridge connector initilization to the Rockchip and Exynos sides.
->>
->> Changes in v4:
->> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
->> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
->> - Drop the drmm_encoder_init() modification commit.
->> - Rename the &analogix_dp_plat_data.bridge to
->>     &analogix_dp_plat_data.next_bridge.
->>
-> Best regards
+Example string: argv[2] =3D "\"xyz\""
 
-Best regards,
-Damon
+Old:
+  mp->usage =3D strdup("\"xyz\"")
+  mp->usage becomes "xyz\""
+  mp->usage becomes "xyz"
 
+New:
+  mp->usage =3D strdup("\"xyz\"")
+  mp->usage becomes "xyz\""
+  mp->usage doesn't change (!)
+
+To match old behavior, I think you'd need "strlen(argv[2]) - 2", right?
+
+I'll also note that with a different (malformed) example string, the
+old code would have also been broken.
+
+
+Example string: argv[2] =3D "\""
+
+Old:
+  mp->usage =3D strdup("\"")
+  mp->usage becomes ""
+  mp->usage[-1] =3D '\0';  // BAD!
+
+
+That should probably be fixed too. Luckily this command can't be run
+by a user in kdb and it just runs stuff at init time...
+
+Maybe a right fix is something like this (untested). You could even
+put it in a small helper so it doesn't need to be duplicated for both
+help and usage:
+
+len =3D strlen(to_copy);
+if (to_copy[0] =3D=3D '"') {
+  to_copy++;
+  len--;
+  if (to_copy[len-1] =3D=3D '"')
+    len--;
+}
+dest =3D kstrndup(to_copy, len, GFP_KDB);
+
+...of course, that stops using kdb_strdup(). I don't really see why
+that exists? The comments make no sense...
+
+
+
+-Doug
 
