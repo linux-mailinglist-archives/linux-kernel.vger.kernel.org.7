@@ -1,203 +1,112 @@
-Return-Path: <linux-kernel+bounces-771380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E593B2863A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:16:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310F1B28634
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951F1B205AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FDC66225F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D47270548;
-	Fri, 15 Aug 2025 19:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82878293C42;
+	Fri, 15 Aug 2025 19:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="WVqOXF1s"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1Wf/ZXE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED4123D7FD;
-	Fri, 15 Aug 2025 19:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC432206A7;
+	Fri, 15 Aug 2025 19:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755285165; cv=none; b=HGhlC+phwBdeuujdavkA/VAc0R5xJjwODw/zXqYdrtFWqSk3D25Z3b7+rsOD4dssH1o9ZHCZNlQ1YtuFvRbaN/mD+55NabRY3aREqou7Pg1p7IcGCjuwNBf5J1BffBFlY98epCVCSeVOZf/+RX0ZD7nXmXnskYLCs1ZibrSpG80=
+	t=1755285138; cv=none; b=fgElNJVGUvC2kwW17mxuHLciurujJjQ/fFFe56R7u+9qL6+cDoIOC9N+eQRfBTYiNyQukpiTFUErRdQtU8yloXQ+O9DNNCrSNaba1jY4+0xRSm6ZxXZJZs3q84iFggP7jELARlVWrzZeRaTDQHtqNZh/ZscrdMJJ00E6S8VJy5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755285165; c=relaxed/simple;
-	bh=1MpLVBaTkftRx0ZL9VAsxbgwHK4XcOhCZ+AdhWvhioU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwWMY3Q/XCdYSbILJgo06fwpL4i7UrCB2EAHm1rZeuftguFHm3VmHv2d0eBjpia4uKQvVnOhyjKpJaneozeDDtVs9uY4yuvWv+EtowuZggvfqmrz1ycavE1L7BM0NfGVkgod4JY+50GPHn5She6olh6vfJJ1IB7YpZpa4HTnBgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=WVqOXF1s; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from NEET (p3174069-ipxg00b01tokaisakaetozai.aichi.ocn.ne.jp [122.23.47.69])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57FJC7DY034459
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 16 Aug 2025 04:12:08 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=ifVha0y779zflZcpYQGkq627LDgI0cZsMNfU0i0tvwo=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250315; t=1755285128; v=1;
-        b=WVqOXF1stIEGuDfk/vqa6cIlPzuDI6vEhc0FEyy4o2QBYkCTdB7wXpzmtkk71YuA
-         TdhZmLetAVvdvtQYFE7bM866tDzTvkdsXT0caE3vqDthlYXz0xKzLlhJ4tS5e3Z5
-         VLO7hufjke3ggEFY+tQoaDq5/oTv8GxXPVTtA1LgaPljDGcoHHvNJxZRiNPUkZ2M
-         l73M+PrDEhYtMGsBB3XvaX13zAQEB2duH6jbSjy9I1wBkWX8jF23qRDzfj9uQ7yB
-         CuZlcoDjmh4cs4OukR0lTN+9nJcojVKlyCfXZEJtNpxuJPL5PlHpKdjIxzxc1KOp
-         2egS5o+0x9/dsp/8yMa7Yw==
-Message-ID: <86de9cd3-c80a-4183-92f0-63335ac9c274@mgml.me>
-Date: Sat, 16 Aug 2025 04:12:07 +0900
+	s=arc-20240116; t=1755285138; c=relaxed/simple;
+	bh=sgy3dyxSlAQCYlsjTTTaZzqp/r732Zhi3hClnc2d2XE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=fxCn5EacuDEsLpJGBfbJnXnfDbqNVm0KjAxlrscq8RD5UrKoNKNy2EP5ka6291bEUGWAmwJCa10q0lgonyZLQr9Y/C3tYsKJTZ5HO1OBtIGrxj42IY6KJVauGUs5Zw1+5EEHzFuIQ0cKJNkkkR16GC1rt07sx/ntTBl54HtO0CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1Wf/ZXE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D19C4CEEB;
+	Fri, 15 Aug 2025 19:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755285137;
+	bh=sgy3dyxSlAQCYlsjTTTaZzqp/r732Zhi3hClnc2d2XE=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=J1Wf/ZXE40wrscHg3EpaIQ8FJkb+AASxnoDGlfqVtggrISCz/2BfEnDuXz/xyB0rh
+	 kWLqUhsR+UJnQ7Ss3blz44+txjRXf6UyRWci/7GWp57DFtS1SFGL72CtSpA+I3U52k
+	 iq3nhg/LDH/YXdRGwHizWq9eeAtayasNM9ke4nFtjKT3F0/eV43KqsII0XdFMM4+P/
+	 EPf8s71I0cVF51NBPJFjkFTjxdUStTXF8BaSNuHpmFKEg3wC9JfchE+OPzkajvReLt
+	 DB9nL1FIT/bAq3lDojypd+tbuPoqsIRjXMU6IYFhOY4mV52OEVQTX5ULiXUiDpOV2j
+	 OBzN56y9X0HWQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] md/raid1,raid10: don't broken array on failfast metadata
- write fails
-To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
-        Mariusz Tkaczyk <mtkaczyk@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20250812090119.153697-1-k@mgml.me>
- <36f78ba0-ac3b-5d97-89f3-2b09d49d1701@huaweicloud.com>
- <c4980d23-7a76-4c28-b9a8-5989524c1f93@mgml.me>
- <f9a22cef-0596-485c-b573-90d27bd3af36@huaweicloud.com>
-Content-Language: en-US
-From: Kenta Akagi <k@mgml.me>
-In-Reply-To: <f9a22cef-0596-485c-b573-90d27bd3af36@huaweicloud.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Fri, 15 Aug 2025 21:12:12 +0200
+Message-Id: <DC38NDRET9NB.31UDI8FHB7WAY@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 0/2] Take ARCH_KMALLOC_MINALIGN into account for
+ build-time XArray check
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Matthew Wilcox" <willy@infradead.org>, "Tamir
+ Duberstein" <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>
+References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+In-Reply-To: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
 
+On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
+> Alice Ryhl (2):
+>       rust: alloc: specify the minimum alignment of each allocator
 
-On 2025/08/15 10:26, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/08/14 23:54, Kenta Akagi 写道:
->> On 2025/08/13 9:59, Yu Kuai wrote:
->>> Hi,
->>>
->>> 在 2025/08/12 17:01, Kenta Akagi 写道:
->>>> It is not intended for the array to fail when a metadata write with
->>>> MD_FAILFAST fails.
->>>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
->>>> when md_error is called on the last device in RAID1/10,
->>>> the MD_BROKEN flag is set on the array.
->>>> Because of this, a failfast metadata write failure will
->>>> make the array "broken" state.
->>>>
->>>> If rdev is not Faulty even after calling md_error,
->>>> the rdev is the last device, and there is nothing except
->>>> MD_BROKEN that prevents writes to the array.
->>>> Therefore, by clearing MD_BROKEN, the array will not become
->>>> "broken" after a failfast metadata write failure.
->>>
->>> I don't understand here, I think MD_BROKEN is expected, the last
->>> rdev has IO error while updating metadata, the array is now broken
->>> and you can only read it afterwards. Allow using this broken array
->>> read-write might causing more severe problem like data loss.
->>>
->> Thank you for reviewing.
->>
->> I think that only when the bio has the MD_FAILFAST flag,
->> a metadata write failure to the last rdev should not make it
->> broken array at that point.
->>
->> This is because a metadata write with MD_FAILFAST is retried after
->> failure as follows:
->>
->> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
->>
->> 2. In md_super_wait, which is called by the function that
->> executed md_super_write and waits for completion,
->> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
->>
->> 3. The caller of md_super_wait (such as md_update_sb)
->> receives a negative return value and then retries md_super_write.
->>
->> 4. The md_super_write function, which is called to perform
->> the same metadata write, issues a write bio
->> without MD_FAILFAST this time, because the rdev has LastDev flag.
->>
->> When a bio from super_written without MD_FAILFAST fails,
->> the array is truly broken, and MD_BROKEN should be set.
->>
->> A failfast bio, for example in the case of nvme-tcp ,
->> will fail immediately if the connection to the target is
->> lost for a few seconds and the device enters a reconnecting
->> state - even though it would recover if given a few seconds.
->> This behavior is exactly as intended by the design of failfast.
->>
->> However, md treats super_write operations fails with failfast as fatal.
->> For example, if an initiator - that is, a machine loading the md module -
->> loses all connections for a few seconds, the array becomes
->> broken and subsequent write is no longer possible.
->> This is the issue I am currently facing, and which this patch aims to fix.
->>
->> Should I add more context to the commit message? Please advise.
-> 
-> Yes, please explain in detail in commit message.
->>
->> Thanks,
->> AKAGI
->>
->>> Thanks,
->>> Kuai
->>>
->>>>
->>>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
->>>> Signed-off-by: Kenta Akagi <k@mgml.me>
->>>> ---
->>>>    drivers/md/md.c | 1 +
->>>>    drivers/md/md.h | 2 +-
->>>>    2 files changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>>> index ac85ec73a409..3ec4abf02fa0 100644
->>>> --- a/drivers/md/md.c
->>>> +++ b/drivers/md/md.c
->>>> @@ -1002,6 +1002,7 @@ static void super_written(struct bio *bio)
->>>>            md_error(mddev, rdev);
->>>>            if (!test_bit(Faulty, &rdev->flags)
->>>>                && (bio->bi_opf & MD_FAILFAST)) {
->>>> +            clear_bit(MD_BROKEN, &mddev->flags);
-> 
-> And I feel a beeter way is to set MD_BROKEN only if the last rdev
-> failed, set it in middle and clear it is werid.
+    [ Add helper for ARCH_KMALLOC_MINALIGN; remove cast to usize. - Danilo =
+]
 
-Copy.
-I'll modify logic and commit message, then send it out as v2.
+>       rust: alloc: take the allocator into account for FOREIGN_ALIGN
 
-Thanks, 
-Akagi
+Applied to alloc-next, thanks!
 
-> Thanks,
-> Kuai
-> 
->>>>                set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->>>>                set_bit(LastDev, &rdev->flags);
->>>>            }
->>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
->>>> index 51af29a03079..2f87bcc5d834 100644
->>>> --- a/drivers/md/md.h
->>>> +++ b/drivers/md/md.h
->>>> @@ -332,7 +332,7 @@ struct md_cluster_operations;
->>>>     *                   resync lock, need to release the lock.
->>>>     * @MD_FAILFAST_SUPPORTED: Using MD_FAILFAST on metadata writes is supported as
->>>>     *                calls to md_error() will never cause the array to
->>>> - *                become failed.
->>>> + *                become failed while fail_last_dev is not set.
->>>>     * @MD_HAS_PPL:  The raid array has PPL feature set.
->>>>     * @MD_HAS_MULTIPLE_PPLS: The raid array has multiple PPLs feature set.
->>>>     * @MD_NOT_READY: do_md_run() is active, so 'array_state', ust not report that
->>>>
->>>
->>>
->> .
->>
-> 
-> 
+--
+
+@Andrew: Just a heads-up, this has a minor conflict with your tree, which
+should also show up in linux-next soon.
+
+diff --cc rust/kernel/alloc.rs
+index b39c279236f5,907301334d8c..000000000000
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@@ -164,7 -137,15 +164,15 @@@ impl NumaNode
+  /// - Implementers must ensure that all trait functions abide by the guar=
+antees documented in the
+  ///   `# Guarantees` sections.
+  pub unsafe trait Allocator {
++     /// The minimum alignment satisfied by all allocations from this allo=
+cator.
++     ///
++     /// # Guarantees
++     ///
++     /// Any pointer allocated by this allocator is guaranteed to be align=
+ed to `MIN_ALIGN` even if
++     /// the requested layout has a smaller alignment.
++     const MIN_ALIGN: usize;
++
+ -    /// Allocate memory based on `layout` and `flags`.
+ +    /// Allocate memory based on `layout`, `flags` and `nid`.
+      ///
+      /// On success, returns a buffer represented as `NonNull<[u8]>` that =
+satisfies the layout
+      /// constraints (i.e. minimum size and alignment as specified by `lay=
+out`).
 
 
