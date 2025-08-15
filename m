@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-770513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA6EB27BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C502B27BF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5E7188DF7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43C61890924
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DC32D481A;
-	Fri, 15 Aug 2025 08:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9722E093B;
+	Fri, 15 Aug 2025 08:55:44 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DF92D3A71;
-	Fri, 15 Aug 2025 08:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964F12D8363;
+	Fri, 15 Aug 2025 08:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248138; cv=none; b=ektqoGxBsYBESfKR1leyV7r9Sgez0jlFKhzaX8PmAO0quB9cdmXNSbuSUvxyyKvc6Ju9v5YgaHxTzQKf4OplsUyS9gE0hAAq3tIz11kyd7c6A/iWMs1hXvfi8bTvsax0Alw53z+yC5NKDWPnD5z/5ERbzy5HqNhbVqnTv3bF5V0=
+	t=1755248144; cv=none; b=gtYDQHSuQXuh3i7igNLbvZzkpbPtDP/cJfV8mbXVm/NP81VniQrFPZ78+OEpPhkAt3LxjbMFv5V8ERXz6GTlfG0cbqlJK+/q/0kepzEMUcEVT5uR6HPrb25CyN9QXrmp090LF3dCbiY8kozXw6pfMAChCBdWIhUsVqmBF0S2p5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248138; c=relaxed/simple;
-	bh=4aDjkHibEaVadfQGPlSSmLSpJv3EcwnykRxixv3rl/8=;
+	s=arc-20240116; t=1755248144; c=relaxed/simple;
+	bh=LZEP7J4G+85IvqSzGsfTqFlhUb51ATFhLdKeN8moA+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HA7ZKfVwWSIZa1vc0LYwpNUEfY6a2pvB6JfjjJOx5sz9wo8qwqSLkzV11u7Hnk3RmY9fwxL7xJAVcZcH0pSc3Mda+TcYi14Sq8R80sgHz14ne/3nNYROVBrzwVigDSWX3kFS8jCwWUisteI9iJsNsi+VrFwgqod5xFqoMjI78KM=
+	 MIME-Version; b=CcWb0euvRB3uibKkYqMaG8Ceya98sLguE8oWuOUHElhuRDM4DAAnWTCHczeFhzccbzmJIdjRTeJbaZL1T/zhBgeFlJkd/N9rLn42NQCmO+N2SvhNxY3Gddw1q/ukSrewoB0Km9mV/WjMduAEKwTvmQ6p8jgamHWr53E1S37jRLo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00C5E1688;
-	Fri, 15 Aug 2025 01:55:28 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C86171E5E;
+	Fri, 15 Aug 2025 01:55:32 -0700 (PDT)
 Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9326C3F63F;
-	Fri, 15 Aug 2025 01:55:31 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 703713F63F;
+	Fri, 15 Aug 2025 01:55:36 -0700 (PDT)
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 To: linux-hardening@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mm@kvack.org,
 	x86@kernel.org
-Subject: [RFC PATCH v5 02/18] set_memory: Introduce set_memory_pkey() stub
-Date: Fri, 15 Aug 2025 09:54:56 +0100
-Message-ID: <20250815085512.2182322-3-kevin.brodsky@arm.com>
+Subject: [RFC PATCH v5 03/18] arm64: mm: Enable overlays for all EL1 indirect permissions
+Date: Fri, 15 Aug 2025 09:54:57 +0100
+Message-ID: <20250815085512.2182322-4-kevin.brodsky@arm.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250815085512.2182322-1-kevin.brodsky@arm.com>
 References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
@@ -78,33 +78,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a new function, set_memory_pkey(), which sets the
-protection key (pkey) of pages in the specified linear mapping
-range. Architectures implementing kernel pkeys (kpkeys) must
-provide a suitable implementation; an empty stub is added as
-fallback.
+In preparation of using POE inside the kernel, enable "Overlay
+applied" for all stage 1 base permissions in PIR_EL1. This ensures
+that the permissions set in POR_EL1 affect all kernel mappings.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 ---
- include/linux/set_memory.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/include/asm/pgtable-prot.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 3030d9245f5a..7b3a8bfde3c6 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -84,4 +84,11 @@ static inline int set_memory_decrypted(unsigned long addr, int numpages)
- }
- #endif /* CONFIG_ARCH_HAS_MEM_ENCRYPT */
+diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+index 85dceb1c66f4..0ab4ac214b06 100644
+--- a/arch/arm64/include/asm/pgtable-prot.h
++++ b/arch/arm64/include/asm/pgtable-prot.h
+@@ -180,13 +180,13 @@ static inline bool __pure lpa2_is_enabled(void)
+ 	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_GCS),           PIE_NONE_O) | \
+ 	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_GCS_RO),        PIE_NONE_O) | \
+ 	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_EXECONLY),      PIE_NONE_O) | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_READONLY_EXEC), PIE_R)      | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RW)     | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_READONLY),      PIE_R)      | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_SHARED),        PIE_RW)     | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_ROX),    PIE_RX)     | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_EXEC),   PIE_RWX)    | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_RO),     PIE_R)      | \
+-	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL),        PIE_RW))
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_READONLY_EXEC), PIE_R_O)      | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RW_O)     | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_READONLY),      PIE_R_O)      | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_SHARED),        PIE_RW_O)     | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_ROX),    PIE_RX_O)     | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_EXEC),   PIE_RWX_O)    | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL_RO),     PIE_R_O)      | \
++	PIRx_ELx_PERM_PREP(pte_pi_index(_PAGE_KERNEL),        PIE_RW_O))
  
-+#ifndef CONFIG_ARCH_HAS_KPKEYS
-+static inline int set_memory_pkey(unsigned long addr, int numpages, int pkey)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif /* _LINUX_SET_MEMORY_H_ */
+ #endif /* __ASM_PGTABLE_PROT_H */
 -- 
 2.47.0
 
