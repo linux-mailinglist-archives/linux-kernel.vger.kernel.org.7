@@ -1,92 +1,373 @@
-Return-Path: <linux-kernel+bounces-770143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609ADB2779F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1226FB2779E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2D11C28775
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33B2587E5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21D214A8B;
-	Fri, 15 Aug 2025 04:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982FF1DDC3F;
+	Fri, 15 Aug 2025 04:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JU8/sim9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QJilNiSO"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9B013FEE;
-	Fri, 15 Aug 2025 04:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7956414A8B
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755230887; cv=none; b=WQjiqEa30Y8/T/GLiLZuruS8JdSIOMiuBCLu3cc+2Ra33cxVZnSk0GnOHN4/+WBFIpDC+56kSjNgdE+tmy49TQLQy3qnpo1z9wV5SUyRnwbq56TOzSD/KZ364F1t40hTrqF72AT8FNR8LdGKXXSMDNoj9zVd0cdkG3tU/RHHuw4=
+	t=1755230875; cv=none; b=oWgzn29onkGd9ZbBIVdmOpq6drW1hor1D14WSP8J58TBII2IHCJ+oazMYtniXzR2/Vufwc1hS/58Hf+N5BTYL4CVabIWTQJorBc7Dta53csUo4IMj7iapOC8LCJ4bd/5PkKwBgFSxW+d0ltUDz1XxJvziXuu7NqFfGXhjAssQp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755230887; c=relaxed/simple;
-	bh=D+6W3XJNV1CjXkDZdn6IEYlQBJoxfn7zvGJ+fWx4njk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1qUHqgOkbBTzqdxiXYuoSTMNjPXLrynp1uJk+RAzqFn3zUC6vIXrXgbnz/6348DOTkM+jO2Np7vsGf7MIhV1KfvglwjLDIoxrpjwfw2u5WeyFUjbeN9dcYk/wa50baDtyN9S//tLLi9JrpSwKGwdy5a58lImZpwi+G2+Tf6I1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JU8/sim9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZRd3lPF/jp54o/xsDfYASXzAEXV60quLPJGLeCwcw8w=; b=JU8/sim9ZhE2nGPIG7n4He5hVz
-	aEoTPYAXqiF34y9V4el955qI5AqX0lzE2/xDlzo9tIj1urZ/V7A3oRn+vFPit6OaDKTqEzkRO2Udp
-	M0L4vlgSQ3eryqI56N0hUaglsXvC5qJo6SDxQQBQ81+hhqYl9bXLsVwamRoxG4E+Y5Hk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1umlix-004mhq-O1; Fri, 15 Aug 2025 06:07:27 +0200
-Date: Fri, 15 Aug 2025 06:07:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <4be8e875-d8a0-4f3c-8305-5b0787039826@lunn.ch>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-4-dong100@mucse.com>
- <a0cd145c-c02e-40da-b180-a8ca041f2ca3@lunn.ch>
- <D19BDA0A798B918F+20250815013153.GA1129045@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1755230875; c=relaxed/simple;
+	bh=RwSO4Q1T6ctIKjfszGR4iMk4KLc300sw36PpMImwZjw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kmM9xnAakc3B3gab7yDfFmf+YVh8XUmv3sQC3XsMLmjGCCccc8cw6cQNGfL05aV5NHxa7wi/uC02dXLVuGwWs5nhRiJ9VgSjpaWLpkNrKq6LsTWzeAx1Knya1iEEz1GwJV/7+EI65Ibsnt1+7cEPivQei0hScFK9mBhxWg7wbu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QJilNiSO; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f8d24c6fso14271771fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755230871; x=1755835671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9e8pHPVBpJpnZzAbKWbiPECwlXFdrGDdyBGbrFe0a8=;
+        b=QJilNiSOOkFYe7hEzuegJiMdRDQVFSdTd3D0qR+DarJsAGo0ai1PYHXmZc1XDfRL/3
+         ujCMLYFBpUD4GZ+RoRkW5xzjekjl9gCEZcCQPPoD3M59gg2u4zGvxmh1o75lOj7oVzzl
+         S7q4WpK/Goz+992V5zhnnBilBCzqP3dM0n6pC3yia4jHRMJ+ulfWUY7HVISwh2GOmtgT
+         MAz95wZsf8NROaXOvn47uXM6KTJjMcsoxFt0G7mqgth3yvyYooYWiqWcuiO3vcAaD8ry
+         Hv8jVD2D2Nj71NVZpjvjEhppauYVXFWyk+WDtTlUxOjUZiO1eoHCjDQOpAzoiYULWCYZ
+         HDbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755230871; x=1755835671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f9e8pHPVBpJpnZzAbKWbiPECwlXFdrGDdyBGbrFe0a8=;
+        b=oV9SNlEHXwsfCcFc31QPOVgSYkv9jFTYSIMEDiu2Wakrbie13XubK10bwJG1vyE3cK
+         jfNx2Jsf+qsRIyF5xv17ffq6CLKu/2Qi2/zIHWTZNoIJXOJza4XD0f2wdno06R/dqX87
+         QpROmk6sQYyolbNGp89mlBCoPf7OQJWSzdEaIUTqOITTkfvA5ggVlNcJSdGmqqAFpdKf
+         OuIcSWZITxcg77mLbBE2gCHHEiaXsLbwy+5clG3jL5p2h3FMQRU9D5aHeEMMnysBkYYS
+         QGPd5gq5zyzSxra2QGvpzzOQ9hj03PcA7qAFi4yU4OXpFYQLSgcrPVcN4iY51rhweSTX
+         Zmpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAxyfFB4y/J09wVLP6qTxp/rbjZQR1kIrZ4X+srm7VuwT3uQGYNPlR0iGjbe6bSB3j2w5IUxsL/GhFn+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXaNkQ+YmQjdMs9AaM5+qQbOYAXLL3YvkwU5bIy6uFUzdy8GHT
+	9MwwfUY5Fy72fRhwlXqeY3vjv8Tl1lhI1tmAghellJrPcpcNOiWX15ijANhVp8JqDt+uIn+/54Q
+	K288SegYKRPlxhPwANIvzHa+3XESxPZ/l37bZfHZAso8/0xM2aSvb
+X-Gm-Gg: ASbGncsb8AluXKEqkhWkYwfR8Fc97fWYxcMqUuO1dnttYGEr1qOAaBP3GqijtyAADOB
+	nFJJ3JQrXerfFPI11gftT54All9CsqXZ+YaFAhQpdL7mNmhPfNqrMzB46mmpRwNlvN9LofrIWXr
+	mQfaEGz/iJwYKpve0zIKOINz2XbGOaNH71JIndcrkdOW0mF5w90tWyDkHJAF1h3YDOZwhB5zkHo
+	Y7l+9RT
+X-Google-Smtp-Source: AGHT+IHHhpvLwRQzTYqEsi0JA5Co1f+dJaEUkGOCKAbt2sHrX46XmG0yA6YeiQZ6UI8h4oZENwbeMXIQZ7Ym5pmUDQM=
+X-Received: by 2002:a05:651c:2208:b0:32f:1c0f:fb73 with SMTP id
+ 38308e7fff4ca-334099bb9e9mr2387571fa.36.1755230871331; Thu, 14 Aug 2025
+ 21:07:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D19BDA0A798B918F+20250815013153.GA1129045@nic-Precision-5820-Tower>
+References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
+ <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
+ <aJtKZhvNX0p3obFw@sunil-laptop> <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
+ <aJwiXKWXik8BmpL8@sunil-laptop> <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
+ <CAK9=C2VOaAJZxCeM-5QPj5B-ie68LivJyQcM8KwKjdL9u00RJg@mail.gmail.com>
+ <CAEEQ3wmDygvLn-EK_hCumOuCkPjKWfnmwiA+kz4p9N=thG0pXA@mail.gmail.com>
+ <CAK9=C2X+6vs=Xa7XnreRs4+e5OjeJA-XtwwUM4GHq7pT=Fs-5A@mail.gmail.com>
+ <CAEEQ3wm9shktdzUeO5RczE-=qdDUS30TGASOFtnMEcuw7L7jZw@mail.gmail.com>
+ <CAK9=C2UDVnpHs04VmzmjjmTYkE--dX2NtoWXGXoX=vVm=SF_5Q@mail.gmail.com> <4A3F784D-4844-48D8-AE84-B4D25BCB78B4@jrtc27.com>
+In-Reply-To: <4A3F784D-4844-48D8-AE84-B4D25BCB78B4@jrtc27.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Fri, 15 Aug 2025 09:37:41 +0530
+X-Gm-Features: Ac12FXysveFy5MvqM7-gcPY6uzwVpoOKdQwpt1C0H9OnoApa3rWZLFWDQwrcUnU
+Message-ID: <CAK9=C2XXsMq_x80R+jH2LDEYYZnBWgXcBAUSbV0tQwEb2OX6yA@mail.gmail.com>
+Subject: Re: [External] [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
+To: Jessica Clarke <jrtc27@jrtc27.com>
+Cc: yunhui cui <cuiyunhui@bytedance.com>, aou@eecs.berkeley.edu, juwenlong@bytedance.com, 
+	alex@ghiti.fr, rafael@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	linux-riscv@lists.infradead.org, Rahul Pathak <rpathak@ventanamicro.com>, lenb@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> By the way, how long should I wait before sending the new version? If it
-> is too frequent, it might cause reviewers to check old versions and miss
-> feedback, link what happened with this mail. And if it is too long, it
-> is easy to miss the 'open window'....
+On Thu, Aug 14, 2025 at 10:27=E2=80=AFPM Jessica Clarke <jrtc27@jrtc27.com>=
+ wrote:
+>
+> On 14 Aug 2025, at 14:37, Anup Patel <apatel@ventanamicro.com> wrote:
+> >
+> > On Thu, Aug 14, 2025 at 11:49=E2=80=AFAM yunhui cui <cuiyunhui@bytedanc=
+e.com> wrote:
+> >>
+> >> Hi Anup,
+> >>
+> >> On Thu, Aug 14, 2025 at 1:48=E2=80=AFPM Anup Patel <apatel@ventanamicr=
+o.com> wrote:
+> >>>
+> >>> On Thu, Aug 14, 2025 at 9:08=E2=80=AFAM yunhui cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> >>>>
+> >>>> Hi Anup,
+> >>>>
+> >>>> On Wed, Aug 13, 2025 at 7:12=E2=80=AFPM Anup Patel <apatel@ventanami=
+cro.com> wrote:
+> >>>>>
+> >>>>> On Wed, Aug 13, 2025 at 12:14=E2=80=AFPM yunhui cui <cuiyunhui@byte=
+dance.com> wrote:
+> >>>>>>
+> >>>>>> Hi Sunil,
+> >>>>>>
+> >>>>>> On Wed, Aug 13, 2025 at 1:28=E2=80=AFPM Sunil V L <sunilvl@ventana=
+micro.com> wrote:
+> >>>>>>>
+> >>>>>>> Hi Yunhui,
+> >>>>>>>
+> >>>>>>> On Wed, Aug 13, 2025 at 11:23:39AM +0800, yunhui cui wrote:
+> >>>>>>>> Hi Sunil,
+> >>>>>>>>
+> >>>>>>>> On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@vent=
+anamicro.com> wrote:
+> >>>>>>>>>
+> >>>>>>> [...]
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> The purpose of cppc_ffh_csr_read() is to calculate the actua=
+l
+> >>>>>>>>>>>> frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX=
+.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> CSR_XXX should be a reference clock and does not count durin=
+g WFI
+> >>>>>>>>>>>> (Wait For Interrupt).
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Similar solutions include: x86's aperf/mperf, and ARM64's AM=
+U with
+> >>>>>>>>>>>> registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> However, we know that CSR_TIME in the current code does coun=
+t during
+> >>>>>>>>>>>> WFI. So, is this design unreasonable?
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Should we consider proposing an extension to support such a =
+dedicated
+> >>>>>>>>>>>> counter (a reference clock that does not count during WFI)? =
+This way,
+> >>>>>>>>>>>> the value can be obtained directly in S-mode without trappin=
+g to
+> >>>>>>>>>>>> M-mode, especially since reading this counter is very freque=
+nt.
+> >>>>>>>>>>>>
+> >>>>>>>>>>> Hi Yunhui,
+> >>>>>>>>>>>
+> >>>>>>>>>>> Yes, but we anticipated that vendors might define their own c=
+ustom CSRs.
+> >>>>>>>>>>> So, we introduced FFH encoding to accommodate such cases.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks,
+> >>>>>>>>>>> Sunil
+> >>>>>>>>>>
+> >>>>>>>>>> As mentioned earlier, it is best to directly read CSR_XXX (a r=
+eference
+> >>>>>>>>>> clock that does not count during WFI) and CSR_CYCLE in S-mode,=
+ rather
+> >>>>>>>>>> than trapping to SBI.
+> >>>>>>>>>>
+> >>>>>>>>> No. I meant direct CSR access itself not SBI. Please take a loo=
+k at
+> >>>>>>>>> Table 6 of RISC-V FFH spec.
+> >>>>>>>>>
+> >>>>>>>>>> drivers/acpi/riscv/cppc.c is a generic driver that is not spec=
+ific to
+> >>>>>>>>>> any vendor. Currently, the upstream code already uses CSR_TIME=
+, and
+> >>>>>>>>>> the logic of CSR_TIME is incorrect.
+> >>>>>>>>>>
+> >>>>>>> ACPI spec for "Reference Performance Register" says,
+> >>>>>>>
+> >>>>>>> "The Reference Performance Counter Register counts at a fixed rat=
+e any
+> >>>>>>> time the processor is active. It is not affected by changes to De=
+sired
+> >>>>>>> Performance, processor throttling, etc."
+> >>>>>>>
+> >>>>>>>>> CSR_TIME is just an example. It is upto the vendor how _CPC obj=
+ects are
+> >>>>>>>>> encoded using FFH. The linux code doesn't mean one should use C=
+SR_TIME
+> >>>>>>>>> always.
+> >>>>>>>>
+> >>>>>>>> First, the example of CSR_TIME is incorrect. What is needed is a
+> >>>>>>>> CSR_XXX (a reference clock that does not count during WFI).
+> >>>>>>>>
+> >>>>>>>> Second, you mentioned that each vendor can customize their own
+> >>>>>>>> implementations. But should all vendors' CSR_XXX/YYY/... be adde=
+d to
+> >>>>>>>> drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/=
+cppc.c fall
+> >>>>>>>> under the scope defined by the RISC-V architecture?
+> >>>>>>>>
+> >>>>>>> No. One can implement similar to csr_read_num() in opensbi. We di=
+dn't
+> >>>>>>> add it since there was no HW implementing such thing. What I am
+> >>>>>>> saying is we have FFH encoding to support such case.
+> >>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>> It would be best to promote a specification to support CSR_XXX=
+, just
+> >>>>>>>>>> like what has been done for x86 and arm64. What do you think?
+> >>>>>>>>>>
+> >>>>>>>>> Wouldn't above work? For a standard extension, you may have to =
+provide
+> >>>>>>>>> more data with actual HW.
+> >>>>>>>>
+> >>>>>>>> This won=E2=80=99t work. May I ask how the current upstream code=
+ can calculate
+> >>>>>>>> the actual CPU frequency using CSR_TIME without trapping to SBI?
+> >>>>>>>> This is a theoretical logical issue. Why is data needed here?
+> >>>>>>>>
+> >>>>>>> As I mentioned above, one can implement a generic CSR read withou=
+t
+> >>>>>>> trapping to SBI.
+> >>>>>>>
+> >>>>>>>> Could you take a look at the "AMU events and event numbers" chap=
+ter in
+> >>>>>>>> the ARM64 manual?
+> >>>>>>>>
+> >>>>>>> As-per ACPI spec reference performance counter is not affected by=
+ CPU
+> >>>>>>> state. The RISC-V FFH encoding is sufficiently generic to support=
+ this
+> >>>>>>> requirement, even if the standard CSR_TIME cannot be used. In suc=
+h
+> >>>>>>> cases, an alternative CSR can be encodeded, accessed via an OS-le=
+vel
+> >>>>>>> abstraction such as csr_read_num().
+> >>>>>>
+> >>>>>> So what you're saying is that we should submit a patch like this, =
+right?
+> >>>>>>
+> >>>>>> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+> >>>>>> index 440cf9fb91aab..953c259d46c69 100644
+> >>>>>> --- a/drivers/acpi/riscv/cppc.c
+> >>>>>> +++ b/drivers/acpi/riscv/cppc.c
+> >>>>>> @@ -66,16 +66,8 @@ static void cppc_ffh_csr_read(void *read_data)
+> >>>>>> {
+> >>>>>>        struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read=
+_data;
+> >>>>>>
+> >>>>>> -       switch (data->reg) {
+> >>>>>> -       /* Support only TIME CSR for now */
+> >>>>>> -       case CSR_TIME:
+> >>>>>> -               data->ret.value =3D csr_read(CSR_TIME);
+> >>>>>> -               data->ret.error =3D 0;
+> >>>>>> -               break;
+> >>>>>> -       default:
+> >>>>>> -               data->ret.error =3D -EINVAL;
+> >>>>>> -               break;
+> >>>>>> -       }
+> >>>>>> +       data->ret.value =3D csr_read_num(data->reg);
+> >>>>>> +       data->ret.error =3D 0;
+> >>>>>> }
+> >>>>>>
+> >>>>>> If that's the case, the robustness of the code cannot be guarantee=
+d,
+> >>>>>> because the range of CSRs from different vendors is unknown.
+> >>>>>
+> >>>>> ACPI FFH is allows mapping to any CSR.
+> >>>>
+> >>>> Yes, FFH can map any CSR, and this is not the point of contention.
+> >>>>
+> >>>> If that's the case, the CSR_TIME used in the current kernel code is
+> >>>> inappropriate. Some vendors may design a counter that does not count
+> >>>> during WFI, making CSR_TIME irrelevant. Even if counting continues
+> >>>> during WFI, are you planning to have one counter operate in S-mode
+> >>>> while the other traps to M-mode?
+> >>>>
+> >>>> In that case, the code would need to be modified as proposed above. =
+Do
+> >>>> you agree?
+> >>>
+> >>> I disagree.
+> >>>
+> >>> Like Sunil already explained, if an implementation has reference coun=
+ter
+> >>> which does not count during WFI state then for such implementation th=
+e
+> >>> delivered performance counter should also not increment during WFI
+> >>> to maintain the relative delta of increments. This means if an implem=
+entation
+> >>> uses TIME CSR as reference counter then for such implementation
+> >>> the delivered performance counter should increment accordingly. Ultim=
+ately,
+> >>> what matters is OS being able to correctly compute the performance le=
+vel
+> >>> using reference and delivered performance counters.
+> >>
+> >>
+> >> For calculating the actual CPU frequency, both implementations are
+> >> acceptable where either both counters continue counting during WFI or
+> >> both stop counting.
+> >> In the current code, how do you read the other counter?
+> >> Shouldn't it be modified like this to support it? This way, all
+> >> counters can be read directly in S-mode without trapping to M-mode:
+> >> +       data->ret.value =3D csr_read_num(data->reg);
+> >> +       data->ret.error =3D 0;
+> >
+> > Yes, the current switch-case needs to replaced by common
+> > csr_read_num() and csr_write_num() implemented in arch/riscv/
+> >
+> > The RISC-V CSR space is limited so with it is straightforward
+> > to implement csr_read_num() and csr_write_num() using
+> > macros where each CSR access will turn-out to be roughly
+> > 3-4 instructions.
+>
+> 12 bits, or 4096 CSRs. Are you saying you want to have a jump table
+> that dispatches to one of 4096 entry points?
+>
+> Maybe you can cut that down a bit for S-mode based on the encoding
+> convention, but that only eliminates 1/4, so you=E2=80=99re still looking=
+ at
+> 3072 entry points, perhaps also minus the few that are allocated and
+> clearly not sensible things to use for this, like stval.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Yes, we don't need a switch case for all possible 4096 CSRs in
+csr_read_num() and csr_write_num(). For S-mode, it will mostly
+contain HPM counters and custom CSRs.
 
-Says at least 24 hours.
+I am already working on a patch along these lines which will be
+posted in the next few days.
 
-But i have been away from emails for a few days, so i was slower than
-usual.
+>
+> But I think that=E2=80=99s not a reasonable approach to take, and if ther=
+e is
+> no CSR in the current RISC-V spec that fits the needs of ACPI then one
+> needs to be defined so that we don=E2=80=99t need every vendor to invent =
+their
+> own. If there is a CSR already then that should be the only one that=E2=
+=80=99s
+> allowed to be used here. If you look at arm64, it hard-codes which
+> counter to use for each of the two calls it supports. That=E2=80=99s a mu=
+ch
+> better world to be in.
+>
 
-Most patches get reviewed in 3 work days. So i would probably not wait
-much longer than that. But also wait for any discussion about a patch
-to come to an end.
+Like mentioned in this thread, the time CSR can be used as
+reference perf counter and for delivered perf counter, we have
+multiple options: 1) RPMI CPPC fast channel, 2) SBI CPPC call,
+and 3) custom CSR. In fact, the QEMU PoC which we had posted
+previously already has RPMI CPPC fast channel for delivered
+perf counter which we access from OpenSBI.
 
-Also, different subsystems work are different speed. 3 days would be
-way to fast for USB for example, that would be more like 2 weeks.
+If a platform vendor wants to implement a reference perf counter
+and delivered perf counter differently then they can always have
+custom CSRs.
 
-	Andrew
+Regards,
+Anup
 
