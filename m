@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-771119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF51B28315
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D47B2831D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADBCAA22D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE5D3AB47E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04918306D39;
-	Fri, 15 Aug 2025 15:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564B2307AD8;
+	Fri, 15 Aug 2025 15:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLtvEjpC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BcQaeZG/"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F45305E3D;
-	Fri, 15 Aug 2025 15:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958D307AC3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272405; cv=none; b=uVpLI+6hE854U/SHrXmUcIW7RcPrqV9JPPYkIspD1GSFxerRW9h6NNsI1RkSQgICW22YGlDtktcIWGgefD4955d7lfYivRvF9oW5zCKppUEOUfuq9C5VwR1ivfn7pSnyLhc85xuIvlv3bJP/NZ55En37NCWoGnk4qwGOkYEb78w=
+	t=1755272515; cv=none; b=rIXmZvhK42kINUvGGLKmiXfV3MPQ4UNWVceD2Zhp2sbma3f1RrDBKb0iXpSffySSb+k5cwnD81YlmU4tAikZ/LVM6zCW8Po8Zf0M/U2eoxUIiLANWcozwyjIfGvYBA8hYyxa7Mpmi4WmamAc3B+NjT/sPKb3FqFkLyNrzhKBXLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272405; c=relaxed/simple;
-	bh=qFFD29Z0bBGyOJ/r8urMn6MWEW61foW7aAMeULHu5cQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2xy/QlxIynPNEzZxOQX4+wvlIkD8h3pHLlQz8JCcxDfcp+0BVP5J0Rf83ffi00oRbdW28xdg6NHp8OyRUetzUBLVowhmfq/0yjDdE9TGK37uL69uHFbYiUAkOv4cqqZqQsa07xtCq5/od4yAfbSybuY28chSH+hQ8/mO8+S65Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLtvEjpC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E9CC4CEEB;
-	Fri, 15 Aug 2025 15:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755272405;
-	bh=qFFD29Z0bBGyOJ/r8urMn6MWEW61foW7aAMeULHu5cQ=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fLtvEjpCpJcL4Br3dGCA310R4Y2FqThotOiDwP4/RNMBJ98DOeQ6jMFavPuxM7u3Z
-	 YBee3GcniPTXE8VnxbNAntO0WnrVAlBSPN/Rg+auulmBzReVjKLE2wtJk5WGr9p/bA
-	 v+UNwcB1/HCJcruh4liLcSUzkIFGzj0D5zYEE1AXG6Bk3xOVDgSxCTVgfi20L/peGh
-	 W5FxJvKHnD4Ces7ML+U4Xa6U1VyeXnxnHxpgLwSOkuc9mVH4pqvhiFujcu52R4pqai
-	 z7w2V5CQDgdwyu3IrZ3mvsiUf3zYUspnccKIKH2BgfWuZt+l2P3OJX4xy8OsKJ0J7E
-	 gbYclLaeRfxNw==
-Message-ID: <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
-Date: Fri, 15 Aug 2025 17:39:54 +0200
+	s=arc-20240116; t=1755272515; c=relaxed/simple;
+	bh=V0iQe0wXHiwXgNwjclXLeqc33EIkx7ymZ0WlHmqsCas=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kjt1cTUISsFeP5Veq60QBgqmxotnCggOwBQqB6d2EVYkDZLdZ4eXq4j9FZTFZVZsrClKvy04B6SsywJMKEDu6QuXiP/sysI8x4ZCxfFnhy4rkwXqNQDH5c+nd/yj4ZUuSjx9bUuxwVmM8DyzvWAkXpfyk7XHnNmSwMLKLOipvxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BcQaeZG/; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326e6b1deso2016244a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755272513; x=1755877313; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZHHNj6EVbfkylJhuGEQxcUJR48ZbvWbqL/aI2BJPfo=;
+        b=BcQaeZG/f9RcD6D65wb23kfnpQB4guGcKuw/KTsOk6gCU8wmZPv3WKbejGKBIKMVJg
+         qnMnhQD5eLFsfma/pjecFNbUnIrG1svYeGCmGqI9V+vFD9VFj3wPA3Aau2l2rI+37NA7
+         PuDK9PUas4XawIIlyE2SCbJPuhcw7DgD3iB9D3MEoWFELVDnq+474vY/Vqu2Y5zt1u9E
+         fmVWw/1HZRif2tIolnjr6/tvQ8QCeCnlrAKcVUWPjQzoS+fjoIXMsNNotp6aCYoekC2S
+         airPuZjuYIQoEOd+iiSTJXEKmdzcxjQhH0KEyLt4WFtru0nB/9ggaABps5g4I5XL1qbD
+         IA1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755272513; x=1755877313;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZHHNj6EVbfkylJhuGEQxcUJR48ZbvWbqL/aI2BJPfo=;
+        b=HFQc28x9oYFtCCfkOMd1ddw1IDBzzuSPwnZAxBAwvR/Fu3t1dZDkbmcanaM2mf383X
+         tLIFIqBB0vDnYjfWJgFSDchdLLHTcTffj+7wDBvLNzoky7jXkDOcJ3cZlMChBj4MMBhT
+         C87UM8O+am25yQkahpRGDBa5j64Bzv3RQVjHXGR2hJUJuQWrWlFA69lG/fuJdGBH0Iva
+         BxxgUPGKl4090edTq+j0NunyRJWxo6SHtrSFr543emACsx5e1WhgCX2s6n0W/zga+vsv
+         7Axnkxs/zyTbNQ3lHTZXezwHnCsiLJ+3wEsxuXlqJymk8lqSVKxK8MuXK+oL7pjcSu2a
+         ahfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWynmzZhxbTRR5DfGJ2oZPaXxJ4Yxh5L3yBnSKuWtJU7PFzbze6UQWk82zxw0dHxqxkcRvKvwPnZ3wKSBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4crJQcNZ2lMaEWJA2U/uzP/H0fh7a941rIdrkoeSzE+CvSPpX
+	oUFOM2EPvVaIoAoc0uKoIcTk6yCfi0/YmXVpiQHCf+GVgAe4DHEKm9aLSj7GCdGa2kg2lR1vxCr
+	z5bYHzg==
+X-Google-Smtp-Source: AGHT+IF1xhNBmkTpZib3NykIL4xlxFbGkhXK+/yjF5LGvtuWFmTYgkxBDJw0+uZkCmQyO/RrRqfOrKLRso0=
+X-Received: from pjbsd7.prod.google.com ([2002:a17:90b:5147:b0:31e:a094:a39])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5104:b0:31e:4492:af48
+ with SMTP id 98e67ed59e1d1-32342238d44mr3660367a91.28.1755272513579; Fri, 15
+ Aug 2025 08:41:53 -0700 (PDT)
+Date: Fri, 15 Aug 2025 08:41:52 -0700
+In-Reply-To: <20250815113951.GC4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Hellwig <hch@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Shivank Garg <shivankg@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Daniel Gomez <da.gomez@samsung.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
- <20250811-wachen-formel-29492e81ee59@brauner>
- <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
- <20250815-darstellen-pappen-90a9edb193e5@brauner>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250815-darstellen-pappen-90a9edb193e5@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250806195706.1650976-1-seanjc@google.com> <20250806195706.1650976-10-seanjc@google.com>
+ <20250815113951.GC4067720@noisy.programming.kicks-ass.net>
+Message-ID: <aJ9VQH87ytkWf1dH@google.com>
+Subject: Re: [PATCH v5 09/44] perf/x86: Switch LVTPC to/from mediated PMI
+ vector on guest load/put context
+From: Sean Christopherson <seanjc@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>, 
+	Mingwei Zhang <mizhang@google.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 15/08/2025 07.25, Christian Brauner wrote:
-> On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
->> On 11/08/2025 07.18, Christian Brauner wrote:j
->>> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
->>>> Christoph suggested that the explicit _GPL_ can be dropped from the
->>>> module namespace export macro, as it's intended for in-tree modules
->>>> only. It would be possible to restrict it technically, but it was
->>>> pointed out [2] that some cases of using an out-of-tree build of an
->>>> in-tree module with the same name are legitimate. But in that case those
->>>> also have to be GPL anyway so it's unnecessary to spell it out in the
->>>> macro name.
->>>>
->>>> [...]
->>>
->>> Ok, so last I remember we said that this is going upstream rather sooner
->>> than later before we keep piling on users. If that's still the case I'll
->>> take it via vfs.fixes unless I hear objections.
->>
->> This used to go through Masahiro's kbuild tree. However, since he is not
->> available anymore [1] I think it makes sense that this goes through the modules
->> tree. The only reason we waited until rc1 was released was because of Greg's
->> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
->> ASAP.
+On Fri, Aug 15, 2025, Peter Zijlstra wrote:
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index e1df3c3bfc0d..ad22b182762e 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -6408,6 +6408,8 @@ void perf_load_guest_context(unsigned long data)
+> >  		task_ctx_sched_out(cpuctx->task_ctx, NULL, EVENT_GUEST);
+> >  	}
+> >  
+> > +	arch_perf_load_guest_context(data);
 > 
-> At this point it would mean messing up all of vfs.fixes to drop it from
-> there. So I'd just leave it in there and send it to Linus.
+> So I still don't understand why this ever needs to reach the generic
+> code. x86 pmu driver and x86 kvm can surely sort this out inside of x86,
+> no?
 
-Got it. I was waiting for confirmation before taking it into the modules tree,
-and I agree that at this point it makes sense to keep it in vfs.fixes.
+It's definitely possible to handle this entirely within x86, I just don't love
+switching the LVTPC without the protection of perf_ctx_lock and perf_ctx_disable().
+It's not a sticking point for me if you strongly prefer something like this: 
 
-> Next time I know where it'll end up.
+diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+index 0e5048ae86fa..86b81c217b97 100644
+--- a/arch/x86/kvm/pmu.c
++++ b/arch/x86/kvm/pmu.c
+@@ -1319,7 +1319,9 @@ void kvm_mediated_pmu_load(struct kvm_vcpu *vcpu)
+ 
+        lockdep_assert_irqs_disabled();
+ 
+-       perf_load_guest_context(kvm_lapic_get_reg(vcpu->arch.apic, APIC_LVTPC));
++       perf_load_guest_context();
++
++       perf_load_guest_lvtpc(kvm_lapic_get_reg(vcpu->arch.apic, APIC_LVTPC));
+ 
+        /*
+         * Disable all counters before loading event selectors and PMCs so that
+@@ -1380,5 +1382,7 @@ void kvm_mediated_pmu_put(struct kvm_vcpu *vcpu)
+ 
+        kvm_pmu_put_guest_pmcs(vcpu);
+ 
++       perf_put_guest_lvtpc();
++
+        perf_put_guest_context();
+ }
 
-Can you clarify what you mean by this?
 
