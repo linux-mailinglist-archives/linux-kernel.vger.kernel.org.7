@@ -1,147 +1,228 @@
-Return-Path: <linux-kernel+bounces-770073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58537B27677
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:07:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14615B27687
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95AA175B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:06:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21247ADC06
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F529BD93;
-	Fri, 15 Aug 2025 03:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCm+kYpZ"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093992BEC53;
+	Fri, 15 Aug 2025 03:06:57 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535526AF3;
-	Fri, 15 Aug 2025 03:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B6E2BDC31
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227187; cv=none; b=lo1vc0pe8a6wLC5SbmRtIRb0eHq0XvVaLW1AoiIn5N81DLmj2jRua7ythyRc3KzbMdu7mlo3ZVDPPQPiJUsUpYpiiEyKUIvJS0y0ZYuljhgq/O7YuSkhw6CjzI4vqj8WpwJ43ckPjLa8uJajxw4eVRVbf+y8FTUiIXJolpqM31A=
+	t=1755227216; cv=none; b=cq8Mbo4RSD3Z/RsUF/Uub9OtTG2IkY3P7sDe2BxQIMGGF7TIYHs4hkwoc0VDrRWvJLazBbKDMrQEN245A2Amw0/La6oycFiVebIN8APBuomzMAOQPgnlQO7Ntj7fWzaTalNzlLJj2gHPLD4gPHovHNLOXiIktfrr0znrYOALxr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227187; c=relaxed/simple;
-	bh=UbtTd5cDnA+tL0Z4ZPtN97UkW1xDXL+wKRfOIrUF1Fo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hh9qlXizwO2NftF0eR0niziwQ0TngNBzTU9Wmds0Jd/CiYiuwLeSffGe1/zS37XhB/kvDD/rLxUrdCCG8q+76R4IaUmcSX3FZISqhzJ3oZL20d/vMAB04N5gsyjO8VmCaMpWTPMWv+Huf+/xE5avKVLmzDBC/YVOFJ9SgJ8jEFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCm+kYpZ; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70a928cca6aso9161176d6.2;
-        Thu, 14 Aug 2025 20:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755227185; x=1755831985; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y/msescSO6DjiLygH5SQxhYUOUBz7dEiXRHXJI+7dv8=;
-        b=CCm+kYpZVQAwhkuSO1loAdg+V4WBnTktqoTS0dR+wlg6rFBMvqfVhPv9MO1TRAKfKi
-         +sLPRIqO7bYUmyHoEXq2316/AyyR/S4Bw15R+c+BzxuUz+iF8zb3vrN8VBJLWi+dDehR
-         kFRdCZGyx2uAuGY/x+f2mYjUiq0yF94/nlVi1CLw6inwNs14SqVxce22KEa2BOmlU1l5
-         wIHR57XU78hasbcDM/MiWrH455rMbfbIB+6O+1YZbSdVXcApCiEE4XZWOD2kcL3/RMYl
-         b1w9m+Hbq/veEy33/QHtEgNu+vNsqXGXykSMPZ54V+6B6KihByxvDZaD34nwPR0cx5/V
-         rtWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755227185; x=1755831985;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y/msescSO6DjiLygH5SQxhYUOUBz7dEiXRHXJI+7dv8=;
-        b=oij8udTXGUVhKouY0asOYKQd5FESNTf3rwemga7AcdFZtQl9ZL/ipuQbaq9JntD0nT
-         9yHNxWtLoF9Eg3brmVokDPgiCG4F5mR97cIGPod4yUnlROTYGbd3FesbMbC8pSCkj9fP
-         NLCqFipvGLERVFvKd5ZHr4l9z6KChrR4HFtVYAnB1CPem/WAUmRSvPz1N+ewyq+rLHHC
-         +5n1pEn2YnBXEn4hCVWhxLW3bVOOZIhaSp8IOr87fFgOCvJrgjlEB8T5B2d7OZr9obi8
-         A29k8SU9U3IRosPa04sKX/rjCHE3ul/Y2GHS4FEDfxt3G5t6qhyvC3cAI6QS4F5W+B3/
-         CH1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVB8eUZDNYtWnWomkLcsXBBeehl1n0fY+S8lr5Kw2ggxkfN4mKR6ekaNkCxuWoFG67CN3KKrBmZCKq/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/66r2VSRS0EJG0XRhHXVZIs0cFGCXRm4D4HXxtFvDL/SIvlVN
-	5mrnHqnT4I+5rGMU465t0Iqz3cqJ18RHbpv5pl/1IwzEefaao7c0/uezVfIwrUT6m4jwDAWL4W5
-	D2ZJ2f+pqcV1NMFIpSZ51iiFVt5LLEu39GQ==
-X-Gm-Gg: ASbGncvLFLBnZq9NWDMta0qeSXyhpdGuZ9Yfx4ndi7yMHXu1wgZeHsFFHyQbczCnjf6
-	GnaG8zofRAqMSUzuoTsDoGMVazYdrZB+CLKXq0MEY6x2z+lE6qpwrnYO6UWP9nb8c9gP+Iq7jVc
-	EGgxXpGxf68Rwk8/aQY16lTqfX79uB9yqOZTvSm+HflhUycBo2WAJxrjVD6v5j6P9oIxgeEPybf
-	zTC59zsDHwEceorScOVhu1jF8GdtV33zYDyiJDOeyUCGYg7jN7a
-X-Google-Smtp-Source: AGHT+IG/1pXVT5fuud5x3Oo/+E1+MALLJEWdNuFJJRMGFx0JokLcZ+B1zIJyQq4KPAwIYE2Vxz648vFKk0BSyvBNtPk=
-X-Received: by 2002:a05:6214:20c5:b0:709:31f8:fd9a with SMTP id
- 6a1803df08f44-70ba7c02df1mr3600896d6.27.1755227184960; Thu, 14 Aug 2025
- 20:06:24 -0700 (PDT)
+	s=arc-20240116; t=1755227216; c=relaxed/simple;
+	bh=q7wMPAQSndoxp6q46A3cCizYz5//U+XKU2mRKBDrtFE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pg1q0/2suHjUBdVSjylwrWCUi6mWNka+MyLOtV+pegkfl7cKNFKCo2WAojby4xRsVf6B5EiEjp6DdMkaPyFyg1t54GNQn3edJwNVgWYj0GHpvYLYMpxUIbU/y05ieW5omYsJPmVjFc8WQxnA3tRWxffYQBV40NWh1E3C+HZf5HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c36TM0rqDzvX7F;
+	Fri, 15 Aug 2025 11:06:47 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id B5B50180B71;
+	Fri, 15 Aug 2025 11:06:43 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpemf500011.china.huawei.com
+ (7.185.36.131) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Aug
+ 2025 11:06:42 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
+	<sstabellini@kernel.org>, <mark.rutland@arm.com>, <ada.coupriediaz@arm.com>,
+	<mbenes@suse.cz>, <broonie@kernel.org>, <anshuman.khandual@arm.com>,
+	<ryan.roberts@arm.com>, <chenl311@chinatelecom.cn>, <liaochang1@huawei.com>,
+	<kristina.martsenko@arm.com>, <leitao@debian.org>, <ardb@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<xen-devel@lists.xenproject.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v8 0/8] arm64: entry: Convert to generic irq entry
+Date: Fri, 15 Aug 2025 11:06:25 +0800
+Message-ID: <20250815030633.448613-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 14 Aug 2025 22:06:13 -0500
-X-Gm-Features: Ac12FXxeH_6vd5VjaiU_viR1KykxMXTGxBa6cz6cDdEZKa3m_F-CiLpsrEJ1Wc0
-Message-ID: <CAH2r5mtRBY-kVFHxA+w2mgvyG_f5cnbtMqxDgAQjDeecC1jyKQ@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-Please pull the following changes since commit
-8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Currently, x86, Riscv, Loongarch use the generic entry which makes
+maintainers' work easier and codes more elegant. So also convert arm64
+to use the generic entry infrastructure from kernel/entry/* by
+switching it to generic IRQ entry first, which will make PREEMPT_DYNAMIC
+and PREEMPT_LAZY use the generic entry common code and remove a lot of
+duplicate code.
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Since commit a70e9f647f50 ("entry: Split generic entry into generic
+exception and syscall entry") split the generic entry into generic irq
+entry and generic syscall entry, it is time to convert arm64 to use
+the generic irq entry. And ARM64 will be completely converted to generic
+entry in the upcoming patch series.
 
-are available in the Git repository at:
+The main convert steps are as follows:
+- Split generic entry into generic irq entry and generic syscall to
+  make the single patch more concentrated in switching to one thing.
+- Make arm64 easier to use irqentry_enter/exit().
+- Make arm64 closer to the PREEMPT_DYNAMIC code of generic entry.
+- Switch to generic irq entry.
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc1-smb3-client-fixes
+This patch set is rebased on v6.17-rc1.
 
-for you to fetch changes up to e19d8dd694d261ac26adb2a26121a37c107c81ad:
+It was tested ok with following test cases on QEMU virt platform:
+ - Perf tests.
+ - Different `dynamic preempt` mode switch.
+ - Pseudo NMI tests.
+ - Stress-ng CPU stress test.
+ - MTE test case in Documentation/arch/arm64/memory-tagging-extension.rst
+   and all test cases in tools/testing/selftests/arm64/mte/*.
 
-  smb: client: remove redundant lstrp update in negotiate protocol
-(2025-08-13 11:36:24 -0500)
+The test QEMU configuration is as follows:
 
-----------------------------------------------------------------
-Nine smb3 client fixes
-- Fix unlink race and rename races
-- SMB3.1.1 compression fix
-- Avoid unneeded strlen calls in cifs_get_spnego_key
-- Fix slab out of bounds in parse_server_interfaces()
-- Fix mid leak and server buffer leak
-- smbdirect send error path fix
-- update internal version #
-- Fix unneeded response time update in negotiate protocol
+	qemu-system-aarch64 \
+		-M virt,gic-version=3,virtualization=on,mte=on \
+		-cpu max,pauth-impdef=on \
+		-kernel Image \
+		-smp 8,sockets=1,cores=4,threads=2 \
+		-m 512m \
+		-nographic \
+		-no-reboot \
+		-device virtio-rng-pci \
+		-append "root=/dev/vda rw console=ttyAMA0 kgdboc=ttyAMA0,115200 \
+			earlycon preempt=voluntary irqchip.gicv3_pseudo_nmi=1" \
+		-drive if=none,file=images/rootfs.ext4,format=raw,id=hd0 \
+		-device virtio-blk-device,drive=hd0 \
 
-----------------------------------------------------------------
-David Howells (1):
-      cifs: Fix collect_sample() to handle any iterator type
+Changes in v8:
+- Update the comment.
+- Fix a typo, inerrupts_enabled(regs) -> interrupts_enabled(regs).
+- Consistently defined 'state' on a separate line, before the main block.
+- Split the "arch_irqentry_exit_need_resched()" patch.
+- Fix CONFIG_PREEMPTION not set build issue.
+- Remove do_signal() declaration in exception.h as there remains
+  no users of `do_signal().
+- Add asm/cpufeature.h header for entry-common.h
+- Add Reviewed-by, Acked-by and Tested-by.
+- Update the commit message.
+- Link to v7: https://lore.kernel.org/all/20250729015456.3411143-1-ruanjinjie@huawei.com/
 
-Dmitry Antipov (1):
-      cifs: avoid extra calls to strlen() in cifs_get_spnego_key()
+Changes in v7:
+- Rebased on v6.16-rc7 and remove the merged first patch.
+- Update the commit message.
+- Link to v6: https://lore.kernel.org/all/20250213130007.1418890-1-ruanjinjie@huawei.com/
 
-Paulo Alcantara (2):
-      smb: client: fix race with concurrent opens in unlink(2)
-      smb: client: fix race with concurrent opens in rename(2)
+Changes in v6:
+- Rebased on 6.14 rc2 next.
+- Put the syscall bits aside and split it out.
+- Have the split patch before the arm64 changes.
+- Merge some tightly coupled patches.
+- Adjust the order of some patches to make them more reasonable.
+- Define regs_irqs_disabled() by inline function.
+- Define interrupts_enabled() in terms of regs_irqs_disabled().
+- Delete the fast_interrupts_enabled() macro.
+- irqentry_state_t -> arm64_irqentry_state_t.
+- Remove arch_exit_to_user_mode_prepare() and pull local_daif_mask() later
+  in the arm64 exit sequence
+- Update the commit message.
+- Link to v5: https://lkml.org/lkml/2024/12/6/609
 
-Stefan Metzmacher (1):
-      smb: client: don't wait for info->send_pending == 0 on error
+Changes in v5:
+- Not change arm32 and keep inerrupts_enabled() macro for gicv3 driver.
+- Move irqentry_state definition into arch/arm64/kernel/entry-common.c.
+- Avoid removing the __enter_from_*() and __exit_to_*() wrappers.
+- Update "irqentry_state_t ret/irq_state" to "state"
+  to keep it consistently.
+- Use generic irq entry header for PREEMPT_DYNAMIC after split
+  the generic entry.
+- Also refactor the ARM64 syscall code.
+- Introduce arch_ptrace_report_syscall_entry/exit(), instead of
+  arch_pre/post_report_syscall_entry/exit() to simplify code.
+- Make the syscall patches clear separation.
+- Update the commit message.
+- Link to v4: https://lkml.indiana.edu/2410.3/02309.html
 
-Steve French (2):
-      smb3: fix for slab out of bounds on mount to ksmbd
-      cifs: update internal version number
+Changes in v4:
+- Rework/cleanup split into a few patches as Mark suggested.
+- Replace interrupts_enabled() macro with regs_irqs_disabled(), instead
+  of left it here.
+- Remove rcu and lockdep state in pt_regs by using temporary
+  irqentry_state_t as Mark suggested.
+- Remove some unnecessary intermediate functions to make it clear.
+- Rework preempt irq and PREEMPT_DYNAMIC code
+  to make the switch more clear.
+- arch_prepare_*_entry/exit() -> arch_pre_*_entry/exit().
+- Expand the arch functions comment.
+- Make arch functions closer to its caller.
+- Declare saved_reg in for block.
+- Remove arch_exit_to_kernel_mode_prepare(), arch_enter_from_kernel_mode().
+- Adjust "Add few arch functions to use generic entry" patch to be
+  the penultimate.
+- Update the commit message.
+- Add suggested-by.
 
-Wang Zhaolong (2):
-      smb: client: fix mid_q_entry memleak leak with per-mid locking
-      smb: client: remove redundant lstrp update in negotiate protocol
+Changes in v3:
+- Test the MTE test cases.
+- Handle forget_syscall() in arch_post_report_syscall_entry()
+- Make the arch funcs not use __weak as Thomas suggested, so move
+  the arch funcs to entry-common.h, and make arch_forget_syscall() folded
+  in arch_post_report_syscall_entry() as suggested.
+- Move report_single_step() to thread_info.h for arm64
+- Change __always_inline() to inline, add inline for the other arch funcs.
+- Remove unused signal.h for entry-common.h.
+- Add Suggested-by.
+- Update the commit message.
 
- fs/smb/client/cifs_spnego.c   | 47 +++++++++++-----------------
- fs/smb/client/cifsfs.h        |  4 +--
- fs/smb/client/cifsglob.h      | 21 +++++++++++++
- fs/smb/client/cifstransport.c | 19 ++++++-----
- fs/smb/client/compress.c      | 71 +++++++++++++-----------------------------
- fs/smb/client/connect.c       |  9 +++---
- fs/smb/client/inode.c         | 34 ++++++++++++++++++--
- fs/smb/client/smb2ops.c       | 15 +++++++--
- fs/smb/client/smb2transport.c |  1 +
- fs/smb/client/smbdirect.c     | 10 +++---
- fs/smb/client/transport.c     |  7 ++---
- 11 files changed, 128 insertions(+), 110 deletions(-)
+Changes in v2:
+- Add tested-by.
+- Fix a bug that not call arch_post_report_syscall_entry() in
+  syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
+- Refactor report_syscall().
+- Add comment for arch_prepare_report_syscall_exit().
+- Adjust entry-common.h header file inclusion to alphabetical order.
+- Update the commit message.
 
---
-Thanks,
+Jinjie Ruan (8):
+  arm64: ptrace: Replace interrupts_enabled() with regs_irqs_disabled()
+  arm64: entry: Refactor the entry and exit for exceptions from EL1
+  arm64: entry: Rework arm64_preempt_schedule_irq()
+  arm64: entry: Use preempt_count() and need_resched() helper
+  entry: Add arch_irqentry_exit_need_resched() for arm64
+  arm64: entry: Refactor preempt_schedule_irq() check code
+  arm64: entry: Move arm64_preempt_schedule_irq() into
+    __exit_to_kernel_mode()
+  arm64: entry: Switch to generic IRQ entry
 
-Steve
+ arch/arm64/Kconfig                    |   1 +
+ arch/arm64/include/asm/daifflags.h    |   2 +-
+ arch/arm64/include/asm/entry-common.h |  57 ++++
+ arch/arm64/include/asm/exception.h    |   1 -
+ arch/arm64/include/asm/preempt.h      |   2 -
+ arch/arm64/include/asm/ptrace.h       |  13 +-
+ arch/arm64/include/asm/xen/events.h   |   2 +-
+ arch/arm64/kernel/acpi.c              |   2 +-
+ arch/arm64/kernel/debug-monitors.c    |   2 +-
+ arch/arm64/kernel/entry-common.c      | 423 +++++++++-----------------
+ arch/arm64/kernel/sdei.c              |   2 +-
+ arch/arm64/kernel/signal.c            |   3 +-
+ kernel/entry/common.c                 |  16 +-
+ 13 files changed, 230 insertions(+), 296 deletions(-)
+ create mode 100644 arch/arm64/include/asm/entry-common.h
+
+-- 
+2.34.1
+
 
