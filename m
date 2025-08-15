@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-770994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEFFB28151
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5966B28159
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5323AD563
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0635C3BDA0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788D21DF256;
-	Fri, 15 Aug 2025 14:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2F1DE2AD;
+	Fri, 15 Aug 2025 14:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaacuJaE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ps1mX7d5"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D309A1C8631;
-	Fri, 15 Aug 2025 14:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E161C8631;
+	Fri, 15 Aug 2025 14:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267076; cv=none; b=Ltc1TGNEodnj2WWfOC0xrvW69U0WDBxfkdE5+xHG0guYBasJRlTJPxxRnnRS/HQR47Ojy5Ir2iWFC1iZpyn4nDJ8ywfh0lHOUoDg8cfeKHAFtoPhRARM+v8riuZ8qDQeh5RE76mJ7Ru0d+1ap3wA0fpYzTpM2o1ONb5v7wGIw4o=
+	t=1755267129; cv=none; b=N6pDHrCPXx+p/bzRkRAumTCDEryKiduZiteRrWs0hNbt3fNbCIsnHX07gV7govpSnIpNvBsXrr53CRO0MmJ/RAoCDJ1wx6XsWfey/Mzn+GbDrv4yQ4jTDQZwAKdCfxFdY30U1GEqtSZt2PBeWD4hCmYSt/LQDwcHexVfM4jpghU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267076; c=relaxed/simple;
-	bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G+tdNJOiKGJvMxLB/ECf4/XG4044YvUeWz3jqaZCcLohBFTcWKmC9dal8Hyu4sCORYdOm8lZwa4KExHEu2FhngKqJJXEfP+QHr4mhj+xlLbwfmIpFLDX16Ll2mRsWGky8vI0/XpjEZqElbu2/NNdr7Lo1V5xehV5dVkrt2dBZKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaacuJaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAD6C4CEEB;
-	Fri, 15 Aug 2025 14:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755267076;
-	bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OaacuJaEj9rY5QRIklO3nzpD/AVM+K8X1Z5ZDaBqawuvI7aTZsvBl9VYQkKE8THmp
-	 86jOb1JhB6Y16fzYIxYMOqoMGpb8Iq0RibCwwHT+beJj5JxgeE5kfXKOylrhHeDu7/
-	 t14AibxzyDmdU2I5tGQMrCy4A3Y97Bof0AVFiYsgEvOK+XBGGQyLTpel76+2k6HqdS
-	 3kg978Y26VX9Qcw12bzguf4j/6w+m6ODMURSQcUUbjt3ri2WW5aRHp9WPuJfy+82jr
-	 hYdCPqlr4DG807jWCrOuanqKE9np1FvoxrV4733F9sMopg2OH6aT40MUEzDtvYCJFA
-	 idmg46g7iyQUg==
-From: Christian Brauner <brauner@kernel.org>
-To: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ahuang12@lenovo.com,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2 1/1] pidfs: Fix memory leak in pidfd_info()
-Date: Fri, 15 Aug 2025 16:11:00 +0200
-Message-ID: <20250815-avocado-schalldicht-f3c2c0720bcc@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250814094453.15232-1-adrianhuang0701@gmail.com>
-References: <20250814094453.15232-1-adrianhuang0701@gmail.com>
+	s=arc-20240116; t=1755267129; c=relaxed/simple;
+	bh=YFvmHVLuMDSoUrcpbBl77p/LvN6/nuUPF5EhuAnakA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oNXRvqH9nmMhnehDD/fi9e+lkJTQxqug1iuEa3ecYIbqtxYmzkcKxtNaNVjcCpCN0Dn6P3+5fmVZyRoIIJen5LO1PjkAVs6DDeWEU3VSIlX+wjAXTCzZC1wijqg5nMOK1tcg1b8cITUmOZw/fN7XxMzbxIWr0PTVzkOGxsMJFYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ps1mX7d5; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57FDK6oP029887;
+	Fri, 15 Aug 2025 14:12:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YFvmHV
+	LuMDSoUrcpbBl77p/LvN6/nuUPF5EhuAnakA8=; b=Ps1mX7d5VIhECb7sQFJ4QX
+	j13zRoR7BH7qxG31m0LdeC1nfao8gZyCbHDGcbSSDdDfHz55ZcOS5NfyWUhUVWp3
+	yUbHYI7xh/Rfqpr2lJ4O8J+gfQnL0wlnHhMjtB1BbrGL6alLsOPCt8uNjePcHB6h
+	Df7zDRqeTwO829hxn3objrniKC4u6SMT5+ckp1IDTpU9zt0DA8xI3o3zJ80xOCKD
+	LhWyUYtgtPllJ1DlZ9ubzUsO3dhEvrNQWj3hIrna+033g9Uw6OcMCzXnnnxeIPdo
+	c4SFRJ4uD7EISb8HKYihBAcuxRk7QRMtIPHtLUPlz77AXZdHRdylJRTkv974ue7w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrpfe5b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 14:12:01 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57FEC01O012526;
+	Fri, 15 Aug 2025 14:12:00 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrpfe55-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 14:12:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57FCdO0t025643;
+	Fri, 15 Aug 2025 14:12:00 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvms01c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Aug 2025 14:12:00 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57FEBujl20185552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Aug 2025 14:11:56 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 66F692004D;
+	Fri, 15 Aug 2025 14:11:56 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F2F720043;
+	Fri, 15 Aug 2025 14:11:56 +0000 (GMT)
+Received: from [9.87.144.27] (unknown [9.87.144.27])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 15 Aug 2025 14:11:55 +0000 (GMT)
+Message-ID: <76db63b3-489e-4ba2-bfc5-280c04f1e91e@linux.ibm.com>
+Date: Fri, 15 Aug 2025 16:11:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2228; i=brauner@kernel.org; h=from:subject:message-id; bh=OtCqmz400JW1LXPKPB63v1Co1OIWV0q/WvIHMpYS9vs=; b=kA0DAAoWkcYbwGV43KIByyZiAGifP/+ieKJMzvCGgMqs6SaDz5YXsfAL26q03/+wPWTwspBlk 4h1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmifP/8ACgkQkcYbwGV43KKcXwD+PuSM ldEABph929HKwJuzVWAoqxHlctswjdkr9F/uOOQBAIQAdeTLOavxwIBePElAGNDKRV1OILsFuQI ZHs3N23QP
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/dasd: use IS_ERR_OR_NULL() for debugfs error
+ checking
+To: Yang Xiuwei <yangxiuwei2025@163.com>, hoeppner@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yang Xiuwei <yangxiuwei@kylinos.cn>
+References: <20250814071247.2572569-1-yangxiuwei2025@163.com>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20250814071247.2572569-1-yangxiuwei2025@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIxOSBTYWx0ZWRfX0870+aIn/hY0
+ 1JVeqnXDlx+IBm0qw2pARpas52qei0/fuUhTBJq2QBzQ1h77nSJ5m/VMKyAQdL39sSTOLhotT+F
+ 8SY4dMTqWFOAbh0fdZV+9iNA7ZcMl9wJ0Wag2/pAiSuvZHPU9Tb8vm9WV5CT/7D03WrJJ1nwrKt
+ YH9ZSWuO8WzGCPr1zAlVfC9PU4GNgi3tGDh9sGAvKMism/61Yx6iQ2vNYZlw7RQU7rNME3mKHSp
+ TCyyKKwLToRDq0fK1r25/Ji5RGWCzno8818ltjNt2pd2jiF7CPbqOsmxvu/RDSHtgtsX/Zd+8eW
+ TkmqB0uH+MoHncXdwu7yYhhq3eZP9Koo37sdaXpL7sEy2vddc0/5Zt5OFLcqcQhsBrAvCkqipd6
+ HLyTquhb
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689f4031 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=W5eW2l5LTO-9rmyNepoA:9
+ a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+X-Proofpoint-GUID: _5mmtJqsWuhVZ8UuyjBBKk_NsrqNR31g
+X-Proofpoint-ORIG-GUID: EGvzj27ZdJ3aCIEAVT-yizTBLj4QkL-b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-15_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120219
 
-On Thu, 14 Aug 2025 17:44:53 +0800, Adrian Huang (Lenovo) wrote:
-> After running the program 'ioctl_pidfd03' of Linux Test Project (LTP) or
-> the program 'pidfd_info_test' in 'tools/testing/selftests/pidfd' of the
-> kernel source, kmemleak reports the following memory leaks:
-> 
->   # cat /sys/kernel/debug/kmemleak
->   unreferenced object 0xff110020e5988000 (size 8216):
->     comm "ioctl_pidfd03", pid 10853, jiffies 4294800031
->     hex dump (first 32 bytes):
->       02 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
->       00 00 00 00 af 01 00 00 80 00 00 00 00 00 00 00  ................
->     backtrace (crc 69483047):
->       kmem_cache_alloc_node_noprof+0x2fb/0x410
->       copy_process+0x178/0x1740
->       kernel_clone+0x99/0x3b0
->       __do_sys_clone3+0xbe/0x100
->       do_syscall_64+0x7b/0x2c0
->       entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   ...
->   unreferenced object 0xff11002097b70000 (size 8216):
->   comm "pidfd_info_test", pid 11840, jiffies 4294889165
->   hex dump (first 32 bytes):
->     06 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
->     00 00 00 00 b5 00 00 00 80 00 00 00 00 00 00 00  ................
->   backtrace (crc a6286bb7):
->     kmem_cache_alloc_node_noprof+0x2fb/0x410
->     copy_process+0x178/0x1740
->     kernel_clone+0x99/0x3b0
->     __do_sys_clone3+0xbe/0x100
->     do_syscall_64+0x7b/0x2c0
->     entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   ...
-> 
-> [...]
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Am 14.08.25 um 09:12 schrieb Yang Xiuwei:
+> From: Yang Xiuwei <yangxiuwei@kylinos.cn>
+>
+> Current code checks both `!pde` and `IS_ERR(pde)` separately when
+> handling debugfs directory creation. Replace with IS_ERR_OR_NULL()
+> for more concise error checking.
+>
+> This change applies to:
+> 1. dasd_debugfs_setup() helper function
+> 2. dasd_statistics_createroot() initialization code
+>
+> Signed-off-by: Yang Xiuwei <yangxiuwei@kylinos.cn>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+applied, thanks
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] pidfs: Fix memory leak in pidfd_info()
-      https://git.kernel.org/vfs/vfs/c/0b2d71a7c826
 
