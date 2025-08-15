@@ -1,191 +1,118 @@
-Return-Path: <linux-kernel+bounces-771324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0972B2857E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48395B28581
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71A61BC00C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EE71BC5A73
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729AB309DCD;
-	Fri, 15 Aug 2025 18:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D626E2F9C5E;
+	Fri, 15 Aug 2025 18:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MqI4eLjT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="W4L5Sohf"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF326308F19;
-	Fri, 15 Aug 2025 18:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86178317702;
+	Fri, 15 Aug 2025 18:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755281178; cv=none; b=V9qb+03Hc3cWL5nt2++ETxWS3VRUXXbq7BiRODpjw9bq6zaozyk1tokD3gljO61N3k8CxpFfTmgSThTccpP/OEoZ9Kaf1f8a+qJUdijHc436+KxAZcRAsa5vSf2zg53I/4YFOoRzsBWo8tuuAakiKyI0j/N2mVNsdIxCc1TWI2M=
+	t=1755281239; cv=none; b=j7eKhvxHT4Om1oGO1THFPaEidP1fsahPPZAD+v/sNazQ2BRyQ6Eb8G9Jze1G5LMgc2ZOkflsrR4YqrM4HQd7km0jqA0j4/vOGrAZjJo433nSzT7sq7CCAYRbh+KVlLdMVJQ5XGtm/cit5VxlxURidUgGxvcNs58XC3mm8mRzQ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755281178; c=relaxed/simple;
-	bh=SJDcsSJXahvK6w3PVLzUoWHXDtQZ5aGGi+KFg2tF+4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CU/mdYRA4jh/xwWe4KRiRsHPT4J+I0WaoRISiOsysYRAquVHfgeymJ6xq/z8xX75AtMFGHFuXQtih6hjjfrtpyiQDo1IZb7D5ckgVROJ1LtcdRG7o6CGtlwZfmKpK6X6sP9UozC0gIiG3D6GhvikDuVY8sWMOF0Q1WK0Rww2a7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MqI4eLjT; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755281176; x=1786817176;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SJDcsSJXahvK6w3PVLzUoWHXDtQZ5aGGi+KFg2tF+4s=;
-  b=MqI4eLjTnsA/z9PALk2BhWPYqsDomep9zlXByBtH5QB5763ea+XNeNNG
-   tfeJp+lC7dCHQl/JtQSL/vHURiRojcqkgrDwh/CcrQOFWpgvS/ssZzTIi
-   4Y2XLx/cF4RW35c1PnnvysXGCoHiM60xFrMyqDfKueII40Iqgi74mzhyc
-   TlHVcM9bG34btPi1qIlWIeNdmWqCg2JQ8kOINPZ3TL6FNqBNNch6O8SPl
-   B7wyI45d58PcfHXB1wpID4Ha3tYLT7OfJXqcCXGQ3rWt3dDxU+Ru5MBAE
-   kvyVmPSabxNuFqMvLXpQGCmsSVOOWvliVBWnRRxHUVd2k69/jbjKaPoRk
-   Q==;
-X-CSE-ConnectionGUID: E+K3w4dORy+8MKVcSV3vRw==
-X-CSE-MsgGUID: JDzpJ2ubTcWKMj7GWxHYIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61417153"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="61417153"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 11:06:15 -0700
-X-CSE-ConnectionGUID: 9vGjZEVGRQaT9wmWLRC5eA==
-X-CSE-MsgGUID: McxF2AsDSm+AEHvcC7cKrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171318698"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.183]) ([10.247.119.183])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 11:06:09 -0700
-Message-ID: <7ff8b51b-7263-4d9c-99f8-1b507cf46262@intel.com>
-Date: Fri, 15 Aug 2025 11:06:04 -0700
+	s=arc-20240116; t=1755281239; c=relaxed/simple;
+	bh=6LkPZMv9k8hDlzCNKVs3sIwoyDtLrZJkQI0c17gRlOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wq+M9rE7a/0iICb0YfA+FkxqeEbTbZjmhMc2WLXWmxmKVxRJK1V+Yq3ogOSQCBR8IuCYWoYenYPrUccdjJuYBGjwr43L/JC3pZ0Ai82uhlObJFKnw2qxtInBlaF4KRJ556QC2wQKpZv/pKHkjkRH1LkoUvTMsD1qIwl+Hzx41Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=W4L5Sohf; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YgvvVuDKqui7txj7cJZLGV7Pe1wl+IwQEbSo3OxI38Y=; b=W4L5SohfsikhicM2fMhMYVU5ez
+	7GHAzt8DwRE0JLzrV2MptVHRAfjIKqFdGNGxRchaK/KTSWivn5Lgyjbde+CxjI24zzPF382VEhuAW
+	gtccE+EVzyqGn5NSLCy0JtxRYj24P64KzKawzX3gdV7ycR2IKsGCbhQza79dQG3D04iA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umyp1-004qd8-3h; Fri, 15 Aug 2025 20:06:35 +0200
+Date: Fri, 15 Aug 2025 20:06:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <b669db06-83f8-447c-8081-7ef6ae9d2aba@lunn.ch>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-6-dong100@mucse.com>
+ <099a6006-02e4-44f0-ae47-7de14cc58a12@lunn.ch>
+ <CFAA902406A8215F+20250815064441.GB1148411@nic-Precision-5820-Tower>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 01/20] nvdimm/label: Introduce NDD_CXL_LABEL flag to
- set cxl label format
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
- <CGME20250730121223epcas5p1386bdf99a0af820dd4411fbdbd413cd5@epcas5p1.samsung.com>
- <20250730121209.303202-2-s.neeraj@samsung.com>
- <20250813141218.0000091f@huawei.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250813141218.0000091f@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CFAA902406A8215F+20250815064441.GB1148411@nic-Precision-5820-Tower>
 
+> > > +static int rnpgbe_reset_hw_ops(struct mucse_hw *hw)
+> > > +{
+> > > +	struct mucse_dma_info *dma = &hw->dma;
+> > > +	int err;
+> > > +
+> > > +	dma_wr32(dma, RNPGBE_DMA_AXI_EN, 0);
+> > > +	err = mucse_mbx_fw_reset_phy(hw);
+> > > +	if (err)
+> > > +		return err;
+> > > +	/* Store the permanent mac address */
+> > > +	if (!(hw->flags & M_FLAGS_INIT_MAC_ADDRESS))
+> > 
+> > What do this hw->flags add to the driver? Why is it here?
+> > 
+> 
+> It is used to init 'permanent addr' only once.
+> rnpgbe_reset_hw_ops maybe called when netdev down or hw hang, no need
+> try to get 'permanent addr' more times.
 
+It normally costs ~0 to ask the firmware something. So it is generally
+simpler to just ask it. If the firmware is dead, you should not really
+care, the RPC should timeout, ETIMEDOUT will get returned to user
+space, and likely everything else will fail anyway.
+ 
+> > >  static void rnpgbe_rm_adapter(struct pci_dev *pdev)
+> > >  {
+> > >  	struct mucse *mucse = pci_get_drvdata(pdev);
+> > > +	struct mucse_hw *hw = &mucse->hw;
+> > >  	struct net_device *netdev;
+> > >  
+> > >  	if (!mucse)
+> > >  		return;
+> > >  	netdev = mucse->netdev;
+> > > +	if (netdev->reg_state == NETREG_REGISTERED)
+> > > +		unregister_netdev(netdev);
+> > 
+> > Is that possible?
+> > 
+> 
+> Maybe probe failed before register_netdev? Then rmmod the driver.
 
-On 8/13/25 6:12 AM, Jonathan Cameron wrote:
-> On Wed, 30 Jul 2025 17:41:50 +0530
-> Neeraj Kumar <s.neeraj@samsung.com> wrote:
-> 
->> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
->> introduced in CXL 2.0 Spec, which contain region label along with
->> namespace label.
->>
->> NDD_LABELING flag is used for namespace. Introduced NDD_CXL_LABEL
->> flag for region label. Based on these flags nvdimm driver performs
->> operation on namespace label or region label.
->>
->> NDD_CXL_LABEL will be utilized by cxl driver to enable LSA2.1 region
->> label support
->>
->> Accordingly updated label index version
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> Hi Neeraj,
-> 
-> A few comments inline.
-> 
->> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
->> index 04f4a049599a..7a011ee02d79 100644
->> --- a/drivers/nvdimm/label.c
->> +++ b/drivers/nvdimm/label.c
->> @@ -688,11 +688,25 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
->>  		- (unsigned long) to_namespace_index(ndd, 0);
->>  	nsindex->labeloff = __cpu_to_le64(offset);
->>  	nsindex->nslot = __cpu_to_le32(nslot);
->> -	nsindex->major = __cpu_to_le16(1);
->> -	if (sizeof_namespace_label(ndd) < 256)
->> +
->> +	/* Set LSA Label Index Version */
->> +	if (ndd->cxl) {
->> +		/* CXL r3.2 Spec: Table 9-9 Label Index Block Layout */
->> +		nsindex->major = __cpu_to_le16(2);
->>  		nsindex->minor = __cpu_to_le16(1);
->> -	else
->> -		nsindex->minor = __cpu_to_le16(2);
->> +	} else {
->> +		nsindex->major = __cpu_to_le16(1);
->> +		/*
->> +		 * NVDIMM Namespace Specification
->> +		 * Table 2: Namespace Label Index Block Fields
->> +		 */
->> +		if (sizeof_namespace_label(ndd) < 256)
->> +			nsindex->minor = __cpu_to_le16(1);
->> +		else
->> +		 /* UEFI Specification 2.7: Label Index Block Definitions */
-> 
-> Odd comment alignment. Either put it on the else so
-> 		else /* UEFI 2.7: Label Index Block Defintions */
-> 
-> or indent it an extra tab
-> 
-> 		else
-> 			/* UEFI 2.7: Label Index Block Definitions */
-> 			
->> +			nsindex->minor = __cpu_to_le16(2);
->> +	}
->> +
->>  	nsindex->checksum = __cpu_to_le64(0);
->>  	if (flags & ND_NSINDEX_INIT) {
->>  		unsigned long *free = (unsigned long *) nsindex->free;
-> 
->> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
->> index e772aae71843..0a55900842c8 100644
->> --- a/include/linux/libnvdimm.h
->> +++ b/include/linux/libnvdimm.h
->> @@ -44,6 +44,9 @@ enum {
->>  	/* dimm provider wants synchronous registration by __nvdimm_create() */
->>  	NDD_REGISTER_SYNC = 8,
->>  
->> +	/* dimm supports region labels (LSA Format 2.1) */
->> +	NDD_CXL_LABEL = 9,
-> 
-> This enum is 'curious'.  It combined flags from a bunch of different
-> flags fields and some stuff that are nothing to do with flags.
-> 
-> Anyhow, putting that aside I'd either rename it to something like
-> NDD_REGION_LABELING (similar to NDD_LABELING that is there for namespace labels
-> or just have it a meaning it is LSA Format 2.1 and drop the fact htat
-> also means region labels are supported.
+Functions like this come in pairs. There is some sort of setup
+function, and a corresponding teardown function. probe/remove,
+open/close. In Linux, if the first fails, the second is never called.
 
-I agree. I had a conversation with Dan about it where I mentioned calling it CXL to describe LSA 2.1 just doesn't seem quite right. He also offered up something like NDD_REGION_LABELING instead of NDD_CXL_LABEL. So +1 to this comment.
-
-DJ 
-
-> 
-> Combination of a comment that talks about one thing and a definition name
-> that doesn't associate with it seems confusing to me.
-> 
-> Jonathan
-> 
-> 
->> +
->>  	/* need to set a limit somewhere, but yes, this is likely overkill */
->>  	ND_IOCTL_MAX_BUFLEN = SZ_4M,
->>  	ND_CMD_MAX_ELEM = 5,
-> 
-> 
-
+	Andrew
 
