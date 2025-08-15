@@ -1,405 +1,630 @@
-Return-Path: <linux-kernel+bounces-770510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A96B27BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B02B27BFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF7F3B233D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381AD3BE236
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D82D1905;
-	Fri, 15 Aug 2025 08:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Q11/tc5Z";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="mn6pWLJZ"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505122D0C8B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248087; cv=fail; b=oc1nLT3qc5KzmyAPjm7Kqo+2nkAazWcjA/oLALg0mdfnn0GXYi4p+lNfYpW4knoPNxdb7mL8AGISPgaLdQMcXBtUphTeuZG0dYNorwLCyN98oip4M+0/owkQicbcxY1JDlMJ5L07uYhh3LsM/5Pbldgve3oPWzmE15FXTXnvFzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248087; c=relaxed/simple;
-	bh=fPJ7EcDITlF8yzlsHY+g3dtzpwHbiU0uwpo+bR5ClM8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R4QL17HVSVw6rLtV/AExtg/ysMFru4qvXevT0f9UQxp3ISzR5cqY9wqeupLEHiRhZKlGXiHIzeIJoZojwVj3COzLWa2keICXzHKi1b2OaZjkDqj1rto+kTEetM+hpDgt99OXU/fRavUf4NT1EQY2CHB2adWJP42gn+JNPfXPGLk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Q11/tc5Z; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=mn6pWLJZ; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7a3a97f679b511f0b33aeb1e7f16c2b6-20250815
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=fPJ7EcDITlF8yzlsHY+g3dtzpwHbiU0uwpo+bR5ClM8=;
-	b=Q11/tc5ZSWtAF3Iekc68MyOszAhO7DaAHmTSsDjzcx5d5tsP1gisbzg8hd7Hp40bbkKxDI6Xh8jxkvpMk8jaDGgalD/N1A+fHQpyThmNWxdbrngbpDvECGvuLGqp0EkuZnAVA5wtWMKnlFfYWYfOIYXtwyPj+2x4VMhJMVFkT/I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:62fa98a6-69d4-4b0b-805f-291b6a3209d4,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:f1326cf,CLOUDID:651b8344-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
-	t:0|15|50,EDM:-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,C
-	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 7a3a97f679b511f0b33aeb1e7f16c2b6-20250815
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2053683023; Fri, 15 Aug 2025 16:54:39 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 15 Aug 2025 16:54:37 +0800
-Received: from OS8PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 15 Aug 2025 16:54:36 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xuI64aKmTj0VBlJaRnrtEMr/FYSZRuNjQDtqR265WsD7h/5IhF52hyHdJJSWxDMVqLGjQu9PgtvfexugFDCq9F1bBCKFDzwFQvkEcWDNMfdzWllIF2Rlc7rYWAiYR63yrdoGAeO7RXTh94wGckMtmwMoE1aAdFip5Wr/jXrnS1FLLVqdIGHtDZC4z65Mpfz0t+ooY9ktc7Ma1qi/KARl1a6G4TDKi2lLsWFFYgxTDhaebe232WfWgfiWw6HkThspDUHXbejL0dNyzo2eftPAMX1NUg5T2DaDIqLSK1lpayDT341t1upSW6yIZhdM/Ok5bBl2OxYid+ILgg2euTWK0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fPJ7EcDITlF8yzlsHY+g3dtzpwHbiU0uwpo+bR5ClM8=;
- b=aRb4e9QO3CXeoIN52Jlv6UUPq4g+ilrw79dRWM+pN8v3NnK3QMvsuz+Jx/83WaJcHKGpCWyDMLG3wZYi3vyhZOImKrRA8Ua0pEVqyD3SvmosPxlUc98sQ6iE2D5SCeEMh/uvFK8U0j+ANNnAag/19qGPZn7CbjVyATXPGjaZkc62D42fTDJdfTeVvXgriUCN65Ot9Sn9bFPIuydXQ90p5hZccQOW6ErpJc4jttNulAR7gpAHWHddf/wIkavX0S4ZHI3j6g8ukVC+yHtvqD35WnQB9sWfThwBEaiDOpADlEW8Ly5yVPVzMaAUHDhUGy9nVxaFoZn11DxQdrfpf8ofuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fPJ7EcDITlF8yzlsHY+g3dtzpwHbiU0uwpo+bR5ClM8=;
- b=mn6pWLJZ3FDVnRF15EIFjNVUnjNWTru9rM0pXJPvJQeWm7augbNGWgQ84/MDOu80CKfs77cTrShLJebw5Szm0Zdse20eddXjW07SUahrOqWS66Da1c30Znotlva0MVe3wOU+5980A7m9K1pe8EdU+5GYRBjghhLhga8ifrim5yU=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by SEYPR03MB7841.apcprd03.prod.outlook.com (2603:1096:101:173::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
- 2025 08:54:33 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 08:54:33 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "AngeloGioacchino Del
- Regno" <angelogioacchino.delregno@collabora.com>, "airlied@gmail.com"
-	<airlied@gmail.com>, Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kernel@collabora.com"
-	<kernel@collabora.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 00/10] Add support for MT8195/88 HDMIv2 and DDCv2
-Thread-Topic: [PATCH v10 00/10] Add support for MT8195/88 HDMIv2 and DDCv2
-Thread-Index: AQHcCE0k65/WJilamEabKmVnobxrULRjc9QA
-Date: Fri, 15 Aug 2025 08:54:33 +0000
-Message-ID: <abe8d1173fa6ee3b976690ab48897ec3b3b293b9.camel@mediatek.com>
-References: <20250808-mediatek-drm-hdmi-v2-v10-0-21ea82eec1f6@collabora.com>
-In-Reply-To: <20250808-mediatek-drm-hdmi-v2-v10-0-21ea82eec1f6@collabora.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SEYPR03MB7841:EE_
-x-ms-office365-filtering-correlation-id: efb2a0a3-0645-4322-ab82-08dddbd95acb
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|42112799006|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?QndxTjljbGhVdXBVYVRwT2tSN0FmdE5UYzFIR2JKZVNDWWlwdTQzK242YlNJ?=
- =?utf-8?B?NUZZOTRDWks5WXYyZGhyQWVpUnd5VVp2bytqaU9kNWtReElaV0Rka0FuN3p0?=
- =?utf-8?B?a1ZjWWJ3YmhHNnpEcDhud2dIeXJsZEEwS3F2VmtwOGJyejFlT21pOStjd0FQ?=
- =?utf-8?B?bUN2Qk1WWjF1VWk0NXpYM0FTdWdDb01aV29SWHJ4aFp3a1VVdU1mNkJEbjdi?=
- =?utf-8?B?ZE94NHVxNDZ0dzhURXBKK1JHbHVZVm5EdzYyazJUZkN4aHdUd0E0M3ZaV3V0?=
- =?utf-8?B?YVBTcWVQMTlHL0VESWw2ZmtSZEtCeWlQdnF6YzJBR2N5TUNWNHNUOHlQdGlx?=
- =?utf-8?B?MStHQ1JUN1N5QlVoN2RaUUpWdVNoMGpIdWFReTNXUGZybnhmK2o2NjZveWox?=
- =?utf-8?B?cE5wakNZYjZxeWIzenpWTWZIRmZ5VE80TkJSZnNocUVYbi90Rkp0ME53YjNS?=
- =?utf-8?B?SDd5VEgrWUZqOWZOOFJsd1VxM2RPSXF1TWUvNlhMcHJEM09GSnM3T0pZSlFH?=
- =?utf-8?B?cFFpWGYrSDZPcVVTRlJJbXRGVHV1bzNjaVE5QWloeVFwdUg0YjVubDM0Nml5?=
- =?utf-8?B?byt4RGQ1bXIzblJRbHJHUVNGQ1Q4WDE1b2FjR2xYelFhOWVzajBzU01zaklW?=
- =?utf-8?B?dm45WXphRzlKaEQrcUM2bXhoWkFsUEtJY2VwaWZUc0lWTFNFL1Z1K2dRNUZG?=
- =?utf-8?B?ZjRIc05NYk5lNDdMcXArVnN2UHI3ZkI5Vlllb01mOXBCai90azNzOHVtbGhK?=
- =?utf-8?B?ZjlPSk5DaVlmQVA5VjZXbDRHaXRHVkJSRFFIUkJTUnZZTFF2MXFxQjBPbTVL?=
- =?utf-8?B?bGZQR00zK1ZQdzR0M1ZnM3F0WGVWb09SdkFFQnZqVEJZYzdtM3dpUjk5eEsx?=
- =?utf-8?B?WFd1THZ4M05KUFAvQ3Y1dVQyQWxoMllDMTNLdlhaY294a1NBbGIrR2RjRlVP?=
- =?utf-8?B?MG1HNi9aTDB6WWQxZ25LWnVITXRrc2FCSDNNc1F3WjlwZmlpZi9qeUlFVjBL?=
- =?utf-8?B?aDRaZHZ1UGdYbnp6cVA4aXlDUXhFWU1PeXFjekZGWFp0ZmNqcDNIMW90Z29r?=
- =?utf-8?B?U2w4MkxyNEJ3ZldFWmhNOEt0RzRUTDdvS3lKYUpEVE9MV2tGbERrOC9CRTR2?=
- =?utf-8?B?WHlMdVlhYy9DM1Bxekx5bm82dWo3NWVReU5pMElKdjZYUnBmNTROdDlvWHdx?=
- =?utf-8?B?dnlXS2N4UTV4QlE3ZTk5ZmVGd1l1SVhORzF6N3VpSFZOaEVFZmFQODNLYS9l?=
- =?utf-8?B?dW5VK3ZFKy81azE0K3pnRWg2ZmxGSHVxNjBlYlZ6UDFRQkVraXBVMEo5azgr?=
- =?utf-8?B?ckI5cTJHdkdKOGRHSmI4S0hyZjMzUjdxRUt5dzdERDQvb0Q2ay9ZMEV5eW9Q?=
- =?utf-8?B?ay93a1I2TU1HUE0wSjk4d1A3ZlYrMEh1OGQ2Wnp3S1kyTk9uTGhmODV5bTVr?=
- =?utf-8?B?QU9SUWRpa3ZCQ3lETTlSZk5YMWlzY2I4bkt4bUt4b21sSTZLOWc4dExHSms4?=
- =?utf-8?B?djRpMXc3RTE4MjFPQjczd0ZyZDI5anE1MTFiSzZjMUVjMTZBS2wvZXRzbzN6?=
- =?utf-8?B?Tno0WWZHSUNzeHovOWM3Y2F1WlZib0ZUVHJvN1ovNG5uUCthWDYvMlh0Sllj?=
- =?utf-8?B?NDdLbjhpMzg3bTNJTXVPbk85anhKZ016bGJmWWh3c09RMURzS0l2ck9hRFRY?=
- =?utf-8?B?NVJRRDJCT2hsb3ZOM3ZTUjdoZGxQTFRNTGFOa1pyc0xkL1FHZjVMUW5OV0Vt?=
- =?utf-8?B?MGNHcTlwYUxRSTk0cFBuc1NSRXJzN3M3LytNWlQ4NjBXakpyTlFYdUNCNzRi?=
- =?utf-8?B?Z2lEWnZOT29yQjF1NWlPTHFKUStHVWJ6VTNsSUVqWkFqLytqL0l2cXhNNTJR?=
- =?utf-8?B?ckNFNCsrU3dSa3NhTGxJZTB2bmQ4TkphZU5UWGZGY1E4YUF4dDk0aFlBWW9t?=
- =?utf-8?B?UlpGemZuNGtEWitwdzJ6VDRJU0x4cXQrZTNsMFY0QzUxdjRWR2VodkRMY2tW?=
- =?utf-8?Q?p7+MzgXSTeMzJ9qVV2Ve9jH4Unj8N0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(42112799006)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eUd0UjI3d3Yrd2UzYkpXR1FRZndVOGkwaGVFZloyVFh5dGZ6dWlERkE4b3Q3?=
- =?utf-8?B?UlNUYmVIUUduNGhwRzVqVXNxemlqMHZ5b1BPbUc4eXN6cTNzYmZUTzQ2RlFE?=
- =?utf-8?B?OHZoTy8xOTVCcUR4SlJvZktoQ0hUdDZlR3EyY3ZEN2VPTForbEFoYUVML2xi?=
- =?utf-8?B?WTQzSEw3SWgzNG1XclZnQm9oT0RhalNiUlhLM0JBU1lhWkZEdFVteEh2eGEv?=
- =?utf-8?B?WElvN1o5ait5dUVOdlY0eGlvRkkvU3FsNjd4WjBYMFYrbEhJYlc0NHkrY0lT?=
- =?utf-8?B?NXg5bmo0bzBrbmRLM2E3TGc5ODNVbXV5c2w4WXN4S2dXTm1HL3lnbDN2K0wv?=
- =?utf-8?B?bWlBdFFBUkNiaW9zS1BVTWlLTHAzUDFGcTJGc3RvV1ZGWnF6ZjhDRDhVRTkz?=
- =?utf-8?B?ZUdiNWxqWkpDQldFa2JMN2kzRzBTaVNoYkp2bnNyRS90Y214T2hMWlpKd0tR?=
- =?utf-8?B?RUtXYlNTS0FtT1FpOE9veFQ5b3VXQi9ndE0vaUJ0Vjk1bklaL1dhanJpb2Vw?=
- =?utf-8?B?WXBQNDVBcDQ4c1BON2E3RmpMazl0dlplcGJKNFZSNTZZMnlBVXNkeHZhcmg4?=
- =?utf-8?B?anpmT0puUXlNM0hCSWcrQVN2SGU4dGx6NUVwMU55ZG5GMDJFcWZsSXhGcm4r?=
- =?utf-8?B?bElWUlJUbVowOE56ZjI4eGQ2MHpJZncwUlQ4Q3NVa0x5RjJoTjliTk83NkUr?=
- =?utf-8?B?eTJnY1BwcEtYczFnME9xTlh1cm4zTFJqMHpqV2Z5WHcyanZPb0RmQkV2U0JS?=
- =?utf-8?B?b29iNmJXUnNMcTYzTk1HSE9HSFBpaWFIWkJVT0xJL2lIbmVSQmRuVUZuUEZW?=
- =?utf-8?B?S0lXSmY2MENkM0o1TXFtRm9CVlJJaHV2L1QyRzg5Q0JNREdvM2FLSGovN2hR?=
- =?utf-8?B?bXhTZ0l6NHVyNktBdnl6MDhmVlk3SW5UNWFLT3VWdE9PL0s5SmhLemRaMDNW?=
- =?utf-8?B?Wlk2d0wwaG05WXo2RURoWGJnK09QSGZlcWt5bEloSjBIdHpVRENobTdlMjV2?=
- =?utf-8?B?QkpVa3c0T011MFBlMStZSnRmVllHN0FtbnJHcXZyVis1MU5BOVpzUnBtRU9k?=
- =?utf-8?B?c0ZMK1RBWS9xTjJaMnUzajFzZGhMblZJbXIzdWtsejdHUmg4TjVNeWJwUTlp?=
- =?utf-8?B?Nk50T0pheDJtWTRnbGlwTDZRUzcyVmVvT2tSYUhwRkVTaEZ5S2dUZ0Y5YTJQ?=
- =?utf-8?B?dHBmaGx2TmxTMDJjU1BHYU1CMDFUOHJEVWZiOUZiZC9qcCtMNWozb1JVMkt3?=
- =?utf-8?B?aTdpcjhqbG03U2dkMmJ6SXpseHRKMjczcE1na0p0MXNNbmQzdXFDYmlGM08w?=
- =?utf-8?B?dmpBcjE3OHhFaXlpUk5Pd284NVRSRW9HY2pKVzFqY3lXUlh3MzFQRDlZbDlp?=
- =?utf-8?B?RUdYRC9nKzFUYmZOSDcyM2RTNjl3RmpLWTczOXJUd3lyK2QvcHRoMzZDTzNx?=
- =?utf-8?B?Y2R6UnFVSWx0YVBReUpXSVFhZ0dWdERIM0FvSmdYMnc0K0pPbWhpZ0dCblNZ?=
- =?utf-8?B?cXdSM1ZPRCtHT3JqU2E3TE91MU9NR2xXYTlEUnBBdVZrL053UVNGL1gxanR3?=
- =?utf-8?B?VVkySGM1NEx1ZDVYZldMSkZ2U1lCL0FnMW5UMGdta09HT3hpWmdOV0RvM2hw?=
- =?utf-8?B?aTNoTHJXNDhxN3RMMm0wd1EzWUU4WVpUdExxcm5lTjVOUzYyU2F1Um9tYkk3?=
- =?utf-8?B?SFhiS2d2ek5qS21BcDVpc0EreEJsK3N3RHRvaWhWb3UwYWtieXFPWnl1bGxs?=
- =?utf-8?B?SEpZaHFOWGw3WTdVVnh4ZmZ5ek80eGIvVXMzSWN6elRJQlNKZWozdFppNmVE?=
- =?utf-8?B?REpESmdIOTlud1JPN280SnpvaElwOEp6dWRzNm01ckRrVkZHaUVIb2hIcnpk?=
- =?utf-8?B?REU2bFJNNUVYSmJLaXJRZkJmNWpVb21ZQnNnR1kyZFFwZE1qczI0U2U2TDVx?=
- =?utf-8?B?NFdQV1A3Y2tqYzRuT09TZEthWWtBZGFKREdjLzQ5UWJOWEFPOFJ1RytveXVJ?=
- =?utf-8?B?NVZnckxRN1I1VXdFODcvNVJyWUVqcEtDTnJJY1ZUTGVVMnFKU0hBZWs2aVhJ?=
- =?utf-8?B?Znp5UjlkSzZDUnhlbUZCK1l4MUpsVTNEbjJkelBvMTBVN3dBN2hyeVluOUdm?=
- =?utf-8?Q?pLMLixOjDrBHGCk0rGc9FgNMH?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5DB08AE66A59F642BFDFD91C640A66C9@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D712D3756;
+	Fri, 15 Aug 2025 08:55:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9520A259CA3;
+	Fri, 15 Aug 2025 08:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755248135; cv=none; b=YWD0CN1lMS3bAtQRbeMVf7oRxwOGfOZsMRUNch+RK2L0TrR1kczqJW4RQ/Xc484WzuPxsPbNEm7bqhN4jdzEZBKhi4tDQZt7NMjqgUpe72Bk576PgNwnORZH5/5vxg0CWk8gToOsfX3B5SmaP0bqI/qpsBCWklhFUCuMNnFWn5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755248135; c=relaxed/simple;
+	bh=Ag48EoG0gyO/W7ECTWd/KflAR3pZ4rex2PeH1Okw+LM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=inw5V9IOak4/AtdZP2QwjkNPpC9trFPS+kld8Hpo+awDwK73fEBcJACta5G7U01fx/xgeMgL8yX2BeGXe4Fh9VDvrRl9I9DlXP3zIdTyS6JBv6HDAtHGRM5lf4BosEBRx82P1US+AdD+aNh7qeDlw9mzgAbS7consVENxJVHO4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D3221688;
+	Fri, 15 Aug 2025 01:55:18 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B47BD3F63F;
+	Fri, 15 Aug 2025 01:55:21 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Maxwell Bland <mbland@motorola.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pierre Langlois <pierre.langlois@arm.com>,
+	Quentin Perret <qperret@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org,
+	x86@kernel.org
+Subject: [RFC PATCH v5 00/18] pkeys-based page table hardening
+Date: Fri, 15 Aug 2025 09:54:54 +0100
+Message-ID: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efb2a0a3-0645-4322-ab82-08dddbd95acb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 08:54:33.3967
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 93TTYm98FKp3yrMSWOKsGJiu5PNSzSPtlqr3xl0/lvnhLzfD4uKsfCdYwQ9YVuo+OdiYpadqv/zqFfH5HfYDbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7841
+Content-Transfer-Encoding: 8bit
 
-SGksIExvdWlzOg0KDQpJbiBbMV0sIE1UODE3MyBIRE1JIGhhcyBicm9rZW4gYnkgYSBwYXRjaCBv
-biB3aGljaCB0aGlzIHNlcmllcyBkZXBlbmQuDQpJIHdvdWxkIGxpa2UgdGhhdCBidWcgZml4ZWQg
-dGhlbiBhcHBseSB0aGlzIHNlcmllcy4NClBsZWFzZSBmaXggdGhhdCBidWcgZmlyc3QuDQoNClsx
-XSBodHRwczovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4LW1lZGlhdGVrLzIw
-MjUtQXVndXN0LzA5NzA5NC5odG1sDQoNClJlZ2FyZHMsDQpDSw0KDQpPbiBGcmksIDIwMjUtMDgt
-MDggYXQgMTI6MTIgKzAyMDAsIExvdWlzLUFsZXhpcyBFeXJhdWQgd3JvdGU6DQo+IEV4dGVybmFs
-IGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVu
-dGlsIHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+IA0KPiAN
-Cj4gVGhpcyBpcyBhIHJlc3BpbiBvZiBBbmdlbG9HaW9hY2NoaW5vIERlbCBSZWdubydzIHBhdGNo
-IHNlcmllcywgdGhhdCBhZGRzDQo+IHRoZSBzdXBwb3J0IG9mIEhETUl2MiBhbmQgRERDdjIgZm9y
-IE1UODE4OCBhbmQgTVQ4MTk1IGluIG1lZGlhdGVrLWRybS4NCj4gDQo+IENoYW5nZXMgaW4gdjEw
-Og0KPiAgLSBSZWJhc2VkIG92ZXIgbmV4dC0yMDI1MDgwNw0KPiAgLSBEcm9wcGVkIHBhdGNoZXMg
-ZnJvbSB2OSB0aGF0IGhhdmUgYmVlbiBhbHJlYWR5IG1lcmdlZCBpbiBhIHByZXZpb3VzDQo+ICAg
-IG1lcmdlIHdpbmRvdyAoMSB0byAxNCkNCj4gIC0gUmVzb2x2ZWQgbWVyZ2UgaXNzdWVzIHdpdGgg
-bmV4dC0yMDI1MDgwNyBmb3IgcGF0Y2hlcyAzLCA0IGFuZCA5DQo+ICAtIEFkZGVkIG5ldyAiZHJt
-L21lZGlhdGVrOiBtdGtfaGRtaTogRHJvcCByZWR1bmRhbnQgY2xvY2sgcmV0cmlldmFsIGluDQo+
-ICAgIG10a19oZG1pX2dldF9jZWNfZGV2IiBwYXRjaCB0byBmaXggYW4gaXNzdWUgaW50cm9kdWNl
-ZCBieSBhIHByZXZpb3VzbHkNCj4gICAgbWVyZ2VkIHBhdGNoIGZyb20gdGhpcyBzZXJpZXMNCj4g
-IC0gRGVsZXRlZCBtdGtfaGRtaS5jLm9yaWcgZmlsZSBhZGRlZCBieSAiZHJtL21lZGlhdGVrOiBt
-dGtfaGRtaTogU3BsaXQgZHJpdmVyDQo+ICAgIGFuZCBhZGQgY29tbW9uIHByb2JlIGZ1bmN0aW9u
-IiBwYXRjaA0KPiAgLSBGaXhlZCBpbiAiZHJtL21lZGlhdGVrOiBJbnRyb2R1Y2UgSERNSS9EREMg
-djIgZm9yIE1UODE5NS9NVDgxODgiIHBhdGNoDQo+ICAgIGEgYnVnIGFib3V0IEVESUQgcmVhZGlu
-ZyBub3QgcHJvcGVybHkgd29ya2luZyBpbiBtdGtfaGRtaV9kZGNfdjIgZHJpdmVyLA0KPiAgICBk
-dWUgdG8gZXh0cmEgYnl0ZSBzZW50IG9uIGkyYyBidXMgYnkgbXRrX2RkY193cl9vbmUgZnVuY3Rp
-b24gd2hlbiB0aGUNCj4gICAgcGF5bG9hZCBsZW5ndGggaXMgZXF1YWwgdG8gMA0KPiAgLSBGaXhl
-ZCBmb3JtYXQgaXNzdWVzIGRldGVjdGVkIGJ5IGNoZWNrcGF0Y2ggaW4gImRybS9tZWRpYXRlazog
-SW50cm9kdWNlDQo+ICAgIEhETUkvRERDIHYyIGZvciBNVDgxOTUvTVQ4MTg4IiBwYXRjaA0KPiAg
-LSBUZXN0ZWQgb24gTWVkaWF0ZWsgR2VuaW8gMzUwLCA1MTAgYW5kIDEyMDAtRVZLIGJvYXJkcw0K
-PiAgLSBMaW5rIHRvIHY5OiBodHRwczovL2xvcmUua2VybmVsLm9yZy9kcmktZGV2ZWwvMjAyNTA0
-MTUxMDQzMjEuNTExNDktMS1hbmdlbG9naW9hY2NoaW5vLmRlbHJlZ25vQGNvbGxhYm9yYS5jb20v
-DQo+IA0KPiBDaGFuZ2VzIGluIHY5Og0KPiAgLSBSZW9yZGVyZWQgcGF0Y2ggZnJvbSBrcnprIGFz
-IGZpcnN0IGFzIHJlcXVlc3RlZCBieSBDSw0KPiANCj4gQ2hhbmdlcyBpbiB2ODoNCj4gIC0gRHJv
-cHBlZCBEUEkgcGF0Y2hlcyBhcyB0aG9zZSBoYXZlIGJlZW4gYXBwbGllZCBpbiB0aGUgcHJldmlv
-dXMgbWVyZ2Ugd2luZG93DQo+ICAtIENoYW5nZWQgZGVzY3JpcHRpb24gaW4gbWVkaWF0ZWssbXQ4
-MTk1LWhkbWkueWFtbCBhcyByZXF1ZXN0ZWQgYnkgQ0sNCj4gIC0gUmVmYWN0b3JlZCBmdW5jdGlv
-biBtdGtfaGRtaV92Ml9od19nY3BfYXZtdXRlKCkgdG8gaW5jbHVkZSBjb250ZW50cw0KPiAgICBv
-ZiwgYW5kIGRlbGV0ZSwgbXRrX2hkbWlfdjJfaHdfcmVzZXRfYXZfbXV0ZV9yZWdzKCkgYXMgcmVx
-dWVzdGVkIGJ5IENLDQo+ICAtIEV4cGFuZGVkIGNvbW1lbnQgYmVmb3JlIGVuYWJsZW1lbnQgb2Yg
-SERDUCByZWF1dGhlbnRpY2F0aW9uIGludGVycnVwdA0KPiAgICB0byBleHBsYWluIHRoYXQgdGhl
-IEhXIHVzZXMgdGhpcyBpbnRlcm5hbGx5IGFzIHJlcXVlc3RlZCBieSBDSw0KPiAgLSBBZGRlZCBj
-b21tZW50IGluIG10a19oZG1pX3YyX2hwZF9wb3JkX3N0YXR1cygpIGV4cGxhaW5pbmcgd2h5IHRo
-ZXJlDQo+ICAgIGFyZSB0aHJlZSBzdGF0ZXMgZm9yIGNhYmxlIGRldGVjdGlvbiBhcyByZXF1ZXN0
-ZWQgYnkgQ0sNCj4gIC0gTW92ZWQgZXh0cmEgaW50ZXJydXB0cyBjbGVhcmluZyBmcm9tIElTUiB0
-byBwcm9iZSBmdW5jdGlvbiBhbmQgYWRkZWQNCj4gICAgY29tbWVudHMgZXhwbGFpbmluZyB0aGUg
-cmVhc29uIHdoeSB0aG9zZSBhcmUgYmVpbmcgY2xlYW5lZCBhdCBwcm9iZQ0KPiAgICB0aW1lLCBh
-cyByZXF1ZXN0ZWQgYnkgQ0suDQo+ICAtIEFkZGVkIHN1cHBvcnQgKGFuZCB0ZXN0ZWQgb24gTVQ4
-Mzk1LzgxOTUgYW5kIE1UODM5MC84MTg4KSBmb3Igb3V0cHV0DQo+ICAgIGluIGJvdGggWVVWNDIy
-IGFuZCBZVVY0NDQgY29sb3JzcGFjZXMgb3RoZXIgdGhhbiBSR0I7IHBsZWFzZSBub3RlIHRoYXQN
-Cj4gICAgUkdCIGlzIHN0aWxsIHRoZSBkZWZhdWx0LCBhbmQgdGhhdCB0aGUgcmVxdWVzdCBmb3Ig
-dXNpbmcgYW55IG9mIHRoZQ0KPiAgICBZVVYgb3V0cHV0IGZvcm1hdHMgZGVwZW5kcyBvbiBwcmV2
-aW91cyBjb21wb25lbnQocykgb2YgdGhlIGRpc3BsYXkNCj4gICAgcGlwZWxpbmUgZGVjbGFyaW5n
-IHN1cHBvcnQgZm9yIHRob3NlOyBzaG91bGQgbm9uZSBvZiB0aGVtIGRlY2xhcmUgYW55DQo+ICAg
-IHN1cHBvcnQgZm9yIFlVViBmb3JtYXRzLCBvbmx5IFJHQiB3aWxsIGJlIGF2YWlsYWJsZSAobm8g
-ZXJyb3JzLCB0aGUNCj4gICAgYWRkaXRpb25hbCBvbmVzIHdpbGwgYmUgc2ltcGx5IGlnbm9yZWQp
-Lg0KPiANCj4gQ2hhbmdlcyBpbiB2NzoNCj4gIC0gU3BsaXQgbW9yZSBwYXRjaGVzIGFzIHJlcXVl
-c3RlZCBieSBDSw0KPiAgLSBDaGFuZ2VkIHRoZSBvcmRlciBvZiB0aGUgaW50ZXJsYWNlZCB2YXJp
-YWJsZSBhZGRpdGlvbiBhcyByZXF1ZXN0ZWQNCj4gIC0gQ2xlYW51cHMgaW4gRERDdjIgYXMgcmVx
-dWVzdGVkIGJ5IENLDQo+ICAtIFJlbW92ZWQgY29tbWVudCBmcm9tDQo+ICAgIGRybS9tZWRpYXRl
-azogbXRrX2hkbWk6IE1vdmUgb3V0cHV0IGluaXQgdG8gbXRrX2hkbWlfcmVnaXN0ZXJfYXVkaW9f
-ZHJpdmVyKCkNCj4gICAgYXMgdGhhdCB3YXMgZm9yZ290dGVuIGZyb20gcmVpbnRyb2R1Y3Rpb24g
-b2YgcHJpbnQgaW4gdjUNCj4gIC0gU29tZSBtb3JlIHNtYWxsIG5pdHBpY2tzIGFzIHBvaW50ZWQg
-b3V0IGJ5IENLIGhlcmUgYW5kIHRoZXJlDQo+IA0KPiBDaGFuZ2VzIGluIHY2Og0KPiAgLSBTcGxp
-dCB0aGUgVFZEIGNsb2NrIGVuYWJsZS9kaXNhYmxlIGNhbGxzIGluIGEgZGlmZmVyZW50IGNvbW1p
-dA0KPiAgLSBDaGFuZ2VkIGBpc19pbnRlcm5hbF9oZG1pYCB0byB0d28gZGlmZmVyZW50IHZhcmlh
-Ymxlcywgb25lIGZvcg0KPiAgICBEUEkgaW5wdXQgY2xvY2sgZnJvbSBIRE1JLCBhbmQgb25lIGZv
-ciBBRklGTyAxVDFQIG91dHB1dCBhbmQNCj4gICAgY29udmVyc2lvbiAobXRrX2RwaSkNCj4gICAg
-LSBDbGFyaWZpZWQgd2h5IE1UODE5NS84OCBIRE1JLXJlc2VydmVkIERQSTEgaXMgZGlmZmVyZW50
-DQo+ICAtIE1vdmVkIGBpbnB1dF8ycF9lbmAgYml0IHRvIHBsYXRmb3JtIGRhdGEgdG8gY2xlYW51
-cCBEUEkgdnMgRFBJTlRGDQo+ICAgIC0gMVQyUCBlbmFibGUgYml0IGlzIGRpZmZlcmVudCBiZXR3
-ZWVuIERQSSBhbmQgRFBJTlRGLCBidXQgdXNhZ2UNCj4gICAgICBpcyBhY3R1YWxseSB0aGUgc2Ft
-ZQ0KPiAgLSBDbGVhbmVkIHVwIGhlYWRlcnMgaW5jbHVzaW9uIGluIG10a19oZG1pX3YyLmMsIG10
-a19oZG1pX2RkY192Mi5jDQo+ICAgIC0gUmVtb3ZlZCBzb21lIHVudXNlZCBoZWFkZXJzLCBhZGRl
-ZCBtaXNzaW5nIGJpdGZpZWxkLmggaGVhZGVyDQo+ICAtIFNwbGl0IHNvbWUgcHJpbnRzIGNsZWFu
-dXAgY29tbWl0cyBhcyByZXF1ZXN0ZWQgYnkgQ0sNCj4gIC0gU3BsaXQgdGhlIGludHJvZHVjdGlv
-biBvZiBtdGtfaGRtaV9jb25mIGFzIHJlcXVlc3RlZCBieSBDSw0KPiAgLSBTcGxpdCBjb21taXQg
-dG8gbWFrZSBDRUMgb3B0aW9uYWwgYXMgcmVxdWVzdGVkIGJ5IENLDQo+ICAtIFJlaW50cm9kdWNl
-ZCBmb3Jnb3R0ZW4gbm9fY2FwdHVyZV9tdXRlIGluIGNvZGVjX3BkYXRhIChtdGtfaGRtaV9jb21t
-b24pDQo+ICAtIFJlaW50cm9kdWNlZCBlcnJvciBwcmludCBmb3IgYXVkaW8gY2xvY2tzIGVuYWJs
-ZW1lbnQgZmFpbHVyZSAobXRrX2hkbWkpDQo+ICAtIEFkZGVkIGNsZWFudXAgc3lzY29uX3JlZ21h
-cF9sb29rdXBfYnlfcGhhbmRsZSBjb21taXQgZnJvbSBLcnp5c3p0b2YgSw0KPiANCj4gQ2hhbmdl
-cyBpbiB2NToNCj4gIC0gUmViYXNlZCBvdmVyIG5leHQtMjAyNTAxMTMNCj4gIC0gUmVzb2x2ZWQg
-bWVyZ2UgaXNzdWVzIHdpdGggbmV4dC0yMDI1MDExMw0KPiAgLSBBZGRlZCBiaXRmaWVsZC5oIGlu
-Y2x1c2lvbiBpbiBtdGtfZHBpIGluIGNvbW1pdCBbMDIvMzNdIHRvIHJlc29sdmUNCj4gICAgYnVp
-bGQgaXNzdWUgZnJvbSAwZGF5IENJDQo+ICAtIFJlbW92ZWQgLmF0b21pY19jaGVjayBjYWxsYmFj
-ayBmcm9tIG10a19oZG1pX3YyIGFzIGl0IGlzIG5vdyBwYXJ0DQo+ICAgIG9mIGRybV9icmlkZ2Vf
-Y29ubmVjdG9yIGFzIHBvaW50ZWQgb3V0IGJ5IERtaXRyeSBCDQo+ICAtIFJlbW92ZWQgY2FsbCB0
-byBwbV9ydW50aW1lX2Rpc2FibGUoKSBhcyB0aGUgZHJpdmVyIHVzZXMgZGV2bQ0KPiAgLSBUZXN0
-ZWQgYWdhaW4gOi0pDQo+IA0KPiBDaGFuZ2VzIGluIHY0Og0KPiAgLSBEREN2MiBiaW5kaW5nIGVy
-cm9uZW91c2x5IGRyb3BwZWQgaW4gdjMgaXMgaW5jbHVkZWQgYWdhaW4gKG9vcHMhKQ0KPiAgLSBB
-ZGRlZCByZWZlcmVuY2UgdG8gZGFpLWNvbW1vbi55YW1sIGluIEhETUl2MiBiaW5kaW5nDQo+ICAt
-IERyb3BwZWQgcGluY3RybCBlbnRyaWVzIGZyb20gSERNSXYyIGJpbmRpbmcNCj4gIC0gRml4ZWQg
-cmVxdWlyZWQgbGlzdCBpbiBIRE1JdjIgYmluZGluZyBhbmQgY2hhbmdlZCBub2RlIG5hbWUgdG8N
-Cj4gICAgJ2hkbWknIGluc3RlYWQgb2YgJ2hkbWktdHgnDQo+ICAtIEZpeGVkIGlzc3VlIGluIG10
-a19oZG1pIGRlcml2ZWQgZnJvbSB3cm9uZyBjb21taXQgc3BsaXR0aW5nIGFjdGlvbg0KPiAgICBm
-cm9tIHZlcnNpb24gMw0KPiAgLSBFeHBvcnRlZCBuZWNlc3Nhcnkgc3ltYm9scyBhbmQgYWRkZWQg
-bmFtZXNwYWNlcyBmb3IgdGhvc2UNCj4gIC0gRml4ZWQgbW9kdWxlIGJ1aWxkIGZvciBib3RoIEhE
-TUl2MSBhbmQgSERNSXYyDQo+ICAtIE90aGVyIGNsZWFudXBzDQo+IA0KPiBDaGFuZ2VzIGluIHYz
-Og0KPiAgLSBBZGRlZCBocGRfZW5hYmxlKCkgYW5kIGhwZF9kaXNhYmxlKCkgY2FsbGJhY2tzIGFz
-IHN1Z2dlc3RlZCBieSBEbWl0cnkgQg0KPiAgLSBSZW1vdmVkIGF1ZGlvIG11dGUgY2FsbCBpbiBi
-cmlkZ2VfZW5hYmxlKCkgYXMgc3VnZ2VzdGVkIGJ5IENLDQo+ICAtIFJld29ya2VkIGNvbW1vbml6
-YXRpb24gY29tbWl0cyBmb3IgbXRrX2hkbWkvbXRrX2hkbWlfY29tbW9uIGFuZCBzcGxpdA0KPiAg
-ICBvdXQgZGVidWdmcy9hYmlzdCBpbXBsZW1lbnRhdGlvbiBhcyBzdWdnZXN0ZWQgYnkgQ0sNCj4g
-IC0gUmVtb3ZlZCAubW9kZV92YWxpZCgpIGNhbGxiYWNrIGFzIGl0IGlzIG5vdyBwcm92aWRlZCBi
-eSB0aGUgYnJpZGdlDQo+ICAgIEFQSSBpbiBkcm1fYnJpZGdlX2Nvbm5lY3Rvcl9oZWxwZXJfZnVu
-Y3MNCj4gIC0gQSBiaXQgb2YgY2xlYW51cHMgaGVyZSBhbmQgdGhlcmUNCj4gIC0gVGVzdGVkIGFn
-YWluIG9uIEhXIGVzcGVjaWFsbHkgZm9yIG5ldyBocGRfZW5hYmxlL2Rpc2FibGUgY2FsbGJhY2tz
-Lg0KPiANCj4gQ2hhbmdlcyBpbiB2MjoNCj4gIC0gTWVyZ2VkIHNlcmllcyAiQWRkIHN1cHBvcnQg
-Zm9yIE1UODE5NS84MTg4IGFuZCBQYXR0ZXJuIEdlbmVyYXRvciINCj4gICAgYW5kICJkcm0vbWVk
-aWF0ZWs6IEFkZCBzdXBwb3J0IGZvciBIRE1JdjIgYW5kIEREQ3YyIElQcyIgaW4gb25lDQo+ICAg
-IGFzIHRoZXkgYXJlIGRpcmVjdGx5IHJlbGF0ZWQsIGFzIHJlcXVlc3RlZCBieSBDSyBIdQ0KPiAg
-LSBNb3JlIGNvbW1vbml6YXRpb246IG1vdmVkIHNvbWUgYXVkaW8gZnVuY3Rpb25zIHRvIG10a19o
-ZG1pX2NvbW1vbg0KPiAgLSBGaXhlZCBhIGJ1ZyBpbiBEREN2MiBkcml2ZXIgdG8gYWxsb3cgc2Vu
-ZGluZyBhIG1lc3NhZ2Ugd2l0aCBsZW49MQ0KPiAgLSBSZW5hbWVkIHNvbWUgZnVuY3Rpb25zIGlu
-IEhETUl2MiB0byBjb25zaXN0ZW50bHkgdXNlIHRoZSBwcmVmaXgNCj4gICAgbXRrX2hkbWlfdjJf
-IGFjcm9zcyB0aGUgZHJpdmVyDQo+ICAtIEFkZGVkIC5tb2RlX3ZhbGlkKCkgY2FsbGJhY2sgdG8g
-SERNSXYyDQo+ICAtIEFkZGVkIC5hdG9taWNfY2hlY2soKSBjYWxsYmFjayB0byBIRE1JdjINCj4g
-IC0gUmVvcmRlcmVkIGRybV9icmlkZ2VfZnVuY3MgaW4gSERNSXYyIGRyaXZlcg0KPiAgLSBSZXdy
-aXR0ZW4gLmVkaWRfcmVhZCgpIGNhbGxiYWNrIGluIEhETUl2MiB0byBtb3ZlIGNoZWNraW5nIGF1
-ZGlvDQo+ICAgIGF2YWlsYWJpbGl0eSB0byBicmlkZ2VfcHJlX2VuYWJsZSgpIHN0YWdlLCBhbmQg
-dG8gc3RvcCB1c2luZyB0aGUNCj4gICAgZHJtX2VkaWRfcmVhZF9kZGMoKSBpbiBmYXZvciBvZiBk
-cm1fZWRpZF9yZWFkKCkNCj4gIC0gQWRkZWQgc3VwcG9ydCBmb3IgQVBJIHByb3ZpZGVkIEhETUkg
-SGVscGVycw0KPiAgLSBBZGRlZCAudG1kc19jaGFyX3JhdGVfdmFsaWQoKSBjYWxsYmFjayB0byBI
-RE1JdjIgZm9yIEhETUkgaGVscGVycw0KPiAgLSBBZGRlZCAuaGRtaV97cmVhZCx3cml0ZX1faW5m
-b2ZyYW1lKCkgY2FsbGJhY2sgdG8gSERNSXYyIGZvciBoZWxwZXJzDQo+ICAtIEFkZGVkIHN1cHBv
-cnQgZm9yIFZlbmRvciBpbmZvZnJhbWVzIGluIEhETUl2Mg0KPiAgLSBBZGRlZCBtaXNzaW5nIGF1
-ZGlvLWRhaS1jZWxscyB0byBIRE1JdjIgYmluZGluZyB0byBmaXggY2hlY2sgZXJyb3INCj4gIC0g
-QWRkZWQgbW9yZSBpbmZvcm1hdGlvbiB0byB0aGUgSERNSXYyIGJpbmRpbmcgZm9yIGNsb2NrcyBh
-bmQgUEhZDQo+ICAtIEFkZGVkIHNvbWUgY29tbWVudHMgdG8gdGhlIEhETUl2MiBjb2RlIHRvIGNs
-YXJpZnkgd2h5IHRoZSBjb250cm9sbGVyDQo+ICAgIGlzIHByZWNvbmZpZ3VyZWQgaW4gYnJpZGdl
-X3ByZV9lbmFibGUoKSBpbnN0ZWFkIG9mIGJyaWRnZV9lbmFibGUoKQ0KPiAgLSBBZGRlZCBhIG1l
-bnRpb24gb2YgdGhlIGRpZmZlcmVuY2VzIGluIEhQRCBiZXR3ZWVuIHYxIGFuZCB2MiB0byB0aGUN
-Cj4gICAgY29tbWl0IGludHJvZHVjaW5nIHRoZSB2MiBkcml2ZXIgKHYyIGlzIG5vdCB1c2luZyBD
-RUMgZm9yIEhQRCkNCj4gIC0gLi4uYW5kIHRlc3RlZCBhZ2FpbiBvbiBIVyEgOi0pDQo+IA0KPiBU
-aGlzIHNlcmllcyBhZGRzIHN1cHBvcnQgZm9yIHRoZSBIRE1JLVRYIHYyIEVuY29kZXIgYW5kIERE
-Q3YyLCBhbmQgZm9yDQo+IHRoZSBkaXJlY3QgY29ubmVjdGlvbiBEUEkgYXMgZm91bmQgaW4gTVQ4
-MTk1LCBNVDgxODggYW5kIHRoZWlyIHZhcmlhbnRzLg0KPiANCj4gVGVzdGVkIG9uIEdlbmlvIDcw
-MCBFVks6DQo+ICAtIEFCSVNUIE9OOiBvaywgcGF0dGVybiBnZW5lcmF0ZWQgaW50ZXJuYWxseSBm
-cm9tIEhETUkgaXMgc2hvd24gb24NCj4gICAgSERNSSBzY3JlZW4gYXQgdGhlIGNvcnJlY3QgcmVz
-b2x1dGlvbjsNCj4gIC0gQUJJU1QgT0ZGICsgRFBJIFBhdHRlcm4gR2VuZXJhdG9yIE9OOiBvaywg
-cGF0dGVybiBjb21pbmcgZnJvbSBEUEkgaXMNCj4gICAgc2hvd24gb24gSERNSSBzY3JlZW4gYXQg
-dGhlIGNvcnJlY3QgcmVzb2x1dGlvbjsNCj4gIC0gQ2FuIG5lZ290aWF0ZSB1cCB0byA0azYwDQo+
-IA0KPiBhbmQgb24gTVQ4Mzk1IFJhZHhhIE5JTyAxMkw6DQo+ICAtIEFCSVNUIE9OOiBvaywgcGF0
-dGVybiBnZW5lcmF0ZWQgaW50ZXJuYWxseSBmcm9tIEhETUkgaXMgc2hvd24gb24NCj4gICAgSERN
-SSBzY3JlZW4gYXQgdGhlIGNvcnJlY3QgcmVzb2x1dGlvbjsNCj4gIC0gQUJJU1QgT0ZGICsgRFBJ
-IFBhdHRlcm4gR2VuZXJhdG9yIE9OOiBvaywgcGF0dGVybiBjb21pbmcgZnJvbSBEUEkgaXMNCj4g
-ICAgc2hvd24gb24gSERNSSBzY3JlZW4gYXQgdGhlIGNvcnJlY3QgcmVzb2x1dGlvbjsNCj4gIC0g
-RHVhbCBzY3JlZW4gdXNlY2FzZSB2YWxpZGF0ZWQgKERTSSArIEhETUkgMzg0MHgyMTYwcCA2MEh6
-KQ0KPiAgLSBDYW4gbmVnb3RpYXRlIHVwIHRvIDRrNjANCj4gDQo+IFBsZWFzZSBub3RlIHRoYXQg
-dGhpcyBzdWJtaXNzaW9uIGRvZXMgKm5vdCogaW5jbHVkZSBzdXBwb3J0IGZvciBIRENQDQo+IG5v
-ciBmb3IgQ0VDdjIsIGFzIEkgd2FudCB0aGlzIHRvIGJlIHVwc3RyZWFtIGJlZm9yZSBpbXBsZW1l
-bnRpbmcNCj4gYWRkaXRpb25hbCBmZWF0dXJlcyB3aGljaCBhcmUgbm90IHN0cmljdGx5IHJlcXVp
-cmVkIGZvciBzaW1wbGUNCj4gSERNSSBvdXRwdXQuDQo+IA0KPiBCb251cyBpbiB0aGlzIHNlcmll
-cyBpcyB0aGUgYWRkaXRpb24gb2Ygc3VwcG9ydCBmb3IgdGhlIFBhdHRlcm4gR2VuZXJhdG9yDQo+
-IGZvdW5kIGluIHRoZSBEUEkgSFc6IHNpbmNlIEkgbmVlZGVkIHRoaXMgZm9yIGRlYnVnZ2luZyBk
-dXJpbmcgZGV2ZWxvcG1lbnQsDQo+IEkgaGFkIHRvIGNvZGUgaW4gdGhlIGFjdHVhbCBzdXBwb3J0
-IGJpdHMgYW5kIGl0IGxvb2tlZCBsaWtlIGEgd2FzdGUgb2YNCj4gdGltZSB0byBqdXN0IHJlbW92
-ZSBpdC4NCj4gSSBpbnN0ZWFkIGRlY2lkZWQgdG8gY2xlYW4gaXQgdXAgYW5kIHVwc3RyZWFtIGl0
-LCBhcyB0aGlzIHdpbGwgYW55d2F5IGNvbWUNCj4gaGFuZHkgZm9yIG11bHRpcGxlIHRoaW5ncywg
-b2Ygd2hpY2ggdGhlIG1vc3QgaW1wb3J0YW50IChpbW8pIGFyZToNCj4gIC0gQWRkaW5nIHN1cHBv
-cnQgZm9yIG5ldyBTb0NzIGluIHRoZSBmdXR1cmUgd2lsbCBiZSBsZXNzIHRpbWUgY29uc3VtaW5n
-DQo+ICAgIGFzIHRoaXMgZHJpdmVyIGFscmVhZHkgaGFzIHRoZSBwYXR0ZXJuIGdlbmVyYXRvciBp
-bjsNCj4gIC0gQ0kgVGVzdGluZyBtaWdodCBiZSBhYmxlIHRvIG1ha2UgdXNlIG9mIHRoaXMgdG8g
-dmFsaWRhdGUgdGhhdCB0aGUNCj4gICAgZGF0YSB0aGF0IGNvbWVzIG91dCBpcyBub3QgZ2FyYmxl
-ZCAoc28sIHRvIGhlbHAgdGVzdGluZyBkaXNwbGF5DQo+ICAgIHN1cHBvcnQgaW4gYW4gYXV0b21h
-dGVkIG1hbm5lcikuDQo+IA0KPiAtLQ0KPiAyLjQ5LjANCj4gDQo+IC0tLQ0KPiBBbmdlbG9HaW9h
-Y2NoaW5vIERlbCBSZWdubyAoOSk6DQo+ICAgICAgIGRybS9tZWRpYXRlazogbXRrX2hkbWk6IElt
-cHJvdmUgbXRrX2hkbWlfZ2V0X2FsbF9jbGsoKSBmbGV4aWJpbGl0eQ0KPiAgICAgICBkcm0vbWVk
-aWF0ZWs6IG10a19oZG1pOiBBZGQgSERNSSBJUCB2ZXJzaW9uIGNvbmZpZ3VyYXRpb24gdG8gcGRh
-dGENCj4gICAgICAgZHJtL21lZGlhdGVrOiBtdGtfaGRtaTogU3BsaXQgZHJpdmVyIGFuZCBhZGQg
-Y29tbW9uIHByb2JlIGZ1bmN0aW9uDQo+ICAgICAgIGRybS9tZWRpYXRlazogbXRrX2hkbWlfY29t
-bW9uOiBNYWtlIENFQyBzdXBwb3J0IG9wdGlvbmFsDQo+ICAgICAgIGRybS9tZWRpYXRlazogbXRr
-X2hkbWlfY29tbW9uOiBBc3NpZ24gRERDIGFkYXB0ZXIgcG9pbnRlciB0byBicmlkZ2UNCj4gICAg
-ICAgZHJtL21lZGlhdGVrOiBtdGtfaGRtaV9jb21tb246IEFkZCBPUF9IRE1JIGlmIGhlbHBlciBm
-dW5jcyBhc3NpZ25lZA0KPiAgICAgICBkcm0vbWVkaWF0ZWs6IG10a19oZG1pX2NvbW1vbjogQWRk
-IHZhciB0byBlbmFibGUgaW50ZXJsYWNlZCBtb2Rlcw0KPiAgICAgICBkcm0vbWVkaWF0ZWs6IElu
-dHJvZHVjZSBIRE1JL0REQyB2MiBmb3IgTVQ4MTk1L01UODE4OA0KPiAgICAgICBkcm0vbWVkaWF0
-ZWs6IG10a19oZG1pX3YyOiBBZGQgZGVidWdmcyBvcHMgYW5kIGltcGxlbWVudCBBQklTVA0KPiAN
-Cj4gTG91aXMtQWxleGlzIEV5cmF1ZCAoMSk6DQo+ICAgICAgIGRybS9tZWRpYXRlazogbXRrX2hk
-bWk6IERyb3AgcmVkdW5kYW50IGNsb2NrIHJldHJpZXZhbCBpbiBtdGtfaGRtaV9nZXRfY2VjX2Rl
-dg0KPiANCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9LY29uZmlnICAgICAgICAgICAgfCAg
-IDE4ICstDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvTWFrZWZpbGUgICAgICAgICAgIHwg
-ICAgMyArDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWkuYyAgICAgICAgIHwg
-IDUzOSArLS0tLS0tLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWlfY29t
-bW9uLmMgIHwgIDQ0MCArKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19o
-ZG1pX2NvbW1vbi5oICB8ICAxOTggKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19oZG1pX2RkY192Mi5jICB8ICAzOTUgKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19oZG1pX3JlZ3NfdjIuaCB8ICAyNjMgKysrKysNCj4gIGRyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfaGRtaV92Mi5jICAgICAgfCAxNTIxICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKw0KPiAgOCBmaWxlcyBjaGFuZ2VkLCAyODU4IGluc2VydGlvbnMoKyksIDUxOSBkZWxldGlv
-bnMoLSkNCj4gLS0tDQo+IGJhc2UtY29tbWl0OiBjZDMyOGU5ODUzM2NkNzAzNWM5YjNhYjEyNjA3
-MGQ4OGRhZTM2ZTE4DQo+IGNoYW5nZS1pZDogMjAyNTA4MDYtbWVkaWF0ZWstZHJtLWhkbWktdjIt
-Y2Y4OGY1MWI4NDU4DQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IC0tDQo+IExvdWlzLUFsZXhpcyBF
-eXJhdWQgPGxvdWlzYWxleGlzLmV5cmF1ZEBjb2xsYWJvcmEuY29tPg0KPiANCg0K
+This is a proposal to leverage protection keys (pkeys) to harden
+critical kernel data, by making it mostly read-only. The series includes
+a simple framework called "kpkeys" to manipulate pkeys for in-kernel use,
+as well as a page table hardening feature based on that framework,
+"kpkeys_hardened_pgtables". Both are implemented on arm64 as a proof of
+concept, but they are designed to be compatible with any architecture
+that supports pkeys.
+
+The proposed approach is a typical use of pkeys: the data to protect is
+mapped with a given pkey P, and the pkey register is initially configured
+to grant read-only access to P. Where the protected data needs to be
+written to, the pkey register is temporarily switched to grant write
+access to P on the current CPU.
+
+The key fact this approach relies on is that the target data is
+only written to via a limited and well-defined API. This makes it
+possible to explicitly switch the pkey register where needed, without
+introducing excessively invasive changes, and only for a small amount of
+trusted code.
+
+Page tables were chosen as they are a popular (and critical) target for
+attacks, but there are of course many others - this is only a starting
+point (see section "Further use-cases"). It has become more and more
+common for accesses to such target data to be mediated by a hypervisor
+in vendor kernels; the hope is that kpkeys can provide much of that
+protection in a simpler and cheaper manner. A rough performance
+estimation has been performed on a modern arm64 system, see section
+"Performance".
+
+This series has similarities with the "PKS write protected page tables"
+series posted by Rick Edgecombe a few years ago [1], but it is not
+specific to x86/PKS - the approach is meant to be generic.
+
+kpkeys
+======
+
+The use of pkeys involves two separate mechanisms: assigning a pkey to
+pages, and defining the pkeys -> permissions mapping via the pkey
+register. This is implemented through the following interface:
+
+- Pages in the linear mapping are assigned a pkey using set_memory_pkey().
+  This is sufficient for this series, but of course higher-level
+  interfaces can be introduced later to ask allocators to return pages
+  marked with a given pkey. It should also be possible to extend this to
+  vmalloc() if needed.
+
+- The pkey register is configured based on a *kpkeys level*. kpkeys
+  levels are simple integers that correspond to a given configuration,
+  for instance:
+
+  KPKEYS_LVL_DEFAULT:
+        RW access to KPKEYS_PKEY_DEFAULT
+        RO access to any other KPKEYS_PKEY_*
+
+  KPKEYS_LVL_<FEAT>:
+        RW access to KPKEYS_PKEY_DEFAULT
+        RW access to KPKEYS_PKEY_<FEAT>
+        RO access to any other KPKEYS_PKEY_*
+
+  Only pkeys that are managed by the kpkeys framework are impacted;
+  permissions for other pkeys are left unchanged (this allows for other
+  schemes using pkeys to be used in parallel, and arch-specific use of
+  certain pkeys).
+
+  The kpkeys level is changed by calling kpkeys_set_level(), setting the
+  pkey register accordingly and returning the original value. A
+  subsequent call to kpkeys_restore_pkey_reg() restores the kpkeys
+  level. The numeric value of KPKEYS_LVL_* (kpkeys level) is purely
+  symbolic and thus generic, however each architecture is free to define
+  KPKEYS_PKEY_* (pkey value).
+
+kpkeys_hardened_pgtables
+========================
+
+The kpkeys_hardened_pgtables feature uses the interface above to make
+the (kernel and user) page tables read-only by default, enabling write
+access only in helpers such as set_pte(). One complication is that those
+helpers as well as page table allocators are used very early, before
+kpkeys become available. Enabling kpkeys_hardened_pgtables, if and when
+kpkeys become available, is therefore done as follows:
+
+1. A static key is turned on. This enables a transition to
+   KPKEYS_LVL_PGTABLES in all helpers writing to page tables, and also
+   impacts page table allocators (step 3).
+
+2. swapper_pg_dir is walked to set all early page table pages to
+   KPKEYS_PKEY_PGTABLES.
+
+3. Page table allocators set the returned pages to KPKEYS_PKEY_PGTABLES
+   (and the pkey is reset upon freeing). This ensures that all page
+   tables are mapped with that privileged pkey.
+
+This series
+===========
+
+The series is composed of two parts:
+
+- The kpkeys framework (patch 1-9). The main API is introduced in
+  <linux/kpkeys.h>, and it is implemented on arm64 using the POE
+  (Permission Overlay Extension) feature.
+
+- The kpkeys_hardened_pgtables feature (patch 10-18). <linux/kpkeys.h>
+  is extended with an API to set page table pages to a given pkey and a
+  guard object to switch kpkeys level accordingly, both gated on a
+  static key. This is then used in generic and arm64 pgtable handling
+  code as needed. Finally a simple KUnit-based test suite is added to
+  demonstrate the page table protection.
+
+pkey register management
+========================
+
+The kpkeys model relies on the kernel pkey register being set to a
+specific value for the duration of a relatively small section of code,
+and otherwise to the default value. Accordingly, the arm64
+implementation based on POE handles its pkey register (POR_EL1) as
+follows:
+
+- POR_EL1 is saved and reset to its default value on exception entry,
+  and restored on exception return. This ensures that exception handling
+  code runs in a fixed kpkeys state.
+
+- POR_EL1 is context-switched per-thread. This allows sections of code
+  that run at a non-default kpkeys level to sleep (e.g. when locking a
+  mutex). For kpkeys_hardened_pgtables, only involuntary preemption is
+  relevant and the previous point already handles that; however sleeping
+  is likely to occur in more advanced uses of kpkeys.
+
+An important assumption is that all kpkeys levels allow RW access to the
+default pkey (0). Otherwise, saving POR_EL1 before resetting it on
+exception entry would be a best difficult, and context-switching it too.
+
+Performance
+===========
+
+No arm64 hardware currently implements POE. To estimate the performance
+impact of kpkeys_hardened_pgtables, a mock implementation of kpkeys has
+been used, replacing accesses to the POR_EL1 register with accesses to
+another system register that is otherwise unused (CONTEXTIDR_EL1), and
+leaving everything else unchanged. Most of the kpkeys overhead is
+expected to originate from the barrier (ISB) that is required after
+writing to POR_EL1, and from setting the POIndex (pkey) in page tables;
+both of these are done exactly in the same way in the mock
+implementation.
+
+The original implementation of kpkeys_hardened_pgtables is very
+inefficient when many PTEs are changed at once, as the kpkeys level is
+switched twice for every PTE (two ISBs per PTE). Patch 18 introduces
+an optimisation that makes use of the lazy_mmu mode to batch those
+switches: 1. switch to KPKEYS_LVL_PGTABLES on arch_enter_lazy_mmu_mode(),
+2. skip any kpkeys switch while in that section, and 3. restore the
+kpkeys level on arch_leave_lazy_mmu_mode(). When that last function
+already issues an ISB (when updating kernel page tables), we get a
+further optimisation as we can skip the ISB when restoring the kpkeys
+level.
+
+Both implementations (without and with batching) were evaluated on an
+Amazon EC2 M7g instance (Graviton3), using a variety of benchmarks that
+involve heavy page table manipulations. The results shown below are
+relative to the baseline for this series, which is 6.17-rc1. The
+branches used for all three sets of results (baseline, with/without
+batching) are available in a repository, see next section.
+
+Caveat: these numbers should be seen as a lower bound for the overhead
+of a real POE-based protection. The hardware checks added by POE are
+however not expected to incur significant extra overhead.
+
+Reading example: for the fix_size_alloc_test benchmark, using 1 page per
+iteration (no hugepage), kpkeys_hardened_pgtables incurs 17.35% overhead
+without batching, and 14.62% overhead with batching. Both results are
+considered statistically significant (95% confidence interval),
+indicated by "(R)".
+
++-------------------+----------------------------------+------------------+---------------+
+| Benchmark         | Result Class                     | Without batching | With batching |
++===================+==================================+==================+===============+
+| mmtests/kernbench | real time                        |            0.30% |         0.11% |
+|                   | system time                      |        (R) 3.97% |     (R) 2.17% |
+|                   | user time                        |            0.12% |         0.02% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/fork      | fork: h:0                        |      (R) 217.31% |        -0.97% |
+|                   | fork: h:1                        |      (R) 275.25% |     (R) 2.25% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/munmap    | munmap: h:0                      |       (R) 15.57% |        -1.95% |
+|                   | munmap: h:1                      |      (R) 169.53% |     (R) 6.53% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 17.35% |    (R) 14.62% |
+|                   | fix_size_alloc_test: p:4, h:0    |       (R) 37.54% |     (R) 9.35% |
+|                   | fix_size_alloc_test: p:16, h:0   |       (R) 66.08% |     (R) 3.15% |
+|                   | fix_size_alloc_test: p:64, h:0   |       (R) 82.94% |        -0.39% |
+|                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |        -1.67% |
+|                   | fix_size_alloc_test: p:16, h:1   |       (R) 50.31% |         3.00% |
+|                   | fix_size_alloc_test: p:64, h:1   |       (R) 59.73% |         2.23% |
+|                   | fix_size_alloc_test: p:256, h:1  |       (R) 62.14% |         1.51% |
+|                   | random_size_alloc_test: p:1, h:0 |       (R) 77.82% |        -0.21% |
+|                   | vm_map_ram_test: p:1, h:0        |       (R) 30.66% |    (R) 27.30% |
++-------------------+----------------------------------+------------------+---------------+
+
+Benchmarks:
+- mmtests/kernbench: running kernbench (kernel build) [4].
+- micromm/{fork,munmap}: from David Hildenbrand's benchmark suite. A
+  1 GB mapping is created and then fork/unmap is called. The mapping is
+  created using either page-sized (h:0) or hugepage folios (h:1); in all
+  cases the memory is PTE-mapped.
+- micromm/vmalloc: from test_vmalloc.ko, varying the number of pages
+  (p:) and whether huge pages are used (h:).
+
+On a "real-world" and fork-heavy workload like kernbench, the estimated
+overhead of kpkeys_hardened_pgtables is reasonable: 4% system time
+overhead without batching, and about half that figure (2.2%) with
+batching. The real time overhead is negligible.
+
+Microbenchmarks show large overheads without batching, which increase
+with the number of pages being manipulated. Batching drastically reduces
+that overhead, almost negating it for micromm/fork. Because all PTEs in
+the mapping are modified in the same lazy_mmu section, the kpkeys level
+is changed just twice regardless of the mapping size; as a result the
+relative overhead actually decreases as the size increases for
+fix_size_alloc_test.
+
+Note: the performance impact of set_memory_pkey() is likely to be
+relatively low on arm64 because the linear mapping uses PTE-level
+descriptors only. This means that set_memory_pkey() simply changes the
+attributes of some PTE descriptors. However, some systems may be able to
+use higher-level descriptors in the future [5], meaning that
+set_memory_pkey() may have to split mappings. Allocating page tables
+from a contiguous cache of pages could help minimise the overhead, as
+proposed for x86 in [1].
+
+Branches
+========
+
+To make reviewing and testing easier, this series is available here:
+
+  https://gitlab.arm.com/linux-arm/linux-kb
+
+The following branches are available:
+
+- kpkeys/rfc-v5 - this series, as posted
+
+- kpkeys/rfc-v5-base - the baseline for this series, that is 6.17-rc1
+
+- kpkeys/rfc-v5-bench-batching - this series + patch for benchmarking on
+  a regular arm64 system (see section above)
+
+- kpkeys/rfc-v5-bench-no-batching - this series without patch 18
+  (batching) + benchmarking patch
+
+Threat model
+============
+
+The proposed scheme aims at mitigating data-only attacks (e.g.
+use-after-free/cross-cache attacks). In other words, it is assumed that
+control flow is not corrupted, and that the attacker does not achieve
+arbitrary code execution. Nothing prevents the pkey register from being
+set to its most permissive state - the assumption is that the register
+is only modified on legitimate code paths.
+
+A few related notes:
+
+- Functions that set the pkey register are all implemented inline.
+  Besides performance considerations, this is meant to avoid creating
+  a function that can be used as a straightforward gadget to set the
+  pkey register to an arbitrary value.
+
+- kpkeys_set_level() only accepts a compile-time constant as argument,
+  as a variable could be manipulated by an attacker. This could be
+  relaxed but it seems unlikely that a variable kpkeys level would be
+  needed in practice.
+
+Further use-cases
+=================
+
+It should be possible to harden various targets using kpkeys, including:
+
+- struct cred - kpkeys-based cred hardening is now available in a
+  separate series [6]
+
+- fixmap (occasionally used even after early boot, e.g.
+  set_swapper_pgd() in arch/arm64/mm/mmu.c)
+
+- eBPF programs (preventing direct access to core kernel code/data)
+
+- SELinux state (e.g. struct selinux_state::initialized)
+
+... and many others.
+
+kpkeys could also be used to strengthen the confidentiality of secret
+data by making it completely inaccessible by default, and granting
+read-only or read-write access as needed. This requires such data to be
+rarely accessed (or via a limited interface only). One example on arm64
+is the pointer authentication keys in thread_struct, whose leakage to
+userspace would lead to pointer authentication being easily defeated.
+
+Open questions
+==============
+
+A few aspects in this RFC that are debatable and/or worth discussing:
+
+- There is currently no restriction on how kpkeys levels map to pkeys
+  permissions. A typical approach is to allocate one pkey per level and
+  make it writable at that level only. As the number of levels
+  increases, we may however run out of pkeys, especially on arm64 (just
+  8 pkeys with POE). Depending on the use-cases, it may be acceptable to
+  use the same pkey for the data associated to multiple levels.
+
+  Another potential concern is that a given piece of code may require
+  write access to multiple privileged pkeys. This could be addressed by
+  introducing a notion of hierarchy in trust levels, where Tn is able to
+  write to memory owned by Tm if n >= m, for instance.
+
+- kpkeys_set_level() and kpkeys_restore_pkey_reg() are not symmetric:
+  the former takes a kpkeys level and returns a pkey register value, to
+  be consumed by the latter. It would be more intuitive to manipulate
+  kpkeys levels only. However this assumes that there is a 1:1 mapping
+  between kpkeys levels and pkey register values, while in principle
+  the mapping is 1:n (certain pkeys may be used outside the kpkeys
+  framework).
+
+- An architecture that supports kpkeys is expected to select
+  CONFIG_ARCH_HAS_KPKEYS and always enable them if available - there is
+  no CONFIG_KPKEYS to control this behaviour. Since this creates no
+  significant overhead (at least on arm64), it seemed better to keep it
+  simple. Each hardening feature does have its own option and arch
+  opt-in if needed (CONFIG_KPKEYS_HARDENED_PGTABLES,
+  CONFIG_ARCH_HAS_KPKEYS_HARDENED_PGTABLES).
+
+
+Any comment or feedback will be highly appreciated, be it on the
+high-level approach or implementation choices!
+
+- Kevin
+
+---
+Changelog
+
+RFC v4..v5:
+
+- Rebased on v6.17-rc1.
+
+- Cover letter: re-ran benchmarks on top of v6.17-rc1, made various
+  small improvements especially to the "Performance" section.
+
+- Patch 18: disable batching while in interrupt, since POR_EL1 is reset
+  on exception entry, making the TIF_LAZY_MMU flag meaningless. This
+  fixes a crash that may occur when a page table page is freed while in
+  interrupt context.
+
+- Patch 17: ensure that the target kernel address is actually
+  PTE-mapped. Certain mappings (e.g. code) may be PMD-mapped instead -
+  this explains why the change made in v4 was required.
+
+
+RFC v4: https://lore.kernel.org/linux-mm/20250411091631.954228-1-kevin.brodsky@arm.com/
+
+RFC v3..v4:
+
+- Added appropriate handling of the arm64 pkey register (POR_EL1):
+  context-switching between threads and resetting on exception entry
+  (patch 7 and 8). See section "pkey register management" above for more
+  details. A new POR_EL1_INIT macro is introduced to make the default
+  value available to assembly (where POR_EL1 is reset on exception
+  entry); it is updated in each patch allocating new keys.
+
+- Added patch 18 making use of the lazy_mmu mode to batch switches to
+  KPKEYS_LVL_PGTABLES - just once per lazy_mmu section rather than on
+  every pgtable write. See section "Performance" for details.
+
+- Rebased on top of [2]. No direct impact on the patches, but it ensures that
+  the ctor/dtor is always called for kernel pgtables. This is an
+  important fix as kernel PTEs allocated after boot were not protected
+  by kpkeys_hardened_pgtables in v3 - a new test was added to patch 17
+  to ensure that pgtables created by vmalloc are protected too.
+
+- Rebased on top of [3]. The batching of kpkeys level switches in patch
+  18 relies on the last patch in [3].
+
+- Moved kpkeys guard definitions out of <linux/kpkeys.h> and to a relevant
+  header for each subsystem (e.g. <asm/pgtable.h> for the
+  kpkeys_hardened_pgtables guard).
+
+- Patch 1,5: marked kpkeys_{set_level,restore_pkey_reg} as
+  __always_inline to ensure that no callable gadget is created.
+  [Maxwell Bland's suggestion]
+
+- Patch 5: added helper __kpkeys_set_pkey_reg_nosync().
+
+- Patch 10: marked kernel_pgtables_set_pkey() and related helpers as
+  __init. [Linus Walleij's suggestion]
+
+- Patch 11: added helper kpkeys_hardened_pgtables_enabled(), renamed the
+  static key to kpkeys_hardened_pgtables_key.
+
+- Patch 17: followed the KUnit conventions more closely. [Kees Cook's
+  suggestion]
+
+- Patch 17: changed the address used in the write_linear_map_pte()
+  test. It seems that the PTEs that map some functions are allocated in
+  ZONE_DMA and read-only (unclear why exactly). This doesn't seem to
+  occur for global variables.
+
+- Various minor fixes/improvements.
+
+- Rebased on v6.15-rc1. This includes [7], which renames a few POE
+  symbols: s/POE_RXW/POE_RWX/ and
+  s/por_set_pkey_perms/por_elx_set_pkey_perms/
+
+
+RFC v3: https://lore.kernel.org/linux-hardening/20250203101839.1223008-1-kevin.brodsky@arm.com/
+
+RFC v2..v3:
+
+- Patch 1: kpkeys_set_level() may now return KPKEYS_PKEY_REG_INVAL to indicate
+  that the pkey register wasn't written to, and as a result that
+  kpkeys_restore_pkey_reg() should do nothing. This simplifies the conditional
+  guard macro and also allows architectures to skip writes to the pkey
+  register if the target value is the same as the current one.
+
+- Patch 1: introduced additional KPKEYS_GUARD* macros to cover more use-cases
+  and reduce duplication.
+
+- Patch 6: reject pkey value above arch_max_pkey().
+
+- Patch 13: added missing guard(kpkeys_hardened_pgtables) in
+  __clear_young_dirty_pte().
+
+- Rebased on v6.14-rc1.
+
+RFC v2: https://lore.kernel.org/linux-hardening/20250108103250.3188419-1-kevin.brodsky@arm.com/
+
+RFC v1..v2:
+
+- A new approach is used to set the pkey of page table pages. Thanks to
+  Qi Zheng's and my own series [8][9], pagetable_*_ctor is
+  systematically called when a PTP is allocated at any level (PTE to
+  PGD), and pagetable_*_dtor when it is freed, on all architectures.
+  Patch 11 makes use of this to call kpkeys_{,un}protect_pgtable_memory
+  from the common ctor/dtor helper. The arm64 patches from v1 (patch 12
+  and 13) are dropped as they are no longer needed. Patch 10 is
+  introduced to allow pagetable_*_ctor to fail at all levels, since
+  kpkeys_protect_pgtable_memory may itself fail.
+  [Original suggestion by Peter Zijlstra]
+
+- Changed the prototype of kpkeys_{,un}protect_pgtable_memory in patch 9
+  to take a struct folio * for more convenience, and implemented them
+  out-of-line to avoid a circular dependency with <linux/mm.h>.
+
+- Rebased on next-20250107, which includes [8] and [9].
+
+- Added locking in patch 8. [Peter Zijlstra's suggestion]
+
+RFC v1: https://lore.kernel.org/linux-hardening/20241206101110.1646108-1-kevin.brodsky@arm.com/
+---
+References
+
+[1] https://lore.kernel.org/all/20210830235927.6443-1-rick.p.edgecombe@intel.com/
+[2] https://lore.kernel.org/linux-mm/20250408095222.860601-1-kevin.brodsky@arm.com/
+[3] https://lore.kernel.org/linux-mm/20250304150444.3788920-1-ryan.roberts@arm.com/
+[4] https://github.com/gormanm/mmtests/blob/master/shellpack_src/src/kernbench/kernbench-bench
+[5] https://lore.kernel.org/all/20250724221216.1998696-1-yang@os.amperecomputing.com/
+[6] https://lore.kernel.org/linux-mm/?q=s%3Apkeys+s%3Acred+s%3A0
+[7] https://lore.kernel.org/linux-arm-kernel/20250219164029.2309119-1-kevin.brodsky@arm.com/
+[8] https://lore.kernel.org/linux-mm/cover.1736317725.git.zhengqi.arch@bytedance.com/
+[9] https://lore.kernel.org/linux-mm/20250103184415.2744423-1-kevin.brodsky@arm.com/
+---
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Jeff Xu <jeffxu@chromium.org>
+Cc: Joey Gouly <joey.gouly@arm.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Maxwell Bland <mbland@motorola.com>
+Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Pierre Langlois <pierre.langlois@arm.com>
+Cc: Quentin Perret <qperret@google.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mm@kvack.org
+Cc: x86@kernel.org
+---
+Kevin Brodsky (18):
+  mm: Introduce kpkeys
+  set_memory: Introduce set_memory_pkey() stub
+  arm64: mm: Enable overlays for all EL1 indirect permissions
+  arm64: Introduce por_elx_set_pkey_perms() helper
+  arm64: Implement asm/kpkeys.h using POE
+  arm64: set_memory: Implement set_memory_pkey()
+  arm64: Reset POR_EL1 on exception entry
+  arm64: Context-switch POR_EL1
+  arm64: Enable kpkeys
+  mm: Introduce kernel_pgtables_set_pkey()
+  mm: Introduce kpkeys_hardened_pgtables
+  mm: Allow __pagetable_ctor() to fail
+  mm: Map page tables with privileged pkey
+  arm64: kpkeys: Support KPKEYS_LVL_PGTABLES
+  arm64: mm: Guard page table writes with kpkeys
+  arm64: Enable kpkeys_hardened_pgtables support
+  mm: Add basic tests for kpkeys_hardened_pgtables
+  arm64: mm: Batch kpkeys level switches
+
+ arch/arm64/Kconfig                        |   2 +
+ arch/arm64/include/asm/kpkeys.h           |  62 +++++++++
+ arch/arm64/include/asm/pgtable-prot.h     |  16 +--
+ arch/arm64/include/asm/pgtable.h          |  57 +++++++-
+ arch/arm64/include/asm/por.h              |  11 ++
+ arch/arm64/include/asm/processor.h        |   2 +
+ arch/arm64/include/asm/ptrace.h           |   4 +
+ arch/arm64/include/asm/set_memory.h       |   4 +
+ arch/arm64/kernel/asm-offsets.c           |   3 +
+ arch/arm64/kernel/cpufeature.c            |   5 +-
+ arch/arm64/kernel/entry.S                 |  24 +++-
+ arch/arm64/kernel/process.c               |   9 ++
+ arch/arm64/kernel/smp.c                   |   2 +
+ arch/arm64/mm/fault.c                     |   2 +
+ arch/arm64/mm/mmu.c                       |  26 ++--
+ arch/arm64/mm/pageattr.c                  |  25 ++++
+ include/asm-generic/kpkeys.h              |  21 +++
+ include/asm-generic/pgalloc.h             |  15 ++-
+ include/linux/kpkeys.h                    | 157 ++++++++++++++++++++++
+ include/linux/mm.h                        |  27 ++--
+ include/linux/set_memory.h                |   7 +
+ mm/Kconfig                                |   5 +
+ mm/Makefile                               |   2 +
+ mm/kpkeys_hardened_pgtables.c             |  44 ++++++
+ mm/memory.c                               | 137 +++++++++++++++++++
+ mm/tests/kpkeys_hardened_pgtables_kunit.c | 106 +++++++++++++++
+ security/Kconfig.hardening                |  24 ++++
+ 27 files changed, 758 insertions(+), 41 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kpkeys.h
+ create mode 100644 include/asm-generic/kpkeys.h
+ create mode 100644 include/linux/kpkeys.h
+ create mode 100644 mm/kpkeys_hardened_pgtables.c
+ create mode 100644 mm/tests/kpkeys_hardened_pgtables_kunit.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.47.0
+
 
