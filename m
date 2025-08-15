@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-771118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3E9B28311
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:40:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF51B28315
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE4A1D032AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADBCAA22D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2B9305E17;
-	Fri, 15 Aug 2025 15:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04918306D39;
+	Fri, 15 Aug 2025 15:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B7OQpQ3n"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLtvEjpC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57C130499F;
-	Fri, 15 Aug 2025 15:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F45305E3D;
+	Fri, 15 Aug 2025 15:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272323; cv=none; b=MNj323fpZgeF63l5ujZlckby9k+LKQVzf5d/aT8jpQpr+2eCLZjUX5HlQ3xumVdklGmU76E+HryEffmQ8oYIMQfbvNkL/fUXPJ6dwy8wbPXhWWLWIILZRJmu7lUU9LT9TNFwa9KO6L3kuHtwLPkU90ZK50mN4ml/OsuiTXUQZRI=
+	t=1755272405; cv=none; b=uVpLI+6hE854U/SHrXmUcIW7RcPrqV9JPPYkIspD1GSFxerRW9h6NNsI1RkSQgICW22YGlDtktcIWGgefD4955d7lfYivRvF9oW5zCKppUEOUfuq9C5VwR1ivfn7pSnyLhc85xuIvlv3bJP/NZ55En37NCWoGnk4qwGOkYEb78w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272323; c=relaxed/simple;
-	bh=Y7xbTipwgCmhi8GcDK1KNdkaHH4yQkh57YCqIXK+5ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ab1O/HuK92JKfm3t7fhhyFpIFaua3o9PoKKSmSnpuXocu0wID4gjxwOwx3K24OJdYrBEGauxYllIPvuDYdYNS7rLi4ZuurymFJZMWTx5csnTGhIm8bkPny9xK9xa9aFl83q/c0gjWB7psJWbbeREwyQZTntg3nff+Ekk/qiJLLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B7OQpQ3n; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57FFcZ072553249;
-	Fri, 15 Aug 2025 10:38:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755272315;
-	bh=wjDT0cuqOqz1KGiBfuvRft2frGHo6r0c62HTNnpyaXg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=B7OQpQ3nyKnmOuEbFUxq3lPgRRvToDpjEXBIYj1JTfCMW3YW1yUQO9SzsRkz5t7jD
-	 6Gt/3hklCgloLDQYbB/2FiLFgG8Cr+dX/3Qd6w8SuAPI55mwNm+ZcO68jiwZ7DnlXk
-	 ++DT56BTxKURf3wb+l6GP+bSZj5AtnKRnZSSJbT8=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57FFcZLU2683971
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 15 Aug 2025 10:38:35 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 15
- Aug 2025 10:38:34 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 15 Aug 2025 10:38:34 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57FFcYPf1490856;
-	Fri, 15 Aug 2025 10:38:34 -0500
-Message-ID: <c32e3cab-9074-488d-8909-4435f5194c48@ti.com>
-Date: Fri, 15 Aug 2025 10:38:33 -0500
+	s=arc-20240116; t=1755272405; c=relaxed/simple;
+	bh=qFFD29Z0bBGyOJ/r8urMn6MWEW61foW7aAMeULHu5cQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a2xy/QlxIynPNEzZxOQX4+wvlIkD8h3pHLlQz8JCcxDfcp+0BVP5J0Rf83ffi00oRbdW28xdg6NHp8OyRUetzUBLVowhmfq/0yjDdE9TGK37uL69uHFbYiUAkOv4cqqZqQsa07xtCq5/od4yAfbSybuY28chSH+hQ8/mO8+S65Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLtvEjpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E9CC4CEEB;
+	Fri, 15 Aug 2025 15:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755272405;
+	bh=qFFD29Z0bBGyOJ/r8urMn6MWEW61foW7aAMeULHu5cQ=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fLtvEjpCpJcL4Br3dGCA310R4Y2FqThotOiDwP4/RNMBJ98DOeQ6jMFavPuxM7u3Z
+	 YBee3GcniPTXE8VnxbNAntO0WnrVAlBSPN/Rg+auulmBzReVjKLE2wtJk5WGr9p/bA
+	 v+UNwcB1/HCJcruh4liLcSUzkIFGzj0D5zYEE1AXG6Bk3xOVDgSxCTVgfi20L/peGh
+	 W5FxJvKHnD4Ces7ML+U4Xa6U1VyeXnxnHxpgLwSOkuc9mVH4pqvhiFujcu52R4pqai
+	 z7w2V5CQDgdwyu3IrZ3mvsiUf3zYUspnccKIKH2BgfWuZt+l2P3OJX4xy8OsKJ0J7E
+	 gbYclLaeRfxNw==
+Message-ID: <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
+Date: Fri, 15 Aug 2025 17:39:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,147 +49,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/33] arm64: dts: ti: k3-j7200: Enable remote processors
- at board level
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250814223839.3256046-1-b-padhi@ti.com>
- <20250814223839.3256046-2-b-padhi@ti.com>
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Shivank Garg <shivankg@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
+ <20250811-wachen-formel-29492e81ee59@brauner>
+ <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
+ <20250815-darstellen-pappen-90a9edb193e5@brauner>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250814223839.3256046-2-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250815-darstellen-pappen-90a9edb193e5@brauner>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 8/14/25 5:38 PM, Beleswar Padhi wrote:
-> Remote Processors defined in top-level J7200 SoC dtsi files are
-> incomplete without the memory carveouts and mailbox assignments which
-> are only known at board integration level.
+
+
+On 15/08/2025 07.25, Christian Brauner wrote:
+> On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
+>> On 11/08/2025 07.18, Christian Brauner wrote:j
+>>> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
+>>>> Christoph suggested that the explicit _GPL_ can be dropped from the
+>>>> module namespace export macro, as it's intended for in-tree modules
+>>>> only. It would be possible to restrict it technically, but it was
+>>>> pointed out [2] that some cases of using an out-of-tree build of an
+>>>> in-tree module with the same name are legitimate. But in that case those
+>>>> also have to be GPL anyway so it's unnecessary to spell it out in the
+>>>> macro name.
+>>>>
+>>>> [...]
+>>>
+>>> Ok, so last I remember we said that this is going upstream rather sooner
+>>> than later before we keep piling on users. If that's still the case I'll
+>>> take it via vfs.fixes unless I hear objections.
+>>
+>> This used to go through Masahiro's kbuild tree. However, since he is not
+>> available anymore [1] I think it makes sense that this goes through the modules
+>> tree. The only reason we waited until rc1 was released was because of Greg's
+>> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
+>> ASAP.
 > 
-> Therefore, disable the remote processors at SoC level and enable them at
-> board level where above information is available.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
+> At this point it would mean messing up all of vfs.fixes to drop it from
+> there. So I'd just leave it in there and send it to Linus.
 
-Looks good to me. Could you move all these "Enable rproc at board level" patches
-to the start of the series? They should be the most straightforward patches and
-so could all go in even if the .dtsi refactor doesn't and needs some work.
+Got it. I was waiting for confirmation before taking it into the modules tree,
+and I agree that at this point it makes sense to keep it in vfs.fixes.
 
-Andrew
+> Next time I know where it'll end up.
 
->   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi       | 3 +++
->   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi | 3 +++
->   arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi     | 9 +++++++++
->   3 files changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> index 5ce5f0a3d6f5..628ff89dd72f 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> @@ -1516,6 +1516,7 @@ main_r5fss0: r5fss@5c00000 {
->   		ranges = <0x5c00000 0x00 0x5c00000 0x20000>,
->   			 <0x5d00000 0x00 0x5d00000 0x20000>;
->   		power-domains = <&k3_pds 243 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
->   
->   		main_r5fss0_core0: r5f@5c00000 {
->   			compatible = "ti,j7200-r5f";
-> @@ -1530,6 +1531,7 @@ main_r5fss0_core0: r5f@5c00000 {
->   			ti,atcm-enable = <1>;
->   			ti,btcm-enable = <1>;
->   			ti,loczrama = <1>;
-> +			status = "disabled";
->   		};
->   
->   		main_r5fss0_core1: r5f@5d00000 {
-> @@ -1545,6 +1547,7 @@ main_r5fss0_core1: r5f@5d00000 {
->   			ti,atcm-enable = <1>;
->   			ti,btcm-enable = <1>;
->   			ti,loczrama = <1>;
-> +			status = "disabled";
->   		};
->   	};
->   
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> index 56ab144fea07..692c4745040e 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> @@ -612,6 +612,7 @@ mcu_r5fss0: r5fss@41000000 {
->   		ranges = <0x41000000 0x00 0x41000000 0x20000>,
->   			 <0x41400000 0x00 0x41400000 0x20000>;
->   		power-domains = <&k3_pds 249 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
->   
->   		mcu_r5fss0_core0: r5f@41000000 {
->   			compatible = "ti,j7200-r5f";
-> @@ -626,6 +627,7 @@ mcu_r5fss0_core0: r5f@41000000 {
->   			ti,atcm-enable = <1>;
->   			ti,btcm-enable = <1>;
->   			ti,loczrama = <1>;
-> +			status = "disabled";
->   		};
->   
->   		mcu_r5fss0_core1: r5f@41400000 {
-> @@ -641,6 +643,7 @@ mcu_r5fss0_core1: r5f@41400000 {
->   			ti,atcm-enable = <1>;
->   			ti,btcm-enable = <1>;
->   			ti,loczrama = <1>;
-> +			status = "disabled";
->   		};
->   	};
->   
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> index 291ab9bb414d..90befcdc8d08 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> @@ -254,20 +254,27 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
->   	};
->   };
->   
-> +&mcu_r5fss0 {
-> +	status = "okay";
-> +};
-> +
->   &mcu_r5fss0_core0 {
->   	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core0>;
->   	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->   			<&mcu_r5fss0_core0_memory_region>;
-> +	status = "okay";
->   };
->   
->   &mcu_r5fss0_core1 {
->   	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core1>;
->   	memory-region = <&mcu_r5fss0_core1_dma_memory_region>,
->   			<&mcu_r5fss0_core1_memory_region>;
-> +	status = "okay";
->   };
->   
->   &main_r5fss0 {
->   	ti,cluster-mode = <0>;
-> +	status = "okay";
->   };
->   
->   /* Timers are used by Remoteproc firmware */
-> @@ -287,12 +294,14 @@ &main_r5fss0_core0 {
->   	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core0>;
->   	memory-region = <&main_r5fss0_core0_dma_memory_region>,
->   			<&main_r5fss0_core0_memory_region>;
-> +	status = "okay";
->   };
->   
->   &main_r5fss0_core1 {
->   	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core1>;
->   	memory-region = <&main_r5fss0_core1_dma_memory_region>,
->   			<&main_r5fss0_core1_memory_region>;
-> +	status = "okay";
->   };
->   
->   &main_i2c0 {
-
+Can you clarify what you mean by this?
 
