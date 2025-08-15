@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-771170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DADEB283C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:22:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CE0B283C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F93AC3064
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73255E78A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3B308F31;
-	Fri, 15 Aug 2025 16:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFF83093B5;
+	Fri, 15 Aug 2025 16:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dKR7/JJa"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUphFxrW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E9B1EE7DC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 16:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3A31607A4;
+	Fri, 15 Aug 2025 16:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755274922; cv=none; b=sYeL6Tr+DQxk+qj2tYosIxxiq/momo77ckwa+Z8Cpdum5/SKvCBiwYOd21oEs9IzOM6Pl7NBFA2Zq5wWARY1zioYQyxxt6l8lHjzWcslnHpiEtXcEjrBsONYsULbGQ0559Rj3fCHK0W2KSNwsJFBTMVMrHUBU9djcXdjfDj9IWY=
+	t=1755275045; cv=none; b=Q0yQwC8ZBR05TtXsxm8UItkRMCq1D6wp+UNIcodEnENn9gDfLLaZltaBXop1WgjVhE3u1chSkXQG7WiTiOzqm6oIAjVjM6LAp9juYbhbHaL4550c6UR6xDxtGQmqo5Gta6r2CALkykRoYx0JI8XCwPYDR13I/z8EOLJCnLaVij8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755274922; c=relaxed/simple;
-	bh=ju6gO3rue10ODGUO07MQ/geG/p66S0K5di6Vl4/q9j8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DdzdXUE4qMpuqLgfOJ0NAok93KphlP3ZrBYVkT7+v82OgwwNqGvOAUWRW1/r1b+/ZPluYLC1vUFqieE2U1Nrej9SnK77fqGEY7k31/jVHn88qA3kf2+zD1j9YxBlURo0g5RQMUizcc0dxuAwV0NwdijJXNkQc6svqQg34s9s4CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dKR7/JJa; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9484:50f9:ca46:26fb:a765] ([IPv6:2601:646:8081:9484:50f9:ca46:26fb:a765])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57FGLSl91993676
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 15 Aug 2025 09:21:29 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57FGLSl91993676
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755274889;
-	bh=qAg9sd44Sk4+s2LmoJ/4KHPXGdrY/miO3OfjoiADiqU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dKR7/JJadlxeHWfyod0YaeJNGLIj5mznim6crEpDe+6Xz/08OmrgKwNsSi9/esizz
-	 7UlQ3gd6Tk13pyEg3Hc1VbyAlQbZD8/aGV59DY7tKNblrgoPtO7ZcI2zkXMqYuheKb
-	 aquJO23IKbMYNeWslW0S7Gx0B4ag7esctUhvwtCjtXFajfVPSHLmNUs/m+foGKo7GQ
-	 y0cWVzIhtS89G0TY6WFUy9JMwza74A9U5YGYhtYeuMJOtxaMZv6nFp+Syo0JysGsN/
-	 7N+R1BwCJzJCdvYURJikZPND09esKRAvUHBdIc9SUVfCexdTxxJYKByJQPtY5wzbj2
-	 Vgz1Yz6jcEnNQ==
-Message-ID: <20dd9552-65fd-4887-a6f9-667a8d7eed34@zytor.com>
-Date: Fri, 15 Aug 2025 09:21:23 -0700
+	s=arc-20240116; t=1755275045; c=relaxed/simple;
+	bh=4W3MexmDLIj0LLuVBsUoXVIfys/oLMGtURiFQUEH13U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lDr6JeuicKkTay8B93GF1HoJVzfVG3Jt+ftyGNYNCHyvD5tduuAoONrIjcPreD4cD4jEf1wMTmTZbhW7MEGqDsFkv5XuoU/12LhuqBGISuKNdZZ9g+bIz8EJNtmxyr/dxC9LDUFGY46h9SihH1gocl3NxrmiLyclVh3NAxOhNfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUphFxrW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B60C4CEEB;
+	Fri, 15 Aug 2025 16:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755275045;
+	bh=4W3MexmDLIj0LLuVBsUoXVIfys/oLMGtURiFQUEH13U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nUphFxrWKV+6n7KpkD3VVRbo27xzyyN/vWebfUiwoAS3RvQSWcpYef5mbG32vq0xD
+	 Hj0/e3bePcSFamI9nK1ma1Z1tJgmnKrGZNeX7nNEd7c2k/TECv6Usta5G6k2J1kTXq
+	 LsLm0KSBqNf5NIpDJGBe/pMGF4IRBd7RfiQ0AFAHXmAiB/AdFCFFEAZWTG5KJ1UEeH
+	 gx7uzJLw+iJTkPJ6nbo75iUvpli22kP4Ea4eVzyFa0QL+rwrRi3uUMsyrZOzUynbnX
+	 vzx4mQ8pLbKA4C23C8MVuQVsKobT/zIxnc9HN1TNS3GmfWQ6VfTQjsBHkx+jBmRUuP
+	 bmqcMI4Wr142Q==
+Date: Fri, 15 Aug 2025 09:24:01 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	qemu-devel@nongnu.org,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
+	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Message-ID: <aJ9fIUkM04HhRgSR@google.com>
+References: <20250812173419.303046420@linuxfoundation.org>
+ <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+ <2025081300-frown-sketch-f5bd@gregkh>
+ <aJ5EupUV9t0jToY3@google.com>
+ <2025081536-resonate-wafer-6699@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/fred: Fix 64bit identifier in fred_ss
-To: Andrew Cooper <andrew.cooper3@citrix.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Xin Li <xin@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-References: <20250814190436.2555438-1-andrew.cooper3@citrix.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20250814190436.2555438-1-andrew.cooper3@citrix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025081536-resonate-wafer-6699@gregkh>
 
-On 2025-08-14 12:04, Andrew Cooper wrote:
-> FRED can only be enabled in Long Mode.  This is the 64bit mode (as opposed to
-> compatibility mode) identifier, rather than being something hard-wired at 1.
+On Fri, Aug 15, 2025 at 07:33:41AM +0200, Greg Kroah-Hartman wrote:
+> On Thu, Aug 14, 2025 at 01:19:06PM -0700, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > Thanks for the report!
+> > 
+> > On Wed, Aug 13, 2025 at 02:50:49PM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
+> > > > Long story:
+> > > > 1)
+> > > > The perf gcc-13 build failed on x86_64 and i386.
+> > > > 
+> > > > Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
+> > > > fallocate failed.
+> > > > 
+> > > > > Ian Rogers <irogers@google.com>
+> > > > >     perf topdown: Use attribute to see an event is a topdown metic or slots
+> > > > 
+> > > > Build error:
+> > > > 
+> > > > arch/x86/tests/topdown.c: In function 'event_cb':
+> > > > arch/x86/tests/topdown.c:53:25: error: implicit declaration of
+> > > > function 'pr_debug' [-Werror=implicit-function-declaration]
+> > > >    53 |                         pr_debug("Broken topdown information
+> > > > for '%s'\n", evsel__name(evsel));
+> > > >       |                         ^~~~~~~~
+> > > > cc1: all warnings being treated as errors
+> > > 
+> > > Already fixed.
+> > 
+> > Are you sure?  I'm not seeing the fix.  Can you share the commit id?
 > 
-> Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-
-[...]
-
-
-> IIRC, this was wrong in an older version of the FRED spec.  I made the same
-> mistake in Xen, and I didn't copy Linux's structure.
+> I dropped the offending perf patch:
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/commit/?id=4199b872a5585e025f62886724f4f9ae80e014ae
 > 
-> I don't thinks this warrants backporting, but the fixes tag is:
-> 
-> Fixes: 3c77bf02d0c0 ("x86/ptrace: Add FRED additional information to the pt_regs structure")
+> Did that not work for you?
 
-Please make it explicit that this patch is "no functional change", i.e.
-it is naming-only patch.
+Oh sorry, I misunderstood you.  I thought you have a fix.
 
-Other than that:
-
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Thanks,
+Namhyung
 
 
