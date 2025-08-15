@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-770704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44647B27E01
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D097B27E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7102A7BB022
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:10:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DFEB60996
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5092FF15F;
-	Fri, 15 Aug 2025 10:11:37 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C022FE076;
+	Fri, 15 Aug 2025 10:12:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8252FE075;
-	Fri, 15 Aug 2025 10:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EC272627;
+	Fri, 15 Aug 2025 10:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755252697; cv=none; b=tsONmVE8+LiFNrWjVgcGXWrxDlTTmgDLmFdkZ8oqhPcONLuWQeO2HhjS73JHfaoIy0hpykyYNJF6ScUlor+gFNtuUnmKXhm5RPPqzgp+bfHJmpXfW+UNh0YOctmC3UzsZ4oJE6iwe3S9F2ElCqgBBx5NQgm8gk9jGrfwFg7u7ug=
+	t=1755252732; cv=none; b=ahqUms5/rdjLNbWlbV/nVVTa+tswyM+maMcY5koYUfbei26qqGvUUDkHG98MOuWcB0EdPZTqs3Es6RAkk3I0IwfMw68OtY1V2t47hdlorp2FexGNHuWQLKK2TSzAkX+yZSeTQb4RaXcb0B54h8WDRz8KWJhKi3xywa9rvtFZamE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755252697; c=relaxed/simple;
-	bh=RfED2PCOz+YUn4/E3zPIkHvesjtY22YQB1eAiG0o3+8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sTvVRfGjVUE530MD7/jeOEp2vi/Duk/3HDm3Bd/CJlodZhSKpKLo0Oo4h14F8Bd1OqW+HzezwVibelakmniaEYE+dUc6IS2qlKp4D+fGLZ2wBH7ZTS1HMPnjGeCp+tYxUP36Whv0MYzaQkOnpNMbofnH4YXQs3aashAebBWlwg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c3HvQ4zB5zvWxS;
-	Fri, 15 Aug 2025 18:11:30 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3C453180B54;
-	Fri, 15 Aug 2025 18:11:32 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 15 Aug 2025 18:11:31 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH net-next 2/2] net: hns3: change the function return type from int to bool
-Date: Fri, 15 Aug 2025 18:04:14 +0800
-Message-ID: <20250815100414.949752-3-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250815100414.949752-1-shaojijie@huawei.com>
-References: <20250815100414.949752-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1755252732; c=relaxed/simple;
+	bh=RUKzeToynFXaZuihyCw9I2ar0pbrHz+dGDuOu5uRoD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eRuNWAf0wuh9QyFHnpgACEQCqSvOZxH3u8lxdJI5re7b0qfEiEva2mOW+h7d9Dco1rFbR7xmplcRW8ideDFwOkROPMvXUzF6w6OALfq+GUJIqiL2S27U6NdjE0VjGGqyLJGOR4ko3qPq754ag026AKAjLucO82IrtqOWrZNyLCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3Hw80LHSzYQvFH;
+	Fri, 15 Aug 2025 18:12:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A39381A158D;
+	Fri, 15 Aug 2025 18:12:06 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxD0B59otc8IDw--.55291S4;
+	Fri, 15 Aug 2025 18:12:06 +0800 (CST)
+From: linan666@huaweicloud.com
+To: jk@ozlabs.org,
+	ardb@kernel.org
+Cc: linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	wanghai38@huawei.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
+Date: Fri, 15 Aug 2025 18:04:16 +0800
+Message-Id: <20250815100416.622236-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,34 +56,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+X-CM-TRANSID:gCh0CgDHjxD0B59otc8IDw--.55291S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr17XrW8Aw43GFWxWw4Uurg_yoW8WFyDp3
+	s5CFW8uFWDWw1qv39YqF1kAa4j9anaqwsrWFs7trW2qF92qw1UWrWvgF1I9ryUurWrJFyD
+	Ga4DG3Z8ta1FyaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfWrJUUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-hclge_only_alloc_priv_buff() only return true or false,
-So, change the function return type from integer to boolean.
+From: Li Nan <linan122@huawei.com>
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+Observed in kernel 6.6 (likely present on master as well):
+
+  Call trace:
+   dump_backtrace+0xe4/0x1c0
+   show_stack+0x34/0x50
+   dump_stack_lvl+0x70/0x100
+   print_address_description.constprop.0+0x84/0x3c0
+   print_report+0xb0/0x280
+   kasan_report+0x7c/0xc8
+   kasan_check_range+0xe8/0x190
+   __asan_loadN+0x1c/0x28
+   memcmp+0x98/0xd0
+   efivarfs_d_compare+0x68/0xd8
+   __d_lookup_rcu_op_compare+0x178/0x218
+   __d_lookup_rcu+0x1f8/0x228
+   d_alloc_parallel+0x150/0x648
+   lookup_open.isra.0+0x5f0/0x8d0
+   open_last_lookups+0x264/0x828
+   path_openat+0x130/0x3f8
+   do_filp_open+0x114/0x248
+   do_sys_openat2+0x340/0x3c0
+   __arm64_sys_openat+0x120/0x1a0
+   invoke_syscall+0x78/0x1c8
+   el0_svc_common.constprop.0+0x14c/0x188
+   do_el0_svc+0x3c/0x58
+   el0_svc+0x44/0x1b8
+   el0t_64_sync_handler+0x100/0x130
+   el0t_64_sync+0x3c8/0x3d0
+
+Crash analysis shows dentry->d_name.len == 35, which makes 'guid'
+subtraction negative and triggers the Call trace. Temporarily mitigate
+the issue by checking len.
+
+Signed-off-by: Li Nan <linan122@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/efivarfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index f209a05e2033..f5457ae0b64f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2182,8 +2182,8 @@ static bool hclge_drop_pfc_buf_till_fit(struct hclge_dev *hdev,
- 	return hclge_is_rx_buf_ok(hdev, buf_alloc, rx_all);
- }
- 
--static int hclge_only_alloc_priv_buff(struct hclge_dev *hdev,
--				      struct hclge_pkt_buf_alloc *buf_alloc)
-+static bool hclge_only_alloc_priv_buff(struct hclge_dev *hdev,
-+				       struct hclge_pkt_buf_alloc *buf_alloc)
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 23ff4e873651..c30d758e303a 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -152,7 +152,7 @@ static int efivarfs_d_compare(const struct dentry *dentry,
  {
- #define COMPENSATE_BUFFER	0x3C00
- #define COMPENSATE_HALF_MPS_NUM	5
+ 	int guid = len - EFI_VARIABLE_GUID_LEN;
+ 
+-	if (name->len != len)
++	if (name->len != len || len <= EFI_VARIABLE_GUID_LEN)
+ 		return 1;
+ 
+ 	/* Case-sensitive compare for the variable name */
 -- 
-2.33.0
+2.39.2
 
 
