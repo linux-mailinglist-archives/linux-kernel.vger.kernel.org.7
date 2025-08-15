@@ -1,90 +1,101 @@
-Return-Path: <linux-kernel+bounces-771459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B913B28794
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:16:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B09EB2879C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 23:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE2917915A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:16:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B32A1791D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 21:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2FF212B31;
-	Fri, 15 Aug 2025 21:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E14245031;
+	Fri, 15 Aug 2025 21:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwmVXJqW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCEEO9d4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64A24A00;
-	Fri, 15 Aug 2025 21:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356374A00;
+	Fri, 15 Aug 2025 21:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755292576; cv=none; b=lQkVpMOgYavcbfwvpwHIdUw7bOeqc43WRTerqzrZ+Mc2yHUi+qjdMipBoOaUsLHDzt1FI2nJ/SCE3vTBmu/jcM1OsmtmeSQOpgV3A9XWn0mBBfoKhGZx6TYcoW8bZYUmvfoMttvqt/3SOspY/5QI3BJfxCosN1ps2TLKZidVa5s=
+	t=1755292749; cv=none; b=Pmye63jeOUzWGHGHB1Zs5HCVymlemL6lcwRr40X+fEDNIIamRHDmyOlyajcZ4gXCZJgUy+9ba59T67Am9CT/gj2Al+PSXm+LgZ5zAKGCShhfZlQbWmS3nHg71o5TkDgEDTFFoBT4BtnoTjvpPIHb8hhJvTGWZ3d1/Ep1Ix4BDks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755292576; c=relaxed/simple;
-	bh=noc6S2jH5KMwAXQAGBgXw4htFU+04vvObhFpEMTkBo8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=raFslaoXMz2N7OlsFSnUCMk0QNGpdUIaZ62Fxn0wfLeIP5evc94PDQ2j8+EFUemj01rlCynKxLZAP0P0Jh4u0JoAzFB2+lsbtcI43hXN0pXOoi1aIcHPwR0pCFglL4OKV00dRJ7Vz4qJPh4B2F0vZ/WK2oXyuvNz4EUFDb4+OvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwmVXJqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34524C4CEEB;
-	Fri, 15 Aug 2025 21:16:15 +0000 (UTC)
+	s=arc-20240116; t=1755292749; c=relaxed/simple;
+	bh=bhEvK5wK2YtXTqi0pcFGbwLRtRhDbn8qEwcWJyPDIl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BZf0nlrj7p7JF+M7RgVKdB2iri556WOgsOuuuGbXD7Ka0KTcA7dFxKYVl037JJzmNw/HHxESIAt6XRyS8R/2c5zVPJJZlG4H1kdlJnluXCxFKQVy4mhmNVU4E5zaBJ2fVfamFUZ5vke3O+jO6UNtj9jGEONai6VwGPQdJtKq+pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCEEO9d4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EDBC4CEEB;
+	Fri, 15 Aug 2025 21:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755292576;
-	bh=noc6S2jH5KMwAXQAGBgXw4htFU+04vvObhFpEMTkBo8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IwmVXJqWa3B45EZ0LDKyKEcd27agrxQXPQdCoI376OjQ96VabM8/4eKeQXAGDETWz
-	 5abKb7JJ0divOMK+81ty6K+/1JBfJmbVdXtODUf7H5EKhUrWwvn8Z5fDJ06ClmYCtp
-	 HsdTdrARGYcanzdPm3jUMInyGX7guB4NIjHQQau72RanY0iRcWRuMAhzcT+CcNG9c+
-	 uRY7SioKusYvKdTRNSGnTKRLQuH5KfuyihH97qzOZYwkxPHcfVyAFN7nEd/NhuuSL7
-	 9N9J1UOU3z1XTcDphE0JmbDDwSLjolYCVu+sjh6eDCNBPlcjKxukHTsBYkW9pnk60+
-	 GT0XoySFCr9QA==
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>
-In-Reply-To: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
-References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
-Subject: Re: [PATCH 0/2] kbuild: userprogs: also inherit byte order and ABI
- from kernel
-Message-Id: <175529257494.1745051.12925907473487620695.b4-ty@kernel.org>
-Date: Fri, 15 Aug 2025 14:16:14 -0700
+	s=k20201202; t=1755292748;
+	bh=bhEvK5wK2YtXTqi0pcFGbwLRtRhDbn8qEwcWJyPDIl0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OCEEO9d414p+6Udjxo+1FmsrM7oKnOJfVjQGPBeV6CGKLFNIaMSbQAR+hILUCH+Cg
+	 UnnE+YMqvTgcjPqSJOBLXF5ls7xoCn28hMAvea/nsHFahCND82tEL4asID8M/YsmIR
+	 F2BSoAY3rY3Ape6Mvh90d8hzr6ujzF43dswID1gJu5a0HlkxLmCArceaU275JJXaBQ
+	 Quh4o95q6sw8mrmt2pQQaxB+Xqc0TQ4vyOxsVZGeaJPi4cc/qPrS+uliMQ/0R3Bc68
+	 WUuWEIf+HKXxE1oY5YTgLC4MpsRloH73GHWFTTVmymW+M45xC1j0sY/ngj76qgbqAI
+	 SH0za9Qjh/Org==
+Message-ID: <1117b9e5-b46a-4661-bfe9-56ff844c1218@kernel.org>
+Date: Fri, 15 Aug 2025 23:19:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: nova-drm: fix 32-bit arm build
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Alex Gaynor <alex.gaynor@gmail.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20250724165441.2105632-1-ojeda@kernel.org>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250724165441.2105632-1-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 13 Aug 2025 07:43:39 +0200, Thomas Weißschuh wrote:
-> Make sure the byte order and ABI of the userprogs matches the one of the
-> kernel, similar to how the bit size is handled.
-> Otherwise the userprogs may not be executable.
-> This happens for example on powerpc little endian, or riscv32.
+On 7/24/25 6:54 PM, Miguel Ojeda wrote:
+> In 32-bit arm, the build fails with:
 > 
-> These patches where originally part of my series "kunit: Introduce UAPI
-> testing framework" [0], but that isn't going anywhere right now and the
-> patches are useful on their own.
+>      error[E0308]: mismatched types
+>        --> drivers/gpu/drm/nova/file.rs:42:28
+>         |
+>      42 |         getparam.set_value(value);
+>         |                  --------- ^^^^^ expected `u64`, found `u32`
+>         |                  |
+>         |                  arguments to this method are incorrect
+>         |
+>      note: method defined here
+>        --> drivers/gpu/drm/nova/uapi.rs:29:12
+>         |
+>      29 |     pub fn set_value(&self, v: u64) {
+>         |            ^^^^^^^^^        ------
+>      help: you can convert a `u32` to a `u64`
+>         |
+>      42 |         getparam.set_value(value.into());
+>         |                                 +++++++
 > 
-> [...]
+> The reason is that `Getparam::set_value` takes a `u64` (from the UAPI),
+> but `pci::Device::resource_len()` returns a `resource_size_t`, which is a
+> `phys_addr_t`, which may be 32- or 64-bit.
+> 
+> Thus add an `into()` call to support the 32-bit case, while allowing the
+> Clippy lint that complains in the 64-bit case where the type is the same.
+> 
+> Fixes: cdeaeb9dd762 ("drm: nova-drm: add initial driver skeleton")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Applied, thanks!
-
-[1/2] kbuild: userprogs: avoid duplication of flags inherited from kernel
-      https://git.kernel.org/kbuild/c/c5afee88548e4
-[2/2] kbuild: userprogs: also inherit byte order and ABI from kernel
-      https://git.kernel.org/kbuild/c/478494044bb42
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+Applied to drm-misc-fixes, thanks!
 
