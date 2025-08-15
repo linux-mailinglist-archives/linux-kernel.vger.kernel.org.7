@@ -1,177 +1,164 @@
-Return-Path: <linux-kernel+bounces-770168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BF2B277EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4948CB277F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277CFA286AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8EB3BC769
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CA62356D2;
-	Fri, 15 Aug 2025 05:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D454F23CEE5;
+	Fri, 15 Aug 2025 05:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hndl5ASm"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTp7wtoo"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395071E502;
-	Fri, 15 Aug 2025 05:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D0F374C4;
+	Fri, 15 Aug 2025 05:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755234029; cv=none; b=OnfY5z7psssz7gXoIUW68JH5jOxCxQU/5rePG0NgoEiQQZLgqWaQFHfYaDUQSDb4+37ULiY85uwN9oSNCdU1HzeazIqbC2tmaWd2TDJ5OWpOGfWE7WogPHiYfCHX4lnbBNj84I0dnAUk3ZrpiWx1cJz1mRlFwoOi+zExCFhp0i4=
+	t=1755234142; cv=none; b=G9wz0i9l9ir+gjSiUtuuvCNzydP4hmVX41PlgaTbfVD1FQ1R4TeyYd8ctnjbvE5TYRGfEIYj3LbJYS2V+/03LbQMqGfSU4xCUNSgXQ1Y7BPwabxRvL4q565NoAKdPjSKQsyGd9qSc3gkpn3YbMDylujk5p+00ZyMKC+rEhz0JwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755234029; c=relaxed/simple;
-	bh=BdXI9uDWb7s6Nrk7XG//Z7OFsqMRPHqalYnUc4lXmwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJOI/+c7brNPvSB/Uy+M6uv3LPVauHlrwICugDJKMgWfr/XlqwXef1mVJJvj6gYnXkfU/zFKmw6orwqTjTsWUm/k010MHMEpg4V5A4o/pqGNnIn/ac+o+JtybahMRFGkhcPlx3O3p1vhXPsjUcr7/jHfolwE9OjKRZytkxC0DTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hndl5ASm; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1755234142; c=relaxed/simple;
+	bh=4aoISFqoZW3xIWfmCOYas+QHZ7GQjQ+ceAIQLkxwDZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CV+VcVIzgC/XVPEEvy3Ji+dMOB/FqUT278YRQOtgy3I6XDJw2ydKMX8R6+QHR7AIiPkn5/xvCS3XlF66TcReJZP4e2emjnD1ONYrAeUfPRt/TSKRsW6ytjHgVwFWv9o2BVARdI77Uuslf5Lr06kxBzCX+qMtHwPYg0ZAF7/egQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTp7wtoo; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55ce5287a47so1482793e87.3;
-        Thu, 14 Aug 2025 22:00:26 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326793a85so1502012a91.1;
+        Thu, 14 Aug 2025 22:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755234025; x=1755838825; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ibYV2DXy3yJ+JImrUWfFgpWrleNjyaOJiO783aX8k0M=;
-        b=hndl5ASmhFn0ORJVS9H8//T31Pi1+HXJBOjnuQUGl0eBNei0Cf2NaI7JDg/LdSHCmP
-         c+wAL3/Rn+ih+sTTNlvPayEjrqHt5sNPtC4NN7VSrxQqeZwCdqohL2snND2AmXrXmbn/
-         506M/+VptmHnao1z/oCNfrmRcmpDi75O/a/tSlN4RzQTbhWXry42X/+cspUx5BggYPyw
-         uEPdkwFt5f3QBe779ufSCdPXV97eWt6xW6gP7C1YTrQfoMHYyneOKGYrpnFyLN/rmnUV
-         LY5vCBeU5CUZsl89j/SdmSu13Tz/4g2QzmD/RijTb8MtmLMeDNp80d6rb5711FSWvnPl
-         zf+g==
+        d=gmail.com; s=20230601; t=1755234140; x=1755838940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HvJ9vjlQgWj0JGVdSmCK4V4OH1FNmLUxKe8JArbwI44=;
+        b=PTp7wtoo24622jPyRmbLk+NyKrV9mx7f5+XG3+2wMR1DqVEGnMjZB1i0MZYSGEFH8n
+         7q0nU6LoEBlSNij2PfXSVsEpQnF8Mknu59Ym0o6jkW4Uo6xRQ7FfC1oN597Qv36bH6O2
+         xgiS59Y0KRbkAlWsZLReitOf/4oI5w4Nv2xtLqwBcuGdZtfNmWMouM8VifCW08JkjUHR
+         OBqvoIxQ2XoW63+03UCVrRykwkV2I+82JqVZSL4ibJC+pnm4katf26FNfTGw+e8pwWQH
+         7BbTBzPFvd8AjzVuGqTPqB6IOtFo6YU+Wk9VOfof4eIzMeGi89/9W0i7VQASeq8w1M+F
+         le1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755234025; x=1755838825;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibYV2DXy3yJ+JImrUWfFgpWrleNjyaOJiO783aX8k0M=;
-        b=TUlCBieGZdViqh3qWZCmFUG/y1XWublofVvpD8ZwCB83PCxrDetUgYaNupMsrAeUto
-         EJ6MC8IDqtLqWLSTNSi+KQWacJs41u4lQkSDBF/D1sgdQvmxMrqh8fUMvHICVYK6Euyo
-         WRoepdTLJk7L+7nITPTCtW2/StTwTQn9trd3ljE2HSY8Xpyq7HRJqzlNK8CghamB7XSD
-         nX58POq9rFKvIzZA4/v2x5flxx5iGXiJIK6AdGiqaPqrgQeXCysPQY/Xz3e9kMErPS9E
-         rSGvcrH2KCvuMub4n2a9D382RQONOdRyMMaKe4rJcVBhQzw46cfXyqZlwEWV56X2rjRe
-         xGog==
-X-Forwarded-Encrypted: i=1; AJvYcCWii6DFR+opnzHMx2k/oZ2FHdFGIkSuSQJerAY1Ufsi8CVv6CmLSmq45Zhq/DjelhALSDa0aroZCsme@vger.kernel.org, AJvYcCWyrhnnL8fQudECSUjWc8jLEptOqDPQv0vCl8S3rzVHhecjiIF+ntaSDzwuV4OmuiF/6/jrqe/K9C4g@vger.kernel.org, AJvYcCXeyksVeNvgt6mec1CHG0oMhAg2Qs089iEjDqNidfH6wElCZbsGIHRfjlPy2JkN1KQ+HH4GVHtRyGkdwazH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv5I4sV9btFmkf1r+YotaNdVCLZt5G5vqJ3UyaP8o3zIREh9Yq
-	ig9O6XQC7RQ2i6aD5fb5qqBHJYLeLY7jWcy57i5MZpCNClkrGjayFzhn
-X-Gm-Gg: ASbGncvP48LqP4iS22Z+DRIv7XSJGLGDa+NtQ3T5+atCoCz0I0g/MorhRuWegCBbSfs
-	ly5icGKn/MD7RGIDVZE9ULjoralA8RtjMJbLi6MtaT6hd7cmpQJpjzNZtgA8QHRrVohhBTJREz2
-	sJI3KzQigd5g1+6mieq/vuxBwSlAD02z63lGhG2ixO5tKvFy9YjWaDiUnjAUJjd/PF4EhH1uE52
-	dY//MH+z7XyVqEB5XTcia3nxCPIVz+OIgbFMa41Qe57Ou7IK1IOlasikt7nRD+ywfpbyfD3LaAh
-	5xNIhy+gf0TN+UeYbh8yppQoN9dqtggrPC8HfhPjQL0dCKTqxgkPs35oZlEeSGb8MtNqHTRSMrC
-	Qt7nv8UyfElk+mtQ/USpAof6PCSdwc6Lqr2WGIBqDRDFV1ZYv/Cq8x02XluFzi+7OwcMFcFvPOc
-	RQQd1331XwTLAgdw==
-X-Google-Smtp-Source: AGHT+IEdtb+aXAX0+qkW3BXed4xKLSwz6zWlk3z6/Lm5JIc0U6agAFpFu98uH0yqHouY6nnMyIkPng==
-X-Received: by 2002:a05:6512:1383:b0:55c:e988:9440 with SMTP id 2adb3069b0e04-55ceeaa185bmr176750e87.6.1755234024976;
-        Thu, 14 Aug 2025 22:00:24 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351646sm79928e87.17.2025.08.14.22.00.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 22:00:24 -0700 (PDT)
-Message-ID: <2a757c8d-4ac5-47b7-920b-96575213d6e1@gmail.com>
-Date: Fri, 15 Aug 2025 08:00:23 +0300
+        d=1e100.net; s=20230601; t=1755234140; x=1755838940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HvJ9vjlQgWj0JGVdSmCK4V4OH1FNmLUxKe8JArbwI44=;
+        b=qSLBmB/0BhD5RAL72BIXcK4f/wYr7xrO3Iwn0Ja2n3hPKnIr4wyex03M4oiJmwAecN
+         YlR+rJOMMpOgFYq1pNNpU9NK3BSVTVV5gqgj7OFUHmfpvQVzf0bUcoHJyDfWiILDHYk0
+         r8TERz8BK9qMY9h68uI/fLBq68nMzcI46PwUI755PdiPGQl4btrvDmbFgrMm40wcI+Pe
+         OB2QpKXARqeJ61OOvnLFs6BvEqDMybmZANL9ETUc4Lyv0ZDdX5T95UPGXAWiJTamHhDZ
+         CDc9N4LyrjhgLm5qQ3CAK9KeJw7l75n5szkthvZJDUr95+Gvkijk/8ZfFKd/ncJMJ95I
+         abkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SVTdRQVG19FGgRi+DS3xdybjeGEPYsUoz+VDsXLIvzmdlEBBOHvYpDsPYTtA9lZ0xk/jMYgmUOnjPDVd@vger.kernel.org, AJvYcCWq9+j1e2+VGxvzX0baAqc0aUcKR4zXhSyQrfbnYJKq/QJ8Anssoez9wZQTCzW3+Lb5hli+n7bMTp5e@vger.kernel.org, AJvYcCXp+Icc+Z7TQslMknr9Z6Kt8XQEhFIQ3xFYdwEsQI5ZQuTPc7gchJmRPS0ZMqYrZynje69wzhsRTok=@vger.kernel.org, AJvYcCXzM4GmwkdzwtIxyOO87CsFysTzfVoZmUzTVZ9nAxSEljl0CIAbrMo2iOUt4Zf0xLZIV1GCumdT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTgRYlIna7iM8IS4mlyTWkkQjLW+MXNZAFbuyntqJhbCMWkrKQ
+	Br8PaKj9D4VbBKiRrPNzH62FsulHOiHjfPdU91S8tcGc5izGgwIvxFGr
+X-Gm-Gg: ASbGncsV9kkFHtvm2hfPx142dgBP+TJxXKlyZM1ZkkVKFyFzYU0jpiEo7R3akd8RAnX
+	XbMBSJpAbTu8lGpdCKGFCfo+RHJrTJxk46jzSsBCf/1xcTLuRYsNx+sfvbhPKe97bYtzlvMpkO9
+	p7cv3TQnHGLw9aY7ztXhkl3lR12ceiEXhZG1LzL6Wxg5e69iNO6vQJvxXrslMvWJKACDgitU2Vw
+	XAXN7C47AH584A3SXcFt7s/xJmIc7rbW192zezd8AJK7tAfYkU1UWWXVyNXattMrfJZo+03j0g4
+	7ZYIpeib7ympgQ/6etDPgLydKpVhhEJ9iDtP6iVuMvnvlCt0H23xb6S9fPu5WxjPpTGerZNRES9
+	q420lhB7CDksw4WU3g6X3xqoCakcdHDJB4/grj6kwtDB0LwrBLknBvuXd00FjsN63Bf70fPJ19w
+	osJiLX/Wuk+zeu2uEccGiUO7dLS89pB7lCBzC7Uw==
+X-Google-Smtp-Source: AGHT+IFc/j6gSSFssjIPr1g+lc0GaAJwz273eKQ4JRPcXd+8ZTYMotiRajoz1cIteit3jJWFjwumvg==
+X-Received: by 2002:a17:903:41c3:b0:242:e0f1:f4bf with SMTP id d9443c01a7336-2446d720275mr11691175ad.18.1755234139897;
+        Thu, 14 Aug 2025 22:02:19 -0700 (PDT)
+Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53c6e1sm5128645ad.115.2025.08.14.22.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 22:02:19 -0700 (PDT)
+From: alistair23@gmail.com
+X-Google-Original-From: alistair.francis@wdc.com
+To: chuck.lever@oracle.com,
+	hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-nfs@vger.kernel.org
+Cc: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	kch@nvidia.com,
+	alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH 0/8] nvme-tcp: Support receiving KeyUpdate requests
+Date: Fri, 15 Aug 2025 15:02:02 +1000
+Message-ID: <20250815050210.1518439-1-alistair.francis@wdc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add BD7910[0,1,2,3]
-To: David Lechner <dlechner@baylibre.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1755159847.git.mazziesaccount@gmail.com>
- <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
- <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
- <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 14/08/2025 17:51, David Lechner wrote:
-> On 8/14/25 4:57 AM, Matti Vaittinen wrote:
->> On 14/08/2025 11:35, Matti Vaittinen wrote:
->>> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
->>> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
->>> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
-> 
-> Is it just a difference in max sample rate? or pinout?
+From: Alistair Francis <alistair.francis@wdc.com>
 
-The BD79104 comes in 2 different packages (BD79104MUF - VQFN16FV3030 and 
-BD79104FV - SSOP-B16).
+The TLS 1.3 specification allows the TLS client or server to send a
+KeyUpdate. This is generally used when the sequence is about to
+overflow or after a certain amount of bytes have been encrypted.
 
-BD79103MUF pins seem identical to the BD79104MUF pins. Not sure if there 
-is (or will be) BD79103FV. (Both the MUF and FV have identically named 
-pins, with same functionality. Only the pin positioning and potentially 
-amount of unused pins differ).
+The TLS spec doesn't mandate the conditions though, so a KeyUpdate
+can be sent by the TLS client or server at any time. This includes
+when running NVMe-OF over a TLS 1.3 connection.
 
-So, looking at the functionality, the pinout is same. Looking at the 
-physical IC, they may use different packaging for these ICs.
+As such Linux should be able to handle a KeyUpdate event, as the
+other NVMe side could initiate a KeyUpdate.
 
-Finally, the only difference between BD79104 and BD79103 I have been 
-able to find from the data-sheet is the differential nonlinearity.
+Upcoming WD NVMe-TCP hardware controllers implement TLS support
+and send KeyUpdate requests.
 
-For BD79104 it is said to be:
-DNL: +1.2 / -0.99 LSB @ VDD = 3 V (Typ)
+This series builds on top of the existing TLS EKEYEXPIRED work,
+which already detects a KeyUpdate request. We can now pass that
+information up to the NVMe layer (target and host) and then pass
+it up to userspace.
 
-For BD79103 it is said to be:
-DNL: ±0.99 LSB @ VDD = 3 V (Typ)
+Userspace (ktls-utils) will need to save the connection state
+in the keyring during the initial handshake. The kernel then
+provides the key serial back to userspace when handling a
+KeyUpdate. Userspace can use this to restore the connection
+information and then update the keys, this final process
+is similar to the initial handshake.
 
-> 
->>> and, based on the data sheets, they seem identical from the software
->>> point-of-view.
->>>
->>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>> ---
->>>    .../devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 11 ++++++++++-
->>>    1 file changed, 10 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->>> index f0a1347ba4db..6a6e6ab4aca3 100644
->>> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->>> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->>> @@ -14,7 +14,16 @@ description: |
->>>      properties:
->>>      compatible:
->>> -    const: rohm,bd79104
->>> +    oneOf:
->>> +      - items:
-> 
-> You can drop the items: here since there is only one item.
+Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
 
-Thanks.
+Alistair Francis (8):
+  net/handshake: Store the key serial number on completion
+  net/handshake: Make handshake_req_cancel public
+  net/handshake: Expose handshake_sk_destruct_req publically
+  tls: Allow callers to clear errors
+  net/handshake: Support KeyUpdate message types
+  nvme-tcp: Support KeyUpdate
+  net/handshake: Support decoding the HandshakeType
+  nvmet-tcp: Support KeyUpdate
 
-> 
->>> +          - enum:
->>> +              - rohm,bd79100
->>> +              - rohm,bd79101
->>> +              - rohm,bd79102
->>> +              - rohm,bd79104
->>> +      - items:
->>> +          - const: rohm,bd79104
->>> +          - const: rohm,bd79103
->>
->> Oops. I believe the order of the compatibles is wrong for the fallback.
-> 
-> Indeed.
+ Documentation/netlink/specs/handshake.yaml | 19 +++++-
+ Documentation/networking/tls-handshake.rst |  4 +-
+ drivers/nvme/host/tcp.c                    | 78 ++++++++++++++++++++--
+ drivers/nvme/target/tcp.c                  | 71 ++++++++++++++++++--
+ include/net/handshake.h                    | 18 ++++-
+ include/net/tls.h                          |  6 ++
+ include/net/tls_prot.h                     | 17 +++++
+ include/uapi/linux/handshake.h             | 14 ++++
+ net/handshake/alert.c                      | 26 ++++++++
+ net/handshake/genl.c                       |  5 +-
+ net/handshake/handshake-test.c             |  1 +
+ net/handshake/handshake.h                  |  1 -
+ net/handshake/request.c                    | 17 +++++
+ net/handshake/tlshd.c                      | 46 +++++++++++--
+ net/sunrpc/svcsock.c                       |  3 +-
+ net/sunrpc/xprtsock.c                      |  3 +-
+ 16 files changed, 300 insertions(+), 29 deletions(-)
 
-Probably needless to say, but I'll fix this for the next version :)
+-- 
+2.50.1
 
-Thanks for the review David!
-
-Yours,
-	-- Matti
 
