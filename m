@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-770238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7572B278CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:06:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBE0B278D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FD9725FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F6F1CE79F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170E25A2C6;
-	Fri, 15 Aug 2025 06:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D04275846;
+	Fri, 15 Aug 2025 06:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Roj1kmnn"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E6SWROy/"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32DC233722;
-	Fri, 15 Aug 2025 06:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3863F2192F9;
+	Fri, 15 Aug 2025 06:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755237998; cv=none; b=W58nqP9w6d3ttiCY8Q6KhTnasVvZqWvv3VwwBNohmQBIs48Qsf5rknu9QwzJjLxBC5ct0xcSqUGF3jrb5tqATaTnRyQAN3M7RC9JUQfAn8ygN+r24O0moS2mN0E13ds1rYtzvXKL42Z0EJIXVkRg0JupnhOkWsCU8wYu16kYAaM=
+	t=1755238095; cv=none; b=WW6Ry5Im25Uq4K5L1Dc/sYPObCMliQWFuo6nCihtzr//EevLTWoBFZqeFRqMJ3JhEpBwMFBsRy+Uz/6VE9Z+F99+DXxREJdap7hAd6BusF0nCrp+jynQg8Me+bla96Y77IPCC5v98c1JIM3eDCb9GSIZ+KC2BVK20ZsnG/wkpQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755237998; c=relaxed/simple;
-	bh=+t21P5Dq36ra1NNcZNgf00aFq1elCkbJ4E18iY6rPTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZtxEZR2xDL4YMWvUKYTJ2GuqRnUwIp+30fAsHsp00VSDnui6sfBv3LBj8ogXUqvH/jBmu3flRddEFJQG7sefEVJdgGBcb2n5FOr/GcyhIcxsnT+P6KACLLUMsovCzVHEJ4Oa9/O3auDjyjnLX18hIJu8kIwPmCfqixZKgFxsLk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Roj1kmnn; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-244581cc971so22806125ad.2;
-        Thu, 14 Aug 2025 23:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755237996; x=1755842796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wnFX4dVpGg23eTIugNUAHrzZAdGhjIxcbXbnMC1Z4s=;
-        b=Roj1kmnnadIL5dcKTLRPHgSPjcsOVXuHeoynigikKSoCJlFK5mzA5ZBN8/rB7ChUy2
-         BYDH8PwFqvA96ESVNQR8PgetSdJrn/4RSxyoD5ahiUXAZC75Sw2aQHV60uhPb+OhYXDA
-         +KLZvGEYw1iCa7p1p/ZLYFWTGoqaoUTXxPWzf61tR46jM15ogU2w97H8lzwJSA4BXOJU
-         7YMgRO5GmDhWSAZgNxi+TsudHZA3hVBfpGNs7Om/xzFxbCpHHhw0VzPm8zcC6sEjtVRT
-         8qnZiozPsjV56XYItXiiaSJhzZkC+LYP7bFrmCFjCSVRM5nYlP9qAYe6AbDyUR3b2P6O
-         NF4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755237996; x=1755842796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7wnFX4dVpGg23eTIugNUAHrzZAdGhjIxcbXbnMC1Z4s=;
-        b=cI2OxPzdO8eUgYi5EYefdYLYeoHHkQJQhSq9sYwpWeHxDelDvrGwbsmZQTO7gw7T6t
-         Y5iimpAKS3vlCmOs3vzQzUxDuP/d43NjFdhv8sWaipMV5jDROKaAORoBMtM6Vb6o9C9p
-         tiXANqnI6jMjU/yxcS+BdXSnLv/rKo7E1M3ATDU2mR6m/7zT1RjAki5l1QXJA7BvPXR8
-         jHPjp8yeapZsHLJgbBfOdCAakOj4xTX9VKKN5kJJzoj6WTDtNvXXf8yeLr7URHBQBUoe
-         nYL1fd2YK2O4AleQCi6JQoOV/Hm7Wb+9BKsfdHAl7kf1Xi4M9dIwcgt3NcZYIXWMsxM6
-         chdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHvjuX3OZpfpjPiMst/GFS7fnI7Wqh0evE0Pxu/YOxmvD6bLt0npOvEbt7llGl10y7rXBH7gcNsXznxT4=@vger.kernel.org, AJvYcCVexkTAAPWnqUTrAxH/Ie4mDc/g2PTIy7zxHPnOLxA8xJIh6tfKar9pH/qx0tz/qi4E06ITz/tU@vger.kernel.org, AJvYcCVprdibnGKBcRBALj7oxaQkhfnUKArbpOUJZ1tSKUy/euBZkxsBmmvjgs9a457DVNhbDpIG2hfcZ7fTcOXyYY7p@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzJvbq/hp8TdudtGjBkRPq/5+7No4WEDHSmU60O5kw39AQguJF
-	PaMkF3ysG2QOYPhsRHbWuxxoDbwiaEHI4w3hn12E3DQbzt+VVbOP16l/
-X-Gm-Gg: ASbGncsUQia0ZWct4O8wubjHk/h2ANMEctObqdWkdBY6cT7PpYxxHvRBEjFNUPRlwmS
-	Y8M32WjJbKBOz4X3UjQehT6BaHOk3MQJqhEtIuvfB0tOGw3Oj/sikrWoS2ucgatSf61GnkiR8Rg
-	4yVhkOaqqQZ3WTQEAsnFo6dJwzdpTAL0RmxG31SwVgj6mYuWBoJDrK17Ss3/xFztPDlSMIkJ/GL
-	bTmFjE7z0hfR8vurK2x4jYUhJPJWDP2bs+ZTePOH5C/sTpO6zr46go+C6NdL2xlzbH3WIaYKyL0
-	frko10ZM/Lt7j25eLR8oIUaeyUJEFaJ8CjFFIUR0yrgalmJnJZMo+ZeN2e1JdjRtxv1t9/qsaMu
-	yg2ZLw5Y80md/zlUK+Ig4Lk2aBM5Uvomx3Q==
-X-Google-Smtp-Source: AGHT+IEQrWYVQ2Dv3PkzxZHgpGvIYrinZ3s8vwr6SVMAI7nuhx64Dihzv2UE4V/596RhIWR4wvlIJA==
-X-Received: by 2002:a17:903:41c8:b0:23c:7c59:c74e with SMTP id d9443c01a7336-2446cccc62amr15511485ad.0.1755237995903;
-        Thu, 14 Aug 2025 23:06:35 -0700 (PDT)
-Received: from pop-os.. ([172.59.160.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9d037sm6546555ad.14.2025.08.14.23.06.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 23:06:35 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: davem@davemloft.net
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	shuah@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH] selftests net/socket.c: removed warnings from unused returns
-Date: Thu, 14 Aug 2025 23:06:31 -0700
-Message-Id: <20250815060631.144471-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755238095; c=relaxed/simple;
+	bh=tbJHKmM4HLfO48fOXVQkSO6aTHrBMsni/C0VTIkbqSg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jw9McsKRbpsoybHDC3v9Eht9hccY4mDEaEWfhZwvViww0+V3d21RHpR2eUblR+y4nBext1IpzMljP2jHDOmht9KY3ZDT3NlmPryOJVL6RphzM7CYcNfNvD6n6fTq9mKB2k/X7oihL+2gUmV/iyB1KdOr370o83rPQo2+XIyfF54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E6SWROy/; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755238083; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=c6Xki8soLW+vw63qx0n+Ld6/faF33zlxnTUtiZxzosw=;
+	b=E6SWROy/yb8tUTn5zKyYzwVtC358UkDJZGtD9bSklYxUIbfbvAfaL4KDYTrZWdRP0BlGeYuGXpB6hWPBRwxIv5l8NQOsuXuhQ0xRaJEGKA5tqB44PMu2fvsTShPFbHNwhyTdvKW2G4mICD1CThc+MmBU/wXK3O6Q/UOOuMRzfJA=
+Received: from 30.74.144.112(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wlnr11M_1755238078 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Aug 2025 14:07:59 +0800
+Message-ID: <0e26b400-e477-4722-a524-8a3c520f5429@linux.alibaba.com>
+Date: Fri, 15 Aug 2025 14:07:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Zi Yan <ziy@nvidia.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-socket.c: In function ‘run_tests’:
-socket.c:59:25: warning: ignoring return value of ‘strerror_r’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-59 | strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
-| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-socket.c:60:25: warning: ignoring return value of ‘strerror_r’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-60 | strerror_r(errno, err_string2, ERR_STRING_SZ);
-| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-socket.c:73:33: warning: ignoring return value of ‘strerror_r’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-73 | strerror_r(errno, err_string1, ERR_STRING_SZ);
-| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- tools/testing/selftests/net/socket.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/net/socket.c b/tools/testing/selftests/net/socket.c
-index db1aeb8c5d1e..7c597c583df3 100644
---- a/tools/testing/selftests/net/socket.c
-+++ b/tools/testing/selftests/net/socket.c
-@@ -39,6 +39,8 @@ static int run_tests(void)
- {
- 	char err_string1[ERR_STRING_SZ];
- 	char err_string2[ERR_STRING_SZ];
-+	char *err_message1;
-+	char *err_message2;
- 	int i, err;
- 
- 	err = 0;
-@@ -56,13 +58,13 @@ static int run_tests(void)
- 			    errno == -s->expect)
- 				continue;
- 
--			strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
--			strerror_r(errno, err_string2, ERR_STRING_SZ);
-+			err_message1 = strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
-+			err_message2 = strerror_r(errno, err_string2, ERR_STRING_SZ);
- 
- 			fprintf(stderr, "socket(%d, %d, %d) expected "
- 				"err (%s) got (%s)\n",
- 				s->domain, s->type, s->protocol,
--				err_string1, err_string2);
-+				err_message1, err_message2);
- 
- 			err = -1;
- 			break;
-@@ -70,12 +72,12 @@ static int run_tests(void)
- 			close(fd);
- 
- 			if (s->expect < 0) {
--				strerror_r(errno, err_string1, ERR_STRING_SZ);
-+				err_message1 = strerror_r(errno, err_string1, ERR_STRING_SZ);
- 
- 				fprintf(stderr, "socket(%d, %d, %d) expected "
- 					"success got err (%s)\n",
- 					s->domain, s->type, s->protocol,
--					err_string1);
-+					err_message1);
- 
- 				err = -1;
- 				break;
--- 
-2.34.1
+On 2025/8/12 23:44, Lorenzo Stoakes wrote:
+> As part of the effort to move to mm->flags becoming a bitmap field, convert
+> existing users to making use of the mm_flags_*() accessors which will, when
+> the conversion is complete, be the only means of accessing mm_struct flags.
+> 
+> This will result in the debug output being that of a bitmap output, which
+> will result in a minor change here, but since this is for debug only, this
+> should have no bearing.
+> 
+> Otherwise, no functional changes intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
 
