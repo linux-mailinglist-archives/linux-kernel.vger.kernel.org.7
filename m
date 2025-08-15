@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-769816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143E2B27407
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A7DB27404
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F22D1899157
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:33:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6068C173D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C331438DF9;
-	Fri, 15 Aug 2025 00:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NXDusvXL"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8461DEFD2;
+	Fri, 15 Aug 2025 00:30:29 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAE53770B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36971D7E41;
+	Fri, 15 Aug 2025 00:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217719; cv=none; b=GRz7tKz1xPE5/GnyNOQrw64snAWIqyeRuE7wNgQonPu0UGmB77b+hl4qSmbcQOqGAb97m9oZ2yYOKyQ6XHxLJkGVE6W3Kd40ZrBO/iW1fH6lJM45f982W7EQGX1+uamIJJA2XZ1EMJ4HUMDQ55VBwcm1AOyxoiuEtOd0zLM2frQ=
+	t=1755217829; cv=none; b=PjRFPiu/Myz2pvqxqxLtiBJyMDH33vcW0IvkUwvH0OD9rxHYPUNHfRoW6HNC8hZzZN5d3r65UY/JTL4ZWPC5N9LdLaW9uyMImozyy6JKYqJSV23GNUXOJYc0M0hUFoCLYYGfIM8Vlmk305k1jo1QuSZIOzzTOlj/TWKfCEfzfHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217719; c=relaxed/simple;
-	bh=yVKMqWKrf5rQ1fctBmoCT+YVt0KEBHfv/Hl5qX2iIME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=afbgH7DEO9KgrqkCQFEkKKbJNUciSYW1jBIG1ikhB1ibFteMjvRtpi401MoFVR9SZ155/wGuPTJydbhwzQJ8hhbpBPowHXYfs9oe4oQuOKHaecj8H7ZLDxwwSY7Vu+m7FX1ILDp6WCEQ5c8sp1wnCRsBN06OgmPYoH4ccGC4yaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NXDusvXL; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e932be1b11cso571914276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755217716; x=1755822516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WhYHAOHHcTMvb/JsfZaG+H6/8e/UtvwiyrLLiJuYoaU=;
-        b=NXDusvXL6RDgCRCDxKUzEN3WI/0qcEQ2PSOIsIplk50EGECaDRzbcUDEU3Zly74X6b
-         SPQOPIrjBciSruYWWrG38SLwXySiwpcO+bGJOGrJ0yV72ChYATs/Ubdl0+/YwT5JBt+e
-         T4lZPNS5vSdQgeq7O1CL4Jkjld8LLC4618XEjFGDObi8Ddd+u368ArYvz/E3wGH/Csvt
-         NaUwTP2vssEsTWD0ED5gbpJTEOXHw6XhHMnk7MVmVe69ZPaD5zdhXD1BAv82PI/HJ/+G
-         br9tNcr1lb45TBfub/uy9cnqllsnE54QUx+M3lHw4pkTqMEzbYT7H0OJgZraD6GGk7XP
-         YRdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755217716; x=1755822516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WhYHAOHHcTMvb/JsfZaG+H6/8e/UtvwiyrLLiJuYoaU=;
-        b=MayFvtb0r95nhe2quGpxAu8LQpxU+K1t8RJhYEtBxTHDBmoiE0qbCTnblL8UOP4+xG
-         h7EMk8zQuo7ZgDzNnRXH1rXuUTTQHiKQthILZtIFRKfJ6SDhk+/OlZDBpZFcYDMfy8zs
-         XA+uYBvy9V75acNbE10btwwLFN5AvGygGOAzohD4VrCy6qR9ibeARe4p7nZdyxDgDrwP
-         ZNKVkK/yFMqc6U7Us1Hmktl5ri/EwICyEdFUTGpYLuBMAzZ+6Our2KUfY/4KSiBHZq9I
-         LxgIEjIxIRLM1VN48U6KZhViCsKjAcU211OJY3v1Jq5QVL8KVKt8lUZKPKEQK4mo7kak
-         M0Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL+VnoMgbE0hD4wpY+4pWkYvyG5Fihv5BPceq5ucuQx44QShRCp9ax6+vi9HjsUIF+jrZzAWvJgWvf0fE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+borXg/ZYyi3N5HhCcV+J+c1denqC7Af1AnuDMlzgNWtebRFk
-	j4O8YsFWu5fenKtZK5F8tU8QwfmhSjdl6WhnE20f7ieo2OL/zq7tj4gMblzEfVf2EHFWocPF8EC
-	W0H9/xcF9F2Gu5U17ovGlvBXnO2+plSHYiW6q552TpA==
-X-Gm-Gg: ASbGncszKnJZkLJy77I1iqIV5WlPhVE/ArPoe7udIp8ordUkWZqanUmchojSaDZnb+p
-	nJKbsezHFJGM2rrFrXlWLlelJeXzkmPThTs9VCRZXhSm8ntV7oSej5dg4GxWv21zeNUrrNeJ8V3
-	8Zo1fWqwBkuChJcKQyriRtPc/cRVAgZ5Lm6dlnXIejNOixWmnxt382diISd9gzGLe+dVgpMbZ+/
-	dTlEcpJ
-X-Google-Smtp-Source: AGHT+IEWHgZsAdK4qEvDGvsR02TXcwc61mkjg/mahmDjUByNY1vc8hT9AhSsb4gPaZW5ujgSq5lJQRMSMiPVldUmqB0=
-X-Received: by 2002:a05:6902:70f:b0:e93:2f07:3fd2 with SMTP id
- 3f1490d57ef6-e93323846bfmr333872276.5.1755217716217; Thu, 14 Aug 2025
- 17:28:36 -0700 (PDT)
+	s=arc-20240116; t=1755217829; c=relaxed/simple;
+	bh=vpihdFNnQtO3u3VXfH54QN6UBWoYNFvJyTb4uwpbg3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hyu/KrqSkYqOKMgtRZSV8nPP+lMak8YEb+tnxRds6OMvLNudz6J6pTbkL91e59BY0lY1G6wkmeJVE0hw/sEVswU1qyb39koO4cot4o1uAfbwkA+R0ngOmRBzDZVXH28ke+t+z3RboidbBug3ugJu3L9E0UviZ3XDuxpGMpriSII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c330w2xnLzKHMsY;
+	Fri, 15 Aug 2025 08:30:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id B115D1A1034;
+	Fri, 15 Aug 2025 08:30:23 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgCXXNecf55oifGUDg--.61325S2;
+	Fri, 15 Aug 2025 08:30:22 +0800 (CST)
+Message-ID: <39e05402-40c7-4631-a87b-8e3747ceddc6@huaweicloud.com>
+Date: Fri, 15 Aug 2025 08:30:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com> <268633D49B18C3E7+aJxMHPhItPq9ioto@LT-Guozexi>
-In-Reply-To: <268633D49B18C3E7+aJxMHPhItPq9ioto@LT-Guozexi>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Fri, 15 Aug 2025 08:28:24 +0800
-X-Gm-Features: Ac12FXxnSnbbKz6jQ95n94znx3YpWdrJ0lK8qAhRBPKv8TxP7rZpNGXhbYfh50Q
-Message-ID: <CAH1PCMaMm+aDXG4AfPbZ_iJQW2cuKY=VMU2_C1k6Vi3cBBSthQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] dmaengine: mmp_pdma: Add SpacemiT K1 SoC support
- with 64-bit addressing
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Alex Elder <elder@riscstar.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+ chenridong@huawei.com, gaoyingjie@uniontech.com
+References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+ <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
+ <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
+ <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
+ <4fdf0c5b-54ce-474a-a2c7-8b99322ff30e@huaweicloud.com>
+ <btaaerpdl3bolxbysbqcig6kiccdgsoo32td64sk6yo4m5l5zy@nds6s35p6e6w>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <btaaerpdl3bolxbysbqcig6kiccdgsoo32td64sk6yo4m5l5zy@nds6s35p6e6w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCXXNecf55oifGUDg--.61325S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF47ArWfWw4rCw4rCw4fAFb_yoWkKFb_uF
+	srJrnIkryFyr1DWw47KrZxZrW5Ca9rCry7CFyUtrWY93s7XFn3urs8tr95Aas5ZayaqFsx
+	Zw4Yy392v3sxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbwkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Wed, Aug 13, 2025 at 4:26=E2=80=AFPM Troy Mitchell
-<troy.mitchell@linux.spacemit.com> wrote:
->
-> Hi Guodong, thanks for your patches!
->
-> I have tested it using i2s and dma-tetst.
->
-> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->
->                 - Troy
->
 
-Thanks Troy.
+
+On 2025/8/14 23:17, Michal Koutný wrote:
+> Hi Ridong.
+> 
+> On Thu, Jul 31, 2025 at 07:53:02PM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>> Have you come up with a better solution for this?
+>> Would appreciate your thoughts when you have time.
+> 
+> Sorry for taking so long. (Also expect my next response here may be
+> slow.)
+> I tried reproducing it with the described LTP tests [1] (to get a better
+> idea about what and why needs to be offlined) but I cannot bring it to a
+> hang nor lockdep report. How do you launch the particular LTP tests to
+> trigger this?
+> 
+> Thanks,
+> Michal
+> 
+> [1]
+> while true ; do
+> 	/opt/ltp/testcases/bin/cgroup_fj_function.sh net_cls $pp
+> 	/opt/ltp/testcases/bin/cgroup_fj_function.sh perf_event
+> done
+> (with pp both `;` or `&` for concurrent runs, two vCPUs)
+
+Hi Michal,
+
+I’ve provided details on how to reproduce the issue—it’s quite straightforward. For your reference,
+here’s the link to the discussion:
+
+https://lore.kernel.org/cgroups/btaaerpdl3bolxbysbqcig6kiccdgsoo32td64sk6yo4m5l5zy@nds6s35p6e6w/T/#m01f1229f2e84e1186abaf04378b4c0f47151f7e4
+
+Let me know if you need further clarification.
+
+-- 
+Best regards,
+Ridong
+
 
