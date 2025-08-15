@@ -1,208 +1,111 @@
-Return-Path: <linux-kernel+bounces-770728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5792DB27E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FB3B27E72
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6611D1D05077
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15891A055A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D052FF657;
-	Fri, 15 Aug 2025 10:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GkNmD9tc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BL/l6xUX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GkNmD9tc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BL/l6xUX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7214C2FD7D6;
+	Fri, 15 Aug 2025 10:36:52 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929222FD7CB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F02D2FD1B7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755253829; cv=none; b=gJDzLH7/SF3pC8yBn5miH5ItbH/GsKCclfrLtVY0eI6xf1iPL9iRIRPgdif1jaF6BV8xoNcvX9vRfS2pwwAS5jf7ANfpb6Zw5Vx/kjCisK9V40Bukn9GCaegY3Dm2/tpNs2FhQsOMc0GazpyLIqU9gZDvs4BkDbhimnz5GvGjSs=
+	t=1755254212; cv=none; b=Eo6O1QLr4ByBUYZmPKXcFAuMguT4buzDTXXI9ZgJCHgF6DjSfOkBtqSLVdzRaGtiWWbGwKJElRszlZliF0OhZQ/QCsAuXj4DpdKr3raBAoAXgKqFGoLlIjgrquQQwkxXboRYYtnEzHXJJiTXz8PvP1aY/5Y0BLwaBvhrq/pwLuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755253829; c=relaxed/simple;
-	bh=UOCRw2WKItyLa/IG6PBz1/NN08tPiqLkSnqWg/d64pE=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=T4zVIrypdsQ4VMDa0pViUcksiwa7SjdepmTy1LMf4un/zb9JsTr22NLNvICLGKvtBsiCqAeNzHanbcIrEbmRR5nDf0MbvVT6KUbCdZMP3T4DE2dBEesoFnPzLXs80aQ/jYlm8aVRd4Fy/HfHfJdszhzdPr8TwTwCVEAQBOUm71I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GkNmD9tc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BL/l6xUX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GkNmD9tc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BL/l6xUX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B752C2188B;
-	Fri, 15 Aug 2025 10:30:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755253825; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ghmMkFo3QvAYeAvB3P6z4pmIIkT6+ltUDkCjOy0gp+4=;
-	b=GkNmD9tcEOybCh3eitFfxjmuYursB5BHHvQ5m9U+d0aOmDcO9PA2PKmqN7zplAq9fbOBj7
-	4ddvVF7sORuJNJYY2JE1oo97cIJBvvfKEcWiwuxac4xq2nNDwsF36EJ95bSu8e+sfaJE7r
-	RV2dttJJJwvewCF+yq7qxngi8JmpC/M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755253825;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ghmMkFo3QvAYeAvB3P6z4pmIIkT6+ltUDkCjOy0gp+4=;
-	b=BL/l6xUXBXxxnkV1w2pDv3Y1i6szozZ51iR1jOkoIRUP9If5YompJUehx2Hlc5mI5QRw05
-	KLJ8weBPf8WDQmBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755253825; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ghmMkFo3QvAYeAvB3P6z4pmIIkT6+ltUDkCjOy0gp+4=;
-	b=GkNmD9tcEOybCh3eitFfxjmuYursB5BHHvQ5m9U+d0aOmDcO9PA2PKmqN7zplAq9fbOBj7
-	4ddvVF7sORuJNJYY2JE1oo97cIJBvvfKEcWiwuxac4xq2nNDwsF36EJ95bSu8e+sfaJE7r
-	RV2dttJJJwvewCF+yq7qxngi8JmpC/M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755253825;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ghmMkFo3QvAYeAvB3P6z4pmIIkT6+ltUDkCjOy0gp+4=;
-	b=BL/l6xUXBXxxnkV1w2pDv3Y1i6szozZ51iR1jOkoIRUP9If5YompJUehx2Hlc5mI5QRw05
-	KLJ8weBPf8WDQmBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CB0C13876;
-	Fri, 15 Aug 2025 10:30:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a9YSIUEMn2hfPgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 15 Aug 2025 10:30:25 +0000
-Date: Fri, 15 Aug 2025 12:30:25 +0200
-Message-ID: <877bz4ubb2.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.17-rc2
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1755254212; c=relaxed/simple;
+	bh=p/NnOKuDXNJI14VVVeNKobRW2XTB3qlqFdhESE40MIc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TtvzvOyJd9gB1NtNbxTIAf1FpMBdv++IzLMKD5HmIAS/0cSCwZw2zsU4p5Vvx+urPdDhZZgC7FmsK9z5kYKZf4ASxLBq9aSblLra6pNMLAFOpkcBWzDkosqzkirGbPvjxvjzKiPQ+MLWyzb++dU2kn0cahREcOvlNFHGR/Pvs00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c3JMZ0cCFzdcD4;
+	Fri, 15 Aug 2025 18:32:26 +0800 (CST)
+Received: from kwepemo100001.china.huawei.com (unknown [7.202.195.173])
+	by mail.maildlp.com (Postfix) with ESMTPS id CEB8E1800B2;
+	Fri, 15 Aug 2025 18:36:46 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemo100001.china.huawei.com
+ (7.202.195.173) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Aug
+ 2025 18:36:35 +0800
+From: Yin Tirui <yintirui@huawei.com>
+To: <akpm@linux-foundation.org>, <rppt@kernel.org>, <david@redhat.com>,
+	<Jonathan.Cameron@huawei.com>, <dan.j.williams@intel.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC: <yintirui@huawei.com>, <chenjun102@huawei.com>,
+	<wangkefeng.wang@huawei.com>
+Subject: [PATCH] mm/numa: fix uninitialized memory nodes causing kernel panic
+Date: Fri, 15 Aug 2025 18:30:40 +0800
+Message-ID: <20250815103040.511627-1-yintirui@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo100001.china.huawei.com (7.202.195.173)
 
-Linus,
+When the number of CPUs is fewer than the number of memory nodes,
+some memory nodes may not be properly initialized because they are
+not added to numa_nodes_parsed during memory parsing.
 
-please pull sound fixes for v6.17-rc2 from:
+In of_numa_parse_memory_nodes(), after successfully adding a memory
+block via numa_add_memblk(), the corresponding node ID should be
+marked as parsed. However, the current implementation in numa_add_memblk()
+only adds the memory block to numa_meminfo but fails to update
+numa_nodes_parsed, leaving some nodes uninitialized.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.17-rc2
+During boot in a QEMU-emulated ARM64 NUMA environment, the kernel
+panics when free_area_init() attempts to access NODE_DATA() for
+memory nodes that were uninitialized.
 
-The topmost commit is c345102d1feed3de8aa9b9ec7d18b3fbba62deb7
+[    0.000000] Call trace:
+[    0.000000]  free_area_init+0x620/0x106c (P)
+[    0.000000]  bootmem_init+0x110/0x1dc
+[    0.000000]  setup_arch+0x278/0x60c
+[    0.000000]  start_kernel+0x70/0x748
+[    0.000000]  __primary_switched+0x88/0x90
 
-----------------------------------------------------------------
-
-sound fixes for 6.17-rc2
-
-A collection of small fixes.
-
-- Potential OOB access fixes in USB-audio driver
-- ASoC kconfig menu fix for improving the generic drivers
-- HD-audio quirks and a fix revert
-- Codec and platform-specific small fixes for ASoC
-
-----------------------------------------------------------------
-
-Alexey Klimov (1):
-      ASoC: codecs: tx-macro: correct tx_macro_component_drv name
-
-Baojun Xu (2):
-      ASoC: tas2781: Normalize the volume kcontrol name
-      ALSA: hda/tas2781: Normalize the volume kcontrol name
-
-Christopher Eby (1):
-      ALSA: hda/realtek: Add Framework Laptop 13 (AMD Ryzen AI 300) to quirks
-
-Colin Ian King (2):
-      ASoC: codec: sma1307: replace spelling mistake with new error message
-      ASoC: tas2781: Fix spelling mistake "dismatch" -> "mismatch"
-
-Kuninori Morimoto (1):
-      ASoC: generic: tidyup standardized ASoC menu for generic
-
-Mario Limonciello (AMD) (1):
-      Revert "ALSA: hda: Add ASRock X670E Taichi to denylist"
-
-Sergio Perez Gonzalez (1):
-      ASoC: stm: stm32_i2s: Fix calc_clk_div() error handling in determine_rate()
-
-Shengjiu Wang (1):
-      ASoC: fsl_sai: replace regmap_write with regmap_update_bits
-
-Shuming Fan (2):
-      ASoC: rt721: fix FU33 Boost Volume control not working
-      ASoC: rt1320: fix random cycle mute issue
-
-Takashi Iwai (3):
-      ALSA: azt3328: Put __maybe_unused for inline functions for gameport
-      ALSA: usb-audio: Validate UAC3 power domain descriptors, too
-      ALSA: usb-audio: Validate UAC3 cluster segment descriptors
-
-Thorsten Blum (1):
-      ASoC: codecs: Call strscpy() with correct size argument
-
-Vasiliy Kovalev (1):
-      ALSA: hda/realtek: Fix headset mic on HONOR BRB-X
-
+Cc: stable@vger.kernel.org
+Fixes: 87482708210f ("mm: introduce numa_memblks")
+Signed-off-by: Yin Tirui <yintirui@huawei.com>
 ---
- sound/hda/codecs/realtek/alc269.c              |  2 ++
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c |  2 +-
- sound/hda/controllers/intel.c                  |  1 -
- sound/pci/azt3328.c                            |  8 ++++----
- sound/soc/Kconfig                              |  4 +++-
- sound/soc/codecs/aw87390.c                     |  8 +++-----
- sound/soc/codecs/aw88081.c                     |  5 ++---
- sound/soc/codecs/aw88166.c                     |  8 +++-----
- sound/soc/codecs/aw88261.c                     |  8 +++-----
- sound/soc/codecs/aw88395/aw88395.c             |  8 +++-----
- sound/soc/codecs/aw88399.c                     |  8 +++-----
- sound/soc/codecs/lpass-tx-macro.c              |  2 +-
- sound/soc/codecs/rt1320-sdw.c                  |  3 ++-
- sound/soc/codecs/rt721-sdca.c                  |  2 ++
- sound/soc/codecs/rt721-sdca.h                  |  4 ++++
- sound/soc/codecs/sma1307.c                     |  2 +-
- sound/soc/codecs/tas2781-i2c.c                 |  6 +++---
- sound/soc/fsl/fsl_sai.c                        | 20 ++++++++++----------
- sound/soc/stm/stm32_i2s.c                      |  7 ++-----
- sound/usb/stream.c                             | 25 ++++++++++++++++++++++---
- sound/usb/validate.c                           | 12 ++++++++++++
- 21 files changed, 86 insertions(+), 59 deletions(-)
+ mm/numa_memblks.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+index 541a99c4071a..1dfe434e71b5 100644
+--- a/mm/numa_memblks.c
++++ b/mm/numa_memblks.c
+@@ -197,7 +197,13 @@ static void __init numa_move_tail_memblk(struct numa_meminfo *dst, int idx,
+  */
+ int __init numa_add_memblk(int nid, u64 start, u64 end)
+ {
+-	return numa_add_memblk_to(nid, start, end, &numa_meminfo);
++	int ret;
++
++	ret = numa_add_memblk_to(nid, start, end, &numa_meminfo);
++	if (!ret)
++		node_set(nid, numa_nodes_parsed);
++
++	return ret;
+ }
+ 
+ /**
+-- 
+2.43.0
 
 
