@@ -1,126 +1,115 @@
-Return-Path: <linux-kernel+bounces-771171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CE0B283C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF8BB283CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73255E78A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B6E0AA3A4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFF83093B5;
-	Fri, 15 Aug 2025 16:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646913090F9;
+	Fri, 15 Aug 2025 16:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUphFxrW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="cMeR2TD0"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3A31607A4;
-	Fri, 15 Aug 2025 16:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755275045; cv=none; b=Q0yQwC8ZBR05TtXsxm8UItkRMCq1D6wp+UNIcodEnENn9gDfLLaZltaBXop1WgjVhE3u1chSkXQG7WiTiOzqm6oIAjVjM6LAp9juYbhbHaL4550c6UR6xDxtGQmqo5Gta6r2CALkykRoYx0JI8XCwPYDR13I/z8EOLJCnLaVij8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755275045; c=relaxed/simple;
-	bh=4W3MexmDLIj0LLuVBsUoXVIfys/oLMGtURiFQUEH13U=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1961C1DFE0B;
+	Fri, 15 Aug 2025 16:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755275237; cv=pass; b=JeefXaMfH612/Cmvl1wn91A4GFWE2huaXxuCvEDO8UeWCxiEcy0nUMs+LGav7wZPozNImKkXXuX4xHulJ8a5SDOlsN0O7fPcNrzC63UWjKrNvLQ6wTjod82p9zx4G5iJKQo952IPQqqaAXNnnb4tExCEILGZVFpVZZ/L19S6leE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755275237; c=relaxed/simple;
+	bh=5+XdDs12ulOZnLkEewrv0XuNVeWQDZjkx1K9KDii/rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDr6JeuicKkTay8B93GF1HoJVzfVG3Jt+ftyGNYNCHyvD5tduuAoONrIjcPreD4cD4jEf1wMTmTZbhW7MEGqDsFkv5XuoU/12LhuqBGISuKNdZZ9g+bIz8EJNtmxyr/dxC9LDUFGY46h9SihH1gocl3NxrmiLyclVh3NAxOhNfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUphFxrW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B60C4CEEB;
-	Fri, 15 Aug 2025 16:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755275045;
-	bh=4W3MexmDLIj0LLuVBsUoXVIfys/oLMGtURiFQUEH13U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUphFxrWKV+6n7KpkD3VVRbo27xzyyN/vWebfUiwoAS3RvQSWcpYef5mbG32vq0xD
-	 Hj0/e3bePcSFamI9nK1ma1Z1tJgmnKrGZNeX7nNEd7c2k/TECv6Usta5G6k2J1kTXq
-	 LsLm0KSBqNf5NIpDJGBe/pMGF4IRBd7RfiQ0AFAHXmAiB/AdFCFFEAZWTG5KJ1UEeH
-	 gx7uzJLw+iJTkPJ6nbo75iUvpli22kP4Ea4eVzyFa0QL+rwrRi3uUMsyrZOzUynbnX
-	 vzx4mQ8pLbKA4C23C8MVuQVsKobT/zIxnc9HN1TNS3GmfWQ6VfTQjsBHkx+jBmRUuP
-	 bmqcMI4Wr142Q==
-Date: Fri, 15 Aug 2025 09:24:01 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	qemu-devel@nongnu.org,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
-	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org,
-	Zhang Yi <yi.zhang@huaweicloud.com>,
-	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Message-ID: <aJ9fIUkM04HhRgSR@google.com>
-References: <20250812173419.303046420@linuxfoundation.org>
- <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
- <2025081300-frown-sketch-f5bd@gregkh>
- <aJ5EupUV9t0jToY3@google.com>
- <2025081536-resonate-wafer-6699@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDOujGocNexIsm+dOGQxXxbffSMHNkAyAibBsZ27SOu2DacOWN5xOMuGsDrpzH6n3VEFWHmBbbTZJpqnJ8XLLwPv6d3D56g2tprPMSROoRETejFYKdJDRj5OYKCohs5gHEKm/0jBnCwa20jJVgIC+QL3kuPq32NUJjszclwAxYY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=cMeR2TD0; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (n5z527m3mjwy6a3pz6x-1.v6.elisa-mobile.fi [IPv6:2001:999:588:5309:51e8:edee:be54:a969])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4c3SDq2zLzzyTF;
+	Fri, 15 Aug 2025 19:27:06 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1755275232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrIPZUVKQzC45FOrz+Jtwamu4m4kCvCmJAWTeS2TERY=;
+	b=cMeR2TD0mA8KlyVM8jm6/idtLXURzEDPuzJzQPi5XNAzGAGj/qOOjqPcq7VWWuCTPh5joR
+	FqaQ6X1RsT4OaBqbUO2vD+LfVjzSU2KjTobfCilOElMF+f61E2oscOVz1dv2YeU3pgkVKt
+	gQSd9ix2P/9nMtqprWSJNgVCT+aY1d8=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1755275232; a=rsa-sha256; cv=none;
+	b=T+JkRrDy0+EYwQyap1w+LjE+XPzdhh/EDvvfKqEl3e2udOsMdga/Z8owY7ohDs9sJwSV3T
+	kiQJfbKNOAjQGtrDcooPGmSWjIFdRpNgDtY5fqEdUFqkwQiueBvTDCqqMlLEKYcO56t1SC
+	g/8OoAXhCt707ctb2DrIjmhbK4pv2+8=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1755275232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrIPZUVKQzC45FOrz+Jtwamu4m4kCvCmJAWTeS2TERY=;
+	b=bRCtcVt523f7Kty0FXCD006Q+XxCs2sLVV7XD1M+lU9po1Jx345QmBHF/Nr6d/A0oSDN7s
+	c4TbAMbIVRbZqRjD52xqlME3RTezyJZ/pjd8PDYAXLYQyHCEs7jLZR7s55Gn9hRbsJSivJ
+	cSmV565IQYWF6a+7R0DKbeA3zcerT78=
+Date: Fri, 15 Aug 2025 19:26:51 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To: Chris Fenner <cfenn@google.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
+Message-ID: <aJ9fy_sO6tza9qLF@iki.fi>
+References: <20250814162252.3504279-1-cfenn@google.com>
+ <aJ8iNLwlf4PAC0h1@kernel.org>
+ <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025081536-resonate-wafer-6699@gregkh>
+In-Reply-To: <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
 
-On Fri, Aug 15, 2025 at 07:33:41AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Aug 14, 2025 at 01:19:06PM -0700, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > Thanks for the report!
-> > 
-> > On Wed, Aug 13, 2025 at 02:50:49PM +0200, Greg Kroah-Hartman wrote:
-> > > On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
-> > > > Long story:
-> > > > 1)
-> > > > The perf gcc-13 build failed on x86_64 and i386.
-> > > > 
-> > > > Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
-> > > > fallocate failed.
-> > > > 
-> > > > > Ian Rogers <irogers@google.com>
-> > > > >     perf topdown: Use attribute to see an event is a topdown metic or slots
-> > > > 
-> > > > Build error:
-> > > > 
-> > > > arch/x86/tests/topdown.c: In function 'event_cb':
-> > > > arch/x86/tests/topdown.c:53:25: error: implicit declaration of
-> > > > function 'pr_debug' [-Werror=implicit-function-declaration]
-> > > >    53 |                         pr_debug("Broken topdown information
-> > > > for '%s'\n", evsel__name(evsel));
-> > > >       |                         ^~~~~~~~
-> > > > cc1: all warnings being treated as errors
-> > > 
-> > > Already fixed.
-> > 
-> > Are you sure?  I'm not seeing the fix.  Can you share the commit id?
+On Fri, Aug 15, 2025 at 08:45:06AM -0700, Chris Fenner wrote:
+> I have a Linux machine with a standard off-the-shelf Infineon SLB9670
+> TPM. Without the session salting, each PCR extension takes just 4-5
+> ms. With session salting, it takes:
+> * 30ms to load the null key from its context blob
+> * 108ms to start the auth session and extend the PCR inside it
+> * 1ms to flush the null key
 > 
-> I dropped the offending perf patch:
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/commit/?id=4199b872a5585e025f62886724f4f9ae80e014ae
-> 
-> Did that not work for you?
+> for an overhead of about 2880%. Depending on the configuration of the
+> kernel/IMA and how many PCR measurements it's making, this could add
+> up to a good chunk of time and explain reports like [3] where people
+> are noting that turning this feature on adds minutes to or triples the
+> boot time.
 
-Oh sorry, I misunderstood you.  I thought you have a fix.
+I'll with shoot another proposal. Let's delete null primary creation
+code and add a parameter 'tpm.integrity_handle', which will refers to
+persistent primary handle:
 
-Thanks,
-Namhyung
+1. It simplifies the code considerably.
+2. It makes whole a lot more sense especially given that there's
+   ambiguity with the key. This comes from earlier off-list
+   discussion where you made this argument, and I'll buy that.
+   I.e. even if we could certify null primary we cannot certify
+   it is "unambiguousness".
+3. Update tpm-security documentation accordingly.
 
+I think this might be "the long-term fix" that could be done right noW.
+
+BR, Jarkko
 
