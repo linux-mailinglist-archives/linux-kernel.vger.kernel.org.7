@@ -1,176 +1,137 @@
-Return-Path: <linux-kernel+bounces-771294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1BCB2853C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DD6B2853F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838327B95B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158EA1CE408E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE85317701;
-	Fri, 15 Aug 2025 17:38:03 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133BD31770F;
+	Fri, 15 Aug 2025 17:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rt5LeOsJ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4183176F7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0433176FF;
+	Fri, 15 Aug 2025 17:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279483; cv=none; b=d08SDEzA0Nig2fBTWlLHkjCrTh9w4GGQrc5XKGeF+Qgz7RUfWqEts/mHhK6BwSlRwlBsZ2j0oztKgnVjHai//8rhbBJb+F6t2jC+5WfYF0iSHXY0MAj7fb2dQeqlZR0MUcIdwbFXTwr27JdkXrRkaNCJxKBRwrokZk5FkUcELsk=
+	t=1755279505; cv=none; b=Nq1N/jjBqcdrXa47+I0DZOp2ylyR4mi/aTCxheicr98kpMoZKMk5z3Rgf9oX29/Q4tQKgvOEOTtSer+GbjrCNCtM4fKNAILybuKA3cy+/zWFUAvL7kDH9M/dPqvGPrNU2014jenuATkdxaN6RYV4oYKxzNNeJpTH7ksmqxEsIOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279483; c=relaxed/simple;
-	bh=122jLdmAfkEvNJQZzQRq+OrAt1kQ0FibmKg0Lmc9H20=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u19ei9EP1vHEH3L4GrOXQL8hDzPAJ6MQMpfqvy1SwXbE0EDVkaPafJ8s6vyiB6EONg1VDFDjJzSbObalHuIbzqKdtYD/FOPbBbe6EjIf6JNhosHRC5hvvsGkHJEl01aO7PDnXrWhOgL/3JwhdKHhh3K2KmKTzfCqApnA+rPtm0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c3TpP1ZcfzYpCvG;
-	Sat, 16 Aug 2025 01:37:49 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
- 2025 01:37:57 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
- 2025 01:37:54 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <lorenzo.stoakes@oracle.com>
-CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
-	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <mhocko@suse.com>,
-	<mingo@redhat.com>, <npache@redhat.com>, <peterz@infradead.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <tglx@linutronix.de>,
-	<zhongjinji@honor.com>
-Subject: Re: [PATCH v4 3/3] mm/oom_kill: Have the OOM reaper and exit_mmap() traverse the maple tree in opposite orders
-Date: Sat, 16 Aug 2025 01:37:50 +0800
-Message-ID: <20250815173750.15323-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
-References: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
+	s=arc-20240116; t=1755279505; c=relaxed/simple;
+	bh=gVkFMLfDZNAcblb5dwn0J3mL9GjMWVi400R+BI3nj1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CPsBszQ+QLlvLUI/M7n1vkkRNjubMF2FznFd1uFAOfmJ0koHjUo3GrOnO/h6mE5tH4i5FBrlUcH/n51yn4LDuWLU5Vpo3VZo86Rb9ReLQ1pRRGetI2sZbwze6jr61sLJXRm1Kdnjh7BrMH9QnVTvBSuTJ0S86MhYsJunOuyX53o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rt5LeOsJ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e411f79dso215930f8f.1;
+        Fri, 15 Aug 2025 10:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755279502; x=1755884302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1WgcUUdQRBquLpdf5eq5AqmAdjxeq8xvK3pQY9lcVSM=;
+        b=Rt5LeOsJWce7UYZAR2dNVmMzZDmz0Us+KlGaLibTWfg+9XKtKfcornLXUFrruWdwa6
+         ZvV3ZHrWlBqwx7PTg6aieP+wqrg/kPx5o6oPP6yUjiwcdwFFp7oftm/IArGjp2kmboz5
+         ZdLk7BhEqxnrN54smLIkEtaOw37CAvbyI9xsCbPsDCSPczFx92lNXUkjSkThK1vCQAFy
+         ZUwOKDMCJt4SLrjvwvXQkCJjhOllpJyFChsGpj8C+0s0acUhmmiWHLLaRiuGWliNgm5z
+         d6b6cPrEyb0SnwTbXo4SGJ2uAW+61Wsq1AnikJHl+D2qvYxbKdw333ELddNRcsCgHrLh
+         u/5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755279502; x=1755884302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1WgcUUdQRBquLpdf5eq5AqmAdjxeq8xvK3pQY9lcVSM=;
+        b=oV0WRUHKa1cnn3JeggUngc6LcswrziXwZM+hdZABRQ7nTZdK/yyBZTBg+yDqAshYS8
+         0gCQS7zzNiexd1v+myFVmE7ETjAoZgRRqC3tZAtrUHV4HA2/FWg2B5+sP3WqBw0Qf/D0
+         EJ4Mcck0bNfVJeS5q7B9xHOkynHG6Db+kLZjTnHPBP9jhhxgLMO96sCfUmAhHq9thFyy
+         m5yPnWBZ741ntxyikqCIyx67NKgRhNp19M/SjWEbGU2LCv6DcsrfOnMbTX7V3/Ma1ECx
+         5YntKKun58oYrxN93HeR14UmgoiUkwMrC/NNQrmK8IJmafW7eid0JvJ5cBcCcFhYt7Hi
+         TraQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWIns3aKtBOld0gbo7oR9eLqdNulpSHd8AilBLZ+CJlsys5f17bsZJYUSMqyQiB2Afnl2KH9lC/vZsRRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHcHxV9+cT9rt1vSxuK5xVKGItVV0DZGyDh4+fuRLsQCwTpq8v
+	6rqSnrA+zuiP+i/b3PjtDsLsJChYbVbJSsf1Yq3+HjDjqPVOqm5fg2Pd
+X-Gm-Gg: ASbGncu89TOo3LG8oOKuem+sw6jdpTkyOqAj4u6EXFkeVCvh8XUYDL/zBFgiSySsRPv
+	MHSGj+L2q+JjfqKQv6hHOKOc9KCjxAkEUgjewIRT8fa0PJy+rJBTi4jCCzB1bJ5skTsMTDKe0Jk
+	Ajgc4YRKSj1/sAI1bfx//wfmtWZjlRUHfXiwQcINBtv06nqNdUZ0Ha7GgWhR6ZYVzArTO6btXo1
+	RvOOpz+S14GYJLlBoZhprDpBzAOqfQ6XD81SW3YVX9ph0Atwg4oStkEpcegwgmcMTib+ajAjC9j
+	mb3FVKmtfx+YkRkN3HRB5EdDvQi4AnkQMte7MU9hhUT7egmM4bKbATAFahrL9vAg9HzgYxeT/4T
+	3bASeXNYC6iOKtEIPZwPwRaG/tpo3bxWtkrfWVmDVmCNfn7JQ9xfJy2rXkbqzztYLrHKeT9/UEy
+	MFloPUtw==
+X-Google-Smtp-Source: AGHT+IFj2gq8k5qF+dxuqCn3M4gO6wawzpjQxzbfBk8qGD/2kEHqMYN5fr5izKW5sZXJSKKkcDgkEA==
+X-Received: by 2002:a05:6000:26d3:b0:3a4:f7d9:9617 with SMTP id ffacd0b85a97d-3bb639d4521mr1070777f8f.0.1755279501969;
+        Fri, 15 Aug 2025 10:38:21 -0700 (PDT)
+Received: from localhost.localdomain ([154.182.175.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb676c96dasm2597432f8f.43.2025.08.15.10.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 10:38:21 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	andy@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Subject: [PATCH] staging: media: atomisp: return early on hmm_bo_device_init() failure
+Date: Fri, 15 Aug 2025 20:37:55 +0300
+Message-Id: <20250815173755.33254-1-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
- (10.68.17.250)
+Content-Transfer-Encoding: 8bit
 
-> 
-> On Thu, Aug 14, 2025 at 09:55:55PM +0800, zhongjinji@honor.com wrote:
-> > From: zhongjinji <zhongjinji@honor.com>
-> >
-> > When a process is OOM killed, if the OOM reaper and the thread running
-> > exit_mmap() execute at the same time, both will traverse the vma's maple
-> > tree along the same path. They may easily unmap the same vma, causing them
-> > to compete for the pte spinlock. This increases unnecessary load, causing
-> > the execution time of the OOM reaper and the thread running exit_mmap() to
-> > increase.
-> 
-> You're not giving any numbers, and this seems pretty niche, you really
-> exiting that many processes with the reaper running at the exact same time
-> that this is an issue? Waiting on a spinlock also?
-> 
-> This commit message is very unconvincing.
+hmm_init() would continue execution even if hmm_bo_device_init() failed,
+potentially leading to bad behaviour when calling hmm_alloc().
 
-Thank you, I will reconfirm this issue.
+- returns the error immediately if hmm_bo_device_init() fails.
 
-> 
-> >
-> > When a process exits, exit_mmap() traverses the vma's maple tree from low to high
-> > address. To reduce the chance of unmapping the same vma simultaneously,
-> > the OOM reaper should traverse vma's tree from high to low address. This reduces
-> > lock contention when unmapping the same vma.
-> 
-> Are they going to run through and do their work in exactly the same time,
-> or might one 'run past' the other and you still have an issue?
-> 
-> Seems very vague and timing dependent and again, not convincing.
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/hmm/hmm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-well, Thank you, I should capture a perf trace for the oom reaper, not perfetto.
-
-> 
-> >
-> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
-> > ---
-> >  include/linux/mm.h | 3 +++
-> >  mm/oom_kill.c      | 9 +++++++--
-> >  2 files changed, 10 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 0c44bb8ce544..b665ea3c30eb 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -923,6 +923,9 @@ static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
-> >  #define for_each_vma_range(__vmi, __vma, __end)				\
-> >  	while (((__vma) = vma_find(&(__vmi), (__end))) != NULL)
-> >
-> > +#define for_each_vma_reverse(__vmi, __vma)					\
-> > +	while (((__vma) = vma_prev(&(__vmi))) != NULL)
-> 
-> Please don't casually add an undocumented public VMA iterator hidden in a
-> patch doing something else :)
-
-sorry, I got it.
-
-> 
-> Won't this skip the first VMA? Not sure this is really worth having as a
-> general thing anyway, it's not many people who want to do this in reverse.
-> 
-> > +
-> >  #ifdef CONFIG_SHMEM
-> >  /*
-> >   * The vma_is_shmem is not inline because it is used only by slow
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 7ae4001e47c1..602d6836098a 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -517,7 +517,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
-> >  {
-> >  	struct vm_area_struct *vma;
-> >  	bool ret = true;
-> > -	VMA_ITERATOR(vmi, mm, 0);
-> > +	VMA_ITERATOR(vmi, mm, ULONG_MAX);
-> >
-> >  	/*
-> >  	 * Tell all users of get_user/copy_from_user etc... that the content
-> > @@ -527,7 +527,12 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
-> >  	 */
-> >  	set_bit(MMF_UNSTABLE, &mm->flags);
-> >
-> > -	for_each_vma(vmi, vma) {
-> > +	/*
-> > +	 * When two tasks unmap the same vma at the same time, they may contend for the
-> > +	 * pte spinlock. To avoid traversing the same vma as exit_mmap unmap, traverse
-> > +	 * the vma maple tree in reverse order.
-> > +	 */
-> 
-> Except you won't necessarily avoid anything, as if one walker is faster
-> than the other they'll run ahead, plus of course they'll have a cross-over
-> where they share the same PTE anyway.
-> 
-> I feel like maybe you've got a fairly specific situation that indicates an
-> issue elsewhere and you're maybe solving the wrong problem here?
-
-Thank you, I will reconfirm this issue.
-
-> 
-> > +	for_each_vma_reverse(vmi, vma) {
-> >  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
-> >  			continue;
-> >
-> > --
-> > 2.17.1
-> >
-> >
-
+diff --git a/drivers/staging/media/atomisp/pci/hmm/hmm.c b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+index f998b57f90c4..97c7ce970aef 100644
+--- a/drivers/staging/media/atomisp/pci/hmm/hmm.c
++++ b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+@@ -34,8 +34,10 @@ int hmm_init(void)
+ 
+ 	ret = hmm_bo_device_init(&bo_device, &sh_mmu_mrfld,
+ 				 ISP_VM_START, ISP_VM_SIZE);
+-	if (ret)
++	if (ret) {
+ 		dev_err(atomisp_dev, "hmm_bo_device_init failed.\n");
++		return ret;
++	}
+ 
+ 	hmm_initialized = true;
+ 
+@@ -48,7 +50,7 @@ int hmm_init(void)
+ 	 */
+ 	dummy_ptr = hmm_alloc(1);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ void hmm_cleanup(void)
+-- 
+2.25.1
 
 
