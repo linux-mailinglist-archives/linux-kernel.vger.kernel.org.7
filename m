@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-771014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D14B28199
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4A7B281AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9849A4E1651
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0AF3A3284
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1B222541B;
-	Fri, 15 Aug 2025 14:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDF2224B1B;
+	Fri, 15 Aug 2025 14:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYMz9gcS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxVRc+Ly"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A1622333D;
-	Fri, 15 Aug 2025 14:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADB1E230E;
+	Fri, 15 Aug 2025 14:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755267944; cv=none; b=KBKHlA53RS6xUL03+bLqfX23pXhwvc3ds3hiuDWk0cdb7fZpnTDUHhvGKkEGcDKh5yxOtJ8yHUvtKA96coRW5wpwVCNOJkN/irp9UCdmUH6RSUo3TcrceowwQsezPd7efIgFTDK18x5mlMVF/8b63Gf4S7xs3duu+lCsRPAdQAY=
+	t=1755268028; cv=none; b=lAbNLA50pVvmndoPvJiG2RIngLA3NzQxViFVgv2oGP6W7pAE2fsbWGZoZDrJT4s4T6EVqBEDZc/npUWIHypN6EntVNNmodiVdi72YxtNugV8u68kW6WkqNNixBurFGMFY2oPu1qnvDp2MpmzyZWAn4KMxoqDeaCSiuJ/Sp+6K78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755267944; c=relaxed/simple;
-	bh=IZndjDUGqtf8qtTgBD7buye/s0ai0XN3SlKIaNaEeUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBL+v8gBfZGH6KdVVJIz4n+PnZ3K+zSQoIzliQ4cx6mNGK4B67XO5lThMtQCydMS5NdApcDEeYf3P0JpopXbevf2Mu8vXnBaMCvt9IU1dq+bQklQPBaU6jWFfJZfVw7JTDruzJ6+1th4ufbXrV2FUeJZtZSDKdaejXnVR6u7eBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYMz9gcS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D40C4CEEB;
-	Fri, 15 Aug 2025 14:25:38 +0000 (UTC)
+	s=arc-20240116; t=1755268028; c=relaxed/simple;
+	bh=f/FObD14MZnJGN6cgRXbXsf/Fjw092bO8WlijOgdNQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qhrpkA0DgI8A/WzYmxfMlZ90QLpWLEUAKFGmT3gXKwrQFTroaanClxAVScMyRL3M4gpur0n258HDDEJIoktyteCCoIzkRq/3HjiARN2ur/4G0QKMetcazELPtMlxB06O2svdubgopmm7vdVmiCxgZnT1QRnRhdf3s8zklbGZmGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxVRc+Ly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9442C4CEEB;
+	Fri, 15 Aug 2025 14:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755267943;
-	bh=IZndjDUGqtf8qtTgBD7buye/s0ai0XN3SlKIaNaEeUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYMz9gcShwpMMEiSo1WWYlkuM6E6kInrV6Orrl+JK6yk+Nmb+ijdYckIwQMbcFNfQ
-	 K6JY4LCJjGuxU19K6lhWn7JGx64MrXiXBPUbjankFoUaJLuutbAjbUfJek1z101hVZ
-	 lVkptAmAoeaI1Oadk7bEdUJWvBYWFw5vfQZ7dlREPuHGXt2ZV4j2DOq10T94SrKIF/
-	 W4ha2iCGy5MT1UjKcFAUTnJNPl1PVEs4pNPIia6uskrefrJtsoZ4k9mX7gs5XBB4CK
-	 1rWslMwRVoFSeCggAdB93nlk++9zly/qqTLOp4SJLt7MCQoljkpLe+L2HEfUAB1qtF
-	 Nx4ukXSNcVIvQ==
-Date: Fri, 15 Aug 2025 16:25:36 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@samsung.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Matthias Maennich <maennich@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-Message-ID: <20250815-darstellen-pappen-90a9edb193e5@brauner>
-References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
- <20250811-wachen-formel-29492e81ee59@brauner>
- <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
+	s=k20201202; t=1755268028;
+	bh=f/FObD14MZnJGN6cgRXbXsf/Fjw092bO8WlijOgdNQk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TxVRc+Ly1mGAqKDvCpOj1Y4DFYb38GAULO4jVR95X25PQ9VTLrRYLyt1OWDI70Z0P
+	 kGQizxtT+oOuzw2+gUeonREFJ4wdG/sAiJJkQbn07LIooTvCKx9uvghdP+FGihK7x9
+	 0CFWNQHAJCulBU85ytmx/uri/F3XWSKfti48VdUHr98VQxYQhdcFhNRrXO5JhlahWx
+	 mbuRLDVtDgiJHSB29zzAZYy++inJiZWn3MCBX5WS+iDtTIgz+1G04oDWfYGl7z2nSL
+	 SWdxMPn9qYCPrc+LPPHqCQIZIiy9dI3hrDs58iQ3eg1g8HQKI9bNiBGZo9P9O1uI1b
+	 K6S4N9bFFgfhw==
+Date: Fri, 15 Aug 2025 09:27:05 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: hans.zhang@cixtech.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, mani@kernel.org, robh@kernel.org,
+	kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mpillai@cadence.com, fugang.duan@cixtech.com,
+	guoyin.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 09/13] PCI: Add Cix Technology Vendor and Device ID
+Message-ID: <20250815142705.GA377241@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
+In-Reply-To: <aJ6qTdA1f21SAr_l@nchen-desktop>
 
-On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
-> On 11/08/2025 07.18, Christian Brauner wrote:
-> > On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
-> >> Christoph suggested that the explicit _GPL_ can be dropped from the
-> >> module namespace export macro, as it's intended for in-tree modules
-> >> only. It would be possible to restrict it technically, but it was
-> >> pointed out [2] that some cases of using an out-of-tree build of an
-> >> in-tree module with the same name are legitimate. But in that case those
-> >> also have to be GPL anyway so it's unnecessary to spell it out in the
-> >> macro name.
-> >>
-> >> [...]
+On Fri, Aug 15, 2025 at 11:32:29AM +0800, Peter Chen wrote:
+> On 25-08-14 17:23:58, Bjorn Helgaas wrote:
+> > On Wed, Aug 13, 2025 at 12:23:27PM +0800, hans.zhang@cixtech.com wrote:
+> > > From: Hans Zhang <hans.zhang@cixtech.com>
+> > >
+> > > Add Cixtech P1 (internal name sky1) as a vendor and device ID for PCI
+> > > devices. This ID will be used by the CIX Sky1 PCIe host controller driver.
+> > >
+> > > Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> > > ---
+> > >  include/linux/pci_ids.h | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> > > index 92ffc4373f6d..24b04d085920 100644
+> > > --- a/include/linux/pci_ids.h
+> > > +++ b/include/linux/pci_ids.h
+> > > @@ -2631,6 +2631,9 @@
+> > >
+> > >  #define PCI_VENDOR_ID_CXL            0x1e98
+> > >
+> > > +#define PCI_VENDOR_ID_CIX            0x1f6c
+> > > +#define PCI_DEVICE_ID_CIX_SKY1               0x0001
 > > 
-> > Ok, so last I remember we said that this is going upstream rather sooner
-> > than later before we keep piling on users. If that's still the case I'll
-> > take it via vfs.fixes unless I hear objections.
+> > I only see these used once in this series, so they probably should be
+> > defined in the file that uses them, per the comment at the top of this
+> > file.
+> > 
+> > Also, https://pcisig.com/membership/member-companies?combine=0x1f6c
+> > doesn't show 0x1f6c as assigned to CIX.  That database often seems
+> > incomplete, but please double check to make sure the ID is actually
+> > reserved.
 > 
-> This used to go through Masahiro's kbuild tree. However, since he is not
-> available anymore [1] I think it makes sense that this goes through the modules
-> tree. The only reason we waited until rc1 was released was because of Greg's
-> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
-> ASAP.
+> Would you please check below:
+> https://pcisig.com/membership/member-companies?combine=1f6c
 
-At this point it would mean messing up all of vfs.fixes to drop it from
-there. So I'd just leave it in there and send it to Linus. Next time
-I know where it'll end up.
+Thanks, sorry if I've asked this before.  Searching that pcisig
+database always seems a little hit and miss.
+
+Bjorn
 
