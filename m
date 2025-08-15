@@ -1,134 +1,137 @@
-Return-Path: <linux-kernel+bounces-771427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C16B28700
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:15:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72D2B286FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F362E1C253E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B791717015B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763823D7F4;
-	Fri, 15 Aug 2025 20:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6492BE034;
+	Fri, 15 Aug 2025 20:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKanWDbV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArIU8Aly"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE56824A3;
-	Fri, 15 Aug 2025 20:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D81A9F9D;
+	Fri, 15 Aug 2025 20:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755288923; cv=none; b=QyWKDqmDNkZAzLlcKqTRBgapG1Mt+7wOoQOVRt2IzUwrG3pO5lFZpMsibjW8BDtxnwIRuNkQ3tSll0MIDrKQnvJ9iC96dnhALjqT+kZ14aGjThBlVcNLWsk+9d1zfQ+DyQRZKB3oIN87zmcqWMl9huRWdYYyzL9/VlDBPxXlE8M=
+	t=1755288851; cv=none; b=PLzb6hvXGCfkMU23OtZiozmcPbkYjHWh6l6wlAC+1YZvbcMouRvt4BHAV3p+gFexM3Y5EFAsKWqP6XwAo0/IAo1gBkm++7vJePGnQFu9wCIC2ASzIpXd5sq5f+bz0EqvE5Xz48NjbTr/WK69dc6DJLZj2aunl5YTvgPgaRXMx18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755288923; c=relaxed/simple;
-	bh=Mm4Y+rNMaulQFt94lvcOhS0cSRTfwAy8PMf9MYOmQ1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZeeQT+1jEeNbIikF8Prj6SESMcvJxNnT/m64zpvBuIAzsp5yhPZ2M7IFLsyLwTIYIp/e5SRAyllEsDUvlpPvkINzTs2fHPXRpu6n8SXK2AEvnrF90ImMuyrCWjQngvMK4iHB0YGl2z3VWEYjv8QCWs25u8rtWzrN4LkKWoLQCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKanWDbV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CDCC4CEEB;
-	Fri, 15 Aug 2025 20:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755288923;
-	bh=Mm4Y+rNMaulQFt94lvcOhS0cSRTfwAy8PMf9MYOmQ1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKanWDbV6UFcB6rPzmgqEaP0FJj0cX4+5DS9ft/TjeXfiCbPDJoA3jGUWJxPk7aUz
-	 /3TOjOq86wtKlWk96Z76KFh58EjyZN+aHgr09Jgggwl9i8Vz125jqxEPmvkU+4R9gK
-	 ftEP6j+UlOeKY92vdFqqYPwwQNyClVt5oWArlh6TaI06JYBCFxX7Zcw/TzOC1yf/7m
-	 b0c8Qaq8OxNhAj79EfoErqH6AizJTNqwiiR/zzyArjPhaWLGuc/sIUgP5OJk/uJlGQ
-	 zz/FUCGS70z+5YfRBn13Wpjq8OqO/ukt8pOZOGlK0037ZSNuIgQc6FQp0fPRuKHpFC
-	 sTAQFrf6S8RUA==
-Date: Fri, 15 Aug 2025 13:15:21 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
-Message-ID: <aJ-VWevppm9Srjmr@google.com>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1755288851; c=relaxed/simple;
+	bh=OVuyTG5nhwMFG0/VcvCQJLlP8ZSEufOwxgfWizbedKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLDVhtLXsL+vset3x5EczSaNc+v/JGCALtBleQOkcB9wxq08DrZWQN/1BP9uF4Zdg33ptnZdx5csj9enCd2IlJq/HfLLBFTtnuyjBssAVdD2sWE9RSSnQbPlq5FuiPuZtKHjEAKok3n7G2OJZK0yBkIyAci85HA7JX873qum/Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArIU8Aly; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78d5dcbso330894966b.1;
+        Fri, 15 Aug 2025 13:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755288848; x=1755893648; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=COhSb7HrWWdD2eumi5rQzVn0swC6LORO2wNxh+3c4p4=;
+        b=ArIU8AlyDKsx8zmTMmcNkjD5PvCxGF8qwz1bgHh38OfiEO1BYbsQ3Xm6UOa6r52s4E
+         WVJR7DhsPPVA8S0NTaoCwTdYCI1050rsB4iUwuXSZyfPD84kdqKm7rOkaK0l50+i+VYc
+         x3J9wo1+fGBw/OkWRR3L8ciUHci/jj6mZTcjVtwA/yIMqAtXvYf4WvIuXnezAIgi3Tre
+         wbwJQXQmCXc41Um4cW5KrU4q42UK6qTHV+g+7fAG7T3fmGaPA04d3nH/Ye3vI2kZuqSv
+         yR9vFHamNvY7Ksi91AJLF0Dnbji1JVdiMsM+wdxRiFp50jWV99ODFjqG01OdHPOMdgEE
+         +IOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755288848; x=1755893648;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=COhSb7HrWWdD2eumi5rQzVn0swC6LORO2wNxh+3c4p4=;
+        b=vkGVMRPbEr82nnCjhju88peGK22XEHjJR7FxPhClWE2hkZ0dY+u0BZZcw2B94KOJXx
+         ERTmHyACHD5XhKPC70iAdVGHJ9UN0MU+Bvys6MML4q1fTHYoVWt0WKWojHd8Bkp583Z+
+         L0fzazN85L/W4scJK9XgU2v35VD5JzsG2Wb8zTAbv2q/kDBGfh/7fUYj7ogifkG1ERka
+         en0hBFfT88hfuPeeyF1tDTYHH1aHPfgGnobzoCjCo+SK19wPSyg9zZrQIe2SEDpbrCjO
+         +FHpUkoQpWLC2HDU7vukf23EOls1t25VKuBp40wdXMnRkMNl3ZdCcMi1LOaT7FNEGc9S
+         Qc1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBFLVonyk8IF8D8uTrGV/KZqRJYzo4sueRxvKJ4pBNF61pXYogxhDkFO1FvJOPfH5oDo4hspVe@vger.kernel.org, AJvYcCWsKx7mb0xbFylgT5y7G5LFNSK4dFGhJo8h7i4nVFi+ZjhwT7BJRVlWV/VsZKPkAwl77vu55Z+xtxX01YE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ8dKAyp0WXBlEgkupuL1D+ZRO4Vax1A/o4uHNlbIFj4OknDd3
+	INu4GoLDndLpUtzxAH+nKkUnV26i2ra1hgvNIqzjbFolsp5ttswmsWeK
+X-Gm-Gg: ASbGncvpUvh2Lf2KmjC5O/uB6scTWLULhJScK83dEIY5xKmhdEbNHPqT+15P9r6Ra9U
+	tLGXuQ36PyyET7EjAQZU9/7iJhu5V/P/10JQFe0F7CfYrkSrChIjetfxuSFHc6B3yEFWk3JQ6pL
+	6eXH4QhRyifp/0dqEVzDTH7EpOEdsvfpWnBo/7qlf2ERazX6WiwQxTPGVKdj36ndqZ99ePBMblD
+	poDwEn4w5FQJ9dK/KxHNHMzi1RRkpZwUBMJ6ZrQp1HnNwf7kGx7uIrWxwRNYKAE+rRCo95EnXWJ
+	zL3xGQzCwRB6ESv2c68vmPgXro4CH/awa3H4706GLG9sCqKIcChtUzpc2QZuFetcBQZQMAqe48U
+	mN+p1KG+hWLjIBP8VlN8zcLtGcl/+teqA
+X-Google-Smtp-Source: AGHT+IGhaqijyQFoFzM8w64aYLTtJpGY+cHcW4Cpo+Dh+QYVANebZy8fOXOSzUZWqeSyiZ4t4U8Z5g==
+X-Received: by 2002:a17:907:60d6:b0:ae3:4f99:a5aa with SMTP id a640c23a62f3a-afcdc206232mr313713966b.4.1755288847938;
+        Fri, 15 Aug 2025 13:14:07 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.132.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfcb2d1sm207666766b.62.2025.08.15.13.14.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 13:14:07 -0700 (PDT)
+Message-ID: <ac041a47-98b1-4fac-86d7-487421b939e9@gmail.com>
+Date: Fri, 15 Aug 2025 21:15:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 00/24] Per queue configs and large rx buffer support for
+ zcrx
+To: Dragos Tatulea <dtatulea@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
+ netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, Willem de Bruijn
+ <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, ap420073@gmail.com, linux-kernel@vger.kernel.org
+References: <cover.1754657711.git.asml.silence@gmail.com>
+ <ul2vfq7upoqwoyop7mhznjmsjau7e4ei2t643gx7t7egoez3vn@lhnf5h2dpeb5>
+ <dbd3784b-2704-4628-9e48-43b17b4980b1@gmail.com>
+ <rekaw6n6fsfkh46tbkyms47wjf7cdllwsihpsvp46bcrhxsxp4@ytymllzp72u6>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <rekaw6n6fsfkh46tbkyms47wjf7cdllwsihpsvp46bcrhxsxp4@ytymllzp72u6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 01:55:40PM +0800, Dapeng Mi wrote:
-> his patch-set fixes perf kvm commands issues, like missed memory
-> allocation check/free, out of range memory access and especially the
-> issue that fails to sample guest with "perf kvm record/top" commands on
-> Intel platforms.
-> 
-> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
->  default event") changes to use PEBS event to do sampling by default
-> including guest sampling. This breaks host to sample guest with commands
-> "perf kvm record/top" on Intel platforms.
-> 
-> Since the change "KVM: x86/pmu: Add basic support to enable guest PEBS
->  via DS"[1] starts, host loses the capability to sample guest with PEBS
-> since all PEBS related MSRs are switched to guest value after vm-entry,
-> like IA32_DS_AREA MSR is switched to guest GVA at vm-entry. This leads
-> to PEBS events can't be used to sample guest by host, otherwise no guest
-> PEBS records can be really sampled. The patches 5-6/6 fix this issue by
-> using "cycles" event instead of PEBS event "cycles:P" to sample guest on
-> Intel platforms.
-> 
-> Changes:
->   v1 -> v2:
->   * Free memory allocated by strdup().
->   * Check "--pfm-events" in kvm_add_default_arch_event() as well.
->   * Opportunistically fix the missed memory allocation and free issue in
->     builtin-kwork.
->   * Comments refine. 
-> 
-> 
-> Tests:
->   * Run command "perf kvm record -a && perf kvm report" and "perf kvm
->     top" on Intel Sapphire Rapids platform, guest records can be
->     captured successfully.
->   * Since no powerpc platforms on hand, doesn't check the patches on
->     powerpc. Any test on powerpc is appreciated.
-> 
-> Ref:
->   [1] https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/
-> 
-> 
-> Dapeng Mi (6):
->   perf tools kvm: Add missed memory allocation check and free
->   perf tools kwork: Add missed memory allocation check and free
->   perf tools kvm: Fix the potential out of range memory access issue
->   perf tools: Add helper x86__is_intel_cpu()
->   perf tools kvm: Use "cycles" to sample guest for "kvm record" on Intel
->   perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
+On 8/15/25 17:44, Dragos Tatulea wrote:
+> On Thu, Aug 14, 2025 at 11:46:35AM +0100, Pavel Begunkov wrote:
+...>> "-A1" here is for using huge pages, so don't forget to configure
+>> /proc/sys/vm/nr_hugepages.
+>>
+>> # client
+>> examples/send-zerocopy -6 tcp -D <ip addr> -p <port>
+>>                         -t <runtime secs>
+>>                         -l -b1 -n1 -z1 -d -s<send size>
+>>
+> Thanks a lot for the branch and the instructions Pavel! I am playing
+> with them now and seeing some preliminary good results. Will post
+> them once we share the patches.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Sounds good
 
-Thanks,
-Namhyung
+>> I had to play with the client a bit for it to keep up with
+>> the server. "-l" enables huge pages, and had to bump up the
+>> send size. You can also add -v to both for a basic payload
+>> verification.
+>>
+> I see what you mean. I also had to make the rx memory larger once
 
-> 
->  tools/perf/arch/x86/util/kvm-stat.c |  51 +++++++++++
->  tools/perf/builtin-kvm.c            | 130 ++++++++++++++++++++--------
->  tools/perf/builtin-kwork.c          |  27 ++++--
->  tools/perf/util/env.c               |  22 +++++
->  tools/perf/util/env.h               |   2 +
->  tools/perf/util/kvm-stat.h          |  10 +++
->  6 files changed, 203 insertions(+), 39 deletions(-)
-> 
-> 
-> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
-> -- 
-> 2.34.1
-> 
+Forgot to mention that the tool doesn't consider CPU affinities,
+so I had to configure task and irq affinities by hand.
+
+> rx-buf-len >= 32K. Otherwise the traffic was hanging after a second or
+> so. This is probably related to the currently known issue where if a
+> page_pool is too small due to incorrect sizing of the buffer, mlx5 hangs
+> on first refill. That still needs fixing.
+
+-- 
+Pavel Begunkov
+
 
