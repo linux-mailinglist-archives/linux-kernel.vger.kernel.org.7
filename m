@@ -1,162 +1,240 @@
-Return-Path: <linux-kernel+bounces-770811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19100B27F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C643B27F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE971CE4BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1177F1CE8A26
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42597287265;
-	Fri, 15 Aug 2025 11:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZbo72NX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B332F90C7;
+	Fri, 15 Aug 2025 11:33:16 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE2224466C;
-	Fri, 15 Aug 2025 11:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216C9285CA6;
+	Fri, 15 Aug 2025 11:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257548; cv=none; b=XMmVmoAE3OQ8m5QhsF/wQYFA1R5WUiFy1jMqTJHXoBBGq7P9q70i+0FEtgqlz00DxYYetxfogKUGv/WmuwJEXojqe0a5k+Wg/pJqnfhKNp7WL0H6Df/ehimJ2VfI3ho0saWuGzz9pPN6nmH7Fb1YO4d0SfVGhaX8QK7u2wBNIsc=
+	t=1755257595; cv=none; b=CQCycjiIFdr7L51ukqsEfcq8kBlwFwxs7Ah5MLPN0e3IlvD0rZ94A08MRMPCqRoppmykZrmu3l+jxWVxyg6g2PB121OKcxJOoeEhhpUryCb/xZZPfomrRSIrFqmGIduWPnkSKksF21BQG2CPRU+GzFNIMvGbR7KxKYtcSx7VJyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257548; c=relaxed/simple;
-	bh=l2mefawQlsuZdyigHB0Y5oDct27lMf5ynCTq6Z52qlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmnZdsq3whTk6eOIksMnte+gkpOAZpcooOc5V0PoAXEFgRaecWKwad484MPW/ZZVBpyrMMdaaS7NpGNSg5/Zl8omi3TiZwU4sG0IdEVPzwVk2ZW5la+nlZ0CS+4r4G5eqA+ODKRlbAUSrM4SdPpS1KU+iAGL3V7T3tSHFUyTfX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZbo72NX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755257547; x=1786793547;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l2mefawQlsuZdyigHB0Y5oDct27lMf5ynCTq6Z52qlE=;
-  b=aZbo72NXLgCbVzRZ2/3SMywtCSY5qDKt0LOWFcgSkK7pXj+yF5DRCmZC
-   OZ7PQnDaG83Xx3iHqbe/Fb9ePt/qbQpJeHHvFMC8VNZTYWOvBjbfqD28O
-   7C8O51F8CzXqdImsWEm1qqyIQP/IdZ455v+YuaDXT/AIfILxG8qR3SD9y
-   rHhM7oDwb9ak0jmdwbJty00czQ5dwD99K9NJMxkEK45kfKhah8or3VxCY
-   7OOpyLZnrXS/9nPRBKZIkGOsw/qGc452EDyugp9j0u93wbG4M0USQeo7H
-   frzw//r3WG4s5hV6QRrD+7bIbaBBgMXmo2az8FcQ7uwHd4YCNaaNuqWz6
-   g==;
-X-CSE-ConnectionGUID: +vQeLbjoSXu7N5+P6yjLKA==
-X-CSE-MsgGUID: m0ds6bi4SOewJd34Afll/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="60206412"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="60206412"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 04:32:26 -0700
-X-CSE-ConnectionGUID: HeACYR4lTB6BD+CZwbus5Q==
-X-CSE-MsgGUID: YpBAb1a/TCCJ1DUCYTHx/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="190709485"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Aug 2025 04:32:23 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umsfU-000Buw-2p;
-	Fri, 15 Aug 2025 11:32:20 +0000
-Date: Fri, 15 Aug 2025 19:31:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
-Subject: Re: [PATCH v4 6/9] iio: imu: inv_icm45600: add I2C driver for
- inv_icm45600 driver
-Message-ID: <202508151941.BweGaEVT-lkp@intel.com>
-References: <20250814-add_newport_driver-v4-6-4464b6600972@tdk.com>
+	s=arc-20240116; t=1755257595; c=relaxed/simple;
+	bh=sNIZoIZfS2w5CLOuw0MqduQTL+xYkQ//GpdGIbEaXSM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MrlAVL3EYLXsx0QuFv/Zvyy0Su05n4k9DvQ6vCAknOEL+noqcJqwhKwAU/HmWlAA94qDEh/ugOL04azoyiuhg4NMes2gFVripb2BuhD3f7D8QYp4rnyGUyi9VB0X/e8F2ELwrhDVft+9i1IbDMcb5hQw7jZGV5Zjlzk7n6pqdhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c3KfQ60rmz6H7hy;
+	Fri, 15 Aug 2025 19:30:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BF57F1402E9;
+	Fri, 15 Aug 2025 19:33:09 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Aug
+ 2025 13:33:08 +0200
+Date: Fri, 15 Aug 2025 12:33:07 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Koichi Okuno <fj2767dz@fujitsu.com>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
+	Gowthami Thiagarajan <gthiagarajan@marvell.com>, Linu Cherian
+	<lcherian@marvell.com>, Robin Murphy <robin.murphy@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, Bjorn Andersson
+	<quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Konrad Dybcio
+	<konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "=?ISO-8859-1?Q?N=EDcolas?= \"F. R. A. Prado\""
+	<nfraprado@collabora.com>, Thomas Gleixner <tglx@linutronix.de>, "Peter
+ Zijlstra" <peterz@infradead.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/2] perf: Fujitsu: Add the Uncore MAC PMU driver
+Message-ID: <20250815123307.000032db@huawei.com>
+In-Reply-To: <20250815034751.3726963-2-fj2767dz@fujitsu.com>
+References: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
+	<20250815034751.3726963-2-fj2767dz@fujitsu.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814-add_newport_driver-v4-6-4464b6600972@tdk.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Remi,
+On Fri, 15 Aug 2025 12:47:28 +0900
+Koichi Okuno <fj2767dz@fujitsu.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> This adds a new dynamic PMU to the Perf Events framework to program and
+> control the Uncore MAC PMUs in Fujitsu chips.
+> 
+> This driver was created with reference to drivers/perf/qcom_l3_pmu.c.
+> 
+> This driver exports formatting and event information to sysfs so it can
+> be used by the perf user space tools with the syntaxes:
+> 
+> perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+> perf stat -e mac_iod0_mac0_ch0/event=0x80/ ls
+> 
+> FUJITSU-MONAKA PMU Events Specification v1.1 URL:
+> https://github.com/fujitsu/FUJITSU-MONAKA
+> 
+> Signed-off-by: Koichi Okuno <fj2767dz@fujitsu.com>
 
-[auto build test WARNING on f8f559752d573a051a984adda8d2d1464f92f954]
+Hi, just one slight doubt inline around interrupt affinities.
+I can't quite remember what breaks when those don't move with the
+perf state and so can't immediately see if relevant here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Remi-Buisson-via-B4-Relay/dt-bindings-iio-imu-Add-inv_icm45600/20250814-170722
-base:   f8f559752d573a051a984adda8d2d1464f92f954
-patch link:    https://lore.kernel.org/r/20250814-add_newport_driver-v4-6-4464b6600972%40tdk.com
-patch subject: [PATCH v4 6/9] iio: imu: inv_icm45600: add I2C driver for inv_icm45600 driver
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250815/202508151941.BweGaEVT-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151941.BweGaEVT-lkp@intel.com/reproduce)
+Anyhow, if that is resolved (either by you saying it's definitely
+not an issue) or adding the irq_set_affinity() calls, then
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508151941.BweGaEVT-lkp@intel.com/
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-All warnings (new ones prefixed by >>):
+Jonathan
 
->> drivers/iio/imu/inv_icm45600/inv_icm45600_core.c:908:12: warning: result of comparison of constant 32768 with expression of type 's16' (aka 'short') is always false [-Wtautological-constant-out-of-range-compare]
-     908 |         if (*temp == INV_ICM45600_DATA_INVALID)
-         |             ~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/imu/inv_icm45600/inv_icm45600_core.c:785:12: warning: unused function 'inv_icm45600_suspend' [-Wunused-function]
-     785 | static int inv_icm45600_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~
-   drivers/iio/imu/inv_icm45600/inv_icm45600_core.c:820:12: warning: unused function 'inv_icm45600_resume' [-Wunused-function]
-     820 | static int inv_icm45600_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~
-   drivers/iio/imu/inv_icm45600/inv_icm45600_core.c:860:12: warning: unused function 'inv_icm45600_runtime_suspend' [-Wunused-function]
-     860 | static int inv_icm45600_runtime_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/imu/inv_icm45600/inv_icm45600_core.c:879:12: warning: unused function 'inv_icm45600_runtime_resume' [-Wunused-function]
-     879 | static int inv_icm45600_runtime_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   5 warnings generated.
+> diff --git a/drivers/perf/fujitsu_mac_pmu.c b/drivers/perf/fujitsu_mac_pmu.c
+> new file mode 100644
+> index 000000000000..1031e0221bb2
+> --- /dev/null
+> +++ b/drivers/perf/fujitsu_mac_pmu.c
+> @@ -0,0 +1,552 @@
+
+> +#define MAC_EVENT_CYCLES                        0x000
+Maybe drop the lading 0 on all these values? 0x00
+etc as we don't go beyond 0xa0
+
+> +#define MAC_EVENT_READ_COUNT                    0x010
+> +#define MAC_EVENT_READ_COUNT_REQUEST            0x011
+> +#define MAC_EVENT_READ_COUNT_RETURN             0x012
+> +#define MAC_EVENT_READ_COUNT_REQUEST_PFTGT      0x013
+> +#define MAC_EVENT_READ_COUNT_REQUEST_NORMAL     0x014
+> +#define MAC_EVENT_READ_COUNT_RETURN_PFTGT_HIT   0x015
+> +#define MAC_EVENT_READ_COUNT_RETURN_PFTGT_MISS  0x016
+> +#define MAC_EVENT_READ_WAIT                     0x017
+> +#define MAC_EVENT_WRITE_COUNT                   0x020
+> +#define MAC_EVENT_WRITE_COUNT_WRITE             0x021
+> +#define MAC_EVENT_WRITE_COUNT_PWRITE            0x022
+> +#define MAC_EVENT_MEMORY_READ_COUNT             0x040
+> +#define MAC_EVENT_MEMORY_WRITE_COUNT            0x050
+> +#define MAC_EVENT_MEMORY_PWRITE_COUNT           0x060
+> +#define MAC_EVENT_EA_MAC                        0x080
+> +#define MAC_EVENT_EA_MEMORY                     0x090
+> +#define MAC_EVENT_EA_MEMORY_MAC_WRITE           0x092
+> +#define MAC_EVENT_EA_HA                         0x0a0
+> +
+> +struct mac_pmu {
+> +	struct pmu		pmu;
+> +	struct hlist_node	node;
+> +	void __iomem		*regs;
+> +	struct perf_event	*events[MAC_NUM_COUNTERS];
+> +	unsigned long		used_mask[BITS_TO_LONGS(MAC_NUM_COUNTERS)];
+> +	cpumask_t		cpumask;
+> +};
+
+> +static void fujitsu_mac_counter_update(struct perf_event *event)
+> +{
+> +	struct mac_pmu *macpmu = to_mac_pmu(event->pmu);
+> +	int idx = event->hw.idx;
+> +	u64 prev, new;
+> +
+> +	do {
+> +		prev = local64_read(&event->hw.prev_count);
+> +		new = readq_relaxed(macpmu->regs + MAC_PM_EVCNTR(idx));
+> +	} while (local64_cmpxchg(&event->hw.prev_count, prev, new) != prev);
+> +
+> +	local64_add(new - prev, &event->count);
+> +}
 
 
-vim +908 drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
 
-8891b99381240f Remi Buisson 2025-08-14  887  
-2570c7e48ace35 Remi Buisson 2025-08-14  888  static int _inv_icm45600_temp_read(struct inv_icm45600_state *st, s16 *temp)
-2570c7e48ace35 Remi Buisson 2025-08-14  889  {
-2570c7e48ace35 Remi Buisson 2025-08-14  890  	struct inv_icm45600_sensor_conf conf = INV_ICM45600_SENSOR_CONF_KEEP_VALUES;
-2570c7e48ace35 Remi Buisson 2025-08-14  891  	int ret;
-2570c7e48ace35 Remi Buisson 2025-08-14  892  
-2570c7e48ace35 Remi Buisson 2025-08-14  893  	/* Make sure a sensor is on. */
-2570c7e48ace35 Remi Buisson 2025-08-14  894  	if (st->conf.gyro.mode == INV_ICM45600_SENSOR_MODE_OFF &&
-2570c7e48ace35 Remi Buisson 2025-08-14  895  	    st->conf.accel.mode == INV_ICM45600_SENSOR_MODE_OFF) {
-2570c7e48ace35 Remi Buisson 2025-08-14  896  		conf.mode = INV_ICM45600_SENSOR_MODE_LOW_POWER;
-2570c7e48ace35 Remi Buisson 2025-08-14  897  		ret = inv_icm45600_set_accel_conf(st, &conf, NULL);
-2570c7e48ace35 Remi Buisson 2025-08-14  898  		if (ret)
-2570c7e48ace35 Remi Buisson 2025-08-14  899  			return ret;
-2570c7e48ace35 Remi Buisson 2025-08-14  900  	}
-2570c7e48ace35 Remi Buisson 2025-08-14  901  
-2570c7e48ace35 Remi Buisson 2025-08-14  902  	ret = regmap_bulk_read(st->map, INV_ICM45600_REG_TEMP_DATA,
-2570c7e48ace35 Remi Buisson 2025-08-14  903  				&st->buffer.u16, sizeof(st->buffer.u16));
-2570c7e48ace35 Remi Buisson 2025-08-14  904  	if (ret)
-2570c7e48ace35 Remi Buisson 2025-08-14  905  		return ret;
-2570c7e48ace35 Remi Buisson 2025-08-14  906  
-2570c7e48ace35 Remi Buisson 2025-08-14  907  	*temp = (s16)le16_to_cpup(&st->buffer.u16);
-2570c7e48ace35 Remi Buisson 2025-08-14 @908  	if (*temp == INV_ICM45600_DATA_INVALID)
-2570c7e48ace35 Remi Buisson 2025-08-14  909  		return -EINVAL;
-2570c7e48ace35 Remi Buisson 2025-08-14  910  
-2570c7e48ace35 Remi Buisson 2025-08-14  911  	return 0;
-2570c7e48ace35 Remi Buisson 2025-08-14  912  }
-2570c7e48ace35 Remi Buisson 2025-08-14  913  
+> +static int fujitsu_mac_pmu_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct acpi_device *acpi_dev;
+> +	struct mac_pmu *macpmu;
+> +	struct resource *memrc;
+> +	char *name;
+> +	int ret;
+> +	u64 uid;
+> +
+> +	acpi_dev = ACPI_COMPANION(dev);
+> +	if (!acpi_dev)
+> +		return -ENODEV;
+> +
+> +	ret = acpi_dev_uid_to_integer(acpi_dev, &uid);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "unable to read ACPI uid\n");
+> +
+> +	macpmu = devm_kzalloc(dev, sizeof(*macpmu), GFP_KERNEL);
+> +	if (!macpmu)
+> +		return -ENOMEM;
+> +
+> +	name = devm_kasprintf(dev, GFP_KERNEL, "mac_iod%llu_mac%llu_ch%llu",
+> +			      (uid >> 8) & 0xF, (uid >> 4) & 0xF, uid & 0xF);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	macpmu->pmu = (struct pmu) {
+> +		.parent		= dev,
+> +		.task_ctx_nr	= perf_invalid_context,
+> +
+> +		.pmu_enable	= fujitsu_mac__pmu_enable,
+> +		.pmu_disable	= fujitsu_mac__pmu_disable,
+> +		.event_init	= fujitsu_mac__event_init,
+> +		.add		= fujitsu_mac__event_add,
+> +		.del		= fujitsu_mac__event_del,
+> +		.start		= fujitsu_mac__event_start,
+> +		.stop		= fujitsu_mac__event_stop,
+> +		.read		= fujitsu_mac__event_read,
+> +
+> +		.attr_groups	= fujitsu_mac_pmu_attr_grps,
+> +		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+> +	};
+> +
+> +	macpmu->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &memrc);
+> +	if (IS_ERR(macpmu->regs))
+> +		return PTR_ERR(macpmu->regs);
+> +
+> +	fujitsu_mac__init(macpmu);
+> +
+> +	ret = platform_get_irq(pdev, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = devm_request_irq(dev, ret, fujitsu_mac__handle_irq, 0,
+> +			       name, macpmu);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+It's been a while since I wrote a perf driver, but I'm a bit surprised to not
+see irq affinity management in here.  I remember running into issues with
+per cpu variables deep in perf when we didn't ensure the perf state and
+the irq remain on the same cpu core.  
+
+There might be something different here though.
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Request for IRQ failed for slice @%pa\n",
+> +				     &memrc->start);
+> +
+> +	/* Add this instance to the list used by the offline callback */
+> +	ret = cpuhp_state_add_instance(mac_pmu_cpuhp_state, &macpmu->node);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Error registering hotplug");
+> +
+> +	ret = perf_pmu_register(&macpmu->pmu, name, -1);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to register MAC PMU\n");
+> +
+> +	dev_dbg(dev, "Registered %s, type: %d\n", name, macpmu->pmu.type);
+> +
+> +	return 0;
+> +}
+
 
