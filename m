@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-770546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF64DB27C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADC3B27C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87375B02B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2D93B8458
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFD429C341;
-	Fri, 15 Aug 2025 09:01:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5287D245022;
-	Fri, 15 Aug 2025 09:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA25259CB2;
+	Fri, 15 Aug 2025 09:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sEz3ybu3"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0F120C469
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248518; cv=none; b=XSIFqXrYyPBfX1lXY2FywvvnBpr0DZWvN+dbQbKfyrc3/9GF9R1ZNwkbMpUmzRSKbFlz0V0BOGtxWdKtPHABgQ6BlD3GPXMX3BZbIfjyyT3f95i2HbNzl8VW88iB1kFaQSTTnyyB798gCYo0E5FLWR4BKISCEdRGFUoXFxlWd7Q=
+	t=1755248613; cv=none; b=a4G0lI59bcKZyAyV0a4Aqzqpat5uW4S5+/LiBnaFl6c8N4pej6lBJsVHycg96CdVl/RTPIZmkZzrgo4jGbZ9C8Bmg31BB726tOdHOLcAUGmVA/mzIrWgAaXDnicBTEaBMEJPbimWPerxslhEQ0iuCp5VojJreUIWwaxQ1YrZljM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248518; c=relaxed/simple;
-	bh=4nhuPMpQH1XDW7lT9b2rrcPbTF2+KzidHExpR5owANk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cjq56OY+DzNsG9MXswQwsD39Ir2+NQzUVvy0z7K194FGTZpQnTxZkHTF8Ptsv+q1S8gC7/sM6JHehAY6nitCEfnTlMMJ6EfUJ1JrOA0/hkOVoyhQYfJZSBkOy9o4QWDeSrh6QV/rqrSfABOH0fZVjeJEuNNFscwDcf6KbxRH2oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8DxzOJ5955oBjpAAQ--.55780S3;
-	Fri, 15 Aug 2025 17:01:45 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJBxD8Jx955oUrVNAA--.32978S2;
-	Fri, 15 Aug 2025 17:01:44 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH V4] init: Handle bootloader identifier in kernel parameters
-Date: Fri, 15 Aug 2025 17:01:20 +0800
-Message-ID: <20250815090120.1569947-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1755248613; c=relaxed/simple;
+	bh=5A1pHi5q147zdLtCh1MvpigZUxlgTHZvMdjlqbARl8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YCgWso89CGyCxp76cSy65PEkKB521r5DLL8uphxJERry5HcWUJMAGOUBbo3FEhYPmBjoJFDtXiLV5EtHXtj4kLtjl9x32yekyPtLPn+VLJCo6+K+G2MDLTvMkjHv0MfXQOtg20pshdtrI2d5xSDFsVyxlSAP6n3eJ511BZ0OoX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sEz3ybu3; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755248606; x=1755853406; i=markus.elfring@web.de;
+	bh=5A1pHi5q147zdLtCh1MvpigZUxlgTHZvMdjlqbARl8M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sEz3ybu3jwwAb0XUplW2LhdC6sWAy7uWvqRFxP63436Z6AA3toS3R3yYxIxbauw4
+	 tG4QOxNlX3mIl6ymIKXUn7HLjEN/bXRrUqm+ydVf+mg6qC8hC+nCTA/afN59oOIEE
+	 Qxvh/5AEerwsyMu89TJ+b+Y9Zb5ujaGZUjEpngykmzHJBt4Ox4OfASCF+vq/11Ufp
+	 IZYqq2z8WZl/gWvRTu5xadmuOPvXF2MVSeMWWSX6cXv+/BwkdkzCohzEaNeNen7Za
+	 pbr4BMGvAsWjpHDbzPirgXNsYdf9iTzwAsgRBEisc5tQlxqduMAJ/6YCYSfTFjquL
+	 y5xdCtY3hTuI2WUGhA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.211]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MumJF-1uUl811FMx-00r7VW; Fri, 15
+ Aug 2025 11:03:26 +0200
+Message-ID: <6fa2678f-5c50-4abd-96af-1f6c4039185c@web.de>
+Date: Fri, 15 Aug 2025 11:03:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxD8Jx955oUrVNAA--.32978S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tw4fCr1rCFW3GF1xXr17XFc_yoW8Kw1xpF
-	Z7tr9xWaykGws8Cw48Wr4vga4Sywn3Aa17JanrWanxXFn0qFy0v3yftF1agas3trWfKF42
-	gF1DZF10k3W7CFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
-	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
-	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
-	0xZFpf9x07jepB-UUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] iommu/riscv: prevent NULL deref in iova_to_phys
+To: XianLiang Huang <huangxianliang@lanxincomputing.com>,
+ iommu@lists.linux.dev, linux-riscv@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Tomasz Jeznach <tjeznach@rivosinc.com>,
+ Will Deacon <will@kernel.org>
+References: <20250815071244.13982-1-huangxianliang@lanxincomputing.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250815071244.13982-1-huangxianliang@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sTW5AmiB7XhDP3iS9aklFSXqPQEy19gNJKR6cnP5t6/o98sWblq
+ eUAfXYIjP90puyqxTD+0qswGmGvsuHu9NQAV6ncw69XGB1BIQ4/Gb4PiqUDOlMryH792zt7
+ 30UCn2VJOTKEnfmzGbbcxWoa2szMfKir4/vs9Y4vafGTA4SkDfdxbWqPPxnkZnkGSi3E3zZ
+ BW2xwFhfW/KtDK74LWz1A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RBNmF5uF59M=;fYcJ2vMRYVFfZsW0pZHMsR3J2+n
+ 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
+ weIwujT8ZP9eEVW0dXS10zeyXRUZ69K0ca2QF
 
-BootLoader (Grub, LILO, etc) may pass an identifier such as "BOOT_IMAGE=
-/boot/vmlinuz-x.y.z" to kernel parameters. But these identifiers are not
-recognized by the kernel itself so will be passed to user space. However
-user space init program also doesn't recognized it.
+=E2=80=A6> riscv_iommu_iova_to_phys() failed to handle NULL returns. Fix b=
+y adding NULL
+> check before dereferencing and returning 0 for invalid iova.
+=E2=80=A6> ---
+> Changes
+> v3:
+> - Remove redundant pte validation in riscv_iommu_iova_to_phys
+> - Improve subject line to emphasize prevention
+=E2=80=A6
 
-KEXEC/KDUMP (kexec-tools) may also pass an identifier such as "kexec" on
-some architectures.
+Repetition:
+https://lore.kernel.org/lkml/effb29be-6d14-47e5-ab71-454119467750@web.de/
 
-We cannot change BootLoader's behavior, because this behavior exists for
-many years, and there are already user space programs search BOOT_IMAGE=
-in /proc/cmdline to obtain the kernel image locations:
+Would a summary phrase like =E2=80=9CPrevent null pointer dereference in r=
+iscv_iommu_iova_to_phys()=E2=80=9D
+be nicer anyhow?
 
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
-(search getBootOptions)
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
-(search getKernelReleaseWithBootOption)
-
-So the the best way is handle (ignore) it by the kernel itself, which
-can avoid such boot warnings (if we use something like init=/bin/bash,
-bootloader identifier can even cause a crash):
-
-Kernel command line: BOOT_IMAGE=(hd0,1)/vmlinuz-6.x root=/dev/sda3 ro console=tty
-Unknown kernel command line parameters "BOOT_IMAGE=(hd0,1)/vmlinuz-6.x", will be passed to user space.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Update comments and commit messages.
-V3: Document bootloader identifiers.
-V4: Use strstarts() instead of strncmp().
-
- init/main.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/init/main.c b/init/main.c
-index 0ee0ee7b7c2c..9b5150166bcf 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -544,6 +544,12 @@ static int __init unknown_bootoption(char *param, char *val,
- 				     const char *unused, void *arg)
- {
- 	size_t len = strlen(param);
-+	/*
-+	 * Well-known bootloader identifiers:
-+	 * 1. LILO/Grub pass "BOOT_IMAGE=...";
-+	 * 2. kexec/kdump (kexec-tools) pass "kexec".
-+	 */
-+	const char *bootloader[] = { "BOOT_IMAGE=", "kexec", NULL };
- 
- 	/* Handle params aliased to sysctls */
- 	if (sysctl_is_alias(param))
-@@ -551,6 +557,12 @@ static int __init unknown_bootoption(char *param, char *val,
- 
- 	repair_env_string(param, val);
- 
-+	/* Handle bootloader identifier */
-+	for (int i = 0; bootloader[i]; i++) {
-+		if (strstarts(param, bootloader[i]))
-+			return 0;
-+	}
-+
- 	/* Handle obsolete-style parameters */
- 	if (obsolete_checksetup(param))
- 		return 0;
--- 
-2.47.3
-
+Regards,
+Markus
 
