@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-770906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3405AB28040
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD77EB28053
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E1AAA8B39
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079D7AE7EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E5F30148E;
-	Fri, 15 Aug 2025 13:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C172FE066;
+	Fri, 15 Aug 2025 13:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ZKhBZYzU"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ah4EJONy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DEA3019D0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DD42737FD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755262852; cv=none; b=La7Y7clZtmvUSjZbsXw7cglt+3ByF9Jvy67JYcxoxV5Chthf5S9htYNc4igLwxq+4YvqLQA5vxGtUtdpFz+rTy9f8Z7JuoefltpguAUpVZUlFjKcjiIK1SvVCZNN8aXP9kBOf/JHqYSiYeJUcCuwUrfiBQa2dDtMgatVf7lVZ7w=
+	t=1755262977; cv=none; b=AvqBTb1UEHpHP+WSvihSAZctByBCc/2kGx86+gNkGT+mbOdIbBMf3/M4QhZqM+7aGgmv+FRZyCGkuc7QRGI1qqPjxj+HWIwD/9I9hRTJ1+zb42Hc5Cz22eR4M8Nk1hBi//UVG2iZNIvzPu1IZq4dhXBVMYov/cwa6/o4CT9jTOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755262852; c=relaxed/simple;
-	bh=x9Yq5jrTzPbpV71DQp/TR2V6uI5f2sCjN5+3E/ZJ8KI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HEVF+jcn/A6U+XfZVNDvJWfUUJUWwzh4gmjLFDnVt9q+3f0FW7VEZaTjyY3HC9P/egLRwsd7jvT8rrleg0Bv/FLRu0Cnwan4uOXgYVWBMEHqEzj6Ut+UDG/8FptkZAjxmIi3FNt/sHAM9za+p3w8aVWaxqvWjFV70gBVj5z6n6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ZKhBZYzU; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce52ab898so2264327e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1755262849; x=1755867649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5aKJ6EuhxrNInhVNv1lAb8m/GnY8B+pF9rLGMgta08=;
-        b=ZKhBZYzU8cv61f1f36n0BFanIeal+DPFqIbffjOOjmW+d4z8Pr51LY4zAzCuL76Zsp
-         T+PpN1vt0JFd4gJwjJqemhSYr4d708J3GOKFcbQk2D1Nc+ESUrjIQE5q2GNlrycU4+je
-         dfrDHGDtZeUc893U263PYLn0TvsKfuzZlRJhmNEHvdZ8Fp/HXFF0xxltQEa9hT8HvRUo
-         NAJI51XmYno2ITvVuTnInyFkR3T8tOHzecCiXtMvPJe4TrIJBxqa63qtPItfjL4OfAuS
-         85NmKrQk6DROcX5n0qeWlQ3Akf0vUO2AGZNQYEJR0SidLBT9s8vQYyjhBvdfSKmUtQ7T
-         aw2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755262849; x=1755867649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M5aKJ6EuhxrNInhVNv1lAb8m/GnY8B+pF9rLGMgta08=;
-        b=JGmbMRaUJsbCiTyNro53we05Hjep7z1PO/YfqSOAZnz/m1p+BYHCpUNnArJKlcNJlI
-         RXDI2vZtzLO5FKLDVT4kRVC0C8EpnrAMlqItooLCPgT0dtLX0ldun3r6iMMF35cPp98G
-         PeiG3AhEVpY2tByYGYFaARVCS3Q9IWXTe6jAu8ARnqReaGPU5mApeelwdvLc5nlGYrPn
-         d1AIWgTQ3Acc9R8z0kvkX55LnVcBLCKHnlKmrOPRD3Clgz1QklbjMeH8pAVMhjHqyiyX
-         TCqiBY0H/nSptezlda4/VZa8utGTcmg1PykzVsGoOxciM20LTwQB+f5as7V8V1smHpcN
-         zZeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwaJflv7gPFXdj+Bw8MS6j/Ocz2bys3zF56MycYhCxoaGdCX2iPheHnEcioHW8fpVbicmhnG29GQM0UP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp89oa7HWEW6XuiDU1+NSpL7lwrKO1VDlW8Gs2BF4k5d6Q2c88
-	oICdsRhTo1rRFQXhZ+MgdD7DUbzjti2sQZu/r0Zuburn1VmZfTSqWHyTHWNH9sdBrVZlRcrY3FH
-	sJ4kxXNY0VkNgyX6Rr9zQPkxo/6SxBNzZ064ojY+02A==
-X-Gm-Gg: ASbGncuoFIoQce6weqNdjV/mZufj65LB6ROIHkwOynYTdZ3iblgthwxx6nwYH5C5zxf
-	ApJtb5vtF+OfNgiuMQD5syzpnLOwa7kolVouqk93aeNm0O/b44/WfvNu7x5p7wJx6H1XwSIbHVb
-	3bmL2ldalZcmwgor+NV176Mbc5BxDstVC7t1Ls+nFhWOeh2ywK6HdUDK64SGhEVXQmhD7Lu/yHY
-	R2OOe2xK+pecc7uYtze8DHjRg==
-X-Google-Smtp-Source: AGHT+IFNKOB1rrD+w7VKvQTDOwyeOYLz2abWlq0iGeI3es8w5nvcHLIOmT4MUBEah/yIuNYyhBR1ZRVJ1G+8nKdddYc=
-X-Received: by 2002:a05:6512:3c81:b0:55b:8e2e:8cc9 with SMTP id
- 2adb3069b0e04-55ceeb2d2c4mr585014e87.33.1755262848871; Fri, 15 Aug 2025
- 06:00:48 -0700 (PDT)
+	s=arc-20240116; t=1755262977; c=relaxed/simple;
+	bh=2qbZCeHo/q0ARCQqWP8WDesTq4zE7avYLQORLO2Zp1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJJTcy2v7dh6Kqjj31ILCqs6bc2PbBc8eRAXPXsuVcmbOYPskxoQHhd5eRNZPmDeGrQNkedP1UisDrg0aBXpL1o7PmPCC+hapTjCBmT8RZqUb1itETA+ZDJ0AMQusQ4okA3Nwz6KGUSQMBdmHX/A42R7Cy789AukdkxN6444NvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ah4EJONy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755262975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qgRHsnf4AepMa57NL8zv+QF6SxJXzB5B6h+HiE996bw=;
+	b=ah4EJONyub3LniWZlZRCA+kZ850RHEm0XrePKgliPCd0kvt586j5BcZEOUHrPavQxTTtAx
+	CioQ2oNIl6bF3+DYf6jYKBXv0oOD3je4aitbNlVtNd1PKZeMMu2cqJki1bUnKPfPTdzPj2
+	f5jxcEnghPtMFopuMAg26HORuqYJMWY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-wpk9pMfHP6m9Qm0RIXrykw-1; Fri,
+ 15 Aug 2025 09:02:51 -0400
+X-MC-Unique: wpk9pMfHP6m9Qm0RIXrykw-1
+X-Mimecast-MFC-AGG-ID: wpk9pMfHP6m9Qm0RIXrykw_1755262969
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1B071800286;
+	Fri, 15 Aug 2025 13:02:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.47])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 15FC81955E89;
+	Fri, 15 Aug 2025 13:02:43 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 15 Aug 2025 15:01:32 +0200 (CEST)
+Date: Fri, 15 Aug 2025 15:01:26 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"mingo@kernel.org" <mingo@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"Mehta, Sohil" <sohil.mehta@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"debug@rivosinc.com" <debug@rivosinc.com>
+Subject: Re: [PATCH 5/6] x86/shstk: don't create the shadow stack for
+ PF_USER_WORKERs
+Message-ID: <20250815130125.GD11549@redhat.com>
+References: <20250814101435.GA17362@redhat.com>
+ <8818b456954644ce609e07d77a65714788ef9098.camel@intel.com>
+ <e50065a9-d5e2-4e94-94b2-e34c5fac9720@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813133812.926145-1-ethan.w.s.graham@gmail.com>
- <20250813133812.926145-7-ethan.w.s.graham@gmail.com> <CANpmjNMXnXf879XZc-skhbv17sjppwzr0VGYPrrWokCejfOT1A@mail.gmail.com>
- <CALrw=nFKv9ORN=w26UZB1qEi904DP1V5oqDsQv7mt8QGVhPW1A@mail.gmail.com> <20250815011744.GB1302@sol>
-In-Reply-To: <20250815011744.GB1302@sol>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Fri, 15 Aug 2025 14:00:37 +0100
-X-Gm-Features: Ac12FXxJSZN0OfDcjS8s6OFmiOlXF2SG0blAOcgASCk44-lWBGEmHN2xDuaUJKY
-Message-ID: <CALrw=nHcpDNwOV6ROGsXq8TtaPNGC4kGf_5YDTfVs2U1+wjRhg@mail.gmail.com>
-Subject: Re: [PATCH v1 RFC 6/6] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Marco Elver <elver@google.com>, Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com, 
-	glider@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
-	davidgow@google.com, dvyukov@google.com, jannh@google.com, rmoar@google.com, 
-	shuah@kernel.org, tarasmadan@google.com, kasan-dev@googlegroups.com, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	"open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e50065a9-d5e2-4e94-94b2-e34c5fac9720@sirena.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Aug 15, 2025 at 2:18=E2=80=AFAM Eric Biggers <ebiggers@kernel.org> =
-wrote:
+On 08/14, Mark Brown wrote:
 >
-> On Thu, Aug 14, 2025 at 04:28:13PM +0100, Ignat Korchagin wrote:
-> > Not sure if it has been mentioned elsewhere, but one thing I already
-> > don't like about it is that these definitions "pollute" the actual
-> > source files. Might not be such a big deal here, but kernel source
-> > files for core subsystems tend to become quite large and complex
-> > already, so not a great idea to make them even larger and harder to
-> > follow with fuzz definitions.
-> >
-> > As far as I'm aware, for the same reason KUnit [1] is not that popular
-> > (or at least less popular than other approaches, like selftests [2]).
-> > Is it possible to make it that these definitions live in separate
-> > files or even closer to selftests?
+> On Thu, Aug 14, 2025 at 05:03:36PM +0000, Edgecombe, Rick P wrote:
+> > On Thu, 2025-08-14 at 12:14 +0200, Oleg Nesterov wrote:
 >
-> That's not the impression I get.  KUnit suites are normally defined in
-> separate files, and KUnit seems to be increasing in popularity.
-
-Great! Either I was wrong from the start or it changed and I haven't
-looked there recently.
-
-> KFuzzTest can use separate files too, it looks like?
+> > > If a features_enabled(ARCH_SHSTK_SHSTK) userspace thread creates a
+> > > PF_USER_WORKER thread, shstk_alloc_thread_stack() allocates the shadow
+> > > stack for no reason, the new (kernel) thread will never return to usermode.
 >
-> Would it make any sense for fuzz tests to be a special type of KUnit
-> test, instead of a separate framework?
+> > I agree we don't need to allocate a shadow stack in this case, but I'm not sure
+> > it is right to fully disable shadow stack in thread.features. First of all,
+> > disabling it from shstk_alloc_thread_stack() seems weird. It just handles
+> > allocating shadow stacks.
+>
+> I agree that it's better to leave userspace shadow stacks enabled, given
+> that the reason we're not allocating the shadow stack is that we don't
+> expect to ever return to userspace then it should be fine to leave the
+> feature turned on for userspace.  If we mess up and do somehow return to
+> userspace
 
-I think so, if possible. There is always some hurdles adopting new
-framework, but if it would be a new feature of an existing one (either
-KUnit or selftests - whatever fits better semantically), the existing
-users of that framework are more likely to pick it up.
+But a PF_USER_WORKER task can never return to userspace. It doesn't differ
+from PF_KTHREAD in this respect.
 
-> - Eric
+Oleg.
+
 
