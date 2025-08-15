@@ -1,265 +1,158 @@
-Return-Path: <linux-kernel+bounces-770086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C627EB2769B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C810CB2766A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714F262886E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:13:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D03600704
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0AD2BE636;
-	Fri, 15 Aug 2025 03:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028CF29D298;
+	Fri, 15 Aug 2025 02:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWu/0bso"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D35Eohqg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AB29ACD1;
-	Fri, 15 Aug 2025 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C881A0BF1;
+	Fri, 15 Aug 2025 02:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227577; cv=none; b=eiWXR8xLihYR6BH3m119F/S0WivRXPPxMRVPbA/baRKBHJe/B3mN4Yoekwe/l9lr7iQf165XVTIkktYkHBakqxnJWbZVuvw6FmdC5hQXZRrpIAjFdwftwpoXBvBLP1u9Ij9PDww1FnRZcR+9LYB3HqGiiBOofHVpLD8+V+Wzq8U=
+	t=1755226710; cv=none; b=XHWFbqwOYFCqruh7sWYxPwjDqPYoJ8xd5EPOw7Uj7Bx8fqXZqeKJ7+nh94EDih7qfERKhA4WAFVNjjBQB9YlDy/LOrBFV6JDeMsJe5fa7NgHP0GBqoNVHPnXSan94rdbv/wMTWfbV1+eksty8RZ3Eq7Q422fUaJlg+tZZi5B/90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227577; c=relaxed/simple;
-	bh=MN6grN1k65SjfjMv0Gt1FohyMOWXmsBPqK6RgkmtpVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HqilGi3amET06C+GolbUtlsGReez62MKkVCWGqC81/KfhuWUDwaie8Q10++PYkHqOADka/Xf4A8DIk7U8bCJGr/GrWV3KU3gJE0wps6q66yL284fbNOAWaMdcwoWappSRyBEf3IkoNjTzELKwtlxSHZiEytUaYOPURCPvoJN3yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWu/0bso; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BBEC4CEF1;
-	Fri, 15 Aug 2025 03:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755227577;
-	bh=MN6grN1k65SjfjMv0Gt1FohyMOWXmsBPqK6RgkmtpVs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tWu/0bsoZkT+G3gMCPQ+ztfK3ArlCLIot22EpstExKo6v3A30r0P9d6kwkGNrtBxM
-	 VB7RsQsDuuDyxpFa67q1+mydKaaOexBcvWTAZpvpYdqVsffJzvVV2jaZgcCTFAsplW
-	 a4U5/j2wU1MrAbCCGmsHk5N2O1nlAD8OZ4cORTTxZmqnNZFVcuLOgeCrtlPyOzDOir
-	 Bk7MYdCrsNgoGYNQV0AZ5DRvGCZ6I+9OYQSEADC4K0VIP0CDv8r1u65PHOXswiRmot
-	 5wDd8gVNLxVTBH6nPY6sP3jO9UN3O7XxGdQdbtW6ygkSW1S8wa5Th5Fhu0ya/GLpOG
-	 5G6Gq3OiarLMA==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Richard Leitner <richard.leitner@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] usb: usb251xb: support usage case without I2C control
-Date: Fri, 15 Aug 2025 10:55:40 +0800
-Message-ID: <20250815025540.30575-3-jszhang@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250815025540.30575-1-jszhang@kernel.org>
-References: <20250815025540.30575-1-jszhang@kernel.org>
+	s=arc-20240116; t=1755226710; c=relaxed/simple;
+	bh=ZoHCRo69UbHgHx5mAQdVdvvPlidj+UaNVfMUMcDCleg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OwVenmE9IrnoE7HpEokJeT5XBHNXAHaCVMLRhujwNLGEbh7WxDzWfjg1W0+WQj7AqO+aehh7SYCqVnXGmn0ip8hmRhCZ4Lr4J9S4vrC9LUjeDW2pkaP0IooooB9MdJMcrwdVv6fhMnmeSnrAM9aiDqvywutxlRH0GPNw8rVrmPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D35Eohqg; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755226708; x=1786762708;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=ZoHCRo69UbHgHx5mAQdVdvvPlidj+UaNVfMUMcDCleg=;
+  b=D35EohqgYVXl13FX5gpH42JGNcrcu6jUDHfmyBV+yRTgZPVSNDcoshvX
+   Su5R3lfVVP2f+PTcr6cFBpzoINSzXoUa5uj7CH/SYxM77phyj/+Nr2uYm
+   HGu8+Sja6FHTB7dKYRjRTSLQ21d+ym1RjdeE06V3O7/20wbjTptB00mcK
+   xgpCwHiobhD6mmnUfey3xvxBLWSsE5XkGSbOzV2CHx8Vy3PE2ffhROiZl
+   VrdQGLSfducR9jkHMYGcmGODVimc0AhN3ERhXgOesBEVThgJ1m1KdauQS
+   sJYmgTkcXbGnwGqyUlmEj9VQS96F0sG526Ay7ciOW4O+kQYxLdWHjvyDn
+   Q==;
+X-CSE-ConnectionGUID: D+BdQh7YScCzHybbncs/oA==
+X-CSE-MsgGUID: 8ide1veTR2WjK5p6WXiwXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="80132903"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="80132903"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:58:27 -0700
+X-CSE-ConnectionGUID: I56/f9bIRuyvq90j8cNzCA==
+X-CSE-MsgGUID: 8pwU93maQr605Wmrss5oBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166827050"
+Received: from hmao3-mobl1.ccr.corp.intel.com (HELO [10.238.0.213]) ([10.238.0.213])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:58:24 -0700
+Message-ID: <aee6539f-528e-46c7-98c6-e740e4c30a5f@intel.com>
+Date: Fri, 15 Aug 2025 10:58:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][v2] x86/kvm: Prefer native qspinlock for dedicated vCPUs
+ irrespective of PV_UNHALT
+To: lirongqing <lirongqing@baidu.com>, seanjc@google.com,
+ pbonzini@redhat.com, vkuznets@redhat.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250722110005.4988-1-lirongqing@baidu.com>
+Content-Language: en-US
+From: "Guo, Wangyang" <wangyang.guo@intel.com>
+In-Reply-To: <20250722110005.4988-1-lirongqing@baidu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Refactor so that register writes for configuration are only performed if
-the device has a i2c_client provided and also register as a platform
-driver. This allows the driver to be used to manage GPIO based control
-of the device.
+On 7/22/2025 7:00 PM, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> The commit b2798ba0b876 ("KVM: X86: Choose qspinlock when dedicated
+> physical CPUs are available") states that when PV_DEDICATED=1
+> (vCPU has dedicated pCPU), qspinlock should be preferred regardless of
+> PV_UNHALT.  However, the current implementation doesn't reflect this: when
+> PV_UNHALT=0, we still use virt_spin_lock() even with dedicated pCPUs.
+> 
+> This is suboptimal because:
+> 1. Native qspinlocks should outperform virt_spin_lock() for dedicated
+>     vCPUs irrespective of HALT exiting
+> 2. virt_spin_lock() should only be preferred when vCPUs may be preempted
+>     (non-dedicated case)
+> 
+> So reorder the PV spinlock checks to:
+> 1. First handle dedicated pCPU case (disable virt_spin_lock_key)
+> 2. Second check single CPU, and nopvspin configuration
+> 3. Only then check PV_UNHALT support
+> 
+> This ensures we always use native qspinlock for dedicated vCPUs, delivering
+> pretty performance gains at high contention levels.
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> 
+> diff with v1: rewrite the changelog
+> 
+>   arch/x86/kernel/kvm.c | 20 ++++++++++----------
+>   1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 921c1c7..9cda79f 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -1073,16 +1073,6 @@ static void kvm_wait(u8 *ptr, u8 val)
+>   void __init kvm_spinlock_init(void)
+>   {
+>   	/*
+> -	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
+> -	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
+> -	 * preferred over native qspinlock when vCPU is preempted.
+> -	 */
+> -	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
+> -		pr_info("PV spinlocks disabled, no host support\n");
+> -		return;
+> -	}
+> -
+> -	/*
+>   	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
+>   	 * are available.
+>   	 */
+> @@ -1101,6 +1091,16 @@ void __init kvm_spinlock_init(void)
+>   		goto out;
+>   	}
+>   
+> +	/*
+> +	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
+> +	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
+> +	 * preferred over native qspinlock when vCPU is preempted.
+> +	 */
+> +	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
+> +		pr_info("PV spinlocks disabled, no host support\n");
+> +		return;
+> +	}
+> +
+>   	pr_info("PV spinlocks enabled\n");
+>   
+>   	__pv_init_lock_hash();
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/usb/misc/usb251xb.c | 108 +++++++++++++++++++++++++++++++-----
- 1 file changed, 94 insertions(+), 14 deletions(-)
+For non-overcommit VM, we may add `-overcommit cpu-pm=on` options to 
+qemu-kvm and let guest to handle idle by itself and reduce the latency. 
+Current kernel will fallback to virt_spin_lock, even kvm-hint-dedicated 
+is provided. With this patch, it can fix this problem and use mcs queue 
+spinlock for better performance.
 
-diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
-index 4fb453ca5450..ef5873009599 100644
---- a/drivers/usb/misc/usb251xb.c
-+++ b/drivers/usb/misc/usb251xb.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/nls.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -242,15 +243,19 @@ static int usb251xb_check_dev_children(struct device *dev, void *child)
- static int usb251x_check_gpio_chip(struct usb251xb *hub)
- {
- 	struct gpio_chip *gc = gpiod_to_chip(hub->gpio_reset);
--	struct i2c_adapter *adap = hub->i2c->adapter;
-+	struct i2c_adapter *adap;
- 	int ret;
- 
-+	if (!hub->i2c)
-+		return 0;
-+
- 	if (!hub->gpio_reset)
- 		return 0;
- 
- 	if (!gc)
- 		return -EINVAL;
- 
-+	adap = hub->i2c->adapter;
- 	ret = usb251xb_check_dev_children(&adap->dev, gc->parent);
- 	if (ret) {
- 		dev_err(hub->dev, "Reset GPIO chip is at the same i2c-bus\n");
-@@ -271,7 +276,8 @@ static void usb251xb_reset(struct usb251xb *hub)
- 	if (!hub->gpio_reset)
- 		return;
- 
--	i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-+	if (hub->i2c)
-+		i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
- 
- 	gpiod_set_value_cansleep(hub->gpio_reset, 1);
- 	usleep_range(1, 10);	/* >=1us RESET_N asserted */
-@@ -280,7 +286,8 @@ static void usb251xb_reset(struct usb251xb *hub)
- 	/* wait for hub recovery/stabilization */
- 	usleep_range(500, 750);	/* >=500us after RESET_N deasserted */
- 
--	i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-+	if (hub->i2c)
-+		i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
- }
- 
- static int usb251xb_connect(struct usb251xb *hub)
-@@ -289,7 +296,11 @@ static int usb251xb_connect(struct usb251xb *hub)
- 	int err, i;
- 	char i2c_wb[USB251XB_I2C_REG_SZ];
- 
--	memset(i2c_wb, 0, USB251XB_I2C_REG_SZ);
-+	if (!hub->i2c) {
-+		usb251xb_reset(hub);
-+		dev_info(dev, "hub is put in default configuration.\n");
-+		return 0;
-+	}
- 
- 	if (hub->skip_config) {
- 		dev_info(dev, "Skip hub configuration, only attach.\n");
-@@ -698,18 +709,13 @@ static int usb251xb_i2c_probe(struct i2c_client *i2c)
- 	return usb251xb_probe(hub);
- }
- 
--static int __maybe_unused usb251xb_suspend(struct device *dev)
-+static int usb251xb_suspend(struct usb251xb *hub)
- {
--	struct i2c_client *client = to_i2c_client(dev);
--	struct usb251xb *hub = i2c_get_clientdata(client);
--
- 	return regulator_disable(hub->vdd);
- }
- 
--static int __maybe_unused usb251xb_resume(struct device *dev)
-+static int usb251xb_resume(struct usb251xb *hub)
- {
--	struct i2c_client *client = to_i2c_client(dev);
--	struct usb251xb *hub = i2c_get_clientdata(client);
- 	int err;
- 
- 	err = regulator_enable(hub->vdd);
-@@ -719,7 +725,23 @@ static int __maybe_unused usb251xb_resume(struct device *dev)
- 	return usb251xb_connect(hub);
- }
- 
--static SIMPLE_DEV_PM_OPS(usb251xb_pm_ops, usb251xb_suspend, usb251xb_resume);
-+static int usb251xb_i2c_suspend(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct usb251xb *hub = i2c_get_clientdata(client);
-+
-+	return usb251xb_suspend(hub);
-+}
-+
-+static int usb251xb_i2c_resume(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct usb251xb *hub = i2c_get_clientdata(client);
-+
-+	return usb251xb_resume(hub);
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_i2c_pm_ops, usb251xb_i2c_suspend, usb251xb_i2c_resume);
- 
- static const struct i2c_device_id usb251xb_id[] = {
- 	{ "usb2422" },
-@@ -739,13 +761,71 @@ static struct i2c_driver usb251xb_i2c_driver = {
- 	.driver = {
- 		.name = DRIVER_NAME,
- 		.of_match_table = usb251xb_of_match,
--		.pm = &usb251xb_pm_ops,
-+		.pm = pm_sleep_ptr(&usb251xb_i2c_pm_ops),
- 	},
- 	.probe = usb251xb_i2c_probe,
- 	.id_table = usb251xb_id,
- };
- 
--module_i2c_driver(usb251xb_i2c_driver);
-+static int usb251xb_plat_probe(struct platform_device *pdev)
-+{
-+	struct usb251xb *hub;
-+
-+	hub = devm_kzalloc(&pdev->dev, sizeof(*hub), GFP_KERNEL);
-+	if (!hub)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, hub);
-+	hub->dev = &pdev->dev;
-+
-+	return usb251xb_probe(hub);
-+}
-+
-+static int usb251xb_plat_suspend(struct device *dev)
-+{
-+	return usb251xb_suspend(dev_get_drvdata(dev));
-+}
-+
-+static int usb251xb_plat_resume(struct device *dev)
-+{
-+	return usb251xb_resume(dev_get_drvdata(dev));
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_plat_pm_ops, usb251xb_plat_suspend, usb251xb_plat_resume);
-+
-+static struct platform_driver usb251xb_plat_driver = {
-+	.driver = {
-+		.name = DRIVER_NAME,
-+		.of_match_table = of_match_ptr(usb251xb_of_match),
-+		.pm = pm_ptr(&usb251xb_plat_pm_ops),
-+	},
-+	.probe		= usb251xb_plat_probe,
-+};
-+
-+static int __init usb251xb_init(void)
-+{
-+	int err;
-+
-+	err = i2c_add_driver(&usb251xb_i2c_driver);
-+	if (err)
-+		return err;
-+
-+	err = platform_driver_register(&usb251xb_plat_driver);
-+	if (err) {
-+		i2c_del_driver(&usb251xb_i2c_driver);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+module_init(usb251xb_init);
-+
-+static void __exit usb251xb_exit(void)
-+{
-+	platform_driver_unregister(&usb251xb_plat_driver);
-+	i2c_del_driver(&usb251xb_i2c_driver);
-+}
-+module_exit(usb251xb_exit);
- 
- MODULE_AUTHOR("Richard Leitner <richard.leitner@skidata.com>");
- MODULE_DESCRIPTION("USB251x/xBi USB 2.0 Hub Controller Driver");
--- 
-2.50.0
-
+Tested-by: Wangyang Guo <wangyang.guo@intel.com>
 
