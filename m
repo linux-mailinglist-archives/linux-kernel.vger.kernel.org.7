@@ -1,156 +1,138 @@
-Return-Path: <linux-kernel+bounces-771293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC62B2853B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CBCB2853A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1729D7B8E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CABE71C852B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5B3176FB;
-	Fri, 15 Aug 2025 17:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F03317703;
+	Fri, 15 Aug 2025 17:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wkb0R+eh"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="LeKaBqFb"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6831F1518
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875E23176E2
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755279451; cv=none; b=Vu92bmCVN5aGh4FzmwCf35cB1FD0gSyGYpFk8j70asKe/srX/nPwTKIt/QpEUCMy7ut1Ysz1W82LseVFu1f5DRjjjNfKaibSTXyqFt29RNYw5Z+afoPJVULEiGlqLRO3Sn8Od2oclAujbe52pO3tJqTcW2ZdPf3ju9y7lMKCq9g=
+	t=1755279446; cv=none; b=Cizr170f/vyLH8UVu20FW8Fr18neIOK8OYkzHmd9En/qeCXAs3B0pvqpPbY612z97PZjqSSd54EjzekBjxY/pCunbT/nslnnOMRv0hzph53sS0XN7pGpIjk/ugu8Ru4tjyP3eM7kILC3XQ0gd1H8zWrxGDqiZTLo6j3k9qbFofg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755279451; c=relaxed/simple;
-	bh=KIXaRrabWkI94cBABbOOQhZm5gakqOBxiKGhfpvK4bU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W0W+7jjmiDb0TCG08ZKny+nX3xKiTYbNlnsTnXSomo6jm2uSq0tI3Q3c/jjfmg8pGjXDZc6JYfXYFWf0NE90Q0pgKgNafweXmhzdOLsshPb8YhbGinAkvqmYozJtDDG7RrlQv7yVQtama4dSCkblZAUvBcckUcOrEfebW8a1ZUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wkb0R+eh; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55cd07a28e0so603e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:37:29 -0700 (PDT)
+	s=arc-20240116; t=1755279446; c=relaxed/simple;
+	bh=EZaKhemVJPR3sq5XowvTLO9YcYMWZSlYjjnux2apyDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vw+2vvY8zmQ2ucwQGAHDnHAINsFlFhkhLpVzGvkFp/q2MwnbSWHKn6NSmm2n9qZLn5LHiO4BM7dupzj1Yneeav0pLgDhGatlSCjvuvtnxzOAwURIkxvhLGnngUkrl/PfDax0hUbvV/uc/JLN5NGWjBoW30F4jW5G9vL5KGWe+H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=LeKaBqFb; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323266d6f57so2362192a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755279448; x=1755884248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UVkGL7jBRLKf6+d6hhcuO3q92nCLqGME9TaVEfeECYI=;
-        b=wkb0R+ehUO23VlC7TenvD+t2JKaQJteL++RmRCRofUjTsmunzO7PL4GNwuVi7lPcIt
-         JIAF2unaTtJKmB5RxkCoOnFq19ybhgRKBvpdHTfnu1ISZYtGrEKOosBVme+wkyZuuPMg
-         Ewz6RQCYyRRveKTq5taNZKJXJ0f34vdqAtR8Xah5xasOZC1DDC48g/EV8t4a992TELnd
-         pX4gtUkWLLSVpE3G1F0XdqTeVmznbJl+KWWYbK6+Xkrz5V87mpWi3vC1ftbsPUzaZf8b
-         O9+QeBllX7yzHgj/cD3AuJnNKOX9ECt8nPUL5YGrfrFnPzQJTIOuVZo//9BT5VobYsBU
-         wWNw==
+        d=wbinvd.org; s=wbinvd; t=1755279444; x=1755884244; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8VgHIJEM7JM7qYl6oFnfKU/T+pMHjuErX1yO4TYSJrk=;
+        b=LeKaBqFbSZA3wUvjGMh/OpDhJW4jjvc6uxDXT9LRCWg+ZzcXldRvSuImG1j557ukYs
+         BU6OwdS9/QisWdl87VpSw4B40qtIITCdMgs0biznP7zluXHnktQ9OgYT9Hd8nzGEt6To
+         QW5azGxjwhvQjm//G5WkwW0q5y22muDkXhSH+0Ikxp3cVHRGzl+dlfH8WaDuwugzma+7
+         Kidc0WW/6kv27Za2qQJ4ULbeii5imtZFy1FJUXNx0UGQHgiSx+UbIxkee9Apa0G/6N0C
+         i8Q93u9TDXlOwxnbIi2DfvxNUJDr8W0DqBOTNU0DF3+nA46rtgTzFvkpuIXscEaZqOHD
+         lSaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755279448; x=1755884248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UVkGL7jBRLKf6+d6hhcuO3q92nCLqGME9TaVEfeECYI=;
-        b=tOQfc10Qet8nDU1jpKo45CofF2PQtqCumGIJoK4GeRqMQ3ecD1QldCpKHJklDKQacY
-         3XNrl5fkNRK/PfH8oKhGmrnXVkErnDQHNn8e61a4h/Wbk3TCeVC1wpo5XaThQP9HYkTo
-         qfoPASkKmb5o4rIg5jijynIkMvXdTKolqeMtAGL3WEgpn15LoC8Nsc5cf658IYQRfJAP
-         bN6CkYq/pJy2Q5OG8+yJwHPnHXHP4eTJnBIIHK1DMWXcj+xhU35IoINKoqOu1bG/vEhu
-         uyoAOhKaVkggHPH4Jmg/iRqRZ9v41O7JCXmeipcbL9ke77b1AtcXyH6r9tT2j4wtuRQE
-         GlKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9bEVS2n6Shy9MBonmZ81Vi7quLCDkAJClmNqgaWvX7M/+YdK3yk+jWXN41HB4+L1I0Njp4se9Xj44zEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYLHmx19KEmw2iJ1wcPprYqlAVkEWpDQf28V0Y9pdcRrMLVw78
-	2wNKnZl68HQVO6fXtu0+xpzHUicsJaf6xxi1pCGQy+YDoK93jmgmIjIuWpcU6BAaATcgbf4UiRX
-	hq2I3wtTJOXvz7jl4dEWnclg3vkhqZIIbCg8Z7hDM
-X-Gm-Gg: ASbGncutpoc9mK0crD6GkFDO+m8JJc31diNO3rbM0NHp/JcK24O0L/sdhahqI92JWW0
-	lzkKs5AeIKQ3yJe8Z8czyC0ccVI8VtqBRMFfMb5kLwy1pygHsxItwf7K0/ouAcInZpRH8jf9KW1
-	EgHTKAbPvfRmbNNtOLz1hB0xH3uzHCJRzRn2fxAC0wdHX6vYYgkpls4ENnL0zOSVl+5zHA/APq7
-	WhdEVLR7S2ZwaN/m6Nuohw+HjRJVSgc8ai9oLvV01oY
-X-Google-Smtp-Source: AGHT+IF815aVMWdvRLDwiej+y4Cx3WJIQ4E2duZu4/2qWl0QtPxHw64kH4aIcMw784zTTXX6YinwEhcRSU5ux9YqIKo=
-X-Received: by 2002:a05:6512:1291:b0:55c:f06b:e042 with SMTP id
- 2adb3069b0e04-55cf06be062mr142027e87.1.1755279447479; Fri, 15 Aug 2025
- 10:37:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755279444; x=1755884244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8VgHIJEM7JM7qYl6oFnfKU/T+pMHjuErX1yO4TYSJrk=;
+        b=NTabU4u3Yp31lOzTVY+zc34wRR1vwQs7WfQop5WXJsXd+IlY7XNQPipiEgiOGEFha3
+         Oph62uq8+XyuYKNuGrEFZ+Ttd9dvbQYh73SWvi9p4V8YpBhCQFrRln0Msod9+/yY1ZAd
+         KcfloavOuGrL3FmbxKxsAzwnVJYezfUr53BU2rrtiDmUZr920MTpN39mIuql3+yUe697
+         kn/MiZSvgwzyoYWmTcumSnlfmE8+G3yOMP+BGYWHl4dion8f3KrJKFAC8C3MvSrFaxup
+         4aISRq/NF3OGcSkZrMNnBVGUV8tf/gi4J284//lyMmjai5nG9F3Fyxbn5GC7LGhnEwE5
+         IYPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfp9SDRXnE1zGoyyemtiADT2+5m13Eu/OZ8kL3a9Z/ooKx6WFDni96NJr0wI5Wn6I14391Sr0kFtxv4a4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr/CSBxBWlcSMBJrczqM9tTeknJHXjhKMyvQBj53KEu03izNgT
+	zRXD8nnV+5j6swbkOpxnQIneNzUhLXuHjE1zpZcKXNKCtnomWtreAQBiZgdHNIA0m+c=
+X-Gm-Gg: ASbGncvitnSdeJV4AW6YUF56z/q6uVXskD2Uqar7mQoXMW8SUmCvBq0Z/jpnNsNJbA1
+	CHbRV/6mkau296MU/TnhrrqXIROenFCRc7MH6f6TFBdcWQF35fsf8ltE2muFX0XpA/+DDLHy5h9
+	E7iLOZfUeoEnBisbIgDYz1nSLspOncu01qpNjpUVyA4fKxuptCotCwvdcJv68a/ncYeHXsNwCgw
+	YIMhV2HMMQ8fNq7zvGKBDA1T1Z3UL9qut/yuH5UVYzj1saVgs+4XY4ryZg3f7GKAOmGLKc5M0+M
+	JUTlvG+eYt0bfnaElzrms5PZ/2J0dgbqOsyuNAHfb9hznUyH/2kTliCt27h52wdBZGrM1wk4IIE
+	xl6yD79UA7xSCS2nWzFAe1Yzn
+X-Google-Smtp-Source: AGHT+IEzUlJW393LwpN228NDGcrlLOOrIrGuJW5vYjizbAfS8DKPO5gF4B6eusG0NuaiUrpfH4afSw==
+X-Received: by 2002:a17:90a:dfcc:b0:31f:eae:a7e8 with SMTP id 98e67ed59e1d1-32341ebf8a0mr4878804a91.11.1755279443694;
+        Fri, 15 Aug 2025 10:37:23 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232ae14f6dsm1947455a91.6.2025.08.15.10.37.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 10:37:23 -0700 (PDT)
+Date: Fri, 15 Aug 2025 10:37:20 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
+	paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	netdev@vger.kernel.org, boqun.feng@gmail.com
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+Message-ID: <aJ9wUAZRzqX5361i@mozart.vkv.me>
+References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
+ <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+ <20250814172326.18cf2d72@kernel.org>
+ <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
+ <20250815094217.1cce7116@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-6-dtatulea@nvidia.com>
-In-Reply-To: <20250815110401.2254214-6-dtatulea@nvidia.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 15 Aug 2025 10:37:15 -0700
-X-Gm-Features: Ac12FXz0bX47lSXrHztHZ5UkfOYR_EvbTsCS-UKorkPh-bL-sJzn-Nb-eZJOYk0
-Message-ID: <CAHS8izO327v1ZXnpqiyBRyO1ntgycVBG9ZLGMdCv4tg_5wBWng@mail.gmail.com>
-Subject: Re: [RFC net-next v3 4/7] net/mlx5e: add op for getting netdev DMA device
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: asml.silence@gmail.com, Saeed Mahameed <saeedm@nvidia.com>, 
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	cratiu@nvidia.com, parav@nvidia.com, Christoph Hellwig <hch@infradead.org>, 
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250815094217.1cce7116@kernel.org>
 
-On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> For zero-copy (devmem, io_uring), the netdev DMA device used
-> is the parent device of the net device. However that is not
-> always accurate for mlx5 devices:
-> - SFs: The parent device is an auxdev.
-> - Multi-PF netdevs: The DMA device should be determined by
->   the queue.
->
-> This change implements the DMA device queue API that returns the DMA
-> device appropriately for all cases.
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> ---
->  .../net/ethernet/mellanox/mlx5/core/en_main.c | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/=
-net/ethernet/mellanox/mlx5/core/en_main.c
-> index 21bb88c5d3dc..0e48065a46eb 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> @@ -5625,12 +5625,36 @@ static int mlx5e_queue_start(struct net_device *d=
-ev, void *newq,
->         return 0;
->  }
->
-> +static struct device *mlx5e_queue_get_dma_dev(struct net_device *dev,
-> +                                             int queue_index)
-> +{
-> +       struct mlx5e_priv *priv =3D netdev_priv(dev);
-> +       struct mlx5e_channels *channels;
-> +       struct device *pdev =3D NULL;
-> +       struct mlx5e_channel *ch;
-> +
-> +       channels =3D &priv->channels;
-> +
-> +       mutex_lock(&priv->state_lock);
-> +
-> +       if (queue_index >=3D channels->num)
-> +               goto out;
-> +
-> +       ch =3D channels->c[queue_index];
-> +       pdev =3D ch->pdev;
+On Friday 08/15 at 09:42 -0700, Jakub Kicinski wrote:
+> On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
+> > On 8/15/25 01:23, Jakub Kicinski wrote:
+> > > On Thu, 14 Aug 2025 03:16:11 -0700 Breno Leitao wrote:  
+> > >>   2.2) netpoll 				// net poll will call the network subsystem to send the packet
+> > >>   2.3) lock(&fq->lock);			// Try to get the lock while the lock was already held  
+> > 
+> > The report for reference:
+> > 
+> > https://lore.kernel.org/all/fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de/> 
+> > > Where does netpoll take fq->lock ?  
+> > 
+> > the dependencies between the lock to be acquired
+> > [  107.985514]  and HARDIRQ-irq-unsafe lock:
+> > [  107.985531] -> (&fq->lock){+.-.}-{3:3} {
+> > ...
+> > [  107.988053]  ... acquired at:
+> > [  107.988054]    check_prev_add+0xfb/0xca0
+> > [  107.988058]    validate_chain+0x48c/0x530
+> > [  107.988061]    __lock_acquire+0x550/0xbc0
+> > [  107.988064]    lock_acquire.part.0+0xa1/0x210
+> > [  107.988068]    _raw_spin_lock_bh+0x38/0x50
+> > [  107.988070]    ieee80211_queue_skb+0xfd/0x350 [mac80211]
+> > [  107.988198]    __ieee80211_xmit_fast+0x202/0x360 [mac80211]
+> > [  107.988314]    ieee80211_xmit_fast+0xfb/0x1f0 [mac80211]
+> > [  107.988424]    __ieee80211_subif_start_xmit+0x14e/0x3d0 [mac80211]
+> > [  107.988530]    ieee80211_subif_start_xmit+0x46/0x230 [mac80211]
+> 
+> Ah, that's WiFi's stack queuing. Dunno whether we expect netpoll to 
+> work over WiFi. I suspect disabling netconsole over WiFi may be the 
+> most sensible way out. Johannes, do you expect mac80211 Tx to be IRQ-safe?
 
-This code assumes priv is initialized, and probably that the device is
-up/running/registered. At first I thought that was fine, but now that
-I look at the code more closely, netdev_nl_bind_rx_doit checks if the
-device is present but doesn't seem to check that the device is
-registered.
+It'd be a bit of a shame IMHO to summarily break netconsole over wifi:
+it works well enough in practice that I've personally found it helpful
+for quick debugging across large numbers of IoT devices (user context
+OOPSes outside net/ usually seem to make it out, as do WARNs and other
+non-fatal splats).
 
-I wonder if we should have a generic check in netdev_nl_bind_rx_doit
-for NETDEV_REGISTERED, and if not, does this code handle unregistered
-netdev correctly (like netdev_priv and priv->channels are valid even
-for unregistered mlx5 devices)?
-
-
---=20
-Thanks,
-Mina
+But if Johannes' answer is "no", maybe there's no way out :/
 
