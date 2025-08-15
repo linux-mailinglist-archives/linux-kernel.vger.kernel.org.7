@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-770151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B04B277B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8B5B277B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0192F7BFF72
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574F41CC0AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DDA232785;
-	Fri, 15 Aug 2025 04:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38C423C397;
+	Fri, 15 Aug 2025 04:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXN5d+Jh"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFF7fRqk"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112DD22FAFD;
-	Fri, 15 Aug 2025 04:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17D7215062;
+	Fri, 15 Aug 2025 04:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755231703; cv=none; b=tCqveewIAbWzW+mfAtE/WJa/uxpdTX8v1HRwTiaVXii1G0q1S6RU57E5y8cRhoZxRjYmZh0A/l1bJQUTPyDQHCRq+aDbAwPzOP90BeKBPYeE0N0MQ41f4crFUhx2M5RiJe5mLHJIt8PJtOrX35gubWi4l/UD8FsMkykcPwoTESc=
+	t=1755231709; cv=none; b=lYZZWRvJX8CKR8KtbtdopadDhrryymn2eAZPJqGIswTfKtwazZKwnBLC+a8p4aJieigNMWf8IMX4IjNWqER5X064e2Xac8Hl3LGSEJCNP2Lrd3D9uAmlfw6LVEXn52yq09U/YPYdalNWyoNmuDru9y0+RKlRdSmfHfhFAKsbpM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755231703; c=relaxed/simple;
-	bh=IkJp91E/55DupmuvLpEkYBgYYD4Won+UDcbvNLHgmfo=;
+	s=arc-20240116; t=1755231709; c=relaxed/simple;
+	bh=yYU3BGY8apJ7/bVxueA9JZ+trRFHpqUCjdyPBdS65Bg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dK2GHiOqYib8r++BoVNdu94ll0057FtfKUXek2hmXDADQc1Ms9ZRGWeOx0Tw9TIEbsuU5xa/geL0ZIhld/wOOo7WQlkFR8XTN9/vsnMf/suyZtYjd1rPr2T+Ob/Y2jE+aAzc4wseUTHyVDImwb3nh9RUFqjMb6Mt70xtEPm+8KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXN5d+Jh; arc=none smtp.client-ip=209.85.166.45
+	 MIME-Version; b=Hxxj4yEhtm56eP/ai2IPpgwbWeUa3apSt7Q8OhU6AkVFpWBNq9op7nzEOcQ6oSiBU/hJvZsd48yXjfc/EsCqBi4S8CDfeIWD5MAv8SoHQqG5yBxvPtrcufF17Olpp1iuTJlWfZlI/9/Hab8uDU8BIM1ylou2b1F6tKekdaNBZXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PFF7fRqk; arc=none smtp.client-ip=209.85.166.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-88432cc7058so47101239f.0;
-        Thu, 14 Aug 2025 21:21:41 -0700 (PDT)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e575ff1b80so5495985ab.3;
+        Thu, 14 Aug 2025 21:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755231701; x=1755836501; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755231707; x=1755836507; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rlEaJjXuqoZ1HAzBjMXk8fek5DSH2Rnu+HHF/ZX6DPI=;
-        b=WXN5d+JheLVhDp9T/J/TF1n2WSRWotw7tBF++Gfqm2jqUIpkP53CIxZq7eTHWGSUSX
-         6xycTqkhS4XPvUixtTk51AdSbYmZaq5et9S3u/Wh24F5ARU56SGNrnSe6/Y7sI3TRbFX
-         oHOlTgBBCrdCz0MgvwYO4gSnjQR0OcvP617ywTRjWUTWDJ8vRp9anaN6QZvfMr+Ec4DY
-         IO/mPKUuMIg0IUws02og4kPS86ww902jPVRRNKLl/nCbVvVKvnFzzbWL5sIV76vW+Qdj
-         W6p8Gq/rJltapLgRDglCK1K1er7N7LIfPB0o/Ybeta0Orxh4W8+4loqPGWg7pkHakdvG
-         itvQ==
+        bh=sQaQCUUCbOrsHCY9Z7BsQ0uU/8o3MVoc/bvLf/aDeTs=;
+        b=PFF7fRqkitizFtBCmrYMEo9Lux7VUeAujWNR/Fi/mz+a3puDRol9hwTi9wd2aFXY/E
+         lYcFQEhz4XSZVIavBqa3mQS1BNPR84z7+Q5BoFJCLLZ6UaBRMh354Ix57jcGVOGkEKfp
+         XohLzWydPTgEjVterDYG6WDaia4wi+wExUVUDAiMEJfOF+Mxo+kQzmIp2If1oKh+l0xM
+         ekbU8Ua25MFcT4kD8gQo4GPspzSXZrHEuIVFlA6WSHoENAQzvjaw5fevit2CHuV9L9NI
+         Ef73eB8ZaiWdq/InVayZCt7/q+esvbUo7ds/jarGLpaY/pXgrjtT//REiRxTRPBvBnTV
+         t+JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755231701; x=1755836501;
+        d=1e100.net; s=20230601; t=1755231707; x=1755836507;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rlEaJjXuqoZ1HAzBjMXk8fek5DSH2Rnu+HHF/ZX6DPI=;
-        b=Xzt3ksGez3smlYljBrGXs+V5LfyurcA4ASKinfn/horhrasmmMktpciklj6HHsvnah
-         38607Zp6mzQRo84gn0412FNDy5+T+2N4WkRMIvs4NS3wrcrTEMzxXWMfL7EsyYSQ55i7
-         MVsw0WVCl7F6fiw7y/502s9w4YL+Gd4gA2NDSBBfhn1V/OEtuZjvofrlct5UYzcsMKUk
-         4VGry3pXUEZMDSEiwHOyXmpsvuIWrhvBulLxBx+xmH1lhbd5vDtv6QReErb5IldRYNqa
-         mUCqzLlD57IUIR9jEeC27RSX5OjboARuCB1HyfKhmuGbD4YEQV9+rw1LBBrH+3jBH3jy
-         bKXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVS1q6DF9L3w9hC4tCGw6rDkyoEFSUp1HgIb6YxHN2OoTHFmBHWAvLvILmLYz9v6yrSyt22d3lMs69h1Ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2cHnPHFjKnReg303Y6Ck/nXaLWc4RaJCpKcAFamOcTiOWb5IP
-	VJ9rIWRBz+5sh5YSAOfUdFLNIxLawKpRC62w9QZDNzY0+uMoYNu7Kh6x
-X-Gm-Gg: ASbGncu0SgI7ghyhl2i5M8cJfuPSdbR0lxLs/0Szkzcc0Tlyg+DgQg19sFdN6AaBIK0
-	ovxmmJzdmGRCGlRmb09jnAQUqcxhhMgy95wCX3UYQL8aZoay1kXomS0o/pJlkffPFeY7J5N8joj
-	urcex4OOhQJEhFXwThkD5HfEC+gU5XN3opmfRvyOPRpWh/Q/dxpxZI75SxwaXqkFo1q++Zg/cO1
-	cAi8z0b9ZLthf0bDhioNRSxoxAimgyvdSHtloSwpD72l/Q0kdgFRzDHj/2x3BOAQACX/yKvilTC
-	r4M4ZxOJRihFScA5xAbolhzTAH3J27Hty4F4WYfhfJsXXhy68NeFn+as/pjelzXtGym4tTVr+IW
-	+gFq/apRFMN22bV0gSvemog810DE1J7VDo6rS6JA66MWjgfpGn4K/9edvANHIfxUTHhs=
-X-Google-Smtp-Source: AGHT+IEIJY5yuuiRjS3rmxW+Q4bh6AhCH/5DK0O/b/9BcnO1EB5P9I1mqCzp66//AjqmuCTsfBOb3A==
-X-Received: by 2002:a92:ca4f:0:b0:3e5:6882:6604 with SMTP id e9e14a558f8ab-3e57e8a7acfmr12847365ab.15.1755231701056;
-        Thu, 14 Aug 2025 21:21:41 -0700 (PDT)
+        bh=sQaQCUUCbOrsHCY9Z7BsQ0uU/8o3MVoc/bvLf/aDeTs=;
+        b=gVHBYUmqONoyukB2q1y/MoHkNBsXFhfpO73zUpTUFzI0vncp8Lnn+0njviGIIFcNZh
+         n6s/N1bEWV4k0G5c2+m3GYQXEYtQIV9YHDaoGtHT9hvZZuTLeCokJvsUGjBn4oY6bVw/
+         KrNVQMiZEF3Q3+XHjdaW12aPPpDZ6ewVDaFt5MpsBmlYfu2wm990AnMRFo0Ao6Ujz74y
+         X4hoQ74RWM65VJSvWOD93oGS/fJDGknhuyfwzQL7pwJ20P1Ob7tTTeByitGUDEXMANvk
+         GR1cfmlB/Kaobs0Pgf+ia1GQREv6vUh7uZC1AdbuUZ1retNwHZizwTMiBMf3uDkhzw/4
+         R2ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhAX9v+dZ33R60/6nVa7YwlbZp/TA4wiLHQ5gVZ3wYQiAcKiYVNgK1M0Vm4H6BSDOjxJXyocQIdyRoDcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/9fdv1lmkIlfWolntsJTC0uQXTNSTGh3AOiOkMscyxzGLUwBJ
+	4kEua4wlYX+ewCDK/BiVEFbOSv/+BG657vENKYdH6Fw96rjVXw62i2gU
+X-Gm-Gg: ASbGncusb/7lBwwVKT3DhJaIiZOxHEk0PaBFDaYulwVzzfLe1sSd2wASQmxBMhPs9s7
+	kaHBEXEWUCfR7PSvmHA/JgW5yw6Lqosqcbql0MlVEhYI2gg74+pQgL9HhEqvpMnLSpnV84HLNCm
+	+loGQ51Zt1umjl7rO+2ZsmwSzaXAK5d6jHx7WIrfbwefPOKqiNlJJPBD/Eadfr6YN2Nt3wm1GmU
+	/JvvxI5ygPK5L5AyHkUsvnU7ce4gG5IwRI4c8QDNUoE5CTW4vFUfBcNCIZNQ31vYpmMufEpoGzU
+	jXUsSPUPJEPht/bROZD0udZKJrw85rvASU7L0hxdqCqe+lt20L4O3sm0ogxYXjcGTvDCg3C3GXK
+	RniCsUpsiCtIWwW8KzFAHOwAEwE/mIqOFyvbXHVWPcEzz/lf3oJS+sW5adip6tVXJ1LExw/qI3j
+	uOTA==
+X-Google-Smtp-Source: AGHT+IF6eJniCFCdaYOLX9voLhd8W5yzM9nF+Is9Q9zOcgxX03gda7Mqvx74f+HDrW5PoHAVO5pobw==
+X-Received: by 2002:a92:c24d:0:b0:3e5:4fee:75e8 with SMTP id e9e14a558f8ab-3e57e9dd050mr10205665ab.20.1755231706763;
+        Thu, 14 Aug 2025 21:21:46 -0700 (PDT)
 Received: from localhost.localdomain (65-128-248-47.mpls.qwest.net. [65.128.248.47])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e5a585esm1689365ab.16.2025.08.14.21.21.38
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e5a585esm1689365ab.16.2025.08.14.21.21.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 21:21:40 -0700 (PDT)
+        Thu, 14 Aug 2025 21:21:46 -0700 (PDT)
 From: Shimrra Shai <shimrrashai@gmail.com>
 To: lgirdwood@gmail.com,
 	broonie@kernel.org,
@@ -81,9 +82,9 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	shimrrashai@gmail.com
-Subject: [PATCH 1/3] ASoC: es8323: remove DAC enablement write from es8323_probe
-Date: Thu, 14 Aug 2025 23:20:21 -0500
-Message-ID: <20250815042023.115485-2-shimrrashai@gmail.com>
+Subject: [PATCH 2/3] ASoC: es8323: add proper left/right mixer controls via DAPM
+Date: Thu, 14 Aug 2025 23:20:22 -0500
+Message-ID: <20250815042023.115485-3-shimrrashai@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250815042023.115485-1-shimrrashai@gmail.com>
 References: <20250815042023.115485-1-shimrrashai@gmail.com>
@@ -95,27 +96,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove initialization of the DAC and mixer enablement bits from the
-es8323_probe routine. This really should be handled by the DAPM
-subsystem.
+Add proper DAC and mixer controls to DAPM; no initialization in
+es8323_probe.
 
 Signed-off-by: Shimrra Shai <shimrrashai@gmail.com>
 ---
- sound/soc/codecs/es8323.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/es8323.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/codecs/es8323.c b/sound/soc/codecs/es8323.c
-index a98229981..194720e4d 100644
+index 194720e4d..79f1fa967 100644
 --- a/sound/soc/codecs/es8323.c
 +++ b/sound/soc/codecs/es8323.c
-@@ -632,7 +632,6 @@ static int es8323_probe(struct snd_soc_component *component)
+@@ -182,13 +182,13 @@ static const struct snd_kcontrol_new es8323_mono_adc_mux_controls =
  
- 	snd_soc_component_write(component, ES8323_CONTROL2, 0x60);
- 	snd_soc_component_write(component, ES8323_CHIPPOWER, 0x00);
--	snd_soc_component_write(component, ES8323_DACCONTROL17, 0xB8);
+ /* Left Mixer */
+ static const struct snd_kcontrol_new es8323_left_mixer_controls[] = {
+-	SOC_DAPM_SINGLE("Left Playback Switch", SND_SOC_NOPM, 7, 1, 1),
++	SOC_DAPM_SINGLE("Left Playback Switch", ES8323_DACCONTROL17, 7, 1, 0),
+ 	SOC_DAPM_SINGLE("Left Bypass Switch", ES8323_DACCONTROL17, 6, 1, 0),
+ };
  
- 	return 0;
- }
+ /* Right Mixer */
+ static const struct snd_kcontrol_new es8323_right_mixer_controls[] = {
+-	SOC_DAPM_SINGLE("Right Playback Switch", SND_SOC_NOPM, 6, 1, 1),
++	SOC_DAPM_SINGLE("Right Playback Switch", ES8323_DACCONTROL20, 7, 1, 0),
+ 	SOC_DAPM_SINGLE("Right Bypass Switch", ES8323_DACCONTROL20, 6, 1, 0),
+ };
+ 
 -- 
 2.48.1
 
