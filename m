@@ -1,146 +1,88 @@
-Return-Path: <linux-kernel+bounces-770594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30739B27CE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96FBB27CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0311B17FFD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A0717940C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9678E261594;
-	Fri, 15 Aug 2025 09:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952522D12F6;
+	Fri, 15 Aug 2025 09:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k64qKfJ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=kotiuk.pl header.i=pawel@kotiuk.pl header.b="WpMNpQ4F"
+Received: from sender-of-o51.zoho.eu (sender-of-o51.zoho.eu [136.143.169.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0834248891;
-	Fri, 15 Aug 2025 09:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755249157; cv=none; b=JI+V65cY2eHHojZ/e8wuICqipEHoBbCAGh3TCstVa2569FJ5Cb/ivHAzoJVxjfBfASyYtMjrgTwIL9Vmh2afBxvU9U4YiQUMWXi27pWjrxzQMGJGyXdK3V64We+YJ+PPNdXmaYav1mOBgJtAEwRONw8MB0MpvZwntajCQrkj9+c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755249157; c=relaxed/simple;
-	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JniuZN8wD8ZYubEAW3MoKWWtH4KH4YnhpEw7tpgG3rFPrs94cPAlUijpv+sAj8lpkoniQhk4qT3Z2iQY0Yp5B43M9WEiPcg25uu5MBL6CoYcIFGlj6UG9b1ne4+KxVqbUehk1sXgRcmjs5gJAMozrIvOmbHMl+lE0BiT41sCQRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k64qKfJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ED2C4CEEB;
-	Fri, 15 Aug 2025 09:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755249154;
-	bh=NCVfEVQN6LHwkNoCyqO9selISDvFLOPAgNrIg0ejz0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k64qKfJ6zNJDhsnuWxR0fgqX3BVaqQwvdZElR/klQAEoCxi1g56cxeHTAZN0/wswK
-	 Pq+3GThmFMau+x8U6BogKChu5yqp5BwT3RbxGdJVY+yxVsA/3n3361XvguUQYtAzo0
-	 CwsxkbStJHs9RAUy1BQLHDF5j08YA23EQWtialVtSTBmcZtV4ZgvbsnBJMyvgGhChp
-	 CJH00Qs5o00iwlgrtxYWMVa2jp4VjDFoGjgtjzcCsiVePDp+01FqKPujeYxhNnJ5cJ
-	 L4zaOZ7N9WkPfF3VfgjAaCkkSQpngOXjnWintiz60FKc8w0raVBwqKL8kvbukYzLFm
-	 Bt1jthD93yq4g==
-Date: Fri, 15 Aug 2025 12:12:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
-	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
- physical memory ranges
-Message-ID: <aJ756q-wWJV37fMm@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-8-pasha.tatashin@soleen.com>
- <20250814132233.GB802098@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906F1261585
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 09:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755249221; cv=pass; b=nbDPGMFoH9sm9yVMauqQmW5yjlEI0np+JkFw8yMQzEOmza24NwzvHcU3wub6OWI4zOCuqR/eijlzN79HJCk1gkg1I99GxAHtuBRnHeJVgMYrIW2/55X2CZ+SCjaJnsIrTYchRoXfelJRX0ckV8v5rCbz4DmNtrEYduJrOAcNsyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755249221; c=relaxed/simple;
+	bh=p4FCBpD5L+4TcZHxjq0b1lI8voUcTe1NeYkiZ3hTzv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=As9fsiFv3qqXIDvUy97A+9bTNBzjvgbuEywURQFk4F90hpsapDHhsUpmxco/EUxW6j5pQkuQG+dnDEH/qlfbN+zTsBkHWO63jBVe+uE5F7VK8+UyW2om6UHT2/TIQuDy4gpQ91kNDkN8JDByN5cNTLgIIvTlWuhRiYd+oR6g/DQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kotiuk.pl; spf=pass smtp.mailfrom=kotiuk.pl; dkim=pass (1024-bit key) header.d=kotiuk.pl header.i=pawel@kotiuk.pl header.b=WpMNpQ4F; arc=pass smtp.client-ip=136.143.169.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kotiuk.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kotiuk.pl
+ARC-Seal: i=1; a=rsa-sha256; t=1755249180; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=cZwtvcpL0VN0RXUv3ngQCyXLE7x6jZ1xOzPBa8ddaW8OVV2u9fBVu7tTv8bHiTmBh6KVuFW/YvRTIMHh+SEfBCED1XBPcql8IX73kiCXVzH+Hb9sDiLZrv/EM+BAHV8sAnLokk9NZjUVo6SzmpEnan2GaydEp/vBrvgFnBtNXL8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1755249180; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=p4FCBpD5L+4TcZHxjq0b1lI8voUcTe1NeYkiZ3hTzv4=; 
+	b=A2bxwGeAieh59kOJBbSW7KOh4+jUFApftKGY6KzGIlBWjTPyot+ZXDpxLMMZiphhzryja+hOZ9HHIcTBEuxCe0TmsUkmvBBd+iQ7z/NyRlIb1wBQO0bd9gwWI3V3EopUbt1gC8/Cv+Dm1hT2TDzm7VVcRotHdZwNcfdnczGZS6I=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=kotiuk.pl;
+	spf=pass  smtp.mailfrom=pawel@kotiuk.pl;
+	dmarc=pass header.from=<pawel@kotiuk.pl>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755249180;
+	s=zmail; d=kotiuk.pl; i=pawel@kotiuk.pl;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=p4FCBpD5L+4TcZHxjq0b1lI8voUcTe1NeYkiZ3hTzv4=;
+	b=WpMNpQ4F3+cG0FxEsirmI2V87GagTD6as/mPxpTL3nNyzOc8bhVlvqBrVmR4z4o4
+	8lsEwGqShTwApRG7yx5AN5B9cylvZndA7a6MH2+1BopWpbQZVV5QfA+IWUsenHctzSK
+	EJBJwN2zsIOuM1qFrJM4QChlL1BZug1iI3pEgQbU=
+Received: by mx.zoho.eu with SMTPS id 1755249179060498.36275145621505;
+	Fri, 15 Aug 2025 11:12:59 +0200 (CEST)
+From: =?UTF-8?q?Pawe=C5=82=20Kotiuk?= <pawel@kotiuk.pl>
+To: bnatikar@amd.com
+Cc: adrian@freund.io,
+	basavaraj.natikar@amd.com,
+	benato.denis96@gmail.com,
+	bentiss@kernel.org,
+	iv.dovg@gmail.com,
+	jikos@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luke@ljones.dev
+Subject: Re: [PATCH 0/1] HID: amd_sfh: Add support for tablet mode
+Date: Fri, 15 Aug 2025 11:12:50 +0200
+Message-ID: <20250815091251.20737-1-pawel@kotiuk.pl>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <db1d95be-e92a-4328-b43e-8214a0b520be@amd.com>
+References: <db1d95be-e92a-4328-b43e-8214a0b520be@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814132233.GB802098@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Aug 14, 2025 at 10:22:33AM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
-> > +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
-> > +{
-> 
-> Why are we adding phys apis? Didn't we talk about this before and
-> agree not to expose these?
-> 
-> The places using it are goofy:
-> 
-> +static int luo_fdt_setup(void)
-> +{
-> +       fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-> +                                          get_order(LUO_FDT_SIZE));
-> 
-> +       ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
-> 
-> +       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
-> 
-> It literally allocated a page and then for some reason switches to
-> phys with an open coded __pa??
-> 
-> This is ugly, if you want a helper to match __get_free_pages() then
-> make one that works on void * directly. You can get the order of the
-> void * directly from the struct page IIRC when using GFP_COMP.
-> 
-> Which is perhaps another comment, if this __get_free_pages() is going
-> to be a common pattern (and I guess it will be) then the API should be
-> streamlined alot more:
-> 
->  void *kho_alloc_preserved_memory(gfp, size);
->  void kho_free_preserved_memory(void *);
+> Sure, Jiri, I will get back to this patch soon.
 
-This looks backwards to me. KHO should not deal with memory allocation,
-it's responsibility to preserve/restore memory objects it supports.
+Hi Basavaraj,
 
-For __get_free_pages() the natural KHO API is kho_(un)preserve_pages().
-With struct page/mesdesc we always have page_to_<specialized object> from
-one side and page_to_pfn from the other side.
+Could yougive us at least a rough estimate when you will be able to check this patch?
 
-Then folio and phys/virt APIS just become a thin wrappers around the _page
-APIs. And down the road we can add slab and maybe vmalloc. 
-
-Once folio won't overlap struct page, we'll have a hard time with only
-kho_preserve_folio() for memory that's not actually folio (i.e. anon and
-page cache)
- 
-> Which can wrapper the get_free_pages and the preserve logic and gives
-> a nice path to possibly someday supporting non-PAGE_SIZE allocations.
-> 
-> Jason
-> 
-
--- 
-Sincerely yours,
-Mike.
+Thanks in advance
+Paweł
 
