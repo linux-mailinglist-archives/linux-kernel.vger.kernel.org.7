@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-770514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F58B27BFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:02:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C29B27BD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF0AA2158E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:57:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A1FB63C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEDD2D59E5;
-	Fri, 15 Aug 2025 08:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC642BE640;
+	Fri, 15 Aug 2025 08:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=126.com header.i=@126.com header.b="V4tyR2SQ"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6+BpbAd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242032D1308;
-	Fri, 15 Aug 2025 08:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CB329D284;
+	Fri, 15 Aug 2025 08:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755248138; cv=none; b=uU404ZSxfQ05sjonE1nNofKtuK26/ZQ25zrcV0u2yetgY2v4mMePJJuO8unxhIlpQ0QynSyWsDleqxrOBJiKo80sD9P9e8lrn/d2pvbLJFZrvkif/37tMVK1Vid8zWhHv1AHSmJvTHqJC9IyarUcROofzLWIJOu0I7/FxC7ICzs=
+	t=1755248044; cv=none; b=YFl1RjSk9/K9kJYZlGQZ9fIP2bWYwNAi/dzI6JZY3+3TzdEczGwBrd2Ha7gTIVFlVDTBmfNpJrRkBuwGEewFEGQraW9/RlX/3AwjiFjzEgJHLLdusrXW6R5tGlfRIM7yRRMxrM+JpFtKyVspHQ2Z0iV074Z7Qzy9IKiCO7ZinxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755248138; c=relaxed/simple;
-	bh=SVN0u/TGQIp5tjfqWI9pwP28aQFwTLYUt1W/pUQeEvQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=FaaumTnDokoHPiw67ny/fb7WHZ5ihXolWD/RNDXGGr+VuqgEUYAEoQ/EXrrUkFu/l5iT4ZXMpFyNgBBEs1USGIAeKdmYBOL4kAydaJpCEDqBhBY6xI6Ti5r5IRluQ/ab6i7FKRPxQFKqZxVclx8r8NyuGyb16E089CfTJpWphp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=fail (1024-bit key) header.d=126.com header.i=@126.com header.b=V4tyR2SQ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=zacT6xkjTGxRYpvcmxrSsU9fI1AYXqPhHOXgZeRyHHE=; b=V
-	4tyR2SQewYBBH46H5T/zAHEEvAZrS33Xpx5WO1NOArX9zWN4GGyVz7xHvXQRffn4
-	xfSmDZ14kxlXMIb1CfRGAPBu2dpc7vJSvGg4WGqnz4Tbkq26eTFWEvekGHFr6bK7
-	7DAW6MPgz0Th+pCHn+EhuXNt7ef3qkmi1L3DkJNQxw=
-Received: from zhanggenjian$126.com ( [116.128.244.171] ) by
- ajax-webmail-wmsvr-41-115 (Coremail) ; Fri, 15 Aug 2025 16:53:57 +0800
- (CST)
-Date: Fri, 15 Aug 2025 16:53:57 +0800 (CST)
-From: "genjian zhang" <zhanggenjian@126.com>
-To: "Damien Le Moal" <dlemoal@kernel.org>
-Cc: axboe@kernel.dk, shinichiro.kawasaki@wdc.com, johannes.thumshirn@wdc.com,
-	kch@nvidia.com, zhengqixing@huawei.com, willy@infradead.org,
-	namcao@linutronix.de, vincent.fu@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Genjian Zhang" <zhanggenjian@kylinos.cn>
-Subject: Re:Re: [PATCH] null_blk: Fix correct parameter desc for the module
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 126com
-In-Reply-To: <d892eb87-6ee2-40a4-9b25-66c2f2e8befa@kernel.org>
-References: <20250815043033.1534949-1-zhanggenjian@126.com>
- <d892eb87-6ee2-40a4-9b25-66c2f2e8befa@kernel.org>
-X-NTES-SC: AL_Qu2eB/6ft0go4SaeZukfmUgQhec8W8ewvfsh2IFXOJl8jAzj5z4JRlNvDHTu4MurETyTqRuYWgZM1/RfUbRWWoMJg59otHgNWOb9W2Gnnx3zzw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1755248044; c=relaxed/simple;
+	bh=fkLFrZT5rOePvj8oL1FKGxrVLn/3EwqTARx7crpxGnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WK+CDSKL7jTfjzVHeHRnj4br3xLThYa4tD3v8ErHWd0/uNVcu3hm42G2diZ3nMZO60G1BOCuAhMS0UNQuVJHxaAPTfGEwoqAVAnj0UsZnh2eJQ52PskUl3RtHtFJMfJ+DnlFZOLLGfdG5/3TNdv5U1qV73s59t+d/SV23dHQVFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6+BpbAd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68880C4CEF5;
+	Fri, 15 Aug 2025 08:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755248044;
+	bh=fkLFrZT5rOePvj8oL1FKGxrVLn/3EwqTARx7crpxGnM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i6+BpbAdMl1b7cUK3TpFifshNNefnhQLvVcVU+acszFV7a8rNmULcOC0ybwIMtZ0X
+	 LpLegNnz/QMJLIak1ZcpGljvgrWbliBYbaYC0m0DV4TJEpOatp2i9cKrr3K7SxuO8n
+	 rqMNnDHnMRNRkqKWS3JuZ3cyMKFQ52+lUAo/r7nHsfQu3h9G3t+AhcDXEAyUwy8lKk
+	 jLxFc6Ji/coGoghOWOl72f7EdOjamppbzH7YP2nlHoMWWFqH8N0UPv0QHKYHumx2KR
+	 kidWdhhIu+Xnj/Nx/1e5oeVv0ZgmMkeOHAW7h6S2Ek2CE0ZFpJR6fhDw6u8AAPFEo4
+	 kA8uhr/n5yulg==
+Date: Fri, 15 Aug 2025 10:54:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kyrie Wu <kyrie.wu@mediatek.com>
+Cc: Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, 
+	George Sun <george.sun@mediatek.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+Subject: Re: [PATCH v3 5/6] dt-bindings: media: Add MT8196
+ mediatek,vcodec-encoder
+Message-ID: <20250815-meek-porcelain-oarfish-1411e3@kuoka>
+References: <20250814085642.17343-1-kyrie.wu@mediatek.com>
+ <20250814085642.17343-6-kyrie.wu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <30445c6a.6920.198acef8f24.Coremail.zhanggenjian@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cykvCgD3n+Om9Z5oCj8bAA--.16019W
-X-CM-SenderInfo: x2kd0wxjhqyxldq6ij2wof0z/1tbiHgOqfmieqlav6wAFsC
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250814085642.17343-6-kyrie.wu@mediatek.com>
 
-CkF0IDIwMjUtMDgtMTUgMTM6MjM6NTAsICJEYW1pZW4gTGUgTW9hbCIgPGRsZW1vYWxAa2VybmVs
-Lm9yZz4gd3JvdGU6Cj5PbiA4LzE1LzI1IDEzOjMwLCBHZW5qaWFuIHdyb3RlOgo+PiBGcm9tOiBH
-ZW5qaWFuIFpoYW5nIDx6aGFuZ2dlbmppYW5Aa3lsaW5vcy5jbj4KPgo+VGhlIHBhdGNoIHRpdGxl
-IGlzIGEgbGl0dGxlIHN0cmFuZ2UuIFdoYXQgYWJvdXQ6Cj4KPm51bGxfYmxrOiBGaXggdGhlIGRl
-c2NyaXB0aW9uIG9mIHRoZSBjYWNoZV9zaXplIG1vZHVsZSBhcmd1bWVudAo+Cj4+IAo+PiBXaGVu
-IGV4ZWN1dGluZyBtb2RpbmZvIG51bGxfYmxrLCB0aGVyZSBpcyBhbiBlcnJvciBpbiB0aGUgZGVz
-Y3JpcHRpb24KPj4gb2YgbW9kdWxlIHBhcmFtZXRlciBtYnBzLCBhbmQgdGhlIG91dHB1dCBpbmZv
-cm1hdGlvbiBvZiBjYWNoZV9zaXplIGlzCj4+IGluY29tcGxldGUuVGhlIG91dHB1dCBvZiBtb2Rp
-bmZvIGJlZm9yZSBhbmQgYWZ0ZXIgYXBwbHlpbmcgdGhpcyBwYXRjaAo+PiBpcyBhcyBmb2xsb3dz
-Ogo+PiAKPj4gQmVmb3JlOgo+PiBbLi4uXQo+PiBwYXJtOiAgICAgICAgICAgY2FjaGVfc2l6ZTp1
-bG9uZwo+PiBbLi4uXQo+PiBwYXJtOiAgICAgICAgICAgbWJwczpDYWNoZSBzaXplIGluIE1pQiBm
-b3IgbWVtb3J5LWJhY2tlZCBkZXZpY2UuCj4+IAkJRGVmYXVsdDogMCAobm9uZSkgKHVpbnQpCj4+
-IFsuLi5dCj4+IAo+PiBBZnRlcjoKPj4gWy4uLl0KPj4gcGFybTogICAgICAgICAgIGNhY2hlX3Np
-emU6Q2FjaGUgc2l6ZSBpbiBNaUIgZm9yIG1lbW9yeS1iYWNrZWQgZGV2aWNlLgo+PiAJCURlZmF1
-bHQ6IDAgKG5vbmUpICh1bG9uZykKPj4gWy4uLl0KPj4gcGFybTogICAgICAgICAgIG1icHM6TGlt
-aXQgbWF4aW11bSBiYW5kd2lkdGggKGluIE1pQi9zKS4KPj4gCQlEZWZhdWx0OiAwIChubyBsaW1p
-dCkgKHVpbnQpCj4+IFsuLi5dCj4+IAo+PiBGaXhlczogMDU4ZWZlMDAwYjMxICgibnVsbF9ibGs6
-IGFkZCBtb2R1bGUgcGFyYW1ldGVycyBmb3IgNCBvcHRpb25zIikKPj4gCj4KPlJlbW92ZSB0aGUg
-YmxhbmsgbGluZSBoZXJlLgo+Cj4+IFNpZ25lZC1vZmYtYnk6IEdlbmppYW4gWmhhbmcgPHpoYW5n
-Z2VuamlhbkBreWxpbm9zLmNuPgo+Cj5XaXRoIHRoZXNlIGZpeGVkLAo+Cj5SZXZpZXdlZC1ieTog
-RGFtaWVuIExlIE1vYWwgPGRsZW1vYWxAa2VybmVsLm9yZz4KPgo+LS0gCj5EYW1pZW4gTGUgTW9h
-bAo+V2VzdGVybiBEaWdpdGFsIFJlc2VhcmNoCgpUaGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlv
-bnMuIEkgd2lsbCBzZW5kIGEgcGF0Y2ggdjIuCgotLSAKR2Vuamlhbgo=
+On Thu, Aug 14, 2025 at 04:56:41PM +0800, Kyrie Wu wrote:
+> From: Irui Wang <irui.wang@mediatek.com>
+> 
+> Add MT8196 encoder compatible string, which will reference VCP device.
+
+You ignored comments from v2.
+
+> 
+> Signed-off-by: Irui Wang <irui.wang@mediatek.com>
+
+Incorrect SoB chain.
+
+> ---
+>  .../bindings/media/mediatek,vcodec-encoder.yaml | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> index ebc615584f92..bb4dbf23ccc5 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> @@ -24,6 +24,7 @@ properties:
+>                - mediatek,mt8188-vcodec-enc
+>                - mediatek,mt8192-vcodec-enc
+>                - mediatek,mt8195-vcodec-enc
+> +              - mediatek,mt8196-vcodec-enc
+>        - items:
+>            - const: mediatek,mt8186-vcodec-enc
+>            - const: mediatek,mt8183-vcodec-enc
+> @@ -58,6 +59,11 @@ properties:
+>      description:
+>        Describes point to scp.
+>  
+> +  mediatek,vcp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Describes point to vcp.
+
+For what? You just repeated the property name. You must say here
+something useful instead: why this is needed, what is its purpose.
+
+
+> +
+>    power-domains:
+>      maxItems: 1
+>  
+> @@ -76,6 +82,17 @@ required:
+>    - iommus
+>  
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt8196-vcodec-enc
+> +
+> +    then:
+> +      required:
+> +        - mediatek,vcp
+
+else
+
+mediatek,vcp: false
+
+
+Best regards,
+Krzysztof
+
 
