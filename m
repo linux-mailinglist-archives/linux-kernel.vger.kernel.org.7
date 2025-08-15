@@ -1,62 +1,96 @@
-Return-Path: <linux-kernel+bounces-771022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BD2B281B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E2FB281D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 005F7BA10E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:28:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5FE1B62339
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B32236424;
-	Fri, 15 Aug 2025 14:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7646123A9B1;
+	Fri, 15 Aug 2025 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s69DztBf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1Cm0G0fy"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E931C1E230E;
-	Fri, 15 Aug 2025 14:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98211224AE8
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 14:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755268149; cv=none; b=jMShbJBWOfUuXKYQ/JD5stk5qu1hBquKi7r6z+WfzpXudUXxl3duHhk1wc+6Qx0lzIKzoCq6VxBmYQoR94xbbNTgHU0MQ2RgOwwfiQ+339cxNn6C4yjzlDvaliS0Y2xt9EuQ900mXqmi9aHFXNp9orZpyxJQjD1aKDh8X/bW1C0=
+	t=1755268163; cv=none; b=ag3YX+kj3KxTMADMJBOCQZZ8OoGcLyZiYWN4TpvEFzs/fqFWemY2bbYGuPz7ra8fxd3EfUK1Gxlwmvoumk5E2MKrTTrOlMJLYf4WNUTHPXLH97/fo56FNL3UvsU9Xdm+LfiZl7jzi46+D2xZcDZnncCwBDmU36kN0GMtnrNQwCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755268149; c=relaxed/simple;
-	bh=H81prq1QS9ngg/A1qE6OG7MnMnv7zcnpHYeSRdGdZx8=;
+	s=arc-20240116; t=1755268163; c=relaxed/simple;
+	bh=RVW9cSXcUu1m5JGd+bvJ90FNpKko1SHEvvh/ezxt6qw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LmnZjzKB0I23fV3BZt96Gfxoq0Qw8o2OMJ5/Qq+T/xOola8VpZKY0ZPkPrCxRrySmKPwhIdQxCqhfHuVxdM0Bs3f/kWpOMgNMCgi5ilrFQ/5O/NOL7SgUelqK1xVfDuV9ZPQB/CV0mZp4/W7hoGc414K2xjUh+GKFuNSpFCw44I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s69DztBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF939C4CEEB;
-	Fri, 15 Aug 2025 14:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755268148;
-	bh=H81prq1QS9ngg/A1qE6OG7MnMnv7zcnpHYeSRdGdZx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s69DztBfXres7T+IGhWSm85kpDCZD1LuzBjTqvlPeazZ2xDoT7onrcIjC0CaPq8bs
-	 iD6N/+Zk/GT+qO4Ph8IN5wbiy8vunaKBWLp5btluDma1LO0TQFm/UeTe7cUSECYDhd
-	 DzGkZQIC1cHW6+P9IxTaGO+r8/nCY+AvJObL29xsrIxfGfEOyqHTP+DnWzN90UVIUd
-	 0ARf0GxAJW30/LZPs4pIVYqqTtSAX2Mh5ft7njos/J8iAMdMypui9QR0elLt3ThP5j
-	 AZ66f2EC/SlK7IDOn1Q1JLgG6Iare8/Wc96BkubrlFWA+SyzHZClNs1G44Ht9zQ41y
-	 +aC7ReJZAkj3A==
-Date: Fri, 15 Aug 2025 07:29:08 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, hch@lst.de, tytso@mit.edu,
-	bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH util-linux v2] fallocate: add FALLOC_FL_WRITE_ZEROES
- support
-Message-ID: <20250815142908.GG7981@frogsfrogsfrogs>
-References: <20250813024015.2502234-1-yi.zhang@huaweicloud.com>
- <20250814165218.GQ7942@frogsfrogsfrogs>
- <a0eda581-ae6c-4b49-8b4f-7bb039b17487@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZfAX1Grpl36QSqI7j0x0+wIRwCLdIwknoX5pgGQ8OlUQake9ZNoNgCv73PBl5QrV1oNTfIA+Jt7JW2Vd6pGlzdhzh+JOwHRlrdHs7+gn1sN3hwPJyaYfAZTTh2TTqQlq/8V6JksRC6/Ul4iL91wNpapGX6K4m4yYq/3ZF2O55I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1Cm0G0fy; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9edf0e4efso1210641f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755268160; x=1755872960; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEwM/gpinhi2XOkvEAyf9mQGVVoziKKdbRHc3b2tU2Q=;
+        b=1Cm0G0fyjqv1m8hdOeKClNqWkFEuBbfhoh8S3VhGSKijpmmcxUWKEQjEvWxiXEfkwY
+         U4iV8YP1oYyQMeixgI1y6ENkDkGmlCdlTNBlj14KhUklqfElpxLXgHZ+luuFzUtlulWn
+         ErfG0fMjRf6unQ2zFsBaoAk8lL/WQEfhziqBEE2/rUKgyByKWHRwA66KmdFgprROGn7Z
+         BvRiJ8ZNvnlrvezIrcfPyEa5PX2+S+MvDus56W5zCMeUDgTWonmY/Hta445yCSPuxVka
+         MOi7z7oj5JXAj594j/qHaY7O6OYuTkUFRolQ4b3HflyazKQZsBckBH+4cOXs80J92mop
+         1z4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755268160; x=1755872960;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dEwM/gpinhi2XOkvEAyf9mQGVVoziKKdbRHc3b2tU2Q=;
+        b=MMVid5NwjKs5Kuo83gJE7axGCKcA+PHzWZAS87Y+n7xxqcCUUbGR1tMz+pMlYOXE9x
+         PxUcrMcPWLnTa3mTMSWrxIDZVxhFtFVf73XvaduQGBqzSH0UooPZmtCdjfN7I+syGGBt
+         WL/SOJ/fesxL4PN7uS+m2AfzLtxO4Q6MIfrgqPxEhO+no3PUv/u+cfnKUToePVTiXSVD
+         P77PUxYKTMTNjjJPu5mbFBL0yibs/PXIXz+0y7snB5SIy5e8ylvoRNyfWlrSnf2xY+Xq
+         cSjko6bKDp7KyPRiPqEq0BgDVu3OaXYMFFmnSfwJk6LnDz02wOAqxk9K00akezyi8P18
+         AizA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTZL6mOtmS+7nDz+sahhdR9hJt5/QydQk1Yl6XyJdqH1fGORfkmQM/Secbt3VH6hacU1CKLtBImHnQz+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWTIDEV/fKKc6qJIoxYZMllx1ax/h0Bm+vfkkv+Y0Aq+9VcTXp
+	ivBEIO3T3HnIjiLqkhYO1n/nKTseWnTVGeIda9GdqyPIQdKGoj3pOjd/a86UPoyqojM=
+X-Gm-Gg: ASbGncsdfEPq9Kp/CH2keAMMDzrxxl58Ym/0aac3/OjLHHS0ly0mwxa6FfQv+wKYLQe
+	tP3lJyv2opFLiObovhfwTYmn3CJCcQySinOCRXJTx00WzQOR60d62Fdlf4ZYDetZz9tyk6MSHz7
+	jkFWTBM55Qp8wrEADRYIkRhGlDBNdfsk468Azh6ODHWqVLneSQDtZVr2ofJfFXqgzuXFaLWky7H
+	4oTAyuSWx3bsFOJjNfDQJ7taaKgHWR8AWMQ6p+XDbSRegDN2caBfu9E6jvKQMFJ2s6w2QgUijvw
+	C3gC0tpFIhGMED4juooZ5BzdVf8OgSP7DrEYNRAMQcBjkiVf1h5L/htqZ3r7wXs1jQPQhNqEE9B
+	bd3t4GBOBhD8txxbEAvWTnXaUr1pWhvuIgaikYRJdMYSdFRSzAj7xQfii/PVmFeIy3zyPg8HHRf
+	FApWCy3g==
+X-Google-Smtp-Source: AGHT+IGcsKXPoXqKCWjr+xBECNzFfr6DUpTtNHm2OUxibNs/VdcsyL+kzq6Oc8b1vYPRnE6BSoDntg==
+X-Received: by 2002:a05:6000:40e1:b0:3a4:d9fa:f1ed with SMTP id ffacd0b85a97d-3bb66d1f4e1mr1923586f8f.13.1755268159688;
+        Fri, 15 Aug 2025 07:29:19 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64c30c38sm2113365f8f.15.2025.08.15.07.29.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 07:29:19 -0700 (PDT)
+Date: Fri, 15 Aug 2025 15:29:17 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-hardening@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kdb: Replace deprecated strcpy() with strscpy() and
+ memcpy()
+Message-ID: <aJ9EPQNk2bcOMP1h@aspen.lan>
+References: <20250814220130.281187-2-thorsten.blum@linux.dev>
+ <aJ72XZ0VkrCkKFNy@aspen.lan>
+ <710CDE93-89CC-4B60-A582-5F9B2916ED72@linux.dev>
+ <aJ8cyXzMaa9b7ppN@aspen.lan>
+ <72F30E3D-2887-4494-B58C-2042AC880C1B@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,96 +99,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a0eda581-ae6c-4b49-8b4f-7bb039b17487@huaweicloud.com>
+In-Reply-To: <72F30E3D-2887-4494-B58C-2042AC880C1B@linux.dev>
 
-On Fri, Aug 15, 2025 at 05:29:19PM +0800, Zhang Yi wrote:
-> Thank you for your review comments!
-> 
-> On 2025/8/15 0:52, Darrick J. Wong wrote:
-> > On Wed, Aug 13, 2025 at 10:40:15AM +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Aug 15, 2025 at 03:16:27PM +0200, Thorsten Blum wrote:
+> On 15. Aug 2025, at 13:40, Daniel Thompson wrote:
+> > On Fri, Aug 15, 2025 at 01:28:01PM +0200, Thorsten Blum wrote:
+> >> Hi Daniel,
 > >>
-> >> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-> >> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
-> >> utility by introducing a new option -w|--write-zeroes.
+> >>> On 15. Aug 2025, at 10:57, Daniel Thompson wrote:
+> >>> Sorry but a strscpy() where the length of the destination buffer has
+> >>> been calculated from the source string is way too much of a red flag
+> >>> for me.
+> >>>
+> >>> Put another way if there are "no functional changes intended" then there
+> >>> cannot possibly be any security benefit from replacing the "unsafe"
+> >>> strcpy() with the "safe" strscpy(). Likewise abusing the destination
+> >>> length argument to truncate a string makes the code shorter but *not*
+> >>> clearer because it's too easy to misread.
 > >>
-> >> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> >> ---
-> >> v1->v2:
-> >>  - Minor description modification to align with the kernel.
-> >>
-> >>  sys-utils/fallocate.1.adoc | 11 +++++++++--
-> >>  sys-utils/fallocate.c      | 20 ++++++++++++++++----
-> >>  2 files changed, 25 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
-> >> index 44ee0ef4c..0ec9ff9a9 100644
-> >> --- a/sys-utils/fallocate.1.adoc
-> >> +++ b/sys-utils/fallocate.1.adoc
-> >> @@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
-> > 
-> > <snip all the long lines>
-> > 
-> >> +*-w*, *--write-zeroes*::
-> >> +Zeroes space in the byte range starting at _offset_ and continuing
-> >> for _length_ bytes. Within the specified range, blocks are
-> >> preallocated for the regions that span the holes in the file. After a
-> >> successful call, subsequent reads from this range will return zeroes,
-> >> subsequent writes to that range do not require further changes to the
-> >> file mapping metadata.
-> > 
-> > "...will return zeroes and subsequent writes to that range..." ?
-> > 
-> 
-> Yeah.
-> 
-> >> ++
-> >> +Zeroing is done within the filesystem by preferably submitting write
-> > 
-> > I think we should say less about what the filesystem actually does to
-> > preserve some flexibility:
-> > 
-> > "Zeroing is done within the filesystem. The filesystem may use a
-> > hardware accelerated zeroing command, or it may submit regular writes.
-> > The behavior depends on the filesystem design and available hardware."
-> > 
-> 
-> Sure.
-> 
-> >> zeores commands, the alternative way is submitting actual zeroed data,
-> >> the specified range will be converted into written extents. The write
-> >> zeroes command is typically faster than write actual data if the
-> >> device supports unmap write zeroes, the specified range will not be
-> >> physically zeroed out on the device.
-> >> ++
-> >> +Options *--keep-size* can not be specified for the write-zeroes
-> >> operation.
-> >> +
-> >>  include::man-common/help-version.adoc[]
-> >>  
-> >>  == AUTHORS
-> [..]
-> >> @@ -429,6 +438,9 @@ int main(int argc, char **argv)
-> >>  			else if (mode & FALLOC_FL_ZERO_RANGE)
-> >>  				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
-> >>  								filename, str, length);
-> >> +			else if (mode & FALLOC_FL_WRITE_ZEROES)
-> >> +				fprintf(stdout, _("%s: %s (%ju bytes) write zeroed.\n"),
-> > 
-> > "write zeroed" is a little strange, but I don't have a better
-> > suggestion. :)
-> > 
-> 
-> Hmm... What about simply using "zeroed", the same to FALLOC_FL_ZERO_RANGE?
-> Users should be aware of the parameters they have passed to fallocate(),
-> so they should not use this print for further differentiation.
+> >> Deliberately truncating the source using strscpy() is a valid use case.
+> >> strscpy() allows the size argument to be smaller than the destination
+> >> buffer, so this is an intended use of the size argument, not an abuse.
+> >
+> > Sorry, I didn't phrase that especially well. I regard the abuse to be
+> > deriving the length of the destination buffer exclusively from the
+> > state of the source buffer.
+> >
+> > As mentioned, it would be much cleaner to eliminate the string copy entirely
+> > than to translate it into something so similar to the original strcpy().
+>
+> Something like this?
 
-No thanks, different inputs should produce different outputs. :)
+It would feels disingenuous of me say "exactly like this" because I
+think your code is nicer than mine would have been for this (I suspect
+I would have been lazy and kdb_strdup()'ed str+1 and injected a
+terminator)!
 
---D
+Looks great. Only one comment:
 
-> Thanks,
-> Yi.
-> 
+> char *kdb_strdup_dequote(const char *str, gfp_t type)
+> {
+> 	size_t len = strlen(str);
+> 	char *s;
+>
+> 	if (str[0] == '"') {
+> 		/* skip leading quote */
+> 		len--;
+> 		str++;
+>
+> 		if (len > 0 && str[len - 1] == '"')
+> 			len--; /* skip trailing quote */
+
+I like the extra diligence of checking the trailing quote but perhaps
+combine the two if statements (so we only chomp the quotes if there
+are two).
+
+
+>        }
+>
+> 	len++; /* add space for NUL terminator */
+>
+> 	s = kmalloc(len, type);
+> 	if (!s)
+> 		return NULL;
+> 	strscpy(s, str, len);
+> 	return s;
+> }
+>
+> This should probably be a separate patch, right?
+
+I think so.
+
+I generally figure if you have to put two paragraphs into the patch
+description but each paragraph makes sense in isolation that's a sign
+there should be two patches... and I think that would be the case here
+(the paragraph explaining the memcpy() piece and the paragraph
+explaining kdb_strdup_dequote() would make sense in isolation.
+
+
+Daniel.
 
