@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-770823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A9DB27F64
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDAFB27F5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE91CAE696B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7D1AE696E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BA0304961;
-	Fri, 15 Aug 2025 11:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCA130100E;
+	Fri, 15 Aug 2025 11:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEiNrh4A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSxNQKfS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AA72882D9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EA62882A1;
 	Fri, 15 Aug 2025 11:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257846; cv=none; b=ZMeVLwu5Cveu9BLIUzmmUI2XRoQh4uDH3F4TKqWWLtv0Mjo0t4FviOPRmFilndYWNpiIb4/XIOwgYnjCzuMDzU3dmPB6WEBhz/v5DkQ8Bq5ryh1VXIuKHCEyypA6zBxpa2yESMrUigY8zDRd/yYCHa9PZeoj0fHTKDqzo+e/z1M=
+	t=1755257846; cv=none; b=Do9+e1uOF7mlHGrg4wKCnjQ5mHgg7QxM1pjHFMPUg/khfeqfdF4kLkhLQ0J+tBN/A1+JsFhsr3YBnznVrt63tI4d+mmmC3QGdCfDELlWkAvfItg1oSOcO4SS6tcYoGsbxsZJp7uFHAXYPCa5LLmxYRH8NcjjDs2+yucn7jH4PP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755257846; c=relaxed/simple;
-	bh=DJ6PKIVf54EN0EVhgnkCRmWpgby/c+jMwkXMtSedHKY=;
+	bh=PgoMVLECaBOExEXb56ZJhk6niEL59BPqFAalBLW0AT4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n+7kYEeCxJXyz6AC0vXdzczO75hTuKgrZ+eR1YIGNON5BIQWTIa12A1LUOYUDsMhqd4ZzSIq3wnjzjYtUHfArUxMHfHKBBCa0OAyqoQLPo5/fSDcVm5ah5ypoJ/VbRznLBPAySZJQpWarjTcZgkTusQlY30+yK8k3BdR6queJ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEiNrh4A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ABBC4CEF9;
+	 MIME-Version; b=uln0scuNQm6rpHVFWcBlBXvl1PzJG2TZze53uJaCeXH+jkE3iM6rgdxzC6ikVLHtjJ5NHtI6Zv2zE3g6zKzqWgOpBd57Qa2FlnvitVnR33mwCsRL3Z6CiWgYQlRQWSXbMqU27xLeJcuv2l4EQugPpO9yNGdqvNf1qZ229L89cTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSxNQKfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B4CC4AF0B;
 	Fri, 15 Aug 2025 11:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755257846;
-	bh=DJ6PKIVf54EN0EVhgnkCRmWpgby/c+jMwkXMtSedHKY=;
+	s=k20201202; t=1755257845;
+	bh=PgoMVLECaBOExEXb56ZJhk6niEL59BPqFAalBLW0AT4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oEiNrh4ABj+qWKIVW68luFPDGQLHKAgttGTwtsc72LU9xVoOhpAtbHuU9RuXk6pJA
-	 qznykEih+00AH4X4jSDJ/9MfjIR+MmD+7ffPJp8Qd4HtJCQZk8r1LEAfA+/qEx7jI1
-	 InDT/4NtgC9GIu4W9QaqCqgvtdOgj2D/hYe7uWRgakn274zS+PaluoMFGi5kQGLrlC
-	 B1X/DCNC7G59F9KgNJF+VocT7HEPqC2MaX8Y9ovkeHq9pFQAoFPRhm012zqgfmDHdE
-	 SO8hEyoAp9rwh6vU33HRjHStF3CmH3UJJY4xRo3BmyKJ51iWEw4Cl6/VD00Ke17RzV
-	 EntO3ofGVxGtw==
+	b=iSxNQKfSH1Vzj91lLyfJbN5JIeU84GyLRPGigVSEhDoTj4NiUYeWb6NwLHTMJrexe
+	 L3xlUj6NgYz9QArzHSlpYLGxKviHiUS1t0Uh31PWH+ppV6wxctF0VSgFRn/WQTW/R3
+	 704OeQ6pmQQ56rZpjvL4mQWtwpdxgb3tTVy+JwbSNE2TW0aQyVInYUETPUM8wML+Ze
+	 NtRsbOnj4VGsKLuPCo/3kHejcQFUWp+j5QzWkFj0sZZAAWw51+F5/1Ai15az//XD2h
+	 THJt9Qtvbex3KcDv/4NK7HnWQwHT0roc3/wa1VwzCfxpsuS33QOPdaDVbdYNJowxrk
+	 g6QDPwKuS30KQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1umskO-000000042T9-0CGZ;
+	id 1umskO-000000042TD-0J3P;
 	Fri, 15 Aug 2025 13:37:24 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] docs: conf.py: rename some vars at latex_documents logic
-Date: Fri, 15 Aug 2025 13:36:20 +0200
-Message-ID: <8105a4afe3210cd974a4e0cba9c280226a9aa63e.1755256868.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 05/11] docs: conf.py: fix some troubles for LaTeX output
+Date: Fri, 15 Aug 2025 13:36:21 +0200
+Message-ID: <ceaa9512336444bd148511a4a3bbc336ca317757.1755256868.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755256868.git.mchehab+huawei@kernel.org>
 References: <cover.1755256868.git.mchehab+huawei@kernel.org>
@@ -65,68 +65,110 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Currently, the logic uses fn and doc vars, but they don't
-properly describe what such vars do.
+While PDF docs work fine on RPM-based distros, it causes conflicts
+on Debian & friends:
 
-Make them clearer:
-	- fname: points to the file name to search (index.rst);
-	- doc: contains the name of the LaTeX or PDF doc to
-	  be produced.
+Documentation/output/process/latex/process.log:
 
-With that, the checks for SPHINXDIRS and for subdirs will
-be more coherent.
+	Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+	LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
+	6.
+	LaTeX Font Info:    No file T1lmr.fd. on input line 116.
+
+	LaTeX Font Warning: Font shape `T1/lmr/m/n' undefined
+	(Font)              using `T1/lmr/m/n' instead on input line 116.
+
+	! Corrupted NFSS tables.
+	wrong@fontshape ...message {Corrupted NFSS tables}
+                                                  error@fontshape else let f...
+	l.116 ...\familydefault\seriesdefault\shapedefault
+
+Change some logic inside latex_elements to avoid such issues,
+following the example from Sphinx documentation:
+
+	https://www.sphinx-doc.org/en/master/latex.html
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/conf.py | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ Documentation/conf.py | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
 diff --git a/Documentation/conf.py b/Documentation/conf.py
-index c8401ed75402..6e12c7d8e07e 100644
+index 6e12c7d8e07e..712e0a016727 100644
 --- a/Documentation/conf.py
 +++ b/Documentation/conf.py
-@@ -93,31 +93,31 @@ def config_init(app, config):
+@@ -9,6 +9,8 @@ import os
+ import shutil
+ import sys
  
-     # When SPHINXDIRS is used, we just need to get index.rst, if it exists
-     if not os.path.samefile(doctree, app.srcdir):
--        doc = "index"
--        doc_name = os.path.basename(app.srcdir)
--        if os.path.exists(os.path.join(app.srcdir, doc + ".rst")):
--            latex_documents.append((doc, doc_name + ".tex",
--                                    "Linux %s Documentation" % doc_name.capitalize(),
-+        doc = os.path.basename(app.srcdir)
-+        fname = "index"
-+        if os.path.exists(os.path.join(app.srcdir, fname + ".rst")):
-+            latex_documents.append((fname, doc + ".tex",
-+                                    "Linux %s Documentation" % doc.capitalize(),
-                                     "The kernel development community",
-                                     "manual"))
-             return
++from  textwrap import dedent
++
+ import sphinx
  
-     # When building all docs, or when a main index.rst doesn't exist, seek
-     # for it on subdirectories
--    for fn in os.listdir(app.srcdir):
--        doc = os.path.join(fn, "index")
--        if not os.path.exists(os.path.join(app.srcdir, doc + ".rst")):
-+    for doc in os.listdir(app.srcdir):
-+        fname = os.path.join(doc, "index")
-+        if not os.path.exists(os.path.join(app.srcdir, fname + ".rst")):
-             continue
+ # If extensions (or modules to document with autodoc) are in another directory,
+@@ -454,19 +456,38 @@ htmlhelp_basename = "TheLinuxKerneldoc"
+ latex_elements = {
+     # The paper size ('letterpaper' or 'a4paper').
+     "papersize": "a4paper",
++    "passoptionstopackages": dedent(r"""
++        \PassOptionsToPackage{svgnames}{xcolor}
++        % Avoid encoding troubles when creating indexes
++        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
++    """),
+     # The font size ('10pt', '11pt' or '12pt').
+     "pointsize": "11pt",
++    # Needed to generate a .ind file
++    'printindex': r'\footnotesize\raggedright\printindex',
+     # Latex figure (float) alignment
+     # 'figure_align': 'htbp',
+     # Don't mangle with UTF-8 chars
++    "fontenc": "",
+     "inputenc": "",
+     "utf8extra": "",
++    'fontpkg': dedent(r'''
++        \usepackage{fontspec}
++        \setmainfont{DejaVu Serif}
++        \setsansfont{DejaVu Sans}
++        \setmonofont{DejaVu Sans Mono}
++        \newfontfamily\headingfont{DejaVu Serif}
++    '''),
+     # Set document margins
+-    "sphinxsetup": """
++    "sphinxsetup": dedent(r"""
+         hmargin=0.5in, vmargin=1in,
+         parsedliteralwraps=true,
+         verbatimhintsturnover=false,
+-    """,
++    """),
++    "preamble": dedent(r"""
++        % Load kerneldoc specific LaTeX settings
++        \input{kerneldoc-preamble.sty}
++    """),
+     #
+     # Some of our authors are fond of deep nesting; tell latex to
+     # cope.
+@@ -474,22 +495,8 @@ latex_elements = {
+     "maxlistdepth": "10",
+     # For CJK One-half spacing, need to be in front of hyperref
+     "extrapackages": r"\usepackage{setspace}",
+-    # Additional stuff for the LaTeX preamble.
+-    "preamble": """
+-        % Use some font with UTF-8 support with XeLaTeX
+-        \\usepackage{fontspec}
+-        \\setsansfont{DejaVu Sans}
+-        \\setromanfont{DejaVu Serif}
+-        \\setmonofont{DejaVu Sans Mono}
+-    """,
+ }
  
-         has = False
-         for l in latex_documents:
--            if l[0] == doc:
-+            if l[0] == fname:
-                 has = True
-                 break
- 
-         if not has:
--            latex_documents.append((doc, fn + ".tex",
--                                    "Linux %s Documentation" % fn.capitalize(),
-+            latex_documents.append((fname, doc + ".tex",
-+                                    "Linux %s Documentation" % doc.capitalize(),
-                                     "The kernel development community",
-                                     "manual"))
+-# Load kerneldoc specific LaTeX settings
+-latex_elements["preamble"] += """
+-        % Load kerneldoc specific LaTeX settings
+-        \\input{kerneldoc-preamble.sty}
+-"""
+-
+ # This will be filled up by config-inited event
+ latex_documents = []
  
 -- 
 2.50.1
