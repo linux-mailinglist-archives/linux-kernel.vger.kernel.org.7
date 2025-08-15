@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-770346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A50B279D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:15:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E730FB279CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014AE5E0E22
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CAE6232DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647592F83CA;
-	Fri, 15 Aug 2025 07:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7EE2F90EA;
+	Fri, 15 Aug 2025 07:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WolOd4bg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mmZh6UEo"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wy0SeTkS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XfP1BrBq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C20C2F7450
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E7C2F83DA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755241613; cv=none; b=dle96hhR0xXK5wS37P5fiaCMWekA9hMYBhixlHVmvGBC2thFAUg/+glKOG3XWg4Uq7OSVjdztasrErV2kKiiQeKAqvVHMUNY8gC13FPR9cW58Qf8RF8+11LjZu77faRBe6GfLw0aVnL8bBpDhRahu8tcQ5PJU13vFupotCatvNg=
+	t=1755241616; cv=none; b=YLZAsbajLLUkX9gDDdK6+QwVUQrRtqLw9eQMe5dxkoYRH2GwqeuC8ELxKq9ptQBgODE92Imx/+97/K0XjHOoPI+e0P5J70Kj0GlFZhtoUy7Vbxu4i2NLCbyOuWlmvNhsT5qEvFCoHds+IDQg0jvms0/NhnAb/1WjzSeiBXHVTsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755241613; c=relaxed/simple;
-	bh=9z1Sdq4BhIr3DLajt8jgfRyN+bMto1EjY0iFvW8JoCs=;
+	s=arc-20240116; t=1755241616; c=relaxed/simple;
+	bh=2p3mVQR6Pei4EbU9vfHkMqnuC71LnqWy+OEui4qrQhk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O/BrnKPt1yBGX8H6IuJzjR/RTU7gqhLLX9fpl45wVHdp09eSgXWrcSfGcSmMp+SmPidZhnHQKwqFu1GOEQ7mUzoA00q0mlvzBgYbqbRKLq3mpM2n8wtn+gb3YvUzXbqyx7cq1nErXYfPDcjggCOdNy6+2FaTy14x23FeBTJlQmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WolOd4bg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mmZh6UEo; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=czlOEAdPsshzzXqr01DUD/HFYhph0917g4KlzfulYUZ7mNawjjHQ9nLjfmENomxh4mqcWdguAEr7CzRCl/jms30AiQ3UAeeviK9nxoK1lkZ+v8YynsHwDnqKoIb7gIVNndOJ/9CdXDdipBXc+h8bT7HSjH8KXYgQDx4D3jc4W4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wy0SeTkS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XfP1BrBq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755241611;
+	s=2020; t=1755241614;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1eI8/xjW0UInlljX8bsLjNZVb1yWs78XL5H+yDv/aJc=;
-	b=WolOd4bgfgXM9cpwd1QF1ILPnG14HQ1Xz/t2kKbCiiSYKBCnqFeSORX3N8rzD04MWUEcHw
-	mS6HZlnj7kT05MraFGbbDnUA3ZdekTP7qjckkryd57/M7+gf96NbLBIm3ZGVl1kzpUrxPS
-	0LwH1uX2Sw7gJqGZu4luPOpa3s0AnRrv9zb7QhqJ7caS5EqsabO64c+8OS6zP91Eox4ATB
-	pImrR0nszenPDlz8fBpWCiUy37TrA7c3SqVz5nH1Anp+nyZMBnkLxO/BUuQjlSxi7ylJGC
-	atrZ40aqPcN0gKKva//7+cPu76EbGHc3DBXp0iDN6wHL2/RsvNgrGwuRYLZmVw==
+	bh=Lr8g2138fQgNu0HI5HEQ50NVYhPOnkdlyJJ7xfGQCns=;
+	b=wy0SeTkS2d6Mdb9+Q1aIiW39aynWaseSM445L+/4iabdY6oC+Il0otO6B9YkbiD6TrJRcC
+	QrsrKGq1PIord+n9sCTv6/SBc5Q3D4xildNm5RBTTMOKCT9+QpZRSimZLCEv3jcwg48xbW
+	Gi+y1tBR7vZ1hyKXkbv5IpRlwiJBK302pHq8/ffGrhPYQOjCKkhC2x1jevNmIa5+aGjmh7
+	RnmE19XpnuNeENYpx2JI2MyDoteTNGWBn4QSmb1QAWmgr2JfFQWgOgLOcU2JVCaRUSrYMe
+	FQ5zI7DjfHlNHNXspI4MkiFFJZGm0NLhZRX1vgs8bACz9umDBvOlvCgysE44ow==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755241611;
+	s=2020e; t=1755241614;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1eI8/xjW0UInlljX8bsLjNZVb1yWs78XL5H+yDv/aJc=;
-	b=mmZh6UEoE10CqUL+DODgmESD2vK0Sm7qwztJQvtvmN0zjWatRr9MV4RWeXUjzJfpJEmOzn
-	H7WaFpkZ+pWWsHCw==
+	bh=Lr8g2138fQgNu0HI5HEQ50NVYhPOnkdlyJJ7xfGQCns=;
+	b=XfP1BrBqt1e2Sww0FRaPWW3nSiAAUHedLKhuBdGHHmBAgouwJ8CTnJV5nOwt6IftaPa+FW
+	b4RosLL7da4tdNBA==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v4 33/34] x86/cpuid: Parse CPUID(0x16)
-Date: Fri, 15 Aug 2025 09:02:26 +0200
-Message-ID: <20250815070227.19981-34-darwi@linutronix.de>
+Subject: [PATCH v4 34/34] x86/tsc: Use parsed CPUID(0x16)
+Date: Fri, 15 Aug 2025 09:02:27 +0200
+Message-ID: <20250815070227.19981-35-darwi@linutronix.de>
 In-Reply-To: <20250815070227.19981-1-darwi@linutronix.de>
 References: <20250815070227.19981-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,51 +81,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add CPUID(0x16) support to the CPUID parser.  It enumerates processor
-frequency information.  Query the leaf only for Intel machines, as this
-is where it is supported.
+Use parsed CPUID(0x16) access instead of direct CPUID queries.
 
-This allows converting CPUID(0x16) call sites to the new CPUID parser
-APIs next.
+Remove the "max standard CPUID level >= CPUID_LEVEL_FREQ" checks since
+the CPUID parser API's NULL check is equivalent.
+
+At cpu_khz_from_cpuid(), remove the Intel vendor check.  The CPUID parser
+caches this leaf output for Intel machines only, thus the CPUID parser
+API's NULL check is also equivalent.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/include/asm/cpuid/types.h | 1 +
- arch/x86/kernel/cpu/cpuid_parser.h | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/x86/kernel/tsc.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
-index 63d2569e2821..c044f7bc7137 100644
---- a/arch/x86/include/asm/cpuid/types.h
-+++ b/arch/x86/include/asm/cpuid/types.h
-@@ -217,6 +217,7 @@ struct cpuid_leaves {
- 	CPUID_LEAF(0x1,		0,		1);
- 	CPUID_LEAF(0x2,		0,		1);
- 	CPUID_LEAF(0x4,		0,		8);
-+	CPUID_LEAF(0x16,	0,		1);
- 	CPUID_LEAF(0x80000000,	0,		1);
- 	CPUID_LEAF(0x80000005,	0,		1);
- 	CPUID_LEAF(0x80000006,	0,		1);
-diff --git a/arch/x86/kernel/cpu/cpuid_parser.h b/arch/x86/kernel/cpu/cpuid_parser.h
-index 1d0d1a3c2bb8..9ac66abeae81 100644
---- a/arch/x86/kernel/cpu/cpuid_parser.h
-+++ b/arch/x86/kernel/cpu/cpuid_parser.h
-@@ -129,6 +129,7 @@ struct cpuid_parse_entry {
- 	/*		  Leaf		Subleaf		Reader function */		\
- 	CPUID_PARSE_ENTRY(0x2,		0,		0x2),				\
- 	CPUID_PARSE_ENTRY(0x4,		0,		deterministic_cache),		\
-+	CPUID_PARSE_ENTRY(0x16,		0,		generic),			\
- 	CPUID_PARSE_ENTRY(0x80000000,	0,		0x80000000),			\
- 	CPUID_PARSE_ENTRY(0x80000005,	0,		generic),			\
- 	CPUID_PARSE_ENTRY(0x80000006,	0,		generic),			\
-@@ -167,6 +168,7 @@ struct cpuid_vendor_entry {
-  	/*		   Leaf		Vendor list */					\
- 	CPUID_VENDOR_ENTRY(0x2,		X86_VENDOR_INTEL, X86_VENDOR_CENTAUR, X86_VENDOR_ZHAOXIN),\
- 	CPUID_VENDOR_ENTRY(0x4,		X86_VENDOR_INTEL, X86_VENDOR_CENTAUR, X86_VENDOR_ZHAOXIN),\
-+	CPUID_VENDOR_ENTRY(0x16,	X86_VENDOR_INTEL),				\
- 	CPUID_VENDOR_ENTRY(0x8000001d,	X86_VENDOR_AMD, X86_VENDOR_HYGON),		\
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 87e749106dda..34da49d45d85 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -662,6 +662,7 @@ static unsigned long quick_pit_calibrate(void)
+  */
+ unsigned long native_calibrate_tsc(void)
+ {
++	const struct leaf_0x16_0 *l16 = cpuid_leaf(&boot_cpu_data, 0x16);
+ 	unsigned int eax_denominator, ebx_numerator, ecx_hz, edx;
+ 	unsigned int crystal_khz;
  
- #endif /* _ARCH_X86_CPUID_PARSER_H */
+@@ -703,13 +704,8 @@ unsigned long native_calibrate_tsc(void)
+ 	 * clock, but we can easily calculate it to a high degree of accuracy
+ 	 * by considering the crystal ratio and the CPU speed.
+ 	 */
+-	if (crystal_khz == 0 && boot_cpu_data.cpuid_level >= CPUID_LEAF_FREQ) {
+-		unsigned int eax_base_mhz, ebx, ecx, edx;
+-
+-		cpuid(CPUID_LEAF_FREQ, &eax_base_mhz, &ebx, &ecx, &edx);
+-		crystal_khz = eax_base_mhz * 1000 *
+-			eax_denominator / ebx_numerator;
+-	}
++	if (crystal_khz == 0 && l16)
++		crystal_khz = l16->cpu_base_mhz * 1000 * eax_denominator / ebx_numerator;
+ 
+ 	if (crystal_khz == 0)
+ 		return 0;
+@@ -736,19 +732,9 @@ unsigned long native_calibrate_tsc(void)
+ 
+ static unsigned long cpu_khz_from_cpuid(void)
+ {
+-	unsigned int eax_base_mhz, ebx_max_mhz, ecx_bus_mhz, edx;
+-
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+-		return 0;
+-
+-	if (boot_cpu_data.cpuid_level < CPUID_LEAF_FREQ)
+-		return 0;
+-
+-	eax_base_mhz = ebx_max_mhz = ecx_bus_mhz = edx = 0;
+-
+-	cpuid(CPUID_LEAF_FREQ, &eax_base_mhz, &ebx_max_mhz, &ecx_bus_mhz, &edx);
++	const struct leaf_0x16_0 *l16 = cpuid_leaf(&boot_cpu_data, 0x16);
+ 
+-	return eax_base_mhz * 1000;
++	return l16 ? (l16->cpu_base_mhz * 1000) : 0;
+ }
+ 
+ /*
 -- 
 2.50.1
 
