@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-770041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36B0B27630
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5251DB27633
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403DD1CC2657
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:40:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EDE16F31F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F080E28136B;
-	Fri, 15 Aug 2025 02:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZfHpTwv4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C1A299A8C;
+	Fri, 15 Aug 2025 02:40:13 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9E9270548;
-	Fri, 15 Aug 2025 02:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ECB287246;
+	Fri, 15 Aug 2025 02:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755225481; cv=none; b=LF/R2bXz/SBjhU4/MHoOsDo2oiXwF0BCWjqy2fw7/QTjtAcZ+sb6NoF+k29jYa+Vk/iYberXINielkYpbUf7CvJiALqaOywU4qyeyfPK2nZiAwVuTPjpO5mCLosKZGMchUXWUxSFx5zGsgYASa0D1BN57XxcZzinD/V/aueIlGo=
+	t=1755225612; cv=none; b=gY/rA+lM0vKXI1gGpZ91Va2U2dxOzHdw5mJfxXqKsqg4yUo+J8LaFxu9sboj9XzrP8ex8qInTGZe1mO/+q9yEKtGQobUuZadd1m5u7ho0oB99MhB5mAOX9OYQQ3s6oU8StCrThEO2ftRMdv+f9f2shuxcWC6Iz5JA8VJYgQbFkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755225481; c=relaxed/simple;
-	bh=FfTNkVdLO1qS8IkMGnyPkwWSzl0av/r3zlncnz1w3uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Op9S9/oT6/x8uxDFLoH+7YtMrCgD6NzV+1Xq8pWVvACAREUiJt/E+GpoHLZrg4+cX4RCNbiNyu1cAykK8PlDm3dBpCFROM9VPh0FwZFW4CyNIZblFeSFOSbaOgCAM1nK5OZWUOfPz/801Mp4vkrjkVE/fjvG5A2WSMsAgScoXGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZfHpTwv4; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755225479; x=1786761479;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FfTNkVdLO1qS8IkMGnyPkwWSzl0av/r3zlncnz1w3uo=;
-  b=ZfHpTwv4ob4MRpimb7pv7nizvHkdyOm+/92NXWyClV+49YwG1Hp6JRZm
-   yFeiuAOQBn0X8LDcOZ2Li5Z4gnr9Cw2ffQ8QSs2Y4qqQUxyd3OPhWIumB
-   LSPTCloc9xzzSwT4MzBebV33T4HWBisvdaLt8CD/NaHTIY81QOsFXfF3f
-   fALz/DN1GzN53aJsDbWUF8tybxzvgo/4Yqw1ODKaWMDtPDOSqQSbNjKYB
-   QdO6U5jmWvPCFvps0U6l2ft93ISjKmrIFzhu4w7MuOVncmceo8TIIZak3
-   As1DYpVFKLoTMKnoLGCWJVpxgu+8UpM0k6IHx+quUHRZH4Z+KPOWvWGTL
-   w==;
-X-CSE-ConnectionGUID: iYvE9cbQRy+iWsUdgDfDwQ==
-X-CSE-MsgGUID: vKhwuhHQR5+cALFwfx2vTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="60179374"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="60179374"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:37:59 -0700
-X-CSE-ConnectionGUID: oE8u1vFbRdiHKSXqZH6kZQ==
-X-CSE-MsgGUID: OS+LmJWIQoCU4f8NhnjwSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166129711"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:37:54 -0700
-Message-ID: <d69b2da1-efc4-47da-a74d-c18d0b50db74@linux.intel.com>
-Date: Fri, 15 Aug 2025 10:37:51 +0800
+	s=arc-20240116; t=1755225612; c=relaxed/simple;
+	bh=u8I2X25WR4fgpDkMDlFyC0T3LW3CMF15mu1UZnKTUlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfBmJH5gE99sBLibdtk3LvpNmMIX9qN8CpidEc49xw+7PKS1zk5g3yETwjAoOysjnUZ8EEXGMrKGfdePbPZkV7ItM0CVQXVHhxGgdWsRb9kfnU0MeWADsXtqF9i2n6fNbkmrbutajHM1NsLPEh8UK5PbUSpnzl7IsPxcSbtuiTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz11t1755225519t45fc5bba
+X-QQ-Originating-IP: yq0E6dA0Nd3VzJJptiSQmJVFvn7q1TzIAMReu6KVsPY=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 15 Aug 2025 10:38:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5342344533602567481
+Date: Fri, 15 Aug 2025 10:38:36 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <F74E98A5E4BF5DA4+20250815023836.GB1137415@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-3-dong100@mucse.com>
+ <a0553f1d-46dd-470c-aabf-163442449e19@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 23/30] KVM: selftests: Add functions to allow mapping
- as shared
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-24-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807201628.1185915-24-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0553f1d-46dd-470c-aabf-163442449e19@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M613wnTrQKZbbJVjJPiVF5qUZkkZaUCybkZ1Rrq/LD7XscKj2g+IMy8i
+	ZeVTua40pupIfse+Ejlzg4pQY71gRw8XkdHiJABJKhjKij+9IGr3vwG+i4eFpKqNqvhiMMr
+	XpETE1WfYWELv+DJAfM/CIkfczlQDIOpraskMUJOPR9Hd1EpFYXxXXcamFxFJU2Z6XnNrQq
+	luySaaIucWztMzbAyFajdX7MHZQ1QJCH6vzxzb8oo52A4eQBaPkb2HUjuFPDFO4vO5PDMS1
+	6w/aaCLdOn7zTGfnsv0CLLlOhG/Bh9h67RVNwd9aqpWMAMY7pOnE7/91gx7OQN5ov+0lkqD
+	6z4bRjaDoten8o1ptazvIns+mBRAkW5NxZFRazW+selTg43SoU1sZNJ3WhTJgqV4OaUk+1l
+	T4yCnnZ8CBo8fgzLtDh8LEH5boc7/C+4HzKW4JLRl29PhD5L8h4h4AuOQU0dQH/MSga9tMW
+	PjS4KO4vCwMHd3OfUU0HRu63JwjeqEA03yyfVBiDrG9x/pBZ9CGTmJTjtvb9joz8iBEKJhj
+	gQrKWgHD0fu0vUgf/RgH2kq6anueZiWexHwb0qiOIY9YS9NQDgz5N9Zes2YXq1k2tYTEuKI
+	wlEXSay5I3wA6evl2SELA4d3oQUNFqqaABh61/CSVJPhFoKNi+GQcX1inH53rWDiKG6seCl
+	ursXmI5+HdnvLzUCoI1a1RAfV85pOucnJD5LkM/4dUlqTyCX1tZR9u8Q7MvKYReghODv2yf
+	q25XPhCuOOurDAbNHpCFez33gQoGJSH4DSxnUr1WQgK0mVife83h1UeAhMkhmOXaJwWZ1M9
+	3DTA2SWb6aqYZPZcOYn9puhCNAaz/2O0MSLmHQIBZrtcH+mB0W/FhoX2spIkEow0BQnZ0fn
+	JkeRgYPemfzDM6DdyR3Wu+aeu9Q3WOSD3uUWkb5WqSxb6DibI0vNb7lYYpS9aNLplxd6aJp
+	7sgvPTKXslxPaYZAzOBZiMzhsx242GrEGO4y5I2EtCjLYAHZV+NAh+2sS8vmaFaKlWa6Zoe
+	rd4yZ/vhTT9G2TsRz1Ih7A12+BhUhr3qdhLGZ0j9yMGSZyv0ki6KIHvUBLL3SNd/AnnhcKD
+	Evd/jLLbwfjm3dLsqNcmcXxOiChWw7C+w==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 8/8/2025 4:16 AM, Sagi Shahar wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
->
-> virt_map() enforces a private mapping for private memory. Introduce
-> virt_map_shared() that creates a shared mapping for private as
-> well as shared memory. This way, the TD does not have to remap its
-> page tables at runtime.
->
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+On Fri, Aug 15, 2025 at 04:05:32AM +0200, Andrew Lunn wrote:
+> > +	hw->driver_version = 0x0002040f;
+> 
+> What does this mean? It is not used anywhere. Such values are usually
+> useless, because they never change, where as the kernel around the
+> driver changes all the time, and it is the combination of the driver
+> and the kernel which matters.
+> 
+>     Andrew
+> 
 > ---
->   .../testing/selftests/kvm/include/kvm_util.h  | 23 +++++++++++++
->   tools/testing/selftests/kvm/lib/kvm_util.c    | 34 +++++++++++++++++++
->   .../testing/selftests/kvm/lib/x86/processor.c | 15 ++++++--
->   3 files changed, 70 insertions(+), 2 deletions(-)
->
-[...]
->   
-> -void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
-> +static void ___virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr,
-> +			   int level, bool protected)
->   {
->   	const uint64_t pg_size = PG_LEVEL_SIZE(level);
->   	uint64_t *pml4e, *pdpe, *pde;
-> @@ -231,17 +232,27 @@ void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
->   	 * Neither SEV nor TDX supports shared page tables, so only the final
->   	 * leaf PTE needs manually set the C/S-bit.
->   	 */
-> -	if (vm_is_gpa_protected(vm, paddr))
+> pw-bot: cr
+> 
 
-Since the original code has already create shared/private mapping based on the
-paddr, why not just use virt_map() and shared GPA as paddr, then no need to
-duplicate the code?
+It means driver version 0.2.4.16.
+I used it in 'mucse_mbx_ifinsmod'(patch4, I will move this to that patch),
+to echo 'driver version' to FW. FW reply different command for different driver.
 
-> +	if (protected)
->   		*pte |= vm->arch.c_bit;
->   	else
->   		*pte |= vm->arch.s_bit;
->   }
->   
-> +void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
-> +{
-> +	___virt_pg_map(vm, vaddr, paddr, level, vm_is_gpa_protected(vm, paddr));
-> +}
-> +
->   void virt_arch_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr)
->   {
->   	__virt_pg_map(vm, vaddr, paddr, PG_LEVEL_4K);
->   }
->   
-> +void virt_arch_pg_map_shared(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr)
-> +{
-> +	___virt_pg_map(vm, vaddr, paddr, PG_LEVEL_4K, false);
-> +}
-> +
->   void virt_map_level(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr,
->   		    uint64_t nr_bytes, int level)
->   {
+Thanks for your feedback.
+
 
 
