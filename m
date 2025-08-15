@@ -1,179 +1,240 @@
-Return-Path: <linux-kernel+bounces-771343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94618B285CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:29:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD35B285D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0AC6A27DA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:28:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F322B617B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B2B20E31B;
-	Fri, 15 Aug 2025 18:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC27C22A7F2;
+	Fri, 15 Aug 2025 18:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Acct5J4R"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QqtpQKBU"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1201D9A5D;
-	Fri, 15 Aug 2025 18:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DF28CF75
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755282483; cv=none; b=Ej+d4XYNOaNlCLwOnenmwd+gReIsUWIENg8E8rESZjFy2dOHi32g3U4CdxNcqQCys6c7niTFkQzQQZMbm8XtvIAkMWbVpRrUAoVVDWCisjbpVahODXgmYKTgKZhgIq7Yove+/GWezC42eJbKcdljohRr5nUfYCycx8lS/HUHJlo=
+	t=1755282610; cv=none; b=Jxxh64WCz4+mUlOFtrxiv8n9ripKCcsyl0L5qwjVLOlAdQenh+uRazbwrWLrBsis0s3a2AJMqnVBzFROLO6tD6B6Lm9mXGYTMbjIjttjnmkfSPq1lZ6+g5JyFqlOmI0IcxnFBBoB22RUgXTwfoor8XbcctTx2RLCD/dU0r56lwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755282483; c=relaxed/simple;
-	bh=WcIeLS4ZXXoXdwDG9ZrZOy7xFIgwGO4Az7+RoIiV7CU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gq9n3Y67qiKegRpX+GjRxH92wsoGQwQ3iuQUf4Cq8VPhipFauXFpVAsrZIyx0+NnNJPSUbAaMkt55oojAlXVO8N7+vkHmGTWuVBsBt9p6eV1sCDHa7oQG/R2TT7t9iAz+N0Ce8w3UrxffarwoGjNYyY6NUEBDoFE1s2Cy3+TotE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Acct5J4R; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b47174edb2bso1609785a12.3;
-        Fri, 15 Aug 2025 11:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755282482; x=1755887282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PRc1fd64O4J1Onrw7dVFQU3zu1pxcaQiGTVN2LS+H5M=;
-        b=Acct5J4RuqPDHQQ62RwBYC0WedB2zbP9rNuCGMv+mVfFKaUqEusdj5Ax4Wjg7sGMZV
-         n+7qCMQbsVb6vowkoR2EGQJAbRD/7jQm5uAvX3FtHrVLI5TLiQyT+edaswkFVWabyh1y
-         uQZy7999sb80XOEBMzL4hnojOfMC0//pbyf2Td9ymxJ34Uxg2tHjrHr0h7HrgET6QX6A
-         HYOQWuSjUtrxZKXylqrtC2761NN7SPs4VGjm6WPOYUyr7iUm1MQQCKJORZwukz8uYuXB
-         KKTpz3EJgzRMCxPjNrJTbV5gaeplKh82rD0Zjnlw0joBboWzzE3Xmxm5otFx0RXfiZrQ
-         dZ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755282482; x=1755887282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PRc1fd64O4J1Onrw7dVFQU3zu1pxcaQiGTVN2LS+H5M=;
-        b=aL3HHYALYbebX8z3wk61qHdVTkXg4L/XvatiDFtz1EK3XECTZEJqO9Yu9q0huFzyRF
-         1AuYjq9IDsR+MMUEryt6TL3OTTOfnASLGysztWqF8eOioTssKofhGOQlq5nsFtFCY9dS
-         F6O9L8NYnMpojdD6DDBG18A/PcMa0CLBtHYoN2EEQSbdUygzAqJMVy5T7wgUo1CGvdvw
-         UrgDGEx8JqlcpEC9qYPY7pub3uldv1hpm4DTgTE+6FbR3aFKjJ82F8b1KdU8fCe2JFD7
-         8q7fMlP/Q9gIqqP7mLkqrZEdhs+H0OCEFg95nS8YVWeqbNAUQFG6nWdsVt8ZLklxgtMC
-         BexA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEWmB82ncA24sGJFAjCzMxUP0CWd1tjpzTMOzNHLmMcC348w5GrqDdNLWWC5Ly3uXJu+l/VG2kgptn@vger.kernel.org, AJvYcCWhgls1xzTOhvieU+fk0wNVlUwfGoqrevQ1XwbEu/IJsZFe+6U1ZScLDvqL6PK8DiDxX4w/JfjRUzfjM6LaWYQkmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4lYUCAy18h73tcynTRq8bcuVXhK9KIfq5IYKXyDNbuhcqC380
-	TEKyHCZmWR/9rUFLQqkSIS2123/8ZEu5Q5OTUXG/e7II+O30JcF0636JION+5hlAYq8=
-X-Gm-Gg: ASbGncvBO7o1yZyKXYnEQCjwL2EcwYue4oLaLteW1xu7Qa5MSMXJffh0EouyA39i5Hp
-	M+mHqK3hVyupVP9ItZCxq3DP2fG8bpZeHb4Bj6TTiNWUhj3NQmYL3r3f60clwpCkBmG2T7uC+Jw
-	OfebRuCzNavEahe168RTE0ygQ5YkjQAVpLHRG8CLHiWcxu7PooyPm33POs1Rftl8vPS8/XEyCx9
-	DmQVN6FCP9zbjQd0rrPPjrWj3QoT6qTJVKYYHLUoEMK0HBU33WfXe8ABBD7GBLcimU2yEhosY1A
-	1OSAxQ975ByGJDdShwgAc1wUhfEqhpG5qkYkggb06BH49xcXcbV8KC9mp+sX82DCMg/k0Strh9h
-	KirF4VQf85LbecUejmG74uu5YAirpF/u5
-X-Google-Smtp-Source: AGHT+IEHD1GjcrbAdBd7la+otQhbrqDF5HpTciQ3G09/nn/3VnQgMLKqhY0XaiQcIXJt9SZb1N/YZQ==
-X-Received: by 2002:a17:90b:3fc3:b0:321:4765:a423 with SMTP id 98e67ed59e1d1-32341ea7860mr4878289a91.6.1755282481580;
-        Fri, 15 Aug 2025 11:28:01 -0700 (PDT)
-Received: from archlinux ([2401:4900:93f2:6a91:9b6f:8f9d:11b:d64a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32343994891sm1791582a91.8.2025.08.15.11.27.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 11:28:01 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	guoren@kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH RESEND] perf/util: make TYPE_STATE_MAX_REGS architecture-dependent
-Date: Fri, 15 Aug 2025 23:57:42 +0530
-Message-ID: <20250815182742.45541-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755282610; c=relaxed/simple;
+	bh=ONrYoJTIdgGb/5wF/dH1qo760V5msEGyARLjyAejL3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hY0EclRoHKm+X0jqrjBh9SOLxEjeJCl6RbbQrj1pBNFEYiR/1s+S/dLOh0WKmhEMzFxTbyfybeU2RPDU7u42Qz+tTvsBEg31pQSAsKCbehppayrRvpirVzr+5oXs4SmXvag3kTCsFaGXG1lIECRDo6ye/sgQDlDncpVJupbDZoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QqtpQKBU; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a077b829-7fed-4f72-a854-f17759867604@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755282594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NTIIr6J1qWMNNwEbgzgtDoYE0QB1SAchhR4ySYVGnL4=;
+	b=QqtpQKBUtwQfDlctzpZTyRwGcr5ZmcyvMKFSx0HnX3yd5lXJj+vEIcR1GRUYd4UXStIQj1
+	DGTnmtP19u1vavolBvT++8LVUgpz6mlgPOh5BYW+Oy+InnRLVTEVrZ+l5rFIkeebaqC6BB
+	JVBeErO1m9KRFoW5z11fojYVhT9K++w=
+Date: Fri, 15 Aug 2025 11:29:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] rdma_rxe: call comp_handler without holding cq->cq_lock
+To: Daisuke Matsuda <dskmtsd@gmail.com>,
+ Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806123921.633410-1-philipp.reisner@linbit.com>
+ <5a31f3ef-358f-4382-8ad1-8050569a2a23@linux.dev>
+ <CADGDV=UgDb51nEtdide7k8==urCdrWcig8kBAY6k0PryR0c7xw@mail.gmail.com>
+ <2b593684-4409-485b-9edf-e44a402ecf3a@linux.dev>
+ <6dbc1383-0c9f-4648-ae8d-4219e89589f4@gmail.com>
+ <885bb38c-4108-4fa2-a6d2-1e60d5e84af9@linux.dev>
+ <620f8611-1e95-4ebd-9db2-eb7231cfb3f2@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <620f8611-1e95-4ebd-9db2-eb7231cfb3f2@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Replace the fixed definition of TYPE_STATE_MAX_REGS with architecture-
-specific values for better accuracy across multiple CPU architectures
-including PowerPC, ARM, x86, RISC-V, MIPS, and others. This change ensures
-the type state registers array size matches the actual register count of
-the target platform.
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- tools/perf/util/annotate-data.h | 45 ++++++++++++++++++++++++++++++---
- 1 file changed, 41 insertions(+), 4 deletions(-)
+On 8/14/25 7:07 AM, Daisuke Matsuda wrote:
+> On 2025/08/14 14:33, Zhu Yanjun wrote:
+>> 在 2025/8/12 8:54, Daisuke Matsuda 写道:
+>>> On 2025/08/11 22:48, Zhu Yanjun wrote:
+>>>> 在 2025/8/10 22:26, Philipp Reisner 写道:
+>>>>> On Thu, Aug 7, 2025 at 3:09 AM Zhu Yanjun <yanjun.zhu@linux.dev> 
+>>>>> wrote:
+>>>>>>
+>>>>>> 在 2025/8/6 5:39, Philipp Reisner 写道:
+>>>>>>> Allow the comp_handler callback implementation to call 
+>>>>>>> ib_poll_cq().
+>>>>>>> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe 
+>>>>>>> driver.
+>>>>>>> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock 
+>>>>>>> deadlock.
+>>>>>>>
+>>>>>>> The Mellanox and Intel drivers allow a comp_handler callback
+>>>>>>> implementation to call ib_poll_cq().
+>>>>>>>
+>>>>>>> Avoid the deadlock by calling the comp_handler callback without
+>>>>>>> holding cq->cw_lock.
+>>>>>>>
+>>>>>>> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+>>>>>>
+>>>>>> ERROR: test_resize_cq (tests.test_cq.CQTest.test_resize_cq)
+>>>>>> Test resize CQ, start with specific value and then increase and 
+>>>>>> decrease
+>>>>>> ---------------------------------------------------------------------- 
+>>>>>>
+>>>>>> Traceback (most recent call last):
+>>>>>>     File "/root/deb/rdma-core/tests/test_cq.py", line 135, in 
+>>>>>> test_resize_cq
+>>>>>>       u.poll_cq(self.client.cq)
+>>>>>>     File "/root/deb/rdma-core/tests/utils.py", line 687, in poll_cq
+>>>>>>       wcs = _poll_cq(cq, count, data)
+>>>>>>             ^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>     File "/root/deb/rdma-core/tests/utils.py", line 669, in _poll_cq
+>>>>>>       raise PyverbsError(f'Got timeout on polling ({count} CQEs 
+>>>>>> remaining)')
+>>>>>> pyverbs.pyverbs_error.PyverbsError: Got timeout on polling (1 CQEs
+>>>>>> remaining)
+>>>>>>
+>>>>>> After I applied your patch in kervel v6.16, I got the above errors.
+>>>>>>
+>>>>>> Zhu Yanjun
+>>>>>>
+>>>>>
+>>>>> Hello Zhu,
+>>>>>
+>>>>> When I run the test_resize_cq test in a loop (100 runs each) on the
+>>>>> original code and with my patch, I get about the same failure rate.
+>>>>
+>>>> Add Daisuke Matsuda
+>>>>
+>>>> If I remember it correctly, when Daisuke and I discussed ODP 
+>>>> patches, we both made tests with rxe, from our tests results, it 
+>>>> seems that this test_resize_cq error does not occur.
+>>>
+>>> Hi Zhu and Philipp,
+>>>
+>>> As far as I know, this error has been present for some time.
+>>> It might be possible to investigate further by capturing a memory 
+>>> dump while the polling is stuck, but I have not had time to do that 
+>>> yet.
+>>> At least, I can confirm that this is not a regression caused by 
+>>> Philipp's patch.
+>>
+>> Hi, Daisuke
+>>
+>> Thanks a lot. I’m now able to consistently reproduce this problem. I 
+>> have created a commit here: 
+>> https://github.com/zhuyj/linux/commit/8db3abc00bf49cac6ea1d5718d28c6516c94fb4e.
+>>
+>> After applying this commit, I ran test_resize_cq 10,000 times, and 
+>> the problem did not occur.
+>>
+>> I’m not sure if there’s a better way to fix this issue. If anyone has 
+>> a better solution, please share it.
+>
+> Hi Zhu,
+>
+> Thank you very much for the investigation.
+>
+> I agree that the issue can be worked around by adding a delay in the 
+> rxe completer path.
+> However, since the issue is easily reproducible, introducing an 
+> explicit sleep might
+> add unnecessary overhead. I think a short busy-wait would be a more 
+> desirable alternative.
+>
+> The intermediate change below does make the issue disappear on my 
+> node, but I don't think
+> this is a complete solution. In particular, it appears that 
+> ibcq->event_handler() —
+> typically ib_uverbs_cq_event_handler() — is not re-entrant, so simply 
+> spinning like this
+> could be risky.
+>
+> ===
+> diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c 
+> b/drivers/infiniband/sw/rxe/rxe_comp.c
+> index a5b2b62f596b..a10a173e53cf 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_comp.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_comp.c
+> @@ -454,7 +454,7 @@ static void do_complete(struct rxe_qp *qp, struct 
+> rxe_send_wqe *wqe)
+>         queue_advance_consumer(qp->sq.queue, QUEUE_TYPE_FROM_CLIENT);
+>
+>         if (post)
+> -               rxe_cq_post(qp->scq, &cqe, 0);
+> +               while (rxe_cq_post(qp->scq, &cqe, 0) == -EBUSY);
+>
+>         if (wqe->wr.opcode == IB_WR_SEND ||
+>             wqe->wr.opcode == IB_WR_SEND_WITH_IMM ||
+> ===
+>
+> If you agree with this direction, I can take some time in the next 
+> week or so to make a
+> formal patch. Of course, you are welcome to take over this idea if you 
+> prefer.
 
-diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
-index 541fee1a5f0a..0dfb12a8f1cc 100644
---- a/tools/perf/util/annotate-data.h
-+++ b/tools/perf/util/annotate-data.h
-@@ -189,11 +189,48 @@ struct type_state_stack {
- 	u8 kind;
- };
- 
--/* FIXME: This should be arch-dependent */
--#ifdef __powerpc__
--#define TYPE_STATE_MAX_REGS  32
-+#if defined(__powerpc__) || defined(__powerpc64__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__aarch64__)
-+#define TYPE_STATE_MAX_REGS 31
-+#elif defined(__arm__)
-+#define TYPE_STATE_MAX_REGS 16
-+#elif defined(__x86_64__)
-+#define TYPE_STATE_MAX_REGS 16
-+#elif defined(__i386__)
-+#define TYPE_STATE_MAX_REGS 8
-+#elif defined(__riscv)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__mips__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__sparc__) || defined(__sparc64__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__alpha__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__s390__) || defined(__s390x__)
-+#define TYPE_STATE_MAX_REGS 16
-+#elif defined(__sh__)
-+#define TYPE_STATE_MAX_REGS 16
-+#elif defined(__nios2__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__hexagon__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__openrisc__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__csky__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__loongarch__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__arc__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__microblaze__)
-+#define TYPE_STATE_MAX_REGS 32
-+#elif defined(__xtensa__)
-+#define TYPE_STATE_MAX_REGS 16
-+#elif defined(__m68k__)
-+#define TYPE_STATE_MAX_REGS 16
- #else
--#define TYPE_STATE_MAX_REGS  16
-+#define TYPE_STATE_MAX_REGS 16
- #endif
- 
- /*
--- 
-2.50.1
 
+Thanks for building on top of my earlier proposal and for sharing your 
+findings. I appreciate the effort you’ve put into exploring this approach.
+
+That said, there are a few concerns we should address before moving forward:
+
+Busy-wait duration – It’s difficult to guarantee that the busy-wait will 
+remain short. If it lasts too long, we may hit the “CPU is locked for 
+too long” warnings, which could impact system responsiveness.
+
+Placement of busy-wait – The current implementation adds the busy-wait 
+after -EBUSY is returned, rather than at the exact location where it 
+occurs. This may hide the actual contention source and could introduce 
+side effects in other paths.
+
+Reentrancy risk – Since ibcq->event_handler() (usually 
+ib_uverbs_cq_event_handler()) is not re-entrant, spinning inside it 
+could be risky and lead to subtle bugs.
+
+I think the idea of avoiding a full sleep makes sense, but perhaps we 
+could look into alternative approaches — for example, an adaptive delay 
+mechanism or handling the -EBUSY condition closer to where it originates.
+
+If you’re interested in pursuing this further, I’d be happy to review an 
+updated patch. I believe this direction still has potential if we 
+address the above points.
+
+Thanks again for your contribution, and I look forward to your next version.
+Best regards,
+
+Yanjun.Zhu
+
+>
+> Thanks,
+> Daisuke
+>
+>>
+>> Thanks a lot.
+>> Zhu Yanjun
+>>
+>>>
+>>> Thanks,
+>>> Daisuke
+>>>
+>>
+>
 
