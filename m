@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-770220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A41B2789B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:39:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28CDB27899
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212EDA01F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:38:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B23714E1371
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1844429B8C7;
-	Fri, 15 Aug 2025 05:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890602BDC13;
+	Fri, 15 Aug 2025 05:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XgVYaE/W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LcHM5PiT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBD2253F00
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D862877C7;
+	Fri, 15 Aug 2025 05:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755236320; cv=none; b=ZRIxbNg8YVDUjgilxJHHxuA9XFmqZgRBQ85Pcl+sobaEqORTluL/eKx2YBHUon76gdtztjZa1ZdkZYxPujtB+jJD4oJ0+rbBzguwHe49L5szrFonX7npDFHMuYrGdE/V2CwBg8ygin0Npa7DXxXutqCtoim6mcM+cEV+m37/9NY=
+	t=1755236321; cv=none; b=MeiD0kvzcUgLBKX5qyUEcgRVSvn4OtuA7yhjS0pzNoiIoBuC4+N0SmIDClUW0sy2yJM8mFoW8UfAmIJ4NaiCulCPJu+gUJyqFK8NSxtzEwoAdNYNgdBNxxVFTT1z0GdCVoBtAoDET9c82q85rYi/MeKv79sLIl/EgWEIXoV/z9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755236320; c=relaxed/simple;
-	bh=k+R2H99bfh+BH8niSXXyRR5xbh5Ki0lvO06FVlwDvVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ih/Z+tIxxBGL//Wj8TA8U9N06aWktKkEH9jQMpjeiCiNM2jQozJ13m2Jy10u9Ygh58zx/bPrkJuBZ9MZH/89L6bMHADI7p++UT1p5vJfmPb7hxddtC7mP1KcTQUHJ/WSTHa8xZ14Zvp2HQvt5EtSqROfd/rwA9VuLVqt+qHMWY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XgVYaE/W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755236316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k+R2H99bfh+BH8niSXXyRR5xbh5Ki0lvO06FVlwDvVA=;
-	b=XgVYaE/Wu4SrOZLjy55Y8/kA3eJslhXSD4DpONp1z4ji4NwGwnExG81DOEAWho7K36IysO
-	A+CVjvD9jOb8y95dNvUc0UHBWI/E4HVzW3XKmW7pRvrwnO8nDpMlB2DaM34WjaDTvafztr
-	CPNWnn5qWM9rq2Z4tstOsFpKKLjhnQs=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-VhVgNHpTPNy-s7BAOW2wSw-1; Fri, 15 Aug 2025 01:38:35 -0400
-X-MC-Unique: VhVgNHpTPNy-s7BAOW2wSw-1
-X-Mimecast-MFC-AGG-ID: VhVgNHpTPNy-s7BAOW2wSw_1755236314
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24457f44a29so18484025ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:38:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755236314; x=1755841114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+R2H99bfh+BH8niSXXyRR5xbh5Ki0lvO06FVlwDvVA=;
-        b=fk38ORixKCUdsR4p3xXLHH2G/YQSjRQSHLCvA/LLK9CGVhHjX3MA/VBwRAecLJ8tYV
-         32k0d+H7RgxyLAnvgJ3XK8CNzsjpEsraqSm+xFXHTWMieaEWjkw035Au+7a7B6hTb0WL
-         W8naNM6JL7+oQYHU/tGMF/5ZkHVGQPsZmN/cZq2IYIJ192TmoYU7jWN9urzgISHHQ8Gu
-         /1+Oh506PMahR+5u7HbyhyH2a9g8yt02AGWLTWgnGK0f2bLfFOWMicPiLnydVweFJZZ+
-         a2oNXV7a5DXVHqFuCrjwvLs7LxOWLpoEtnEH2niN8E+pxXW5xLJzlzOTBO/O42f747+g
-         pqaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXh9xOgxLO6Z8PX3Slkr7FnnH76MYcTYL+OXfFEhBrofdJ+1N2PGc7MY9KxJ6UuUZNzCJCBz5hTcBoD+CM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkeEm+D+zniyU8WdM80TOqYum9NdITkGb8xCvb89KUdWCwFVWK
-	Q5DJra2XLGyjJSmdYhDl2grPQ5vIHx6u38xCSGcXn94qU0NwFuy2k3qZ+WreCpwTarw+od5k0oK
-	g7vejSXtKA2yImdiQ3d5FrpqTBnyGnwU/XrOz+xr1iIAbUcvgkoqzV+5J6/qrBbLGE0SHZ22h20
-	PceViS3JxCaSMf+719tBaocrF5eR8cVw+cMiFdKVkX
-X-Gm-Gg: ASbGncs6xjlPpiiqZPcr4zC1kSVrn+luuYFQqQWhbJoc4NYhSWNdOLiiKVryvLZS2Nx
-	rxTePpe/Ih9CdIrElMOIy4c+BGqymmWClwvALqqZmHGugSNQSXoiKxrN5OH1xkM8Zt0djjIUK3l
-	lH5+1BVgC3zwsZW007YeJ45A==
-X-Received: by 2002:a17:902:ce84:b0:240:5549:708e with SMTP id d9443c01a7336-2446d8ef2dcmr14828015ad.46.1755236313897;
-        Thu, 14 Aug 2025 22:38:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNF8ixWW+K/UQ+wsBh6Kk+3CTYVr9Miz4ZwB26y/XjbpOCpnb8qBRzSIZa7K8FyWNx9BMFUAKlBAn4MxP1R4w=
-X-Received: by 2002:a17:902:ce84:b0:240:5549:708e with SMTP id
- d9443c01a7336-2446d8ef2dcmr14827585ad.46.1755236313492; Thu, 14 Aug 2025
- 22:38:33 -0700 (PDT)
+	s=arc-20240116; t=1755236321; c=relaxed/simple;
+	bh=TohMWBdcbYnEEUSw3DTmVLG9f0ly5WylwkYngG7FL6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=saEwN6D/eJzus+bDHlcG881OF7euTCCdJVRiGeTgKS4fz/b5L2NaIaGHLVOxIFMqAosR/ftL2pjXDkzSklS6ENBY6UVkeV72lKcLAVddv2YWH4FBYgpDDS3xlEZRPXdukboMYKMOB9dALAQ8DS1GBohC1aV/0E/JxnkQI1sj168=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LcHM5PiT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755236321; x=1786772321;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TohMWBdcbYnEEUSw3DTmVLG9f0ly5WylwkYngG7FL6U=;
+  b=LcHM5PiTa4olcbOpN+k2eOklE6/oIbg7jBoEL2aDtc98wOeF7iSfOqPM
+   X1+wMebT4oMx0V+GnFTK3v7/kkuebOXv1MfavefsxAQtjXiRJXuXGlNKE
+   8JlWRROZv2Fh/Bw9ywlVgyEWNQVyZC/woorbF3O+lq7al1uWk2XIIPt1N
+   9+LWECco7jAiyVQxh8HHYn2UZYUT8jaGpzqygmd+NTWg+XP74TnctkXGi
+   Pvs5kjpZjCrhUtJJuigg1gUP9/GtM0CGZEPpjAbE7SfchUqwc/7LGxZwd
+   HIPE5Qa4y+f4aSy+DcWb8Hqww8qi0ae4+d1f9akcfFhb44xPFdvnZDYkg
+   w==;
+X-CSE-ConnectionGUID: 713fo/BHSSu3bj4yvtWm3w==
+X-CSE-MsgGUID: GHiJMx5lTJe8eUu69+fH1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57423514"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57423514"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:38:40 -0700
+X-CSE-ConnectionGUID: dCUFVluuQAqK0yjbFfXE+g==
+X-CSE-MsgGUID: YSVWm2DlQiGD4EnzGs87BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="197935613"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:38:35 -0700
+Message-ID: <c64b90c9-ee7f-4ca3-b199-24b4927d5608@linux.intel.com>
+Date: Fri, 15 Aug 2025 13:38:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250815022257epcas5p3de66f4e633a87e17275c0b16b888bb4e@epcas5p3.samsung.com>
- <CACGkMEv2wMm_tb+mbgMFA2M2ZimVr1OBKre3nrYrBDVPpqVoiw@mail.gmail.com> <20250815022308.2783786-1-junnan01.wu@samsung.com>
-In-Reply-To: <20250815022308.2783786-1-junnan01.wu@samsung.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 15 Aug 2025 13:38:21 +0800
-X-Gm-Features: Ac12FXx0bLK4_QgLg7PMFy71tElM2n26_1WoRrHpv6PfQj0ttolriEFKlqdwaoQ
-Message-ID: <CACGkMEtakEiHbrcAqF+TMU0jWgYOxTcDYpuELG+1p9d85MSN0w@mail.gmail.com>
-Subject: Re: [PATCH net] virtio_net: adjust the execution order of function
- `virtnet_close` during freeze
-To: Junnan Wu <junnan01.wu@samsung.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	eperezma@redhat.com, kuba@kernel.org, lei19.wang@samsung.com, 
-	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, q1.huang@samsung.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com, ying123.xu@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 26/30] KVM: selftests: TDX: Add support for
+ TDG.MEM.PAGE.ACCEPT
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-27-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807201628.1185915-27-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 10:24=E2=80=AFAM Junnan Wu <junnan01.wu@samsung.com=
-> wrote:
->
-> Sorry, I basically mean that the tx napi which caused by userspace will n=
-ot be scheduled during suspend,
-> others can not be guaranteed, such as unfinished packets already in tx vq=
- etc.
->
-> But after this patch, once `virtnet_close` completes,
-> both tx and rq napi will be disabled which guarantee their napi will not =
-be scheduled in future.
-> And the tx state will be set to "__QUEUE_STATE_DRV_XOFF" correctly in `ne=
-tif_device_detach`.
 
-Ok, so the commit mentioned by fix tag is incorrect.
 
-Thanks
+On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+> From: Ackerley Tng <ackerleytng@google.com>
+>
+> Add support for TDG.MEM.PAGE.ACCEPT that the guest uses to accept
+> a pending private page, previously added by TDH.MEM.PAGE.AUG or after
+> conversion using the KVM_SET_MEMORY_ATTRIBUTES ioctl().
+
+KVM_SET_MEMORY_ATTRIBUTES does the invalidation and attribute change, but it
+doesn't add pending private pages.
+
+Actually, pending pages are still added by TDH.MEM.PAGE.AUG during fault path.
 
 >
-> Thanks.
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   tools/testing/selftests/kvm/include/x86/tdx/tdx.h | 2 ++
+>   tools/testing/selftests/kvm/lib/x86/tdx/tdx.c     | 7 +++++++
+>   2 files changed, 9 insertions(+)
 >
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+> index 88f3571df16f..53637159fa12 100644
+> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+> @@ -7,6 +7,7 @@
+>   #include "kvm_util.h"
+>   
+>   #define TDG_VP_INFO 1
+> +#define TDG_MEM_PAGE_ACCEPT 6
+>   
+>   #define TDG_VP_VMCALL_GET_TD_VM_CALL_INFO 0x10000
+>   #define TDG_VP_VMCALL_MAP_GPA 0x10001
+> @@ -40,5 +41,6 @@ uint64_t tdg_vp_info(uint64_t *rcx, uint64_t *rdx,
+>   		     uint64_t *r8, uint64_t *r9,
+>   		     uint64_t *r10, uint64_t *r11);
+>   uint64_t tdg_vp_vmcall_map_gpa(uint64_t address, uint64_t size, uint64_t *data_out);
+> +uint64_t tdg_mem_page_accept(uint64_t gpa, uint8_t level);
+>   
+>   #endif // SELFTEST_TDX_TDX_H
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+> index bae84c34c19e..a51ab7511936 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/kvm_para.h>
+>   #include <string.h>
+>   
+> +#include "processor.h"
+>   #include "tdx/tdcall.h"
+>   #include "tdx/tdx.h"
+>   #include "tdx/tdx_util.h"
+> @@ -215,3 +216,9 @@ uint64_t tdg_vp_vmcall_map_gpa(uint64_t address, uint64_t size, uint64_t *data_o
+>   		*data_out = args.r11;
+>   	return ret;
+>   }
+> +
+> +uint64_t tdg_mem_page_accept(uint64_t gpa, uint8_t level)
+> +{
+> +	return __tdx_module_call(TDG_MEM_PAGE_ACCEPT, (gpa & PAGE_MASK) | level,
+> +				 0, 0, 0, NULL);
+> +}
 
 
