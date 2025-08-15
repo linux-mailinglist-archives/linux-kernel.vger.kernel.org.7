@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-770684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E11B27DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:04:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBF6B27DD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1662B1D05D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A300EA0021D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BF12FE584;
-	Fri, 15 Aug 2025 10:01:29 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E912FCBE2;
-	Fri, 15 Aug 2025 10:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9D32F60DB;
+	Fri, 15 Aug 2025 10:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="vr83j4M1"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B6E2FAC1F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755252089; cv=none; b=GsW8uZwwYtcylLkBZQPIUhsQj3FjzkcUIH2mE4ZYnOjrsrC0GTGy2ChSPnHAr2yuafV0SddblgjxJRlCsRUsyfGLGkexcqKhiwioHvdXaRC3sSr60MLaNv25t0AQRhP9wMIt60gV4pDpipQcl/fMdz51NWQXAh18/4WJjGFahkU=
+	t=1755252084; cv=none; b=kSSsp04i4uJywWh/VVOTeoPBKMefC6zegYXSewPigDTiJkRbvwEcRHE1tYvd388v024lUqQxIdkUJb7Y7S2QR3Xnl75herqixqTnDprFGTTl45ZZ4k1KCyCMwkKMHde7ymaZwLReIWGXEtt+1wDvUrJl3bgakvMJ/T+x7cxrL7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755252089; c=relaxed/simple;
-	bh=hJ0omirrcdCvBfSAvT36DFAi2zbKGO64uxdw3nQO9sU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lp5jphcs7yzuYvneGKEluPn2MZMgOxzRTH/k0RAVMrOxl1XeOUzf8xGm9PB/rMBqKepKl4PVV6z6Gk6wQPCxtvHxHqqeMa5NwjBWp7Mmsxl0sMJbIo3q2s/pHbGfIAJm8fbDmM16/UbcXFOpFeiNTLTo4msOBKOs0fyq0YZkq2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.212.9])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1f81529f9;
-	Fri, 15 Aug 2025 18:01:15 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: naoki@radxa.com
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
-Date: Fri, 15 Aug 2025 18:01:10 +0800
-Message-Id: <20250815100110.1302357-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <058E04574291144B+66620590-b680-44b9-92c5-7dc4c43080e7@radxa.com>
-References: <058E04574291144B+66620590-b680-44b9-92c5-7dc4c43080e7@radxa.com>
+	s=arc-20240116; t=1755252084; c=relaxed/simple;
+	bh=8FsMk8obAbD+bD00DJ3mYVUDhP/6yoGCi9VNK8VjAFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/fVe7gONbyoUBIRee7ALdZXLnSGOzSPMAUTy/uOhubbdfI4o9tIVzjlRUqUpKTUxQYlZi88qoQSQdf6WM3BGj+OLVTEC45RMGcCrVAq915S6k84zVbdYZHPPGG1ApRxenq41ECr6kyzxc4JiK1NOIjecm12oGU94SNyiTGUwio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=vr83j4M1; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 1230051EB3;
+	Fri, 15 Aug 2025 12:01:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1755252080;
+	bh=8FsMk8obAbD+bD00DJ3mYVUDhP/6yoGCi9VNK8VjAFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vr83j4M161TRumIMrKEvi+KvnRunX7jsFjaLirpQXvcspcrBGkXldm3ThsgnoZ5Qy
+	 NCBKCI3ax+d6zc3PWT8F0CHJKLxateKkwvY8hc3Eo4+e15qlLuUPyP/PRniOY8IvuB
+	 yAVNHniRaJjENv0Veyh6CzWG3G+RJqGjK8UIcMTtDLiNpJ9q2hKamIlXXNN1YaLuE9
+	 QvRpPvOOMcbej3WQqTt36aH1OGxKMjXyHwDFKKQ4NWkdv0VseU59P9tjftFifX41Rn
+	 ADnsERYP6xf08gdiO2QOZsZdsSJN3oDEZpdjDWU1BMTZ7Yimbf5NpSVu8EthNUeFxK
+	 /LoYnW0ys8Liw==
+Date: Fri, 15 Aug 2025 12:01:18 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: XianLiang Huang <huangxianliang@lanxincomputing.com>
+Cc: tjeznach@rivosinc.com, markus.elfring@web.de, will@kernel.org,
+	robin.murphy@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iommu/riscv: prevent NULL deref in iova_to_phys
+Message-ID: <aJ8FbvCJEOj2XjT-@8bytes.org>
+References: <20250815071244.13982-1-huangxianliang@lanxincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98ad2d2bef03a2kunmff7e9ce61e6136
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSh5NVkxKH01MSE1OGkgZSVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVCWVdZFhoPEhUdFFlBWU9LSFVKS0lCTUtKVUpLS1VLWQ
-	Y+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815071244.13982-1-huangxianliang@lanxincomputing.com>
 
-Hi,
+On Fri, Aug 15, 2025 at 03:12:44PM +0800, XianLiang Huang wrote:
+> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> index 2d0d31ba2886..0eae2f4bdc5e 100644
+> --- a/drivers/iommu/riscv/iommu.c
+> +++ b/drivers/iommu/riscv/iommu.c
+> @@ -1283,7 +1283,7 @@ static phys_addr_t riscv_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
+>  	unsigned long *ptr;
+>  
+>  	ptr = riscv_iommu_pte_fetch(domain, iova, &pte_size);
+> -	if (_io_pte_none(*ptr) || !_io_pte_present(*ptr))
+> +	if (!ptr)
+>  		return 0;
 
-> "label" is deprecated. "color" and "function" should be enough to 
-> explain what they are.
->
-> (Personally, I prefer LED_FUNCTION_STATUS to LED_FUNCTION_HEARTBEAT)
+Zero is usually not an invalid physical address, or is it on RISC-V?
 
-BTW, will there be versions of Radxa E24C and Radxa E54C with
-onboard eMMC? It seems that they are all onboard SPI instead
-of eMMC. If there is no onboard eMMC version, we can remove
-the sdhci node in dts.
-
-Thanks,
-Chukun
-
---
-2.25.1
-
-
+-Joerg
 
