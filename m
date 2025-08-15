@@ -1,201 +1,145 @@
-Return-Path: <linux-kernel+bounces-770889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701E0B28006
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051FBB2800A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 644327BAF3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C4B7BB958
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22D63009C2;
-	Fri, 15 Aug 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452BF301023;
+	Fri, 15 Aug 2025 12:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pftKXj6j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Wo/Zp3I5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0b6K2XDb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1QhShcHr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BktOj1Et"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5712D052
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA02741CD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755261248; cv=none; b=ctZQJW+ey+8rAW5Nxr1HdXO45VBhkk+98mjB3NZ4DKCObD53cek7HgYiH3ehJ/71yiGaajos/WQkfo4Xjx8yxIi7bU++RkCr+RVkXTHkJHrIOhIIrKltyPdIH5rxOSX8ENBGYyZBvoT4a/fhmL+aO9goHbZL+m2qzbr5bb8gcCc=
+	t=1755261258; cv=none; b=RWe6aubzWLMhwvnVCakGTcDbRM5lu3GsLlgtWXE5AVCLwl+FAU9E8gSLxAvoZXRsI4T4xT2M+zwcU+ZvdiNSgyHowKFS5dianbox6JV4ARb6XrdVEecIGHntMTVMJ2LnbnZ1S6UYdioJnYuZ88cGeTUc4cxHPV9lZdVmhgiutgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755261248; c=relaxed/simple;
-	bh=S7/XPMO0d+W6nIw8W5IyAf52ou3icGbH/Rx+JGDtyGI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5FUaJ2YkX5uD/mTRWedHjn+ay0OzaQSOdaNkGVBGbZ5MyKnASsCyyMdMclDbBbsFZTTO409ozOVfyZBHXRBeOvxQtH6w4m9vQw9OsoFtTLul55MrODHWPXfl7qmYI3qaAeOhjUU68kEvElWBZtbZH51+igfUNCPUT7SOQyDRxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pftKXj6j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Wo/Zp3I5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0b6K2XDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1QhShcHr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 545001F83E;
-	Fri, 15 Aug 2025 12:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755261243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
-	b=pftKXj6j6PflFjz2In7gvs+RV0Y8qhkGDb6PZ4y7+rzDZrIxXULvojkcqqPh8iwTzEdno0
-	t0fkPgA4nkv5qshCOFXPS9L0fwIG+maJ0tAJBrbr3S2Fouy4camlszFTG8rqjB6VERTg6t
-	eqGTGeGjoHhl7T695DNEWBJPIjZrprU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755261243;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
-	b=Wo/Zp3I5Sgxy1iMwvGxmiNjWV9Gfgb6MOxL/pPJ9FiTS5D6rmJmYExVUZXvuvJxD/7saaQ
-	liN2MD3wVE3KiIAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755261241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
-	b=0b6K2XDbFirJwyeNjzVe/NtQ2QWdZPG8fwGIo/40zzhCHxFLewXI2GmrpQfPPlaPRO54Ys
-	SsiLlTw4OF4g/UkdjoBKbpkZFQGD3NH7KhlvTRQIr51CNqQw5PXa34XFkOasU8H9PD7Hok
-	AFfK1Mf76dM/RaMkfPi2uB/OYlr99ns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755261241;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbKW3m79yzVvWd4c4oeFxoOPejDr9ro0zvoA9q/+lL0=;
-	b=1QhShcHrjb+96XnMqazaYYsnkahj8edGVGHZGhwGL0Iu59wGl7xBM3cbXktVrJpRhaELXf
-	B/zOwfneMk60jfDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A137F13876;
-	Fri, 15 Aug 2025 12:34:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R7KUIzgpn2hMYwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 15 Aug 2025 12:34:00 +0000
-Date: Fri, 15 Aug 2025 13:34:02 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] testing/radix-tree/maple: hack around kfree_rcu not
- existing
-Message-ID: <fcbr3lvd2aa6m4cjl666ksbf5px25htnh5slahj4pk2id54ygn@llqqfn5urq52>
-References: <20250814064927.27345-1-lorenzo.stoakes@oracle.com>
- <kq3y4okddkjpl3yk3ginadnynysukiuxx3wlxk63yhudeuidcc@pu5gysfsrgrb>
- <20250814180217.da2ab57d5b940b52aa45b238@linux-foundation.org>
- <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
+	s=arc-20240116; t=1755261258; c=relaxed/simple;
+	bh=2NPBJgIbug0Bh+0ak17HZ4aogx7N/v5utSxx0PGuCKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njkTx+Q1ZtMtpQRqujzjLEUT4nCCa98wLPb8b1CPAd0pqUInviK38x1ERw3OJZFfPSYtrgR0kgsjtDLV/3LairOjmVpexJGNjOyZO+/ANS+rsEz80Dzu7hf6nRQKxPvLPbpzhARXHdGwZSHkIdkkGKwWZIgDH7OgKyxoLYvyMBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BktOj1Et; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so1068565f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755261254; x=1755866054; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2NPBJgIbug0Bh+0ak17HZ4aogx7N/v5utSxx0PGuCKs=;
+        b=BktOj1Etftc/hzF6N+qUmNOfwsQvBMN0/m8i1mG1pq5xDUQQVMs02tCISPs/rCWs6S
+         7UJTC7SWBT/slTELayNHsnPQ/w0dMRvislbFQ3t00+sTzf/jYLJ3Ofn1ySsfGbu7dY8b
+         1GwF9GPmdW+yqZch7hoG7FaNuiN8qj0rXGqLknOCuHdVCspxzIwjZ/JAAPIf9HWxtOOI
+         ZjhthdD49OtsPSLhpV90AE31+E5TjvKGR21C35KgElXWUCVKbIlcuJQaJAdzHhyG1TgW
+         lAMCxYOyGs9Ei4N7lm+DdzDoJ2roBHhnOAa1hlkF33SVmaBS0rmNlqiJov+efQ64RFWX
+         nWFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755261254; x=1755866054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2NPBJgIbug0Bh+0ak17HZ4aogx7N/v5utSxx0PGuCKs=;
+        b=v0dH471W0b7nbl39UjSvmD2wl95mr+xk37ig6maMUBKwhAGDv5sYQw7flySdIHZYyc
+         gJY2Q+QzQZwFPsoR6BgXR7MUQlLX9XtL2iyfIkrFXxhRDn5gZ2QrPcmhY8a7xkQpDE/5
+         SKUUzixZoTt3B7RLyywqy5vnqQT3rMZTsHnFVY6/HSst/+oPNAkBQA6WzHwmomJNZaRK
+         R5opH4eES824clvuyzJWH0GtMQRLSpdz8tMUJiekD+LAqeUAO6+RyjYsnqzmmnBW+KzR
+         LpLJGfrlGxzrRLDfXI+qqm5+uWwGP7rzqk0v9t5uepF9Cta6FxwuKKWCi7Wz9+AGXwFZ
+         k1Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0uq4VuU359mshrUHthc+0n5Z+P7qT4sTwABrrSsYWfqZgS15yBKRD+5JaYzH1GaJaGSl6L6KWsrT8eA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLX49n7rigQi1PON86kifyIRyTcDmjTEW8InIOSwy4RjWoyZI9
+	lIHqLlWy9cfsV2BQsaB++OHlzdHZvKhcDrvgjWb/GqomrxCIdQeFKQxYlGD4/Q6XPPA=
+X-Gm-Gg: ASbGncutfz+OXvb2P0BE85/Kc1WHe1Jtc8M2TKYXZpSMesoIGW86PF115PKR7DMZqOU
+	LZMcTOAyHwbfWDvOTt70w+kPrFMG9KvZ1qfFTVZWXC5X+7w2g7ItMG6VUK5BivMrYPYY7Wv93kD
+	JSLMDQI4ITIhQMO82Xegaw0Ps0lUA/10l3CUT1GNYiDOroWsgAHOvgk2dzi/GVaAgBWX+mK1v+O
+	90GMu6wufvuWaBNMk3QaQW1kKsL5DcE3aVyTWh7L15152oEMfo+dV3P0ZyqhQHMUZw3iiXh03fL
+	A4VwSzjllZGQcaMgpgXRjJd6hXmYe9PlW8LaJE1EiCrctdp3MYDZXhYjIEgRRhjoU1wJRDy7V35
+	r/LxlmMgf0XT/P6RD6csA6rirMoc1L0Mn1SLEPgZKuz+PILjdQVdk
+X-Google-Smtp-Source: AGHT+IHOvaE7tZeHngdDROJ3VBbwyIHwQY//OcWQOpF4xFO/7x0xp2UXIVTyys/GbEi0VR5R6Dqu6Q==
+X-Received: by 2002:a05:6000:1888:b0:3b7:99a8:bf6e with SMTP id ffacd0b85a97d-3bb694ae038mr1734547f8f.51.1755261253797;
+        Fri, 15 Aug 2025 05:34:13 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d5f4539sm1195356a12.14.2025.08.15.05.34.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 05:34:12 -0700 (PDT)
+Date: Fri, 15 Aug 2025 14:34:03 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: lirongqing <lirongqing@baidu.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cgroup: Remove redundant rcu_read_lock() in
+ spin_lock_irq() section
+Message-ID: <f64n5c6dkdjuaudk5p66mvpjyjulrjytmndqufmdu3uhft46sy@bem2gx34zhkz>
+References: <20250815091430.8694-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lxgzoylpx6c2h6sk"
 Content-Disposition: inline
-In-Reply-To: <wh2wvfa5zt5zoztq3eqvjhicgsf3ywcmr6sto2zynkjlpjqj2b@bt7cdc4f7u3j>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <20250815091430.8694-1-lirongqing@baidu.com>
 
-On Thu, Aug 14, 2025 at 10:09:15PM -0400, Liam R. Howlett wrote:
-> * Andrew Morton <akpm@linux-foundation.org> [250814 21:02]:
-> > On Thu, 14 Aug 2025 13:40:03 +0100 Pedro Falcato <pfalcato@suse.de> wrote:
-> > 
-> > > On Thu, Aug 14, 2025 at 07:49:27AM +0100, Lorenzo Stoakes wrote:
-> > > > From: Pedro Falcato <pfalcato@suse.de>
-> > > > 
-> > > > liburcu doesn't have kfree_rcu (or anything similar). Despite that, we can
-> > > > hack around it in a trivial fashion, by adding a wrapper.
-> > > > 
-> > > > This wrapper only works for maple_nodes, and not anything else (due to us
-> > > > not being able to know rcu_head offsets in any way), and thus we take
-> > > > advantage of the type checking to avoid future silent breakage.
-> > > > 
-> > > > This fixes the build for the VMA userland tests.
-> > > > 
-> > > > Additionally remove the existing implementation in maple.c, and have
-> > > > maple.c include the maple-shared.c header.
-> > > > 
-> > > > Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-> > > > Tested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > Signed-off-by: Pedro Falcato <pfalcato@suse.de>
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > ---
-> > > > 
-> > > > Andrew - please attribute this as Pedro's patch (Pedro - please mail to
-> > > > confirm), as this is simply an updated version of [0], pulled out to fix the
-> > > > VMA tests which remain broken.
-> > > >
-> > > 
-> > > ACK, this is fine. The future of the series is still unclear, so if this fixes
-> > > the build then all good from my end :)
-> > 
-> > Well, can we have this as a standalone thing, rather than as a
-> > modification to a patch whose future is uncertain?
-> > 
-> > Then we can just drop "testing/radix-tree/maple: hack around kfree_rcu
-> > not existing", yes?
-> > 
-> > Some expansion of "fixes the build for the VMA userland tests" would be
-> > helpful.
-> 
-> Ah, this is somewhat messy.
-> 
-> Pedro removed unnecessary rcu calls with the newer slab reality as you
-> can directly call kfree instead of specifying the kmem_cache.
-> 
-> But the patch is partially already in Vlastimil's sheaves work and we'd
-> like his work to go through his branch, so the future of this particular
-> patch is a bit messy.
-> 
-> Maybe we should just drop the related patches that caused the issue from
-> the mm-new branch?  That way we don't need a fix at all.
-> 
-> And when Vlastimil is around, we can get him to pick up the set
-> including the fix.
-> 
-> Doing things this way will allow Vlastimil the avoid conflicts on
-> rebase, and restore the userspace testing in mm-new.
-> 
-> Does that make sense to everyone?
->
 
-I agree. This sounds sensible. I don't think it makes much sense to let the
-patchset rot in mm-new.
+--lxgzoylpx6c2h6sk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] cgroup: Remove redundant rcu_read_lock() in
+ spin_lock_irq() section
+MIME-Version: 1.0
 
--- 
-Pedro
+Hello RongQing.
+
+On Fri, Aug 15, 2025 at 05:14:30PM +0800, lirongqing <lirongqing@baidu.com>=
+ wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+>=20
+> Since spin_lock_irq() already disables preemption and task_css_set()
+> is protected by css_set_lock, the rcu_read_lock() calls are unnecessary
+> within the critical section. Remove them to simplify the code.
+>=20
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+
+So there is some inconsistency betwen cgroup_migrate() and
+cgroup_attach_task() (see also 674b745e22b3c ("cgroup: remove
+rcu_read_lock()/rcu_read_unlock() in critical section of
+spin_lock_irq()")) -- that'd warrant unification. Have you spotted other
+instances of this?
+
+The RCU lock is there not only because of task_css_set() but also for
+while_each_thread(). I'd slightly prefer honoring the advice from Paul
+[1] and keep a redundant rcu_read_lock() -- for more robustness to
+reworks, I'm not convinced this simplification has othe visible
+benefits.
+
+Thanks,
+Michal
+
+[1] https://lore.kernel.org/all/20220107213612.GQ4202@paulmck-ThinkPad-P17-=
+Gen-1/
+
+--lxgzoylpx6c2h6sk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaJ8pHgAKCRB+PQLnlNv4
+CLeEAQDhACSSxzfculiGEZg5K7CYSS8BDwlcU8+9yAxEJIfsLwEAmbKaApjfh0Ki
+8I+wSutS8pxwWUO8EeeZ9jbous+NrQw=
+=uUm4
+-----END PGP SIGNATURE-----
+
+--lxgzoylpx6c2h6sk--
 
