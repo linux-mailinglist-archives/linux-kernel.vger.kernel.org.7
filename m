@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-770465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBB6B27B10
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8B5B27B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09ACCA28737
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B653A44E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABFF20F087;
-	Fri, 15 Aug 2025 08:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466FC1F91C5;
+	Fri, 15 Aug 2025 08:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NWzdE3iX"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGKmw4Ap"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3614D1E86E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACD42836F;
+	Fri, 15 Aug 2025 08:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755246695; cv=none; b=kWjOj0Dacb4+c1DaW4ouN9JQ2956e5o5GyYvljd8NvW5wxe6LnM7HeW3bAEg7XvbOwKRArk92cmmofaEf2OaE+MRteW0/O8no5PAWsDgXYksjVYAbloLYZ55xMOsGKtvRNtj05JcYoqJD8e35TSBEXTIOe57Um9wDBBZGiJXaug=
+	t=1755246726; cv=none; b=FCkzRitowD0OLjitKkKR0/fac6EKihHkW4FUXv/OpFT8bVEacpMFouEvb/ZjpQ8L4/TobG8RY/GmIeeVxFuIUGTMea4ql1UsXC7Tmg9q0VrEGwVZRhj+4n5qxpbSoczaYL9ok0+KBuBh5Fn69PHgMWMoRFgI93io1a1NcdZkbjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755246695; c=relaxed/simple;
-	bh=F7TgtDIVeJHmJbdmhVsLQz8ZXqh8PmvpMqqRRdkM3Hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBDulH5of78351CrZHgWqvhOJk7Fbn2t8tP7GebwyPwMxqDj+N2C63q4ati4VXmy8r1oEP9MH3NTJPajNwbOCZWm9Nni33eAxO3uYgd18ytrw5w8zSTU7EpDnEkDtkh3j/UO+hRuunFlhfLCK9+dZQX3MKJuJbO7UZ0Hi/+6K8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NWzdE3iX; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=hr2q
-	1UFu4n5c+NUsYTOIsmm+4qw3eig0S8Zk3qsF2Qo=; b=NWzdE3iXg9eNG8b5vB41
-	E/wcyWSlko7QcPzDFSSQ2kUn2lUfw7i1xfOmpe501mGG6ylioIqQTvM4nMNUspFh
-	9AplZT9ZCBTfvs1AU1Ww6FZmeD/sxciigvdwVHb0PyzCnZLQetnvV5pwEVer74HO
-	rC+c9UgIqJ+FYCTWon4Auyw1kiFHQ0pB23QWj2cbK66FBChyHLuzZLA1pe+a7yae
-	K59Iy4YY26YWdJEGHJfQxZR6kZ0N01UaepbWBTJkYq9Fr2ySglOchyi3kekGB0aF
-	teC7y+iWkyhlaRvxdnGhJXpk/L+6FSdwgPZsumv5wPhIxtV+ZLLr+cH25E4dhtNF
-	EA==
-Received: (qmail 1330456 invoked from network); 15 Aug 2025 10:31:22 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Aug 2025 10:31:22 +0200
-X-UD-Smtp-Session: l3s3148p1@TOH1NmM8Rs9tKLK5
-Date: Fri, 15 Aug 2025 10:31:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Luca Weiss <luca@lucaweiss.eu>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] i2c: qcom-cci: Add msm8953 compatible
-Message-ID: <aJ7wWDejA0KDarIE@shikoro>
-References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
- <20250810-msm8953-cci-v1-2-e83f104cabfc@lucaweiss.eu>
- <aJnefpETGJm_cuRY@shikoro>
- <f956eccec6b8ae2737b1e758b8357051@lucaweiss.eu>
+	s=arc-20240116; t=1755246726; c=relaxed/simple;
+	bh=9+8DBXXTptKn2ZWjjVXEiRdMpDFZWM3gMPQi3jbFQpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T4SxRqEKs7aQzZgZmgMETsdetP9PIao+qcLMwtWvKkH7oNmgpx5o2do+p1dmk71QMO6qDan3UhYMrl6Tu0sAyOSU1lmYvgilm+qIkZ1dLi4VBlT90M8kd4nfH3LesEqfShG2zI99hi7qnqlkn9KfbJ2fApY28IZZ8iltLClhHc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGKmw4Ap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB08C4CEEB;
+	Fri, 15 Aug 2025 08:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755246726;
+	bh=9+8DBXXTptKn2ZWjjVXEiRdMpDFZWM3gMPQi3jbFQpo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=gGKmw4ApnoAQgJHg1XK47rQAiNYIEjjgwwIhqNFK6ERKqG4u7IVccY2UFnrMSBStm
+	 sz5q3KxAdYXKTy0p3/TL/9sGVsMn1NNgBM6ouiShqAuSiC6guZ22DOg20vQr4P9fFW
+	 SXezbAyppmwK64z0mTKArt4u2eRAVONKUFi1YPAIMnALVbxDeksWetbZc3splGLGEK
+	 oyhLYG66x+B/TaT2jVFT/jhxX5oOmmjtrXnrJhNcT0fIrgIn9NkHgv/kZqnv/mRy8Q
+	 Y3NhUsU/A2QPeCiYFQRnUt8gMpkON08DjuZ/ZWa7p71U806+3jZbdHjxbRVKmVQfeF
+	 sRWEZeDtelq3Q==
+Message-ID: <a0a1bc99-0322-4f63-a903-12983facddc9@kernel.org>
+Date: Fri, 15 Aug 2025 10:32:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TQXPwgYOVAqGLFm1"
-Content-Disposition: inline
-In-Reply-To: <f956eccec6b8ae2737b1e758b8357051@lucaweiss.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
+ property.
+To: Yi xin Zhu <yzhu@maxlinear.com>, "vkoul@kernel.org" <vkoul@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "kees@kernel.org" <kees@kernel.org>,
+ "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "av2082000@gmail.com" <av2082000@gmail.com>,
+ "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250808032243.3796335-1-yzhu@maxlinear.com>
+ <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
+ <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 15/08/2025 09:07, Yi xin Zhu wrote:
+> Hi Krzysztof,
+> 
+> On 08/08/2025 14:10, Krzysztof wrote:
+>>
+>>
+>> Where is the changelog?
+>>
+> Sorry for missing the changelog.  I will include it in V3 patch.
+> 
+>>> +  intel,dma-sw-desc:
+>>> +    type: boolean
+>>> +    description:
+>>> +      Indicates that the DMA driver should operate in 
+>>> + software-managed
+>> mode.
+>>> +      If this property is not present, it implies that DMA 
+>>> + descriptors are
+>> managed and generated by another hardware component that controls the 
+>> DMA engine.
+>>
+>> Nothing improved:
+>> 1. Still wrongly wrapped.
+>> 2. Still SW property.
+>>
+>> I don't think you read the feedback. You need to describe hardware, not SW.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Could you please give me some advice with regarding to the device tree attribute?
+> My understanding is if I can create a phandle link to describe the DMA descriptors are provided by some HW component.  
+> That follows the comments. Something like this:
+> 
+> intel,dma-desc-provider = <&xxx_hw>;
+> 
+> Then it describes some HW component manages the DMA descriptors.
 
 
---TQXPwgYOVAqGLFm1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is not sufficient to tell. Creating phandles representing fake
+hardware is still not hardware description.
 
-Hi Luca,
-
-> I'm also not sure what these parameters depend on, if it's CCI HW version,
-> or
-> something else. So naming it after the SoC should be a safer bet. Also the
-> msm8974-cci was only named 'v1.5' because it's an inbetween mix of the v1
-> and
-> v2 that were already upstream so arguably that one shouldn't have been
-> called
-> v1.5 in the first place either.
->=20
-> Let me know what you think. Maybe also someone from Qualcomm/Linaro can j=
-ump
-> in and share their thoughts, if someone knows more what these params depe=
-nd
-> on.
-
-Thanks for the heads up. I agree that it needs someone from Qualcomm for
-definite answers. But if nobody chimes in, your patch is good as is from
-my side.
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Thanks,
-
-   Wolfram
+> Without it, it means SW manage the DMA descriptors.
+> Please correct me if my understanding is wrong.
 
 
---TQXPwgYOVAqGLFm1
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, it is wrong, because you focus on syntax instead of on the hardware
+problem or hardware characteristic.
 
------BEGIN PGP SIGNATURE-----
+> 
+> However, in the existing driver,  HW manages descriptor mode is the default mode.
+> I can't create such link in the device tree without breaking the devicetree ABI.
+> So, is it okay I create an attribute like below ?
+> 
+> Intel,dma-desc-provider = "CPU";   // it means CPU manage DMA descriptors.
+> 
+> Intel,dma-desc-provider = "XXX_HW";  // it means XX_HW manage DMA descriptors.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmie8FUACgkQFA3kzBSg
-KbbvTQ/9ElCikIoyrJsjc7KJ2KX/PRWCsQmCcW6yAyFK/XmNcw4I7XspRIHrTJ6K
-h80bO5zcB0ki4bTyFxIKcDgVF6txxg2/x4nXm9bQW+sbb+RtuHo28EeodxakO44a
-YqbACbIZ+KQj0dGWp8PB0iaSeTJnxdhhgmx03UU3nMDs/C09EXSQS8xyjgRlcWI6
-nrWSfxhKBxkYpii91HNrv4QPZx+slvJKN0vGIWcjMopXvEfn42fkQ52K94aRH4Dz
-u0HE90AGKjOITswJunyt4grA8hPzXiGZC+fgenrC/a5kJUarrjGJb72BX27dKOa1
-CNAucY/bPhlaWWI4ZEh2e0M1FRVLXWfZPBgX3MX98aGZEdWJO0DGK/2d332d3NYS
-KFp1g1SR23x0Z2lLbFBmtpCMusMVSYslirF/4nESLCiQV804Y7jUd0koMbI7rQuf
-54mHAGpZTouQHBx1ITYquBu9VFfxWneLU78hN+Ja29eGe2tRiOzmPWkXso+h/E0i
-JB5KZ87W0L6tvbCCHbvz3pO95zeS4E5q82XHYITqTJSrjgmNWuFQyRtnc3XW3Pj5
-qQ1i74WTPu3CJRhHBgOZJeE1bDc/dcWS0ZlDhJxL4h3dI62432o1kPYaCLqEMTjx
-J11Wj3/4i54MbuCRi9cTqStmWUYJM8f5NiEQYfbDEhKfqWTnOGs=
-=9FHa
------END PGP SIGNATURE-----
 
---TQXPwgYOVAqGLFm1--
+And how is it not a OS policy? Bring reasoning and arguments, otherwise
+I cannot help you. Your reply above has zero hardware-related arguments,
+zero facts, zero hardware description.
+
+Best regards,
+Krzysztof
 
