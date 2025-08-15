@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-770860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542EBB27FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEFAB27FBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A517A7B86FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA6BAC016A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050EC28C2D1;
-	Fri, 15 Aug 2025 12:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB472FFDE9;
+	Fri, 15 Aug 2025 12:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="obpPn8MQ"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="hluGK8sM"
+Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DA921ABAA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECF1286D42
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755259646; cv=none; b=KYkHyKm13TU9+lnlT0JvTFEVof+qvYA5MG8cx+lXmq5e9EDLU5x6VgWmwyfxVEe/D4LpHDXaC8WmHJQWEogpnauCcNFaNnqmW6AOHnd9Bh5oLbRAoCyfKfzi3SN1WFYvTzNPMCbyFty+7/DZZf95ZZbA6mScIOe43LZt18fGxEA=
+	t=1755259692; cv=none; b=eEsIYp5tH9YBnKKfBNb4KWgtPM8BbW5mGlHXsa75NgtruKt0yYoPueEVKkuqOD4lEifcl2e+p+GL/Fc+p15GkVsrhOTtI628YZ51igTyk/hfhGLU+tPHsePsEkYgCWJUr2Jck0Zub/GaGTh8qhmfXWQVF6EwI4ObVXxXM7aMb9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755259646; c=relaxed/simple;
-	bh=d7mLkx2zmfajtsD8tZE+IyUM91Hth/Nqpv1oIfjVVHE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=rZmKcxOQNV6/vm/jAAjfGbzhfj6/WkyspngcL72kiEN0t+PKJdxyxTujEP4Bbmps1QPEIlOhUK0TjXI8bAjg4vJM1khyt0QzZFRLRtiJuawzm8ss44cWRi3rdWDen40zDYx/vSPEgnbyIxTK0MoFAHtgP1wZ8Gkg6paGvEkWRBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=obpPn8MQ; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755259692; c=relaxed/simple;
+	bh=kmOx6KNrW9R2ODoH8ZfThQ3AFAnXjdWrstnCoX4e6s8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bHEePxLyJns1dPE7pptdt4930s0JkY2LHVYY8sARt42p3fgGeKA1inJA1YI9Uk72o7IxPADPmcjOzTp9GpLeYE3Av41QztP/Pwwy/dhras8/vGhaeVyeruAolqpE+/p6z3W5GlfE5guH4IbIUF+wb08n0LOGxMonf5AH0voKlqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=hluGK8sM; arc=none smtp.client-ip=61.135.153.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755259686;
+	bh=94wBHy/NdizbVtKXVXboJCBrkTObdo7WSc8rNvbMJhI=;
+	h=From:Subject:Date:Message-ID;
+	b=hluGK8sMterWn9oDaCgfLs2TG1OCmvnzx6MqMttagAhUobj1uhe5L5LtGcE5+2MFI
+	 gTGjGmRQEAl9iVvi4I+nZzpJjo4CXSkwq07cqbJ5CXl5kc5s47jocCc7PBF1mNx0sq
+	 80UlQZS226YbPeYvFSNX/ygCvCwQhMEMmZTPZTMs=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 689F231B0000553B; Fri, 15 Aug 2025 20:07:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5596864456636
+X-SMAIL-UIID: 3A54955BD27249B2992BABC3730E264C-20250815-200757-1
+From: Hillf Danton <hdanton@sina.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	netdev@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH v4 9/9] vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
+Date: Fri, 15 Aug 2025 20:07:46 +0800
+Message-ID: <20250815120747.4634-1-hdanton@sina.com>
+In-Reply-To: <20250815062222-mutt-send-email-mst@kernel.org>
+References: <20250717090116.11987-1-will@kernel.org> <20250717090116.11987-10-will@kernel.org> <20250813132554.4508-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755259632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S1snjcKnr5T+gZaU0t/7csMoaxio2O5nUXuj8A3C7QA=;
-	b=obpPn8MQaE6sEdep1Ia26ok2jP1igFkswh5NXhZgsIanDEcTwThXpGlEMMPSaTT+CGYP/t
-	/M+yOmjHMlDJbTfcTKnZKuntmX8kH707C+2MHeoi/kkI2KECDn7E/bJaXxQ9Ivbv2w5Eyr
-	JnDtDhjtP7iu5QIpL5TxkJ3cjuR/ZiY6wqtRwKtza77rNlliSC4PErDNS1IjBLPdmcu+e0
-	8wNP7N3rWxVHBPRR1J+PuFQe9tuO2NcDq7SFRYCVs0NaC2X1In0rLqbOyfN4XDWq3Ar/CP
-	ZRTBl6G3hY8XCXXzoiHvnIhk7T7DMIU7eFRLvRNs2fYjEiWBZVJUke/+tPvDGQ==
-Content-Type: multipart/signed;
- boundary=8624ee546faf8c26b2a96c7cf02ab2c1b94682b15dc888f8a0edb7954318;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 15 Aug 2025 14:06:49 +0200
-Message-Id: <DC2ZLORG11W0.1CS78L6F2OV4Q@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Pavel Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-Cc: "Jacek Anaszewski" <jacek.anaszewski@gmail.com>,
- <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: leds: Clearly mark label property as
- deprecated
-References: <20250815104805.405009-1-didi.debian@cknow.org>
- <b30905fa-6bd1-47dd-8371-f609d418387b@kernel.org>
-In-Reply-To: <b30905fa-6bd1-47dd-8371-f609d418387b@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---8624ee546faf8c26b2a96c7cf02ab2c1b94682b15dc888f8a0edb7954318
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Fri Aug 15, 2025 at 1:00 PM CEST, Krzysztof Kozlowski wrote:
-> On 15/08/2025 12:47, Diederik de Haas wrote:
->> The text description already mentioned the label property was
->> deprecated, but using the 'deprecated' property makes is clearer and
->> more explicit.
->>=20
->> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
->> ---
->>  Documentation/devicetree/bindings/leds/common.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>=20
->
-> Please first read previous discussions:
-
-[I reversed the order of the links so the oldest is first]
-
-> https://lore.kernel.org/all/20221122111124.6828-1-cniedermaier@dh-electro=
-nics.com/
-
-Rob: "They ['function' and 'label'] serve 2 different purposes."
-
-> https://lore.kernel.org/all/20240509110545.49889-1-linux@fw-web.de/
-
-Krzysztof: "I don't think there was conclusion to make it deprecated on
-last attempt"
-
-I agree.
-What I don't understand: Why wasn't the text updated to correct the
-incorrect statement about deprecation (that's how I interpret it now)?
-Or some other conclusion being made and that that will be reflected in
-the text and/or a deprecated property.
-
-Otherwise the confusion remains and then it's just a matter of time
-before a 4th person comes along proposing the same patch.
-And possibly even more harmful: people use it incorrectly.
-
-There's also this line:
-"function-enumerator has no effect when this property is present."
-
-if that is true, and I would assume so as that's what the binding says,
-then I messed up even bigger then I already think I did in commit
-1631cbdb8089 ("arm64: dts: rockchip: Improve LED config for NanoPi R5S")
-resulting in commit
-912b1f2a796e ("arm64: dts: rockchip: Drop netdev led-triggers on NanoPi R5S=
-")
-
-... but I'd have expected that to be pointed out in the review.
-
-I can understand that function-enumerator is used in an automatically
-generated label when a label doesn't exist, but I'm inclined to think
-the same "They serve 2 different purposes" applies here too.
-
-Cheers,
-  Diederik
-
---8624ee546faf8c26b2a96c7cf02ab2c1b94682b15dc888f8a0edb7954318
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaJ8i5gAKCRDXblvOeH7b
-blHPAP47IybHAz/ehXhdDv8uUzgLK6trTHIF4sa580pxeE3YkQD+IT7PvgXPS4r7
-s6gjTNa7I7J78T4OjK79J1SWdXcrgQg=
-=JWsI
------END PGP SIGNATURE-----
-
---8624ee546faf8c26b2a96c7cf02ab2c1b94682b15dc888f8a0edb7954318--
+On Fri, 15 Aug 2025 06:22:56 -0400 "Michael S. Tsirkin" wrote:
+> On Wed, Aug 13, 2025 at 09:25:53PM +0800, Hillf Danton wrote:
+> > On Wed, 13 Aug 2025 04:41:09 -0400 "Michael S. Tsirkin" wrote:
+> > > On Thu, Jul 17, 2025 at 10:01:16AM +0100, Will Deacon wrote:
+> > > > When transmitting a vsock packet, virtio_transport_send_pkt_info() calls
+> > > > virtio_transport_alloc_linear_skb() to allocate and fill SKBs with the
+> > > > transmit data. Unfortunately, these are always linear allocations and
+> > > > can therefore result in significant pressure on kmalloc() considering
+> > > > that the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
+> > > > VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
+> > > > allocation for each packet.
+> > > > 
+> > > > Rework the vsock SKB allocation so that, for sizes with page order
+> > > > greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
+> > > > instead with the packet header in the SKB and the transmit data in the
+> > > > fragments. Note that this affects both the vhost and virtio transports.
+> > > > 
+> > > > Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > > Signed-off-by: Will Deacon <will@kernel.org>
+> > > 
+> > > So this caused a regression, see syzbot report:
+> > > 
+> > > https://lore.kernel.org/all/689a3d92.050a0220.7f033.00ff.GAE@google.com
+> > > 
+> > > I'm inclined to revert unless we have a fix quickly.
+> > > 
+> > Because recomputing skb len survived the syzbot test [1], Will looks innocent.
+> > 
+> > [1] https://lore.kernel.org/lkml/689c8d08.050a0220.7f033.014a.GAE@google.com/
+> 
+> I'm not sure I follow that patch though. Do you mind submitting
+> with an explanation in the commit log?
+> 
+It is a simple debug patch to test if Will's work is good at least in the
+syzbot scenario, but stil a couple miles away from a patch with the SOB tag.
 
