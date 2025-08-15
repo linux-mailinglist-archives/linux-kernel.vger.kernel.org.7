@@ -1,201 +1,356 @@
-Return-Path: <linux-kernel+bounces-770105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24ACCB276CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBE3B276CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFDAA03467
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859A6684DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81DE2BD5A7;
-	Fri, 15 Aug 2025 03:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341522BD036;
+	Fri, 15 Aug 2025 03:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="RoCPr0m0"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="537fBxO9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D963B220680;
-	Fri, 15 Aug 2025 03:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755228600; cv=pass; b=T+xXn8lvb+j2QXvIbu6LDKKxjW6xW05y8WVVHeuUE7UcPmYMvJN/aAK03SdMRbL20dWopnPQSIRY3dNHiqayElUcszxhvgmuXA3Ll9BEuFPz5Ymwt3vKWlkhPY9sNJwsSSfBMSS93uZ9yUn2fVTbGs06QjW2V6F30C7lYuPf6Kk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755228600; c=relaxed/simple;
-	bh=mdZiUri0kIO2iKUG95ONZSdovSP8ZHW1VlA2QMUPM0M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e2wwQIpzT3g9mSaze2uwWd4YWLeDcc7nX7MwVyQO76m8hvJidmf7O9Ygy19bdD6JHw2a4Em4THw83EmZc/E7878razSIhSCeMh5AkoHNErBa1LMqJ0rVq9WIoZuy0oGw5FORSUQzdKpCjodjm2bHwrL6NHTjZKlTyh+Rtuszx/4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=RoCPr0m0; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755228453; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jfLVPTnwfqD5FMQWOu43tyFW6cnqPrDZZ4mIwgGDJVNLDz+Cx4m/TxACfG+eQ7yU5Pd//YGJQhMl1doY1aR4SUjohroZu9P2cJ1xYEZ9ygHIH7SDjS8epnC0at8KE/5E/Gu1GBtPe+Cph0RV0YC/+clZPM+l6/cLptyBSqaV5yA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755228453; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mdZiUri0kIO2iKUG95ONZSdovSP8ZHW1VlA2QMUPM0M=; 
-	b=fUhqGgiQlCYjY1HuN2MuA2QIgZ3CVbdUvnMkkMFEPOmFTVYlFqnTjmCNAyygPa1nabWfRP04ijAL1byrgD3HytHUkbPlwTbu0dlhte4W7m+S9IEUcft/H769kaM2okUZRnAFLbdvgakrV5O/LefIxGI02Zo9wbVx7vPGJ/bizRY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755228453;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=mdZiUri0kIO2iKUG95ONZSdovSP8ZHW1VlA2QMUPM0M=;
-	b=RoCPr0m0uOi6hvT4w/2YFoz/0KI9eRXdbs9ht/U6PAkx39URRhaSzwLpDU/2BIL+
-	0sP5QAkpoDl0itr5GEmtfRbNZRUvCtx9Hr7R+gP/iiqR7eG5T9X+JNF32EN200fcuI+
-	UQInfT3Ikv2tuNUuIGvVvcqok2P5nnp28AZ1tg0Cv3owkCjaYA8zF/pV3zYNxdeMuQO
-	nR4FL2qyhKQHrN1XbbkT1tHsggIuV/soPlL2ok2jnLsxEqsAMXTIGfkK4xFyV7ZFXkJ
-	4/MGpm7khnVKfzT2Php3mq2KPCiUF7CVWyZMVktYcZDNxy0eWEH8iy9c1ablAMeZRmp
-	pl56vkkJWQ==
-Received: by mx.zohomail.com with SMTPS id 1755228451073607.077347460962;
-	Thu, 14 Aug 2025 20:27:31 -0700 (PDT)
-Message-ID: <30ac6d0aae753a819940606aa0c110127db5972d.camel@icenowy.me>
-Subject: Re: [PATCH v2 2/3] clk: thead: support changing DPU pixel clock rate
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>, Drew Fustini
- <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>,  Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDD3294A0C;
+	Fri, 15 Aug 2025 03:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755228511; cv=none; b=Ocalkub6XmenhvLQWzAexIB+1Df1tpeH1D4rkDZg6y4yb8K5XpsaG9j5u69S/JbJCazQWG/g9kxGR83VAP7L3YUW7QtdHxW03Hl0FrO/KP03rWxKV56wvLqtnc332b9QknVaIDuVgH4iHCZsbModST9E8iaITue72b2FftqJ28M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755228511; c=relaxed/simple;
+	bh=jP7e9gn+a58ccJpt8demjh1kQTTOHU0Vnk0gVqye3Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mks/3F72RB0mhW16Px6iyzpcbofoPv9Zu2c8Tnzd/mNMEPVDAkzBhAC2W/ogDkJbukkY34VeihqZobApVZR0gGcY5st5wHTTeg7R0FpdyzyaOTRanBFm1/0EFO+9KE5DhiFh4CGA/JwWYCUQX2mtwseGZv+gOK8Zur2iqH4JD/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=537fBxO9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KxAb8RxFweq9QIxQUe5FSbZG2FwtLiTAM5boIcfZmVQ=; b=537fBxO9uwxRtKsvaMBppAQ1+R
+	LkBciKbHhmQWd08WwVbTCa/R3YAJ2aJH9h5KVNcWABhr0dIjXs8+mx6PDYrP1zS8yjEDVaDtm81jr
+	Y0TD2geKuBPbfLyP3gBjRGWS63wnbZykvDO+apMvmc9lgICBkEVQ3yfyDeI0Lsy5JD1k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uml6d-004mUP-Q0; Fri, 15 Aug 2025 05:27:51 +0200
+Date: Fri, 15 Aug 2025 05:27:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Date: Fri, 15 Aug 2025 11:27:25 +0800
-In-Reply-To: <B226CDDA4BC5D173+aJ6aEPwUqM91jnLv@LT-Guozexi>
-References: <20250813072702.2176993-1-uwu@icenowy.me>
-	 <20250813072702.2176993-3-uwu@icenowy.me>
-	 <B226CDDA4BC5D173+aJ6aEPwUqM91jnLv@LT-Guozexi>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <eebc7ed8-f6c5-4095-b33e-251411f26f0a@lunn.ch>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-5-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814073855.1060601-5-dong100@mucse.com>
 
-5ZyoIDIwMjUtMDgtMTXmmJ/mnJ/kupTnmoQgMTA6MjMgKzA4MDDvvIxUcm95IE1pdGNoZWxs5YaZ
-6YGT77yaCj4gT24gV2VkLCBBdWcgMTMsIDIwMjUgYXQgMDM6Mjc6MDFQTSArMDgwMCwgSWNlbm93
-eSBaaGVuZyB3cm90ZToKPiA+IFRoZSBEUFUgcGl4ZWwgY2xvY2sgcmF0ZSBjb3JyZXNwb25kcyB0
-byB0aGUgcmVxdWlyZWQgZG90IGNsb2NrIG9mCj4gPiB0aGUKPiA+IGRpc3BsYXkgbW9kZSwgc28g
-aXQgbmVlZHMgdG8gYmUgdHdlYWthYmxlLgo+ID4gCj4gPiBBZGQgc3VwcG9ydCB0byBjaGFuZ2Ug
-aXQsIGJ5IGFkZGluZyBnZW5lcmljIGRpdmlkZXIgc2V0dGluZyBjb2RlLAo+ID4gYXJtaW5nIHRo
-ZSBjb2RlIHRvIHRoZSBkcHUwL2RwdTEgY2xvY2tzLCBhbmQgc2V0dGluZyB0aGUgcGl4ZWwKPiA+
-IGNsb2NrCj4gPiBjb25uZWN0ZWQgdG8gdGhlIERQVSAoYWZ0ZXIgYSBnYXRlKSB0byBDTEtfU0VU
-X1JBVEVfUEFSRU5UIHRvCj4gPiBwcm9wYWdhdGUKPiA+IGl0IHRvIHRoZSBkaXZpZGVycy4KPiA+
-IAo+ID4gU2lnbmVkLW9mZi1ieTogSWNlbm93eSBaaGVuZyA8dXd1QGljZW5vd3kubWU+Cj4gPiAt
-LS0KPiA+IENoYW5nZXMgaW4gdjI6Cj4gPiAtIERyb3BwZWQgcm91bmRfcmF0ZSgpIGJlY2F1c2Ug
-b2YgZGVwcmVjYXRpb24uCj4gPiAtIENoYW5nZWQgdGhlIGxvZ2ljIG9mIGRldGVybWluZV9yYXRl
-KCkgdG8gZWFybHkgcmV0dXJuIGlmIHRoZQo+ID4gZGl2aWRlcgo+ID4gwqAgY291bGQgYmUgY2hh
-bmdlZC4KPiA+IAo+ID4gwqBkcml2ZXJzL2Nsay90aGVhZC9jbGstdGgxNTIwLWFwLmMgfCA2NAo+
-ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQo+ID4gwqAxIGZpbGUgY2hhbmdlZCwg
-NTkgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvY2xrL3RoZWFkL2Nsay10aDE1MjAtYXAuYwo+ID4gYi9kcml2ZXJzL2Nsay90aGVhZC9j
-bGstdGgxNTIwLWFwLmMKPiA+IGluZGV4IDBiNTQ1OGFmOGM1NTAuLmIyMjBhOGVkMjI2MDcgMTAw
-NjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2Nsay90aGVhZC9jbGstdGgxNTIwLWFwLmMKPiA+ICsrKyBi
-L2RyaXZlcnMvY2xrL3RoZWFkL2Nsay10aDE1MjAtYXAuYwo+ID4gQEAgLTU1LDYgKzU1LDcgQEAg
-c3RydWN0IGNjdV9nYXRlIHsKPiA+IMKgCj4gLi4uCj4gPiArc3RhdGljIGludCBjY3VfZGl2X3Nl
-dF9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGUpCj4gPiArewo+ID4gK8KgwqDCoMKg
-wqDCoMKgc3RydWN0IGNjdV9kaXYgKmNkID0gaHdfdG9fY2N1X2Rpdihodyk7Cj4gPiArwqDCoMKg
-wqDCoMKgwqBpbnQgdmFsID0gZGl2aWRlcl9nZXRfdmFsKHJhdGUsIHBhcmVudF9yYXRlLCBOVUxM
-LAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgY2QtPmRpdi53aWR0aCwgY2QtPmRpdi5mbGFncyk7Cj4gPiArwqDCoMKg
-wqDCoMKgwqB1bnNpZ25lZCBpbnQgY3Vycl92YWwsIHJlZ192YWw7Cj4gPiArCj4gPiArwqDCoMKg
-wqDCoMKgwqBpZiAodmFsIDwgMCkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
-ZXR1cm4gdmFsOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnbWFwX3JlYWQoY2QtPmNvbW1v
-bi5tYXAsIGNkLT5jb21tb24uY2ZnMCwgJnJlZ192YWwpOwo+ID4gK8KgwqDCoMKgwqDCoMKgY3Vy
-cl92YWwgPSByZWdfdmFsOwo+IHVoPyByZW1vdmUgdGhpcyBsaW5lLgo+IAo+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCAtIFRyb3kKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoGN1cnJfdmFs
-ID0gY3Vycl92YWwgPj4gY2QtPmRpdi5zaGlmdDsKCk9vb29vcHMsIEkgYW0gc2lsbHkgZW5vdWdo
-Li4uCldpbGwgY2hhbmdlIHRoaXMgdG8gYGN1cnJfdmFsID0gcmVnX3ZhbCA+PiBjZC0+ZGl2LnNo
-aWZ0O2AgaW5zdGVhZCBpbgp0aGUgbmV4dCByZXZpc2lvbi4KCj4gPiArwqDCoMKgwqDCoMKgwqBj
-dXJyX3ZhbCAmPSBHRU5NQVNLKGNkLT5kaXYud2lkdGggLSAxLCAwKTsKPiA+ICsKPiA+ICvCoMKg
-wqDCoMKgwqDCoGlmICghY2QtPmRpdl9lbiAmJiBjdXJyX3ZhbCAhPSB2YWwpCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiArwqDCoMKg
-wqDCoMKgwqByZWdfdmFsICY9IH5jZC0+ZGl2X2VuOwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnbWFw
-X3dyaXRlKGNkLT5jb21tb24ubWFwLCBjZC0+Y29tbW9uLmNmZzAsIHJlZ192YWwpOwo+ID4gK8Kg
-wqDCoMKgwqDCoMKgdWRlbGF5KDEpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnX3ZhbCAm
-PSB+R0VOTUFTSyhjZC0+ZGl2LndpZHRoICsgY2QtPmRpdi5zaGlmdCAtIDEsIGNkLQo+ID4gPmRp
-di5zaGlmdCk7Cj4gPiArwqDCoMKgwqDCoMKgwqByZWdfdmFsIHw9IHZhbCA8PCBjZC0+ZGl2LnNo
-aWZ0Owo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnbWFwX3dyaXRlKGNkLT5jb21tb24ubWFwLCBjZC0+
-Y29tbW9uLmNmZzAsIHJlZ192YWwpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnX3ZhbCB8
-PSBjZC0+ZGl2X2VuOwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVnbWFwX3dyaXRlKGNkLT5jb21tb24u
-bWFwLCBjZC0+Y29tbW9uLmNmZzAsIHJlZ192YWwpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKg
-cmV0dXJuIDA7Cj4gPiArfQo+ID4gKwo+ID4gwqBzdGF0aWMgdTggY2N1X2Rpdl9nZXRfcGFyZW50
-KHN0cnVjdCBjbGtfaHcgKmh3KQo+ID4gwqB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGNj
-dV9kaXYgKmNkID0gaHdfdG9fY2N1X2Rpdihodyk7Cj4gPiBAQCAtMjQwLDcgKzI5MSw4IEBAIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX29wcyBjY3VfZGl2X29wcyA9IHsKPiA+IMKgwqDCoMKgwqDC
-oMKgwqAuZ2V0X3BhcmVudMKgwqDCoMKgwqA9IGNjdV9kaXZfZ2V0X3BhcmVudCwKPiA+IMKgwqDC
-oMKgwqDCoMKgwqAuc2V0X3BhcmVudMKgwqDCoMKgwqA9IGNjdV9kaXZfc2V0X3BhcmVudCwKPiA+
-IMKgwqDCoMKgwqDCoMKgwqAucmVjYWxjX3JhdGXCoMKgwqDCoD0gY2N1X2Rpdl9yZWNhbGNfcmF0
-ZSwKPiA+IC3CoMKgwqDCoMKgwqDCoC5kZXRlcm1pbmVfcmF0ZcKgPSBjbGtfaHdfZGV0ZXJtaW5l
-X3JhdGVfbm9fcmVwYXJlbnQsCj4gPiArwqDCoMKgwqDCoMKgwqAuc2V0X3JhdGXCoMKgwqDCoMKg
-wqDCoD0gY2N1X2Rpdl9zZXRfcmF0ZSwKPiA+ICvCoMKgwqDCoMKgwqDCoC5kZXRlcm1pbmVfcmF0
-ZSA9IGNjdV9kaXZfZGV0ZXJtaW5lX3JhdGUsCj4gPiDCoH07Cj4gPiDCoAo+ID4gwqBzdGF0aWMg
-dm9pZCBjY3VfcGxsX2Rpc2FibGUoc3RydWN0IGNsa19odyAqaHcpCj4gPiBAQCAtNzg0LDYgKzgz
-Niw3IEBAIHN0YXRpYyBzdHJ1Y3QgY2N1X2RpdiB2ZW5jX2NsayA9IHsKPiA+IMKgfTsKPiA+IMKg
-Cj4gPiDCoHN0YXRpYyBzdHJ1Y3QgY2N1X2RpdiBkcHUwX2NsayA9IHsKPiA+ICvCoMKgwqDCoMKg
-wqDCoC5kaXZfZW7CoMKgwqDCoMKgwqDCoMKgwqA9IEJJVCg4KSwKPiA+IMKgwqDCoMKgwqDCoMKg
-wqAuZGl2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgPSBUSF9DQ1VfRElWX0ZMQUdTKDAsIDgsCj4g
-PiBDTEtfRElWSURFUl9PTkVfQkFTRUQpLAo+ID4gwqDCoMKgwqDCoMKgwqDCoC5jb21tb27CoMKg
-wqDCoMKgwqDCoMKgwqA9IHsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmNs
-a2lkwqDCoMKgwqDCoMKgwqDCoMKgID0gQ0xLX0RQVTAsCj4gPiBAQCAtNzkxLDcgKzg0NCw3IEBA
-IHN0YXRpYyBzdHJ1Y3QgY2N1X2RpdiBkcHUwX2NsayA9IHsKPiA+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgLmh3LmluaXTCoMKgwqDCoMKgwqDCoMKgPSBDTEtfSFdfSU5JVF9QQVJF
-TlRTX0hXKCJkcHUwIiwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkcHUw
-X3BsbF9jbGtfcGFyZW50LAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICZj
-Y3VfZGl2X29wcywKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDApLAo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgQ0xLX1NFVF9SQVRFX1VOR0FURSksCj4g
-PiDCoMKgwqDCoMKgwqDCoMKgfSwKPiA+IMKgfTsKPiA+IMKgCj4gPiBAQCAtODAwLDYgKzg1Myw3
-IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX3BhcmVudF9kYXRhCj4gPiBkcHUwX2Nsa19wZFtd
-ID0gewo+ID4gwqB9Owo+ID4gwqAKPiA+IMKgc3RhdGljIHN0cnVjdCBjY3VfZGl2IGRwdTFfY2xr
-ID0gewo+ID4gK8KgwqDCoMKgwqDCoMKgLmRpdl9lbsKgwqDCoMKgwqDCoMKgwqDCoD0gQklUKDgp
-LAo+ID4gwqDCoMKgwqDCoMKgwqDCoC5kaXbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqA9IFRIX0ND
-VV9ESVZfRkxBR1MoMCwgOCwKPiA+IENMS19ESVZJREVSX09ORV9CQVNFRCksCj4gPiDCoMKgwqDC
-oMKgwqDCoMKgLmNvbW1vbsKgwqDCoMKgwqDCoMKgwqDCoD0gewo+ID4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAuY2xraWTCoMKgwqDCoMKgwqDCoMKgwqAgPSBDTEtfRFBVMSwKPiA+
-IEBAIC04MDcsNyArODYxLDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfZGl2IGRwdTFfY2xrID0gewo+
-ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAuaHcuaW5pdMKgwqDCoMKgwqDCoMKg
-wqA9IENMS19IV19JTklUX1BBUkVOVFNfSFcoImRwdTEiLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIGRwdTFfcGxsX2Nsa19wYXJlbnQsCj4gPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgJmNjdV9kaXZfb3BzLAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgMCksCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBDTEtf
-U0VUX1JBVEVfVU5HQVRFKSwKPiA+IMKgwqDCoMKgwqDCoMKgwqB9LAo+ID4gwqB9Owo+ID4gwqAK
-PiA+IEBAIC04OTEsOSArOTQ1LDkgQEAgc3RhdGljIENDVV9HQVRFKENMS19HUFVfQ09SRSwgZ3B1
-X2NvcmVfY2xrLAo+ID4gImdwdS1jb3JlLWNsayIsIHZpZGVvX3BsbF9jbGtfcGQsCj4gPiDCoHN0
-YXRpYyBDQ1VfR0FURShDTEtfR1BVX0NGR19BQ0xLLCBncHVfY2ZnX2FjbGssICJncHUtY2ZnLWFj
-bGsiLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3Bk
-LCAweDAsIEJJVCg0KSwgMCk7Cj4gPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfRFBVX1BJWEVMQ0xL
-MCwgZHB1MF9waXhlbGNsaywgImRwdTAtcGl4ZWxjbGsiLAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGRwdTBfY2xrX3BkLCAweDAsIEJJVCg1KSwgMCk7Cj4gPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgZHB1MF9jbGtfcGQsIDB4MCwgQklUKDUpLCBDTEtfU0VUX1JB
-VEVfUEFSRU5UKTsKPiA+IMKgc3RhdGljIENDVV9HQVRFKENMS19EUFVfUElYRUxDTEsxLCBkcHUx
-X3BpeGVsY2xrLCAiZHB1MS1waXhlbGNsayIsCj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgZHB1MV9jbGtfcGQsIDB4MCwgQklUKDYpLCAwKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBkcHUxX2Nsa19wZCwgMHgwLCBCSVQoNiksIENMS19TRVRfUkFURV9QQVJF
-TlQpOwo+ID4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX0RQVV9IQ0xLLCBkcHVfaGNsaywgImRwdS1o
-Y2xrIiwKPiA+IHZpZGVvX3BsbF9jbGtfcGQsIDB4MCwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgQklUKDcpLCAwKTsKPiA+IMKgc3RhdGljIENDVV9HQVRFKENMS19EUFVfQUNM
-SywgZHB1X2FjbGssICJkcHUtYWNsayIsCj4gPiB2aWRlb19wbGxfY2xrX3BkLCAweDAsCj4gPiAt
-LSAKPiA+IDIuNTAuMQo+ID4gCj4gPiAKPiA+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCj4gPiBsaW51eC1yaXNjdiBtYWlsaW5nIGxpc3QKPiA+IGxpbnV4
-LXJpc2N2QGxpc3RzLmluZnJhZGVhZC5vcmcKPiA+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
-L21haWxtYW4vbGlzdGluZm8vbGludXgtcmlzY3YKCg==
+>  struct mucse_hw {
+> +	u8 pfvfnum;
+>  	void __iomem *hw_addr;
+>  	void __iomem *ring_msix_base;
+>  	struct pci_dev *pdev;
+> +	u32 fw_version;
+> +	u32 axi_mhz;
+> +	u32 bd_uid;
+>  	enum rnpgbe_hw_type hw_type;
+>  	struct mucse_dma_info dma;
+>  	struct mucse_eth_info eth;
 
+Think about alignment of these structures. The compiler is going to
+put in padding after the u8 phvfnum. The 3 pointers are all the same
+size, no padding. The u32 probably go straight after the pointers. The
+enum it might represent as a single byte, so there is will be padding
+before dma. So consider moving the u8 next to the enum.
+
+pahole(1) will tell you what the compiler really did, but you will
+find more experienced engineers try to minimise padding, or
+deliberately group hot items on a cache line, and document that.
+
+> +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
+> +				  struct mbx_fw_cmd_req *req,
+> +				  struct mbx_fw_cmd_reply *reply)
+> +{
+> +	int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
+> +	int retry_cnt = 3;
+> +	int err;
+> +
+> +	err = mutex_lock_interruptible(&hw->mbx.lock);
+> +	if (err)
+> +		return err;
+> +	err = hw->mbx.ops->write_posted(hw, (u32 *)req,
+> +					L_WD(len));
+
+This L_WD macro is not nice. It seems like a place bugs will be
+introduced, forgetting to call it here. Why not have write_posted()
+take bytes, and have the lowest layer convert to 32 bit words.
+
+It also seems odd you are adding MBX_REQ_HDR_LEN here but not that
+actual header. Why not increase the length at the point the header is
+actually added? Keep stuff logically together.
+
+> +	if (err)
+> +		goto quit;
+> +	do {
+> +		err = hw->mbx.ops->read_posted(hw, (u32 *)reply,
+> +					       L_WD(sizeof(*reply)));
+> +		if (err)
+> +			goto quit;
+> +	} while (--retry_cnt >= 0 && reply->opcode != req->opcode);
+> +quit:
+
+Maybe add some documentation about what is actually going on here. I
+assume you are trying to get the driver and firmware into sync after
+one or other has crashed, burned, and rebooted. You need to flush out
+old replies. You allow up to three old replies to be in the queue, and
+then give up. Since you don't retry the write, you don't expect writes
+to be lost?
+
+
+> +	mutex_unlock(&hw->mbx.lock);
+> +	if (!err && retry_cnt < 0)
+> +		return -ETIMEDOUT;
+> +	if (!err && reply->error_code)
+> +		return -EIO;
+> +	return err;
+> +}
+> +
+> +/**
+> + * mucse_fw_get_capability - Get hw abilities from fw
+> + * @hw: pointer to the HW structure
+> + * @abil: pointer to the hw_abilities structure
+> + *
+> + * mucse_fw_get_capability tries to get hw abilities from
+> + * hw.
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +static int mucse_fw_get_capability(struct mucse_hw *hw,
+> +				   struct hw_abilities *abil)
+> +{
+> +	struct mbx_fw_cmd_reply reply = {};
+> +	struct mbx_fw_cmd_req req = {};
+> +	int err;
+> +
+> +	build_phy_abilities_req(&req, &req);
+
+Passing the same parameter twice? Is that correct? It looks very odd.
+
+> +/**
+> + * mbx_cookie_zalloc - Alloc a cookie structure
+> + * @priv_len: private length for this cookie
+> + *
+> + * @return: cookie structure on success
+> + **/
+> +static struct mbx_req_cookie *mbx_cookie_zalloc(int priv_len)
+> +{
+> +	struct mbx_req_cookie *cookie;
+> +
+> +	cookie = kzalloc(struct_size(cookie, priv, priv_len), GFP_KERNEL);
+> +	if (cookie) {
+> +		cookie->timeout_jiffes = 30 * HZ;
+> +		cookie->magic = COOKIE_MAGIC;
+> +		cookie->priv_len = priv_len;
+> +	}
+> +	return cookie;
+
+> +struct mbx_req_cookie {
+> +	int magic;
+> +#define COOKIE_MAGIC 0xCE
+> +	cookie_cb cb;
+> +	int timeout_jiffes;
+> +	int errcode;
+> +	wait_queue_head_t wait;
+> +	int done;
+> +	int priv_len;
+> +	char priv[];
+> +};
+
+
+Using struct_size() makes me think this is supposed to be a flexible
+array? I've never used them myself, but shouldn't be some markup so
+the compiler knows priv_len is the len of priv?
+
+> +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
+> +				 struct mbx_fw_cmd_req *req,
+> +				 struct mbx_req_cookie *cookie)
+> +{
+> +	int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
+> +	int err;
+> +
+> +	cookie->errcode = 0;
+> +	cookie->done = 0;
+> +	init_waitqueue_head(&cookie->wait);
+> +	err = mutex_lock_interruptible(&hw->mbx.lock);
+> +	if (err)
+> +		return err;
+> +	err = mucse_write_mbx(hw, (u32 *)req,
+> +			      L_WD(len));
+> +	if (err) {
+> +		mutex_unlock(&hw->mbx.lock);
+
+Please try to put the unlock at the end of the function, with a goto
+on error.
+
+> +		return err;
+> +	}
+> +	do {
+> +		err = wait_event_interruptible_timeout(cookie->wait,
+> +						       cookie->done == 1,
+> +						       cookie->timeout_jiffes);
+> +	} while (err == -ERESTARTSYS);
+
+This needs a comment, because i don't understand it.
+
+
+> +	mutex_unlock(&hw->mbx.lock);
+> +	if (!err)
+> +		err = -ETIME;
+
+I _think_ ETIMEDOUT would be more normal.
+
+> +	else
+> +		err = 0;
+> +	if (!err && cookie->errcode)
+> +		err = cookie->errcode;
+> +
+> +	return err;
+> +}
+> +int mucse_fw_get_macaddr(struct mucse_hw *hw, int pfvfnum,
+> +			 u8 *mac_addr,
+> +			 int lane)
+> +{
+> +	struct mbx_fw_cmd_reply reply = {};
+> +	struct mbx_fw_cmd_req req = {};
+> +	int err;
+> +
+> +	build_get_macaddress_req(&req, 1 << lane, pfvfnum, &req);
+> +	err = mucse_fw_send_cmd_wait(hw, &req, &reply);
+> +	if (err)
+> +		return err;
+> +
+> +	if ((1 << lane) & le32_to_cpu(reply.mac_addr.lanes))
+
+BIT(). And normally the & would be the other way around.
+
+What exactly is a lane here? Normally we would think of a lane is
+-KR4, 4 SERDES lanes making one port. But the MAC address is a
+property of the port, not the lane within a port.
+
+> +		memcpy(mac_addr, reply.mac_addr.addrs[lane].mac, 6);
+
+There is a macro for 6, please use it.
+
+> +struct hw_abilities {
+> +	u8 link_stat;
+> +	u8 lane_mask;
+> +	__le32 speed;
+> +	__le16 phy_type;
+> +	__le16 nic_mode;
+> +	__le16 pfnum;
+
+Another example of a bad structure layout. It would of been much
+better to put the two u8 after speed.
+
+> +} __packed;
+
+And because this is packed, and badly aligned, you are forcing the
+compiler to do a lot more work accessing these members.
+
+> +
+> +static inline void ability_update_host_endian(struct hw_abilities *abi)
+> +{
+> +	u32 host_val = le32_to_cpu(abi->ext_ability);
+> +
+> +	abi->e_host = *(typeof(abi->e_host) *)&host_val;
+> +}
+
+Please add a comment what this is doing, it is not obvious.
+
+
+> +
+> +#define FLAGS_DD BIT(0)
+> +#define FLAGS_ERR BIT(2)
+> +
+> +/* Request is in little-endian format. Big-endian systems should be considered */
+
+So the code now sparse clean? If it is, you can probably remove this
+comment.
+
+> +static inline void build_phy_abilities_req(struct mbx_fw_cmd_req *req,
+> +					   void *cookie)
+> +{
+> +	req->flags = 0;
+> +	req->opcode = cpu_to_le16(GET_PHY_ABALITY);
+> +	req->datalen = 0;
+> +	req->reply_lo = 0;
+> +	req->reply_hi = 0;
+> +	req->cookie = cookie;
+> +}
+> +
+> +static inline void build_ifinsmod(struct mbx_fw_cmd_req *req,
+> +				  unsigned int lane,
+> +				  int status)
+> +{
+> +	req->flags = 0;
+> +	req->opcode = cpu_to_le16(DRIVER_INSMOD);
+> +	req->datalen = cpu_to_le16(sizeof(req->ifinsmod));
+> +	req->cookie = NULL;
+> +	req->reply_lo = 0;
+> +	req->reply_hi = 0;
+> +	req->ifinsmod.lane = cpu_to_le32(lane);
+> +	req->ifinsmod.status = cpu_to_le32(status);
+> +}
+> +
+> +static inline void build_reset_phy_req(struct mbx_fw_cmd_req *req,
+> +				       void *cookie)
+> +{
+> +	req->flags = 0;
+> +	req->opcode = cpu_to_le16(RESET_PHY);
+> +	req->datalen = 0;
+> +	req->reply_lo = 0;
+> +	req->reply_hi = 0;
+> +	req->cookie = cookie;
+> +}
+> +
+> +static inline void build_get_macaddress_req(struct mbx_fw_cmd_req *req,
+> +					    int lane_mask, int pfvfnum,
+> +					    void *cookie)
+> +{
+> +	req->flags = 0;
+> +	req->opcode = cpu_to_le16(GET_MAC_ADDRES);
+> +	req->datalen = cpu_to_le16(sizeof(req->get_mac_addr));
+> +	req->cookie = cookie;
+> +	req->reply_lo = 0;
+> +	req->reply_hi = 0;
+> +	req->get_mac_addr.lane_mask = cpu_to_le32(lane_mask);
+> +	req->get_mac_addr.pfvf_num = cpu_to_le32(pfvfnum);
+> +}
+
+These are rather large for inline functions in a header. Please move
+them into a .c file.
+
+	Andrew
 
