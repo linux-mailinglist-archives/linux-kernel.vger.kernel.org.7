@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-770069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CABB2766E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:04:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDC4B27674
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 951F44E40EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CB86225DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5452F29B8C2;
-	Fri, 15 Aug 2025 03:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEDF2BDC35;
+	Fri, 15 Aug 2025 03:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eFSyTybM"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfVgry8J"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025B429B20D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAD42BDC1D;
+	Fri, 15 Aug 2025 03:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755227034; cv=none; b=nvtHyKu0MvX7jMRWUmzOlGStgRw4F1LxGxyEi9U5YEEx6rAMXl2dsG0+MdvNWFBojKOpuTM3MxHROAXBBtvNmBsVM3joZPUXVqgOlAMq3nuzVCsn1FYc+rIrMaBzM7RXYS/0ZFtU3DrnHHv3QFIiaSzRtP8YDrcbayzJ0tP1R50=
+	t=1755227038; cv=none; b=JbYas5syZd3vomj1xt1iPny0t+/cyc7jImo7bMdQmK7bDDjIbDbFVt9iVtd5Wor7HHufgsHahIfF0mN9ImgfGFHUARk6k36gdA68Bx+2v4JVnJIQbIEgfBTU7f9zi6g9NSypz1gZpYWb4yKiEJ+JV9uu+q0Zg2dxB4FcDlSNaaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755227034; c=relaxed/simple;
-	bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NCDxZhFPEQtf7/h9uF7BUkvxab2hHXBb6j+GrR0n7UTt7A1YvzHzHulOpVi1feHpEb1CqNTDQVIFlTNJGQMs6dhPxRW3rN9eegOQ8iL2U5z+cTUmZP6MKnOu8Q6IG8LJuMml50HnE10w612hB9d5sNXHfPYSsmUxKRsq4SoRu1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eFSyTybM; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce52807f8so1486152e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:03:52 -0700 (PDT)
+	s=arc-20240116; t=1755227038; c=relaxed/simple;
+	bh=/o3GwDWqV5hH1v+H6gx3dIPP8Y+EaJ4kCVPvHOuM6+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK/hLssyDGi0PFwo9H81GrJqkZk54coMxrH6B5JwwfqHMrrulQmsDDZCztj28nuH5CIlYe/mSn+C++J+xEXqHcgwVIcB4a1DmMQpRlzj9/CVdgfr3Vs3mAbsbNMQp+t6bHn5WOfGK1CKb1LdElu8G2ddS7D9uo0KbfpgbCFFOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfVgry8J; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb78ead12so230727566b.1;
+        Thu, 14 Aug 2025 20:03:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755227031; x=1755831831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755227035; x=1755831835; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
-        b=eFSyTybMep2zGs8cgTE9pFyv+RTx1qg/TRgwPwPzjOQ7yhv/VSIHID5g3GxVInSYYs
-         MEYzYAInQbb171Zo4sOPVbxWclPPKuptT/OeJ9TBJAvsCWXlngg9fkFLbU6PW1q805dl
-         OiqErf0N1aN3mvk2cDicMkezFJiuU/xQAQxCQ=
+        bh=i3d/p98av+5p9WSBdtxvzNDj+UN/95Nc/p87bn2DC6M=;
+        b=YfVgry8JCk6ultoXKaJJIThrg0w+FxIK93Gs0Aw0Prrv8F6/Z6+jrn89cfPhvSOXWb
+         P4anjcu7FAMU03DYR9Xpvl9UEBrXAUEzykdDCGsHewJdvqjJ6TLinJW5DQvhfXMKKLzt
+         Vsl/QudQ4xhQLSkos0hM6iB7ywS183oPanl5G5EOzO/svcccF1L0iZ7fHAXfNB7gOIIu
+         WKMaLSsyEKq910lmTke2z6kHK0KQpkkZ71pGh6f69c64QMmvN46PGAuZOlV7KBxpzzoU
+         /5zRWq6iZL4P4h4dB6Ia7X62Q910xOLQi3C4AF4KSyASXMfmE6NCrNHUnp/MR58/AbQp
+         PXBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755227031; x=1755831831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
-        b=IX38YuAlDFOz1SadogozufyjvHkAECw1FN40lSsG5KyYmmv4ZqZBosA+awoaBiaHXz
-         A5iB5VtQHGzNS98FCvoIQNE/LBsFvQg8qEDEf0gONJQ0eHOn3DONxKWG80egNPInlwOB
-         MR1ui49icvJV7QxMjQrETZwfpsfbzhYLZ4+DSrLtkYcO198rYGm7tL0qtbrPmoNHvf7W
-         5LrHHxgrD8kyT8Cgi9EZ+l50vabn8GlMo+6TNOzzVehOIn9UfwshOxrP8Zy8yA9wWvY7
-         o0rWxLf5r33QYvwjPhzGzKXW+MDpK21EC/axk1IQVGg+xyGD0XXYqhpSP7Rtmtye06Wg
-         r4HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNn92lo9dMvX14ZzM591NKnupC5ZfbK8fpnERIZb7oUtHSPR02c10tEomU0HZF6by0AM8izRX5l5XUAZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt4JSsdmr9DYLIhSkNjpgxsGmqj7SQRro646XwTZkoa8dW3RH5
-	UjEmuI0z3M/E9DtK+qKT2zJJErIqGmu7SXqMuWUfwpO2ar2j2ycJproI2n6xBoJVu5Nz31D42is
-	HFQwgGl0oRkktQPs+XnoNy+gcdf4nS+IIx3EcGzJ5
-X-Gm-Gg: ASbGncsa+McmRmBYBcwVr/jfM/Y6QGwhQoWo6ZQ1NCBLkDJO3DAj/PkhQNHts2ycKuU
-	LlX9MevjO0b1fUi4KeApBO1tQH0OvwPBeQNVJ5lElrDzDWwZCd9i0TJtyoT1x+oKKCLu8Ou3yJ9
-	q1nnFT6783EaN9uTZpZZZ0jRiCvzjuErIqlIhEG6VCTuRrzOK6JLQIQwUoURQGexoGFjZD+oZnw
-	FSYCWsGJFtRNVLStmJVEj4Y0xU/cJFBshIxQg==
-X-Google-Smtp-Source: AGHT+IE5oudoWOuExXFcWc613ObdeU+xcba/kkjYM4lQww+ElYzSmi2/gSXFiaP7UzcFCgh/kx+W9zwxu3OJ8SIUDuU=
-X-Received: by 2002:a05:6512:1104:b0:553:a9af:9e43 with SMTP id
- 2adb3069b0e04-55ceeb906demr143594e87.53.1755227031067; Thu, 14 Aug 2025
- 20:03:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755227035; x=1755831835;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i3d/p98av+5p9WSBdtxvzNDj+UN/95Nc/p87bn2DC6M=;
+        b=nUj47yeN5oRYzG7UOqJP8OhlXv+ZnnqKMthRCM/Or77NX9CXQtb7t66Ld5l8KxzTAA
+         DPiuX9xi8FOCVPwdHavFgth13y+nLKmKpZUycMeznqAFQNKaRgpZ3yEQsydIC0ZLOBr1
+         yVFhdNawjNwXSikKexHOGAybEmb4VrM/HJOFWt/dOHaanVw6GO1xMosrzEr0Xe++Nimw
+         SbgNbEWW6G04u9l30xYNozDxdfJU8kHSXeyY9KRS/YkzqKDL+KAVckgAdHkGlglx0owr
+         vXjDCc9v850QAv8I3Ehw+tRr9bpfnqGXQ7CtdID7SPzl8Rs9e8B5URUW5ACUlafWY898
+         Akig==
+X-Forwarded-Encrypted: i=1; AJvYcCVQZa9xYbLVhuYA4DnKEXykC0d/YqFNSpAkwy3x4SZ86+8aqsqrDqAKS5rPRtT1NFLgtZ9xLOHadTfnXDY=@vger.kernel.org, AJvYcCXSpYrfbJGeVGtfObSe4Cfwa2UDhBe5DhCNv9W4XuKEkiqE9rr29SAW/aLKt6odbOa9NxjHxnDwbuE0dEFIRYGa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ewFrCf2mkFA3O6fnkZtjVpbinfUssMnXRTxaAzhXIfF5bCNg
+	uhH7iXqAHzycTCPQBLdcaZCHAtCM+OtP7iBmcww4z2KdAWK+KDdcqYMb
+X-Gm-Gg: ASbGnctWOOaZCJ3qJNn9doUHEJjySE3XGdvZrnzwnJmVMi1RPrlVV2OiiHtOyLbWjgF
+	fDuIa5JgJY0gbJSo4MR2qIVX6hCVq7Yro6lXOWkDBCINWIUuLLL1Zqym8P5aXI9MCHlj+hcIpel
+	G98ZnVpaldhtnlsuXkPBoHEtaUKopZMX10r+olP5IjE8j06LA2hlFFe4GGoGMJZ9ZHCtrBlO4lr
+	wbGJpReGp04f/sTP23LcFlax2lYKomizVQBDh+TIReFwuXJq2kU/j+QeES2NGy1xbtsgzpEk41n
+	U9hOGB0/Ohu/QfYnVj9NlwtxJbkyVUiU1TrQ9nki/cvtqg2t2bm2LCryTq1ao3iSqhdQaLGdzCF
+	BmV91nO9lUnallla4ARWTIA==
+X-Google-Smtp-Source: AGHT+IF+lAZM91ReYPwNbswbCM5l5ckkM05Jg+DyCanBBq8z5Gts5vNv6UzeXlo4zmJYRRx+LGwLnQ==
+X-Received: by 2002:a17:907:3f22:b0:afa:12c6:26f with SMTP id a640c23a62f3a-afcdc1bf1dcmr37711966b.26.1755227034718;
+        Thu, 14 Aug 2025 20:03:54 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfcb2c6sm23132566b.60.2025.08.14.20.03.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Aug 2025 20:03:54 -0700 (PDT)
+Date: Fri, 15 Aug 2025 03:03:53 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] selftests/mm: mark all functions static in
+ split_huge_page_test.c
+Message-ID: <20250815030353.rdppdwizz3b2btb6@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250815023915.1394655-1-ziy@nvidia.com>
+ <20250815023915.1394655-3-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-2-laura.nao@collabora.com>
-In-Reply-To: <20250805135447.149231-2-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 15 Aug 2025 12:03:40 +0900
-X-Gm-Features: Ac12FXzlE2kni0q5NyqXgX7d170kjvAVh0V3KwwS63urIxRRXRRBW2zdHpmR4vA
-Message-ID: <CAGXv+5GDU45O46A+mpdu1HQ_sfT2Su4fgFCtr4xPjoRPzwOWmg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/27] clk: mediatek: clk-pll: Add set/clr regs for
- shared PLL enable control
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815023915.1394655-3-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
+On Thu, Aug 14, 2025 at 10:39:11PM -0400, Zi Yan wrote:
+>All functions are only used within the file.
 >
-> On MT8196, there are set/clr registers to control a shared PLL enable
-> register. These are intended to prevent different masters from
-> manipulating the PLLs independently. Add the corresponding en_set_reg
-> and en_clr_reg fields to the mtk_pll_data structure.
->
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+
+-- 
+Wei Yang
+Help you, Help me
 
