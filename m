@@ -1,771 +1,163 @@
-Return-Path: <linux-kernel+bounces-770130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4065B2771A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:49:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403B6B2770D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832085E7A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BE01CE5A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE329D29E;
-	Fri, 15 Aug 2025 03:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7141621D3E9;
+	Fri, 15 Aug 2025 03:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="QlGaOJTb"
-Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J3Abb0hL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0846C22A1C5;
-	Fri, 15 Aug 2025 03:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332F914A8B;
+	Fri, 15 Aug 2025 03:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229787; cv=none; b=Ys6/5tPPJ1nuta2Sdt7+so1LNcTfzbom52liswyszbMM/SlFUUSpCaUfa3jKMnzCc0YcVoGIVvZgxg5YdcI9FFGDfu6iDMfpz5ljAAk0uVIELKxsEzw0kCky8bGLzXRh3G223XEGXiWN8cVz6rLl4IpVj5S1uHqCxXLXmJa7rYw=
+	t=1755229684; cv=none; b=LIVwQFlTtdhq0XG8Fxe8YWLNuw9yUo2jDA9qHQc4cUifDOuG6d6Emj5OE6Xvxv88Z4lrfR+Hx4uAmnOBEn0sh63zgQssCpu+OcdLTlmLmMJcujMAtoXMqWwaYgb82I7TWpdm+i8fz2OKq3ONg9BRYk0qLJylgAreIXFWlXbIizo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229787; c=relaxed/simple;
-	bh=wpiFBQWwoaGpBC4gFMsYyBQndrXNXFeFiY0UdqehCRw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PVZpQQCwbm+g4Sm1tuJ+u9h00FCLyvgg12tZ6WLU414ASi7bnskeSj1RElwXB8UDzzblXqkAb99CxmWpVKHKJ03fv1sbgU1OOzUfTWDBbLM251ArMQ0a0cm+blndjroqOOwEb8z9UTjx5ya7zGpB0PZh+N9zatGLiPeNlacr6ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=QlGaOJTb; arc=none smtp.client-ip=68.232.139.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1755229786; x=1786765786;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=wpiFBQWwoaGpBC4gFMsYyBQndrXNXFeFiY0UdqehCRw=;
-  b=QlGaOJTbpID/9evSmTEFkN3gTrVaFcBAlIx2R1mOXrnoUvW/SF9rAjvd
-   KmaiFHP5j1osTBmFzJVg5ssZj36VHZk2jf2Td5MxxJbt+qZKheWjalcMa
-   QFB9ZtVioJztfkePNwEA4xdFb/srEhxpaVzuoWRQD9JNxU9pwFlAdwNdc
-   FoBuVWjCTHmXaRK9IXitvvXzkpOnfmNXaV0a4c+3VMzVW159dsygfn/Fv
-   VExTizOHjidLcdxq+dIetoh5GGXesSRlw9jcUB/iK0HeZheAsZt8JxX2V
-   +C0Kx5ZfWaiO/3ftn0Jaq/cZ6BQQYDc8jjIQ6xiibzn7D1tpwxSlQZ2H+
+	s=arc-20240116; t=1755229684; c=relaxed/simple;
+	bh=JEgTnVH/BV69PpBuDgQi6kkM93lGAGsa5M0gQm+th7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rcbok6c4I1UWaFmMCwCMIKNGWbCI85ELbesc7GjE6c/cjzc/lVILY1xyr4t3tDsxngWu/Uqmol5CIzS0iH8eylqsEiLaQEthczo4KlLVGbvzs8zlmUB8hpr26Z5vfCx0ZgQemGpIYXVtcIFlMhlbY+QJ9mjZ/6NlDMeYYFFj8Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J3Abb0hL; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755229684; x=1786765684;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JEgTnVH/BV69PpBuDgQi6kkM93lGAGsa5M0gQm+th7k=;
+  b=J3Abb0hLomkxmIYH5aUN7krmlpNOL/2KEQrEr5UIuAAKqfkv77BRxAO9
+   irymnnwTUNNqVwAw61sXfiORdFEW9amQIeaSTaBejwvb7FKk54n/brljv
+   bdU2Xuu4pbmry4LXFSDST6Y4N/Zgr7TbTVGqd2vm/MvWu90RtpECYSRYB
+   7cPFUU+glpHrFxgrMh3RFQdHDxR1x8cbI/bwrOPE7q7cAjn6QhswYGddo
+   EcjLG294zbG4K80el2hO4gJEzHQMbTFWcix4WUasJO2KmRB0H99AGUPPl
+   sz6D+bmvl4diFYqzoxI9o39fBibblyvb5c3BRr8mqd6jL+AizkcGRl6hx
    Q==;
-X-CSE-ConnectionGUID: xt2zqD3DRIiwpAFUxA6ejA==
-X-CSE-MsgGUID: fEOAX3ZaSiGiHzWh8DBvDQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="208658775"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747666800"; 
-   d="scan'208";a="208658775"
-Received: from unknown (HELO az2nlsmgr2.o.css.fujitsu.com) ([20.61.8.234])
-  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 12:48:34 +0900
-Received: from az2nlsmgm2.o.css.fujitsu.com (unknown [10.150.26.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr2.o.css.fujitsu.com (Postfix) with ESMTPS id 0B5401542;
-	Fri, 15 Aug 2025 03:48:34 +0000 (UTC)
-Received: from az2nlsmom1.o.css.fujitsu.com (az2nlsmom1.o.css.fujitsu.com [10.150.26.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm2.o.css.fujitsu.com (Postfix) with ESMTPS id AC8641C01DE7;
-	Fri, 15 Aug 2025 03:48:33 +0000 (UTC)
-Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by az2nlsmom1.o.css.fujitsu.com (Postfix) with ESMTP id 250C8829190;
-	Fri, 15 Aug 2025 03:48:25 +0000 (UTC)
-From: Koichi Okuno <fj2767dz@fujitsu.com>
-To: Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Gowthami Thiagarajan <gthiagarajan@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Koichi Okuno <fj2767dz@fujitsu.com>
-Subject: [PATCH v7 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
-Date: Fri, 15 Aug 2025 12:47:29 +0900
-Message-ID: <20250815034751.3726963-3-fj2767dz@fujitsu.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
-References: <20250815034751.3726963-1-fj2767dz@fujitsu.com>
+X-CSE-ConnectionGUID: CIHLorH4S6OTBkiflkc6yg==
+X-CSE-MsgGUID: 22iW8UdeRN28PDb5iy4A1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57466905"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57466905"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 20:48:03 -0700
+X-CSE-ConnectionGUID: vGRT3hNERv619L2yTCUTnw==
+X-CSE-MsgGUID: hTW5MDy3Sx6WZv1OySJ5/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="166902366"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 14 Aug 2025 20:47:58 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umlPu-000BWK-1k;
+	Fri, 15 Aug 2025 03:47:48 +0000
+Date: Fri, 15 Aug 2025 11:47:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>, catalin.marinas@arm.com,
+	will@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+	beata.michalska@arm.com, sudeep.holla@arm.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxarm@huawei.com, jonathan.cameron@huawei.com,
+	vincent.guittot@linaro.org, yangyicong@hisilicon.com,
+	zhanjie9@hisilicon.com, lihuisong@huawei.com, yubowen8@huawei.com,
+	linhongye@h-partners.com, zhenglifeng1@huawei.com
+Subject: Re: [PATCH v4 3/3] arm64: topology: Setup AMU FIE for online CPUs
+ only
+Message-ID: <202508151158.Hm9U6le6-lkp@intel.com>
+References: <20250814072853.3426386-4-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814072853.3426386-4-zhenglifeng1@huawei.com>
 
-This adds a new dynamic PMU to the Perf Events framework to program and
-control the Uncore PCI PMUs in Fujitsu chips.
+Hi Lifeng,
 
-This driver was created with reference to drivers/perf/qcom_l3_pmu.c.
+kernel test robot noticed the following build errors:
 
-This driver exports formatting and event information to sysfs so it can
-be used by the perf user space tools with the syntaxes:
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on rafael-pm/linux-next rafael-pm/bleeding-edge arm/for-next arm/fixes kvmarm/next soc/for-next linus/master v6.17-rc1 next-20250814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-perf stat -e pci_iod0_pci0/ea-pci/ ls
-perf stat -e pci_iod0_pci0/event=0x80/ ls
+url:    https://github.com/intel-lab-lkp/linux/commits/Lifeng-Zheng/arm64-topology-Set-scale-freq-source-only-for-the-CPUs-that-have-not-been-set-before/20250814-153732
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20250814072853.3426386-4-zhenglifeng1%40huawei.com
+patch subject: [PATCH v4 3/3] arm64: topology: Setup AMU FIE for online CPUs only
+config: arm64-allnoconfig (https://download.01.org/0day-ci/archive/20250815/202508151158.Hm9U6le6-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508151158.Hm9U6le6-lkp@intel.com/reproduce)
 
-FUJITSU-MONAKA PMU Events Specification v1.1 URL:
-https://github.com/fujitsu/FUJITSU-MONAKA
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508151158.Hm9U6le6-lkp@intel.com/
 
-Signed-off-by: Koichi Okuno <fj2767dz@fujitsu.com>
----
- .../admin-guide/perf/fujitsu_pci_pmu.rst      |  50 ++
- Documentation/admin-guide/perf/index.rst      |   1 +
- drivers/perf/Kconfig                          |   9 +
- drivers/perf/Makefile                         |   1 +
- drivers/perf/fujitsu_pci_pmu.c                | 536 ++++++++++++++++++
- 5 files changed, 597 insertions(+)
- create mode 100644 Documentation/admin-guide/perf/fujitsu_pci_pmu.rst
- create mode 100644 drivers/perf/fujitsu_pci_pmu.c
+All errors (new ones prefixed by >>):
 
-diff --git a/Documentation/admin-guide/perf/fujitsu_pci_pmu.rst b/Documentation/admin-guide/perf/fujitsu_pci_pmu.rst
-new file mode 100644
-index 000000000000..117cefc4d185
---- /dev/null
-+++ b/Documentation/admin-guide/perf/fujitsu_pci_pmu.rst
-@@ -0,0 +1,50 @@
-+====================================================
-+Fujitsu Uncore PCI Performance Monitoring Unit (PMU)
-+====================================================
-+
-+This driver supports the Uncore PCI PMUs found in Fujitsu chips.
-+Each PCI PMU on these chips is exposed as a uncore perf PMU with device name
-+pci_iod<iod>_pci<pci>.
-+
-+The driver provides a description of its available events and configuration
-+options in sysfs, see /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
-+This driver exports:
-+- formats, used by perf user space and other tools to configure events
-+- events, used by perf user space and other tools to create events
-+  symbolically, e.g.:
-+    perf stat -a -e pci_iod0_pci0/event=0x24/ ls
-+- cpumask, used by perf user space and other tools to know on which CPUs
-+  to open the events
-+
-+This driver supports the following events:
-+- pci-port0-cycles
-+  This event counts PCI cycles at PCI frequency in port0.
-+- pci-port0-read-count
-+  This event counts read transactions for data transfer in port0.
-+- pci-port0-read-count-bus
-+  This event counts read transactions for bus usage in port0.
-+- pci-port0-write-count
-+  This event counts write transactions for data transfer in port0.
-+- pci-port0-write-count-bus
-+  This event counts write transactions for bus usage in port0.
-+- pci-port1-cycles
-+  This event counts PCI cycles at PCI frequency in port1.
-+- pci-port1-read-count
-+  This event counts read transactions for data transfer in port1.
-+- pci-port1-read-count-bus
-+  This event counts read transactions for bus usage in port1.
-+- pci-port1-write-count
-+  This event counts write transactions for data transfer in port1.
-+- pci-port1-write-count-bus
-+  This event counts write transactions for bus usage in port1.
-+- ea-pci
-+  This event counts energy consumption of PCI.
-+
-+  'ea' is the abbreviation for 'Energy Analyzer'.
-+
-+Examples for use with perf::
-+
-+  perf stat -e pci_iod0_pci0/ea-pci/ ls
-+
-+Given that these are uncore PMUs the driver does not support sampling, therefore
-+"perf record" will not work. Per-task perf sessions are not supported.
-diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-index e0262060db17..50cc039ad702 100644
---- a/Documentation/admin-guide/perf/index.rst
-+++ b/Documentation/admin-guide/perf/index.rst
-@@ -30,3 +30,4 @@ Performance monitor support
-    ampere_cspmu
-    mrvl-pem-pmu
-    fujitsu_mac_pmu
-+   fujitsu_pci_pmu
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index ab4e44c99a53..3d86710d9c73 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -187,6 +187,15 @@ config FUJITSU_MAC_PMU
- 	 Adds the Uncore MAC PMU into the perf events subsystem for
- 	 monitoring Uncore MAC events.
- 
-+config FUJITSU_PCI_PMU
-+	bool "Fujitsu Uncore PCI PMU"
-+	depends on (ARM64 && (ACPI || COMPILE_TEST))
-+	help
-+	 Provides support for the Uncore PCI performance monitor unit (PMU)
-+	 in Fujitsu processors.
-+	 Adds the Uncore PCI PMU into the perf events subsystem for
-+	 monitoring Uncore PCI events.
-+
- config QCOM_L2_PMU
- 	bool "Qualcomm Technologies L2-cache PMU"
- 	depends on ARCH_QCOM && ARM64 && ACPI
-diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-index be7f74c3b14c..6d4a33cd8211 100644
---- a/drivers/perf/Makefile
-+++ b/drivers/perf/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_FSL_IMX8_DDR_PMU) += fsl_imx8_ddr_perf.o
- obj-$(CONFIG_FSL_IMX9_DDR_PMU) += fsl_imx9_ddr_perf.o
- obj-$(CONFIG_HISI_PMU) += hisilicon/
- obj-$(CONFIG_FUJITSU_MAC_PMU) += fujitsu_mac_pmu.o
-+obj-$(CONFIG_FUJITSU_PCI_PMU) += fujitsu_pci_pmu.o
- obj-$(CONFIG_QCOM_L2_PMU)	+= qcom_l2_pmu.o
- obj-$(CONFIG_QCOM_L3_PMU) += qcom_l3_pmu.o
- obj-$(CONFIG_RISCV_PMU) += riscv_pmu.o
-diff --git a/drivers/perf/fujitsu_pci_pmu.c b/drivers/perf/fujitsu_pci_pmu.c
-new file mode 100644
-index 000000000000..dbe050eec711
---- /dev/null
-+++ b/drivers/perf/fujitsu_pci_pmu.c
-@@ -0,0 +1,536 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for the Uncore PCI PMUs in Fujitsu chips.
-+ *
-+ * See Documentation/admin-guide/perf/fujitsu_pci_pmu.rst for more details.
-+ *
-+ * This driver is based on drivers/perf/qcom_l3_pmu.c
-+ * Copyright (c) 2015-2017, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2024 Fujitsu. All rights reserved.
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/list.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/perf_event.h>
-+#include <linux/platform_device.h>
-+
-+/* Number of counters on each PMU */
-+#define PCI_NUM_COUNTERS  8
-+/* Mask for the event type field within perf_event_attr.config and EVTYPE reg */
-+#define PCI_EVTYPE_MASK   0xFF
-+
-+/* Perfmon registers */
-+#define PCI_PM_EVCNTR(__cntr)           (0x000 + (__cntr) * 8)
-+#define PCI_PM_CNTCTL(__cntr)           (0x100 + (__cntr) * 8)
-+#define PCI_PM_CNTCTL_RESET             0
-+#define PCI_PM_EVTYPE(__cntr)           (0x200 + (__cntr) * 8)
-+#define PCI_PM_EVTYPE_EVSEL(__val)      FIELD_GET(PCI_EVTYPE_MASK, __val)
-+#define PCI_PM_CR                       0x400
-+#define PCI_PM_CR_RESET                 BIT(1)
-+#define PCI_PM_CR_ENABLE                BIT(0)
-+#define PCI_PM_CNTENSET                 0x410
-+#define PCI_PM_CNTENSET_IDX(__cntr)     BIT(__cntr)
-+#define PCI_PM_CNTENCLR                 0x418
-+#define PCI_PM_CNTENCLR_IDX(__cntr)     BIT(__cntr)
-+#define PCI_PM_CNTENCLR_RESET           0xFF
-+#define PCI_PM_INTENSET                 0x420
-+#define PCI_PM_INTENSET_IDX(__cntr)     BIT(__cntr)
-+#define PCI_PM_INTENCLR                 0x428
-+#define PCI_PM_INTENCLR_IDX(__cntr)     BIT(__cntr)
-+#define PCI_PM_INTENCLR_RESET           0xFF
-+#define PCI_PM_OVSR                     0x440
-+#define PCI_PM_OVSR_OVSRCLR_RESET       0xFF
-+
-+#define PCI_EVENT_PORT0_CYCLES          0x000
-+#define PCI_EVENT_PORT0_READ_COUNT      0x010
-+#define PCI_EVENT_PORT0_READ_COUNT_BUS  0x014
-+#define PCI_EVENT_PORT0_WRITE_COUNT     0x020
-+#define PCI_EVENT_PORT0_WRITE_COUNT_BUS 0x024
-+#define PCI_EVENT_PORT1_CYCLES          0x040
-+#define PCI_EVENT_PORT1_READ_COUNT      0x050
-+#define PCI_EVENT_PORT1_READ_COUNT_BUS  0x054
-+#define PCI_EVENT_PORT1_WRITE_COUNT     0x060
-+#define PCI_EVENT_PORT1_WRITE_COUNT_BUS 0x064
-+#define PCI_EVENT_EA_PCI                0x080
-+
-+struct pci_pmu {
-+	struct pmu		pmu;
-+	struct hlist_node	node;
-+	void __iomem		*regs;
-+	struct perf_event	*events[PCI_NUM_COUNTERS];
-+	unsigned long		used_mask[BITS_TO_LONGS(PCI_NUM_COUNTERS)];
-+	cpumask_t		cpumask;
-+};
-+
-+static int pci_pmu_cpuhp_state;
-+
-+#define to_pci_pmu(p) (container_of(p, struct pci_pmu, pmu))
-+
-+static void fujitsu_pci_counter_start(struct perf_event *event)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+
-+	/* Initialize the hardware counter and reset prev_count*/
-+	local64_set(&event->hw.prev_count, 0);
-+	writeq_relaxed(0, pcipmu->regs + PCI_PM_EVCNTR(idx));
-+
-+	/* Set the event type */
-+	writeq_relaxed(PCI_PM_EVTYPE_EVSEL(event->attr.config), pcipmu->regs + PCI_PM_EVTYPE(idx));
-+
-+	/* Enable interrupt generation by this counter */
-+	writeq_relaxed(PCI_PM_INTENSET_IDX(idx), pcipmu->regs + PCI_PM_INTENSET);
-+
-+	/* Finally, enable the counter */
-+	writeq_relaxed(PCI_PM_CNTCTL_RESET, pcipmu->regs + PCI_PM_CNTCTL(idx));
-+	writeq_relaxed(PCI_PM_CNTENSET_IDX(idx), pcipmu->regs + PCI_PM_CNTENSET);
-+}
-+
-+static void fujitsu_pci_counter_stop(struct perf_event *event,
-+				     int flags)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+
-+	/* Disable the counter */
-+	writeq_relaxed(PCI_PM_CNTENCLR_IDX(idx), pcipmu->regs + PCI_PM_CNTENCLR);
-+
-+	/* Disable interrupt generation by this counter */
-+	writeq_relaxed(PCI_PM_INTENCLR_IDX(idx), pcipmu->regs + PCI_PM_INTENCLR);
-+}
-+
-+static void fujitsu_pci_counter_update(struct perf_event *event)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	int idx = event->hw.idx;
-+	u64 prev, new;
-+
-+	do {
-+		prev = local64_read(&event->hw.prev_count);
-+		new = readq_relaxed(pcipmu->regs + PCI_PM_EVCNTR(idx));
-+	} while (local64_cmpxchg(&event->hw.prev_count, prev, new) != prev);
-+
-+	local64_add(new - prev, &event->count);
-+}
-+
-+static inline void fujitsu_pci__init(struct pci_pmu *pcipmu)
-+{
-+	int i;
-+
-+	writeq_relaxed(PCI_PM_CR_RESET, pcipmu->regs + PCI_PM_CR);
-+
-+	writeq_relaxed(PCI_PM_CNTENCLR_RESET, pcipmu->regs + PCI_PM_CNTENCLR);
-+	writeq_relaxed(PCI_PM_INTENCLR_RESET, pcipmu->regs + PCI_PM_INTENCLR);
-+	writeq_relaxed(PCI_PM_OVSR_OVSRCLR_RESET, pcipmu->regs + PCI_PM_OVSR);
-+
-+	for (i = 0; i < PCI_NUM_COUNTERS; ++i) {
-+		writeq_relaxed(PCI_PM_CNTCTL_RESET, pcipmu->regs + PCI_PM_CNTCTL(i));
-+		writeq_relaxed(PCI_PM_EVTYPE_EVSEL(0), pcipmu->regs + PCI_PM_EVTYPE(i));
-+	}
-+
-+	/*
-+	 * Use writeq here to ensure all programming commands are done
-+	 * before proceeding
-+	 */
-+	writeq(PCI_PM_CR_ENABLE, pcipmu->regs + PCI_PM_CR);
-+}
-+
-+static irqreturn_t fujitsu_pci__handle_irq(int irq_num, void *data)
-+{
-+	struct pci_pmu *pcipmu = data;
-+	/* Read the overflow status register */
-+	long status = readq_relaxed(pcipmu->regs + PCI_PM_OVSR);
-+	int idx;
-+
-+	if (status == 0)
-+		return IRQ_NONE;
-+
-+	/* Clear the bits we read on the overflow status register */
-+	writeq_relaxed(status, pcipmu->regs + PCI_PM_OVSR);
-+
-+	for_each_set_bit(idx, &status, PCI_NUM_COUNTERS) {
-+		struct perf_event *event;
-+
-+		event = pcipmu->events[idx];
-+		if (!event)
-+			continue;
-+
-+		fujitsu_pci_counter_update(event);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void fujitsu_pci__pmu_enable(struct pmu *pmu)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(pmu);
-+
-+	/* Ensure the other programming commands are observed before enabling */
-+	wmb();
-+
-+	writeq_relaxed(PCI_PM_CR_ENABLE, pcipmu->regs + PCI_PM_CR);
-+}
-+
-+static void fujitsu_pci__pmu_disable(struct pmu *pmu)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(pmu);
-+
-+	writeq_relaxed(0, pcipmu->regs + PCI_PM_CR);
-+
-+	/* Ensure the basic counter unit is stopped before proceeding */
-+	wmb();
-+}
-+
-+/*
-+ * We must NOT create groups containing events from multiple hardware PMUs,
-+ * although mixing different software and hardware PMUs is allowed.
-+ */
-+static bool fujitsu_pci__validate_event_group(struct perf_event *event)
-+{
-+	struct perf_event *leader = event->group_leader;
-+	struct perf_event *sibling;
-+	int counters;
-+
-+	if (leader->pmu != event->pmu && !is_software_event(leader))
-+		return false;
-+
-+	/* The sum of the counters used by the event and its leader event */
-+	counters = 2;
-+
-+	for_each_sibling_event(sibling, leader) {
-+		if (is_software_event(sibling))
-+			continue;
-+		if (sibling->pmu != event->pmu)
-+			return false;
-+		counters++;
-+	}
-+
-+	/*
-+	 * If the group requires more counters than the HW has, it
-+	 * cannot ever be scheduled.
-+	 */
-+	return counters <= PCI_NUM_COUNTERS;
-+}
-+
-+static int fujitsu_pci__event_init(struct perf_event *event)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	/* Is the event for this PMU? */
-+	if (event->attr.type != event->pmu->type)
-+		return -ENOENT;
-+
-+	/*
-+	 * Sampling not supported since these events are not
-+	 * core-attributable.
-+	 */
-+	if (hwc->sample_period)
-+		return -EINVAL;
-+
-+	/*
-+	 * Task mode not available, we run the counters as socket counters,
-+	 * not attributable to any CPU and therefore cannot attribute per-task.
-+	 */
-+	if (event->cpu < 0)
-+		return -EINVAL;
-+
-+	/* Validate the group */
-+	if (!fujitsu_pci__validate_event_group(event))
-+		return -EINVAL;
-+
-+	hwc->idx = -1;
-+
-+	/*
-+	 * Many perf core operations (eg. events rotation) operate on a
-+	 * single CPU context. This is obvious for CPU PMUs, where one
-+	 * expects the same sets of events being observed on all CPUs,
-+	 * but can lead to issues for off-core PMUs, like this one, where
-+	 * each event could be theoretically assigned to a different CPU.
-+	 * To mitigate this, we enforce CPU assignment to one designated
-+	 * processor (the one described in the "cpumask" attribute exported
-+	 * by the PMU device). perf user space tools honor this and avoid
-+	 * opening more than one copy of the events.
-+	 */
-+	event->cpu = cpumask_first(&pcipmu->cpumask);
-+
-+	return 0;
-+}
-+
-+static void fujitsu_pci__event_start(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	hwc->state = 0;
-+	fujitsu_pci_counter_start(event);
-+}
-+
-+static void fujitsu_pci__event_stop(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (hwc->state & PERF_HES_STOPPED)
-+		return;
-+
-+	fujitsu_pci_counter_stop(event, flags);
-+	if (flags & PERF_EF_UPDATE)
-+		fujitsu_pci_counter_update(event);
-+	hwc->state |= PERF_HES_STOPPED | PERF_HES_UPTODATE;
-+}
-+
-+static int fujitsu_pci__event_add(struct perf_event *event, int flags)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	int idx;
-+
-+	/* Try to allocate a counter. */
-+	idx = bitmap_find_free_region(pcipmu->used_mask, PCI_NUM_COUNTERS, 0);
-+	if (idx < 0)
-+		/* The counters are all in use. */
-+		return -EAGAIN;
-+
-+	hwc->idx = idx;
-+	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
-+	pcipmu->events[idx] = event;
-+
-+	if (flags & PERF_EF_START)
-+		fujitsu_pci__event_start(event, 0);
-+
-+	/* Propagate changes to the userspace mapping. */
-+	perf_event_update_userpage(event);
-+
-+	return 0;
-+}
-+
-+static void fujitsu_pci__event_del(struct perf_event *event, int flags)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	/* Stop and clean up */
-+	fujitsu_pci__event_stop(event, flags | PERF_EF_UPDATE);
-+	pcipmu->events[hwc->idx] = NULL;
-+	bitmap_release_region(pcipmu->used_mask, hwc->idx, 0);
-+
-+	/* Propagate changes to the userspace mapping. */
-+	perf_event_update_userpage(event);
-+}
-+
-+static void fujitsu_pci__event_read(struct perf_event *event)
-+{
-+	fujitsu_pci_counter_update(event);
-+}
-+
-+#define PCI_PMU_FORMAT_ATTR(_name, _config)				      \
-+	(&((struct dev_ext_attribute[]) {				      \
-+		{ .attr = __ATTR(_name, 0444, device_show_string, NULL),      \
-+		  .var = (void *) _config, }				      \
-+	})[0].attr.attr)
-+
-+static struct attribute *fujitsu_pci_pmu_formats[] = {
-+	PCI_PMU_FORMAT_ATTR(event, "config:0-7"),
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_pci_pmu_format_group = {
-+	.name = "format",
-+	.attrs = fujitsu_pci_pmu_formats,
-+};
-+
-+static ssize_t pci_pmu_event_show(struct device *dev,
-+				  struct device_attribute *attr, char *page)
-+{
-+	struct perf_pmu_events_attr *pmu_attr;
-+
-+	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
-+	return sysfs_emit(page, "event=0x%02llx\n", pmu_attr->id);
-+}
-+
-+#define PCI_EVENT_ATTR(_name, _id)					     \
-+	PMU_EVENT_ATTR_ID(_name, pci_pmu_event_show, _id)
-+
-+static struct attribute *fujitsu_pci_pmu_events[] = {
-+	PCI_EVENT_ATTR(pci-port0-cycles, PCI_EVENT_PORT0_CYCLES),
-+	PCI_EVENT_ATTR(pci-port0-read-count, PCI_EVENT_PORT0_READ_COUNT),
-+	PCI_EVENT_ATTR(pci-port0-read-count-bus, PCI_EVENT_PORT0_READ_COUNT_BUS),
-+	PCI_EVENT_ATTR(pci-port0-write-count, PCI_EVENT_PORT0_WRITE_COUNT),
-+	PCI_EVENT_ATTR(pci-port0-write-count-bus, PCI_EVENT_PORT0_WRITE_COUNT_BUS),
-+	PCI_EVENT_ATTR(pci-port1-cycles, PCI_EVENT_PORT1_CYCLES),
-+	PCI_EVENT_ATTR(pci-port1-read-count, PCI_EVENT_PORT1_READ_COUNT),
-+	PCI_EVENT_ATTR(pci-port1-read-count-bus, PCI_EVENT_PORT1_READ_COUNT_BUS),
-+	PCI_EVENT_ATTR(pci-port1-write-count, PCI_EVENT_PORT1_WRITE_COUNT),
-+	PCI_EVENT_ATTR(pci-port1-write-count-bus, PCI_EVENT_PORT1_WRITE_COUNT_BUS),
-+	PCI_EVENT_ATTR(ea-pci, PCI_EVENT_EA_PCI),
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_pci_pmu_events_group = {
-+	.name = "events",
-+	.attrs = fujitsu_pci_pmu_events,
-+};
-+
-+static ssize_t cpumask_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	struct pci_pmu *pcipmu = to_pci_pmu(dev_get_drvdata(dev));
-+
-+	return cpumap_print_to_pagebuf(true, buf, &pcipmu->cpumask);
-+}
-+static DEVICE_ATTR_RO(cpumask);
-+
-+static struct attribute *fujitsu_pci_pmu_cpumask_attrs[] = {
-+	&dev_attr_cpumask.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group fujitsu_pci_pmu_cpumask_attr_group = {
-+	.attrs = fujitsu_pci_pmu_cpumask_attrs,
-+};
-+
-+static const struct attribute_group *fujitsu_pci_pmu_attr_grps[] = {
-+	&fujitsu_pci_pmu_format_group,
-+	&fujitsu_pci_pmu_events_group,
-+	&fujitsu_pci_pmu_cpumask_attr_group,
-+	NULL
-+};
-+
-+static int fujitsu_pci_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
-+{
-+	struct pci_pmu *pcipmu = hlist_entry_safe(node, struct pci_pmu, node);
-+
-+	/* If there is not a CPU/PMU association pick this CPU */
-+	if (cpumask_empty(&pcipmu->cpumask))
-+		cpumask_set_cpu(cpu, &pcipmu->cpumask);
-+
-+	return 0;
-+}
-+
-+static int fujitsu_pci_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
-+{
-+	struct pci_pmu *pcipmu = hlist_entry_safe(node, struct pci_pmu, node);
-+	unsigned int target;
-+
-+	if (!cpumask_test_and_clear_cpu(cpu, &pcipmu->cpumask))
-+		return 0;
-+
-+	target = cpumask_any_but(cpu_online_mask, cpu);
-+	if (target >= nr_cpu_ids)
-+		return 0;
-+
-+	perf_pmu_migrate_context(&pcipmu->pmu, cpu, target);
-+	cpumask_set_cpu(target, &pcipmu->cpumask);
-+
-+	return 0;
-+}
-+
-+static int fujitsu_pci_pmu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct acpi_device *acpi_dev;
-+	struct pci_pmu *pcipmu;
-+	struct resource *memrc;
-+	char *name;
-+	int ret;
-+	u64 uid;
-+
-+	acpi_dev = ACPI_COMPANION(dev);
-+	if (!acpi_dev)
-+		return -ENODEV;
-+
-+	ret = acpi_dev_uid_to_integer(acpi_dev, &uid);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "unable to read ACPI uid\n");
-+
-+	pcipmu = devm_kzalloc(dev, sizeof(*pcipmu), GFP_KERNEL);
-+	if (!pcipmu)
-+		return -ENOMEM;
-+
-+	name = devm_kasprintf(dev, GFP_KERNEL, "pci_iod%llu_pci%llu",
-+			      (uid >> 4) & 0xF, uid & 0xF);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	pcipmu->pmu = (struct pmu) {
-+		.parent		= dev,
-+		.task_ctx_nr	= perf_invalid_context,
-+
-+		.pmu_enable	= fujitsu_pci__pmu_enable,
-+		.pmu_disable	= fujitsu_pci__pmu_disable,
-+		.event_init	= fujitsu_pci__event_init,
-+		.add		= fujitsu_pci__event_add,
-+		.del		= fujitsu_pci__event_del,
-+		.start		= fujitsu_pci__event_start,
-+		.stop		= fujitsu_pci__event_stop,
-+		.read		= fujitsu_pci__event_read,
-+
-+		.attr_groups	= fujitsu_pci_pmu_attr_grps,
-+		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
-+	};
-+
-+	pcipmu->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &memrc);
-+	if (IS_ERR(pcipmu->regs))
-+		return PTR_ERR(pcipmu->regs);
-+
-+	fujitsu_pci__init(pcipmu);
-+
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = devm_request_irq(dev, ret, fujitsu_pci__handle_irq, 0,
-+			       name, pcipmu);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Request for IRQ failed for slice @%pa\n",
-+				     &memrc->start);
-+
-+	/* Add this instance to the list used by the offline callback */
-+	ret = cpuhp_state_add_instance(pci_pmu_cpuhp_state, &pcipmu->node);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Error registering hotplug");
-+
-+	ret = perf_pmu_register(&pcipmu->pmu, name, -1);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to register PCI PMU\n");
-+
-+	dev_dbg(dev, "Registered %s, type: %d\n", name, pcipmu->pmu.type);
-+
-+	return 0;
-+}
-+
-+static const struct acpi_device_id fujitsu_pci_pmu_acpi_match[] = {
-+	{ "FUJI200D", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, fujitsu_pci_pmu_acpi_match);
-+
-+static struct platform_driver fujitsu_pci_pmu_driver = {
-+	.driver = {
-+		.name = "fujitsu-pci-pmu",
-+		.acpi_match_table = fujitsu_pci_pmu_acpi_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = fujitsu_pci_pmu_probe,
-+};
-+
-+static int __init register_fujitsu_pci_pmu_driver(void)
-+{
-+	int ret;
-+
-+	/* Install a hook to update the reader CPU in case it goes offline */
-+	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
-+				      "perf/fujitsu/pci:online",
-+				      fujitsu_pci_pmu_online_cpu,
-+				      fujitsu_pci_pmu_offline_cpu);
-+	if (ret < 0)
-+		return ret;
-+
-+	pci_pmu_cpuhp_state = ret;
-+	return platform_driver_register(&fujitsu_pci_pmu_driver);
-+}
-+device_initcall(register_fujitsu_pci_pmu_driver);
+   arch/arm64/kernel/topology.c: In function 'cpuhp_topology_online':
+>> arch/arm64/kernel/topology.c:409:41: error: implicit declaration of function 'cpufreq_cpu_policy'; did you mean 'cpufreq_cpu_put'? [-Wimplicit-function-declaration]
+     409 |         struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
+         |                                         ^~~~~~~~~~~~~~~~~~
+         |                                         cpufreq_cpu_put
+   arch/arm64/kernel/topology.c:409:41: error: initialization of 'struct cpufreq_policy *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+
+
+vim +409 arch/arm64/kernel/topology.c
+
+   406	
+   407	static int cpuhp_topology_online(unsigned int cpu)
+   408	{
+ > 409		struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
+   410	
+   411		/*
+   412		 * If the online CPUs are not all AMU FIE CPUs or the new one is already
+   413		 * an AMU FIE one, no need to set it.
+   414		 */
+   415		if (!policy || !cpumask_available(amu_fie_cpus) ||
+   416		    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
+   417		    cpumask_test_cpu(cpu, amu_fie_cpus))
+   418			return 0;
+   419	
+   420		/*
+   421		 * If the new online CPU cannot pass this check, all the CPUs related to
+   422		 * the same policy should be clear from amu_fie_cpus mask, otherwise they
+   423		 * may use different source of the freq scale.
+   424		 */
+   425		if (WARN_ON(!freq_counters_valid(cpu))) {
+   426			topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
+   427							 policy->related_cpus);
+   428			cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
+   429			return 0;
+   430		}
+   431	
+   432		cpumask_set_cpu(cpu, amu_fie_cpus);
+   433	
+   434		topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
+   435	
+   436		pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
+   437	
+   438		return 0;
+   439	}
+   440	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
