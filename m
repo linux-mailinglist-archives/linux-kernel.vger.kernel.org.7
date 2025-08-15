@@ -1,176 +1,223 @@
-Return-Path: <linux-kernel+bounces-770730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C982B27E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10254B27E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9261D03966
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0005A019A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 10:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C952FE04A;
-	Fri, 15 Aug 2025 10:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DAB2FD1B7;
+	Fri, 15 Aug 2025 10:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V7Ysf9D5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bYAiQz4Y"
+Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCBB27604E;
-	Fri, 15 Aug 2025 10:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB6721FF5D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 10:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755253951; cv=none; b=JOsfwKMS6ZPORP6+wfwVqKfNHMPU8qBOBihTflvhogmB0dDLGsKCIaA0S6NUwgw5gXL0n3pWfZHkNycyZZcQ0h82gLiz17RRs4t+TD5tQCITOb7BdJJYzPhJO17s6+dc03+Tx52IIlEQNSZ0yna1C65gmv6d4a+yvyIq0ebwZLY=
+	t=1755254171; cv=none; b=heUPmzY0XXwSZD0RlV/TLDgWZET4gvC/lzYYlHsLb9WVVsM0gu1uGBDM0SWrT1+KLJI4KnU2coG0eHl1g/IfaGQ0G50HIGqNqCZreHNlDUyzZXyYMDE5V2iqI6nK7JcgHH3F+I/L1xJE0GgEcCjcEh2jgkHpGlPnGSuZ4voj6dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755253951; c=relaxed/simple;
-	bh=Tf06S22oGZwz4QF7IIkMPTnPInylNOcha5gpHU9syJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qL26yLtAyO+2+G+2IoOL9KNwWioGEzCHGLfPfut0+bTR4NKhpUgK9y1M0XXjj3iFPfYTUylybzaT8Xu9XEjqFH5Rzc8TVMN1J0hoCGyw5tX7jOwLWgtS/JedO4boT62XIVpMJ2I5NlhVy5O0sm/FF4sDt/xnOqaZt2gPFDBv6B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V7Ysf9D5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id ECEBD56D;
-	Fri, 15 Aug 2025 12:31:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755253891;
-	bh=Tf06S22oGZwz4QF7IIkMPTnPInylNOcha5gpHU9syJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V7Ysf9D5tktEaio/i6U2xspkdXxnp5hU0YBvOeLUAdQMu23AJ3fFGyWF1x2D9mK4Y
-	 U3/AgvCR06LNwzwhJf4TgGDJw1E1EYmvLXVCeriW6EdevB68Dyj/f3xZM1RWE6dL/2
-	 +hmQixZP0RPM/VmfoTG98thARprSrbdTcnQGySmk=
-Date: Fri, 15 Aug 2025 13:32:05 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
-	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
- mbus_config
-Message-ID: <20250815103205.GJ6201@pendragon.ideasonboard.com>
-References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
- <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+	s=arc-20240116; t=1755254171; c=relaxed/simple;
+	bh=byvwE3TiFZNjUcWQkr01VHegzmfVvfQRpa8VJPuEbMg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Sp6As3FO2bo/B/89PZo2iMW3sI/7Uh/6UHDxLGcFMuN9lv5YZR64WVCiLkFX8khwr6xk39Y60EMrLqOdTET6s/usKhg2G15E5yhTV1lIVlRt0QFvOuLziuuevMzE34QIXMEwYGUkDV+GIULDzb4kT8ILvCJCJi0n+owj3WPBwU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bYAiQz4Y; arc=none smtp.client-ip=209.85.222.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com
+Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7e8705feefaso493628885a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 03:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755254168; x=1755858968; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eFpXxq44oeslvizqCF8Bv0M0ZVaQrSB155EOLBMECVQ=;
+        b=bYAiQz4Y6C9yXc7zHn9HOg5CNjPJrKqu6tQ3M6JazK795hSacPC2li+itBnjuBfFd8
+         FjZKQfzu3a35EDQCdrJgVkwqC7kUA4qd8GkebiUhTlJDkBQv0udeu+IwGKBJwLkH0YDY
+         uNrKDgH+bZKL0booGNZOS384/qUeisyrCkGTjb9vYrUbhzJurOo+tX0Cu8v/cJHmjbaB
+         CDy0T5J/2ZbZ2MRo171ekpvh+nhanUuziZOPuKBwHJG8ENXPYFiZe+BSGdwXlikIDw17
+         Yq4rh1Q2c5fjKREZAErI5+hFvcG/vBHstXIewVnHORZwCnsPNaX+gPelBA5/QHDqsFMO
+         4SSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755254168; x=1755858968;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eFpXxq44oeslvizqCF8Bv0M0ZVaQrSB155EOLBMECVQ=;
+        b=bBE2U627hNK7Es3/gNUuV5kMVJKjDYUl1XR/wpkZyDvkL8KJui7FhJFfZRKYnnjZmR
+         4Dqn7bHP2QVX2yhxUdV7ZHws6Kp8vG1H7AssLRvNRnkscfp4i8z3Z3drT3c5HAB6Dl+M
+         /yAXyp63hyhJOEppv4d+nCz8W/DMcQO7YDH/MXqhzmnJb7/94edTAePUvjkNU/Vb6BFe
+         NAUkDKmdu08rwND/s8MpQGOMhtdKvP64cXm/s2sgpqUjcKQUvlu80Cg/SFQE6MHBKOVM
+         TBI3lyWPWdpMv4rcjTKZrAQQufayuDoLvAyQhXM7Wd+qPUUTcgvrNjzM5sdl3FhE1NEd
+         gvww==
+X-Forwarded-Encrypted: i=1; AJvYcCVrWXRd/tQc7C5h2K89uNNISDJkdrBAwtz4kD1O84sV7Ph0tVs/gxVtg0a6QHyG7MaOIsXaPledC2NKyGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq+TNKK/NqZIJqYA3D6Rr6w/M5R7ePFwHpfPF5/CbH6cYnUo5P
+	R6+f5b1Zum9bmZsMPr+og97Ok6jmt8P3AIGi3Vrlt1sGgERtZCGKOl2n39c4APeiOdrQhP1GoXZ
+	/vPsEEGETMrGJ+Q==
+X-Google-Smtp-Source: AGHT+IGqwcNa0muVNYMhfJnNR56U34U3LHWpaKq2hOoZwkS5Io63dT+8xTEkaJe22M4TB6v424ec54WU5OMILA==
+X-Received: from qkpg1.prod.google.com ([2002:a05:620a:2781:b0:7e8:14fd:d2c9])
+ (user=marievic job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:620a:1a17:b0:7e1:9c2d:a862 with SMTP id af79cd13be357-7e87e06b8dbmr185880085a.39.1755254168517;
+ Fri, 15 Aug 2025 03:36:08 -0700 (PDT)
+Date: Fri, 15 Aug 2025 10:35:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
+Message-ID: <20250815103604.3857930-1-marievic@google.com>
+Subject: [PATCH v3 0/7] kunit: Refactor and extend KUnit's parameterized
+ testing framework
+From: Marie Zhussupova <marievic@google.com>
+To: rmoar@google.com, davidgow@google.com, shuah@kernel.org, 
+	brendan.higgins@linux.dev
+Cc: mark.rutland@arm.com, elver@google.com, dvyukov@google.com, 
+	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
+	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Marie Zhussupova <marievic@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 15, 2025 at 09:18:13AM +0000, Sakari Ailus wrote:
-> On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
-> > Although 4 lanes may be physically available, we may not be using all of
-> > them. Get the number of configured lanes in the case a driver has
-> > implemented the get_mbus_config op.
-> > 
-> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > 
-> > ---
-> > 
-> > Currently, the imx-mipi-csis driver parses the device tree to determine
-> > the number of configured lanes for the CSI receiver. This may be
-> > incorrect in the case that the connected device only uses a subset of
-> > lanes, for example. Allow the drivers for these cameras to create a
-> > mbus_config to configure the number of lanes that are actually being
-> > used.
-> > 
-> > If the driver does not support the get_mbus_config op, this patch will
-> > have no functional change.
-> > 
-> > Compile tested against media-master (v6.17-rc1)
-> > ---
-> >  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
-> >  1 file changed, 41 insertions(+)
-> > 
-> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > index 2beb5f43c2c0..efe4e2ad0382 100644
-> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
-> >  	return container_of(sdev, struct mipi_csis_device, sd);
-> >  }
-> >  
-> > +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
-> > +{
-> > +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > +	struct v4l2_mbus_config mbus_config = { 0 };
-> > +	int ret;
-> > +
-> > +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
-> > +			       0, &mbus_config);
-> > +	if (ret == -ENOIOCTLCMD) {
-> > +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (ret) {
-> > +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-> > +		dev_err(csis->dev, "Unsupported media bus type %u\n",
-> > +			mbus_config.type);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
-> > +		dev_err(csis->dev,
-> > +			"Unsupported mbus config: too many data lanes %u\n",
-> > +			mbus_config.bus.mipi_csi2.num_data_lanes);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+Hello!
 
-There's a bug here, you override the number of lanes retrieved from DT,
-which is the number of connected lanes, with the number of lanes used by
-the source for its particular configuration. You will never be able to
-then use more lanes in a different source configuration.
+KUnit offers a parameterized testing framework, where tests can be
+run multiple times with different inputs. However, the current
+implementation uses the same `struct kunit` for each parameter run.
+After each run, the test context gets cleaned up, which creates
+the following limitations:
 
-> > +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
-> 
-> None of the above is really specific to this driver. Could you instead
-> implement a function that parses the information from the fwnode endpoint
-> and uses mbus configuration on top?
+a. There is no way to store resources that are accessible across
+   the individual parameter runs.
+b. It's not possible to pass additional context, besides the previous
+   parameter (and potentially anything else that is stored in the current
+   test context), to the parameter generator function.
+c. Test users are restricted to using pre-defined static arrays
+   of parameter objects or generate_params() to define their
+   parameters. There is no flexibility to make a custom dynamic
+   array without using generate_params(), which can be complex if
+   generating the next parameter depends on more than just the single
+   previous parameter.
 
-That would need to parse the endpoint every time we start streaming, it
-doesn't sound ideal.
+This patch series resolves these limitations by:
 
-> The function could take struct media_pad pointer as an argument, or struct
-> v4l2_subdev pointer and the pad number.
-> 
-> I wonder if any other parameters could change dynamically but I can't think
-> of that now, so perhaps just the number of lanes is what the function
-> should indeed return.
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> >  {
-> >  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-> > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
-> >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
-> >  	csis_fmt = find_csis_format(format->code);
-> >  
-> > +	ret = mipi_csis_get_active_lanes(sd);
-> > +	if (ret < 0)
-> > +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
-> > +
-> >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
-> >  	if (ret < 0)
-> >  		goto err_unlock;
+1. [P 1] Giving each parameterized run its own `struct kunit`. It will
+   remove the need to manage state, such as resetting the `test->priv`
+   field or the `test->status_comment` after every parameter run.
+
+2. [P 1] Introducing parameterized test context available to all
+   parameter runs through the parent pointer of type `struct kunit`.
+   This context won't be used to execute any test logic, but will
+   instead be used for storing shared resources. Each parameter run
+   context will have a reference to that parent instance and thus,
+   have access to those resources.
+
+3. [P 2] Introducing param_init() and param_exit() functions that can
+   initialize and exit the parameterized test context. They will run once
+   before and after the parameterized test. param_init() can be used to add
+   resources to share between parameter runs, pass parameter arrays, and
+   any other setup logic. While param_exit() can be used to clean up
+   resources that were not managed by the parameterized test, and
+   any other teardown logic.
+
+4. [P 3] Passing the parameterized test context as an additional argument
+   to generate_params(). This provides generate_params() with more context,
+   making parameter generation much more flexible. The generate_params()
+   implementations in the KCSAN and drm/xe tests have been adapted to match
+   the new function pointer signature.
+
+5. [P 4] Introducing a `params_array` field in `struct kunit`. This will
+   allow the parameterized test context to have direct storage of the
+   parameter array, enabling features like using dynamic parameter arrays
+   or using context beyond just the previous parameter. This will also
+   enable outputting the KTAP test plan for a parameterized test when the
+   parameter count is available.
+
+Patches 5 and 6 add examples tests to lib/kunit/kunit-example-test.c to
+showcase the new features and patch 7 updates the KUnit documentation
+to reflect all the framework changes.
+
+Thank you!
+-Marie
+
+---
+
+Changes in v3:
+
+Link to v2 of this patch series:
+https://lore.kernel.org/all/20250811221739.2694336-1-marievic@google.com/
+
+- Added logic for skipping the parameter runs and updating the test statistics
+  when parameterized test initialization fails.
+- Minor changes to the documentation.
+- Commit message formatting.
+
+Changes in v2:
+
+Link to v1 of this patch series:
+https://lore.kernel.org/all/20250729193647.3410634-1-marievic@google.com/
+
+- Establish parameterized testing terminology:
+   - "parameterized test" will refer to the group of all runs of a single test
+     function with different parameters.
+   - "parameter run" will refer to the execution of the test case function with
+     a single parameter.
+   - "parameterized test context" is the `struct kunit` that holds the context
+     for the entire parameterized test.
+   - "parameter run context" is the `struct kunit` that holds the context of the
+     individual parameter run.
+   - A test is defined to be a parameterized tests if it was registered with a
+     generator function.
+- Make comment edits to reflect the established terminology.
+- Require users to manually pass kunit_array_gen_params() to
+  KUNIT_CASE_PARAM_WITH_INIT() as the generator function, unless they want to
+  provide their own generator function, if the parameter array was registered
+  in param_init(). This is to be consistent with the definition of a
+  parameterized test, i.e. generate_params() is never NULL if it's
+  a parameterized test.
+- Change name of kunit_get_next_param_and_desc() to
+  kunit_array_gen_params().
+- Other minor function name changes such as removing the "__" prefix in front
+  of internal functions.
+- Change signature of get_description() in `struct params_array` to accept
+  the parameterized test context, as well.
+- Output the KTAP test plan for a parameterized test when the parameter count
+  is available.
+- Cover letter was made more concise.
+- Edits to the example tests.
+- Fix bug of parameterized test init/exit logic being done outside of the
+  parameterized test check.
+- Fix bugs identified by the kernel test robot.
+
+---
+
+Marie Zhussupova (7):
+  kunit: Add parent kunit for parameterized test context
+  kunit: Introduce param_init/exit for parameterized test context
+    management
+  kunit: Pass parameterized test context to generate_params()
+  kunit: Enable direct registration of parameter arrays to a KUnit test
+  kunit: Add example parameterized test with shared resource management
+    using the Resource API
+  kunit: Add example parameterized test with direct dynamic parameter
+    array setup
+  Documentation: kunit: Document new parameterized test features
+
+ Documentation/dev-tools/kunit/usage.rst | 342 +++++++++++++++++++++++-
+ drivers/gpu/drm/xe/tests/xe_pci.c       |   2 +-
+ include/kunit/test.h                    |  95 ++++++-
+ kernel/kcsan/kcsan_test.c               |   2 +-
+ lib/kunit/kunit-example-test.c          | 217 +++++++++++++++
+ lib/kunit/test.c                        |  94 +++++--
+ rust/kernel/kunit.rs                    |   4 +
+ 7 files changed, 728 insertions(+), 28 deletions(-)
 
 -- 
-Regards,
+2.51.0.rc1.167.g924127e9c0-goog
 
-Laurent Pinchart
 
