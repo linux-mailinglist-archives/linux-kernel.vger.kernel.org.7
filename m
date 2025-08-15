@@ -1,54 +1,91 @@
-Return-Path: <linux-kernel+bounces-770282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D24AB27954
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:43:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BC7B27955
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C229B1CC287B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4105A52C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD2729AB18;
-	Fri, 15 Aug 2025 06:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1B299AB5;
+	Fri, 15 Aug 2025 06:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UNcUwka5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJh+5Le6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755FD42AA1;
-	Fri, 15 Aug 2025 06:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE2342AA1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755240192; cv=none; b=HV/QpMIazpKTG9ISQpV7vj/y9arqnQ8dxnlgvLw4IVTR/jC+bIkY/Hs3vpAL8UrcjfvZ1zmnbem3wuGogHdkLG0rDFrSB1zdiTWEhRL3zObziuf4itmqCPd/Q+Jvbpa8KXhFuV4ODRYenm2CfJ96RHfPhCMCgyOkQAXwnA0Mw9M=
+	t=1755240211; cv=none; b=oONlz7JhU4NW82QYocXxkg2jjQqveWcqF/F4DfZ/rU8pY2WIsdrVGqGGJa+/yriSAP+/u9/xjQtnZiYNFhm847uXe3oDIPXwm+YtbdNxX9P32tQb2sLaZmAO9j36A6G0ZLxzDeAp351z93KEZdnHBiK6hxUVzUCUellvDeaKPHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755240192; c=relaxed/simple;
-	bh=US5mNRFodQxM6js0+PIlarxhmEF/94ylWPwzlBlT8bg=;
+	s=arc-20240116; t=1755240211; c=relaxed/simple;
+	bh=xkCLba4G6E1+UldU9eajjTFLYGvxB4goimC/qTArDEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6CYf3mIAS5Ro7XG6/Vgr1xza429JFoaTlhHczp9IfyDNbx7GLY4ldkPVxPPG1NVDd3ke6v98mBVexj6rLYa3GH9zaiGOKkgp1JHBLGkUQJoXYcTTHZhlicBb9a/lhBsEaFRHpFcNeIudki8r4n6ZMdvm67ukv2ghl2fVb2IXps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UNcUwka5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0FDC4CEEB;
-	Fri, 15 Aug 2025 06:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755240192;
-	bh=US5mNRFodQxM6js0+PIlarxhmEF/94ylWPwzlBlT8bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UNcUwka5bBTfI3KJITQ1x36BSIyPTwbwicw2aIitaFia/bwlpWIpoNTqpFFjZO5V7
-	 Ri6lKpUl6Jm/9kuxbeGqTYbsepjA/r1/vco3O3BNN+/8igUuxpW2g7JZ88qGt7uuK2
-	 e8datUMYmKbzrFQUTWv4T2XEM8IVcC3PD8JF4dp8=
-Date: Fri, 15 Aug 2025 08:43:09 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	peterz@infradead.org, zhouchengming@bytedance.com,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	lujialin4@huawei.com, chenridong@huawei.com
-Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
-Message-ID: <2025081558-patriot-goes-4559@gregkh>
-References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
- <2025081526-skeptic-cough-7fda@gregkh>
- <5bdcd25c-3d4d-4541-99c7-5f6b0f3cb891@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3hO2r/qaIa5DFlVGuL8+xrLFoik0fkl34Hp4b7EWAqoy5Ylzhvc9RZ4fOEh0KTcUhK5hqI1Z2nDgaTKohSdxvHud8wZ7oeLbQcQlN00f9vf9YmqMKO5molHUuYVeiYm9LSuWIpYcwkBiCtaUH1LEQ5aTOwL+Y6CKLEgMG4+s0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJh+5Le6; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b656412so2518071a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:43:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755240208; x=1755845008; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQ+FKPOPxHYzBg0qRiV9WQnD66XSjRAhVwtd58VUZ+w=;
+        b=OJh+5Le6YOoYjHQX8q7F3xyTN6cQJO7nDg/CsZH+fXWZnyeDOAPoRFI6QiEZu/hSRm
+         7XfpdmZ4AKu/U9RbCGsuyvz9PutJPfNXAef0u4JCS9uHu2f35OZCEq3wl/qUmHQvXVmM
+         J6vZNGuNJZJyemLvyZu51+IboJwm/bWct1uHdBSFWgaLD9/MffyKCM/SaQILpS1VuWFj
+         l5eGSrZ3ULkivr4mJDHO58YvLakyXcO0+5V9geQ1SwU/+0Ynf3QkfBjYmdc5GZ4b/oIk
+         5FKd0FwNuHNcWVOCojpJPWsTwmDa5qugPtFjFnKzEDhH21ZLaesilEcAPxgPSGyFoiTl
+         dZ/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755240208; x=1755845008;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RQ+FKPOPxHYzBg0qRiV9WQnD66XSjRAhVwtd58VUZ+w=;
+        b=hEgLvmfq7e4pqvVKJRbNiOYNFrgsAvW5HYfw+NJCPdLWXLoeeZSy9iT3GNUQhX/oP3
+         3JqC2X677OPQRgTtfBd8X6Cdtq+z/BdQcClsRtR58zFIYF/aZrk4GIEPgYA712XKjwnZ
+         eE91aY4S/A3gsWpNV3jkTb3BD01RiIsGxU0gsU6T19IBdu/e4/3Cmia/oXAyBPL9nMyc
+         meqlc8NN2z/MIyNLjXvdq4qxAyIMDf6TYzvVuLkjT82zo0KxerR9DQuvHtuGc2qN4seX
+         ZbartihGTYOKTg6JU0F2JP8Am2V/2HI3XImzHBo+nnN66VZoqQrjnLcW42eb0x0GVvVE
+         G03A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8lm5sMQrL1hHoL0Vaq933Vicr5e05P2iqiCGLDrX6BV7vGqoXU6EzkYmN4cltovUvWD9xEIo49B8ZBR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8YS3bhApES8rulOkxRNvzYubi88V12Qxpr75GGmo1X9me1Jyr
+	GdR4yAgTHjynibjorOymE/WZJRdahcyojL1RSVmSAvKTXvGGlPgg16kHkyBn2zzO
+X-Gm-Gg: ASbGncuFQyfQeiUgbjqREX5UVp1AC0MKtG5xF6bb9JSrDmIEbOSGcrBuck2ov3Cp4ka
+	9xOcpBtA2Do1WnVIwDY86FWWcQTRAd7R2YOZVSWNUW4hAfBDJyweLhhECNUyh2Ilekv5M7ORviY
+	HK5ITUuFDfWxp9TyB3U7hK1U4+q80PM6Ekom0uEaBkuMztefViARRFA7HOsCDqBMbugn18eXd5y
+	L4mnnM6s2cJQFBiKlJLoVSXxbFJALkf5pUUwpkK4TQ9Ep8yZZ/zOQHpZ0HUpZNGQCxbgEGDXPZf
+	GJEyQ1VYychGwhrH6ZBAwL5KRHeMM+15ITmlPZS3cimQF47lvZ5v7YS/7ZQXtDQvTgJ4UGtwEc+
+	aNt9mOfvhYkkMtHiKk14IQQ==
+X-Google-Smtp-Source: AGHT+IGPFk4+EoYus2GiJezFDslbVAG50BHI7St5CSnh5npe7++NmJQ+qpasnKnRTuGEMgD6zS98Qw==
+X-Received: by 2002:a05:6402:2713:b0:618:1485:3749 with SMTP id 4fb4d7f45d1cf-618b056089fmr728966a12.18.1755240207429;
+        Thu, 14 Aug 2025 23:43:27 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01b5facsm727726a12.41.2025.08.14.23.43.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Aug 2025 23:43:27 -0700 (PDT)
+Date: Fri, 15 Aug 2025 06:43:26 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Ye Liu <ye.liu@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm/page_alloc: simplify lowmem_reserve max calculation
+Message-ID: <20250815064326.itngdnefuoihlk2j@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250815024509.37900-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,133 +94,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5bdcd25c-3d4d-4541-99c7-5f6b0f3cb891@huaweicloud.com>
+In-Reply-To: <20250815024509.37900-1-ye.liu@linux.dev>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Fri, Aug 15, 2025 at 02:22:54PM +0800, Chen Ridong wrote:
-> 
-> 
-> On 2025/8/15 14:11, Greg KH wrote:
-> > On Fri, Aug 15, 2025 at 01:34:29AM +0000, Chen Ridong wrote:
-> >> From: Chen Ridong <chenridong@huawei.com>
-> >>
-> >> A use-after-free (UAF) vulnerability was identified in the PSI (Pressure
-> >> Stall Information) monitoring mechanism:
-> >>
-> >> BUG: KASAN: slab-use-after-free in psi_trigger_poll+0x3c/0x140
-> >> Read of size 8 at addr ffff3de3d50bd308 by task systemd/1
-> >>
-> >> psi_trigger_poll+0x3c/0x140
-> >> cgroup_pressure_poll+0x70/0xa0
-> >> cgroup_file_poll+0x8c/0x100
-> >> kernfs_fop_poll+0x11c/0x1c0
-> >> ep_item_poll.isra.0+0x188/0x2c0
-> >>
-> >> Allocated by task 1:
-> >> cgroup_file_open+0x88/0x388
-> >> kernfs_fop_open+0x73c/0xaf0
-> >> do_dentry_open+0x5fc/0x1200
-> >> vfs_open+0xa0/0x3f0
-> >> do_open+0x7e8/0xd08
-> >> path_openat+0x2fc/0x6b0
-> >> do_filp_open+0x174/0x368
-> >>
-> >> Freed by task 8462:
-> >> cgroup_file_release+0x130/0x1f8
-> >> kernfs_drain_open_files+0x17c/0x440
-> >> kernfs_drain+0x2dc/0x360
-> >> kernfs_show+0x1b8/0x288
-> >> cgroup_file_show+0x150/0x268
-> >> cgroup_pressure_write+0x1dc/0x340
-> >> cgroup_file_write+0x274/0x548
-> >>
-> >> Reproduction Steps:
-> >> 1. Open test/cpu.pressure and establish epoll monitoring
-> >> 2. Disable monitoring: echo 0 > test/cgroup.pressure
-> >> 3. Re-enable monitoring: echo 1 > test/cgroup.pressure
-> >>
-> >> The race condition occurs because:
-> >> 1. When cgroup.pressure is disabled (echo 0 > cgroup.pressure), it:
-> >>    - Releases PSI triggers via cgroup_file_release()
-> >>    - Frees of->priv through kernfs_drain_open_files()
-> >> 2. While epoll still holds reference to the file and continues polling
-> >> 3. Re-enabling (echo 1 > cgroup.pressure) accesses freed of->priv
-> >>
-> >> epolling			disable/enable cgroup.pressure
-> >> fd=open(cpu.pressure)
-> >> while(1)
-> >> ...
-> >> epoll_wait
-> >> kernfs_fop_poll
-> >> kernfs_get_active = true	echo 0 > cgroup.pressure
-> >> ...				cgroup_file_show
-> >> 				kernfs_show
-> >> 				// inactive kn
-> >> 				kernfs_drain_open_files
-> >> 				cft->release(of);
-> >> 				kfree(ctx);
-> >> 				...
-> >> kernfs_get_active = false
-> >> 				echo 1 > cgroup.pressure
-> >> 				kernfs_show
-> >> 				kernfs_activate_one(kn);
-> >> kernfs_fop_poll
-> >> kernfs_get_active = true
-> >> cgroup_file_poll
-> >> psi_trigger_poll
-> >> // UAF
-> >> ...
-> >> end: close(fd)
-> >>
-> >> Fix this by adding released flag check in kernfs_fop_poll(), which is
-> >> treated as kn is inactive.
-> >>
-> >> Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enable interface")
-> >> Reported-by: Zhang Zhantian <zhangzhaotian@huawei.com>
-> >> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> >> ---
-> >>  fs/kernfs/file.c       | 2 +-
-> >>  kernel/cgroup/cgroup.c | 1 +
-> >>  2 files changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-> >> index a6c692cac616..d5d01f0b9392 100644
-> >> --- a/fs/kernfs/file.c
-> >> +++ b/fs/kernfs/file.c
-> >> @@ -852,7 +852,7 @@ static __poll_t kernfs_fop_poll(struct file *filp, poll_table *wait)
-> >>  	struct kernfs_node *kn = kernfs_dentry_node(filp->f_path.dentry);
-> >>  	__poll_t ret;
-> >>  
-> >> -	if (!kernfs_get_active(kn))
-> >> +	if (of->released || !kernfs_get_active(kn))
-> > 
-> > I can see why the cgroup change is needed, but why is this test for
-> > released() an issue here?  This feels like two different changes/fixes
-> > for different problems?  Why does testing for released matter at this
-> > point in time?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Thank you for your feedback.
-> 
-> The cgroup changes can prevent the UAF (Use-After-Free) issue, but they will introduce a NULL
-> pointer access problem.
+On Fri, Aug 15, 2025 at 10:45:09AM +0800, Ye Liu wrote:
+>From: Ye Liu <liuye@kylinos.cn>
+>
+>Use max() to find the maximum lowmem_reserve value and min_t() to
+>cap it to managed_pages in calculate_totalreserve_pages(), instead
+>of open-coding the comparisons. No functional change.
+>
+>Signed-off-by: Ye Liu <liuye@kylinos.cn>
+>Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+>Acked-by: Zi Yan <ziy@nvidia.com>
 
-Where will the null pointer access happen?  kernfs_fop_poll() isn't
-caring about the released file, AND you need to properly lock things
-when testing that value (hint, what if it changes right after you tested
-it?)
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-> If the open file is properly drained(released), it can not safely invoke the poll callback again.
-> Otherwise, it may still lead to either UAF or NULL pointer issues
-> 
-> Are you suggesting I should split this into two separate patches?
-
-This feels like two separate issues for two different things.  The PSI
-change didn't cause the kernfs change to be required right?
-
-thanks,
-
-greg k-h
+-- 
+Wei Yang
+Help you, Help me
 
