@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-771446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C45B2876D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6CAB2876E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71072AA762B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651CD1B67A8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 20:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDF729A309;
-	Fri, 15 Aug 2025 20:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1DB2566D2;
+	Fri, 15 Aug 2025 20:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Cx/RWPy6"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383121C195;
-	Fri, 15 Aug 2025 20:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYIPq1uv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A331A1487D1;
+	Fri, 15 Aug 2025 20:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755291210; cv=none; b=UZ+6cBDyjx22qzygDlsCWqMum4++8HKC40tUT7vL/ifJkHTHAR1YA4JP87//imu+UrBVKEo+ZmwF/v6ICRVCUTY6QgC3Oe8ChEahbtRZm5Y2trbr4GQMBhjA81Py0sCK2G9bkTjVTFpQBMcLVhYUSDOrnzrNMUArKK4kCYvwrX4=
+	t=1755291319; cv=none; b=WRdl1I/3Tx7Y2yTC8WQpp+3MX/ltwDA+GnjuGEVzb/IYTSY5aoSiY6X5+ROIZXuuPeJnKZGYayGvS+igUpj2oiK7EVSVp+QELVsKJYh1Sh0DkkSGF2gRRMRMVw2ry2SID+2SDCf0CY6f0aZmCFDkuu+0xlnPpYWxpeUFIEdEnx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755291210; c=relaxed/simple;
-	bh=U/Ro8vz/iAp/7iBIzHwAUhMzP4MGPKMHRji3pFwym08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQN2sBB2yyaJ7M/j66hFhQePJSmVJEE8O1VJc/asXxEonXlWiSKVhKUlKwDmep92GOqO+tiyIyh22Sz9eihzirtA4dIqYUgk3NHb3u3CSvt0VYrOrMQMAxMMezpT4IsvMUmkR2q1o9cPvFRFEWDcvpIJuzfXAHyy9QxlkoNv8Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Cx/RWPy6; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 27EE314C2D3;
-	Fri, 15 Aug 2025 22:53:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1755291208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sC8Nx2zlJ569RHndJFpGErR2BoHbhdIvqK5HeCPv+/8=;
-	b=Cx/RWPy6XkGb918pyNolHn4uGEaAQ1vfPDBUoMGkjBFqLI8nw3HsvQxv1Bk1DptR5lm/v+
-	pFjZpmohnhpy/l+NWMn74sYYdbga/2yXUXJbqC8z9Jnvl+Hvt9nwlWtMkh215lmC8tKNab
-	tTxds72ASkICX+tpvvsvaybfJQo86RTknqg1owD0tk/5oo8o5MkEPZTcFdGtikP7suYcgA
-	Xk8lvlOxd4W2RTJAQ5WSgwlF2rxvCYqB3zsNcoVd+RTXKrxRFTCDw+urqKTiTJyW6CGN4P
-	JvRQ6HPTXCP02jF09YaTemCbsVtm3BGgiU94850YJNHbKJahSQ/+5tCZrT/kMg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id df44282f;
-	Fri, 15 Aug 2025 20:53:23 +0000 (UTC)
-Date: Sat, 16 Aug 2025 05:53:08 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Sandeen <sandeen@sandeen.net>, Eric Sandeen <sandeen@redhat.com>,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
-	linux_oss@crudebyte.com, dhowells@redhat.com
-Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
-Message-ID: <aJ-eNBtjEuYidHiu@codewreck.org>
-References: <20250730192511.2161333-1-sandeen@redhat.com>
- <aIqa3cdv3whfNhfP@codewreck.org>
- <6e965060-7b1b-4bbf-b99b-fc0f79b860f8@sandeen.net>
- <aJ6SPLaYUEtkTFWc@codewreck.org>
- <20250815-gebohrt-stollen-b1747c01ce40@brauner>
+	s=arc-20240116; t=1755291319; c=relaxed/simple;
+	bh=mfsPXzN4ggnSZQUZHLOnuq0Jf6wKKVa1rBkrUF65quo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hAxAu0Vj71LxsDRWR0Huo2FzkZJbKLiw/VhepZX8NbNy6bteeJXLiFBr7vPOUbrm/kc/CvEJ8u/IKIZjynmSBzKfjuMTPOSKQ45k8qPmDNE4gDVdHYJAMXRCzXu1c+O7d9JE2NH7I+ffEdqu/VgMhepJ1IllM/kHja4b25FelhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYIPq1uv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07403C4CEEB;
+	Fri, 15 Aug 2025 20:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755291319;
+	bh=mfsPXzN4ggnSZQUZHLOnuq0Jf6wKKVa1rBkrUF65quo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BYIPq1uvfFwKIZ++DYeuA6arNCyodKFjFQS7H0YFO8GfxqkcM0L2J3X9spos6mdmE
+	 Uv3MvQgPcpQaX1BYUb71Yb8qywPs0b5/xPQEHVRBzcnI7zsJ2AfzcSFt8XKo/J2yfu
+	 FIeUuIJTBrPxoM7WlFYu3pkRSnIihb8EhxFRi4Hw2amXiwwQpnDmQA57eiPXto1n0U
+	 ZF4UQo/FQuGZmHFI9XYcgV4eaQdTlsYXoGq7T5aLMOIAIE9ESp2Uyi5iuv5LqhCsew
+	 rgw6Gy5JliBEK4PB9HgSgl0LSeOm9bU2r9eK+OY2YnFkYAhqinRb5CkuKslhQLktlf
+	 ynEJd6JX9Az8A==
+Message-ID: <b1a87360-339b-4554-a429-c29980abc454@kernel.org>
+Date: Fri, 15 Aug 2025 22:55:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815-gebohrt-stollen-b1747c01ce40@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: dma: Update ARef and AlwaysRefCounted imports from
+ sync::aref
+To: Shankari Anand <shankari.ak0208@gmail.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg
+ <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250814104133.350093-1-shankari.ak0208@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250814104133.350093-1-shankari.ak0208@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Christian Brauner wrote on Fri, Aug 15, 2025 at 03:55:13PM +0200:
-> Fyi, Eric (Sandeen) is talking about me, Christian Brauner, whereas you
-> seem to be thinking of Christian Schoenebeck...
+On 8/14/25 12:41 PM, Shankari Anand wrote:
+> Update call sites in the dma subsystem to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+> 
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
+> 
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 
-Ah, yes.. (He's also in cc, although is name doesn't show up in his
-linux_oss@crudebyte mail)
-
-Well, that makes more sense; I've picked up the patches now so I think
-it's fine as it is but happy to drop the set if you have any reason to
-want them, just let me know.
--- 
-Dominique
+Applied to alloc-next, thanks!
 
