@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-770297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00717B27976
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:52:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB541B27979
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 08:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2D11176BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:52:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ED2F7B7C88
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 06:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DCB207A26;
-	Fri, 15 Aug 2025 06:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8012153C7;
+	Fri, 15 Aug 2025 06:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="AgYQeaQf"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2105.outbound.protection.outlook.com [40.107.102.105])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="G8htHEHw"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2102.outbound.protection.outlook.com [40.107.236.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23EF4315F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657A8207A26
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 06:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.102
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755240748; cv=fail; b=c622u6vRpzz4Ibo+HwIhuXA8qmZKQAYRVQKtQJupvh/Lb7ZEXr1ibRQ1rkJzMqQjoLkANA3nDp+A1KfjPxxz1tiITlhSLraSC8NYKMKaTXvgcrp5rejGkmRrU3Oev47bDPyAwC20JQqFSXJwAYPjO6pIsPTYwiT7X0TBlzPppEQ=
+	t=1755240768; cv=fail; b=DFXGtkXDmoleSCk6HvT1vkSjZQEOH3/jIto2AmL4FtydC9fuqH0S1n6WUWs50e8BAsCJwFLSW9GZtCYG8Hv5fXaoDx28p8L3lAgdl1Gtmj74iLaLKHa1wc9nKuixAXlsFURyjc4M3s9mo2hBvDAlc78R8HLdYHiCsJO/GcmO6pQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755240748; c=relaxed/simple;
-	bh=+FEEHa1Uhz9P2jW/y8toxxyZ+dJWgHnxk1UbeNTM6ho=;
+	s=arc-20240116; t=1755240768; c=relaxed/simple;
+	bh=12r47nHopHGHbbr8xRGiN3TedMTSSuNY8Z7u9KK4qVE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ki2svDh+UpMIgW3g2qZXoCov2ZpCoPBVgYegRH9K2y5BFFs15ijIUECIlmHZP58P2Tl6thW9eDDKX/p7fWYlh8B4APrhYMa+O0tOlLIlF2HJ2R6/G+GN9g3u7jWsPep6+jBSmFf+q43WXfh6e9rFv92+o/zVAOV1Mf4yGhxbb6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=AgYQeaQf; arc=fail smtp.client-ip=40.107.102.105
+	 Content-Type:MIME-Version; b=bYimeui/EnhiLWehRLgNnE5mZsp4ug7m1HLkgSnVKs2t6I4I5y2e0jt3ZnvYs4wYqX7q0numIsKZY7um2jr3eY+tli25I6W+aqi5YXywBKHBTpDaCnQukzO2CJEcOFDBSzE5LKEoNOlu+wsQotf8UkfZAhllZd/jTgSgCD4vlAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=G8htHEHw; arc=fail smtp.client-ip=40.107.236.102
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zWQ+ptpVQsI52LK56xaXQVC6F+DokIZzaemGhTzJZ9FzrVwf0o4pATIU/fUvBylhR3agQviKfKVC5qvIYREAKTjX7vtKcKc8hAeDCBpn4/G2rl58oMG+6zrNYfSRKVjwKZ78ZBFggFHr0C7v3RQbpdRhVIQD4Xad/8bI35h2C7C90CiyY0WFC7YRtPy4a5tDb+3kmVyEStKkDIiraZemBx+ja/MPAwebR5N8EY8k7Bipj7IC5BYYUrf+Zwfjx+uN0bFJfw1TqwnXXl/IUnFD1yquG5qIjCQLJ+ito5MBmMaTYmYE/qRuMopwMNN5uXItM13kQ1JDLILwFRuJz+AFUA==
+ b=jIqKkbM62A43TM1Kkig9vYERLSziPOYgYqo2LOX904f1P1SGK+jyhLbootH1JimdH+3XmXAkqmxopFpRn5ls5IE48S1g8OmL2qKqwGC122LuD5QJ9YtBDn6/fht0Px4kApGT/C4kE6j1iTlEtJRzB6EVlOVoCeTptKso7a8w+uZXK9yz2gnqzo4oKDog6eeAWBRNrQfhi9qcLEB/vCD1kzGpX2zzsga7ONgvS9KjwxbPg3ryNyGDoQAsDN7Xn9v8aA8ZKfE/k+BVcgV3GEZdc62TdnzqrVMi6uXsBKM/+0s8CH0NiEWFvxvKOuJfaKS6ayAuRiAGISfH+pPmX27qCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvItEv/6X84XuwxJhznN8kW4mrOxJNzbxryF9jSKiZs=;
- b=VtRZw/FIE6xESaNPrp4wjrMSITZz5EUAagM1io//WopV4yvByKVWEFRkz3JRme272sfLBZO8MqY4C+nDmLRbZtV5v8rM2DYzCpyp9hnAvjW3Hco5ARD174rm0x6rxzU1aGUVuYNSEeTlk3TsvjlhzPxz365A3hK0nR5asnDNojuEFhi1B50MMmQ41NSlpENAm5B6dW5QOVwZMzE7QEkgNfl34D+7RXBpNrS287oI/yqCQJu+bvszS3CiSRcZLFLU6N1uZ5mpACTIga+O0fjSx6evSh8yqleviW00lpdNukGobL8NELgM+KXrsz/mZQmEXlpbJ+EEDp58s06dppvLJA==
+ bh=2CKVqqUJQyAEM53ljMgb255zDalrevfUMEIDh/at2ao=;
+ b=HEUlbz56M72EiztuDbs4K9G0ogItg8Er2vcEGq3e1aBad8Df0323Fmq7Sy9c7KXE77Hlx2E1xPoo0lezK1Q95Nk9CUlnj5Sagp0VUQt1nKPmAoUmmXCissunlopyVVGSbHQs+oaGZzMOrl2/tOQkFq12Vx2BgNu9lEfVjo0HLUVXdizKAT+qU5Y+nvdlFzAo7k2srWegr2W1mYE+4scn4hD4DtWGU4a/2IkskLlJwuAJpAYuhleQSqvqEdNg6uGQREVSfdqnUDaq51PiLhOtqH5fgZ8MyJBfcyFKURAsmtzENfNhzNWCZqrjdEgL6CfUBrhBDKNCF8IhXZVCas3mcA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
  header.from=os.amperecomputing.com; dkim=pass
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bvItEv/6X84XuwxJhznN8kW4mrOxJNzbxryF9jSKiZs=;
- b=AgYQeaQf1ZzwlvLz/nKGR3TM3M9rY5Z0VApc448UEp5EpnEYbdbdO0awtIV/ARhPtiMIMbzlk+r9ZxY+PkwUt5vyJI44PeRhpC+DoME/L7w2DwaVCqfmJKiqpgH2LytdC544o6MJre1+Y9ixOv9yeHoqHvXQ/XMxgM1G7ZRNJYM=
+ bh=2CKVqqUJQyAEM53ljMgb255zDalrevfUMEIDh/at2ao=;
+ b=G8htHEHwWMhfm+VZH03jUEp5NKtvNNxp1Z6kbZwUJGumiNmj+Hvmt06BrgUp1NirzRzSQBCU7BjdmfXAQxUOD9DywkbjqhYhyGPF1VkCKT/CHEEPPq2WU711nKVzhz4soDnOAZhIuFTbJu+zKy2TMWSQHfC6CLLBvamZieeQNGA=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
 Received: from PH0PR01MB6761.prod.exchangelabs.com (2603:10b6:510:76::23) by
  SA1PR01MB7358.prod.exchangelabs.com (2603:10b6:806:1f9::20) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.19; Fri, 15 Aug 2025 06:52:24 +0000
+ 15.20.9031.19; Fri, 15 Aug 2025 06:52:44 +0000
 Received: from PH0PR01MB6761.prod.exchangelabs.com
  ([fe80::bf98:19e8:71ee:cf2]) by PH0PR01MB6761.prod.exchangelabs.com
  ([fe80::bf98:19e8:71ee:cf2%7]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 06:52:18 +0000
+ 06:52:43 +0000
 From: Adam Li <adamli@os.amperecomputing.com>
 To: anna-maria@linutronix.de,
 	frederic@kernel.org,
@@ -66,16 +66,16 @@ Cc: cl@linux.com,
 	linux-kernel@vger.kernel.org,
 	patches@amperecomputing.com,
 	Adam Li <adamli@os.amperecomputing.com>
-Subject: [PATCH 1/2] tick/nohz: Fix wrong NOHZ idle CPU state
-Date: Fri, 15 Aug 2025 06:51:14 +0000
-Message-Id: <20250815065115.289337-2-adamli@os.amperecomputing.com>
+Subject: [PATCH 2/2] tick/nohz: Trigger warning when CPU in wrong NOHZ idle state
+Date: Fri, 15 Aug 2025 06:51:15 +0000
+Message-Id: <20250815065115.289337-3-adamli@os.amperecomputing.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250815065115.289337-1-adamli@os.amperecomputing.com>
 References: <20250815065115.289337-1-adamli@os.amperecomputing.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0064.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::11) To PH0PR01MB6761.prod.exchangelabs.com
+X-ClientProxiedBy: JH0PR01CA0044.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:5c::14) To PH0PR01MB6761.prod.exchangelabs.com
  (2603:10b6:510:76::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,135 +85,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH0PR01MB6761:EE_|SA1PR01MB7358:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02ddf8d2-9f65-4532-b748-08dddbc8467d
+X-MS-Office365-Filtering-Correlation-Id: 6090f68e-0e18-4eb6-86c0-08dddbc85599
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FjVpBaoCr46n26lWjm9FyX6Sn3stnUKJzJMramXGXqlQ3k7J9m3j49BDFY/z?=
- =?us-ascii?Q?vIpbGmiMqdvpHa5YYQAkx9UxKy/6CZO8JUGovTJbpvVBZJfgrBuswyTBw+ZT?=
- =?us-ascii?Q?bpqQsx9D7z7velr0SuVv5uECrbGVlGTOuvoTeF/b2x/KHJC1Eq76l2XdzQAc?=
- =?us-ascii?Q?azQaETgI5AaX6B9/9Qr+IMrsWLa9Vo+y6dUE/EaB+Yhw5G9nPtrcwSA6LEuY?=
- =?us-ascii?Q?+wP1dGPj+xa3+zoQvKaMExjCCXuE6wt5svb29y+OhNcPifuZxbcdg8NVj+u5?=
- =?us-ascii?Q?gdYdDTsHUeXt85+h3mqrHUJsNtVSrjkLtXdL/+1wuOuLEXm54UqLU3rl03jK?=
- =?us-ascii?Q?Sm8Gq7gy7NuX/ERbgG9RxYqKVfCmLX0KZh6ymZ3BjKKuHiEZcbmm8e7cdd07?=
- =?us-ascii?Q?nMG0TDhqloP5qCKB5gfIHJA7IGwkbxuzL9HhB7EK+oBfpdPD8zIqTwrMpVFa?=
- =?us-ascii?Q?A3sxICvqIDlm0+u8E2ObGry8SaeZXrv01I53R02iAaIkAVo/3pjb7Q0WhgJN?=
- =?us-ascii?Q?kuyd7M7JEXIaLlX3VFHiBCsjZw4/tE84JNaFuVtxMAdrIrW1m7wOk96dxpgX?=
- =?us-ascii?Q?Z2vRmaGN4oXMAdtsSEGOlAKtiaJsBGwOP6b2nnnLdTzpoAC3qOPHLmLkCzTT?=
- =?us-ascii?Q?Z1BCBP3FOR3E3Zi6ijLs0mNhvyow2+XfdQNGkUiGX6mQICe/VyRhtWTUCfPR?=
- =?us-ascii?Q?iW053nvora7T+0InYDXNU9AKhSoBMetHzJ7mqTdFgYoA0oPhXk3rrGsb6NH3?=
- =?us-ascii?Q?YwL/Zo2N6AywuXkq2QCSKCmjqfg4s8y+EjYfW11/TeQIdjwKS1zH309nY3y0?=
- =?us-ascii?Q?74VKr7P76Bi8DNSRTMokRKNfO2rHsNGp+NDkcjN9REjur4FEn9ndK8N7gq6M?=
- =?us-ascii?Q?bNhHlQB93rnNHcdQOxstgrEIpEBhskDm1tsxg2tWXv8flQrWHk8g5m6MOEsi?=
- =?us-ascii?Q?k1vOKCVBn2Cm/Nqhwrv9S6xOlvNZfId/tQZ223koEw/tw7iQNj8p9OHZNdMe?=
- =?us-ascii?Q?y1XSSEXPYiLrng3X18X+6cccbaTTA5AXeuwE2zXis04DJG3KPDZ3shgIP9MQ?=
- =?us-ascii?Q?g14f6/ogSykRWBho94lFhpHCvkXcAvP+YNaoO/Wmr49jqjQJDMhxXk3KvYjh?=
- =?us-ascii?Q?S44rpFIlSWKI6eO1GPW70HyFTzzZZ6+Syi7Ixc88RtA7OnxKu4jlX4NgRf13?=
- =?us-ascii?Q?SvuFsqjwteNId3jawJCVQGtxX//Zfcub51VJXyR1ios13P+UM/d8qFIxSJll?=
- =?us-ascii?Q?+LHgzBRe9I7P7Op/JqTvbIjfRYwYQN3c6VHdz/RIeTX1syzN3qhT32BWDn/Y?=
- =?us-ascii?Q?Mj1AwE4pmTQY6VuPy0UJXPseX1qJXXlv7CdeLa5rTXpq5cguF1LBV5ugXRtM?=
- =?us-ascii?Q?mwxBg+JpBc3EMe4L8wCTvjH4MOcEF9zIUocWgMJWuz0TaU7ZLRyH4+ov69E6?=
- =?us-ascii?Q?CIQom9fbZo9FiKOi3GviwqXGuaVnIlGFt5OhR/Trjw41uRiOxlZXtg=3D=3D?=
+	=?us-ascii?Q?1i1KliKThFGJjbuEANV7JkUiGTTQZnhyoIV3PheNom7ZfYOhrn4RrfPeuOCp?=
+ =?us-ascii?Q?sgp9xKc4XHVhv+Ol+FngjV9qmaShwkCpYETb2+DCp7NaAVvNpTyjWw/ysp1X?=
+ =?us-ascii?Q?tNR73xcJ2VzNK1FGGd6rTszlD5rQe7DRJB6LJtDswyqVRKRd6Z2uFTKKpXve?=
+ =?us-ascii?Q?3r6SeGoFhP87U4nMbpclI+V6ZleButcDdRgPqnmW8hbT/4KBztMtbOrUEvOg?=
+ =?us-ascii?Q?4kvPSIpHFV/D0LFI3DDr86th+W5iNL1fV65twSe26ZowZ1PYOtFNwBEPjQaM?=
+ =?us-ascii?Q?E+MwKHsBZWUzGkE9mks260vdOZLaHlBtft3zWl7m4b6fHGL7Pg4RtuUT9Zas?=
+ =?us-ascii?Q?GbTO9IyHv1cK2X95Xr+U+wq6I+OF6oZXW5P5ndJyYbOgEgD8tyBY5+xCHlUn?=
+ =?us-ascii?Q?wdyQ7oXENR597x37DvKhB7Db6fb2Ntm/HVsjQfGTnI3K6yF/hhArWaYt3Avn?=
+ =?us-ascii?Q?IhfwPrkBX9wTTgV+BGZUirBl3z/uoEVqeGN34wZWqvAX12z0vgnCt3Dk0dIY?=
+ =?us-ascii?Q?NasaHJpIbXJkmTBmZFOEQeTMLxC2eMlsorEbUicE+aBlRVyElWoOSdduL9z4?=
+ =?us-ascii?Q?s9U/MXn5m5o5itXGuaFS9pTgEaku8Bbk+HYGvumr0lUfJwfPZc0IqEwNVDWF?=
+ =?us-ascii?Q?AQFlbKSC1UenjbU04AA+EK3rlzSvHyO328vlfrYLEj7pQXsc3pQILDS09Vc2?=
+ =?us-ascii?Q?zO3WBdyCu6SSl1A1+XmFDKhf8C0I7Sk+GffofsHTBOiuR3jT44GTlBLMuQiT?=
+ =?us-ascii?Q?y6uksHgKnr/vsCNzmqk+3LhTf1QkXG+fnAqN8ZawSRsBzzlL5SSTxoyPoj9l?=
+ =?us-ascii?Q?gP7JwtruHPm871rW/czgbA24MjDQWBaWgZzmT+jnZFlEe4lwv9JASDg4hSxc?=
+ =?us-ascii?Q?p2+EcjL+4PGQemuyV8u4w9OiDh7iravv/dprVboEJI7LCQCUlAR5RkQx/xBd?=
+ =?us-ascii?Q?1qF8FX9W0pQl86MazVBoypAyhYaZEOhQhEUdbSO4AKAeEt/Fu0dufDdnEZkc?=
+ =?us-ascii?Q?2MWWG9Q+7Z5z2zX176KaaR6AVW8TJ01fRcoVfozqAtdwsrO+oRyt+rAKy/v7?=
+ =?us-ascii?Q?WNYEaTo8hN4mTCgiHhAHjNFFyZijIGlu9P4L7b0v2QKSWvF3fxiyJVCfFowr?=
+ =?us-ascii?Q?b3RJHaVTyDu5sZftTy2FMsRPdVt4aDX/jEUPv7+U+RdoiOVNvC6ml0tg58OU?=
+ =?us-ascii?Q?yb+fmllcip+yr+d+FiXefHbY7XfUja753nFOjegYR49MYRKktwW5icHQ+uj8?=
+ =?us-ascii?Q?Wzu9MTRURGmNe7DKbFCR/9EnMr7m7oK5YWLFqBJc6/4XJ6Bl+XFjNAuky/zo?=
+ =?us-ascii?Q?cEfReQCm189YkRDoX0Qaz7If/QezG3LrEyixnVJixjox3NSCHy0l8/kd/ZfH?=
+ =?us-ascii?Q?oc14LmX6hbvToCdT0CzESxQOBRcu7TLk0buxA9q1bbmF+0HoctoFQ6Bi/aJF?=
+ =?us-ascii?Q?ezKZqR6jzO4C3iUzOBMdvmpI8lHbrKhUyDe4C8X1nHNixsZNht/Ihg=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6761.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3BPONcNwLYuY8C4wV8ESIBFSpBIfc6x8/n5TqxBJTUVgTQfahHUpM3qzdFJj?=
- =?us-ascii?Q?JAiblJv3A/OSOtYc67vZIovOLfQwayEXhYVjt/pw/cz4z6erbUonD14Ryhse?=
- =?us-ascii?Q?2zbgl/RZs6AEqLhuezRWtGKRRIZah91lx7LOueTmHnpoxQhmSYLRnLREQczo?=
- =?us-ascii?Q?FSNXnY8RKJVasMdOCf59YOZs7hZWp0JMDHIT7YI9jBTP5ZgCz51fJ09HBvt+?=
- =?us-ascii?Q?w6u72/sm6JgrjLbEXYN4EahYGDzg9sYkT2C+ge88bolMYBE7gk6w3aOBsuUI?=
- =?us-ascii?Q?2UwtFMWyn0+OFUIRhegVMI6K58ofVB9y12xNhMhVA2SB3ReHW6ENecmenTo3?=
- =?us-ascii?Q?vAFcaYyMJFEqCXtUw3L1G3E46r36g4JCt0HG8nN04L6a2FByVb7guaSi4m66?=
- =?us-ascii?Q?a6CAa09s2WKhi/ptmXDXEyG5DjuRNCnmxuJLcs+oMnPyn35Rl8fKzydKUfRc?=
- =?us-ascii?Q?kAoYY7cEpPR6kZMxT5F3FUWhjBUfNzgNvL12t3Ndy65PhWMRlv0AkCCoYUZ0?=
- =?us-ascii?Q?ckAUMBftYvks/SLJzhs+2jVcHFYDqRdZbx1tbRRGG8irF/w8pYcx8XExH67W?=
- =?us-ascii?Q?R3FWG+R9Zaxqezu4EFAusrtkYry5iYBZ/2uOB2ju+aPv+yIHoGEyfIGzH9yC?=
- =?us-ascii?Q?AfRdLLw/KKk+1Hd7Q2ESxWJv9fPsYiUmEiL9NJX3eM7rR9wrytYHTs85NbgV?=
- =?us-ascii?Q?ZWIk0PKzE7G3UgPWUyyBXL5JOaIqKiiFuChr1NkbpV6L8vXYLii8RLyR6J4/?=
- =?us-ascii?Q?lk/90lpIu0FtR3bkGHoS7BGQYPGowuw4tDVuoO+HFEnKKcweaKeOpIkXylH1?=
- =?us-ascii?Q?QZvvMxKtqRg3Tbq4K8n4/Q6jAeAhCdY2lTegDyh+0LQ0DMcibiOb4wuVzyFd?=
- =?us-ascii?Q?nYJiHbHEdLHN5iPo6XylrTgU9u6D8IEOFIcUhSdX5JgiNwmq1WRpTMnX8y1g?=
- =?us-ascii?Q?CBq8m7Llaf//Bq2KYUUU0ALd29I9PobC66wvcKTeIKkNhmUreyV5PQZXabEu?=
- =?us-ascii?Q?4I0UlYxeK2ydRA3DOWzvcxXQopIxu2asJlQy+Qb1o/6DwParFhw6SkT8yem3?=
- =?us-ascii?Q?ymGbTz6fNoPecMk71VQJA6B+RMeGBxJFnkWA24J7Dwq+9tsUmMJUaAIcx7RL?=
- =?us-ascii?Q?+cOYIDE48NGwfX7pfE4Br+fWbtkQXG05HN8w8wQkh5dCa62jG3/vU2cNTILl?=
- =?us-ascii?Q?h5korCFcVQXsWXAy2YCbm6R3IIGCb9Jtz12i3BgEH013yx9bTnTypzomufgY?=
- =?us-ascii?Q?5T4wkjbsYQYdZcdOp7e5WxE4Y3E2/la288lwWuFkGjpnY6DOoAvrkR+plKb7?=
- =?us-ascii?Q?aREVuqjtzCYmhFo8bNQv1MXKee9fwlWDyzMgZnklKBL0Qas5LacpllPFm9EB?=
- =?us-ascii?Q?Q6DCLVT7gSn2o9UgyISPZMfwU7zcderK+6/OcoxrGF0ozt1GukAu2Jw3M3BN?=
- =?us-ascii?Q?uCwJru+AUuabhvW2KwQjMbLrwFLp3I4penfYBiUxMbOYvrzLwds0l6DzpuhY?=
- =?us-ascii?Q?9mOOXAb7TSGnczYR0nsRFpEGg/fUuSJ7vY8gUuJhl3onQn4DY1KBfAuwIxeh?=
- =?us-ascii?Q?fbFAcN/9wJAD6AKj8LHBMoNomWH3hrTc6kCg1/fLH4fUB0LKjkotPIN0W0wH?=
- =?us-ascii?Q?/B/St/psweyGLKd9oBqnJ2Q=3D?=
+	=?us-ascii?Q?qe8tOyW8jgl1EjG69p4l4QgZ37V3GMBsIehenx7jkvvk1mevaBeSpU4laTGY?=
+ =?us-ascii?Q?OmdRpumRnd+fJu1TXvb4+GNdp2mIiWV11HsMBT8iQVHW5VFxb2fzWJFuZdfH?=
+ =?us-ascii?Q?QAS8CJHOcTi/kdC+/4eY/DpDIyEpPoX0HZ4p0Suhxc1cxJLBAyupw8adqJYB?=
+ =?us-ascii?Q?ySpVhZn2oTXDbQbqbUGHHoi+c70Eb9lXjN0weJ3o9fVfM2J579yTtv4zJH6+?=
+ =?us-ascii?Q?7Zyix68vGBIHd8LWto9PN/mjO2/ZHrDporIPU7zgRhrdiggKo40jjVO9dGRi?=
+ =?us-ascii?Q?HhY9cfd9UhUvD4h/AMnwAt01eFKNCtIEOqftvH3O7f8gakS2ECAx06NQL6Sr?=
+ =?us-ascii?Q?6haORJFjbS+DBl3R6ymUVLOq0CfOyu5+btYJUOC+Sjr2m2glVBkiAuohq5PX?=
+ =?us-ascii?Q?Ykp8ZRAn54FV++HVNSfjH47/1KehlFbhg0x/Fppbf9tT1B5tbmqFxM18jtmE?=
+ =?us-ascii?Q?RnnnIrnTIeD0zC8Afle0qt4qgv+uTsLIMHCvGpN0Q2lNFJSsNS8aKOz8t+Or?=
+ =?us-ascii?Q?ehUpuLU2k3j7ZCfAmrO3OIFIsVN0H8SDCdb+yHaABm+LJoarvDZ2jvNMn6OE?=
+ =?us-ascii?Q?dosAwlKlepXbYodM1RWN6Z63MJpuTc+WNk3YRQnBi0NtOmjuKYPctCyf39vq?=
+ =?us-ascii?Q?kt+Tdxdl0zuHgOXV89s7GKXRVNZ9XoBDPesXYDC7yWfIjfE+qjJGcY9x18Gh?=
+ =?us-ascii?Q?0Mxe/cDuY8cFCbi3v/0tg6jf7kKN+GXBf6o013nCpktCg2Qzp8a6baxlD0Kx?=
+ =?us-ascii?Q?g5qdIG0Q87EK9SvIciUaF83ohQcTOOG3Gm9gSHOK1aKfJVxSa2kpw5aE2d7G?=
+ =?us-ascii?Q?j4q+lfyQ6E5a8WQYUmk94tM20I72VSZ4QFDaE/Ga+zyoY9AiFYfvTk0RwE/H?=
+ =?us-ascii?Q?gG4MzomH5cvvCqQNubEfUG48EaFMlwaM8GVWOIavHCxuCKhV7+s0OHStwdPG?=
+ =?us-ascii?Q?fK7+8pxpHHLpW/Rh7jbh3RzPzDovFfGxODJyI0wzRCeHtPAr9pQSsJiLphFD?=
+ =?us-ascii?Q?YB0JPXLkhqkRPo4G/rkQOgwekPP7ubYKyZuIcTchTeIEZf58GRhCV5AMAPQT?=
+ =?us-ascii?Q?CQn6czwreAGc9/EF2x3jkBr2ilqdBuQxdPioBLgsKMCbartSURsf26oTGDaB?=
+ =?us-ascii?Q?Fv7OapW/9Ei/BqiYDhB+3xZhXfOjqGIn1aNmrB5u4AqJabhIi+F6dYcFrfYF?=
+ =?us-ascii?Q?dGb4L2Ka7S2vTPMW0RMc9dWYEX2OiWTcC5KMvqg20j2NBqRm5oTGxuCTSJv6?=
+ =?us-ascii?Q?reXS5X0Sef+HXvCVfY1LFCFlm8BHIxBDM0BwNqjlnT86sVZjP7TrHyniEGJN?=
+ =?us-ascii?Q?qIrmERF+2aUWQAwXbtjyO67KsMzkP/7XJOkG1doYBuT6PseKT2KEnRQFmJ6x?=
+ =?us-ascii?Q?mFKbDPrgwixqIRc26Hd7kwCbTkf6XaKVlF92rMUXu40PEZ4OuHZG/lTxvMLT?=
+ =?us-ascii?Q?OCCVl2lNV+86AGIYPUW9LaB7+0o13PiquPWs7fmysRzKuq243X3O1hn9RbtY?=
+ =?us-ascii?Q?noh9ASbUz7A7dbx20PI7EwqEwYmNvN348+2L1Puo5SUYUV+kYyyxlGBi/Fxw?=
+ =?us-ascii?Q?t/3MdE+zXUw2Uu0CA80lK2kvk7VclnvvMv5ltJYQEXDy9A6dQ47Sd78T6xsE?=
+ =?us-ascii?Q?OtdRY38sp1pDDGekz5t19KE=3D?=
 X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02ddf8d2-9f65-4532-b748-08dddbc8467d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6090f68e-0e18-4eb6-86c0-08dddbc85599
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6761.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 06:52:18.2789
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 06:52:43.9194
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TRTv7lJwYc8Y6o65Fb8SlVlqRvhM81rV/+xpDXbGhrKoELGOa6ewSSnEmEnUiYbPuLUqIH/LCi4pKjIvDwc984k3RQHSVzjlrCXS/XJIMCpWYsvm7ziR4cQtH8fOGpa8
+X-MS-Exchange-CrossTenant-UserPrincipalName: wxshnqMS1hVIFlmi2HN/3o2C/gW8UuDuW7Z7TBo/TaIZNb7DBCHSCOLG5v+JkQEQiR7iqb2tjN2K1sbhHOMFDnqqc22eESDzoQXDQKV2XbsPGr//x2P/yDmeQmIrWU/G
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB7358
 
-NOHZ idle load balance is done among CPUs in nohz.idle_cpus_mask.
-A CPU is added to nohz.idle_cpus_mask in:
-do_idle()
-  -> tick_nohz_idle_stop_tick()
-     -> nohz_balance_enter_idle()
+This patch is for debug only.
 
-nohz_balance_enter_idle() is called if:
-1) tick is stopped (TS_FLAG_STOPPED is set)
-2) and tick was not already stopped before tick_nohz_idle_stop_tick()
-   stops the tick (!was_stopped)
-
-When CONFIG_NO_HZ_FULL is set and the CPU is in the nohz_full list
-then 'was_stopped' may always be true.
-The flag 'TS_FLAG_STOPPED' may be already set in
-tick_nohz_full_stop_tick(). So nohz_balance_enter_idle() has no chance
-to be called.
-
-As a result, CPU will stay in a 'wrong' state:
-1) tick is stopped (TS_FLAG_STOPPED is set)
+Warning is triggerred when CPU is in this state:
+1) tick was already stopped before tick_nohz_idle_stop_tick()
+   stops the tick
 2) and CPU is not in nohz.idle_cpus_mask
-3) and CPU stays idle
+3) and CPU is idle
+4) and tick is stopped
 
-Neither the periodic nor the NOHZ idle load balancing can move task
-to this CPU. Some CPUs keep idle while others busy.
-
-In nohz_balance_enter_idle(), 'rq->nohz_tick_stopped' is checked to avoid
-duplicated nohz.idle_cpus_mask setting. So for nohz_balance_enter_idle()
-there is no need to check the '!was_stopped' condition.
-
-This patch will add the CPU to nohz.idle_cpus_mask as expected.
+CPU will stay idle in this state, since neither the periodic nor
+the NOHZ idle load balancing can move task to this CPU.
 
 Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
-Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
 ---
- kernel/time/tick-sched.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/sched/nohz.h | 2 ++
+ kernel/sched/fair.c        | 5 +++++
+ kernel/time/tick-sched.c   | 3 ++-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
+diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
+index 0db7f67935fe..ea6e07777395 100644
+--- a/include/linux/sched/nohz.h
++++ b/include/linux/sched/nohz.h
+@@ -9,8 +9,10 @@
+ #ifdef CONFIG_NO_HZ_COMMON
+ extern void nohz_balance_enter_idle(int cpu);
+ extern int get_nohz_timer_target(void);
++extern bool nohz_balance_idle_cpu(int cpu);
+ #else
+ static inline void nohz_balance_enter_idle(int cpu) { }
++static inline bool nohz_balance_idle_cpu(int cpu) { return false; }
+ #endif
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..cd1c17368e05 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7109,6 +7109,11 @@ static struct {
+ 	unsigned long next_blocked;	/* Next update of blocked load in jiffies */
+ } nohz ____cacheline_aligned;
+ 
++inline bool nohz_balance_idle_cpu(int cpu)
++{
++	return cpumask_test_cpu(cpu, nohz.idle_cpus_mask);
++}
++
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+ static unsigned long cpu_load(struct rq *rq)
 diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index c527b421c865..b900a120ab54 100644
+index b900a120ab54..8241b14842f3 100644
 --- a/kernel/time/tick-sched.c
 +++ b/kernel/time/tick-sched.c
-@@ -1229,8 +1229,9 @@ void tick_nohz_idle_stop_tick(void)
+@@ -1228,7 +1228,8 @@ void tick_nohz_idle_stop_tick(void)
+ 
  		ts->idle_sleeps++;
  		ts->idle_expires = expires;
- 
--		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
--			ts->idle_jiffies = ts->last_jiffies;
-+		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-+			if (!was_stopped)
-+				ts->idle_jiffies = ts->last_jiffies;
- 			nohz_balance_enter_idle(cpu);
- 		}
- 	} else {
+-
++		WARN_ON_ONCE(was_stopped && !nohz_balance_idle_cpu(cpu) &&
++			idle_cpu(cpu) && tick_nohz_tick_stopped_cpu(cpu));
+ 		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
+ 			if (!was_stopped)
+ 				ts->idle_jiffies = ts->last_jiffies;
 -- 
 2.34.1
 
