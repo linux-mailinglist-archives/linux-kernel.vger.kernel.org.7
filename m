@@ -1,98 +1,84 @@
-Return-Path: <linux-kernel+bounces-771265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C423B284D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:20:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E6AB284DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 19:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8682F7AA38F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CCA97B0553
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F33D19AD8B;
-	Fri, 15 Aug 2025 17:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EB61D9A5D;
+	Fri, 15 Aug 2025 17:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V8uHfd0g"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P22/ntMN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603812F9C34;
-	Fri, 15 Aug 2025 17:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB7B2F9C45;
+	Fri, 15 Aug 2025 17:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755278415; cv=none; b=DsL9/0YRmzz+E3+lqQIpRGZcbe84DewUB5XkC9PJVNqPUBlOPkVr6nfp4+wZ+VMv1leoa/JMOLDw8W1P6oy7472KFC0oxtNlHWIAyOK8OzDjIfcZDavh3iC9AJlApgjI3KMLKH7zWUPWVpMjicHLRLumhKDd1TqAu48u5WudA24=
+	t=1755278427; cv=none; b=K3GihRNbXnvgkQ+srfXJwG0MD1YKFcM2dRg6s4VwrSwTaKMw2jjcbSXmomvDOkvbGWD0obaTsIcUtpnQ2dmzdGPHcM764UqQ6Q6akfD4U9hcqL717yb4DaOH8boypqoO1SuLEP5MzlflCBFq9VZ0kRnmckkVvy2suzFGen+ZvBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755278415; c=relaxed/simple;
-	bh=SUiiRJ3yGxoPXaH8M9+QdGkFHbB1hKcd3L5XOGPaRZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=riM4ShgymNlBkS3uUJcCO4E+pspHQ0tFA+Am/JjEBVMO19O5MDMXRMA+gDRs3LxdEjxDvX8uBTL+H/CALCVuO1Ut6EsxNHIz01QBbsk+FqO7w2keTP18R9duZLyuxcxPoXeKEUqzjiyjFUazhb89KGwczo3JwgjH2lZoEdaPyRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V8uHfd0g; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=3MCf5e3TI9cJ7IsBDtDWvT98184OzmB18hpxzAlH6qg=; b=V8uHfd0gfbvQ6jKOkxOoO1tyld
-	jCM8kisINijPGiH2Q+s4+emo0250pJLnRFpxWQ8foiaJgRb+9IjrjIssFRRaG2ydTvH+e4XtnEaN1
-	wFajiuoOOTQ6jp64gNTaGL62DF0EII7qtkz6yi8k+r/aoQvqXuIrRyiuOvuSkE5T7tWD+6oPpilZL
-	kJgMmbbZ+06A6SzUR544IzoCNcjv7QEuKuaY8P5NpwO3R2ddLPEjvOplbJJDoHOCrIiHw++WlIU+q
-	GQnPUyInMaGff5jz6MHX5SVv5Om8YhkMU0lREJeVkM3G+3BIBWCcDcDgHO9I1c+apudNP8p82/3HG
-	6tcVmf3w==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umy68-000000036Uf-45oy;
-	Fri, 15 Aug 2025 17:20:13 +0000
-Message-ID: <d4a6bf68-3348-49b7-a9fc-d84c8e416b4f@infradead.org>
-Date: Fri, 15 Aug 2025 10:20:11 -0700
+	s=arc-20240116; t=1755278427; c=relaxed/simple;
+	bh=bZHXMBWIWtOd9P3kjklQ81O4Y1/Lvowqh+ondUT2CG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Egm+EnR+LxzSCPVTJHaxAWnQUVup+b/aLNSd2zysDZXR5jx8b/dQ9SuTb8QBoYjS+l21nzJq88jerRKrIsJm0pam85yKRH2ekBxnHzVxiQJdSCx8LEDWTZGgPVejRn9Tx3f2nEoEyvgBqMlLxD2pxl1aiy4paPFin5jrWh34n2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P22/ntMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F233C4CEEB;
+	Fri, 15 Aug 2025 17:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755278426;
+	bh=bZHXMBWIWtOd9P3kjklQ81O4Y1/Lvowqh+ondUT2CG0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=P22/ntMN9giiNcZhqYtT4CsS40bU9fSOJYWm1hQMGztJLKw14ftmUz2MZAXJm7hGJ
+	 rY56i/HhF5ADh5AgMK1o3rf34KY03H0qvGWzY2QCPsuPenRX9EEstD8RMZWQp0QPzR
+	 Fh3kO+sQumhKmTxtv6d/mmyQAbjuudu41HP1ZOKuao5GBGGwFrC1tSg0kuANapMrdh
+	 hX9GlGQ+Vz+ysLAib6kLdq/xVa7FOaF0fHaZDfov7Id83LVZA3HNQGg505SY3Kdje2
+	 WPS1aGCg5DFs1o8+xs2P/HPMjNv0zJBnZvUcR0ywK+JqJRbx6/QiUOzfTJaIzz3SXS
+	 R0ItPnt7e2TZg==
+Date: Fri, 15 Aug 2025 10:20:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: <almasrymina@google.com>, <asml.silence@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, <cratiu@nvidia.com>,
+ <tariqt@nvidia.com>, <parav@nvidia.com>, Christoph Hellwig
+ <hch@infradead.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v3 6/7] net: devmem: pre-read requested rx queues
+ during bind
+Message-ID: <20250815102025.202c42d3@kernel.org>
+In-Reply-To: <20250815110401.2254214-8-dtatulea@nvidia.com>
+References: <20250815110401.2254214-2-dtatulea@nvidia.com>
+	<20250815110401.2254214-8-dtatulea@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Documentation fixes for dm-pcache
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Device Mapper <dm-devel@lists.linux.dev>
-Cc: Dongsheng Yang <dongsheng.yang@linux.dev>, Zheng Gu <cengku@gmail.com>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>
-References: <20250815075622.23953-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250815075622.23953-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-
-
-On 8/15/25 12:56 AM, Bagas Sanjaya wrote:
-> Hi,
+On Fri, 15 Aug 2025 14:03:47 +0300 Dragos Tatulea wrote:
+> Instead of reading the requested rx queues after binding the buffer,
+> read the rx queues in advance in a bitmap and iterate over them when
+> needed.
 > 
-> Here are docs fixes for dm-pcache as reported in linux-next ([1], [2]).
+> This is a preparation for fetching the DMA device for each queue.
 > 
-> Enjoy!
-> 
-> [1]: https://lore.kernel.org/linux-next/20250815130543.3112144e@canb.auug.org.au/
-> [2]: https://lore.kernel.org/linux-next/20250815131115.45518c74@canb.auug.org.au/
-> 
-> Bagas Sanjaya (3):
->   dm-pcache: Remove unnecessary line breaks
->   dm-pcache: Use bullet list for data_crc constructor argument
->   Documentation: device-mapper: Add dm-pcache docs to toctree index
-> 
->  .../admin-guide/device-mapper/dm-pcache.rst       | 15 ++++-----------
->  Documentation/admin-guide/device-mapper/index.rst |  1 +
->  2 files changed, 5 insertions(+), 11 deletions(-)
+> This patch has no functional changes.
 
+Nice!
 
-LGTM. Thanks.
+> +	rxq_bitmap = bitmap_alloc(netdev->num_rx_queues, GFP_KERNEL);
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
--- 
-~Randy
+FWIW I think you can use num_real_rx_queues since we're holding
+the instance lock which prevents it from changing?
+
+But it's just bits so doesn't matter all that much.
 
