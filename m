@@ -1,92 +1,109 @@
-Return-Path: <linux-kernel+bounces-770103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E75B276C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:29:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD04B2768C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B881888264
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:27:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914D15813E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2680029AB0E;
-	Fri, 15 Aug 2025 03:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F01029B790;
+	Fri, 15 Aug 2025 03:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWbOy3cN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k4vpW/SW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9A829D26C;
-	Fri, 15 Aug 2025 03:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C1017A318;
+	Fri, 15 Aug 2025 03:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755228448; cv=none; b=b3EGtQaQfntAimNI7ctTmlBk/cIJqeBPZ/t404WXgmiDoJtUDKxtX+1dpYQMfPdHo8aOfKEzDbZZAFRsbySoQYsENb8wtTGVSMXwvZd5lRFrMLOVFd0wLsZWHm/7PCnasxGcJapM2HS9HYhpvdyfYW8xBBHcE/qrcuoRjkKabBA=
+	t=1755227481; cv=none; b=OE2NVcSCouuRz4szwPEK8IBEg7GiDhPUoiKQG88mSdNyfV53SQoG89WNMmiStQZauDwa5WyoNNs9bp352tNd5ArgvvPh3LJT8QBHIPjkhjWBoXH/y2v6njklB1r+kbxnx7yUz1KqFOSrKrS3BU3wJmqjUuv3q48mEfwgap6JwTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755228448; c=relaxed/simple;
-	bh=50Y13gswXvqynDSmLEISvpYLyX8qVSTFdfU8wyi+m8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z45vCGBJgoNN5Vl1zsMqY/k9y3VjBLJU3oTI1OBb72jy/qD33XFgH/Nh/ItcucL2/uQyHZTTliMT7iyZbmLFEfgV/ykR5eweV4dlYBr1OoINCkYy4acLVfeTE3acij+oR8ldywUnlvmib/82knvNM9EFLL1j9rFBrc7vfshRShA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWbOy3cN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF83CC4CEED;
-	Fri, 15 Aug 2025 03:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755228448;
-	bh=50Y13gswXvqynDSmLEISvpYLyX8qVSTFdfU8wyi+m8U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sWbOy3cNwY+FsyxS1p/A0QgX8uaWkDnkn2zZNul6Zl16InRhK1e0/hV9d4LWjdU46
-	 MEBr+KjmSbpM8xdmC0Oe/c2CnXLvIgqMd2+11EJBvPa8Nfxq2rQng3ZqTx4p2uJDcp
-	 43aCcXqylukOuG30r4BcYhpcfeLRoL2h62/C2RiU3w11QbXKdiv8AayEji5tU6id3e
-	 ZFgA3EHZsXGD/zhcAxDgBMpeM417vlo83UmXxuxgqQ5hS1DhmlCILnVrX5bDLZLSIU
-	 V5+lNvoqb2EwV4QQD6LS1CKEIX6gklsUALtjXPwGqCLTAC6Dsdixm3yOa/I54rvlet
-	 NE5TlFWv5IDng==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: berlin: Fix wrong register in suspend/resume
-Date: Fri, 15 Aug 2025 11:10:16 +0800
-Message-ID: <20250815031016.31000-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1755227481; c=relaxed/simple;
+	bh=qHRRuytUocIu+CsWIt7kgTlmTi700czCAy/wBi+AkVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SYYMhDPyRkEDy6ZbB/S0/Ff49+KkJWBt9pUtEXDWUFC+/6Z2o3/L2FzT6i7ImTxnnW9ilSb/3Yvl2fbIuNWrnOMCsCJNzIEDbZiGpBf4Hvblr9tK1ytksrLfd4jFPU39exHaxq9dsbgHsgpGqJhfK5AN3WkICfp5HWpQh9n/L0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=k4vpW/SW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755227476;
+	bh=G2rGAl0K6IpCoyyBehhidHY5X3oFGur3Y2aVw+oVqTo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k4vpW/SWjWdVAbW1Xp79aK0HlV3wcdNZucOlMvfBS637bC7BXFKoThg6HCbUxjW/n
+	 OMgnz2lDd/L43TjH/m+uigR66ZGaHUc5Vg+VTwgx+JJzdap+eKSblyoEEuKmd6u9v5
+	 Oxu09sUbhSVXyQU4WLaIp+6oUgysg/XDzMsqYuH2WgJiGAYhbxtlAN9WaHX5B5MJH5
+	 5Y6iHEJi3qLgwEl9qwTO8QLSCBnwQ1RGKKUPbhL6LEwwtH7ogil9sUoUGUukQJdjmb
+	 cza3zva7fp7A2aY0NAX88tW8oryGYe8TGouVO84Qm9Z1JeNv3KfBaMLdmJrvhYgUZN
+	 kNyNfjx/cEhPw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c36ZX1r8pz4wd0;
+	Fri, 15 Aug 2025 13:11:16 +1000 (AEST)
+Date: Fri, 15 Aug 2025 13:11:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: Dongsheng Yang <dongsheng.yang@linux.dev>, Mikulas Patocka
+ <mpatocka@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the device-mapper tree
+Message-ID: <20250815131115.45518c74@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/EBeG+jrE_i4huEX4E7A8NNN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The 'enable' register should be BERLIN_PWM_EN rather than
-BERLIN_PWM_ENABLE.
+--Sig_/EBeG+jrE_i4huEX4E7A8NNN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: bbf0722c1c66 ("pwm: berlin: Add suspend/resume support")
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/pwm/pwm-berlin.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
-index 831aed228caf..858d36991374 100644
---- a/drivers/pwm/pwm-berlin.c
-+++ b/drivers/pwm/pwm-berlin.c
-@@ -234,7 +234,7 @@ static int berlin_pwm_suspend(struct device *dev)
- 	for (i = 0; i < chip->npwm; i++) {
- 		struct berlin_pwm_channel *channel = &bpc->channel[i];
- 
--		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_ENABLE);
-+		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_EN);
- 		channel->ctrl = berlin_pwm_readl(bpc, i, BERLIN_PWM_CONTROL);
- 		channel->duty = berlin_pwm_readl(bpc, i, BERLIN_PWM_DUTY);
- 		channel->tcnt = berlin_pwm_readl(bpc, i, BERLIN_PWM_TCNT);
-@@ -262,7 +262,7 @@ static int berlin_pwm_resume(struct device *dev)
- 		berlin_pwm_writel(bpc, i, channel->ctrl, BERLIN_PWM_CONTROL);
- 		berlin_pwm_writel(bpc, i, channel->duty, BERLIN_PWM_DUTY);
- 		berlin_pwm_writel(bpc, i, channel->tcnt, BERLIN_PWM_TCNT);
--		berlin_pwm_writel(bpc, i, channel->enable, BERLIN_PWM_ENABLE);
-+		berlin_pwm_writel(bpc, i, channel->enable, BERLIN_PWM_EN);
- 	}
- 
- 	return 0;
--- 
-2.50.0
+After merging the device-mapper tree, today's linux-next build (htmldocs)
+produced these warnings:
 
+Documentation/admin-guide/device-mapper/dm-pcache.rst:46: ERROR: Unexpected=
+ indentation. [docutils]
+Documentation/admin-guide/device-mapper/dm-pcache.rst:48: WARNING: Block qu=
+ote ends without a blank line; unexpected unindent. [docutils]
+Documentation/admin-guide/device-mapper/dm-pcache.rst: WARNING: document is=
+n't included in any toctree
+
+Introduced by commit
+
+  6fb8fbbaf147 ("dm-pcache: add persistent cache target in device-mapper")
+
+The line numbers are *after* I applied the other build failure patch.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EBeG+jrE_i4huEX4E7A8NNN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiepVMACgkQAVBC80lX
+0GySFwf/W/mra21Cq6REwIEyeGLGO/9Gi0zy3hK/X/MmnYHkhvp116h1K+NkX2hS
+GFdE5mvGvdvntPVwz+bpEbRxMMyiS/sE1a0np7IWFY3Xy6uxCApbzCuFntre27bK
+jAsqWPtCSJx4tBCTdpvU1pIqlrSYQOZdjIM+1CISmD3W3eaY+8jAAhhVMKGHj612
+sEJBGbGpPHqBnzZxCEcictfE+SzZEN43gNlLvSTQW15npV58Mf474bzcE56OacM1
+4qzb/JQcWrTuirN2Z34dnCMuVPmL95pcsJkjBl6pLyf/UA93zdLuoTzCe9B7ioFa
+dKuDd3M0pXjzzTRobH29WQCE3gulHw==
+=ZwHT
+-----END PGP SIGNATURE-----
+
+--Sig_/EBeG+jrE_i4huEX4E7A8NNN--
 
