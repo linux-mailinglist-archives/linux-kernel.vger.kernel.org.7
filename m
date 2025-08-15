@@ -1,179 +1,132 @@
-Return-Path: <linux-kernel+bounces-770785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D291AB27EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138AEB27EF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D197B74FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8387C1C21632
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C879728643D;
-	Fri, 15 Aug 2025 11:13:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2FF28467C;
+	Fri, 15 Aug 2025 11:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="PIiTt0Eq"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63903192D97;
-	Fri, 15 Aug 2025 11:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5158E24DD11
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 11:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755256406; cv=none; b=gS/XOvqAKtjluAZ5GFnbjCLOz+X0OJy7WgdUf1upHtLCEPfX7TbVhKFR09lKrlvLCorjSiQPoCBktlofD2oerXrHStCOnFpcUMqrfGdMfOfY3ZgOCbNZLi7xWu/Y2aX4EToiRa9CkjFqaFXM4GXwterOzab9+Qs7jzTS2yZcOhw=
+	t=1755256549; cv=none; b=sbrREEslTYF8tONHZz1hKR9OLVnxbR1WGyaUtMeegfZ/peWds5Dj6e1QxzMA67cIab1xJBGPjeO5HSyd5U9n7WEBGbrV2CHMWqEzHk6YqxEsYqaJKSdaf3qs/co3k1aiP82sNf6v3hgpDk5lMPl8MENSy20IWW9tojWLYsMkjBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755256406; c=relaxed/simple;
-	bh=kZa8XaiNRy3Y5ddm4zbiVPAGgDC6F4xh5I/4z3Z0IQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIxYv3vcgbKRC7kPUGai3uHQICAeCEVWr9LymVPFTRJS7wxy3x6ed4h8g+bXQBBz5QoBvBG6NyOVoRbgH5901Ux8Y/d5luP0YnHKUkxkp+XeSbE8XnriGLOOogGwhwQqNtF1zYxffpRRZy/jl8kw8zVZ+uHJY0gDB6vPXVEbeYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B8BC4CEEB;
-	Fri, 15 Aug 2025 11:13:21 +0000 (UTC)
-Date: Fri, 15 Aug 2025 12:13:19 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
-	will@kernel.org, akpm@linux-foundation.org,
-	scott@os.amperecomputing.com, jhubbard@nvidia.com,
-	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
-	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
-	james.morse@arm.com, ardb@kernel.org,
-	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
-	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/2] kasan/hw-tags: introduce kasan.store_only option
-Message-ID: <aJ8WTyRJVznC9v4K@arm.com>
-References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
- <20250813175335.3980268-2-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1755256549; c=relaxed/simple;
+	bh=T/aoVi6AF3aVJ/uqRpoLaF29+CuY9MSd7NGZ1/77wPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S4jgVp+/KaJjofw5CoUwODMVbs+08I2IAJB2nOLZ6THsB7kQ4bjky7hj6KJuCY8Pjb6tqPWOdnm7ygqqZ0LTgemZr/3O0Z9/PgQ2fBbSOsveJCROwPmzihwUzYLTeP1eUcgGxYwic9GdTitatkNWf9QKjzm6GfU1kZXef6VLW7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=PIiTt0Eq; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e8704c52b3so213020385a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 04:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1755256547; x=1755861347; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T/aoVi6AF3aVJ/uqRpoLaF29+CuY9MSd7NGZ1/77wPA=;
+        b=PIiTt0EqygxNkFvhm4MeLUq0V9koS18X0/cyH+rgN2euVQm+YuwZzkMzS2wZf+c+Xt
+         OmENiOLIvbxy13W2VdhWEj1+xzfdMr0gx0ytlvYeIr5QF3kAP9HOImDisosMRLoxDEhM
+         nSsowXzad4ESduQ0ibKIJpo6OhhXv3jarkPIYhOhyVt0yaBwRBGFBdaHOqSdIT9ISVLz
+         fhD8ghoRZ2Q6LGQnASfWOBUQY82pV6KPVdAGPu7Br+UKsZuaDjdl+fMGpfpyxwhccuxj
+         HS6zvuDFzdSM9oIlsIsz55OqySQGGF2ZNokGW5F95GVc7UjkeiLH+olt5kfMsxGuo0mS
+         7dVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755256547; x=1755861347;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T/aoVi6AF3aVJ/uqRpoLaF29+CuY9MSd7NGZ1/77wPA=;
+        b=Gjc7q0ch2eU4r9zIjVl9DyvxNZP9PhsPstcIbggCgSxsvomfNSgp9MChZwv5+y2oa9
+         Crd57I+x4bZxepPFAjHgc7D/t1kmV73ig48dcH//Q3MJ7Z7nNDIZPOxVEkQAFzc3PJRd
+         lRnGEXFY7MyjDhGq+dooZUCRjRsLWetO8KiCE6ySlzg81VbTcPELYEisknm+7PeH9tXv
+         GKphGQ/Kfad+oGCWtcxKkUy1ng0GjqdsZS4V8++KrC3QMyxGATPS6ZxmjT4I66NnCUvQ
+         lgX32MtpNgrpseYRcUQi1jkgYMbBUd8BQjvr786z3/yISc8/taESrZnMi5Jlb/F2UPzu
+         Z8lw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBajYCvwArL0Cl6nIRLWAYnH0ghIZvHMQjrJU+4yFvlVdHtlKH6QOO53DnKAHr518NBXHgBlzTDrvl5Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNhanVzzTjM8niGcemAFAjIVdTL4nurScsaHj83hGiznXC4L8O
+	pJYaiJGxN5gyhzmtGkXtoO707/xKNpFRin0cNkBTW4LKMdisf+SEFwFL2Y83twAB6rScXgPu4Ph
+	LiUdPCzFBAThekHa8uVKAI0vxigdS5fCbilDVQD9ghg==
+X-Gm-Gg: ASbGnctwJjb+/88GNGXE/Tf7wDg4x/8zGf0eEaUp667DuwORDQ8Mgn+Uoy+L8ScDA/Y
+	jzJyubHyX41zkBoPDZsnrtCvJ4MFec4Q7K3dFaex4D3DnAtbfmHZzhRoY7uaRtB4ncEJyAHNOU6
+	WgL+nyBxq5+T7UqP+ttPiyeww1u/aWVUwgLYk3Db6pCUKg7KxwkAfOxHykCHnvlg/pcAS7e6YBB
+	8sIH/o=
+X-Google-Smtp-Source: AGHT+IEEYrgrzZzFQH7gJARNv39C5+Wwbco9I1459+Dntaj16EsMUXS27AwHprK/yA0fuMnmrf2M26jY7o7J1U606dI=
+X-Received: by 2002:a05:620a:7006:b0:7e6:391c:41ae with SMTP id
+ af79cd13be357-7e87e0c7484mr195050185a.58.1755256547086; Fri, 15 Aug 2025
+ 04:15:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813175335.3980268-2-yeoreum.yun@arm.com>
+References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org> <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
+ <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
+ <CAPj87rNDPQqTqj1LAdFYmd4Y12UHXWi5+65i0RepkcOX3wvEyA@mail.gmail.com> <20250814161718.GA3117411-robh@kernel.org>
+In-Reply-To: <20250814161718.GA3117411-robh@kernel.org>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 15 Aug 2025 12:15:35 +0100
+X-Gm-Features: Ac12FXyQS213pP_GudOiU8lJOx9k9Gscd8v3FBcgxsevLgT7o4PDTPSWp9SpRP4
+Message-ID: <CAPj87rN=Hod6GyA72x07yTvxL5X2q4UyUmPg-hyjjFA5KJvYGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
+To: Rob Herring <robh@kernel.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 13, 2025 at 06:53:34PM +0100, Yeoreum Yun wrote:
-> diff --git a/arch/arm64/include/asm/mte-kasan.h b/arch/arm64/include/asm/mte-kasan.h
-> index 2e98028c1965..3e1cc341d47a 100644
-> --- a/arch/arm64/include/asm/mte-kasan.h
-> +++ b/arch/arm64/include/asm/mte-kasan.h
-> @@ -200,6 +200,7 @@ static inline void mte_set_mem_tag_range(void *addr, size_t size, u8 tag,
->  void mte_enable_kernel_sync(void);
->  void mte_enable_kernel_async(void);
->  void mte_enable_kernel_asymm(void);
-> +int mte_enable_kernel_store_only(void);
->  
->  #else /* CONFIG_ARM64_MTE */
->  
-> @@ -251,6 +252,11 @@ static inline void mte_enable_kernel_asymm(void)
->  {
->  }
->  
-> +static inline int mte_enable_kenrel_store_only(void)
-				^^^^^^
-This won't build with MTE disabled (check spelling).
+Hi Rob,
 
-> +{
-> +	return -EINVAL;
-> +}
-> +
->  #endif /* CONFIG_ARM64_MTE */
->  
->  #endif /* __ASSEMBLY__ */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 9ad065f15f1d..7b724fcf20a7 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2404,6 +2404,11 @@ static void cpu_enable_mte(struct arm64_cpu_capabilities const *cap)
->  
->  	kasan_init_hw_tags_cpu();
->  }
-> +
-> +static void cpu_enable_mte_store_only(struct arm64_cpu_capabilities const *cap)
-> +{
-> +	kasan_late_init_hw_tags_cpu();
-> +}
->  #endif /* CONFIG_ARM64_MTE */
->  
->  static void user_feature_fixup(void)
-> @@ -2922,6 +2927,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		.capability = ARM64_MTE_STORE_ONLY,
->  		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->  		.matches = has_cpuid_feature,
-> +		.cpu_enable = cpu_enable_mte_store_only,
+On Thu, 14 Aug 2025 at 17:17, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Aug 14, 2025 at 11:51:44AM +0100, Daniel Stone wrote:
+> > This is the main security issue, since it would allow writes a
+> > cmdstream BO which has been created but is not _the_ cmdstream BO for
+> > this job. Fixing that is pretty straightforward, but given that
+> > someone will almost certainly try to add dmabuf support to this
+> > driver, it's also probably worth a comment in the driver flags telling
+> > anyone who tries to add DRIVER_PRIME that they need to disallow export
+> > of cmdbuf BOs.
+>
+> What would be the usecase for exporting BOs here?
+>
+> I suppose if one wants to feed in camera data and we need to do the
+> allocation in the ethos driver since it likely has more constraints
+> (i.e. must be contiguous). (Whatever happened on the universal allocator
+> or constraint solver? I haven't been paying attention for a while...)
 
-I don't think we should add this, see below.
+Yeah, I guess it's just reasonably natural to allow export if you're
+allowing import as well.
 
->  		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTESTOREONLY, IMP)
->  	},
->  #endif /* CONFIG_ARM64_MTE */
-> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-> index e5e773844889..8eb1f66f2ccd 100644
-> --- a/arch/arm64/kernel/mte.c
-> +++ b/arch/arm64/kernel/mte.c
-> @@ -157,6 +157,20 @@ void mte_enable_kernel_asymm(void)
->  		mte_enable_kernel_sync();
->  	}
->  }
-> +
-> +int mte_enable_kernel_store_only(void)
-> +{
-> +	if (!cpus_have_cap(ARM64_MTE_STORE_ONLY))
-> +		return -EINVAL;
-> +
-> +	sysreg_clear_set(sctlr_el1, SCTLR_EL1_TCSO_MASK,
-> +			 SYS_FIELD_PREP(SCTLR_EL1, TCSO, 1));
-> +	isb();
-> +
-> +	pr_info_once("MTE: enabled stonly mode at EL1\n");
-> +
-> +	return 0;
-> +}
->  #endif
+> Here's the reworked (but not yet tested) code which I think should solve
+> all of the above issues. There was also an issue with the cleanup path
+> that we wouldn't do a put on the last BO if there was a size error. We
+> just need to set ejob->region_bo[ejob->region_cnt] and increment
+> region_cnt before any checks.
 
-If we do something like mte_enable_kernel_asymm(), that one doesn't
-return any error, just fall back to the default mode.
+Nice, thanks! That all looks good to me.
 
-> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
-> index 9a6927394b54..c2f90c06076e 100644
-> --- a/mm/kasan/hw_tags.c
-> +++ b/mm/kasan/hw_tags.c
-> @@ -219,6 +246,20 @@ void kasan_init_hw_tags_cpu(void)
->  	kasan_enable_hw_tags();
->  }
->  
-> +/*
-> + * kasan_late_init_hw_tags_cpu_post() is called for each CPU after
-> + * all cpus are bring-up at boot.
+Using unchecked add/mul when calculating the sizes also made me raise
+an eyebrow - it might be provably safe but perhaps it's better to use
+all the helpers just to make sure undetected overflow can't occur.
 
-Nit: s/bring-up/brought up/
-
-> + * Not marked as __init as a CPU can be hot-plugged after boot.
-> + */
-> +void kasan_late_init_hw_tags_cpu(void)
-> +{
-> +	/*
-> +	 * Enable stonly mode only when explicitly requested through the command line.
-> +	 * If system doesn't support, kasan checks all operation.
-> +	 */
-> +	kasan_enable_store_only();
-> +}
-
-There's nothing late about this. We have kasan_init_hw_tags_cpu()
-already and I'd rather have it all handled via this function. It's not
-that different from how we added asymmetric support, though store-only
-is complementary to the sync vs async checking.
-
-Like we do in mte_enable_kernel_asymm(), if the feature is not available
-just fall back to checking both reads and writes in the chosen
-async/sync/asymm way. You can add some pr_info() to inform the user of
-the chosen kasan mode. It's really mostly an performance choice.
-
--- 
-Catalin
+Cheers,
+Daniel
 
