@@ -1,94 +1,130 @@
-Return-Path: <linux-kernel+bounces-771522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0701B2885F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2435EB28862
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6971D01A84
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685DC5A884D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 22:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AABB246798;
-	Fri, 15 Aug 2025 22:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D70A2620F5;
+	Fri, 15 Aug 2025 22:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVqF0em7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="27VAkc/2"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D40228CB0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553B13FEE;
+	Fri, 15 Aug 2025 22:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755297500; cv=none; b=eixCHKxmqjVK7nC/NPX5UlgvCRRunPC7YVLAkkhAA+M8mG8CHtUl1jBd6Xe5/Sajx+5IJq17Fi7oSgUdUxK3yk2gjZ4Hka0dHfow/2PSf2qRpZeYIH0hrl8p67zzN4EomteCquRU1ezRUMjmX+vloW5SkyUvsYNNp7cKfXfm0CY=
+	t=1755297538; cv=none; b=QSbuawqsB3xsKO2pks0o5yrLFMqtHMfkup5buopmDPp5OaBJskYw7Qdy3Hg48u4XUVNqe7Dh3YTGAJKvb+36rmcCQxtqmz4G3aMWgQHuoHZ05wZBglhrHdvD+QZmYUcp2fVpz+cjc6Ac1Hl8rkAsLhIT5V/aB8R/F2GpQpRrEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755297500; c=relaxed/simple;
-	bh=c1qsvMQG96pzBwCVQ6DQN2WgwR3ejEwlyfyjNUhq1vo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ijI7gI3M/lTgmrt6jJAiEe7J4Z3Thjrah6tR0XFTXQdRFYzsP2sEPePY+W6nnypQq3Y2J+SVjEl3uooZxcs/SISszN+a7m7yIV03H/nJDex6N3LarZ4W8see8EVViYE7tZlhfLVA4WAA46DRwd+bjr53ky81B5SDNape63ELK6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVqF0em7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3DFC4AF09
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755297499;
-	bh=c1qsvMQG96pzBwCVQ6DQN2WgwR3ejEwlyfyjNUhq1vo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZVqF0em7dKgoDIQDN98KAre5pp776726gARLfwMEUHS/VPlTDAe1JNAf+EVtRfDe+
-	 gLP4EnJn5+hwASM146DKl+BpHAzMgXHp5tsNgFe4EIaL7CE0wp3keUweON/j8jOlDu
-	 RWOe7Vry9AP4iYnQpHVsMPPLXiG8YWoCdDmxDYGHLLNWWrU/2T3UDsbq0pommEpUFd
-	 e8sfw8bmkyIHrgtXFXpREjlhyTMaf/oeeGGt5VwWKLOvs7GGmd/JJCEGrQN71yg+bc
-	 TZjptqJb0JUxTUyNv+rfH/KVu0ajuADNsil/Hc2F/+7xTz4fGYW5dDywHt4FdKDU+u
-	 WWi6NrYB4p9+Q==
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-459fc675d11so9355e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:38:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqDxGzTl3blqcmP1KEECUzhdorNHockSpKptaIN+B+i8j6pWqPEYsXPyg/3zUp8mNNMiUxDtlBHTXgIrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpqMCRLim9bcVoqGOeENgFR/5E3V6SAc9S6awPLpGZz8xe7VTN
-	XSKLzlTRWUJaZoAAYKGcaFXnGqiQ293I8SskKpz+kRVZA3Ucxrh5G0iaa7fdhHpnBrjE9jvAxp1
-	w2FuvGuu3lbDzFD8+HFW6RwvzaDk66oFZjrXCWAEa
-X-Google-Smtp-Source: AGHT+IE2tthVbAPeYRpJUIRaQnADPFL/TZXfZagadCXDYlDKYMDA92nIonbGrC6wnNlCfUJKohX+2h24RryranZcrwo=
-X-Received: by 2002:a05:600d:c:b0:45a:207a:eb7c with SMTP id
- 5b1f17b1804b1-45a26768932mr354405e9.0.1755297497747; Fri, 15 Aug 2025
- 15:38:17 -0700 (PDT)
+	s=arc-20240116; t=1755297538; c=relaxed/simple;
+	bh=SU5U9JA8BpJrLDqB6qFZ5x7j2WQF/0eO5Lpaikl8yFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBtO8V4G3I3c0pc9Qbv8zTyvgbc0PhLleLuelVTHYgbjniwfqrY6XD/kw217WHewZAjKdUnPU7l+G+ZJCnvWMqIDNFCx0iBdHU/m08vLebyduuFE3XL3if7UqnRULBpxJUlYM5ji8oA22O6Y4gUd3x4cMwHOCsGm3+73za/nzVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=27VAkc/2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vH9M3gIPfPvhVLyqEXopQg5B5Azi5msqEGmfM/vCccc=; b=27VAkc/2u764qpgBbHqTK5WWRS
+	XL1zcYEU4nMVBCkjVnQcp0a8RyrdamOfE7gbIzdL3kmkiMkjPJASJU3Oteh5NoQ54QjnWmBhpu78g
+	jacLrAJBrgdEMIPfJWLSsHK7TwDTrB90jEvvG6mZ0ciwN/T7GcJl2YeM6u2TVCzIj86E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1un34H-004rtV-M4; Sat, 16 Aug 2025 00:38:37 +0200
+Date: Sat, 16 Aug 2025 00:38:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Artur Rojek <contact@artur-rojek.eu>
+Cc: Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+Message-ID: <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-4-contact@artur-rojek.eu>
+ <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
+ <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
+ <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812170046.56468-1-sj@kernel.org> <CAF8kJuN1BH0rqC6czj9govNOugd_5K9ijYcxbWYpEpUdQKn0-A@mail.gmail.com>
- <2f75a76c-bdc1-6ca7-4438-21554831ec56@google.com>
-In-Reply-To: <2f75a76c-bdc1-6ca7-4438-21554831ec56@google.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 15 Aug 2025 15:38:06 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNEeQ14p-VpgRvTJ0YiXLHbc4Y8wSrOOMsnug8oP_bOHg@mail.gmail.com>
-X-Gm-Features: Ac12FXzIQqOjNJhb-gjOaL6Nux9YI0GUqFop_i3tfHE5EMefJpuCak10WYPZD2g
-Message-ID: <CAF8kJuNEeQ14p-VpgRvTJ0YiXLHbc4Y8wSrOOMsnug8oP_bOHg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page as-is
-To: Hugh Dickins <hughd@google.com>
-Cc: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Takero Funaki <flintglass@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
 
-On Wed, Aug 13, 2025 at 11:58=E2=80=AFAM Hugh Dickins <hughd@google.com> wr=
-ote:
->
-> On Wed, 13 Aug 2025, Chris Li wrote:
-> >
-> > I know Hugh has some idea to store incompressible pages in the swap
-> > cache as well. Hugh?
->
-> No, I don't have any idea or plan to store incompressible pages in the
-> swap cache myself.  But yes, incompressible pages could well be "stored"
-> in the swap cache.
+On Fri, Aug 15, 2025 at 11:14:08PM +0200, Artur Rojek wrote:
+> On 2025-08-15 22:52, Artur Rojek wrote:
+> > On 2025-08-15 22:16, Andrew Lunn wrote:
+> > 
+> > Hi Andrew,
+> > thanks for the review!
+> > 
+> > > > +static irqreturn_t jcore_emac_irq(int irq, void *data)
+> > > > +{
+> > > > +	struct jcore_emac *priv = data;
+> > > > +	struct net_device *ndev = priv->ndev;
+> > > > +	struct sk_buff *skb;
+> > > > +	struct {
+> > > > +		int packets;
+> > > > +		int bytes;
+> > > > +		int dropped;
+> > > > +		int crc_errors;
+> > > > +	} stats = {};
+> > > > +	unsigned int status, pkt_len, i;
+> > > 
+> > > netdev uses 'reverse christmas tree' for local variables. They should
+> > > be sorted longest to shortest. This sometimes means you need to move
+> > > assignments into the body of the function, in this case, ndev.
+> 
+> Should I move the struct stats members into stand alone variables as
+> well? Or is below sorting acceptable with regards to stats vs skb:
 
-Sorry Hugh, I don't mean to assign you more work. Just brainstorming.
-Yes it could. The pros will be no swap fault. The cons is breaking the
-zswap LRU ordering.
+I would pull the structure definition out of the function. Then just
+create one instance of the structure on the stack.
 
-Chris
+> > > What support is there for MDIO? Normally the MAC driver would not be
+> > > setting the carrier status, phylink or phylib would do that.
+> > 
+> > From what I can tell, none. This is a very simple FPGA RTL
+> > implementation of a MAC, and looking at the VHDL, I don't see any MDIO
+> > registers.
+> 
+> > Moreover, the MDIO pin on the PHY IC on my dev board also
+> > appears unconnected.
+> 
+> I spoke too soon on that one. It appears to be connected through a trace
+> that goes under the IC. Nevertheless, I don't think MDIO support is in
+> the IP core design.
+
+MDIO is actually two pins. MDC and MDIO.
+
+It might be there is a second IP core which implements MDIO. There is
+no reason it needs to be tightly integrated into the MAC. But it does
+make the MAC driver slightly more complex. You then need a Linux MDIO
+bus driver for it, and the DT for the MAC would include a phy-handle
+property pointing to the PHY on the MDIO bus.
+
+Is there an Ethernet PHY on your board?
+
+	Andrew
 
