@@ -1,216 +1,158 @@
-Return-Path: <linux-kernel+bounces-770901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF127B2802E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:49:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3655B28031
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 14:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBAD41724B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398D0AE5E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FD52E36EF;
-	Fri, 15 Aug 2025 12:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="POsBI022"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7463009C0;
+	Fri, 15 Aug 2025 12:51:32 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D225DDAB;
-	Fri, 15 Aug 2025 12:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC48C28724D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 12:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755262148; cv=none; b=WrZid8L1L7+A3m+iR0wwXG5UVf2gMf6b17iwAuNfGf1jrjqLY1tEU9nzbjH3XOIJDy8z1amscPQ4FLo9b/ClNkSb5/env6AFoIwT9AMRYgUoSzIMA2Xvt2JtlwLFzHBSJUU37wmlfTOsTWmhB/0lnkN5Wzaspt+rW0Pu9rE5ewg=
+	t=1755262292; cv=none; b=UPjK/zL5x/YLZQCMfeISRJKRJzBOpiULlMCq7+Sw0YX+29qXfMNZqPW4/Fcga8hO9gExqrybdHf8hifMQtsSFNHngY0hlb214FC+XByZniAfWSRsnImAYbX45ayq1nh9mFPAOh6xtVj1Kzt+1zivmAYiYfd0vPug1+Wii32CYY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755262148; c=relaxed/simple;
-	bh=TszXMU49qG3PiI/lUkV4zsxC6WnAW1JSHFD5eAnJhug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T/gucpOWUFIJNsMq1Lt7O9m+e+63KnTq7fxXwnORrcjpZL6zOP63Jrx2Oy2F3DoGbfNZZ+cV8L1z3arj5WiVlNCCcQg5sLDLV1bR6R3/zcXYdMeGdXSthhPNXLuapuhoTWGHDn0U1sQh2y06ECVYvDhEH2KCjDiZIV83bprM72I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=POsBI022; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57F9linH010468;
-	Fri, 15 Aug 2025 12:48:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pComdYhf8ID09m/5ijvvK+F08ZofY1uU3bdlKG2IwjU=; b=POsBI022AopIlVon
-	eMMgUF7de/7Gd45LUFc6G5TUERdm1Hxm7/5iqq3vXm2RQFwQuL9g7+p/i4lBuHuR
-	Xoz3RGQaTZDQ7lRgfLw5NPgbcA+b1wAJ9C9rub4a24X7GD8iUlxxDRM309PUGBJx
-	TbG5gSf34VjHNtA0S+66gw3+M6xYSa/3rfwCOQLVg1DIKr5dtYDrx3KLJ1dYroho
-	f2OgzWtVGh5IKHFt/41V3fhx+qkoF+2bUJBGBk+ryZOtenaUt4WngfH5UGdKnorm
-	le+ILyY6bnIlqpv5ocSgjqnkVFwxORDouh8F0HU89E6iyUxtE68hIL7AQ2N6cWqJ
-	xjcYmA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9t3962-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Aug 2025 12:48:58 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57FCmvDE001355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Aug 2025 12:48:57 GMT
-Received: from [10.133.33.33] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 15 Aug
- 2025 05:48:53 -0700
-Message-ID: <c4d4c458-bc64-4ca9-9c65-3e942825eac5@quicinc.com>
-Date: Fri, 15 Aug 2025 20:48:43 +0800
+	s=arc-20240116; t=1755262292; c=relaxed/simple;
+	bh=i+aPcss7VmJoxOpuwmVgNxkJ/VMR9F7dWDLf7/Yu7hI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kt1lPEchgK5h3H8tF0+3FrTlG8gcuDYiknkVedBm2O0pJwPmWx0Nt8gjGo0GjIQdUGTzTQGHh3Tg40a3eWC5l5Mx9CsznZ6HgO34lscWRi49s3sBbXrDrkanu1i+S9+jNasD8xJH6z8jDwBq01+vyAZrPwaoa0O5KaZqw8/JDZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88432cccc80so193466339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:51:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755262290; x=1755867090;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=enP3JEntlzGXIDabS54nyj311LpxKS5EFVJv1n3Cq7g=;
+        b=KgQxunQ+/wKbAn8jNiFaTlcijJ5hqigY/UQMs4jucz3j6RUqFLhcrOhV8plE+XVYj5
+         H25mIVb/iN12cYnhbecyQUGe5+8u1AtOZ96RS2p9wYKE23zMUapBLRCOxWLfGyiStTsE
+         DytP50JBabrm0NZ8R21KQjgLT9nmNTk/j/F4k+PdAgow4uBG9GAeXP0hs5F1ug7RTO2T
+         dHZWV5YuEPuOlPRUWC9xQuvEAoC8qw3zTKjqYUG0StdoTRp5oVb33s6hKKEsvy8k7vFV
+         ten5vOPVlVNJB2odqmNHVnl+nbcip5EnfegRA4VU66zz6kELMLFCINtzF2dWzaANSwJo
+         fA4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVij7bBry6anB/v5wD+iWajoBnlE4jemo5pIj8EUV5rx4lrp4NAxF/GqrrL6wxo56GG7z7KPhc8i6r0Aco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy46lVgXDd4QogXyZ1UR+/UkUFdmWnFVdcuteUdOV9YF1Jy4awf
+	SjqaHtbtz/x1gzY1ud2LQMdH4cvaZrzw4Yr4QexdUV2es5P3qiUVI88pP2AUYcKTImYzauAS7SX
+	q7xTZIMcYUw5VkxIUgsBGO96GtqYM5AfxvB2zL8o4MtYGz0TBEuC/cVWxREI=
+X-Google-Smtp-Source: AGHT+IHqBSx4L/1FPdmSjhhRJsJ/AP4pMbB0NFfEOJvkHaOuCInbmYTKe5z/92Ht/AX71HVk6+1eX3B7X/es6u6N5LSjXPcQDyTc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: <rafael@kernel.org>, <lenb@kernel.org>, <pavel@kernel.org>,
-        <tony.luck@intel.com>, <reinette.chatre@intel.com>,
-        <Dave.Martin@arm.com>, <james.morse@arm.com>, <ulf.hansson@linaro.org>,
-        <amit.kucheria@linaro.org>, <christian.loehle@arm.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhongqiu.han@oss.qualcomm.com>
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-Content-Language: en-US
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-In-Reply-To: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689f2cba cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=ONSPaYZiz2aHDf4gUJcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: XCQ0Kj62ox8c6Gn-sLZ8OAO0HuccMX30
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX0xcnuYn7h9Vw
- ak48ubIL3Kh/c8wST6AZyZlKALqU5c03On4iAPEn9/LK91W1L3Zx2m4/BFELqa3vQjr7iXJO15b
- PZoc5rOt+sFGgqoVn0kG2zA4ung/il8BOQsyZ/Z7U2ofIcwGq6uoXMF/mCMbm/I5ry4URhHbbx/
- to7QyJ7umFTfVFZwzWIwG/efpcGFLg5R0fNiQ8rrXnvS4MY9+10ZPoG4r+2PAGjlodYxxx5MnJD
- /ikHkFVpZRFS92kEsGozegT0yt22EMeXtx+BRwHJTZSQEhalgD9v9ft08pNYTdX6JlkUEGDJVPp
- ztoE2CPdU2ANMGGXzqAmO2hc0It6AEZkQdhfYWF2sEd527nHs8SlQvoYiYQ73AhNXO6SWc3HC6W
- GUIrj0WH
-X-Proofpoint-GUID: XCQ0Kj62ox8c6Gn-sLZ8OAO0HuccMX30
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-15_04,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+X-Received: by 2002:a05:6602:29cf:b0:884:456:c08f with SMTP id
+ ca18e2360f4ac-8843e51a08fmr410497839f.13.1755262290097; Fri, 15 Aug 2025
+ 05:51:30 -0700 (PDT)
+Date: Fri, 15 Aug 2025 05:51:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689f2d52.050a0220.e29e5.0015.GAE@google.com>
+Subject: [syzbot] [gfs2?] WARNING in vfs_setxattr (3)
+From: syzbot <syzbot+5ce48a14916462cec450@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/21/2025 8:40 PM, Zhongqiu Han wrote:
-> Hi all,
-> 
-> This patch series introduces support for CPU affinity-based latency
-> constraints in the PM QoS framework. The motivation is to allow
-> finer-grained power management by enabling latency QoS requests to target
-> specific CPUs, rather than applying system-wide constraints.
-> 
-> The current PM QoS framework supports global and per-device CPU latency
-> constraints. However, in many real-world scenarios, such as IRQ affinity
-> or CPU-bound kernel threads, only a subset of CPUs are
-> performance-critical. Applying global constraints in such cases
-> unnecessarily prevents other CPUs from entering deeper C-states, leading
-> to increased power consumption.
-> 
-> This series addresses that limitation by introducing a new interface that
-> allows latency constraints to be applied to a CPU mask. This is
-> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
-> embedded systems where power efficiency is critical for example:
-> 
->                          driver A       rt kthread B      module C
->    CPU IDs (mask):         0-3              2-5              6-7
->    target latency(us):     20               30               100
->                            |                |                |
->                            v                v                v
->                            +---------------------------------+
->                            |        PM  QoS  Framework       |
->                            +---------------------------------+
->                            |                |                |
->                            v                v                v
->    CPU IDs (mask):        0-3            2-3,4-5            6-7
->    runtime latency(us):   20             20, 30             100
-> 
-> The current implementation includes only cpu_affinity_latency_qos_add()
-> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
-> planned for future submission, along with PM QoS optimizations in the UFS
-> subsystem.
-> 
-> Patch1 introduces the core support for CPU affinity latency QoS in the PM
-> QoS framework.
-> 
-> Patch2 removes redundant KERN_ERR prefixes in WARN() calls in the global
-> CPU PM QoS interface. This change addresses issues in existing code and is
-> not related to the new interface introduced in this patch series.
-> 
-> Patch3 adds documentation for the new interface.
-> 
-> Patch4 fixes a minor documentation issue related to the return type of
-> cpu_latency_qos_request_active(). This change addresses issues in existing
-> doc and is not related to the new interface introduced in this patch
-> series.
-> 
-> Patch5 updates the resctrl pseudo-locking logic to use the new CPU
-> affinity latency QoS helpers, improving clarity and consistency. The only
-> functional and beneficial change is that the new interface actively wakes
-> up CPUs whose latency QoS values have changed, ensuring the latency limit
-> takes effect immediately.
+Hello,
 
-Hi Rafael,
-I hope you're doing well. I just wanted to kindly check in regarding
-current patch I submitted a while ago.
+syzbot found the following issue on:
 
-I understand things can get busy, and there's absolutely no rush — just
-wanted to make sure it hasn't been missed.
+HEAD commit:    24ea63ea3877 Merge tag 'acpi-6.17-rc2' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13353da2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ce48a14916462cec450
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100883a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1329d842580000
 
-Thank you~
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-24ea63ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/307e082b78f2/vmlinux-24ea63ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a771414670e3/bzImage-24ea63ea.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6d33fef85cee/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=15353da2580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5ce48a14916462cec450@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff8880422768f8, owner = 0x0, curr 0xffff88803304c880, list empty
+WARNING: CPU: 0 PID: 5726 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
+WARNING: CPU: 0 PID: 5726 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Modules linked in:
+CPU: 0 UID: 0 PID: 5726 Comm: syz.0.47 Not tainted 6.17.0-rc1-syzkaller-00111-g24ea63ea3877 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
+RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Code: d0 48 c7 c7 60 ec 8a 8b 48 c7 c6 80 ee 8a 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 d3 56 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 74 cf a3 8f 80 e1 07 80 c1 03
+RSP: 0018:ffffc9000d99fa50 EFLAGS: 00010296
+RAX: 1cf7ff1b0c410100 RBX: ffff8880422768f8 RCX: ffff88803304c880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: dffffc0000000000 R08: ffff88801fc24253 R09: 1ffff11003f8484a
+R10: dffffc0000000000 R11: ffffed1003f8484b R12: 0000000000000000
+R13: ffff888042276950 R14: ffff8880422768f8 R15: 1ffff1100844ed20
+FS:  00007f3d8169c6c0(0000) GS:ffff88808d210000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3d8169bfc8 CR3: 0000000033237000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:879 [inline]
+ vfs_setxattr+0x17a/0x2f0 fs/xattr.c:323
+ do_setxattr fs/xattr.c:636 [inline]
+ filename_setxattr+0x274/0x600 fs/xattr.c:665
+ path_setxattrat+0x364/0x3a0 fs/xattr.c:713
+ __do_sys_setxattr fs/xattr.c:747 [inline]
+ __se_sys_setxattr fs/xattr.c:743 [inline]
+ __x64_sys_setxattr+0xbc/0xe0 fs/xattr.c:743
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3d8078ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3d8169c038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f3d809b6090 RCX: 00007f3d8078ebe9
+RDX: 0000200000000100 RSI: 0000200000000540 RDI: 00002000000003c0
+RBP: 00007f3d80811e19 R08: 0000000000000001 R09: 0000000000000000
+R10: 00000000000000a6 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3d809b6128 R14: 00007f3d809b6090 R15: 00007ffdbb0ae248
+ </TASK>
 
 
-> 
-> Changes since v1:
-> - Rebased on top of current next.
-> - Resolve the compilation warning due to a missing static function
->    declaration.
-> - Remove the conditional compilation based on CONFIG_CPU_IDLE and make it
->    depend solely on CONFIG_PM.
-> - Add support for cpu_affinity_latency_qos_active.
-> - Remove cpu_affinity_latency_qos_update; will reintroduce it when needed
->    in the future.
-> - Optimize the code, for example by using cpu_affinity_latency_qos_active
->    inside the add/remove functions to enhance robustness.
-> - Refine the commit message and fix a few minor issues unrelated to this
->    series.
-> - Refactor the CPU latency PM QoS logic of resctrl pseudo_lock using the
->    interfaces provided by this series.
-> - Link to v1: https://lore.kernel.org/all/20250424095228.1112558-1-quic_zhonhan@quicinc.com/
-> 
-> Zhongqiu Han (5):
->    PM: QoS: Add support for CPU affinity latency PM QoS
->    PM: QOS: Remove unnecessary KERN_ERR on WARN() calls
->    Documentation: PM: QoS: Add CPU affinity latency PM QoS Interface
->      documentation
->    Documentation: PM: QoS: Fix return type and return value description
->    resctrl: Replace PM QoS logic with cpu_affinity_latency_qos_* helpers
-> 
->   Documentation/power/pm_qos_interface.rst |  63 ++++++++-
->   fs/resctrl/pseudo_lock.c                 |  51 +------
->   include/linux/pm_qos.h                   |  40 ++++++
->   include/linux/resctrl.h                  |   3 +-
->   kernel/power/qos.c                       | 166 ++++++++++++++++++++++-
->   5 files changed, 268 insertions(+), 55 deletions(-)
-> 
-> 
-> base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Thx and BRs,
-Zhongqiu Han
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
