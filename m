@@ -1,116 +1,172 @@
-Return-Path: <linux-kernel+bounces-769891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD69B274CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE51B274D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 03:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DD97AED3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0258F3BE1DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09856277C9A;
-	Fri, 15 Aug 2025 01:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEADA286D5E;
+	Fri, 15 Aug 2025 01:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Rv7j8MQ3"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JyCHEiYG"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EA019ABD8
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5D427E7E1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 01:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755221914; cv=none; b=XGX/s1jtl8Ft3lQ9EPNGjcFaVMXbLfTXB8dXYw5blUI0M/j5pTEZkIfqkB8K1BYWn0hahaHakkqVx6wKeVZqddHjI2ePkJzsOY31Jqth079/be6hPBM97PbC5C29Sdrc4aTbVtWh7oG7UD+5GEinG2tOfT+wAUC34U3L3oMd88w=
+	t=1755222013; cv=none; b=Bkda+0bRL3m4Kgg3A+Ef6hWDES5ZQ+bxDUDtQOFWG1Ips1F14hUivf56LeiuiZSnRT5t0loxdtBspXep/WDvZaXspJ80PNbb4vdXRgyCnWCh+2duwjRVxnAvekcYMcxYljf9Zy8YSRYvf7HXU8KOgbOz0NKITPqp/dx1pOtMg0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755221914; c=relaxed/simple;
-	bh=bTs4Gl0zj2aTUwfLbuEPcGK9gSHi74I9ri2KM9DxhGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjPxzRC+bF/BA4xV8fJMcX1oO9Ak2KN0NfNxiEL5i0alK9D5Fw2hgW2bPQrCGr5GTkt/WKFVcSBNYHN04j0pYj9a+POTbxhEZyYhg2zxFSR9Qk2oUnPoWWPBVtYV/QA4RyEOBGryzjGVGQ+Y4gq0VMpJ9+mAsq+Os9TjZiMhNmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Rv7j8MQ3; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0032c975-1e37-484f-9b7b-a3f0fea0401a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755221905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvIK9iJ7V8SHnncWDIUPYMTGNncr21um3VSz5HwThLw=;
-	b=Rv7j8MQ3/UNGwwdvhntFdBWKEAHI300ZJy5nVbhPaQxP2lu1/Xv6QTPG/vsbkanIXvGX0v
-	Gch2UTO+opI2CgstTS5Yq8HjzJWUE64pYMaswUN/0i1GK+1eJ5QD9hbCdcCiY1GLb9bJqV
-	ZXEStufgTaSGJR+4CsA+mCz6bpgR/ME=
-Date: Fri, 15 Aug 2025 09:38:15 +0800
+	s=arc-20240116; t=1755222013; c=relaxed/simple;
+	bh=7b5AOffM5L7v+I1MHxn4CQwk/s6C0jf/sj+ji86lezE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mzVkdTK1NkA41JXqxiZDtqZ013XnV3t2LKBuk8rAUrASz/KPSFfuBNPoM9XVJoJHP7qTF3by79bMM64plDOJlm5Wwlxqhqt70Vnr9+rxmCNga9ELAqcI99NuBu4g/1I6OUo7m83CD8rwrz7sVuW1Ntr7+Tt86i01OZAMT3jt0ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JyCHEiYG; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755222002; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=mM6ETlRb4AUaAvsKe6UppqbUP1u8KlXUj2EtKdJpteA=;
+	b=JyCHEiYGxKkS7TCdZ1j/3onv6mb2JBU4J2UUxJsqzM/h7BPIvmtSeD84E4X751/MRjrjk+Z0I9yGWQLU8ovtbNyR+rvWZB0euKifwj+BoZ3s+SMrYo5OirENoZ1TR9YDZ86fqA/7JkB4w5bXxQMItds9Mgyb6rsPDv+PhDyasFY=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WlmgyQm_1755222000 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Aug 2025 09:40:00 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Bharata B Rao <bharata@amd.com>
+Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <Jonathan.Cameron@huawei.com>,  <dave.hansen@intel.com>,
+  <gourry@gourry.net>,  <hannes@cmpxchg.org>,
+  <mgorman@techsingularity.net>,  <mingo@redhat.com>,
+  <peterz@infradead.org>,  <raghavendra.kt@amd.com>,  <riel@surriel.com>,
+  <rientjes@google.com>,  <sj@kernel.org>,  <weixugc@google.com>,
+  <willy@infradead.org>,  <ziy@nvidia.com>,  <dave@stgolabs.net>,
+  <nifan.cxl@gmail.com>,  <xuezhengchu@huawei.com>,  <yiannis@zptcorp.com>,
+  <akpm@linux-foundation.org>,  <david@redhat.com>,  <byungchul@sk.com>,
+  <kinseyho@google.com>,  <joshua.hahnjy@gmail.com>,  <yuanchu@google.com>,
+  <balbirs@nvidia.com>
+Subject: Re: [RFC PATCH v1 2/7] migrate: implement
+ migrate_misplaced_folios_batch
+In-Reply-To: <20250814134826.154003-3-bharata@amd.com> (Bharata B. Rao's
+	message of "Thu, 14 Aug 2025 19:18:21 +0530")
+References: <20250814134826.154003-1-bharata@amd.com>
+	<20250814134826.154003-3-bharata@amd.com>
+Date: Fri, 15 Aug 2025 09:39:59 +0800
+Message-ID: <87a541e51s.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm/page_alloc: simplify lowmem_reserve max calculation
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, Ye Liu <liuye@kylinos.cn>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250814090053.22241-1-ye.liu@linux.dev>
- <EF575A1E-6AE2-45D7-9AC0-49C462A0CE5C@nvidia.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ye Liu <ye.liu@linux.dev>
-In-Reply-To: <EF575A1E-6AE2-45D7-9AC0-49C462A0CE5C@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=ascii
 
+Bharata B Rao <bharata@amd.com> writes:
 
+> From: Gregory Price <gourry@gourry.net>
+>
+> A common operation in tiering is to migrate multiple pages at once.
 
-在 2025/8/14 22:47, Zi Yan 写道:
-> On 14 Aug 2025, at 5:00, Ye Liu wrote:
-> 
->> From: Ye Liu <liuye@kylinos.cn>
->>
->> Use max() macro to simplify the calculation of maximum lowmem_reserve
->> value in calculate_totalreserve_pages(), instead of open-coding the
->> comparison. The functionality remains identical.
->>
->> Signed-off-by: Ye Liu <liuye@kylinos.cn>
->> ---
->>  mm/page_alloc.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 64872214bc7d..8a55a4951d19 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -6236,8 +6236,7 @@ static void calculate_totalreserve_pages(void)
->>
->>  			/* Find valid and maximum lowmem_reserve in the zone */
->>  			for (j = i; j < MAX_NR_ZONES; j++) {
->> -				if (zone->lowmem_reserve[j] > max)
->> -					max = zone->lowmem_reserve[j];
->> +				max = max(max, zone->lowmem_reserve[j]);
->>  			}
-> 
-> There is a “if (max > managed_pages)” below. Maybe convert that as well?
+Is it common now?  If so, you can replace some callers of
+migrate_misplaced_folio() with migrate_misplaced_folios_batch().
 
-I should use min() here, but I noticed the two variables have different types: 
-one is 'long' and the other is 'unsigned long'. So, I should use min_t(). 
-But then again, why is lowmem_reserve of type 'long'? 
-It should be a non-negative number, right? 
-Is it possible to change the type of lowmem_reserve to 'unsigned long' and 
-change all uses of it at the same time? Is it necessary?
+> The migrate_misplaced_folio function requires one call for each
 
-> 
-> Feel free to add Acked-by: Zi Yan <ziy@nvidia.com>.
-> 
-> Best Regards,
-> Yan, Zi
+IMHO, migrate_misplaced_folio() is more concise than
+migrate_misplaced_folio function.
 
--- 
-Thanks,
-Ye Liu
+> individual folio.  Expose a batch-variant of the same call for use
+> when doing batch migrations.
+>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Bharata B Rao <bharata@amd.com>
+> ---
+>  include/linux/migrate.h |  6 ++++++
+>  mm/migrate.c            | 31 +++++++++++++++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+>
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index acadd41e0b5c..0593f5869be8 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -107,6 +107,7 @@ static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
+>  int migrate_misplaced_folio_prepare(struct folio *folio,
+>  		struct vm_area_struct *vma, int node);
+>  int migrate_misplaced_folio(struct folio *folio, int node);
+> +int migrate_misplaced_folios_batch(struct list_head *foliolist, int node);
+>  #else
+>  static inline int migrate_misplaced_folio_prepare(struct folio *folio,
+>  		struct vm_area_struct *vma, int node)
+> @@ -117,6 +118,11 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
+>  {
+>  	return -EAGAIN; /* can't migrate now */
+>  }
+> +static inline int migrate_misplaced_folios_batch(struct list_head *foliolist,
+> +						 int node)
+> +{
+> +	return -EAGAIN; /* can't migrate now */
+> +}
+>  #endif /* CONFIG_NUMA_BALANCING */
+>  
+>  #ifdef CONFIG_MIGRATION
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 7e356c0b1b5a..1268a95eda0e 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2714,5 +2714,36 @@ int migrate_misplaced_folio(struct folio *folio, int node)
+>  	BUG_ON(!list_empty(&migratepages));
+>  	return nr_remaining ? -EAGAIN : 0;
+>  }
+> +
+> +/*
+> + * Batch variant of migrate_misplaced_folio. Attempts to migrate
+> + * a folio list to the specified destination.
+> + *
+> + * Caller is expected to have isolated the folios by calling
+> + * migrate_misplaced_folio_prepare(), which will result in an
+> + * elevated reference count on the folio.
+> + *
+> + * This function will un-isolate the folios, dereference them, and
+> + * remove them from the list before returning.
+> + */
+> +int migrate_misplaced_folios_batch(struct list_head *folio_list, int node)
 
+In addition to working on a list of folios instead of single folio, I
+found there are some difference about memcg counting between
+migrate_misplaced_folios_batch() and migrate_misplace_folio().  Why?
+
+And, can we merge the implementation of two functions to reduce code
+duplication?
+
+> +{
+> +	pg_data_t *pgdat = NODE_DATA(node);
+> +	unsigned int nr_succeeded;
+> +	int nr_remaining;
+> +
+> +	nr_remaining = migrate_pages(folio_list, alloc_misplaced_dst_folio,
+> +				     NULL, node, MIGRATE_ASYNC,
+> +				     MR_NUMA_MISPLACED, &nr_succeeded);
+> +	if (nr_remaining)
+> +		putback_movable_pages(folio_list);
+> +
+> +	if (nr_succeeded) {
+> +		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
+> +		mod_node_page_state(pgdat, PGPROMOTE_SUCCESS, nr_succeeded);
+> +	}
+> +	BUG_ON(!list_empty(folio_list));
+> +	return nr_remaining ? -EAGAIN : 0;
+> +}
+>  #endif /* CONFIG_NUMA_BALANCING */
+>  #endif /* CONFIG_NUMA */
+
+---
+Best Regards,
+Huang, Ying
 
