@@ -1,175 +1,195 @@
-Return-Path: <linux-kernel+bounces-770825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB93CB27F66
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17791B27F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC71AE7337
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F613B19BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 11:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECC830496B;
-	Fri, 15 Aug 2025 11:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDA028850C;
+	Fri, 15 Aug 2025 11:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLOIUVNc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y4e3KVOK"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F4A28851C;
-	Fri, 15 Aug 2025 11:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD4A286417;
+	Fri, 15 Aug 2025 11:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755257846; cv=none; b=iKC5J+k6hScXz0xl27QuhxYJP6g3kkayr7GrVvQ3fb9a6uQyWZLkjGMMnJczUNfTXn5uAZHRX2gq1c8+ybhRO7H+dM37UvsmZ1rbsYvu1n+IP5eHB/r2No/jg2zXeVjeYT9MwS2Fqgkds4EoO/I++gwcJZazw3w+mnCWNGwKCTY=
+	t=1755257817; cv=none; b=t3XJd7DeLcTkwxfw+aWTvkT4jYwd8gCsdWJwcsipZt+JuvRNj4EV7d5EG5gw+pjxRiXC2Kbdu4YugXymtU410TUEWatAVLfFHiP+ODtrFiL5ER9bXJFBzXKqypaOTgcxd2bA7ss/FxbcZ0hboSs4dn5HLy+nLp8e0O/VxDxO2Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755257846; c=relaxed/simple;
-	bh=FF6CTJItuLQX4L+saUiPgdc0K549DCILUpiRkhl6c30=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jHa1NBYDj5VeBRoaCU961DUxyPSXjuna6nd+Eg1fYPnEIqGA1oDrJFz/P+KDGk4sTHJpHCP8Y2jmSFH+AzGTrLMfg72DoxnUjWjp5Iz2QnLlPs4ArYZdxk7eD3P5S6LdW52oACn0q0i/H2K3YJJh0hvFYi5p+3eB1z5kXvh1a6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLOIUVNc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16F36C116B1;
-	Fri, 15 Aug 2025 11:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755257846;
-	bh=FF6CTJItuLQX4L+saUiPgdc0K549DCILUpiRkhl6c30=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vLOIUVNcxzibC03/MJr57laqLFHNh4zKfsrDIxXugUTygc+6I2VcnO+yYYaYIdigV
-	 BcEusm2FKdC0qRq9zLxzPV11cMpY2wUoBT/5S8Ta/KcxhqaP5ju7hvVp6FyiYv5yUu
-	 +VLBXIoD3XY+WMM3ap6bcDAnXUQ3xlHwmH6voojjAx+RDRxmKLLG7xnJWy8f8Qtje/
-	 3Ro0XSOWzlaOhHJuSc0NAluRaYF0VQP74F3FPR2N4nhGFrSu3vYbWFFoYoGaFKpKSz
-	 ZWd6VG93gkAY3uCSwspTvmUi3jbgNxEx8tKv4fTkqNfB1u01jRzKT0pCdSQCiM6+wW
-	 0mAsqyZWSHirg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1umskO-000000042Tb-10C5;
-	Fri, 15 Aug 2025 13:37:24 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <mchehab+huawei@kernel.org>,
-	Benno Lossin <mchehab+huawei@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <mchehab+huawei@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH 11/11] scripts: sphinx-pre-install: fix PDF dependencies for gentoo
-Date: Fri, 15 Aug 2025 13:36:27 +0200
-Message-ID: <fc1dbf7d4eb4cb0887a19f75d1ae71d683648771.1755256868.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755256868.git.mchehab+huawei@kernel.org>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1755257817; c=relaxed/simple;
+	bh=2GIMgu8NPtt6P2qI5ejUuahA1+6uQNRov1RsqwBWiqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjHoMddiuPx6BVQyoUPQpqAm73Q9geoOrQ9IDEXUUuETtV/oK1+qLjM5f2apmUJw2z0f2jLSDMMnzJV89Pqo1/Ym4IFfN4KzkU3XhJ5PGNGU7P04kSGI/RY6qQVtem96WYdGbAs59J3hvKuLCePNn1Y5TDZfXTAzj+8K5+AgAHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Y4e3KVOK; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 26128605;
+	Fri, 15 Aug 2025 13:35:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755257758;
+	bh=2GIMgu8NPtt6P2qI5ejUuahA1+6uQNRov1RsqwBWiqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y4e3KVOK2J0XXmCqgj9JJfIrcgYxrrI+rTidxCHGaWXadY1ai6uVWvVchaozmrBsU
+	 WmCsl4otPF8doCkfsyoLO18ZUHqBQUM1ngLtQE8HYes4PNC0qzwKnBsDjCx2iCGfHP
+	 b3fPKZ0X6xpvtJyKPqtNsM4xe44EmFHXQNmXLbY8=
+Date: Fri, 15 Aug 2025 14:36:33 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
+	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
+ mbus_config
+Message-ID: <20250815113633.GM6201@pendragon.ideasonboard.com>
+References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
+ <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+ <20250815103205.GJ6201@pendragon.ideasonboard.com>
+ <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
 
-Package fonts are wrong. Fix it. With that, most PDF files
-now builds.
+On Fri, Aug 15, 2025 at 11:25:24AM +0000, Sakari Ailus wrote:
+> Hi Laurent,
+> 
+> On Fri, Aug 15, 2025 at 01:32:05PM +0300, Laurent Pinchart wrote:
+> > On Fri, Aug 15, 2025 at 09:18:13AM +0000, Sakari Ailus wrote:
+> > > On Thu, Aug 14, 2025 at 12:37:01PM +0100, Isaac Scott wrote:
+> > > > Although 4 lanes may be physically available, we may not be using all of
+> > > > them. Get the number of configured lanes in the case a driver has
+> > > > implemented the get_mbus_config op.
+> > > > 
+> > > > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > > > 
+> > > > ---
+> > > > 
+> > > > Currently, the imx-mipi-csis driver parses the device tree to determine
+> > > > the number of configured lanes for the CSI receiver. This may be
+> > > > incorrect in the case that the connected device only uses a subset of
+> > > > lanes, for example. Allow the drivers for these cameras to create a
+> > > > mbus_config to configure the number of lanes that are actually being
+> > > > used.
+> > > > 
+> > > > If the driver does not support the get_mbus_config op, this patch will
+> > > > have no functional change.
+> > > > 
+> > > > Compile tested against media-master (v6.17-rc1)
+> > > > ---
+> > > >  drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
+> > > >  1 file changed, 41 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > > > index 2beb5f43c2c0..efe4e2ad0382 100644
+> > > > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > > > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > > > @@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
+> > > >  	return container_of(sdev, struct mipi_csis_device, sd);
+> > > >  }
+> > > >  
+> > > > +static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
+> > > > +{
+> > > > +	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > > > +	struct v4l2_mbus_config mbus_config = { 0 };
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
+> > > > +			       0, &mbus_config);
+> > > > +	if (ret == -ENOIOCTLCMD) {
+> > > > +		dev_dbg(csis->dev, "No remote mbus configuration available\n");
+> > > > +		return 0;
+> > > > +	}
+> > > > +
+> > > > +	if (ret) {
+> > > > +		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
+> > > > +		return ret;
+> > > > +	}
+> > > > +
+> > > > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
+> > > > +		dev_err(csis->dev, "Unsupported media bus type %u\n",
+> > > > +			mbus_config.type);
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
+> > > > +		dev_err(csis->dev,
+> > > > +			"Unsupported mbus config: too many data lanes %u\n",
+> > > > +			mbus_config.bus.mipi_csi2.num_data_lanes);
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+> > 
+> > There's a bug here, you override the number of lanes retrieved from DT,
+> > which is the number of connected lanes, with the number of lanes used by
+> > the source for its particular configuration. You will never be able to
+> > then use more lanes in a different source configuration.
+> > 
+> > > > +	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
+> > > 
+> > > None of the above is really specific to this driver. Could you instead
+> > > implement a function that parses the information from the fwnode endpoint
+> > > and uses mbus configuration on top?
+> > 
+> > That would need to parse the endpoint every time we start streaming, it
+> > doesn't sound ideal.
+> 
+> Perhaps not, but does that matter in practice? Parsing the endpoint is,
+> after all, fairly trivial. The advantage would be simplifying drivers.
 
-  PDF docs:
-  ---------
-      PASSED: dev-tools: pdf/dev-tools.pdf
-      PASSED: tools: pdf/tools.pdf
-      PASSED: filesystems: pdf/filesystems.pdf
-      PASSED: w1: pdf/w1.pdf
-      PASSED: maintainer: pdf/maintainer.pdf
-      PASSED: process: pdf/process.pdf
-      PASSED: isdn: pdf/isdn.pdf
-      PASSED: fault-injection: pdf/fault-injection.pdf
-      PASSED: iio: pdf/iio.pdf
-      PASSED: scheduler: pdf/scheduler.pdf
-      PASSED: staging: pdf/staging.pdf
-      PASSED: fpga: pdf/fpga.pdf
-      PASSED: power: pdf/power.pdf
-      PASSED: leds: pdf/leds.pdf
-      PASSED: edac: pdf/edac.pdf
-      PASSED: PCI: pdf/PCI.pdf
-      PASSED: firmware-guide: pdf/firmware-guide.pdf
-      PASSED: cpu-freq: pdf/cpu-freq.pdf
-      PASSED: mhi: pdf/mhi.pdf
-      PASSED: wmi: pdf/wmi.pdf
-      PASSED: timers: pdf/timers.pdf
-      PASSED: accel: pdf/accel.pdf
-      PASSED: hid: pdf/hid.pdf
-      FAILED: userspace-api: Build failed (FAILED)
-      PASSED: spi: pdf/spi.pdf
-      PASSED: networking: pdf/networking.pdf
-      PASSED: virt: pdf/virt.pdf
-      PASSED: nvme: pdf/nvme.pdf
-      FAILED: translations: Build failed (FAILED)
-      PASSED: input: pdf/input.pdf
-      PASSED: tee: pdf/tee.pdf
-      PASSED: doc-guide: pdf/doc-guide.pdf
-      PASSED: cdrom: pdf/cdrom.pdf
-      FAILED: gpu: Build failed (FAILED)
-      FAILED: i2c: Build failed (FAILED)
-      FAILED: RCU: Build failed (FAILED)
-      PASSED: watchdog: pdf/watchdog.pdf
-      PASSED: usb: pdf/usb.pdf
-      PASSED: rust: pdf/rust.pdf
-      PASSED: crypto: pdf/crypto.pdf
-      PASSED: kbuild: pdf/kbuild.pdf
-      PASSED: livepatch: pdf/livepatch.pdf
-      PASSED: mm: pdf/mm.pdf
-      PASSED: locking: pdf/locking.pdf
-      PASSED: infiniband: pdf/infiniband.pdf
-      PASSED: driver-api: pdf/driver-api.pdf
-      PASSED: bpf: pdf/bpf.pdf
-      PASSED: devicetree: pdf/devicetree.pdf
-      PASSED: block: pdf/block.pdf
-      PASSED: target: pdf/target.pdf
-      FAILED: arch: Build failed (FAILED)
-      PASSED: pcmcia: pdf/pcmcia.pdf
-      PASSED: scsi: pdf/scsi.pdf
-      PASSED: netlabel: pdf/netlabel.pdf
-      PASSED: sound: pdf/sound.pdf
-      PASSED: security: pdf/security.pdf
-      PASSED: accounting: pdf/accounting.pdf
-      PASSED: admin-guide: pdf/admin-guide.pdf
-      FAILED: core-api: Build failed (FAILED)
-      PASSED: fb: pdf/fb.pdf
-      PASSED: peci: pdf/peci.pdf
-      PASSED: trace: pdf/trace.pdf
-      PASSED: misc-devices: pdf/misc-devices.pdf
-      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
-      PASSED: hwmon: pdf/hwmon.pdf
+It's trivial from a code point of view, but it's not a cheap operation.
+I'd like to avoid making starting streaming more expensive.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/sphinx-pre-install | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Alternatively we could think of caching this information somewhere but I
+> don't think it's worth it.
 
-diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
-index 758a84ae6347..c46d7b76f93c 100755
---- a/scripts/sphinx-pre-install
-+++ b/scripts/sphinx-pre-install
-@@ -1069,10 +1069,10 @@ class SphinxDependencyChecker(MissingCheckers):
-         Provide package installation hints for Gentoo.
-         """
-         texlive_deps = [
-+            "dev-texlive/texlive-fontsrecommended",
-             "dev-texlive/texlive-latexextra",
-             "dev-texlive/texlive-xetex",
-             "media-fonts/dejavu",
--            "media-fonts/lm",
-         ]
- 
-         progs = {
+Drivers likely need to parse endpoints for other reasons. I'd cache the
+value in drivers, like done today, and pass it to a get_active_lanes
+helper.
+
+> > > The function could take struct media_pad pointer as an argument, or struct
+> > > v4l2_subdev pointer and the pad number.
+> > > 
+> > > I wonder if any other parameters could change dynamically but I can't think
+> > > of that now, so perhaps just the number of lanes is what the function
+> > > should indeed return.
+> > > 
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > >  {
+> > > >  	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > > > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+> > > >  	csis_fmt = find_csis_format(format->code);
+> > > >  
+> > > > +	ret = mipi_csis_get_active_lanes(sd);
+> > > > +	if (ret < 0)
+> > > > +		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
+> > > > +
+> > > >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
+> > > >  	if (ret < 0)
+> > > >  		goto err_unlock;
+
 -- 
-2.50.1
+Regards,
 
+Laurent Pinchart
 
