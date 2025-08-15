@@ -1,115 +1,89 @@
-Return-Path: <linux-kernel+bounces-770063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E233AB2765F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:53:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B87AB27667
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DDA568424
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:53:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12AAD4E3D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA91292B58;
-	Fri, 15 Aug 2025 02:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8229D295;
+	Fri, 15 Aug 2025 02:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j4COaN5t"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B960291C2D;
-	Fri, 15 Aug 2025 02:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LvoijHPZ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604B27AC32;
+	Fri, 15 Aug 2025 02:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755226393; cv=none; b=aFNeMzi30Owv53pt2aBzPleXOnxhizA0zoez8GsWgWKsFkqICr7XgsPLqLwI7Iot/nqBZgZE0IOJW9URjQU7OEPGnYcgGQ7s3RmBr2JaECu80OVW/vuJLM0au6Xlg3hO8719u2gcSDmIeDkAT8+jJ3mHdn6sKqRRHQDKyyoWQQE=
+	t=1755226508; cv=none; b=PJZeV4NJ1L89TkE0ebauzkajjdFmHbsU7Kzg93igc/IiVWPeoEfz8TRoXqsGO/8U2+hoHieOsxfCvAtsI2bLAuPCVR0sVXpjGLQ+6kjMbgv+pf4toGPXysQu/UGCo1WYSgonVTT9o45w9UfYsgG57MveknQpxXcSYUMFuQh+KvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755226393; c=relaxed/simple;
-	bh=wad71HYAYfLhhLqPojmKa25g/oEHTWLZegrpvBYkr7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WR0/JHmNZdH0GwQeRykqJAgfYMksAs0+KsRhBzeuN3zlFSszBR17qY8qPfAHRJ4uWizX1HeZHr5TK60pLp5gQxlJm5wjTSis7VJ//PT2lJ9LljCY4grRehbo069GDMzvDeJLrEsibCc2cC60jQZnPY3xk6EUDK0/qBCrjm0ig9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j4COaN5t; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=QZVCzrbuC3u5VaWwoobTCBcWvATTA38krFlGKxEqZJE=; b=j4COaN5tYuRhIY7ZY473lK72dY
-	EiguNMWI8t/0QwYXS7gawwzmkBkizObitNkYcK7EME9QFTygLi60wo1won4CXE2iX2Vgu5s6t8BU4
-	xLh0H8c1pttR7Itt4pwZHP0rQ+ocDKMAw4v9mHcI85L8Tz+8fjRj6cw1AQhxUJB2Oa4qaKmkNpep5
-	J25N+vxYlLRiu9jCPQE1IBBwpWb3iMJA58AcPwsc0GyKkhSoESmArSEEliGF8kUhEX/pPR2Ptn0vA
-	TKbGQPTlQB84/rJel8Xm3a+9VRblK+nyA9d6bEjS8v7GRB4UJZRst86YmSWgIuBRKHk/uslycBJ0b
-	m1NBhPCw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umkZ5-00000001EKb-2h1k;
-	Fri, 15 Aug 2025 02:53:11 +0000
-Message-ID: <b63fb30a-5d33-42bd-bdf3-b8dfb960bdf5@infradead.org>
-Date: Thu, 14 Aug 2025 19:53:11 -0700
+	s=arc-20240116; t=1755226508; c=relaxed/simple;
+	bh=KeJFi1pVXNK4Tlmsq/GV1v1fG/zwnxtUHIBtXHNy1QA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=srdtQs4QkDbOi1SWqu9X75YffGp9Zhy4xQAIQg+79bbZF2cTE4uUDPj87M9kUmtOL/B5ZHTowbGncsqH8YyU4iNcTdBUKrJ0boPBIUNhHwhR1GhFDQdtgSkXwHh2v/p/dRmWOsO5nWzuGRPdRhlDJJ/K1lIFLevPtoF7aX5U/1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LvoijHPZ; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=e/
+	j1B9z3bQhmtlG6OiGtt3zOIKdDdDP0HF/AC2CMs64=; b=LvoijHPZzzbTl/MnnZ
+	N7uMXprKdHStlcncaEbsggBe6PYRdmlcdKGiRbNWyf/Jf7zBa9oLMOYqO6NERDi4
+	dfo1OVOBal8ESZr3ZjPChmfLT/enmqkbkV/fQ6EmCdxVHF9Od71jvsiR9hnvXqGq
+	Re9mWwFBhsD4+3Z+7bFTnx/7I=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBHffVtoZ5ovy88Bg--.29439S2;
+	Fri, 15 Aug 2025 10:54:38 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: af_packet: Use hrtimer to do the retire operation
+Date: Fri, 15 Aug 2025 10:54:37 +0800
+Message-Id: <20250815025437.1053773-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/13] Collect documention-related tools under
- tools/doc
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20250813213218.198582-1-corbet@lwn.net>
- <e84e288af0536cdc406c787301bc6b9b11c0be0a@intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <e84e288af0536cdc406c787301bc6b9b11c0be0a@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBHffVtoZ5ovy88Bg--.29439S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XrW8Ww1fJF15Xr17uF48WFg_yoW3GrgE9r
+	yqvF48Ka1rJr4rWa17Kr43Jr9Y9w48Ga4UGa9Yy3sIvr1YgryjkFnxur15uF4DCwnrC3sx
+	Cr4Ut34xtw1DWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb73vUUUUUU==
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiMBmqCmienv4+bgAAsP
 
+On Fri, 2025-08-15 at 1:29 +0800, Willem wrote:
 
-
-On 8/14/25 7:59 AM, Jani Nikula wrote:
-> On Wed, 13 Aug 2025, Jonathan Corbet <corbet@lwn.net> wrote:
->> Our documentation-related tools are spread out over various directories;
->> several are buried in the scripts/ dumping ground.  That makes them harder
->> to discover and harder to maintain.
->>
->> Recently, the idea of creating a dedicated directory for documentation tools
->> came up; I decided to see what it would look like.  This series creates a
->> new directory, tools/doc, and moves various utilities there, hopefully
->> fixing up all of the relevant references in the process.
->>
->> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+> > -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
+> > +	p1->tov_in_msecs = p1->retire_blk_tov;
 > 
-> A wholehearted
+> Can probably drop this field as it's the same as retire_blk_tov.
 > 
-> Acked-by: Jani Nikula <jani.nikula@intel.com>
-> 
-> on all of it.
+> Or convert to ktime_t next_timer, to be able to replace ktime_get()
+> with ktime_add_ms when rearming when calling hrtimer_set_expires.
 
-and
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-for the series.
+Dear Willem,
 
-along with using either of tools/doc/ or tools/docs/.
+Thank you for your suggestion.
+I will drop the tov_in_msecs field in PATCH v2.
+Additionally, I think we cannot avoid using ktime_get, as the retire
+timeout for each block is not fixed. When there are a lot of network packets,
+a block can retire quickly, and if we do not re-fetch the time, the timeout
+duration may be set incorrectly.
 
->> The big elephant lurking in this small room is the home for Python modules;
->> I left them under scripts/lib, but that is an even less appropriate place
->> than it was before.  I would propose either tools/python or lib/python;
->> thoughts on that matter welcome.
-> 
-> lib/ contains code that's built into the kernel, I think lib/python
-> would be out of place.
+Thanks
+Xin Zhao
 
-Would tools/docs/lib be OK?
-I wouldn't tie it up to a specific language,
-but I don't have a strong opinion either way.
-
-> IMO tools/python (or tools/lib/python, no strong opinion) is more
-> appropriate.
-
--- 
-~Randy
 
