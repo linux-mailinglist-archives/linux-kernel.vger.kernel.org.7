@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-770206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A117CB2786F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0B9B2786E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7478B634D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:28:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F534B6327D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 05:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454FC292B38;
-	Fri, 15 Aug 2025 05:29:21 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B901548C;
+	Fri, 15 Aug 2025 05:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="g4qYgRzm"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99456242D66
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 05:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6637210E3;
+	Fri, 15 Aug 2025 05:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755235760; cv=none; b=E3vKm7Yu5gC+SA20DlfnuszVQeurdRx3uGlIAeURGPOsOLq2MpdRD96k96fvmwwzq5VZVakBkrL3HF9GnnQWsu+Uj/YafIMzitohXZCpc2QN/7vHaIh+HdAHcd74/YNRLahnD3v14nliexllVxmo4V3F938039tt55qg4kgIqKQ=
+	t=1755235756; cv=none; b=Y+AGgnPsRVcCqI4dE6sXH1rhr/8agWIqY0F4OUVr+GGKAqQi0xC5R/T9cUCQ9gEXgFx9M5ihw03cjNezBDYQH+YbwmrJj1dg08FRxSlcbQ0XddgQiimc1+0xLGLz/FOk4yYc6nnTCQ18a+06BgLJe5aZmvgTVaAcUYb/sUaD2+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755235760; c=relaxed/simple;
-	bh=VURvw+k590gCXeGUBglVj+/8RkSid+pcYUblRadhAI4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QHLgG4UpWqguMX2rQueVuwEt3BYNw9OeYheg9jM0dAAEMVsokpP+4tiCkWANSMHO6In/SDdXOmvFI8BOnMho/CY2ys/jbDKzXdiPCtQTNvudHU7NvVBupNmRQGp1XgZVKWj8ivBMrbpWBe/O/TPPN7I/JG3nZ5VWrZb1l4PRhlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>,
-	"peterz@infradead.org" <peterz@infradead.org>, "jpoimboe@kernel.org"
-	<jpoimboe@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "david.kaplan@amd.com"
-	<david.kaplan@amd.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs
- without ARCH_CAP_GDS_CTRL
-Thread-Topic: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for CPUs
- without ARCH_CAP_GDS_CTRL
-Thread-Index: AQHcDaVol6m8kQbUoUCDZWrxRnEWbA==
-Date: Fri, 15 Aug 2025 05:28:18 +0000
-Message-ID: <8caaa7fabf2446ffbac922dafaed3dc9@baidu.com>
-References: <20250815035334.4230-1-lirongqing@baidu.com>
- <20250815050811.gm7nxcd7wn47lshy@desk>
-In-Reply-To: <20250815050811.gm7nxcd7wn47lshy@desk>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1755235756; c=relaxed/simple;
+	bh=/XAYOv4onJR62PLBFNvd8hre+c7yJYiQS/IDb5Nx+J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMYZDaUTDrt1Yhg0lFb7jtHKqMMOR97pJLynsedYDLO+t6ZE6G0fN8hfaD+DwtpRiAtYHMmVK1nmQWG1c239xlJRJeIFUYQck8tuwIMEXSMUr8CkZEIbqMYtFTUkiepnDNFS/mjB0kcDwgBRpFlt7LoD6Xsf/OXHQPEBQaGmv/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=g4qYgRzm; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KolVN+Kf+xjXZURWyuqMGoPAKUXu62zPPtuevoWeXKo=; b=g4qYgRzmEMeOBNMTs2dTafhchU
+	zcaAwE8qDO3V7gNpW9AV1hB34p2tr8XGtw9HhFuD4R0eYHKnVIAqKNwx5oGARv300JgHLDogSkrFh
+	vEJ09EJm8Hd6SmpMk6NLUr+YCaEtPpDxgo8w/jODnDgUQGjPdNcmf2geGRXHaTPSjZGM9MPZo6oXg
+	FVzs8tbagZh/JFxeENUzlhKqAvXnNwNFIfPCQuq4nXXAfzPPJPXOiSMnOXjzkjNJi8VsGeiAqHapl
+	k9nU2Jh5+0lrMCLcjixa0HKMEWg1h0eXK+a3Fkn0f8LquW9bG17qqsWYylQX/IIvNHAkc2TG9XoZE
+	u3GQBFSA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ummkJ-00ETYr-1X;
+	Fri, 15 Aug 2025 13:28:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Aug 2025 13:28:51 +0800
+Date: Fri, 15 Aug 2025 13:28:51 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
+	senozhatsky@chromium.org, linux-crypto@vger.kernel.org,
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com,
+	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com
+Subject: Re: [PATCH v11 18/24] crypto: acomp - Add crypto_acomp_batch_size()
+ to get an algorithm's batch-size.
+Message-ID: <aJ7Fk6RpNc815Ivd@gondor.apana.org.au>
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
+ <20250801043642.8103-19-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801043642.8103-19-kanchana.p.sridhar@intel.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF3YW4gR3VwdGEgPHBh
-d2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbT4NCj4gU2VudDogMjAyNcTqONTCMTXI1SAx
-MzowOQ0KPiBUbzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBDYzogdGds
-eEBsaW51dHJvbml4LmRlOyBicEBhbGllbjguZGU7IHBldGVyekBpbmZyYWRlYWQub3JnOw0KPiBq
-cG9pbWJvZUBrZXJuZWwub3JnOyBtaW5nb0ByZWRoYXQuY29tOyBkYXZlLmhhbnNlbkBsaW51eC5p
-bnRlbC5jb207DQo+IHg4NkBrZXJuZWwub3JnOyBocGFAenl0b3IuY29tOyBkYXZpZC5rYXBsYW5A
-YW1kLmNvbTsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbPz8/
-P10gUmU6IFtQQVRDSF0geDg2L2J1Z3M6IEZpeCBHRFMgbWl0aWdhdGlvbiBjaGVjayBmb3IgQ1BV
-cyB3aXRob3V0DQo+IEFSQ0hfQ0FQX0dEU19DVFJMDQo+IA0KPiBPbiBGcmksIEF1ZyAxNSwgMjAy
-NSBhdCAxMTo1MzozNEFNICswODAwLCBsaXJvbmdxaW5nIHdyb3RlOg0KPiA+IEZyb206IExpIFJv
-bmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPg0KPiA+IFRoZSBjb21taXQgOGM3MjYx
-YWJjYjdhZCgieDg2L2J1Z3M6IEFkZCBhdHRhY2sgdmVjdG9yIGNvbnRyb2xzIGZvcg0KPiA+IEdE
-UyIpIGNhdXNlZCBjYWxsIHRyYWNlcyBkdXJpbmcgc2Vjb25kYXJ5IENQVSBpbml0aWFsaXphdGlv
-biBiZWNhdXNlDQo+ID4gaXQgZGlkbid0IHByb3Blcmx5IGhhbmRsZSBDUFVzIHRoYXQgbGFjayB0
-aGUgQVJDSF9DQVBfR0RTX0NUUkwgY2FwYWJpbGl0eS4NCj4gPg0KPiA+IEZvciBDUFVzIHdpdGhv
-dXQgQVJDSF9DQVBfR0RTX0NUUkwgc3VwcG9ydCwgd2Ugc2hvdWxkIHNldCB0aGUNCj4gPiBtaXRp
-Z2F0aW9uIHRvIEdEU19NSVRJR0FUSU9OX1VDT0RFX05FRURFRCByYXRoZXIgdGhhbg0KPiA+IEdE
-U19NSVRJR0FUSU9OX09GRiwgYXMgdGhlc2UgQ1BVcyBtYXkgc3RpbGwgYmUgdnVsbmVyYWJsZSBi
-dXQgY2Fubm90DQo+IGRpc2FibGUgbWl0aWdhdGlvbi4NCj4gPg0KPiA+IEFkZCB0aGUgbWlzc2lu
-ZyBjaGVjayBmb3IgQVJDSF9DQVBfR0RTX0NUUkwgdG8gcHJvcGVybHkgZGV0ZXJtaW5lIHRoZQ0K
-PiA+IG1pdGlnYXRpb24gc3RhdGUgZm9yIGFmZmVjdGVkIENQVXMuDQo+ID4NCj4gPiBbICAgIDIu
-ODA5MTQ3XSB1bmNoZWNrZWQgTVNSIGFjY2VzcyBlcnJvcjogUkRNU1IgZnJvbSAweDEyMyBhdCBy
-SVA6DQo+IDB4ZmZmZmZmZmZiMzQ1MjgwNyAodXBkYXRlX2dkc19tc3IrMHg4Ny8weGUwKQ0KPiA+
-ICh1cGRhdGVfZ2RzX21zcisweDg3LzB4ZTApDQo+ID4gWyAgICAyLjgwOTE0N10gQ2FsbCBUcmFj
-ZToNCj4gPiBbICAgIDIuODA5MTQ3XSAgPFRBU0s+DQo+ID4gWyAgICAyLjgwOTE0N10gIGlkZW50
-aWZ5X3NlY29uZGFyeV9jcHUrMHg3Mi8weDkwDQo+ID4gWyAgICAyLjgwOTE0N10gIHN0YXJ0X3Nl
-Y29uZGFyeSsweDdhLzB4MTQwDQo+ID4gWyAgICAyLjgwOTE0N10gIGNvbW1vbl9zdGFydHVwXzY0
-KzB4MTNlLzB4MTQxDQo+ID4gWyAgICAyLjgwOTE0N10gIDwvVEFTSz4NCj4gPiBbICAgIDIuODA5
-MTQ3XSB1bmNoZWNrZWQgTVNSIGFjY2VzcyBlcnJvcjogV1JNU1IgdG8gMHgxMjMgKHRyaWVkIHRv
-IHdyaXRlDQo+IDB4MDAwMDAwMDAwMDAwMDAxMCkgYXQgcklQOiAweGZmZmZmZmZmYjM0NTI3YjgN
-Cj4gPiAodXBkYXRlX2dkc19tc3IrMHgzOC8weGUwKQ0KPiA+IFsgICAgMi44MDkxNDddIENhbGwg
-VHJhY2U6DQo+ID4gWyAgICAyLjgwOTE0N10gIDxUQVNLPg0KPiA+IFsgICAgMi44MDkxNDddICBp
-ZGVudGlmeV9zZWNvbmRhcnlfY3B1KzB4NzIvMHg5MA0KPiA+IFsgICAgMi44MDkxNDddICBzdGFy
-dF9zZWNvbmRhcnkrMHg3YS8weDE0MA0KPiA+IFsgICAgMi44MDkxNDddICBjb21tb25fc3RhcnR1
-cF82NCsweDEzZS8weDE0MQ0KPiA+IFsgICAgMi44MDkxNDddICA8L1RBU0s+DQo+ID4gWyAgICAy
-LjgwOTE0N10gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+ID4gWyAgICAy
-LjgwOTE0N10gV0FSTklORzogQ1BVOiAxIFBJRDogMCBhdCBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1
-Z3MuYzoxMDUzDQo+IHVwZGF0ZV9nZHNfbXNyKzB4OWIvMHhlMA0KPiA+DQo+ID4gRml4ZXM6IDhj
-NzI2MWFiY2I3YWQgKCJ4ODYvYnVnczogQWRkIGF0dGFjayB2ZWN0b3IgY29udHJvbHMgZm9yIEdE
-UyIpDQo+ID4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29t
-Pg0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyB8IDIgKysNCj4gPiAg
-MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2Fy
-Y2gveDg2L2tlcm5lbC9jcHUvYnVncy5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4g
-PiBpbmRleCBiNzRiZjkzLi4zYWY5MTFjIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5l
-bC9jcHUvYnVncy5jDQo+ID4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4gPiBA
-QCAtMTA3MSw2ICsxMDcxLDggQEAgc3RhdGljIHZvaWQgX19pbml0IGdkc19zZWxlY3RfbWl0aWdh
-dGlvbih2b2lkKQ0KPiA+ICAJCQlnZHNfbWl0aWdhdGlvbiA9IEdEU19NSVRJR0FUSU9OX0ZVTEw7
-DQo+ID4gIAkJZWxzZSB7DQo+ID4gIAkJCWdkc19taXRpZ2F0aW9uID0gR0RTX01JVElHQVRJT05f
-T0ZGOw0KPiA+ICsJCQlpZiAoISh4ODZfYXJjaF9jYXBfbXNyICYgQVJDSF9DQVBfR0RTX0NUUkwp
-KQ0KPiANCj4gVGhpcyBjaGVjayBpcyBhbHJlYWR5IHByZXNlbnQgZmV3IGxpbmVzIGJlbG93Lg0K
-PiANCj4gPiArCQkJCWdkc19taXRpZ2F0aW9uID0gR0RTX01JVElHQVRJT05fVUNPREVfTkVFREVE
-Ow0KPiA+ICAJCQlyZXR1cm47DQo+IA0KPiBUbyBhdm9pZCBkdXBsaWNhdGluZywgYSBiZXR0ZXIg
-Zml4IGNvdWxkIGJlIHRvIG5vdCByZXR1cm4gaGVyZSwgYW5kIGxldCB0aGUgbmV4dA0KPiBibG9j
-ayBEVFJUOg0KDQpCdXQgaWYgY3B1IGhhcyBBUkNIX0NBUF9HRFNfQ1RSTCwgdGhlIG5leHQgYmxv
-Y2sgd2lsbCBiZSBza2lwcGVkLCBhbmQgdGhlIGNvZGVzIGFmdGVyIGNoZWNraW5nIEFSQ0hfQ0FQ
-X0dEU19DVFJMIGJsb2NrIHdpbGwgYmUgcnVuLCB0aGlzIGlzIG5vdCBleHBlY3RlZA0KDQpTbyBJ
-IGFkZCBhIGR1cGxpY2F0aW5nIGNoZWNrDQoNCkJyDQoNCi1MaQ0KDQoNCj4gDQo+ICAgICAgICAg
-IC8qIE5vIG1pY3JvY29kZSAqLw0KPiAgICAgICAgICBpZiAoISh4ODZfYXJjaF9jYXBfbXNyICYg
-QVJDSF9DQVBfR0RTX0NUUkwpKSB7DQo+ICAgICAgICAgICAgICAgICAgaWYgKGdkc19taXRpZ2F0
-aW9uICE9IEdEU19NSVRJR0FUSU9OX0ZPUkNFKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-Z2RzX21pdGlnYXRpb24gPQ0KPiBHRFNfTUlUSUdBVElPTl9VQ09ERV9ORUVERUQ7DQo+ICAgICAg
-ICAgICAgICAgICAgcmV0dXJuOw0KPiAgICAgICAgICB9DQo=
+On Thu, Jul 31, 2025 at 09:36:36PM -0700, Kanchana P Sridhar wrote:
+>
+> diff --git a/include/crypto/internal/acompress.h b/include/crypto/internal/acompress.h
+> index ffffd88bbbad3..2325ee18e7a10 100644
+> --- a/include/crypto/internal/acompress.h
+> +++ b/include/crypto/internal/acompress.h
+> @@ -28,6 +28,8 @@
+>   *
+>   * @compress:	Function performs a compress operation
+>   * @decompress:	Function performs a de-compress operation
+> + * @get_batch_size:	Maximum batch-size for batching compress/decompress
+> + *			operations.
+>   * @init:	Initialize the cryptographic transformation object.
+>   *		This function is used to initialize the cryptographic
+>   *		transformation object. This function is called only once at
+> @@ -46,6 +48,7 @@
+>  struct acomp_alg {
+>  	int (*compress)(struct acomp_req *req);
+>  	int (*decompress)(struct acomp_req *req);
+> +	unsigned int (*get_batch_size)(void);
+
+I can't imagine a situation where this needs to be dynamic.
+Please just make it a static value rather than a callback function.
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
