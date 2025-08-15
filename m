@@ -1,224 +1,349 @@
-Return-Path: <linux-kernel+bounces-771156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E87B283A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5428FB283AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 18:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD6B5C8326
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25860B61708
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 16:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019703090C7;
-	Fri, 15 Aug 2025 16:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C373090C9;
+	Fri, 15 Aug 2025 16:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QqMOIPNJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDkj0LV1"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B420288C06;
-	Fri, 15 Aug 2025 16:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755274457; cv=fail; b=JZ17w13EqOw/jqTBk2AKsb6b7Q54C4cISuEzTElNkx/T610/TMyDojd1+p+zX88QfBS40Sy9u7gxVBjwhlERHFm/n4QHfqUcBVMQEXJcQ/y3pspwg2v9+h40t118pHNTDyF+lA3ke1PeBxjfFiHOZCoScc5m/x+gPPI5TAylbSw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755274457; c=relaxed/simple;
-	bh=qqT0z9NZTsOue3YrQvuDZjmInNU4OJ7LcD+iWMkiEKo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=erxc01W9RaUP7U4hWZL2Id/SiTYrsmBcRk0aOqIhcfHCB2eb26Gzz4ADgJIWp9fkFOoHKIZwzPLmAUPFv3XzQngjm3RKJcFcHH6vI7nOPCeZbut/LpZ4SBVfNe3VvZogl7FCzGMs1Zpn1z2qRHz75+fBzy5N9Z49qjxa8YmtYB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QqMOIPNJ; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755274456; x=1786810456;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qqT0z9NZTsOue3YrQvuDZjmInNU4OJ7LcD+iWMkiEKo=;
-  b=QqMOIPNJw94GA3Bq3aJlpPHiDNMkvG9TyS9U8hdYzg9Vft5ek+CwRzvy
-   D5xpiW1ddADFgrpy2NfSjXCh7TNRBVN24MplC5qeaNSq5H4QDOaeFTIco
-   /XRkff2BuemQR+iiC+zuUQvT/Wimn4AyJUtH7eZzASxNn6qj4o7kbas4Z
-   H1eEP2Uk7eHoNf0Lon8ozZZyUcVu3F7NU7hkKRNGK8J7u2XMvbq+KKGDt
-   HA/p+Q/g7IJfxaVZlyKECYX3d4umBLlfPUgO0K9NqLaBhqdb34J6vLER7
-   tNCWRinF8eVZRxhWsxsT68Q57ljD0Lqx7PItKq+wqDtXvvLhqGprJCtKy
-   Q==;
-X-CSE-ConnectionGUID: boYDXXyiRZuCqX9Ab31ESA==
-X-CSE-MsgGUID: yl5wS0WCRO60HCVGU+5IUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="69044982"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="69044982"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 09:14:16 -0700
-X-CSE-ConnectionGUID: I/eQkGnkQr2vuReNDYdvYA==
-X-CSE-MsgGUID: qv8iiJpzTjaM21s8iKTK/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167296901"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 09:14:16 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 15 Aug 2025 09:14:14 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 15 Aug 2025 09:14:14 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.82) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 15 Aug 2025 09:14:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C4DURe+LfzDL+wltdoB6LuEjptuwqjPC63zMYKkwbLZ2P6wylZHYIPdDe4Ld1BfKKAlIWSrktjBs3JnXjV2zNOsE5ix7rC+nNuywsDniXyt4PdCcgdNkvLuy/My+3iXyoS9BKJJFjc57hGjd5r7udlOwgCZs/ns1S128ILN/3t9rZ+TJoo4PaCJthfgjh3F9B38D2I1VnuckCeWVSAQfZYmM9990h7/mUsBtg4qlOvXhnX1ivNL4aCvvGD4TJTh+2QB51d6BKTzMMmlgDV5lBGFjrBna95rDHjpLCndDN2XJzBdZuvmTdtpv2Vh7D3ZSIi3kd8Ansm9X2WbWUMuIyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qqT0z9NZTsOue3YrQvuDZjmInNU4OJ7LcD+iWMkiEKo=;
- b=Agt/pgAj29cODjf6316/7g3829mvgdylQlQvT/IbXCmdBq2wXO675eMn4DMfggFBuNJGQoH/FJj9Mv3omZq2lsGlpgMGgWNhnjuq4H1SsV9pVGwcIiikl9IphIoRZ24lz6mHAPE7cJBsYXTQqBIftQEO+pVNgA31jestzFRVkRzWkxlxr4Si5zodg34YZbdCIHoRzcBVHZiJf0urIpBZKtQqXb1kc5yOVciQ/wVJnEY/akhOvGhqJVJDy3fe7RHE9BkaosNVRUqRD8h3+JaDo2Xx0fZCT+DuV6Qb8/19wSOEsJDu9hN8ZCSnqwZXL4FZkqInY54xIonIjYouP5u3VQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SA1PR11MB8375.namprd11.prod.outlook.com (2603:10b6:806:38b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
- 2025 16:14:13 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
- 16:14:13 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "avadhut.naik@amd.com"
-	<avadhut.naik@amd.com>, "john.allen@amd.com" <john.allen@amd.com>
-Subject: RE: [PATCH v2] x86/mce: Do away with unnecessary context quirks
-Thread-Topic: [PATCH v2] x86/mce: Do away with unnecessary context quirks
-Thread-Index: AQHcDTLlXEToa5RkX0Wxt1bBlAn1ubRiXeoAgAArmQCAAAX5gIAAFQIAgAAThICAAQKegIAAKC2w
-Date: Fri, 15 Aug 2025 16:14:12 +0000
-Message-ID: <SJ1PR11MB60837DE56FAE5869234BB34BFC34A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20250814154809.165916-1-yazen.ghannam@amd.com>
- <aJ4U3g4fDNNibUOz@agluck-desk3> <20250814193056.GA192444@yaz-khff2.amd.com>
- <aJ4-c0gNPbwwU3jk@agluck-desk3> <20250814210730.GA228071@yaz-khff2.amd.com>
- <aJ5gcUsaKK2AXDsu@agluck-desk3> <20250815134259.GA27834@yaz-khff2.amd.com>
-In-Reply-To: <20250815134259.GA27834@yaz-khff2.amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SA1PR11MB8375:EE_
-x-ms-office365-filtering-correlation-id: 1dbdd605-a482-4622-700a-08dddc16c641
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?OHcwY2pkeVpyQzJ4SUVCRmlvQStBZGhVSzI5UXdwMU5NK3pPdllaUG8xcFQ3?=
- =?utf-8?B?ZUN6M0JCNXl0a08yNjNrR0MyNnF4bFBjS1hSNTh0VWJhL1FGVUhuNUdwdHpD?=
- =?utf-8?B?eWQ2N0JFcVByY0I4N05ESGk5Sm90ZUpzdlY3ZnBSTktTd0svTW5aRXFYNHNN?=
- =?utf-8?B?eGd3bkF6dlhXcEJ6dEN2cDVuNnE4eEZyK1BKd3phOExIcTJUbHVGVkEzQUx2?=
- =?utf-8?B?ZWxZbnhSYWZKblF4bFJWdFVuVjJBL01NT0FnYU8zME9ZZDFSOTNJSnJPcXJJ?=
- =?utf-8?B?dGpnOW5PUFBtUExtdDRjaEF1Qlg0QUZtbVF3Vm9GOC8xVHBhUzZWUUE1eDEr?=
- =?utf-8?B?bHlmSSttRXR6MWRvT3RUdzVFdmN0bEFlZkY4QVdZbHZTM0N2TlppMURPcm8v?=
- =?utf-8?B?M2wxRmZ4VXJLcldFaWNzWVdybjhCNkNCVHdGMkJ0eWVBdUhQODlqdXh3L3JB?=
- =?utf-8?B?U1l4NjZSajZoejlNRVFkTmtQWitJc2wxcjJlWWVJZ0s3YUFEOWUxeFU0QXJL?=
- =?utf-8?B?TWJTcklMYnNWRHQ4QWc4eWtQOWk5UDkxY1pGelZWZHpNTVdNWnczeU9WbXE5?=
- =?utf-8?B?WDZPS1VWZjJjRlRCV0lBVExuK2tKbGRtVzByREJwVGE3MzI0UmdlOEdWeVV4?=
- =?utf-8?B?dU9UakR4dUcvWWU5S0RzK3hMYkhrS3NxRHhva0piUzFCaWdhb3NnNkRpd0p5?=
- =?utf-8?B?OVh4UFdMVXc4UytZMllQbmNEN2tHYUFQSE5HdGdkSXFrMzBXV1NveC9aZHMy?=
- =?utf-8?B?Q0Q2Z3lCM1pIMHhlVWZmWjIrNUFnWW5DcWladXcwTnBJOWlOZGNuWFgxTmhG?=
- =?utf-8?B?dDM0V1g3cW1Zd2VleGVjbXBDK2dtUk1pREZpWEI4U1Z6dit6enh6bytZS21n?=
- =?utf-8?B?dDkvSERUTEw4dWVPNTdEL0F6SnNRK3R2T0VZT1NXalJ1N2JnZEI5WFFPcXAx?=
- =?utf-8?B?bElNZkk4R0lLVDFEclRmYkxHa202WDQxVkV4Mk9KektDSzVsYWdRY0R4Mnkw?=
- =?utf-8?B?b3NlVG5RcXZ0djc1eXRMWHc2Wm9RWU1TbDZFYjNaM0NsUmE3eDU2dm43UGwx?=
- =?utf-8?B?RjJqK3BSWjhhOWxVRnhTeFFxSDhuY2U3UXBxdjhWQ3grM2QxYW5ncnFLd0dZ?=
- =?utf-8?B?TURBb3Jpb0w3OFpUcSt1cTRWdkhLVy9aVXhJVDE4T2Y2OUs1WEFXdnFFamla?=
- =?utf-8?B?UWNCWkFGTVJyMUVoNmJhWi9UL2JFRElVRklVc0tHV2YvMlFCLzRVODg0WFMx?=
- =?utf-8?B?a25ZOEx2WEMxai9YaTZScS9JcDF4cHc1QXB3OWEwSFVlWjBsL2NBVXdCR1Vl?=
- =?utf-8?B?NloyTjBTWmkxU1V2ZzFpNExEekRFNWFNZkswZ3VrS3hjRGFyQVVDTnF0RE4x?=
- =?utf-8?B?Nit4aFBwLzh6K1RoMHRBRlBydEpuWVphUElEZ2w4Y1dOYjJTdzFmL1JuY0kv?=
- =?utf-8?B?MWdiN3RXaDd4aldiMFVPSG1UN1VOcjhtNTV6N0RkTlNzbis3K3hCVXc4emdY?=
- =?utf-8?B?RnRDWTdMbzVGVnB2Z1BRUmZQbGw5TEZiMDZ5Szl0RFB1WHo0TE1UcVZTRUpq?=
- =?utf-8?B?Y21xMjM2RTRvMTVWVUxENEkxOFpqQkVWY01SdE1qc1hIckxXVnZxcStGZVpj?=
- =?utf-8?B?WDBKZWV5SEk4ck1jdmlidmNHcnAyZk1JSzU5bFIzT3hhMHRObjBxU28yQVNU?=
- =?utf-8?B?ZXNPYVdhY21DdGhOSWN6ejhqYlgrS3pwMHB6UytOU0dZWUk4NFBLL1U1Z3FL?=
- =?utf-8?B?RkIrdm14STUwaWNtU0laSmNTLzU4YnA2UWxsb2x2NVZVVldSZnBkWU1zOFdJ?=
- =?utf-8?B?dDZ6YzVGeEVpeXI1Sjl3eEJtL2g0Mnd0VWtMOEU3WW9kalhacVdvRWhrdk9w?=
- =?utf-8?B?emgvQi9sR1RXSjFMaUt5Ly9BZ1c5eDZMQnZleXVMaVhuMStsLzV1SWlBdzJW?=
- =?utf-8?B?Vk5wOTBwbTJkZGVGY09FZFVLYi9NdnVtbXpGUVNJeTVOT3IyUE95Uk5YdzMz?=
- =?utf-8?B?QVl5ejI0anl3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b2dLQWIzSU8xSXRzQXJ2NmdZTE95TzIremVYQkxPSDlGN3NUbG5xQ3ZTTHFX?=
- =?utf-8?B?dkl2WE1rVTF1Ym92cGE1NU4zQjJKQjRFTXN0anVwVlVramltcGxBVVB5ZGE5?=
- =?utf-8?B?bmNrRzlqSEgwYnV6M2tiVzZUenRJYjVlOFc3eGRpSGYvNm5TdmtrUUl5Y1Q5?=
- =?utf-8?B?QXFrVmFET2FPc05JSmNCUy9pdXpmTlcwM0RqajJLclg2VFFYTHpmckowU3Vl?=
- =?utf-8?B?SWdEb3VOTXI1NDZCa1o2SjBMMEMvMnpEcU9sU1JGZ3RCRDRoTWppQXQ3bjRZ?=
- =?utf-8?B?dkJDNXF5MjZMNFM1QnRPdFE3QVFwUzdzNkl1ZHlMUGFFYVB6YkpXdVlzSERV?=
- =?utf-8?B?c2VXblBKd3IvVXYzdisrY3NjZlowcG1nZkF5cnZJNFNzTlVrbWg5NTRBR2Y0?=
- =?utf-8?B?Q1VtTmp3Y2s0eVUxTDNCQ1NXYmVOdEV2MWRkV3BtbjdwYllPOXo1MlBqUVlr?=
- =?utf-8?B?bVVacFVjK1RIbEVnVzllejBBTUtub3BXdFZwbTFULzVWbGgzbi9jRjZzdGZG?=
- =?utf-8?B?YkFSTFNvSWZUUzhDY2l5SFc1V2ZwRnFBU3V6L25wVHVEYm5wUFhRT1czVVZC?=
- =?utf-8?B?NGZEd2s2QmdGekprVHdGcjNEQlVzZEQvTjg5QUFWV0l4aDRsRm51akFYRHBy?=
- =?utf-8?B?cTJQM2dtTXdqaFp2czZWY3lIZ0lmT1Nrc3o2dTE3Zml5eU1IM3p5SW9jN0lI?=
- =?utf-8?B?Sjl0QmFVM09JcXlTemliQ3hsZTIvcTVKaXhwTXp5YXdnTWxuN3Vadm5lT1J5?=
- =?utf-8?B?bTFKRTZkRDRERTM4dTRycUlhSy83bWlDSWtFUWRtT3ZvSXFJYUE5NmcybklI?=
- =?utf-8?B?MllydWRyREh3V1IzcmR6L21VNWtLQ2ljMStFWlVlWE90aG5KTU9PdzcrdXRn?=
- =?utf-8?B?MlJZQTFSclZHSzJEWkpMRTRWTHZ0T1RuTWppRGVObGh5OXN6KzlSM2FMZGVS?=
- =?utf-8?B?eHc5VmljZmU4RjMreklFV1UwS0FMa0k3VWMzQUdkZnNuOTZreksxMVg1ZXBQ?=
- =?utf-8?B?YXYyUXJuUy9adytnVE43bUw5Z3BUa2RpU21DcE5MTU04aHpBdkszS1ZFSmFu?=
- =?utf-8?B?L3VlVmF2L3NHTWVkcHl1UDlEOXpFeUkxakgva3NGTVJzS1VvRXZDSEpEYits?=
- =?utf-8?B?aFRsWnBiakNEYmdrNDU2ZlN6VkVLYkFzWE9DVG1aVlA5d1Q5bjVXODZNQzBz?=
- =?utf-8?B?Y3N3dlZPVzRIb0NwYXEvNjhBZmxzd1ZmbUVDeDFldVEwRmcwMDBieXBRbTlK?=
- =?utf-8?B?WUlMZnFyMTdMMnF3Q2pjMklLY3cvVzFjTGZUdElWaWZvNzdWR3NwZmVsUjNQ?=
- =?utf-8?B?bVlPblFSZlAxM2MrbU9YbUdJbHZlcXFzR2Q0NVNHaXU2R0dMMFIrRDVVZkRi?=
- =?utf-8?B?WnhTeFphcWpEMVdzeXlQS1hyWTRtT2tsckRJU1ZXeGU5T1E0OStIUzFwRW5z?=
- =?utf-8?B?Kzk2T2tqMzRoYmFqOXVMT0NuQWs0d0RyUUhiMVpSNG1ucTFYNWNsbGRuT3BJ?=
- =?utf-8?B?RVZXbkN3K2ZWUzlxeTBtVUZzZVVQaWhwNFJsUUJPN0kydWtPVHdQaGxWNkxk?=
- =?utf-8?B?Wno3ZURRb2gzOGMzdTZWZ0tVaURZVDBrNXZtOHlZNk4wbVFpNld6bzQ4Yk1o?=
- =?utf-8?B?TGJFaktPbXhlMlloc2dvM0IyOGdVNHNTU2c1K2dCaFFBejlXbm5QZ0VzQ0la?=
- =?utf-8?B?VFd2ZHE1T2JCU0xYK0pla0NTSHQ0UVd3UmlSbHpPM3ZvRjBDS2FPdzd3RkJM?=
- =?utf-8?B?aWFSbHlHKzJBWTFsVExCbkMrQ1ZmRmsxUmlKTzZRaTNSck9lYVpweFFTbEM4?=
- =?utf-8?B?Ylp4cFBKbllSK1h2aCt4cVpBa2JjakVDdEZ6QW9VUFk5TktpRFVrbThLbm5s?=
- =?utf-8?B?STdCT3JIM1hERHR1OEVtRTl5WVJ2ME93MDUyRlFrdGsyOWVLM2VHcjVVOVlF?=
- =?utf-8?B?ajExVEJWVk5KelorR21ia0w4b2VQL25KaDIzbjRWanVsSWRpcjEzd3RKRzVt?=
- =?utf-8?B?VUVjRnlOcytReFpFTU5RRDNBOXdXc0gwWDZVenFnSmY2ZDg4TjRnSUpnbUVu?=
- =?utf-8?B?WUllMWlyNTZsWWJzWE1UdmM5YzRzZ0xPamc3MEpZYnd1cnJNQ0c5em9ud3Vo?=
- =?utf-8?Q?HJHHZM7NY9Sg4TsqUy1azqmML?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC8224B03;
+	Fri, 15 Aug 2025 16:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755274586; cv=none; b=k/oGj26r8PT+fuMjd7fxx/91NLXzS5apSbgqkcnZ8CMWKtjCZsf95WMLzSVeWuTotylxZbMY+duSU8KPidshWryXXquwpvOWfUBYczbIa5EOKdb5ALVsOupmjaPjJBSZW9VJg15zeJFRWUtIbtZgGqABDQiFTUmyLS61u0itqJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755274586; c=relaxed/simple;
+	bh=CJqtRouB/zf6LLkoYjjtkKlIZ0K2T4r3DtGNwFhhH3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rb1A95iA8Qk2mwQizYuRkuw4QvUEdJwPpHqGmTiV2fT12YPzAsOIAU+d3pty9nNTXm3fWqjlI381919Oc6NkhG5txxlvh/mTmzRqrhDXO4eT+up1c6bHEIP1oVpXTHQcTY+6k7RkPn0Or5G37b4oVNpp34deogx8rvsV28i8Rc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDkj0LV1; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6188b7550c0so2834478a12.2;
+        Fri, 15 Aug 2025 09:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755274583; x=1755879383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W1W8qCWPDSlcr4LOYzMFIQnsfqXcLIE3VVjRwGLr7Hk=;
+        b=MDkj0LV1jRnJH1XUcop0di2bxwfS1l4Oo6yXSvqYf6ldfFz8DqOFYh5vs/UBp2+M4w
+         P/V6QycdgDkfG0ROtWhGxSFFaLGJaPDCRrfvxz1d7MhznAIzlSZAWFkEYc0RXGN1yGB5
+         HIAnuvpgXjmMw7iYJDiqLxK1DwCXO/xhrqrRzOjn0aOQaERXFp82P/U3g5ZtUdcE9JMy
+         cp2g00gMCLEJBIwbTvM/maAcjyp2YShh6kiRByZnxzhauc1/u99xp/L55UDvz9yCtYop
+         D1h24phJeqx6x6gIKUHCdMJwY2jF7B6mH4ZOloF4DSBrS0WFGjqZsxzP8m8loj5FCqry
+         EPyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755274583; x=1755879383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W1W8qCWPDSlcr4LOYzMFIQnsfqXcLIE3VVjRwGLr7Hk=;
+        b=R616yPqBrEGHN2VFR+XbskyDCIKpWbKRlG95qCqrObVYf50SkE7+WyewQiVCg8mM48
+         4gvHccH0pU+h6wdFCywXfmxDw9EkTBU1ncSUPEJzrR0RJdALtJomBQhzA6iWVV6pEZov
+         2LmU94Zld6gVpgUzwakxcOCCYjA6cxZiFj2uXT9PigMF7Pkz7RI3EdK+tDGO9xgZ/Hin
+         mMNf+cXGSDAUcOIRK8VpQFBTNbjJivFsnSdOJkgtaCay29jHDR8ltiYbGStX9Gvxsvvw
+         6qkJagQeXQiZlKR4mpyTRDcoy2L+LyJu7OZu5aLnIA4BiErXTLdHAifiHH9h72r7HH/l
+         GixA==
+X-Forwarded-Encrypted: i=1; AJvYcCVF7HnxFBkKP3GQ2rBZ2LqCIlrXX+idm0VcK0+kOqEBFpOx6LfxqlzsH0Im43qZe8Aee7l2d7T/0tD+zY3x@vger.kernel.org, AJvYcCWy55c7T1bQH91egCfPru/dTe/UWWTjjyTwAOkDTmyuluDEqwGgG57E8RyJUm622A4vPBLYd8/pFmoNhAbH@vger.kernel.org, AJvYcCWzxawBYELQueKN0ZmELBEtYk1F2/TgHsa8E9puFxlDTjKjqKYnEsB5o6PkzTYjQohzH42S8t1qGA9apZA8rQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys3wAkr2BYwDDvyqPAKorSCDqRiS1TNppvrUYUSd/HfdPWP9vj
+	HzuOfyDkzJgihlyNQ9A3OOSpH9G5Z6Drbo+x3F0ZdYTzHbeMG/pfNgulNcJ6eiskWfa+onKt9zA
+	aFAA4O3uwJYtxYSp7EU59omiJAi/raYV6FbSsB24=
+X-Gm-Gg: ASbGnctbVjWR1owsmZSPd84Yn63DqZY3owlIzxnSrBRs9xbrK/VzMk/mD4UsdPoja5f
+	6g7Lovh2x1e9gx1Arqrn8pBg07MpkVHJZ78d7lawq7Wqh8xcqdqWn22AF7gYEwkgjfp3hJzfuH3
+	qsywyhWyVu16U31K+V5mXnUcoBxffILfpIZbvuz11dGsZNFzeKHqjwwYbh22NKZvkf3fT406Man
+	H6N1yFwU1K4x49djA==
+X-Google-Smtp-Source: AGHT+IEq53CvZiK9QwqFIqqIkvSxCZLxw6WxxXTSPChXmEAA61xP7XlyJOFW+kFmv0bmdEoccnYSbMGzYVpCumTMoGc=
+X-Received: by 2002:a05:6402:234a:b0:615:7fdf:9c4f with SMTP id
+ 4fb4d7f45d1cf-618b055639amr2207732a12.24.1755274582886; Fri, 15 Aug 2025
+ 09:16:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1dbdd605-a482-4622-700a-08dddc16c641
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2025 16:14:12.9544
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GSE2Ra0ZqbW4v7rKagB8HgFTv20KTlGOeYTzgVQL7rSavXhssi200G/AWLgD/eq+UfD3qDuImf/Ige0ANvgW0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8375
-X-OriginatorOrg: intel.com
+References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com> <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
+In-Reply-To: <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 15 Aug 2025 18:16:11 +0200
+X-Gm-Features: Ac12FXw7HEcTxH4ly2XMMWxVMhAdyLVKkIQ0ckSe7GXTHasZi66tKFCBe0_tVXc
+Message-ID: <CAOQ4uxjVs4kKfvfp+Jgdf2BxMW8v5p0gPHujRfCHj4733ioCag@mail.gmail.com>
+Subject: Re: [PATCH v5 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBPa2F5LCBmYWlyIGVub3VnaC4gSXQgc2VlbXMgbGlrZSB0aGVzZSBxdWlya3Mgc2hvdWxkIHN0
-YXkuIFRoYW5rcyBmb3INCj4gdGhlIGRpc2N1c3Npb24uIEl0IHJlYWxseSBoZWxwZWQgbWUgYmV0
-dGVyIHVuZGVyc3RhbmQgdGhlc2UgcXVpcmtzIGFuZA0KPiB0aGVpciBoaXN0b3J5Lg0KDQpZYXpl
-biwNCg0KTWF5YmUgc29tZWRheSB3ZSBzaG91bGQgc2F5ICJlbm91Z2giIGFuZCBjbGVhbiBvdXQg
-Y29kZSB0byBzdXBwb3J0IGFuY2llbnQgaGlzdG9yeS4NClRoYXQgU2FuZHlicmlkZ2UgQ1BVIHdh
-cyBsYXVuY2hlZCBpbiAyMDEyLCBkaXNjb250aW51ZWQgaW4gMjAxNSwgYW5kIGlzIG5vdyBvdXQg
-b2YNCnNlcnZpY2Ugd2luZG93IChtZWFuaW5nIG5vIG5ldyBtaWNyb2NvZGUgdXBkYXRlcykuIFdp
-dGggb25seSA4IGNvcmVzIGFuZCAyME1CDQpMMyBjYWNoZSwgSSBleHBlY3QgbWFueSBsYXB0b3Bz
-IG5vdyBydW4gcmluZ3MgYXJvdW5kIGl0Lg0KDQpMaW51eCBoYXMgYSBoaXN0b3J5IG9mIHN1cHBv
-cnRpbmcgc3lzdGVtcyBsb25nIGFmdGVyIG1hbnVmYWN0dXJlcnMgaGF2ZSBtb3ZlZCBvbiwNCmJ1
-dCBpdCBkb2VzIGV2ZW50dWFsbHkgZHJvcCBvbGQgc3R1ZmYuIE1heWJlIHRvZGF5IGlzbid0IHRo
-ZSByaWdodCB0aW1lLiBCdXQgcGVyaGFwcw0KMjAzMyB3aGVuIHRob3NlIG9sZCBzeXN0ZW0gcmVh
-Y2ggVVNBIGxlZ2FsIGRyaW5raW5nIGFnZSA6LSkNCg0KLVRvbnkNCg==
+On Thu, Aug 14, 2025 at 7:22=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> To add overlayfs support casefold layers, create a new function
+> ovl_casefold(), to be able to do case-insensitive strncmp().
+>
+> ovl_casefold() allocates a new buffer and stores the casefolded version
+> of the string on it. If the allocation or the casefold operation fails,
+> fallback to use the original string.
+>
+> The case-insentive name is then used in the rb-tree search/insertion
+> operation. If the name is found in the rb-tree, the name can be
+> discarded and the buffer is freed. If the name isn't found, it's then
+> stored at struct ovl_cache_entry to be used later.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v4:
+>  - Move the consumer/free buffer logic out to the caller
+>  - s/aux/c_name
+>
+> Changes from v3:
+>  - Improve commit message text
+>  - s/OVL_NAME_LEN/NAME_MAX
+>  - drop #ifdef in favor of if(IS_ENABLED)
+>  - use new helper sb_encoding
+>  - merged patch "Store casefold name..." and "Create ovl_casefold()..."
+>  - Guard all the casefolding inside of IS_ENABLED(UNICODE)
+>
+> Changes from v2:
+> - Refactor the patch to do a single kmalloc() per rb_tree operation
+> - Instead of casefolding the cache entry name everytime per strncmp(),
+>   casefold it once and reuse it for every strncmp().
+> ---
+>  fs/overlayfs/readdir.c | 115 +++++++++++++++++++++++++++++++++++++++++--=
+------
+>  1 file changed, 97 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce27172d28d879559f1008b9c87320..803ac6a7516d0156ae7793ee1=
+ff884dbbf2e20b0 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -27,6 +27,8 @@ struct ovl_cache_entry {
+>         bool is_upper;
+>         bool is_whiteout;
+>         bool check_xwhiteout;
+> +       const char *cf_name;
+> +       int cf_len;
+>         char name[];
+>  };
+>
+> @@ -45,6 +47,7 @@ struct ovl_readdir_data {
+>         struct list_head *list;
+>         struct list_head middle;
+>         struct ovl_cache_entry *first_maybe_whiteout;
+> +       struct unicode_map *map;
+>         int count;
+>         int err;
+>         bool is_upper;
+> @@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
+de(struct rb_node *n)
+>         return rb_entry(n, struct ovl_cache_entry, node);
+>  }
+>
+> +static int ovl_casefold(struct unicode_map *map, const char *str, int le=
+n, char **dst)
+> +{
+> +       const struct qstr qstr =3D { .name =3D str, .len =3D len };
+> +       int cf_len;
+> +
+> +       if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len=
+))
+> +               return 0;
+> +
+> +       *dst =3D kmalloc(NAME_MAX, GFP_KERNEL);
+> +
+> +       if (dst) {
+> +               cf_len =3D utf8_casefold(map, &qstr, *dst, NAME_MAX);
+> +
+> +               if (cf_len > 0)
+> +                       return cf_len;
+> +       }
+> +
+> +       kfree(*dst);
+> +       return 0;
+> +}
+> +
+>  static bool ovl_cache_entry_find_link(const char *name, int len,
+>                                       struct rb_node ***link,
+>                                       struct rb_node **parent)
+> @@ -79,7 +103,7 @@ static bool ovl_cache_entry_find_link(const char *name=
+, int len,
+>
+>                 *parent =3D *newp;
+>                 tmp =3D ovl_cache_entry_from_node(*newp);
+> -               cmp =3D strncmp(name, tmp->name, len);
+> +               cmp =3D strncmp(name, tmp->cf_name, tmp->cf_len);
+>                 if (cmp > 0)
+>                         newp =3D &tmp->node.rb_right;
+>                 else if (cmp < 0 || len < tmp->len)
+> @@ -101,7 +125,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(s=
+truct rb_root *root,
+>         while (node) {
+>                 struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(n=
+ode);
+>
+> -               cmp =3D strncmp(name, p->name, len);
+> +               cmp =3D strncmp(name, p->cf_name, p->cf_len);
+>                 if (cmp > 0)
+>                         node =3D p->node.rb_right;
+>                 else if (cmp < 0 || len < p->len)
+> @@ -145,13 +169,16 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data =
+*rdd,
+>
+>  static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_da=
+ta *rdd,
+>                                                    const char *name, int =
+len,
+> +                                                  const char *cf_name, i=
+nt cf_len,
+>                                                    u64 ino, unsigned int =
+d_type)
+>  {
+>         struct ovl_cache_entry *p;
+>
+>         p =3D kmalloc(struct_size(p, name, len + 1), GFP_KERNEL);
+> -       if (!p)
+> +       if (!p) {
+> +               kfree(cf_name);
+>                 return NULL;
+> +       }
+>
+>         memcpy(p->name, name, len);
+>         p->name[len] =3D '\0';
+> @@ -167,6 +194,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
+truct ovl_readdir_data *rdd,
+>         /* Defer check for overlay.whiteout to ovl_iterate() */
+>         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
+_REG;
+>
+> +       if (cf_name && cf_name !=3D name) {
+> +               p->cf_name =3D cf_name;
+> +               p->cf_len =3D cf_len;
+> +       } else {
+> +               p->cf_name =3D p->name;
+> +               p->cf_len =3D len;
+> +       }
+> +
+>         if (d_type =3D=3D DT_CHR) {
+>                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
+>                 rdd->first_maybe_whiteout =3D p;
+> @@ -174,48 +209,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(=
+struct ovl_readdir_data *rdd,
+>         return p;
+>  }
+>
+> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> -                                 const char *name, int len, u64 ino,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> +                                 const char *name, int len,
+> +                                 const char *cf_name, int cf_len,
+> +                                 u64 ino,
+>                                   unsigned int d_type)
+>  {
+>         struct rb_node **newp =3D &rdd->root->rb_node;
+>         struct rb_node *parent =3D NULL;
+>         struct ovl_cache_entry *p;
+>
+> -       if (ovl_cache_entry_find_link(name, len, &newp, &parent))
+> -               return true;
+> +       if (ovl_cache_entry_find_link(cf_name, cf_len, &newp, &parent))
+> +               return 0;
+>
+> -       p =3D ovl_cache_entry_new(rdd, name, len, ino, d_type);
+> +       p =3D ovl_cache_entry_new(rdd, name, len, cf_name, cf_len, ino, d=
+_type);
+>         if (p =3D=3D NULL) {
+>                 rdd->err =3D -ENOMEM;
+> -               return false;
+> +               return -ENOMEM;
+>         }
+>
+>         list_add_tail(&p->l_node, rdd->list);
+>         rb_link_node(&p->node, parent, newp);
+>         rb_insert_color(&p->node, rdd->root);
+>
+> -       return true;
+> +       return 1;
+>  }
+>
+> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+> +/* Return 0 for found, 1 for added, <0 for error */
+> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>                            const char *name, int namelen,
+> +                          const char *cf_name, int cf_len,
+>                            loff_t offset, u64 ino, unsigned int d_type)
+>  {
+>         struct ovl_cache_entry *p;
+>
+> -       p =3D ovl_cache_entry_find(rdd->root, name, namelen);
+> +       p =3D ovl_cache_entry_find(rdd->root, cf_name, cf_len);
+>         if (p) {
+>                 list_move_tail(&p->l_node, &rdd->middle);
+> +               return 0;
+>         } else {
+> -               p =3D ovl_cache_entry_new(rdd, name, namelen, ino, d_type=
+);
+> +               p =3D ovl_cache_entry_new(rdd, name, namelen, cf_name, cf=
+_len,
+> +                                       ino, d_type);
+>                 if (p =3D=3D NULL)
+>                         rdd->err =3D -ENOMEM;
+>                 else
+>                         list_add_tail(&p->l_node, &rdd->middle);
+>         }
+>
+> -       return rdd->err =3D=3D 0;
+> +       return rdd->err ?: 1;
+>  }
+>
+>  void ovl_cache_free(struct list_head *list)
+> @@ -223,8 +265,11 @@ void ovl_cache_free(struct list_head *list)
+>         struct ovl_cache_entry *p;
+>         struct ovl_cache_entry *n;
+>
+> -       list_for_each_entry_safe(p, n, list, l_node)
+> +       list_for_each_entry_safe(p, n, list, l_node) {
+> +               if (p->cf_name !=3D p->name)
+> +                       kfree(p->cf_name);
+>                 kfree(p);
+> +       }
+>
+>         INIT_LIST_HEAD(list);
+>  }
+> @@ -260,12 +305,38 @@ static bool ovl_fill_merge(struct dir_context *ctx,=
+ const char *name,
+>  {
+>         struct ovl_readdir_data *rdd =3D
+>                 container_of(ctx, struct ovl_readdir_data, ctx);
+> +       struct ovl_fs *ofs =3D OVL_FS(rdd->dentry->d_sb);
+> +       char *cf_name =3D NULL;
+> +       int c_len =3D 0;
+> +       int ret;
+> +
+> +       const char *c_name =3D NULL;
+> +
+
+Another nit:
+Pls move up next to cf_name =3D NULL line in your branch
+
+No need to repost.
+
+Thanks,
+Amir.
 
