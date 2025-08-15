@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-770058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661C1B2764C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:47:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB47CB27656
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 04:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4024A5677A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45E9723B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 02:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265F1277C9A;
-	Fri, 15 Aug 2025 02:47:32 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68D92BD59F;
+	Fri, 15 Aug 2025 02:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oh0T+hif"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224E417B425;
-	Fri, 15 Aug 2025 02:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE80A29ACED;
+	Fri, 15 Aug 2025 02:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755226051; cv=none; b=du0ADfFA1y31qJ8joJno1DrMxZyIJ9ZYjPZdlcmT2COBsZa4MfWbx7HH4spJMwZQX4WtS33/GejqvX5t6RuEUGpuDxdKgPBgg29+GZjOe5Xs7XshX0dpvXhMAVrw6jVRqG6ebyrtfipLAoZHrpdYrvdTo8iHako6NgDEVCAsLPI=
+	t=1755226054; cv=none; b=cDADD+DHHK7QUHPxOMhyqvr1TgqJxqv9DUSRJwDz1ipyC8GnbVdR1LOuheBvcV6yE/x4eUUebrGTic1dl2xX3Rl+rTtgVMP7xbIRXKMLMefefrfnK42Qz0THDSBxQw7wijGKtym1bIuCZT70rMI8m1GKIMDOWi/RBDN9bokX7hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755226051; c=relaxed/simple;
-	bh=gCxvoSncoAMm5cb9dzgd7qhiA0eQqS5E6UWE1gIlj9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E6TswCWYakqgroS3jaiGPQE4/oCPc2vn/i9Kx1GOrp0mubOvI3fgzl9MKhA2VlZoZte7JJnvaw+dn1yEjaHM8gQ1ht7nHgEij/wQoNFH3p/NoEWeTGepDhdGxeCoIA7c6ppvSgLvaR1giFHjgBiz3eIHAfyv5j4ZxprPfIzzl8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 3C10D138A54;
-	Fri, 15 Aug 2025 02:47:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id BC96920028;
-	Fri, 15 Aug 2025 02:47:18 +0000 (UTC)
-Date: Thu, 14 Aug 2025 22:47:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Steve French
- <smfrench@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>,
- "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Questions about wake_up[_interruptible][_all]
-Message-ID: <20250814224717.192b625d@batman.local.home>
-In-Reply-To: <13851363-0dc9-465c-9ced-3ede4904eef0@samba.org>
-References: <b1f38f6b-9d14-46cb-81f1-6bc5f92e7c65@samba.org>
-	<20250813173705.0e910f5a@gandalf.local.home>
-	<13851363-0dc9-465c-9ced-3ede4904eef0@samba.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755226054; c=relaxed/simple;
+	bh=tUeCc9ThgrHoqXZlg9UZj7CL5h9CrTzdS+fOkqe0qYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AwlIFjRID2FXksmH/vsyDUJOSDUrSBsGBHnfvwMcyL2CSqjRvBLZl6SLqSX9Cxgm2wad4b0vA32c57c4JFxoq2Eb3HYOI5VB/d/Kw6CALjILVUwbi3bI6uGFcYjndYfCv2Ugc9JhxCJ64b6vbj3ubiS6hywPEc1j5gTXwVRaeDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oh0T+hif; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755226053; x=1786762053;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tUeCc9ThgrHoqXZlg9UZj7CL5h9CrTzdS+fOkqe0qYg=;
+  b=Oh0T+hifYhufXnayXUNDcO3U+faclzywXsIAzr9FFmZ7fmzTaCXFOZJY
+   VVQxHiCrfRCUY54xw0EWdndssEjF+DqLQDlYk3Eyfhu+gIRnbSTe2cbXU
+   bx2obFPl23iRSAiNDpr7oUfbn4FXfNsHw2QyQDi5WK7NFBTodNaJthzgO
+   2YhTfNZHjFopImkM383yZV/iIylhfn74hY5GRvUcAxMCAL6006gXINSOz
+   GezOs+6kBmWRxyW9oPRPTZ/zxnkug8y96S4Y3Qf2TJ/LdT1eqa7FuxAh9
+   ZVx3Ch0nH73Ihl95ltm+Coq9yqG3obDl5rF6IVsGaShbhMn/AREio5Zts
+   Q==;
+X-CSE-ConnectionGUID: qY484xyWSXSQN+l5h7RXHg==
+X-CSE-MsgGUID: yXbkP92+RGyYOBKniVHSnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="67822342"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="67822342"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:47:32 -0700
+X-CSE-ConnectionGUID: QNJit5/IQiO/mRXOgmG1Ig==
+X-CSE-MsgGUID: lDe+5FosRvyosWE0PxClsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="167269050"
+Received: from hmao3-mobl1.ccr.corp.intel.com (HELO [10.238.0.213]) ([10.238.0.213])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 19:47:29 -0700
+Message-ID: <066780ea-95f0-49c4-938a-3405975ebf60@intel.com>
+Date: Fri, 15 Aug 2025 10:47:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [????] RE: [PATCH RESEND^2] x86/paravirt: add backoff mechanism
+ to virt_spin_lock
+To: Peter Zijlstra <peterz@infradead.org>, "Li,Rongqing"
+ <lirongqing@baidu.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Li, Tianyou" <tianyou.li@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>
+References: <20250813005043.1528541-1-wangyang.guo@intel.com>
+ <20250813143340.GN4067720@noisy.programming.kicks-ass.net>
+ <DS0PR11MB8018B027AA0738EB8B6CD55D9235A@DS0PR11MB8018.namprd11.prod.outlook.com>
+ <bb474c693d77428eb0336566150a1ea3@baidu.com>
+ <20250814104156.GV4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Guo, Wangyang" <wangyang.guo@intel.com>
+In-Reply-To: <20250814104156.GV4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: BC96920028
-X-Stat-Signature: d7j3jhht8x7kzuug1ayaokbqreb8xzst
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+kB/E05ewgxoOfBc2Q59evmuhbOc9V8vo=
-X-HE-Tag: 1755226038-949633
-X-HE-Meta: U2FsdGVkX18ER/X4Pycl7WxqoZbrV4JlFQQpekn0pgKoGJ8nythpJW7r01fUx4nteqr4HyBNn+zsYbeUyNVLpDHw09jfr823H0eeYWFPo09Y1nxdFT1jqog5vReGyYz5Fw095wv5miSQ2aDW17/iAXj+GDahu7XH96A/O5gVT//yXInyhRcLU06BWIq/LLEOo/6cm74EHPObysU6cHdhgJXH0ppzRw4BNOvB+VTwOHeh/Z49K3EZ7EESwB7BUQzimN1Nmoe2FVdAeaNivcXhe59Im7e/2GcBQl3GdnuRkmar5H4bJJUzAH+f+kci+GT+Ydsc3SMdk0BpIvDBUrFM9AsyhwwE+fxCpNk90K5hWOtCOx+XEO/W8rac1Dsrep9q
 
-On Thu, 14 Aug 2025 09:57:14 +0200
-Stefan Metzmacher <metze@samba.org> wrote:
+On 8/14/2025 6:41 PM, Peter Zijlstra wrote:
+> On Thu, Aug 14, 2025 at 03:10:46AM +0000, Li,Rongqing wrote:
+>>> On 8/13/2025 10:33 PM, Peter Zijlstra wrote:
+>>>> On Wed, Aug 13, 2025 at 08:50:43AM +0800, Wangyang Guo wrote:
+>>>>> Binary exponential backoff is introduced. As try-lock attempt
+>>>>> increases, there is more likely that a larger number threads compete
+>>>>> for the same lock, so increase wait time in exponential.
+>>>>
+>>>> You shouldn't be using virt_spin_lock() to begin with. That means
+>>>> you've misconfigured your guest.
+>>>>
+>>>> We have paravirt spinlocks for a reason.
+>>>
+>>> We have tried PARAVIRT_SPINLOCKS, it can help to reduce the contention cycles,
+>>> but the throughput is not good. I think there are two factors:
+>>>
+>>> 1. the VM is not overcommit, each thread has its CPU resources to doing spin
+>>> wait.
+>>
+>> If vm is not overcommit, guest should have KVM_HINTS_REALTIME, I think native qspinlock should be better
+>> Could you try test this patch
+>> https://patchwork.kernel.org/project/kvm/patch/20250722110005.4988-1-lirongqing@baidu.com/
+> 
+> Right, that's the knob.
 
-> Am 13.08.25 um 23:37 schrieb Steven Rostedt:
-> > On Wed, 13 Aug 2025 22:28:08 +0200
-> > Stefan Metzmacher <metze@samba.org> wrote:
-> >   
-> >> I guess I understand the difference between
-> >> wait_event() and wait_event_interruptible(),
-> >> the first ignores any signal even kill and the
-> >> 2nd returns -ERESTARTSYS on any signal.  
-> > 
-> > The main difference is what the code does after the wait_event*().
-> > 
-> > If you use wait_event_interruptible() the first thing the code should do is
-> > to check if a signal is pending or not. Or at least check some status to
-> > know that what it is waiting for did not happen and handle it properly.
-> > 
-> > But there's places in the kernel where the task is waiting for something
-> > and it expects that whatever it is waiting for *must* happen eventually and
-> > it should not continue until it does.
-> > 
-> > Looking at one example: fs/jbd2/journal.c: jbd2_journal_start_thread()
-> > 
-> > It creates a thread, tests that it is created, and then waits for that
-> > thread to acknowledge that it is running, and the function should not
-> > return until it does.
-> > 
-> > If someone were to send a signal to that waiter and wake it up prematurely,
-> > the following code may become buggy as it expects the thread to be
-> > initialized and active when it is not.  
-> 
-> Thanks!
-> 
-> Via a private channel I also got this answer:
-> 
-> wake_up_interruptible() only wakes tasks that are in the
-> TASK_INTERRUPTIBLE state.
-> 
-> wake_up() wakes tasks that are in either the TASK_INTERRUPTIBLE or
-> TASK_UNINTERRUPTIBLE state, as per the TASK_NORMAL macro used in the
-> definition of wake_up().
-> 
-> Call chain:
-> 
-> wake_up_interruptible
->    __wake_up(mode = TASK_INTERRUPTIBLE)
->      __wake_up_common_lock(mode = TASK_INTERRUPTIBLE)
->        __wake_up_common(mode = TASK_INTERRUPTIBLE)
->          curr->func(mode = TASK_INTERRUPTIBLE)
->            // curr->func is usually default_wake_function
->            default_wake_function(mode = TASK_INTERRUPTIBLE)
->              try_to_wake_up(state = TASK_INTERRUPTIBLE)
->                ttwu_state_match(state = TASK_INTERRUPTIBLE)
->                  __task_state_match(state = TASK_INTERRUPTIBLE):
->                  if (READ_ONCE(p->__state) & state) ...
-> 
+Yes, that works.
+By providing qemu-kvm with `-cpu host,kvm-hint-dedicated` option, it can 
+use mcs qspinlock and have better performance compared to virt_spin_lock().
 
-That's a differentiation in implementation, but I thought your question
-was more about what the differentiation in the purpose of the two.
+But for non-overcommit VM, we may add `-overcommit cpu-pm=on` to let 
+guest to handle idle by itself and reduce the guest latency. Current 
+kernel will fallback to virt_spin_lock, even kvm-hint-dedicated is 
+provided. With Rongqing's patch, it can fix this problem.
 
--- Steve
+BR
+Wangyang
+
 
