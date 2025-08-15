@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-771135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713AEB28344
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CB6B28345
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 17:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C50B03D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:49:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04B49B05350
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC7F308F20;
-	Fri, 15 Aug 2025 15:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E891E308F27;
+	Fri, 15 Aug 2025 15:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="royxHDIp"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Okuu1+fF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF7A306D5F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 15:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D67301031;
+	Fri, 15 Aug 2025 15:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755272986; cv=none; b=XSDHWIrC01liMhQmYFhXjJJWWtta0VLU5issdN66kQvr6DEcUdZV72AfnqOejrbbLzQg+nMta9anhdTeBUDW5cdhftULhAffT793fxSEcwLfQ9eT10CnlMig4w4h6mwiLs9lpHbZtkyBsZyiRGCO6xh7rMb2WU8Zx1E+RDyrPzc=
+	t=1755273009; cv=none; b=U70QBBdv3F4RUOM+QxwhJopRS+/oO2ObCmloUGSlAv7kmi5GV20y71cAudRVVWCdLqFyS35d/+7DgsiCbUCYtYr7Y2Pv5Ig/KLVk5w0AZEzr4ir4Q1g1N38UeJe2jkRrFOtoRA0BRKTL1ldZuJQoVaVFsK3sOfthsQTZo83npLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755272986; c=relaxed/simple;
-	bh=LDT1LlSRvClcQTESyvNZOcCDbQzHYlxIpeUOcGdwEq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hl2GRjsq8JtxQFrxnIE2mxrD0+Sexj4UTxLlWMUwsN87FK9OQHiaQOe2e/Ie77X+sQrUZlIrDzujWx7ss2cFmNyuZlj2/kIdk+Oe0wTTRGCmF45/NeOc61LJWFjHL3M6wuq5DdR3uvBuskNssGpO5Pv9AbN1V+lxZr0+Y7Ze9kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=royxHDIp; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74381f0664fso594521a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 08:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755272982; x=1755877782; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYeMUsITLzLzX8aJHEpZBjK6mYQbUKQb8W2QJwQZHWg=;
-        b=royxHDIp6fTpPf7/wF2Uis2NIQDsarsmTXle6OaQMmECNcLb0YOEcVASBVQ+i0V0zc
-         fx8azFrjCN4BPJ1lWqFrnfqh2NcO4NEsTqF9w7d3pJbuTwXM/msNiSmwGLEy77D1moLs
-         bDTEYhfNAgSHvJ9a6LZXFjYcEz2xdaWDJD7l8pyetL5vqh5m+rN8pzWOagnPJ60WnMuU
-         fqvqk4FJF/1p/QFfMvW7BArhAaM/M4ff5vMppz4C9dNueUHbDwrGYLpnquJSbqDOaCOX
-         zJS8U0mkK14N0OorqAZ1NKwV+dtrLPlTTUNdiNoIvVBxs1pWkw6ahiQhhjbmLv9eD0iM
-         btyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755272982; x=1755877782;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYeMUsITLzLzX8aJHEpZBjK6mYQbUKQb8W2QJwQZHWg=;
-        b=hQcDXwRJkp6gfIRv+tumoVyD16x6RR6R3ZE/mS7BQBEUIpjOk14xqJyJdI1A6btcam
-         xbTRDYmbgbXt3mBXkYGu5aRL8GCS9fjV1lruVKQ9a8oqu9yUTq0wUKA1xxNW1xfBM+4h
-         7auSuNioOjBJNDIzzMcOYnNw2FSnJdol2Sr7w0f3B/eUYSCLYADEF3IF54GYeAWUc9wz
-         ktzlf6M8RiU7gD6Qijeq5kbNOHNg4bGyq6VW+xdiFVgFpryWeqRPaIvsr3ylEMSWZt5e
-         kUBAoY1n5mvDgYMU1p+1eVoVHg48zOq+bx3D+k+MaXrV8ED7nf1G6k+oxXR1GUxRdEbk
-         Fspw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwFeqqDi6PwfywUrrRfCaLhkyYd0vTAo848Dn991USCOdEkVgMaz1E4Ed9ytlpLMdRPF1HoqM2JJllw3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ+uER4VfV7C+EFUOVdIeSr98xgj/8Nb1+tTqXQVRc8zR2MaYk
-	g5Iomi5GbDUf4hnACBW7rUXNGJoUgN/O3RvKXchmxeMry66OrkJDgmTWezuguIcZqBc=
-X-Gm-Gg: ASbGncsO6R9OonqZHTJyUa0sHLz4ym2SKYr4qVjWJ9wFL0bpgzD1n8SBz+AsgueY1qP
-	L0jjb4D/uG5+7Ax6Gh7f7sziT6stME5NlssyTdyrADXY6aTzA46tttqdYLH/SWjgXU+j1nI9+05
-	WMCBHC30cbraVt2MXutaF+P9PzFtO+Qn1pv5rfooZolnNwyH31CIARZeFTXFAYM1p1isWYdzam8
-	hssdjkC3lbinZrXSG8fjckq5Kwo3JSNDodWrccpvFu2kUZ4K4912dIjetQG+jevjTbDKiM1x5ge
-	l9AhzsNZW2SUwvRDjMSnewWCFoC2z6tc+yMWqDfYOZt4yuBdkYExpHI+1XADsq0MvHJ9vgsJjZN
-	vPWdFAYwp7UBeFIQFuDM6UXENHlnmjK0Ca1ci0y6B6N50hKiPonKivt8qBxYt+ORVtu69hXSUzf
-	mYRnAfbXk=
-X-Google-Smtp-Source: AGHT+IEoVnaL83a5r2gLAMPUw8k6gnxh57UaRSMs78wsysGd8hJtR5B/O1txsAfKqL986GFe82rtXQ==
-X-Received: by 2002:a05:6830:4108:b0:742:f996:ef34 with SMTP id 46e09a7af769-743924f533bmr1526978a34.27.1755272981907;
-        Fri, 15 Aug 2025 08:49:41 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:677:c1a1:65b9:2b0c? ([2600:8803:e7e4:1d00:677:c1a1:65b9:2b0c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7439203b5ffsm348082a34.25.2025.08.15.08.49.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 08:49:41 -0700 (PDT)
-Message-ID: <ded7ba99-089b-47a7-95b9-ca6666dc3e29@baylibre.com>
-Date: Fri, 15 Aug 2025 10:49:40 -0500
+	s=arc-20240116; t=1755273009; c=relaxed/simple;
+	bh=qytKwaB3l4RIjNh9PVsL/wNzm8knGPzPeQsYYa/SDd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjoOC85OQiWTZKfcoEzPOv5kyA7TcbrWEtTmsVdFuCFxB2BPE1eQ4o1n4OGgcEOp3eMHvuk4cH6bxy29xpATD0UY+p2CTAIcPoxuNaIYgpbq/y11cuawbMAxkERGmllsBSkSS67ZTvhbkEuzfyVWXxIBdaZ7foRDj0nPKpnR9xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Okuu1+fF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B3BC4CEEB;
+	Fri, 15 Aug 2025 15:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755273008;
+	bh=qytKwaB3l4RIjNh9PVsL/wNzm8knGPzPeQsYYa/SDd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Okuu1+fFXo2By0VOowZPvAEYLx8AJ/DEJbCie3aW0qGo5w9462MRUariT9wUj7y1a
+	 QGKQRWT3ycFdh9XQvDh1QHk11fWR11E2nufk4p8dvcXknRmYL9AtHTm6FXGfK3xcxH
+	 ntq9zPEW1G/3jS6hl2SSATYTapxZ4VkpnPS5UDKmx64LyD6oMk+DJWcIxXiLyhOgxB
+	 Xd3HrFbism+bnMkZjIWzr+zv7XkFYOdls/fmBSN0m6nJ09ivERt5wTWZsx89EUS/yh
+	 6cxbrLuFjExaQ8mYI5pjNAcZkrqYYNWjUNtKwDTYis3GVIxAlmHFkOT0g0/EIvkmvO
+	 IXQBKhUrSdcBw==
+Date: Fri, 15 Aug 2025 16:50:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: y@spud.smtp.subspace.kernel.org, tsbogend@alpha.franken.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mips: lantiq: Document lantiq dcdc
+ binding
+Message-ID: <20250815-deflation-item-571bdcdbce8f@spud>
+References: <20250814082705.3183231-1-olek2@wp.pl>
+ <20250814-vocation-viscous-b54bc343e8c6@spud>
+ <e327b6ce-11ad-4909-9c6f-cd833b44e15f@wp.pl>
+ <20250815-kangaroo-isolating-7e1a366be8d4@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/9] dt-bindings: spi: Add spi-buses property
-To: Sean Anderson <sean.anderson@linux.dev>, Mark Brown <broonie@kernel.org>,
- Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-References: <20250616220054.3968946-1-sean.anderson@linux.dev>
- <20250616220054.3968946-2-sean.anderson@linux.dev>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250616220054.3968946-2-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 6/16/25 5:00 PM, Sean Anderson wrote:
-> From: David Lechner <dlechner@baylibre.com>
-> 
-> Add a spi-buses property to the spi-peripheral-props binding to allow
-> specifying the SPI bus or buses that a peripheral is connected to in
-> cases where the SPI controller has more than one physical SPI bus.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v2:
-> - New
-> 
->  .../devicetree/bindings/spi/spi-peripheral-props.yaml  | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> index 8fc17e16efb2..cfdb55071a08 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> @@ -89,6 +89,16 @@ properties:
->      description:
->        Delay, in microseconds, after a write transfer.
->  
-> +  spi-buses:
-> +    description:
-> +      Array of bus numbers that describes which SPI buses of the controller are
-> +      connected to the peripheral. This only applies to peripherals connected
-> +      to specialized SPI controllers that have multiple SPI buses on a single
-> +      controller.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-
-Finally have some hardware to test this series with using 2 or 4 buses.
-I found that we also need an absolute max here to make the bindings checker
-happy. 8 seems sensible since I haven't seen more than that on a peripheral.
-We can always increase it if we find hardware that requires more buses.
-
-	maxItems: 8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ei3muymvEB30lY7P"
+Content-Disposition: inline
+In-Reply-To: <20250815-kangaroo-isolating-7e1a366be8d4@spud>
 
 
+--ei3muymvEB30lY7P
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +    default: [0]
-> +
->    stacked-memories:
->      description: Several SPI memories can be wired in stacked mode.
->        This basically means that either a device features several chip
+On Fri, Aug 15, 2025 at 04:48:42PM +0100, Conor Dooley wrote:
+> On Fri, Aug 15, 2025 at 12:13:41PM +0200, Aleksander Jan Bajkowski wrote:
+> > Hi Conor,
+> >=20
+> > On 8/14/25 22:48, Conor Dooley wrote:
+> > > On Thu, Aug 14, 2025 at 10:26:56AM +0200, Aleksander Jan Bajkowski wr=
+ote:
+> > > > Lantiq DCDC is a voltage converter with a voltage sensor.
+> > > >=20
+> > > > Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> > > > ---
+> > > >   .../mips/lantiq/lantiq,dcdc-xrx200.yaml       | 32 ++++++++++++++=
++++++
+> > > >   1 file changed, 32 insertions(+)
+> > > >   create mode 100644 Documentation/devicetree/bindings/mips/lantiq/=
+lantiq,dcdc-xrx200.yaml
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,d=
+cdc-xrx200.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc=
+-xrx200.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..5648b9676b3c
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx=
+200.yaml
+> > > > @@ -0,0 +1,32 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/mips/lantiq/lantiq,dcdc-xrx200.=
+yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Lantiq DCDC (DC-DC converter with voltage sensor)
+> > > > +
+> > > > +maintainers:
+> > > > +  - Aleksander Jan Bajkowski <olek2@wp.pl>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    items:
+> > > > +      - enum:
+> > > > +          - lantiq,dcdc-xrx200
+> > > What is "xrx2000" in this context?
+> >=20
+> >=20
+> > =E2=80=9Cxrx200=E2=80=9D is one of the generations of Lantiq SoCs. It i=
+ncludes four part
+> > numbers
+> > with the same memory map. The other generations are amazon-se, danube,
+> > ARX100,
+> > GRX100, xRX200, xRX300, xRX330. These correspond to the internal code n=
+ames:
+> > ase,
+> > danube, ar9, gr9, vr9, ar10, grx390.
+>=20
+> And the dc-dc converter is part of the SoC?
 
+(whether it is or not, you'd be well served by having a more complete
+explanation either in your commit message, the description field of the
+binding or both)
+
+> Either way, you've got this file in the wrong location probably, dc-dc
+> converters are usually under the regulator directory.
+
+
+
+--ei3muymvEB30lY7P
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ9XLAAKCRB4tDGHoIJi
+0kM8AQDutrBeBqQha2GCIzclWmBKrRjriazwSkHEwZb9m515WAD/ectDgU+IhI8Y
+0g//ICWo/kYYTIEwRx3m2hmr6K/SjA4=
+=4gxX
+-----END PGP SIGNATURE-----
+
+--ei3muymvEB30lY7P--
 
