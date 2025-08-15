@@ -1,120 +1,177 @@
-Return-Path: <linux-kernel+bounces-770414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EE8B27A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA709B27A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 09:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19C760380B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2CE6046C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 07:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3622BE7DD;
-	Fri, 15 Aug 2025 07:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A332D0C6E;
+	Fri, 15 Aug 2025 07:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4B2PYzR"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qj9AzmOc"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EA723CE;
-	Fri, 15 Aug 2025 07:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59CC2C2AA2
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755244636; cv=none; b=A0WFtVwU4mODOqw7aD7NQ9mngo+US5FxjOrWBlfZDfFN7qhN9bG9TzUqu0dTEkSfamqQrFgs/M00FZj7NAxE8t5dsn9nlJ5GvFJXY/8KOcK2zv89gV8zLwzmmKNDq/8kH8dkqVpxzG9cjxb1fgmIVeNrYG18q6ml/NzVerm5ajo=
+	t=1755244648; cv=none; b=hfBuJk8ZYl/vFTlNDMppYbk4p7YLg9evd1BWEaci5mpZsY4FoEafUYq4yP7d6B/tzCz8AFpVSPbHzVE9VTdj8FIOD9v5RmMFZp9L6jK5NaqiO6ZeC/Bcq89xTpKF0YY9mcNRGnEQnrRqINgTGKdW7as2ZDCZ5CIlgaR84I6IKYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755244636; c=relaxed/simple;
-	bh=3osPC01Ljp5ANRjUTeg8DmGTTDJXs5SXusQAR8ULEfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaVjv8V7rbxf1nawuII4JPf6gTNO87vaMpUL8TbQ88rRa4gafDgfjZgCvYs/BYwTVOHIB9lfz9Kw1N2BH7ZUtk5YqJZCWmkUiZJW9NpMjhorh7ny6VO6ScA71P7bLF+xwxPJCC4X4NYdGV0t5QDUqgI0uInkpvHJeQfNSNQBy9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4B2PYzR; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=TB61BP+fjBVuNp1rtfB34czc4Akb1WRHV2ohgDZf2o4=; b=W4B2PYzRPuCb1TfYFBz3Ktp6ng
-	kNGZSOJRHnN+Qu7q5ZDj5ZxjRVmcFsZkmMrD6otNB5vsNW4cVszh2KUOFWsaTFjlx5aQowe0Bz1lg
-	j56K3A/PWyNKw2Xq9D3D2ZQfoLL3jMOPjJap2fikqvkCRmAbemMvhc0yYxsFcjRvf/9miurMynzAo
-	7PFS2ncS+ipjiE68X7xXSLYT/0awTYUVwOIKLuIYOo4+dyL41fCfoym7ZYKaC7FrH1QL1cSbIBPg8
-	ZVa4rv+L/5/4SRDs7ZaLK5A2LAgzx6YW7ZwKuMEfRMDRGAD7R2SaVPgATIM2MDt1xTu8pVNWBpAco
-	pRE3fLJQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umpJF-0000000GeXv-2fwR;
-	Fri, 15 Aug 2025 07:57:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 73CAD300310; Fri, 15 Aug 2025 09:57:08 +0200 (CEST)
-Date: Fri, 15 Aug 2025 09:57:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Leon Hwang <hffilwlqm@gmail.com>, bpf <bpf@vger.kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, X86 ML <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
-	alyssa.milburn@intel.com, scott.d.constable@intel.com,
-	Joao Moreira <joao@overdrivepizza.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>, ojeda@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
-Message-ID: <20250815075708.GB3419281@noisy.programming.kicks-ass.net>
-References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
- <CAADnVQLyahEsFereM_-Y-MUdWm2mLHNKfffwNKX5Fvy+EaH-Nw@mail.gmail.com>
+	s=arc-20240116; t=1755244648; c=relaxed/simple;
+	bh=S3PyHRya11+qZZoLBhC4j0hGymegURexx3ja0gfDP5k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f+sUGI0jc2HP0lWhZcsINqGcn6f9J+RY+ACaq1v1yQ3nMmNSUW7We48FVVTMC4j/btfMwWenWO0hXarB5PDFpyIcQINBzV/vawryiDtA0MsPaDEakUBMRSyckhAZ094xkArTpm8QgOBEt6C+K8rorZEf3IEOY333PJ2EGeOhviU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qj9AzmOc; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b9d41b82beso1303182f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 00:57:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755244644; x=1755849444; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JliYzecp+8vx7iCZ9GJLeCQ8PS5q6wpUw4vUME/s30E=;
+        b=qj9AzmOcz3WUQgVM4tdjs3eex1wsrDoeEJjNl3xnmVMPb08wEluHqA++N9Fe7RHUdB
+         QR0b4yXBfF5tJAYpDB6hsjyDuZf3pCQeYscuguRifQSaarqsHpJRBANyLjoEqyWUhgbR
+         lhZdNA9lHGeod6htN/XYU+av0ljusDFLNfNDPkOhYbxOyd7yuXTi1H85sB8WZ9ywbT2Y
+         d8KjLBdBQXU2+Q1xSHWszHt6DrKyKktAjc5IYK1sf9KBMd+f1e9/XEKCDpQTVK1Emlxs
+         ezwn/XtSjmuYQwV0zkwVOjcEZj2rdyf6u8O3OrJzggQhl0M30WNnABVso9ChiDg8rjlN
+         QGXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755244644; x=1755849444;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JliYzecp+8vx7iCZ9GJLeCQ8PS5q6wpUw4vUME/s30E=;
+        b=rK2PlfBxpQUaO9q+Dq/pKkPSQeF1vPScfhR3o/Co1fiibsQ4C5gcvq9eT0coU0OtfB
+         aR3ctFFWCPQJIl4o919QLMNICE8tn3GwmK0bsFfV6Y7KwZqCEXPkXg0ChQi9GaBUu6p3
+         MXRhRKeoNqeEV1EN4/ApI9y5xNbG13H7xy0mnO9Ih2IAn2IwgGWrikYhcxNwkRLe/gDO
+         PlfZunq9pl5ZrrIVpK5ynhgN6lnrWec4ZZ1Ji3h++NlVHhAjqhfKr2SKLB21XAJTOFes
+         3K14tubo4JlANNYDGnj5MLQYW/ZTBtouRqP1CCBOL2Z4koMfhQwR2xhHPuVPBtITJ9t7
+         BTHA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6DB1QkrgVi9vi6IoHZkxXxYTv0xdKKzoAQj+qq88yByQSTQeMUn3v3ISYY4qRxi7vyFJsAEGdWlgKEOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzb//WYAtOjn9qT+Wvxeo/FZnXcwagHehnkWDw+PBIEs+vrI0m
+	sFZ/8TKIClpNs3dER1L3aUdEm4fhARa/XKjoDbuk/4F8sCSmL84/achZTuFlrxtImp3xe2fOuId
+	BG43t8+c8tCrfXUkr4Q==
+X-Google-Smtp-Source: AGHT+IF4UAIGeGPcDCFJRIRqOWfB2t00wIC/GdVYBLo4fLARPgG9tdEIjrdMKNGCFc4KqwkU7tZqFWVeQcaemCw=
+X-Received: from wmbep25.prod.google.com ([2002:a05:600c:8419:b0:456:2003:32a5])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5850:0:b0:3a4:e68e:d33c with SMTP id ffacd0b85a97d-3bb693b1d7dmr874644f8f.47.1755244644250;
+ Fri, 15 Aug 2025 00:57:24 -0700 (PDT)
+Date: Fri, 15 Aug 2025 07:57:23 +0000
+In-Reply-To: <20250815-rnull-up-v6-16-v5-5-581453124c15@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLyahEsFereM_-Y-MUdWm2mLHNKfffwNKX5Fvy+EaH-Nw@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250815-rnull-up-v6-16-v5-0-581453124c15@kernel.org> <20250815-rnull-up-v6-16-v5-5-581453124c15@kernel.org>
+Message-ID: <aJ7oY9pxlrnfAv8s@google.com>
+Subject: Re: [PATCH v5 05/18] rust: str: introduce `kstrtobool` function
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Breno Leitao <leitao@debian.org>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Aug 15, 2025 at 08:42:39AM +0300, Alexei Starovoitov wrote:
-> On Thu, Aug 14, 2025 at 2:17 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Hi!
-> >
-> > A while ago FineIBT started using the instruction 0xEA to generate #UD.
-> > All existing parts will generate #UD in 64bit mode on that instruction.
-> >
-> > However; Intel/AMD have not blessed using this instruction, it is on
-> > their 'reserved' list for future use.
-> >
-> > Peter Anvin worked the committees and got use of 0xD6 blessed, and it
-> > will be called UDB (per the next SDM or so).
-> >
-> > Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
-> > had to switch the hash register to EAX in order to free up some bytes.
-> >
-> > Per the x86_64 ABI, EAX is used to pass the number of vector registers
-> > for varargs -- something that should not happen in the kernel. More so,
-> > we build with -mskip-rax-setup, which should leave EAX completely unused
-> > in the calling convention.
+On Fri, Aug 15, 2025 at 09:30:40AM +0200, Andreas Hindborg wrote:
+> Add a Rust wrapper for the kernel's `kstrtobool` function that converts
+> common user inputs into boolean values.
 > 
-> rax is used to pass tail_call count.
-> See diagram in commit log:
-> https://lore.kernel.org/all/20240714123902.32305-2-hffilwlqm@gmail.com/
-> Before that commit rax was used differently.
-> Bottom line rax was used for a long time to support bpf_tail_calls.
-> I'm traveling atm. So cc-ing folks for follow ups.
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/str.rs | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index d8326f7bc9c1..5611f7846dc0 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -4,6 +4,7 @@
+>  
+>  use crate::{
+>      alloc::{flags::*, AllocError, KVec},
+> +    error::Result,
+>      fmt::{self, Write},
+>      prelude::*,
+>  };
+> @@ -920,6 +921,63 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>      }
+>  }
+>  
+> +/// Convert common user inputs into boolean values using the kernel's `kstrtobool` function.
+> +///
+> +/// This routine returns `Ok(bool)` if the first character is one of 'YyTt1NnFf0', or
+> +/// \[oO\]\[NnFf\] for "on" and "off". Otherwise it will return `Err(EINVAL)`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// # use kernel::{c_str, str::kstrtobool};
+> +///
+> +/// // Lowercase
+> +/// assert_eq!(kstrtobool(c_str!("true")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("tr")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("t")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("twrong")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("false")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("f")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("yes")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("no")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("on")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("off")), Ok(false));
+> +///
+> +/// // Camel case
+> +/// assert_eq!(kstrtobool(c_str!("True")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("False")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("Yes")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("No")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("On")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("Off")), Ok(false));
+> +///
+> +/// // All caps
+> +/// assert_eq!(kstrtobool(c_str!("TRUE")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("FALSE")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("YES")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("NO")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("ON")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("OFF")), Ok(false));
+> +///
+> +/// // Numeric
+> +/// assert_eq!(kstrtobool(c_str!("1")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("0")), Ok(false));
+> +///
+> +/// // Invalid input
+> +/// assert_eq!(kstrtobool(c_str!("invalid")), Err(EINVAL));
+> +/// assert_eq!(kstrtobool(c_str!("2")), Err(EINVAL));
+> +/// ```
+> +pub fn kstrtobool(string: &CStr) -> Result<bool> {
+> +    let mut result: bool = false;
+> +
+> +    // SAFETY: `string` is a valid null-terminated C string, and `result` is a valid
+> +    // pointer to a bool that we own.
+> +    let ret =
+> +        unsafe { bindings::kstrtobool(string.as_char_ptr(), core::ptr::from_mut(&mut result)) };
 
-IIRC the bpf2bpf tailcall doesn't use CFI at the moment. But let me
-double check.
+Using ptr::from_mut here seesm excessive IMO. I think that function
+makes sense when it replaces an explicit `as` cast, but now when it can
+be done by a coercion. This is perfectly readable:
 
-So emit_cfi() is called at the very start of emit_prologue() and
-__arch_prepare_bpf_trampoline() in the BPF_TRAMP_F_INDIRECT case.
+let ret = unsafe { bindings::kstrtobool(string.as_char_ptr(), &mut result) };
 
-Now, emit_prologue() starts with the CFI bits, but the tailcall lands at
-X86_TAIL_CALL_OFFSET, at which spot we only have EMIT_ENDBR(), nothing
-else. So RAX should be unaffected at that point.
+Or if you insist, you could directly create a raw pointer:
 
-So, AFAICT, we're good on that point. It is just the C level indirect
-function call ABI that is affected, BPF internal conventions are
-unaffected.
+let ret = unsafe { bindings::kstrtobool(string.as_char_ptr(), &raw mut result) };
 
+Alice
 
