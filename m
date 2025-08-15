@@ -1,139 +1,332 @@
-Return-Path: <linux-kernel+bounces-770941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-770939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EF0B280B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D28B280B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 15:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391851CE281E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175CC1CE15C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 13:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B77B302775;
-	Fri, 15 Aug 2025 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600073019BD;
+	Fri, 15 Aug 2025 13:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NdDc8q3o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OTdG9oFV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7FE3019AD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BF28724D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 13:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755265081; cv=none; b=E/mRX1Stk9WGwlOdh4Utbbz0n3VU46eKjt/zmd5/ZHvwAlrSw4QIR+V2HCKeQZ869K1wLnJBNvLsZQAPX0myNQ6Kyji/tHs7PP2sMmzh0CzAgLkaArm9O+vkjwyx3705deQdI0qCMcsD9opQSgWQ2TWF0L6IPGDxY/j/BM7N5SU=
+	t=1755265058; cv=none; b=s6Kab/V7jQw/1Q2NZ2q/RsDq/WyNhYPx2BFpmx8MmN5W49J4oFiEIG3x5reG2i8VrsBpvMyoCAyR7bs4P75Ql6slTjr4GeNQiUGxsmUCFOwcR0WeKg/78rfNWYYo21F1nmwHFT9zpsb9Gu/h7m/73VCIZgNUP7f+mD+aoqkM+ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755265081; c=relaxed/simple;
-	bh=m8hv0RZV9Mr6fM2+lzlOFczAMuNvVzSER5/ae08maD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXFBX+2cdq9jQe/EvglX+ofuKaHUI6IiHl/k+lAOyqpLLGIurqyyejGbJP4/1+G10XO9bYVkBrXjJk1GMFSAJlS9I3rrdpp6NPBc5AJC2yZThaQfmZO/nCtniRomxFoacq42RZRCDewd1lEZxhG0i3/EKw6NS8mXBLHX7joRRuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NdDc8q3o; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755265080; x=1786801080;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=m8hv0RZV9Mr6fM2+lzlOFczAMuNvVzSER5/ae08maD0=;
-  b=NdDc8q3oy0eDiQMQc+y+ltkU4P47OJNj4fvoTm47t9SVDK+cOvy6w4a7
-   cx3Pe/sAUuEs60YYyhpja8JKJiYWCp6OOf11VOdXlAsQQVl4GnDIdteKx
-   YO6do5OzD58pmasdzvqnGHoNsvrmNE1+QzXEwwpMrTMG8fRZtNFiHsK+D
-   6HA4wnTgxx1J6cqwTmPSYJyUcLzWHYLlzxwksPHok4SIj9kK3cGz+WBPo
-   dSFFGTeEp6OZSPFE/D56Wevx1pPx/FRhcIj4uOYdf9Rmq9PNb34kLRGDj
-   mZgGeNjICfhzKDi2tAf5vA/m8LbUAtYgOk1ADraXP8JGNLaVdGwkjTaWe
-   Q==;
-X-CSE-ConnectionGUID: gP+BGY6YT565fZMvwsel3g==
-X-CSE-MsgGUID: vekNCIemToGmOFeLpXQjIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57446396"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57446396"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 06:37:56 -0700
-X-CSE-ConnectionGUID: IT/YsOgCQruB9ihR5M9s8g==
-X-CSE-MsgGUID: nCHOfA5MQUqHXyHV6YakUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="204196499"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 15 Aug 2025 06:37:53 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umuco-000BzQ-2i;
-	Fri, 15 Aug 2025 13:37:45 +0000
-Date: Fri, 15 Aug 2025 21:37:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>, bleung@chromium.org
-Cc: oe-kbuild-all@lists.linux.dev, tzungbi@kernel.org, dawidn@google.com,
-	chrome-platform@lists.linux.dev, akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] platform/chrome: Protect cros_ec_device lifecycle
- with ref_proxy
-Message-ID: <202508152116.hQq8Sw2Y-lkp@intel.com>
-References: <20250814091020.1302888-3-tzungbi@kernel.org>
+	s=arc-20240116; t=1755265058; c=relaxed/simple;
+	bh=EkukpV3FFtELRil9qkr6l2IlP8xkLNYzLp7/fC83roE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RMyuwNdKQbjJSorgEtkW+PmqrXdIRKJhM+wLXTJkD4o4LlffA8ZFHAOY1CRewmmm0KLdDrTyyiQHqH5FK2rhm1U/RJFxa5g682mO9+g/RBckXMm9I3xnNqFjCFCN9E+Kmofg8WAO3VDVcuyZ5jP9DHs63r9gH7gJHDRDdsZGDlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OTdG9oFV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755265055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HAr1AlxPa2PLnBvFUB2yr2b+jA2FCI9CNGMzin6U/SU=;
+	b=OTdG9oFVAQWJrmm92f63eWBKufJhtXYUVTm7U+XwdY7Rw5ZD0+kxE0vD/6P+eBn3FyE9uS
+	PEXcUJEiycJDlmCcILyXV3UgzW5E5McAIfILOOgGVfOuUOWilzepVSRLWc060uGRTd4KyA
+	mGBvrYb622iTvLUXL0zoWapzNIRxXUo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-mYOouCPNMmae2ZzeMIP0fg-1; Fri,
+ 15 Aug 2025 09:37:32 -0400
+X-MC-Unique: mYOouCPNMmae2ZzeMIP0fg-1
+X-Mimecast-MFC-AGG-ID: mYOouCPNMmae2ZzeMIP0fg_1755265051
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E000A1954194;
+	Fri, 15 Aug 2025 13:37:30 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.222])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2DC2919327C0;
+	Fri, 15 Aug 2025 13:37:26 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: linux-hyperv@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Tianyu Lan <tiala@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Li Tian <litian@redhat.com>,
+	Philipp Rudo <prudo@redhat.com>
+Subject: [PATCH] x86/hyperv: Fix kdump on Azure CVMs
+Date: Fri, 15 Aug 2025 15:37:25 +0200
+Message-ID: <20250815133725.1591863-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814091020.1302888-3-tzungbi@kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Tzung-Bi,
+Azure CVM instance types featuring a paravisor hang upon kdump. The
+investigation shows that makedumpfile causes a hang when it steps on a page
+which was previously share with the host
+(HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY). The new kernel has no
+knowledge of these 'special' regions (which are Vmbus connection pages,
+GPADL buffers, ...). There are several ways to approach the issue:
+- Convey the knowledge about these regions to the new kernel somehow.
+- Unshare these regions before accessing in the new kernel (it is unclear
+if there's a way to query the status for a given GPA range).
+- Unshare these regions before jumping to the new kernel (which this patch
+implements).
 
-kernel test robot noticed the following build warnings:
+To make the procedure as robust as possible, store PFN ranges of shared
+regions in a linked list instead of storing GVAs and re-using
+hv_vtom_set_host_visibility(). This also allows to avoid memory allocation
+on the kdump/kexec path.
 
-[auto build test WARNING on chrome-platform/for-next]
-[also build test WARNING on chrome-platform/for-firmware-next akpm-mm/mm-nonmm-unstable akpm-mm/mm-everything linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The patch skips implementing weird corner case in hv_list_enc_remove()
+when a PFN in the middle of a region is unshared. First, it is unlikely
+that such requests happen. Second, it is not a big problem if
+hv_list_enc_remove() doesn't actually remove some regions as this will
+only result in an extra hypercall doing nothing upon kexec/kdump; there's
+no need to be perfect.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tzung-Bi-Shih/lib-Add-ref_proxy-module/20250814-172126
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250814091020.1302888-3-tzungbi%40kernel.org
-patch subject: [PATCH 2/3] platform/chrome: Protect cros_ec_device lifecycle with ref_proxy
-config: sparc64-randconfig-r113-20250815 (https://download.01.org/0day-ci/archive/20250815/202508152116.hQq8Sw2Y-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce: (https://download.01.org/0day-ci/archive/20250815/202508152116.hQq8Sw2Y-lkp@intel.com/reproduce)
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/hyperv/ivm.c           | 153 ++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h |   2 +
+ drivers/hv/vmbus_drv.c          |   2 +
+ 3 files changed, 157 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508152116.hQq8Sw2Y-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> lib/ref_proxy.c:167:16: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __rcu * @@     got void * @@
-   lib/ref_proxy.c:167:16: sparse:     expected void [noderef] __rcu *
-   lib/ref_proxy.c:167:16: sparse:     got void *
-   lib/ref_proxy.c: note: in included file (through include/linux/notifier.h, include/linux/memory_hotplug.h, include/linux/mmzone.h, ...):
-   include/linux/srcu.h:373:9: sparse: sparse: context imbalance in 'ref_proxy_put' - unexpected unlock
-
-vim +167 lib/ref_proxy.c
-
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  152  
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  153  /**
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  154   * ref_proxy_get() - Get the resource.
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  155   * @proxy: The pointer of struct ref_proxy.
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  156   *
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  157   * This tries to de-reference to the resource and enters a RCU critical
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  158   * section.
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  159   *
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  160   * Return: The pointer to the resource.  NULL if the resource has gone.
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  161   */
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  162  void __rcu *ref_proxy_get(struct ref_proxy *proxy)
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  163  {
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  164  	struct ref_proxy_provider *rpp = proxy->rpp;
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  165  
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  166  	proxy->idx = srcu_read_lock(&rpp->srcu);
-f2304a9508b177 Tzung-Bi Shih 2025-08-14 @167  	return rcu_dereference(rpp->ref);
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  168  }
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  169  EXPORT_SYMBOL(ref_proxy_get);
-f2304a9508b177 Tzung-Bi Shih 2025-08-14  170  
-
+diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+index ade6c665c97e..a6e614672836 100644
+--- a/arch/x86/hyperv/ivm.c
++++ b/arch/x86/hyperv/ivm.c
+@@ -462,6 +462,150 @@ void hv_ivm_msr_read(u64 msr, u64 *value)
+ 		hv_ghcb_msr_read(msr, value);
+ }
+ 
++/*
++ * Keep track of the PFN regions which were shared with the host. The access
++ * must be revoked upon kexec/kdump (see hv_ivm_clear_host_access()).
++ */
++struct hv_enc_pfn_region {
++	struct list_head list;
++	u64 pfn;
++	int count;
++};
++
++static LIST_HEAD(hv_list_enc);
++static DEFINE_RAW_SPINLOCK(hv_list_enc_lock);
++
++static int hv_list_enc_add(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	bool found = false;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		found = false;
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_for_each_entry(ent, &hv_list_enc, list) {
++			if ((ent->pfn <= pfn) && (ent->pfn + ent->count - 1 >= pfn)) {
++				/* Nothin to do - pfn is already in the list */
++				found = true;
++			} else if (ent->pfn + ent->count == pfn) {
++				/* Grow existing region up */
++				found = true;
++				ent->count++;
++			} else if (pfn + 1 == ent->pfn) {
++				/* Grow existing region down */
++				found = true;
++				ent->pfn--;
++				ent->count++;
++			}
++		};
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++
++		if (found)
++			continue;
++
++		/* No adajacent region found -- creating a new one */
++		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
++		if (!ent)
++			return -ENOMEM;
++
++		ent->pfn = pfn;
++		ent->count = 1;
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_add(&ent->list, &hv_list_enc);
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++
++	return 0;
++}
++
++static void hv_list_enc_remove(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent, *t;
++	unsigned long flags;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_for_each_entry_safe(ent, t, &hv_list_enc, list) {
++			if (pfn == ent->pfn + count - 1) {
++				/* Removing tail pfn */
++				ent->count--;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++			} else if (pfn == ent->pfn) {
++				/* Removing head pfn */
++				ent->count--;
++				ent->pfn++;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++			}
++
++			/*
++			 * Removing PFNs in the middle of a region is not implemented; the
++			 * list is currently only used for cleanup upon kexec and there's
++			 * no harm done if we issue an extra unneeded hypercall making some
++			 * region encrypted when it already is.
++			 */
++		};
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++}
++
++void hv_ivm_clear_host_access(void)
++{
++	struct hv_gpa_range_for_visibility *input;
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	u64 hv_status;
++	int cur, i;
++
++	if (!hv_is_isolation_supported())
++		return;
++
++	raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++
++	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
++	if (!input)
++		goto unlock;
++
++	list_for_each_entry(ent, &hv_list_enc, list) {
++		for (i = 0, cur = 0; i < ent->count; i++) {
++			input->gpa_page_list[cur] = ent->pfn + i;
++			cur++;
++
++			if (cur == HV_MAX_MODIFY_GPA_REP_COUNT || i == ent->count - 1) {
++				input->partition_id = HV_PARTITION_ID_SELF;
++				input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
++				input->reserved0 = 0;
++				input->reserved1 = 0;
++				hv_status = hv_do_rep_hypercall(
++					HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
++					cur, 0, input, NULL);
++				WARN_ON_ONCE(!hv_result_success(hv_status));
++				cur = 0;
++			}
++		}
++
++	};
++
++unlock:
++	raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++}
++EXPORT_SYMBOL_GPL(hv_ivm_clear_host_access);
++
+ /*
+  * hv_mark_gpa_visibility - Set pages visible to host via hvcall.
+  *
+@@ -475,6 +619,7 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 	struct hv_gpa_range_for_visibility *input;
+ 	u64 hv_status;
+ 	unsigned long flags;
++	int ret;
+ 
+ 	/* no-op if partition isolation is not enabled */
+ 	if (!hv_is_isolation_supported())
+@@ -486,6 +631,14 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 		return -EINVAL;
+ 	}
+ 
++	if (visibility == VMBUS_PAGE_NOT_VISIBLE) {
++		hv_list_enc_remove(pfn, count);
++	} else {
++		ret = hv_list_enc_add(pfn, count);
++		if (ret)
++			return ret;
++	}
++
+ 	local_irq_save(flags);
+ 	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index abc4659f5809..6a988001e46f 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -263,10 +263,12 @@ static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip,
+ void hv_vtom_init(void);
+ void hv_ivm_msr_write(u64 msr, u64 value);
+ void hv_ivm_msr_read(u64 msr, u64 *value);
++void hv_ivm_clear_host_access(void);
+ #else
+ static inline void hv_vtom_init(void) {}
+ static inline void hv_ivm_msr_write(u64 msr, u64 value) {}
+ static inline void hv_ivm_msr_read(u64 msr, u64 *value) {}
++static inline void hv_ivm_clear_host_access(void) {}
+ #endif
+ 
+ static inline bool hv_is_synic_msr(unsigned int reg)
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 2ed5a1e89d69..2e891e108218 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -2784,6 +2784,7 @@ static void hv_kexec_handler(void)
+ 	/* Make sure conn_state is set as hv_synic_cleanup checks for it */
+ 	mb();
+ 	cpuhp_remove_state(hyperv_cpuhp_online);
++	hv_ivm_clear_host_access();
+ };
+ 
+ static void hv_crash_handler(struct pt_regs *regs)
+@@ -2799,6 +2800,7 @@ static void hv_crash_handler(struct pt_regs *regs)
+ 	cpu = smp_processor_id();
+ 	hv_stimer_cleanup(cpu);
+ 	hv_synic_disable_regs(cpu);
++	hv_ivm_clear_host_access();
+ };
+ 
+ static int hv_synic_suspend(void)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.0
+
 
