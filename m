@@ -1,134 +1,134 @@
-Return-Path: <linux-kernel+bounces-772273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8058FB29093
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 22:42:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C042B29096
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 22:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B455683AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:42:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8317B1EF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702A304BD2;
-	Sat, 16 Aug 2025 20:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEC9308F08;
+	Sat, 16 Aug 2025 20:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lko3moo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJA6K4Qa"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D71DE4CA;
-	Sat, 16 Aug 2025 20:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F71FF1C4;
+	Sat, 16 Aug 2025 20:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755376946; cv=none; b=JkzOljZ6b3AoemD8KMMqrQBnbxlOxOMIpKT3N+d9E/0BQwcE9K9B7oxaP88jTHJP+ZE6JvwzbXBH7j5YYyE3MhJubkYvJ0rgL0Ka2nUPUlCBmCXThb8Rl826bkYAHVMoRMfg42DyteY42fpBpETnkDhf5aifzW7x/v0FAgmZA8k=
+	t=1755377626; cv=none; b=LrujlwDK50i82ANELT9xtUIsT9Dx/tfE9mZWNy79BLEV+TusTCVlNgcBPIplsGhuiZSOmQheBg/th0qHRNKCgLAfaG8LYUs3mopXfM4YGoMHwaLvwUyfIFlr0ToKOUIZ9gKihvhCTSaIBvsEQBXMco/2hbvZQGbglmOVreZs7c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755376946; c=relaxed/simple;
-	bh=C0cmruSQBBjqCamTnSvZt6Z6H4u/o6gYc+QMxN0dUNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PZ7g3VEP5XmjWzcj76f6UYJHELUDp0Fy35PQ5AMULtxD2xPT1FzgxcVbNJOVufZ14Nj+eYNGay5jWgVmKeoi3gdakNm7g6mp1+yjxzvnNPjsFfrn+tLdUza0I69H8f3TzkVAf/Mgjib1LEawq99RUsFGI2C3I+nbTNg9xi6C14o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lko3moo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77BEAC4CEEF;
-	Sat, 16 Aug 2025 20:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755376945;
-	bh=C0cmruSQBBjqCamTnSvZt6Z6H4u/o6gYc+QMxN0dUNk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lko3moo/xtF64BMLgObhQ9pTtT8+94yyOMpKyfWY/CL9Jj7TX0kg4KyDDn7XbC8F+
-	 038Gw0mj1fT9nd7+uF0+33H8tSqMoa97lD25ath488K9gccVxYeMIlDm5mCyqOKJG8
-	 4jN6BOkymI/pTpcThhA2akT3UmgD5ikkv/6+3eSAmhiuDYsvWFzw/D0qzJxw5K81MG
-	 qbWjr7tNJJATQ030RnAan4C6z20cM0J5P3dS1tozu53jQxHEt8XQAcizLqcPRMPIof
-	 XodD3BktX4yJgtM5OvW8xXw5UWOXruFEVLUyHLtv3NMo8hAiTNcPOj+xcrCuArrMQH
-	 NmJkkb66fmniQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1755377626; c=relaxed/simple;
+	bh=Egk+BX2Z0HAo6W6BXodo9gGdmkwnPQsFb6x5iwnQpt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JnXBPH9ewNYLJRMA0XHBmYRVtgqm93Ezl9Jf969FVO5cJUNWI0f8UHs1HKl1czG3sM7d0LxXLaIJ01VwexFFk2iKnkmUS7v1PZNv3mey+XI3nSvITMWaer7urYuHokw16a18WGLyouogNKk1MWQbUEZzCpspTpckbTF3+h2vjg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJA6K4Qa; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea94c7dso3517434b3a.2;
+        Sat, 16 Aug 2025 13:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755377624; x=1755982424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3tq/SNP+XOKQn6KczyDyeEB8VlhfBDHPhVlYBthHEo=;
+        b=GJA6K4QaZvQ6wEAWEmPlbE5oPRynytuY7rfbGpq9JzeCcGTAnB9L7PYztBT7ZfbXLx
+         M0tYgog7oZATPjDBlBrUj5iJelsN81jJOOTEdJmz2AbR0mf3/G8d8yzSc8PHC74udcn/
+         tYiwh0b090EODZb0RZr4ehLl1+6ddJxEQYgF4/6MeuOyG5rVtiMtNQ8DU2Ts/xiow9Ar
+         qVGQ63YQ0NiwgYKoPtDJgjK+p7wY/Co4XsGIU+0m/zb6W7oI/dlZ3HLip2KnbUGJOQU5
+         Tv1AC8TzXKxU1/Gla2v7xrbX3dqHWKOBYf/89IDAhEeukEUf9a3Z/QvmfplqJOZXr5RJ
+         rPDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755377624; x=1755982424;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M3tq/SNP+XOKQn6KczyDyeEB8VlhfBDHPhVlYBthHEo=;
+        b=ic9g78rYmnJ6iPH7IkZmPOUr0wCW9c0Hi96PlNxatAro4Gnpv0OhidC+jatlmuiAyo
+         XLAcUn+jdGVYWHm/QFvRWz1PPlbuUo4fbmlQf9Vc4tU8ccL2c0CaJhp3tx/xXgbs6aT1
+         AJpQ8rllVxzHopd/zTEybNzUllSoHQpqf/QirpqEyFJR52Av8AegN8d08+M2o1wUC+n4
+         IucfqmaRDKE4L8Cz1jRjF/rnQlMBtEhGJSKn3VZG/4R/umwjcBmnvV/qAKX4ZHHvDnF5
+         xIg5PKTW3cWRcWAhKIgeRJadKv6AXlx1q4FXEmNalj06JMBxy+RdgJaJ4tajkj3wv+uF
+         F0DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Zn/AlPVE49LFyywkXk24xGye3frLFTFqvfYwNcKxzwUOPyXHQIvQnD3AZ9WRBmnmqihlIxYGOgR7uqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYBOPV8jzoqQdCs2hmXSrjHBbquQVr2IrXB1zu+TBeKgsBJvs6
+	+uDr/gGU5oEzKh89Fe4PdI6SMRsWoV72MpVEGmasYkGu8NTEgXJcDWdf
+X-Gm-Gg: ASbGncsS4HPs6P8z3ESJWkZyhqYa6LrxQe2H+VMTiijhJBOIMZAJkrqgSSutWcRUZcf
+	dxFsEA4hY8qJZWNQAAYXgP2WpPDo4t0vur9wWZHvgeSYaReY4HXg4Tnn/+R+zhK9poTTdzB6dwJ
+	vvG3LmBrgZoI9v4sADijeGQiLE1t6aDAlwp9Xv43E5/SonxYQlphmEO8Gs3zblcBeKbQTw1W9ps
+	5PQnLyKIYnHqKmccdtccjy6BWtm+ToQXsiyTIM0mQw6qHCZqvr43Z6uNNpgAJdlGIMzX+gqCY4/
+	DPfg5rKBSPjIyHdV9C1oRDehJpXmTXCicUL4pkPKwpLD7k+pKjyQhl7rau3uawMo5Ywas54rszB
+	AzjtpEN6KBU58YK80x92o8H4DqdyUjCiOOKOQDm+RkIgr9g==
+X-Google-Smtp-Source: AGHT+IHLwNTq3ZX7hanMAQH4yYNU+0wPlr2zkQW/bPvDuwTbohtHkalGdqR4wUhTxP3YTSVzo9iexQ==
+X-Received: by 2002:a05:6a00:17a0:b0:76b:ca98:faae with SMTP id d2e1a72fcca58-76e446c5b4cmr11285275b3a.8.1755377624108;
+        Sat, 16 Aug 2025 13:53:44 -0700 (PDT)
+Received: from localhost.localdomain ([202.83.40.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4528c812sm3833154b3a.45.2025.08.16.13.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 13:53:43 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: alloc: fix `rusttest` by providing `Cmalloc::aligned_layout` too
-Date: Sat, 16 Aug 2025 22:42:15 +0200
-Message-ID: <20250816204215.2719559-1-ojeda@kernel.org>
+	Abinash Singh <abinashsinghlalotra@gmail.com>
+Subject: [PATCH v7 0/2] scsi: sd: Fix build warning in sd_revalidate_disk()
+Date: Sun, 17 Aug 2025 02:23:27 +0530
+Message-ID: <20250816205329.404116-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit fde578c86281 ("rust: alloc: replace aligned_size() with
-Kmalloc::aligned_layout()") provides a public `aligned_layout` function
-in `Kamlloc`, but not in `Cmalloc`, and thus uses of it will trigger an
-error in `rusttest`.
+Hi all,
 
-Such a user appeared in the following commit 22ab0641b939 ("rust: drm:
-ensure kmalloc() compatible Layout"):
+This v7 series follows up on v6 of the 
+"scsi: sd: Fix build warning in sd_revalidate_disk()" patches.
 
-    error[E0599]: no function or associated item named `aligned_layout` found for struct `alloc::allocator_test::Cmalloc` in the current scope
-       --> rust/kernel/drm/device.rs:100:31
-        |
-    100 |         let layout = Kmalloc::aligned_layout(Layout::new::<Self>());
-        |                               ^^^^^^^^^^^^^^ function or associated item not found in `Cmalloc`
-        |
-       ::: rust/kernel/alloc/allocator_test.rs:19:1
-        |
-    19  | pub struct Cmalloc;
-        | ------------------ function or associated item `aligned_layout` not found for this struct
+On Mon, 11 Aug 2025 09:39 Damien Le Moal wrote:
+> The order of the patches must be reversed because the fix build warning patch
+> must be CC-ed to stable with a Fixes tag. The cleanup making
+> sd_revalidate_disk() a void function must come after the fix. That will avoid
+> the weird placeholder comment and also will allow a more extensive cleanup to
+> replace several "goto out" with a simple return.
 
-Thus add an equivalent one for `Cmalloc`.
+Damien Le Moal pointed out that the order of the patches should be reversed:
+The build warning fix must come first, since it requires a Fixes tag 
+and should be CC-ed to stable.
 
-Fixes: fde578c86281 ("rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Danilo, as usual, please feel free to rebase if that is better.
+The cleanup making sd_revalidate_disk() return void should follow afterwards,
+which also allows for a cleaner refactor without placeholder comments and prepares 
+for further simplifications.
 
-Here I just copied the function, including comments, as-is, which maybe we want
-to tweak. However, we may want to remove `allocator_test` soon anyway (this adds
-to the justification for doing that, so that is good news :).
+Changes in v7:
 
-I am sending that one in parallel -- hopefully we can land that removal too in
-this cycle, but meanwhile, we can put something like this in your branch.
+Reversed patch order:
 
- rust/kernel/alloc/allocator_test.rs | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Fix build warning in sd_revalidate_disk() (with Fixes and Cc: stable)
+Refactor sd_revalidate_disk() to return void
 
-diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-index a3074480bd8d..90dd987d40e4 100644
---- a/rust/kernel/alloc/allocator_test.rs
-+++ b/rust/kernel/alloc/allocator_test.rs
-@@ -22,6 +22,17 @@
- pub type Vmalloc = Kmalloc;
- pub type KVmalloc = Kmalloc;
+I have built and tested this series locally with both gcc and clang; 
+no build errors or warnings remain.
 
-+impl Cmalloc {
-+    /// Returns a [`Layout`] that makes [`Kmalloc`] fulfill the requested size and alignment of
-+    /// `layout`.
-+    pub fn aligned_layout(layout: Layout) -> Layout {
-+        // Note that `layout.size()` (after padding) is guaranteed to be a multiple of
-+        // `layout.align()` which together with the slab guarantees means that `Kmalloc` will return
-+        // a properly aligned object (see comments in `kmalloc()` for more information).
-+        layout.pad_to_align()
-+    }
-+}
-+
- extern "C" {
-     #[link_name = "aligned_alloc"]
-     fn libc_aligned_alloc(align: usize, size: usize) -> *mut crate::ffi::c_void;
---
-2.50.1
+Many thanks to Damien for the review and guidance.
+
+Abinash Singh (2):
+  scsi: sd: Fix build warning in sd_revalidate_disk()
+  scsi: sd: make sd_revalidate_disk() return void
+
+ drivers/scsi/sd.c | 58 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 25 deletions(-)
+
+-- 
+2.43.0
+
 
