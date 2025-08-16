@@ -1,101 +1,67 @@
-Return-Path: <linux-kernel+bounces-772161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358EAB28F6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:23:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5612B28F6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6541EAC6AD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02761AE2DCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFF2F0662;
-	Sat, 16 Aug 2025 16:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1E62EA469;
+	Sat, 16 Aug 2025 16:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIGyBKU4"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HMOGqysT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DEF33086;
-	Sat, 16 Aug 2025 16:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796DC33086
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755361376; cv=none; b=RafKloZcuH5Pyw7x4zi3Nq8c3I0Q6ViV/EA5A9oaqErbwaC9Yw6G6ogTpW0Ar/SZ1epsBvs6kND4ZttnsBCRSi9J9dRf4NWbyhUpNxAGdgJ4Az7zGYQr8z1766uquXTxSkyiCx5jdIDX49rOVS3oi8monigkH7pI+qGtyAXY3vw=
+	t=1755361433; cv=none; b=GPdF5IWjS7r+An3+XM9h6ahgEEddrKeubacLe2G5TLhc/A3IwIUMU+Ovq4CWCf4Y+C3kTSbolooSb1KRCxUyKGZImE/UPLjpyiVSzLfUaf+Owdu7bcb1RWNzFXptVALaK9m/TQh9gLiIjQ9mRXU0ZJWzWhmJEI5D4FDQ+lyo3OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755361376; c=relaxed/simple;
-	bh=NZM13o2Exswd9U+U96wypdU8sDgj2Ia3oSNRi53SxnI=;
+	s=arc-20240116; t=1755361433; c=relaxed/simple;
+	bh=6a/D8SiGcnfWLy2DG5tXjfRQrHV6mtr3pBUI4gUmhnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BcAQGIc17fwD04XrY9EbPCu6wfhGtgcwXH3G6Xoe9aDRQnbGeC0zBjNw7eORut6+i5hq2rQQeK1/SLjJhfzOdZUey/uPS5ropXRSpog5exCZNUPXqYv2fp9ruT34KabVfdeOoDXo24mVm99oz4gi/l1fkUyVMexYmnbbSZsl6sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIGyBKU4; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce58bb89so2599749fac.0;
-        Sat, 16 Aug 2025 09:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755361372; x=1755966172; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Rtpc5s7M7/+q1cABKsKTJfzX3/F+/4NGbX+n4VhZH8=;
-        b=cIGyBKU4ukL+l+lzIL85FrzttJMEoqq2eHc7WbB1iAr/K1zYthOV6jwEI1T/rCeB8T
-         MFkGcSSnGY3+E5KRdaMUsi/Dlu+bpqCiRh2+Z6BImuWvZwrbx4cUVruorh/HPY6uqs8f
-         Cq/ZpMJMLh06K7CTPoOUOaWft8iZvBm+F2CcNTi4g4IgeHUc97qO5NNd5R4Wyl7Kf1Ma
-         a55qTJIK63NIBd71jBm3pq/cXPlK/hjwaGBNPb0fOGFv93t5fZ2kasjrfkoqG8Oq+39z
-         AueKoyuQGYOsF5WnREomdlFXvbMVCnw2u/Odw6RiE/izFlmjCEA6BBLCJjyTGNN/gND6
-         7vsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755361372; x=1755966172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Rtpc5s7M7/+q1cABKsKTJfzX3/F+/4NGbX+n4VhZH8=;
-        b=XtjHNmD0TMBTN0kPAtjSHtjL5vsYC7LeY+okFJzlFu5i1b8GYkUpghKXeDH0dNiuen
-         OLVuSAhd1oNpV6Ji9Q4n1bzd5q2XMxGMnj63Z+t+sKrwMBfBqyP43g2LOKhW39XYi30g
-         mNIIP0l28mzeY9HyXKBk44nK4OwJC2kmJz3PE1onid3jwDGROFMUDLNqsB/pPTDrGMTC
-         sdduoDNjH+puLBRfiTVvPnzgR00oIjC0KzCquf6gN3w4JvPGiIJlos+EuULQrWKuSq5K
-         N1AP/kAkPiUQXv1IHY+B/5DvY0hzEUpSbP7f9lvUeEndx5tAQvn3xyuN26/qestUzM5/
-         +mrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWn0yvHl8Gz0jtF5htXRuzzv99SmIrMvm72qPgdbCVL8z4jHp2QTflaYqTufdzsRwjJF5nucDMEfk=@vger.kernel.org, AJvYcCVbuLxnCBl2WgUzwZXLFY5r+vlX4dTa+UJy5CtEuNtBWOfF9f5BPA0F4FCy9/bj5ylbsZuoKEjF4ReoDL+e@vger.kernel.org, AJvYcCWYCulUJlN+9MYSD2LWpIMxxG7+EmchaKgmP03wDZsr8fPlvsoI5cNMsMQGKuOxg+jCseh3P4zsGtAP@vger.kernel.org, AJvYcCXpM4Re49A4EEqwH+LznVVm8UNsaoNMzHVSJEDHzhXe9G6pEI3deG7Sl8ow8DJ88aoCCYC/hIIfMTqwGI1XNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ewsyApcKvOdEeVh8XoxdT4KdW1/xd/8sVVa/pLQJHcMfdp2J
-	FGTMPzN/xw5QfD35YO7bTw5dM8UxR9qayoJUF9Fk3o2OS3ykjJGDOaQ5
-X-Gm-Gg: ASbGncus3hshJJMG7lsK0lcHXePF4F1vdlTht6vZH0EaNjuLqLolRGnBrxnJBGVp0qt
-	yDUvRBF6ZIpncURZbfvbH/udZfcEddomfzt0EYMTiMKzLTWNtZfK/gKZoySYvzFZQCAiiF7qnp/
-	1O8H/jqJki/pY7brZg58XVP798G/zyrAsLdReN9anQH2XvRtehJq2FmpAvqkWsg85rSksokKC9D
-	S9LvdOvMF+sNdfHPyoXaa4KxQ1EEvyUYUGKzPBadh8wdBcYuNbhGYVGb6si5rtzcQ7o2qY6FZ4S
-	tH/Gid2AdmJCiY0c42yI6afWP2uDrNy38ppLcqkT8u4PEu7I6MB1Q8OpB5K3smqRyKkC0f87LYp
-	cjTE249zGjr7lnGQtUaaIgs6DNcbsSqMrWxAo
-X-Google-Smtp-Source: AGHT+IHCxUIkdlGxbKhRgkda2hbannURDDEsuMBjaUCvPESePWFZyXXJu5EUcQ/LJ4zZvF6BnvAeCQ==
-X-Received: by 2002:a05:6870:15c8:b0:30c:5189:5707 with SMTP id 586e51a60fabf-310aae9750cmr3295321fac.28.1755361372333;
-        Sat, 16 Aug 2025 09:22:52 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:1d43:22e9:7ffa:494a])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74391bd20a3sm911591a34.21.2025.08.16.09.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 09:22:51 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Sat, 16 Aug 2025 11:22:49 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
-Subject: Re: [RFC V2 14/18] famfs_fuse: GET_DAXDEV message and daxdev_table
-Message-ID: <vfg7t7dzqjf6g6374wavesakk332n4dqabgokw4xobsar5jnxm@m7xfan6vhyty>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-15-john@groves.net>
- <CAJfpegv19wFrT0QFkwFrKbc6KXmktt0Ba2Lq9fZoihA=eb8muA@mail.gmail.com>
- <20250814171941.GU7942@frogsfrogsfrogs>
- <CAJfpegv8Ta+w4CTb7gvYUTx3kka1-pxcWX_ik=17wteU9XBT1g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gU3VFnpuZn/4bQXnGMH7mxTRN/TK07iJ7bFTI558E2o42vKuOQfxwdn+RIHvQeZs5mQzIkYo83Sph2+GZuJAUMQ1UgEDJEyNpTXnhFun2H5HCI4p2QNxYSmoPbEmJthR21f51DK2Zaiayyta5dazcjPPGkZ8IETRkRPBEwoEQss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HMOGqysT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+HWoCRfW0ZS3On5syAjsKZlW7if0MwQudqfkU82yqG0=; b=HMOGqysTT3F9ZUtoBjslEpxSXf
+	2fnpQ0k82dLplCoE0BwdsVAy4ZlphT/D5Gc2+VmttgWr2TF7flKJVz7VU7F5Xcf8IURFcUzF8w+Zc
+	e0wWfuHrOU16HN7/npGnZAJvEZj6876pZIgdYwET0gutT27dTQ/yt97hGM/iE3jV/bBChcf+vwKQY
+	6zRwV8Sc5aYb5LYPr5n0JE1UQJ+O1u1JmuW1n59ptIqeyuLgkFeANS9EJPKmYUqiG3LaY1AY1M4aV
+	usd2JntfNIbuqZWe1cqbtCvNCZ3LTeqAboQzHrRCwLzm/QGY4qAHdk/AaG1b29z6ZxLMddcqMMse5
+	gim6anmA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1unJgy-0000000BceU-1n72;
+	Sat, 16 Aug 2025 16:23:40 +0000
+Date: Sat, 16 Aug 2025 17:23:40 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-kernel@vger.kernel.org,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+Message-ID: <aKCwjCJTEhX4Q6wW@casper.infradead.org>
+References: <20250815090539.1578484-1-chenhuacai@loongson.cn>
+ <a20d605c-79a0-4d89-985b-9512a990b492@redhat.com>
+ <CAAhV-H470h2HDEN_NY2qNBxUqQrSRQhLzwqZe9PB8GjnNsZVFQ@mail.gmail.com>
+ <66ebc632-6704-4637-b62d-1cb11e5a4782@redhat.com>
+ <9db98f7f-b90f-464b-ae7f-e94ac523bc28@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,64 +70,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegv8Ta+w4CTb7gvYUTx3kka1-pxcWX_ik=17wteU9XBT1g@mail.gmail.com>
+In-Reply-To: <9db98f7f-b90f-464b-ae7f-e94ac523bc28@redhat.com>
 
-On 25/08/14 08:25PM, Miklos Szeredi wrote:
-> On Thu, 14 Aug 2025 at 19:19, Darrick J. Wong <djwong@kernel.org> wrote:
-> > What happens if you want to have a fuse server that hosts both famfs
-> > files /and/ backing files?  That'd be pretty crazy to mix both paths in
-> > one filesystem, but it's in theory possible, particularly if the famfs
-> > server wanted to export a pseudofile where everyone could find that
-> > shadow file?
-> 
-> Either FUSE_DEV_IOC_BACKING_OPEN detects what kind of object it has
-> been handed, or we add a flag that explicitly says this is a dax dev
-> or a block dev or a regular file.  I'd prefer the latter.
-> 
-> Thanks,
-> Miklos
+On Sat, Aug 16, 2025 at 12:54:52PM +0200, David Hildenbrand wrote:
+> +++ b/mm/balloon_compaction.c
+> @@ -256,8 +256,10 @@ const struct movable_operations balloon_mops = {
+>  static int __init balloon_init(void)
+>  {
+> -	movable_ops[MOVABLE_BALLOON] = &balloon_mops;
+> -	return 0;
+> +	int rc;
+> +
+> +	rc = register_movable_ops(&balloon_mops, PGTY_offline);
+> +	return rc;
 
-I have future ideas of famfs supporting non-dax-memory files in a mixed
-namespace with normal famfs dax files. This seems like the simplest way 
-to relax the "files are strictly pre-allocated" rule. But I think this 
-is orthogonal to how fmaps and backing devs are passed into the kernel. 
+Using 'rc' as the name of this variable is an anti-pattern.  All it
+tells you is "this is the return value".  Calling it 'err' is far
+better because now we know it's an error number (or zero for success,
+of course).
 
-The way I'm thinking about it, the difference would be handled in
-read/write/mmap. Taking fuse_file_read_iter as the example, the code 
-currently looks like this:
+It seems to be a particularly IBM derived antipattern ;-)
+Some internal style guide, perhaps?
 
-	if (FUSE_IS_VIRTIO_DAX(fi))
-		return fuse_dax_read_iter(iocb, to);
-	if (fuse_file_famfs(fi))
-		return famfs_fuse_read_iter(iocb, to);
+> +void unregister_movable_ops(const struct movable_operations *ops, enum pagetype type)
+> +{
+> +	switch (type) {
+> +	case PGTY_offline:
+> +		WARN_ON_ONCE(offline_movable_ops != ops);
+> +		offline_movable_ops = NULL;
+> +		break;
+> +	case PGTY_zsmalloc:
+> +		WARN_ON_ONCE(zsmalloc_movable_ops != ops);
+> +		zsmalloc_movable_ops = NULL;
+> +		break;
 
-	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-	if (ff->open_flags & FOPEN_DIRECT_IO)
-		return fuse_direct_read_iter(iocb, to);
-	else if (fuse_file_passthrough(ff))
-		return fuse_passthrough_read_iter(iocb, to);
-	else
-		return fuse_cache_read_iter(iocb, to);
-
-If the famfs fuse servert wants a particular file handled via another 
-mechanism -- e.g. READ message to server or passthrough -- the famfs 
-fuse server can just provide an fmap that indicates such.  Then 
-fuse_file_famfs(fi) would return false for that file, and it would be 
-handled through other existing mechanisms (which the famfs fuse 
-server would have to handle correctly).
-
-Famfs could, for example, allow files to be created as generic or
-passthrough, and then have a "commit" step that allocated dax memory, 
-moved the data from a non-dax into dax, and appended the file to the 
-famfs metadata log - flipping the file to full-monty-famfs (tm). 
-Prior to the "commit", performance is less but all manner of mutations 
-could be allowed.
-
-So I don't think this looks very be hard, and it's independent of the 
-mechanism by which fmaps get into the kernel.
-
-Regards,
-John
-
+This might be a bit excessive ... just passing the pagetype and not
+having the sanity checks should be enough for the tiny number of users
+this interface will have.
 
 
