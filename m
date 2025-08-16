@@ -1,167 +1,166 @@
-Return-Path: <linux-kernel+bounces-772066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0CDB28E68
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:14:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A086CB28E6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA9AD561482
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBEA7BB724
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7F2EAB9C;
-	Sat, 16 Aug 2025 14:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048522EBDC6;
+	Sat, 16 Aug 2025 14:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="eYzHQyb+"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="r3t4TTOM"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2CA2116E0
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A977E0E8
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755353687; cv=none; b=E3RG7LtpdtPGJkdF32nX6TNCY10i3j/PIEFtK5BPztojBcbeBJznUyJ1zDcOqGZrjMG28vk6mH3WEMj0dKUb3VjHcwtLx7uZkcfP7JsBUeYeFfV/v9JuYPsllxTmRm5WbgiJ69Le7d9dGuhNT0d/7iT1ETyMe4Tp4seDkFw67Zo=
+	t=1755353802; cv=none; b=mPCk2uuWNVuPX7Skd3ydVYDu2R6mIq/2WzMOHxegOEhnIXFuec8geg4WdCn4TfW0oS7Yd6tZSImxOGvGUNGs/TR1qmcmWykw2jmowMiw4vjQ0r5LV/C/ctHKS7dK5r8rNIp9h1lkn4wMfjdEY0mbkH4+ayjwWVDBm9Cy2DtcFDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755353687; c=relaxed/simple;
-	bh=NcJ8LwHh3X7ee/tDUAZszrsp3afTB1rWbCZa3b73x+Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KUCyDo3PFad63gArBF10brX63Sb2F2dfB/b2RB1u5zcUQzrWfY6vrtDs9zXXgywcw1JqjmDDM5vSp5nkNvnTHDykXUNpHeSqLww3UhUd7e9Y8Clg97WhsKgy8fjuMk30o9dij+ctfRvR3KaH+yt++YwdDnWaCp+G5UYjs2pDh1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=eYzHQyb+; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id F0E88240101
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:14:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1755353677; bh=Mpo2T6N9jQpcLimTJ5GBjW8DKYRI/lr1kRh0Hkt1PyM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
-	b=eYzHQyb+38nn1wg10un15QUgjEpREWCKnRbKqkonMDmFjfO7yO9oYVq7L9LQgrPU8
-	 evVuiH+S6c9ODW8aPsekEwEMud8leBFrYzjQVcm8/zEMsPhIZI6B2P5vRLjPr/RZPm
-	 SExrWACGw+h3hYt8ANH5O6Z7GwmHKxkq/4SFzb2w0EoqrUjuaA9RXW/Nb/jHIge4aI
-	 fAR1urfjFNSZ20hhe5zhjY7c7qxGzA3uPATSZaz8LCGIpqNCsrr3qml6Hx8qnGuMMd
-	 l12goOJXrCmGA8cW2p3dI7o14Fv4Py6hAGBvKPFq2XxlguLLApkOo/TS9cnSgzHjuq
-	 c7+95UEf/XnOg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4c41FT0YDnz9rxf;
-	Sat, 16 Aug 2025 16:14:37 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-Date: Sat, 16 Aug 2025 14:14:37 +0000
-Subject: [PATCH v3] debugfs: fix mount options not being applied
+	s=arc-20240116; t=1755353802; c=relaxed/simple;
+	bh=jRn+68TydpTDnUBx92tCFQOcAjFK+D29aieMu5Iz3wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXnIeHcsu083E+vTyY7/YNDEUZXqw85ACq28jSuhX9HoKfcyv2X4037SKPvb0Lnn533ECThRVvqbaXT9O1s74UMDlGvrlUM09OF5RWefggYmQtFnXdf71B88rG3Ck1cLwrtpIfyK/aVQ+hpkeVURyeySw+Ae0tPDJhLWaAaLz/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=r3t4TTOM; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70a9282f475so25155336d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 07:16:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1755353799; x=1755958599; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/WPrq9qE/mcKs1KinEiimPYdP4EDUSl2u22e6GWf8XM=;
+        b=r3t4TTOMVxWO4lDPtw+8o8GZCz7odm3/TzNlcAuqEKpdQP9BKdWnx9bxMaMqkA2zQ9
+         Peaw6tJsZkWF2plopa/QSA4XE3c6p6yLv1loBMS/zuERrbx0uhCG4VvN02SHEaDvmVwe
+         700ihruGn23VWMcPiV0fqoXyIi7x99zSlzdoqiH17nPXrbgkzDB2sl6D1xyEnfyKwrr4
+         mMDGWpSfh9tD3MZVmyK811otkddP6n20pShem7zDb34dcetA5KZFRmi4AAGpOzNn+PcM
+         1oEp213J2bU37RtCxwvfRDj42fUWUBML8NLw4O614Bilw/oKlJ2sr3S8xYI0VgZpgFOE
+         0xJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755353799; x=1755958599;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WPrq9qE/mcKs1KinEiimPYdP4EDUSl2u22e6GWf8XM=;
+        b=Hf4mj6dOprQR5fkHz2UBDBb47Bmw4QW7BMqzLfeRrGOgpngBX2O/Fa8bwFFvgzsWsJ
+         eVjca4Cadgf/Nac7qbgI0J1hyITtBLm+RuvZYljM35nJ2vIpCs7mW3T3S5jH+30Vjguv
+         ZSrSaX2yS/8oJAU8it+Xw3tETLHDwR9SNk/AmCPLjZPTWBiXIz/PasL7Cbq6QzUZQyl1
+         sT5jqIVWyZ8/vMEmIyRqnyg243Y5lVRKAJMUciYTZAJk6pJXHQqz55PiJJUZAEkhqvJd
+         3LjDDJL1PkLbz9WdiSVclCqKX9C0whfv3ni500wEmiql5J0QncrAfwuDGpLxoR4GPE7B
+         iPLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUun9faDUsPFUBbHzMlAJIvaCtm6DHmU/OHS4rM4s+EjmGOkTboir6U+i6OHDv6iM6Famxyhn8WpOMRAiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPNLxAxIj1dubY5LqlkSfyQ/Y6LALn6SzuNJbNSiDyZxBzmOOr
+	Aljr5Up1Z1bORZeglxNM+0+SABj505vgDjXl3y/5NmfXt2gH8K/mnSNKqwv+WyTK7A==
+X-Gm-Gg: ASbGnctlX01M5aJfrkKabKpOuflvh9cTOQtXt87uM54D5U13Z6PN+HxKr9PsQdrV13y
+	2WAz1VyFFBMELRpeivw8hOvd4iNn7UMIBDYo97moAUXas8/XJaB3FQLd57h3Hl5s3kco7v5wBM9
+	Ds9Cr+EsIqHJhlyQUyyw/wAkFXwDPcGG+gSSFCvM/a014riP/Nqh/7dzmGPT4yOCmtOOWoghYT+
+	5TYy3BxnEdXYvTY66oDNWwefB0f8wtmN+oDvuUdpzJeDeRKFLuTtFF7Jgdqeq7gum3tu82DLa0i
+	1LSviQ5o5N5f3aUZ2bhlrv73p0L1hNG3ChQNxhJT1K/yNT0wNaWMfIndrYeSVNP5/jWwwAPYYxZ
+	byU9EtbjO2QLk6cHJMd9tTgeTWtk=
+X-Google-Smtp-Source: AGHT+IFg9HLizvQGJ4TwOzHyQne2Pjmhu3qTT34UGiwiDfF6gJsi9Wq8f0M9Mbi0CDc3I4ce5R6Msg==
+X-Received: by 2002:a05:6214:3014:b0:709:76b4:5933 with SMTP id 6a1803df08f44-70ba7cb1a68mr71180886d6.52.1755353798673;
+        Sat, 16 Aug 2025 07:16:38 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::f777])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba9097688sm23736106d6.25.2025.08.16.07.16.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 07:16:38 -0700 (PDT)
+Date: Sat, 16 Aug 2025 10:16:34 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
+ in vhci_urb_enqueue on PREEMPT_RT
+Message-ID: <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
+ <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
+ <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAEeSoGgC/33NQQ6DIBCF4asY1qUZUES76j2aLhBGZVExgKSN8
- e5FV23SdPm/ZL5ZSUBvMZBLsRKPyQbrphzlqSB6VNOA1JrchAMX0EBFDXbL0Af6cMsUqZtjoFz
- VjZGyYj0Ikg9nj719Hujtnnu0ITr/On4ktq9/ucQoo50G0VZSNdCJ6+xCRHeeMJLdS/zDYOVPg
- 2cDtJKt5IBG11/Gtm1vsJhQp/kAAAA=
-X-Change-ID: 20250804-debugfs-mount-opts-2a68d7741f05
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
- Eric Sandeen <sandeen@redhat.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Charalampos Mitrodimas <charmitro@posteo.net>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755353677; l=3131;
- i=charmitro@posteo.net; s=20250727; h=from:subject:message-id;
- bh=NcJ8LwHh3X7ee/tDUAZszrsp3afTB1rWbCZa3b73x+Y=;
- b=Np9txrvzbD3/1Z6vvurRIstaz2gF3yJO/cd78K8BssuwehJUiB6EhVduCZFRyGT8tfxCBJEoC
- srOeCfwcvvjBoISeZaznN4mzqlogCzXUwS8G+bZ6PokXr83mmkZ6wmW
-X-Developer-Key: i=charmitro@posteo.net; a=ed25519;
- pk=/tpM70o3uGkbo2oePEdVimUYLyVTgpnPq4nwoG0pFsM=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
 
-Mount options (uid, gid, mode) are silently ignored when debugfs is
-mounted. This is a regression introduced during the conversion to the
-new mount API.
+On Sat, Aug 16, 2025 at 11:18:02AM +0900, Yunseong Kim wrote:
+> I think this part is a macro, so it appears this way.
+> 
+> Link: https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
+> 
+> #define spin_lock_irqsave(lock, flags)			 \
+> 	do {						 \
+> 		typecheck(unsigned long, flags);	 \
+> 		flags = 0;				 \
+> 		spin_lock(lock);			 \
+> 	} while (0)
+> 
+> My tree is indeed 6.17-rc1. I made a mistake in the diagram,
+> which caused the misunderstanding. I’ve redrawn the diagram:
+> 
+>   kworker (hub_event)
+>       |
+>       v
+>   vhci_urb_enqueue() [drivers/usb/usbip/vhci_hcd.c]
+>       |
+>       |---> spin_unlock_irqrestore(&vhci->lock, flags);
+>       |     (Context: IRQs Enabled, Process Context)
+>       |---> local_irq_disable();
+>       |
+>       |     *** STATE CHANGE: IRQs Disabled (Atomic Context) ***
+>       |
+>       +-----> usb_hcd_giveback_urb() [drivers/usb/core/hcd.c]
+>               |
+>               v
+>               __usb_hcd_giveback_urb()
+>               |
+>               v
+>               mon_complete() [drivers/usb/mon/mon_main.c]
+>               |
+>               |---> spin_lock_irqsave() [include/linux/spinlock_rt.h]
+>                     |
+>                     v https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
+>                     spin_lock() [kernel/locking/spinlock_rt.c] <--- Attempts to acquire lock
+>                     |
+>                     | [On PREEMPT_RT]
+>                     v
+>                     rt_spin_lock() [kernel/locking/spinlock_rt.c]
+>                     |
+>                     v
+>                     [May Sleep if contended]
+>                     |
+>       X <----------- BUG: Sleeping in atomic context (IRQs are disabled!)
+> 
+>       |
+>       |---> local_irq_enable();
+>             (Context: IRQs Enabled)
 
-When the mount API conversion was done, the parsed options were never
-applied to the superblock when it was reused. As a result, the mount
-options were ignored when debugfs was mounted.
+So it looks like we should be using a different function instead of 
+local_irq_disable().  We need something which in a non-RT build will 
+disable interrupts on the local CPU, but in an RT build will merely 
+disable preemption.  (In fact, every occurrence of local_irq_disable() 
+in the USB subsystem probably should be changed in this way.)
 
-Fix this by following the same pattern as the tracefs fix in commit
-e4d32142d1de ("tracing: Fix tracefs mount options"). Call
-debugfs_reconfigure() in debugfs_get_tree() to apply the mount options
-to the superblock after it has been created or reused.
+Is there such a function?
 
-As an example, with the bug the "mode" mount option is ignored:
-
-  $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
-  $ mount | grep debugfs_test
-  debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
-  $ ls -ld /tmp/debugfs_test
-  drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
-
-With the fix applied, it works as expected:
-
-  $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
-  $ mount | grep debugfs_test
-  debugfs on /tmp/debugfs_test type debugfs (rw,relatime,mode=666)
-  $ ls -ld /tmp/debugfs_test
-  drw-rw-rw- 37 root root 0 Aug  2 17:28 /tmp/debugfs_test
-
-Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220406
-Cc: stable@vger.kernel.org
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
----
-Changes in v3:
-- Reworded patch description to avoid confusion about OOPs
-- Link to v2: https://lore.kernel.org/r/20250813-debugfs-mount-opts-v2-1-0ca79720edc6@posteo.net
-
-Changes in v2:
-- Follow the same pattern as e4d32142d1de ("tracing: Fix tracefs mount options")
-- Add Cc: stable tag
-- Link to v1: https://lore.kernel.org/r/20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net
----
- fs/debugfs/inode.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index a0357b0cf362d8ac47ff810e162402d6a8ae2cb9..c12d649df6a5435050f606c2828a9a7cc61922e4 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -183,6 +183,9 @@ static int debugfs_reconfigure(struct fs_context *fc)
- 	struct debugfs_fs_info *sb_opts = sb->s_fs_info;
- 	struct debugfs_fs_info *new_opts = fc->s_fs_info;
- 
-+	if (!new_opts)
-+		return 0;
-+
- 	sync_filesystem(sb);
- 
- 	/* structure copy of new mount options to sb */
-@@ -282,10 +285,16 @@ static int debugfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- static int debugfs_get_tree(struct fs_context *fc)
- {
-+	int err;
-+
- 	if (!(debugfs_allow & DEBUGFS_ALLOW_API))
- 		return -EPERM;
- 
--	return get_tree_single(fc, debugfs_fill_super);
-+	err = get_tree_single(fc, debugfs_fill_super);
-+	if (err)
-+		return err;
-+
-+	return debugfs_reconfigure(fc);
- }
- 
- static void debugfs_free_fc(struct fs_context *fc)
-
----
-base-commit: 3c4a063b1f8ab71352df1421d9668521acb63cd9
-change-id: 20250804-debugfs-mount-opts-2a68d7741f05
-
-Best regards,
--- 
-Charalampos Mitrodimas <charmitro@posteo.net>
+Alan Stern
 
 
