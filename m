@@ -1,101 +1,176 @@
-Return-Path: <linux-kernel+bounces-771951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F9BB28D2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:56:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDF3B28D6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E236C1CE5EB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458701B68280
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FBC2D59E5;
-	Sat, 16 Aug 2025 10:53:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3CC2D7D31;
+	Sat, 16 Aug 2025 11:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n71hZWok"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC56E2BEC39;
-	Sat, 16 Aug 2025 10:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C1B2C3768;
+	Sat, 16 Aug 2025 11:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755341602; cv=none; b=uXf28osGiSYUEjZoZKCT48n1DBbU8Ve9hTvuVkMHvDYvRco4AP4k4rOAUz1oSdraeetrOSeDPs6uNx4R+Qxx4JhtgttjO9mp+LHKccPFOm3DxfcSPs83CNm3RQIMhbQHFC5RJC1kMlsrtQ96qWN/TH9KlZVzJssNDLHVCGx9030=
+	t=1755343544; cv=none; b=RGxYOQK+WDYdClodj+zlK/lQ16mCHOEZYQfQ53mTQP+UB4WqZrFjCjA1ijK+loQ/h1t5WI6jZcr0uJioQtwcB+1EkuK2+SLz0+QP3aw57Rfg/IjYxjWbMFDaD+dShp4wR0ADcZjez22NOJZRHJu6rGzZ5gqMF9cm5leYRy9YGI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755341602; c=relaxed/simple;
-	bh=6FAPIP5FkbuIRoAUBawSKb4AJYRef3OuI3wUeKdsop4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RRosJ2A0HGvTWiuGX1t3ru/ixp8G6rAiOZd1zDBcaBCYrMoAyLX11dnr9C9mSjkoHQWyVHFNBjENbOAXnbK4HSwTJQN7DJhPXSclVZ4ZwHYZn23cKvxPxNuIl4XllmvLGLXycGPTMzEqejmyaVkvRX3ER6zTVALzuByJcashITg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c3wn75S70zvX7s;
-	Sat, 16 Aug 2025 18:53:15 +0800 (CST)
-Received: from kwepemk500001.china.huawei.com (unknown [7.202.194.86])
-	by mail.maildlp.com (Postfix) with ESMTPS id BDF9C180B5A;
-	Sat, 16 Aug 2025 18:53:17 +0800 (CST)
-Received: from localhost.localdomain (10.175.104.170) by
- kwepemk500001.china.huawei.com (7.202.194.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 16 Aug 2025 18:53:16 +0800
-From: JiangJianJun <jiangjianjun3@huawei.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <hare@suse.de>, <bvanassche@acm.org>,
-	<michael.christie@oracle.com>, <hch@infradead.org>, <haowenchao22@gmail.com>,
-	<john.g.garry@oracle.com>, <hewenliang4@huawei.com>, <yangyun50@huawei.com>,
-	<wuyifeng10@huawei.com>, <wubo40@huawei.com>, <yangxingui@h-partners.com>
-Subject: [PATCH 14/14] scsi: iscsi_tcp: enable LUN-based and target-based error handlers
-Date: Sat, 16 Aug 2025 19:24:17 +0800
-Message-ID: <20250816112417.3581253-15-jiangjianjun3@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250816112417.3581253-1-jiangjianjun3@huawei.com>
-References: <20250816112417.3581253-1-jiangjianjun3@huawei.com>
+	s=arc-20240116; t=1755343544; c=relaxed/simple;
+	bh=yXFNrlTsuKcIiCEG5HOLk1E5J3QOdw3cZCTv8+Nq19Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lymf+8swtYgb1MQ/awKjckKqmxpsrbAqBmBImqGNQSM8Ss1evvOcw8DXIKgvL1i65vX1D2049+yYP1sO8UD2uodCBlzi9ComXoPZSiVY2DcUE9DVGo/7lS+GdqnTrQvL8lsk374Yu9b5G6wUupXHzUQnQXf0BpmoOrCCvWLh2kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n71hZWok; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755343543; x=1786879543;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yXFNrlTsuKcIiCEG5HOLk1E5J3QOdw3cZCTv8+Nq19Q=;
+  b=n71hZWokabrRDjOBI42sW1w7fjcwElw+LzgHU0HWoginULo6m9Vv5+uS
+   VyzB02IQqdsOytedHFHSh40WxiqMEcV+DKosm6IhunAJh/9KEGIVcu0B5
+   3Zcqq/SJdf0Usyo0xZGOPOpLX1DDprsi+gQARMq4Tgel+hOcBbjJOa5IP
+   +P/8s/RALDzHzxdN5m2A9XMsV8uaNUmxnusVFn9MFU4ACzsDhl6dK21dc
+   /xRbKU/yK/NKlXqY1P71MA66hBC9XFjVMy98tMEDk6gyi6yWuEvo/C8Ol
+   USGE1rcUl1OCcIWd14L+2avMlBLLJkWEMFJuPosfcDMWlXbKN43Aj/H1g
+   A==;
+X-CSE-ConnectionGUID: p07IyuLnRySbStjIjLqRLQ==
+X-CSE-MsgGUID: guZ+JZrCTZeGG9OOly6HqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57713463"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57713463"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 04:25:42 -0700
+X-CSE-ConnectionGUID: uGNPv/P0SAOZCDHGzi1O3w==
+X-CSE-MsgGUID: Tv9x7wr8Td6dRbiYNGSuGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="190913937"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 16 Aug 2025 04:25:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unF2T-000CqO-0F;
+	Sat, 16 Aug 2025 11:25:34 +0000
+Date: Sat, 16 Aug 2025 19:24:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Artur Rojek <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
+	Jeff Dionne <jeff@coresemi.io>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
+Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+Message-ID: <202508161930.ergOga3z-lkp@intel.com>
+References: <20250815194806.1202589-4-contact@artur-rojek.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500001.china.huawei.com (7.202.194.86)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815194806.1202589-4-contact@artur-rojek.eu>
 
-From: JiangJianJun <jiangjianjun3@h-partners.com>
+Hi Artur,
 
-The iSCSI TCP driver now supports resetting LUNs or targets,
-allowing us to enable LUN-based error handlers and enable them
-to fall back to target-based error handlers.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: JiangJianJun <jiangjianjun3@h-partners.com>
----
- drivers/scsi/iscsi_tcp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index 7b4fe0e6afb2..328e76219b1c 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -33,6 +33,7 @@
- #include <scsi/scsi_device.h>
- #include <scsi/scsi_host.h>
- #include <scsi/scsi.h>
-+#include <scsi/scsi_eh.h>
- #include <scsi/scsi_transport_iscsi.h>
- #include <trace/events/iscsi.h>
- #include <trace/events/sock.h>
-@@ -1040,6 +1041,9 @@ static const struct scsi_host_template iscsi_sw_tcp_sht = {
- 	.eh_target_reset_handler = iscsi_eh_recover_target,
- 	.dma_boundary		= PAGE_SIZE - 1,
- 	.sdev_configure		= iscsi_sw_tcp_sdev_configure,
-+	.sdev_setup_eh		= scsi_device_setup_eh,
-+	.sdev_clear_eh		= scsi_device_clear_eh,
-+	.sdev_eh_fallback	= 1,
- 	.proc_name		= "iscsi_tcp",
- 	.this_id		= -1,
- 	.track_queue_depth	= 1,
+url:    https://github.com/intel-lab-lkp/linux/commits/Artur-Rojek/dt-bindings-vendor-prefixes-Document-J-Core/20250816-042354
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250815194806.1202589-4-contact%40artur-rojek.eu
+patch subject: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250816/202508161930.ergOga3z-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161930.ergOga3z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508161930.ergOga3z-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/jcore_emac.c:231:2: warning: label at end of compound statement is a C2x extension [-Wc2x-extensions]
+     231 |         }
+         |         ^
+   1 warning generated.
+
+
+vim +231 drivers/net/ethernet/jcore_emac.c
+
+   192	
+   193	static void jcore_emac_set_rx_mode(struct net_device *ndev)
+   194	{
+   195		struct jcore_emac *priv = netdev_priv(ndev);
+   196		struct netdev_hw_addr *ha;
+   197		unsigned int reg, i, idx = 0, set_mask = 0, clear_mask = 0, addr = 0;
+   198	
+   199		if (ndev->flags & IFF_PROMISC)
+   200			set_mask |= JCORE_EMAC_PROMISC;
+   201		else
+   202			clear_mask |= JCORE_EMAC_PROMISC;
+   203	
+   204		if (ndev->flags & IFF_ALLMULTI)
+   205			set_mask |= JCORE_EMAC_MCAST;
+   206		else
+   207			clear_mask |= JCORE_EMAC_MCAST;
+   208	
+   209		regmap_update_bits(priv->map, JCORE_EMAC_CONTROL, set_mask | clear_mask,
+   210				   set_mask);
+   211	
+   212		if (!(ndev->flags & IFF_MULTICAST))
+   213			return;
+   214	
+   215		netdev_for_each_mc_addr(ha, ndev) {
+   216			/* Only the first 3 octets are used in a hardware mcast mask. */
+   217			memcpy(&addr, ha->addr, 3);
+   218	
+   219			for (i = 0; i < idx; i++) {
+   220				regmap_read(priv->map, JCORE_EMAC_MCAST_MASK(i), &reg);
+   221				if (reg == addr)
+   222					goto next_ha;
+   223			}
+   224	
+   225			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(idx), addr);
+   226			if (++idx >= JCORE_EMAC_MCAST_ADDRS) {
+   227				netdev_warn(ndev, "Multicast list limit reached\n");
+   228				break;
+   229			}
+   230	next_ha:
+ > 231		}
+   232	
+   233		/* Clear the remaining mask entries. */
+   234		for (i = idx; i < JCORE_EMAC_MCAST_ADDRS; i++)
+   235			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(i), 0);
+   236	}
+   237	
+
 -- 
-2.33.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
