@@ -1,98 +1,173 @@
-Return-Path: <linux-kernel+bounces-772063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C037EB28E62
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E73AB28E67
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA031BC5456
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FE3AA0B6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD522EACED;
-	Sat, 16 Aug 2025 14:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284472EB5DA;
+	Sat, 16 Aug 2025 14:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8+R3qDT"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="m9vCKHyK"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1158A2E717D;
-	Sat, 16 Aug 2025 14:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0402EA17C
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755353556; cv=none; b=UmNEoO0dhT4TBAKI29LBXaJctp++gbR72jMLUfCNEn2w5wzQYKX/kEDgcUO+gQh/t7xhZQQZmWMStvJ7+lQiTRHo8uALLkYT1avOi1tV2gu4ki0by7ZQJB/RmQWN6xGMgfQozfnA6douyRFQyVf9n4kitwTMOXU48VES7SHxSYw=
+	t=1755353600; cv=none; b=mYZBG4hpcUE+s/PUOTozglCQyu0HPUx/d7KMzQ1zRcoiOuwSBBWMKmmEHXsrzJ/wBLqviACGOD+cpBin/1iDVF0UDKLker501eh6jbI6L9E7Ap8oDih4lER2Bf2HRoRMSVQrERMnobxGLvIZ10t5Sa2kyNYydt5MtbN1ExARnW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755353556; c=relaxed/simple;
-	bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLNO61OtEPwe+vWeDo1gd8HrxsURX2oa8LB8wluWEdjM63wZOzFuZduuszHmJIYlzrF76GdYPJQxHrLqznN+8zkvH+IxzR5tpQ73Z5+RD0Z70MDkICi5WWRDO2mxJE8djuB5DaUz9PpBllyHLQp6UfchF/6jixx3A4i/hlp8PG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8+R3qDT; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-618b62dba21so1614555a12.2;
-        Sat, 16 Aug 2025 07:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755353553; x=1755958353; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
-        b=m8+R3qDT/hxRKHbt2Q4BYAEixpm4Y553NfmkNrcax/iXQ0I4h/fzXIyuL8vBsAG28v
-         N++hQfqQr4zOO8s8Hl5852PEn3rNdjhVq6Y9D/IHvckl3HDfNGN+XaGKGrZDZp2qkIE2
-         rxxL+fksT+Khs3ne2rJa8iiNzzxYMWXpjgqw7zfP6jioAX0Qjfr0uRfo/3gOIPaW0zlu
-         4LE2tX//yDuUbL151WHQAxYvdk81TNQVuROpl92bSEBrGd8KMLlEKMxrOHbb9ug1x+HQ
-         etijIZ0tu4KoRNjcMfSPBA+X2QQ2ZeKHO0hhuhE1jpTKi6s1Gzhu1QX1UoP3pVDuaXSe
-         uKWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755353553; x=1755958353;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
-        b=XoG/x2JejmwOKwNM4RTOuMc0wAjO4/i4SL9ODs4QW33lgxggzyOdSx+v8f3P0jPghq
-         Js782oJIRKgexy+ypf4RZ4EABiQB/4S6IWbD+4asbFb7tQzzY+xMmEnEjUbcJjUnqajm
-         g3MAppMqcD/WFkD2UB6/C/kJKVoR1ZYXwBfxE3kX0D3Bqigv688H1OnTK9T1Ym46VKwf
-         QeCRTkuQCeUeqYV225nND13HLBco8lDDL36hoOp6vL0Fj8QaH7+oCm2vTkHF6eLvSQhB
-         mDpRQrw1YPsorFoTCPTXnYFfhizExFA+N7+UI2RaukzEPh9hP2sEPTJlg/n/tQD8OuHK
-         iBeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdK9LxHq7l/BAOo7+8a6Q2t8lARLh6pQY+D5DCwUo107Lwg8DGahQo0moioFMubxHUi7bAYkLHX4/W8opREgGP@vger.kernel.org, AJvYcCXhlE1foEeuzcivW7+JZiZ5zgHN96LcCd1EMs1AJZqZSqfdPt4UIhU2JGibHIA5FB0qz2vI0jk4BymbGLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4AXlGwDKn+y+Kye12/hNAx9d1U9clZSwA+rcnH5/jTqHIiwS6
-	ICNfh1hhD3EomA22KK0S6JIHD/b6odfV33MBEgArelmB9YoBCLBsdcudczjbL8j0UGuV84N905t
-	IgwMZHMpSMII4uxxEgYbkhY/AELMWqA==
-X-Gm-Gg: ASbGnctwCwQAjxVY8IeTVowlvFpIodLVaLCkf83UYrCItduF31d2HCFkp9BCSLrHbfg
-	b913ef85l09R/otnOdeaZSbaCrkjWDQhdpFCHAVLahjBcpd4UsZ4P3J+kGoQMF6LwOXaPkM8nFT
-	ZKajaUDckpE+ytt60BVO5AWeic+wQFkpKUtO6sA7uWWRKwHDX7AuUkAdcec1xCNE5wKd4BzhsEO
-	yeLNeA=
-X-Google-Smtp-Source: AGHT+IF39sA2/AVBMFINcOLAmtFs2hW/T/K1I1gQxZpjqQbWUrpFsMrEH1JB5BTTlUPFahsCPdZqX+kgleQP4aRgk+c=
-X-Received: by 2002:a05:6402:35c3:b0:606:ebd9:c58b with SMTP id
- 4fb4d7f45d1cf-619b6f65d97mr2325294a12.1.1755353553120; Sat, 16 Aug 2025
- 07:12:33 -0700 (PDT)
+	s=arc-20240116; t=1755353600; c=relaxed/simple;
+	bh=m9P48Ohs96Wlh4Ls9H7JsnINbOQm56N2LA6GI1qW/pQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V/f4Subdy5sjVT3DtigKGANNNqDrC9m0Pxpvtst3DXkDN1K5CZdBIrrjN6w8yKW/1DqQSwO3Q0C4LJU90LpoVpWObhzNw/B+QDdks9k41dpBpJwDhBtLAZN5eSqQfiiZg+LDagnv77bM9amNbrsiq9+VwjXCWcugb+o3+3WaMR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=m9vCKHyK; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 6B662240027
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:13:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
+	t=1755353590; bh=QVtoCaM9dNujyJoQTU+vTVDlVfr9CLInFCfLU4dyJ2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=m9vCKHyK23a/y+Ju68xmhpgCEWaeXsPNI3cgkj3crrPrsf68nJCqbR9NkZl5fSvIT
+	 aiOrk1si5T4OOaLDzDTc0Dsi+xAH4VYIDPO9vMYNYihv5A9ahO5Hex9neKo2DOxpY+
+	 ze3P9Lp2cWX7B9Lk+nA6v00e5jhbubpxQMV4KKBKgiWtcj89QVJIJ3UEgdJIwYMX9M
+	 EHEl1sz08NVsQbErpnHnGYgcilDz4Nl6pcQq3NJv8PPYEc7WkOn+iLmYn3Y1H3wQn8
+	 yKeJrbBuTNtb6vpn9C8qd9vDlpwAi2ZO2B3eg3Im1su76DiWwn/FbrWsi9RUxwaOem
+	 +81KdVExN42IQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4c41Cm74cyz6twQ;
+	Sat, 16 Aug 2025 16:13:08 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Danilo Krummrich <dakr@kernel.org>,  Christian
+ Brauner <brauner@kernel.org>,  David Howells <dhowells@redhat.com>,
+  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
+Subject: Re: [PATCH v2] debugfs: fix mount options not being applied
+In-Reply-To: <b169faca-fef9-4099-920a-c34cc9a985a8@redhat.com>
+References: <20250813-debugfs-mount-opts-v2-1-0ca79720edc6@posteo.net>
+	<b169faca-fef9-4099-920a-c34cc9a985a8@redhat.com>
+Date: Sat, 16 Aug 2025 14:13:10 +0000
+Message-ID: <87a53zuzgr.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250702152057.4067-1-ujwal.kundur@gmail.com>
- <aGf_W_ZgIf63dmAz@x1.local> <CALkFLLJua-LeS+S5GpiXORA-3wNSR0DTzbh2bvU=Vg-Uzd2VFA@mail.gmail.com>
- <CALkFLLLoXfTNtigbcyD4RdJfY+b5Rh5-5Zta1QM9dBQxZd19cQ@mail.gmail.com> <DC19N1YGQP7J.1MH8WV5KHUHFF@google.com>
-In-Reply-To: <DC19N1YGQP7J.1MH8WV5KHUHFF@google.com>
-From: Ujwal Kundur <ujwal.kundur@gmail.com>
-Date: Sat, 16 Aug 2025 19:42:20 +0530
-X-Gm-Features: Ac12FXyvzVN6lhXuryFknwNkw_NPGtcXZDTU-i8PRTDQZLOHQyctkouzXjWB6_Y
-Message-ID: <CALkFLLKmjj=Gt8g2Y-2u28HEkoXXF5cFG=v1cV2MEDHjZ=0OgA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/1] selftests/mm/uffd: Refactor non-composite global
- vars into struct
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Peter Xu <peterx@redhat.com>, akpm@linux-foundation.org, shuah@kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-> Hey sorry I've been on a nice long holiday but I can take a look at this
-> soon. Just need to get out from under my other review snowdrift first!
+Eric Sandeen <sandeen@redhat.com> writes:
 
-Thanks! I'll have to rebase on mm-new again after the 6.17-rc1
-changes. Will push a V7 out soon, this time without threading the
-patch as suggested :)
+> On 8/13/25 6:55 PM, Charalampos Mitrodimas wrote:
+>> Mount options (uid, gid, mode) are silently ignored when debugfs is
+>> mounted. This is a regression introduced during the conversion to the
+>> new mount API.
+>> 
+>> When the mount API conversion was done, the line that sets
+>> sb->s_fs_info to the parsed options was removed. This causes
+>> debugfs_apply_options() to operate on a NULL pointer.
+>
+> The change looks fine to me but I'm a little confused by this paragraph.
+> Is there something in the current code that will lead to an OOPs of
+> the kernel on a NULL ptr?
+
+Ah, sorry for the confusion, I worded that poorly. There's no OOPs in
+the code.
+
+Sending a v3 for it.
+
+>
+> I just don't want to generate CVEs if we don't have to ;)
+>
+> As for the code change itself,
+>
+> Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+
+Thanks!
+
+>
+> Thanks!
+>
+>> Fix this by following the same pattern as the tracefs fix in commit
+>> e4d32142d1de ("tracing: Fix tracefs mount options"). Call
+>> debugfs_reconfigure() in debugfs_get_tree() to apply the mount options
+>> to the superblock after it has been created or reused.
+>> 
+>> As an example, with the bug the "mode" mount option is ignored:
+>> 
+>>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
+>>   $ mount | grep debugfs_test
+>>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
+>>   $ ls -ld /tmp/debugfs_test
+>>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
+>> 
+>> With the fix applied, it works as expected:
+>> 
+>>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
+>>   $ mount | grep debugfs_test
+>>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime,mode=666)
+>>   $ ls -ld /tmp/debugfs_test
+>>   drw-rw-rw- 37 root root 0 Aug  2 17:28 /tmp/debugfs_test
+>> 
+>> Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220406
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+>> ---
+>> Changes in v2:
+>> - Follow the same pattern as e4d32142d1de ("tracing: Fix tracefs mount options")
+>> - Add Cc: stable tag
+>> - Link to v1: https://lore.kernel.org/r/20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net
+>> ---
+>>  fs/debugfs/inode.c | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+>> index a0357b0cf362d8ac47ff810e162402d6a8ae2cb9..c12d649df6a5435050f606c2828a9a7cc61922e4 100644
+>> --- a/fs/debugfs/inode.c
+>> +++ b/fs/debugfs/inode.c
+>> @@ -183,6 +183,9 @@ static int debugfs_reconfigure(struct fs_context *fc)
+>>  	struct debugfs_fs_info *sb_opts = sb->s_fs_info;
+>>  	struct debugfs_fs_info *new_opts = fc->s_fs_info;
+>>  
+>> +	if (!new_opts)
+>> +		return 0;
+>> +
+>>  	sync_filesystem(sb);
+>>  
+>>  	/* structure copy of new mount options to sb */
+>> @@ -282,10 +285,16 @@ static int debugfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>>  
+>>  static int debugfs_get_tree(struct fs_context *fc)
+>>  {
+>> +	int err;
+>> +
+>>  	if (!(debugfs_allow & DEBUGFS_ALLOW_API))
+>>  		return -EPERM;
+>>  
+>> -	return get_tree_single(fc, debugfs_fill_super);
+>> +	err = get_tree_single(fc, debugfs_fill_super);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return debugfs_reconfigure(fc);
+>>  }
+>>  
+>>  static void debugfs_free_fc(struct fs_context *fc)
+>> 
+>> ---
+>> base-commit: 3c4a063b1f8ab71352df1421d9668521acb63cd9
+>> change-id: 20250804-debugfs-mount-opts-2a68d7741f05
+>> 
+>> Best regards,
 
