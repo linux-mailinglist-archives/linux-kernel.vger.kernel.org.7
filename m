@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-772000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357EEB28DA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BE7B28DAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DC5AC05C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C0AAC05BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12072D7D42;
-	Sat, 16 Aug 2025 12:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAFD2D7D3F;
+	Sat, 16 Aug 2025 12:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hyyn2Yko"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egpGU+B2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51031202963;
-	Sat, 16 Aug 2025 12:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38BE202963;
+	Sat, 16 Aug 2025 12:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755347313; cv=none; b=atE6wv+tlcYzBWMdpG6wbOSeJq87uiAnAzM2gU9RNODtXlvT2yAdWydbHrA1/3FuDllLkFTzBCljXBWQDkrsEp7QxM6gGW0uISQ+w6w5Aw8xVZQrdRg/xH14NrKjvg/4IWCfoTKbNHglrdI0rVwxK1MzaGBMDXST+/oOZCbcTks=
+	t=1755347389; cv=none; b=qLq4aEHbYvbtDM8Nu/3t9EZa2AX7ySMQ1bCu5f85sQFb6wDED5bFM5cS96y+ux0Mk9KwgOjvXiQCdkKDQlTQCotWDmRRPOVvF24H7/tDcu4nOrgk8mmn18zqW9GYedvU2vwOyQFw+bEZzN4LzAgxitOKK8he6h8Zif4VFiohcRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755347313; c=relaxed/simple;
-	bh=LJeFZtZTd/y7pEigZxfXECcr2D/HhqEwT40BN7OnCwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t7jR5JfV+NZqkxP+7u/+4264evfgEwj5vYMZirOB14cCKof/U3G02fvfHyf0as1tmvI8j/Zhmd8h0i/NPHRbP+KtwokS455vaRDeKWZ5S5AXrDxuq5HBSPdUBVA+bC46y8y9X4t5FuJsTLbk0Ig6quiyKshvGefHh5+NwBUhe4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hyyn2Yko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CAB9C4CEEF;
-	Sat, 16 Aug 2025 12:28:26 +0000 (UTC)
+	s=arc-20240116; t=1755347389; c=relaxed/simple;
+	bh=VI+6xO96wk37w+RND69wrlguvv4gCVOsEMWuyLRPQM0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uIIOj979WBjXone5sfIzikUhyVJRK6QE1JjwGL8d2VtH1a954uNpX3aJaNs8WHV673tk5S6jzu6Fcr/fLkzJWSy0uIi4OgKdkDXiqxo9weWK57m8vc2O9sKRtLw89z/1mTSk73Dj58g+xj3T5XNgUdlrRbf7YgYtbUy14y/o8Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egpGU+B2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385BCC4CEEF;
+	Sat, 16 Aug 2025 12:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755347311;
-	bh=LJeFZtZTd/y7pEigZxfXECcr2D/HhqEwT40BN7OnCwE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Hyyn2Yko7QeeCmR0DNlCNH3cd4y8EfJ6ln/6wWQJnuXhAAlZ3gAiJZIuxpcWVPP4z
-	 F0cznSiLVlmWuG2gudGIZZglWw+mZR1HUTX3t3emy8nRT5Jo4na49PtomzDuhtQZ1E
-	 DNgW6m+ceGjNliKFeB+Q3pwShmHDX+TiCL0C+yno9nthZ3WUBw73vykUTx3+rnO8W4
-	 cv0UgID+MCDuBWrsQ3iYjqgefVPgW4fNea/nGscBWNewLRCtKkXIYUhWy+JhzF5sWK
-	 mT7jk3LMU4HvwY+6DzbPsIua7iwilfxxj+aco4AIzzUAAQ2mH05rrj5k0i0wIYDjVj
-	 d49EsVy55WRwA==
-Date: Sat, 16 Aug 2025 13:28:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sukrut Bellary <sbellary@baylibre.com>,
- Lothar Rubusch <l.rubusch@gmail.com>
-Subject: Re: [PATCH 2/3] iio: adc: adc128s052: Simplify matching chip_data
-Message-ID: <20250816132823.0d987b20@jic23-huawei>
-In-Reply-To: <d817f2c9-063f-4506-888f-f3c6faef53c4@baylibre.com>
-References: <cover.1755159847.git.mazziesaccount@gmail.com>
-	<b91ca4c576aac225525bbd7cd904bf684e796987.1755159847.git.mazziesaccount@gmail.com>
-	<d817f2c9-063f-4506-888f-f3c6faef53c4@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1755347389;
+	bh=VI+6xO96wk37w+RND69wrlguvv4gCVOsEMWuyLRPQM0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=egpGU+B2hOEHejlVWCKK/FIjyUT8EFvDI8M3ZTgEDQ1Le25wo5nknJsUuygLD8yrY
+	 B6befhhS++UgEmNob2ttan+6wjJTsyFgosG8NSGGuGA8daHP+rFCtTkByzQkjgSB1t
+	 zhxxOofCYIROBlKxMl4tx2QibaUZCuE4+ooMy+/JDsdkW7GTzmfr3Q5SZ0M/KyAVGq
+	 OaLisCYbQVTMzWWcPQtwnmTbgdufHDaGE1kvYzX2z/+DjNds4QJXSSeBe2VmVtoQax
+	 fZ3M7sHcp2JahsNW6v6UO2mQWsd6Iy+sMOrSqVQxBVV9yTkP9BBjC7q9NA22KsYzL6
+	 rk0czJ9Ue3/tw==
+Date: Sat, 16 Aug 2025 07:29:48 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Srinivas Kandagatla <srini@kernel.org>, 
+ Ciprian Costea <ciprianmarian.costea@nxp.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linaro-s32@linaro.org, 
+ NXP S32 Linux Team <s32@nxp.com>, linux-kernel@vger.kernel.org
+To: Ciprian Costea <dan.carpenter@linaro.org>
+In-Reply-To: <7d0e025ed3fdc9e545f1d0b84f6a1cbb9dfb4e91.1755341000.git.dan.carpenter@linaro.org>
+References: <cover.1755341000.git.dan.carpenter@linaro.org>
+ <7d0e025ed3fdc9e545f1d0b84f6a1cbb9dfb4e91.1755341000.git.dan.carpenter@linaro.org>
+Message-Id: <175534738837.644771.11317656897363628070.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: nvmem: Add the nxp,s32g-ocotp yaml
+ file
 
-On Thu, 14 Aug 2025 09:53:21 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On 8/14/25 3:35 AM, Matti Vaittinen wrote:
-> > The adc128s052 driver supports a few different ICs. IC specific
-> > configuration data is stored in an array. IC data, residing in a
-> > specific point of the array, is pointed from the SPI device match data.
-> > 
-> > There is no need to have the chip config data structures in an array
-> > and splitting them out of an array has at least following benefits:
-> > 
-> > - Chip-specific structures can be named after the chips they support.
-> >   This makes referring them a tad cleaner, compared to using a generic
-> >   array name with a numerical index.
-> > 
-> > - Avoid all potential 'out of bounds' errors which can result if the
-> >   array is changed.
-> > 
-> > Split the chip configuration data array to individual structures.
-> > 
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > 
-> > ---  
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
+On Sat, 16 Aug 2025 13:47:03 +0300, Ciprian Costea wrote:
+> Add bindings to expose the On Chip One-Time Programmable Controller
+> (OCOTP) for the NXP s32g chipset.  There are three versions of this
+> chip but they're compatible so we can fall back to the nxp,s32g2-ocotp
+> compatible.
 > 
-Any racing series get to rebase on top of this.
+> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  .../bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml  | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
+> 
 
-Applied this patch as it is good in it's own right.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
+yamllint warnings/errors:
 
-Jonathan
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.example.dts:18:18: fatal error: dt-bindings/nvmem/s32g-ocotp-nvmem.h: No such file or directory
+   18 |         #include <dt-bindings/nvmem/s32g-ocotp-nvmem.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1524: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/7d0e025ed3fdc9e545f1d0b84f6a1cbb9dfb4e91.1755341000.git.dan.carpenter@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
