@@ -1,399 +1,114 @@
-Return-Path: <linux-kernel+bounces-772086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51579B28E91
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6FFB28E90
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D174AA6C0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC45CAA6D41
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D8D2F60D7;
-	Sat, 16 Aug 2025 14:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327D82F3C08;
+	Sat, 16 Aug 2025 14:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJ3UeKI1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4bEG7Vh"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2972D2F0C64;
-	Sat, 16 Aug 2025 14:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F109A2F39B2;
+	Sat, 16 Aug 2025 14:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755355501; cv=none; b=At8va2gzEX2AP2JMgzUdeI2JKO1KfxJTZHe+L7lSOQvzylXpTfiIBLlS0EkNrrBfEmDNHcuTm65gR02KvOwQtzKtjJq/neIy4uuCpZbeC+oqudlFK/hOy+C3eofVgvfE4XN6Yto2z2SNCUl00YCw6R9frbq8tjhC7GJ9G9jsg1Q=
+	t=1755355496; cv=none; b=rkLYopVuE1vRsJT6O0arUwu82FuicD5MliGQuKcf9cxv4tqlTOCLql1X+vuxHbIzaFF50iLxk2ypUfcPBp4IVzDMyJmtqFeB+SmvCOWmSeXokGvyJIneK2QOBa6gGa1V5ixTzsyuMhYmYbvLTwsfVYeRWJyDr+902mCxNkCpDS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755355501; c=relaxed/simple;
-	bh=nxaZ5rLodTUBsxVd5XYQtVcb791QDELrBcEKjfDaopg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QdtRAO2zYOAD8SeZ3gLknHxtWhwDo9JWKe2CeicNdoLjBQFYFRw0Fu3J/K1m2/7K7y7sjkTWn1xATlkT6HyNL3zt3Z9P9IRIovt8elAiwxjkl63Bnfq6mfGYQKUzYs0fZELPX5/YQdvnGLX2n/B6/dhYhnbwrODKlmODCgmRBRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJ3UeKI1; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755355500; x=1786891500;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nxaZ5rLodTUBsxVd5XYQtVcb791QDELrBcEKjfDaopg=;
-  b=QJ3UeKI1JDIsOF/2/dtRUN/dsygh6h9+YW1D0O9lf9tPNL8H0JD9jrEJ
-   e48CJRLYz1Q4KAIcC5hO53zd33powx86LIpntnepT/B9ZrkV7fnbX7Tlp
-   qc2VPyv+rRXykDtSECmuyYk2Y0zzuh/S/irL9rMLF7ryWzwDIHckXiGWQ
-   jLG10Vt3teuw5nhG/6iGTVNBQiXyTqhCLaT7Iiab1DLZ+EQCO3pTcVWbc
-   w0ZCWWhz69630nsX2E1nstBXYkmzKRIOJjqpmKc/+q5ta9zTKU/DeWVt2
-   3DsPpHJF/RwiEfbqeRkjnhKVEcWaZFIVL0Bex37i9W2hju+rbgWOniAlr
-   g==;
-X-CSE-ConnectionGUID: 3MPJsmeCQNKSjXU5eBiOdg==
-X-CSE-MsgGUID: ncYYr5bYS+i8EzCBCG1YrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57508500"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57508500"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 07:45:00 -0700
-X-CSE-ConnectionGUID: 6mnG0BvdQSqzgLIE55rb7g==
-X-CSE-MsgGUID: XCCewDyIQcCMz6ijXM6dzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="198220481"
-Received: from abityuts-desk.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.93])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 07:44:54 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com,
-	kai.huang@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com,
-	binbin.wu@linux.intel.com,
-	isaku.yamahata@intel.com,
-	linux-kernel@vger.kernel.org,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com,
-	ira.weiny@intel.com
-Subject: [PATCH RFC 2/2] KVM: TDX: Add flag to support MWAIT instruction only
-Date: Sat, 16 Aug 2025 17:44:35 +0300
-Message-ID: <20250816144436.83718-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250816144436.83718-1-adrian.hunter@intel.com>
-References: <20250816144436.83718-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1755355496; c=relaxed/simple;
+	bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=m5PwsB68AFYl0zgM+cj8w4jOebiw9WQh7wRa2fyyHUfIAwwtpcYrOX43wNKaoqF0aDrwHS+zmpD4YWqm8x45W7gaZMB2QvubrBWN0gZ+qEMZWRzBH5DQ5wxVgrqOuQTpksq6PdTpd39fWJwaRrT9dCaKUNn0I4Vck1OPtyMJc2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4bEG7Vh; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce5097493so2797873e87.0;
+        Sat, 16 Aug 2025 07:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755355493; x=1755960293; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
+        b=L4bEG7Vhx4m8xNxjog2TobZ9jx0q2GnPAHAyWNEFPtcEJC8zNx42nEh9+wacQRra2L
+         LTj3xFCgksFhKm0AATIXrMYAW64FU4GeKhMUv2BNpPz08VHv0rugYoTI7zGOVjsTxO4f
+         V3g6CVmQsnrUX5F9KjIoCqwK1dG8Sm1nVmGugyW5FiJ2FTisr7A1jhUczzrjPYl0Om+6
+         keJychKWiFf7bwfMZ0nPOf8aLsfV1Z+3xUY9FXj2uELRkaLqlPn40DBDMbIivPmSREjB
+         GIT0JQ9GZWS4RmQmE8vuZteFYsfJZl7uNFb/9LXYo2T6qlrFgAKH/DMkJIPV7lzmj66A
+         7f7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755355493; x=1755960293;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ad0rqTBKrC07+KLGJQvOoukB6wwe2MaDDb656sA5fHg=;
+        b=rdyOeccNlgIIzjI3S5F7pnZ1cYEYrV/GvNifEiDLJhVlVPpyLDCqAYvj2DrazON0xo
+         fhFMTa9pwTO6ohCaG6EZOY3c0Xf6hka/Ec93N2cXc1iUQF/n1kEnlKY/V4JGcN/Lhn3Q
+         qp886BQQRxdMPg6WDxUNwrBeaCRnXCK3W3w8hJH+ufnpKY1nySU1RnsPMi54+NlPEElu
+         Tu8Yxh2fhBEl+eztTrd52K8rLS6cGfk0zEbV5pXbCuMnrQNumRvZ2OCGdzUoJHWRr6zV
+         FRdLo8S0aBzJr12V5dCcM2ym6jwWa9n1EJbTLOETsrTPXno45tsBbx4MLytYex63eQSw
+         x0MA==
+X-Gm-Message-State: AOJu0YygqezPGHNycic9qpphKJBFTgNNuszgUj1tLK07t1O22RExu3uW
+	Mjwgr11p36cFHxEEIyF+jHKCuPQNFeEMshusHR6Tp3W5T9yHGIKRGRD8g2gx8g==
+X-Gm-Gg: ASbGnctrMlpzSg/pbdgUa4Y1gnj0akAHt/P0pS1vRyx3QAlHDBggOYhPANsKDX2YFGd
+	qYdyReHPYZW6jL+ARRDKRF/o40AIDJQiqjJdag7kF3gKkdwdOoJmu/Abz8qMRRhj7OBzIeHoh7p
+	KehwFYdVG/JzF+jzpjOAvbwWwtXlriLucvHs53ktaR/i9uQw0TaMHGtj8UoJW1iKaPcoYLy/9Zy
+	YgirKtxIFXR6/20SKmKr+MkzjaLPQwWO3JdQJn6My04a8wZhbcA4XvOfJrfltOsD92C1CGe53o5
+	0Z1TDmvnxvnl0IAW961axuVsXZq98BimTS6AUIIktN6H2cU8Y1Sd+72zZkbNEPWFDznDnUoeacu
+	B8EjMh66x1+AJwCmnbNV8PACTkQmp2bWo6G0tDf6q86ulbUT/PIdKwTDx5PNVtOPxodyxlnsQL+
+	GQai3fst23mU0UQ8ag5LHL34Z9
+X-Google-Smtp-Source: AGHT+IHFziVeSKf3pFW9oNtzz07cnSMCtCUhRlcd67X/iT7qKpqZQJWJuSLgmtztlQ4qh6kKS6K6yA==
+X-Received: by 2002:a05:6512:620c:b0:55b:8f02:c9ee with SMTP id 2adb3069b0e04-55ceeba008amr1280651e87.55.1755355492622;
+        Sat, 16 Aug 2025 07:44:52 -0700 (PDT)
+Received: from [85.229.209.79] (c-85-229-209-79.bbcust.telenor.se. [85.229.209.79])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3568sm868489e87.117.2025.08.16.07.44.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 07:44:52 -0700 (PDT)
+Message-ID: <d38f7ae8-d10e-428d-b72f-a1fb490a45ab@gmail.com>
+Date: Sat, 16 Aug 2025 16:44:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: linux-fsdevel@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Thomas Lindroth <thomas.lindroth@gmail.com>
+Subject: Is it normal for the user and sys times in /proc/stat to move
+ backwards with NO_HZ?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a TDX-specific flag to allow for using the MWAIT instruction in a
-guest.  This provides for users that understand the limitations that TDX
-has compared with VMX in this regard.
+I have noticed that some of the values in /proc/stat, such as user, nice, and sys time,
+can decrease on subsequent reads. The file Documentation/filesystems/proc.rst states:
+"The value of iowait field in /proc/stat will decrease in certain conditions".
+Since the documentation specifically mentions iowait I assume that the other values
+should not decrease.
 
-The limitations are:
+A simple way to test this is by running:
+while true; do grep -F "cpu1 " /proc/stat;done| awk 'NR>1{diff=$2-p;if(diff<0)print diff}{p=$2}'
 
- 1. TDX Module versions prior to 1.5.09 and 2.0.04 do not expose the
-    Always-Running-APIC-Timer (ARAT) feature (CPUID leaf 6: EAX bit 2),
-    which a TDX guest may need for correct handling of deep C-states.
+I believe this issue is related to the use of NO_HZ. I use nohz_full=1-23 on an
+Intel i7-13700K CPU with 24 logical cores. I have never seen decreasing values on cpu0,
+which is the housekeeping CPU with ticks always enabled. I have seen decreasing user,
+nice, and sys times on all other cores on kernel 6.12.38 and an older 6.1.140 kernel.
 
-    For example, with a Linux guest, that results in cpuidle disabling the
-    timer interrupt and invoking the Tick Broadcast framework to provide a
-    wake-up.  Currently, that falls back to the PIT timer which does not
-    work for TDX, resulting in the guest becoming stuck in the idle loop.
+I boot the kernel with the following arguments:
+nohz_full=1-23 rcu_nocbs=1-23 intel_iommu=on kvm.ignore_msrs=1 kvm-intel.nested=0
+kvm.report_ignored_msrs=0 vfio-pci.disable_vga=1 split_lock_detect=off
 
- 2. TDX Module versions 1.5.09 and 2.0.04 or later support #VE reduction,
-    which, if the guest opts to enable it, results in the TDX Module
-    injecting #GP for accesses to MSRs that the guest could reasonably
-    assume to exist if the MWAIT feature is available.
+If this is expected behaviour it would be helpful if the documentation could be updated
+to better clarify this.
 
-A Linux guest could possibly be used with TDX support for MWAIT, for
-example by:
-
- a)	- Using TDX Module versions 1.5.09 and 2.0.04 or later, and
-	- Using acpi_idle driver with suitable ACPI tables like _CST
-
- b)	- Using TDX Module versions 1.5.09 and 2.0.04 or later, and
-	- Ignoring unchecked MSR access errors from intel_idle
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- Documentation/virt/kvm/x86/intel-tdx.rst | 28 ++++++++++-
- arch/x86/include/uapi/asm/kvm.h          |  3 ++
- arch/x86/kvm/vmx/tdx.c                   | 62 ++++++++++++++++--------
- 3 files changed, 72 insertions(+), 21 deletions(-)
-
-diff --git a/Documentation/virt/kvm/x86/intel-tdx.rst b/Documentation/virt/kvm/x86/intel-tdx.rst
-index bcfa97e0c9e7..b534a092b4c1 100644
---- a/Documentation/virt/kvm/x86/intel-tdx.rst
-+++ b/Documentation/virt/kvm/x86/intel-tdx.rst
-@@ -70,8 +70,12 @@ Return the TDX capabilities that current KVM supports with the specific TDX
- module loaded in the system.  It reports what features/capabilities are allowed
- to be configured to the TDX guest.
- 
-+KVM_TDX_FLAGS_ALLOW_MWAIT flag allows the capability to use the MWAIT
-+instruction in a guest (CPUID leaf 1 ECX bit 3), but beware of the limitations,
-+see "MWAIT Limitations" below.
-+
- - id: KVM_TDX_CAPABILITIES
--- flags: must be 0
-+- flags: must be 0, or KVM_TDX_FLAGS_ALLOW_MWAIT (if KVM_TDX_CAP_ALLOW_MWAIT)
- - data: pointer to struct kvm_tdx_capabilities
- - hw_error: must be 0
- 
-@@ -111,8 +115,12 @@ KVM_TDX_INIT_VM
- Perform TDX specific VM initialization.  This needs to be called after
- KVM_CREATE_VM and before creating any VCPUs.
- 
-+KVM_TDX_FLAGS_ALLOW_MWAIT flag allows the capability to use the MWAIT
-+instruction in a guest (CPUID leaf 1 ECX bit 3), but beware of the limitations,
-+see "MWAIT Limitations" below.
-+
- - id: KVM_TDX_INIT_VM
--- flags: must be 0
-+- flags: must be 0, or KVM_TDX_FLAGS_ALLOW_MWAIT (if KVM_TDX_CAP_ALLOW_MWAIT)
- - data: pointer to struct kvm_tdx_init_vm
- - hw_error: must be 0
- 
-@@ -282,6 +290,22 @@ control flow is as follows:
- 
- #. Run VCPU
- 
-+MWAIT Limitations
-+=================
-+
-+- TDX Module versions 1.5.09 and 2.0.04 or later support #VE reduction,
-+  which, if the guest opts to enable it, results in the TDX Module
-+  injecting #GP for accesses to MSRs that the guest could reasonably
-+  assume to exist if the MWAIT feature is available.
-+
-+- TDX Module versions prior to 1.5.09 and 2.0.04 do not expose the
-+  Always-Running-APIC-Timer (ARAT) feature (CPUID leaf 6: EAX bit 2),
-+  which a TDX guest may need for correct handling of deep C-states.
-+  For example, with a Linux guest, that results in cpuidle disabling the
-+  timer interrupt and invoking the Tick Broadcast framework to provide a
-+  wake-up.  Currently, that falls back to the PIT timer which does not
-+  work for TDX, resulting in the guest becoming stuck in the idle loop.
-+
- References
- ==========
- 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index e019111e2150..8175e05c9e50 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -945,6 +945,8 @@ enum kvm_tdx_cmd_id {
- 	KVM_TDX_CMD_NR_MAX,
- };
- 
-+#define KVM_TDX_FLAGS_ALLOW_MWAIT	_BITUL(0)
-+
- struct kvm_tdx_cmd {
- 	/* enum kvm_tdx_cmd_id */
- 	__u32 id;
-@@ -964,6 +966,7 @@ struct kvm_tdx_cmd {
- };
- 
- #define KVM_TDX_CAP_TERMINATE_VM       _BITULL(0)
-+#define KVM_TDX_CAP_ALLOW_MWAIT        _BITULL(1)
- 
- struct kvm_tdx_capabilities {
- 	__u64 supported_attrs;
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index cdf0dc6cf068..db85624e0e78 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -143,7 +143,7 @@ static void clear_mwait(struct kvm_cpuid_entry2 *entry)
- 	entry->ecx &= ~__feature_bit(X86_FEATURE_MWAIT);
- }
- 
--static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
-+static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry, bool disallow_mwait)
- {
- 	if (has_tsx(entry))
- 		clear_tsx(entry);
-@@ -152,18 +152,20 @@ static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
- 		clear_waitpkg(entry);
- 
- 	/* Also KVM_X86_DISABLE_EXITS_MWAIT is disallowed in tdx_vm_init() */
--	if (has_mwait(entry))
-+	if (disallow_mwait && has_mwait(entry))
- 		clear_mwait(entry);
- }
- 
--static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
-+static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry, bool disallow_mwait)
- {
--	return has_tsx(entry) || has_waitpkg(entry) || has_mwait(entry);
-+	return has_tsx(entry) || has_waitpkg(entry) ||
-+	       (disallow_mwait && has_mwait(entry));
- }
- 
- #define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
- 
--static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
-+static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx,
-+				 bool disallow_mwait)
- {
- 	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
- 
-@@ -185,14 +187,15 @@ static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char i
- 	if (entry->function == 0x80000008)
- 		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
- 
--	tdx_clear_unsupported_cpuid(entry);
-+	tdx_clear_unsupported_cpuid(entry, disallow_mwait);
- }
- 
- #define TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT	BIT(1)
- 
--static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
-+static int init_kvm_tdx_caps(struct kvm *kvm, const struct tdx_sys_info_td_conf *td_conf,
- 			     struct kvm_tdx_capabilities *caps)
- {
-+	bool disallow_mwait = kvm->arch.unsupported_disable_exits & KVM_X86_DISABLE_EXITS_MWAIT;
- 	int i;
- 
- 	caps->supported_attrs = tdx_get_supported_attrs(td_conf);
-@@ -203,7 +206,7 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
- 	if (!caps->supported_xfam)
- 		return -EIO;
- 
--	caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM;
-+	caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM | KVM_TDX_CAP_ALLOW_MWAIT;
- 
- 	caps->cpuid.nent = td_conf->num_cpuid_config;
- 
-@@ -211,7 +214,7 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
- 		TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT;
- 
- 	for (i = 0; i < td_conf->num_cpuid_config; i++)
--		td_init_cpuid_entry2(&caps->cpuid.entries[i], i);
-+		td_init_cpuid_entry2(&caps->cpuid.entries[i], i, disallow_mwait);
- 
- 	return 0;
- }
-@@ -2268,7 +2271,9 @@ int tdx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	}
- }
- 
--static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
-+#define KVM_TDX_CAPABILITIES_FLAGS KVM_TDX_FLAGS_ALLOW_MWAIT
-+
-+static int tdx_get_capabilities(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- {
- 	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
- 	struct kvm_tdx_capabilities __user *user_caps;
-@@ -2276,10 +2281,12 @@ static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
- 	u32 nr_user_entries;
- 	int ret = 0;
- 
--	/* flags is reserved for future use */
--	if (cmd->flags)
-+	if (cmd->flags & ~KVM_TDX_CAPABILITIES_FLAGS)
- 		return -EINVAL;
- 
-+	if (cmd->flags & KVM_TDX_FLAGS_ALLOW_MWAIT)
-+		kvm->arch.unsupported_disable_exits &= ~KVM_X86_DISABLE_EXITS_MWAIT;
-+
- 	caps = kzalloc(sizeof(*caps) +
- 		       sizeof(struct kvm_cpuid_entry2) * td_conf->num_cpuid_config,
- 		       GFP_KERNEL);
-@@ -2297,7 +2304,7 @@ static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
- 		goto out;
- 	}
- 
--	ret = init_kvm_tdx_caps(td_conf, caps);
-+	ret = init_kvm_tdx_caps(kvm, td_conf, caps);
- 	if (ret)
- 		goto out;
- 
-@@ -2356,9 +2363,19 @@ static int setup_tdparams_eptp_controls(struct kvm_cpuid2 *cpuid,
- 	return 0;
- }
- 
--static int setup_tdparams_cpuids(struct kvm_cpuid2 *cpuid,
-+static void tdx_update_mwait_in_guest(struct kvm *kvm, struct kvm_cpuid2 *cpuid)
-+{
-+	const struct kvm_cpuid_entry2 *entry;
-+
-+	entry = kvm_find_cpuid_entry2(cpuid->entries, cpuid->nent, 1, 0);
-+
-+	kvm->arch.mwait_in_guest = entry && has_mwait(entry);
-+}
-+
-+static int setup_tdparams_cpuids(struct kvm *kvm, struct kvm_cpuid2 *cpuid,
- 				 struct td_params *td_params)
- {
-+	bool disallow_mwait = kvm->arch.unsupported_disable_exits & KVM_X86_DISABLE_EXITS_MWAIT;
- 	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
- 	const struct kvm_cpuid_entry2 *entry;
- 	struct tdx_cpuid_value *value;
-@@ -2372,14 +2389,14 @@ static int setup_tdparams_cpuids(struct kvm_cpuid2 *cpuid,
- 	for (i = 0; i < td_conf->num_cpuid_config; i++) {
- 		struct kvm_cpuid_entry2 tmp;
- 
--		td_init_cpuid_entry2(&tmp, i);
-+		td_init_cpuid_entry2(&tmp, i, disallow_mwait);
- 
- 		entry = kvm_find_cpuid_entry2(cpuid->entries, cpuid->nent,
- 					      tmp.function, tmp.index);
- 		if (!entry)
- 			continue;
- 
--		if (tdx_unsupported_cpuid(entry))
-+		if (tdx_unsupported_cpuid(entry, disallow_mwait))
- 			return -EINVAL;
- 
- 		copy_cnt++;
-@@ -2437,10 +2454,12 @@ static int setup_tdparams(struct kvm *kvm, struct td_params *td_params,
- 	if (ret)
- 		return ret;
- 
--	ret = setup_tdparams_cpuids(cpuid, td_params);
-+	ret = setup_tdparams_cpuids(kvm, cpuid, td_params);
- 	if (ret)
- 		return ret;
- 
-+	tdx_update_mwait_in_guest(kvm, cpuid);
-+
- #define MEMCPY_SAME_SIZE(dst, src)				\
- 	do {							\
- 		BUILD_BUG_ON(sizeof(dst) != sizeof(src));	\
-@@ -2745,6 +2764,8 @@ static int tdx_read_cpuid(struct kvm_vcpu *vcpu, u32 leaf, u32 sub_leaf,
- 	return -EIO;
- }
- 
-+#define KVM_TDX_INIT_VM_FLAGS KVM_TDX_FLAGS_ALLOW_MWAIT
-+
- static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- {
- 	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-@@ -2758,9 +2779,12 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- 	if (kvm_tdx->state != TD_STATE_UNINITIALIZED)
- 		return -EINVAL;
- 
--	if (cmd->flags)
-+	if (cmd->flags & ~KVM_TDX_INIT_VM_FLAGS)
- 		return -EINVAL;
- 
-+	if (cmd->flags & KVM_TDX_FLAGS_ALLOW_MWAIT)
-+		kvm->arch.unsupported_disable_exits &= ~KVM_X86_DISABLE_EXITS_MWAIT;
-+
- 	init_vm = kmalloc(sizeof(*init_vm) +
- 			  sizeof(init_vm->cpuid.entries[0]) * KVM_MAX_CPUID_ENTRIES,
- 			  GFP_KERNEL);
-@@ -2925,7 +2949,7 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
- 
- 	switch (tdx_cmd.id) {
- 	case KVM_TDX_CAPABILITIES:
--		r = tdx_get_capabilities(&tdx_cmd);
-+		r = tdx_get_capabilities(kvm, &tdx_cmd);
- 		break;
- 	case KVM_TDX_INIT_VM:
- 		r = tdx_td_init(kvm, &tdx_cmd);
--- 
-2.48.1
-
+/Thomas Lindroth
 
