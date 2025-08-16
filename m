@@ -1,126 +1,234 @@
-Return-Path: <linux-kernel+bounces-771802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D502B28BB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94492B28BB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C19641894916
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222A87B392D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D315A233D9E;
-	Sat, 16 Aug 2025 08:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0664B233D7C;
+	Sat, 16 Aug 2025 08:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTJ/OkNh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikfWdUZH"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3042222C7;
-	Sat, 16 Aug 2025 08:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFDC1E0DFE;
+	Sat, 16 Aug 2025 08:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755331487; cv=none; b=P7bF81qTboIf65s4XFBw7S1RO/R+YdBU8rId3S/3r8RaEY/63F00iLBbo/qoFm5SY6bCO2mLijbeXcPCi/4kIvlkIv2oeDcit8+es3R+yaaIn3BU/w6ElzbCpQShGi2g/fgTNOiZFH+ivR6Dg5HCeEj2sE944QbIJyuMGwaex+c=
+	t=1755331546; cv=none; b=XULOmHNLYbbJ2z8M0OuRFgw0G3lzI5UDC0VrXIBSz2bTzqi/2Q8gCUSeHVCDXTfD/OCF9VqRC0EUh6WkAjbkGPK2X0mY2N1gg/mCFdPJZr/tJ+MeR+Eew6UG1+wb3mAnfzu1jMw9x6lm28w8Kcd4+8SUFbuhW8kwF6eF63PEbVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755331487; c=relaxed/simple;
-	bh=FgOI9nx4upQaQKMm7YmMfL7xb2BnIp+ISDny86PrSLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B8IjreBGqf0BXYT/TmWGqxog6uDT/g1dBi/2WtYVvZ5UXh4bsAOdPgU1XHVYDh5yuJKVHL5m8WdzOKoosRmDJs1GzkBWa7wd0Dmow6EjXhdTLrw8ToITvQ5Yq6ls0bMgg1yRHBl6zkyCrQMffOztW4oauQHjV+sR1IhBUFQPGuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTJ/OkNh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5857DC4CEEF;
-	Sat, 16 Aug 2025 08:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755331486;
-	bh=FgOI9nx4upQaQKMm7YmMfL7xb2BnIp+ISDny86PrSLo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NTJ/OkNhGwjmHgRTRy9asw9qWi2CUuH1rjyJYTKXtesUGWn37g3djWZ6eNbZ8U9A2
-	 6bJxjl8QIr04PUvRfadL2F4IXbJMxAfJN6xsf2idSuNPcy1RsbV31o1SF8X1wyJsi8
-	 SmjEjtT2IFLx2zgxx+1LEb5C3EeHrXG4wsHddvNcbAwjhSDWEB78pJsehB9fWHLqzF
-	 pvBDs3Xj2bDN7wf2hXqSBfmuTEGmrc8uh5ALwZPfXfEtRxt1FbcK/mx4+wcdfoBu71
-	 dqT4U92nmG2GlODABIo5qHe9LHNFkBhJ/APJ6BfaEYqE2iPAWEoAlruDMayw9ws2n7
-	 pfgjRTrxNK6Ig==
-Message-ID: <1d6691c0-d195-436f-810d-d657bd0936d1@kernel.org>
-Date: Sat, 16 Aug 2025 10:04:42 +0200
+	s=arc-20240116; t=1755331546; c=relaxed/simple;
+	bh=U2SSg03nIGBIKqiglQlafM0Kg84PROIyCRyrsKXRUqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cVdWDpSwoce+ptWSRj8jb9MpXAmTnH+85Tip+OOGhd3n6FIcXdJPzs/VhQNTtDIy3TKOMM88SN+JeLs+b31SQo4zdVMXt9iO6LO5hG452B1ZlJu6D1s5EGmqc+9mhyf80hzQ8LbnBQ6xpa0W2DP++4YyGN9MY5PSgJFCavTnnE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikfWdUZH; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618b83e5b27so1161720a12.3;
+        Sat, 16 Aug 2025 01:05:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755331543; x=1755936343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iu8qk67ZhGdQPwKrGPGRLnb5WCGC7UANE0lK3H9FyDI=;
+        b=ikfWdUZHlttAbj2/9Qw5qmZQD19WxKP6pJT+563OEU6HjSFRNteJcNynsUhd+r8vE1
+         TPhq2Kb3JCzWm+p3RDCfET3asts6fENH3cLfByg7To4oAYh+JKHrlxOJLh4pXMdiEAWK
+         lIEUr7tlWPgLiPdMt9MbbBbsvOpd9I5lyxMA/Y1EZgDO/yEzJTd0dtjoN1mWZ20iqI/9
+         B3XJLuZWwWPkPUjIqSTD4zE5mi/ui4WGG9GwpDo643OGSV5Dp4hGebY72KwZsC59j1lh
+         Kmm2UB47kz43YY/HyzUK35RGoSkuRB6YCaCPsBBRyEOKTzvaDNBBBxGT7NFdgYi93RJe
+         j1QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755331543; x=1755936343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Iu8qk67ZhGdQPwKrGPGRLnb5WCGC7UANE0lK3H9FyDI=;
+        b=PDFwyGsPX2sx1jYNuSOurokH1mDulRWNFd4OlFQH5HHEzC6KmuK/ao7z1AAPgimw7z
+         CKWSKSPCb7vi1j281WIK0/OqNgzzyn7bERDI3KC75NIsh7EIV2AHS6w8a0MPmkEC9jP1
+         wPMy9F7I/j4FSToDu4g7b4Z3yXlznGCvkKCeytYJj/IHt3j7ybem8FA2SJu5nunh1Bfe
+         bsTLDD5C8yLLmgbRAnW84Wb1WMMWbuGnYYCzLZd4PQ/bP0PWMH4nl6LybkMVK+d1lHw4
+         thrjBuhkKp3kn6M0z7/MNNMHN8YclfcknC724Mbq2P2CKpb2XeRutQ1pRjh16R0lY1EQ
+         QPKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUse0bpMQtyEynPjpom2as930Poy0N2O863hBr+SYfdoM7ONXsndKmyUaFPs9Ub9erzWrNnvO/cToveQ==@vger.kernel.org, AJvYcCW0JL9NRc6jm0sNUFr2syvsjkepJ37h+bv1AybcQ9zMq54TV7EwahHgPaWdFudmA86rWKqu5Z2mBNoHv8aF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR5TAjz138LgdNZ7mtKACcrEF8xxj1l0T83UdXAapCwNVqtN3P
+	FITFP8MYaO2SfihC20t1T5aWNZL4lUL6ybyTXBfoALFJSuC8D+woeg4T+vpPSqf6j9W5kQrTKEX
+	tRgsck1HQhOK1seAWbOFBi4F7nAvNIQkO/n+v24Vhng==
+X-Gm-Gg: ASbGnct029XwH9UYLNyRScSMo0NBSLfpVKeQA6zpaGIFkz43+/OjwAgYJKLUObtBn14
+	dsKyW3ATLOg1nlZcWqLA1EcPCqAMRziVIaBSrcckCEgSQJHFCdncHV6kmKKlsBEHazN3yvrw3CB
+	c6C98NZsvxgqbwI+++6/JpLBjuaRkOTtMxUe2oN3tBc8gitz+bsGC81ccsLzZkriTuTuGX1lEyS
+	xfzFKYpYkK1VCgF+g==
+X-Google-Smtp-Source: AGHT+IFzd8xKXP7bDXIZU1nuy/Eby5dLIYrSTouaWv1oG/qsf/u1d+oiyF0QURCaJxNuj+dRHzEcCCBb9Vdzf3ArNQ0=
+X-Received: by 2002:a05:6402:34ce:b0:615:793b:dbff with SMTP id
+ 4fb4d7f45d1cf-618b051c486mr3708870a12.13.1755331542438; Sat, 16 Aug 2025
+ 01:05:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: Add Sony IMX585 CMOS image
- sensor
-To: Will Whang <will@willwhang.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250816055432.131912-1-will@willwhang.com>
- <20250816055432.131912-2-will@willwhang.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250816055432.131912-2-will@willwhang.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
+ <20250815080216.410665-9-yukuai1@huaweicloud.com> <c5e63966-e7f6-4d82-9d66-3a0abccc9d17@linux.ibm.com>
+ <af40ef99-9b61-4725-ba77-c5d3741add99@kernel.org> <aKADe9hNz99dQTfy@fedora>
+In-Reply-To: <aKADe9hNz99dQTfy@fedora>
+From: =?UTF-8?B?5L2Z5b+r?= <yukuai1994@gmail.com>
+Date: Sat, 16 Aug 2025 16:05:30 +0800
+X-Gm-Features: Ac12FXzQrVaUH-b5nKOXfJDOP2e4IT8LOtgHbo2GjHVDidU-3EQ2YVM_5bzKmaY
+Message-ID: <CAHW3DrjPEHX=XmPCQDBLJoXmnjz3GKsht33o-S6tH-tNb-_WQQ@mail.gmail.com>
+Subject: Re: [PATCH 08/10] blk-mq: fix blk_mq_tags double free while
+ nr_requests grown
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Yu Kuai <yukuai@kernel.org>, Nilay Shroff <nilay@linux.ibm.com>, 
+	Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hare@suse.de, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/08/2025 07:54, Will Whang wrote:
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        imx585@1a {
+Hi,
 
-You keep ignoring v1 review, then v2 review and sending the same.
+Ming Lei <ming.lei@redhat.com> =E4=BA=8E2025=E5=B9=B48=E6=9C=8816=E6=97=A5=
+=E5=91=A8=E5=85=AD 12:05=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, Aug 16, 2025 at 10:57:23AM +0800, Yu Kuai wrote:
+> > Hi,
+> >
+> > =E5=9C=A8 2025/8/16 3:30, Nilay Shroff =E5=86=99=E9=81=93:
+> > >
+> > > On 8/15/25 1:32 PM, Yu Kuai wrote:
+> > > > From: Yu Kuai <yukuai3@huawei.com>
+> > > >
+> > > > In the case user trigger tags grow by queue sysfs attribute nr_requ=
+ests,
+> > > > hctx->sched_tags will be freed directly and replaced with a new
+> > > > allocated tags, see blk_mq_tag_update_depth().
+> > > >
+> > > > The problem is that hctx->sched_tags is from elevator->et->tags, wh=
+ile
+> > > > et->tags is still the freed tags, hence later elevator exist will t=
+ry to
+> > > > free the tags again, causing kernel panic.
+> > > >
+> > > > Fix this problem by using new allocated elevator_tags, also convert
+> > > > blk_mq_update_nr_requests to void since this helper will never fail=
+ now.
+> > > >
+> > > > Meanwhile, there is a longterm problem can be fixed as well:
+> > > >
+> > > > If blk_mq_tag_update_depth() succeed for previous hctx, then bitmap=
+ depth
+> > > > is updated, however, if following hctx failed, q->nr_requests is no=
+t
+> > > > updated and the previous hctx->sched_tags endup bigger than q->nr_r=
+equests.
+> > > >
+> > > > Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dep=
+endency in elv_iosched_store")
+> > > > Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through=
+ sysfs")
+> > > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > > > ---
+> > > >   block/blk-mq.c    | 19 ++++++-------------
+> > > >   block/blk-mq.h    |  4 +++-
+> > > >   block/blk-sysfs.c | 21 ++++++++++++++-------
+> > > >   3 files changed, 23 insertions(+), 21 deletions(-)
+> > > >
+> > > > diff --git a/block/blk-mq.c b/block/blk-mq.c
+> > > > index 11c8baebb9a0..e9f037a25fe3 100644
+> > > > --- a/block/blk-mq.c
+> > > > +++ b/block/blk-mq.c
+> > > > @@ -4917,12 +4917,12 @@ void blk_mq_free_tag_set(struct blk_mq_tag_=
+set *set)
+> > > >   }
+> > > >   EXPORT_SYMBOL(blk_mq_free_tag_set);
+> > > > -int blk_mq_update_nr_requests(struct request_queue *q, unsigned in=
+t nr)
+> > > > +void blk_mq_update_nr_requests(struct request_queue *q,
+> > > > +                        struct elevator_tags *et, unsigned int nr)
+> > > >   {
+> > > >           struct blk_mq_tag_set *set =3D q->tag_set;
+> > > >           struct blk_mq_hw_ctx *hctx;
+> > > >           unsigned long i;
+> > > > - int ret =3D 0;
+> > > >           blk_mq_quiesce_queue(q);
+> > > > @@ -4946,24 +4946,17 @@ int blk_mq_update_nr_requests(struct reques=
+t_queue *q, unsigned int nr)
+> > > >                                   nr - hctx->sched_tags->nr_reserve=
+d_tags);
+> > > >                   }
+> > > >           } else {
+> > > > -         queue_for_each_hw_ctx(q, hctx, i) {
+> > > > -                 if (!hctx->tags)
+> > > > -                         continue;
+> > > > -                 ret =3D blk_mq_tag_update_depth(hctx, &hctx->sche=
+d_tags,
+> > > > -                                               nr);
+> > > > -                 if (ret)
+> > > > -                         goto out;
+> > > > -         }
+> > > > +         blk_mq_free_sched_tags(q->elevator->et, set);
+> > > I think you also need to ensure that elevator tags are freed after we=
+ unfreeze
+> > > queue and release ->elevator_lock otherwise we may get into the lockd=
+ep splat
+> > > for pcpu_lock dependency on ->freeze_lock and/or ->elevator_lock. Ple=
+ase note
+> > > that blk_mq_free_sched_tags internally invokes sbitmap_free which inv=
+okes
+> > > free_percpu which acquires pcpu_lock.
+> >
+> > Ok, thanks for the notice. However, as Ming suggested, we might fix thi=
+s
+> > problem
+> >
+> > in the next merge window.
+>
+> There are two issues involved:
+>
+> - blk_mq_tags double free, introduced recently
+>
+> - long-term lock issue in queue_requests_store()
+>
+> IMO, the former is a bit serious, because kernel panic can be triggered,
+> so suggest to make it to v6.17. The latter looks less serious and has
+> existed for long time, but may need code refactor to get clean fix.
+>
+> > I'll send one patch to fix this regression by
+> > replace
+> >
+> > st->tags with reallocated new sched_tags as well.
+>
+> Patch 7 in this patchset and patch 8 in your 1st post looks enough to
+> fix this double free issue.
+>
+But without previous refactor, this looks hard. Can we consider the followi=
+ng
+one line patch for this merge window? just fix the first double free
+issue for now.
 
-Respond to entire feedback you received instead of ignoring it.
+diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+index d880c50629d6..1e0ccf19295a 100644
+--- a/block/blk-mq-tag.c
++++ b/block/blk-mq-tag.c
+@@ -622,6 +622,7 @@ int blk_mq_tag_update_depth(struct blk_mq_hw_ctx *hctx,
+                        return -ENOMEM;
 
-Best regards,
-Krzysztof
+                blk_mq_free_map_and_rqs(set, *tagsptr, hctx->queue_num);
++               hctx->queue->elevator->et->tags[hctx->queue_num]=3D new;
+                *tagsptr =3D new;
+        } else {
+                /*
+
+>
+> Thanks,
+> Ming
+>
+>
 
