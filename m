@@ -1,215 +1,105 @@
-Return-Path: <linux-kernel+bounces-771685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B64B28A4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:40:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34127B28A55
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE00A1BC85CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:41:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB0057AD9A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9E1C84A8;
-	Sat, 16 Aug 2025 03:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F66D1D9663;
+	Sat, 16 Aug 2025 03:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/uU60Mj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fgOrKMkc"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B379EA
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2941C3BFC;
+	Sat, 16 Aug 2025 03:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755315641; cv=none; b=qjSQ+m/Usm81vK4/oAxcsJOXU4xslvoeG2ZTyVPM5TLyHUnxVUMcUq4yK0IIUBcy621q1eHgw/FFfbZ0drQF/2DqcnENrxw4qo2yQG0NF3acu2jAQkqgszc1YuJZKaI+peBT6lc17wLRGTKCqydsoXNMQnZiArHMR2IlmSjLGSg=
+	t=1755316258; cv=none; b=AIq/555wB4675Ec1wDKgbbqLCKatStaORnNrktWh614YfGe/WBDTFrq+GvVHrszf7fTGKb6BfhRvFNE5s66IyRBdjhPRb+32xKdcIjnMpnDdTpIthuGtDbMK9RVqk3R4kub4VqaPuMkq7qGeBAtX6t5IARhrvXVy5lyOGKAdAY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755315641; c=relaxed/simple;
-	bh=r2D7UAio2Gm8Hww2NAzkBX8TFfOmLoFMNdcmoKOzjJc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=HUsaXcQiqI21xeyU2mCcLoRcg9b/PmH7W26erRGr7lKbx2DbQzdQW/ZuNrNVSlIXz4DAiu4Zr+CP1yXo1QeboupAku9zkBOwyhT8BXUj4th9mYqOuq2kYTFUF+/EbXv216cqPchLl9JB2ZikczOOAb/UNucc8u5PBiKjtOdaYl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/uU60Mj; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755315641; x=1786851641;
-  h=date:from:to:cc:subject:message-id;
-  bh=r2D7UAio2Gm8Hww2NAzkBX8TFfOmLoFMNdcmoKOzjJc=;
-  b=W/uU60Mjnw2IezVceLHw/KDOd49LZTTpbSqsiHhnLO7JC12JIJBFvHMn
-   viRkvtw0B+78sacR8IHOiFUrMVb8BNaphaHic/rdQX0+XCciPS3L9Kjrp
-   wUkn3h5iWm+hQHKyHX0UllxPJojtGM7nHRFSnn5kUb6mW4H5tZLqP7SYZ
-   e8sauveXY904fKr9/4S6PEKOMalZYNK354/C+dRuU3DTwWOs/VAlH4yEw
-   FH6Uc+AE37PwKn1M4Rhi7c6xuyFmiosTsXWFxK/jT2ejJWXeIjri4Zibw
-   hMT+xnzGjEIjDLMUjCJ6JYUl8KnAOPeLlZh7WgDo7pVGOsozDIE4PVI4e
-   g==;
-X-CSE-ConnectionGUID: aE4593HiQ3Cheqd902xkFA==
-X-CSE-MsgGUID: FJuDSP39TneNoG4ntZ8Ihw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57586317"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57586317"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 20:40:39 -0700
-X-CSE-ConnectionGUID: btNWjch4Qc+bSj24Qpgx2A==
-X-CSE-MsgGUID: gfkTfjZfTNyoPYQ6ZLxd7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166330688"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 15 Aug 2025 20:40:38 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1un7m9-000CYU-0X;
-	Sat, 16 Aug 2025 03:40:23 +0000
-Date: Sat, 16 Aug 2025 11:38:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/build] BUILD SUCCESS
- 5d6d30eca4dd1c9e8515a8d4b13106205d5c0ec4
-Message-ID: <202508161130.ho8RPtaT-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755316258; c=relaxed/simple;
+	bh=ji8lgMEfgfQf0FfIR9ASrIZlJBvRxe30F/clE5+N0bM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hWY3WXeGOP6phIszMQ0GhrJ64IgVWEMA/BOO2i3SdtGsDqp8pgmC5bEEbO7RFfpcsZ9ByO9BihYbpaBgMFr6M4O47fukD6c6d88zeO97nqVM8Zf/VCWo3rzI3+GyGz6m/g977/S25OiGrWA59X6lpNdEZmlh10RxedxtShjP9cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fgOrKMkc; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id C10EC22C1F;
+	Sat, 16 Aug 2025 05:50:55 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id UOeO-Fg5KiIv; Sat, 16 Aug 2025 05:50:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755316253; bh=ji8lgMEfgfQf0FfIR9ASrIZlJBvRxe30F/clE5+N0bM=;
+	h=From:To:Cc:Subject:Date;
+	b=fgOrKMkc/kQuniJGhFm4QIyI0P9MepwygZp6f/OEuWBAkeou1poU0VYe/xOEgAo8/
+	 LmukokAJUavM5Bm7mjEmtih1SkNnC+M+I6rkPWkw6HFa1/YRlc8ugxhRbf8wHcUJzY
+	 oHNAHFeDJ2Uq8QqJb/+Y99CMC9LvMwkAsx0Yb1Ctd08SagRS3kzKXKJuliT8AhLSGH
+	 RtR1LgnLLOLU6Mtvac5MGQpSEBRbbQsjSo5F7rWIVf8CWdI4KCxPr65vdHuNGdHyDK
+	 sR2ukqsVXQYjsr/6N+hVXhRgnxahqEThXZOOxAkZagMegUNFUv94mYPJuPykQ6rB5r
+	 dxPcO3p2sIfhw==
+From: Yao Zi <ziyao@disroot.org>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/3] Support GPIO controller of Loongson 2K0300 SoC
+Date: Sat, 16 Aug 2025 03:50:25 +0000
+Message-ID: <20250816035027.11727-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/build
-branch HEAD: 5d6d30eca4dd1c9e8515a8d4b13106205d5c0ec4  x86/build: Remove cc-option for GCC retpoline flags
+This series adds support for Loongson 2K0300's GPIO controller. While
+being mostly identical to previous implementation, its interrupt
+functionality hasn't been implemented in gpio-loongson-64bit.c. PATCH 2
+implements its interrupt support with an IRQCHIP, and the code could be
+reused for other Loongson SoCs with similar interrupt functionality like
+2K1500 and 2K2000.
 
-elapsed time: 1003m
+Tested on CTCISZ Forever Pi, reading/writing GPIOs works correctly, and
+both level and edge interrupts could be triggered.
 
-configs tested: 123
-configs skipped: 119
+The devicetree patch depends on series "Support reset controller of
+Loongson 2K0300 SoC"[1] for a clean apply. Thanks for your time and review.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+[1]: https://lore.kernel.org/all/20250816033327.11359-2-ziyao@disroot.org/
 
-tested configs:
-alpha                            allnoconfig    clang-22
-arc                              allnoconfig    clang-22
-arc                  randconfig-001-20250816    gcc-8.5.0
-arc                  randconfig-002-20250816    gcc-8.5.0
-arm                              allnoconfig    clang-22
-arm                         moxart_defconfig    gcc-15.1.0
-arm                  randconfig-001-20250816    gcc-8.5.0
-arm                  randconfig-002-20250816    gcc-8.5.0
-arm                  randconfig-003-20250816    gcc-8.5.0
-arm                  randconfig-004-20250816    gcc-8.5.0
-arm64                            allnoconfig    clang-22
-arm64                randconfig-001-20250816    gcc-8.5.0
-arm64                randconfig-002-20250816    gcc-8.5.0
-arm64                randconfig-003-20250816    gcc-8.5.0
-arm64                randconfig-004-20250816    gcc-8.5.0
-csky                             allnoconfig    clang-22
-csky                 randconfig-001-20250816    clang-22
-csky                 randconfig-002-20250816    clang-22
-hexagon                          allnoconfig    clang-22
-hexagon              randconfig-001-20250816    clang-22
-hexagon              randconfig-002-20250816    clang-22
-i386                            allmodconfig    clang-20
-i386                            allmodconfig    gcc-12
-i386                             allnoconfig    clang-20
-i386                             allnoconfig    gcc-12
-i386                            allyesconfig    clang-20
-i386                            allyesconfig    gcc-12
-i386       buildonly-randconfig-001-20250815    gcc-12
-i386       buildonly-randconfig-001-20250816    clang-20
-i386       buildonly-randconfig-002-20250815    clang-20
-i386       buildonly-randconfig-002-20250816    clang-20
-i386       buildonly-randconfig-003-20250815    clang-20
-i386       buildonly-randconfig-003-20250816    clang-20
-i386       buildonly-randconfig-004-20250815    clang-20
-i386       buildonly-randconfig-004-20250816    clang-20
-i386       buildonly-randconfig-005-20250815    clang-20
-i386       buildonly-randconfig-005-20250816    clang-20
-i386       buildonly-randconfig-006-20250815    gcc-12
-i386       buildonly-randconfig-006-20250816    clang-20
-i386                               defconfig    clang-20
-i386                 randconfig-001-20250816    clang-20
-i386                 randconfig-002-20250816    clang-20
-i386                 randconfig-003-20250816    clang-20
-i386                 randconfig-004-20250816    clang-20
-i386                 randconfig-005-20250816    clang-20
-i386                 randconfig-006-20250816    clang-20
-i386                 randconfig-007-20250816    clang-20
-i386                 randconfig-011-20250816    clang-20
-i386                 randconfig-012-20250816    clang-20
-i386                 randconfig-013-20250816    clang-20
-i386                 randconfig-014-20250816    clang-20
-i386                 randconfig-015-20250816    clang-20
-i386                 randconfig-016-20250816    clang-20
-i386                 randconfig-017-20250816    clang-20
-loongarch                        allnoconfig    clang-22
-loongarch            randconfig-001-20250816    clang-22
-loongarch            randconfig-002-20250816    clang-22
-m68k                       m5307c3_defconfig    gcc-15.1.0
-nios2                randconfig-001-20250816    clang-22
-nios2                randconfig-002-20250816    clang-22
-openrisc                         allnoconfig    clang-22
-parisc                           allnoconfig    clang-22
-parisc               randconfig-001-20250816    clang-22
-parisc               randconfig-002-20250816    clang-22
-powerpc                          allnoconfig    clang-22
-powerpc                   amigaone_defconfig    gcc-15.1.0
-powerpc                      ebony_defconfig    gcc-15.1.0
-powerpc                    kmeter1_defconfig    gcc-15.1.0
-powerpc                 mpc885_ads_defconfig    gcc-15.1.0
-powerpc              randconfig-001-20250816    clang-22
-powerpc              randconfig-002-20250816    clang-22
-powerpc              randconfig-003-20250816    clang-22
-powerpc64            randconfig-001-20250816    clang-22
-powerpc64            randconfig-002-20250816    clang-22
-powerpc64            randconfig-003-20250816    clang-22
-riscv                            allnoconfig    clang-22
-riscv                randconfig-001-20250816    clang-22
-riscv                randconfig-002-20250816    clang-22
-s390                             allnoconfig    clang-22
-s390                 randconfig-001-20250816    clang-22
-s390                 randconfig-002-20250816    clang-22
-sh               ecovec24-romimage_defconfig    gcc-15.1.0
-sh                       edosk7705_defconfig    gcc-15.1.0
-sh                   randconfig-001-20250816    clang-22
-sh                   randconfig-002-20250816    clang-22
-sparc                randconfig-001-20250816    clang-22
-sparc                randconfig-002-20250816    clang-22
-sparc64              randconfig-001-20250816    clang-22
-sparc64              randconfig-002-20250816    clang-22
-um                               allnoconfig    clang-22
-um                   randconfig-001-20250816    clang-22
-um                   randconfig-002-20250816    clang-22
-x86_64                           allnoconfig    clang-20
-x86_64                          allyesconfig    clang-20
-x86_64     buildonly-randconfig-001-20250815    clang-20
-x86_64     buildonly-randconfig-001-20250816    gcc-12
-x86_64     buildonly-randconfig-002-20250815    gcc-12
-x86_64     buildonly-randconfig-002-20250816    gcc-12
-x86_64     buildonly-randconfig-003-20250815    gcc-12
-x86_64     buildonly-randconfig-003-20250816    gcc-12
-x86_64     buildonly-randconfig-004-20250815    clang-20
-x86_64     buildonly-randconfig-004-20250816    gcc-12
-x86_64     buildonly-randconfig-005-20250815    clang-20
-x86_64     buildonly-randconfig-005-20250816    gcc-12
-x86_64     buildonly-randconfig-006-20250815    gcc-12
-x86_64     buildonly-randconfig-006-20250816    gcc-12
-x86_64                             defconfig    clang-20
-x86_64                             defconfig    gcc-11
-x86_64                                 kexec    clang-20
-x86_64               randconfig-071-20250816    gcc-11
-x86_64               randconfig-072-20250816    gcc-11
-x86_64               randconfig-073-20250816    gcc-11
-x86_64               randconfig-074-20250816    gcc-11
-x86_64               randconfig-075-20250816    gcc-11
-x86_64               randconfig-076-20250816    gcc-11
-x86_64               randconfig-077-20250816    gcc-11
-x86_64               randconfig-078-20250816    gcc-11
-x86_64                              rhel-9.4    clang-20
-x86_64                         rhel-9.4-func    clang-20
-x86_64                   rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-rust    clang-20
-xtensa               randconfig-001-20250816    clang-22
-xtensa               randconfig-002-20250816    clang-22
+Yao Zi (3):
+  dt-bindings: gpio: loongson: Document GPIO controller of 2K0300 SoC
+  gpio: loongson-64bit: Add support for Loongson 2K0300 SoC
+  LoongArch: dts: Add GPIO controller for Loongson 2K0300
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ .../bindings/gpio/loongson,ls-gpio.yaml       |  28 ++-
+ arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  20 ++
+ drivers/gpio/Kconfig                          |   1 +
+ drivers/gpio/gpio-loongson-64bit.c            | 191 +++++++++++++++++-
+ 4 files changed, 232 insertions(+), 8 deletions(-)
+
+-- 
+2.50.1
+
 
