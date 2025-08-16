@@ -1,174 +1,144 @@
-Return-Path: <linux-kernel+bounces-771981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFF2B28D78
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:44:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31611B28D79
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:44:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C071763E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:44:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10DA34E04CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D64C2E11BC;
-	Sat, 16 Aug 2025 11:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7402D0619;
+	Sat, 16 Aug 2025 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Jp6/nvEa"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QazUCY8n"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3642BEC50;
-	Sat, 16 Aug 2025 11:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755344644; cv=fail; b=rQZ+21hJFY2e5vqwcbgRTYafoqeFZ02NTW2yKn7dAP10GFqnd3KqIjq+CVvKo1YEuc0YHEy5xrHUr9710LX8L5AxxqDe100unx37vAF9qou7+qpdmmpN8hXiaJfhSLn44tiSIp79OqdT5VznH1WsJoXc4LRzqFprH0jyZzJIS38=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755344644; c=relaxed/simple;
-	bh=FA92BpVl4iWIZ2kIEOkpPtBpBN+aTz+BhK0ZQPMEOWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KlfYaTyr+6iCbBRT6cQX64hfbfHRZ+w+BPuKplwmbnelOVkPgNdEMPBm326trpKSGuzWuL0QFnKBcK3Gv8CT0Q0W3HcRPpTSrDqkF2BsW8BT/RzK5xepdgBlQsuTPvIwcSsgTqK2EY9uSvarbhwz3JZnJhLQB9mriq9XPSt9O/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Jp6/nvEa; arc=fail smtp.client-ip=40.107.237.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mfw8lNnPrU7yCZ0yanUSsEf0yp52p0OmBAkgecibcI0/OKACHG8wRhTERhf6keF5RQbZGUhfQSVacvdV0XsBhP1FQRgKuKeb6sqWwV8v/BN/lYblQm7x/YAAVgMFVlkdQP/g5jl4CIRNowANarZIqH1Ak8ORwPzgBib+KDORbQMujpZQfysUTkLJbnPOFxxMQK774yUksH8xBdKjvsFwOJJFFZ0dhz3zPaUaT7tcHIVFH1I1UJtpUxw3LAblG9E7yEz7E4ERR8zVtvuSvaNZcCN/R6qz7L72k4tIQtryn/ZuH6g7PHqXzY8Du5Oyj7Z1xXdoc2Dwq8hmq5w9kQPFLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x98YlXfSRQLr/qyfQQjrsH14PcSUpA//NoxLajxkamM=;
- b=r2pS8Hr2Z41Zs/XAfSrPONkypNcepncuAuHVXPqxzO5JGLxI6n/QDrux9q+P3OcpnVdVhwb/9wtaPIrnc25OdoOcSISTi6cmUlKWOOh14U+P91aH4Cdei2/8l44q1HRPEkMKAye819RqLo58f9YSeS1/mDKUgC4oC5DMhKgtE07JlY/lOYgqRO9EnoFyZZG8vRUjEE733eSQMFmgzYqQjCpaDYcn3TDrKtEw03pjZbvtiGeJxFww4oTjMSRWD/9k54jzPSPK6nZS7CVcJk4hsTApIzeFL0eYZqwZ1rUlID+2fdtOwNq8ZjPDTo+u1qlpgdw9hpek2Yq8z3EsVmui+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x98YlXfSRQLr/qyfQQjrsH14PcSUpA//NoxLajxkamM=;
- b=Jp6/nvEaDvrLAzbwFRJOE2CDzOXkFbWZbnQcG+ST+2oqEMx//nae0Ax5kb06J7Zp+K/sJftcesshVQzj3SUTHE5OHoObT5cgGTDKfA3Fo/xd8pG1guvir3nyd19jobPwZLQtP7RxuPFBxyVLQZEjNwK8YEu3/T1fEjId231Ow8DUU2j2YPXwdgiaeUXfiJZvpWbaycUZXGAOT3hGiL9t+1+GkQDQv0hzh9J9xgLNm/cLo0Y3P592M4Zpy1zU9d8fFD4FFVQcRA1Vf8JhHa7VnIlZoshHhBQid451BBlL1B+cvjmihq3tE3HLhBQ1FtfC3HdMgMdrtR+nojihYup1Bg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH8PR12MB7445.namprd12.prod.outlook.com (2603:10b6:510:217::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Sat, 16 Aug
- 2025 11:43:58 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9031.014; Sat, 16 Aug 2025
- 11:43:57 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] selftests/mm: reimplement is_backed_by_thp() with
- more precise check
-Date: Sat, 16 Aug 2025 07:43:54 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <C8AA817C-E687-4656-AFB0-1729CB711D66@nvidia.com>
-In-Reply-To: <20250816003013.e12ecb8f2dc45e7f934ff281@linux-foundation.org>
-References: <20250815023915.1394655-1-ziy@nvidia.com>
- <20250815023915.1394655-4-ziy@nvidia.com>
- <20250816003013.e12ecb8f2dc45e7f934ff281@linux-foundation.org>
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0285.namprd03.prod.outlook.com
- (2603:10b6:408:f5::20) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481DC2E11BC;
+	Sat, 16 Aug 2025 11:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755344668; cv=none; b=FSpVAL9j13FIs3TDSG2Sn/P3MOA+K0uzBm6QiYXnAVmgq2KJNNt4NpTZ1i8U/oAPqRc8NaBT6FNiuVz60k5sYKo8PuUZ1b8ycPsEjAKJyv2ysbdqv9DEgfWQhSa8MsBdmlVlrVN01R6GslF+QXR+jRwu4EdCMZjob9ugZ9toKyg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755344668; c=relaxed/simple;
+	bh=sadl+94nfOOO+PFAVTq5awVo/e+yg+dtDdZJ+TmTfNU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AQZAWIjCYg9K7XB4Gilp659sTqI3ePsxk8Ii4sy48Ep0UypOkqmhCjCbb8VONFgUo4axEFSfg1GfPRfIRO0S1t0e/mxqYMFe89kbIKXM7MrE/zPSp31Uqbb1Uqw9n40uaGLYxolU5robMXhVPhnR4Vh2RMaDahHtQxiNG+DMaWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QazUCY8n; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4716fb8e74so2491395a12.0;
+        Sat, 16 Aug 2025 04:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755344666; x=1755949466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Fe47Jpwa/1lJM+lMXCCDio5n2It2kWlFgs8x2tPHgA=;
+        b=QazUCY8nNEH2L6eHe/PcearZs6d/axVWew8wx5BYUt6GC5xpW5L3Bvv0ogHGMbpCmF
+         inNFybPATv7iBd+3m+hinxI63+2LZMKWRVmE1JsiLnqFYO5BIGfMPTQtuJ9LtoL5EmWp
+         2VUI4/t88MCRjyDYtXrq5mFuh+5WnX2SxaRnpJ38AHC7390hYh7ePG1fBt8uVcoHUorm
+         wl6ocJ3eJ5312v5DbxMiykkWCnQ2n1/IyoyVidQC7pJ1paCE8A4WB8a+2mZ5i6yXc8Va
+         XBkAvyMbWFoFfV5/zMxnclUVssSoFokt2mz0fT8LvTVmZnO/AP4t8NQaVdS21jDpJQfH
+         nc/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755344666; x=1755949466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Fe47Jpwa/1lJM+lMXCCDio5n2It2kWlFgs8x2tPHgA=;
+        b=DQdPO+E/dd9Wizegv9FLVTj1NzdOA6iTqgiRnYnY2buo7OjrAWYhSRTKWmYuXANM4d
+         X+okHZZmrgjLalz1izIVqavWMPZCskASn2FlBM67lVJR4P8qFjmgmMCnNSVuhpeDWIry
+         2Bx1Omv79SIYJ7jwEkwIP0+X3K4mMIkzpUKU7/R5SWU9dP3AmVAWWGf4XnDDI5eVvDjd
+         JX6VoPEHEF4APWv9CtWcTvLdi89K3DsjPahlgZAf+q+fbKWtUZ1QEyHw4eiHAas/9cc/
+         x0kk4mP+JmmNiRsLopH6z5niO/a6S2AVEFcL9w+T3a4QsNBoOEuBgxjiCw05zze5TvCT
+         Bm1g==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Ph5rq5Cj5gKQF5W3j66Cd6PBNykD9gdty1wB98j8xnYs+F5TxW/gr2bBQdiRw91uGid281npQbSpl1jbAQg=@vger.kernel.org, AJvYcCXS9CyPqUCyX4mZQfx9n8z8R00vfIFlcjbU6JplsC0G3gbLhYkjXeCDWKkioqERQQzYbeoo8tbVknWmbjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvWvfeZyjEkAaeIKbikdBEJX5NFE8wj5/FN7t6ehLW7fJBW/Tw
+	067hwgFigkXnh+IMqYxfhwfNiavFX+6CtUWfG9rChtJRx/KkKjOiKUAl
+X-Gm-Gg: ASbGncuOZxFCeoh/hqLWhu+CWzwh8gvqKCZPEg/FMgPLTpkwL8eUI9f3yKH3gqkmcks
+	5hMAHgyzhoPrcHLVaKxlZJX5rtONiaxWH428ZRISo4Aw89gPrcDxEhTU7Sfo7uF+5KApmgHfpRZ
+	mWHiizAlQ58Mr3TBLUFiCatA0p7xLw1XVqp89udw1mdzBz06UFx7Vzwrt0NHeKzzp1iGZNHY2Y6
+	dgaG7TVcpY/zhJYkty4X4Je4OqOjYAgzO8zc3AdSJWvuhUp+R2nN4p1JPp9UuolG2T/8atOWWh7
+	Ll+K8xvnbH5ZD+D0bzeqqtqMKeJchN3H2CwjJ4B733FpGFUqddijA9OdVB+WXgn5D0D0ZbxE4qH
+	xi2wqUsn7GBsXNS7xECfdOX2Y6BboG8kaZl9q
+X-Google-Smtp-Source: AGHT+IF/UJIWVXa9nNhvGyN80X24vI3JbpvvYOS/CJUaQpPwgL1aSMZ5otCohS5FAAXW7z4ww0yE3A==
+X-Received: by 2002:a17:903:1b04:b0:240:150e:57ba with SMTP id d9443c01a7336-2446d6d33d2mr81048185ad.3.1755344666323;
+        Sat, 16 Aug 2025 04:44:26 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cadff5asm34551165ad.42.2025.08.16.04.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 04:44:25 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: [PATCH] rust: cred: update AlwaysRefCounted import to sync::aref
+Date: Sat, 16 Aug 2025 17:14:09 +0530
+Message-Id: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH8PR12MB7445:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5eb924cf-c56b-4d0a-cf52-08dddcba2f9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hXv5KKU4BbvI9qNI6LEGKzeS0z1W8AhRHH6lYewt3p6NAZ+LnkY6XWGADaRR?=
- =?us-ascii?Q?EfAqaCKkqq68XsCAuSUH97VyxESSBjKzpiktTlAZFD1GSYGpNyT4y36guXel?=
- =?us-ascii?Q?q6gMA3rSaI5JCJq7k+MvBDFbXPEZq0CNjBbkcxIi0g8ctHg8wwu/IZOyj/w4?=
- =?us-ascii?Q?OWbP5gPkmp5pADuS5VbwoVc1271Hlf3r921rrp/Bp0/Tg0Penz6mD2M3Dxml?=
- =?us-ascii?Q?0wJAR1Tcl+Jw8+KSSqHR+/L4MnwTGLTB59N5AHVAZAkHuHN1MOlefwTbQQTf?=
- =?us-ascii?Q?RC5d0wOz42g/gnZ1JHqEE90Nb2IMBxan1q+l7Zs+zruStVW7Kb4UUsIyMTIW?=
- =?us-ascii?Q?gl01Ct47TE6jFIyaGwlFv8GEWMnXLWH1oISU/4xfwxihPLA7LdOqi8EgVXDf?=
- =?us-ascii?Q?tiYRcqDRDHAIowZPU5f6eEYqMXafRJgukX3wqqRJf3xFOO77hlnXi/TPHSoE?=
- =?us-ascii?Q?f3nnz04At3BGOg+P7jFgMKSVLh+kXt1wxdPQhvijLL228SD8ys2GNH/2I0b3?=
- =?us-ascii?Q?t5k07/0rY58QpYApWXyaXtdeZhY6OboggqGLXG09QYDVUAzY7u16GscnWpTN?=
- =?us-ascii?Q?8Plmustiby8lvBEuivTPJEcFHJAdls2l21kRoitLLbdN/kT/k+BMzTBtu1X6?=
- =?us-ascii?Q?OgVVEZkPwptsSi2YCGdyDcLwaGe8kAn8RwINCXKa0CfWRbVdt2l3guQeRJgT?=
- =?us-ascii?Q?+OPy4B9rzMsJHh7AeVAm2tgAg3d82i5qSXCtANwdOp7z11UtQjSfm5uYLUeP?=
- =?us-ascii?Q?S4WjpKXIdJysqEKrfUHXHCqfQqy3wg7aoGBTxP5O/FTZuilDaOhoWZTVY6of?=
- =?us-ascii?Q?e/E9S1YZ+pnjiTWZSj4BRU3mxhC140tvEHVZ5WrybsNHrwweK53thzHHWkOS?=
- =?us-ascii?Q?JGDs5w048cIm+x8NcDDM2D5ra37NWNZYqORCsGMJcAx/cKF8e5MQC0qglbX/?=
- =?us-ascii?Q?Y2L9dFkIHozkzSrdkAV69FToDUOrXOpw814ipcdRoDVkgXA68EMqPHTkfCES?=
- =?us-ascii?Q?Mu4M2G4d73opawTHZr51JxJpcoIv+4UHah5zPwGyU/YJGw4pazCM0psZuuTJ?=
- =?us-ascii?Q?A9j+HM6j8MTAl6MWU+XT2QhKQIoHwR2eV5Km3r8XU+/wLwTWKBuOh6q31cr+?=
- =?us-ascii?Q?0ky0Yg5JG1idvIaHNHMUjxEVbRjqMzZuTKEKPHhzVXgIDOoNxSfHs5pqxWcM?=
- =?us-ascii?Q?6RT1tLVj0QLEPqyPgVNlQV0lixYkw8fvOX3qXyfYDvkQY3v0FkvIsUx9Tb4L?=
- =?us-ascii?Q?6dFM9+un7iSdtTD2C6y2lbe+2T2tjFJ4CNGH7OZZooxAlqsXuAJ811Jgx2ik?=
- =?us-ascii?Q?74nvHUx5Y7D6f41MLyHKZ39q2MYFY0+hQIjqHQuGOWMMdNxqF9sDeSDOuiYA?=
- =?us-ascii?Q?My1BLxXAs1/J2dFmu4Gke7cD7r9eYUKd9rp8qNdxXvQgMFCHpqD+jB5yEe1c?=
- =?us-ascii?Q?q/zNG6jZWK0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HCww7jehf+3mTzIO3hpdLmldqbVqVkmm5i0PLYtYs8RFFsbkONFeJkpy4iMS?=
- =?us-ascii?Q?TIW5NJ9NnWVNHgGJ5bMDBwQKaAkXun8tZ/WY+7hH4cJKcKDEOVJ3eZhobbuG?=
- =?us-ascii?Q?2X6tazmVmeXdWkN0ZUFLcRDqAo8zuIe6GVb7KnWQuLppn3h8KtCiouIb/dMg?=
- =?us-ascii?Q?4QqB/6sIOY4O7eHuz4hgvZXAeIk86jV/QkScZ5xUMGX6wT1NBD22Z6REXAt9?=
- =?us-ascii?Q?wfxfcrcn62Vmu1Ps6wcbty/P5arAYnzh1r3mm0/x/1uDCByjaUyQrkmiU8cp?=
- =?us-ascii?Q?Fvdti75eT1RUkwgtJLuClkLLLTbQAMJbU7xvuddSWjKS/fo/bOYgjhfNfOvt?=
- =?us-ascii?Q?uWf5+GRge2IlSqvtxnwUOFUFkUJjgbC473tqPvPI8cHOkhJPh7EwqAZGrjOY?=
- =?us-ascii?Q?y/sEuhb4KpKD23fb4lrzA8MSYuXChwk4Fpwbw876o+hQdCwJMknlou4v3QdX?=
- =?us-ascii?Q?IwWoWwpBdvpCR3XQuyKH20dWxXneMA5zbgGluTCDB1CXZUKro3OY1kIgXxso?=
- =?us-ascii?Q?g+ZnY4YGyzT2M1JlPgoV/tu+Sh7iUZyoXV+OgiG27TYcbNebVoafazy/4g/g?=
- =?us-ascii?Q?GTDrrKsFP4QkscZ37uyH5ze3F5tkyzCYWqavhWf/rDZlC6RirkuFb3VcLxZH?=
- =?us-ascii?Q?kKbIZ21ADjFrN3/UN8tOhgxFZ+75xvuACAXr1WVyEz6C8OpLdCNG96KyYmpj?=
- =?us-ascii?Q?YmgIKHGMBt3s+nyv9kwVlrSpT+EcD+8+2MBUN0VXb678wNv1pZx2dMWo7dUu?=
- =?us-ascii?Q?PEubyvlfp7oYxEq+YMDnj1RXVkTRKyslkVhYrAP5WoYMdnITDsWav3G+fVGz?=
- =?us-ascii?Q?T/ywKBl1g64VwiMGqi5nYfL0xo3p2Kaemt9CfT8pjPGZ8JnWkNa3s1QX8mCi?=
- =?us-ascii?Q?+/TLk4TnQWClz6ZD15iQxxMtAViM4/2SKxX3khnmPmMebZdNs4bDypsPWbji?=
- =?us-ascii?Q?OFyZlolfm4XVXdH/jg5emvuw56+qVHrT9Nb04xu9iO7je0UImRP14q2N6HHu?=
- =?us-ascii?Q?MEeweo34VCUH60dhbZmqMX+18xFz/Yp+eRwqKftwNaD8FhnnxQ1IkOCGKI2y?=
- =?us-ascii?Q?l90DN2bR+vGd5t3rou2X7vghypwtm/sw5So8eDrdHrG5XnVuGfC39EhLRtJJ?=
- =?us-ascii?Q?1YsEwRIeBnjV31sKvSKCKmbK1RVd5EiUT46joVhJPAaQHTn+ryQTIv1WXpMG?=
- =?us-ascii?Q?GGXnKrCgkvdtHCyhBBMs7PHgRz6uKiUCIUsDWSdFfkhKCYE6giCfK2nVCqjD?=
- =?us-ascii?Q?mBy3/1itQ3GrRFYRY3HFZNaaSoHXAc/EoZfwTkO2Yj3DQ7Wzij2BHeFvK6j3?=
- =?us-ascii?Q?ABaLyfQbIe6MgZTirBJYBd2QdDKr+gzCAk3S5Lc2fO1amH26PP8y3CGtJdbY?=
- =?us-ascii?Q?CyvRf0VjVo7guuH0b/wIBDiFqdGhKZfiGVur+PNKwafdKcC01EIfzGhZ63ny?=
- =?us-ascii?Q?0E+QjUQJwnm8iA8BQXr/B3XKu/tLQn+0qCj7+/9wqE+sau0VJnOAgZyo//9c?=
- =?us-ascii?Q?PD7b+d1WyMrrPmvYK0jCnmA9UQ3qah2wD9HHuKvaNy5lh8DnOJaMCVfauJPI?=
- =?us-ascii?Q?F6Tus5IXKpA2g1zmkKXdVQfLPLur+yIz1pty5XzG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5eb924cf-c56b-4d0a-cf52-08dddcba2f9f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 11:43:57.8413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZCSDlE3NA+spXPoQT4/43CzcTZJCD+z9kkjh0legt6IyN0yypupqiplCH9uYALJX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7445
+Content-Transfer-Encoding: 8bit
 
-On 16 Aug 2025, at 3:30, Andrew Morton wrote:
+Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::aref`
+instead of `types`.
 
-> I hit a large reject.  Can you please redo against next mm-new?
+This is part of the ongoing effort to move `ARef` and
+`AlwaysRefCounted` to the `sync` module for better modularity.
 
-Sure.
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1173
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+---
+It part of a subsystem-wise split series, as suggested in:
+https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+This split series is intended to ease review and subsystem-level maintenance.
 
---
-Best Regards,
-Yan, Zi
+The original moving patch is here: (commit 07dad44aa9a93)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+
+Gradually the re-export from types.rs will be eliminated in the
+future cycle.
+---
+ rust/kernel/cred.rs | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
+index 2599f01e8b28..4a2229542fb7 100644
+--- a/rust/kernel/cred.rs
++++ b/rust/kernel/cred.rs
+@@ -8,11 +8,7 @@
+ //!
+ //! Reference: <https://www.kernel.org/doc/html/latest/security/credentials.html>
+ 
+-use crate::{
+-    bindings,
+-    task::Kuid,
+-    types::{AlwaysRefCounted, Opaque},
+-};
++use crate::{bindings, sync::aref::AlwaysRefCounted, task::Kuid, types::Opaque};
+ 
+ /// Wraps the kernel's `struct cred`.
+ ///
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.34.1
+
 
