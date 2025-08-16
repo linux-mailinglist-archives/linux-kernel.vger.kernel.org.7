@@ -1,120 +1,82 @@
-Return-Path: <linux-kernel+bounces-771880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433E8B28C86
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8CDB28C7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFEA1C800AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE6C5C349B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD8623D2AB;
-	Sat, 16 Aug 2025 09:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D966F243964;
+	Sat, 16 Aug 2025 09:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtUmIY0c"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="YWgD05nM"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B731423F40F;
-	Sat, 16 Aug 2025 09:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5090D216E24;
+	Sat, 16 Aug 2025 09:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336887; cv=none; b=P666V70I37kEA4LG/w0zZp3aIUGjuNxUYFnyCLLfzZyWtAHJZ9swsuh10h/17+dADcYBpGLySlcvqZrU/FkzBhRGtxUw0AHbo3R+ZXg3QhIJvaHFvMq9GgmEWL3qcWnO5V4bwVuHpF/v0pgXv2RLcr75VNbZpx2c3ks9TYar+Fw=
+	t=1755336906; cv=none; b=Nl+M8NtJGm6BxFJJxmSIggEFqLUhTSXZ0UHSf5TFXTj6bTAt+DhbmGmIGpXYG0oRuO6RH/yvcjlvc9Pn7RNvoiR8foLh+D9lYdMsUiux8RyaaLZN1tVUdbQYkb7HEMrOa/xsvsqRxxkmhxPgM07xYjsSz6gRTzbo1RprF7A4hRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336887; c=relaxed/simple;
-	bh=UzPkeUJpFFIz5NZn5MQP9WNh5qcQOGMY0RszBW7vCwU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=rgB6MF6CbLg69YY/tc4tUTbXfLXcvDVNJp1IYUcWHyFBKhXp3kzjbuYm0hx6R1tbht1xBTqZd98d1gl2l19pG3Pu4PL5EtKrltlE+nCfDnQo4hykHD0T3e5jQUi2VMaqFpK5qipv5GJDUSu3tjQmdHgBeFKktNBYUcefNRAF1sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtUmIY0c; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-50f8b94c6adso666880137.3;
-        Sat, 16 Aug 2025 02:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755336884; x=1755941684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OGEFmcc706ihZ0upVBFGijpGh8qPNo2j6S0svytZHMQ=;
-        b=BtUmIY0caeD3AtM4Kv+wZwAeW71UwH9GfoATnk5nsDCe4t/VCGR/935FP+zT1O9n1y
-         8x+fT4c5TbtkJnkn4AGdJ3qZCaYRi0GPi47tTk9FuONyS05szpOzWGBybTurXVEItAe/
-         ZgfXE9wxNpz1Sw6O9xC5l2e5cSrYx8VfjbqLjf3AMNBOzCiHF8UY+g1GW4qWBBQ+g0Iv
-         ru/Ob+9hesqmDsGsCybqswzi/8YlM7j8SkzdAlnM9OVNUNusHAzqxHy4j9xgc2OQ7T0z
-         WLo8bdZYmnUQPWm62EybpIA/PjddDM3Uxq4/Z+4sHkDbgK6EvjGLWBVBfzMeyUJplJto
-         FKeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755336884; x=1755941684;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OGEFmcc706ihZ0upVBFGijpGh8qPNo2j6S0svytZHMQ=;
-        b=k579QmcoIzS1syUfTgtVY7bnHhjq4lwK8cEodfruvu1bgsE2Mxpy9atyeb3svn9OSh
-         OwDW890ttd66TtkRpB2nj3Wj4uWnhhb0Am7ue1eefOk1OLp2ZpYlYkFDyEF2NW+Nw66o
-         u+afYaYKTOyU2sQ9Kzt0RrPTLkoCGTuXrubwNWlhIuouCWFNSrrwgqbCmnrtrAcbakfp
-         isfSNrvf8pupvSvhCtmSPhk4uv0AV+N/qhaYvTamP+LbaaefEQ1fpSOJWaPqVyfFpJwf
-         TERHpXXIJdVTWRniIAqrUOoE0BNyVz77NX+VbG7YInHzj6EItmwhK6u2fJEiPmkEVuvF
-         ZFDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu+6RLMg2PQrcHs0FmVNKPIuqDysaLSBUG86nU4StUbddr1ggDEL5bHKQDTgMF32AkUm/rIYsQ@vger.kernel.org, AJvYcCVxOu6gEz+LKnCRO6YA3xv0kbLlWyzKTeO9mrIFvXvon3RmedSBdmb2e9mGVtLYyYZ3C/MFZQNlJpRYgtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAPrzUbKLjNc3aIMb8twxbx8Cn+7PPgdpuNfO+A+dj9XFhg4TZ
-	u6cRRVtbfoghbcN7LB75/BAbUwhw5xJNRQXBQ0JHJT4r6RCt55B2kCgjqM9+89iY
-X-Gm-Gg: ASbGncvYcJbD51IM6iLceGP82xvd/UYyQoLLv7Yjbko+ak/k/8e62k8gFaEhBW1IMG+
-	qr2/oy8sj1eSInyMPO0b41y4L2kRcuk1LfCt6i2TAkY6aSUHU93TV2JdMB+wLy/wy1aglMti39z
-	8YyGjU512mznyJS8qMiU2LazFce1MwXh/ZdkcGao/N1vrXE+IQ339k3dmZiWPL2m/FbvbABzLOm
-	0Q0hjNUXCInGWhvB2eDA/IdC4MmRfhMhOTOhyg46JSX0IZYJnXj3wv+hsVXUIsZgtUX9cyK9cHE
-	pcmbO9dEsVFvgKf7dVbpPWjTfu/aCz8ac1+sEnSOJ4g4Wyc5uoAB8GQCR5ikdQiQGDqHl/38mgh
-	gpemq9VY28/nKTtG5AG0CnNX2u6A0pSDPdDTl0lMU+DVgJzDoEVz2lAYRhXJvy8yqkHZqlw==
-X-Google-Smtp-Source: AGHT+IFMl3BEqyBUZWA6WoiCtiouNPFnKV7x/pY+D6CDUDwdFhqIC+6ZOsO6pvpFXzWMyJQhM5UnQw==
-X-Received: by 2002:a05:6102:26cf:b0:4e5:9380:9c25 with SMTP id ada2fe7eead31-5126ad1e206mr1982168137.3.1755336884432;
-        Sat, 16 Aug 2025 02:34:44 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-890277bf746sm681112241.5.2025.08.16.02.34.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 02:34:43 -0700 (PDT)
-Date: Sat, 16 Aug 2025 05:34:43 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <willemdebruijn.kernel.1096d5f9f114f@gmail.com>
-In-Reply-To: <20250816024831.1451167-1-jackzxcui1989@163.com>
-References: <20250816024831.1451167-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire
- operation
+	s=arc-20240116; t=1755336906; c=relaxed/simple;
+	bh=oS4MMNV5cFzJkx9BPCUG2h1bgKPe6DzbBhakUDx13nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRPtaa7cuVQP1CmAbiCvTCE106qqcRSw3+P0E4dTB9ki1vATuLyYPH8J5k7m6rP5oX2aOYH2KB1/IbOD4WeUwXaszmjcGNiFxS4XHyrTrWyKzH9tEIImhE1Qy9xkj32Lpq5NwZopyzkuI4IqnWSpjFlbVKt2anb+yiqzu1FSq90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=YWgD05nM; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=CVeQ1TAhbYB1Ry605kKypiNwSur4bCtDvJM68WwPFr8=; b=YWgD05nMAGbJxttgEb059Ya7ww
+	x/LUqM2utqnadxCcZnNrDb06Ci6aJmvt6xRn+2OgXjQHJ3vaWKqomUtb4D4mN0ojk3NpSKeCjCLwm
+	PjyejJzUIvePtS0OXiZWOHaUmLKQ/y6O5Oeq3YuWvKwsO5Bs/4FNt3jB6hmXG0IyoicwYJAcGMBqF
+	05F4b+HZ+ge35Y5E4Fbn180H+GW1YzVJ0eJLNbv3QDjAbsb3ZCSY0UxSHaAtONbbbpoWIlOwuhog9
+	1R8p1T0CdYGe1jXU7jfgE++zve6IOQZzKxr5GrN14e2NYpVPmlv0yfT9Iv8zz6evmqiZ0jhSMguIf
+	OejewbhQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1unD40-00EmOr-1l;
+	Sat, 16 Aug 2025 17:34:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 16 Aug 2025 17:34:56 +0800
+Date: Sat, 16 Aug 2025 17:34:56 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: olivia@selenic.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwrng: Use us_to_ktime() where appropriate
+Message-ID: <aKBQwOsgTYiUxSgh@gondor.apana.org.au>
+References: <20250731121727.136128-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731121727.136128-1-zhao.xichao@vivo.com>
 
-Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
+On Thu, Jul 31, 2025 at 08:17:27PM +0800, Xichao Zhao wrote:
+> It is better to replace ns_to_ktime() with us_to_ktime(),
+> which can make the code clearer.
 > 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/char/hw_random/timeriomem-rng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Discussion in v2 is still ongoing. This will have to be respun based
-on that.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
