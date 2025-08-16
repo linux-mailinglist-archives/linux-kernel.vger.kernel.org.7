@@ -1,145 +1,122 @@
-Return-Path: <linux-kernel+bounces-771710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A35B28A93
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B7BB28A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214581C272D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8770C1C26DEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF17B149C7B;
-	Sat, 16 Aug 2025 04:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943F81DE894;
+	Sat, 16 Aug 2025 04:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="GtPBXUOT"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ac0A0pgm"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1810A79EA
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6435A79EA
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755319671; cv=none; b=W2EDoDwWjWt/sJhyf87IQiAI8SiQjiIh4ssXM1GvEZA+7PolmJMVd7hZJkpTP5JGjDkJe3Da6YMfj0HUGuO6kt7tHXN3HYJqREnqCPQ/xrLigCDLrUVcdNGAepscBixYaZDt0Zatt7tC0KbwbByqZE5dgNoKYQsY5zGR1Yj5vAc=
+	t=1755319822; cv=none; b=VuR19OL5GxghQeiNAnrXFK82Xmw3DNRIGag5m/NKLS+M2e8y2xtAquZ/ksqu/wmwfbqQQZKbEF6RPrk8IIwjIFCgjCKK78bpM+2xcM4rLmnYhXisI30i2OgPXSrPH3WRzq2cfYK+cpHRtloT8WnAuQAjQyTgi4khL4IhQd5Rfd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755319671; c=relaxed/simple;
-	bh=JLSoB8jwb0pqKgE8UWtDvQKlwRuPLGfY8+Zl/anW9Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nj6oEyW0OEZiFPvDFrsBPWMhv1jY5AJMPjShxxkFNPTn/+zmQMbfrDSgdk9De+ASXZyFVoPjd2RAsF5UoJpnorNwSDJtxBJkSP6OcoPZbNA0WeDVP3rmrU1hFT3IOkgRcd6xVgebke6ftD23NUME+2yjbGxEyf3VWP9bEts3HDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=GtPBXUOT; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 8E7A5104D017
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:17:44 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 8E7A5104D017
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1755319664; bh=JLSoB8jwb0pqKgE8UWtDvQKlwRuPLGfY8+Zl/anW9Oo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GtPBXUOTLuWUO6//PVhm2M3CxTFQyr0LAvwpwzPXvhGZyWlNp/vJvdt9W0ws8a+JN
-	 M6OWAmHG21se304DGR1+iPWUMKvUyUFx6v502QsEmHeNo2gd04CzjANEdaIgANK971
-	 jRDfJY7M0TPgZXB6XJDLqsC1aJYR7X5TO4Y2Y/gU=
-Received: (qmail 19036 invoked by uid 510); 16 Aug 2025 10:17:44 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.261156 secs; 16 Aug 2025 10:17:44 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 16 Aug 2025 10:17:42 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id A0BF136003F;
-	Sat, 16 Aug 2025 10:17:41 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id A46741E8134B;
-	Sat, 16 Aug 2025 10:17:40 +0530 (IST)
-Date: Sat, 16 Aug 2025 10:17:39 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: saeedm@nvidia.com, itayavr@nvidia.com, dave.jiang@intel.com,
-	jgg@ziepe.ca, Jonathan.Cameron@huawei.com,
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
-Message-ID: <aKANa/mtzIYaCBUb@bhairav-test.ee.iitb.ac.in>
-References: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
- <aJ-DebbVy8-9cEt0@aschofie-mobl2.lan>
+	s=arc-20240116; t=1755319822; c=relaxed/simple;
+	bh=BNvSs17H30Pojr0mYh58UbN4qSdGEsmKv1b+WURr28o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNzD9Mhyp2bnJejQKqGEHqg+DB1B8UsjX8hWdMcJ6GccZnO5p69I8eJSwlDzziJHhiYsOSZ7MgY5BVWgm1RnEtcW+qW/Q+yFVZoCKj16erLMaWyNAjnJUVTp81mzYYPxtJ8lZcIr3TspIoXig1nzDL/dqCXbMlMYspZ85LzvkM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ac0A0pgm; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9d41c1149so1890270f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755319817; x=1755924617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BNvSs17H30Pojr0mYh58UbN4qSdGEsmKv1b+WURr28o=;
+        b=ac0A0pgmYmpVddezLCCslg0nWfxdfR4uI8XmVffgzdSOC0eF63cM5uRrtd6X3hEh4X
+         MQD7YgYDx0SuVZTr3+zOkc4CUNrF4Rph9yZkBA2Z9d/TWLipfzKPCWAcsnHaMmCYX/Gm
+         IxQxATgHFK4xB1jYejWO7C6aDrD4tE54wVpcTW+bIz0GeAPUlX+66zf4pmnMulh4e9r5
+         xj95atBOQcYCfi7FpEynQMR0SHoxUb0mTWWu9KbkUv88/5R9mdV3JTuJYwUIXaO5Nosl
+         NY6ACKTRMDl9zCBajiufinf5DfAaGWpl6ax9ygEfYtKQjTeHfPz98wlksSS7Pa0e9hVH
+         RiPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755319817; x=1755924617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BNvSs17H30Pojr0mYh58UbN4qSdGEsmKv1b+WURr28o=;
+        b=fzpGYkj3vYdcLZdgwEUsGx1oqsXUt4AIo6EbdtRXGTa3c3SHC4cBrqZ30xg6vro39B
+         OvlOwri8fl4el0nXcV+k9WPw5OeD6zSK8uaI+zNBWjbI22JYu1trx3b07o/ktTYkT2T/
+         4OuxLun2KRiHhKPPXDJ9NRU8/vc4TOeUCA1v2CPlD2c9LsRN9SiCULxyNQfcs+eZm/SM
+         MADonsQkitlGdF6neGJvMqO00ufbvHAQWIk+riWVXipeGBxzYVQwOOIwtUm2f/+sAOoy
+         yNVpE+R4k668pvLDakUm0UG2KOKB/YhoouCPHajznaga6IHIpnA9TLMmdz2zbV1nlBnD
+         Ll+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjgH/RuaQcbaABZNV7Aib1VQ8NiBQW0Xc+JHD9fqeL1CY31f8UBLU5IICS9e13TtH0ha70cbrlmR5ScW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8POqs0m4eKwOMRNSQ0DIo4/VCqF//IrdaBUyTzKjZjg4IesE
+	ulnOtDmUT1O5Cseu4gfKkK9EXCv4wBTAAAYjkn8573OeDnCDb3IvOJsZwgwTqyeoSSFTpNeI8Io
+	X0pmGzOHUBCfTe+99MSsRKWvva+83JSw=
+X-Gm-Gg: ASbGncv8qc9F0SKIaa6TA6WA6WN2/9SGAgByQO7B1rtwBX2AU1EtAZGkCAW8IB/tPvV
+	nDVVXjibRwNOOODFchwYy6VRbp8BWxo2rJ1pgHTgvwTkbvhftPenqUMVYLAAZvMBS/VgGGothzR
+	4VZy1WY/eaY2u5IUNUjk0sqPpNrdIdeX/CzqL1AUdsL0IqDNrQ1XK2HMcL/MdiG482a1Ak5Gtrq
+	KJLmTqb
+X-Google-Smtp-Source: AGHT+IFPvY8ec5Jn5OTlpsBfvFYtAsonj3tCEjtnK0os5EQlDMqmiyj8gQxFAf5K2RSyQc73thlVSiKnZ0ALE9aWQug=
+X-Received: by 2002:a05:6000:200e:b0:3b7:735f:25c9 with SMTP id
+ ffacd0b85a97d-3bb67100411mr3698495f8f.21.1755319817249; Fri, 15 Aug 2025
+ 21:50:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJ-DebbVy8-9cEt0@aschofie-mobl2.lan>
+References: <20250812124941.69508-1-bhe@redhat.com> <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+ <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com>
+ <aJxzehJYKez5Q1v2@MiWiFi-R3L-srv> <CA+fCnZfv9sbHuRVy8G9QdbKaaeO-Vguf7b2Atc5WXEs+uJx0YQ@mail.gmail.com>
+ <aJ2kpEVB4Anyyo/K@MiWiFi-R3L-srv>
+In-Reply-To: <aJ2kpEVB4Anyyo/K@MiWiFi-R3L-srv>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Sat, 16 Aug 2025 06:50:06 +0200
+X-Gm-Features: Ac12FXxYLTsqomvoG9UG93Lotus4fuW2rcu_NxDqALVSquB40p2BNceICCGi8q4
+Message-ID: <CA+fCnZcdSDEZvRSxEnogBMCFg1f-PK7PKx0KB_1SA0saY6-21g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] mm/kasan: make kasan=on|off work for all three modes
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	kexec@lists.infradead.org, sj@kernel.org, lorenzo.stoakes@oracle.com, 
+	elver@google.com, snovitoll@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 11:59:05AM -0700, Alison Schofield wrote:
-> On Sun, Aug 10, 2025 at 11:47:42PM +0530, Akhilesh Patil wrote:
-> > Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
-> > Avoid potential memory management issue by matching alloc/free routines.
-> > 
-> > Fixes: 52929c2142041 ("fwctl/mlx5: Support for communicating with mlx5 fw")
-> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> 
-> Hi Akhilesh,
-> 
-> How about making the commit message more specific about why this
-> patch is critical even when no immediate symptoms are observed. Based
-> on the current description, a developer might think "this works fine
-> in my testing, so it's not urgent."
-> 
-> This type bug is particularly dangerous because it can pass code review
-> and testing, then cause mysterious production failures that are extremely
-> difficult to trace back to the root cause.
+On Thu, Aug 14, 2025 at 10:56=E2=80=AFAM Baoquan He <bhe@redhat.com> wrote:
+>
+> Ah, I got what you mean. We probably are saying different things.
+>
+> In order to record memory content of a corrupted kernel, we need reserve
+> a memory region during bootup of a normal kernel (usually called 1st
+> kernel) via kernel parameter crashkernel=3DnMB in advance. Then load
+> kernel into the crashkernel memory region, that means the region is not
+> usable for 1st kernel. When 1st kernel collapsed, we stop the 1st kernel
+> cpu/irq and warmly switch to the loaded kernel in the crashkernel memory
+> region (usually called kdump kernel). In kdump kernel, it boots up and
+> enable necessary features to read out the 1st kernel's memory content,
+> we usually use user space tool like makeudmpfile to filter out unwanted
+> memory content.
+>
+> So this patchset intends to disable KASAN to decrease the crashkernel
+> meomry value because crashkernel is not usable for 1st kernel. As for
+> shadow memory of 1st kernel, we need recognize it and filter it away
+> in makedumpfile.
 
-Agree.
-> 
-> If this sounds like I'm going overboard on an obvious fix, I am doing
-> so intentionally. I am encouraging you, as a new contributor, to show
-> that you looked into how kvzalloc() works. I believe it can use either
-> kmalloc() or vmalloc(). You don't need to be a memory alloc expert to
-> submit this fix, but demonstrate that you looked beyond a report in a
-> static analysis tool. Also, that's where the interesting learnings
-> appear.
-> 
-> Similar to what Markus mentioned, a simple message stating how this
-> was found is useful too.
-> 
-> --Alison
+Ah, I see, thank you for the explanation!
 
-Thanks Alison for valuable insights and feedback :) 
-I will add "How this issue got dicovered" and "Why it is important to
-fix" in the commit message and share v2.
-
-Regards,
-Akhilesh
-
-> 
-> 
-> > ---
-> >  drivers/fwctl/mlx5/main.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/fwctl/mlx5/main.c b/drivers/fwctl/mlx5/main.c
-> > index f93aa0cecdb9..4b379f695eb7 100644
-> > --- a/drivers/fwctl/mlx5/main.c
-> > +++ b/drivers/fwctl/mlx5/main.c
-> > @@ -345,7 +345,7 @@ static void *mlx5ctl_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
-> >  	 */
-> >  	if (ret && ret != -EREMOTEIO) {
-> >  		if (rpc_out != rpc_in)
-> > -			kfree(rpc_out);
-> > +			kvfree(rpc_out);
-> >  		return ERR_PTR(ret);
-> >  	}
-> >  	return rpc_out;
-> > -- 
-> > 2.34.1
-> > 
+So kdump kernel runs with the amount of RAM specified by crashkernel=3D.
+And KASAN's shadow memory increases RAM usage, which means
+crashkernel=3D needs to be set to a higher value for KASAN kernels. Is
+my understanding of the problem correct?
 
