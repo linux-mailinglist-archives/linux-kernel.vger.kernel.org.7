@@ -1,155 +1,342 @@
-Return-Path: <linux-kernel+bounces-771650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E51B28A0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:24:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AC0B28A16
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20746189D69D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA7E171B24
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCD61537A7;
-	Sat, 16 Aug 2025 02:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA69278F3A;
+	Sat, 16 Aug 2025 02:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fKJ/Q+i5"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKyC69cE"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6CA849C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 02:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A5B1E49F;
+	Sat, 16 Aug 2025 02:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755311035; cv=none; b=I9DR/XhBjzfvXskSIroA7M6j7GSeLUJGgGQ97VUXhvd95ETISfyxztYAyoqBIyGHW31kUoRZGGYwj5rg/tPo+ALgX6PztdbnGjyY2KWEC8fhLgQGcxE2wh+cxw3jJbE1Z5MY7uDi65w8HL+e8LuFYxibCMBdqwQZ66YNyoDiDXw=
+	t=1755311775; cv=none; b=lvQBdw+QirmZw1gHNmE258cVXw/rifPEyUUWAF7sz048jpDuSKU/4zcv1HnW9Gxp6iUosXiPtjdw/3iu+fH0F1lSmjyaa9aN5G4YZfJx7380hFSSgh7hMRUX4dySUewbS1UybGcbTs020dY/SEmq72TRigI9qTszHZYQKd+b1TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755311035; c=relaxed/simple;
-	bh=vd1Q/iIvN6B7dlNO1TEjjPKytmNby3nU3JdmU9OkYzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXSERUcoRVBWbEhsckqgOjPLVI1noypjyyh6aqOTmF0426oK7eFhv7jqmNc76EFGt0DlaOa9FoS94p2KGQMIw6Wd+AXaSTEtWp3jip+fRaBL0t7xhSehBnfgrNZUs+/hyTOnNQDAyODjKpRbXQDS8+Fyq6eFHOKu8G4mv9Tbprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fKJ/Q+i5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24457fe9704so19782985ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 19:23:54 -0700 (PDT)
+	s=arc-20240116; t=1755311775; c=relaxed/simple;
+	bh=3nQME40gvM8W6BwP5sBQwhr0YN3vk4QP8nR+VqStULY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=npd4uqXqcpenmgO5GNjCUFMT97qoxtOr7h8C7rG41hpco7ONdLIHjqaKGsdBj4a4mZXVzuhSWrsLaktKwsZiWZSRYaKuxTegGAuAO7ZO7eeQMH2cHGJstZhMumfvSqcFnep77fkNaxElnPSyS0AYXPuUJH2jmpzfA65RsabrWt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKyC69cE; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9dc5c6521so1585461f8f.1;
+        Fri, 15 Aug 2025 19:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755311034; x=1755915834; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMrJZFZ4o+9OD1KNbPbn15xKcbrAR+qjukG3QxeAoyk=;
-        b=fKJ/Q+i562nBgBbSATYlmUJzOTujyCX715ccR7Eg+q6UE/Xo21FmaErka5bqmnq6sC
-         lpL0RPdVuGPVrGoHAA5JiAnCTg7SFQv/iYnjb/RLT5LG5UTAzNTUe0cdRgSKqbuPz1fE
-         MYIetIXcWZgJDTOeJ15FaTvcQx2rKiOBqPGVg=
+        d=gmail.com; s=20230601; t=1755311772; x=1755916572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4M9ZyI6DowTCxonjTpizTCoCn6lmBq4WzieG8vFe7sE=;
+        b=SKyC69cEenhP3xhWQWWbBZldPjZN9CLQ6/EpvXznMP0sbOTA8LvpDDDVhPRs0rBnsD
+         dmxZkcg+y0Loket4Q3zwatmasMW00V7BVJtPYSvxadpwr0If1kN3CHx9dqYXinrVO+3A
+         dDZ74uXqFsMYiQ1AWTv6u6RLVz5pvcBscGxoDNB+Fkg2o7QalABDUcgpGSkxAKn53xfq
+         knwJkkMX239DZJtw0Ch93LwXQtbuZdvbHgVUtMUHsVBv2o4vvoBC4ReUTWPPbngpTxhO
+         xk22P0oKPJLR2FW25yapskVd/2mgrsgkEjz1e17NXqu4wvJv9eFY/laXDPRgmYsy2ZEd
+         fCqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755311034; x=1755915834;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMrJZFZ4o+9OD1KNbPbn15xKcbrAR+qjukG3QxeAoyk=;
-        b=vjgS8Kg7hX4n5M/UHUz+dDW6nz2xEQO/JjrGcfMnshXU5n7wyZ+nclk54TlON4rVJ0
-         7Fhm9FdQ74kICIvPAbDJQ4ScyU8v7b5zvN3O7BAQ4t4CvwGHzu9sAFKNUUuS25Hkq4o6
-         TnPzbP3/enahhvClBOjxq/EQqfYdqRM7oYQ3PKNrJM82xF3nV9xzoM1kx05bXcNmiUXC
-         A4cQmtvYing4OpqGPwvSlZDbIUQDYCAoUBknyMlCRvjFOj8zGLyq5Gn9FdaMzR+OER12
-         3mxKRQzJXliMUOfXulAyMHrJqyCgPeYi8oSFjs6gvVHj3pVZQcufPSk3ZnXpDlMa47rA
-         xnwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUavo4FGX1Jy/zT63rkd5WO0tFPUaMK+OoA5Xm53pxPI7rCB+0rUAjF3zV2qAtcQg386087tfjChqVCPMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4g3kHKcDPZk5M6SgwIh8yKpaFkvjarr9C7Myv0Of+xhE3oqNj
-	lFgh84virXen+s4ZQaO5kWTP6sCpXX57fjTfIzPDXL5KNr6khIDm/VrBxsCRxwvqcUfGNVWjKln
-	i8UY=
-X-Gm-Gg: ASbGnctK/2fIOVx6Pg/aZSNCP6UcEFQTQgqV3d7KsljeD8GHwIj9h6cmkIakKsKP7pc
-	MJTUD/j3tfln4kfoqDekOQ8L0wpA+Ga16iRJsbSvXhe1BuAkv/2hPKRR/ZxURVFetgyTiagETb2
-	jhjHc3MszWtG6TtI5JnGrufcxvD7nWgLAe4e2dqZ2hAdY1l5vPUDGj5AtyfLy7CF05PwMs3ihyE
-	dphs3I1TwhIM9Kvc2N771Tf99Pr9wvSdVtcjyGujdD0FPTrIcPHgtqpTiLiHHYQuxZQhm3dgZyZ
-	NWXVBhpY2nUdz2NsxMJaW1xFq8ks3FHIZKyM/00LwA2febBuYo/eijLh1i3ubz7etOln2cqli74
-	AjINPVY4Jnde7zzLPQP3DpOaGEoH6cBzvXPr7ITE2BFzCZnR7NeVXvS4gMADO
-X-Google-Smtp-Source: AGHT+IFxFyvLRlvI//+N2amY4eKcFJIHNjTGuk8Up1imrlzzmHPsU7HrzAw6S8zG0dbR7sK+B7C2oA==
-X-Received: by 2002:a17:903:2f82:b0:244:6c39:3383 with SMTP id d9443c01a7336-2446d709449mr54558145ad.21.1755311033583;
-        Fri, 15 Aug 2025 19:23:53 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:eaff:25b5:2a27:51d9])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32330da89d5sm5454374a91.0.2025.08.15.19.23.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 19:23:52 -0700 (PDT)
-Date: Fri, 15 Aug 2025 19:23:51 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Tsai Sung-Fu <danielsftsai@google.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] genirq: Add kunit tests for depth counts
-Message-ID: <aJ_rt6AORXs6RTGI@google.com>
-References: <20250522210837.4135244-1-briannorris@chromium.org>
- <ded44edf-eeb7-420c-b8a8-d6543b955e6e@roeck-us.net>
- <aJ91RRsMB-duD2yR@google.com>
- <fc42ed34-e87d-4868-94bb-30554a3f6ec4@roeck-us.net>
+        d=1e100.net; s=20230601; t=1755311772; x=1755916572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4M9ZyI6DowTCxonjTpizTCoCn6lmBq4WzieG8vFe7sE=;
+        b=QIgUe3quK7CJK9ZL/Kkfpg6NUcpYhNGbLh3YfzUJyICxjJ0XjLAgEQvljptS1Cxuy9
+         pSOo4zNcR02NG0YC3bXgcZ4u3tvuNJ600bj7GZf9fJFyyuab2APha+CMgrsDCtnKDdUX
+         elM7vamiI0UmrdVo3KuJUpv+rInE6r2HS86Yp/19zhbD892L19HZy8ofFYvpE21dptXv
+         fWV23JvtTjXyGrv0QPsEI6xW0z/q7uCacfgtmpISHzK8fr6iZzOXTua9nHJfe3Olg9Oa
+         TCX9CeNvF4esq71XLSeRL41eGOdy9hzzt73qYhFMmfluoGEFgHytNJ3BAitvEensRz83
+         0opQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK6bvp3CxhumIk4Qh6oRorBQ2g7P/DMFskFuXoyIVyymsNJYC+uuPZM/rbiuo7zv9FVmMv23GVJ8830I2N@vger.kernel.org, AJvYcCWNY9Y8ld7VXeoWnTbOfmAhJ0+KQKcgJ8pNC45F+L0rchSlUZN2GJOyv+hoEgODi8BeXT2/mAXG05Lv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4tfrn0/673uC77MtZUiDdTDZPrnRqzhTezNgTEMXw7hL4kM44
+	nt3eiMEJR9L/Bp+QnxKIM6qQy5L5ABy7oZs+E/TQVZlYQTPWNf6/OHQ=
+X-Gm-Gg: ASbGncvdedukWoK6cTt9qmtdGXPoFPw2bY4ZpQMj8+BH+/i3RYtmhgb56Gljctj/a0t
+	naZRQK+NMCtz0mleDU0hzRFlnHMq7wgPV4h3ZGhcf/lIJG1sueYeZlk9fEO9OT9Ai5m/7Hvhmmu
+	qvTpSkDMQ3AtYnag0KcrKWd53j458LR5S403MGuxIdONyQZK+oo7pir9kGVsSpQwQtE8NmZE+o9
+	P8iNk20xi25CIc3PjQdytCRxrfiu0gZbB0h7jzTC0phwSMqk8gOhV5klp2BeTi02cN/oSZvHlXU
+	SLJ78/adA1DDmkenT6I8cZiLV4z+PX9VR58SFeCi38FeVrW80goKzj/z/qIqqSgkGUNVIRX4h9E
+	nhepdn65eMPPWc7UueCW+AZmhIftE/Xqcf3KAdCXj4WEloIo=
+X-Google-Smtp-Source: AGHT+IGaAKxSyahe4X7ye9LwU0bGzvLyikS4pBbTpwkuQUkuER5idUuQkE99J64paUrkLwVW9urFaQ==
+X-Received: by 2002:a05:6000:26d0:b0:3b7:89c2:463c with SMTP id ffacd0b85a97d-3bb68734babmr2804049f8f.29.1755311771325;
+        Fri, 15 Aug 2025 19:36:11 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:212f:1af8:ee74:5774:2fc2:70a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb5d089e07sm3949856f8f.0.2025.08.15.19.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 19:36:10 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: robh@kernel.org,
+	lee@kernel.org
+Cc: peter.ujfalusi@gmail.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH] mfd: dt-bindings: ti,twl6040: convert to DT schema
+Date: Sat, 16 Aug 2025 04:33:30 +0200
+Message-Id: <20250816023330.173349-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc42ed34-e87d-4868-94bb-30554a3f6ec4@roeck-us.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 15, 2025 at 05:24:24PM -0700, Guenter Roeck wrote:
-> I can try, but the irq test code fails for me all over the place, so I am
-> not sure if it is worth it.
-> 
-> From my current upstream test results (6.17-rc1):
-> 
-> Build results:
-> 	total: 162 pass: 162 fail: 0
-> Qemu test results:
-> 	total: 637 pass: 637 fail: 0
-> Unit test results:
-> 	pass: 640017 fail: 649
-> 
-> The failures are all from the irq test code. I didn't have time to analyze it.
-> You can find details at https://kerneltests.org/builders in the "master" column
-> if you have time.
+Convert the legacy TXT binding for the TWL6040 MFD to the modern YAML
+DT schema format. This adds formal validation and improves documentation
+for the TWL6040/TWL6041 audio codec, which provides audio, vibra, and GPO
+functionality on OMAP4+ platforms.
 
-I can't replicate all of those easily, since I don't have tooling ready
-for some of the more esoteric architectures. But many of those look like
-they boil down to a single oversight: that some architectures default to
-IRQ_NOREQUEST, and so I need to throw this onto the fake IRQs I set up:
+The unused 'twl6040,audpwron-gpio' property has been dropped from
+the schema as it is not used by the driver.
 
-	irq_settings_clr_norequest(desc);
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+---
+ .../devicetree/bindings/mfd/ti,twl6040.yaml   | 149 ++++++++++++++++++
+ .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
+ 2 files changed, 149 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
 
-With that, I can pass on ARCH=arm:
+diff --git a/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
+new file mode 100644
+index 000000000..c8922fce4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
+@@ -0,0 +1,149 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/ti,twl6040.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TWL6040/TWL6041 Audio Codec
++
++maintainers:
++  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
++
++description:
++  The TWL6040s are 8-channel high quality low-power audio codecs providing
++  audio, vibra and GPO functionality on OMAP4+ platforms.
++  They are connected to the host processor via i2c for commands, McPDM for
++  audio data and commands.
++
++properties:
++  compatible:
++    enum:
++      - ti,twl6040
++      - ti,twl6041
++
++  reg:
++    const: 0x4b
++
++  interrupts:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 1
++
++  '#clock-cells':
++    description: TWL6040 is a provider of PDMCLK which is used by McPDM.
++    const: 0
++
++  vio-supply:
++    description: Regulator for the VIO supply.
++
++  v2v1-supply:
++    description: Regulator for the V2V1 supply.
++
++  enable-active-high:
++    type: boolean
++    description: If present, powers on the device during boot.
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    maxItems: 2
++    items:
++      enum: [clk32k, mclk]
++
++  # Vibra functionality :
++
++  vddvibl-supply:
++    description: Regulator for the left vibra motor supply.
++
++  vddvibr-supply:
++    description: Regulator for the right vibra motor supply.
++
++  vibra:
++    type: object
++    description: Node for vibra motor configuration parameters.
++    properties:
++      ti,vibldrv-res:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Resistance parameter for the left driver.
++
++      ti,vibrdrv-res:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Resistance parameter for the right driver.
++
++      ti,viblmotor-res:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Resistance parameter for the left motor.
++
++      ti,vibrmotor-res:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Resistance parameter for the right motor.
++
++      vddvibl_uV:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Optional override for the VDDVIBL default voltage (in uV).
++
++      vddvibr_uV:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Optional override for the VDDVIBR default voltage (in uV).
++    required:
++      - ti,vibldrv-res
++      - ti,vibrdrv-res
++      - ti,viblmotor-res
++      - ti,vibrmotor-res
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - gpio-controller
++  - '#gpio-cells'
++  - '#clock-cells'
++  - vio-supply
++  - v2v1-supply
++  - vddvibl-supply
++  - vddvibr-supply
++  - vibra
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      twl6040: twl@4b {
++        compatible = "ti,twl6040";
++        reg = <0x4b>;
++
++        interrupts = <0 119 4>;
++        interrupt-parent = <&gic>;
++
++        gpio-controller;
++        #gpio-cells = <1>;
++        #clock-cells = <0>;
++
++        vio-supply = <&v1v8>;
++        v2v1-supply = <&v2v1>;
++        enable-active-high;
++
++        /* regulators for vibra motor */
++        vddvibl-supply = <&vbat>;
++        vddvibr-supply = <&vbat>;
++
++        vibra {
++          /* Vibra driver, motor resistance parameters */
++          ti,vibldrv-res = <8>;
++          ti,vibrdrv-res = <3>;
++          ti,viblmotor-res = <10>;
++          ti,vibrmotor-res = <10>;
++        };
++      };
++    };
+diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
+deleted file mode 100644
+index dfd8683ed..000000000
+--- a/Documentation/devicetree/bindings/mfd/twl6040.txt
++++ /dev/null
+@@ -1,67 +0,0 @@
+-Texas Instruments TWL6040 family
+-
+-The TWL6040s are 8-channel high quality low-power audio codecs providing audio,
+-vibra and GPO functionality on OMAP4+ platforms.
+-They are connected to the host processor via i2c for commands, McPDM for audio
+-data and commands.
+-
+-Required properties:
+-- compatible : "ti,twl6040" for twl6040, "ti,twl6041" for twl6041
+-- reg: must be 0x4b for i2c address
+-- interrupts: twl6040 has one interrupt line connecteded to the main SoC
+-- gpio-controller:
+-- #gpio-cells = <1>: twl6040 provides GPO lines.
+-- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
+-- twl6040,audpwron-gpio: Power on GPIO line for the twl6040
+-
+-- vio-supply: Regulator for the twl6040 VIO supply
+-- v2v1-supply: Regulator for the twl6040 V2V1 supply
+-
+-Optional properties, nodes:
+-- enable-active-high: To power on the twl6040 during boot.
+-- clocks: phandle to the clk32k and/or to mclk clock provider
+-- clock-names: Must be "clk32k" for the 32K clock and "mclk" for the MCLK.
+-
+-Vibra functionality
+-Required properties:
+-- vddvibl-supply: Regulator for the left vibra motor
+-- vddvibr-supply: Regulator for the right vibra motor
+-- vibra { }: Configuration section for vibra parameters containing the following
+-	     properties:
+-- ti,vibldrv-res: Resistance parameter for left driver
+-- ti,vibrdrv-res: Resistance parameter for right driver
+-- ti,viblmotor-res: Resistance parameter for left motor
+-- ti,viblmotor-res: Resistance parameter for right motor
+-
+-Optional properties within vibra { } section:
+-- vddvibl_uV: If the vddvibl default voltage need to be changed
+-- vddvibr_uV: If the vddvibr default voltage need to be changed
+-
+-Example:
+-&i2c1 {
+-	twl6040: twl@4b {
+-		compatible = "ti,twl6040";
+-
+-		interrupts = <0 119 4>;
+-		interrupt-parent = <&gic>;
+-		twl6040,audpwron-gpio = <&gpio4 31 0>;
+-
+-		vio-supply = <&v1v8>;
+-		v2v1-supply = <&v2v1>;
+-		enable-active-high;
+-
+-		/* regulators for vibra motor */
+-		vddvibl-supply = <&vbat>;
+-		vddvibr-supply = <&vbat>;
+-
+-		vibra {
+-			/* Vibra driver, motor resistance parameters */
+-			ti,vibldrv-res = <8>;
+-			ti,vibrdrv-res = <3>;
+-			ti,viblmotor-res = <10>;
+-			ti,vibrmotor-res = <10>;
+-		};
+-	};
+-};
+-
+-/include/ "twl6040.dtsi"
+-- 
+2.39.5
 
-  tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch arm \
-      --qemu_args '-smp 2' --cross_compile arm-linux-gnueabi-
-
-I'm less sure about the ARCH=parisc{,64} ones, but I think that boils
-down to missing CONFIG_SPARSE_IRQ. I think I can skip tests in the
-!SPARSE_IRQ case.
-
-> Note that "imply SMP" does not make SMP mandatory. I can still disable it after
-> enabling IRQ_KUNIT_TEST on x86.
-
-Right, that's intentional. There are a few CONFIG_SMP-conditional bits
-in the tests, since many users likely run on ARCH=um, which does not
-have an SMP build.
-
-> Frankly I don't really understand what "imply"
-> is supposed to be useful for.
-
-Documentation/kbuild/kconfig-language.rst calls it a "weak reverse
-dependency" (i.e., a weak "select") and:
-
-  This is useful e.g. with multiple drivers that want to indicate their
-  ability to hook into a secondary subsystem while allowing the user to
-  configure that subsystem out without also having to unset these drivers.
-
-Basically, I want SMP when it's available, but I don't want to force it
-when not. And it means on KUNIT_ALL_TESTS builds that otherwise didn't
-make an opinionated choice for CONFIG_SMP, we get CONFIG_SMP=y. The
-latter point is relevant to tools/testing/kunit/kunit.py.
-
-I have a patch series to clean up a little while fixing the errors
-you've pointed me at. I'll probably send it out next week.
-
-Thanks,
-Brian
 
