@@ -1,398 +1,201 @@
-Return-Path: <linux-kernel+bounces-771637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CC3B289CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B8BB289D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7DF1D02478
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5110A1B68423
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA43117A31C;
-	Sat, 16 Aug 2025 02:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884F71AB52D;
+	Sat, 16 Aug 2025 02:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuRHaz5f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gX7+sNB2"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE41272615;
-	Sat, 16 Aug 2025 02:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0826B849C;
+	Sat, 16 Aug 2025 02:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755309971; cv=none; b=s53SoZxvsVAm44JHXiF3n2b8ZrwbuHGa6un+OQsOZP6TLGp+25Z5xWxzVsd/J3MTgGkQN+9BBH7eKpgu/A3T7DcxO2mL6uRMfW3D0M7yI0NV0ajfzYATCuzMYabBgKA89Uzl4IDqhFRAw9DU+CZWRFSbtZhwsZEEflQc7DcvezI=
+	t=1755310699; cv=none; b=dJpRFe51Zeov2yeUD6xko9WH5E4kHTsiyXrZFTtNZKX617B2kfBSvArj1ykRqeuNYqzsELaCQl4hMxF/HGnmJElVOZahn/72/C04KQun2aAiUWDuBg0+BLZ9IB0WrWTmAt2Ubaap7yBL3+kgMaUloEntfK/uajiUmRFMoREVeb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755309971; c=relaxed/simple;
-	bh=NOsxdxYrW7Asq/W2QdVgo1gwbbPwUtpsrHOz1itW15M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FqH5ci40OOjt1RfH0VrA7b4eTxXXMkubVCmwYZjKcNbL/fWT+RA6i7wARtS6XURox6BxMjg8XNSM0NbrQIarrzoGwm/rE25lScVX0wSTaX+jsUavl1NyEZvB4V5A0wAvyQ2D719893lGOJ67YcdLrhxtMofWFCig+G0nFEeKYaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuRHaz5f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53330C4CEEB;
-	Sat, 16 Aug 2025 02:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755309970;
-	bh=NOsxdxYrW7Asq/W2QdVgo1gwbbPwUtpsrHOz1itW15M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uuRHaz5f7k9WVe138qZd4goHuqfG0/LGO624UkuzkXYUQxK85FxPtQxpOT1uTaFHH
-	 zDB/eHiUaJ9p7ul6nb0QkndgkqNOCLFsgEJZRojCI12lB0UZurXk1zKHl8reMSUzKK
-	 qVy12XjEewPATjDil0nMQ7iBt3GgcrRkVKfIifP4FSvnKtbJdu7WTotmZHH8lq0f91
-	 3W5kDLF3KkNpPwPY5K/r8s3gO7sXSocJqlrh3hNN6DZRwFq15uAr3toOsjnrJA3GyQ
-	 Ik2dow4ObrriHrc6gB5LEXPbr+gcJK+jhkZcIfYQZHC/5O57P68qyefNnywqH8DXcf
-	 WEQxpDUclbYuA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] lib/crypto: Drop inline from all *_mod_init_arch() functions
-Date: Fri, 15 Aug 2025 19:04:57 -0700
-Message-ID: <20250816020457.432040-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755310699; c=relaxed/simple;
+	bh=aDy0qVp2q5+Lq4LeUAw8NC+sBlWqtCUZDD8aXWVCbdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ue3UfX1hI1OTScbOaScLzCbZyH9OAxqSep+cTgqWx0k4+SlLNmzjNNZD1xkdVaOSPZu/4VhfWZCgZo7kA3PwCzXA40xpQYV56c/Xz6YG3Tm4fXfH5u8UtqVvvhoMeuQW2H0atojRpaNwrq6rJxbuSo91wP5ZdBaPP0yhC8v1cOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gX7+sNB2; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so1357638f8f.3;
+        Fri, 15 Aug 2025 19:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755310696; x=1755915496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uIJKDcBWWluZRtog13Tx7W4gOZJkTvCgk5uA8HdkcN4=;
+        b=gX7+sNB2l/CedCUUBVxeuaj1I1VXW9nEAGZ52tXoAVXIQz3iCFJdblxYhFEVlanlGc
+         aarpjzEGE5M8YvtFiSvinmgxbUHzQlHP/Msfi1CBJz56kEt8LX36BKzP6jHm/BrT3UjH
+         gS1LALi4D4mPWWSnKoFQn8IQ8iaoMBioPBVELmFCnkVm702SIMxfhMCFFIPB+6khu2DF
+         i1r+tgIlmzhuiltHWJT364jNKA+rTeySkNVJeggGw9FUnsoiL4IcC0V/fterwJWkPlOw
+         oEShRifMpSgFtfIrvXAQ4VUjXCflIgDpBb6ENRzWc5nULsnaiQBlD6h70g14brm1XeQ0
+         uFxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755310696; x=1755915496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uIJKDcBWWluZRtog13Tx7W4gOZJkTvCgk5uA8HdkcN4=;
+        b=Ct2WQ4KEmr7tRULOClDKGYfGFV2kwc8/DmhJ0JvWcLeSXSnob1edrYnF2UdTHdAhUs
+         sQGGgA9BBryCtHbMWllMYVwymX6BdoGTWZtA0DwIocxKvqqC0TvkTGmA5tx2qBlMVAHD
+         UqhmnVFt426zUY9qnP+jUeAJ4ZRoTq6Jqw3Qw4AMb0/gYqwAT+h45FUCWWgE/JuGxTsK
+         T5pt0v3MT218bF4eW3SPDoM/Igc9h7DlaUGPjOpGfbZo5jZCA56VrMuAARUmSP3zY6mO
+         qGH8LW2X01/1At5IGRrmqsUcXdkTQCun4RYAuTvSXiz3SFvHQ799DbDBRwtVrn5L/N9d
+         IdWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA/wHqDP1H9MCRDu2DT2YYJd+fty0PzlZ7Zk81yoD5bAyOvxgGvUZqnwIVIDYfQagk6vybSZWb1z4CCg==@vger.kernel.org, AJvYcCUdSx6tPsV1/R3MCO+W1dwDrcZ9XKhUr2daEYS8Y1ju1xvmfx0fR55skQGht105yXis3k6xxnKkQcz1HR4=@vger.kernel.org, AJvYcCVbk/bJzbAiIKzDsSCaPdXcJ3z1Ps5Kib3TCQ5f7g5u8yfaduDrWItaqoadgvNuXZ4s9OJulvVu2tnB@vger.kernel.org, AJvYcCVwhUOS+LePzbelR75rJV0eQa7PlYpUbBSg3nOEy5xe71Tvp7OAbbfKAty67Yuz/IKMWn6EYmNU9hALAPo=@vger.kernel.org, AJvYcCWOmMEap6Wg0M4Fw8PYsPexZRbsCLqPNS5RCWB+W5BCU1x6Msi4JSZFIn60DiSWsEpZhrHc/2SxQo3nBA==@vger.kernel.org, AJvYcCWgEjFdCMxwkPZDLxLoTHfSLoEAhZRwhmWrigpQIqlbiqpLn0eKe0Pyy+xi6lGAF8GbIWZjNbDa7FEF@vger.kernel.org, AJvYcCXGZzij2QSCdaae7Zyv7JRDxwcU3nsYRfAMSmpAzSwKSBRm7zO57wQVaBoMyQAsUDous5BIg1m/zwkE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzECpEZ4aHJOCFiqI5LQh6MqvIBzOOcCM4f5xaAawOPkcWpD7jz
+	+vRPIjcwbmSsIVALes4fGWMaZZN0Lceh+ZR6vuVOcA8eNsBU6FRdPt0rWfwKhok=
+X-Gm-Gg: ASbGncvUyVd2rL+6odRmNYme8tlz4eOcHjFg4mbcZ8LW8f60UZPIJyUDQ4c+lYHwPS9
+	PJezIVrbOSxn03N3EBDqwvxT+AkQ8LtaA3QhgiSSDgVTe8fmhsNfL1yKqk7mrN6/krudLDWJoQ0
+	v0RuqV6A3HNzvMYcyXcVvdrVZHpyT90oQllGHh+wPVtRhSQ9oOR5d96NWMMdIFWomuj365tcGQG
+	aC9vYZc2XnR2Guw3GQCU2zaySJt0fxGnfG3+fRODgJ8LjEeE2zrT+lQMT2AnZTuFmth6cBThW9H
+	bt++wOq5PB9BCAVzIpo1eYmfFSxKxrXYBcDBlxJIFTI7TujFi3psbhaus+tNwgtxelFqTbcGiuM
+	F2zkB9S0/5STkPDx/U3vsJN2lAFLHfDQgGj0NJT2/cOvt2Pw=
+X-Google-Smtp-Source: AGHT+IF1htkecc9HAJQpPjefp7HjSurwKvKSIKB7tOJ4/onjIyj3P7jRr6l43jLYoWPhKfwlfQ8Ulw==
+X-Received: by 2002:a05:600c:4509:b0:456:19b2:6aa8 with SMTP id 5b1f17b1804b1-45a26784353mr8573715e9.19.1755310695624;
+        Fri, 15 Aug 2025 19:18:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:212f:1af8:ee74:5774:2fc2:70a1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1fe2c019sm58712535e9.17.2025.08.15.19.18.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 19:18:15 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: andreas@kemnade.info,
+	peter.ujfalusi@gmail.com,
+	dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	lgirdwood@gmail.com,
+	tiwai@suse.com,
+	conor+dt@kernel.org,
+	lee@kernel.org,
+	ukleinek@kernel.org,
+	broonie@kernel.org,
+	gregkh@linuxfoundation.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	aaro.koskinen@iki.fi,
+	khilman@baylibre.com,
+	rogerq@kernel.org,
+	tony@atomide.com,
+	linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v3 0/6] dt-bindings: Convert TWL4030/6040 family binding to DT schema
+Date: Sat, 16 Aug 2025 04:15:17 +0200
+Message-Id: <20250816021523.167049-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Drop 'inline' from all the *_mod_init_arch() functions so that the
-compiler will warn about any bugs where they are unused due to not being
-wired up properly.  (There are no such bugs currently, so this just
-establishes a more robust convention for the future.  Of course, these
-functions also tend to get inlined anyway, regardless of the keyword.)
+Hello,
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+This series converts the remaining legacy TXT bindings for the Texas
+Instruments TWL4030/6030 family to the DT schema format.
+
+This v3 series addresses extensive feedback from v2. The main changes
+include consolidating the simple power and PWM bindings directly into the
+main ti,twl.yaml binding for a cleaner structure. It also adds a fix for
+an incorrect schema $id in the ti,twl4030-gpio binding and corrects
+various properties based on reviewer feedback.
+
+This results in a cleaner, more accurate, and more consolidated set of
+bindings for this TWL family.
+
+As requested, the unrelated ti,twl6040 binding conversion has been dropped
+from this series and will be sent separately.
+
+Thank you,
+Jihed
+
+There is a typo in the subject, "TWL4030/6040" should be "TWL4030/6030".
+
 ---
- lib/crypto/arm/sha1.h     | 2 +-
- lib/crypto/arm/sha256.h   | 2 +-
- lib/crypto/arm/sha512.h   | 2 +-
- lib/crypto/arm64/sha1.h   | 2 +-
- lib/crypto/arm64/sha256.h | 2 +-
- lib/crypto/arm64/sha512.h | 2 +-
- lib/crypto/riscv/sha256.h | 2 +-
- lib/crypto/riscv/sha512.h | 2 +-
- lib/crypto/s390/sha1.h    | 2 +-
- lib/crypto/s390/sha256.h  | 2 +-
- lib/crypto/s390/sha512.h  | 2 +-
- lib/crypto/sparc/md5.h    | 2 +-
- lib/crypto/sparc/sha1.h   | 2 +-
- lib/crypto/sparc/sha256.h | 2 +-
- lib/crypto/sparc/sha512.h | 2 +-
- lib/crypto/x86/sha1.h     | 2 +-
- lib/crypto/x86/sha256.h   | 2 +-
- lib/crypto/x86/sha512.h   | 2 +-
- 18 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/lib/crypto/arm/sha1.h b/lib/crypto/arm/sha1.h
-index fa1e924190006..29f8bcad0447c 100644
---- a/lib/crypto/arm/sha1.h
-+++ b/lib/crypto/arm/sha1.h
-@@ -33,11 +33,11 @@ static void sha1_blocks(struct sha1_block_state *state,
- 	}
- }
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
- #define sha1_mod_init_arch sha1_mod_init_arch
--static inline void sha1_mod_init_arch(void)
-+static void sha1_mod_init_arch(void)
- {
- 	if (elf_hwcap & HWCAP_NEON) {
- 		static_branch_enable(&have_neon);
- 		if (elf_hwcap2 & HWCAP2_SHA1)
- 			static_branch_enable(&have_ce);
-diff --git a/lib/crypto/arm/sha256.h b/lib/crypto/arm/sha256.h
-index eab713e650f33..7556457b3094b 100644
---- a/lib/crypto/arm/sha256.h
-+++ b/lib/crypto/arm/sha256.h
-@@ -33,11 +33,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- 	}
- }
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	if (elf_hwcap & HWCAP_NEON) {
- 		static_branch_enable(&have_neon);
- 		if (elf_hwcap2 & HWCAP2_SHA2)
- 			static_branch_enable(&have_ce);
-diff --git a/lib/crypto/arm/sha512.h b/lib/crypto/arm/sha512.h
-index cc2447acd5621..d1b485dd275db 100644
---- a/lib/crypto/arm/sha512.h
-+++ b/lib/crypto/arm/sha512.h
-@@ -27,11 +27,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- 	}
- }
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	if (cpu_has_neon())
- 		static_branch_enable(&have_neon);
- }
- #endif /* CONFIG_KERNEL_MODE_NEON */
-diff --git a/lib/crypto/arm64/sha1.h b/lib/crypto/arm64/sha1.h
-index f822563538cc8..aaef4ebfc5e34 100644
---- a/lib/crypto/arm64/sha1.h
-+++ b/lib/crypto/arm64/sha1.h
-@@ -30,10 +30,10 @@ static void sha1_blocks(struct sha1_block_state *state,
- 		sha1_blocks_generic(state, data, nblocks);
- 	}
- }
- 
- #define sha1_mod_init_arch sha1_mod_init_arch
--static inline void sha1_mod_init_arch(void)
-+static void sha1_mod_init_arch(void)
- {
- 	if (cpu_have_named_feature(SHA1))
- 		static_branch_enable(&have_ce);
- }
-diff --git a/lib/crypto/arm64/sha256.h b/lib/crypto/arm64/sha256.h
-index d95f1077c32bd..be4aeda9d0e6e 100644
---- a/lib/crypto/arm64/sha256.h
-+++ b/lib/crypto/arm64/sha256.h
-@@ -44,11 +44,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- 	}
- }
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	if (cpu_have_named_feature(ASIMD)) {
- 		static_branch_enable(&have_neon);
- 		if (cpu_have_named_feature(SHA2))
- 			static_branch_enable(&have_ce);
-diff --git a/lib/crypto/arm64/sha512.h b/lib/crypto/arm64/sha512.h
-index 7539ea3fef10d..ddb0d256f73aa 100644
---- a/lib/crypto/arm64/sha512.h
-+++ b/lib/crypto/arm64/sha512.h
-@@ -35,11 +35,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- 	}
- }
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	if (cpu_have_named_feature(SHA512))
- 		static_branch_enable(&have_sha512_insns);
- }
- #endif /* CONFIG_KERNEL_MODE_NEON */
-diff --git a/lib/crypto/riscv/sha256.h b/lib/crypto/riscv/sha256.h
-index f36f68d2e88cc..1def18b0a4fb5 100644
---- a/lib/crypto/riscv/sha256.h
-+++ b/lib/crypto/riscv/sha256.h
-@@ -29,11 +29,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- 		sha256_blocks_generic(state, data, nblocks);
- 	}
- }
- 
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	/* Both zvknha and zvknhb provide the SHA-256 instructions. */
- 	if ((riscv_isa_extension_available(NULL, ZVKNHA) ||
- 	     riscv_isa_extension_available(NULL, ZVKNHB)) &&
- 	    riscv_isa_extension_available(NULL, ZVKB) &&
-diff --git a/lib/crypto/riscv/sha512.h b/lib/crypto/riscv/sha512.h
-index 59dc0294a9a7e..145bdab1214e3 100644
---- a/lib/crypto/riscv/sha512.h
-+++ b/lib/crypto/riscv/sha512.h
-@@ -28,11 +28,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- 		sha512_blocks_generic(state, data, nblocks);
- 	}
- }
- 
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	if (riscv_isa_extension_available(NULL, ZVKNHB) &&
- 	    riscv_isa_extension_available(NULL, ZVKB) &&
- 	    riscv_vector_vlen() >= 128)
- 		static_branch_enable(&have_extensions);
-diff --git a/lib/crypto/s390/sha1.h b/lib/crypto/s390/sha1.h
-index 08bd138e881cc..73d94476a157a 100644
---- a/lib/crypto/s390/sha1.h
-+++ b/lib/crypto/s390/sha1.h
-@@ -18,11 +18,11 @@ static void sha1_blocks(struct sha1_block_state *state,
- 	else
- 		sha1_blocks_generic(state, data, nblocks);
- }
- 
- #define sha1_mod_init_arch sha1_mod_init_arch
--static inline void sha1_mod_init_arch(void)
-+static void sha1_mod_init_arch(void)
- {
- 	if (cpu_have_feature(S390_CPU_FEATURE_MSA) &&
- 	    cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_1))
- 		static_branch_enable(&have_cpacf_sha1);
- }
-diff --git a/lib/crypto/s390/sha256.h b/lib/crypto/s390/sha256.h
-index 70a81cbc06b2c..acd4835087897 100644
---- a/lib/crypto/s390/sha256.h
-+++ b/lib/crypto/s390/sha256.h
-@@ -18,11 +18,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- 	else
- 		sha256_blocks_generic(state, data, nblocks);
- }
- 
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	if (cpu_have_feature(S390_CPU_FEATURE_MSA) &&
- 	    cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_256))
- 		static_branch_enable(&have_cpacf_sha256);
- }
-diff --git a/lib/crypto/s390/sha512.h b/lib/crypto/s390/sha512.h
-index 24744651550cb..46699d43df7eb 100644
---- a/lib/crypto/s390/sha512.h
-+++ b/lib/crypto/s390/sha512.h
-@@ -18,11 +18,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- 	else
- 		sha512_blocks_generic(state, data, nblocks);
- }
- 
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	if (cpu_have_feature(S390_CPU_FEATURE_MSA) &&
- 	    cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_512))
- 		static_branch_enable(&have_cpacf_sha512);
- }
-diff --git a/lib/crypto/sparc/md5.h b/lib/crypto/sparc/md5.h
-index 3f1b0ed8c0b3f..3995f3e075eb6 100644
---- a/lib/crypto/sparc/md5.h
-+++ b/lib/crypto/sparc/md5.h
-@@ -30,11 +30,11 @@ static void md5_blocks(struct md5_block_state *state,
- 		md5_blocks_generic(state, data, nblocks);
- 	}
- }
- 
- #define md5_mod_init_arch md5_mod_init_arch
--static inline void md5_mod_init_arch(void)
-+static void md5_mod_init_arch(void)
- {
- 	unsigned long cfr;
- 
- 	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
- 		return;
-diff --git a/lib/crypto/sparc/sha1.h b/lib/crypto/sparc/sha1.h
-index 5015f93584b7e..bdf771fcc1f73 100644
---- a/lib/crypto/sparc/sha1.h
-+++ b/lib/crypto/sparc/sha1.h
-@@ -25,11 +25,11 @@ static void sha1_blocks(struct sha1_block_state *state,
- 	else
- 		sha1_blocks_generic(state, data, nblocks);
- }
- 
- #define sha1_mod_init_arch sha1_mod_init_arch
--static inline void sha1_mod_init_arch(void)
-+static void sha1_mod_init_arch(void)
- {
- 	unsigned long cfr;
- 
- 	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
- 		return;
-diff --git a/lib/crypto/sparc/sha256.h b/lib/crypto/sparc/sha256.h
-index 1d10108eb1954..b2f4419ec7781 100644
---- a/lib/crypto/sparc/sha256.h
-+++ b/lib/crypto/sparc/sha256.h
-@@ -25,11 +25,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- 	else
- 		sha256_blocks_generic(state, data, nblocks);
- }
- 
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	unsigned long cfr;
- 
- 	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
- 		return;
-diff --git a/lib/crypto/sparc/sha512.h b/lib/crypto/sparc/sha512.h
-index 55303ab6b15f7..a8c37a7d4c393 100644
---- a/lib/crypto/sparc/sha512.h
-+++ b/lib/crypto/sparc/sha512.h
-@@ -24,11 +24,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- 	else
- 		sha512_blocks_generic(state, data, nblocks);
- }
- 
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	unsigned long cfr;
- 
- 	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
- 		return;
-diff --git a/lib/crypto/x86/sha1.h b/lib/crypto/x86/sha1.h
-index e308379d89bcf..c48a0131fd12c 100644
---- a/lib/crypto/x86/sha1.h
-+++ b/lib/crypto/x86/sha1.h
-@@ -53,11 +53,11 @@ static void sha1_blocks(struct sha1_block_state *state,
- {
- 	static_call(sha1_blocks_x86)(state, data, nblocks);
- }
- 
- #define sha1_mod_init_arch sha1_mod_init_arch
--static inline void sha1_mod_init_arch(void)
-+static void sha1_mod_init_arch(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_SHA_NI)) {
- 		static_call_update(sha1_blocks_x86, sha1_blocks_ni);
- 	} else if (cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM,
- 				     NULL) &&
-diff --git a/lib/crypto/x86/sha256.h b/lib/crypto/x86/sha256.h
-index c852396ef3190..41fa95fbc3bf8 100644
---- a/lib/crypto/x86/sha256.h
-+++ b/lib/crypto/x86/sha256.h
-@@ -34,11 +34,11 @@ static void sha256_blocks(struct sha256_block_state *state,
- {
- 	static_call(sha256_blocks_x86)(state, data, nblocks);
- }
- 
- #define sha256_mod_init_arch sha256_mod_init_arch
--static inline void sha256_mod_init_arch(void)
-+static void sha256_mod_init_arch(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_SHA_NI)) {
- 		static_call_update(sha256_blocks_x86, sha256_blocks_ni);
- 	} else if (cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM,
- 				     NULL) &&
-diff --git a/lib/crypto/x86/sha512.h b/lib/crypto/x86/sha512.h
-index be2c8fc122469..0213c70cedd01 100644
---- a/lib/crypto/x86/sha512.h
-+++ b/lib/crypto/x86/sha512.h
-@@ -33,11 +33,11 @@ static void sha512_blocks(struct sha512_block_state *state,
- {
- 	static_call(sha512_blocks_x86)(state, data, nblocks);
- }
- 
- #define sha512_mod_init_arch sha512_mod_init_arch
--static inline void sha512_mod_init_arch(void)
-+static void sha512_mod_init_arch(void)
- {
- 	if (cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM, NULL) &&
- 	    boot_cpu_has(X86_FEATURE_AVX)) {
- 		if (boot_cpu_has(X86_FEATURE_AVX2) &&
- 		    boot_cpu_has(X86_FEATURE_BMI2))
+Changes in v3:
 
-base-commit: 56784a42208677e6fb24ba0bd93a2ea0bd9f41ff
+  - Dropped ti,twl6040 patch to be sent separately.
+  - Consolidated power, pwm and pwmled bindings into the main
+    ti,twl.yaml binding, removing 3 patches from the series.
+  - Added new patch (v3 6/6) to correct the $id in ti,twl4030-gpio.yaml.
+  - Made 'linux,keymap' a required property in ti,twl4030-keypad.
+  - Marked (very) old ti,twl4030-power properties as deprecated.
+  - Updated commit message format for omap-twl4030.yaml (PATCH v2 7/9).
+
+Changes in v2:
+
+  - Add new patch (9/9) to fix the parent ti,twl.yaml binding by adding
+    the missing sub-node definitions, resolving dtbs_check errors.
+  - (1/9) ti,twl4030-audio: Moved binding to sound/, added enum for
+    ti,enable-vibra, and simplified the example.
+  - (2/9) ti,twl6040: Renamed twl6040,audpwron-gpio to ti,audpwron-gpio
+    to fix a vendor prefix validation error.
+  - (8/9) ti,twlxxxx-usb: Added '#phy-cells' property to support the
+    standard PHY framework.
+  - (7/9) omap-twl4030: Minor cosmetic fixes, retaining Acked-by Mark Brown.
+  - Other patches: Minor description and formatting cleanups.
+
+The following six patches are included in this series:
+
+Jihed Chaibi (6):
+  dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
+  mfd: dt-bindings: ti,twl4030-audio: convert to DT schema
+  input: dt-bindings: ti,twl4030-keypad: convert to DT schema
+  ASoC: dt-bindings: omap-twl4030: convert to DT schema
+  usb: dt-bindings: ti,twlxxxx-usb: convert to DT schema
+  dt-bindings: gpio: ti,twl4030: Correct the schema $id path
+
+ .../bindings/gpio/ti,twl4030-gpio.yaml        |   2 +-
+ .../bindings/input/ti,twl4030-keypad.yaml     |  59 ++++++
+ .../bindings/input/twl4030-keypad.txt         |  27 ---
+ .../devicetree/bindings/mfd/ti,twl.yaml       | 191 ++++++++++++++++++
+ .../devicetree/bindings/mfd/twl4030-audio.txt |  46 -----
+ .../devicetree/bindings/mfd/twl4030-power.txt |  48 -----
+ .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+ .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+ .../bindings/sound/omap-twl4030.txt           |  62 ------
+ .../bindings/sound/ti,omap-twl4030.yaml       | 102 ++++++++++
+ .../bindings/sound/ti,twl4030-audio.yaml      |  90 +++++++++
+ .../bindings/usb/ti,twlxxxx-usb.yaml          | 125 ++++++++++++
+ .../devicetree/bindings/usb/twlxxxx-usb.txt   |  43 ----
+ 13 files changed, 568 insertions(+), 261 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/twl4030-keypad.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-audio.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/omap-twl4030.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,omap-twl4030.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,twl4030-audio.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,twlxxxx-usb.yaml
+ delete mode 100644 Documentation/devicetree/bindings/usb/twlxxxx-usb.txt
+
 -- 
-2.50.1
+2.39.5
 
 
