@@ -1,158 +1,580 @@
-Return-Path: <linux-kernel+bounces-772276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC52B2909A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 22:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98FEB2909C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 22:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AACDAA84CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:54:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2DA77B24D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA50A257851;
-	Sat, 16 Aug 2025 20:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB222D7D29;
+	Sat, 16 Aug 2025 20:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMw78KyZ"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jB6mP0Ru"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995B2D0C93;
-	Sat, 16 Aug 2025 20:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5FB1FF1C4;
+	Sat, 16 Aug 2025 20:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755377655; cv=none; b=POE4dlsOMUtjluUfYLoc7W79MAzXNTV3Rb6J2pjb60V3YAuksSaFrGJlN6nJPRxyM+TGhNajZlP1J4nw580Hg0U2bUfW4GPRSjq0rfEFTnDdQn6keL3DlrzWdu0gRxIdTqiX4i2WXYgLtKFBvxawxZOr04bL9Qhxu//RhN4BNPQ=
+	t=1755377694; cv=none; b=MIalJ0iA0gbzk7OZ8s5jb7ncIlscwbJWFDcEH++xl8Y1QHR14ko1Uka5GwDby3ElnEbvMPU77MkaAZJKamHFTvoGgGT/HRWT+GCIxcPXavji8hdJ+fs2q8PpcWLAslkNp0FRWbqP298KZI+m3sPQgQ685fnErcxalN9CT/+/SSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755377655; c=relaxed/simple;
-	bh=j//4/Y3YVPGUz3Y8VjQqQAg73P1GbGkbLzFkd1MRs2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bTchON+eEHkwgeeiNWT9pNobHzDGQr5sUeu4+F+5O5QbiDhigSV3tC4Z5Ew+1U20dR+iBkWonRPaBN3NF9TDDYx2dbOVM8i+ZEMzDLqITh25VyIGGonf57iNdhj3Jz5LQYGZUJN7iE6QdarH7k893un//QcGJiA9xjPFuxQfmF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMw78KyZ; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so762538b3a.0;
-        Sat, 16 Aug 2025 13:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755377653; x=1755982453; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=34/e/gMA3rbNvxNje27VwqCNEdXoYxJi3L/UJkaHF/Q=;
-        b=FMw78KyZbv7tyyGoY3RG05BSgyeK8823y+u3+ljdTOC7xt8DIMd8GGmeSzuUENIO65
-         t37N/MvpjuIuEIzm8FRqOTWEBpDEzCW7/WcbW1QUa21lNebKjIKK913vvf34RfRL6pnH
-         TJwf9Cb2/vvj6pZWLAE0ZDVG8fmMpChvW2YLmWdGMg8hTPzm347ZubMma1EHQRlf/qK8
-         PhH3X01K/acxsDYFsc2HWM8YtImVJ4gEcL4YC0oloAEiUTOqXP0lYopKvTpUH7zvBN+X
-         xnzq/YyPIkuMb1btpJhiiDicC3y3oDJMaIwK8gu8gSNW5pvXOh/0skLtzkm0XLijPTP3
-         LjhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755377653; x=1755982453;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34/e/gMA3rbNvxNje27VwqCNEdXoYxJi3L/UJkaHF/Q=;
-        b=toGSoLrZo5P2l4WPGjR/EzybnxddjZTdCzW3bZVBWuBKARNl4JK6XgoweyxTtRpybp
-         XBkMRBZxtp6gejfc445lHPgDSxza6XWE1jnvORqN3KAHjRsR8MFI8dhaNJoVXiFGOH4B
-         WSx9cxEiDTYd6Z/EOioByW7jUkAcXG5YU0G4aDLoUWKfVWteluJVwzc2nqKGKFSKiM42
-         gIphFYso1srzOI7y4Zngc32QKxKQi5qhkm+WOpdDhcl6hiAx2Aq2yceudsXeJlKW4+Qz
-         EzWWjZLICtwPEnYFGlvUp5PyE3CCx93N8caglfrqQW5ygniQOMCVJ8cG/IIgEkkOw++h
-         fYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjItYIlFJitwqm3TzBBPd9yRuRzOWPwVrVmdPMbPZDq8HYAqrUkkT0Ok0gjyCSOPknpLeF9PryVrdiIZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDgj1AxBsJwd/upfCMIjC5iuaglmwouNhXQvIYJ6gZGWHdebzP
-	Z/JDecmLGmZE6YDZe3gbupwqVm58wvzc+zYOgtQnnhzyAQNH6Rx1hDYW
-X-Gm-Gg: ASbGncu2wK09di6KbhAcF9F1ig05cwC5K3ESQJqbNstNrXiXbhH/WhOgV4ymdym9u76
-	y9rTwYLtY7qZWAYhyae9E5lBWZQOrMYJojmYG8cM66YUB/UgQJm9dcunKUK3Ntp5cUFt8tHkTOx
-	kwRJNreaKG8BtQKgJstcggEreCverWiyOj3z9zzptapZtjqiwaVoRWW4PrFyska0UdTXlx97Cn0
-	DP+G0Uq8Al5LFZoojSoSSW2Z73ZWk/Nr0KjfR2K0V2RJJ9xPPWMB+RPyYzKPrmUFw44jyhSmezw
-	17Ipvb5PZFEVYonDvXe3KKSkb+fDStFryKM+opayNbv68o+gC/eNHAh6/RYUcqcQXifY9CTNu+5
-	mW1Yum4/G2M8TM22/vtjumzeP5JDHs67t2P5Y57XWIXJYrQ==
-X-Google-Smtp-Source: AGHT+IFx09QVFUdWWcrdYDRkEcDo+ImxAk/HZ1EioMQPPNKC2P2A7A8lDat74sf4jjCgNVLhPAs1VA==
-X-Received: by 2002:a05:6a21:99a1:b0:220:33e9:15da with SMTP id adf61e73a8af0-240e6117aacmr4246725637.2.1755377653204;
-        Sat, 16 Aug 2025 13:54:13 -0700 (PDT)
-Received: from localhost.localdomain ([202.83.40.77])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4528c812sm3833154b3a.45.2025.08.16.13.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 13:54:12 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abinash Singh <abinashsinghlalotra@gmail.com>
-Subject: [PATCH v7 2/2] scsi: sd: make sd_revalidate_disk() return void
-Date: Sun, 17 Aug 2025 02:23:29 +0530
-Message-ID: <20250816205329.404116-3-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250816205329.404116-1-abinashsinghlalotra@gmail.com>
-References: <20250816205329.404116-1-abinashsinghlalotra@gmail.com>
+	s=arc-20240116; t=1755377694; c=relaxed/simple;
+	bh=OJ2rjoKfqdjV9A6zx3wYUGvdFUVH30eLa7Upq7odQKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXgwZDFHesWZmmE5GjKKjkT+T7VLwGO845Ksodx/3wF3vOb/+ThDgkbti/89WnZNumVDcAtDHXobDfKO/8zbyU6VRDEaH43/ps2ES4XouMK5iCoGDtHbvsMBzq5nDu7fB/xL7CG2JbPIrk8+8lZ40fh/G+Q4zey1d+B8cQg36DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jB6mP0Ru; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7152B442A7;
+	Sat, 16 Aug 2025 20:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755377683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l/CF/Y7iJ0ss1JDPWU4lh6tjzGMoBZNZnXrnJMrKpsI=;
+	b=jB6mP0RuVQ4wc3SxnROigpDHTek2uGw5rWBbZImseBiFONapKoKSAo8wlJgiK4nOBZMRKI
+	dPn6wzJAzssTkX9fpncQedOJw8Sce4+13PCgjqszRQpj+5rEc7/Yyou/qdJoXXLBKxYW0G
+	WmyHEp/odflyZanHExcvoDEmCNozfgofWJHVu5Av+dpbQTvPkqAGGRHKw0xDkeJFOtKpZ7
+	9E8A/FrDP+UJ9voCG4EcqL2VX+0Rj0x7o+y0fNmrpRvABB0gdjzfhukNU/JB3BzA4sqm0q
+	L5ymJts8bL5CD/QTVBUZaf1nM+d+1jDtjZ0aDOBx4snACx/TKQOlx8Ap6jJptQ==
+Date: Sat, 16 Aug 2025 22:53:56 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Anders Sandahl <anders.sandahl@axis.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@axis.com
+Subject: Re: [PATCH] rtc: rx8111: Add NVMEM and timestamp functionality
+Message-ID: <2025081620535601a84107@mail.local>
+References: <20250429-rtc-rx8111-events-v1-1-7e2a61126042@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429-rtc-rx8111-events-v1-1-7e2a61126042@axis.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeejkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepuddvuddugefhfedtgeejteevleeiudetheeluefgiedugfduueekhfffueelieegnecuffhomhgrihhnpegvphhsohhnuggvvhhitggvrdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtugemvgegkeejmeduheeivgemfhekiehfmeeiheehtdemudehjedvmeejsgduvdemrggvvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtdgumegvgeekjeemudehiegvmehfkeeifhemieehhedtmeduheejvdemjegsuddvmegrvgdvkedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopegrnhguvghrshdrshgrnhgurghhlhesrgigihhsrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgv
+ ghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhesrgigihhsrdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-The sd_revalidate_disk() function currently returns 0 for
-both success and memory allocation failure.Since none of its
-callers use the return value, this return code is both unnecessary
-and potentially misleading.
+Hello,
 
-Change the return type of sd_revalidate_disk() from int to void
-and remove all return value handling. This makes the function
-semantics clearer and avoids confusion about unused return codes.
+I'm sorry for the delay I was planning to take this during the previous
+cycle based on the commit message but after review, the patch does more
+than what the commit says.
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
----
- drivers/scsi/sd.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+On 29/04/2025 15:59:21+0200, Anders Sandahl wrote:
+> Introduce support for saving a timestamp triggered by an external
+> event via the EVIN pin. After an event detection, the timestamp can be
+> retrieved from timestamp0 in sysfs.
+> 
+> Also add a sysfs control timestamp0_write_nvmem to enable the RX8111
+> feature that stores timestamps in NVMEM as a circular buffer.
+> 
+> Signed-off-by: Anders Sandahl <anders.sandahl@axis.com>
+> ---
+> The Epson RX8111 device has support for saving a time stamp when a 
+> hardware trigger occurs. It also has a register area that can be used 
+> as non-volatile memory.
+> 
+> Datasheet: https://download.epsondevice.com/td/pdf/app/RX8111CE_en.pdf
+> 
+> Timestamp is made available in the same manner as in "rtc-rv3028.c"
+> through sys-fs. NVMEM is made available using the framework functions.
+> ---
+>  drivers/rtc/rtc-rx8111.c | 351 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 349 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-rx8111.c b/drivers/rtc/rtc-rx8111.c
+> index 8450d9f0b566c63bca04988d892ea4db585ac526..4f428eb98f4858b4c70b3a5709d8204a77d0a1ea 100644
+> --- a/drivers/rtc/rtc-rx8111.c
+> +++ b/drivers/rtc/rtc-rx8111.c
+> @@ -58,7 +58,14 @@
+>  #define RX8111_FLAG_XST_BIT BIT(0)
+>  #define RX8111_FLAG_VLF_BIT BIT(1)
+>  
+> +#define RX8111_REG_TS_RAM_START		0x40	/* Timestamp RAM area start. */
+> +#define RX8111_REG_TS_RAM_END		0x7f	/* Timestamp RAM area end. */
+> +
+> +#define RX8111_BIT_EVIN_SETTING_OVW	BIT(1)	/* Enable overwrite timestamp RAM. */
+> +#define RX8111_BIT_EVIN_SETTING_PU1	BIT(3)	/* Pull up select 1. */
+> +
+>  #define RX8111_TIME_BUF_SZ (RX8111_REG_YEAR - RX8111_REG_SEC + 1)
+> +#define RX8111_TS_BUF_SZ (RX8111_REG_TS_YEAR - RX8111_REG_TS_SEC + 1)
+>  
+>  enum rx8111_regfield {
+>  	/* RX8111_REG_EXT. */
+> @@ -98,6 +105,11 @@ enum rx8111_regfield {
+>  	/* RX8111_REG_STATUS_MON. */
+>  	RX8111_REGF_VLOW,
+>  
+> +	/* RX8111_REG_TS_CTRL1. */
+> +	RX8111_REGF_TSRAM,
+> +	RX8111_REGF_TSCLR,
+> +	RX8111_REGF_EISEL,
+> +
+>  	/* Sentinel value. */
+>  	RX8111_REGF_MAX
+>  };
+> @@ -134,12 +146,16 @@ static const struct reg_field rx8111_regfields[] = {
+>  	[RX8111_REGF_CHGEN]  = REG_FIELD(RX8111_REG_PWR_SWITCH_CTRL, 7, 7),
+>  
+>  	[RX8111_REGF_VLOW]  = REG_FIELD(RX8111_REG_STATUS_MON, 1, 1),
+> +
+> +	[RX8111_REGF_TSRAM]  = REG_FIELD(RX8111_REG_TS_CTRL1, 0, 0),
+> +	[RX8111_REGF_TSCLR]  = REG_FIELD(RX8111_REG_TS_CTRL1, 1, 1),
+> +	[RX8111_REGF_EISEL]  = REG_FIELD(RX8111_REG_TS_CTRL1, 2, 2),
+>  };
+>  
+>  static const struct regmap_config rx8111_regmap_config = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> -	.max_register = RX8111_REG_TS_CTRL3,
+> +	.max_register = RX8111_REG_TS_RAM_END,
+>  };
+>  
+>  struct rx8111_data {
+> @@ -147,8 +163,224 @@ struct rx8111_data {
+>  	struct regmap_field *regfields[RX8111_REGF_MAX];
+>  	struct device *dev;
+>  	struct rtc_device *rtc;
+> +	spinlock_t ts_lock;	/* Don't allow poll of ETS bit when it's temporarily disabled. */
+>  };
+>  
+> +static ssize_t timestamp0_store(struct device *dev,
+> +				struct device_attribute *attr, const char *buf,
+> +				size_t count)
+> +{
+> +	struct rx8111_data *data = dev_get_drvdata(dev);
+> +	int ret, etsval;
+> +
+> +	/*
+> +	 * Clear event only if events are enabled. This is to protect
+> +	 * us from losing events in the future if events have been disabled
+> +	 * by mistake (error in read function).
+> +	 */
+> +	spin_lock(&data->ts_lock);
+> +	ret = regmap_field_read(data->regfields[RX8111_REGF_ETS], &etsval);
+> +	spin_unlock(&data->ts_lock);
+> +
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not read ETS (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (!etsval)
+> +		return -EINVAL;
+> +
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_EVF], 0);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not write EVF bit (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_TSCLR], 1);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not write TSCLR bit (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t timestamp0_show(struct device *dev,
+> +			       struct device_attribute *attr, char *buf)
+> +{
+> +	struct rx8111_data *data = dev_get_drvdata(dev);
+> +
+> +	struct rtc_time tm;
+> +	int ret, evfval;
+> +	u8 date[RX8111_TS_BUF_SZ];
+> +
+> +	/* Read out timestamp values only when an event has occurred. */
+> +	ret = regmap_field_read(data->regfields[RX8111_REGF_EVF], &evfval);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not read EVF (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (!evfval)
+> +		return 0;
+> +
+> +	spin_lock(&data->ts_lock);
+> +
+> +	/* Disable timestamp during readout to avoid unreliable data. */
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_ETS], 0);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not disable timestamp function (%d)\n",
+> +			ret);
+> +		goto err_out;
+> +	}
+> +
+> +	ret = regmap_bulk_read(data->regmap, RX8111_REG_TS_SEC, date,
+> +			       sizeof(date));
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not read timestamp data (%d)\n", ret);
+> +		goto err_out;
+> +	}
+> +
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_ETS], 1);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not enable timestamp function (%d)\n", ret);
+> +		goto err_out;
+> +	}
+> +
+> +	spin_unlock(&data->ts_lock);
+> +
+> +	tm.tm_sec = bcd2bin(date[0]);
+> +	tm.tm_min = bcd2bin(date[1]);
+> +	tm.tm_hour = bcd2bin(date[2]);
+> +	tm.tm_mday = bcd2bin(date[4]);
+> +	tm.tm_mon = bcd2bin(date[5]) - 1;
+> +	tm.tm_year = bcd2bin(date[6]) + 100;
+> +
+> +	ret = rtc_valid_tm(&tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sprintf(buf, "%llu\n",
+> +		       (unsigned long long)rtc_tm_to_time64(&tm));
+> +
+> +err_out:
+> +	spin_unlock(&data->ts_lock);
+> +	return ret;
+> +}
+> +
+> +static DEVICE_ATTR_RW(timestamp0);
+> +
+> +static ssize_t timestamp0_write_nvmem_store(struct device *dev,
+> +					    struct device_attribute *attr,
+> +					    const char *buf, size_t count)
+> +{
+> +	struct rx8111_data *data = dev_get_drvdata(dev);
+> +	bool enable;
+> +	int ret;
+> +
+> +	if (count < 1)
+> +		return -EINVAL;
+> +
+> +	ret = kstrtobool(buf, &enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_TSRAM],
+> +				 enable ? 1 : 0);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not set TSRAM bit (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t timestamp0_write_nvmem_show(struct device *dev,
+> +					   struct device_attribute *attr,
+> +					   char *buf)
+> +{
+> +	struct rx8111_data *data = dev_get_drvdata(dev);
+> +	int enable;
+> +	int ret;
+> +
+> +	ret = regmap_field_read(data->regfields[RX8111_REGF_TSRAM], &enable);
+> +	if (ret) {
+> +		dev_dbg(dev, "Could not read TSRAM bit (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return sprintf(buf, "%s\n", enable ? "1" : "0");
+> +}
+> +
+> +static DEVICE_ATTR_RW(timestamp0_write_nvmem);
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index c3791746806d..ba3bfd9b00aa 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -106,7 +106,7 @@ static void sd_config_discard(struct scsi_disk *sdkp, struct queue_limits *lim,
- 		unsigned int mode);
- static void sd_config_write_same(struct scsi_disk *sdkp,
- 		struct queue_limits *lim);
--static int  sd_revalidate_disk(struct gendisk *);
-+static void  sd_revalidate_disk(struct gendisk *);
- static void sd_unlock_native_capacity(struct gendisk *disk);
- static void sd_shutdown(struct device *);
- static void scsi_disk_release(struct device *cdev);
-@@ -3691,7 +3691,7 @@ static void sd_read_block_zero(struct scsi_disk *sdkp)
-  *	performs disk spin up, read_capacity, etc.
-  *	@disk: struct gendisk we care about
-  **/
--static int sd_revalidate_disk(struct gendisk *disk)
-+static void sd_revalidate_disk(struct gendisk *disk)
- {
- 	struct scsi_disk *sdkp = scsi_disk(disk);
- 	struct scsi_device *sdp = sdkp->device;
-@@ -3709,13 +3709,13 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	 * of the other niceties.
- 	 */
- 	if (!scsi_device_online(sdp))
--		goto out;
-+		return;
- 
- 	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
- 	if (!lim) {
- 		sd_printk(KERN_WARNING, sdkp,
- 			"sd_revalidate_disk: Disk limit allocation failure.\n");
--		goto out;
-+		return;
- 	}
- 
- 	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
-@@ -3829,7 +3829,6 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	kfree(lim);
- 	kfree(buffer);
- 
--	return err;
- }
- 
- /**
+Any new ABI has to be documented. Also, sysfs is probably not the
+correct interface for this, I've been planning to come up with an
+architecture document for a while, I'll try to do so soon after ELCE.
+
+> +
+> +static int rx8111_sysfs_register(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = device_create_file(dev, &dev_attr_timestamp0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = device_create_file(dev, &dev_attr_timestamp0_write_nvmem);
+> +	if (ret)
+> +		device_remove_file(dev, &dev_attr_timestamp0);
+> +
+> +	return ret;
+> +}
+
+Please use rtc_add_groups, the probability of one succeeding and the
+other one failing is super low.
+
+> +
+> +static void rx8111_sysfs_unregister(void *data)
+> +{
+> +	struct device *dev = (struct device *)data;
+> +
+> +	device_remove_file(dev, &dev_attr_timestamp0);
+> +	device_remove_file(dev, &dev_attr_timestamp0_write_nvmem);
+> +}
+> +
+> +static int rx8111_setup(struct rx8111_data *data)
+> +{
+> +	int ret;
+> +
+> +	/* Disable multiple timestamps; area is used for nvmem as default. */
+> +	ret = regmap_write(data->regmap, RX8111_REG_TS_CTRL2, 0);
+> +	if (ret) {
+> +		dev_dbg(data->dev, "Could not setup TS_CTRL2 (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, RX8111_REG_TS_CTRL3, 0);
+> +	if (ret) {
+> +		dev_dbg(data->dev, "Could not setup TS_CTRL3 (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Configure EVIN pin, trigger on low level. PU = 1M Ohm. */
+> +	ret = regmap_write(data->regmap, RX8111_REG_EVIN_SETTING,
+> +			   RX8111_BIT_EVIN_SETTING_PU1 |
+> +				   RX8111_BIT_EVIN_SETTING_OVW);
+> +	if (ret) {
+> +		dev_dbg(data->dev, "Could not setup EVIN (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Enable timestamp triggered by EVIN pin. */
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_ETS], 1);
+> +	if (ret) {
+> +		dev_dbg(data->dev, "Could not enable timestamp function (%d)\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+
+This is where lies the difficulty of getting the interface right. We
+can't hardcode any configuration in the driver as this means that we
+deviate from the defaults without providing a userspace interface.
+However, we need that interface to be generic enough for all RTCs. As
+said, I have a draft that I need to refine.
+
+> +	/* Disable all interrupts. */
+> +	ret = regmap_write(data->regmap, RX8111_REG_CTRL, 0);
+> +	if (ret) {
+> +		dev_dbg(data->dev, "Could not disable interrupts (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+
+This can't be done in probe as this is disabling all alarms in probe.
+Alarms have to survive across reboots. It also clears the STOP bit which
+must only be done after setting the time.
+
+> +	return 0;
+> +}
+> +
+>  static int rx8111_read_vl_flag(struct rx8111_data *data, unsigned int *vlval)
+>  {
+>  	int ret;
+> @@ -160,6 +392,17 @@ static int rx8111_read_vl_flag(struct rx8111_data *data, unsigned int *vlval)
+>  	return ret;
+>  }
+>  
+> +static int rx8111_clear_vl_flag(struct rx8111_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_field_write(data->regfields[RX8111_REGF_VLF], 0);
+> +	if (ret)
+> +		dev_dbg(data->dev, "Could not write VL flag (%d)", ret);
+> +
+
+This was not in your commit message and this was left out because this
+can only be done after setting the time. After reading the datasheet
+closer, we should even set all the registers again after this event. Why
+would you simply clear the bit?
+
+> +	return ret;
+> +}
+> +
+>  static int rx8111_read_time(struct device *dev, struct rtc_time *tm)
+>  {
+>  	struct rx8111_data *data = dev_get_drvdata(dev);
+> @@ -289,11 +532,69 @@ static int rx8111_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
+>  		vlval |= regval ? RTC_VL_BACKUP_LOW : 0;
+>  
+>  		return put_user(vlval, (typeof(vlval) __user *)arg);
+> +	case RTC_VL_CLR:
+> +		return rx8111_clear_vl_flag(data);
+>  	default:
+>  		return -ENOIOCTLCMD;
+>  	}
+>  }
+>  
+> +static int rx8111_nvram_write(void *priv, unsigned int offset, void *val,
+> +			      size_t bytes)
+> +{
+> +	struct rx8111_data *data = priv;
+> +	int ret, len;
+> +
+> +	/*
+> +	 * The RX8111 device can only handle transfers with repeated start
+> +	 * within the same 16 bytes aligned block.
+> +	 */
+> +	while (bytes > 0) {
+> +		len = ((offset % 15) + bytes > 16) ? 16 - (offset % 16) : bytes;
+> +		ret = regmap_bulk_write(data->regmap,
+> +					RX8111_REG_TS_RAM_START + offset, val,
+> +					len);
+> +		if (ret) {
+> +			dev_dbg(data->dev, "Could not write nvmem (%d)\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		val += len;
+> +		offset += len;
+> +		bytes -= len;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rx8111_nvram_read(void *priv, unsigned int offset, void *val,
+> +			     size_t bytes)
+> +{
+> +	struct rx8111_data *data = priv;
+> +	int ret, len;
+> +
+> +	/*
+> +	 * The RX8111 device can only handle transfers with repeated start
+> +	 * within the same 16 bytes aligned block.
+> +	 */
+> +	while (bytes > 0) {
+> +		len = ((offset % 15) + bytes > 16) ? 16 - (offset % 16) : bytes;
+> +		ret = regmap_bulk_read(data->regmap,
+> +				       RX8111_REG_TS_RAM_START + offset, val,
+> +				       len);
+> +		if (ret) {
+> +			dev_dbg(data->dev, "Could not read nvmem (%d)\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		val += len;
+> +		offset += len;
+> +		bytes -= len;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rtc_class_ops rx8111_rtc_ops = {
+>  	.read_time = rx8111_read_time,
+>  	.set_time = rx8111_set_time,
+> @@ -305,6 +606,16 @@ static int rx8111_probe(struct i2c_client *client)
+>  	struct rx8111_data *data;
+>  	struct rtc_device *rtc;
+>  	size_t i;
+> +	int ret;
+> +	struct nvmem_config nvmem_cfg = {
+> +		.name = "rx8111_nvram",
+> +		.word_size = 1,
+> +		.stride = 1,
+> +		.size = RX8111_REG_TS_RAM_END - RX8111_REG_TS_RAM_START + 1,
+> +		.type = NVMEM_TYPE_BATTERY_BACKED,
+> +		.reg_read = rx8111_nvram_read,
+> +		.reg_write = rx8111_nvram_write,
+> +	};
+>  
+>  	data = devm_kmalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+>  	if (!data) {
+> @@ -312,6 +623,8 @@ static int rx8111_probe(struct i2c_client *client)
+>  		return -ENOMEM;
+>  	}
+>  
+> +	spin_lock_init(&data->ts_lock);
+> +
+>  	data->dev = &client->dev;
+>  	dev_set_drvdata(data->dev, data);
+>  
+> @@ -331,6 +644,10 @@ static int rx8111_probe(struct i2c_client *client)
+>  		}
+>  	}
+>  
+> +	ret = rx8111_setup(data);
+> +	if (ret)
+> +		return ret;
+> +
+>  	rtc = devm_rtc_allocate_device(data->dev);
+>  	if (IS_ERR(rtc)) {
+>  		dev_dbg(data->dev, "Could not allocate rtc device\n");
+> @@ -343,7 +660,37 @@ static int rx8111_probe(struct i2c_client *client)
+>  
+>  	clear_bit(RTC_FEATURE_ALARM, rtc->features);
+>  
+> -	return devm_rtc_register_device(rtc);
+> +	ret = devm_rtc_register_device(rtc);
+> +	if (ret) {
+> +		dev_dbg(data->dev,
+> +			"Could not register rtc device (%d)\n", ret);
+> +		return ret;
+> +	}
+
+devm_rtc_register_device has to come last, you must not fail after a
+successful call.
+
+> +
+> +	ret = rx8111_sysfs_register(data->dev);
+> +	if (ret) {
+> +		dev_dbg(data->dev,
+> +			"Could not create sysfs entry (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_add_action_or_reset(data->dev, &rx8111_sysfs_unregister,
+> +				       data->dev);
+> +	if (ret) {
+> +		dev_dbg(data->dev,
+> +			"Could not add sysfs unregister devres action (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	nvmem_cfg.priv = data;
+> +	ret = devm_rtc_nvmem_register(rtc, &nvmem_cfg);
+> +	if (ret) {
+> +		dev_dbg(data->dev,
+> +			"Could not register rtc nvmem device (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct of_device_id rx8111_of_match[] = {
+> 
+> ---
+> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+> change-id: 20250424-rtc-rx8111-events-df9a35810a73
+> 
+> Best regards,
+> -- 
+> Anders Sandahl <anders.sandahl@axis.com>
+> 
+
 -- 
-2.43.0
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
