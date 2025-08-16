@@ -1,218 +1,158 @@
-Return-Path: <linux-kernel+bounces-771656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C550AB28A1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:49:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA29CB28A1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A04A5C766C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED891CC3A4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB7E18A6DB;
-	Sat, 16 Aug 2025 02:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5804219006B;
+	Sat, 16 Aug 2025 02:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CgmbxXuR"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4038B;
-	Sat, 16 Aug 2025 02:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4RKmj4Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A663EA8D;
+	Sat, 16 Aug 2025 02:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755312558; cv=none; b=RB/Kiospmw//Yu2aadU1Elzc7ogHeeB8Qx4JYGPTj+GIXvDmvqsXpZ+EMPme5aI7A15oCqHsxJrSL5HBvedEdwzaK7jEZKwlpW7mdGsPFXvuDc2mhHPmwqr9JqzQk2XUoF/xeNAgHtP7go09MKsXUe9OYIK8RZUUOrZt8l7WW+Y=
+	t=1755313048; cv=none; b=IHAbfYLhZavDDQurC4hOXqYzfEnsbyi+vLw2SSSRcHya1T6HR3ZIWLzqgcnYQOgTKvI4tshZi4wsLzbnJt5r/PpwQVtf2iN6Pw7BXNHUOrJ0Gf7et9U9g0orhbwQNYLQkg0c2x4QxzVPHPzKspN4c+OyvW8zOfHuv5jqAQHi6TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755312558; c=relaxed/simple;
-	bh=hyFoRJfR+/+dfufmADJJETGSdWS8oikKKEtoGRU+TX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jr2FVT6Z3nbcDDFOXfJYiObl00cMIPP+TPYEtY3D+z4VryJmxemESOwpwJPIE2TIV8w3Riz+pwK90Xspg8odBI2GLLT5NYL4ZZRIopyjrofTfiQr1ZQa4mYqBujKuV4W8ih9tyIMRWQVSHs0UiUUmRhTGKBy15yx85iTNt+EFzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CgmbxXuR; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=3A
-	DGn3+EY0cLRTbPVPUMRLpsDFaJI1jPaAcL8kcj18g=; b=CgmbxXuRFzH/7BCps2
-	APh3WrgqCi6swzU+OcrW1cZchvTNJnjmgwBQVFnPnof1V5k5qGkAsaoLczZAA/YP
-	A0f96GWzTfe+8xFNFOcF0MZh0SIKTJmFmOcoacWdtefvtSltTfdAuZJ+o3zoKHPC
-	AB2snqpXY1qDNqqV+jnnjAJ28=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wB3b+eA8Z9oAufhCA--.21748S2;
-	Sat, 16 Aug 2025 10:48:33 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire operation
-Date: Sat, 16 Aug 2025 10:48:31 +0800
-Message-Id: <20250816024831.1451167-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755313048; c=relaxed/simple;
+	bh=9+X2ZEiERK6NjxysThGLD5jYBovImzJ0hxY0qwiJ3ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPH7o8U6RAlysHfbruVLFsVSpSaao5i8LAOIIbhUJss9w3SJ0x1JSzTIQE28gm+OaCwE4adiZwlgdCWMknh/x8ujS8chJQqNFAVUqIuR3W3i67RkNe35kw21OISG7BvCeulX1c+b4dqVWCweC9mpboRVETHPjDu6iBARdHHCgMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4RKmj4Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5DDFC4CEEB;
+	Sat, 16 Aug 2025 02:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755313048;
+	bh=9+X2ZEiERK6NjxysThGLD5jYBovImzJ0hxY0qwiJ3ns=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S4RKmj4YzpBNdZ/i/vZidoCwib+WQn/HXEt9KErw4ttLhyaFo4Il9h/vrTMpMAlR6
+	 2MFXNEWo7Gz2Myjk/Cv8Nu/T88BNJgJwTQdHScqdHqprAv1SxNKqK7VaGN3PHnIQFU
+	 /LI9492heNA3r6bPu40l8LMvyOEdwMi58fO7VJHTjjn3TgUt9FYZZlaA7/9TivrRoT
+	 4Y1AphaQB3qlCRPVKakgdRMlS5I61H8vfzLFNYO0RwEyjKw1n+XGnyqejzJidMTNre
+	 dqbwsDnXuVtvbUcYeHZnW4LGqGYikZZFqww8Dea+/NajH4AZrrBXhpR/0HRGJUUjdF
+	 o80/mzvJ46dHQ==
+Message-ID: <af40ef99-9b61-4725-ba77-c5d3741add99@kernel.org>
+Date: Sat, 16 Aug 2025 10:57:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: yukuai@kernel.org
+Subject: Re: [PATCH 08/10] blk-mq: fix blk_mq_tags double free while
+ nr_requests grown
+To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, hare@suse.de, ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
+ <20250815080216.410665-9-yukuai1@huaweicloud.com>
+ <c5e63966-e7f6-4d82-9d66-3a0abccc9d17@linux.ibm.com>
+From: Yu Kuai <yukuai@kernel.org>
+In-Reply-To: <c5e63966-e7f6-4d82-9d66-3a0abccc9d17@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wB3b+eA8Z9oAufhCA--.21748S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWDWr1rAF1fGr48AFWUJwb_yoWxXry8pa
-	y5WryxGw47Za1agw48Jrs7ZFyYgw1jyryUG393Xwsay3ZxtryrJa1j9r90gFWftFZFkw47
-	ArsYqF15Cw1ktrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pMnQUUUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiMAGrCmif8MwNDgAAsY
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
+Hi,
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
-Changes in v3:
-- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
-  as suggested by Willem de Bruijn;
+在 2025/8/16 3:30, Nilay Shroff 写道:
+>
+> On 8/15/25 1:32 PM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> In the case user trigger tags grow by queue sysfs attribute nr_requests,
+>> hctx->sched_tags will be freed directly and replaced with a new
+>> allocated tags, see blk_mq_tag_update_depth().
+>>
+>> The problem is that hctx->sched_tags is from elevator->et->tags, while
+>> et->tags is still the freed tags, hence later elevator exist will try to
+>> free the tags again, causing kernel panic.
+>>
+>> Fix this problem by using new allocated elevator_tags, also convert
+>> blk_mq_update_nr_requests to void since this helper will never fail now.
+>>
+>> Meanwhile, there is a longterm problem can be fixed as well:
+>>
+>> If blk_mq_tag_update_depth() succeed for previous hctx, then bitmap depth
+>> is updated, however, if following hctx failed, q->nr_requests is not
+>> updated and the previous hctx->sched_tags endup bigger than q->nr_requests.
+>>
+>> Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dependency in elv_iosched_store")
+>> Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/blk-mq.c    | 19 ++++++-------------
+>>   block/blk-mq.h    |  4 +++-
+>>   block/blk-sysfs.c | 21 ++++++++++++++-------
+>>   3 files changed, 23 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index 11c8baebb9a0..e9f037a25fe3 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -4917,12 +4917,12 @@ void blk_mq_free_tag_set(struct blk_mq_tag_set *set)
+>>   }
+>>   EXPORT_SYMBOL(blk_mq_free_tag_set);
+>>   
+>> -int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+>> +void blk_mq_update_nr_requests(struct request_queue *q,
+>> +			       struct elevator_tags *et, unsigned int nr)
+>>   {
+>>   	struct blk_mq_tag_set *set = q->tag_set;
+>>   	struct blk_mq_hw_ctx *hctx;
+>>   	unsigned long i;
+>> -	int ret = 0;
+>>   
+>>   	blk_mq_quiesce_queue(q);
+>>   
+>> @@ -4946,24 +4946,17 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+>>   				nr - hctx->sched_tags->nr_reserved_tags);
+>>   		}
+>>   	} else {
+>> -		queue_for_each_hw_ctx(q, hctx, i) {
+>> -			if (!hctx->tags)
+>> -				continue;
+>> -			ret = blk_mq_tag_update_depth(hctx, &hctx->sched_tags,
+>> -						      nr);
+>> -			if (ret)
+>> -				goto out;
+>> -		}
+>> +		blk_mq_free_sched_tags(q->elevator->et, set);
+> I think you also need to ensure that elevator tags are freed after we unfreeze
+> queue and release ->elevator_lock otherwise we may get into the lockdep splat
+> for pcpu_lock dependency on ->freeze_lock and/or ->elevator_lock. Please note
+> that blk_mq_free_sched_tags internally invokes sbitmap_free which invokes
+> free_percpu which acquires pcpu_lock.
 
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn;
-- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
+Ok, thanks for the notice. However, as Ming suggested, we might fix this 
+problem
 
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet;
-- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
-  as suggested by Eric Dumazet;
-- Add some performance details to the changelog
-  as suggested by Ferenc Fejes;
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn;
-- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
-  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-- Just return HRTIMER_RESTART directly as all cases return the same value
-  as suggested by Willem de Bruijn;
-- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
+in the next merge window. I'll send one patch to fix this regression by 
+replace
 
----
----
- net/packet/af_packet.c | 24 ++++++++++++++----------
- net/packet/internal.h  |  3 +--
- 2 files changed, 15 insertions(+), 12 deletions(-)
+st->tags with reallocated new sched_tags as well.
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a7017d7f0..763b0c968 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -203,7 +203,7 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
- static int prb_queue_frozen(struct tpacket_kbdq_core *);
- static void prb_open_block(struct tpacket_kbdq_core *,
- 		struct tpacket_block_desc *);
--static void prb_retire_rx_blk_timer_expired(struct timer_list *);
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
- static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
- static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
- static void prb_clear_rxhash(struct tpacket_kbdq_core *,
-@@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
- 
- static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
--	timer_delete_sync(&pkc->retire_blk_timer);
-+	hrtimer_cancel(&pkc->retire_blk_timer);
- }
- 
- static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-@@ -603,9 +603,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
- 	struct tpacket_kbdq_core *pkc;
- 
- 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
--		    0);
--	pkc->retire_blk_timer.expires = jiffies;
-+	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-+	hrtimer_start(&pkc->retire_blk_timer, ms_to_ktime(pkc->retire_blk_tov),
-+		      HRTIMER_MODE_REL_SOFT);
- }
- 
- static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-@@ -676,7 +677,6 @@ static void init_prb_bdqc(struct packet_sock *po,
- 	else
- 		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
- 						req_u->req3.tp_block_size);
--	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
- 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
- 	rwlock_init(&p1->blk_fill_in_prog_lock);
- 
-@@ -691,8 +691,8 @@ static void init_prb_bdqc(struct packet_sock *po,
-  */
- static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
--	mod_timer(&pkc->retire_blk_timer,
--			jiffies + pkc->tov_in_jiffies);
-+	hrtimer_set_expires(&pkc->retire_blk_timer,
-+			    ktime_add(ktime_get(), ms_to_ktime(pkc->retire_blk_tov)));
- 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
- }
- 
-@@ -719,8 +719,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-  * prb_calc_retire_blk_tmo() calculates the tmo.
-  *
-  */
--static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
- {
-+	enum hrtimer_restart ret = HRTIMER_RESTART;
- 	struct packet_sock *po =
- 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
- 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-@@ -732,8 +733,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	frozen = prb_queue_frozen(pkc);
- 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 
--	if (unlikely(pkc->delete_blk_timer))
-+	if (unlikely(pkc->delete_blk_timer)) {
-+		ret = HRTIMER_NORESTART;
- 		goto out;
-+	}
- 
- 	/* We only need to plug the race when the block is partially filled.
- 	 * tpacket_rcv:
-@@ -790,6 +793,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 
- out:
- 	spin_unlock(&po->sk.sk_receive_queue.lock);
-+	return ret;
- }
- 
- static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-diff --git a/net/packet/internal.h b/net/packet/internal.h
-index 1e743d031..9812feb3d 100644
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -47,10 +47,9 @@ struct tpacket_kbdq_core {
- 
- 	unsigned short  retire_blk_tov;
- 	unsigned short  version;
--	unsigned long	tov_in_jiffies;
- 
- 	/* timer to retire an outstanding block */
--	struct timer_list retire_blk_timer;
-+	struct hrtimer  retire_blk_timer;
- };
- 
- struct pgv {
--- 
-2.34.1
 
+Thanks,
+
+Kuai
+
+>   
+> Thanks,
+> --Nilay
+>
+>
+>
 
