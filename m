@@ -1,93 +1,58 @@
-Return-Path: <linux-kernel+bounces-772079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CF2B28E88
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57069B28EA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A1E1C23D2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346623BA0E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE02F0C6E;
-	Sat, 16 Aug 2025 14:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362742F1FDE;
+	Sat, 16 Aug 2025 14:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fU43e3y8"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b="yo+wGyxZ"
+Received: from isilmar-4.linta.de (isilmar-4.linta.de [136.243.71.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105E62ED14F;
-	Sat, 16 Aug 2025 14:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20652ED179
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.71.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755355406; cv=none; b=R/AddKCXqcSR1mGhd0BnW7BpPOmZohZo4kcHd6EonGEvFL7RVL4EZUGNolhZMgEiEHo3qDjJS4i1qIC0q2V9mi+7fYBqF3/lFl3TTow8AcKXvLwd0OHN1U5MfcU8LkspF19KP71/e08XjU4pWdTeQZiNBSFwHsmHZQLeN2sjITQ=
+	t=1755355949; cv=none; b=vBi61KmEfYwbFvduobjmRD7k0hK/BazVEttSPxa6WL9s4FPHHLPWdtKGHG+S9bdOTptBlq0UTf7WQGY6Nr84orIryixpRAA7UhxQKyp3S4IUSsYt9f6hpUSvPXnfU9zlcQKFkJQfZUpNfjJ4xuEpjSGJLDuLwbQ/lhJg9OZkW4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755355406; c=relaxed/simple;
-	bh=WosEZ3saSWBJMzH3JyYi4WqLDke5m7nW7duANtVtIVg=;
+	s=arc-20240116; t=1755355949; c=relaxed/simple;
+	bh=QsrSgo1OINdU9FzZenuyNq1YjSn+2cYuPSyx31lP7TQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vnc4geqxijlEab4BE476B7B1kHUuwIM35ZA4bAtgaBOsQmouPmqkZt2D9d3d+2AW8agatHH+nD0+5naHT3sbqvl3g16yi/IqbTge9lx+MGMw53IhHSGGL84fEvtat8RIf2nIXsZr/5bxCBilU6blI/e/a2LARY18NVmnWi2jYhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fU43e3y8; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb78ead12so408483966b.1;
-        Sat, 16 Aug 2025 07:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755355403; x=1755960203; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yklf0U5QFdhyrLX5rUnNnZYccDAUmCcCKkGNXA7e/fo=;
-        b=fU43e3y8mpjlONmMUXGjWIpcYaHqOIDrgxLq3NhXpecqOeWrmWv0WS41i4GZH5H2po
-         YE0QhA8KU5O9aYpQ9PE4vWmbIF8LdKA8lrAt8w+VMKyfXyWkm1zgJtMKtMNm3rGVfjT6
-         QhxGwKuUV2dz7cWTzoAIh7HYQzq/9bc8ArP4xABrFtI/zrIZrCLsYCXY2rVBj1NnyCSE
-         PEIWHrF9+q/F4TtEoV9rV+/r6vonDxKl8zF+iV4e5trA9cbzPWY9WEtYRUL0dJfFq98L
-         gH1SWQvUMOtNwUGevuSZDhMxrjlCmYZoDYz7Wi0+3g9aXBrE848XHPDjQX8Jh545KSI3
-         2a7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755355403; x=1755960203;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Yklf0U5QFdhyrLX5rUnNnZYccDAUmCcCKkGNXA7e/fo=;
-        b=qSWCG3DUUZQ5QDhQanRPs3iY4i7RmR+e7/ZQnyRBOD7EJ0wVJVFwWK1iHRerbsKOV5
-         a8WIu+ikO/zpRnXNFukrW4FTaTEJtB4Owu58lAEnUueIe3YDK4x0kKg6ywsOT9WMZ7oD
-         Ujfl7QScZONzzJdYFWVt8G8uwcavnR6JlV86V66W/kjDAzpbFtGj2Msfey59o4q8tnkV
-         zR2ic5cBJJym7Im/itWmL7SyP5MhJp7uzaH7hCEmCNSr7wka2480RPbNa4NjPysLZRSo
-         z3Ehmky+z5wc8pVj3VNRZUrjO8k1tYv82pbb68KNtQnCHC2Q0QZ6FHcXJ4y2wJ7RV0qV
-         X8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu2EZIYx5VQ+ohTUFE1ZGGFbo9PdyEomnj3v27yNNliYKaWgfLwA47xqVC47FR4UXXejy1UWv238SDxk5aL18h@vger.kernel.org, AJvYcCWGQvHe4U3Ya3iD4rn7JlVMECfP58nmra4hhagxlMJox7cJVcnYQgYYqs3ZkeJdQq9yhC8l+3YxA8wg378=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrkTBLy0WBbmG0WAnMfgWhxMi4F9e+2I59+rXy12mIY8kcj73V
-	GUYHU5k3y+/xTHmolJ/hXopbRhCgrSzxhoTj7aN3hAqnwWEk2R7ldsXG
-X-Gm-Gg: ASbGncsjBmX+WvG9m4G0XAtH/6WUPPwjAdrPHoaSgeefew8THabJV9WrXwVhQzbvFLV
-	2BdGo8BctZfhQ7Qdv3ibKufVHze72ViaVJi+e1/rm0HO/OL3xUfyDeP35NxiCCPsUpzWsxtzF8u
-	ayG4sWlS8uPiNj8L6W2hiNuXpDAZ3kPpogw0935mRE71GGSxJp7Fhgvk3eHhHEdeSXmGPxOEoRd
-	sHgEy0z2yZRBsL6LfakVKBdFKu++T8446LZIda2L3Cavt77sjtqHpJSJiygawLcLmCNH9N2JkST
-	BawlGzIb15kph8eLo2CLfO22WKSFvBtNghEVD+3+aqkTCQ4CvnqkDpOz2SdFvT8CuiM2UfEPUGm
-	RV4qm/ncx1VVkwCi6FXz7Eg==
-X-Google-Smtp-Source: AGHT+IEGqVbAIDII1mY1gCF9jBAvWgrpMrhi6faWvY2jr8e0MUYDYVLLmVWONSAn0yE+VDd8vjzzzw==
-X-Received: by 2002:a17:906:6a0f:b0:ad8:85df:865b with SMTP id a640c23a62f3a-afcdc288daemr532008566b.33.1755355403259;
-        Sat, 16 Aug 2025 07:43:23 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53f5fsm393726666b.2.2025.08.16.07.43.22
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Aug 2025 07:43:22 -0700 (PDT)
-Date: Sat, 16 Aug 2025 14:43:22 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, richard.weiyang@gmail.com, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	donettom@linux.ibm.com, ritesh.list@gmail.com
-Subject: Re: [PATCH v4 5/7] selftests/mm: fix child process exit codes in
- ksm_functional_tests
-Message-ID: <20250816144322.nh7qwwfiuhnjp76g@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250816040113.760010-1-aboorvad@linux.ibm.com>
- <20250816040113.760010-6-aboorvad@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxpCPCjNUUG4aVyWu8XUWwtEwTUPHfxayibAF0UBsLfLMMyCX0f3/AsbF1smmhJKSvrGRaRu7Vt8wgfoln9MPFqXwOdbpgIuEafb24nF5FWyyPJkM2xjnJ+jiTszoeq0llXoK/pR8yr7ncoYT04hK7bhk5aKHW+ylmKqW3DZjHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net; spf=pass smtp.mailfrom=dominikbrodowski.net; dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b=yo+wGyxZ; arc=none smtp.client-ip=136.243.71.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dominikbrodowski.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dominikbrodowski.net;
+	s=k19.isilmar-4; t=1755355415;
+	bh=QsrSgo1OINdU9FzZenuyNq1YjSn+2cYuPSyx31lP7TQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yo+wGyxZ/FVQpr5ziDHvz27zeS2Wnj6mpEQL1qilghdvjooEnFAOhMT0f13Ze+Id+
+	 r4XWRyAkFwI4EypoAzQwU4rn1quHzLAi8R22+4IjghVUywZIKiqe0V0OdXb/vwf7pr
+	 oXvmRe1Jz4DbXF2mYk5Mzd+x1KAv06HTJHZufpVWeshiRt3AthRFjUHQkJ8L+e4qs1
+	 2C6NM69jegIplMLYZaIaegrTCooJupZmKTh0oO4/hWfNNsUiJWAT5qWNemB2ZpAqDy
+	 fpj3SzMay06feqE2r7MWxGB07iRI13bOaJS2K9i96iuDnxkJsnHPJ7OcULjrbTHenv
+	 p7FdwY7bco+WQ==
+Received: from shine.dominikbrodowski.net (shine.brodo.linta [10.2.0.112])
+	by isilmar-4.linta.de (Postfix) with ESMTPSA id 8796E200720;
+	Sat, 16 Aug 2025 14:43:35 +0000 (UTC)
+Received: by shine.dominikbrodowski.net (Postfix, from userid 1000)
+	id 1B8CCA00AE; Sat, 16 Aug 2025 16:43:23 +0200 (CEST)
+Date: Sat, 16 Aug 2025 16:43:23 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: linux-kernel@vger.kernel.org, lee@kernel.org
+Subject: Re: [PATCH] pcmcia: Add error handling for add_interval() in
+ do_validate_mem()
+Message-ID: <aKCZC6zaG3T8NVgT@shine.dominikbrodowski.net>
+References: <20250120131006.1332-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,68 +61,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816040113.760010-6-aboorvad@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20250120131006.1332-1-vulab@iscas.ac.cn>
 
-On Sat, Aug 16, 2025 at 09:31:11AM +0530, Aboorva Devarajan wrote:
->In ksm_functional_tests, test_child_ksm() returned negative values to
->indicate errors.  However, when passed to exit(), these were interpreted
->as large unsigned values (e.g, -2 became 254), leading to incorrect
->handling in the parent process.  As a result, some tests appeared to be
->skipped or silently failed.
+Am Mon, Jan 20, 2025 at 09:10:06PM +0800 schrieb Wentao Liang:
+> In the do_validate_mem(), the call to add_interval() does not
+> handle errors. If kmalloc() fails in add_interval(), it could
+> result in a null pointer being inserted into the linked list,
+> leading to illegal memory access when sub_interval() is called
+> next.
+> 
+> This patch adds an error handling for the add_interval(). If
+> add_interval() returns an error, the function will return early
+> with the error code.
+> 
+> Fixes: 7b4884ca8853 ("pcmcia: validate late-added resources")
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/pcmcia/rsrc_nonstatic.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
+> index bf9d070a4496..da494fe451ba 100644
+> --- a/drivers/pcmcia/rsrc_nonstatic.c
+> +++ b/drivers/pcmcia/rsrc_nonstatic.c
+> @@ -375,7 +375,9 @@ static int do_validate_mem(struct pcmcia_socket *s,
+>  
+>  	if (validate && !s->fake_cis) {
+>  		/* move it to the validated data set */
+> -		add_interval(&s_data->mem_db_valid, base, size);
+> +		ret = add_interval(&s_data->mem_db_valid, base, size);
+> +		if (ret)
+> +			return ret;
+>  		sub_interval(&s_data->mem_db, base, size);
+>  	}
 
-This is because "the least significant 8 bits" is returned to parent, right?
+Applied to pcmcia-next, thanks.
 
->
->This patch changes test_child_ksm() to return positive error codes (1, 2,
->3) and updates test_child_ksm_err() to interpret them correctly.
->Additionally, test_prctl_fork_exec() now uses exit(4) after a failed
->execv() to clearly signal exec failures.  This ensures the parent
->accurately detects and reports child process failures.
->
->--------------
->Before patch:
->--------------
->- [RUN] test_unmerge
->ok 1 Pages were unmerged
->...
->- [RUN] test_prctl_fork
->- No pages got merged
->- [RUN] test_prctl_fork_exec
->ok 7 PR_SET_MEMORY_MERGE value is inherited
->...
->Bail out! 1 out of 8 tests failed
->- Planned tests != run tests (9 != 8)
->- Totals: pass:7 fail:1 xfail:0 xpass:0 skip:0 error:0
->
->--------------
->After patch:
->--------------
->- [RUN] test_unmerge
->ok 1 Pages were unmerged
->...
->- [RUN] test_prctl_fork
->- No pages got merged
->not ok 7 Merge in child failed
->- [RUN] test_prctl_fork_exec
->ok 8 PR_SET_MEMORY_MERGE value is inherited
->...
->Bail out! 2 out of 9 tests failed
->- Totals: pass:7 fail:2 xfail:0 xpass:0 skip:0 error:0
->
->Fixes: 6c47de3be3a0 ("selftest/mm: ksm_functional_tests: extend test case for ksm fork/exec")
->Co-developed-by: Donet Tom <donettom@linux.ibm.com>
->Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->Acked-by: David Hildenbrand <david@redhat.com>
->Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-
-If so:
-
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-
-Thanks, I am afraid to make the same mistake if you don't point out.
-
--- 
-Wei Yang
-Help you, Help me
+Best,
+	Dominik
 
