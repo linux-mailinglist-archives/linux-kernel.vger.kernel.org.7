@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-771732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA742B28AD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:55:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BF0B28AD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C571AE669B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA433AE660D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05651F4168;
-	Sat, 16 Aug 2025 05:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKXGWhuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24061F8677;
+	Sat, 16 Aug 2025 05:55:17 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69ED1FFC41;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094401F460B;
+	Sat, 16 Aug 2025 05:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755323660; cv=none; b=IG7yBvLox28e2tQ26hEftPbPyyYBDKG1zmLdQADMvRooDH2FLWSEGADYV70F38HT2TNUpoIjNFPqaoVqXHvdkVdtwMjjX5l7grxtUl8bBhVP8Mld3hSzsdy95xDWTIKrY7isjhT9w6dRciBXWL6ncXnuETOjWBArNK1TiHM0j7E=
+	t=1755323717; cv=none; b=jdzpSEzt4LbzNT6Rm397FqiAciZQJSdPP2DTJ8jAgHP77RlTSyGCcF2t5hSX8ispoYdX4lndMvt+uyZmTXc1hHu/UTNVRiypflCI8u/AQmr+ln6bzawsamijSgAArMKaydxaqzXTjWFnGHkVxuCwgfm4oqKfFlRmL7sQy7E17A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755323660; c=relaxed/simple;
-	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kavr93jh7K4JqjwEX0+l99ZEJMEycHWQK29T4Oso19x8RE3FykY3RsMujB8JF1uFkD5ChTW39IaQ3ALcy6X+00XXxZvODO0Shc7/Zy8gZxZYWjm2Blla6oJb7jIzmzMprS7pyB9HiCF/gGytQeaE9uSsrMMIOTJanOM/XnFL7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKXGWhuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B851C4CEFC;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755323659;
-	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RKXGWhufXinkH7S7ODTw2OU/BXCIQyjsaO83N16UgK4XRGbdNKIdLwvlJURE1FOY6
-	 aTcT3ak3405nBvlDIHBuzSkBkrma/ddOeZ49zYL53ChGZwtU6NwDZ9zt7erwZ/7wUG
-	 ydY6heDuAuaDjtWZfyFQrWIPD4E5gpdFXO/ebAVbAxKsTHkk8SXggeskgjltRoORfU
-	 ZgLs0tGXGDU17sjdvhReiUnQJDnoz2Kgbp8LVndEBsosWartPcDoEcsF0oefPcpwln
-	 0yRXuMcSqPMQqnFoKuI3FQ8JVBAKtNqBkms6ZfXle/kAzZt9XfZT/zB1JtZCZvJOJc
-	 1IyOSCXPbAxmg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3378ACA0EE9;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sat, 16 Aug 2025 00:53:37 -0500
-Subject: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+	s=arc-20240116; t=1755323717; c=relaxed/simple;
+	bh=bWYYKAYxGMlobHiI6Ave2YFgHIf/DZ9zZtd20i2n5WI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VdJbrgb+dSoDrqouS8Xg0MZOnpjU0j2daOrenu8ghaj5Ur0lE7lSfgo5U/qVkVdLw2esKV4kqHsJ4fvFKsHcGKGchNcaEwYiPxhkQsOy2JK8sjwDfFOibVOTwyS3BIS4bqNvlqZiVckWf5I/rbmNjO9goUjpfmP4K+MiG++aWew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e434a0118so1224989b3a.0;
+        Fri, 15 Aug 2025 22:55:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755323714; x=1755928514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j8l6ugMORWdZnLG6DvtshikPFCBAakpfJtq8I9fLIE8=;
+        b=D7LF1D97WlJQ2j86EqTQe5oDcKZhkXhS9zTAOfFz/9HglX1j6AdJNmRPZeWXK0WF/r
+         u109nasUN9+NaDaPbvnG1IJXGYd0HIrs5Pa4uht9WBtEraRAK43OML0i1rWl1SlDLDrG
+         neQZP0Sc2O5ZNtIRicvMY/ojKw5zNZ41pxkR+/nMoQBDpLFDh5hJ+Tz0auhiN6sZ4cO5
+         pVH7NbdiOeDf2VS0B7gptnghjNU6S+FIYRl8scPD0dnpTCfenhk5Eq/spCBbIjhNddPj
+         DKkjHseHCNqZYHvDKOQ6c0oWE68niK7Im4DMlK+M/mgk8+UIuKnY1q8Jol9AStRnJvZH
+         y1QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxw6DFpYEMzWAuRm9BFOX4SEjS/SqG3EQKQU3wqWplfxClf9xXYfmHDluQusuawA2aLL5Vz+Bfv9cJ@vger.kernel.org, AJvYcCX0tGeDHQ/O3LBgj6D3JZE8xHkZxBv2MMZpmy1B0f51kZ+bpRzyGgow6ZgcK7ebeu2ZGcV3G5Sk3euyZgP2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx60Ojdr73GLxN5bcLtaPRpRbkAWM6kxAQ+wOwvFxOwObVkuZMJ
+	id2py0ITp8mH+3m2SnOjkqakAyy7CHGEC76KJfqIcr40CMfAM45Q5iKvH8vo4X91/fk=
+X-Gm-Gg: ASbGncvAKY6brtO57e4Bci0ezoPb2RSXpaUom04cHkrjNQmp7bQ93i6BwtpAXVSYKVf
+	PUGW0NanIu+ny1fsgH7Kk0gmbqVjF0uBmUAaLVdTNZLbO46ocRr1Htbt1UvSJVVe2vj28EThp5d
+	T47Rq7/Agqsn0LVJgphqrMWAYvf/ysxgJauVAU97rv0bkBFAzLXcsSwSOQ6W0XWWNkcnL8av1EP
+	ZtRSmynaABJSu7yp+kv9WMMz3uSkptqUYPviyH4/7zWD6Nd5U0EUYZLcmA6McR84Nkj+DuwhXA7
+	kng/gS+Xi15xNhmNyAdMG0UMj2CtDP+bqYoPdeGS5MiB/wHhTdTUJJygghIRthvqS11xYq8RPyP
+	vprUHZp1QZH0UChvkmRbrKZOEaFE5SgcW/ERBSthx6lBeaK7zgoPmcLcBfTUoOIP7yvY=
+X-Google-Smtp-Source: AGHT+IH81cWB4GjkvFKEzW81dhzt3dL/rd6gx+vJKvrcqnS6KC21zI3Q4A79hOEHtHnPPVw+l8vHwQ==
+X-Received: by 2002:a05:6a20:7f96:b0:240:f96:3153 with SMTP id adf61e73a8af0-240d2e69f54mr7365229637.29.1755323714119;
+        Fri, 15 Aug 2025 22:55:14 -0700 (PDT)
+Received: from localhost.localdomain (c-24-4-34-163.hsd1.ca.comcast.net. [24.4.34.163])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e452663f0sm2402730b3a.21.2025.08.15.22.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 22:55:13 -0700 (PDT)
+From: Will Whang <will@willwhang.com>
+To: Will Whang <will@willwhang.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] media: Add Sony IMX585 image sensor support
+Date: Sat, 16 Aug 2025 06:54:30 +0100
+Message-Id: <20250816055432.131912-1-will@willwhang.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com>
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
-In-Reply-To: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=935;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=JtR2frb8U61WYYSqhxHsZ+WqeNipPuKmeW1w+OFmzpU=;
- b=c8aF1tlFVKvuMAgjpH17Vx+W6YJ9ly6+2UZTmDmo879riiX6BemOb25Mah5RxcSAtHIDCI+VW
- kPtnx+v5hAcB7G6R9kog0SaaaP/PtAG4t6pc175XEY1HjM4RniK+1dA
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi all,
 
-P3450's cpu is only rated for 1.4 GHz while the CVB table it uses tries
-to scale to 1.5 GHz. Set an appropriate limit on the maximum scaling
-frequency.
+This is v3 of the IMX585 driver.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v3:
+  - Remove ClearHDR support.
+  - Remove HCG/LCG switch support.
+  - Use full parts number as compatible string.
+  - dt-bindings: fixing sync mode values.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index ec0e84cb83ef9bf8f0e52e2958db33666813917c..10f878d3f50815d1f0297d15669048ab9cad73ee 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -594,6 +594,7 @@ clock@70110000 {
- 		nvidia,droop-ctrl = <0x00000f00>;
- 		nvidia,force-mode = <1>;
- 		nvidia,sample-rate = <25000>;
-+		nvidia,dfll-max-freq = <1479000000>;
- 
- 		nvidia,pwm-min-microvolts = <708000>;
- 		nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
+Mainly the change is to remove the need for driver specific V4L2
+Controls given the review comments in v2.
+
+Features
+==========
+  * 4-lane or 2-lane MIPI-CSI-2 up to 2079 Mbps/lane
+  * 4 K and 1080p @ 60 fps 12-bit mode, monochrome variant.
+  * Blacklevel adjustments through V4L2_CID_BRIGHTNESS.
+  * Multi Camera synchronization mode support.
+
+Testing
+==========
+  - Platform: Raspberry Pi 5 and Raspberry Pi 4B, 4/2 lanes
+
+Series layout
+=============
+  1. **dt-bindings: media: Add Sony IMX585 CMOS image sensor**
+  3. **media: i2c: imx585: Add Sony IMX585 image-sensor driver**
+
+v2 Link: https://lore.kernel.org/linux-media/20250810220921.14307-1-will@willwhang.com/
+
+v1 Link: https://lore.kernel.org/linux-media/20250702063836.3984-1-will@willwhang.com/
+
+Thanks for reviewing!
+
+Signed-off-by: Will Whang <will@willwhang.com>
+
+Will Whang (2):
+  dt-bindings: media: Add Sony IMX585 CMOS image sensor
+  media: i2c: imx585: Add Sony IMX585 image-sensor driver
+
+ .../bindings/media/i2c/sony,imx585.yaml       |  114 ++
+ MAINTAINERS                                   |    7 +
+ drivers/media/i2c/Kconfig                     |    9 +
+ drivers/media/i2c/Makefile                    |    1 +
+ drivers/media/i2c/imx585.c                    | 1358 +++++++++++++++++
+ 5 files changed, 1489 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx585.yaml
+ create mode 100644 drivers/media/i2c/imx585.c
 
 -- 
-2.50.1
-
+2.39.5
 
 
