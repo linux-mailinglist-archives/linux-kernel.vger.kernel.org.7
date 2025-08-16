@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-771814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D1CB28BCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E60B28BD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38793B9F3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2853BCA0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7644723534D;
-	Sat, 16 Aug 2025 08:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CFA2367D5;
+	Sat, 16 Aug 2025 08:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q47tzq7H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3FmVHNK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6222222C3;
-	Sat, 16 Aug 2025 08:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654951C5D4B;
+	Sat, 16 Aug 2025 08:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755332404; cv=none; b=QZbR08NNuUIcGp14AIr9/Uii+DtSlMXlRyjnWVaXxKDzSsqJTkfs9/nln3AKBPoX94yKKs1lVmgmOeBysvA+IypyU+ou+nrcy+TmsuqhveXMuiXySfRQjpP8UzgyX3dnLrYy6Dtt3oyPzmkCKIOICqArS0rO/gWpdjUajNc0SBU=
+	t=1755332519; cv=none; b=ZF2orsE/nloiTGGGFWLujptuTEPSDOgN4cez242/IWaW2/2Gmgp/MDOOeeOLbTUeZTy9++0to1kWUKnwnSZBrJ/QLILedxZ8j+7zBzD/X4x8ZPLx8Bx7iq+34EgOHR5+OLB1zwM7iFxVxOHsVxcL0vtiKzsTmmiNClZEcbcahMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755332404; c=relaxed/simple;
-	bh=nqXpO0Afu7Q9LYqv1ain41BiwjcqwFhwWW0Yb2kHhsk=;
+	s=arc-20240116; t=1755332519; c=relaxed/simple;
+	bh=Ecgw6+STTi9kx0zSogBa652g8EHVNw0w8FcFqDRNx78=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVjYwfK3l8Syj9WyoJykLpj+HQzueQXI2KgAt3O8QSUYwIN9BJXFUVbvo8mUKZFCis2gEVl+mJ890GQ7aD5R6fnRK0lURcAont/Hwwu/wIRqDY01+zxbXk3XTB7kwfrevpP4AsNh5H/UZpgXxpTmuoU5Y29fckoi5k0D7TbXVbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q47tzq7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D50BEC4CEEF;
-	Sat, 16 Aug 2025 08:20:00 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=L7/4Lnv9U7OB7eGl672ybHiNmle1oRoYPaeyrx8Tzin8EcDgrxK4hNuFxYw4UIGgNovY8xknZ+/Jpbal1j5ukDUzfqa+9X1slnRJrQrkxAviuyuWehwlUzliabwGCfO7dEqSlG/sCT5t6lPh8Lo2qqxL/tIMDZOBvn2MT0FX2Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3FmVHNK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3215BC4CEEF;
+	Sat, 16 Aug 2025 08:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755332404;
-	bh=nqXpO0Afu7Q9LYqv1ain41BiwjcqwFhwWW0Yb2kHhsk=;
+	s=k20201202; t=1755332518;
+	bh=Ecgw6+STTi9kx0zSogBa652g8EHVNw0w8FcFqDRNx78=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q47tzq7HCnzXYBHYx8oI6yFEgpedpccT4AIHNKPM1WPW4/m7G2c7A7DQxwLynJzGO
-	 ozIU/3V+jEaITefNxI5iHFHTvCzfX1rbIK4eHUCJDkf81Kju2Cad7tIGGw1RU1GSiE
-	 wfD+wS2m+uhlPKkRWjYxmuu1UuwQzUtUn+gQ5aFyKHuuDTpMNIbOrAXX6Z2LqfBSVC
-	 Lqf41zowoUT/kRdmMLZEdesQCxrk9M3mSe1jfWuM8MQgdrM8NcVsNm+7Vr9OASZhQJ
-	 7pBCoLDuQPriFnUrnFJ07LHsQjhEksu/GltlWk+f98Uk/HQ1wA36CxPpyIy1LAdBX4
-	 CUYEbefRfUIhQ==
-Message-ID: <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
-Date: Sat, 16 Aug 2025 10:19:58 +0200
+	b=k3FmVHNKYCPySqeFxH/sHLMUuQeDb4w4V0zMV6P7iD/sgPpt8UokEB7tGSGwBnWTh
+	 slrwfbi3Yf6JNcPMCJbOyU4bfr+JmNJzrpoI0dl19tCShPWRrfYDGzmQg2iXoC0cl0
+	 guruGzpD0pkLCJo7gywLkHtTnWd8vbtfNS0mRWWDjyiuBYtP5UabfhUFFPR5VXwy2p
+	 xFLiJgm5kYo7EVWBKRLmMXx91VkJwuprFIa4cshEKVLJvDrOq7z7k/+dVur5CpTya8
+	 LenM1t5TVwQJmA07O6xLw3W5+d/qp8MYRJiIQEWS9v/onD/YsVtJXA5sC9t0z0ZuFm
+	 4QC2WYXIuxJKA==
+Message-ID: <cc3e798e-bb66-4e91-8fda-d1c8fcecf301@kernel.org>
+Date: Sat, 16 Aug 2025 10:21:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
-To: Artur Rojek <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
- Jeff Dionne <jeff@coresemi.io>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-3-contact@artur-rojek.eu>
+Subject: Re: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
+To: webgeek1234@gmail.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thierry Reding <treding@nvidia.com>
+References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+ <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,77 +108,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250815194806.1202589-3-contact@artur-rojek.eu>
+In-Reply-To: <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2025 21:48, Artur Rojek wrote:
-> Add a documentation file to describe the Device Tree bindings for the
-> Ethernet Media Access Controller found in the J-Core family of SoCs.
+On 16/08/2025 07:53, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 > 
-> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> Some devices report a cpu speedo value that corresponds to a table that
+> scales beyond the chips capability. This allows devices to set a lower
+> limit.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  .../devicetree/bindings/net/jcore,emac.yaml   | 42 +++++++++++++++++++
->  1 file changed, 42 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/jcore,emac.yaml
+>  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/jcore,emac.yaml b/Documentation/devicetree/bindings/net/jcore,emac.yaml
-> new file mode 100644
-> index 000000000000..a4384f7ed83d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/jcore,emac.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/jcore,emac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: J-Core Ethernet Media Access Controller
-> +
-> +description: |
-> +  This node provides properties for configuring the Ethernet MAC found
-> +  in the J-Core family of SoCs.
-> +
-> +maintainers:
-> +  - Artur Rojek <contact@artur-rojek.eu>
-> +
-> +properties:
-> +  compatible:
-> +    const: jcore,emac
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..6cdbabc1f036a767bdc8e5df64eeff34171a3b85 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -70,6 +70,9 @@ Required properties for PWM mode:
+>    - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+>    - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+>  
+> +Optional properties for limiting frequency:
+> +- nvidia,dfll-max-freq: Maximum scaling frequency.
 
-You need SoC-based compatibles. And then also rename the file to match it.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +allOf:
-> +  - $ref: ethernet-controller.yaml#
-> +
-> +additionalProperties: false
+1. Frequency is in units.
+2. OPP defines it already, doesn't it?
+3. You need to convert file to DT schema first. No new properties are
+allowed in text.
 
-unevaluatedProperties instead
-
-> +
-> +examples:
-> +  - |
-> +    ethernet@10000 {
-> +      compatible = "jcore,emac";
-> +      reg = <0x10000 0x2000>;
-> +      interrupts = <0x11>;
-
-That's not hex...
-
-> +    };
 
 
 Best regards,
