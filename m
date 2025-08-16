@@ -1,166 +1,128 @@
-Return-Path: <linux-kernel+bounces-771990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053D0B28D8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:06:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90980B28D90
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECC7AA05A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B261CE1D29
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427FC2BD038;
-	Sat, 16 Aug 2025 12:06:41 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA969291C1C;
+	Sat, 16 Aug 2025 12:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeBWnzBj"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8222083;
-	Sat, 16 Aug 2025 12:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03182248F4E;
+	Sat, 16 Aug 2025 12:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755346000; cv=none; b=puihdnTHhupvp9HOb+LUnb/qhjGgamGwdTirBEm57yP7+iYUo6ctXAJJOEBmNywkha/v12vMze91IO4cJyZEpaEaEX1OTQUqKOWsJnAdCEVeobSIkLFjj7HP+FsFi39BCoagNBq25e1soglYSXHdXArhx3EzoJG+dth5ADjHMJg=
+	t=1755346063; cv=none; b=Iz0FMdKEP3vU8VuFhb/xNuj7ONibBw5jQV4r3236K727exoY3FVAvtaBzzGGJGJeKCW87UdCf1U5LJ+VugDmc1uw97gOATm1NEikzWaXiX6pWHkEBXG8wSUVmxf85Jhgb7XltNucngb1l+QBVL+x9a1fDica5KA4/H/3v7hPfnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755346000; c=relaxed/simple;
-	bh=pxKL/i5KZ3St1r+nCO3dem3IEbdpNgPCz0cfdIjoFtE=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=pkbrB3ScMYXHK+mKhIPeqI3n4rBNpc8bkuCSJJsMQRLEgf4twJkVe894s8bGrosQ6zPECvA2wLzBWGtF8UITsoEWwTTbT6ew2dP4yscZjxbSNv7DrzslCoX5JJryh8+6fMhGhdRoQWs42MYqagG24wA2L2ctvxMk2fCozp3W5Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 42CE343203;
-	Sat, 16 Aug 2025 12:06:34 +0000 (UTC)
+	s=arc-20240116; t=1755346063; c=relaxed/simple;
+	bh=MCxqwdCyd7LpWhm3XSDiCEWlq9JFShUDrWlnI2qNaYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HQDourxamDQIEDwyOpUYo2b/hKNnrtu+Q0Q1YQDsw5jbozgnWV25TBdl2bRjcczcZZORDbTP7G62XFFwUHSyLpovn5V8uJ08rylw4rWzsZ/wiQXcv8TVCiTkC06/L7INF7kteqRRVRakgG5OnJnqrTvCFvKxqk8+AtMmN8eNDAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeBWnzBj; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso1667100b3a.3;
+        Sat, 16 Aug 2025 05:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755346061; x=1755950861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rd+lX086uWwRHrUMcy9FeLMXxOxDloAhR19zDZS3vQo=;
+        b=UeBWnzBjwJxFsodFPczkZHsM70XAxlHoq25uN5loV/VDRqpvrSQ8o4nMjhyTWsdqwX
+         IPf3gjS3coOH4PS5TcAViSL6x2yFtF7vU4zdmK1MzM+XgR15m8XllwTRPc//L3JXb+UR
+         +vh+6bAlLS/zok6NfeuJcL9YyAEbHJ6pWTW1sxMz8Fdm1LzRUfOQrlSbwR2vlipnzgNL
+         CgUy1prMsZOMxRITvF/iSjWZCiIg6miFp9FpBsDCJrKjB/WzA3Tw8E34hDlqz332eG7t
+         te9KNyksEz996dU8L/JFuiSI8D5AVLDWn168wbHdxeKr8+pd+seDYesBlTapR9KMvB3+
+         KPhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755346061; x=1755950861;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rd+lX086uWwRHrUMcy9FeLMXxOxDloAhR19zDZS3vQo=;
+        b=fzS1ALEhgmXoFBKCdR/ryqknmLkJb2q+mcwc6q7SJ/p2l7IZUaIhEIXdG6V2g6IrR1
+         S0VVuXvpvIISHP6Vf1dvtQPKNtwAqbQF6vDGkvMrP8Ph3FaB+fsl579HUjH3yB/36NRE
+         rwU9ejxhFSbGSG+TUyUzSEwuNVA4hxksym/T2ub0DC0cCXGcNMiKkQtZ/ZsmD2Gcvs3O
+         aBPIcGguDm1BcT74aYCCnnXweNhZDZwwEW54lHXe3ovPz/1x+NKKnUxNkkbOdozedjJH
+         EhKaicB8MuY+ELTwuPdHFiY4wyKYq64MGxoo8uwli4Xb0KAAg6Njuncwm424MUsCEjbh
+         E55g==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2lI4dhOFQLyf78zi8JisRlAG+x5sSpfJq2hfSpyZrJmWtPa8TKcfM1XzquWhScWJiMF3/HsethRd+3h3@vger.kernel.org, AJvYcCWkR9oSD2D99cZo5QBqzAwDpfKzgyEd2paHCKR/ESgIGn9SD+asceTtq4nl1p0HovpS7BDMYPBMN3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGixL76rUihpAzPGRYBH+k6n0O+JJq13l6TpSCBhUhpOxs+QzG
+	KnAcJHHxj33+AavicEZvCtLAs0NUlRxEvlgbI0tqNKdRR7Bvpk5//gXI
+X-Gm-Gg: ASbGncthJTdKElFUaZDnpX3Y3PYL/0TNwbCfNyff300nFJBG4AOpLZXIMDc8f3ierMl
+	lAIL5KGIITGHTMT9Rc+FontA6KzAvxbdQWBJpDxaUMazFEpJc/MKSsXNDXGtmceCU75cjAEiRvW
+	J6zQWXpI3ahG6tIxXmwoA5XeiOYwctKG0owZWnbErYmbvT2BQjcdsA908BDLK7k69yQjLEWbq93
+	6wOJSZt6CA6SJdgwkFduRkfoEOCGCGPxISj8dCaE9LWaUEjeOHQfiaFSo107I3Do3+ULFZrpexQ
+	obxN4AZhFoh9bosxopMVRljLKuYyNU9BzYEyfV+lwO6mvggljespX1rGFIHJZTfASGqxw8GU3q0
+	5hE8Ghb7GsiPkla2VuykTpwtTvWF5UDxghem27w==
+X-Google-Smtp-Source: AGHT+IGGu+nvEVyKJTO0ATFBAbBRPloz2WymqvooTN6HuWRwGHbfAk8osmiyq3lFM2jELNZHW0sksQ==
+X-Received: by 2002:a05:6a00:4f85:b0:76b:6288:e2e7 with SMTP id d2e1a72fcca58-76e4480b995mr7802121b3a.20.1755346061214;
+        Sat, 16 Aug 2025 05:07:41 -0700 (PDT)
+Received: from gmail.com ([157.50.27.190])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45589ca6sm3199943b3a.84.2025.08.16.05.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 05:07:40 -0700 (PDT)
+From: hariconscious@gmail.com
+To: shuah@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	corbet@lwn.net,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: HariKrishna <hariconscious@gmail.com>
+Subject: [PATCH] documentation/arm64 : kdump fixed typo errors
+Date: Sat, 16 Aug 2025 17:37:31 +0530
+Message-ID: <20250816120731.24508-1-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 16 Aug 2025 14:06:34 +0200
-From: Artur Rojek <contact@artur-rojek.eu>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
-In-Reply-To: <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-3-contact@artur-rojek.eu>
- <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
-Message-ID: <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
-X-Sender: contact@artur-rojek.eu
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeeikeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhfkgigtgfesthejjhdttddtvdenucfhrhhomheptehrthhurhcutfhojhgvkhcuoegtohhnthgrtghtsegrrhhtuhhrqdhrohhjvghkrdgvuheqnecuggftrfgrthhtvghrnheptdeugfelveeuvedtfffhledttddthefhuedufffguedtveehieeukeejgfejgefhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghdpghhithhhuhgsuhhsvghrtghonhhtvghnthdrtghomhenucfkphepuddtrddvtddtrddvtddurdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedutddrvddttddrvddtuddrudelpdhhvghlohepfigvsghmrghilhdrghgrnhguihdrnhgvthdpmhgrihhlfhhrohhmpegtohhnthgrtghtsegrrhhtuhhrqdhrohhjvghkrdgvuhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgssehlrghnughlvgihrdhnvghtpdhrtghpthhtohepjhgvfhhfsegtohhrvghsvghmihdrihhopdhrtghpthhtohepghhlrghusghithiisehphhihshhikhdrfhhuqdgsvghrlhhinhdru
- ggvpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
-X-GND-Sasl: contact@artur-rojek.eu
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-16 10:19, Krzysztof Kozlowski wrote:
-> On 15/08/2025 21:48, Artur Rojek wrote:
->> Add a documentation file to describe the Device Tree bindings for the
->> Ethernet Media Access Controller found in the J-Core family of SoCs.
->> 
->> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
->> ---
->>  .../devicetree/bindings/net/jcore,emac.yaml   | 42 
->> +++++++++++++++++++
->>  1 file changed, 42 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/net/jcore,emac.yaml
->> 
->> diff --git a/Documentation/devicetree/bindings/net/jcore,emac.yaml 
->> b/Documentation/devicetree/bindings/net/jcore,emac.yaml
->> new file mode 100644
->> index 000000000000..a4384f7ed83d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/jcore,emac.yaml
->> @@ -0,0 +1,42 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/jcore,emac.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: J-Core Ethernet Media Access Controller
->> +
->> +description: |
->> +  This node provides properties for configuring the Ethernet MAC 
->> found
->> +  in the J-Core family of SoCs.
->> +
->> +maintainers:
->> +  - Artur Rojek <contact@artur-rojek.eu>
->> +
->> +properties:
->> +  compatible:
->> +    const: jcore,emac
-> 
-> You need SoC-based compatibles. And then also rename the file to match 
-> it.
+From: HariKrishna <hariconscious@gmail.com>
 
-Given how the top-most compatible of the bindings [1] of the board I am
-using has "jcore,j2-soc", this driver should probably go with
-"jcore,j2-emac".
+kdump.rst documentation typos corrected
 
-But as this is an FPGA design, I don't know how widespread the use is
-across other jcore derived SoCs (if any?).
-I will wait for Jeff (who's design this is) to clarify on that.
+Signed-off-by: HariKrishna <hariconscious@gmail.com>
+---
+ Documentation/arch/arm64/kdump.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-PS. Too bad we already have other IP cores following the old pattern:
+diff --git a/Documentation/arch/arm64/kdump.rst b/Documentation/arch/arm64/kdump.rst
+index 56a89f45df28..d3195a93a066 100644
+--- a/Documentation/arch/arm64/kdump.rst
++++ b/Documentation/arch/arm64/kdump.rst
+@@ -5,7 +5,7 @@ crashkernel memory reservation on arm64
+ Author: Baoquan He <bhe@redhat.com>
+ 
+ Kdump mechanism is used to capture a corrupted kernel vmcore so that
+-it can be subsequently analyzed. In order to do this, a preliminarily
++it can be subsequently analyzed. In order to do this, a preliminary
+ reserved memory is needed to pre-load the kdump kernel and boot such
+ kernel if corruption happens.
+ 
+@@ -18,7 +18,7 @@ Kernel parameter
+ 
+ Through the kernel parameters below, memory can be reserved accordingly
+ during the early stage of the first kernel booting so that a continuous
+-large chunk of memomy can be found. The low memory reservation needs to
++large chunk of memory can be found. The low memory reservation needs to
+ be considered if the crashkernel is reserved from the high memory area.
+ 
+ - crashkernel=size@offset
+-- 
+2.43.0
 
-> $ grep -r "compatible = \"jcore," bindings/ | grep -v "emac"
-> bindings/timer/jcore,pit.yaml:        compatible = "jcore,pit";
-> bindings/spi/jcore,spi.txt:	compatible = "jcore,spi2";
-> bindings/interrupt-controller/jcore,aic.yaml:        compatible = 
-> "jcore,aic2";
-
-Cheers,
-Artur
-
-[1] 
-https://raw.githubusercontent.com/j-core/jcore-soc/refs/heads/master/targets/boards/turtle_1v1/board.dts
-
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +
->> +allOf:
->> +  - $ref: ethernet-controller.yaml#
->> +
->> +additionalProperties: false
-> 
-> unevaluatedProperties instead
-> 
->> +
->> +examples:
->> +  - |
->> +    ethernet@10000 {
->> +      compatible = "jcore,emac";
->> +      reg = <0x10000 0x2000>;
->> +      interrupts = <0x11>;
-> 
-> That's not hex...
-> 
->> +    };
-> 
-> 
-> Best regards,
-> Krzysztof
 
