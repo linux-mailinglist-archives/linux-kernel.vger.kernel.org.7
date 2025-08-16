@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-771614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E2AB2897D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B3AB2897E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A691D05277
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5D9AC727C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4092E482EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42A8770FE;
 	Sat, 16 Aug 2025 00:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="OO38XvtD"
-Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6UxfmZ3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ABD33EC
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D3D9478
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755305868; cv=none; b=tf+bVTTueQl9PZpjYln5ghzB32q0GDieuQMtDoIhFqmArEYyk4x2cDoFWqaBUMQvxOw0EmCKPYMcIoL+gkuJrBOJCLknfqQ+fVaNmXgbJHyP2c03JkG+5SRGCo8567kvI7EJ4p5hjNnv4ekTngH4aXeFg2Bbv+T4+HTOShz28Ug=
+	t=1755305869; cv=none; b=M/K1U+mmw+3WGF3VPtmQInQdTdq9fRCs0LvpbxY3ZxJneGu9/zxJiRBBOJ9wDT3fuuCVLeu8tnuVH3t/6J/EYCTXfHXMkZ4BUPFEmkLHResGKxfEcNk/NNj+Kt+D+3nT5K0/ztzxuFKuGoeDf8ks3aN5ym+XRtIcJ9x8gO2VJlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755305868; c=relaxed/simple;
-	bh=N4iGyZ1bMWNR92uUa/ToVmrqO03ypwUeqH0dCdB3Ol4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e55aeU03ObT6h+Gn5bDwgPt3XWynrZd2E7wwEGMgyjX+wpzAfdKrPdzfL5vOgM5Gykx8FGj9luXRnEeO8aI6NdVvzQBdresDgSbvBSaPwgEU8NSqUjf63fPSkId9cfc98nQGURr1SROyxhfWZNRiSHjo+30LniU+HC+xuee7sRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=OO38XvtD; arc=none smtp.client-ip=202.108.3.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755305863;
-	bh=NBeRk8adTbnZryQ/MhdKyFpznLfRabUCsyJwqKMNF9A=;
-	h=From:Subject:Date:Message-ID;
-	b=OO38XvtDsREONpoGyFYMPx4Gjy7Cnqg6Jvzypkv2/z1JKpuic7uFuhSmc5XoqNj4s
-	 CQUmdoxUhNV+CI2/3D+k6Z8w/plK4S0d7HC6KNJTqGsfseD8RlIB5IvxjKreHMQ2JM
-	 IF0NMgmfgAg8HeQf/jeYA3j0yudsDk/Y6tGL5ZPw=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 689FD77B00002AEE; Sat, 16 Aug 2025 08:57:34 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3162026292108
-X-SMAIL-UIID: AA1CD258DAA343CFBC2658F574F06E89-20250816-085734-1
-From: Hillf Danton <hdanton@sina.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Michal Koutny <mkoutny@suse.com>,
-	tj@kernel.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	gaoyingjie@uniontech.com
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
-Date: Sat, 16 Aug 2025 08:57:21 +0800
-Message-ID: <20250816005723.4672-1-hdanton@sina.com>
-In-Reply-To: <3f6feb92-0496-416b-bf0c-4391e0d4426d@huaweicloud.com>
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com> <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs> <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com> <20250815024020.4579-1-hdanton@sina.com> <20250815100213.4599-1-hdanton@sina.com> <20250815115512.4616-1-hdanton@sina.com>
+	s=arc-20240116; t=1755305869; c=relaxed/simple;
+	bh=4yRdPc9V0nuMMCwNQ2HPQxK9Z42aO6f3cMEDFSNO1+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQ3k5FV+vSqXDqhnj95aob9mzCyU4+0HDlTVHtmfmNqwLv2uFG6DZnbYZeZcB8AzETvxEFLvFIFVQB8us33e7sAmh6uk8ksasvVSxnMLvtpe4LAmHAS607oCjojkQEUo8HLBSlQd89KVXS+fVzDc933QqU5eixG+AeIpC5oGUlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6UxfmZ3; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755305867; x=1786841867;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4yRdPc9V0nuMMCwNQ2HPQxK9Z42aO6f3cMEDFSNO1+Q=;
+  b=i6UxfmZ3ogqFSFPUOTADbTjyoZzY9ISKm/+JQn8RXW6UGyoX0N6DmReX
+   gzbpIByaQOtQzGqjoJHFB2pJF7+6rYxOGuIempoNl/goMtbqh/Mj7BL35
+   F3BK75kyp5fO1MbUUR9CtfIh1zegw/Uxrww6WNXo/BfsH2zh8/CokQ5BM
+   TwzzaKNpkcsjDIJ4NZMUBB9PIXeaoLUds11b02mMa/iXq86hDP8dH7rwn
+   AgbxQHcYWXmnLScFTKBOgn7NTJETU1cTKNibqUmiBc+wTFg0GDte5i97M
+   S5hGlLK0IMss2cIB29wc9NhBMPT36Ti9yddoO83ASRNAISIJup6yDzjrs
+   Q==;
+X-CSE-ConnectionGUID: Qna4op8mS16t88a2fxojlw==
+X-CSE-MsgGUID: aIFG6c3FQSuxarHpJAU59Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57536984"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57536984"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 17:57:45 -0700
+X-CSE-ConnectionGUID: ZNfZxbMcR1S4D5xE0QuGTg==
+X-CSE-MsgGUID: 0OScScgjQIa7s+TsDBG+WQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="197985617"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Aug 2025 17:57:43 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un5Er-000CSo-1V;
+	Sat, 16 Aug 2025 00:57:41 +0000
+Date: Sat, 16 Aug 2025 08:57:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huacai Chen <chenhuacai@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+Message-ID: <202508160823.9dRNF1Rc-lkp@intel.com>
+References: <20250815090539.1578484-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815090539.1578484-1-chenhuacai@loongson.cn>
 
-On Sat, 16 Aug 2025 08:33:55 +0800 Chen Ridong wrote:
-> On 2025/8/15 19:54, Hillf Danton wrote:
-> > On Fri, 15 Aug 2025 18:28:53 +0800 Chen Ridong wrote:
-> >>
-> >> To clarify, when you mentioned "cut max_active off", did you mean setting max_active of
-> >> cgroup_destroy_wq to 1?
-> >>
-> > 	cgroup_destroy_wq = alloc_workqueue("cgroup_destroy", 0, 0);
-> 
-> Thank you for the additional clarification.
-> 
-> While this modification is functional, I’m concerned it might spawn a significant number of cgroup
-> destruction tasks—most of which would contend for cgroup_mutex. Could this waste system resources?
-> 
-No win comes from nothing, so you need to pay $.02 for example at least
-for curing the task hung by erasing the root cause.
+Hi Huacai,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Huacai-Chen/mm-migrate-Fix-NULL-movable_ops-if-CONFIG_ZSMALLOC-m/20250815-170745
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250815090539.1578484-1-chenhuacai%40loongson.cn
+patch subject: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+config: sparc-randconfig-001-20250816 (https://download.01.org/0day-ci/archive/20250816/202508160823.9dRNF1Rc-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160823.9dRNF1Rc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160823.9dRNF1Rc-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   sparc-linux-ld: mm/zsmalloc.o: in function `zs_init':
+>> mm/zsmalloc.c:2250:(.init.text+0x8): undefined reference to `zsmalloc_mops'
+>> sparc-linux-ld: mm/zsmalloc.c:2250:(.init.text+0xc): undefined reference to `zsmalloc_mops'
+
+
+vim +2250 mm/zsmalloc.c
+
+  2246	
+  2247	static int __init zs_init(void)
+  2248	{
+  2249	#ifdef CONFIG_MIGRATION
+> 2250		movable_ops[MOVABLE_ZSMALLOC] = &zsmalloc_mops;
+  2251	#endif
+  2252	#ifdef CONFIG_ZPOOL
+  2253		zpool_register_driver(&zs_zpool_driver);
+  2254	#endif
+  2255		zs_stat_init();
+  2256		return 0;
+  2257	}
+  2258	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
