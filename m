@@ -1,214 +1,157 @@
-Return-Path: <linux-kernel+bounces-772236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0042EB29041
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:44:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A77B2904D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561011C87653
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E6917C429
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0236F2144CF;
-	Sat, 16 Aug 2025 19:44:24 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093A921578F;
+	Sat, 16 Aug 2025 19:51:10 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB51A3166;
-	Sat, 16 Aug 2025 19:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA11621018A;
+	Sat, 16 Aug 2025 19:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755373463; cv=none; b=orCQ50s2u4ZMAT/L12iK1eufauLSHrlHZiieGKslYAYIB4U4rVqDOQdrJdkrr1VeuU0QyqYk2RbIxmJhDL1usFl8MCKkdZ446C+QfjJ8yvSR/XfBQudRhMQVlN9T6sFlbPzNqpzDEx7vtqomgvaJkB/c+9eHQnynXFOTVpWxh7I=
+	t=1755373869; cv=none; b=qjWeHclGRoy642PD126m06l4O91f5kKxA/3tqnHMeSOFSnRWabzsnEiyFP4Wkpzvo9Qq1v60KErFgrDJNRP5GTSd8bxRb2HaxafZnGRYyrkHaRHEekyfGT6w1dPdXPWRDN0liUtHkC0qZhPRv0cmmzVCZpDSTJm2HTv9kPynAhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755373463; c=relaxed/simple;
-	bh=CxOkN5Im8aBXZWyAkD76EEsI08M13nbfFlULVi6mYiw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9yYH8Q5P301P1w+cnB8NPtfInQRsjSNCFwYS/c3njDQ8WnfoArlTOndr6aPihb5YZt3xQXnAaSpfU1ccEeoL4x+cTLy84GTfFcz32XY20yhvRg9VdNouep7iRDgVCqkfG/1JyRRkuujMFLPCQrfcmZ62Ll5ODIQoFJgUSApbuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so4108542a12.0;
-        Sat, 16 Aug 2025 12:44:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755373459; x=1755978259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xhNfRQTJCTHs8wZzyX52sBmas0EwpebMHyW2WLiU29g=;
-        b=gJG61+u8JIZab8zkSfVYatuTh8ggrV1uvAVroshRVIf60QVl+xDN9P5s+b3VW83k68
-         oNQNIydh/rZ/PIHjNepE29pvOu83a+qrpSHgjdvegQTFf6DCJ5xnFajcP10GKu13IQNA
-         PQK0BgQppHAbj9adQFUTV0lEdjRb9JsUG+uomIjSkEy29J0kQSEuk8Sm5lUGYT30tBoq
-         lwOdhe9Slgssme4MV5wm0RI3/lEQnb1vr7EYEkqkoOU1HLDEKSsvgyUW9CBmGzrG4yWX
-         d/2QLNac8SziSrj2k1Gg1Lx1MJW4y/T/NVQcQvf8d9IXNDoIMuoHVGfCP8+6trcU1Kak
-         Jq9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUE7eLKUbRBBilvt6i6FohonuQk5PKbLs26rkpfzJV1+a9KfjQn19bK/8BXX22+ZlG7CzcUVqXZXb+RAK++@vger.kernel.org, AJvYcCVYdzQ9gfIPjZyL+lmPuXk+qmJLfBCNL1OWihiRJcs8s+7dUjk8KIR5pnk4UE6r3odmKKXNPdF/zXdF@vger.kernel.org, AJvYcCVaLmKANxt8/1dbORUu1mRJgoSGcnyr9zIkgPn0HeFRw4+JzQEhV+TVgQWkYWSUGbfuOvgHZGPbAwnfWfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDYADuoFEYVix2JLp/ZtcV37KWhJQysPBEo8+jObm3/UgKoS9C
-	SOrvtpbxBmY6b++yQugsakk/Bp7xgbTRSGk0nC9vKFGD8ZIOl0Ml6uIhG8U+aXGcKy8=
-X-Gm-Gg: ASbGncvfqV2qxogbMxruZseV1rnjG51DnxIB6+5wZByBYwc0qIyZL7as4NrBHuuqm8p
-	ZShXTjXD9XdD/9nD89KabAcnpdqXgh5tPKTixeeOGYewlR0YsErmkgsz4WkCMfVU5NQgnLRVRyP
-	CnaPki99pkbTuCtn9AYZIBTInxBmgGi7iLSDxTfwLQaTR/xo+4cMlApSUdK5/gOGicF2ng78kOE
-	bv+wcrzsZCPZBUiWQ9CFa/V08GjlrUorcqeqnxpvs9JhTIsH38KCNCkDJ+8D8eOjCn/zYB75QLk
-	rechTE3BpvS+1G9Yxxg1hsz5E6kHBlySpkVuaUfxL8rUXSANtitPATKXbo9SNWjBisgNbIpuV21
-	M1Z8zA9s/ZpClM1ZEou2m+69W9abqdZJw6V6Mu8+L5yMzjStSrkZQw7BUMQ==
-X-Google-Smtp-Source: AGHT+IF11+0kRNdzNVSkYd7J4a+gx/5oVsKz4/r1QtGu9V4+SCyBNATcWaR+MPKV/XHPcqLojimmbA==
-X-Received: by 2002:a05:6402:2102:b0:618:10c3:d799 with SMTP id 4fb4d7f45d1cf-619bf20ff00mr3560066a12.28.1755373458986;
-        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b0e42sm3785588a12.52.2025.08.16.12.44.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618b62dba21so1805728a12.2;
-        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUP1IcS3O7jgMxSzu5iGLG/zEP9br3iXc7Id5t12d40PqJAklFVQdClsgmI0+tIZPUX8cXBDZjfADwRJngW@vger.kernel.org, AJvYcCW/PjHylU9c67IDIbJ0fPQ5kBhh1AsR9yGcIhmHp9X5eUTDiGTXjc+ZO1/eNuYxh8oTa8ZvrPynteIB@vger.kernel.org, AJvYcCWeKOT8+GTevppPN1jEbXchD1NdQxW92O3UFPoUHge/Ri1ekXRLuqjBKazUVWDtV55WxiTEg21BgE0FzAs=@vger.kernel.org
-X-Received: by 2002:a05:6402:3495:b0:615:5bec:1df with SMTP id
- 4fb4d7f45d1cf-619bf1f7206mr3258270a12.25.1755373458280; Sat, 16 Aug 2025
- 12:44:18 -0700 (PDT)
+	s=arc-20240116; t=1755373869; c=relaxed/simple;
+	bh=RBbQrtRwehhemxLdMv5fjf08owk+Wvkmgcq4c5VJSAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XXxC54eV137NflDyNbeqEjY6ZVHxhvQPPfhaInAGzmynscaSZo7pN3LI/sL2DgDl0Asq/Jt9Yz3UXlEhzJ7JYZzq7Wh/aWr+BJNU0TmRzebT2Xr7zau/NDXQtV8nIw7n9JrWiVOmhMR9u0bu4pKmIsrfQV3q613cL8BVzQ1VkWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1unMvQ-000000006vj-3naq;
+	Sat, 16 Aug 2025 19:50:49 +0000
+Date: Sat, 16 Aug 2025 20:50:44 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH RFC net-next 00/23] net: dsa: lantiq_gswip: Add support for
+ MaxLinear GSW1xx switch family
+Message-ID: <aKDhFCNwjDDwRKsI@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810220921.14307-1-will@willwhang.com> <20250810220921.14307-4-will@willwhang.com>
- <20250811-cinnamon-tapir-of-music-0bda96@kuoka>
-In-Reply-To: <20250811-cinnamon-tapir-of-music-0bda96@kuoka>
-From: Will Whang <will@willwhang.com>
-Date: Sat, 16 Aug 2025 12:44:05 -0700
-X-Gmail-Original-Message-ID: <CAFoNnryfrJvoEHNgQDpSZBbGiGjPr-bwnhhg4cgpNK_hW=0EbQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy-vY_C5easw1Tym_fd5E3dOtxKIqhJ9wZAZ5bar5LAous57hWKnWEIrdU
-Message-ID: <CAFoNnryfrJvoEHNgQDpSZBbGiGjPr-bwnhhg4cgpNK_hW=0EbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] media: i2c: imx585: Add Sony IMX585 image-sensor driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Aug 11, 2025 at 1:06=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Sun, Aug 10, 2025 at 11:09:20PM +0100, Will Whang wrote:
-> > +
-> > +/* -------------------------------------------------------------------=
--------
-> > + * Power / runtime PM
-> > + * -------------------------------------------------------------------=
--------
-> > + */
-> > +
-> > +static int imx585_power_on(struct device *dev)
-> > +{
-> > +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-> > +     struct imx585 *imx585 =3D to_imx585(sd);
-> > +     int ret;
-> > +
-> > +     dev_dbg(imx585->clientdev, "power_on\n");
-> > +
-> > +     ret =3D regulator_bulk_enable(IMX585_NUM_SUPPLIES, imx585->suppli=
-es);
-> > +     if (ret) {
-> > +             dev_err(imx585->clientdev, "Failed to enable regulators\n=
-");
-> > +             return ret;
-> > +     }
-> > +
-> > +     ret =3D clk_prepare_enable(imx585->xclk);
-> > +     if (ret) {
-> > +             dev_err(imx585->clientdev, "Failed to enable clock\n");
-> > +             goto reg_off;
-> > +     }
-> > +
-> > +     gpiod_set_value_cansleep(imx585->reset_gpio, 1);
->
-> You asserted reset gpio causing it to enter reset and you call this
-> "power on"?
->
-> > +     usleep_range(IMX585_XCLR_MIN_DELAY_US,
-> > +                  IMX585_XCLR_MIN_DELAY_US + IMX585_XCLR_DELAY_RANGE_U=
-S);
-> > +     return 0;
-> > +
-> > +reg_off:
-> > +     regulator_bulk_disable(IMX585_NUM_SUPPLIES, imx585->supplies);
-> > +     return ret;
-> > +}
-> > +
-> > +static int imx585_power_off(struct device *dev)
-> > +{
-> > +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-> > +     struct imx585 *imx585 =3D to_imx585(sd);
-> > +
-> > +     dev_dbg(imx585->clientdev, "power_off\n");
-> > +
-> > +     gpiod_set_value_cansleep(imx585->reset_gpio, 0);
->
-> And here device comes up, but you call it power off? Your functions or
-> reset gpio code are completely reversed/wrong.
+This patch series extends the existing lantiq_gswip DSA driver to support
+the MaxLinear GSW1xx family of dedicated Ethernet switch ICs. These switches
+are based on the same IP as the Lantiq/Intel GSWIP found in VR9 and xRX
+MIPS router SoCs, but are connected via MDIO instead of memory-mapped I/O.
 
-Reset pin High -> Run normally
-Reset pin Low -> Reset state
+The series includes several improvements and refactoring to prepare for the
+new hardware support.
 
-See drivers/media/i2c/imx219.c with the same logic:
+The GSW1xx family includes several variants:
+- GSW120: 4 ports, 2 PHYs, RGMII & SGMII/2500Base-X
+- GSW125: 4 ports, 2 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
+- GSW140: 6 ports, 4 PHYs, RGMII & SGMII/2500Base-X  
+- GSW141: 6 ports, 4 PHYs, RGMII & SGMII
+- GSW145: 6 ports, 4 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
 
-static int imx219_power_on(struct device *dev)
-{
-struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-struct imx219 *imx219 =3D to_imx219(sd);
-int ret;
+Key features implemented:
+- MDIO-based register access using regmap
+- Support for SGMII/1000Base-X/2500Base-X SerDes interfaces
+- Configurable MII delays via device tree properties
+- Energy Efficient Ethernet (EEE) support
+- 4096 VLAN support on newer API versions
+- Assisted learning on CPU port
 
-ret =3D regulator_bulk_enable(IMX219_NUM_SUPPLIES,
-   imx219->supplies);
-if (ret) {
-dev_err(dev, "%s: failed to enable regulators\n",
-__func__);
-return ret;
-}
+This is submitted as RFC to gather feedback on the approach, particularly
+regarding the prefered order of things, ie. should I first introduce all
+features (some are already supported on GRX3xx), then split into MDIO and
+common parts, then add new hardware like I did now, or rather first split
+into MDIO and common parts, then add new hardware support and then new
+features would follow (maybe even in follow series)?
 
-ret =3D clk_prepare_enable(imx219->xclk);
-if (ret) {
-dev_err(dev, "%s: failed to enable clock\n",
-__func__);
-goto reg_off;
-}
+Basic testing has be carried out on the GSW145 reference board, confirming
+everything works as fine as it does on older Lantiq GSWIP hardware.
+Brief testing also showed that nothing breaks on Lantiq VR9 (VRX208),
+testing on slightly newer Intel GRX330 hardware is going to follow.
 
-gpiod_set_value_cansleep(imx219->reset_gpio, 1);
-usleep_range(IMX219_XCLR_MIN_DELAY_US,
-    IMX219_XCLR_MIN_DELAY_US + IMX219_XCLR_DELAY_RANGE_US);
+As Vladimir Oltean is working on a series of patches improving lantiq_gswip
+the first patch of this series is likely to be replaced by his work and can
+be ignored for now. I've included it anyway for completeness as that is also
+what I have been testing.
 
-return 0;
+Daniel Golle (23):
+  net: dsa: lantiq_gswip: honor dsa_db passed to port_fdb_{add,del}
+  net: dsa: lantiq_gswip: deduplicate dsa_switch_ops
+  net: dsa: lantiq_gswip: prepare for more CPU port options
+  net: dsa: lantiq_gswip: move definitions to header
+  net: dsa: lantiq_gswip: introduce bitmaps for port types
+  net: dsa: lantiq_gswip: load model-specific microcode
+  net: dsa: lantiq_gswip: make DSA tag protocol model-specific
+  net: dsa: lantiq_gswip: store switch API version in priv
+  net: dsa: lantiq_gswip: add support for SWAPI version 2.3
+  net: dsa: lantiq_gswip: support enable/disable learning
+  net: dsa: lantiq_gswip: support Energy Efficient Ethernet
+  net: dsa: lantiq_gswip: support 4k VLANs on API 2.2 or later
+  net: dsa: lantiq_gswip: support model-specific mac_select_pcs()
+  net: dsa: lantiq_gswip: support GSW1xx offset of MII register
+  net: dsa: lantiq_gswip: allow adjusting MII delays
+  net: dsa: lantiq_gswip: support standard MDIO node name
+  net: dsa: lantiq_gswip: move MDIO bus registration to .setup()
+  net: dsa: lantiq_gswip: convert to use regmap
+  net: dsa: lantiq_gswip: split into common and MMIO parts
+  net: dsa: lantiq_gswip: add registers specific for MaxLinear GSW1xx
+  net: dsa: add tagging driver for MaxLinear GSW1xx switch family
+  net: dsa: add driver for MaxLinear GSW1xx switch family
+  net: dsa: lantiq_gswip: ignore SerDes modes in phylink_mac_config()
 
-reg_off:
-regulator_bulk_disable(IMX219_NUM_SUPPLIES, imx219->supplies);
+ drivers/net/dsa/Kconfig               |   17 +
+ drivers/net/dsa/Makefile              |    2 +
+ drivers/net/dsa/lantiq_gswip.c        | 1933 ++-----------------------
+ drivers/net/dsa/lantiq_gswip.h        |  408 ++++++
+ drivers/net/dsa/lantiq_gswip_common.c | 1778 +++++++++++++++++++++++
+ drivers/net/dsa/lantiq_pce.h          |    9 +-
+ drivers/net/dsa/mxl-gsw1xx.c          |  710 +++++++++
+ drivers/net/dsa/mxl-gsw1xx_pce.h      |  160 ++
+ include/net/dsa.h                     |    2 +
+ net/dsa/Kconfig                       |    8 +
+ net/dsa/Makefile                      |    1 +
+ net/dsa/tag_mxl-gsw1xx.c              |  141 ++
+ 12 files changed, 3331 insertions(+), 1838 deletions(-)
+ create mode 100644 drivers/net/dsa/lantiq_gswip.h
+ create mode 100644 drivers/net/dsa/lantiq_gswip_common.c
+ create mode 100644 drivers/net/dsa/mxl-gsw1xx.c
+ create mode 100644 drivers/net/dsa/mxl-gsw1xx_pce.h
+ create mode 100644 net/dsa/tag_mxl-gsw1xx.c
 
-return ret;
-}
-
-static int imx219_power_off(struct device *dev)
-{
-struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-struct imx219 *imx219 =3D to_imx219(sd);
-
-gpiod_set_value_cansleep(imx219->reset_gpio, 0);
-regulator_bulk_disable(IMX219_NUM_SUPPLIES, imx219->supplies);
-clk_disable_unprepare(imx219->xclk);
-
-return 0;
-}
-
-I really don't understand why this is a problem, it is up to the chip
-designer to decide
-what to do with reset behavior and not the reviewers.
-
-I'm simply writing the code following the datasheets here.
-
-
-> Best regards,
-> Krzysztof
->
+-- 
+2.50.1
 
