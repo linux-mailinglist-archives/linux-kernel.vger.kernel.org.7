@@ -1,75 +1,59 @@
-Return-Path: <linux-kernel+bounces-772295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA066B290F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430D6B290F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92794AC399A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 23:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02F21C82E69
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 23:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6DC244675;
-	Sat, 16 Aug 2025 23:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23010245005;
+	Sat, 16 Aug 2025 23:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JN/m3C16"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQDseDI+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CFF288DA
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 23:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB701EDA2C;
+	Sat, 16 Aug 2025 23:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755386467; cv=none; b=kFNIoy/Gt3a5yN7RUPKffis+PSsYn2BJVLQaL3n0RGxvhgCyIfw0wGgZbtqVqzY7ooL0KsxI8YbwXdveW6VfhnvRXB+UBhhLvG3MtfEqsxDkCK330zVWE2PPnGdvPct4RocgUl/lnc90kMhtsRBLowGhns/Kmv2MVtqwW2JJuIE=
+	t=1755386872; cv=none; b=kqgPW+qsan4WSkEB9ahu29tEfu5ZwUoZGb9ds12HamJWvlLqsnOy6AA3anHkoiMNzVzeRMgBStMUsPGRCsSMCqx9hauLo531HTF6TxwjURJrMwVSt4UnG3SEuo/IQtLS0D92rYce3zQpWwQaAGkpHiMXxocEorKj5omNK+dQZ38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755386467; c=relaxed/simple;
-	bh=DU2j/wqwniXJo+tFk1WY/PI+bO2fLqK+tuOtYEl8Bd8=;
+	s=arc-20240116; t=1755386872; c=relaxed/simple;
+	bh=MH+pLrfbqWRbgWT2IxanHwfX7q2c5M1yYZ9GbKJV9eU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGuCMkeQgty5MubIOYcKCef4cCr63tX5FkBc3PMZNchNISLfTsLdXmlQ4hVaMsbjiZCVUQampFjGFQPhTO3B8h1Mig+aFHg0nMByNoBkWA+vNBtIuvnfdWVjR6L4/oS6a/8YxAAyOz27Ob2qsk3U7HPYcjCSkK5S6KgEE7FoH3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JN/m3C16; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755386465; x=1786922465;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DU2j/wqwniXJo+tFk1WY/PI+bO2fLqK+tuOtYEl8Bd8=;
-  b=JN/m3C16BvU73yxMNgBMGFrzztnCiXzsNOeSfoAJP+4XXJDJMy8CF6T7
-   XDBCAvQS0J8JMm4tETF74cIUyT+2+7SXf2iud8iqd3L7/2X/VsllngVqC
-   lsEjHvSr0QcpqSIXWaBmAoOfhx8dIT8aoXDH0j+IrRztiyGyIl+lSytSI
-   0ZEHIc/1EJLLI1oR59XRvV7FLxzf16e3fh9ffhVwuEO30+Zm5j5Y2VG65
-   u7j85lPrxpH40asQOWtMQKqmVk9+Yu0sPCgjESRetjPMiDxR1vUMTtSl6
-   E/dl/kGx3huyGJBLHh+ZjZo5IuctFCdTVpvRwh/dgSxfoAz+2TzHe8VxP
-   g==;
-X-CSE-ConnectionGUID: zq1QE+P9QOSq79pSH+yjAA==
-X-CSE-MsgGUID: atfQ4FFXQo6XTFI3Wn/TTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="80239198"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="80239198"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 16:21:05 -0700
-X-CSE-ConnectionGUID: bK+l1/lpQNCtgImcYn8wTw==
-X-CSE-MsgGUID: ALcV1ipHTfKX9J0E+jAdbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="172491159"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 16 Aug 2025 16:21:03 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unQCh-000DGH-1x;
-	Sat, 16 Aug 2025 23:20:55 +0000
-Date: Sun, 17 Aug 2025 07:19:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Clint George <clintbgeorge@gmail.com>, skhan@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Clint George <clintbgeorge@gmail.com>
-Subject: Re: [PATCH] Fixed Spelling in cpufreq module in kselftests. Earlier
- it used to be "loops", now i made it "loop(s)"
-Message-ID: <202508170740.9el3nJS7-lkp@intel.com>
-References: <20250816124036.5786-1-clintbgeorge@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ib9lQMpQKArl0hzXJTZIGibeX4dMKNA6Js1cafKZArx3xByWiopNpLcGjrGjEnjn6oX31YqfUjgh6kk36KyM4xzFU/XoOtr/z1qtMGLkU3ioOZpEfaP8G5GzPGuRh8epf9E20UrKN8V+vR5ZTLWEHA5gCUERHah2NmrhX7jBQxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQDseDI+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BB7C4CEEF;
+	Sat, 16 Aug 2025 23:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755386872;
+	bh=MH+pLrfbqWRbgWT2IxanHwfX7q2c5M1yYZ9GbKJV9eU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQDseDI+FFcvvdiy01zIsv/Uf0VWNABprBq5D2c7VYRYlj2++c8UJXCvMqvIk+pYl
+	 5/Twb+qgl2XMD84h+C4e+My2OQfYEz4UBWY9WqV/XcmKCZsrF8I5zTN8wQcigef0s9
+	 /S8Lkgfs3DXkNG94GNK71oeC7PiyCUfbx2zjGEbBCZut1Hjlwu4WING7S02RdiXxf1
+	 wbKqcqBE2zZsdLjKn1fgwzcH22omt8GIoCedunvJTVenSsxcYraXeo/gfHRmBqX7or
+	 qn7ke9AaP0rJ8ald/m/LKEYZCkIN0IL258E98xa1PrXt99ElR35J5Mw6XSrNzTiiAW
+	 o6bY4nXkuBhhw==
+Date: Sat, 16 Aug 2025 16:27:50 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Han Gao <rabenda.cn@gmail.com>,
+	Yao Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] riscv: dts: thead: th1520: add soft PWM fan for
+ Lichee Pi 4A
+Message-ID: <aKET9i0/+INnOMoX@x1>
+References: <20250816093209.2600355-1-uwu@icenowy.me>
+ <20250816093209.2600355-4-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,36 +62,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816124036.5786-1-clintbgeorge@gmail.com>
+In-Reply-To: <20250816093209.2600355-4-uwu@icenowy.me>
 
-Hi Clint,
+On Sat, Aug 16, 2025 at 05:32:09PM +0800, Icenowy Zheng wrote:
+> Because of the SoM+Dock design of Lichee Pi 4A, heat dissipation does
+> not work well; fortunately it comes with a fan port with PWM driving
+> capability.
+> 
+> As the hardware PWM controller of Lichee Pi 4A isn't ready yet, drive it
+> with pwm-gpio driver (software PWM) now.
+> 
+> A long PWM period is used, because not only software PWM is used, but
+> also the fan port is a 2-pin one and fast PWM might confuse the BLDC
+> driver on fans.
+> 
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  .../boot/dts/thead/th1520-lichee-pi-4a.dts    | 53 +++++++++++++++++++
+>  arch/riscv/boot/dts/thead/th1520.dtsi         |  2 +-
+>  2 files changed, 54 insertions(+), 1 deletion(-)
 
-kernel test robot noticed the following build warnings:
+Is it possible to reconcile the work that Michal is doing with the
+hardware PWM controller series [1] and this series?
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The PWM controller does need Rust which works okay for me when using
+llvm but that might not be the case for everyone. Maybe there is some
+way to use the pwm controller if available and then failback to gpio if
+not.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Clint-George/Fixed-Spelling-in-cpufreq-module-in-kselftests-Earlier-it-used-to-be-loops-now-i-made-it-loop-s/20250816-204247
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20250816124036.5786-1-clintbgeorge%40gmail.com
-patch subject: [PATCH] Fixed Spelling in cpufreq module in kselftests. Earlier it used to be "loops", now i made it "loop(s)"
-config: arm-randconfig-002-20250817 (https://download.01.org/0day-ci/archive/20250817/202508170740.9el3nJS7-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508170740.9el3nJS7-lkp@intel.com/reproduce)
+Thanks,
+Drew 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508170740.9el3nJS7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> tools/testing/selftests/cpufreq/cpufreq_selftest.txt: warning: ignored by one of the .gitignore files
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[1] https://lore.kernel.org/linux-riscv/20250806-rust-next-pwm-working-fan-for-sending-v13-7-690b669295b6@samsung.com/
 
