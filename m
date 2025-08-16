@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-771985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB44B28D7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:55:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46867B28D83
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB528A28AE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7052B027F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B475B2DC343;
-	Sat, 16 Aug 2025 11:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975326E6FF;
+	Sat, 16 Aug 2025 12:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cL15tGnf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AA6d6NkB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D523504B;
-	Sat, 16 Aug 2025 11:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD03248F4E;
+	Sat, 16 Aug 2025 12:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755345344; cv=none; b=fcbJmp4SJMN3YYxZoXHJ5H4z8uEF3dm5wOiGZ7l7abWapvINCxxv5MiClaLFmLtPmuhGdJCtLV/okCpzIWxWTYpiHYYIubjcBIspat7vcoEjx3d+/Xo9Ayy1OiyYKDzdJm7AwKWM8ctdZu71jMG7ZQ/6PCKLe4O86fSsgunZ6t0=
+	t=1755345614; cv=none; b=tOHygawomhP0lSH088p6vI3aq4eoAxBEQxCuFpAqkUTc45nACMDY6JJhxefHWgS7Jk4f46ql1L56bzPbGERelV9R6V5Ictn+B25IzbC59oTfj8ExEbQ8sdJYfnxEkhVP+JerzzK27Ql2afkXmq4bwJZMuiK56BUeK2OngWbd0yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755345344; c=relaxed/simple;
-	bh=ANncU8lgObSWtg5ScydN7E+de1qMSShz6qNo14jNZhA=;
+	s=arc-20240116; t=1755345614; c=relaxed/simple;
+	bh=YyT9VmgGsLPhHji6Xt5V9PnkrRS+Xqsx2HovdXgAOCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m1gwhw5YBEtbJrp0m/+TGQxZKsg//3P8hZgh6yG7eptbAigb35z3iBQcJ78NoSptPtLgZ18W32BQJ/+sTAkWQezcwz7bWFZDp/6kNSfrVC2BmynDIvzfwJj6dHpdPjcZQ3Y8ELMMmQ163cSxbwCdTJfBozboRJWNdYx6QqizuyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cL15tGnf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E83C4CEEF;
-	Sat, 16 Aug 2025 11:55:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Cw8zypgBqGnhlxFgDZLKBeK1DmIcpqMwv7g3OlaipeWAFAsZvLaydMErMEdELpXbGnzstH+A+mH6fXY0PSMJ8zhyeO/Sh8YwOT5NPMXVqvvRj576nlGYt+Ywp8kpp/CCyV+9hfyiASkgLtXDVc602YUeDOFGbW+ym3PgnWLbQpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AA6d6NkB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB8CC4CEF1;
+	Sat, 16 Aug 2025 12:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755345342;
-	bh=ANncU8lgObSWtg5ScydN7E+de1qMSShz6qNo14jNZhA=;
+	s=k20201202; t=1755345614;
+	bh=YyT9VmgGsLPhHji6Xt5V9PnkrRS+Xqsx2HovdXgAOCQ=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cL15tGnft5wKH0WmD8E3AMOGQ3MhXAEIExnCsgqEIQxXM1rrubwGeS8vRnLLwmc8c
-	 wLUBI+LBT2w6kPkzeBlVqPJvRnSJsx28L7Euj5H3cjhRPMI7uRdAOzZwyjjitFfxta
-	 eCA47ClZG2uzJMWmq3mZtPYkWdnJYKtkA/+ORP04qjgYWnhSVKTWcQP4w/kqI1mupO
-	 CW2x/MOwljaPR7TQTuyArGf7+qD7F/aoYncnIaSPO28awPBlr2poNMe/JFIb+phWC/
-	 pOLplEpO7rKt+M1qp8BTVJwDw1JdkQDhdusAexdUsoCl/QJweg2YnPlTvGi2u24Yhm
-	 uc03nl/ptghfQ==
-Date: Sat, 16 Aug 2025 13:55:38 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: bpf@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-Message-ID: <20250816135538.733b80d3@foz.lan>
-In-Reply-To: <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
-	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	b=AA6d6NkBOqOzwhLK5CEoSAPDKnuNnrZC57jvfubQ/C8ZcWmXdevlL9usA3yjSAYyD
+	 U4JCVQAcROVlZHq3B/HegEIiyv6/SnHDb+TvzgpSRqkMpzkcfQuLHaRQ5PjL6g5jaq
+	 0AifDpstHPmzT/iP9Lvgre6xqi04gv4tLZvvh3xDStBRMSXpdGVjhwHFNJXedIM640
+	 5SUjjgwp+OzqjcmmWSkyHNZC6hVfXGjy4DTalcF14FgEMN/hV1BtdG+o/OKXD+1N4J
+	 UM8BQZwgnaGDEL80yF6I7Z4b8JLJWlisjdf7+UK4NRPQKrR1+iVPY8EsU9Tz3hvx5T
+	 A5UHz7TsY96gA==
+Date: Sat, 16 Aug 2025 13:00:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] iio: imu: inv_icm45600: add buffer support in
+ iio devices
+Message-ID: <20250816130004.53021d6b@jic23-huawei>
+In-Reply-To: <20250814-add_newport_driver-v4-3-4464b6600972@tdk.com>
+References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
+	<20250814-add_newport_driver-v4-3-4464b6600972@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,194 +64,302 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Sat, 16 Aug 2025 14:06:43 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
+On Thu, 14 Aug 2025 08:57:17 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-> [-CC most folks]
+> From: Remi Buisson <remi.buisson@tdk.com>
 > 
-> Hi Mauro,
+> Add FIFO control functions.
+> Support hwfifo watermark by multiplexing gyro and accel settings.
+> Support hwfifo flush.
 > 
-> On Fri, 15 Aug 2025 13:36:16 +0200, Mauro Carvalho Chehab wrote:
-> > Hi Jon,
-> > 
-> > This series touch only on three files, and have a small diffstat:
-> > 
-> >    Documentation/Makefile     |    4 -
-> >    Documentation/conf.py      |  106 +++++++++++++++++++++----------------
-> >    scripts/sphinx-pre-install |   41 +++++++++++---
-> >    3 files changed, 96 insertions(+), 55 deletions(-)
-> > 
-> > Yet, it took a lot of my time.  Basically, it addresses lots of problems  related
-> > with building PDF docs:
-> > 
-> > - Makefile has a wrong set of definitions for paper size. It was
-> >   using pre-1.7 Sphinx nomenclature for some conf vars;
-> > - The LaTeX options a conf.py had lots of issues;
-> > - Finally, some PDF package dependencies for distros were wrong.
-> > 
-> > I wrote an entire testbench to test this and doing builds on every
-> > platform mentioned at sphinx-pre-install. 
-> > 
-> > After the change *most* PDF files are built on *most* platforms. 
-> > 
-> > 
-> > Summary
-> > =======
-> >   PASSED - AlmaLinux release 9.6 (Sage Margay) (7 tests)
-> >   PASSED - Amazon Linux release 2023 (Amazon Linux) (7 tests)
-> >   FAILED - archlinux (1 tests)
-> >   PASSED - CentOS Stream release 9 (7 tests)
-> >   PARTIAL - Debian GNU/Linux 12 (7 tests)
-> >   PARTIAL - Devuan GNU/Linux 5 (7 tests)
-> >   PASSED - Fedora release 42 (Adams) (7 tests)
-> >   PARTIAL - Gentoo Base System release 2.17 (7 tests)
-> >   PASSED - Kali GNU/Linux 2025.2 (7 tests)
-> >   PASSED - Mageia 9 (7 tests)
-> >   PARTIAL - Linux Mint 22 (7 tests)
-> >   PARTIAL - openEuler release 25.03 (7 tests)
-> >   PARTIAL - OpenMandriva Lx 4.3 (7 tests)
-> >   PASSED - openSUSE Leap 15.6 (7 tests)
-> >   PASSED - openSUSE Tumbleweed (7 tests)
-> >   PARTIAL - Oracle Linux Server release 9.6 (7 tests)
-> >   FAILED - Red Hat Enterprise Linux release 8.10 (Ootpa) (7 tests)
-> >   PARTIAL - Rocky Linux release 8.9 (Green Obsidian) (7 tests)
-> >   PARTIAL - Rocky Linux release 9.6 (Blue Onyx) (7 tests)
-> >   FAILED - Springdale Open Enterprise Linux release 9.2 (Parma) (7 tests)
-> >   PARTIAL - Ubuntu 24.04.2 LTS (7 tests)
-> >   PASSED - Ubuntu 25.04 (7 tests)
-> > 
-> > The failed distros are:
-> > 
-> > - archlinux. This is some problem on recent lxc containers. Unrelated
-> >   with pdf builds;
-> > - RHEL 8: paywall issue: some packages required by Sphinx require a repository
-> >   that it is not openly available. I might have using CentOS repos, but, as we're
-> >   already testing it, I opted not do do it;
-> > - Springdale 9.2: some broken package dependency.
-> > 
-> > Now, if you look at the full logs below, you'll see that some distros come with
-> > XeLaTeX or LaTeX troubles, causing bigger and/or more complex docs to
-> > fail. It is possible to fix those, but they depend on addressing distro-specific
-> > LaTeX issues like increasing maximum memory limits and maximum number
-> > of idented paragraphs.  
-> 
-> No, the trouble is failed conversion of SVG --> PDF by convert(1) + rsvg-convert(1).
-> Failed conversions trigger huge raw SVG code to be included literally into LaTeX
-> sources, which results in code listings too huge to be rendered in a page; and
-> overwhelms xelatex.
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
 
-I remember we had some cases of too large items on media uAPI. There,
-the problem were mostly on tables. The fix was to add several LaTeX
-specific commands:
-
-	$ git grep -i "raw:: latex" Documentation/userspace-api/media/|wc -l
-	201
-
-Currently, they all are just changing font size, but 
-
-We also use less-ugly things like Sphinx PDF builder specific
-classes:
-
-	.. cssclass:: longtable
-
-So, one alternative would be to look at techniques to auto-scale
-image, like:
-
-	\usepackage{pdfpages}
-	...
-	\includepdf{image.png}
-
-as proposed here:
-
-	https://tex.stackexchange.com/questions/39147/scale-image-to-page-width
-
-Yet, we tried something like that before to auto-scale tables,
-overriding Sphinx Latex macros. It worked for a couple of sphinx versions, 
-but maintaining it was hard, as newer versions of Sphinx came with different
-macro names or different behaviors.
-
-Heh, if you check:
-	https://www.sphinx-doc.org/en/master/latex.html#additional-css-like-sphinxsetup-keys
-
-You'll see that sphinx latex builder have been suffering lots of changes
-over time.
-
-> IIUC, kfigure.py does such fallbacks of failed PDF conversions.  Mightn't it be
-> better to give up early in the latexdocs stage?
-
-Makes sense to me.
-
-> > It follows full results per distro.  
-> 
-> [Ignoring lengthy list of results...]
-> 
-> I think all you need to test build against are the limited list of:
-> 
->     - arch.pdf
->     - core-api.pdf
->     - doc-guide.pdf
->     - gpu.pdf
->     - i2c.pdf
->     - RCU.pdf
->     - translations.pdf
->     - userspace-api.pdf
-> 
-> All of them have figures in SVG, and latexdocs tries to convert them
-> into PDF.
-> 
-> Probably, recommending Inkscape rather than ImageMagick would be the right
-> thing, at least where it is provided as a distro package.
-
-Works for me, but let's do it on a separate series. I still have more
-than 100 patches on my pile to be merged. This series is focused on
-making at least some PDFs to build where possible, addressing major
-problems at conf.py that are causing LaTeX to not work on several
-distros and to fix wrong package dependencies(*).
-
-I'll add a TODO item on my queue to replace fom ImageMagick to
-Inkscape on a separate series.
-
-(*) One of such problem you blamed sphinx-build-wrapper, but 
-    the issue is actually addressed on this series with fixes to conf.py: 
-    there are currently several troubles at latex_documents list and at
-    latex_elements.
-
-    Those are causing wrong font detection on LaTeX. Maybe the corrupted
-    font issues you got are related to it.
-
-    It took me a lot of time to set latex_elements in a way that
-    it now works fine. The main keys related to it are those:
-
-	"passoptionstopackages": dedent(r"""
-	        \PassOptionsToPackage{svgnames}{xcolor}
-	        % Avoid encoding troubles when creating indexes
-	        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
-	    """),
-	"fontenc": "",
-	'fontpkg': dedent(r'''
-	        \usepackage{fontspec}
-	        \setmainfont{DejaVu Serif}
-	        \setsansfont{DejaVu Sans}
-	        \setmonofont{DejaVu Sans Mono}
-	        \newfontfamily\headingfont{DejaVu Serif}
-	'''),
-
-    You can't imagine how much hours it took to get the above
-    lines right ;-)
-
-    Basically, "fontenc" and "fontpkg" are two different ways
-    that LaTeX use to include true-type fonts. We need to disable the 
-    first, as otherwise it will try to use both, which may result in 
-    incompatible fonts (On Debian, LaTeX build reports corrupted fonts 
-    on T1 fontenc set - preventing PDF builds). The actual messge there
-    is:
-
-	! Corrupted NFSS tables
-
-    Btw, just disabling fontenc there was not enough, as babel was still
-    trying to load a T1 Polish font indirectly used by Sphinx hyphenation
-    macros. I had to add \newfontfamily to fix such issue.
+Comments inline.
 
 Thanks,
-Mauro
+
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..59415e9b1e4ee21a641781275e3654402cf6d0a8
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+
+> +/**
+> + * inv_icm45600_buffer_update_watermark - update watermark FIFO threshold
+> + * @st:	driver internal state
+> + *
+> + * Returns 0 on success, a negative error code otherwise.
+> + *
+> + * FIFO watermark threshold is computed based on the required watermark values
+> + * set for gyro and accel sensors. Since watermark is all about acceptable data
+> + * latency, use the smallest setting between the 2. It means choosing the
+> + * smallest latency but this is not as simple as choosing the smallest watermark
+> + * value. Latency depends on watermark and ODR. It requires several steps:
+> + * 1) compute gyro and accel latencies and choose the smallest value.
+> + * 2) adapt the chosen latency so that it is a multiple of both gyro and accel
+> + *    ones. Otherwise it is possible that you don't meet a requirement. (for
+> + *    example with gyro @100Hz wm 4 and accel @100Hz with wm 6, choosing the
+> + *    value of 4 will not meet accel latency requirement because 6 is not a
+> + *    multiple of 4. You need to use the value 2.)
+> + * 3) Since all periods are multiple of each others, watermark is computed by
+> + *    dividing this computed latency by the smallest period, which corresponds
+> + *    to the FIFO frequency.
+> + */
+> +int inv_icm45600_buffer_update_watermark(struct inv_icm45600_state *st)
+> +{
+> +	const size_t packet_size = sizeof(struct inv_icm45600_fifo_2sensors_packet);
+> +	unsigned int wm_gyro, wm_accel, watermark;
+> +	u32 period_gyro, period_accel, period;
+> +	u32 latency_gyro, latency_accel, latency;
+> +
+> +	/* Compute sensors latency, depending on sensor watermark and odr. */
+> +	wm_gyro = inv_icm45600_wm_truncate(st->fifo.watermark.gyro, packet_size,
+> +					   st->fifo.period);
+> +	wm_accel = inv_icm45600_wm_truncate(st->fifo.watermark.accel, packet_size,
+> +					    st->fifo.period);
+> +	/* Use us for odr to avoid overflow using 32 bits values. */
+> +	period_gyro = inv_icm45600_odr_to_period(st->conf.gyro.odr) / 1000UL;
+> +	period_accel = inv_icm45600_odr_to_period(st->conf.accel.odr) / 1000UL;
+> +	latency_gyro = period_gyro * wm_gyro;
+> +	latency_accel = period_accel * wm_accel;
+> +
+> +	/* 0 value for watermark means that the sensor is turned off. */
+> +	if (wm_gyro == 0 && wm_accel == 0)
+> +		return 0;
+> +
+> +	if (latency_gyro == 0) {
+> +		watermark = wm_accel;
+> +		st->fifo.watermark.eff_accel = wm_accel;
+> +	} else if (latency_accel == 0) {
+> +		watermark = wm_gyro;
+> +		st->fifo.watermark.eff_gyro = wm_gyro;
+> +	} else {
+> +		/* Compute the smallest latency that is a multiple of both. */
+> +		if (latency_gyro <= latency_accel)
+> +			latency = latency_gyro - (latency_accel % latency_gyro);
+> +		else
+> +			latency = latency_accel - (latency_gyro % latency_accel);
+> +		/* Use the shortest period. */
+> +		period = min(period_gyro, period_accel);
+> +		/* All this works because periods are multiple of each others. */
+> +		watermark = latency / period;
+> +		if (watermark < 1)
+> +			watermark = 1;
+
+		watermark = max(latency/period, 1);
+
+> +		/* Update effective watermark. */
+> +		st->fifo.watermark.eff_gyro = latency / period_gyro;
+> +		if (st->fifo.watermark.eff_gyro < 1)
+> +			st->fifo.watermark.eff_gyro = 1;
+
+		st->fifo.atermark.eff_gyro = max(latency / period_gyro, 1);
+
+> +		st->fifo.watermark.eff_accel = latency / period_accel;
+> +		if (st->fifo.watermark.eff_accel < 1)
+> +			st->fifo.watermark.eff_accel = 1;
+		max()
+> +	}
+> +
+> +
+> +	st->buffer.u16 = cpu_to_le16(watermark);
+> +	return regmap_bulk_write(st->map, INV_ICM45600_REG_FIFO_WATERMARK,
+> +				&st->buffer.u16, sizeof(st->buffer.u16));
+> +}
+> +
+> +int inv_icm45600_buffer_init(struct inv_icm45600_state *st)
+> +{
+> +	int ret;
+> +	unsigned int val;
+> +
+> +	st->fifo.watermark.eff_gyro = 1;
+> +	st->fifo.watermark.eff_accel = 1;
+> +
+> +	/* Disable all FIFO EN bits. */
+> +	ret = regmap_write(st->map, INV_ICM45600_REG_FIFO_CONFIG3, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Disable FIFO and set depth. */
+> +	val = FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
+> +				INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS);
+
+Align immediately after (
+
+
+> +	val |= INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX;
+> +	ret = regmap_write(st->map, INV_ICM45600_REG_FIFO_CONFIG0, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable only timestamp in fifo, disable compression. */
+> +	ret = regmap_write(st->map, INV_ICM45600_REG_FIFO_CONFIG4,
+> +			   INV_ICM45600_FIFO_CONFIG4_TMST_FSYNC_EN);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable FIFO continuous watermark interrupt. */
+> +	return regmap_set_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG2,
+> +			       INV_ICM45600_REG_FIFO_CONFIG2_WM_GT_TH);
+> +}
+
+
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> index 0fdf86cdfe547357d2b74d9c97092e9a1e5722a8..cad632fb2e5158e9cd7cee66f77eb56fe101ecc3 100644
+> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> @@ -17,6 +17,7 @@
+
+
+> +/**
+> + * inv_icm45600_irq_init() - initialize int pin and interrupt handler
+> + * @st:		driver internal state
+> + * @irq:	irq number
+> + * @irq_type:	irq trigger type
+> + * @open_drain:	true if irq is open drain, false for push-pull
+> + *
+> + * Returns 0 on success, a negative error code otherwise.
+> + */
+> +static int inv_icm45600_irq_init(struct inv_icm45600_state *st, int irq,
+> +				 int irq_type, bool open_drain)
+> +{
+> +	struct device *dev = regmap_get_device(st->map);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	/* Configure INT1 interrupt: default is active low on edge. */
+> +	switch (irq_type) {
+> +	case IRQF_TRIGGER_RISING:
+> +	case IRQF_TRIGGER_HIGH:
+> +		val = INV_ICM45600_INT1_CONFIG2_ACTIVE_HIGH;
+> +		break;
+> +	default:
+> +		val = INV_ICM45600_INT1_CONFIG2_ACTIVE_LOW;
+> +		break;
+> +	}
+> +
+> +	switch (irq_type) {
+> +	case IRQF_TRIGGER_LOW:
+> +	case IRQF_TRIGGER_HIGH:
+> +		val |= INV_ICM45600_INT1_CONFIG2_LATCHED;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (!open_drain)
+> +		val |= INV_ICM45600_INT1_CONFIG2_PUSH_PULL;
+> +
+> +	ret = regmap_write(st->map, INV_ICM45600_REG_INT1_CONFIG2, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	irq_type |= IRQF_ONESHOT;
+
+I'd do that in the call and avoid changing the meaning of the irq_type
+local variable in this function.
+
+> +	return devm_request_threaded_irq(dev, irq, inv_icm45600_irq_timestamp,
+> +					 inv_icm45600_irq_handler, irq_type,
+
+					 irq_type | IRQF_ONESHOT,
+
+> +					 "inv_icm45600", st);
+> +}
+> +
+>  static int inv_icm45600_timestamp_setup(struct inv_icm45600_state *st)
+>  {
+>  	/* Enable timestamps. */
+> @@ -556,6 +646,8 @@ int inv_icm45600_core_probe(struct regmap *regmap, const struct inv_icm45600_chi
+>  	struct fwnode_handle *fwnode;
+>  	struct inv_icm45600_state *st;
+>  	struct regmap *regmap_custom;
+> +	int irq, irq_type;
+> +	bool open_drain;
+>  	int ret;
+>  
+>  	/* Get INT1 only supported interrupt. */
+> @@ -563,6 +655,17 @@ int inv_icm45600_core_probe(struct regmap *regmap, const struct inv_icm45600_chi
+>  	if (!fwnode)
+>  		return dev_err_probe(dev, -ENODEV, "Missing FW node\n");
+>  
+> +	irq = fwnode_irq_get_byname(fwnode, "INT1");
+> +	if (irq < 0) {
+> +		if (irq != -EPROBE_DEFER)
+> +			dev_err_probe(dev, irq, "Missing INT1 interrupt\n");
+dev_err_probe() doesn't print on defer anyway. (or -ENOMEM)
+
+What you've done here is stopped the debug logic for deferred probe reasons getting
+the info on it being because we are waiting for an interrupt.  If this was intentional
+then add a comment, otherwise just
+		return dev_err_probe()
+here
+
+> +		return irq;
+> +	}
+
+> @@ -633,6 +748,23 @@ static int inv_icm45600_suspend(struct device *dev)
+>  
+>  		st->suspended.gyro = st->conf.gyro.mode;
+>  		st->suspended.accel = st->conf.accel.mode;
+> +
+> +		/* Disable FIFO data streaming. */
+> +		if (st->fifo.on) {
+> +			unsigned int val;
+> +
+> +			ret = regmap_clear_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG3,
+> +						INV_ICM45600_FIFO_CONFIG3_IF_EN);
+> +			if (ret)
+> +				return ret;
+> +			val = FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
+> +						INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS);
+> +			ret = regmap_update_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG0,
+> +						INV_ICM45600_FIFO_CONFIG0_MODE_MASK, val);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +
+>  	}
+>  
+>  	return pm_runtime_force_suspend(dev);
+> @@ -653,10 +785,30 @@ static int inv_icm45600_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	scoped_guard(mutex, &st->lock)
+> +	scoped_guard(mutex, &st->lock) {
+> +
+>  		/* Restore sensors state. */
+>  		ret = inv_icm45600_set_pwr_mgmt0(st, st->suspended.gyro,
+>  						st->suspended.accel, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Restore FIFO data streaming. */
+Its a little odd to resume in a different order to how we took things down.
+Perhaps add a comment if there is a reason for that.  If not reorder it
+purely to make it easier to review.
+
+
+> +		if (st->fifo.on) {
+> +			unsigned int val;
+> +
+> +			inv_sensors_timestamp_reset(&gyro_st->ts);
+> +			inv_sensors_timestamp_reset(&accel_st->ts);
+> +			val = FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
+> +						INV_ICM45600_FIFO_CONFIG0_MODE_STREAM);
+> +			ret = regmap_update_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG0,
+> +						INV_ICM45600_FIFO_CONFIG0_MODE_MASK, val);
+> +			if (ret)
+> +				return ret;
+> +			ret = regmap_set_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG3,
+> +					INV_ICM45600_FIFO_CONFIG3_IF_EN);
+> +		}
+> +	}
+>  
+>  	return ret;
+>  }
+> 
+
 
