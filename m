@@ -1,177 +1,242 @@
-Return-Path: <linux-kernel+bounces-771738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FABDB28AE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:59:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C98B28AE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FE8AE6CEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B6B5E3B21
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0151F8ADD;
-	Sat, 16 Aug 2025 05:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A891F874C;
+	Sat, 16 Aug 2025 05:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="Iiw/0hfx"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CfnaU+KM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAE318DB01
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 05:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054AE1F9F51;
+	Sat, 16 Aug 2025 05:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755323908; cv=none; b=PN8ta5d+vuzvXzWFeIVRW+5Zln5zwA0WK5Xb0rH1zOrHrXKHi4VUwmgw50GHqVAL1c1eOiBowwmwHvqLhJOwuVSKstGskefjQzvGJSSbMx6UmyLNuij3BJ9tr8CGYjgo595VA6OKJz3mLHyLhWLA9l/9LbG/s7iXtksi5B6IFgc=
+	t=1755323919; cv=none; b=lMHFf6uqDP8UT0sBd+GR9OdX24EOKXlMlljei+PkSHE7g+NI3FP1/YeC2M2a4A7jEkVcTBSuA0KF9MGdosZJeJHXnqXEOfMW8uUQESSiPQBC2rwfntv9SUmFvvz4GxGOU+bGLIOOEW5kdWYk3YSTtOdx68CtUTuo+cLi31Det34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755323908; c=relaxed/simple;
-	bh=DrbctBGMgceWHyU2G3iajKdl9FJ/GIp+Lv0AO0b4Ibw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fe1YDztNLOmMdn26RgVAw4gJ5xEGMU5i0m7AdtuANrnK93EIqsmDI+QtO/5wd82hTfKElqHer+ZT5VBmFAeTr/sZW9L08AutHZuHWxDdo0ujKeHL0K4a3g+BSKmyeLQp6RKeIGV2zjFXp53RF6vN1YTScd34yEsiDVogkW5/XXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=Iiw/0hfx; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b471754c159so1693808a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 22:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1755323906; x=1755928706; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mxd0WrYqOz4ItTjbQ6f59qSMdSo/i5unAWV7GJYBATY=;
-        b=Iiw/0hfxV8o1WbHtTO25SWUFRu7XvuuNxAzV0YKkSLWsGYOzVdz1Wisnt65eKmphQW
-         xGKXn92PraSM99YExq/aID/UL8D++jwFYM3WWpO2L7KmgrWRdG0/sIyMa88a37G40tKs
-         wAg4UFL17Bz0KZCGy5fBblSKDnSlD+o4OnfEWNYuKilvR0ZtzL7L3DwFUSC48uCn7Yww
-         vq2PfeMjTNtIeLkMzyXpRsWMtO1pDu0GMi6+zIluM270agGhmtscOPRmDoe8qM+oW1Fw
-         ZFUP4ZlTZxyO/X/Lenpvj13A6XLI5AtJYD6Bnax+08xpZWkRpPnkGjNyW/cJBB+lYiYJ
-         MOxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755323906; x=1755928706;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxd0WrYqOz4ItTjbQ6f59qSMdSo/i5unAWV7GJYBATY=;
-        b=jK1k3mKX8MZvaVv0N55GZr840EUbbKhoqsgTvFKNkeJSaIHhvmewjD4slf1wtjFfee
-         c6UdQAyT2DKcNs4x/pVWlZY6Z7b8fxQL07nuBv+GXp4c/z8dxJH8++r2a2U47Tb1XJ5r
-         b2EFo8JiGBgpnwVUChacIb7gisBVLC9hYH56zJA6VfHVzfv3d+8b26Wjw23F+5pEfYqn
-         OHgcNyIeAp+o4aT7WSE5CSgA6Li7N5OdF1snY+9qH98VuMMAUvvry9kioI3Rax7Hgtey
-         gIfORvIEfc04SIOO3+7Cm5sJusVPzUwi2GU6AlgjAalxh8RZqMwlXiO84sT+ti6gRFJN
-         Q9KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmeGmGo10oFBGgC3LjOX/Kg7OT65dJRd7hBI90K5yX9NAJtAVBUr34M/ZFWonxCtcozfwWmJQTA2j/YEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyaw8M1ADnHLjssoVKH6t5NF3GhSyvz3yKtBDt1Pq8JmH/+qs+7
-	0cmjuGYNiGd6YcbfOtFbKTfsBOOvP/IJBSMbm7DgPRnxJa4OktXj6ga8NIM2LnGHhQ==
-X-Gm-Gg: ASbGncsKlEY9tTtboNq8Sw+88s9m9Ami2HcTZqRtvI/wovD8z9J1kq/rk2RS3wYJlbp
-	1nmjf+ur7FPtrYbWg7f1XWG/LoSZ1lwKHMcJRei434kSeaEXWEJg2Y3g6ZfV+k1hE2NSSpumAYX
-	ucmeb9UH4HAPrVrj43crmxU8BRCzPd4TsxY5DyzZvfaeRqgmb1R4j8d940UY9Iy6O5c0E6DTFbZ
-	yf7jwkgwpdiSkoGod6OuchVud0K6kfERK32eE536ftt7BXONsVhC7JjPq28nQ2ef18ahQdoDVxS
-	3yeH1JDD8AcbzWDVmrdIGRrAP8sURhc1JwUsvM7lHNdKJoqKfW4PtC+qGcL84yjPb4fNRj5PH3H
-	uTOWfNmbAsZQioHq09lTjlM8VpuSUnBA=
-X-Google-Smtp-Source: AGHT+IGMUi/8br7pdXwHNqC0siZsEeBmVj1wPTeFjaWA75a/tNNlmbnRO1ELIfRE9yhceLHbSOHfOQ==
-X-Received: by 2002:a17:903:1a08:b0:242:9bc5:319f with SMTP id d9443c01a7336-24478ff0354mr20789205ad.55.1755323906287;
-        Fri, 15 Aug 2025 22:58:26 -0700 (PDT)
-Received: from [192.168.1.9] ([2401:4900:8899:e205:7ddd:6d95:7c30:9bd3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0a0a7sm28328245ad.65.2025.08.15.22.58.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 22:58:26 -0700 (PDT)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Sat, 16 Aug 2025 11:27:46 +0530
-Subject: [PATCH v2 2/2] rust: kernel: of: Add overlay id abstraction
+	s=arc-20240116; t=1755323919; c=relaxed/simple;
+	bh=gCT3Vy/InXFik2JESebYvEoHergxHzILaLortPdjdEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMsM0T68Mpru8TjNxpoXDIFs3EoxcMVyJL1Cre+wlFVpQ4QV1VrU5t58D6ZQy6W7bVD2SoJTbhm7e0KWeljHe+X0OLbKbt42CdGr77S2QTQPfTjcJn/W5PbNky/iSGzHFhMQtINUM1qFnYUJhhj5JurPy+1LwPNhv3p1qbFZCtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CfnaU+KM; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755323917; x=1786859917;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gCT3Vy/InXFik2JESebYvEoHergxHzILaLortPdjdEk=;
+  b=CfnaU+KMUI5wxxEI92CqOlFuQ6LI1ExESQz3rCtqKhNxXwbSVNLLgpY9
+   b78KyB+MRgpPaYyYR9Vuqg0Bym/msWTjpE4PxT3vVFD8Kue4RDZWNf0N8
+   cvgiqM/V/QNBg0JQPN2DjisZGDFbid5AxbffP1DYrMliyj6SSSbn5M4+U
+   KOtOKn1Tast4UvJWj8M9Ub7u6eBxbwvJgWztSpfg+uNNJbpYBFItodrzH
+   vW0PuC3/YAfsK4XwxfGMWhV8Up/NrE2bN1uS8PvCeebJTe9NLvTbmhzvh
+   Gt3BGaKYNr5MtgBps0UzJv6dvSoynUIb2ayTvwgIuGzfwmMlzXAVakc5b
+   w==;
+X-CSE-ConnectionGUID: 8g34BEzoQeC97GnsJ+WSkQ==
+X-CSE-MsgGUID: Pkg6DQbXQNSiJvaBOR9YHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57782707"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57782707"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 22:58:36 -0700
+X-CSE-ConnectionGUID: QUjKVCBASXajz5+TmQybjw==
+X-CSE-MsgGUID: j7G5cbBBTFG13/GWLTPRIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="172377014"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 15 Aug 2025 22:58:34 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un9vz-000Ccm-1M;
+	Sat, 16 Aug 2025 05:58:31 +0000
+Date: Sat, 16 Aug 2025 13:58:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>, Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@corigine.com>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: Re: [PATCH v2 2/3] nfp: flower: use vmalloc_array() to simplify code
+Message-ID: <202508161307.IWBBnNXY-lkp@intel.com>
+References: <20250814102100.151942-3-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-rust-overlay-abs-v2-2-48a2c8921df2@beagleboard.org>
-References: <20250816-rust-overlay-abs-v2-0-48a2c8921df2@beagleboard.org>
-In-Reply-To: <20250816-rust-overlay-abs-v2-0-48a2c8921df2@beagleboard.org>
-To: Jason Kridner <jkridner@beagleboard.org>, 
- Deepak Khatri <lorforlinux@beagleboard.org>, 
- Robert Nelson <robertcnelson@beagleboard.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
- Saravana Kannan <saravanak@google.com>, Benno Lossin <lossin@kernel.org>, 
- Benno Lossin <lossin@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1536; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=DrbctBGMgceWHyU2G3iajKdl9FJ/GIp+Lv0AO0b4Ibw=;
- b=owEBbQKS/ZANAwAKAQXO9ceJ5Vp0AcsmYgBooB3tJrlOtPTqSiWnSQcILitlwR6+YrzBwopAB
- skmiYeHt6aJAjMEAAEKAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCaKAd7QAKCRAFzvXHieVa
- dAQVD/0Q5hTcGTe/dOvA31APqGKCstjWbPgoIGuSHivTDdQ6WDmL8YTE0ye8sXqDS4b5+MMRZks
- Cp8ZRw+Nb6TxCCnnuBoBYtXcay5Mkl3jXX/DRS+TEkVP+y2iJz35C7rQrJv5f/i4acPBSnQmhN1
- rNAEL2JF+v1RkWfoJuScYR4geli6Ojcreb+03NAterVUVCeXauaMQjK6lY4YP1+cwyd45CXWKNT
- NPZK1PLZuwZxsif0TA+OmvbyXp2ByTFp35V1dGt9Cw/LeHvDzKgtZgw/Y6FEJWhS6i+nkEbLrDH
- CCveRN4nYFbofeXyDly4UPF+7fnmpUFAxUpZbbf9jg3RyK3J5BONwfLmeVlEFOr4J/GcSZxgi7W
- KhXiG2rombic+QRufQvRF5Yw7K9Xh0Gha20Nw6aCGuElxO5MKTQXYJbu4fGH7kEiEog8uwyDtH4
- Am6UsqTJ0BSz8nVMF2/o96uND58qfRvumguVGVhEB1y25+UjduKSNQMpnrF3CPN96CAqqXr4k4m
- MVuknIj3vd3/LolSZ98XP6L5iJFvYoT0oVVIosu7I8KWK64+AacUrmNzPzl6vbH5ZNQHJP/zS3N
- BCxSNKWrPuxYBWZedGrZVdsxkWKezUj2L+IiTJ7mSt+Q7BcVO/PKOC66Vqdcm1MJS16v2ULQu3F
- EBxGO4SdJcrjYTg==
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814102100.151942-3-rongqianfeng@vivo.com>
 
-Allow applying devicetree overlays from Rust.
+Hi Qianfeng,
 
-The overlay is removed on Drop.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
- rust/kernel/of.rs | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+[auto build test WARNING on tnguy-next-queue/dev-queue]
+[also build test WARNING on tnguy-net-queue/dev-queue net-next/main net/main linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index 74d42dce06f0e9f67a0e5bd1287117b4966d4af9..646148cc959fd5414271f9cf9023ef5d77a2ac2c 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -75,3 +75,37 @@ pub fn as_raw(&self) -> *mut bindings::device_node {
-         self.0.get()
-     }
- }
-+
-+/// Devicetree overlay present in livetree.
-+///
-+/// The overlay is removed on Drop
-+pub struct OvcsId(kernel::ffi::c_int);
-+
-+impl OvcsId {
-+    /// Create and apply an overlay changeset to the live tree.
-+    pub fn of_overlay_fdt_apply(overlay: &[u8], base: &DeviceNode) -> Result<Self> {
-+        let mut ovcs_id: kernel::ffi::c_int = 0;
-+
-+        // Ensure that overlay length fits in u32
-+        let Ok(overlay_len) = overlay.len().try_into() else {
-+            return Err(crate::error::code::E2BIG);
-+        };
-+
-+        crate::error::to_result(unsafe {
-+            bindings::of_overlay_fdt_apply(
-+                overlay.as_ptr().cast(),
-+                overlay_len,
-+                &mut ovcs_id,
-+                base.as_raw(),
-+            )
-+        })?;
-+
-+        Ok(Self(ovcs_id))
-+    }
-+}
-+
-+impl Drop for OvcsId {
-+    fn drop(&mut self) {
-+        unsafe { bindings::of_overlay_remove(&mut self.0) };
-+    }
-+}
+url:    https://github.com/intel-lab-lkp/linux/commits/Qianfeng-Rong/eth-intel-use-vmalloc_array-to-simplify-code/20250814-183400
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git dev-queue
+patch link:    https://lore.kernel.org/r/20250814102100.151942-3-rongqianfeng%40vivo.com
+patch subject: [PATCH v2 2/3] nfp: flower: use vmalloc_array() to simplify code
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250816/202508161307.IWBBnNXY-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161307.IWBBnNXY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508161307.IWBBnNXY-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/vmalloc.h:5,
+                    from drivers/net/ethernet/netronome/nfp/flower/metadata.c:8:
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c: In function 'nfp_flower_metadata_init':
+>> include/linux/stddef.h:24:42: warning: 'vmalloc_array_noprof' sizes specified with 'sizeof' in the earlier argument and not in the later argument [-Wcalloc-transposed-args]
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:239:16: note: in definition of macro 'alloc_hooks_tag'
+     239 |         typeof(_do_alloc) _res;                                         \
+         |                ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+   include/linux/stddef.h:24:42: note: earlier argument should specify number of elements, later size of each element
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:239:16: note: in definition of macro 'alloc_hooks_tag'
+     239 |         typeof(_do_alloc) _res;                                         \
+         |                ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/stddef.h:24:42: warning: 'vmalloc_array_noprof' sizes specified with 'sizeof' in the earlier argument and not in the later argument [-Wcalloc-transposed-args]
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:243:24: note: in definition of macro 'alloc_hooks_tag'
+     243 |                 _res = _do_alloc;                                       \
+         |                        ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+   include/linux/stddef.h:24:42: note: earlier argument should specify number of elements, later size of each element
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:243:24: note: in definition of macro 'alloc_hooks_tag'
+     243 |                 _res = _do_alloc;                                       \
+         |                        ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/stddef.h:24:42: warning: 'vmalloc_array_noprof' sizes specified with 'sizeof' in the earlier argument and not in the later argument [-Wcalloc-transposed-args]
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:246:24: note: in definition of macro 'alloc_hooks_tag'
+     246 |                 _res = _do_alloc;                                       \
+         |                        ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+   include/linux/stddef.h:24:42: note: earlier argument should specify number of elements, later size of each element
+      24 | #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+         |                                          ^
+   include/linux/alloc_tag.h:246:24: note: in definition of macro 'alloc_hooks_tag'
+     246 |                 _res = _do_alloc;                                       \
+         |                        ^~~~~~~~~
+   include/linux/vmalloc.h:192:33: note: in expansion of macro 'alloc_hooks'
+     192 | #define vmalloc_array(...)      alloc_hooks(vmalloc_array_noprof(__VA_ARGS__))
+         |                                 ^~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:17: note: in expansion of macro 'vmalloc_array'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                 ^~~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/main.h:29:41: note: in expansion of macro 'sizeof_field'
+      29 | #define NFP_FL_STATS_ELEM_RS            sizeof_field(struct nfp_fl_stats_id, \
+         |                                         ^~~~~~~~~~~~
+   drivers/net/ethernet/netronome/nfp/flower/metadata.c:567:31: note: in expansion of macro 'NFP_FL_STATS_ELEM_RS'
+     567 |                 vmalloc_array(NFP_FL_STATS_ELEM_RS,
+         |                               ^~~~~~~~~~~~~~~~~~~~
+
+
+vim +24 include/linux/stddef.h
+
+3876488444e712 Denys Vlasenko 2015-03-09  17  
+4229a470175be1 Kees Cook      2018-01-10  18  /**
+e7f18c22e6bea2 Kees Cook      2021-08-19  19   * sizeof_field() - Report the size of a struct field in bytes
+4229a470175be1 Kees Cook      2018-01-10  20   *
+4229a470175be1 Kees Cook      2018-01-10  21   * @TYPE: The structure containing the field of interest
+4229a470175be1 Kees Cook      2018-01-10  22   * @MEMBER: The field to return the size of
+4229a470175be1 Kees Cook      2018-01-10  23   */
+4229a470175be1 Kees Cook      2018-01-10 @24  #define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+4229a470175be1 Kees Cook      2018-01-10  25  
 
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
