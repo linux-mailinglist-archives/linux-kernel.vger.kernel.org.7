@@ -1,105 +1,81 @@
-Return-Path: <linux-kernel+bounces-771591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AB0B28923
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB96B28926
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1452B7AEEB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AB6A21D59
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DCD23AD;
-	Sat, 16 Aug 2025 00:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPovdOdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68006C8CE;
+	Sat, 16 Aug 2025 00:16:38 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257FE10E9
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EE915A8
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755303259; cv=none; b=GoBdZvukTUGmiJq1Acwz63ZAwDrMuTEuSvAjMWqd1ojbRJzx+xPD/4UoLnwqKmHPlRO9DRL9OY7aKZ5xCtW+ABC2Q6+2YOAG+MF3c6qkMaP/YXDcZruAup2wZ66+pdUm5A9v7kKHls2OWC8Z2R7tWFKodqTplpBhe/9a6piO0p4=
+	t=1755303398; cv=none; b=eLOKSCe8JXwOuBWsLkslrlHuMYjsOqiI/MFk2J8HySpeWbsrM6zFeifbEkkM+KkkyHUwwzzdKcxg8sweyTkSOBaEn2jem/B0fZIzVKQsqEDWXoUxoDBhRH1uBFICIh9lLkpYkT+RTCyaBRB1HtrULnvwDEy/g69S6GXp5xXq6xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755303259; c=relaxed/simple;
-	bh=9E2a9HWM2TF4Tj0nfz+ge7orBtJMia0qs6lVy6H72Uk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FOhiYEUTxUpGHXvPxxmO7uy1WsgTEuvVv8Q6aPUHOVd97nmjgYvffTuehxZtfiIEfKqMIOKDcyoh3bC1G7alj9njaMRAAeLgsKH30/XIZV9Kgto97p2zQGNHtPt23TgDPDgVzSAG30CKkfNnbc2QLT3/7GRAiGtuH/xE5TXhJ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPovdOdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6042C4CEEB;
-	Sat, 16 Aug 2025 00:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755303259;
-	bh=9E2a9HWM2TF4Tj0nfz+ge7orBtJMia0qs6lVy6H72Uk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bPovdOdIU5s2hlab5l0iRg9GNOXSYe+UJajnz7CYXVCGaiKTBsmn4ltLuC5FVzWku
-	 g/++t835BnUWvSCh2conBRqalW1wxqp+fs2XFwzk7raKTuh+4TEnWnXXnmVnCAbHbF
-	 Ki2SeSPxdyYFyZEtT4b+5Wnzo66tzwoRg1Mo7NmPPVcx6FIzHu1ihDvzul0dfbjxzx
-	 cJkzum5cQeNpvmyE1YjuSHA+FmhInXbybAjGZG/gWRxerBrHOz+DjCYChEc3TzusPO
-	 GeMnS4R72PFkMsxh6VhAOhJwXRFZJhtTuvITLqkpdgC2rZQvg5v44eC1r0bUUJ1tw6
-	 rWsgfxYrtJqmQ==
-From: SeongJae Park <sj@kernel.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Chris Li <chrisl@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>,
-	Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page as-is
-Date: Fri, 15 Aug 2025 17:14:15 -0700
-Message-Id: <20250816001415.90915-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAKEwX=Mtu3KyNUv_oWFo9vNiWKkmbzMXmG3t=XgpVtG9C_v2mA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1755303398; c=relaxed/simple;
+	bh=y8isc9z85O0HGhdnNW3E2I+l3vWgPGE5+cOMZia7esY=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=q2HS+B2uIIQvqKFR0e/uFWYzR1G01qSH1oLSlTQPkJWpk0E6wtJed2jnMmE9dMpvd5Vfgdh/t9XHqFMR8w2FH6FC6pDsYllAZhObhgHpOKLPv5Wl6mJcQ2MTa1JFm0CAJBGrWhG88o6bRyp6pAnNeh6BosZ7BPr7AvdMa82lYUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>,
+	"peterz@infradead.org" <peterz@infradead.org>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "david.kaplan@amd.com"
+	<david.kaplan@amd.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Re: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for
+ CPUs without ARCH_CAP_GDS_CTRL
+Thread-Topic: Re: [????] Re: [PATCH] x86/bugs: Fix GDS mitigation check for
+ CPUs without ARCH_CAP_GDS_CTRL
+Thread-Index: AdwOQrts3RmaX2f/Rn6fQ4EXML6jwA==
+Date: Sat, 16 Aug 2025 00:15:20 +0000
+Message-ID: <2a53cf1c48b44ea4b12debeed7521d50@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-FEAS-Client-IP: 172.31.50.48
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Fri, 15 Aug 2025 16:08:50 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
-
-> On Fri, Aug 15, 2025 at 3:29 PM Chris Li <chrisl@kernel.org> wrote:
-> >
-> > On Wed, Aug 13, 2025 at 11:20 AM SeongJae Park <sj@kernel.org> wrote:
-[...]
-> > I slept over it a bit. Now I think we should make this a counter of
-> > how many uncompressed pages count stored in zswap. Preperbelly as per
-> > memcg counter.
-> 
-> Actually, yeah I asked about this counter in a review in an earlier
-> version as well, then I completely forgot about it :)
-> 
-> 
-> > I saw that you implement it as a counter in your V1. Does the zsmalloc
-> > already track this information in the zspool class? Having this per
-> 
-> Kinda sorta. If we build the kernel with CONFIG_ZSMALLOC_STAT, we can
-> get the number of objects in each size_class.
-> 
-> Each time we read, I believe we have to read every size class though.
-> So it's kinda annoying. Whereas here, we can just read an atomic
-> counter? :)
-
-Sounds good.  So in the next version (v4), I will drop compress_fail.  Instead,
-I will add two new counters, namely compress_engine_fail and the new atomic
-counter, say, stored_uncompressed_pages.  Please suggest better names or
-correct me if I'm missing some of your points.
-
-
-Thanks,
-SJ
-
-[...]
+DQo+IA0KPiBIb3cgaXMgdGhhdCBhIHByb2JsZW0/IFRoYXQgaXMgaG93IGl0IHdhcyBvcmlnaW5h
+bGx5IGltcGxlbWVudGVkLg0KPiANCj4gSW5mYWN0LCB0aGUgZm9sbG93aW5nIGNoZWNrcyBhcmUg
+cmVxdWlyZWQgZm9yIHRoZSBjb3JyZWN0IGJlaGF2aW9yOg0KDQoNCllvdSBhcmUgcmlnaHQsIEkg
+d2lsbCByZXNlbmQgdGhpcyBwYXRjaA0KDQpUaGFua3MNCg0KLUxpDQoNCj4gDQo+ICAgICAgICAg
+IGlmIChtY3VfY3RybCAmIEdEU19NSVRHX0xPQ0tFRCkgew0KPiAgICAgICAgICAgICAgICAgIGlm
+IChnZHNfbWl0aWdhdGlvbiA9PSBHRFNfTUlUSUdBVElPTl9PRkYpDQo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICBwcl93YXJuKCJNaXRpZ2F0aW9uIGxvY2tlZC4gRGlzYWJsZSBmYWlsZWQuXG4i
+KTsNCj4gCS4uLg0KPiAgICAgICAgICAgICAgICAgIGdkc19taXRpZ2F0aW9uID0gR0RTX01JVElH
+QVRJT05fRlVMTF9MT0NLRUQ7DQo+ICAgICAgICAgIH0NCj4gDQo+IElmIHRoZSBHRFMgbWljcm9j
+b2RlIG1pdGlnYXRpb24gaXMgbG9ja2VkIGJlZm9yZSB0aGUga2VybmVsIGJvb3QsIE1TUiB3cml0
+ZSBmb3INCj4gT0ZGIHdpbGwgbm90IHRha2UgZWZmZWN0IGFueXdheXMuIEFuZCB5b3UgcmVwb3J0
+IE9GRiB3aGVuIHRoZSBtaXRpZ2F0aW9uIGlzDQo+IGxvY2tlZCB0byBPTi4gV2hpbGUgYWxzbyB0
+cmlnZ2VyaW5nIGJlbG93IFdBUk5fT05fT05DRSgpOg0KPiANCj4gdXBkYXRlX2dkc19tc3IoKQ0K
+PiB7DQo+IC4uLg0KPiAgICAgICAgICAvKg0KPiAgICAgICAgICAgKiBDaGVjayB0byBtYWtlIHN1
+cmUgdGhhdCB0aGUgV1JNU1IgdmFsdWUgd2FzIG5vdCBpZ25vcmVkLg0KPiBXcml0ZXMgdG8NCj4g
+ICAgICAgICAgICogR0RTX01JVEdfRElTIHdpbGwgYmUgaWdub3JlZCBpZiB0aGlzIHByb2Nlc3Nv
+ciBpcyBsb2NrZWQgYnV0IHRoZQ0KPiBib290DQo+ICAgICAgICAgICAqIHByb2Nlc3NvciB3YXMg
+bm90Lg0KPiAgICAgICAgICAgKi8NCj4gICAgICAgICAgcmRtc3JxKE1TUl9JQTMyX01DVV9PUFRf
+Q1RSTCwgbWN1X2N0cmxfYWZ0ZXIpOw0KPiAgICAgICAgICBXQVJOX09OX09OQ0UobWN1X2N0cmwg
+IT0gbWN1X2N0cmxfYWZ0ZXIpOw0K
 
