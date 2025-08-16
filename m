@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-771983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761BBB28D7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB44B28D7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D068AE408F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB528A28AE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A0B28D845;
-	Sat, 16 Aug 2025 11:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B475B2DC343;
+	Sat, 16 Aug 2025 11:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KocMUYbU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cL15tGnf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62B1E86E;
-	Sat, 16 Aug 2025 11:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D523504B;
+	Sat, 16 Aug 2025 11:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755344804; cv=none; b=e75HCrCA2EojxkFJEknQtEy/D7LiCDY5O7Lmcbdj+o0fF8+Wz7TJXxdjAvLU6T+Vueo12+l9Xopq1c7Hxo6y7i6BByxjRH25CpA+iOAE6q/v3i4oA2OzSqS9SkdZ5H88kWKLVPzWFLMI8D4pDs0f7vQ4f9COqx+xGv1iJkH0Qq8=
+	t=1755345344; cv=none; b=fcbJmp4SJMN3YYxZoXHJ5H4z8uEF3dm5wOiGZ7l7abWapvINCxxv5MiClaLFmLtPmuhGdJCtLV/okCpzIWxWTYpiHYYIubjcBIspat7vcoEjx3d+/Xo9Ayy1OiyYKDzdJm7AwKWM8ctdZu71jMG7ZQ/6PCKLe4O86fSsgunZ6t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755344804; c=relaxed/simple;
-	bh=1FVmfOCJ+0AHBlBlpMw9ZwYRde40J1MucEDpJcZAeqU=;
+	s=arc-20240116; t=1755345344; c=relaxed/simple;
+	bh=ANncU8lgObSWtg5ScydN7E+de1qMSShz6qNo14jNZhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AqcykiRbIhxS/SyYUpi7x2yafbDxj1FiWl1fXcclkNE7Z9p3kFtgDAAzyVVoKGWMGsaQ5thR0IBhsMxJEwVAlCedBqY/xbrBh2/I4DlEirtJar925/ulfDWK5g4bQsp1Vvqs51oMrxazGrm4EHYEZgWHmHn5LEyAHKSdN/4G/ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KocMUYbU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A42C4CEEF;
-	Sat, 16 Aug 2025 11:46:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=m1gwhw5YBEtbJrp0m/+TGQxZKsg//3P8hZgh6yG7eptbAigb35z3iBQcJ78NoSptPtLgZ18W32BQJ/+sTAkWQezcwz7bWFZDp/6kNSfrVC2BmynDIvzfwJj6dHpdPjcZQ3Y8ELMMmQ163cSxbwCdTJfBozboRJWNdYx6QqizuyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cL15tGnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E83C4CEEF;
+	Sat, 16 Aug 2025 11:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755344803;
-	bh=1FVmfOCJ+0AHBlBlpMw9ZwYRde40J1MucEDpJcZAeqU=;
+	s=k20201202; t=1755345342;
+	bh=ANncU8lgObSWtg5ScydN7E+de1qMSShz6qNo14jNZhA=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KocMUYbUBptZAskemnUDG75AaIgs/NyHHwE5xX5GY5q+NyrEtsfRE1aUdLMQ9KW2e
-	 ujmhXWf5kJIQ9M2Q022D/x/PVx0VgWeJkxKA2v/iPfJqbe3Y81otESobw+AKdk+lTp
-	 WlpY+eUGWau+i4tDpEMpgXm7FAc5GDRw9NrVkUYTK4g3BKGOX7gClD2TIwPw8nBZ6H
-	 mV7Zbsrzt8D5VJh0k/H/84tlctF5gmG9pNGmcHIRFjd2SiAPo5AQEhW6fz2ErmSieI
-	 nN0jWymgDRaDBxU7ldVT+BChO4wk0JqpxZOM6noaSdtGhyEd9RMnskUuZsd/mkuhVV
-	 SzMJrjZEZOVhQ==
-Date: Sat, 16 Aug 2025 12:46:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/9] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <20250816124634.692e1b55@jic23-huawei>
-In-Reply-To: <20250814-add_newport_driver-v4-2-4464b6600972@tdk.com>
-References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
-	<20250814-add_newport_driver-v4-2-4464b6600972@tdk.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	b=cL15tGnft5wKH0WmD8E3AMOGQ3MhXAEIExnCsgqEIQxXM1rrubwGeS8vRnLLwmc8c
+	 wLUBI+LBT2w6kPkzeBlVqPJvRnSJsx28L7Euj5H3cjhRPMI7uRdAOzZwyjjitFfxta
+	 eCA47ClZG2uzJMWmq3mZtPYkWdnJYKtkA/+ORP04qjgYWnhSVKTWcQP4w/kqI1mupO
+	 CW2x/MOwljaPR7TQTuyArGf7+qD7F/aoYncnIaSPO28awPBlr2poNMe/JFIb+phWC/
+	 pOLplEpO7rKt+M1qp8BTVJwDw1JdkQDhdusAexdUsoCl/QJweg2YnPlTvGi2u24Yhm
+	 uc03nl/ptghfQ==
+Date: Sat, 16 Aug 2025 13:55:38 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: bpf@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+Message-ID: <20250816135538.733b80d3@foz.lan>
+In-Reply-To: <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,358 +60,194 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 14 Aug 2025 08:57:16 +0000
-Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
+Em Sat, 16 Aug 2025 14:06:43 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-> From: Remi Buisson <remi.buisson@tdk.com>
+> [-CC most folks]
 > 
-> Core component of a new driver for InvenSense ICM-45600 devices.
-> It includes registers definition, main probe/setup, and device
-> utility functions.
+> Hi Mauro,
 > 
-> ICM-456xx devices are latest generation of 6-axis IMU,
-> gyroscope+accelerometer and temperature sensor. This device
-> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
-> intelligent motion features like pedometer, tilt detection,
-> and tap detection.
+> On Fri, 15 Aug 2025 13:36:16 +0200, Mauro Carvalho Chehab wrote:
+> > Hi Jon,
+> > 
+> > This series touch only on three files, and have a small diffstat:
+> > 
+> >    Documentation/Makefile     |    4 -
+> >    Documentation/conf.py      |  106 +++++++++++++++++++++----------------
+> >    scripts/sphinx-pre-install |   41 +++++++++++---
+> >    3 files changed, 96 insertions(+), 55 deletions(-)
+> > 
+> > Yet, it took a lot of my time.  Basically, it addresses lots of problems  related
+> > with building PDF docs:
+> > 
+> > - Makefile has a wrong set of definitions for paper size. It was
+> >   using pre-1.7 Sphinx nomenclature for some conf vars;
+> > - The LaTeX options a conf.py had lots of issues;
+> > - Finally, some PDF package dependencies for distros were wrong.
+> > 
+> > I wrote an entire testbench to test this and doing builds on every
+> > platform mentioned at sphinx-pre-install. 
+> > 
+> > After the change *most* PDF files are built on *most* platforms. 
+> > 
+> > 
+> > Summary
+> > =======
+> >   PASSED - AlmaLinux release 9.6 (Sage Margay) (7 tests)
+> >   PASSED - Amazon Linux release 2023 (Amazon Linux) (7 tests)
+> >   FAILED - archlinux (1 tests)
+> >   PASSED - CentOS Stream release 9 (7 tests)
+> >   PARTIAL - Debian GNU/Linux 12 (7 tests)
+> >   PARTIAL - Devuan GNU/Linux 5 (7 tests)
+> >   PASSED - Fedora release 42 (Adams) (7 tests)
+> >   PARTIAL - Gentoo Base System release 2.17 (7 tests)
+> >   PASSED - Kali GNU/Linux 2025.2 (7 tests)
+> >   PASSED - Mageia 9 (7 tests)
+> >   PARTIAL - Linux Mint 22 (7 tests)
+> >   PARTIAL - openEuler release 25.03 (7 tests)
+> >   PARTIAL - OpenMandriva Lx 4.3 (7 tests)
+> >   PASSED - openSUSE Leap 15.6 (7 tests)
+> >   PASSED - openSUSE Tumbleweed (7 tests)
+> >   PARTIAL - Oracle Linux Server release 9.6 (7 tests)
+> >   FAILED - Red Hat Enterprise Linux release 8.10 (Ootpa) (7 tests)
+> >   PARTIAL - Rocky Linux release 8.9 (Green Obsidian) (7 tests)
+> >   PARTIAL - Rocky Linux release 9.6 (Blue Onyx) (7 tests)
+> >   FAILED - Springdale Open Enterprise Linux release 9.2 (Parma) (7 tests)
+> >   PARTIAL - Ubuntu 24.04.2 LTS (7 tests)
+> >   PASSED - Ubuntu 25.04 (7 tests)
+> > 
+> > The failed distros are:
+> > 
+> > - archlinux. This is some problem on recent lxc containers. Unrelated
+> >   with pdf builds;
+> > - RHEL 8: paywall issue: some packages required by Sphinx require a repository
+> >   that it is not openly available. I might have using CentOS repos, but, as we're
+> >   already testing it, I opted not do do it;
+> > - Springdale 9.2: some broken package dependency.
+> > 
+> > Now, if you look at the full logs below, you'll see that some distros come with
+> > XeLaTeX or LaTeX troubles, causing bigger and/or more complex docs to
+> > fail. It is possible to fix those, but they depend on addressing distro-specific
+> > LaTeX issues like increasing maximum memory limits and maximum number
+> > of idented paragraphs.  
 > 
-> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
-Hi Remi,
+> No, the trouble is failed conversion of SVG --> PDF by convert(1) + rsvg-convert(1).
+> Failed conversions trigger huge raw SVG code to be included literally into LaTeX
+> sources, which results in code listings too huge to be rendered in a page; and
+> overwhelms xelatex.
 
-Coming together well.  A few additional comments inline from a fresh read.
+I remember we had some cases of too large items on media uAPI. There,
+the problem were mostly on tables. The fix was to add several LaTeX
+specific commands:
 
-Jonathan
+	$ git grep -i "raw:: latex" Documentation/userspace-api/media/|wc -l
+	201
 
-> ---
->  drivers/iio/imu/Kconfig                          |   1 +
->  drivers/iio/imu/Makefile                         |   1 +
->  drivers/iio/imu/inv_icm45600/Kconfig             |   5 +
->  drivers/iio/imu/inv_icm45600/Makefile            |   4 +
->  drivers/iio/imu/inv_icm45600/inv_icm45600.h      | 364 ++++++++++++
->  drivers/iio/imu/inv_icm45600/inv_icm45600_core.c | 702 +++++++++++++++++++++++
->  6 files changed, 1077 insertions(+)
+Currently, they all are just changing font size, but 
 
+We also use less-ugly things like Sphinx PDF builder specific
+classes:
 
-> diff --git a/drivers/iio/imu/inv_icm45600/Makefile b/drivers/iio/imu/inv_icm45600/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4f442b61896e91647c7947a044949792bae06a30
-> --- /dev/null
-> +++ b/drivers/iio/imu/inv_icm45600/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +obj-$(CONFIG_INV_ICM45600) += inv-icm45600.o
-> +inv-icm45600-y += inv_icm45600_core.o
-> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600.h b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e0304f35d32a078d4b9c260b2c6c29601583a429
-> --- /dev/null
-> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
-> @@ -0,0 +1,364 @@
+	.. cssclass:: longtable
 
-> +struct iio_dev *inv_icm45600_gyro_init(struct inv_icm45600_state *st);
-> +
-> +int inv_icm45600_gyro_parse_fifo(struct iio_dev *indio_dev);
-> +
-> +struct iio_dev *inv_icm45600_accel_init(struct inv_icm45600_state *st);
-> +
-> +int inv_icm45600_accel_parse_fifo(struct iio_dev *indio_dev);
+So, one alternative would be to look at techniques to auto-scale
+image, like:
 
-Some of this stuff isn't defined yet. Move the definitions to the patch where they are.
+	\usepackage{pdfpages}
+	...
+	\includepdf{image.png}
 
-> +
-> +#endif
-> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..0fdf86cdfe547357d2b74d9c97092e9a1e5722a8
-> --- /dev/null
-> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
-> @@ -0,0 +1,702 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/* Copyright (C) 2025 Invensense, Inc. */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
+as proposed here:
 
-Bring headers in as they are used during the patch set.
-Not seeing an irqs yet.
+	https://tex.stackexchange.com/questions/39147/scale-image-to-page-width
 
-> +#include <linux/limits.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/types.h>
-> +
-> +#include "inv_icm45600.h"
-> +
-> +static int inv_icm45600_ireg_read(struct regmap *map, unsigned int reg,
-> +				   u8 *data, size_t count)
-> +{
-> +	int ret;
-> +	u8 addr[2];
-> +	ssize_t i;
-> +	unsigned int d;
-> +
-> +	addr[0] = FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg);
-> +	addr[1] = FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg);
-> +
-> +	/* Burst write address. */
-> +	ret = regmap_bulk_write(map, INV_ICM45600_REG_IREG_ADDR, addr, sizeof(addr));
+Yet, we tried something like that before to auto-scale tables,
+overriding Sphinx Latex macros. It worked for a couple of sphinx versions, 
+but maintaining it was hard, as newer versions of Sphinx came with different
+macro names or different behaviors.
 
-addr is on the stack, so not DMA safe for the bulk write.  I haven't checked
-though if you have it bounced in the regmap implementation.
+Heh, if you check:
+	https://www.sphinx-doc.org/en/master/latex.html#additional-css-like-sphinxsetup-keys
 
-> +	/* Wait while the device is busy processing the address. */
-> +	fsleep(INV_ICM45600_IREG_DELAY_US);
-> +	if (ret)
-> +		return ret;
+You'll see that sphinx latex builder have been suffering lots of changes
+over time.
 
+> IIUC, kfigure.py does such fallbacks of failed PDF conversions.  Mightn't it be
+> better to give up early in the latexdocs stage?
 
+Makes sense to me.
 
-> +u32 inv_icm45600_odr_to_period(enum inv_icm45600_odr odr)
-> +{
-> +	static u32 odr_periods[INV_ICM45600_ODR_MAX] = {
-> +		/* reserved values */
-> +		0, 0, 0,
-> +		/* 6.4kHz */
+> > It follows full results per distro.  
+> 
+> [Ignoring lengthy list of results...]
+> 
+> I think all you need to test build against are the limited list of:
+> 
+>     - arch.pdf
+>     - core-api.pdf
+>     - doc-guide.pdf
+>     - gpu.pdf
+>     - i2c.pdf
+>     - RCU.pdf
+>     - translations.pdf
+>     - userspace-api.pdf
+> 
+> All of them have figures in SVG, and latexdocs tries to convert them
+> into PDF.
+> 
+> Probably, recommending Inkscape rather than ImageMagick would be the right
+> thing, at least where it is provided as a distro package.
 
-Given very short comments, perhaps
-		0, 0, 0, /* reserved */
-		156250, /* 6.4kHz */
-etc, just to reduce screen scrolling.
+Works for me, but let's do it on a separate series. I still have more
+than 100 patches on my pile to be merged. This series is focused on
+making at least some PDFs to build where possible, addressing major
+problems at conf.py that are causing LaTeX to not work on several
+distros and to fix wrong package dependencies(*).
 
-Also, might as well mark it const.
+I'll add a TODO item on my queue to replace fom ImageMagick to
+Inkscape on a separate series.
 
+(*) One of such problem you blamed sphinx-build-wrapper, but 
+    the issue is actually addressed on this series with fixes to conf.py: 
+    there are currently several troubles at latex_documents list and at
+    latex_elements.
 
-> +		156250,
-> +		/* 3.2kHz */
-> +		312500,
-> +		/* 1.6kHz */
-> +		625000,
-> +		/* 800kHz */
-> +		1250000,
-> +		/* 400Hz */
-> +		2500000,
-> +		/* 200Hz */
-> +		5000000,
-> +		/* 100Hz */
-> +		10000000,
-> +		/* 50Hz */
-> +		20000000,
-> +		/* 25Hz */
-> +		40000000,
-> +		/* 12.5Hz */
-> +		80000000,
-> +		/* 6.25Hz */
-> +		160000000,
-> +		/* 3.125Hz */
-> +		320000000,
-> +		/* 1.5625Hz */
-> +		640000000,
-> +	};
-> +
-> +	return odr_periods[odr];
-> +}
-> +
-> +static int inv_icm45600_set_pwr_mgmt0(struct inv_icm45600_state *st,
-> +				      enum inv_icm45600_sensor_mode gyro,
-> +				      enum inv_icm45600_sensor_mode accel,
-> +				      unsigned int *sleep_ms)
-> +{
-> +	enum inv_icm45600_sensor_mode oldgyro = st->conf.gyro.mode;
-> +	enum inv_icm45600_sensor_mode oldaccel = st->conf.accel.mode;
-> +	unsigned int sleepval;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	/* if nothing changed, exit */
-> +	if (gyro == oldgyro && accel == oldaccel)
-> +		return 0;
-> +
-> +	val = FIELD_PREP(INV_ICM45600_PWR_MGMT0_GYRO_MODE_MASK, gyro) |
-> +	      FIELD_PREP(INV_ICM45600_PWR_MGMT0_ACCEL_MODE_MASK, accel);
-> +	ret = regmap_write(st->map, INV_ICM45600_REG_PWR_MGMT0, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->conf.gyro.mode = gyro;
-> +	st->conf.accel.mode = accel;
-> +
-> +	/* Compute the required wait time for sensors to stabilize. */
-> +	sleepval = 0;
-> +
-> +	/* Accel startup time. */
-> +	if (accel != oldaccel && oldaccel == INV_ICM45600_SENSOR_MODE_OFF) {
-> +		if (sleepval < INV_ICM45600_ACCEL_STARTUP_TIME_MS)
-> +			sleepval = INV_ICM45600_ACCEL_STARTUP_TIME_MS;
+    Those are causing wrong font detection on LaTeX. Maybe the corrupted
+    font issues you got are related to it.
 
-		sleepval = max(sleepval, INV_ICM...
+    It took me a lot of time to set latex_elements in a way that
+    it now works fine. The main keys related to it are those:
 
-> +	}
-> +	if (gyro != oldgyro) {
-> +		/* Gyro startup time. */
-> +		if (oldgyro == INV_ICM45600_SENSOR_MODE_OFF) {
-> +			if (sleepval < INV_ICM45600_GYRO_STARTUP_TIME_MS)
-> +				sleepval = INV_ICM45600_GYRO_STARTUP_TIME_MS;
-similar
-> +		/* Gyro stop time. */
-> +		} else if (gyro == INV_ICM45600_SENSOR_MODE_OFF) {
-> +			if (sleepval < INV_ICM45600_GYRO_STOP_TIME_MS)
-> +				sleepval =  INV_ICM45600_GYRO_STOP_TIME_MS;
-and here as well.
+	"passoptionstopackages": dedent(r"""
+	        \PassOptionsToPackage{svgnames}{xcolor}
+	        % Avoid encoding troubles when creating indexes
+	        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
+	    """),
+	"fontenc": "",
+	'fontpkg': dedent(r'''
+	        \usepackage{fontspec}
+	        \setmainfont{DejaVu Serif}
+	        \setsansfont{DejaVu Sans}
+	        \setmonofont{DejaVu Sans Mono}
+	        \newfontfamily\headingfont{DejaVu Serif}
+	'''),
 
-> +		}
-> +	}
-> +
-> +	/* Deferred sleep value if sleep pointer is provided or direct sleep */
-> +	if (sleep_ms)
-> +		*sleep_ms = sleepval;
-> +	else if (sleepval)
-> +		msleep(sleepval);
-> +
-> +	return 0;
-> +}
+    You can't imagine how much hours it took to get the above
+    lines right ;-)
 
+    Basically, "fontenc" and "fontpkg" are two different ways
+    that LaTeX use to include true-type fonts. We need to disable the 
+    first, as otherwise it will try to use both, which may result in 
+    incompatible fonts (On Debian, LaTeX build reports corrupted fonts 
+    on T1 fontenc set - preventing PDF builds). The actual messge there
+    is:
 
-> +int inv_icm45600_core_probe(struct regmap *regmap, const struct inv_icm45600_chip_info *chip_info,
-> +				bool reset, inv_icm45600_bus_setup bus_setup)
-> +{
-> +	struct device *dev = regmap_get_device(regmap);
-> +	struct fwnode_handle *fwnode;
-> +	struct inv_icm45600_state *st;
-> +	struct regmap *regmap_custom;
-> +	int ret;
-> +
-> +	/* Get INT1 only supported interrupt. */
+	! Corrupted NFSS tables
 
-Not seeing relevance of comment to this code.
+    Btw, just disabling fontenc there was not enough, as babel was still
+    trying to load a T1 Polish font indirectly used by Sphinx hyphenation
+    macros. I had to add \newfontfamily to fix such issue.
 
-> +	fwnode = dev_fwnode(dev);
-> +	if (!fwnode)
-
-Why do you need to check this here, rather than just letting it fail later?
-
-> +		return dev_err_probe(dev, -ENODEV, "Missing FW node\n");
-> +
-> +	regmap_custom = devm_regmap_init(dev, &inv_icm45600_regmap_bus,
-> +					 regmap, &inv_icm45600_regmap_config);
-> +	if (IS_ERR(regmap_custom))
-> +		return dev_err_probe(dev, PTR_ERR(regmap_custom), "Failed to register regmap\n");
-> +
-> +	st = devm_kzalloc(dev, sizeof(*st), GFP_KERNEL);
-> +	if (!st)
-> +		return dev_err_probe(dev, -ENOMEM, "Cannot allocate memory\n");
-> +
-> +	dev_set_drvdata(dev, st);
-> +
-> +	ret = devm_mutex_init(dev, &st->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->map = regmap_custom;
-> +
-> +	ret = iio_read_mount_matrix(dev, &st->orientation);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to retrieve mounting matrix\n");
-> +
-> +	st->vddio_supply = devm_regulator_get(dev, "vddio");
-> +	if (IS_ERR(st->vddio_supply))
-> +		return PTR_ERR(st->vddio_supply);
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get vdd regulator\n");
-> +
-> +	/* IMU start-up time. */
-> +	fsleep(100000);
-> +
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-
-You may need to enforce runtime PM being enabled / built or add some fallback code.
-I think right now vddio will never be turned on if we have runtime PM disabled.
-
-That then leads into annoyingly fiddly code to turn it off again as we have
-to verify it isn't already off due to runtime pm in the path that is only there
-for non runtime pm.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = inv_icm45600_setup(st, chip_info, reset, bus_setup);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = inv_icm45600_timestamp_setup(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Suspend after 2 seconds. */
-> +	pm_runtime_set_autosuspend_delay(dev, 2000);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_put(dev);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(inv_icm45600_core_probe, "IIO_ICM45600");
-> +
-> +/*
-> + * Suspend saves sensors state and turns everything off.
-> + * Check first if runtime suspend has not already done the job.
-No explicit 'check' any more.  force suspend is dealing with that
-for you, so probably drop this doc or maybe update it.
-> + */
-> +static int inv_icm45600_suspend(struct device *dev)
-> +{
-> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	scoped_guard(mutex, &st->lock) {
-> +
-drop this blank line.
-
-> +		st->suspended.gyro = st->conf.gyro.mode;
-> +		st->suspended.accel = st->conf.accel.mode;
-> +	}
-> +
-> +	return pm_runtime_force_suspend(dev);
-> +}
-> +
-> +/*
-> + * System resume gets the system back on and restores the sensors state.
-> + * Manually put runtime power management in system active state.
-> + */
-> +static int inv_icm45600_resume(struct device *dev)
-> +{
-> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
-> +	struct inv_icm45600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
-> +	struct inv_icm45600_sensor_state *accel_st = iio_priv(st->indio_accel);
-
-Bring these in when they are needed.  Probably next patch but I haven't checked.
-
-> +	int ret = 0;
-> +
-> +	ret = pm_runtime_force_resume(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	scoped_guard(mutex, &st->lock)
-> +		/* Restore sensors state. */
-> +		ret = inv_icm45600_set_pwr_mgmt0(st, st->suspended.gyro,
-> +						st->suspended.accel, NULL);
-> +
-> +	return ret;
-> +}
-
+Thanks,
+Mauro
 
