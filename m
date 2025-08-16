@@ -1,131 +1,160 @@
-Return-Path: <linux-kernel+bounces-771889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA4AB28C95
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:49:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70146B28C97
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567031C85FEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CAC5C7E87
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754BF28A40C;
-	Sat, 16 Aug 2025 09:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554F128A402;
+	Sat, 16 Aug 2025 09:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehuGdz9z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fI8czEog"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B871AA1D9;
-	Sat, 16 Aug 2025 09:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3B715E97;
+	Sat, 16 Aug 2025 09:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755337791; cv=none; b=agtdKiHabxFSNbjg6mnUnKdt+x4hDRZIqu3xpcMArWJKQCRpe6EFe7m8QfdpgeX32PxcEsHwUOPFT1A+XgeR3LiZ/+gJmjpu73Bu1heuaEK4nQCWThuxrgmDGm/WALkBnFzdioyMKlh0kNxJScpkMxVwTFNZbmU5oNunNEbWoDI=
+	t=1755338057; cv=none; b=jcaJqP+MnxTYaYWWxGPZdGP0qriVGb8ghj3BrKfERoIkLugZMBX/40ogCZKCxgTEyyVh7ozgJBjysgCUGS70dslORVtbj8pCNtCkNedMJXUNSgHGrKJF6CoQ0tregX4bO0+YQcGXVvzEf2MZpQUK8Vj3aMm+3/Za9VzrCKKzXRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755337791; c=relaxed/simple;
-	bh=leJ+kLeCoibTebWAlijl6gV/kTK3C57W2w0vK32dMLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=th8pxfbhknDfUAR0/flHWucw5sDfhZePIM82tiZKEnVc0b5gfCh0JtIs/gKDVy1F+B9qACJUQM5l4OTeaZmtXiAZooxIJP5p/7wo7TqnyAQAiy+NPETf4plv9CmWjAoQt/LlIuxCWPI4RiSplyj/i/JMq6XPMiVpEYKNxbI0gF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehuGdz9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEAE9C4CEEF;
-	Sat, 16 Aug 2025 09:49:47 +0000 (UTC)
+	s=arc-20240116; t=1755338057; c=relaxed/simple;
+	bh=NtLH2o5zFdwL8qLnkv2fWmiwgZJi4KCQFqICzRQxE4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f9Dd52TdIq1U91YLG5BKhA8mim3ZmIKOcnbkqD5GY6T8iHuPce39mtdqFw4gWJ/d7H3R2W+fooubKOQzCpiQE2JxJgZOkQRsPuCOx71glWLy177Ilfs/6Yi6suzKI5dMMgrM0268uZ0toft4M2DAViLPYCQkbyJO1/lqIHHuSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fI8czEog; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9724C4CEEF;
+	Sat, 16 Aug 2025 09:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755337791;
-	bh=leJ+kLeCoibTebWAlijl6gV/kTK3C57W2w0vK32dMLk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ehuGdz9zmRfK+sP1ZrB0lH3OwjJ8Glal5nS+iqAKHyhDyxxW3zgppOyA4ayGnZSM+
-	 7MDZEmGGzVPkf+Sn7Wvd72O2j97aRD4xOV44B0DFooDDGYPjV1HTRMT1Ks1AMo7hco
-	 ItJ6MjrLvqogYhB7qtuF0hmKQaGVwU1BIfLFnp83iqckDE+LyWFUv37ZA3ofgKE+I2
-	 TTmlIyh+EwqrGGfGkjpCGo3TcbSf1liF5MBIAGrgXHtvo3h+M26CQyA3mzipEUjrQO
-	 YBclxKSTpEGGVqiOon+keYvSE59HwhCKkxm+BXy+81G+4f3Z37G6ELqly/5+fcq8Yp
-	 T8cwUyRQYpHtQ==
-Message-ID: <601338fe-8db8-455b-978f-02200523a123@kernel.org>
-Date: Sat, 16 Aug 2025 11:49:46 +0200
+	s=k20201202; t=1755338057;
+	bh=NtLH2o5zFdwL8qLnkv2fWmiwgZJi4KCQFqICzRQxE4M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fI8czEogd8nQ0MJyN+ikp5ha0X9Hnj3k38RpvscZnt/uGura+0KTetoMXs4KUa0Iv
+	 waYJdzjv88/3Wj/UxUTd0tW3Rmo8KVEbp2bMSAUQt3N4JvoAiqLjRtV5yAHCfRVrSE
+	 1mjPJRZIcusHuZxsx9EhD6BMQVAy4hdpfwGV3oAp/j175fUCESGpMGY38hyHtp82CJ
+	 uv4Znmf+TBRsjNi90a0dcgooDHC08HbPIEajcBOZJUSxtORodI7pr8c/zUqE/N5fhX
+	 gZt84Kv+ZVBQRtF676EFKUdMnvMletZBvnwJ+EMXLwJTEHfzQ+ef7/nHXHvIu+ITAN
+	 CrbS4V6QKA3cw==
+Date: Sat, 16 Aug 2025 10:54:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ben Collins <bcollins@watter.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
+Message-ID: <20250816105410.70e47dac@jic23-huawei>
+In-Reply-To: <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+References: <20250813151614.12098-1-bcollins@watter.com>
+	<20250813151614.12098-6-bcollins@watter.com>
+	<a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: gpio: loongson: Document GPIO controller
- of 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>, Yinbo Zhu <zhuyinbo@loongson.cn>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250816035027.11727-2-ziyao@disroot.org>
- <20250816035027.11727-3-ziyao@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250816035027.11727-3-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 16/08/2025 05:50, Yao Zi wrote:
->  
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-You should have probably separate binding if you need three new properties.
+On Wed, 13 Aug 2025 17:52:04 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
+> On 8/13/25 10:15 AM, Ben Collins wrote:
+> > MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+> > to allow get/set of this value.
+> > 
+> > Signed-off-by: Ben Collins <bcollins@watter.com>
+> > ---
+> >  drivers/iio/temperature/mcp9600.c | 43 +++++++++++++++++++++++++++++++
+> >  1 file changed, 43 insertions(+)
+> > 
+> > diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
+> > index 5ead565f1bd8c..5bed3a35ae65e 100644
+> > --- a/drivers/iio/temperature/mcp9600.c
+> > +++ b/drivers/iio/temperature/mcp9600.c
+> > @@ -31,6 +31,7 @@
+> >  #define MCP9600_STATUS_ALERT(x)		BIT(x)
+> >  #define MCP9600_SENSOR_CFG		0x5
+> >  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
+> > +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
+> >  #define MCP9600_ALERT_CFG1		0x8
+> >  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+> >  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+> > @@ -111,6 +112,7 @@ static const struct iio_event_spec mcp9600_events[] = {
+> >  			.address = MCP9600_HOT_JUNCTION,		       \
+> >  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
+> >  					      BIT(IIO_CHAN_INFO_SCALE) |       \
+> > +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
+> >  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE), \
+> >  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
+> >  			.num_event_specs = hj_num_ev,			       \
+> > @@ -149,6 +151,7 @@ static const struct iio_chan_spec mcp9600_channels[][2] = {
+> >  struct mcp9600_data {
+> >  	struct i2c_client *client;
+> >  	u32 thermocouple_type;
+> > +	u32 filter_level;
+> >  };
+> >  
+> >  static int mcp9600_read(struct mcp9600_data *data,
+> > @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
+> >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+> >  		*val = mcp9600_tc_types[data->thermocouple_type];
+> >  		return IIO_VAL_CHAR;
+> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> > +		*val = data->filter_level;  
+> 
+> We can't just pass the raw value through for this. The ABI is defined
+> in Documentation/ABI/testing/sysfs-bus-iio and states that the value
+> is the frequency in Hz.
+> 
+> So we need to do the math to convert from the register value to
+> the required value.
+> 
+> I'm a bit rusty on my discrete time math, so I had chatgpt help me
+> do the transform of the function from the datasheet to a transfer
+> function and use that to find the frequency response.
+> 
+> It seemed to match what my textbook was telling me, so hopefully
+> it got it right.
+> 
+> Then it spit out the following program that can be used to make
+> a table of 3dB points for a given sampling frequency. If I read the
+> datasheet right, the sampling frequency depends on the number of
+> bits being read.
+> 
+> For example, for 3 Hz sample rate (18-bit samples), I got:
+> 
+>   n  f_3dB (Hz)
+>   1  0.58774
+>   2  0.24939
+>   3  0.12063
+>   4  0.05984
+>   5  0.02986
+>   6  0.01492
+>   7  0.00746
+> 
+> I had to skip n=0 though since that is undefined. Not sure how we
+> handle that since it means no filter. Maybe Jonathan can advise?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is always a fun corner case.  Reality is there is always
+some filtering going on due to the analog side of things we
+just have no idea what it is if the nicely defined filter is
+turned off.  I can't remember what we have done in the past,
+but one option would be to just have anything bigger than 0.58774
+defined as being filter off and return a big number. Not elegant
+though.  Or just don't bother supporting it if we think no one
+will ever want to run with not filter at all.
 
-Best regards,
-Krzysztof
+Hmm. or given this is a digital filter on a sampled signal, can we establish
+an effective frequency that could be detected without aliasing and
+use that?  Not sure - I'm way to rusty on filter theory (and was
+never that good at it!)
+
+Jonathan
 
