@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-771588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85FBB2891B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6373DB28920
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53050724FAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A1E1C26147
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FED14D2B7;
-	Sat, 16 Aug 2025 00:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BD22A1BF;
+	Sat, 16 Aug 2025 00:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqfBJCEZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="F3JJqTfE"
+Received: from smtp153-163.sina.com.cn (smtp153-163.sina.com.cn [61.135.153.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38C82AE68;
-	Sat, 16 Aug 2025 00:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619581FDD
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755302921; cv=none; b=sgmNR2u60pIZsh5k/FpThwyI87KWBuoNRgsEj7WC404V+ge9Y4Wp4V/jeVXTBpVnCu70gecukvoUWUhwttCvg8nnATV+g9KtsJ4SckXoEL5XxJVh0YpvP/9RGhGh+7+f1B9gRBFz0wtb6pj5DJtdlnpAn1DzGQhuwiO9sQ49trY=
+	t=1755302965; cv=none; b=DQXpiixJxcz4EnrPMtTNC+8sTN5eUDk8SVl9eit6idfSIf7rGvpQW7d1r7cqqg5zCO9vXLIPyjEDRR3wo+/65+2G6ytiHfrg8xu0H2Of0SvYK995nu1/8yp1j0po6+LmTHYYX5Gtb/TW7bG008nAbezUdfTrMYUat07GXW1cVoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755302921; c=relaxed/simple;
-	bh=gE4Rji/8SJ+UEZVXQUf6+/Ok6DOW5KtjWyQ+ski3jFY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oLrSqfuqAZRzLSiN63s2SIcSQURO94yizR9Ih5cRZ9dWUXk3i4hoSHMkHXNqz4xcg2ml278vCjSMQmmGvbkOOsgDdR83eqt7/Tq8LJq4ztqkmBz5xuZD1bQGegGEJNfbrT7+WLpYx16LkBPkEAtUcz4K1oY59hcFbkSBJ1gLhks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqfBJCEZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C624C4CEEB;
-	Sat, 16 Aug 2025 00:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755302920;
-	bh=gE4Rji/8SJ+UEZVXQUf6+/Ok6DOW5KtjWyQ+ski3jFY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SqfBJCEZihQj/iBL4EZ4cH5ZINwZArRGA28BiyakR/xh7Nmm/zpVlwSxUmRYLNBPn
-	 6YbqoBuSk8pUnaDHhANmYorbzIpUUU0vijld56W5Ehy0a8FXbM8AfI335Dup7otkiy
-	 coA564Hfxb9tDC/k+OOg8bg3qAJanRAcwFRoOp4JVJwRG12BHPUyXh75idqkbt+Ale
-	 J8W4kyjBE1lgSbJDewpbgB7FnMdD2yD4WINvU8pv5DQ4Pnmwmo7fWeyjGFzcY/5B/u
-	 ipa0cVw9a27eQg8pMmK+j9MoMrlf6T0CQ8feeSqaD5RGvqcgktKbEgJDFJ0xk32yN4
-	 BxcNiifObvkAw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 220BBCE10F4; Fri, 15 Aug 2025 17:08:39 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 7/7] rcutorture: Delay forward-progress testing until boot completes
-Date: Fri, 15 Aug 2025 17:08:37 -0700
-Message-Id: <20250816000837.2622858-7-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <8758bcc6-901f-4828-b2fc-aa9f90e85451@paulmck-laptop>
-References: <8758bcc6-901f-4828-b2fc-aa9f90e85451@paulmck-laptop>
+	s=arc-20240116; t=1755302965; c=relaxed/simple;
+	bh=F0CG0VqNgeqX8oh+TQB3QzFWHslyU8JjBLjUk9bCwbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oxSnnVEUVB4agINzRU7+oNJf1boFugLCBdm/WHD0UUzrroG2IoO0qO6D+AwDihHa+aoVTP73n05GNGEg88QT3DcKh8w3EsndvjDRKRr3K3szdwJPqhDpjwgyWrBBABRVXm5UKn7sdMCRh5hK3YaC1M+lZuTGMhzglF5sr92XPfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=F3JJqTfE; arc=none smtp.client-ip=61.135.153.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755302959;
+	bh=bdkGAoWrdbVzcqO40aR6fwo0x6+ClWirQe96L5A0gRY=;
+	h=From:Subject:Date:Message-ID;
+	b=F3JJqTfEjrYaZENNBeFhIjZE8TUT+6ph6zuaWBnDYu24/lbC2zT76q5Z+ZnoY2bIs
+	 rHyXHbCQSWalasINiOeFxaNQNcYovKXHUZy0MWPYP/zRLkOUdOdfM8r2Pfk+dmY8CO
+	 thEWv9mhX7nB+VcwOm4DMi31qjh2EyHnVDW1vrao=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 689FCC2400004CB2; Sat, 16 Aug 2025 08:09:10 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6044754456638
+X-SMAIL-UIID: 66DD780839E84197B5EAAF0360550DC7-20250816-080910-1
+From: Hillf Danton <hdanton@sina.com>
+To: Will Deacon <will@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>,
+	jasowang@redhat.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	stefanha@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
+Date: Sat, 16 Aug 2025 08:08:56 +0800
+Message-ID: <20250816000900.4653-1-hdanton@sina.com>
+In-Reply-To: <aJ9WsFovkgZM3z09@willie-the-truck>
+References: <20250812052645-mutt-send-email-mst@kernel.org> <689b1156.050a0220.7f033.011c.GAE@google.com> <20250812061425-mutt-send-email-mst@kernel.org> <aJ8HVCbE-fIoS1U4@willie-the-truck> <20250815063140-mutt-send-email-mst@kernel.org> <aJ8heyq4-RtJAPyI@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +71,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Forward-progress testing can hog CPUs, which is not a great thing to do
-before boot has completed.  This commit therefore makes the CPU-hotplug
-operations hold off until boot has completed.
+On Fri, 15 Aug 2025 16:48:00 +0100 Will Deacon wrote:
+>On Fri, Aug 15, 2025 at 01:00:59PM +0100, Will Deacon wrote:
+>> On Fri, Aug 15, 2025 at 06:44:47AM -0400, Michael S. Tsirkin wrote:
+>> > On Fri, Aug 15, 2025 at 11:09:24AM +0100, Will Deacon wrote:
+>> > > On Tue, Aug 12, 2025 at 06:15:46AM -0400, Michael S. Tsirkin wrote:
+>> > > > On Tue, Aug 12, 2025 at 03:03:02AM -0700, syzbot wrote:
+>> > > > > Hello,
+>> > > > > 
+>> > > > > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> > > > > WARNING in virtio_transport_send_pkt_info
+>> > > > 
+>> > > > OK so the issue triggers on
+>> > > > commit 6693731487a8145a9b039bc983d77edc47693855
+>> > > > Author: Will Deacon <will@kernel.org>
+>> > > > Date:   Thu Jul 17 10:01:16 2025 +0100
+>> > > > 
+>> > > >     vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
+>> > > >     
+>> > > > 
+>> > > > but does not trigger on:
+>> > > > 
+>> > > > commit 8ca76151d2c8219edea82f1925a2a25907ff6a9d
+>> > > > Author: Will Deacon <will@kernel.org>
+>> > > > Date:   Thu Jul 17 10:01:15 2025 +0100
+>> > > > 
+>> > > >     vsock/virtio: Rename virtio_vsock_skb_rx_put()
+>> > > >     
+>> > > > 
+>> > > > 
+>> > > > Will, I suspect your patch merely uncovers a latent bug
+>> > > > in zero copy handling elsewhere.
+>> 
+>> I'm still looking at this, but I'm not sure zero-copy is the right place
+>> to focus on.
+>> 
+>> The bisected patch 6693731487a8 ("vsock/virtio: Allocate nonlinear SKBs
+>> for handling large transmit buffers") only has two hunks. The first is
+>> for the non-zcopy case and the latter is a no-op for zcopy, as
+>> skb_len == VIRTIO_VSOCK_SKB_HEADROOM and so we end up with a linear SKB
+>> regardless.
+>
+>It's looking like this is caused by moving from memcpy_from_msg() to
+>skb_copy_datagram_from_iter(), which is necessary to handle non-linear
+>SKBs correctly.
+>
+>In the case of failure (i.e. faulting on the source and returning
+>-EFAULT), memcpy_from_msg() rewinds the message iterator whereas
+>skb_copy_datagram_from_iter() does not. If we have previously managed to
+>transmit some of the packet, then I think
+>virtio_transport_send_pkt_info() can end up returning a positive "bytes
+>written" error code and the caller will call it again. If we've advanced
+>the message iterator, then this can end up with the reported warning if
+>we run out of input data.
+>
+>As a hack (see below), I tried rewinding the iterator in the error path
+>of skb_copy_datagram_from_iter() but I'm not sure whether other callers
+>would be happy with that. If not, then we could save/restore the
+>iterator state in virtio_transport_fill_skb() if the copy fails. Or we
+>could add a variant of skb_copy_datagram_from_iter(), say
+>skb_copy_datagram_from_iter_full(), which has the rewind behaviour.
+>
+>What do you think?
+>
+>Will
+>
+>--->8
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/rcutorture.c | 2 ++
- 1 file changed, 2 insertions(+)
+#syz test
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 1578d330565752..b8a684459381f2 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -3457,6 +3457,8 @@ static int rcu_torture_fwd_prog(void *args)
- 	int tested_tries = 0;
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index 94cc4705e91d..62e44ab136b7 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -551,7 +551,7 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
+ 				 int len)
+ {
+ 	int start = skb_headlen(skb);
+-	int i, copy = start - offset;
++	int i, copy = start - offset, start_off = offset;
+ 	struct sk_buff *frag_iter;
  
- 	VERBOSE_TOROUT_STRING("rcu_torture_fwd_progress task started");
-+	while (!rcu_inkernel_boot_has_ended())
-+		schedule_timeout_interruptible(HZ / 10);
- 	rcu_bind_current_to_nocb();
- 	if (!IS_ENABLED(CONFIG_SMP) || !IS_ENABLED(CONFIG_RCU_BOOST))
- 		set_user_nice(current, MAX_NICE);
--- 
-2.40.1
-
+ 	/* Copy header. */
+@@ -614,6 +614,7 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
+ 		return 0;
+ 
+ fault:
++	iov_iter_revert(from, offset - start_off);
+ 	return -EFAULT;
+ }
+ EXPORT_SYMBOL(skb_copy_datagram_from_iter);
+--
 
