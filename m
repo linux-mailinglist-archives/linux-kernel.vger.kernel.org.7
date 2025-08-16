@@ -1,104 +1,93 @@
-Return-Path: <linux-kernel+bounces-772105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46DCB28ECA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C0DB28ED9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E799A58673C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200821895EF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32A82F5310;
-	Sat, 16 Aug 2025 15:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AB02F533F;
+	Sat, 16 Aug 2025 15:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="L2zMQX5H"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="TXqIFPiu"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCEA2F39D5;
-	Sat, 16 Aug 2025 15:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43BE22D7A5;
+	Sat, 16 Aug 2025 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357113; cv=none; b=Pf5nnfJ49PnwZdiJ8BrjAfUsl9V29cmcEHsZljat0Bncs4Vd4VUr/m0pAxqy2fEAdkv7Rr6jtn2Fh9rvF59P25L8us5ELJkm3ei+4xqsWVYYyr5+mQZIxS/yM7sP5c/NY5r/PfRPkNgpM7EzLBpcQu8va+ti0kYv7vCIRULD+k4=
+	t=1755357289; cv=none; b=uTqgPwP8uur6mmnDjNn1eG7Ag6gb3/4DrDG35izSJ7kz4pbZFdX2BwNTrrmG10aSV/QN/f1mGi1StLlPJk/8wmr95/dAXo3YnfLngOId2VhnHnxOBRvE+pEtC6SpIjDFnx0ACxsO9bMu0sHujIdbTykpmH0/JaLkq5BkGE3Pkm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357113; c=relaxed/simple;
-	bh=UMEFa52la42hMqyKMzdR+q0aEPSEABoj+9c5UKaSSvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Asr2Os8HnYgtbbAIz9ScsMN9AU3SowTY1xpuz9ij9tLld6hLPnSiK7Kjl6ewqz/JBhMan+FzFvr+14Vq/Rx26n+hU8vOC2ZuyjfJYyIHG9KwvF85axwkYrCT5X8aTdeYMMY6pmNLatKZajt79Pb52DMU/J1sAjzYM+WSS1o6mD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=L2zMQX5H; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=3NAUUTiJZHuAR2izt+xT21rv8ZMns6fw9BsTVEElK6M=; b=L2zMQX5Hww/NOqp+oDguP1MWAu
-	1ExUD0+VsfUvL6v/2KlyqgL8gCrSmpJwMTv3YOQwJNOIw+3X/vP1XY6QaNoKbf/xZuZj4gL711y5D
-	bCwVW1B/FiRf5PchvAzW8u/Z7jA9aGPLCCxu4tNwhS2U3KQAv6y9HMANgJzwLm3tseIY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1unIZJ-004uXK-LF; Sat, 16 Aug 2025 17:11:41 +0200
-Date: Sat, 16 Aug 2025 17:11:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next v3 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
- YT921x switch support
-Message-ID: <9b44c768-8362-4b1d-931a-6df91106018b@lunn.ch>
-References: <20250816052323.360788-1-mmyangfl@gmail.com>
- <20250816052323.360788-2-mmyangfl@gmail.com>
+	s=arc-20240116; t=1755357289; c=relaxed/simple;
+	bh=OSQDEVYojpqUsVcDydeFyzVEZCVIa8DW4oEeyDGqo8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=myBsYPMH/4jFu07OogdKvXDNXiH68sY1D/VqlBhAEEhkCu9zGfGMbD7XqpFjIgY8+QAmmuZzs0UQNHVu/2wdMJNzNE1k1oR1fdW6qdYACt0EvqfaTGAA44ICDLdo8mzu0/+2+rg14jiSajKFlR3PEnJg+Kec1hll0h4wKRXPiws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=TXqIFPiu; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=OSQDEVYojpqUsVcDydeFyzVEZCVIa8DW4oEeyDGqo8E=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1755357181; v=1; x=1755789181;
+ b=TXqIFPiu6ruM8+TZCP7ahhsw6qYop9K/l1fCNrrqliT1uZk7vu1AzGR1/A19LlPkTANLZoEu
+ aOhte95klePHknLPz9jeiQ1J8m8KWcUc1qD3YANM04M4R+5VWBwv408nNHpSfhvZqD3o1IudYE/
+ 5oy/nQtqAeBqojkzXAH6V2Uzy5kvJVOMRVPBenkGd6eL1JY6MgHZftTadmQ3EnqrCFIgt44XpiP
+ WI2rJgMDlEz3yd8Nyje075Ns+6LtDmlpKQeXihPAM2dZ/vuzDXp5BH70FaW+orF8e0etwUYrkk4
+ Zk4pf5s0w+ttb0XY7QjBJfHZK+MBrwqHddhw9+/QhPdvg==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 12f6888e; Sat, 16 Aug 2025 17:13:01 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
+ Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
+Date: Sat, 16 Aug 2025 17:13:00 +0200
+Message-ID: <6196438.lOV4Wx5bFT@radijator>
+In-Reply-To: <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
+References:
+ <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+ <1950265.tdWV9SEqCh@radijator>
+ <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816052323.360788-2-mmyangfl@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-> +  motorcomm,switch-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      When managed via MDIO, a hard-configured switch ID to form MDIO reg addrs,
-> +      to distinguish between multiple devices beside phyaddr.
-> +    enum: [0, 1, 2, 3]
-> +    default: 0
-> +    maxItems: 1
+On Friday, 15 August 2025 08:08:24 Central European Summer Time Krzysztof K=
+ozlowski wrote:
+> On 15/08/2025 00:08, Duje Mihanovi=C4=87 wrote:
+> > > I am asking to see complete binding with complete DTS in example and
+> > > submitted to SoC maintainer.
+> >=20
+> > Hm, so if in the example (and the actual DTS) each domain is assigned a
+> > clock, can I then keep the domain and domain controller nodes like Medi=
+atek
+> > and Rockchip have?
+>=20
+> You would need to point me to specific files or show some code.
 
-So how is this different to reg? Why cannot it be derived from reg?
-Please give us all the details of what this actually does. Or point us
-to a chapter in the datasheet.
+Sure, mediatek,power-controller.yaml and rockchip,power-controller.yaml
+in Documentation/devicetree/bindings/power.
 
-> +                /* if external phy is connected to a MAC */
-> +                port@9 {
-> +                    reg = <9>;
-> +                    label = "wan";
-> +                    phy-mode = "rgmii";
-> +                    phy-handle = <&phy1>;
-> +
-> +                    fixed-link {
-> +                        speed = <1000>;
-> +                        full-duplex;
-> +                        pause;
-> +                    };
-
-If there is an external PHY, why have a fixed link?
+Regards,
+=2D-
+Duje
 
 
-    Andrew
 
----
-pw-bot: cr
 
