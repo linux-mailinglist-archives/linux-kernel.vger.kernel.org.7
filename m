@@ -1,108 +1,205 @@
-Return-Path: <linux-kernel+bounces-771579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A2BB2890A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:06:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47A9B28912
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB9BE3AC4CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBAE1C84130
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4877B5789D;
-	Sat, 16 Aug 2025 00:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DACC79EA;
+	Sat, 16 Aug 2025 00:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXLAdGS1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMf+dC18"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9119C2AE7F;
-	Sat, 16 Aug 2025 00:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA18B524F
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755302762; cv=none; b=FmC3Sx2VRD9SMS/mc/9rHQ12jydmsDNzY7oDnqhlHYjX9xDRRICaDVJQ3e3FCTcDsDIKLaUs4GOmT5yk6bNVAvY04vHB54Wx+/ndpOZm9jwQfhheo2RdhXQFMaoJIcc485+NdWwDcxK+B57z7lJ4AaMthwdtzCvfFO1KLi7t04I=
+	t=1755302824; cv=none; b=lKVCa2wmGKxQNcvE8slFXQlfCix4ZNZmS7Xn7EKC0ahtv1A4NXQlSPvYwQxhvkmFMJ03oNHKaXIOBYwtxON78NzyfzQRC8y9wymKP9qvR7baACKLnISfy0Osy2qHD+qtl2tAAWU27A0FVUQVAzvFX5Ww052sQENZEdCHH1YIZYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755302762; c=relaxed/simple;
-	bh=bUr/c79awvu8OWGK8+lJnU//Ku79FE8Xqz9RETWtyqk=;
+	s=arc-20240116; t=1755302824; c=relaxed/simple;
+	bh=+7InZKab1A6cmyKNxFZYNSs5pQCLVO7y8nEBO2jsTxc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uhn8U5BrFtCqC/IDJ9amJGtzPlPx6yQyv8k3+Ja7pggNa/o7ABc8U+oBrPVgXEcz7wLvxMCIrB8X0iH4JdIIQF6L9fu/dNftPe2Ena34AnO51zDw4RvaUvndx/jIb8qsXE64HsXC4+Bip4gPCiI0xHLyJN6U3wxl5uXXJmObnhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXLAdGS1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18012C4CEF4;
-	Sat, 16 Aug 2025 00:06:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ncvoB5l6Tj1bcYvvijboyrjLfToKPyC0FiGZbQrTcWhihhQRkRCutQ++hDSxphVxY1mMtcJj4xNEbbKbEl6yPgKw0EUlRNLlpHH3+gkfSwmfFir18iBxLRCxPLUzrU67nn5ov1P/XD45HunRrPcCUiyV+6ajc77MRgE9rT9sEEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMf+dC18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7CAC4CEEB;
+	Sat, 16 Aug 2025 00:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755302762;
-	bh=bUr/c79awvu8OWGK8+lJnU//Ku79FE8Xqz9RETWtyqk=;
+	s=k20201202; t=1755302824;
+	bh=+7InZKab1A6cmyKNxFZYNSs5pQCLVO7y8nEBO2jsTxc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KXLAdGS1dy2hxu45WdWoBAx+PzL/7iHNKWZd7EHjDUSbd9p4sU1ixyFCS1tEuoY9P
-	 F/bQyO5wpjnkt6HDQT3kzdhkBm/z0kr9jlV03Hz8LYUefSwmfR2wiKBvy5FvUnARB4
-	 fHz+pYb7Ri9Mx4ZULWA0HUxb6nEeawgjCc2WOzI5BAhd8jMtQ4beO5lJbyKkbEFb8d
-	 Fh6jyDXTJBiqn4O+CCy7V7YEQrd5ORxkQ9MTkj5gCQBiLBPbCusmfXQbDcAG1B65U8
-	 yBIxOZbeYXv/R0Q4qW+pD13/m6wyS5LrGjZ+YR2DO3HAk9MKyRjAY7fkWfwz8MNcz6
-	 tBgacMYFCjCLg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 90731CE0EA9; Fri, 15 Aug 2025 17:06:00 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org
-Subject: [PATCH v6 6/6] srcu: Document srcu_flip() memory-barrier D relation to SRCU-fast
-Date: Fri, 15 Aug 2025 17:05:59 -0700
-Message-Id: <20250816000559.2622626-6-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <b592a936-fd9e-4aef-a2af-9d40ae19511d@paulmck-laptop>
-References: <b592a936-fd9e-4aef-a2af-9d40ae19511d@paulmck-laptop>
+	b=EMf+dC18/RoSmZ8NitdCIj8RPm5ygXauWGNGpZi5SE1DL9kU+eogqSTOH/RaSl/HE
+	 INzj9L5q8hAWhI5DRKRnu7z4GXo0wwoLfzr3ZH/304b3MgWUUV0SVRiZzx7GC+Rawv
+	 Mj6MBhKv63kJ6X0HKIYY5hmalEsqCbVZm4bK4TCutj5tBzKsJfkRsCGgeaFrtt13Q4
+	 W9/+Acg2stkd4uRKIBOSMCIm18aC9EFiuY+24JOVdR0io9NXL2c5qHijZafQqjIXqM
+	 HHa+ksKjDpeoTdWU8Gn8qTiD6RAz0+B/tN16rvu1ZmYtwOXgc645P4vb6kZVYObBe2
+	 OQ3cVddhEQYng==
+From: SeongJae Park <sj@kernel.org>
+To: Chris Li <chrisl@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takero Funaki <flintglass@gmail.com>,
+	Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page as-is
+Date: Fri, 15 Aug 2025 17:07:01 -0700
+Message-Id: <20250816000701.90784-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAF8kJuONDFj4NAksaR4j_WyDbNwNGYLmTe-o76rqU17La=nkOw@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The smp_mb() memory barrier at the end of srcu_flip() has a comment,
-but that comment does not make it clear that this memory barrier is an
-optimization, as opposed to being needed for correctness.  This commit
-therefore adds this information and points out that it is omitted
-for SRCU-fast, where a much heavier weight synchronize_srcu() would
-be required.
+On Fri, 15 Aug 2025 15:28:59 -0700 Chris Li <chrisl@kernel.org> wrote:
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: <bpf@vger.kernel.org>
----
- kernel/rcu/srcutree.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> On Wed, Aug 13, 2025 at 11:20 AM SeongJae Park <sj@kernel.org> wrote:
+[...]
+> We might still wait to evaluate the lost/gain vs store the
+> incompressible in swap cache. Google actually has an internal patch to
+> store the incompressible pages in swap cache and move them out of the
+> LRU to another already existing list. I can clean it up a bit and send
+> it to the list for comparison.
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index c5e8ebc493d5ee..1ff94b76d91f15 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -1168,6 +1168,16 @@ static void srcu_flip(struct srcu_struct *ssp)
- 	 * counter update.  Note that both this memory barrier and the
- 	 * one in srcu_readers_active_idx_check() provide the guarantee
- 	 * for __srcu_read_lock().
-+	 *
-+	 * Note that this is a performance optimization, in which we spend
-+	 * an otherwise unnecessary smp_mb() in order to reduce the number
-+	 * of full per-CPU-variable scans in srcu_readers_lock_idx() and
-+	 * srcu_readers_unlock_idx().  But this performance optimization
-+	 * is not so optimal for SRCU-fast, where we would be spending
-+	 * not smp_mb(), but rather synchronize_rcu().  At the same time,
-+	 * the overhead of the smp_mb() is in the noise, so there is no
-+	 * point in omitting it in the SRCU-fast case.  So the same code
-+	 * is executed either way.
- 	 */
- 	smp_mb(); /* D */  /* Pairs with C. */
- }
--- 
-2.40.1
+This would be really nice!
 
+[...]
+> > So, if we agree on my justification about the metadata overhead, I think this
+> > could be done as a followup work of this patch?
+> 
+> Sure. I am most interested in getting the best overall solution. No
+> objects to get it now vs later.
+
+Thank you for being flexible, Chris.  I'm also looking forward to keep
+collaborating with you on the followup works!
+
+[...]
+> > > Is there any reason you want to store the page in zpool when the
+> > > compression engine (not the ratio) fails?
+> >
+> > The main problem this patch tries to solve is the LRU order corruption.  In any
+> > case, I want to keep the order if possible.
+> 
+> In that case, does it mean that in order to keep the LRU, you never
+> want to write from zswap to a real back end device?
+
+Not always, but until we have to write back zswapped pages to real back end
+deevice, and all zswapped pages of lower LRU-order are already wrote back.
+
+[...]
+> > >      if (dlen >= PAGE_SIZE) {
+> > >         zswap_compress_fail++;
+> >
+> > I define compress failure here as a failure of attempt to compress the given
+> > page's content into a size smaller than PAGE_SIZE.  It is a superset including
+> > both "ratio" failure and "engine" failure.  Hence I think zswap_compress_fail
+> > should be increased even in the upper case.
+> 
+> I slept over it a bit. Now I think we should make this a counter of
+> how many uncompressed pages count stored in zswap. Preperbelly as per
+> memcg counter.
+
+I agree that could be useful.  I will add the counter in the next version (v4).
+But making it for each memcg may be out of the scope of this patch, in my
+opinion.  Would you mind doing per-memcg counter implementation as a followup?
+
+> I saw that you implement it as a counter in your V1.
+
+Yes, though it was only for internal usage and therefore not exposed to the
+user space.  I will make it again and expose to the user space via debugfs.
+Say, stored_uncompressed_pages?
+
+> Does the zsmalloc
+> already track this information in the zspool class?
+
+zsmalloc provides such information when CONFIG_ZSMALLOC_STAT is enabled, to my
+understanding.
+
+[...]
+> I am actually less interested in the absolute failure number which
+> keeps increasing, more on how much incompressible zswap is stored.
+> That counter + number of engine errors should be perfect.
+
+Sounds good.  So the next version (v4) of this patch will provide two new
+debugfs counters, namely compress_engine_fail, and stored_uncompressed_pages.
+
+[...]
+> > I agree this code is nice to read.  Nonetheless I have to say the behavior is
+> > somewhat different from what I want.
+> 
+> Even if you keep the current behavior, you can move the invert the
+> test condition and then remove the "else + goto" similar to the above.
+> That will make your code less and flatter. I will need to think about
+> whether we can assign the return value less.
+
+Nice idea.  What about below?
+
+        if (comp_ret) {
+                zswap_compress_engine_fail++;
+                dlen = PAGE_SIZE;
+        }
+        if (dlen >= PAGE_SIZE) {
+                zswap_compress_fail++;
+                if (!mem_cgroup_zswap_writeback_enabled(
+                                        folio_memcg(page_folio(page)))) {
+                        comp_ret = -EINVAL;
+                        goto unlock;
+                }
+                comp_ret = 0;
+                dlen = PAGE_SIZE;
+                dst = kmap_local_page(page);
+        }
+
+> 
+> Another point I would like to make is that you currently make the cut
+> off threshold as page size. The ideal threshold might be something
+> slightly smaller than page size. The reason is that the zsmalloc has a
+> fixed size chuck to store it. If your page is close to full, it will
+> store the data in the same class as the full page. You are not gaining
+> anything from zsmalloc if the store page compression ratio is 95%.
+> That 5% will be in the waste in the zsmalloc class fragment anyway. So
+> the trade off is, decompress 95% of a page vs memcpy 100% of a page.
+> It is likely memcpy 100% is faster. I don't know the exact ideal cut
+> off of threshold. If I had to guess, I would guess below 90%.
+
+Agreed, this could be another nice followup work to do.
+
+> 
+> >
+> > > I can
+> > > be biased towards my own code :-).
+> > > I think we should treat the compression engine failure separately from
+> > > the compression rate failure. The engine failure is rare and we should
+> > > know about it as a real error. The compression rate failure is normal.
+> >
+> > Again, I agree having the observability would be nice.  I can add a new counter
+> > for that, like below attached patch, for example.
+> 
+> I would love that. Make that per memcg if possible :-)
+
+As mentioned above, I would like to make only a global counter on debugfs for
+now, if you don't mind.  Let me know if you mind.
+
+
+Thanks,
+SJ
+
+[...]
 
