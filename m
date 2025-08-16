@@ -1,199 +1,252 @@
-Return-Path: <linux-kernel+bounces-772069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442CDB28E70
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D1AB28E72
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22ABF5C0626
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E24C1C23504
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E32E54A9;
-	Sat, 16 Aug 2025 14:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631CA2EBBA9;
+	Sat, 16 Aug 2025 14:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="IfD1KkmC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cyIG6nbz"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uYmgzF2u"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E41B28C873
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755353998; cv=none; b=ITkibfWU4SHtG8v4GoC0QkcqhCT6MNHi2qrtnfWpWzGwY/Roc4tkAZFM8vey2weR2zW4L1UAi6WKzzd3XxYOhv2P1to9Ioewgq90He412v2cWZ9+Fezh2eZ9cxaFTBsUmqPSi9KgG44qqgH70oyUZpTtwP+RnujFvRAwWtO9GcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755353998; c=relaxed/simple;
-	bh=nf7kyzbNYEZU4c3UZr5VFb8CoLAMkskXvGH3WdzPbcY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ct3zKwLURp9l+5z30Z5UDhhP1MujqozRkEKeTjIFUA1fYgdvRtF4faR1TqOK1x0TqDuXHFBakg/cy5iieXgzLxD1NG2zIm4rRb+vnywjDOyCD3yzhdjI1YHxyBVo+N8JiiCBTdQep9EpZsSrGcva+0k/9FqLsPG+M1xapXrWIx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=IfD1KkmC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cyIG6nbz; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4103E7A02B7;
-	Sat, 16 Aug 2025 10:19:55 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-01.internal (MEProxy); Sat, 16 Aug 2025 10:19:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1755353995;
-	 x=1755440395; bh=uUlh/L5iBn2cZluTjtVOTeuqRXG5pOVjQE6WfHmHMeQ=; b=
-	IfD1KkmCs/+imALzV5qqefaa/LNt/OmMOuRPl1WinpFwBNtFotmVLroGZipUlzvQ
-	tzUn4cKb3LIKHq25IW0i3MBde+TymZ7qpb6kYF9l0AnCif3IhWNPRK3RHpxI/srF
-	UE3E7B70z0XLx3MruxK5PVm9aDNbzx27lIjFiOfsFwnULoA/wFD5nsea65FCgKwe
-	K7CkEtr4Zv783Lwj/e/xaFWKa/NLpfBvqXA9JwLj+ciZTKFBi9Q3wNNrOxynxG1L
-	XYOiVOcSzn2nx/jYmcP0BSF1wfg5eUsy70gOxB0cJUe9sDDTACxslwHjbP00zKbq
-	JqO/73mmFgtVog1bbUFaIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755353995; x=
-	1755440395; bh=uUlh/L5iBn2cZluTjtVOTeuqRXG5pOVjQE6WfHmHMeQ=; b=c
-	yIG6nbzLkluoUtXyWgJceAgWgySU2RgvaBbKf/ynuH+g6E3dW/1EGyQb0jS/ayGS
-	hxRE+Teq6Kjpn4WeiPbh7qywsX1BcaTkuVl5evnAXoVOEU/nzRxRQ8XuLXghGG6w
-	qO7/9yMLGs2EdpmgM7otV47Irngkkwcwg9nt3t3RYQQKl60TTsObMIrAA8+FbwIU
-	Md4uZ/CDqZCYZXUEpCTkEEyzXsUvWjdep8nyJmtcxOXn0ItUHAr0uZ+Rq43ZT5qZ
-	P+PWLa3SXkFPgtRlLeG2mk1ClKj+VaO+ydNeiB/qAiQ9ejzxtWypRZCk4rl2TD57
-	05ywDSuOMKKrjfPCCMSZA==
-X-ME-Sender: <xms:iZOgaCQ8F1HAx8M4hTKowVC0mkjRJdagCQjS5OzjBc4nE99ujgwFFg>
-    <xme:iZOgaHwPE1hSBAx3rN0MD734upqIEjIJpaEfSJ57oUm2PU1QIY_-bpsSE1_Y9kZkO
-    y9qx7x9TEySD8nEHE8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeejtdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfgrnhhn
-    vgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epheejtdeffeethfetgefhffejudegheefueejtedvhfeuheevfeekheetfeduffevnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnh
-    hnrghurdhnvghtpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehrohgsihhnrd
-    hmuhhrphhhhiesrghrmhdrtghomhdprhgtphhtthhopehnvggrlhesghhomhhprgdruggv
-    vhdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilh
-    hlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgv
-    lheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhise
-    hlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepihhomhhmuheslhhishhtshdr
-    lhhinhhugidruggvvhdprhgtphhtthhopehmrghrtggrnhesmhgrrhgtrghnrdhsth
-X-ME-Proxy: <xmx:iZOgaDUeUO03LyxCXHYfmw9LCDo12_91ql4W0jPaJAPyQt7aChoHwQ>
-    <xmx:iZOgaBERpxt-lW-vHqQPifnCjBi0NhCOW2T1JfMINoHysM1DszeGaw>
-    <xmx:iZOgaOdbIoTiQTP0SBZz1ioFrYy8IFvNZEGSn3Xk61O1Q3gbTiz5TA>
-    <xmx:iZOgaCq5v_XtB0WlQ4GVnjvqiUgDglCFDFYqAVIKeGW1qx9yTJIO5g>
-    <xmx:i5OgaHyLWNa1HTaJfEPCJZwiD1JlKOuGsMhoQA33o11jEiOdur44mLq3>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9F059700065; Sat, 16 Aug 2025 10:19:53 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54E72E54A9;
+	Sat, 16 Aug 2025 14:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755354018; cv=fail; b=b9pqz+61qjhXy7cHzTgKfXqkUFQ+AD3TRzeXBRjPbA/d9pINWDteuqm9iOSty4CZCPIP4QPGD5VLcVjVgqvMDmp13ZZWxzJGyI9s60q1Ulqw/cxmf8HEpBZFmJIRh+yCMdEHi/B7GlPrLDWVQ0A8Jj9qwyjZhNGavKOrP0vAF2k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755354018; c=relaxed/simple;
+	bh=ZzHh/FX2VUarM6VAtidCcdid0aKKvKjEXFQ9xq6FoKk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IZMATLlfD7Mp/r+y2Zst2n7DiWNZQYl717dcwbX2fNWNwHmKTpRLZBMPB/8RCFEJRVEOv9F8rx4wiv1eT8MsvJVfhY/IPUIpGt6Qw+X4NgD7UiMbFpFWScHWlx1ztaZawRGnGuYkZ3vi0fIHYS1jlgc0DUCJwVwxFXPXQhNqqjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uYmgzF2u; arc=fail smtp.client-ip=40.107.237.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=soa0CQu6m/k/WDxe5MhZFrJIPHSUOc+O0i0NeWIpoCwJCT52xM1erSkRVr3oAOcE9JHKoIkM3WGuFgVlo1FOd7o5ThC8f9NLE5z/e1gcZZeMoYNNnDAsJIYzc8W0ZoZsQRqwkS64ykJ4LpJoNpB2HOCbj4+g1y4tGiO6D6Q4FeoWPoLf819PKa0KIYlsT+9Yu/HTWe09Zg+jNKF/wi6JUmdgLYppQOpHlnqb7oWkUL61kq9MHN5ePbcHPs05FUAtr91hcR1UELnRdTQaj8vFfDBVtxVmU7oELQrtCEDYZNehJkTjOiihUJHH1VzBTo4KCN+mffZTkmeEVNVBZCus9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xZvJJ2uJbu7UtkMQXt+brTrsJh5ZbvCAnC2GlBpDLGQ=;
+ b=ZtlX0zFGMRpS+STxPGrMIWVnbx/glc0TInLs6J8XeBRDYaqrrS1VpYdqzGjUPwcPeH09nZ9fBhKyJVMtTInGCTGsoMitg3UIv/QtUwqziffRBnaP2Cl7wEKHHr2AmcmF9ZekfaYpbAFhwlIto0IAExhMmYkUkk+R/0jwzMRkvmDO7Z9GWbPFPnitEvirtgcu/UPkbNDCN0rx085xxf8xwcyfK8k0YiV35rB4t9aoj3du/B/k2A2+mWDOGUGZQrBFfzN4IKxKgqax9cWtOLB7NSgRtRBkZN04ok7oLwfVip8/NMonFh2ibFV1YDvkV4uFZWzZ4a3JhqD3QF5TIzTmOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xZvJJ2uJbu7UtkMQXt+brTrsJh5ZbvCAnC2GlBpDLGQ=;
+ b=uYmgzF2uygM+0r1Lk3LcgYtYwLBgcLSr+AHw2Ycy4g/AQDfb8cy9c2WBf944CyVDIEbU1qX9K8CEY+yT42ocRvHv+u09gwSduPxl4OgVT2+iLbyXYeI1xSD3QZFE7NgUe9TeYMW4A3C6JfP4ZfHDnMyg+w+qNSfPyFmkddL3dd4=
+Received: from BYAPR01CA0012.prod.exchangelabs.com (2603:10b6:a02:80::25) by
+ MN2PR12MB4301.namprd12.prod.outlook.com (2603:10b6:208:1d4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.21; Sat, 16 Aug
+ 2025 14:20:12 +0000
+Received: from CO1PEPF000066EA.namprd05.prod.outlook.com
+ (2603:10b6:a02:80:cafe::2b) by BYAPR01CA0012.outlook.office365.com
+ (2603:10b6:a02:80::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.19 via Frontend Transport; Sat,
+ 16 Aug 2025 14:21:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066EA.mail.protection.outlook.com (10.167.249.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Sat, 16 Aug 2025 14:20:10 +0000
+Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 16 Aug
+ 2025 09:20:01 -0500
+From: Vishal Badole <Vishal.Badole@amd.com>
+To: <Shyam-sundar.S-k@amd.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Vishal Badole <Vishal.Badole@amd.com>
+Subject: [PATCH v3 net-next] amd-xgbe: Configure and retrieve 'tx-usecs' for Tx coalescing
+Date: Sat, 16 Aug 2025 19:49:41 +0530
+Message-ID: <20250816141941.126054-1-Vishal.Badole@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AIqzQMgvnQL3
-Date: Sat, 16 Aug 2025 16:19:33 +0200
-From: "Janne Grunau" <j@jannau.net>
-To: "Sven Peter" <sven@kernel.org>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>, "Neal Gompa" <neal@gompa.dev>,
- "Joerg Roedel" <joro@8bytes.org>, "Will Deacon" <will@kernel.org>,
- "Robin Murphy" <robin.murphy@arm.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
- "Hector Martin" <marcan@marcan.st>
-Message-Id: <2d3e818d-5bc3-4156-a0c6-6d756f814c86@app.fastmail.com>
-In-Reply-To: <c9440d31-add4-4c0f-ac2a-184e771ab455@kernel.org>
-References: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
- <20250814-apple-dart-4levels-v1-3-db2214a78c08@jannau.net>
- <c9440d31-add4-4c0f-ac2a-184e771ab455@kernel.org>
-Subject: Re: [PATCH 3/3] iommu: apple-dart: Add 4-level page table support
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EA:EE_|MN2PR12MB4301:EE_
+X-MS-Office365-Filtering-Correlation-Id: a21f42b0-e178-4f62-09a1-08dddcd00294
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6KQLaGeIH8DHvX6L5pUptYLeOEUd9JvQVUFE8Z/exHCVe14rltCPepmAPHDf?=
+ =?us-ascii?Q?iEM8BAtgoomXfJu0+dG+gEV3TtVZPlRK5pKV80hNl+WfuoscxcIqpK/TaVkE?=
+ =?us-ascii?Q?FiCTzplieQ6f7CfB4iZH0mjV0n5hN+LbbTDKoVkjzJBuvhIXvrEiYp0MA9vr?=
+ =?us-ascii?Q?SvJbAKK2Ept/NWyX7mGmyDLkTyE9gWojfW/+v3EOra8vPjPk+vZN4ZP2JrIv?=
+ =?us-ascii?Q?wucVlgTvf1pQaEehOyiPoYH9K140htiD3uCgHPrUzfZGYCqBGRIB0GNGjWuJ?=
+ =?us-ascii?Q?Oj9EDp6ZBCpZkMfchPdzizum16uw54sSyrB7LMgeGqDrje79UXppwEyGSEQl?=
+ =?us-ascii?Q?0g2Lzc4ZA2RxBkVmJ8glN5CYxllxANkLiZ0Qakzz0hdtaYMOb267aL2kCAvW?=
+ =?us-ascii?Q?huBi2JzOlyQ/qzqa3aQ6dCw5U2vo3FksIrTpo5P2UWw1HbQGeUnMKEz9htj5?=
+ =?us-ascii?Q?6Is1o7zqSszHPtHd2nD/68yMALrPYIbz47Ea5qBN1anWVNMw4W90VmKgPqkL?=
+ =?us-ascii?Q?W9bc1u33lromQAgh/Wf7dLdiWiZu/iChaq4mboEvCZOEMGG0++ZMyy9kgtLn?=
+ =?us-ascii?Q?Evu9jGSHJer2fwJMmLsVvetr/tzQdTNRPsCegiDhYiyCRDzqVY5mNSo5Y5B9?=
+ =?us-ascii?Q?2S2iw3Al3ws7os2wLMgxD3iiQ1mu0Q6uzeFaTwf4z4Mi1gILnMmTnDTwboWN?=
+ =?us-ascii?Q?ESEJonCOTpiv+IOQTdIH/p6s8oHaIS3ZulbAtTRWtEL/jFaFBtsrrbM9IrX+?=
+ =?us-ascii?Q?ZozOc1s3Ky78mtpfs7Z252emzKm+cQZrntYmzbYDIPEspyTorWQOVpiLEeAx?=
+ =?us-ascii?Q?Jfpzprs/LLK7GT4I7UmNXrjXo8eXeb9RqGO6KdtH83ipo4/pyeGvjTEs1rGW?=
+ =?us-ascii?Q?TShLsaIKicxjMNrZ1QSQfzOZl5URGxRbyCP0Gwa+0hdR63zUyGaKQwhSvHCi?=
+ =?us-ascii?Q?yRrkhEU7jCFR00rh0Qslw6RZROaLw10D8VcecS1RLFS50wtOEUjf9dVGJKvq?=
+ =?us-ascii?Q?TSAXPV0kDgsw8TixwhIyTV1NwZRfnfeaHtG7xQGeDW3dnCm8l7ct9b7bHNSq?=
+ =?us-ascii?Q?x0Lq+MSvHl04TS9DQF40+GQR+6YwzzLVGDVaoP707IpL5ZsZjqO2EDyEKA94?=
+ =?us-ascii?Q?ZOmp620uu6//KXwk58BsmkF9J+qPTz6KBBla3/Al6Dx+I6nZV66v8K8ZyrF7?=
+ =?us-ascii?Q?A7/EsUo+lJi88neTHfPkCygoorDh/9mNKYs3Gdd6jZeVm/I7/jYQz+hM3wfT?=
+ =?us-ascii?Q?dMiqb7voXgOvHEELU//7reSYYmzsvFgbj9g1sbugM9zl6wcq8k2fi6PON8Wg?=
+ =?us-ascii?Q?meQeiyWXlKz+Hi1mx2aOGdPiahQosNHGV54KX74WSyY4uNc9au+/rjZPL1D+?=
+ =?us-ascii?Q?lz9QhXBkdv11u+KVSFu60JA0JkDEEU6kZkiIkw5Ip6mmHFw6FogpA6sw8RP3?=
+ =?us-ascii?Q?puuL36rXLZZg4fA2xqkaxJoVScIMROKymQBcXEwKB5WtwL9blqimHuDE0lkV?=
+ =?us-ascii?Q?41cHoCzEjc9jwmU95B7JMXZspluHFWD0Vz+tNBV2e958VWs8xVI7XXtzgA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 14:20:10.9683
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a21f42b0-e178-4f62-09a1-08dddcd00294
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066EA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4301
 
-Hej,
+Ethtool has advanced with additional configurable options, but the
+current driver does not support tx-usecs configuration using Ethtool.
 
-On Sat, Aug 16, 2025, at 15:50, Sven Peter wrote:
-> On 14.08.25 10:40, Janne Grunau wrote:
->> From: Hector Martin <marcan@marcan.st>
->>
->> The T8110 variant DART implementation on T602x SoCs indicates an IAS
->> of 42, which requires an extra page table level. The extra level is
->> optional, but let's implement it.
->>
->> Since the driver failed at IO page table creation with 42-bit IAS add
->> "apple,t6020-dart" as separate compatible using the T8110 HW data.
->
-> Is the commit description outdated? I don't see this change anywhere.
+Add support to configure and retrieve 'tx-usecs' using ethtool, which
+specifies the wait time before servicing an interrupt for Tx coalescing.
 
-yes, I decided to handle this as missing feature / bug. Both end up with
-the same result and as far as we can tell it is fully compatible.
-Removed locally.
+Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
+Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+---
+v2 -> v3:
+    - Update the commit message.
+    - Ensure tx-usecs value must be non zero.
+    - Round tx-usecs to nearest multiple of jiffy granularity.
+    - Link to v2: https://lore.kernel.org/netdev/20250812045035.3376179-1-Vishal.Badole@amd.com/
 
->> Later it might be useful to restrict this based on the actual
->> attached devices, since most won't need that much address space
->> anyway.
->>
->> Signed-off-by: Hector Martin <marcan@marcan.st> Signed-off-by: Janne
->> Grunau <j@jannau.net>
->> ---
->>   drivers/iommu/apple-dart.c | 23 +++++++++++++++++------ 1 file
->>   changed, 17 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
->> index e72a93e78e26ca61b233c83d439dbdfadf040fc6..bb48e8603d6c84bcf107-
->> 294d851c2f2fc1273298 100644 --- a/drivers/iommu/apple-dart.c +++ b/drivers/iommu/apple-
->> dart.c @@ -133,6 +133,7 @@  #define DART_T8110_TCR
->> 0x1000  #define DART_T8110_TCR_REMAP            GENMASK(11, 8)
->> #define DART_T8110_TCR_REMAP_EN         BIT(7) +#define
->> DART_T8110_TCR_FOUR_LEVEL       BIT(3)  #define
->> DART_T8110_TCR_BYPASS_DAPF      BIT(2)  #define
->> DART_T8110_TCR_BYPASS_DART      BIT(1)  #define
->> DART_T8110_TCR_TRANSLATE_ENABLE BIT(0) @@ -177,6 +178,7 @@ struct
->> apple_dart_hw {     u32 tcr_enabled;     u32 tcr_disabled;     u32
->> tcr_bypass;
->> +    u32 tcr_4level;
->>
->>      u32 ttbr; u32 ttbr_valid; @@ -217,6 +219,7 @@ struct apple_dart
->>      { u32 pgsize; u32 num_streams; u32 supports_bypass : 1;
->> +    u32 four_level : 1;
->>
->>      struct iommu_group *sid2group[DART_MAX_STREAMS]; struct
->>      iommu_device iommu; @@ -305,13 +308,16 @@ static struct
->>      apple_dart_domain *to_dart_domain(struct iommu_domain *dom) }
->>
->>   static void -apple_dart_hw_enable_translation(struct
->>   apple_dart_stream_map *stream_map)
->>   +apple_dart_hw_enable_translation(struct apple_dart_stream_map
->>   *stream_map, int levels) {   struct apple_dart *dart = stream_map-
->>   >dart;   int sid;
->>
->> +    WARN_ON(levels != 3 && levels != 4);
->> +    WARN_ON(levels == 4 && !dart->four_level); for_each_set_bit(sid,
->>      stream_map->sidmap, dart->num_streams)
->> -            writel(dart->hw->tcr_enabled, dart->regs +
->>              DART_TCR(dart, sid));
->> +            writel(dart->hw->tcr_enabled | (levels == 4 ? dart->hw-
->>              >tcr_4level : 0),
->> +                   dart->regs + DART_TCR(dart, sid));
->
-> This is a bit hard to read, I'd prefer an explicit if (dart->hw-
-> >tcr_4level) here.
+v1 -> v2:
+    - Replace netdev_err() with extack interface for user error reporting.
+    - Link to v1: https://lore.kernel.org/netdev/20250719072608.4048494-1-Vishal.Badole@amd.com/
+---
+ drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 28 ++++++++++++++++++--
+ drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-you mean `if (levels == 4)`? `dart->hw->tcr_4level` will be `BIT(3)` for
-t8110 darts even when they use just 3 page table levels.
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+index 12395428ffe1..0bbb0decdae8 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+@@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device *netdev,
+ 	ec->rx_coalesce_usecs = pdata->rx_usecs;
+ 	ec->rx_max_coalesced_frames = pdata->rx_frames;
+ 
++	ec->tx_coalesce_usecs = pdata->tx_usecs;
+ 	ec->tx_max_coalesced_frames = pdata->tx_frames;
+ 
+ 	return 0;
+@@ -463,7 +464,8 @@ static int xgbe_set_coalesce(struct net_device *netdev,
+ 	struct xgbe_prv_data *pdata = netdev_priv(netdev);
+ 	struct xgbe_hw_if *hw_if = &pdata->hw_if;
+ 	unsigned int rx_frames, rx_riwt, rx_usecs;
+-	unsigned int tx_frames;
++	unsigned int tx_frames, tx_usecs;
++	unsigned int jiffy_us = jiffies_to_usecs(1);
+ 
+ 	rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
+ 	rx_usecs = ec->rx_coalesce_usecs;
+@@ -485,20 +487,42 @@ static int xgbe_set_coalesce(struct net_device *netdev,
+ 		return -EINVAL;
+ 	}
+ 
++	tx_usecs = ec->tx_coalesce_usecs;
+ 	tx_frames = ec->tx_max_coalesced_frames;
+ 
+ 	/* Check the bounds of values for Tx */
++	if (!tx_usecs) {
++		NL_SET_ERR_MSG_FMT_MOD(extack,
++				       "tx-usecs must not be 0");
++		return -EINVAL;
++	}
++	if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
++		NL_SET_ERR_MSG_FMT_MOD(extack, "tx-usecs is limited to %d usec",
++				       XGMAC_MAX_COAL_TX_TICK);
++		return -EINVAL;
++	}
+ 	if (tx_frames > pdata->tx_desc_count) {
+ 		netdev_err(netdev, "tx-frames is limited to %d frames\n",
+ 			   pdata->tx_desc_count);
+ 		return -EINVAL;
+ 	}
+ 
++	/* Round tx-usecs to nearest multiple of jiffy granularity */
++	if (tx_usecs % jiffy_us) {
++		tx_usecs = rounddown(tx_usecs, jiffy_us);
++		if (!tx_usecs)
++			tx_usecs = jiffy_us;
++		NL_SET_ERR_MSG_FMT_MOD(extack,
++				       "tx-usecs rounded to %u usec due to jiffy granularity (%u usec)",
++				       tx_usecs, jiffy_us);
++	}
++
+ 	pdata->rx_riwt = rx_riwt;
+ 	pdata->rx_usecs = rx_usecs;
+ 	pdata->rx_frames = rx_frames;
+ 	hw_if->config_rx_coalesce(pdata);
+ 
++	pdata->tx_usecs = tx_usecs;
+ 	pdata->tx_frames = tx_frames;
+ 	hw_if->config_tx_coalesce(pdata);
+ 
+@@ -830,7 +854,7 @@ static int xgbe_set_channels(struct net_device *netdev,
+ }
+ 
+ static const struct ethtool_ops xgbe_ethtool_ops = {
+-	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
++	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+ 				     ETHTOOL_COALESCE_MAX_FRAMES,
+ 	.get_drvinfo = xgbe_get_drvinfo,
+ 	.get_msglevel = xgbe_get_msglevel,
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
+index 905959035a40..8f01f9a2be39 100755
+--- a/drivers/net/ethernet/amd/xgbe/xgbe.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+@@ -272,6 +272,7 @@
+ /* Default coalescing parameters */
+ #define XGMAC_INIT_DMA_TX_USECS		1000
+ #define XGMAC_INIT_DMA_TX_FRAMES	25
++#define XGMAC_MAX_COAL_TX_TICK		100000
+ 
+ #define XGMAC_MAX_DMA_RIWT		0xff
+ #define XGMAC_INIT_DMA_RX_USECS		30
+-- 
+2.34.1
 
-Changed locally to
-
-u32 tcr = dart->hw->tcr_enabled; if (levels == 4)        tcr |= dart->hw-
->tcr_4level;
-
-and then writel(tcr, ...) in the loop.
-
-I've change prefix of all commits in this series to "iommu/apple-dart"
-and "iommu/io-pgtable-dart".
-
-thanks,
-Janne
 
