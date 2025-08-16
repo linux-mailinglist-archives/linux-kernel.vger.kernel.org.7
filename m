@@ -1,90 +1,116 @@
-Return-Path: <linux-kernel+bounces-771912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C460B28CD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:24:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E51B28CD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EB7AC87C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:24:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED4737BBA00
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12712918E9;
-	Sat, 16 Aug 2025 10:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D2C292936;
+	Sat, 16 Aug 2025 10:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlxM3M5C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IePDLVGZ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129AE1BC3F;
-	Sat, 16 Aug 2025 10:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADCD252912;
+	Sat, 16 Aug 2025 10:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755339847; cv=none; b=BRKPqXo82YO2zdhAZxoYs3Sc0GYzKIn7tnxsAuyTo4zawMYZNGOFnHhVtig5nUe/e1c2wfPd9ER3+ekz4ZBJUJh37wbhnVIKvH4kFslc04bJESql1WjoZ/Aw2ksAszsZue5jT6nM9RnSCXefWMnvVTmKx8Av1lsppJTtF9nlZl0=
+	t=1755339904; cv=none; b=QhIDDDDOb4d7zernNGhwAgCT3ZRE8iTZUZNgrsPF/ytovZYgRtDJn+BbOh2mfa3SabzGZnBlnCUoPi7xfiO81z0C/37uGDiRcZ3qpYFCDYeRRKpb9wpQIC6vfq3K/1ArpgqeKS4K5CELnCPl9IJfKcQpNyYoZ8qQ7N31/FSvjW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755339847; c=relaxed/simple;
-	bh=q4RSZ0OyCd9Xi9QA2zHc8zfFbKlMQ/MIajyfHJrcspY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dPGogG08I5LoAET8AIXGn6ijGOhp5lN90eGtp7IRGhmUTZMMb4VsCaSDmoxK0DNYnj4+q3YA13TehNMEqRwwyi84GHM/QMElofpItvcBivwCWhnYYqdhiEZiU+Rp8WgEJd7QhKfRmhIgcc04XRmh0RzHuBITeLS7AWzKniT/PbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlxM3M5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7D3C4CEEF;
-	Sat, 16 Aug 2025 10:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755339846;
-	bh=q4RSZ0OyCd9Xi9QA2zHc8zfFbKlMQ/MIajyfHJrcspY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rlxM3M5CtVgx/30XuqAkSlcf7TlkzvM5T7wziOlT6E6NoKma9pe4CTp8+B3zTXqKh
-	 hyYBNRvlH3ixJNzRLL0nBt2l+GbX26KKiaHUrckzkBHP4JstvZ9HznwwySLoNEbuhz
-	 HgIS2sni1eGYjyfC1CCXb+f/7TSEXMVpaUcE2e4Igbdwd2yvKLlJ9ihGMDR2ztmhNl
-	 KMQDAsEykYu37svydwwoe0wBYdWx4fPS54UI9sS06CJThGHJRYgHY9prwbYS+9tFWS
-	 Wikva0vlfJ6L1Ap8GOZuLklEirh0e3qgHK0OKVM2VRgiGbIUcYJAWOTwS/F2gO5Qu0
-	 CPaTRa8M+zO1w==
-Date: Sat, 16 Aug 2025 11:23:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: ltc2497: add lltc,ltc2495
- bindings
-Message-ID: <20250816112355.79747df6@jic23-huawei>
-In-Reply-To: <20250815-fanatic-benevolent-whippet-ce6f19@kuoka>
-References: <20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com>
-	<20250814-ltc2495-v3-1-c2a6cecd6b99@gmail.com>
-	<20250815-fanatic-benevolent-whippet-ce6f19@kuoka>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755339904; c=relaxed/simple;
+	bh=PJU7htTDQ2hko0s3DIZZxAA1LpnKiMLmKn61cStMIsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGmE/zuV16R0UHmWoFx5bg+p0J/QFSV4ZoSNXafqdC8p+FLIonklffoFEYy2e4iaHUdhER0q8hPKjUtlpB4o+34nAP4OiL2I3oErafCOXuPD3mBLqVBnpWWHj9c7qcecWBvd2EiC8jR1961OWOcmlrawqMs958mP1gB/8vdHUEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IePDLVGZ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id CAEC22080B;
+	Sat, 16 Aug 2025 12:25:00 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id NXE75Uhcr_XP; Sat, 16 Aug 2025 12:25:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755339900; bh=PJU7htTDQ2hko0s3DIZZxAA1LpnKiMLmKn61cStMIsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IePDLVGZYTzkNTAyL7QyTRXgQt0HbfqnmuB8PnhjCm5o3baBccG3fuAGEV8OzRAvD
+	 71MrSNLUA36NorOmr09RomrbRUaDhgDE3hZr0SBQ851th+G2rHH+9qmai2d6gv7jbw
+	 QpviGwFc+TUHwMYBlGyD3LIfEwioIn9nE0WBcq/UWsH0l0Wo8aUFlTYmXJVyywSSdA
+	 yJRqiTMcaZmLMD/M8PQKH1Y3OYw7vdwXs3Ky0PCYz15XvfaC8EwWOTsyocS8Yvqx+v
+	 rDDQSDJaIlnMYyI9xuCvWadC1S0L8OTBHJ2CFvsC6GlR8t3UjqdnDaqC8u5HpiQ5Tc
+	 93wwm8/LmllVA==
+Date: Sat, 16 Aug 2025 10:24:45 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH 1/3] dt-bindings: reset: Document reset controller of
+ Loongson 2K0300 SoC
+Message-ID: <aKBcbUbx-hgNBOY_@pie>
+References: <20250816033327.11359-2-ziyao@disroot.org>
+ <20250816033327.11359-3-ziyao@disroot.org>
+ <d5134909-58a4-48c2-a227-2fb3ce200c2f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5134909-58a4-48c2-a227-2fb3ce200c2f@kernel.org>
 
-On Fri, 15 Aug 2025 10:57:21 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> On Thu, Aug 14, 2025 at 01:00:17PM +0200, Yusuf Alper Bilgin wrote:
-> > Update the binding documentation for LTC2497 to include LTC2495 to
-> > enable support for its internal temperature sensor, which requires a
-> > different I2C command format and a new IIO channel.  
+On Sat, Aug 16, 2025 at 11:48:46AM +0200, Krzysztof Kozlowski wrote:
+> On 16/08/2025 05:33, Yao Zi wrote:
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    rst: reset-controller@1600011c {
 > 
-> Your patch #2 says they are compatible, so either this patch is wrong
-> (and you are supposed to use fallbacks) or patch #2 is wrong/incomplete.
-Agreed.  Going too fast here, and discussion on v1 wasn't finished.
+> Drop unused label
+> 
+> 
+> > +        compatible = "loongson,ls2k0300-reset";
+> > +        reg = <0x1600011c 0x8>;
+> > +        #reset-cells = <1>;
+> > +    };
+> > diff --git a/include/dt-bindings/reset/loongson,ls2k0300-reset.h b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+> > new file mode 100644
+> > index 000000000000..d425411e6d19
+> > --- /dev/null
+> > +++ b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+> > @@ -0,0 +1,70 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> 
+> Why not using same license as the binding?
 
-Jonathan
+I was referring to another binding's header when writing this, and yes
+it's better to keep them the same.
 
 > 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Will fix these issues and carry the tag in v2, thanks.
+
 > Best regards,
 > Krzysztof
-> 
 
+Best regards,
+Yao Zi
 
