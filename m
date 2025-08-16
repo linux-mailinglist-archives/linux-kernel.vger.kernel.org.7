@@ -1,70 +1,91 @@
-Return-Path: <linux-kernel+bounces-771706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC2CB28A8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411BCB28A8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86DA564327
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3559A5642B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954B41D5CEA;
-	Sat, 16 Aug 2025 04:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B51CAA65;
+	Sat, 16 Aug 2025 04:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XBcjzuRl"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSU9Posm"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C0A32C8B
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E032C8B
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755318498; cv=none; b=BaPWK4MT4J9iYinXQdM/kdnFnBUHXM0MOY1BcVTsVynzCen3yKIuXtyQ1IEAqDrAz/L/B5QOhInD8INla4RgNYI/UsoaidFgRBItnO+/7PGtSqzPAZnIn2szF4UbuTsurk6EwIXmu5pmTHsKBP/67vsHRhN2d9LM0jrn+Pdbv4Y=
+	t=1755318532; cv=none; b=IteJh4nAiPmN9vVb6VpIbpRjdqRcPPqwTyC02OYfhAKK6AG3V7UJdVqQmXu9n8iicCcLNt3Qzz+daqHn2vrvGEqsTBlgT21R4vhTrtGqDJ4V7EFSlxy5SATlXnC/qIi6EkJnwWQVVEzO9yWNSqyqPFUTHdR+w+N1X+83aZJAZHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755318498; c=relaxed/simple;
-	bh=Esg2ApusHefEjks4oB99o3R10X7dJNo2nl0FDeReQuQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fx4+CoEh9CIim4eDv30ktJrdE7y/MMC9RojWkz3yg8GNRH3qpsSp2FuOXSSyJq4OK71+OjA+ciXlH9LmWDayGcdobbY+dRmJI3SU8Mp7iogbgNQh0Au783WYV8c3jqxiMLuXp14//r2LxC/mT2j5NPfzCQ2wAjS06AQmwGR3mGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XBcjzuRl; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57G4RpGv2287569;
-	Fri, 15 Aug 2025 23:27:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755318471;
-	bh=cdEhyYP5Z26rmwIUQNXyNDdUNTis7R2NVlJzNymdpOI=;
-	h=From:To:CC:Subject:Date;
-	b=XBcjzuRl1KMbLNwgSi9d5qbSqSsg2X8bimzPuR0/NrlIrJqGnCa/ORS0d0wQZT15/
-	 2y/5jlVnQN/S8XwDsRkbBU2MARoeNqz5eINXIJqFdbmW3QqWb6/m+o34UKdZYZd8GW
-	 sgnASpjtLn/HlZwT7JSxQ7jhHBSq1ztq4avOlyns=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57G4RnRU3061512
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 15 Aug 2025 23:27:50 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 15
- Aug 2025 23:27:49 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 15 Aug 2025 23:27:49 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57G4Rj5W1962932;
-	Fri, 15 Aug 2025 23:27:46 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <13564923607@139.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v2] ALSA: hda/tas2781: Add name prefix tas2781 for tas2781's dvc_tlv and amp_vol_tlv
-Date: Sat, 16 Aug 2025 12:27:41 +0800
-Message-ID: <20250816042741.1659-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1755318532; c=relaxed/simple;
+	bh=T3uRfYG+/Tk9uidSVKx0F9Kn9rjGkazrVJXrCU4rVkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PvnW3TpVyX7iStuU9DL8wr7GEOwPOu2bDUXhsgon6dDZWVxqC1rwrhG3gQnoHt3xtbB9uDu7+gWE/yw/MCfnsCBfG+TIhHMbHl3shGxJfWWODhdlJ3nzFs8F+y3p+Af1bFFhyzwOlcJb11gIbACGwzjuG6IHLtIucxjqMYTTOgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSU9Posm; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2961330b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755318530; x=1755923330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nUdKVXAydBJ9wkHs/z6NzRQghT8Ti2LWocpy6KfUJOo=;
+        b=PSU9Posm9yHzCDhNtHpryTsR+6Euwf1z7M+9pPtKtfmggjI7rGlL6alVk5An5t62mm
+         fULYniSbgDGaJ2QTWinZPJAl8fPRy2eAoKtz0/PI3P1fNxKdQJW1Zxp/rS+xnnWxfW0W
+         D5BAsroS+2MHi+BIYamY/Sk7XOHzwmO2tU/ryE/DgKOsqstO31V7qFlfc6HYSVfLbUH+
+         em9WGhvYozZA779MLnzZsAlZJYCod4RAgJ/fGDg3RYi6IxcU+j9Yd/r8d7o/qE7c6WAQ
+         K3NBVncTc0f4ZZTPaKQvK6EypEzsIO9YEeknbBPan2jl1wLBmQp/q1tyqFSPBeKWOr41
+         501A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755318530; x=1755923330;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nUdKVXAydBJ9wkHs/z6NzRQghT8Ti2LWocpy6KfUJOo=;
+        b=s3J7cersnEO1eCOLP+qoCYpIz+A/5ufaN4gdMGrr3KMc8+VuYryOu6i6drfE/3zAp/
+         EZgy+iNix2KUm39vJYAqvsbqhhcpHctEsCt1xIHLS9aHFwduBt3a40f0Gzd8TJg0Rm12
+         5KszDQR97VJY+OXhRO6HyQRap/X4YpcKeUFu3IqMJh0ZZxebEAg1KoFbjnsOD50R3JEF
+         EELyU+EDBFgEkDEeQGGDtwh9COCwZTwPQawPjcjh1QdEFm3w6a55SkYvAGkigIlGmbjN
+         YeHh7fNAOdZSs4TcTVKogVUccKLCVOpYEf/znuDLDmlQ0l0YvYrmZx0B/+B5r+k3BH0O
+         cA1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqWm4fRlxfzTPS2tAoy4dU3vPLWiN1XjJ65GC7khPkOTWGfNh6JMM2o1uwC7Yymnpslf4ff0VEWNOIqKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxblFspO2UzoDAWfIOdamcBVkSgbfdIRHsA13FYdScfyjphN+lP
+	VWuhNMFUuTAHFjgOFH+Dq1nfslO8HSrvtEkm7HO114t1wy8ErLHEX8pI
+X-Gm-Gg: ASbGncuo88myRXalDOK/olt1SGJow01nepUY9TqP0yD27aQTVOSIgGUdZSZSVxNVKjT
+	XV46wot1hFjUgYlxh1Iy8YMu0p77Vk16SBxJmT1iYllmmLbU8kmY4MzJym8Xf6HewsYnE1bvc9D
+	lI5PM8QytRteUuiKHR/ux8IUWYFkGpDPbN0IxBCGZKh5Pu1e+S34vdo6WllfZwtCLvJj25uZi6Q
+	1qrE2+jMobWPVXfJ4W9Bt8NMJuf1bqO6GHCHkmbMM2pP1WNgFEekTIW8yKC6dYezxbBcklevFun
+	r6UgZhjx3hRhcMBKyou2TLGwyOSDxDHCgybBIqrXO2jj484rcSseAPw1FnLZKgOpSxW8ZZAPnMg
+	aLAbR04VeoyDwOd37T2vsCwxRDrUU0iQ5CiL8E78MBkA4znaVaP7sREwDXRzF2TRB
+X-Google-Smtp-Source: AGHT+IHFWWtb1KbXVIg+UozThISuavCO9wv+AE+Tap4j/B944QQFysY2kNhergonWcz8XuW9tB67gQ==
+X-Received: by 2002:a05:6a21:6da6:b0:220:3870:c61e with SMTP id adf61e73a8af0-240d2d7d678mr7691737637.4.1755318530006;
+        Fri, 15 Aug 2025 21:28:50 -0700 (PDT)
+Received: from bj-kjy-standalone-gaoxiang17.mioffice.cn ([43.224.245.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d73a418sm2611958a12.38.2025.08.15.21.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 21:28:49 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH] mm/cma: print total and used pages in cma_alloc()
+Date: Sat, 16 Aug 2025 12:28:42 +0800
+Message-Id: <20250816042842.3959315-1-gxxa03070307@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,97 +93,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-With some new devices adding into the driver, dvc_tlv and amp_vol_tlv will
-cause confusion for customers on which devices they support.
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
-Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+This makes cma info more intuitive during debugging.
 
+before:
+[   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+[   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+[   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+
+after:
+[   24.069738] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 64, request pages: 1, align 0)
+[   24.075317] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 65, request pages: 1, align 0)
+[   24.078455] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 66, request pages: 1, align 0)
+
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
 ---
-v2:
- - Put Fixes tag.
----
- include/sound/tas2781-tlv.h                    | 6 +++---
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 2 +-
- sound/hda/codecs/side-codecs/tas2781_hda_spi.c | 6 ++++--
- sound/soc/codecs/tas2781-i2c.c                 | 4 ++--
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ mm/cma.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/tas2781-tlv.h b/include/sound/tas2781-tlv.h
-index ef9b9f19d212..273224df9282 100644
---- a/include/sound/tas2781-tlv.h
-+++ b/include/sound/tas2781-tlv.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2025 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2781 driver implements a flexible and configurable
-@@ -15,7 +15,7 @@
- #ifndef __TAS2781_TLV_H__
- #define __TAS2781_TLV_H__
+diff --git a/mm/cma.c b/mm/cma.c
+index 2ffa4befb99a..46cc98e7f587 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -776,6 +776,17 @@ static void cma_debug_show_areas(struct cma *cma)
+ 	spin_unlock_irq(&cma->lock);
+ }
  
--static const __maybe_unused DECLARE_TLV_DB_SCALE(dvc_tlv, -10000, 50, 0);
--static const __maybe_unused DECLARE_TLV_DB_SCALE(amp_vol_tlv, 1100, 50, 0);
-+static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2781_dvc_tlv, -10000, 50, 0);
-+static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2781_amp_tlv, 1100, 50, 0);
++static unsigned long cma_get_used_pages(struct cma *cma)
++{
++	unsigned long used;
++
++	spin_lock_irq(&cma->lock);
++	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
++	spin_unlock_irq(&cma->lock);
++
++	return used << cma->order_per_bit;
++}
++
+ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
+ 				unsigned long count, unsigned int align,
+ 				struct page **pagep, gfp_t gfp)
+@@ -858,8 +869,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 	if (!cma || !cma->count)
+ 		return page;
  
- #endif
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index 3471b9ab52cb..318f8c58ae61 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -269,7 +269,7 @@ static const struct snd_kcontrol_new tas2770_snd_controls[] = {
- static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2781_AMP_LEVEL,
- 		1, 0, 20, 0, tas2781_amp_getvol,
--		tas2781_amp_putvol, amp_vol_tlv),
-+		tas2781_amp_putvol, tas2781_amp_tlv),
- 	ACARD_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
- 		tas2781_force_fwload_get, tas2781_force_fwload_put),
- };
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_spi.c b/sound/hda/codecs/side-codecs/tas2781_hda_spi.c
-index 09a5d0f131b2..b9a55672bf15 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_spi.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_spi.c
-@@ -494,9 +494,11 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
+-	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+-		(void *)cma, cma->name, count, align);
++	pr_debug("%s(cma %p, name: %s, total pages: %lu, used pages: %lu, request pages: %lu, align %d)\n",
++		__func__, (void *)cma, cma->name, cma->count, cma_get_used_pages(cma), count, align);
  
- static struct snd_kcontrol_new tas2781_snd_ctls[] = {
- 	ACARD_SINGLE_RANGE_EXT_TLV(NULL, TAS2781_AMP_LEVEL, 1, 0, 20, 0,
--		tas2781_amp_getvol, tas2781_amp_putvol, amp_vol_tlv),
-+		tas2781_amp_getvol, tas2781_amp_putvol,
-+		tas2781_amp_tlv),
- 	ACARD_SINGLE_RANGE_EXT_TLV(NULL, TAS2781_DVC_LVL, 0, 0, 200, 1,
--		tas2781_digital_getvol, tas2781_digital_putvol, dvc_tlv),
-+		tas2781_digital_getvol, tas2781_digital_putvol,
-+		tas2781_dvc_tlv),
- 	ACARD_SINGLE_BOOL_EXT(NULL, 0, tas2781_force_fwload_get,
- 		tas2781_force_fwload_put),
- };
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index e4ca43e006db..ea3cdb8553de 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -910,10 +910,10 @@ static const struct snd_kcontrol_new tasdevice_cali_controls[] = {
- static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 	SOC_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2781_AMP_LEVEL,
- 		1, 0, 20, 0, tas2781_amp_getvol,
--		tas2781_amp_putvol, amp_vol_tlv),
-+		tas2781_amp_putvol, tas2781_amp_tlv),
- 	SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Volume", TAS2781_DVC_LVL,
- 		0, 0, 200, 1, tas2781_digital_getvol,
--		tas2781_digital_putvol, dvc_tlv),
-+		tas2781_digital_putvol, tas2781_dvc_tlv),
- };
- 
- static const struct snd_kcontrol_new tas2781_cali_controls[] = {
+ 	if (!count)
+ 		return page;
 -- 
-2.43.0
+2.34.1
 
 
