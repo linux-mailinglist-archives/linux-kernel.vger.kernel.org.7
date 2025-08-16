@@ -1,181 +1,115 @@
-Return-Path: <linux-kernel+bounces-771700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7BCB28A7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DC7B28A7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1971D026AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93A4AA78BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E05154BF5;
-	Sat, 16 Aug 2025 04:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556B71DDC23;
+	Sat, 16 Aug 2025 04:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S51iCyCQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrK2LwHo"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A81192D68
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5A07483;
+	Sat, 16 Aug 2025 04:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755317140; cv=none; b=XXXLmqZ3smx4s7+rjfWU5OD30E7hUZ1ndBTmWdyHhI5ozNp2S07e7FLLyjKNL3zEE328RgHQSjlVddcuh5QrK4IMVcH9T/UnK4Ubewbd0iBTseKL6Jm3vLdpcepNukKDGyn+owow9wL1+BVz/ZudAd/b/yZ6ZPhyn76pNj/w938=
+	t=1755317421; cv=none; b=rQhVBtqs0n8ovKEWjl6L0mMXSGIY5u2zKKev87tk0yq5bU5U885b8L0gIBoJ0uvMQbLEo8aLfUv6J6a+O7T9FLXgLrls0Tr2grDtNN/0RTKGJAZ2xCe+qYTB+y8PeIOiyHrBVcEYJRNW5Lou+yqASWXCyayEl5YfLpJq/f2x6/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755317140; c=relaxed/simple;
-	bh=9MraKFbbVF3ZG1giR43/4Qfnj03Tvr0GDhYuIA6QRrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mn+hGN7aF1yaQiyjXPI5yUIfG0hAKcmcH97mx/AGtotRiSu1v0j2CVEGd/7E/FmWEhMLICWGVi4J8zzdfDcI8N9gbHMJZGBwMniQWZymT+NB9ARdcCcb2i8ElIdmo70nHSu3vkolkEd5N0cj9lx1B32eGDEE1qGf2KISYU2vnIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S51iCyCQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755317136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Be/x7kdTxHZOOjJPiYl+QftUIbBdfgZWPH7ZWtutGaM=;
-	b=S51iCyCQeeyvHKA0CWkK94MZWJWyi98mHwB6aYQOvQdtx3eRgU6MG+Al3aD2hnSEqDMZnK
-	Q1cCKqoUJ6ZuJY1HhvYnPnnV74DUC3ErxrBukTvmHg8hdRP/m5mxoRDBurHGF+AXz27xtQ
-	ImsId2g1dF9/4CCPjZzCOoAcExQKiZc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-Rt3GOwvDMkCOA0BzFAluyw-1; Sat,
- 16 Aug 2025 00:05:30 -0400
-X-MC-Unique: Rt3GOwvDMkCOA0BzFAluyw-1
-X-Mimecast-MFC-AGG-ID: Rt3GOwvDMkCOA0BzFAluyw_1755317129
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55B4A180047F;
-	Sat, 16 Aug 2025 04:05:28 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.6])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A481180029C;
-	Sat, 16 Aug 2025 04:05:20 +0000 (UTC)
-Date: Sat, 16 Aug 2025 12:05:15 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai@kernel.org>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
-	axboe@kernel.dk, hare@suse.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH 08/10] blk-mq: fix blk_mq_tags double free while
- nr_requests grown
-Message-ID: <aKADe9hNz99dQTfy@fedora>
-References: <20250815080216.410665-1-yukuai1@huaweicloud.com>
- <20250815080216.410665-9-yukuai1@huaweicloud.com>
- <c5e63966-e7f6-4d82-9d66-3a0abccc9d17@linux.ibm.com>
- <af40ef99-9b61-4725-ba77-c5d3741add99@kernel.org>
+	s=arc-20240116; t=1755317421; c=relaxed/simple;
+	bh=/c3aNzjOgzXJdrd/tUcCte5n93leNqn/o0rqKcxvA70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a4myMYUlWKTKbo5YERe2ISOH7Sun2ljILl062gzo7qErgPQhmliFYjo3HVRozeRHUC3YGHenThzTklqGz/oEoP3WzrqTF7g2gRrwCnh1fmxoTlT177V4lVLdLmqMAnZV4ME5iFAqdBNKlm7JJ0XKTJa3Rq2UIpv9IWAasHJ6q2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrK2LwHo; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2430c3684d1so27911725ad.0;
+        Fri, 15 Aug 2025 21:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755317420; x=1755922220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZgmrZyNxf9Lsu54SjKCiJtIUKWyFnhsglXuJqcWDIus=;
+        b=NrK2LwHo28FAbBP1kvt84jC+/TG6MCyYsHmF7G6QhMP1hpGfT4z0HW80w5Nh2Eeivq
+         ZF2KKD0nGqBAgI5eR1+uzhA4RuNMfpe+V4hC6B1g3GTaTWxBtl26tFSPhwJYLyVebpe/
+         yiqCywXtMWykaRPF6/3wbVe83kBBMj6/gBClqWfLbOGcVsybNVnd0jBxvCbDTw3R9bHN
+         MlTZGaG98piLyEpx+pvCwlCrJ1CRQffiC8bfp/8lhTsDRBFv6vdaeA2bAQavWF/m9LkI
+         256DqhsbbM4Y78Aye1MyBYq3jZcwI9mNoTtJ4Hu5e8Y4CpPFVDuvYmwGADq81G/joBju
+         hLgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755317420; x=1755922220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZgmrZyNxf9Lsu54SjKCiJtIUKWyFnhsglXuJqcWDIus=;
+        b=NTrKdLE8VonsbGA4VntbDeO8l7GPbMFd8yLfTnMw2sHee3aFjw96AkkS6OdjSuDOdA
+         3QtnP7f1DJNP6Ea90UuDL/2NwxfVDw69Pz/goFDf3zvlgVkCXOpSO5vOQMJ43MbEDbOu
+         vRSGOONkb/6IqAfARI9Jbc/EMVVL21lPMwAEVzoP56MS0mfljAY5wbB6Le8aB0C4v12P
+         WNHlkRQ1vDhDRHRdvFeuO4V3CgxJ6NhvCjjevcfNy4/r1MoZwOOi82tUbZ1j73i3YL8C
+         lo8zu2PTIL/EVPf16JIDB5iWnSsK413OLrb7vzdRXj1FP3rhZMgaiKukZhlxbOv8RpQ7
+         Z7UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgYHwKzI8uN6GSkwAPte49W5Ck1ab/xcJi2P3k252TUvlU82/AFMQ9pu76upwIh9WL0sPCaz5OeoYiu4g=@vger.kernel.org, AJvYcCXG+2XOZhGM1nx8nIaMIzhrzU1EfAk3zcKeRX53mGFWalOJza0GV/7VfBxfo9QBL0pTnqIqOuqkGKtmdArroo4x@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSxMpUu/+AHqec35ZNAqaiVJthPjSyn5Di7X6n7D7ACFQzge9y
+	fwPP1CIZOpwDdnciByY58loZ3b6qvc4+kcJRzJPF/SjqQ+vNy//09YX5O/YB2jQt
+X-Gm-Gg: ASbGnctaadHusryolUq6+zxT2PnhmrBixlRLZWeXlkYdoaQE4/9n4MwaXVIfLucD1EN
+	0tX4ztWvAPyvmUF9GhkosWElYhPpGCPhZAVnkcZMZocT3V49i1LvEECThfuMJMCTEiC6rFgq9Z/
+	siHRnNPin4kXOQEpz5M6w9i4W7hniy3wflfgnPdudmSl/ldAooyMqzP0IPSBgdStRXLWMaitKFQ
+	AcXtUiXTj0D+eZVjrsCyJosdAemGI70w0zyXv0eXaKjfc0Oq2UC2c5LF0TLYdsm5hqFVkgZj/Q4
+	Ks3k9UMq04TJp/rLyyrF8i1Nx0ZyQxdQ0E6fMBfwKaoiG6yySey2470J8bcgt6b5j+/IQ6RUhp8
+	QDcQIwIAaKkNUHXY5DiLOazY5sQ==
+X-Google-Smtp-Source: AGHT+IGjAe97d4G7wjQcmf5PK9qwQ+YnFzo0vcsTuTa1kbZBxViRv8DPWyTH8/SgX+MWNFi7sQ465Q==
+X-Received: by 2002:a17:902:e751:b0:23f:f39b:eae4 with SMTP id d9443c01a7336-2446bd131c7mr73257325ad.9.1755317419719;
+        Fri, 15 Aug 2025 21:10:19 -0700 (PDT)
+Received: from gmail.com ([157.50.43.60])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54e2a3sm26096095ad.125.2025.08.15.21.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 21:10:19 -0700 (PDT)
+From: hariconscious@gmail.com
+To: shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: HariKrishna <hariconscious@gmail.com>
+Subject: [PATCH] kselftest/media_tests : fixed typo errors
+Date: Sat, 16 Aug 2025 09:40:12 +0530
+Message-ID: <20250816041012.851-1-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <af40ef99-9b61-4725-ba77-c5d3741add99@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sat, Aug 16, 2025 at 10:57:23AM +0800, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/8/16 3:30, Nilay Shroff 写道:
-> > 
-> > On 8/15/25 1:32 PM, Yu Kuai wrote:
-> > > From: Yu Kuai <yukuai3@huawei.com>
-> > > 
-> > > In the case user trigger tags grow by queue sysfs attribute nr_requests,
-> > > hctx->sched_tags will be freed directly and replaced with a new
-> > > allocated tags, see blk_mq_tag_update_depth().
-> > > 
-> > > The problem is that hctx->sched_tags is from elevator->et->tags, while
-> > > et->tags is still the freed tags, hence later elevator exist will try to
-> > > free the tags again, causing kernel panic.
-> > > 
-> > > Fix this problem by using new allocated elevator_tags, also convert
-> > > blk_mq_update_nr_requests to void since this helper will never fail now.
-> > > 
-> > > Meanwhile, there is a longterm problem can be fixed as well:
-> > > 
-> > > If blk_mq_tag_update_depth() succeed for previous hctx, then bitmap depth
-> > > is updated, however, if following hctx failed, q->nr_requests is not
-> > > updated and the previous hctx->sched_tags endup bigger than q->nr_requests.
-> > > 
-> > > Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dependency in elv_iosched_store")
-> > > Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
-> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> > > ---
-> > >   block/blk-mq.c    | 19 ++++++-------------
-> > >   block/blk-mq.h    |  4 +++-
-> > >   block/blk-sysfs.c | 21 ++++++++++++++-------
-> > >   3 files changed, 23 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > > index 11c8baebb9a0..e9f037a25fe3 100644
-> > > --- a/block/blk-mq.c
-> > > +++ b/block/blk-mq.c
-> > > @@ -4917,12 +4917,12 @@ void blk_mq_free_tag_set(struct blk_mq_tag_set *set)
-> > >   }
-> > >   EXPORT_SYMBOL(blk_mq_free_tag_set);
-> > > -int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
-> > > +void blk_mq_update_nr_requests(struct request_queue *q,
-> > > +			       struct elevator_tags *et, unsigned int nr)
-> > >   {
-> > >   	struct blk_mq_tag_set *set = q->tag_set;
-> > >   	struct blk_mq_hw_ctx *hctx;
-> > >   	unsigned long i;
-> > > -	int ret = 0;
-> > >   	blk_mq_quiesce_queue(q);
-> > > @@ -4946,24 +4946,17 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
-> > >   				nr - hctx->sched_tags->nr_reserved_tags);
-> > >   		}
-> > >   	} else {
-> > > -		queue_for_each_hw_ctx(q, hctx, i) {
-> > > -			if (!hctx->tags)
-> > > -				continue;
-> > > -			ret = blk_mq_tag_update_depth(hctx, &hctx->sched_tags,
-> > > -						      nr);
-> > > -			if (ret)
-> > > -				goto out;
-> > > -		}
-> > > +		blk_mq_free_sched_tags(q->elevator->et, set);
-> > I think you also need to ensure that elevator tags are freed after we unfreeze
-> > queue and release ->elevator_lock otherwise we may get into the lockdep splat
-> > for pcpu_lock dependency on ->freeze_lock and/or ->elevator_lock. Please note
-> > that blk_mq_free_sched_tags internally invokes sbitmap_free which invokes
-> > free_percpu which acquires pcpu_lock.
-> 
-> Ok, thanks for the notice. However, as Ming suggested, we might fix this
-> problem
-> 
-> in the next merge window.
+From: HariKrishna <hariconscious@gmail.com>
 
-There are two issues involved:
+fixed typo error
 
-- blk_mq_tags double free, introduced recently
+Signed-off-by: HariKrishna <hariconscious@gmail.com>
+---
+ tools/testing/selftests/media_tests/media_device_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- long-term lock issue in queue_requests_store()
-
-IMO, the former is a bit serious, because kernel panic can be triggered,
-so suggest to make it to v6.17. The latter looks less serious and has
-existed for long time, but may need code refactor to get clean fix.
-
-> I'll send one patch to fix this regression by
-> replace
-> 
-> st->tags with reallocated new sched_tags as well.
-
-Patch 7 in this patchset and patch 8 in your 1st post looks enough to
-fix this double free issue.
-
-
-Thanks,
-Ming
+diff --git a/tools/testing/selftests/media_tests/media_device_test.c b/tools/testing/selftests/media_tests/media_device_test.c
+index 4b9953359e40..5710532ac379 100644
+--- a/tools/testing/selftests/media_tests/media_device_test.c
++++ b/tools/testing/selftests/media_tests/media_device_test.c
+@@ -71,7 +71,7 @@ int main(int argc, char **argv)
+ 	if (getuid() != 0)
+ 		ksft_exit_skip("Please run the test as root - Exiting.\n");
+ 
+-	/* Generate random number of interations */
++	/* Generate random number of iterations */
+ 	srand((unsigned int) time(NULL));
+ 	count = rand();
+ 
+-- 
+2.43.0
 
 
