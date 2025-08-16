@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-772165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91589B28F7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A564B28F7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188871C210D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:31:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C5D169BB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C001DF72C;
-	Sat, 16 Aug 2025 16:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B02F39DC;
+	Sat, 16 Aug 2025 16:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTE9ObEk"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZEv8ejtc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B596638F9C;
-	Sat, 16 Aug 2025 16:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21FC2E4252
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755361836; cv=none; b=FHOK6oEo1UYcXZ684x9g35cDLALF5FhcQiO83ukDIDE5SntxFrrx7eUNCrB3vjsSb7Fi6acPgw0c5cSz35nF3qdeDY8Sx1CTjHTyYWhiaGP+lLIxI2fBwI+8l4UpqbQqjphNmO3B2eOzTHKXGjaFhKNpIH67A0j4Fy3nCRzSwuI=
+	t=1755361858; cv=none; b=mxgpVkUaztT7WRfYowFvrfPE3Am3JgdkGCEr0yv9YLW9aWn76ux1VtVjTFsew6VIzHYauoJhN9UFA1Em0xZa4jCT6eVH6l8tCsA0u8BCbeTlPykfkWjzobcvW7DpxEIyq7RhzufWpf9LtOOe6Tn7+U3zeaWT0A8IS9xkn9kWn8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755361836; c=relaxed/simple;
-	bh=hndPGv2wdnGaAp+U8k81L2oZ/U9gw0TgClsOE/aLPCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uqCdPMf9iXS2PoTyVu/fTFGMlGvVLdj8KZkzux/yF67cob3+DbHiUz2F5HsYFT1gvhmXZwwtrSGmhTr7Cbu6l4cvoJl2nw5vKgaWepxJR0uXFgrfBdQJTv3jbnKzBuY64mgveWbnPZ51EyATlfbdbV2k7TY6Dexixpy1/UBJplw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTE9ObEk; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326e09f58so3251971a91.2;
-        Sat, 16 Aug 2025 09:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755361834; x=1755966634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YfDPs/ifotx8nej6O4Kf3zetz5WIEYRWWHBMLRI1GI8=;
-        b=aTE9ObEkRvMtGeboRAAjnpJLESSwo4x+vVw/uqHO1xN1vXWcCNY/VxJkyc8MJnBme4
-         8XWMM5R8DsyW7LyiUv5dEl2WGl5JMr+rZsBI3YN0x+tWeErvdQS+wzm6WWLKTh/OC113
-         iWiarPizP4RxMomJtrYORZTBQFy1QGxUt8QfYXbyDaws9Ys7JH6nuo70rqumvRLaMpLo
-         7GcycoVLDb3PJH2xCEsXX6TrnTd8BfK7pRlLevEUW56TUDuLcTTlNMqVfX0izyBpUVUC
-         Rtj7Q1igOf/PBpSSNnrdIGzRrmpYPOLVzV7MndAZf07jlOw5JCIGREk2ntEfOskauw8C
-         ItcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755361834; x=1755966634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YfDPs/ifotx8nej6O4Kf3zetz5WIEYRWWHBMLRI1GI8=;
-        b=W5CJzgC/hKFbQsOOejKSXT+XvcLY1dF1Et/ZOqzv3V6ld4Kel8rAEQJT4vqWyFMy7+
-         Fq8OaHOncJEYj2nG2R6AGBjN47Lc8BwPX/xioQax606BoKZdrZvWRZniOzmV69QOvFBd
-         cAN66UlyV9mkHUZc7qcYqIU0VzLlwa6RZXDZ+LnWZMTGS/gwee30f5x4SDBbc3tLK+Am
-         vya6kmFOE9ITgjI8bDPTcoyDsdRyrPibwiiKjvw0RgiQ1y9xGb/LhX01Nec8F8YsRN0k
-         4hdrZLESSXL8P2uBZYzqa0nSpKlUD69SeL77bzvg1FGYaqQl2oG/3op9w7z06tZiR6np
-         2ooQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW39WggErK4ltA8AktJWPJvfNykic2ULUYaCZJD2babTHpEsj5NxJO3vWeTlz11X/xP7jtrcd0zdie9Of0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDR6t+1/gnAKD/+cRNTIgEmc8vDDa4I1qjROegRKPUSuv9nA8w
-	XWYq+uDxUTsRUUtoXG03lutf8rdio/Jnz/jisNCsxl8HLvl8hgQIRLSe
-X-Gm-Gg: ASbGncvOdKCmUJPMy5mn7tB9PQ+5BwlEcYaZV8FOPqdBMpXSi6OV84qKIUTtMkxajSs
-	G0p4EAf4KcbWFzHp4ZdUzpvsoW4w92oqyGbdJfuHOD2++kmObmFMMS51H+AhwoP1HQBPe0fulJd
-	EbCQX/a19AIVPBjzUQRvcGCoByVrwds/2PiCY2TE4017/Jk4mXwuB+n2lYV+BC7ATGbQSWab5eo
-	tcYrR7zw89xOrFr8Wca0qtc82krYaBZtOKyJ1m7tqgJrUH+U9sBUBIRBBlLo/EayPWXX86w5ZxV
-	cI5TyCs001R9DWkO/ZurI97Ne833w/slbCBLMTFBuZWiU3DEuWMAvAoeKwrI9MumWFQXz7ghezw
-	UUO7kvAyDAA==
-X-Google-Smtp-Source: AGHT+IExilKHuwfg07ydhMDm+4UcwYtz8LgwCY2xQg6+6o4mVcZ6auOnXR5yUfYe+WTxwta9g7WjDw==
-X-Received: by 2002:a17:90b:5663:b0:320:f718:8e63 with SMTP id 98e67ed59e1d1-32341ebf894mr7086204a91.9.1755361833870;
-        Sat, 16 Aug 2025 09:30:33 -0700 (PDT)
-Received: from ws ([103.167.140.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233116f46fsm6992892a91.28.2025.08.16.09.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 09:30:33 -0700 (PDT)
-From: Xiao Liang <shaw.leon@gmail.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] padata: Reset next CPU when reorder sequence wraps around
-Date: Sun, 17 Aug 2025 00:30:15 +0800
-Message-ID: <20250816163017.75098-1-shaw.leon@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755361858; c=relaxed/simple;
+	bh=ZFfAo8apibsWsI1omhLl8iawazNCfUYxTJ6h2jfQBZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q04Dv76WMbpOZfapM64wjHU2EP3u66KPOybprqDScJ06fBB4qkzuSAJQZO/4+32p/CZT3QQTS2A7gQVBYEeXNNsx7cM3PBDq3wuWjT/FB3Mt8+SYFSYJ79gXkxYaEeDmD8SNB0Y8HEWEwi4ZIjJIEbeZJPieKUbFAICus31lgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZEv8ejtc; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755361857; x=1786897857;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZFfAo8apibsWsI1omhLl8iawazNCfUYxTJ6h2jfQBZY=;
+  b=ZEv8ejtcfvCaE9SscNxOZluH7mmdTezkBPdMmQ5qXChmgWqV9PURl+xG
+   2t2ka8WmFOl3Rc2AMVKp+rplZsYeKqvbKXFfgGbvSZz/B6V57LfhzWc+L
+   fVUD2djAPVIy8yhxMEjbtG8WpCqucfjz6ZGkaE3E1IGgb+Zx+0ZbosW84
+   lcgCrKbllnxTzt6pDCh1iEcfvbkRiYgGZ8WZsQDAR9IJYXuRQFTGoJhuH
+   /XihVbGbKzEg2QgmTNjYeeq79Vx7cUqY3iYq9YxD7kcHhojTHLNCHhg2e
+   9rFOQChnHN3Hmz5fehrTFQU3k6k+fknt6B2HucSl1rndd4bEasJoALisK
+   Q==;
+X-CSE-ConnectionGUID: EHxmPtMJQ1qQF9OQNo5s+Q==
+X-CSE-MsgGUID: DDClrGHoR1OY52oBf9yCJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="69020216"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="69020216"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 09:30:56 -0700
+X-CSE-ConnectionGUID: PZSfjvSKRIqbKzG5XmYmLA==
+X-CSE-MsgGUID: CK+ohIFiTxO5RXZQZAbzeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167481802"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 16 Aug 2025 09:30:52 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unJnu-000D0S-1k;
+	Sat, 16 Aug 2025 16:30:50 +0000
+Date: Sun, 17 Aug 2025 00:30:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org,
+	david@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH] mm/cma: print total and used pages in cma_alloc()
+Message-ID: <202508170014.PK57XSd7-lkp@intel.com>
+References: <20250816042842.3959315-1-gxxa03070307@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816042842.3959315-1-gxxa03070307@gmail.com>
 
-When seq_nr wraps around, the next reorder job with seq 0 is hashed to
-the first CPU in padata_do_serial(). Correspondingly, need reset pd->cpu
-to the first one when pd->processed wraps around. Otherwise, if the
-number of used CPUs is not a power of 2, padata_find_next() will be
-checking a wrong list, hence deadlock.
+Hi Xiang,
 
-Fixes: 6fc4dbcf0276 ("padata: Replace delayed timer with immediate workqueue in padata_reorder")
-Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
----
- kernel/padata.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index f85f8bd788d0..833740d75483 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -291,8 +291,12 @@ static void padata_reorder(struct padata_priv *padata)
- 		struct padata_serial_queue *squeue;
- 		int cb_cpu;
- 
--		cpu = cpumask_next_wrap(cpu, pd->cpumask.pcpu);
- 		processed++;
-+		/* When sequence wraps around, reset to the first CPU. */
-+		if (unlikely(processed == 0))
-+			cpu = cpumask_first(pd->cpumask.pcpu);
-+		else
-+			cpu = cpumask_next_wrap(cpu, pd->cpumask.pcpu);
- 
- 		cb_cpu = padata->cb_cpu;
- 		squeue = per_cpu_ptr(pd->squeue, cb_cpu);
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiang-Gao/mm-cma-print-total-and-used-pages-in-cma_alloc/20250816-122940
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250816042842.3959315-1-gxxa03070307%40gmail.com
+patch subject: [PATCH] mm/cma: print total and used pages in cma_alloc()
+config: arm-randconfig-002-20250816 (https://download.01.org/0day-ci/archive/20250817/202508170014.PK57XSd7-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508170014.PK57XSd7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508170014.PK57XSd7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/cma.c: In function 'cma_get_used_pages':
+>> mm/cma.c:784:26: error: 'struct cma' has no member named 'bitmap'
+     784 |  used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+         |                          ^~
+>> mm/cma.c:784:41: error: too few arguments to function 'cma_bitmap_maxno'
+     784 |  used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+         |                                         ^~~~~~~~~~~~~~~~
+   In file included from mm/cma.c:34:
+   mm/cma.h:77:29: note: declared here
+      77 | static inline unsigned long cma_bitmap_maxno(struct cma *cma,
+         |                             ^~~~~~~~~~~~~~~~
+
+
+vim +784 mm/cma.c
+
+   778	
+   779	static unsigned long cma_get_used_pages(struct cma *cma)
+   780	{
+   781		unsigned long used;
+   782	
+   783		spin_lock_irq(&cma->lock);
+ > 784		used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+   785		spin_unlock_irq(&cma->lock);
+   786	
+   787		return used << cma->order_per_bit;
+   788	}
+   789	
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
