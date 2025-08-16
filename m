@@ -1,163 +1,143 @@
-Return-Path: <linux-kernel+bounces-771926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D301B28CF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E11B28CF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E201B64C13
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1967176FE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA4C293B5C;
-	Sat, 16 Aug 2025 10:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8A295D91;
+	Sat, 16 Aug 2025 10:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bddQ7JUF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UIFnvw7N"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17D28C852
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473326CE1E
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755340587; cv=none; b=s7knJtAKsE3zPg8qeIMrOKLPgGGPzO1ICAf3anUYGqBP84KjPQ1TAAHjq9UHtdDRz8VWGrmNDcyeKNCZF/FsvZaOc2xuiLrBfHANSNnbyfm/BxnS4+NQCvxCn4lVmY+/cto5+rxahv9u0y8799pW3usIsfcCyX+Yr6anI7U683k=
+	t=1755340699; cv=none; b=ZSZfY+BTWBNP4BBfNFcTHta007n66YrYB8lw+r5w4EkNVFVN6SF+1exgOv7byfuFQhdMjB9k5fTcTXZIwFUFi5X//xxe3pI6mhb1M6/szdKLENZNcUtKPGZz+daWaodLFE83nmr8YPlh+ugVXSdcpDjgt1m1bfdoKklFrN3/GKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755340587; c=relaxed/simple;
-	bh=EYfRYy1z92ajS4ke1U1qfeBzLYzlyxCzubIJ3/OY6bs=;
+	s=arc-20240116; t=1755340699; c=relaxed/simple;
+	bh=ekx8YSOc7g6jM4/k8aaZwSazUxe/M8O4Al5/LfbvT28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OS/kXNoTrz4oLCPasc24dkRXl9OplqTBkqtwd0RXvUS2jCySwXE7VIqWZgw6EXktMvZmgLrnMwtSEP9i4bwrCgIW7/LCr1wK+aXxEEnem/JEt6LeI7pF19N5knnGSIeGkuo3ukF3Yy07HY7bzUGtyF/aas3fV0LgTSpltf3i+Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bddQ7JUF; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyb3efsdFiwx+MUtRie0etM8dmpJwd15GOgCuB6mlnQYwOXQfBTuwVBMV9mLVZNSnlF6YP95yhoPzs3RRdka6WbrnudL1krM0Oh4jKGC6GjgY21CAQjYHppb2Q5zMbcSJxE/XmbqR0GiDQDewqwA/CdEK2dW9rOYCp1ZuBieQko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UIFnvw7N; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755340584;
+	s=mimecast20190719; t=1755340697;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=u8kpb4zYqo4EMmVx2Xny+4AO4zuhFI4D+a2JoLHbhIs=;
-	b=bddQ7JUFQ5QD85Kt9P2FeWLty2Uck6PEqmOpr0fEgFoO+a26T4pqgDwdfjeibAcpj3RCG6
-	vEgD80IG0Xv/bNdMAnaeAfhYZATaV7MyotMnnKMmviXrUHKqgW0UUOz08Qrg7VoYpzcAx/
-	950FWT6RgcZQTNWdwIM5rU454OaZrVM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=WVcBDRwWsttWGK38lVHrVbMK6gqAO5C0KIt3MgVZUK8=;
+	b=UIFnvw7NjVftyT0n7odJ2BhaiF0TwR9gI/e5eNeKwb/hPKHc8VavRdh5Rzt6CuQoJdQXFq
+	7ze4uNJvPhUTHyYwyb6mJNkeJFJawpkAkpA9JXXrPZX5L7y4mTfjVj14HNdLr8Jzkoq7ZZ
+	DtJ4o4Z9ySm+UP0t3XBPf4bMsE9jiKo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-235-e4vK5wJEPSKmDw9oeqGfqA-1; Sat, 16 Aug 2025 06:36:22 -0400
-X-MC-Unique: e4vK5wJEPSKmDw9oeqGfqA-1
-X-Mimecast-MFC-AGG-ID: e4vK5wJEPSKmDw9oeqGfqA_1755340582
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b9bfe2c601so1529823f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:36:22 -0700 (PDT)
+ us-mta-635-50EJKwG-NsCMi3D21_4aXQ-1; Sat, 16 Aug 2025 06:38:16 -0400
+X-MC-Unique: 50EJKwG-NsCMi3D21_4aXQ-1
+X-Mimecast-MFC-AGG-ID: 50EJKwG-NsCMi3D21_4aXQ_1755340695
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b0cfbafso15524845e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:38:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755340581; x=1755945381;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8kpb4zYqo4EMmVx2Xny+4AO4zuhFI4D+a2JoLHbhIs=;
-        b=WxkA3zO1hI73aziMWXpnwtqQD4eITPGO11Zy25NHA9sd2jqvR0mD8CXbukVPmwvbdT
-         1++myfesU5vjRt3xztH9Y4E+skkkXzQx8HZvLKaYSGQlXgTnGjm813A6QMs5aLrhFWLC
-         uZ8CdrQsuMQ8+MfdWLVFgTMfNMx8aXc8CngHAJBd8vUnc5WkAH/ItGe+8zwY79lv1mUd
-         5hT52uRR+r39VlkSF6T7q8yBwjrTTy0ohtADUBo2z5FwYMwmdjj8ip0xWnL6mN+A2CuR
-         fojx9N0wgtKsbzB7R1LBLPwfT+XeGcbxKNfl8X18uj0A/RG+fFmqeZvN0c+rSxZ1l493
-         HvvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ov30vbekKwoQS2k2s+bFmeX0fkkT0o2T+U2ShMqkBy8pJ1LMdc7V73A9SL24wHfiGM5wgsTDmSNwm78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfNWMCiJ8uuxiS2497823R6XEUqslEyxrxmtdiX/Qq5qQ43/6d
-	oxzrPE8sK9J+hOhsq8azFt4oaqJRa4p6jfCy044L0DRZFoQOKOLyUNXyZ/wjYhbhcoM5OokdmCQ
-	NRzfg9JKdXxFgTOfZ3blH/OgP3SlBLT1tjY0Bx7n/jpm6VuVtvvxpgbaTRo97/eBL0g==
-X-Gm-Gg: ASbGncvKXyDsZgFu15JEIPPnN6Ls2UaNYRPG6f1ENq6yYth3xMALNkQA31QxA8nXHEs
-	Sglv3vNmQ23aCU9vktMS47ecGprQJaUElmBseX1pgqnTFOhfovXkI0/z37zMkV+yf0Z6GLzG7iu
-	o6lYRiDQKy+Md1PxcUqyOC+IOAgK6upJKYA7Qx3NOP2ygUMRp7N2MK9YWXjUB/msy95IbikBNSr
-	9btTRm8J9rpFlWEEtSTm+fMVijQuWncxYfExvjBvzKI69k9D+M6YjkBdbxGpciWRW4Y/o0vEwzB
-	GnMQQP64/4yrGVLZOtftlS1OC+NPcKKv/0A=
-X-Received: by 2002:a05:6000:4310:b0:3a5:8991:64b7 with SMTP id ffacd0b85a97d-3ba5093b77dmr7934607f8f.26.1755340581479;
-        Sat, 16 Aug 2025 03:36:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhOaIvnCh51kO1M3yudZ1Zco2KV8bF2xaTDUF4+BRWU8NLMhH+ezyI4LNzBjTWj+A0q+/Xgw==
-X-Received: by 2002:a05:6000:4310:b0:3a5:8991:64b7 with SMTP id ffacd0b85a97d-3ba5093b77dmr7934596f8f.26.1755340581068;
-        Sat, 16 Aug 2025 03:36:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755340695; x=1755945495;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVcBDRwWsttWGK38lVHrVbMK6gqAO5C0KIt3MgVZUK8=;
+        b=hdtM0p9OiifdFoRZwGjQFInlmrkoT6au050EO3nBE/ouWzfA17TxeBVVK67IfjV42F
+         KUSuNIUbQAxPdiS29tSaBkMIivjHhlbIT+tAhSxHhpL0G1PoukA6sOLs1IkUjPNd08ma
+         UIccULNedMAKWhuKLdAlPTBO7ZhPFbFduG7lCrIig3pgBtOgKYWn9CzzcMJ9W4mMiTnC
+         c95Lu/U4YZvLYHA1DxVgJea7Jnk+Hz7KcAvXYbnY87ixNku2xvfUymQpV85mtOm9wCxW
+         RtnC5gSFkE4s6NI57mnwCAMllSyj/SE7hhsCmHq/wkG7T8fDH30pCARAr5bWELyTyIah
+         dxUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU+nkJMBfiUAADWTtbu7ouI52G0DRu6XowIyZtXLXwDLjQzP9CvNETyPhkWntCaC772is1d1UwF9dl4NI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhZaXqSDvn3zqhShn2vH1HLOKFOkBHOw4dQUmP1DZdkbQbv5VI
+	ile6bz4NIv86N+T/4ciHVihdrzcdyrJU7oP/HJkTCm9YKXJ/m12Xw/6+xMyNRt4AMpK2mlwodGU
+	pqIYQWXJL5rCTeCopUOg41pj6xpupx6bhnV/+2AjP73HW6XJwAk8BXSN6L4W2GHUkpQ==
+X-Gm-Gg: ASbGncum7R8FOWPn4dGBa8ZXO0uwVupBFEDbMNW0QWBVBy8L+aku9nkXSYTqB+eu22D
+	rhJcI82+IWo504/OHhnFFX6MEQZDV4YY2zZJpevvXX4/cXnFC2BEckQn23R0tO6SJ0+FqRJB5mj
+	M+/KTIjnQf8/7HlL6alfvuwCAivWofWap+SlaIPZYuc8dMrApE5dOmMHNJlEzBq52p8a3M6bygz
+	iL8nETPA+m0reK9PUiVFHrvolke77dl8Vbpi1uuW5prpenio7zcWWK3czcXPE8G5si/blMeZLD1
+	I6OzN/lVDGdhgTm2yKsJuR9wbgIIVqMXvfg=
+X-Received: by 2002:a05:600c:4f53:b0:459:d780:3604 with SMTP id 5b1f17b1804b1-45a24220467mr38335065e9.3.1755340694660;
+        Sat, 16 Aug 2025 03:38:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpyVsdecoZjN3XgasLnVr8q4r9q39UzUvK2o47D3rxm95PhfzS+mCEvAW9UWwlVcWzucaPIA==
+X-Received: by 2002:a05:600c:4f53:b0:459:d780:3604 with SMTP id 5b1f17b1804b1-45a24220467mr38334835e9.3.1755340694248;
+        Sat, 16 Aug 2025 03:38:14 -0700 (PDT)
 Received: from redhat.com ([2a06:c701:73cf:b700:6c5c:d9e7:553f:9f71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64d307cfsm5181464f8f.18.2025.08.16.03.36.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6bd337sm91741855e9.4.2025.08.16.03.38.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 03:36:20 -0700 (PDT)
-Date: Sat, 16 Aug 2025 06:36:18 -0400
+        Sat, 16 Aug 2025 03:38:13 -0700 (PDT)
+Date: Sat, 16 Aug 2025 06:38:11 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alyssa Ross <hi@alyssa.is>
-Cc: SamiUddinsami.md.ko@gmail.com, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Sami Uddin <sami.md.ko@gmail.com>, regressions@lists.linux.dev
-Subject: Re: [REGRESSION] virtio: reject shm region if length is zero
-Message-ID: <20250816063522-mutt-send-email-mst@kernel.org>
-References: <20250511222153.2332-1-sami.md.ko@gmail.com>
- <kgasjsq2s4pshravsinycfihdfjhdts5iz2fox42aejs4xqhce@frurksambnk3>
- <87y0rkie9l.fsf@alyssa.is>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, netdev@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH v4 9/9] vsock/virtio: Allocate nonlinear SKBs for
+ handling large transmit buffers
+Message-ID: <20250816063802-mutt-send-email-mst@kernel.org>
+References: <20250717090116.11987-1-will@kernel.org>
+ <20250717090116.11987-10-will@kernel.org>
+ <20250813132554.4508-1-hdanton@sina.com>
+ <20250815120747.4634-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87y0rkie9l.fsf@alyssa.is>
+In-Reply-To: <20250815120747.4634-1-hdanton@sina.com>
 
-On Fri, Aug 15, 2025 at 09:19:34PM +0200, Alyssa Ross wrote:
-> Alyssa Ross <hi@alyssa.is> writes:
-> 
-> > On Mon, May 12, 2025 at 07:51:53AM +0930, SamiUddinsami.md.ko@gmail.com wrote:
-> >> From: Sami Uddin <sami.md.ko@gmail.com>
-> >>
-> >> Prevent usage of shared memory regions where the length is zero,
-> >> as such configurations are not valid and may lead to unexpected behavior.
-> >>
-> >> Signed-off-by: Sami Uddin <sami.md.ko@gmail.com>
-> >> ---
-> >> v3:
-> >> - Use idiomatic 'if (!region->len)' as suggested by reviewer
-> >> v2:
-> >> - Fixed coding style issue: added space after 'if' statement
-> >>
-> >>  include/linux/virtio_config.h | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >
-> > Hi, I'm sorry to be the bearer of bad news, but since this patch my VM
-> > no longer works.  The system is running wayland-proxy-virtwl[1] inside
-> > a crosvm[2] VM, using crosvm's virtio-gpu device to do cross-domain
-> > Wayland forwarding.
-> >
-> > Since this change, wayland-proxy-virtwl crashes with the following log
-> > message:
-> >
-> > 	wl-proxy [WARNING]: Error handling client: Unix.Unix_error(Unix.EINVAL, "DRM_IOCTL_VIRTGPU_RESOURCE_CREATE_BLOB", "")
-> >
-> > I'm pretty confused by what this change was supposed to do in the first
-> > place…  Looking at how virtio_get_shm_region() is used in
-> > virtio_gpu_init(), it's called with a pointer to zeroed memory, and then
-> > the get_shm_region() implementation is supposed to write to the region,
-> > without ever reading from it as far as I can tell.  Why is the initial
-> > value of an out parameter being checked at all?  How does this prevent
-> > using zero-length shared memory regions?
-> >
-> > [1]: https://crosvm.dev/
-> > [2]: https://github.com/talex5/wayland-proxy-virtwl
-> >
-> > #regzbot introduced: 206cc44588f72b49ad4d7e21a7472ab2a72a83df
-> 
-> Okay, just found that it's already been reverted:
-> https://lore.kernel.org/all/20250808072533-mutt-send-email-mst@kernel.org/
-> 
-> Still, I'm confused how this was supposed to fix anything…
-> 
-> #regzbot fix: Revert "virtio: reject shm region if length is zero"
+On Fri, Aug 15, 2025 at 08:07:46PM +0800, Hillf Danton wrote:
+> On Fri, 15 Aug 2025 06:22:56 -0400 "Michael S. Tsirkin" wrote:
+> > On Wed, Aug 13, 2025 at 09:25:53PM +0800, Hillf Danton wrote:
+> > > On Wed, 13 Aug 2025 04:41:09 -0400 "Michael S. Tsirkin" wrote:
+> > > > On Thu, Jul 17, 2025 at 10:01:16AM +0100, Will Deacon wrote:
+> > > > > When transmitting a vsock packet, virtio_transport_send_pkt_info() calls
+> > > > > virtio_transport_alloc_linear_skb() to allocate and fill SKBs with the
+> > > > > transmit data. Unfortunately, these are always linear allocations and
+> > > > > can therefore result in significant pressure on kmalloc() considering
+> > > > > that the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
+> > > > > VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
+> > > > > allocation for each packet.
+> > > > > 
+> > > > > Rework the vsock SKB allocation so that, for sizes with page order
+> > > > > greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
+> > > > > instead with the packet header in the SKB and the transmit data in the
+> > > > > fragments. Note that this affects both the vhost and virtio transports.
+> > > > > 
+> > > > > Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > > > Signed-off-by: Will Deacon <will@kernel.org>
+> > > > 
+> > > > So this caused a regression, see syzbot report:
+> > > > 
+> > > > https://lore.kernel.org/all/689a3d92.050a0220.7f033.00ff.GAE@google.com
+> > > > 
+> > > > I'm inclined to revert unless we have a fix quickly.
+> > > > 
+> > > Because recomputing skb len survived the syzbot test [1], Will looks innocent.
+> > > 
+> > > [1] https://lore.kernel.org/lkml/689c8d08.050a0220.7f033.014a.GAE@google.com/
+> > 
+> > I'm not sure I follow that patch though. Do you mind submitting
+> > with an explanation in the commit log?
+> > 
+> It is a simple debug patch to test if Will's work is good at least in the
+> syzbot scenario, but stil a couple miles away from a patch with the SOB tag.
 
-
-
-Are you asking why was the patch applied in the 1st place?
-It seemed like an invalid behaviour to me, and I thought it's
-not too late to block it so we don't need to support it
-down the road.
-
--- 
-MST
+Oh that makes sense then.
 
 
