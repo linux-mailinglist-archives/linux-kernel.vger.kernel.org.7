@@ -1,83 +1,105 @@
-Return-Path: <linux-kernel+bounces-772028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D80B28E05
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91272B28E0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C21897116
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639335C337D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEF72E541D;
-	Sat, 16 Aug 2025 13:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273922E5B11;
+	Sat, 16 Aug 2025 13:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enapnd71"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLdLj3pV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0A023ABA8;
-	Sat, 16 Aug 2025 13:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F2B23A562;
+	Sat, 16 Aug 2025 13:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755349800; cv=none; b=OuwoQrsw4V0yb85YBpDxkT9/qeEGa7b76mRRm88uV0sbn89DYLltmXS96f6kLH/MdCaPz4TtJEX7knFSAd3PERtQfCabQvA0+fdb4dCPsX3rbFy0fXLX2CugbPTyjQT0F405QDqV4FqMc//jpimCzkcSE2UtAs7HIWppk2h5ymQ=
+	t=1755349950; cv=none; b=FwKEDBodr85T93rRi2/JqcNFvwAC9cdpoPOMauG84XeYj0EExzk7OSgpQI8G5YYG6hb00M0nOCdu64eIpAQvsPsSs1C9SMJarghbj9lX2BKJWeEMPXQJ2xDjUIegyDpvlxyUDQ+9egis8hRQS/w798dMrUXG+oMJ0NgPKVNxlPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755349800; c=relaxed/simple;
-	bh=WCzugAa8NfIcrwg9w9x3VRT2U5Q71BphvrzagKgIwBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+jzrEtvQSyRCaNOFcmUaN/hJQ35U2R0oxSs042eTVvTW5Bi+cYGwp4n6nN2MGjYf7hFy9YgIIIpyrw63pn+HpCxihMFNcgdZ2aQlFS0n7/mTpi6kDScmaKjXnDnE39yTJONHg39SdCsJu2naH23mrMjRgdOWV24FFbAWjBwong=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enapnd71; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1287C4CEEF;
-	Sat, 16 Aug 2025 13:09:59 +0000 (UTC)
+	s=arc-20240116; t=1755349950; c=relaxed/simple;
+	bh=T0ihUu05oB0idqYsW4ppls0Ccy84ClVeS8cutf1iMJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D8eYDkmxrGqSzKWOoQ5qXCsXHXYv2lCQVrohB6HIyBvFl2lQqiJDhmJcITj+tWKj7VTmxeKNBir9a2HeviR2GfLA+vXpw42mSNSCp8HfslYpk9ftUBQWo66HesXMcB2itj+9URVhnsgwS1OG+ZGo58HAY3RRjRDnASCmygBaQ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLdLj3pV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC68C4CEEF;
+	Sat, 16 Aug 2025 13:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755349800;
-	bh=WCzugAa8NfIcrwg9w9x3VRT2U5Q71BphvrzagKgIwBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=enapnd71gvn+2pALMJWMVgUu//0QvM2EQng1lsny9msCtdoZyWnBMOII9rkaFqp21
-	 2PDskO4EYAn5TKhNaqYrD6lERwepTnjbZq7puCzup9gRKiGcEUCXKQMin+nesxZaZ3
-	 b2849U9ky3DyKGDCewcMiKVS+VN5HpssxCrkkXHCq90KRctPD9ZPMe3SPqnwVN+r2g
-	 yAE7ZQS27qexzlJmJoD/oI4S+Kq5ybUABTOxArq4dELHx7cknJ1+9cVVeyQOWVEePV
-	 4sfQ6TmYLRnIzyd4gzQvhnskgY8Y/abo1buggcts3vHSP5QY1TNn9naqumTw7NWfaU
-	 1XMGmP3jTzd1A==
-Date: Sat, 16 Aug 2025 09:09:58 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org,
-	Romain Gantois <romain.gantois@bootlin.com>, lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.16 09/85] regulator: core: repeat voltage
- setting request for stepped regulators
-Message-ID: <aKCDJneZp4OXJRxJ@lappy>
-References: <20250804002335.3613254-1-sashal@kernel.org>
- <20250804002335.3613254-9-sashal@kernel.org>
- <38852b6e-20b3-43fc-90d7-29d10fd90abe@sirena.org.uk>
+	s=k20201202; t=1755349950;
+	bh=T0ihUu05oB0idqYsW4ppls0Ccy84ClVeS8cutf1iMJw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fLdLj3pVC2liA2pM+LgfBMrAYou3OYlJ6bKUpA94Lwn1vQfIzPXwHJt+0smyFtxFB
+	 nBI8FHnhdod6JIo0YLjFot69M+j9Md2fuacttWVSugJNVkdvXDwW9WX8lDc/WGorJ+
+	 H4RL57YpIucgMV++PMBv5+f1N06hMYXjgmIX70KRtxHe0pNmB1EhRiHsNbg9/MKGby
+	 L+1tNTty579ZHXXxe/HRghrT3FC8DocspI1Vzon3KFWed5Mbiv8UX/qGch8Dro62xz
+	 +aFAuTuHV5a1IJhkR55mBydlVaUVR6hrtxTuHdlm6hOpTSTYYyxDKKXG/1sp3yEBwe
+	 GzjFjfY/pxylQ==
+Date: Sat, 16 Aug 2025 14:12:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
+ parts
+Message-ID: <20250816141220.0dd8d68f@jic23-huawei>
+In-Reply-To: <8c27b00c-5b80-400f-8538-b9ad96fd5feb@kernel.org>
+References: <cover.1754617360.git.Jonathan.Santos@analog.com>
+	<ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
+	<c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
+	<aJ0UEUVmIH94Nuwi@JSANTO12-L01.ad.analog.com>
+	<8c27b00c-5b80-400f-8538-b9ad96fd5feb@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <38852b6e-20b3-43fc-90d7-29d10fd90abe@sirena.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 12:36:08PM +0100, Mark Brown wrote:
->On Sun, Aug 03, 2025 at 08:22:18PM -0400, Sasha Levin wrote:
->> From: Romain Gantois <romain.gantois@bootlin.com>
->>
->> [ Upstream commit d511206dc7443120637efd9cfa3ab06a26da33dd ]
->>
->> The regulator_set_voltage() function may exhibit unexpected behavior if the
->> target regulator has a maximum voltage step constraint. With such a
->> constraint, the regulator core may clamp the requested voltage to a lesser
->> value, to ensure that the voltage delta stays under the specified limit.
->
->This needs a followup fix which isn't in mainline yet.
+On Thu, 14 Aug 2025 08:03:23 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-I'll drop it, thanks!
+> On 14/08/2025 00:39, Jonathan Santos wrote:
+> >>>  
+> >>> +  adi,aaf-gain:
+> >>> +    description: |
+> >>> +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
+> >>> +      ADC input, measured in milli-units. The AAF provides additional signal  
+> >>
+> >> What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
+> >> unpopular to see mB, but we cannot use 1/100 of dB, so I could
+> >> understand it.
+> >>  
+> > 
+> > Actually, the gain is expressed in V/V, not in dB. I may have phrased it poorly, but since
+> > there are fractional values like 0.364 and 0.143, I chose to represent it
+> > in milli-units.  
+> 
+> Why your reply to is corrupted:
+> "c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org"?
+> 
+> 
+> What sort of unit is milli-unit? Isn't this 1/1000 of some BASE unit,
+> but you do not have here a base?
+> 
+> I think you want just basis point if this is V/V (already in common
+> property suffixes)
+Nice. I didn't know about -bp.   That does sound like a good choice for ratio
+stuff and here would be 100x larger actual values which is fine.
 
--- 
-Thanks,
-Sasha
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
