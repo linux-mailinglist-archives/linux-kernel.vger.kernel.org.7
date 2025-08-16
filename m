@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-771662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E51CB28A27
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7BBB28A29
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A93E67BE039
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FED22A6F9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF8119F130;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8421A5BAF;
 	Sat, 16 Aug 2025 03:08:36 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6196619004E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2CA19994F
 	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755313715; cv=none; b=uUHm7cwA4lkQaApHTJ2j62a6lIykvNE4hqwuitZD+rATOAzEa/l2Y82JOQJ68iHpuoQK93GXDeXdzfL57rY0yJcYDffrTFoK+Z4qlEVnrSKMK6B7t5/vb/pNGEO1VT2v/WnovbbQTzQMoudDKBkwq3WLMxDEt8Ry6QmKQ05lDe8=
+	t=1755313716; cv=none; b=dXUs6h3T3/NpSMBoLrxixjxekAy8DkYtgnHNIer3+BghVtOhdNxuoUpbZ59Ewpryjbvzj2awYkQTpkSljrjF4HXmD9JE3trwBHN4M0FZYI6P63KSZcuRBejl2a8cRgt8/WOQFYMRzs1a7xTwN5fPASk18L/zNHdgqJ7t+MoQ7DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755313715; c=relaxed/simple;
-	bh=O47n/p9fEaSXT5GZk8MWqXDWYNUEOxsivcokhH/6Kyg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=s2MaR5aiMnHD8qf9UdrAnVA7uC9mVU9IrgPqcq2V3ZHxWiz+9eXIrkQxv1z+zdQzsyrYmDORpruZyQrDv2DvTB9mQnaLfeFuR71DuslzeKn+QYmUKpi0OhYyVxC0G4qf2ogw5H2ntma3WqXTBpacrH90nBMUvn83Uc62vpfDvhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1755313716; c=relaxed/simple;
+	bh=6pBJXU/MyKVUN754mqkMYqJusqO6bCVd8m2jj+ain6A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HCzC+XyitH1B6Kn74iApAFeg9v75yvKLYDLdvgvRM7cqVC7J8Asj++Umoqgs1m9qLlp2vBwtouxBfF+e5qxUAmNRiZ3PTK2xUkTL2cppkTwU5muHmHgkyYzef+M0d4w5KW5/l8avkemvh9y3OQFIZVkVyYBzMjHlfDp9hJsnkjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e576fa8fc9so14914825ab.2
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e56ffea78fso35935025ab.1
         for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 20:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755313713; x=1755918513;
+        d=1e100.net; s=20230601; t=1755313714; x=1755918514;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JCL2FXRG+4DpeAE+/wOBcxOm5mvMocyxQgnRq8Vn9Nc=;
-        b=pzHT6xukxtZOwahQjcVzpJIg84KZ9Gpm9hNSG15EGjqNwZxIH/bnlb4KsAK4pgrF15
-         c+3C4SlvPHUNGhTR+liHVk3606mOMBavE1bT+LoSCw5ClingmcTfy3sbibMjqYxDmzBy
-         3M7vZMX+/TRuanFM2QaifW4z1JKDnccw71HWc277o5T3DCOgwqbxymdpc5asWB+C+TQM
-         zvwXSva4ACeC+xN+C5nkB2waa4ZSrKTmysLVU+txQhBOAAbCp76XI/L+rVQ7NY6Zpgsu
-         ZHYfAZK6y0s8aLNL28X9b7puPHnrVI/9IVtWep7QId9s8Bll6ih/AQ/SSX8mRxXn3lbV
-         GE1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVbygOc8wIvy/rVOZCpnN/diBkSA7Cj3zbHpJxI1fnSL4rV5xrLyas5yxc2As0MrJ/8KY6sfKFNa6u8gBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+VGEu/SIkBuUYFFiX6pjnATYAl8hF76n3oc6th4q7kcgxTfJq
-	4XTIiax1T7xayBD/gYISy9c+HqvGNL6a9wR4m7qZdiFwxhKWXIT5bLPFPP0Ww8FpJvhSuXA8PB+
-	tNUH4VXwY8XJTlse2GlkdEUtpoX6voIkuLlzYhFwV2vIPHZ7Got8Oviha47k=
-X-Google-Smtp-Source: AGHT+IFhnl6zUNc+nBEDR1GvUuQ7D1ApnAEUQgL+dGi/evYDaPzrn/Zj0k7+Rb7ZT8UONvdGrYqNvHijhAVr779rDdUXyDH6pYHA
+        bh=PQu04VGbncgbNvJGFt4fFPJTftoQuHp4eSxa6rqNv6g=;
+        b=S8nynlR3EnS5M4zc/MhciMsDN+nESBNNRvwhRQUXtJuBlN0o+SDWpDtmDjJ3EzgvOn
+         SqjXIo9UvzQdLkHDolF7wyjso+SlHhIeloV4bhWPnBBNTpc9lBq9Ib1Hx+0tAP+ik+G2
+         IPgGe++nt2f0Xbm3a8S3Xom87QMvQG1dzv23gU2Y8FDKeTQwBvsksxLZJ3V5VVReR/8q
+         Uc862O6qVKnKA/uG31/z7Jq9W5PK05+Ww5bUpMJfcUMp4Uf5s6CNIWot/dxYQsyTW1wW
+         VWdrkcM7pTTxkfFN/QS7roHqeuq4AE1BWz7Ut5Bdrf5vAszlJvj1mcCyagmDPBh7/e7y
+         fq3A==
+X-Forwarded-Encrypted: i=1; AJvYcCURdyRHlfV/tgyxh1LqVnTHtlv6wJneHwAvA4fOcRLwk+Xjz11gNsa0K+Ajjc531G+cf7/A8i3fT2uVoCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySVMsWSGQJxV8C/zPY5sO4hf//dYwT6BSz00Y9LACGneK/LYYD
+	yMrUiqzH14X7+Pg04fmEQSs97akfkuNq7Dj7AIiVNRGS00Dn/HlnyGyuFvvlSwgtbL4GJxoeLhG
+	rkQcxB1Z69pE2jLf4i0onFjNLdNYiKmt7MyTcJnES4czB/J53ruTnbfZQN1I=
+X-Google-Smtp-Source: AGHT+IH01KqsKZsaEl291+FCpwACaxmXN2BvC+hTuP+uJXbLeXhOspYIQHHzl4hhfWwaRcRQQQ2gNgF1Ww5ZSpqBAzN/SG/vJgd6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c08:b0:3e5:67a6:d418 with SMTP id
- e9e14a558f8ab-3e57e83d558mr94546865ab.3.1755313713507; Fri, 15 Aug 2025
- 20:08:33 -0700 (PDT)
+X-Received: by 2002:a05:6e02:12ea:b0:3e5:5466:1aa2 with SMTP id
+ e9e14a558f8ab-3e57e7fd2b0mr79891595ab.10.1755313714003; Fri, 15 Aug 2025
+ 20:08:34 -0700 (PDT)
 Date: Fri, 15 Aug 2025 20:08:33 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689ff631.050a0220.e29e5.0033.GAE@google.com>
-Subject: [syzbot] [overlayfs?] WARNING in shmem_unlink
-From: syzbot <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <689ff631.050a0220.e29e5.0035.GAE@google.com>
+Subject: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
+From: syzbot <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    0cc53520e68b Merge tag 'probes-fixes-v6.17-rc1' of git://g..
+HEAD commit:    d7ee5bdce789 Merge tag 'firewire-fixes-6.17-rc1' of git://..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a003a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec9fab8b7f0386b98a17
+console output: https://syzkaller.appspot.com/x/log.txt?x=11835af0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=20537064367a0f98d597
 compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1387bc34580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d253a2580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1f4865acb167/disk-0cc53520.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14540c5ef981/vmlinux-0cc53520.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/35534bfe1c7e/bzImage-0cc53520.xz
-
-Bisection is inconclusive: the first bad commit could be any of:
-
-241062ae5d87 ovl: change ovl_workdir_cleanup() to take dir lock as needed.
-a45ee87ded78 ovl: narrow locking in ovl_workdir_cleanup_recurse()
-c69566b1d11d ovl: narrow locking on ovl_remove_and_whiteout()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130d1dbc580000
+disk image: https://storage.googleapis.com/syzbot-assets/62d2c52c687a/disk-d7ee5bdc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f827f7b0a929/vmlinux-d7ee5bdc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0babf789124a/bzImage-d7ee5bdc.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+Reported-by: syzbot+20537064367a0f98d597@syzkaller.appspotmail.com
 
+asix 1-1:0.0 (unnamed net_device) (uninitialized): Failed to read reg index 0x0000: -71
+asix 1-1:0.0 (unnamed net_device) (uninitialized): Error reading Medium Status register: ffffffb9
 ------------[ cut here ]------------
-WARNING: CPU: 1 PID: 9026 at fs/inode.c:417 drop_nlink+0xc5/0x110 fs/inode.c:417
-Modules linked in:
-CPU: 1 UID: 0 PID: 9026 Comm: syz.4.1430 Tainted: G        W           6.17.0-rc1-syzkaller-00038-g0cc53520e68b #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
+UBSAN: shift-out-of-bounds in drivers/net/usb/asix_devices.c:679:27
+shift exponent 240 is too large for 64-bit type 'unsigned long'
+CPU: 1 UID: 0 PID: 6020 Comm: kworker/1:4 Not tainted 6.17.0-rc1-syzkaller-00116-gd7ee5bdce789 #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:drop_nlink+0xc5/0x110 fs/inode.c:417
-Code: c8 08 00 00 be 08 00 00 00 e8 b7 90 ec ff f0 48 ff 83 c8 08 00 00 5b 41 5c 41 5e 41 5f 5d e9 82 9f c8 08 cc e8 dc 5a 8d ff 90 <0f> 0b 90 eb 81 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff
-RSP: 0018:ffffc9000f5ef600 EFLAGS: 00010293
-RAX: ffffffff82310064 RBX: ffff88803352c420 RCX: ffff88802cfcbb80
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffff52001ebdeb5 R12: 1ffff110066a588d
-R13: 00000000689e7afa R14: ffff88803352c468 R15: dffffc0000000000
-FS:  00007fec6bd366c0(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555591d73608 CR3: 00000000274f4000 CR4: 00000000003526f0
+Workqueue: usb_hub_wq hub_event
 Call Trace:
  <TASK>
- shmem_unlink+0x1f5/0x2d0 mm/shmem.c:4041
- vfs_unlink+0x39a/0x660 fs/namei.c:4586
- ovl_do_unlink fs/overlayfs/overlayfs.h:218 [inline]
- ovl_cleanup_locked fs/overlayfs/dir.c:36 [inline]
- ovl_cleanup+0x151/0x230 fs/overlayfs/dir.c:56
- ovl_check_rename_whiteout fs/overlayfs/super.c:607 [inline]
- ovl_make_workdir fs/overlayfs/super.c:704 [inline]
- ovl_get_workdir+0xabd/0x17c0 fs/overlayfs/super.c:827
- ovl_fill_super+0x1365/0x35b0 fs/overlayfs/super.c:1406
- vfs_get_super fs/super.c:1325 [inline]
- get_tree_nodev+0xbb/0x150 fs/super.c:1344
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fec6c6cebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fec6bd36038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fec6c8f5fa0 RCX: 00007fec6c6cebe9
-RDX: 0000200000000200 RSI: 0000200000000000 RDI: 0000000000000000
-RBP: 00007fec6c751e19 R08: 0000200000000140 R09: 0000000000000000
-R10: 00000000000000d4 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fec6c8f6038 R14: 00007fec6c8f5fa0 R15: 00007ffc15eea8d8
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+ ax88772_init_mdio drivers/net/usb/asix_devices.c:679 [inline]
+ ax88772_bind+0xdcf/0xfa0 drivers/net/usb/asix_devices.c:910
+ usbnet_probe+0xa93/0x2870 drivers/net/usb/usbnet.c:1781
+ usb_probe_interface+0x665/0xc30 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9e0 drivers/base/dd.c:659
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3689
+ usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
+ usb_probe_device+0x1c4/0x390 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9e0 drivers/base/dd.c:659
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3689
+ usb_new_device+0xa39/0x16f0 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x2958/0x4a20 drivers/usb/core/hub.c:5952
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
  </TASK>
+---[ end trace ]---
 
 
 ---
@@ -149,7 +145,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
