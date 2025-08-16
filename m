@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-772135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32116B28F22
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568D9B28F23
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457EBB62145
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D1F1C250B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3002B2F60B7;
-	Sat, 16 Aug 2025 15:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198A2F83A9;
+	Sat, 16 Aug 2025 15:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAwvVAdX"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0UR2x2/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A552E3717
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0ED2E3717;
+	Sat, 16 Aug 2025 15:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357985; cv=none; b=XiWmLKyDdEbT6/O6tdXHHlWDXXi1EdrhmPBaEE6XHSKCFZSsTwKLTmw42P4kwERcWWSyv6rR26Su3emT/kYLJ+lGLCWpYJ3itZbTd6TozOeuNbCLlmGpK6EVu21pPd6Tzcr5oh4QFlU9Uw9bR4yCc5HpoAIZ5v99LCoAUW+HtdU=
+	t=1755357990; cv=none; b=rpbp8uryDaOHKyUcJRFcl03aMazAOZERDMdgkD5cDNYARFGkzx0aQXF8Pnjx+8dpHPzMra/uAw7chIx4Yspb2bnW1jndERppPxqo7BjnCqrFDGzjvsn8qp26PM/gZwFZWI0sKkuUkZl8ezXKUj91IebLrxMdfCDklYTaHht9CYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357985; c=relaxed/simple;
-	bh=BfAvAFLlIpC3b2DyuXLmbkTf7L8vxGNdTxCkyuHNgwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=minW9ZgZef/9ARbwgvMkHfdNoHWjQmsBHQ+qLG1yhkCGr7JWBZIy0oCNF3tux1hQTKwL2EqF85ewArxv7lJinr+36KPKblRC2t5p1a0hIxC1ThXmWjIUKKCuPbEevQMJK3iOG7ECFV+nod13Ff2X3ui0CrqW1LVmkKyrPZG2zzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAwvVAdX; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2e614b84so2770694b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 08:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755357983; x=1755962783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mnxj9j4ujZHlmAKFH0J5lQUtJG4DrJODQ1fx+MjoZI=;
-        b=mAwvVAdX5OKBNH8esU3kkwjJDKph/nQ+VZ2+bVQJrw7WMCEDx7Q6TP+nyTAjFnHBPF
-         vDtK6HKt4bhdILktw0wO144aNdeqdHrzGkZS6yHdG86byhCAUs9iNt5HOmKcPU17vKVW
-         6MebPbXQeCxxyOak1lssJB2oWozaZNVOzwsVVCA0u7oOwwyH0gVXtqHhlM8nybiCje1J
-         DJaxhZyL+JvYO8MFobI10cu0SSaGXwdClHx2vsQ1tCWzElLYcz3jcNFPC3iPGeOzuRsR
-         aR4ObjQO+KnlIXlVESyx/AN5/1el2RGNe88PsTSObf9+RuhYGZlS1pykAKdduLCKDerr
-         HT7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755357983; x=1755962783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+mnxj9j4ujZHlmAKFH0J5lQUtJG4DrJODQ1fx+MjoZI=;
-        b=aF3CnWQS7FLaK3/la7SfIKlwm1F10UzHZ3qRmj9/WMxmboQ9JlCEVnBCGaKL9MCIMU
-         RnaAPUb2k4BqybehMwLqeaHMFhhkT5cQj0IW9v77L8n7Hjmsvh4sl90eB5HZKjkQ41Zu
-         ii0kKOmHCu1weM++ithD9FfC5IG4JRjcEkDRXyR7xC+EBfxd5HfftbUvlf6hViveSSkc
-         yCiUfsESFKObKG1WEOjnFmYNeS3113c6BKpJWpGzhi4S9D3E72kXH4d5ULSJho3mBzG0
-         6efeHFn9vtAg4RjF0cLydkOcCe67+qSI0k7Z97IyFj6g6lLDzwL+COhfA9bFTy+0p3sX
-         ReUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbY0hksp5JU9CmW+YdFIbpG/9+zaLovgKl41ynAQocXBOhZ7A0nsQCWefzLLpNFvyLhsXDJQi9GOZbpxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXX/OuSC1TpJQ32mUCv1ofPgtNETpn1MQ0yGOOuMz1sm9j3wQE
-	JPjv4ype++sxcWwIEFRY2PzZPkeSUVSck16IVPOtYfhxSvLnNZcWMA59
-X-Gm-Gg: ASbGncubVWxBr0LUj7d1fksQsYHYAnzwEa9o7flRwA/e7N56Hkz+gBSS4B0uQhKGN3L
-	8EtStzQU4rjVrEenFzfP1b9l37lDJ8i6Esd9X9d3ti5+psEAdimJovSAjKkUdCvkpwOwt0aRnYV
-	OAibw6FVM4pX+I5KdDkNUvTrXwbBjklX5g4ClHfCeZfGWvcBkeY6gGievW3AekF0BZ3/gXfVrL+
-	6dhYoVsPYrTsIoKUvx/ahHNkhdRfqk+JeHUdRswiblr+JpccLQ4fpYxRBX9EIw9dbA/KEqLy07I
-	FI7MI7TK/NcBu1woWF65X+Dzph/jzoAb91KhSi2q96jVqwWKutzrjG3yZm9B+Nm2ri3l9X1W6yw
-	le0oS4Rey1Tr09Zhqm/s=
-X-Google-Smtp-Source: AGHT+IFw/4392JeGo+4oIC6CNMmWWYGFfVUHQ0o5Vvd3MPIQwmDgr00+svvnyoZjozRFHuSkH1e3Gw==
-X-Received: by 2002:a17:902:f64d:b0:243:17f:b767 with SMTP id d9443c01a7336-2446d75ce15mr85010495ad.25.1755357983551;
-        Sat, 16 Aug 2025 08:26:23 -0700 (PDT)
-Received: from Terra ([2001:df0:b240:417c:391a:2d23:2970:dee9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb09ff8sm37861245ad.50.2025.08.16.08.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 08:26:23 -0700 (PDT)
-From: Athul Raj Kollareth <krathul3152@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	skhan@linuxfoundation.org
-Cc: Athul Raj Kollareth <krathul3152@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpu/drm: Replace the deprecated logging functions in drm_gem* files
-Date: Sat, 16 Aug 2025 20:56:02 +0530
-Message-ID: <20250816152604.14667-1-krathul3152@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755357990; c=relaxed/simple;
+	bh=Pc4q8yjY8pxZXyMW5NA6zIA9FgLD4a52pcg6bXs53hc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OgXbwuch0Ot2aF1EiN59jTGMcaOuOwaqkPrgWeQ1V2uxqIkCS6QtEtVvSN1xKRD8Vw2YAABknlOnS2VWc6n/nV9FyyzLmOKyTL4po+/10IIJayxPSmustatF3HjNLsAs6aHL1wtK+e4IwOXTXuX/8VrBruv0Gun9Hkx3s0tU/RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0UR2x2/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A586C4CEEF;
+	Sat, 16 Aug 2025 15:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755357989;
+	bh=Pc4q8yjY8pxZXyMW5NA6zIA9FgLD4a52pcg6bXs53hc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i0UR2x2/Uy/VCJta0LcRf9hVPfE+cxny4aiT/Uz048xnKZOhwlKu5x0IAxYyy4JHT
+	 or+hmzQ3DUbdoerIvupVraj4bRIBoEmkqj0psjRoSLkIj1yh5SUu7OSBEupL8x4Fd4
+	 ut2pXLlFTcDQ/GnW2dmKOrQ2sVMy42jnVN+AsXuaZ0VZHzZKJUiZKaXCkHRGQLAL8S
+	 fxmKYy4aE4yo1kg7e/AJOi1A+FkmkGs3EeuFkO/ft5ObauSVo0/yqNvtbmPP9uBjZB
+	 3nfFQCQLsRx95RBPCpEJ92LY25sRARzi53yrsD0bUt8fu3YH503wQmkLfLUXaxi+n/
+	 Rsvd3Y8dShXfg==
+Message-ID: <b0dfb39b-e72e-4b8f-bd4a-bc8320aae98f@kernel.org>
+Date: Sat, 16 Aug 2025 17:26:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] iommu: apple-dart: Add 4-level page table support
+To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+ Hector Martin <marcan@marcan.st>
+References: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
+ <20250814-apple-dart-4levels-v1-3-db2214a78c08@jannau.net>
+ <c9440d31-add4-4c0f-ac2a-184e771ab455@kernel.org>
+ <2d3e818d-5bc3-4156-a0c6-6d756f814c86@app.fastmail.com>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <2d3e818d-5bc3-4156-a0c6-6d756f814c86@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replace the deprecated logging functions used in drm_gem* helper files
-with their appropriate ones specified in drm_print.h.
+On 16.08.25 16:19, Janne Grunau wrote:
+> Hej,
+> 
+> On Sat, Aug 16, 2025, at 15:50, Sven Peter wrote:
+>> On 14.08.25 10:40, Janne Grunau wrote:
+>>> From: Hector Martin <marcan@marcan.st>
+>>>
+>>> The T8110 variant DART implementation on T602x SoCs indicates an IAS
+>>> of 42, which requires an extra page table level. The extra level is
+>>> optional, but let's implement it.
+>>>
+>>> Since the driver failed at IO page table creation with 42-bit IAS add
+>>> "apple,t6020-dart" as separate compatible using the T8110 HW data.
+>>
+>> Is the commit description outdated? I don't see this change anywhere.
+> 
+> yes, I decided to handle this as missing feature / bug. Both end up with
+> the same result and as far as we can tell it is fully compatible.
+> Removed locally.
+> 
+>>> Later it might be useful to restrict this based on the actual
+>>> attached devices, since most won't need that much address space
+>>> anyway.
+>>>
+>>> Signed-off-by: Hector Martin <marcan@marcan.st> Signed-off-by: Janne
+>>> Grunau <j@jannau.net>
+>>> ---
+>>>    drivers/iommu/apple-dart.c | 23 +++++++++++++++++------ 1 file
+>>>    changed, 17 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+>>> index e72a93e78e26ca61b233c83d439dbdfadf040fc6..bb48e8603d6c84bcf107-
+>>> 294d851c2f2fc1273298 100644 --- a/drivers/iommu/apple-dart.c +++ b/drivers/iommu/apple-
+>>> dart.c @@ -133,6 +133,7 @@  #define DART_T8110_TCR
+>>> 0x1000  #define DART_T8110_TCR_REMAP            GENMASK(11, 8)
+>>> #define DART_T8110_TCR_REMAP_EN         BIT(7) +#define
+>>> DART_T8110_TCR_FOUR_LEVEL       BIT(3)  #define
+>>> DART_T8110_TCR_BYPASS_DAPF      BIT(2)  #define
+>>> DART_T8110_TCR_BYPASS_DART      BIT(1)  #define
+>>> DART_T8110_TCR_TRANSLATE_ENABLE BIT(0) @@ -177,6 +178,7 @@ struct
+>>> apple_dart_hw {     u32 tcr_enabled;     u32 tcr_disabled;     u32
+>>> tcr_bypass;
+>>> +    u32 tcr_4level;
+>>>
+>>>       u32 ttbr; u32 ttbr_valid; @@ -217,6 +219,7 @@ struct apple_dart
+>>>       { u32 pgsize; u32 num_streams; u32 supports_bypass : 1;
+>>> +    u32 four_level : 1;
+>>>
+>>>       struct iommu_group *sid2group[DART_MAX_STREAMS]; struct
+>>>       iommu_device iommu; @@ -305,13 +308,16 @@ static struct
+>>>       apple_dart_domain *to_dart_domain(struct iommu_domain *dom) }
+>>>
+>>>    static void -apple_dart_hw_enable_translation(struct
+>>>    apple_dart_stream_map *stream_map)
+>>>    +apple_dart_hw_enable_translation(struct apple_dart_stream_map
+>>>    *stream_map, int levels) {   struct apple_dart *dart = stream_map-
+>>>    >dart;   int sid;
+>>>
+>>> +    WARN_ON(levels != 3 && levels != 4);
+>>> +    WARN_ON(levels == 4 && !dart->four_level); for_each_set_bit(sid,
+>>>       stream_map->sidmap, dart->num_streams)
+>>> -            writel(dart->hw->tcr_enabled, dart->regs +
+>>>               DART_TCR(dart, sid));
+>>> +            writel(dart->hw->tcr_enabled | (levels == 4 ? dart->hw-
+>>>               >tcr_4level : 0),
+>>> +                   dart->regs + DART_TCR(dart, sid));
+>>
+>> This is a bit hard to read, I'd prefer an explicit if (dart->hw-
+>>> tcr_4level) here.
+> 
+> you mean `if (levels == 4)`? `dart->hw->tcr_4level` will be `BIT(3)` for
+> t8110 darts even when they use just 3 page table levels.
 
-Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
----
- drivers/gpu/drm/drm_gem.c            | 4 ++--
- drivers/gpu/drm/drm_gem_dma_helper.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+yup, I must've copy/pasted the wrong thing.
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 4a89b6acb6af..91f528d8900f 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -102,7 +102,7 @@ drm_gem_init(struct drm_device *dev)
- 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
- 					  GFP_KERNEL);
- 	if (!vma_offset_manager) {
--		DRM_ERROR("out of memory\n");
-+		drm_err(dev, "out of memory\n");
- 		return -ENOMEM;
- 	}
- 
-@@ -805,7 +805,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
- 
- 	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
- 		ret = -EFAULT;
--		DRM_DEBUG("Failed to copy in GEM handles\n");
-+		drm_dbg_core(NULL, "Failed to copy in GEM handles\n");
- 		goto out;
- 	}
- 
-diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-index 4f0320df858f..a507cf517015 100644
---- a/drivers/gpu/drm/drm_gem_dma_helper.c
-+++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-@@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
- 
- 	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
- 	if (ret) {
--		DRM_ERROR("Failed to vmap PRIME buffer\n");
-+		drm_err(dev, "Failed to vmap PRIME buffer\n");
- 		return ERR_PTR(ret);
- 	}
- 
--- 
-2.50.1
+> 
+> Changed locally to
+> 
+> u32 tcr = dart->hw->tcr_enabled; if (levels == 4)        tcr |= dart->hw-
+>> tcr_4level;
+> 
+> and then writel(tcr, ...) in the loop.
+Great, I didn't even realize you could move that entire thing out of the 
+loop.
+
+> I've change prefix of all commits in this series to "iommu/apple-dart"
+> and "iommu/io-pgtable-dart".
+
+Feel free to add my Reviewed-by for this commit as well then.
+
+
+
+Thanks,
+
+Sven
 
 
