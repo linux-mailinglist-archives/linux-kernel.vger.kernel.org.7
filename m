@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-771873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B71B28C70
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47445B28C73
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68031C826AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7785C1C82374
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BF91E1A3B;
-	Sat, 16 Aug 2025 09:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E0B24503B;
+	Sat, 16 Aug 2025 09:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="cu++eg9n"
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="iUzjxrQy"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139E824679B;
-	Sat, 16 Aug 2025 09:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AFF24469A;
+	Sat, 16 Aug 2025 09:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336778; cv=pass; b=r6NsLYmEkHzev+rBTB3YEMhr7Lrrv51aZ2mtxtUqXp83hYfaX1OyzMHIrNh6qqLED7vHrzq7ZX7oUz+UA6xP+pAjFPy/3pjB6oHY9UStC8kyiIQ9hDH/0VTDk+DnCYFEGCm5l9Qfh4725MmIyVYRVTT0r8X4iyi/CwWojWBMnlw=
+	t=1755336791; cv=pass; b=PyiMgyrNToRF76Ku4NEVQlQ8wLyVf8BoNOrTu+dV90V56ctFb4bzUGDPZ4GgTlh6GsaWJnHleFgw/7Cd0msCs5/vdQihZ911kJUGOQzoA/wdWtHyu6CqUaKZJqS+umEtFrPJMASnvrPlVEw8Ux34YNCFq2YwqsawRUSuLBB8U24=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336778; c=relaxed/simple;
-	bh=KBk1KwAODd1Zk/766TOzD3cy3Z16Ze3mqD9MoBF2AO4=;
+	s=arc-20240116; t=1755336791; c=relaxed/simple;
+	bh=BmlE93Zs1Qp2ycCVRZn6NL8x/s3gajsV6GrAT+07b6w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pfCX2EaamUq1HEgrJqrxELXsKVK0x712AQgp54mqq3eqK5hR2l/RgPXsQRaFWGvjAVozxpGs9i0bxO7Zqz6FXSF25+llbZUjVw9PIGFm00gWV7sxFCCShioULOYU8Al8vRxcW71cP+L9k8PPQNYilGNQophzb9qdLEIa2UNVrvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=cu++eg9n; arc=pass smtp.client-ip=136.143.188.15
+	 MIME-Version; b=p1CKAgqpJ3BJD5RFd0F/xDsCXngZxMA7wv7Xx68UsqnDPeVBe1x1hVi+oKopmi9MDxiuNJFYcaI7DMJNXHt5HPTDlI1cl1Fbu9WA63R4clkRbnxqQuQVlXLnNtyuZl7rXpq4dWIyLiVFkFZslWa/HrLmq2nvInayxGKjCe8y6C8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=iUzjxrQy; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755336766; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1755336781; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=ZUVD1jKbcycpJoOHNYt6loehgxTSeRCDJag3kw2I2QnzA+ypHO88tNyQqye1FylJlD1mnBs+EFnle10N+R/eGNjCIxG3mqzHbqJs0kxF313+bGsVuJSNnncrc3GFzLfAGS+cfNNcC9QDsjFSP+aqh3fDaKsLYYIIUXdXWOQKVbo=
+	b=W0sLdmC/dzTpbI8WbmZT8YwZeQwmhYwQV4QpaCbOCr9Jt72D65DCoj4QJ2Wg4Bn8clzui2oVabNIBJREggmUQpq/8AKWX3u9Ra4Yd65la25yOqDb5ZAX1gix0gcXLOrrttZAIfcvrQRTvSiPPdOVpqfUsjubZSa7snzqIZfBvkw=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755336766; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=T93m/qBDDnHV3ndKiLSsbo6LGiGCBHHPOQ9wTTk4DHs=; 
-	b=DC04lwQgdsvQi67rgSxznHA3hJeSQj2Vn4sF+M7mknA368ZE+sWzO65z/+0Ju4mf/Ppr2TYXDhl30iuhi3NciyhP3KV26N5Q2cAitPpbLF28HgiJxlx4YkNVx2J0GVy5mHZEBQS97evZ5iizG3IFwBjqd2dum3LqXErplzt1UTw=
+	t=1755336781; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+z/oVlLFF1PycSfqjySbob+HkdEI6/LSvl3u/uL2B6Y=; 
+	b=Wxug/1PhLezaZvsblAoh3ZoJ1pNCb81+3/Kj+6TZKRIFrAYznSl/gw/4uC75PC6OM4GYfrkCyjA6pFwopBuXeQvm2vQu7Q+HvmoKSdh6jbZmNubXce4bqLGosJNHF1QMd+/RiAwdPwrFtKqRlpPEU21IXzyzXmSC82rqJf1yrcU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=icenowy.me;
 	spf=pass  smtp.mailfrom=uwu@icenowy.me;
 	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755336766;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755336780;
 	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=T93m/qBDDnHV3ndKiLSsbo6LGiGCBHHPOQ9wTTk4DHs=;
-	b=cu++eg9n1Z7p9md9w6Hqnxk23dieTThLkzdyjxuBokoEuIYqdp/ezHSbfK+1hqO6
-	oBfyAPzX3ddH45cGu8U090vE97Y8Etbx79Sjj7P2pO1yj2WxTvF/iSU5RaB1wnE9qiQ
-	xPFKDojTlNQNYwmnC0/fK1aRrcTKLVhFuIy93c/f1xslO9VfoYLYlDsUxyd+dIvU7h+
-	wiH4rMOGQISG1D+ELvvAa7Q/zGxYkaSLMATp4VAMSQRlEOGWZuBESxGWL25+JgoHrmy
-	vjAzv3bsSSEMHPmsSEO603t/+CfCZRXedlXpNTNwJ2EtSCqdhF9UhXdtMlB9Nxi9ZaG
-	Mxkbc4B6xw==
-Received: by mx.zohomail.com with SMTPS id 1755336765084748.2338970354662;
-	Sat, 16 Aug 2025 02:32:45 -0700 (PDT)
+	bh=+z/oVlLFF1PycSfqjySbob+HkdEI6/LSvl3u/uL2B6Y=;
+	b=iUzjxrQyI6HFaPu3MCLdm3l7YzqJrj9nWNy4mm9KDPRuPP7LgUnMpWQKZyhve+XC
+	CWGZpCLtJullORPPuA5FEQQDMZ3NM06wQu3oh2XK0GWtx2QBe3HxrSpO22uHMc6p4ZK
+	a7XQc0l6FF8Ne7IaII4LApHFq8eG15/yOAh3pYRc0J3zDycyfGoaP2Y4PGDaQlcrkzh
+	bgnlOCYBGTEpbpGU2qoFMjGtXJ2w8XhifWquMYFWjUcztm5vCvlaUByqaPUU3OLorVd
+	NwOkjs/hgF8z3gRSOmNa90hpvPfRXia+a9tYqjsGeqeTYHqO4MoqEJnrCx8jc5AxscE
+	dHNPqFtWrg==
+Received: by mx.zohomail.com with SMTPS id 1755336778054821.4036963515487;
+	Sat, 16 Aug 2025 02:32:58 -0700 (PDT)
 From: Icenowy Zheng <uwu@icenowy.me>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -66,9 +66,9 @@ Cc: Han Gao <rabenda.cn@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 2/3] riscv: dts: thead: th1520: add initial thermal zones
-Date: Sat, 16 Aug 2025 17:32:08 +0800
-Message-ID: <20250816093209.2600355-3-uwu@icenowy.me>
+Subject: [PATCH 3/3] riscv: dts: thead: th1520: add soft PWM fan for Lichee Pi 4A
+Date: Sat, 16 Aug 2025 17:32:09 +0800
+Message-ID: <20250816093209.2600355-4-uwu@icenowy.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250816093209.2600355-1-uwu@icenowy.me>
 References: <20250816093209.2600355-1-uwu@icenowy.me>
@@ -81,51 +81,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-As the PVT sensors's "T" means thermal, add thermal zones for the
-thermal sensors.
+Because of the SoM+Dock design of Lichee Pi 4A, heat dissipation does
+not work well; fortunately it comes with a fan port with PWM driving
+capability.
 
-Because of the current lack of DVFS, only a critical trip point is added
-now.
+As the hardware PWM controller of Lichee Pi 4A isn't ready yet, drive it
+with pwm-gpio driver (software PWM) now.
+
+A long PWM period is used, because not only software PWM is used, but
+also the fan port is a 2-pin one and fast PWM might confuse the BLDC
+driver on fans.
 
 Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 ---
- arch/riscv/boot/dts/thead/th1520.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ .../boot/dts/thead/th1520-lichee-pi-4a.dts    | 53 +++++++++++++++++++
+ arch/riscv/boot/dts/thead/th1520.dtsi         |  2 +-
+ 2 files changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index e9c81bdabed8a..a48eca5def606 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -701,4 +701,29 @@ gpio4: gpio-controller@0 {
- 			};
- 		};
+diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+index 4020c727f09e8..f696db01353c5 100644
+--- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
++++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include "th1520-lichee-module-4a.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Sipeed Lichee Pi 4A";
+@@ -28,6 +29,58 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
  	};
 +
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <15000>;
++	gpio_pwm: gpio-pwm {
++		#pwm-cells = <3>;
++		compatible = "pwm-gpio";
++		gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
++	};
 +
-+			thermal-sensors = <&pvt 0>;
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		#cooling-cells = <2>;
++		pwms = <&gpio_pwm 0 100000000 0>;
++		cooling-levels = <0 66 196 255>;
++	};
++};
 +
-+			trips {
-+				cpu_crit: crit-trip {
-+					/* milliCelsius */
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
++&cpu_thermal_zone {
++	trips {
++		fan_trip0: fan-trip-0 {
++			temperature = <40000>;
++			hysteresis = <8000>;
++			type = "active";
 +		};
 +
-+		ddrc-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <15000>;
++		fan_trip1: fan-trip-1 {
++			temperature = <50000>;
++			hysteresis = <8000>;
++			type = "active";
++		};
 +
-+			thermal-sensors = <&pvt 1>;
++		fan_trip2: fan-trip-2 {
++			temperature = <60000>;
++			hysteresis = <8000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		map-active-0 {
++			cooling-device = <&fan 1 1>;
++			trip = <&fan_trip0>;
++		};
++
++		map-active-1 {
++			cooling-device = <&fan 2 2>;
++			trip = <&fan_trip1>;
++		};
++
++		map-active-2 {
++			cooling-device = <&fan 3 3>;
++			trip = <&fan_trip2>;
 +		};
 +	};
  };
+ 
+ &padctrl0_apsys {
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index a48eca5def606..5ac8044a05f1e 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -703,7 +703,7 @@ gpio4: gpio-controller@0 {
+ 	};
+ 
+ 	thermal-zones {
+-		cpu-thermal {
++		cpu_thermal_zone: cpu-thermal {
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <15000>;
+ 
 -- 
 2.50.1
 
