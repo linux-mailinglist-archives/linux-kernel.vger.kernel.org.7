@@ -1,231 +1,421 @@
-Return-Path: <linux-kernel+bounces-771984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D96CB28D7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761BBB28D7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5183A65C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D068AE408F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49635286416;
-	Sat, 16 Aug 2025 11:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A0B28D845;
+	Sat, 16 Aug 2025 11:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4AkqDGM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KocMUYbU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22F31E86E
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62B1E86E;
+	Sat, 16 Aug 2025 11:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755344835; cv=none; b=HXzdTDZZvPYhW3/Wm0W4QCl2mfzp80H5L2DQvoNxYfHBBDx3ifPM55wh2U9KOD4vbF2gLPSPVf1VlcgZFinT5YsUWTbpfUMXCHUkwoPir8h+iWU/1K8h+qJVAy4whnFYDHvmRY0dqbY6tz58r7NryaxoRlUvcP61ZI6YKqkcgQY=
+	t=1755344804; cv=none; b=e75HCrCA2EojxkFJEknQtEy/D7LiCDY5O7Lmcbdj+o0fF8+Wz7TJXxdjAvLU6T+Vueo12+l9Xopq1c7Hxo6y7i6BByxjRH25CpA+iOAE6q/v3i4oA2OzSqS9SkdZ5H88kWKLVPzWFLMI8D4pDs0f7vQ4f9COqx+xGv1iJkH0Qq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755344835; c=relaxed/simple;
-	bh=9QG2qnN+bLG0YRjxusIeoXyhEcbIIovm9S32OrHzO+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuVAqo5ua3/Pdtz3r0MS5eH9+cEXbCLvaAhBtDE3LpeLV8BI/z3HiJUK5wz1q/NXqzt/7bvmjdWNByV6igkCeq8MD/ocvdMBo4xt5ycD1D3V4AcLGbRLbkH1KaP9U42PcfDdB8sJRgt+3l6sgp3b70YoefY85ythhc+d9U7hLhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4AkqDGM; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755344834; x=1786880834;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9QG2qnN+bLG0YRjxusIeoXyhEcbIIovm9S32OrHzO+A=;
-  b=i4AkqDGMPTJGxFfssZOaK8ZnPXd7tIGnHhMMrRC7FH7/pF92ydEf772P
-   FwZseWhcnVvZVY4pxUx5WDm+Hu4O93EEi8c5eTNImXuOiCxNGTmYMLW6A
-   zn6N70hky886i+2MJFeK/guDTLdeeeS54Z1mjeqnP/rbdpf8NR/+chI7U
-   yMEQzGRrDk1F/U/EOHUIeFFMpYHWe3Zb6kF3McVN8yG6mlbISmsUSDon3
-   T2HHKLF9ni+U3QxxtAEzBqIYA+p8yHA3hRnLw5TI0Xcs5rUm0GRuzubiI
-   H7vTdqGmz2ziwuOJzkXpCY3aw7eEYG3Upr34Aosc7WTgD8On02D0UEelO
-   A==;
-X-CSE-ConnectionGUID: a+sZodJ5SVW5mtuLzA23OA==
-X-CSE-MsgGUID: zLbGTkRWRKy5xtZ5DECbXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57748533"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57748533"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 04:47:13 -0700
-X-CSE-ConnectionGUID: HqWPDu/kQ9GXT3ZWH1xpiw==
-X-CSE-MsgGUID: kAy0Muq7SN+8aIBnGiPL5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166822571"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 16 Aug 2025 04:47:11 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unFNI-000Cqk-0N;
-	Sat, 16 Aug 2025 11:47:06 +0000
-Date: Sat, 16 Aug 2025 19:46:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>, bleung@chromium.org
-Cc: oe-kbuild-all@lists.linux.dev, tzungbi@kernel.org, dawidn@google.com,
-	chrome-platform@lists.linux.dev, akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] platform/chrome: cros_ec_chardev: Consume
- cros_ec_device via ref_proxy
-Message-ID: <202508161910.b7YHKLdh-lkp@intel.com>
-References: <20250814091020.1302888-4-tzungbi@kernel.org>
+	s=arc-20240116; t=1755344804; c=relaxed/simple;
+	bh=1FVmfOCJ+0AHBlBlpMw9ZwYRde40J1MucEDpJcZAeqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AqcykiRbIhxS/SyYUpi7x2yafbDxj1FiWl1fXcclkNE7Z9p3kFtgDAAzyVVoKGWMGsaQ5thR0IBhsMxJEwVAlCedBqY/xbrBh2/I4DlEirtJar925/ulfDWK5g4bQsp1Vvqs51oMrxazGrm4EHYEZgWHmHn5LEyAHKSdN/4G/ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KocMUYbU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A42C4CEEF;
+	Sat, 16 Aug 2025 11:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755344803;
+	bh=1FVmfOCJ+0AHBlBlpMw9ZwYRde40J1MucEDpJcZAeqU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KocMUYbUBptZAskemnUDG75AaIgs/NyHHwE5xX5GY5q+NyrEtsfRE1aUdLMQ9KW2e
+	 ujmhXWf5kJIQ9M2Q022D/x/PVx0VgWeJkxKA2v/iPfJqbe3Y81otESobw+AKdk+lTp
+	 WlpY+eUGWau+i4tDpEMpgXm7FAc5GDRw9NrVkUYTK4g3BKGOX7gClD2TIwPw8nBZ6H
+	 mV7Zbsrzt8D5VJh0k/H/84tlctF5gmG9pNGmcHIRFjd2SiAPo5AQEhW6fz2ErmSieI
+	 nN0jWymgDRaDBxU7ldVT+BChO4wk0JqpxZOM6noaSdtGhyEd9RMnskUuZsd/mkuhVV
+	 SzMJrjZEZOVhQ==
+Date: Sat, 16 Aug 2025 12:46:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/9] iio: imu: inv_icm45600: add new inv_icm45600
+ driver
+Message-ID: <20250816124634.692e1b55@jic23-huawei>
+In-Reply-To: <20250814-add_newport_driver-v4-2-4464b6600972@tdk.com>
+References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
+	<20250814-add_newport_driver-v4-2-4464b6600972@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814091020.1302888-4-tzungbi@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Tzung-Bi,
+On Thu, 14 Aug 2025 08:57:16 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> From: Remi Buisson <remi.buisson@tdk.com>
+> 
+> Core component of a new driver for InvenSense ICM-45600 devices.
+> It includes registers definition, main probe/setup, and device
+> utility functions.
+> 
+> ICM-456xx devices are latest generation of 6-axis IMU,
+> gyroscope+accelerometer and temperature sensor. This device
+> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
+> intelligent motion features like pedometer, tilt detection,
+> and tap detection.
+> 
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+Hi Remi,
 
-[auto build test WARNING on chrome-platform/for-next]
-[also build test WARNING on next-20250815]
-[cannot apply to chrome-platform/for-firmware-next akpm-mm/mm-nonmm-unstable akpm-mm/mm-everything linus/master v6.17-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Coming together well.  A few additional comments inline from a fresh read.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tzung-Bi-Shih/lib-Add-ref_proxy-module/20250814-172126
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250814091020.1302888-4-tzungbi%40kernel.org
-patch subject: [PATCH 3/3] platform/chrome: cros_ec_chardev: Consume cros_ec_device via ref_proxy
-config: i386-randconfig-061-20250815 (https://download.01.org/0day-ci/archive/20250816/202508161910.b7YHKLdh-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161910.b7YHKLdh-lkp@intel.com/reproduce)
+Jonathan
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161910.b7YHKLdh-lkp@intel.com/
+> ---
+>  drivers/iio/imu/Kconfig                          |   1 +
+>  drivers/iio/imu/Makefile                         |   1 +
+>  drivers/iio/imu/inv_icm45600/Kconfig             |   5 +
+>  drivers/iio/imu/inv_icm45600/Makefile            |   4 +
+>  drivers/iio/imu/inv_icm45600/inv_icm45600.h      | 364 ++++++++++++
+>  drivers/iio/imu/inv_icm45600/inv_icm45600_core.c | 702 +++++++++++++++++++++++
+>  6 files changed, 1077 insertions(+)
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/platform/chrome/cros_ec_chardev.c:75:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cros_ec_device *ec_dev @@     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev @@
-   drivers/platform/chrome/cros_ec_chardev.c:75:47: sparse:     expected struct cros_ec_device *ec_dev
-   drivers/platform/chrome/cros_ec_chardev.c:75:47: sparse:     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev
->> drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const * @@     got union ec_response_get_next_data_v3 [noderef] __rcu * @@
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     expected void const *
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     got union ec_response_get_next_data_v3 [noderef] __rcu *
->> drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const * @@     got union ec_response_get_next_data_v3 [noderef] __rcu * @@
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     expected void const *
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     got union ec_response_get_next_data_v3 [noderef] __rcu *
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const * @@     got union ec_response_get_next_data_v3 [noderef] __rcu * @@
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     expected void const *
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse:     got union ec_response_get_next_data_v3 [noderef] __rcu *
->> drivers/platform/chrome/cros_ec_chardev.c:287:42: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct blocking_notifier_head *nh @@     got struct blocking_notifier_head [noderef] __rcu * @@
-   drivers/platform/chrome/cros_ec_chardev.c:287:42: sparse:     expected struct blocking_notifier_head *nh
-   drivers/platform/chrome/cros_ec_chardev.c:287:42: sparse:     got struct blocking_notifier_head [noderef] __rcu *
-   drivers/platform/chrome/cros_ec_chardev.c:341:40: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cros_ec_device *ec_dev @@     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev @@
-   drivers/platform/chrome/cros_ec_chardev.c:341:40: sparse:     expected struct cros_ec_device *ec_dev
-   drivers/platform/chrome/cros_ec_chardev.c:341:40: sparse:     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev
->> drivers/platform/chrome/cros_ec_chardev.c:374:43: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cros_ec_device *ec @@     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev @@
-   drivers/platform/chrome/cros_ec_chardev.c:374:43: sparse:     expected struct cros_ec_device *ec
-   drivers/platform/chrome/cros_ec_chardev.c:374:43: sparse:     got struct cros_ec_device [noderef] __rcu *[assigned] ec_dev
->> drivers/platform/chrome/cros_ec_chardev.c:113:34: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:114:47: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:124:31: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:125:37: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:126:17: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:365:22: sparse: sparse: dereference of noderef expression
-   drivers/platform/chrome/cros_ec_chardev.c:374:23: sparse: sparse: dereference of noderef expression
 
-vim +75 drivers/platform/chrome/cros_ec_chardev.c
+> diff --git a/drivers/iio/imu/inv_icm45600/Makefile b/drivers/iio/imu/inv_icm45600/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4f442b61896e91647c7947a044949792bae06a30
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +obj-$(CONFIG_INV_ICM45600) += inv-icm45600.o
+> +inv-icm45600-y += inv_icm45600_core.o
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600.h b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e0304f35d32a078d4b9c260b2c6c29601583a429
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
+> @@ -0,0 +1,364 @@
 
-    51	
-    52	static int ec_get_version(struct chardev_priv *priv, char *str, int maxlen)
-    53	{
-    54		static const char * const current_image_name[] = {
-    55			"unknown", "read-only", "read-write", "invalid",
-    56		};
-    57		struct ec_response_get_version *resp;
-    58		struct cros_ec_command *msg;
-    59		struct cros_ec_device __rcu *ec_dev;
-    60		int ret;
-    61	
-    62		msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
-    63		if (!msg)
-    64			return -ENOMEM;
-    65	
-    66		msg->command = EC_CMD_GET_VERSION + priv->cmd_offset;
-    67		msg->insize = sizeof(*resp);
-    68	
-    69		REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
-    70			if (!ec_dev) {
-    71				ret = -ENODEV;
-    72				goto exit;
-    73			}
-    74	
-  > 75			ret = cros_ec_cmd_xfer_status(ec_dev, msg);
-    76			if (ret < 0) {
-    77				snprintf(str, maxlen,
-    78					 "Unknown EC version, returned error: %d\n",
-    79					 msg->result);
-    80				goto exit;
-    81			}
-    82		}
-    83	
-    84		resp = (struct ec_response_get_version *)msg->data;
-    85		if (resp->current_image >= ARRAY_SIZE(current_image_name))
-    86			resp->current_image = 3; /* invalid */
-    87	
-    88		snprintf(str, maxlen, "%s\n%s\n%s\n%s\n", CROS_EC_DEV_VERSION,
-    89			 resp->version_string_ro, resp->version_string_rw,
-    90			 current_image_name[resp->current_image]);
-    91	
-    92		ret = 0;
-    93	exit:
-    94		kfree(msg);
-    95		return ret;
-    96	}
-    97	
-    98	static int cros_ec_chardev_mkbp_event(struct notifier_block *nb,
-    99					      unsigned long queued_during_suspend,
-   100					      void *_notify)
-   101	{
-   102		struct chardev_priv *priv = container_of(nb, struct chardev_priv,
-   103							 notifier);
-   104		struct cros_ec_device __rcu *ec_dev;
-   105		struct ec_event *event;
-   106		unsigned long event_bit;
-   107		int total_size;
-   108	
-   109		REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
-   110			if (!ec_dev)
-   111				return NOTIFY_DONE;
-   112	
- > 113			event_bit = 1 << ec_dev->event_data.event_type;
-   114			total_size = sizeof(*event) + ec_dev->event_size;
-   115	
-   116			if (!(event_bit & priv->event_mask) ||
-   117			    (priv->event_len + total_size) > CROS_MAX_EVENT_LEN)
-   118				return NOTIFY_DONE;
-   119	
-   120			event = kzalloc(total_size, GFP_KERNEL);
-   121			if (!event)
-   122				return NOTIFY_DONE;
-   123	
-   124			event->size = ec_dev->event_size;
-   125			event->event_type = ec_dev->event_data.event_type;
- > 126			memcpy(event->data, &ec_dev->event_data.data, ec_dev->event_size);
-   127		}
-   128	
-   129		spin_lock(&priv->wait_event.lock);
-   130		list_add_tail(&event->node, &priv->events);
-   131		priv->event_len += total_size;
-   132		wake_up_locked(&priv->wait_event);
-   133		spin_unlock(&priv->wait_event.lock);
-   134	
-   135		return NOTIFY_OK;
-   136	}
-   137	
+> +struct iio_dev *inv_icm45600_gyro_init(struct inv_icm45600_state *st);
+> +
+> +int inv_icm45600_gyro_parse_fifo(struct iio_dev *indio_dev);
+> +
+> +struct iio_dev *inv_icm45600_accel_init(struct inv_icm45600_state *st);
+> +
+> +int inv_icm45600_accel_parse_fifo(struct iio_dev *indio_dev);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Some of this stuff isn't defined yet. Move the definitions to the patch where they are.
+
+> +
+> +#endif
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0fdf86cdfe547357d2b74d9c97092e9a1e5722a8
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> @@ -0,0 +1,702 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/* Copyright (C) 2025 Invensense, Inc. */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+
+Bring headers in as they are used during the patch set.
+Not seeing an irqs yet.
+
+> +#include <linux/limits.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/types.h>
+> +
+> +#include "inv_icm45600.h"
+> +
+> +static int inv_icm45600_ireg_read(struct regmap *map, unsigned int reg,
+> +				   u8 *data, size_t count)
+> +{
+> +	int ret;
+> +	u8 addr[2];
+> +	ssize_t i;
+> +	unsigned int d;
+> +
+> +	addr[0] = FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg);
+> +	addr[1] = FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg);
+> +
+> +	/* Burst write address. */
+> +	ret = regmap_bulk_write(map, INV_ICM45600_REG_IREG_ADDR, addr, sizeof(addr));
+
+addr is on the stack, so not DMA safe for the bulk write.  I haven't checked
+though if you have it bounced in the regmap implementation.
+
+> +	/* Wait while the device is busy processing the address. */
+> +	fsleep(INV_ICM45600_IREG_DELAY_US);
+> +	if (ret)
+> +		return ret;
+
+
+
+> +u32 inv_icm45600_odr_to_period(enum inv_icm45600_odr odr)
+> +{
+> +	static u32 odr_periods[INV_ICM45600_ODR_MAX] = {
+> +		/* reserved values */
+> +		0, 0, 0,
+> +		/* 6.4kHz */
+
+Given very short comments, perhaps
+		0, 0, 0, /* reserved */
+		156250, /* 6.4kHz */
+etc, just to reduce screen scrolling.
+
+Also, might as well mark it const.
+
+
+> +		156250,
+> +		/* 3.2kHz */
+> +		312500,
+> +		/* 1.6kHz */
+> +		625000,
+> +		/* 800kHz */
+> +		1250000,
+> +		/* 400Hz */
+> +		2500000,
+> +		/* 200Hz */
+> +		5000000,
+> +		/* 100Hz */
+> +		10000000,
+> +		/* 50Hz */
+> +		20000000,
+> +		/* 25Hz */
+> +		40000000,
+> +		/* 12.5Hz */
+> +		80000000,
+> +		/* 6.25Hz */
+> +		160000000,
+> +		/* 3.125Hz */
+> +		320000000,
+> +		/* 1.5625Hz */
+> +		640000000,
+> +	};
+> +
+> +	return odr_periods[odr];
+> +}
+> +
+> +static int inv_icm45600_set_pwr_mgmt0(struct inv_icm45600_state *st,
+> +				      enum inv_icm45600_sensor_mode gyro,
+> +				      enum inv_icm45600_sensor_mode accel,
+> +				      unsigned int *sleep_ms)
+> +{
+> +	enum inv_icm45600_sensor_mode oldgyro = st->conf.gyro.mode;
+> +	enum inv_icm45600_sensor_mode oldaccel = st->conf.accel.mode;
+> +	unsigned int sleepval;
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	/* if nothing changed, exit */
+> +	if (gyro == oldgyro && accel == oldaccel)
+> +		return 0;
+> +
+> +	val = FIELD_PREP(INV_ICM45600_PWR_MGMT0_GYRO_MODE_MASK, gyro) |
+> +	      FIELD_PREP(INV_ICM45600_PWR_MGMT0_ACCEL_MODE_MASK, accel);
+> +	ret = regmap_write(st->map, INV_ICM45600_REG_PWR_MGMT0, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->conf.gyro.mode = gyro;
+> +	st->conf.accel.mode = accel;
+> +
+> +	/* Compute the required wait time for sensors to stabilize. */
+> +	sleepval = 0;
+> +
+> +	/* Accel startup time. */
+> +	if (accel != oldaccel && oldaccel == INV_ICM45600_SENSOR_MODE_OFF) {
+> +		if (sleepval < INV_ICM45600_ACCEL_STARTUP_TIME_MS)
+> +			sleepval = INV_ICM45600_ACCEL_STARTUP_TIME_MS;
+
+		sleepval = max(sleepval, INV_ICM...
+
+> +	}
+> +	if (gyro != oldgyro) {
+> +		/* Gyro startup time. */
+> +		if (oldgyro == INV_ICM45600_SENSOR_MODE_OFF) {
+> +			if (sleepval < INV_ICM45600_GYRO_STARTUP_TIME_MS)
+> +				sleepval = INV_ICM45600_GYRO_STARTUP_TIME_MS;
+similar
+> +		/* Gyro stop time. */
+> +		} else if (gyro == INV_ICM45600_SENSOR_MODE_OFF) {
+> +			if (sleepval < INV_ICM45600_GYRO_STOP_TIME_MS)
+> +				sleepval =  INV_ICM45600_GYRO_STOP_TIME_MS;
+and here as well.
+
+> +		}
+> +	}
+> +
+> +	/* Deferred sleep value if sleep pointer is provided or direct sleep */
+> +	if (sleep_ms)
+> +		*sleep_ms = sleepval;
+> +	else if (sleepval)
+> +		msleep(sleepval);
+> +
+> +	return 0;
+> +}
+
+
+> +int inv_icm45600_core_probe(struct regmap *regmap, const struct inv_icm45600_chip_info *chip_info,
+> +				bool reset, inv_icm45600_bus_setup bus_setup)
+> +{
+> +	struct device *dev = regmap_get_device(regmap);
+> +	struct fwnode_handle *fwnode;
+> +	struct inv_icm45600_state *st;
+> +	struct regmap *regmap_custom;
+> +	int ret;
+> +
+> +	/* Get INT1 only supported interrupt. */
+
+Not seeing relevance of comment to this code.
+
+> +	fwnode = dev_fwnode(dev);
+> +	if (!fwnode)
+
+Why do you need to check this here, rather than just letting it fail later?
+
+> +		return dev_err_probe(dev, -ENODEV, "Missing FW node\n");
+> +
+> +	regmap_custom = devm_regmap_init(dev, &inv_icm45600_regmap_bus,
+> +					 regmap, &inv_icm45600_regmap_config);
+> +	if (IS_ERR(regmap_custom))
+> +		return dev_err_probe(dev, PTR_ERR(regmap_custom), "Failed to register regmap\n");
+> +
+> +	st = devm_kzalloc(dev, sizeof(*st), GFP_KERNEL);
+> +	if (!st)
+> +		return dev_err_probe(dev, -ENOMEM, "Cannot allocate memory\n");
+> +
+> +	dev_set_drvdata(dev, st);
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->map = regmap_custom;
+> +
+> +	ret = iio_read_mount_matrix(dev, &st->orientation);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to retrieve mounting matrix\n");
+> +
+> +	st->vddio_supply = devm_regulator_get(dev, "vddio");
+> +	if (IS_ERR(st->vddio_supply))
+> +		return PTR_ERR(st->vddio_supply);
+> +
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to get vdd regulator\n");
+> +
+> +	/* IMU start-up time. */
+> +	fsleep(100000);
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+
+You may need to enforce runtime PM being enabled / built or add some fallback code.
+I think right now vddio will never be turned on if we have runtime PM disabled.
+
+That then leads into annoyingly fiddly code to turn it off again as we have
+to verify it isn't already off due to runtime pm in the path that is only there
+for non runtime pm.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = inv_icm45600_setup(st, chip_info, reset, bus_setup);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = inv_icm45600_timestamp_setup(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Suspend after 2 seconds. */
+> +	pm_runtime_set_autosuspend_delay(dev, 2000);
+> +	pm_runtime_use_autosuspend(dev);
+> +	pm_runtime_put(dev);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(inv_icm45600_core_probe, "IIO_ICM45600");
+> +
+> +/*
+> + * Suspend saves sensors state and turns everything off.
+> + * Check first if runtime suspend has not already done the job.
+No explicit 'check' any more.  force suspend is dealing with that
+for you, so probably drop this doc or maybe update it.
+> + */
+> +static int inv_icm45600_suspend(struct device *dev)
+> +{
+> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	scoped_guard(mutex, &st->lock) {
+> +
+drop this blank line.
+
+> +		st->suspended.gyro = st->conf.gyro.mode;
+> +		st->suspended.accel = st->conf.accel.mode;
+> +	}
+> +
+> +	return pm_runtime_force_suspend(dev);
+> +}
+> +
+> +/*
+> + * System resume gets the system back on and restores the sensors state.
+> + * Manually put runtime power management in system active state.
+> + */
+> +static int inv_icm45600_resume(struct device *dev)
+> +{
+> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
+> +	struct inv_icm45600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
+> +	struct inv_icm45600_sensor_state *accel_st = iio_priv(st->indio_accel);
+
+Bring these in when they are needed.  Probably next patch but I haven't checked.
+
+> +	int ret = 0;
+> +
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	scoped_guard(mutex, &st->lock)
+> +		/* Restore sensors state. */
+> +		ret = inv_icm45600_set_pwr_mgmt0(st, st->suspended.gyro,
+> +						st->suspended.accel, NULL);
+> +
+> +	return ret;
+> +}
+
 
