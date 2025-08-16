@@ -1,157 +1,79 @@
-Return-Path: <linux-kernel+bounces-771795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07889B28BA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:55:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52822B28BA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D401CC395A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113A1AC5F5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DC8230BEC;
-	Sat, 16 Aug 2025 07:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="mqo1r5js"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3899C230BFD;
+	Sat, 16 Aug 2025 08:00:49 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA8E4C98;
-	Sat, 16 Aug 2025 07:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5011E0DFE;
+	Sat, 16 Aug 2025 08:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755330909; cv=none; b=OM/wtHmqsQ0WecTVKh7VOG2PPhAfbtZ6xR7Y2CEv4Ufo6u5AyQFjmqaB6l1aJhme7OdlcydBt852aeOxDqY7pclmlPS5K3lN5IsSGJUlfdTzR6SdzEqOiztsB7biFSm9/UVS1heggmcUeW3AJZPC1SEqi3Q0KJC3QOulAUfGhCw=
+	t=1755331248; cv=none; b=NPA/JUYCN29XF1s693/70Q5oFsZ9hzXtQsm1PHlN8PNCTSU6oCMQ6Fsk87lOuCbTDHL9JsH8/VCtZN++CS2S0beDTawTrvm4NSOEH8hMUyheqxVahv5jFPuaY7BVQQh3YGkRVSpUDVQmCKJfOc46DriLfj0+9YFzX1pNFQhFbkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755330909; c=relaxed/simple;
-	bh=srsqYMdPTwRmVbD7Pe2YVDmuQrEFDzbatacOFDUivio=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z9k8EQrdfaNN+rd7swdEsXhC/isCBJG09duPhW1QmFyzKeFrR88IABz6W7G5zc3GoCRTLNAYJ31aXgXzTs+us4He5ySc2zUrz2pOnPH6YC44I8rK38V7s3fv7jWY/bWpPSoc3nGLtEJohF7koNUpL6cGWhOrzXGV0yW7yQLAuLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=mqo1r5js; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4a9f71bc7a7611f0b33aeb1e7f16c2b6-20250816
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fnw6L/2KwNT+tgpsNYiO/B84S45uSAGUvD6nwPyE38I=;
-	b=mqo1r5jszh+4Hf5VKTpsE/MowD0eF0vXlI1HJUGI40AYjoSOcsg/9AWcVHFI7m+8+PatYqofmCfj7PUFrYAsO0iymu6n87lJxnx75WarW33ZV893xy8U4vw4MHTmYrfECEKUuD9nZQramx0dUGGjdE1oiz5GVuP8dEWz93NsUr4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:743bb7ab-2bd3-4f55-a823-9d920a2c3502,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:d3338944-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4a9f71bc7a7611f0b33aeb1e7f16c2b6-20250816
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <leilk.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 406166382; Sat, 16 Aug 2025 15:54:52 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Sat, 16 Aug 2025 15:54:50 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Sat, 16 Aug 2025 15:54:49 +0800
-From: Leilk Liu <leilk.liu@mediatek.com>
-To: Andi Shyti <andi.shyti@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Qii Wang <qii.wang@mediatek.com>, Wolfram Sang <wsa@kernel.org>, Liguo
- Zhang <liguo.zhang@mediatek.com>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Leilk.Liu
-	<leilk.liu@mediatek.com>
-Subject: [PATCH] i2c: mediatek: fix potential incorrect use of I2C_MASTER_WRRD
-Date: Sat, 16 Aug 2025 15:53:54 +0800
-Message-ID: <20250816075434.31780-1-leilk.liu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1755331248; c=relaxed/simple;
+	bh=rDhXEhM6sO/wVkn3ko/kOWXUw+XTgXSS6AoFjXOUZTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kL4gQ142YpiZPZdHHkyyvqEQUlJl99BUegK73SMloEcv4nC9MsytMPgRiqOXJyj7b38HCBocOMv/iydxEDz269NPlxUEyM6IYRecgip3mydCjwmhj5hmJgPYlA8nGtEFRht6y6WAfc7pNGpSdeWL4GdMenZfnFBeEOg1IjSzOxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.212.9])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1f93a30c3;
+	Sat, 16 Aug 2025 16:00:38 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: dts: rockchip: update Radxa E52C support
+Date: Sat, 16 Aug 2025 16:00:27 +0800
+Message-Id: <20250816080030.183931-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-MTK: N
+X-HM-Tid: 0a98b1e51b5303a2kunm56d2169525b6f6
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSkhCVklCHRofGEpITUMaGFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVCWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
+	tLWQY+
 
-From: "Leilk.Liu" <leilk.liu@mediatek.com>
+Changed from v2:
+  Remove merged patches
+  Remove VCC_3V3_PMU for Radxa E52C (new)
+  Update pinctrl names for Radxa E52C (new)
+  Update commit message for disabling display subsystem
 
-The old IC does not support the I2C_MASTER_WRRD (write-then-read)
-function, but the current code’s handling of i2c->auto_restart may
-potentially lead to entering the I2C_MASTER_WRRD software flow,
-resulting in unexpected bugs.
+Chukun Pan (3):
+  arm64: dts: rockchip: disable display subsystem for Radxa E52C
+  arm64: dts: rockchip: remove vcc_3v3_pmu regulator for Radxa E52C
+  arm64: dts: rockchip: update pinctrl names for Radxa E52C
 
-Instead of repurposing the auto_restart flag, add a separate flag
-to signal I2C_MASTER_WRRD operations.
+ .../boot/dts/rockchip/rk3582-radxa-e52c.dts   | 30 ++++++++-----------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-Also fix handling of msgs. If the operation (i2c->op) is
-I2C_MASTER_WRRD, then the msgs pointer is incremented by 2.
-For all other operations, msgs is simply incremented by 1.
-
-Fixes: 173b77e8d8fe ("i2c: mediatek: add i2c first write then read optimization")
-
-Signed-off-by: Leilk.Liu <leilk.liu@mediatek.com>
----
- drivers/i2c/busses/i2c-mt65xx.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-index ab456c3717db..dee40704825c 100644
---- a/drivers/i2c/busses/i2c-mt65xx.c
-+++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -1243,6 +1243,7 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
- {
- 	int ret;
- 	int left_num = num;
-+	bool write_then_read_en = false;
- 	struct mtk_i2c *i2c = i2c_get_adapdata(adap);
- 
- 	ret = clk_bulk_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-@@ -1256,6 +1257,7 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
- 		if (!(msgs[0].flags & I2C_M_RD) && (msgs[1].flags & I2C_M_RD) &&
- 		    msgs[0].addr == msgs[1].addr) {
- 			i2c->auto_restart = 0;
-+			write_then_read_en = true;
- 		}
- 	}
- 
-@@ -1280,12 +1282,10 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
- 		else
- 			i2c->op = I2C_MASTER_WR;
- 
--		if (!i2c->auto_restart) {
--			if (num > 1) {
--				/* combined two messages into one transaction */
--				i2c->op = I2C_MASTER_WRRD;
--				left_num--;
--			}
-+		if (write_then_read_en) {
-+			/* combined two messages into one transaction */
-+			i2c->op = I2C_MASTER_WRRD;
-+			left_num--;
- 		}
- 
- 		/* always use DMA mode. */
-@@ -1293,7 +1293,10 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
- 		if (ret < 0)
- 			goto err_exit;
- 
--		msgs++;
-+		if (i2c->op == I2C_MASTER_WRRD)
-+			msgs += 2;
-+		else
-+			msgs++;
- 	}
- 	/* the return value is number of executed messages */
- 	ret = num;
 -- 
-2.46.0
+2.25.1
 
 
