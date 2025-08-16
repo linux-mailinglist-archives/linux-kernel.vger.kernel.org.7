@@ -1,88 +1,175 @@
-Return-Path: <linux-kernel+bounces-772049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DE0B28E3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C40EB28E44
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3AB5828E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79421582A20
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807332E7F18;
-	Sat, 16 Aug 2025 13:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E775E2E92CD;
+	Sat, 16 Aug 2025 13:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4sXc0/H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEbBkEaD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B7613FD86;
-	Sat, 16 Aug 2025 13:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498AB86348;
+	Sat, 16 Aug 2025 13:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755352303; cv=none; b=uBYyGHwGSbqBEKhgmPHPgxXDnByFLi+IWpm2hHQdoYJB1/yW0KectgukZJDl4LFARkSECJj5u1cthmLnL8DFSlrN6HdZz6uH5H1bMfn2xsvNWsyErUTBmuSNGVGrrOi5raS/DzQATRFkjSSFVhhZkvIBG267DVc9u6WV0oMSAxE=
+	t=1755352423; cv=none; b=h97IJqGLec7A1p/p6tS+AKlPs7Wj4bY7sFeG2zqZ9kfZG6VOauVFi0VFV6YZP/tUUJzFVSy9b7PwTirS4VnHB33pUHQ5OcoC2/A4mcdsxpSR9jahQcOet9Ly1eA9O0tYZ1Yjzb8k7xuBI5NzuglZKKZ2Gn91GkoZ9zkWNh3Skuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755352303; c=relaxed/simple;
-	bh=/qZDmh5/8XKUYKj91nL5Btm7IQfUf6RnaVizyK1MG9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdJ83G5JpL7V5KgPN1Yu/xuZtYF6SS4XcYD7JmxlZA2umWJ9qnF8H5+dxXSXWQCUXVAkfjjhyCKyuZG5bnWcJ3C8tGy2qtRgI7YliHfic972T29OMnScsAE5v9R/0xxdd9EtkFg97fl5FrOJrj6USpxwT3kl2XeCRZMf8cW+p5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4sXc0/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26215C4CEEF;
-	Sat, 16 Aug 2025 13:51:40 +0000 (UTC)
+	s=arc-20240116; t=1755352423; c=relaxed/simple;
+	bh=bwfSR2vpQAcZH0AnlNv87di+ENSkFjj270WCdZY3OkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ncbkC9hb4hCXsmvYHFqJg1n6VcG4/BdeFL5O9wFEZe1+UDdyFZNxfzBcEa6HO03+33G5GY78VLHQa7cDq637n4aQvvNCsWXY8HBFoiGSmddnph2Yucm6T7NomBC2/rjUS+Yz88mkA0tVcsOsp7GPDLXwFZCfjuqq3Sq15imaS34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEbBkEaD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01625C4CEEF;
+	Sat, 16 Aug 2025 13:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755352303;
-	bh=/qZDmh5/8XKUYKj91nL5Btm7IQfUf6RnaVizyK1MG9I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e4sXc0/H+gZwdIb1XeOq7sXcmeOPPFTpoTkG6dJ1dnrSNA4Oe1nRM1nZ0w0tIdzAy
-	 yJxh4Lm0PPOrugXk0mwxbSpCv6O1FfULeqTeckExLj+TY8ZQNcLYmy6NYMqK2fNGyX
-	 qsvCRSuDdDFSXz3b/FPKCdLSrYmYLxhq8OKY1ZqsWKU7b4g7GrZ7CyaUlYfSiIs9RL
-	 u4aaBhT5adufXXDYC+qCY+3JNPoN8osPPZ+L1p/3J/4WTngmQ5Ff1cmaxjfjs++f1j
-	 i/6tOFg5PdAcCI2KuaHvGfXYT8/mrk0mBQyeuX3WKkqONYdymg/z78/6zpSrMiNTYY
-	 VODErzwKryGMQ==
-Message-ID: <bbfe3c37-db5d-4860-b3ec-546975304426@kernel.org>
-Date: Sat, 16 Aug 2025 15:51:39 +0200
+	s=k20201202; t=1755352422;
+	bh=bwfSR2vpQAcZH0AnlNv87di+ENSkFjj270WCdZY3OkE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FEbBkEaDF4KMYkZqkMad0JkUrCRg7brmtL9QUcPec9Dq2Zqd6rzVsSfQzEJFnTEs4
+	 gLf8MKDl8mHYPJWuW0rBOIvBy3om6/ccBgrbnZP4Qpk+XumH0w45uI0nW+/eelLY6b
+	 fk3Gh4zmgBHLZGmma5ryGScBxBdLmIoDuLgsLMleSRI6tTS96sJCwkSeJZEsL9olX0
+	 IUKRPv7K8BEtsUka6HVGjKK8Rb9iekXyFkLgVu1jt+lJR5U4Yp2cZzBzXjBg5EtSp4
+	 z9zCN/5VtsOgV9JpmY5vavHVH0F5AOuFPosW5vSCLTuyYk+aCaAuh/nNRPkFmDqKKF
+	 fpjdjxN7EYKgg==
+Date: Sat, 16 Aug 2025 14:53:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Claudiu
+ Beznea <claudiu.beznea.uj@bp.renesas.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v5 1/2] iio: adc: rzg2l: Cleanup suspend/resume path
+Message-ID: <20250816145334.7a538a19@jic23-huawei>
+In-Reply-To: <20250810123328.800104-2-claudiu.beznea.uj@bp.renesas.com>
+References: <20250810123328.800104-1-claudiu.beznea.uj@bp.renesas.com>
+	<20250810123328.800104-2-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] iommu: apple-dart: Make the hw register fields u32s
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Hector Martin <marcan@marcan.st>
-References: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
- <20250814-apple-dart-4levels-v1-1-db2214a78c08@jannau.net>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250814-apple-dart-4levels-v1-1-db2214a78c08@jannau.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 14.08.25 10:40, Janne Grunau wrote:
-> From: Hector Martin <marcan@marcan.st>
+On Sun, 10 Aug 2025 15:33:27 +0300
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
+
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> The registers are 32-bit and the offsets definitely don't need 64 bits
-> either, these should've been u32s.
+> There is no need to manually track the runtime PM status in the driver.
+> The pm_runtime_force_suspend() and pm_runtime_force_resume() functions
+> already call pm_runtime_status_suspended() to check the runtime PM state.
 > 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Janne Grunau <j@jannau.net>
+> Additionally, avoid calling pm_runtime_put_autosuspend() during the
+> suspend/resume path, as this would decrease the usage counter of a
+> potential user that had the ADC open before the suspend/resume cycle.
+> 
+> Fixes: cb164d7c1526 ("iio: adc: rzg2l_adc: Add suspend/resume support")
+That SHA isn't upstream. I think it should be.
+563cf94f9329
+
+With that fixes up, applied these to the fixes-togreg branch of iio.git and
+marked them for stable.
+
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
-
-The commit description should start with iommu/apple-dart to keep 
-consistent with the subsystem style. With that:
-
-Reviewed-by: Sven Peter <sven@kernel.org>
-
-
-
-Thanks,
-
-Sven
+> 
+> Changes in v5:
+> - none
+> 
+> Changes in v4:
+> - collected tags
+> 
+> Changes in v3:
+> - collected tags
+> 
+> Changes in v2:
+> - none
+> 
+>  drivers/iio/adc/rzg2l_adc.c | 29 ++++++++---------------------
+>  1 file changed, 8 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 9674d48074c9..0cb5a67fd497 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -89,7 +89,6 @@ struct rzg2l_adc {
+>  	struct completion completion;
+>  	struct mutex lock;
+>  	u16 last_val[RZG2L_ADC_MAX_CHANNELS];
+> -	bool was_rpm_active;
+>  };
+>  
+>  /**
+> @@ -541,14 +540,9 @@ static int rzg2l_adc_suspend(struct device *dev)
+>  	};
+>  	int ret;
+>  
+> -	if (pm_runtime_suspended(dev)) {
+> -		adc->was_rpm_active = false;
+> -	} else {
+> -		ret = pm_runtime_force_suspend(dev);
+> -		if (ret)
+> -			return ret;
+> -		adc->was_rpm_active = true;
+> -	}
+> +	ret = pm_runtime_force_suspend(dev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+>  	if (ret)
+> @@ -557,9 +551,7 @@ static int rzg2l_adc_suspend(struct device *dev)
+>  	return 0;
+>  
+>  rpm_restore:
+> -	if (adc->was_rpm_active)
+> -		pm_runtime_force_resume(dev);
+> -
+> +	pm_runtime_force_resume(dev);
+>  	return ret;
+>  }
+>  
+> @@ -577,11 +569,9 @@ static int rzg2l_adc_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (adc->was_rpm_active) {
+> -		ret = pm_runtime_force_resume(dev);
+> -		if (ret)
+> -			goto resets_restore;
+> -	}
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret)
+> +		goto resets_restore;
+>  
+>  	ret = rzg2l_adc_hw_init(dev, adc);
+>  	if (ret)
+> @@ -590,10 +580,7 @@ static int rzg2l_adc_resume(struct device *dev)
+>  	return 0;
+>  
+>  rpm_restore:
+> -	if (adc->was_rpm_active) {
+> -		pm_runtime_mark_last_busy(dev);
+> -		pm_runtime_put_autosuspend(dev);
+> -	}
+> +	pm_runtime_force_suspend(dev);
+>  resets_restore:
+>  	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+>  	return ret;
 
 
