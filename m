@@ -1,213 +1,218 @@
-Return-Path: <linux-kernel+bounces-771655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF788B28A1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C550AB28A1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7CF174856
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:38:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A04A5C766C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44741199EAD;
-	Sat, 16 Aug 2025 02:38:23 +0000 (UTC)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B713EA8D;
-	Sat, 16 Aug 2025 02:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB7E18A6DB;
+	Sat, 16 Aug 2025 02:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CgmbxXuR"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4038B;
+	Sat, 16 Aug 2025 02:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755311902; cv=none; b=gZffOHcESH1v+iLDAunYSPcY6SS5+0KvKzJ5GrAKhUkLmXfGLnGTp3VG06PZIwVdhzzIMdU1lvMHDQwZzkPoFcZygw0OmIBUQU8//MHikCEIuAloywW8PUzjd7+M073vj9B70jjUv+nlD86Hb0w2t+0yqPIAjBi70ELSFw0Hlw0=
+	t=1755312558; cv=none; b=RB/Kiospmw//Yu2aadU1Elzc7ogHeeB8Qx4JYGPTj+GIXvDmvqsXpZ+EMPme5aI7A15oCqHsxJrSL5HBvedEdwzaK7jEZKwlpW7mdGsPFXvuDc2mhHPmwqr9JqzQk2XUoF/xeNAgHtP7go09MKsXUe9OYIK8RZUUOrZt8l7WW+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755311902; c=relaxed/simple;
-	bh=I1SSCfXKHJm5JlVGrebwtb326YyL9MQr/FIgmseAKnk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Wylm3JjWXaIqdr77yBs1qSumJmrW+tjuKj46ZlNIfhCEq+CAqlbBpF878H8QJ9Nwh+leqmAYsdCEWkh+mYx17Pq41ITiNoZzULYUO4j2ULs4Kv4Zyi8ePTsIc0TmLDGRWG4M7+F9+eHu8997c2zHqJhdC7SHxNgzb9/QcQX+v0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b471751142aso344894a12.2;
-        Fri, 15 Aug 2025 19:38:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755311900; x=1755916700;
-        h=content-transfer-encoding:organization:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jtYxl+rrETdJtMyZa8ApEqZEanvH/+Xy7WfUj5F8zoc=;
-        b=BI7lzh7QtA6Hra+hGil7YJ17q5oTIFtPXhPhfI7qpeHZgb2V+PEbYkdO/R6HA5HrNX
-         1f/g/Ka9kIb88N9xi0XER8oV2xy1JUnsj04GoVp2m57GPMAgmeTnX3mhX+iVOCXs+6Zh
-         fNMUcQGSK8X58q5J7e01SzuRaTdwNQhuolglG/k7kWUv+awEaqEzE47AjTY//Pp7ChYC
-         w+v2Cm8/8X084roZyF4jwk2/OOCNg8EALIpF5MVBeDNXZGw/sugWBKGZvD8L2Ip0Bezx
-         4NoOXD0iu8vdV06Ctr37bgg44Kud7JxjTNFA9zrll7Jo5H5CwKOj43dtFI53N/GuiUwk
-         vj3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnkaTbCPV6jMn9ldNXLmvPUQAGfSXZbrWDo5K1EaVhtsHgeVegTyyxLwPKoeqBlPI6gfETTKM7LSr0ILI=@vger.kernel.org, AJvYcCVrThgh7g0cpWhyi+HJ77gutZcdpPhdgLpvTNesXsLQgSV0JLXTz4/CyNjISZhcaUlg5coz7Gm3ClbAsdRKFkQ=@vger.kernel.org, AJvYcCWJUm6GEMNHi2uUDYF9xb5MmaJTrMWdFi9gGqM9v91pHQOMdy6Axk8P2azGui0zrWgvdB6uQ7FmPUfQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuzm/VTf4iJdeUno3dP5J7CXH4AOg3TvZmth+Jk/MZrWVgA5GL
-	FxpkBtXlJmtEZob1UkPFhhuy3BDuTdv8uxAVk4NqteX8b8SgKpluMeBkrUilAQ==
-X-Gm-Gg: ASbGnctFr9L93OyTqEJamFD7sVIQuuYMY2622BghcCGbz6PrghEoBsoT7ZXIzhdJ0Ek
-	Y1QmZxp5PW/VLbZizBlcStC+evs9n+oVp77ffsGpGtyb0nL29yLl10qKTuFzag4rHXqnNEgzxNE
-	5b+CdKrRLapjZspQRD+MIWCjWHz76GWjLhvSYduCwPQS8GqQgk0rlDM1vM3qSzP0FNLEHRl7DLi
-	7K72xE5WDTrWKwqQe/quqXpA/nqtE2gsKRv3fxieBCniUuEMoDw/ANmn6PLIWj7A7LVWIGH+nT0
-	dX3IlG1mzScLT4tvGh/QsvID+Fele6LlpUT8r4edbw3xvQOLwJk/3b+XqxU19NeHxrFOeUYZhBC
-	1UCfMeuEmNrqn7qhhjvg/BUKZJkEBmp2y
-X-Google-Smtp-Source: AGHT+IHzCz7VyRWLMvefhL0mlUPzZ6+vJ+DogXCfUzXPUObVZRUSTVsB5cxDnu4dREpr5dZuhI+baA==
-X-Received: by 2002:a17:903:1a70:b0:240:11be:4dbe with SMTP id d9443c01a7336-2446d95b26cmr27393595ad.8.1755311900471;
-        Fri, 15 Aug 2025 19:38:20 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d577f31sm24692425ad.152.2025.08.15.19.38.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 19:38:20 -0700 (PDT)
-Message-ID: <5b337389-73b9-4ee4-a83e-7e82bf5af87a@kzalloc.com>
-Date: Sat, 16 Aug 2025 11:38:14 +0900
+	s=arc-20240116; t=1755312558; c=relaxed/simple;
+	bh=hyFoRJfR+/+dfufmADJJETGSdWS8oikKKEtoGRU+TX4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jr2FVT6Z3nbcDDFOXfJYiObl00cMIPP+TPYEtY3D+z4VryJmxemESOwpwJPIE2TIV8w3Riz+pwK90Xspg8odBI2GLLT5NYL4ZZRIopyjrofTfiQr1ZQa4mYqBujKuV4W8ih9tyIMRWQVSHs0UiUUmRhTGKBy15yx85iTNt+EFzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CgmbxXuR; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=3A
+	DGn3+EY0cLRTbPVPUMRLpsDFaJI1jPaAcL8kcj18g=; b=CgmbxXuRFzH/7BCps2
+	APh3WrgqCi6swzU+OcrW1cZchvTNJnjmgwBQVFnPnof1V5k5qGkAsaoLczZAA/YP
+	A0f96GWzTfe+8xFNFOcF0MZh0SIKTJmFmOcoacWdtefvtSltTfdAuZJ+o3zoKHPC
+	AB2snqpXY1qDNqqV+jnnjAJ28=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wB3b+eA8Z9oAufhCA--.21748S2;
+	Sat, 16 Aug 2025 10:48:33 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xin Zhao <jackzxcui1989@163.com>
+Subject: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire operation
+Date: Sat, 16 Aug 2025 10:48:31 +0800
+Message-Id: <20250816024831.1451167-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
- linux-usb@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Nam Cao <namcao@linutronix.de>, Marcello Sylvester Bauer <sylv@sylv.io>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Al Viro <viro@zeniv.linux.org.uk>, andreyknvl@gmail.com,
- Austin Kim <austindh.kim@gmail.com>, linux-rt-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-From: Yunseong Kim <ysk@kzalloc.com>
-Subject: [BUG] usb: gadget: dummy_hcd: Sleeping function called from invalid
- context in dummy_dequeue on PREEMPT_RT
-Organization: kzalloc
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wB3b+eA8Z9oAufhCA--.21748S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWDWr1rAF1fGr48AFWUJwb_yoWxXry8pa
+	y5WryxGw47Za1agw48Jrs7ZFyYgw1jyryUG393Xwsay3ZxtryrJa1j9r90gFWftFZFkw47
+	ArsYqF15Cw1ktrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pMnQUUUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiMAGrCmif8MwNDgAAsY
 
-While testing a PREEMPT_RT enabled kernel (based on v6.17.0-rc1),
-I encountered a "BUG: sleeping function called from invalid context" error
-originating from the dummy_dequeue function in the dummy USB driver.
+In a system with high real-time requirements, the timeout mechanism of
+ordinary timers with jiffies granularity is insufficient to meet the
+demands for real-time performance. Meanwhile, the optimization of CPU
+usage with af_packet is quite significant. Use hrtimer instead of timer
+to help compensate for the shortcomings in real-time performance.
+In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+This is unacceptable in some high real-time systems that require timely
+processing of network packets. By replacing it with hrtimer, if a timeout
+of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+3 ms.
 
-The call flow (triggered via ioctl):
+Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+---
+Changes in v3:
+- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
+  as suggested by Willem de Bruijn;
 
-  Userspace (syz.0.2514 via ioctl)
-      |
-      v
-  raw_ioctl() -> usb_ep_dequeue()
-      |
-      v
-  dummy_dequeue() [drivers/usb/gadget/udc/dummy_hcd.c]
-      |
-      |     (Context: Process Context, IRQs Enabled)
-      |
-      |---> local_irq_save(flags);
-      |
-      |     *** STATE CHANGE: IRQs Disabled (Atomic Context) ***
-      |
-      |---> spin_lock(&dum->lock);  <--- Trace location (dummy_hcd.c:769)
-            |
-            | [On PREEMPT_RT]
-            v
-            rt_spin_lock() [kernel/locking/spinlock_rt.c]
-            |
-            v
-            [May Sleep if contended]
-            |
-      X <--- BUG: Sleeping in atomic context!
+Changes in v2:
+- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
+  as suggested by Willem de Bruijn;
+- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
 
-      |
-      |---> spin_unlock(&dum->lock);
-      |
-      |     (Note: IRQs are still disabled here)
-      |
-      |---> usb_gadget_giveback_request();
-      |
-      v
-      local_irq_restore(flags);
-      (Context: IRQs Enabled)
+Changes in v1:
+- Do not add another config for the current changes
+  as suggested by Eric Dumazet;
+- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
+  as suggested by Eric Dumazet;
+- Add some performance details to the changelog
+  as suggested by Ferenc Fejes;
+- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
+  as suggested by Willem de Bruijn;
+- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
+  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
+- Just return HRTIMER_RESTART directly as all cases return the same value
+  as suggested by Willem de Bruijn;
+- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
+- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
 
-Stack trace excerpt:
+---
+---
+ net/packet/af_packet.c | 24 ++++++++++++++----------
+ net/packet/internal.h  |  3 +--
+ 2 files changed, 15 insertions(+), 12 deletions(-)
 
- BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
- in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 27291, name: syz.0.2514
- preempt_count: 0, expected: 0
- RCU nest depth: 0, expected: 0
- CPU: 1 UID: 0 PID: 27291 Comm: syz.0.2514 Kdump: loaded Not tainted 6.17.0-rc1-00001-g1149a5db27c8-dirty #55 PREEMPT_RT 
- Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
- Call trace:
-  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
-  __dump_stack+0x30/0x40 lib/dump_stack.c:94
-  dump_stack_lvl+0x148/0x1d8 lib/dump_stack.c:120
-  dump_stack+0x1c/0x3c lib/dump_stack.c:129
-  __might_resched+0x2e4/0x52c kernel/sched/core.c:8957
-  __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
-  rt_spin_lock+0xa8/0x1bc kernel/locking/spinlock_rt.c:57
-  spin_lock include/linux/spinlock_rt.h:44 [inline]
-  dummy_dequeue+0x9c/0x3b8 drivers/usb/gadget/udc/dummy_hcd.c:769
-  usb_ep_dequeue+0x70/0x21c drivers/usb/gadget/udc/core.c:330
-  raw_process_ep0_io+0x2e8/0x704 drivers/usb/gadget/legacy/raw_gadget.c:738
-  raw_ioctl_ep0_write drivers/usb/gadget/legacy/raw_gadget.c:766 [inline]
-  raw_ioctl+0x1b44/0x3288 drivers/usb/gadget/legacy/raw_gadget.c:1312
-  vfs_ioctl fs/ioctl.c:51 [inline]
-  __do_sys_ioctl fs/ioctl.c:598 [inline]
-  __se_sys_ioctl fs/ioctl.c:584 [inline]
-  __arm64_sys_ioctl+0x14c/0x1c4 fs/ioctl.c:584
-  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-  el0_svc+0x40/0x140 arch/arm64/kernel/entry-common.c:879
-  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
-  el0t_64_sync+0x1ac/0x1b0 arch/arm64/kernel/entry.S:596
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index a7017d7f0..763b0c968 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -203,7 +203,7 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
+ static int prb_queue_frozen(struct tpacket_kbdq_core *);
+ static void prb_open_block(struct tpacket_kbdq_core *,
+ 		struct tpacket_block_desc *);
+-static void prb_retire_rx_blk_timer_expired(struct timer_list *);
++static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
+ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
+ static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
+ static void prb_clear_rxhash(struct tpacket_kbdq_core *,
+@@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
+ 
+ static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+ {
+-	timer_delete_sync(&pkc->retire_blk_timer);
++	hrtimer_cancel(&pkc->retire_blk_timer);
+ }
+ 
+ static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
+@@ -603,9 +603,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
+ 	struct tpacket_kbdq_core *pkc;
+ 
+ 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+-	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
+-		    0);
+-	pkc->retire_blk_timer.expires = jiffies;
++	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
++		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
++	hrtimer_start(&pkc->retire_blk_timer, ms_to_ktime(pkc->retire_blk_tov),
++		      HRTIMER_MODE_REL_SOFT);
+ }
+ 
+ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+@@ -676,7 +677,6 @@ static void init_prb_bdqc(struct packet_sock *po,
+ 	else
+ 		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
+ 						req_u->req3.tp_block_size);
+-	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
+ 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
+ 	rwlock_init(&p1->blk_fill_in_prog_lock);
+ 
+@@ -691,8 +691,8 @@ static void init_prb_bdqc(struct packet_sock *po,
+  */
+ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+ {
+-	mod_timer(&pkc->retire_blk_timer,
+-			jiffies + pkc->tov_in_jiffies);
++	hrtimer_set_expires(&pkc->retire_blk_timer,
++			    ktime_add(ktime_get(), ms_to_ktime(pkc->retire_blk_tov)));
+ 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
+ }
+ 
+@@ -719,8 +719,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+  * prb_calc_retire_blk_tmo() calculates the tmo.
+  *
+  */
+-static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
++static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
+ {
++	enum hrtimer_restart ret = HRTIMER_RESTART;
+ 	struct packet_sock *po =
+ 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
+ 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+@@ -732,8 +733,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+ 	frozen = prb_queue_frozen(pkc);
+ 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
+ 
+-	if (unlikely(pkc->delete_blk_timer))
++	if (unlikely(pkc->delete_blk_timer)) {
++		ret = HRTIMER_NORESTART;
+ 		goto out;
++	}
+ 
+ 	/* We only need to plug the race when the block is partially filled.
+ 	 * tpacket_rcv:
+@@ -790,6 +793,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+ 
+ out:
+ 	spin_unlock(&po->sk.sk_receive_queue.lock);
++	return ret;
+ }
+ 
+ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+diff --git a/net/packet/internal.h b/net/packet/internal.h
+index 1e743d031..9812feb3d 100644
+--- a/net/packet/internal.h
++++ b/net/packet/internal.h
+@@ -47,10 +47,9 @@ struct tpacket_kbdq_core {
+ 
+ 	unsigned short  retire_blk_tov;
+ 	unsigned short  version;
+-	unsigned long	tov_in_jiffies;
+ 
+ 	/* timer to retire an outstanding block */
+-	struct timer_list retire_blk_timer;
++	struct hrtimer  retire_blk_timer;
+ };
+ 
+ struct pgv {
+-- 
+2.34.1
 
-On PREEMPT_RT configurations, spin_lock() is replaced by rt_spin_lock(),
-which may sleep when contended. Therefore, it is forbidden to call
-spin_lock() while interrupts are hard-disabled (atomic context).
-
-The issue occurs in dummy_dequeue because it explicitly disables interrupts
-using local_irq_save() before attempting to acquire dum->lock via
-spin_lock().
-
-static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
-{
-    // ... (snip) ...
-    ep = usb_ep_to_dummy_ep(_ep);
-    dum = ep_to_dummy(ep);
-
-    if (!dum->driver)
-        return -ESHUTDOWN;
-
-    local_irq_save(flags);       // <--- 1. IRQs Disabled (Enters Atomic Context)
-    spin_lock(&dum->lock);       // <--- 2. Calls rt_spin_lock (May sleep) -> BUG
-    list_for_each_entry(iter, &ep->queue, queue) {
-        // ... (critical section) ...
-        break;
-    }
-    spin_unlock(&dum->lock);
-
-    if (retval == 0) {
-        // ... (snip) ...
-        // Note: Called while IRQs are still disabled.
-        usb_gadget_giveback_request(_ep, _req);
-    }
-    local_irq_restore(flags);    // <--- 3. IRQs restored
-    return retval;
-}
-
-The pattern of manually disabling IRQs and then taking a spinlock
-local_irq_save() + spin_lock() is unsafe on PREEMPT_RT, the current code
-structure keeps IRQs disabled even after spin_unlock(&dum->lock) while
-calling usb_gadget_giveback_request(). This extended atomic context can
-also be problematic if the completion handler attempts to acquire another
-sleepable lock.
-
-I request a review and correction of this locking mechanism to ensure
-stability on PREEMPT_RT configurations.  Kernel config, full logs, and
-reproduction steps can be provided on request.
-
-Thanks,
-
-Best Regards,
-Yunseong Kim
 
