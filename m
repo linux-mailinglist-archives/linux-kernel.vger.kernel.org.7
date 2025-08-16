@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-772141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0A2B28F35
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EABDB28F36
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9455C7221
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489661C25547
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882C5128819;
-	Sat, 16 Aug 2025 15:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170831A317D;
+	Sat, 16 Aug 2025 15:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="GuGp/UQR"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iCV2G5ph"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8BA1DFDE
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ADA13C3F6
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755358499; cv=none; b=lTmBTrIbkrjVU/PU0gtfdAwTZM6wGKyR/9aywr/vfIfh3/sNN4HVUODxok90NAoaTqFJ8X5GhX+p05TZqIMSe4PNRAd0s7HT0irR16KlNGvsbhIJvnNWYZX2peLTPUpynr8FvxlamVvILa96DIWzh4nnggIKhDIy/19axOOmVh0=
+	t=1755358502; cv=none; b=pH7KTlI9OW8OgiOXta8V3ZOn1893AQJkdXxSuMK6DQU/pIZutCTWP9Om0GZo8IjtWIvI88IUfNYi49Rz136dBmN943IBm6EKKIIo0H1p3VuURCw8rq/B5/rsnn2WRdmtk6FszL1gYZsHPg+6beQaiQE5sOhoVFaXwkV/0tkHhII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755358499; c=relaxed/simple;
-	bh=/BTHMpSsxFGcGqLg97eEU1oQoEm9/K6s0g4iNQIQMS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+sjGg1lJ0yGdKfnr4nIHbY1bttU+hI3KEfJy+1AtjC5MftV4/yn5Ti2sMNbH8jk5x+gAcJjxbWt8k4k52+cfmDyp8lJTjNEcgFXSYPOKbYdevuRUWah21Sa2468SRxUM5ZGGvt5xCtRVOVjmklw9wN7CLovW1MR2xQIpx2LPIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=GuGp/UQR; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1755358502; c=relaxed/simple;
+	bh=gUCmvxT1+6H9HHpzyrJbkBUZeZ+q2k9d8IA5OolinHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qkOrW0XLEgPo6dITNnxCryiOlboOoarqyt6+T/lWrmHMzA1VfqYa6mvgkxn2pB83frWod55+eQJEYdbdavsQwab3at9t1TnfcAPJeWXh42yWDusamGpAe0hGPY2w5p6HFGvAO1aEdMHGjPs0OuMofbXgp1kNubmmXlNqRU+ObVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iCV2G5ph; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D76A725C43;
-	Sat, 16 Aug 2025 17:34:48 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 4C9A920468;
+	Sat, 16 Aug 2025 17:34:52 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id d2qCjzOpWtkC; Sat, 16 Aug 2025 17:34:47 +0200 (CEST)
+ id E4_sDYxaye6b; Sat, 16 Aug 2025 17:34:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755358487; bh=/BTHMpSsxFGcGqLg97eEU1oQoEm9/K6s0g4iNQIQMS0=;
-	h=From:To:Cc:Subject:Date;
-	b=GuGp/UQR1O1oOWkBU//Q+QGS4imjpSGNtAgoKNAluGxPBaR5PzlRSA0IQ4shCcRRP
-	 ZM8tyG7AF39bjZ5DnAH3vW+OIIyqiy5EKeHIrZxAVHyN3aUIEpsR5kkjLEbbszq2CQ
-	 qCM0WP6HDBWCIfqS/0pSoXgiEet1712LBMAF+s2ySpTUROa9wK9+Hd2tzHdf03Ujuk
-	 q38x4QgXALj63fVZIzZV3wWIqt5jpPe+LEzWu0BfEKA7Yxxj7wfGXraW0oGKx5cycs
-	 JIgZi0X708EizJqJkDYzhvOT6OTRietfdt8XbJySlz40oPwISGDWqUnr6xRpfy5PeS
-	 7Q8kJwdP64eDw==
+	t=1755358491; bh=gUCmvxT1+6H9HHpzyrJbkBUZeZ+q2k9d8IA5OolinHY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=iCV2G5phaOkKAVgTRG5MZmxXi3HDdurOjrArYMFgjTUHb05pEWV4DBQwwRCXp6aSR
+	 Z0/6A8BQ3/3BeQ0tiNK/G+KuSiSdr6EoSP2/PerazNT6dsAUlUSvcvFUp43PAklYhW
+	 zIigwlbaMI4DCF0R2u28S0KfEf99fUT/d7c7I6IYfDqNWC4ZfIPbul/3e2bpudGyGF
+	 IYg28exNXh8is6y7fa8S1nurXPbQLkddSDuzWSTTSCrmYeeTHXkErmkSfBy5UcMn4R
+	 hmWgzl7yV5mKVva5U00n085xFXTTuZHStYTYeG6M+bkXsKz6q6TYGhJ0LG8aUJdzvW
+	 sutEXkeD3cpxQ==
 From: Yao Zi <ziyao@disroot.org>
 To: Thomas Zimmermann <tzimmermann@suse.de>,
 	Javier Martinez Canillas <javierm@redhat.com>,
@@ -55,9 +56,11 @@ To: Thomas Zimmermann <tzimmermann@suse.de>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 1/2] drm/vesadrm: Match framebuffer device by id instead of driver name
-Date: Sat, 16 Aug 2025 15:34:29 +0000
-Message-ID: <20250816153430.51235-1-ziyao@disroot.org>
+Subject: [PATCH 2/2] drm/efidrm: Match framebuffer device by id instead of driver name
+Date: Sat, 16 Aug 2025 15:34:30 +0000
+Message-ID: <20250816153430.51235-2-ziyao@disroot.org>
+In-Reply-To: <20250816153430.51235-1-ziyao@disroot.org>
+References: <20250816153430.51235-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,59 +70,59 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Currently the driver matches the platform framebuffer device registered
-by sysfb through driver name, "vesa-framebuffer", this is a little
+by sysfb through driver name, "efi-framebuffer", this is a little
 confusing since this driver registers a DRM device, instead of a
 framebuffer.
 
-Moreover, we have a driver with the same name, enabled by
-CONFIG_FB_VESA, that acts as a consumer of vesa-framebuffer as well.
-They cannot be both loaded into the kernel.
+Moreover, we have a driver with the same name, enabled by CONFIG_FB_EFI,
+that acts as a consumer of efi-framebuffer as well. They cannot be both
+loaded into the kernel.
 
 Making these two drivers coexist is sometimes useful, e.g., a
 distribution may want to build fbcon into the kernel image for debugging
 purpose, but keep the whole DRM subsystem enabled as module. In such
-case vesadrm could serve as a solution for running DRM-specific
-userspace programs on platforms with only VESA VBIOS available.
+case efidrm could serve as a solution for running DRM-specific userspace
+programs on platforms with only UEFI framebuffer supplied.
 
-Let's rename the driver as "vesa-display" to avoid possible confusion.
-A platform_device_id table is introduced to match "vesa-framebuffer"
+Let's rename the driver as "efi-display" to avoid possible confusion.
+A platform_device_id table is introduced to match "efi-framebuffer"
 devices.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- drivers/gpu/drm/sysfb/vesadrm.c | 10 +++++++++-
+ drivers/gpu/drm/sysfb/efidrm.c | 10 +++++++++-
  1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sysfb/vesadrm.c b/drivers/gpu/drm/sysfb/vesadrm.c
-index 90615e9ac86b..16635dc3d5cc 100644
---- a/drivers/gpu/drm/sysfb/vesadrm.c
-+++ b/drivers/gpu/drm/sysfb/vesadrm.c
+diff --git a/drivers/gpu/drm/sysfb/efidrm.c b/drivers/gpu/drm/sysfb/efidrm.c
+index 1883c4a8604c..7f76e8961788 100644
+--- a/drivers/gpu/drm/sysfb/efidrm.c
++++ b/drivers/gpu/drm/sysfb/efidrm.c
 @@ -3,6 +3,7 @@
  #include <linux/aperture.h>
- #include <linux/ioport.h>
+ #include <linux/efi.h>
  #include <linux/limits.h>
 +#include <linux/mod_devicetable.h>
  #include <linux/platform_device.h>
  #include <linux/screen_info.h>
  
-@@ -517,10 +518,17 @@ static void vesadrm_remove(struct platform_device *pdev)
+@@ -375,10 +376,17 @@ static void efidrm_remove(struct platform_device *pdev)
  	drm_dev_unplug(dev);
  }
  
-+static const struct platform_device_id vesadrm_platform_id[] = {
-+	{ "vesa-framebuffer" },
++static const struct platform_device_id efidrm_platform_id[] = {
++	{ "efi-framebuffer" },
 +	{ },
 +};
-+MODULE_DEVICE_TABLE(platform, vesadrm_platform_id);
++MODULE_DEVICE_TABLE(platform, efidrm_platform_id);
 +
- static struct platform_driver vesadrm_platform_driver = {
+ static struct platform_driver efidrm_platform_driver = {
  	.driver = {
--		.name = "vesa-framebuffer",
-+		.name = "vesa-display",
+-		.name = "efi-framebuffer",
++		.name = "efi-display",
  	},
-+	.id_table = vesadrm_platform_id,
- 	.probe = vesadrm_probe,
- 	.remove = vesadrm_remove,
++	.id_table = efidrm_platform_id,
+ 	.probe = efidrm_probe,
+ 	.remove = efidrm_remove,
  };
 -- 
 2.50.1
