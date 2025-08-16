@@ -1,152 +1,155 @@
-Return-Path: <linux-kernel+bounces-771707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411BCB28A8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7D7B28A8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3559A5642B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64637AC7F3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B51CAA65;
-	Sat, 16 Aug 2025 04:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BDF19D081;
+	Sat, 16 Aug 2025 04:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSU9Posm"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oBOOD4S2"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E032C8B
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1948318B12
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755318532; cv=none; b=IteJh4nAiPmN9vVb6VpIbpRjdqRcPPqwTyC02OYfhAKK6AG3V7UJdVqQmXu9n8iicCcLNt3Qzz+daqHn2vrvGEqsTBlgT21R4vhTrtGqDJ4V7EFSlxy5SATlXnC/qIi6EkJnwWQVVEzO9yWNSqyqPFUTHdR+w+N1X+83aZJAZHE=
+	t=1755318794; cv=none; b=gJWkYy/cw4tMkBrLMOt+oiJdFnnY08UJ7P/bEm5CdAKIeHPXpLJzXWfmn7BpMguBejbNDqsUsCSoNkaK0lCbKeP5iWv2OMMn45IRWbu8NBOuM8PNT5zS0luoZjch2iYMSytJxaLhKrJ1uogrBRPoc2W8Kj+r6Nz8oqiE24UUL1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755318532; c=relaxed/simple;
-	bh=T3uRfYG+/Tk9uidSVKx0F9Kn9rjGkazrVJXrCU4rVkc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PvnW3TpVyX7iStuU9DL8wr7GEOwPOu2bDUXhsgon6dDZWVxqC1rwrhG3gQnoHt3xtbB9uDu7+gWE/yw/MCfnsCBfG+TIhHMbHl3shGxJfWWODhdlJ3nzFs8F+y3p+Af1bFFhyzwOlcJb11gIbACGwzjuG6IHLtIucxjqMYTTOgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSU9Posm; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea79219so2961330b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:28:50 -0700 (PDT)
+	s=arc-20240116; t=1755318794; c=relaxed/simple;
+	bh=rcJszxXK8P0mEG137zcHYraV1EH2lNkG7npEmwXAKzk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dgwmFK1VE5KrghKbUKbTq0yw6ncVpbIUiGlySwrbqvV7R15L67ndGcIRMRuBjgfRFQdbsW9E8VzFJPggffBE3QMgeLtoivpuj1eiokT2Hdvb633VAZuv5ITyyWHvbenWhYNcMj7I34F+nHxrRG3yPuZlIeIf1MdB8IS4HWWKSLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oBOOD4S2; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso2334778a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:33:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755318530; x=1755923330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nUdKVXAydBJ9wkHs/z6NzRQghT8Ti2LWocpy6KfUJOo=;
-        b=PSU9Posm9yHzCDhNtHpryTsR+6Euwf1z7M+9pPtKtfmggjI7rGlL6alVk5An5t62mm
-         fULYniSbgDGaJ2QTWinZPJAl8fPRy2eAoKtz0/PI3P1fNxKdQJW1Zxp/rS+xnnWxfW0W
-         D5BAsroS+2MHi+BIYamY/Sk7XOHzwmO2tU/ryE/DgKOsqstO31V7qFlfc6HYSVfLbUH+
-         em9WGhvYozZA779MLnzZsAlZJYCod4RAgJ/fGDg3RYi6IxcU+j9Yd/r8d7o/qE7c6WAQ
-         K3NBVncTc0f4ZZTPaKQvK6EypEzsIO9YEeknbBPan2jl1wLBmQp/q1tyqFSPBeKWOr41
-         501A==
+        d=google.com; s=20230601; t=1755318792; x=1755923592; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsRxtwwK15Bg0qbKyAiNtrwYfp9IiiWX2XFwbSp/aNA=;
+        b=oBOOD4S2Vh3cPOhyQK5oPlvksCBWeEqWbWfrbVRWWQiSHhpg6u96+OV5mldm/Dsx4+
+         BOMLooovX6qct4S37liSMqsgX9JoPwhVbMcAXjvyq+GGyXG1IUKoPrxrr1hF4vwBPyu1
+         WwvZ4tS3QEpCA1kcoERWoxuNe87ogtFZlogU8StPjc59RPIJo/K9zQ0+WVVsynM1Nsao
+         Z2p4rT4D7K5OnfsktJPytVn8IYpvJbsgQyts/o8755wk8hzRVAfxx6hgMXfKR27B0agr
+         4ac+kJUAZhP1Z6XKDV41HnLUbcAYIChkiFByBeF2orUxvuaXJA6I4g84r55tNuQSFxWk
+         kHqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755318530; x=1755923330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nUdKVXAydBJ9wkHs/z6NzRQghT8Ti2LWocpy6KfUJOo=;
-        b=s3J7cersnEO1eCOLP+qoCYpIz+A/5ufaN4gdMGrr3KMc8+VuYryOu6i6drfE/3zAp/
-         EZgy+iNix2KUm39vJYAqvsbqhhcpHctEsCt1xIHLS9aHFwduBt3a40f0Gzd8TJg0Rm12
-         5KszDQR97VJY+OXhRO6HyQRap/X4YpcKeUFu3IqMJh0ZZxebEAg1KoFbjnsOD50R3JEF
-         EELyU+EDBFgEkDEeQGGDtwh9COCwZTwPQawPjcjh1QdEFm3w6a55SkYvAGkigIlGmbjN
-         YeHh7fNAOdZSs4TcTVKogVUccKLCVOpYEf/znuDLDmlQ0l0YvYrmZx0B/+B5r+k3BH0O
-         cA1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqWm4fRlxfzTPS2tAoy4dU3vPLWiN1XjJ65GC7khPkOTWGfNh6JMM2o1uwC7Yymnpslf4ff0VEWNOIqKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxblFspO2UzoDAWfIOdamcBVkSgbfdIRHsA13FYdScfyjphN+lP
-	VWuhNMFUuTAHFjgOFH+Dq1nfslO8HSrvtEkm7HO114t1wy8ErLHEX8pI
-X-Gm-Gg: ASbGncuo88myRXalDOK/olt1SGJow01nepUY9TqP0yD27aQTVOSIgGUdZSZSVxNVKjT
-	XV46wot1hFjUgYlxh1Iy8YMu0p77Vk16SBxJmT1iYllmmLbU8kmY4MzJym8Xf6HewsYnE1bvc9D
-	lI5PM8QytRteUuiKHR/ux8IUWYFkGpDPbN0IxBCGZKh5Pu1e+S34vdo6WllfZwtCLvJj25uZi6Q
-	1qrE2+jMobWPVXfJ4W9Bt8NMJuf1bqO6GHCHkmbMM2pP1WNgFEekTIW8yKC6dYezxbBcklevFun
-	r6UgZhjx3hRhcMBKyou2TLGwyOSDxDHCgybBIqrXO2jj484rcSseAPw1FnLZKgOpSxW8ZZAPnMg
-	aLAbR04VeoyDwOd37T2vsCwxRDrUU0iQ5CiL8E78MBkA4znaVaP7sREwDXRzF2TRB
-X-Google-Smtp-Source: AGHT+IHFWWtb1KbXVIg+UozThISuavCO9wv+AE+Tap4j/B944QQFysY2kNhergonWcz8XuW9tB67gQ==
-X-Received: by 2002:a05:6a21:6da6:b0:220:3870:c61e with SMTP id adf61e73a8af0-240d2d7d678mr7691737637.4.1755318530006;
-        Fri, 15 Aug 2025 21:28:50 -0700 (PDT)
-Received: from bj-kjy-standalone-gaoxiang17.mioffice.cn ([43.224.245.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d73a418sm2611958a12.38.2025.08.15.21.28.46
+        d=1e100.net; s=20230601; t=1755318792; x=1755923592;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsRxtwwK15Bg0qbKyAiNtrwYfp9IiiWX2XFwbSp/aNA=;
+        b=FEk6GLAoM423tCRBzR80V22qous0Wcvp/BlCMXfXi0JB8VEMdvIzpQb2gTKBdiSiBI
+         Gio/lo2QsT5DPuxiYLR5NFmoWMgbX/x/tuQH9UG1TRUruvVMqLY2DW0gN77z84NY7UCE
+         YUX8JiUQvt9/FSfMV5h9sjSmf/QCi8wXLumTwoRiknZWt/Z+dfHET7nSEVFKWAjIPuEo
+         Z/3uITM7PDRSrT9buHJGsD2nO/JJ/ABvX2zaWTxR1+a24gA7A/x6jzAB5Q20VnRmAos2
+         pekVDTz25KjReVNBLIQZh1jHFtezIqFuVneEgLBg/8+8YJ4uDj9q1GtOMUrI0qjnB8kR
+         rYiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsA96Eebfa67TQG+zvNCW9Xg7olwtXLXyXiDCLCCywkrFlFErSXnP1rDik0UsibCHBXvrrUCjTvTNWXX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfHr2Lk6+5n70ZcD9x7W5WUSgZtQGIj54pxQlexORCs6d/Sh80
+	EzfzO8nKbzTOEsld9aEveipokDGoooIxiuMkeSFv6fr6OypAPUS/ZdaTfKirhLG22g==
+X-Gm-Gg: ASbGncsvYqZ5tb4IRl+1dt2gwkNf4jftdcyUnyHgJqwuMhE8NGHOW73lp1S4qmD9mYC
+	/DGRivCc+YnJeEyiN3/hA9BnwNBL7acQMJgO5jrmU0M6M+xCBnA98X+1rPx6Xfl0f9X/GaQEEzS
+	mJwxR8U2U4ipLXRSjw6RVcNuKk1wNZP4Q6gqsU1rkoHmdLr6DFWZ6WKFnLeKHvz1KGRrsxL+Ekp
+	Z1Zzbt9qoI7YMTJVXR2AeFn+mX9Jkkb5M0jwAaduGHjcL8L9XlK+QexV5STTfWarEMQntEkIPlj
+	tXNqjE+Rjy2sJ7uWarE8cCNxIuG7FWb3wUU98EQ04F0DthtyuQxBHAlcLntvB6mvjHKVrfp4NGW
+	nggmpyqXFujk3Fbr34Qjq+pE2klDNL+UKSGkUqH5Vm+GEflmSistUwph9U+Zp4xs1yhu+mf4DUq
+	lJdMjt25XA2k61kQ==
+X-Google-Smtp-Source: AGHT+IFRvkHkV/M4v52bM46SWACcSKG/8sC45sXQrlbrPp0hgPn1IBR5PeJOCfpEfjyh07P94QuUHg==
+X-Received: by 2002:a17:90b:2d83:b0:313:b1a:3939 with SMTP id 98e67ed59e1d1-32341ed8debmr6549218a91.15.1755318792114;
+        Fri, 15 Aug 2025 21:33:12 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d794a39sm2619964a12.53.2025.08.15.21.33.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 21:28:49 -0700 (PDT)
-From: Xiang Gao <gxxa03070307@gmail.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: [PATCH] mm/cma: print total and used pages in cma_alloc()
-Date: Sat, 16 Aug 2025 12:28:42 +0800
-Message-Id: <20250816042842.3959315-1-gxxa03070307@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 15 Aug 2025 21:33:11 -0700 (PDT)
+Date: Fri, 15 Aug 2025 21:33:09 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: John Hubbard <jhubbard@nvidia.com>
+cc: Will Deacon <will@kernel.org>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
+    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
+ attempting migration
+In-Reply-To: <ef85aa74-180c-4fbc-8af6-e6cca45eed43@nvidia.com>
+Message-ID: <9a406ab6-0da8-fb8c-968c-2b403be6781d@google.com>
+References: <20250815101858.24352-1-will@kernel.org> <ef85aa74-180c-4fbc-8af6-e6cca45eed43@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: gaoxiang17 <gaoxiang17@xiaomi.com>
+On Fri, 15 Aug 2025, John Hubbard wrote:
+> On 8/15/25 3:18 AM, Will Deacon wrote:
+> > 
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index adffe663594d..656835890f05 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -2307,7 +2307,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+> >  			continue;
+> >  		}
+> >  
+> > -		if (!folio_test_lru(folio) && drain_allow) {
+> > +		if (drain_allow &&
+> > +		   (!folio_test_lru(folio) || folio_test_mlocked(folio))) {
+> 
+> That should work, yes.
+> 
+> Alternatively, after thinking about this a bit today, it seems to me that the
+> mlock batching is a little too bold, given the presence of gup/pup. And so I'm
+> tempted to fix the problem closer to the root cause, like this (below).
+> 
+> But maybe this is actually *less* wise than what you have proposed...
+> 
+> I'd like to hear other mm folks' opinion on this approach:
+> 
+> diff --git a/mm/mlock.c b/mm/mlock.c
+> index a1d93ad33c6d..edecdd32996e 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -278,7 +278,15 @@ void mlock_new_folio(struct folio *folio)
+>  
+>  	folio_get(folio);
+>  	if (!folio_batch_add(fbatch, mlock_new(folio)) ||
+> -	    folio_test_large(folio) || lru_cache_disabled())
+> +	    folio_test_large(folio) || lru_cache_disabled() ||
+> +	/*
+> +	 * If this is being called as part of a gup FOLL_LONGTERM operation in
+> +	 * CMA/MOVABLE zones with MLOCK_ONFAULT active, then the newly faulted
+> +	 * in folio will need to immediately migrate to a pinnable zone.
+> +	 * Allowing the mlock operation to batch would break the ability to
+> +	 * migrate the folio. Instead, force immediate processing.
+> +	 */
+> +	 (current->flags & PF_MEMALLOC_PIN))
+>  		mlock_folio_batch(fbatch);
+>  	local_unlock(&mlock_fbatch.lock);
+>  }
 
-This makes cma info more intuitive during debugging.
+It's certainly worth considering this approach: it is consistent with
+the lru_cache_disabled() approach (but I'm not a great fan of the
+lru_cache_disabled() approach, often wonder how much damage it does).
 
-before:
-[   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
-[   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
-[   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+But I think you've placed this in the wrong function: mlock_new_folio()
+should already be satisfactorily handled, it's mlock_folio() that's
+the problematic one.
 
-after:
-[   24.069738] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 64, request pages: 1, align 0)
-[   24.075317] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 65, request pages: 1, align 0)
-[   24.078455] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 66, request pages: 1, align 0)
+I didn't know of PF_MEMALLOC_PIN at all: as you say,
+let's hear other opinions.
 
-Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
----
- mm/cma.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/mm/cma.c b/mm/cma.c
-index 2ffa4befb99a..46cc98e7f587 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -776,6 +776,17 @@ static void cma_debug_show_areas(struct cma *cma)
- 	spin_unlock_irq(&cma->lock);
- }
- 
-+static unsigned long cma_get_used_pages(struct cma *cma)
-+{
-+	unsigned long used;
-+
-+	spin_lock_irq(&cma->lock);
-+	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
-+	spin_unlock_irq(&cma->lock);
-+
-+	return used << cma->order_per_bit;
-+}
-+
- static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 				unsigned long count, unsigned int align,
- 				struct page **pagep, gfp_t gfp)
-@@ -858,8 +869,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
- 	if (!cma || !cma->count)
- 		return page;
- 
--	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
--		(void *)cma, cma->name, count, align);
-+	pr_debug("%s(cma %p, name: %s, total pages: %lu, used pages: %lu, request pages: %lu, align %d)\n",
-+		__func__, (void *)cma, cma->name, cma->count, cma_get_used_pages(cma), count, align);
- 
- 	if (!count)
- 		return page;
--- 
-2.34.1
-
+Hugh
 
