@@ -1,215 +1,150 @@
-Return-Path: <linux-kernel+bounces-772168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0BFB28F7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:39:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9C0B28F7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5A85C07E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C20AE4CBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB12512D7;
-	Sat, 16 Aug 2025 16:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D02EBDEC;
+	Sat, 16 Aug 2025 16:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K98Bhnlm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iU3aUcWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2947261C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D652E7261C;
+	Sat, 16 Aug 2025 16:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755362357; cv=none; b=j0PCVBv+fTtiGnPjXsBPvI4aDVQTT/QzdJVuwz1a/Mh4J+R2ndilB72MzR53BiGA2pZbzP7ia3a9uDsrD9z35JRmyttWa1SQ07sRVX4qs9vjiwXunWsriX5sm0+3a2uR09is9VI8DryZUmrx1RKPnsS27hGG2xtwOA0d3VLUCLI=
+	t=1755362439; cv=none; b=LIOvCmJGrPsVSKJawuu2hwNgnA+hivrZ9XgYVl47W9Psxk6taKWxZp5u7i44IEjptt9e4ADQucmKkuFMvAYf4DbC/zLPVy6mu84uLqfhp8n4ibiW/XR+QY6ut74L9C+TpAPgYHqo/hpluidQGA9MzTL6xnoKByJ1YuWGkIVZT2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755362357; c=relaxed/simple;
-	bh=vME0ZngE4bQl5kn0AQB2kMSges2+ADQpOtr9UnrzP5Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NZBYlzNpKbthnsdw5FA29hRFuJMxiHCVBZzqb41kRHMt181YaVMKoI4MgSR5lFgEkvuVQDpag1SbT/mNTj+FlE8DCtARb/IjP7Q9s3frV7ZAI+8uAbREykwF1FXC8kiq0RwuySViI/hEcXB8LOEsV/ukAS+uP9CF2q7IBMGtSng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K98Bhnlm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755362354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=MWmL2oVXJczc7g3P72KJ61eiH7fIoChDjNLW/W2RW3w=;
-	b=K98BhnlmEtsw7tTetxrA8g8P5PbX6mwUENvFlgLMtl6eD95qJR0EwpHWmU0BsclXTukVMc
-	Wvp8iWZg0ptWjDfn7wOm4FdzotzGCQDCi0EhO3FIHBuqQqTxL+dHdWyZy7zrLU+aD0n+cv
-	YLYYJL6YMp3hMzQWLyi08s+KfnMiYuI=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-X61t2arfPfy-WYP_FNXsyQ-1; Sat, 16 Aug 2025 12:39:12 -0400
-X-MC-Unique: X61t2arfPfy-WYP_FNXsyQ-1
-X-Mimecast-MFC-AGG-ID: X61t2arfPfy-WYP_FNXsyQ_1755362351
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-333f8f2c2bfso15594751fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:39:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755362346; x=1755967146;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MWmL2oVXJczc7g3P72KJ61eiH7fIoChDjNLW/W2RW3w=;
-        b=dpeWyKsm7jkxhnTpMHsn40YYCOmiSxHOuxYnexBEip1V/+QfWozfYBWCo8nvn1Pa9B
-         /Up0lCVVHE9+z79gOvDwbyd2hXHnUFsmz2SYfea/bUp7x6pJeBxQoqg9IAkpPDdX9cmY
-         PPCKKesoi99D2ql8gdsdTU8EeXQR/Cn+Ec8CYRjQq7ijfJCkNP8TKCfLm5m2gL64FXSa
-         X9zV1mE/XR46UZ/nmWSeDf0tIfdO41CJDpRCUEEEBNIEYNf0sEjlnlvjpZirx59s5ekH
-         +duULn3sPfKkStUNYp+kL9ATLCt2LBSHcDjmeY1fvc4/21y+Wm87XhG4U05XZUL1jbg7
-         G8gQ==
-X-Gm-Message-State: AOJu0YxU+IFgVSq4Cn1kSPDYkj4TpgFQT014d9zprvGZasb0lIV0wqQg
-	fCGM4xxIK5edviTmSs8WEXgXcSk/Jr9+UNk1/TvKxzBAN5fKu5QS//RCVIjSfslPyfjv/ptp648
-	O1+zsMkd/VsTDKnuLFlMRxqor3l62c+R1CYkXJTiA8O/AdeBvCjwK80E34VxS8pPrcA0TBzAfeE
-	G9w8VjdvUaLLJbgLlxqPEOS1MOl/sRHG0vEXTyl0cRyudHWwaBsFI=
-X-Gm-Gg: ASbGncsFV7HXPtdylp4AA232YPaYc0Ek6/JYI2WOees3vMnwES+jDq31VQTsi0kMYdR
-	RMfri4QZXWCqNuLzVER5X9gh251Bi5cZpIpOCksBt7YLROnoXFIDx8w0XPlX/pBe+LFIZTkFVI7
-	bCa6u9a7Tft70SjM0ar54=
-X-Received: by 2002:a05:651c:2115:b0:32a:6e20:7cdb with SMTP id 38308e7fff4ca-33412bf36e3mr8539001fa.17.1755362345937;
-        Sat, 16 Aug 2025 09:39:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFe1LzaEmO1iJmTUOpOuUzc2NcK2Xe6SYrxW/YX2lAdgkIFkzE2iX9vTHjBsMSAgNT7LW6Z8Y6Zp+ERoByTUBE=
-X-Received: by 2002:a05:651c:2115:b0:32a:6e20:7cdb with SMTP id
- 38308e7fff4ca-33412bf36e3mr8538941fa.17.1755362345463; Sat, 16 Aug 2025
- 09:39:05 -0700 (PDT)
+	s=arc-20240116; t=1755362439; c=relaxed/simple;
+	bh=n20ZocEQ5b486yxGjR3mzMYx8wP1tNaCNGvSml+GYMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qQPoKeBNeS9rcDsFpoKSrsQ/9rJ740Xco4IQD8dWg1hG6zg4gprSs3qkn1fu8GwldKQ/jvQNXpk0+pH49tDbx3yuFZaQrV/CzKwTivTz3BSlEfEDL41bzCmN0736YRkRdIj8Tb2YKo2Alv7yZvuFTon9R+uHWkPtOarSNfltzgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iU3aUcWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0061C4CEEF;
+	Sat, 16 Aug 2025 16:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755362438;
+	bh=n20ZocEQ5b486yxGjR3mzMYx8wP1tNaCNGvSml+GYMI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iU3aUcWJe6DVw83sxI/iUaAOuPGuL+xif6/Xdk+fc7dgE8Sgwoge8i76um9RPHFEU
+	 5lJz7LBRRDauZoKnlWepDeIEA6UCK65L9Bod3LLA4v1bCdKdOFVDw/2AIlbyNNZcVJ
+	 nQK53FnzI2e0WcLOhYsKVG6YDkAE3Gc1Vp0vcE7s2icPCAIGNgwIzyyKPulb7mnS6o
+	 xzlVz8/nO6a4AHf6jK2+PUCNYspr5/SvOvfgdH27ny+ml3dGgdOAARnqv0wqkGvAVM
+	 57oiyf82Gdskp9O4mJdw5EYn7RufNYAtDYz3NdU9rJjDP955Y0gng4aYV+n97z4/zz
+	 U+q3V0AT7EOTw==
+Date: Sat, 16 Aug 2025 17:40:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 2/5] iio: add power and energy measurement modifiers
+Message-ID: <20250816174030.124d280c@jic23-huawei>
+In-Reply-To: <20250815095713.9830-3-antoniu.miclaus@analog.com>
+References: <20250815095713.9830-1-antoniu.miclaus@analog.com>
+	<20250815095713.9830-3-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jirka Hladky <jhladky@redhat.com>
-Date: Sat, 16 Aug 2025 18:38:54 +0200
-X-Gm-Features: Ac12FXyDNtc3P6WeviznXzZhQIyN-C4FeizrScL5lIVDkYiMb_kok8ts04hBdNs
-Message-ID: <CAE4VaGBZzpkfkBXbiuED8Pv-UnjQ5xSk+t=dAdwSjv=u7-b8pw@mail.gmail.com>
-Subject: [REGRESSION] 76% performance loss in timer workloads caused by
- 513793bc6ab3 "posix-timers: Make signal delivery consistent"
-To: linux-kernel <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	john.stultz@linaro.org, anna-maria@linutronix.de
-Cc: Philip Auld <pauld@redhat.com>, Prarit Bhargava <prarit@redhat.com>, 
-	Luis Goncalves <lgoncalv@redhat.com>, Miroslav Lichvar <mlichvar@redhat.com>, Luke Yang <luyang@redhat.com>, 
-	Jan Jurca <jjurca@redhat.com>, Joe Mario <jmario@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 15 Aug 2025 09:56:35 +0000
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-I'm reporting a performance regression in kernel 6.13 that causes a
-76% performance loss in timer-heavy workloads. Through kernel
-bisection, we have identified the root cause as commit
-513793bc6ab331b947111e8efaf8fcef33fb83e5.
+> Add new IIO modifiers to support power and energy measurement devices:
+> 
+> Power modifiers:
+> - IIO_MOD_ACTIVE: Real power consumed by the load
+> - IIO_MOD_REACTIVE: Power that oscillates between source and load
+> - IIO_MOD_APPARENT: Magnitude of complex power
+> - IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency
+> - IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)
+> 
+> Signal quality modifiers:
+> - IIO_MOD_RMS: Root Mean Square value
+> 
+> These modifiers enable proper representation of power measurement
+> devices like energy meters and power analyzers.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v4:
+>  - add proper KernelVersion and Contact fields to ABI documentation
+>  - add detailed description for power factor measurement
+>  - add altcurrent RMS measurement support
+>  Documentation/ABI/testing/sysfs-bus-iio | 27 +++++++++++++++++++++++++
+>  drivers/iio/industrialio-core.c         |  5 +++++
+>  include/linux/iio/types.h               |  1 +
+>  include/uapi/linux/iio/types.h          |  4 ++++
+>  4 files changed, 37 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 2fb2cea4b192..9d283b23d3c0 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -167,7 +167,17 @@ Description:
+>  		is required is a consistent labeling.  Units after application
+>  		of scale and offset are millivolts.
+>  
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltageY_rms_raw
+> +KernelVersion:	6.15
 
-Summary
+That was a while back. Will be at least 6.18 unless this was hiding in use in
+a driver that I didn't notice.
 
-Regression: 76% performance drop in applications using nanosleep()/POSIX timers
- * 4.3x increase in timer overruns and voluntary context switches
-  * Dramatic drop in timer completion rate (76% -> 20%)
-  * Over 99% of timers fail to expire when timer migration is disabled in 6.13
-Root Cause: commit 513793bc6ab3 "posix-timers: Make signal delivery consistent"
-Impact: Timer signal delivery mechanism broken
-Reproducer: stress-ng --timer workload on any system.
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Raw (unscaled) RMS voltage measurement from
 
-/usr/bin/time -v ./stress-ng --timer 1 -t 23 --verbose --metrics-brief
---yaml /dev/stdout 2>&1 | tee $(uname -r)_timer.log
-grep -Poh 'bogo-ops-per-second-real-time: \K[0-9.]+' $(uname -r)_timer.log
+Spell out RMS so
+		Raw (unscaled) Root Mean Square (RMS) voltge measurement from
 
-6.12 kernel:
-User time (seconds): 9.71
-Percent of CPU this job got: 73%
-stress-ng: metrc: [39351] stressor       bogo ops real time  usr time
-sys time   bogo ops/s     bogo ops/s
-stress-ng: metrc: [39351]                           (secs)    (secs)
- (secs)   (real time) (usr+sys time)
-stress-ng: metrc: [39351] timer          11253022     23.01      9.71
-    7.01    489125.18      673113.26
-timer: 3655093 timer overruns (instance 0)
-Voluntary context switches: 720747
+Also wrapping is odd.  Match rest of file.
 
-6.13 kernel:
-User time (seconds): 4.02
-Percent of CPU this job got: 28%
-stress-ng: metrc: [5416] stressor       bogo ops real time  usr time
-sys time   bogo ops/s     bogo ops/s
-stress-ng: metrc: [5416]                           (secs)    (secs)
-(secs)   (real time) (usr+sys time)
-stress-ng: metrc: [5416] timer           3103864     23.00      4.02
-   2.08    134950.34      509002.47
-timer: 15578896 timer overruns (instance 0)
-Voluntary context switches: 3100815
 
-CPU utilization dropped significantly, while timer overruns and
-voluntary context switches increased by a factor of 4.3x.
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_powerfactor
+> +KernelVersion:	6.15
 
-It's interesting to examine hrtimer events with perf-record:
-perf sched record -e timer:hrtimer_start -e timer:hrtimer_expire_entry
--e timer:hrtimer_expire_exit --output="hrtimer-$(uname -r).perf"
-./stress-ng --timer 1 -t 23 --metrics-brief --yaml /dev/stdout
-perf sched script -i "hrtimer-$(uname -r).perf" > "hrtimer-$(uname -r).txt"
+6.18
 
-grep -c hrtimer_start hrtimer*txt
-6.12: 10898132
-6.13: 17105314
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Power factor measurement from channel Y. Power factor is the
+> +		ratio of active power to apparent power. The value is unitless.
+> +
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceY_raw
+>  KernelVersion:	3.2
+>  Contact:	linux-iio@vger.kernel.org
+> @@ -1569,6 +1586,9 @@ Description:
 
-grep -c hrtimer_expire_entry hrtimer-6.12.0-33.el10.x86_64.txt
-hrtimer-6.13.0-0.rc2.22.eln144.x86_64.txt
-6.12: 8358469
-6.13: 3476757
+>  
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_altcurrentY_rms_raw
+> +KernelVersion:	6.15
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Raw (unscaled no bias removal etc.) RMS current measurement from
+> +		channel Y. Units after application of scale and offset are milliamps.
+As above.
 
-The number of timers started increased significantly in 6.13, but most
-timers do not expire. Completion rate went down from 76% to 20%
+Otherwise all looks good to me.
 
-The next test was to disable timer migrations with the 6.13 kernel:
-echo 0 > /proc/sys/kernel/timer_migration
+Jonathan
 
-6.13, /proc/sys/kernel/timer_migration set to zero
-User time (seconds): 10.42
-Percent of CPU this job got: 59%
-stress-ng: metrc: [5927] stressor       bogo ops real time  usr time
-sys time   bogo ops/s     bogo ops/s
-stress-ng: metrc: [5927]                           (secs)    (secs)
-(secs)   (real time) (usr+sys time)
-stress-ng: metrc: [5927] timer           7004133     23.00     10.41
-   3.11    304526.98      518257.73
-timer: 7102554 timer overruns (instance 0)
-Voluntary context switches: 7009365
-
-Results improve, but there is still a 40% performance drop compared to
-6.12 (489125 versus 304526 bogo ops/s).
-
-I have also tried to add CPU pinning, but it had almost no effect:
-6.13, /proc/sys/kernel/timer_migration set to zero, processed pin to one CPU:
-$ taskset -c 10 /usr/bin/time -v ./stress-ng --timer 1 -t 23 --verbose
---metrics-brief 2>&1 | tee $(uname
--r)_timer_timer_migration_off_pinned.log
-User time (seconds): 10.34
-Percent of CPU this job got: 61%
-stress-ng: metrc: [6230] stressor       bogo ops real time  usr time
-sys time   bogo ops/s     bogo ops/s
-stress-ng: metrc: [6230]                           (secs)    (secs)
-(secs)   (real time) (usr+sys time)
-stress-ng: metrc: [6230] timer           7129797     23.00     10.33
-   3.53    309991.17      514479.47
-timer: 7152958 timer overruns (instance 0)
-Voluntary context switches: 7128460
-
-Using perf record to trace hrtimer events reveals the following:
-
-Kernel      hrtimer_start    hrtimer_expire_entry    Completion Rate
-6.12         10,898,132         8,358,469               76.7%
-6.13         17,105,314         3,476,757               20.3%
-6.13+mig=0   17,067,784            30,841                0.18%
-
-Over 99% of timers fail to expire properly in 6.13 with timer
-migration disabled, indicating broken timer signal delivery.
-
-We have collected results on a dual-socket Intel Emerald Rapids system
-with 256 CPUs, but we observed the same problem on other systems as
-well. Intel and AMD x86_64, aarch64, and ppc64le are all affected. The
-regression is more pronounced on systems with higher CPU counts.
-
-I have additional performance traces, perf data, and test
-configurations available if needed for debugging. I'm happy to test
-patches or provide more detailed analysis.
-
-We have also tested kernel 6.16, and it behaves the same as kernel 6.13.
-
-Thank you!
-Jirka
+> +
+>  What:		/sys/.../iio:deviceX/in_energy_en
+>  What:		/sys/.../iio:deviceX/in_distance_en
+>  What:		/sys/.../iio:deviceX/in_velocity_sqrt(x^2+y^2+z^2)_en
 
 
