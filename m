@@ -1,307 +1,245 @@
-Return-Path: <linux-kernel+bounces-771844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E977B28C23
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30708B28C27
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6EAAC137B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DF31CE5060
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380BC23BD1F;
-	Sat, 16 Aug 2025 08:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C189235055;
+	Sat, 16 Aug 2025 09:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TWcE8zX7"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2054.outbound.protection.outlook.com [40.107.244.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ItVfvCgr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2FF1C5D4B;
-	Sat, 16 Aug 2025 08:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755334758; cv=fail; b=PySaaKggoAjteIJfCiH94YtZ/CZOgXzTuxFGAW7P9uBt/ap9Tn60j6nFeY48DH5295Va5LvrznxeWoWMzuzV1TdHsxpGjzfxtWsMms7tVXJMdEqXSIE0zDjwrYhxoNUDvJKDfPvXosy8GE5iJikB97jYjcLDqRiGH9U4ABtgmYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755334758; c=relaxed/simple;
-	bh=4yf3Dl+1cFB4rSIwkorG2ACFlHm4qT6CK0QDj0LcLTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aFYw0M837/MUr9XqdzIS24iX+QUW/SiSpLwH8JFnfe9EGVq79/fNPoF39tqpH69rrIZsdjHZ1FgKoTIQgDMX3lu6Kmgl6ZtUdJC1eJEeIrpzPL5DpKFuQQIeF3yuAccwUQpPH5A7N/mTk3gHca4IIefr/HV93NvJYzaQAzqa/PM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TWcE8zX7; arc=fail smtp.client-ip=40.107.244.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E13/XK/otbSQrPFieBqQQ5/1MqE6RDCbPodbb0SXtG4n507N88yN1jP1lITLWY9aaxsYmsJXn5ISEEGQbObjHovc34W03cSOBCqzi19D67PhFozLH1IiDd1GBCWbhod+YkzmMO3K3vP4zXWo4FQcFu8YCtj6RQPGMNqIBsMUgX3UDgRiyqgqEo1CyZDndiMHPmvtolXfX++OUUwNo50aoFxmkkY4UnpsWI/fkcPV215c3OZR96MIhKc07LpsywGdaTbZylMd3s1B7QkpNcakW+xCokwCSaC0DfK/EF+43+RJO5wV8P+t7U2tBDVJdA+uyrwdDCkwrx2fGPb+VdcCTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BdQ9PPNoHkX1j8i0pJdDz/iAsOkFEHommm2Eu8xkjy8=;
- b=TwICEeRHSTU9Sj4Xj5H/fyMFvLR5eKoPmn6ivibfvXlmFM4ZRhYKOLnk2P1Le0Q7C8vYRK153DNA9wGw9gJ2Ilzim3JwjBD9attY/Z7oQYfXmZ7zx+SQcpATlcdA42/iZgqlDEyTkLuI6zrYxk/moUT9ah3IS8VzN6Xy7hfy6E6jBc7n9SvtEsVUR23RnOkhjLqsYRgK8/lvucn8mSYWBTDMGYtBGzhI78KA5pSiTidvnllmGniRqBPieXvTqi8PXKQhHj0xpYDBe7SoXI4Cudl7ZIwuxPgITkhQqTynj00f3+5Un+wPcmCyXZKbmfqXqQNxF27giiVm5ES3BNLHWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BdQ9PPNoHkX1j8i0pJdDz/iAsOkFEHommm2Eu8xkjy8=;
- b=TWcE8zX7qfKg/cQRbIO33FTcvuv6D7JZkuVxhwSUQHsu+JAva3JI8LcA7MgggjLaJS+YCT0TBUNnt9k/dcj4DvArijGEao1ouJVnsxEbWTpg4qZDU6+5kAWOKShrtIuMNpfY1DtIyZb+StTTB1Vi5r1XlMpOEkSLU2FNI1feEoMEQ/tliWUFf8B8O8uSJ+n9FAo51AxnBq6XnjbLdXizpL9M4A3jlI9O26h0CJsr+IbG90diKuvpGMFeKaD81jth4Qk9MDXCscOQ30dninOGSz7YhK09jTh5qeWUE0KxNsJcUW7n+YQ+F4OcKsFgOkjSkYIMZ6XCHjEeTIlzzcFQaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
- by SA3PR12MB9178.namprd12.prod.outlook.com (2603:10b6:806:396::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Sat, 16 Aug
- 2025 08:59:14 +0000
-Received: from IA1PR12MB9031.namprd12.prod.outlook.com
- ([fe80::1fb7:5076:77b5:559c]) by IA1PR12MB9031.namprd12.prod.outlook.com
- ([fe80::1fb7:5076:77b5:559c%6]) with mapi id 15.20.9031.014; Sat, 16 Aug 2025
- 08:59:14 +0000
-Date: Sat, 16 Aug 2025 08:59:06 +0000
-From: Dragos Tatulea <dtatulea@nvidia.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, cratiu@nvidia.com, 
-	tariqt@nvidia.com, parav@nvidia.com, Christoph Hellwig <hch@infradead.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC net-next v3 6/7] net: devmem: pre-read requested rx queues
- during bind
-Message-ID: <nv2z4vvycay3eygcjfmxcqjgrftmmqm3nmesui4vjenexjbnvk@ll7km6oblghm>
-References: <20250815110401.2254214-2-dtatulea@nvidia.com>
- <20250815110401.2254214-8-dtatulea@nvidia.com>
- <CAHS8izM-2vdudZeRu51TNCRzVPQVBKmrj0YoK80nNgWvR-ft3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izM-2vdudZeRu51TNCRzVPQVBKmrj0YoK80nNgWvR-ft3g@mail.gmail.com>
-X-ClientProxiedBy: TL2P290CA0027.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::11) To IA1PR12MB9031.namprd12.prod.outlook.com
- (2603:10b6:208:3f9::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D425531770C
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755334915; cv=none; b=sEVMoDsey+4OguYLzHjZn25MOh1vGheUYOD/XrChgdJOTzA1Z28YnvKo6uHkKTn5Wuq+QTDnhWNB8NQu93fgH2KYmvEubAVimuaumY6HrpN+wTkrYtsmhN1ItZDZLO9McR0iBB6/wwIgMMKNXOVlz/m7PJkB8Wy+lD4jeRqNhAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755334915; c=relaxed/simple;
+	bh=yKYsjpWLMhWpBFNoBwSSSbfozL7DFY+CO5ldUUOYZVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JeTyZrAESqTWEwHlC/8A9NcWRizwuCb9aLtp9Qo9Mo2V2kyNMalDtPQY64YPS1nuxnDfTIQIQunKd14fQi0b1C6YwKTeTkI3xeWVZZNcMeVpOQ8c1irotz4wK6Q+J5yuAqtDj/A2qagSHazFHI5jRZGw+Fyl3gte92cdGtwofKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ItVfvCgr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755334912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GLRaqZk+G77LOdhKudPGgxUl7C3uWX/KsdNR5jlxTvw=;
+	b=ItVfvCgrIGvG6A3Mse2Ycf9SPLBmCxMEdYbkiy0iSJr4jfmZgBRmgdHZlEpx6VAMc/7k1t
+	HMaOSkhhlJAtPuHpRp9ympYFRirLuq5e41dPN37HS6awjtNnJGh/Jy1ze3Bv02Yp0tT2v8
+	3pODL5A3yeMrbHiWewXT/SjIqu+iQzI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-20-VArAwcyaO-S4MU8lUg5mBA-1; Sat, 16 Aug 2025 05:01:51 -0400
+X-MC-Unique: VArAwcyaO-S4MU8lUg5mBA-1
+X-Mimecast-MFC-AGG-ID: VArAwcyaO-S4MU8lUg5mBA_1755334910
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b9d41c1147so1546948f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 02:01:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755334910; x=1755939710;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GLRaqZk+G77LOdhKudPGgxUl7C3uWX/KsdNR5jlxTvw=;
+        b=Q4nGFZklSQ0o91mAjfZ7wXD8gah0B2bwivB5Nafk0guqkgqAIyS5E8vvLBHTM201eP
+         Kp86JHAyfznxf8B9kYIDMcBzqQSp8LCffWwzvKVdWoC8JP0AGcemLG0LdUPhg6rT8+17
+         odl9TMJPj+4T7lo79xi4c/wDgZNwsBsI8bC3bu6Zjtr2FMqBQt7dJ6PAixVx3OZ9qEJb
+         lqaEU+lipaea0gpo+tX04rFOXJSSsfxYKybgVlWUtG7SyXH7Zil/jyz0enNbX8OrAlZS
+         p3QGWGcy4gi0mpPwPLLKSs1NtlCZ8zy2Xk9s8eQmFYWRjHr/teL+egiG2FjDE8+qKLCE
+         ItiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOsx6uleSq+5NJnDvFNl5zIVqzhciSUWhUMBpE/RaRddmt9/ZJpq2zQeue/5dgsDnz/dg8q7+PSRHqTmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBrLoZCtWeExvoDBfSQVCWeJTf2Un+RIGV5pxnC4TtV/W4INN9
+	IeW6JXe/8LVbw03P2LaeXlhn0VKr1DFR9wDV2gF0undtvAFQ4YFMK36ll2UAwFYd/9x68piUq2C
+	ZLICtWBs9i3VCQG+lzjAdelondN/oDdBuDxmyvfyQQki3v158rpLKzdeZa2XKf3akOw==
+X-Gm-Gg: ASbGnctLNY7os0FddC0TFl8CEBtUeOfl3pTBkrmC2r0q44pW4CPNY1q2UFQ0nYDHB91
+	HI8YUGb9QAJ5fOMcimAJhHbd0NwgOOft7NMKeMPXDcf9luekV5/Jxr1NGnVGnqjW4io97nqad/p
+	aa4edW2Bw6Vx+VVFKAk1YH8tp1PzopF8ihcBm4hw5XkqjLvvN4QMbACD9rObwyTY/mG40RUbtQV
+	tcR8r02UrNORYxI4bT17PWiG4SWbeMAl5QJ0oDcMwxD3lOPRP7FFJj5aGCU8ocFCjS3ezAJmm+v
+	nSyLAMM40EYCjJ1f8gyqYPPNvH8fLFN5W9lmVE8w5lnv9avc1FjvS3ZUmWIp1QQ3cWT7+xlRgii
+	wZ5sOK1uq6EMO1IoSe/V6PV1cgSa+YQ3zPUqfWQW6K/e/Q4P1HpGQ0M/4/unSDYrVILs=
+X-Received: by 2002:a05:6000:430b:b0:3a4:eed9:755d with SMTP id ffacd0b85a97d-3bb6665cef3mr3712056f8f.3.1755334909762;
+        Sat, 16 Aug 2025 02:01:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEJeEK643AlfLu4zYVeo3CzuO7W32xxSVbF2ZLr/0L6Y10VTYefWkyiIkUj9b2SMeFimaHtg==
+X-Received: by 2002:a05:6000:430b:b0:3a4:eed9:755d with SMTP id ffacd0b85a97d-3bb6665cef3mr3712023f8f.3.1755334909345;
+        Sat, 16 Aug 2025 02:01:49 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f23:c700:d8ae:41bf:492a:9e4c? (p200300d82f23c700d8ae41bf492a9e4c.dip0.t-ipconnect.de. [2003:d8:2f23:c700:d8ae:41bf:492a:9e4c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb5d089e07sm5007536f8f.0.2025.08.16.02.01.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 02:01:48 -0700 (PDT)
+Message-ID: <66ebc632-6704-4637-b62d-1cb11e5a4782@redhat.com>
+Date: Sat, 16 Aug 2025 11:01:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB9031:EE_|SA3PR12MB9178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00d31964-d2d4-4ead-95fb-08dddca32c70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VTMwRkdGdk1aTkV5KzNKbnVGZzEreGRPNTFUY0U3UlBWczRyRUpFWjRhaEUz?=
- =?utf-8?B?RkpjdE84eitOZ1dDR0ZrYzNGa3hzdXJ6c2h3bXIrRER3MkhzMGx4WGc2M3NW?=
- =?utf-8?B?Y3VFcnlNZElReHNISGhmdjJsd2s3aTZZU0tFU29ZNXd1VEpkQ1pkR1h0TmpH?=
- =?utf-8?B?Zkk2a25HSzFCeUQva1EwS0NpWHVnT2J1T3g2R3czT3VEWW9QSjF3cnphd3ZJ?=
- =?utf-8?B?OGNzNlkxRFFrK2QvS29kV3lGUVB5c2FvNHpwWEdkNTZDTkhaajRkU0lLMDlu?=
- =?utf-8?B?YkEyRFhqQStkRGlYSlBnS0MxZklMWnVtci95KzlnMGVybHVOU2FYY1Y1SmU5?=
- =?utf-8?B?NU90NEJvcHZCVWNVYUNpeUR6WUtUQWpkWndneGFzRzZxK0hyRnpLcCtXQVpB?=
- =?utf-8?B?bmlWeDNjbnN5Wmlod0FpNUlRS2tSWDd3WUxHdnJZWFJpWDNabmQ0dUxRSjRp?=
- =?utf-8?B?b3NTWFRjTFJjR1VScWZkQjBFRGt5UmI4Z0VJZTdOSzQwQjJzWHlNQUI2djJ3?=
- =?utf-8?B?Q3MzWFBoZDB6bDdXYjlDZ2JnOG1rZHhJdVNPai9reEFYVUlrdlIyUHNpWVp3?=
- =?utf-8?B?cEJZZHF2V0VtYnAvdm9STEp3aDVPMHAxL0pzREZzZU5KYldkV3o3TFZ3YXNL?=
- =?utf-8?B?YXVqLzZZRERJZVgrT05ZU3JmQXVnd0FrenBaa0pmRVVMaUN1ZCtoczUwQVN1?=
- =?utf-8?B?anlTNkhOUnlFb3lzT0RXNE5FQkpwck1najNHT0k2bm84SG1vUWxHMUVLSHFO?=
- =?utf-8?B?UHJ4d0tlenluOXFZNUU4czROSHJtc0RzZGNML2JBTWcvOE1ZMXBCVlh4OFBj?=
- =?utf-8?B?cW5WOGE2UFFsYVlVOUJyY1ZPaExaM3djdTVXTHRWek5WM3VzWnFrdEFyV05n?=
- =?utf-8?B?MHRBZXFmRHU4S0JuVjFpK3RJaFRJYllTT0RtTEVmbVBkUHlWZC81Y2c5REtv?=
- =?utf-8?B?eXV6ZjJHc3lzQWQ1UURWMHIwOXZDQ0RaNktqYThUZkRRdVJlNkVXV2cxRXUz?=
- =?utf-8?B?QjdPVklhNHdtM3JPUUhwcS80amFVUXBHa004MWRoVUJoZVd3N2RzOWNWNkE0?=
- =?utf-8?B?VjJKRVJ4V1JLQ3UzM3dybWtOM25TcDhUSkFoZzl5S01FaHdDWFpQMGRPTXZK?=
- =?utf-8?B?NGptYzJaWkw3cEdLM01wWVB6Vm1GSm8wR1BSd2dsejN3NHUyZnllSW51R2dh?=
- =?utf-8?B?NTVPVFJ3bHl3WDArcXRVZlowbm1NWjhnTmdKcXhRYitlaW1pREc4L3RMMEcr?=
- =?utf-8?B?N1VVTmhZLzNNZEZzQXdqMDN6VVlZQjJLUWMza1I1VWU0a3FRTW12Q2pBSFhP?=
- =?utf-8?B?a3VZMEhnU1hKMC9YTzBkVk8xOGNDNC9QTWRvZGgvZGxhVDRCeUUwcDFWSGE3?=
- =?utf-8?B?TGg5UU1qUndsOGprWEFvOFJxTUxVUUkrcnlMVkpOb2RaSHE2T3IzRjc5NUFv?=
- =?utf-8?B?dG96eHJTamR6SDJxQ3JHTllHcVVLRDlySitWWnRhSmM0UUVYTWQvaHpzdk1X?=
- =?utf-8?B?bWtZakErMG56cTF2bnNBeGtIVjZwWmM1ZWN3Wld6RGVTUnEvNm1wNjVTakFC?=
- =?utf-8?B?UzZ2VlBwRmFyUDJPa2ZualpUdTNRcEx4ZHdYRzJkSHd3d0tNMDRCM0dpSm4v?=
- =?utf-8?B?NU5FQVd5TXRMbWpHY3Q4REpPVUxBcEV5ZzdGcEp5OGo3RXpjZWtaMlViVDdN?=
- =?utf-8?B?Ny94blBuVmYybEMweUx0ZW40R1g3RTI1dUgxMGMraTVpSjVkdU5neHdDRkVG?=
- =?utf-8?B?Z0F3ZEdBOXJzcC9GMFNNVmFvWlFrTFlxQ0hkNWtZeXZEM1lLQXJtUFVpYnNi?=
- =?utf-8?B?V0RPL2RkMU9aWXhUSnBJclNJRGVjdytBZ0c1S3lEZm1YUTM5WVNEZFFaZmlK?=
- =?utf-8?B?YXlVRG9NM3UxRytwa3Zjdmkyb20yMGl1R2ZYeVk1UEQwZFdtL3liYUozSWZ5?=
- =?utf-8?Q?do5XrPN2Erw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9031.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXdjVWhyU1JJelFpTEZXV2RzLzVpT1JiOFFMR3ZnYkx1OW40KzVacVVmVk1P?=
- =?utf-8?B?cSswOWtPR05NTnAvTkRuemt6M2JSSTF4OFhCdnNHWXdvMjdHZDVUSmdTanFv?=
- =?utf-8?B?RWVaaEtpMUtjWkpaZTdEM2VVam1xbkdZVlV5clNRQlRzaXdOVjdIWHBsKzlQ?=
- =?utf-8?B?ZGxuWW9kcHcvR0F4bzV2ejUwK2ZLL2p3RmJpczc2SG8wWVRwMFU1a3RCU0Nt?=
- =?utf-8?B?bzQ5RzBubkdFNlBoNVZDb0Y4V1JoVUV0d2dnb096UUZqSnF6dUQxV2NhaUJl?=
- =?utf-8?B?Z0Y3WU9QVWY0ZDREd25UaFY5cFUzN2VBUHgvbmt0alhaR2tXLzllMnpRN29n?=
- =?utf-8?B?R0tDVk05ZDlySFZ5c1NLbTFPSHVUT3ZEOEo3U0hEYlFlVUVEN0ZMQVdVcitn?=
- =?utf-8?B?cG5qVmV3YTJYOE10TmpJb0x2VzBQYnM3SlpFYUV6dEZZcTZVZmc5K2ZuYTVa?=
- =?utf-8?B?enRUdmZSRVphb3doSmpzRmVrRFEyalN5M1kyTmNGVGFiekFOaXlyQXRBWUh1?=
- =?utf-8?B?VDVraGhQREwrZnF4K1d0SWxMQWxwY0ZqbVRNK1Jub2xYWFBvL3dJWWNqRWlM?=
- =?utf-8?B?eEp6UEpudTFWOEJVK2t2Z3lIK3ZLNVlZQmxuZ29SbTNubGl4SWdRWU1DdytL?=
- =?utf-8?B?Y0p1cDFLM2szVHo3elpRZUpIczcwdFlLY01oU1Z0UkkxVnRwdGJtTWZGS2hP?=
- =?utf-8?B?TDc5MXkwcWluemZUeWhsblVwbzdIckJJVGVtSUJHc1c1UmRJRkE5RTNselVs?=
- =?utf-8?B?STBrQWlOd0krTXBGeDZxTHkxM0dkWFBER3hpT0lFTGhzZndoelB5NEF6dVpR?=
- =?utf-8?B?QmppbTQ0S05hR0wzU0tnWXpuM0EzTys0MkJTaFlyL20wVjZOVEl2VUpseUlr?=
- =?utf-8?B?Qk4vRmVsd2FxM3NFZEptN3QwRHJTdUNuNWlMdHEySHJCcENBTXh5cXp0WWtR?=
- =?utf-8?B?ZUJiaXdNNHVhQ3RqaU1qUFR2bm12bWxMRjI3a1VnSWhYQjNQdW5yRk84bkVo?=
- =?utf-8?B?WmFxRWhBOXBBVlpFaU8rdVVKamptRlNoaHYwc0hKYWdnY09LN1h3dXhLZzJ5?=
- =?utf-8?B?RHNKbXdSN3dsdVRXRGxLOW9TZWZTbjVJWEFLVnpoakRzdUNINFgxMjk2cVl6?=
- =?utf-8?B?aXpjSHFsbXlpVHl4eGFZMXRmQlByR3JPcCtwK0drUkFZSFFwS3FSMU1iTm4r?=
- =?utf-8?B?RzdDYWF1c1pPLy8wbTgvMC8xN01SQ2RRdEdDS1RWQnZLSUtDTW5jdkpMUUI2?=
- =?utf-8?B?dWVTdll1dm02ODNEQ3hBcnBwY3J0S1hzS3pqM1N0N0NTUmUxTjhSOExKUUpn?=
- =?utf-8?B?bitEbG9OMzBJSHlWN3JNRUl4UWRYQlZzekZRYm1qVHc0a01RTFZIeXFFbjNR?=
- =?utf-8?B?NnRUQ1B1VUs5MXJibDZhbnpuY0dyb0I2anNLWUU2VzRkdTRoMEVaRUlOZk80?=
- =?utf-8?B?N2FYUDJaQWtmcHBYT0hOUXkrdjFZSWl4NmVscTFNWEpobDQydEF3VE1RSjZo?=
- =?utf-8?B?aXVNa2dpNDRsRFJoVmNoQjNFc01qM2lGNTBYblpTaFBIbjcvaklLMFYvcHEr?=
- =?utf-8?B?ZFloWWo4Vzl4dG5kVDQ2VEVqUzVxa242WkpRalcwZHk5bDNvTnE1WEdGMHpz?=
- =?utf-8?B?LzNRdWFEOHR2QnR6RmRObWkxb3pXai9GanRJeFBTRXFMbC9rN1NqOFdNNjFK?=
- =?utf-8?B?dVRhTTRIRThwNU1lak5pR0tuV3VwVnhWMXh6MG9WVXVlcDVvNmZRY0hzeUZs?=
- =?utf-8?B?bXdaTFRWN0FsODJkR1V4V3MvY0I3UVlvQnJyWlhCZ0lBN3NIV2VyRldGcFhp?=
- =?utf-8?B?QXh0eWpQZTRxblV0SDd6YVV6amY5VnFrVGNjRlNEaXZJQXdNcFluMFdURW9n?=
- =?utf-8?B?SnlpakRabHpjT1hUeVgzdDBkLys2MS8vMHREWTVnMitkNGJCWVZkL2dKTnFk?=
- =?utf-8?B?dnFqbmpuTGdsVDFRYlBXRDBiVjJ1eHFmcG1TNHJwdFZXTUpHQjFtOTNjNHNC?=
- =?utf-8?B?b3d2SC9HNDd6bGlyVEhTUnRnOG92NjdKb0NpY3VueUp5OVk1Y2hkL0Y3ekgz?=
- =?utf-8?B?Wk1GY1NDNjhFNGhySEdKYWtWWmpzQkd2TWY4bVRSbFhqZDFuNW5PSnM5b2tt?=
- =?utf-8?Q?hifKaiBrOsBE+oV05W4uqaDa0?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00d31964-d2d4-4ead-95fb-08dddca32c70
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9031.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 08:59:14.1418
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EAbQ1Lvpc70j+Lu6XRv2lg+uBJsbnehL34CykHGmKAaLVJpDLzAYUuQoSRk1XZMdRipaOmp6Gx41ZZ56ppXaAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9178
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Harry Yoo <harry.yoo@oracle.com>, linux-kernel@vger.kernel.org,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>
+References: <20250815090539.1578484-1-chenhuacai@loongson.cn>
+ <a20d605c-79a0-4d89-985b-9512a990b492@redhat.com>
+ <CAAhV-H470h2HDEN_NY2qNBxUqQrSRQhLzwqZe9PB8GjnNsZVFQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAAhV-H470h2HDEN_NY2qNBxUqQrSRQhLzwqZe9PB8GjnNsZVFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 15, 2025 at 11:05:56AM -0700, Mina Almasry wrote:
-> On Fri, Aug 15, 2025 at 4:07 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
-> >
-> > Instead of reading the requested rx queues after binding the buffer,
-> > read the rx queues in advance in a bitmap and iterate over them when
-> > needed.
-> >
-> > This is a preparation for fetching the DMA device for each queue.
-> >
-> > This patch has no functional changes.
-> >
-> > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> > ---
-> >  net/core/netdev-genl.c | 76 +++++++++++++++++++++++++++---------------
-> >  1 file changed, 49 insertions(+), 27 deletions(-)
-> >
-> > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> > index 3e2d6aa6e060..3e990f100bf0 100644
-> > --- a/net/core/netdev-genl.c
-> > +++ b/net/core/netdev-genl.c
-> > @@ -869,17 +869,50 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
-> >         return err;
-> >  }
-> >
-> > -int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> > +static int netdev_nl_read_rxq_bitmap(struct genl_info *info,
-> > +                                    unsigned long *rxq_bitmap)
-> >  {
-> >         struct nlattr *tb[ARRAY_SIZE(netdev_queue_id_nl_policy)];
-> > +       struct nlattr *attr;
-> > +       int rem, err = 0;
-> > +       u32 rxq_idx;
-> > +
-> > +       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
-> > +                              genlmsg_data(info->genlhdr),
-> > +                              genlmsg_len(info->genlhdr), rem) {
-> > +               err = nla_parse_nested(
-> > +                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1, attr,
-> > +                       netdev_queue_id_nl_policy, info->extack);
-> > +               if (err < 0)
-> > +                       return err;
-> > +
-> > +               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QUEUE_ID) ||
-> > +                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QUEUE_TYPE))
-> > +                       return -EINVAL;
-> > +
-> > +               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) != NETDEV_QUEUE_TYPE_RX) {
-> > +                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_TYPE]);
-> > +                       return -EINVAL;
-> > +               }
-> > +
-> > +               rxq_idx = nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
-> > +
-> > +               bitmap_set(rxq_bitmap, rxq_idx, 1);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> > +{
-> >         struct net_devmem_dmabuf_binding *binding;
-> >         u32 ifindex, dmabuf_fd, rxq_idx;
-> >         struct netdev_nl_sock *priv;
-> >         struct net_device *netdev;
-> > +       unsigned long *rxq_bitmap;
-> >         struct device *dma_dev;
-> >         struct sk_buff *rsp;
-> > -       struct nlattr *attr;
-> > -       int rem, err = 0;
-> > +       int err = 0;
-> >         void *hdr;
-> >
-> >         if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
-> > @@ -922,37 +955,22 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> >                 goto err_unlock;
-> >         }
-> >
-> > +       rxq_bitmap = bitmap_alloc(netdev->num_rx_queues, GFP_KERNEL);
-> > +       if (!rxq_bitmap) {
-> > +               err = -ENOMEM;
-> > +               goto err_unlock;
-> > +       }
-> > +       netdev_nl_read_rxq_bitmap(info, rxq_bitmap);
-> > +
-> >         dma_dev = netdev_queue_get_dma_dev(netdev, 0);
-> >         binding = net_devmem_bind_dmabuf(netdev, dma_dev, DMA_FROM_DEVICE,
-> >                                          dmabuf_fd, priv, info->extack);
-> >         if (IS_ERR(binding)) {
-> >                 err = PTR_ERR(binding);
-> > -               goto err_unlock;
-> > +               goto err_rxq_bitmap;
-> >         }
-> >
-> > -       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
-> > -                              genlmsg_data(info->genlhdr),
-> > -                              genlmsg_len(info->genlhdr), rem) {
-> > -               err = nla_parse_nested(
-> > -                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1, attr,
-> > -                       netdev_queue_id_nl_policy, info->extack);
-> > -               if (err < 0)
-> > -                       goto err_unbind;
-> > -
-> > -               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QUEUE_ID) ||
-> > -                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_A_QUEUE_TYPE)) {
-> > -                       err = -EINVAL;
-> > -                       goto err_unbind;
-> > -               }
-> > -
-> > -               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) != NETDEV_QUEUE_TYPE_RX) {
-> > -                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_TYPE]);
-> > -                       err = -EINVAL;
-> > -                       goto err_unbind;
-> > -               }
-> > -
-> > -               rxq_idx = nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
-> > -
-> > +       for_each_set_bit(rxq_idx, rxq_bitmap, netdev->num_rx_queues) {
+On 16.08.25 10:57, Huacai Chen wrote:
+> Hi, David,
 > 
-> Is this code assuming that netdev->num_rx_queues (or
-> real_num_rx_queues) <= BITS_PER_ULONG? Aren't there devices out there
-> that support more than 64 hardware queues? If so, I guess you need a
-> different data structure than a bitmap (or maybe there is arbirary
-> sized bitmap library somewhere to use).
->
-The bitmap API can handle any number of bits. Can it not?
+> On Sat, Aug 16, 2025 at 3:22 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 15.08.25 11:05, Huacai Chen wrote:
+>>
+>> Hi,
+>>
+>> please CC the appropriate maintainers next time. You missed (some)
+>> balloon and zsmalloc maintainers.
+> OK, thanks.
+> 
+>>
+>>> After commit 84caf98838a3e5f4bdb34 ("mm: stop storing migration_ops in
+>>> page->mapping") we get such an error message if CONFIG_ZSMALLOC=m:
+>>>
+>>>    WARNING: CPU: 3 PID: 42 at mm/migrate.c:142 isolate_movable_ops_page+0xa8/0x1c0
+>>>    CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
+>>>    pc 9000000000540bd8 ra 9000000000540b84 tp 9000000100420000 sp 9000000100423a60
+>>>    a0 9000000100193a80 a1 000000000000000c a2 000000000000001b a3 ffffffffffffffff
+>>>    a4 ffffffffffffffff a5 0000000000000267 a6 0000000000000000 a7 9000000100423ae0
+>>>    t0 00000000000000f1 t1 00000000000000f6 t2 0000000000000000 t3 0000000000000001
+>>>    t4 ffffff00010eb834 t5 0000000000000040 t6 900000010c89d380 t7 90000000023fcc70
+>>>    t8 0000000000000018 u0 0000000000000000 s9 ffffff00010eb800 s0 ffffff00010eb800
+>>>    s1 000000000000000c s2 0000000000043ae0 s3 0000800000000000 s4 900000000219cc40
+>>>    s5 0000000000000000 s6 ffffff00010eb800 s7 0000000000000001 s8 90000000025b4000
+>>>       ra: 9000000000540b84 isolate_movable_ops_page+0x54/0x1c0
+>>>      ERA: 9000000000540bd8 isolate_movable_ops_page+0xa8/0x1c0
+>>>     CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+>>>     PRMD: 00000004 (PPLV0 +PIE -PWE)
+>>>     EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+>>>     ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+>>>    ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
+>>>     PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+>>>    CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
+>>>    Stack : 90000000021fd000 0000000000000000 9000000000247720 9000000100420000
+>>>            90000001004236a0 90000001004236a8 0000000000000000 90000001004237e8
+>>>            90000001004237e0 90000001004237e0 9000000100423550 0000000000000001
+>>>            0000000000000001 90000001004236a8 725a84864a19e2d9 90000000023fcc58
+>>>            9000000100420000 90000000024c6848 9000000002416848 0000000000000001
+>>>            0000000000000000 000000000000000a 0000000007fe0000 ffffff00010eb800
+>>>            0000000000000000 90000000021fd000 0000000000000000 900000000205cf30
+>>>            000000000000008e 0000000000000009 ffffff00010eb800 0000000000000001
+>>>            90000000025b4000 0000000000000000 900000000024773c 00007ffff103d748
+>>>            00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
+>>>            ...
+>>>    Call Trace:
+>>>    [<900000000024773c>] show_stack+0x5c/0x190
+>>>    [<90000000002415e0>] dump_stack_lvl+0x70/0x9c
+>>>    [<90000000004abe6c>] isolate_migratepages_block+0x3bc/0x16e0
+>>>    [<90000000004af408>] compact_zone+0x558/0x1000
+>>>    [<90000000004b0068>] compact_node+0xa8/0x1e0
+>>>    [<90000000004b0aa4>] kcompactd+0x394/0x410
+>>>    [<90000000002b3c98>] kthread+0x128/0x140
+>>>    [<9000000001779148>] ret_from_kernel_thread+0x28/0xc0
+>>>    [<9000000000245528>] ret_from_kernel_thread_asm+0x10/0x88
+>>>
+>>> The reason is that defined(CONFIG_ZSMALLOC) evaluates to 1 only when
+>>> CONFIG_ZSMALLOC=y, we should use IS_ENABLED(CONFIG_ZSMALLOC) instead.
+>>
+>> Ouch, I missed that CONFIG_ZSMALLOC can be configured like that. I
+>> thought it would always be builtin.
+> Make CONFIG_ZSMALLOC be bool can solve this, if you think it is reasonable.
+> 
+>>
+>>> But when I use IS_ENABLED(CONFIG_ZSMALLOC), page_movable_ops() cannot
+>>> access zsmalloc_mops because zsmalloc_mops is in a module.
+>>>
+>>> To solve this problem, we define a movable_ops[] array in mm/migrate.c,
+>>> initialise its elements at mm/balloon_compaction.c & mm/zsmalloc.c, and
+>>> let the page_movable_ops() function return elements from movable_ops[].
+>>
+>> Before I took that easy route to just get it working quickly, I
+>> envisioned a proper registration interface. See below.
+> When I found I cannot access zsmalloc_mops in a module I considered
+> the registration interface. But in this case I think that is an
+> over-design and not straight forward.
+> 
+> Moreover, a registration interface looks like a redesign and not
+> suitable for hot-fix.
 
-Thanks,
-Dragos
+I think you misread my message: This is not debatable.
+
+If you don't want to fix it properly, I can send a fix.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
