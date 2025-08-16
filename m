@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-772291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743A8B290E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:06:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D138EB290ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14351B63D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 23:06:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50377ABF04
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 23:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604B223F405;
-	Sat, 16 Aug 2025 23:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7621D63EF;
+	Sat, 16 Aug 2025 23:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcuVuj8i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTI2DQ+Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42583176E2;
-	Sat, 16 Aug 2025 23:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F453176E9;
+	Sat, 16 Aug 2025 23:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755385588; cv=none; b=auDSBdytVUtzVim1+Ics43tY5MpYuIN0a/kW1i2iIX4ZeMYvMIv7wVy3JB/DdcjBhJZqSdGQKImjWV+UMd3Me3U/88QhHmziogX5qvnRUMi51SYjYxAkAux64+X/idL2BDBQ0Gc5d/BHdfU3YJrDlbhss2MkOLZeS0iioEch1JY=
+	t=1755386201; cv=none; b=U3LIOXNkYoK6skO39kZzASNGP7B6UDWq16MfAUc1nCc29s3KGHVAoPqLKAHUv0GweJOe4/iZMFHrjFWLoiAQpse2+Uq6atzE1HCGayT2nzwryolNRBG0m7tX0XJhnVdT8u880dzM5fCh17YUeRkdDDFVWJ/iLwLopb5NM7Awe4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755385588; c=relaxed/simple;
-	bh=iSKnB2zZ894IV2ruSrlFuVSXiPxFFjRzOOZWUxvj+Qs=;
+	s=arc-20240116; t=1755386201; c=relaxed/simple;
+	bh=OHkAbGlDKsYvfqX+OzqqHwvaoFnMvxEZtaai09lKiY4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Irt9mSMeGd8jE2ixQuRvKdri3yFWSCGXJCCjsn1N/7MnNRb2cOT2cjAQ0GbZNul2I5mJSDjgetrMetcA+J3zolbtTjT3AeGy41/r6+MhpPhddYsRb4eaOB4IeY91UoRTFD4+idkx1DFTV6eO6uhSH8Imry6c+rLyMoCSHHzzecE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcuVuj8i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10163C4CEEF;
-	Sat, 16 Aug 2025 23:06:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpDXqD4ymFKdKnJQqoBgFFIA/cgYT7OrLGmqyb3gyvp67d/nBnQjbI1QXD6xdelBYBeceMso9Wh8b+echdbtHxJdTtQso9bCjeadGdw+yf8hn+gD4YngAQgxo8/NMtwyEkvaY3r3bGnU+NtbJi+IC/AufeD3NnuMUBOv+Qu7Sdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTI2DQ+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F6BC4CEEF;
+	Sat, 16 Aug 2025 23:16:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755385588;
-	bh=iSKnB2zZ894IV2ruSrlFuVSXiPxFFjRzOOZWUxvj+Qs=;
+	s=k20201202; t=1755386201;
+	bh=OHkAbGlDKsYvfqX+OzqqHwvaoFnMvxEZtaai09lKiY4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RcuVuj8iWC1LOVXruzh1iTw7J1+fVWyGVSFT1uUB+DSeSQ6JtyOLcaot6P/ntJkDS
-	 /J3a7ja+Ak4l8PFb3vWIr9UvjcZWLFJjXiIakqp0pXoK9Qx/VuC73hFS7mMHzz+rrX
-	 O+rzlI/6N5f8Kf1MgKUAdmSPOI/Mfe1ARUdbpHUmb0FCo9Qfij/LTfST0v2knlSgJy
-	 KH8IAYi51toR3PCMqW3lJEkejPvcVNqcbJjXiBumiruuTC/ZQpRubDfP7WKnBO2XuW
-	 Q6tWgIt3BrN2ebi/O4FHgZxfTlB92sa7y9vIwgCjGwMiohke7q3vWjVCOs856iGI3p
-	 EC0IEhEpvRabg==
-Date: Sat, 16 Aug 2025 16:06:26 -0700
+	b=tTI2DQ+ZYBGZ3nagYB/0VvE8BZYgTsR+poCS+c20iBCA1LNtz+awi6X/uTLW93f4H
+	 CTkmgeiWSyzoFRonRwF4lsgq8AqO1GWTfsRmrAEHJ8Sb/rCuj33jBhlVFIqNuvZ/zP
+	 FGrl1zqsKj7JsawWickGyKG5x1qZhpK5RClHKalq9jt4WxY6ro7Qe2Z5BnepSjaj66
+	 5NweiLL0qJiSbwQV4W6JhM1HYu97aoaL3MTtKqMhBD2eB5QrwV7G3T24r8+DFgjvYR
+	 0Ha1aQKx5sODtppA0Lr4uZQttGLIab42iBgSCxky8bzF9hFajM6ljHVYJQvBywwoQ1
+	 t8d3LpALm9LKQ==
+Date: Sat, 16 Aug 2025 16:16:39 -0700
 From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, nux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
-Subject: Re: [PATCH net v3] net: stmmac: thead: Enable TX clock before MAC
- initialization
-Message-ID: <aKEO8gFxUhid/QOX@x1>
-References: <20250815104803.55294-1-ziyao@disroot.org>
+To: Troy Mitchell <troy.mitchell@linux.dev>
+Cc: Icenowy Zheng <uwu@icenowy.me>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: thead: th1520-ap: describe gate clocks with
+ clk_gate
+Message-ID: <aKERV0c7jat//279@x1>
+References: <20250813171136.2213309-1-uwu@icenowy.me>
+ <20250813171136.2213309-2-uwu@icenowy.me>
+ <aKA9QxKo3fg-bdNa@troy-wujie14pro-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815104803.55294-1-ziyao@disroot.org>
+In-Reply-To: <aKA9QxKo3fg-bdNa@troy-wujie14pro-arch>
 
-On Fri, Aug 15, 2025 at 10:48:03AM +0000, Yao Zi wrote:
-> The clk_tx_i clock must be supplied to the MAC for successful
-> initialization. On TH1520 SoC, the clock is provided by an internal
-> divider configured through GMAC_PLLCLK_DIV register when using RGMII
-> interface. However, currently we don't setup the divider before
-> initialization of the MAC, resulting in DMA reset failures if the
-> bootloader/firmware doesn't enable the divider,
-> 
-> [    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-> [    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
-> [    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
-> [    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
-> [    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
-> 
-> Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
-> divider before MAC initialization. Note that for reconfiguring the
-> divisor, the divider must be disabled first and re-enabled later to make
-> sure the new divisor take effect.
-> 
-> The exact clock rate doesn't affect MAC's initialization according to my
-> test. It's set to the speed required by RGMII when the linkspeed is
-> 1Gbps and could be reclocked later after link is up if necessary.
-> 
-> Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+On Sat, Aug 16, 2025 at 04:11:47PM +0800, Troy Mitchell wrote:
+> On Thu, Aug 14, 2025 at 01:11:35AM +0800, Icenowy Zheng wrote:
+> > Similar to previous situation of mux clocks, the gate clocks of
+> > clk-th1520-ap drivers are also using a helper that creates a temporary
+> > struct clk_hw and abandons the struct clk_hw in struct ccu_common, which
+> > prevents clock gates to be clock parents.
+> > 
+> > Do the similar refactor of dropping struct ccu_common and directly use
+> > struct clk_gate here.
+> > 
+> > This patch mimics the refactor done on struct ccu_mux at [1].
+> > 
+> > [1] https://lore.kernel.org/all/20250722080535.60027-2-ziyao@disroot.org/
+> Should we remove this link to the cover-letter?
+>                 - Troy
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+Good point. Yes, I think this would be better than a link as it is now
+in master:
+
+54edba916e29 ("clk: thead: th1520-ap: Describe mux clocks with clk_mux")
+
+There is already v2 posted so no need for v3 just for this. I can fixup
+when applying.
+
+Thanks,
+Drew
 
