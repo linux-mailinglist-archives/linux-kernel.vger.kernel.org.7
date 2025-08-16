@@ -1,101 +1,148 @@
-Return-Path: <linux-kernel+bounces-771754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5051B28B2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AFDB28B30
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C9F567D78
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4785AC63C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0E81F8AC5;
-	Sat, 16 Aug 2025 06:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BA51F1518;
+	Sat, 16 Aug 2025 06:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtMrVXM6"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsqMZVMM"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814563176E8;
-	Sat, 16 Aug 2025 06:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE593176F0;
+	Sat, 16 Aug 2025 06:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755326780; cv=none; b=UmK7UcjhzicuMo4oU0ZjnrFmcd0ifzNwbt5aaKQ35aSeB2/xA6e0wIF8+HRwKTv1J+cUC5Ye3OQjjElodVWjlRfmKzKOzjAV00gT9Rj1vW36ncZl0U3Jpl63ugZh9Rn5R05ezVX4tGx/0KXYEYE3i+vCKToYSubauiG/pBJJ1D8=
+	t=1755327103; cv=none; b=LtRI2YJupQoVJI7drHxTrrU37F1PbWBo5cxfxnvxYv/YHZsMynvrW6YcpXPLowvj2zCtJD4DIJEiQUX4UCPXLmCdVmBLumG+TaGKm5qMwFgX05VyovxME3uvP9jgJDRSV7jwyhQjbBQCNygWewYkO6L5gEpyl5DS0dQSdgDpyow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755326780; c=relaxed/simple;
-	bh=gAvOBrY5es/yKWkDs7Yk9hOG49QFhgslkJsBwv3zr0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rB8ALoJqu38K5jvVkWjZZMzBTcJMls6bulOxV+OMGtZ905pFHiiWJzcqWKF8mhW5w/mepV6PybT+mZwHlWpPjDlJY25fntLRVSBllCc25jUTdJDk7QWfaLEDNQm0bKFNGGV3VlIMh2Q1IYD3ooUUbXMzMo05AddAsPHzJX+35bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtMrVXM6; arc=none smtp.client-ip=209.85.160.42
+	s=arc-20240116; t=1755327103; c=relaxed/simple;
+	bh=I1I/6P6R/jJHDP7d/EmBJ02o3OhrJmNh1erLpSB768s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z1Y7hdWWAe8taSYuTnjUbusYqfReO777Et/PyolP56LINWxc2VfWZT2GaiTkeiQLgyoobO7BVryn2+vHQJJtefCNvJKhfW+jSi1tm0DOmevRbV4webvefQ+e71+OTMubIh97bxYDh6PlRFGSQRgsiOxsrfNkeN5rqP7bPLcVutk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsqMZVMM; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-30cce5cb708so1817355fac.0;
-        Fri, 15 Aug 2025 23:46:19 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e434a0118so1249290b3a.0;
+        Fri, 15 Aug 2025 23:51:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755326778; x=1755931578; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAvOBrY5es/yKWkDs7Yk9hOG49QFhgslkJsBwv3zr0s=;
-        b=dtMrVXM6kPB2hN/CJGon7DcoY5f5bE7qDG57be7Vq7NAk98eos0aKQ6lbm+eGS7sdk
-         LKpBeCFmlXnKRsabH/AuL76Rn0+patLDHeGwkFYCvfEBwIIScMAaV1IMkMGF6G2yMDA8
-         oWYVfGUV8K1r2K20oMO8mSoy/dItXoEdcvw0yDt/N2ou4u8sqpnG/G2Hbt2FXSGtrfM+
-         Et4OMaWQdbv813BJZwtgtTHAXAJd+3o+y1pDxTH4PK9Af/N2sJIZp1EgGhuuT83CcQGY
-         KiU9H01nozKEL8cEt/rvMVHjycJ9rLUA52CtdBDlA6c99rRz9ZTwSk+BeblCeu5YAY7k
-         PNnQ==
+        d=gmail.com; s=20230601; t=1755327101; x=1755931901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=39WcNe2AXItXXp9jrDQpd1B8VQX1N+yULMm80zOpn5Q=;
+        b=EsqMZVMML1Eh2ZNNHqqyPAoQbm1Mnz/OkEaquoslcXl4b4dRySbnuleHE4IBx2JOKJ
+         rON9LKpTCC+RoAzkHTUSNSKa+qb7F/GN2uk5+3KPB7Ms3TupgoZtuurLivFUNLjlV/jg
+         aBcWDubxHHmDu0fdnErgBQ0iv5EktVU98lpi21n+5GfvpU2PZSdnHkOG34lrCMv9v2xv
+         8Jz874zMwVxiJ+8RazV6QhZVNdXCLveAMHXawcxMRqXUF1GblUesCk8RUAz4J9RlH3ta
+         kAwCB79kF7Z/XriL9Mvdfy7Yuomf5OB4xCiV/Bozb2i2czvtBGBMs/xa+qppCIgeJCZt
+         4gOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755326778; x=1755931578;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755327101; x=1755931901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gAvOBrY5es/yKWkDs7Yk9hOG49QFhgslkJsBwv3zr0s=;
-        b=SFUcq+0TeW0SIwlmfFFJXu2DCpbYV3aeuuUq/Qux8DgCz7THgqhsZrmKHr0/CVnjAJ
-         3Qwkx/ay3ATCqiAGcyq5fMLxYEAuoTQFH7oVQbFlx6OKb6NptzERSz5YbQvXlp9wlnKQ
-         /OT8cntCcoigMgHuQpHfyQFbST/Kp+K+X8dtI1J9bgXj8rUqxxk6TDoH9kkOcG/gAnvc
-         EdGbdmvLnFHhmydZamJcBaiApZvE0Py/uL/lDceWFhEVQb0qDeuIg0zk7UHbXxh84ZhD
-         hyf8U9l4SA3CqgnB1YB3Rq4B2GshhwLrrM0AoEg5j0qx+dUfs6H0YRuFSoWGWiQp6gMk
-         tkJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzJ+jYze/hzCpvZX/nzHvT7hw/ms64a1BrmtKUqKxngGa1LE8F81UxR6oAG2bektZ5vlUMiYQshOigjSk6@vger.kernel.org, AJvYcCXGafCDyqCaYL8+eEyBCX9HHCO2EaMX/MiPDS7MaUfEvqL4yi0jNV0+YTCB4F0cZ5lDuvQr/gYCtg5q@vger.kernel.org, AJvYcCXq1IFteHt2G3WcXWBBJzvTHxXK8IMpAWMBnPKV2JzXZNB3z9HyQHYsYSQ8qlSG5y+Djz5l3+Wa+H6Q0WTzoN2NFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVx7NMQ9P3sRc3qIulkM3fjKDxfQinuZyq7KO0e0E6S2uq1aOO
-	XKXUZFeW4El6pvuXYzcKx4LmomWRfsSP9/Xxc06g+pqg6ob2bzsau3oC3+9Q9fWFWH/P1DYh1e1
-	HxEdc9eWEqD8uPifKDfMgHlQK7iO2ZR8=
-X-Gm-Gg: ASbGnctfl4NoM+LMcxzgTyNpX4PvV6f5WL1mhLsfXtdkQAdOjdYPTTGsWwssr8FmqgG
-	JqNCyTW/5wUVGKSbrXjroLUFsHDqn1fPQakdGB8WHKYVpLTveBpeJjg7r5HOFuxcu4PWRrj7NGn
-	C0tbZqaDQUItS7nlOCLzwanA+uJqm5yvfaqIVYihoxhWXOrF3qqUVeM5ad76vIYfAkHfFmXar/+
-	Fn5vpV8DqIW8pb+nIFi/xVopqmtTkbPtVGi9N8=
-X-Google-Smtp-Source: AGHT+IGjUuTFMbcHoxRQ16+EoLIDzFiULTRGmEHr00m0tAm0LGBEAq+siKWzqCMyJm8+Yk6JcOtKE+H+Yf8xIItqBpE=
-X-Received: by 2002:a05:6870:8910:b0:2d4:d9d6:c8d2 with SMTP id
- 586e51a60fabf-310aaec9831mr3004527fac.35.1755326778529; Fri, 15 Aug 2025
- 23:46:18 -0700 (PDT)
+        bh=39WcNe2AXItXXp9jrDQpd1B8VQX1N+yULMm80zOpn5Q=;
+        b=KlfRJyKmhLXRDZozsxKwmbCS3jv15uxBSD6pAFK3sBXU5IxBjRcidHHJa3RyvBvQqL
+         Lps6CNsqoFqRp682PHgaR4qTE2o9Yyj++QQQOriUN/Y62C+/Nqws9ZN6ka1Iis0jKCAP
+         zXH373xCPKhJY891GCYBewf0SoZotABR+cgRwHL3BgmxLyjjlQ3LagvTfu4APlXzFMp4
+         8tsEaNzRm7p2InVEdiD/nKEgJNqmE7kh4DSuqGZvizStM4EL76JsTDHdVWMgXUnkIac2
+         Vd/ICyteXMEaHSi0L47iPwZgZ0QOh0WFZLY67Z1VVh3I5sq/71Hb45U+kD+Boy9c+UHl
+         5Urw==
+X-Forwarded-Encrypted: i=1; AJvYcCWndd9aMntFmX8Th7QW1j692JYdBbkyhh3YoM1j0zBfnUClpNMHz/xT8HzNttc8CKMRgE+sIWiRS9M8P5s=@vger.kernel.org, AJvYcCX3tN57IhjxX7eNOkqiTrLhSKREiB0r9EjaxWOPMEhoOqQ4tJDCzwh0LEWX2Wwz3wRUlCKllaiA@vger.kernel.org
+X-Gm-Message-State: AOJu0YypuAUpTCFEJfk1jMNbGNNajiFTjgeppz9ov3y/ZJFCvj7gOQSm
+	A8rr+i10dfdR3h4Q1mr9nMYIByBw812jUZco/LcSRxyL/SxrBctWVxvl
+X-Gm-Gg: ASbGncuNzZB4kVPgXahCQxUXchH7A8WUQ/8/hy0311kHuMCltBuTRhGRf+Gm9uHzkeQ
+	k/shFwKL2OHTiDhahaYBliwMNgaHQxaIfwq3BZhdybwgCNFqq48Pmh9P8eJt+7n0Qg++Yw8JDla
+	n8vzy369nKQjijUyZFFr1DS+rsmv+RR41lhKezKt7rXEZK6RmyhwWsXTZd/pVu1QJsM/UzUPi4Y
+	VwpKPi9F0Ey8RIZT+1d8PGhBxsvnOvns/tQGE8ETRL/wb15xem/x1u1EuhQu8HzP8PkKNKWJqQa
+	HYcDvjL4dbtmZ8fSD53BUyzqmyAlrC0WedB6x1fkDCFQ60bB4biHQ4lEIeIXpd20ZipMFuVeEee
+	l/QClt6ZFi62XjEbqwqUI+MRJzNEMr+c=
+X-Google-Smtp-Source: AGHT+IGUsLmuiPcI2giCI2IF6qVd6KgQXhFiqbI/NN3EugFt3xJ2EVq0iMIu3K9bJKvvdzrEtNpDKw==
+X-Received: by 2002:a05:6a00:3493:b0:76b:fd9d:8524 with SMTP id d2e1a72fcca58-76e446d626cmr6485065b3a.2.1755327100857;
+        Fri, 15 Aug 2025 23:51:40 -0700 (PDT)
+Received: from archlinux ([2401:4900:67c2:7988:186:bdc:a8e7:4149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e455b5f9asm2512433b3a.107.2025.08.15.23.51.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 23:51:40 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	darwi@linutronix.de,
+	sohil.mehta@intel.com,
+	peterz@infradead.org,
+	ravi.bangoria@amd.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v5 RESEND] x86/cpu/intel: Fix the constant_tsc model check for Pentium 4
+Date: Sat, 16 Aug 2025 12:21:26 +0530
+Message-ID: <20250816065126.5000-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815182742.45541-1-suchitkarunakaran@gmail.com> <aJ-ScOp3ZCG6PQmD@google.com>
-In-Reply-To: <aJ-ScOp3ZCG6PQmD@google.com>
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Date: Sat, 16 Aug 2025 12:16:07 +0530
-X-Gm-Features: Ac12FXycVXpv53_SMZYPs1lhxZFFkJf2blSiPR5TbUndixnCz2Z4HJEjGK5pwjQ
-Message-ID: <CAO9wTFj7S7G2bqbiuKbR+o7Y0u1EkYY5GsHasJZLmAo5ZuCx9w@mail.gmail.com>
-Subject: Re: [PATCH RESEND] perf/util: make TYPE_STATE_MAX_REGS architecture-dependent
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, guoren@kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-csky@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Namhyung,
-Thanks for reviewing the patch. I'd like to ask if there's anything
-else I should do regarding this patch, given that it's supported only
-for x86 and powerpc?
+Pentium 4's which are INTEL_P4_PRESCOTT (model 0x03) and later have
+a constant TSC. This was correctly captured until commit fadb6f569b10
+("x86/cpu/intel: Limit the non-architectural constant_tsc model checks").
 
-Thanks,
-Suchit
+In that commit, an error was introduced while selecting the last P4
+model (0x06) as the upper bound. Model 0x06 was transposed to
+INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
+simple typo, probably just copying and pasting the wrong P4 model.
+
+Fix the constant TSC logic to cover all later P4 models. End at
+INTEL_P4_CEDARMILL which accurately corresponds to the last P4 model.
+
+Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks")
+Cc: <stable@vger.kernel.org> # v6.15
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+Changes since v4:
+- Updated the patch based on review suggestions
+
+Changes since v3:
+- Refined changelog
+
+Changes since v2:
+- Improved commit message
+
+Changes since v1:
+- Fixed incorrect logic
+
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 076eaa41b8c8..98ae4c37c93e 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86_power & (1 << 8)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
+-	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
++	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
+ 		   (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 	}
+-- 
+2.50.1
+
 
