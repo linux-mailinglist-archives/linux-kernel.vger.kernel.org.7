@@ -1,143 +1,168 @@
-Return-Path: <linux-kernel+bounces-771569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4479B288FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B3DB28903
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F4D5A7D39
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71A33A93E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCE56BFCE;
-	Sat, 16 Aug 2025 00:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAA717E0;
+	Sat, 16 Aug 2025 00:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q01lbT5S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcdUkQYi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2E0EED8;
-	Sat, 16 Aug 2025 00:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CD4189
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755302511; cv=none; b=L0kL6NBrj/0WZDTjPl3wJoEMHkRjhcIUoDYGamgtOfdWDWXhyRY40Wxo9AOAFk5RCEpuF8YJGBPcBK+KTzCP3JqukcumlGNn/vnnsWjTuowg+XUGhXde9IiLBft92jiZReCt5w3Pm/YQ7Q955SvKM0cs+4g6sXO/gZ17Qy6rkdg=
+	t=1755302740; cv=none; b=LYO8y3qaerZ+YaC24jdaHw/KvBtWgawt2vLY+SI4f+Gkg1Og8ib0P1fD0a0GFKe6iyx8s/WfHbipnYZG2YqPlimJuYfc9EJ/jLBWpV1FbvZtQwEPom1Ka4trBzxzVzph5qbc1BIe/ljsafxBXdJL8o4s9lFF9yKRaAeZTxWfxNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755302511; c=relaxed/simple;
-	bh=FGAfKe2mUubPShjfHv2CMrtmsbPxnRWUzJcdffSD7pY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jyFtCkX8Q6ozpndncIHKCxT+EqQC7ly4UXUmooja90JIdpe+TelDdqKTJEL/5JgOL6SxdbJBW+XgLck1ATt9jxug0xhGwKYwhuH+u0Gl44pk3JCOBKpReqWONUIACN7jiEqagJXe3oReRSw+eqNBljoQ7Fq3fNoGNdoahkO7DtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q01lbT5S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2649FC4CEF7;
-	Sat, 16 Aug 2025 00:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755302511;
-	bh=FGAfKe2mUubPShjfHv2CMrtmsbPxnRWUzJcdffSD7pY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q01lbT5Sf7em/FB4qtZVWjiUNyBptsGA1+xRHaDUHJQSBHqi/A+9pxefcV9cUpLtA
-	 r/Huc/7OOLG1UgSyPwBmgllW+xQfRjelusSgyOiwiKp3tYopohsMyljCIHmh/YySzX
-	 n+wqJ5gKqRcyrI3a7w87kQI27af2JXmSzSMDMRBXbsjWx9uTOuTF8U6mUNfkfN9TEo
-	 v6TtEQWMwVRS60nnqKPhN0oHQoU9h5bgVAwjXnnFsvKF+9mR5+lNWzM1meNbNAItXt
-	 zvgqbwfEUcKv0Kphtd+EaVRoMB/vAEG+PqY0LvBKoIgYtmx1fwiZ+iPq8CBG+WFMGc
-	 Q9cTfXazjCcUA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 530F4CE0B31; Fri, 15 Aug 2025 17:01:50 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-Subject: [PATCH 3/3] rculist: move list_for_each_rcu() to where it belongs
-Date: Fri, 15 Aug 2025 17:01:49 -0700
-Message-Id: <20250816000149.2622447-3-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <a4c6f496-ca08-46f5-a159-03074a57706a@paulmck-laptop>
-References: <a4c6f496-ca08-46f5-a159-03074a57706a@paulmck-laptop>
+	s=arc-20240116; t=1755302740; c=relaxed/simple;
+	bh=fp3ba3yh1PjKXwhGIQu9YreT6Qt7pwV5DNFMwkhYq+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=om3n2ea3pGD/VrMC8AcCVT6EA0M9lDj3VAABBdAAe+HNg/5USJqfLi6Yja2+1MERB+SvfhL41ptMPN/OjKwOniEI18YjNJj9CM8ssuXHKHhQLIUAsnkJ7YG7h3xQqO2oQOzzWPSCeZZAAm+DHVpgfflsWsLQgGngMEUB8dFmDMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcdUkQYi; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755302739; x=1786838739;
+  h=date:from:to:cc:subject:message-id;
+  bh=fp3ba3yh1PjKXwhGIQu9YreT6Qt7pwV5DNFMwkhYq+Q=;
+  b=dcdUkQYi7pE4jSqOD+qAs4MpZ5y7WHm/A7nbO3nqyI5oawaqK6aUhedH
+   QjKMjAex3vEAKC6dAFbwO9paa/CI9HWx2Fiy4W5gpb6OyZ5REODhNsUgn
+   1EGdcWd2NQ8cL8pXx63toBsFfV/3+NptBZUXkP6M2AD+57gRBTOHA8067
+   KvOCgLy9U7sqp+VzXS4pStRncYHXGvmKieDZlKx9YVN6Ejq4LeHdA0O4B
+   KTfbVpfgFSsDbTae0+P4ulBaYXa3dXpuh9Kep9Ebb4AM81VSQwNhm15xf
+   ZVlZfy9K+rnYN7HrfMqnhqOlr33UQ8UJ5HsgXtTlnbQo+Qm1J4EXeETPz
+   A==;
+X-CSE-ConnectionGUID: zwTEAn7qTAKP3hQH15zz4g==
+X-CSE-MsgGUID: 6EMVqLu/StyPbNJ5VpSlEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57551844"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57551844"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 17:05:38 -0700
+X-CSE-ConnectionGUID: rTbHQt0cTmu2w17q0nLINA==
+X-CSE-MsgGUID: 7V9AJR3mSJiyfS8C8aqdOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166614623"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 15 Aug 2025 17:05:37 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un4QR-000CRW-1P;
+	Sat, 16 Aug 2025 00:05:35 +0000
+Date: Sat, 16 Aug 2025 08:04:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev] BUILD SUCCESS
+ dca002f8b3cf0f60bf9255c775600e98e56080a6
+Message-ID: <202508160842.OxkcUaSW-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+branch HEAD: dca002f8b3cf0f60bf9255c775600e98e56080a6  EXP arm64: enable PREEMPT_LAZY
 
-The list_for_each_rcu() relies on the rcu_dereference() API which is not
-provided by the list.h. At the same time list.h is a low-level basic header
-that must not have dependencies like RCU, besides the fact of the potential
-circular dependencies in some cases. With all that said, move RCU related
-API to the rculist.h where it belongs.
+elapsed time: 1449m
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
-Reviewed-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
----
- include/linux/list.h    | 10 ----------
- include/linux/rculist.h | 10 ++++++++++
- kernel/cgroup/dmem.c    |  1 +
- 3 files changed, 11 insertions(+), 10 deletions(-)
+configs tested: 76
+configs skipped: 1
 
-diff --git a/include/linux/list.h b/include/linux/list.h
-index e7e28afd28f8ee..e7bdad9b861827 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -686,16 +686,6 @@ static inline void list_splice_tail_init(struct list_head *list,
- #define list_for_each(pos, head) \
- 	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
- 
--/**
-- * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-- * @pos:	the &struct list_head to use as a loop cursor.
-- * @head:	the head for your list.
-- */
--#define list_for_each_rcu(pos, head)		  \
--	for (pos = rcu_dereference((head)->next); \
--	     !list_is_head(pos, (head)); \
--	     pos = rcu_dereference(pos->next))
--
- /**
-  * list_for_each_continue - continue iteration over a list
-  * @pos:	the &struct list_head to use as a loop cursor.
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 1b11926ddd4710..2abba7552605c5 100644
---- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -42,6 +42,16 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
-  */
- #define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
- 
-+/**
-+ * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_rcu(pos, head)		  \
-+	for (pos = rcu_dereference((head)->next); \
-+	     !list_is_head(pos, (head)); \
-+	     pos = rcu_dereference(pos->next))
-+
- /**
-  * list_tail_rcu - returns the prev pointer of the head of the list
-  * @head: the head of the list
-diff --git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
-index 10b63433f05737..e12b946278b6c6 100644
---- a/kernel/cgroup/dmem.c
-+++ b/kernel/cgroup/dmem.c
-@@ -14,6 +14,7 @@
- #include <linux/mutex.h>
- #include <linux/page_counter.h>
- #include <linux/parser.h>
-+#include <linux/rculist.h>
- #include <linux/slab.h>
- 
- struct dmem_cgroup_region {
--- 
-2.40.1
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250815    gcc-8.5.0
+arc                   randconfig-002-20250815    gcc-9.5.0
+arm                               allnoconfig    clang-22
+arm                   randconfig-001-20250815    clang-16
+arm                   randconfig-002-20250815    clang-18
+arm                   randconfig-003-20250815    gcc-14.3.0
+arm                   randconfig-004-20250815    gcc-8.5.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250815    gcc-8.5.0
+arm64                 randconfig-002-20250815    gcc-8.5.0
+arm64                 randconfig-003-20250815    clang-22
+arm64                 randconfig-004-20250815    gcc-15.1.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250815    gcc-15.1.0
+csky                  randconfig-002-20250815    gcc-15.1.0
+hexagon                           allnoconfig    clang-22
+hexagon               randconfig-001-20250815    clang-22
+hexagon               randconfig-002-20250815    clang-22
+i386        buildonly-randconfig-001-20250815    gcc-12
+i386        buildonly-randconfig-002-20250815    clang-20
+i386        buildonly-randconfig-003-20250815    clang-20
+i386        buildonly-randconfig-004-20250815    clang-20
+i386        buildonly-randconfig-005-20250815    clang-20
+i386        buildonly-randconfig-006-20250815    gcc-12
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250815    clang-22
+loongarch             randconfig-002-20250815    clang-20
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                 randconfig-001-20250815    gcc-11.5.0
+nios2                 randconfig-002-20250815    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                randconfig-001-20250815    gcc-8.5.0
+parisc                randconfig-002-20250815    gcc-14.3.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250815    gcc-11.5.0
+powerpc               randconfig-002-20250815    clang-19
+powerpc               randconfig-003-20250815    gcc-11.5.0
+powerpc64             randconfig-001-20250815    gcc-14.3.0
+powerpc64             randconfig-002-20250815    gcc-10.5.0
+powerpc64             randconfig-003-20250815    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250815    gcc-12.5.0
+riscv                 randconfig-002-20250815    gcc-8.5.0
+s390                              allnoconfig    clang-22
+s390                  randconfig-001-20250815    gcc-8.5.0
+s390                  randconfig-002-20250815    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250815    gcc-11.5.0
+sh                    randconfig-002-20250815    gcc-12.5.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20250815    gcc-11.5.0
+sparc                 randconfig-002-20250815    gcc-13.4.0
+sparc64               randconfig-001-20250815    clang-22
+sparc64               randconfig-002-20250815    gcc-15.1.0
+um                                allnoconfig    clang-22
+um                    randconfig-001-20250815    gcc-12
+um                    randconfig-002-20250815    clang-19
+x86_64      buildonly-randconfig-001-20250815    clang-20
+x86_64      buildonly-randconfig-002-20250815    gcc-12
+x86_64      buildonly-randconfig-003-20250815    gcc-12
+x86_64      buildonly-randconfig-004-20250815    clang-20
+x86_64      buildonly-randconfig-005-20250815    clang-20
+x86_64      buildonly-randconfig-006-20250815    gcc-12
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250815    gcc-8.5.0
+xtensa                randconfig-002-20250815    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
