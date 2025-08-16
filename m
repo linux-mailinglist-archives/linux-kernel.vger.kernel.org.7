@@ -1,290 +1,170 @@
-Return-Path: <linux-kernel+bounces-771596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34923B28932
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE056B28934
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEEE1CC23F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9E01CC21E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E97C8CE;
-	Sat, 16 Aug 2025 00:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ti40O1a"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331011758B;
+	Sat, 16 Aug 2025 00:23:15 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE82211C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369A38B;
+	Sat, 16 Aug 2025 00:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755303749; cv=none; b=qv/0Bxw7sqmtOvoNmRaQidJfUpGZhgOCMnCDe8QsdbUnLxMSdyOfYk6GJu9BfPchgOTlMiXCdBM7azh6tAvg+kmTFY5qDsExFJ29mWFpzqP43h8OiIScjPL139569+yYI1HEdM1sWJmr5R794WO/qrxlQQM+USVowyfcPKwQXEE=
+	t=1755303794; cv=none; b=Le4pO/LeD0coYyP+HnEZJSxA/4cH+dWBIGdfaP69KLWvU3LXFl3VIHzSue4Q+u70FUaNOB3g6TjZ3KrB8glstcBEj3jc2pm80ONDKP+djPejgaD/sDG3w0PVWk4xoncg6YoDazowbGjAY2kHPfzyzNiFkMps9pEBucw9b2zblC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755303749; c=relaxed/simple;
-	bh=Wh3z6S19D84SL8OrP7UhmAFviWo7tPijNFSdv3grLXU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J8/SbSQV5t1L7TfompoX2wwKH6W+RifOCAo2bZaCy4NcRA3uNSOBnHLNUwXBG8H3vTifhzGYMS9vgeMcGMny6AeDwsTF+fSr7RGRQRU7O9O8/07epM2XiWgR1x3SCPVdIwNp2wF3VCiqNhnZAFGI2q4ghoCFE63EwEOEiHx3qeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ti40O1a; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323266dcf3bso2244407a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755303747; x=1755908547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X3wBdk9H1Vt6sme48JNCL8OLAP+nfd/lh3+nxpJ1X4s=;
-        b=4Ti40O1aJGjorYjUrTXZsG8MBccSVbphUkt4/ie8WE8Pd0BHQDuprSfFKlN/z7QRIf
-         +eFERrI44UuUyIccNxFGIGR6y2JeBm3wmXDUDkdo8mhKQmYmvYM5ax8Ciy/FshikSrj5
-         4ytmDw2nAuK3CQxWElIw+WhQRYqjjevVd65ZWsa3bd/rnwVPshAM2hLz8RFujKzIM/O9
-         UEW6MZA0k/PQt5SkjvbaCAQadlvFJKa3FGglNY/MoyEkyWRGnGDvVP0+j476xLUH+Ak7
-         dQ4J9f56jmTVn427PTO2HynxMs54qtlf7js+sAAM/z9srkxDS68eYWeUyVUN2Oro6Tts
-         wrAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755303747; x=1755908547;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X3wBdk9H1Vt6sme48JNCL8OLAP+nfd/lh3+nxpJ1X4s=;
-        b=d/+2VuXJflQLU6rQK24aH5Wtlvhc0e9fgbLRyXXVhdOxctQVjpgNrHJwCV+CWTk5tP
-         qm0cdqifzcA4ArDgbzDqvyWXX8o5a/ARCowFZgbL+oqJGstzMp0M1wG13VA3M5n5AgYC
-         zBTMf1FvgoD4CHpa8wj9S0xKqgb4CmuuuWWzfzn1d56kHkdzUZ/FuO0UZja4N0FTd++V
-         5D1u8Jxd7194ou2gBmpa7WTk8KM7M8LrB8TyWX/zS60lDxwfi0dWiGTHZBhLeMkf8sSZ
-         hjwlCbqvi032d2UGW8mQE4rRn9+fRq+EEcsQN63Ra4TybaRTnAn4mDNMPIx2ASQzNw0s
-         N0jw==
-X-Forwarded-Encrypted: i=1; AJvYcCX35lw9FwZEBHi4/JKRkwdfKfnsD9DXRvSEGawztAtWIGQy4LcUpG+GDPjKtXeA2+6nmW/c7BNDSKOwLRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnbtgP/o/htnYVbZ/p8q2UNn8lcmMh1Pkvtei2nPZ1u57h5lzA
-	NdpHC1Xc6DR4ffqV1EUQxDUwZ/Csyh+3VBVDKv3EBMMsrKLQX22YmU7bvqPwGiVPItmb2kv+zwn
-	kJ+4hfQ==
-X-Google-Smtp-Source: AGHT+IE/x8l+IwNZ3Owxqu+oRGM35gIi/2y5zovy6E25qA4AEQWyEFk/gxtzR51nhpfEcZGzA+9uX2edFJw=
-X-Received: from pjbqn6.prod.google.com ([2002:a17:90b:3d46:b0:31f:1a3e:fe3b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2588:b0:321:96da:79f9
- with SMTP id 98e67ed59e1d1-3234224e0bamr5280234a91.34.1755303746879; Fri, 15
- Aug 2025 17:22:26 -0700 (PDT)
-Date: Fri, 15 Aug 2025 17:22:24 -0700
-In-Reply-To: <CAAhR5DG+EMVbrdGaPoUiX3MtnVktFtdiY+dDjRhA9tugAoRTJQ@mail.gmail.com>
+	s=arc-20240116; t=1755303794; c=relaxed/simple;
+	bh=UMLbRctQ+cTPntRvhQJfLLnfVWo2nOf0W9To+b646lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mxyKhui/mOF5LtByFbRHVD36a2kdGf8t4WS/eNz+k8QO7BLSrA4vE88n1GFwy6kIWir+EDzqTCLfhNsQk5MDji+qsKm1ZknJTTYbqkGhKxVN/xpZJVKhbsDVeXiBSMA2ZfLUQAQja/LVIgTG0PLv/grxNGBcoM7/+gIeFxgLXQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3fp64gLczYQv12;
+	Sat, 16 Aug 2025 08:23:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 3F6491A07BB;
+	Sat, 16 Aug 2025 08:23:09 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgDX5LZsz59oR9MTDw--.29195S2;
+	Sat, 16 Aug 2025 08:23:09 +0800 (CST)
+Message-ID: <7b2a1645-6271-4f90-acea-cb12ba10cf81@huaweicloud.com>
+Date: Sat, 16 Aug 2025 08:23:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-7-sagis@google.com>
- <aJpO_zN3buvaQoAW@google.com> <0c8d6d1c-d9e1-4ffd-bb26-a03fb87cde1f@linux.intel.com>
- <CAAhR5DG+EMVbrdGaPoUiX3MtnVktFtdiY+dDjRhA9tugAoRTJQ@mail.gmail.com>
-Message-ID: <aJ_PQPkD3qrlW8jZ@google.com>
-Subject: Re: [PATCH v8 06/30] KVM: selftests: Add helper functions to create
- TDX VMs
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [-next v2 4/4] cpuset: add helpers for cpus read and cpuset_mutex
+ locks
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com, christophe.jaillet@wanadoo.fr
+References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
+ <20250813082904.1091651-5-chenridong@huaweicloud.com>
+ <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
+ <750ac0bd-42f9-47fa-8274-0ff4e4a7fa3d@huaweicloud.com>
+ <93e37ccf-8ac8-40f5-840f-2f221f58131e@redhat.com>
+ <d09c4e49-8a3a-49b9-9f63-0b39a4bea45f@redhat.com>
+ <c88c6e2e-5988-405c-a037-651a8800ba83@huaweicloud.com>
+ <820ec990-9695-46d0-ae95-2c0eda66bf9c@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <820ec990-9695-46d0-ae95-2c0eda66bf9c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDX5LZsz59oR9MTDw--.29195S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXryfJFWkWF1rtrWDZr1fWFg_yoWrJw1rpF
+	1kGFy7JrWUJr1xuw1avw1rXry8tw1UKa1UXrn8JF18ZF9FvF1avr1UWFnIgry5Kr4xGr1U
+	ZF9ruw43uryDJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Fri, Aug 15, 2025, Sagi Shahar wrote:
-> On Tue, Aug 12, 2025 at 11:22=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel=
-.com> wrote:
-> >
-> >
-> >
-> > On 8/12/2025 4:13 AM, Sean Christopherson wrote:
-> > > On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> > [...]
-> > >> +
-> > >> +/*
-> > >> + * Boot parameters for the TD.
-> > >> + *
-> > >> + * Unlike a regular VM, KVM cannot set registers such as esp, eip, =
-etc
-> > >> + * before boot, so to run selftests, these registers' values have t=
-o be
-> > >> + * initialized by the TD.
-> > >> + *
-> > >> + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS=
-_GPA.
-> > >> + *
-> > >> + * The TD boot code will read off parameters from this struct and s=
-et up the
-> > >> + * vCPU for executing selftests.
-> > >> + */
-> > >> +struct __packed td_boot_parameters {
-> > > None of these comments explain why these structures are __packed, and=
- I suspect
-> > > _that_ is the most interesting/relevant information for unfamiliar re=
-aders.
-> > I guess because the fields defined in this structure are accessed by ha=
-rd-coded
-> > offsets in boot code.
-> > But as you suggested below, replicating the functionality of the kernel=
-'s
-> > OFFSET() could get rid of "__packed".
-> >
->=20
-> I agree, I think the reason for using __packed is because of the hard
-> coded offsets. I tried using OFFSET() as Sean suggested but couldn't
-> make it work.
->=20
-> I can't get the Kbuild scripts to work inside the kvm selftests
-> Makefile. I tried adding the following rules based on a reference I
-> found:
->=20
-> +include/x86/tdx/td_boot_offsets.h: lib/x86/tdx/td_boot_offsets.s
-> +       $(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
-> +
-> +lib/x86/tdx/td_boot_offsets.s: lib/x86/tdx/td_boot_offsets.c
-> +       $(call if_changed_dep,cc_s_c)
->=20
-> But I'm getting the following error when trying to generate the header:
->=20
-> /bin/sh: -c: line 1: syntax error near unexpected token `;'
-> /bin/sh: -c: line 1: `set -e;  ;  printf '# cannot find fixdep (%s)\n'
->  > lib/x86/tdx/.td_boot_offsets.s.cmd; printf '# using basic dep
-> data\n\n' >> lib/x86/tdx/.td_boot_offsets.s.cmd; cat
-> lib/x86/tdx/.td_boot_offsets.s.d >>
-> lib/x86/tdx/.td_boot_offsets.s.cmd; printf '\n%s\n'
-> 'cmd_lib/x86/tdx/td_boot_offsets.s :=3D ' >>
-> lib/x86/tdx/.td_boot_offsets.s.cmd'
-> make: *** [Makefile.kvm:44: lib/x86/tdx/td_boot_offsets.s] Error 2
->=20
-> For now I can add a comment on the __packed and add a TODO to replace
-> it with OFFSET. I think that making OFFSET work inside the kvm
-> selftests will require more expertise in the Kbuild system which I
-> don't have.
 
-No, I don't want to punt on this.  I don't care about __packed, I care abou=
-t the
-maintenance and review costs associated with hand coding struct offsets in =
-.S
-files.
 
-The problem is this line:
+On 2025/8/16 3:13, Waiman Long wrote:
+> On 8/13/25 11:58 PM, Chen Ridong wrote:
+>>
+>> On 2025/8/14 11:27, Waiman Long wrote:
+>>> On 8/13/25 11:13 PM, Waiman Long wrote:
+>>>> On 8/13/25 8:44 PM, Chen Ridong wrote:
+>>>>> On 2025/8/14 4:09, Waiman Long wrote:
+>>>>>> On 8/13/25 4:29 AM, Chen Ridong wrote:
+>>>>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>>>>
+>>>>>>> cpuset: add helpers for cpus_read_lock and cpuset_mutex
+>>>>>>>
+>>>>>>> Replace repetitive locking patterns with new helpers:
+>>>>>>> - cpus_read_cpuset_lock()
+>>>>>>> - cpus_read_cpuset_unlock()
+>>>>>>>
+>>>>>>> This makes the code cleaner and ensures consistent lock ordering.
+>>>>>>>
+>>>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>>>>> ---
+>>>>>>>     kernel/cgroup/cpuset-internal.h |  2 ++
+>>>>>>>     kernel/cgroup/cpuset-v1.c       | 12 +++------
+>>>>>>>     kernel/cgroup/cpuset.c          | 48 +++++++++++++++------------------
+>>>>>>>     3 files changed, 28 insertions(+), 34 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+>>>>>>> index 75b3aef39231..6fb00c96044d 100644
+>>>>>>> --- a/kernel/cgroup/cpuset-internal.h
+>>>>>>> +++ b/kernel/cgroup/cpuset-internal.h
+>>>>>>> @@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int
+>>>>>>> turning_on)
+>>>>>>>     ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+>>>>>>>                         char *buf, size_t nbytes, loff_t off);
+>>>>>>>     int cpuset_common_seq_show(struct seq_file *sf, void *v);
+>>>>>>> +void cpus_read_cpuset_lock(void);
+>>>>>>> +void cpus_read_cpuset_unlock(void);
+>>>>>> The names are not intuitive. I would prefer just extend the cpuset_lock/unlock to include
+>>>>>> cpus_read_lock/unlock and we use cpuset_lock/unlock consistently in the cpuset code. Also,
+>>>>>> there is
+>>>>>> now no external user of cpuset_lock/unlock, we may as well remove them from
+>>>>>> include/linux/cpuset.h.
+>>>>>>
+>>>>>> Cheers,
+>>>>>> Longman
+>>>>> I like the idea and have considered it.
+>>>>> However, I noticed that cpuset_locked is being used in __sched_setscheduler.
+>>>> Right, I overloooked the cpuset_lock() call in kernel/sched/syscall.c. So we can't remove it from
+>>>> include/linux/cpuset.h.
+>>>>
+>>>> This call is invoked to ensure cpusets information is stable. However, it doesn't hurt if the
+>>>> cpus_read_lock() is also acquired as a result. Alternatively, we can use a name like
+>>>> cpuset_full_lock() to include cpus_read_lock().
+>>> I have a correction. According to commit d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem and
+>>> hotplug lock order") , sched_scheduler() can be called while holding cpus_hotplug_lock. So we should
+>>> keep cpuset_lock() as it is.
+>>>
+>>> Cheers,
+>>> Longman
+>> Thank you Longman, this is very helpful.
+>>
+>> I had considered whether we can add cpus_read_lock() to the cpuset_lock, but based on your
+>> explanation, I now understand this approach would not work.
+>>
+>> For clarity, would it be acceptable to rename:
+>> cpus_read_cpuset_lock() -> cpuset_full_lock()
+>> cpus_read_cpuset_unlock() -> cpuset_full_unlock()
+> 
+> Yes, that is what I want to see. Note that taking both cpus_read_lock() and cpuset_mutex are needed
+> to modify cpuset data. Taking just cpuset_mutex will prevent other from making changes to the cpuset
+> data, but is not enough to make modification.
+> 
+> Cheers,
+> Longman
+> 
+>>
 
-	$(call if_changed_dep,cc_s_c)
+See, I will add the comments to clarify how to use these helpers.
 
-IIUC, the kernel's "generic" command for generating a .s file from a .c fil=
-e
-assumes various paths and flags, which doesn't play nice with KVM selftests=
-'
-unusual setup.
-
-We could fudge around that by defining a custom command, e.g.
-
-	cmd_kvm_cc_s_c =3D $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -S $< -o $@
-
-but that just runs into more problems with the build system (variables not
-defined, more assumptions about the environment, etc).
-
-AFAICT, there's no need to use if_changed_dep, i.e. fixdep.  KVM selftests
-generate dependencies using standard mechanisms, and they appear to work as
-expected for this case, so just omit the if_change_dep and let the existing
-dependency stuff do its magic.
-
-This could be tidied up, e.g. add kbuild.h to tool/s, and is obviously inco=
-mplete,
-but it works.
-
----
- tools/testing/selftests/kvm/Makefile.kvm      | 13 ++++++++++
- .../kvm/lib/x86/tdx/td_boot_offsets.c         | 25 +++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets=
-.c
-
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selft=
-ests/kvm/Makefile.kvm
-index 438502e02a0f..1fec90da15a1 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -237,6 +237,9 @@ OVERRIDE_TARGETS =3D 1
- include ../lib.mk
- include ../cgroup/lib/libcgroup.mk
-=20
-+include $(top_srcdir)/scripts/Kbuild.include
-+include $(top_srcdir)/scripts/Makefile.lib
-+
- INSTALL_HDR_PATH =3D $(top_srcdir)/usr
- LINUX_HDR_PATH =3D $(INSTALL_HDR_PATH)/include/
- LINUX_TOOL_INCLUDE =3D $(top_srcdir)/tools/include
-@@ -326,18 +329,28 @@ $(LIBKVM_C_OBJ): $(OUTPUT)/%.o: %.c $(GEN_HDRS)
- $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
-=20
-+$(OUTPUT)/lib/x86/tdx/td_boot.o: $(OUTPUT)/include/x86/tdx/td_boot_offsets=
-.h
-+
- # Compile the string overrides as freestanding to prevent the compiler fro=
-m
- # generating self-referential code, e.g. without "freestanding" the compil=
-er may
- # "optimize" memcmp() by invoking memcmp(), thus causing infinite recursio=
-n.
- $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
-=20
-+$(OUTPUT)/lib/x86/tdx/td_boot_offsets.s: lib/x86/tdx/td_boot_offsets.c
-+	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -S $< -o $@
-+
-+$(OUTPUT)/include/x86/tdx/td_boot_offsets.h: $(OUTPUT)/lib/x86/tdx/td_boot=
-_offsets.s FORCE
-+	$(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
-+
- $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
- $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
- $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
- $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
- $(TEST_GEN_OBJ): $(GEN_HDRS)
-=20
-+FORCE:
-+
- cscope: include_paths =3D $(LINUX_TOOL_INCLUDE) $(LINUX_HDR_PATH) include =
-lib ..
- cscope:
- 	$(RM) cscope.*
-diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c b/to=
-ols/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c
-new file mode 100644
-index 000000000000..622f9a19ca30
---- /dev/null
-+++ b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define COMPILE_OFFSETS
-+
-+#include <linux/kernel.h>
-+
-+#include "tdx/td_boot.h"
-+
-+#define DEFINE(sym, val) \
-+	asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" (val))
-+
-+#define BLANK() asm volatile("\n.ascii \"->\"" : : )
-+
-+#define OFFSET(sym, str, mem) \
-+	DEFINE(sym, offsetof(struct str, mem))
-+
-+#define COMMENT(x) \
-+	asm volatile("\n.ascii \"->#" x "\"")
-+
-+static void __attribute__((used)) common(void)
-+{
-+	BLANK();
-+	OFFSET(TD_BOOT_cr0, td_boot_parameters, cr0);
-+	OFFSET(TD_BOOT_cr3, td_boot_parameters, cr3);
-+	OFFSET(TD_BOOT_cr4, td_boot_parameters, cr4);
-+}
-
-base-commit: 04b916993b06d35ec96a5324e0ed93d1eb115dbd
---=20
+-- 
+Best regards,
+Ridong
 
 
