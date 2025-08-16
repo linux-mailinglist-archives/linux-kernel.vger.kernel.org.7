@@ -1,239 +1,269 @@
-Return-Path: <linux-kernel+bounces-772131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645BCB28F15
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:24:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5620B28F17
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E251668BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:23:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636E5B61A9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD42FFDF1;
-	Sat, 16 Aug 2025 15:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0832F83CA;
+	Sat, 16 Aug 2025 15:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EvINhH8F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=watter-com.20230601.gappssmtp.com header.i=@watter-com.20230601.gappssmtp.com header.b="ZgG1Cx9S"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723DE2FFDCB
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300812F83AD
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357598; cv=none; b=ppJCtNl419X3SdsD9tNQn6UkIx5pxJYIy93atMEj0br2a/nbVDtwsjx+SGBc/KBVVZpWyNWbHFTstA1/Jl3pJKdEkohfPAggcwgIqd8dC7bnWAzINfC0Zkiq5OdU2OqlQ9rOP8QVTkefmdRzO0lItep+/1Xgcp/a9K6dzMN2YNQ=
+	t=1755357608; cv=none; b=Aa4p387BObc5zP1jmXgaQSuQeOzcRQG3lzqcOrCyeSSCjVEj/Ki2Sis4ygwHP3pFdr/Y7SMXmcYhuRcmWjcEko4QhjOsqodQgK4Mh/V9Gl/LAjMtBAS4m+S0LxArMCZPzdCoYPlthHbJXbZ1LD5uZga5ViRVNLoD0JuReqlQnpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357598; c=relaxed/simple;
-	bh=AaZVjuS1W7Ukw+8AzT9N6e3I54ede+nAI+GfJJ8GCnM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AQutAEkxEafhmlEJ2A26FDTeKHTuNNdhtfj07AB3dAUSJmIKNt6Jjt+10g7sreJHnpGY2GfzxH8rhp3bdh6YX6Bx16Rp6+AohD6h1aD+4vhvLOg5dVDLYBvUAGUeuNXzMhbWptsc90qq3l3OCj4AQSwJff+VVUy5hVhUzxlV2fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EvINhH8F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57G3PpD5030372
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TbQAYOijnA+OwP4fT62BQ14vH/cW4cuE/yCXav6j8bE=; b=EvINhH8F0hgbF8KM
-	5qk0gSsN+3bHotJ0bJ5hK3CMF8K0NLv7uptGLSKcto7vUYnGwAKmSQgBvWRUJ530
-	zrn7TwACfuYdmzEHkRLcUKQkQWBmB5Ep2aAl9+Oy9nuJ/AatZtTcYu/ViiCwtxuR
-	PYwDNh37DiJU5wsPg5xKCQ7Cyn+xnya8NCqciVIcKofiLTChW33HqTHmqeWshUTh
-	VlQlQnZpBKWwnIAs/UmQs/Dj427ekhyYyki8cFirsYcHxjcCzzJar9yzhbrT3BFh
-	HPaXdgh9AxeBzDJQWhVa0mq6VM+NCE2XHj5eBZA6SqNBbu5i1U2Q5t8PKdjUYc/D
-	FW0sAg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2u8u0v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:55 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a88d99c1cso60969906d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 08:19:55 -0700 (PDT)
+	s=arc-20240116; t=1755357608; c=relaxed/simple;
+	bh=STFuy61bAqjLc1A3xYa6BQy8obAHUogEOAeVZfGmvKE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lLGALu34AKy9Ag4FCO785wKm/byPIx+6E0qODUylE5XEK65g4IiUwA6xXhoBE6AlFOTpo0UisTVUtAKdQrzIuM9/gmuIeIMxO42f/iI+TGGtJvwW3qb8l2rPBj0fGzxPw//uRb5F2xMpuZ0GCXLyQyAXQG+EVyJsybzgjgR5MXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=watter.com; spf=pass smtp.mailfrom=watter.com; dkim=pass (2048-bit key) header.d=watter-com.20230601.gappssmtp.com header.i=@watter-com.20230601.gappssmtp.com header.b=ZgG1Cx9S; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=watter.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=watter.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b109c6b9fcso28926401cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 08:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=watter-com.20230601.gappssmtp.com; s=20230601; t=1755357605; x=1755962405; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PljJvM9Mz+exp2gU7l5Y6SyyPwdaLnV8wYec/Xl0OdI=;
+        b=ZgG1Cx9S3aDLji3WZUWQrucdlsANNILvC5O7OW16ixbekbmIQlyJSPtZfoKVK5JBy+
+         9JWFFtjV3ev1kSN81FuK8R7juWdRxMCloNZSvgPVtKRHhWg05LDgiJHS3DY6ax13VsZ3
+         AQUk/mZ0566S0fCTTRP7MEEQd4gmtoeK2AreKUVeMpYxoy3nbeFA+qs7zQa8qqlO/BEx
+         hIpiPGcNTR38nrFMF2dUwnQtDSPankRw009rLAacmG1ogWqF4ttJoYD0AHJUJjcoTHwQ
+         W0ZI3pCP3UUoMjfrDXZppps4pJ86yx+9Gg9i0wOQYE1uSqsFDBNkAHM/hJC5qfwEwJKC
+         oTCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755357594; x=1755962394;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755357605; x=1755962405;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TbQAYOijnA+OwP4fT62BQ14vH/cW4cuE/yCXav6j8bE=;
-        b=GbuDs1nFPa5K7rHJjucwbJudJR3mSmS5PTmsf1FAdGV1BZCGRrgwR0rCTBS8TxfGQj
-         Z0ItILl2BRWxtuEnWQXyXQlHdLWgr+j0r9zjCDAxHaQG1eTH4lxUnl69DUnlCoWgpKl/
-         OuPLBtGYQNGMJrnA5I08C1OXwTG9+DWTyWLDhUHN0kGsEd9lq61yJ/PXUemUVKAKehHE
-         WU+Jn7RkUg57KAHLLni2D7uAmEBT+zz2it2MBX6z9Ie/JBQYkzY0t+4R0XhtxHAAjwpN
-         YzPShMuqfy3YNIW7bu5knoBTOnoEo+MLVcr00GCON1Tv03hruPg9cjSBny28HMNicTJJ
-         hnLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7oFP0jJUzN/Mk1juubd7GV9wvsqozUI+yCEws5nuwcWzPUlG2WdGSlbfyGuT+tvOpZR6M/EqfIxTv/cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxx7SnZKWn9le4mOp0NdQsBz2ohuwohshiX7I+3BXzHhjLwb2R
-	QGj8mR9Qn7H74kQlc001UDJt/PGHWcolDY9/IXJGJmqiIJfhPR5unZD6U+ZvuvKSxyd0UVjh+dM
-	EjNVXXMyqBsxndeRr7IwJIPfcSh2KM0F1sBYuSXX4nnIKOoMf475fUz4A3OycjfLO5IU=
-X-Gm-Gg: ASbGncv4JOj1/EnTXzM4li/vdEW+YzrJrCB8cAM0sNTbbLLItr0/z0pnTifONEjey3d
-	KDgmskMy6rAZbTx2vxhdv6OSCfpCUWcIwhBBhBpTW0Ma99s5hPUDvZJsFrEtcbxByORiN4WcBrS
-	fOkiONrz5o2cNF/i8igFVu70UwiCWhnNkSnEVzPM+esZQQkmby53kX4Uwqfm5i1lr0m3VFlvsFm
-	TIXuTgh0we2wA9YWRYVcl2i7iGcj9lAjP8WgAHIuP1REwZ0yzE2bLRpg/aUie8RSXsKkED5elbZ
-	GycxM/09d/y/R0nZVAhOxg9vSQ3oWAGoCbfMVoks+8oBefOLvF+P9TzzjjeOt3sIyTYvcTPamew
-	aub+0cuhgXkQ09O7wJNeB2NNY+cMvcQYo3dugKdLd8TQWh1FvrHnB
-X-Received: by 2002:a05:6214:ac7:b0:709:b92d:e84 with SMTP id 6a1803df08f44-70ba7ae80c1mr81199726d6.16.1755357594489;
-        Sat, 16 Aug 2025 08:19:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHhdLfF+QII0ufvMc+c1Td2k4+GoblWcwEEncKFspxyk5vAWtgqLRyB8GatC2wFnN2BRckcQ==
-X-Received: by 2002:a05:6214:ac7:b0:709:b92d:e84 with SMTP id 6a1803df08f44-70ba7ae80c1mr81199036d6.16.1755357593955;
-        Sat, 16 Aug 2025 08:19:53 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35965fsm907579e87.37.2025.08.16.08.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 08:19:52 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sat, 16 Aug 2025 18:19:42 +0300
-Subject: [PATCH v2 8/8] drm: writeback: rename
- drm_writeback_connector_init_with_encoder()
+        bh=PljJvM9Mz+exp2gU7l5Y6SyyPwdaLnV8wYec/Xl0OdI=;
+        b=SxKaLq/ZOZ+zLfLa722Sbmnk21oSFrP8KlN48Nd4N22ilUXcPE2AVGiVxTexJTGmf3
+         HCnkLxhwJ6Hsv8zKdhFdGagdvCZ5FBr6wGHXjjdoqroHPbhs5X1F9aOlElEAl0Wvce93
+         vMwHDUmTGo77+Ze3pNhFVuhb15OkT5DjHbbdiX4eL9M1dqz9UNhOSEd6vjC5RoD3VZrr
+         bF/jnMqBdGHNIe3l2Vx63tlQRoFZLX3CNWHNqJb6Bq4eIk+mPSFn/lcA8aJcb2h1fbNM
+         o9zPc4m9LkrdWbUCEKg69KStumlSlrAhnU3+PdzoXNV2FQIwLwdfPOPcTfy+pO6ZG0am
+         EFbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq9ymMFsWRKrnZ5r5ufCr2leUKGWVvcp5GT+6ouV/Q0LC9gaTzbQIYxQ+lgiTc+muP8yIhoCurgT5ePWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTmxTB1aFsJNQiVHXIfXX0mYPdt89WoY0f951yLDXrX2obej9t
+	I23mg6Xrzet9JaL00mK+RbEZplJGVQ3o1k8d3KwFZpizhB0S2nSVvJxKE/AyWSat+Q==
+X-Gm-Gg: ASbGncs2Xrnpg244qsSprFlJPMd4PkxkmbJMK0k1GUEXP3HGtsE76RxWzTR563WWL42
+	MwLCFdszI6+HeXQYKg59AZn1LSCEAJpkEOuIjtqIQJsinyrK3CIVPx22Jwo5EUisjfkVKTOG4b4
+	XaTo+p860Y4y+sFn587Bhnr4M2c7juXLlPcGs3pmf3rzMNuJZ4PoOaKvRK24IoIYZhOj1/iA2Dj
+	SGRsmBa88qqJK+r3Q+xnC4ZW23TFYmOkMCXhusSluSbje67EDrvrRWGL7QtxL4I47qc2npFaanE
+	kIubveeMA753QDpr4Ua//TYyAsIJjJt48CS5wuRKphpdCsdZNurxZsz5mA9Fg7dk6O9lnqNpqZa
+	lpnvtaCBv4v4hctfBVRNY0P3TNEBUl3IE6IDn/+6hqH+cex3XcDSN
+X-Google-Smtp-Source: AGHT+IHObH22YxFxpV+R5+xoTRTV27hK2OKtgfrrQ4IrW4SrDeRUdo/iUZ7Fwpe+k4XepGkTbSEdJQ==
+X-Received: by 2002:a05:622a:15cf:b0:4b0:e1bd:a2bb with SMTP id d75a77b69052e-4b11e294f49mr76763941cf.50.1755357604987;
+        Sat, 16 Aug 2025 08:20:04 -0700 (PDT)
+Received: from smtpclient.apple ([70.32.192.89])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1977dcsm282449085a.49.2025.08.16.08.20.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Aug 2025 08:20:04 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-wb-drop-encoder-v2-8-f951de04f4f9@oss.qualcomm.com>
-References: <20250816-wb-drop-encoder-v2-0-f951de04f4f9@oss.qualcomm.com>
-In-Reply-To: <20250816-wb-drop-encoder-v2-0-f951de04f4f9@oss.qualcomm.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        "Kandpal, Suraj" <suraj.kandpal@intel.com>,
-        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <siqueira@igalia.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3126;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=AaZVjuS1W7Ukw+8AzT9N6e3I54ede+nAI+GfJJ8GCnM=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBooKGJYpPrdEi6HVTifOyYs/TwBkaE/wZcLttBb
- dHmFyn9qPuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaKChiQAKCRCLPIo+Aiko
- 1TpWB/9pVqcOdq3X6uUsOd6BlW9YVLDGMvNAlGtBquoyjHsI9eErZLJKu29rJ6TztxyiQ7q0i08
- jhfNJ0QGtJnijOlndgpf3L5upqul+kGrj0NtrEGWUc/DMB313lePVT/6AJ8Fn66/y5F0U2K2YJh
- sYeO5+KMWvj9ZGirQtyaJLtDZ7j1P8NgMByPHWub7osZupbOECo9VtFnKoFtsTWB4xtp0xLRgpY
- fyrmP1520fajz+ht3NawHqe1d20Hr4uhoGwn/W+joxOzUYs40p5yAbDA40ZbsclFKknpadmDD8u
- bvigSvNbXvi1tsVzPhQYUP5PmRjL/8RPxzLmdvUFBcq5talE
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a0a19b cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=QyXUC8HyAAAA:8 a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8
- a=yAS5wIYi4md-6cvEWsUA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-ORIG-GUID: Q4-gNdVENvsTxaOEC6M38-c1f3bzneSX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX+IGRRrj2fjyo
- byX2y4skIEIell5MS1c80Y+AD09HVXp8PS2VFKTUziZFeUyE1UJsSh75F6vYeedivypORipTwTt
- m2Q64XpsulzH58SLQVfQbhTMT4MkuFvk/a5k76tjg7+P7cr4fEJvpoeAVS52Pho48nHjIm22Znc
- PWwhVxjMfQL2X+RvauD70drGgYER3C9O0zNLkhzaFPGmSb6Vt+P3OG7aW0GtCVbls3o2+vFjWlo
- H56opyMLCwDZi65CjTjQgzgJu7WFfHoGaXVZQ0PdL0j/oNSP+h1f+ewIvZpch4BdOYeANhf9D6Z
- 3FBwbQvCTgnRhVBci/TndAY3J3eYkBc/kWtwlFd/wwz9jXySxtX2m+dd3a8+ooST7i0t2mVbxEA
- Ec/CgaU0
-X-Proofpoint-GUID: Q4-gNdVENvsTxaOEC6M38-c1f3bzneSX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-16_04,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.2\))
+Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
+From: Ben Collins <bcollins@watter.com>
+In-Reply-To: <20250816160835.3b44a4cd@jic23-huawei>
+Date: Sat, 16 Aug 2025 11:19:53 -0400
+Cc: David Lechner <dlechner@baylibre.com>,
+ =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <59D7D612-D618-4FF0-A932-2EB0B57D321E@watter.com>
+References: <20250813151614.12098-1-bcollins@watter.com>
+ <20250813151614.12098-6-bcollins@watter.com>
+ <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+ <20250816105410.70e47dac@jic23-huawei>
+ <DA11BDA3-E4E3-4C1A-9E4E-84E92F62A4B3@watter.com>
+ <20250816160835.3b44a4cd@jic23-huawei>
+To: Jonathan Cameron <jic23@kernel.org>
+X-Mailer: Apple Mail (2.3864.100.1.1.2)
 
-Rename drm_writeback_connector_init_with_encoder() to
-drm_writeback_connector_init() and adapt its interface to follow
-drmm_writeback_connector_init().
 
-Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/drm_writeback.c | 14 +++++++-------
- include/drm/drm_writeback.h     | 10 +++++-----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+> On Aug 16, 2025, at 11:08=E2=80=AFAM, Jonathan Cameron =
+<jic23@kernel.org> wrote:
+>=20
+> On Sat, 16 Aug 2025 09:12:37 -0400
+> Ben Collins <bcollins@watter.com> wrote:
+>=20
+>>> On Aug 16, 2025, at 5:54=E2=80=AFAM, Jonathan Cameron =
+<jic23@kernel.org> wrote:
+>>>=20
+>>> On Wed, 13 Aug 2025 17:52:04 -0500
+>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>=20
+>>>> On 8/13/25 10:15 AM, Ben Collins wrote: =20
+>>>>> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+>>>>> to allow get/set of this value.
+>>>>>=20
+>>>>> Signed-off-by: Ben Collins <bcollins@watter.com>
+>>>>> ---
+>>>>> drivers/iio/temperature/mcp9600.c | 43 =
++++++++++++++++++++++++++++++++
+>>>>> 1 file changed, 43 insertions(+)
+>>>>>=20
+>>>>> diff --git a/drivers/iio/temperature/mcp9600.c =
+b/drivers/iio/temperature/mcp9600.c
+>>>>> index 5ead565f1bd8c..5bed3a35ae65e 100644
+>>>>> --- a/drivers/iio/temperature/mcp9600.c
+>>>>> +++ b/drivers/iio/temperature/mcp9600.c
+>>>>> @@ -31,6 +31,7 @@
+>>>>> #define MCP9600_STATUS_ALERT(x) BIT(x)
+>>>>> #define MCP9600_SENSOR_CFG 0x5
+>>>>> #define MCP9600_SENSOR_TYPE_MASK GENMASK(6, 4)
+>>>>> +#define MCP9600_FILTER_MASK GENMASK(2, 0)
+>>>>> #define MCP9600_ALERT_CFG1 0x8
+>>>>> #define MCP9600_ALERT_CFG(x) (MCP9600_ALERT_CFG1 + (x - 1))
+>>>>> #define MCP9600_ALERT_CFG_ENABLE BIT(0)
+>>>>> @@ -111,6 +112,7 @@ static const struct iio_event_spec =
+mcp9600_events[] =3D {
+>>>>> .address =3D MCP9600_HOT_JUNCTION,        \
+>>>>> .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |        \
+>>>>>      BIT(IIO_CHAN_INFO_SCALE) |       \
+>>>>> +       BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
+>>>>>      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE), \
+>>>>> .event_spec =3D &mcp9600_events[hj_ev_spec_off],        \
+>>>>> .num_event_specs =3D hj_num_ev,        \
+>>>>> @@ -149,6 +151,7 @@ static const struct iio_chan_spec =
+mcp9600_channels[][2] =3D {
+>>>>> struct mcp9600_data {
+>>>>> struct i2c_client *client;
+>>>>> u32 thermocouple_type;
+>>>>> + u32 filter_level;
+>>>>> };
+>>>>>=20
+>>>>> static int mcp9600_read(struct mcp9600_data *data,
+>>>>> @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev =
+*indio_dev,
+>>>>> case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+>>>>> *val =3D mcp9600_tc_types[data->thermocouple_type];
+>>>>> return IIO_VAL_CHAR;
+>>>>> + case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+>>>>> + *val =3D data->filter_level;   =20
+>>>>=20
+>>>> We can't just pass the raw value through for this. The ABI is =
+defined
+>>>> in Documentation/ABI/testing/sysfs-bus-iio and states that the =
+value
+>>>> is the frequency in Hz.
+>>>>=20
+>>>> So we need to do the math to convert from the register value to
+>>>> the required value.
+>>>>=20
+>>>> I'm a bit rusty on my discrete time math, so I had chatgpt help me
+>>>> do the transform of the function from the datasheet to a transfer
+>>>> function and use that to find the frequency response.
+>>>>=20
+>>>> It seemed to match what my textbook was telling me, so hopefully
+>>>> it got it right.
+>>>>=20
+>>>> Then it spit out the following program that can be used to make
+>>>> a table of 3dB points for a given sampling frequency. If I read the
+>>>> datasheet right, the sampling frequency depends on the number of
+>>>> bits being read.
+>>>>=20
+>>>> For example, for 3 Hz sample rate (18-bit samples), I got:
+>>>>=20
+>>>> n  f_3dB (Hz)
+>>>> 1  0.58774
+>>>> 2  0.24939
+>>>> 3  0.12063
+>>>> 4  0.05984
+>>>> 5  0.02986
+>>>> 6  0.01492
+>>>> 7  0.00746
+>>>>=20
+>>>> I had to skip n=3D0 though since that is undefined. Not sure how we
+>>>> handle that since it means no filter. Maybe Jonathan can advise? =20=
 
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 1a01df91b2c5868e158d489b782f4c57c61a272c..ec2575c4c21b7449707b0595322e2202a0cf9865 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -235,7 +235,7 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
- }
- 
- /**
-- * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
-+ * drm_writeback_connector_init - Initialize a writeback connector with
-  * a custom encoder
-  *
-  * @dev: DRM device
-@@ -263,11 +263,11 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
-  *
-  * Returns: 0 on success, or a negative error code
-  */
--int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
--					      struct drm_writeback_connector *wb_connector,
--					      struct drm_encoder *enc,
--					      const struct drm_connector_funcs *con_funcs,
--					      const u32 *formats, int n_formats)
-+int drm_writeback_connector_init(struct drm_device *dev,
-+				 struct drm_writeback_connector *wb_connector,
-+				 const struct drm_connector_funcs *con_funcs,
-+				 struct drm_encoder *enc,
-+				 const u32 *formats, int n_formats)
- {
- 	struct drm_connector *connector = &wb_connector->base;
- 	int ret;
-@@ -284,7 +284,7 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
- 
- 	return ret;
- }
--EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
-+EXPORT_SYMBOL(drm_writeback_connector_init);
- 
- /**
-  * drm_writeback_connector_cleanup - Cleanup the writeback connector
-diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-index 879ca103320cc225ffb3687419088361315535fc..958466a05e604b387722610fc11f9e841316d21b 100644
---- a/include/drm/drm_writeback.h
-+++ b/include/drm/drm_writeback.h
-@@ -137,11 +137,11 @@ drm_connector_to_writeback(struct drm_connector *connector)
- 	return container_of(connector, struct drm_writeback_connector, base);
- }
- 
--int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
--				struct drm_writeback_connector *wb_connector,
--				struct drm_encoder *enc,
--				const struct drm_connector_funcs *con_funcs, const u32 *formats,
--				int n_formats);
-+int drm_writeback_connector_init(struct drm_device *dev,
-+				 struct drm_writeback_connector *wb_connector,
-+				 const struct drm_connector_funcs *con_funcs,
-+				 struct drm_encoder *enc,
-+				 const u32 *formats, int n_formats);
- 
- int drmm_writeback_connector_init(struct drm_device *dev,
- 				  struct drm_writeback_connector *wb_connector,
+>>>=20
+>>> This is always a fun corner case.  Reality is there is always
+>>> some filtering going on due to the analog side of things we
+>>> just have no idea what it is if the nicely defined filter is
+>>> turned off.  I can't remember what we have done in the past,
+>>> but one option would be to just have anything bigger than 0.58774
+>>> defined as being filter off and return a big number. Not elegant
+>>> though.  Or just don't bother supporting it if we think no one
+>>> will ever want to run with not filter at all.
+>>>=20
+>>> Hmm. or given this is a digital filter on a sampled signal, can we =
+establish
+>>> an effective frequency that could be detected without aliasing and
+>>> use that?  Not sure - I'm way to rusty on filter theory (and was
+>>> never that good at it!) =20
+>>=20
+>> I=E2=80=99ve seen another driver use { U64_MAX, U64_MAX } for this =
+case. It
+>> didn=E2=80=99t seem very clean. I thought to use { 999999, 999999 } =
+or even
+>> { 1, 0 }, but anything other than =E2=80=9Coff=E2=80=9D just felt =
+odd.
+> Ah.  Could we use filter_type? (additional attribute)
+>=20
+> That already has a 'none' option.  Nothing there yet that works for =
+the 'on'
+> option here.  These are always tricky to name unless they are a very
+> well known class of filter.   The datasheet calls this one an =
+Exponential
+> Moving Average filter. Not a term I'd encountered before, but google =
+did
+> find me some references.  so maybe ema as a filter type?
 
--- 
-2.47.2
+In the docs I have, it says:
+
+	In addition, this device integrates a first order recursive
+	Infinite Impulse Response (IIR) filter, also known as
+	Exponential Moving Average (EMA).
+
+The EMA formula I=E2=80=99ve used for an adc-attached thermistor was the =
+same
+formula I=E2=80=99ve seen used in IIR, so I think they are generally the =
+same.
+
+>>=20
+>> ChatGPT suggests this:
+>>=20
+>>    =E2=80=A2 Clamp to Nyquist frequency
+>>        =E2=80=A2 For a sample rate f_s, the maximum realizable cutoff =
+is the Nyquist limit f_s/2.
+>>        =E2=80=A2 At f_s =3D 3\ \text{Hz}, Nyquist is 1.5\ \text{Hz}.
+>>        =E2=80=A2 You could encode { 1, 500000 } (1.5 Hz) as the =
+maximum meaningful cutoff.
+>=20
+> Hmm. Whilst kind of backwards as that's where you'll see aliasing it =
+does make more sense
+> I think than just a magic large number.
+>=20
+> I think I prefer the filter type route though now your comment on =
+'off' has lead me to it.
+>=20
+> Make sure to add ABI docs for the new filter type if you do go that =
+way.
+
+I was considering a new =E2=80=9Cfilter_enable=E2=80=9D attribute and =
+only list the
+other values in the 3db filter available. This seems more robust and
+doesn=E2=80=99t require any sort of agreed on magic number.
 
 
