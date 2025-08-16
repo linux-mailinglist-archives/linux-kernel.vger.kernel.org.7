@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-772062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481BAB28E60
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:11:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C037EB28E62
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B161BC54AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA031BC5456
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4999F2E9738;
-	Sat, 16 Aug 2025 14:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD522EACED;
+	Sat, 16 Aug 2025 14:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="USFgHKsW"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8+R3qDT"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A0347D0
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1158A2E717D;
+	Sat, 16 Aug 2025 14:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755353495; cv=none; b=KdU5+7FI38Ix016QbQEbFRn/Xn7G3+AU5hephK+bVxU37zU5g9dipiDtkI/i3f5vp+m/M88s05/4o0l2Ta30VObayEZEKlptgj6Km9rNXLz0Gwh0RLcohylToPPeaiGlmzACHDmuK4s6Ucw2D9Fq47N4hQ7FLbp+DL17X40Df48=
+	t=1755353556; cv=none; b=UmNEoO0dhT4TBAKI29LBXaJctp++gbR72jMLUfCNEn2w5wzQYKX/kEDgcUO+gQh/t7xhZQQZmWMStvJ7+lQiTRHo8uALLkYT1avOi1tV2gu4ki0by7ZQJB/RmQWN6xGMgfQozfnA6douyRFQyVf9n4kitwTMOXU48VES7SHxSYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755353495; c=relaxed/simple;
-	bh=olXWmm3jSFvSdhRPnxNlNEgEC2/BOJswPUCg764FGOw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=pdV4HIFl/ST9EPEpzILDUkGgImty4KGYhk/Y2B645Cw6E8T+oyUD11ez9Tx24HsOG9yEWbl8omKuKljxyKnvjn94yK/5cujb0e3/WCWIXEh+zqSmssFueyXLH2TpXuJ8mZlhwxDJPpqZW7Ob2k3NELRL8qq3Yf07jIqvEo+MSII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=USFgHKsW; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755353556; c=relaxed/simple;
+	bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cLNO61OtEPwe+vWeDo1gd8HrxsURX2oa8LB8wluWEdjM63wZOzFuZduuszHmJIYlzrF76GdYPJQxHrLqznN+8zkvH+IxzR5tpQ73Z5+RD0Z70MDkICi5WWRDO2mxJE8djuB5DaUz9PpBllyHLQp6UfchF/6jixx3A4i/hlp8PG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8+R3qDT; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-618b62dba21so1614555a12.2;
+        Sat, 16 Aug 2025 07:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755353553; x=1755958353; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
+        b=m8+R3qDT/hxRKHbt2Q4BYAEixpm4Y553NfmkNrcax/iXQ0I4h/fzXIyuL8vBsAG28v
+         N++hQfqQr4zOO8s8Hl5852PEn3rNdjhVq6Y9D/IHvckl3HDfNGN+XaGKGrZDZp2qkIE2
+         rxxL+fksT+Khs3ne2rJa8iiNzzxYMWXpjgqw7zfP6jioAX0Qjfr0uRfo/3gOIPaW0zlu
+         4LE2tX//yDuUbL151WHQAxYvdk81TNQVuROpl92bSEBrGd8KMLlEKMxrOHbb9ug1x+HQ
+         etijIZ0tu4KoRNjcMfSPBA+X2QQ2ZeKHO0hhuhE1jpTKi6s1Gzhu1QX1UoP3pVDuaXSe
+         uKWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755353553; x=1755958353;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=feoSPjnrOdX0//SvROhIkB9I3UqFW46Ajumc7uAoMRI=;
+        b=XoG/x2JejmwOKwNM4RTOuMc0wAjO4/i4SL9ODs4QW33lgxggzyOdSx+v8f3P0jPghq
+         Js782oJIRKgexy+ypf4RZ4EABiQB/4S6IWbD+4asbFb7tQzzY+xMmEnEjUbcJjUnqajm
+         g3MAppMqcD/WFkD2UB6/C/kJKVoR1ZYXwBfxE3kX0D3Bqigv688H1OnTK9T1Ym46VKwf
+         QeCRTkuQCeUeqYV225nND13HLBco8lDDL36hoOp6vL0Fj8QaH7+oCm2vTkHF6eLvSQhB
+         mDpRQrw1YPsorFoTCPTXnYFfhizExFA+N7+UI2RaukzEPh9hP2sEPTJlg/n/tQD8OuHK
+         iBeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdK9LxHq7l/BAOo7+8a6Q2t8lARLh6pQY+D5DCwUo107Lwg8DGahQo0moioFMubxHUi7bAYkLHX4/W8opREgGP@vger.kernel.org, AJvYcCXhlE1foEeuzcivW7+JZiZ5zgHN96LcCd1EMs1AJZqZSqfdPt4UIhU2JGibHIA5FB0qz2vI0jk4BymbGLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4AXlGwDKn+y+Kye12/hNAx9d1U9clZSwA+rcnH5/jTqHIiwS6
+	ICNfh1hhD3EomA22KK0S6JIHD/b6odfV33MBEgArelmB9YoBCLBsdcudczjbL8j0UGuV84N905t
+	IgwMZHMpSMII4uxxEgYbkhY/AELMWqA==
+X-Gm-Gg: ASbGnctwCwQAjxVY8IeTVowlvFpIodLVaLCkf83UYrCItduF31d2HCFkp9BCSLrHbfg
+	b913ef85l09R/otnOdeaZSbaCrkjWDQhdpFCHAVLahjBcpd4UsZ4P3J+kGoQMF6LwOXaPkM8nFT
+	ZKajaUDckpE+ytt60BVO5AWeic+wQFkpKUtO6sA7uWWRKwHDX7AuUkAdcec1xCNE5wKd4BzhsEO
+	yeLNeA=
+X-Google-Smtp-Source: AGHT+IF39sA2/AVBMFINcOLAmtFs2hW/T/K1I1gQxZpjqQbWUrpFsMrEH1JB5BTTlUPFahsCPdZqX+kgleQP4aRgk+c=
+X-Received: by 2002:a05:6402:35c3:b0:606:ebd9:c58b with SMTP id
+ 4fb4d7f45d1cf-619b6f65d97mr2325294a12.1.1755353553120; Sat, 16 Aug 2025
+ 07:12:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755353490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gXOtsIBUt5Q8GjGEEyrG9hdfarb8U4iDDYTRYZfEMLE=;
-	b=USFgHKsWMRwclD+dOKPvxw3L05Nmw54SaqWFKKCtdtAgcAPvQDBugNjn1H6Dj/nyOVx7Ii
-	dDfeXXVAs53e4Flkqlt+Lkc6BzbZaGKZ8HIQBtJFOhEKJ//Q8n2mkIJcYzMPrUw/Ft0vC8
-	8dF8y2opMvnRH4gqEIxKI795X7uwwRuOzKruPKzEYNVkcr/UtFpeNYV56zsww3xakszOGo
-	uFuy+WwLD+Fme6BfIdK0i40jECgainadzECXo5gMem8cfi5iW6+ill1TUNXOrMej3BTVfR
-	gWZ8JwV8oHXCK6aZFdE5NIKahpbAYov4LAWFSf23Go1tihYRQZW39eSeuPGQmQ==
-Content-Type: multipart/signed;
- boundary=ce84aeca85d13a394e424f78243a774da427df6c7723bf1acd3cf4638e4c;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 16 Aug 2025 16:11:00 +0200
-Message-Id: <DC3WVB8IOMNV.14F1RIJHNO33Q@cknow.org>
-Cc: <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re: [BUG report] kernel warnings with Samsung 970 EVO 2TB SSD
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Keith Busch" <kbusch@kernel.org>
-References: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
- <aKCFjzai3Y0RcGHP@kbusch-mbp>
-In-Reply-To: <aKCFjzai3Y0RcGHP@kbusch-mbp>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250702152057.4067-1-ujwal.kundur@gmail.com>
+ <aGf_W_ZgIf63dmAz@x1.local> <CALkFLLJua-LeS+S5GpiXORA-3wNSR0DTzbh2bvU=Vg-Uzd2VFA@mail.gmail.com>
+ <CALkFLLLoXfTNtigbcyD4RdJfY+b5Rh5-5Zta1QM9dBQxZd19cQ@mail.gmail.com> <DC19N1YGQP7J.1MH8WV5KHUHFF@google.com>
+In-Reply-To: <DC19N1YGQP7J.1MH8WV5KHUHFF@google.com>
+From: Ujwal Kundur <ujwal.kundur@gmail.com>
+Date: Sat, 16 Aug 2025 19:42:20 +0530
+X-Gm-Features: Ac12FXyvzVN6lhXuryFknwNkw_NPGtcXZDTU-i8PRTDQZLOHQyctkouzXjWB6_Y
+Message-ID: <CALkFLLKmjj=Gt8g2Y-2u28HEkoXXF5cFG=v1cV2MEDHjZ=0OgA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/1] selftests/mm/uffd: Refactor non-composite global
+ vars into struct
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Peter Xu <peterx@redhat.com>, akpm@linux-foundation.org, shuah@kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---ce84aeca85d13a394e424f78243a774da427df6c7723bf1acd3cf4638e4c
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+> Hey sorry I've been on a nice long holiday but I can take a look at this
+> soon. Just need to get out from under my other review snowdrift first!
 
-Hi,
-
-On Sat Aug 16, 2025 at 3:20 PM CEST, Keith Busch wrote:
-> On Sat, Aug 16, 2025 at 01:40:44PM +0200, Diederik de Haas wrote:
->> I have a Samsung 970 EVO 2TB SSD and I see these kernel warnings:
->
-> ...=20
-> =20
->> I wonder if something can be done to fix those warnings.
->
-> Are you talking about this message?
->
->    nvme nvme0: missing or invalid SUBNQN field
->
-> You can't do anything about it, but I wouldn't worry about it either.
-
-That's indeed one of them; good to know it's not to worry about.
-
-> If you want to see what the driver is reacting to, you can check the
-> subnqn from command line:
->
->   # nvme id-ctrl /dev/nvme0 | grep subnqn
->
-> It'll probably be all zeros. The field has been required by spec, but
-> the driver tolerates ones that don't implement it.
-
-root@nanopi-r5s:~# nvme id-ctrl /dev/nvme0 | grep subnqn
-subnqn    :
-
-So it seems to be just empty?
-
-> It's just a message that the device isn't spec compliant, but
-> otherwise perfectly operational.
-
-But still worthy of a warning (instead of info) msg?
-
-The other kernel warning is this:
-
-  nvme nvme0: using unchecked data buffer
-
-The SUBNQN message appears every time, this one appears often, but not
-always.
-
-When researching this/these issues, I discovered the nvme-cli package
-(with the nvme command) and via its manpage I found this command:
-
-  nvme get-feature /dev/nvme0 -f 3
-
-I didn't even know NVMe's had namespaces, but this didn't look good:
-
-  The namespace or the format of that namespace is invalid(0x200b)
-
-... without actually understanding what it means and/or what its
-consequences are. It could be harmless and/or normal though.
-
-Cheers,
-  Diederik
-
---ce84aeca85d13a394e424f78243a774da427df6c7723bf1acd3cf4638e4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKCRiwAKCRDXblvOeH7b
-bsMOAP467UvBdOwLTCTyaNzSEfLdNs09O66h8luJumIRs2fs2wEAgmhYVurmWFBA
-TqpVQhTLqv4KBJri3VBLPBP7uamUAAI=
-=23W7
------END PGP SIGNATURE-----
-
---ce84aeca85d13a394e424f78243a774da427df6c7723bf1acd3cf4638e4c--
+Thanks! I'll have to rebase on mm-new again after the 6.17-rc1
+changes. Will push a V7 out soon, this time without threading the
+patch as suggested :)
 
