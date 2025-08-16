@@ -1,1030 +1,214 @@
-Return-Path: <linux-kernel+bounces-772240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E82B29048
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0042EB29041
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CFA1C25A8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561011C87653
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B39B21885A;
-	Sat, 16 Aug 2025 19:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFkf/Jm8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0236F2144CF;
+	Sat, 16 Aug 2025 19:44:24 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFEA215F42;
-	Sat, 16 Aug 2025 19:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB51A3166;
+	Sat, 16 Aug 2025 19:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755373657; cv=none; b=rqXhrKdsk0fLQignL9PVcWRBdw6sEmpbBN4R2fwAw0GpDTDUMIPQMrepZfvxTr7BIcxKaFeGjv2MeZLWsue8ZLmyE8lO1KgqqgvgQ1KIgBJqcyWlDj3VS8GcjCNgDaboa5uFcH3ko3nYdGCoCknZCOmP71I9tKUuAXVAW5+bHSo=
+	t=1755373463; cv=none; b=orCQ50s2u4ZMAT/L12iK1eufauLSHrlHZiieGKslYAYIB4U4rVqDOQdrJdkrr1VeuU0QyqYk2RbIxmJhDL1usFl8MCKkdZ446C+QfjJ8yvSR/XfBQudRhMQVlN9T6sFlbPzNqpzDEx7vtqomgvaJkB/c+9eHQnynXFOTVpWxh7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755373657; c=relaxed/simple;
-	bh=YjIkbFIFWwl7d+to44atb269lQw+HsL028JZ2G/oaiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SsOf0MZgGU9RBSOZ5znl9h+qktheGRQU0gepb1XHVkXrP+TlAZ519GL3fKQ0Uof2XxbSTNv6PVW9ygrU7Exgutb+c+/HHrF7tGi6UJDYdv6E9JFlBmfwAtOUko43a+eVqAcPNjjvAqYDDU01x99dOBXtRF9guXUBpNPzeyj7cYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFkf/Jm8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C46C4CEFA;
-	Sat, 16 Aug 2025 19:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755373656;
-	bh=YjIkbFIFWwl7d+to44atb269lQw+HsL028JZ2G/oaiU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XFkf/Jm8I6XLyXLMPiI6baVlaVE1KTZ+b9iWT9xXu6WfC3tot0KR33/Y7icuwJKdS
-	 4MzM/zaWkJ7VkGmBPfKnWkf9QjHofVx9d+uK6vmd3l4a97gVitBW7sNOVxp+higMPq
-	 urFxI7I72NvR9P0x3Rc6Pu1Fv+/XZ4APZxF4+Hrg7V1SvJ1R9vQzi/I5YmUJSEzIjU
-	 Cjb8BKC9Yhkzw3DEFXUkh1JigcgHVOKDhfYJH+01ogtbHWIUVqbLcXqQDzeqMZdtfE
-	 yyHNDxpzaM2R5Ll0X7CtKJa10uo7yN+C/5u99oJilcvpK65hn8aXdEpNKynxXynCQg
-	 42heeHS1fPoHQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
-	Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 3/3] lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
-Date: Sat, 16 Aug 2025 12:43:53 -0700
-Message-ID: <20250816194353.562491-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250816194353.562491-1-ebiggers@kernel.org>
-References: <20250816194353.562491-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1755373463; c=relaxed/simple;
+	bh=CxOkN5Im8aBXZWyAkD76EEsI08M13nbfFlULVi6mYiw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V9yYH8Q5P301P1w+cnB8NPtfInQRsjSNCFwYS/c3njDQ8WnfoArlTOndr6aPihb5YZt3xQXnAaSpfU1ccEeoL4x+cTLy84GTfFcz32XY20yhvRg9VdNouep7iRDgVCqkfG/1JyRRkuujMFLPCQrfcmZ62Ll5ODIQoFJgUSApbuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so4108542a12.0;
+        Sat, 16 Aug 2025 12:44:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755373459; x=1755978259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xhNfRQTJCTHs8wZzyX52sBmas0EwpebMHyW2WLiU29g=;
+        b=gJG61+u8JIZab8zkSfVYatuTh8ggrV1uvAVroshRVIf60QVl+xDN9P5s+b3VW83k68
+         oNQNIydh/rZ/PIHjNepE29pvOu83a+qrpSHgjdvegQTFf6DCJ5xnFajcP10GKu13IQNA
+         PQK0BgQppHAbj9adQFUTV0lEdjRb9JsUG+uomIjSkEy29J0kQSEuk8Sm5lUGYT30tBoq
+         lwOdhe9Slgssme4MV5wm0RI3/lEQnb1vr7EYEkqkoOU1HLDEKSsvgyUW9CBmGzrG4yWX
+         d/2QLNac8SziSrj2k1Gg1Lx1MJW4y/T/NVQcQvf8d9IXNDoIMuoHVGfCP8+6trcU1Kak
+         Jq9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUE7eLKUbRBBilvt6i6FohonuQk5PKbLs26rkpfzJV1+a9KfjQn19bK/8BXX22+ZlG7CzcUVqXZXb+RAK++@vger.kernel.org, AJvYcCVYdzQ9gfIPjZyL+lmPuXk+qmJLfBCNL1OWihiRJcs8s+7dUjk8KIR5pnk4UE6r3odmKKXNPdF/zXdF@vger.kernel.org, AJvYcCVaLmKANxt8/1dbORUu1mRJgoSGcnyr9zIkgPn0HeFRw4+JzQEhV+TVgQWkYWSUGbfuOvgHZGPbAwnfWfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDYADuoFEYVix2JLp/ZtcV37KWhJQysPBEo8+jObm3/UgKoS9C
+	SOrvtpbxBmY6b++yQugsakk/Bp7xgbTRSGk0nC9vKFGD8ZIOl0Ml6uIhG8U+aXGcKy8=
+X-Gm-Gg: ASbGncvfqV2qxogbMxruZseV1rnjG51DnxIB6+5wZByBYwc0qIyZL7as4NrBHuuqm8p
+	ZShXTjXD9XdD/9nD89KabAcnpdqXgh5tPKTixeeOGYewlR0YsErmkgsz4WkCMfVU5NQgnLRVRyP
+	CnaPki99pkbTuCtn9AYZIBTInxBmgGi7iLSDxTfwLQaTR/xo+4cMlApSUdK5/gOGicF2ng78kOE
+	bv+wcrzsZCPZBUiWQ9CFa/V08GjlrUorcqeqnxpvs9JhTIsH38KCNCkDJ+8D8eOjCn/zYB75QLk
+	rechTE3BpvS+1G9Yxxg1hsz5E6kHBlySpkVuaUfxL8rUXSANtitPATKXbo9SNWjBisgNbIpuV21
+	M1Z8zA9s/ZpClM1ZEou2m+69W9abqdZJw6V6Mu8+L5yMzjStSrkZQw7BUMQ==
+X-Google-Smtp-Source: AGHT+IF11+0kRNdzNVSkYd7J4a+gx/5oVsKz4/r1QtGu9V4+SCyBNATcWaR+MPKV/XHPcqLojimmbA==
+X-Received: by 2002:a05:6402:2102:b0:618:10c3:d799 with SMTP id 4fb4d7f45d1cf-619bf20ff00mr3560066a12.28.1755373458986;
+        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b0e42sm3785588a12.52.2025.08.16.12.44.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618b62dba21so1805728a12.2;
+        Sat, 16 Aug 2025 12:44:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUP1IcS3O7jgMxSzu5iGLG/zEP9br3iXc7Id5t12d40PqJAklFVQdClsgmI0+tIZPUX8cXBDZjfADwRJngW@vger.kernel.org, AJvYcCW/PjHylU9c67IDIbJ0fPQ5kBhh1AsR9yGcIhmHp9X5eUTDiGTXjc+ZO1/eNuYxh8oTa8ZvrPynteIB@vger.kernel.org, AJvYcCWeKOT8+GTevppPN1jEbXchD1NdQxW92O3UFPoUHge/Ri1ekXRLuqjBKazUVWDtV55WxiTEg21BgE0FzAs=@vger.kernel.org
+X-Received: by 2002:a05:6402:3495:b0:615:5bec:1df with SMTP id
+ 4fb4d7f45d1cf-619bf1f7206mr3258270a12.25.1755373458280; Sat, 16 Aug 2025
+ 12:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250810220921.14307-1-will@willwhang.com> <20250810220921.14307-4-will@willwhang.com>
+ <20250811-cinnamon-tapir-of-music-0bda96@kuoka>
+In-Reply-To: <20250811-cinnamon-tapir-of-music-0bda96@kuoka>
+From: Will Whang <will@willwhang.com>
+Date: Sat, 16 Aug 2025 12:44:05 -0700
+X-Gmail-Original-Message-ID: <CAFoNnryfrJvoEHNgQDpSZBbGiGjPr-bwnhhg4cgpNK_hW=0EbQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy-vY_C5easw1Tym_fd5E3dOtxKIqhJ9wZAZ5bar5LAous57hWKnWEIrdU
+Message-ID: <CAFoNnryfrJvoEHNgQDpSZBbGiGjPr-bwnhhg4cgpNK_hW=0EbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] media: i2c: imx585: Add Sony IMX585 image-sensor driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhihang Shao <zhihang.shao.iscas@gmail.com>
+On Mon, Aug 11, 2025 at 1:06=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On Sun, Aug 10, 2025 at 11:09:20PM +0100, Will Whang wrote:
+> > +
+> > +/* -------------------------------------------------------------------=
+-------
+> > + * Power / runtime PM
+> > + * -------------------------------------------------------------------=
+-------
+> > + */
+> > +
+> > +static int imx585_power_on(struct device *dev)
+> > +{
+> > +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
+> > +     struct imx585 *imx585 =3D to_imx585(sd);
+> > +     int ret;
+> > +
+> > +     dev_dbg(imx585->clientdev, "power_on\n");
+> > +
+> > +     ret =3D regulator_bulk_enable(IMX585_NUM_SUPPLIES, imx585->suppli=
+es);
+> > +     if (ret) {
+> > +             dev_err(imx585->clientdev, "Failed to enable regulators\n=
+");
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret =3D clk_prepare_enable(imx585->xclk);
+> > +     if (ret) {
+> > +             dev_err(imx585->clientdev, "Failed to enable clock\n");
+> > +             goto reg_off;
+> > +     }
+> > +
+> > +     gpiod_set_value_cansleep(imx585->reset_gpio, 1);
+>
+> You asserted reset gpio causing it to enter reset and you call this
+> "power on"?
+>
+> > +     usleep_range(IMX585_XCLR_MIN_DELAY_US,
+> > +                  IMX585_XCLR_MIN_DELAY_US + IMX585_XCLR_DELAY_RANGE_U=
+S);
+> > +     return 0;
+> > +
+> > +reg_off:
+> > +     regulator_bulk_disable(IMX585_NUM_SUPPLIES, imx585->supplies);
+> > +     return ret;
+> > +}
+> > +
+> > +static int imx585_power_off(struct device *dev)
+> > +{
+> > +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
+> > +     struct imx585 *imx585 =3D to_imx585(sd);
+> > +
+> > +     dev_dbg(imx585->clientdev, "power_off\n");
+> > +
+> > +     gpiod_set_value_cansleep(imx585->reset_gpio, 0);
+>
+> And here device comes up, but you call it power off? Your functions or
+> reset gpio code are completely reversed/wrong.
 
-This is a straight import of the OpenSSL/CRYPTOGAMS Poly1305
-implementation for riscv authored by Andy Polyakov.  The file
-'poly1305-riscv.pl' is taken straight from
-https://github.com/dot-asm/cryptogams commit
-5e3fba73576244708a752fa61a8e93e587f271bb.  This patch was tested on
-SpacemiT X60, with 2~2.5x improvement over generic implementation.
+Reset pin High -> Run normally
+Reset pin Low -> Reset state
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-Signed-off-by: Zhihang Shao <zhihang.shao.iscas@gmail.com>
-[EB: ported to lib/crypto/riscv/]
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- lib/crypto/Kconfig                 |   3 +-
- lib/crypto/Makefile                |  12 +
- lib/crypto/riscv/poly1305-riscv.pl | 847 +++++++++++++++++++++++++++++
- lib/crypto/riscv/poly1305.h        |  14 +
- 4 files changed, 875 insertions(+), 1 deletion(-)
- create mode 100644 lib/crypto/riscv/poly1305-riscv.pl
- create mode 100644 lib/crypto/riscv/poly1305.h
+See drivers/media/i2c/imx219.c with the same logic:
 
-diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
-index 4a7d67438c3bf..879c15470ee92 100644
---- a/lib/crypto/Kconfig
-+++ b/lib/crypto/Kconfig
-@@ -126,10 +126,11 @@ config CRYPTO_LIB_POLY1305_ARCH
- 	default y if ARM
- 	default y if ARM64 && KERNEL_MODE_NEON
- 	default y if MIPS
- 	# The PPC64 code needs to be fixed to work in softirq context.
- 	default y if PPC64 && CPU_LITTLE_ENDIAN && VSX && BROKEN
-+	default y if RISCV
- 	default y if X86_64
- 
- # This symbol controls the inclusion of the Poly1305 generic code.  This differs
- # from most of the other algorithms, which handle the generic code
- # "automatically" via __maybe_unused.  This is needed so that the Adiantum code,
-@@ -141,11 +142,11 @@ config CRYPTO_LIB_POLY1305_GENERIC
- 	# impl as a fallback.  (Or if selected explicitly.)
- 	default y if !CRYPTO_LIB_POLY1305_ARCH || PPC64
- 
- config CRYPTO_LIB_POLY1305_RSIZE
- 	int
--	default 2 if MIPS
-+	default 2 if MIPS || RISCV
- 	default 11 if X86_64
- 	default 9 if ARM || ARM64
- 	default 1
- 
- config CRYPTO_LIB_CHACHA20POLY1305
-diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-index f35f28d9d0e5e..1cda789704349 100644
---- a/lib/crypto/Makefile
-+++ b/lib/crypto/Makefile
-@@ -108,10 +108,21 @@ $(obj)/mips/poly1305-core.S: $(src)/mips/poly1305-mips.pl
- 	$(call if_changed,perlasm_poly1305)
- endif
- 
- libpoly1305-$(CONFIG_PPC) += powerpc/poly1305-p10le_64.o
- 
-+ifeq ($(CONFIG_RISCV),y)
-+libpoly1305-y += riscv/poly1305-core.o
-+poly1305-perlasm-flavour-$(CONFIG_32BIT) := 32
-+poly1305-perlasm-flavour-$(CONFIG_64BIT) := 64
-+quiet_cmd_perlasm_poly1305 = PERLASM $@
-+      cmd_perlasm_poly1305 = $(PERL) $< $(poly1305-perlasm-flavour-y) $@
-+$(obj)/riscv/poly1305-core.S: $(src)/riscv/poly1305-riscv.pl
-+	$(call if_changed,perlasm_poly1305)
-+AFLAGS_riscv/poly1305-core.o += -Dpoly1305_init=poly1305_block_init
-+endif
-+
- ifeq ($(CONFIG_X86),y)
- libpoly1305-y += x86/poly1305-x86_64-cryptogams.o
- $(obj)/x86/poly1305-x86_64-cryptogams.S: $(src)/x86/poly1305-x86_64-cryptogams.pl
- 	$(call cmd,perlasm)
- endif
-@@ -120,10 +131,11 @@ endif # CONFIG_CRYPTO_LIB_POLY1305_ARCH
- 
- # clean-files must be defined unconditionally
- clean-files += arm/poly1305-core.S \
- 	       arm64/poly1305-core.S \
- 	       mips/poly1305-core.S \
-+	       riscv/poly1305-core.S \
- 	       x86/poly1305-x86_64-cryptogams.S
- 
- ################################################################################
- 
- obj-$(CONFIG_CRYPTO_LIB_SHA1) += libsha1.o
-diff --git a/lib/crypto/riscv/poly1305-riscv.pl b/lib/crypto/riscv/poly1305-riscv.pl
-new file mode 100644
-index 0000000000000..e25e6338a9ac1
---- /dev/null
-+++ b/lib/crypto/riscv/poly1305-riscv.pl
-@@ -0,0 +1,847 @@
-+#!/usr/bin/env perl
-+# SPDX-License-Identifier: GPL-1.0+ OR BSD-3-Clause
-+#
-+# ====================================================================
-+# Written by Andy Polyakov, @dot-asm, initially for use with OpenSSL.
-+# ====================================================================
-+#
-+# Poly1305 hash for RISC-V.
-+#
-+# February 2019
-+#
-+# In the essence it's pretty straightforward transliteration of MIPS
-+# module [without big-endian option].
-+#
-+# 1.8 cycles per byte on U74, >100% faster than compiler-generated
-+# code. 1.9 cpb on C910, ~75% improvement. 3.3 on Spacemit X60, ~69%
-+# improvement.
-+#
-+# June 2024.
-+#
-+# Add CHERI support.
-+#
-+######################################################################
-+#
-+($zero,$ra,$sp,$gp,$tp)=map("x$_",(0..4));
-+($t0,$t1,$t2,$t3,$t4,$t5,$t6)=map("x$_",(5..7,28..31));
-+($a0,$a1,$a2,$a3,$a4,$a5,$a6,$a7)=map("x$_",(10..17));
-+($s0,$s1,$s2,$s3,$s4,$s5,$s6,$s7,$s8,$s9,$s10,$s11)=map("x$_",(8,9,18..27));
-+#
-+######################################################################
-+
-+$flavour = shift || "64";
-+
-+for (@ARGV) {   $output=$_ if (/\w[\w\-]*\.\w+$/);   }
-+open STDOUT,">$output";
-+
-+$code.=<<___;
-+#ifdef __KERNEL__
-+# ifdef __riscv_zicfilp
-+#  undef __riscv_zicfilp // calls are expected to be direct
-+# endif
-+#endif
-+
-+#if defined(__CHERI_PURE_CAPABILITY__) && !defined(__riscv_misaligned_fast)
-+# define __riscv_misaligned_fast 1
-+#endif
-+___
-+
-+if ($flavour =~ /64/) {{{
-+######################################################################
-+# 64-bit code path...
-+#
-+my ($ctx,$inp,$len,$padbit) = ($a0,$a1,$a2,$a3);
-+my ($in0,$in1,$tmp0,$tmp1,$tmp2,$tmp3,$tmp4) = ($a4,$a5,$a6,$a7,$t0,$t1,$t2);
-+
-+$code.=<<___;
-+#if __riscv_xlen == 64
-+# if __SIZEOF_POINTER__ == 16
-+#  define PUSH	csc
-+#  define POP	clc
-+# else
-+#  define PUSH	sd
-+#  define POP	ld
-+# endif
-+#else
-+# error "unsupported __riscv_xlen"
-+#endif
-+
-+.option	pic
-+.text
-+
-+.globl	poly1305_init
-+.type	poly1305_init,\@function
-+poly1305_init:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	sd	$zero,0($ctx)
-+	sd	$zero,8($ctx)
-+	sd	$zero,16($ctx)
-+
-+	beqz	$inp,.Lno_key
-+
-+#ifndef	__riscv_misaligned_fast
-+	andi	$tmp0,$inp,7		# $inp % 8
-+	andi	$inp,$inp,-8		# align $inp
-+	slli	$tmp0,$tmp0,3		# byte to bit offset
-+#endif
-+	ld	$in0,0($inp)
-+	ld	$in1,8($inp)
-+#ifndef	__riscv_misaligned_fast
-+	beqz	$tmp0,.Laligned_key
-+
-+	ld	$tmp2,16($inp)
-+	neg	$tmp1,$tmp0		# implicit &63 in sll
-+	srl	$in0,$in0,$tmp0
-+	sll	$tmp3,$in1,$tmp1
-+	srl	$in1,$in1,$tmp0
-+	sll	$tmp2,$tmp2,$tmp1
-+	or	$in0,$in0,$tmp3
-+	or	$in1,$in1,$tmp2
-+
-+.Laligned_key:
-+#endif
-+	li	$tmp0,1
-+	slli	$tmp0,$tmp0,32		# 0x0000000100000000
-+	addi	$tmp0,$tmp0,-63		# 0x00000000ffffffc1
-+	slli	$tmp0,$tmp0,28		# 0x0ffffffc10000000
-+	addi	$tmp0,$tmp0,-1		# 0x0ffffffc0fffffff
-+
-+	and	$in0,$in0,$tmp0
-+	addi	$tmp0,$tmp0,-3		# 0x0ffffffc0ffffffc
-+	and	$in1,$in1,$tmp0
-+
-+	sd	$in0,24($ctx)
-+	srli	$tmp0,$in1,2
-+	sd	$in1,32($ctx)
-+	add	$tmp0,$tmp0,$in1	# s1 = r1 + (r1 >> 2)
-+	sd	$tmp0,40($ctx)
-+
-+.Lno_key:
-+	li	$a0,0			# return 0
-+	ret
-+.size	poly1305_init,.-poly1305_init
-+___
-+{
-+my ($h0,$h1,$h2,$r0,$r1,$rs1,$d0,$d1,$d2) =
-+   ($s0,$s1,$s2,$s3,$t3,$t4,$in0,$in1,$t2);
-+my ($shr,$shl) = ($t5,$t6);		# used on R6
-+
-+$code.=<<___;
-+.globl	poly1305_blocks
-+.type	poly1305_blocks,\@function
-+poly1305_blocks:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	andi	$len,$len,-16		# complete blocks only
-+	beqz	$len,.Lno_data
-+
-+	caddi	$sp,$sp,-4*__SIZEOF_POINTER__
-+	PUSH	$s0,3*__SIZEOF_POINTER__($sp)
-+	PUSH	$s1,2*__SIZEOF_POINTER__($sp)
-+	PUSH	$s2,1*__SIZEOF_POINTER__($sp)
-+	PUSH	$s3,0*__SIZEOF_POINTER__($sp)
-+
-+#ifndef	__riscv_misaligned_fast
-+	andi	$shr,$inp,7
-+	andi	$inp,$inp,-8		# align $inp
-+	slli	$shr,$shr,3		# byte to bit offset
-+	neg	$shl,$shr		# implicit &63 in sll
-+#endif
-+
-+	ld	$h0,0($ctx)		# load hash value
-+	ld	$h1,8($ctx)
-+	ld	$h2,16($ctx)
-+
-+	ld	$r0,24($ctx)		# load key
-+	ld	$r1,32($ctx)
-+	ld	$rs1,40($ctx)
-+
-+	add	$len,$len,$inp		# end of buffer
-+
-+.Loop:
-+	ld	$in0,0($inp)		# load input
-+	ld	$in1,8($inp)
-+#ifndef	__riscv_misaligned_fast
-+	beqz	$shr,.Laligned_inp
-+
-+	ld	$tmp2,16($inp)
-+	srl	$in0,$in0,$shr
-+	sll	$tmp3,$in1,$shl
-+	srl	$in1,$in1,$shr
-+	sll	$tmp2,$tmp2,$shl
-+	or	$in0,$in0,$tmp3
-+	or	$in1,$in1,$tmp2
-+
-+.Laligned_inp:
-+#endif
-+	caddi	$inp,$inp,16
-+
-+	andi	$tmp0,$h2,-4		# modulo-scheduled reduction
-+	srli	$tmp1,$h2,2
-+	andi	$h2,$h2,3
-+
-+	add	$d0,$h0,$in0		# accumulate input
-+	 add	$tmp1,$tmp1,$tmp0
-+	sltu	$tmp0,$d0,$h0
-+	add	$d0,$d0,$tmp1		# ... and residue
-+	sltu	$tmp1,$d0,$tmp1
-+	add	$d1,$h1,$in1
-+	add	$tmp0,$tmp0,$tmp1
-+	sltu	$tmp1,$d1,$h1
-+	add	$d1,$d1,$tmp0
-+
-+	 add	$d2,$h2,$padbit
-+	 sltu	$tmp0,$d1,$tmp0
-+	mulhu	$h1,$r0,$d0		# h0*r0
-+	mul	$h0,$r0,$d0
-+
-+	 add	$d2,$d2,$tmp1
-+	 add	$d2,$d2,$tmp0
-+	mulhu	$tmp1,$rs1,$d1		# h1*5*r1
-+	mul	$tmp0,$rs1,$d1
-+
-+	mulhu	$h2,$r1,$d0		# h0*r1
-+	mul	$tmp2,$r1,$d0
-+	 add	$h0,$h0,$tmp0
-+	 add	$h1,$h1,$tmp1
-+	 sltu	$tmp0,$h0,$tmp0
-+
-+	 add	$h1,$h1,$tmp0
-+	 add	$h1,$h1,$tmp2
-+	mulhu	$tmp1,$r0,$d1		# h1*r0
-+	mul	$tmp0,$r0,$d1
-+
-+	 sltu	$tmp2,$h1,$tmp2
-+	 add	$h2,$h2,$tmp2
-+	mul	$tmp2,$rs1,$d2		# h2*5*r1
-+
-+	 add	$h1,$h1,$tmp0
-+	 add	$h2,$h2,$tmp1
-+	mul	$tmp3,$r0,$d2		# h2*r0
-+	 sltu	$tmp0,$h1,$tmp0
-+	 add	$h2,$h2,$tmp0
-+
-+	add	$h1,$h1,$tmp2
-+	sltu	$tmp2,$h1,$tmp2
-+	add	$h2,$h2,$tmp2
-+	add	$h2,$h2,$tmp3
-+
-+	bne	$inp,$len,.Loop
-+
-+	sd	$h0,0($ctx)		# store hash value
-+	sd	$h1,8($ctx)
-+	sd	$h2,16($ctx)
-+
-+	POP	$s0,3*__SIZEOF_POINTER__($sp)		# epilogue
-+	POP	$s1,2*__SIZEOF_POINTER__($sp)
-+	POP	$s2,1*__SIZEOF_POINTER__($sp)
-+	POP	$s3,0*__SIZEOF_POINTER__($sp)
-+	caddi	$sp,$sp,4*__SIZEOF_POINTER__
-+
-+.Lno_data:
-+	ret
-+.size	poly1305_blocks,.-poly1305_blocks
-+___
-+}
-+{
-+my ($ctx,$mac,$nonce) = ($a0,$a1,$a2);
-+
-+$code.=<<___;
-+.globl	poly1305_emit
-+.type	poly1305_emit,\@function
-+poly1305_emit:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	ld	$tmp2,16($ctx)
-+	ld	$tmp0,0($ctx)
-+	ld	$tmp1,8($ctx)
-+
-+	andi	$in0,$tmp2,-4		# final reduction
-+	srl	$in1,$tmp2,2
-+	andi	$tmp2,$tmp2,3
-+	add	$in0,$in0,$in1
-+
-+	add	$tmp0,$tmp0,$in0
-+	sltu	$in1,$tmp0,$in0
-+	 addi	$in0,$tmp0,5		# compare to modulus
-+	add	$tmp1,$tmp1,$in1
-+	 sltiu	$tmp3,$in0,5
-+	sltu	$tmp4,$tmp1,$in1
-+	 add	$in1,$tmp1,$tmp3
-+	add	$tmp2,$tmp2,$tmp4
-+	 sltu	$tmp3,$in1,$tmp3
-+	 add	$tmp2,$tmp2,$tmp3
-+
-+	srli	$tmp2,$tmp2,2		# see if it carried/borrowed
-+	neg	$tmp2,$tmp2
-+
-+	xor	$in0,$in0,$tmp0
-+	xor	$in1,$in1,$tmp1
-+	and	$in0,$in0,$tmp2
-+	and	$in1,$in1,$tmp2
-+	xor	$in0,$in0,$tmp0
-+	xor	$in1,$in1,$tmp1
-+
-+	lwu	$tmp0,0($nonce)		# load nonce
-+	lwu	$tmp1,4($nonce)
-+	lwu	$tmp2,8($nonce)
-+	lwu	$tmp3,12($nonce)
-+	slli	$tmp1,$tmp1,32
-+	slli	$tmp3,$tmp3,32
-+	or	$tmp0,$tmp0,$tmp1
-+	or	$tmp2,$tmp2,$tmp3
-+
-+	add	$in0,$in0,$tmp0		# accumulate nonce
-+	add	$in1,$in1,$tmp2
-+	sltu	$tmp0,$in0,$tmp0
-+	add	$in1,$in1,$tmp0
-+
-+#ifdef	__riscv_misaligned_fast
-+	sd	$in0,0($mac)		# write mac value
-+	sd	$in1,8($mac)
-+#else
-+	srli	$tmp0,$in0,8		# write mac value
-+	srli	$tmp1,$in0,16
-+	srli	$tmp2,$in0,24
-+	sb	$in0,0($mac)
-+	srli	$tmp3,$in0,32
-+	sb	$tmp0,1($mac)
-+	srli	$tmp0,$in0,40
-+	sb	$tmp1,2($mac)
-+	srli	$tmp1,$in0,48
-+	sb	$tmp2,3($mac)
-+	srli	$tmp2,$in0,56
-+	sb	$tmp3,4($mac)
-+	srli	$tmp3,$in1,8
-+	sb	$tmp0,5($mac)
-+	srli	$tmp0,$in1,16
-+	sb	$tmp1,6($mac)
-+	srli	$tmp1,$in1,24
-+	sb	$tmp2,7($mac)
-+
-+	sb	$in1,8($mac)
-+	srli	$tmp2,$in1,32
-+	sb	$tmp3,9($mac)
-+	srli	$tmp3,$in1,40
-+	sb	$tmp0,10($mac)
-+	srli	$tmp0,$in1,48
-+	sb	$tmp1,11($mac)
-+	srli	$tmp1,$in1,56
-+	sb	$tmp2,12($mac)
-+	sb	$tmp3,13($mac)
-+	sb	$tmp0,14($mac)
-+	sb	$tmp1,15($mac)
-+#endif
-+
-+	ret
-+.size	poly1305_emit,.-poly1305_emit
-+.string	"Poly1305 for RISC-V, CRYPTOGAMS by \@dot-asm"
-+___
-+}
-+}}} else {{{
-+######################################################################
-+# 32-bit code path
-+#
-+
-+my ($ctx,$inp,$len,$padbit) = ($a0,$a1,$a2,$a3);
-+my ($in0,$in1,$in2,$in3,$tmp0,$tmp1,$tmp2,$tmp3) =
-+   ($a4,$a5,$a6,$a7,$t0,$t1,$t2,$t3);
-+
-+$code.=<<___;
-+#if __riscv_xlen == 32
-+# if __SIZEOF_POINTER__ == 8
-+#  define PUSH	csc
-+#  define POP	clc
-+# else
-+#  define PUSH	sw
-+#  define POP	lw
-+# endif
-+# define MULX(hi,lo,a,b)	mulhu hi,a,b; mul lo,a,b
-+# define srliw	srli
-+# define srlw	srl
-+# define sllw	sll
-+# define addw	add
-+# define addiw	addi
-+# define mulw	mul
-+#elif __riscv_xlen == 64
-+# if __SIZEOF_POINTER__ == 16
-+#  define PUSH	csc
-+#  define POP	clc
-+# else
-+#  define PUSH	sd
-+#  define POP	ld
-+# endif
-+# define MULX(hi,lo,a,b)	slli b,b,32; srli b,b,32; mul hi,a,b; addiw lo,hi,0; srai hi,hi,32
-+#else
-+# error "unsupported __riscv_xlen"
-+#endif
-+
-+.option	pic
-+.text
-+
-+.globl	poly1305_init
-+.type	poly1305_init,\@function
-+poly1305_init:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	sw	$zero,0($ctx)
-+	sw	$zero,4($ctx)
-+	sw	$zero,8($ctx)
-+	sw	$zero,12($ctx)
-+	sw	$zero,16($ctx)
-+
-+	beqz	$inp,.Lno_key
-+
-+#ifndef	__riscv_misaligned_fast
-+	andi	$tmp0,$inp,3		# $inp % 4
-+	sub	$inp,$inp,$tmp0		# align $inp
-+	sll	$tmp0,$tmp0,3		# byte to bit offset
-+#endif
-+	lw	$in0,0($inp)
-+	lw	$in1,4($inp)
-+	lw	$in2,8($inp)
-+	lw	$in3,12($inp)
-+#ifndef	__riscv_misaligned_fast
-+	beqz	$tmp0,.Laligned_key
-+
-+	lw	$tmp2,16($inp)
-+	sub	$tmp1,$zero,$tmp0
-+	srlw	$in0,$in0,$tmp0
-+	sllw	$tmp3,$in1,$tmp1
-+	srlw	$in1,$in1,$tmp0
-+	or	$in0,$in0,$tmp3
-+	sllw	$tmp3,$in2,$tmp1
-+	srlw	$in2,$in2,$tmp0
-+	or	$in1,$in1,$tmp3
-+	sllw	$tmp3,$in3,$tmp1
-+	srlw	$in3,$in3,$tmp0
-+	or	$in2,$in2,$tmp3
-+	sllw	$tmp2,$tmp2,$tmp1
-+	or	$in3,$in3,$tmp2
-+.Laligned_key:
-+#endif
-+
-+	lui	$tmp0,0x10000
-+	addi	$tmp0,$tmp0,-1		# 0x0fffffff
-+	and	$in0,$in0,$tmp0
-+	addi	$tmp0,$tmp0,-3		# 0x0ffffffc
-+	and	$in1,$in1,$tmp0
-+	and	$in2,$in2,$tmp0
-+	and	$in3,$in3,$tmp0
-+
-+	sw	$in0,20($ctx)
-+	sw	$in1,24($ctx)
-+	sw	$in2,28($ctx)
-+	sw	$in3,32($ctx)
-+
-+	srlw	$tmp1,$in1,2
-+	srlw	$tmp2,$in2,2
-+	srlw	$tmp3,$in3,2
-+	addw	$in1,$in1,$tmp1		# s1 = r1 + (r1 >> 2)
-+	addw	$in2,$in2,$tmp2
-+	addw	$in3,$in3,$tmp3
-+	sw	$in1,36($ctx)
-+	sw	$in2,40($ctx)
-+	sw	$in3,44($ctx)
-+.Lno_key:
-+	li	$a0,0
-+	ret
-+.size	poly1305_init,.-poly1305_init
-+___
-+{
-+my ($h0,$h1,$h2,$h3,$h4, $r0,$r1,$r2,$r3, $rs1,$rs2,$rs3) =
-+   ($s0,$s1,$s2,$s3,$s4, $s5,$s6,$s7,$s8, $t0,$t1,$t2);
-+my ($d0,$d1,$d2,$d3) =
-+   ($a4,$a5,$a6,$a7);
-+my $shr = $ra;		# used on R6
-+
-+$code.=<<___;
-+.globl	poly1305_blocks
-+.type	poly1305_blocks,\@function
-+poly1305_blocks:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	andi	$len,$len,-16		# complete blocks only
-+	beqz	$len,.Labort
-+
-+#ifdef	__riscv_zcmp
-+	cm.push	{ra,s0-s8}, -48
-+#else
-+	caddi	$sp,$sp,-__SIZEOF_POINTER__*12
-+	PUSH	$ra, __SIZEOF_POINTER__*11($sp)
-+	PUSH	$s0, __SIZEOF_POINTER__*10($sp)
-+	PUSH	$s1, __SIZEOF_POINTER__*9($sp)
-+	PUSH	$s2, __SIZEOF_POINTER__*8($sp)
-+	PUSH	$s3, __SIZEOF_POINTER__*7($sp)
-+	PUSH	$s4, __SIZEOF_POINTER__*6($sp)
-+	PUSH	$s5, __SIZEOF_POINTER__*5($sp)
-+	PUSH	$s6, __SIZEOF_POINTER__*4($sp)
-+	PUSH	$s7, __SIZEOF_POINTER__*3($sp)
-+	PUSH	$s8, __SIZEOF_POINTER__*2($sp)
-+#endif
-+
-+#ifndef	__riscv_misaligned_fast
-+	andi	$shr,$inp,3
-+	andi	$inp,$inp,-4		# align $inp
-+	slli	$shr,$shr,3		# byte to bit offset
-+#endif
-+
-+	lw	$h0,0($ctx)		# load hash value
-+	lw	$h1,4($ctx)
-+	lw	$h2,8($ctx)
-+	lw	$h3,12($ctx)
-+	lw	$h4,16($ctx)
-+
-+	lw	$r0,20($ctx)		# load key
-+	lw	$r1,24($ctx)
-+	lw	$r2,28($ctx)
-+	lw	$r3,32($ctx)
-+	lw	$rs1,36($ctx)
-+	lw	$rs2,40($ctx)
-+	lw	$rs3,44($ctx)
-+
-+	add	$len,$len,$inp		# end of buffer
-+
-+.Loop:
-+	lw	$d0,0($inp)		# load input
-+	lw	$d1,4($inp)
-+	lw	$d2,8($inp)
-+	lw	$d3,12($inp)
-+#ifndef	__riscv_misaligned_fast
-+	beqz	$shr,.Laligned_inp
-+
-+	lw	$t4,16($inp)
-+	sub	$t5,$zero,$shr
-+	srlw	$d0,$d0,$shr
-+	sllw	$t3,$d1,$t5
-+	srlw	$d1,$d1,$shr
-+	or	$d0,$d0,$t3
-+	sllw	$t3,$d2,$t5
-+	srlw	$d2,$d2,$shr
-+	or	$d1,$d1,$t3
-+	sllw	$t3,$d3,$t5
-+	srlw	$d3,$d3,$shr
-+	or	$d2,$d2,$t3
-+	sllw	$t4,$t4,$t5
-+	or	$d3,$d3,$t4
-+
-+.Laligned_inp:
-+#endif
-+	srliw	$t3,$h4,2		# modulo-scheduled reduction
-+	andi	$t4,$h4,-4
-+	andi	$h4,$h4,3
-+
-+	addw	$d0,$d0,$h0		# accumulate input
-+	 addw	$t4,$t4,$t3
-+	sltu	$h0,$d0,$h0
-+	addw	$d0,$d0,$t4		# ... and residue
-+	sltu	$t4,$d0,$t4
-+
-+	addw	$d1,$d1,$h1
-+	 addw	$h0,$h0,$t4		# carry
-+	sltu	$h1,$d1,$h1
-+	addw	$d1,$d1,$h0
-+	sltu	$h0,$d1,$h0
-+
-+	addw	$d2,$d2,$h2
-+	 addw	$h1,$h1,$h0		# carry
-+	sltu	$h2,$d2,$h2
-+	addw	$d2,$d2,$h1
-+	sltu	$h1,$d2,$h1
-+
-+	addw	$d3,$d3,$h3
-+	 addw	$h2,$h2,$h1		# carry
-+	sltu	$h3,$d3,$h3
-+	addw	$d3,$d3,$h2
-+
-+	MULX	($h1,$h0,$r0,$d0)	# d0*r0
-+
-+	 sltu	$h2,$d3,$h2
-+	 addw	$h3,$h3,$h2		# carry
-+
-+	MULX	($t4,$t3,$rs3,$d1)	# d1*s3
-+
-+	 addw	$h4,$h4,$padbit
-+	 caddi	$inp,$inp,16
-+	 addw	$h4,$h4,$h3
-+
-+	MULX	($t6,$a3,$rs2,$d2)	# d2*s2
-+	 addw	$h0,$h0,$t3
-+	 addw	$h1,$h1,$t4
-+	 sltu	$t3,$h0,$t3
-+	 addw	$h1,$h1,$t3
-+
-+	MULX	($t4,$t3,$rs1,$d3)	# d3*s1
-+	 addw	$h0,$h0,$a3
-+	 addw	$h1,$h1,$t6
-+	 sltu	$a3,$h0,$a3
-+	 addw	$h1,$h1,$a3
-+
-+
-+	MULX	($h2,$a3,$r1,$d0)	# d0*r1
-+	 addw	$h0,$h0,$t3
-+	 addw	$h1,$h1,$t4
-+	 sltu	$t3,$h0,$t3
-+	 addw	$h1,$h1,$t3
-+
-+	MULX	($t4,$t3,$r0,$d1)	# d1*r0
-+	 addw	$h1,$h1,$a3
-+	 sltu	$a3,$h1,$a3
-+	 addw	$h2,$h2,$a3
-+
-+	MULX	($t6,$a3,$rs3,$d2)	# d2*s3
-+	 addw	$h1,$h1,$t3
-+	 addw	$h2,$h2,$t4
-+	 sltu	$t3,$h1,$t3
-+	 addw	$h2,$h2,$t3
-+
-+	MULX	($t4,$t3,$rs2,$d3)	# d3*s2
-+	 addw	$h1,$h1,$a3
-+	 addw	$h2,$h2,$t6
-+	 sltu	$a3,$h1,$a3
-+	 addw	$h2,$h2,$a3
-+
-+	mulw	$a3,$rs1,$h4		# h4*s1
-+	 addw	$h1,$h1,$t3
-+	 addw	$h2,$h2,$t4
-+	 sltu	$t3,$h1,$t3
-+	 addw	$h2,$h2,$t3
-+
-+
-+	MULX	($h3,$t3,$r2,$d0)	# d0*r2
-+	 addw	$h1,$h1,$a3
-+	 sltu	$a3,$h1,$a3
-+	 addw	$h2,$h2,$a3
-+
-+	MULX	($t6,$a3,$r1,$d1)	# d1*r1
-+	 addw	$h2,$h2,$t3
-+	 sltu	$t3,$h2,$t3
-+	 addw	$h3,$h3,$t3
-+
-+	MULX	($t4,$t3,$r0,$d2)	# d2*r0
-+	 addw	$h2,$h2,$a3
-+	 addw	$h3,$h3,$t6
-+	 sltu	$a3,$h2,$a3
-+	 addw	$h3,$h3,$a3
-+
-+	MULX	($t6,$a3,$rs3,$d3)	# d3*s3
-+	 addw	$h2,$h2,$t3
-+	 addw	$h3,$h3,$t4
-+	 sltu	$t3,$h2,$t3
-+	 addw	$h3,$h3,$t3
-+
-+	mulw	$t3,$rs2,$h4		# h4*s2
-+	 addw	$h2,$h2,$a3
-+	 addw	$h3,$h3,$t6
-+	 sltu	$a3,$h2,$a3
-+	 addw	$h3,$h3,$a3
-+
-+
-+	MULX	($t6,$a3,$r3,$d0)	# d0*r3
-+	 addw	$h2,$h2,$t3
-+	 sltu	$t3,$h2,$t3
-+	 addw	$h3,$h3,$t3
-+
-+	MULX	($t4,$t3,$r2,$d1)	# d1*r2
-+	 addw	$h3,$h3,$a3
-+	 sltu	$a3,$h3,$a3
-+	 addw	$t6,$t6,$a3
-+
-+	MULX	($a3,$d3,$r0,$d3)	# d3*r0
-+	 addw	$h3,$h3,$t3
-+	 addw	$t6,$t6,$t4
-+	 sltu	$t3,$h3,$t3
-+	 addw	$t6,$t6,$t3
-+
-+	MULX	($t4,$t3,$r1,$d2)	# d2*r1
-+	 addw	$h3,$h3,$d3
-+	 addw	$t6,$t6,$a3
-+	 sltu	$d3,$h3,$d3
-+	 addw	$t6,$t6,$d3
-+
-+	mulw	$a3,$rs3,$h4		# h4*s3
-+	 addw	$h3,$h3,$t3
-+	 addw	$t6,$t6,$t4
-+	 sltu	$t3,$h3,$t3
-+	 addw	$t6,$t6,$t3
-+
-+
-+	mulw	$h4,$r0,$h4		# h4*r0
-+	 addw	$h3,$h3,$a3
-+	 sltu	$a3,$h3,$a3
-+	 addw	$t6,$t6,$a3
-+	addw	$h4,$t6,$h4
-+
-+	li	$padbit,1		# if we loop, padbit is 1
-+
-+	bne	$inp,$len,.Loop
-+
-+	sw	$h0,0($ctx)		# store hash value
-+	sw	$h1,4($ctx)
-+	sw	$h2,8($ctx)
-+	sw	$h3,12($ctx)
-+	sw	$h4,16($ctx)
-+
-+#ifdef	__riscv_zcmp
-+	cm.popret	{ra,s0-s8}, 48
-+#else
-+	POP	$ra, __SIZEOF_POINTER__*11($sp)
-+	POP	$s0, __SIZEOF_POINTER__*10($sp)
-+	POP	$s1, __SIZEOF_POINTER__*9($sp)
-+	POP	$s2, __SIZEOF_POINTER__*8($sp)
-+	POP	$s3, __SIZEOF_POINTER__*7($sp)
-+	POP	$s4, __SIZEOF_POINTER__*6($sp)
-+	POP	$s5, __SIZEOF_POINTER__*5($sp)
-+	POP	$s6, __SIZEOF_POINTER__*4($sp)
-+	POP	$s7, __SIZEOF_POINTER__*3($sp)
-+	POP	$s8, __SIZEOF_POINTER__*2($sp)
-+	caddi	$sp,$sp,__SIZEOF_POINTER__*12
-+#endif
-+.Labort:
-+	ret
-+.size	poly1305_blocks,.-poly1305_blocks
-+___
-+}
-+{
-+my ($ctx,$mac,$nonce,$tmp4) = ($a0,$a1,$a2,$a3);
-+
-+$code.=<<___;
-+.globl	poly1305_emit
-+.type	poly1305_emit,\@function
-+poly1305_emit:
-+#ifdef	__riscv_zicfilp
-+	lpad	0
-+#endif
-+	lw	$tmp4,16($ctx)
-+	lw	$tmp0,0($ctx)
-+	lw	$tmp1,4($ctx)
-+	lw	$tmp2,8($ctx)
-+	lw	$tmp3,12($ctx)
-+
-+	srliw	$ctx,$tmp4,2		# final reduction
-+	andi	$in0,$tmp4,-4
-+	andi	$tmp4,$tmp4,3
-+	addw	$ctx,$ctx,$in0
-+
-+	addw	$tmp0,$tmp0,$ctx
-+	sltu	$ctx,$tmp0,$ctx
-+	 addiw	$in0,$tmp0,5		# compare to modulus
-+	addw	$tmp1,$tmp1,$ctx
-+	 sltiu	$in1,$in0,5
-+	sltu	$ctx,$tmp1,$ctx
-+	 addw	$in1,$in1,$tmp1
-+	addw	$tmp2,$tmp2,$ctx
-+	 sltu	$in2,$in1,$tmp1
-+	sltu	$ctx,$tmp2,$ctx
-+	 addw	$in2,$in2,$tmp2
-+	addw	$tmp3,$tmp3,$ctx
-+	 sltu	$in3,$in2,$tmp2
-+	sltu	$ctx,$tmp3,$ctx
-+	 addw	$in3,$in3,$tmp3
-+	addw	$tmp4,$tmp4,$ctx
-+	 sltu	$ctx,$in3,$tmp3
-+	 addw	$ctx,$ctx,$tmp4
-+
-+	srl	$ctx,$ctx,2		# see if it carried/borrowed
-+	sub	$ctx,$zero,$ctx
-+
-+	xor	$in0,$in0,$tmp0
-+	xor	$in1,$in1,$tmp1
-+	xor	$in2,$in2,$tmp2
-+	xor	$in3,$in3,$tmp3
-+	and	$in0,$in0,$ctx
-+	and	$in1,$in1,$ctx
-+	and	$in2,$in2,$ctx
-+	and	$in3,$in3,$ctx
-+	xor	$in0,$in0,$tmp0
-+	xor	$in1,$in1,$tmp1
-+	xor	$in2,$in2,$tmp2
-+	xor	$in3,$in3,$tmp3
-+
-+	lw	$tmp0,0($nonce)		# load nonce
-+	lw	$tmp1,4($nonce)
-+	lw	$tmp2,8($nonce)
-+	lw	$tmp3,12($nonce)
-+
-+	addw	$in0,$in0,$tmp0		# accumulate nonce
-+	sltu	$ctx,$in0,$tmp0
-+
-+	addw	$in1,$in1,$tmp1
-+	sltu	$tmp1,$in1,$tmp1
-+	addw	$in1,$in1,$ctx
-+	sltu	$ctx,$in1,$ctx
-+	addw	$ctx,$ctx,$tmp1
-+
-+	addw	$in2,$in2,$tmp2
-+	sltu	$tmp2,$in2,$tmp2
-+	addw	$in2,$in2,$ctx
-+	sltu	$ctx,$in2,$ctx
-+	addw	$ctx,$ctx,$tmp2
-+
-+	addw	$in3,$in3,$tmp3
-+	addw	$in3,$in3,$ctx
-+
-+#ifdef	__riscv_misaligned_fast
-+	sw	$in0,0($mac)		# write mac value
-+	sw	$in1,4($mac)
-+	sw	$in2,8($mac)
-+	sw	$in3,12($mac)
-+#else
-+	srl	$tmp0,$in0,8		# write mac value
-+	srl	$tmp1,$in0,16
-+	srl	$tmp2,$in0,24
-+	sb	$in0, 0($mac)
-+	sb	$tmp0,1($mac)
-+	srl	$tmp0,$in1,8
-+	sb	$tmp1,2($mac)
-+	srl	$tmp1,$in1,16
-+	sb	$tmp2,3($mac)
-+	srl	$tmp2,$in1,24
-+	sb	$in1, 4($mac)
-+	sb	$tmp0,5($mac)
-+	srl	$tmp0,$in2,8
-+	sb	$tmp1,6($mac)
-+	srl	$tmp1,$in2,16
-+	sb	$tmp2,7($mac)
-+	srl	$tmp2,$in2,24
-+	sb	$in2, 8($mac)
-+	sb	$tmp0,9($mac)
-+	srl	$tmp0,$in3,8
-+	sb	$tmp1,10($mac)
-+	srl	$tmp1,$in3,16
-+	sb	$tmp2,11($mac)
-+	srl	$tmp2,$in3,24
-+	sb	$in3, 12($mac)
-+	sb	$tmp0,13($mac)
-+	sb	$tmp1,14($mac)
-+	sb	$tmp2,15($mac)
-+#endif
-+
-+	ret
-+.size	poly1305_emit,.-poly1305_emit
-+.string	"Poly1305 for RISC-V, CRYPTOGAMS by \@dot-asm"
-+___
-+}
-+}}}
-+
-+foreach (split("\n", $code)) {
-+    if ($flavour =~ /^cheri/) {
-+	s/\(x([0-9]+)\)/(c$1)/ and s/\b([ls][bhwd]u?)\b/c$1/;
-+	s/\b(PUSH|POP)(\s+)x([0-9]+)/$1$2c$3/ or
-+	s/\b(ret|jal)\b/c$1/;
-+	s/\bcaddi?\b/cincoffset/ and s/\bx([0-9]+,)/c$1/g or
-+	m/\bcmove\b/ and s/\bx([0-9]+)/c$1/g;
-+    } else {
-+	s/\bcaddi?\b/add/ or
-+	s/\bcmove\b/mv/;
-+    }
-+    print $_, "\n";
-+}
-+
-+close STDOUT;
-diff --git a/lib/crypto/riscv/poly1305.h b/lib/crypto/riscv/poly1305.h
-new file mode 100644
-index 0000000000000..88f3df44e355e
---- /dev/null
-+++ b/lib/crypto/riscv/poly1305.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * OpenSSL/Cryptogams accelerated Poly1305 transform for riscv
-+ *
-+ * Copyright (C) 2025 Institute of Software, CAS.
-+ */
-+
-+asmlinkage void poly1305_block_init(struct poly1305_block_state *state,
-+				    const u8 raw_key[POLY1305_BLOCK_SIZE]);
-+asmlinkage void poly1305_blocks(struct poly1305_block_state *state,
-+				const u8 *src, u32 len, u32 hibit);
-+asmlinkage void poly1305_emit(const struct poly1305_state *state,
-+			      u8 digest[POLY1305_DIGEST_SIZE],
-+			      const u32 nonce[4]);
--- 
-2.50.1
+static int imx219_power_on(struct device *dev)
+{
+struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
+struct imx219 *imx219 =3D to_imx219(sd);
+int ret;
 
+ret =3D regulator_bulk_enable(IMX219_NUM_SUPPLIES,
+   imx219->supplies);
+if (ret) {
+dev_err(dev, "%s: failed to enable regulators\n",
+__func__);
+return ret;
+}
+
+ret =3D clk_prepare_enable(imx219->xclk);
+if (ret) {
+dev_err(dev, "%s: failed to enable clock\n",
+__func__);
+goto reg_off;
+}
+
+gpiod_set_value_cansleep(imx219->reset_gpio, 1);
+usleep_range(IMX219_XCLR_MIN_DELAY_US,
+    IMX219_XCLR_MIN_DELAY_US + IMX219_XCLR_DELAY_RANGE_US);
+
+return 0;
+
+reg_off:
+regulator_bulk_disable(IMX219_NUM_SUPPLIES, imx219->supplies);
+
+return ret;
+}
+
+static int imx219_power_off(struct device *dev)
+{
+struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
+struct imx219 *imx219 =3D to_imx219(sd);
+
+gpiod_set_value_cansleep(imx219->reset_gpio, 0);
+regulator_bulk_disable(IMX219_NUM_SUPPLIES, imx219->supplies);
+clk_disable_unprepare(imx219->xclk);
+
+return 0;
+}
+
+I really don't understand why this is a problem, it is up to the chip
+designer to decide
+what to do with reset behavior and not the reviewers.
+
+I'm simply writing the code following the datasheets here.
+
+
+> Best regards,
+> Krzysztof
+>
 
