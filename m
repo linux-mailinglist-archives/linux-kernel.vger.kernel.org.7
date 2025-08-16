@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-771624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812D5B289A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA9EB289A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC721CC059D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53FDAA1734
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C64A17A2F6;
-	Sat, 16 Aug 2025 01:31:05 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E219115B0FE;
+	Sat, 16 Aug 2025 01:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTpMemuT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640FF33993;
-	Sat, 16 Aug 2025 01:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF326290;
+	Sat, 16 Aug 2025 01:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755307865; cv=none; b=IxCMAHSZ25g9bu9Vp3sx3jMGvz+A5KcYgO+ZfW9UtQOBdlMrJg9y+jYOeCt8ine/K4CqRITrihsI9+LMgOaz1EKD6FnhyUDyi/BglRYsl8EKMoaxo+oNizdllIzLh3L6T6aaKfLGaApfTZ7xc9DEWRzstje0GtKGkgkV3/+RIYk=
+	t=1755308041; cv=none; b=JYMBH6UwXMqftMpufr28tBdZUUGe+ttItnUmOFLd3xhowotDUWUS+5wMmpIWN/qwyr4tFla4vbX0jKkN5opzZilP4k9wYgx8yLmrGueQH/k6rv6JbH2ukrC2chxBZMCqQiTx01H0v/6cyPS4yNZev/pkZympA73tG6o8fuR0t98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755307865; c=relaxed/simple;
-	bh=UkTYxZdXAU2D6+3HUsLzb6XAiMzEMUOi09A73MBkkiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=t4ATqiha1PYPnldGFVoMK5DIPHar/eGRXY2kX9oXAxdJ/HMVs6COwUVDKijTSMF7b4sUkD7EWshxPVQEnaaK/jhSrT30UWuCkWKGuT5OD1lMKgsI48mm50Debd0guGIMR75xF6Yz98opByS2S6udY/mxrg+c0RicNBb6XCgCpYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c3hKT5bsCz2dMMZ;
-	Sat, 16 Aug 2025 09:31:57 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E357140145;
-	Sat, 16 Aug 2025 09:30:53 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 16 Aug 2025 09:30:52 +0800
-Message-ID: <deec25f9-9e58-4650-8920-eddd9995c28b@huawei.com>
-Date: Sat, 16 Aug 2025 09:30:51 +0800
+	s=arc-20240116; t=1755308041; c=relaxed/simple;
+	bh=QAU67ghT7uJFx7o0i6RFgiTCA5x0lDgncw00VvbV1wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TNNW3nXOcWqWvIsQ/yUXmMz0x95JfG8Io5V62unwk9JdB7dC6alIzhGUMqU6hBokSGwYiSzx1sbN6LKYh+J2F58EYXyGDQRU8Z+OpjVTI7wXW5CAyM1ZtAZ0bp8c1xUcUQasc9hsCELPSB2HWo7wbDrrxVA4+C1cx+h6Sa5c+0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTpMemuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC64FC4CEEB;
+	Sat, 16 Aug 2025 01:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755308040;
+	bh=QAU67ghT7uJFx7o0i6RFgiTCA5x0lDgncw00VvbV1wE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iTpMemuTse99V3Ddi/QFoLd7riwysF0dE0pOZPaMpZdDhuP/IWagkgtbjkiOoUCmt
+	 1ILIFUJGphVjvIwAfjTfK4V1lTkYRlFpYSuLe7htGRazss0dBeVtsAUZ3GDm0QfCmD
+	 BkvrBs/yEeDIxh81jESYEEJYjmNPi7ENJJ4vXsmm9SNls79hUEo/aWOpLFcsQbUoMR
+	 2ACHvrbLIYRGP9+XgCOog1olZujzz+BD6VcRb7tLVg3Ijoj4rK9923gTmkJgPwOCrl
+	 ywmkSHvfwBqGiZU/zQXJmpLgVRGv7hzhrX1UVBttpNg/ejMqYYxaFjWsYdFLnV72DG
+	 zUJg9Do1WGv2A==
+Date: Fri, 15 Aug 2025 18:33:59 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lukasz Majewski <lukasz.majewski@mailbox.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v18 5/7] net: mtip: Add mtip_switch_{rx|tx} functions
+ to the L2 switch driver
+Message-ID: <20250815183359.352a0ecb@kernel.org>
+In-Reply-To: <20250813070755.1523898-6-lukasz.majewski@mailbox.org>
+References: <20250813070755.1523898-1-lukasz.majewski@mailbox.org>
+	<20250813070755.1523898-6-lukasz.majewski@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] riscv, bpf: use lw when reading int cpu in
- bpf_get_smp_processor_id
-Content-Language: en-US
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
-	<bpf@vger.kernel.org>
-CC: <stable@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song
- Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John
- Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
-	<jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Kumar Kartikeya
- Dwivedi <memxor@gmail.com>, <linux-riscv@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
- <20250812090256.757273-4-rkrcmar@ventanamicro.com>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20250812090256.757273-4-rkrcmar@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf100007.china.huawei.com (7.202.181.221)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 13 Aug 2025 09:07:53 +0200 Lukasz Majewski wrote:
+> +		page = fep->page[bdp - fep->rx_bd_base];
+> +		/* Process the incoming frame */
+> +		pkt_len = bdp->cbd_datlen;
+> +
+> +		dma_sync_single_for_cpu(&fep->pdev->dev, bdp->cbd_bufaddr,
+> +					pkt_len, DMA_FROM_DEVICE);
+> +		net_prefetch(page_address(page));
+> +		data = page_address(page);
+> +
+> +		if (fep->quirks & FEC_QUIRK_SWAP_FRAME)
+> +			swap_buffer(data, pkt_len);
+> +
+> +		eth_hdr = (struct ethhdr *)data;
+> +		mtip_atable_get_entry_port_number(fep, eth_hdr->h_source,
+> +						  &rx_port);
+> +		if (rx_port == MTIP_PORT_FORWARDING_INIT)
+> +			mtip_atable_dynamicms_learn_migration(fep,
+> +							      mtip_get_time(),
+> +							      eth_hdr->h_source,
+> +							      &rx_port);
+> +
+> +		if ((rx_port == 1 || rx_port == 2) && fep->ndev[rx_port - 1])
+> +			pndev = fep->ndev[rx_port - 1];
+> +		else
+> +			pndev = dev;
+> +
+> +		*port = rx_port;
+> +
+> +		/* This does 16 byte alignment, exactly what we need.
+> +		 * The packet length includes FCS, but we don't want to
+> +		 * include that when passing upstream as it messes up
+> +		 * bridging applications.
+> +		 */
+> +		skb = netdev_alloc_skb(pndev, pkt_len + NET_IP_ALIGN);
+> +		if (unlikely(!skb)) {
+> +			dev_dbg(&fep->pdev->dev,
+> +				"%s: Memory squeeze, dropping packet.\n",
+> +				pndev->name);
+> +			page_pool_recycle_direct(fep->page_pool, page);
+> +			pndev->stats.rx_dropped++;
+> +			return -ENOMEM;
+> +		}
+> +
+> +		skb_reserve(skb, NET_IP_ALIGN);
+> +		skb_put(skb, pkt_len);      /* Make room */
+> +		skb_copy_to_linear_data(skb, data, pkt_len);
+> +		skb->protocol = eth_type_trans(skb, pndev);
+> +		skb->offload_fwd_mark = fep->br_offload;
+> +		napi_gro_receive(&fep->napi, skb);
 
+The rx buffer circulation is very odd. You seem to pre-allocate buffers
+for the full ring from a page_pool. And then copy the data out of those
+pages. The normal process is that after packet is received a new page is
+allocated to give to HW, and old is attached to an skb, and sent up the
+stack.
 
-On 2025/8/12 17:02, Radim Krčmář wrote:
-> emit_ld is wrong, because thread_info.cpu is 32-bit, not xlen-bit wide.
-> The struct currently has a hole after cpu, so little endian accesses
-> seemed fine.
-> 
-> Fixes: 2ddec2c80b44 ("riscv, bpf: inline bpf_get_smp_processor_id()")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
-> ---
->   arch/riscv/net/bpf_jit_comp64.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-> index 6e1554d89681..9883a55d61b5 100644
-> --- a/arch/riscv/net/bpf_jit_comp64.c
-> +++ b/arch/riscv/net/bpf_jit_comp64.c
-> @@ -1763,7 +1763,7 @@ int bpf_jit_emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
->   		 */
->   		if (insn->src_reg == 0 && insn->imm == BPF_FUNC_get_smp_processor_id) {
->   			/* Load current CPU number in R0 */
-> -			emit_ld(bpf_to_rv_reg(BPF_REG_0, ctx), offsetof(struct thread_info, cpu),
-> +			emit_lw(bpf_to_rv_reg(BPF_REG_0, ctx), offsetof(struct thread_info, cpu),
->   				RV_REG_TP, ctx);
->   			break;
->   		}
-
-Reviewed-by: Pu Lehui <pulehui@huawei.com>
+Also you are releasing the page to be recycled without clearing it from
+the ring. I think you'd free it again on shutdown, so it's a
+double-free.
+-- 
+pw-bot: cr
 
