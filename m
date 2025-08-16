@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-772035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721BEB28E1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:20:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02F3B28E1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AE51C8808D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA88A5C6394
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37CD2E7BAF;
-	Sat, 16 Aug 2025 13:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169D2EA142;
+	Sat, 16 Aug 2025 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="wFzQlAtG"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="QvaapAyW"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3D12E5D34
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 13:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E02E7F3A
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 13:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755350413; cv=none; b=HX0W9iXxCgmlBmn5URLk/UsGYm5IPn+QwTQe/YQP8zRzRnOAX8cwcZPc4CJUmnVY7NgtrTASDZ3ublKqwHz/vn9zi52E1tOML7AuOX+4vPmRxpXjEy638TMZLOC/CvNkODfYMRMAsji/IUxXbrt4d/V7Sb8HH5uaxAAhaVhfKXc=
+	t=1755350415; cv=none; b=F1gu2c/Mt68EIKhE+qcUvU36QgSpFWDF++3QjkaqCynIPt6aBda3494gWBkjLC8yXR9Ice68woBEHwMxDWoZfNQhhMhVorGnoB3/NiXzyK6kT9CFE4WRvygsseO9riI0mfjLc7tYyc1mfnkA5zN2DimkSve3jZ84VR3leZRQ+Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755350413; c=relaxed/simple;
-	bh=h/v9ujGE8odtWlDIS1VYDDLdtv2P8kRgkNSSPf9ULfc=;
+	s=arc-20240116; t=1755350415; c=relaxed/simple;
+	bh=3PbhZqHEi4vaBFsYSL0yw+zK3kFanY9DMQDt5CbV03c=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TVrgt3/VLIRolLfAQv94kVB2E3/Px6j1BaJ7VwFTNRlY+I0aUx1UHUXYyEdnFqe1aoJY2JXdB7qer4juwpk7hWs0tMnGfKJ8iGezBKpzgbsfmGsMbo2lGigoc36Omrh3Zg11K+A2iESlC0LZEfJD2c6mFNeM0x4HI7s+fDmI5Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=wFzQlAtG; arc=none smtp.client-ip=212.77.101.11
+	 MIME-Version; b=AhBAsbUkQu74B2IbqeYmHSZkEhgQqSALQGpzvDtmBI1riDDyNq0wcniN3F8blepxyitcR9hK7wRYAKhoynZTxpZYfNe6a33I67R520fYZTeJkptw9uNpTBFUuNYfXzyIF9oPEagEpoeUYMmblSSltt93lj5zlZmWB0k0pUElfwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=QvaapAyW; arc=none smtp.client-ip=212.77.101.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 21064 invoked from network); 16 Aug 2025 15:20:09 +0200
+Received: (wp-smtpd smtp.wp.pl 27459 invoked from network); 16 Aug 2025 15:20:11 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755350409; bh=BSybUhQorMByn+HYAhAbD0K4nDxfFdsvec1CtZCfSCw=;
+          t=1755350411; bh=9YJ1lPO0WvMR//31eSCB17Ig95szVlmjfIv6jeugCes=;
           h=From:To:Subject;
-          b=wFzQlAtGRDRgiBFKu1IZjehEKETbwIrkiVSDRlyKcyuvf+NFubpLBSuhHvep4HyC2
-           Z4V+alW04vBNAaXwCuFwL7bXNO0PMaB/v8vQApYABBrsGVyrooaqq/A16EduDbV/kz
-           F4Ni1Ui6fNa6K2ANUYGE9WFk1r3k1H18gnQ8C6mvx/DuoKDYE7M9kceccXZZLybgKf
-           /Po6OR9YbafUZ9rudpYybrxAFB169er8/LAgh43C1DO9EWdhwpQoWmHUMgUe80UZNO
-           GaC0zY6bgnS7LnLtDbkpwykJWc1E6/w6Uz7WPlNlvtzMs3ayluMJT9kQkPxjoyCB3L
-           l+2l0HmvBQjWA==
+          b=QvaapAyWVdZv9EA4BRBTkmumg5DQM8mK3BIFBiq+6dfKeKwGoENJYclkZTxd14jB6
+           X7wte6kU8LYm9X2jEQc0Kz8REuLwpoyccG8Y5l9Ss2oj1ih3JnlFHlird4oCaDMmgV
+           SNtgbwkbCaYKGoWRf6emq/ojbIibhVmjAiH0ivfS8C0aGwvUt19TBA8N3UtfflX0Vc
+           T0NWxAfLGnzDK1x0u8wYIB7YqjYpNOZpJI5VEyGSmzsHaYt8cgA3mzKXOfWNv891fX
+           sfMiylAkEqGk9hhKf6Oct/oy4lxhihnGGsuhpDF0byX68QthtJVePhKqLDGG9dqthM
+           Bz2jjydkJRovg==
 Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
           (envelope-sender <olek2@wp.pl>)
           by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <robh@kernel.org>; 16 Aug 2025 15:20:09 +0200
+          for <robh@kernel.org>; 16 Aug 2025 15:20:11 +0200
 From: Aleksander Jan Bajkowski <olek2@wp.pl>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -54,9 +54,9 @@ To: robh@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] mips: lantiq: danube: add missing timer interrupts
-Date: Sat, 16 Aug 2025 15:16:23 +0200
-Message-ID: <20250816132002.3632343-3-olek2@wp.pl>
+Subject: [PATCH v2 3/3] mips: lantiq: danube: add device-specified compatible in GPTU node
+Date: Sat, 16 Aug 2025 15:16:24 +0200
+Message-ID: <20250816132002.3632343-4-olek2@wp.pl>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250816132002.3632343-1-olek2@wp.pl>
 References: <20250816132002.3632343-1-olek2@wp.pl>
@@ -67,33 +67,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-WP-MailID: dbf883a0be23ea35d53b0d02bf1fe655
+X-WP-MailID: 88a931d89730847405752da1b9d15df0
 X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [odPh]                               
+X-WP-SPAM: NO 0000001 [kSIx]                               
 
-The driver expects six interrupt lines to be specified.
+This patch adds device-specific compatibility in the GPTU node.
 
-Fixes: 30404aec4d09 ("MIPS: lantiq: adds support for gptu timers")
 Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 ---
- arch/mips/boot/dts/lantiq/danube.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/mips/boot/dts/lantiq/danube.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-index 7a7ba66aa534..8e92573aaf75 100644
+index 8e92573aaf75..d09276b31718 100644
 --- a/arch/mips/boot/dts/lantiq/danube.dtsi
 +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-@@ -71,6 +71,10 @@ fpi@10000000 {
- 		gptu@e100a00 {
- 			compatible = "lantiq,gptu-xway";
- 			reg = <0xe100a00 0x100>;
-+			interrupt-parent = <&icu0>;
-+			interrupts = <126 127 128 129 130 131>;
-+			interrupt-names = "timer1a", "timer1b", "timer2a",
-+				"timer2b", "timer3a", "timer3b";
- 		};
+@@ -69,7 +69,7 @@ fpi@10000000 {
+ 		reg = <0x10000000 0xef00000>;
  
- 		serial@e100c00 {
+ 		gptu@e100a00 {
+-			compatible = "lantiq,gptu-xway";
++			compatible = "lantiq,danube-gptu", "lantiq,gptu-xway";
+ 			reg = <0xe100a00 0x100>;
+ 			interrupt-parent = <&icu0>;
+ 			interrupts = <126 127 128 129 130 131>;
 -- 
 2.47.2
 
