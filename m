@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-771690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BDB28A60
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:53:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2643B28A61
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9477B30D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:52:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B8CC7B4BAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30A71DC997;
-	Sat, 16 Aug 2025 03:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DF61DC997;
+	Sat, 16 Aug 2025 03:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B+LtpeGw"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtU0X/f8"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B983155333;
-	Sat, 16 Aug 2025 03:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEDCC8EB;
+	Sat, 16 Aug 2025 03:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755316422; cv=none; b=Sk71SjzWjpQrDa+iQfXCRlTEj9uIWJJf9dUEaVgWYD+EFLIqnToqHHRSDsan5a3CQoBxl4SnPwa4tgk92VfibA0RRds7mFvwjKJ+4XFFaRMeSKYIwVhXtuM9VE+JgDjoIXLuZIafe/oecCr1q8omXfXSF1hP6HiEG6i6lptpmo8=
+	t=1755316450; cv=none; b=thxyhWMn9DiW/rkhx13fffWfVslgYV+caZkrgiyfQYSZaiiCjrHJbyJHFLEbEIEHB8d7hx+VNq3zz3LuVy8kODLMLh6PAIzsvI8xqvVvR8ZAua7/WuL/TperBpPots04AEVW0duJ6mJAVLqMfF8hircO3sLmDK334Iks/qKmAFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755316422; c=relaxed/simple;
-	bh=sFof9ZJ265IZSD36dpzx06sjikw+apqRmtPD496v4Lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XgWERR84V+7rcQqU2lTDLM//8LbAx449GLRgZYxogs/x3gTCYLlwN8FXuYBqWmYoANxOPC2Y3GLoarTA1VkL5+rBf9rYrXLF3ciHaFBe/8auo1zyH0C5IA9gJ+7gTlTlZnfyw++y6oUKT4Z9AGFiHkQXXwYlrCnqoyGRUFLZ0iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B+LtpeGw; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755316407; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=JIZlq6Vx8PLQbzVJbIEl4PG97O7jQ5b2q+B6qeAr2Jc=;
-	b=B+LtpeGwLF4PR5rKOMpfnaZlRBABz/F1h1aZl2UF2FT7VaG89zUQnZyQqkWXOrTcAHeV6MYKFHXdtDPxdP3z4KrmMw1zPCWxW3DbcaHZhc1K+lno1V8Hi7itnsviN7y7yUKWajoTRupPnXO/RgmiBvJadxTUpMvU5ng/BXEWTow=
-Received: from 30.221.32.119(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WlqVtem_1755316338 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 16 Aug 2025 11:53:27 +0800
-Message-ID: <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
-Date: Sat, 16 Aug 2025 11:52:18 +0800
+	s=arc-20240116; t=1755316450; c=relaxed/simple;
+	bh=fxvicm52WISCYfgWHWVWd3u3rkdYmcm8O/xICpLXpJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyAeU509qCvHbEjWLOtk755acrOjdI9um3Od6aXlV0c/HlANTEORxREsjTVJ/Qk0AA8vAONeBmnmJlU4ej93MlggB5KYM0S0pjSDWY+rlGTUq5ksvX3wEqOm+PJ9YlJciNCUK307eJFZGvFUyYMInM4qdm4ngBFraLgwQqeHcdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtU0X/f8; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2eb49b83so1544682b3a.3;
+        Fri, 15 Aug 2025 20:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755316448; x=1755921248; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBXYGJTAqCqDCfB+RH4qZdu2913ppW7rW3q98ghsrtA=;
+        b=WtU0X/f8RRHcNAjyCTlJYEBaD4ROWzBHxd1YKaIzhuI3jZmN3RjU7l1rL7D5u1a8hb
+         9t5qOUD7yBdm99VuHeRGT3YUflgSAXJX83O75TrjlVsS9hg3f1ueu/HZndXpxH7ek/qo
+         snNvw6w3RtIKzNF4apFl1WBOYzyLwyK7TIw1pRMpjgheAuY8rq5idvImEdkyWilz8jyL
+         eLVamoeqKcrNCPkD6kojMQDeNKnKpNETJOrN4JMQF4Kaz3DjRHybXjfKRiKG20cFJEMC
+         CQwD0I33F+VecqfVhBaUtiQu5S/60TMnauL2qy4iu7yz6nc6ehYN2AAfq8c9PPQN7faf
+         T31w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755316448; x=1755921248;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iBXYGJTAqCqDCfB+RH4qZdu2913ppW7rW3q98ghsrtA=;
+        b=C34+waqCBCiuNtD1SlvT5z6xequheqD+vFr+S1Z5Elv/BOAYljO+2Vq9eMtDb3L+bt
+         ozBRJ1tCdBCBSGBlTOI5ik5C+V0cwsYkrZW67VDKyB8304s/IsNtZsf10dR52Fb1WY6V
+         Os/1HLDrjsLmCJXABdtFbTVqItOGK4PWtIg+BtmVod+jcJMHhp4/2OeJgGZcGbpX7aFZ
+         orAmsQYS6sOX82wTDzPj5B2IYmTgqstJUBy8kzu/NGL84g3G6hDjbuHvkYhAzHNFPhuG
+         JG/MrjtrpPWsoXdl7V00hbAerQxnYdhErlAaXzLR+BlNxfJxfBwdDJteMmTHN2lBVEcF
+         3G3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVpGyViap0Boo8LJrPapCHHg6pYBzpQ8qOZsUVRkd9rM4RpOqc8NzVu+RxhNEVizn/nB5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqVjtPDHZrLBJmsJfMKEtYdy2zU9KcswigkV7e3HdCe3jZK/Se
+	G8QHjvHnj001X/FnDOIBrsf8W0bOCKUecgKCKW/wpCF0Bt5NBxCtZpZd
+X-Gm-Gg: ASbGncuR/+dDxRfwzlbo334c6bQ1RZO5WZJJPG8uXjj243gGPAUZKRtg1CXG8Pk+XvI
+	kEhCOQOGWRf6muNRsePqZUmZhv4Xvvuup9kGQ5Ml/WcylwzyZW3HTuEu33+wf5anhZhLdTHHcEH
+	ExNiW6CBhiKlWhshNTM25QgLivdz7n7C8XKmih1nWLggnyiGanT3mV41/gj2SK1qnNuYb1g67B6
+	XBli8Ew1FKnHwhWqcgceJHOe3f45Y2xAN514Ngr6ft+7gRgtUpKuzPjlxL0sPsBnx0dTFPEWnq1
+	xwXY1PkV0Vty+uSHQ0jEVV9CplitUVv5PmcwGnmpBISHus/WivE0GkQvFnbeygh4G05BYiFeDrO
+	ErAoBml1qFh7XX6Lg+hli/w==
+X-Google-Smtp-Source: AGHT+IHsHCAks15A9PVkrZkY/zv2SXUkplxDH3JcooQQnxstIPoF1j4eU1U4v24/6bAym4GWBt7W3g==
+X-Received: by 2002:a05:6a00:4fca:b0:76b:e1c6:35d6 with SMTP id d2e1a72fcca58-76e5151e0b0mr1832890b3a.0.1755316447869;
+        Fri, 15 Aug 2025 20:54:07 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4528bca0sm2270816b3a.34.2025.08.15.20.54.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 20:54:06 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 6A8424207D08; Sat, 16 Aug 2025 10:54:04 +0700 (WIB)
+Date: Sat, 16 Aug 2025 10:54:04 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: Re: [PATCH 1/3] doc: Update whatisRCU.rst for recent RCU API
+ additions
+Message-ID: <aKAA3OHvISThlUX-@archie.me>
+References: <9ea6b51e-b48a-474f-b7ae-4fb6414d0aaf@paulmck-laptop>
+ <20250816000007.2622326-1-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
- dust.li@linux.alibaba.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- David Woodhouse <dwmw2@infradead.org>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
- <20250815113814.5e135318@kernel.org>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <20250815113814.5e135318@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iVJj7PYbMjjOCHgo"
+Content-Disposition: inline
+In-Reply-To: <20250816000007.2622326-1-paulmck@kernel.org>
 
 
+--iVJj7PYbMjjOCHgo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/8/16 02:38, Jakub Kicinski wrote:
-> On Tue, 12 Aug 2025 19:53:21 +0800 Wen Gu wrote:
->> This adds a driver for Alibaba CIPU PTP clock. The CIPU, an underlying
->> infrastructure of Alibaba Cloud, synchronizes time with reference clocks
->> continuously and provides PTP clocks for VMs and bare metals in cloud.
-> 
->> +static struct attribute *ptp_cipu_attrs[] = {
->> +	&dev_attr_reg_dev_feat.attr,
->> +	&dev_attr_reg_gst_feat.attr,
->> +	&dev_attr_reg_drv_ver.attr,
->> +	&dev_attr_reg_env_ver.attr,
->> +	&dev_attr_reg_dev_stat.attr,
->> +	&dev_attr_reg_sync_stat.attr,
->> +	&dev_attr_reg_tm_prec_ns.attr,
->> +	&dev_attr_reg_epo_base_yr.attr,
->> +	&dev_attr_reg_leap_sec.attr,
->> +	&dev_attr_reg_max_lat_ns.attr,
->> +	&dev_attr_reg_mt_tout_us.attr,
->> +	&dev_attr_reg_thresh_us.attr,
->> +
->> +	&dev_attr_ptp_gettm.attr,
->> +	&dev_attr_ptp_gettm_inval_err.attr,
->> +	&dev_attr_ptp_gettm_tout_err.attr,
->> +	&dev_attr_ptp_gettm_excd_thresh.attr,
->> +
->> +	&dev_attr_dev_clk_abn.attr,
->> +	&dev_attr_dev_clk_abn_rec.attr,
->> +	&dev_attr_dev_maint.attr,
->> +	&dev_attr_dev_maint_rec.attr,
->> +	&dev_attr_dev_maint_tout.attr,
->> +	&dev_attr_dev_busy.attr,
->> +	&dev_attr_dev_busy_rec.attr,
->> +	&dev_attr_dev_err.attr,
->> +	&dev_attr_dev_err_rec.attr,
-> 
-> This driver is lacking documentation. You need to describe how the user
-> is expected to interact with the device and document all these sysfs
-> attributes.
-> 
+On Fri, Aug 15, 2025 at 05:00:05PM -0700, Paul E. McKenney wrote:
+> +RCU: Initialization/cleanup/ordering::
+> +
+> +	RCU_INIT_POINTER
+> +	RCU_INITIALIZER
+> +	RCU_POINTER_INITIALIZER
+> +	init_rcu_head
+> +	destroy_rcu_head
+> +	init_rcu_head_on_stack
+> +	destroy_rcu_head_on_stack
+> +	SLAB_TYPESAFE_BY_RCU
+> +
+> +
+> +RCU: Quiescents states and control::
+> +
+> +	cond_resched_tasks_rcu_qs
+> +	rcu_all_qs
+> +	rcu_softirq_qs_periodic
+> +	rcu_end_inkernel_boot
+> +	rcu_expedite_gp
+> +	rcu_gp_is_expedited
+> +	rcu_unexpedite_gp
+> +	rcu_cpu_stall_reset
+> +	rcu_head_after_call_rcu
+> +	rcu_is_watching
+> +
+> +
+> +RCU-sync primitive:
+> +
+> +	rcu_sync_is_idle
+> +	rcu_sync_init
+> +	rcu_sync_enter
+> +	rcu_sync_exit
+> +	rcu_sync_dtor
 
-OK. I will add the description.
-
-Would you prefer me to create a related .rst file under Documentation/
-(perhaps in a new Documentation/clock/ptp/ directory?), or add the
-description comments directly in this driver source?
-
-> Maybe it's just me, but in general I really wish someone stepped up
-> and created a separate subsystem for all these cloud / vm clocks.
-> They have nothing to do with PTP. In my mind PTP clocks are simple HW
-> tickers on which we build all the time related stuff. While this driver
-> reports the base year for the epoch and leap second status via sysfs.
-
-These sysfs are intended to provide diagnostics and informations.
-For users, interacting with this PTP clock works the same way as with other
-PTP clock, through the exposed chardev. The 1588 protocol related work has
-been done by the cloud infra so the driver only reads some registers.
+Looks like inconsistent (normal paragraph instead of literal code block like
+the rest).
 
 Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--iVJj7PYbMjjOCHgo
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaKAA2AAKCRD2uYlJVVFO
+oyzvAPwOXv26GjZPJ4r7xJ/FHCS3yUzvoSfU0yTvYr/qI6tmDQD/aYRkvMiGSguN
+stVxUatSYoWy/aJ75FdWrUc1o8PQnAo=
+=sssj
+-----END PGP SIGNATURE-----
+
+--iVJj7PYbMjjOCHgo--
 
