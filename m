@@ -1,596 +1,266 @@
-Return-Path: <linux-kernel+bounces-772227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1D4B2902E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:11:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6E6B29030
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FDAA5A7C8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531E65A7DA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C53201266;
-	Sat, 16 Aug 2025 19:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648EE20B7EE;
+	Sat, 16 Aug 2025 19:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ujoDL0xy"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6q0MgJG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C431F4703
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 19:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1E122615
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 19:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755371501; cv=none; b=tx930EvPiBmoiKxexCFNmOMZLldlqsG0320eD3BzzfpU1b7tzfwL5IC9SAXP9agwWgexy67NSeto5tjdCNnuVrGlEVV5ep0OMTasvGxSBoNG3+5Ty2ypXdL26xkNwf46MGIoW9Sej+gs2AWQRrr64LYyCkcqDBRq/lXer8rQTck=
+	t=1755371756; cv=none; b=odGopiUC5XjljsZD4oYEut+4pv8yiqWgcJ+y1WAO4G0gmKflQ6vdXA9e6mBzOOSZLuzv/4FNAnLGhPrlEudvSoQB0eKHghUnq8CEZdiTnc90z+4UemDY0OYdIcHUiLEMijHmxpoR0BcV0Vyp15MI2x9KHfnXhgg03D828LluXP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755371501; c=relaxed/simple;
-	bh=BpTELHwFBv6TO3y6SLHhoUWZ+rTdMBy8AnJJ4eUxABY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GYSvh2W6Q8L5jG85I5dUuca+OVCq+nkuWYQHoB4LidzPUKvvcAuMES+g6zzxOACHA0k3uiiYzeRW+96xD9Un07j1gdDQW9PEKOYKGJXMrcCzWXX9rR87Aziu5LzhJrUOIEbEW3rX2HoKi4lBxlO/zRlgawHYUHVjYyixmEqOEpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ujoDL0xy; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-244581953b8so31858335ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 12:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755371496; x=1755976296; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D2b4I74l91nF0HRNssQ7bSgGkLbdaG7n4udVN8wFuGU=;
-        b=ujoDL0xyxZ1xr9bzvwqloKR3OyMasC7mmGDAwgoYbJevJSRIwbdw09rtq80hrAgOT9
-         GQrb/5EQSDtL6QwMidf4ogwRdxX384Om31dW9mpZnUuRrr7jvHXVvfJe2AiQ06I4b0/6
-         qjHO+VCe364Bh7V4P3Vi+r+YFMcaBUA6XGG/ahso6zFQBVEVz+mBXeGnSnjLnYOX5pLU
-         VgBqQQNuW2ZrVkUvKsXZpj3RWGlpBib2DLCQI78/8VtBCDPopsHMAR2yrvtmoRgBs/9W
-         JpIZR829kaittLUm7Ovz93m9R5LBR9qUCniaD9Y/RBS64swl4Rrg5GhhWkq80JPcmEoC
-         Z7hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755371496; x=1755976296;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D2b4I74l91nF0HRNssQ7bSgGkLbdaG7n4udVN8wFuGU=;
-        b=UHcnRzT1Q9y/J+WAYtXK5pTaCPY0gPJqfZ+eyhWq2Q7m2oGF0YzDJlNBVh2tgAr7al
-         dK0oTTAPfyZi4QxRGK0kKvQVAxM2XEEnGB+KGvELhhvfnvfflNjqvCOGYKqpdshFmpHB
-         8cuPPT2QAULvTxhetCpDcb9RPNHW4KAuYDSAxifmYrZbeuIV5S6edplq5+zs1UZWutXe
-         mDnsisIr3hzPq42nRtss+3GNuA/nWQA+8n4ezNjFv6sA8qdPVtKO8is+WEiSICLe4/j/
-         EpsG3WYRq1F4THwJZZycLeBXIb636ODKRRah+3cjazH4Ug9DHYXIaSqvAWAPzawdZZ1x
-         +wPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbKUuAfiOjDTGlMJebtauEppCGVOXriGtYkZfFptkX9yb6sKO6yYEf/5vtzr3HlkMlpkGLRsaoQhs9pUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybr6KkNulquttirRsIinT8uvsKlKpj2XkujpabR4htTByXJej7
-	JbhJsp5kSmWpa5aoW3r4XkfowMEdksF6qZC+EKCOLLzxpvjpMPwJazDDv1SffsvXbKUrkWuFHmj
-	Qe2O16Gnd+co203D3Wo+rDrDQyA==
-X-Google-Smtp-Source: AGHT+IEv7ZdU4wvYCo/SVKfigEVmFu/5ziUfJ5s1mjOpawzYxvJHEyoQC3Uidz0JBv5hO62anh8pwHoDhmRHvpQd5g==
-X-Received: from plbkh16.prod.google.com ([2002:a17:903:650:b0:240:718d:564a])
- (user=lokeshgidra job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:187:b0:234:aa9a:9e0f with SMTP id d9443c01a7336-24478f6356amr42485355ad.23.1755371496139;
- Sat, 16 Aug 2025 12:11:36 -0700 (PDT)
-Date: Sat, 16 Aug 2025 12:11:23 -0700
+	s=arc-20240116; t=1755371756; c=relaxed/simple;
+	bh=I0tMp8ZMxQUOM+ZGmkaosXXler31EIT1wqssk9LwdIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XKganxW7zCMUPgSoGvr2fVT+BWJPA/6n02bkOWTL45TL3VYcDy7Czy/lEnGJnDLYkPUWYc15cYNql6Wri2WVoaTQmxXuXpOIWgQnR0VZQQPFSYN75SRfcNvR7tIz7IC95kgcxKpffHz3Sm8Rvcs2+ouv/XOBnOauPwe52I5WxTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6q0MgJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3469AC116D0
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 19:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755371756;
+	bh=I0tMp8ZMxQUOM+ZGmkaosXXler31EIT1wqssk9LwdIY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a6q0MgJG4Bt4m54MHh4DNJEzNf744gtuNpB2tf6BHqj0AB8JMfD6FnztnTbLi9DZI
+	 q6OyLLbYAnM/EsJZDDjtnrnty5ZaXCNQiNuGp5ejJh8epJdLSaZODR9Dv0I8gl6v93
+	 O7+WGWdVO0F1a+fSEl0AXEdIbzw/5MSRCd53WLSI020LKOjXf/vLEj3thPnPHxxmLX
+	 odF3onWLCloL+/gR4CWCZdbOt2hrmuMjeF+ZkvChHH+b/p4LwljpYzr/G/CEJ9D0OL
+	 1UnBkAuj9Bufp1AKb28XCE0h584TFPMuHhT3QJl9GjACL2GkJTy2z3bHh97KZ0lxsj
+	 esP5YrIlGeG4Q==
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459fbca0c95so58755e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 12:15:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMIO+3g6hDdqq7jbQ4UighJMNxaVaLrzF9yGSSVjaXRwXwROXhJ2s4/kboc7B53qOMByIwHgpGhgLmQfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEzjgTdpNDi3GteWOen2S2RF+auwimgJ/KvjfS1sNgFW2NxsVC
+	yUcsYm++Pj/qCQaxXp3ufJs8yeruCSC14j17vvaWMuv81ggzEcUUH1tYBk0R8AhhtN540zJyW9n
+	sqX4TXq+x91ofPKmy/onlAkEW0bRAo+3l6jCCCVOR
+X-Google-Smtp-Source: AGHT+IGnoTrnnqoE8ad9OuT4PTDa3XFRStZziu5MdWDOriajB3cTQptUGs9bDKsSy3mFCj2WIyMZAKeiWHIhkayjxhA=
+X-Received: by 2002:a05:600c:c081:b0:453:79c3:91d6 with SMTP id
+ 5b1f17b1804b1-45a26efb748mr1041445e9.1.1755371754704; Sat, 16 Aug 2025
+ 12:15:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-Message-ID: <20250816191123.3601561-1-lokeshgidra@google.com>
-Subject: [PATCH v6] userfaultfd: opportunistic TLB-flush batching for present
- pages in MOVE
-From: Lokesh Gidra <lokeshgidra@google.com>
-To: akpm@linux-foundation.org
-Cc: aarcange@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	ngeoffray@google.com, Lokesh Gidra <lokeshgidra@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
-	Barry Song <baohua@kernel.org>
+MIME-Version: 1.0
+References: <20250716202006.3640584-1-youngjun.park@lge.com>
+ <20250716202006.3640584-2-youngjun.park@lge.com> <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
+ <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330> <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+ <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
+ <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com> <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
+In-Reply-To: <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
+From: Chris Li <chrisl@kernel.org>
+Date: Sat, 16 Aug 2025 12:15:43 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
+X-Gm-Features: Ac12FXyWwdls-FsaRf6mfH0ti9KL3EVSh5eHK7Plqi7oep3Q2Is0FQrFr3qdzUg
+Message-ID: <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
-for moving present pages. Mitigate this cost by opportunistically
-batching present contiguous pages for TLB flushing.
+On Sat, Aug 16, 2025 at 10:21=E2=80=AFAM YoungJun Park <youngjun.park@lge.c=
+om> wrote:
+>
+> On Fri, Aug 15, 2025 at 08:10:09AM -0700, Chris Li wrote:
+> > Hi Michal and YoungJun,
+>
+> First of all, thank you for sharing your thoughts. I really appreciate th=
+e
+> detailed feedback. I have many points I would like to think through and
+> discuss as well. For now, let me give some quick feedback, and I will fol=
+low
+> up with more detailed responses after I have had more time to reflect.
 
-Without batching, in our testing on an arm64 Android device with UFFD GC,
-which uses MOVE ioctl for compaction, we observed that out of the total
-time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
-~20% in vm_normal_folio().
+Please do, that is part of the community feedback and review process.
 
-With batching, the proportion of vm_normal_folio() increases to over
-70% of move_pages_pte() without any changes to vm_normal_folio().
-Furthermore, time spent within move_pages_pte() is only ~20%, which
-includes TLB-flush overhead.
+> > I am sorry for the late reply. I have briefly read through the patches
+> > series the overall impression:
+> > 1)  Priority is not the best way to select which swap file to use per c=
+group.
+> > The priority is assigned to one device, it is a per swap file local
+> > change. The effect you want to see is actually a global one, how this
+> > swap device compares to other devices. You actually want  a list at
+> > the end result. Adjusting per swap file priority is backwards. A lot
+> > of unnecessary usage complexity and code complexity come from that.
+> > 2)  This series is too complicated for what it does.
+>
+> You mentioned that the series is overly complex and does more than what i=
+s
+> really needed. I understand your concern. I have spent quite a lot of tim=
+e
+> thinking about this topic, and the reason I chose the priority approach i=
+s
+> that it gives more flexibility and extensibility by reusing an existing
+> concept.
 
-When the GC intensive benchmark, which was used to gather the above
-numbers, is run on cuttlefish (qemu android instance on x86_64), the
-completion time of the benchmark went down from ~45mins to ~20mins.
+I have not questioned the approach you can achieve with your goal. The
+real question is, is this the best approach to consider to merge into
+the main line Linux kernel. Merging into the main line kernel has a
+very high bar. How is it compared to other alternative approaches in
+terms of technical merit and complexity trade offs.
 
-Furthermore, system_server, one of the most performance critical system
-processes on android, saw over 50% reduction in GC compaction time on an
-arm64 android device.
+> Where you see unnecessary functionality, I tend to view it as providing m=
+ore
+> degrees of freedom and flexibility. In my view, the swap tier concept can=
+ be
+> expressed as a subset of the per-cgroup priority model.
 
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>
-Cc: Barry Song <v-songbaohua@oppo.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Peter Xu <peterx@redhat.com>
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-Acked-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Barry Song <baohua@kernel.org>
----
-Changes since v5 [1]
-- Make calculation of largest extent that can be batched unconditional
-  on length, per Barry Song
+Why would I trade a cleaner less complex approach for a more complex
+approach with technical deficiency not able to address (inverting swap
+entry LRU ordering)?
 
-Chagnes since v4 [2]
-- Replaced 'err' with 'ret' in move_pages_ptes(), per Barry Song
-- Use pmd_addr_end() for calculating largest extent that can be
-  batched under the same src and dst PTLs, per Barry Song
-- Add a description comment for move_present_ptes() explaining what
-  conditions are to be met by folios to be batched, per Barry Song
+> > I have a similar idea, "swap.tiers," first mentioned earlier here:
+> > https://lore.kernel.org/linux-mm/CAF8kJuNFtejEtjQHg5UBGduvFNn3AaGn4ffyo=
+OrEnXfHpx6Ubg@mail.gmail.com/
+> >
+> > I will outline the line in more detail in the last part of my reply.
+> >
+> > BTW, YoungJun and Michal, do you have the per cgroup swap file control
+> > proposal for this year's LPC? If you want to, I am happy to work with
+> > you on the swap tiers topic as a secondary. I probably don't have the
+> > time to do it as a primary.
+>
+> I have not submitted an LPC proposal. If it turns out to be necessary,
+> I agree it could be a good idea, and I truly appreciate your offer to
+> work together on it.
 
-Changes since v3 [3]
-- Fix unintialized 'step_size' warning, per Dan Carpenter
-- Removed pmd_none() from check_ptes_for_batched_move(), per Peter Xu
-- Removed flush_cache_range() in zero-page case, per Peter Xu
-- Added comment to explain why folio reference for batched pages is not
-  required, per Peter Xu
-- Use MIN() in calculation of largest extent that can be batched under
-  the same src and dst PTLs, per Peter Xu
-- Release first folio's reference in move_present_ptes(), per Peter Xu
+Let me clarify. LPC is not required to get your series merged. Giving
+a talk in LPC usually is an honor. It does not guarantee your series
+gets merged either. It certainly helps your idea get more exposure and
+discussion. You might be able to meet some maintainers in person. For
+me, it is nice to meet the person to whom I have been communicating by
+email. I was making the suggestion because it can be a good topic for
+LPC, and just in case you might enjoy LPC. It is totally for your
+benefit. Up to your decision, please don't make it a burden. It is
+not.
 
-Changes since v2 [4]
-- Addressed VM_WARN_ON failure, per Lorenzo Stoakes
-- Added check to ensure all batched pages share the same anon_vma
+If after your consideration, you do want to submit a proposal in LPC,
+you need to hurry though. The deadline is closing soon.
 
-Changes since v1 [5]
-- Removed flush_tlb_batched_pending(), per Barry Song
-- Unified single and multi page case, per Barry Song
+> From my understanding, though, the community has
+> so far received this patchset positively, so I hope the discussion can
+> continue within this context and eventually be accepted there.
 
-[1] https://lore.kernel.org/all/20250813193024.2279805-1-lokeshgidra@google.com/
-[2] https://lore.kernel.org/all/20250810062912.1096815-1-lokeshgidra@google.com/
-[3] https://lore.kernel.org/all/20250807103902.2242717-1-lokeshgidra@google.com/
-[4] https://lore.kernel.org/all/20250805121410.1658418-1-lokeshgidra@google.com/
-[5] https://lore.kernel.org/all/20250731104726.103071-1-lokeshgidra@google.com/
+Let me make it very clear.  As it is, it will not get my support for
+the reason I have laid out in my last email.
 
- mm/userfaultfd.c | 222 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 149 insertions(+), 73 deletions(-)
+> > OK. I want to abandon the weight-adjustment approach. Here I outline
+> > the swap tiers idea as follows. I can probably start a new thread for
+> > that later.
+> >
+> > 1) No per cgroup swap priority adjustment. The swap file priority is
+> > global to the system.
+> > Per cgroup swap file ordering adjustment is bad from the LRU point of
+> > view. We should make the swap file ordering matching to the swap
+> > device service performance. Fast swap tier zram, zswap store hotter
+> > data, slower tier hard drive store colder data.  SSD in between. It is
+> > important to maintain the fast slow tier match to the hot cold LRU
+> > ordering.
+>
+> Regarding your first point about swap tiers: I would like to study this p=
+art
+> a bit more carefully.
 
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 45e6290e2e8b..bd7053673a3b 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1026,18 +1026,64 @@ static inline bool is_pte_pages_stable(pte_t *dst_pte, pte_t *src_pte,
- 	       pmd_same(dst_pmdval, pmdp_get_lockless(dst_pmd));
- }
- 
--static int move_present_pte(struct mm_struct *mm,
--			    struct vm_area_struct *dst_vma,
--			    struct vm_area_struct *src_vma,
--			    unsigned long dst_addr, unsigned long src_addr,
--			    pte_t *dst_pte, pte_t *src_pte,
--			    pte_t orig_dst_pte, pte_t orig_src_pte,
--			    pmd_t *dst_pmd, pmd_t dst_pmdval,
--			    spinlock_t *dst_ptl, spinlock_t *src_ptl,
--			    struct folio *src_folio)
-+/*
-+ * Checks if the two ptes and the corresponding folio are eligible for batched
-+ * move. If so, then returns pointer to the locked folio. Otherwise, returns NULL.
-+ *
-+ * NOTE: folio's reference is not required as the whole operation is within
-+ * PTL's critical section.
-+ */
-+static struct folio *check_ptes_for_batched_move(struct vm_area_struct *src_vma,
-+						 unsigned long src_addr,
-+						 pte_t *src_pte, pte_t *dst_pte,
-+						 struct anon_vma *src_anon_vma)
-+{
-+	pte_t orig_dst_pte, orig_src_pte;
-+	struct folio *folio;
-+
-+	orig_dst_pte = ptep_get(dst_pte);
-+	if (!pte_none(orig_dst_pte))
-+		return NULL;
-+
-+	orig_src_pte = ptep_get(src_pte);
-+	if (!pte_present(orig_src_pte) || is_zero_pfn(pte_pfn(orig_src_pte)))
-+		return NULL;
-+
-+	folio = vm_normal_folio(src_vma, src_addr, orig_src_pte);
-+	if (!folio || !folio_trylock(folio))
-+		return NULL;
-+	if (!PageAnonExclusive(&folio->page) || folio_test_large(folio) ||
-+	    folio_anon_vma(folio) != src_anon_vma) {
-+		folio_unlock(folio);
-+		return NULL;
-+	}
-+	return folio;
-+}
-+
-+/*
-+ * Moves src folios to dst in a batch as long as they share the same
-+ * anon_vma as the first folio, are not large, and can successfully
-+ * take the lock via folio_trylock().
-+ */
-+static long move_present_ptes(struct mm_struct *mm,
-+			      struct vm_area_struct *dst_vma,
-+			      struct vm_area_struct *src_vma,
-+			      unsigned long dst_addr, unsigned long src_addr,
-+			      pte_t *dst_pte, pte_t *src_pte,
-+			      pte_t orig_dst_pte, pte_t orig_src_pte,
-+			      pmd_t *dst_pmd, pmd_t dst_pmdval,
-+			      spinlock_t *dst_ptl, spinlock_t *src_ptl,
-+			      struct folio **first_src_folio, unsigned long len,
-+			      struct anon_vma *src_anon_vma)
- {
- 	int err = 0;
-+	struct folio *src_folio = *first_src_folio;
-+	unsigned long src_start = src_addr;
-+	unsigned long src_end;
- 
-+	len = pmd_addr_end(dst_addr, dst_addr + len) - dst_addr;
-+	src_end = pmd_addr_end(src_addr, src_addr + len);
-+	flush_cache_range(src_vma, src_addr, src_end);
- 	double_pt_lock(dst_ptl, src_ptl);
- 
- 	if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, orig_src_pte,
-@@ -1051,31 +1097,56 @@ static int move_present_pte(struct mm_struct *mm,
- 		err = -EBUSY;
- 		goto out;
- 	}
-+	/* It's safe to drop the reference now as the page-table is holding one. */
-+	folio_put(*first_src_folio);
-+	*first_src_folio = NULL;
-+	arch_enter_lazy_mmu_mode();
-+
-+	while (true) {
-+		orig_src_pte = ptep_get_and_clear(mm, src_addr, src_pte);
-+		/* Folio got pinned from under us. Put it back and fail the move. */
-+		if (folio_maybe_dma_pinned(src_folio)) {
-+			set_pte_at(mm, src_addr, src_pte, orig_src_pte);
-+			err = -EBUSY;
-+			break;
-+		}
- 
--	orig_src_pte = ptep_clear_flush(src_vma, src_addr, src_pte);
--	/* Folio got pinned from under us. Put it back and fail the move. */
--	if (folio_maybe_dma_pinned(src_folio)) {
--		set_pte_at(mm, src_addr, src_pte, orig_src_pte);
--		err = -EBUSY;
--		goto out;
--	}
--
--	folio_move_anon_rmap(src_folio, dst_vma);
--	src_folio->index = linear_page_index(dst_vma, dst_addr);
-+		folio_move_anon_rmap(src_folio, dst_vma);
-+		src_folio->index = linear_page_index(dst_vma, dst_addr);
- 
--	orig_dst_pte = folio_mk_pte(src_folio, dst_vma->vm_page_prot);
--	/* Set soft dirty bit so userspace can notice the pte was moved */
-+		orig_dst_pte = folio_mk_pte(src_folio, dst_vma->vm_page_prot);
-+		/* Set soft dirty bit so userspace can notice the pte was moved */
- #ifdef CONFIG_MEM_SOFT_DIRTY
--	orig_dst_pte = pte_mksoft_dirty(orig_dst_pte);
-+		orig_dst_pte = pte_mksoft_dirty(orig_dst_pte);
- #endif
--	if (pte_dirty(orig_src_pte))
--		orig_dst_pte = pte_mkdirty(orig_dst_pte);
--	orig_dst_pte = pte_mkwrite(orig_dst_pte, dst_vma);
-+		if (pte_dirty(orig_src_pte))
-+			orig_dst_pte = pte_mkdirty(orig_dst_pte);
-+		orig_dst_pte = pte_mkwrite(orig_dst_pte, dst_vma);
-+		set_pte_at(mm, dst_addr, dst_pte, orig_dst_pte);
-+
-+		src_addr += PAGE_SIZE;
-+		if (src_addr == src_end)
-+			break;
-+		dst_addr += PAGE_SIZE;
-+		dst_pte++;
-+		src_pte++;
-+
-+		folio_unlock(src_folio);
-+		src_folio = check_ptes_for_batched_move(src_vma, src_addr, src_pte,
-+							dst_pte, src_anon_vma);
-+		if (!src_folio)
-+			break;
-+	}
- 
--	set_pte_at(mm, dst_addr, dst_pte, orig_dst_pte);
-+	arch_leave_lazy_mmu_mode();
-+	if (src_addr > src_start)
-+		flush_tlb_range(src_vma, src_start, src_addr);
-+
-+	if (src_folio)
-+		folio_unlock(src_folio);
- out:
- 	double_pt_unlock(dst_ptl, src_ptl);
--	return err;
-+	return src_addr > src_start ? src_addr - src_start : err;
- }
- 
- static int move_swap_pte(struct mm_struct *mm, struct vm_area_struct *dst_vma,
-@@ -1140,7 +1211,7 @@ static int move_swap_pte(struct mm_struct *mm, struct vm_area_struct *dst_vma,
- 	set_pte_at(mm, dst_addr, dst_pte, orig_src_pte);
- 	double_pt_unlock(dst_ptl, src_ptl);
- 
--	return 0;
-+	return PAGE_SIZE;
- }
- 
- static int move_zeropage_pte(struct mm_struct *mm,
-@@ -1167,20 +1238,20 @@ static int move_zeropage_pte(struct mm_struct *mm,
- 	set_pte_at(mm, dst_addr, dst_pte, zero_pte);
- 	double_pt_unlock(dst_ptl, src_ptl);
- 
--	return 0;
-+	return PAGE_SIZE;
- }
- 
- 
- /*
-- * The mmap_lock for reading is held by the caller. Just move the page
-- * from src_pmd to dst_pmd if possible, and return true if succeeded
-- * in moving the page.
-+ * The mmap_lock for reading is held by the caller. Just move the page(s)
-+ * from src_pmd to dst_pmd if possible, and return number of bytes moved.
-+ * On failure, an error code is returned.
-  */
--static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
--			  struct vm_area_struct *dst_vma,
--			  struct vm_area_struct *src_vma,
--			  unsigned long dst_addr, unsigned long src_addr,
--			  __u64 mode)
-+static long move_pages_ptes(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
-+			    struct vm_area_struct *dst_vma,
-+			    struct vm_area_struct *src_vma,
-+			    unsigned long dst_addr, unsigned long src_addr,
-+			    unsigned long len, __u64 mode)
- {
- 	swp_entry_t entry;
- 	struct swap_info_struct *si = NULL;
-@@ -1194,11 +1265,10 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 	struct folio *src_folio = NULL;
- 	struct anon_vma *src_anon_vma = NULL;
- 	struct mmu_notifier_range range;
--	int err = 0;
-+	long ret = 0;
- 
--	flush_cache_range(src_vma, src_addr, src_addr + PAGE_SIZE);
- 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
--				src_addr, src_addr + PAGE_SIZE);
-+				src_addr, src_addr + len);
- 	mmu_notifier_invalidate_range_start(&range);
- retry:
- 	/*
-@@ -1212,7 +1282,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 
- 	/* Retry if a huge pmd materialized from under us */
- 	if (unlikely(!dst_pte)) {
--		err = -EAGAIN;
-+		ret = -EAGAIN;
- 		goto out;
- 	}
- 
-@@ -1231,14 +1301,14 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 	 * transparent huge pages under us.
- 	 */
- 	if (unlikely(!src_pte)) {
--		err = -EAGAIN;
-+		ret = -EAGAIN;
- 		goto out;
- 	}
- 
- 	/* Sanity checks before the operation */
- 	if (pmd_none(*dst_pmd) || pmd_none(*src_pmd) ||
- 	    pmd_trans_huge(*dst_pmd) || pmd_trans_huge(*src_pmd)) {
--		err = -EINVAL;
-+		ret = -EINVAL;
- 		goto out;
- 	}
- 
-@@ -1246,7 +1316,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 	orig_dst_pte = ptep_get(dst_pte);
- 	spin_unlock(dst_ptl);
- 	if (!pte_none(orig_dst_pte)) {
--		err = -EEXIST;
-+		ret = -EEXIST;
- 		goto out;
- 	}
- 
-@@ -1255,21 +1325,21 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 	spin_unlock(src_ptl);
- 	if (pte_none(orig_src_pte)) {
- 		if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES))
--			err = -ENOENT;
-+			ret = -ENOENT;
- 		else /* nothing to do to move a hole */
--			err = 0;
-+			ret = PAGE_SIZE;
- 		goto out;
- 	}
- 
- 	/* If PTE changed after we locked the folio them start over */
- 	if (src_folio && unlikely(!pte_same(src_folio_pte, orig_src_pte))) {
--		err = -EAGAIN;
-+		ret = -EAGAIN;
- 		goto out;
- 	}
- 
- 	if (pte_present(orig_src_pte)) {
- 		if (is_zero_pfn(pte_pfn(orig_src_pte))) {
--			err = move_zeropage_pte(mm, dst_vma, src_vma,
-+			ret = move_zeropage_pte(mm, dst_vma, src_vma,
- 					       dst_addr, src_addr, dst_pte, src_pte,
- 					       orig_dst_pte, orig_src_pte,
- 					       dst_pmd, dst_pmdval, dst_ptl, src_ptl);
-@@ -1292,14 +1362,14 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			spin_lock(src_ptl);
- 			if (!pte_same(orig_src_pte, ptep_get(src_pte))) {
- 				spin_unlock(src_ptl);
--				err = -EAGAIN;
-+				ret = -EAGAIN;
- 				goto out;
- 			}
- 
- 			folio = vm_normal_folio(src_vma, src_addr, orig_src_pte);
- 			if (!folio || !PageAnonExclusive(&folio->page)) {
- 				spin_unlock(src_ptl);
--				err = -EBUSY;
-+				ret = -EBUSY;
- 				goto out;
- 			}
- 
-@@ -1313,7 +1383,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			 */
- 			if (!locked && folio_test_large(folio)) {
- 				spin_unlock(src_ptl);
--				err = -EAGAIN;
-+				ret = -EAGAIN;
- 				goto out;
- 			}
- 
-@@ -1332,7 +1402,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			}
- 
- 			if (WARN_ON_ONCE(!folio_test_anon(src_folio))) {
--				err = -EBUSY;
-+				ret = -EBUSY;
- 				goto out;
- 			}
- 		}
-@@ -1343,8 +1413,8 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			pte_unmap(src_pte);
- 			pte_unmap(dst_pte);
- 			src_pte = dst_pte = NULL;
--			err = split_folio(src_folio);
--			if (err)
-+			ret = split_folio(src_folio);
-+			if (ret)
- 				goto out;
- 			/* have to reacquire the folio after it got split */
- 			folio_unlock(src_folio);
-@@ -1362,7 +1432,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			src_anon_vma = folio_get_anon_vma(src_folio);
- 			if (!src_anon_vma) {
- 				/* page was unmapped from under us */
--				err = -EAGAIN;
-+				ret = -EAGAIN;
- 				goto out;
- 			}
- 			if (!anon_vma_trylock_write(src_anon_vma)) {
-@@ -1375,10 +1445,11 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			}
- 		}
- 
--		err = move_present_pte(mm,  dst_vma, src_vma,
--				       dst_addr, src_addr, dst_pte, src_pte,
--				       orig_dst_pte, orig_src_pte, dst_pmd,
--				       dst_pmdval, dst_ptl, src_ptl, src_folio);
-+		ret = move_present_ptes(mm, dst_vma, src_vma,
-+					dst_addr, src_addr, dst_pte, src_pte,
-+					orig_dst_pte, orig_src_pte, dst_pmd,
-+					dst_pmdval, dst_ptl, src_ptl, &src_folio,
-+					len, src_anon_vma);
- 	} else {
- 		struct folio *folio = NULL;
- 
-@@ -1389,20 +1460,20 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 				pte_unmap(dst_pte);
- 				src_pte = dst_pte = NULL;
- 				migration_entry_wait(mm, src_pmd, src_addr);
--				err = -EAGAIN;
-+				ret = -EAGAIN;
- 			} else
--				err = -EFAULT;
-+				ret = -EFAULT;
- 			goto out;
- 		}
- 
- 		if (!pte_swp_exclusive(orig_src_pte)) {
--			err = -EBUSY;
-+			ret = -EBUSY;
- 			goto out;
- 		}
- 
- 		si = get_swap_device(entry);
- 		if (unlikely(!si)) {
--			err = -EAGAIN;
-+			ret = -EAGAIN;
- 			goto out;
- 		}
- 		/*
-@@ -1422,7 +1493,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 					swap_cache_index(entry));
- 		if (!IS_ERR_OR_NULL(folio)) {
- 			if (folio_test_large(folio)) {
--				err = -EBUSY;
-+				ret = -EBUSY;
- 				folio_put(folio);
- 				goto out;
- 			}
-@@ -1439,7 +1510,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 				goto retry;
- 			}
- 		}
--		err = move_swap_pte(mm, dst_vma, dst_addr, src_addr, dst_pte, src_pte,
-+		ret = move_swap_pte(mm, dst_vma, dst_addr, src_addr, dst_pte, src_pte,
- 				orig_dst_pte, orig_src_pte, dst_pmd, dst_pmdval,
- 				dst_ptl, src_ptl, src_folio, si, entry);
- 	}
-@@ -1461,7 +1532,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 	if (si)
- 		put_swap_device(si);
- 
--	return err;
-+	return ret;
- }
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -1732,7 +1803,7 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- {
- 	struct mm_struct *mm = ctx->mm;
- 	struct vm_area_struct *src_vma, *dst_vma;
--	unsigned long src_addr, dst_addr;
-+	unsigned long src_addr, dst_addr, src_end;
- 	pmd_t *src_pmd, *dst_pmd;
- 	long err = -EINVAL;
- 	ssize_t moved = 0;
-@@ -1775,8 +1846,8 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 	if (err)
- 		goto out_unlock;
- 
--	for (src_addr = src_start, dst_addr = dst_start;
--	     src_addr < src_start + len;) {
-+	for (src_addr = src_start, dst_addr = dst_start, src_end = src_start + len;
-+	     src_addr < src_end;) {
- 		spinlock_t *ptl;
- 		pmd_t dst_pmdval;
- 		unsigned long step_size;
-@@ -1844,6 +1915,8 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 						  dst_addr, src_addr);
- 			step_size = HPAGE_PMD_SIZE;
- 		} else {
-+			long ret;
-+
- 			if (pmd_none(*src_pmd)) {
- 				if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES)) {
- 					err = -ENOENT;
-@@ -1860,10 +1933,13 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 				break;
- 			}
- 
--			err = move_pages_pte(mm, dst_pmd, src_pmd,
--					     dst_vma, src_vma,
--					     dst_addr, src_addr, mode);
--			step_size = PAGE_SIZE;
-+			ret = move_pages_ptes(mm, dst_pmd, src_pmd,
-+					      dst_vma, src_vma, dst_addr,
-+					      src_addr, src_end - src_addr, mode);
-+			if (ret < 0)
-+				err = ret;
-+			else
-+				step_size = ret;
- 		}
- 
- 		cond_resched();
+Please do.
 
-base-commit: 90d970cade8e67e20b09bbfdc2f0b52064322921
--- 
-2.51.0.rc1.163.g2494970778-goog
+> If you could share some additional explanation, that
+> would be very helpful for me.
 
+Feel free to ask, I will do my best to answer.
+
+> > More example:
+> >  "- +ssd +hdd -ssd" will simplify to: "- +hdd", which means hdd only.
+> >  "+ -hdd": No hdd for you! Use everything else.
+> >
+> > Let me know what you think about the above "swap.tiers"(name TBD) propo=
+sal.
+>
+> Thank you very much for the detailed description of the "swap.tiers" idea=
+.
+> As I understand it, the main idea is to separate swap devices by speed,
+> assign a suitable priority range for each, and then make it easy for user=
+s to
+> include or exclude tiers. I believe I have understood the concept clearly=
+.
+>
+> I agree that operating with tiers is important. At the same time, as I
+> mentioned earlier, I believe that managing priorities in a way that refle=
+cts
+> tiers can also achieve the intended effect.
+
+The per cgroup per swap file priorities has one Achilles heel you need
+to address before you can make any further progress upstreaming it.
+Putting the extra complexity aside, the per cgroup per swap file
+priorities can invert swap entry LRU order between different views of
+ordering by different cgroup.
+That violates the swap entry LRU order between tiers.
+
+From the swap file point of view, when it needs to flush some data to
+the lower tiers, it is very hard if possible for swap file to maintain
+per cgroup LRU order within a swap file.
+It is much easier if all the swap entries in a swap file are in the
+same LRU order tier.
+
+Inverting swap entry LRU order is a deal breaker for your per cgroup
+per swap file priority approach.
+
+> I have also been thinking about a possible compromise. If the interface i=
+s
+
+The swap.tiers idea is not a compromise, it is a straight win. Can you
+describe what per cgroup per swap file can do while swap.tiers can
+not?
+
+> intended to make tiers visible to users in the way you describe, then map=
+ping
+> priority ranges to tiers (as you propose) makes sense. Users would still =
+have
+> the flexibility to define ordering, while internally we could maintain th=
+e
+
+Because I don't want to violate the swap entry LRU ordering between
+tiers. Within that context, what usage case do you have in mind?
+Within the same tier, the swap device can have finer grain priority
+order between them. The part I haven't understood, please help me
+understand, why do you need per cgroup per swap file orthering  rather
+than the tier order? It is much easier from the admin's point of view.
+This app needs to be fast, can't afford slow swap, give it faster swap
+tiers.
+
+> priority list model I suggested. I wonder what you think about such a hyb=
+rid
+> approach.
+
+It obviously will introduce new complexity. I want to understand the
+reason to justify the additional complexity before I consider such an
+approach.
+
+> Thank you as always for your valuable insights.
+
+My pleasure. Thanks for leading this per cgroup swap file effort.
+
+Chris
 
