@@ -1,155 +1,105 @@
-Return-Path: <linux-kernel+bounces-771708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7D7B28A8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:33:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D70FB28A91
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64637AC7F3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:33:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3804E10A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BDF19D081;
-	Sat, 16 Aug 2025 04:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788C41E25E8;
+	Sat, 16 Aug 2025 04:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oBOOD4S2"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="jHTQ6IDA"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1948318B12
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE6B191
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755318794; cv=none; b=gJWkYy/cw4tMkBrLMOt+oiJdFnnY08UJ7P/bEm5CdAKIeHPXpLJzXWfmn7BpMguBejbNDqsUsCSoNkaK0lCbKeP5iWv2OMMn45IRWbu8NBOuM8PNT5zS0luoZjch2iYMSytJxaLhKrJ1uogrBRPoc2W8Kj+r6Nz8oqiE24UUL1I=
+	t=1755319420; cv=none; b=EdFkwdJSSDS9HiIEzeSOPrq69k0ISz+MkFwn8yVWICaEkXgfAu6Kjpp1KXSUiHdCo/xJiFxhr/LMwVBrqkRhUpkx328f/09dfYtt8xyzArxe7fizdYAceHGRAILpCNQ+erI00h8mip2BAnZjhS2PipVXzsdoR9LTTEJw5l5Ruu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755318794; c=relaxed/simple;
-	bh=rcJszxXK8P0mEG137zcHYraV1EH2lNkG7npEmwXAKzk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dgwmFK1VE5KrghKbUKbTq0yw6ncVpbIUiGlySwrbqvV7R15L67ndGcIRMRuBjgfRFQdbsW9E8VzFJPggffBE3QMgeLtoivpuj1eiokT2Hdvb633VAZuv5ITyyWHvbenWhYNcMj7I34F+nHxrRG3yPuZlIeIf1MdB8IS4HWWKSLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oBOOD4S2; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso2334778a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 21:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755318792; x=1755923592; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsRxtwwK15Bg0qbKyAiNtrwYfp9IiiWX2XFwbSp/aNA=;
-        b=oBOOD4S2Vh3cPOhyQK5oPlvksCBWeEqWbWfrbVRWWQiSHhpg6u96+OV5mldm/Dsx4+
-         BOMLooovX6qct4S37liSMqsgX9JoPwhVbMcAXjvyq+GGyXG1IUKoPrxrr1hF4vwBPyu1
-         WwvZ4tS3QEpCA1kcoERWoxuNe87ogtFZlogU8StPjc59RPIJo/K9zQ0+WVVsynM1Nsao
-         Z2p4rT4D7K5OnfsktJPytVn8IYpvJbsgQyts/o8755wk8hzRVAfxx6hgMXfKR27B0agr
-         4ac+kJUAZhP1Z6XKDV41HnLUbcAYIChkiFByBeF2orUxvuaXJA6I4g84r55tNuQSFxWk
-         kHqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755318792; x=1755923592;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsRxtwwK15Bg0qbKyAiNtrwYfp9IiiWX2XFwbSp/aNA=;
-        b=FEk6GLAoM423tCRBzR80V22qous0Wcvp/BlCMXfXi0JB8VEMdvIzpQb2gTKBdiSiBI
-         Gio/lo2QsT5DPuxiYLR5NFmoWMgbX/x/tuQH9UG1TRUruvVMqLY2DW0gN77z84NY7UCE
-         YUX8JiUQvt9/FSfMV5h9sjSmf/QCi8wXLumTwoRiknZWt/Z+dfHET7nSEVFKWAjIPuEo
-         Z/3uITM7PDRSrT9buHJGsD2nO/JJ/ABvX2zaWTxR1+a24gA7A/x6jzAB5Q20VnRmAos2
-         pekVDTz25KjReVNBLIQZh1jHFtezIqFuVneEgLBg/8+8YJ4uDj9q1GtOMUrI0qjnB8kR
-         rYiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsA96Eebfa67TQG+zvNCW9Xg7olwtXLXyXiDCLCCywkrFlFErSXnP1rDik0UsibCHBXvrrUCjTvTNWXX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfHr2Lk6+5n70ZcD9x7W5WUSgZtQGIj54pxQlexORCs6d/Sh80
-	EzfzO8nKbzTOEsld9aEveipokDGoooIxiuMkeSFv6fr6OypAPUS/ZdaTfKirhLG22g==
-X-Gm-Gg: ASbGncsvYqZ5tb4IRl+1dt2gwkNf4jftdcyUnyHgJqwuMhE8NGHOW73lp1S4qmD9mYC
-	/DGRivCc+YnJeEyiN3/hA9BnwNBL7acQMJgO5jrmU0M6M+xCBnA98X+1rPx6Xfl0f9X/GaQEEzS
-	mJwxR8U2U4ipLXRSjw6RVcNuKk1wNZP4Q6gqsU1rkoHmdLr6DFWZ6WKFnLeKHvz1KGRrsxL+Ekp
-	Z1Zzbt9qoI7YMTJVXR2AeFn+mX9Jkkb5M0jwAaduGHjcL8L9XlK+QexV5STTfWarEMQntEkIPlj
-	tXNqjE+Rjy2sJ7uWarE8cCNxIuG7FWb3wUU98EQ04F0DthtyuQxBHAlcLntvB6mvjHKVrfp4NGW
-	nggmpyqXFujk3Fbr34Qjq+pE2klDNL+UKSGkUqH5Vm+GEflmSistUwph9U+Zp4xs1yhu+mf4DUq
-	lJdMjt25XA2k61kQ==
-X-Google-Smtp-Source: AGHT+IFRvkHkV/M4v52bM46SWACcSKG/8sC45sXQrlbrPp0hgPn1IBR5PeJOCfpEfjyh07P94QuUHg==
-X-Received: by 2002:a17:90b:2d83:b0:313:b1a:3939 with SMTP id 98e67ed59e1d1-32341ed8debmr6549218a91.15.1755318792114;
-        Fri, 15 Aug 2025 21:33:12 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d794a39sm2619964a12.53.2025.08.15.21.33.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 21:33:11 -0700 (PDT)
-Date: Fri, 15 Aug 2025 21:33:09 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: John Hubbard <jhubbard@nvidia.com>
-cc: Will Deacon <will@kernel.org>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
-    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-    David Hildenbrand <david@redhat.com>, Frederick Mayle <fmayle@google.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-    Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
- attempting migration
-In-Reply-To: <ef85aa74-180c-4fbc-8af6-e6cca45eed43@nvidia.com>
-Message-ID: <9a406ab6-0da8-fb8c-968c-2b403be6781d@google.com>
-References: <20250815101858.24352-1-will@kernel.org> <ef85aa74-180c-4fbc-8af6-e6cca45eed43@nvidia.com>
+	s=arc-20240116; t=1755319420; c=relaxed/simple;
+	bh=Pq4zY20r2hDlH7rMB0y0utkHPKa2ujCGHObqC8u8EA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRfwokJ1ksImv5xNeEaXM392LgYwhSmyUv+ZaXCyJ5nCJg4fZAbcrDI70udEz/FPTJRwPGfCyMRZJscVmwucOVE0dUb41UzsGsfNe8vdZzUQPLeN0V5e6Rb/Na3YbB/TR9HqP8rofEr+lZz3idvkOCWw20iauBsKavtCAyQbj0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=jHTQ6IDA; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id E71E1104C1F9
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:13:25 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in E71E1104C1F9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755319405; bh=Pq4zY20r2hDlH7rMB0y0utkHPKa2ujCGHObqC8u8EA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jHTQ6IDAB1V95xXlq/+fYEANhQrUE02i+RtBXYzp8ElEP/NO/+NCIOTNJDjG1fOBL
+	 9irJFRQIjDnkGBm8Da72SY1+FTVU00tL9fR6mP3L74ps5X/iuemXcRAswgCDWojEWj
+	 VQk5VESMBt1iCAuZKe4c5hiQBEW4TeeKf3xybLVo=
+Received: (qmail 18167 invoked by uid 510); 16 Aug 2025 10:13:25 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.166873 secs; 16 Aug 2025 10:13:25 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 16 Aug 2025 10:13:23 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 2D8A336003F;
+	Sat, 16 Aug 2025 10:13:23 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id EE6841E8134B;
+	Sat, 16 Aug 2025 10:13:22 +0530 (IST)
+Date: Sat, 16 Aug 2025 10:13:17 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: akhileshpatilvnit@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+	Itay Avraham <itayavr@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
+Message-ID: <aKAMZenB2iqSSfd3@bhairav-test.ee.iitb.ac.in>
+References: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
+ <35e23690-a907-4606-a484-e3e342a14e7c@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35e23690-a907-4606-a484-e3e342a14e7c@web.de>
 
-On Fri, 15 Aug 2025, John Hubbard wrote:
-> On 8/15/25 3:18 AM, Will Deacon wrote:
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index adffe663594d..656835890f05 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -2307,7 +2307,8 @@ static unsigned long collect_longterm_unpinnable_folios(
-> >  			continue;
-> >  		}
-> >  
-> > -		if (!folio_test_lru(folio) && drain_allow) {
-> > +		if (drain_allow &&
-> > +		   (!folio_test_lru(folio) || folio_test_mlocked(folio))) {
+On Fri, Aug 15, 2025 at 04:40:10PM +0200, Markus Elfring wrote:
+> > Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
+> > Avoid potential memory management issue by matching alloc/free routines.
 > 
-> That should work, yes.
+> Will another bit of background information become helpful
+> for an improved change description?
 > 
-> Alternatively, after thinking about this a bit today, it seems to me that the
-> mlock batching is a little too bold, given the presence of gup/pup. And so I'm
-> tempted to fix the problem closer to the root cause, like this (below).
-> 
-> But maybe this is actually *less* wise than what you have proposed...
-> 
-> I'd like to hear other mm folks' opinion on this approach:
-> 
-> diff --git a/mm/mlock.c b/mm/mlock.c
-> index a1d93ad33c6d..edecdd32996e 100644
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -278,7 +278,15 @@ void mlock_new_folio(struct folio *folio)
->  
->  	folio_get(folio);
->  	if (!folio_batch_add(fbatch, mlock_new(folio)) ||
-> -	    folio_test_large(folio) || lru_cache_disabled())
-> +	    folio_test_large(folio) || lru_cache_disabled() ||
-> +	/*
-> +	 * If this is being called as part of a gup FOLL_LONGTERM operation in
-> +	 * CMA/MOVABLE zones with MLOCK_ONFAULT active, then the newly faulted
-> +	 * in folio will need to immediately migrate to a pinnable zone.
-> +	 * Allowing the mlock operation to batch would break the ability to
-> +	 * migrate the folio. Instead, force immediate processing.
-> +	 */
-> +	 (current->flags & PF_MEMALLOC_PIN))
->  		mlock_folio_batch(fbatch);
->  	local_unlock(&mlock_fbatch.lock);
->  }
+> Test command example:
+> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> /usr/bin/spatch -D report scripts/coccinelle/api/kfree_mismatch.cocci drivers/fwctl/mlx5/main.c
 
-It's certainly worth considering this approach: it is consistent with
-the lru_cache_disabled() approach (but I'm not a great fan of the
-lru_cache_disabled() approach, often wonder how much damage it does).
+Sure, I will update the commit message to add this and push v2.
+Thanks Markus for the suggestion. 
 
-But I think you've placed this in the wrong function: mlock_new_folio()
-should already be satisfactorily handled, it's mlock_folio() that's
-the problematic one.
+Regards,
+Akhilesh
 
-I didn't know of PF_MEMALLOC_PIN at all: as you say,
-let's hear other opinions.
-
-Hugh
+> …
+> 
+> Regards,
+> Markus
 
