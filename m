@@ -1,1890 +1,671 @@
-Return-Path: <linux-kernel+bounces-772212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562C0B28FF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:00:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB742B28FFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFCACA23310
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B7FA20E41
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD9E1EF0B9;
-	Sat, 16 Aug 2025 18:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28421DE89B;
+	Sat, 16 Aug 2025 18:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r46Bn97l"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="lU/Gtj/y"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AC5433AD
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755367241; cv=none; b=sZgCLcXa7Q43Fz1eqlIY4keCMablteORmXZHFuNWdJj9fHzareWVCwduXBnpeo7/zgjHl/qxYI2kCRiNxsDLMPCnXRk2R0CbVyXmbZmJkCFzlwSPxd4qTWm+APgLwgFu8KP8pNw5df5EFQs2YKYHwXyp5k1wdrq6bS1a/cgNO0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755367241; c=relaxed/simple;
-	bh=64ZSuiq8BqDKxSYcw/UTD4fad9xAPYUaI47WShUJqE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pJ55fM43tg3IxrTQtUnZDINoWhd8SLAc6/fCzSnyBMTLWknuEs0OFrjAWzMOEYneVpCZeNC9OKIIIOz/ZXMUP/DqkLwJDBqfzucl5uqHLtEd7eMvqczD8+MCUmnRSmd6gA5mI0PoRhWIJw1wcCD5clI+tMZXtbnmg1J0scKKF1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r46Bn97l; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e931cc4c572so2771905276.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755367237; x=1755972037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZCTYq5ZCYwlILfj8f9MuEtT+CI6eklWh8efZur2Hzs=;
-        b=r46Bn97lAld9/ggQXh1lusCEhQ+vzmoe1QAHW7x7rjDvhl8AMnVe1Dw7rOafiJ9H1T
-         ghdO5DQ2AhkZMvzwXgs1J3cENWUjcR38OvsshkQx4tCaGvEeTBJTTmP1HEeGaEsGpIrg
-         IUTcgzV2mztFfpg5m4Bk6lQjhx+C0UO0z4E9bHlZkkJa6+tvVBm1R9iNaNXFl6AfUj2R
-         K5tiJw8RLQeVxfCJPEWTVixvqV84dvxXXaAxu7ybNYNiCxMqJRXo/QZ60G7ka8W64zUj
-         jqF9rIlihl6kTfnYPcqh8KNUwTrirUF9oqsTe2fxkqzKS6BVyRbannS1kXbcMmhsoNGG
-         MwdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755367237; x=1755972037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IZCTYq5ZCYwlILfj8f9MuEtT+CI6eklWh8efZur2Hzs=;
-        b=CV3EfHBtxfDNHNn4TXSJ0ZrrAEJ2IZcGF1GOoiBCPauJNpZd1Qo21Q/1XWmR3kmKGv
-         QSOY/tWF2YgU3a9evk0d9AFW9xIWZCdmF/6fPFQh8E+R2eqlrF2nLHh1YFmN4FLAKNWx
-         HCNZr2rDxF4MFJYkwejy/pgHk9tyNeuxUNyI90oCkR8BGRFLMj59boFmWHuuRtCb8+IS
-         tVpmEQ3kZtUGgF5kr70sN4lPKhrtxuhLj8YnC+lMytv6fHo5urGqok3Fp/7Ph8u8u2wI
-         vO+1kBaj/Mc9EXDnsNiPeEwyhucHh9ve+RYo+ebhi4sAoxFaoRy+L+g2C9QS0wr20Hnb
-         umEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVitExSC0SOXL5TEK9wkRAACE8BjVeEtKIBBrQwmQiv0Ld/WJ6a+6EmzoG2Pibzn0oTo1x9lXwAwPCVJRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFOJb7EIvn4pgyvj3w9ELinCFYs42MYp+VPaFUknUswiQh7tWS
-	B2K8W2WnFfBjRL67OrfY855KiJemmFOi7FSuJGuDaNzrOzxrcOA40o1yPupin8kU6c/eKRUBwWL
-	T4AaiKCJZNGLq/NMdzyhfm5f0BocVDRV81ZrDjE1Bc3pAT1Dgmr/yJBvIqw==
-X-Gm-Gg: ASbGncteT8wO3EHxVitv/12taOnyiNdenlKtu9DRcTVtDs0SuVfRa5xu5VLuhq7SyUh
-	IVUjgS6zDK5VAWblfXaKUfjFVjJKZFZN3BfyHzmAKHSHGPO0rgGxyTfXmFBQvePgkt5y7WP8aTD
-	X5bnuHPzhYr2VyfO/NosSekVdtoiBiw1vow3rgP0JEE8XymSTZT6sEf87f7DnNT/mA10K+tuALt
-	Rmu6Q==
-X-Google-Smtp-Source: AGHT+IFCrYlZ9nM9pk6Hld2TWKgIwH3cqoDUJcu0KMWp0zITx7bmxXHsFZGIzT5pT4FH5qhb3XEoRbKe6tgHRORLBn4=
-X-Received: by 2002:a05:6902:72a:b0:e8f:caae:d581 with SMTP id
- 3f1490d57ef6-e933dea6e18mr3983368276.13.1755367237007; Sat, 16 Aug 2025
- 11:00:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE41E835D;
+	Sat, 16 Aug 2025 18:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755367324; cv=pass; b=QC2DAzjbpl08uy1Zuy5q6lNIppqk/X1JhbWHzrbd3JQ7wfzgUykHE6K9Fk2iISMfvziYxi4Hs1ZG/9F2mg2RWe9fOP3Srn9IiIaGimKCkclPp0wGEOG5A+/KQRq/6Amvt9NvWT3/2MZeaVABT4bXpFiR+U6626AqnSkPgC81M+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755367324; c=relaxed/simple;
+	bh=WRN7Y+mJPhq1lzC65kvUwvUbec0UmlD6NQJeGsV6hcg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fYY5QJ7JPs+SHYD8xRBQnBMuKfFjImmLtvZuA+YoQTMyluOfNHrv12Idit4EX+qOpL+twHJ/aEGDjW+yaLTuCeVlvCJy1zt3V60jKfKiaNsKTjGWShcqFqy4mYKCjV06nVgzfXIpDFemvI+McPS5EXJoFP1faHeEJviATdEaLZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=lU/Gtj/y; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755367282; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K4Ie3lj9iVpvZ6SISTVgxMCDJljbzbF+gUoSRrDcuHnIVALIV5d64eYyP+IkaGwHTbcmOTpPX0zv/s85xMtERYwgRpiWOeu8oxw20xlIdkK2egb0+Odc/BVu1K2GwCqHssbAEDLfxPAXPn9y17u13TDA/ZMwF7/n/1hoAzgTZFk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755367282; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WRN7Y+mJPhq1lzC65kvUwvUbec0UmlD6NQJeGsV6hcg=; 
+	b=luesoOaFew9equIxqTLqiFscc2F1EtUkSuEomwUn9I1YoxtuPVSkq3i7lUsrNMfuD/Wk3etDS+9v34j34WfimObUUu8QoMINDEhSLiOct9P9bhTAOvymtCQkk/wkLBzOAXkGjY8VdQdlnsp2zuTCbVjlTkkxovYMsEDrBCFi6ac=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755367282;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=WRN7Y+mJPhq1lzC65kvUwvUbec0UmlD6NQJeGsV6hcg=;
+	b=lU/Gtj/yf0ZhqKjALZDdri3k7R0AUvbTu1XnmFhLaU17o53p6NByDzWpf18TXWN9
+	J43q3Xf9MA60dWdkVxzn+6Ad5wEImEh+zhHssj8xDQXTki5qHqnb9hbZqGKgmWP8U5e
+	yxRM8pF94Dmz4EXUTbuzbppir6AWarOBUHlgyQzEnKOI+aa5WcKFZpm2bfnmOmyeCD6
+	LkzO2feYOmbCpcOIzGMhyuKKztkD0tfgT4ttAJ6UW4AxsG/J7NG5TW9QgLv4liu+8Tj
+	wuVETNFYNZRm7d5AnfuKs+NxVMK2hMkf5X+UEu+CifGRU9bOD/dJLcK+EZ5V0L7hJjr
+	5eURZnBAug==
+Received: by mx.zohomail.com with SMTPS id 1755367279718758.5663912584431;
+	Sat, 16 Aug 2025 11:01:19 -0700 (PDT)
+Message-ID: <585816ef99b54e7c8407d8c352fcb311e26d6000.camel@icenowy.me>
+Subject: Re: [RFC PATCH 3/8] drm: verisilicon: add a driver for Verisilicon
+ display controllers
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Drew Fustini <fustini@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Heiko Stuebner <heiko@sntech.de>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Michal Wilczynski
+ <m.wilczynski@samsung.com>, Han Gao <rabenda.cn@gmail.com>, Yao Zi
+ <ziyao@disroot.org>, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org
+Date: Sun, 17 Aug 2025 02:01:09 +0800
+In-Reply-To: <0a931bef23d8feb758f5a752ee84a4abaddb8fa4.camel@icenowy.me>
+References: <20250814164048.2336043-1-uwu@icenowy.me>
+	 <20250814164048.2336043-4-uwu@icenowy.me>
+	 <m7sg6sbc75lsnm6u6zppq574rtgt2rzr5hjmpwfwns2wnmmfs2@anbw5z7mo5a3>
+	 <c9caa122d57cbe3de3efee2de211d914c96eb0bc.camel@icenowy.me>
+	 <0a931bef23d8feb758f5a752ee84a4abaddb8fa4.camel@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com> <20250815070500.3275491-5-ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250815070500.3275491-5-ivo.ivanov.ivanov1@gmail.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sat, 16 Aug 2025 13:00:26 -0500
-X-Gm-Features: Ac12FXyhyzu69YkaGtpygvbnTkQWSXml0riJWIipA0EuTXcHS9_vFSPvxwzTvas
-Message-ID: <CAPLW+4nqB=N1Oa=S=24w-EUvpi6YneOrsLdWUei+mynYQ8QVgw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arm64: dts: exynos2200: define all usi nodes
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On Fri, Aug 15, 2025 at 2:07=E2=80=AFAM Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
->
-> Universal Serial Interface (USI) supports three types of serial
-> interfaces - uart, i2c and spi. Each protocol can work independently
-> and configured using external configuration inputs.
->
-> As each USI instance has access to 4 pins, there are multiple possible
-> configurations:
-> - the first 2 and the last 2 pins can be i2c (sda/scl) or uart (rx/tx)
-> - the 4 pins can be used for 4 pin uart or spi
->
-> For each group of 4 pins, there is one usi instance that can access all
-> 4 pins, and a second usi instance that can be used to set the last 2
-> pins in i2c mode. Such configuration can be achieved by setting the
-> mode property of usiX and usiX_i2c nodes correctly - if usiX is set
-> to take up 2 pins, then usiX_i2c can be set to take the other 2.
-> If usiX is set for 4 pins, then usiX_i2c should be left disabled.
->
-> Define all the USI nodes from peric0 (usi4), peric1 (usi7-10), peric2
-> (usi0-6, usi11) and cmgp (usi0-6_cmgp, 2 pin usi7_cmgp) blocks, as well
-> as their respective uart and i2c subnodes. Suffix labels for blocks
-> in CMGP instances with _cmgpX, and follow the naming conventions from
-> the vendor kernel to avoid confusion.
->
+5ZyoIDIwMjUtMDgtMTfmmJ/mnJ/ml6XnmoQgMDE6MjIgKzA4MDDvvIxJY2Vub3d5IFpoZW5n5YaZ
+6YGT77yaCj4g5ZyoIDIwMjUtMDgtMTfmmJ/mnJ/ml6XnmoQgMDA6NDggKzA4MDDvvIxJY2Vub3d5
+IFpoZW5n5YaZ6YGT77yaCj4gPiDlnKggMjAyNS0wOC0xNuaYn+acn+WFreeahCAxOToxOCArMDMw
+MO+8jERtaXRyeSBCYXJ5c2hrb3blhpnpgZPvvJoKPiA+ID4gT24gRnJpLCBBdWcgMTUsIDIwMjUg
+YXQgMTI6NDA6NDNBTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPiA+ID4gPiBUaGlzIGlz
+IGEgZnJvbS1zY3JhdGNoIGRyaXZlciB0YXJnZXRpbmcgVmVyaXNpbGljb24gREMtc2VyaWVzCj4g
+PiA+ID4gZGlzcGxheQo+ID4gPiA+IGNvbnRyb2xsZXJzLCB3aGljaCBmZWF0dXJlIHNlbGYtaWRl
+bnRpZmljYXRpb24gZnVuY3Rpb25hbGl0eQo+ID4gPiA+IGxpa2UKPiA+ID4gPiB0aGVpcgo+ID4g
+PiA+IEdDLXNlcmllcyBHUFVzLgo+ID4gPiA+IAo+ID4gPiA+IE9ubHkgREM4MjAwIGlzIGJlaW5n
+IHN1cHBvcnRlZCBub3csIGFuZCBvbmx5IHRoZSBtYWluCj4gPiA+ID4gZnJhbWVidWZmZXIKPiA+
+ID4gPiBpcyBzZXQKPiA+ID4gPiB1cCAoYXMgdGhlIERSTSBwcmltYXJ5IHBsYW5lKS4gU3VwcG9y
+dCBmb3IgbW9yZSBEQyBtb2RlbHMgYW5kCj4gPiA+ID4gbW9yZQo+ID4gPiA+IGZlYXR1cmVzIGlz
+IG15IGZ1cnRoZXIgdGFyZ2V0cy4KPiA+ID4gPiAKPiA+ID4gPiBBcyB0aGUgZGlzcGxheSBjb250
+cm9sbGVyIGlzIGRlbGl2ZXJlZCB0byBTb0MgdmVuZG9ycyBhcyBhCj4gPiA+ID4gd2hvbGUKPiA+
+ID4gPiBwYXJ0LAo+ID4gPiA+IHRoaXMgZHJpdmVyIGRvZXMgbm90IHVzZSBjb21wb25lbnQgZnJh
+bWV3b3JrIGFuZCBleHRyYSBicmlkZ2VzCj4gPiA+ID4gaW5zaWRlIGEKPiA+ID4gPiBTb0MgaXMg
+ZXhwZWN0ZWQgdG8gYmUgaW1wbGVtZW50ZWQgYXMgZGVkaWNhdGVkIGJyaWRnZXMgKHRoaXMKPiA+
+ID4gPiBkcml2ZXIKPiA+ID4gPiBwcm9wZXJseSBzdXBwb3J0cyBicmlkZ2UgY2hhaW5pbmcpLgo+
+ID4gPiA+IAo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPHV3dUBpY2Vub3d5
+Lm1lPgo+ID4gPiA+IC0tLQo+ID4gPiA+IMKgZHJpdmVycy9ncHUvZHJtL0tjb25maWfCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsKPiA+ID4gPiDC
+oGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8wqDCoCAxICsKPiA+ID4gPiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNv
+bi9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDE1ICsKPiA+ID4gPiDCoGRyaXZlcnMv
+Z3B1L2RybS92ZXJpc2lsaWNvbi9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCA1ICsK
+PiA+ID4gPiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19icmlkZ2UuY8KgwqDCoMKg
+wqDCoCB8IDMzMAo+ID4gPiA+ICsrKysrKysrKysrKysrKysrKwo+ID4gPiA+IMKgZHJpdmVycy9n
+cHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2JyaWRnZS5owqDCoMKgwqDCoMKgIHzCoCA0MCArKysKPiA+
+ID4gPiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19icmlkZ2VfcmVncy5owqAgfMKg
+IDQ3ICsrKwo+ID4gPiA+IMKgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2NydGMuY8Kg
+wqDCoMKgwqDCoMKgwqAgfCAyMTcKPiA+ID4gPiArKysrKysrKysrKysKPiA+ID4gPiDCoGRyaXZl
+cnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19jcnRjLmjCoMKgwqDCoMKgwqDCoMKgIHzCoCAyOSAr
+Kwo+ID4gPiA+IMKgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2NydGNfcmVncy5owqDC
+oMKgIHzCoCA2MCArKysrCj4gPiA+ID4gwqBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vdnNf
+ZGMuY8KgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMjMzCj4gPiA+ID4gKysrKysrKysrKysrKwo+ID4g
+PiA+IMKgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2RjLmjCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB8wqAgMzkgKysrCj4gPiA+ID4gwqBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vdnNf
+ZGNfdG9wX3JlZ3MuaMKgIHzCoCAyNyArKwo+ID4gPiA+IMKgZHJpdmVycy9ncHUvZHJtL3Zlcmlz
+aWxpY29uL3ZzX2RybS5jwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTc3ICsrKysrKysrKysKPiA+ID4g
+PiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19kcm0uaMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqAgMjkgKysKPiA+ID4gPiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19od2Ri
+LmPCoMKgwqDCoMKgwqDCoMKgIHwgMTUwICsrKysrKysrCj4gPiA+ID4gwqBkcml2ZXJzL2dwdS9k
+cm0vdmVyaXNpbGljb24vdnNfaHdkYi5owqDCoMKgwqDCoMKgwqDCoCB8wqAgMjkgKysKPiA+ID4g
+PiDCoGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19wbGFuZS5jwqDCoMKgwqDCoMKgwqAg
+fCAxMDIgKysrKysrCj4gPiA+ID4gwqBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vdnNfcGxh
+bmUuaMKgwqDCoMKgwqDCoMKgIHzCoCA2OCArKysrCj4gPiA+ID4gwqAuLi4vZ3B1L2RybS92ZXJp
+c2lsaWNvbi92c19wcmltYXJ5X3BsYW5lLmPCoMKgwqAgfCAxNjYgKysrKysrKysrCj4gPiA+ID4g
+wqAuLi4vZHJtL3ZlcmlzaWxpY29uL3ZzX3ByaW1hcnlfcGxhbmVfcmVncy5owqDCoCB8wqAgNTMg
+KysrCj4gPiA+ID4gwqAyMSBmaWxlcyBjaGFuZ2VkLCAxODE5IGluc2VydGlvbnMoKykKPiA+ID4g
+PiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vS2NvbmZp
+Zwo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNv
+bi9NYWtlZmlsZQo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS92
+ZXJpc2lsaWNvbi92c19icmlkZ2UuYwo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19icmlkZ2UuaAo+ID4gPiA+IMKgY3JlYXRlIG1vZGUg
+MTAwNjQ0Cj4gPiA+ID4gZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2JyaWRnZV9yZWdz
+LmgKPiA+ID4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGlj
+b24vdnNfY3J0Yy5jCj4gPiA+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJt
+L3ZlcmlzaWxpY29uL3ZzX2NydGMuaAo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19jcnRjX3JlZ3MuaAo+ID4gPiA+IMKgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19kYy5jCj4gPiA+ID4gwqBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2RjLmgKPiA+
+ID4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NAo+ID4gPiA+IGRyaXZlcnMvZ3B1L2RybS92ZXJpc2ls
+aWNvbi92c19kY190b3BfcmVncy5oCj4gPiA+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2RybS5jCj4gPiA+ID4gwqBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2RybS5oCj4gPiA+ID4gwqBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2h3ZGIuYwo+ID4gPiA+
+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19od2Ri
+LmgKPiA+ID4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGlj
+b24vdnNfcGxhbmUuYwo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2Ry
+bS92ZXJpc2lsaWNvbi92c19wbGFuZS5oCj4gPiA+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQKPiA+
+ID4gPiBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vdnNfcHJpbWFyeV9wbGFuZS5jCj4gPiA+
+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQKPiA+ID4gPiBkcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGlj
+b24vdnNfcHJpbWFyeV9wbGFuZV9yZWdzLmgKPiA+ID4gPiAKPiA+ID4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vS2NvbmZpZwo+ID4gPiA+
+IGluZGV4IGY3ZWE4ZTg5NWMwYzAuLjMzNjAxNDg1ZWNkYmEgMTAwNjQ0Cj4gPiA+ID4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL0tjb25maWcKPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vS2Nv
+bmZpZwo+ID4gPiA+IEBAIC0zOTYsNiArMzk2LDggQEAgc291cmNlICJkcml2ZXJzL2dwdS9kcm0v
+c3ByZC9LY29uZmlnIgo+ID4gPiA+IMKgCj4gPiA+ID4gwqBzb3VyY2UgImRyaXZlcnMvZ3B1L2Ry
+bS9pbWFnaW5hdGlvbi9LY29uZmlnIgo+ID4gPiA+IMKgCj4gPiA+ID4gK3NvdXJjZSAiZHJpdmVy
+cy9ncHUvZHJtL3ZlcmlzaWxpY29uL0tjb25maWciCj4gPiA+ID4gKwo+ID4gPiA+IMKgY29uZmln
+IERSTV9IWVBFUlYKPiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgdHJpc3RhdGUgIkRSTSBTdXBwb3J0
+IGZvciBIeXBlci1WIHN5bnRoZXRpYyB2aWRlbwo+ID4gPiA+IGRldmljZSIKPiA+ID4gPiDCoMKg
+wqDCoMKgwqDCoMKgZGVwZW5kcyBvbiBEUk0gJiYgUENJICYmIEhZUEVSVgo+ID4gPiA+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUKPiA+ID4gPiBiL2RyaXZlcnMvZ3B1L2Ry
+bS9NYWtlZmlsZQo+ID4gPiA+IGluZGV4IDRkYWZiZGM4Zjg2YWMuLjMyZWQ0Y2Y5ZGYxYmQgMTAw
+NjQ0Cj4gPiA+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL01ha2VmaWxlCj4gPiA+ID4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL01ha2VmaWxlCj4gPiA+ID4gQEAgLTIzMSw2ICsyMzEsNyBAQCBvYmot
+ecKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqArPSBzb2xvbW9u
+Lwo+ID4gPiA+IMKgb2JqLSQoQ09ORklHX0RSTV9TUFJEKSArPSBzcHJkLwo+ID4gPiA+IMKgb2Jq
+LSQoQ09ORklHX0RSTV9MT09OR1NPTikgKz0gbG9vbmdzb24vCj4gPiA+ID4gwqBvYmotJChDT05G
+SUdfRFJNX1BPV0VSVlIpICs9IGltYWdpbmF0aW9uLwo+ID4gPiA+ICtvYmotJChDT05GSUdfRFJN
+X1ZFUklTSUxJQ09OX0RDKSArPSB2ZXJpc2lsaWNvbi8KPiA+ID4gPiDCoAo+ID4gPiA+IMKgIyBF
+bnN1cmUgZHJtIGhlYWRlcnMgYXJlIHNlbGYtY29udGFpbmVkIGFuZCBwYXNzIGtlcm5lbC1kb2MK
+PiA+ID4gPiDCoGhkcnRlc3QtZmlsZXMgOj0gXAo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vdmVyaXNpbGljb24vS2NvbmZpZwo+ID4gPiA+IGIvZHJpdmVycy9ncHUvZHJtL3Zl
+cmlzaWxpY29uL0tjb25maWcKPiA+ID4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+ID4gPiA+IGlu
+ZGV4IDAwMDAwMDAwMDAwMDAuLjAyMzU1NzdjNzI4MjQKPiA+ID4gPiAtLS0gL2Rldi9udWxsCj4g
+PiA+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL0tjb25maWcKPiA+ID4gPiBA
+QCAtMCwwICsxLDE1IEBACj4gPiA+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0y
+LjAtb25seQo+ID4gPiA+ICtjb25maWcgRFJNX1ZFUklTSUxJQ09OX0RDCj4gPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgdHJpc3RhdGUgIkRSTSBTdXBwb3J0IGZvciBWZXJpc2lsaWNvbiBEQy1zZXJpZXMg
+ZGlzcGxheQo+ID4gPiA+IGNvbnRyb2xsZXJzIgo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGRlcGVu
+ZHMgb24gRFJNICYmIENPTU1PTl9DTEsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBkZXBlbmRzIG9u
+IFJJU0NWIHx8IENPTVBJTEVSX1RFU1QKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzZWxlY3QgRFJN
+X0NMSUVOVF9TRUxFQ1RJT04KPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzZWxlY3QgRFJNX0dFTV9E
+TUFfSEVMUEVSCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgc2VsZWN0IERSTV9LTVNfSEVMUEVSCj4g
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgc2VsZWN0IERSTV9CUklER0VfQ09OTkVDVE9SCj4gPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgc2VsZWN0IFJFR01BUF9NTUlPCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+c2VsZWN0IFZJREVPTU9ERV9IRUxQRVJTCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgaGVscAo+ID4g
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgIENob29zZSB0aGlzIG9wdGlvbiBpZiB5b3UgaGF2ZSBhIFNv
+QyB3aXRoIFZlcmlzaWxpY29uCj4gPiA+ID4gREMtCj4gPiA+ID4gc2VyaWVzCj4gPiA+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqAgZGlzcGxheSBjb250cm9sbGVycy4gSWYgTSBpcyBzZWxlY3RlZCwgdGhl
+IG1vZHVsZQo+ID4gPiA+IHdpbGwKPiA+ID4gPiBiZQo+ID4gPiA+IGNhbGxlZAo+ID4gPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgIHZlcmlzaWxpY29uLWRjLgo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vTWFrZWZpbGUKPiA+ID4gPiBiL2RyaXZlcnMvZ3B1L2Ry
+bS92ZXJpc2lsaWNvbi9NYWtlZmlsZQo+ID4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiA+
+ID4gaW5kZXggMDAwMDAwMDAwMDAwMC4uZmQ4ZDgwNWZiY2RlMQo+ID4gPiA+IC0tLSAvZGV2L251
+bGwKPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdmVyaXNpbGljb24vTWFrZWZpbGUKPiA+
+ID4gPiBAQCAtMCwwICsxLDUgQEAKPiA+ID4gPiArIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
+R1BMLTIuMC1vbmx5Cj4gPiA+ID4gKwo+ID4gPiA+ICt2ZXJpc2lsaWNvbi1kYy1vYmpzIDo9IHZz
+X2JyaWRnZS5vIHZzX2NydGMubyB2c19kYy5vIHZzX2RybS5vCj4gPiA+ID4gdnNfaHdkYi5vIHZz
+X3BsYW5lLm8gdnNfcHJpbWFyeV9wbGFuZS5vCj4gPiA+ID4gKwo+ID4gPiA+ICtvYmotJChDT05G
+SUdfRFJNX1ZFUklTSUxJQ09OX0RDKSArPSB2ZXJpc2lsaWNvbi1kYy5vCj4gPiA+ID4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92ZXJpc2lsaWNvbi92c19icmlkZ2UuYwo+ID4gPiA+IGIv
+ZHJpdmVycy9ncHUvZHJtL3ZlcmlzaWxpY29uL3ZzX2JyaWRnZS5jCj4gPiA+ID4gbmV3IGZpbGUg
+bW9kZSAxMDA2NDQKPiA+ID4gPiBpbmRleCAwMDAwMDAwMDAwMDAwLi5jOGNhZjMxZmFjN2Q2Cj4g
+PiA+ID4gLS0tIC9kZXYvbnVsbAo+ID4gPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92ZXJpc2ls
+aWNvbi92c19icmlkZ2UuYwo+ID4gPiA+IEBAIC0wLDAgKzEsMzMwIEBACj4gPiA+ID4gKy8vIFNQ
+RFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9ubHkKPiA+ID4gPiArLyoKPiA+ID4gPiAr
+ICogQ29weXJpZ2h0IChDKSAyMDI1IEljZW5vd3kgWmhlbmcgPHV3dUBpY2Vub3d5Lm1lPgo+ID4g
+PiA+ICsgKi8KPiA+ID4gPiArCj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9vZi5oPgo+ID4gPiA+
+ICsjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+Cj4gPiA+ID4gKwo+ID4gPiA+ICsjaW5jbHVkZSA8
+dWFwaS9saW51eC9tZWRpYS1idXMtZm9ybWF0Lmg+Cj4gPiA+ID4gKwo+ID4gPiA+ICsjaW5jbHVk
+ZSA8ZHJtL2RybV9hdG9taWMuaD4KPiA+ID4gPiArI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hl
+bHBlci5oPgo+ID4gPiA+ICsjaW5jbHVkZSA8ZHJtL2RybV9icmlkZ2UuaD4KPiA+ID4gPiArI2lu
+Y2x1ZGUgPGRybS9kcm1fYnJpZGdlX2Nvbm5lY3Rvci5oPgo+ID4gPiA+ICsjaW5jbHVkZSA8ZHJt
+L2RybV9jb25uZWN0b3IuaD4KPiA+ID4gPiArI2luY2x1ZGUgPGRybS9kcm1fZW5jb2Rlci5oPgo+
+ID4gPiA+ICsjaW5jbHVkZSA8ZHJtL2RybV9vZi5oPgo+ID4gPiA+ICsjaW5jbHVkZSA8ZHJtL2Ry
+bV9wcmludC5oPgo+ID4gPiA+ICsjaW5jbHVkZSA8ZHJtL2RybV9zaW1wbGVfa21zX2hlbHBlci5o
+Pgo+ID4gPiA+ICsKPiA+ID4gPiArI2luY2x1ZGUgInZzX2JyaWRnZS5oIgo+ID4gPiA+ICsjaW5j
+bHVkZSAidnNfYnJpZGdlX3JlZ3MuaCIKPiA+ID4gPiArI2luY2x1ZGUgInZzX2NydGMuaCIKPiA+
+ID4gPiArI2luY2x1ZGUgInZzX2RjLmgiCj4gPiA+ID4gKwo+ID4gPiA+ICtzdGF0aWMgaW50IHZz
+X2JyaWRnZV9hdHRhY2goc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSwKPiA+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgZHJt
+X2VuY29kZXIgKmVuY29kZXIsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZW51bSBkcm1fYnJpZGdlX2F0dGFjaF9mbGFncyBmbGFn
+cykKPiA+ID4gPiArewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCB2c19icmlkZ2UgKnZi
+cmlkZ2UgPQo+ID4gPiA+IGRybV9icmlkZ2VfdG9fdnNfYnJpZGdlKGJyaWRnZSk7Cj4gPiA+ID4g
+Kwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVy
+LCB2YnJpZGdlLT5uZXh0LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBicmlkZ2UsIGZsYWdzKTsKPiA+ID4gPiAr
+fQo+ID4gPiA+ICsKPiA+ID4gPiArc3RydWN0IHZzZGNfZHBfZm9ybWF0IHsKPiA+ID4gPiArwqDC
+oMKgwqDCoMKgwqB1MzIgbGludXhfZm10Owo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGJvb2wgaXNf
+eXV2Owo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHUzMiB2c2RjX2ZtdDsKPiA+ID4gPiArfTsKPiA+
+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyBzdHJ1Y3QgdnNkY19kcF9mb3JtYXQgdnNkY19kcF9zdXBw
+b3J0ZWRfZm10c1tdID0gewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoC8qIGRlZmF1bHQgdG8gUkdC
+ODg4ICovCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9CVVNfRk1UX0ZJWEVELCBmYWxz
+ZSwKPiA+ID4gPiBWU0RDX0RJU1BfRFBfQ09ORklHX0ZNVF9SR0I4ODggfSwKPiA+ID4gPiArwqDC
+oMKgwqDCoMKgwqB7IE1FRElBX0JVU19GTVRfUkdCODg4XzFYMjQsIGZhbHNlLAo+ID4gPiA+IFZT
+RENfRElTUF9EUF9DT05GSUdfRk1UX1JHQjg4OCB9LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHsg
+TUVESUFfQlVTX0ZNVF9SR0I1NjVfMVgxNiwgZmFsc2UsCj4gPiA+ID4gVlNEQ19ESVNQX0RQX0NP
+TkZJR19GTVRfUkdCNTY1IH0sCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9CVVNfRk1U
+X1JHQjY2Nl8xWDE4LCBmYWxzZSwKPiA+ID4gPiBWU0RDX0RJU1BfRFBfQ09ORklHX0ZNVF9SR0I2
+NjYgfSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB7IE1FRElBX0JVU19GTVRfUkdCODg4XzFYMjQs
+IGZhbHNlLAo+ID4gPiA+IFZTRENfRElTUF9EUF9DT05GSUdfRk1UX1JHQjg4OCB9LAo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoHsgTUVESUFfQlVTX0ZNVF9SR0IxMDEwMTBfMVgzMCwKPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoCBmYWxzZSwgVlNEQ19ESVNQX0RQX0NPTkZJR19GTVRfUkdCMTAxMDEw
+IH0sCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9CVVNfRk1UX1VZVlk4XzFYMTYsIHRy
+dWUsCj4gPiA+ID4gVlNEQ19ESVNQX0RQX0NPTkZJR19ZVVZfRk1UX1VZVlk4IH0sCj4gPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgeyBNRURJQV9CVVNfRk1UX1VZVlkxMF8xWDIwLCB0cnVlLAo+ID4gPiA+
+IFZTRENfRElTUF9EUF9DT05GSUdfWVVWX0ZNVF9VWVZZMTAgfSwKPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqB7IE1FRElBX0JVU19GTVRfWVVWOF8xWDI0LCB0cnVlLAo+ID4gPiA+IFZTRENfRElTUF9E
+UF9DT05GSUdfWVVWX0ZNVF9ZVVY4IH0sCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9C
+VVNfRk1UX1lVVjEwXzFYMzAsIHRydWUsCj4gPiA+ID4gVlNEQ19ESVNQX0RQX0NPTkZJR19ZVVZf
+Rk1UX1lVVjEwIH0sCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9CVVNfRk1UX1VZWVZZ
+WThfMF81WDI0LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgIHRydWUsIFZTRENfRElTUF9EUF9D
+T05GSUdfWVVWX0ZNVF9VWVlWWVk4IH0sCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgeyBNRURJQV9C
+VVNfRk1UX1VZWVZZWTEwXzBfNVgzMCwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoCB0cnVlLCBW
+U0RDX0RJU1BfRFBfQ09ORklHX1lVVl9GTVRfVVlZVllZMTAgfSwKPiA+ID4gPiArfTsKPiA+ID4g
+PiArCj4gPiA+ID4gK3N0YXRpYyB1MzIgKnZzX2JyaWRnZV9hdG9taWNfZ2V0X291dHB1dF9idXNf
+Zm10cyhzdHJ1Y3QKPiA+ID4gPiBkcm1fYnJpZGdlCj4gPiA+ID4gKmJyaWRnZSwKPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGRybV9icmlkZ2Vfc3RhdGUKPiA+ID4gPiAqYnJp
+ZGdlX3N0YXRlLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZHJtX2NydGNf
+c3RhdGUKPiA+ID4gPiAqY3J0Y19zdGF0ZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+c3RydWN0Cj4gPiA+ID4gZHJtX2Nvbm5lY3Rvcl9zdGF0ZQo+ID4gPiA+ICpjb25uX3N0YXRlLAo+
+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQKPiA+ID4gPiAqbnVtX291
+dHB1dF9mbXRzKQo+ID4gPiA+ICt7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IHZzX2Jy
+aWRnZSAqdmJyaWRnZSA9Cj4gPiA+ID4gZHJtX2JyaWRnZV90b192c19icmlkZ2UoYnJpZGdlKTsK
+PiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubiA9IGNvbm5f
+c3RhdGUtPmNvbm5lY3RvcjsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB1MzIgKm91dHB1dF9mbXRz
+Owo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCBpOwo+ID4gPiA+ICsKPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqBpZiAodmJyaWRnZS0+aW50ZiA9PSBWU0RDX09VVFBVVF9JTlRFUkZB
+Q0VfRFBJKQo+ID4gPiAKPiA+ID4gVGhpcyBraW5kIG9mIGNoZWNrcyBsb29rcyBsaWtlIHRoZXJl
+IHNob3VsZCBiZSBhIGRybV9lbmNvZGVyCj4gPiA+IGhhbmRsZWQKPiA+ID4gYnkKPiA+ID4gdGhl
+IHNhbWUgZHJpdmVyLiBPciBtYXliZSBpdCdzIGJldHRlciB0byBoYXZlIHR3byBzZXRzIG9mIGZ1
+bmNzCj4gPiA+IHN0cnVjdHVyZXMsIG9uZSBmb3IgdGhlIERQSSwgb25lIGZvciBEUC4KPiA+IAo+
+ID4gV2VsbCB0aGVzZSBmdW5jdGlvbnMgdXNlZCB0byBiZSBmb3IgYW4gZW5jb2RlciwgaG93ZXZl
+ciBJIGZvdW5kCj4gPiB0aGF0Cj4gPiBlbmNvZGVycyBjYW5ub3QgdGFrZSBwYXJ0IGluIGZvcm1h
+dCBuZWdvdGlhdGlvbiwgYW5kIGF0IGxlYXN0IHNvbWUKPiA+IHNvdXJjZSBzYXlzIGVuY29kZXIg
+aXMgZGVwcmVjYXRlZCBpbiB0aGlzIHNpdHVhdGlvbiBhbmQgYSBmaXJzdAo+ID4gYnJpZGdlCj4g
+PiBpbiB0aGUgYnJpZGdlIGNoYWluIGlzIGJldHRlciBoZXJlLgo+ID4gCj4gPiBBIHNpbXBsZSBl
+bmNvZGVyIGlzIGNyZWF0ZWQgYnkgdGhpcyBwYXJ0IG9mIGRyaXZlciwgYnV0IGFsbCBpdHMKPiA+
+IHdvcmtzCj4gPiBhcmUgbW92ZWQgdG8gdGhpcyBicmlkZ2UsIHNpbWlsYXIgdG8gd2hhdCBvdGhl
+ciBkcml2ZXJzIHdpdGggYnJpZGdlCj4gPiBjaGFpbmluZyBzdXBwb3J0IGRvLgo+ID4gCj4gPiA+
+IAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqbnVtX291dHB1dF9mbXRz
+ID0gMTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBlbHNlCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCpudW1fb3V0cHV0X2ZtdHMgPQo+ID4gPiA+IEFSUkFZX1NJWkUodnNk
+Y19kcF9zdXBwb3J0ZWRfZm10cyk7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoG91
+dHB1dF9mbXRzID0ga2NhbGxvYygqbnVtX291dHB1dF9mbXRzLAo+ID4gPiA+IHNpemVvZigqb3V0
+cHV0X2ZtdHMpLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBHRlBfS0VSTkVMKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBp
+ZiAoIW91dHB1dF9mbXRzKQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
+ZXR1cm4gTlVMTDsKPiA+ID4gPiArCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKHZicmlkZ2Ut
+PmludGYgPT0gVlNEQ19PVVRQVVRfSU5URVJGQUNFX0RQSSkgewo+ID4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoY29ubi0+ZGlzcGxheV9pbmZvLm51bV9idXNfZm9ybWF0
+cyAmJgo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29ubi0+
+ZGlzcGxheV9pbmZvLmJ1c19mb3JtYXRzKQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgb3V0cHV0X2ZtdHNbMF0gPSBjb25uLQo+ID4gPiA+ID4g
+ZGlzcGxheV9pbmZvLmJ1c19mb3JtYXRzWzBdOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBlbHNlCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBvdXRwdXRfZm10c1swXSA9IE1FRElBX0JVU19GTVRfRklYRUQ7Cj4gPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgfSBlbHNlIHsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgZm9yIChpID0gMDsgaSA8ICpudW1fb3V0cHV0X2ZtdHM7IGkrKykKPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG91dHB1dF9mbXRz
+W2ldID0KPiA+ID4gPiB2c2RjX2RwX3N1cHBvcnRlZF9mbXRzW2ldLmxpbnV4X2ZtdDsKPiA+ID4g
+Cj4gPiA+IG1lbWNweShhLCBiLCBtaW4oQVJSQVlfU0laRSgpLCBudW1fb3V0cHV0X2ZtdHMpKSA/
+Cj4gPiAKPiA+IHZzZGNfZHBfc3VwcG9ydGVkX2ZtdHMgaXMgYSBtYXAgb2YgbGludXhfZm10IHRv
+IGhhcmR3YXJlLXNwZWNpZmljCj4gPiBwYXJhbWV0ZXIsIHNvIG1lbWNweSB3b24ndCB3b3JrIGhl
+cmUuCj4gPiAKPiA+ID4gCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgfQo+ID4gPiA+ICsKPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqByZXR1cm4gb3V0cHV0X2ZtdHM7Cj4gPiA+ID4gK30KPiA+ID4gPiAr
+Cj4gPiA+ID4gK3N0YXRpYyBib29sIHZzX2JyaWRnZV9vdXRfZHBfZm10X3N1cHBvcnRlZCh1MzIg
+b3V0X2ZtdCkKPiA+ID4gPiArewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCBp
+Owo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBmb3IgKGkgPSAwOyBpIDwgQVJSQVlf
+U0laRSh2c2RjX2RwX3N1cHBvcnRlZF9mbXRzKTsKPiA+ID4gPiBpKyspCj4gPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmICh2c2RjX2RwX3N1cHBvcnRlZF9mbXRzW2ldLmxp
+bnV4X2ZtdCA9PQo+ID4gPiA+IG91dF9mbXQpCj4gPiA+IAo+ID4gPiByZXR1cm4gdHJ1ZTsKPiA+
+ID4gCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqBicmVhazsKPiA+ID4gPiArCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgcmV0dXJuICEoaSA9PSBB
+UlJBWV9TSVpFKHZzZGNfZHBfc3VwcG9ydGVkX2ZtdHMpKTsKPiA+ID4gCj4gPiA+IHJldHVybiBm
+YWxzZTsKPiA+ID4gCj4gPiA+ID4gK30KPiA+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyB1MzIgKnZz
+X2JyaWRnZV9hdG9taWNfZ2V0X2lucHV0X2J1c19mbXRzKHN0cnVjdAo+ID4gPiA+IGRybV9icmlk
+Z2UKPiA+ID4gPiAqYnJpZGdlLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
+ZHJtX2JyaWRnZV9zdGF0ZQo+ID4gPiA+ICpicmlkZ2Vfc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHN0cnVjdCBkcm1fY3J0Y19zdGF0ZQo+ID4gPiA+ICpjcnRjX3N0YXRlLAo+
+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QKPiA+ID4gPiBkcm1fY29ubmVjdG9y
+X3N0YXRlCj4gPiA+ID4gKmNvbm5fc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHUzMiBvdXRwdXRfZm10LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBp
+bnQKPiA+ID4gPiAqbnVtX2lucHV0X2ZtdHMpCj4gPiA+ID4gK3sKPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqBzdHJ1Y3QgdnNfYnJpZGdlICp2YnJpZGdlID0KPiA+ID4gPiBkcm1fYnJpZGdlX3RvX3Zz
+X2JyaWRnZShicmlkZ2UpOwo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBpZiAodmJy
+aWRnZS0+aW50ZiA9PSBWU0RDX09VVFBVVF9JTlRFUkZBQ0VfRFAgJiYKPiA+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgIXZzX2JyaWRnZV9vdXRfZHBfZm10X3N1cHBvcnRlZChvdXRwdXRfZm10
+KSkgewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqbnVtX2lucHV0X2Zt
+dHMgPSAwOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gTlVM
+TDsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB9Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDCoMKg
+wqDCoHJldHVybgo+ID4gPiA+IGRybV9hdG9taWNfaGVscGVyX2JyaWRnZV9wcm9wYWdhdGVfYnVz
+X2ZtdChicmlkZ2UsCj4gPiA+ID4gYnJpZGdlX3N0YXRlLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiA+ID4gY3J0Y19z
+dGF0ZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+ID4gPiA+IGNvbm5fc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4gPiBvdXRwdXRf
+Zm10LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgCj4gPiA+ID4gbnVtX2lucHV0X2ZtdHMpOwo+ID4gPiA+ICt9Cj4gPiA+ID4g
+Kwo+ID4gPiA+ICtzdGF0aWMgaW50IHZzX2JyaWRnZV9hdG9taWNfY2hlY2soc3RydWN0IGRybV9i
+cmlkZ2UgKmJyaWRnZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgZHJtX2JyaWRnZV9zdGF0ZQo+
+ID4gPiA+ICpicmlkZ2Vfc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGRybV9jcnRjX3N0
+YXRlCj4gPiA+ID4gKmNydGNfc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGRybV9jb25u
+ZWN0b3Jfc3RhdGUKPiA+ID4gPiAqY29ubl9zdGF0ZSkKPiA+ID4gPiArewo+ID4gPiA+ICvCoMKg
+wqDCoMKgwqDCoHN0cnVjdCB2c19icmlkZ2UgKnZicmlkZ2UgPQo+ID4gPiA+IGRybV9icmlkZ2Vf
+dG9fdnNfYnJpZGdlKGJyaWRnZSk7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGlm
+ICh2YnJpZGdlLT5pbnRmID09IFZTRENfT1VUUFVUX0lOVEVSRkFDRV9EUCAmJgo+ID4gPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAhdnNfYnJpZGdlX291dF9kcF9mbXRfc3VwcG9ydGVkKGJyaWRn
+ZV9zdGF0ZS0KPiA+ID4gPiA+IG91dHB1dF9idXNfY2ZnLmZvcm1hdCkpCj4gPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRUlOVkFMOwo+ID4gPiA+ICsKPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqB2YnJpZGdlLT5vdXRwdXRfYnVzX2ZtdCA9IGJyaWRnZV9zdGF0ZS0K
+PiA+ID4gPiA+IG91dHB1dF9idXNfY2ZnLmZvcm1hdDsKPiA+ID4gCj4gPiA+IFlvdSBhcmUgc2F2
+aW5nIGEgc3RhdGUgdmFsdWUgaW50byBhIG5vbi1zdGF0ZSB2YXJpYWJsZS4gVGhlcmUgaXMKPiA+
+ID4gbm8KPiA+ID4gZ3VhcmFudGVlIHRoYXQgdGhpcyBhdG9taWNfY2hlY2soKSB3aWxsIGJlIGZv
+bGxvd2VkIGJ5IHRoZSBhY3R1YWwKPiA+ID4gY29tbWl0LiBTbywgZWl0aGVyIHlvdSBoYXZlIHRv
+IHVzZSBhIHN0cnVjdCB0aGF0IGV4dGVuZHMKPiA+ID4gZHJtX2JyaWRnZV9zdGF0ZSBoZXJlIG9y
+IHN0b3JlIHRoZSBvdXRwdXRfYnVzX2ZtdCBkdXJpbmcKPiA+ID4gYXRvbWljX2VuYWJsZSgpLgo+
+ID4gCj4gPiBJbiBmYWN0IEkgZG9uJ3Qgd2FudCB0byBzYXZlIGl0IC0tIHRoZSBrZXJuZWwgaXMg
+cXVpcmt5IGhlcmUgYW5kCj4gPiB0aGlzCj4gPiB2YWx1ZSBkb2VzIG5vdCBnZXQgcGFzc2VkIGlu
+dG8gYXRvbWljX2VuYWJsZS4gSSBtaW1pY2tlZCB3aGF0IG90aGVyCj4gPiBkcml2ZXJzIGRvLiBT
+ZWUgaW5nZW5pY19kcm1fYnJpZGdlX2F0b21pY19jaGVjaygpIGluCj4gPiBpbmdlbmljL2luZ2Vu
+aWMtCj4gPiBkcm0tZHJ2LmMgYW5kIG1lc29uX2VuY29kZXJfaGRtaV9hdG9taWNfY2hlY2soKSBp
+bgo+ID4gbWVzb24vbWVzb25fZW5jb2Rlcl9oZG1pLmMgLgo+ID4gCj4gPiA+IAo+ID4gPiA+ICsK
+PiA+ID4gPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsKPiA+ID4gPiArfQo+ID4gPiA+ICsKPiA+
+ID4gPiArc3RhdGljIHZvaWQgdnNfYnJpZGdlX2F0b21pY19lbmFibGUoc3RydWN0IGRybV9icmlk
+Z2UgKmJyaWRnZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGRybV9hdG9taWNfc3RhdGUK
+PiA+ID4gPiAqc3RhdGUpCj4gPiA+ID4gK3sKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
+dnNfYnJpZGdlICp2YnJpZGdlID0KPiA+ID4gPiBkcm1fYnJpZGdlX3RvX3ZzX2JyaWRnZShicmlk
+Z2UpOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBkcm1fYnJpZGdlX3N0YXRlICpicl9z
+dGF0ZSA9Cj4gPiA+ID4gZHJtX2F0b21pY19nZXRfYnJpZGdlX3N0YXRlKHN0YXRlLAo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgCj4gPiA+ID4gwqDCoAo+ID4gPiA+IMKgwqAKPiA+ID4gPiDCoMKgwqDCoMKg
+YnJpZGdlKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgdnNfY3J0YyAqY3J0YyA9IHZi
+cmlkZ2UtPmNydGM7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IHZzX2RjICpkYyA9IGNy
+dGMtPmRjOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCBvdXRwdXQgPSBjcnRj
+LT5pZDsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB1MzIgZHBfZm10Owo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoHVuc2lnbmVkIGludCBpOwo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBE
+Uk1fREVCVUdfRFJJVkVSKCJFbmFibGluZyBvdXRwdXQgJXVcbiIsIG91dHB1dCk7Cj4gPiA+ID4g
+Kwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHN3aXRjaCAodmJyaWRnZS0+aW50Zikgewo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoGNhc2UgVlNEQ19PVVRQVVRfSU5URVJGQUNFX0RQSToKPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnbWFwX2NsZWFyX2JpdHMoZGMtPnJlZ3Ms
+Cj4gPiA+ID4gVlNEQ19ESVNQX0RQX0NPTkZJRyhvdXRwdXQpLAo+ID4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFZT
+RENfRElTUF9EUF9DT05GSUdfRFBfRU4pOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBicmVhazsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBjYXNlIFZTRENfT1VUUFVUX0lO
+VEVSRkFDRV9EUDoKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZm9yIChp
+ID0gMDsgaSA8Cj4gPiA+ID4gQVJSQVlfU0laRSh2c2RjX2RwX3N1cHBvcnRlZF9mbXRzKTsKPiA+
+ID4gPiBpKyspIHsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoGlmICh2c2RjX2RwX3N1cHBvcnRlZF9mbXRzW2ldLmxpbnV4X2ZtdAo+ID4gPiA+
+ID09Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgdmJyaWRnZS0+b3V0cHV0X2J1c19mbXQpCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7Cj4g
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgV0FSTl9PTl9PTkNFKGkgPT0KPiA+ID4gPiBBUlJBWV9TSVpF
+KHZzZGNfZHBfc3VwcG9ydGVkX2ZtdHMpKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgZHBfZm10ID0gdnNkY19kcF9zdXBwb3J0ZWRfZm10c1tpXS52c2RjX2ZtdDsKPiA+
+ID4gCj4gPiA+IFRoaXMgbWlnaHQgdHJpZ2dlciBhbGwgc3RhdGljIGNoZWNrZXJzIGluIHRoZSB1
+bml2ZXJzZS4gSXQncyBub3QKPiA+ID4gcmVhbGx5Cj4gPiA+IHBvc3NpYmxlLCBzaW5jZSB5b3Un
+dmUgY2hlY2tlZCBpdCBpbiB0aGUgYXRvbWljX2NoZWNrKCksIGJ1dC4uLgo+ID4gCj4gPiBTaWdo
+IEkgZG9uJ3Qga25vdyBob3cgdG8gcHJvcGVybHkgZGVzY3JpYmUgaXQuLi4KPiA+IAo+ID4gSSBj
+YW4gb25seSBzYXkgc29tZXRoaW5nIHJlYWxseSBiYWQgaGFwcGVucyBpZiB0aGUgcHJldmlvdXMK
+PiA+IFdBUk5fT05fT05DRSBpcyB0cmlnZ2VyZWQuCj4gPiAKPiA+ID4gCj4gPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRwX2ZtdCB8PSBWU0RDX0RJU1BfRFBfQ09ORklHX0RQ
+X0VOOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWdtYXBfd3JpdGUo
+ZGMtPnJlZ3MsCj4gPiA+ID4gVlNEQ19ESVNQX0RQX0NPTkZJRyhvdXRwdXQpLAo+ID4gPiA+IGRw
+X2ZtdCk7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZ21hcF9hc3Np
+Z25fYml0cyhkYy0+cmVncywKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiA+ID4gVlNEQ19ESVNQX1BB
+TkVMX0NPTkZJRyhvdXRwdXQpLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVlNEQ19ESVNQX1BBTkVMX0NP
+TkZJR19ZVVYsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+ID4gPiA+IHZzZGNfZHBfc3VwcG9ydGVkX2Zt
+dHNbaV0uaXNfeXV2KTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJl
+YWs7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgfQo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqByZWdtYXBfY2xlYXJfYml0cyhkYy0+cmVncywKPiA+ID4gPiBWU0RDX0RJU1BfUEFORUxf
+Q09ORklHKG91dHB1dCksCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBWU0RDX0RJU1BfUEFORUxfQ09ORklHX0RBVF9QT0wpOwo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoHJlZ21hcF9hc3NpZ25fYml0cyhkYy0+cmVncywKPiA+ID4gPiBWU0RD
+X0RJU1BfUEFORUxfQ09ORklHKG91dHB1dCksCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFZTRENfRElTUF9QQU5FTF9DT05GSUdfREVf
+UE9MLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBicl9zdGF0ZS0+b3V0cHV0X2J1c19jZmcuZmxhZ3MgJgo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBEUk1fQlVTX0ZMQUdf
+REVfTE9XKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqByZWdtYXBfYXNzaWduX2JpdHMoZGMtPnJl
+Z3MsCj4gPiA+ID4gVlNEQ19ESVNQX1BBTkVMX0NPTkZJRyhvdXRwdXQpLAo+ID4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBWU0RDX0RJU1Bf
+UEFORUxfQ09ORklHX0NMS19QT0wsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyX3N0YXRlLT5vdXRwdXRfYnVzX2NmZy5mbGFncyAm
+Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIERSTV9CVVNfRkxBR19QSVhEQVRBX0RSSVZFX05FR0VER0UpOwo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoHJlZ21hcF9zZXRfYml0cyhkYy0+cmVncywKPiA+ID4gPiBWU0RDX0RJU1BfUEFORUxf
+Q09ORklHKG91dHB1dCksCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBWU0RDX0RJU1BfUEFORUxfQ09ORklHX0RFX0VOIHwKPiA+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFZTRENfRElTUF9QQU5F
+TF9DT05GSUdfREFUX0VOIHwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoFZTRENfRElTUF9QQU5FTF9DT05GSUdfQ0xLX0VOKTsKPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqByZWdtYXBfc2V0X2JpdHMoZGMtPnJlZ3MsCj4gPiA+ID4gVlNEQ19ESVNQ
+X1BBTkVMX0NPTkZJRyhvdXRwdXQpLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgVlNEQ19ESVNQX1BBTkVMX0NPTkZJR19SVU5OSU5HKTsKPiA+
+ID4gPiArwqDCoMKgwqDCoMKgwqByZWdtYXBfY2xlYXJfYml0cyhkYy0+cmVncywgVlNEQ19ESVNQ
+X1BBTkVMX1NUQVJULAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAKPiA+ID4gPiBWU0RDX0RJU1BfUEFORUxfU1RBUlRfTVVMVElfRElTUF9T
+WU5DKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqByZWdtYXBfc2V0X2JpdHMoZGMtPnJlZ3MsIFZT
+RENfRElTUF9QQU5FTF9TVEFSVCwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoFZTRENfRElTUF9QQU5FTF9TVEFSVF9SVU5OSU5HKG91dHB1dCkp
+Owo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqByZWdtYXBfc2V0X2JpdHMoZGMtPnJl
+Z3MsCj4gPiA+ID4gVlNEQ19ESVNQX1BBTkVMX0NPTkZJR19FWChjcnRjLQo+ID4gPiA+ID4gaWQp
+LAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+VlNEQ19ESVNQX1BBTkVMX0NPTkZJR19FWF9DT01NSVQpOwo+ID4gPiA+ICt9Cj4gPiA+ID4gKwo+
+ID4gPiA+ICtzdGF0aWMgdm9pZCB2c19icmlkZ2VfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9i
+cmlkZ2UKPiA+ID4gPiAqYnJpZGdlLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBkcm1f
+YXRvbWljX3N0YXRlCj4gPiA+ID4gKnN0YXRlKQo+ID4gPiA+ICt7Cj4gPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgc3RydWN0IHZzX2JyaWRnZSAqdmJyaWRnZSA9Cj4gPiA+ID4gZHJtX2JyaWRnZV90b192
+c19icmlkZ2UoYnJpZGdlKTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgdnNfY3J0YyAq
+Y3J0YyA9IHZicmlkZ2UtPmNydGM7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IHZzX2Rj
+ICpkYyA9IGNydGMtPmRjOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCBvdXRw
+dXQgPSBjcnRjLT5pZDsKPiA+ID4gPiArCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgRFJNX0RFQlVH
+X0RSSVZFUigiRGlzYWJsaW5nIG91dHB1dCAldVxuIiwgb3V0cHV0KTsKPiA+ID4gPiArCj4gPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgcmVnbWFwX2NsZWFyX2JpdHMoZGMtPnJlZ3MsIFZTRENfRElTUF9Q
+QU5FTF9TVEFSVCwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIFZTRENfRElTUF9QQU5FTF9TVEFSVF9NVUxUSV9ESVNQX1NZTkMKPiA+ID4g
+PiB8Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoAo+ID4gPiA+IFZTRENfRElTUF9QQU5FTF9TVEFSVF9SVU5OSU5HKG91dHB1dCkpOwo+ID4g
+PiA+ICvCoMKgwqDCoMKgwqDCoHJlZ21hcF9jbGVhcl9iaXRzKGRjLT5yZWdzLAo+ID4gPiA+IFZT
+RENfRElTUF9QQU5FTF9DT05GSUcob3V0cHV0KSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFZTRENfRElTUF9QQU5FTF9DT05GSUdfUlVO
+TklORyk7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHJlZ21hcF9zZXRfYml0cyhk
+Yy0+cmVncywKPiA+ID4gPiBWU0RDX0RJU1BfUEFORUxfQ09ORklHX0VYKGNydGMtCj4gPiA+ID4g
+PiBpZCksCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqBWU0RDX0RJU1BfUEFORUxfQ09ORklHX0VYX0NPTU1JVCk7Cj4gPiA+ID4gK30KPiA+ID4g
+PiArCj4gPiA+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2JyaWRnZV9mdW5jcyB2c19icmlk
+Z2VfZnVuY3MgPSB7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLmF0dGFjaCA9IHZzX2JyaWRnZV9h
+dHRhY2gsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLmF0b21pY19lbmFibGUgPSB2c19icmlkZ2Vf
+YXRvbWljX2VuYWJsZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqAuYXRvbWljX2Rpc2FibGUgPSB2
+c19icmlkZ2VfYXRvbWljX2Rpc2FibGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLmF0b21pY19j
+aGVjayA9IHZzX2JyaWRnZV9hdG9taWNfY2hlY2ssCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLmF0
+b21pY19nZXRfaW5wdXRfYnVzX2ZtdHMgPQo+ID4gPiA+IHZzX2JyaWRnZV9hdG9taWNfZ2V0X2lu
+cHV0X2J1c19mbXRzLAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoC5hdG9taWNfZ2V0X291dHB1dF9i
+dXNfZm10cyA9Cj4gPiA+ID4gdnNfYnJpZGdlX2F0b21pY19nZXRfb3V0cHV0X2J1c19mbXRzLAo+
+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoC5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0KPiA+ID4gPiBk
+cm1fYXRvbWljX2hlbHBlcl9icmlkZ2VfZHVwbGljYXRlX3N0YXRlLAo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoC5hdG9taWNfZGVzdHJveV9zdGF0ZSA9Cj4gPiA+ID4gZHJtX2F0b21pY19oZWxwZXJf
+YnJpZGdlX2Rlc3Ryb3lfc3RhdGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLmF0b21pY19yZXNl
+dCA9IGRybV9hdG9taWNfaGVscGVyX2JyaWRnZV9yZXNldCwKPiA+ID4gPiArfTsKPiA+ID4gPiAr
+Cj4gPiA+ID4gK3N0YXRpYyBpbnQgdnNfYnJpZGdlX2RldGVjdF9vdXRwdXRfaW50ZXJmYWNlKHN0
+cnVjdAo+ID4gPiA+IGRldmljZV9ub2RlCj4gPiA+ID4gKm9mX25vZGUsCj4gPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludAo+ID4gPiA+IG91dHB1dCkKPiA+
+ID4gPiArewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGludCByZXQ7Cj4gPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgc3RydWN0IGRldmljZV9ub2RlICpyZW1vdGU7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKg
+wqDCoMKgwqDCoHJlbW90ZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfbm9kZShvZl9ub2RlLCBvdXRw
+dXQsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiA+ID4gVlNEQ19PVVRQVVRf
+SU5URVJGQUNFX0RQSSk7Cj4gPiA+IAo+ID4gPiBUaGlzIGRlc2VydmVzIGEgY29tbWVudCBpbiB0
+aGUgc291cmNlIGZpbGUuCj4gPiA+IAo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGlmIChyZW1vdGUp
+IHsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0ID0gVlNEQ19PVVRQ
+VVRfSU5URVJGQUNFX0RQSTsKPiA+ID4gCj4gPiA+IHJldHVybiBoZXJlLCBkcm9wIGVsc2V7fQo+
+ID4gCj4gPiBXZWxsIGEgb2Zfbm9kZV9wdXQoKSBpcyBtaXNzaW5nIGJlZm9yZSB0aGUgZmluYWwg
+cmV0dXJuLCBhbmQgWWFvIFppCj4gPiBub3RlZCBtZSBvZiBpdC4KPiA+IAo+ID4gPiAKPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqB9IGVsc2Ugewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqByZW1vdGUgPSBvZl9ncmFwaF9nZXRfcmVtb3RlX25vZGUob2Zfbm9kZSwKPiA+ID4g
+PiBvdXRwdXQsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oAo+ID4gPiA+IFZTRENfT1VUUFVUX0lOVEVSRkFDRV9EUCk7Cj4gPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoGlmIChyZW1vdGUpCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSBWU0RDX09VVFBVVF9JTlRFUkZBQ0Vf
+RFA7Cj4gPiA+IAo+ID4gPiByZXR1cm4KPiA+ID4gCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoGVsc2UKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHJldCA9IC1FTk9ERVY7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgfQo+
+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0Owo+ID4gPiA+ICt9Cj4g
+PiA+ID4gKwo+ID4gPiA+ICtzdHJ1Y3QgdnNfYnJpZGdlICp2c19icmlkZ2VfaW5pdChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZHJtX2RldiwKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IHZzX2NydGMgKmNydGMp
+Cj4gPiA+ID4gK3sKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQgb3V0cHV0ID0g
+Y3J0Yy0+aWQ7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IHZzX2JyaWRnZSAqYnJpZGdl
+Owo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBkcm1fYnJpZGdlICpuZXh0Owo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoGVudW0gdnNfYnJpZGdlX291dHB1dF9pbnRlcmZhY2UgaW50ZjsKPiA+
+ID4gPiArwqDCoMKgwqDCoMKgwqBpbnQgcmV0Owo+ID4gPiA+ICsKPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqBpbnRmID0gdnNfYnJpZGdlX2RldGVjdF9vdXRwdXRfaW50ZXJmYWNlKGRybV9kZXYtPmRl
+di0KPiA+ID4gPiA+IG9mX25vZGUsCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgb3V0cHV0KTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBpZiAoaW50ZiA9PSAt
+RU5PREVWKSB7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl9pbmZv
+KGRybV9kZXYtPmRldiwgIlNraXBwaW5nIG91dHB1dCAldVxuIiwKPiA+ID4gPiBvdXRwdXQpOwo+
+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gTlVMTDsKPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqB9Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGJyaWRn
+ZSA9IGRldm1fa3phbGxvYyhkcm1fZGV2LT5kZXYsIHNpemVvZigqYnJpZGdlKSwKPiA+ID4gPiBH
+RlBfS0VSTkVMKTsKPiA+ID4gCj4gPiA+IGRldm1fZHJtX2JyaWRnZV9hbGxvYygpCj4gPiA+IAo+
+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghYnJpZGdlKQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsKPiA+ID4gPiArCj4gPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgYnJpZGdlLT5jcnRjID0gY3J0YzsKPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqBicmlkZ2UtPmludGYgPSBpbnRmOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGJyaWRnZS0+
+YmFzZS5mdW5jcyA9ICZ2c19icmlkZ2VfZnVuY3M7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoG5leHQgPSBkZXZtX2RybV9vZl9nZXRfYnJpZGdlKGRybV9kZXYtPmRldiwgZHJtX2Rl
+di0KPiA+ID4gPiA+ZGV2LQo+ID4gPiA+ID4gb2Zfbm9kZSwKPiA+ID4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIG91dHB1dCwgaW50Zik7Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKElTX0VSUihuZXh0
+KSkgewo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSBQVFJfRVJS
+KG5leHQpOwo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnb3RvIGVycl9m
+cmVlX2JyaWRnZTsKPiA+ID4gPiArwqDCoMKgwqDCoMKgwqB9Cj4gPiA+ID4gKwo+ID4gPiA+ICvC
+oMKgwqDCoMKgwqDCoGJyaWRnZS0+bmV4dCA9IG5leHQ7Cj4gPiA+ID4gKwo+ID4gPiA+ICvCoMKg
+wqDCoMKgwqDCoHJldCA9IGRybV9zaW1wbGVfZW5jb2Rlcl9pbml0KGRybV9kZXYsICZicmlkZ2Ut
+PmVuYywKPiA+ID4gCj4gPiA+IE9oLCBzbyB0aGVyZSBpcyBhbiBlbmNvZGVyLi4uIFBsZWFzZSBk
+cm9wIGRybV9zaW1wbGVfZW5jb2RlciwKPiA+ID4gaXQncwo+ID4gPiBkZXByZWNhdGVkLCBhbmQg
+dHJ5IG1vdmluZyBhbGwgdGhlIGlmcyB0byB0aGUgZW5jb2RlciBmdW5jcy4KPiA+IAo+ID4gQWg/
+IElzIGl0IHJlYWxseSBkZXByZWNhdGVkPyBJIGNhbiBmaW5kIG5vIHNvdXJjZSBvZiB0aGlzCj4g
+PiBkZXByZWNhdGlvbi4KPiA+IAo+ID4gSW4gYWRkaXRpb24sIEkgdGhpbmsgbWFueSBkcml2ZXJz
+IGhlcmUgYXJlIHVzaW5nIGEgYnJpZGdlIGFzIGEKPiA+ICJiZXR0ZXIKPiA+IGVuY29kZXIiIGJl
+Y2F1c2Ugb2YgdGhlIHJlc3RyaWN0aW9uIG9mIGN1cnJlbnQgZW5jb2Rlcgo+ID4gaW1wbGVtZW50
+YXRpb24sCj4gPiBhbmQgSSBhbSBkb2luZyB0aGUgc2FtZSB0aGluZy4gRWl0aGVyIGVuY29kZXIg
+ZnVuY3Rpb25hbGl0eSBzaG91bGQKPiA+IGJlCj4gPiBpbXByb3ZlZCB0byBvbiBwYXIgd2l0aCBi
+cmlkZ2UsIG9yIHN1Y2ggZHVtbXkgZW5jb2RlcnMgd2l0aCBhCj4gPiBicmlkZ2UKPiA+IHNob3Vs
+ZCBleGlzdCwgYW5kIHNvbWUgaGVscGVyIGZvciBjcmVhdGluZyB0aGVtIHNob3VsZCBleGlzdC4g
+SXQKPiA+IG1pZ2h0Cj4gPiBiZSBub3QgZHJtX3NpbXBsZV9lbmNvZGVyX2luaXQgKGJlY2F1c2Ug
+SSBjYW4gdW5kZXJzdGFuZCB0aGUKPiA+IGRlcHJlY2F0aW9uIG9mIG90aGVyIHBhcnRzIG9mIHRo
+ZSBzaW1wbGUta21zIHJvdXRpbmVzLCBhbHRob3VnaCBJCj4gPiBzZWUKPiA+IG5vIGZvcm1hbCBk
+b2N1bWVudGF0aW9uIG1lbnRpb25pbmcgaXQncyBkZXByZWNhdGVkLCBtYXliZSBJIG1pc3NlZAo+
+ID4gc29tZQo+ID4gbmV3c3BhcGVyPyksIGJ1dCBpdCBzaG91bGQgZXhpc3QuCj4gCj4gSSBzZWUg
+c29tZSBwcmFjdGljZSBvZiBwYXNzaW5nIE5VTEwgdG8gZHJtbV9wbGFpbl9lbmNvZGVyX2FsbG9j
+KCkKPiBmcm9tCj4gdGhlIGFkcCBkcml2ZXIsIGhvd2V2ZXIgbG9va3MgbGlrZSB0aGlzIGlzbid0
+IGFsd2F5cyBzYWZlIGFuZCBvbiBteQo+IHRlc3Qgb2YgdGhpcyBjaGFuZ2Ugb24gdG9wIG9mIHZl
+cmlzaWxpY29uIGRyaXZlciAob24gdG9wIG9mIHY2LjE3LQo+IHJjMSkKPiBJIGdvdCBteXN0ZXJp
+b3VzIG9vcHMgaWYgdGhlIERDIGRyaXZlciBoYXBwZW5zIHRvIGJlIHByb2JlZCBiZWZvcmUKPiB0
+aGUKPiBIRE1JIGNvbnRyb2xsZXIgZHJpdmVyOgoKV2VsbCBzb3JyeSBmb3IgdGhpcyBkaXN0dXJi
+YW5jZS4uLgoKSXQncyBiZWNhdXNlIEkgdXNlZCBkZXZtIHRvIGFsbG9jYXRlIERSTSBvYmplY3Rz
+LCBhbmQgZ2V0IGZpeGVkIHdoZW4gSQpzd2l0Y2hlZCB0aGVtIHRvIGRybW0uCgo+IGBgYAo+IFvC
+oMKgIDI4LjM3MjY5OF0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgYWNjZXNzIHRvIHVzZXIgbWVt
+b3J5IHdpdGhvdXQKPiB1YWNjZXNzIHJvdXRpbmVzIGF0IHZpcnR1YWwgYWRkcmVzcyAwMDAwMDAw
+MDAwMDAwMDEwCj4gW8KgwqAgMjguMzgzNTk2XSBDdXJyZW50ICh1ZGV2LXdvcmtlcikgcGd0YWJs
+ZTogNEsgcGFnZXNpemUsIDM5LWJpdAo+IFZBcywKPiBwZ2RwPTB4MDAwMDAwMDEwODUzMjAwMAo+
+IFvCoMKgIDI4LjM5MjE4MF0gWzAwMDAwMDAwMDAwMDAwMTBdIHBnZD0wMDAwMDAwMDAwMDAwMDAw
+LAo+IHA0ZD0wMDAwMDAwMDAwMDAwMDAwLCBwdWQ9MDAwMDAwMDAwMDAwMDAwMAo+IFvCoMKgIDI4
+LjQwMTEwOF0gT29wcyBbIzFdCj4gW8KgwqAgMjguNDAzNDA1XSBNb2R1bGVzIGxpbmtlZCBpbjog
+dGgxNTIwX2R3X2hkbWkgdmVyaXNpbGljb25fZGMoKykKPiBjb25maWdmcyBkbV9tb2QKPiBbwqDC
+oCAyOC40MTA3NzNdIENQVTogMSBVSUQ6IDAgUElEOiA1MjcgQ29tbTogKHVkZXYtd29ya2VyKSBO
+b3QgdGFpbnRlZAo+IDYuMTcuMC1yYzErICM5MiBOT05FIAo+IFvCoMKgIDI4LjQxODg5MF0gSGFy
+ZHdhcmUgbmFtZTogU2lwZWVkIExpY2hlZSBQaSA0QSAoRFQpCj4gW8KgwqAgMjguNDIzNzg0XSBl
+cGMgOiBkcm1fbW9kZV9jb25maWdfY2xlYW51cCsweGM2LzB4MjI0Cj4gW8KgwqAgMjguNDI4ODAw
+XcKgIHJhIDogZHJtX21vZGVfY29uZmlnX2NsZWFudXArMHhhNC8weDIyNAo+IFvCoMKgIDI4LjQz
+Mzc5Nl0gZXBjIDogZmZmZmZmZmY4MDdkNzAxNiByYSA6IGZmZmZmZmZmODA3ZDZmZjQgc3AgOgo+
+IGZmZmZmZmM2MDA0ZjM3OTAKPiBbwqDCoCAyOC40NDEwMzhdwqAgZ3AgOiBmZmZmZmZmZjgxYzUy
+YWU4IHRwIDogZmZmZmZmZDcwMDg3M2FjMCB0MCA6Cj4gMDAwMDAwMDAwMDAwMDA0MAo+IFvCoMKg
+IDI4LjQ0ODI3OV3CoCB0MSA6IDAwMDAwMDAwMDAwMDAwMDAgdDIgOiAwMDAwMDAwMDAwMDAxYzkx
+IHMwIDoKPiBmZmZmZmZjNjAwNGYzODEwCj4gW8KgwqAgMjguNDU1NTE0XcKgIHMxIDogZmZmZmZm
+ZDcwODQ3ZjAwMCBhMCA6IGZmZmZmZmQ3MDg0N2U4NDAgYTEgOgo+IGZmZmZmZmQ3MDg0N2YyZjgK
+PiBbwqDCoCAyOC40NjI3NzBdwqAgYTIgOiBmZmZmZmZmZjgxYzk0MTc4IGEzIDogMDAwMDAwMDAw
+MDAwMDAwMiBhNCA6Cj4gMDAwMDAwMDAwMDAwMDAwMAo+IFvCoMKgIDI4LjQ3MDAyN13CoCBhNSA6
+IDAwMDAwMDAwMDAwMDAwMDAgYTYgOiAwMDAwMDAwMDAwMDAwNDM2IGE3IDoKPiBmZmZmZmZkNzBk
+M2ViMzUwCj4gW8KgwqAgMjguNDc3MjYzXcKgIHMyIDogZmZmZmZmZmZmZmZmZmZmOCBzMyA6IGZm
+ZmZmZmQ3MDg0N2YyZDAgczQgOgo+IGZmZmZmZmQ3MDg0N2YyYjgKPiBbwqDCoCAyOC40ODQ0OTld
+wqAgczUgOiBkZWFkMDAwMDAwMDAwMTAwIHM2IDogZmZmZmZmZDcwODQ3ZjAxOCBzNyA6Cj4gMDAw
+MDAwMDAwMDAwMDAwMAo+IFvCoMKgIDI4LjQ5MTczM13CoCBzOCA6IGZmZmZmZmM2MDA0ZjNkNDAg
+czkgOiBmZmZmZmZmZjAxZDA0MTk4IHMxMDoKPiBmZmZmZmZjNjAwNGYzYzgwCj4gW8KgwqAgMjgu
+NDk4OTY4XcKgIHMxMTogZmZmZmZmZmYwMWQwNDJjMCB0MyA6IDAwMDAwMDAwMDAwMDAwMDIgdDQg
+Ogo+IDAwMDAwMDAwMDAwMDA0MDIKPiBbwqDCoCAyOC41MDYyMDBdwqAgdDUgOiBmZmZmZmZkNzA4
+NDdmMWY4IHQ2IDogZmZmZmZmZDcwODQ3ZjIwMAo+IFvCoMKgIDI4LjUxMTUyM10gc3RhdHVzOiAw
+MDAwMDAwMjAwMDAwMTIwIGJhZGFkZHI6IDAwMDAwMDAwMDAwMDAwMTAKPiBjYXVzZTogMDAwMDAw
+MDAwMDAwMDAwZAo+IFvCoMKgIDI4LjUxOTQ1NF0gWzxmZmZmZmZmZjgwN2Q3MDE2Pl0KPiBkcm1f
+bW9kZV9jb25maWdfY2xlYW51cCsweGM2LzB4MjI0Cj4gW8KgwqAgMjguNTI1NzU0XSBbPGZmZmZm
+ZmZmODA3ZDc1Zjg+XQo+IGRybV9tb2RlX2NvbmZpZ19pbml0X3JlbGVhc2UrMHhjLzB4MTQKPiBb
+wqDCoCAyOC41MzIzMTJdIFs8ZmZmZmZmZmY4MDdkNWI4ZT5dIGRybV9tYW5hZ2VkX3JlbGVhc2Ur
+MHg3YS8weDEwMAo+IFvCoMKgIDI4LjUzODI1N10gWzxmZmZmZmZmZjgwN2M2YjlhPl0KPiBkZXZt
+X2RybV9kZXZfaW5pdF9yZWxlYXNlKzB4NjIvMHg3OAo+IFvCoMKgIDI4LjU0NDY0MV0gWzxmZmZm
+ZmZmZjgwODQ4NzdhPl0gZGV2bV9hY3Rpb25fcmVsZWFzZSsweGUvMHgxOAo+IFvCoMKgIDI4LjU1
+MDQxMV0gWzxmZmZmZmZmZjgwODQ4YjFhPl0gcmVsZWFzZV9ub2RlcysweDNlLzB4OTQKPiBbwqDC
+oCAyOC41NTU3NTJdIFs8ZmZmZmZmZmY4MDg0OWNjNj5dIGRldnJlc19yZWxlYXNlX2FsbCsweDcy
+LzB4YjQKPiBbwqDCoCAyOC41NjE1MjldIFs8ZmZmZmZmZmY4MDg0M2Q3ND5dIGRldmljZV91bmJp
+bmRfY2xlYW51cCsweDEwLzB4NTgKPiBbwqDCoCAyOC41Njc1NTRdIFs8ZmZmZmZmZmY4MDg0NDUx
+MD5dIHJlYWxseV9wcm9iZSsweDE4NC8weDMwYwo+IFvCoMKgIDI4LjU3Mjk3M10gWzxmZmZmZmZm
+ZjgwODQ0NmZjPl0gX19kcml2ZXJfcHJvYmVfZGV2aWNlKzB4NjQvMHgxMGMKPiBbwqDCoCAyOC41
+NzkwODZdIFs8ZmZmZmZmZmY4MDg0NDg2OD5dIGRyaXZlcl9wcm9iZV9kZXZpY2UrMHgyYy8weGI0
+Cj4gW8KgwqAgMjguNTg0OTM3XSBbPGZmZmZmZmZmODA4NDRhNWE+XSBfX2RyaXZlcl9hdHRhY2gr
+MHg5YS8weDFhNAo+IFvCoMKgIDI4LjU5MDUzMF0gWzxmZmZmZmZmZjgwODQyMzg2Pl0gYnVzX2Zv
+cl9lYWNoX2RldisweDYyLzB4YjAKPiBbwqDCoCAyOC41OTYxMzBdIFs8ZmZmZmZmZmY4MDg0M2Vh
+Nj5dIGRyaXZlcl9hdHRhY2grMHgxYS8weDI0Cj4gW8KgwqAgMjguNjAxNDYxXSBbPGZmZmZmZmZm
+ODA4NDM2NjI+XSBidXNfYWRkX2RyaXZlcisweGY2LzB4MjAwCj4gW8KgwqAgMjguNjA2OTcyXSBb
+PGZmZmZmZmZmODA4NDU4NTg+XSBkcml2ZXJfcmVnaXN0ZXIrMHg0MC8weGRjCj4gW8KgwqAgMjgu
+NjEyNDc4XSBbPGZmZmZmZmZmODA4NDZiYWM+XQo+IF9fcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVy
+KzB4MWMvMHgyNAo+IFvCoMKgIDI4LjYxODk0Nl0gWzxmZmZmZmZmZjAxZDBiMDIwPl0KPiB2c19k
+Y19wbGF0Zm9ybV9kcml2ZXJfaW5pdCsweDIwLzB4MTAwMCBbdmVyaXNpbGljb25fZGNdCj4gW8Kg
+wqAgMjguNjI3MDc1XSBbPGZmZmZmZmZmODAwMTU4YzY+XSBkb19vbmVfaW5pdGNhbGwrMHg1Ni8w
+eDFjYwo+IFvCoMKgIDI4LjYzMjY3NV0gWzxmZmZmZmZmZjgwMGM4MTE2Pl0gZG9faW5pdF9tb2R1
+bGUrMHg1Mi8weDFkYwo+IFvCoMKgIDI4LjYzODE4N10gWzxmZmZmZmZmZjgwMGM5YmQyPl0gbG9h
+ZF9tb2R1bGUrMHgxNmUyLzB4MWFmYwo+IFvCoMKgIDI4LjY0MzY5Nl0gWzxmZmZmZmZmZjgwMGNh
+MWM2Pl0gaW5pdF9tb2R1bGVfZnJvbV9maWxlKzB4NzYvMHhiMAo+IFvCoMKgIDI4LjY0OTcyNl0g
+WzxmZmZmZmZmZjgwMGNhNDM2Pl0KPiBfX3Jpc2N2X3N5c19maW5pdF9tb2R1bGUrMHgxZmUvMHgz
+Y2MKPiBbwqDCoCAyOC42NTYxOTVdIFs8ZmZmZmZmZmY4MGNmZWUxZT5dIGRvX3RyYXBfZWNhbGxf
+dSsweDI5Ni8weDM3MAo+IFvCoMKgIDI4LjY2MTg3OF0gWzxmZmZmZmZmZjgwZDA5YTU2Pl0gaGFu
+ZGxlX2V4Y2VwdGlvbisweDE0Ni8weDE1Mgo+IFvCoMKgIDI4LjY2NzY1Nl0gQ29kZTogODk5MyAy
+ZDA0IGI5MDMgMDAwNyA4NTEzIGZmODcgMTk2MSA4ZTYzIDAwZjkKPiA3ZDVjCj4gKDZiOWMpIDk3
+ODIgCj4gW8KgwqAgMjguNjc1MjMzXSAtLS1bIGVuZCB0cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0t
+LS0KPiBgYGAKCg==
 
-Just a note: upstream kernel community usually doesn't care about
-downstream/vendor kernel implementations, and such references are
-often frowned upon. The reason is that the vendor kernel code often
-doesn't meet upstream kernel standards (to put it mildly), so it's
-totally fine to re-implement a feature from scratch before upstreaming
-it, if its implementation in the downstream kernel is subpar (even if
-it's a device tree).
-
-If by saying "to avoid confusion" you mean some ABI can be broken
-(e.g. between kernel and user space), please elaborate. Otherwise I
-don't see a strong need for someone to be able to cross-reference the
-downstream and upstream device trees -- they are usually two
-completely different beasts.
-
-> Spi support will be added later on.
->
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
-
-The whole node naming scheme here still feels a bit of crazy to me,
-but I don't have any strong objections, so:
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1361 ++++++++++++++++++++
->  1 file changed, 1361 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot=
-/dts/exynos/exynos2200.dtsi
-> index b3a8933a4..933ab7818 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> @@ -7,6 +7,7 @@
->
->  #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/soc/samsung,exynos-usi.h>
->
->  / {
->         compatible =3D "samsung,exynos2200";
-> @@ -314,6 +315,76 @@ pinctrl_peric0: pinctrl@10430000 {
->                         reg =3D <0x10430000 0x1000>;
->                 };
->
-> +               usi4: usi@105000c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x105000c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric0 CLK_DOUT_PERIC0_USI04>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric0 0x1024>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_8: i2c@10500000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10500000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric0 CLK_DOUT_PERIC0_U=
-SI04>,
-> +                                        <&cmu_peric0 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 673 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c8_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_6: serial@10500000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x10500000 0xc0>;
-> +                               clocks =3D <&cmu_peric0 CLK_MOUT_PERIC0_N=
-OC_USER>,
-> +                                        <&cmu_peric0 CLK_DOUT_PERIC0_USI=
-04>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 673 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart6_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi4_i2c: usi@105100c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x105100c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric0 CLK_DOUT_PERIC0_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric0 0x1024>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_9: i2c@10510000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10510000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric0 CLK_DOUT_PERIC0_I=
-2C>,
-> +                                        <&cmu_peric0 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 672 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c9_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
->                 cmu_peric1: clock-controller@10700000 {
->                         compatible =3D "samsung,exynos2200-cmu-peric1";
->                         reg =3D <0x10700000 0x8000>;
-> @@ -336,6 +407,287 @@ pinctrl_peric1: pinctrl@10730000 {
->                         reg =3D <0x10730000 0x1000>;
->                 };
->
-> +               usi7: usi@109000c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109000c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI07>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2030>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_14: i2c@10900000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10900000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI07>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC1_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 680 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c14_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_9: serial@10900000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x10900000 0xc0>;
-> +                               clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_N=
-OC_USER>,
-> +                                        <&cmu_peric1 CLK_DOUT_PERIC1_USI=
-07>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 680 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart9_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi7_i2c: usi@109100c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109100c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI07_SPI_I=
-2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2034>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_15: i2c@10910000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10910000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI07_SPI_I2C>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 679 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c15_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi8: usi@109200c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109200c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI08>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2038>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_16: i2c@10920000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10920000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI08>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC1_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 682 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c16_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_10: serial@10920000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x10920000 0xc0>;
-> +                               clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_N=
-OC_USER>,
-> +                                        <&cmu_peric1 CLK_DOUT_PERIC1_USI=
-08>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 682 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart10_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi8_i2c: usi@109300c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109300c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI08_SPI_I=
-2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric1 0x203c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_17: i2c@10930000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10930000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI08_SPI_I2C>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 681 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c17_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi9: usi@109400c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109400c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI09>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2040>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_18: i2c@10940000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10940000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI09>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC1_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 684 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c18_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_11: serial@10940000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x10940000 0xc0>;
-> +                               clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_N=
-OC_USER>,
-> +                                        <&cmu_peric1 CLK_DOUT_PERIC1_USI=
-09>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 684 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart11_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi9_i2c: usi@109500c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109500c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2044>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_19: i2c@10950000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10950000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_I=
-2C>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 683 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c19_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi10: usi@109600c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109600c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_USI10>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric1 0x2048>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_20: i2c@10960000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10960000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_U=
-SI10>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC1_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 686 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c20_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_12: serial@10960000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x10960000 0xc0>;
-> +                               clocks =3D <&cmu_peric1 CLK_MOUT_PERIC1_N=
-OC_USER>,
-> +                                        <&cmu_peric1 CLK_DOUT_PERIC1_USI=
-10>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 686 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart12_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi10_i2c: usi@109700c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x109700c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric1 CLK_MOUT_PERIC0_NOC_USER>=
-,
-> +                                <&cmu_peric1 CLK_DOUT_PERIC1_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric1 0x204c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_21: i2c@10970000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x10970000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric1 CLK_DOUT_PERIC1_I=
-2C>,
-> +                                        <&cmu_peric1 CLK_MOUT_PERIC0_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 685 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c21_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +               };
-> +
->                 cmu_hsi0: clock-controller@10a00000 {
->                         compatible =3D "samsung,exynos2200-cmu-hsi0";
->                         reg =3D <0x10a00000 0x8000>;
-> @@ -458,6 +810,496 @@ pinctrl_peric2: pinctrl@11c30000 {
->                         reg =3D <0x11c30000 0x1000>;
->                 };
->
-> +               usi0: usi@11d000c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d000c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI00>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2000>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_0: i2c@11d00000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d00000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI00>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 704 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c0_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_2: serial@11d00000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11d00000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-00>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 704 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart2_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi0_i2c: usi@11d100c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d100c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI00_SPI_I=
-2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2004>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_1: i2c@11d10000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d10000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI00_SPI_I2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 703 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c1_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi1: usi@11d200c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d200c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI01>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2008>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_2: i2c@11d20000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d20000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI01>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 706 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c2_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_3: serial@11d20000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11d20000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-01>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 706 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart3_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi1_i2c: usi@11d300c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d300c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI01_SPI_I=
-2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x200c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_3: i2c@11d30000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d30000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI01_SPI_I2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 705 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c3_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi2: usi@11d400c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d400c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI02>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2010>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_4: i2c@11d40000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d40000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI02>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 708 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c4_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_4: serial@11d40000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11d40000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-02>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 708 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart4_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <256>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi2_i2c: usi@11d500c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d500c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2014>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_5: i2c@11d50000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d50000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_I=
-2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 707 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c5_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi3: usi@11d600c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d600c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI03>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x2018>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_6: i2c@11d60000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d60000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI03>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 710 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c6_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_5: serial@11d60000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11d60000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-03>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 710 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart5_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <256>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi3_i2c: usi@11d700c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d700c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x201c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_7: i2c@11d70000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d70000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_I=
-2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 709 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c7_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi5_i2c: usi@11d800c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d800c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x102c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_11: i2c@11d80000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d80000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_I=
-2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 711 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c11_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi6_i2c: usi@11d900c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11d900c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x1004>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_13: i2c@11d90000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11d90000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_I=
-2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 713 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c13_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi11: usi@11da00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11da00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI11>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x1058>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_22: i2c@11da0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11da0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI11>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 716 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c22_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_13: serial@11da0000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11da0000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-11>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 716 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart13_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi11_i2c: usi@11db00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11db00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_peric2 0x105c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_23: i2c@11db0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11db0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_I=
-2C>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 715 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c23_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi5: usi@11dd00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11dd00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI05>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x117c>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_10: i2c@11dd0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11dd0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI05>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 538 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c10_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_7: serial@11dd0000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11dd0000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-05>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 538 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart7_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <256>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi6: usi@11de00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x11de00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>=
-,
-> +                                <&cmu_peric2 CLK_DOUT_PERIC2_USI06>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_peric2 0x1180>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_12: i2c@11de0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x11de0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_peric2 CLK_DOUT_PERIC2_U=
-SI06>,
-> +                                        <&cmu_peric2 CLK_MOUT_PERIC2_NOC=
-_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 539 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c12_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_8: serial@11de0000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x11de0000 0xc0>;
-> +                               clocks =3D <&cmu_peric2 CLK_MOUT_PERIC2_N=
-OC_USER>,
-> +                                        <&cmu_peric2 CLK_DOUT_PERIC2_USI=
-06>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 539 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart8_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
->                 cmu_cmgp: clock-controller@14e00000 {
->                         compatible =3D "samsung,exynos2200-cmu-cmgp";
->                         reg =3D <0x14e00000 0x8000>;
-> @@ -485,6 +1327,525 @@ wakeup-interrupt-controller {
->                         };
->                 };
->
-> +               usi_cmgp0: usi@14f000c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f000c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI0>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2000>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_24: i2c@14f00000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f00000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI0>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 175 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c24_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_14: serial@14f00000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14f00000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI0>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 175 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart14_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp0: usi@14f100c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f100c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_SPI_I2C0>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2070>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_25: i2c@14f10000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f10000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_SPI_I=
-2C0>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 173 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c25_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp1: usi@14f200c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f200c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI1>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2010>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_26: i2c@14f20000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f20000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI1>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 176 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c26_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_15: serial@14f20000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14f20000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI1>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 176 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart15_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp1: usi@14f300c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f300c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_SPI_I2C1>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2074>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_27: i2c@14f30000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f30000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_SPI_I=
-2C1>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 174 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c27_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp2: usi@14f400c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f400c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI2>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2020>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_28: i2c@14f40000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f40000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI2>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c28_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_16: serial@14f40000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14f40000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI2>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart16_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp2: usi@14f500c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f500c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2024>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_29: i2c@14f50000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f50000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 167 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c29_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp3: usi@14f600c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f600c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI3>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2030>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_30: i2c@14f60000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f60000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI3>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 178 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c30_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_17: serial@14f60000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14f60000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI3>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 178 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart17_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp3: usi@14f700c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f700c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2034>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_31: i2c@14f70000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f70000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 168 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c31_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp4: usi@14f800c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f800c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI4>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2040>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_32: i2c@14f80000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f80000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI4>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 179 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c32_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_18: serial@14f80000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14f80000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI4>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 179 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart18_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp4: usi@14f900c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14f900c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2044>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_33: i2c@14f90000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14f90000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 169 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c33_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp5: usi@14fa00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14fa00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI5>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2050>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_34: i2c@14fa0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14fa0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI5>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 180 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c34_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_19: serial@14fa0000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14fa0000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI5>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 180 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart19_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp5: usi@14fb00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14fb00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2054>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_35: i2c@14fb0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14fb0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 170 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c35_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_cmgp6: usi@14fc00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14fc00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_USI6>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2060>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_36: i2c@14fc0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14fc0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_USI6>=
-,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 181 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c36_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       serial_20: serial@14fc0000 {
-> +                               compatible =3D "samsung,exynos2200-uart",=
- "google,gs101-uart";
-> +                               reg =3D <0x14fc0000 0xc0>;
-> +                               clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKAL=
-IVE_NOC_USER>,
-> +                                        <&cmu_cmgp CLK_DOUT_CMGP_USI6>;
-> +                               clock-names =3D "uart", "clk_uart_baud0";
-> +                               interrupts =3D <GIC_SPI 181 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&uart20_bus_single>;
-> +                               pinctrl-names =3D "default";
-> +                               samsung,uart-fifosize =3D <64>;
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp6: usi@14fd00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14fd00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2064>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_37: i2c@14fd0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14fd0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 171 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c37_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
-> +               usi_i2c_cmgp7: usi@14fe00c0 {
-> +                       compatible =3D "samsung,exynos2200-usi", "samsung=
-,exynos850-usi";
-> +                       reg =3D <0x14fe00c0 0x20>;
-> +                       ranges;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       clocks =3D <&cmu_cmgp CLK_MOUT_CMGP_CLKALIVE_NOC_=
-USER>,
-> +                                <&cmu_cmgp CLK_DOUT_CMGP_I2C>;
-> +                       clock-names =3D "pclk", "ipclk";
-> +                       samsung,mode =3D <USI_MODE_I2C>;
-> +                       samsung,sysreg =3D <&syscon_cmgp 0x2080>;
-> +                       status =3D "disabled";
-> +
-> +                       hsi2c_38: i2c@14fe0000 {
-> +                               compatible =3D "samsung,exynos2200-hsi2c"=
-,
-> +                                            "samsung,exynosautov9-hsi2c"=
-;
-> +                               reg =3D <0x14fe0000 0xc0>;
-> +                               #address-cells =3D <1>;
-> +                               #size-cells =3D <0>;
-> +                               clocks =3D <&cmu_cmgp CLK_DOUT_CMGP_I2C>,
-> +                                        <&cmu_cmgp CLK_MOUT_CMGP_CLKALIV=
-E_NOC_USER>;
-> +                               clock-names =3D "hsi2c", "hsi2c_pclk";
-> +                               interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVE=
-L_HIGH 0>;
-> +                               pinctrl-0 =3D <&hsi2c38_bus>;
-> +                               pinctrl-names =3D "default";
-> +                               status =3D "disabled";
-> +                       };
-> +               };
-> +
->                 cmu_vts: clock-controller@15300000 {
->                         compatible =3D "samsung,exynos2200-cmu-vts";
->                         reg =3D <0x15300000 0x8000>;
-> --
-> 2.43.0
->
->
 
