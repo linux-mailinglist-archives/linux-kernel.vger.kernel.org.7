@@ -1,117 +1,254 @@
-Return-Path: <linux-kernel+bounces-772139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD131B28F28
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:30:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83106B28F2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6315C71DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C721C2682C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018E82F7458;
-	Sat, 16 Aug 2025 15:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EA717A318;
+	Sat, 16 Aug 2025 15:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PYbwC6m9"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=watter-com.20230601.gappssmtp.com header.i=@watter-com.20230601.gappssmtp.com header.b="q41O9S6q"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADA58462
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD29D8462
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755358202; cv=none; b=GrQuIGX2Shy4G/mOpSOKbA+OKMFya1YW6y9otSv6N4InaeSUdHdoi8Mme4xo8ghsMrh81UASGMbLuz/sQ32wkXQrqvXHEXFw1sxXLYhb7wcgTlsGYduvJ05qg9mELWQCasGg3/F1mu+01pws/BC9TQJ2SLMKZKLRzNpmI27yYSM=
+	t=1755358411; cv=none; b=Ywby9IZmVaLmOwvUg0w1myS11KurwwqaYBEZoK+JMe1uuQudhny2P5TmGPBmyFzZqkcVBNNCgGp2z1J6VhYJaXTBUEaOcbFAZQY8D1pQjKK/OFX+mtkH9NYCtVCcXMfsdyDTsgHvpIHnbF27Waq6MIIQMD2xVNcdTy7xWJvxDes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755358202; c=relaxed/simple;
-	bh=+Spv1PsNit21/PUVejo5UL7D6iAmgNLhXurHkYoE/e8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mIoNqbTvX3sNdAbGnEYkVNDtsInWrdpC5zS2hvkaOOPcbPkp5dUv4cW6DkNn2Lkm2KWuYOP3Fgs0z+K3PKVQSKydfdh2sMZ+Miwoowq9e7oHx+JqD0kKNnEnae6UUJ3Zf1ZZAqwg/F9hUnUJoDe8tCkIHGS5hj4/dL9WdUn/zaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PYbwC6m9; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755358198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VO9LFrcZyjmUCjNxK9HB911t9pQCKhf3yh5jBn/3GgQ=;
-	b=PYbwC6m9zDUptb5cBKZz1HsIx28Ara6mWX5/xGGImnr9PWMBt/f1mZwJFAjkoGyPIb417f
-	zZoLm135hcsXefHkgkI8TzhWD/HkUcyDOJWrQPhx7EYzX292YNxfB7fxMwR45SZhwOgdAA
-	ZPM16G2LRFXg3k8mDa+1VD3lAi1bnBA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Russell Senior <russell@personaltelco.net>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/cyrix: Replace deprecated strcpy() with strscpy()
-Date: Sat, 16 Aug 2025 17:29:15 +0200
-Message-ID: <20250816152916.427883-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755358411; c=relaxed/simple;
+	bh=dbf+21yIHggLWEeSKkhjYBASontrjXkiLG2CL2Izi2E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=s/Es/2gVEo427xlhItuVe0vxHr2Vak3YmGp/VnBHD6sS57OfjKEIqHTmKCODergGgkZYmBdLUb8fnLvpgdKuN2KNnicnVIQqwN5F3qBVQjPakW5x85L+adcnayYah6+UJGdd3rGDdUvl7TKO1m0DpjP0EajGTrMpws18/tUd1hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=watter.com; spf=pass smtp.mailfrom=watter.com; dkim=pass (2048-bit key) header.d=watter-com.20230601.gappssmtp.com header.i=@watter-com.20230601.gappssmtp.com header.b=q41O9S6q; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=watter.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=watter.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b10c1abfe4so33203041cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 08:33:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=watter-com.20230601.gappssmtp.com; s=20230601; t=1755358408; x=1755963208; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lT4GYVc03o/2wHM5Ynf/D/xh1YH2nsw8S0x9olXJtHM=;
+        b=q41O9S6qNfstcDRLyrPG2JLChVu8CFliaZ6/J2O+RnZiN9xpzI6imt15JiJMmSZv2m
+         oLfPmPALVORAwoHpKGy1UbUT5SPcd5g2JEfW6NfaL4PgnvqBfGVmJNeC2IT03MdzsKnY
+         gvnIXm/Nb4sBAHN9Y5AKD+fBSJEOLTit0LPH2+yZKqGW6qFCL4MlYQaoW1uuarKTMq5D
+         eSkydsa+iY6UQ2t0y1iDz0H0XkTUleIwkL75N/w24s3GLb4eCzC+z5gGy1fpF+YZ2/Z/
+         ELalzIKKmgA0xTCICNnDAA12cHf6DQ8vjRM38WDqC/jgy3bxI5osgY6LwJpo17wz7s/b
+         /HUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755358408; x=1755963208;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lT4GYVc03o/2wHM5Ynf/D/xh1YH2nsw8S0x9olXJtHM=;
+        b=AMq9Xk3Nvm4vpt0O8JHE+zAdn63vRYuQ5A1h2oiwVFlXvBddhkwURG1eZ+QukxBrsV
+         ihiNJd7C0Svfh5Y8jEd8GabzlNn2y+P2uD8fHMdF6uS1wqiXk/fe6iwlX3ugU16F0J8R
+         +BB2Mz3rlEJtMJr3gfZRGfTU/+Hlrj/4NOMbVuROlx3MzqOxrssrcEDff54U9V3nSqYs
+         sKnD+YUGzTxoUVnPqX82zWIc5tCOlsA6eqAVrx67E2X1QN1imnyAdDNc0nk6PCwmzU/I
+         cKrBHXcuUyOPW/eECh5Mhi+Wk9nsgyY0E6UOvjyNhPnlVuPLiH/ffPYFHxRJDmXQy587
+         26ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbYbg1Xid33i9hO80c8O3XaOz8CtDAYHyYStBJMkaVBXprwnIHRWThn45hEcW8IqD5rISTp4qCiWqTblc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQhgTAECbdT7RfvpPNhhjwdzcVx5WQuArjaGpzDJAz3UhEs3zg
+	HahXC2LFkP9r9VeHWwAHBcsUAkhhP1jDRL4CbBcQqZKlvuPI8eirecxMfI6Mw+zFdw==
+X-Gm-Gg: ASbGncvN91tRv7s1mXnF5YizP64qGedUI9JPiipg4FFF18Nfz5ZCQuGUTOJ1CC+DGcj
+	Ca6q4uck7ZJPSuFwWQVtmhoN+m5FdsNnFhEjA+fyes1yjt0UT4gWFJl8lUR1fVlV7djWs07R08W
+	Qo1STaxuhbA9UiVXmTErBxy3MpYO2BWDyyt84tuHjJOOlGkAmKuHR1wwObmwy9ZtTC9Q9VH8xzl
+	Y9AQnFF6VibXgsgJq/LS+nNhevCFCYLHRdZIcNTgmJCFW6gt3re/SyqXYcjmaW3aZnvl5Ajk51v
+	zMdaBicfsjB5HVi+jzwMGOXoh0xGmjZ12Q8erTQczWRRUeVZNfQDFDQa9WjGtR2DZS0BmG9Hq1u
+	swiRYObDjoR1ww6h0gYyS8PYcc5CzAu8HbzRlTQQu7Q==
+X-Google-Smtp-Source: AGHT+IGSad1ScauPnbohVvSDUUWWl1dpR+oMxuVRES9HnD+0AuwhYLy+nebDAM2aCbUd5zHFkqTUlg==
+X-Received: by 2002:ac8:5881:0:b0:4af:195a:b92e with SMTP id d75a77b69052e-4b127b8e894mr53708851cf.39.1755358408456;
+        Sat, 16 Aug 2025 08:33:28 -0700 (PDT)
+Received: from smtpclient.apple ([70.32.192.89])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc188desm24642661cf.2.2025.08.16.08.33.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Aug 2025 08:33:27 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.2\))
+Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
+From: Ben Collins <bcollins@watter.com>
+In-Reply-To: <59D7D612-D618-4FF0-A932-2EB0B57D321E@watter.com>
+Date: Sat, 16 Aug 2025 11:33:17 -0400
+Cc: David Lechner <dlechner@baylibre.com>,
+ =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <93E1A889-81AE-4DAB-9297-2A74C87E38B3@watter.com>
+References: <20250813151614.12098-1-bcollins@watter.com>
+ <20250813151614.12098-6-bcollins@watter.com>
+ <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+ <20250816105410.70e47dac@jic23-huawei>
+ <DA11BDA3-E4E3-4C1A-9E4E-84E92F62A4B3@watter.com>
+ <20250816160835.3b44a4cd@jic23-huawei>
+ <59D7D612-D618-4FF0-A932-2EB0B57D321E@watter.com>
+To: Jonathan Cameron <jic23@kernel.org>
+X-Mailer: Apple Mail (2.3864.100.1.1.2)
 
-strcpy() is deprecated; use strscpy() instead.
 
-Remove the local variable 'char *buf' and call strscpy() directly with
-'c->x86_model_id', allowing the compiler to infer the fixed size of the
-destination buffer using sizeof().
+> On Aug 16, 2025, at 11:19=E2=80=AFAM, Ben Collins =
+<bcollins@watter.com> wrote:
+>=20
+>>=20
+>> On Aug 16, 2025, at 11:08=E2=80=AFAM, Jonathan Cameron =
+<jic23@kernel.org> wrote:
+>>=20
+>> On Sat, 16 Aug 2025 09:12:37 -0400
+>> Ben Collins <bcollins@watter.com> wrote:
+>>=20
+>>>> On Aug 16, 2025, at 5:54=E2=80=AFAM, Jonathan Cameron =
+<jic23@kernel.org> wrote:
+>>>>=20
+>>>> On Wed, 13 Aug 2025 17:52:04 -0500
+>>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>>=20
+>>>>> On 8/13/25 10:15 AM, Ben Collins wrote: =20
+>>>>>> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+>>>>>> to allow get/set of this value.
+>>>>>>=20
+>>>>>> Signed-off-by: Ben Collins <bcollins@watter.com>
+>>>>>> ---
+>>>>>> drivers/iio/temperature/mcp9600.c | 43 =
++++++++++++++++++++++++++++++++
+>>>>>> 1 file changed, 43 insertions(+)
+>>>>>>=20
+>>>>>> diff --git a/drivers/iio/temperature/mcp9600.c =
+b/drivers/iio/temperature/mcp9600.c
+>>>>>> index 5ead565f1bd8c..5bed3a35ae65e 100644
+>>>>>> --- a/drivers/iio/temperature/mcp9600.c
+>>>>>> +++ b/drivers/iio/temperature/mcp9600.c
+>>>>>> @@ -31,6 +31,7 @@
+>>>>>> #define MCP9600_STATUS_ALERT(x) BIT(x)
+>>>>>> #define MCP9600_SENSOR_CFG 0x5
+>>>>>> #define MCP9600_SENSOR_TYPE_MASK GENMASK(6, 4)
+>>>>>> +#define MCP9600_FILTER_MASK GENMASK(2, 0)
+>>>>>> #define MCP9600_ALERT_CFG1 0x8
+>>>>>> #define MCP9600_ALERT_CFG(x) (MCP9600_ALERT_CFG1 + (x - 1))
+>>>>>> #define MCP9600_ALERT_CFG_ENABLE BIT(0)
+>>>>>> @@ -111,6 +112,7 @@ static const struct iio_event_spec =
+mcp9600_events[] =3D {
+>>>>>> .address =3D MCP9600_HOT_JUNCTION,        \
+>>>>>> .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |        \
+>>>>>>     BIT(IIO_CHAN_INFO_SCALE) |       \
+>>>>>> +       BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
+>>>>>>     BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE), \
+>>>>>> .event_spec =3D &mcp9600_events[hj_ev_spec_off],        \
+>>>>>> .num_event_specs =3D hj_num_ev,        \
+>>>>>> @@ -149,6 +151,7 @@ static const struct iio_chan_spec =
+mcp9600_channels[][2] =3D {
+>>>>>> struct mcp9600_data {
+>>>>>> struct i2c_client *client;
+>>>>>> u32 thermocouple_type;
+>>>>>> + u32 filter_level;
+>>>>>> };
+>>>>>>=20
+>>>>>> static int mcp9600_read(struct mcp9600_data *data,
+>>>>>> @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev =
+*indio_dev,
+>>>>>> case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+>>>>>> *val =3D mcp9600_tc_types[data->thermocouple_type];
+>>>>>> return IIO_VAL_CHAR;
+>>>>>> + case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+>>>>>> + *val =3D data->filter_level;   =20
+>>>>>=20
+>>>>> We can't just pass the raw value through for this. The ABI is =
+defined
+>>>>> in Documentation/ABI/testing/sysfs-bus-iio and states that the =
+value
+>>>>> is the frequency in Hz.
+>>>>>=20
+>>>>> So we need to do the math to convert from the register value to
+>>>>> the required value.
+>>>>>=20
+>>>>> I'm a bit rusty on my discrete time math, so I had chatgpt help me
+>>>>> do the transform of the function from the datasheet to a transfer
+>>>>> function and use that to find the frequency response.
+>>>>>=20
+>>>>> It seemed to match what my textbook was telling me, so hopefully
+>>>>> it got it right.
+>>>>>=20
+>>>>> Then it spit out the following program that can be used to make
+>>>>> a table of 3dB points for a given sampling frequency. If I read =
+the
+>>>>> datasheet right, the sampling frequency depends on the number of
+>>>>> bits being read.
+>>>>>=20
+>>>>> For example, for 3 Hz sample rate (18-bit samples), I got:
+>>>>>=20
+>>>>> n  f_3dB (Hz)
+>>>>> 1  0.58774
+>>>>> 2  0.24939
+>>>>> 3  0.12063
+>>>>> 4  0.05984
+>>>>> 5  0.02986
+>>>>> 6  0.01492
+>>>>> 7  0.00746
+>>>>>=20
+>>>>> I had to skip n=3D0 though since that is undefined. Not sure how =
+we
+>>>>> handle that since it means no filter. Maybe Jonathan can advise? =20=
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Note: I already submitted this in April as part of another patch [1]
-which doesn't apply anymore. Submitting this again as a separate patch.
-[1]: https://lore.kernel.org/lkml/20250425074917.1531-3-thorsten.blum@linux.dev/
----
- arch/x86/kernel/cpu/cyrix.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+>>>>=20
+>>>> This is always a fun corner case.  Reality is there is always
+>>>> some filtering going on due to the analog side of things we
+>>>> just have no idea what it is if the nicely defined filter is
+>>>> turned off.  I can't remember what we have done in the past,
+>>>> but one option would be to just have anything bigger than 0.58774
+>>>> defined as being filter off and return a big number. Not elegant
+>>>> though.  Or just don't bother supporting it if we think no one
+>>>> will ever want to run with not filter at all.
+>>>>=20
+>>>> Hmm. or given this is a digital filter on a sampled signal, can we =
+establish
+>>>> an effective frequency that could be detected without aliasing and
+>>>> use that?  Not sure - I'm way to rusty on filter theory (and was
+>>>> never that good at it!) =20
+>>>=20
+>>> I=E2=80=99ve seen another driver use { U64_MAX, U64_MAX } for this =
+case. It
+>>> didn=E2=80=99t seem very clean. I thought to use { 999999, 999999 } =
+or even
+>>> { 1, 0 }, but anything other than =E2=80=9Coff=E2=80=9D just felt =
+odd.
+>> Ah.  Could we use filter_type? (additional attribute)
+>>=20
+>> That already has a 'none' option.  Nothing there yet that works for =
+the 'on'
+>> option here.  These are always tricky to name unless they are a very
+>> well known class of filter.   The datasheet calls this one an =
+Exponential
+>> Moving Average filter. Not a term I'd encountered before, but google =
+did
+>> find me some references.  so maybe ema as a filter type?
+>=20
+> In the docs I have, it says:
+>=20
+> In addition, this device integrates a first order recursive
+> Infinite Impulse Response (IIR) filter, also known as
+> Exponential Moving Average (EMA).
+>=20
+> The EMA formula I=E2=80=99ve used for an adc-attached thermistor was =
+the same
+> formula I=E2=80=99ve seen used in IIR, so I think they are generally =
+the same.
 
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index dfec2c61e354..07521e3f94d8 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -192,7 +192,6 @@ static void early_init_cyrix(struct cpuinfo_x86 *c)
- static void init_cyrix(struct cpuinfo_x86 *c)
- {
- 	unsigned char dir0, dir0_msn, dir0_lsn, dir1 = 0;
--	char *buf = c->x86_model_id;
- 	const char *p = NULL;
- 
- 	/*
-@@ -352,9 +351,9 @@ static void init_cyrix(struct cpuinfo_x86 *c)
- 		dir0_msn = 7;
- 		break;
- 	}
--	strcpy(buf, Cx86_model[dir0_msn & 7]);
-+	strscpy(c->x86_model_id, Cx86_model[dir0_msn & 7]);
- 	if (p)
--		strcat(buf, p);
-+		strcat(c->x86_model_id, p);
- 	return;
- }
- 
-@@ -416,7 +415,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
- 	if (c->x86 == 4 && test_cyrix_52div()) {
- 		unsigned char dir0, dir1;
- 
--		strcpy(c->x86_vendor_id, "CyrixInstead");
-+		strscpy(c->x86_vendor_id, "CyrixInstead");
- 		c->x86_vendor = X86_VENDOR_CYRIX;
- 
- 		/* Actually enable cpuid on the older cyrix */
--- 
-2.50.1
+Clarification: An EMA is a 1-pole IIR filter, while IIR filters can be
+many other types besides 1-pole.
 
 
