@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-771987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB06B28D87
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB90B28D89
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63BFEA266C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7CAAA05BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4025523BCF0;
-	Sat, 16 Aug 2025 12:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CD8238C0B;
+	Sat, 16 Aug 2025 12:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="wdm6kXYE"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU42HziR"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0508A22083
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 12:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A8023A9B3
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 12:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755345859; cv=none; b=Rs5twTdKFQkJgTogxSDZ9D9rfe0439eAtB4H5SusMpbybESVhrPjGhdnGbUGPyaRSjnsyKyhChOX+PNb4jXebEhzLF+ZYMonsCjDgiY+w+jpjChIuYG1OE3WMVG091fwj2U/RvdmIcsbHhkGJA/Y5ed/2YsqPYNC6dxVj0LO6y8=
+	t=1755345889; cv=none; b=HAG6HgPuYL741OMHDeT9dz2fY1qAl62AX3+FCwlI9EZq4LHxWwoG15yThB/Q+c2MQd9qdQdIicJ55HRu80stDzJqwFa1HvpVQNInQ2oYMYwWKos/d0Gv2Lw80yGG+HjOUwBwI6FjB0Bf0bNe4he89XTfD7g5sXK1GzOqSnZINec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755345859; c=relaxed/simple;
-	bh=t63xP7wbz/CsoRt+s5ClY7ekzXig2IH8x/MbkPBlbvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=juk6F3j5tunsNYxYI6UVYD+4wrRva8a0mIG0Ce4Wvhi23z2KSuv1rX4LB0dlOL644VlUfVAg0PR7qqEu487vhYDzwGdsxixP2k9VfW/3ZuAfPSvLiluRT85JCpQZcy2esTlSIoLGmi8f27DwiW9Zsx4SxkLTn72RmUbK32i8n1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=wdm6kXYE; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 20827 invoked from network); 16 Aug 2025 14:04:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755345849; bh=J8YEjh/pQ9i8Wl0STZLqAHRZnuedkvdfjwXqtEq3kkw=;
-          h=Subject:To:Cc:From;
-          b=wdm6kXYE/zrr3wa02A83E2fuu5y2rXWgR8BQIX9BXEFYmr3rbmBooQlCsxRVUUmsR
-           2Bk9io3SM89+6BUOY5slRNY9NKy2F6UrA6UuLQgpqemuVcXpYvOAZRdZ4F1kqC213a
-           RLdlgW7sK37n/SXTzA/SU+Iw5KqOZgC6srGK2i1S73eKasofeIpPz3HxST4yQ1vKdc
-           h/IYcJbaLYLFimS23BDtuMRC6DyvmE8/wXhH/6jAZe/A2WKCRg/QwLPMieNt5bd4Gv
-           K2X0mm9RH8YBCpeHkO+qNezx5p96lEVrWrYUoIe+ptt4tmR9to8vq5WkMMuUGPaL3E
-           tz1U0or1ze8kQ==
-Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO [192.168.3.229]) (olek2@wp.pl@[83.24.134.210])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <conor@kernel.org>; 16 Aug 2025 14:04:09 +0200
-Message-ID: <0dc6c3b2-cf93-4cdf-b0bb-1b0d420f1060@wp.pl>
-Date: Sat, 16 Aug 2025 14:04:09 +0200
+	s=arc-20240116; t=1755345889; c=relaxed/simple;
+	bh=mulRtUHIc8N/PIE49kqXvQyyxUYOjPvvgXlMpQ3e0+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VVxNiUB12kNjQRFs96iFPhd2nX73+ckeL/r9K+J2MqmF46FRQzYqUFWAVii9sQWwub76+lJtstWVd3wzLfwcFALx8Tv6Vg+5afaQe+V1E0P7gDjFiUK5sIPfUCG8FoyRg070VZ9ZyjX+yLvBit6LfCYCR9odQNspZIap9gAMA+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EU42HziR; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32326de9f4eso2515530a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 05:04:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755345887; x=1755950687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IRXV44PwQfVfLgImJrTaANIWIbJbHaU92U/BzopGLSg=;
+        b=EU42HziRA7BEvoHO2cKlQIMSEfeniIGWhK++CxVBH4OQTNC8/w2PqXzpf4O9KWnyIh
+         PwWSyXKGftiQdBTpVaLLVsURwM/2mgrXoGI/pyu8H+sNIra6e3wzYYOunfLpIywH1FdA
+         zwJ/CmmuSRsk92K8xdDE8oRHtT/Ws/dLe9sSAEe9kDtTe1mXmErVNSRK7MTR+frhygOX
+         7NVMxN+n6BvCZ6HFV55KtLwhmpYV7L7dQRH2uEZ+/oIF1a4HGjWaa6CYfRsSBfFqrYNm
+         nPyVfkqRtFvb2smPVYehB9eIxNcA07KAzoq3B7Hwuo1t65ThNzIHBElHwcuXSbO7+N9L
+         u4LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755345887; x=1755950687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IRXV44PwQfVfLgImJrTaANIWIbJbHaU92U/BzopGLSg=;
+        b=ie9WWnQx7EVcZnKQZILQkJVcPrQ5M5AOjWjfAgtV2OY90Dnqd9gtGdBM+UePQ5RPCg
+         WMWB3UhMmTwrKy1NcFQ5d0JPuuLocM8doQgXDQ4Bk6VV+FJRuE4pKcR47gCFC/YWRW8A
+         4rx3g1WZgWcHuJzT46iNoxS66XlA4VsCu7zHV8ty4P+viUsaLlHaD2BwA+6aARlyH2Lx
+         kQDOIAIjxkdKAl77NNh2u/1CJ3alPg6584Y2r07CAZYqq2sz7i4Cl4EdmNkj0iudLIMD
+         ++P0JDfIXAY7fXlDt5gK4xJy5BiLKXzXXKW54zbUtO6ttDElOFdzPWULKuuF8j+E19rt
+         eX/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXTYbAizRXfFzpsAoZDFmOI8BP3CWpN+PUiUVy19cDn35cM1s5kM1RRsOy/F5pS+oVNz6rr6mmIAWB7a9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNPNfG4CeBqr+ku12RubOT3vUFz07A6kG5JjeAdNPQFVQ9CIAV
+	0Bt3ffMlyAakdP7lNwOGqDZmwX6+NlhFn57bSh9sOzVCi2XZDPpPB7JogtgU3gSzDtZDb1k4G2T
+	VNMm25wGOrWq7vo6OOK/xlz79OIWIp48=
+X-Gm-Gg: ASbGnctX8Hwtuucz5EBuWG/5Uqz5UQ//A+BDx2mZdKZRszsL885pd/dtmqaDmHJFVp7
+	dAghVlWLCmOQWh74Tiix5vGa24rHXw8Q9MjBTWb2Y8G3FaDyttWHnhjpgn3APWsgcpUDrcqiBEf
+	U4ljGBC2kVw8gxkjzqGOqV6GCsWuFu/gsHO/i3Kzo3+qdE2zjpP5tN0nwNtKFx1UH6r/R7KWTgV
+	S2VR1c=
+X-Google-Smtp-Source: AGHT+IEW1BFzCpzoqiXUOA9dcgpirpe98DZsv4T2hWuFQBIy8Cc9tbAXcYnphe1Vm1b/ToGV0aR8irsU9X8+iz/50nA=
+X-Received: by 2002:a17:90b:5643:b0:321:9536:4b69 with SMTP id
+ 98e67ed59e1d1-3234223a401mr7394867a91.27.1755345886931; Sat, 16 Aug 2025
+ 05:04:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mips: lantiq: Document Lantiq Xway GPTU
-To: Conor Dooley <conor@kernel.org>
-Cc: tsbogend@alpha.franken.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814093704.3197030-1-olek2@wp.pl>
- <20250814-settling-hamstring-d6a6e957f6c6@spud>
-Content-Language: en-US
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <20250814-settling-hamstring-d6a6e957f6c6@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: 9cbe2bc5c69b60e7ad18a5b9179db56a
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [ETOR]                               
+References: <20250729174332.3acd1a86@gandalf.local.home>
+In-Reply-To: <20250729174332.3acd1a86@gandalf.local.home>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Sat, 16 Aug 2025 14:04:34 +0200
+X-Gm-Features: Ac12FXwfJHuPg0toK2krfbOjtNVdPZv0eGEVf1bRzqtiV5xVp7KgQjTukRbf9iY
+Message-ID: <CAFLxGvxZJv_A+YKCxVcd4yxPXLhHD5L9VzkvbFKPytxXc5vWaw@mail.gmail.com>
+Subject: Re: [GIT PULL] runtime verification: Updates for 6.17
+To: Steven Rostedt <rostedt@goodmis.org>, rmk+kernel@arm.linux.org.uk
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Gabriele Monaco <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>, 
+	John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+[Adding ARM folks]
 
-On 8/14/25 22:50, Conor Dooley wrote:
-> On Thu, Aug 14, 2025 at 11:36:59AM +0200, Aleksander Jan Bajkowski wrote:
->> The Lantiq SoC has six built-in 16-bit general purpose timers (GPTU).
->>
->> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
->> ---
->>   .../mips/lantiq/lantiq,gptu-xway.yaml         | 39 +++++++++++++++++++
->>   1 file changed, 39 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,gptu-xway.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,gptu-xway.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,gptu-xway.yaml
->> new file mode 100644
->> index 000000000000..fcfc634dd391
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,gptu-xway.yaml
->> @@ -0,0 +1,39 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mips/lantiq/lantiq,gptu-xway.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Lantiq Xway SoC series General Purpose Timer Unit (GPTU)
-> "SoC series" implies that you're using the same compatible for multiple
-> devices. Why are you not using device-specific compatibles?
+On Tue, Jul 29, 2025 at 11:43=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+> Linus,
+>
+> Runtime verification changes for 6.17
 
-This IP Core didn't change in subsequent generations of SoCs, so it had
-one compatible string. In the next iteration, I will add device-specific
-compatibles.
+[...]
+
+> - Add a vpanic() to allow for va_list to be passed to panic.
+
+This change is causing a regression on ARM32.
+panic() no longer shows a proper stack trace.
+
+With this change:
+[    2.943690] Kernel panic - not syncing: VFS: Unable to mount root
+fs on unknown-block(0,0)
+[    2.950101] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.17.0-rc1 #176 NONE
+[    2.950509] Hardware name: Generic DT based system
+[    2.950865] Call trace:
+[    2.951722]  unwind_backtrace from show_stack+0x18/0x1c
+[    2.953111]  show_stack from dump_stack_lvl+0x54/0x68
+[    2.953312]  dump_stack_lvl from vpanic+0xf8/0x388
+[    2.953526]  vpanic from __do_trace_suspend_resume+0x0/0x50
+
+With commit  3f045de7f5 "panic: Add vpanic()" reverted:
+[    2.680077] Kernel panic - not syncing: VFS: Unable to mount root
+fs on unknown-block(0,0)
+[    2.690241] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.17.0-rc1-dirty #177 NONE
+[    2.690832] Hardware name: Generic DT based system
+[    2.691339] Call trace:
+[    2.692530]  unwind_backtrace from show_stack+0x18/0x1c
+[    2.694283]  show_stack from dump_stack_lvl+0x54/0x68
+[    2.694536]  dump_stack_lvl from panic+0x110/0x31c
+[    2.694944]  panic from mount_root_generic+0x1fc/0x2ac
+[    2.695399]  mount_root_generic from prepare_namespace+0x200/0x258
+[    2.695723]  prepare_namespace from kernel_init+0x20/0x140
+[    2.695974]  kernel_init from ret_from_fork+0x14/0x28
+
+The change itself looks fine, so I suspect it uncovers a deeper
+problem with panic().
+Maybe it changes the stack layout enough such that dump_stack() on
+ARM32 is no longer
+able to walk it? I'm using gcc 15.1.1, if this matters.
+
+To reproduce the issue using qemu, build a multi_v7_defconfig zImage and ru=
+n:
+qemu-system-arm -m 512 -M virt -kernel arch/arm/boot/zImage
+-no-reboot -nographic -append "console=3DttyAMA0 panic=3D1"
+It will fail to mount a rootfs and panic.
+
+--=20
+Thanks,
+//richard
 
