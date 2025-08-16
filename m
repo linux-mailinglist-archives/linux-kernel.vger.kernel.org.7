@@ -1,196 +1,98 @@
-Return-Path: <linux-kernel+bounces-772073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948FCB28E79
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF12B28E7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8ADD5C2BB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50B7189A971
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699BC2EA497;
-	Sat, 16 Aug 2025 14:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76B2EAB6E;
+	Sat, 16 Aug 2025 14:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwNKSU60"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t9Whfvkk"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6D98462;
-	Sat, 16 Aug 2025 14:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6338462
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755354693; cv=none; b=WrqjRLSur3rkbDaCFYg+qI8YaLgzpnx34YwRVY2xhl3ojwuiWqXbdm+vMut/RN3pNZOSERjo7/eabfGGNwqxBsQWNmhn1oMU3JgMry27/2vifwx8VJxczMbo8sgUSsPSPhIkbNIWcTk0IPhGuxiPKNBBCuJ6EnoVaCgZKS5Qu+E=
+	t=1755354881; cv=none; b=T9FXK/5dyjPl6aX3Pydzu8Mse6ii/ouH9QcxqLaR/4vVsIg4DSbp4Cc95JoUGJJs6d+TdDePR0xvCD3DDtrzy7LAfppwkltF33eGnqYgIHFC0BHDvt7KTe+12HS+0qWdXTpm1mOMk39IYMUJ/OzJxpw7f5tEoRb4fQjenAh/K7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755354693; c=relaxed/simple;
-	bh=rTl8jCYiZiPGQRC+XEI6ofajhMKlPHjaTG9pBXNhA9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LpTF/4Tgu3dItrYQoHJZpmtMLMtjRnvRbM84jv6Ih34C+qLK/W5Vpy1PxwS9AJKsiYuFiVgs7IsqsLui/nvW4WooiboCNATJkKOOSE80ECpNASKDeFxjS1GfLM7ukZNpM98cWehib9sZ03vg92/TQmnwwHjOfcb++sVZuit7Y2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwNKSU60; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7a2befdso407215066b.2;
-        Sat, 16 Aug 2025 07:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755354690; x=1755959490; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AhSK0ty+ioZ0FDzNSGurp9JorLqfNJRkank5C8eSUoo=;
-        b=dwNKSU60iX7FHfmpIBsoOwEuzAtBDG5dJcRb/rsSBdgEiQdH7kWziIXD6NjF4j9P1L
-         XGtOnuXfO9anYR+MaaHxkquxMYTH4tyuHEC488yhGivJi3JZp5mZMogEkR0sNNy1qYk4
-         QfPb0mOjNLZibwfJAJhQDgyGB1mf8lW+8A6QYyNQwA8EO97qIkDdw4l0UOsunWB4osEG
-         z7inmQPbIbQYxHYuzBvBmmXHohP/CrY8g9bHFE7QfMbL4XIdhpcUaKZkfNHk7jBbbBhl
-         a0zz+F7xPl18qkDv038mIhk2gkb7kTQvEBgL8gk2u58bT/Uf4iTA6OmBpccylI4LaTSB
-         5Ecg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755354690; x=1755959490;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AhSK0ty+ioZ0FDzNSGurp9JorLqfNJRkank5C8eSUoo=;
-        b=lqaMUGtuV25mnQHbtLwPA2+mdtTbHogF6u2MBjd33LLpz6JqnLD7Pe6hLAV3kKcvm1
-         fSslhN6TEXn6MM5ykxyuBlGZMtkvrY+fqkgQnvpA/e0UcvNdImEUuHEDWVEXv/Hl7sTn
-         u2PzFpsFU7eTry1aVBnlRJMIjebpgzbhqde3MoVPeWfB9jhjFmiAxfbJzrubR11TZo/F
-         10f6g7pG5Wm4l/FHxHZhppez0y97HlYYjzGAURN+wQhjUq8EwkvmK1l8xB0epMX4dQUe
-         gkrkrNNcZRvbqg9D7neHbF1551gxU5n2wy8n7MzrgIlS7tmm2+wNUOxlmZ7q8rfyN75s
-         q9Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmUxZyO9B5oBe1SKjdMTaJNdIIRGL0NBBetRYCkgN6/fbY8aBKkXij0aeTUm+4oJyPtZ0aq5p+EOduCOM=@vger.kernel.org, AJvYcCWaIu8GKokxpVQC8D2rZ3U8XwbbIajAO6/3Q3jArujH6ImZMfljUZFJF5SWBrdYcWio7LI/492i46Q0HKCt/86s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4LI4eStcTwrEz8JZ4pmLWf4gi7WsNjf2ivNaEYShLj376YH3k
-	0yjDK+16tuPK31hRjW9N1FgDnMqGXTYWVpsIncawbMfq3qNo/Mv8zNi7
-X-Gm-Gg: ASbGncsLGFerRb+qgcjj8Ux8YL4yGcflNEgFgMFaOkP9EDvggDPJxlURgmSWNASh7Ua
-	+V3YGTpiTO2r08Zauonl68arQYZ+T2wXRWoZveMFNZLmWQCwUV/YMhj4zUuP3+urRAc3wWypODk
-	t0LrIi1vHFWPJLBdshNXF+f0QpHm6tFIYY23h2oCG3iyaHcVgp1J+WXas4hnBF+GzJ9eBfFpgBm
-	GoXfCBAC1Z1K6eGjwItJ5iKLBDqpHnTWFlHeqNTLCN3vusNrxJ2fl24dLYKYz612z2w7xVyPQ7N
-	pIa1a5eAMMOw2UglT9b5Zv/TdEhhShvpxv/DYXYST8uB5dYH2LeAmtKzYuPutQiBcqBtw7HF5dV
-	mGcRb4JZxyYjkvnxWZZME/btc2OZRwlrS
-X-Google-Smtp-Source: AGHT+IE+hnbZgqLEo1vrSz2gfgfdwaN8B2FfhiHGFXOhrjksUt6d8A4An/LGiPxpjL+ETuSim/flxA==
-X-Received: by 2002:a17:906:c103:b0:ae9:a1f1:2b7d with SMTP id a640c23a62f3a-afceacd0d01mr285486166b.17.1755354690189;
-        Sat, 16 Aug 2025 07:31:30 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01168csm382021766b.91.2025.08.16.07.31.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Aug 2025 07:31:29 -0700 (PDT)
-Date: Sat, 16 Aug 2025 14:31:29 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, richard.weiyang@gmail.com, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	donettom@linux.ibm.com, ritesh.list@gmail.com
-Subject: Re: [PATCH v4 4/7] mm/selftests: Fix split_huge_page_test failure on
- systems with 64KB page size
-Message-ID: <20250816143129.u2rdwpwvfhsdptvx@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250816040113.760010-1-aboorvad@linux.ibm.com>
- <20250816040113.760010-5-aboorvad@linux.ibm.com>
+	s=arc-20240116; t=1755354881; c=relaxed/simple;
+	bh=/m4r4n3DCZDR+D/6soZNQEByd1DUSGxRVldlxW9knvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NY8+d2+9uYpWKOW3G6a9X/5gr507Q1fho1zkdSL450RniwrzhUO94d3AjWnn2bwF5avjoKG0+BeITVXY7MCk99ijB/FRv25gN7K1mXc891fYbLWeAQzeMyFqPt4dRe1sv2AE8rwzLDi7XHu+5lj+r3uC/wp2BrY2KwDqglG1rco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t9Whfvkk; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755354875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YH+CcFBJex3jqbOvIAk2XxbUjPkJEFpmgZTAWcKZ2z4=;
+	b=t9Whfvkk2edENZLRYuepgC78Ip8+s6VoU0LVVa6K8IBr81forbQ2iMYiD9Sz+rtYucqOa2
+	cJBOV35HEyw9/Bw1lVM2UXuq/tTn5aNKTLeCOrk34/pZGTYWtKtpZCnn6RlQ3LYgsZaC5y
+	u7ypb0o29qN/CZK8pkmqIaLwFT2AYr8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu/intel: Replace deprecated strcpy() in init_intel()
+Date: Sat, 16 Aug 2025 16:32:08 +0200
+Message-ID: <20250816143208.386842-4-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816040113.760010-5-aboorvad@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Aug 16, 2025 at 09:31:10AM +0530, Aboorva Devarajan wrote:
->From: Donet Tom <donettom@linux.ibm.com>
->
->The split_huge_page_test fails on systems with a 64KB base page size.
->This is because the order of a 2MB huge page is different:
->
->On 64KB systems, the order is 5.
->
->On 4KB systems, it's 9.
->
->The test currently assumes a maximum huge page order of 9, which is only
->valid for 4KB base page systems. On systems with 64KB pages, attempting
->to split huge pages beyond their actual order (5) causes the test to fail.
->
->In this patch, we calculate the huge page order based on the system's base
->page size. With this change, the tests now run successfully on both 64KB
->and 4KB page size systems.
->
->Fixes: fa6c02315f745 ("mm: huge_memory: a new debugfs interface for splitting THP tests")
->Co-developed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->Reviewed-by: Dev Jain <dev.jain@arm.com>
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+strcpy() is deprecated; use strscpy() instead.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Note: I already submitted this in April as part of another patch [1]
+which doesn't apply anymore. Submitting this again as a separate patch.
+[1]: https://lore.kernel.org/lkml/20250425074917.1531-3-thorsten.blum@linux.dev/
+---
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nit below:
-
->---
-> tools/testing/selftests/mm/cow.c              |  5 -----
-> .../selftests/mm/split_huge_page_test.c       | 22 ++++++++++++-------
-> tools/testing/selftests/mm/uffd-wp-mremap.c   |  5 -----
-> tools/testing/selftests/mm/vm_util.h          |  5 +++++
-> 4 files changed, 19 insertions(+), 18 deletions(-)
->
->diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
->index 90ee5779662f..e742d9313798 100644
->--- a/tools/testing/selftests/mm/cow.c
->+++ b/tools/testing/selftests/mm/cow.c
->@@ -41,11 +41,6 @@ static size_t hugetlbsizes[10];
-> static int gup_fd;
-> static bool has_huge_zeropage;
-> 
->-static int sz2ord(size_t size)
->-{
->-	return __builtin_ctzll(size / pagesize);
->-}
->-
-> static int detect_thp_sizes(size_t sizes[], int max)
-> {
-> 	int count = 0;
->diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->index eadbeb820d71..7cbeaebc9d71 100644
->--- a/tools/testing/selftests/mm/split_huge_page_test.c
->+++ b/tools/testing/selftests/mm/split_huge_page_test.c
->@@ -523,6 +523,9 @@ int main(int argc, char **argv)
-> 	const char *fs_loc;
-> 	bool created_tmp;
-> 	int offset;
->+	unsigned int max_order;
->+	unsigned int nr_pages;
->+	unsigned int tests;
-> 
-> 	ksft_print_header();
-> 
->@@ -534,35 +537,38 @@ int main(int argc, char **argv)
-> 	if (argc > 1)
-> 		optional_xfs_path = argv[1];
-> 
->-	ksft_set_plan(1+8+1+9+9+8*4+2);
->-
-> 	pagesize = getpagesize();
-> 	pageshift = ffs(pagesize) - 1;
-> 	pmd_pagesize = read_pmd_pagesize();
-> 	if (!pmd_pagesize)
-> 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
-> 
->+	nr_pages = pmd_pagesize / pagesize;
->+	max_order =  sz2ord(pmd_pagesize);
-                    ^
-		    extra space here
-
->+	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
->+	ksft_set_plan(tests);
->+
-> 	fd_size = 2 * pmd_pagesize;
-> 
-> 	split_pmd_zero_pages();
-> 
-
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 076eaa41b8c8..c4ea3325d3e7 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		}
+ 
+ 		if (p)
+-			strcpy(c->x86_model_id, p);
++			strscpy(c->x86_model_id, p);
+ 	}
+ #endif
+ 
 -- 
-Wei Yang
-Help you, Help me
+2.50.1
+
 
