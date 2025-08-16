@@ -1,152 +1,142 @@
-Return-Path: <linux-kernel+bounces-771887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC1FB28C90
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDC6B28C92
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4740117618B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6578D1C85073
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0A828A1DF;
-	Sat, 16 Aug 2025 09:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E728A3F2;
+	Sat, 16 Aug 2025 09:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OTLLz9dT"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvIN6SgP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD511289816
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E6238179;
+	Sat, 16 Aug 2025 09:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755337559; cv=none; b=lcoL9DH/InrIrF8dVncia1l13v23atx0g7IVm16JfCV3DsWvG8avPDVjBYNzvQkWtorctSPp8qdlO/jn5EoDXiAkXX5tRp9H7St+yk39xxTpML7N6mFA8RlRQbcrCr3nZOoK1Aq2pNwi09Ki2lnYP2R444Vr5D/0qhquclr8SLU=
+	t=1755337731; cv=none; b=PYUQlJoOkHNdiKqYEe753dXxmOvjE+0s6ziAkWxxFOGywwwWt2z+Q1imBX742WL1h9d4XjVRS7oKQXhyCefPw8/NOYJXwhTABSunRbiGDG1aUsQi6zEm/yrHIkVQ5/Aa0pa9tJzOXcOHEXomA7gPYb8jMTyKqlV41Ym7reDC38E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755337559; c=relaxed/simple;
-	bh=D9E1Sdc+bFrheEgUcIxJpALM3s/yzTgSbrMLVCO/2mg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=odmNcBJx4c2piuhbekqG85hXK2fDJcOgwNsRuyRdpQxPncJKmMBrRc/0Hd+ZqoPI4GcYGG+bcnN+jcNeBQiuANuMrJKsqwijJAHOrEJLbmU03oXcAOSOsdPTI4uCkn4JssGumKNoJ81xCVQ3vIi6IxDHhkvnstYAxxYnVi/R6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OTLLz9dT; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47174c667aso2229788a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 02:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755337557; x=1755942357; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uZHGYUzDoUC6aImN9JZ3dd5lPuQ3tp3WIMsPX/nZ5KI=;
-        b=OTLLz9dTvjUAwVKfREA1bwjXNbQGLAZ4ghjmTRtizH3TCgh96aWRnWjQfQWfvzKuo/
-         94qrKvFxphyvLGr80aRDspyo3Og11IN4qVMc4sc0AF1cr0cjk6YGM7mTwwONV+x8sBwb
-         7joYpopUlw6vS0vNHkKde1ZSh9EBdGhOy4dvM1tWXbJFqP8cYA6L9p9G3Y0Di3H/V8wp
-         u2xNCBuyw8HCmB2ftbX2CBVnpM14RM3mciA5MFttskzzxzPU2wP+4IsdXYxSImow1TPc
-         6PfwSkrG4VI9eTzs7vT8Ech72Ncpk0SBkHKDsbeI3vEKqF8TEMQuDnUzp/nJkNDhypHM
-         692A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755337557; x=1755942357;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uZHGYUzDoUC6aImN9JZ3dd5lPuQ3tp3WIMsPX/nZ5KI=;
-        b=lmNooclLEyQMyXeLpZqXftEwdxAvlQejfIp0mfrqMCWXLlab+m0b1NlW0NZtu4B+tw
-         RlnYS9oFhR92qgLlRVHwljPbxMKIoYmUuKBlPQICU+ZCqRVbFUDI2TzJY5MuKiAaoy8Y
-         Enm3g9EYSX0PTd+Os3bFlPJ7OQOn3lDpshEfKm+LRRdugbQ4ZkO9vnNKCO6USyIuMQGo
-         D1ljb4MG9uI3zCnjXmvaNX0rXi3S2JOORNySoOumy9enHIjhcaqkB/q3jzo4E15ZiAxy
-         jlD0ZDboK3NDezDgYE78e82WImOvrwuIK0mYMjiMDMLm0v7SW2HnKlq5p3BKrXctp3Xj
-         84Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAEjUlfovxqJBymBz5feyF7l3dk5Fh5lzpR3+y6zBTxT/+A2lk5BQoIU8rGGHlzar7yUrv6qxFbOrg950=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8Zl+EZOQ++v6ZrUNIItWhoiQcvLQlIDXzJab0vaJ1aLoInID
-	adErszo52o8njF5EvcU3rkA8f/wWnjzlfpS3M0xWWrUnOGlEbsOGNDjERyJXI9ItYHSjpJElGva
-	eR9eR7Br5wWmXjg==
-X-Google-Smtp-Source: AGHT+IHDPVPEatlxcF4io1U5PXBqiRWFqj78UBNij14JEJ5PCzJdGppshbMzlIiK12O5f7T/RLdVgFYw9kNljQ==
-X-Received: from plblg11.prod.google.com ([2002:a17:902:fb8b:b0:240:3c5f:99d8])
- (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:230a:b0:23f:cf96:3072 with SMTP id d9443c01a7336-2446d8c5dddmr73728925ad.26.1755337557083;
- Sat, 16 Aug 2025 02:45:57 -0700 (PDT)
-Date: Sat, 16 Aug 2025 17:45:28 +0800
+	s=arc-20240116; t=1755337731; c=relaxed/simple;
+	bh=tuDGi921oJen9tqn7mJsQZiu7Fywen9D9j9aCB+BOKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQlJOffWB51v+VYGMrDIjOO3wprDuMnSfM/Is7z3YyrVuBTRilPzIEPyQaRkfeiVC+w4Wl462BrADY+ArIomgzSDhVO6yfdG+zQNIkdYxlLC8hRLT/78xjDP1BEgMrZARwU82a64itQS2F0TYDOIz1xYOhpAgsD1lvWD3X2cPzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvIN6SgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3A6C4CEEF;
+	Sat, 16 Aug 2025 09:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755337731;
+	bh=tuDGi921oJen9tqn7mJsQZiu7Fywen9D9j9aCB+BOKQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GvIN6SgPwMYzAyxMRox94LN7RuY32e/OtmGssFuhvgCxXiL5/nDkB+kj3A9UULc80
+	 PNpHAaOM/ULRjLCVNSenr8TSTJ0aud3iZaOVXQng4C4NcJf+1831ZSwENdAAYRqmYz
+	 K5zM9YPpuKz9hvKiu+4hB1BCp6Z2MNA0KERSMv6Ku8EsO/GoWHiu9KvFahu0eLC219
+	 IUHXto9phrlKq1L0VmRx2kmE7mgNDUw8iGq0FkQhH9jPQRS/dDqApTinqlDlrDSxGT
+	 oJPAUX7FPmAoHc+vReh3kNQjkh07oE5meAS8/C2BU/KqAKn+c07DyRa40A+YvOTKeD
+	 /I//eBF+bj2/g==
+Message-ID: <d5134909-58a4-48c2-a227-2fb3ce200c2f@kernel.org>
+Date: Sat, 16 Aug 2025 11:48:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <20250816094528.3560222-2-davidgow@google.com>
-Subject: [PATCH] genirq/test: Fix depth tests on architectures with NOREQUEST
- by default.
-From: David Gow <davidgow@google.com>
-To: Brian Norris <briannorris@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: David Gow <davidgow@google.com>, Guenter Roeck <linux@roeck-us.net>, 
-	linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: reset: Document reset controller of
+ Loongson 2K0300 SoC
+To: Yao Zi <ziyao@disroot.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+ Kexy Biscuit <kexybiscuit@aosc.io>
+References: <20250816033327.11359-2-ziyao@disroot.org>
+ <20250816033327.11359-3-ziyao@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250816033327.11359-3-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The new irq KUnit tests fail on some architectures (notably PowerPC and
-32-bit ARM), as the request_irq() call fails due to the
-ARCH_IRQ_INIT_FLAGS containing IRQ_NOREQUEST, yielding the following
-errors:
-[10:17:45]     # irq_free_disabled_test: EXPECTATION FAILED at kernel/irq/irq_test.c:88
-[10:17:45]     Expected ret == 0, but
-[10:17:45]         ret == -22 (0xffffffffffffffea)
-[10:17:45]     # irq_free_disabled_test: EXPECTATION FAILED at kernel/irq/irq_test.c:90
-[10:17:45]     Expected desc->depth == 0, but
-[10:17:45]         desc->depth == 1 (0x1)
-[10:17:45]     # irq_free_disabled_test: EXPECTATION FAILED at kernel/irq/irq_test.c:93
-[10:17:45]     Expected desc->depth == 1, but
-[10:17:45]         desc->depth == 2 (0x2)
+On 16/08/2025 05:33, Yao Zi wrote:
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    rst: reset-controller@1600011c {
 
-If we clear IRQ_NOREQUEST from the desc, these tests now pass on arm and
-powerpc.
+Drop unused label
 
-Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
-Signed-off-by: David Gow <davidgow@google.com>
----
- kernel/irq/irq_test.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
-index a75abebed7f2..e220e7b2fc18 100644
---- a/kernel/irq/irq_test.c
-+++ b/kernel/irq/irq_test.c
-@@ -54,6 +54,9 @@ static void irq_disable_depth_test(struct kunit *test)
- 	desc = irq_to_desc(virq);
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
-+	/* On some architectures, IRQs are NOREQUEST | NOPROBE by default. */
-+	irq_settings_clr_norequest(desc);
-+
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
- 	KUNIT_EXPECT_EQ(test, ret, 0);
- 
-@@ -81,6 +84,9 @@ static void irq_free_disabled_test(struct kunit *test)
- 	desc = irq_to_desc(virq);
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
-+	/* On some architectures, IRQs are NOREQUEST | NOPROBE by default. */
-+	irq_settings_clr_norequest(desc);
-+
- 	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
- 	KUNIT_EXPECT_EQ(test, ret, 0);
- 
-@@ -120,6 +126,9 @@ static void irq_shutdown_depth_test(struct kunit *test)
- 	desc = irq_to_desc(virq);
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
-+	/* On some architectures, IRQs are NOREQUEST | NOPROBE by default. */
-+	irq_settings_clr_norequest(desc);
-+
- 	data = irq_desc_get_irq_data(desc);
- 	KUNIT_ASSERT_PTR_NE(test, data, NULL);
- 
-@@ -180,6 +189,9 @@ static void irq_cpuhotplug_test(struct kunit *test)
- 	desc = irq_to_desc(virq);
- 	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
- 
-+	/* On some architectures, IRQs are NOREQUEST | NOPROBE by default. */
-+	irq_settings_clr_norequest(desc);
-+
- 	data = irq_desc_get_irq_data(desc);
- 	KUNIT_ASSERT_PTR_NE(test, data, NULL);
- 
--- 
-2.51.0.rc1.167.g924127e9c0-goog
+> +        compatible = "loongson,ls2k0300-reset";
+> +        reg = <0x1600011c 0x8>;
+> +        #reset-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/reset/loongson,ls2k0300-reset.h b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+> new file mode 100644
+> index 000000000000..d425411e6d19
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+> @@ -0,0 +1,70 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 
+Why not using same license as the binding?
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
