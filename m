@@ -1,84 +1,210 @@
-Return-Path: <linux-kernel+bounces-772037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F2FB28E1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1FBB28E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC25F1CE11DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081281CE0F8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15E2E5D32;
-	Sat, 16 Aug 2025 13:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C9F2E5D30;
+	Sat, 16 Aug 2025 13:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBbPjok9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhRwEavN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C82E7F3A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 13:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BA9BE46;
+	Sat, 16 Aug 2025 13:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755350418; cv=none; b=paxtCL5RAnM01dOMk7z0Ay/VIbvE8I8J674tNvkgZP2OhK5l7wCntqAqqp1JFs8ujgvsW+JCCQ1BMFmj0b7xl7wUIGW4nAnyf0EbrJIg8eik7sjXhVpp/+8XbqQ5zkqb15ks2eNkbFRqjR70y3md8AJjVMAF33nkI6fRKqNoWK4=
+	t=1755350665; cv=none; b=osRoxPNSKgQ3jax24QUe1Sd4717gW9k/ax6C8WskpqNtwOZt6mxTXx9gmd8/XSEskTTCC/aeM+OGBOTwc3pZuyczliBm7bCTDR1eGpQ2QLbsN0fXZ8i37/ja4+lRk0xNBURabgIAzmslVOf1tyWyzyOTO2SocFffvqNmGFwhbyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755350418; c=relaxed/simple;
-	bh=4a4UkLWAzywoDLLPOv9OQ0BJA1ty0NVPTX6oHQuZ0/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DQ526AilnIIquIAd+ETMe/tVU5MJqqvDVVLELsfUVmTTNyfGZstf3v+Aye9gPlURHEl18wlo8DyFnzf9fnpXM99vy6XSPPv81DPCXvl2ZJYyj3JJXJdQPSeBr2dEA0XS8kAS3p4SzceCRR+08TW8JysSedVKIkEZECFoa4bGgg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBbPjok9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00FCC4CEEF;
-	Sat, 16 Aug 2025 13:20:16 +0000 (UTC)
+	s=arc-20240116; t=1755350665; c=relaxed/simple;
+	bh=oHEiGnFxFtU/G+50iP8aQgUkZU9yifzTqwhFxxZyrSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cqIffD75uVnxbtvLiXi9nnzopU2qy3S5J8xEfY7igZjoW5XBC3ygK8y8oRJ1I+ybBcBO7c4gDVdnOc0+Nh90O0TTCJNb9pOemedn3HvmIxQgfamUVD93HpNc06gL7VRjmo88BN3gyfI7zhl4bPmhxWIYnV7DT0kKlKIR5JSQ0kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhRwEavN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E0CC4CEEF;
+	Sat, 16 Aug 2025 13:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755350417;
-	bh=4a4UkLWAzywoDLLPOv9OQ0BJA1ty0NVPTX6oHQuZ0/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TBbPjok9HI/V7jj/NTyLShma030jGXnB0hc5RhIb7tppnfW/Yl/Ln/2omN1T4kezV
-	 IYEVJCUHEXzeql3tID96H4hKbsqXUqBAoJ2DkrLFxpyTz4L4xT1mICPbdj2nX7rbdW
-	 Y4M17GXRpCElKFVJ42ndQCNXOS1U4ShcM1jcrB9WZbDCq/N3shJvokL1CDN/TqYg5Z
-	 wxES7Hi9nXl9+mnCRMG5COrcUnSRmbOSSzumKUvB6e1Wv/GWKINsXWAaxXqYVkzxoy
-	 iFHEpknm1i2iPrHlfPn4WzJjhI6vkCVn9yZz1BVjLFiHCqS+3F2RGZyNYhmXSvjNZF
-	 xYYKdmumnveFg==
-Date: Sat, 16 Aug 2025 07:20:15 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG report] kernel warnings with Samsung 970 EVO 2TB SSD
-Message-ID: <aKCFjzai3Y0RcGHP@kbusch-mbp>
-References: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
+	s=k20201202; t=1755350664;
+	bh=oHEiGnFxFtU/G+50iP8aQgUkZU9yifzTqwhFxxZyrSA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QhRwEavN1HGnqLOKneP0njEW6qD4myASz+2qyQNnU0brtQLMtxKqCS4j9UfHYJrLF
+	 tqQlu9j24mqiaSsHi7wH6tefcD2+wlRCXkPDxBgSXFDL7X/B7oIu2jryOIEJlhgAyh
+	 79/lAge9btXnUUohpZxx9ruj3+osTF5jmTmpbghOf3IQHuL26jWpW7y5DGCYKU+tPS
+	 pioOrdkNZKGbGGXJFGXsW3f10iDLABwIM5byOUGkH+6utddSXKDdYa54YtoGce4yS8
+	 If20SKPxzqYPn5n0WmnZScza9csXrkHpceijk70PBzarffuiLFRgbpAebAr72lzRPd
+	 cdVU+A1b052Ng==
+Date: Sat, 16 Aug 2025 14:24:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: iio: Replace bouncing Analog emails
+Message-ID: <20250816142415.01e29012@jic23-huawei>
+In-Reply-To: <20250812132445.75398-2-krzysztof.kozlowski@linaro.org>
+References: <20250812132445.75398-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 16, 2025 at 01:40:44PM +0200, Diederik de Haas wrote:
-> Hi,
-> 
-> I have a Samsung 970 EVO 2TB SSD and I see these kernel warnings:
+On Tue, 12 Aug 2025 15:24:46 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-... 
- 
-> I wonder if something can be done to fix those warnings.
+> Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
+> permanently:
+>=20
+>   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Reci=
+pient not found by SMTP address lookup'
+>=20
+> so replace them with Marcelo Schmitt and Nuno S=C3=A1 (listed alphabetica=
+lly
+> by first name) from Analog where appropriate.
+>=20
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks for the patch and to Marcelo and Nuno for covering these.
 
-Are you talking about this message?
+Applied.
 
-   nvme nvme0: missing or invalid SUBNQN field
+> ---
+>=20
+> Changes in v2:
+> 1. Add Nuno, based on discussions on the list.
+> 2. Add Rob's Ack.
+>=20
+> This change got agreement on the list, but still would be nice if you
+> folks Ack it formally.
+> ---
+>  Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml | 3 ++-
+>  Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml   | 3 ++-
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml      | 3 ++-
+>  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 1 -
+>  Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/iio/frequency/adf4371.yaml   | 3 ++-
+>  Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml   | 3 ++-
+>  7 files changed, 12 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.ya=
+ml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+> index 3dc973b98f81..a92e153705f3 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+> @@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: ADIS16240 Programmable Impact Sensor and Recorder driver
+> =20
+>  maintainers:
+> -  - Alexandru Tachici <alexandru.tachici@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  description: |
+>    ADIS16240 Programmable Impact Sensor and Recorder driver that supports
+> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml=
+ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+> index 88aa67bf2280..0ba0df46c3a9 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+> @@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer
+> =20
+>  maintainers:
+> -  - Stefan Popa <stefan.popa@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  description: |
+>    Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer that su=
+pports
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> index 7146a654ae38..4dd5395730c1 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> @@ -8,7 +8,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Analog Devices AD7124 ADC device driver
+> =20
+>  maintainers:
+> -  - Stefan Popa <stefan.popa@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  description: |
+>    Bindings for the Analog Devices AD7124 ADC device. Datasheet can be
+> diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml =
+b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
+> index 5207c919abe0..eac48166fe72 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
+> @@ -9,7 +9,6 @@ title: Linear Technology / Analog Devices LTC2496 ADC
+>  maintainers:
+>    - Lars-Peter Clausen <lars@metafoo.de>
+>    - Michael Hennerich <Michael.Hennerich@analog.com>
+> -  - Stefan Popa <stefan.popa@analog.com>
+> =20
+>  properties:
+>    compatible:
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b=
+/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> index 82b0eed6a7b7..091cc93f1f90 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> @@ -8,7 +8,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Analog Devices AD5770R DAC device driver
+> =20
+>  maintainers:
+> -  - Alexandru Tachici <alexandru.tachici@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  description: |
+>    Bindings for the Analog Devices AD5770R current DAC device. Datasheet =
+can be
+> diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml=
+ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> index 53d607441612..2e1ff77fd1de 100644
+> --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> @@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Analog Devices ADF4371/ADF4372 Wideband Synthesizers
+> =20
+>  maintainers:
+> -  - Popa Stefan <stefan.popa@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  description: |
+>    Analog Devices ADF4371/ADF4372 SPI Wideband Synthesizers
+> diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml=
+ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
+> index 7a1a74fec281..43ecf46e9c20 100644
+> --- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
+> +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
+> @@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Analog Devices ADIS16480 and similar IMUs
+> =20
+>  maintainers:
+> -  - Alexandru Tachici <alexandru.tachici@analog.com>
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> =20
+>  properties:
+>    compatible:
 
-You can't do anything about it, but I wouldn't worry about it either.
-
-If you want to see what the driver is reacting to, you can check the
-subnqn from command line:
-
-  # nvme id-ctrl /dev/nvme0 | grep subnqn
-
-It'll probably be all zeros. The field has been required by spec, but
-the driver tolerates ones that don't implement it. It's just a message
-that the device isn't spec compliant, but otherwise perfectly
-operational.
 
