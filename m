@@ -1,174 +1,141 @@
-Return-Path: <linux-kernel+bounces-772224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F85AB29028
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CD2B29029
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863AA587524
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04A1AA883B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330220C00C;
-	Sat, 16 Aug 2025 18:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E3A1FBE80;
+	Sat, 16 Aug 2025 19:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="S1igk2Qo"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8Owlow8"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2961E1A17
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FE9450F2;
+	Sat, 16 Aug 2025 19:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755370537; cv=none; b=obxkT9q9SdOncZUBnCyJl/B8LiP3t5Nt1mZadMzVNWKYbFBhUKK1PhmpuwB6kBBFssTv4bAa9HnCZieHebsDQ2exv5gmgkLnC/jx41vjPnUyNuduQ8RIqqaQNLOrcP8j0btvRI3dzmDSQYjvapLcEoPvwGaBqlxhTMLvZ6pKAq8=
+	t=1755370902; cv=none; b=RucPElTeHB8g92WM/8DHGVVRwmwStuAEYv9FX6K8mb3Xx2CyEfrIgJ1asAl4RGYri36ZP++TtbWler/Aw2ADQqFKq7XfNZdu4pnfMOOwhOCljwJqeuQivRktJmFa64eExbEPVqusL4EaEW1+Q9qaLNrdYgYyH+b6Y8HxpN7ubOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755370537; c=relaxed/simple;
-	bh=e7uChWhGMvZHa6Mpyo4vNChVMnVBmFr56RHl7o6kiq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PpYdrqQSU4JHgmPB66p8Y1vldfjqOispoXvLNUSYe8seAz4yNIOJT/JyRgfw6juh8qqqKFKNgelZMw6UrKuGxJ+RDZoNu/qDHzKMpWeDlELy43te5Zseom/jBjsFzNG6RT4FXVOfZTtBxiN7smkQ6Q3VRcWrH/e2ra+o9upD5Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=S1igk2Qo; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381e0a227so2125447a34.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:55:34 -0700 (PDT)
+	s=arc-20240116; t=1755370902; c=relaxed/simple;
+	bh=NMHQWek6hJCAFu2VRXW9YhQZ3hluLQdp9qccjoE3vCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cslI7ViLNN/ahMKtnXTLEz6z8M7/4s4mTcA7CJPJN+vmgso4v7DZNCoXuQl1U4FvtocPFeUSAIcFH9UubIBtAqw0uGk1PWkJ7MJJa7qq+XMeapLELYcdJH2hrBcTQ49W+36gCsawSr3hEi8s2WvSOGVRQU85OmkNYXJsMGXJvoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8Owlow8; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so21979785e9.2;
+        Sat, 16 Aug 2025 12:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755370534; x=1755975334; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ffPmnzaqLO3di+HvejIJSUJDzn9TWvgequfo9PXfSM0=;
-        b=S1igk2Qoa9bDBOAF/e5k3FdjHD1V2HTomiRHp40QZE0MPI3d92UOrh22x7QsJlZIz5
-         uKaTMObYlBAiLh52RXauM/3mpg1x1A8lNz/UxUgLw/JoKiXeeEF87axSVbip7bg40IKH
-         LqNsft42EzC7NKB6vhfpfYwp7Hi3P31dviBnmQzoni9pp1zPwmuuWGf7E6Gf+4aoEgtc
-         H1mFKNCGllFy04RF2g0qW5MqrgYWphclRO/EX67pYUd/2+SUB9w41hpMFIDlJ3Dsd0kc
-         CW8KIiCyORqODQSrwQJ1oHub2DrYhP8OK0T4iTSgCPVzMegokvMd5/tw1M8wwj7naVE4
-         FLKA==
+        d=gmail.com; s=20230601; t=1755370899; x=1755975699; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ge402z6OscbL8CU2G3ApWQ3/4su8++yMy2rU7voov5g=;
+        b=Q8Owlow8C4lhWXtSNKrYaN5z/3XllqAwygvWuBZ96v2vnnYIHKmewF+O/mzZuFVOWr
+         SPclIZlLIHr6zWaI5AUAaIQgH7u4gwvRxJo7hcVXjAd/SQK2OWCZQJ9YBEqlzcGJcQN/
+         m7j+jvFE/KqjdG199nVGtpP7r6DlVkbv9oTaP0d55B4rTlJCSP3imdN2dpYY/KknQCqJ
+         PIOj0ON/hP8nPLVp1etUJQru0OOMkYHTYNqVdNBgs1euqnxxj2AJ6223DjHLNp+b7+wW
+         lvJRpdfng8pZmtHqUSZvfXBkCXl1oHLJjh8BNfy0grxtvRHaZG3jFKvP8XMhSyUZ+csE
+         2MAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755370534; x=1755975334;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ffPmnzaqLO3di+HvejIJSUJDzn9TWvgequfo9PXfSM0=;
-        b=lgouwXG4E8aqwqUYjbvcJKamwt/kBov5c7/VaOHjjF9+drDGSxGVYgAzAMulbaIeyV
-         prgxJXYREBNj1t8FIwm7J4LzhKQGUE5k1+2C9zhuan8vX1vmNl2Ytl5Ed3xYenzKtxiu
-         /WSurysjaFer7jC1zQkZY9mj9+cbUZnr6w8eZRUcugNm1LFI8LGb6dI8MbGGDhZ97kOZ
-         usLvyCBJAUIzWaQdNoXBHVLWaLhQGubvQ9JF29tv/Rv/xipQL8w5nWV180+9QuGClCXl
-         TJzeW/j/iTFsILaVVMd66+T60BoOONQdqS/NC/BzwfHOoeqAmmgyPzP8DJjWtR0pB0Gx
-         x4pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPnYLO6Oyf/X2MmTuryxxq7CFL5ASHs7lI82JpIGzJqtAv8am9VB2/MEzesOGpd6U+sZCjzFvBUncp8X0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHHccwZRrA5PNCUYyEovjohP9CSglF15OWqQjQ8k0s+TetMBKG
-	ZolkeWStQXb61p467svTEUPBpDgpBqtWB7QAZ3BUK8fuRXgjg6OjiyUItlUzNt6tjyc=
-X-Gm-Gg: ASbGncs5IJaUis73VHwYivwCSNyZs1bGb+1JIe9avK8q8U3p2E/XhWNY86pTm0nFL/T
-	dFuzYQA5pbKtvljwfNAJHhBqWwI+bUq3KXah1wK5jfEqxYe9y/+qOQMyxxk2roMrxp+z1Sjrbof
-	QZ6a2uv23qdUVRj2XnzsW1e5231Jlkf+454tKkPF3ZZ+XVm54SUp7CpaMUua0UWJnRmrdM1Cftj
-	KSWPqxfDLaW7I9H72opBCRrBP3t7eCGoRhK/iz5butiORGQrFZt2qDxiwCOd904mOymIj3T+Q3p
-	6lJ+kmlJrJahL6WRzO1ir5fzAXgNYwEa+41D7ZLIql++Kwq8y2T0QkVszDGBwaQGXFzSb+wuUaa
-	IjCbqQcICZjLbPVRISS3JkfIveMOeyXDPILBpCSVfvO9iP51jfXC9qAPs7bXR9eGnoaRymcFT
-X-Google-Smtp-Source: AGHT+IEo6Cd9FfYudnBVmWWkFVcb8dBQtaWN3pYM49rfwJr5rFglXZnKGElmuA2TlxnPrLBE2fctyw==
-X-Received: by 2002:a05:6830:6f8c:b0:741:a842:18a8 with SMTP id 46e09a7af769-7439bae80a5mr1909896a34.22.1755370533643;
-        Sat, 16 Aug 2025 11:55:33 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fcf8:116:11db:fbac? ([2600:8803:e7e4:1d00:fcf8:116:11db:fbac])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bebfb34f2sm488110eaf.10.2025.08.16.11.55.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 11:55:32 -0700 (PDT)
-Message-ID: <66063382-78c6-4d93-be25-46e972e390f4@baylibre.com>
-Date: Sat, 16 Aug 2025 13:55:31 -0500
+        d=1e100.net; s=20230601; t=1755370899; x=1755975699;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ge402z6OscbL8CU2G3ApWQ3/4su8++yMy2rU7voov5g=;
+        b=tA/cPdHdRAtuq0NlrF/QMQY+Y+vdn2zf81eYlIVvpAkhPw1VvLjw8Msx56O/c5xaA8
+         4qtdVqxqGMqgQ+iULrtXz7wHrs8xq0Gn1Z9iao4bCb+LAgn889qA3KwXbzd0nVQctzcE
+         M0vRgGOc94OjPIrQrjQ6nlodMXJalhaD2kL1OuSFHtvzYUP6/mybLQ1x03R6erY/qeVF
+         uuh5OV4LipapPVO2172pGQqT+e4IqyG9lH/MQbTJJZ0ueAAJG8VGlGLyrf1KDhIp6NVB
+         FMZkSjQyq2FnB2VK8MsVdtcSM4EkLmWVdr1zYTucPngBbkSkn17oSR0bTroqpRg760vy
+         URig==
+X-Forwarded-Encrypted: i=1; AJvYcCXvYezhrtj+BniGGVdcF4BZlaZdQcKCNKx2UO6dTyRE2GfGUtODaVdlNJc5GoenKnq4hRxtIkptO1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK3b6vi1RPLc2VJ6oB3b5qqCCeZOKqvRCsy+KR2h9MfadSpF3M
+	WQuW609QNdenJDSUYzFnk4zRUrraCo8ADyQmRPhIxTKpt+j7+zznX0CI
+X-Gm-Gg: ASbGncvBFJifJFVNCwNyzvAUf3lxsfdiKuuDYrJM4n6+CO2SVUX7amXKZ0L0DMdQGe7
+	S7c1zzTdMlrHI6nzqB15A3OmxJwh3vzZXWtIVHYOtf43hOcSivUTAvH5e1l+o2xEA15+h5TDN5L
+	j9V9JTBMqCQDAOM0yjepSxh1H+i1Uk32x8wmpaNjEggiL7TjBb5NiXsVUxvYtiCwanYOKj698ud
+	4Ecn8U1q1h34EwP3ds2OHlQj/l8Oq1Xay9kyDnuW4VgocBOY44YzWmaMPUKBwSClHD0BJhp34qL
+	AL5N94VVGp1aaYYMrDM40vPe65oQvTE9/nvkTpwKuFsOvinhSdBj1vaJSt+rju+AdyXxXx9w+j9
+	JQICGXlrBPbMvo0FnBFSnhVn4q0AhFGnF
+X-Google-Smtp-Source: AGHT+IFtveIIDTcyJAnjHia9tIV1AvmirXxSlVv11WsL6hk8Z34okLiXhF2+XZpD6tAQX8TpSeCydQ==
+X-Received: by 2002:a05:600c:154c:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-45a217f1cf7mr59689355e9.4.1755370898887;
+        Sat, 16 Aug 2025 12:01:38 -0700 (PDT)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb676c96dasm6608999f8f.43.2025.08.16.12.01.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 12:01:38 -0700 (PDT)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com,
+	corbet@lwn.net,
+	linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>
+Subject: [PATCH] docs: Replace dead links to spectre side channel white papers
+Date: Sat, 16 Aug 2025 22:00:28 +0300
+Message-ID: <20250816190028.55573-1-zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
- microchip,mcp9601
-To: Jonathan Cameron <jic23@kernel.org>, Ben Collins <bcollins@watter.com>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250815164627.22002-1-bcollins@watter.com>
- <20250815164627.22002-2-bcollins@watter.com>
- <20250816105825.35e69652@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250816105825.35e69652@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/16/25 4:58 AM, Jonathan Cameron wrote:
-> On Fri, 15 Aug 2025 16:46:03 +0000
-> Ben Collins <bcollins@watter.com> wrote:
-> 
->> The mcp9600 driver supports the mcp9601 chip, but complains about not
->> recognizing the device id on probe. A separate patch...
->>
->> 	iio: mcp9600: Recognize chip id for mcp9601
->>
->> ...addresses this. This patch updates the dt-bindings for this chip to
->> reflect the change to allow explicitly setting microchip,mcp9601 as
->> the expected chip type.
->>
->> The mcp9601 also supports features not found on the mcp9600, so this
->> will also allow the driver to differentiate the support of these
->> features.
-> 
-> If it's additional features only then you can still use a fallback
-> compatible.  Intent being that a new DT vs old kernel still 'works'.
-> 
-> Then for the driver on new kernels we match on the new compatible and
-> support those new features.  Old kernel users get to keep the ID
-> mismatch warning - they can upgrade if they want that to go away ;)
-> 
-> Krzysztof raised the same point on v2 but I'm not seeing it addressed
-> in that discussion.
+The papers are published by Intel, AMD and MIPS.
 
-One could make the argument that these are not entirely fallback
-compatible since bit 4 of the STATUS register has a different
-meaning depending on if the chip is MCP9601/L01/RL01 or not.
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+The MIPS blog post is nowhere to be found on mips.com,
+instead a link is placed to the last time the web archive
+has crawled it.
 
-Interestingly, the existing bindings include interrupts for
-open circuit and short circuit alert pins. But these pins
-also only exist on MCP9601/L01/RL01. If we decide these aren't
-fallback compatible, then those properties should have the
-proper constraints added as well.
+ Documentation/admin-guide/hw-vuln/spectre.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> Jonathan
-> 
->>
->> Signed-off-by: Ben Collins <bcollins@watter.com>
->> ---
->>  .../bindings/iio/temperature/microchip,mcp9600.yaml         | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
->> index d2cafa38a5442..d8af0912ce886 100644
->> --- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
->> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
->> @@ -4,7 +4,7 @@
->>  $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
->>  $schema: http://devicetree.org/meta-schemas/core.yaml#
->>  
->> -title: Microchip MCP9600 thermocouple EMF converter
->> +title: Microchip MCP9600 and similar thermocouple EMF converters
->>  
->>  maintainers:
->>    - Andrew Hepp <andrew.hepp@ahepp.dev>
->> @@ -14,7 +14,9 @@ description:
->>  
->>  properties:
->>    compatible:
->> -    const: microchip,mcp9600
->> +    enum:
->> +      - microchip,mcp9600
->> +      - microchip,mcp9601
->>  
->>    reg:
->>      maxItems: 1
-> 
+diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
+index 132e0bc6007e..991f12adef8d 100644
+--- a/Documentation/admin-guide/hw-vuln/spectre.rst
++++ b/Documentation/admin-guide/hw-vuln/spectre.rst
+@@ -664,7 +664,7 @@ Intel white papers:
+ 
+ .. _spec_ref1:
+ 
+-[1] `Intel analysis of speculative execution side channels <https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/Intel-Analysis-of-Speculative-Execution-Side-Channels.pdf>`_.
++[1] `Intel analysis of speculative execution side channels <https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/analysis-of-speculative-execution-side-channels-white-paper.pdf>`_.
+ 
+ .. _spec_ref2:
+ 
+@@ -682,7 +682,7 @@ AMD white papers:
+ 
+ .. _spec_ref5:
+ 
+-[5] `AMD64 technology indirect branch control extension <https://developer.amd.com/wp-content/resources/Architecture_Guidelines_Update_Indirect_Branch_Control.pdf>`_.
++[5] `AMD64 technology indirect branch control extension <https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/white-papers/111006-architecture-guidelines-update-amd64-technology-indirect-branch-control-extension.pdf>`_.
+ 
+ .. _spec_ref6:
+ 
+@@ -708,7 +708,7 @@ MIPS white paper:
+ 
+ .. _spec_ref10:
+ 
+-[10] `MIPS: response on speculative execution and side channel vulnerabilities <https://www.mips.com/blog/mips-response-on-speculative-execution-and-side-channel-vulnerabilities/>`_.
++[10] `MIPS: response on speculative execution and side channel vulnerabilities <https://web.archive.org/web/20220512003005if_/https://www.mips.com/blog/mips-response-on-speculative-execution-and-side-channel-vulnerabilities/>`_.
+ 
+ Academic papers:
+ 
+-- 
+2.49.0
 
 
