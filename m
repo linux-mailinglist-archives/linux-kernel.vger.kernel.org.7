@@ -1,74 +1,67 @@
-Return-Path: <linux-kernel+bounces-771865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A42B28C5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:28:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AA9B28C5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF16A3B3EEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D644E3B47A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E92622FDEC;
-	Sat, 16 Aug 2025 09:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A34E244664;
+	Sat, 16 Aug 2025 09:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TRWxEgvG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="OTg6XfFH"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ECD634
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CFA2288D5;
+	Sat, 16 Aug 2025 09:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336520; cv=none; b=dLKN0MwpzZqkK25hq/KauxY+7SL4TXS5DhZvE5j+/X8lvo6C840TmFaRkpaWDD++IQ5Idfwe+bTQ45rkZxe98ikrXGpyvGLtcjojsEuh52ZybY4vs1RgQUWzdJO+xclLBa6ww/txCCuMlHzmAQIkcyxXZ8VT5xRh9yKFnrEJ2P0=
+	t=1755336627; cv=none; b=D0MnIXJ31cu1U8xyl7yVsgh/58gDR6GCMwxhU+PNoKxB8PrQBzqX15fMrVWDYzAbDQEliLagXBmmkvcq7S2WSUE53mLg4xlPyiKQxai9tdODuvIMMZJ7rxaxk5UkQIHILSR/7pLlQmyUO0dte8rs6JDCOrJzPjG0l7UTOMOabEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336520; c=relaxed/simple;
-	bh=Rn9UConvvnSANKtYygpj4VC/hkURXLINnkb5ZsYqGlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ajr9hmpu97dENQXSeb2VJc8zDywE4yGpU+U2q6Y/iL+wdWaOAAYirm+AMOK22gfDAS97OuGrAvyTOROxgBPmV92UwLUpcB54dpxXhVklMicvuCErhebpB810mXe5Cs/PInkWnT/XCsarNMaH5m00l9SEq7GEQ6zIA4LTXMsYq+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TRWxEgvG; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755336519; x=1786872519;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Rn9UConvvnSANKtYygpj4VC/hkURXLINnkb5ZsYqGlw=;
-  b=TRWxEgvGTORVP55Q30WH/uMSB36MzO7wpqU4SPcubFOriQ8gV+2p7zdH
-   2ju1042iRIPGh/rNbEXzM5uU4SiN3avpsrKLAm40bKKbZozcOTLuYULoV
-   vbqOsTuFqIN/epoI0ifl79vytseE9mn829/Zmb2fghkxjz74Q652JqALg
-   RS4JvlIVJFUonM3MiDY0q8kaGsszpOxpeqOz13wYPWEcHZmPVP9MO9Ati
-   nkIVBX/0HEwdEJOQGAP5RztPXCmfHeLJAcsiMlDroSYjxq2x7cqty5jkm
-   je/gXTjok4gaFjm6M16m6HB4pqY94YiJPtdZhwKlQt+dJMk56SsCxy5CF
-   g==;
-X-CSE-ConnectionGUID: sLNYg5iES0GsPUlcYlfkxw==
-X-CSE-MsgGUID: yErd5ld3Q1+O7NiDsB9aEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57353218"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57353218"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 02:28:38 -0700
-X-CSE-ConnectionGUID: 4J00drCaQ5+PqMTVmQOv9g==
-X-CSE-MsgGUID: XHhYQworS32YIkR1WP400g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167102001"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 16 Aug 2025 02:28:36 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unDDF-000CmW-32;
-	Sat, 16 Aug 2025 09:28:33 +0000
-Date: Sat, 16 Aug 2025 17:28:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2
- (different address spaces)
-Message-ID: <202508161713.RWu30Lv1-lkp@intel.com>
+	s=arc-20240116; t=1755336627; c=relaxed/simple;
+	bh=ZMB0T7WyZDc/KYFhxhYAA5BbOcLSc9wwrxrSkbS/0Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUbQuqfOaCyyzICyqn/HZsBbvLQHE+QfaoG/gRB9TqHtM4csGJ3xsXhjmNVeG/j5T6Br329H0i0r7EGXkI7uHnmhTvBJjYvZ1D2xMnlQ/tA1vguIP2Va6WXJACDEpKOadUf5c4ZEGiQvzA1Em8JLtDF0JDLi+4x7DCuOdhYRXBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=OTg6XfFH; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=d9UixZd+ywiMt91Do8+cl23FuTfwWnP+omo1gMjpILA=; b=OTg6XfFHsfjrOZ3hD6wVssqj7J
+	qtHjXlVWv7mLQHNATuNhigGzBgckLqiJdQuL6VLbE0GDh7nM/HeMsVP+F3NC8c2HoIwb+E52yIesU
+	SxFQNjMe6VXPPRs8nLgowDNq/t6h9dGR372SSbaCX23Gik1N1S7lP8q57jgZsy3VUEls347mmpmPr
+	lHdHTN4rpMxkTpDh8Iw4ySU5ZD+TvyCucEaTE3us9yzeCF3w9kYMK1T8spF132iDtfKIX5rdvX48D
+	E4Cjj0/Dy5g7OLg10UGz3TXTUOojkmNDePIkwaMcCGuetn4dA4zm7Y5SpH+Hor3dociAiRQLCfTH5
+	Bsh0V33A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1unCz2-00EmIs-25;
+	Sat, 16 Aug 2025 17:29:50 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 16 Aug 2025 17:29:49 +0800
+Date: Sat, 16 Aug 2025 17:29:49 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: corbet@lwn.net, seanjc@google.com, pbonzini@redhat.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	thomas.lendacky@amd.com, john.allen@amd.com, davem@davemloft.net,
+	akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org,
+	nikunj@amd.com, Neeraj.Upadhyay@amd.com, aik@amd.com,
+	ardb@kernel.org, michael.roth@amd.com, arnd@arndb.de,
+	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add SEV-SNP CipherTextHiding feature support
+Message-ID: <aKBPjfyIHMc2X_ZL@gondor.apana.org.au>
+References: <cover.1752869333.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,132 +70,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1752869333.git.ashish.kalra@amd.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   dfd4b508c8c6106083698a0dd5e35aecc7c48725
-commit: ca1a66cdd685030738cf077e3955fdedfe39fbb9 riscv: uaccess: do not do misaligned accesses in get/put_user()
-date:   2 months ago
-config: riscv-randconfig-r122-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161713.RWu30Lv1-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce: (https://download.01.org/0day-ci/archive/20250816/202508161713.RWu30Lv1-lkp@intel.com/reproduce)
+On Mon, Jul 21, 2025 at 02:12:15PM +0000, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> Ciphertext hiding prevents host accesses from reading the ciphertext
+> of SNP guest private memory. Instead of reading ciphertext, the host
+> will see constant default values (0xff).
+> 
+> The SEV ASID space is split into SEV and SEV-ES/SNP ASID ranges.
+> Enabling ciphertext hiding further splits the SEV-ES/SEV-SNP ASID space
+> into separate ASID ranges for SEV-ES and SEV-SNP guests.
+> 
+> Add new module parameter to the KVM module to enable ciphertext hiding
+> support and a user configurable system-wide maximum SNP ASID value. If
+> the module parameter value is "max" then the complete SEV-ES/SEV-SNP
+> space is allocated to SEV-SNP guests.
+> 
+> v7:
+> - Fix comments.
+> - Move the check for module parameter ciphertext_hiding_asids inside
+> check_and_enable_sev_snp_ciphertext_hiding(), this keeps all the logic
+> related to the parameter in a single function.
+> 
+> v6:
+> - Fix module parameter ciphertext_hiding_asids=0 case.
+> - Coalesce multiple cases of handling invalid module parameter
+> ciphertext_hiding_asids into a single branch/label.
+> - Fix commit logs.
+> - Fix Documentation.
+> 
+> v5:
+> - Add pre-patch to cache SEV platform status and use this cached
+> information to set api_major/api_minor/build.
+> - Since the SEV platform status and SNP platform status differ, 
+> remove the state field from sev_device structure and instead track
+> SEV platform state from cached SEV platform status.
+> - If SNP is enabled then cached SNP platform status is used for 
+> api_major/api_minor/build.
+> - Fix using sev_do_cmd() instead of __sev_do_cmd_locked().
+> - Fix commit logs.
+> - Fix kernel-parameters documentation. 
+> - Modify KVM module parameter to enable CipherTextHiding to support
+> "max" option to allow complete SEV-ES+ ASID space to be allocated
+> to SEV-SNP guests.
+> - Do not enable ciphertext hiding if module parameter to specify
+> maximum SNP ASID is invalid.
+> 
+> v4:
+> - Fix buffer allocation for SNP_FEATURE_INFO command to correctly
+> handle page boundary check requirements.
+> - Return correct length for SNP_FEATURE_INFO command from
+> sev_cmd_buffer_len().
+> - Switch to using SNP platform status instead of SEV platform status if
+> SNP is enabled and cache SNP platform status and feature information.
+> Modify sev_get_api_version() accordingly.
+> - Fix commit logs.
+> - Expand the comments on why both the feature info and the platform
+> status fields have to be checked for CipherTextHiding feature 
+> detection and enablement.
+> - Add new preperation patch for CipherTextHiding feature which
+> introduces new {min,max}_{sev_es,snp}_asid variables along with
+> existing {min,max}_sev_asid variable to simplify partitioning of the
+> SEV and SEV-ES+ ASID space.
+> - Switch to single KVM module parameter to enable CipherTextHiding
+> feature and the maximum SNP ASID usable for SNP guests when 
+> CipherTextHiding feature is enabled.
+> 
+> v3:
+> - rebase to linux-next.
+> - rebase on top of support to move SEV-SNP initialization to
+> KVM module from CCP driver.
+> - Split CipherTextHiding support between CCP driver and KVM module
+> with KVM module calling into CCP driver to initialize SNP with
+> CipherTextHiding enabled and MAX ASID usable for SNP guest if
+> KVM is enabling CipherTextHiding feature.
+> - Move module parameters to enable CipherTextHiding feature and
+> MAX ASID usable for SNP guests from CCP driver to KVM module
+> which allows KVM to be responsible for enabling CipherTextHiding
+> feature if end-user requests it.
+> 
+> v2:
+> - Fix and add more description to commit logs.
+> - Rename sev_cache_snp_platform_status_and_discover_features() to 
+> snp_get_platform_data().
+> - Add check in snp_get_platform_data to guard against being called
+> after SNP_INIT_EX.
+> - Fix comments for new structure field definitions being added.
+> - Fix naming for new structure being added.
+> - Add new vm-type parameter to sev_asid_new().
+> - Fix identation.
+> - Rename CCP module parameters psp_cth_enabled to cipher_text_hiding and 
+> psp_max_snp_asid to max_snp_asid.
+> - Rename max_snp_asid to snp_max_snp_asid. 
+> 
+> Ashish Kalra (7):
+>   crypto: ccp - New bit-field definitions for SNP_PLATFORM_STATUS
+>     command
+>   crypto: ccp - Cache SEV platform status and platform state
+>   crypto: ccp - Add support for SNP_FEATURE_INFO command
+>   crypto: ccp - Introduce new API interface to indicate SEV-SNP
+>     Ciphertext hiding feature
+>   crypto: ccp - Add support to enable CipherTextHiding on SNP_INIT_EX
+>   KVM: SEV: Introduce new min,max sev_es and sev_snp asid variables
+>   KVM: SEV: Add SEV-SNP CipherTextHiding support
+> 
+>  .../admin-guide/kernel-parameters.txt         |  18 +++
+>  arch/x86/kvm/svm/sev.c                        |  96 +++++++++++--
+>  drivers/crypto/ccp/sev-dev.c                  | 127 ++++++++++++++++--
+>  drivers/crypto/ccp/sev-dev.h                  |   6 +-
+>  include/linux/psp-sev.h                       |  44 +++++-
+>  include/uapi/linux/psp-sev.h                  |  10 +-
+>  6 files changed, 274 insertions(+), 27 deletions(-)
+> 
+> -- 
+> 2.34.1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161713.RWu30Lv1-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   WARNING: invalid argument to '-march': '_zacas_zabha'
->> mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned long long [usertype] * @@
-   mm/maccess.c:41:17: sparse:     expected void const [noderef] __user *from
-   mm/maccess.c:41:17: sparse:     got unsigned long long [usertype] *
->> mm/maccess.c:43:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned int [usertype] * @@
-   mm/maccess.c:43:17: sparse:     expected void const [noderef] __user *from
-   mm/maccess.c:43:17: sparse:     got unsigned int [usertype] *
->> mm/maccess.c:45:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned short [usertype] * @@
-   mm/maccess.c:45:17: sparse:     expected void const [noderef] __user *from
-   mm/maccess.c:45:17: sparse:     got unsigned short [usertype] *
->> mm/maccess.c:46:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
-   mm/maccess.c:46:9: sparse:     expected void const [noderef] __user *from
-   mm/maccess.c:46:9: sparse:     got unsigned char [usertype] *
->> mm/maccess.c:73:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned long long [usertype] * @@
-   mm/maccess.c:73:17: sparse:     expected void [noderef] __user *to
-   mm/maccess.c:73:17: sparse:     got unsigned long long [usertype] *
->> mm/maccess.c:75:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned int [usertype] * @@
-   mm/maccess.c:75:17: sparse:     expected void [noderef] __user *to
-   mm/maccess.c:75:17: sparse:     got unsigned int [usertype] *
->> mm/maccess.c:77:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned short [usertype] * @@
-   mm/maccess.c:77:17: sparse:     expected void [noderef] __user *to
-   mm/maccess.c:77:17: sparse:     got unsigned short [usertype] *
->> mm/maccess.c:78:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned char [usertype] * @@
-   mm/maccess.c:78:9: sparse:     expected void [noderef] __user *to
-   mm/maccess.c:78:9: sparse:     got unsigned char [usertype] *
-   mm/maccess.c:98:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
-   mm/maccess.c:98:17: sparse:     expected void const [noderef] __user *from
-   mm/maccess.c:98:17: sparse:     got unsigned char [usertype] *
-
-vim +41 mm/maccess.c
-
-eab0c6089b6897 Christoph Hellwig    2020-06-08  15  
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  16  /*
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  17   * The below only uses kmsan_check_memory() to ensure uninitialized kernel
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  18   * memory isn't leaked.
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  19   */
-fe557319aa06c2 Christoph Hellwig    2020-06-17  20  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
-b58294ead14cde Christoph Hellwig    2020-06-08  21  	while (len >= sizeof(type)) {					\
-b58294ead14cde Christoph Hellwig    2020-06-08  22  		__get_kernel_nofault(dst, src, type, err_label);	\
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  23  		kmsan_check_memory(src, sizeof(type));			\
-b58294ead14cde Christoph Hellwig    2020-06-08  24  		dst += sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  25  		src += sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  26  		len -= sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  27  	}
-b58294ead14cde Christoph Hellwig    2020-06-08  28  
-fe557319aa06c2 Christoph Hellwig    2020-06-17  29  long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
-b58294ead14cde Christoph Hellwig    2020-06-08  30  {
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  31  	unsigned long align = 0;
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  32  
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  33  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  34  		align = (unsigned long)dst | (unsigned long)src;
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  35  
-fe557319aa06c2 Christoph Hellwig    2020-06-17  36  	if (!copy_from_kernel_nofault_allowed(src, size))
-2a71e81d321987 Christoph Hellwig    2020-06-08  37  		return -ERANGE;
-b58294ead14cde Christoph Hellwig    2020-06-08  38  
-b58294ead14cde Christoph Hellwig    2020-06-08  39  	pagefault_disable();
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  40  	if (!(align & 7))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @41  		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  42  	if (!(align & 3))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @43  		copy_from_kernel_nofault_loop(dst, src, size, u32, Efault);
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  44  	if (!(align & 1))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @45  		copy_from_kernel_nofault_loop(dst, src, size, u16, Efault);
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @46  	copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
-b58294ead14cde Christoph Hellwig    2020-06-08  47  	pagefault_enable();
-b58294ead14cde Christoph Hellwig    2020-06-08  48  	return 0;
-b58294ead14cde Christoph Hellwig    2020-06-08  49  Efault:
-b58294ead14cde Christoph Hellwig    2020-06-08  50  	pagefault_enable();
-b58294ead14cde Christoph Hellwig    2020-06-08  51  	return -EFAULT;
-b58294ead14cde Christoph Hellwig    2020-06-08  52  }
-fe557319aa06c2 Christoph Hellwig    2020-06-17  53  EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
-b58294ead14cde Christoph Hellwig    2020-06-08  54  
-fe557319aa06c2 Christoph Hellwig    2020-06-17  55  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
-b58294ead14cde Christoph Hellwig    2020-06-08  56  	while (len >= sizeof(type)) {					\
-b58294ead14cde Christoph Hellwig    2020-06-08  57  		__put_kernel_nofault(dst, src, type, err_label);	\
-e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  58  		instrument_write(dst, sizeof(type));			\
-b58294ead14cde Christoph Hellwig    2020-06-08  59  		dst += sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  60  		src += sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  61  		len -= sizeof(type);					\
-b58294ead14cde Christoph Hellwig    2020-06-08  62  	}
-b58294ead14cde Christoph Hellwig    2020-06-08  63  
-fe557319aa06c2 Christoph Hellwig    2020-06-17  64  long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
-b58294ead14cde Christoph Hellwig    2020-06-08  65  {
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  66  	unsigned long align = 0;
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  67  
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  68  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  69  		align = (unsigned long)dst | (unsigned long)src;
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  70  
-b58294ead14cde Christoph Hellwig    2020-06-08  71  	pagefault_disable();
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  72  	if (!(align & 7))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @73  		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  74  	if (!(align & 3))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @75  		copy_to_kernel_nofault_loop(dst, src, size, u32, Efault);
-2423de2e6f4d86 Arnd Bergmann        2021-08-11  76  	if (!(align & 1))
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @77  		copy_to_kernel_nofault_loop(dst, src, size, u16, Efault);
-fe557319aa06c2 Christoph Hellwig    2020-06-17 @78  	copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
-b58294ead14cde Christoph Hellwig    2020-06-08  79  	pagefault_enable();
-b58294ead14cde Christoph Hellwig    2020-06-08  80  	return 0;
-b58294ead14cde Christoph Hellwig    2020-06-08  81  Efault:
-b58294ead14cde Christoph Hellwig    2020-06-08  82  	pagefault_enable();
-b58294ead14cde Christoph Hellwig    2020-06-08  83  	return -EFAULT;
-b58294ead14cde Christoph Hellwig    2020-06-08  84  }
-ca79a00bb9a899 Sabyrzhan Tasbolatov 2024-10-16  85  EXPORT_SYMBOL_GPL(copy_to_kernel_nofault);
-b58294ead14cde Christoph Hellwig    2020-06-08  86  
-
-:::::: The code at line 41 was first introduced by commit
-:::::: fe557319aa06c23cffc9346000f119547e0f289a maccess: rename probe_kernel_{read,write} to copy_{from,to}_kernel_nofault
-
-:::::: TO: Christoph Hellwig <hch@lst.de>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
+Patches 1-5 applied.  Thanks.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
