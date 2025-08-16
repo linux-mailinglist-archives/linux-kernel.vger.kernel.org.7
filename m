@@ -1,169 +1,208 @@
-Return-Path: <linux-kernel+bounces-771864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFE0B28C59
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A42B28C5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01995AE4637
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF16A3B3EEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50F923F439;
-	Sat, 16 Aug 2025 09:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E92622FDEC;
+	Sat, 16 Aug 2025 09:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CGjmAFig"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TRWxEgvG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F7A194C75;
-	Sat, 16 Aug 2025 09:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ECD634
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336366; cv=none; b=DMe/2UeYU4S+rZQkZD1O+TELZzMD4ARUzzf4NHIbbl1z/h/w+UNHifQChPs22JorjMS87j0sSYdD0TaJGm4vqECY7TvRqsUAtQk4LWP7jzYrVF85IZg4nrvB+f2vJYzYl4og56l2wT4/+Ok8o541KeCTCXJrF+l2qmfyBcfRZP4=
+	t=1755336520; cv=none; b=dLKN0MwpzZqkK25hq/KauxY+7SL4TXS5DhZvE5j+/X8lvo6C840TmFaRkpaWDD++IQ5Idfwe+bTQ45rkZxe98ikrXGpyvGLtcjojsEuh52ZybY4vs1RgQUWzdJO+xclLBa6ww/txCCuMlHzmAQIkcyxXZ8VT5xRh9yKFnrEJ2P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336366; c=relaxed/simple;
-	bh=QvEU6HRO0DARKMydq9orO5i/PFQrv20H+oLTRghpq7w=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=UEOOHei0KKIq9lhfteVY0G0UaH4E4krMzVmUm+I1zoN4y+vDBzyHdvxqkA3nMRaVbjulT0St3wQl7p5ASsNtPvZ1wVMZB7BLn/ceLRduWr3Drb2vYmNK9FEHJy7HihMWDnwud0WyeCCGloZca/4mJKkQH0j4yH3UB8j+c8cPbEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CGjmAFig; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755336337; x=1755941137; i=markus.elfring@web.de;
-	bh=ygRsKx0lB8Er7OpZFhZCEN79wM6pfvOZNWmfxbSCU/M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CGjmAFigBIOAKV3SK59zAXQtjHvji5NMQ14hTRERTb+NgSzPL10Ej28vedhfmQDX
-	 96evRJVsPBvR2ugYCJ74u+SQUM4RJTd22QCMuNxLh9qkbnzhwE8RUMhBKEYYwH9PV
-	 RPDGjfftCzAubDpStO/TkX7WVHDCCKXhBW4br2l1RylGVeK7R4QGr9++ZoRdNoUrY
-	 OH6iA/pwjhfz9OErB9FjQWd1KtC+skHsGHyWDs2u6P0ag0pahqXI/Ut/uYqFnwX6V
-	 isdsiOzVBXrr3YtjDcvlYPSSj31SgpV9eYAzSlR1poUcBgIXhnUwyqBSJLBCfv6HD
-	 pTf+//vsJ5824b5KMQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.248]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMXxF-1v6f3v3XFv-00J9mY; Sat, 16
- Aug 2025 11:25:36 +0200
-Message-ID: <f9638a40-7927-4456-9b9d-d449c06b1070@web.de>
-Date: Sat, 16 Aug 2025 11:25:31 +0200
+	s=arc-20240116; t=1755336520; c=relaxed/simple;
+	bh=Rn9UConvvnSANKtYygpj4VC/hkURXLINnkb5ZsYqGlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ajr9hmpu97dENQXSeb2VJc8zDywE4yGpU+U2q6Y/iL+wdWaOAAYirm+AMOK22gfDAS97OuGrAvyTOROxgBPmV92UwLUpcB54dpxXhVklMicvuCErhebpB810mXe5Cs/PInkWnT/XCsarNMaH5m00l9SEq7GEQ6zIA4LTXMsYq+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TRWxEgvG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755336519; x=1786872519;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Rn9UConvvnSANKtYygpj4VC/hkURXLINnkb5ZsYqGlw=;
+  b=TRWxEgvGTORVP55Q30WH/uMSB36MzO7wpqU4SPcubFOriQ8gV+2p7zdH
+   2ju1042iRIPGh/rNbEXzM5uU4SiN3avpsrKLAm40bKKbZozcOTLuYULoV
+   vbqOsTuFqIN/epoI0ifl79vytseE9mn829/Zmb2fghkxjz74Q652JqALg
+   RS4JvlIVJFUonM3MiDY0q8kaGsszpOxpeqOz13wYPWEcHZmPVP9MO9Ati
+   nkIVBX/0HEwdEJOQGAP5RztPXCmfHeLJAcsiMlDroSYjxq2x7cqty5jkm
+   je/gXTjok4gaFjm6M16m6HB4pqY94YiJPtdZhwKlQt+dJMk56SsCxy5CF
+   g==;
+X-CSE-ConnectionGUID: sLNYg5iES0GsPUlcYlfkxw==
+X-CSE-MsgGUID: yErd5ld3Q1+O7NiDsB9aEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57353218"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57353218"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 02:28:38 -0700
+X-CSE-ConnectionGUID: 4J00drCaQ5+PqMTVmQOv9g==
+X-CSE-MsgGUID: XHhYQworS32YIkR1WP400g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167102001"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Aug 2025 02:28:36 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unDDF-000CmW-32;
+	Sat, 16 Aug 2025 09:28:33 +0000
+Date: Sat, 16 Aug 2025 17:28:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2
+ (different address spaces)
+Message-ID: <202508161713.RWu30Lv1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Abhijit Gangurde <abhijit.gangurde@amd.com>, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Allen Hubbe <allen.hubbe@amd.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Brett Creeley <brett.creeley@amd.com>, Jonathan Corbet <corbet@lwn.net>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Paolo Abeni <pabeni@redhat.com>, Shannon Nelson <shannon.nelson@amd.com>,
- Shannon Nelson <sln@onemain.com>, Simon Horman <horms@kernel.org>
-References: <20250814053900.1452408-2-abhijit.gangurde@amd.com>
-Subject: Re: [PATCH v5 01/14] net: ionic: Create an auxiliary device for rdma
- driver
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250814053900.1452408-2-abhijit.gangurde@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iauRxyQjADelyP2sFys0+KzZgu340c5fR0yRNILaMmNldQTIdsM
- CeEHBC2P0pBAN2+qIPwq5489DZ1b/svSfNPk4fDXoBoJ4wQ9Ze5+lXkYYQAvmGscPG1saVQ
- RiyyjdhktVdWsEJaf3cGI9KSRua3DSP8AwtL4F3mwO2baM6lE+7QHO6NSfK0fB6/GH5cHDZ
- rX4qof1IlRc4xj9MfnMZQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NQdwOQD4K88=;38XZtlDYX325gzU941eoHYLCE79
- 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
- f5Wq+JLTwVXwpeAzxdkTxxzBbcK9f/i/KzMHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/pensando/ionic/ionic_aux.c
-> @@ -0,0 +1,80 @@
-=E2=80=A6
-> +void ionic_auxbus_unregister(struct ionic_lif *lif)
-> +{
-> +	mutex_lock(&lif->adev_lock);
-> +	if (!lif->ionic_adev)
-=E2=80=A6
-> +out:
-> +	mutex_unlock(&lif->adev_lock);
-> +}
-=E2=80=A6
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   dfd4b508c8c6106083698a0dd5e35aecc7c48725
+commit: ca1a66cdd685030738cf077e3955fdedfe39fbb9 riscv: uaccess: do not do misaligned accesses in get/put_user()
+date:   2 months ago
+config: riscv-randconfig-r122-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161713.RWu30Lv1-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce: (https://download.01.org/0day-ci/archive/20250816/202508161713.RWu30Lv1-lkp@intel.com/reproduce)
 
-Under which circumstances would you become interested to apply a call
-like =E2=80=9Cscoped_guard(mutex, &lif->adev_lock)=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.16/source/include/linux/mutex.h#L225
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508161713.RWu30Lv1-lkp@intel.com/
 
-Regards,
-Markus
+sparse warnings: (new ones prefixed by >>)
+   WARNING: invalid argument to '-march': '_zacas_zabha'
+>> mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned long long [usertype] * @@
+   mm/maccess.c:41:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:41:17: sparse:     got unsigned long long [usertype] *
+>> mm/maccess.c:43:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned int [usertype] * @@
+   mm/maccess.c:43:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:43:17: sparse:     got unsigned int [usertype] *
+>> mm/maccess.c:45:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned short [usertype] * @@
+   mm/maccess.c:45:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:45:17: sparse:     got unsigned short [usertype] *
+>> mm/maccess.c:46:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
+   mm/maccess.c:46:9: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:46:9: sparse:     got unsigned char [usertype] *
+>> mm/maccess.c:73:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned long long [usertype] * @@
+   mm/maccess.c:73:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:73:17: sparse:     got unsigned long long [usertype] *
+>> mm/maccess.c:75:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned int [usertype] * @@
+   mm/maccess.c:75:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:75:17: sparse:     got unsigned int [usertype] *
+>> mm/maccess.c:77:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned short [usertype] * @@
+   mm/maccess.c:77:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:77:17: sparse:     got unsigned short [usertype] *
+>> mm/maccess.c:78:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned char [usertype] * @@
+   mm/maccess.c:78:9: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:78:9: sparse:     got unsigned char [usertype] *
+   mm/maccess.c:98:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
+   mm/maccess.c:98:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:98:17: sparse:     got unsigned char [usertype] *
+
+vim +41 mm/maccess.c
+
+eab0c6089b6897 Christoph Hellwig    2020-06-08  15  
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  16  /*
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  17   * The below only uses kmsan_check_memory() to ensure uninitialized kernel
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  18   * memory isn't leaked.
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  19   */
+fe557319aa06c2 Christoph Hellwig    2020-06-17  20  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+b58294ead14cde Christoph Hellwig    2020-06-08  21  	while (len >= sizeof(type)) {					\
+b58294ead14cde Christoph Hellwig    2020-06-08  22  		__get_kernel_nofault(dst, src, type, err_label);	\
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  23  		kmsan_check_memory(src, sizeof(type));			\
+b58294ead14cde Christoph Hellwig    2020-06-08  24  		dst += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  25  		src += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  26  		len -= sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  27  	}
+b58294ead14cde Christoph Hellwig    2020-06-08  28  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  29  long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
+b58294ead14cde Christoph Hellwig    2020-06-08  30  {
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  31  	unsigned long align = 0;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  32  
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  33  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  34  		align = (unsigned long)dst | (unsigned long)src;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  35  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  36  	if (!copy_from_kernel_nofault_allowed(src, size))
+2a71e81d321987 Christoph Hellwig    2020-06-08  37  		return -ERANGE;
+b58294ead14cde Christoph Hellwig    2020-06-08  38  
+b58294ead14cde Christoph Hellwig    2020-06-08  39  	pagefault_disable();
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  40  	if (!(align & 7))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @41  		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  42  	if (!(align & 3))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @43  		copy_from_kernel_nofault_loop(dst, src, size, u32, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  44  	if (!(align & 1))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @45  		copy_from_kernel_nofault_loop(dst, src, size, u16, Efault);
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @46  	copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
+b58294ead14cde Christoph Hellwig    2020-06-08  47  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  48  	return 0;
+b58294ead14cde Christoph Hellwig    2020-06-08  49  Efault:
+b58294ead14cde Christoph Hellwig    2020-06-08  50  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  51  	return -EFAULT;
+b58294ead14cde Christoph Hellwig    2020-06-08  52  }
+fe557319aa06c2 Christoph Hellwig    2020-06-17  53  EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+b58294ead14cde Christoph Hellwig    2020-06-08  54  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  55  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+b58294ead14cde Christoph Hellwig    2020-06-08  56  	while (len >= sizeof(type)) {					\
+b58294ead14cde Christoph Hellwig    2020-06-08  57  		__put_kernel_nofault(dst, src, type, err_label);	\
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  58  		instrument_write(dst, sizeof(type));			\
+b58294ead14cde Christoph Hellwig    2020-06-08  59  		dst += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  60  		src += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  61  		len -= sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  62  	}
+b58294ead14cde Christoph Hellwig    2020-06-08  63  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  64  long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+b58294ead14cde Christoph Hellwig    2020-06-08  65  {
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  66  	unsigned long align = 0;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  67  
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  68  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  69  		align = (unsigned long)dst | (unsigned long)src;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  70  
+b58294ead14cde Christoph Hellwig    2020-06-08  71  	pagefault_disable();
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  72  	if (!(align & 7))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @73  		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  74  	if (!(align & 3))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @75  		copy_to_kernel_nofault_loop(dst, src, size, u32, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  76  	if (!(align & 1))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @77  		copy_to_kernel_nofault_loop(dst, src, size, u16, Efault);
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @78  	copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
+b58294ead14cde Christoph Hellwig    2020-06-08  79  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  80  	return 0;
+b58294ead14cde Christoph Hellwig    2020-06-08  81  Efault:
+b58294ead14cde Christoph Hellwig    2020-06-08  82  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  83  	return -EFAULT;
+b58294ead14cde Christoph Hellwig    2020-06-08  84  }
+ca79a00bb9a899 Sabyrzhan Tasbolatov 2024-10-16  85  EXPORT_SYMBOL_GPL(copy_to_kernel_nofault);
+b58294ead14cde Christoph Hellwig    2020-06-08  86  
+
+:::::: The code at line 41 was first introduced by commit
+:::::: fe557319aa06c23cffc9346000f119547e0f289a maccess: rename probe_kernel_{read,write} to copy_{from,to}_kernel_nofault
+
+:::::: TO: Christoph Hellwig <hch@lst.de>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
