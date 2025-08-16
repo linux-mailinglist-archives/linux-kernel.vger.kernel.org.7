@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-772092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE4CB28EA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA70B28E8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC4D1C24236
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 862667B2BC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05BC2F39D2;
-	Sat, 16 Aug 2025 14:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BC02F39B5;
+	Sat, 16 Aug 2025 14:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b="xE5Av/Gm"
+	dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b="bYMNAbur"
 Received: from isilmar-4.linta.de (isilmar-4.linta.de [136.243.71.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F592DAFA0;
-	Sat, 16 Aug 2025 14:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B882F0C4A;
+	Sat, 16 Aug 2025 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.71.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755355950; cv=none; b=DpUoaTVoj014+EAEgApYjVX3UhVukO5p4uhGZiK4Jm/PNWtRmPCIUhGxhQKCjqmpVYX3WBsgLV6pNsQ0q7lJCcgXf5fbkv+ttNVlXrpkdO2Ufy8vFybnFSyQWNzAzJcfbv2jqq7Ll50rwpWuaoEgNV4wV/e8CZsVhWH3+RNsnZo=
+	t=1755355427; cv=none; b=RmkodBgu21DT6Oq2mzATEWs6JDu1C4+MMH+A4v+wIaYVIyAhafT34KJXkegClpsDYadpDPjknHTQfXG/lPOEB1UQEqPEjqW1S0wJxkwu0FGaWOVpv88Rik5GDl2tfTD1LTRPdHhCTAQcEHKeoDFLJFgusEBQVIn4rTUlZYrJoao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755355950; c=relaxed/simple;
-	bh=3do6237ns7Jz5GVPzNLh0umlxmUl0oaKcOpEPreWvws=;
+	s=arc-20240116; t=1755355427; c=relaxed/simple;
+	bh=pPS3+waBKJZuNb6253otbngG8ThZHROIxTa2swY+WYA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxJdoa13cz9pNE3G8rM0IjB4WucPIIzWPPOoVhhvkjmHOA0QrNXPsqojIlqzQXpn8EnhdUlO3I+w6p6begg7RlkjfZM4L9LkEQ51h2JK0GLs34tb4og/w13aUxuKM77pILGlhkEMelAw6cVDzRjIXyTOKz+fHEyfSCfIk9VOp+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net; spf=pass smtp.mailfrom=dominikbrodowski.net; dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b=xE5Av/Gm; arc=none smtp.client-ip=136.243.71.142
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrwEjbQoI5eYjUHfTNUWLtHafF0B733tP+JsMi6OWYhuIrrnfH3qZ/RaPkoKqPBezQoO4WAf7MWYJwbPCc65lXOG1s+HSTIKyZBYSxR3F4e7TZjk5cPx0J3W5O1S+H9SGU1lszrPE/YBk9VY/G0rjtjKtVKhvx01DS3qloMQVko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net; spf=pass smtp.mailfrom=dominikbrodowski.net; dkim=pass (2048-bit key) header.d=dominikbrodowski.net header.i=@dominikbrodowski.net header.b=bYMNAbur; arc=none smtp.client-ip=136.243.71.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dominikbrodowski.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dominikbrodowski.net;
-	s=k19.isilmar-4; t=1755355415;
-	bh=3do6237ns7Jz5GVPzNLh0umlxmUl0oaKcOpEPreWvws=;
+	s=k19.isilmar-4; t=1755355416;
+	bh=pPS3+waBKJZuNb6253otbngG8ThZHROIxTa2swY+WYA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xE5Av/Gmg0m6GPDiMyPYUz84tBhSOk1Hi5sHnSoq21aIwuix8GMu8MLECm6aaEjQt
-	 UjoGCcvanr5/QpGflDzt0fXqU3fpc0BBp3/+C0CMSC1pvtc7wMplMrs/ipRRXMzN83
-	 1m0ASOpTtwM23a9e2KzE2Pb4bVuC3aMwafMvdZZfxP5RODFCH4cRKKZ/guC668AxCS
-	 wzyd97L+omantHV/JxW3B5hySn756u1YpyqfQOVyvNRciaktp/ffGSB5o63/ljqQwd
-	 WP0ePctVssOq7dULxYCTBDh08HsIbHgdpTqHp6wkuQKi9Nw2XStbe5avBJvzOO7iFF
-	 XJkG/2aV9Ygtg==
+	b=bYMNAburrhC/oT4b3swyvRvlXyf3Q7IKHqdyfxntxB9TRJC0zatFNicoHqZV4EqYT
+	 rDxFQaPBLcf9fVGcbTkHBp2oiuxyXtXBN6JHn0zYS4N+U+GG5PYP8DmsG2iBXUSwFV
+	 J+7Gqmacd5GeqtY8AZZ5hZ+1Gy3Ur8YoRpZ8HQltGHhTE27Vyr+BbbfG73LqNsq/Gt
+	 Vemc6PnToVZYnCa/B2JS0+GsVLRSMbkYYoVdheA1e5BJf4NkavGS7nGpuGTW79QtUV
+	 /n0iNyKMDq0mp7gdiWTnZntplEHyAWsjTGc2trb1bye2YEc/n+RXVnX8Es3gXVX6Fl
+	 L9NboqNLHFohA==
 Received: from shine.dominikbrodowski.net (shine.brodo.linta [10.2.0.112])
-	by isilmar-4.linta.de (Postfix) with ESMTPSA id 094C320071C;
-	Sat, 16 Aug 2025 14:43:34 +0000 (UTC)
+	by isilmar-4.linta.de (Postfix) with ESMTPSA id 8AF3A20074E;
+	Sat, 16 Aug 2025 14:43:36 +0000 (UTC)
 Received: by shine.dominikbrodowski.net (Postfix, from userid 1000)
-	id 5559DA009E; Sat, 16 Aug 2025 16:42:15 +0200 (CEST)
-Date: Sat, 16 Aug 2025 16:42:15 +0200
+	id 8D5D9A00A2; Sat, 16 Aug 2025 16:42:31 +0200 (CEST)
+Date: Sat, 16 Aug 2025 16:42:31 +0200
 From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH RESEND] pcmcia: Fix a NULL pointer dereference in
- __iodyn_find_io_region()
-Message-ID: <aKCYx6-E-daskCzh@shine.dominikbrodowski.net>
-References: <20250812072509.472061-1-make24@iscas.ac.cn>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Lee Jones <lee@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Shaomin Deng <dengshaomin@cdjrlc.com>,
+	Jilin Yuan <yuanjilin@cdjrlc.com>, Mao Zhu <zhumao001@208suo.com>
+Subject: Re: [PATCH] pcmcia: ds: Emphasize "really" epizeuxis
+Message-ID: <aKCY182EIzEZCV4P@shine.dominikbrodowski.net>
+References: <20250811020436.13486-2-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +67,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812072509.472061-1-make24@iscas.ac.cn>
+In-Reply-To: <20250811020436.13486-2-bagasdotme@gmail.com>
 
-Many thanks, applied to pcmcia-next. This allocation is practically no-fail
-owing to GFP_KERNEL and the small allocation size, and rsrc_iodyn.c is on
-its way out, but it's better safe than to be sorry.
+Applied to pcmcia-next.
 
-Best,
+Thanks,
 	Dominik
 
-Am Tue, Aug 12, 2025 at 03:25:09PM +0800 schrieb Ma Ke:
-> In __iodyn_find_io_region(), pcmcia_make_resource() is assigned to
-> res and used in pci_bus_alloc_resource(). There is a dereference of res
-> in pci_bus_alloc_resource(), which could lead to a NULL pointer
-> dereference on failure of pcmcia_make_resource().
+Am Mon, Aug 11, 2025 at 09:04:37AM +0700 schrieb Bagas Sanjaya:
+> pcmcia_dev_present() comment writes about small timeframe where
+> the function returns NULL (racy condition), in epizeuxis device. In the
+> past, it tripped contributors who misunderstood it for "really"
+> duplicate ([1], [2]).
 > 
-> Fix this bug by adding a check of res.
+> Add comma between "really" words to emphasize the epizeuxis.
 > 
-> Found by code review, complie tested only.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 49b1153adfe1 ("pcmcia: move all pcmcia_resource_ops providers into one module")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Link: https://lore.kernel.org/all/YxT1As38WRZcyH0%2F@shine.dominikbrodowski.net/ [1]
+> Link: https://lore.kernel.org/all/20220831083623.GA25639@isilmar-4.linta.de/ [2]
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
->  drivers/pcmcia/rsrc_iodyn.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/pcmcia/ds.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pcmcia/rsrc_iodyn.c b/drivers/pcmcia/rsrc_iodyn.c
-> index b04b16496b0c..2677b577c1f8 100644
-> --- a/drivers/pcmcia/rsrc_iodyn.c
-> +++ b/drivers/pcmcia/rsrc_iodyn.c
-> @@ -62,6 +62,9 @@ static struct resource *__iodyn_find_io_region(struct pcmcia_socket *s,
->  	unsigned long min = base;
->  	int ret;
->  
-> +	if (!res)
-> +		return NULL;
-> +
->  	data.mask = align - 1;
->  	data.offset = base & data.mask;
->  
+> diff --git a/drivers/pcmcia/ds.c b/drivers/pcmcia/ds.c
+> index da6f66f357cc10..18f4eef28dbc5d 100644
+> --- a/drivers/pcmcia/ds.c
+> +++ b/drivers/pcmcia/ds.c
+> @@ -1308,7 +1308,7 @@ static int pcmcia_bus_early_resume(struct pcmcia_socket *skt)
+>   * physically present, even if the call to this function returns
+>   * non-NULL. Furthermore, the device driver most likely is unbound
+>   * almost immediately, so the timeframe where pcmcia_dev_present
+> - * returns NULL is probably really really small.
+> + * returns NULL is probably really, really small.
+>   */
+>  struct pcmcia_device *pcmcia_dev_present(struct pcmcia_device *_p_dev)
+>  {
+> 
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 > -- 
-> 2.25.1
+> An old man doll... just what I always wanted! - Clara
 > 
 > 
 
