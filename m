@@ -1,139 +1,290 @@
-Return-Path: <linux-kernel+bounces-771595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146CFB28933
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:22:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34923B28932
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309835C4263
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:21:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEEE1CC23F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864761DDF7;
-	Sat, 16 Aug 2025 00:21:35 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E97C8CE;
+	Sat, 16 Aug 2025 00:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ti40O1a"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E736BA4A;
-	Sat, 16 Aug 2025 00:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE82211C
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755303695; cv=none; b=ovfv6FJ1KEiV43LSCSgjmJGFQ1a7n46LiLbfNpaUVZFW6Doh36q94tBD+JRPaxRkmUsMig3jV8pPcyYAGqB9Tyr9GpjoTe3LxTZNdplYvjt0hdWJo2TMR6t14wRpFb5lBKEoMxsSRcHI/fJAY/6wsIe8YR5QHDNotf/wsngo+Zo=
+	t=1755303749; cv=none; b=qv/0Bxw7sqmtOvoNmRaQidJfUpGZhgOCMnCDe8QsdbUnLxMSdyOfYk6GJu9BfPchgOTlMiXCdBM7azh6tAvg+kmTFY5qDsExFJ29mWFpzqP43h8OiIScjPL139569+yYI1HEdM1sWJmr5R794WO/qrxlQQM+USVowyfcPKwQXEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755303695; c=relaxed/simple;
-	bh=whir1zdGiHIN02BGkjkiwOncIcFAOkCAozZd0GwWNP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cK/QwOABzZpCdqGUkR7IeKIpuW3i9DwCPpzoH2hHN2EOF1MIfVAuuYzVTQYA8BEcTRYHu2wxWdeY8tyycxwx6DmL3/ii6LAs9nBZRrwag1aageeRxi4xj74AgYfP/nhzQCLnR7n2tBStsPC++5c0zVn5PvdMNGyKxDr9gNG7ILw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c3fmB32TXzYQtsk;
-	Sat, 16 Aug 2025 08:21:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0848A1A018D;
-	Sat, 16 Aug 2025 08:21:29 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgD3A7YEz59on7ATDw--.30859S2;
-	Sat, 16 Aug 2025 08:21:25 +0800 (CST)
-Message-ID: <2f4b260d-a4a7-458f-966c-17fab945fc37@huaweicloud.com>
-Date: Sat, 16 Aug 2025 08:21:23 +0800
+	s=arc-20240116; t=1755303749; c=relaxed/simple;
+	bh=Wh3z6S19D84SL8OrP7UhmAFviWo7tPijNFSdv3grLXU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=J8/SbSQV5t1L7TfompoX2wwKH6W+RifOCAo2bZaCy4NcRA3uNSOBnHLNUwXBG8H3vTifhzGYMS9vgeMcGMny6AeDwsTF+fSr7RGRQRU7O9O8/07epM2XiWgR1x3SCPVdIwNp2wF3VCiqNhnZAFGI2q4ghoCFE63EwEOEiHx3qeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ti40O1a; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323266dcf3bso2244407a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 17:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755303747; x=1755908547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X3wBdk9H1Vt6sme48JNCL8OLAP+nfd/lh3+nxpJ1X4s=;
+        b=4Ti40O1aJGjorYjUrTXZsG8MBccSVbphUkt4/ie8WE8Pd0BHQDuprSfFKlN/z7QRIf
+         +eFERrI44UuUyIccNxFGIGR6y2JeBm3wmXDUDkdo8mhKQmYmvYM5ax8Ciy/FshikSrj5
+         4ytmDw2nAuK3CQxWElIw+WhQRYqjjevVd65ZWsa3bd/rnwVPshAM2hLz8RFujKzIM/O9
+         UEW6MZA0k/PQt5SkjvbaCAQadlvFJKa3FGglNY/MoyEkyWRGnGDvVP0+j476xLUH+Ak7
+         dQ4J9f56jmTVn427PTO2HynxMs54qtlf7js+sAAM/z9srkxDS68eYWeUyVUN2Oro6Tts
+         wrAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755303747; x=1755908547;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=X3wBdk9H1Vt6sme48JNCL8OLAP+nfd/lh3+nxpJ1X4s=;
+        b=d/+2VuXJflQLU6rQK24aH5Wtlvhc0e9fgbLRyXXVhdOxctQVjpgNrHJwCV+CWTk5tP
+         qm0cdqifzcA4ArDgbzDqvyWXX8o5a/ARCowFZgbL+oqJGstzMp0M1wG13VA3M5n5AgYC
+         zBTMf1FvgoD4CHpa8wj9S0xKqgb4CmuuuWWzfzn1d56kHkdzUZ/FuO0UZja4N0FTd++V
+         5D1u8Jxd7194ou2gBmpa7WTk8KM7M8LrB8TyWX/zS60lDxwfi0dWiGTHZBhLeMkf8sSZ
+         hjwlCbqvi032d2UGW8mQE4rRn9+fRq+EEcsQN63Ra4TybaRTnAn4mDNMPIx2ASQzNw0s
+         N0jw==
+X-Forwarded-Encrypted: i=1; AJvYcCX35lw9FwZEBHi4/JKRkwdfKfnsD9DXRvSEGawztAtWIGQy4LcUpG+GDPjKtXeA2+6nmW/c7BNDSKOwLRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnbtgP/o/htnYVbZ/p8q2UNn8lcmMh1Pkvtei2nPZ1u57h5lzA
+	NdpHC1Xc6DR4ffqV1EUQxDUwZ/Csyh+3VBVDKv3EBMMsrKLQX22YmU7bvqPwGiVPItmb2kv+zwn
+	kJ+4hfQ==
+X-Google-Smtp-Source: AGHT+IE/x8l+IwNZ3Owxqu+oRGM35gIi/2y5zovy6E25qA4AEQWyEFk/gxtzR51nhpfEcZGzA+9uX2edFJw=
+X-Received: from pjbqn6.prod.google.com ([2002:a17:90b:3d46:b0:31f:1a3e:fe3b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2588:b0:321:96da:79f9
+ with SMTP id 98e67ed59e1d1-3234224e0bamr5280234a91.34.1755303746879; Fri, 15
+ Aug 2025 17:22:26 -0700 (PDT)
+Date: Fri, 15 Aug 2025 17:22:24 -0700
+In-Reply-To: <CAAhR5DG+EMVbrdGaPoUiX3MtnVktFtdiY+dDjRhA9tugAoRTJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [-next v2 3/4] cpuset: separate tmpmasks and cpuset allocation
- logic
-To: Waiman Long <llong@redhat.com>, kernel test robot <lkp@intel.com>,
- tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com,
- christophe.jaillet@wanadoo.fr
-References: <20250813082904.1091651-4-chenridong@huaweicloud.com>
- <202508140524.S2O4D57k-lkp@intel.com>
- <bd043822-29b2-49f4-864d-6658741f572c@huaweicloud.com>
- <15b47a34-ea8a-4a07-bc1e-5ba886010721@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <15b47a34-ea8a-4a07-bc1e-5ba886010721@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgD3A7YEz59on7ATDw--.30859S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWfCryUtF1rWw47Kw4xXrb_yoW8Kr1fpF
-	W8Xa90yFs8Xr1xGan2gw1vvF1jgan5Jry5Wwn8Gr1UZFZFvF1UWr4I9r45WFnFg3ZagFyS
-	yFZxWFySvw1UuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Mime-Version: 1.0
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-7-sagis@google.com>
+ <aJpO_zN3buvaQoAW@google.com> <0c8d6d1c-d9e1-4ffd-bb26-a03fb87cde1f@linux.intel.com>
+ <CAAhR5DG+EMVbrdGaPoUiX3MtnVktFtdiY+dDjRhA9tugAoRTJQ@mail.gmail.com>
+Message-ID: <aJ_PQPkD3qrlW8jZ@google.com>
+Subject: Re: [PATCH v8 06/30] KVM: selftests: Add helper functions to create
+ TDX VMs
+From: Sean Christopherson <seanjc@google.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: Binbin Wu <binbin.wu@linux.intel.com>, linux-kselftest@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 15, 2025, Sagi Shahar wrote:
+> On Tue, Aug 12, 2025 at 11:22=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel=
+.com> wrote:
+> >
+> >
+> >
+> > On 8/12/2025 4:13 AM, Sean Christopherson wrote:
+> > > On Thu, Aug 07, 2025, Sagi Shahar wrote:
+> > [...]
+> > >> +
+> > >> +/*
+> > >> + * Boot parameters for the TD.
+> > >> + *
+> > >> + * Unlike a regular VM, KVM cannot set registers such as esp, eip, =
+etc
+> > >> + * before boot, so to run selftests, these registers' values have t=
+o be
+> > >> + * initialized by the TD.
+> > >> + *
+> > >> + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS=
+_GPA.
+> > >> + *
+> > >> + * The TD boot code will read off parameters from this struct and s=
+et up the
+> > >> + * vCPU for executing selftests.
+> > >> + */
+> > >> +struct __packed td_boot_parameters {
+> > > None of these comments explain why these structures are __packed, and=
+ I suspect
+> > > _that_ is the most interesting/relevant information for unfamiliar re=
+aders.
+> > I guess because the fields defined in this structure are accessed by ha=
+rd-coded
+> > offsets in boot code.
+> > But as you suggested below, replicating the functionality of the kernel=
+'s
+> > OFFSET() could get rid of "__packed".
+> >
+>=20
+> I agree, I think the reason for using __packed is because of the hard
+> coded offsets. I tried using OFFSET() as Sean suggested but couldn't
+> make it work.
+>=20
+> I can't get the Kbuild scripts to work inside the kvm selftests
+> Makefile. I tried adding the following rules based on a reference I
+> found:
+>=20
+> +include/x86/tdx/td_boot_offsets.h: lib/x86/tdx/td_boot_offsets.s
+> +       $(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
+> +
+> +lib/x86/tdx/td_boot_offsets.s: lib/x86/tdx/td_boot_offsets.c
+> +       $(call if_changed_dep,cc_s_c)
+>=20
+> But I'm getting the following error when trying to generate the header:
+>=20
+> /bin/sh: -c: line 1: syntax error near unexpected token `;'
+> /bin/sh: -c: line 1: `set -e;  ;  printf '# cannot find fixdep (%s)\n'
+>  > lib/x86/tdx/.td_boot_offsets.s.cmd; printf '# using basic dep
+> data\n\n' >> lib/x86/tdx/.td_boot_offsets.s.cmd; cat
+> lib/x86/tdx/.td_boot_offsets.s.d >>
+> lib/x86/tdx/.td_boot_offsets.s.cmd; printf '\n%s\n'
+> 'cmd_lib/x86/tdx/td_boot_offsets.s :=3D ' >>
+> lib/x86/tdx/.td_boot_offsets.s.cmd'
+> make: *** [Makefile.kvm:44: lib/x86/tdx/td_boot_offsets.s] Error 2
+>=20
+> For now I can add a comment on the __packed and add a TODO to replace
+> it with OFFSET. I think that making OFFSET work inside the kvm
+> selftests will require more expertise in the Kbuild system which I
+> don't have.
 
+No, I don't want to punt on this.  I don't care about __packed, I care abou=
+t the
+maintenance and review costs associated with hand coding struct offsets in =
+.S
+files.
 
-On 2025/8/16 3:15, Waiman Long wrote:
-> 
-> On 8/14/25 8:44 PM, Chen Ridong wrote:
->>
->> On 2025/8/14 5:28, kernel test robot wrote:
->>> Hi Chen,
->>>
->>> kernel test robot noticed the following build warnings:
->>>
->>> [auto build test WARNING on tj-cgroup/for-next]
->>> [also build test WARNING on linus/master v6.17-rc1 next-20250813]
->>> [If your patch is applied to the wrong git tree, kindly drop us a note.
->>> And when submitting patch, we suggest to use '--base' as documented in
->>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>>
->>> url:   
->>> https://github.com/intel-lab-lkp/linux/commits/Chen-Ridong/cpuset-remove-redundant-CS_ONLINE-flag/20250813-164651
->>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
->>> patch link:    https://lore.kernel.org/r/20250813082904.1091651-4-chenridong%40huaweicloud.com
->>> patch subject: [-next v2 3/4] cpuset: separate tmpmasks and cpuset allocation logic
->>> config: x86_64-defconfig
->>> (https://download.01.org/0day-ci/archive/20250814/202508140524.S2O4D57k-lkp@intel.com/config)
->>> compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
->>> reproduce (this is a W=1 build):
->>> (https://download.01.org/0day-ci/archive/20250814/202508140524.S2O4D57k-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202508140524.S2O4D57k-lkp@intel.com/
->>>
->>> All warnings (new ones prefixed by >>):
->>>
->>>>> Warning: kernel/cgroup/cpuset.c:422 function parameter 'pmasks' not described in 'alloc_cpumasks'
->> Hi all,
->>
->> Thank you for the warning about the comment issue - I will fix it in the next version.
->>
->> I will be appreciate if you can review this patch. If you have any feedback, I can update the entire
->> series together.
->>
-> Sorry for not responding to this patch. It looked reasonable to me. I did miss the error in the
-> comment though. Fortunately it was caught by the test robot.
-> 
-> Cheers,
-> Longman
+The problem is this line:
 
-Thank you for your feedback.
+	$(call if_changed_dep,cc_s_c)
 
--- 
-Best regards,
-Ridong
+IIUC, the kernel's "generic" command for generating a .s file from a .c fil=
+e
+assumes various paths and flags, which doesn't play nice with KVM selftests=
+'
+unusual setup.
+
+We could fudge around that by defining a custom command, e.g.
+
+	cmd_kvm_cc_s_c =3D $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -S $< -o $@
+
+but that just runs into more problems with the build system (variables not
+defined, more assumptions about the environment, etc).
+
+AFAICT, there's no need to use if_changed_dep, i.e. fixdep.  KVM selftests
+generate dependencies using standard mechanisms, and they appear to work as
+expected for this case, so just omit the if_change_dep and let the existing
+dependency stuff do its magic.
+
+This could be tidied up, e.g. add kbuild.h to tool/s, and is obviously inco=
+mplete,
+but it works.
+
+---
+ tools/testing/selftests/kvm/Makefile.kvm      | 13 ++++++++++
+ .../kvm/lib/x86/tdx/td_boot_offsets.c         | 25 +++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets=
+.c
+
+diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selft=
+ests/kvm/Makefile.kvm
+index 438502e02a0f..1fec90da15a1 100644
+--- a/tools/testing/selftests/kvm/Makefile.kvm
++++ b/tools/testing/selftests/kvm/Makefile.kvm
+@@ -237,6 +237,9 @@ OVERRIDE_TARGETS =3D 1
+ include ../lib.mk
+ include ../cgroup/lib/libcgroup.mk
+=20
++include $(top_srcdir)/scripts/Kbuild.include
++include $(top_srcdir)/scripts/Makefile.lib
++
+ INSTALL_HDR_PATH =3D $(top_srcdir)/usr
+ LINUX_HDR_PATH =3D $(INSTALL_HDR_PATH)/include/
+ LINUX_TOOL_INCLUDE =3D $(top_srcdir)/tools/include
+@@ -326,18 +329,28 @@ $(LIBKVM_C_OBJ): $(OUTPUT)/%.o: %.c $(GEN_HDRS)
+ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
+=20
++$(OUTPUT)/lib/x86/tdx/td_boot.o: $(OUTPUT)/include/x86/tdx/td_boot_offsets=
+.h
++
+ # Compile the string overrides as freestanding to prevent the compiler fro=
+m
+ # generating self-referential code, e.g. without "freestanding" the compil=
+er may
+ # "optimize" memcmp() by invoking memcmp(), thus causing infinite recursio=
+n.
+ $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
+=20
++$(OUTPUT)/lib/x86/tdx/td_boot_offsets.s: lib/x86/tdx/td_boot_offsets.c
++	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -S $< -o $@
++
++$(OUTPUT)/include/x86/tdx/td_boot_offsets.h: $(OUTPUT)/lib/x86/tdx/td_boot=
+_offsets.s FORCE
++	$(call filechk,offsets,__TDX_BOOT_OFFSETS_H__)
++
+ $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
+ $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
+ $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
+ $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
+ $(TEST_GEN_OBJ): $(GEN_HDRS)
+=20
++FORCE:
++
+ cscope: include_paths =3D $(LINUX_TOOL_INCLUDE) $(LINUX_HDR_PATH) include =
+lib ..
+ cscope:
+ 	$(RM) cscope.*
+diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c b/to=
+ols/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c
+new file mode 100644
+index 000000000000..622f9a19ca30
+--- /dev/null
++++ b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: GPL-2.0
++#define COMPILE_OFFSETS
++
++#include <linux/kernel.h>
++
++#include "tdx/td_boot.h"
++
++#define DEFINE(sym, val) \
++	asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" (val))
++
++#define BLANK() asm volatile("\n.ascii \"->\"" : : )
++
++#define OFFSET(sym, str, mem) \
++	DEFINE(sym, offsetof(struct str, mem))
++
++#define COMMENT(x) \
++	asm volatile("\n.ascii \"->#" x "\"")
++
++static void __attribute__((used)) common(void)
++{
++	BLANK();
++	OFFSET(TD_BOOT_cr0, td_boot_parameters, cr0);
++	OFFSET(TD_BOOT_cr3, td_boot_parameters, cr3);
++	OFFSET(TD_BOOT_cr4, td_boot_parameters, cr4);
++}
+
+base-commit: 04b916993b06d35ec96a5324e0ed93d1eb115dbd
+--=20
 
 
