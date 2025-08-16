@@ -1,149 +1,229 @@
-Return-Path: <linux-kernel+bounces-771988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB90B28D89
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:04:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC3FB28D8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7CAAA05BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EDD1CE04FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CD8238C0B;
-	Sat, 16 Aug 2025 12:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73518284B41;
+	Sat, 16 Aug 2025 12:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU42HziR"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="B+xE5h8X"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013060.outbound.protection.outlook.com [40.107.44.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A8023A9B3
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 12:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755345889; cv=none; b=HAG6HgPuYL741OMHDeT9dz2fY1qAl62AX3+FCwlI9EZq4LHxWwoG15yThB/Q+c2MQd9qdQdIicJ55HRu80stDzJqwFa1HvpVQNInQ2oYMYwWKos/d0Gv2Lw80yGG+HjOUwBwI6FjB0Bf0bNe4he89XTfD7g5sXK1GzOqSnZINec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755345889; c=relaxed/simple;
-	bh=mulRtUHIc8N/PIE49kqXvQyyxUYOjPvvgXlMpQ3e0+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VVxNiUB12kNjQRFs96iFPhd2nX73+ckeL/r9K+J2MqmF46FRQzYqUFWAVii9sQWwub76+lJtstWVd3wzLfwcFALx8Tv6Vg+5afaQe+V1E0P7gDjFiUK5sIPfUCG8FoyRg070VZ9ZyjX+yLvBit6LfCYCR9odQNspZIap9gAMA+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EU42HziR; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32326de9f4eso2515530a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 05:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755345887; x=1755950687; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IRXV44PwQfVfLgImJrTaANIWIbJbHaU92U/BzopGLSg=;
-        b=EU42HziRA7BEvoHO2cKlQIMSEfeniIGWhK++CxVBH4OQTNC8/w2PqXzpf4O9KWnyIh
-         PwWSyXKGftiQdBTpVaLLVsURwM/2mgrXoGI/pyu8H+sNIra6e3wzYYOunfLpIywH1FdA
-         zwJ/CmmuSRsk92K8xdDE8oRHtT/Ws/dLe9sSAEe9kDtTe1mXmErVNSRK7MTR+frhygOX
-         7NVMxN+n6BvCZ6HFV55KtLwhmpYV7L7dQRH2uEZ+/oIF1a4HGjWaa6CYfRsSBfFqrYNm
-         nPyVfkqRtFvb2smPVYehB9eIxNcA07KAzoq3B7Hwuo1t65ThNzIHBElHwcuXSbO7+N9L
-         u4LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755345887; x=1755950687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IRXV44PwQfVfLgImJrTaANIWIbJbHaU92U/BzopGLSg=;
-        b=ie9WWnQx7EVcZnKQZILQkJVcPrQ5M5AOjWjfAgtV2OY90Dnqd9gtGdBM+UePQ5RPCg
-         WMWB3UhMmTwrKy1NcFQ5d0JPuuLocM8doQgXDQ4Bk6VV+FJRuE4pKcR47gCFC/YWRW8A
-         4rx3g1WZgWcHuJzT46iNoxS66XlA4VsCu7zHV8ty4P+viUsaLlHaD2BwA+6aARlyH2Lx
-         kQDOIAIjxkdKAl77NNh2u/1CJ3alPg6584Y2r07CAZYqq2sz7i4Cl4EdmNkj0iudLIMD
-         ++P0JDfIXAY7fXlDt5gK4xJy5BiLKXzXXKW54zbUtO6ttDElOFdzPWULKuuF8j+E19rt
-         eX/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTYbAizRXfFzpsAoZDFmOI8BP3CWpN+PUiUVy19cDn35cM1s5kM1RRsOy/F5pS+oVNz6rr6mmIAWB7a9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNPNfG4CeBqr+ku12RubOT3vUFz07A6kG5JjeAdNPQFVQ9CIAV
-	0Bt3ffMlyAakdP7lNwOGqDZmwX6+NlhFn57bSh9sOzVCi2XZDPpPB7JogtgU3gSzDtZDb1k4G2T
-	VNMm25wGOrWq7vo6OOK/xlz79OIWIp48=
-X-Gm-Gg: ASbGnctX8Hwtuucz5EBuWG/5Uqz5UQ//A+BDx2mZdKZRszsL885pd/dtmqaDmHJFVp7
-	dAghVlWLCmOQWh74Tiix5vGa24rHXw8Q9MjBTWb2Y8G3FaDyttWHnhjpgn3APWsgcpUDrcqiBEf
-	U4ljGBC2kVw8gxkjzqGOqV6GCsWuFu/gsHO/i3Kzo3+qdE2zjpP5tN0nwNtKFx1UH6r/R7KWTgV
-	S2VR1c=
-X-Google-Smtp-Source: AGHT+IEW1BFzCpzoqiXUOA9dcgpirpe98DZsv4T2hWuFQBIy8Cc9tbAXcYnphe1Vm1b/ToGV0aR8irsU9X8+iz/50nA=
-X-Received: by 2002:a17:90b:5643:b0:321:9536:4b69 with SMTP id
- 98e67ed59e1d1-3234223a401mr7394867a91.27.1755345886931; Sat, 16 Aug 2025
- 05:04:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A1F22083;
+	Sat, 16 Aug 2025 12:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755345925; cv=fail; b=Shjh35VJHLITy0epfSQtRmrtRnkt9Jg1MEbWF2AZH0KVHhPkipoPxnGdU1XH6+HFCDpYqtBsGXBJOz2MXdjqEEIFrC0uKKhtwqRKbEq5rD8R3/kBM4eFNgR2yK9Z0QDA5WnJVPIrHRXN+52ccWnB4CV6m5fitAFTf7a88yKEACo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755345925; c=relaxed/simple;
+	bh=9gE2kNiKUL8UjIipRx0xBKcG+YLr/JcKitLYF08Vx7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gcSeDG+NUSA3yKpMQYchN5yhN0Z7U718fmH6Zv3Ecc0oKUU4yDvxC57PtUS0q2rwR3yicrLowaBitzrq2xf5uDoGxKbqrsLt1UJABM6CI3Mfs4QHEAlrUK4odkJ4tjL3wD+4igvTflKokYAFtkkZDw8K0oEVs5YpABxXZaFLNpg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=B+xE5h8X; arc=fail smtp.client-ip=40.107.44.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iZUv8jqS/FD+cd1QbWNepLPBq9K6DFW/7eZDnCZuEzcCRYdLR596+tXfrRpX47PH/WRkZApaI9Becug+5QZjog5OV9VU74zk686yj0hpBh8A7+LjJ60mWRECdrR4HuLUQDme2NFryavVtos4CT96SoREJgirT7+Bf1fg+gOVQji9cut+5jL+TEgiaXcolUwsxgZdH7bPuCbQyzuNPRYoax4yURB8PCEq8gKD8vChc1q5PhxghW3St3475vqgPoD3tD89QiPyCNcEgb+TGzapr8Lw0y2V83db5pJbKLA6xu1onnMR0Y11wauVEr63Mz0ZYRUFm1qMg7of5tMfrnlNsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iyAU2ucGBCSxJOjpQbRRiMtIFA7qkdbczuLoJnM94ds=;
+ b=g1f2PR0oTdeyQmviULXTOmK5IKq2oXt5/vk8IY5/s3gkJRgZuduM/98Bo+Gvem8TXaJk1zB1tWQ1w2HzpBPq9dEIooGGZcwThtTx42gr/dsmR67HzYuL4djDedAlpDQZAho/PonRtSL8L2pLrfHj94PMkJeAd6W1LhAZ9MA/NM3B2ns3My3PDAloArTN/2ThkYxm1tS12bo2rEI76DI2C6XH+GYdhR2Psck9kFgBUrrZXQWoE3+n0NhseOP/0DXuPYfVF9xZz3QvQ0Wtc9zo3ZRlStrfeJNVQP3LdNWtzvY5i7IUfuKD7Pq9imGQGjW0vkAfbgflpt60EeoPXsoFHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iyAU2ucGBCSxJOjpQbRRiMtIFA7qkdbczuLoJnM94ds=;
+ b=B+xE5h8XZFerNlz1q+BvuQu+SbmJJD1IF2vnV6BxmEGRC7Eqm9+6XfKBvwH7YjiHwLHvU34/s5q0jILIa8doC6ihMkJELwtHgZ3m3IkesaWv1mdlmUKC7TBkWkJ6BBlichh+UHehYyNxqk2pT2JY4ljOeykfYrrdSpNy82+DyBHhMLkw9Y7nPvvzr+lkeo2d7LtYktrA/rwva/TKQ7v7B1bqy9+/NiMQJ8Bgwn5ZTS6hx2T3ri2YIAz5hjxR1H4AJspTzeDWmiTrYZ9MkxAqrIyuSpHZGKJG5m+7PkFjw9pm71NEljROxJojN/foiYC+IMM/GxDOhIhqYOqqZjwIRQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEZPR06MB6599.apcprd06.prod.outlook.com (2603:1096:101:17e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Sat, 16 Aug
+ 2025 12:05:20 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.018; Sat, 16 Aug 2025
+ 12:05:20 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH v2] iio: imu: use min() to improve code
+Date: Sat, 16 Aug 2025 20:05:09 +0800
+Message-Id: <20250816120510.355835-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0016.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::6) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729174332.3acd1a86@gandalf.local.home>
-In-Reply-To: <20250729174332.3acd1a86@gandalf.local.home>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Sat, 16 Aug 2025 14:04:34 +0200
-X-Gm-Features: Ac12FXwfJHuPg0toK2krfbOjtNVdPZv0eGEVf1bRzqtiV5xVp7KgQjTukRbf9iY
-Message-ID: <CAFLxGvxZJv_A+YKCxVcd4yxPXLhHD5L9VzkvbFKPytxXc5vWaw@mail.gmail.com>
-Subject: Re: [GIT PULL] runtime verification: Updates for 6.17
-To: Steven Rostedt <rostedt@goodmis.org>, rmk+kernel@arm.linux.org.uk
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Gabriele Monaco <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>, 
-	John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB6599:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6335b491-1a90-49fb-885c-08dddcbd2bc5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6VPUQyUzsIaDNhSi56mpTgMagCL1mY3xqsb/ROo9dh6rr0nBYAnbpiOtiFfk?=
+ =?us-ascii?Q?mnCI0Qyg31vhWXXcbBbHd79Qd7JV5k7SAhqGt94Dzq04VgOO8ZEPhhbN9Mjo?=
+ =?us-ascii?Q?OkIrS4lmtWXffe9QI1N6PtHtVNZsezEqjVHHoMxkXZ9p1U43ELaqT1lu4hb6?=
+ =?us-ascii?Q?gwRkQUTWv8DdNTBvSAmbog07KcHXNqEWJ0q4rCbxPQZFEyunStJ+yuVr3vE1?=
+ =?us-ascii?Q?tCR38vxWG79gU96NYEALl1Gkj2zwSxpeDffhBGILpgmaDx539qJ0kUho5kV/?=
+ =?us-ascii?Q?miIAjOwDVzUrQX5vaiiEkleYjuHW1x1PHx5JAxgUJo0tZT1s9j39dpCTL+mK?=
+ =?us-ascii?Q?V59ML9HnLh9+gJoPF+mxI65mC+L52rLfPjJEX8DyYlvEXtIP/mlIkRM2hrjl?=
+ =?us-ascii?Q?FT0Fy4gizsuBfkM95qqEQ7ePIu4D6HkeW9wwQqg6sMt62oTzzEzkqqRZ6wCN?=
+ =?us-ascii?Q?xZmlHRCpE5jvUJUdIXUEs3KJuc5fn4ANup2PGia9Wy0i2PRnoyQDjqkOzhto?=
+ =?us-ascii?Q?lbkRwUsQkzVKRh5EqvvxltLkKqf1FibvvbCkexfnP7b+RnOwjN2lLcgQqDdR?=
+ =?us-ascii?Q?lM7r0K02FReIANAhd86Bbi7pntUg9BGYnwPvTR8d7ofOutwV1SmtN+5kTjlq?=
+ =?us-ascii?Q?SjCkc39j9i/qMxTzZM4QgF6mKs1UBCM99gZvhu9AAV2aoyYV12kcy/HICWuD?=
+ =?us-ascii?Q?w8QpTShN8EEj5zDuZtHUJlgkQxhOjD2Uw1X6GPN3BksJsjrz5O2mlSiKZYoR?=
+ =?us-ascii?Q?xj8F5NMFuh8L23yLGHIqvCoDtss+NcGnoO1X62AEa7mf4Gi7w6gH401yITVC?=
+ =?us-ascii?Q?13PlUe83kBlH3ikkhjy+pdcF1ez+VNRZqP7X3NefpBzIWC77xDe/MwIEd7UI?=
+ =?us-ascii?Q?ym3iyI5QUh0oCiCm3D4uy/kp9d7vb+Fd/GYAc54oDo2iyCWwLCN1/9yBEOIB?=
+ =?us-ascii?Q?4ut09f9yeuUy+zzQkMGnqfgK6SMlEipGTTFQntPSOhsIkDWAGyIudm9ng3Vu?=
+ =?us-ascii?Q?I5l8B9MYRbSOp68hVnu7HluPNbDOCyhbF9x2VtjRnaaAoxnR9pjpgCXRAXJb?=
+ =?us-ascii?Q?Zx800HJdlWTKplUXsRq3wxR6hpFV9m4XE37QEj0UJbq70PVn/JOA0FocW2sM?=
+ =?us-ascii?Q?2DrsnjZJLEReZc+KUTUnLW92ZwdztUGHTAEuJVngfif3pdNgtrogV3b6xeqw?=
+ =?us-ascii?Q?kta8ODPtrVx0AaXdxRQ72kzXfap3wP2pR0AvRZ6J3Uyev/b1/1GpxLE2tPH2?=
+ =?us-ascii?Q?sQup8u0cGbxzjaeQoPttg/DHWkRG2Fezrv1T6vkT/8jnSGtBlPYS2b4nnJQS?=
+ =?us-ascii?Q?g0KqYqDp7XhnQp1kHxavMVMv19HWdvlaLpaPLBdvpJ+Rt3ps4OtB0yEO93hf?=
+ =?us-ascii?Q?MLNXXeeOnFCO7DOI6XfPWvgrQd2X/ccpL1pisyQBSQBG0teFI9170UfndtD+?=
+ =?us-ascii?Q?C8/DY2JtNomt/UmQKli+OmL2xiUUyaXReWS4mg0p4CJMRxgt8pd9yg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8mI1enieTUSiCZ7ztFJ5mogqUbvJ789o5xCy0NWfyU/l+eGxOhOGKF/oCNjq?=
+ =?us-ascii?Q?yGoD1TUkoT4HPSn6FXGgD/5oo6joNsRIMOsXUse578Rpj1/8z6/txbni9BLc?=
+ =?us-ascii?Q?zwfO7GaRQbjvrPxnVoF2fAwup4OA4V+HIB7hoyWS7TFb4aEBC2HEntfZOLbI?=
+ =?us-ascii?Q?OFmfn0eQtwfdS5vfzNZ+WijqZTTRMbt449ENs+O7Llpcw+FmFW4Q5vr4AFHQ?=
+ =?us-ascii?Q?XSAlXZMImc2QikxwD7nilWeAJHtjmxMZGpbeLbrrTwNyT+wEWcCvlHMMLc7p?=
+ =?us-ascii?Q?B729cyOBXolGtD5UOkqnnwM/XMF+yB1S51YwG3YNzmBodhLp2vidMzyTYhOL?=
+ =?us-ascii?Q?owuVAZlSCfbs1WIz6bLm/C43OOF/4vzyy29r/qdGUz2T7UDzYX5UVwRqrbo+?=
+ =?us-ascii?Q?ms86AKv2mrMn/yTiLppVb+jOqjKcR7OauGS0jpYFvvhMUN7QNBp0seRfbU1o?=
+ =?us-ascii?Q?ri72yEu1bm2kB50pMjjmbpjh3HkV0scKExqDs6JAr6D63r49SRfd5UTlQ+0l?=
+ =?us-ascii?Q?WxCxbO45EmfrwzouPAMKtHIsfUfdrTNO1yfKHrXbfsouvGX3+HcfhwWBPiWT?=
+ =?us-ascii?Q?Q6cqNN6DJp1wQ1C7TPVK2ZdGidn5HapZz79I6/RGKjNrf52E/NZbsCU3DLKu?=
+ =?us-ascii?Q?0C2DyxpPQLH8AQmiwSrrqRJBmEjFVkZkkLrbsCe+QdFcMFrvXEd+Z3/qwg2G?=
+ =?us-ascii?Q?VhymdMah+AjYfJyR1hjJWs++sGUWe3EgiEtX/hYNz662HnSKDzr3onT/Ybi/?=
+ =?us-ascii?Q?t1C8RcP4TVj1qSp3w4YX4j35CZL8sF6k9G8hVx2VjNg7piZ05638qd/o7nRN?=
+ =?us-ascii?Q?F19KokY8mSnoUB1QlsI9j3wvdJ76eLZdAWLU9GQCG1FGB1QcpbEp61w/+eBQ?=
+ =?us-ascii?Q?JTYbBY+HU36bThxrLpLEuILBWlXq58WUAfk0yAkLupZ+RalVa7tsGo16laAa?=
+ =?us-ascii?Q?y3HYji4MpI+kgu0qNMPynIe5s8I5nAnZ7DcsTZW7mkmJUr+TpoUVH4J8IA8V?=
+ =?us-ascii?Q?JC8J/tWLO7xHQeM/eUoZ8JEzrBpQcwiMNbO/XvX4PaEwvfaWn2gvf4UcGdAm?=
+ =?us-ascii?Q?fIUOxIqpmBtYwoWB7MnO2oV5TYFaNZKkXAGdgAZ64aNaRjUC+rNUFsZerllj?=
+ =?us-ascii?Q?H7lv8Gf5wn+AQsr/NX1Eaair7O8iGhlKWAX2giBPpznUu86E/IizGTIZUX2F?=
+ =?us-ascii?Q?62EE/HmUlf1YJLyNGJ+yLMXL22Tk9X7Pkxb1YOjH9jJ0fzozXJQza/C33CWQ?=
+ =?us-ascii?Q?iyE93+FGsXSBU5NfFfkU9Q1hpoJzjePR7S5KlGUMczpPkCY0gb8Un0F5CJXb?=
+ =?us-ascii?Q?uFC+B2nBXRLuEce2pvleSVKJ0odibZDCbdk9+4OXXao2AW4HMBTK+lFLnB7v?=
+ =?us-ascii?Q?z+ScQgLoik9toFg8VHtWo8Gq94CpoAEcFFje7pPZo4fNAvw8hK1Hq0cHCDyX?=
+ =?us-ascii?Q?EnM3J5V+G+P2Yqa/cqw8XlCTbUi02XmvOzrf4evONsjQ+y0/0ISMZgVHk3cS?=
+ =?us-ascii?Q?r+EKIwvf+RVusnJ5UzS+wvPJH4CfJNS/6+F6+RLT61XtI/ap0JR3YpWjnyCm?=
+ =?us-ascii?Q?PMAsWAPoHtA7oBW7TBDvrSkUx98zJjF7UfdhwOrt?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6335b491-1a90-49fb-885c-08dddcbd2bc5
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 12:05:19.9853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l1VITZYmywjMr5KwHgiYusduM2wYVq9l4DqVyO+Ueqf5C2bOuULsfwoxhFy3pc3GrlXOfs99bO+MHuBvg+eU6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6599
 
-[Adding ARM folks]
+Use min() to reduce code in inv_icm42600_buffer_update_fifo_period()
+and inv_icm42600_buffer_update_watermark(), and improve readability.
 
-On Tue, Jul 29, 2025 at 11:43=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
-> Linus,
->
-> Runtime verification changes for 6.17
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+v2: Remove the redundant variable and comment as suggested by David.
+---
+ .../imu/inv_icm42600/inv_icm42600_buffer.c    | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-[...]
+diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
+index 7c4ed981db04..ca744aaee542 100644
+--- a/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
++++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/device.h>
++#include <linux/minmax.h>
+ #include <linux/mutex.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+@@ -100,7 +101,7 @@ ssize_t inv_icm42600_fifo_decode_packet(const void *packet, const void **accel,
+ 
+ void inv_icm42600_buffer_update_fifo_period(struct inv_icm42600_state *st)
+ {
+-	u32 period_gyro, period_accel, period;
++	u32 period_gyro, period_accel;
+ 
+ 	if (st->fifo.en & INV_ICM42600_SENSOR_GYRO)
+ 		period_gyro = inv_icm42600_odr_to_period(st->conf.gyro.odr);
+@@ -112,12 +113,7 @@ void inv_icm42600_buffer_update_fifo_period(struct inv_icm42600_state *st)
+ 	else
+ 		period_accel = U32_MAX;
+ 
+-	if (period_gyro <= period_accel)
+-		period = period_gyro;
+-	else
+-		period = period_accel;
+-
+-	st->fifo.period = period;
++	st->fifo.period = min(period_gyro, period_accel);
+ }
+ 
+ int inv_icm42600_buffer_set_fifo_en(struct inv_icm42600_state *st,
+@@ -204,7 +200,7 @@ int inv_icm42600_buffer_update_watermark(struct inv_icm42600_state *st)
+ {
+ 	size_t packet_size, wm_size;
+ 	unsigned int wm_gyro, wm_accel, watermark;
+-	u32 period_gyro, period_accel, period;
++	u32 period_gyro, period_accel;
+ 	u32 latency_gyro, latency_accel, latency;
+ 	bool restore;
+ 	__le16 raw_wm;
+@@ -237,13 +233,8 @@ int inv_icm42600_buffer_update_watermark(struct inv_icm42600_state *st)
+ 			latency = latency_gyro - (latency_accel % latency_gyro);
+ 		else
+ 			latency = latency_accel - (latency_gyro % latency_accel);
+-		/* use the shortest period */
+-		if (period_gyro <= period_accel)
+-			period = period_gyro;
+-		else
+-			period = period_accel;
+ 		/* all this works because periods are multiple of each others */
+-		watermark = latency / period;
++		watermark = latency / min(period_gyro, period_accel);
+ 		if (watermark < 1)
+ 			watermark = 1;
+ 		/* update effective watermark */
+-- 
+2.34.1
 
-> - Add a vpanic() to allow for va_list to be passed to panic.
-
-This change is causing a regression on ARM32.
-panic() no longer shows a proper stack trace.
-
-With this change:
-[    2.943690] Kernel panic - not syncing: VFS: Unable to mount root
-fs on unknown-block(0,0)
-[    2.950101] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
-6.17.0-rc1 #176 NONE
-[    2.950509] Hardware name: Generic DT based system
-[    2.950865] Call trace:
-[    2.951722]  unwind_backtrace from show_stack+0x18/0x1c
-[    2.953111]  show_stack from dump_stack_lvl+0x54/0x68
-[    2.953312]  dump_stack_lvl from vpanic+0xf8/0x388
-[    2.953526]  vpanic from __do_trace_suspend_resume+0x0/0x50
-
-With commit  3f045de7f5 "panic: Add vpanic()" reverted:
-[    2.680077] Kernel panic - not syncing: VFS: Unable to mount root
-fs on unknown-block(0,0)
-[    2.690241] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
-6.17.0-rc1-dirty #177 NONE
-[    2.690832] Hardware name: Generic DT based system
-[    2.691339] Call trace:
-[    2.692530]  unwind_backtrace from show_stack+0x18/0x1c
-[    2.694283]  show_stack from dump_stack_lvl+0x54/0x68
-[    2.694536]  dump_stack_lvl from panic+0x110/0x31c
-[    2.694944]  panic from mount_root_generic+0x1fc/0x2ac
-[    2.695399]  mount_root_generic from prepare_namespace+0x200/0x258
-[    2.695723]  prepare_namespace from kernel_init+0x20/0x140
-[    2.695974]  kernel_init from ret_from_fork+0x14/0x28
-
-The change itself looks fine, so I suspect it uncovers a deeper
-problem with panic().
-Maybe it changes the stack layout enough such that dump_stack() on
-ARM32 is no longer
-able to walk it? I'm using gcc 15.1.1, if this matters.
-
-To reproduce the issue using qemu, build a multi_v7_defconfig zImage and ru=
-n:
-qemu-system-arm -m 512 -M virt -kernel arch/arm/boot/zImage
--no-reboot -nographic -append "console=3DttyAMA0 panic=3D1"
-It will fail to mount a rootfs and panic.
-
---=20
-Thanks,
-//richard
 
