@@ -1,188 +1,224 @@
-Return-Path: <linux-kernel+bounces-771875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47445B28C73
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:33:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B9EB28C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7785C1C82374
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F561C82C64
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E0B24503B;
-	Sat, 16 Aug 2025 09:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="iUzjxrQy"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AFF24469A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF49244692;
 	Sat, 16 Aug 2025 09:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336791; cv=pass; b=PyiMgyrNToRF76Ku4NEVQlQ8wLyVf8BoNOrTu+dV90V56ctFb4bzUGDPZ4GgTlh6GsaWJnHleFgw/7Cd0msCs5/vdQihZ911kJUGOQzoA/wdWtHyu6CqUaKZJqS+umEtFrPJMASnvrPlVEw8Ux34YNCFq2YwqsawRUSuLBB8U24=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336791; c=relaxed/simple;
-	bh=BmlE93Zs1Qp2ycCVRZn6NL8x/s3gajsV6GrAT+07b6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p1CKAgqpJ3BJD5RFd0F/xDsCXngZxMA7wv7Xx68UsqnDPeVBe1x1hVi+oKopmi9MDxiuNJFYcaI7DMJNXHt5HPTDlI1cl1Fbu9WA63R4clkRbnxqQuQVlXLnNtyuZl7rXpq4dWIyLiVFkFZslWa/HrLmq2nvInayxGKjCe8y6C8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=iUzjxrQy; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755336781; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=W0sLdmC/dzTpbI8WbmZT8YwZeQwmhYwQV4QpaCbOCr9Jt72D65DCoj4QJ2Wg4Bn8clzui2oVabNIBJREggmUQpq/8AKWX3u9Ra4Yd65la25yOqDb5ZAX1gix0gcXLOrrttZAIfcvrQRTvSiPPdOVpqfUsjubZSa7snzqIZfBvkw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755336781; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+z/oVlLFF1PycSfqjySbob+HkdEI6/LSvl3u/uL2B6Y=; 
-	b=Wxug/1PhLezaZvsblAoh3ZoJ1pNCb81+3/Kj+6TZKRIFrAYznSl/gw/4uC75PC6OM4GYfrkCyjA6pFwopBuXeQvm2vQu7Q+HvmoKSdh6jbZmNubXce4bqLGosJNHF1QMd+/RiAwdPwrFtKqRlpPEU21IXzyzXmSC82rqJf1yrcU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755336780;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=+z/oVlLFF1PycSfqjySbob+HkdEI6/LSvl3u/uL2B6Y=;
-	b=iUzjxrQyI6HFaPu3MCLdm3l7YzqJrj9nWNy4mm9KDPRuPP7LgUnMpWQKZyhve+XC
-	CWGZpCLtJullORPPuA5FEQQDMZ3NM06wQu3oh2XK0GWtx2QBe3HxrSpO22uHMc6p4ZK
-	a7XQc0l6FF8Ne7IaII4LApHFq8eG15/yOAh3pYRc0J3zDycyfGoaP2Y4PGDaQlcrkzh
-	bgnlOCYBGTEpbpGU2qoFMjGtXJ2w8XhifWquMYFWjUcztm5vCvlaUByqaPUU3OLorVd
-	NwOkjs/hgF8z3gRSOmNa90hpvPfRXia+a9tYqjsGeqeTYHqO4MoqEJnrCx8jc5AxscE
-	dHNPqFtWrg==
-Received: by mx.zohomail.com with SMTPS id 1755336778054821.4036963515487;
-	Sat, 16 Aug 2025 02:32:58 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 3/3] riscv: dts: thead: th1520: add soft PWM fan for Lichee Pi 4A
-Date: Sat, 16 Aug 2025 17:32:09 +0800
-Message-ID: <20250816093209.2600355-4-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250816093209.2600355-1-uwu@icenowy.me>
-References: <20250816093209.2600355-1-uwu@icenowy.me>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7X2e6qe"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124CC23F40F;
+	Sat, 16 Aug 2025 09:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755336788; cv=none; b=PrmnRS/JhUc5Ab7tzh6IuSLTzuCMMgWHThvrJHa7zO6n3UVHCx39jvDa8RWmO/KqE4dMkrSWwWr1J2r2t4x1FcV2wVYQiSrMYd7WhSaA9fT/+ybrhx56WxKscIQI85Go/f1+BaPro6OTobGK0fvrFPwFlsZYMw3khQoN6+9VpH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755336788; c=relaxed/simple;
+	bh=hdiMuqUgn3hq9fvJi99uwhoP1Kg6ZzWdtYhvi9M7LI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j5he+/3w7Luo7eHBi3bEHQv/xvElb4sbVPv5ucKoYw83ggbkl3NA5n2R1yUs67u919vdclwk64PYk6bOVFdYS4zW5Hkod/aBNaOVtpHKjcJcD5b6xjNWDrfGF7I9TUMS1gJeDUmbNV71QaD4qZcHBFvyxyrXfYNwRTqWC36s62Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7X2e6qe; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9e4110df6so363682f8f.2;
+        Sat, 16 Aug 2025 02:33:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755336784; x=1755941584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Px5kT9Zj2OEa6lf/DpL6BrsHwqOYEXNq7iLeLvlTsBw=;
+        b=J7X2e6qeuP3EHGpkScroL60nUwlACJ5fO71Wn/lCNPMGmuRcSQaHkACdPTh+0uD0sT
+         k0nD6yXgGQ7yibWj6ukApzLlBodg8YCt8RmN0GOPbPrMTJvbTuFlORUh21cmtthZIBYQ
+         fECEWtGbBZWk5vB4P3C9tg//W+Om/RoAr1UMR+jOCkA48RZvTPQnUzWo4+c7GjQwrsr/
+         3YZ54Pb/KBaxr2r74F5oXJoMRtIMIFlp+7HUOHkHURzevdHAk9TPnYYY4frzbnxKfnq5
+         aS3qLAT4mjNO8ClmRlIUpihjVMeQz8f6CqPuaeqoDkFhYGUw2mEXCtCoLiPs7weDB3Do
+         3kkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755336784; x=1755941584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Px5kT9Zj2OEa6lf/DpL6BrsHwqOYEXNq7iLeLvlTsBw=;
+        b=jbQd73CaylP1PSRrLgBWE8XQj49R4wdrvv2fnN27wJFVnQfvVOwmG3dAMZ7Kha9Pru
+         F46ZYQO//TG+3FbHRCR8xo7UoztwdKlzVfz7/0FE6gjyUivM5owvjTNtnCAotMGWefVu
+         neLsZIWTZNjekqfAW4jobS43xEg1fQOKik3Y7TpuFUZOzt71LXsJJAwe5bOWpD97mqTi
+         IjQG9ZBU/+f8MKKoJF8N9FFxvbaHt/NoWXC1Fk1Op8DagHwb8OondtGqwF8FoVzK7ETI
+         V7Ou/XZYR3amnBeo6XpbXtvPW3zrTz6n8nLLfjXpQeD4WW8Brc4poTokyh/WWo3m2yZB
+         j1Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT51GvoDqTCHtczL9gLsPcDC9KYyp2Jn2sH3BAn2l/tMKbBEmxbtoIZhy0ro7tPRwNG3MktU2h@vger.kernel.org, AJvYcCVU9c3oMKDNlw5agOzs+97O/KSz4bTWywGH37oqmHt30+9qGKpk8BbYfpMAcnB9B9QXFWNwBGHogrcF8Ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZDZx+eaM0Ufp2PKpotGxT4rPMZLTFBWk6G5lecZlTh8tuJjA5
+	cRseu2hWZKIVaD6wjGnvL32MPa49Am2hrmJb3hkvb2c5GyNQ0ZK6bkUq
+X-Gm-Gg: ASbGnct7hC+8bRichG/mG59bofOoJ1jS+wEC+AtW0Xcr4lz+ns8eaJy6okkL6PV3CqR
+	i+w6N0AWzNseUj17uHQyZgg/K7VGAaKQfQa7Qg9FUdKq40Ml3FQHF8SiBSkAyH/NoMtLi+V+rdz
+	ai2pYL4qOCT6Ew2uMW3mHSePnKq0syhphddEF8TR9VDSeIOvhn7sWgqawd9gK977k0sCLxNNMTZ
+	ZfVJT5Oi09lrc5ov4ZIEE293rVxTtfaLaWxPBIT6P2LCTBuVeYuLIg1l0GXUYsvHFTdeI0mFJ5l
+	gB+a6RWzFhbxUQ4Pp1ptlNSIWZDEkp4zduSG8P2ba+1tyLWauXaNGhirazXlQM5b2GxcAN3MI4p
+	yptEZii8pjSQMmqp07G04HGHYU157fP4d2Smcid14rlNhfrQ/SLRw
+X-Google-Smtp-Source: AGHT+IHOKiBGjTArO+Umj5Qhqd1VsyKLXbP72Y00mZJdxOsRmVixr/6cIZOinpjUeu5gz+hEOi9gkA==
+X-Received: by 2002:a05:600c:444a:b0:459:d449:a629 with SMTP id 5b1f17b1804b1-45a21895202mr18979955e9.8.1755336783950;
+        Sat, 16 Aug 2025 02:33:03 -0700 (PDT)
+Received: from [192.168.100.4] ([149.3.87.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6475857dsm5171864f8f.2.2025.08.16.02.33.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 02:33:03 -0700 (PDT)
+Message-ID: <eab6a734-b134-41a4-b455-7269eaaf033e@gmail.com>
+Date: Sat, 16 Aug 2025 13:33:00 +0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: slub: avoid wake up kswapd in set_track_prepare
+To: Harry Yoo <harry.yoo@oracle.com>, yangshiguang1011@163.com
+Cc: vbabka@suse.cz, akpm@linux-foundation.org, cl@gentwo.org,
+ rientjes@google.com, roman.gushchin@linux.dev, glittao@gmail.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ yangshiguang <yangshiguang@xiaomi.com>
+References: <20250814111641.380629-2-yangshiguang1011@163.com>
+ <aKBAdUkCd95Rg85A@harry>
+Content-Language: en-US
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+In-Reply-To: <aKBAdUkCd95Rg85A@harry>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Because of the SoM+Dock design of Lichee Pi 4A, heat dissipation does
-not work well; fortunately it comes with a fan port with PWM driving
-capability.
+Rather than masking to GFP_NOWAIT—which still allows kswapd to be 
+woken—let’s strip every reclaim bit (`__GFP_RECLAIM` and 
+`__GFP_KSWAPD_RECLAIM`) and add `__GFP_NORETRY | __GFP_NOWARN`. That 
+guarantees we never enter the slow path that calls `wakeup_kswapd()`, so 
+the timer-base lock can’t be re-entered.
 
-As the hardware PWM controller of Lichee Pi 4A isn't ready yet, drive it
-with pwm-gpio driver (software PWM) now.
-
-A long PWM period is used, because not only software PWM is used, but
-also the fan port is a 2-pin one and fast PWM might confuse the BLDC
-driver on fans.
-
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
- .../boot/dts/thead/th1520-lichee-pi-4a.dts    | 53 +++++++++++++++++++
- arch/riscv/boot/dts/thead/th1520.dtsi         |  2 +-
- 2 files changed, 54 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8..f696db01353c5 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -4,6 +4,7 @@
-  */
- 
- #include "th1520-lichee-module-4a.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Sipeed Lichee Pi 4A";
-@@ -28,6 +29,58 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	gpio_pwm: gpio-pwm {
-+		#pwm-cells = <3>;
-+		compatible = "pwm-gpio";
-+		gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&gpio_pwm 0 100000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+};
-+
-+&cpu_thermal_zone {
-+	trips {
-+		fan_trip0: fan-trip-0 {
-+			temperature = <40000>;
-+			hysteresis = <8000>;
-+			type = "active";
-+		};
-+
-+		fan_trip1: fan-trip-1 {
-+			temperature = <50000>;
-+			hysteresis = <8000>;
-+			type = "active";
-+		};
-+
-+		fan_trip2: fan-trip-2 {
-+			temperature = <60000>;
-+			hysteresis = <8000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map-active-0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&fan_trip0>;
-+		};
-+
-+		map-active-1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&fan_trip1>;
-+		};
-+
-+		map-active-2 {
-+			cooling-device = <&fan 3 3>;
-+			trip = <&fan_trip2>;
-+		};
-+	};
- };
- 
- &padctrl0_apsys {
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index a48eca5def606..5ac8044a05f1e 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -703,7 +703,7 @@ gpio4: gpio-controller@0 {
- 	};
- 
- 	thermal-zones {
--		cpu-thermal {
-+		cpu_thermal_zone: cpu-thermal {
- 			polling-delay-passive = <250>;
- 			polling-delay = <15000>;
- 
--- 
-2.50.1
+On 8/16/2025 12:25 PM, Harry Yoo wrote:
+> On Thu, Aug 14, 2025 at 07:16:42PM +0800, yangshiguang1011@163.com wrote:
+>> From: yangshiguang <yangshiguang@xiaomi.com>
+>>
+>> From: yangshiguang <yangshiguang@xiaomi.com>
+>>
+>> set_track_prepare() can incur lock recursion.
+>> The issue is that it is called from hrtimer_start_range_ns
+>> holding the per_cpu(hrtimer_bases)[n].lock, but when enabled
+>> CONFIG_DEBUG_OBJECTS_TIMERS, may wake up kswapd in set_track_prepare,
+>> and try to hold the per_cpu(hrtimer_bases)[n].lock.
+>>
+>> So avoid waking up kswapd.The oops looks something like:
+> 
+> Hi yangshiguang,
+> 
+> In the next revision, could you please elaborate the commit message
+> to reflect how this change avoids waking up kswapd?
+> 
+>> BUG: spinlock recursion on CPU#3, swapper/3/0
+>>   lock: 0xffffff8a4bf29c80, .magic: dead4ead, .owner: swapper/3/0, .owner_cpu: 3
+>> Hardware name: Qualcomm Technologies, Inc. Popsicle based on SM8850 (DT)
+>> Call trace:
+>> spin_bug+0x0
+>> _raw_spin_lock_irqsave+0x80
+>> hrtimer_try_to_cancel+0x94
+>> task_contending+0x10c
+>> enqueue_dl_entity+0x2a4
+>> dl_server_start+0x74
+>> enqueue_task_fair+0x568
+>> enqueue_task+0xac
+>> do_activate_task+0x14c
+>> ttwu_do_activate+0xcc
+>> try_to_wake_up+0x6c8
+>> default_wake_function+0x20
+>> autoremove_wake_function+0x1c
+>> __wake_up+0xac
+>> wakeup_kswapd+0x19c
+>> wake_all_kswapds+0x78
+>> __alloc_pages_slowpath+0x1ac
+>> __alloc_pages_noprof+0x298
+>> stack_depot_save_flags+0x6b0
+>> stack_depot_save+0x14
+>> set_track_prepare+0x5c
+>> ___slab_alloc+0xccc
+>> __kmalloc_cache_noprof+0x470
+>> __set_page_owner+0x2bc
+>> post_alloc_hook[jt]+0x1b8
+>> prep_new_page+0x28
+>> get_page_from_freelist+0x1edc
+>> __alloc_pages_noprof+0x13c
+>> alloc_slab_page+0x244
+>> allocate_slab+0x7c
+>> ___slab_alloc+0x8e8
+>> kmem_cache_alloc_noprof+0x450
+>> debug_objects_fill_pool+0x22c
+>> debug_object_activate+0x40
+>> enqueue_hrtimer[jt]+0xdc
+>> hrtimer_start_range_ns+0x5f8
+>> ...
+>>
+>> Signed-off-by: yangshiguang <yangshiguang@xiaomi.com>
+>> Fixes: 5cf909c553e9 ("mm/slub: use stackdepot to save stack trace in objects")
+>> ---
+>> v1 -> v2:
+>>      propagate gfp flags to set_track_prepare()
+>>
+>> [1] https://lore.kernel.org/all/20250801065121.876793-1-yangshiguang1011@163.com
+>> ---
+>>   mm/slub.c | 21 +++++++++++----------
+>>   1 file changed, 11 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index 30003763d224..dba905bf1e03 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -962,19 +962,20 @@ static struct track *get_track(struct kmem_cache *s, void *object,
+>>   }
+>>   
+>>   #ifdef CONFIG_STACKDEPOT
+>> -static noinline depot_stack_handle_t set_track_prepare(void)
+>> +static noinline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
+>>   {
+>>   	depot_stack_handle_t handle;
+>>   	unsigned long entries[TRACK_ADDRS_COUNT];
+>>   	unsigned int nr_entries;
+>> +	gfp_flags &= GFP_NOWAIT;
+> 
+> Is there any reason to downgrade it to GFP_NOWAIT when the gfp flag allows
+> direct reclamation?
+> 
+>>   	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 3);
+>> -	handle = stack_depot_save(entries, nr_entries, GFP_NOWAIT);
+>> +	handle = stack_depot_save(entries, nr_entries, gfp_flags);
+>>   
+>>   	return handle;
+>>   }
+>>   #else
+>> -static inline depot_stack_handle_t set_track_prepare(void)
+>> +static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
+>>   {
+>>   	return 0;
+>>   }
+>> @@ -4422,7 +4423,7 @@ static noinline void free_to_partial_list(
+>>   	depot_stack_handle_t handle = 0;
+>>   
+>>   	if (s->flags & SLAB_STORE_USER)
+>> -		handle = set_track_prepare();
+>> +		handle = set_track_prepare(GFP_NOWAIT);
+> 
+> I don't think it is safe to use GFP_NOWAIT during free?
+> 
+> Let's say fill_pool() -> kmem_alloc_batch() fails to allocate an object
+> and then free_object_list() frees allocated objects,
+> set_track_prepare(GFP_NOWAIT) may wake up kswapd, and the same deadlock
+> you reported will occur.
+> 
+> So I think it should be __GFP_NOWARN?
+> 
 
 
