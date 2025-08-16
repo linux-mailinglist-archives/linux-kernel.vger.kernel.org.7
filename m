@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-771681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B73B28A47
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069C0B28A4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F245A828E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E50D1B6729C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56B41B0F11;
-	Sat, 16 Aug 2025 03:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2CF1D416E;
+	Sat, 16 Aug 2025 03:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="hmS8pZ++"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="gUIqK3tq"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F917A2F6;
-	Sat, 16 Aug 2025 03:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12E634;
+	Sat, 16 Aug 2025 03:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755315261; cv=none; b=MhjgJ6wLczi3nZcSqdt/cnAdrQEzDL+Bg65Rj5iR56iLiSJp/O7x0I9g28EqZJojYku+bYQaZFo6Qet93eS2JcfS9TqzTUw6TnWdR72hdI+eZwJyoFgEwyRtD6HTyToMHT12dpugjUlhVaQVdB/PvXC7GVvS93R0EED2Iexqp0M=
+	t=1755315262; cv=none; b=p4hKtv+eoMURvg9XOE2LBaHmB3UedP98bPkxDmFL9XU0asfpzDyZSIzx8NgzJ1TdnupS1ZHM4a8unpFr6lAlpKZJoC3TNjYc9NGPBWYYaDLDKEYvoZmZWVz2DI1AWXRxo+mESyjtFUQZEBVngaOTGwEGEhMrUvdInGuQNPnkJeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755315261; c=relaxed/simple;
-	bh=N/oqJn4ZvxNNFoCwA259VuHk2vtLCnNsRDlcE0nBqtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cHiInPUsj7f3PNkfjLrGlls483z8FER2bdpkuozdrK1KWzBHoKazwtEHLsNVjJMxMFJvZBvuu+TtvaFP4N2Z6IjJMmERswoeKtkrFDBGfVmbu/jMJB4kmuc4rlRXEvWP/OSb1BRbINnxWgz7jt3BG3cEmEke1XTLh+wwShjKIFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=hmS8pZ++; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1755315262; c=relaxed/simple;
+	bh=yylrxDiAQOfoIt3a9mGl9RFAoxqy5iyE3xSz0HSXlEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HLoBqEJB+oXx0nLuW5qxJeSd/tluP+KV503c9L2/TzKvIz/ZNCYl6tZbqyVmxGBwNVL/0S0qMtdkoAF38WPM81Sl8LzhB65cTIK6v4neQTr8OpHXQq+bnfVjenL0lz5wZUrZIpNgnYxckeTHIofh3WzfJVGOPEBpIpKKNO1pceA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=gUIqK3tq; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id AD8EC25E27;
-	Sat, 16 Aug 2025 05:34:15 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id A85D725DFA;
+	Sat, 16 Aug 2025 05:34:19 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id FQXJYJxO1B6p; Sat, 16 Aug 2025 05:34:14 +0200 (CEST)
+ id qIJjVjwVHQrl; Sat, 16 Aug 2025 05:34:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755315254; bh=N/oqJn4ZvxNNFoCwA259VuHk2vtLCnNsRDlcE0nBqtU=;
-	h=From:To:Cc:Subject:Date;
-	b=hmS8pZ++BVZsO/z9DTcDa7fA3JNsaWGb8+W6b2snuaYetaqdCQiZfCtB6I6ai6Sq0
-	 M1NuAAwf/+1dZuq9C+qX2rCC0wybSv1itsPO7cGAtW6BfrL/cd9JS5GBydzNo4O+Px
-	 NRySM0fGRtmLvNvX3ukkWtzAfaobTL/FuYy1BMQfBPZLiDzvzVnGGudVUjOpOCCJhA
-	 2Zv848mu1+BtQ0nAtm/RrrHtNCFuyDSXZVCLGG1bDob7+a3Bxq9Z4tk7QcGGKtncGW
-	 aW1j+Si91lfSABlFit7Qu1J7JfSqHauBlgHYjJdmhNbGG46/Jo2u4TYIeCYjosIW9s
-	 KJiyaVC5uCgJg==
+	t=1755315258; bh=yylrxDiAQOfoIt3a9mGl9RFAoxqy5iyE3xSz0HSXlEo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gUIqK3tquZKTtLcYjxwusDFWISpJNY56eNop71+9Rw+KOm1OIdERCwlUsRG5KDRh3
+	 EDIqkmKApZ6gNdPNeflD+B9bCECAXy53acEnZOrgOZdLQBxScJw/QMrHjnfi/9IFpV
+	 MRS1pwhDW4SbzKjD5CxYDL4V0gxtW+AZMejSjeAZ/aVVb6so/6wn1smW8issFM2USm
+	 QyHETuah/wO5XcxSrQbX93RZRVj+bwM/g+wHeBRT68W0VQULg8epAQvMxkHNRPssNL
+	 uR+3PgaIvyr20g1jc3isI8d/CAY3knQmBkNtdKojqKyn/18atIcWdU7W8frlDZotg1
+	 N75PyD+nDt1uw==
 From: Yao Zi <ziyao@disroot.org>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -58,9 +59,11 @@ Cc: devicetree@vger.kernel.org,
 	Mingcong Bai <jeffbai@aosc.io>,
 	Kexy Biscuit <kexybiscuit@aosc.io>,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 0/3] Support reset controller of Loongson 2K0300 SoC
-Date: Sat, 16 Aug 2025 03:33:25 +0000
-Message-ID: <20250816033327.11359-2-ziyao@disroot.org>
+Subject: [PATCH 1/3] dt-bindings: reset: Document reset controller of Loongson 2K0300 SoC
+Date: Sat, 16 Aug 2025 03:33:26 +0000
+Message-ID: <20250816033327.11359-3-ziyao@disroot.org>
+In-Reply-To: <20250816033327.11359-2-ziyao@disroot.org>
+References: <20250816033327.11359-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,33 +72,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Different from previous Loongson SoCs, 2K0300 integrates a reset
-controller that provides reset signals represented by contiguous,
-distinct register bits for almost every SoC function block. This series
-adds its dt-binding and implements its support through reset-simple
-driver.
+Add bindings for the reset controller of Loongson 2K0300 SoC.
 
-Reset functionalities are tested with UARTs and GPIO module, it's
-verified the module won't work with the corresponding reset asserted.
-
-The devicetree patch (PATCH 3) depends on series "Support pinctrl for
-Loongson 2K0300 SoC" for a clean apply. Thanks for your time and review.
-
-[1]: https://lore.kernel.org/all/20250811163749.47028-2-ziyao@disroot.org/
-
-Yao Zi (3):
-  dt-bindings: reset: Document reset controller of Loongson 2K0300 SoC
-  reset: simple: Support Loongson 2K0300 SoC
-  LoongArch: dts: Add reset controller for Loongson 2K0300
-
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
  .../reset/loongson,ls2k0300-reset.yaml        | 35 ++++++++++
- arch/loongarch/boot/dts/loongson-2k0300.dtsi  | 17 +++++
- drivers/reset/reset-simple.c                  |  2 +
  .../reset/loongson,ls2k0300-reset.h           | 70 +++++++++++++++++++
- 4 files changed, 124 insertions(+)
+ 2 files changed, 105 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/reset/loongson,ls2k0300-reset.yaml
  create mode 100644 include/dt-bindings/reset/loongson,ls2k0300-reset.h
 
+diff --git a/Documentation/devicetree/bindings/reset/loongson,ls2k0300-reset.yaml b/Documentation/devicetree/bindings/reset/loongson,ls2k0300-reset.yaml
+new file mode 100644
+index 000000000000..23c90b892673
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/loongson,ls2k0300-reset.yaml
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/loongson,ls2k0300-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson 2K0300 SoC Reset Controller
++
++maintainers:
++  - Yao Zi <ziyao@disroot.org>
++
++properties:
++  compatible:
++    const: loongson,ls2k0300-reset
++
++  reg:
++    maxItems: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    rst: reset-controller@1600011c {
++        compatible = "loongson,ls2k0300-reset";
++        reg = <0x1600011c 0x8>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/reset/loongson,ls2k0300-reset.h b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+new file mode 100644
+index 000000000000..d425411e6d19
+--- /dev/null
++++ b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
++ */
++#ifndef _DT_BINDINGS_RESET_LOONGSON_LS2K0300_H_
++#define _DT_BINDINGS_RESET_LOONGSON_LS2K0300_H_
++
++#define RST_DDR			0
++#define RST_SPI0		1
++#define RST_SPI1		2
++#define RST_LIO			3
++#define RST_DC			4
++#define RST_GMAC0		5
++#define RST_GMAC1		6
++#define RST_USBM		7
++#define RST_USB			8
++#define RST_OTG			9
++#define RST_GPIO		10
++#define RST_I2S			11
++#define RST_ADC			12
++#define RST_WDT			13
++#define RST_RTC			14
++#define RST_OTP			15
++#define RST_DMA			16
++#define RST_SPI2		17
++#define RST_SPI3		18
++#define RST_CAN0		19
++#define RST_CAN1		20
++#define RST_CAN2		21
++#define RST_CAN3		22
++#define RST_I2C0		23
++#define RST_I2C1		24
++#define RST_I2C2		25
++#define RST_I2C3		26
++#define RST_HPET0		27
++#define RST_HPET1		28
++#define RST_HPET2		29
++#define RST_HPET3		30
++#define RST_ATIMER		31
++#define RST_GTIMER		32
++#define RST_BTIMER		33
++#define RST_PWM			34
++#define RST_UART0		35
++#define RST_UART1		36
++#define RST_UART2		37
++#define RST_UART3		38
++#define RST_UART4		39
++#define RST_UART5		40
++#define RST_UART6		41
++#define RST_UART7		42
++#define RST_UART8		43
++#define RST_UART9		44
++#define RST_SDIO0		45
++#define RST_SDIO1		46
++#define RST_CANBUF0		47
++#define RST_CANBUF1		48
++#define RST_CANBUF2		49
++#define RST_CANBUF3		50
++#define RST_CANRAM		51
++#define RST_ENCDMA		52
++#define RST_SM2			53
++#define RST_RNG			54
++#define RST_AES			55
++#define RST_DES			56
++#define RST_SM3			57
++#define RST_SM4			58
++#define RST_SDIOM		59
++#define RST_APBM		60
++
++#endif /* _DT_BINDINGS_RESET_LOONGSON_LS2K0300_H_ */
 -- 
 2.50.1
 
