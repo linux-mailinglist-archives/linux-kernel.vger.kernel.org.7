@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-771936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B28B28D08
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:50:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E486B28D31
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CA35C3A13
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C382600642
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFAC28F51E;
-	Sat, 16 Aug 2025 10:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50F529B220;
+	Sat, 16 Aug 2025 10:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="civYSYls"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+Oo5RmA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1443621CFF4
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E275029ACDE;
+	Sat, 16 Aug 2025 10:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755341403; cv=none; b=DVtHCEdVqdRkjjx7FOtTfR3WXHYlW6hoU6CGks/3avEpLBX2nb0e4/iVRwf2sgoEX0YO2+q0FwJ0s6rRv6JPZp6kGPq65AOu6QZNNEGMiFshFAglhyzar3BjRHzqj5fTJBKpjvHmWmlf0IoPoTKKqti14Hyu8braeJJQbP/RM/0=
+	t=1755341637; cv=none; b=YEFwtJAL9rRbloZ1Ang8cCHqzaQmaikf/vJhjBG8Wla1kfvCGpePK+5MfgrctF+Z6zneT2flhEK8vS++jOQ3E4w8b1dNfxfZCYj1nTlPzGXoqi9FhV3d3viLMFLCeGhNifv77qYBr9zsM7PlT7XMTL1pa8U6RorTun6jMfLOS5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755341403; c=relaxed/simple;
-	bh=doz42PD32C7caXkh5JHONCE2ZOdONZJc6Yx0NMQtnSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W7+QjffV66am88JDK9TTDalgiPPV5k8kAmOc1/HffV4fNBgo1VM7KYl7LWc0nqXuL8x2wNDXlLX00Gm4k1hGZZSGHbmQyVBjoofSIabUAPs1PygtNaVO9xF39HPNBKw5VaPwm215virxWI59dxIPFDEYMnay9bgcsGd3hSeAjNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=civYSYls; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso15892635e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755341400; x=1755946200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FwwivMGnEw2uIFchpfZdnqFMVWS3GjK/zVl2JQuqPm0=;
-        b=civYSYlszTqujTcerSF3GMsRE3F3MT5kFJ0r1tByjMyep8shuH1/6RJnLGhhIBw0c0
-         mr3l6hNlvx+fzSQEZtcebCmQ/wXvaaE865jU0CvNUuLHzOBlxbJKkSzkI72guOI2+DUx
-         kQWjws2D7tdZsYaF/CEcLveD7oFPNiYoFYCiFq2iG7Cpb09mVBYloyRyvMhXGi3HEOe1
-         72lskpcYZah4k+yZjn32uMYI3iUTW3VsSsPzrIWXhjWIE62T9A79yb3KKgVIhyqI8Kcz
-         jVMj5lEWveAkscVCTrr+P7SQD8nCs5tLfiZ3v4kuFMA0stdhFboeTe3HyRSy5UnpjSD7
-         xXsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755341400; x=1755946200;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwwivMGnEw2uIFchpfZdnqFMVWS3GjK/zVl2JQuqPm0=;
-        b=xLmZqD7I0h1SL4jpp+q5oyf7iuJ2T6NBfmJ9K8XkOnsf5ETVWT7VremhlZ78tIlUAe
-         ZQPO5eIt/sY/lhsBE/B5WKjojdmgHkgzHU2NKApWfbzT2uUGB4HkjyUDEiuYWCQg0Gqk
-         wGvb5b6LuXQ/cmS0+dkXZRMbnfycbRaYfHauWQtzPxUPzdGSD10ZuEPwQprKPicEzgC+
-         97R8MW9Ap4vj0OsoInZIIVIlTFhhFBFGwEp1gcnlwE9SQiy2joXOYL07LZCC25A/IaP5
-         TxpU0wvO/qzTbvZLcl3W2u2dhQ18x2oxnz3aXScsFmW0PvB/VJiETKUDyZf7ZLtc1HZB
-         MjmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXveH+StD+faXF6aMtYYOzJTk9/dilHtYqoWA06Dw127OYOwwHdOfH+u2rxq9fG9YZNgiV90zbBRwalznQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYXR+SrbvVcwoYcj2uogI7BBE0gX/ejF7p03U4xVor52NjPkXQ
-	+M8WHXOBeyABAQJzwE5Vl0ASxTTYMJQq3Q+m3Cmg3qfgIM941WCzl6Vn8Lppzj+hyRY=
-X-Gm-Gg: ASbGnctZS5pEMJOIJ75TAifP+CTrFnQJiNBvgz7QYgC8AGnV43UBjo0JfLKuY9PSwk6
-	0FJAbcLajeeJIiKMeXErPMsSdrtYVqswgDGCMu0BC/bT+5XQaTEkrQQFG4ublKJoA2OgPwq+DfB
-	qEt2hBlnZWqmcyZHX1TD5URKMNeZ5WOPTaDPDdaz8NUnRLn1D6Nwu6HgBf1koqqVMfRl0UrLqus
-	AVwdtqZdJdRX4310eYCoeNlTv2ooIAAi1WffdfOTqdXcmQBT9/ECVrz8blvwz86bvXGnDStEv3b
-	zGT3lhUaTXy4SnAHUYrIqqrfNO6zby2Kfbeixjc1FKG4iI1Ta+IClJwsW4gjBEaAgrA1t5Dn07O
-	9vu6NOYi6KylpeJW9rA153cfKaHv+Pf1xYvao+ccWwTcqTtr8paHR1mn74k+He3LC
-X-Google-Smtp-Source: AGHT+IE5o1fNVVbU2Hem8lhgp/yOa9qYSWveharYtFOMpSTzQ18tGJVdXt4smsZsAVwuhr9xInUKkg==
-X-Received: by 2002:a05:600c:474d:b0:456:1ac8:cac8 with SMTP id 5b1f17b1804b1-45a2180b6aemr48450885e9.15.1755341400420;
-        Sat, 16 Aug 2025 03:50:00 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a27fd554bsm12863585e9.13.2025.08.16.03.49.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 03:49:59 -0700 (PDT)
-Message-ID: <d6c26171-8be9-4c15-a105-3d641558032f@linaro.org>
-Date: Sat, 16 Aug 2025 11:49:59 +0100
+	s=arc-20240116; t=1755341637; c=relaxed/simple;
+	bh=NrCkOT32NSplq8+x8pz9ZQFGUGbs5XTCGwcFwWKjxtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C/HWiyQvsVqYSfx9+KSsWwRdBK4Gz2zFEL1f/Kadzt1PSX0FOfPey0Bsks8WOQbRL1BnQlvAlLN68/zxXCzBGFswUUIf6yjc5l8xXVoLUrKdtpMdKVdeCDSUuxXUYmDUKFCevuF1W3ToxNRRPl1IGCbdThPPli4zdTobP8qj18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+Oo5RmA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77B0C4CEEF;
+	Sat, 16 Aug 2025 10:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755341636;
+	bh=NrCkOT32NSplq8+x8pz9ZQFGUGbs5XTCGwcFwWKjxtc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q+Oo5RmAl/yPzstmUq1BFZH4pf4a3pucCoqHTD3vf5eimfltsVG4N+eflpz1V6nGS
+	 j0nrO/EMJMPLFJnJyA7aiZOSi6RPEwXUZcJvz4id6feHsOlINdyqIMxwoYqt78S60v
+	 PfKrmTH/vWBzR/CllclA/R2Ui//xq1dWFbJtBwlEQs/DMiP3qZGGJDS1/pdHUWd4Oz
+	 ay7L+2FJ8TVaahduSvV5/0ahy8DkhwsT3F7D9adPr+PpbwuBDH8AYOksl0P0dvXB4E
+	 BJS5FvVtv1kw6Z+kB/IpIExkfFhn9l/vKBUv35W12p+q2HxnmLfHP/s82R2dqhb5AZ
+	 AC/rvgpuQNUWA==
+Date: Sat, 16 Aug 2025 11:53:48 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Beguin <liambeguin@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iio: adc: ltc2497: reorder struct members to fix
+ memory holes
+Message-ID: <20250816115348.1fba0a7b@jic23-huawei>
+In-Reply-To: <20250815-ltc2495-v4-3-2d04e6005468@gmail.com>
+References: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com>
+	<20250815-ltc2495-v4-3-2d04e6005468@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/24] media: iris: Update vbuf flags before
- v4l2_m2m_buf_done
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
- Vedang Nagar <quic_vnagar@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
- Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-7-c725ff673078@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250813-iris-video-encoder-v2-7-c725ff673078@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 10:37, Dikshita Agarwal wrote:
-> Update the vbuf flags appropriately in error cases before calling
-> v4l2_m2m_buf_done(). Previously, the flag update was skippied in error
-> scenario, which could result in incorrect state reporting for buffers.
+On Fri, 15 Aug 2025 12:02:04 +0200
+Yusuf Alper Bilgin <y.alperbilgin@gmail.com> wrote:
+
+> Reorder members in the `ltc2497_chip_info` and `ltc2497core_driverdata`
+> structs to eliminate memory holes identified by the `pahole` tool.
 > 
-> Fixes: 17f2a485ca67 ("media: iris: implement vb2 ops for buf_queue and firmware response")
-> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> Confirm via the `bloat-o-meter` that this change has no significant
+> impact on the final code size:
+> 
+> | Object File     | Total Size Change |
+> |-----------------|-------------------|
+> | ltc2497-core.o  | 0 (0.00%)         |
+> | ltc2497.o       | +2 (+0.10%)       |
+> | ltc2496.o       | 0 (0.00%)         |
+> 
+> Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
+
+whilst I know Andy is a fan of this stuff, I'm not convinced it is worth
+the churn in this particular case. 
+
+The driverdata is allocated via iio_priv() so has a bunch of additional
+alignment rules applied and is on the end of another larger allocation.
+I suspect that completely hides the advantages in closing the holes up.
+
+The chip_info one is a bit more convincing as that's static const stuff and
+maybe it ends up packing a little better.
+
+Anyhow, let us see what Andy thinks.
+
+Thanks,
+
+Jonathan
+
 > ---
->   drivers/media/platform/qcom/iris/iris_buffer.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/iio/adc/ltc2497.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index 23cac5d1312913b8dac44347ae66cb80a6a15deb..38548ee4749ea7dd1addf2c9d0677cf5217e3546 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -651,6 +651,8 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
->   
->   	vb2 = &vbuf->vb2_buf;
->   
-> +	vbuf->flags |= buf->flags;
-> +
->   	if (buf->flags & V4L2_BUF_FLAG_ERROR) {
->   		state = VB2_BUF_STATE_ERROR;
->   		vb2_set_plane_payload(vb2, 0, 0);
-> @@ -659,8 +661,6 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
->   		return 0;
->   	}
->   
-> -	vbuf->flags |= buf->flags;
-> -
->   	if (V4L2_TYPE_IS_CAPTURE(type)) {
->   		vb2_set_plane_payload(vb2, 0, buf->data_size);
->   		vbuf->sequence = inst->sequence_cap++;
+> diff --git a/drivers/iio/adc/ltc2497.h b/drivers/iio/adc/ltc2497.h
+> index dfe2d5c30017adeb3f17e57fc5bf1e0e792ff30f..48e9f74870ab489b5df6e69a39446610c6a72b93 100644
+> --- a/drivers/iio/adc/ltc2497.h
+> +++ b/drivers/iio/adc/ltc2497.h
+> @@ -5,8 +5,8 @@
+>  #define LTC2497_CONVERSION_TIME_MS	150ULL
+>  
+>  struct ltc2497_chip_info {
+> -	u32 resolution;
+>  	const char *name;
+> +	u32 resolution;
+>  	/*
+>  	 * Represents the datasheet constant from the temperature formula:
+>  	 * T_Kelvin = (DATAOUT * Vref) / temp_scale, where Vref is in Volts.
+> @@ -20,15 +20,15 @@ struct ltc2497_chip_info {
+>  };
+>  
+>  struct ltc2497core_driverdata {
+> -	struct regulator *ref;
+> -	ktime_t	time_prev;
+>  	/* lock to protect against multiple access to the device */
+>  	struct mutex lock;
+> +	struct regulator *ref;
+> +	ktime_t	time_prev;
+>  	const struct ltc2497_chip_info	*chip_info;
+> -	u8 addr_prev;
+>  	int (*result_and_measure)(struct ltc2497core_driverdata *ddata,
+>  				  u8 address, int *val);
+>  	enum iio_chan_type chan_type_prev;
+> +	u8 addr_prev;
+>  };
+>  
+>  int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev);
 > 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
