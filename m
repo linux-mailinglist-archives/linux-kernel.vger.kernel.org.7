@@ -1,166 +1,165 @@
-Return-Path: <linux-kernel+bounces-772067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A086CB28E6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:17:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16EAB28E6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBEA7BB724
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08DD5C05DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048522EBDC6;
-	Sat, 16 Aug 2025 14:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A5B2EA483;
+	Sat, 16 Aug 2025 14:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="r3t4TTOM"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIZHRSS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A977E0E8
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 14:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB413FD86;
+	Sat, 16 Aug 2025 14:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755353802; cv=none; b=mPCk2uuWNVuPX7Skd3ydVYDu2R6mIq/2WzMOHxegOEhnIXFuec8geg4WdCn4TfW0oS7Yd6tZSImxOGvGUNGs/TR1qmcmWykw2jmowMiw4vjQ0r5LV/C/ctHKS7dK5r8rNIp9h1lkn4wMfjdEY0mbkH4+ayjwWVDBm9Cy2DtcFDs=
+	t=1755353951; cv=none; b=XOtKO0SChAkWVwHoRrKc/EIjhThcEdcufh8bkyUNxV8AJCihM2GxxMUOQPaakXo4ZcTbP40rNB14NfXuo18lusb4iDX9E38fuqNLzQU8Jazeta2SHL1lhj7zDDwhU8Teu3mVDO4eBvqsu0KPv8/gU2w8OC4j+5HKVv3/gTMBLdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755353802; c=relaxed/simple;
-	bh=jRn+68TydpTDnUBx92tCFQOcAjFK+D29aieMu5Iz3wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXnIeHcsu083E+vTyY7/YNDEUZXqw85ACq28jSuhX9HoKfcyv2X4037SKPvb0Lnn533ECThRVvqbaXT9O1s74UMDlGvrlUM09OF5RWefggYmQtFnXdf71B88rG3Ck1cLwrtpIfyK/aVQ+hpkeVURyeySw+Ae0tPDJhLWaAaLz/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=r3t4TTOM; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70a9282f475so25155336d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 07:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755353799; x=1755958599; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/WPrq9qE/mcKs1KinEiimPYdP4EDUSl2u22e6GWf8XM=;
-        b=r3t4TTOMVxWO4lDPtw+8o8GZCz7odm3/TzNlcAuqEKpdQP9BKdWnx9bxMaMqkA2zQ9
-         Peaw6tJsZkWF2plopa/QSA4XE3c6p6yLv1loBMS/zuERrbx0uhCG4VvN02SHEaDvmVwe
-         700ihruGn23VWMcPiV0fqoXyIi7x99zSlzdoqiH17nPXrbgkzDB2sl6D1xyEnfyKwrr4
-         mMDGWpSfh9tD3MZVmyK811otkddP6n20pShem7zDb34dcetA5KZFRmi4AAGpOzNn+PcM
-         1oEp213J2bU37RtCxwvfRDj42fUWUBML8NLw4O614Bilw/oKlJ2sr3S8xYI0VgZpgFOE
-         0xJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755353799; x=1755958599;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/WPrq9qE/mcKs1KinEiimPYdP4EDUSl2u22e6GWf8XM=;
-        b=Hf4mj6dOprQR5fkHz2UBDBb47Bmw4QW7BMqzLfeRrGOgpngBX2O/Fa8bwFFvgzsWsJ
-         eVjca4Cadgf/Nac7qbgI0J1hyITtBLm+RuvZYljM35nJ2vIpCs7mW3T3S5jH+30Vjguv
-         ZSrSaX2yS/8oJAU8it+Xw3tETLHDwR9SNk/AmCPLjZPTWBiXIz/PasL7Cbq6QzUZQyl1
-         sT5jqIVWyZ8/vMEmIyRqnyg243Y5lVRKAJMUciYTZAJk6pJXHQqz55PiJJUZAEkhqvJd
-         3LjDDJL1PkLbz9WdiSVclCqKX9C0whfv3ni500wEmiql5J0QncrAfwuDGpLxoR4GPE7B
-         iPLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUun9faDUsPFUBbHzMlAJIvaCtm6DHmU/OHS4rM4s+EjmGOkTboir6U+i6OHDv6iM6Famxyhn8WpOMRAiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPNLxAxIj1dubY5LqlkSfyQ/Y6LALn6SzuNJbNSiDyZxBzmOOr
-	Aljr5Up1Z1bORZeglxNM+0+SABj505vgDjXl3y/5NmfXt2gH8K/mnSNKqwv+WyTK7A==
-X-Gm-Gg: ASbGnctlX01M5aJfrkKabKpOuflvh9cTOQtXt87uM54D5U13Z6PN+HxKr9PsQdrV13y
-	2WAz1VyFFBMELRpeivw8hOvd4iNn7UMIBDYo97moAUXas8/XJaB3FQLd57h3Hl5s3kco7v5wBM9
-	Ds9Cr+EsIqHJhlyQUyyw/wAkFXwDPcGG+gSSFCvM/a014riP/Nqh/7dzmGPT4yOCmtOOWoghYT+
-	5TYy3BxnEdXYvTY66oDNWwefB0f8wtmN+oDvuUdpzJeDeRKFLuTtFF7Jgdqeq7gum3tu82DLa0i
-	1LSviQ5o5N5f3aUZ2bhlrv73p0L1hNG3ChQNxhJT1K/yNT0wNaWMfIndrYeSVNP5/jWwwAPYYxZ
-	byU9EtbjO2QLk6cHJMd9tTgeTWtk=
-X-Google-Smtp-Source: AGHT+IFg9HLizvQGJ4TwOzHyQne2Pjmhu3qTT34UGiwiDfF6gJsi9Wq8f0M9Mbi0CDc3I4ce5R6Msg==
-X-Received: by 2002:a05:6214:3014:b0:709:76b4:5933 with SMTP id 6a1803df08f44-70ba7cb1a68mr71180886d6.52.1755353798673;
-        Sat, 16 Aug 2025 07:16:38 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::f777])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba9097688sm23736106d6.25.2025.08.16.07.16.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 07:16:38 -0700 (PDT)
-Date: Sat, 16 Aug 2025 10:16:34 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
+	s=arc-20240116; t=1755353951; c=relaxed/simple;
+	bh=YcFIevqPRmnHsCDkXNhTN5eFLd3vOH8VP/okgY0uJXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaSv21ix7qyKgGHTrFlPBq69gyz4Z6hJNLI52iLTsu6VyFihX6wQTDSLgc7P5lmqWRztngO4rkSSieofG51optMyprSld3rzsmgprBu3JwS2kgC10aZuF82uHIiAi4RW5viYZcD57YWS9lrCGeebviRPBPwUJ+TBb+x3yvhXjfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIZHRSS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19F9C4CEF5;
+	Sat, 16 Aug 2025 14:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755353950;
+	bh=YcFIevqPRmnHsCDkXNhTN5eFLd3vOH8VP/okgY0uJXY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XIZHRSS3T/81UV43SIi6itPdlSWPZRBCHS0Zs/JjSZrtw7ic3MIPMfzc+CKQ0VJlr
+	 qHVI7fiSXDUFRaFwsgPRPoXCw923tDI5NAuL+QCY0DU3LnUrIHxuuQFvfO+SDqJzWH
+	 yXWgoNsSNPL57xIqD/cHcKBM8RBVirUWvVTQwa1K3KpcWF9s7ggApBK78dYd675/zF
+	 uDNvTsC4WWHdrZ1BkT7CY6v28HGklNsy4zOPyysmCCpox+MBqi0SxVnvrEkjX20EQG
+	 QD2aKIqbxrcn0wRPH+iqY5cIZWkwr3Z2ioMP+bLTPZ8jc7gInq2mz89KAMprcDQ1e9
+	 hbEfb6Zbo5VRw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b70abdfso3990011a12.2;
+        Sat, 16 Aug 2025 07:19:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVF/amdUQRwguQV0lQTLA2e382n0kxZ9XFfJUGN49cXOF+baHr6F2oT+3aKPxKXUCG1AqGVQJl6E/Gs9XQ6@vger.kernel.org, AJvYcCX5zS0b0rmQR28tuBM3VDAZMQyhABxBFT6pQ7WysIkXAnLsIaYAclK/PpF8osBfEheyAxPlZnDYPRSHlw==@vger.kernel.org, AJvYcCXzA2/w4hwGEC5nlcgHuPTTmecrgROIADXIgdKLD6NO/soaS5HJd8gKJNsBfu/7U1DzE9qLm+8jVwzo@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGAtkDnWAZ4692waSaYMIscl8behXil8SYwhXrX3S51VsaWJbz
+	OUJxgVrebjT/nxdTCf0aJf1lyQSbCZ3ex5frqKaiYO+Mbvavugo3aRBxpM0PLH1Ag6/GQy8u2he
+	2T+e8LB6kEBCkP5L3OzWky66hFK5jMQM=
+X-Google-Smtp-Source: AGHT+IEUkDFwlk9UhU8t342L0FCVGyMnVyPMWk30oqfsuvVTNwMtk4q2cTnYOAkS6eUbn+3TgBvlePgr0B/LX2tiyFU=
+X-Received: by 2002:a05:6402:2708:b0:618:adff:66e5 with SMTP id
+ 4fb4d7f45d1cf-618b054dbd5mr4317218a12.17.1755353949346; Sat, 16 Aug 2025
+ 07:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
+References: <20250816035027.11727-2-ziyao@disroot.org> <20250816035027.11727-3-ziyao@disroot.org>
+In-Reply-To: <20250816035027.11727-3-ziyao@disroot.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 16 Aug 2025 22:18:57 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5ZQQpHS_b9UL8UNgX9MH8-i4DV8bid00vEDzg76rgebw@mail.gmail.com>
+X-Gm-Features: Ac12FXwCN0XtFPhP6PgPuh0T8gncotsiBAGxXqlAdAXBDWQBMIikImgkiykBIWA
+Message-ID: <CAAhV-H5ZQQpHS_b9UL8UNgX9MH8-i4DV8bid00vEDzg76rgebw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: loongson: Document GPIO controller
+ of 2K0300 SoC
+To: Yao Zi <ziyao@disroot.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>, 
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 16, 2025 at 11:18:02AM +0900, Yunseong Kim wrote:
-> I think this part is a macro, so it appears this way.
-> 
-> Link: https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
-> 
-> #define spin_lock_irqsave(lock, flags)			 \
-> 	do {						 \
-> 		typecheck(unsigned long, flags);	 \
-> 		flags = 0;				 \
-> 		spin_lock(lock);			 \
-> 	} while (0)
-> 
-> My tree is indeed 6.17-rc1. I made a mistake in the diagram,
-> which caused the misunderstanding. I’ve redrawn the diagram:
-> 
->   kworker (hub_event)
->       |
->       v
->   vhci_urb_enqueue() [drivers/usb/usbip/vhci_hcd.c]
->       |
->       |---> spin_unlock_irqrestore(&vhci->lock, flags);
->       |     (Context: IRQs Enabled, Process Context)
->       |---> local_irq_disable();
->       |
->       |     *** STATE CHANGE: IRQs Disabled (Atomic Context) ***
->       |
->       +-----> usb_hcd_giveback_urb() [drivers/usb/core/hcd.c]
->               |
->               v
->               __usb_hcd_giveback_urb()
->               |
->               v
->               mon_complete() [drivers/usb/mon/mon_main.c]
->               |
->               |---> spin_lock_irqsave() [include/linux/spinlock_rt.h]
->                     |
->                     v https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
->                     spin_lock() [kernel/locking/spinlock_rt.c] <--- Attempts to acquire lock
->                     |
->                     | [On PREEMPT_RT]
->                     v
->                     rt_spin_lock() [kernel/locking/spinlock_rt.c]
->                     |
->                     v
->                     [May Sleep if contended]
->                     |
->       X <----------- BUG: Sleeping in atomic context (IRQs are disabled!)
-> 
->       |
->       |---> local_irq_enable();
->             (Context: IRQs Enabled)
+On Sat, Aug 16, 2025 at 11:51=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrote:
+>
+> Loongson 2K0300 ships a GPIO controller whose input/output control logic
+> is similar to previous generation of SoCs. Additionally, it acts as an
+> interrupt-controller supporting both level and edge interrupts and has a
+> distinct reset signal.
+>
+> Describe its compatible in devicetree. We enlarge the maximum value of
+> ngpios to 128, since the controller technically supports at most 128
+> pins, although only 106 are routed out of the package. Properties for
+> interrupt-controllers and resets are introduced and limited as 2K0300
+> only.
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  .../bindings/gpio/loongson,ls-gpio.yaml       | 28 ++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml=
+ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index b68159600e2b..69852444df23 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -14,6 +14,7 @@ properties:
+>      oneOf:
+>        - enum:
+>            - loongson,ls2k-gpio
+> +          - loongson,ls2k0300-gpio
+>            - loongson,ls2k0500-gpio0
+>            - loongson,ls2k0500-gpio1
+>            - loongson,ls2k2000-gpio0
+> @@ -36,7 +37,7 @@ properties:
+>
+>    ngpios:
+>      minimum: 1
+> -    maximum: 64
+> +    maximum: 128
+>
+>    "#gpio-cells":
+>      const: 2
+> @@ -49,6 +50,14 @@ properties:
+>      minItems: 1
+>      maxItems: 64
+>
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  interrupt-controller: true
+ls2k300 supports interrupt-controller while others don't?
 
-So it looks like we should be using a different function instead of 
-local_irq_disable().  We need something which in a non-RT build will 
-disable interrupts on the local CPU, but in an RT build will merely 
-disable preemption.  (In fact, every occurrence of local_irq_disable() 
-in the USB subsystem probably should be changed in this way.)
+Huacai
 
-Is there such a function?
-
-Alan Stern
-
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -58,6 +67,23 @@ required:
+>    - gpio-ranges
+>    - interrupts
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: loongson,ls2k0300-gpio
+> +    then:
+> +      required:
+> +        - "#interrupt-cells"
+> +        - interrupt-controller
+> +        - resets
+> +    else:
+> +      properties:
+> +        "#interrupts-cells": false
+> +        interrupt-controller: false
+> +        resets: false
+> +
+>  additionalProperties: false
+>
+>  examples:
+> --
+> 2.50.1
+>
 
