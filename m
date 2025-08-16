@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-771715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E482AB28AA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E91AEB28AA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0C0A25D6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C92AA7DB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BD41DF261;
-	Sat, 16 Aug 2025 05:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1D71E521B;
+	Sat, 16 Aug 2025 05:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Ty/yhhyu"
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IL3XInNl"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714001862A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 05:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314DF1862A;
+	Sat, 16 Aug 2025 05:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755321680; cv=none; b=t0x+9+FzsVobKLF8k+N/Rb7ClUUfF3dhdEPJyQnE9hbg2/PIHhus7g0HiuOsUjOsmJrlDZla2ctVVSY4PL0alZjXjv6FR3/tDtqnHUaOJ1QnDFe8N6YM3e/pacxMKR4qAZaiUYYQSkCKvHSjP2pqOYoDJoDvfVq1preP2uoe2TU=
+	t=1755321988; cv=none; b=og3pq9Ax6uX+I9+4KYqnaaMrJd93ziBFXzoAwM3KSXJIUiBCekWZbL1CFu3qQqd3G/uSSrSYzEpRFydPduYBI6/XQYknB3Aytmo/wy4pdlMRoqns7zQ5/emL5b0d+IN/xeW9FJH9Gwqbh8WaLqfJ05ylppDLd1HIAwSeYBoTdWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755321680; c=relaxed/simple;
-	bh=sn6Ma67MjR10z0241vZVJtlBs2yUz3uk4rbJEDBfsSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AyUzHyK/WIMjiioFm59SHEqXHMI2qMRqluT27msgC/Y3fSDfkB5psPRDLXRzTNheJ8HQJ+9rTc8LW8jROKNVoz0GjDuPk+oVRTDtAqVnWMSyv7FMsWHMmUo81S+oK5cPcE6FDMUy1wg+XrykGm0CFlH5LqFGBFaFuBVEZjjl8zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Ty/yhhyu; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755321670;
-	bh=4psIGG+A/EzzJmGJeRDXlskfaP6zKa+nNyqiE8y2QSE=;
-	h=From:Subject:Date:Message-ID;
-	b=Ty/yhhyuHJe+P6C2DkAivuUQ0wC07P2nSE8t0rA7TplRUn+6G5gFIGJwHpc3XJqds
-	 sVScl1ngeu9OBDtkhUEef86a3Oj1KZQc522R0P4PmMyWWHLPyglvCTgW5DHmZOM6Nc
-	 ddBPvvpZzE5POn2G2Y/FTsjuTx3bG7CIDrQkGyAY=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68A014AC00003829; Sat, 16 Aug 2025 13:18:38 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5820896685145
-X-SMAIL-UIID: DC748C80E527414AB6F6243FEF8CF4B3-20250816-131838-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+abbfd103085885cf16a2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in usbtmc_interrupt
-Date: Sat, 16 Aug 2025 13:18:25 +0800
-Message-ID: <20250816051826.4739-1-hdanton@sina.com>
-In-Reply-To: <689ff5f6.050a0220.e29e5.0032.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755321988; c=relaxed/simple;
+	bh=nVjqhG9sbPi0wuuSS6+4rvv16FUq7s90IVK1VJVy9Wc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oi3oBi1yRWj98ND4L27oDJp3Zjwijz4JVu0xkcbuygvm9MO1vkUyfSOorLzNlL8QszmdavaNqr5TyI+MU4sHJF14MBQGtGuWhEOOzMvEMQ23hLOzlbKXOltpxI75QNIJyLj4YW/usoMvbbmKR7/k1pJgwQLnzmqijXhG8IntE+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IL3XInNl; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47174c3817so1910269a12.2;
+        Fri, 15 Aug 2025 22:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755321986; x=1755926786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rfYWh65R6C5URO0NO9DTk8nFnnyazeHWWO/jHTbMAPo=;
+        b=IL3XInNl8wepyuIQaawz7FIQn29IrodX3/X6UVP6R/80pcJcBWBHFV8enB7FwY17j2
+         wdtEtgyjasTMQTOiuVHo5F6rW5edTe7zYHK+FyVoIWXhqJDg7F2teyrcqO55BBfY5IFO
+         RG6FD6bHz8MRcm6DsPfWp47y9pl3qcn+1C6E/4eqIQ0zZ/KD1pXQbrgRsJcoAKBo5wTk
+         RgpIcHvZiU1LXteoVMR5VY4BkwXC2uGVq8SxsmgspfgFaBkgm+pKmZ8ERZENFQ7ALYum
+         m9TVzrGR1iGnvivASN9t9lGNpQQFg9sJgwIY6wZ3i4z1xJGjfoTq48Z4OuNT/sUAnXNS
+         jOpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755321986; x=1755926786;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rfYWh65R6C5URO0NO9DTk8nFnnyazeHWWO/jHTbMAPo=;
+        b=o14T3HLLvIk2gKNy9uANFGYsfM6aVnm6kOQ76Kl4MxT+qqCHpGVJk5sge6y81GOcPI
+         5zXDExMX0uq3wb+pKVHsPNkNnDwXswO+8Gj8nLczAEhsVCyRNPe9M7OA0tCV0IwIfIBy
+         X/R2wjwn49t0cXHjsjab7oIczoWVjlHoEd8G/vKMBFfiwiQZaj2qxg9nrOQuDRI55nv2
+         mtbPMP/rgNPzidgNsVEoPgFZGxMNvtynw6k0XMCLlOoNIuXtNZPqn5iOLKX5CW2126B3
+         t1b46h3RPCMvx+gGGRBzHtZ3JgUbp9uTUVpx6/pRTeRa06U4XbPnivt7/4J/8mZL7EiU
+         I3Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMn+CfXbimu+QrdSEXrO2zx/5/Igil367hzpOsgzJrbY4qZAvbFBNEulW2Wm4ClirYbQa08W4vk1u@vger.kernel.org, AJvYcCXD3Yd39T8Pcr18snEDwWW5jgHa6mkGZJd6VdvuqriOBanaHvPsZLWjLDGP5tDeQIPPqBNoYyb5j6xk1EwC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy05APa2MCluLGAQm8hy+x+VXaj4B3hBa4/R3GFCkVaCe4Zb2Oe
+	KgWb2KAUcOgZp8pbmtHIczZkXbazCN1XiA8imbhocdnKvUOTX3AzrtESjvqEsfR1kZBU2g==
+X-Gm-Gg: ASbGnctWlZ3li0HBklAHDB6Kg6eioWfJngo7DKkgGtoXTtssrlYyBlWNVJWwjPC5p8T
+	HtmCIajXeKs/OjKcEJYJWBhHLwN2LANnU0BLfFo6IZZEovi93NUO2VCxWp+0N1dhXXqkGmwR6Ot
+	Q6bSVXgoiaL1vuOAbw6GpFjz7eH2WhPxaYqoJga/meV1SW0bENJAZWheqfMecSSsnsPCPnZBlIx
+	GhK/DeUQmgR1AlzwV6kYL6Gw89pLdWd+6Nm9uGE/AGO6lli+JJfw0XwsobmxvMHYA6ZZA+6pcsv
+	8r4Uy9fgX4O9Pm9irkdvAufXpH4oqHBfoguhp8R+ALHoLhuuhFbQNEeUntBn1FYSwfJcHtsmADz
+	xi8xdGJhTy477Pqwan4Bae0S47DnUiQ==
+X-Google-Smtp-Source: AGHT+IGeDOSO0voCJeRuqzmLYix6G+3EdF64VR5GERchsW16sjMcRRjfTUF7mFkmG9sK9raG14dzBQ==
+X-Received: by 2002:a17:903:b07:b0:23d:fa76:5c3b with SMTP id d9443c01a7336-2446d745130mr71210345ad.22.1755321986160;
+        Fri, 15 Aug 2025 22:26:26 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([89.208.250.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9d016sm27225805ad.35.2025.08.15.22.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 22:26:25 -0700 (PDT)
+From: David Yang <mmyangfl@gmail.com>
+To: netdev@vger.kernel.org
+Cc: David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next v3 0/3] net: dsa: yt921x: Add support for Motorcomm YT921x
+Date: Sat, 16 Aug 2025 13:23:18 +0800
+Message-ID: <20250816052323.360788-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,31 +98,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> Date: Fri, 15 Aug 2025 20:07:34 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    931e46dcbc7e Add linux-next specific files for 20250814
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11ef65a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bb7fbecfa2364d1c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=abbfd103085885cf16a2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a99842580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17108da2580000
+Motorcomm YT921x is a series of ethernet switches developed by Shanghai
+Motorcomm Electronic Technology, including:
 
-#syz test
+  - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
+  - YT9213NB / YT9214NB: 2 GbE phys
+  - YT9218N / YT9218MB: 8 GbE phys
 
---- x/drivers/usb/class/usbtmc.c
-+++ y/drivers/usb/class/usbtmc.c
-@@ -2365,6 +2365,7 @@ static void usbtmc_free_int(struct usbtm
- 	if (!data->iin_ep_present || !data->iin_urb)
- 		return;
- 	usb_kill_urb(data->iin_urb);
-+	usb_kill_urb(data->iin_urb);
- 	kfree(data->iin_buffer);
- 	data->iin_buffer = NULL;
- 	usb_free_urb(data->iin_urb);
---
+and up to 2 serdes interfaces.
+
+This patch adds basic support for a working DSA switch.
+
+v2: https://lore.kernel.org/r/20250814065032.3766988-1-mmyangfl@gmail.com
+  - fix words in dt binding
+  - add support for lag and mst
+v1: https://lore.kernel.org/r/20250808173808.273774-1-mmyangfl@gmail.com
+  - fix coding style
+  - add dt binding
+  - add support for fdb, vlan and bridge
+
+David Yang (3):
+  dt-bindings: net: dsa: yt921x: Add Motorcomm YT921x switch support
+  net: dsa: tag_yt921x: add support for Motorcomm YT921x tags
+  net: dsa: yt921x: Add support for Motorcomm YT921x
+
+ .../bindings/net/dsa/motorcomm,yt921x.yaml    |  166 +
+ drivers/net/dsa/Kconfig                       |    7 +
+ drivers/net/dsa/Makefile                      |    1 +
+ drivers/net/dsa/yt921x.c                      | 3960 +++++++++++++++++
+ include/net/dsa.h                             |    2 +
+ net/dsa/Kconfig                               |    6 +
+ net/dsa/Makefile                              |    1 +
+ net/dsa/tag_yt921x.c                          |  126 +
+ 8 files changed, 4269 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ create mode 100644 drivers/net/dsa/yt921x.c
+ create mode 100644 net/dsa/tag_yt921x.c
+
+-- 
+2.47.2
+
 
