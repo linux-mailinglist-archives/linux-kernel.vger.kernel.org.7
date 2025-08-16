@@ -1,293 +1,148 @@
-Return-Path: <linux-kernel+bounces-771832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308A4B28C04
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:47:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AF8B28C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E7C1CE477B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C462C5E0CDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F112823A562;
-	Sat, 16 Aug 2025 08:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5C923AB88;
+	Sat, 16 Aug 2025 08:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTrhJzbD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2+xw3jm"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3769A13AD26;
-	Sat, 16 Aug 2025 08:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D735113AD26;
+	Sat, 16 Aug 2025 08:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755334033; cv=none; b=cIIil1UQfg/3OnuDPWRyo9K1xmSFyyCXzvnoR8RCeGJcSLFivVgENEqkMkVCIxLJ2PAbHmMf1pH2pZJMjxzxzWvAcj/19kNi876aBKfjobhhkOFseLZf3K1CoISHkOPuH5WTjIgQAGrmiM77+BbZOqjCkvcNFoVDOB4f0A33IIc=
+	t=1755334046; cv=none; b=o4k7N5CCkqKwOP8qw5kjnX1vvSIEgnZH7zGFzJN1sJSdG9rmTRy3m8iYctK+/S6uXwOhkkN5b5S6iax+ZiFmLD77I7w9WuWamlS3iq9vw/QtOdv5unaqccOGtaTR/KsQ83lNnU6KsKZdPZa0Q8pF5HwsOnO0GHHkX7SFcn9Zu9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755334033; c=relaxed/simple;
-	bh=X/tWkuenMGUH8KB0IxKz5clw88ySLexKQReiGWiI9HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQ+mdXz8Ru+dFBnLtdiTrG+LDJ5KKuAFYKQy/j/NqFjpw6XIzqo4a6fxkMQv080/wSCx/uUYGWDLqcIvjajaWnguagmtt2eTrzbcaesGwmKSRwejUwFkPrqHmCXGX8rk49SpkCyu2KRkJDm3zyk40REm+JKS4qKSRGwGYpK3z6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTrhJzbD; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755334031; x=1786870031;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X/tWkuenMGUH8KB0IxKz5clw88ySLexKQReiGWiI9HI=;
-  b=CTrhJzbDQL2EF/7FDWRT6ixGCjlINfWlTMbet0wrQkZZMA2P+5rJ/3tx
-   8ij24+ay00Vn/ZbR7X0EX9x4D5krj9O13a+Ly2j1n2lWp+coOUav2eJJ3
-   CqGUKCSjzhK8nDVO03r9N4zN/4OtWLEux/y9OtF216+KDgah+4emKzm/x
-   q7MCi25K0L7QuYnlBCU51cSaLd6pxqdaNb2LZavZxMY56LGiEjqK63MV9
-   vqC3Eg/gReGpMEDiJSvNRn6m2sgej1Z2iT9Ax+AOeh9a5mtUV4Wl/wtV7
-   nTnbzBQk9L/zl832rPpZWEaU45VoGrtUA9ngNonBFDOOkwCoafp7fdsUE
-   Q==;
-X-CSE-ConnectionGUID: e4gnpK6sSjSIsr14N3rM3Q==
-X-CSE-MsgGUID: rnP4qIhtRKWkgKGPeDqLPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57743936"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57743936"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 01:47:11 -0700
-X-CSE-ConnectionGUID: 907qySqDRHCENg03g4Lvow==
-X-CSE-MsgGUID: GxsIphT9QiKsF29TgU7HQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167565368"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 16 Aug 2025 01:47:08 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unCZ8-000Cku-1j;
-	Sat, 16 Aug 2025 08:47:06 +0000
-Date: Sat, 16 Aug 2025 16:46:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] iio: mcp9600: Recognize chip id for mcp9601
-Message-ID: <202508161646.PDl6V4EU-lkp@intel.com>
-References: <20250815164627.22002-4-bcollins@watter.com>
+	s=arc-20240116; t=1755334046; c=relaxed/simple;
+	bh=8PCZnzyRTidqnHyCuNwmg93j5EhJWu3LK3bWlpzsKUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dznkfeg+yRg4uXxjXP3ylFxzZPB1SNER2AHmoYQcXQqnfz7rJqbCLUI894QTMG6pBkB+f2U6PdZcj41FsdGSCjV7ub7XOhkzW8mzf+aqxzNNDZ5T86hXPuJtDlbAySNrjXhvRoyiPDyJz8EavsVg5poiiHqTyzQqyXNpmR/oIxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2+xw3jm; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24458298aedso23742185ad.3;
+        Sat, 16 Aug 2025 01:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755334044; x=1755938844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n00OWL+w8sWdTdOAmEeus4NBoquiXkV9tCtbNCC3Db4=;
+        b=A2+xw3jmVDSuaJYZknaB7XKeWx/jHAbh12qsYxj8tKWiiBU+BFannyrTeUOjuqg8Tf
+         sMt+ZaLH0MY3u6Y17nFsURD0b2nxVPBWDkxFq3/CJyBnpFwBtDVE0duLo0F4juu/sBP2
+         bvXwlj3oOuTt9UC3raySV10u+Kf5bS/2gMXFwrhvEnwYxCwrLfLDyjY2VrJrZ37OAiZh
+         eQ4cfgrVYoe2pC5YkN0TA0+rj9u4NaUAkyoNfgLB7jTkvVxCulY4ipebJ8DQBuU1cliC
+         wXwcGGooMIn0Jk7wPJ2nljUJA1TJXSLYJaK/3KScKNJbxjAz4WRTa5RqYLL8Mql7J4dH
+         u0jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755334044; x=1755938844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n00OWL+w8sWdTdOAmEeus4NBoquiXkV9tCtbNCC3Db4=;
+        b=PNGub+DIyvbQV+7hm7g1k03KcfmGonfA001AUklr3q5GIbhAo0ZSaIPhOE+0OY+LQU
+         FZIpJOqbknIy6n2psu+GHP33M6hjDT3Gq0QBmUzW8mIORqz3fDofvn3hjaQ8sOi+snNy
+         7YNCS9vl4n8Z0zCShfRauaHlWXLxGvpUhpcy3hjM/yU457bTTifhBxM+KfhUmCfUYp3S
+         jKlsNul20UAy6DDiqeWf4N9myjlxWxM9szRRB3LlIO9QcFsGRPiNuA8P2/5wlVdkS7wY
+         G47sHt20q91upu5ctxxEJL6JMTzjblh6KAONM2s1lqPf+CoVWw9A1Cyc6pBDB2y3p3AZ
+         LX5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWF89AUQoPLGDwafeLueeaA35dserEigqF5B3Ay5yeb2qCnem6LOHuSF2FHc1LSrT+9pgM6Qv6Ooo8=@vger.kernel.org, AJvYcCXP5MAMIC/T8TJJMbIx5fCk5h93HfVhLl5usR8bp4EypAHmctdm+vXWjjAmTyQZb9gOuO9ij6sseBEix4KX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8YG0ZvjCtSPDzqlKkN8uSumhWfQK6C4ucTTgw8AbTXA0sxUD2
+	pZjw4YWlkDEUBhv3MVO9a39I4+m4ej85QU+zlZ2k+LBaTQg14oj7mayq
+X-Gm-Gg: ASbGnctwCcsZXn9NIyJYft80cjfodVbRu4SCtPJA9aJGCHhf4yvi7utPUI+i8oDWuPk
+	8RRc68zXQoDQKVhQuqtXDb39atCAAwconnhk77CBDHjjQBPlFGEi7D/iLDuABGL2APq6E3H0GPW
+	CH1vYg4OqcngJT4Tw0UHA8gfGm8I5WJl1Lk++ILEtyHl39QXjji/RREUPFUssbcfJj5ki0zRXlX
+	hgFKNF6RX/PdnksNN8qvjtvFVmLcZfUuYwzhDiOkk2YuP1WjdfhiRaMNBw5US8J9HqhkDtL1f3O
+	7hchAmb5TjxW5OxL6sEHICI2B3KzOBb4MH8PHMqqTpNRPfmZCAl7RelVHmLSjbAIPGBmNCnGYWf
+	dr90ZHjgtZYQ=
+X-Google-Smtp-Source: AGHT+IHRLGNB8SYXmPKw81D1VOKbz4q3gvNOhwVUuxSt8mOuivVjupipoQ1fbt8d5uqOtt3TGwriuA==
+X-Received: by 2002:a17:903:22c6:b0:242:9bc4:f1c7 with SMTP id d9443c01a7336-2447909bfd5mr31610805ad.54.1755334044121;
+        Sat, 16 Aug 2025 01:47:24 -0700 (PDT)
+Received: from junAIR ([212.192.12.80])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d57f12esm31048215ad.157.2025.08.16.01.47.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 01:47:23 -0700 (PDT)
+From: iuncuim <iuncuim@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH 0/7] arm64: allwinner: a523: add USB3.0 support
+Date: Sat, 16 Aug 2025 16:46:53 +0800
+Message-ID: <20250816084700.569524-1-iuncuim@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815164627.22002-4-bcollins@watter.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ben,
+From: Mikhail Kalashnikov <iuncuim@gmail.com>
 
-kernel test robot noticed the following build warnings:
+This series is a draft and does not include patches for dt-bindings.
+The first series is necessary for testing on other devices and
+initiating discussion.
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This series of patches adds USB 3.0 functionality for the
+A523/A527/H728/T527 processor.Most of the code is derived from the BSP,
+ as the datasheet does not fully describe this feature.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ben-Collins/dt-bindings-iio-mcp9600-Add-compatible-for-microchip-mcp9601/20250816-005705
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250815164627.22002-4-bcollins%40watter.com
-patch subject: [PATCH 3/5] iio: mcp9600: Recognize chip id for mcp9601
-config: riscv-randconfig-001-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161646.PDl6V4EU-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161646.PDl6V4EU-lkp@intel.com/reproduce)
+I have verified functionality on two of my boards, walnutpi 2b (t527)
+and x96qproplus (h728). When testing usb3.0 on x96qproplus, I get
+reconnections of my nvme, it looks like the port does not provide enough
+ current to work. I have encountered similar complaints from users of the
+  device on Android. In the case of walnutpi, there is no such problem.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161646.PDl6V4EU-lkp@intel.com/
+Based on 6.17-rc1
 
-All warnings (new ones prefixed by >>):
+Mikhail Kalashnikov (7):
+  clk: sunxi-ng: a523: add missing usb related clocks
+  arm64: dts: allwinner: a523: add third usb2 phy
+  phy: sun4i-usb: a523: add support for the USB2 PHY
+  phy: allwinner: a523: add USB3/PCIe PHY driver
+  arm64: dts: allwinner: a523: add USB3.0 phy node
+  arm64: dts: allwinner: a523: add DWC3 USB3.0 node
+  arm64: dts: allwinner: a523: activate USB3 for all boards
 
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:820:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     820 |         insl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
-     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from drivers/iio/temperature/mcp9600.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     829 |         outsb(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
-     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/iio/temperature/mcp9600.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     838 |         outsw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
-     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/iio/temperature/mcp9600.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     847 |         outsl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
-     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/iio/temperature/mcp9600.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> drivers/iio/temperature/mcp9600.c:440:53: warning: invalid conversion specifier '\x0a' [-Wformat-invalid-specifier]
-     440 |                                 "Expected id %02x, but device responded with %02\n",
-         |                                                                              ~~~^
-   include/linux/dev_printk.h:156:62: note: expanded from macro 'dev_warn'
-     156 |         dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                     ^~~
-   include/linux/dev_printk.h:19:22: note: expanded from macro 'dev_fmt'
-      19 | #define dev_fmt(fmt) fmt
-         |                      ^~~
-   include/linux/dev_printk.h:110:16: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
->> drivers/iio/temperature/mcp9600.c:441:26: warning: data argument not used by format string [-Wformat-extra-args]
-     440 |                                 "Expected id %02x, but device responded with %02\n",
-         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     441 |                                  chip_info->chip_id, dev_id);
-         |                                                      ^
-   include/linux/dev_printk.h:156:70: note: expanded from macro 'dev_warn'
-     156 |         dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                     ~~~     ^
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^
-   drivers/iio/temperature/mcp9600.c:428:22: warning: unused variable 'ret' [-Wunused-variable]
-     428 |         int ch_sel, dev_id, ret;
-         |                             ^~~
-   10 warnings generated.
-
-
-vim +/x0a +440 drivers/iio/temperature/mcp9600.c
-
-   422	
-   423	static int mcp9600_probe(struct i2c_client *client)
-   424	{
-   425		const struct mcp_chip_info *chip_info = i2c_get_match_data(client);
-   426		struct iio_dev *indio_dev;
-   427		struct mcp9600_data *data;
-   428		int ch_sel, dev_id, ret;
-   429	
-   430		dev_id = i2c_smbus_read_byte_data(client, MCP9600_DEVICE_ID);
-   431		if (dev_id < 0)
-   432			return dev_err_probe(&client->dev, dev_id,
-   433					     "Failed to read device ID\n");
-   434	
-   435		switch (dev_id) {
-   436		case MCP9600_DEVICE_ID_MCP9600:
-   437		case MCP9600_DEVICE_ID_MCP9601:
-   438			if (dev_id != chip_info->chip_id)
-   439				dev_warn(&client->dev,
- > 440					"Expected id %02x, but device responded with %02\n",
- > 441					 chip_info->chip_id, dev_id);
-   442			break;
-   443	
-   444		default:
-   445			dev_warn(&client->dev, "Unknown id %x, using %x\n", dev_id,
-   446				 chip_info->chip_id);
-   447		}
-   448	
-   449		indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-   450		if (!indio_dev)
-   451			return -ENOMEM;
-   452	
-   453		data = iio_priv(indio_dev);
-   454		data->client = client;
-   455	
-   456		ch_sel = mcp9600_probe_alerts(indio_dev);
-   457		if (ch_sel < 0)
-   458			return ch_sel;
-   459	
-   460		indio_dev->info = &mcp9600_info;
-   461		indio_dev->name = chip_info->chip_name;
-   462		indio_dev->modes = INDIO_DIRECT_MODE;
-   463		indio_dev->channels = mcp9600_channels[ch_sel];
-   464		indio_dev->num_channels = ARRAY_SIZE(mcp9600_channels[ch_sel]);
-   465	
-   466		return devm_iio_device_register(&client->dev, indio_dev);
-   467	}
-   468	
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  52 +++-
+ .../dts/allwinner/sun55i-a527-cubie-a5e.dts   |   8 +
+ .../dts/allwinner/sun55i-h728-x96qpro+.dts    |   8 +
+ .../dts/allwinner/sun55i-t527-avaota-a1.dts   |   8 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  32 +++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |   2 +-
+ drivers/phy/allwinner/Kconfig                 |   9 +
+ drivers/phy/allwinner/Makefile                |   1 +
+ drivers/phy/allwinner/phy-sun4i-usb.c         |  10 +
+ drivers/phy/allwinner/phy-sun55i-usb3-pcie.c  | 267 ++++++++++++++++++
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |   4 +
+ 11 files changed, 392 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/phy/allwinner/phy-sun55i-usb3-pcie.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
 
