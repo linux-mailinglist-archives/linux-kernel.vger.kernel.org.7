@@ -1,137 +1,136 @@
-Return-Path: <linux-kernel+bounces-772167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A564B28F7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4D3B28F7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C5D169BB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD96AC7DF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B02F39DC;
-	Sat, 16 Aug 2025 16:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A4C1D5154;
+	Sat, 16 Aug 2025 16:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZEv8ejtc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaOYU9EN"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21FC2E4252
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7781418CC1D
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755361858; cv=none; b=mxgpVkUaztT7WRfYowFvrfPE3Am3JgdkGCEr0yv9YLW9aWn76ux1VtVjTFsew6VIzHYauoJhN9UFA1Em0xZa4jCT6eVH6l8tCsA0u8BCbeTlPykfkWjzobcvW7DpxEIyq7RhzufWpf9LtOOe6Tn7+U3zeaWT0A8IS9xkn9kWn8M=
+	t=1755361854; cv=none; b=JyFE64Ll2+Xu1Fh6uFyVv9VvZQc0m/X3w+BNQVUuyHP6ScOMchn+862KbcnhPcrNufrrfGuBXiRdKkYY0MMWoxoFi5Yf/dKCW1npka0QIvdF2pwvRUS8eujo7OwlVgs8ixaHW9nT8HMwqHop4Oj/1EQEcLSdABBR5kN5x2abb7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755361858; c=relaxed/simple;
-	bh=ZFfAo8apibsWsI1omhLl8iawazNCfUYxTJ6h2jfQBZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q04Dv76WMbpOZfapM64wjHU2EP3u66KPOybprqDScJ06fBB4qkzuSAJQZO/4+32p/CZT3QQTS2A7gQVBYEeXNNsx7cM3PBDq3wuWjT/FB3Mt8+SYFSYJ79gXkxYaEeDmD8SNB0Y8HEWEwi4ZIjJIEbeZJPieKUbFAICus31lgLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZEv8ejtc; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755361857; x=1786897857;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZFfAo8apibsWsI1omhLl8iawazNCfUYxTJ6h2jfQBZY=;
-  b=ZEv8ejtcfvCaE9SscNxOZluH7mmdTezkBPdMmQ5qXChmgWqV9PURl+xG
-   2t2ka8WmFOl3Rc2AMVKp+rplZsYeKqvbKXFfgGbvSZz/B6V57LfhzWc+L
-   fVUD2djAPVIy8yhxMEjbtG8WpCqucfjz6ZGkaE3E1IGgb+Zx+0ZbosW84
-   lcgCrKbllnxTzt6pDCh1iEcfvbkRiYgGZ8WZsQDAR9IJYXuRQFTGoJhuH
-   /XihVbGbKzEg2QgmTNjYeeq79Vx7cUqY3iYq9YxD7kcHhojTHLNCHhg2e
-   9rFOQChnHN3Hmz5fehrTFQU3k6k+fknt6B2HucSl1rndd4bEasJoALisK
-   Q==;
-X-CSE-ConnectionGUID: EHxmPtMJQ1qQF9OQNo5s+Q==
-X-CSE-MsgGUID: DDClrGHoR1OY52oBf9yCJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="69020216"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="69020216"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 09:30:56 -0700
-X-CSE-ConnectionGUID: PZSfjvSKRIqbKzG5XmYmLA==
-X-CSE-MsgGUID: CK+ohIFiTxO5RXZQZAbzeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167481802"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 16 Aug 2025 09:30:52 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unJnu-000D0S-1k;
-	Sat, 16 Aug 2025 16:30:50 +0000
-Date: Sun, 17 Aug 2025 00:30:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org,
-	david@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: Re: [PATCH] mm/cma: print total and used pages in cma_alloc()
-Message-ID: <202508170014.PK57XSd7-lkp@intel.com>
-References: <20250816042842.3959315-1-gxxa03070307@gmail.com>
+	s=arc-20240116; t=1755361854; c=relaxed/simple;
+	bh=F0o0xnWPkozCFKWoWj71XGLa+u+3bjRmZCdOz8jbtZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uXXuOzyfgwQ9jVuYDvuhSws50DWjA3oHv2xfRBP67BLslauVopYvnxvSaUAMIf/lD9hd5v5WVavXWn/gksJoUPyL/VhROu6XscgCQuJIpbo6s2x22grNrwb+s81zfuAomC5GEkUmWaJgOfaC5Y3Dy2BVGiblhQEXIjyhG3kYF80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaOYU9EN; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2eb6ce24so2711371b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755361853; x=1755966653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGscpHrKLYkJKBlkkWYFnLv4KZW6fc4RH4rOnrFs+fs=;
+        b=DaOYU9ENy3qhW6W/IiKCbnYPSamUUsL5cH+hpjNQyN+6e1pcQ1fp1ee4pClnA82cRQ
+         jOG2JcqZgnBM8deXx5sETuToZyem6Nwspox8Y0xeijUxtQk4j+ifgAqG9lU7BSkqD+B9
+         sic/qeyy8oje0wj/QjYK3p0zE8tBJ+mxK+ADDNcPSo4PQ277OI0Vfd3DvgQYTgVuwiPK
+         uf12Oz9b9blDhj1cALNnX0V9nSHSxwbplhJXgTluCaMrm84xANB0NSmjIH+JOvEBssX9
+         BuF8CW2AW8lAJqf++0e4kzzuTGbWysBMPEW8QvgLQNMOi6fmxyNNBawat2zyuDypuh6p
+         z3ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755361853; x=1755966653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lGscpHrKLYkJKBlkkWYFnLv4KZW6fc4RH4rOnrFs+fs=;
+        b=aEcX0mE5XEmEwoLU3ABUR1lN9ZoD5GlTEnXmIhVxFQThF/uUAQB6n9SYC8FqWqyF4Y
+         iCKlylazOIslckKnoYLmkIXiq1IO9Hx/bIx0aJlMnD9MekhnDiKFxz5PrhPpItuYrVRK
+         UU840/9Dn56Aw9UxLFCPYXpVD8l5L3lJkx7ffBi94GTFHHDNS8pKpyzTZY5E+YQBE5aa
+         FaJ1L5ey/CFvxVvzgHTy0F+K4r6nOhiS/kYJtTDSrGZtfqgyyPu6Az3MajgDUl4APrPh
+         CA3BiWTm+B7hnF23iPqYJh0RYhcAZhmOCVOVlq8/brnfXHobN7pfqlIxWeO3fqMF8l5c
+         ptnQ==
+X-Gm-Message-State: AOJu0YxBlv+mPkbm34kq20lV1MZAsT/rwjksdY+Dr7emm5coKlKSVprK
+	aHwn1zNt0q77JAnThw9MMNe4fr1NE04Axyr+f9wJwk+KhA7b22FYSwzWBre1I23U
+X-Gm-Gg: ASbGnct+OwYF88AzUxJRM4FCfKnGjC5YEXS4w84Tds2KWu4Va2PzLiNrqQskn2r47Yx
+	ZwyK2sD9tBpUvSwx0muFHPHdq9+x4WcnjJkUigAVOIrJ3Js5WMvjG5n1Zq2mNH19JWsHqeDgI3E
+	b4MUwuIb7Pxn18pmykvszo8Nel4aZhkqoCdYOlbK4V6lf3dGHY8tbyXyXB8R9NbEJHYtVEApDjz
+	nCUyMYGyyDeZEgIDDDtVMvnDlLU6Zo3+0evmb25954GmARCT6bgal+mH5y+vD6a3IZDAj+1kqE9
+	b779RZTatJOW2tCs9VGPE7foNx6gy0gDhR7kmQC9HUYEYhv5nVi4z5kvTTdQjtc/P4B9rgU1ccx
+	jXvWNs/+m+Dk+EYPtIM1moJC2J3RnNGT76l9Vd6K4
+X-Google-Smtp-Source: AGHT+IGSAapA897DNdthl6u94XoLHXfcYBulHrIpjLCBAeZ1DUcYVGCBMsa0QYl0Pil1B+ITk7QjBg==
+X-Received: by 2002:a05:6a00:cc7:b0:748:ffaf:9b53 with SMTP id d2e1a72fcca58-76e448182cbmr10108454b3a.16.1755361852552;
+        Sat, 16 Aug 2025 09:30:52 -0700 (PDT)
+Received: from clint-Latitude-7390.. ([110.226.179.173])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e4558b021sm3426091b3a.96.2025.08.16.09.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 09:30:52 -0700 (PDT)
+From: Clint George <clintbgeorge@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Clint George <clintbgeorge@gmail.com>
+Subject: [PATCH] Fix spelling/grammar issues in ktap.rst file. Minor Changes
+Date: Sat, 16 Aug 2025 22:00:37 +0530
+Message-Id: <20250816163037.13675-1-clintbgeorge@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816042842.3959315-1-gxxa03070307@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Xiang,
+Signed-off-by: Clint George <clintbgeorge@gmail.com>
+---
+ Documentation/dev-tools/ktap.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiang-Gao/mm-cma-print-total-and-used-pages-in-cma_alloc/20250816-122940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250816042842.3959315-1-gxxa03070307%40gmail.com
-patch subject: [PATCH] mm/cma: print total and used pages in cma_alloc()
-config: arm-randconfig-002-20250816 (https://download.01.org/0day-ci/archive/20250817/202508170014.PK57XSd7-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508170014.PK57XSd7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508170014.PK57XSd7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/cma.c: In function 'cma_get_used_pages':
->> mm/cma.c:784:26: error: 'struct cma' has no member named 'bitmap'
-     784 |  used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
-         |                          ^~
->> mm/cma.c:784:41: error: too few arguments to function 'cma_bitmap_maxno'
-     784 |  used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
-         |                                         ^~~~~~~~~~~~~~~~
-   In file included from mm/cma.c:34:
-   mm/cma.h:77:29: note: declared here
-      77 | static inline unsigned long cma_bitmap_maxno(struct cma *cma,
-         |                             ^~~~~~~~~~~~~~~~
-
-
-vim +784 mm/cma.c
-
-   778	
-   779	static unsigned long cma_get_used_pages(struct cma *cma)
-   780	{
-   781		unsigned long used;
-   782	
-   783		spin_lock_irq(&cma->lock);
- > 784		used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
-   785		spin_unlock_irq(&cma->lock);
-   786	
-   787		return used << cma->order_per_bit;
-   788	}
-   789	
-
+diff --git a/Documentation/dev-tools/ktap.rst b/Documentation/dev-tools/ktap.rst
+index 414c105b1..fbfda5094 100644
+--- a/Documentation/dev-tools/ktap.rst
++++ b/Documentation/dev-tools/ktap.rst
+@@ -5,7 +5,7 @@ The Kernel Test Anything Protocol (KTAP), version 1
+ ===================================================
+ 
+ TAP, or the Test Anything Protocol is a format for specifying test results used
+-by a number of projects. It's website and specification are found at this `link
++by a number of projects. Its website and specification are found at this `link
+ <https://testanything.org/>`_. The Linux Kernel largely uses TAP output for test
+ results. However, Kernel testing frameworks have special needs for test results
+ which don't align with the original TAP specification. Thus, a "Kernel TAP"
+@@ -13,7 +13,7 @@ which don't align with the original TAP specification. Thus, a "Kernel TAP"
+ This specification describes the generally accepted format of KTAP as it is
+ currently used in the kernel.
+ 
+-KTAP test results describe a series of tests (which may be nested: i.e., test
++KTAP test results describe a series of tests (which may be nested: i.e., tests
+ can have subtests), each of which can contain both diagnostic data -- e.g., log
+ lines -- and a final result. The test structure and results are
+ machine-readable, whereas the diagnostic data is unstructured and is there to
+@@ -92,7 +92,7 @@ keyword preceding the diagnostic data. In the event that a parser encounters
+ a directive it doesn't support, it should fall back to the "ok" / "not ok"
+ result.
+ 
+-Currently accepted directives are:
++The currently accepted directives are:
+ 
+ - "SKIP", which indicates a test was skipped (note the result of the test case
+   result line can be either "ok" or "not ok" if the SKIP directive is used)
+@@ -235,7 +235,7 @@ Major differences between TAP and KTAP
+ ==================================================   =========  ===============
+ Feature                                              TAP        KTAP
+ ==================================================   =========  ===============
+-yaml and json in diagnosic message                   ok         not recommended
++yaml and json in diagnostic message                  ok         not recommended
+ TODO directive                                       ok         not recognized
+ allows an arbitrary number of tests to be nested     no         yes
+ "Unknown lines" are in category of "Anything else"   yes        no
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
