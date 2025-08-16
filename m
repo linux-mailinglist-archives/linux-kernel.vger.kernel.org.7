@@ -1,176 +1,205 @@
-Return-Path: <linux-kernel+bounces-771974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDF3B28D6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:26:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BD2B28D67
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458701B68280
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6313B9D74
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3CC2D7D31;
-	Sat, 16 Aug 2025 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CB72D0C86;
+	Sat, 16 Aug 2025 11:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n71hZWok"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh8pD0Nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C1B2C3768;
-	Sat, 16 Aug 2025 11:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB831DF742;
+	Sat, 16 Aug 2025 11:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755343544; cv=none; b=RGxYOQK+WDYdClodj+zlK/lQ16mCHOEZYQfQ53mTQP+UB4WqZrFjCjA1ijK+loQ/h1t5WI6jZcr0uJioQtwcB+1EkuK2+SLz0+QP3aw57Rfg/IjYxjWbMFDaD+dShp4wR0ADcZjez22NOJZRHJu6rGzZ5gqMF9cm5leYRy9YGI8=
+	t=1755343529; cv=none; b=PK8JJPCkU3nT0KvaMwoTq3TcmuSK1NXBIlkstLyscoT9WGTWhz6hjQ9H90OV2I5bkU/DdpZCLpQDciZKMlqKAViNQtIw2kyn3xeZA82fDSSvAxWiKHeu71PdhDxoJ2aDH6NNW4lwaoEKMCTStUrRAWkXlahNXRzwW3k12CPGw9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755343544; c=relaxed/simple;
-	bh=yXFNrlTsuKcIiCEG5HOLk1E5J3QOdw3cZCTv8+Nq19Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lymf+8swtYgb1MQ/awKjckKqmxpsrbAqBmBImqGNQSM8Ss1evvOcw8DXIKgvL1i65vX1D2049+yYP1sO8UD2uodCBlzi9ComXoPZSiVY2DcUE9DVGo/7lS+GdqnTrQvL8lsk374Yu9b5G6wUupXHzUQnQXf0BpmoOrCCvWLh2kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n71hZWok; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755343543; x=1786879543;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yXFNrlTsuKcIiCEG5HOLk1E5J3QOdw3cZCTv8+Nq19Q=;
-  b=n71hZWokabrRDjOBI42sW1w7fjcwElw+LzgHU0HWoginULo6m9Vv5+uS
-   VyzB02IQqdsOytedHFHSh40WxiqMEcV+DKosm6IhunAJh/9KEGIVcu0B5
-   3Zcqq/SJdf0Usyo0xZGOPOpLX1DDprsi+gQARMq4Tgel+hOcBbjJOa5IP
-   +P/8s/RALDzHzxdN5m2A9XMsV8uaNUmxnusVFn9MFU4ACzsDhl6dK21dc
-   /xRbKU/yK/NKlXqY1P71MA66hBC9XFjVMy98tMEDk6gyi6yWuEvo/C8Ol
-   USGE1rcUl1OCcIWd14L+2avMlBLLJkWEMFJuPosfcDMWlXbKN43Aj/H1g
-   A==;
-X-CSE-ConnectionGUID: p07IyuLnRySbStjIjLqRLQ==
-X-CSE-MsgGUID: guZ+JZrCTZeGG9OOly6HqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57713463"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57713463"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 04:25:42 -0700
-X-CSE-ConnectionGUID: uGNPv/P0SAOZCDHGzi1O3w==
-X-CSE-MsgGUID: Tv9x7wr8Td6dRbiYNGSuGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="190913937"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 16 Aug 2025 04:25:38 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unF2T-000CqO-0F;
-	Sat, 16 Aug 2025 11:25:34 +0000
-Date: Sat, 16 Aug 2025 19:24:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Artur Rojek <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
-	Jeff Dionne <jeff@coresemi.io>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-Message-ID: <202508161930.ergOga3z-lkp@intel.com>
-References: <20250815194806.1202589-4-contact@artur-rojek.eu>
+	s=arc-20240116; t=1755343529; c=relaxed/simple;
+	bh=5C84l4xZ1NV/v27biPkkCIjMZop57ZB3qzqqFyLS+jU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SAqjFhIjSArluVcPdkg77ww0ZAepa7ZqxmQQ6DAPXy5FYvswNEOoygOW4fpulzz8CWMvW59ukNFFMhoDH9CWi2DrIy3idAImILoMOhN7gGTMJvl8rpwwu4invRGZDh3cH7BprmQTfLAvNW19NcU6vVLFhyNWrZ98XIaRS91u8Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh8pD0Nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783CFC4CEEF;
+	Sat, 16 Aug 2025 11:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755343528;
+	bh=5C84l4xZ1NV/v27biPkkCIjMZop57ZB3qzqqFyLS+jU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kh8pD0Nda/J7JqycDC8vYqFJOKj/hlQH8ZKorpiXMMH6QJYWQn4+eQ7yIR7LmlSIK
+	 CyQTBf6TYbpfC/8hnjmWCPI8InZzP+6G4pOqIcLbYvDjbBAxQII2ZC839QHzS68R/l
+	 rn7FW9NsMM24vjPsyqGiAtTUWaCJkZW4zQAXLAYvwqXfHXFNiTQ/Red5W4+r3YOn2E
+	 eIwFqpTdKu1sBmpMn0kYHfRDHp6YbG6/Gq8m96vnY9i03RNC1njN0EecIYjDC0qQW0
+	 zP7NdYrFWI0cSRpenZSYNCRoCkvBIhglWUC+QRypcLRwPXRaZFnFWP5eOGIDN7nNV3
+	 Ccy6BwIIxOU8Q==
+Date: Sat, 16 Aug 2025 12:25:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] dt-bindings: iio: imu: Add inv_icm45600
+Message-ID: <20250816122519.2c7a5d9e@jic23-huawei>
+In-Reply-To: <20250814-add_newport_driver-v4-1-4464b6600972@tdk.com>
+References: <20250814-add_newport_driver-v4-0-4464b6600972@tdk.com>
+	<20250814-add_newport_driver-v4-1-4464b6600972@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815194806.1202589-4-contact@artur-rojek.eu>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Artur,
+On Thu, 14 Aug 2025 08:57:15 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> From: Remi Buisson <remi.buisson@tdk.com>
+> 
+> Document the ICM-45600 devices devicetree bindings.
+> 
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+> ---
+>  .../bindings/iio/imu/invensense,icm45600.yaml      | 97 ++++++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm45600.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm45600.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f43258124c32ebf850fc29b2e97643885e6f8480
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm45600.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/imu/invensense,icm45600.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: InvenSense ICM-45600 Inertial Measurement Unit
+> +
+> +maintainers:
+> +  - Remi Buisson <remi.buisson@tdk.com>
+> +
+> +description: |
+> +  6-axis MotionTracking device that combines a 3-axis gyroscope and a 3-axis
+> +  accelerometer.
+> +
+> +  It has a configurable host interface that supports I3C, I2C and SPI serial
+> +  communication, features up to 8kB FIFO and 2 programmable interrupts with
+> +  ultra-low-power wake-on-motion support to minimize system power consumption.
+> +
+> +  Other industry-leading features include InvenSense on-chip APEX Motion
+> +  Processing engine for gesture recognition, activity classification, and
+> +  pedometer, along with programmable digital filters, and an embedded
+> +  temperature sensor.
+> +
+> +  https://invensense.tdk.com/wp-content/uploads/documentation/DS-000576_ICM-45605.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - invensense,icm45605
+> +      - invensense,icm45606
+> +      - invensense,icm45608
+> +      - invensense,icm45634
+> +      - invensense,icm45686
+> +      - invensense,icm45687
+> +      - invensense,icm45688p
+> +      - invensense,icm45689
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      enum:
+> +        - INT1
+> +        - INT2
+> +    description: Choose chip interrupt pin to be used as interrupt input.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+See v1 review on this from Krzysztof that you seem to have missed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Artur-Rojek/dt-bindings-vendor-prefixes-Document-J-Core/20250816-042354
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250815194806.1202589-4-contact%40artur-rojek.eu
-patch subject: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250816/202508161930.ergOga3z-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161930.ergOga3z-lkp@intel.com/reproduce)
+> +
+> +  drive-open-drain:
+> +    type: boolean
+> +
+> +  vdd-supply:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161930.ergOga3z-lkp@intel.com/
+Description doesn't add much so simply
+  vdd-supply: true
 
-All warnings (new ones prefixed by >>):
+Might be enough.
 
->> drivers/net/ethernet/jcore_emac.c:231:2: warning: label at end of compound statement is a C2x extension [-Wc2x-extensions]
-     231 |         }
-         |         ^
-   1 warning generated.
+> +    description: Regulator that provides power to the sensor
+> +
+> +  vddio-supply:
+> +    description: Regulator that provides power to the bus
+Also very standard description so probably doesn't add anything.
 
+> +
+> +  mount-matrix:
+> +    description: an optional 3x3 mounting rotation matrix
 
-vim +231 drivers/net/ethernet/jcore_emac.c
+Could do
+  mount-matrix: true
 
-   192	
-   193	static void jcore_emac_set_rx_mode(struct net_device *ndev)
-   194	{
-   195		struct jcore_emac *priv = netdev_priv(ndev);
-   196		struct netdev_hw_addr *ha;
-   197		unsigned int reg, i, idx = 0, set_mask = 0, clear_mask = 0, addr = 0;
-   198	
-   199		if (ndev->flags & IFF_PROMISC)
-   200			set_mask |= JCORE_EMAC_PROMISC;
-   201		else
-   202			clear_mask |= JCORE_EMAC_PROMISC;
-   203	
-   204		if (ndev->flags & IFF_ALLMULTI)
-   205			set_mask |= JCORE_EMAC_MCAST;
-   206		else
-   207			clear_mask |= JCORE_EMAC_MCAST;
-   208	
-   209		regmap_update_bits(priv->map, JCORE_EMAC_CONTROL, set_mask | clear_mask,
-   210				   set_mask);
-   211	
-   212		if (!(ndev->flags & IFF_MULTICAST))
-   213			return;
-   214	
-   215		netdev_for_each_mc_addr(ha, ndev) {
-   216			/* Only the first 3 octets are used in a hardware mcast mask. */
-   217			memcpy(&addr, ha->addr, 3);
-   218	
-   219			for (i = 0; i < idx; i++) {
-   220				regmap_read(priv->map, JCORE_EMAC_MCAST_MASK(i), &reg);
-   221				if (reg == addr)
-   222					goto next_ha;
-   223			}
-   224	
-   225			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(idx), addr);
-   226			if (++idx >= JCORE_EMAC_MCAST_ADDRS) {
-   227				netdev_warn(ndev, "Multicast list limit reached\n");
-   228				break;
-   229			}
-   230	next_ha:
- > 231		}
-   232	
-   233		/* Clear the remaining mask entries. */
-   234		for (i = idx; i < JCORE_EMAC_MCAST_ADDRS; i++)
-   235			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(i), 0);
-   236	}
-   237	
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+Needed for any functionality to be available?
+Note that this isn't a question of what driver currently requires, but
+more what someone could implement if they happen not to have wired interrupts.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+That happens annoyingly often!
+
+Jonathan
+> +  - interrupt-names
+> +  - vdd-supply
+> +  - vddio-supply
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        imu@68 {
+> +            compatible = "invensense,icm45605";
+> +            reg = <0x68>;
+> +            interrupt-parent = <&gpio2>;
+> +            interrupt-names = "INT1";
+> +            interrupts = <7 IRQ_TYPE_EDGE_RISING>;
+> +            vdd-supply = <&vdd>;
+> +            vddio-supply = <&vddio>;
+> +            mount-matrix = "0", "-1", "0",
+> +                           "1", "0", "0",
+> +                           "0", "0", "1";
+> +        };
+> +    };
+> 
+
 
