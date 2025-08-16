@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-771593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D7DB2892A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E37E1B2892F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8AEF1CC0BFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E764B1CC20EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA871758B;
-	Sat, 16 Aug 2025 00:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MjkUJ0rH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215534A0A;
+	Sat, 16 Aug 2025 00:19:50 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992010957;
-	Sat, 16 Aug 2025 00:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DE310957
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 00:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755303516; cv=none; b=tyX/UeOMbyZ2IjAWRqqjpZ2jvJ4ty77NQ+1okIZ42upr1LGI6ckfQlknync78x8+wHBc1QxIwRUlLXRks2/+OoKAe0eyRSrqsJh2BfkBPxzrRIk0S8iRcDZagBRAuMDE1S+U2Vi2QSZpEo6Jh2JrKhFN2xUfX+ebMQSrPvUTWUs=
+	t=1755303589; cv=none; b=juwU5nHw9esvg+u8AG63/RiR6V5sRQmALJRF9nWZ3Y2snaeajSWtNZG+gP7jwwjYsZCm2USvw44MrvGYxAT82aReb3bMYCLdydn689l35F9D234BOgqWsJ0uIf9soqifUM8Axlt78Y2Wpu1a9iahpvQ/K1bYZer2Tct1Y1N7QN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755303516; c=relaxed/simple;
-	bh=5egSqttg+zhq6JKFgoxyFAWXu1lGsjRBE1PauwRUfEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2NcnnGIBDj0NyqUhQyaAvFEO7OXsKHiY1ePzpHQ60pCyoiBIylXeQkqrZSePMDpemEBy89KliKRzvZvhf1P/fLRlr7qhOm3mDewFRWeboxZ+ZcPjGCs7IdttWiZ94vPY4He1MvbfdCqjetOxr38yAFSZh7y01ejzus+ySlEGXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MjkUJ0rH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ko1+mkIT7bYw/SCpq1gobXQboTLe77dTl2YpjhZDnOs=; b=MjkUJ0rHyoIO3POmly8MKNLxXJ
-	QukjgnljN238hKfTozbtCWOkWH1TbCHqkwGF93WO2rTZEp6j4wuBiM+1VotuN11KwomVIRtIAWj3i
-	I16/wXcHg91xSLB0Xd0EQQfESYZ8kjsMIM0LsBh1UOlwc/3YEZjRLYYx6c1FIgfIHcUI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1un4co-004sJx-5R; Sat, 16 Aug 2025 02:18:22 +0200
-Date: Sat, 16 Aug 2025 02:18:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Artur Rojek <contact@artur-rojek.eu>
-Cc: Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-Message-ID: <ee607928-1845-47aa-90a1-6511decda49d@lunn.ch>
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-4-contact@artur-rojek.eu>
- <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
- <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
- <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
- <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
- <7a4154eef1cd243e30953d3423e97ab1@artur-rojek.eu>
+	s=arc-20240116; t=1755303589; c=relaxed/simple;
+	bh=d3JBlurWXIm51JZT55vsAQhmgIB/GLQhiMmJ26sDsDM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mH14mOUxfgXRuqgy4GwUeAmPhcaxBU9pacOi/7+48vVY29mBovgfxrEgxLUMr2loE4Zcs5RKnkDJ2eMBnej+KwHfKECnVtysh0nddTADsTCcsyuVTxbKulGAjgyP2xtKBs4mozoP8b2XsOFytDE2GQ3ZGhN5QpSb6PyAR1EDrIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <tglx@linutronix.de>, <bp@alien8.de>, <peterz@infradead.org>,
+	<jpoimboe@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
+	<mingo@redhat.com>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <david.kaplan@amd.com>, <linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v2] x86/bugs: Fix GDS mitigation select for non-ARCH_CAP_GDS_CTRL CPUs
+Date: Sat, 16 Aug 2025 08:19:05 +0800
+Message-ID: <20250816001905.2270-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a4154eef1cd243e30953d3423e97ab1@artur-rojek.eu>
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc2.internal.baidu.com (172.31.50.46) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-> Yes, it's an IC+ IP101ALF 10/100 Ethernet PHY [1]. It does have both MDC
-> and MDIO pins connected, however I suspect that nothing really
-> configures it, and it simply runs on default register values (which
-> allow for valid operation in 100Mb/s mode, it seems). I doubt there is
-> another IP core to handle MDIO, as this SoC design is optimized for
-> minimal utilization of FPGA blocks. Does it make sense to you that a MAC
-> could run without any access to an MDIO bus?
+From: Li RongQing <lirongqing@baidu.com>
 
-It can work like that. You will likely have problems if the link ever
-negotiates 10Mbps or 100Mbps half duplex. You generally need to change
-something in the MAC to support different speeds and duplex. Without
-being able to talk to the PHY over MDIO you have no idea what it has
-negotiated with the link peer.
+The current GDS mitigation logic incorrectly returns early when
+ARCH_CAP_GDS_CTRL is not present, which leads to two problems:
 
-	Andrew
+1. CPUs without ARCH_CAP_GDS_CTRL support are incorrectly marked with
+   GDS_MITIGATION_OFF when they should be marked as
+   GDS_MITIGATION_UCODE_NEEDED.
+
+2. The mitigation state checks and locking verification that follow are
+   skipped, which means:
+   - fail to detect if the mitigation was locked
+   - miss the warning when trying to disable a locked mitigation
+
+Remove the early return to ensure proper mitigation state handling. This
+allows:
+- Proper mitigation classification for non-ARCH_CAP_GDS_CTRL CPUs
+- Complete mitigation state verification
+
+The change fixes the following runtime issues observed:
+
+[    2.809147] unchecked MSR access error: WRMSR to 0x123 (tried to write 0x0000000000000010) at rIP: 0xffffffffb34527b8 (update_gds_msr+0x38/0xe0)
+[    2.809147] Call Trace:
+[    2.809147]  <TASK>
+[    2.809147]  identify_secondary_cpu+0x72/0x90
+[    2.809147]  start_secondary+0x7a/0x140
+[    2.809147]  common_startup_64+0x13e/0x141
+[    2.809147]  </TASK>
+[    2.809147] ------------[ cut here ]------------
+[    2.809147] WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/bugs.c:1053 update_gds_msr+0x9b/0xe0
+
+Fixes: 8c7261abcb7ad ("x86/bugs: Add attack vector controls for GDS")
+Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ arch/x86/kernel/cpu/bugs.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index b74bf93..9e0b9bf 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1071,7 +1071,6 @@ static void __init gds_select_mitigation(void)
+ 			gds_mitigation = GDS_MITIGATION_FULL;
+ 		else {
+ 			gds_mitigation = GDS_MITIGATION_OFF;
+-			return;
+ 		}
+ 	}
+ 
+-- 
+2.9.4
+
 
