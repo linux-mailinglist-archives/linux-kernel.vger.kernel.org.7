@@ -1,244 +1,421 @@
-Return-Path: <linux-kernel+bounces-771858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E79B28C46
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14030B28C43
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCE81CE5DA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADCFAC448B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2903523F413;
-	Sat, 16 Aug 2025 09:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A32E23CF12;
+	Sat, 16 Aug 2025 09:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MDB8eRBh"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="b8WrPvmW"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B6923D29F;
-	Sat, 16 Aug 2025 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755335543; cv=pass; b=m6Q+aMk7vZhRtF5E/JUX2ISWiFo4OCADS9gVi9Eiy1wyzFH14SyvuwMjQB4LCRivHZNiZ/GykkE4yJtCnfC/W2FPdDDICicQ703YKipmjEoea9/Ggl6qM86jO9A9z5teb3kbFxep+zOJaOH+TGTQbIMKY+iEwinNXPE/vK3uxco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755335543; c=relaxed/simple;
-	bh=sxntlmaX9skVoC/D7k0co6oe2BLpEuvezNW/dGjNWQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dc6ryjpQgaTgXBZGTF2C+q7mjSfSckYuh1jP6cB9La2qSL0OBblFmHSCdsgOwcleQtDE7BWyxEKd2skNm28JWw4wlvlpK2o28c/7KXFf3rQg2Iv6eVH3sNC1tyF4O+G9jQPOtvWST9nJRKeKXmVD4Sw+meBVIUpAh5BEFpa4zsU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MDB8eRBh; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755335526; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mdit7eKotHavbQ2FTFFdYRrLobT1upX7wtgcYrNQD6jYKYItSAyZZiglbGzYpMRoljnRAFcgltakEKZqsxZe+4UWGlWdUKPOCkiMNoEtgHj9B0JjUYatVxJpkICGmDyXOuPEwFCkNoeckiU+9BiWhhY7DdSx4HL9g6cjkUFt9ys=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755335526; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NRlRSlmdIvW6NmRYLkNnaaRN4ad5e91BviukfyqBzLo=; 
-	b=NxKmgHBqUQB8IMOiDwHNqsOj5zLHmktNFTgrXhwwRbe43WdRTWr256b4MSJvbh3/LbS9u9eBgnZELEabshNUalEQT0t2Lz4qpyy0N2yaw2luVwUVzIXRuSHz6qYDnXilVofg84YQXKC13OikiMHk6XP7+Pu43dmknrJt2NK5oUE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755335526;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=NRlRSlmdIvW6NmRYLkNnaaRN4ad5e91BviukfyqBzLo=;
-	b=MDB8eRBhMH344Z6it9ItfGqQp5shI/jeiBD+vArrMbeVbAIeO2gHWnSFPiL0oSaf
-	aIFDYe1mDkyATA57Mc+g5A8TnvyeE04drQNFJNic+N4LXpaipocOXco5WQ5KecOC5hD
-	nhTVu2vYIZu6CJAVN9GnodeG5tpRc4Ko5RSNvxtv4McdyRkexJ+Ezu46Q6NGlV93tpy
-	GQlAEJjP8G5yB3FUI7oSOZqLmL3aT+7UxfOk/AwHc4papu5GtUCfTSi8gxi4CkVuN40
-	MtMFFXk573ey8DAmAHaRmfS03vpTVTDJOUydrOI9j7U4uHK+8jg3PUAwY6JnC6Jezwy
-	rjSFmahjMA==
-Received: by mx.zohomail.com with SMTPS id 1755335523279919.8290029794405;
-	Sat, 16 Aug 2025 02:12:03 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v3 4/4] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
-Date: Sat, 16 Aug 2025 17:11:13 +0800
-Message-ID: <20250816091113.2596048-5-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250816091113.2596048-1-uwu@icenowy.me>
-References: <20250816091113.2596048-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF0823F295;
+	Sat, 16 Aug 2025 09:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755335527; cv=none; b=QSv9GUUp4ZBWnSNQ3BAoPRy47coeSCLZ+Tl9SWEsHTK/3GrNEQfGTdY1poO3+8QWOd3fir9jbdcfhkU13/LrLJ7REGth3zp6qk272JkPRiPyDzFL4FB7Z7P35XouTn06wQUEJWyA2J9ft6NhGcsAqnFr6ViOvAmHV5eUl5GSOhU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755335527; c=relaxed/simple;
+	bh=m8UDmGU4+3aehgMOMlBPzcggmP/G2qZElSdr9yPggC0=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=NMdZJ6IvSOFYIWZqgFGaJKsjPMyeEJQ1ZnX43MHvxU47ZAXimMM5QXS76YVtFrVGBwalDNPEz2pSz2tlmfr32SsY/T0E7/OeBxO9lv00rwksEZY2X1JArVX262Dvzgv/3qm7Teaj2G0ZLypK0ihJpfpf0hxCkUgvimHtDcPF6M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=b8WrPvmW; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1755335524;
+	bh=m8UDmGU4+3aehgMOMlBPzcggmP/G2qZElSdr9yPggC0=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=b8WrPvmWgPjaK/o7Vbv/Y6Twby2u4r6/RKKD0Pj0U98Ej8U4yTgX3ukresQfmey5k
+	 i3NVpcv5wp/UhlBda8V70gvJZpO5MhDgGMnxDLx1WhHma0HpkRP7TB9dcNSllyYkRs
+	 3EjWeIPHvecLka6EA28eF0FhQnIZTEaxBmCMeT80=
+Received: from [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b] (unknown [IPv6:2a00:23c8:101e:bb01:5bfe:95b6:ba99:a97b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 5FBBA1C00A7;
+	Sat, 16 Aug 2025 05:12:03 -0400 (EDT)
+Message-ID: <5597dc1584d9b50c6f003c77b474d22443d81bf6.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.17-rc1
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Sat, 16 Aug 2025 10:12:01 +0100
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-The AXI crossbar of TH1520 has no proper timeout handling, which means
-gating AXI clocks can easily lead to bus timeout and thus system hang.
+One core change removing the 'w' access flag of attributes that don't
+have a set routine (and therefore can't be written to) which should
+have no practical impact.  The big scsi_debug update is caused by
+reformatting lots of arrays and the rest of the bug fixes in drivers
+are trivial.
 
-Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
-ungated by default on system reset.
+The patch is available here:
 
-In addition, convert all current CLK_IGNORE_UNUSED usage to
-CLK_IS_CRITICAL to prevent unwanted clock gating.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+The short changelog is:
+
+Colin Ian King (1):
+      scsi: scsi_debug: Make read-only arrays static const
+
+Damien Le Moal (1):
+      scsi: core: sysfs: Correct sysfs attributes access rights
+
+Jean Delvare (1):
+      scsi: lpfc: Fix wrong function reference in a comment
+
+Jiasheng Jiang (1):
+      scsi: lpfc: Remove redundant assignment to avoid memory leak
+
+Nitin Rawat (1):
+      scsi: ufs: core: Fix interrupt handling for MCQ Mode
+
+Peter Wang (1):
+      scsi: ufs: mediatek: Fix out-of-bounds access in MCQ IRQ mapping
+
+Waqar Hameed (1):
+      scsi: ufs: core: Remove error print for devm_add_action_or_reset()
+
+And the diffstat:
+
+ drivers/scsi/lpfc/lpfc_debugfs.c |  1 -
+ drivers/scsi/lpfc/lpfc_vport.c   |  2 +-
+ drivers/scsi/scsi_debug.c        | 91 +++++++++++++++++++++++++-----------=
+----
+ drivers/scsi/scsi_sysfs.c        |  4 +-
+ drivers/ufs/core/ufshcd.c        | 12 ++++--
+ drivers/ufs/host/ufs-mediatek.c  |  2 +-
+ 6 files changed, 69 insertions(+), 43 deletions(-)
+
+With full diff below.
+
+Regards,
+
+James
+
 ---
-No changes in v2 except for rebasing error fixes (which I sent as FIXED
-patches in v1).
-Changes in v3:
-- Rebased atop ccu_gate refactor.
-- Added Drew's R-b.
 
- drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 54222b3219ccf..26e55e1c60148 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -559,7 +559,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
- 					      gmac_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -581,7 +581,7 @@ static struct ccu_div axi_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
- 						      axi_parents,
- 						      &ccu_div_ops,
--						      0),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -730,7 +730,7 @@ static struct ccu_div apb_pclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
- 						      apb_parents,
- 						      &ccu_div_ops,
--						      CLK_IGNORE_UNUSED),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -761,7 +761,7 @@ static struct ccu_div vi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -786,7 +786,7 @@ static struct ccu_div vo_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -811,7 +811,7 @@ static struct ccu_div vp_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      CLK_IGNORE_UNUSED),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -872,27 +872,27 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
- static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, 4, 0);
- static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, 5, 0);
- static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
--		0x134, 8, 0);
-+		0x134, 8, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
--		0x134, 7, 0);
-+		0x134, 7, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
--		0x138, 8, CLK_IGNORE_UNUSED);
-+		0x138, 8, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
--		0x140, 9, CLK_IGNORE_UNUSED);
-+		0x140, 9, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
--		0x150, 9, CLK_IGNORE_UNUSED);
-+		0x150, 9, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
--		0x150, 10, CLK_IGNORE_UNUSED);
-+		0x150, 10, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
--		0x150, 11, CLK_IGNORE_UNUSED);
-+		0x150, 11, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
- 		0x150, 12, 0);
- static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
- 	{ .hw = &perisys_apb4_hclk.gate.hw },
- };
- 
--static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, 0);
--static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, 0);
-+static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, CLK_IS_CRITICAL);
-+static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, 30, 0);
- static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 26, 0);
- static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, 24, 0);
-@@ -936,11 +936,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, 2, 0);
- static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, 1, 0);
- 
- static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
--		video_pll_clk_pd, 0x0, 0, 0);
-+		video_pll_clk_pd, 0x0, 0, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
- 		0x0, 3, 0);
- static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
--		video_pll_clk_pd, 0x0, 4, 0);
-+		video_pll_clk_pd, 0x0, 4, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
- 		dpu0_clk_pd, 0x0, 5, CLK_SET_RATE_PARENT);
- static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
-@@ -972,9 +972,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
- static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
- 		0x0, 19, 0);
- static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
--		video_pll_clk_pd, 0x0, 20, 0);
-+		video_pll_clk_pd, 0x0, 20, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
--		video_pll_clk_pd, 0x0, 21, 0);
-+		video_pll_clk_pd, 0x0, 21, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
- 		video_pll_clk_pd, 0x0, 22, 0);
- static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
-@@ -984,11 +984,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
- static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
- 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, 25, 0);
- static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
--		video_pll_clk_pd, 0x0, 27, 0);
-+		video_pll_clk_pd, 0x0, 27, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
--		video_pll_clk_pd, 0x0, 28, 0);
-+		video_pll_clk_pd, 0x0, 28, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
--		video_pll_clk_pd, 0x0, 29, 0);
-+		video_pll_clk_pd, 0x0, 29, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
- 		video_pll_clk_pd, 0x0, 30, 0);
- static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
--- 
-2.50.1
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debu=
+gfs.c
+index 2db8d9529b8f..7c4d7bb3a56f 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -6280,7 +6280,6 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 			}
+ 			phba->nvmeio_trc_on =3D 1;
+ 			phba->nvmeio_trc_output_idx =3D 0;
+-			phba->nvmeio_trc =3D NULL;
+ 		} else {
+ nvmeio_off:
+ 			phba->nvmeio_trc_size =3D 0;
+diff --git a/drivers/scsi/lpfc/lpfc_vport.c b/drivers/scsi/lpfc/lpfc_vport.=
+c
+index 2797aa75a689..aff6c9d5e7c2 100644
+--- a/drivers/scsi/lpfc/lpfc_vport.c
++++ b/drivers/scsi/lpfc/lpfc_vport.c
+@@ -666,7 +666,7 @@ lpfc_vport_delete(struct fc_vport *fc_vport)
+ 	 * Take early refcount for outstanding I/O requests we schedule during
+ 	 * delete processing for unreg_vpi.  Always keep this before
+ 	 * scsi_remove_host() as we can no longer obtain a reference through
+-	 * scsi_host_get() after scsi_host_remove as shost is set to SHOST_DEL.
++	 * scsi_host_get() after scsi_remove_host as shost is set to SHOST_DEL.
+ 	 */
+ 	if (!scsi_host_get(shost))
+ 		return VPORT_INVAL;
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 0847767d4d43..353cb60e1abe 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -2674,8 +2674,10 @@ static int resp_rsup_tmfs(struct scsi_cmnd *scp,
+=20
+ static int resp_err_recov_pg(unsigned char *p, int pcontrol, int target)
+ {	/* Read-Write Error Recovery page for mode_sense */
+-	unsigned char err_recov_pg[] =3D {0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
+-					5, 0, 0xff, 0xff};
++	static const unsigned char err_recov_pg[] =3D {
++		0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
++		5, 0, 0xff, 0xff
++	};
+=20
+ 	memcpy(p, err_recov_pg, sizeof(err_recov_pg));
+ 	if (1 =3D=3D pcontrol)
+@@ -2685,8 +2687,10 @@ static int resp_err_recov_pg(unsigned char *p, int p=
+control, int target)
+=20
+ static int resp_disconnect_pg(unsigned char *p, int pcontrol, int target)
+ { 	/* Disconnect-Reconnect page for mode_sense */
+-	unsigned char disconnect_pg[] =3D {0x2, 0xe, 128, 128, 0, 10, 0, 0,
+-					 0, 0, 0, 0, 0, 0, 0, 0};
++	static const unsigned char disconnect_pg[] =3D {
++		0x2, 0xe, 128, 128, 0, 10, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
+=20
+ 	memcpy(p, disconnect_pg, sizeof(disconnect_pg));
+ 	if (1 =3D=3D pcontrol)
+@@ -2696,9 +2700,11 @@ static int resp_disconnect_pg(unsigned char *p, int =
+pcontrol, int target)
+=20
+ static int resp_format_pg(unsigned char *p, int pcontrol, int target)
+ {       /* Format device page for mode_sense */
+-	unsigned char format_pg[] =3D {0x3, 0x16, 0, 0, 0, 0, 0, 0,
+-				     0, 0, 0, 0, 0, 0, 0, 0,
+-				     0, 0, 0, 0, 0x40, 0, 0, 0};
++	static const unsigned char format_pg[] =3D {
++		0x3, 0x16, 0, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0x40, 0, 0, 0
++	};
+=20
+ 	memcpy(p, format_pg, sizeof(format_pg));
+ 	put_unaligned_be16(sdebug_sectors_per, p + 10);
+@@ -2716,10 +2722,14 @@ static unsigned char caching_pg[] =3D {0x8, 18, 0x1=
+4, 0, 0xff, 0xff, 0, 0,
+=20
+ static int resp_caching_pg(unsigned char *p, int pcontrol, int target)
+ { 	/* Caching page for mode_sense */
+-	unsigned char ch_caching_pg[] =3D {/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+-	unsigned char d_caching_pg[] =3D {0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
+-		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0,     0, 0, 0, 0};
++	static const unsigned char ch_caching_pg[] =3D {
++		/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
++	};
++	static const unsigned char d_caching_pg[] =3D {
++		0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
++		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0, 0, 0, 0, 0
++	};
+=20
+ 	if (SDEBUG_OPT_N_WCE & sdebug_opts)
+ 		caching_pg[2] &=3D ~0x4;	/* set WCE=3D0 (default WCE=3D1) */
+@@ -2738,8 +2748,10 @@ static int resp_ctrl_m_pg(unsigned char *p, int pcon=
+trol, int target)
+ { 	/* Control mode page for mode_sense */
+ 	unsigned char ch_ctrl_m_pg[] =3D {/* 0xa, 10, */ 0x6, 0, 0, 0, 0, 0,
+ 					0, 0, 0, 0};
+-	unsigned char d_ctrl_m_pg[] =3D {0xa, 10, 2, 0, 0, 0, 0, 0,
+-				     0, 0, 0x2, 0x4b};
++	static const unsigned char d_ctrl_m_pg[] =3D {
++		0xa, 10, 2, 0, 0, 0, 0, 0,
++		0, 0, 0x2, 0x4b
++	};
+=20
+ 	if (sdebug_dsense)
+ 		ctrl_m_pg[2] |=3D 0x4;
+@@ -2794,10 +2806,14 @@ static int resp_grouping_m_pg(unsigned char *p, int=
+ pcontrol, int target)
+=20
+ static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
+ {	/* Informational Exceptions control mode page for mode_sense */
+-	unsigned char ch_iec_m_pg[] =3D {/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
+-				       0, 0, 0x0, 0x0};
+-	unsigned char d_iec_m_pg[] =3D {0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
+-				      0, 0, 0x0, 0x0};
++	static const unsigned char ch_iec_m_pg[] =3D {
++		/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
++		0, 0, 0x0, 0x0
++	};
++	static const unsigned char d_iec_m_pg[] =3D {
++		0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
++		0, 0, 0x0, 0x0
++	};
+=20
+ 	memcpy(p, iec_m_pg, sizeof(iec_m_pg));
+ 	if (1 =3D=3D pcontrol)
+@@ -2809,8 +2825,9 @@ static int resp_iec_m_pg(unsigned char *p, int pcontr=
+ol, int target)
+=20
+ static int resp_sas_sf_m_pg(unsigned char *p, int pcontrol, int target)
+ {	/* SAS SSP mode page - short format for mode_sense */
+-	unsigned char sas_sf_m_pg[] =3D {0x19, 0x6,
+-		0x6, 0x0, 0x7, 0xd0, 0x0, 0x0};
++	static const unsigned char sas_sf_m_pg[] =3D {
++		0x19, 0x6, 0x6, 0x0, 0x7, 0xd0, 0x0, 0x0
++	};
+=20
+ 	memcpy(p, sas_sf_m_pg, sizeof(sas_sf_m_pg));
+ 	if (1 =3D=3D pcontrol)
+@@ -2854,9 +2871,10 @@ static int resp_sas_pcd_m_spg(unsigned char *p, int =
+pcontrol, int target,
+=20
+ static int resp_sas_sha_m_spg(unsigned char *p, int pcontrol)
+ {	/* SAS SSP shared protocol specific port mode subpage */
+-	unsigned char sas_sha_m_pg[] =3D {0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
+-		    0, 0, 0, 0, 0, 0, 0, 0,
+-		};
++	static const unsigned char sas_sha_m_pg[] =3D {
++		0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
++		0, 0, 0, 0, 0, 0, 0, 0,
++	};
+=20
+ 	memcpy(p, sas_sha_m_pg, sizeof(sas_sha_m_pg));
+ 	if (1 =3D=3D pcontrol)
+@@ -2923,8 +2941,10 @@ static int process_medium_part_m_pg(struct sdebug_de=
+v_info *devip,
+ static int resp_compression_m_pg(unsigned char *p, int pcontrol, int targe=
+t,
+ 	unsigned char dce)
+ {	/* Compression page for mode_sense (tape) */
+-	unsigned char compression_pg[] =3D {0x0f, 14, 0x40, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 00, 00};
++	static const unsigned char compression_pg[] =3D {
++		0x0f, 14, 0x40, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0
++	};
+=20
+ 	memcpy(p, compression_pg, sizeof(compression_pg));
+ 	if (dce)
+@@ -3282,9 +3302,10 @@ static int resp_mode_select(struct scsi_cmnd *scp,
+=20
+ static int resp_temp_l_pg(unsigned char *arr)
+ {
+-	unsigned char temp_l_pg[] =3D {0x0, 0x0, 0x3, 0x2, 0x0, 38,
+-				     0x0, 0x1, 0x3, 0x2, 0x0, 65,
+-		};
++	static const unsigned char temp_l_pg[] =3D {
++		0x0, 0x0, 0x3, 0x2, 0x0, 38,
++		0x0, 0x1, 0x3, 0x2, 0x0, 65,
++	};
+=20
+ 	memcpy(arr, temp_l_pg, sizeof(temp_l_pg));
+ 	return sizeof(temp_l_pg);
+@@ -3292,8 +3313,9 @@ static int resp_temp_l_pg(unsigned char *arr)
+=20
+ static int resp_ie_l_pg(unsigned char *arr)
+ {
+-	unsigned char ie_l_pg[] =3D {0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
+-		};
++	static const unsigned char ie_l_pg[] =3D {
++		0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
++	};
+=20
+ 	memcpy(arr, ie_l_pg, sizeof(ie_l_pg));
+ 	if (iec_m_pg[2] & 0x4) {	/* TEST bit set */
+@@ -3305,11 +3327,12 @@ static int resp_ie_l_pg(unsigned char *arr)
+=20
+ static int resp_env_rep_l_spg(unsigned char *arr)
+ {
+-	unsigned char env_rep_l_spg[] =3D {0x0, 0x0, 0x23, 0x8,
+-					 0x0, 40, 72, 0xff, 45, 18, 0, 0,
+-					 0x1, 0x0, 0x23, 0x8,
+-					 0x0, 55, 72, 35, 55, 45, 0, 0,
+-		};
++	static const unsigned char env_rep_l_spg[] =3D {
++		0x0, 0x0, 0x23, 0x8,
++		0x0, 40, 72, 0xff, 45, 18, 0, 0,
++		0x1, 0x0, 0x23, 0x8,
++		0x0, 55, 72, 35, 55, 45, 0, 0,
++	};
+=20
+ 	memcpy(arr, env_rep_l_spg, sizeof(env_rep_l_spg));
+ 	return sizeof(env_rep_l_spg);
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 169af7d47ce7..15ba493d2138 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -265,7 +265,7 @@ show_shost_supported_mode(struct device *dev, struct de=
+vice_attribute *attr,
+ 	return show_shost_mode(supported_mode, buf);
+ }
+=20
+-static DEVICE_ATTR(supported_mode, S_IRUGO | S_IWUSR, show_shost_supported=
+_mode, NULL);
++static DEVICE_ATTR(supported_mode, S_IRUGO, show_shost_supported_mode, NUL=
+L);
+=20
+ static ssize_t
+ show_shost_active_mode(struct device *dev,
+@@ -279,7 +279,7 @@ show_shost_active_mode(struct device *dev,
+ 		return show_shost_mode(shost->active_mode, buf);
+ }
+=20
+-static DEVICE_ATTR(active_mode, S_IRUGO | S_IWUSR, show_shost_active_mode,=
+ NULL);
++static DEVICE_ATTR(active_mode, S_IRUGO, show_shost_active_mode, NULL);
+=20
+ static int check_reset_type(const char *str)
+ {
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 96ad57c3144b..efd7a811a002 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -7138,14 +7138,19 @@ static irqreturn_t ufshcd_threaded_intr(int irq, vo=
+id *__hba)
+ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+ {
+ 	struct ufs_hba *hba =3D __hba;
++	u32 intr_status, enabled_intr_status;
+=20
+ 	/* Move interrupt handling to thread when MCQ & ESI are not enabled */
+ 	if (!hba->mcq_enabled || !hba->mcq_esi_enabled)
+ 		return IRQ_WAKE_THREAD;
+=20
++	intr_status =3D ufshcd_readl(hba, REG_INTERRUPT_STATUS);
++	enabled_intr_status =3D intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENA=
+BLE);
++
++	ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
++
+ 	/* Directly handle interrupts since MCQ ESI handlers does the hard job */
+-	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
+-				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
++	return ufshcd_sl_intr(hba, enabled_intr_status);
+ }
+=20
+ static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
+@@ -10516,8 +10521,7 @@ int ufshcd_alloc_host(struct device *dev, struct uf=
+s_hba **hba_handle)
+ 	err =3D devm_add_action_or_reset(dev, ufshcd_devres_release,
+ 				       host);
+ 	if (err)
+-		return dev_err_probe(dev, err,
+-				     "failed to add ufshcd dealloc action\n");
++		return err;
+=20
+ 	host->nr_maps =3D HCTX_TYPE_POLL + 1;
+ 	hba =3D shost_priv(host);
+diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediate=
+k.c
+index 86ae73b89d4d..f902ce08c95a 100644
+--- a/drivers/ufs/host/ufs-mediatek.c
++++ b/drivers/ufs/host/ufs-mediatek.c
+@@ -818,7 +818,7 @@ static u32 ufs_mtk_mcq_get_irq(struct ufs_hba *hba, uns=
+igned int cpu)
+ 	unsigned int q_index;
+=20
+ 	q_index =3D map->mq_map[cpu];
+-	if (q_index > nr) {
++	if (q_index >=3D nr) {
+ 		dev_err(hba->dev, "hwq index %d exceed %d\n",
+ 			q_index, nr);
+ 		return MTK_MCQ_INVALID_IRQ;
 
 
