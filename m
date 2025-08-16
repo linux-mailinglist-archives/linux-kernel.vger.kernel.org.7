@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-771888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDC6B28C92
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:48:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA4AB28C95
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6578D1C85073
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567031C85FEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E728A3F2;
-	Sat, 16 Aug 2025 09:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754BF28A40C;
+	Sat, 16 Aug 2025 09:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvIN6SgP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehuGdz9z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E6238179;
-	Sat, 16 Aug 2025 09:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B871AA1D9;
+	Sat, 16 Aug 2025 09:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755337731; cv=none; b=PYUQlJoOkHNdiKqYEe753dXxmOvjE+0s6ziAkWxxFOGywwwWt2z+Q1imBX742WL1h9d4XjVRS7oKQXhyCefPw8/NOYJXwhTABSunRbiGDG1aUsQi6zEm/yrHIkVQ5/Aa0pa9tJzOXcOHEXomA7gPYb8jMTyKqlV41Ym7reDC38E=
+	t=1755337791; cv=none; b=agtdKiHabxFSNbjg6mnUnKdt+x4hDRZIqu3xpcMArWJKQCRpe6EFe7m8QfdpgeX32PxcEsHwUOPFT1A+XgeR3LiZ/+gJmjpu73Bu1heuaEK4nQCWThuxrgmDGm/WALkBnFzdioyMKlh0kNxJScpkMxVwTFNZbmU5oNunNEbWoDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755337731; c=relaxed/simple;
-	bh=tuDGi921oJen9tqn7mJsQZiu7Fywen9D9j9aCB+BOKQ=;
+	s=arc-20240116; t=1755337791; c=relaxed/simple;
+	bh=leJ+kLeCoibTebWAlijl6gV/kTK3C57W2w0vK32dMLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQlJOffWB51v+VYGMrDIjOO3wprDuMnSfM/Is7z3YyrVuBTRilPzIEPyQaRkfeiVC+w4Wl462BrADY+ArIomgzSDhVO6yfdG+zQNIkdYxlLC8hRLT/78xjDP1BEgMrZARwU82a64itQS2F0TYDOIz1xYOhpAgsD1lvWD3X2cPzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvIN6SgP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3A6C4CEEF;
-	Sat, 16 Aug 2025 09:48:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=th8pxfbhknDfUAR0/flHWucw5sDfhZePIM82tiZKEnVc0b5gfCh0JtIs/gKDVy1F+B9qACJUQM5l4OTeaZmtXiAZooxIJP5p/7wo7TqnyAQAiy+NPETf4plv9CmWjAoQt/LlIuxCWPI4RiSplyj/i/JMq6XPMiVpEYKNxbI0gF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehuGdz9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEAE9C4CEEF;
+	Sat, 16 Aug 2025 09:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755337731;
-	bh=tuDGi921oJen9tqn7mJsQZiu7Fywen9D9j9aCB+BOKQ=;
+	s=k20201202; t=1755337791;
+	bh=leJ+kLeCoibTebWAlijl6gV/kTK3C57W2w0vK32dMLk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GvIN6SgPwMYzAyxMRox94LN7RuY32e/OtmGssFuhvgCxXiL5/nDkB+kj3A9UULc80
-	 PNpHAaOM/ULRjLCVNSenr8TSTJ0aud3iZaOVXQng4C4NcJf+1831ZSwENdAAYRqmYz
-	 K5zM9YPpuKz9hvKiu+4hB1BCp6Z2MNA0KERSMv6Ku8EsO/GoWHiu9KvFahu0eLC219
-	 IUHXto9phrlKq1L0VmRx2kmE7mgNDUw8iGq0FkQhH9jPQRS/dDqApTinqlDlrDSxGT
-	 oJPAUX7FPmAoHc+vReh3kNQjkh07oE5meAS8/C2BU/KqAKn+c07DyRa40A+YvOTKeD
-	 /I//eBF+bj2/g==
-Message-ID: <d5134909-58a4-48c2-a227-2fb3ce200c2f@kernel.org>
-Date: Sat, 16 Aug 2025 11:48:46 +0200
+	b=ehuGdz9zmRfK+sP1ZrB0lH3OwjJ8Glal5nS+iqAKHyhDyxxW3zgppOyA4ayGnZSM+
+	 7MDZEmGGzVPkf+Sn7Wvd72O2j97aRD4xOV44B0DFooDDGYPjV1HTRMT1Ks1AMo7hco
+	 ItJ6MjrLvqogYhB7qtuF0hmKQaGVwU1BIfLFnp83iqckDE+LyWFUv37ZA3ofgKE+I2
+	 TTmlIyh+EwqrGGfGkjpCGo3TcbSf1liF5MBIAGrgXHtvo3h+M26CQyA3mzipEUjrQO
+	 YBclxKSTpEGGVqiOon+keYvSE59HwhCKkxm+BXy+81G+4f3Z37G6ELqly/5+fcq8Yp
+	 T8cwUyRQYpHtQ==
+Message-ID: <601338fe-8db8-455b-978f-02200523a123@kernel.org>
+Date: Sat, 16 Aug 2025 11:49:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: reset: Document reset controller of
- Loongson 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
- Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250816033327.11359-2-ziyao@disroot.org>
- <20250816033327.11359-3-ziyao@disroot.org>
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: loongson: Document GPIO controller
+ of 2K0300 SoC
+To: Yao Zi <ziyao@disroot.org>, Yinbo Zhu <zhuyinbo@loongson.cn>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+References: <20250816035027.11727-2-ziyao@disroot.org>
+ <20250816035027.11727-3-ziyao@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,34 +107,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250816033327.11359-3-ziyao@disroot.org>
+In-Reply-To: <20250816035027.11727-3-ziyao@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/08/2025 05:33, Yao Zi wrote:
+On 16/08/2025 05:50, Yao Zi wrote:
+>  
+> +  "#interrupt-cells":
+> +    const: 2
 > +
-> +additionalProperties: false
+> +  interrupt-controller: true
 > +
-> +examples:
-> +  - |
-> +    rst: reset-controller@1600011c {
-
-Drop unused label
-
-
-> +        compatible = "loongson,ls2k0300-reset";
-> +        reg = <0x1600011c 0x8>;
-> +        #reset-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/reset/loongson,ls2k0300-reset.h b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
-> new file mode 100644
-> index 000000000000..d425411e6d19
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/loongson,ls2k0300-reset.h
-> @@ -0,0 +1,70 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-
-Why not using same license as the binding?
+> +  resets:
+> +    maxItems: 1
+> +
+You should have probably separate binding if you need three new properties.
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
