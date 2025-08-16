@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-772290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7FCB290E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 00:59:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743A8B290E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC2A1C26040
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 22:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14351B63D72
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 23:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744CC23E35B;
-	Sat, 16 Aug 2025 22:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604B223F405;
+	Sat, 16 Aug 2025 23:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFXKqEt2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcuVuj8i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E91DD0D4;
-	Sat, 16 Aug 2025 22:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42583176E2;
+	Sat, 16 Aug 2025 23:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755385156; cv=none; b=O3raW7CFxeB1M+SwyhkiNHZGZ3yDy23irFGmzvp5Un2PDSmzoXp/jUZxkjcD90yT7UAIu2AQGsjz+d/3mvbdtx9SdWdSarWvNQ+g64wismWwy2vl5B1mjpu437WAac8ehALgNnAzPpVqu1Rqi71L6/MZy4diOVqZqa3PBiZqr9Y=
+	t=1755385588; cv=none; b=auDSBdytVUtzVim1+Ics43tY5MpYuIN0a/kW1i2iIX4ZeMYvMIv7wVy3JB/DdcjBhJZqSdGQKImjWV+UMd3Me3U/88QhHmziogX5qvnRUMi51SYjYxAkAux64+X/idL2BDBQ0Gc5d/BHdfU3YJrDlbhss2MkOLZeS0iioEch1JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755385156; c=relaxed/simple;
-	bh=qe6DNb5yjdnToiSTXiYyc0eMnncF7v9EWnoXVZEYaPc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RoUc1hcEVkejAwBl1AS0NzLrVcuPn7QX8S6SazlQSB1EaRApk9zQju7/llVqvq9DPN8bjvLVuqvHHHktsN8vNgY29Zt+TLoxOrdR8aXipLf26YWfG2vDsVsEs5ZN8LAi3QbefquZQcEUkqd1Y0BoNi9FvuFHqPhnsvpnoUXFBAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFXKqEt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FEA1C4CEEF;
-	Sat, 16 Aug 2025 22:59:16 +0000 (UTC)
+	s=arc-20240116; t=1755385588; c=relaxed/simple;
+	bh=iSKnB2zZ894IV2ruSrlFuVSXiPxFFjRzOOZWUxvj+Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Irt9mSMeGd8jE2ixQuRvKdri3yFWSCGXJCCjsn1N/7MnNRb2cOT2cjAQ0GbZNul2I5mJSDjgetrMetcA+J3zolbtTjT3AeGy41/r6+MhpPhddYsRb4eaOB4IeY91UoRTFD4+idkx1DFTV6eO6uhSH8Imry6c+rLyMoCSHHzzecE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcuVuj8i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10163C4CEEF;
+	Sat, 16 Aug 2025 23:06:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755385156;
-	bh=qe6DNb5yjdnToiSTXiYyc0eMnncF7v9EWnoXVZEYaPc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YFXKqEt2T01KU5I68iljGFShwydYpaAYVAOlkeBVbKjrkzzM1bobGvz7AY8lRgAtR
-	 z7ok5/8to1uNC5BjSFUrth8LKSsZs2OGtKRRy3EjBcWO2++c0LKPFOh8SvHoN/chS2
-	 27oBPwio3WTZzUSgyV7jszB5U6cTGWx8UcP+ou9D9CTM5LMc0Gh7VehHxn9jU7FPwE
-	 TPVa+3Ci4DMxK4eR/x5i3ClyWyx1cj0FgBWVmJqmUSPAyl0ZuC/yGBfcqKiL89ww43
-	 iMQfwQhMEvGXWdLXsWQEwst0bVMD234Ioz3XWfjMA36WukF/NF72XLleMdOLJsVGhk
-	 keqjVQnuGC4rA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EA939D0C3C;
-	Sat, 16 Aug 2025 22:59:28 +0000 (UTC)
-Subject: Re: [GIT PULL] Rust fixes for 6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250816214534.2736622-1-ojeda@kernel.org>
-References: <20250816214534.2736622-1-ojeda@kernel.org>
-X-PR-Tracked-List-Id: <rust-for-linux.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250816214534.2736622-1-ojeda@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.17
-X-PR-Tracked-Commit-Id: 252fea131e15aba2cd487119d1a8f546471199e2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 99bade344cfa1577c6dd658e10a3d64b119bddf4
-Message-Id: <175538516691.1570424.1799473356754517600.pr-tracker-bot@kernel.org>
-Date: Sat, 16 Aug 2025 22:59:26 +0000
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1755385588;
+	bh=iSKnB2zZ894IV2ruSrlFuVSXiPxFFjRzOOZWUxvj+Qs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RcuVuj8iWC1LOVXruzh1iTw7J1+fVWyGVSFT1uUB+DSeSQ6JtyOLcaot6P/ntJkDS
+	 /J3a7ja+Ak4l8PFb3vWIr9UvjcZWLFJjXiIakqp0pXoK9Qx/VuC73hFS7mMHzz+rrX
+	 O+rzlI/6N5f8Kf1MgKUAdmSPOI/Mfe1ARUdbpHUmb0FCo9Qfij/LTfST0v2knlSgJy
+	 KH8IAYi51toR3PCMqW3lJEkejPvcVNqcbJjXiBumiruuTC/ZQpRubDfP7WKnBO2XuW
+	 Q6tWgIt3BrN2ebi/O4FHgZxfTlB92sa7y9vIwgCjGwMiohke7q3vWjVCOs856iGI3p
+	 EC0IEhEpvRabg==
+Date: Sat, 16 Aug 2025 16:06:26 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, nux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Subject: Re: [PATCH net v3] net: stmmac: thead: Enable TX clock before MAC
+ initialization
+Message-ID: <aKEO8gFxUhid/QOX@x1>
+References: <20250815104803.55294-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815104803.55294-1-ziyao@disroot.org>
 
-The pull request you sent on Sat, 16 Aug 2025 23:45:34 +0200:
+On Fri, Aug 15, 2025 at 10:48:03AM +0000, Yao Zi wrote:
+> The clk_tx_i clock must be supplied to the MAC for successful
+> initialization. On TH1520 SoC, the clock is provided by an internal
+> divider configured through GMAC_PLLCLK_DIV register when using RGMII
+> interface. However, currently we don't setup the divider before
+> initialization of the MAC, resulting in DMA reset failures if the
+> bootloader/firmware doesn't enable the divider,
+> 
+> [    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
+> [    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
+> [    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
+> [    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
+> [    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
+> 
+> Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
+> divider before MAC initialization. Note that for reconfiguring the
+> divisor, the divider must be disabled first and re-enabled later to make
+> sure the new divisor take effect.
+> 
+> The exact clock rate doesn't affect MAC's initialization according to my
+> test. It's set to the speed required by RGMII when the linkspeed is
+> 1Gbps and could be reclocked later after link is up if necessary.
+> 
+> Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.17
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/99bade344cfa1577c6dd658e10a3d64b119bddf4
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reviewed-by: Drew Fustini <fustini@kernel.org>
 
