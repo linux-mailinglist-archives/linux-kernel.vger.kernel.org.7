@@ -1,171 +1,130 @@
-Return-Path: <linux-kernel+bounces-772195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819A8B28FC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:27:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A9EB28FC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC9C582FA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCB51C2583E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872792FF665;
-	Sat, 16 Aug 2025 17:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2D2F60A9;
+	Sat, 16 Aug 2025 17:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DMrKpGE3"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="dxv0rl6r"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F958374D1
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A132FFDC4
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755365188; cv=none; b=JLbHDuwiMilZC/qn0hgJn/eAQJQd6lPuudUrs1PVrhMkOeu+STrtS6aiTUSla1G1u6t9wmhy1ZXrdM+nu5YcaNRlvk/411jPX+BSd0EjVsvQ15AiZWX7RjCeIbs6/06tzj8nphLdxVB2/ke1xdFj0fSNxZ1NoQkHdtgyYpY4RUg=
+	t=1755365193; cv=none; b=PXBO1VHHRr41xsdtDLx37fmqiVJF2iqrC6WN1AW22eQ0++uLJK4zA9kOgdGG3s1x+JoBTrcUL3TssdLTX99IQ9X2FoVC9X2W/joPFXlHYNglssmdPM0GN5DcoqQXHPoTiDJ8aCJqV5YOWTlxB0vHlBu1DDr2cxjgLSRJcqE0SoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755365188; c=relaxed/simple;
-	bh=Pt4QFkJKeDes/1dpFWEZFRC9Fyo6Q/os1TmT4UtDfcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lg9zYHTWXhzPNDh4WpWX+1/MPdjn6UmQMo1PegBJNztI6Q6pF+qX/iEzK70PaD/zGJliZG5xEKZlmX9bWFXSi7rm4qCZu5+pel3AYEZ/JRLMF9Rdl6fs4fHZmuPQeckfQMRgQaR/fG3ZP7Uo/Wm9lomlQskxqHHRvbbtGptLXPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DMrKpGE3; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e93498d436dso31721276.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755365186; x=1755969986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+erJ0Zp3LHICZMt425StIsw9Vrx8YjGGvrTqeALgDWk=;
-        b=DMrKpGE3gLl7UE8DO5puO8Qafguwz8USANOHBAqI+QGjwLDzXbI7/SDdCpaFKGSh6m
-         XWJdJCqwlwo0boUVHTkN2OXspJislxpCdJSM4k2mNHtjYe/xs9X8hClf3atGALEbImPJ
-         Yq7fNfFGiTfhUl5CSFvv7knPUWjBz5exqenyf3GpSgUkucn31yGH/aiADY/5l2Qc50qv
-         fYOhAaW3/bbeeQtXK/uKFQJuWLKmqZZZu2qHuiNqg0+ieC1NDZPoyPcuIKhmRnHC2w7M
-         TdQ/OFMfrxhJGd22TSvqtdy/aPntZ5aNT513Tgaz3rkXmc4oMHLsW8Asz8Y6VAdIeypw
-         4GCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755365186; x=1755969986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+erJ0Zp3LHICZMt425StIsw9Vrx8YjGGvrTqeALgDWk=;
-        b=kdoos1W+G+hvGHElHdIw7fwHaADoGHOtHDjfudN5osTb//4oWV3V8OzEEr/1wGZFCH
-         32JvVr0ftraN8JqkIZi6CIL1S990Yher2rw/s093aMCYvoTdaKarw3NrIbFG0oZ4sAPC
-         Kcf7Kro+XDkT68Co2WtSReQgKcbtsBbTw2Ux8Txj2MDCsix9pevIexCFnE7v947k6Cxu
-         492OW7uKBRPSnd2sp72gUzbe0cErfYsQo1OE90p5rKHJzPg3rGhZ5tNaKpmAAS8aVWoK
-         ndf1id9K7YUyj83MBG7P5NZRSiCMy8CrNrqoL+bbmHH4lcR8qSu7QV0Kjfqcoig8oLBW
-         /P0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVj2+WZdluEBJeZxG8PN7VGXGW4gsFh2c7vsydZfVFTAz4auVYEVr8iAbF8803uhZx489s7p2EQ4TUZi1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt4ryft3L6Cm1ORwTvXKa4HBpcjEmAcZLnjDSS8UnM8mg11FO5
-	2aMDRoGW9/foSYrjugEyr2zIObQolPAlQSP5MPg8kt+9l52oof2FyZzFIJOCC28XeW0RP+cd/Nb
-	m8nYZ1d1zIQ7qA8xDAF918ptwS/ZV5n/GkkII0xs+gg==
-X-Gm-Gg: ASbGncsmVxZ/hfCJmDavgbT1QlGYjM/YCUXBzb7h+BHcPDPnCnqpRjpH7+QPRKu1g0w
-	BSFW7FYjY7N+KYghEaP7qvyQp02jX/bqM3ZcvOUup+3AzB6YQ50ZWMdA+9M+m6FaLWfNiPzt0BO
-	oq/peQsh9y1+o2De2nNY3ImQi2eWG6h7uluyunaGzTzZ71zJNnIkCnD888OsFwPca2p5lptg5OO
-	nSH+A==
-X-Google-Smtp-Source: AGHT+IEiUE/ZBe/h6CTv9oXmV/520CYO08VrAKRH9DK2kLKicjLwLKXfuc77q+NFZWV5/udeIZCHd/ZkZBNSaus2ZAI=
-X-Received: by 2002:a05:6902:1208:b0:e93:36f3:573c with SMTP id
- 3f1490d57ef6-e9336f35958mr7576548276.5.1755365186241; Sat, 16 Aug 2025
- 10:26:26 -0700 (PDT)
+	s=arc-20240116; t=1755365193; c=relaxed/simple;
+	bh=DVhZox1JbBY2xJ7jFvjY7Bbserpka9EkVtY05SBt2yE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=cNbazeESTA0rd/muGktgFCoCo9raK6P0XusVpkSTAXIqR7hWmgF5HjowPOU0z9K66A1t8sdcxwKBcZho/tCAA/yT8tYJsVh9kAuF2ekcXRkY1ceO9lxY+oK3VsD9BL4gllOmmY6oqiyqVNlOcVMnfRLBPrzCCy5sk7Efdht43Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=dxv0rl6r; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com> <20250815070500.3275491-4-ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250815070500.3275491-4-ivo.ivanov.ivanov1@gmail.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sat, 16 Aug 2025 12:26:15 -0500
-X-Gm-Features: Ac12FXxe2rWnXKWQd1X34M41uQmxOqzmaGTi-5t45-ucTyoZet0Hf0j8vH7V5Mg
-Message-ID: <CAPLW+4mp5DASdcToSW1QD7f51w4AYQeKzTF=nq2U=f-HiXD-8w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: exynos2200: increase the size of all syscons
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755365186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ir4PRrv0foJMSUrxJ04CAwKKpBnrB2oKqpw/18RYe5w=;
+	b=dxv0rl6rfxiiZoE+vSXvb5+WM0Qv5ruhRJIH928wH3M+mzCl/ldYy8lA6WrZCV9OVjt3Sn
+	W5C2mbLSbIVOC1fh6KDdTSKauZOI64FBaXPlieqUBWqcwLDEScHdf2qoMk17VDOdSbBD6l
+	1loVKQYJc1usHcpH4sam+PbwammjJWIGqW5XYEXd5V0pvHCUwgx9DS355GSYgh+M19t19O
+	uG9yPnvjlamxhDuOEgX8vIWSJU6XmWt43vLdRxNCcsfUzXsqWJ5ARvkfDZ7u99RTn3+jnC
+	p2pdB88vL7r/0qcThZ9zbwRoO+3QvlFN6t5jwslJ2MsH6ComSxHBOsT27Lt2Fw==
+Content-Type: multipart/signed;
+ boundary=ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Sat, 16 Aug 2025 19:26:16 +0200
+Message-Id: <DC410TGMPWBO.3CP1NM5WWBEJ0@cknow.org>
+Subject: Re: RFE: Make ANDROID_BINDER_IPC tristate
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Todd Kjos" <tkjos@google.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, "Todd Kjos"
+ <tkjos@android.com>, "Martijn Coenen" <maco@android.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Christian Brauner" <brauner@kernel.org>, "Carlos
+ Llamas" <cmllamas@google.com>, "Suren Baghdasaryan" <surenb@google.com>,
+ <linux-kernel@vger.kernel.org>, "Diederik de Haas" <didi.debian@cknow.org>
+References: <DC3UBQJQJ2SN.3B2AJHOP3933Z@cknow.org>
+ <2025081642-viewpoint-exemption-006f@gregkh>
+ <DC3V792JTD1J.LB1A657GBFQA@cknow.org>
+ <CAHRSSEyxcqydwbEHHLzHKar9AaQAjACFuM0CnBxN5XrvFQdBcw@mail.gmail.com>
+In-Reply-To: <CAHRSSEyxcqydwbEHHLzHKar9AaQAjACFuM0CnBxN5XrvFQdBcw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
+
+--ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Fri, Aug 15, 2025 at 2:06=E2=80=AFAM Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
->
-> As IP cores are aligned by 0x10000, increase the size of all system
-> register instances to the maximum (0x10000) to allow using accessing
-> registers over the currently set limit.
->
-> Suggested-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->
-> ---
-> Did not add the r-b from Sam, as the patch is pretty much completely
-> reworked, including the description. Please send it again :).
-> ---
+On Sat Aug 16, 2025 at 6:37 PM CEST, Todd Kjos wrote:
+> This is not feasible since binder relies on many kernel internal function=
+s
+> and data that cannot be exported for loadable module. Patches for this ha=
+ve
+> been attempted in the past, but soundly rejected. You can see some of tha=
+t
+> discussion at
+> https://lore.kernel.org/lkml/20180730143710.14413-1-christian@brauner.io/=
+.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+That seems to be the upstreaming attempt (or at least trying to start a
+discussion about it) of the initial patch.
+A lot could've happened in these 7 years, but apparently not enough for
+a different outcome. Good to know, thanks :-)
 
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+FWIW these are the current ones:
+https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.16.1-1_exp1/debi=
+an/patches/debian/export-symbols-needed-by-binder.patch
+https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.16.1-1_exp1/debi=
+an/patches/debian/android-enable-building-binder-as-module.patch
+
+Cheers,
+  Diederik
+
+> On Sat, Aug 16, 2025 at 5:52=E2=80=AFAM Diederik de Haas <didi.debian@ckn=
+ow.org>
+> wrote:
 >
-> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot=
-/dts/exynos/exynos2200.dtsi
-> index 943e83851..b3a8933a4 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> @@ -306,7 +306,7 @@ cmu_peric0: clock-controller@10400000 {
->
->                 syscon_peric0: syscon@10420000 {
->                         compatible =3D "samsung,exynos2200-peric0-sysreg"=
-, "syscon";
-> -                       reg =3D <0x10420000 0x2000>;
-> +                       reg =3D <0x10420000 0x10000>;
->                 };
->
->                 pinctrl_peric0: pinctrl@10430000 {
-> @@ -328,7 +328,7 @@ cmu_peric1: clock-controller@10700000 {
->
->                 syscon_peric1: syscon@10720000 {
->                         compatible =3D "samsung,exynos2200-peric1-sysreg"=
-, "syscon";
-> -                       reg =3D <0x10720000 0x2000>;
-> +                       reg =3D <0x10720000 0x10000>;
->                 };
->
->                 pinctrl_peric1: pinctrl@10730000 {
-> @@ -418,7 +418,7 @@ cmu_ufs: clock-controller@11000000 {
->
->                 syscon_ufs: syscon@11020000 {
->                         compatible =3D "samsung,exynos2200-ufs-sysreg", "=
-syscon";
-> -                       reg =3D <0x11020000 0x2000>;
-> +                       reg =3D <0x11020000 0x10000>;
->                 };
->
->                 pinctrl_ufs: pinctrl@11040000 {
-> @@ -450,7 +450,7 @@ cmu_peric2: clock-controller@11c00000 {
->
->                 syscon_peric2: syscon@11c20000 {
->                         compatible =3D "samsung,exynos2200-peric2-sysreg"=
-, "syscon";
-> -                       reg =3D <0x11c20000 0x4000>;
-> +                       reg =3D <0x11c20000 0x10000>;
->                 };
->
->                 pinctrl_peric2: pinctrl@11c30000 {
-> @@ -471,7 +471,7 @@ cmu_cmgp: clock-controller@14e00000 {
->
->                 syscon_cmgp: syscon@14e20000 {
->                         compatible =3D "samsung,exynos2200-cmgp-sysreg", =
-"syscon";
-> -                       reg =3D <0x14e20000 0x2000>;
-> +                       reg =3D <0x14e20000 0x10000>;
->                 };
->
->                 pinctrl_cmgp: pinctrl@14e30000 {
-> --
-> 2.43.0
->
->
+>> On Sat Aug 16, 2025 at 2:47 PM CEST, Greg Kroah-Hartman wrote:
+>> > On Sat, Aug 16, 2025 at 02:11:24PM +0200, Diederik de Haas wrote:
+>> >> Programs like Waydroid allows people to run Android in a Linux contai=
+ner
+>> >> but it needs ANDROID_BINDER_IPC to do that.
+>> >>
+>> >> So hereby the request to make ANDROID_BINDER_IPC tristate so people t=
+hat
+>> >> want to use it can load it when needed.
+>> >>
+>> >> Debian has a patch to make it tristate since 2018, but it would be so
+>> >> much more useful to have it tristate upstream.
+
+--ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKC/OwAKCRDXblvOeH7b
+bnxRAQDTUfioVWjg5z/Uk+w9RHlMuScF3xkhXYWm58zm/xnXmgD+M5kmWQeKWVtb
+ORKOstr347rotj7J6ThpB+L2h+aB2QQ=
+=MyJg
+-----END PGP SIGNATURE-----
+
+--ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a--
 
