@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-771568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624C1B288FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35916B28900
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F9FB00E4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369395C1BB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D703224B28;
-	Sat, 16 Aug 2025 00:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2084186348;
+	Sat, 16 Aug 2025 00:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYgrgecG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfVvMfOG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C47B1CD0C;
-	Sat, 16 Aug 2025 00:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE93482EB;
+	Sat, 16 Aug 2025 00:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755302507; cv=none; b=dPcXHQYF5aiimUDbu9YaspQJaKsNOWoxdwNWv0pmcrdIGRA8t/bMUp4vNdyNEw/MjE9HwgxIkQoc16ebXxaV3y10FEh54cjiso6R2bYpIW6gY4TY4PtvcgM77M+4db1N2GIM21I9JJTPUabjAaw3nCtzGAin99cPe0MVnEVRL3U=
+	t=1755302511; cv=none; b=h+OKqgdtCZb+sILslIHYwUmErcITSWoI54QKZLCwXnOFq5qP0tv7Ymy7SWUN5yijA6O7Wtks0SLeojmY8/zsNLMO8Mvl9FlYfHD6s255oN2MH9bdYu2wxXcUyKuRL0hK52CFgHC+0S+9SGl9LIE3sZZoH72KDNcM/oEvpnc+ejQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755302507; c=relaxed/simple;
-	bh=koM5B3TOcnXeXdxE6Ak3avu0G5587Dgk7UrmUzSqrVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aTM8QsBWSpFLpHXH8CNSp58m58LO1NIzzymgQt2Do2Js0IlmRIVWsN1j2KeooibfRuhoNejFtVRpDd8JZUrziZ7FKvo9g6r0jN4Az6ldZgvsZsN3PEH9JRiZT6DMiQj72/tQc+3TGGFuAtl1Ge5VE9NIGf57j/1bRmrd7brp7aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYgrgecG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08D6C4CEEB;
-	Sat, 16 Aug 2025 00:01:46 +0000 (UTC)
+	s=arc-20240116; t=1755302511; c=relaxed/simple;
+	bh=tt2fnvxyKHuxMWduq2G5iWtwAxgOUA1tzVmzIKN+kzc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QYbYmhhxXWRqlMM7djLCcFm3sCB/I/yOUPGMHAjeRgfcw9pSw7rf4skk5BFnslBMBulO0TugS0uCk/DT33DVHMDuhe3KcQvEf4dPJs4uPaNoSGIwKsfzrXC4rfYuOdrviGPeXh9E3jE6g5T2lDguV/+ckCDQw7bDfPg54h3tPo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfVvMfOG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C22C4CEEB;
+	Sat, 16 Aug 2025 00:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755302506;
-	bh=koM5B3TOcnXeXdxE6Ak3avu0G5587Dgk7UrmUzSqrVM=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=nYgrgecGzf1kDftUy4YlG1EIBNOm+5dYm6Hu0quUTVaMD2tgYTlKv3hb4J4fb2pJh
-	 DgonMqbUKp374SEMioA6OjOUe2MY6xtsvm4o5mDXkFkyC/uOZAQ2oq+AA3BcGNXJCU
-	 mFbWUtxSIGrUtdVoipVsc/DK7DP6gI54WigFDVldhOLAdIBDpNETEj/3x8x79Q9FAj
-	 Lv73pU1gtzO5uHD6WNJ8rsfc9YisPzyv8R8OOI8VUXZTmJK+MSsshf/pBHC/bbjNC2
-	 e1Dl5WH6cRtVz4561DzMbVp2Udrn6g3ZiUMVXcbRUNlXV3B33OOX/85kO8zP8kHHP9
-	 DYLuWXfDBSmYA==
+	s=k20201202; t=1755302511;
+	bh=tt2fnvxyKHuxMWduq2G5iWtwAxgOUA1tzVmzIKN+kzc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RfVvMfOG0b1QlhMLnLmblX46MZolGzZjvIs3TBKOhafZopSS0PhOLo13QQXH+vwf6
+	 LV76Q3gdo2WypaqEUB4777jVJV2WXpaFcdf2/e6DYEyx63kv35q7OKgxo1L2aJ8P2r
+	 Grz2OFYCTC7QMt6oxr4LPRTSP67Zme20HH0HmFF1fhO/81KwGndvGKuKtMNG6HHgGg
+	 eSQBIoNtQL14j+3+nPHjR9OqpnEIa+qR8a0uLdoYHmggQtkbboKywiDuH8WpznnWth
+	 f77u9gyEwkVISoZJDwK/eDJ82g12NBxsCob6Yzf9cHwQMWfbuQjRr1VfYr07UD3Yph
+	 vzJvhbLHS4Y6Q==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E5E2BCE0B2D; Fri, 15 Aug 2025 17:01:45 -0700 (PDT)
-Date: Fri, 15 Aug 2025 17:01:45 -0700
+	id 4D80BCE0B2D; Fri, 15 Aug 2025 17:01:50 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH 0/3] Miscellaneous RCU updates for v6.18
-Message-ID: <a4c6f496-ca08-46f5-a159-03074a57706a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH 1/3] rcu: Document that rcu_barrier() hurries lazy callbacks
+Date: Fri, 15 Aug 2025 17:01:47 -0700
+Message-Id: <20250816000149.2622447-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <a4c6f496-ca08-46f5-a159-03074a57706a@paulmck-laptop>
+References: <a4c6f496-ca08-46f5-a159-03074a57706a@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+This commit adds to the rcu_barrier() kerneldoc header stating that this
+function hurries lazy callbacks and that it does not normally result in
+additional RCU grace periods.
 
-This series contains miscellaneous RCU updates for v6.18:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/tree.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-1.	Document that rcu_barrier() hurries lazy callbacks.
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8eff357b0436be..1291e0761d70ab 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3800,6 +3800,11 @@ static void rcu_barrier_handler(void *cpu_in)
+  * to complete.  For example, if there are no RCU callbacks queued anywhere
+  * in the system, then rcu_barrier() is within its rights to return
+  * immediately, without waiting for anything, much less an RCU grace period.
++ * In fact, rcu_barrier() will normally not result in any RCU grace periods
++ * beyond those that were already destined to be executed.
++ *
++ * In kernels built with CONFIG_RCU_LAZY=y, this function also hurries all
++ * pending lazy RCU callbacks.
+  */
+ void rcu_barrier(void)
+ {
+-- 
+2.40.1
 
-2.	Remove local_irq_save/restore() in
-	rcu_preempt_deferred_qs_handler(), courtesy of Zqiang.
-
-3.	move list_for_each_rcu() to where it belongs, courtesy of Andy
-	Shevchenko.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- include/linux/list.h     |   10 ----------
- include/linux/rculist.h  |   10 ++++++++++
- kernel/cgroup/dmem.c     |    1 +
- kernel/rcu/tree.c        |    5 +++++
- kernel/rcu/tree_plugin.h |    5 +----
- 5 files changed, 17 insertions(+), 14 deletions(-)
 
