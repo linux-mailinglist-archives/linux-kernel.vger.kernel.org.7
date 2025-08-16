@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-771759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89ADB28B39
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:56:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC081B28B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845C63BC52D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8AD5A0CD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC40521CC68;
-	Sat, 16 Aug 2025 06:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01E221D011;
+	Sat, 16 Aug 2025 06:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ebURtJ1g"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyS5GcZ+"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FFA1F460B
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECB73176F0
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755327415; cv=none; b=XRjCc8AAt4iNB2WxSISadoQR1eJowrb1MdJ/HoiTtv0M6tqjEvVIWOjp9GqczD5Oqg4oGpViw1OAgtguid6x/ZtRW4pNXuBq5QaXhKM4RfeIOX6pRQvg7Kaq8hFYiVzd0pyXymv4LEY6tThrCBmzJWjzP8Zl7sHC3HcxvSiO+Ok=
+	t=1755327477; cv=none; b=Vegip9DNzMJi4HXmlO6tSayfXnSyyWvzTmsBMLCkm6SWbGY9Pktc1MppVJo6qqvDicdPBQf0U7uGdACECdinvcLAhnaVOljsSDax1ccsKpVxx3cSCFVguAE3Jmewp/JZNCwiASc5adShXKhoqTNzBwiMq2eXGhEonvVknyfGMYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755327415; c=relaxed/simple;
-	bh=bI4rs/1ljEWXuiqnYOGV/rAnn1FN0kF8J4+0GBa75Gw=;
+	s=arc-20240116; t=1755327477; c=relaxed/simple;
+	bh=4ya+ORsQ8cX9UsCUqnb33v3ZqeBVAQam2G3ncNO2MRo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KfFh0BFh5rKFefsP7iNTbpAhEGfwXD3CgLsZzoGu4v6T2n/8hAjmHAKBQWZj9jyasAkAli2vBkgJ96NNp6k0eofe3F7xx5VQgJxhmd71MeIWSsvnLXyDuZMrDxb0fEHmlsHxn7uKvqAZlpBVBfECKEfn7iPd7rHeskR7o5xvN+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ebURtJ1g; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=U2wf90QsdW7s+qnNkfGpCGD3ama+kzMvgcQv0NmOOlkOsuvLHR/2NoV6ToGG5dn0iMNhfr27q4DD3BWdDYAoUeUdfhlcDnJQNNRWymNzL9edA0JYs0Vase7YNNP2dSPyA10YflU3EblXzeTue2UioNXAryO9fqLeLm2Iz9ruJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyS5GcZ+; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755327411;
+	s=mimecast20190719; t=1755327474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KN8fg+nbiX9r2kmZVMOFzoFbgLpi1t5HuR+4HKB2nW4=;
-	b=ebURtJ1gjobSwfhSkuBf6zIz0ZZAOfjm9tJo4rQtjInCaUwUF40838oU57+OICLf9VyDsW
-	01tl+kAv+8cNyvg6oRSdEko8ULH+L61T1n7YDrFXPzfZPAsXsZD0XKtGtpluDnWu6Joug5
-	7QDmLwYEQvPZldTVfWF9t4sfoUv7ERQ=
+	bh=wg8wKLsgD4C0qASoGGdbCBpxEg9XbKTfPdSgvDSrnxY=;
+	b=QyS5GcZ+Yn1CQM/JNbBUnhzNWVvz3ejYb/gle8hAtYEb1lWKY32ly5ib3kKDoZF2Mo+0mi
+	uytKh+KuwOkVkY3ryBIZZ48x/xkQ7QeSTCDaB0YxdvJ3u6H+DuOVJV7ZWpFCewpus+dLqO
+	xHjHRPIz/Wwa/ZA3JVHnUJVXcfzhSMc=
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
  [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-b2OsFD22PraVPl-W-qnqlQ-1; Sat, 16 Aug 2025 02:56:50 -0400
-X-MC-Unique: b2OsFD22PraVPl-W-qnqlQ-1
-X-Mimecast-MFC-AGG-ID: b2OsFD22PraVPl-W-qnqlQ_1755327409
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b9dc5c288eso1888823f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:56:49 -0700 (PDT)
+ us-mta-322-DjyLGzGQPO6yoevr3iLT_A-1; Sat, 16 Aug 2025 02:57:52 -0400
+X-MC-Unique: DjyLGzGQPO6yoevr3iLT_A-1
+X-Mimecast-MFC-AGG-ID: DjyLGzGQPO6yoevr3iLT_A_1755327471
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b9edf2d82dso1313407f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:57:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755327409; x=1755932209;
+        d=1e100.net; s=20230601; t=1755327471; x=1755932271;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KN8fg+nbiX9r2kmZVMOFzoFbgLpi1t5HuR+4HKB2nW4=;
-        b=d/iQODPJW6Wxe1zK0CHLgIVnCA3GvhfpQUHlZHCRE3CZ30kJGUPC/bh8BAmzTCsOCy
-         qpzNmmugNzW9xXjfI9aA6rMq+4h8HR3EbF97/y+gnrco3BAj6ZTyTKBZMRYju30qb82Z
-         H/j0amlyzesVROptkiKB6bB+T56A9EgGxumu5H1hRxrPjeQ8eYv+HkslTuM23vc7am1O
-         8l4efwVevSRqs0tKbh/jm+/E2SNsqv00aPwudT8CmU1GVOVbFjII7BeQO33Wpq37ym5Z
-         iZ82YiByugmwOwgdwcnht9gT9YhuIFSHNLi80W2uXzs5ilKYF4/F3ywX5kiFgld2Eowm
-         Vg/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWyw2CvhokcwfTpSI4ug2fAemHn13p1MlK/UfX9AjFF6U1PekXwvlVdSJtwOPToGw3dX7EDdr4wgTr8TqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy84Hllp0fnkw1INx9eiWiZ7GwrYtnfFtkSX2nY/fsZcM+POJpX
-	OhzQ+/IAyj4/8tgyxIAhEBE0XUAdoC0Dfr0zZirG6HE6j4/y/SDk7hOuZm6Q9PPmydhQ6S7H0xS
-	z4KPt3vbEadfvrQ4jmQSqbbJvBo/lLGmvJsY89URwzQt24VO0Kwc5agVIyRWVXXbhKw==
-X-Gm-Gg: ASbGncvqTTnfRDDnqOS5HoCTEUTpnVBpAqPdHYC+lul3FO1E9af9aL/G4QqL0czNmhW
-	V5HMlcQOA6K72JwGqH/RY/yqP4xKrXVMPnDJfsfNaFaThIDPO79R7f3/IV/hYiX+fsT/LTHONYV
-	h/LOakZI/KPE/3yATZRmVzHhdqZX1BM2iQEJQTd2P9XmUPv+Rl5RHyrDuu5jXWci2ydJOhVWfDM
-	cdR+O+64IOWko6fg5Gu9m8tk58yUmuPC3Ytq9HevfMGpH1Y1lOH79JVzApFMSbVpjdgWeF9BUpn
-	TKChff1GWfx94YkaALGQCk437Rzc1H7wbMf008JZAzryX4y1OqrR5UbpcVKybHXHuGjIojRQml1
-	NY9sZmUkgZNt5zSwYILBJXLr1kqZpgHyLMbMbqB1sTABuiuvFaAGTVnidwlgJg2neA6k=
-X-Received: by 2002:a5d:5f53:0:b0:3b8:d3ae:26e with SMTP id ffacd0b85a97d-3bb69b7d31emr2962682f8f.53.1755327408871;
-        Fri, 15 Aug 2025 23:56:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFO6LdVmZCPII/OsVa8BXcCaSLsJhIbHGjOSatlSPMXt4cEzP2EZ9sEjNz9iVGYBsrMs+Y2IA==
-X-Received: by 2002:a5d:5f53:0:b0:3b8:d3ae:26e with SMTP id ffacd0b85a97d-3bb69b7d31emr2962666f8f.53.1755327408493;
-        Fri, 15 Aug 2025 23:56:48 -0700 (PDT)
+        bh=wg8wKLsgD4C0qASoGGdbCBpxEg9XbKTfPdSgvDSrnxY=;
+        b=exKjnVHqGzCbUt0UJ8/B0SfZebR1gP6wW+CRLCav7ZTdlgovbUsc3nsXCYCDEBNO1O
+         4s/dRKMY+FuSdzWONtM6xAoVayk91F2zEZrSW6gAm7uPCLHMUvNtg9JQsiribNGEhvfa
+         AcrY3DN+raRmu24+nqbZ7jPSfSFjEnobvvDp7z+rYKlrrXlkRjvcZ2DG80l3otrBPMkS
+         i3E15aNiFAV9ZEMqUo5XbUxupApsJ+qlbnUKLo5D7lju9a+5GwMySgeFSad+OqdeiUcy
+         jpy96iK3CxgSwCD/Az8FPGsCfu+ZeTqGTIvsD+mAw2OE3cC7BssMi8TWXhVch0hU9Zeg
+         9nOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ9ADItdygCG9z1Yyo7q4Qh9KJFOHeeiYcSPyh1wh5lJ5UxJHH7SrenWPvlVmAVUDMGlNIN6K8p0jneqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG2a7JMYGlyK/K4daBFlHqwV8lDkk9NwL1wr0bGUr5Qiy3DlgK
+	2jiVqZYaAbpMR1w3HYgy8lRjKokcpkrXypw4kERUc+m1oF5DfFOIpiQCdQKcSONZd9beGx2ABTG
+	iB7fdyOCKW9IjL6T5b1BhAIekOUSY9rkDZqoXPamp4fhzhpEwltBkll4iZvSPPJQ+UA==
+X-Gm-Gg: ASbGncvb+c3iiLVPbH1Ic94CVB8scxrBU1RdYqUttMRbVpBbWRjt8YKiPvK6fQYBogi
+	69aMGmpmqE7zlspmv8zfZ/+o9GejlhhYtGqk8zLJyuo9ZbmGwbn4BmpcY8/y0U4TAjbH2takfI4
+	g2cfNiWNIJM/1rGMioZZfShSvpnkUhft23SjLxLRLr8vixcik8HIWR20XcIYG/LO0qDpzZS3fIW
+	VN3uSxJbV5QCCfCnHqxL/0OuSjIQmMcmvNBEkfPVu0ACKRr8ciK/54ohnUXevUcwj3TWxQlP8aM
+	RGLKzl1LC7yAGSdskxBZ3drIqDJn8EadpoecfrQP6vb+uqtiqZxI4mHmJfS84GA20TCEa+fBxTm
+	pr+65OBERUEuXo0hngsbBAvzhU52DQikpHYYDsoleZMNuKV58OmHQCjV1i/Dxcm8EAZQ=
+X-Received: by 2002:a05:600c:c8c:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45a21839acemr39164395e9.19.1755327471432;
+        Fri, 15 Aug 2025 23:57:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOjp2/h7DEpRetBzYCh95sTuQHMs3qZPndjitRLIlFMSSKwzMEFfJZgCwWmyFWpiYtiA8F9w==
+X-Received: by 2002:a05:600c:c8c:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45a21839acemr39164235e9.19.1755327471052;
+        Fri, 15 Aug 2025 23:57:51 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f23:c700:d8ae:41bf:492a:9e4c? (p200300d82f23c700d8ae41bf492a9e4c.dip0.t-ipconnect.de. [2003:d8:2f23:c700:d8ae:41bf:492a:9e4c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223206c7sm44705415e9.16.2025.08.15.23.56.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b226eecsm53774695e9.1.2025.08.15.23.57.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 23:56:48 -0700 (PDT)
-Message-ID: <701bfbb4-6c12-4614-a322-def3ca923c78@redhat.com>
-Date: Sat, 16 Aug 2025 08:56:47 +0200
+        Fri, 15 Aug 2025 23:57:50 -0700 (PDT)
+Message-ID: <b95b62e2-3e71-4029-9f15-2ce780b1b91d@redhat.com>
+Date: Sat, 16 Aug 2025 08:57:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,14 +90,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] mm/cma: print total and used pages in cma_alloc()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Xiang Gao <gxxa03070307@gmail.com>, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- gaoxiang17 <gaoxiang17@xiaomi.com>
+To: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
+ Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
 References: <20250816042842.3959315-1-gxxa03070307@gmail.com>
  <ee29262a-911b-4a97-b619-0dea3b657252@redhat.com>
- <20250815234528.882ab58247cefc96e4137811@linux-foundation.org>
+ <9be479a1-ab93-4ec7-b1aa-68acd94f15ea@gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -144,35 +144,17 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250815234528.882ab58247cefc96e4137811@linux-foundation.org>
+In-Reply-To: <9be479a1-ab93-4ec7-b1aa-68acd94f15ea@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 16.08.25 08:45, Andrew Morton wrote:
-> On Sat, 16 Aug 2025 08:27:39 +0200 David Hildenbrand <david@redhat.com> wrote:
-> 
->>> @@ -858,8 +869,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
->>>    	if (!cma || !cma->count)
->>>    		return page;
->>>    
->>> -	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
->>> -		(void *)cma, cma->name, count, align);
->>> +	pr_debug("%s(cma %p, name: %s, total pages: %lu, used pages: %lu, request pages: %lu, align %d)\n",
->>> +		__func__, (void *)cma, cma->name, cma->count, cma_get_used_pages(cma), count, align);
->>
->> 		^ one space missing for proper indentation.
->>
->> But doing another spinlock cycle just for debugging purposes? That does
->> not feel right, sorry.
-> 
-> If we're calling pr_debug() frequently enough for this to matter, we
-> have other problems!
+On 16.08.25 08:42, Giorgi Tchankvetadze wrote:
+> What about using tracepoints?
+> Add a trace_cma_alloc() event that only runs when tracing is enabled. No
+> lock unless someone is actively monitoring
 
-We call it for each and every actual CMA allocation? I really don't see 
-why we want to just randomly make CMA allocation latency worse.
-
-Is the existing pr_debug() a problem? Maybe. But who actually has debug 
-messages enabled in any sane setup?
+Tracing in general sounds like a much better approach here than the two 
+pr_debug() in this function.
 
 -- 
 Cheers
