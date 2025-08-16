@@ -1,209 +1,178 @@
-Return-Path: <linux-kernel+bounces-771639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9515EB289D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E34B28A07
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480A760201A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:18:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B2BEB64BA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2C7192B84;
-	Sat, 16 Aug 2025 02:18:12 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F233C1FBC94;
+	Sat, 16 Aug 2025 02:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H3aCE55t"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC71A95E;
-	Sat, 16 Aug 2025 02:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D708719D08F
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 02:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755310692; cv=none; b=QVUR8WWt/qEOrgIJbMfSGCgHEdMnr8Y8rjMrgLJsi++bR9EqbCii7Ivg86UbAoSf25TkFwP+EnxAUYiIEuHA4xxRO+g/8nzPjKzroz6kJmEl+IqsYsNzgOi/qFWu1S5GklfZJqf4rMZqltARV8t3sHpmIrEhDK+JrgW+alcjoUc=
+	t=1755310708; cv=none; b=eGfGIyntDiFmPIcZk4vgu0E615vNNdREoYlEllWFidNUePJ0k1plzhFAsMBK1RjVU7k1IPAw6DutlnFBuAN6FATa6z0ymC4fF2KgEwb6sD0BQ5rHlqae/ysK8qC772hi/GwcHgZL1KciiXn+dXFjUe50h4hgfaTqdAlCcLkZv1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755310692; c=relaxed/simple;
-	bh=s4ZInaeHU0K/BWeIVGD8Oh9RU4nlKEkUdtbbM5sTBm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CDfLGVQASmn0ZJexTvJ9XRfJkFrETu+Y0zy+HwJtMTiU96UKWgLzZ0R+AVNTMqclv8NIpv6AcpWybNtPRsp7IOxjsPIv+mVnp/5WQ9QPXnKOWf3O/BDQdJCzARHRqQoaECj39p5Re3msUsabqqpDjVsOzBL7Zuzq+i8G7J2FOr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24458293cebso3463575ad.3;
-        Fri, 15 Aug 2025 19:18:10 -0700 (PDT)
+	s=arc-20240116; t=1755310708; c=relaxed/simple;
+	bh=wUGIvKrpeupzIRgkLjoxvnnL4aYCz4wqe6Y1gDPHbAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Po5lLG3sUclnJIHZJKPfyQMGNDye0CGm+ATZwFYuIc5xncWaDbbE5bhQdeH6vy3j2qxsjjq7mIz5Tjr8HrIHOP0v0i9CNGYhnN02T5HuvYgOyFlUjp9XFhswm2fwxqleEqZA9Wwmcb2gKNVmmaXHSf6CoFOC/7dF4p5+Swp/z8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H3aCE55t; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afca41c7d7fso572306966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 19:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755310704; x=1755915504; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bwsXpXXIuYQCL/FW90IpYibOz6Dfp82j0b3aRU8rwPo=;
+        b=H3aCE55tHzz6WyPbYzCUrIo+ItI9OxGSKAoOHBd9+VdEnZJQZAuoxK6SW11sMlk4XV
+         RZ9swmz5Z/S2AuD8Qve3WSn7y8QJONm7FNvw+v/LApoP7IhpsNbvJgYXnKkR4qX+Caw2
+         AQQjReLbjSEwz4egINy+HNBZ8s6ei2JqdYMcp2P7k98JEEFQYV2c/qe3rbr1MxPl8qEH
+         TJ60zK831q0fWwtlJ6ppGoQVYnKmIngPCOBeXf4IAbM0R38B2N/NaCglmgdqHQtwcvR5
+         qlJlo+bBmFX/7BSXEE6XcI5FYwat8EDf0egsspx15KoUoUCshIsVaknZeHQRrF6DB8KI
+         Bqng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755310690; x=1755915490;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1755310704; x=1755915504;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u7+YvTE3zXrxg2NPoB/pXCcTw+FU7/h69ZU4O7D7BtE=;
-        b=uittm4/yXAhJBrd/rGRRdOuTkDPCTgPf2qQRbNcMQiPLW3ohWMCa/A2Zu9ZolaBB10
-         5UQtB9fw4zgVUIiVPjwAQrFsSIZMJs00YMU/Q5LHo2/kN6spZs5/z1qLO2ayKe5J9wVW
-         V/a3o9Zg0IGHELW9J5lWzRAh60OyYHVBq8tiIp6L6nO5f0IhApA4Gv+ZpHCdXkezSg2s
-         BRMSViK8uu7Z40LgrBEmie8zPJ7sqVZ4VPY4FmaXQqnQ2g29/I8eVZY08pdeKtQiBIlO
-         e2VrbcsyuCX0udn12A5JR2P73nEY8v5J8r+2Xm+toNHeuJvWO1kgaV8gRi87Fj7QYnao
-         /tDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUABIGlPXXuATqQESZZw2KAZqhCP2FibUhyxlTfS305x4E/bXOZUjLjTxa7HVoAYjudrpkcxc6GPPT4fQc=@vger.kernel.org, AJvYcCUVvsoHnJK1NYOoxkvFVJtveCuc8x/pvnO2fXkXG6No3oSbX3hUPtlsCVnsVhvqElCbZkpUyXWcrpcgdCO+hxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo+1oSbtCf0w4f0BxiBgGOCw3SM7VUhV/o1IK/J/4/m6ngCeKh
-	LL00l91YakzNJ7wIEMeINr2IkYLXM95EmQRt2IpWOF3Qx+iMRUnIj4zs
-X-Gm-Gg: ASbGncsUZHOqfDe5uPhvfd3xM6HfKO5/eGK+efh6iXPLjWlbwJ1t1lG8lKd2yhEARJm
-	6ruoz83Kb4I1VSRsupRKHtGHY0Jp1rzWYR0DvG+Y3C66/fPE2dBKx/749gGCI58v3m0HfukhWgt
-	4VUTltqUw46ZDqtJwqN4jF666v/xnGBYXorMtwtH1eFVMcFqcie5ZR7wT4rZddVqwiCDWNcNo/8
-	DKcFATDxm1PDp27G1LGtkeQuGGm3HPAKHKpH+UnMIlk2nhGx5s6qQDSMYBayWhd/Uj9TtCk7mzU
-	782XhQYs85kFeGTRl58lRPj1IvVhq/G7RDDoJrvopzCFXRZVLQ91XV2brbLLy7QFsl2RMKm5BkP
-	Coa6ijREvkDL6pipbFRjM6/n3D4BIBMEa
-X-Google-Smtp-Source: AGHT+IGKyVt6YNx8hzsEDiKM3d8MPYTvIJyS5Ze9B4ONXLm2BtBVctGCSWO+iINuXMA6bIG4ClYZeQ==
-X-Received: by 2002:a17:902:d482:b0:231:c9bb:6105 with SMTP id d9443c01a7336-2446cb8781amr30203385ad.0.1755310689658;
-        Fri, 15 Aug 2025 19:18:09 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d56e9e5sm24691175ad.148.2025.08.15.19.18.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 19:18:09 -0700 (PDT)
-Message-ID: <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
-Date: Sat, 16 Aug 2025 11:18:02 +0900
+        bh=bwsXpXXIuYQCL/FW90IpYibOz6Dfp82j0b3aRU8rwPo=;
+        b=BmH4rmgRVcFbe1451kHaYSTm8PKhcfilyIkqbBF0Dw4cnBcy94OcH4yjwtifRjx2g8
+         FcipdI7p6o0buFZotBYDWqQESZ83B5GfuoZ+FBBSMnSXEPAPZFA1bOr9Gz8csZ9hBDgz
+         ntMgVRCuBtonybSjSkTh3AdMfRhUGTrHg/lbW8HnIuqHBR/9TgixEhRnDWP438gmSYLM
+         KtEUYDOEHw0HWLf7D7f3oMbaRlBLpZF60bCbr2oB7qJ+ecYSfqEZkfW6U2MM25UC295Q
+         N0Vhi6Aaihev7SGS++D/hdYNUKr1BBYxHSCTAnksE6r2Ko81ljv/cyJoWBT8fRJVOWnn
+         fr2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsbSKr6xXoTUFBc0Dv5DCeWhdeKL6gLfVHJLlE6JNoJjwgjHFJ3PixdPrZ3ctsuN/42b/JNxRgbjsI9lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSFXhw3jkTTc+do0sVQz7POm7ldVMW2jWzYEl3RlZYkqwDXuKp
+	ah2Qlc0rdOgua9osX90fLrkFkmeF+Sp/5fUkvcosMTw79CIzbN+ECaBv6bHhD5+g0Q==
+X-Gm-Gg: ASbGncs8equUsiWms8loZdIk7VAg9zPfin4v+5/qUgehNMs9O2PRbBmy4NckENubbWj
+	f9jJrBFPugYbRb+jG2IX+o6mHR8I2VnUQuL/uHdo1SBFDXSslJ9dBPnxdk81Kl6A/QYk+nm1DNA
+	uGa1zISRj0YBYSDubbaHiCQx+mXAbdKDaecfONEWR/3sFFiC4zM2MMGXJVS5OEfGYXyK+kv3mHV
+	bU79ISQSvCCe8aGo7BNG6FUPT62d2xS5gGKtUzdKdAZOI7cufkl2f2qoFIHY3O9TUHOWQiQkY4P
+	LA3VZWNtIwbHPUnP2JD0Q80jcfz0oz1xEYSEJbCqQZ9Q1JmTQTD3R3crWynyM/7kqPSjPUmzAB+
+	UWM9BPVT8Zry/EkVBJ1xfQg==
+X-Google-Smtp-Source: AGHT+IHNk8PBKUNrSPx10ifAUYOJvFnn2Jc4DOTuWB3OZc7DjYdpAwzxQ0MKpk/V8JZvySJfquvRNQ==
+X-Received: by 2002:a17:907:7f09:b0:ae3:5185:5416 with SMTP id a640c23a62f3a-afcdb1a2e5amr388545866b.13.1755310704049;
+        Fri, 15 Aug 2025 19:18:24 -0700 (PDT)
+Received: from localhost ([2a07:de40:b240:0:2ad6:ed42:2ad6:ed42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01168csm262745266b.91.2025.08.15.19.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 19:18:23 -0700 (PDT)
+Date: Sat, 16 Aug 2025 02:18:21 +0000
+From: Wei Gao <wegao@suse.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, kuniyu@google.com,
+	kraig@google.com, lkp@intel.com, netdev@vger.kernel.org,
+	dsahern@kernel.org, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, edumazet@google.com, horms@kernel.org,
+	oe-lkp@lists.linux.dev, kuba@kernel.org, pabeni@redhat.com,
+	ncardwell@google.com, davem@davemloft.net, ltp@lists.linux.it,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: Re: [LTP] [PATCH net v2] net: ip: order the reuseport socket in
+ __inet_hash
+Message-ID: <aJ_qbZDvDJwVoZGA@localhost>
+References: <20250801090949.129941-1-dongml2@chinatelecom.cn>
+ <202508110750.a66a4225-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org,
- Andrey Konovalov <andreyknvl@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>, Thomas Gleixner
- <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller@googlegroups.com
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508110750.a66a4225-lkp@intel.com>
 
-Hi Alan,
-
-On 8/16/25 10:51 AM, Alan Stern wrote:
-> On Sat, Aug 16, 2025 at 10:29:34AM +0900, Yunseong Kim wrote:
->> While testing a PREEMPT_RT enabled kernel (based on v6.17.0-rc1),
->> I encountered a "BUG: sleeping function called from invalid context"
->> error originating from the USB/IP VHCI driver.
->>
->> On PREEMPT_RT configurations, standard spin_lock() calls are replaced by
->> rt_spin_lock(). Since rt_spin_lock() may sleep when contended, it must not
->> be called from an atomic context (e.g., with interrupts disabled).
->>
->> The issue occurs within the vhci_urb_enqueue function This function
->> explicitly disables local interrupts using local_irq_disable() immediately
->> before calling usb_hcd_giveback_urb(), adhering to HCD requirements.
+On Mon, Aug 11, 2025 at 01:27:12PM +0800, kernel test robot wrote:
 > 
-> ...
 > 
->> This error reported after this work:
->> It occurs after going through the code below:
->>
->>  static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags)
->>  {
->>  
->>  	...
->>  
->>  no_need_unlink:
->>  	spin_unlock_irqrestore(&vhci->lock, flags);
->>  	if (!ret) {
->>  		/* usb_hcd_giveback_urb() should be called with
->>  		 * irqs disabled
->>  		 */
->>  		local_irq_disable(); // <--- Entering atomic context (IRQs disabled)
->>  		usb_hcd_giveback_urb(hcd, urb, urb->status);
->>  		local_irq_enable();
->>  	}
->>  	return ret;
->>  }
->>
->>  static void mon_bus_complete(struct mon_bus *mbus, struct urb *urb, int status)
->>  {
->>  	...
->>  	spin_lock_irqsave(&mbus->lock, flags);
->                   ^
-> ------------------^
+> Hello,
 > 
->>  	...
->>  }
->>
->> When called with interrupts disabled, usb_hcd_giveback_urb() eventually
->> leads to mon_complete() in the USB monitoring, if usbmon is enabled,
->> via __usb_hcd_giveback_urb().
->>
->> mon_complete() attempts to acquire a lock via spin_lock(), observed in the
->> trace within the inlined mon_bus_complete.
+> kernel test robot noticed "BUG:KASAN:slab-use-after-free_in__inet_hash" on:
 > 
-> Look again.  mon_bus_complete() calls spin_lock_irqsave(), not 
-> spin_lock().
+> commit: 859ca60b71ef223e210d3d003a225d9ca70879fd ("[PATCH net v2] net: ip: order the reuseport socket in __inet_hash")
+> url: https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/net-ip-order-the-reuseport-socket-in-__inet_hash/20250801-171131
+> base: https://git.kernel.org/cgit/linux/kernel/git/davem/net.git 01051012887329ea78eaca19b1d2eac4c9f601b5
+> patch link: https://lore.kernel.org/all/20250801090949.129941-1-dongml2@chinatelecom.cn/
+> patch subject: [PATCH net v2] net: ip: order the reuseport socket in __inet_hash
 > 
-> Is the kernel tree that you are using different from Linus's tree?
-I think this part is a macro, so it appears this way.
+> in testcase: ltp
+> version: ltp-x86_64-6505f9e29-1_20250802
+> with following parameters:
+> 
+> 	disk: 1HDD
+> 	fs: ext4
+> 	test: fs_perms_simple
+> 
+> 
+> 
+> config: x86_64-rhel-9.4-ltp
+> compiler: gcc-12
+> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202508110750.a66a4225-lkp@intel.com
+> 
+> 
+> kern :err : [  128.186735] BUG: KASAN: slab-use-after-free in __inet_hash (net/ipv4/inet_hashtables.c:749 net/ipv4/inet_hashtables.c:800) 
 
-Link: https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
+This kasan error not related with LTP case, i guess it triggered by network
+related process such as bind etc. I try to give following patch to fix
+kasan error, correct me if any mistake, thanks.
 
-#define spin_lock_irqsave(lock, flags)			 \
-	do {						 \
-		typecheck(unsigned long, flags);	 \
-		flags = 0;				 \
-		spin_lock(lock);			 \
-	} while (0)
+From: Wei Gao <wegao@suse.com>
+Date: Sat, 16 Aug 2025 09:32:56 +0800
+Subject: [PATCH v1] net: Fix BUG:KASAN:slab-use-after-free_in__inet_hash
 
-My tree is indeed 6.17-rc1. I made a mistake in the diagram,
-which caused the misunderstanding. I’ve redrawn the diagram:
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202508110750.a66a4225-lkp@intel.com
+Signed-off-by: Wei Gao <wegao@suse.com>
+---
+ include/linux/rculist_nulls.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  kworker (hub_event)
-      |
-      v
-  vhci_urb_enqueue() [drivers/usb/usbip/vhci_hcd.c]
-      |
-      |---> spin_unlock_irqrestore(&vhci->lock, flags);
-      |     (Context: IRQs Enabled, Process Context)
-      |---> local_irq_disable();
-      |
-      |     *** STATE CHANGE: IRQs Disabled (Atomic Context) ***
-      |
-      +-----> usb_hcd_giveback_urb() [drivers/usb/core/hcd.c]
-              |
-              v
-              __usb_hcd_giveback_urb()
-              |
-              v
-              mon_complete() [drivers/usb/mon/mon_main.c]
-              |
-              |---> spin_lock_irqsave() [include/linux/spinlock_rt.h]
-                    |
-                    v https://github.com/torvalds/linux/blob/v6.17-rc1/include/linux/spinlock_rt.h#L96
-                    spin_lock() [kernel/locking/spinlock_rt.c] <--- Attempts to acquire lock
-                    |
-                    | [On PREEMPT_RT]
-                    v
-                    rt_spin_lock() [kernel/locking/spinlock_rt.c]
-                    |
-                    v
-                    [May Sleep if contended]
-                    |
-      X <----------- BUG: Sleeping in atomic context (IRQs are disabled!)
+diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
+index da500f4ae142..5def9009c507 100644
+--- a/include/linux/rculist_nulls.h
++++ b/include/linux/rculist_nulls.h
+@@ -57,7 +57,7 @@ static inline void hlist_nulls_del_init_rcu(struct hlist_nulls_node *n)
+  * @node: element of the list.
+  */
+ #define hlist_nulls_pprev_rcu(node) \
+-       (*((struct hlist_nulls_node __rcu __force **)&(node)->pprev))
++       (*((struct hlist_nulls_node __rcu __force **)(node)->pprev))
 
-      |
-      |---> local_irq_enable();
-            (Context: IRQs Enabled)
+ /**
+  * hlist_nulls_del_rcu - deletes entry from hash list without re-initialization
+@@ -175,7 +175,7 @@ static inline void hlist_nulls_add_before_rcu(struct hlist_nulls_node *n,
+ {
+        WRITE_ONCE(n->pprev, next->pprev);
+        n->next = next;
+-       rcu_assign_pointer(hlist_nulls_pprev_rcu(n), n);
++       rcu_assign_pointer(hlist_nulls_pprev_rcu(next), n);
+        WRITE_ONCE(next->pprev, &n->next);
+ }
 
-
-> Alan Stern
-
-Thank you!
-
-Yunseong Kim
-
+--
+2.43.0
 
 
