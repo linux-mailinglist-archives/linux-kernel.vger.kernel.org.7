@@ -1,164 +1,152 @@
-Return-Path: <linux-kernel+bounces-771760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC081B28B3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71900B28B3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8AD5A0CD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A1011896483
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01E221D011;
-	Sat, 16 Aug 2025 06:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570CB21E098;
+	Sat, 16 Aug 2025 06:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyS5GcZ+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pOlEzCDs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9IRpo1lA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECB73176F0
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2953176F0;
+	Sat, 16 Aug 2025 06:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755327477; cv=none; b=Vegip9DNzMJi4HXmlO6tSayfXnSyyWvzTmsBMLCkm6SWbGY9Pktc1MppVJo6qqvDicdPBQf0U7uGdACECdinvcLAhnaVOljsSDax1ccsKpVxx3cSCFVguAE3Jmewp/JZNCwiASc5adShXKhoqTNzBwiMq2eXGhEonvVknyfGMYs=
+	t=1755327587; cv=none; b=SBUgDIJ2YR6TY6UJvdUAnphAeHBTnTnw0To8Cn6WmrHxb95hW84QxtOhS0FnTjmLtjz327pw0f7NRdHz6GXgSLb51HyhGeNSlEgmJO9ZOxLfQTwi0hPXRwRLY/dxokaFFb/H9SH0CbD9zefu0aO9+j2g+4JfjWji8fj2ufKbGcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755327477; c=relaxed/simple;
-	bh=4ya+ORsQ8cX9UsCUqnb33v3ZqeBVAQam2G3ncNO2MRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2wf90QsdW7s+qnNkfGpCGD3ama+kzMvgcQv0NmOOlkOsuvLHR/2NoV6ToGG5dn0iMNhfr27q4DD3BWdDYAoUeUdfhlcDnJQNNRWymNzL9edA0JYs0Vase7YNNP2dSPyA10YflU3EblXzeTue2UioNXAryO9fqLeLm2Iz9ruJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyS5GcZ+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755327474;
+	s=arc-20240116; t=1755327587; c=relaxed/simple;
+	bh=WlA2MdWzrUL96f7KUYM6sdeESTS9cAPMHbk5ZlsxiSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7bQZhh6aFjWpwNPyFT3GBhsGOt3drof7h3aPICiBXRAr4H8ITKNRbleaeG9asP2J0sEx6BvO/kj+ExpNUA+jE2e1adn46Z9F0vl3mbTXMcvRqZ4+NPFUTZtdz62pMfdQGmmAW46iuoiv3J5zg/rXMUdUTdtCOFxQRkzKGvH/P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pOlEzCDs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9IRpo1lA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 16 Aug 2025 08:59:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755327582;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wg8wKLsgD4C0qASoGGdbCBpxEg9XbKTfPdSgvDSrnxY=;
-	b=QyS5GcZ+Yn1CQM/JNbBUnhzNWVvz3ejYb/gle8hAtYEb1lWKY32ly5ib3kKDoZF2Mo+0mi
-	uytKh+KuwOkVkY3ryBIZZ48x/xkQ7QeSTCDaB0YxdvJ3u6H+DuOVJV7ZWpFCewpus+dLqO
-	xHjHRPIz/Wwa/ZA3JVHnUJVXcfzhSMc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-322-DjyLGzGQPO6yoevr3iLT_A-1; Sat, 16 Aug 2025 02:57:52 -0400
-X-MC-Unique: DjyLGzGQPO6yoevr3iLT_A-1
-X-Mimecast-MFC-AGG-ID: DjyLGzGQPO6yoevr3iLT_A_1755327471
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b9edf2d82dso1313407f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:57:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755327471; x=1755932271;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wg8wKLsgD4C0qASoGGdbCBpxEg9XbKTfPdSgvDSrnxY=;
-        b=exKjnVHqGzCbUt0UJ8/B0SfZebR1gP6wW+CRLCav7ZTdlgovbUsc3nsXCYCDEBNO1O
-         4s/dRKMY+FuSdzWONtM6xAoVayk91F2zEZrSW6gAm7uPCLHMUvNtg9JQsiribNGEhvfa
-         AcrY3DN+raRmu24+nqbZ7jPSfSFjEnobvvDp7z+rYKlrrXlkRjvcZ2DG80l3otrBPMkS
-         i3E15aNiFAV9ZEMqUo5XbUxupApsJ+qlbnUKLo5D7lju9a+5GwMySgeFSad+OqdeiUcy
-         jpy96iK3CxgSwCD/Az8FPGsCfu+ZeTqGTIvsD+mAw2OE3cC7BssMi8TWXhVch0hU9Zeg
-         9nOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9ADItdygCG9z1Yyo7q4Qh9KJFOHeeiYcSPyh1wh5lJ5UxJHH7SrenWPvlVmAVUDMGlNIN6K8p0jneqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG2a7JMYGlyK/K4daBFlHqwV8lDkk9NwL1wr0bGUr5Qiy3DlgK
-	2jiVqZYaAbpMR1w3HYgy8lRjKokcpkrXypw4kERUc+m1oF5DfFOIpiQCdQKcSONZd9beGx2ABTG
-	iB7fdyOCKW9IjL6T5b1BhAIekOUSY9rkDZqoXPamp4fhzhpEwltBkll4iZvSPPJQ+UA==
-X-Gm-Gg: ASbGncvb+c3iiLVPbH1Ic94CVB8scxrBU1RdYqUttMRbVpBbWRjt8YKiPvK6fQYBogi
-	69aMGmpmqE7zlspmv8zfZ/+o9GejlhhYtGqk8zLJyuo9ZbmGwbn4BmpcY8/y0U4TAjbH2takfI4
-	g2cfNiWNIJM/1rGMioZZfShSvpnkUhft23SjLxLRLr8vixcik8HIWR20XcIYG/LO0qDpzZS3fIW
-	VN3uSxJbV5QCCfCnHqxL/0OuSjIQmMcmvNBEkfPVu0ACKRr8ciK/54ohnUXevUcwj3TWxQlP8aM
-	RGLKzl1LC7yAGSdskxBZ3drIqDJn8EadpoecfrQP6vb+uqtiqZxI4mHmJfS84GA20TCEa+fBxTm
-	pr+65OBERUEuXo0hngsbBAvzhU52DQikpHYYDsoleZMNuKV58OmHQCjV1i/Dxcm8EAZQ=
-X-Received: by 2002:a05:600c:c8c:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45a21839acemr39164395e9.19.1755327471432;
-        Fri, 15 Aug 2025 23:57:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOjp2/h7DEpRetBzYCh95sTuQHMs3qZPndjitRLIlFMSSKwzMEFfJZgCwWmyFWpiYtiA8F9w==
-X-Received: by 2002:a05:600c:c8c:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45a21839acemr39164235e9.19.1755327471052;
-        Fri, 15 Aug 2025 23:57:51 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f23:c700:d8ae:41bf:492a:9e4c? (p200300d82f23c700d8ae41bf492a9e4c.dip0.t-ipconnect.de. [2003:d8:2f23:c700:d8ae:41bf:492a:9e4c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b226eecsm53774695e9.1.2025.08.15.23.57.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 23:57:50 -0700 (PDT)
-Message-ID: <b95b62e2-3e71-4029-9f15-2ce780b1b91d@redhat.com>
-Date: Sat, 16 Aug 2025 08:57:49 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+XdKT3RbO38yzmJe2zUDEOluaw1lQbYnVyhey9SPCE=;
+	b=pOlEzCDsFStS31E40StT1IcwZwxm66QdSZCgsE0MfPOJdUbf1P8u7xa02mCFNpXhXHs25Y
+	B53BhSzS65HVm68WEqMe61djldpLTnJlZxd4R5lTYJhCpiobWFlFe22wV4ymaa0oWwIoUY
+	IP/tJqNncYFm9p9IGrIKJJhz8OoVjOo9/nelhOLCJlENuthG9Ti+NyJjXxA2T5VnU2AlKP
+	v4F6lZSYDtQx52XXZOLNzrNxm+LCwsq1nTS4jQ2tdN/Cgq/WhgFfsUxqvyEN/dNmYYESXk
+	Me3tLfjB0MFfHGwOlICgvQw01BN2hZLp4an6NFgS0jPXcTMo43xPi2Fe5yxSnQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755327582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+XdKT3RbO38yzmJe2zUDEOluaw1lQbYnVyhey9SPCE=;
+	b=9IRpo1lA20bMsMMBZgZrdkRdS3ox1N+EY4B1DKHyzjTAQk8lhYnlwN7yjclndCyepDgiqE
+	uk3ByFCZaRqtVYCw==
+From: Nam Cao <namcao@linutronix.de>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
+	linux-usb@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Marcello Sylvester Bauer <sylv@sylv.io>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, andreyknvl@gmail.com,
+	Austin Kim <austindh.kim@gmail.com>, linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: [BUG] usb: gadget: dummy_hcd: Sleeping function called from
+ invalid context in dummy_dequeue on PREEMPT_RT
+Message-ID: <20250816065933.EPwBJ0Sd@linutronix.de>
+References: <5b337389-73b9-4ee4-a83e-7e82bf5af87a@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/cma: print total and used pages in cma_alloc()
-To: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
- Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
-References: <20250816042842.3959315-1-gxxa03070307@gmail.com>
- <ee29262a-911b-4a97-b619-0dea3b657252@redhat.com>
- <9be479a1-ab93-4ec7-b1aa-68acd94f15ea@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <9be479a1-ab93-4ec7-b1aa-68acd94f15ea@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b337389-73b9-4ee4-a83e-7e82bf5af87a@kzalloc.com>
 
-On 16.08.25 08:42, Giorgi Tchankvetadze wrote:
-> What about using tracepoints?
-> Add a trace_cma_alloc() event that only runs when tracing is enabled. No
-> lock unless someone is actively monitoring
+On Sat, Aug 16, 2025 at 11:38:14AM +0900, Yunseong Kim wrote:
+> While testing a PREEMPT_RT enabled kernel (based on v6.17.0-rc1),
+> I encountered a "BUG: sleeping function called from invalid context" error
+> originating from the dummy_dequeue function in the dummy USB driver.
+...
+> The pattern of manually disabling IRQs and then taking a spinlock
+> local_irq_save() + spin_lock() is unsafe on PREEMPT_RT, the current code
+> structure keeps IRQs disabled even after spin_unlock(&dum->lock) while
+> calling usb_gadget_giveback_request(). This extended atomic context can
+> also be problematic if the completion handler attempts to acquire another
+> sleepable lock.
 
-Tracing in general sounds like a much better approach here than the two 
-pr_debug() in this function.
+I don't know the USB subsystem well, but the comments above struct
+usb_request says:
 
--- 
-Cheers
+ * @complete: Function called when request completes, so this request and
+ *	its buffer may be re-used.  The function will always be called with
+ *	interrupts disabled, and it must not sleep.
 
-David / dhildenb
+Therefore it shouldn't be a concern that "completion handler attempts to
+acquire another sleepable lock".
 
+> I request a review and correction of this locking mechanism to ensure
+> stability on PREEMPT_RT configurations.  Kernel config, full logs, and
+> reproduction steps can be provided on request.
+
+This was introduced by b4dbda1a22d2 ("USB: dummy-hcd: disable interrupts
+during req->complete") which split the spin_lock_irqsave() into
+local_irq_save() and spin_lock().
+
+The untested patch below should help?
+
+Enabling interrupt (spin_unlock_irqrestore) and then immediately disabling
+interrupt (local_irq_save) is not the nicest thing. But then I don't see
+how to avoid that while being non-hacky and human-readable.
+
+Nam
+
+diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
+index 21dbfb0b3bac..a4653c919664 100644
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -765,8 +765,7 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
+ 	if (!dum->driver)
+ 		return -ESHUTDOWN;
+ 
+-	local_irq_save(flags);
+-	spin_lock(&dum->lock);
++	spin_lock_irqsave(&dum->lock, flags);
+ 	list_for_each_entry(iter, &ep->queue, queue) {
+ 		if (&iter->req != _req)
+ 			continue;
+@@ -776,15 +775,16 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
+ 		retval = 0;
+ 		break;
+ 	}
+-	spin_unlock(&dum->lock);
++	spin_unlock_irqrestore(&dum->lock, flags);
+ 
+ 	if (retval == 0) {
+ 		dev_dbg(udc_dev(dum),
+ 				"dequeued req %p from %s, len %d buf %p\n",
+ 				req, _ep->name, _req->length, _req->buf);
++		local_irq_save(flags);
+ 		usb_gadget_giveback_request(_ep, _req);
++		local_irq_restore(flags);
+ 	}
+-	local_irq_restore(flags);
+ 	return retval;
+ }
+ 
 
