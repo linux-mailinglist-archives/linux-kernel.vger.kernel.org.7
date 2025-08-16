@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-772235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532ACB2903E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93388B29045
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A2E1C86E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4EF587993
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB3E1F75A6;
-	Sat, 16 Aug 2025 19:36:04 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039ED215075;
+	Sat, 16 Aug 2025 19:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rb4d3azo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF351F582A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 19:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5625419F11F;
+	Sat, 16 Aug 2025 19:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755372964; cv=none; b=nUJarS0BsDLd4ELlWBRCyV9oboDLiDHKH+rxAEn2YahC0Qb2mY/2Lxa0b0YdgTNQNm3ZLjWHIZQcjSLch6Rd+vxhy4NYwFGjSbSIdEzbmih+sFebvttPbrnIP2T/ZBdnqP/qa41239WnIX7qHpthjjnKHac/SY+BE8i4tug+ymc=
+	t=1755373656; cv=none; b=J5zdNxiF+jBD8t4YHgbqvQZ1kSyGmlAqv2twmWJz+1fgZkzM5kIKcsKL16wSpAgNZweH5JzjbZKM6l7GZUKgETHUE6gVPm82OaqYjuFPRdTFsYqCkoIE4utPUwT4tbV/nrwBOznH9r10/t1t85v1u4FN5SY0TkyR9/8bF4TZu8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755372964; c=relaxed/simple;
-	bh=QzrSxmFk6iveACVr/9rEhCqobbpcZhNFTVK5ExiN5Hk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EaqsW4k8uwJTZGonGeCa2WU9Jd2DC9+y4hfPpTWKPf1vvnk9mg2Cj//v1cO7WbCKgycszZT4Zbp4dbnPjKvyogR5h0b7aCrqtSMQhx/1bvhaSdb5SN5G0/Hr/QI2qYiwZHOzW7c5dakpAtp6KX23JY+DCFRZC4frOAFcv7m268Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E7FD744349;
-	Sat, 16 Aug 2025 19:35:56 +0000 (UTC)
-Message-ID: <c5bf56b8-da06-4e17-86bc-1b69af3065cd@ghiti.fr>
-Date: Sat, 16 Aug 2025 21:35:50 +0200
+	s=arc-20240116; t=1755373656; c=relaxed/simple;
+	bh=gWdKsqnCQv8AjMCN4PIGSK65i4nSEgxnGoN3qZ6Ae6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JqGRfA6F4tEooAFtBEPTdr58bBiFb/uZ9RibJATPv7BJq7hYSLgiNXaOnhfHmPI5wbLab9N0A+WBbEMq9EGiZkugoP/FgEHxLZ6XbJ8auDz8r59O8CBmCSKzUt9ZDi0/FhDnuE+Or8WwTiOz088mwJ8kX81BH+aGwBdw2rDPWPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rb4d3azo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4DDC4CEEF;
+	Sat, 16 Aug 2025 19:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755373655;
+	bh=gWdKsqnCQv8AjMCN4PIGSK65i4nSEgxnGoN3qZ6Ae6I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rb4d3azoRCv8hnrcBHQgevJf5KUy/7DBpgxvVAITh8P6pLc6LuXUMsCxqx7vMn4rh
+	 OFBlfoGW6shbl2rF9aYEiPBYCTMrKa0sHkxKsxLCJyzRjL+rmbtCC7P1w1108zeKIw
+	 rkYMTQ0Y+nHt1L+CHWy0SVbRs2HEnmi3pvFEC/KldaJILEfy82iMyIyGXmFbXxkaES
+	 rqNdsRC9d268Z3ELgYKf7xeOqP7jUj4UahYkPx6iJRLYwdjnlq2SmLjgZ1K38EJ+kr
+	 o+eDdU70kwL3gwc2Kfq5vYwg78t8IqXGSvlO7ZcmEl31TWPjHXNKvttKPso9gK3Z/s
+	 Q5IcFrbJdSwNA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/3] Consolidate Poly1305 code and add RISC-V optimization
+Date: Sat, 16 Aug 2025 12:43:50 -0700
+Message-ID: <20250816194353.562491-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/damon/sysfs-schemes: put damos dests dir after
- removing its files
-To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: damon@lists.linux.dev, kernel-team@meta.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250816165559.2601-1-sj@kernel.org>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250816165559.2601-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeejjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhuddtveegleeggeefledtudfhudelvdetudfhgeffffeigffgkeethfejudejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdefrddvfeegrdduudeirdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdefrddvfeegrdduudeirdduhedupdhhvghloheplgdutddrudehhedrudejuddrjeekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepshhjsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrmhhonheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmhesk
- hhvrggtkhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-Hi SeongJae,
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-On 8/16/25 18:55, SeongJae Park wrote:
-> damon_sysfs_scheme_rm_dirs() puts dests directory kobject before
-> removing its internal files.  Sincee putting the kobject frees its
-> container struct, and the internal files removal accesses the container,
-> use-after-free happens.  Fix it by putting the reference _after_
-> removing the files.
->
-> Reported-by: Alexandre Ghiti <alex@ghiti.fr>
-> Closes: https://lore.kernel.org/2d39a734-320d-4341-8f8a-4019eec2dbf2@ghiti.fr
-> Fixes: 2cd0bf85a203 ("mm/damon/sysfs-schemes: implement DAMOS action destinations directory") # 6.17.x
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
-> Not Cc-ing stable@, since the broken commit is in 6.17-rc1 and hence probably
-> this fix will land on the mainline before the release of the first 6.17 stable
-> kernel (6.17.1).
->
->   mm/damon/sysfs-schemes.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-> index 74056bcd6a2c..6536f16006c9 100644
-> --- a/mm/damon/sysfs-schemes.c
-> +++ b/mm/damon/sysfs-schemes.c
-> @@ -2158,8 +2158,8 @@ static void damon_sysfs_scheme_rm_dirs(struct damon_sysfs_scheme *scheme)
->   {
->   	damon_sysfs_access_pattern_rm_dirs(scheme->access_pattern);
->   	kobject_put(&scheme->access_pattern->kobj);
-> -	kobject_put(&scheme->dests->kobj);
->   	damos_sysfs_dests_rm_dirs(scheme->dests);
-> +	kobject_put(&scheme->dests->kobj);
->   	damon_sysfs_quotas_rm_dirs(scheme->quotas);
->   	kobject_put(&scheme->quotas->kobj);
->   	kobject_put(&scheme->watermarks->kobj);
->
-> base-commit: 9aa69ba9d9e220ea1d8ba62592fe7ffba376b2cc
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-v1
+
+This series simplifies and optimizes the organization of the Poly1305
+code by consolidating it into a single module.  This follows the example
+of SHA-1, SHA-256, SHA-512, CRC32, etc.
+
+Since the RISC-V Poly1305 patch has had a moving target, I also rebased
+it on top of this series and included it as patch 3.
+
+Eric Biggers (2):
+  lib/crypto: poly1305: Remove unused function
+    poly1305_is_arch_optimized()
+  lib/crypto: poly1305: Consolidate into single module
+
+Zhihang Shao (1):
+  lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
+
+ crypto/Kconfig                                |   2 +
+ include/crypto/internal/poly1305.h            |  16 +-
+ include/crypto/poly1305.h                     |   9 -
+ lib/crypto/Kconfig                            |  53 +-
+ lib/crypto/Makefile                           |  69 +-
+ lib/crypto/arm/Kconfig                        |   5 -
+ lib/crypto/arm/Makefile                       |  18 -
+ lib/crypto/arm/poly1305-armv4.pl              |   3 +-
+ lib/crypto/arm/poly1305-glue.c                |  76 --
+ lib/crypto/arm/poly1305.h                     |  53 ++
+ lib/crypto/arm64/Kconfig                      |   6 -
+ lib/crypto/arm64/Makefile                     |  13 -
+ lib/crypto/arm64/poly1305-armv8.pl            |   3 +
+ lib/crypto/arm64/poly1305-glue.c              |  74 --
+ lib/crypto/arm64/poly1305.h                   |  50 ++
+ lib/crypto/mips/Kconfig                       |   5 -
+ lib/crypto/mips/Makefile                      |  14 -
+ lib/crypto/mips/poly1305-glue.c               |  33 -
+ lib/crypto/mips/poly1305-mips.pl              |   8 +-
+ lib/crypto/mips/poly1305.h                    |  14 +
+ lib/crypto/poly1305-generic.c                 |  25 -
+ lib/crypto/poly1305.c                         |  81 +-
+ lib/crypto/powerpc/Kconfig                    |   8 -
+ lib/crypto/powerpc/Makefile                   |   3 -
+ .../{poly1305-p10-glue.c => poly1305.h}       |  40 +-
+ lib/crypto/riscv/poly1305-riscv.pl            | 847 ++++++++++++++++++
+ lib/crypto/riscv/poly1305.h                   |  14 +
+ lib/crypto/x86/Kconfig                        |   6 -
+ lib/crypto/x86/Makefile                       |  10 -
+ lib/crypto/x86/poly1305-x86_64-cryptogams.pl  |  33 +-
+ .../x86/{poly1305_glue.c => poly1305.h}       |  47 +-
+ 31 files changed, 1172 insertions(+), 466 deletions(-)
+ delete mode 100644 lib/crypto/arm/poly1305-glue.c
+ create mode 100644 lib/crypto/arm/poly1305.h
+ delete mode 100644 lib/crypto/arm64/poly1305-glue.c
+ create mode 100644 lib/crypto/arm64/poly1305.h
+ delete mode 100644 lib/crypto/mips/poly1305-glue.c
+ create mode 100644 lib/crypto/mips/poly1305.h
+ delete mode 100644 lib/crypto/poly1305-generic.c
+ rename lib/crypto/powerpc/{poly1305-p10-glue.c => poly1305.h} (63%)
+ create mode 100644 lib/crypto/riscv/poly1305-riscv.pl
+ create mode 100644 lib/crypto/riscv/poly1305.h
+ rename lib/crypto/x86/{poly1305_glue.c => poly1305.h} (83%)
 
 
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks for the quick fix!
-
-Alex
-
+base-commit: 56784a42208677e6fb24ba0bd93a2ea0bd9f41ff
+-- 
+2.50.1
 
 
