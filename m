@@ -1,153 +1,254 @@
-Return-Path: <linux-kernel+bounces-771632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6781BB289BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76121B289BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E448AC304E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EBAA1CE2B84
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 01:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19518DB01;
-	Sat, 16 Aug 2025 01:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0DF19994F;
+	Sat, 16 Aug 2025 01:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="Um1uXUfv"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DH29Qz3M"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BD02B2DA
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 01:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1DB18C03F
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 01:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755309403; cv=none; b=OIn++E2Rsys6/Tc+gET0ILzc8macLxwfgPrBERwwefuIRMLjUZAfC2RmlLIbx83uVwUm8/7YQcBfInK4WXv6ykUUnVOVF8Q+cHKoB/44e/pRR8eYD8FG865wI1TSc207O4jVNTgt8mZwis3hHdzq4M2cemP/p3aC/VUi3GbC5oI=
+	t=1755309411; cv=none; b=iNHS+tRbnYjuyP8GOIat1J20IT/Bzxf5Ft8tJsxCqicwlwBZICRLph9EA5D/9lHKVDpaadxi4M+3YGJBXdPgWWpCiJ+cFeEDG3FD5wjboCTqF56b8xPc4Rx5Jp9Mqk3im42U3s7Srs448eRmkjHaAvVgmBN9+VNYcmZmPjqXXWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755309403; c=relaxed/simple;
-	bh=aPHE4+j2Xn6T67Rd1NzXaikrS96g/PXgXAZLqgG4Y0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3Vzh5X3s64AWbPOqst9FRVS9hB2MTuFFKQMRzHL9+60hlq98WbK6w9lOEl38OkGsTXx1LG96dK7BHR+xA7Y+xLkO60XJ9O9yXJgEFOLyXiLpP09DWplH/JwNeEIhVKO0FCuY8Msuz8TYbPjiYpvAhL3IQ8SwFmVDc19CfUjtBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=Um1uXUfv; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61bf9ef4ee3so111879eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:56:41 -0700 (PDT)
+	s=arc-20240116; t=1755309411; c=relaxed/simple;
+	bh=Ej1Ms8x3fV9hlh+VBITET4wxyZCGlUYPCpJfqRg4/mk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I0dZwFNtypk7ZT5Ki1u7fwvD2mtrxQLaqYcAPwb8uiriVrqmRaDw6RlXPkBd/a5osqtbvY6epVTLXYjkTXtTpvM+LJTuemMeigt12ddloyBj6PBTw5AMira1lLoevN1yNKmtjJTC/09oAQ+EqMIisnD3M15Llvw2D/5XkGYulYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DH29Qz3M; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-242d1e947feso102095ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 18:56:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1755309400; x=1755914200; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1755309409; x=1755914209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jP1W19LjLSkvrRoe2qDVizyJ7MFWz2WXooHFP4rj+9E=;
-        b=Um1uXUfvDKR+XBzrkdH22t/u6OEDIJ5xHPYAbw0RT/xlhNcvloQQquWqDBs+LGmFCR
-         UV/6IpIL6tjwMPm8hKSGoLUcL6vODgGx/oKGC8zuAjQrPyHq2j8WC73r27O/vyP6ZXpS
-         Rk7HywSbswT5KRN008zhdkHhPwzKXukXovWm8msDdoMS6toC2QYTFpOFuNYVesDhIOcG
-         vUWWM791k6b6je8cEndi7c2e66ma3F/HCQ03wqmZnaR2zSWwlVU0R9ayHdbmyg+FQHNX
-         XCHGH/h8/aPzgNiUN5E/RZhmAXo/kutP07UWiS0BgHlSJQyRub43Yvlhcwx92LknKt3d
-         GExQ==
+        bh=L4ItdIwW0Nn2rbKUapLvi+7KaOlcmfEY49F8WH61kT0=;
+        b=DH29Qz3Mu9cmUzSOsvN+lWHbTYR0UenpjF6MiJc8ALS0O2NRQumsLUq8OqrPMOlvD/
+         EKNocpxMLd/M9yKnBYYZ8KdeF1/L4J5a1Omxq2XN8gUOI9q2VXFBZUzQlSqDnZa8qj4T
+         HNCQ0afMNiLLxLQX4/d7OuJigxTqTfNMlcq2Sm1yrR+zjPE/yF/bs1YMiMV3jCitLG2l
+         Lc0vWKqIEYmkHD9BEJ9J9guKlb7yOFbFCWsaRgpSJusgtynNrtjreFQwF1UglYkxdleS
+         0Lu9ayTLBZCcwOgLeR0rxSeEwjB/JIOxOeGREvfoy/ZdkEt+FKBY7X5IdQU1uCxM1l/W
+         zBkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755309400; x=1755914200;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755309409; x=1755914209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jP1W19LjLSkvrRoe2qDVizyJ7MFWz2WXooHFP4rj+9E=;
-        b=BbD1DhsO/Ri5IcdLr93+LaqUR/p2TIa0xCHsNPIa99rWslv7NY64OcouOd0DbxjMsb
-         Hg9sE4Sk26krv4IVsnfVFgBF9YrZk0/O4FyrMVZm6yGFF5iy8Yjep6GqAUOaVJ+1CfYY
-         tIr97r91AdHctAinihOOpCwI9JWAPlCW4i8KJqQM+TRQ0Fl1cV83DyzsDHg8L/I+91xs
-         oPuDF5bF1Z+9xljfPpPG3/6a8G716QyNtC/9BkEB3eYT5vwn03ssn1Z/dOLGdxCqj8e0
-         aB1f1iDN0+irmLTcfG765I5lJIcxXNHYRFTBvB4p6AByr5xFwOucXzepj9jFIKdp449q
-         aoMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3BRzICn2FurBc+i3N27nwT1WzuE6YZclkhUbGeqol4D3jRa+DKFcueFjdmQezrncc0NVEIB7g31Kg28E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH8388WhXDVRfE3LyFu7LsVHlhrxxa7HcwJNS55tVLMwKLyW1v
-	kHd6ZC+kugt07kgwvZu2laQDONjYzJRQV7br9/iayOeqgF/hCIC05IFbn5NE4zN5vxYcSIWwAhH
-	udn9Z
-X-Gm-Gg: ASbGncsfTDfMOJVDfb+yxvGradO92B5/iIw3OILS+8gsrc6ayxT0wVoa9Cjhkt4pvTe
-	5yhXxUks4rMqDC2BFh510qeek9MndOtwclLUBNIhWrE8hhT1w4UhAYrQFT6xJnuuDDVjC2BbGRJ
-	pr9tG+SM9vYr9A9vwcz8R26mQQvKTtxBbEItOVH4NiD/uq1nqNxCd8cHIq00+WT6sEKXWXHTc8s
-	Lc+u0XRjSzEMTs9v7MLFba9kaQHEDij2QUZ4kFEJrT2zHkXTUHd6ttoofo+U9+WQqYTzeA1X3hh
-	HOhRJxUrYnniXzFY0x08kdmwgeyc4s4J+Z2/Ly+r2vUlcX0xInt0Q93qXstap2b/8F5ylZFvMGy
-	Pgm2lOqUZhquBN7p16haDm0mjUw==
-X-Google-Smtp-Source: AGHT+IFU8iO56aObahNDHhvpR8cX3ydX0AhknrZWZalCNi8QAT4mM1Bfx8pbUZ3kDzm7L3D8FVl9Ag==
-X-Received: by 2002:a05:6808:30a5:b0:433:fa92:69e9 with SMTP id 5614622812f47-435ec53125dmr2455248b6e.34.1755309400441;
-        Fri, 15 Aug 2025 18:56:40 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:e32c:c52b:6661:b446])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ed1af894sm532720b6e.20.2025.08.15.18.56.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 18:56:38 -0700 (PDT)
-Date: Fri, 15 Aug 2025 20:56:33 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Frederick Lawler <fred@cloudflare.com>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: Re: [RFC] Patches to disable messages during BMC reset
-Message-ID: <aJ_lUYTlrzYnRD-5@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20250807230648.1112569-1-corey@minyard.net>
- <aJ-lPAc2bLlvHNa3@CMGLRV3>
+        bh=L4ItdIwW0Nn2rbKUapLvi+7KaOlcmfEY49F8WH61kT0=;
+        b=TXAeHYU8XREAGVsLlO7bEzfZT6Rjhrih5vu86Vk4otAt8tJmS1d3rXZB/iRJ1ANaAo
+         3Qcb3jkgsvcg/9ROT3IEQPN1fzSeRsB7W2UTVjglKcAqS1c6LNnjgY4ZQiRNK+Ut1QXR
+         rlxjq8vMTZ2GoqvADGhUReAOrBJ9VBz1evVkzZq3c11TXBdthj0h0/izwtx8UOXwISw0
+         C2ZNJxaP/o9Xm6bS3keI7Rq2dkhdM5rz0LezF6wrt1UzdvzDQB7Ag3KOTieb3rS4aY2X
+         /G2A2JwFdnAltdYEphw59ELVLQSXunHhY1RXtTAdd2+1Ck67xBEGI1b5k8tCCZoZh/xq
+         dJ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKOIHWOgr79+eCiodoDAIruA1q00DCMUqBFd4IqICrV/A35sq5TsvwVs+4938p0+iRa56e+Yj0cGbrZNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP98jq2rsNt0z01kGMoU6nB1amB8rwEk3Y+6HyI1v4tfJw/n6G
+	hCYVvPCHloQduwRSV2Hh/CLE9R/+hTd6PCoXESV4GqRZL35tI0LX5EnN/aunk5G8AUlO1ZyhL6t
+	2UKjreGKV5a3v9po0nixmaBAUBxEAZk2C4ov+ZoAO
+X-Gm-Gg: ASbGncsTwiVx8RBaPCOxlWBOpErsrn50V63G1I8HmkiG8KbzSA2aqEG+fVt8l15It+C
+	0hqUvCu8Z9jGEDk51yIL5P1yIs0O7DuRqohj1CScjsTdU5FCRp3FjlxBJazZ83aiKaTffQrjpSa
+	PUA4eVg7QyX2HDEPieQ23cDKpDyDjvxNoBblKaotSOD/glXliNkwdZTN8ENpeWdzDCcScurZi2Y
+	ddTyqhiy4P8ah/HbP91Wy/6riTtx2UXZeYoSEEgL0Y=
+X-Google-Smtp-Source: AGHT+IGjIbEibm7TAU0Qy99Qr9hDz/0we50Y7edVXGYdgrm7Uw4jOk5StezzxSbZkloheGwBu8Np97ishY6Mw8oSHGs=
+X-Received: by 2002:a17:903:18e:b0:223:2630:6b86 with SMTP id
+ d9443c01a7336-2447a749a14mr766545ad.7.1755309408800; Fri, 15 Aug 2025
+ 18:56:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJ-lPAc2bLlvHNa3@CMGLRV3>
+References: <20250611104844.245235-1-steven.price@arm.com> <20250611104844.245235-20-steven.price@arm.com>
+ <CAGtprH-on3JdsHx-DyjN_z_5Z6HJoSQjJpA5o5_V6=rygMSbtQ@mail.gmail.com>
+ <80c46a5c-7559-4763-bbf2-6c755a4b067c@arm.com> <CAGtprH_6DYk8POPy+sLc3RL0-5gcrTdPNcDWFTssOK5_U4B3Nw@mail.gmail.com>
+ <23be7cdb-f094-4303-87ae-2fdfed80178b@arm.com>
+In-Reply-To: <23be7cdb-f094-4303-87ae-2fdfed80178b@arm.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Fri, 15 Aug 2025 18:56:36 -0700
+X-Gm-Features: Ac12FXy9Nf5jI_ZDaA0g-5pDhbHHzOx-JhcDUdLC5lWZaTciSyoinSl41owJHk4
+Message-ID: <CAGtprH-TChZuLgb0sOU_14YGpCynw7sukLT0tP9sEzzd040dHw@mail.gmail.com>
+Subject: Re: [PATCH v9 19/43] arm64: RME: Allow populating initial contents
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei <alexandru.elisei@arm.com>, 
+	Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev, 
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>, Gavin Shan <gshan@redhat.com>, 
+	Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>, 
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 04:23:08PM -0500, Frederick Lawler wrote:
-> Hi Corey,
-> 
-> On Thu, Aug 07, 2025 at 06:02:31PM -0500, Corey Minyard wrote:
-> > I went ahead and did some patches for this, since it was on my mind.
-> > 
-> > With these, if a reset is sent to the BMC, the driver will disable
-> > messages to the BMC for a time, defaulting to 30 seconds.  Don't
-> > modify message timing, since no messages are allowed, anyway.
-> > 
-> > If a firmware update command is sent to the BMC, then just reject
-> > sysfs commands that query the BMC.  Modify message timing and
-> > allow direct messages through the driver interface.
-> > 
-> > Hopefully this will work around the problem, and it's a good idea,
-> > anyway.
-> > 
-> > -corey
-> > 
-> 
-> Thanks for the patches, and sorry for the delay in response.
-> It's one of _those weeks_. Anyway, I backported the patch series
-> to 6.12, and the changes seem reasonable to me overall. Ran it
-> through our infra on a single node, and nothing seemed to break.
-> 
-> I did observe with testing that resetting BMC via ipmitool on the host
-> did kick out sysfs reads as expected.
+On Fri, Aug 15, 2025 at 8:48=E2=80=AFAM Steven Price <steven.price@arm.com>=
+ wrote:
+>
+> On 14/08/2025 17:26, Vishal Annapurve wrote:
+> > On Wed, Aug 13, 2025 at 2:30=E2=80=AFAM Steven Price <steven.price@arm.=
+com> wrote:
+> >>
+> >> On 01/08/2025 02:56, Vishal Annapurve wrote:
+> >>> On Wed, Jun 11, 2025 at 3:59=E2=80=AFAM Steven Price <steven.price@ar=
+m.com> wrote:
+> >>>>
+> >>>> +static int realm_create_protected_data_page(struct realm *realm,
+> >>>> +                                           unsigned long ipa,
+> >>>> +                                           kvm_pfn_t dst_pfn,
+> >>>> +                                           kvm_pfn_t src_pfn,
+> >>>> +                                           unsigned long flags)
+> >>>> +{
+> >>>> +       unsigned long rd =3D virt_to_phys(realm->rd);
+> >>>> +       phys_addr_t dst_phys, src_phys;
+> >>>> +       bool undelegate_failed =3D false;
+> >>>> +       int ret, offset;
+> >>>> +
+> >>>> +       dst_phys =3D __pfn_to_phys(dst_pfn);
+> >>>> +       src_phys =3D __pfn_to_phys(src_pfn);
+> >>>> +
+> >>>> +       for (offset =3D 0; offset < PAGE_SIZE; offset +=3D RMM_PAGE_=
+SIZE) {
+> >>>> +               ret =3D realm_create_protected_data_granule(realm,
+> >>>> +                                                         ipa,
+> >>>> +                                                         dst_phys,
+> >>>> +                                                         src_phys,
+> >>>> +                                                         flags);
+> >>>> +               if (ret)
+> >>>> +                       goto err;
+> >>>> +
+> >>>> +               ipa +=3D RMM_PAGE_SIZE;
+> >>>> +               dst_phys +=3D RMM_PAGE_SIZE;
+> >>>> +               src_phys +=3D RMM_PAGE_SIZE;
+> >>>> +       }
+> >>>> +
+> >>>> +       return 0;
+> >>>> +
+> >>>> +err:
+> >>>> +       if (ret =3D=3D -EIO) {
+> >>>> +               /* current offset needs undelegating */
+> >>>> +               if (WARN_ON(rmi_granule_undelegate(dst_phys)))
+> >>>> +                       undelegate_failed =3D true;
+> >>>> +       }
+> >>>> +       while (offset > 0) {
+> >>>> +               ipa -=3D RMM_PAGE_SIZE;
+> >>>> +               offset -=3D RMM_PAGE_SIZE;
+> >>>> +               dst_phys -=3D RMM_PAGE_SIZE;
+> >>>> +
+> >>>> +               rmi_data_destroy(rd, ipa, NULL, NULL);
+> >>>> +
+> >>>> +               if (WARN_ON(rmi_granule_undelegate(dst_phys)))
+> >>>> +                       undelegate_failed =3D true;
+> >>>> +       }
+> >>>> +
+> >>>> +       if (undelegate_failed) {
+> >>>> +               /*
+> >>>> +                * A granule could not be undelegated,
+> >>>> +                * so the page has to be leaked
+> >>>> +                */
+> >>>> +               get_page(pfn_to_page(dst_pfn));
+> >>>
+> >>> I would like to point out that the support for in-place conversion
+> >>> with guest_memfd using hugetlb pages [1] is under discussion.
+> >>>
+> >>> As part of the in-place conversion, the policy we are routing for is
+> >>> to avoid any "refcounts" from KVM on folios supplied by guest_memfd a=
+s
+> >>> in-place conversion works by splitting and merging folios during
+> >>> memory conversion as per discussion at LPC [2].
+> >>
+> >> CCA doesn't really support "in-place" conversions (see more detail
+> >> below). But here the issue is that something has gone wrong and the RM=
+M
+> >> is refusing to give us a page back.
+> >
+> > I think I overloaded the term "in-place" conversion in this context. I
+> > was talking about supporting "in-place" conversion without data
+> > preservation. i.e. Host will use the same GPA->HPA range mapping even
+> > after conversions, ensuring single backing for guest memory. This is
+> > achieved by guest_memfd keeping track of private/shared ranges based
+> > on userspace IOCTLs to change the tracking metadata.
+>
+> Yes, so for a destructive conversion this is fine. We can remove the
+> page from the protected region and then place the same physical page in
+> the shared region (or vice versa).
+>
+> Population is a special case because it's effectively non-destructive,
+> and in that case we need both the reference data and the final
+> (protected) physical page both available at same time.
+>
+> >>
+> >>>
+> >>> The best way to avoid further use of this page with huge page support
+> >>> around would be either:
+> >>> 1) Explicitly Inform guest_memfd of a particular pfn being in use by
+> >>> KVM without relying on page refcounts or
+> >>
+> >> This might work, but note that the page is unavailable even after user
+> >> space has freed the guest_memfd. So at some point the page needs to be
+> >> marked so that it cannot be reallocated by the kernel. Holding a
+> >> refcount isn't ideal but I haven't come up with a better idea.
+> >>
+> >> Note that this is a "should never happen" situation - the code will ha=
+ve
+> >> WARN()ed already - so this is just a best effort to allow the system t=
+o
+> >> limp on.
+> >>
+> >>> 2) Set the page as hwpoisoned. (Needs further discussion)
+> >>
+> >> This certainly sounds like a closer fit - but I'm not very familiar wi=
+th
+> >> hwpoison so I don't know how easy it would be to integrate with this.
+> >>
+> >
+> > We had similar discussions with Intel specific SEPT management and the
+> > conclusion there was to just not hold refcounts and give a warning on
+> > such failures [1].
+> >
+> > [1] https://lore.kernel.org/kvm/20250807094241.4523-1-yan.y.zhao@intel.=
+com/
+>
+> So these paths (should) all warn already. I guess the question is
+> whether we want the platform to limp on in these situations or not.
+> Certainly converting the WARNs to BUG_ON would be very easy, but the
+> intention here was to give the user some chance to save their work
+> before killing the system.
+>
+> Just WARNing might be ok, but if the kernel allocates the page for one
+> of it's data structures then it's effectively a BUG_ON - there's no
+> reasonable recovery. Reallocation into user space we can sort of handle,
+> but only by killing the process.
 
-Ok, I took the liberty of adding a "Tested-by" line with your name.  If
-that's not ok, I can pull it out.
+Makes sense, this scenario is different from TDX as the host will run
+into GPT faults if accessing memory owned by the realm world with no
+good way to recover. Let's try to find the right complexity to take on
+when handling errors for such rare scenarios, without relying on
+refcounts as we start looking into huge page support.
 
-> 
-> Resetting the BMC remotely, was not handled (this seems obvious given the state
-> changes are handled via ipmi_msg handler). Would the BMC send an event
-> to the kernel letting it know its resetting so that case could be
-> handled?
-
-Unfortunately not.  It's one of the many things that would be nice to
-have...
-
-In general, dealing with a BMC being reset is a real pain.  They tend to
-do all kinds of different things.  The worst is when they sort of act
-like they are operational, but then do strange things.
-
-I haven't thought of a good general purpose way to handle this.  I'm
-toying with the idea of making it so if the BMC gets an error, just shut
-things down for a second or so and then test it to see if it's working.
-During this time just return errors, like the new patches do during
-reset.
-
-Thanks for testing these.
-
--corey
-
-> 
-> Best,
-> Fred
+>
+> >>> This page refcounting strategy will have to be revisited depending on
+> >>> which series lands first. That being said, it would be great if ARM
+> >>> could review/verify if the series [1] works for backing CCA VMs with
+> >>> huge pages.
+> >>>
+> >>> [1] https://lore.kernel.org/kvm/cover.1747264138.git.ackerleytng@goog=
+le.com/
+> >>> [2] https://lpc.events/event/18/contributions/1764/
 
