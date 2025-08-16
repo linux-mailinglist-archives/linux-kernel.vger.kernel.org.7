@@ -1,773 +1,215 @@
-Return-Path: <linux-kernel+bounces-772216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BED8B2900B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:10:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFFDB29011
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91A77A610A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57080A27C18
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079982F9994;
-	Sat, 16 Aug 2025 18:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3551A2E7BC2;
+	Sat, 16 Aug 2025 18:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c5uOmo2z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b="VjgkORfj"
+Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [212.27.42.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224EE2F60AF
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166EE15C15F;
+	Sat, 16 Aug 2025 18:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755367821; cv=none; b=D8G/2y/3H5TU47qIdn7fFMUvTtlZI/LLKzEOstc4pJXpy1XmAUXbU6LtZriuAzjtuMajqlVy+z/f8hBdsyeUWUw4NNl/iyvrnyxDP1WtmfbRoPvGxolIHwPZXsH8zsUltUHM1cKBKSltv8MJ0r0ExdHy4KLte+zBeuBZYDbBvOU=
+	t=1755368657; cv=none; b=Ta+UYtpMr1RUQF5ky6pLbOcBYIL5PK40xHdOmcICrqkv+iYVR52Rw4F1+j9AuU+QCj/lgCn8OICwJiZIm9r1PJluW/6r1AyokGdkRHBU3H7R12bsxVShjWCagfyP9IIupRwpGPw2bZ2hK4LuFc9dDO3Bqyacf+bzoOv/EQvwos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755367821; c=relaxed/simple;
-	bh=9i9LISw9RVCaDnSDtqv5an7RuA4RdwpV/yQb/dx4ukE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvKLQY73lpk0gNWwTXRJyduxi6Qk/GiIADZ0XB8DfY9/YTeGQWTWfJsBd5njBZop4IF1GgYDrrU3NXyC0dwEz5owVeohq05GoQ36AWw8pX/pT5MeZDEegOjRqMatypVhbYMsPg3K3cptkoRuatsxqHrdlZOhURZWWxnzdTaW8xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c5uOmo2z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57GHfPTc022340
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:10:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yG/G6lh/LkLzYMzmLYWhP7M0R2CFgcnZp3gBKe/dYFU=; b=c5uOmo2zL3aYWINV
-	r+B23iDZpKXfr5koKdNCLqhb5d6I3/OIBVZaczgLorcADkkWicWoEIB+xkj+93ZY
-	2bOA2jSlHNSxMZ8v6avDSD06YSokhtdc9w39v2zNkyxY7BniElApNMGwPSkrOdHa
-	kF7FNlLI1V3pzXqP3L8qkQF1uUP1vUXvGYm6LSwc0y/LnBxh1b0J2g+QbP0dxWl+
-	DrzsviT51qVM7yRNc1Gh+u/HcrA6/ohJQI7I0XY7kBWMkGeZAxCX7qAlbNRDH4Me
-	0hMgnBIokoxyaZNzUGw+BQevW1yP3yznGlaGXnUccJu17DcE0cz+qstDZv0Oeuq2
-	/vUf/A==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jk5m8wrn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:10:18 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a9f55eb56so67609116d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:10:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755367813; x=1755972613;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yG/G6lh/LkLzYMzmLYWhP7M0R2CFgcnZp3gBKe/dYFU=;
-        b=sTE8epH2SuZ/sZe5/MDMvTZPWkEpvaXzpN5VZUg6is+XrlmwKg/yvFMUV1p1vhA5du
-         wHn/+s8lP4rpGhNYtaSjkfGo495gblVMB/4qr1EvDcxyOIepaFMbAzSU1vkKOhQb079U
-         jzvhrKAIj9VAuk7az5TBlk0sh1DqCRlW3aLJYyNRZRtMs2COZwx01QRfq1jqE3M1g2/C
-         uOXi2JdSxnXxKXjLgsY8Jpl0iGfj9LjH2ujfCvFd5tbfxq76yKmndoazZ+iN2iLsIupf
-         Y3vi113y2ZMHjVBuoqzASXdPa3gJKz3JUFydzKbYZDBrfeaBu5uhub4TlH3mbLGKdyC9
-         n7XA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Go08sDoQ6GXnBNCObYWUYF9U+VXCMoNsFLj2JB6RfFJaPjamoaICbTHUJOobUuurGttX/T/Yqn2oNHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS9ce3A0e5XncZdbiuFj89yXsNCSNndPAQRVjlCgtkbNuLQwMt
-	VrOW9LeSFdnWBNObF02em2BKrZD/bqDDyJ+pkaCTqgsO+yEG+Y0c+/7lpCduAuawiO2xYnVn5Xu
-	EQfV7IXDs4cPOy0aaW4JSTk6ROc5765+Ixe7kbH++qnVz3o3HK5ljgBOeUtf2Iuz2lSY=
-X-Gm-Gg: ASbGnctOX6ZMzXknO1BGqgWIUSoGICetmKmfswvt6IIn0rizGWzasEuLi6s/KlhjbV4
-	bdleQnKb6eipeO0H6or2qDabxqoKSqGcCZ5c3ybG1NYSeky3yZmEF+//OMYyEP0QvsWUJYPiZKb
-	FivLuiho0RaJsQ4JrcUzC1+xjBpY4QlvRJytWqXG0Q9SPDUieEkyRS3cL55kIoh/XvLVJ8CQ1b8
-	oPENPP/TDKe/iWSt66M+WFWXMytmOkD/Hmg0klzDsja9zs/wD4uv+fpdnJVNod1KfgswIlVjvjO
-	QgzEyUM3Oxm82blCxt8gvSzYgeitxwzGe1hufYM8ra9gVP7NmVv45Q3+c3aHWCzBEA5m04cM8M2
-	DjRLx7ceQc0tLjO9LNE0eWlmeokPps3o8yo+1HJbZgv+/N9BqZVGf
-X-Received: by 2002:a05:6214:2249:b0:709:8742:e46e with SMTP id 6a1803df08f44-70ba7c4c918mr90662476d6.45.1755367813015;
-        Sat, 16 Aug 2025 11:10:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHudZQltT5VdvRVyB2pGZmQmIXYECsSOje+oqGK2LKNnDQrT0AibUgteBZaQiMHPZjvprKw0Q==
-X-Received: by 2002:a05:6214:2249:b0:709:8742:e46e with SMTP id 6a1803df08f44-70ba7c4c918mr90661716d6.45.1755367812367;
-        Sat, 16 Aug 2025 11:10:12 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef369abasm935429e87.63.2025.08.16.11.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 11:10:11 -0700 (PDT)
-Date: Sat, 16 Aug 2025 21:10:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Drew Fustini <fustini@kernel.org>,
-        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michal Wilczynski <m.wilczynski@samsung.com>,
-        Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH 3/8] drm: verisilicon: add a driver for Verisilicon
- display controllers
-Message-ID: <eyfgdk6d2oj2tpw7vndxcn3jw5ib3h4sahghbe23xn4qvj3rr6@jwzuzjpihnlx>
-References: <20250814164048.2336043-1-uwu@icenowy.me>
- <20250814164048.2336043-4-uwu@icenowy.me>
- <m7sg6sbc75lsnm6u6zppq574rtgt2rzr5hjmpwfwns2wnmmfs2@anbw5z7mo5a3>
- <c9caa122d57cbe3de3efee2de211d914c96eb0bc.camel@icenowy.me>
- <0a931bef23d8feb758f5a752ee84a4abaddb8fa4.camel@icenowy.me>
+	s=arc-20240116; t=1755368657; c=relaxed/simple;
+	bh=6O5N523WCTyTWnot0VxJfp/vgZYIQmHEvO5kzCfgTIg=;
+	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc; b=YQbvrHu2b/rcqKKsm7vs5B+pk7pwNvBSQtDkiO0KM5JFutlcHn3MW8PjCsFv/r/6LXDFRfy2FSkBHbRyDB9fm2Y5whW9tl0dBU2VK6/X4fmZR/+ulZ9pzcBsE6Z+BOT7D6Y9h7kLlfTgpfRn0/Y3L5tuscOMlwUvDZFqPTpwOBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b=VjgkORfj; arc=none smtp.client-ip=212.27.42.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from [IPV6:2001:861:57c6:79d0:a4eb:e0da:cdee:91bc] (unknown [IPv6:2001:861:57c6:79d0:a4eb:e0da:cdee:91bc])
+	(Authenticated sender: tomben13@free.fr)
+	by smtp4-g21.free.fr (Postfix) with ESMTPSA id CFA9419F576;
+	Sat, 16 Aug 2025 20:24:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
+	s=smtp-20201208; t=1755368651;
+	bh=6O5N523WCTyTWnot0VxJfp/vgZYIQmHEvO5kzCfgTIg=;
+	h=Date:From:Subject:To:Cc:From;
+	b=VjgkORfjyUOqlEoIaGFF4Dc5CnrUpziHHX1UKQXi+vWHiQoFp2JqkjkprastBgygm
+	 Rkvkyfql5Mlobth7Q5uVoVrp23Tz+i8AgRLZpfOvF++1NmEX14lCDls1H+wuubzpeZ
+	 U1JBLnzEbY20ULAQigzKmWbHB0G9ad/ECPjjM/4ckocVThczfWdfwZ5cU8QsaPZ8xg
+	 XellSPqX0UPtVAJkhTG95zWczY/kvRSPB1ft2To6tNny47IhaWXkaDVB2vn1faEuaj
+	 NG44sCF8/bZ6i8rdKMqIvwiztRUpzCuuZXGUkMm/xqVpBSDxccIYYcxwSzo5/vXodi
+	 6aE7wuCEYy8eQ==
+Content-Type: multipart/mixed; boundary="------------hRjbDyTg7mLmLz3i4cN3lQN3"
+Message-ID: <afab2e44-ff31-4b3f-bfd8-0d5b184423c4@free.fr>
+Date: Sat, 16 Aug 2025 20:24:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0a931bef23d8feb758f5a752ee84a4abaddb8fa4.camel@icenowy.me>
-X-Authority-Analysis: v=2.4 cv=Sdn3duRu c=1 sm=1 tr=0 ts=68a0c98a cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=ss7acsNiZ-28_-SBEVcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-ORIG-GUID: 9ebGhOGizuDiNYc6TQ6p5sT5Vn5nxGDr
-X-Proofpoint-GUID: 9ebGhOGizuDiNYc6TQ6p5sT5Vn5nxGDr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDA0MiBTYWx0ZWRfX2zmhL29LYIsJ
- Qer95NRn6IiXvO9rdOOf24osjSuLM41Qah88CyZFSy5ilhaxeOq0POS95YxpUGlM3FpONnbvXWn
- tGs20cY5pyAF0D5GhTyPpqz8IGD1PmWdtEveZZRbykjPZPU9a9pR7BbpjHthOIIsfPjCZ8Wb8eC
- DW1UYlELw7WOI2o3SnetjyWWRUpGn/ePj3PWfh8ZY/OVptOuoA0qgS9Khb9a/2XyPlCYmqwx0mD
- NYMugI8f6L8AmXjTLOXbuUfLOuLDPYtvDZe6+P7Iiii83zd59grvUfKOyBRL9FsTxGYPKEag7nm
- SwbCw+kzcuWbulJbTUwpsI9Llux8QAaJkskP1IApLQ/JyjiKz/LXuEBmZpSaDCsZDXQ7CAZejlT
- 7v8ZTjZ3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-16_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 spamscore=0
- adultscore=0 malwarescore=0 bulkscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508160042
+User-Agent: Mozilla Thunderbird
+From: Tom Benham <tomben13@free.fr>
+Subject: [Bug][Patch] /dev/input/jsX absent for Nintendo Switch Pro controller
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: en-US
 
-On Sun, Aug 17, 2025 at 01:22:07AM +0800, Icenowy Zheng wrote:
-> 在 2025-08-17星期日的 00:48 +0800，Icenowy Zheng写道：
-> > 在 2025-08-16星期六的 19:18 +0300，Dmitry Baryshkov写道：
-> > > On Fri, Aug 15, 2025 at 12:40:43AM +0800, Icenowy Zheng wrote:
-> > > > This is a from-scratch driver targeting Verisilicon DC-series
-> > > > display
-> > > > controllers, which feature self-identification functionality like
-> > > > their
-> > > > GC-series GPUs.
-> > > > 
-> > > > Only DC8200 is being supported now, and only the main framebuffer
-> > > > is set
-> > > > up (as the DRM primary plane). Support for more DC models and
-> > > > more
-> > > > features is my further targets.
-> > > > 
-> > > > As the display controller is delivered to SoC vendors as a whole
-> > > > part,
-> > > > this driver does not use component framework and extra bridges
-> > > > inside a
-> > > > SoC is expected to be implemented as dedicated bridges (this
-> > > > driver
-> > > > properly supports bridge chaining).
-> > > > 
-> > > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > > > ---
-> > > >  drivers/gpu/drm/Kconfig                       |   2 +
-> > > >  drivers/gpu/drm/Makefile                      |   1 +
-> > > >  drivers/gpu/drm/verisilicon/Kconfig           |  15 +
-> > > >  drivers/gpu/drm/verisilicon/Makefile          |   5 +
-> > > >  drivers/gpu/drm/verisilicon/vs_bridge.c       | 330
-> > > > ++++++++++++++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_bridge.h       |  40 +++
-> > > >  drivers/gpu/drm/verisilicon/vs_bridge_regs.h  |  47 +++
-> > > >  drivers/gpu/drm/verisilicon/vs_crtc.c         | 217 ++++++++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_crtc.h         |  29 ++
-> > > >  drivers/gpu/drm/verisilicon/vs_crtc_regs.h    |  60 ++++
-> > > >  drivers/gpu/drm/verisilicon/vs_dc.c           | 233
-> > > > +++++++++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_dc.h           |  39 +++
-> > > >  drivers/gpu/drm/verisilicon/vs_dc_top_regs.h  |  27 ++
-> > > >  drivers/gpu/drm/verisilicon/vs_drm.c          | 177 ++++++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_drm.h          |  29 ++
-> > > >  drivers/gpu/drm/verisilicon/vs_hwdb.c         | 150 ++++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_hwdb.h         |  29 ++
-> > > >  drivers/gpu/drm/verisilicon/vs_plane.c        | 102 ++++++
-> > > >  drivers/gpu/drm/verisilicon/vs_plane.h        |  68 ++++
-> > > >  .../gpu/drm/verisilicon/vs_primary_plane.c    | 166 +++++++++
-> > > >  .../drm/verisilicon/vs_primary_plane_regs.h   |  53 +++
-> > > >  21 files changed, 1819 insertions(+)
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/Kconfig
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/Makefile
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge_regs.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc_regs.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc_top_regs.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_drm.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_drm.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_hwdb.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_hwdb.h
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.c
-> > > >  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.h
-> > > >  create mode 100644
-> > > > drivers/gpu/drm/verisilicon/vs_primary_plane.c
-> > > >  create mode 100644
-> > > > drivers/gpu/drm/verisilicon/vs_primary_plane_regs.h
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> > > > index f7ea8e895c0c0..33601485ecdba 100644
-> > > > --- a/drivers/gpu/drm/Kconfig
-> > > > +++ b/drivers/gpu/drm/Kconfig
-> > > > @@ -396,6 +396,8 @@ source "drivers/gpu/drm/sprd/Kconfig"
-> > > >  
-> > > >  source "drivers/gpu/drm/imagination/Kconfig"
-> > > >  
-> > > > +source "drivers/gpu/drm/verisilicon/Kconfig"
-> > > > +
-> > > >  config DRM_HYPERV
-> > > >         tristate "DRM Support for Hyper-V synthetic video device"
-> > > >         depends on DRM && PCI && HYPERV
-> > > > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> > > > index 4dafbdc8f86ac..32ed4cf9df1bd 100644
-> > > > --- a/drivers/gpu/drm/Makefile
-> > > > +++ b/drivers/gpu/drm/Makefile
-> > > > @@ -231,6 +231,7 @@ obj-y                       += solomon/
-> > > >  obj-$(CONFIG_DRM_SPRD) += sprd/
-> > > >  obj-$(CONFIG_DRM_LOONGSON) += loongson/
-> > > >  obj-$(CONFIG_DRM_POWERVR) += imagination/
-> > > > +obj-$(CONFIG_DRM_VERISILICON_DC) += verisilicon/
-> > > >  
-> > > >  # Ensure drm headers are self-contained and pass kernel-doc
-> > > >  hdrtest-files := \
-> > > > diff --git a/drivers/gpu/drm/verisilicon/Kconfig
-> > > > b/drivers/gpu/drm/verisilicon/Kconfig
-> > > > new file mode 100644
-> > > > index 0000000000000..0235577c72824
-> > > > --- /dev/null
-> > > > +++ b/drivers/gpu/drm/verisilicon/Kconfig
-> > > > @@ -0,0 +1,15 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > +config DRM_VERISILICON_DC
-> > > > +       tristate "DRM Support for Verisilicon DC-series display
-> > > > controllers"
-> > > > +       depends on DRM && COMMON_CLK
-> > > > +       depends on RISCV || COMPILER_TEST
-> > > > +       select DRM_CLIENT_SELECTION
-> > > > +       select DRM_GEM_DMA_HELPER
-> > > > +       select DRM_KMS_HELPER
-> > > > +       select DRM_BRIDGE_CONNECTOR
-> > > > +       select REGMAP_MMIO
-> > > > +       select VIDEOMODE_HELPERS
-> > > > +       help
-> > > > +         Choose this option if you have a SoC with Verisilicon
-> > > > DC-
-> > > > series
-> > > > +         display controllers. If M is selected, the module will
-> > > > be
-> > > > called
-> > > > +         verisilicon-dc.
-> > > > diff --git a/drivers/gpu/drm/verisilicon/Makefile
-> > > > b/drivers/gpu/drm/verisilicon/Makefile
-> > > > new file mode 100644
-> > > > index 0000000000000..fd8d805fbcde1
-> > > > --- /dev/null
-> > > > +++ b/drivers/gpu/drm/verisilicon/Makefile
-> > > > @@ -0,0 +1,5 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > +
-> > > > +verisilicon-dc-objs := vs_bridge.o vs_crtc.o vs_dc.o vs_drm.o
-> > > > vs_hwdb.o vs_plane.o vs_primary_plane.o
-> > > > +
-> > > > +obj-$(CONFIG_DRM_VERISILICON_DC) += verisilicon-dc.o
-> > > > diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c
-> > > > b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> > > > new file mode 100644
-> > > > index 0000000000000..c8caf31fac7d6
-> > > > --- /dev/null
-> > > > +++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> > > > @@ -0,0 +1,330 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > +/*
-> > > > + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
-> > > > + */
-> > > > +
-> > > > +#include <linux/of.h>
-> > > > +#include <linux/regmap.h>
-> > > > +
-> > > > +#include <uapi/linux/media-bus-format.h>
-> > > > +
-> > > > +#include <drm/drm_atomic.h>
-> > > > +#include <drm/drm_atomic_helper.h>
-> > > > +#include <drm/drm_bridge.h>
-> > > > +#include <drm/drm_bridge_connector.h>
-> > > > +#include <drm/drm_connector.h>
-> > > > +#include <drm/drm_encoder.h>
-> > > > +#include <drm/drm_of.h>
-> > > > +#include <drm/drm_print.h>
-> > > > +#include <drm/drm_simple_kms_helper.h>
-> > > > +
-> > > > +#include "vs_bridge.h"
-> > > > +#include "vs_bridge_regs.h"
-> > > > +#include "vs_crtc.h"
-> > > > +#include "vs_dc.h"
-> > > > +
-> > > > +static int vs_bridge_attach(struct drm_bridge *bridge,
-> > > > +                           struct drm_encoder *encoder,
-> > > > +                           enum drm_bridge_attach_flags flags)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +
-> > > > +       return drm_bridge_attach(encoder, vbridge->next,
-> > > > +                                bridge, flags);
-> > > > +}
-> > > > +
-> > > > +struct vsdc_dp_format {
-> > > > +       u32 linux_fmt;
-> > > > +       bool is_yuv;
-> > > > +       u32 vsdc_fmt;
-> > > > +};
-> > > > +
-> > > > +static struct vsdc_dp_format vsdc_dp_supported_fmts[] = {
-> > > > +       /* default to RGB888 */
-> > > > +       { MEDIA_BUS_FMT_FIXED, false,
-> > > > VSDC_DISP_DP_CONFIG_FMT_RGB888 },
-> > > > +       { MEDIA_BUS_FMT_RGB888_1X24, false,
-> > > > VSDC_DISP_DP_CONFIG_FMT_RGB888 },
-> > > > +       { MEDIA_BUS_FMT_RGB565_1X16, false,
-> > > > VSDC_DISP_DP_CONFIG_FMT_RGB565 },
-> > > > +       { MEDIA_BUS_FMT_RGB666_1X18, false,
-> > > > VSDC_DISP_DP_CONFIG_FMT_RGB666 },
-> > > > +       { MEDIA_BUS_FMT_RGB888_1X24, false,
-> > > > VSDC_DISP_DP_CONFIG_FMT_RGB888 },
-> > > > +       { MEDIA_BUS_FMT_RGB101010_1X30,
-> > > > +         false, VSDC_DISP_DP_CONFIG_FMT_RGB101010 },
-> > > > +       { MEDIA_BUS_FMT_UYVY8_1X16, true,
-> > > > VSDC_DISP_DP_CONFIG_YUV_FMT_UYVY8 },
-> > > > +       { MEDIA_BUS_FMT_UYVY10_1X20, true,
-> > > > VSDC_DISP_DP_CONFIG_YUV_FMT_UYVY10 },
-> > > > +       { MEDIA_BUS_FMT_YUV8_1X24, true,
-> > > > VSDC_DISP_DP_CONFIG_YUV_FMT_YUV8 },
-> > > > +       { MEDIA_BUS_FMT_YUV10_1X30, true,
-> > > > VSDC_DISP_DP_CONFIG_YUV_FMT_YUV10 },
-> > > > +       { MEDIA_BUS_FMT_UYYVYY8_0_5X24,
-> > > > +         true, VSDC_DISP_DP_CONFIG_YUV_FMT_UYYVYY8 },
-> > > > +       { MEDIA_BUS_FMT_UYYVYY10_0_5X30,
-> > > > +         true, VSDC_DISP_DP_CONFIG_YUV_FMT_UYYVYY10 },
-> > > > +};
-> > > > +
-> > > > +static u32 *vs_bridge_atomic_get_output_bus_fmts(struct
-> > > > drm_bridge
-> > > > *bridge,
-> > > > +                                       struct drm_bridge_state
-> > > > *bridge_state,
-> > > > +                                       struct drm_crtc_state
-> > > > *crtc_state,
-> > > > +                                       struct
-> > > > drm_connector_state
-> > > > *conn_state,
-> > > > +                                       unsigned int
-> > > > *num_output_fmts)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +       struct drm_connector *conn = conn_state->connector;
-> > > > +       u32 *output_fmts;
-> > > > +       unsigned int i;
-> > > > +
-> > > > +       if (vbridge->intf == VSDC_OUTPUT_INTERFACE_DPI)
-> > > 
-> > > This kind of checks looks like there should be a drm_encoder
-> > > handled
-> > > by
-> > > the same driver. Or maybe it's better to have two sets of funcs
-> > > structures, one for the DPI, one for DP.
-> > 
-> > Well these functions used to be for an encoder, however I found that
-> > encoders cannot take part in format negotiation, and at least some
-> > source says encoder is deprecated in this situation and a first
-> > bridge
-> > in the bridge chain is better here.
-> > 
-> > A simple encoder is created by this part of driver, but all its works
-> > are moved to this bridge, similar to what other drivers with bridge
-> > chaining support do.
-> > 
-> > > 
-> > > > +               *num_output_fmts = 1;
-> > > > +       else
-> > > > +               *num_output_fmts =
-> > > > ARRAY_SIZE(vsdc_dp_supported_fmts);
-> > > > +
-> > > > +       output_fmts = kcalloc(*num_output_fmts,
-> > > > sizeof(*output_fmts),
-> > > > +                             GFP_KERNEL);
-> > > > +       if (!output_fmts)
-> > > > +               return NULL;
-> > > > +
-> > > > +       if (vbridge->intf == VSDC_OUTPUT_INTERFACE_DPI) {
-> > > > +               if (conn->display_info.num_bus_formats &&
-> > > > +                   conn->display_info.bus_formats)
-> > > > +                       output_fmts[0] = conn-
-> > > > > display_info.bus_formats[0];
-> > > > +               else
-> > > > +                       output_fmts[0] = MEDIA_BUS_FMT_FIXED;
-> > > > +       } else {
-> > > > +               for (i = 0; i < *num_output_fmts; i++)
-> > > > +                       output_fmts[i] =
-> > > > vsdc_dp_supported_fmts[i].linux_fmt;
-> > > 
-> > > memcpy(a, b, min(ARRAY_SIZE(), num_output_fmts)) ?
-> > 
-> > vsdc_dp_supported_fmts is a map of linux_fmt to hardware-specific
-> > parameter, so memcpy won't work here.
-> > 
-> > > 
-> > > > +       }
-> > > > +
-> > > > +       return output_fmts;
-> > > > +}
-> > > > +
-> > > > +static bool vs_bridge_out_dp_fmt_supported(u32 out_fmt)
-> > > > +{
-> > > > +       unsigned int i;
-> > > > +
-> > > > +       for (i = 0; i < ARRAY_SIZE(vsdc_dp_supported_fmts); i++)
-> > > > +               if (vsdc_dp_supported_fmts[i].linux_fmt ==
-> > > > out_fmt)
-> > > 
-> > > return true;
-> > > 
-> > > > +                       break;
-> > > > +
-> > > > +       return !(i == ARRAY_SIZE(vsdc_dp_supported_fmts));
-> > > 
-> > > return false;
-> > > 
-> > > > +}
-> > > > +
-> > > > +static u32 *vs_bridge_atomic_get_input_bus_fmts(struct
-> > > > drm_bridge
-> > > > *bridge,
-> > > > +                                       struct drm_bridge_state
-> > > > *bridge_state,
-> > > > +                                       struct drm_crtc_state
-> > > > *crtc_state,
-> > > > +                                       struct
-> > > > drm_connector_state
-> > > > *conn_state,
-> > > > +                                       u32 output_fmt,
-> > > > +                                       unsigned int
-> > > > *num_input_fmts)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +
-> > > > +       if (vbridge->intf == VSDC_OUTPUT_INTERFACE_DP &&
-> > > > +           !vs_bridge_out_dp_fmt_supported(output_fmt)) {
-> > > > +               *num_input_fmts = 0;
-> > > > +               return NULL;
-> > > > +       }
-> > > > +
-> > > > +       return drm_atomic_helper_bridge_propagate_bus_fmt(bridge,
-> > > > bridge_state,
-> > > > +                                                        
-> > > > crtc_state,
-> > > > +                                                        
-> > > > conn_state,
-> > > > +                                                        
-> > > > output_fmt,
-> > > > +                                                        
-> > > > num_input_fmts);
-> > > > +}
-> > > > +
-> > > > +static int vs_bridge_atomic_check(struct drm_bridge *bridge,
-> > > > +                                 struct drm_bridge_state
-> > > > *bridge_state,
-> > > > +                                 struct drm_crtc_state
-> > > > *crtc_state,
-> > > > +                                 struct drm_connector_state
-> > > > *conn_state)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +
-> > > > +       if (vbridge->intf == VSDC_OUTPUT_INTERFACE_DP &&
-> > > > +           !vs_bridge_out_dp_fmt_supported(bridge_state-
-> > > > > output_bus_cfg.format))
-> > > > +               return -EINVAL;
-> > > > +
-> > > > +       vbridge->output_bus_fmt = bridge_state-
-> > > > > output_bus_cfg.format;
-> > > 
-> > > You are saving a state value into a non-state variable. There is no
-> > > guarantee that this atomic_check() will be followed by the actual
-> > > commit. So, either you have to use a struct that extends
-> > > drm_bridge_state here or store the output_bus_fmt during
-> > > atomic_enable().
-> > 
-> > In fact I don't want to save it -- the kernel is quirky here and this
-> > value does not get passed into atomic_enable. I mimicked what other
-> > drivers do. See ingenic_drm_bridge_atomic_check() in ingenic/ingenic-
-> > drm-drv.c and meson_encoder_hdmi_atomic_check() in
-> > meson/meson_encoder_hdmi.c .
-> > 
-> > > 
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > > +static void vs_bridge_atomic_enable(struct drm_bridge *bridge,
-> > > > +                                   struct drm_atomic_state
-> > > > *state)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +       struct drm_bridge_state *br_state =
-> > > > drm_atomic_get_bridge_state(state,
-> > > > +                                                                
-> > > >   
-> > > >      bridge);
-> > > > +       struct vs_crtc *crtc = vbridge->crtc;
-> > > > +       struct vs_dc *dc = crtc->dc;
-> > > > +       unsigned int output = crtc->id;
-> > > > +       u32 dp_fmt;
-> > > > +       unsigned int i;
-> > > > +
-> > > > +       DRM_DEBUG_DRIVER("Enabling output %u\n", output);
-> > > > +
-> > > > +       switch (vbridge->intf) {
-> > > > +       case VSDC_OUTPUT_INTERFACE_DPI:
-> > > > +               regmap_clear_bits(dc->regs,
-> > > > VSDC_DISP_DP_CONFIG(output),
-> > > > +                                 VSDC_DISP_DP_CONFIG_DP_EN);
-> > > > +               break;
-> > > > +       case VSDC_OUTPUT_INTERFACE_DP:
-> > > > +               for (i = 0; i <
-> > > > ARRAY_SIZE(vsdc_dp_supported_fmts);
-> > > > i++) {
-> > > > +                       if (vsdc_dp_supported_fmts[i].linux_fmt
-> > > > ==
-> > > > +                           vbridge->output_bus_fmt)
-> > > > +                               break;
-> > > > +               }
-> > > > +               WARN_ON_ONCE(i ==
-> > > > ARRAY_SIZE(vsdc_dp_supported_fmts));
-> > > > +               dp_fmt = vsdc_dp_supported_fmts[i].vsdc_fmt;
-> > > 
-> > > This might trigger all static checkers in the universe. It's not
-> > > really
-> > > possible, since you've checked it in the atomic_check(), but...
-> > 
-> > Sigh I don't know how to properly describe it...
-> > 
-> > I can only say something really bad happens if the previous
-> > WARN_ON_ONCE is triggered.
-> > 
-> > > 
-> > > > +               dp_fmt |= VSDC_DISP_DP_CONFIG_DP_EN;
-> > > > +               regmap_write(dc->regs,
-> > > > VSDC_DISP_DP_CONFIG(output),
-> > > > dp_fmt);
-> > > > +               regmap_assign_bits(dc->regs,
-> > > > +                                 
-> > > > VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                                  VSDC_DISP_PANEL_CONFIG_YUV,
-> > > > +                                 
-> > > > vsdc_dp_supported_fmts[i].is_yuv);
-> > > > +               break;
-> > > > +       }
-> > > > +
-> > > > +       regmap_clear_bits(dc->regs,
-> > > > VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                         VSDC_DISP_PANEL_CONFIG_DAT_POL);
-> > > > +       regmap_assign_bits(dc->regs,
-> > > > VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                          VSDC_DISP_PANEL_CONFIG_DE_POL,
-> > > > +                          br_state->output_bus_cfg.flags &
-> > > > +                          DRM_BUS_FLAG_DE_LOW);
-> > > > +       regmap_assign_bits(dc->regs,
-> > > > VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                          VSDC_DISP_PANEL_CONFIG_CLK_POL,
-> > > > +                          br_state->output_bus_cfg.flags &
-> > > > +                          DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE);
-> > > > +       regmap_set_bits(dc->regs, VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                       VSDC_DISP_PANEL_CONFIG_DE_EN |
-> > > > +                       VSDC_DISP_PANEL_CONFIG_DAT_EN |
-> > > > +                       VSDC_DISP_PANEL_CONFIG_CLK_EN);
-> > > > +       regmap_set_bits(dc->regs, VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                       VSDC_DISP_PANEL_CONFIG_RUNNING);
-> > > > +       regmap_clear_bits(dc->regs, VSDC_DISP_PANEL_START,
-> > > > +                         VSDC_DISP_PANEL_START_MULTI_DISP_SYNC);
-> > > > +       regmap_set_bits(dc->regs, VSDC_DISP_PANEL_START,
-> > > > +                       VSDC_DISP_PANEL_START_RUNNING(output));
-> > > > +
-> > > > +       regmap_set_bits(dc->regs, VSDC_DISP_PANEL_CONFIG_EX(crtc-
-> > > > > id),
-> > > > +                       VSDC_DISP_PANEL_CONFIG_EX_COMMIT);
-> > > > +}
-> > > > +
-> > > > +static void vs_bridge_atomic_disable(struct drm_bridge *bridge,
-> > > > +                                    struct drm_atomic_state
-> > > > *state)
-> > > > +{
-> > > > +       struct vs_bridge *vbridge =
-> > > > drm_bridge_to_vs_bridge(bridge);
-> > > > +       struct vs_crtc *crtc = vbridge->crtc;
-> > > > +       struct vs_dc *dc = crtc->dc;
-> > > > +       unsigned int output = crtc->id;
-> > > > +
-> > > > +       DRM_DEBUG_DRIVER("Disabling output %u\n", output);
-> > > > +
-> > > > +       regmap_clear_bits(dc->regs, VSDC_DISP_PANEL_START,
-> > > > +                         VSDC_DISP_PANEL_START_MULTI_DISP_SYNC |
-> > > > +                         VSDC_DISP_PANEL_START_RUNNING(output));
-> > > > +       regmap_clear_bits(dc->regs,
-> > > > VSDC_DISP_PANEL_CONFIG(output),
-> > > > +                         VSDC_DISP_PANEL_CONFIG_RUNNING);
-> > > > +
-> > > > +       regmap_set_bits(dc->regs, VSDC_DISP_PANEL_CONFIG_EX(crtc-
-> > > > > id),
-> > > > +                       VSDC_DISP_PANEL_CONFIG_EX_COMMIT);
-> > > > +}
-> > > > +
-> > > > +static const struct drm_bridge_funcs vs_bridge_funcs = {
-> > > > +       .attach = vs_bridge_attach,
-> > > > +       .atomic_enable = vs_bridge_atomic_enable,
-> > > > +       .atomic_disable = vs_bridge_atomic_disable,
-> > > > +       .atomic_check = vs_bridge_atomic_check,
-> > > > +       .atomic_get_input_bus_fmts =
-> > > > vs_bridge_atomic_get_input_bus_fmts,
-> > > > +       .atomic_get_output_bus_fmts =
-> > > > vs_bridge_atomic_get_output_bus_fmts,
-> > > > +       .atomic_duplicate_state =
-> > > > drm_atomic_helper_bridge_duplicate_state,
-> > > > +       .atomic_destroy_state =
-> > > > drm_atomic_helper_bridge_destroy_state,
-> > > > +       .atomic_reset = drm_atomic_helper_bridge_reset,
-> > > > +};
-> > > > +
-> > > > +static int vs_bridge_detect_output_interface(struct device_node
-> > > > *of_node,
-> > > > +                                            unsigned int output)
-> > > > +{
-> > > > +       int ret;
-> > > > +       struct device_node *remote;
-> > > > +
-> > > > +       remote = of_graph_get_remote_node(of_node, output,
-> > > > +                                        
-> > > > VSDC_OUTPUT_INTERFACE_DPI);
-> > > 
-> > > This deserves a comment in the source file.
-> > > 
-> > > > +       if (remote) {
-> > > > +               ret = VSDC_OUTPUT_INTERFACE_DPI;
-> > > 
-> > > return here, drop else{}
-> > 
-> > Well a of_node_put() is missing before the final return, and Yao Zi
-> > noted me of it.
-> > 
-> > > 
-> > > > +       } else {
-> > > > +               remote = of_graph_get_remote_node(of_node,
-> > > > output,
-> > > > +                                                
-> > > > VSDC_OUTPUT_INTERFACE_DP);
-> > > > +               if (remote)
-> > > > +                       ret = VSDC_OUTPUT_INTERFACE_DP;
-> > > 
-> > > return
-> > > 
-> > > > +               else
-> > > > +                       ret = -ENODEV;
-> > > > +       }
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > > +struct vs_bridge *vs_bridge_init(struct drm_device *drm_dev,
-> > > > +                                struct vs_crtc *crtc)
-> > > > +{
-> > > > +       unsigned int output = crtc->id;
-> > > > +       struct vs_bridge *bridge;
-> > > > +       struct drm_bridge *next;
-> > > > +       enum vs_bridge_output_interface intf;
-> > > > +       int ret;
-> > > > +
-> > > > +       intf = vs_bridge_detect_output_interface(drm_dev->dev-
-> > > > > of_node,
-> > > > +                                                output);
-> > > > +       if (intf == -ENODEV) {
-> > > > +               dev_info(drm_dev->dev, "Skipping output %u\n",
-> > > > output);
-> > > > +               return NULL;
-> > > > +       }
-> > > > +
-> > > > +       bridge = devm_kzalloc(drm_dev->dev, sizeof(*bridge),
-> > > > GFP_KERNEL);
-> > > 
-> > > devm_drm_bridge_alloc()
-> > > 
-> > > > +       if (!bridge)
-> > > > +               return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +       bridge->crtc = crtc;
-> > > > +       bridge->intf = intf;
-> > > > +       bridge->base.funcs = &vs_bridge_funcs;
-> > > > +
-> > > > +       next = devm_drm_of_get_bridge(drm_dev->dev, drm_dev->dev-
-> > > > > of_node,
-> > > > +                                     output, intf);
-> > > > +       if (IS_ERR(next)) {
-> > > > +               ret = PTR_ERR(next);
-> > > > +               goto err_free_bridge;
-> > > > +       }
-> > > > +
-> > > > +       bridge->next = next;
-> > > > +
-> > > > +       ret = drm_simple_encoder_init(drm_dev, &bridge->enc,
-> > > 
-> > > Oh, so there is an encoder... Please drop drm_simple_encoder, it's
-> > > deprecated, and try moving all the ifs to the encoder funcs.
-> > 
-> > Ah? Is it really deprecated? I can find no source of this
-> > deprecation.
-> > 
-> > In addition, I think many drivers here are using a bridge as a
-> > "better
-> > encoder" because of the restriction of current encoder
-> > implementation,
-> > and I am doing the same thing. Either encoder functionality should be
-> > improved to on par with bridge, or such dummy encoders with a bridge
-> > should exist, and some helper for creating them should exist. It
-> > might
-> > be not drm_simple_encoder_init (because I can understand the
-> > deprecation of other parts of the simple-kms routines, although I see
-> > no formal documentation mentioning it's deprecated, maybe I missed
-> > some
-> > newspaper?), but it should exist.
-> 
-> I see some practice of passing NULL to drmm_plain_encoder_alloc() from
-> the adp driver, however looks like this isn't always safe and on my
-> test of this change on top of verisilicon driver (on top of v6.17-rc1)
-> I got mysterious oops if the DC driver happens to be probed before the
-> HDMI controller driver:
+This is a multi-part message in MIME format.
+--------------hRjbDyTg7mLmLz3i4cN3lQN3
+Content-Type: multipart/alternative;
+ boundary="------------LWzMZnYUId0q1ZdOaJUOuGtQ"
 
-I think you can pass NULL for funcs only if you use drmm_* functions to
-handle encoder. This way it gets cleaned before
-drm_mode_config_cleanup() gets called.
+--------------LWzMZnYUId0q1ZdOaJUOuGtQ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> [   28.519454] [<ffffffff807d7016>] drm_mode_config_cleanup+0xc6/0x224
-> [   28.525754] [<ffffffff807d75f8>]
-> drm_mode_config_init_release+0xc/0x14
-> [   28.532312] [<ffffffff807d5b8e>] drm_managed_release+0x7a/0x100
-> [   28.538257] [<ffffffff807c6b9a>] devm_drm_dev_init_release+0x62/0x78
+First and foremost, apologies if this report is not properly done or 
+formatted or whatever regarding the kernel development process. Feel 
+free to correct me if I did something wrong.
 
+Distribution: ArchLinux
 
+|$ cat /proc/version
+Linux version 6.16-arch2-1 (linux@archlinux) (gcc (GCC) 15.2.1 20250813, 
+GNU ld (GNU Binutils) 2.45.0) #3 SMP PREEMPT_DYNAMIC Sat, 16 Aug 2025 
+16:19:12 +0000
+|
+Problem description:
+When plugging a Nintendo Switch Pro controller, the |/dev/input/js0| 
+file does not get created.
 
--- 
-With best wishes
-Dmitry
+Problem analysis:
+I think I have pinpointed the bug in the hid-nintendo.c driver.
+
+  * joydev (who is responsible for creating |/dev/input/js0|) is not
+    handling the device.
+  * However, joydev receives the handling request from input.c only for
+    the IMU device (the accelerometer), which is blacklisted (totally
+    normal) so we get the following message when activating debug
+    messages in joydev:
+      o |input input39: joydev: blacklisting 'Nintendo Co., Ltd. Pro
+        Controller (IMU)'|
+  * joydev is looking for |absbit| and |keybit| in order to match a
+    device (defined in |joydev_ids| array)
+  * But for the regular device (not IMU), |absbit| and |keybit| are 0
+  * The reason is that in |joycon_input_create|, |input_register_device|
+    is called BEFORE setting the bits (which happen in |joycon_config_*|)
+  * This change was introduced in commit
+    94f18bb19945915fcdfd1903841020ef1b6af44a
+  * Before that, |input_register_device| was called AFTER setting the bits
+  * So, possible regression ? I can't test with older kernels unfortunately
+
+I attached the simple patch that works for me.
+
+Would it also make sense to move the rumble config before the call to 
+|input_register_device| ? It was moved after the IMU device creation in 
+the same commit, although I am not sure if it NEEDS to be. Let me know 
+what you think of that.
+
+Unrelated to the bug but I noticed during my testing that when first 
+plugging the controller, when the hid_nintendo module is not loaded, 
+hid-generic handles it but then it gets disconnected right after and 
+hid_nintendo takes over. I'm very new to kernel debugging so I don't 
+know if this behavior is normal but I guess it is. What's funny is that 
+because hid-generic doesn't have the same bug, the |/dev/input/js0| 
+device gets created and then immediately removed. You can see it if you 
+|ls| continuously the |/dev/input| folder. This was very confusing at 
+first !
+
+--------------LWzMZnYUId0q1ZdOaJUOuGtQ
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p>First and foremost, apologies if this report is not properly done
+      or formatted or whatever regarding the kernel development process.
+      Feel free to correct me if I did something wrong.</p>
+    <p>Distribution: ArchLinux</p>
+    <p><code>$ cat /proc/version<br>
+        Linux version 6.16-arch2-1 (linux@archlinux) (gcc (GCC) 15.2.1
+        20250813, GNU ld (GNU Binutils) 2.45.0) #3 SMP PREEMPT_DYNAMIC
+        Sat, 16 Aug 2025 16:19:12 +0000<br>
+      </code> <br>
+      Problem description:<br>
+      When plugging a Nintendo Switch Pro controller, the <code>/dev/input/js0</code>
+      file does not get created.</p>
+    <p>Problem analysis:<br>
+      I think I have pinpointed the bug in the hid-nintendo.c driver.</p>
+    <ul>
+      <li>joydev (who is responsible for creating <code>/dev/input/js0</code>)
+        is not handling the device.</li>
+      <li>However, joydev receives the handling request from input.c
+        only for the IMU device (the accelerometer), which is
+        blacklisted (totally normal) so we get the following message
+        when activating debug messages in joydev:</li>
+      <ul>
+        <li><code>input input39: joydev: blacklisting 'Nintendo Co.,
+            Ltd. Pro Controller (IMU)'</code></li>
+      </ul>
+      <li>joydev is looking for <code>absbit</code> and <code>keybit</code>
+        in order to match a device (defined in <code>joydev_ids</code>
+        array)</li>
+      <li>But for the regular device (not IMU), <code>absbit</code> and
+        <code>keybit</code> are 0</li>
+      <li>The reason is that in <code>joycon_input_create</code>, <code>input_register_device</code>
+        is called BEFORE setting the bits (which happen in <code>joycon_config_*</code>)</li>
+      <li>This change was introduced in commit
+        94f18bb19945915fcdfd1903841020ef1b6af44a</li>
+      <li>Before that, <code>input_register_device</code> was called
+        AFTER setting the bits</li>
+      <li>So, possible regression ? I can't test with older kernels
+        unfortunately</li>
+    </ul>
+    <p>I attached the simple patch that works for me.</p>
+    <p>Would it also make sense to move the rumble config before the
+      call to <code>input_register_device</code> ? It was moved after
+      the IMU device creation in the same commit, although I am not sure
+      if it NEEDS to be. Let me know what you think of that.</p>
+    <p>Unrelated to the bug but I noticed during my testing that when
+      first plugging the controller, when the hid_nintendo module is not
+      loaded, hid-generic handles it but then it gets disconnected right
+      after and hid_nintendo takes over. I'm very new to kernel
+      debugging so I don't know if this behavior is normal but I guess
+      it is. What's funny is that because hid-generic doesn't have the
+      same bug, the <code>/dev/input/js0</code> device gets created and
+      then immediately removed. You can see it if you <code>ls</code>
+      continuously the <code>/dev/input</code> folder. This was very
+      confusing at first !</p>
+  </body>
+</html>
+
+--------------LWzMZnYUId0q1ZdOaJUOuGtQ--
+--------------hRjbDyTg7mLmLz3i4cN3lQN3
+Content-Type: text/x-patch; charset=UTF-8; name="hid_nintendo.patch"
+Content-Disposition: attachment; filename="hid_nintendo.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1uaW50ZW5kby5jIGIvZHJpdmVycy9oaWQv
+aGlkLW5pbnRlbmRvLmMKaW5kZXggZmI0OTg1OTg4NjE1Li5hMjE2MThiNDJjMzggMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvaGlkL2hpZC1uaW50ZW5kby5jCisrKyBiL2RyaXZlcnMvaGlkL2hp
+ZC1uaW50ZW5kby5jCkBAIC0yMTM4LDEwICsyMTM4LDYgQEAgc3RhdGljIGludCBqb3ljb25f
+aW5wdXRfY3JlYXRlKHN0cnVjdCBqb3ljb25fY3RsciAqY3RscikKIAljdGxyLT5pbnB1dC0+
+cGh5cyA9IGhkZXYtPnBoeXM7CiAJaW5wdXRfc2V0X2RydmRhdGEoY3Rsci0+aW5wdXQsIGN0
+bHIpOwogCi0JcmV0ID0gaW5wdXRfcmVnaXN0ZXJfZGV2aWNlKGN0bHItPmlucHV0KTsKLQlp
+ZiAocmV0KQotCQlyZXR1cm4gcmV0OwotCiAJaWYgKGpveWNvbl90eXBlX2lzX3JpZ2h0X2pv
+eWNvbihjdGxyKSkgewogCQlqb3ljb25fY29uZmlnX3JpZ2h0X3N0aWNrKGN0bHItPmlucHV0
+KTsKIAkJam95Y29uX2NvbmZpZ19idXR0b25zKGN0bHItPmlucHV0LCByaWdodF9qb3ljb25f
+YnV0dG9uX21hcHBpbmdzKTsKQEAgLTIxNzIsNiArMjE2OCwxMCBAQCBzdGF0aWMgaW50IGpv
+eWNvbl9pbnB1dF9jcmVhdGUoc3RydWN0IGpveWNvbl9jdGxyICpjdGxyKQogCQlqb3ljb25f
+Y29uZmlnX2J1dHRvbnMoY3Rsci0+aW5wdXQsIG42NGNvbl9idXR0b25fbWFwcGluZ3MpOwog
+CX0KIAorCXJldCA9IGlucHV0X3JlZ2lzdGVyX2RldmljZShjdGxyLT5pbnB1dCk7CisJaWYg
+KHJldCkKKwkJcmV0dXJuIHJldDsKKwogCWlmIChqb3ljb25faGFzX2ltdShjdGxyKSkgewog
+CQlyZXQgPSBqb3ljb25faW11X2lucHV0X2NyZWF0ZShjdGxyKTsKIAkJaWYgKHJldCkK
+
+--------------hRjbDyTg7mLmLz3i4cN3lQN3--
 
