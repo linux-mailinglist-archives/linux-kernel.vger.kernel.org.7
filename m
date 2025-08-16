@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-772133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA82B28F20
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA70B28F1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1882B62019
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:22:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CA42B62739
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D6B2F90FD;
-	Sat, 16 Aug 2025 15:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3402F60D4;
+	Sat, 16 Aug 2025 15:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="auYojMp6"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oFFND71j"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7B81DE3A7;
-	Sat, 16 Aug 2025 15:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC812E3717;
+	Sat, 16 Aug 2025 15:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357658; cv=none; b=GGr3nOdxjm+zNriuxzJiEokfFun5tSxtmvWX+7Snfy1AsgxqRwvmpdcPQwZ0/J1Xx8FRuB/ZREmbquxi5ybS//hCGx2Anq90cWB4Ptj/LWHwbFwTqybHbHH/jlG2oHZkERjSFo+TgORqZk5ijHOJW89j+7T1DWptG/krEo4E2Xo=
+	t=1755357904; cv=none; b=WQZP6AB1Xs25WU4vXw9vF4bWAMCLDmU/NLBmHYj6LufT/IUHm2p+kCzExXbCVYhKlh79rd+GD+Zp8y/JRkr7i+0uj545cKCJYLtAJFfSx49T1575zFl602A3JmV1X+XZB0AvRXmsJltOPN8Sosx7o/+UTD22UiPx+tLqBpWcyW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357658; c=relaxed/simple;
-	bh=RBIyDtnznFHzqlQIF1q+gcJw4wQW/dS5qTzOPwt1XYI=;
+	s=arc-20240116; t=1755357904; c=relaxed/simple;
+	bh=5STO/XpwBqv8Hr/MbjJKrklmj2I5JqDYc0nDpWPO+XY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFP1qday64ohXzQy6w37jT0MJKOMvPuaCn/TNeDmBcbmrknv6FC6wTdeYMWDa+m0k9LDmdywvb2oOLW3iKj0UMMG2RTQQHiYKnpwI0hKD/zomWRwvSuzxO+BxfSyfhvQNdnDXDVaUrgDjs23Dei4CUqRq7pqqAW2KOmgkIdEGcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=auYojMp6; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkZYtJBEdFoB0wenA4+E00FAeNBHy5iWyQPNLTBxarr/NV3vM8PoLmu/Ds7yfjCRMVFWAVvmBzYk0LYlReAtn2Af9h7uczoAZzSoKde5/tJ/PobF78Yccr1EixlWiAxxC5D02VllYOmoSJ2NuM2KxO2NhDwsBTmpCqQNDUUkPx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oFFND71j; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=shQDX71uKhVljkmiU89xwZumPoU80TwEyr56tSmwUfU=; b=auYojMp6+dMcsrLevaeyCizdDk
-	LONQLs50qaqdKV1kqcFcSEI8r271ye35AfBxJbl2ZqX01I0SI9BgrHwDtmBliNRSaVmzlhnqLxR45
-	Q5U5E0MnKlAxC+43FyIVsAgn96ECQk6ximiPQiQ0BHzk8MAjSPDKRhGEET39l+Kq8WfQ=;
+	bh=kucQfFX0WapujO2b3RkE6LfKTcIS2R/LSGVe/oUbxjs=; b=oFFND71jEJztk7u/guQAV983gk
+	n2klaiQodaftwmyx+7373uM5M1pI49gAjF4wX95cEnGP/F/FIJc0vwvJFzl3+BHjRhLdnDclxKptl
+	cPutdwYIBR40GMTnh8OP//J8mL4SZEi3+mEz2l/CGO6k0n+IJ4yZa24Qh2KGkg/MAemw=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1unIi5-004uZe-6l; Sat, 16 Aug 2025 17:20:45 +0200
-Date: Sat, 16 Aug 2025 17:20:45 +0200
+	id 1unIm4-004uat-QQ; Sat, 16 Aug 2025 17:24:52 +0200
+Date: Sat, 16 Aug 2025 17:24:52 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: David Yang <mmyangfl@gmail.com>
 Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
@@ -53,10 +53,11 @@ Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
 	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
 	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [net-next v3 0/3] net: dsa: yt921x: Add support for Motorcomm
- YT921x
-Message-ID: <1ceb8a8f-140a-4b54-be2a-df9ac2c219b6@lunn.ch>
+Subject: Re: [net-next v3 2/3] net: dsa: tag_yt921x: add support for
+ Motorcomm YT921x tags
+Message-ID: <095df250-2ef9-4589-893d-f28193076f16@lunn.ch>
 References: <20250816052323.360788-1-mmyangfl@gmail.com>
+ <20250816052323.360788-3-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,36 +66,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816052323.360788-1-mmyangfl@gmail.com>
+In-Reply-To: <20250816052323.360788-3-mmyangfl@gmail.com>
 
-On Sat, Aug 16, 2025 at 01:23:18PM +0800, David Yang wrote:
-> Motorcomm YT921x is a series of ethernet switches developed by Shanghai
-> Motorcomm Electronic Technology, including:
-> 
->   - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
->   - YT9213NB / YT9214NB: 2 GbE phys
->   - YT9218N / YT9218MB: 8 GbE phys
-> 
-> and up to 2 serdes interfaces.
-> 
-> This patch adds basic support for a working DSA switch.
-> 
-> v2: https://lore.kernel.org/r/20250814065032.3766988-1-mmyangfl@gmail.com
->   - fix words in dt binding
->   - add support for lag and mst
+> +static struct sk_buff *
+> +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
+> +{
+> +	unsigned int port;
+> +	__be16 *tag;
+> +	u16 rx;
+> +
+> +	if (unlikely(!pskb_may_pull(skb, YT921X_TAG_LEN)))
+> +		return NULL;
+> +
+> +	tag = (__be16 *)skb->data;
+> +
+> +	/* Locate which port this is coming from */
+> +	rx = ntohs(tag[1]);
+> +	if (unlikely((rx & YT921X_TAG_PORT_EN) == 0)) {
+> +		netdev_err(netdev, "Unexpected rx tag 0x%04x\n", rx);
+> +		return NULL;
+> +	}
+> +
+> +	port = FIELD_GET(YT921X_TAG_RX_PORT_M, rx);
+> +	skb->dev = dsa_conduit_find_user(netdev, 0, port);
+> +	if (unlikely(!skb->dev)) {
+> +		dev_warn_ratelimited(&netdev->dev,
+> +				     "Cannot locate rx port %u\n", port);
+> +		return NULL;
+> +	}
 
-Please don't add new features between revisions. Reviewers spend time
-reviewing the code. They assume just the issues raised will be
-address, and the rest of the code remains unchanged. It then means
-they just need to check the issues raised have been addressed. By
-adding new features, they back to the beginning, having to review all
-the code again, because you potentially added new issues.
-
-LAG and MST should of been implemented as patches on top of the basic
-driver. They can then be reviewed as small increments.
-
-Please put yourself in our position. How would you review this code?
-That would make it easy for you to review it?
+Why do you rate limit the second, but not the first?
 
 	Andrew
 
