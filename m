@@ -1,140 +1,88 @@
-Return-Path: <linux-kernel+bounces-772218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F80B29013
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3E9B29018
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 20:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AAB1C879A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB32A2319B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD9E2EA14B;
-	Sat, 16 Aug 2025 18:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335362FE057;
+	Sat, 16 Aug 2025 18:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1FAVt5eW"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVthTd69"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3160D15C15F
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7161D15C15F;
+	Sat, 16 Aug 2025 18:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755368669; cv=none; b=ZTyh3OGE7NGnGUGUgq1S3dTM5iEVSfWj5u5h2qe6oCXrzJXo0uuGEjavf5NKbapYp1HSHREFcYEou25bab8NDMMfecqtoIZMYQ2LZ3zYQkP3EEjYgkNBdOBCOKqLcCPq2znTnSTp/H6sEI5V2+oo6hp4O5HkNfTuQaNFJ/BoN4A=
+	t=1755368835; cv=none; b=akhHc9V2p/nZ5drpnKO1BDbGb0GXnnVT+KmVzrp/Mriz9NXlVvbEjeg+DoARTAFRhh58Ej+MuBbSZBxbKMDMtQWpYUoGeV1ceU1OHzPsGa+2qzi8TVjB6SrR9ESw9zxJOIuC4zhHRSU2v43wFa3W1Cw5lv2YCDuOpwX9mfTR0cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755368669; c=relaxed/simple;
-	bh=JnJIOlsGDO2UgNwnN1Ia+2CZfap16BIfk8Z5hv3zESg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O8kH9EWUYsV91wKOpQsJocOw+IQ737O9LP4vB7IP0X2XapyPOPPz1YOvZdzSz6fx+Z9zdkAtg3lXBGgqBh5BFAV775+9MoOupLYzLsxacKnEF451MPwgLv9/jYoia5XKAjIjqydHyvxGbYosYWT3SXhRZeCVynzSMwTJmsA7A20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1FAVt5eW; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381ff668cso1579917a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755368666; x=1755973466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qNUlCKf+PozSMhiOiUc8QNdxtKMKbQOVsk7v2FaWGKw=;
-        b=1FAVt5eWY8DS0VDeHQN1P/lVuT7fjFXnqX9KoiolRwnSg8zjv/Z7VVZm/gXVKcwEL+
-         KnCAjPuJ4cLpkiipHRAoVipMG32MK/IWfkcxmW3INNm+xgBl8ddH+N/l0sjM+xcQkwa8
-         gim0Kp9fq8efYBsGG+URQjY/GNvE2VIeKDxQOpQuxhc63fHl0s9/1qx/BhZ6x+ScgAhs
-         NMjVhCKraYxm3CTLYIjc21Oo6wh3hpB9gnRYUDKzRg6ztdFQNzPhUpcxgMuGDWOK/ttd
-         fpF5CxYn0M1E5QmlOb43cBIxixol7avtbfaECWWHQaCnVEsgcupis4CcvHJF+JegkoY+
-         6bvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755368666; x=1755973466;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNUlCKf+PozSMhiOiUc8QNdxtKMKbQOVsk7v2FaWGKw=;
-        b=UU7xSycyZZxQOYr1tXnvYrk97DGMB2oHZ9Hk3Uw3C7ImbVwCFqAHYZ9aoTb2753vea
-         vZjDxh/ccmNHFpomBXWZCiprgaFOS3CYDKBPVGniN+Beu32X3puVBxAN43JNSmcVPInl
-         Om0pPYCqVrUgZvSyX5RYBO5qMFEyh6nIQLNa7FUAsDTy+fxkCfNl3ogcdyaju3gG6v5o
-         Rov6QVbE6qs7uOtJ6JlFUN2yJ00kRLMugH3/+V/QTDk1cZJlba2KtxQBiuC1ceUKI4de
-         +5XdzvkA9fuiCBi016uZGSGgvROFMcxLVAdBUOJy7YtbSKgi7+FY81TIOkcl9PqGgwmP
-         keuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYtObJ9yaQGx1888VrrBAl7Q5ec4N1Rwbwv14LH9OgF61kx4QS2UtquzSZKLJvV7TNex34hNl2/Npi6wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLkeDc2XrMHdatdRpMROc8l79oidzAyRlbJ+YmRhtMPhlNQTxw
-	b2wT4wr6CZCLKQMBMvCWn4Y9/a5eRWfyGHytUGroVHcAMsFQZpZAFoq2zyYjlye5Bm0=
-X-Gm-Gg: ASbGncubwzjsU/ofTJfbmPGWjxKPL5cScoCtmSyGWLiF+SNzd2hrR7PJp+YWJhsMfdH
-	FstX6kz8wybcNpq5ReNvQuODaFxio0dn0qmX17RhgG4DWC9yLn3V6iHofBvIj8WddVSo0nMIJoK
-	/W6LASx714sbTVGufn+M80/5J9IeH/24CB+R2tuowbYeTxwrUrP8AiE3DX+o/Vf7GqionjczaRt
-	jTpaWYmAXZMe67ikCKWTDDJWTT0/DOAD1wJRqc2hQIm/i70XrgxsCleAxcfkHOQeJ3GwixL68EQ
-	QfFrG7eBB4yR82a41/5oVIqbZ1wgcIdLXJH+fX+C963Bv+/FrtOYW8yA6EKenlC7jL2OPFBvVod
-	eMG3wsP3HSnMfh4WkdERRN/clRz+c51HrAe++YYaoYpXp4RM6ydPZFGqqX4SSxK4kYEjqAK04aF
-	gYZD6HpWk=
-X-Google-Smtp-Source: AGHT+IG4x9+lZonQLtZAv5o+14TpRzPIGvwvJFP8LMAyvwlY/f86+nqIN4zZje7xbJPshmzcKpQvVA==
-X-Received: by 2002:a05:6830:2a8a:b0:743:823:a094 with SMTP id 46e09a7af769-743923d34b2mr4625028a34.10.1755368666249;
-        Sat, 16 Aug 2025 11:24:26 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fcf8:116:11db:fbac? ([2600:8803:e7e4:1d00:fcf8:116:11db:fbac])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bebfb2a02sm456819eaf.11.2025.08.16.11.24.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 11:24:24 -0700 (PDT)
-Message-ID: <7cd6f642-b26a-45aa-a2f2-ccb7fbc28b20@baylibre.com>
-Date: Sat, 16 Aug 2025 13:24:24 -0500
+	s=arc-20240116; t=1755368835; c=relaxed/simple;
+	bh=wsEBIuxySBNX56S3ZSXmQYy+ySJQlVUn2tu0BS9YA5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LIp+MYMTpdEuj9Xih8H5LRGa1W1W30MDCe6q9DGf5w9X++ngbisfpdUQyZ5M5k5XA9TDg1zJpEekpV8riLIBcgwLV5iKUZ3L5sgB5NsiStID76fFh4FV7IvvrhQbH6HBEgBJ5vkyP5vZxVPtETGpaowwia7W0hLWXXC/STptj3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVthTd69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C23AC4CEEF;
+	Sat, 16 Aug 2025 18:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755368834;
+	bh=wsEBIuxySBNX56S3ZSXmQYy+ySJQlVUn2tu0BS9YA5A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YVthTd69DKN4Ajoa/pVqLz8TngOJEgqMqHLIhWZpFKacImhptnl4Cw9WfVBuozJm7
+	 8dJ/CmyMdYAfrK5BjNE3QZQ+kp/NouJAJoaAc4JVzDSVIKDYT/PfBhLiq9HIoH8sqH
+	 42mZBe4s31RJ2RKJMuKzW6PcfJShafnClQt6KnP1F7YAhPZ7zKjajBvcFBSXMDQ/if
+	 c1zDe66l0FOYxTEOYQ/5erImI5yYi0l5/4s7gpvnY8Pw6JAb8dF1BR7BgpaQiifq6s
+	 c1V3Jl2arY0s2NRn2T2uhacyzLfrEWWeJgMBBUA0W3uHH4eAmIXo/kLWNGUM7lwO+c
+	 lXg8hsEN2tMHw==
+Date: Sat, 16 Aug 2025 11:27:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jianguo Wu <wujianguo@chinatelecom.cn>, Shuah
+ Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, zhenwei pi
+ <pizhenwei@bytedance.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-doc@vger.kernel.org, Christoph Paasch <cpaasch@openai.com>,
+ stable@vger.kernel.org, Thomas Dreibholz <dreibh@simula.no>
+Subject: Re: [PATCH net 0/8] mptcp: misc fixes for v6.17-rc
+Message-ID: <20250816112712.209644c8@kernel.org>
+In-Reply-To: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
+References: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] iio: mcp9600: Add support for thermocouple-type
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250815164627.22002-1-bcollins@watter.com>
- <20250815164627.22002-5-bcollins@watter.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250815164627.22002-5-bcollins@watter.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/15/25 11:46 AM, Ben Collins wrote:
-> dt-bindings documentation for this driver claims to support
-> thermocouple-type, but the driver does not actually make use of
-> the property.
+On Fri, 15 Aug 2025 19:28:18 +0200 Matthieu Baerts (NGI0) wrote:
+> Here are various fixes:
 > 
-> Implement usage of the property to configure the chip for the
-> selected thermocouple-type.
+> - Patch 1: Better handling SKB extension allocation failures. A fix for
+>   v5.7.
 > 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
+> - Patches 2, 3: Avoid resetting MPTCP limits when flushing MPTCP
+>   endpoints. With a validation in the selftests. Fixes for v5.7.
+> 
+> - Patches 4, 5, 6: Disallow '0' as ADD_ADDR retransmission timeout.
+>   With a preparation patch, and a validation in the selftests. Fixes for
+>   v5.11.
+> 
+> - Patches 8, 9: Fix C23 extension warnings in the selftests, spotted by
+>   GCC. Fixes for v6.16.
 
-...
-
-> @@ -453,6 +504,24 @@ static int mcp9600_probe(struct i2c_client *client)
->  	data = iio_priv(indio_dev);
->  	data->client = client;
->  
-> +	/* Accept type from dt with default of Type-K. */
-
-We still also need a dt-bindings patch to specify the default there as well.
-
-> +	data->thermocouple_type = THERMOCOUPLE_TYPE_K;
-> +	ret = device_property_read_u32(&client->dev, "thermocouple-type",
-> +				       &data->thermocouple_type);
-> +	if (ret < 0 && ret != -EINVAL)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "Error reading thermocouple-type property\n");
-> +
-> +	if (data->thermocouple_type >= ARRAY_SIZE(mcp9600_type_map))
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +				     "Invalid thermocouple-type property %u.\n",
-> +				     data->thermocouple_type);
-> +
-> +	/* Set initial config. */
-> +	ret = mcp9600_config(data);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	ch_sel = mcp9600_probe_alerts(indio_dev);
->  	if (ch_sel < 0)
->  		return ch_sel;
-
+userspace_pm.sh which hasn't flaked in 1000 runs has flaked last night,
+with this series applied:
+https://netdev-3.bots.linux.dev/vmksft-mptcp/results/255941/8-userspace-pm-sh/
+Looks unrelated but also quite strange?
 
