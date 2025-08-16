@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-771882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19D7B28C85
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433E8B28C86
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A93B0273F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFEA1C800AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5192459DC;
-	Sat, 16 Aug 2025 09:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD8623D2AB;
+	Sat, 16 Aug 2025 09:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="jL5FHEAi"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtUmIY0c"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8378F244691;
-	Sat, 16 Aug 2025 09:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B731423F40F;
+	Sat, 16 Aug 2025 09:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336916; cv=none; b=rz1N3qYSbTvI+ABWbOUp7M68U8ATYDQZeXv3xZaIfYoMGq207C5dCQZ7HUkDGDEFdgjnQlyv0IQEEe67ow+/KcLaxDAFt5KZUkmSX7Uc/9jHOiTmEThGtnoPxbvcYQdR40V19kA5h0byaPpeIIMQuH917kxZUS0j9l2VKLRfHZY=
+	t=1755336887; cv=none; b=P666V70I37kEA4LG/w0zZp3aIUGjuNxUYFnyCLLfzZyWtAHJZ9swsuh10h/17+dADcYBpGLySlcvqZrU/FkzBhRGtxUw0AHbo3R+ZXg3QhIJvaHFvMq9GgmEWL3qcWnO5V4bwVuHpF/v0pgXv2RLcr75VNbZpx2c3ks9TYar+Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336916; c=relaxed/simple;
-	bh=vL1pWIIeA+gkr1dzD+beVbOku+chq7z2CHA2by6Mckk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqW7qzBP+EDVYaScnQmajveHsG0zB5LrVJU6h1l5A9FQW2/1IJiwIXhTlAl2Ae8I918UdIlY/m/gdZnOoE+mFKK5fq8hJFXk/4BziDT0/kzCaHJ4f3g2XS+DsyXc2PNab114CS8Hf2etXRXeOEqu5nRQ3DwV/BIVAs+mvqGpUx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=jL5FHEAi; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=qc5HQDHwVHMxpEHETkNV6dvzLOvUTcQzrBqfc20nmD0=; b=jL5FHEAiLoxIsQI5XOOmkeZZC8
-	56zzct30bq5Q4ITev9HM3sW9v+11sG51UmeRUqeaOU3Q05T1PYPfDvH2rVwxaVb7x/mo5C50o3Auz
-	9/7F2q3pRrYJDqi8lVBCTNccC7wsKsOIs1961TPILuiK6AZOk3pk/ySfejEKRYmlswj61RKLcNvhL
-	xHkKrOc9u5RgvI1JxkfNMYQUjcF1C4TWq1hQ6Qujy6XT2xypssXe0T1qW9tFsqcc9fKgJea+tvx1m
-	+ZN+o123y5Veo5W13MMRmoDrZA6mhtxrGzowzrO8e7M51zU3SG2+cXE6CM5WDI14P6mtL9qCWrOPj
-	Xs5XkKJA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1unD3Q-00EmOe-24;
-	Sat, 16 Aug 2025 17:34:22 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 16 Aug 2025 17:34:21 +0800
-Date: Sat, 16 Aug 2025 17:34:21 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Olivia Mackall <olivia@selenic.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>, Arnd Bergmann <arnd@arndb.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwrng: nomadik: add ARM_AMBA dependency
-Message-ID: <aKBQnVHyaSjr4uQ2@gondor.apana.org.au>
-References: <20250729152804.2411621-1-arnd@kernel.org>
+	s=arc-20240116; t=1755336887; c=relaxed/simple;
+	bh=UzPkeUJpFFIz5NZn5MQP9WNh5qcQOGMY0RszBW7vCwU=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=rgB6MF6CbLg69YY/tc4tUTbXfLXcvDVNJp1IYUcWHyFBKhXp3kzjbuYm0hx6R1tbht1xBTqZd98d1gl2l19pG3Pu4PL5EtKrltlE+nCfDnQo4hykHD0T3e5jQUi2VMaqFpK5qipv5GJDUSu3tjQmdHgBeFKktNBYUcefNRAF1sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtUmIY0c; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-50f8b94c6adso666880137.3;
+        Sat, 16 Aug 2025 02:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755336884; x=1755941684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OGEFmcc706ihZ0upVBFGijpGh8qPNo2j6S0svytZHMQ=;
+        b=BtUmIY0caeD3AtM4Kv+wZwAeW71UwH9GfoATnk5nsDCe4t/VCGR/935FP+zT1O9n1y
+         8x+fT4c5TbtkJnkn4AGdJ3qZCaYRi0GPi47tTk9FuONyS05szpOzWGBybTurXVEItAe/
+         ZgfXE9wxNpz1Sw6O9xC5l2e5cSrYx8VfjbqLjf3AMNBOzCiHF8UY+g1GW4qWBBQ+g0Iv
+         ru/Ob+9hesqmDsGsCybqswzi/8YlM7j8SkzdAlnM9OVNUNusHAzqxHy4j9xgc2OQ7T0z
+         WLo8bdZYmnUQPWm62EybpIA/PjddDM3Uxq4/Z+4sHkDbgK6EvjGLWBVBfzMeyUJplJto
+         FKeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755336884; x=1755941684;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OGEFmcc706ihZ0upVBFGijpGh8qPNo2j6S0svytZHMQ=;
+        b=k579QmcoIzS1syUfTgtVY7bnHhjq4lwK8cEodfruvu1bgsE2Mxpy9atyeb3svn9OSh
+         OwDW890ttd66TtkRpB2nj3Wj4uWnhhb0Am7ue1eefOk1OLp2ZpYlYkFDyEF2NW+Nw66o
+         u+afYaYKTOyU2sQ9Kzt0RrPTLkoCGTuXrubwNWlhIuouCWFNSrrwgqbCmnrtrAcbakfp
+         isfSNrvf8pupvSvhCtmSPhk4uv0AV+N/qhaYvTamP+LbaaefEQ1fpSOJWaPqVyfFpJwf
+         TERHpXXIJdVTWRniIAqrUOoE0BNyVz77NX+VbG7YInHzj6EItmwhK6u2fJEiPmkEVuvF
+         ZFDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+6RLMg2PQrcHs0FmVNKPIuqDysaLSBUG86nU4StUbddr1ggDEL5bHKQDTgMF32AkUm/rIYsQ@vger.kernel.org, AJvYcCVxOu6gEz+LKnCRO6YA3xv0kbLlWyzKTeO9mrIFvXvon3RmedSBdmb2e9mGVtLYyYZ3C/MFZQNlJpRYgtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAPrzUbKLjNc3aIMb8twxbx8Cn+7PPgdpuNfO+A+dj9XFhg4TZ
+	u6cRRVtbfoghbcN7LB75/BAbUwhw5xJNRQXBQ0JHJT4r6RCt55B2kCgjqM9+89iY
+X-Gm-Gg: ASbGncvYcJbD51IM6iLceGP82xvd/UYyQoLLv7Yjbko+ak/k/8e62k8gFaEhBW1IMG+
+	qr2/oy8sj1eSInyMPO0b41y4L2kRcuk1LfCt6i2TAkY6aSUHU93TV2JdMB+wLy/wy1aglMti39z
+	8YyGjU512mznyJS8qMiU2LazFce1MwXh/ZdkcGao/N1vrXE+IQ339k3dmZiWPL2m/FbvbABzLOm
+	0Q0hjNUXCInGWhvB2eDA/IdC4MmRfhMhOTOhyg46JSX0IZYJnXj3wv+hsVXUIsZgtUX9cyK9cHE
+	pcmbO9dEsVFvgKf7dVbpPWjTfu/aCz8ac1+sEnSOJ4g4Wyc5uoAB8GQCR5ikdQiQGDqHl/38mgh
+	gpemq9VY28/nKTtG5AG0CnNX2u6A0pSDPdDTl0lMU+DVgJzDoEVz2lAYRhXJvy8yqkHZqlw==
+X-Google-Smtp-Source: AGHT+IFMl3BEqyBUZWA6WoiCtiouNPFnKV7x/pY+D6CDUDwdFhqIC+6ZOsO6pvpFXzWMyJQhM5UnQw==
+X-Received: by 2002:a05:6102:26cf:b0:4e5:9380:9c25 with SMTP id ada2fe7eead31-5126ad1e206mr1982168137.3.1755336884432;
+        Sat, 16 Aug 2025 02:34:44 -0700 (PDT)
+Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
+        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-890277bf746sm681112241.5.2025.08.16.02.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 02:34:43 -0700 (PDT)
+Date: Sat, 16 Aug 2025 05:34:43 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Xin Zhao <jackzxcui1989@163.com>
+Message-ID: <willemdebruijn.kernel.1096d5f9f114f@gmail.com>
+In-Reply-To: <20250816024831.1451167-1-jackzxcui1989@163.com>
+References: <20250816024831.1451167-1-jackzxcui1989@163.com>
+Subject: Re: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729152804.2411621-1-arnd@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 05:28:00PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+Xin Zhao wrote:
+> In a system with high real-time requirements, the timeout mechanism of
+> ordinary timers with jiffies granularity is insufficient to meet the
+> demands for real-time performance. Meanwhile, the optimization of CPU
+> usage with af_packet is quite significant. Use hrtimer instead of timer
+> to help compensate for the shortcomings in real-time performance.
+> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+> This is unacceptable in some high real-time systems that require timely
+> processing of network packets. By replacing it with hrtimer, if a timeout
+> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+> 3 ms.
 > 
-> Compile-testing this driver is only possible when the AMBA bus driver is
-> available in the kernel:
-> 
-> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_remove':
-> nomadik-rng.c:(.text+0x67): undefined reference to `amba_release_regions'
-> x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_probe':
-> nomadik-rng.c:(.text+0xee): undefined reference to `amba_request_regions'
-> x86_64-linux-ld: nomadik-rng.c:(.text+0x18d): undefined reference to `amba_release_regions'
-> 
-> The was previously implied by the 'depends on ARCH_NOMADIK', but needs to be
-> specified for the COMPILE_TEST case.
-> 
-> Fixes: d5e93b3374e4 ("hwrng: Kconfig - Add helper dependency on COMPILE_TEST")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/char/hw_random/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Discussion in v2 is still ongoing. This will have to be respun based
+on that.
 
