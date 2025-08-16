@@ -1,140 +1,125 @@
-Return-Path: <linux-kernel+bounces-772088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A97B28E95
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD130B28E9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F687AA7325
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BBDAAA7BD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 14:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF1F298242;
-	Sat, 16 Aug 2025 14:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809702F0668;
+	Sat, 16 Aug 2025 14:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJzySBZ6"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5cR47R6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34558462;
-	Sat, 16 Aug 2025 14:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74042D46CA;
+	Sat, 16 Aug 2025 14:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755355585; cv=none; b=I+TOcpw3H5dOljI3Y75Bugr3hcdao3Jv2gHH7YS1zoEiJfMwaUhuKVeVZGcDJ4zIzqkCXBJJZ6OvdJupomw34IItnuh6vp/Ot/te4wPnPGjXbmKItGjLi9g2VPAdvgAc3tei3DuRsgKmXx8jX9ReW/u5apyh8hyW0EdinvpP2ew=
+	t=1755355830; cv=none; b=YlGqqhWIPi2YbWMPj43H4KBPW2+UbRz+P2LLXu1MYj4m1MmgZCanIW4rZDVg/oENyekpKweIHkaYYaOsv6e6/pBs1YLj25EFUBp/Qo2hxD0sDGHOYbw9C2X1noZuUrmJqolLfCWaHd4hzw2g4vpYvXZO00eYYgEBlRbr7LKx35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755355585; c=relaxed/simple;
-	bh=5aaRUSH/4btpHZ9YU0dxGdPsemsBQH/FhjTp881Z+ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mham7aDckXmAsvH4dTz1S+umMuvPZzNI2T1LNUIeNhW271J6x7x9qvT06i6T6Z8Vvrtj7yde8rLHg6vkcg5jj43xVxkRMYG/C9PbH2R7imxXkjcMCuDoo2FroEAj5mvGaKGON5MHkgNiZmbsCSF5Ked9xiciL9UDdDKoIe9i7sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJzySBZ6; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so4351847a12.3;
-        Sat, 16 Aug 2025 07:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755355582; x=1755960382; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gw+P/Pa0Dw/S93nPWnlSUfNlUoEoEUunc4lH2vJItmg=;
-        b=cJzySBZ6IldNtRgM4U4u7E2NpOgBEyLvm0mp55GTf+C58VeDwWsHVUhnfU/psS9U61
-         ORMWAsQ8sXoh5s3JN3U7ExBngUEdJ2bNlMRsyTV22JmlRrsPREuwID12dcTD/poE9/pD
-         +PC9K3KQyN2voNZB44I3Ng6rX5pM9LDZrMVD8X4RZc8ltjLe5cRw5tUcQkXt1AoiZAoa
-         2Ot7RpbTvEYDoHbgU7Nzs4WsjYTKBQFjlV89ie8ZPGp3RHgRu8XrrXq3FRMZGKjfUrcQ
-         TkTUQnT/kBoBs7hLi4GoNKCnX+TDJY6znhFwi/E133lQyuB3DK0cyaD6/WpY+mX0MxKY
-         5TvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755355582; x=1755960382;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gw+P/Pa0Dw/S93nPWnlSUfNlUoEoEUunc4lH2vJItmg=;
-        b=SYWNDuia2o7Vz7ay/sIv/7OFayBgmz7jY5nWEJDCV/9C+NDS1r4EdWntJv5W4mFUbS
-         OQi3dmOCwhq07acHH0ViOt8R8gDjvgPv43hoQ81Hl6U7Cqbquza6M0T4TbfFMBidTy9N
-         OqsrB1Yqhg4J6Zi3+15VzaPxXmWA5rhu68tFvBf5U5i9Qpv8n7oUDIxqfk7yLn8xTKcY
-         pvcXN47Tc+o2b1pm0AbzuAFIHkhLkYWpaQOiXCwAGuZ8QyeEBJEGjO88fhe+CkSnEjFT
-         xl6Kd/6FDJhhjda53EUk543jk1Wkc89UntgHnxn2I8lnIS5QVdlMZ3Onz6XgyowTQsYd
-         e3Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEerzD3vtNjw3B26kcoJP7L5dIfW9xVskYClrz6G/+uFoFHW28NWF6RR4q31tfcbae/F5VldajXA01XMc5e6md@vger.kernel.org, AJvYcCWHCYDiCWRXAquYZXSoJUJoRnOApux3vfm8FH7OdFqG4GEWNdhbn4+PCujzZtPxRzc04kwgmf74QOCnTM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzpXHby8UhuSMp4p7zQxN8jdNHw5FMCPzUDmvwNH4GvtuBsmoK
-	rYCmU+gV7dRUYBnnVvlr0yAnJgFjUZdpcPmNyBwm6KoI2v+tDljGMkgO
-X-Gm-Gg: ASbGncsHOF6TOdciwSewdWBCWCgKsctyFlWbBRHlYWfzVwukVLQ8aLv+7S2zKwMXFM5
-	xzfvqfBnC0bGVOKXpeXI0uoL7Al+ORxCCNVDJRtK6iYrCg2BbVGjl1PwuMSSOtAzRETK6XStQXP
-	VNwGuvTS1HEhJv7fWI/H1wlaROke7QOKfNq7690Nm+FZJ3xCelkG6RdxJVZF6orky3g4ci+R5iw
-	/LoH1ey2bb/WgPp5TtPo2ZDOuQWfUCuOyk+F46IWLC5kbqJAFqYl2wakLxX+1NMMqeP3/0Yxo62
-	Yojzfvpj46l2mJ+T0LmH1QBTx2LcQU4OKzwSRJazYGDNZ5T/k0CyimcXPcCi1hlsScHRmQ4dRC1
-	lTwXpNB9AWWNpfCfL7TPTVw==
-X-Google-Smtp-Source: AGHT+IEmWAGVkWxKGm+74BpjO/R8tO3rFmp421TY2+nMdu59Zv37dPIM+ndBXIrW+4ecQTGD7IRrMQ==
-X-Received: by 2002:a05:6402:1d48:b0:618:2733:1a52 with SMTP id 4fb4d7f45d1cf-618b050f323mr4526625a12.8.1755355581871;
-        Sat, 16 Aug 2025 07:46:21 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01ae6bcsm3401904a12.37.2025.08.16.07.46.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Aug 2025 07:46:21 -0700 (PDT)
-Date: Sat, 16 Aug 2025 14:46:21 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, richard.weiyang@gmail.com, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	donettom@linux.ibm.com, ritesh.list@gmail.com
-Subject: Re: [PATCH v4 7/7] selftests/mm: skip hugepage-mremap test if
- userfaultfd unavailable
-Message-ID: <20250816144621.3d4ocd44slizboxy@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250816040113.760010-1-aboorvad@linux.ibm.com>
- <20250816040113.760010-8-aboorvad@linux.ibm.com>
+	s=arc-20240116; t=1755355830; c=relaxed/simple;
+	bh=3/6j6G8m0fiGcHsJh9fJn6cHi5TaoU26V0jjDuRfG+A=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VsMtu4UU4/DgQAtRIrBVD/Nlak/KGlIWlAhLR9C6tV4ud0mLsfdv2JLBzbIyFO/XMG5pp4tlMIWCBSvC7v8ozL7oK3GsIKq1YGzseYVceZIGRmjLm3mBYfmZackjLtR7ZZf6Eg9WVSsRu+wgEJMdmYZHB6QU/qo1vWU40+v2s64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5cR47R6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA1CC4CEEF;
+	Sat, 16 Aug 2025 14:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755355829;
+	bh=3/6j6G8m0fiGcHsJh9fJn6cHi5TaoU26V0jjDuRfG+A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f5cR47R6qxae48z9hM2mG0DES2xjsZfWd4eXtRf/u1POszbsgvpHz4oYwRrRBX+sF
+	 HG6wQSXjA+J2Q+ejd2Hjw0bdXH/x8EWJdO1fFoHk7HM+xI8vmqM62WFKbmytnFv2gr
+	 HeVNXOvdO5WWPv5M0aSm6ulo7kGtnqi6KPVSSUZtlC/XrI0kijHEBDuR8aqk5NX/sG
+	 VkDKCpTG3iO7R0NcddX+8jEUIjsKu/eC+JsuYcF0W4VMqramGQmI/6qiHiQAGxZfJh
+	 z4ttB6PpFLctgPaTtIZLTJ3gwcR7uCGS71IV8U8gBMYH3xtEPGVFJlnj1bIwegDXO+
+	 SSLSAs0zDe72A==
+Date: Sat, 16 Aug 2025 23:50:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: olsajiri@gmail.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ hca@linux.ibm.com, revest@chromium.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next v4 1/4] fprobe: use rhltable for
+ fprobe_ip_table
+Message-Id: <20250816235023.4dabfbc13a46a859de61cf4d@kernel.org>
+In-Reply-To: <20250815064712.771089-2-dongml2@chinatelecom.cn>
+References: <20250815064712.771089-1-dongml2@chinatelecom.cn>
+	<20250815064712.771089-2-dongml2@chinatelecom.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816040113.760010-8-aboorvad@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 16, 2025 at 09:31:13AM +0530, Aboorva Devarajan wrote:
->Gracefully skip test if userfaultfd is not supported (ENOSYS) or not
->permitted (EPERM), instead of failing.  This avoids misleading failures
->with clear skip messages.
->
->--------------
->Before Patch
->--------------
->~ running ./hugepage-mremap
->...
->~ Bail out! userfaultfd: Function not implemented
->~ Planned tests != run tests (1 != 0)
->~ Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
->~ [FAIL]
->not ok 4 hugepage-mremap # exit=1
->
->--------------
->After Patch
->--------------
->~ running ./hugepage-mremap
->...
->~ ok 2 # SKIP userfaultfd is not supported/not enabled.
->~ 1 skipped test(s) detected.
->~ Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
->~ [SKIP]
->ok 4 hugepage-mremap # SKIP
->
->Co-developed-by: Donet Tom <donettom@linux.ibm.com>
->Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->Acked-by: David Hildenbrand <david@redhat.com>
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Hi Menglong,
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Sorry, one more thing.
+
+> @@ -260,14 +263,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  	if (WARN_ON_ONCE(!fregs))
+>  		return 0;
+>  
+> -	first = node = find_first_fprobe_node(func);
+> -	if (unlikely(!first))
+> -		return 0;
+> -
+> +	rcu_read_lock();
+
+Actually, we don't need these rcu_read_lock() in this function, because
+the caller function_graph_enter_regs() uses ftrace_test_recursion_trylock()
+which disables preemption. Thus we don't need to do this again here.
+
+> +	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+>  	reserved_words = 0;
+> -	hlist_for_each_entry_from_rcu(node, hlist) {
+> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  		if (node->addr != func)
+> -			break;
+> +			continue;
+>  		fp = READ_ONCE(node->fp);
+>  		if (!fp || !fp->exit_handler)
+>  			continue;
+> @@ -278,17 +279,19 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  		reserved_words +=
+>  			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
+>  	}
+> -	node = first;
+> +	rcu_read_unlock();
+>  	if (reserved_words) {
+>  		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
+>  		if (unlikely(!fgraph_data)) {
+> -			hlist_for_each_entry_from_rcu(node, hlist) {
+> +			rcu_read_lock();
+
+Ditto.
+
+> +			rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  				if (node->addr != func)
+> -					break;
+> +					continue;
+>  				fp = READ_ONCE(node->fp);
+>  				if (fp && !fprobe_disabled(fp))
+>  					fp->nmissed++;
+>  			}
+> +			rcu_read_unlock();
+>  			return 0;
+>  		}
+>  	}
+
+Thank you,
+
 
 -- 
-Wei Yang
-Help you, Help me
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
