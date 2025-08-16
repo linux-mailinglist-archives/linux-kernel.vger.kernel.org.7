@@ -1,138 +1,195 @@
-Return-Path: <linux-kernel+bounces-771767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B181B28B59
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:23:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E37B28B5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7629DA25065
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0CD2A0B93
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82E62264BE;
-	Sat, 16 Aug 2025 07:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97347226CE5;
+	Sat, 16 Aug 2025 07:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MhP7xOm5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OgJ+JYaN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF9F1FF1C4;
-	Sat, 16 Aug 2025 07:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADCA317700;
+	Sat, 16 Aug 2025 07:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755328972; cv=none; b=Aua1NhtZmitQzSVI7WWswg9wCW/SrDMHhrms2KmGRL6lnklWGJqohTNs70utLYWkuFUD7TvQeFuTHStklSR9bk8ByYEU6C1vrl6TdL6jbxA+iXyTXdODjlYvoqNg2lA/HulaJWuyynvnyOvvKuun98L4d6R0sDJ9sNFoSVSldOU=
+	t=1755329171; cv=none; b=DXmkuuSpWpda/iZvvNybTj7vG0zeAwwxCdgBCPVr52lgmIpFVyP747gQzYeCBbntH/GVjO+KWuPUlzPJeuIfBkdwgd3hDMTdjNv10tkSgb+zF0b9OCJx3nK8meplfjEmE6YHyyrIFDWRNXHd93vpju9UsBivVv8CJ9TCLUtid+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755328972; c=relaxed/simple;
-	bh=RktG3mJqHtP7HemL3r/r9u2zJXZn1GV5rAd1YQbSD60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5DPzKohvW7p3n8oi2Vo+VkePY0zCazXJfdFH37jqRpgXoxxcfk5YVhdJqqz9N/PuvkqhTWUso9d7CM1f5IIvBvnROMdsdpjIfAcdyzOQ89nIXAJHZ3XHNKnDgnWut7EOeDN1jzTf0m1ScmCF42/Ra9Vxgm+hB9VE1ddEpb70PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MhP7xOm5; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755328971; x=1786864971;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RktG3mJqHtP7HemL3r/r9u2zJXZn1GV5rAd1YQbSD60=;
-  b=MhP7xOm5XWBxVyEv0QX+kwKM2aIjxJDbcjZSWKK8/6+HNH+isiOnqy4V
-   EA45u7zgbihF3IXFoGqzsnuL/19tgBKiz/7dkB/ZPX1WkBb4O+yKx+f/B
-   bx/gppjbsIwtiMNzI4CZjHBZmtTVe+kFCYNqo037VLy8CaDD+XuNNAtHk
-   7LC8ieEjzsYw4jWmiGiht+rR4M7nmjd0Lxj3WVzjLJRbrjjpWO4BVFAX0
-   E/ptvQiQALGzZ5jPyYP5QFnRZDxbRE7zoAH5ido+IsELMkdEoCM3z7QKM
-   y5ah7IWjPhSgCKhBXgWUAy9m83BvudiTazTBhlnkzCjq1LgVhrL4Xifm+
-   Q==;
-X-CSE-ConnectionGUID: lCyQorQ4Ru+w+dWX3/ux5g==
-X-CSE-MsgGUID: heqREVKKTmK0bLDw6GPBIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="57350579"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57350579"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 00:22:50 -0700
-X-CSE-ConnectionGUID: ySHHbVpPQRCbMrfyeMv0Zw==
-X-CSE-MsgGUID: NuP/qYHYTZuGYdpC79nLdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="190888765"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 16 Aug 2025 00:22:47 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unBFU-000CfM-2t;
-	Sat, 16 Aug 2025 07:22:44 +0000
-Date: Sat, 16 Aug 2025 15:22:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-hyperv@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Tianyu Lan <tiala@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, Li Tian <litian@redhat.com>,
-	Philipp Rudo <prudo@redhat.com>
-Subject: Re: [PATCH] x86/hyperv: Fix kdump on Azure CVMs
-Message-ID: <202508161430.0GC3nT8J-lkp@intel.com>
-References: <20250815133725.1591863-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1755329171; c=relaxed/simple;
+	bh=4XAz9bon46+H1VJjJGsLMcoXdCqYbz6Q3iS4hHKWTw8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CzI9sbJGGzTlItsNdMriTCL0EBwOq7YVGGRv5G1+bzhOicNxrZQb0ffVQqZPxicEKaJqhDpgVTqzyR3x2iO9RWjmlPhoY9su4EXMQdmme+kV/rukJsD4XKCIM79NDsBchO+VGOGJLHh69yaDAg1CwSrUme1MdxC+TVwTYa+EdDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OgJ+JYaN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57G6CpDG010298;
+	Sat, 16 Aug 2025 07:25:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=FujwLWBHrI1ua+hJ0VoVJf
+	0F1VieTR0FwJJt+VOP6l8=; b=OgJ+JYaNAmSsm+z4+RlHC/brPaEgXCs9Kq3ldH
+	KBIxLepTd7YBJAGVE00MqMeTEiBblpwzNFw0ZiWRKgmQC+1PO3aoAo07sWHh7NR6
+	e3KuR2OtKOROv4mUkOZakyj7D20K1FvmpYpuuEznokbvff57foTReIYDb+QmX3R4
+	SfpjkRNAD0w8N6zDrmJRLJuQGCpGjDkZhaeUD1A1xyLKSrKITxXwL3C5IBVjDqrg
+	4WIHnlv8wuM2QA2GnHyQLlQdZYpmEv74bn9Pqiep7QvrHsnr+kfHRVDzcIBCEU+i
+	P9lMG8ii07GrXyKvoLLkxC8dq+DP0lD1aV7Kp2i94TfGMQuw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jjc7r82j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Aug 2025 07:25:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57G7PnsB029208
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Aug 2025 07:25:49 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Sat, 16 Aug 2025 00:25:48 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v11 0/2] coresight: Add label sysfs node support
+Date: Sat, 16 Aug 2025 00:25:27 -0700
+Message-ID: <20250816072529.3716968-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815133725.1591863-1-vkuznets@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX6BqxJfVmQvTi
+ aQZ7bN30ex9GhR0/e2TMtx9m+ZZXVJKCN+WSBAw8MKA61vCsjY1v5Y0o7UFItYFNuQG0fwIGPGA
+ Z5cg/7KWFQjQJ6eEhiMpDsGLt8UBQ2LR/YNEiB0Ugk/BJ9rzbEFmHZwR3IsplnE2ymsmj2Wv+U6
+ uXpZT9QYKH3qtc9qzEZmUQ6il5E3YBnFGCJKmzLhRvKv6eJ2bvSLxUU0F7pak+7XnXN3vFUQ+v1
+ 8b+ASf/xrrmsqW3QZ1Av3HaoLJrsyGDprEHUiWKDddjOze3BTw8iVMxllu6dDhd6FRm4BeCqEt5
+ vKFlO/B1Hru01hUkoe0TLz1ELinJUl3C8NAGueJwJbydZ436dYDEdo6T/uwCFQ7CnxmuT/GLp5P
+ VJXv4l8E
+X-Authority-Analysis: v=2.4 cv=c4mrQQ9l c=1 sm=1 tr=0 ts=68a0327e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=2OwXVqhp2XgA:10 a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=C_w9g3tfadNPII6ijWgA:9 a=W4TVW4IDbPiebHqcZpNg:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: p0ayFbln2rBf2s9RBK1_SopPKg-3kKWq
+X-Proofpoint-ORIG-GUID: p0ayFbln2rBf2s9RBK1_SopPKg-3kKWq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-16_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160033
 
-Hi Vitaly,
+Change since V10:
+1. Update kernel version to 6.18
+V10 link: https://lkml.org/lkml/2025/8/6/520
 
-kernel test robot noticed the following build errors:
+Change since V9:
+1. Replace scnprintf with sysfs_emit.
+2. Update date in ABI files.
+V9 link: https://lkml.org/lkml/2025/7/17/832
 
-[auto build test ERROR on tip/x86/core]
-[also build test ERROR on linus/master v6.17-rc1]
-[cannot apply to next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Change since V8:
+1. Add label in all documentations of coresight components.
+2. Add control of the visibility of the label sysfs attribute.
+V8 link: https://lkml.org/lkml/2025/7/3/985
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vitaly-Kuznetsov/x86-hyperv-Fix-kdump-on-Azure-CVMs/20250815-214053
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20250815133725.1591863-1-vkuznets%40redhat.com
-patch subject: [PATCH] x86/hyperv: Fix kdump on Azure CVMs
-config: arm64-randconfig-003-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161430.0GC3nT8J-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161430.0GC3nT8J-lkp@intel.com/reproduce)
+Change since V7:
+1. Update the conflict when apply to coresight next.
+2. Update the Date and version in ABI file.
+V7 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250226121926.2687497-3-quic_jinlmao@quicinc.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161430.0GC3nT8J-lkp@intel.com/
+Change since V6:
+1. Update the date and version in ABI file.
 
-All errors (new ones prefixed by >>):
+Change since V5:
+1. Update the kernel version of ABI files.
+2. Add link of different patch versions.
+V5 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20241210122253.31926-1-quic_jinlmao@quicinc.com/
 
-   drivers/hv/vmbus_drv.c: In function 'hv_kexec_handler':
->> drivers/hv/vmbus_drv.c:2786:2: error: implicit declaration of function 'hv_ivm_clear_host_access' [-Werror=implicit-function-declaration]
-     hv_ivm_clear_host_access();
-     ^~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Change since V4:
+1. Add label in DT and add label sysfs node for each coresight device.
+V4 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
 
+Change since V3:
+1. Change device-name to arm,cs-dev-name.
+2. Add arm,cs-dev-name to only CTI and sources' dt-binding.
+V3 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240131082628.6288-1-quic_jinlmao@quicinc.com/
 
-vim +/hv_ivm_clear_host_access +2786 drivers/hv/vmbus_drv.c
+Change since V2:
+1. Fix the error in coresight core.
+drivers/hwtracing/coresight/coresight-core.c:1775:7: error: assigning to 'char *' from 'const char *' discards qualifiers
 
-  2778	
-  2779	static void hv_kexec_handler(void)
-  2780	{
-  2781		hv_stimer_global_cleanup();
-  2782		vmbus_initiate_unload(false);
-  2783		/* Make sure conn_state is set as hv_synic_cleanup checks for it */
-  2784		mb();
-  2785		cpuhp_remove_state(hyperv_cpuhp_online);
-> 2786		hv_ivm_clear_host_access();
-  2787	};
-  2788	
+2. Fix the warning when run dtbinding check.
+Documentation/devicetree/bindings/arm/arm,coresight-cpu-debug.yaml: device-name: missing type definition
+V2 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240115164252.26510-1-quic_jinlmao@quicinc.com/
+
+Change since V1:
+1. Change coresight-name to device name.
+2. Add the device-name in coresight dt bindings.
+V1 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230208110716.18321-1-quic_jinlmao@quicinc.com/#25231737
+
+Mao Jinlong (2):
+  dt-bindings: arm: Add label in the coresight components
+  coresight: Add label sysfs node support
+
+ .../testing/sysfs-bus-coresight-devices-cti   |  6 ++
+ .../sysfs-bus-coresight-devices-dummy-source  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etb10 |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm3x |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm4x |  6 ++
+ .../sysfs-bus-coresight-devices-funnel        |  6 ++
+ .../testing/sysfs-bus-coresight-devices-stm   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tmc   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tpdm  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-trbe  |  6 ++
+ .../bindings/arm/arm,coresight-cti.yaml       |  4 ++
+ .../arm/arm,coresight-dummy-sink.yaml         |  4 ++
+ .../arm/arm,coresight-dummy-source.yaml       |  4 ++
+ .../arm/arm,coresight-dynamic-funnel.yaml     |  4 ++
+ .../arm/arm,coresight-dynamic-replicator.yaml |  4 ++
+ .../bindings/arm/arm,coresight-etb10.yaml     |  4 ++
+ .../bindings/arm/arm,coresight-etm.yaml       |  4 ++
+ .../arm/arm,coresight-static-funnel.yaml      |  4 ++
+ .../arm/arm,coresight-static-replicator.yaml  |  4 ++
+ .../bindings/arm/arm,coresight-tmc.yaml       |  4 ++
+ .../bindings/arm/arm,coresight-tpiu.yaml      |  4 ++
+ .../bindings/arm/qcom,coresight-ctcu.yaml     |  4 ++
+ .../arm/qcom,coresight-remote-etm.yaml        |  4 ++
+ .../bindings/arm/qcom,coresight-tpda.yaml     |  4 ++
+ .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 ++
+ drivers/hwtracing/coresight/coresight-sysfs.c | 71 ++++++++++++++++++-
+ 26 files changed, 189 insertions(+), 2 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
