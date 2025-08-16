@@ -1,228 +1,155 @@
-Return-Path: <linux-kernel+bounces-771907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2D0B28CC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6828B28CC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 366AB5E7698
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4863FB0464A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC44928F53F;
-	Sat, 16 Aug 2025 10:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D614291C15;
+	Sat, 16 Aug 2025 10:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/HHbTnV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ggbz/Z/p"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE8528E607;
-	Sat, 16 Aug 2025 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE69728FFE7
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755339312; cv=none; b=Kizh4IaAlv8bD4T10V7fk/etIw2AWWYhrKSjobapykKvzee5HXoGs9SlMFr7s0r8Skxj1wLGLEUAQa3nZejhjhMVWfPS852xMWew52o/zhcOd6fEuOpAlGu1bF/iGg6Jc/UcRwwPy72SDqvLVPAN8ZfZ8p0bIYn/YX6x1hgVsPw=
+	t=1755339329; cv=none; b=ma8XSruwHpaiNKeGRfq0eQjIxgTJm7FLIiiUHWJ49syeF8bmCdryYmofycSFvjRtGbKLSwj8ZiEwyVg7TW23MlAVqbJX8efwN2ca8Z3DdoCgolyg+rP53qBHbL2RA21ULCqrI3BNhJ3A1cdguZrOkuTITZzqIOu54YmWMSHQnq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755339312; c=relaxed/simple;
-	bh=z0ufMcym3P8lbUCGjA4fColIIiLdctpjv2CCx6NAb3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AvkkX+WufVF/TUAzZnsZGm3S4MHtxCkM4ESw9zag6F/3hHBsYmdNxeDta6OEL5hIpcwAeA4Xs5tEjMWGrio1rhwBYDHj3ONxOKEnx5quOB4pBUWKncmiG9kh7RflXTpXa3M83I2kg4xurgZtmk8cbR4hBwpzsf88dLbYFhAH+ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/HHbTnV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388EEC4CEF4;
-	Sat, 16 Aug 2025 10:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755339311;
-	bh=z0ufMcym3P8lbUCGjA4fColIIiLdctpjv2CCx6NAb3M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k/HHbTnVJEMBiWI04GNKSOJXSUhKCQwasIJbCJ+gMWkJex9GDhO+e6RrUrhCTwNPN
-	 Re4cPSCPmEfAUX2B6toYQ/bDTv8N0CjgG1GrXZ8oyr5o2XFn0XkGNHkMhEEoQuPLt0
-	 eMUUIp1TpsLWoYU+SFBqFID76Z57cQTQZbdBoaORnaCO+c3uMcuIWDnkInLGhPGAqz
-	 ecp2ksNyZY0RtoVo9VZdcXOqKtZiuBUlTSs7uFgI5gSM6UAap+k9Qlti9qdQ731BkB
-	 +Myxiu6HxVMioFZlM4qQxBiBUdRKwiIXV52NghhaNWgtLfNVFLa0FZKYRNSp1sJuuI
-	 edYJGfR2UUAJw==
-Date: Sat, 16 Aug 2025 11:15:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ben Collins <bcollins@watter.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <20250816111504.3ae0e3f3@jic23-huawei>
-In-Reply-To: <20250815164627.22002-6-bcollins@watter.com>
-References: <20250815164627.22002-1-bcollins@watter.com>
-	<20250815164627.22002-6-bcollins@watter.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755339329; c=relaxed/simple;
+	bh=Nh3NrLx9OEag4aosCiVt6RzyBczUYLkKTLWOeNhbtQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyrqfP2tCMonMt5Idy3ssWWMNGaPPFD9is2VUpJquHsLZVBn9ai1uLPcc+dfNWU4RDIjewT6qjjO76M9/4FSXjfWnrLi5QQaLVVmObvvHU3n8+hXF5jfJoRcD5UbRwurvTrxEWPP8QLBtR0rPUG85Kohp4dRit91FxAwSueJXmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ggbz/Z/p; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9d41baedeso1476154f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755339326; x=1755944126; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lGt82GlIKWDzCqErqhiqhcXLyT50Jvw2mM2mW/AA2Dw=;
+        b=Ggbz/Z/p/nBIjYYEAMC69itrPy04Uw77np836rOtmdq5YPDh2v2TYrKzt4qDWtUKc3
+         wmn7bKpE7wtqOTqeEAflMooNtM0YuLU0hLvUrvinalQ6JI0i7/FJ77FZJvlSms5Wh6yx
+         YLImcbfxnNQr6hC8A5ZzsdhwG8ETaKZi/haREoE8AOGQ/fGTWKZN9Mdk0jc6Q0lhz73u
+         MlsEF31lKZh6RETIshtWuYm3q+CHmrOnmgWysSteRaIATyZMn2f5tyzFWx/Kt2FDVkvw
+         JxPDMKNoZ/MvhgBjjUl2ZpWRiM7OqSuYcLeYLkbz8cYxv/hISLVI7DG3NP2kkXs5h14b
+         mOQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755339326; x=1755944126;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGt82GlIKWDzCqErqhiqhcXLyT50Jvw2mM2mW/AA2Dw=;
+        b=OoQOdlkcLdCiCMIMmHwauc0WCeXiAYg0wdYYENfmtl3/7/asBlNZ9RNojpEm272vIZ
+         kxvrzB/8DS3OBp7F9gWMU7fpMquhZ8dkBTnG6fVwNSkD/R0DExx4O1S0Gjc2fNdhyLpr
+         5E22H6Ipsr7NBQSrlCEEGT7IPHYOvnAAGrs1UH0NYqe+nuGkO8CzkeQxNbdEcS1wsNRf
+         mmknQVj2VOxeobmFXpP76XLoKHZo+GZweTFXU/W7qf1cid+4f5wJpHudSt76lQPYYYAJ
+         dxLoGw9iMdoK29L5/lYXVtIAPTqv9OoStsp+U6RNUPx95SOVhU8lcGtmcNlX7X/Z5dk/
+         tRqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7tqqxoekqeZuZIxndZ4cduRVBLB2RmDFlOCgauvxn6TGEO9sfKw27ezsCLL2KbcEQpEfLsFbOIiAlQ20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynPdNdPsdcxEzB9uWbnWwNX3CNGLRlbdhO50ExaajGQcZnen5a
+	M9EQ0UtJMFFhguL81rkINnGCfE6fT/Y+5OKdVrlo3xBLRKJjpCVlXmMG2Bw5eEWzVVA=
+X-Gm-Gg: ASbGncsQ6oA7GYh6SSqN4toZy1jkH1q6c6KyIX+RuXauPD6F1j9nBFrNwlEuZTAgv4L
+	kf6fXdLiRrlMS+gyZoZLHYsKrHZW3vvHpLeAiIpLyxXKmIuBwyPaCDekJgghJKeju7D8+uGpbZC
+	ijH0yOjOMRTh1VY8Md1y3qgIQ6+eE/49s1bvKGWfboh6J8DhoJ2q3NlfI1tTF7e15HqYReeOxMN
+	sJkJgEVF/E7Yrw/sv5XqqeImuRm/jjL3GoyhpBopspxOo0mFEDSJlqylJpnjs9vWp751yPoJqzP
+	95WHleL5+LHR33Oohk8sseCckxNuR0/DqSQhDlxOrLIaUo5tqgENdKrewltsklkQJTqeqGyGZqR
+	WrnJuT8Jh1qJbDQRfphGRQN8MZqHj0aZIQXBYty8oXNHBdTDC2gTbnLZuyujhCno5
+X-Google-Smtp-Source: AGHT+IGmLANuUFgyoBXIF4SnP+CvmH/WZED91QLhAbarFtBDm+auOklS8ukCHnJhlG0Pcv8G6VzDtQ==
+X-Received: by 2002:a05:6000:420a:b0:3b7:886b:fb76 with SMTP id ffacd0b85a97d-3bb6636cb0emr4085932f8f.12.1755339326328;
+        Sat, 16 Aug 2025 03:15:26 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a22319780sm50655435e9.7.2025.08.16.03.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 03:15:25 -0700 (PDT)
+Message-ID: <956110cf-d309-430c-b30f-a9c442e015cf@linaro.org>
+Date: Sat, 16 Aug 2025 11:15:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/24] media: iris: Fix memory leak by freeing
+ untracked persist buffer
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
+ Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-3-c725ff673078@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250813-iris-video-encoder-v2-3-c725ff673078@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Aug 2025 16:46:07 +0000
-Ben Collins <bcollins@watter.com> wrote:
-
-> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> to allow get/set of this value.
+On 13/08/2025 10:37, Dikshita Agarwal wrote:
+> One internal buffer which is allocated only once per session was not
+> being freed during session close because it was not being tracked as
+> part of internal buffer list which resulted in a memory leak.
 > 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-
-This needs a lot more description given these should be frequencies.
-We identified recently that some other drivers have this wrong but
-we should be looking to fix those if possible, not replicate it.
-
-The infinite value does need some more discussion. Lets carry that
-on in the v2 thread.
-
-Jonathan
-
-
+> Add the necessary logic to explicitly free the untracked internal buffer
+> during session close to ensure all allocated memory is released
+> properly.
+> 
+> Fixes: 73702f45db81 ("media: iris: allocate, initialize and queue internal buffers")
+> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->  drivers/iio/temperature/mcp9600.c | 73 +++++++++++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
+>   drivers/media/platform/qcom/iris/iris_buffer.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> index 361572a241f06..896520ddf6d3c 100644
-> --- a/drivers/iio/temperature/mcp9600.c
-> +++ b/drivers/iio/temperature/mcp9600.c
-> @@ -31,6 +31,7 @@
->  #define MCP9600_STATUS_ALERT(x)		BIT(x)
->  #define MCP9600_SENSOR_CFG		0x05
->  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
-> +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
->  #define MCP9600_ALERT_CFG1		0x08
->  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
->  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-> @@ -94,6 +95,10 @@ static const int mcp9600_tc_types[] = {
->  	[THERMOCOUPLE_TYPE_R] = 'R',
->  };
->  
-> +static const int mcp_iir_coefficients_avail[] = {
-> +	1, 2, 4, 8, 16, 32, 64, 128,
-> +};
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index 6425e4919e3b0b849ba801ca9e01921c114144cd..9f664c241149362d44d3a8fa65e2266f9c2e80e0 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -413,6 +413,16 @@ static int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane, bool
+>   		}
+>   	}
+>   
+> +	if (force) {
+> +		buffers = &inst->buffers[BUF_PERSIST];
 > +
->  static const struct iio_event_spec mcp9600_events[] = {
->  	{
->  		.type = IIO_EV_TYPE_THRESH,
-> @@ -118,7 +123,10 @@ static const struct iio_event_spec mcp9600_events[] = {
->  			.address = MCP9600_HOT_JUNCTION,		       \
->  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
->  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
-> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
->  					      BIT(IIO_CHAN_INFO_SCALE),	       \
-> +			.info_mask_separate_available =                        \
-> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
->  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
->  			.num_event_specs = hj_num_ev,			       \
->  		},							       \
-> @@ -161,6 +169,7 @@ struct mcp_chip_info {
->  struct mcp9600_data {
->  	struct i2c_client *client;
->  	u32 thermocouple_type;
-> +	u8 filter_level; /* Chip default is 0 */
->  };
->  
->  static int mcp9600_read(struct mcp9600_data *data,
-> @@ -191,13 +200,36 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
->  		if (ret)
->  			return ret;
->  		return IIO_VAL_INT;
-> +
->  	case IIO_CHAN_INFO_SCALE:
->  		*val = 62;
->  		*val2 = 500000;
->  		return IIO_VAL_INT_PLUS_MICRO;
-> +
->  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
->  		*val = mcp9600_tc_types[data->thermocouple_type];
->  		return IIO_VAL_CHAR;
-> +
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		*val = mcp_iir_coefficients_avail[data->filter_level];
-> +		return IIO_VAL_INT;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp9600_read_avail(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      const int **vals, int *type, int *length,
-> +			      long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		*vals = mcp_iir_coefficients_avail;
-> +		*type = IIO_VAL_INT;
-> +		*length = ARRAY_SIZE(mcp_iir_coefficients_avail);
-> +		return IIO_AVAIL_LIST;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -211,6 +243,7 @@ static int mcp9600_config(struct mcp9600_data *data)
->  
->  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
->  			  mcp9600_type_map[data->thermocouple_type]);
-> +	FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level);
->  
->  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
->  	if (ret < 0) {
-> @@ -221,6 +254,43 @@ static int mcp9600_config(struct mcp9600_data *data)
->  	return 0;
->  }
->  
-> +static int mcp9600_write_raw_get_fmt(struct iio_dev *indio_dev,
-> +				     struct iio_chan_spec const *chan,
-> +				     long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp9600_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct mcp9600_data *data = iio_priv(indio_dev);
-> +	int i;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		for (i = 0; i < ARRAY_SIZE(mcp_iir_coefficients_avail); i++) {
-> +			if (mcp_iir_coefficients_avail[i] == val)
-> +				break;
+> +		list_for_each_entry_safe(buf, next, &buffers->list, list) {
+> +			ret = iris_destroy_internal_buffer(inst, buf);
+> +			if (ret)
+> +				return ret;
 > +		}
-> +
-> +		if (i == ARRAY_SIZE(mcp_iir_coefficients_avail))
-> +			return -EINVAL;
-> +
-> +		data->filter_level = i;
-> +		return mcp9600_config(data);
-> +
-> +	default:
-> +		return -EINVAL;
 > +	}
-> +}
 > +
->  static int mcp9600_get_alert_index(int channel2, enum iio_event_direction dir)
->  {
->  	if (channel2 == IIO_MOD_TEMP_AMBIENT) {
-> @@ -358,6 +428,9 @@ static int mcp9600_write_thresh(struct iio_dev *indio_dev,
->  
->  static const struct iio_info mcp9600_info = {
->  	.read_raw = mcp9600_read_raw,
-> +	.read_avail = mcp9600_read_avail,
-> +	.write_raw = mcp9600_write_raw,
-> +	.write_raw_get_fmt = mcp9600_write_raw_get_fmt,
->  	.read_event_config = mcp9600_read_event_config,
->  	.write_event_config = mcp9600_write_event_config,
->  	.read_event_value = mcp9600_read_thresh,
+>   	return 0;
+>   }
+>   
+> 
 
+Why is the logic here not to simply release every index of the enum 
+iris_buffer_type ?
+
+If I'm reading the code right here, len indicates the list of linked 
+lists to free, adding BUF_PERSIST appends to the list that may be freed 
+if force is true but, then what about the remaining entries BUF_SCRATCH_1 ?
+
+Is it valid to leave this routine with force = true but BUF_SCRATCH_1 
+not specifically indexed, if so why ?
+
+---
+bod
 
