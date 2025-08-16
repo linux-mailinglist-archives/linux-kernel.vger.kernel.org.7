@@ -1,342 +1,197 @@
-Return-Path: <linux-kernel+bounces-771653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AC0B28A16
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:37:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24C2B28A14
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA7E171B24
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 240667BCF44
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA69278F3A;
-	Sat, 16 Aug 2025 02:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63841156F4A;
+	Sat, 16 Aug 2025 02:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKyC69cE"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LAarHHci"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A5B1E49F;
-	Sat, 16 Aug 2025 02:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731B79478
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 02:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755311775; cv=none; b=lvQBdw+QirmZw1gHNmE258cVXw/rifPEyUUWAF7sz048jpDuSKU/4zcv1HnW9Gxp6iUosXiPtjdw/3iu+fH0F1lSmjyaa9aN5G4YZfJx7380hFSSgh7hMRUX4dySUewbS1UybGcbTs020dY/SEmq72TRigI9qTszHZYQKd+b1TI=
+	t=1755311725; cv=none; b=ug1FyMfkQdwrg0J+4iNWhafIAw0JVvVclW2ko2sVgaAyPSm0DbS4bg6f6kvkmJ7sZd7XQT8+7fuL9XWHmlCRjYPZGWMOeDzslgGLG45EO4/vh5O8fVc72QTBdCRalKSlL1J1o49aQBYYJdRkQH0VNXbqvwYagMWzIWXgDwbMcbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755311775; c=relaxed/simple;
-	bh=3nQME40gvM8W6BwP5sBQwhr0YN3vk4QP8nR+VqStULY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=npd4uqXqcpenmgO5GNjCUFMT97qoxtOr7h8C7rG41hpco7ONdLIHjqaKGsdBj4a4mZXVzuhSWrsLaktKwsZiWZSRYaKuxTegGAuAO7ZO7eeQMH2cHGJstZhMumfvSqcFnep77fkNaxElnPSyS0AYXPuUJH2jmpzfA65RsabrWt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKyC69cE; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9dc5c6521so1585461f8f.1;
-        Fri, 15 Aug 2025 19:36:13 -0700 (PDT)
+	s=arc-20240116; t=1755311725; c=relaxed/simple;
+	bh=izKkYZyKE3NDGI1sM2L5pcWgCNJg3k/86kjkHcLqNgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XPvgMSf/u1XJYUfBG+3e5uZTiQ8ti061y6Gc7zc2XrTeQyoV/kKWngmeoLCgIc//UDLUG2UeLyEJTjAY3DMAB7tDzK3I8BI7Bz8PLlcRPbbEg82RY0YkrIdeUkM3ohEfkBXCPGP/19IeLkSaZ3cxqa5dUkygNm4H0HGxUmFBPHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LAarHHci; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-244580523a0so23077905ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 19:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755311772; x=1755916572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4M9ZyI6DowTCxonjTpizTCoCn6lmBq4WzieG8vFe7sE=;
-        b=SKyC69cEenhP3xhWQWWbBZldPjZN9CLQ6/EpvXznMP0sbOTA8LvpDDDVhPRs0rBnsD
-         dmxZkcg+y0Loket4Q3zwatmasMW00V7BVJtPYSvxadpwr0If1kN3CHx9dqYXinrVO+3A
-         dDZ74uXqFsMYiQ1AWTv6u6RLVz5pvcBscGxoDNB+Fkg2o7QalABDUcgpGSkxAKn53xfq
-         knwJkkMX239DZJtw0Ch93LwXQtbuZdvbHgVUtMUHsVBv2o4vvoBC4ReUTWPPbngpTxhO
-         xk22P0oKPJLR2FW25yapskVd/2mgrsgkEjz1e17NXqu4wvJv9eFY/laXDPRgmYsy2ZEd
-         fCqQ==
+        d=google.com; s=20230601; t=1755311723; x=1755916523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GYSYnsAnc4+Pe25joGiiZuFU50uPj3OZL8WRBpyuG54=;
+        b=LAarHHci//B2EUfLYTtJbPQhcfQ72afSaYsFanA+lvVGVChWiE5OsVL9QG4N6ic76N
+         rI54jMorIr4eX/PhX0qAlZB2X+stOkOEyqgZfvJ7pOhWxrYeYuSwkiW3NoJ9emnriAXy
+         xIFb2IYh97xFrTgl6Jyn1ixC80i1rPZC1DDqIIOc6xNnPtK00Kc67wEhXPKyWff3OXO0
+         UW6+L8wcTjg4Tfe7ZmgjiGoNa+FkponP1Jn8s4hNQCFpjBKa17kD9Z6Xj+YCDgxEJ9H5
+         vLYZpl2tbGDZAi/lK2H8utNDN5QudI75m7WbKjlMCOsb2iOfphAb9LYUlVb72DeCUczN
+         xfsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755311772; x=1755916572;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4M9ZyI6DowTCxonjTpizTCoCn6lmBq4WzieG8vFe7sE=;
-        b=QIgUe3quK7CJK9ZL/Kkfpg6NUcpYhNGbLh3YfzUJyICxjJ0XjLAgEQvljptS1Cxuy9
-         pSOo4zNcR02NG0YC3bXgcZ4u3tvuNJ600bj7GZf9fJFyyuab2APha+CMgrsDCtnKDdUX
-         elM7vamiI0UmrdVo3KuJUpv+rInE6r2HS86Yp/19zhbD892L19HZy8ofFYvpE21dptXv
-         fWV23JvtTjXyGrv0QPsEI6xW0z/q7uCacfgtmpISHzK8fr6iZzOXTua9nHJfe3Olg9Oa
-         TCX9CeNvF4esq71XLSeRL41eGOdy9hzzt73qYhFMmfluoGEFgHytNJ3BAitvEensRz83
-         0opQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK6bvp3CxhumIk4Qh6oRorBQ2g7P/DMFskFuXoyIVyymsNJYC+uuPZM/rbiuo7zv9FVmMv23GVJ8830I2N@vger.kernel.org, AJvYcCWNY9Y8ld7VXeoWnTbOfmAhJ0+KQKcgJ8pNC45F+L0rchSlUZN2GJOyv+hoEgODi8BeXT2/mAXG05Lv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4tfrn0/673uC77MtZUiDdTDZPrnRqzhTezNgTEMXw7hL4kM44
-	nt3eiMEJR9L/Bp+QnxKIM6qQy5L5ABy7oZs+E/TQVZlYQTPWNf6/OHQ=
-X-Gm-Gg: ASbGncvdedukWoK6cTt9qmtdGXPoFPw2bY4ZpQMj8+BH+/i3RYtmhgb56Gljctj/a0t
-	naZRQK+NMCtz0mleDU0hzRFlnHMq7wgPV4h3ZGhcf/lIJG1sueYeZlk9fEO9OT9Ai5m/7Hvhmmu
-	qvTpSkDMQ3AtYnag0KcrKWd53j458LR5S403MGuxIdONyQZK+oo7pir9kGVsSpQwQtE8NmZE+o9
-	P8iNk20xi25CIc3PjQdytCRxrfiu0gZbB0h7jzTC0phwSMqk8gOhV5klp2BeTi02cN/oSZvHlXU
-	SLJ78/adA1DDmkenT6I8cZiLV4z+PX9VR58SFeCi38FeVrW80goKzj/z/qIqqSgkGUNVIRX4h9E
-	nhepdn65eMPPWc7UueCW+AZmhIftE/Xqcf3KAdCXj4WEloIo=
-X-Google-Smtp-Source: AGHT+IGaAKxSyahe4X7ye9LwU0bGzvLyikS4pBbTpwkuQUkuER5idUuQkE99J64paUrkLwVW9urFaQ==
-X-Received: by 2002:a05:6000:26d0:b0:3b7:89c2:463c with SMTP id ffacd0b85a97d-3bb68734babmr2804049f8f.29.1755311771325;
-        Fri, 15 Aug 2025 19:36:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:212f:1af8:ee74:5774:2fc2:70a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb5d089e07sm3949856f8f.0.2025.08.15.19.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 19:36:10 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: robh@kernel.org,
-	lee@kernel.org
-Cc: peter.ujfalusi@gmail.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH] mfd: dt-bindings: ti,twl6040: convert to DT schema
-Date: Sat, 16 Aug 2025 04:33:30 +0200
-Message-Id: <20250816023330.173349-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1755311723; x=1755916523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GYSYnsAnc4+Pe25joGiiZuFU50uPj3OZL8WRBpyuG54=;
+        b=e0ZXdFkfHQAbYbFD4bWQnz9/qoGCheH0g5NcyZGRIUqPBiM4a7n5zThQSKp10vw+vI
+         N3eheFoBqPyDUnf0eXbRM/vLEzHEZ0LjOozSM4EqFILvpwHed0dUeR795vOMVvnT7SND
+         Ofm4A9+/lXLzNqchhq9Lgp8QIUjBPXnr1ErNf1ktID2JHrCcKLizRiXVkqrG966IIdkn
+         uz/3lTysa6znSbqV0Zc5/bT8nEmvw0JHCtBfGieK4weNWgQ5bDp3OvjaNL1qysg+ZrpH
+         FIYV+cM/5eAz7F9CkI4eMYR8tJ4b5uHEyQxsVlzy9Kiad3pz94axQ/gvt+crU77SGVY1
+         Pu3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXkzjkEM0DnAuhyl93yHx6f4l3JO9rsumpSWEzAeKG2/aH371mv7JwENBd9L07yxs38RkhDFKeUFvHc3Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8MYcSGU1joyfd0BdDE2ADe3VRf5cVvLzNMWim3X9ThLP/4nFx
+	1jGZv6AtwDa14tfM0o3avMwXWb6Vry8KK8Yyy/8Q3qYR16krMW6kwjZH5bb3284e05XvFsNwzc6
+	ZS/9nS+tsrq6vM7v4lPLJn5cb7eG4HK/KFXf1m+Nz
+X-Gm-Gg: ASbGncvvelZ/Q7yfhMZ0BUvZNhNLj7ziDre1MAH5YPKygIAqJpumj+F0A3lFnQBZKK0
+	rka38KlWTzyyFdAxaaU0TiSNMD3DzH1ToLTol2zdNVxo4TeWAKyQ1M2WYxzyt5jS62REQCEHoDo
+	pi5NAmAEZUCbfZDS/6shfMzIvoqgL3y7BcxaqT3j8+KhX962mi8zl0d3RrF0X15HV1R2IPDaEAA
+	ROXWNLDVJWIZu2fse4wCnpdIH35e3NVM8pWNaAtYzWS3YQ=
+X-Google-Smtp-Source: AGHT+IEoa6K5VPw7SESWJcyry0r0EAmnREWUavxXpMAeN45Ss7wHcLf9j0oo8tGG9DPZYtegphKPTtIWix2PRHyIVkg=
+X-Received: by 2002:a17:903:1967:b0:242:a0b0:3c12 with SMTP id
+ d9443c01a7336-2446d9c534amr60239055ad.52.1755311722577; Fri, 15 Aug 2025
+ 19:35:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250801090949.129941-1-dongml2@chinatelecom.cn>
+ <202508110750.a66a4225-lkp@intel.com> <aJ_qbZDvDJwVoZGA@localhost>
+In-Reply-To: <aJ_qbZDvDJwVoZGA@localhost>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Fri, 15 Aug 2025 19:35:10 -0700
+X-Gm-Features: Ac12FXxRtAJ-Rrz7HjZK8VbUPj4MqgpSheT6l3cFeoFUPq4dJKBOPfSiUKanWVU
+Message-ID: <CAAVpQUCEGiRjoobf69Jd5M9vnZyi0N6crNUgSBpDTGNfrap1cA@mail.gmail.com>
+Subject: Re: [LTP] [PATCH net v2] net: ip: order the reuseport socket in __inet_hash
+To: Wei Gao <wegao@suse.com>
+Cc: kernel test robot <oliver.sang@intel.com>, Menglong Dong <menglong8.dong@gmail.com>, kraig@google.com, 
+	lkp@intel.com, netdev@vger.kernel.org, dsahern@kernel.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, edumazet@google.com, 
+	horms@kernel.org, oe-lkp@lists.linux.dev, kuba@kernel.org, pabeni@redhat.com, 
+	ncardwell@google.com, davem@davemloft.net, ltp@lists.linux.it, 
+	Menglong Dong <dongml2@chinatelecom.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the legacy TXT binding for the TWL6040 MFD to the modern YAML
-DT schema format. This adds formal validation and improves documentation
-for the TWL6040/TWL6041 audio codec, which provides audio, vibra, and GPO
-functionality on OMAP4+ platforms.
+On Fri, Aug 15, 2025 at 7:18=E2=80=AFPM Wei Gao <wegao@suse.com> wrote:
+>
+> On Mon, Aug 11, 2025 at 01:27:12PM +0800, kernel test robot wrote:
+> >
+> >
+> > Hello,
+> >
+> > kernel test robot noticed "BUG:KASAN:slab-use-after-free_in__inet_hash"=
+ on:
+> >
+> > commit: 859ca60b71ef223e210d3d003a225d9ca70879fd ("[PATCH net v2] net: =
+ip: order the reuseport socket in __inet_hash")
+> > url: https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/net-i=
+p-order-the-reuseport-socket-in-__inet_hash/20250801-171131
+> > base: https://git.kernel.org/cgit/linux/kernel/git/davem/net.git 010510=
+12887329ea78eaca19b1d2eac4c9f601b5
+> > patch link: https://lore.kernel.org/all/20250801090949.129941-1-dongml2=
+@chinatelecom.cn/
+> > patch subject: [PATCH net v2] net: ip: order the reuseport socket in __=
+inet_hash
+> >
+> > in testcase: ltp
+> > version: ltp-x86_64-6505f9e29-1_20250802
+> > with following parameters:
+> >
+> >       disk: 1HDD
+> >       fs: ext4
+> >       test: fs_perms_simple
+> >
+> >
+> >
+> > config: x86_64-rhel-9.4-ltp
+> > compiler: gcc-12
+> > test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30G=
+Hz (Ivy Bridge) with 8G memory
+> >
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >
+> >
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202508110750.a66a4225-lkp@inte=
+l.com
+> >
+> >
+> > kern :err : [  128.186735] BUG: KASAN: slab-use-after-free in __inet_ha=
+sh (net/ipv4/inet_hashtables.c:749 net/ipv4/inet_hashtables.c:800)
+>
+> This kasan error not related with LTP case, i guess it triggered by netwo=
+rk
+> related process such as bind etc. I try to give following patch to fix
+> kasan error, correct me if any mistake, thanks.
 
-The unused 'twl6040,audpwron-gpio' property has been dropped from
-the schema as it is not used by the driver.
+Note that the report was for the patch in the mailing list
+and the patch was not applied to net-next.git nor net.git.
 
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
----
- .../devicetree/bindings/mfd/ti,twl6040.yaml   | 149 ++++++++++++++++++
- .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
- 2 files changed, 149 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
-new file mode 100644
-index 000000000..c8922fce4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
-@@ -0,0 +1,149 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ti,twl6040.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments TWL6040/TWL6041 Audio Codec
-+
-+maintainers:
-+  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
-+
-+description:
-+  The TWL6040s are 8-channel high quality low-power audio codecs providing
-+  audio, vibra and GPO functionality on OMAP4+ platforms.
-+  They are connected to the host processor via i2c for commands, McPDM for
-+  audio data and commands.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,twl6040
-+      - ti,twl6041
-+
-+  reg:
-+    const: 0x4b
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 1
-+
-+  '#clock-cells':
-+    description: TWL6040 is a provider of PDMCLK which is used by McPDM.
-+    const: 0
-+
-+  vio-supply:
-+    description: Regulator for the VIO supply.
-+
-+  v2v1-supply:
-+    description: Regulator for the V2V1 supply.
-+
-+  enable-active-high:
-+    type: boolean
-+    description: If present, powers on the device during boot.
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      enum: [clk32k, mclk]
-+
-+  # Vibra functionality :
-+
-+  vddvibl-supply:
-+    description: Regulator for the left vibra motor supply.
-+
-+  vddvibr-supply:
-+    description: Regulator for the right vibra motor supply.
-+
-+  vibra:
-+    type: object
-+    description: Node for vibra motor configuration parameters.
-+    properties:
-+      ti,vibldrv-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the left driver.
-+
-+      ti,vibrdrv-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the right driver.
-+
-+      ti,viblmotor-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the left motor.
-+
-+      ti,vibrmotor-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the right motor.
-+
-+      vddvibl_uV:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Optional override for the VDDVIBL default voltage (in uV).
-+
-+      vddvibr_uV:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Optional override for the VDDVIBR default voltage (in uV).
-+    required:
-+      - ti,vibldrv-res
-+      - ti,vibrdrv-res
-+      - ti,viblmotor-res
-+      - ti,vibrmotor-res
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - '#clock-cells'
-+  - vio-supply
-+  - v2v1-supply
-+  - vddvibl-supply
-+  - vddvibr-supply
-+  - vibra
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      twl6040: twl@4b {
-+        compatible = "ti,twl6040";
-+        reg = <0x4b>;
-+
-+        interrupts = <0 119 4>;
-+        interrupt-parent = <&gic>;
-+
-+        gpio-controller;
-+        #gpio-cells = <1>;
-+        #clock-cells = <0>;
-+
-+        vio-supply = <&v1v8>;
-+        v2v1-supply = <&v2v1>;
-+        enable-active-high;
-+
-+        /* regulators for vibra motor */
-+        vddvibl-supply = <&vbat>;
-+        vddvibr-supply = <&vbat>;
-+
-+        vibra {
-+          /* Vibra driver, motor resistance parameters */
-+          ti,vibldrv-res = <8>;
-+          ti,vibrdrv-res = <3>;
-+          ti,viblmotor-res = <10>;
-+          ti,vibrmotor-res = <10>;
-+        };
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
-deleted file mode 100644
-index dfd8683ed..000000000
---- a/Documentation/devicetree/bindings/mfd/twl6040.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--Texas Instruments TWL6040 family
--
--The TWL6040s are 8-channel high quality low-power audio codecs providing audio,
--vibra and GPO functionality on OMAP4+ platforms.
--They are connected to the host processor via i2c for commands, McPDM for audio
--data and commands.
--
--Required properties:
--- compatible : "ti,twl6040" for twl6040, "ti,twl6041" for twl6041
--- reg: must be 0x4b for i2c address
--- interrupts: twl6040 has one interrupt line connecteded to the main SoC
--- gpio-controller:
--- #gpio-cells = <1>: twl6040 provides GPO lines.
--- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
--- twl6040,audpwron-gpio: Power on GPIO line for the twl6040
--
--- vio-supply: Regulator for the twl6040 VIO supply
--- v2v1-supply: Regulator for the twl6040 V2V1 supply
--
--Optional properties, nodes:
--- enable-active-high: To power on the twl6040 during boot.
--- clocks: phandle to the clk32k and/or to mclk clock provider
--- clock-names: Must be "clk32k" for the 32K clock and "mclk" for the MCLK.
--
--Vibra functionality
--Required properties:
--- vddvibl-supply: Regulator for the left vibra motor
--- vddvibr-supply: Regulator for the right vibra motor
--- vibra { }: Configuration section for vibra parameters containing the following
--	     properties:
--- ti,vibldrv-res: Resistance parameter for left driver
--- ti,vibrdrv-res: Resistance parameter for right driver
--- ti,viblmotor-res: Resistance parameter for left motor
--- ti,viblmotor-res: Resistance parameter for right motor
--
--Optional properties within vibra { } section:
--- vddvibl_uV: If the vddvibl default voltage need to be changed
--- vddvibr_uV: If the vddvibr default voltage need to be changed
--
--Example:
--&i2c1 {
--	twl6040: twl@4b {
--		compatible = "ti,twl6040";
--
--		interrupts = <0 119 4>;
--		interrupt-parent = <&gic>;
--		twl6040,audpwron-gpio = <&gpio4 31 0>;
--
--		vio-supply = <&v1v8>;
--		v2v1-supply = <&v2v1>;
--		enable-active-high;
--
--		/* regulators for vibra motor */
--		vddvibl-supply = <&vbat>;
--		vddvibr-supply = <&vbat>;
--
--		vibra {
--			/* Vibra driver, motor resistance parameters */
--			ti,vibldrv-res = <8>;
--			ti,vibrdrv-res = <3>;
--			ti,viblmotor-res = <10>;
--			ti,vibrmotor-res = <10>;
--		};
--	};
--};
--
--/include/ "twl6040.dtsi"
--- 
-2.39.5
-
+>
+> From: Wei Gao <wegao@suse.com>
+> Date: Sat, 16 Aug 2025 09:32:56 +0800
+> Subject: [PATCH v1] net: Fix BUG:KASAN:slab-use-after-free_in__inet_hash
+>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508110750.a66a4225-lkp@intel.co=
+m
+> Signed-off-by: Wei Gao <wegao@suse.com>
+> ---
+>  include/linux/rculist_nulls.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.=
+h
+> index da500f4ae142..5def9009c507 100644
+> --- a/include/linux/rculist_nulls.h
+> +++ b/include/linux/rculist_nulls.h
+> @@ -57,7 +57,7 @@ static inline void hlist_nulls_del_init_rcu(struct hlis=
+t_nulls_node *n)
+>   * @node: element of the list.
+>   */
+>  #define hlist_nulls_pprev_rcu(node) \
+> -       (*((struct hlist_nulls_node __rcu __force **)&(node)->pprev))
+> +       (*((struct hlist_nulls_node __rcu __force **)(node)->pprev))
+>
+>  /**
+>   * hlist_nulls_del_rcu - deletes entry from hash list without re-initial=
+ization
+> @@ -175,7 +175,7 @@ static inline void hlist_nulls_add_before_rcu(struct =
+hlist_nulls_node *n,
+>  {
+>         WRITE_ONCE(n->pprev, next->pprev);
+>         n->next =3D next;
+> -       rcu_assign_pointer(hlist_nulls_pprev_rcu(n), n);
+> +       rcu_assign_pointer(hlist_nulls_pprev_rcu(next), n);
+>         WRITE_ONCE(next->pprev, &n->next);
+>  }
+>
+> --
+> 2.43.0
+>
 
