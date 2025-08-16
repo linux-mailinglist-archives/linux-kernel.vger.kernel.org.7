@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-771689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE469B28A5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:51:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BDB28A60
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8AEAE4917
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9477B30D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 03:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85A21DC997;
-	Sat, 16 Aug 2025 03:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30A71DC997;
+	Sat, 16 Aug 2025 03:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JWY/AcAc"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B+LtpeGw"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE921D5165;
-	Sat, 16 Aug 2025 03:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B983155333;
+	Sat, 16 Aug 2025 03:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755316312; cv=none; b=BdBpOlIf0ELFcKdMKits8zivQYBc3i7LsT1y0dxw412jCwPdB7NpjdISMb88f0wZeKaIkH7vytfQKPHHgFjwcebLwT9pDRiSi/9otmP2VUcfCyomDVUfV+9Om7NrYkdeU39I5Ltx8HXW0RM1IbsMAguvRDF86jSrRtKso0sJYuM=
+	t=1755316422; cv=none; b=Sk71SjzWjpQrDa+iQfXCRlTEj9uIWJJf9dUEaVgWYD+EFLIqnToqHHRSDsan5a3CQoBxl4SnPwa4tgk92VfibA0RRds7mFvwjKJ+4XFFaRMeSKYIwVhXtuM9VE+JgDjoIXLuZIafe/oecCr1q8omXfXSF1hP6HiEG6i6lptpmo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755316312; c=relaxed/simple;
-	bh=z+QX49317csTrXfz8J0F5bFGxPypVOXL9Q3FPo0GCeU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=STxWgIsMbHDzA/Ri3BaVJ3JHawRCVyPouldimFcDfutbUtwOmL+ooYtqs3dE0e9+BC6ljU7y+KopO5xv5Vm+GPo4lZHQz6jS07VB6TJUp+e/11DqIyLo0G1sQbPTCgwKA0hfNAzDO4O2fP3jzNFMeR8xU6SgN0f1gx4M3V1S+U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JWY/AcAc; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 75C8F2524A;
-	Sat, 16 Aug 2025 05:51:49 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id aD3xxEUm5ASV; Sat, 16 Aug 2025 05:51:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755316308; bh=z+QX49317csTrXfz8J0F5bFGxPypVOXL9Q3FPo0GCeU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JWY/AcAckCYAnfE6oaPnq2Nn1tY8NQcnpT8D5TumG+izIpatoCDM+Zf6pm58Y2jD5
-	 aGKhnvxwqWf3URliNtHT+QtJCiBoDH0LzLWN7/n4XWFepHmLdY0KaDIlkRPs3puaGC
-	 BTgUUH7atOgzu8DzgMPuZu6TlZ8NiJfIAE8XDISTeFvvuaAojl6wahHzMoKB2/mktW
-	 rRIA0jvB0gCoW75m6hIlqOo4EVmXbWr8/+nyaWaBxksftrWuazcb018TE3L6i/rS4l
-	 o+XqQ+74AcchhoytVdfatTxOAzqWjzCGi1+kSeLSiyWoeuY1ftVGR/YFAU78bM7hGw
-	 RuohBFHXTcbMw==
-From: Yao Zi <ziyao@disroot.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 3/3] LoongArch: dts: Add GPIO controller for Loongson 2K0300
-Date: Sat, 16 Aug 2025 03:50:28 +0000
-Message-ID: <20250816035027.11727-5-ziyao@disroot.org>
-In-Reply-To: <20250816035027.11727-2-ziyao@disroot.org>
-References: <20250816035027.11727-2-ziyao@disroot.org>
+	s=arc-20240116; t=1755316422; c=relaxed/simple;
+	bh=sFof9ZJ265IZSD36dpzx06sjikw+apqRmtPD496v4Lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XgWERR84V+7rcQqU2lTDLM//8LbAx449GLRgZYxogs/x3gTCYLlwN8FXuYBqWmYoANxOPC2Y3GLoarTA1VkL5+rBf9rYrXLF3ciHaFBe/8auo1zyH0C5IA9gJ+7gTlTlZnfyw++y6oUKT4Z9AGFiHkQXXwYlrCnqoyGRUFLZ0iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B+LtpeGw; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755316407; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JIZlq6Vx8PLQbzVJbIEl4PG97O7jQ5b2q+B6qeAr2Jc=;
+	b=B+LtpeGwLF4PR5rKOMpfnaZlRBABz/F1h1aZl2UF2FT7VaG89zUQnZyQqkWXOrTcAHeV6MYKFHXdtDPxdP3z4KrmMw1zPCWxW3DbcaHZhc1K+lno1V8Hi7itnsviN7y7yUKWajoTRupPnXO/RgmiBvJadxTUpMvU5ng/BXEWTow=
+Received: from 30.221.32.119(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WlqVtem_1755316338 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 16 Aug 2025 11:53:27 +0800
+Message-ID: <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+Date: Sat, 16 Aug 2025 11:52:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
+ dust.li@linux.alibaba.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ David Woodhouse <dwmw2@infradead.org>
+References: <20250812115321.9179-1-guwen@linux.alibaba.com>
+ <20250815113814.5e135318@kernel.org>
+From: Wen Gu <guwen@linux.alibaba.com>
+In-Reply-To: <20250815113814.5e135318@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Describe Loongson 2K0300's GPIO controller in devicetree.
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/loongarch/boot/dts/loongson-2k0300.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k0300.dtsi b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-index 835d3c63537b..60a055b05c44 100644
---- a/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-@@ -240,6 +240,26 @@ uart9: serial@16102400 {
- 			status = "disabled";
- 		};
- 
-+		gpio: gpio@16104000 {
-+			compatible = "loongson,ls2k0300-gpio";
-+			reg = <0x0 0x16104000 0x0 0x4000>;
-+			interrupt-parent = <&liointc1>;
-+			interrupts = <21 IRQ_TYPE_LEVEL_HIGH>,
-+				     <22 IRQ_TYPE_LEVEL_HIGH>,
-+				     <23 IRQ_TYPE_LEVEL_HIGH>,
-+				     <24 IRQ_TYPE_LEVEL_HIGH>,
-+				     <25 IRQ_TYPE_LEVEL_HIGH>,
-+				     <26 IRQ_TYPE_LEVEL_HIGH>,
-+				     <27 IRQ_TYPE_LEVEL_HIGH>;
-+			ngpios = <106>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 0 106>;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			resets = <&rst RST_GPIO>;
-+		};
-+
- 		isa@16400000 {
- 			compatible = "isa";
- 			#address-cells = <2>;
--- 
-2.50.1
+On 2025/8/16 02:38, Jakub Kicinski wrote:
+> On Tue, 12 Aug 2025 19:53:21 +0800 Wen Gu wrote:
+>> This adds a driver for Alibaba CIPU PTP clock. The CIPU, an underlying
+>> infrastructure of Alibaba Cloud, synchronizes time with reference clocks
+>> continuously and provides PTP clocks for VMs and bare metals in cloud.
+> 
+>> +static struct attribute *ptp_cipu_attrs[] = {
+>> +	&dev_attr_reg_dev_feat.attr,
+>> +	&dev_attr_reg_gst_feat.attr,
+>> +	&dev_attr_reg_drv_ver.attr,
+>> +	&dev_attr_reg_env_ver.attr,
+>> +	&dev_attr_reg_dev_stat.attr,
+>> +	&dev_attr_reg_sync_stat.attr,
+>> +	&dev_attr_reg_tm_prec_ns.attr,
+>> +	&dev_attr_reg_epo_base_yr.attr,
+>> +	&dev_attr_reg_leap_sec.attr,
+>> +	&dev_attr_reg_max_lat_ns.attr,
+>> +	&dev_attr_reg_mt_tout_us.attr,
+>> +	&dev_attr_reg_thresh_us.attr,
+>> +
+>> +	&dev_attr_ptp_gettm.attr,
+>> +	&dev_attr_ptp_gettm_inval_err.attr,
+>> +	&dev_attr_ptp_gettm_tout_err.attr,
+>> +	&dev_attr_ptp_gettm_excd_thresh.attr,
+>> +
+>> +	&dev_attr_dev_clk_abn.attr,
+>> +	&dev_attr_dev_clk_abn_rec.attr,
+>> +	&dev_attr_dev_maint.attr,
+>> +	&dev_attr_dev_maint_rec.attr,
+>> +	&dev_attr_dev_maint_tout.attr,
+>> +	&dev_attr_dev_busy.attr,
+>> +	&dev_attr_dev_busy_rec.attr,
+>> +	&dev_attr_dev_err.attr,
+>> +	&dev_attr_dev_err_rec.attr,
+> 
+> This driver is lacking documentation. You need to describe how the user
+> is expected to interact with the device and document all these sysfs
+> attributes.
+> 
 
+OK. I will add the description.
+
+Would you prefer me to create a related .rst file under Documentation/
+(perhaps in a new Documentation/clock/ptp/ directory?), or add the
+description comments directly in this driver source?
+
+> Maybe it's just me, but in general I really wish someone stepped up
+> and created a separate subsystem for all these cloud / vm clocks.
+> They have nothing to do with PTP. In my mind PTP clocks are simple HW
+> tickers on which we build all the time related stuff. While this driver
+> reports the base year for the epoch and leap second status via sysfs.
+
+These sysfs are intended to provide diagnostics and informations.
+For users, interacting with this PTP clock works the same way as with other
+PTP clock, through the exposed chardev. The 1588 protocol related work has
+been done by the cloud infra so the driver only reads some registers.
+
+Thanks.
 
