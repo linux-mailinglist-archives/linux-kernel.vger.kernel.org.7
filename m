@@ -1,74 +1,103 @@
-Return-Path: <linux-kernel+bounces-772143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3878B28F38
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DCEB28F42
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5321C24E2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2DB1C261BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC9E1A0BFD;
-	Sat, 16 Aug 2025 15:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA802F0682;
+	Sat, 16 Aug 2025 15:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FpEz8krS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8CC6FC5;
-	Sat, 16 Aug 2025 15:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PD4Dx4Xm"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFDA2DE6EA;
+	Sat, 16 Aug 2025 15:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755358680; cv=none; b=UClRsmV3fHG3nL6aPxrqnFHR4lTjKFVm8qA32CqH2tDTXsk5R/vOmxnc75ek4ewkYXQSv5fKGPax/GwXSuP98upZElPmhzyUMHHXexKFaeonjH0MJm2IGXdqCpQretb4oZXPFtNB7HIltQ/oZfuNe2Ye057t12NW1kOLjJBuq2M=
+	t=1755359242; cv=none; b=jXH8XPI3WDAVMnh7thYLsr5nrnZ7Ok6b/qQGycqCwNX8kvp8/1WvCxdbDdLHhCiS73RBa7SenTEPDC9jw3ZmXp7vAEG5CV4U9NQkxouzNo9d7//0jZV0mmqzvy0IGqLI6lBQe/dzz0oy/1/WcXOD8f3oe21RLbzD12gnMDdS5cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755358680; c=relaxed/simple;
-	bh=fmUjxBqT/YQptLLFUCnuBtOiMVGfqLNL5OiA/bV5gvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qnuz1b2SHqpYGVAkNBKuzogtLpfowx44DzcRA4ODLQMoNajVXRc8k7VchvCieV8EiIEPlEUbZ3DikvDtcHjQIJ98Xaed9dq2PBwXMjdxDjemyYWnpXSbfMmXpVdlRvDe+77T/yZqubwD1eHJZu2w8Rl79RJzu5ltu4p8sjw/ytk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FpEz8krS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=RvC+UC/AdOwrm3IlIaz82Z8Ib6je8cnny1YfptPh3y4=; b=FpEz8krSo3XZrKdIGIf9Cniw4q
-	qq/+8JbM3iURszASaV3B5xrxulu5ttSDVG/SaE1HoUJt06qh0dQsm0DuIbjzoYxzNcZ1+0orKY8br
-	FzIbN+DUdioUXbgrzCLm9AQuwfJz6MRLCC4U/nWLmu9de/UmBxWX6nSkyrKURmmpDYJM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1unIyX-004ufj-4Z; Sat, 16 Aug 2025 17:37:45 +0200
-Date: Sat, 16 Aug 2025 17:37:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
-	dust.li@linux.alibaba.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-Message-ID: <729dee1e-3c8c-40c5-b705-01691e3d85d7@lunn.ch>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
- <20250815113814.5e135318@kernel.org>
- <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+	s=arc-20240116; t=1755359242; c=relaxed/simple;
+	bh=2aukL0kJEli4cIpF9lNeOMmlFomt6T6CHJMbTxc5Efw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=acJYPUay+DUJ1AazAev196kg9REi7KVfmz41i3enheAi/P3sLNC0dqX1o9IiJBoUR3Xhc6LYf+3TmeOinh+i53cQlay55wM4sfFqEJRPbkx0K7V+VKSt+8MV4Z8i4dl3viEwriW8oey8+5RKZdMLRkoshSRhPvfTjDImPZOfKaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PD4Dx4Xm; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=M3
+	64n49fvVCUS9f/bM7DYaH6Murcb4YBFOLmmbIlPlI=; b=PD4Dx4XmXlWxxlEOw6
+	WTD1TvuyXaEwmSKXKP78sIcH8Qh+mUl0psNAZnAzpUa9LjbbawbxrI/Y1Pxxpc14
+	bKW4XNxweYqoo9GA2Gbgin6Namrkk/HWlnZyzfMCDEULLZcFSlHFQwqrmNqaj9q7
+	Kdtv0pR+EnELSvMq3QaJI7qmw=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDHfLfip6BoVzqMBw--.15530S2;
+	Sat, 16 Aug 2025 23:46:43 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	jingoohan1@gmail.com
+Cc: robh@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v3 0/3] PCIe: Refactor link speed configuration with unified macro
+Date: Sat, 16 Aug 2025 23:46:30 +0800
+Message-Id: <20250816154633.338653-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHfLfip6BoVzqMBw--.15530S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtrWxZF4xtr18Jw4rZF4xJFb_yoWDKrcEvF
+	y2qFy2kr4UtrZ3ZFyFyr4avry5Aay8GrW3AFy0y3y5JFy2vF4DGr1kZrZrXa48WFsxCa9r
+	JFn8Xr1fAwn7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRM8nYUUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQw+ro2igp4IHuQAAsX
 
-> These sysfs are intended to provide diagnostics and informations.
+This series standardizes PCIe link speed handling across multiple drivers
+by introducing a common conversion macro PCIE_SPEED2LNKCTL2_TLS(). The
+changes eliminate redundant speed-to-register mappings and simplify code
+maintenance:
 
-Maybe they should be in debugfs if they are just diagnostics? You then
-don't need to document them, because they are not ABI.
+The refactoring improves code consistency and reduces conditional
+branching, while maintaining full backward compatibility with existing
+speed settings.
 
-	Andrew
+---
+Changes for v3:
+- Rebase to v6.17-rc1.
+- Gentle ping.
+
+Changes for v2:
+- s/PCIE_SPEED2LNKCTL2_TLS_ENC/PCIE_SPEED2LNKCTL2_TLS
+- The patch commit message were modified.
+---
+
+Hans Zhang (3):
+  PCI: Add PCIE_SPEED2LNKCTL2_TLS conversion macro
+  PCI: dwc: Simplify link speed configuration with macro
+  PCI/bwctrl: Replace legacy speed conversion with shared macro
+
+ drivers/pci/controller/dwc/pcie-designware.c | 18 +++---------------
+ drivers/pci/pci.h                            |  9 +++++++++
+ drivers/pci/pcie/bwctrl.c                    | 19 +------------------
+ 3 files changed, 13 insertions(+), 33 deletions(-)
+
+
+base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
+-- 
+2.25.1
+
 
