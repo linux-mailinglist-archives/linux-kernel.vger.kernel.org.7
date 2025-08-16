@@ -1,244 +1,212 @@
-Return-Path: <linux-kernel+bounces-772127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383FBB28F0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:23:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313BBB28EFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9230C16A594
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07663B0EB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1982FCC11;
-	Sat, 16 Aug 2025 15:19:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8782FCBFB
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B4A2F83C0;
+	Sat, 16 Aug 2025 15:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oCAgJmfF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0521D2F90F1
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357591; cv=none; b=Cz3KZGNJKXyaqR2m4xkFxfMvnIegUR3Yui8sP+OoZMDap2SNwApgjuvcwP0OaesuU5aohkJ0o+IbZGZpKwpeYG0ZNm/T0rb7mkRKWs3xjrInu87RJujWhaygAAKHI9lgfri6k7vgH/jZ7Lfvb5rTKPZgwTDOOtUlmTN1PN8bxJs=
+	t=1755357583; cv=none; b=Mhe0gzvm0iMl/IlGd9VFzbKm96lFLiJK3v+aUike86iNeADH+9Hz4Io0RYgKizlksMwytuYRVkG3oJFpO31Ehn4powMsxmKSuc2+wt5aAqXH0BN8F/xxMztgdLEJjKflv7c3nIaf/xus4cZflJz4KZtklGWcmtbxLmYEPU73ZBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357591; c=relaxed/simple;
-	bh=8eu35A25ZoHlVGl5aQr08jMr2zEpcJk0h8Qm+KEEqLA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BzQjjermaocNErd2g/MUVuLC6ZX000p+hrNyDrfrsO+hnFTtWeQMS3RtMxw+SQqqQqGu3nWUlxgJCKdhsJN9/HcMs3NLmGJXbLOPXudV59WcOYT59WNqqpvLb+B5T2AHhjnKro/h8WDAOjh58e4UTUHEgJ/qlTK5pRQcJZVm45w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 858E21D13;
-	Sat, 16 Aug 2025 08:19:41 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D6993F5A1;
-	Sat, 16 Aug 2025 08:19:47 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	james.morse@arm.com,
-	ardb@kernel.org,
-	scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH RESEND v7 6/6] arm64: futex: support futex with FEAT_LSUI
-Date: Sat, 16 Aug 2025 16:19:29 +0100
-Message-Id: <20250816151929.197589-7-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250816151929.197589-1-yeoreum.yun@arm.com>
-References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1755357583; c=relaxed/simple;
+	bh=A/d943iupZVCsxCU+H3jAnKd2fBEwptYqE3Wnl3fWfg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=einueChCfikBSUcJSMi+yVV4dJkqjqBt+Nm57E0x1DxyaWUIz0Io8BQyfIvZobYYUE11NZmAAUFwsJFnyOPDn1gVYfNrJLtzRgWAIAtbvWd+CF4azLugAn71ZYsUMQz/0yB4lOjHERoDiGcS8+3LQ8RfJYv+dP+unj4bhGKBKnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oCAgJmfF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57G7ImBu007649
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5lryexlqd0cwKQzcmybpaI
+	+3EMl9PhbQcl2IWaTvkAM=; b=oCAgJmfFi/I2hzZFvUUpZcIkfXUtBg3UORsCZf
+	JW43oqB6fB7mnzKdW1JpGIZ9TtzLtE+W3jZ36ZMH0RXXf53Mhu96U37P8XUnxarY
+	oimPLzWmgJZFXbICcXB0HBA1w1gu09hc1CXhdn16cHauAmztii6bPGsJnEFJoSC3
+	aYiCb5CpR3aeAnly/872UnqG7qWifllQ4xar86OOnxToYp63YUVDlMLJ7cDGODHY
+	oH6TvRWa1VymRh1hvQ7/2Lbt+4Mcrs7mZQrgFZ+OPFp7MRkfVs3ANWt4JXNERfd9
+	6AHTINJsBENxDPhLNKJRYyljl1ij1Dn+lNT1choVU6dt8tAQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jk99gqkp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:19:41 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e864817cb8so1036725785a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 08:19:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755357580; x=1755962380;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5lryexlqd0cwKQzcmybpaI+3EMl9PhbQcl2IWaTvkAM=;
+        b=H5de/ufs4bmGq5l27EhNiF/t/K5pFf4evf42tcjGMqEwgTnLlRF4Z383AgB54hbHTX
+         GxiP1AaKm3FclLwb/J0x7Urz0AcOzyyvWHXONV+Ym7R0MwHOsNjvQ/gn1QkfeE7LMW1j
+         uqPOHb9OZ/NgozDkM9372y32mwohCPBI/1FevxtIiy1mLpTQKVK2pl9ytpfInsYM+chw
+         szHOhMpznWJEnC+VVzSej1n/zSry44gZB5LepAmp/PUq3BQbZKDDemERBlCGM7khgU+L
+         LFoFBgUVeBH9ChZlHrkAk+VxRzglQ6t2lSF2nEYohiuRjrAx1t/2chlSY9BJuUcioyoL
+         XZLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRpRp4ZojjFE9idVjOuaODIFytsb4C6COsAOT3TfSWukJ2PEA+QM4E1lHRF0g3M/exJg+nBWpbhPUTpnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf3tJK67CwnvfYQT4vCIESJu93DtmG5H+HA71pz4gighL9C2ic
+	NiN2WSax0O6H56uIsp2xQa48vhAB4WDOr3HX1fC4e5B0jkURoUpRT6/qSGRFAlgkX5hpBKcQJXc
+	M2pngivdk8JB4HMefznQh2pZvaLmbym+d2saqheAwwPdckOQu1bxxpyYs7dfogRmP5ig=
+X-Gm-Gg: ASbGncuX5tlPYdwS2SVjd8h7+qS/iHzItEDPwHtrBxi2I8RbWJdj2lr0lM90avajq+x
+	ULW59e0bP67oVh04rclEr5GnwwQ3iOmD1CMbHu/UTuSt1rvzcic4Oix08CQynXwl4euKjdhL6VD
+	OALeHGWXNG+wqdgvtIfAWli0vhkP61zjOcyu9jY0ArCX5UY3b1YgFHpoI6BN4U+0FRLTXRQuGwk
+	rRGpj2NmhO+uViS9zRJdWNePbxEODB8ZkS/+6JHIzyFuDgBRo8mLLT0Yk3xPrHahyZy11ubpYij
+	hXcnNfkKflxvCPuYVPKZBnybCR54JJT8cbJhhTUBo2Qb5znmx+q8QJ9OKXsDFbx29zPHI3OMeNt
+	eu386qWcgnr7prkpn/CfsNaS0w+oDXxnfNcNvv31BpMM8Q2kOp/Vp
+X-Received: by 2002:ad4:5587:0:b0:70b:ae3b:4fcf with SMTP id 6a1803df08f44-70bae3b53demr47856636d6.23.1755357579692;
+        Sat, 16 Aug 2025 08:19:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfelfomvA5wci6xz+3wi0J8SULNHFeOUuYXDPXJ1C+6Dag8vtfdR/Y+CaRJy4U66cTGuwdXA==
+X-Received: by 2002:ad4:5587:0:b0:70b:ae3b:4fcf with SMTP id 6a1803df08f44-70bae3b53demr47856216d6.23.1755357579187;
+        Sat, 16 Aug 2025 08:19:39 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35965fsm907579e87.37.2025.08.16.08.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 08:19:38 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v2 0/8] drm: writeback: clean up writeback connector
+ initialization
+Date: Sat, 16 Aug 2025 18:19:34 +0300
+Message-Id: <20250816-wb-drop-encoder-v2-0-f951de04f4f9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIahoGgC/3WOwQ6DIBBEf8Vw7lokKtZT/6PxgLBWkioKaG2M/
+ 17U9NjLZmeyM29X4tBqdKSMVmJx1k6bPgh2iYhsRf9E0CpowijLaEETeNegrBkAe2kUWrhxQSX
+ PapUpTkJqsNjo5Wh8VEG32nljPwdgTnb3f9ecAIWCpXma05Q1XN2Nc/E4iZc0XReHQartZFgcp
+ /CsP0GkFg5hP9K+jJTtoNNOXn8L9Lj4EN2+MNFAzu8AAAA=
+X-Change-ID: 20250801-wb-drop-encoder-97a0c75bd5d7
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        "Kandpal, Suraj" <suraj.kandpal@intel.com>,
+        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <siqueira@igalia.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2260;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=A/d943iupZVCsxCU+H3jAnKd2fBEwptYqE3Wnl3fWfg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBooKGIGMd13UWHpYiChLD84LKwc5yW7HTOFZ5Nc
+ BeTRdJYMi+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaKChiAAKCRCLPIo+Aiko
+ 1VU2B/4olLxWynZ6yiMZ4UeXGeUOQWFTHVS0OmcvLMCYAz5OQG0aZQ8ccKIlHwyxoHSBsBg78Mr
+ 5QdHuJQEQDktITLER+XgXzSQGcAgijiinR/nhTa+NfpLIGR/EZrDmm2Pzno0MlDiSYg29IhxB4T
+ kEyqTv5mjfkGwilg9DYt3nua1zSszeQdW1SnwwmS2bJ5BNDrwFKw9Be1apeVE0V5bbt3gjV9cJ1
+ CTyH4/m6IJr1ZW1Z9GAeYcsmchIGnAeuuUGT6OENI6yZkiEVDemT5O54HW7bSXSXNU41/Le5fiv
+ QQeKwVTkV8cEZ7a13v/GM/cWDBTcehtOQTW4bxGUsGsKFDS6
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-ORIG-GUID: DCW3493crhER6Gz8EWp6BgzxQKCznTDN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDA0NSBTYWx0ZWRfX5wtJLbXNpP0i
+ X5ELg8aSETLSg+6Gnc4MDvsIRJmx48X6WzoAwZ6xH+jdV8JcT8LAXccgnpC0wRKKdrrrUr6rgqK
+ P3gs9d0mFLFuJHCAkkn8FBwZ2OuJqJV08MroVnfuSGp2aemQ+QkNrfbeePfpbSv10Pmu+w9xVcH
+ 1H9IfRh0TdJObK3oEeXxmBbhB7j90h1VjihZ5ewcwLRQxbnX/KDxbR//JdQrmelDeWU4rT4YBQE
+ VWqhsPbiHar4RslMJKdhJwaFLKrUuyoGXvqJeg9LdHGmY12NGHiZ1On8KYclAtuBqkEodB9pP2/
+ jo1bSMS2yM5P4nxa0gG82yPjqkj6njs2R33KSoI230MuU/fraO89LhafQqRUK2TekRZ/G58ZR9A
+ IEbdeGPu
+X-Authority-Analysis: v=2.4 cv=IIMCChvG c=1 sm=1 tr=0 ts=68a0a18d cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=cFjmsF-WLDi_aLc5EnEA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: DCW3493crhER6Gz8EWp6BgzxQKCznTDN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-16_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160045
 
-Current futex atomic operations are implemented with ll/sc instructions
-and clearing PSTATE.PAN.
+Drivers using drm_writeback_connector_init() / _with_encoder() don't
+perform cleanup in a manner similar to drmm_writeback_connector_init()
+(see drm_writeback_connector_cleanup()). Migrate all existing drivers
+to use drmm_writeback_connector_init(), drop
+drm_writeback_connector_init() and drm_writeback_connector::encoder
+(it's unused afterwards).
 
-Since Armv9.6, FEAT_LSUI supplies not only load/store instructions but
-also atomic operation for user memory access in kernel it doesn't need
-to clear PSTATE.PAN bit anymore.
+This series leaves former drm_writeback_connector_init_with_encoder()
+(renamed to drm_writeback_connector_init as a non-managed counterpart
+for drmm_writeback_connector_init()). It is supposed to be used by
+drivers which can not use drmm functions (like Intel). However I think
+it would be better to drop it completely.
 
-With theses instructions some of futex atomic operations don't need to
-be implmented with ldxr/stlxr pair instead can be implmented with
-one atomic operation supplied by FEAT_LSUI.
-
-However, some of futex atomic operations still need to use ll/sc way
-via ldtxr/stltxr supplied by FEAT_LSUI since there is no correspondant
-atomic instruction or doesn't support word size operation.
-(i.e) eor, cas{mb}t
-
-But It's good to work without clearing PSTATE.PAN bit.
-
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- arch/arm64/include/asm/futex.h | 130 ++++++++++++++++++++++++++++++++-
- 1 file changed, 129 insertions(+), 1 deletion(-)
+Changes in v2:
+- Switched to drm_crtc_mask() where applicable (Louis Chauvet)
+- Link to v1: https://lore.kernel.org/r/20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com
 
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index 22a6301a9f3d..ece35ca9b5d9 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -9,6 +9,8 @@
- #include <linux/uaccess.h>
- #include <linux/stringify.h>
+---
+Dmitry Baryshkov (8):
+      drm/amd/display: use drmm_writeback_connector_init()
+      drm/komeda: use drmm_writeback_connector_init()
+      drm/mali: use drmm_writeback_connector_init()
+      drm/msm/dpu: use drmm_writeback_connector_init()
+      drm/msm/dpu: use drmm_writeback_connector_init()
+      drm/vc4: use drmm_writeback_connector_init()
+      drm: writeback: drop excess connector initialization functions
+      drm: writeback: rename drm_writeback_connector_init_with_encoder()
 
-+#include <asm/alternative.h>
-+#include <asm/alternative-macros.h>
- #include <asm/errno.h>
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  2 +-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   | 18 ++++--
+ .../drm/arm/display/komeda/komeda_wb_connector.c   | 30 ++++++----
+ drivers/gpu/drm/arm/malidp_mw.c                    | 25 ++++----
+ drivers/gpu/drm/drm_writeback.c                    | 69 +++-------------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c      | 10 +---
+ .../gpu/drm/renesas/rcar-du/rcar_du_writeback.c    | 23 +++++---
+ drivers/gpu/drm/vc4/vc4_txp.c                      |  9 ++-
+ include/drm/drm_writeback.h                        | 22 +------
+ 9 files changed, 77 insertions(+), 131 deletions(-)
+---
+base-commit: cb640b2ca54617f4a9d4d6efd5ff2afd6be11f19
+change-id: 20250801-wb-drop-encoder-97a0c75bd5d7
 
- #define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
-@@ -115,11 +117,137 @@ __llsc_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
- 	return ret;
- }
-
-+#ifdef CONFIG_AS_HAS_LSUI
-+
-+#define __LSUI_PREAMBLE	".arch_extension lsui\n"
-+
-+#define LSUI_FUTEX_ATOMIC_OP(op, asm_op, mb)				\
-+static __always_inline int						\
-+__lsui_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
-+{									\
-+	int ret = 0;							\
-+	int oldval;							\
-+									\
-+	uaccess_ttbr0_enable();						\
-+	asm volatile("// __lsui_futex_atomic_" #op "\n"			\
-+	__LSUI_PREAMBLE							\
-+"1:	" #asm_op #mb "	%w3, %w2, %1\n"					\
-+"2:\n"									\
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)				\
-+	: "+r" (ret), "+Q" (*uaddr), "=r" (oldval)			\
-+	: "r" (oparg)							\
-+	: "memory");							\
-+	uaccess_ttbr0_disable();					\
-+									\
-+	if (!ret)							\
-+		*oval = oldval;						\
-+									\
-+	return ret;							\
-+}
-+
-+LSUI_FUTEX_ATOMIC_OP(add, ldtadd, al)
-+LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
-+LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
-+LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-+
-+static __always_inline int
-+__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	unsigned int loops = LLSC_MAX_LOOPS;
-+	int ret, oldval, tmp;
-+
-+	uaccess_ttbr0_enable();
-+	/*
-+	 * there are no ldteor/stteor instructions...
-+	 */
-+	asm volatile("// __lsui_futex_atomic_eor\n"
-+	__LSUI_PREAMBLE
-+"	prfm	pstl1strm, %2\n"
-+"1:	ldtxr	%w1, %2\n"
-+"	eor	%w3, %w1, %w5\n"
-+"2:	stltxr	%w0, %w3, %2\n"
-+"	cbz	%w0, 3f\n"
-+"	sub	%w4, %w4, %w0\n"
-+"	cbnz	%w4, 1b\n"
-+"	mov	%w0, %w6\n"
-+"3:\n"
-+"	dmb	ish\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %w0)
-+	_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %w0)
-+	: "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp),
-+	  "+r" (loops)
-+	: "r" (oparg), "Ir" (-EAGAIN)
-+	: "memory");
-+	uaccess_ttbr0_disable();
-+
-+	if (!ret)
-+		*oval = oldval;
-+
-+	return ret;
-+}
-+
-+static __always_inline int
-+__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	int ret = 0;
-+	unsigned int loops = LLSC_MAX_LOOPS;
-+	u32 val, tmp;
-+
-+	uaccess_ttbr0_enable();
-+	/*
-+	 * cas{al}t doesn't support word size...
-+	 */
-+	asm volatile("//__lsui_futex_cmpxchg\n"
-+	__LSUI_PREAMBLE
-+"	prfm	pstl1strm, %2\n"
-+"1:	ldtxr	%w1, %2\n"
-+"	eor	%w3, %w1, %w5\n"
-+"	cbnz	%w3, 4f\n"
-+"2:	stltxr	%w3, %w6, %2\n"
-+"	cbz	%w3, 3f\n"
-+"	sub	%w4, %w4, %w3\n"
-+"	cbnz	%w4, 1b\n"
-+"	mov	%w0, %w7\n"
-+"3:\n"
-+"	dmb	ish\n"
-+"4:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)
-+	_ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)
-+	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp), "+r" (loops)
-+	: "r" (oldval), "r" (newval), "Ir" (-EAGAIN)
-+	: "memory");
-+	uaccess_ttbr0_disable();
-+
-+	if (!ret)
-+		*oval = oldval;
-+
-+	return ret;
-+}
-+
-+#define __lsui_llsc_body(op, ...)					\
-+({									\
-+	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
-+		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
-+})
-+
-+#else	/* CONFIG_AS_HAS_LSUI */
-+
-+#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
-+
-+#endif	/* CONFIG_AS_HAS_LSUI */
-+
-+
- #define FUTEX_ATOMIC_OP(op)						\
- static __always_inline int						\
- __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
- {									\
--	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-+	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
- }
-
- FUTEX_ATOMIC_OP(add)
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+Best regards,
+-- 
+With best wishes
+Dmitry
 
 
