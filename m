@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-771783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38230B28B7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CFFB28B76
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64E4AA372B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08E62A1DC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFD522CBC0;
-	Sat, 16 Aug 2025 07:37:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F99223DC0;
+	Sat, 16 Aug 2025 07:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UluxB1cQ"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A9E22A7F2;
-	Sat, 16 Aug 2025 07:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ADB10E3;
+	Sat, 16 Aug 2025 07:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755329860; cv=none; b=ejSlhobaFkCwgYx8eVTQoWYy5+ZuMPpKn0RtgDD7W0cDx8IZ12+Uz38cWv159JwZC9MNv8+DQf6QiePT2wV76JFLOevcxjDSZxwGqqBLEY0Hggf6vM9Qg7pVv2dxdYvRgBs2xuqwEbRpbv0zT+Gbv1/6Iz+m40dh75lK0SbumSY=
+	t=1755329572; cv=none; b=iNIYFGO871ZIgoyVMAciaEXQP/90nQgFgRRgItNC0mbQCCNga5uusc031Uv0rHwYSN9coKMORiEv4wm+5zjOIiJ2As/b1OZa+j2Au4673fORTMHkFeQtz+FbUGTiEnOSss7rRjOauFK6ffyD47v7qJuW2SKKEAnBqKJ8ksdyd3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755329860; c=relaxed/simple;
-	bh=/dVTk1qYplh5wGby56mcDhozRU+6sHqe0LKLvQKFnso=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jLpmLL2l9QzPCCPhiDdPjpdg6slSA455RI9zRYjTlYCb5b77xRI1bu95d/IOJryNESDUmwMRwhUVINyyIvYVgvPz2tTAoXt71YxuH0+XoP1mjFdJq3eOJ9e+WMamKtll1q69V1VRBwrQj1DgSeWq3eaEkvR/LFMpr38n/ISJsww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c3rQ52gM0zqVTs;
-	Sat, 16 Aug 2025 15:36:29 +0800 (CST)
-Received: from kwepemo100001.china.huawei.com (unknown [7.202.195.173])
-	by mail.maildlp.com (Postfix) with ESMTPS id 09FDD140123;
-	Sat, 16 Aug 2025 15:37:29 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemo100001.china.huawei.com
- (7.202.195.173) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
- 2025 15:37:28 +0800
-From: Yin Tirui <yintirui@huawei.com>
-To: <robh@kernel.org>, <saravanak@google.com>, <dan.j.williams@intel.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <rppt@kernel.org>,
-	<Jonathan.Cameron@huawei.com>, <devicetree@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-CC: <wangkefeng.wang@huawei.com>, <chenjun102@huawei.com>,
-	<yintirui@huawei.com>
-Subject: [PATCH v2] of_numa: fix uninitialized memory nodes causing kernel panic
-Date: Sat, 16 Aug 2025 15:31:31 +0800
-Message-ID: <20250816073131.2674809-1-yintirui@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755329572; c=relaxed/simple;
+	bh=q+dgUCPe7PptlK/VNa6BpDuPqjJRDtx/mKOxTEyOEdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b8fRmzP9QIHdcPdr6kqRsOB2UNIk0AR1aBinOSAaUBdIHnGr0UkidIs1uD4KewEW/W6+zEmACAqtgX0l0qpb24PwBp8k4LAW4Ks6TjUfZH6nqTQtl7owtFfKmQ0AqfuEjOpjHNxMDdovCCV6lFBFYE91b58Xlly/cr5ZS8its0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UluxB1cQ; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755329558; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Zi3mt6f9DghYW3n1681Tp/+SCUmn8lZ88byVYz6vHiE=;
+	b=UluxB1cQrymYLvK+3ZAwrCIev8HS87uApWtGZS5RlQeX+uwrjobqZwe+crSsmpGRFFnvGLTo9HegkVsBplo0cxeDZ/wndqgjdF06CPrFnovzd2gW1O8tisZ91SRox798RnhHPcZDUe6NZnmuzuaHHBg2/jk5mHdhUwdxSsYTthM=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0Wlqzknt_1755329556 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 16 Aug 2025 15:32:38 +0800
+From: fangyu.yu@linux.alibaba.com
+To: anup@brainfault.org,
+	atish.patra@linux.dev,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: guoren@linux.alibaba.com,
+	guoren@kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Subject: [PATCH] RISC-V: KVM: Write hgatp register with valid mode bits
+Date: Sat, 16 Aug 2025 15:32:34 +0800
+Message-Id: <20250816073234.77646-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,60 +62,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemo100001.china.huawei.com (7.202.195.173)
 
-When the number of CPUs is fewer than the number of memory nodes,
-some memory nodes may not be properly initialized because they are
-not added to numa_nodes_parsed during memory parsing.
+From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-In of_numa_parse_memory_nodes(), after successfully adding a memory
-block via numa_add_memblk(), the corresponding node ID should be
-marked as parsed. However, the current implementation in numa_add_memblk()
-only adds the memory block to numa_meminfo but fails to update
-numa_nodes_parsed, leaving some nodes uninitialized.
+According to the RISC-V Privileged Architecture Spec, when MODE=Bare
+is selected,software must write zero to the remaining fields of hgatp.
 
-During boot in a QEMU-emulated ARM64 NUMA environment, the kernel
-panics when free_area_init() attempts to access NODE_DATA() for
-memory nodes that were uninitialized.
+We have detected the valid mode supported by the HW before, So using a
+valid mode to detect how many vmid bits are supported.
 
-[    0.000000] Call trace:
-[    0.000000]  free_area_init+0x620/0x106c (P)
-[    0.000000]  bootmem_init+0x110/0x1dc
-[    0.000000]  setup_arch+0x278/0x60c
-[    0.000000]  start_kernel+0x70/0x748
-[    0.000000]  __primary_switched+0x88/0x90
-
-Cc: stable@vger.kernel.org
-Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
-Signed-off-by: Yin Tirui <yintirui@huawei.com>
-
+Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 ---
+ arch/riscv/kvm/vmid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: Move the changes to the of_numa related. Correct the fixes tag.
----
- drivers/of/of_numa.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
-index 230d5f628c1b..cd2dc8e825c9 100644
---- a/drivers/of/of_numa.c
-+++ b/drivers/of/of_numa.c
-@@ -59,8 +59,11 @@ static int __init of_numa_parse_memory_nodes(void)
- 			r = -EINVAL;
- 		}
+diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+index 3b426c800480..d176a5c2f9a4 100644
+--- a/arch/riscv/kvm/vmid.c
++++ b/arch/riscv/kvm/vmid.c
+@@ -28,7 +28,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
  
--		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++)
-+		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++) {
- 			r = numa_add_memblk(nid, rsrc.start, rsrc.end + 1);
-+			if (!r)
-+				node_set(nid, numa_nodes_parsed);
-+		}
- 
- 		if (!i || r) {
- 			of_node_put(np);
+ 	/* Figure-out number of VMID bits in HW */
+ 	old = csr_read(CSR_HGATP);
+-	csr_write(CSR_HGATP, old | HGATP_VMID);
++	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
+ 	vmid_bits = csr_read(CSR_HGATP);
+ 	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+ 	vmid_bits = fls_long(vmid_bits);
 -- 
-2.43.0
+2.49.0
 
 
