@@ -1,130 +1,168 @@
-Return-Path: <linux-kernel+bounces-772196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A9EB28FC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:26:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D9EB28FCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCB51C2583E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2411C2555C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2D2F60A9;
-	Sat, 16 Aug 2025 17:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379032F659D;
+	Sat, 16 Aug 2025 17:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="dxv0rl6r"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="il+Ei518"
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A132FFDC4
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A543F2EBDDB
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755365193; cv=none; b=PXBO1VHHRr41xsdtDLx37fmqiVJF2iqrC6WN1AW22eQ0++uLJK4zA9kOgdGG3s1x+JoBTrcUL3TssdLTX99IQ9X2FoVC9X2W/joPFXlHYNglssmdPM0GN5DcoqQXHPoTiDJ8aCJqV5YOWTlxB0vHlBu1DDr2cxjgLSRJcqE0SoQ=
+	t=1755365284; cv=none; b=GDF5TaTcGFB2JLtnNFlklzXdzM6YUoFlQVhiyY0IoFbosA5SZNhmqeGhDT1pXlkYEHqjUjYlf3ezv+pgoPpPaIAzXZqq0rq1M2SeXEeKm1g4JcQ0V3NHl4D2p73QUqUdQxSKn6MPet5ubYa2TOlGhUsJTNcMKPKSl0OjnpzY99A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755365193; c=relaxed/simple;
-	bh=DVhZox1JbBY2xJ7jFvjY7Bbserpka9EkVtY05SBt2yE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=cNbazeESTA0rd/muGktgFCoCo9raK6P0XusVpkSTAXIqR7hWmgF5HjowPOU0z9K66A1t8sdcxwKBcZho/tCAA/yT8tYJsVh9kAuF2ekcXRkY1ceO9lxY+oK3VsD9BL4gllOmmY6oqiyqVNlOcVMnfRLBPrzCCy5sk7Efdht43Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=dxv0rl6r; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755365284; c=relaxed/simple;
+	bh=qfd5Bpl29LjbUuYcluXS6+PkRhUbGbXh09AU6IENGkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TiKJ0xbPh/ZNMhJK8nSlJ6BY7a8xcCfZ9hA2rE+I5F45onn+qlaWoYkitZ6kfvo+tH9f6ZtNoFymRqRbek5VPWZLlrd/wkAsRVuAkk5poQaM4XNJKMzlYrjcFvhn0CWPb4DzUFVXmh495ztgFWtEOwpWSs9KYf+CpLrC8gS+CFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=il+Ei518; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755365276; bh=i8DayYv+95JsTVimWEBfQAF5hYZeMAz3j5aY/gIoeQE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=il+Ei518Qq207efT+RmQbo1KQd8rhr+sMApI6n4QvQb9cxKl8LXdDG3DfeIpq75YiF2l4rx7Jen5sARihKUC7JGtn/zPe8iAAMdC+zWRn/KsNxFEAaKq1+OM30UAiAojdvCzjdxX2ShNcfRDWYy4kg8nHMjk8QpgDeyEBZyxCoZOp5ctxz0Y6IcooGZWBh0rqJFT16sfX8K8tWsFRZeVmrq94PMaIkZV4fhUvNXUs/I6so2UAwgmTX3aDt+IadrDrBPxzx54GK3T4tWfI7Vnge36wpjirnsk3rKxsEDpLqE4C9KAQZIa4jSfIyBE2z/Ea779AGsELhe0TzqT1xi37A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755365276; bh=tNje3rHJRdLXlmNVOri2AM2PuYULlPcH2Cr1ZwZ1KH4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UjNkUDIQnRmUg9gT5E3VJb4ZKjWTGj/hgJzVjGI6CNDdoQd88/3+vXgnkXzNmU8yKwZIttkSS0ENXYtDSO54HDddVC3FB6J5HAXezSbAaM3CSFqCP+csBxavElOfaTsIanQl6Oyq2zbWsXdjtIdKXtzcTuqj+pe8LS/K2OJ8O6YnyaxR9+obGossGIQXQEvkJyBw/Y3RdZtJyHo2ZLH0R+3+ajirRxzrZIejyTvWbUfWmBzG7p6NqhGzNZK7YJi5iyqkds4IJ/hSX/BUb1QXYbCYpeid25YvKbY8FuKxNSvwnfMKTJFAJhP+297jSQAIp3DRxVYaJ+51IeaoCHAc2g==
+X-YMail-OSG: La05JAUVM1l6C2gpIlsRgjat3TOYEPvoifJKmbaMfP0k.hCiUO3wMZDvqhpTOJF
+ JqqmdRZZ_Sc2rB7tV4_UgcI4KE_xXuCFdwUVhmT5RYoZKUkmxXwRIlfQOlv5gvV7yKyl34ElWR.6
+ EWf6tRuDYvZNfFsjWSRVA1Nndl.jWwvuln7S2zRtwuTR16D2lmjXa7Shi9Dq4M50LrmpvHsYrfws
+ 1eWljiJ2D7IZajBfqVWUMYOd9mfNscznR9dA2TcGK5NVgSuIzDNWijjQJE_sLWvsfjOafFRT7463
+ oK6WEQLq_50cNDXsJZzgUGAeJKUZkB8YqGXxWqcnlHMtQdurXB.hdEFgEKSsL.kqEOI2ZN0eCERt
+ Np_.UNsW8ND5MyuBxbgby6U70m_c8X.Lm3Y6OqJScHIU4ZTk73K3EEvMSkd48wMxFNKFp99bLhNU
+ 8nT7A3XfknfOG2ZH7JeOW.RuQN.n.nVngBxBQ55byXoCqEYWInI2DZILl7MUp3SR54MSjx8eViuQ
+ MOBVrVkwyFEOoTChZo5UewVKbPv9mKRoXEbWLqizJ2394CT8vjymssvi_m9w3TZHcBGmiuJLZg4J
+ Jh7O9bMJwSB.jduefaUxGbI.tN0oZXYKD5GcuUf.Gq7Zl4jqtoD9l8gqRo7YCKYQHgVVCdUc9vgo
+ TV9DiHivqJFMjzODXcw55PmYN.rnH7gvL3EW9pgeElaV.03HDaygKbURRONQ9ONcCD7kKMDKwvjP
+ 5VO5EBynuNb64vj_mZfQwtmwGKLoNEbpyoIVSScQUkiesjqT4IyAUx2KIa2rYmrC2_mGJ.1_4bOL
+ 6Ue.GXnoLzK6ldknHkvzavMpia1jAI0K_any1rPQp5YBZRBG1CFbPmXvBV7ClQzr2dIwGQmZrJt4
+ vqV_jr7u.y_cJxUqBT6Db5ObMRiDKFyaPAGi3e3n177pqhc5eA.VO1Tu7mwn25vnw.3d3GsS77hj
+ oeU.2NU3hUTqld0dBcpBm4dOPedk3Na05U1u3Pcw6rDHxE5i5WryHq0dzlVYt_7SICGSA1oHP1PV
+ TJPE5ctK1ZQP1Ol6zVz.rZEPGAVzht9QFLvtg4n2Ar2rP5u0Y6FRF8DthCKneRcbI752yLhYIZwc
+ tVVCNl1K38_jvYRk0PUIXZkATL9ZjODPf4kEVilbSMEc99LVWlZUtXCnxUpbV0xRVqYPKfAHOU5V
+ iEVY_CExQhkG6ULYH9r_LiOcwS13PAICjLo4vSyTWCEsKzOaey2aeVDiw4IFx2ui8OnUs1xaOFMA
+ zvvfSpE38Nhp4HxJxtNZgHUR3Th2cgGDQADLNwFInHyIMB6qwNQRMxr0FhzZENVnnEDaofdW_01s
+ 50QuJgoYcl268zqpzEi4aCmFC6KIpAeKm4YUcrXz5UDJd0jBAAU_qUbEkEz_0w0aLf28xgJCJM7_
+ bWOLEiqalYe0IzxK2TaIOo1VecS84IYk43zk7I9kxd1gh.96kxXtemEMPhBcD9FkIo3EEreP_8pB
+ 2U3E6.50.IF.vrSv80iBS_pl.VFPs4cL3S8.Uvf7hK3vbGFZoLqegW1gPOgSN8N8zGWqoSu6kWFx
+ ZYfS1v0732JGR5U9Xw.J6VVSsqxXFIU89fO2YdDrDKHEm9xYlosAE_cGnYDT2zb_lgsLeAztJfZV
+ 0fLk8QRCgN5gsPZBefLSEYcsOaVX6LziNCmTLENaRZ5VDE3rqKEMtomCrOy6XTJjYpTp_y2GGVDQ
+ rmW8I0OMfx.fCARY3vhOJnTPyj9ujpH8n9YAPq48DnjPyzzx1sbkJ8IVwjGdDWRSk4sBR.CEfQLd
+ 1eDW8OREi1wQy64jFSEZ_dnxXPE.yUd5VU2oDkWG1B7BBpBj0kY3zcbO6GPNebcu71w8uruYd5ON
+ Xwk.FP9iTdmY.7ffWbgPsygZk.2gwgfOSayD1FOGQmtG8NUAnCebAlbXlJGalebF2Opms_IcGeVt
+ 7lGiwgvNx4zvKv8gaaU14B_JuPoO5axNxS7grsGLkkAAJSpmHa7xII5dpShjW9l6c82N4Swosjv7
+ 2BQxvuDMUsTKljw1OIRc.BivcY1urIGssVkYEr.b1yNsOLZKDY9vqlvQDRYB9zmpttdeqgPD_tzA
+ yJLXfJWdNN4FtXW2.QQyGwL082iYIzPBmOAWZDKab0cn2pgAoTCOfv8rCjPqZlDkaloZ9Kn7XomR
+ rNwIJHk2fKesYXLy0CMI0LqX6tCFCxi1v4zSOaid0EGScsY.tyuw33rjp6irnjDCspN.eegh9lle
+ _Bk2_6shZn9fR8sPmQJLAcOq7FeeU5oAu6jvKeV2iKpQsfbpRf1pJSSk5tPHs7m_5Beui9B5LfCi
+ mBd5et67LFI6OS7PsrnwtpbdU
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 00d65f2d-0ce4-4459-b992-21d0ad94126c
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 16 Aug 2025 17:27:56 +0000
+Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6030f5619f5a29a549fe58c2f4d3ccdf;
+          Sat, 16 Aug 2025 17:27:53 +0000 (UTC)
+Message-ID: <99ee372d-ca63-4dae-bf53-567a5dc69be4@schaufler-ca.com>
+Date: Sat, 16 Aug 2025 10:27:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755365186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ir4PRrv0foJMSUrxJ04CAwKKpBnrB2oKqpw/18RYe5w=;
-	b=dxv0rl6rfxiiZoE+vSXvb5+WM0Qv5ruhRJIH928wH3M+mzCl/ldYy8lA6WrZCV9OVjt3Sn
-	W5C2mbLSbIVOC1fh6KDdTSKauZOI64FBaXPlieqUBWqcwLDEScHdf2qoMk17VDOdSbBD6l
-	1loVKQYJc1usHcpH4sam+PbwammjJWIGqW5XYEXd5V0pvHCUwgx9DS355GSYgh+M19t19O
-	uG9yPnvjlamxhDuOEgX8vIWSJU6XmWt43vLdRxNCcsfUzXsqWJ5ARvkfDZ7u99RTn3+jnC
-	p2pdB88vL7r/0qcThZ9zbwRoO+3QvlFN6t5jwslJ2MsH6ComSxHBOsT27Lt2Fw==
-Content-Type: multipart/signed;
- boundary=ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 16 Aug 2025 19:26:16 +0200
-Message-Id: <DC410TGMPWBO.3CP1NM5WWBEJ0@cknow.org>
-Subject: Re: RFE: Make ANDROID_BINDER_IPC tristate
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Todd Kjos" <tkjos@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, "Todd Kjos"
- <tkjos@android.com>, "Martijn Coenen" <maco@android.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Christian Brauner" <brauner@kernel.org>, "Carlos
- Llamas" <cmllamas@google.com>, "Suren Baghdasaryan" <surenb@google.com>,
- <linux-kernel@vger.kernel.org>, "Diederik de Haas" <didi.debian@cknow.org>
-References: <DC3UBQJQJ2SN.3B2AJHOP3933Z@cknow.org>
- <2025081642-viewpoint-exemption-006f@gregkh>
- <DC3V792JTD1J.LB1A657GBFQA@cknow.org>
- <CAHRSSEyxcqydwbEHHLzHKar9AaQAjACFuM0CnBxN5XrvFQdBcw@mail.gmail.com>
-In-Reply-To: <CAHRSSEyxcqydwbEHHLzHKar9AaQAjACFuM0CnBxN5XrvFQdBcw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
---ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Audit: Records for multiple security contexts
+To: paul@paul-moore.com, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org
+References: <20250816164140.6045-1-casey.ref@schaufler-ca.com>
+ <20250816164140.6045-1-casey@schaufler-ca.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250816164140.6045-1-casey@schaufler-ca.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24338 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Sat Aug 16, 2025 at 6:37 PM CEST, Todd Kjos wrote:
-> This is not feasible since binder relies on many kernel internal function=
-s
-> and data that cannot be exported for loadable module. Patches for this ha=
-ve
-> been attempted in the past, but soundly rejected. You can see some of tha=
-t
-> discussion at
-> https://lore.kernel.org/lkml/20180730143710.14413-1-christian@brauner.io/=
-.
+Opps. script error. Please disregard.
 
-That seems to be the upstreaming attempt (or at least trying to start a
-discussion about it) of the initial patch.
-A lot could've happened in these 7 years, but apparently not enough for
-a different outcome. Good to know, thanks :-)
 
-FWIW these are the current ones:
-https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.16.1-1_exp1/debi=
-an/patches/debian/export-symbols-needed-by-binder.patch
-https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.16.1-1_exp1/debi=
-an/patches/debian/android-enable-building-binder-as-module.patch
-
-Cheers,
-  Diederik
-
-> On Sat, Aug 16, 2025 at 5:52=E2=80=AFAM Diederik de Haas <didi.debian@ckn=
-ow.org>
-> wrote:
+On 8/16/2025 9:41 AM, Casey Schaufler wrote:
+> The Linux audit system includes LSM based security "context" information
+> in its events. Historically, only one LSM that uses security contexts can
+> be active on a system. One of the few obsticles to allowing multiple LSM
+> support is the inability to report more than one security context in an
+> audit event. This patchset provides a mechanism to provide supplimental
+> records containing more than one security context for subjects and
+> objects.
 >
->> On Sat Aug 16, 2025 at 2:47 PM CEST, Greg Kroah-Hartman wrote:
->> > On Sat, Aug 16, 2025 at 02:11:24PM +0200, Diederik de Haas wrote:
->> >> Programs like Waydroid allows people to run Android in a Linux contai=
-ner
->> >> but it needs ANDROID_BINDER_IPC to do that.
->> >>
->> >> So hereby the request to make ANDROID_BINDER_IPC tristate so people t=
-hat
->> >> want to use it can load it when needed.
->> >>
->> >> Debian has a patch to make it tristate since 2018, but it would be so
->> >> much more useful to have it tristate upstream.
-
---ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKC/OwAKCRDXblvOeH7b
-bnxRAQDTUfioVWjg5z/Uk+w9RHlMuScF3xkhXYWm58zm/xnXmgD+M5kmWQeKWVtb
-ORKOstr347rotj7J6ThpB+L2h+aB2QQ=
-=MyJg
------END PGP SIGNATURE-----
-
---ea6e302605aadf16eefba0cee419b443ffd121b0ee764855d111be28c27a--
+> The mechanism for reporting multiple security contexts inspired
+> considerable discussion. It would have been possible to add multiple
+> contexts to existing records using sophisticated formatting. This would
+> have significant backward compatibility issues, and require additional
+> parsing in user space code. Adding new records for an event that contain
+> the contexts is more in keeping with the way audit events have been
+> constructed in the past.
+>
+> Only audit events associated with system calls have required multiple
+> records prior to this. Mechanism has been added allowing any event
+> to be composed of multiple records. This should make it easier to
+> add information to existing audit events without breaking backward
+> compatability.
+>
+> v5:
+> Comment on the LSM_ID_UNDEF behavior in security_secid_to_secctx().
+> Change some names to better reflect their purpose.
+> Move alignment changes into a separate patch.
+> v4:
+> Use LSM_ID_UNDEF when checking for valid LSM IDs in
+> security_lsmprop_to_secctx().
+> Fix the object record to include only those for LSMs that use them.
+> Squash the two patches dealing with subject contexts.
+> Base the patches on Paul Moore's LSM initialization patchset.
+> https://lore.kernel.org/all/20250409185019.238841-31-paul@paul-moore.com/
+> v3:
+> Rework how security modules identify that they provide security
+> contexts to the audit system. Maintain a list within the audit
+> system of the security modules that provide security contexts.
+> Revert the separate counts of subject and object contexts.
+> v2:
+> Maintain separate counts for LSMs using subject contexts and object
+> contexts. AppArmor uses the former but not the latter.
+> Correct error handling in object record creation.
+>
+> https://github.com/cschaufler/lsm-stacking#audit-6.16-rc4-v5
+>
+> Casey Schaufler (5):
+>   Audit: Create audit_stamp structure
+>   LSM: security_lsmblob_to_secctx module selection
+>   Audit: Add record for multiple task security contexts
+>   Audit: Fix indentation in audit_log_exit
+>   Audit: Add record for multiple object contexts
+>
+>  include/linux/audit.h        |  23 +++
+>  include/linux/security.h     |   6 +-
+>  include/uapi/linux/audit.h   |   2 +
+>  kernel/audit.c               | 274 ++++++++++++++++++++++++++++++-----
+>  kernel/audit.h               |  13 +-
+>  kernel/auditsc.c             |  65 +++------
+>  net/netlabel/netlabel_user.c |   8 +-
+>  security/apparmor/lsm.c      |   3 +
+>  security/lsm.h               |   4 -
+>  security/lsm_init.c          |   5 -
+>  security/security.c          |  21 ++-
+>  security/selinux/hooks.c     |   5 +
+>  security/smack/smack_lsm.c   |   5 +
+>  13 files changed, 325 insertions(+), 109 deletions(-)
+>
 
