@@ -1,102 +1,157 @@
-Return-Path: <linux-kernel+bounces-771608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697F4B28953
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:34:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8234B2895C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 02:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D5D5C6AA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD3A17BD83
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 00:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A38225D7;
-	Sat, 16 Aug 2025 00:34:02 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD27578F3A;
+	Sat, 16 Aug 2025 00:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJOdlNAh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47AB171CD;
-	Sat, 16 Aug 2025 00:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E34501A;
+	Sat, 16 Aug 2025 00:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755304441; cv=none; b=up0DTKpC5QKXPqg3A0nKl0YfHEki8kNy1HPhlrXGlbE77VnvEZExMhN//FzWpfBZv31WXAc+hfZQzwhVQAHxvyEs+QAi63aiChsr2OYrF7FkSwFbEqvn4kALBoXGHyAXFqmsHFYFb0hsCYKljrgS5qjnfmZSGKfp1cQ38F0RxRk=
+	t=1755304587; cv=none; b=Vsdk5t3lcD/hrKzn26JEp6XrWSytH7LC99rDyqwbTiNYG0h0WuB0fRftD+DU9CoQ5Yrs4k4lIEmi4Oa31sZNN2v8gmH3IPBllKOVDF0/lo7tFhWS6D8v2DnnPGgqKLSYFSBEW+1FHvxCk59NaWFqCakUh/XM9qRPhcdUzfTO+Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755304441; c=relaxed/simple;
-	bh=bHghoBHVNxNoQy2qCP1Svhf+HM/w6IXlKX4oFvO2XS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZeWHLXEmwjsLp5GiBhwO6P2XfQ+4WlRgJ8jyYZXLG2fgRzdGa9vu+I0ufokgyOISzt0wv7i6Rtva7KIt9v8BaC7P/ZaOxS33YFKKIHss9vmIvBdIGqr/ugds/9U/N6Idqk1wy1ER3bwlvvBVZV9HcOLbVSInfOxvgc+41+6VFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c3g2Z4FXxzKHMYG;
-	Sat, 16 Aug 2025 08:33:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E1BD51A0A14;
-	Sat, 16 Aug 2025 08:33:57 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgCncBH00Z9o_+tMDw--.54024S2;
-	Sat, 16 Aug 2025 08:33:57 +0800 (CST)
-Message-ID: <3f6feb92-0496-416b-bf0c-4391e0d4426d@huaweicloud.com>
-Date: Sat, 16 Aug 2025 08:33:55 +0800
+	s=arc-20240116; t=1755304587; c=relaxed/simple;
+	bh=benNazeuPaouG/+e8wLXd4fxOv6Us5y+9Sh2v9/dsfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+kyY821p98y/Rr/Fq/6IL3NZ8CAahEkcnQtg3KFe6K56wywT2ZO7yE8e8RgEeunwLKNTR8Qete/TeIl+X+eh4DsJpfL4PxGUIOPEfAyZwYolsF7n1iHcS0y2YNyPVOXKDrPU3E7PK0oGZNE0t5JaR+ibIgDmMhPq9d/jKFhZaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJOdlNAh; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755304585; x=1786840585;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=benNazeuPaouG/+e8wLXd4fxOv6Us5y+9Sh2v9/dsfc=;
+  b=mJOdlNAhAO+1VHVjjrYso7JmNsr0Sy+pQ5kYpBEqkgozEhGIYaoiy2Ln
+   RI7ynZ9Ffvv2LoR5vQoSHiIZexSlSAixki6lmuzJSMLJOOm2e/c8uEF0h
+   BxPZscGOx97/ukND+ymEAwtnRcA+YFS7x/3Sd56Vk4MV1K+SYaWIMdxmP
+   vsEbtMcIqYTeSMJLbf3ge+8CKkYyfVY9pCG4UeIrYvQnEzqB1ozKAu3/Y
+   lpVIHFwbbCavonCLDKZDeK08cgAvGDJqUXm2Sq6RanJYlxF59oDM4yyl9
+   X2ClZH+dpin719Q+FSpvS3Qw3rbz1hweO4UBUI0RtNSFokRUkG9Rj1Il+
+   w==;
+X-CSE-ConnectionGUID: wRmwqNWlQYOsPU2dNupwXg==
+X-CSE-MsgGUID: iYiDwLKeRLKoEiIGMdez4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61465016"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61465016"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 17:36:25 -0700
+X-CSE-ConnectionGUID: XsfJWJHDRiucVH5KSe51BA==
+X-CSE-MsgGUID: NSRhkyfJQCqWWqVNaOYoEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166309080"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 15 Aug 2025 17:36:18 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un4u8-000CSI-05;
+	Sat, 16 Aug 2025 00:36:16 +0000
+Date: Sat, 16 Aug 2025 08:35:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v4 08/13] drm/bridge: analogix_dp: Add new API
+ analogix_dp_finish_probe()
+Message-ID: <202508160857.yC3oMucJ-lkp@intel.com>
+References: <20250814104753.195255-9-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-To: Hillf Danton <hdanton@sina.com>
-Cc: Michal Koutny <mkoutny@suse.com>, tj@kernel.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com,
- gaoyingjie@uniontech.com
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
- <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
- <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
- <20250815024020.4579-1-hdanton@sina.com>
- <20250815100213.4599-1-hdanton@sina.com>
- <20250815115512.4616-1-hdanton@sina.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20250815115512.4616-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCncBH00Z9o_+tMDw--.54024S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYb7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF
-	54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UGYL
-	9UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814104753.195255-9-damon.ding@rock-chips.com>
+
+Hi Damon,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-exynos/exynos-drm-next]
+[also build test ERROR on rockchip/for-next linus/master v6.17-rc1 next-20250815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Damon-Ding/drm-bridge-analogix_dp-Formalize-the-struct-analogix_dp_device/20250814-185009
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git exynos-drm-next
+patch link:    https://lore.kernel.org/r/20250814104753.195255-9-damon.ding%40rock-chips.com
+patch subject: [PATCH v4 08/13] drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+config: x86_64-randconfig-001-20250816 (https://download.01.org/0day-ci/archive/20250816/202508160857.yC3oMucJ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508160857.yC3oMucJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508160857.yC3oMucJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: vmlinux.o: in function `analogix_dp_finish_probe':
+>> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1700: undefined reference to `devm_of_dp_aux_populate_bus'
 
 
+vim +1700 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 
-On 2025/8/15 19:54, Hillf Danton wrote:
-> On Fri, 15 Aug 2025 18:28:53 +0800 Chen Ridong wrote:
->>
->> To clarify, when you mentioned "cut max_active off", did you mean setting max_active of
->> cgroup_destroy_wq to 1?
->>
-> 	cgroup_destroy_wq = alloc_workqueue("cgroup_destroy", 0, 0);
-
-Thank you for the additional clarification.
-
-While this modification is functional, I’m concerned it might spawn a significant number of cgroup
-destruction tasks—most of which would contend for cgroup_mutex. Could this waste system resources?
+  1695	
+  1696	int analogix_dp_finish_probe(struct analogix_dp_device *dp)
+  1697	{
+  1698		int ret;
+  1699	
+> 1700		ret = devm_of_dp_aux_populate_bus(&dp->aux, analogix_dp_aux_done_probing);
+  1701		if (ret) {
+  1702			/*
+  1703			 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will
+  1704			 * not be called because there are no EP devices. Then the callback function
+  1705			 * analogix_dp_aux_done_probing() will be called directly in order to support
+  1706			 * the other valid DT configurations.
+  1707			 *
+  1708			 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
+  1709			 */
+  1710			if (ret != -ENODEV) {
+  1711				dev_err(dp->dev, "failed to populate aux bus\n");
+  1712				return ret;
+  1713			}
+  1714	
+  1715			return analogix_dp_aux_done_probing(&dp->aux);
+  1716		}
+  1717	
+  1718		return 0;
+  1719	}
+  1720	EXPORT_SYMBOL_GPL(analogix_dp_finish_probe);
+  1721	
 
 -- 
-Best regards,
-Ridong
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
