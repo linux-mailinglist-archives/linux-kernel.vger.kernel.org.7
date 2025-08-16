@@ -1,267 +1,220 @@
-Return-Path: <linux-kernel+bounces-771704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D34B28A89
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49B1B28A8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBB607B38FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4A7AC669A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5F01D5CEA;
-	Sat, 16 Aug 2025 04:25:12 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E491CAA65;
+	Sat, 16 Aug 2025 04:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GTOmmidf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88437483;
-	Sat, 16 Aug 2025 04:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C069E1C5496
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 04:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755318311; cv=none; b=TEJLyG5olFLpALOtHSDM3gY2sgHnR/aXedu3bwshJgB0G9bpbyArgwlr0Iifnxe0TfQ+NlSQBlt/RRdAhu1LVCpYfVYFnZG/4yM9MMB4RdIeNEw8m4pCPpgCtJGsSoIpd/vlwxgDwEEkLYyvbnxduKPf2YUyPLYVdYfe3RzEFbs=
+	t=1755318401; cv=none; b=ZxZQabf0nd5ROhdWfByruQP9LL2AUCDoRVaIJbD6pw+WTYMVJVQYW6FTkIbGsT+Xlpt8HdJtzCsJogu2QwXjrJJBg+STp2WQ6XCNQ19YXWHUZ31rg+X3+C+xmGtERagYfRf6w94/qGC3Oi1s/T3ATHlcbZTGiiAXYhl/5GSLv2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755318311; c=relaxed/simple;
-	bh=AvE7Vq+Ia1iy0ymdsrxHDLQTSws2IWS+/tUHXwiSo/E=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=o4MLSp1Wi5UZl95x103DasavgYLFIsRjOA9hwvBgRG9c6ewDbcXF5etjCbwodRkROHOwGEzIyBLzqsvxDW1AIl1XxTjHuda0aN4LjN+FhdJLLzk5dyMJSLgCuQMnEzD3aKBZpQ/28UpaqW6CrPULucxYeliieoRsgVOsUNk60es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.108] (unknown [114.241.87.235])
-	by APP-01 (Coremail) with SMTP id qwCowABXgaUGCKBoONhEDA--.30386S2;
-	Sat, 16 Aug 2025 12:24:39 +0800 (CST)
-Message-ID: <89865f17-f405-445a-874d-9361fe247bfe@iscas.ac.cn>
-Date: Sat, 16 Aug 2025 12:24:38 +0800
+	s=arc-20240116; t=1755318401; c=relaxed/simple;
+	bh=lPYzgHqneTPGpOmELfbMjIqXvFeAATbu/hvQiQvTepU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=en01LswA+khuwByAWqUBdqiCn2i+VEK7in3LOXSNfA+N14kF25m7ZE/DgbBOVer6k9t4qJkHEb01LpftF/lnVANtMLZ/0VDUBG1cf25at34RKAQ2oVrhd0dJYmCv8K52ZsK1Rsu80VyKSZOU38q861II+yIPIINFDBfqViM2nIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GTOmmidf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755318400; x=1786854400;
+  h=date:from:to:cc:subject:message-id;
+  bh=lPYzgHqneTPGpOmELfbMjIqXvFeAATbu/hvQiQvTepU=;
+  b=GTOmmidfKMZwu3eP4jT+oJmjjGnXBLqyoVJhSluuF1RAd2CrTXRZkN+S
+   zHjybvQI8V/UXhwJFLKs4ag3TXatjgODw1FUtlHHAcJyhneNkMyf1MumE
+   KJGPJd7btln08Z9DkkOQ53PysyP/xFfvWWWnBO0E4bmSNhkFXagZrXqlT
+   jM1pkOV+mSdF5Xw5XA9mvwujmlSPjLaM+5RzJ6CsxWNt+ImaBOPcK+K13
+   WfKDZo7+aaX9fiq8Cu5e9EydOfKnF/hFJKxab++KjZ9PGznNPPgTbhMHo
+   N3tMyic2Oyr5+Y1U7s87okEkEXlT5tX048/qm+8CPhcq/0HMW+E36jrie
+   A==;
+X-CSE-ConnectionGUID: bJY3u6vCTk6oHD91qKm6IA==
+X-CSE-MsgGUID: oZ8tAjfZTEaZZC4gJaewOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="45204675"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="45204675"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2025 21:26:39 -0700
+X-CSE-ConnectionGUID: mSils05PTLSFRD4/0LTZtQ==
+X-CSE-MsgGUID: 4kZSrzwfRsOSRy5l+gDF/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171280124"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Aug 2025 21:26:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1un8V2-000Cac-0K;
+	Sat, 16 Aug 2025 04:26:36 +0000
+Date: Sat, 16 Aug 2025 12:26:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ a1586c248c973b493ca682ae5d48e5d0acbce596
+Message-ID: <202508161202.YdNdiOJi-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-Subject: Re: [PATCH 2/2] RISC-V: Add common csr_read_num() and csr_write_num()
- functions
-To: Anup Patel <apatel@ventanamicro.com>, Sunil V L
- <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Len Brown <lenb@kernel.org>, Atish Patra <atish.patra@linux.dev>,
- Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Vivian Wang <wangruikang@iscas.ac.cn>
-References: <20250815161406.76370-1-apatel@ventanamicro.com>
- <20250815161406.76370-3-apatel@ventanamicro.com>
-Content-Language: en-US
-In-Reply-To: <20250815161406.76370-3-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowABXgaUGCKBoONhEDA--.30386S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr1xWw18WFy5KrW8JryDAwb_yoW7uFyUpr
-	WjkFZIkr48Ars293y3Crn8Jry5X3WxWFWUK348Xay3Xr4Utr98WrykWa4UtryDWFZ5X3s8
-	WF1q9w4fC3s0qrDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUUxR6UUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: a1586c248c973b493ca682ae5d48e5d0acbce596  Merge branch into tip/master: 'x86/entry'
 
-On 8/16/25 00:14, Anup Patel wrote:
-> In RISC-V, there is no CSR read/write instruction which takes CSR
-> number via register so add common csr_read_num() and csr_write_num()
-> functions which allow accessing certain CSRs by passing CSR number
-> as parameter. These common functions will be first used by the
-> ACPI CPPC driver and RISC-V PMU driver.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/csr.h |   3 +
->  arch/riscv/kernel/Makefile   |   1 +
->  arch/riscv/kernel/csr.c      | 177 +++++++++++++++++++++++++++++++++++
->  drivers/acpi/riscv/cppc.c    |  17 ++--
->  drivers/perf/riscv_pmu.c     |  43 +--------
->  5 files changed, 189 insertions(+), 52 deletions(-)
->  create mode 100644 arch/riscv/kernel/csr.c
->
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 6fed42e37705..1540626b3540 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -575,6 +575,9 @@
->  			      : "memory");			\
->  })
->
-> +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
-> +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
-> +
->  #endif /* __ASSEMBLY__ */
->
->  #endif /* _ASM_RISCV_CSR_H */
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index c7b542573407..0a75e20bde18 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -50,6 +50,7 @@ obj-y	+= soc.o
->  obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
->  obj-y	+= cpu.o
->  obj-y	+= cpufeature.o
-> +obj-y	+= csr.o
->  obj-y	+= entry.o
->  obj-y	+= irq.o
->  obj-y	+= process.o
-> diff --git a/arch/riscv/kernel/csr.c b/arch/riscv/kernel/csr.c
-> new file mode 100644
-> index 000000000000..f7de45bb597c
-> --- /dev/null
-> +++ b/arch/riscv/kernel/csr.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Ventana Micro Systems Inc.
-> + */
-> +
-> +#define pr_fmt(fmt) "riscv: " fmt
-> +#include <linux/err.h>
-> +#include <linux/export.h>
-> +#include <linux/printk.h>
-> +#include <linux/types.h>
-> +#include <asm/csr.h>
-> +
-> +#define CSR_CUSTOM0_U_RW_BASE		0x800
-> +#define CSR_CUSTOM0_U_RW_COUNT		0x100
-> +
-> +#define CSR_CUSTOM1_U_RO_BASE		0xCC0
-> +#define CSR_CUSTOM1_U_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM2_S_RW_BASE		0x5C0
-> +#define CSR_CUSTOM2_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM3_S_RW_BASE		0x9C0
-> +#define CSR_CUSTOM3_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM4_S_RO_BASE		0xDC0
-> +#define CSR_CUSTOM4_S_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM5_HS_RW_BASE		0x6C0
-> +#define CSR_CUSTOM5_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM6_HS_RW_BASE		0xAC0
-> +#define CSR_CUSTOM6_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM7_HS_RO_BASE		0xEC0
-> +#define CSR_CUSTOM7_HS_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM8_M_RW_BASE		0x7C0
-> +#define CSR_CUSTOM8_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM9_M_RW_BASE		0xBC0
-> +#define CSR_CUSTOM9_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM10_M_RO_BASE		0xFC0
-> +#define CSR_CUSTOM10_M_RO_COUNT		0x040
-> +
-> +unsigned long csr_read_num(unsigned long csr_num, int *out_err)
-> +{
-> +#define switchcase_csr_read(__csr_num)				\
-> +	case (__csr_num):					\
-> +		return csr_read(__csr_num)
-> +#define switchcase_csr_read_2(__csr_num)			\
-> +	switchcase_csr_read(__csr_num + 0);			\
-> +	switchcase_csr_read(__csr_num + 1)
-> +#define switchcase_csr_read_4(__csr_num)			\
-> +	switchcase_csr_read_2(__csr_num + 0);			\
-> +	switchcase_csr_read_2(__csr_num + 2)
-> +#define switchcase_csr_read_8(__csr_num)			\
-> +	switchcase_csr_read_4(__csr_num + 0);			\
-> +	switchcase_csr_read_4(__csr_num + 4)
-> +#define switchcase_csr_read_16(__csr_num)			\
-> +	switchcase_csr_read_8(__csr_num + 0);			\
-> +	switchcase_csr_read_8(__csr_num + 8)
-> +#define switchcase_csr_read_32(__csr_num)			\
-> +	switchcase_csr_read_16(__csr_num + 0);			\
-> +	switchcase_csr_read_16(__csr_num + 16)
-> +#define switchcase_csr_read_64(__csr_num)			\
-> +	switchcase_csr_read_32(__csr_num + 0);			\
-> +	switchcase_csr_read_32(__csr_num + 32)
-> +#define switchcase_csr_read_128(__csr_num)			\
-> +	switchcase_csr_read_64(__csr_num + 0);			\
-> +	switchcase_csr_read_64(__csr_num + 64)
-> +#define switchcase_csr_read_256(__csr_num)			\
-> +	switchcase_csr_read_128(__csr_num + 0);			\
-> +	switchcase_csr_read_128(__csr_num + 128)
-> +
+elapsed time: 1269m
 
-That's... a bit horrendous.
+configs tested: 128
+configs skipped: 6
 
-Since we know that each inner case is quite simple, can we just do our
-own jump table for that? Each case can be one csrr/csrw and one jal
-(possibly pad to 8 bytes), and we can just jump to
-label + (csr_num - range_start) * 8. See bottom of this message for an
-untested prototype.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Vivian "dramforever" Wang
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250815    gcc-8.5.0
+arc                   randconfig-002-20250815    gcc-9.5.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                      jornada720_defconfig    clang-22
+arm                         lpc18xx_defconfig    clang-22
+arm                            mmp2_defconfig    gcc-15.1.0
+arm                          pxa168_defconfig    clang-19
+arm                   randconfig-001-20250815    clang-16
+arm                   randconfig-002-20250815    clang-18
+arm                   randconfig-003-20250815    gcc-14.3.0
+arm                   randconfig-004-20250815    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250815    gcc-8.5.0
+arm64                 randconfig-002-20250815    gcc-8.5.0
+arm64                 randconfig-003-20250815    clang-22
+arm64                 randconfig-004-20250815    gcc-15.1.0
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250815    gcc-15.1.0
+csky                  randconfig-002-20250815    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250815    clang-22
+hexagon               randconfig-002-20250815    clang-22
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250815    gcc-12
+i386        buildonly-randconfig-002-20250815    clang-20
+i386        buildonly-randconfig-003-20250815    clang-20
+i386        buildonly-randconfig-004-20250815    clang-20
+i386        buildonly-randconfig-005-20250815    clang-20
+i386        buildonly-randconfig-006-20250815    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250815    clang-22
+loongarch             randconfig-002-20250815    clang-20
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                        m5272c3_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250815    gcc-11.5.0
+nios2                 randconfig-002-20250815    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250815    gcc-8.5.0
+parisc                randconfig-002-20250815    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc               randconfig-001-20250815    gcc-11.5.0
+powerpc               randconfig-002-20250815    clang-19
+powerpc               randconfig-003-20250815    gcc-11.5.0
+powerpc64             randconfig-001-20250815    gcc-14.3.0
+powerpc64             randconfig-002-20250815    gcc-10.5.0
+powerpc64             randconfig-003-20250815    clang-22
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250815    gcc-12.5.0
+riscv                 randconfig-002-20250815    gcc-8.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250815    gcc-8.5.0
+s390                  randconfig-002-20250815    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250815    gcc-11.5.0
+sh                    randconfig-002-20250815    gcc-12.5.0
+sh                          rsk7203_defconfig    gcc-15.1.0
+sh                  sh7785lcr_32bit_defconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250815    gcc-11.5.0
+sparc                 randconfig-002-20250815    gcc-13.4.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250815    clang-22
+sparc64               randconfig-002-20250815    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250815    gcc-12
+um                    randconfig-002-20250815    clang-19
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250815    clang-20
+x86_64      buildonly-randconfig-002-20250815    gcc-12
+x86_64      buildonly-randconfig-003-20250815    gcc-12
+x86_64      buildonly-randconfig-004-20250815    clang-20
+x86_64      buildonly-randconfig-005-20250815    clang-20
+x86_64      buildonly-randconfig-006-20250815    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250815    gcc-8.5.0
+xtensa                randconfig-002-20250815    gcc-15.1.0
 
-UNTESTED prototype:
-
-#define CSR_CYCLE 0xc00
-#define CSR_CYCLEH 0xc80
-
-/* Force expand argument if macro */
-#define str(_x) #_x
-
-unsigned long csr_read_num(long csr_num)
-{
-	unsigned long res, tmp;
-
-        /*
-	 * Generate a jump table for each range. Each (inner) case is 8 bytes of
-	 * code, a csrr instruction and a jump, possibly padded, so we just jump
-	 * to label_1f + (csr_num - _start) * 8
-	 */
-#define csr_read_case_range(_start, _size) 					\
-	case (_start) ... ((_start) + (_size) - 1):				\
-		asm volatile (							\
-				"	lla %[tmp], 1f\n"			\
-				"	add %[tmp], %[tmp], %[offset]\n"	\
-				"	jr %[tmp]\n"				\
-				"1:\n"						\
-				"	.rept (" str(_size) ")\n"		\
-				"	csrr %[res], (" str(_start) " + \\+)\n"	\
-				"	j 2f\n"					\
-				"	.balign 4\n"				\
-				"	.endr\n"				\
-				"2:\n"						\
-				: [tmp] "=&r"(tmp), [res] "=r"(res)		\
-				: [offset] "r"((csr_num - _start) * 8)		\
-				: );						\
-		break;								\
-
-
-	switch (csr_num) {
-	csr_read_case_range(CSR_CYCLE, 4)
-	csr_read_case_range(CSR_CYCLEH, 4)
-
-	/* ... other cases */
-
-	default:
-		/* Error handling */
-	}
-
-#undef csr_read_case_range
-
-	return res;
-}
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
