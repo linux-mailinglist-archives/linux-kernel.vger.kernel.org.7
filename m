@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-771742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7309B28AEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:16:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F002B28AF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5AA7B93D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123092A1E37
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CC720ADF8;
-	Sat, 16 Aug 2025 06:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442F120E005;
+	Sat, 16 Aug 2025 06:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eFFcWNgi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="TK98vtq9"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E43176F0;
-	Sat, 16 Aug 2025 06:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7426C2116E0
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755324951; cv=none; b=TAD0OLtaRlx/86emMw8psJiJFEvVVSOKm+SZu+CUVLovIIlpIpIwNfzRbNGSlDGuTHBQakcRAULStVyhjWNuK0dTfkl2eEk2b8FV680emmesqymd1GPu2fkOYihKiH95LNBH1wg+s1cnuSoB63XRJqLBlr1THnehrPa411ZO2B4=
+	t=1755325215; cv=none; b=pelhc0ufKmRS/4vnSBm0fC3nin2Y5AlHXPsU7HuB42tpjdgal5M1fBlnAdx7VzAIsTbqZSSdbQEaJAnLtfc39jocMoXDwovuk0f3Ezc3G9CAVBvd79tgj+7KXOImvzl2mhTAp4Kte8+08jK5DE85MbZ5r2Eyu8TfN4aCENt9HBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755324951; c=relaxed/simple;
-	bh=jheQbrl6mo7J2mKnNzaTKtMrCR9vMP2nmVKMbKRV5Ik=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Bt/Uiai9qgWTU8Jn5Vwlt3ygsUFXpuABG/LNMs+r2dm+J3GjdGygPy1OxL2gM/zSs7DxgGZcnMVDUUtQMxqNYnb7BcJZpV80c1KbIhTbpM9JucfraFG9pUS5QiWBOmNs0aHzqsFrmgZGFv5utmHHQfNlEEoRX2JHbRdZy09RX+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eFFcWNgi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7758C4CEEF;
-	Sat, 16 Aug 2025 06:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755324950;
-	bh=jheQbrl6mo7J2mKnNzaTKtMrCR9vMP2nmVKMbKRV5Ik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eFFcWNgiGcxyOJzwvTV+O8epT32CN6pMMrHQrTBnK47ltJ3kaFTY0YfDu8vbZ5l0E
-	 Wo+IYTPEnoW9T0YtNcGyuIV5s85/amVROP+WqbjMtBCJpaF9eQycl9gpzK6QxUykxC
-	 bWBY0jYi35xQg8n2VLrVqTZNqGDs6/nZDfBts/Kg=
-Date: Fri, 15 Aug 2025 23:15:49 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: david@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- corbet@lwn.net, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
- riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
- baolin.wang@linux.alibaba.com, npache@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-Subject: Re: [PATCH v5 5/7] selftest/mm: Extract sz2ord function into
- vm_util.h
-Message-Id: <20250815231549.1d7ef74fc13149e07471f335@linux-foundation.org>
-In-Reply-To: <20250815135549.130506-6-usamaarif642@gmail.com>
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
-	<20250815135549.130506-6-usamaarif642@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755325215; c=relaxed/simple;
+	bh=ep6t0DaH2od4/w3ALMPkD/VxFwAE8feLc9aiVO9z3lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BIE21Rb8hhegjl6OtIUvxlTZrfAojRBhH8M54APtnmZNgAmrgOafabt4AHSthvl4Lji64mXpY7v7QCILT2dnYPkYGgkBEwCv/6WV6hDp9ncR7TQ6c2bg6sUymeJtpit0UyQvnEW2cQ/JMIcIIu6QmAPKp0TZNpfurzMIQQnf4ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=TK98vtq9; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 6AE5E104D019
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:50:04 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 6AE5E104D019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755325204; bh=ep6t0DaH2od4/w3ALMPkD/VxFwAE8feLc9aiVO9z3lA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TK98vtq9aYaIm3djSOOSkWn+jTozBfWzP7o99Y4qlBR1leHdGb90Blpj/dASOpTBF
+	 CNArwO91H9mP60RjjGkGqeO77D/HMizLMUtkhlVMyHnqyIoq73+qxFmp6ozaS8XAKT
+	 8wDubbST4uTSvMH79Lt9cZROPDtm64GVCjMBsBWw=
+Received: (qmail 9851 invoked by uid 510); 16 Aug 2025 11:50:04 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 0.804583 secs; 16 Aug 2025 11:50:04 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 16 Aug 2025 11:50:03 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 0F907360035;
+	Sat, 16 Aug 2025 11:50:03 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 2C9841E8130E;
+	Sat, 16 Aug 2025 11:50:02 +0530 (IST)
+Date: Sat, 16 Aug 2025 11:49:54 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: saeedm@nvidia.com, itayavr@nvidia.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, jgg@ziepe.ca,
+	Jonathan.Cameron@huawei.com, Markus.Elfring@web.de
+Cc: linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH v2] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
+Message-ID: <aKAjCoF9cT3VEbSE@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
 
-On Fri, 15 Aug 2025 14:54:57 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
+Avoid potential memory management issue considering kvzalloc() can
+internally choose to use either kmalloc() or vmalloc() based on memory
+request and current system memory state. Hence, use more appropriate
+kvfree() which automatically determines correct free method to avoid
+potential hard to debug memory issues.
+Fix this issue discovered by running spatch static analysis tool using
+coccinelle script - scripts/coccinelle/api/kfree_mismatch.cocci
 
-> The function already has 2 uses and will have a 3rd one
-> in prctl selftests. The pagesize argument is added into
-> the function, as it's not a global variable anymore.
-> No functional change intended with this patch.
-> 
+Fixes: 52929c2142041 ("fwctl/mlx5: Support for communicating with mlx5 fw")
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+---
+changes v1 -> v2:
+- Update commit message with details on why this issue needs to be fixed
+  as suggested by Alison <alison.schofield@intel.com>
+- Update commit message with details on how this issue was discovered
+  using coccinelle scripts as suggested by Markus <Markus.Elfring@web.de>
+- Carry forward Reviewd-by tag from Dave Jiang <dave.jiang@intel.com>
+---
+ drivers/fwctl/mlx5/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://lkml.kernel.org/r/20250816040113.760010-5-aboorvad@linux.ibm.com
-jut did this, but didn't add the extra arg. 
-tools/testing/selftests/mm/split_huge_page_test.c needed updating.
-
---- a/tools/testing/selftests/mm/cow.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-+++ a/tools/testing/selftests/mm/cow.c
-@@ -52,7 +52,7 @@ static int detect_thp_sizes(size_t sizes
- 	if (!pmdsize)
- 		return 0;
- 
--	orders = 1UL << sz2ord(pmdsize);
-+	orders = 1UL << sz2ord(pmdsize, pagesize);
- 	orders |= thp_supported_orders();
- 
- 	for (i = 0; orders && count < max; i++) {
-@@ -1211,8 +1211,8 @@ static void run_anon_test_case(struct te
- 		size_t size = thpsizes[i];
- 		struct thp_settings settings = *thp_current_settings();
- 
--		settings.hugepages[sz2ord(pmdsize)].enabled = THP_NEVER;
--		settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
-+		settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_NEVER;
-+		settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
- 		thp_push_settings(&settings);
- 
- 		if (size == pmdsize) {
-@@ -1863,7 +1863,7 @@ int main(void)
- 	if (pmdsize) {
- 		/* Only if THP is supported. */
- 		thp_read_settings(&default_settings);
--		default_settings.hugepages[sz2ord(pmdsize)].enabled = THP_INHERIT;
-+		default_settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_INHERIT;
- 		thp_save_settings();
- 		thp_push_settings(&default_settings);
- 
---- a/tools/testing/selftests/mm/uffd-wp-mremap.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-+++ a/tools/testing/selftests/mm/uffd-wp-mremap.c
-@@ -82,9 +82,9 @@ static void *alloc_one_folio(size_t size
- 		struct thp_settings settings = *thp_current_settings();
- 
- 		if (private)
--			settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
-+			settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
- 		else
--			settings.shmem_hugepages[sz2ord(size)].enabled = SHMEM_ALWAYS;
-+			settings.shmem_hugepages[sz2ord(size, pagesize)].enabled = SHMEM_ALWAYS;
- 
- 		thp_push_settings(&settings);
- 
---- a/tools/testing/selftests/mm/vm_util.h~selftest-mm-extract-sz2ord-function-into-vm_utilh
-+++ a/tools/testing/selftests/mm/vm_util.h
-@@ -127,9 +127,9 @@ static inline void log_test_result(int r
- 	ksft_test_result_report(result, "%s\n", test_name);
- }
- 
--static inline int sz2ord(size_t size)
-+static inline int sz2ord(size_t size, size_t pagesize)
- {
--	return __builtin_ctzll(size / getpagesize());
-+	return __builtin_ctzll(size / pagesize);
- }
- 
- void *sys_mremap(void *old_address, unsigned long old_size,
---- a/tools/testing/selftests/mm/split_huge_page_test.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-+++ a/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -544,7 +544,7 @@ int main(int argc, char **argv)
- 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
- 
- 	nr_pages = pmd_pagesize / pagesize;
--	max_order =  sz2ord(pmd_pagesize);
-+	max_order =  sz2ord(pmd_pagesize, pagesize);
- 	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
- 	ksft_set_plan(tests);
- 
-_
+diff --git a/drivers/fwctl/mlx5/main.c b/drivers/fwctl/mlx5/main.c
+index f93aa0cecdb9..4b379f695eb7 100644
+--- a/drivers/fwctl/mlx5/main.c
++++ b/drivers/fwctl/mlx5/main.c
+@@ -345,7 +345,7 @@ static void *mlx5ctl_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
+ 	 */
+ 	if (ret && ret != -EREMOTEIO) {
+ 		if (rpc_out != rpc_in)
+-			kfree(rpc_out);
++			kvfree(rpc_out);
+ 		return ERR_PTR(ret);
+ 	}
+ 	return rpc_out;
+-- 
+2.34.1
 
 
