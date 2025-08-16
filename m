@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-771899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C05FB28CAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394A1B28CAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC2E67B16CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBB4AC1162
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF87E28D831;
-	Sat, 16 Aug 2025 10:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C79728D83B;
+	Sat, 16 Aug 2025 10:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dF4fnMTE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rlb05og6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE0C28C84C;
-	Sat, 16 Aug 2025 10:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C57728C039;
+	Sat, 16 Aug 2025 10:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755338877; cv=none; b=kf81VbUVFJ5osHyjll5gxctYlZ2Jvq9BwlZsSyyU30OEoiHAmW+35PI/Jow2w5YRsV9cNLccvlHjZ9gfXTYuLyoDTdzgSJFBv3/8514VTH8AI4mhWMfPN++7sANRPwpZMuVFyMsiwyrJJUXlOELSsRdw9s+xAQeO3iDgWNFQxDs=
+	t=1755338969; cv=none; b=GiFglRHB/lQ5lLHn0/CjGQYxG0DOjsChIW6TYHE2NHq7OCg665iSaiUQ5l226DHCKBqaZ6KX/Z5eMJZ1ql/xI1HTkIV6FbI/YKFRdCQkF2/4msKhIQV5mURq5IY96nca+A1t2EjWbChRM2hZAW1a4nNptr8CaD3jDFE3e8Y75v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755338877; c=relaxed/simple;
-	bh=xp1P+sO93gQPXTaxhlBCl+TFlpWpJwY0dgXxIiAZxfs=;
+	s=arc-20240116; t=1755338969; c=relaxed/simple;
+	bh=jaTxjgtJrNRkh/dbTd55p8FruDlWhMwNR666ZZJv3OU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ByNV3gL7DOsVPBQVGld19NHWqpwV7FyJWkoTJxDyn3HQoK5eUhZdoTT+/aX5Nbu4qDLl2dLwGIYdlB89HbebrDIOoG6P6c4aWDgMoZA6DPDDPov0HCGo2kJuMCOhu3Nrje8TQL2FbC6aLngL3u8r9kRAVs0Fl6u156rkxQtBK5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dF4fnMTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F05F8C4CEEF;
-	Sat, 16 Aug 2025 10:07:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DN/tLUMl21V+oqn6D30ogeo3v+8ltB7zh3vFGAptm9qLlpuNdovoTY5+mHkiF5Qg/yji/ZLs4gBZ85zMCQjHCMVvebBgpBaAOENwspLe2NW/+46WOPYgtE180Fq62qj2EgwxtVl2gE7siyqUlIwWIn+vXCVIm8noyrtRtFlT1q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rlb05og6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51335C4CEEF;
+	Sat, 16 Aug 2025 10:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755338876;
-	bh=xp1P+sO93gQPXTaxhlBCl+TFlpWpJwY0dgXxIiAZxfs=;
+	s=k20201202; t=1755338968;
+	bh=jaTxjgtJrNRkh/dbTd55p8FruDlWhMwNR666ZZJv3OU=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dF4fnMTEROeiItj4LCHCX7fnSbyd86TDZeBSEBXsTteJ6kcckv+34sJhynuq0zzy7
-	 FQXHA1/NFkJ3DgPfhucqxTcC5KmmPrnWcXLMHPJh526m6XjQzNCkMhY24VpoV4QOie
-	 WNANztHhvUhao2GiJop53pEOdOadTwlQhonRddsYL9aTYYknLrvdbrWNu6SAsWcYuI
-	 Dp9i6pSAMpAsbpdy4iubigPbg64EtA1ZYD0OgkEMDLbfhCwwT/PaQgV16ZvgRP9L0f
-	 lznqeYC0soSLAF1Jb3wTPsnZ7XUiiC9/pTKP06h/5yh3cHuVDiOOMixxPrd9OBJoQl
-	 0rWqhuRLez+iw==
-Date: Sat, 16 Aug 2025 11:07:47 +0100
+	b=Rlb05og6ZnSD8IZnNAHaeH/mIIvjVOmqALFStsQW0523dhUMabwOLIwRp4Jp143z2
+	 WnClgwkn2pGCM9vqHKRzKW52bbrJrSoNB1DHxrQavVQ9tWKrDZbpsdtTQ5dlX8tRaA
+	 f7Qjl5Gvsc0gDrBwft/4BNIXInmKD3+zkjendCh1bTr2HyldNp75jLm+UhuI8yBnMf
+	 V6NdL6fh6SmZ5Id8u1bjjkaQVANciUe9kkpIBq7Kt1WYjTFWI/prn8ZMGamkrOU7va
+	 V6UsnjY7+apjxbVz2bIiHv4egmYumdojR44XG4eJlhYAzFSENfL2WTJlibTVFGmQtC
+	 Xi04Ii8W/XJKg==
+Date: Sat, 16 Aug 2025 11:09:18 +0100
 From: Jonathan Cameron <jic23@kernel.org>
 To: Ben Collins <bcollins@watter.com>
 Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
@@ -49,10 +49,10 @@ Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
  Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
  Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew
  Hepp <andrew.hepp@ahepp.dev>
-Subject: Re: [PATCH 0/5] iio: mcp9600: Features and improvements
-Message-ID: <20250816110747.42696c91@jic23-huawei>
-In-Reply-To: <20250815164627.22002-1-bcollins@watter.com>
-References: <20250815164627.22002-1-bcollins@watter.com>
+Subject: Re: [PATCH v3 0/5] iio: mcp9600: Features and improvements
+Message-ID: <20250816110918.76858b07@jic23-huawei>
+In-Reply-To: <20250815170304.22606-1-bcollins@watter.com>
+References: <20250815170304.22606-1-bcollins@watter.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,15 +63,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Aug 2025 16:46:02 +0000
+On Fri, 15 Aug 2025 17:03:00 +0000
 Ben Collins <bcollins@watter.com> wrote:
 
 > From: Ben Collins <bcollins@kernel.org>
+Ah.   Given this didn't get threaded with the previous posting, it can end
+up in a very different place in peoples in boxes.  If you miss a version
+number or something like that just reply to the cover letter to say so.
 
-See submitting patches documentation.  Should have a version number in the [] in the patch title.
-
-Jonathan
-
+Either way patchwork etc aren't going to figure out which version this
+applies to.
 > 
 > ChangeLog:
 > v2 -> v3:
