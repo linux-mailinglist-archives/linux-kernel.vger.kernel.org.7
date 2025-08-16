@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-772186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE9DB28FAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D43B28FAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8131C2301D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03486AE337B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8E62ED160;
-	Sat, 16 Aug 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151B72F8BE0;
+	Sat, 16 Aug 2025 17:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GeH4NuFI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B5rcNgra"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF842EBDDB
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2DF1DB13A
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755363778; cv=none; b=cLa3L8NYKLnENl9PjwwdU4LsBWl+cuBxMlcAhFPf/eAI9peKVZ7ozMRArbchlpyG16XHZ6cJNm1zRNK2/YcBypslyIQLUw/J4hoe6zlqvC6W3mPb4ynKG3PG4Zj9kRkbQ+ego6rjdwYYpAqbPGxkNeZcE8dPCcWF9O1JFv4CiDA=
+	t=1755363852; cv=none; b=PL0OUS1Esxkym5bOyyN7RNItMfHoZOEX5pZdrahnyUzT54nC8NgWknBRxTr2I80vMx8DrRZN+zvhA+r29TOSd6JzCO0taW+ijAyhMi3hdfRc04Z5vJ0kEZ6SOOZr+pu1wC56FBEFiwrI2TcLyCtZyiSsL7Qc4+njEuBpaSM8V4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755363778; c=relaxed/simple;
-	bh=sK3AxoPntkuuzAsgqaDk0ZUDWCx8COfE335VmkHhp8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rs68BXlrYI1ZvQ9tPUl/kn3gse5hgqYKO6ZlpktP7W1vBwAC52WAWdJ6qNfz6ny6xjCA4E7VZ4AvDIwc8Mu1ia7LzZEtXl12J/EZW5BXtG/bFPBf4cb3VYUEvd6RoYXjmqU5Y/Z1zTDzNd5Cox7uOhsRUn4uIVmPOBhwegOjB+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GeH4NuFI; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1755363852; c=relaxed/simple;
+	bh=TG3Jt/7V+yOc1IhxiSM4dKHPX2ZlN9fdEf0yfPnjr/w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lAmGWz2lrYFbkpThuACVWHUhV+D5LVfGatg5oELVYGYPFqGdX2R5UtDSLkQ+k82kX+E/Sx23e+8GYOJSCy8AsNV609Ri76cb2O7j4Qv4BSANErPoab9lG0XM8vyjtSznv3Qmve/QILklTzZKzoRc9ayfhfg9Sr+9MQG/v8T3FWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B5rcNgra; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755363774;
+	s=mimecast20190719; t=1755363849;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rFOP4bP93eQhTLAi/4pMwsYYbYyGFzwy8zCXssqgG+s=;
-	b=GeH4NuFIhqHNbHXtd2LC1Zqa2lxmM1LQ9cP7Chq9HVL6Onqs+d79hLIACKaIR2n6myBoN0
-	9mfA2zSO/tuBDdG6NTN8FlDTtuS2X0Eb26jDmneWRBvRLHX4enm3C9uoEkHQJwdL+EHvDu
-	SEp1eUBSZaePdCjO80K12NMU7Ta559I=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4Vdzv3DmlnaOpYN+0D5wTRGqHnadxEawRnToIYrOHH0=;
+	b=B5rcNgrakPzhoL+BCyp6Qx9sDFiB/nr0sBwqLkDe8vHEYXmJLLPF90xbidiiMgC1nosmtB
+	AhiaLxq+jyY45Z/y6Vueb78HHktqy1A00P2l3BWSMUKpbXbFo3mXper2YOI37RqtPmJCRr
+	B+HwIQYrVeYQDOg09u9J6r7OcqM1a0s=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-412-0p3ir6SKPMqMWfVOWZA_Mw-1; Sat, 16 Aug 2025 13:02:53 -0400
-X-MC-Unique: 0p3ir6SKPMqMWfVOWZA_Mw-1
-X-Mimecast-MFC-AGG-ID: 0p3ir6SKPMqMWfVOWZA_Mw_1755363772
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0cfbafso16656375e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:02:53 -0700 (PDT)
+ us-mta-626-xMwwh_jcMVmclx_pc7H-zg-1; Sat, 16 Aug 2025 13:04:06 -0400
+X-MC-Unique: xMwwh_jcMVmclx_pc7H-zg-1
+X-Mimecast-MFC-AGG-ID: xMwwh_jcMVmclx_pc7H-zg_1755363845
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e87031d3e5so716245485a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:04:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755363772; x=1755968572;
+        d=1e100.net; s=20230601; t=1755363845; x=1755968645;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rFOP4bP93eQhTLAi/4pMwsYYbYyGFzwy8zCXssqgG+s=;
-        b=cmpWb2Wft7H4T55si66K8xDJ2fTI1k3aY5/cJXPGcbGqkY7clKf9jT+katgBLrhyu8
-         oS4+wSmI62Ydhu+AcH5yx7MPOE+0kEO6jLdrUULxBrRcbCzAfF6DM7ZnK/v7OpwJnYKw
-         qSLNSkKJOAK5bhyoRQ/3O+yxHjWOjrOYEpTy8nHhQMpojOmbykj0IWPsaXqPJjAmrDoi
-         sYJWHYwYLGpGPozTtXY3/TBMFt/Vfq3y3/MJYFw1KrUUPwqk2MnRAYgx1DInoOjvKdI8
-         ERXW/PN+sWCP10lN0rlQbYgGoiIz///z69uucvJhZVLJxHZqLTFPzTiynvkp0UuS3/Vh
-         OMKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJRxy5E8EBhmq0iSMcwCBG80SD3RR0IjRQQKvIf9wJTwNuHD1p07FtWBxmS5YBX3E1D6Ag7kjNfkKfGp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXwLUVKmpPVrj7mdRU0uRMW70R2Uwqn+MWNx8HHfOUKL/XFRTh
-	5x6OJDb51Vpod/6eO+uitHKDtNvPymNWWKYiEgBkgg5ZBdKNUWCj0/zCnadZKjQHu5s2Q451PY1
-	sY9wvsS7Z/BxmY2gl90t1qLlmsf3+rvfypVVzY4iSA/iABwaZpeaSQwQjiS5U4Y23/w==
-X-Gm-Gg: ASbGncvQVXGhc9EqCUC94Bl85HmCcsy3XqonB/XKm7OOMQ/U0DUcTR+k/IZ6CcD8P6f
-	/g9ykoZ/SpQr0EYNdQHA80xl+hyHRrEzHBa7it7g0YXaUZ6j4TTJLRyV9IwkKLAqZbupUg6JRg8
-	n2BAvGISGQ3dxBUfSAtRMTzPE1JqaeonEXoyDj0Ujbe9W3DWZDscOzBu/4nWZoJhrBt7Umb9SAa
-	jqxF16NdNzOlp1YRevuf2yB0wc6p0lBkKJ/tZqQTCa2gDD8aQQlGStOSdpwf5pSbmJilmJrdVNg
-	Z9RadHsUDdaybvyPEKhS+GAxJEbpBXSSrlmnQUXGabN2yaGpwSOxJ/NECfUIXnkld9OODgMlMww
-	5eT2k+zDSnEqiI+W4jGjqQe4xNjffaJrYn7f1e8rV0qF8HsQD7Bh/3trBvAYhl95sE9o=
-X-Received: by 2002:a05:600c:474e:b0:459:ddd6:1cc7 with SMTP id 5b1f17b1804b1-45a2177eb16mr61148555e9.0.1755363772095;
-        Sat, 16 Aug 2025 10:02:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOyYAkn234G8pFJcO4TueuMIUSgTIyfD8FB92vg7RHPAiraVq7PwNpRBwY9X2yqOnzbai3+A==
-X-Received: by 2002:a05:600c:474e:b0:459:ddd6:1cc7 with SMTP id 5b1f17b1804b1-45a2177eb16mr61148305e9.0.1755363771677;
-        Sat, 16 Aug 2025 10:02:51 -0700 (PDT)
+        bh=4Vdzv3DmlnaOpYN+0D5wTRGqHnadxEawRnToIYrOHH0=;
+        b=UbOROH0bUW6aHDZkNZb5JrzyQE+nTnMCm/x2o+GCqQiOQoDRqPr9XWLyZdJerbEFE8
+         mXKiyxkUuOE/6kJyQMOHBUhZz06G6NoNEHC0tUz/8Xi+E2xhw87uwGQ/JZrh6WxJ+FJz
+         Tl/V2tQZMKyV14J6CgJFEYoSKSS+7gypoUNkYxvOz0CwPPubpkGhkyjPTDyC6St59fsn
+         mjaUWbc/z442m3yPkM97Y9ZYZlgFDja28NQaI8DKpwh2E66kEGPJxr4F709iONG3tZAc
+         EHnF3+pbT5MlP1hNK7Bb4KV943cYrye6L8Xa+8BzIvt1ZM+/jbD7C50iZ04SflwPwjFc
+         E8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLG7AL0D17Bq2/pdpgfRpfqlvFFRrPhxeYxD1mb5Er3FhtMjeXD/GO5B0PzdAF4qE9XS4LFOkODNLgLt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNIA0TM02+Dr4vzFnwtPybU3IjM4Yn7y0Gm/4Vjj4VzcMLzYT1
+	l+ZKt+8pVSJ4Mb2wcqENs8nAFM5Grf/gvO1Y5KJ5qJSwIgFAYHdpZTZLiuwndIJs+l4IR9E4E8Y
+	P4nZafbRVsJWLerBuXx+3vBN5bLZl3Y6XmUNCAiuTsjKYbalsHWELbES/fuTqFu61wg==
+X-Gm-Gg: ASbGncsKZnGzeX5feMpym9RKywG4dkv8Mi3nbzoUVv5+QbDW8iuIBsBAnZATd+eASM1
+	n7iWhQVeMLjM2XfNIzLAXDBz7IeH4EibNQYEUbt0YimdY7iMo1XUJs6eL6lJ6hmKGRJ/d35uABG
+	fe2/zlzlfGurwe4Z9FDeOXxEbd4H6xxE2tNSVkwbK2zKO9XCUgzEt1ntpeEre1YnlVjBs6QU/jM
+	1WnljPJ6p3M/MPjUHmTlhHcvJZnaXZoY5kzO3DYsWLMxwuXot7EHiG8QJ9VeHFDjXN2LAUpa1lP
+	/o30+HHJcGxZ4XJxv7hr/79h/q/TUt8LCGE4BxoUG66fRCBAa9cRgDjFGkYSaLFLttdNx+TU9eG
+	Tnqjp6ZRCEZKq2VEl2w0rB54CXep3n8ZEyoA8j2tuDEfkFl/oJRi83LYXBvScXK8u+gs=
+X-Received: by 2002:a05:620a:319c:b0:7e6:3f78:8f08 with SMTP id af79cd13be357-7e88688587fmr514791385a.60.1755363845427;
+        Sat, 16 Aug 2025 10:04:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNaUZO42WuGpZxpSuCZqndfUjaEylzUym4Cf72hFk1jzKC0ptFmeGKh1sj47e4Q0dIMo8G4g==
+X-Received: by 2002:a05:620a:319c:b0:7e6:3f78:8f08 with SMTP id af79cd13be357-7e88688587fmr514786285a.60.1755363845013;
+        Sat, 16 Aug 2025 10:04:05 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f23:c700:d8ae:41bf:492a:9e4c? (p200300d82f23c700d8ae41bf492a9e4c.dip0.t-ipconnect.de. [2003:d8:2f23:c700:d8ae:41bf:492a:9e4c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64758463sm6419268f8f.4.2025.08.16.10.02.50
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1e5a7bsm290177485a.75.2025.08.16.10.04.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 10:02:50 -0700 (PDT)
-Message-ID: <e06f23d9-adcf-4d0a-8ba1-bda6d4b483b1@redhat.com>
-Date: Sat, 16 Aug 2025 19:02:49 +0200
+        Sat, 16 Aug 2025 10:04:04 -0700 (PDT)
+Message-ID: <07b17e1c-92e6-432a-9af6-13d3fc8246bc@redhat.com>
+Date: Sat, 16 Aug 2025 19:04:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,6 +90,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+From: David Hildenbrand <david@redhat.com>
 To: Matthew Wilcox <willy@infradead.org>
 Cc: Huacai Chen <chenhuacai@kernel.org>, Huacai Chen
  <chenhuacai@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>,
@@ -105,7 +106,7 @@ References: <20250815090539.1578484-1-chenhuacai@loongson.cn>
  <66ebc632-6704-4637-b62d-1cb11e5a4782@redhat.com>
  <9db98f7f-b90f-464b-ae7f-e94ac523bc28@redhat.com>
  <aKCwjCJTEhX4Q6wW@casper.infradead.org>
-From: David Hildenbrand <david@redhat.com>
+ <e06f23d9-adcf-4d0a-8ba1-bda6d4b483b1@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -151,67 +152,48 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <aKCwjCJTEhX4Q6wW@casper.infradead.org>
+In-Reply-To: <e06f23d9-adcf-4d0a-8ba1-bda6d4b483b1@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 16.08.25 18:23, Matthew Wilcox wrote:
-> On Sat, Aug 16, 2025 at 12:54:52PM +0200, David Hildenbrand wrote:
->> +++ b/mm/balloon_compaction.c
->> @@ -256,8 +256,10 @@ const struct movable_operations balloon_mops = {
->>   static int __init balloon_init(void)
->>   {
->> -	movable_ops[MOVABLE_BALLOON] = &balloon_mops;
->> -	return 0;
->> +	int rc;
->> +
->> +	rc = register_movable_ops(&balloon_mops, PGTY_offline);
->> +	return rc;
+On 16.08.25 19:02, David Hildenbrand wrote:
+> On 16.08.25 18:23, Matthew Wilcox wrote:
+>> On Sat, Aug 16, 2025 at 12:54:52PM +0200, David Hildenbrand wrote:
+>>> +++ b/mm/balloon_compaction.c
+>>> @@ -256,8 +256,10 @@ const struct movable_operations balloon_mops = {
+>>>    static int __init balloon_init(void)
+>>>    {
+>>> -	movable_ops[MOVABLE_BALLOON] = &balloon_mops;
+>>> -	return 0;
+>>> +	int rc;
+>>> +
+>>> +	rc = register_movable_ops(&balloon_mops, PGTY_offline);
+>>> +	return rc;
+>>
+>> Using 'rc' as the name of this variable is an anti-pattern.  All it
+>> tells you is "this is the return value".  Calling it 'err' is far
+>> better because now we know it's an error number (or zero for success,
+>> of course).
 > 
-> Using 'rc' as the name of this variable is an anti-pattern.  All it
-> tells you is "this is the return value".  Calling it 'err' is far
-> better because now we know it's an error number (or zero for success,
-> of course).
-
-I know, we all have our things to complain about. Some about Cc: above 
---, others about the name of error variables :P
-
-$ git grep "int rc" | wc -l
-12730
-$ git grep "int ret" | wc -l
-80386
-$ git grep "int error" | wc -l
-4349
-$ git grep "int err " | wc -l
-6117
-
+> I know, we all have our things to complain about. Some about Cc: above
+> --, others about the name of error variables :P
 > 
-> It seems to be a particularly IBM derived antipattern ;-)
-
-Careful miser :D
-
-> Some internal style guide, perhaps?
-
-Kernel-internal style guide maybe ;)
-
+> $ git grep "int rc" | wc -l
+> 12730
+> $ git grep "int ret" | wc -l
+> 80386
+> $ git grep "int error" | wc -l
+> 4349
+> $ git grep "int err " | wc -l
+> 6117
 > 
->> +void unregister_movable_ops(const struct movable_operations *ops, enum pagetype type)
->> +{
->> +	switch (type) {
->> +	case PGTY_offline:
->> +		WARN_ON_ONCE(offline_movable_ops != ops);
->> +		offline_movable_ops = NULL;
->> +		break;
->> +	case PGTY_zsmalloc:
->> +		WARN_ON_ONCE(zsmalloc_movable_ops != ops);
->> +		zsmalloc_movable_ops = NULL;
->> +		break;
+>>
+>> It seems to be a particularly IBM derived antipattern ;-)
 > 
-> This might be a bit excessive ... just passing the pagetype and not
-> having the sanity checks should be enough for the tiny number of users
-> this interface will have.
+> Careful miser :D
 
-Yeah, no strong opinion, this was a 3 minute hack.
+"mister". No idea if "miser" exist and if so, whether it could be 
+considered offensive ;)
 
 -- 
 Cheers
