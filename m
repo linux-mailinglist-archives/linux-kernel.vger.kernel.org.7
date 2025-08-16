@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-771746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F68B28AF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30487B28AFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF022A22B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6451CE6FDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A1D21257E;
-	Sat, 16 Aug 2025 06:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F662144CF;
+	Sat, 16 Aug 2025 06:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXDR3NjA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OVh3pBvL"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B732211499
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52DC1F4703
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 06:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755325457; cv=none; b=eYc7He1u5RLKlxRFXb5eCA0JiT7VWe9G2DN6xvk78udhI+zVuFBH2MkaEGN9gEJ5biajrzrL++P7ZBnVDej1Wlm08pGY2hMKdtYfKjl9XpF9lHM6CZJG3fQLFoKY7Dfz/l3AaTRHiZ/e4jT0b7A97YZs2pKyxAV8gVo9Rw1czWo=
+	t=1755325669; cv=none; b=MKl1zOvscC/QmCpt95QIwr1rX3/UguVe6yvFxXAHjdUguDES6KNOoRip2z5nOmFZezzrLQGmkA+3UZUG24VLmxdVQkL5q0qDzGgvahtwAfDNbUMsfx9TwTokYVP4thBuhad6nwbzSGC8cPqpr9kIN5GW9xBkxeSZQ1Ably59TEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755325457; c=relaxed/simple;
-	bh=342LxuJdaNl4CWX9CTzec1rpwOpSIab+DVBXDHi3jYg=;
+	s=arc-20240116; t=1755325669; c=relaxed/simple;
+	bh=YMHLuGEY+IemOK1W2IdkwqTXgmfUTd7SA5lwh1wV1zM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PTsDKIhNaqEWNTeIAwBAQ2KlPcuGrC58aEX9LIpqKctsu9ZNbS5k1utwooxYyF86nKYDWZ5hQkEGE4c78w/sqSFJU3/4Rky2WEWkHBfMqdrHXg/NwcV+N8+5Y7+0+D6Zo85oE79HXEXrLz668j89hgZvO8DXzI9Q+0f1FdI2yrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXDR3NjA; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=LCVUPeOgF9/hzzOj2A9xOG1TtvVpzr3aF1CGBKD7HG/XKUH9MIl+Kr2VxG6SSg1/Wq+Vq2gH6NJV+VSQdYnFLxC1Y937JIgDq1ovKX1SstLV66hJZlTu58Q5eiWte8CPuuH7E0hN2dr46o/7tASCFqlRC6zBB4hNmTYqRZv5X+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OVh3pBvL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755325454;
+	s=mimecast20190719; t=1755325666;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=p1AiogaXO4KDpvqOf8z6X8E09Ih613U1kMZd3r/QYjs=;
-	b=NXDR3NjAK4DcxiK/Vo8Ll7mUFw15t2LbBZHQEh7Vq6cxWo2x2LoPD2hrrnb6ShjjtSo4BF
-	EkGe1I2jQfY8qtSgiZYTuCgZ6pya6XMnSyFQSDTYUKqWJAyOkPx+SpQf0lRWQMB2qj2DxN
-	GnVzhNjdNOSCh/8CF/wfy5ABOrTA0ms=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=fUuoR3W6iZ2p6uoKb6adWtn5/8ajohyLB0yXCyvc0h8=;
+	b=OVh3pBvL3T/Sq1BL08wkmdNejPIwjo/n6bFs1Eg+8uRoIEd1fPWvSS7sO3LNvK7H/AHBRS
+	r+7R9XxCd8bzGhR+kkzeHjBHTkR3Pba4759JREo/ckbVJSeKYhxn5UcOnkpnicpLRKakGb
+	4Cuaaq/jTS0pm8iAwumBvcEY102vU6A=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-220-qXAaT9mrOUqotKoDHPREwg-1; Sat, 16 Aug 2025 02:24:12 -0400
-X-MC-Unique: qXAaT9mrOUqotKoDHPREwg-1
-X-Mimecast-MFC-AGG-ID: qXAaT9mrOUqotKoDHPREwg_1755325451
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b9dc5c2ba0so1193900f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:24:12 -0700 (PDT)
+ us-mta-298-7Ol7zbo2M_WGunczIxHBRQ-1; Sat, 16 Aug 2025 02:27:43 -0400
+X-MC-Unique: 7Ol7zbo2M_WGunczIxHBRQ-1
+X-Mimecast-MFC-AGG-ID: 7Ol7zbo2M_WGunczIxHBRQ_1755325662
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0cc989so12897075e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Aug 2025 23:27:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755325451; x=1755930251;
+        d=1e100.net; s=20230601; t=1755325662; x=1755930462;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=p1AiogaXO4KDpvqOf8z6X8E09Ih613U1kMZd3r/QYjs=;
-        b=YiPrc+vA4Zl6f5WKy6zKHckETnt5eS6UpNd7CMGJDWYZe1huK9TGa+EGZ/Crr2Ei4v
-         Oxbuh2vnRJ98YJuulWnuB3HHzbrjqJYTuAuEBTHmFY679/xOozbjKbnKx4L07jMSxoGe
-         1+IzgCv1k3UXAf8zBxojiqOYmrr18SqIVZEo9bzu2iNbpNiSHsS3UUkNXasvbhbnuMoE
-         H/RVMxMNn+W5Y3y5jQn9gxVZHrA8Mm72SVNioaN42USFtHNpOM8EaAUxYxK4PQogjcOr
-         WmMqLGz/GWvagAj2b4uX8dC65vBjCxCPsV7efTlwWN4ux2fSN1Fdr5pTuUaXGiMzpW9C
-         spoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbBm1wWSxPE1E7GGCMcEIgZL9hR9dl1sITEKBxPdqmSagEvSDoaBGC15RUh3Rgjy0koJpKWrkIaf61d7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzog4jZpnVlGhk1VgvbV6IqEeBs3o1WWIP3EbYy5UlM+wS8CJT
-	T7a23LidagUvwjJCON24XEGMgl6DnCH7y2ohJ51FrLjrABbCzNFH9GD4DqLyJ4/qV/xh4MNFmE+
-	gyqr0C26tFyW6tGN6y892vXeDIkIf7dlo6VSJ1RydJ70ADOD2UpFVsnraMdOE2hzfvg==
-X-Gm-Gg: ASbGncvUT0W7HzLpnaMOoitI+vdNnke1fGz+uiU3b7DjxiAIMflvEXWW4myHZz5Sxz9
-	m6W/yVc9INXKSiASoxvR7XVZn3r36hBfbDvIs3pIYsqAr10I+ZS8hVZei5kdUzEl0iiX4qvWwQs
-	ZPN/KkbuDThtO2S9gr7aI92743U6Ft8sYWofMAJgUNsf77bg3IPspWPDeiqzZUk+Ml3qkgpbptH
-	Hdp1TIF+yJga9a7hagQgBXhhoR/AfUeMjvshO5GvsQxsDm6Q59HhX89bgaOwRrB3eSNKbOLygWG
-	jj+FEyuMhXjyt9nugDBMTMUm1afQ8jsjka4VtJKmkJt7BF2iIIjK1sRmh360rdl/oUBd0QbosGl
-	hLBOCWtaRK7EN5VXv+qEK8hHDgpjZQmsByAfwY7Y2WdT9nnaa3SHCUKjThKSE8AUutps=
-X-Received: by 2002:a05:600c:4f91:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-45a2678420fmr10232245e9.21.1755325451389;
-        Fri, 15 Aug 2025 23:24:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSIospP340Ezkww18kd7aUrmmiQWcd4pTR9W4fP9PhEqEg8ffXiYj3nkoM5w1sMGhQv7pE/Q==
-X-Received: by 2002:a05:600c:4f91:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-45a2678420fmr10232105e9.21.1755325450984;
-        Fri, 15 Aug 2025 23:24:10 -0700 (PDT)
+        bh=fUuoR3W6iZ2p6uoKb6adWtn5/8ajohyLB0yXCyvc0h8=;
+        b=etL3QQoXV8b//TltJ/AP0IR9x9jExrQSJQGAaVjQkCticnp1+Y0GVGlaWJhFXm76U4
+         t7dgBtQqJCCnTwaUu5eNR2IMhAGp/YtTTqJtBrIC1hAjZ9S1y6XIBiVuoYheZZnQnBoO
+         mpfK6zpUb9xzCd3cxI0gyOr5uSwrgps5zxxlRMBwrWebTc1r6XAdvhL4KACLDZLAJV81
+         VaAanRDAkmzgfN6hPzdhY30xSqtkYdiukzeSgtOUdDHj+CQCieydQRpaChWA6hIZwQHS
+         0YojiAshySq2yj+yJrsNS4LGDtDnUgxljmoMEatRLhgCmH5UFL98JruWs9g/LQf2SacW
+         3TKA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+4GRz6JZt+xMnWFx6Zxf0e+wRxY6CGL3isbTnJ03EljllHYvLBgs1CGvttZuIxZ/MJFs5ozUx7DDZ7js=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhkhe90+apSWR045fAulFK7ECZTNoYRn2bGbdsuA+iVqSFnCSE
+	jIMQSPIwUjgD1hZHpgThkHNCwLKwueK0oGR45mVp2+diP2LnskzGegD86dBBVWen/XeP/6M8skX
+	5RaVpb+plpGm83GYbsdgVkh6hdi8/kE75U/qTMNOW+jC0esovNOY4kHttb7EJVi6oLg==
+X-Gm-Gg: ASbGnctyoNHC3zK01UdwVF6ISK8MtO/jweAHaluJ3GFc6LA3VdLKsRyplKL/XX5vijF
+	ANIJCnRRCniqiWdHVBm5m+53LBNhHROMnQpeJaINm6O+rLjFvQb+Ugv4lTe0Ga2nG4EYbc3G2js
+	3AMU5w68yMjMlhdipn/otOGZ4FBb60ecPRkalS3gkyio7WOXpKJQx30j9bz5LqQTMH21n2Z9SpB
+	oOiGACbSS/La3BB27hyf8WoqYJtpsvoRDcGUqTHNbPqDBE32qq7IDftOTfQcUdR6NcPhh/qXuHa
+	RjDXJ54SIe4kpy6useukfLGRlFqSfRT3KTGgRqLBUoSE6ft6qfc6c7yIFzExwzwp1cp0N+2dFoJ
+	ScfU32zXy4oRNyA4GVSD+Nu2uXmB44XH32Cqhj//1DstyMkb4dp1I75nCVLjM7udnf6Q=
+X-Received: by 2002:a05:600c:c04b:10b0:459:e3f8:9308 with SMTP id 5b1f17b1804b1-45a21ab157fmr22208065e9.11.1755325661988;
+        Fri, 15 Aug 2025 23:27:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFaL5U3yulaxPkegpoMwZPMWC4xqYC1NkrnFhrR/g7GiOgEyUoKNgfM5RiObhMGQcjcxWIdJg==
+X-Received: by 2002:a05:600c:c04b:10b0:459:e3f8:9308 with SMTP id 5b1f17b1804b1-45a21ab157fmr22207915e9.11.1755325661595;
+        Fri, 15 Aug 2025 23:27:41 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f23:c700:d8ae:41bf:492a:9e4c? (p200300d82f23c700d8ae41bf492a9e4c.dip0.t-ipconnect.de. [2003:d8:2f23:c700:d8ae:41bf:492a:9e4c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223197fbsm45975695e9.8.2025.08.15.23.24.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a2221136dsm44144735e9.5.2025.08.15.23.27.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Aug 2025 23:24:10 -0700 (PDT)
-Message-ID: <2aaa9982-48c7-4461-8be8-1427d9ed3f3d@redhat.com>
-Date: Sat, 16 Aug 2025 08:24:07 +0200
+        Fri, 15 Aug 2025 23:27:41 -0700 (PDT)
+Message-ID: <ee29262a-911b-4a97-b619-0dea3b657252@redhat.com>
+Date: Sat, 16 Aug 2025 08:27:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,21 +89,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/7] selftest/mm: Extract sz2ord function into
- vm_util.h
-To: Andrew Morton <akpm@linux-foundation.org>,
- Usama Arif <usamaarif642@gmail.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-6-usamaarif642@gmail.com>
- <20250815231549.1d7ef74fc13149e07471f335@linux-foundation.org>
+Subject: Re: [PATCH] mm/cma: print total and used pages in cma_alloc()
+To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+References: <20250816042842.3959315-1-gxxa03070307@gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -150,98 +141,65 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250815231549.1d7ef74fc13149e07471f335@linux-foundation.org>
+In-Reply-To: <20250816042842.3959315-1-gxxa03070307@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 16.08.25 08:15, Andrew Morton wrote:
-> On Fri, 15 Aug 2025 14:54:57 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+On 16.08.25 06:28, Xiang Gao wrote:
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
 > 
->> The function already has 2 uses and will have a 3rd one
->> in prctl selftests. The pagesize argument is added into
->> the function, as it's not a global variable anymore.
->> No functional change intended with this patch.
->>
+> This makes cma info more intuitive during debugging.
 > 
-> https://lkml.kernel.org/r/20250816040113.760010-5-aboorvad@linux.ibm.com
-> jut did this, but didn't add the extra arg.
-> tools/testing/selftests/mm/split_huge_page_test.c needed updating.
+> before:
+> [   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+> [   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+> [   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
 > 
-> --- a/tools/testing/selftests/mm/cow.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-> +++ a/tools/testing/selftests/mm/cow.c
-> @@ -52,7 +52,7 @@ static int detect_thp_sizes(size_t sizes
->   	if (!pmdsize)
->   		return 0;
->   
-> -	orders = 1UL << sz2ord(pmdsize);
-> +	orders = 1UL << sz2ord(pmdsize, pagesize);
->   	orders |= thp_supported_orders();
->   
->   	for (i = 0; orders && count < max; i++) {
-> @@ -1211,8 +1211,8 @@ static void run_anon_test_case(struct te
->   		size_t size = thpsizes[i];
->   		struct thp_settings settings = *thp_current_settings();
->   
-> -		settings.hugepages[sz2ord(pmdsize)].enabled = THP_NEVER;
-> -		settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
-> +		settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_NEVER;
-> +		settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
->   		thp_push_settings(&settings);
->   
->   		if (size == pmdsize) {
-> @@ -1863,7 +1863,7 @@ int main(void)
->   	if (pmdsize) {
->   		/* Only if THP is supported. */
->   		thp_read_settings(&default_settings);
-> -		default_settings.hugepages[sz2ord(pmdsize)].enabled = THP_INHERIT;
-> +		default_settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_INHERIT;
->   		thp_save_settings();
->   		thp_push_settings(&default_settings);
->   
-> --- a/tools/testing/selftests/mm/uffd-wp-mremap.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-> +++ a/tools/testing/selftests/mm/uffd-wp-mremap.c
-> @@ -82,9 +82,9 @@ static void *alloc_one_folio(size_t size
->   		struct thp_settings settings = *thp_current_settings();
->   
->   		if (private)
-> -			settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
-> +			settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
->   		else
-> -			settings.shmem_hugepages[sz2ord(size)].enabled = SHMEM_ALWAYS;
-> +			settings.shmem_hugepages[sz2ord(size, pagesize)].enabled = SHMEM_ALWAYS;
->   
->   		thp_push_settings(&settings);
->   
-> --- a/tools/testing/selftests/mm/vm_util.h~selftest-mm-extract-sz2ord-function-into-vm_utilh
-> +++ a/tools/testing/selftests/mm/vm_util.h
-> @@ -127,9 +127,9 @@ static inline void log_test_result(int r
->   	ksft_test_result_report(result, "%s\n", test_name);
+> after:
+> [   24.069738] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 64, request pages: 1, align 0)
+> [   24.075317] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 65, request pages: 1, align 0)
+> [   24.078455] cma: cma_alloc(cma (____ptrval____), name: reserved, total pages: 16384, used pages: 66, request pages: 1, align 0)
+> 
+> Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> ---
+>   mm/cma.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 2ffa4befb99a..46cc98e7f587 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -776,6 +776,17 @@ static void cma_debug_show_areas(struct cma *cma)
+>   	spin_unlock_irq(&cma->lock);
 >   }
 >   
-> -static inline int sz2ord(size_t size)
-> +static inline int sz2ord(size_t size, size_t pagesize)
->   {
-> -	return __builtin_ctzll(size / getpagesize());
-> +	return __builtin_ctzll(size / pagesize);
->   }
+> +static unsigned long cma_get_used_pages(struct cma *cma)
+> +{
+> +	unsigned long used;
+> +
+> +	spin_lock_irq(&cma->lock);
+> +	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+> +	spin_unlock_irq(&cma->lock);
+> +
+> +	return used << cma->order_per_bit;
+> +}
+> +
+>   static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
+>   				unsigned long count, unsigned int align,
+>   				struct page **pagep, gfp_t gfp)
+> @@ -858,8 +869,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+>   	if (!cma || !cma->count)
+>   		return page;
 >   
->   void *sys_mremap(void *old_address, unsigned long old_size,
-> --- a/tools/testing/selftests/mm/split_huge_page_test.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
-> +++ a/tools/testing/selftests/mm/split_huge_page_test.c
-> @@ -544,7 +544,7 @@ int main(int argc, char **argv)
->   		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
->   
->   	nr_pages = pmd_pagesize / pagesize;
-> -	max_order =  sz2ord(pmd_pagesize);
-> +	max_order =  sz2ord(pmd_pagesize, pagesize);
->   	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
->   	ksft_set_plan(tests);
->   
-> _
-> 
+> -	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+> -		(void *)cma, cma->name, count, align);
+> +	pr_debug("%s(cma %p, name: %s, total pages: %lu, used pages: %lu, request pages: %lu, align %d)\n",
+> +		__func__, (void *)cma, cma->name, cma->count, cma_get_used_pages(cma), count, align);
 
+		^ one space missing for proper indentation.
 
-LGTM.
+But doing another spinlock cycle just for debugging purposes? That does 
+not feel right, sorry.
 
 -- 
 Cheers
