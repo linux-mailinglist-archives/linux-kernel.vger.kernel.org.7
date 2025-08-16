@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-772234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F66B2903D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:35:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532ACB2903E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 21:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 284B25679C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A2E1C86E90
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A6720B7FE;
-	Sat, 16 Aug 2025 19:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGP8DpDo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB3E1F75A6;
+	Sat, 16 Aug 2025 19:36:04 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9371DC9B5;
-	Sat, 16 Aug 2025 19:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF351F582A
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 19:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755372933; cv=none; b=raLVoWhdxVonuw9ukXlJDXh7PkWzFm/Wt5AOtOkMp60m6fiRwNHGkmRSgXhFeuGWW6qaT12SsLfV4b8F60oy3Ft8/GmG7GmlfuJ8gTs0ivhC+fEUlvCsxn7tFutOQK5GQDNWvZC0tlqOnlkL6T35dFjMT8TwQ+cu1pXiwFO1gNQ=
+	t=1755372964; cv=none; b=nUJarS0BsDLd4ELlWBRCyV9oboDLiDHKH+rxAEn2YahC0Qb2mY/2Lxa0b0YdgTNQNm3ZLjWHIZQcjSLch6Rd+vxhy4NYwFGjSbSIdEzbmih+sFebvttPbrnIP2T/ZBdnqP/qa41239WnIX7qHpthjjnKHac/SY+BE8i4tug+ymc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755372933; c=relaxed/simple;
-	bh=WlPCp9fVlPwFTXS7XmQr33PixxriCbunSTJIpHN/Lvg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=TAC2P0+hl4fI2ViAjp/foTHWPljn6+3UTipkK4x+w6DjIEyC7psunzw+VATHyQoSNb9XV0Nb58eEvsZiAvf1FQExIoWjwWwmrl5U+EyR/Z8WP0YZR7gjRX4fRdWnFpgqiP+jsxuiDSSsakW+ajrUYglkaztTVnw3mbHSkbt1LB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGP8DpDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0ADC4CEEF;
-	Sat, 16 Aug 2025 19:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755372933;
-	bh=WlPCp9fVlPwFTXS7XmQr33PixxriCbunSTJIpHN/Lvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LGP8DpDoQHmXQZJhujUuaz5XK7bx94w3tlAszPyywczhD/Qlt7TI+nFQF9cJeMjmH
-	 qfIkSax1djg7lcCDwXQcycsuQ+a4n0yktlZVIU0c4aE+HBc3Qq+sA+UtvEdN98Oqed
-	 3HiWP0pgRV9vKXLVHAnZouzQAphHCPV83BnARNrKLvuBELFbZ6MnKb7FRecx3KNtuX
-	 FjAEJzY0Em5+8j0GVjV0jVtKnHmB5Tqp8F/e724kPixcMSmykK1dd6hIUF3jydOFVR
-	 yfY5vaTs7Nbonto/cUG+r/Ugp2BFvesaGJWeTuFIZ5vMOVR/r5d40HK8fYBE/nSrIg
-	 LFrfCO37hTrWA==
+	s=arc-20240116; t=1755372964; c=relaxed/simple;
+	bh=QzrSxmFk6iveACVr/9rEhCqobbpcZhNFTVK5ExiN5Hk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaqsW4k8uwJTZGonGeCa2WU9Jd2DC9+y4hfPpTWKPf1vvnk9mg2Cj//v1cO7WbCKgycszZT4Zbp4dbnPjKvyogR5h0b7aCrqtSMQhx/1bvhaSdb5SN5G0/Hr/QI2qYiwZHOzW7c5dakpAtp6KX23JY+DCFRZC4frOAFcv7m268Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E7FD744349;
+	Sat, 16 Aug 2025 19:35:56 +0000 (UTC)
+Message-ID: <c5bf56b8-da06-4e17-86bc-1b69af3065cd@ghiti.fr>
+Date: Sat, 16 Aug 2025 21:35:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 16 Aug 2025 21:35:26 +0200
-Message-Id: <DC43RPUDBY6M.1TGSQKJV9BKSF@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v8 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-X-Mailer: aerc 0.20.1
-References: <20250719030827.61357-1-boqun.feng@gmail.com>
- <20250719030827.61357-7-boqun.feng@gmail.com>
- <DC0AKAL1LW84.MR2RFTMX1H61@kernel.org> <aKCtbSDuJNrtdLNp@tardis-2.local>
-In-Reply-To: <aKCtbSDuJNrtdLNp@tardis-2.local>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: put damos dests dir after
+ removing its files
+To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: damon@lists.linux.dev, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250816165559.2601-1-sj@kernel.org>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250816165559.2601-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeejjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhuddtveegleeggeefledtudfhudelvdetudfhgeffffeigffgkeethfejudejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdefrddvfeegrdduudeirdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdefrddvfeegrdduudeirdduhedupdhhvghloheplgdutddrudehhedrudejuddrjeekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepshhjsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrmhhonheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmhesk
+ hhvrggtkhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-On Sat Aug 16, 2025 at 6:10 PM CEST, Boqun Feng wrote:
-> On Tue, Aug 12, 2025 at 10:04:12AM +0200, Benno Lossin wrote:
->> On Sat Jul 19, 2025 at 5:08 AM CEST, Boqun Feng wrote:
->> > +/// Types that support atomic add operations.
->> > +///
->> > +/// # Safety
->> > +///
->> > +/// `wrapping_add` any value of type `Self::Repr::Delta` obtained by =
-[`Self::rhs_into_delta()`] to
->>=20
->> Can you add a normal comment TODO here:
->>=20
->>     // TODO: properly define `wrapping_add` in this context.
+Hi SeongJae,
+
+On 8/16/25 18:55, SeongJae Park wrote:
+> damon_sysfs_scheme_rm_dirs() puts dests directory kobject before
+> removing its internal files.  Sincee putting the kobject frees its
+> container struct, and the internal files removal accesses the container,
+> use-after-free happens.  Fix it by putting the reference _after_
+> removing the files.
 >
-> Yeah, this sounds good to me. How do you propose we arrange the normal
-> comment with the doc comment, somthing like:
+> Reported-by: Alexandre Ghiti <alex@ghiti.fr>
+> Closes: https://lore.kernel.org/2d39a734-320d-4341-8f8a-4019eec2dbf2@ghiti.fr
+> Fixes: 2cd0bf85a203 ("mm/damon/sysfs-schemes: implement DAMOS action destinations directory") # 6.17.x
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+> Not Cc-ing stable@, since the broken commit is in 6.17-rc1 and hence probably
+> this fix will land on the mainline before the release of the first 6.17 stable
+> kernel (6.17.1).
 >
->     // TODO: properly define `wrapping_add` in this context.
->    =20
->     /// Types that support atomic add operations.
->     ///
->     /// # Safety
->     ///
->     /// `wrapping_add` any value of type `Self::Repr::Delta` obtained by =
-[`Self::rhs_into_delta()`] to
->     ...
->     pub unsafe trait AtomicAdd<...> {
->         ...
->     }
+>   mm/damon/sysfs-schemes.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+> index 74056bcd6a2c..6536f16006c9 100644
+> --- a/mm/damon/sysfs-schemes.c
+> +++ b/mm/damon/sysfs-schemes.c
+> @@ -2158,8 +2158,8 @@ static void damon_sysfs_scheme_rm_dirs(struct damon_sysfs_scheme *scheme)
+>   {
+>   	damon_sysfs_access_pattern_rm_dirs(scheme->access_pattern);
+>   	kobject_put(&scheme->access_pattern->kobj);
+> -	kobject_put(&scheme->dests->kobj);
+>   	damos_sysfs_dests_rm_dirs(scheme->dests);
+> +	kobject_put(&scheme->dests->kobj);
+>   	damon_sysfs_quotas_rm_dirs(scheme->quotas);
+>   	kobject_put(&scheme->quotas->kobj);
+>   	kobject_put(&scheme->watermarks->kobj);
+>
+> base-commit: 9aa69ba9d9e220ea1d8ba62592fe7ffba376b2cc
 
 
-Inline maybe?
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-    /// Types that support atomic add operations.
-    ///
-    /// # Safety
-    ///
-    // TODO: properly define `wrapping_add` in this context:
-    /// `wrapping_add` any value of type `Self::Repr::Delta` obtained by [`=
-Self::rhs_into_delta()`] to
-    /// any value of type `Self::Repr` obtained through transmuting a value=
- of type `Self` to must
-    /// yield a value with a bit pattern also valid for `Self`.
+Thanks for the quick fix!
 
----
-Cheers,
-Benno
+Alex
+
+
 
