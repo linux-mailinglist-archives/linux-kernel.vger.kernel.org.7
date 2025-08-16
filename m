@@ -1,110 +1,195 @@
-Return-Path: <linux-kernel+bounces-771712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAE2B28A97
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C32B28AA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF12F728D83
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 04:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10BCA240FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7EB1DF261;
-	Sat, 16 Aug 2025 04:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885C81E2614;
+	Sat, 16 Aug 2025 05:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksW83XI+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5UBxNQ9"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C3479EA;
-	Sat, 16 Aug 2025 04:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ECB33EC;
+	Sat, 16 Aug 2025 05:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755320098; cv=none; b=PiUf6kYKrN/ONDGaq8zbgjLPcis+SP+zHf+GaQXo5dpiDLgSGEzPKJvqMBQdHscyxmX1hfTsvkjQVkCXpQStdSM6QFwMdON55wfGOhZWfuA0wGmN5n0u9+fu3Utf/jmDI9sIoyLnRzbJk9d8gTdVgobnR7KpB2LyjPHg2L7sCHg=
+	t=1755321545; cv=none; b=Hvl4soB4jKfe/9tNU+GvzhLbAp+dRr1P56YylIQyKFmEeiwokcpI7hw8zetz5DeYsKSIvtIwVOw7xrSMp9Tdru6u2cvTHbbykYHAQxJotzJuWRbOLey9ZwM0Qt+THhwnj2qRvZcZYvkJ7zqscHHxWkOppRZjs6FpUoiEGNs/sNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755320098; c=relaxed/simple;
-	bh=h+o3WSXaw2RyG9oM71im2NRh43BA9eu7Ciwz1kBTYg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNgQviuspe4vCVVuoMsJ3PHkqgvpUooQ1CAi8l3a5g+vaymOwPUqW0/rDUVTJFK9XbsdfEk4QmuK/LzyRSkdU+otNvDQp81wn3Hd0LOk5dI2C/FsIQNVBHTftTWyI3g/cprZTAWoGnFp8B0aLdOhI7zsdV10OOUdG2lhypMHeCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksW83XI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA71C4CEEF;
-	Sat, 16 Aug 2025 04:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755320098;
-	bh=h+o3WSXaw2RyG9oM71im2NRh43BA9eu7Ciwz1kBTYg8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ksW83XI+2TgIE37dDMzx7xh78RWjjuvDyKbFgSYUIkbcJ3RBBLWTepoXdCwX/gwMT
-	 tTPA/pNFZqHLBzKVaxt4m7q6oEEkG5c2i/NMDJizwok7njy5k9ogL0+4IxIVYYsUuW
-	 uRta3bPPzejKwR/76ttjQbLsGHeyYqTyXIo8Q5mRdHMa2+cwfIRdpPZUfQvFFmFykF
-	 +7xc6CdsD2ld1ChMPVDjQKLBWP22yMUFNNZ81y/6Rpo3VuRrSC8jFwGYN1uwLAIdyc
-	 a83vzqVUQYG6wvpxNjIoy5uIpbMIGoMoIJJvTIa/1chEMZYsHk0jhawojXT+DiY2Zp
-	 6MEf2Lg2f2KTA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A888CCE0ADB; Fri, 15 Aug 2025 21:54:57 -0700 (PDT)
-Date: Fri, 15 Aug 2025 21:54:57 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH 1/3] doc: Update whatisRCU.rst for recent RCU API
- additions
-Message-ID: <189f6091-016f-4a96-a1f1-321231aeddaf@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <9ea6b51e-b48a-474f-b7ae-4fb6414d0aaf@paulmck-laptop>
- <20250816000007.2622326-1-paulmck@kernel.org>
- <aKAA3OHvISThlUX-@archie.me>
+	s=arc-20240116; t=1755321545; c=relaxed/simple;
+	bh=Gm64J36QXnfSRLkDe+0+vYNftocOboKLW+Bgxkh8el8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NjqQZn3VfoVGr2U6FLcP5lMMgXaFR5tCVrZw2XVjMZR1UJYzS2NLPcHX/blBadVzs8It7DWYdSx+l/HiKd2FYiWwi+02JE3TA6eZX5WJhdYSXSuTBgim7YuT8jP+ufvihXtqMQuBYLdMz20N7l5KdmskgVyAe5TlzUJKjw1YN2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5UBxNQ9; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e39ec6e05so1413484b3a.2;
+        Fri, 15 Aug 2025 22:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755321544; x=1755926344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hg7l3bbSFZPtoIG+3mgwC3AL7gcWmKd442FKHZEi+xU=;
+        b=M5UBxNQ90IfJAuC/CvPcRwAVmtiQrJZwHVfNo4bJIrW2sKDG9urx4e58/r7EWRfmeI
+         gAyyQsAlCrrZNJc2C6KcwWYf9/CO0M95eC5ZOPBRLPT4XysVwom13oVdhndHKNrLFDRf
+         LQPbdAWQ9KJsc7n3hA2tJKCVFtzv0PjdmJfT0MxCyyAMi6RSIVIool61ZziJMWvdr8Qu
+         RhSUyYH7A1LCNzl4mKfZGCUO+bjlyrwE4gBYhLAmN3K95c5NUCC4cRQkHGlWF76fTvoI
+         292dDJonjq4V6nkCXz6okMoKC9CxlZ4bENHIyz7F4RkFTGPp3iUH1vNEEPPWSr+uF2Lg
+         C4sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755321544; x=1755926344;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hg7l3bbSFZPtoIG+3mgwC3AL7gcWmKd442FKHZEi+xU=;
+        b=kZjKpJX429btBEFhGMYptxgnIU87SQA79YruKFrfPreeYybs0IpA+Rew8dvXWtF7Z0
+         vhZ44elLzEt0xbpWFXo1iM8VaAQGJ8E1SWIZkSm+Xk+BEb7clPgXoyjn/8KH8HekN2it
+         TQ8yD4Mg1Ls1KImmacRDO8Ik5sg8u29fQ15zS/pULRh0ezFg6Wu6zKwE5+KHSfhNIkmu
+         cmYixvIq3ljyfk6BMqcZrzB3RUTQSffJmM6Gdskx4/6+688x1hGmoOlO586S8yCI/L9j
+         7OPr8Hyf5vc+jVGJQ5U3xOAE+ZkF9qonSjU+d1G0qH3DjOyrkAATsBxg+jHNayhH8Snd
+         jnfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFKdrw2i/Hseza/r7O3wALZhJ1vUUedsV0mds65WHvauM1RnlKBlKXEp4We0+Nkz4KtGB+xeo7L8o=@vger.kernel.org, AJvYcCVi4WXCu5rRjaXAagPQqC0I/4HhQSaHZdEJB/elODaEhDeRT921WmA93ALMPM2QOUERBF0i5ayxcLolUCiJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMoT/r1BazNLAp4Q8k7yoJMPoVlbi+fGipinxofz8FyDNBQmWS
+	a0ZcAQJARYOoL7bnjlK4uCOZlhSE9SwMMU2AgI+19Oew95Fcoj5AxcED
+X-Gm-Gg: ASbGnct1z0WarmnszUaNH2MXHe93HwwQ0E5deOQTYCKwWqF6vMuaj41SMX8Zyj1xZ+w
+	Gy6zj6k0Ltm+hYKccIPK2ArZri5Ca67oFfald6Ci/4Fj60ybfGTXYGJWDjfpuG41QRjRMeknSTw
+	61SCr2ia6Ez8isfTlMw+vUwx90WWQABbaiRUgJ5M/BJvTBNaJVX1wp2Zywol9l8bDAO5gek0ntQ
+	Q+zkwcN0gB/cJ0LhHQhg5/s+g8AfW4UAZbNJ1z94fGeb2smWogj8v/5N/quIuMS9kWnakxIOTEg
+	XIJdxAcMF+2FevTy3LSSPwN1heExAGfY1B7x69en0A1nWyXrTWWwO3PmTsJ31bC8//+wHYWI3ud
+	8DozvQEvzWHEpksElx5rbgDcFiibUfSgbYZPcNPd9llidVBtHkdkXBaBp5+mph/H/+96x
+X-Google-Smtp-Source: AGHT+IFkeW6vUGKadK1tRdBbxQantqRYXD/XkBxSfAysSmRbdkf/hrVXlC5RZ2s3zvce2Tavkp5/7w==
+X-Received: by 2002:a05:6a20:2585:b0:240:fe4:10f9 with SMTP id adf61e73a8af0-240d3006933mr7472724637.6.1755321543580;
+        Fri, 15 Aug 2025 22:19:03 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d602713sm2738470a12.27.2025.08.15.22.19.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 22:19:03 -0700 (PDT)
+Message-ID: <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+Date: Sat, 16 Aug 2025 14:06:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKAA3OHvISThlUX-@archie.me>
+User-Agent: Mozilla Thunderbird
+To: mchehab+huawei@kernel.org
+Cc: bpf@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <cover.1755256868.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 16, 2025 at 10:54:04AM +0700, Bagas Sanjaya wrote:
-> On Fri, Aug 15, 2025 at 05:00:05PM -0700, Paul E. McKenney wrote:
-> > +RCU: Initialization/cleanup/ordering::
-> > +
-> > +	RCU_INIT_POINTER
-> > +	RCU_INITIALIZER
-> > +	RCU_POINTER_INITIALIZER
-> > +	init_rcu_head
-> > +	destroy_rcu_head
-> > +	init_rcu_head_on_stack
-> > +	destroy_rcu_head_on_stack
-> > +	SLAB_TYPESAFE_BY_RCU
-> > +
-> > +
-> > +RCU: Quiescents states and control::
-> > +
-> > +	cond_resched_tasks_rcu_qs
-> > +	rcu_all_qs
-> > +	rcu_softirq_qs_periodic
-> > +	rcu_end_inkernel_boot
-> > +	rcu_expedite_gp
-> > +	rcu_gp_is_expedited
-> > +	rcu_unexpedite_gp
-> > +	rcu_cpu_stall_reset
-> > +	rcu_head_after_call_rcu
-> > +	rcu_is_watching
-> > +
-> > +
-> > +RCU-sync primitive:
-> > +
-> > +	rcu_sync_is_idle
-> > +	rcu_sync_init
-> > +	rcu_sync_enter
-> > +	rcu_sync_exit
-> > +	rcu_sync_dtor
+[-CC most folks]
+
+Hi Mauro,
+
+On Fri, 15 Aug 2025 13:36:16 +0200, Mauro Carvalho Chehab wrote:
+> Hi Jon,
 > 
-> Looks like inconsistent (normal paragraph instead of literal code block like
-> the rest).
+> This series touch only on three files, and have a small diffstat:
+> 
+>    Documentation/Makefile     |    4 -
+>    Documentation/conf.py      |  106 +++++++++++++++++++++----------------
+>    scripts/sphinx-pre-install |   41 +++++++++++---
+>    3 files changed, 96 insertions(+), 55 deletions(-)
+> 
+> Yet, it took a lot of my time.  Basically, it addresses lots of problems  related
+> with building PDF docs:
+> 
+> - Makefile has a wrong set of definitions for paper size. It was
+>   using pre-1.7 Sphinx nomenclature for some conf vars;
+> - The LaTeX options a conf.py had lots of issues;
+> - Finally, some PDF package dependencies for distros were wrong.
+> 
+> I wrote an entire testbench to test this and doing builds on every
+> platform mentioned at sphinx-pre-install. 
+> 
+> After the change *most* PDF files are built on *most* platforms. 
+> 
+> 
+> Summary
+> =======
+>   PASSED - AlmaLinux release 9.6 (Sage Margay) (7 tests)
+>   PASSED - Amazon Linux release 2023 (Amazon Linux) (7 tests)
+>   FAILED - archlinux (1 tests)
+>   PASSED - CentOS Stream release 9 (7 tests)
+>   PARTIAL - Debian GNU/Linux 12 (7 tests)
+>   PARTIAL - Devuan GNU/Linux 5 (7 tests)
+>   PASSED - Fedora release 42 (Adams) (7 tests)
+>   PARTIAL - Gentoo Base System release 2.17 (7 tests)
+>   PASSED - Kali GNU/Linux 2025.2 (7 tests)
+>   PASSED - Mageia 9 (7 tests)
+>   PARTIAL - Linux Mint 22 (7 tests)
+>   PARTIAL - openEuler release 25.03 (7 tests)
+>   PARTIAL - OpenMandriva Lx 4.3 (7 tests)
+>   PASSED - openSUSE Leap 15.6 (7 tests)
+>   PASSED - openSUSE Tumbleweed (7 tests)
+>   PARTIAL - Oracle Linux Server release 9.6 (7 tests)
+>   FAILED - Red Hat Enterprise Linux release 8.10 (Ootpa) (7 tests)
+>   PARTIAL - Rocky Linux release 8.9 (Green Obsidian) (7 tests)
+>   PARTIAL - Rocky Linux release 9.6 (Blue Onyx) (7 tests)
+>   FAILED - Springdale Open Enterprise Linux release 9.2 (Parma) (7 tests)
+>   PARTIAL - Ubuntu 24.04.2 LTS (7 tests)
+>   PASSED - Ubuntu 25.04 (7 tests)
+> 
+> The failed distros are:
+> 
+> - archlinux. This is some problem on recent lxc containers. Unrelated
+>   with pdf builds;
+> - RHEL 8: paywall issue: some packages required by Sphinx require a repository
+>   that it is not openly available. I might have using CentOS repos, but, as we're
+>   already testing it, I opted not do do it;
+> - Springdale 9.2: some broken package dependency.
+> 
+> Now, if you look at the full logs below, you'll see that some distros come with
+> XeLaTeX or LaTeX troubles, causing bigger and/or more complex docs to
+> fail. It is possible to fix those, but they depend on addressing distro-specific
+> LaTeX issues like increasing maximum memory limits and maximum number
+> of idented paragraphs.
 
-As in the "RCU-sync primitive:" needs another colon (":") at the end of
-that line?  If so, agreed, will fix on next rebase, and thank you!
+No, the trouble is failed conversion of SVG --> PDF by convert(1) + rsvg-convert(1).
+Failed conversions trigger huge raw SVG code to be included literally into LaTeX
+sources, which results in code listings too huge to be rendered in a page; and
+overwhelms xelatex.
 
-							Thanx, Paul
+IIUC, kfigure.py does such fallbacks of failed PDF conversions.  Mightn't it be
+better to give up early in the latexdocs stage?
+
+> It follows full results per distro.
+
+[Ignoring lengthy list of results...]
+
+I think all you need to test build against are the limited list of:
+
+    - arch.pdf
+    - core-api.pdf
+    - doc-guide.pdf
+    - gpu.pdf
+    - i2c.pdf
+    - RCU.pdf
+    - translations.pdf
+    - userspace-api.pdf
+
+All of them have figures in SVG, and latexdocs tries to convert them
+into PDF.
+
+Probably, recommending Inkscape rather than ImageMagick would be the right
+thing, at least where it is provided as a distro package.
+
+Regards,
+Akira
+
 
