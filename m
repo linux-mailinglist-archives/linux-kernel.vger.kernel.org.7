@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-771778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80E7B28B75
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:30:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38230B28B7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 09:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 052E4B61BBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64E4AA372B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8292222DA;
-	Sat, 16 Aug 2025 07:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GytX8O7Z"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFD522CBC0;
+	Sat, 16 Aug 2025 07:37:41 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657ED223DC0
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 07:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A9E22A7F2;
+	Sat, 16 Aug 2025 07:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755329442; cv=none; b=XUV+DosUYgFZZS8F42bpCVf5Cor3a9Hh+cwER6aNaeNDjT2i8vmi4e69GqZdPg9MN1bzrDmlB475770yKNsRNr9NOJKcaX7ygJCiRkFjhfmdmFjIFSBO7iI/lnA/s5s8bs6HgTLEHkhrOwc+8bw4Q93En2W49ZHpHhBM1PQeqBo=
+	t=1755329860; cv=none; b=ejSlhobaFkCwgYx8eVTQoWYy5+ZuMPpKn0RtgDD7W0cDx8IZ12+Uz38cWv159JwZC9MNv8+DQf6QiePT2wV76JFLOevcxjDSZxwGqqBLEY0Hggf6vM9Qg7pVv2dxdYvRgBs2xuqwEbRpbv0zT+Gbv1/6Iz+m40dh75lK0SbumSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755329442; c=relaxed/simple;
-	bh=i5ssAXv0QmdSaZC7DTfY9ZarpbikiIO5JuEr7iyRhLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWTBLY4pzywCJFgUn6EhgjPcUsMH2tjv0YKDjDnU7dxxfura6G8Jmf4bfTmYazBFIy8e9e6jpA29BZKwCL3+AgSPswyNXkTY/R7O02E6uh0cHE07SrMHnIqOaaORZU2keW/T5XLF/D8nxtbikSOkQWQ/GtYMPGue4qLPLnjNiEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GytX8O7Z; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 16 Aug 2025 15:30:14 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755329427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VrtQfsqunoMUAgJ9HLaz9rRre5ttd6HWa6pPbNixffA=;
-	b=GytX8O7ZMvMgzlcKTYRi7/4RWi/vtIOmu0EqcFqGnCSgetACzbUYNmff9ftOjvDflrsnWP
-	ugPkOXm0MdNmesJpFMxbW2sV82NwmGDRe6+HWNj3UXzWJ4kI5Y2azMDN/GpJcgtUW3ZWR0
-	VxSm/8mYunsgnCD92SdK3z47VJDA890=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH 1/2] ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
-Message-ID: <aKAzhjJcCAynfF1Q@troy-wujie14pro-arch>
-References: <20250815161406.76370-1-apatel@ventanamicro.com>
- <20250815161406.76370-2-apatel@ventanamicro.com>
+	s=arc-20240116; t=1755329860; c=relaxed/simple;
+	bh=/dVTk1qYplh5wGby56mcDhozRU+6sHqe0LKLvQKFnso=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jLpmLL2l9QzPCCPhiDdPjpdg6slSA455RI9zRYjTlYCb5b77xRI1bu95d/IOJryNESDUmwMRwhUVINyyIvYVgvPz2tTAoXt71YxuH0+XoP1mjFdJq3eOJ9e+WMamKtll1q69V1VRBwrQj1DgSeWq3eaEkvR/LFMpr38n/ISJsww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c3rQ52gM0zqVTs;
+	Sat, 16 Aug 2025 15:36:29 +0800 (CST)
+Received: from kwepemo100001.china.huawei.com (unknown [7.202.195.173])
+	by mail.maildlp.com (Postfix) with ESMTPS id 09FDD140123;
+	Sat, 16 Aug 2025 15:37:29 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemo100001.china.huawei.com
+ (7.202.195.173) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 16 Aug
+ 2025 15:37:28 +0800
+From: Yin Tirui <yintirui@huawei.com>
+To: <robh@kernel.org>, <saravanak@google.com>, <dan.j.williams@intel.com>,
+	<akpm@linux-foundation.org>, <david@redhat.com>, <rppt@kernel.org>,
+	<Jonathan.Cameron@huawei.com>, <devicetree@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC: <wangkefeng.wang@huawei.com>, <chenjun102@huawei.com>,
+	<yintirui@huawei.com>
+Subject: [PATCH v2] of_numa: fix uninitialized memory nodes causing kernel panic
+Date: Sat, 16 Aug 2025 15:31:31 +0800
+Message-ID: <20250816073131.2674809-1-yintirui@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815161406.76370-2-apatel@ventanamicro.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo100001.china.huawei.com (7.202.195.173)
 
-On Fri, Aug 15, 2025 at 09:44:05PM +0530, Anup Patel wrote:
-> The cppc_ffh_csr_read() and cppc_ffh_csr_write() returns Linux error
-> code in "data->ret.error" so cpc_read_ffh() and cpc_write_ffh() must
-> not use sbi_err_map_linux_errno() for FFH_CPPC_CSR.
-> 
-> Fixes: 30f3ffbee86b ("ACPI: RISC-V: Add CPPC driver")
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  drivers/acpi/riscv/cppc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 440cf9fb91aa..42c1a9052470 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -119,7 +119,7 @@ int cpc_read_ffh(int cpu, struct cpc_reg *reg, u64 *val)
->  
->  		*val = data.ret.value;
->  
-> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
-> +		return data.ret.error;
->  	}
->  
->  	return -EINVAL;
-> @@ -148,7 +148,7 @@ int cpc_write_ffh(int cpu, struct cpc_reg *reg, u64 val)
->  
->  		smp_call_function_single(cpu, cppc_ffh_csr_write, &data, 1);
->  
-> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
-> +		return data.ret.error;
->  	}
->  
->  	return -EINVAL;
->
-Thanks!
+When the number of CPUs is fewer than the number of memory nodes,
+some memory nodes may not be properly initialized because they are
+not added to numa_nodes_parsed during memory parsing.
 
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
-> -- 
-> 2.43.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+In of_numa_parse_memory_nodes(), after successfully adding a memory
+block via numa_add_memblk(), the corresponding node ID should be
+marked as parsed. However, the current implementation in numa_add_memblk()
+only adds the memory block to numa_meminfo but fails to update
+numa_nodes_parsed, leaving some nodes uninitialized.
+
+During boot in a QEMU-emulated ARM64 NUMA environment, the kernel
+panics when free_area_init() attempts to access NODE_DATA() for
+memory nodes that were uninitialized.
+
+[    0.000000] Call trace:
+[    0.000000]  free_area_init+0x620/0x106c (P)
+[    0.000000]  bootmem_init+0x110/0x1dc
+[    0.000000]  setup_arch+0x278/0x60c
+[    0.000000]  start_kernel+0x70/0x748
+[    0.000000]  __primary_switched+0x88/0x90
+
+Cc: stable@vger.kernel.org
+Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
+Signed-off-by: Yin Tirui <yintirui@huawei.com>
+
+---
+
+v2: Move the changes to the of_numa related. Correct the fixes tag.
+---
+ drivers/of/of_numa.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
+index 230d5f628c1b..cd2dc8e825c9 100644
+--- a/drivers/of/of_numa.c
++++ b/drivers/of/of_numa.c
+@@ -59,8 +59,11 @@ static int __init of_numa_parse_memory_nodes(void)
+ 			r = -EINVAL;
+ 		}
+ 
+-		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++)
++		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++) {
+ 			r = numa_add_memblk(nid, rsrc.start, rsrc.end + 1);
++			if (!r)
++				node_set(nid, numa_nodes_parsed);
++		}
+ 
+ 		if (!i || r) {
+ 			of_node_put(np);
+-- 
+2.43.0
+
 
