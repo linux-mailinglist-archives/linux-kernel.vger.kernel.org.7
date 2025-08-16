@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-772193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0B8B28FC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819A8B28FC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 19:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997061CC316A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC9C582FA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6292F9C23;
-	Sat, 16 Aug 2025 17:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872792FF665;
+	Sat, 16 Aug 2025 17:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gOqQ0K2k"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DMrKpGE3"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA2E244665
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F958374D1
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755364937; cv=none; b=PQEh6LXZZGAYd6u91IBoGeMMkYkhNfUEI/Hp+lTURNwHdSyTrbVjHsPT7uMjGrG0DGVLkMsovk4r0u7Z3K8uSaGyC5qebxFC5J4wyjEFwSaDqxNB3kxnjjZLOu/8+UGBXwnDxNlOW4ch5DgZJYwf0fLA6FN007sWcofG0uSSYwk=
+	t=1755365188; cv=none; b=JLbHDuwiMilZC/qn0hgJn/eAQJQd6lPuudUrs1PVrhMkOeu+STrtS6aiTUSla1G1u6t9wmhy1ZXrdM+nu5YcaNRlvk/411jPX+BSd0EjVsvQ15AiZWX7RjCeIbs6/06tzj8nphLdxVB2/ke1xdFj0fSNxZ1NoQkHdtgyYpY4RUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755364937; c=relaxed/simple;
-	bh=uo+OncJI4Myjpz8f2aJumPsc1iN2S7NFiH4P5XJOOOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YWqgredF0HmBigoI0YW2F96QuvtuO5HkHB2y4hGyCEVvDuax08GTFhS6aqWjC6cnjclu3hIqE7Kk41qEzvDPVs57QHjmTYs/iEfTcNbUp5jcnAm9+KeSMq0gKUBO82HtwoI6Xg3op/PPV66sFNz4OJCQMDUfziSXWS02Jc6sAkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gOqQ0K2k; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cce58bb89so2616919fac.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:22:15 -0700 (PDT)
+	s=arc-20240116; t=1755365188; c=relaxed/simple;
+	bh=Pt4QFkJKeDes/1dpFWEZFRC9Fyo6Q/os1TmT4UtDfcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lg9zYHTWXhzPNDh4WpWX+1/MPdjn6UmQMo1PegBJNztI6Q6pF+qX/iEzK70PaD/zGJliZG5xEKZlmX9bWFXSi7rm4qCZu5+pel3AYEZ/JRLMF9Rdl6fs4fHZmuPQeckfQMRgQaR/fG3ZP7Uo/Wm9lomlQskxqHHRvbbtGptLXPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DMrKpGE3; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e93498d436dso31721276.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755364935; x=1755969735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ABxHftxzLrHC817RM36mVaTvJR4++06Og795T+rFPJI=;
-        b=gOqQ0K2kLVhZXsQMfIO5N4M3JMsSri8urwqRoaHwe45tPq7ydsg7QJ7tyHreSHAdaT
-         ZqNIY4GAdlCStKWow4mWFM38CHmoE78P38UMZnBXbUsg4URBUDKBvvxhEWkZEtVQyK9z
-         jdzK/iDw0mQVBm9W7K8RWDPd6p43RR2ao07lG8G1zE8enkE8JfkSLM8oWQf5DQcdvgHq
-         RGRXOhOz0ztbbyalvia5jEX4Cw07neZMoSyoeBA54LWPYlDg9cTzYSJL3oCGHsTdcNjv
-         yFjgy2qrAHsszmWEV5//DnboV+xncKgqhw3PR+JmtsLAmzjYzewhTq1G66QzzzVvKUFp
-         IppA==
+        d=linaro.org; s=google; t=1755365186; x=1755969986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+erJ0Zp3LHICZMt425StIsw9Vrx8YjGGvrTqeALgDWk=;
+        b=DMrKpGE3gLl7UE8DO5puO8Qafguwz8USANOHBAqI+QGjwLDzXbI7/SDdCpaFKGSh6m
+         XWJdJCqwlwo0boUVHTkN2OXspJislxpCdJSM4k2mNHtjYe/xs9X8hClf3atGALEbImPJ
+         Yq7fNfFGiTfhUl5CSFvv7knPUWjBz5exqenyf3GpSgUkucn31yGH/aiADY/5l2Qc50qv
+         fYOhAaW3/bbeeQtXK/uKFQJuWLKmqZZZu2qHuiNqg0+ieC1NDZPoyPcuIKhmRnHC2w7M
+         TdQ/OFMfrxhJGd22TSvqtdy/aPntZ5aNT513Tgaz3rkXmc4oMHLsW8Asz8Y6VAdIeypw
+         4GCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755364935; x=1755969735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABxHftxzLrHC817RM36mVaTvJR4++06Og795T+rFPJI=;
-        b=dJhF6J3tS+IOWm8kDnpSzo6usWXwSEk2/rV27TIvyGrBIKelNkenjCOcN52JDDeAUr
-         mEHoarE5BFswelF+CnL4uuGWG+LQo80ElG0Y3if06WqFc+bEllVZo5sNCsCpDuUsPvH5
-         cf7BRMUi5IuZRrS/tTz3R/7QX/HHzBlvKh7Y2/QDKHL2N3UY8QwdCbuGml4JnHCnAe7K
-         Lqj/ItQQ3A4RvtYimY06aAfwJzqwBWsMB+aBp57qsO4l+zMSA3h7aFNiiF0jeju4TyVi
-         30e0WlgrE9GcgV7exFaSzCpLNMonyI1wsKaiPY2YdILcjseG+g/wm/HrWF5ncAJK6foL
-         te8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUK7+pO+esuCMN5YEcqbbbvsKEo89ZaSM2Z1JmgP6h9w3JjTv2hCaHuinKSrN8pl3PlKu3SYhu/z92QQ34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlPVBsKwm2iEgSbJQH3h8qqNcLqiM/nrfhZnKvPkKRLjvwtRWh
-	RnQAvrbZiQ+iNIACSuTqb+grII0o7xVMCeT3ZMMcq8c6OeXnxfswlg0JpcQj4UDNKWYE/apdE+b
-	a2LM8
-X-Gm-Gg: ASbGncvHhFaERAy1gZXEXIaENf7FDfpUtb9gOwTG7X/oxkmVHHQrS+RkNCM+idTgNfV
-	gwrkTxopYo45u1bfMJs2mRI5uoXyo2CfDug95AJ3bgO2qn983/B+Lhk0mk3DyeBcAi4TgIpS3fQ
-	dZy6Lhcsnzt3zi1X3Kp/CAc7tjwOoGU/4db9Yp7tNpF4xcagwXw5ouw8EFIqeXMYykPIuoEZTJc
-	ZjNotvb2J+IzPspJUeqKNgh6k2GmWQbNqKIzCOfGtVDyRkS7qH9dNXdtUyM7Lg+y016bkMU+H0u
-	5TuMLGJbc8kcHoUpbup/52FU69jHjeLqs3xC7/ZOH2utWgteXpBlp+y4eSQzqtjD32Cfjbyf75b
-	R2e0B9gXpfY8VStZhB0yl/8iqDkRrSwUtsVrVUdB5zra2cTnfdtbn0eBgGQl/QPOamKZuHGy1
-X-Google-Smtp-Source: AGHT+IF/Ida+uaip0/WJfage6wEN5F2NxxDcGtxRMU+BcoaqB7p+zdaxJBA5J2D7Usg9YF3tOg62yw==
-X-Received: by 2002:a05:6870:c907:b0:30b:85a0:eb66 with SMTP id 586e51a60fabf-310aab55b9bmr3559443fac.12.1755364934826;
-        Sat, 16 Aug 2025 10:22:14 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fcf8:116:11db:fbac? ([2600:8803:e7e4:1d00:fcf8:116:11db:fbac])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abb34366sm1329353fac.23.2025.08.16.10.22.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 10:22:14 -0700 (PDT)
-Message-ID: <c6fb37b0-e904-4fbc-8666-9eb747861af9@baylibre.com>
-Date: Sat, 16 Aug 2025 12:22:13 -0500
+        d=1e100.net; s=20230601; t=1755365186; x=1755969986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+erJ0Zp3LHICZMt425StIsw9Vrx8YjGGvrTqeALgDWk=;
+        b=kdoos1W+G+hvGHElHdIw7fwHaADoGHOtHDjfudN5osTb//4oWV3V8OzEEr/1wGZFCH
+         32JvVr0ftraN8JqkIZi6CIL1S990Yher2rw/s093aMCYvoTdaKarw3NrIbFG0oZ4sAPC
+         Kcf7Kro+XDkT68Co2WtSReQgKcbtsBbTw2Ux8Txj2MDCsix9pevIexCFnE7v947k6Cxu
+         492OW7uKBRPSnd2sp72gUzbe0cErfYsQo1OE90p5rKHJzPg3rGhZ5tNaKpmAAS8aVWoK
+         ndf1id9K7YUyj83MBG7P5NZRSiCMy8CrNrqoL+bbmHH4lcR8qSu7QV0Kjfqcoig8oLBW
+         /P0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVj2+WZdluEBJeZxG8PN7VGXGW4gsFh2c7vsydZfVFTAz4auVYEVr8iAbF8803uhZx489s7p2EQ4TUZi1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt4ryft3L6Cm1ORwTvXKa4HBpcjEmAcZLnjDSS8UnM8mg11FO5
+	2aMDRoGW9/foSYrjugEyr2zIObQolPAlQSP5MPg8kt+9l52oof2FyZzFIJOCC28XeW0RP+cd/Nb
+	m8nYZ1d1zIQ7qA8xDAF918ptwS/ZV5n/GkkII0xs+gg==
+X-Gm-Gg: ASbGncsmVxZ/hfCJmDavgbT1QlGYjM/YCUXBzb7h+BHcPDPnCnqpRjpH7+QPRKu1g0w
+	BSFW7FYjY7N+KYghEaP7qvyQp02jX/bqM3ZcvOUup+3AzB6YQ50ZWMdA+9M+m6FaLWfNiPzt0BO
+	oq/peQsh9y1+o2De2nNY3ImQi2eWG6h7uluyunaGzTzZ71zJNnIkCnD888OsFwPca2p5lptg5OO
+	nSH+A==
+X-Google-Smtp-Source: AGHT+IEiUE/ZBe/h6CTv9oXmV/520CYO08VrAKRH9DK2kLKicjLwLKXfuc77q+NFZWV5/udeIZCHd/ZkZBNSaus2ZAI=
+X-Received: by 2002:a05:6902:1208:b0:e93:36f3:573c with SMTP id
+ 3f1490d57ef6-e9336f35958mr7576548276.5.1755365186241; Sat, 16 Aug 2025
+ 10:26:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] iio: mcp9600: Add support for IIR filter
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250815164627.22002-1-bcollins@watter.com>
- <20250815164627.22002-6-bcollins@watter.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250815164627.22002-6-bcollins@watter.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com> <20250815070500.3275491-4-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250815070500.3275491-4-ivo.ivanov.ivanov1@gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Sat, 16 Aug 2025 12:26:15 -0500
+X-Gm-Features: Ac12FXxe2rWnXKWQd1X34M41uQmxOqzmaGTi-5t45-ucTyoZet0Hf0j8vH7V5Mg
+Message-ID: <CAPLW+4mp5DASdcToSW1QD7f51w4AYQeKzTF=nq2U=f-HiXD-8w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] arm64: dts: exynos2200: increase the size of all syscons
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/15/25 11:46 AM, Ben Collins wrote:
-> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> to allow get/set of this value.
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
+On Fri, Aug 15, 2025 at 2:06=E2=80=AFAM Ivaylo Ivanov
+<ivo.ivanov.ivanov1@gmail.com> wrote:
+>
+> As IP cores are aligned by 0x10000, increase the size of all system
+> register instances to the maximum (0x10000) to allow using accessing
+> registers over the currently set limit.
+>
+> Suggested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> ---
+> Did not add the r-b from Sam, as the patch is pretty much completely
+> reworked, including the description. Please send it again :).
 > ---
 
-...
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->  static int mcp9600_read(struct mcp9600_data *data,
-> @@ -191,13 +200,36 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
->  		if (ret)
->  			return ret;
->  		return IIO_VAL_INT;
-> +
->  	case IIO_CHAN_INFO_SCALE:
->  		*val = 62;
->  		*val2 = 500000;
->  		return IIO_VAL_INT_PLUS_MICRO;
-> +
->  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
->  		*val = mcp9600_tc_types[data->thermocouple_type];
->  		return IIO_VAL_CHAR;
-> +
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		*val = mcp_iir_coefficients_avail[data->filter_level];
-
-We already calculated the correct values, so we should be using
-those instead of made-up values.
-
-And the suggestion of using filter_type takes care of the
-turning the filter off so we don't need an "infinity" value
-here.
-
-That does bring up the question though, if the filter is off,
-should this attribute return an error in that case?
-
-> +		return IIO_VAL_INT;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
+>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos2200.dtsi
+> index 943e83851..b3a8933a4 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+> @@ -306,7 +306,7 @@ cmu_peric0: clock-controller@10400000 {
+>
+>                 syscon_peric0: syscon@10420000 {
+>                         compatible =3D "samsung,exynos2200-peric0-sysreg"=
+, "syscon";
+> -                       reg =3D <0x10420000 0x2000>;
+> +                       reg =3D <0x10420000 0x10000>;
+>                 };
+>
+>                 pinctrl_peric0: pinctrl@10430000 {
+> @@ -328,7 +328,7 @@ cmu_peric1: clock-controller@10700000 {
+>
+>                 syscon_peric1: syscon@10720000 {
+>                         compatible =3D "samsung,exynos2200-peric1-sysreg"=
+, "syscon";
+> -                       reg =3D <0x10720000 0x2000>;
+> +                       reg =3D <0x10720000 0x10000>;
+>                 };
+>
+>                 pinctrl_peric1: pinctrl@10730000 {
+> @@ -418,7 +418,7 @@ cmu_ufs: clock-controller@11000000 {
+>
+>                 syscon_ufs: syscon@11020000 {
+>                         compatible =3D "samsung,exynos2200-ufs-sysreg", "=
+syscon";
+> -                       reg =3D <0x11020000 0x2000>;
+> +                       reg =3D <0x11020000 0x10000>;
+>                 };
+>
+>                 pinctrl_ufs: pinctrl@11040000 {
+> @@ -450,7 +450,7 @@ cmu_peric2: clock-controller@11c00000 {
+>
+>                 syscon_peric2: syscon@11c20000 {
+>                         compatible =3D "samsung,exynos2200-peric2-sysreg"=
+, "syscon";
+> -                       reg =3D <0x11c20000 0x4000>;
+> +                       reg =3D <0x11c20000 0x10000>;
+>                 };
+>
+>                 pinctrl_peric2: pinctrl@11c30000 {
+> @@ -471,7 +471,7 @@ cmu_cmgp: clock-controller@14e00000 {
+>
+>                 syscon_cmgp: syscon@14e20000 {
+>                         compatible =3D "samsung,exynos2200-cmgp-sysreg", =
+"syscon";
+> -                       reg =3D <0x14e20000 0x2000>;
+> +                       reg =3D <0x14e20000 0x10000>;
+>                 };
+>
+>                 pinctrl_cmgp: pinctrl@14e30000 {
+> --
+> 2.43.0
+>
+>
 
