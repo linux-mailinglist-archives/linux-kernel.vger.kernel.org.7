@@ -1,101 +1,221 @@
-Return-Path: <linux-kernel+bounces-772152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F11B28F51
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FD8B28F54
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8EB41CC3A34
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D970A1CC38E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E29244665;
-	Sat, 16 Aug 2025 16:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180A72C158C;
+	Sat, 16 Aug 2025 16:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HAleAEvw"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19D170A37;
-	Sat, 16 Aug 2025 16:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IELA6aiB"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FFB5464D;
+	Sat, 16 Aug 2025 16:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755360348; cv=none; b=kCICAIJm18no27lp7qMiqK7k5BEWCW/lSOYklD3vQNUqEd/tWgohE0C2YN/PFo9IK+6ob9VfJ7jZFEa1n0fYqv/lGbVxIC9HxAuUMaEmNvpYeJk+f9bVpqVGjw3Dszjp3fUpBQ2sqmBH4w/Hm5sR6vLlHWiTN8fF8MYmfrQ79h4=
+	t=1755360496; cv=none; b=ST4sozP6MGxYBl6MpSdk90t1VchmGxAzk4V2ijHa47ny2iYQympwOCbqaR8etizmGCXqNU2m06MCQkytY+ntDeydSGQVO6qDEpRiOGJS6bDXaI7o2Vm0IjUx14z87U3OkoCHFv2k1BRCZBNZW6lMo5qq8H4HvXNg6un9uwqMnto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755360348; c=relaxed/simple;
-	bh=UvLeR1cYc057w10eRLP8ciPQMZDMUaBMqNmqYiFGrZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i2fLaJPm54fBO3vgqAsDlsbp8iysVUk4QIEZEpNXMn1BMGhMI785csTkYwGH8MmTALywL5AuN7fyVyr1Touhpm1bD5pVrDozIkHLtLzv+H8HdnBBzioPdJUyMQFzxVgjAbGB1MY12RPXTjOkTzwc2oHI/0ZfmceBkP3PHHvg4pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HAleAEvw; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=XDYawLrhkzFBHKzvw5+ydZUpT3fCgm/tuXskrC+yzB4=;
-	b=HAleAEvwYL4g8I5qxYQVKEBYmAzOPfGPIg+9mxzOJ/kjnISF0FA3/AVhN1cpI8
-	bTprfPbli/3ytNCfw1/FfKgjiG5twkPesA5N42FRZfqtmdsgDUw7yjp9av12ECoh
-	vAX5VPBEx3s31/LSupph5kJA3aBsCc2viufjqRth4A2vI=
-Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgAnQJ09rKBoZ+W+AQ--.1722S2;
-	Sun, 17 Aug 2025 00:05:17 +0800 (CST)
-Message-ID: <953620e7-8873-481d-b235-8cbefcb08172@163.com>
-Date: Sun, 17 Aug 2025 00:05:17 +0800
+	s=arc-20240116; t=1755360496; c=relaxed/simple;
+	bh=oSXu/5bEZ9WlhAtEdxk5ZZ6vNoMPX9phFwiUWWadqvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuEO3i1KTPxsyJKb5YzBVkH1Pops08+xJs/pjmJ/66VRkRxpW3Cph2XipEWknM4AOpUamCy8REoJ3Cq05MIUFP4zCimbGidQ6INqk9uJkrOg6DbnlvGz8nfekBPDaim6ujTrSdOupWZoDk86471GXrrWq1jJYL/y4lbRQE8AlNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IELA6aiB; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id C1B8222B44;
+	Sat, 16 Aug 2025 18:08:12 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 5vBCi2Do4UOV; Sat, 16 Aug 2025 18:08:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755360492; bh=oSXu/5bEZ9WlhAtEdxk5ZZ6vNoMPX9phFwiUWWadqvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IELA6aiBcm3HMTEUydHZCrrPcJ5NtlDuORsKQvVPYYeJjH5ERsS3B9sWzjEst/oGs
+	 1f7rjUNwvmmBAcmdGlRABwGCfndD6JWwoDCeQLfpdFWULZU/nplHbkOKtHnnGQLNTC
+	 P27gDeRs0VjlultmUXco9VyHHM8NIe0tBVQwBgx6EeWk9jJFoKOrQdv+J5oZtQ5Xmx
+	 HTf0BtDZ1Zj6LHB/TxzRV4exQTFZ3TisVihCgOVV4rcHaiahs9XfsyFajcSJfxt7Mz
+	 Vh4l9Anys9IYCR+CR/eKm8trWct8WGU4WHp50ZOWmC8QtfPq9XhWzVJSmmyUVw94ge
+	 EyEmtR/hAYOqA==
+Date: Sat, 16 Aug 2025 16:07:54 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: loongson: Document GPIO
+ controller of 2K0300 SoC
+Message-ID: <aKCs2jUcYxYHWIB2@pie>
+References: <20250816035027.11727-2-ziyao@disroot.org>
+ <20250816035027.11727-3-ziyao@disroot.org>
+ <CAAhV-H5ZQQpHS_b9UL8UNgX9MH8-i4DV8bid00vEDzg76rgebw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] PCI: of: Relax max-link-speed check to support
- PCIe Gen5/Gen6
-To: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- krzk+dt@kernel.org, manivannan.sadhasivam@linaro.org, conor+dt@kernel.org
-Cc: robh@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250529021026.475861-1-18255117159@163.com>
- <20250529021026.475861-4-18255117159@163.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250529021026.475861-4-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:QCgvCgAnQJ09rKBoZ+W+AQ--.1722S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZr43XF47XF1fuw17Kry8Zrb_yoWDWrgE9F
-	17XrZ3Gr4FkFyYkr1ayrWavrn0v3yrWw4UXryFyw1xAa4rCa4DZFn3uFy5Aa93Aa13JF18
-	JF98Gr1jkrnFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUaFAJUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQw6ro2igp4JksAAAs8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H5ZQQpHS_b9UL8UNgX9MH8-i4DV8bid00vEDzg76rgebw@mail.gmail.com>
 
-Dear Bjorn,
+On Sat, Aug 16, 2025 at 10:18:57PM +0800, Huacai Chen wrote:
+> On Sat, Aug 16, 2025 at 11:51 AM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > Loongson 2K0300 ships a GPIO controller whose input/output control logic
+> > is similar to previous generation of SoCs. Additionally, it acts as an
+> > interrupt-controller supporting both level and edge interrupts and has a
+> > distinct reset signal.
+> >
+> > Describe its compatible in devicetree. We enlarge the maximum value of
+> > ngpios to 128, since the controller technically supports at most 128
+> > pins, although only 106 are routed out of the package. Properties for
+> > interrupt-controllers and resets are introduced and limited as 2K0300
+> > only.
+> >
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  .../bindings/gpio/loongson,ls-gpio.yaml       | 28 ++++++++++++++++++-
+> >  1 file changed, 27 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > index b68159600e2b..69852444df23 100644
+> > --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > @@ -14,6 +14,7 @@ properties:
+> >      oneOf:
+> >        - enum:
+> >            - loongson,ls2k-gpio
+> > +          - loongson,ls2k0300-gpio
+> >            - loongson,ls2k0500-gpio0
+> >            - loongson,ls2k0500-gpio1
+> >            - loongson,ls2k2000-gpio0
+> > @@ -36,7 +37,7 @@ properties:
+> >
+> >    ngpios:
+> >      minimum: 1
+> > -    maximum: 64
+> > +    maximum: 128
+> >
+> >    "#gpio-cells":
+> >      const: 2
+> > @@ -49,6 +50,14 @@ properties:
+> >      minItems: 1
+> >      maxItems: 64
+> >
+> > +  "#interrupt-cells":
+> > +    const: 2
+> > +
+> > +  interrupt-controller: true
+> ls2k300 supports interrupt-controller while others don't?
 
-Gentle ping.
+For these SoCs' GPIO controllers (I didn't carefully check 3A{5,6}00 and
+7A{1,2}00), there're three different cases,
+
+1. Controller of 2K0500, 2K1000:
+
+   These controllers have only interrupt enable bits for each GPIO.
+   Interrupts are routed directly to the parent interrupt controller and
+   there're multiple pins share the same interrupt in the parent, e.g.,
+   GPIO 0-31 share interrupt 26 of the second liointc on 2K0500.
+
+   Since we have neither an interrupt status register nor interrupt ack
+   bits, it's hard to tell which GPIO line is triggering the interrupt.
+   And we even cannot configure the polarity/edge for triggering
+   interrupts, thus I don't think these GPIO controller should be
+   described as interrupt controllers.
+
+   For these controllers, gpio-loongson-64bit.c implements GPIO
+   controller's .to_irq() method which translates GPIO descriptor to
+   corresponding IRQ number. This should work as long as there's at most
+   one interrupt consumer for each group of GPIOs that share the same
+   parent interrupt line.
+
+2. Node controller of 2K1500 and 2K2000:
+
+   These SoCs have GPIO controllers directly attached to the "node" (I
+   think it means the CPU core, but am not sure). These controllers are
+   similar to the first class, but they have an additional feature that
+   the polarity for triggering interrupts could be configured.
+
+   Still we couldn't precisely tell which GPIO line is triggering the
+   interrupt, thus it's hard to implement it as a fully-functional
+   irqchip, either. But if we don't do so, I cannot come up with a way
+   to describe the polarity settings. I'm unsure whether these
+   controllers should be implemented as interrupt controllers.
+
+3. South-bridge controller of 2K1500 and 2K2000, and 2K0300's
+   controller:
+
+   Reading through the public TRM, I'm sure these're all fully
+   functional interrupt controllers, and should be implemented as
+   interrupt controllers.
+
+   However, this also means the current binding for 2K1500/2K2000's
+   south-bridge controller is WRONG, and a fix it seems to bring in ABI
+   breakages (interrupt-controller/interrupt-cells are a must). But
+   since I don't have these devices on hand, and they are at least not
+   related to the situation of 2K0300, I decided to keep them as-is.
+
+So the answer to the original question is, no, at least 2K1500/2K2000's
+south-bridge GPIO controllers are also interrupt controllers according
+to their public documentation. But I cannot test my GPIO changes against
+them since I don't have such boards, and fixing the binding up may break
+the ABI, thus I leave them as-is in this "support for 2K0300" series.
+
+> Huacai
 
 Best regards,
-Hans
+Yao Zi
 
-On 2025/5/29 10:10, Hans Zhang wrote:
-> The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
-> but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
-> This patch updates the validation in `of_pci_get_max_link_speed` to allow
-> values up to 6, ensuring compatibility with newer PCIe generations.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->   drivers/pci/of.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index ab7a8252bf41..379d90913937 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
->   	u32 max_link_speed;
->   
->   	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
-> -	    max_link_speed == 0 || max_link_speed > 4)
-> +	    max_link_speed == 0 || max_link_speed > 6)
->   		return -EINVAL;
->   
->   	return max_link_speed;
-
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -58,6 +67,23 @@ required:
+> >    - gpio-ranges
+> >    - interrupts
+> >
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: loongson,ls2k0300-gpio
+> > +    then:
+> > +      required:
+> > +        - "#interrupt-cells"
+> > +        - interrupt-controller
+> > +        - resets
+> > +    else:
+> > +      properties:
+> > +        "#interrupts-cells": false
+> > +        interrupt-controller: false
+> > +        resets: false
+> > +
+> >  additionalProperties: false
+> >
+> >  examples:
+> > --
+> > 2.50.1
+> >
 
