@@ -1,155 +1,162 @@
-Return-Path: <linux-kernel+bounces-771908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6828B28CC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B27B28CC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 12:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4863FB0464A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:15:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4F1AC8518
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 10:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D614291C15;
-	Sat, 16 Aug 2025 10:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A401128C037;
+	Sat, 16 Aug 2025 10:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ggbz/Z/p"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kg/DGjvS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE69728FFE7
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 10:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038B01BC3F;
+	Sat, 16 Aug 2025 10:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755339329; cv=none; b=ma8XSruwHpaiNKeGRfq0eQjIxgTJm7FLIiiUHWJ49syeF8bmCdryYmofycSFvjRtGbKLSwj8ZiEwyVg7TW23MlAVqbJX8efwN2ca8Z3DdoCgolyg+rP53qBHbL2RA21ULCqrI3BNhJ3A1cdguZrOkuTITZzqIOu54YmWMSHQnq8=
+	t=1755339544; cv=none; b=HKWsTpNkEulkGz7TZqpUA+ZtsrWxFFRuMtYj3Iyutm4zNNRt+CqsfWSAtk0Zn4rpmH3befdXyOGzBLnPKq2pJx/pEXoIldScn4Amng5Eav6Yi3o3YCULNEw+pdAawWtykcU6eeJUHcGFJzBWgeMSr/b93KJjq7hU+uGxLCrAHXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755339329; c=relaxed/simple;
-	bh=Nh3NrLx9OEag4aosCiVt6RzyBczUYLkKTLWOeNhbtQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nyrqfP2tCMonMt5Idy3ssWWMNGaPPFD9is2VUpJquHsLZVBn9ai1uLPcc+dfNWU4RDIjewT6qjjO76M9/4FSXjfWnrLi5QQaLVVmObvvHU3n8+hXF5jfJoRcD5UbRwurvTrxEWPP8QLBtR0rPUG85Kohp4dRit91FxAwSueJXmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ggbz/Z/p; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9d41baedeso1476154f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 03:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755339326; x=1755944126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lGt82GlIKWDzCqErqhiqhcXLyT50Jvw2mM2mW/AA2Dw=;
-        b=Ggbz/Z/p/nBIjYYEAMC69itrPy04Uw77np836rOtmdq5YPDh2v2TYrKzt4qDWtUKc3
-         wmn7bKpE7wtqOTqeEAflMooNtM0YuLU0hLvUrvinalQ6JI0i7/FJ77FZJvlSms5Wh6yx
-         YLImcbfxnNQr6hC8A5ZzsdhwG8ETaKZi/haREoE8AOGQ/fGTWKZN9Mdk0jc6Q0lhz73u
-         MlsEF31lKZh6RETIshtWuYm3q+CHmrOnmgWysSteRaIATyZMn2f5tyzFWx/Kt2FDVkvw
-         JxPDMKNoZ/MvhgBjjUl2ZpWRiM7OqSuYcLeYLkbz8cYxv/hISLVI7DG3NP2kkXs5h14b
-         mOQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755339326; x=1755944126;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lGt82GlIKWDzCqErqhiqhcXLyT50Jvw2mM2mW/AA2Dw=;
-        b=OoQOdlkcLdCiCMIMmHwauc0WCeXiAYg0wdYYENfmtl3/7/asBlNZ9RNojpEm272vIZ
-         kxvrzB/8DS3OBp7F9gWMU7fpMquhZ8dkBTnG6fVwNSkD/R0DExx4O1S0Gjc2fNdhyLpr
-         5E22H6Ipsr7NBQSrlCEEGT7IPHYOvnAAGrs1UH0NYqe+nuGkO8CzkeQxNbdEcS1wsNRf
-         mmknQVj2VOxeobmFXpP76XLoKHZo+GZweTFXU/W7qf1cid+4f5wJpHudSt76lQPYYYAJ
-         dxLoGw9iMdoK29L5/lYXVtIAPTqv9OoStsp+U6RNUPx95SOVhU8lcGtmcNlX7X/Z5dk/
-         tRqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7tqqxoekqeZuZIxndZ4cduRVBLB2RmDFlOCgauvxn6TGEO9sfKw27ezsCLL2KbcEQpEfLsFbOIiAlQ20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynPdNdPsdcxEzB9uWbnWwNX3CNGLRlbdhO50ExaajGQcZnen5a
-	M9EQ0UtJMFFhguL81rkINnGCfE6fT/Y+5OKdVrlo3xBLRKJjpCVlXmMG2Bw5eEWzVVA=
-X-Gm-Gg: ASbGncsQ6oA7GYh6SSqN4toZy1jkH1q6c6KyIX+RuXauPD6F1j9nBFrNwlEuZTAgv4L
-	kf6fXdLiRrlMS+gyZoZLHYsKrHZW3vvHpLeAiIpLyxXKmIuBwyPaCDekJgghJKeju7D8+uGpbZC
-	ijH0yOjOMRTh1VY8Md1y3qgIQ6+eE/49s1bvKGWfboh6J8DhoJ2q3NlfI1tTF7e15HqYReeOxMN
-	sJkJgEVF/E7Yrw/sv5XqqeImuRm/jjL3GoyhpBopspxOo0mFEDSJlqylJpnjs9vWp751yPoJqzP
-	95WHleL5+LHR33Oohk8sseCckxNuR0/DqSQhDlxOrLIaUo5tqgENdKrewltsklkQJTqeqGyGZqR
-	WrnJuT8Jh1qJbDQRfphGRQN8MZqHj0aZIQXBYty8oXNHBdTDC2gTbnLZuyujhCno5
-X-Google-Smtp-Source: AGHT+IGmLANuUFgyoBXIF4SnP+CvmH/WZED91QLhAbarFtBDm+auOklS8ukCHnJhlG0Pcv8G6VzDtQ==
-X-Received: by 2002:a05:6000:420a:b0:3b7:886b:fb76 with SMTP id ffacd0b85a97d-3bb6636cb0emr4085932f8f.12.1755339326328;
-        Sat, 16 Aug 2025 03:15:26 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a22319780sm50655435e9.7.2025.08.16.03.15.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 03:15:25 -0700 (PDT)
-Message-ID: <956110cf-d309-430c-b30f-a9c442e015cf@linaro.org>
-Date: Sat, 16 Aug 2025 11:15:23 +0100
+	s=arc-20240116; t=1755339544; c=relaxed/simple;
+	bh=5NWhecVS2/AkV4nKyydh9LzhF8tYLJWu8T8ZtYaFAiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cje8/BoV/HjtOqsIePsp4G/lnkAqriH1Tv0l5aVIGd0uM7nEPQZ1fWPlF7lan/LQDRNwlN8X6r+rG9otQmGiGWbIzgZ/bHOpYn4JFrzAI6EddspEkJkq4vDgbd93LgAh6DPqwiuphhrFX8MPmMDD6kE9b/nyfzoTr83vjTo9YNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kg/DGjvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E2AC4CEEF;
+	Sat, 16 Aug 2025 10:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755339543;
+	bh=5NWhecVS2/AkV4nKyydh9LzhF8tYLJWu8T8ZtYaFAiA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kg/DGjvSRSjvpuL0i6KsABAKxqcwW4z/YYtBF3zbY75FotPoVzg8EwTSc8wG7/79P
+	 jLMW4wKnfjbpuslmQe5nDGlDhy6uF1fAOJqiuR4XN9mAq0afZmc8bWkxduIm9wXrw1
+	 NLKs8wKDFS1VKMW3wWT9tCOgHhfPkucD+5BkhdPjMTfImgnCfI7t/APrkrFAt8BBR3
+	 Ej9iNb6TMpCNwAFrI4y6jR+7RVhFvGv/SfSZ+BgbrdVtoyAEOJjgBB49qlSIy9sCA/
+	 0aqG7AbFogRNahMEL4J2Ka0tq0lffLWVo/EGnixaSw0VDam3/Milt9x4JASefUss3w
+	 cGn2IxGo7a9hQ==
+Date: Sat, 16 Aug 2025 11:18:55 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Add LTC2495 support
+Message-ID: <20250816111855.7e934f4d@jic23-huawei>
+In-Reply-To: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com>
+References: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/24] media: iris: Fix memory leak by freeing
- untracked persist buffer
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
- Vedang Nagar <quic_vnagar@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
- Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-3-c725ff673078@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250813-iris-video-encoder-v2-3-c725ff673078@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 10:37, Dikshita Agarwal wrote:
-> One internal buffer which is allocated only once per session was not
-> being freed during session close because it was not being tracked as
-> part of internal buffer list which resulted in a memory leak.
+On Fri, 15 Aug 2025 12:02:01 +0200
+Yusuf Alper Bilgin <y.alperbilgin@gmail.com> wrote:
+
+> Hi All,
 > 
-> Add the necessary logic to explicitly free the untracked internal buffer
-> during session close to ensure all allocated memory is released
-> properly.
+> This is the v4 of the patch series to add support for the LTC2495 ADC
+> and to enable the internal temperature channel for the LTC2495 and
+> LTC2499.
 > 
-> Fixes: 73702f45db81 ("media: iris: allocate, initialize and queue internal buffers")
-> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> Thanks to Andy Shevchenko for his helpful reviews on earlier versions,
+> and to David Lechner and Krzysztof Kozlowski for their feedbacks on
+> v3. This version addresses all feedback from v3.
+> 
+> Best Regards,
+> 
+> Alper
+
+Hi Alper,
+
+A small process thing.  Wait a little longer between versions
+as it tends to save time for both the submitter and reviewers.
+
+At least a few days is appropriate typically and for first versions
+I'd generally advise a week. Many reviewers only get to the list
+once a week or so (some less than that!)
+
+Thanks,
+
+Jonathan
+
+> 
+> Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
 > ---
->   drivers/media/platform/qcom/iris/iris_buffer.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> Changes in v4:
+>   - Removed the verbose formula derivation comment from `read_raw`.
+>   - Reworked the temperature channel definition to omit the redundant
+>     `.address` and `.channel` fields.
+>   - Moved I2C-specific bit definitions from the shared header into
+>     `ltc2497.c` and removed the pre-combined command macro.
+>   - Simplified I2C logic to check the channel type instead of a
+>     non-standard address.
+>   - Combined the basic device support (#2) and temperature sensor feature (#3)
+>     patches into a single patch (#2).
+>   - Link to v3: https://lore.kernel.org/r/20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index 6425e4919e3b0b849ba801ca9e01921c114144cd..9f664c241149362d44d3a8fa65e2266f9c2e80e0 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -413,6 +413,16 @@ static int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane, bool
->   		}
->   	}
->   
-> +	if (force) {
-> +		buffers = &inst->buffers[BUF_PERSIST];
-> +
-> +		list_for_each_entry_safe(buf, next, &buffers->list, list) {
-> +			ret = iris_destroy_internal_buffer(inst, buf);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
->   	return 0;
->   }
->   
+> Changes in v3:
+>   - Used the standard `kelvin_to_celsius()` helper instead of a custom
+>     define.
+>   - Corrected macro definition style.
+>   - Renamed `LTC2497_CHANNELS` and `LTC_T_CHAN` for clarity.
+>   - Combined all struct layout optimizations into a single patch.
+>   - Link to v2: https://lore.kernel.org/r/20250813-ltc2495-v2-0-bbaf20f6ba07@gmail.com
 > 
+> Changes in v2:
+>   - Rewrote all commit messages to use the imperative mood.
+>   - Added a justification for the new compatible string to the device
+>     tree binding commit message.
+>   - Removed all unrelated whitespace and formatting changes.
+>   - Removed redundant explicit `false` initializers from structs.
+>   - Replaced the magic number for Kelvin conversion with a define.
+>   - Improved comments for defines and temperature scaling constants.
+>   - Renamed confusing macros and struct fields to be more descriptive.
+>   - Replaced dynamic channel allocation with a static array approach
+>     using a shared macro to improve readability.
+>   - Optimized data structure layouts based on pahole output to remove
+>     memory holes.
+>   - Link to v1: https://lore.kernel.org/r/20250812-ltc2495-v1-0-7bf4c6feec2e@gmail.com
+> ---
+> Implementation Notes
+>  - checkpatch warning: The new static array approach uses a shared macro
+>    for the common channels (`LTC2497_CHANNELS`), which triggers a
+>    checkpatch.pl warning: "Macros with complex values should be enclosed
+>    in parentheses". However, this will cause a compilitaion error, as an
+>    initializer list cannot be parenthesized.
+>  - uV to mV conversion: I could not find a standard macro, so a manual
+>    division is used for now. This could be a point of future
+>    improvement.
+> 
+> ---
+> Yusuf Alper Bilgin (3):
+>       dt-bindings: iio: adc: ltc2497: add lltc,ltc2495 bindings
+>       iio: adc: ltc2497: add support for LTC2495
+>       iio: adc: ltc2497: reorder struct members to fix memory holes
+> 
+>  .../devicetree/bindings/iio/adc/lltc,ltc2497.yaml  |   3 +
+>  drivers/iio/adc/ltc2497-core.c                     | 132 ++++++++++++++-------
+>  drivers/iio/adc/ltc2497.c                          |  39 +++++-
+>  drivers/iio/adc/ltc2497.h                          |  19 ++-
+>  4 files changed, 147 insertions(+), 46 deletions(-)
+> ---
+> base-commit: acbbb5a20971089064ca6b271dd251e629be8d4d
+> change-id: 20250811-ltc2495-572817c13fd3
+> 
+> Best regards,
 
-Why is the logic here not to simply release every index of the enum 
-iris_buffer_type ?
-
-If I'm reading the code right here, len indicates the list of linked 
-lists to free, adding BUF_PERSIST appends to the list that may be freed 
-if force is true but, then what about the remaining entries BUF_SCRATCH_1 ?
-
-Is it valid to leave this routine with force = true but BUF_SCRATCH_1 
-not specifically indexed, if so why ?
-
----
-bod
 
