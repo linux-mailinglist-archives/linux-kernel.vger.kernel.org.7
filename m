@@ -1,215 +1,715 @@
-Return-Path: <linux-kernel+bounces-772150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD136B28F4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 17:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874B7B28F4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 18:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A8C3B8B1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 15:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8451CC2FB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 16:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C6726E6FF;
-	Sat, 16 Aug 2025 15:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434D923AD;
+	Sat, 16 Aug 2025 16:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLM/mWTs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Du+iv/L5"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65BE17A31C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C21E170A37
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 16:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755359940; cv=none; b=l/3gVxl0QlIjYsCVkt4cJR3InZUn7scsij9Et9DNx54Fn8f/CKJkMTGlbYhzbtkeajdJri28dWJ/CSLS2ZPLHxPhL2cprs7xV9gQeBtfV4PrQS9R8QKGeL1QPMJG4XhJm4TOX4yw4jfqj4i1Nv+60yxD8u6s3vE9a/aAuW5SZ6c=
+	t=1755360231; cv=none; b=G+viu3hAfxh0hc5wB9t2KzzAxfTkrh7l81Uk4WhnHeVw1zMI2EcnVo94W0lMx7TGcvwoR3BjQKHNzFPmvPMP4ByzFtqwEPyUb0SaVC048GnbTTAYcyyKpMK2JTlGYDBdewTC3QtuJB0RJc5XMuYeqMd8yGAOV9C+hGv5ywxzfoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755359940; c=relaxed/simple;
-	bh=JMNH+5n2uYfaz9WPCTj8NPg4vBAEEacm4+oGVRjJTSs=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=PqjhDEW7U6hpGlvhAuD/Ih78jDGndh9aQRCtGSMxz/y+e5e6W9OhuMf3k+Dg+3o5ZIZUi0tEvhg6aQUFS/M76WZAv2/npEZJx5HmtY5G1NaXtF1+rOv76qGIliCT6B7c5ANoQbYN0JMM/VaLiIU1W/Q35qgKaFY5hoobLXVOCIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLM/mWTs; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755359939; x=1786895939;
-  h=date:from:to:cc:subject:message-id;
-  bh=JMNH+5n2uYfaz9WPCTj8NPg4vBAEEacm4+oGVRjJTSs=;
-  b=PLM/mWTsMX/8IBcUfNexwwO5s4ZbTp29E9N+GxE/FSqVsQN5naXg5NfX
-   dmrxUWjzxdlHtY21rEpvQF1FrjgSWCg/yR3lxo2m/Xys2T+anBMoQ6VSa
-   BqkpeQLMwahsaRQTyamKj/N9Dkhqjqy2jimliXZEq2bUAUEf4MVf8uYwX
-   3E5u7ZHIcO40STf5nEYHj420wMxIuORL8lNuqPY+CnHcCjlrS/JcyVZoR
-   eSeEoy7BBRgKVpIR0PMm49O8hMXhNiwN9Pf2rfG5GtR+sHc/OFjMhrFBw
-   V1k280Yet+KDa0LXnF6yNn11K6PjGrG6DoZPEwkzWDtyTTwmW6xd9rYk4
-   w==;
-X-CSE-ConnectionGUID: yHHhTf86Rz+alMTEToTGHQ==
-X-CSE-MsgGUID: LD8Iyf59TPOWw6NRTPSBkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="80229815"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="80229815"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 08:58:57 -0700
-X-CSE-ConnectionGUID: smcoJbxKRiqC4iQezZXXJg==
-X-CSE-MsgGUID: vx509DLjTOichALmps9Fig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171675598"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 16 Aug 2025 08:58:57 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unJJ0-000Cya-04;
-	Sat, 16 Aug 2025 15:58:54 +0000
-Date: Sat, 16 Aug 2025 23:58:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- ed6c4b657bca3b39f7b11cba1405931aeb490f3d
-Message-ID: <202508162339.9zHr4yj3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755360231; c=relaxed/simple;
+	bh=u2psHS2G+/4XjTi3pk9j2/3tNj+xrZSftbAJ/b/KdcM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DxNtjsHMwzq93K6ZiUs/2TB+ZC4lYuI6Hba2/J5VJ9Q8m82rM9cDZKLxwZpwl3MetsVzvaQACJymEPdcIW6Jhn6AQX6xvmpqJh465xMieLYQwddAkoWPGHknxqr/PxH1ugg80PByJoq/8KLDDGQIAakDENLL332U+YzXbP94o4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Du+iv/L5; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso3419835a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 09:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755360227; x=1755965027; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EqhyznmI34kQJqOP9LcUn5xoQ4iuB98vys1gUXn5KXM=;
+        b=Du+iv/L5J0e0xGI7hcVLgjayVkDK4A0tzfu9KL4hce6O3BpBg2tyuEf6I8k99UbD29
+         A1gSMFGgVmrSGRjnCDmlzY5VgXwa4Of+nHUv/jaoJrecQNb69oZczJ6z/MZZmK2696oR
+         wFzzqTaoXGi8Y7AxgGKM+fhuR4z4fXhDAoIp5i0AbrVuSAMM0+RNaqXtWagFvAD90Sw3
+         JKWiNW7G3eEsSFzKtX2vQqlSdljimsU0SS3jXPU7Alvt/0M4dJ+hwkQaKywojItvDN8i
+         SPMlnTAz5PChudKpIk72YlWWHmHdDCC77M9YfaJd53c69kGyOADdlvF+ZadCtI4BICkZ
+         Qt/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755360227; x=1755965027;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EqhyznmI34kQJqOP9LcUn5xoQ4iuB98vys1gUXn5KXM=;
+        b=sRO1VUkFIt/bTBhNf5qPxRKfQpNR1eHugYyYM8bFbbMGYNOjqhKVMJsNNk15eCYhs9
+         BW0GqNTfk5KIti3Vzet1z/tLZ0wV2WL56a/1iNF8vpd/UlkWFq2sTt/wD5ejaNWLuUkv
+         bVIG5oqDWn1eaPBc+1pwWGEPZW6TY0vIpMRDoEL5grIzJV5mFOAAj7QZ3pbf+vCvg806
+         KF5F9bT4LiPfNQQ9zjy2CBD7oTxp/FAttJj66KzU7bmYFDLFH56nYWPnSWcPRzK2SqSM
+         Q4aRzm2FmCeqH82pJfAcGVqulfSuxX9NNiuVwreefRK+6eX6n2D1xVqFf4L28vZfmp5+
+         f0xw==
+X-Gm-Message-State: AOJu0YywtMVGDOGa1nmUAdz9RZ2513piYjtZ109nPYTtS/hPDTX8Nm3h
+	5IOlDkgDR5RvuHcmfAfUlpV/R21CjrSrC7UzcrXv4i0TmkMaYW3Q/95z
+X-Gm-Gg: ASbGncsukpKwcaAhZse+DgqgbyaifMeYaOD6WLQUJ7EYrZcffjHRYcbuazh2Dhk4e7O
+	O/aRa3IXYyb6Smg5n0/8o0PiA9U2/B5XHph/Gyvgoepr4hOC+2dIRWyrKeAtyDck+tYq/dR3egW
+	OoNYhlnTGrzac/UGBMvbxHuFFvBTD5mbWsGfB1ssbyIdr1ZSeSS1OuYWe1Uy/NC1Ffl40expGaW
+	M570Nz9q0pX6cVnm6g0GvRM2t4h+eJAod/Aokdm1xdcF4sKOchrz/pTi0dwkWAThrWyCG8znamU
+	2OuDeMlxz60S1MvoHIDZQ1NWlsc56CfUji52cJ0iqONDJZLC0L+sVdsaAJ7ZpX0KDGreOx0YD0Q
+	u3spyPyKpddoDqSowc2Qw0ALC6Xl/HYCLVwQfDogfRJkts5IoJ8WMrxuqfoEgkCGlspd0ru6wsH
+	GXn9PrUi4QGGoB66TZowywFFxOZQ==
+X-Google-Smtp-Source: AGHT+IEdUPsAn6vJVXHuE+as5BtgENOEfLWHzYiocF0dunTdWk6i4gnVyoFLXYEI5Hjja3NO8azaBg==
+X-Received: by 2002:a05:6402:2683:b0:615:905a:3d43 with SMTP id 4fb4d7f45d1cf-618b054b84dmr5075920a12.16.1755360226562;
+        Sat, 16 Aug 2025 09:03:46 -0700 (PDT)
+Received: from tablet.my.domain (ip-37-248-152-152.multi.internet.cyfrowypolsat.pl. [37.248.152.152])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01ae6b1sm3467520a12.33.2025.08.16.09.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 09:03:46 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Date: Sat, 16 Aug 2025 18:03:33 +0200
+Subject: [PATCH] mfd: bcm590xx: Add support for interrupt handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250816-bcm590xx-irq-v1-1-ccbb490628dd@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANSroGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Mz3aTkXFNLg4oK3cyiQl2jFJNkw+SkVAODJEMloJaCotS0zAqwcdG
+ xtbUAXiDghl4AAAA=
+X-Change-ID: 20250816-bcm590xx-irq-2d4c1cbe00b1
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=21720;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=u2psHS2G+/4XjTi3pk9j2/3tNj+xrZSftbAJ/b/KdcM=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBooKvgtYw4M4LyDNBkctuKA5dZdiGvxgyOexMmx
+ h/qcjWxnECJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaKCr4AAKCRCzu/ihE6BR
+ aO1gD/9Dwsm9S3EDs9+fGU5t0Lev9e2Cf82BvbT3YIaj7PMedu295mgBKZ7mRLt/MNV+j5AdxES
+ brgm6LvLEWuTmVR7AkxxH5VKCGTBj2NKbxT3jk1mNSS2//uKxMzVxsvLPqAE/s9x+KZkjD4PLCV
+ bwnNOb9H2n0l78fRGUpWYVrdhZu4HZqfFrdlNq9pbhY49TCOCnUnFpFswJRfG4CHXcIUK0ic/un
+ jj3omlOAvclKpawa+5WUkwYMamMqeDjgSBy86K/Bpzf8pAGC5XiRAd+d3HZSMjjo1FpIp13pObJ
+ xYPW3AguhFISKZQVubwVW2s5UQi1mtIothho1rb/jAWevxRRQerCPQSDNO9O+/+cVfxoT4B60qu
+ 6qGDvsd29HS/oDY4Vsiw6Dhn37b8HP8vR50+yfCWLzvJZ69b/hnxirLvOLLbdyC5ciyWMG0ZxMk
+ oZglrUdZLl79T2CgwPlXsQtBW+ap8eghto1qDXIhfPwqoyv6RyFaIrsCCNjpA3sBXZsk4/VacW/
+ JAq4Omk5Nekbzw2xVm15CcmnXEngQJdZP7BtACtM59J5a5vNwnRcFjyKrp1q0xZhBSB6BD9jkIK
+ GsxOOJR+OhCoR4VqVYQYTCLClZXawsMsgL6bhZpEJIlkhXDCcIlimzvWfvt8CgmnkuuONaRVRZp
+ SHHgE4t0myfsQ1Q==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: ed6c4b657bca3b39f7b11cba1405931aeb490f3d  x86/cpuid: Remove transitional <asm/cpuid.h> header
+The BCM590XX supports up to 128 internal interrupts, which are used by
+various parts of the chip. Add regmap_irq-based interrupt handling and
+helper functions to allow subdevice drivers to easily use the interrupts.
 
-elapsed time: 1429m
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+This patch is a prerequisite for future subdevice additions, since
+many of them rely on the interrupts; I have a power-on key driver and
+an RTC driver ready which both use the IRQ data/helper functions included
+in this patch (they will be sent in subsequent patch series), and more
+are on the way.
+---
+ drivers/mfd/Kconfig          |   1 +
+ drivers/mfd/bcm590xx.c       | 281 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/bcm590xx.h | 231 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 513 insertions(+)
 
-configs tested: 123
-configs skipped: 4
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 6fb3768e3d71cbb5c81f63de36cdb2d27a0a7726..e76b18e29dbc6ba40f162276cb19b89806b326a6 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -175,6 +175,7 @@ config MFD_BCM590XX
+ 	tristate "Broadcom BCM590xx PMUs"
+ 	select MFD_CORE
+ 	select REGMAP_I2C
++	select REGMAP_IRQ
+ 	depends on I2C
+ 	help
+ 	  Support for the BCM590xx PMUs from Broadcom
+diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+index 5a8456bbd63f65b9260f05ef6546c026bf822bae..d688abd08c12b621a38586650843e55bd71ca715 100644
+--- a/drivers/mfd/bcm590xx.c
++++ b/drivers/mfd/bcm590xx.c
+@@ -26,16 +26,30 @@
+ #define BCM590XX_PMUREV_ANA_MASK	0xF0
+ #define BCM590XX_PMUREV_ANA_SHIFT	4
+ 
++#define BCM590XX_REG_IRQ1		0x20
++#define BCM590XX_REG_IRQ1_MASK		0x30
++
+ static const struct mfd_cell bcm590xx_devs[] = {
+ 	{
+ 		.name = "bcm590xx-vregs",
+ 	},
+ };
+ 
++static bool bcm590xx_volatile_pri(struct device *dev, unsigned int reg)
++{
++	/*
++	 * IRQ registers are clear-on-read, make sure we don't cache them
++	 * so that they get read/cleared correctly
++	 */
++	return (reg >= BCM590XX_REG_IRQ1 &&
++		reg <= (BCM590XX_REG_IRQ1 + 15));
++}
++
+ static const struct regmap_config bcm590xx_regmap_config_pri = {
+ 	.reg_bits	= 8,
+ 	.val_bits	= 8,
+ 	.max_register	= BCM590XX_MAX_REGISTER_PRI,
++	.volatile_reg	= bcm590xx_volatile_pri,
+ 	.cache_type	= REGCACHE_MAPLE,
+ };
+ 
+@@ -46,6 +60,268 @@ static const struct regmap_config bcm590xx_regmap_config_sec = {
+ 	.cache_type	= REGCACHE_MAPLE,
+ };
+ 
++/** Interrupt handling **/
++
++/* IRQ IDs in the MFD header follow the IRQ order in hardware. */
++#define BCM590XX_REGMAP_IRQ_REG(id)	REGMAP_IRQ_REG_LINE(id, 8)
++
++/* BCM59054 IRQs */
++
++static const struct regmap_irq bcm59054_regmap_irqs[] = {
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBINS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBRM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATINS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATRM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_LOOP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_TMR_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_EOC),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESUME_VBUS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPLOW),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPHIGH),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGERRDIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV_DIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV_DIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_TF),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TTR_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TCH_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_SW_TMR_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_PORT_DIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_CC_REDUCE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUSLOWBND),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_UBPD_CHG_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_OTG_SESS_VALID_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_RM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VA_SESS_VALID_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IDCHG),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RIC_C_TO_FLOAT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_LATCH),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_TO),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_CHANGE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_SNS_END),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PROB),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PRB_ERR),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_PRESSED),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RELEASED),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_WAKEUP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_BIT_VLD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RESTART),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T1),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T2),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T3),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_I2C_RESTART),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GBAT_PLUG_IN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SMPL_INT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_RM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_XTAL_FAILURE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_R_10S_WAIT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_ALARM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_SEC),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_MIN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTCADJ),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_FGC),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BBLOW),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_DATA_RDY),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IN_CON_MEAS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_UPPER),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IGNORE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_OVERRIDDEN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_HSAB_SHCKT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_IHFD_SHCKT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_NOP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_LEN_ERR),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_RCV_ERR),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_RESP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_POS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_EOT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_XMT_END),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_INT_POS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LOWBAT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR1OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR2OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR1OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR2OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESERVED),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_OVR),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO2_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_OVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_SHD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRV),
++	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRI),
++};
++
++static const struct regmap_irq_chip bcm59054_irq_chip = {
++	.name = "bcm59054-irq",
++	.irqs = bcm59054_regmap_irqs,
++	.num_irqs = BCM59054_IRQ_MAX,
++	.num_regs = 16,
++	.status_base = BCM590XX_REG_IRQ1,
++	.mask_base = BCM590XX_REG_IRQ1_MASK,
++	.clear_on_unmask = true,
++};
++
++/* BCM59056 IRQs */
++
++static const struct regmap_irq bcm59056_regmap_irqs[] = {
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_ALARM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_SEC),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_MIN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTCADJ),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATINS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATRM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_GBAT_PLUG_IN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SMPL_INT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBINS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBRM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_EOC),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RESUME_VBUS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TTR_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TCH_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_SW_TMR_EXP),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_LATCH),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_TO),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPLOW),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPHIGH),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV_DIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV_DIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGERRDIS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBWV_R_10S_WAIT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BBLOW),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_LOWBAT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VERYLOWBAT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_DATA_RDY),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IN_CON_MEAS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_UPPER),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IGNORE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_OVERRIDDEN),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_HSAB_SHCKT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_IHFD_SHCKT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBC_TF),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IOSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SDSROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ASROVRI),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UBPD_CHG_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_RM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_HOLD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_F),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_R),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_OFFHOLD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_RESTART),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IDCHG),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_JIG_USB_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UART_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_INS),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_RM),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_CHANGE),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_SNS_END),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_VLD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_INVLD),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_OVERCURRENT),
++	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_FGC),
++};
++
++static const struct regmap_irq_chip bcm59056_irq_chip = {
++	.name = "bcm59056-irq",
++	.irqs = bcm59056_regmap_irqs,
++	.num_irqs = BCM59056_IRQ_MAX,
++	.num_regs = 16,
++	.status_base = BCM590XX_REG_IRQ1,
++	.mask_base = BCM590XX_REG_IRQ1_MASK,
++	.clear_on_unmask = true,
++};
++
++static int bcm590xx_irq_init(struct bcm590xx *bcm590xx)
++{
++	const struct regmap_irq_chip *irq_chip;
++	int ret;
++
++	if (!bcm590xx->irq) {
++		dev_err(bcm590xx->dev, "No IRQ configured\n");
++		return -EINVAL;
++	}
++
++	switch (bcm590xx->pmu_id) {
++	case BCM590XX_PMUID_BCM59054:
++		irq_chip = &bcm59054_irq_chip;
++		break;
++	case BCM590XX_PMUID_BCM59056:
++		irq_chip = &bcm59056_irq_chip;
++		break;
++	default:
++		dev_err(bcm590xx->dev,
++			"Unknown device type, this is a driver bug!\n");
++		return -EINVAL;
++	}
++
++	ret = devm_regmap_add_irq_chip(bcm590xx->dev, bcm590xx->regmap_pri,
++			bcm590xx->irq, IRQF_TRIGGER_FALLING, 0,
++			irq_chip, &bcm590xx->irq_data);
++	if (ret) {
++		dev_err(bcm590xx->dev, "Failed to reguest IRQ %d: %d\n",
++			bcm590xx->irq, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++/** Chip version parsing **/
++
+ /* Map PMU ID value to model name string */
+ static const char * const bcm590xx_names[] = {
+ 	[BCM590XX_PMUID_BCM59054] = "BCM59054",
+@@ -98,6 +374,7 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+ 
+ 	i2c_set_clientdata(i2c_pri, bcm590xx);
+ 	bcm590xx->dev = &i2c_pri->dev;
++	bcm590xx->irq = i2c_pri->irq;
+ 	bcm590xx->i2c_pri = i2c_pri;
+ 
+ 	bcm590xx->pmu_id = (uintptr_t) of_device_get_match_data(bcm590xx->dev);
+@@ -132,6 +409,10 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+ 	if (ret)
+ 		goto err;
+ 
++	ret = bcm590xx_irq_init(bcm590xx);
++	if (ret)
++		goto err;
++
+ 	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
+ 				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
+ 	if (ret < 0) {
+diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
+index 5a5783abd47b9a6bb6f9bb3a8cafddbd01aa7fcc..e6ea643766ab1a9d579c94605b54c53dc1d742d7 100644
+--- a/include/linux/mfd/bcm590xx.h
++++ b/include/linux/mfd/bcm590xx.h
+@@ -50,6 +50,237 @@ struct bcm590xx {
+ 	/* Chip revision, read from PMUREV reg */
+ 	u8 rev_digital;
+ 	u8 rev_analog;
++
++	/* Interrupts */
++	int irq;
++	struct regmap_irq_chip_data *irq_data;
++};
++
++/* Interrupt handling helper functions */
++
++static inline int
++bcm590xx_devm_request_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
++			  irq_handler_t handler, unsigned long flags,
++			  const char *name, void *data)
++{
++	if (!bcm590xx->irq_data)
++		return -EINVAL;
++
++	return devm_request_threaded_irq(dev,
++				regmap_irq_get_virq(bcm590xx->irq_data, irq),
++				NULL, handler, flags, name, data);
++}
++
++static inline void
++bcm590xx_devm_free_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
++		       void *data)
++{
++	if (!bcm590xx->irq_data)
++		return;
++
++	devm_free_irq(dev, regmap_irq_get_virq(bcm590xx->irq_data, irq), data);
++}
++
++/* BCM59054 IRQs */
++
++enum bcm59054_irq {
++	BCM59054_IRQ_USBINS = 0,
++	BCM59054_IRQ_USBRM,
++	BCM59054_IRQ_BATINS,
++	BCM59054_IRQ_BATRM,
++	BCM59054_IRQ_MBC_CV_LOOP,
++	BCM59054_IRQ_MBC_CV_TMR_EXP,
++	BCM59054_IRQ_EOC,
++	BCM59054_IRQ_RESUME_VBUS,
++	BCM59054_IRQ_MBTEMPLOW,
++	BCM59054_IRQ_MBTEMPHIGH,
++	BCM59054_IRQ_USBOV,
++	BCM59054_IRQ_MBOV,
++	BCM59054_IRQ_CHGERRDIS,
++	BCM59054_IRQ_MBOV_DIS,
++	BCM59054_IRQ_USBOV_DIS,
++	BCM59054_IRQ_MBC_TF,
++	BCM59054_IRQ_CHG_HW_TTR_EXP,
++	BCM59054_IRQ_CHG_HW_TCH_EXP,
++	BCM59054_IRQ_CHG_SW_TMR_EXP,
++	BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP,
++	BCM59054_IRQ_USB_PORT_DIS,
++	BCM59054_IRQ_USB_CC_REDUCE,
++	BCM59054_IRQ_VBUSLOWBND,
++	BCM59054_IRQ_UBPD_CHG_F,
++	BCM59054_IRQ_VBUS_VALID_F,
++	BCM59054_IRQ_OTG_SESS_VALID_F,
++	BCM59054_IRQ_VB_SESS_END_F,
++	BCM59054_IRQ_ID_RM,
++	BCM59054_IRQ_VBUS_VALID_R,
++	BCM59054_IRQ_VA_SESS_VALID_R,
++	BCM59054_IRQ_VB_SESS_END_R,
++	BCM59054_IRQ_ID_INS,
++	BCM59054_IRQ_IDCHG,
++	BCM59054_IRQ_RIC_C_TO_FLOAT,
++	BCM59054_IRQ_CHGDET_LATCH,
++	BCM59054_IRQ_CHGDET_TO,
++	BCM59054_IRQ_ADP_CHANGE,
++	BCM59054_IRQ_ADP_SNS_END,
++	BCM59054_IRQ_ADP_PROB,
++	BCM59054_IRQ_ADP_PRB_ERR,
++	BCM59054_IRQ_POK_PRESSED,
++	BCM59054_IRQ_POK_RELEASED,
++	BCM59054_IRQ_POK_WAKEUP,
++	BCM59054_IRQ_POK_BIT_VLD,
++	BCM59054_IRQ_POK_RESTART,
++	BCM59054_IRQ_POK_T1,
++	BCM59054_IRQ_POK_T2,
++	BCM59054_IRQ_POK_T3,
++	BCM59054_IRQ_I2C_RESTART,
++	BCM59054_IRQ_GBAT_PLUG_IN,
++	BCM59054_IRQ_SMPL_INT,
++	BCM59054_IRQ_AUX_INS,
++	BCM59054_IRQ_AUX_RM,
++	BCM59054_IRQ_XTAL_FAILURE,
++	BCM59054_IRQ_MBWV_R_10S_WAIT,
++	BCM59054_IRQ_MBWV_F,
++	BCM59054_IRQ_RTC_ALARM,
++	BCM59054_IRQ_RTC_SEC,
++	BCM59054_IRQ_RTC_MIN,
++	BCM59054_IRQ_RTCADJ,
++	BCM59054_IRQ_FGC,
++	BCM59054_IRQ_BBLOW,
++	BCM59054_IRQ_DIE_OT_R,
++	BCM59054_IRQ_DIE_OT_F,
++	BCM59054_IRQ_RTM_DATA_RDY,
++	BCM59054_IRQ_RTM_IN_CON_MEAS,
++	BCM59054_IRQ_RTM_UPPER,
++	BCM59054_IRQ_RTM_IGNORE,
++	BCM59054_IRQ_RTM_OVERRIDDEN,
++	BCM59054_IRQ_AUD_HSAB_SHCKT,
++	BCM59054_IRQ_AUD_IHFD_SHCKT,
++	BCM59054_IRQ_POK_NOP,
++	BCM59054_IRQ_MIPI_LEN_ERR,
++	BCM59054_IRQ_MIPI_RCV_ERR,
++	BCM59054_IRQ_MIPI_BUSQ_RESP,
++	BCM59054_IRQ_MIPI_BUSQ_POS,
++	BCM59054_IRQ_MIPI_EOT,
++	BCM59054_IRQ_MIPI_XMT_END,
++	BCM59054_IRQ_MIPI_INT_POS,
++	BCM59054_IRQ_LOWBAT,
++	BCM59054_IRQ_CSROVRI,
++	BCM59054_IRQ_VSROVRI,
++	BCM59054_IRQ_MSROVRI,
++	BCM59054_IRQ_SDSR1OVRI,
++	BCM59054_IRQ_SDSR2OVRI,
++	BCM59054_IRQ_IOSR1OVRI,
++	BCM59054_IRQ_IOSR2OVRI,
++	BCM59054_IRQ_RESERVED,
++	BCM59054_IRQ_RFLDO_OVRI,
++	BCM59054_IRQ_AUDLDO_OVRI,
++	BCM59054_IRQ_USBLDO_OVR,
++	BCM59054_IRQ_SDXLDO_OVRI,
++	BCM59054_IRQ_MICLDO_OVRI,
++	BCM59054_IRQ_SIMLDO1_OVRI,
++	BCM59054_IRQ_SIMLDO2_OVRI,
++	BCM59054_IRQ_MMCLDO1_OVRI,
++	BCM59054_IRQ_CAMLDO1_OVRI,
++	BCM59054_IRQ_CAMLDO2_OVRI,
++	BCM59054_IRQ_VIBLDO_OVRI,
++	BCM59054_IRQ_SDLDO_OVRI,
++	BCM59054_IRQ_GPLDO1_OVRI,
++	BCM59054_IRQ_GPLDO2_OVRI,
++	BCM59054_IRQ_GPLDO3_OVRI,
++	BCM59054_IRQ_RFLDO_SHD,
++	BCM59054_IRQ_AUDLDO_SHD,
++	BCM59054_IRQ_USBLDO_SHD,
++	BCM59054_IRQ_SDXLDO_SHD,
++	BCM59054_IRQ_MICLDO_SHD,
++	BCM59054_IRQ_SIMLDO1_SHD,
++	BCM59054_IRQ_SIMLDO2_SHD,
++	BCM59054_IRQ_MMCLDO1_SHD,
++	BCM59054_IRQ_MMCLDO2_SHD,
++	BCM59054_IRQ_CAMLDO1_SHD,
++	BCM59054_IRQ_CAMLDO2_SHD,
++	BCM59054_IRQ_VIBLDO_SHD,
++	BCM59054_IRQ_SDLDO_SHD,
++	BCM59054_IRQ_GPLDO1_SHD,
++	BCM59054_IRQ_GPLDO2_SHD,
++	BCM59054_IRQ_GPLDO3_SHD,
++	BCM59054_IRQ_TCXLDO_OVRI,
++	BCM59054_IRQ_LVLDO1_OVRI,
++	BCM59054_IRQ_LVLDO2_OVRI,
++	BCM59054_IRQ_TCXLDO_SHD,
++	BCM59054_IRQ_LVLDO1_SHD,
++	BCM59054_IRQ_LVLDO2_SHD,
++	BCM59054_IRQ_VBOVRV,
++	BCM59054_IRQ_VBOVRI,
++	BCM59054_IRQ_MAX,
++};
++
++/* BCM59056 IRQs */
++
++enum bcm59056_irq {
++	BCM59056_IRQ_RTC_ALARM = 0,
++	BCM59056_IRQ_RTC_SEC,
++	BCM59056_IRQ_RTC_MIN,
++	BCM59056_IRQ_RTCADJ,
++	BCM59056_IRQ_BATINS,
++	BCM59056_IRQ_BATRM,
++	BCM59056_IRQ_GBAT_PLUG_IN,
++	BCM59056_IRQ_SMPL_INT,
++	BCM59056_IRQ_USBINS,
++	BCM59056_IRQ_USBRM,
++	BCM59056_IRQ_USBOV,
++	BCM59056_IRQ_EOC,
++	BCM59056_IRQ_RESUME_VBUS,
++	BCM59056_IRQ_CHG_HW_TTR_EXP,
++	BCM59056_IRQ_CHG_HW_TCH_EXP,
++	BCM59056_IRQ_CHG_SW_TMR_EXP,
++	BCM59056_IRQ_CHGDET_LATCH,
++	BCM59056_IRQ_CHGDET_TO,
++	BCM59056_IRQ_MBTEMPLOW,
++	BCM59056_IRQ_MBTEMPHIGH,
++	BCM59056_IRQ_MBOV,
++	BCM59056_IRQ_MBOV_DIS,
++	BCM59056_IRQ_USBOV_DIS,
++	BCM59056_IRQ_CHGERRDIS,
++	BCM59056_IRQ_VBUS_1V5_R,
++	BCM59056_IRQ_VBUS_4V5_R,
++	BCM59056_IRQ_VBUS_1V5_F,
++	BCM59056_IRQ_VBUS_4V5_F,
++	BCM59056_IRQ_MBWV_R_10S_WAIT,
++	BCM59056_IRQ_BBLOW,
++	BCM59056_IRQ_LOWBAT,
++	BCM59056_IRQ_VERYLOWBAT,
++	BCM59056_IRQ_RTM_DATA_RDY,
++	BCM59056_IRQ_RTM_IN_CON_MEAS,
++	BCM59056_IRQ_RTM_UPPER,
++	BCM59056_IRQ_RTM_IGNORE,
++	BCM59056_IRQ_RTM_OVERRIDDEN,
++	BCM59056_IRQ_AUD_HSAB_SHCKT,
++	BCM59056_IRQ_AUD_IHFD_SHCKT,
++	BCM59056_IRQ_MBC_TF,
++	BCM59056_IRQ_CSROVRI,
++	BCM59056_IRQ_IOSROVRI,
++	BCM59056_IRQ_SDSROVRI,
++	BCM59056_IRQ_ASROVRI,
++	BCM59056_IRQ_UBPD_CHG_F,
++	BCM59056_IRQ_ACD_INS,
++	BCM59056_IRQ_ACD_RM,
++	BCM59056_IRQ_PONKEYB_HOLD,
++	BCM59056_IRQ_PONKEYB_F,
++	BCM59056_IRQ_PONKEYB_R,
++	BCM59056_IRQ_PONKEYB_OFFHOLD,
++	BCM59056_IRQ_PONKEYB_RESTART,
++	BCM59056_IRQ_IDCHG,
++	BCM59056_IRQ_JIG_USB_INS,
++	BCM59056_IRQ_UART_INS,
++	BCM59056_IRQ_ID_INS,
++	BCM59056_IRQ_ID_RM,
++	BCM59056_IRQ_ADP_CHANGE,
++	BCM59056_IRQ_ADP_SNS_END,
++	BCM59056_IRQ_SESSION_END_VLD,
++	BCM59056_IRQ_SESSION_END_INVLD,
++	BCM59056_IRQ_VBUS_OVERCURRENT,
++	BCM59056_IRQ_FGC,
++	BCM59056_IRQ_MAX,
+ };
+ 
+ #endif /*  __LINUX_MFD_BCM590XX_H */
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250816-bcm590xx-irq-2d4c1cbe00b1
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250816    gcc-8.5.0
-arc                   randconfig-002-20250816    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250816    gcc-12.5.0
-arm                   randconfig-002-20250816    gcc-10.5.0
-arm                   randconfig-003-20250816    gcc-10.5.0
-arm                   randconfig-004-20250816    gcc-10.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250816    clang-22
-arm64                 randconfig-002-20250816    clang-22
-arm64                 randconfig-003-20250816    gcc-8.5.0
-arm64                 randconfig-004-20250816    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250816    gcc-15.1.0
-csky                  randconfig-002-20250816    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250816    clang-19
-hexagon               randconfig-002-20250816    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250816    clang-20
-i386        buildonly-randconfig-002-20250816    gcc-12
-i386        buildonly-randconfig-003-20250816    gcc-12
-i386        buildonly-randconfig-004-20250816    gcc-12
-i386        buildonly-randconfig-005-20250816    gcc-12
-i386        buildonly-randconfig-006-20250816    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250816    gcc-15.1.0
-loongarch             randconfig-002-20250816    gcc-14.3.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                         db1xxx_defconfig    clang-22
-nios2                            alldefconfig    gcc-11.5.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250816    gcc-10.5.0
-nios2                 randconfig-002-20250816    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20250816    gcc-10.5.0
-parisc                randconfig-002-20250816    gcc-8.5.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                  iss476-smp_defconfig    gcc-15.1.0
-powerpc                      katmai_defconfig    clang-22
-powerpc                     mpc512x_defconfig    clang-22
-powerpc               randconfig-001-20250816    clang-20
-powerpc               randconfig-002-20250816    clang-22
-powerpc               randconfig-003-20250816    clang-22
-powerpc64             randconfig-001-20250816    gcc-8.5.0
-powerpc64             randconfig-002-20250816    clang-22
-powerpc64             randconfig-003-20250816    clang-16
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250816    clang-22
-riscv                 randconfig-002-20250816    gcc-13.4.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250816    clang-22
-s390                  randconfig-002-20250816    gcc-12.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250816    gcc-15.1.0
-sh                    randconfig-002-20250816    gcc-12.5.0
-sh                           se7722_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250816    gcc-15.1.0
-sparc                 randconfig-002-20250816    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250816    gcc-11.5.0
-sparc64               randconfig-002-20250816    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250816    gcc-12
-um                    randconfig-002-20250816    gcc-12
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250816    gcc-12
-x86_64      buildonly-randconfig-002-20250816    gcc-12
-x86_64      buildonly-randconfig-003-20250816    gcc-12
-x86_64      buildonly-randconfig-004-20250816    clang-20
-x86_64      buildonly-randconfig-005-20250816    clang-20
-x86_64      buildonly-randconfig-006-20250816    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250816    gcc-10.5.0
-xtensa                randconfig-002-20250816    gcc-9.5.0
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
