@@ -1,195 +1,181 @@
-Return-Path: <linux-kernel+bounces-771977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE14B28D71
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:31:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6C2B28D73
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 13:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2040FAC5253
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C701B66CFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 11:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D118257851;
-	Sat, 16 Aug 2025 11:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BDB2E11BC;
+	Sat, 16 Aug 2025 11:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="SYSAjJcB"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012026.outbound.protection.outlook.com [52.101.126.26])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="YrzuUa2n"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA6322FE11
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755343872; cv=fail; b=eh2/QKrOaCQCoZ8RoNyvnI0/74BaL59cNDF+t/gO1OYjV9BqksS9Ocq53Hwp8HaIf/KsKUm3T6CQ1t/tvJMvBk+lCPFTkM62QZJbm8YMfCawW8RJDKcCPc6Ic0aMrAjP0zR8gs6ixG1pWe09Vs7u2sBBiU2PlhUSenhEtlCHo2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755343872; c=relaxed/simple;
-	bh=hdcAdtIyzLU0jyrK0/BRQDdAzex7dz8NpmxSXK5pKO0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SdjXyxzCgovYSmOBuMTVz8mgui2BwF1PiWyeJeerKYh/jSk6Ov6Ew0iaunG4yfZtLzux02QzSr9a8k5nvYy3MgM5iMGa/CrzKZ+QwR5IJamgTo2wcS07+ms8JzhJvJRtB8biMdVfAYfbHPZ0XJLIyBtPx1IVT3GDEkEwhW4qSs0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=SYSAjJcB; arc=fail smtp.client-ip=52.101.126.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WGY2VG95XMFo8Vcq5gvka0MYAY9JX5UQ7DvrpiOMoQ8eCucYRdDXK2GeQkkKpbZ2zhvfVFLNmlPyk/ERbQBuTVtZ16m2V6Rc3fvkp1E1BGIO+1p+wJfyULRMQbQIs0kc92cunvDwLoK3USun23rnWSJHHykMNwM5th2UIVT3c9deq5ADICOSK9X3llDPex7yuwZX7eT+zRNwcKBZviMLYhKwaltYalQlb59UmxsL95beScMX1nDMMQ5FGmkcdMcq9Wywz+gjSNOK4R5XnfT6qWM4zECu/vI8suXeq51gp5SRaYwDnKIaXgMG1mUqhhCXLRlECEi0TL/7+PtliOzZpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hdcAdtIyzLU0jyrK0/BRQDdAzex7dz8NpmxSXK5pKO0=;
- b=jaGIUwCKuiIv8tL9i4X7RqUn/jiRj6UDVYWOeCqdduCVzAEShGF8K4KwFf5DVQb+32KK5jR//50JqOqn+G6hhV8CYyCZw7lI2qaIHDa8vyv4mOe6GFWnLFRfd6Vj524HvuePIcVE6Yh7t/7LI54V5FgICMQi8FDUJVYuSOIyqFm1wIritvkIOHlrfxduFGbfna3sQOyxXjXNLJuvbwdd8kTnYVemcMd+dpCzkTa+pK+HZE8hwCPGCYXkfdSOCVlpjyxyZC/0JkuHxYBKKOGye22HcQxyoP60fsJDPzClO8E7UH2kt/nwPqF8Y+WYfYh1Ux7lAWusRsmxco0LeBzEyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hdcAdtIyzLU0jyrK0/BRQDdAzex7dz8NpmxSXK5pKO0=;
- b=SYSAjJcBpEPGUKtSuasOuaNqVMXG58Fy5vDxqRJ6rHUj9suU6y+vi0U4c2qNCNNmGtNav2aAig7oRNu++fTw/RBRv6VYafsc+QlV/d8c/sQ1CXIUvusessV5Ab9QiucKq4ipL21MGMMXd71NnL3k4fd42lV49jC+G7m1CK6gZ+cVvLU8UyKeQLD53uQhJQqygtYOfbueMK+UsuV1JwZaTqdUFnqBZK/T9qXGElXw/ksqv2eWjjTh9d+F0xWqsmjL2wbFPP0yKvKYz2dibdreQZZ0dJ6pfn5RqisR9HOhWj8tIecMvrpWRenfuk0CljbE3i59Bg+hRe+mxeIv5THN6Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEZPR06MB7175.apcprd06.prod.outlook.com (2603:1096:101:22a::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.19; Sat, 16 Aug 2025 11:31:04 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.018; Sat, 16 Aug 2025
- 11:31:04 +0000
-Message-ID: <0f33e6aa-56ed-4dfb-8959-3d6ea769e3cd@vivo.com>
-Date: Sat, 16 Aug 2025 19:31:00 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/habanalabs: fix mismatched alloc/free for
- kvcalloc()
-Content-Language: en-US
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay
- <ogabbay@kernel.org>, Farah Kassabri <fkassabri@habana.ai>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Koby Elbaz <koby.elbaz@intel.com>,
- Konstantin Sinyuk <konstantin.sinyuk@intel.com>
-References: <20250808085530.233737-1-rongqianfeng@vivo.com>
- <aKBmMU0_e2tGwCHT@wunner.de>
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <aKBmMU0_e2tGwCHT@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0021.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7B6280CFA
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 11:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755344482; cv=none; b=PgoNGCCXEMckSMpZd3Mb+z7DOYgCDJng4niWaAqbekalqdS31Z9GE+grO16SX2g3oHm09+LO0DdhOR+1trtF0RfJRnsy904qb6/NbBqOGmsW3Uy+GMuCJtla6xvBJwJw0oJmfhbYXq1oM+LTTKpLx1ubpc1o7LEGxabCiOi2OH0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755344482; c=relaxed/simple;
+	bh=bg3O/7VPI3Vdi6agm8MsLnTnQoTd2YkaGMWAGLzlcxs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From; b=rvl+iZXkE1sgg9EomInuEFPwaWOd+QCdjtmLABXbHCZ36EsL9GGxc59/gauPxW+u7jmg1GNIZh11T5ZkgYrZKDCJ3S1Hd0Dc4RomjdrsR07OvncXN0cI96mMAlSHu68t1yDM7K0XldT2490/IAuucejCwN/n5IzgnCXRhgZ7P0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=YrzuUa2n; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB7175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ac47e54-58ee-49bc-630a-08dddcb8623c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z1UwYStYWmRnVFVZTzVjUEVNY0hlbFZrWkFZWGVEOEo5YlNxeTB5b1VPeUZX?=
- =?utf-8?B?UTlvYklsYTR1Um8xQXBNN0JQY1RqZ2tKamFVVklDcUhHVm9nbWFGQ0NkajZi?=
- =?utf-8?B?M3UzdEVxalRCdWZVb3ROS1lkNlk5UmlrZ1NZNGZHK1F2bkc0aTlPUHR2Q2hP?=
- =?utf-8?B?OFA0QTlYbS9DeVc2YTBpQVRjZkZZUk5MaVBXQWVVbDRhSGRnaDd5TC9wVU15?=
- =?utf-8?B?ODJmdnBzU3VPc2V2M3VlWXZuNWcwOFdmWmVIeHZHZmppV0dOZUV6d2llbi9Q?=
- =?utf-8?B?RkpGZnNEV0VuTmg5UkFIUVcvZ3JqSXpUbng2NFFxZ1JjU09iZVNvSjhDTytP?=
- =?utf-8?B?THlpayswYnZMMUd3QXVzN2lmMXEzdmppZnJ4THR6VWdKSTEvV3hrQTlCVWs0?=
- =?utf-8?B?d3NENW1UN2owZzBWS1pPTHkvVTF5YUVicWgwNVpxam9VV2ZYT2M1c0NMYjYy?=
- =?utf-8?B?dkRhZUltY3NWS3pxR1NDNTBWMWdLZ21IbzFQNWpJcTRkZDgxcmJ2b1FNT2R4?=
- =?utf-8?B?QVhpMFk2L01hNTJkdVBTUWNTRy80eUxxV3hMKzI3T0R1VHFuWDkzdDV1MjRz?=
- =?utf-8?B?bmVsNlp5VkdxcVlzdVRNc0xINlo2cE5GekUvN1c2b3Bob2JqSFdQMjNySm9z?=
- =?utf-8?B?d0xKZ05uOTMrZUVJN3U2czhSelNvcktFVHQzSDhxbzdQS0N0RHExZEl4d0l4?=
- =?utf-8?B?Y1BBeFQxemtGeTVSZXFHODdIOE1wTGZEMTdqMVl3dWkwNFdodjlyQ0FCTSsy?=
- =?utf-8?B?T1czOUdra3VxQ2ZpY0V1eTUrOHB0eDNWZC9uWXpIa1c2UDAxakpMSTg2NlB0?=
- =?utf-8?B?djFtSnI4UXJZUjVTcTA4dGVQcERQZ1U1VGhnMnNhS0c1NWtkd2VFcXBTSGxv?=
- =?utf-8?B?RXh3dTViWXZZT0NuRG5BeVlLazdyVVZuTkZMZ0xOVE96R1Y4cGtCVFoxY0FU?=
- =?utf-8?B?TlV0VXlrTEJMd3UrQ2psMmFYYkt5YWJkV3JaQU5LNy91cW9zalNKN3ptRkdj?=
- =?utf-8?B?SW5xK0NCV2lsTzRIcTlpS3V0MkNoTCtkNjIyRHFzZDZGMHc2cEQzYXF5aHN1?=
- =?utf-8?B?c2tQZmQwYlBqZnY2aU5Wa1UwanBpVkRUNVgxY0FQWCtWZGY5WHRsZkxCSnJZ?=
- =?utf-8?B?dXM0TnZJNHdPdk1KWDRlOFpxZVZncTZOZG11Y0RoUlNtRWE1MTByOGtoQnhy?=
- =?utf-8?B?c2w5dWtEVGM3M1MrQjdKY2hoVjRWaHh4QUxmZ1YxKzR0MXRJRmpzMkUrU2RM?=
- =?utf-8?B?aG9ET3B4OGlzQXFUU3l5c2NzNzZSNlMzOXZ2YldMZmcvQzZqQ1FJcmdsMy9x?=
- =?utf-8?B?WWFUelQ2cEF6K1poMUZlTkc1dG5QY0xKMnBrZGM1N2dleUVHNERlTUIwaTBV?=
- =?utf-8?B?MEY5bHJmelJxZTBFNk5HK0Jzd3lBNlFKM25MMzgvWG9EY29zR1MzQ2ZINUVt?=
- =?utf-8?B?dHNSbUJXZDd3cGNscFdIcW9rbXNqMjQ5UXNIYWdicDFBdnQ3SjdaVEtFTWU3?=
- =?utf-8?B?a3lxcUZrWll4Kzc0aGhVYlg4NkRmazhRYlo4V3UxTDV0YWRpZkN2ais1eit4?=
- =?utf-8?B?aEROWExoM3V5QmQ1L0VTUWdjYXUwRmxPYUU2OTNEcmhVQlhnSlpmUUp2YUxV?=
- =?utf-8?B?WXVUUy80OFNLU0pZRWVHbnRNRnNFbWFxNElJa2duUVZ6S3Fnek9MODRqeThp?=
- =?utf-8?B?MDBRcTNxNktxZG9LaGgzUGZQS0l1d1VPREg2TUU2WkQwTUlOcHNTdmE0VlE5?=
- =?utf-8?B?TGdpOW5xbmltelZQbit1TkdaL1dmQ2xhRm5sK0N0cXBMcTdjeWpwUVdoS0FL?=
- =?utf-8?Q?YKi+wwS/E8Od1R89jWmUKoJKCJBN4mP57L2tM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UE9JY2hWUmx6TDFSTGFVWnllc3VtZXFwcVRHcFhtMURkZHo1SUFsS0tPR0py?=
- =?utf-8?B?QTVocW1JZm1qUHpVZ1JadERmNE5lZTc0ekhlV0FVNStCdXBoZjdDQStqaXFz?=
- =?utf-8?B?QVQ3ZGJWTWk1RFRWLzJCMDI0SkhtK2thKzRLUm5BdDZFTWhXVldQSWZDVjdN?=
- =?utf-8?B?djNCallCOUliSEtXUU5oT2MyWWNXbUErT3NvQTRON2MySGl1YTZyaWcvbW04?=
- =?utf-8?B?TFdvaWhNVE9vTUx0TEFtejM0MFl4ZEpqempkdm1sdllNTmJmRDcrVW5tZTJ6?=
- =?utf-8?B?NWxMd1RyWEVoZFhLb2pISDNqU3hualVYWHpuN3ZIMEtYQXpMWEkvMFpPM3R0?=
- =?utf-8?B?eFdzbDg4a2ZDS3kvVjlYQjQ0eFZLbm1oZWZmM3MyRG1tWXpkK3gyZEliTUpW?=
- =?utf-8?B?c0MrUFh6MkJENlA5RHNMSEdMeEVhcUNqNFZlTHJvUEtNM3hkY1lVMlZNVE9I?=
- =?utf-8?B?dXBWMFAyVzd4VFhBcm9yMW01ejYxcHpPQlFiYjhKQ3ZuNUM2ZUlnenlRbDlG?=
- =?utf-8?B?L3Fwb1BiMGs1cGR4Rnc4eTRLRzBFVVIwbHhITFFKRHQ3SEJ6Q0IwNWIxREh5?=
- =?utf-8?B?VGJPTDVSdVdKMGRxc3htaWJRWCtlWW11aC9hZDhvc1RNUTliN05FeUREOXE4?=
- =?utf-8?B?STBtMGVPR0pjL0FxSjZrLzZlVmJCeGZ6NUplTmM5ZVR3a3hzSXEzUUlGT1E3?=
- =?utf-8?B?T29wd2FSY05EYjMza0kzYzlDVndUR2daUCtBL3lsS2lRa1dnU1Z2TDBZeExi?=
- =?utf-8?B?Wm9GMk5pVmxPRkM5NVJROFplbHhrSGpUOVpCUmVZcnUxQnZFN0VRUERITkpF?=
- =?utf-8?B?bmFvaXFFTjhJUXNVVmNZVEdwZittWlNmYXdGMzFocVAyYnFEWHdvaDR6bFFU?=
- =?utf-8?B?Sy9sTzM2L1dUSjR0Zys3eVV2NVFBSEJkRThmQm1pMWJPOGVEM2Z5cllrYy8y?=
- =?utf-8?B?dUl1VzQ2THJBaDhSQUdnQkZIYk9IVFk5TXFYZ3RHa1lYM1NuV0hpbnFUK09r?=
- =?utf-8?B?QXJjMm5DU1ZKcDR2MmxDM2h6dHRGSXlCQUNrZGJ1OFFFNklXYktuL1cwTk00?=
- =?utf-8?B?eW1La2x1L3lSNXVnMDV0bnNxME1LMENJZm4xUmdtUEJpQUVQQVExT1lPV3JP?=
- =?utf-8?B?eSsxWGtvcURqQmNucDhlRXAwWENrNG5pYWc3WkpRWm9QSkwweURTTVZpMGpZ?=
- =?utf-8?B?YXNzdVdwTTk0VDRYN0FHRUdTUitBNkt2SXlTdVVmcGxqZEQyR1JtTTFtL1pD?=
- =?utf-8?B?RGZhOTg1NGhXVmE1a2NEZDlxbTc5Y28rNnVMNDV4TERVb2FKMVR2b1BqR2tQ?=
- =?utf-8?B?UUcwMkQyN3ZvdExrTWVWNEk2Snh1UzVzL1NJYzdHR3FQV1VNNS8vSS96VCtq?=
- =?utf-8?B?VHdqdy9oOE1rQysxV0lnUkE3R3pyV0VWNDhrdTZML0Zwc0ZkZk1EaklPcXJJ?=
- =?utf-8?B?SHh1NkU5UHdka0dKdkUvUkdWRDFUVmlKZGtJUnpMY1lubCs4L3pjTk90UXZn?=
- =?utf-8?B?WUFqYzluZTd0dkJ3eVhOQytBZnpPdkQxMkJKSXVMTTViWG9hN3h3Z0cwck94?=
- =?utf-8?B?elhwUlI5ZDBTVUpzOHVUb2Y2ek52NWxoMEZoTHZiWWRMK3o0REZvYTFYbU9M?=
- =?utf-8?B?VnFwNi9xYlBrRXhvdFFCUmRKMFRjU3NDbGNFenRhY2h0VEFyMmpTMWZwQ29j?=
- =?utf-8?B?dVFkcktNeHZGQzhNdko4MFRpei9lZ0lWTldkVFk4YzROanZJeUxsMktKR3NT?=
- =?utf-8?B?RTc0OXdiQ3BSU3hMS1NZUUNZZGdwamtVcldFTVNiR0NlTWI3U2dlNElKT3Q4?=
- =?utf-8?B?a2orMiswYndmOU9Ta2YybEhIaVoyWWcvWnZlSHdWMklTYThyQzY2SThmN09Y?=
- =?utf-8?B?bVVjQ1NDdzlCNW5oN010b0FkRlhlRGJZNXFiMWFSY056bHVSSnFMdXhBYysv?=
- =?utf-8?B?UTR2dVIxamUwcjREZ3FnL1FGc25PVTNhaGE0UVRHallVU0NkRExEakFFWE9n?=
- =?utf-8?B?elVhaDRmYk44aGJySmdDWEJZRWVYbFR5ZE5yTTVCRHFwL21Rb3I2NXc0ay8v?=
- =?utf-8?B?WkYvM0d5cnoyQ1dHODU4TjcrdW1BN1FLbm5iMTB5NUV5V1ZPRWx0MEdITEZZ?=
- =?utf-8?Q?2aEam/+hSyc3zMDd3xAAFomT6?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ac47e54-58ee-49bc-630a-08dddcb8623c
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 11:31:03.8350
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ilm4hXhcAaRyz+0vOd71GFYsFu7lSigjhjo5o2bXBWWoNq+MqV08zBQspXOEgfoinO2YZuDFLI2in+ts+JKbEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7175
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755344474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=1h/bw6MWPhtYkzd58nPhjPCtWtPfRHnCtDvW+x+ZnZs=;
+	b=YrzuUa2n/RG3q4uFVXmqTv7AN8BKqBpwh3l7+3yKaVfgUsQRR3E+V1wPoIU0rn9ML2nQlx
+	oFYh2NMX0x5PzdhvlKswjrQfVEPw4uFHLeV4Gmg6WwTBRHU8JutCVx9RT5Wc53mQw61psH
+	3jrgTcULoNtIvj5zM8NfN+GLqbcQxzQaahz04OrB2ixA+tUTy/5tbyff1ptlKbVuNbQAQz
+	D4r9mItjwGIYuzL4J7JPfwq1++YKiTPhk77CY8gVMRR/7WBhkCkX426dg73xwrXGTxxJZq
+	QkZypru9pZXZMU6kvTd5XUZRUgHxArDoLP8jcwhJIKc6fT5cy/szKCOO07hvtQ==
+Content-Type: multipart/signed;
+ boundary=35f8d77e639258498209840db9ef4dfbb4a4ae4bdacbba93267a554176a9;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Sat, 16 Aug 2025 13:40:44 +0200
+Message-Id: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
+To: <linux-nvme@lists.infradead.org>
+Cc: <linux-kernel@vger.kernel.org>, "Diederik de Haas"
+ <didi.debian@cknow.org>
+Subject: [BUG report] kernel warnings with Samsung 970 EVO 2TB SSD
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+X-Migadu-Flow: FLOW_OUT
 
+--35f8d77e639258498209840db9ef4dfbb4a4ae4bdacbba93267a554176a9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-在 2025/8/16 19:06, Lukas Wunner 写道:
-> [You don't often get email from lukas@wunner.de. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> On Fri, Aug 08, 2025 at 04:55:27PM +0800, Qianfeng Rong wrote:
->> Replace kfree() with kvfree() for memory allocated by kvcalloc().
->>
->> Compile-tested only.
->>
->> Fixes: f728c17fc97a ("accel/habanalabs/gaudi2: move HMMU page tables to device memory")
->> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> Thorsten Blum submitted an identical patch a year earlier:
-> https://patch.msgid.link/20240820231028.136126-1-thorsten.blum@toblux.com
->
-> I've just applied his patch but added a Reported-by tag with your name to
-> acknowledge your contribution.
-it's ok, thanks.
->
-> Thanks!
->
-> Lukas
+Hi,
+
+I have a Samsung 970 EVO 2TB SSD and I see these kernel warnings:
+
+root@nanopi-r5s:~# uname -a
+Linux nanopi-r5s 6.16-arm64-cknow #1 SMP PREEMPT Debian 6.16-1 (2025-07-28)=
+ aarch64 GNU/Linux
+root@nanopi-r5s:~# dmesg --level 0,1,2
+root@nanopi-r5s:~# dmesg --level 3
+root@nanopi-r5s:~# dmesg --level 4
+[    2.410231] dw-apb-uart fe660000.serial: forbid DMA for kernel console
+[    5.234812] gpio gpiochip0: Static allocation of GPIO base is deprecated=
+, use dynamic allocation.
+[    5.242112] gpio gpiochip1: Static allocation of GPIO base is deprecated=
+, use dynamic allocation.
+[    5.246222] gpio gpiochip2: Static allocation of GPIO base is deprecated=
+, use dynamic allocation.
+[    5.252811] gpio gpiochip3: Static allocation of GPIO base is deprecated=
+, use dynamic allocation.
+[    5.265791] gpio gpiochip4: Static allocation of GPIO base is deprecated=
+, use dynamic allocation.
+[    5.741901] r8169 0000:01:00.0: can't read MAC address, setting random o=
+ne
+[    5.806644] pci 0001:10:00.0: Primary bus is hard wired to 0
+[    5.849952] r8169 0001:11:00.0: can't read MAC address, setting random o=
+ne
+[    6.017270] pci 0002:20:00.0: Primary bus is hard wired to 0
+[    6.393688] nvme nvme0: missing or invalid SUBNQN field.
+[   21.484306] nvme nvme0: using unchecked data buffer
+root@nanopi-r5s:~# dmesg | grep nvme
+[    6.386187] nvme nvme0: pci function 0002:21:00.0
+[    6.386697] nvme 0002:21:00.0: enabling device (0000 -> 0002)
+[    6.393688] nvme nvme0: missing or invalid SUBNQN field.
+[    6.397901] nvme nvme0: D3 entry latency set to 8 seconds
+[    6.428168] nvme nvme0: 4/0/0 default/read/poll queues
+[    6.465173]  nvme0n1: p1
+[   12.522314] systemd[1]: Starting modprobe@nvme_fabrics.service - Load Ke=
+rnel Module nvme_fabrics...
+[   12.973871] systemd[1]: modprobe@nvme_fabrics.service: Deactivated succe=
+ssfully.
+[   12.977051] systemd[1]: Finished modprobe@nvme_fabrics.service - Load Ke=
+rnel Module nvme_fabrics.
+[   21.484306] nvme nvme0: using unchecked data buffer
+
+Before I put this SSD into my FriendlyELEC NanoPi R5S (rk3568; arm64)
+I had it in my main PC (AMD Ryzen 1800X; amd64) where I had these
+warnings as well, so it seems directly connected to the drive, not the
+device it's plugged into.
+
+I wonder if something can be done to fix those warnings.
+I'm not aware of these warnings causing actual problems, but I haven't
+'really' used it thus far (mostly to store some media files), but I want
+to use my NanoPi R5S as my server (with f.e. my git repos), so I want to
+be extra sure my data won't be at risk. And I don't like ignoring kernel
+warnings; I assume they're warnings for a reason.
+
+Some more data about the drive:
+
+root@nanopi-r5s:~# nvme list
+Node                  Generic               SN                   Model     =
+                               Namespace  Usage                      Format=
+           FW Rev
+--------------------- --------------------- -------------------- ----------=
+------------------------------ ---------- -------------------------- ------=
+---------- --------
+/dev/nvme0n1          /dev/ng0n1            xxxxxxxxxxxxxxx      Samsung SS=
+D 970 EVO Plus 2TB             0x1        534.51  GB /   2.00  TB    512   =
+B +  0 B   2B2QEXM7
+
+root@nanopi-r5s:~# nvme get-feature /dev/nvme0 -f 3
+get-feature:0x03 (LBA Range Type): NVMe status: Invalid Namespace or Format=
+: The namespace or the format of that namespace is invalid(0x200b)
+
+I don't know if it would/can be risky to share the Serial Number, so I
+blanked that out, but I can provide that if that would be helpful.
+
+root@nanopi-r5s:~# lspci -v -s 0002:21:00.0
+0002:21:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVM=
+e SSD Controller SM981/PM981/PM983 (prog-if 02 [NVM Express])
+        Subsystem: Samsung Electronics Co Ltd SSD 970 EVO/PRO
+        Flags: bus master, fast devsel, latency 0, IRQ 75
+        Memory at f0200000 (64-bit, non-prefetchable) [size=3D16K]
+        Capabilities: [40] Power Management version 3
+        Capabilities: [50] MSI: Enable- Count=3D1/1 Maskable- 64bit+
+        Capabilities: [70] Express Endpoint, IntMsgNum 0
+        Capabilities: [b0] MSI-X: Enable+ Count=3D33 Masked-
+        Capabilities: [100] Advanced Error Reporting
+        Capabilities: [148] Device Serial Number 00-00-00-00-00-00-00-00
+        Capabilities: [158] Power Budgeting <?>
+        Capabilities: [168] Secondary PCI Express
+        Capabilities: [188] Latency Tolerance Reporting
+        Capabilities: [190] L1 PM Substates
+        Kernel driver in use: nvme
+        Kernel modules: nvme
+
+But I did not change the Device Serial Number from lspci.
+AFAIK I have the latest firmware (checked with fwupd).
+
+Happy to provide additional data, but as I don't know what would be
+useful, I figured I'll leave it up to the experts to ask for it.
+
+Cheers,
+  Diederik
+
+--35f8d77e639258498209840db9ef4dfbb4a4ae4bdacbba93267a554176a9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKBuUgAKCRDXblvOeH7b
+biC4AP4xV9B0s22aFzjgq9ft23dgNZj5MmayWFZh8GlHwcLUqwD7BfjNzNwTKk/7
+eKwWc79zBlllICr8AE2I9bdnDVnMjgE=
+=yiAO
+-----END PGP SIGNATURE-----
+
+--35f8d77e639258498209840db9ef4dfbb4a4ae4bdacbba93267a554176a9--
 
