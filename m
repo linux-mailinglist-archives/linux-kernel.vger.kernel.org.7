@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-771729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329A7B28ACD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:54:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B56AB28AD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 07:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0B95A7F00
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594361885E52
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 05:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CCC1FDA61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E061FBEBE;
 	Sat, 16 Aug 2025 05:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="My2OZOmk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evScQ224"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9DC1F2B8D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C84AFBF0;
 	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755323659; cv=none; b=AM4grCCOa0yfifRcxOUKRz6blywENQlV6uiH9kb+VDk0EJkJLAiECnQao0q872xuQXi4TYDog95Q4WDpo3YZKqarbShr9T8WVueP+Rfm1ynl6igqsilEClSIo9mKzpFUtFi1uO+81jIr7uzHX66HzmsttZbaMJZBXlLBsscuy+M=
+	t=1755323659; cv=none; b=TeGvolFndQpodp/UBaM4Rj+ujQLAAq6fCyCf3a5r08an5fP1aXZIU2VDVh7P06sDHkLSi6TslW3CftUmcO0f2YhzC4/qv40LVpQfIdKNOaeb7guni9efbUHgWZzE32Ydlizp2+NdhdrIG/rP3p4D9KtkYc4wdUG1klJxhsx2Peg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755323659; c=relaxed/simple;
-	bh=8klj2uYRMfs8FE617jEyAtR6aZOYS7SLudYM0j1xsJc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PhSTB12hjWgc3WC/fWiSiMnd4oNXsKodZtcJ56rtYpiNuXyxB9qy9NmZsWLmMk+v9Ydr+dOKqBD2fTJJt5TndJrW4drPxWsEDy3EOExHwUClse++m9n1CxP4CO3XGamG+c72eR5Aw4xTsxtqGyf6alfYomIgoYNZNPBd2Vgzn4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=My2OZOmk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F3FC8C4CEEF;
-	Sat, 16 Aug 2025 05:54:18 +0000 (UTC)
+	bh=cOotQfb3hXrw4Cc4Ozk3KZs+QDC0iDdLyslVoGta5QQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KuWYlBaEvuTCtx0Ht8MU8562P2a5vg/zKXAyJyN14E8t0BlmJpvz/He8l0RHnVCY8BPujaHRJ4rSfdOqt4RK0TfroNDM44r+XRTe/AoIRS6kffOfSFfo4hCc6/QcXEJgYrFmV2H1Nq3jaxkk+BBiJv+sW+ergpguCXLWGRNCoKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evScQ224; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C25DC4CEF5;
+	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755323659;
-	bh=8klj2uYRMfs8FE617jEyAtR6aZOYS7SLudYM0j1xsJc=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=My2OZOmkgK8S/P8TzqtVuTbioib7+OEyAX+S/+oU0G3Oa+lzPSj92c5JMbq2rdNhG
-	 Ejcymzn8Ci5jExdHmVkfVFxXkOCDRebXp6Z4jgpSHW4f0uzhDIkEU+Lv75N9n0Hoyd
-	 fxE+BUWaZ4h0yS4YAVembS0HK8QEDMDM7jDVY5BznxFZfD/jEhfx2Qv+kFWdP0Rhe9
-	 7kFh/ayeNIERUMk3USg8FVGonhuX+hHd4plqMJei/+X94jluv+UTa0K8yt4jm1VIA2
-	 eCLkHqvkocH3vUS17tX6knbmnyEAGyaDa5LNCNUdpWiTOd3r6h5Ff0a9wI6tWZ2J5w
-	 Jn7Jgy7GzHNvA==
+	bh=cOotQfb3hXrw4Cc4Ozk3KZs+QDC0iDdLyslVoGta5QQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=evScQ2246WRm+K6XcJD7i8B6eT/naoG2Fr7u7kYeiquxX5KLsK5q9cbnxIvNaVi1d
+	 E9EXOwKEsjaxrIblZHRx9o5jcqNGZNaO7goupJwfXSMP5FFrhfckeykqndcFMKdPHZ
+	 ROLeBh//6NnPXrji7ZoSu/kXl6e08IAWBC/Ce9z2FpaiMyWR7thikpyN3R0Qvh5x+M
+	 V+IgTY6UoiOC6lINfsu/DQjvpstdd7G8cSh9gkqxSpIep3jdL6S9qDBSldFP0QTXqe
+	 CMhc4e68jF9j5ivlPvPwFAQG1AmpwbMgzXTd+y3mrD+q8XjqDjfIPQR3hnfVTIkgDQ
+	 eJ7RviHAUZXrA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24EBCA0EE9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C86CA0EE6;
 	Sat, 16 Aug 2025 05:54:18 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH 0/5] Properly Limit Tegra210 Clock Rates
-Date: Sat, 16 Aug 2025 00:53:32 -0500
-Message-Id: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+Date: Sat, 16 Aug 2025 00:53:33 -0500
+Subject: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANwcoGgC/x3MSwqAIBRG4a3EHSeo9LC2Eg3M/uxOLDQikPaeN
- PwG52RKiIxEY5Up4ubERyhQdUVut8FD8FpMWupWGqXFBR+tVlKkE1gP0fSyGxTMYpyjUp0RGz/
- /cZrf9wPHlmM/YQAAAA==
-X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
+Message-Id: <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
+References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+In-Reply-To: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -70,11 +70,11 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=1124;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=1074;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=8klj2uYRMfs8FE617jEyAtR6aZOYS7SLudYM0j1xsJc=;
- b=YxZKMWmKba+krIJVoRlKTJR6SZv8sVtniqhXAmEvuC1t8HToXFXb2O9pGXk+SJ4NDI4UrjzhQ
- iSR3FVD6PuzDL/FRX2qtKMXMhf5HBqqGlA0s3BPkRJaKv8q50xfq3HX
+ bh=i008IfPSaYeZDCxQCAJ7fiLJ8vYgRkhMPyZzDoavqYE=;
+ b=RsGAR4X/ZLdBD17nQiWJrjizisf+BJBjuFoEXnTzahSr2JDZ4hFiMsowb5/xLuAlDn6sOrX9X
+ gmronvaJJWgAovoTwAAj/SWd+3XthQrlMvT1oUzBKVEHfVcnNjjYmMI
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -82,32 +82,34 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
-all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
-supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
-Overclocking should not be the default state.
+From: Aaron Kling <webgeek1234@gmail.com>
+
+Some devices report a cpu speedo value that corresponds to a table that
+scales beyond the chips capability. This allows devices to set a lower
+limit.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Aaron Kling (5):
-      dt-bindings: clock: tegra124-dfll: Add property to limit frequency
-      soc: tegra: fuse: speedo-tegra210: Update speedo ids
-      soc: tegra: fuse: speedo-tegra210: Add sku 0x8F
-      clk: tegra: dfll: Support limiting max clock per device
-      arm64: tegra: Limit max cpu frequency on P3450
+ Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
- .../bindings/clock/nvidia,tegra124-dfll.txt        |  3 ++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  1 +
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  8 ++++-
- drivers/soc/tegra/fuse/speedo-tegra210.c           | 39 ++++++++++++++++++----
- 4 files changed, 43 insertions(+), 8 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250812-tegra210-speedo-470691e8b8cc
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..6cdbabc1f036a767bdc8e5df64eeff34171a3b85 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -70,6 +70,9 @@ Required properties for PWM mode:
+   - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+   - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+ 
++Optional properties for limiting frequency:
++- nvidia,dfll-max-freq: Maximum scaling frequency.
++
+ Example for I2C:
+ 
+ clock@70110000 {
 
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.50.1
 
 
 
