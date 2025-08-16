@@ -1,246 +1,152 @@
-Return-Path: <linux-kernel+bounces-771745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-771742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2C1B28AF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7309B28AEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 08:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289647BE322
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:19:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5AA7B93D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Aug 2025 06:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1B120D4E9;
-	Sat, 16 Aug 2025 06:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CC720ADF8;
+	Sat, 16 Aug 2025 06:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQOd5wrI"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eFFcWNgi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8003176F0;
-	Sat, 16 Aug 2025 06:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E43176F0;
+	Sat, 16 Aug 2025 06:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755325267; cv=none; b=kwLruQLcqsYJOPbYC3BvM3EnZKxKP7XQgy/YSzaFhkYmK0M3Og7NkhbuV1ILY4klOX7MAktdGQopkDpkC33MJ01R7kdJQrm3l6vSZtb8LBAlKH4zR+sZ0WEJdtcUQOeu3Iyzef4vlwRpIPPdpbu/efzcFBYt7luuJN/eI8XDNd8=
+	t=1755324951; cv=none; b=TAD0OLtaRlx/86emMw8psJiJFEvVVSOKm+SZu+CUVLovIIlpIpIwNfzRbNGSlDGuTHBQakcRAULStVyhjWNuK0dTfkl2eEk2b8FV680emmesqymd1GPu2fkOYihKiH95LNBH1wg+s1cnuSoB63XRJqLBlr1THnehrPa411ZO2B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755325267; c=relaxed/simple;
-	bh=E6rmIOI7RTVHu4KWYJztJfgD4VXoH0nCUqR1F2Kpcf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VRULmQfgXJypMbzbua+QA5eENq57MwBRlf6riMXb6U/4dJSOmv8e1PScJyFmhihpHy0JGABtIJl2/VKhIGYPv7dBr9XOP2jdxeq4Avhi82jcEaA5ZFdCyGBe7Z6ciNZfS88FYxdjuOGFkePoqwlLokjx5BsI413EyfpKEynodqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQOd5wrI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95428C4CEEF;
-	Sat, 16 Aug 2025 06:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755325267;
-	bh=E6rmIOI7RTVHu4KWYJztJfgD4VXoH0nCUqR1F2Kpcf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQOd5wrIlmd+0I4ODsdNmga5yxbcRhIT1qQrN49ZG6QiJy4Sll7UTNZzbMUoT/kla
-	 lsTHfNNDR7G5MhXZ8veTKWt4NcpN0qaE4FCR2xL9MrBgINvS/6bBJEpx28HdMwONng
-	 EE/Ctw2p6MHqG7jEuvwIBUiGxM+qdhI6fF3gn8/zt1ugiEsnEpJ1xihzO/FvljuJ4e
-	 6g2k5/9X1iNIlTohy7SrqOvg/jacBsXwaTJCFRZOCb1QtdaHkK/fFAqcS83QX4o7YF
-	 IPlyREOSBsCnvyN0otVbieFOQUCpNdKtzSfFQVumitxpfL+fBeWliVuY/SBFlsQQ8k
-	 jkX3iG6AH0GEg==
-Date: Sat, 16 Aug 2025 14:03:48 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Bough Chen <haibo.chen@nxp.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Manuel Lauss <manuel.lauss@gmail.com>,
-	=?utf-8?B?TWljaGHvv73vv70gTWlyb3Pvv73vv71hdw==?= <mirq-linux@rere.qmqm.pl>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Ben Dooks <ben-linux@fluff.org>, Viresh Kumar <vireshk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 18/38] mmc: sdhci-esdhc-imx: use modern PM macros
-Message-ID: <aKAfRFPJQM_EtAKF@xhacker>
-References: <20250815013413.28641-1-jszhang@kernel.org>
- <20250815013413.28641-19-jszhang@kernel.org>
- <DU0PR04MB94962993C99F922CCF93FB6F9034A@DU0PR04MB9496.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1755324951; c=relaxed/simple;
+	bh=jheQbrl6mo7J2mKnNzaTKtMrCR9vMP2nmVKMbKRV5Ik=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Bt/Uiai9qgWTU8Jn5Vwlt3ygsUFXpuABG/LNMs+r2dm+J3GjdGygPy1OxL2gM/zSs7DxgGZcnMVDUUtQMxqNYnb7BcJZpV80c1KbIhTbpM9JucfraFG9pUS5QiWBOmNs0aHzqsFrmgZGFv5utmHHQfNlEEoRX2JHbRdZy09RX+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eFFcWNgi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7758C4CEEF;
+	Sat, 16 Aug 2025 06:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755324950;
+	bh=jheQbrl6mo7J2mKnNzaTKtMrCR9vMP2nmVKMbKRV5Ik=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eFFcWNgiGcxyOJzwvTV+O8epT32CN6pMMrHQrTBnK47ltJ3kaFTY0YfDu8vbZ5l0E
+	 Wo+IYTPEnoW9T0YtNcGyuIV5s85/amVROP+WqbjMtBCJpaF9eQycl9gpzK6QxUykxC
+	 bWBY0jYi35xQg8n2VLrVqTZNqGDs6/nZDfBts/Kg=
+Date: Fri, 15 Aug 2025 23:15:49 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: david@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ corbet@lwn.net, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+ hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
+ riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
+ baolin.wang@linux.alibaba.com, npache@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCH v5 5/7] selftest/mm: Extract sz2ord function into
+ vm_util.h
+Message-Id: <20250815231549.1d7ef74fc13149e07471f335@linux-foundation.org>
+In-Reply-To: <20250815135549.130506-6-usamaarif642@gmail.com>
+References: <20250815135549.130506-1-usamaarif642@gmail.com>
+	<20250815135549.130506-6-usamaarif642@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DU0PR04MB94962993C99F922CCF93FB6F9034A@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 03:23:56AM +0000, Bough Chen wrote:
-> > -----Original Message-----
-> > From: Jisheng Zhang <jszhang@kernel.org>
-> > Sent: 2025Ò´8êÅ15ìí 9:34
-> > To: Ulf Hansson <ulf.hansson@linaro.org>; Aubin Constans
-> > <aubin.constans@microchip.com>; Nicolas Ferre
-> > <nicolas.ferre@microchip.com>; Alexandre Belloni
-> > <alexandre.belloni@bootlin.com>; Claudiu Beznea
-> > <claudiu.beznea@tuxon.dev>; Manuel Lauss <manuel.lauss@gmail.com>;
-> > Micha©© Miros©©aw <mirq-linux@rere.qmqm.pl>; Jaehoon Chung
-> > <jh80.chung@samsung.com>; Krzysztof Kozlowski <krzk@kernel.org>; Alim
-> > Akhtar <alim.akhtar@samsung.com>; Heiko Stuebner <heiko@sntech.de>;
-> > Russell King <linux@armlinux.org.uk>; Chaotian Jing
-> > <chaotian.jing@mediatek.com>; Matthias Brugger <matthias.bgg@gmail.com>;
-> > AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>;
-> > Shawn Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
-> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Adrian Hunter <adrian.hunter@intel.com>; Kamal
-> > Dasu <kamal.dasu@broadcom.com>; Al Cooper <alcooperx@gmail.com>;
-> > Broadcom internal kernel review list
-> > <bcm-kernel-feedback-list@broadcom.com>; Florian Fainelli
-> > <florian.fainelli@broadcom.com>; Bough Chen <haibo.chen@nxp.com>; Michal
-> > Simek <michal.simek@amd.com>; Eugen Hristev <eugen.hristev@linaro.org>;
-> > Vignesh Raghavendra <vigneshr@ti.com>; Ben Dooks <ben-linux@fluff.org>;
-> > Viresh Kumar <vireshk@kernel.org>; Orson Zhai <orsonzhai@gmail.com>;
-> > Baolin Wang <baolin.wang@linux.alibaba.com>; Chunyan Zhang
-> > <zhang.lyra@gmail.com>; Patrice Chotard <patrice.chotard@foss.st.com>;
-> > Thierry Reding <thierry.reding@gmail.com>; Jonathan Hunter
-> > <jonathanh@nvidia.com>; Chen-Yu Tsai <wens@csie.org>; Jernej Skrabec
-> > <jernej.skrabec@gmail.com>; Samuel Holland <samuel@sholland.org>; Alexey
-> > Charkov <alchark@gmail.com>
-> > Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH 18/38] mmc: sdhci-esdhc-imx: use modern PM macros
-> > 
-> > Use the modern PM macros for the suspend and resume functions to be
-> > automatically dropped by the compiler when CONFIG_PM or
-> > CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
-> > 
-> > This has the advantage of always compiling these functions in, independently of
-> > any Kconfig option. Thanks to that, bugs and other regressions are subsequently
-> > easier to catch.
+On Fri, 15 Aug 2025 14:54:57 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+
+> The function already has 2 uses and will have a 3rd one
+> in prctl selftests. The pagesize argument is added into
+> the function, as it's not a global variable anymore.
+> No functional change intended with this patch.
 > 
-> Hi Jisheng,
 
-Hi,
+https://lkml.kernel.org/r/20250816040113.760010-5-aboorvad@linux.ibm.com
+jut did this, but didn't add the extra arg. 
+tools/testing/selftests/mm/split_huge_page_test.c needed updating.
 
-> 
-> When I remove all the configs under Power management options I got the following build warning:
-> 
-> drivers/mmc/host/sdhci-esdhc-imx.c:2079:12: warning: ¡®sdhci_esdhc_resume¡¯ defined but not used [-Wunused-function]
->  2079 | static int sdhci_esdhc_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~
->   CC      drivers/mmc/host/cqhci-core.o
-> drivers/mmc/host/sdhci-esdhc-imx.c:2017:12: warning: ¡®sdhci_esdhc_suspend¡¯ defined but not used [-Wunused-function]
->  2017 | static int sdhci_esdhc_suspend(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~
+--- a/tools/testing/selftests/mm/cow.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
++++ a/tools/testing/selftests/mm/cow.c
+@@ -52,7 +52,7 @@ static int detect_thp_sizes(size_t sizes
+ 	if (!pmdsize)
+ 		return 0;
+ 
+-	orders = 1UL << sz2ord(pmdsize);
++	orders = 1UL << sz2ord(pmdsize, pagesize);
+ 	orders |= thp_supported_orders();
+ 
+ 	for (i = 0; orders && count < max; i++) {
+@@ -1211,8 +1211,8 @@ static void run_anon_test_case(struct te
+ 		size_t size = thpsizes[i];
+ 		struct thp_settings settings = *thp_current_settings();
+ 
+-		settings.hugepages[sz2ord(pmdsize)].enabled = THP_NEVER;
+-		settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
++		settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_NEVER;
++		settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
+ 		thp_push_settings(&settings);
+ 
+ 		if (size == pmdsize) {
+@@ -1863,7 +1863,7 @@ int main(void)
+ 	if (pmdsize) {
+ 		/* Only if THP is supported. */
+ 		thp_read_settings(&default_settings);
+-		default_settings.hugepages[sz2ord(pmdsize)].enabled = THP_INHERIT;
++		default_settings.hugepages[sz2ord(pmdsize, pagesize)].enabled = THP_INHERIT;
+ 		thp_save_settings();
+ 		thp_push_settings(&default_settings);
+ 
+--- a/tools/testing/selftests/mm/uffd-wp-mremap.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
++++ a/tools/testing/selftests/mm/uffd-wp-mremap.c
+@@ -82,9 +82,9 @@ static void *alloc_one_folio(size_t size
+ 		struct thp_settings settings = *thp_current_settings();
+ 
+ 		if (private)
+-			settings.hugepages[sz2ord(size)].enabled = THP_ALWAYS;
++			settings.hugepages[sz2ord(size, pagesize)].enabled = THP_ALWAYS;
+ 		else
+-			settings.shmem_hugepages[sz2ord(size)].enabled = SHMEM_ALWAYS;
++			settings.shmem_hugepages[sz2ord(size, pagesize)].enabled = SHMEM_ALWAYS;
+ 
+ 		thp_push_settings(&settings);
+ 
+--- a/tools/testing/selftests/mm/vm_util.h~selftest-mm-extract-sz2ord-function-into-vm_utilh
++++ a/tools/testing/selftests/mm/vm_util.h
+@@ -127,9 +127,9 @@ static inline void log_test_result(int r
+ 	ksft_test_result_report(result, "%s\n", test_name);
+ }
+ 
+-static inline int sz2ord(size_t size)
++static inline int sz2ord(size_t size, size_t pagesize)
+ {
+-	return __builtin_ctzll(size / getpagesize());
++	return __builtin_ctzll(size / pagesize);
+ }
+ 
+ void *sys_mremap(void *old_address, unsigned long old_size,
+--- a/tools/testing/selftests/mm/split_huge_page_test.c~selftest-mm-extract-sz2ord-function-into-vm_utilh
++++ a/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -544,7 +544,7 @@ int main(int argc, char **argv)
+ 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
+ 
+ 	nr_pages = pmd_pagesize / pagesize;
+-	max_order =  sz2ord(pmd_pagesize);
++	max_order =  sz2ord(pmd_pagesize, pagesize);
+ 	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
+ 	ksft_set_plan(tests);
+ 
+_
 
-Hmm interesting, what's test toolchain? I tested this patch with gcc14
-with below three combinations before sending out, no warnings at all:
-PM + PM_SLEEP
-PM only
-!PM + ! PM_SLEEP
-
-The sdhci_esdhc_suspend|resume are referenced by SYSTEM_SLEEP_PM_OPS.
-The pm_sleep_ptr() macro does the tricky, when both PM and PM_SLEEP are
-disabled, they are optimized out.
-
-So can you plz kindly show your toolchain? I will check
-
-Thanks
-> 
-> Regards
-> Haibo Chen
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > ---
-> >  drivers/mmc/host/sdhci-esdhc-imx.c | 13 +++----------
-> >  1 file changed, 3 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
-> > b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > index a040c0896a7b..a7a5df673b0f 100644
-> > --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> > +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > @@ -1650,7 +1650,6 @@ static void sdhci_esdhc_imx_hwinit(struct sdhci_host
-> > *host)
-> >  	}
-> >  }
-> > 
-> > -#ifdef CONFIG_PM_SLEEP
-> >  static void sdhc_esdhc_tuning_save(struct sdhci_host *host)  {
-> >  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host); @@ -1707,7
-> > +1706,6 @@ static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
-> >  		       host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-> >  	}
-> >  }
-> > -#endif
-> > 
-> >  static void esdhc_cqe_enable(struct mmc_host *mmc)  { @@ -2016,7
-> > +2014,6 @@ static void sdhci_esdhc_imx_remove(struct platform_device
-> > *pdev)
-> >  		cpu_latency_qos_remove_request(&imx_data->pm_qos_req);
-> >  }
-> > 
-> > -#ifdef CONFIG_PM_SLEEP
-> >  static int sdhci_esdhc_suspend(struct device *dev)  {
-> >  	struct sdhci_host *host = dev_get_drvdata(dev); @@ -2112,9 +2109,7 @@
-> > static int sdhci_esdhc_resume(struct device *dev)
-> > 
-> >  	return ret;
-> >  }
-> > -#endif
-> > 
-> > -#ifdef CONFIG_PM
-> >  static int sdhci_esdhc_runtime_suspend(struct device *dev)  {
-> >  	struct sdhci_host *host = dev_get_drvdata(dev); @@ -2188,12 +2183,10
-> > @@ static int sdhci_esdhc_runtime_resume(struct device *dev)
-> >  		cpu_latency_qos_remove_request(&imx_data->pm_qos_req);
-> >  	return err;
-> >  }
-> > -#endif
-> > 
-> >  static const struct dev_pm_ops sdhci_esdhc_pmops = {
-> > -	SET_SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
-> > -	SET_RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
-> > -				sdhci_esdhc_runtime_resume, NULL)
-> > +	SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
-> > +	RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
-> > +sdhci_esdhc_runtime_resume, NULL)
-> >  };
-> > 
-> >  static struct platform_driver sdhci_esdhc_imx_driver = { @@ -2201,7 +2194,7
-> > @@ static struct platform_driver sdhci_esdhc_imx_driver = {
-> >  		.name	= "sdhci-esdhc-imx",
-> >  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> >  		.of_match_table = imx_esdhc_dt_ids,
-> > -		.pm	= &sdhci_esdhc_pmops,
-> > +		.pm	= pm_ptr(&sdhci_esdhc_pmops),
-> >  	},
-> >  	.probe		= sdhci_esdhc_imx_probe,
-> >  	.remove		= sdhci_esdhc_imx_remove,
-> > --
-> > 2.50.0
-> 
 
