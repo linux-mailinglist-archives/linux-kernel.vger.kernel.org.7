@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-772597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF144B294B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F122B294C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DB634E07F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA284E7E8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2C2882A2;
-	Sun, 17 Aug 2025 18:34:59 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC3B28399;
+	Sun, 17 Aug 2025 18:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b7S7OJxq"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38C1F4C98;
-	Sun, 17 Aug 2025 18:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC79304BA8
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 18:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755455699; cv=none; b=RHDRDpCElVNpKd9fxpQwJhWcVCzLHBMknFqaIUltTT5IsWwnIRspTe+v4QaXl2ZhMK3PUnck9HtAIzybX+q8o3tUh4M5xDg7AFS2lYUDzMMUv6SGdv+C6VlGU3wkx1OJ10UDcTuohnN00h5wWohxgy+tOQF62jzW/6F7wATfrAY=
+	t=1755455902; cv=none; b=uEqMSRSbJDrP3/TkvTJeJ/4RC1OhGuZTMMb2ueJnU5LCri/QEU014jhk9AMJilBH/Fgv6YcxKVyowZ0tCoiHlXnZCmrzU8AapmzJvDAmVDgWcJG+mQ+bX7y1NyHSeF8wwMcOJ//Yw1PNyndWet/M+7EOBwJhW9lX3P/MOuVhdKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755455699; c=relaxed/simple;
-	bh=DTnbaTdos2se8naC0CupyhhLgsthUHFqG3p7FNFbcA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PlGYOwow2xR4hi6bnSNjJBYQqK7OnCT/DqQa5idQcp+a3QxJM+DnJFFSv7gtnfoUp9oiWzBU9g6K4xIsPH3pgUkmaPthXCHYPoOYnX8F064jRrLXdZ8fkbUNWFCS2OKnlEmzbyJz1a3zJbwTEHR06wdSn7s0fECRoDiLOh5DhkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [10.0.54.22] (unknown [62.214.191.67])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CC26E61E647BB;
-	Sun, 17 Aug 2025 20:34:39 +0200 (CEST)
-Message-ID: <c1ccb74a-d715-41a7-862b-3038323d8091@molgen.mpg.de>
-Date: Sun, 17 Aug 2025 20:34:35 +0200
+	s=arc-20240116; t=1755455902; c=relaxed/simple;
+	bh=k8hw2Mq5iK4lhnKBCsE22+y+LTrgRBOTynjAoyj8GV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQ9w/RywbpWIbny1746Ui91qaH1p5CiEfmNVMMRgD8XQ5WPHn/ST0Z+0uGF6Yadtq4hzm/8fnuTx4jhDqdtfs13cinNGCXZwWz6D+PlYMEO5vQLSLx1g6elT55IUaeOwHwmodVsutLUQZa6XiQMHT+TOJdWQH82HYwHP3fgoi7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b7S7OJxq; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755455888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xFvn3En6LhswXX2FtnVX2Bgz4scDZPn0KaR2MGRe2Co=;
+	b=b7S7OJxqWc/GUwMHBrHGizHki69LPKVdYFPkackfYryED+aG89g+dxYy9iqN92y+m5a/Jq
+	PfRnV8AtWyRPwYIZpz31NPlEILZQeDQHveCzVXbedboMhqdcZEQ1jLfmtN3ohWEY/OrnJF
+	uSMivOKfntNAjBlM7nPoxsC03+K+wnY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-hardening@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] MIPS: sgi-ip22: Replace deprecated strcpy() in plat_mem_setup()
+Date: Sun, 17 Aug 2025 20:37:11 +0200
+Message-ID: <20250817183728.612012-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spin_lock_irqsave() in autofs_write() is bogus
-To: Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, autofs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250817163609.GV222315@ZenIV>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250817163609.GV222315@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Dear Al,
+strcpy() is deprecated; use strscpy() instead.
 
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/mips/sgi-ip22/ip22-setup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Am 17.08.25 um 18:36 schrieb Al Viro:
-> 	That function should never be (and never is) called with irqs
-> disabled - we have an explicit mutex_lock() in there, if nothing else.
-> Which makes spin_lock_irqsave() use in there pointless - we do need to
-> disable irqs for ->siglock, but that should be spin_lock_irq().
-> 
-> 	The history is interesting - it goes all way back to 2.1.68pre1,
-> and that obviously was a tree-wide work.  Might be interesting to look
-> for other places with just-in-case spin_lock_irqsave()...
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-> index 33dd4660d82f..4dc226e86360 100644
-> --- a/fs/autofs/waitq.c
-> +++ b/fs/autofs/waitq.c
-> @@ -46,7 +46,7 @@ void autofs_catatonic_mode(struct autofs_sb_info *sbi)
->   static int autofs_write(struct autofs_sb_info *sbi,
->   			struct file *file, const void *addr, int bytes)
->   {
-> -	unsigned long sigpipe, flags;
-> +	unsigned long sigpipe;
->   	const char *data = (const char *)addr;
->   	ssize_t wr = 0;
->   
-> @@ -66,10 +66,10 @@ static int autofs_write(struct autofs_sb_info *sbi,
->   	 * SIGPIPE unless it was already supposed to get one
->   	 */
->   	if (wr == -EPIPE && !sigpipe) {
-> -		spin_lock_irqsave(&current->sighand->siglock, flags);
-> +		spin_lock_irq(&current->sighand->siglock);
->   		sigdelset(&current->pending.signal, SIGPIPE);
->   		recalc_sigpending();
-> -		spin_unlock_irqrestore(&current->sighand->siglock, flags);
-> +		spin_unlock_irq(&current->sighand->siglock);
->   	}
->   
->   	/* if 'wr' returned 0 (impossible) we assume -EIO (safe) */
-> 
+diff --git a/arch/mips/sgi-ip22/ip22-setup.c b/arch/mips/sgi-ip22/ip22-setup.c
+index e06a818fe792..f083b25be13b 100644
+--- a/arch/mips/sgi-ip22/ip22-setup.c
++++ b/arch/mips/sgi-ip22/ip22-setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/types.h>
+ #include <linux/console.h>
+ #include <linux/sched.h>
++#include <linux/string.h>
+ #include <linux/tty.h>
+ 
+ #include <asm/addrspace.h>
+@@ -65,7 +66,7 @@ void __init plat_mem_setup(void)
+ 		static char options[8] __initdata;
+ 		char *baud = ArcGetEnvironmentVariable("dbaud");
+ 		if (baud)
+-			strcpy(options, baud);
++			strscpy(options, baud);
+ 		add_preferred_console("ttyS", *(ctype + 1) == '2' ? 1 : 0,
+ 				      baud ? options : NULL);
+ 	} else if (!ctype || *ctype != 'g') {
+-- 
+2.50.1
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
 
