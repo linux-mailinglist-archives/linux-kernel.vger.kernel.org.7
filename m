@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-772599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B17CB294B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814DEB294BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070AE1B203A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790B917F3E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8A430146F;
-	Sun, 17 Aug 2025 18:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5573302CBD;
+	Sun, 17 Aug 2025 18:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DSbZzlu/"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kvQ49TOE"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58561F4703
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 18:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAFC30102D
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 18:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755455895; cv=none; b=NMYJu7XklCDxbczs/7OW3aJL38tIZN8Y5EwVK8i+drrVZ0OUbYuF2ahdVmmbFfvQnFxsUlGBxWXTEPf2Q3f21Tr7vVccB7EM7WD+bT+CjMLXM4yQaEtTveZPmPSTjeiIxjKtnC0R9KUZTOXav5Hqxh2qEY2ew3zGyKPtjzqUXN4=
+	t=1755455898; cv=none; b=IoqkS3ovVZwapbvHFrGcKasrLA1rZGBYEI6HQ7EthgBsYfdLFBiuSTH7XF0ETrk5xah+Xpt8QqtWHF7RHYQj9+dvIcMBpCZs0bBMj3CeoIDGFeCpmmeEty0bavS87R0CP6fzZsLASPiRQeF5U5m72mYZP7ymkfWxoSLJ/Gq0YtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755455895; c=relaxed/simple;
-	bh=INypzJZVvRsuZMPxXGFxZWyEOvHfFpJqjvibZjyXVjs=;
+	s=arc-20240116; t=1755455898; c=relaxed/simple;
+	bh=MIPEmkj8ov40oghApOnZj6uHa4v1TUsDCFIbFhrjr00=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kx27wTWO6UNmFGqv6JgULiib6KMp1mSzuE7nY1BBw1fPFXCQ9fCHML1jPiElRlSVJRul192K6NJMWIemQBMAp73/bdEZILUERy7As1axoy6ARfk/l83Slu0xO/KLLtLkRNyv+Z6SPY282e00k33hlr2j9gCKOczQAScWo+sdD2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DSbZzlu/; arc=none smtp.client-ip=91.218.175.173
+	 MIME-Version; b=eYqGr/2QO4pZqUbQqGn5mAMdj6bp5pWWbqWLe9SS5NBLtlnT0OWNhM5CAopIRN8w7pcmJHB2foB29PgP5fIPEbPqbnVd1XODiwNbzk1Meyl7HnxjycM0hKVorT6TxSR1Ejp2Girr1tKelwQjyxZb3G4dUkPqd6mnFLgjUrJPgZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kvQ49TOE; arc=none smtp.client-ip=91.218.175.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755455892;
+	t=1755455894;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uMC9qxl3+y8DjdiNV2tMfFu89w7Qwy8mTMvWDapM4CM=;
-	b=DSbZzlu/aOEapMU14Je5BNwcLLKrDxTOgyQK4IiOv9DbY5tu+g1vQ6Xg9xW489Hm6KapGA
-	xk7ia+HJo+4sGNssbDYrjuXlrFVUVNG9bZXajipf5Qz9YNT+fpNx9jLc7BjalU9tkcIC8S
-	om3fMxp3zvpH/KCVR3PkI10wCk6oBFY=
+	bh=pQd3fjTE0bv5k0utUixn7f4BcezD3BFIk5BYH/5tHhc=;
+	b=kvQ49TOED4OS6VPH/JogC1VSquoWosgYj5mPa0rt2WeWkLAKR4IhFGpDPXKylHtjURVU03
+	myo8tCZtt64f8aISDgoLjU32+AH1HZqQnQv3syRQQJIwrhCNNawOcs4DCmy1moB4dbUfWy
+	CA/SJbfirsq46ON/4nLHG5Mftn6TZC4=
 From: Thorsten Blum <thorsten.blum@linux.dev>
 To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Thorsten Blum <thorsten.blum@linux.dev>,
-	Thomas Zimmermann <tzimmermann@suse.de>
+	Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-hardening@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] MIPS: sni: Replace deprecated strcpy() in sni_console_setup()
-Date: Sun, 17 Aug 2025 20:37:13 +0200
-Message-ID: <20250817183728.612012-3-thorsten.blum@linux.dev>
+Subject: [PATCH 4/8] MIPS: txx9: Replace deprecated strcpy() with strscpy()
+Date: Sun, 17 Aug 2025 20:37:14 +0200
+Message-ID: <20250817183728.612012-4-thorsten.blum@linux.dev>
 In-Reply-To: <20250817183728.612012-1-thorsten.blum@linux.dev>
 References: <20250817183728.612012-1-thorsten.blum@linux.dev>
 Precedence: bulk
@@ -67,30 +69,31 @@ strcpy() is deprecated; use strscpy() instead.
 Link: https://github.com/KSPP/linux/issues/88
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- arch/mips/sni/setup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/txx9/generic/setup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/sni/setup.c b/arch/mips/sni/setup.c
-index 03cb69937258..fc7da12284f5 100644
---- a/arch/mips/sni/setup.c
-+++ b/arch/mips/sni/setup.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <linux/console.h>
- #include <linux/screen_info.h>
-+#include <linux/string.h>
+diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
+index 5dc867ea2c69..03f8a3a95637 100644
+--- a/arch/mips/txx9/generic/setup.c
++++ b/arch/mips/txx9/generic/setup.c
+@@ -200,7 +200,7 @@ static void __init preprocess_cmdline(void)
+ 	static char cmdline[COMMAND_LINE_SIZE] __initdata;
+ 	char *s;
  
- #ifdef CONFIG_FW_ARC
- #include <asm/fw/arc/types.h>
-@@ -80,7 +81,7 @@ static void __init sni_console_setup(void)
- 			break;
- 		}
- 		if (baud)
--			strcpy(options, baud);
-+			strscpy(options, baud);
- 		if (strncmp(cdev, "tty552", 6) == 0)
- 			add_preferred_console("ttyS", port,
- 					      baud ? options : NULL);
+-	strcpy(cmdline, arcs_cmdline);
++	strscpy(cmdline, arcs_cmdline);
+ 	s = cmdline;
+ 	arcs_cmdline[0] = '\0';
+ 	while (s && *s) {
+@@ -270,7 +270,7 @@ void __init prom_init(void)
+ 	preprocess_cmdline();
+ 	select_board();
+ 
+-	strcpy(txx9_system_type, txx9_board_vec->system);
++	strscpy(txx9_system_type, txx9_board_vec->system);
+ 
+ 	txx9_board_vec->prom_init();
+ }
 -- 
 2.50.1
 
