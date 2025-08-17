@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D1DB29204
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:23:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF8BB29207
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6F3168082
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D761F203C33
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49F123D7E9;
-	Sun, 17 Aug 2025 07:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14283223DE5;
+	Sun, 17 Aug 2025 07:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+lxK1jk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9fCi6MB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E2E202F93;
-	Sun, 17 Aug 2025 07:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E08F7404E;
+	Sun, 17 Aug 2025 07:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755415395; cv=none; b=EAArigniUYx/PyFCLRMsQQymKm5EG73H4uV5skorhQeAu1IfQhmN8EUSoVGMtWFIPm5Qadtm+S95Zysek6kRvCrier1IiAKtenpCuEQxMSi2eKOfwbF1E+70Sb9SygLi3z2mP6jHLZp32DlTschclBobTkxyfyxNHvIrpPTGazM=
+	t=1755415539; cv=none; b=hdpTmcVHcgVHudeDGW0NqGJ1BWSVmiZTVMHWyqLStILbyg+bExBuiKkeJoTSCLuNZ/BbT7CfKxKdQnsq9JsTL1IfWe+jJTO0AVCXc6GjoLtDNYsQTjBq3dMErNMeLJtYhqmb2XNcu+Yl7reRX9/FEuWdNeWDuZu1TanCVKvpubg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755415395; c=relaxed/simple;
-	bh=34FTHGnwsJ7syn3/SeG8AvHnM0WI6ebyoXYwAz3kn0I=;
+	s=arc-20240116; t=1755415539; c=relaxed/simple;
+	bh=9aRcWoV+UMk5idXKgIczOYrwUIZEkMx9vArmENQ/UXg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qk7nEpuib/GUhTWftGkXcF5L/CXrXc2LOX65sb9PI0lao5OSQN4TdlIqeuD+qweI7mBG4f63p3EOycAsCVlwZP5obXRNAX3q4bNLXnTFbBp0gZ23bRZmdYB1rG/m82Feb+kCwO9upgQdSJv9xnjoQyMkmS7kSZqnXgLHjiZsI5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+lxK1jk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F45C4CEEB;
-	Sun, 17 Aug 2025 07:23:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Bg69XNMpPE2kLtWVNQp57nGWX3DAI+yxOB+xjVcnyo143B9Bw+tO7wrV6tLI5w7XKoQ2fTIAE5ZQ/dUf2UQ/jb2Z8wR2R9nmymSKwxi31ISu528olE3Sw/b2VmNCdwAzfIwK6Ap6619oliF0t6Rw3+qOc8r2SXpwEHc0kZQvyyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9fCi6MB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFD4C4CEEB;
+	Sun, 17 Aug 2025 07:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755415394;
-	bh=34FTHGnwsJ7syn3/SeG8AvHnM0WI6ebyoXYwAz3kn0I=;
+	s=k20201202; t=1755415539;
+	bh=9aRcWoV+UMk5idXKgIczOYrwUIZEkMx9vArmENQ/UXg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J+lxK1jk6jsLRjQ/u9kBzinNqcuLdrctAsnV8WS06nKwmdFmEgA3xQw3FQpYxv28+
-	 0dfTg/rvO1DFk+BcUWEH+S8ATMqY7m0Vyp+E8IlDppHo6EoRXrNzsKADu/kG8gYaER
-	 R0iiVnMVaigtjwvKlGuD/hm8dzK/aYET9uun4/uuKWYPqOb14WcPR/xd4GUmrqXgpJ
-	 u4BbgdnOx7h0AGT7KVyi1RCDw10P0cSgQtBQq6fpjjsg9z0bTmAn5VnKY5S9Tk7hMS
-	 ucB2jaFmTuHTmWB0A4WzRNclmCwsRNqACjZlhE1vgK0IId0/xBONqOg7058cyM+Jan
-	 8ceTgpJM6W7Xg==
-Message-ID: <ff167728-a4a7-4f7d-a809-d0e482ab7dd6@kernel.org>
-Date: Sun, 17 Aug 2025 09:23:09 +0200
+	b=p9fCi6MBJ2J4z015V22qjt3ST8AlYwCfk8BRYkjWTGHFp0PwNZc7xgWqXcGXJA4PG
+	 OuzIkU/gxx8tOKQGl+YWbmffEuli7MWWG64c3FUInRH0/NmszwBBEwavGvTsN4VRaM
+	 +DaMij7N7SzboR6vW265LNyOnEf0K1z1ybk2CkwWqJzsbqxcpb0CBqJXUFkqWjWsC2
+	 bzTkZ38qiwnxuzUJh/uP4dAJyrk2odf7kzvto5f4SvbG74usOMyJiruPyweWrBVDvK
+	 SB4gfluyzGm679eZlRx+o3VlAOKWZHfs5w5k61wa8opWT4wVw1vnwjYOW7dggL7eCU
+	 DFWjXdXn3iXOQ==
+Message-ID: <67accd3e-8804-4f38-af6f-3c351ca7807d@kernel.org>
+Date: Sun, 17 Aug 2025 09:25:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: update TI TPS23861 bindings
- with per-port schema
-To: Gregory Fuchedgi <gfuchedgi@gmail.com>
-Cc: Robert Marko <robert.marko@sartura.hr>,
- Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250811-hwmon-tps23861-add-class-restrictions-v2-0-ebd122ec5e3b@gmail.com>
- <20250811-hwmon-tps23861-add-class-restrictions-v2-2-ebd122ec5e3b@gmail.com>
- <eab6d2d2-9337-40fe-81c7-95dc1956ce6f@kernel.org>
- <CAAcybusHjAR67N0rumb6M_uG1ct3aa=zv2XkpUjhSSxv0NdzFA@mail.gmail.com>
+Subject: Re: [PATCH v3 6/9] dt-bindings: clock: nxp,imx95-blk-ctl: Add
+ optional ldb property
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+ <20250806150521.2174797-7-laurentiu.palcu@oss.nxp.com>
+ <20250807-airborne-rich-lobster-6f8e2e@kuoka>
+ <3ckcsadhab3wx54g37qhqtckr6r5j7g4mffmcksbxlxuavar7a@hokyb2k6lk3p>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,60 +111,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAAcybusHjAR67N0rumb6M_uG1ct3aa=zv2XkpUjhSSxv0NdzFA@mail.gmail.com>
+In-Reply-To: <3ckcsadhab3wx54g37qhqtckr6r5j7g4mffmcksbxlxuavar7a@hokyb2k6lk3p>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 05:00, Gregory Fuchedgi wrote:
-> On Tue, Aug 12, 2025 at 12:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> +  shutdown-gpios:
->> powerdown-gpios, see gpio-consumer-common.yaml
-> It is called shutdown in the datasheet, but seems like neither powerdown nor
-> shutdown truly reflects its purpose. This pin doesn't power down the controller
-> itself. It shuts down the ports while keeping the controller available for
-> configuration over i2c. Should I call it ti,ports-shutdown-gpios or maybe
-> ti,shutdown-gpios? Any other suggestions?
-
-
-Feels more like enable-gpios.
-
+On 07/08/2025 14:35, Laurentiu Palcu wrote:
+>>
+>> Why every device here has ldb child? Why camera has ldb?
+> I guess I see what you mean... Would something like the following change
+> be acceptable?
 > 
->>> +patternProperties:
->>> +  "^port@[0-3]$":
->> This goes to ports property.
-> Do you mean I should add another DT node that groups all ports? such as:
-> compatible = "ti,tps23861"; ports { port@0 {...} port@1 {...} }
+> ---
+> if:
+>   properties:
+>     compatible:
+>       contains:
+>         const: nxp,imx94-lvds-csr
+> then:
+>   patternProperties:
+>     "^ldb@[0-9a-f]+$":
+>       type: object
+>       $ref: /schemas/display/bridge/fsl,ldb.yaml#
 
-
-Yes.
-
-> 
-> If that's the case would it make sense to use "^.*$" pattern to allow any name
-> and drop the port label? Is patternProperties even needed in this case?
-
-
-You should use standard graph bindings, so:
-
-git grep 'ref' -- Documentation/devicetree/bindings/ | grep ports
-
-
-> 
->>> +        tps23861@28 {
->> Node names should be generic. See also an explanation and list of
-> Ack. Should I also fix the existing example in this patch?
-
-
-You can, up to you.
-
-> 
->>> +            label = "my_poe_controller";
->> Use useful names or just drop it.
-> I thought this is good as an example? A useful name would be board specific.
-
-
-Then it should be board specific. You add here real and the most
-complete example.
-
+In if:then: you only narrow the existence or constraints, so "if:not:
+.... then: patternProperties:.... ^ldb@[0-9a-f]+$:false". The node
+should still be defined in top level.
 
 Best regards,
 Krzysztof
