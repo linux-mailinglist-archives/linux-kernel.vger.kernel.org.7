@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-772609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C457B294D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD86CB294DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28AB5E0DEA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5178719640D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA9027453;
-	Sun, 17 Aug 2025 19:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8AE220687;
+	Sun, 17 Aug 2025 19:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="n3PyGRtm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZzYhwcz"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30181E47BA
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 19:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D1E219EB;
+	Sun, 17 Aug 2025 19:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755457218; cv=none; b=N79JCFzL7hQOXjMN5z4VeSDYyJvMFJ2niMP2V7s3YHKsxa5jM0L506RF1oDvdTFf2h6e6AtmrnFwaI3bO+aeE2his2Q2jOAkfzY87+g4wcHv1327oqlndUVRr3UU4zjvtjA0xLgIdxEYzaT4mECXGr9mdgcKTtJtt7DBYxgR2f8=
+	t=1755458268; cv=none; b=eARq5BeSz3sVWVROEd9W5toiXvQ0brWIY9S1DTFmpL0eLotoTbvPWqJibjKpnbu9aK8QOfXGsTGCU71QvYQDbDWkVcpxtXxTOO/nRIVanyySxbD+dp8+1hR38et9MYEzq8JwaTXqgiRf7oG200vAeIrQ0HMY9Ea8klBP6LmaToo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755457218; c=relaxed/simple;
-	bh=csRlLWwAyxG0z9swGUI1LX969xN6gyudBnqkJnmj/TI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DhZl2toxYaaC8g3avsknXPyy0squClczmYEYnmU0SCvPIT6y8rr1J1r4WaujH4febUYm3cJWhvQtkdAxn3JcrOqPlTaDlfkeI3pXSDj4YQYezv3R4EkAp/TR1z0kTvwWHoA9xb4ltYVlnJYxpWmRrZd/z6wS8nwmTvOKVjLnutM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=n3PyGRtm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3833DC4CEEB;
-	Sun, 17 Aug 2025 19:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755457217;
-	bh=csRlLWwAyxG0z9swGUI1LX969xN6gyudBnqkJnmj/TI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n3PyGRtmeAXUTAe/pUJ76L1k5xR1uEZ934ueomG3TwPMOeKePCAseCwTWc9NkFZUb
-	 6JTxGToVVVORz5Mh0kc0u6CAlLsBnepzuhrWVHc2vhvivsRsoCe+lMSm2CPkKPW8Cx
-	 jYS/+9cd3z4UZisvN9BrPaPDyPLdeL0sF/PFHaqY=
-Date: Sun, 17 Aug 2025 12:00:16 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: liuqiqi@kylinos.cn
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm:fix duplicate accounting of free pages in
- should_reclaim_retry()
-Message-Id: <20250817120016.8dcc091c5b7114d6993a29ae@linux-foundation.org>
-In-Reply-To: <20250812070210.1624218-1-liuqiqi@kylinos.cn>
-References: <20250812070210.1624218-1-liuqiqi@kylinos.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755458268; c=relaxed/simple;
+	bh=pQmh+/rMC3Khd+GFeS6kXLNZhR3ipIoRR2wz218fZes=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mlF+CjIxvvxA4tXnkFFwgevSH6dZSCTM7EeO7Sjkc9+8Vzn9dkUo47+FRdhwIV3dKUBj897iV0mOBlLSjTqhNQZJGHWWjIY4zpFxv9Q7RGDVUQK2Baw+WQAktXVky74QWzIBtVD48YQlGaBmwo5IaFvqoMEnFkHbTxUc4UNCQDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZzYhwcz; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109bd3f80so6457371cf.2;
+        Sun, 17 Aug 2025 12:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755458266; x=1756063066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W1oewm8//5zzqMzQPl1PxnhJclJc22to6grfT2wZ7V0=;
+        b=GZzYhwcz4EvifjKzbrH886O7GgXnTRLpONeLCZPoip1lfQOxqNs6VtjfLcOwgJ5nYM
+         1Pt+umUueo7vOQ/vZFS6LYenXbFzON5ODtyr4IQo+eRXyqCv2+tMrqBKoToVtYMRRAS6
+         dKqG4YjZ9hDP/aoY7BeMOHnkgyPjfWHRpcYFbvFeWAYvehBcxlHJ5t07bR/ubmii2XxR
+         q0XbTeMI+wTyQfnl/d/FcKVsd1mNT2IisvZ7EiZK57wscAzgcQCy5elR2EjN4D7TlY2v
+         UvNICJr3y6CTvUuMMQfITdyZjZsfyvkEuZ+JB/TDrw4is8F9QO3KtINDqQuxWCuB0n9c
+         PDsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755458266; x=1756063066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W1oewm8//5zzqMzQPl1PxnhJclJc22to6grfT2wZ7V0=;
+        b=So/fhxWTfN9FkmPKU1mYMxgAZMIm8zGxSd9JXMGzywuoVWiNr3ITLJ6phpN89HoEmo
+         qw9WMDYcuDlRS1LnGQ0YerPltzbGFeCXW40PwFjJrU/8mO3MjC9ZU/0x1nIC5YRVCoh6
+         ypB3E8bhmHAKONXTWBNeGjAgRl5nDfEb/JqJog+Gw75sjA8oqWBw+E0lZwUtAMdXxLpr
+         lK0J/Ks1+KlZ2ttdi4Dwr8h2FkL/azMdPBRSh0vnP7q+Nhk2w8QG1YVLXkZU289eMDNy
+         uqmshcfiRm1IEucuxOM35wwSd67pUYgelz27RTg0DBUy5xx0UNOFmTQM1YHx6LKoFoQP
+         YTVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM8CmOpEr3jTtCYCJOpqYgDG3Gz7/4FPD54SBoEbaIRT+xMlWsz6y5iGANokj7E28/mKNAKNr4@vger.kernel.org, AJvYcCWy05vOJnurP4P9Ta/uLbcTllS2nMo0Z/RW0AfV+SmVGjyR8y1X0Jere+01MuR5TN2D9ksrQwVauaNmdX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv6GBbSQV4zV6B03LlXK7O74WUgPwrRA9MnKsmMFqjr4PaoUtB
+	dDbyDOY0j8AMa6iIBzNNgJwqnEhbi93KgczJUlEnNxEKYUZQK5DEHCNCVQITUAOJ+NbXqjtbCp+
+	hZ/FsWuOLX4ycADgnmyA/JPQ+4prJjp0=
+X-Gm-Gg: ASbGnctDZu+0iZHcnK4PKwPanDejzzXD8MDh+p+KdkAqI7IJJT19T4EvMb0f5XXWkwK
+	q1fBjQbtHpfIceZQr6ABdqxmNXkmDfZ9HEJpkYqLuX9YT/Ka+2o8UoAKg1GEbDLBHBi3cWUM3V7
+	C6m7wTosP9Wyk1XK0g7gMSSBmoR9rWbSnWiKxZdGXpI9r/Lu/yL+03FDrLkV6Q0qCNcVoec1vCu
+	93NcA==
+X-Google-Smtp-Source: AGHT+IF5Wjtv/qBVOACz2IQw2CXgLu1+h7c6wqUmWZhjl+mnd3gpUk4Y0JWwOnj24qvzHdOxH2nE0wFcqLN7OlqwAag=
+X-Received: by 2002:ac8:59d2:0:b0:4a9:7fc9:d20d with SMTP id
+ d75a77b69052e-4b11e127d10mr62965111cf.5.1755458266123; Sun, 17 Aug 2025
+ 12:17:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250814193217.819835-1-miguelgarciaroman8@gmail.com> <aKHrttHa0W1RfZjB@secunet.com>
+In-Reply-To: <aKHrttHa0W1RfZjB@secunet.com>
+From: =?UTF-8?B?TWlndWVsIEdhcmPDrWEgUm9tw6Fu?= <miguelgarciaroman8@gmail.com>
+Date: Sun, 17 Aug 2025 21:17:35 +0200
+X-Gm-Features: Ac12FXyVutdXTJcwJlOf5NXD2jbTnjKyPa8rc-hXwfNQUvbsfJF4W10cZ4xXJeU
+Message-ID: <CABKbRoLQQw_E0zFg5nxXwncf1EYA931_L7DUEc4TWvPjBc4j0Q@mail.gmail.com>
+Subject: Re: [PATCH net-next] xfrm: xfrm_user: use strscpy() for alg_name
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 12 Aug 2025 15:02:10 +0800 liuqiqi@kylinos.cn wrote:
-
-> From: liuqiqi <liuqiqi@kylinos.cn>
-> 
-> In the zone_reclaimable_pages() function, if the page counts for
-> NR_ZONE_INACTIVE_FILE, NR_ZONE_ACTIVE_FILE, NR_ZONE_INACTIVE_ANON,
-> and NR_ZONE_ACTIVE_ANON are all zero,
-> the function returns the number of free pages as the result.
-> 
-> In this case, when should_reclaim_retry() calculates reclaimable pages,
-> it will inadvertently double-count the free pages in its accounting.
-> 
-> static inline bool
-> should_reclaim_retry(gfp_t gfp_mask, unsigned order,
->                      struct alloc_context *ac, int alloc_flags,
->                      bool did_some_progress, int *no_progress_loops)
-> {
->         ...
->                 available = reclaimable = zone_reclaimable_pages(zone);
->                 available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
-
-Thanks.  Does this have any significant runtime effects?
-
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -393,14 +393,7 @@ unsigned long zone_reclaimable_pages(struct zone *zone)
->  	if (can_reclaim_anon_pages(NULL, zone_to_nid(zone), NULL))
->  		nr += zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANON) +
->  			zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON);
-> -	/*
-> -	 * If there are no reclaimable file-backed or anonymous pages,
-> -	 * ensure zones with sufficient free pages are not skipped.
-> -	 * This prevents zones like DMA32 from being ignored in reclaim
-> -	 * scenarios where they can still help alleviate memory pressure.
-> -	 */
-> -	if (nr == 0)
-> -		nr = zone_page_state_snapshot(zone, NR_FREE_PAGES);
-> +
->  	return nr;
->  }
->  
-> @@ -6417,7 +6410,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
->  		return true;
->  
->  	for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {
-> -		if (!zone_reclaimable_pages(zone))
-> +		if (!zone_reclaimable_pages(zone) && zone_page_state_snapshot(zone, NR_FREE_PAGES))
->  			continue;
->  
->  		pfmemalloc_reserve += min_wmark_pages(zone);
+El dom, 17 ago 2025 a las 16:48, Steffen Klassert
+(<steffen.klassert@secunet.com>) escribi=C3=B3:
+>
+> On Thu, Aug 14, 2025 at 09:32:17PM +0200, Miguel Garc=C3=ADa wrote:
+> > Replace the strcpy() calls that copy the canonical algorithm name into
+> > alg_name with strscpy() to avoid potential overflows and guarantee NULL
+> > termination.
+> >
+> > Destination is alg_name in xfrm_algo/xfrm_algo_auth/xfrm_algo_aead
+> > (size CRYPTO_MAX_ALG_NAME).
+> >
+> > Tested in QEMU (BusyBox/Alpine rootfs):
+> >  - Added ESP AEAD (rfc4106(gcm(aes))) and classic ESP (sha256 + cbc(aes=
+))
+> >  - Verified canonical names via ip -d xfrm state
+> >  - Checked IPComp negative (unknown algo) and deflate path
+> >
+> > Signed-off-by: Miguel Garc=C3=ADa <miguelgarciaroman8@gmail.com>
+>
+> Patch applied, thanks!
+Perfect, thanks!
 
