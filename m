@@ -1,171 +1,179 @@
-Return-Path: <linux-kernel+bounces-772379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C95B291F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EFAB291FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8B6487E9C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:18:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88331B260ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DAB21147B;
-	Sun, 17 Aug 2025 07:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3F23ABAF;
+	Sun, 17 Aug 2025 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWu2cCZ+"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIzZcZhr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893718C011;
-	Sun, 17 Aug 2025 07:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937201F4706;
+	Sun, 17 Aug 2025 07:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755415102; cv=none; b=I2WsJCmf3tr4zZ4qoJ489n65PydPbRU7dtBCKJde0hb65x6PbkUORkUsQ4NjM6qOcppMzXkgS6Kr11ppBXbfYA+7zP27hmMJ+9g1Cig/BjF94W9RyzQ0jbXPvPCy9Mcz70abIkW85nAh+Z/HBtN2b9hn/I071eU+O90l5lK0AMc=
+	t=1755415151; cv=none; b=E7G6MVcIV+VjRYPUorQl/2i7kjxL7d+ujGXnTfUOjB7YESUs8qAIP5I7HvdOxeZ472FH5BAlAbEW3bIaQwfshUb8d/bTMQtlp8EPe4k6MwtZHdFKfgHnkaK1ZZk6dm0W3vmrvkTa6/99Y2ZMyZEhKbm8gzx/CATC9B25h6Qdrq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755415102; c=relaxed/simple;
-	bh=YYB5cQdBwmhnkPbs3DQCuTcXEQFORaxBGjppJecTYmY=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fQP+YMvc7sAjREW4w4iGvpQ1Ziu4I5efTbvH4VJXayNotTZQFVnmU8zLS69htSHD9oUgp3pYv/fi1QDATQe5532ZFCmsgebASWcUYyrqY45FiIwVFyNPgUoJpYDqNuYKTBZZ8dPuDlIRwJ1wd+jvS2xIm6WK8urmiXeHD2LJb3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWu2cCZ+; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e434a0118so1780272b3a.0;
-        Sun, 17 Aug 2025 00:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755415100; x=1756019900; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MfMC4arSp0JLKDKHa53x0AnEcCZLSQaZ5L9mSSYKNlo=;
-        b=QWu2cCZ+MbttSfY3UbJy9EqBqAz6NaWnbYoHtjVfAWv+OUaw3vpNr1K2ixQhGMz2HY
-         d67m1DaD4SKuyT1UXbI2uyXtNSqfDclAY6RXNFcHDtXhpSdEduXsNjnZLNRJnFHOE6V3
-         Z6LIqVgxL8mkujsIaNTvCu7c2byjzh0hKCZrEz0bGJ7vShKgU9e0btoH3Ewaf05UwI3N
-         AVmNmyJy0UWHvomQi7Lem2ntsq2ulcF/5QVg9x1s8beRBBcO9UdGLitNbWnBir6iLfdX
-         yiv3QI2jj/ybhfiQRO9jpHraPSLh9cN4NLo/Ze1gH8a+Tzjevo2wP8t/2L0ksGy+Nivd
-         PVRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755415100; x=1756019900;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MfMC4arSp0JLKDKHa53x0AnEcCZLSQaZ5L9mSSYKNlo=;
-        b=ThpNvCd/JY9tGqdasvpRCa1WwGAkAKzWDlyurlnv5FzB0G1weZZ8SuSuZgO4EhLsgP
-         wy/cUqlT9hVHR+2TxykQxSMQ7+k22rdCdvo5/N9S+DfIh7mVTTZP47INwJ79z46w5ouJ
-         F/PcXEYj8X1K7L+NqDt6lqPszy6mFACkt94tlmJLLRKfI8aXA0H5GbMOvPN/VSD+vPbf
-         3LjnBcDsw1llH2YrREYDD8dQZL4atLIl7uZco/sSQqmO+wdVkEv7tyYQvL1ERkhSu843
-         8nFNK6VAft4TBgHv+G2JZbxm7y8NRoZSrJS9ePfWOhv4WrbZppFUNSWs0Uba8Xn7yALH
-         zUlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpD4PRqzIXAGTpyEF5DHxBuestlYCsC7iO9sxmjCoNTKE2+CKqYUEv6FEeOxdIWO1o9EtcdmQrQk7eGS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+N4z7mXom9RsjyoW0scyddc8NGYZX9TYt+m+eDJqrhcqVuFbV
-	A83foSNDn3K1wdcaamGunRgZOxaCx3P22DA02nvrbCePB+nwyKNFQrcP
-X-Gm-Gg: ASbGncvp7pe2ExKcojb0pz/n6hyG67LrKm97SEU+PFeTf0tSRhV6iKbuNaWYoSGJruU
-	LjYRUZHvkDCU+2mdiXywu27s/m9UkrX/enIAY3D5FB8aK8823Y/Rf7C9NunOqEoLyT1E5lQAA6u
-	fxa1V+Vp+G970nvKU0jDmJasidNdw6HbmbD7NslnhwdNlyytn0b60vASbryXVSGXBbcvwPMIdQl
-	OYbnKsjurhccQiyOA2e4goTTahnESaHhoLI6QaNhT1jymTuvAiEEGKkC6rs1L7PuDwzBdHoWJ4F
-	4czV9V/FAzis9vNVYGu1SmUw6AYDIrH80G6rFUadpmiWcRAJzIWzOFUkwU1D9AvilLFrH0u+Jz+
-	JDuHdW33MH5UAoySAEUpAxKNzZ00rxhgolYMWdJFyPQbCqkcHiFz2paU4vJBphzVv8i3rrCMM2i
-	BFR4DGidehlOE=
-X-Google-Smtp-Source: AGHT+IGoK2G125/Gd07SfKiVd0IYtohQM2A/WcFW0fC/hyWR9+qft+w0WXzp4P+R55yWZYHcilLI6Q==
-X-Received: by 2002:a17:902:e751:b0:23f:e2e0:f89b with SMTP id d9443c01a7336-2446d5ba169mr100734275ad.3.1755415100120;
-        Sun, 17 Aug 2025 00:18:20 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f8ddsm49343985ad.89.2025.08.17.00.18.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 00:18:19 -0700 (PDT)
-Date: Sun, 17 Aug 2025 16:18:04 +0900 (JST)
-Message-Id: <20250817.161804.1331850210190243752.fujita.tomonori@gmail.com>
-To: lyude@redhat.com
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, a.hindborg@kernel.org, fujita.tomonori@gmail.com,
- daniel.almeida@collabora.com, boqun.feng@gmail.com, frederic@kernel.org,
- anna-maria@linutronix.de, jstultz@google.com, sboyd@kernel.org,
- ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, aliceryhl@google.com,
- tmgross@umich.edu, dakr@kernel.org
-Subject: Re: [PATCH v7 6/7] rust: time: Add Instant::from_nanos()
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250813224240.3799325-7-lyude@redhat.com>
-References: <20250813224240.3799325-1-lyude@redhat.com>
-	<20250813224240.3799325-7-lyude@redhat.com>
+	s=arc-20240116; t=1755415151; c=relaxed/simple;
+	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmMomjObPBSOtPoF3XNmI+wyBoafk11X0VajHabF+/Y1EYP6WOH7LltmyHTf99ULL1Up3BP7VXy1R9QO90AlX3uqXkP3EK8eP2WuI9uBE3pPba9N5PCe5LGqOZ0ut5uTMAA1j4Fxp2KqzaNnWjvFNXaL3Wb0qzlca1tz5ASxLwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIzZcZhr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CD7C4CEEB;
+	Sun, 17 Aug 2025 07:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755415151;
+	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WIzZcZhrGmrVNBZxq2Gcv1VEeQrnro/YDTiryCPMd6mt1e64BabAxeKsbS0uHeo22
+	 Ny5/52BqNnV3tDlTDzpYQfOfc6YSXBJ2m4dxny6LtkDM4BgUo7zFPkSjAQM2ncRVQO
+	 W/p6VvaqCd+euTgxH7EQHRrvbST1sIfzqGfigtVABMstAI/Xok1w6kzPkQep4yWvPx
+	 mqpK7uToLeuiWm+OmFl8f7rR1rDUukrOlxFp/kUL+lvqCHmCcwl/2aHxBzkWDVDUx+
+	 Mq6IIMJFyRL6YM606LS+MtHiYWjlEarzzfrm4Mu3xBE5o206ysYn3ZpmmqO30aCh65
+	 gXqlZzu27L3Fg==
+Message-ID: <fb5083ff-4bee-4a0f-8774-54b492cd9a6d@kernel.org>
+Date: Sun, 17 Aug 2025 09:19:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>,
+ Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+ <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
+ <20250730211151.GA1749004-robh@kernel.org>
+ <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 13 Aug 2025 18:42:21 -0400
-Lyude Paul <lyude@redhat.com> wrote:
-
-> For implementing Rust bindings which can return a point in time.
+On 14/08/2025 16:42, Clément Le Goffic wrote:
+> Hi Rob,
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> On 30/07/2025 23:11, Rob Herring wrote:
+>> On Mon, Jul 28, 2025 at 05:29:37PM +0200, Clément Le Goffic wrote:
+>>> Introduce JEDEC compliant DDR bindings, that use new memory-props binding.
+>>>
+>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>> ---
+>>>   .../memory-controllers/ddr/jedec,ddr4.yaml         | 34 ++++++++++++++++++++++
+>>>   1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+>>> new file mode 100644
+>>> index 000000000000..f457066a2f8b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+>>> @@ -0,0 +1,34 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr4.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
+>>> +
+>>> +maintainers:
+>>> +  - Krzysztof Kozlowski <krzk@kernel.org>
+>>> +
+>>> +allOf:
+>>> +  - $ref: jedec,sdram-props.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{1}$"
+>>
+>> Shouldn't this be 'jedec,ddr4-...'
 > 
-> ---
-> V4:
-> * Turn from_nanos() into an unsafe function in order to ensure that we
->   uphold the invariants of Instant
-> V5:
-> * Add debug_assert!() to from_nanos
+> That's not the case for lpddr bindings, I wanted both lpddr and ddr 
+> bindings to be similar but this can change.
+
+For LPDDR Julius introduced in commit 686fe63b2280 ("dt-bindings:
+memory: Add numeric LPDDR compatible string variant") ddr4-VENDORID
+pattern to distinguish individual manufacturers.
+
+Jedec is not really the vendor here.
+
+Is it the same case in DDR? You have a defined list of vendor IDs (also
+1 byte)?
+
 > 
->  rust/kernel/time.rs | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 64c8dcf548d63..75088d080b834 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -200,6 +200,29 @@ pub fn elapsed(&self) -> Delta {
->      pub(crate) fn as_nanos(&self) -> i64 {
->          self.inner
->      }
-> +
-> +    /// Create an [`Instant`] from a time duration specified in nanoseconds without checking if it
-> +    /// is positive.
-
-Can we create Instant (a specific poin in time) from a time duraiton?
-
-The caller (the 7th patch) creates Instant from C side's Instant? 
-
-> +    /// # Panics
-> +    ///
-> +    /// On debug builds, this function will panic if `nanos` violates our safety contract.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller promises that `nanos` is in the range from 0 to `KTIME_MAX`.
-
-No conclusion has been made yet, but using a mathematical integer
-interval or a Rust range expression might be a better fit here:
-
-https://lore.kernel.org/lkml/87ms9ktoly.fsf@kernel.org/
-
-> +    #[expect(unused)]
-> +    #[inline]
-> +    pub(crate) unsafe fn from_nanos(nanos: i64) -> Self {
-
-If this function creates Instant from C side's Instant, from_ktime()
-might be better?
+>>
+>>> +      - const: jedec,ddr4
 
 
-> +        debug_assert!(nanos >= 0);
-> +
-> +        // INVARIANT: Our safety contract ensures that `nanos` is in the range from 0 to
-> +        // `KTIME_MAX`.
-> +        Self {
-> +            inner: nanos as bindings::ktime_t,
-> +            _c: PhantomData,
-> +        }
-> +    }
->  }
->  
->  impl<C: ClockSource> core::ops::Sub for Instant<C> {
-> -- 
-> 2.50.0
-> 
-> 
+Best regards,
+Krzysztof
 
