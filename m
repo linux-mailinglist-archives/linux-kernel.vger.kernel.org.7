@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-772543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BD8B293E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:43:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2561B293EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADE2D7A4B5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:42:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E26B7ABA6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2F71537A7;
-	Sun, 17 Aug 2025 15:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2C02FE05C;
+	Sun, 17 Aug 2025 15:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JSfGOoSR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwVgzwA4"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B6E2E5D30;
-	Sun, 17 Aug 2025 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980A539FCE;
+	Sun, 17 Aug 2025 15:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755445427; cv=none; b=g74vThKJZCNnGvbSI39lL8WL7NjzISsefIgSsql8qDeiEcPWgNqVzzP57YBJnkiz1xymb26yuCatU1oJiC/1Z4MxDxJoN3vukad79I3CyA8DlOwOWNFLIjw9u4CZSXHXZsogBsyOzn/vKAuajuYadE8NsT3EVTuNM9Vj9hbTydw=
+	t=1755445868; cv=none; b=LxZFtDiqsdCGdEWbTWNSctfBzZ91/GN1TWRr7SsrTaj97Qf291GNyHOKKK1qSx09RmPijXS3leL/tARiQ9RyDV39RjAIB5vDILpViQiXACUUJy4Mzzt4MLkuG1V5W+ZLIOnBaMuSMCg6QuQ4okX4HuS5XByxh8/vKKj337iRN4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755445427; c=relaxed/simple;
-	bh=8Nm+4/xDYbPwKXJ+Q/BkwH554auvDIwd36Ys38lMFro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YW0+bQM/5eBuNBFaFdxk1/R32LJKu725Srp2kjWkMIA9fRrTO+ReT/YD0FZcKmDlF+lnCEeady0dt/zqvKYJiRZQsoL+N5Yu3cI2ckQDh1Fpd4H4pg2l1uIsPNMfr7LkwS9ITOrxtZsIFxl47fTeRrZw/KD0+fG3M1Og3HSJzfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JSfGOoSR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xiYU6zDnLSC5t35wkz5NmkHEQkEt2jtczkb6tSK1COo=; b=JSfGOoSRcSoG8r1NKyPCGBZ8j1
-	WwrHCGh+xWo6bhO0u60E1dwi5pQvKt3mMyrDmrAzY9ArsiIlEBb3M1z06Yog8XPKlDuy+7Mdt83SN
-	OIgSDXGDJM2vSwX6Cgjq2FG1SVWbLreEWQEc9PzyfBhzuQa6T0qGHg4nJuATlRTv7jE4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1unfXb-004yT8-D7; Sun, 17 Aug 2025 17:43:27 +0200
-Date: Sun, 17 Aug 2025 17:43:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH RFC net-next 00/23] net: dsa: lantiq_gswip: Add support
- for MaxLinear GSW1xx switch family
-Message-ID: <af253f4d-b63c-4a05-bd87-f5bd47f3f8e2@lunn.ch>
-References: <aKDhFCNwjDDwRKsI@pidgin.makrotopia.org>
+	s=arc-20240116; t=1755445868; c=relaxed/simple;
+	bh=JR8jbMCs8QxjEzkOj58G229hlMPUMqRiNV2+nI2zpTc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=aj64DifwaZX1DKiTQh5HWLFzqhji9VTtObVYLfBkYKYmc3G+hY/MI9+YMEg4IJ3p6C8KgRBzZzCOUbTIhaJSwoJw7ntC0vPbyxL4ACbR92viKQm5O7vimlNJVPiMCxATQAbVnJ6Fyy7Aov3h8CFoke4OKwUouhUuxBQXphv1+dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwVgzwA4; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323266baa22so2563872a91.0;
+        Sun, 17 Aug 2025 08:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755445866; x=1756050666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QjOJABZCp548naVzq1SVUQpsRTFmVx7Vnw2LNaJgSpc=;
+        b=OwVgzwA4hXT/z39dvOfJPk1T/+IyPZxIcXdfQ+KS0Dw6DkrZdSO4mrg+THaquOOT9/
+         18WT2m3+fgou8u4dGUni19O4a3GmCxrZQOU6QN2CFhRg0f8d0mb65fzVITy7jeS2RZc+
+         Y67NqDz3gOJnlJM4WSL7+k0TtqWhcglyIGm7/E19NVxLlAer+7i1f19tpEKPQsueYLTT
+         34dgmtpi65pt7B0nAb8TS3GNxoxWipXXgiV/kwFPV33yzXpXdOQc20N/ExUwVJq8ga23
+         OZdpE3QTRnSfcB1SR/Sa1964BSxd1AXb7MUb+2uONM3ePCvEY8FHJHoF3LLUeQIKKMTY
+         /9MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755445866; x=1756050666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QjOJABZCp548naVzq1SVUQpsRTFmVx7Vnw2LNaJgSpc=;
+        b=QOSp0uOBs4EyltwDqpHtSyttQSS/BhwKhjeu9q6T8XDyUTCYu2KNk0khXbz0DMspRG
+         LxHvQI2Cx5O+e/v+SPT1JgiiAHZCJ10IxaiQzIUsIbLxg8GCc0WyvJrcaYNE06BObR5U
+         RLhBh9m7uknP/P7gJvr/zOoTQ+R4wr3IWkyqKTdBqfLKGdDVD/sKYATfnmvOYM5tK9yz
+         2Tmyq1SsiVH6gOrU7wnjS2Om2zkCn1N/QxojPivXwLPXAluekYpArmnyfNkM2v71xZKv
+         BYheb6kVkNZUQWyvKNsPpEffeCNQ1A+1OFgFeBcdyqUtRnUr/XT7OnrPTSDv1Qp0nxzY
+         9xbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXD6M3rLp7gQTyq6aEoftRzjlqLlZAWwLa2YRaechT6YhZ9Ztl8+aRZ64YtzK2polI0TiYkE/ggAygKTqc=@vger.kernel.org, AJvYcCXXpT1OhN2NJv8by/P9iwarLwYomA6Xxp4RwKk8l26pUWqY4JjVR8drwScu4nkowq4ySgeZemWpl5KW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLyUFL3ysnEOFj4EGHBdCDmaUNU7/Q8tuOFDesus9nWoM41SCB
+	u/qIWjgiVR98Yaq/3f12VDOlII9kNMEnboPxJf9Hwg3UsRZMIXUoAeIq
+X-Gm-Gg: ASbGnctVC24YD9lzMCtcS0M2dfNnTe9E/OELSK5LqZRcXmsBgzVP7LmwWHLp0AfLHrt
+	fA08T5yqKXp57nNSe9xSxCaKuMT0VomMGtEkZ3ILRtmz0xKfFdebYX6mv4Xud7hES33sl9jiWKq
+	ihNMA1ons3/HAC+fwlft2J2ftXhKnZKxc8pJ6E5pIkWYblWsppaDtRtoBcDYyH3Eqgw3naGS9/5
+	ED5M0+vNJggxByj+TX2+ZBmVTtq+H+agZmgeihObUneQ/lt+QAFsCRDIiaYHydPNqBvQjfDKDD1
+	zSmWbmG78A4LZ11Z6CvyKPAF9MKVXWLzoDb+GO5sD+r0ZDP2edqJbU7LqQUVRxW5TlkazXnbDCx
+	WMXr6kA1xx+dsCL/5t4U=
+X-Google-Smtp-Source: AGHT+IHpRWgCYbDi4joXJa+E8544/3ray+wLKLWD1YuD6ZGN7D13+dewr7cVSoJHVCWGfA+uB3mVkw==
+X-Received: by 2002:a17:90b:3b8c:b0:31c:3651:2d18 with SMTP id 98e67ed59e1d1-3234dc64767mr9865139a91.16.1755445865738;
+        Sun, 17 Aug 2025 08:51:05 -0700 (PDT)
+Received: from fedora ([2804:14c:64:af90::1000])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45292dc1sm5221495b3a.50.2025.08.17.08.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 08:51:05 -0700 (PDT)
+From: Marcelo Moreira <marcelomoreira1905@gmail.com>
+To: cem@kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v2] xfs: Replace strncpy with memcpy
+Date: Sun, 17 Aug 2025 12:50:41 -0300
+Message-ID: <20250817155053.15856-1-marcelomoreira1905@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKDhFCNwjDDwRKsI@pidgin.makrotopia.org>
+Content-Transfer-Encoding: 8bit
 
-> This is submitted as RFC to gather feedback on the approach, particularly
-> regarding the prefered order of things, ie. should I first introduce all
-> features (some are already supported on GRX3xx), then split into MDIO and
-> common parts, then add new hardware like I did now, or rather first split
-> into MDIO and common parts, then add new hardware support and then new
-> features would follow (maybe even in follow series)?
+Following a suggestion from Dave and everyone who contributed to v1, this
+changes modernizes the code by aligning it with current kernel best practices.
+It improves code clarity and consistency, as strncpy is deprecated as explained
+in Documentation/process/deprecated.rst. Furthermore, this change was tested
+by xfstests and as it was not an easy task I decided to document on my blog
+the step by step of how I did it https://meritissimo1.com/blog/2-xfs-tests :).
 
-I think the first 8 patches can be merged as a series. You can see
-these are preparation for new features, but don't actually add any new
-features, so make a reasonable set. 23 patches is too many for one
-set.
+This change does not alter the functionality or introduce any behavioral
+changes.
 
-I have not looked at the remaining patches.
+Changes include:
+ - Replace strncpy with memcpy.
 
-	Andrew
+---
+Changelog:
+
+Changes since v1:
+- Replace strncpy with memcpy instead of strscpy.
+- The change was tested using xfstests.
+
+Link to v1: https://lore.kernel.org/linux-kernel-mentees/CAPZ3m_jXwp1FfsvtR2s3nwATT3fER=Mc6qj+GzKuUhY5tjQFNQ@mail.gmail.com/T/#t
+
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
+---
+ fs/xfs/scrub/symlink_repair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
+index 953ce7be78dc..5902398185a8 100644
+--- a/fs/xfs/scrub/symlink_repair.c
++++ b/fs/xfs/scrub/symlink_repair.c
+@@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
+ 		return 0;
+ 
+ 	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
+-	strncpy(target_buf, ifp->if_data, nr);
++	memcpy(target_buf, ifp->if_data, nr);
+ 	return nr;
+ }
+ 
+-- 
+2.50.1
+
 
