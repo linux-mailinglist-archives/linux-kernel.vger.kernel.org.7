@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-772472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1599CB2931F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DACEB29326
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E93483BD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3791B23BFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D478241CB6;
-	Sun, 17 Aug 2025 12:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C911D284B5D;
+	Sun, 17 Aug 2025 13:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFgvmGuL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="mfUsreZ8"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FF8217730;
-	Sun, 17 Aug 2025 12:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF17923A9B4
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 13:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755435165; cv=none; b=qk4ychvWcmyXhU3EeA6LUd4YXkQS8/9ZOrxSXmM3IVXSQGHMinoI4iCpcMp9qdIvDoIgPxwoNCl0DiEFKddjhhds+tMvwiF9MCVZJ9Se4eYq2wzegr+cQxLmShX+G+X1AG6ByJZGddV5LLV2EXTDX8yaaHmcPtM+ICD0xdQbXtI=
+	t=1755435967; cv=none; b=Rg4FPDRWPoRcSZ2K+OzTelzzfcnMTOyk4iidCnZZMPyf5MWNkegRtEShBpl+Jd9k2hFCpwIFtMOsRrLKkkJNTGMAZ9U1EF5l0Btf3LpISTe+havpio6fbaxi3E9i3mGrU26oS3X51Vvgg2Vjmd3EDqfokFBiPCGv2tHrWxrTFyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755435165; c=relaxed/simple;
-	bh=oV3+jyn62XLBXLWVu/rJ9L9fudX4FVawuqdm6lJhq7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+3RAB/vHul4/6ggZN2CALcJjBEpwLIdBxZKC0J0vvzKGaXW7vIQdTH91f3r0m17zPiJ0pfziWCMR9IPGha6qpp58HZmRbx/CiXmeK31woz9qb+U28gIcwbbosBloBaLmgbl+NIcTqgQYTpDUAn2iVOAUY23oSepKHR4+7YOx38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFgvmGuL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A31C4CEEB;
-	Sun, 17 Aug 2025 12:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755435164;
-	bh=oV3+jyn62XLBXLWVu/rJ9L9fudX4FVawuqdm6lJhq7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFgvmGuLRnMlhs3uzPT6dzO/0601X701xh5wUSGa8kB8p+tbmNGNUddGn02r2bFvK
-	 nQSdzm+3FQxNehb0XhcfGlcqXNoRKx5mKGkhj8OJbVkcsB8i49ha3ooOGPSKBWVqHZ
-	 Z/GEb20mBg5Un/U8FhC1srOSpgEwMhNE9ZOA1uuxiqOvP4IeulXdD10W6swrR26K64
-	 67kZ9kikUi6lWB1I+YaH+cQe+x03fcJNSE/TJ1dxeXQAmGjeCMquD7k5zf0TicImqC
-	 Ue9K0igLzTCgEOF3BEkWxEicdSCuVZALimhgpPA6nuSYAFqAgUKcZCXkISYNOiWh6u
-	 KFHJ3WDqiE11Q==
-Date: Sun, 17 Aug 2025 14:52:39 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v6 3/9] kbuild: extract modules.builtin.modinfo from
- vmlinux.unstripped
-Message-ID: <aKHQl_XC63-c-81L@example.org>
-References: <cover.1755170493.git.legion@kernel.org>
- <16859d94a2c8e4b1bb305defdb8b7be238499c66.1755170493.git.legion@kernel.org>
- <CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com>
+	s=arc-20240116; t=1755435967; c=relaxed/simple;
+	bh=3PVQz1Npck8Dwovy/OX7P/UR/4Jfxuhm/zBlVDMlZZw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WCgLpaSleDyvlqhGizgeL8t+89nocLyIjv5evt9DGACI+YljJpDeCBn+uNjJTQRD0MzHI1WnAme0bbeR1vjHhGmiBJbBi2x0QIVDtwn8rtRULRtf3GNFxpshhKnnuDKcObBVIHRGiSOSen4hP/Stc6frt39MbqI3bMiM2yda4Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=mfUsreZ8; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e4147690so2267330f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 06:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pinefeat.co.uk; s=google; t=1755435962; x=1756040762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+00MvInGtT/2ob9Rq8Xm3oOT1gPpF55RwkoNwuBCzSg=;
+        b=mfUsreZ8VrW7YFhDwKFrIaVQdi++g2JN4tAf7o3zqt6SOm/CmMxhuc+PlPCXDWjQP8
+         RiSP05NKSZTKkfVdLf2Sc8DpxVGNhMuOCBhxMARo/dN4EJDga9oMQale8LYZZtWdH4kV
+         Tv+4Ni3UZ+Zt8wm1WaF2TI2WBvGwVkgTGQXztGJEEWbcn6pkRqtgT0lBgC+gMitaGWSN
+         cstWN6WLZifJrYLYUflw+Wdq8IyoyesAhdiCRUx5UhakpqWZ/zCqbJ2h05Stolx83Aqg
+         p2z5k1j2Gab8I9ZG9gGbKffMfq8Fxe1/ZdrYkXbXIIVtDUCd22vCE/at1FqbL1ruTfEw
+         Zc6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755435962; x=1756040762;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+00MvInGtT/2ob9Rq8Xm3oOT1gPpF55RwkoNwuBCzSg=;
+        b=TESNenNI5wUSp0MKEEOH6r0J747MdzygCgmQ+LWcH3C1n1j/8upTWerUtq67OD8utw
+         mniCtE1HR/aw4YECdxU2QMyys3c1fP+Rjc6j2clZH1mzWe5q9Ns/bSyKlOv2uvs67CTl
+         uvYwJR//DbJBmwF7oe/2HmANyoXEFutNsWos1qsQeKpBzV/kMSTa3hnexDrMvoB/ybRh
+         Ee6M8Wtbrv/zzXBVeSyzXnInqIlbGs7eYU7WLs2aHRiKqrpq2zBj71Vm7MzvdQD4bFbY
+         7g2K6agcAvEnI6+RG1WET0VqSyO57yeg7AzLqQRuoWx/SwjgY4PncS6sr+oTh5qlHCS4
+         64FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv1/0Fmh8Pu4nWQrzVeuA1TynwHVb8dSY8DHbhhTyB8jZKDYCW9e+452RORsyRvzmGq3LImkH9nEvWnwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHIXB89mlWGUyM14CYxdFEvxC7Ch1DMmu1vVoDaGXFJbU6GQtu
+	2iiZ6wgnK09yEgvCluklW6Se3WZzpfor9dgtmh1J4HOQy+E/31B9SOGzXq+CnI1bgIXTMSZ5lEJ
+	87rO3GL6HnQ==
+X-Gm-Gg: ASbGncsHZ/dJG3jqrYTeA4uWE+2/q5tB1GNkV+zoBGLUxI2j0BY8d9AcTfUhYDrzH48
+	NBBHvfRaURmP04cemyvXvZ7XUVyrMu7m8pRwArD0GLciuq3iAQLoOK4e336nvhGIzV6OUv9ZDPI
+	zXV3EDvA9CVM+9w2NsiAD8cWBPFAjqjY8E5bCivY0nFJic1XIdpFuMHow5bdZagoAJhF9u5OtQz
+	fBBJ+gpgNScb2p7VaLnjckBhLTDg9ER7Ar1wpy0OGq1sTX2iwWyf1Nm0m2MDv5EmZhbwzmkB8Jc
+	sxnqKUnWFzelZTyetCUdLVWDY1d8l8GQuBjJM03xiW5iuCdl+EMIq1VY5ToontoBd++7Iq6DUyy
+	xifyBP4GoPvcUAXXcLTCZd/NlGqK6/h4dengy
+X-Google-Smtp-Source: AGHT+IEBquoYzqH1BGvf/UZy7kHktiJyWv/AzngI7aknei31lWrO45ZcaBJaFyvTvIKsx0U0NI0g2A==
+X-Received: by 2002:a05:6000:4287:b0:3b9:16e5:bd1c with SMTP id ffacd0b85a97d-3bc6a55e8bfmr4038608f8f.31.1755435961484;
+        Sun, 17 Aug 2025 06:06:01 -0700 (PDT)
+Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:b4c0:f0fd:db4c:31dd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb93862fe7sm9235729f8f.64.2025.08.17.06.06.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 06:06:01 -0700 (PDT)
+From: Aliaksandr Smirnou <support@pinefeat.co.uk>
+To: mchehab@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aliaksandr Smirnou <support@pinefeat.co.uk>
+Subject: [PATCH v3 0/2] Pinefeat cef168 lens control board driver
+Date: Sun, 17 Aug 2025 14:05:47 +0100
+Message-Id: <20250817130549.7766-1-support@pinefeat.co.uk>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com>
 
-On Sun, Aug 17, 2025 at 09:34:52PM +0900, Masahiro Yamada wrote:
-> On Thu, Aug 14, 2025 at 10:08 PM Alexey Gladkov <legion@kernel.org> wrote:
-> >
-> > From: Masahiro Yamada <masahiroy@kernel.org>
-> >
-> > Currently, we assume all the data for modules.builtin.modinfo are
-> > available in vmlinux.o.
-> >
-> > This makes it impossible for modpost, which is invoked after vmlinux.o,
-> > to add additional module info.
-> >
-> > This commit moves the modules.builtin.modinfo rule after modpost.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> 
-> I got this report from Stephen
-> https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
-> 
-> Please make sure to have no regression.
-> If this is difficult to solve, please discard this patch,
-> and consider a different approach.
+This patch series adds support for the Pinefeat adapter, which interfaces
+Canon EF and EF-S lenses to non-Canon camera bodies. The cef168 circuit
+control board provides an I2C interface for electronic focus and aperture
+control. The driver integrates with the V4L2 sub-device API.
 
-My emails must have gotten lost somewhere. Because I replied to that
-message right away and provided a fix. Stephen even applied it to the tree
-later. You were in CC whole time.
+For more information about the product, see:
+https://github.com/pinefeat/cef168
 
-https://lore.kernel.org/all/20250730090025.2402129-1-legion@kernel.org/
+Changes in v3:
+ - removed vcc-supply property and example
+ - fixed incorrect type in assignment
+ - fixed cast to restricted
+ - removed unreachable code
+ - changed comparison to NULL
+ - fixed indent in commit message
 
-Tomorrow I will make a new version with the corrections I missed. But now,
-I'm not sure to which tree I should send it.
+Link to v2: https://lore.kernel.org/all/20250811213102.15703-1-aliaksandr.smirnou@gmail.com/
 
-> 
-> > ---
-> >  scripts/Makefile.vmlinux   | 26 ++++++++++++++++++++++++++
-> >  scripts/Makefile.vmlinux_o | 26 +-------------------------
-> >  2 files changed, 27 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index e2ceeb9e168d..fdab5aa90215 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -96,6 +96,32 @@ targets += vmlinux
-> >  vmlinux: vmlinux.unstripped FORCE
-> >         $(call if_changed,strip_relocs)
-> >
-> > +# modules.builtin.modinfo
-> > +# ---------------------------------------------------------------------------
-> > +
-> > +OBJCOPYFLAGS_modules.builtin.modinfo := -j .modinfo -O binary
-> > +
-> > +targets += modules.builtin.modinfo
-> > +modules.builtin.modinfo: vmlinux.unstripped FORCE
-> > +       $(call if_changed,objcopy)
-> > +
-> > +# modules.builtin
-> > +# ---------------------------------------------------------------------------
-> > +
-> > +__default: modules.builtin
-> > +
-> > +# The second line aids cases where multiple modules share the same object.
-> > +
-> > +quiet_cmd_modules_builtin = GEN     $@
-> > +      cmd_modules_builtin = \
-> > +       tr '\0' '\n' < $< | \
-> > +       sed -n 's/^[[:alnum:]:_]*\.file=//p' | \
-> > +       tr ' ' '\n' | uniq | sed -e 's:^:kernel/:' -e 's/$$/.ko/' > $@
-> > +
-> > +targets += modules.builtin
-> > +modules.builtin: modules.builtin.modinfo FORCE
-> > +       $(call if_changed,modules_builtin)
-> > +
-> >  # modules.builtin.ranges
-> >  # ---------------------------------------------------------------------------
-> >  ifdef CONFIG_BUILTIN_MODULE_RANGES
-> > diff --git a/scripts/Makefile.vmlinux_o b/scripts/Makefile.vmlinux_o
-> > index b024ffb3e201..23c8751285d7 100644
-> > --- a/scripts/Makefile.vmlinux_o
-> > +++ b/scripts/Makefile.vmlinux_o
-> > @@ -1,7 +1,7 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> >
-> >  PHONY := __default
-> > -__default: vmlinux.o modules.builtin.modinfo modules.builtin
-> > +__default: vmlinux.o
-> >
-> >  include include/config/auto.conf
-> >  include $(srctree)/scripts/Kbuild.include
-> > @@ -73,30 +73,6 @@ vmlinux.o: $(initcalls-lds) vmlinux.a $(KBUILD_VMLINUX_LIBS) FORCE
-> >
-> >  targets += vmlinux.o
-> >
-> > -# modules.builtin.modinfo
-> > -# ---------------------------------------------------------------------------
-> > -
-> > -OBJCOPYFLAGS_modules.builtin.modinfo := -j .modinfo -O binary
-> > -
-> > -targets += modules.builtin.modinfo
-> > -modules.builtin.modinfo: vmlinux.o FORCE
-> > -       $(call if_changed,objcopy)
-> > -
-> > -# modules.builtin
-> > -# ---------------------------------------------------------------------------
-> > -
-> > -# The second line aids cases where multiple modules share the same object.
-> > -
-> > -quiet_cmd_modules_builtin = GEN     $@
-> > -      cmd_modules_builtin = \
-> > -       tr '\0' '\n' < $< | \
-> > -       sed -n 's/^[[:alnum:]:_]*\.file=//p' | \
-> > -       tr ' ' '\n' | uniq | sed -e 's:^:kernel/:' -e 's/$$/.ko/' > $@
-> > -
-> > -targets += modules.builtin
-> > -modules.builtin: modules.builtin.modinfo FORCE
-> > -       $(call if_changed,modules_builtin)
-> > -
-> >  # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
-> >  # ---------------------------------------------------------------------------
-> >
-> > --
-> > 2.50.1
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
-> 
+Patches:
+  dt-bindings: Pinefeat cef168 lens control board
+  media: i2c: Pinefeat cef168 lens control board driver
 
+ .../bindings/media/i2c/pinefeat,cef168.yaml   |  48 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   8 +
+ drivers/media/i2c/Kconfig                     |   8 +
+ drivers/media/i2c/Makefile                    |   1 +
+ drivers/media/i2c/cef168.c                    | 335 ++++++++++++++++++
+ drivers/media/i2c/cef168.h                    |  51 +++
+ 7 files changed, 453 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
+ create mode 100644 drivers/media/i2c/cef168.c
+ create mode 100644 drivers/media/i2c/cef168.h
+
+
+base-commit: 2b38afce25c4e1b8f943ff4f0a2b51d6c40f2ed2
 -- 
-Rgrds, legion
+2.34.1
 
 
