@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-772404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA59B2923D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:28:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067F8B29240
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C6A1B253A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:28:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6335D16452D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA7D219302;
-	Sun, 17 Aug 2025 08:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF39219302;
+	Sun, 17 Aug 2025 08:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXkredwL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l3PmP9kP"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B997B3176F5;
-	Sun, 17 Aug 2025 08:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26667081F;
+	Sun, 17 Aug 2025 08:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755419299; cv=none; b=IrybDmqx/JYYxax7wjF3lb5zsSIeV0bsOSg1ndmlzWRzACEhkrzNGIZqez5ncX7xLHdvA5lx8x/zOeFvs1SK/1aQQhdCwCyGYUHLHSkjUrFqw3WZv9M7RQKJnMN9snDiUNwePTLCt2mAgTwShB9r8XTIdPFDkjIyTr659xNlpdo=
+	t=1755419462; cv=none; b=ibAy610CIF+zoLuLZFX5Qa6GQMwvlp0AYgqjWfMVTjKoHtO1APq+UyiE3ySGb9Am950IdrM/6JeGUdmNSZTaufikm745AkWL5n8zi3IzE7Ewe+UUiUksl834gPH1KVUZuXq7cBhAfrf74kMa/2yGRoOpCJAN6lnqMjjhV/fBNyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755419299; c=relaxed/simple;
-	bh=Zefgybi/8uhiiRyM5T1/XbLvYo6nNToH9kozBvIgikU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MJMMsk0WajE0P9T6Z8dDCCTotSSPnHuhnJvPb5ah6RBf9Y2Jm34nK7iZKFmUrWqmFuOsmVUaG8zc3zrxl2yNqZG+i92Zhhpn/52j2r5V5X5SxVquBYApFQfOj5g1iwZYnKnQoa1AihyjMqwF21AxsG3PnDncTUyoHA8bDI9DK/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXkredwL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD7BC4CEEB;
-	Sun, 17 Aug 2025 08:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755419298;
-	bh=Zefgybi/8uhiiRyM5T1/XbLvYo6nNToH9kozBvIgikU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hXkredwL5Y6o5sZHYXxnAh9+RzAKKW4LeBltbkL0HYmUnJTvWl3Jbj3DV3wcirC5i
-	 LRnHfW7ok9G6K0v185orfJUwxgf6M3c67wboO2g4cZYIEguyREiXseMCJLNU2z+bpc
-	 CNO/TssXgLagcZt66DisMIesfQjL/lN2PImCJaXE7Jy/8nXswkVYgf2cyj3ymq5z6g
-	 cSKt6Zg4WGMoTglcJFDmuczCjEBlBWzd82Msqf4vU+1zeQPzmi7CxyweBeDnIlMg3r
-	 OLrhWcIfXpsbbFCXMfB54XEwIz2y7fKQDecpVAyoOYDkbISAdw5gWQl9BXWURkbrQk
-	 hKFWCxoSSMe1w==
-Message-ID: <b9c8d571-e0ce-4703-8748-96f7ca4a59bf@kernel.org>
-Date: Sun, 17 Aug 2025 10:28:14 +0200
+	s=arc-20240116; t=1755419462; c=relaxed/simple;
+	bh=aXDOIfl6Yp/gQN+k8xyuM5d5hOup3DJ04o2A9M+e3ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIwny4+a/sFqpCHnU9XXNUQvGm0sSp9RHy16SsAAzUYyuLP42FPtN/5DaCTAArvGL6Dn+MFZNZpQiWbjoeUHW8ycIfqsU04s+28+OyUCdD4sXqjicMTn3YbeYzuxXlQGPPGQijyBFXKm6ONQ0HyR7r2jtp2OqlGLmZQC0Ad4nOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l3PmP9kP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755419453;
+	bh=aXDOIfl6Yp/gQN+k8xyuM5d5hOup3DJ04o2A9M+e3ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l3PmP9kPr7gF2QOPiPA8AiC2+g8PJ3dAtUdsd5f3cblloU3KVAQgBImUbBBoeoWho
+	 x6eISNL3jSxlMeW3KnPoALGFiNWobM64rGWMmffRohZprQ2BFcXnDKyXj/T16Ip65y
+	 TB3MWozHemok/0+0SSEdERd4b3kwPDV0MIvZkWv8=
+Date: Sun, 17 Aug 2025 10:30:52 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH 2/3] selftests/nolibc: don't pass CC to toplevel Makefile
+Message-ID: <ebb84a9c-8771-4791-8a81-b615cecec7c3@t-8ch.de>
+References: <20250719-nolibc-llvm-system-v1-0-1730216ce171@weissschuh.net>
+ <20250719-nolibc-llvm-system-v1-2-1730216ce171@weissschuh.net>
+ <20250721025627.GB1886@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] media: i2c: imx585: Add Sony IMX585 image-sensor
- driver
-To: Will Whang <will@willwhang.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250816055432.131912-1-will@willwhang.com>
- <20250816055432.131912-3-will@willwhang.com>
- <7e27b69b-40df-4ac4-aebf-dbd00044b71b@kernel.org>
- <CAFoNnrxbzcF+YranTL8Von3BkROhq8X=RX5sa90M6PYgS_vjkQ@mail.gmail.com>
- <daa45e3e-84a6-4c39-854a-1429fb68d415@kernel.org>
- <CAFoNnrw4yRKGL_m0=g14C583o13ptC6e84TN---ABdyeg8jMhg@mail.gmail.com>
- <04fd00bb-beb4-4f35-88fb-bf1cc7691505@kernel.org>
- <CAFoNnrxd_2=9aJqo9yQ8bcDsyW9pVRCfmUU6tOHoeX5wEB2AhA@mail.gmail.com>
- <11e35902-a19a-44b2-b816-15a495048d41@kernel.org>
- <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250721025627.GB1886@1wt.eu>
 
-On 17/08/2025 09:53, Will Whang wrote:
->>>
->>> And in all the examples I provided to you, this is the only IMX415
->>> that has the logic inverted.
->>
->> And? All other drivers, camera sensors, hwmon, iio, codecs and whatnot?
->>
-> Are those Sony image sensors?
->>
->>> I can apply the same logic and say this is buggy and wrong.
->>
->> We are not going to talk imaginary things.
->>
-> So you can imagine this code is buggy even though I tell you this is correct?
-> Of course I tested it already.
+Hi Willy,
+
+On 2025-07-21 04:56:27+0200, Willy Tarreau wrote:
+> On Sat, Jul 19, 2025 at 05:38:28PM +0200, Thomas Weißschuh wrote:
+> > The toplevel Makefile is capable of calculating CC from CROSS_COMPILE
+> > and/or ARCH.
+> > 
+> > Stop passing the unnecessary variable.
+> (...) 
+> >  # Execute the toplevel kernel Makefile
+> > -KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CC=$(CC) CROSS_COMPILE=$(CROSS_COMPILE)
+> > +KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE)
 > 
->>> Do you understand this is writing the GPIO directly and has nothing to
->>
->> It is not. Again, you are mixing logical level with line level. You
->> never responded to that part, you never used actual arguments except
->> some vague statements like above.
->>
->> You do not write GPIO directly.
->>
->> Each driver is supposed to use logical level.
->>
-> hmm? Code in the tree disagree with you? Are you going to arguing that
-> all the 90% of Sony image sensor drivers are old and buggy?
+> Here the goal was not to help the toplevel Makefile figure CC, but rather
+> to permit the user to override it, and it's also listed in "make help",
+> and even used in cc-option.
+> 
+> I understnad that you're trying to avoid forcing CC to clang when
+> building, but in this case, what will CROSS_COMPILE contain ?  My
+> guess is that you intend to make CROSS_COMPILE point to the gcc-based
+> toolchain, and have CC point to clang for userland only. Is this the
+> case ?
+
+Correct.
+
+> I think I'd be fine with this, but then we need to make it
+> explicit in the help message and fix the current one, possibly just
+> with this:
+> 
+> -	@echo "  nolibc-test       build the executable (uses \$$CC and \$$CROSS_COMPILE)"
+> +	@echo "  nolibc-test       build the executable (uses \$$CC)"
+
+I don't think this is correct. $CC itself depends on $CROSS_COMPILE
+through tools/scripts/Makefile.include.
+
+> 	@echo "  libc-test         build an executable using the compiler's default libc instead"
+> 	@echo "  run-user          runs the executable under QEMU (uses \$$XARCH, \$$TEST)"
+> 	@echo "  initramfs.cpio    prepare the initramfs archive with nolibc-test"
+> 	@echo "  initramfs         prepare the initramfs tree with nolibc-test"
+>  	@echo "  defconfig         create a fresh new default config (uses \$$XARCH)"
+> -	@echo "  kernel            (re)build the kernel (uses \$$XARCH)"
+> +	@echo "  kernel            (re)build the kernel (uses \$$XARCH, \$$CROSS_COMPILE)"
+
+I'll fold this into the last commit of the series.
 
 
-I checked now and both driver and all users of imx219 are wrong. Don't
-ever use that as an example.
-
-And you doing THE SAME as imx219 is also proof that your code is wrong.
-
-
-Best regards,
-Krzysztof
+Thomas
 
