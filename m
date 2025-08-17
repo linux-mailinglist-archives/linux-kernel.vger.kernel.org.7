@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07FBB291B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA74B291B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C30C17B626
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48350203B36
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB85620458A;
-	Sun, 17 Aug 2025 05:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F4A20468E;
+	Sun, 17 Aug 2025 05:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFTXjdD+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pukss/ny"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C051EEF9;
-	Sun, 17 Aug 2025 05:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D976253A7;
+	Sun, 17 Aug 2025 05:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755410006; cv=none; b=FaOyI8rYOZcT6BEtVNUQ3DIuO8ImtJq2fHb00qUBI8t2E8FqpePJck6qJv5QPwHbM9WLAvTAypoKLJkzPXJWR/KwxrCAxwlI8fkbvXnTCb0D/nl2wV8WNbJUECXt+8Fpigpeo2g02dYowK6Pk+HN4M2i1ZWVjKopfzhEG+xzYxc=
+	t=1755410320; cv=none; b=qrVPQ7EdyqOKpGacNA3ahOVVdIbKfdJJPuJxGbEkdTDIJxDCPbQIcP+nds+JzdCxsFqEGgY8beNl/gvT+eRU4Zql4UwwkDqDHzIgk1SQKcdxpKP7DVqor0TVveqcfsR8FZMwzDo5An6SMgPIUwVN9z9VLyKkWavQo78OL8chEPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755410006; c=relaxed/simple;
-	bh=CHAyhki5L7Mzq3s56yJYrOkTQB3/awW/UGDQmcXfgNY=;
+	s=arc-20240116; t=1755410320; c=relaxed/simple;
+	bh=kVjCOVtPxPkKBG13ruCUgSjZutxtffiOYNecBVrhCsM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HLy2XIGI4i5yAv4zw8ClGyDA/IY15lzlCUve7Sd+YIJaravcl60aRRfmAwaZJF3r+BQvF0JbEhW72Ou23r72RIBSwKfXGZDZBl2z3/B0uGZKM3e/fQKYim0zq7zKDemG4gFoTnsOQpfWE34EuVQcTGdvH7/DYIs7VlQOGcagkEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFTXjdD+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE48C4CEEB;
-	Sun, 17 Aug 2025 05:53:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=mHOQ/m088MEQdMOPXTByCEn1kXP0YCjyYjebiEVKJYQ6vbMFR2QEZapB5pqIeQQtImPnW4bwjOP10aymcbswgFO/o7K24lX35Ewxaib9XWlk5Gy3yZIz4IyIYDw3YvbSr+8ePChTlrwemu3tS1uOfJGM1lHLKi4a1PW04DoUOfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pukss/ny; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9753CC4CEEB;
+	Sun, 17 Aug 2025 05:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755410005;
-	bh=CHAyhki5L7Mzq3s56yJYrOkTQB3/awW/UGDQmcXfgNY=;
+	s=k20201202; t=1755410319;
+	bh=kVjCOVtPxPkKBG13ruCUgSjZutxtffiOYNecBVrhCsM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JFTXjdD+JUdRe+wCLt5Qu4bjXfzfmPLaKH50KqEKxX6hJybmm8GEWVrNyOiudNR5L
-	 ljx1jwYSoAcDifQcuZ0wnm5CeA8/tFzcHRkvl9JLPDwhFChgpELdFTLpJFXwjyEVNu
-	 4JrnVfiwB8FkkVjRjUa6QjODixBQyliyQPIk0s2pvMwJGKxEZcIGS/TL4d8Vqa/W7/
-	 bW5d6Vw4WI87K0m+4pLWlOzlurJFTpdZVZtg4GMEWc7fohvtMxZXXl/HZ1zmFcWl4v
-	 GNt9FmRTPv8WeuvZ4apq2o4n8VUWjDrdSk2kI/ZVFMMy3cBXQy2eZdI0xITS32mOmM
-	 yXoiyi9FjYXVQ==
-Message-ID: <38b4d3fe-a716-4cc2-8c05-1891606f4c85@kernel.org>
-Date: Sun, 17 Aug 2025 07:53:19 +0200
+	b=pukss/nyQ2Q3HHl6r6++EUnmYnRM62KpZb1WCKb+3SNOCkxIGyI/xlqxAUTBx1mpT
+	 /msCYg1I9YlQWHoNN3ifopa/4WewHc+fsWDtUHu5MkBLTp8n1NPpzzsMoIY4wNK17L
+	 D3SuDA6PQlkOoUiWDHLhBFaX1QQhGdE7YdNTHB9MZOeudTd5KM6Z7aTzS5cVz/FVah
+	 kV2Ge9xbha3HKM3ZS+HE9+xRPIHQLISh85e0dGjG4skhQb8IIloI/ganH3Ka42KDcp
+	 2zyJr1ckheKtCXeTGzGyBHbnqH5LHj2DVdIUcHQRkcFziNef+XNzRNvdfWQKg/R8of
+	 BvAHhEChRTADg==
+Message-ID: <bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
+Date: Sun, 17 Aug 2025 07:58:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: s32g: Add device tree information for the
- OCOTP driver
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Chester Lin <chester62515@gmail.com>
-Cc: Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linaro-s32@linaro.org,
- Srinivas Kandagatla <srini@kernel.org>
-References: <cover.1755341000.git.dan.carpenter@linaro.org>
- <9b3874c6aedf87f78cc6438fe840433162b06445.1755341000.git.dan.carpenter@linaro.org>
+Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
+To: Andreas Kemnade <andreas@kemnade.info>,
+ Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
+ <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,52 +101,186 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <9b3874c6aedf87f78cc6438fe840433162b06445.1755341000.git.dan.carpenter@linaro.org>
+In-Reply-To: <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/08/2025 12:47, Dan Carpenter wrote:
-> Add the device tree information for the S32G On Chip One-Time
-> Programmable Controller (OCOTP) chip.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  arch/arm64/boot/dts/freescale/s32g2.dtsi | 7 +++++++
->  arch/arm64/boot/dts/freescale/s32g3.dtsi | 7 +++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> index 09d2fbbe1d8c..e58ea0d3b083 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> @@ -612,5 +612,12 @@ gic: interrupt-controller@50800000 {
->  			interrupt-controller;
->  			#interrupt-cells = <3>;
->  		};
+On 16/08/2025 21:19, Andreas Kemnade wrote:
+> Add charger driver for ROHM BD718(15/28/78) PMIC charger block.
+> It is a stripped down version of the driver here:
+> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
+
+Why are you duplicating the driver? Why original cannot be used?
+
+
+...
+
 > +
-> +		ocotp: ocotp@400a4000 {
-
-Nodename: efuse@ or nvmem@
-
-> +			compatible = "nxp,s32g2-ocotp";
-> +			reg = <0x400a4000 0x400>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +		};
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> index 39effbe8217c..184a29dea184 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> @@ -681,6 +681,13 @@ gic: interrupt-controller@50800000 {
->  			      <0x50420000 0x2000>;
->  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->  		};
+> +#define RSENS_DEFAULT_30MOHM 30000 /* 30 mOhm in uOhms*/
 > +
-> +		ocotp: ocotp@400a4000 {
+> +static int bd7182x_get_rsens(struct bd71828_power *pwr)
+> +{
+> +	u64 tmp = RSENS_CURR;
+> +	int rsens_ohm = RSENS_DEFAULT_30MOHM;
+> +	struct fwnode_handle *node = NULL;
+> +
+> +	if (pwr->dev->parent)
+> +		node = dev_fwnode(pwr->dev->parent);
+> +
+> +	if (node) {
+> +		int ret;
+> +		uint32_t rs;
+> +
+> +		ret = fwnode_property_read_u32(node,
+> +					       "rohm,charger-sense-resistor-micro-ohms",
 
-Same here
+Hm? Are you writing ACPI or DT driver?
+
+> +					       &rs);
+> +		if (ret) {
+> +			if (ret == -EINVAL) {
+> +				rs = RSENS_DEFAULT_30MOHM;
+> +			} else {
+> +				dev_err(pwr->dev, "Bad RSENS dt property\n");
+> +				return ret;
+> +			}
+> +		}
+> +		if (!rs) {
+> +			dev_err(pwr->dev, "Bad RSENS value\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		rsens_ohm = (int)rs;
+> +	}
+> +
+> +	/* Reg val to uA */
+> +	do_div(tmp, rsens_ohm);
+> +
+> +	pwr->curr_factor = tmp;
+> +	pwr->rsens = rsens_ohm;
+> +	dev_dbg(pwr->dev, "Setting rsens to %u micro ohm\n", pwr->rsens);
+> +	dev_dbg(pwr->dev, "Setting curr-factor to %u\n", pwr->curr_factor);
+> +	return 0;
+> +}
+> +
+> +static int bd71828_power_probe(struct platform_device *pdev)
+> +{
+> +	struct bd71828_power *pwr;
+> +	struct power_supply_config ac_cfg = {};
+> +	struct power_supply_config bat_cfg = {};
+> +	int ret;
+> +	struct regmap *regmap;
+> +
+> +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!regmap) {
+> +		dev_err(&pdev->dev, "No parent regmap\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	pwr = devm_kzalloc(&pdev->dev, sizeof(*pwr), GFP_KERNEL);
+> +	if (!pwr)
+> +		return -ENOMEM;
+> +
+> +	pwr->regmap = regmap;
+> +	pwr->dev = &pdev->dev;
+> +	pwr->chip_type = platform_get_device_id(pdev)->driver_data;
+> +
+> +	switch (pwr->chip_type) {
+> +	case ROHM_CHIP_TYPE_BD71828:
+> +		pwr->bat_inserted = bd71828_bat_inserted;
+> +		pwr->get_temp = bd71828_get_temp;
+> +		pwr->regs = &pwr_regs_bd71828;
+> +		dev_dbg(pwr->dev, "Found ROHM BD71828\n");
+
+This is pretty useless debug. You do not use here autodetection, so
+there is no "found" case. It's straightforward bind.
+
+> +		break;
+> +	case ROHM_CHIP_TYPE_BD71815:
+> +		pwr->bat_inserted = bd71815_bat_inserted;
+> +		pwr->get_temp = bd71815_get_temp;
+> +		pwr->regs = &pwr_regs_bd71815;
+> +		dev_dbg(pwr->dev, "Found ROHM BD71815\n");
+
+Same here, drop.
+
+> +	break;
+> +	default:
+> +		dev_err(pwr->dev, "Unknown PMIC\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = bd7182x_get_rsens(pwr);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "sense resistor missing\n");
+> +
+> +	dev_set_drvdata(&pdev->dev, pwr);
+> +	bd71828_init_hardware(pwr);
+> +
+> +	bat_cfg.drv_data	= pwr;
+> +	bat_cfg.fwnode		= dev_fwnode(&pdev->dev);
+> +
+> +	ac_cfg.supplied_to	= bd71828_ac_supplied_to;
+> +	ac_cfg.num_supplicants	= ARRAY_SIZE(bd71828_ac_supplied_to);
+> +	ac_cfg.drv_data		= pwr;
+> +
+> +	pwr->ac = devm_power_supply_register(&pdev->dev, &bd71828_ac_desc,
+> +					     &ac_cfg);
+> +	if (IS_ERR(pwr->ac)) {
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(pwr->ac),
+> +				     "failed to register ac\n");
+> +	}
+> +
+> +	pwr->bat = devm_power_supply_register(&pdev->dev, &bd71828_bat_desc,
+> +					      &bat_cfg);
+> +	if (IS_ERR(pwr->bat)) {
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(pwr->bat),
+> +				     "failed to register bat\n");
+> +	}
+> +
+> +	ret = bd7182x_get_irqs(pdev, pwr);
+> +	if (ret) {
+
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
+
+Drop {}
+
+This applies to other places as well.
+
+> +		return dev_err_probe(&pdev->dev, ret, "failed to request IRQs");
+> +	};
+> +
+> +	/* Configure wakeup capable */
+> +	device_set_wakeup_capable(pwr->dev, 1);
+> +	device_set_wakeup_enable(pwr->dev, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct platform_device_id bd71828_charger_id[] = {
+> +	{ "bd71815-power", ROHM_CHIP_TYPE_BD71815 },
+> +	{ "bd71828-power", ROHM_CHIP_TYPE_BD71828 },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, bd71828_charger_id);
+> +
+> +static struct platform_driver bd71828_power_driver = {
+> +	.driver = {
+> +		.name = "bd718xx-power",
+> +	},
+> +	.probe = bd71828_power_probe,
+> +	.id_table = bd71828_charger_id,
+> +};
+> +
+> +module_platform_driver(bd71828_power_driver);
+> +MODULE_ALIAS("platform:bd718xx-power");
+
+Drop module alias, incorrect name anyway and you already have proper
+aliases from table.
 
 
 Best regards,
