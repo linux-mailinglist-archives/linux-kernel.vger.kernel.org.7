@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B912B291B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07FBB291B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 911457B4B5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C30C17B626
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A41F1534;
-	Sun, 17 Aug 2025 05:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB85620458A;
+	Sun, 17 Aug 2025 05:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCEJfNW6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFTXjdD+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0C113B58A
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 05:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C051EEF9;
+	Sun, 17 Aug 2025 05:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755409935; cv=none; b=n+9n6R894viGz463bQ6RtQcBUbleuyxKcgdC4cvMww47C42jHldtN0EFns4Nn/bgZT6xqcF2hpNhcH4LvNK2CRCtdmwXnkaaBv5Ll+aJZDd2RHoZEiBOjjCkG9JoFu69IRT/hlZedvFsy5zbpb6T8H4sBhTxdwnz7J2AqH9Ejhg=
+	t=1755410006; cv=none; b=FaOyI8rYOZcT6BEtVNUQ3DIuO8ImtJq2fHb00qUBI8t2E8FqpePJck6qJv5QPwHbM9WLAvTAypoKLJkzPXJWR/KwxrCAxwlI8fkbvXnTCb0D/nl2wV8WNbJUECXt+8Fpigpeo2g02dYowK6Pk+HN4M2i1ZWVjKopfzhEG+xzYxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755409935; c=relaxed/simple;
-	bh=QcgnRcdrgZ46bj93pLgyVcvWAJGPLerUK+s0G3YsVXU=;
+	s=arc-20240116; t=1755410006; c=relaxed/simple;
+	bh=CHAyhki5L7Mzq3s56yJYrOkTQB3/awW/UGDQmcXfgNY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gqGA+ssme8WlsRDMusIWe59YmEMherCeCOt599e7c4W00331QpoBIaVa0v/eJb2hDSyp/7JlAiqPnuLZ0wa4qETbxOyt0Os1noBRd/jhPiHG9QaZiis8svbouvR8sXmLlYeUju3t8gVyFCWOSXhWMS+hv59RtxvEasPeyNN+RaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCEJfNW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074CFC4CEEB;
-	Sun, 17 Aug 2025 05:52:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=HLy2XIGI4i5yAv4zw8ClGyDA/IY15lzlCUve7Sd+YIJaravcl60aRRfmAwaZJF3r+BQvF0JbEhW72Ou23r72RIBSwKfXGZDZBl2z3/B0uGZKM3e/fQKYim0zq7zKDemG4gFoTnsOQpfWE34EuVQcTGdvH7/DYIs7VlQOGcagkEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFTXjdD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE48C4CEEB;
+	Sun, 17 Aug 2025 05:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755409935;
-	bh=QcgnRcdrgZ46bj93pLgyVcvWAJGPLerUK+s0G3YsVXU=;
+	s=k20201202; t=1755410005;
+	bh=CHAyhki5L7Mzq3s56yJYrOkTQB3/awW/UGDQmcXfgNY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TCEJfNW6Q1lMjsAPUPVkDOVMyTkwwalYlen51FX+pOIGHBRHMXdW3FkFzu7jQTj+v
-	 PjUPNJhL8k+NMMxEUtq6bnocMT5W2FvyTUSK2+ht48J5iBrVtMuu8s839lcjUNqiDC
-	 FkfsOzoHnivIJWRQKpuCPlzfrNJXmZi21jADVHTbwMgIXHoEm0iKymqNqCdYermM8v
-	 ifQVkgESnNAb+5Kzr8LDnAhrWxIWcCk83MTSbF1GpFXSwN1d3TcBuQGl8AnbDyPemi
-	 wORz5eI/1YPM42LRp+xnepQZkmIBhbFP50KIlzLVYs7giYH3LtKcRBV9/wTOWleZTN
-	 Tldl8AxdQgjTw==
-Message-ID: <a5cbd3d4-b8ba-4e1f-8ae1-b0e79fedfd47@kernel.org>
-Date: Sun, 17 Aug 2025 07:52:12 +0200
+	b=JFTXjdD+JUdRe+wCLt5Qu4bjXfzfmPLaKH50KqEKxX6hJybmm8GEWVrNyOiudNR5L
+	 ljx1jwYSoAcDifQcuZ0wnm5CeA8/tFzcHRkvl9JLPDwhFChgpELdFTLpJFXwjyEVNu
+	 4JrnVfiwB8FkkVjRjUa6QjODixBQyliyQPIk0s2pvMwJGKxEZcIGS/TL4d8Vqa/W7/
+	 bW5d6Vw4WI87K0m+4pLWlOzlurJFTpdZVZtg4GMEWc7fohvtMxZXXl/HZ1zmFcWl4v
+	 GNt9FmRTPv8WeuvZ4apq2o4n8VUWjDrdSk2kI/ZVFMMy3cBXQy2eZdI0xITS32mOmM
+	 yXoiyi9FjYXVQ==
+Message-ID: <38b4d3fe-a716-4cc2-8c05-1891606f4c85@kernel.org>
+Date: Sun, 17 Aug 2025 07:53:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
-To: Ciprian Costea <dan.carpenter@linaro.org>,
+Subject: Re: [PATCH 3/3] arm64: dts: s32g: Add device tree information for the
+ OCOTP driver
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Chester Lin <chester62515@gmail.com>
+Cc: Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linaro-s32@linaro.org,
  Srinivas Kandagatla <srini@kernel.org>
-Cc: linaro-s32@linaro.org, NXP S32 Linux Team <s32@nxp.com>,
- linux-kernel@vger.kernel.org
 References: <cover.1755341000.git.dan.carpenter@linaro.org>
- <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+ <9b3874c6aedf87f78cc6438fe840433162b06445.1755341000.git.dan.carpenter@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,67 +111,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+In-Reply-To: <9b3874c6aedf87f78cc6438fe840433162b06445.1755341000.git.dan.carpenter@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/08/2025 12:47, Ciprian Costea wrote:
-> Provide access to the On Chip One-Time Programmable Controller (OCOTP)
-> pages on the NXP S32G platform.
+On 16/08/2025 12:47, Dan Carpenter wrote:
+> Add the device tree information for the S32G On Chip One-Time
+> Programmable Controller (OCOTP) chip.
 > 
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-
-Incomplete chain, missing SoBs. You cannot add someone's Co-developed-by
-if they do not sign the patch.
-
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/nvmem/Kconfig            |  10 ++
->  drivers/nvmem/Makefile           |   2 +
->  drivers/nvmem/s32g-ocotp-nvmem.c | 171 +++++++++++++++++++++++++++++++
->  3 files changed, 183 insertions(+)
->  create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+>  arch/arm64/boot/dts/freescale/s32g2.dtsi | 7 +++++++
+>  arch/arm64/boot/dts/freescale/s32g3.dtsi | 7 +++++++
+>  2 files changed, 14 insertions(+)
 > 
-> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-
-
-
-
+> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> index 09d2fbbe1d8c..e58ea0d3b083 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> @@ -612,5 +612,12 @@ gic: interrupt-controller@50800000 {
+>  			interrupt-controller;
+>  			#interrupt-cells = <3>;
+>  		};
 > +
-> +static int s32g_ocotp_probe(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *of_matched_dt_id;
-> +	struct s32g_ocotp_priv *s32g_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct nvmem_device *nvmem;
-> +	struct resource *res;
+> +		ocotp: ocotp@400a4000 {
+
+Nodename: efuse@ or nvmem@
+
+> +			compatible = "nxp,s32g2-ocotp";
+> +			reg = <0x400a4000 0x400>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +		};
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> index 39effbe8217c..184a29dea184 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> @@ -681,6 +681,13 @@ gic: interrupt-controller@50800000 {
+>  			      <0x50420000 0x2000>;
+>  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
 > +
-> +	of_matched_dt_id = of_match_device(ocotp_of_match, dev);
-> +	if (!of_matched_dt_id) {
+> +		ocotp: ocotp@400a4000 {
 
-This is useless check, drop everything around of_matched_dt_id.
+Same here
 
-> +		dev_err(dev, "Unable to find driver data.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	s32g_data = devm_kzalloc(dev, sizeof(*s32g_data), GFP_KERNEL);
-> +	if (!s32g_data)
-> +		return -ENOMEM;
-> +
-> +	s32g_data->fuse = of_device_get_match_data(dev);
-> +	if (!s32g_data->fuse) {
-> +		dev_err(dev, "Cannot find platform device data.\n");
 
-This is impossible condition, so no need for error message.
-
-> +		return -ENODEV;
-
-And here probably -EINVAL, because if it was probed, the device is there.
-
-> +	}
 Best regards,
 Krzysztof
 
