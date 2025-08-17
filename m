@@ -1,253 +1,170 @@
-Return-Path: <linux-kernel+bounces-772337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64435B29184
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:28:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E295AB29185
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236802032DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:28:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C11E7A5ED4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825111F03D7;
-	Sun, 17 Aug 2025 04:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219791E5205;
+	Sun, 17 Aug 2025 04:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFKeloyh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qeDGugEE"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79EF41760;
-	Sun, 17 Aug 2025 04:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93871D8A10
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 04:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755404916; cv=none; b=cm7BuUY7Nsxr5Xpf80G1FG/cS51wtVhFP6F7voIoayaRfgQL7Df3h5RvbJFWfmlHQ7+gZbOtiaVvlmkqbQXe7LAlKxzCtJAGG4ASKK6HXb2+9uIfz/DdLamKG3lqCBGpKjmBneo/QiIoKdMKmlyp0iSFwd/9jwpVvDE+cY4yx5w=
+	t=1755404932; cv=none; b=XGYWr/BJtmxsQczOOhIaQvSXvWslZgTxAs90jH7mCPkT/FPoNctQykSRVI/ToDY65QPrGqi6XGI60h83rpm5KPgvLRd9cjW7on7mBOpm/TYR3NJJ/yv2ILvfzbQFcxD2FNrilYHdKIn/jCvPdr8JhB59zGOSmM3bpu1Bi9ZXm5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755404916; c=relaxed/simple;
-	bh=roBsXTXGnXLtqkdQMkwjW74wVTodWks6KmfOvZGXISw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doRVRO6hNyIi2YLDdqrlawXd6eq5kMJo2di28kZJXSlwjR4MlxcjpIpsOcM1XZhgQlSkPajNCBm4/+S0gW/LWICoT7qNvDvbT81I1S3VQB88ocdy2RLQWmcEPCUtxM3VvF2SCjEoL4CTBGkJN0DU5yrycwu8WYcxN8rqSTjNY3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFKeloyh; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755404914; x=1786940914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=roBsXTXGnXLtqkdQMkwjW74wVTodWks6KmfOvZGXISw=;
-  b=XFKeloyhlwb8irfoyvgo7Pg+t6KTdTlk+STFtsP+c0JYse5ajNu50EGJ
-   wm68Vl/+1knApzLIn/88eye328LCPhIDknc9dqmD7qU5YIfgR9SzZlRFm
-   c4J5MbXgUC3UDJY7exAMGgwjqWNZwqw/bkiN+zcg51bc1ZlPm8d6esN8/
-   6rB5EmzdZvD74atveiw4CPgHhjCLWyxK+4LFHK8UBi9lCQgUit2MryEUa
-   LK4ltWhNDo9v9Sip37TPPQUlq5qqSE/H+9AKv8JaNlivoOhn6A4Mxyzx3
-   sVRYY9NXpWxuwxH8/eYjPE1JXmfHKwgAzHrCuKw1voIXjCRby8UGgqX2z
-   A==;
-X-CSE-ConnectionGUID: vlZRdxvsRxmgV9anzTiMPg==
-X-CSE-MsgGUID: Xtlx70LnQrKZvoQeaKMzRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57578211"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57578211"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 21:28:33 -0700
-X-CSE-ConnectionGUID: fy5oHdMkTVKdVnTF/IvgEg==
-X-CSE-MsgGUID: ThgxVKmvQRGwUvrdBbVe8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171505443"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 16 Aug 2025 21:28:31 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unV0O-000DMB-2Y;
-	Sun, 17 Aug 2025 04:28:28 +0000
-Date: Sun, 17 Aug 2025 12:28:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chung <seokwoo.chung130@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org, mathieu.desnoyer@efficios.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Ryan Chung <seokwoo.chung130@gmail.com>
-Subject: Re: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or
- symbol list
-Message-ID: <202508171256.CSm9DAkb-lkp@intel.com>
-References: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
+	s=arc-20240116; t=1755404932; c=relaxed/simple;
+	bh=Mr4fHH6i7FAjbuBkaKdLxYVk8XQx7tfluazo+4U4NMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kM0qiCDxbLfUcLSIuSye+VZlXAmepxZpqsMSrdWJf4SsbzDF+LrTkamdDNi/M9vSFd6PKSoOsyEWD+tJhPgJTjIV9NHcyYlzSwalBqNdMmw2eepzsE2vRuoc88pCQDzdb5nNZdpQtBDDOqPT25RWqFOB8x6T838naow7WsSfHWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qeDGugEE; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9e4147690so2096135f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 21:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755404929; x=1756009729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BiJC33MJvOH1Vpmx9TcHijUmBr5sO/XAeGk2/N8gTkw=;
+        b=qeDGugEEMQqcYWZ+RryJp0lvRraM+7W9K609gu6QVwft5qOX+hugZi6TPR/Ljx2QM3
+         A4b3ooPRc7xcIoGBu+WI/NrejGc4DmVmaLgcecp6F9kD2CWgIiTDp1P7h+RUlc3YLv5s
+         XlT6vgTEExUGXmnkQp+v9xdfNnB5fn5xKTdBh21oJxG9GOdC+PQOVr0MIalge8PsyKD6
+         z4pNuC2wp2YcMieAOItL7mnIgGHtnFqcvcInlxmCT+NMRcSvZOZ1ugDjt8wFJlygYwFz
+         rcVV5L5zXMkuMZeRAMdoQvXGDzNYXQdvL6XI5XVA2aEog3SsCpY6UrETwXXW7UFbv0Gf
+         NGdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755404929; x=1756009729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BiJC33MJvOH1Vpmx9TcHijUmBr5sO/XAeGk2/N8gTkw=;
+        b=l61YbVUm65B+3I6Ht5BGZsOwZynsytP8uCf7nWuUUPG7WenU1Jm7Pa9n+jZzrU8OP5
+         Wh1FHHhyePsVf4h5CspuzBFIBesUTPSillkZiNcxR09KZ8XTAMPWUOxJqcqccUASehi+
+         4Gwi7g6nvdJwwWtSmW/4zrmxvibJTn8QI4H7NGzp2QPDVtqmko5nIt2OdcdM1zO/whLc
+         9+6nuTXV889ss/4GlN8mGfin1dEQyOHXnxuhTQD62i45YuX+j7BgVxbE6n2vYlkGbaff
+         +tjUFgpFd8DYyYx0LaZrGhoZa7v44rgTJx8/OdQg+ux0zY5XqOwJps2KsZRgDcjPNbb+
+         ihBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq+rVZyh88nLqt0BI3sBVYidH78nxPjtRU/b22uDkwoMRNfs6UNLkLxYDDUWIygsyrR7klqsF4r4JWjx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6FnjrRwDBeG4MD2l8oK5/JUlvO8fzdZyTwMqhON9osghU/ZD9
+	aulZhta1xQ/qvCnvKItGdzefxIGHpFJjDnHd4B1MhsEFAMM5qTWR+GKcOP9eCG8OOrcPLJSVxpM
+	+eEszjBubSHkb/wHF5SwE5pm/ZQXTVgCZBnH07pEc
+X-Gm-Gg: ASbGncsav6fEqqUz0LEl8UFQu02ccM4iuzFTXtUtYR9Fs7ZZoiHd9ziIk3stgMFoswz
+	lhMZhxHMtVfkPbxAxbCpFMURTQ30JmD55JdLz/MGb6dJfnioZjI6LAiKebqfBvE5R/TLB7LfeqY
+	Ldh/HlYWxbugepBO8nsK2mjAuKUeR9nXd51niWOHVPmZ61rjltQlSV7K/sFQqBQ2kRqCDX42XZ1
+	/gg6xCdInimEExBVxT4N37H5BIIq7v/m3fp
+X-Google-Smtp-Source: AGHT+IGS1pBzG3LJi4LJWdLgnoIui/QvinF2gyEaQMWHssnXGuqeTADFCMUiB+RW5hDg9XSqK51zw3Dazhk17SzXGFw=
+X-Received: by 2002:a05:6000:400b:b0:3b7:8914:cd94 with SMTP id
+ ffacd0b85a97d-3bc6aa272c6mr3281632f8f.41.1755404928970; Sat, 16 Aug 2025
+ 21:28:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250815225259.3012455-2-sudarsanm@google.com> <aKA7180s0HdLfOKc@harry>
+ <CAA9mObAiQbAYvzhW---VoqDA6Zsb152p5ePMvbco0xgwyvaB2Q@mail.gmail.com>
+ <498fc518-d78a-43a4-9196-507891e9b844@suse.cz> <22666e86-2523-4136-94e6-0de126fcec1e@suse.cz>
+In-Reply-To: <22666e86-2523-4136-94e6-0de126fcec1e@suse.cz>
+From: Sudarsan Mahendran <sudarsanm@google.com>
+Date: Sat, 16 Aug 2025 21:28:12 -0700
+X-Gm-Features: Ac12FXw1MXLMOdAVkoTs0tVE-q5mUXa0vf_noCRKGgACEIZjA3myKp54MhzQnoA
+Message-ID: <CAA9mObALY3L=G3Ti52pSnWYGHspDa01Xr6NeiWHwTGOX76K7nw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] SLUB percpu sheaves
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Liam.Howlett@oracle.com, cl@gentwo.org, 
+	howlett@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, rcu@vger.kernel.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, surenb@google.com, urezki@gmail.com, 
+	Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ryan,
+On Sat, Aug 16, 2025 at 11:31=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> On 8/16/25 8:31 PM, Vlastimil Babka wrote:
+> >>
+> >> I assume somehow the free_to_pcs_bulk() fallback case is taken, thus
+> >> calling __kmem_cache_free_bulk(), which calls free_to_pcs_bulk() ad na=
+useam.
+> > Could it be a rebase gone wrong? Mine to 6.17-rc1 is here (but untested=
+)
 
-kernel test robot noticed the following build warnings:
+Yes Vlastimil,
 
-[auto build test WARNING on v6.16]
-[also build test WARNING on linus/master next-20250815]
-[cannot apply to trace/for-next v6.17-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+You're right. It is a rebase gone wrong. Thanks for catching this.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chung/trace-trace_fprobe-c-TODO-handle-filter-nofilter-or-symbol-list/20250813-002748
-base:   v6.16
-patch link:    https://lore.kernel.org/r/20250812162101.5981-1-seokwoo.chung130%40gmail.com
-patch subject: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or symbol list
-config: s390-randconfig-r073-20250817 (https://download.01.org/0day-ci/archive/20250817/202508171256.CSm9DAkb-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 8.5.0
+I ported this patch series on top of v6.17-rc1 using b4 cmd
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508171256.CSm9DAkb-lkp@intel.com/
+b4 am -o - 20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz | git
+am --reject
 
-smatch warnings:
-kernel/trace/trace_fprobe.c:768 __register_trace_fprobe() warn: inconsistent indenting
+For some reason b4 merging yielded me this:
 
-vim +768 kernel/trace/trace_fprobe.c
+git show 893ee67b5c75e7411e4e3c6ddaa8d0765985423e
+slab: add opt-in caching layer of percpu sheaves
 
-   732	
-   733	/* Internal register function - just handle fprobe and flags */
-   734	static int __register_trace_fprobe(struct trace_fprobe *tf)
-   735	{
-   736		int i, ret;
-   737	
-   738		/* Should we need new LOCKDOWN flag for fprobe? */
-   739		ret = security_locked_down(LOCKDOWN_KPROBES);
-   740		if (ret)
-   741			return ret;
-   742	
-   743		if (trace_fprobe_is_registered(tf))
-   744			return -EINVAL;
-   745	
-   746		for (i = 0; i < tf->tp.nr_args; i++) {
-   747			ret = traceprobe_update_arg(&tf->tp.args[i]);
-   748			if (ret)
-   749				return ret;
-   750		}
-   751	
-   752		/* Set/clear disabled flag according to tp->flag */
-   753		if (trace_probe_is_enabled(&tf->tp))
-   754			tf->fp.flags &= ~FPROBE_FL_DISABLED;
-   755		else
-   756			tf->fp.flags |= FPROBE_FL_DISABLED;
-   757	
-   758		if (trace_fprobe_is_tracepoint(tf)) {
-   759	
-   760			/* This tracepoint is not loaded yet */
-   761			if (tf->tpoint == TRACEPOINT_STUB)
-   762				return 0;
-   763	
-   764			return __regsiter_tracepoint_fprobe(tf);
-   765		}
-   766	
-   767	    /* Parse tf->symbol */
- > 768	    {
-   769	        char *spec, *bang, *p;
-   770	        int n = 0, w = 0, j, rc;
-   771	        char **syms = NULL;
-   772	
-   773	        spec = kstrdup(tf->symbol, GFP_KERNEL);
-   774	        if (!spec)
-   775	            return -ENOMEM;
-   776	
-   777	        /* If a '!' exists, treat it as single symbol + filter */
-   778	        bang = strchr(spec, '!');
-   779	        if (bang) {
-   780	            char *sym, *flt;
-   781	
-   782	            *bang = '\0';
-   783	            sym = strim(spec);
-   784	            flt = strim(bang + 1);
-   785	
-   786	            if (!*sym || !*flt) {
-   787	                kfree(spec);
-   788	                return -EINVAL; /* reject empty symbol/filter */
-   789	            }
-   790	
-   791	            rc = register_fprobe(&tf->fp, sym, flt);
-   792	            kfree(spec);
-   793	            return rc;
-   794	        }
-   795	
-   796	        /* Comma list (or single symbol without '!') */
-   797	        /* First pass: count non-empty tokens */
-   798	        p = spec;
-   799	        while (p) {
-   800	            char *tok = strsep(&p, ",");
-   801	            if (tok && *strim(tok))
-   802	                n++;
-   803	        }
-   804	
-   805	        if (n == 0){
-   806	            kfree(spec);
-   807	            return -EINVAL;
-   808	        }
-   809	
-   810	        /* Allocate array for pointers into spec (callee copies/consumes) */
-   811	        syms = kcalloc(n, sizeof(*syms), GFP_KERNEL);
-   812	        if (!syms) {
-   813	            kfree(spec);
-   814	            return -ENOMEM;
-   815	        }
-   816	
-   817	        /* Second pass: fill, skipping empties */
-   818	        p = spec;
-   819	        while (p) {
-   820	            char *tok = strsep(&p, ",");
-   821	            char *s;
-   822	
-   823	            if (!tok)
-   824	                break;
-   825	            s = strim(tok);
-   826	            if (!*s)
-   827	                continue;
-   828	            syms[w++] = s; 
-   829	        }
-   830	        
-   831	        /* Dedup in-place */
-   832	        for (i = 0; i < w; i++){
-   833	            if (!syms[i])
-   834	                continue;
-   835	            for (j = i + 1; j < w; j++) {
-   836	                if (syms[j] && !strcmp(syms[i], syms[j]))
-   837	                    syms[j] = NULL;
-   838	            }
-   839	        }
-   840	
-   841	        /* Compact */
-   842	        for (i = 0, j = 0; i < w; i++) {
-   843	            if (syms[i])
-   844	                syms[j++] = syms[i];
-   845	        }
-   846	        w = j;
-   847	
-   848	        /* After dedup, ensure we still have at least one symbol */
-   849	        if (w == 0){
-   850	            kfree(syms);
-   851	            kfree(spec);
-   852	            return -EINVAL;
-   853	        }
-   854	
-   855	        /* Register list or single symbol, using the existing bulk API */
-   856	        if (w == 1)
-   857	            rc = register_fprobe(&tf->fp, syms[0], NULL);
-   858	        else
-   859	            rc = register_fprobe_syms(&tf->fp, (const char **)syms, w);
-   860	
-   861	        kfree(syms);
-   862	        kfree(spec);
-   863	        return rc;
-   864	    }
-   865	}
-   866	
+@@ -5252,6 +6133,15 @@ static void __kmem_cache_free_bulk(struct
+kmem_cache *s, size_t size, void **p)
+        if (!size)
+                return;
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
++       /*
++        * freeing to sheaves is so incompatible with the detached freelist=
+ so
++        * once we go that way, we have to do everything differently
++        */
++       if (s && s->cpu_sheaves) {
++               free_to_pcs_bulk(s, size, p);
++               return;
++       }
++
+        do {
+
+
+Whereas the original patch [1] had this instead:
+
+@@ -5033,6 +5801,15 @@ void kmem_cache_free_bulk(struct kmem_cache *s,
+size_t size, void **p)
+  if (!size)
+  return;
+
++ /*
++ * freeing to sheaves is so incompatible with the detached freelist so
++ * once we go that way, we have to do everything differently
++ */
++ if (s && s->cpu_sheaves) {
++ free_to_pcs_bulk(s, size, p);
++ return;
++ }
++
+
+I have no idea why b4 got confused between kmem_cache_free_bulk() and
+__kmem_cache_free_bulk().
+
+After I fixed this issue, I'm able to boot the kernel successfully.
+
+[1] https://lore.kernel.org/all/20250214-slub-percpu-caches-v2-1-88592ee096=
+6a@suse.cz/
+
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/
+>
+> This branch specifically
+> https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=
+=3Db4/slub-percpu-sheaves
 
