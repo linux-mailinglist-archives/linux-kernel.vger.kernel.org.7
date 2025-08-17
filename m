@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EFAB291FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:19:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5B7B29200
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88331B260ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:19:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D019201F3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3F23ABAF;
-	Sun, 17 Aug 2025 07:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AA4231A55;
+	Sun, 17 Aug 2025 07:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIzZcZhr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSI8vqTN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937201F4706;
-	Sun, 17 Aug 2025 07:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF9D1D61AA;
+	Sun, 17 Aug 2025 07:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755415151; cv=none; b=E7G6MVcIV+VjRYPUorQl/2i7kjxL7d+ujGXnTfUOjB7YESUs8qAIP5I7HvdOxeZ472FH5BAlAbEW3bIaQwfshUb8d/bTMQtlp8EPe4k6MwtZHdFKfgHnkaK1ZZk6dm0W3vmrvkTa6/99Y2ZMyZEhKbm8gzx/CATC9B25h6Qdrq4=
+	t=1755415259; cv=none; b=akfm29dSp3HT6F8nufIK6Rha49EYgl1gPrNh4zswbWtgXaqvq6M/mFfs55SDnJudj+oKTVaOCq4kf5khvGaFdMv3uR6TI+q1sJrWA4xLDJWTgbLOVFvgwdPG6ZQlNBi3m96UIWHQpVWvU+IXbwgg5a5+pWGy7z4sAVvftHV2b8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755415151; c=relaxed/simple;
-	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
+	s=arc-20240116; t=1755415259; c=relaxed/simple;
+	bh=JQ9I2ZA6NpxuMGRw8pMBYPM7Uq05lyYD7RorcnDzmE4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmMomjObPBSOtPoF3XNmI+wyBoafk11X0VajHabF+/Y1EYP6WOH7LltmyHTf99ULL1Up3BP7VXy1R9QO90AlX3uqXkP3EK8eP2WuI9uBE3pPba9N5PCe5LGqOZ0ut5uTMAA1j4Fxp2KqzaNnWjvFNXaL3Wb0qzlca1tz5ASxLwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIzZcZhr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CD7C4CEEB;
-	Sun, 17 Aug 2025 07:19:05 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=B/LI7/ji+WedAkDIx2NSeWyATlQD1uhHJOZH4HvdFhniRC7Ew50TCzwVHGdOfZ4uIexfxrMEOkJFLOdhtTvcAYT+K69YuTz3glFYdiTjqS8jqGQKcH8LJUkFShmw2WvE1Mrh9xe9fppgkp0ixpm3iNXhzprKZTJMVw0BC9xgAHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSI8vqTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A674C4CEEB;
+	Sun, 17 Aug 2025 07:20:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755415151;
-	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
+	s=k20201202; t=1755415258;
+	bh=JQ9I2ZA6NpxuMGRw8pMBYPM7Uq05lyYD7RorcnDzmE4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WIzZcZhrGmrVNBZxq2Gcv1VEeQrnro/YDTiryCPMd6mt1e64BabAxeKsbS0uHeo22
-	 Ny5/52BqNnV3tDlTDzpYQfOfc6YSXBJ2m4dxny6LtkDM4BgUo7zFPkSjAQM2ncRVQO
-	 W/p6VvaqCd+euTgxH7EQHRrvbST1sIfzqGfigtVABMstAI/Xok1w6kzPkQep4yWvPx
-	 mqpK7uToLeuiWm+OmFl8f7rR1rDUukrOlxFp/kUL+lvqCHmCcwl/2aHxBzkWDVDUx+
-	 Mq6IIMJFyRL6YM606LS+MtHiYWjlEarzzfrm4Mu3xBE5o206ysYn3ZpmmqO30aCh65
-	 gXqlZzu27L3Fg==
-Message-ID: <fb5083ff-4bee-4a0f-8774-54b492cd9a6d@kernel.org>
-Date: Sun, 17 Aug 2025 09:19:04 +0200
+	b=lSI8vqTNzeBPDxdLTp2i2cQaiaCWOq9avtgUBF0WanE+AzYS2kW+QiH+9XEVOKbzK
+	 K1YxBet3nf1oZjkwZoL7StOOhAIu8cAuu08zGQAM/E7lN/SdhUJYQ6XPQmUHa95Rl+
+	 sW+VLqEH2Pcbqp05UuFgokqjlcUXCwkYZbbqKpBnr1fo2p/XI5J0da5FgEqPcvIUKa
+	 5BLd4OYX/ZIyNCNe1HtY/EKvNBenMCVE4Go1iSDMOJ2+pwqZKIqyHi7k9yI96RUg2M
+	 EwPgBZ9mY/XFDV8qQON3sBWLfV/XhMREB5uxpAicYALqVxuuOZQG3nrVimz+H3Yb25
+	 3C0eJ7Rezd3AA==
+Message-ID: <d8248069-c12e-4f72-a625-c4f68aa42f1f@kernel.org>
+Date: Sun, 17 Aug 2025 09:20:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>,
- Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+Subject: Re: [PATCH 1/3] spi: dt-bindings: add doc for Amlogic A113L2 SFC
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
- <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
- <20250730211151.GA1749004-robh@kernel.org>
- <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
+ <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>,
+ Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+References: <20250808-spifc-v1-0-ff4e30e26a6b@amlogic.com>
+ <20250808-spifc-v1-1-ff4e30e26a6b@amlogic.com>
+ <20250808-adamant-fat-raven-38c8b3@kuoka>
+ <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
+ <5cc336bc-f071-41d2-b59a-af0df23af00b@kernel.org>
+ <d872a711-7442-4e2e-bc59-0d6f4f656fde@amlogic.com>
+ <017a4d15-286d-4e0a-89ff-f658009a6de6@kernel.org>
+ <cf825229-7294-4fc5-b7dd-09dc1198db74@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,64 +110,74 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
+In-Reply-To: <cf825229-7294-4fc5-b7dd-09dc1198db74@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/08/2025 16:42, Clément Le Goffic wrote:
-> Hi Rob,
+On 14/08/2025 08:38, Xianwei Zhao wrote:
+> Hi Krzysztof,
+>     Thanks for your reply.
 > 
-> On 30/07/2025 23:11, Rob Herring wrote:
->> On Mon, Jul 28, 2025 at 05:29:37PM +0200, Clément Le Goffic wrote:
->>> Introduce JEDEC compliant DDR bindings, that use new memory-props binding.
->>>
->>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->>> ---
->>>   .../memory-controllers/ddr/jedec,ddr4.yaml         | 34 ++++++++++++++++++++++
->>>   1 file changed, 34 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
->>> new file mode 100644
->>> index 000000000000..f457066a2f8b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
->>> @@ -0,0 +1,34 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr4.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
->>> +
->>> +maintainers:
->>> +  - Krzysztof Kozlowski <krzk@kernel.org>
->>> +
->>> +allOf:
->>> +  - $ref: jedec,sdram-props.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{1}$"
+> On 2025/8/14 00:19, Krzysztof Kozlowski wrote:
+>> [ EXTERNAL EMAIL ]
 >>
->> Shouldn't this be 'jedec,ddr4-...'
-> 
-> That's not the case for lpddr bindings, I wanted both lpddr and ddr 
-> bindings to be similar but this can change.
-
-For LPDDR Julius introduced in commit 686fe63b2280 ("dt-bindings:
-memory: Add numeric LPDDR compatible string variant") ddr4-VENDORID
-pattern to distinguish individual manufacturers.
-
-Jedec is not really the vendor here.
-
-Is it the same case in DDR? You have a defined list of vendor IDs (also
-1 byte)?
-
-> 
+>> On 13/08/2025 11:34, Xianwei Zhao wrote:
+>>> Hi Krzysztof,
+>>>      Thanks  for your reply.
+>>>
+>>> On 2025/8/13 15:36, Krzysztof Kozlowski wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>>
+>>>> On 13/08/2025 08:13, Xianwei Zhao wrote:
+>>>>>>> +allOf:
+>>>>>>> +  - $ref: /schemas/spi/spi-controller.yaml#
+>>>>>>> +
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    const: amlogic,a4-spifc
+>>>>>>> +
+>>>>>>> +  reg:
+>>>>>>> +    items:
+>>>>>>> +      - description: core registers
+>>>>>>> +      - description: parent clk control registers
+>>>>>>
+>>>>>> Why are you poking to parent node or to clock registers? This looks like
+>>>>>> mixing up device address spaces.
+>>>>>>
+>>>>>
+>>>>> The SPIFC bus clock multiplexes EMMC modules, so the corresponding
+>>>>> frequency division register is also in EMMC module. The SPIFC and the
+>>>>> EMMC modules cannot be used simultaneously.
+>>>>
+>>>> Then obviously you cannot put here EMMC or parent registers.
+>>>>
+>>>> It looks really like you miss proper hardware representation.
+>>>>
+>>>
+>>> It does seem a bit unusual. However, in our hardware design, EMMC and
+>>> SFC modules are integrated, and they share common resources such as the
+>>> clock and I/O pins .They are mutually exclusive.
+>>>
 >>
->>> +      - const: jedec,ddr4
+>> How did you express it in DT? This looks similar to serial engines and
+>> such are not implemented independently.
+>>
+> 
+> The hardware design provides this clock for both modules — EMMC and 
+> SPIFC. A control bit (bit 31: Cfg_NAND, where 0 = Port C only, 1 = NAND) 
+> is used to determine which module uses the clock.
+> 
+> It's not that NAND is using EMMC’s resources; rather, the configuration 
+> register controlling this selection is located within the EMMC module, 
+> which makes the setup appear somewhat unusual.
+
+No, how did you express in DT that they are mutually exclusive?
+
+> 
+> In the device tree (DT), I'll just refer directly to the clock frequency 
+> division control register.
+
+This does not solve the exclusive usage...
 
 
 Best regards,
