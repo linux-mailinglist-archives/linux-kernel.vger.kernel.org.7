@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-772427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C0B29286
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CFAB29294
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BACA4E1F1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F308E1B2374E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED24A2288EE;
-	Sun, 17 Aug 2025 09:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1421C1DC075;
+	Sun, 17 Aug 2025 10:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C2M/Z3NW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J5zJW4+S"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nC1S9mxC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965519463;
-	Sun, 17 Aug 2025 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51CF4A33
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 10:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755424305; cv=none; b=K+qRH+fT8dFP44/yHRx3PwIIBsNcIZT9ka4T5vdNHZ1J1f3Tfegq0ev0m4nKkZf+orVcapMEq19fbCxR1t0i6TN63B048L6CtHrhUaH0BG86eV4qPqZnlnWiCEBhPguhQpy8ysqV149hiv0SSjn2kK7HVV+L5LGSbOYh0f7zSjk=
+	t=1755425789; cv=none; b=oJ6hUGL7TRGiF9DMvEX9OtQlPVRJxBqj4AfbO9vM9X0vNmloZaMZiaqEzHSqVAYZXt8ojbOpO9mnDQwB0fm5+smKQcj517aCNNIR8ZavqeK32lfHpLSRXw0UP6+LxhCwqCNs3CThGTxSLsuV2JvrtEla6UWL53zwNBKKuwkjRtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755424305; c=relaxed/simple;
-	bh=mtJ3gzEv6o+xFkmPgKTzQ3JESw+W8iZciev1RKZWuSU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NtqlInoCEBBJXEbMxojax7R3dxoZzusmjB6TakVzOpHkQ9b13P7xmlJG6dZKTW8ve7sb5COON1pZj4jZ6S0XS47rpixAFKjGqWsKGCyrDBDYYYkRpVsHwdHJfUzG8ATp7KBOrOrH2wqMBvRjw3kZEoJBMmEnv+r9+kw1Ox++RDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C2M/Z3NW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J5zJW4+S; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 17 Aug 2025 09:51:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755424296;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N9HdNGuZyBv5MBuRLKD9Imf9j+MQbdgmcchbtdHA9ds=;
-	b=C2M/Z3NWGm8uej/Xzl+D1xE0sFK+Wh6u10hUCJZon3mMkWkATvM+fZVjPFfcRAiSq7hj0T
-	g/i1iP3C0iifIRQO4Yd7K8vX0a3d1bEv8K7PXfz5lQtlqfAXWjTcC7vkr+bR3TUWsjBaeB
-	f2WSNSoPWPmKN245Wl5gAq5e0aDzWUUDzfiJw3NFpy02yj5gwrkfjic/mKxaZ9vY/cEh8Q
-	2RLAZr0z4+XHvp452hLsC9qkoxID/antwj6aYlcn1bN4WYLgKVO/dRM+sxBdFpdoNmULxB
-	bC+rp20xWWk4H4/THsLP46YqoqW7zqiUJn3t8KYOjvX9pGtxqpOaJHmQ383lBQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755424296;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N9HdNGuZyBv5MBuRLKD9Imf9j+MQbdgmcchbtdHA9ds=;
-	b=J5zJW4+SpgXZMsxgJhaNUYvrrWf3pgqwFxr+SIjz6y/zKdtsNYUZT2ukUEU2f5L5kGo7pO
-	IUNupFDtnFwzkPDw==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] x86/build: Remove cc-option from -mno-fp-ret-in-387
-Cc: Nathan Chancellor <nathan@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250814-x86-min-ver-cleanups-v1-4-ff7f19457523@kernel.org>
-References: <20250814-x86-min-ver-cleanups-v1-4-ff7f19457523@kernel.org>
+	s=arc-20240116; t=1755425789; c=relaxed/simple;
+	bh=+A14c1W+X+e9ckEeG7fLA+HMWihm8ocOrIT9CAvB0SA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCLEO4nTOhVEad6v0fU9oGq65VhT89lIMA3a+zrLuW3bH2f82k7Sv5MpBzA/9vGRKjJzLVHiyU+1XTn8c//v3t8ixFpFSYe42c1ZjY/EwmFFP1IZTWYFzzhNSZEtQ1lU35q0hxSce3kp3DyzIEBjVQqDHzqTRbznyNTNZXuM4+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nC1S9mxC; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755425788; x=1786961788;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+A14c1W+X+e9ckEeG7fLA+HMWihm8ocOrIT9CAvB0SA=;
+  b=nC1S9mxCmxxSUD37U/vwY0JEoTRFjzfilt53HEF0HwXkDEMjuW1kdQBo
+   TlXnVykvrVvEKBevK6E46pxiX3foWQ64iknVibrlJGqZZWT07BjEnZ5oK
+   ncSnv041Nfa5OyRC9hU2AAliwR1PTFLKvxb+8Xd1GkMESNw4xi26OdkNd
+   Q5P0a8nPB2n25RAMPPkaB/CMtflgkeF8TgUF+pZRqOY8RCDkK0eXahWcc
+   le3w0HYJ/7gOcbBzqHBLZfpfw/iaXwtIi7f4niE2DLOqJET3Hl1qexRcB
+   soneRN8qLVyFs8032CY0yCDet+ug8wXtXdfHyh2IwwRK5BfYpw/lZqgm8
+   Q==;
+X-CSE-ConnectionGUID: DefzWpTrR7KkbuMLa9oLUQ==
+X-CSE-MsgGUID: YUuV7qDHT/mw1LmjLqmRCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="61511059"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61511059"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 03:16:28 -0700
+X-CSE-ConnectionGUID: +9d8gx9kSNufnReCk+lhMw==
+X-CSE-MsgGUID: krM7rEmbTX6xWVFMAnBwOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="166847320"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 17 Aug 2025 03:16:24 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unaQz-000DT9-0i;
+	Sun, 17 Aug 2025 10:16:20 +0000
+Date: Sun, 17 Aug 2025 18:15:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huacai Chen <chenhuacai@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Harry Yoo <harry.yoo@oracle.com>, Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+Message-ID: <202508171758.8m5jQYdz-lkp@intel.com>
+References: <20250817083534.2398601-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175542429414.1420.18313894506338628845.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817083534.2398601-1-chenhuacai@loongson.cn>
 
-The following commit has been merged into the x86/build branch of tip:
+Hi Huacai,
 
-Commit-ID:     0a42d732c136d3466cd19fafa7317d3004430318
-Gitweb:        https://git.kernel.org/tip/0a42d732c136d3466cd19fafa7317d30044=
-30318
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Thu, 14 Aug 2025 18:31:40 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sun, 17 Aug 2025 11:36:47 +02:00
+kernel test robot noticed the following build warnings:
 
-x86/build: Remove cc-option from -mno-fp-ret-in-387
+[auto build test WARNING on akpm-mm/mm-everything]
 
-This has been supported in GCC for forever and clang gained support for it as
-an alias of '-mno-x87' in LLVM 14. Now that x86 requires LLVM 15 or newer
-since
+url:    https://github.com/intel-lab-lkp/linux/commits/Huacai-Chen/mm-migrate-Fix-NULL-movable_ops-if-CONFIG_ZSMALLOC-m/20250817-163814
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250817083534.2398601-1-chenhuacai%40loongson.cn
+patch subject: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+config: x86_64-buildonly-randconfig-002-20250817 (https://download.01.org/0day-ci/archive/20250817/202508171758.8m5jQYdz-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508171758.8m5jQYdz-lkp@intel.com/reproduce)
 
-  7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0"),
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508171758.8m5jQYdz-lkp@intel.com/
 
-this flag can be unconditionally added, saving a compiler invocation.
+All warnings (new ones prefixed by >>):
 
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://github.com/llvm/llvm-project/commit/a9fba2be35db674971382e38b99=
-a31403444d9bf
-Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-4-ff7f19457523=
-@kernel.org
----
- arch/x86/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   mm/zsmalloc.c: In function 'zs_init':
+>> mm/zsmalloc.c:2249:13: warning: unused variable 'rc' [-Wunused-variable]
+    2249 |         int rc;
+         |             ^~
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 0c82a61..1bbf943 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -148,7 +148,7 @@ else
-=20
-         # Don't autogenerate traditional x87 instructions
-         KBUILD_CFLAGS +=3D -mno-80387
--        KBUILD_CFLAGS +=3D $(call cc-option,-mno-fp-ret-in-387)
-+        KBUILD_CFLAGS +=3D -mno-fp-ret-in-387
-=20
-         # By default gcc and clang use a stack alignment of 16 bytes for x86.
-         # However the standard kernel entry on x86-64 leaves the stack on an
+
+vim +/rc +2249 mm/zsmalloc.c
+
+  2246	
+  2247	static int __init zs_init(void)
+  2248	{
+> 2249		int rc;
+  2250	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
