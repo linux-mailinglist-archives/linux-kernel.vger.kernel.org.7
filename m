@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-772368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E4EB291D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F152B291D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63D3C205A48
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:18:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F060B2084BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4DC214228;
-	Sun, 17 Aug 2025 06:18:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6561F22424C;
+	Sun, 17 Aug 2025 06:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4XdW7xb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31491E491B
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 06:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9DF2236F2;
+	Sun, 17 Aug 2025 06:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755411487; cv=none; b=fPjDdTJD2ttRRVN3JNu34DLT/X64FnHvEGo8qPkZ0sLS7tyN0bzDBfRxLOgq7VZOh/2VMA6Hae22sEvtP6aL/s+LIuC64GNC+Qlka3n1Rhq6+uPlmoO8sb5S1lbpqAmazpIL2exGX5C0auTHqglnoEPpsrgNjzVgpc0EQhfE1ic=
+	t=1755412061; cv=none; b=FqsUaTLqYhnp1NhdLq8rEWT6nagi3v/n+Nk+TQe0mF5zgylpxzUd/MjLgJPe89vNL4P8qmhrCAYuBM9fh+WPEj9gDOYszwO/M6ZgxC4JTl2nbsteNrJuwl4bjskZ5SAEhlHER42wbwYV1kDn0k+0V8OsutSQPGqldzPGVkfv/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755411487; c=relaxed/simple;
-	bh=x6SRgnib0G7M2g+ot+TWQJ8h3Z9ID7PuY1Ye6vQiO7A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lCcdbWbVICL1Y54sVfcK/40iIkCh9gXfldKFYH4OC6vfQVeDe+DC6yLAZJJ24698pK/bgsEauJnN/MD6o8mxZoEpQ3Fcpos0mR1aptIw8PW/wyDyGbaopdSjoTTktCk71NOaL6aRqShFynMQyCCsaIe5vyoYtDavOGGbFMQSkf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88432d8ddb1so382254539f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 23:18:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755411485; x=1756016285;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdO8zLjvXGnLAKqt2Wo9ucoKrtcFQMjL+W6shvTRwsE=;
-        b=p5On85v2hS1rwv4+DnyyvMay7gSyvggc69h+mg3hcZ2SPQgUn6t1AvM5linEXcbNv+
-         y6h1ix8y/0pdiQ/zdvzSLXf6r+jFsmlv/HPo7e92zN2VK/lxaMgeFZ4PwVhr1La2jntT
-         utNMF7kqwb0tG5iJTZqwIWb/88Ix6+Zo9MApZg0DPwXwUgyJ2gJEHCHeSDvlagI1zaH/
-         sRFsPrO5VnldhnbnRL4GGodRNxEt2N1WPjVpmem1z7eYFWWcfW1v7FivTnXoWsy+Hfsn
-         qCV4Pf8EPAY+fLwOGwjt8YFktQATcmk2MhkBZ1IiX1fZgj84rYuU3di0/TS5PIS5ef2v
-         hhrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMO1GNKwuDXDC5VYKm8+iSgbQE+PF4oACbWl7gJTGOIcQJLiKS7D9IiP4javBOXhd/itFUw1rAmnuE1ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhdCbirQvInkQFIOJd/eFSKEzgPdRmsMRyRPFaS2WTjm7yHaQU
-	5RyUIumL+385dWIhtJh4BgoTzX5W08k2XT3hhFo1/z9STzCoQ7iC3dgyzzf0cR8b5AYoYh+36fm
-	+CmVKGmt3T1MTmDgRmzp92nQYzY/xHRzdMLX983Tmgfj/0IqrZtsVNOKik6E=
-X-Google-Smtp-Source: AGHT+IHZFzSwDxf2TRTZM6Le8S0sSkvLrk9hGAeEtwb8V3MPhnIYewVlR7ckO5uIS7XAC1CPsuDIjUd08C4UFZSkM+VjvxP9yYWX
+	s=arc-20240116; t=1755412061; c=relaxed/simple;
+	bh=TpmqSwdZ371xVQIviS8OQTjs+jZME4B/LsCHX3bDftw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/qe1AnrfSHNiWDYX5iOtUtWm4sv9KFuMjZmBJbDJ1DQh/ZiYRE4zTQ+Bq/iYdfGiRs7vfX5reUVqs5yU6yFQm060CAvcYUPr0/Fr6vRHqV0ArV6EDhnV463qbahsJJa80EDa42oNVmT+NZoACuvBsj215a8mKXsJF+bSFI/yEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4XdW7xb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A0C1C4CEEB;
+	Sun, 17 Aug 2025 06:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755412061;
+	bh=TpmqSwdZ371xVQIviS8OQTjs+jZME4B/LsCHX3bDftw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C4XdW7xbTBpqFEORPxC1v3F8aSWpsZ+Ea/95jk9ry8PCZOXJVI+ZamyYFNTPxhbEQ
+	 6INhZjVaNkUoxlfLOTIBvpRSlhgB4QOPTStKhXz4gtG4AoiHUW/hMgNK3LW3DI4oX/
+	 ksMbj7ImH7mHfYimQfwqymhHw1c7TCzEpOrEflQbr/ABlhHGWv5dKkU+P6OXz4Bj1u
+	 LgDQ8T/aDiYzq2nDIC3lR+KqKxwtjg2TFon0nNaRaR7/GcFMEGdVce8R4hFxyFt+Ha
+	 QT+1F+o1GJapakOZSMqtE06huxFIx7w6OS7Mro9hVMlGQm5OcciEYHM6jN7jtJmxMP
+	 yEgE2yPtudFlA==
+Date: Sun, 17 Aug 2025 09:27:33 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Yin Tirui <yintirui@huawei.com>
+Cc: robh@kernel.org, saravanak@google.com, dan.j.williams@intel.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	Jonathan.Cameron@huawei.com, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	wangkefeng.wang@huawei.com, chenjun102@huawei.com
+Subject: Re: [PATCH v2] of_numa: fix uninitialized memory nodes causing
+ kernel panic
+Message-ID: <aKF2VZ1y8OuEChmw@kernel.org>
+References: <20250816073131.2674809-1-yintirui@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16ce:b0:3e5:7e02:a06d with SMTP id
- e9e14a558f8ab-3e57e84b6c4mr127240065ab.4.1755411484903; Sat, 16 Aug 2025
- 23:18:04 -0700 (PDT)
-Date: Sat, 16 Aug 2025 23:18:04 -0700
-In-Reply-To: <689ff66d.050a0220.e29e5.0036.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a1741c.050a0220.e29e5.005d.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] kernel panic: stack is corrupted in debug_object_active_state
-From: syzbot <syzbot+56728135217003dc6f7d@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, davem@davemloft.net, 
-	johan.hedberg@gmail.com, kuba@kernel.org, linma@zju.edu.cn, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, netdev@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816073131.2674809-1-yintirui@huawei.com>
 
-syzbot has bisected this issue to:
+Hi,
 
-commit e305509e678b3a4af2b3cfd410f409f7cdaabb52
-Author: Lin Ma <linma@zju.edu.cn>
-Date:   Sun May 30 13:37:43 2021 +0000
+On Sat, Aug 16, 2025 at 03:31:31PM +0800, Yin Tirui wrote:
+> When the number of CPUs is fewer than the number of memory nodes,
+> some memory nodes may not be properly initialized because they are
+> not added to numa_nodes_parsed during memory parsing.
 
-    Bluetooth: use correct lock to prevent UAF of hdev object
+Why the issue happens when there are less CPUs than nodes?
+Does anything updates numa_nodes_parsed when there are more CPUs than
+nodes?
+ 
+> In of_numa_parse_memory_nodes(), after successfully adding a memory
+> block via numa_add_memblk(), the corresponding node ID should be
+> marked as parsed. However, the current implementation in numa_add_memblk()
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10c6e234580000
-start commit:   ee94b00c1a64 Merge tag 'block-6.17-20250815' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12c6e234580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c6e234580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98e114f4eb77e551
-dashboard link: https://syzkaller.appspot.com/bug?extid=56728135217003dc6f7d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118d2234580000
+... current implementation of of_numa_parse_memory_nodes()?
 
-Reported-by: syzbot+56728135217003dc6f7d@syzkaller.appspotmail.com
-Fixes: e305509e678b ("Bluetooth: use correct lock to prevent UAF of hdev object")
+> only adds the memory block to numa_meminfo but fails to update
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+maybe "... but skips updating"
+
+> numa_nodes_parsed, leaving some nodes uninitialized.
+> 
+> During boot in a QEMU-emulated ARM64 NUMA environment, the kernel
+> panics when free_area_init() attempts to access NODE_DATA() for
+> memory nodes that were uninitialized.
+> 
+> [    0.000000] Call trace:
+> [    0.000000]  free_area_init+0x620/0x106c (P)
+> [    0.000000]  bootmem_init+0x110/0x1dc
+> [    0.000000]  setup_arch+0x278/0x60c
+> [    0.000000]  start_kernel+0x70/0x748
+> [    0.000000]  __primary_switched+0x88/0x90
+
+Would have be nice to have the full crash trace here and more details how
+qemu was run.
+
+> Cc: stable@vger.kernel.org
+> Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
+> Signed-off-by: Yin Tirui <yintirui@huawei.com>
+> 
+> ---
+> 
+> v2: Move the changes to the of_numa related. Correct the fixes tag.
+> ---
+>  drivers/of/of_numa.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
+> index 230d5f628c1b..cd2dc8e825c9 100644
+> --- a/drivers/of/of_numa.c
+> +++ b/drivers/of/of_numa.c
+> @@ -59,8 +59,11 @@ static int __init of_numa_parse_memory_nodes(void)
+>  			r = -EINVAL;
+>  		}
+>  
+> -		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++)
+> +		for (i = 0; !r && !of_address_to_resource(np, i, &rsrc); i++) {
+>  			r = numa_add_memblk(nid, rsrc.start, rsrc.end + 1);
+> +			if (!r)
+> +				node_set(nid, numa_nodes_parsed);
+> +		}
+>  
+>  		if (!i || r) {
+>  			of_node_put(np);
+> -- 
+> 2.43.0
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
