@@ -1,221 +1,151 @@
-Return-Path: <linux-kernel+bounces-772418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5A2B29258
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA88B2925C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4DB7A559F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344EA1B22815
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8BD2185B8;
-	Sun, 17 Aug 2025 08:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A8C22173F;
+	Sun, 17 Aug 2025 08:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxmOTR2h"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eKbVA+LY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA25221FC4;
-	Sun, 17 Aug 2025 08:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF081A841E
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755420730; cv=none; b=I6nUlq/guluxy+s5fQdp94bgF3eML3axoSI/SBICnCLWkKgVKyDg/GG+RiZv/yoMMIfF5FuYtrlSRz5yLbe1yUdKCpMBCyqzw5+daTstjKuLr39xaYN75SJBHm48AQcYSKopDynALwmLlru4dxck6ZuGrei/CmYyNAT7GPeR0cc=
+	t=1755421049; cv=none; b=UrVXCzG4/+JVvLXpkMvuzxeRAlx/Yf50mmEoBwX+r598NzeFGeQFFKaEYgQ8Yb327pHwhdHim5hR+BCKj8q3VdpIXm4ATxkYERUOJiY/WLgDYzgoKl7uMZwid+HiyOq8zDQ67sS1oNDoZvIYfMvqFaP2/Rt0EkjNFv2I94oFCJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755420730; c=relaxed/simple;
-	bh=mOZmGCDS+ifmqcLYmfbp8BPcpAmCwzlvZIOuiRx0LQc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pPkpYD3OEBHEZTKsv0o1TaJ3gXpcuQhqFYGrZFazvTSG9jjoNPEAyuwFz8106cax9K+UyA8WHeE3HZtpSORvWLNx/bIAi9MUunoNrpEQ9cSaNYEEyuQQIS0trgwkwspM4E8y9MAXXSvHN6p+YP/ESrszG1vU5Udyw969c0Y5bI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxmOTR2h; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so20299175e9.0;
-        Sun, 17 Aug 2025 01:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755420727; x=1756025527; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nczVdXOwZnKrAnrfSpvljupjNcdPfY9nuejpS2UQfbs=;
-        b=LxmOTR2hxxQ15wfbcEa28kXUuPJSve8hTXq6W1yzoW1FWaMkm4B4T1ZH4nl3ynQ1Yt
-         RQwFIG4PvZBU6ITq0QIiDCpAg1l8NYGrXLlWyLd8O43qa40AjzhmtnZ1HOWuOllj7cps
-         MRAK8bz7cYb8tMKGeO/ZTgb4DFeWZLR/nA2FedFBxuQhtE+2wBSEu1OE7lyCzJ0bUHEt
-         vpLAD/oDeJ/QbdOzRiF0zdtbccDYq1tTzki6ZNGRxmWfv6SFOhFjT5cb+BSbNL45SifM
-         9NFlYvE3hJghnPBK8F5a/H2LMn73crpB410rxEeS3cuLXULEocod1CB9SGUuEcjwW5p+
-         pnFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755420727; x=1756025527;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nczVdXOwZnKrAnrfSpvljupjNcdPfY9nuejpS2UQfbs=;
-        b=lh5JtqeIL29TYSsr17ymifQTFUxtwU+fyysp/x5lNxXf/b4V10HAOW7xkI8Zusr68M
-         ijGocMETYBvRewSqj6XG1t2bt6MsQZhpxiqa31P5Ci9mmVK74ruXGprg/TWcVJtjAN59
-         CerSimD+PshC5iBaDTwemHhSo4NFp7rNBLdtCO/wJlsCorjIQpkq5fLF0nIXL9ZsIwpk
-         WQGN3qc9zE7QuhXD0+WGyFyOYnZ19DW+b55Yk27zH5W8t6JGoqyr/cSMkqXTiz8LjgTG
-         UXu/9lqj7f6yNila/kjwxRhsmkgfUTK1mnuBlCUFntB0la5B/UHI7B/QYfgdT9Q0R58R
-         TH/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWo0rJOTsifpXA4orVM0r2JxmHfoui5mFtOohGt//fVpndSBkvOketciHnQCdYSZy5jPWZZea5ra1Av@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx76So4f2BCHdKy66MKZdbk32p18kQctuZxGtWkY4rqme4Mf6YR
-	4zQytDW7tGZgsj8WsAejf5dslkSmLGQVo0tVubGyA+KzQJzaKgVmVDag
-X-Gm-Gg: ASbGncu3f9vYmcD2Wd0pfyZEPtIJRW60QLEA1WkCuuZZ8Ii7o5/++500M93J1adIrfx
-	L4cb1Z1pfXz5MywFNxFeI9QNEwpQNmQyyDQvMPF8MQtrDGwS87+3enPFtEpxrx2MgLUKVQLFba5
-	1cUyAZxhII0x4rXXzkEI3HgUQTgcWkgETezJ9YsndWeowjbkMz4O4waWZ+A+9CRcrehWM+BFNmr
-	W0JDFIcS8jLvVEawl8cmIOyt0HBq4E0dv7zAyKcjatdUmZnJd5/U14qkiPtDxWgt9Y44bjRcTiQ
-	P5AsTrFqIJ3ZnyyS5AcMrfjJGZrXKIBGxprGugGPNvzHNd25MVzI52jc2J2YniWenaB/KEpcEu4
-	uDrApRiFwwjQO/Sdf952p8uVn5WI2R+VkaZ10XQ==
-X-Google-Smtp-Source: AGHT+IHpkqsbnW5dI7T7TVGSboSIG78i5UQ9PGrjFIX6sk/xbZSOWeEOND1ulVndvLOVG5mNNs3k7g==
-X-Received: by 2002:a05:600c:b8d:b0:459:dfde:3324 with SMTP id 5b1f17b1804b1-45a21857f09mr61790745e9.29.1755420726498;
-        Sun, 17 Aug 2025 01:52:06 -0700 (PDT)
-Received: from tablet.my.domain ([2a00:f41:b0c2:8202:4205:bdef:2b7a:307d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c61a66esm122908205e9.0.2025.08.17.01.52.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 01:52:06 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 17 Aug 2025 10:52:04 +0200
-Subject: [PATCH] dt-bindings: extcon: rt8973a: Convert DT bindings to YAML
+	s=arc-20240116; t=1755421049; c=relaxed/simple;
+	bh=fPUDi0DZzoqZfl8sl+wTGpuFJ3GTkf38jnCIeZxqurQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ku3vIL01l6jmhxPRmDwg/kRW/NLUNjtpBOZJEQbXd9xe9zCeIH0puWu7K7uol05J95aNB4FJQgUBI9KHxFkFzjFe1YNVU6RSp2EwVQZN8BX6pPIoRyiYtj3nhq5z6vvvcB/hs0TWQB9FiHqI9wEz+hg6ovTKgg+PVwQuRDpJZAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eKbVA+LY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 03DC040E0206;
+	Sun, 17 Aug 2025 08:57:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 94RntjjoMWWS; Sun, 17 Aug 2025 08:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755421041; bh=t/GgKOh0JWWW4x61dOBo2v+zkBCxsrF+oUxXPJPET+U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eKbVA+LYAibCOR4J48BdXurC1uYwJ4YkTCDAvRGU+PJuU9UwPtNZCLP7W5LsWf9Io
+	 Iodd3IPP9MZH3XiFY7T4QIcC2nEWqaY6d8OFn7HQ5hSPatRBhRauj+W8Ggc7r7Cbju
+	 UQ9ppi1uAZb4HDFWq9n2WGvg06Gz07clGnzHBxmRNvw8no6SdsbtNiNl+MdFyvQjgG
+	 4iF5itNfpI0Boo2jntidMW6j2D4GDMpnl7DSCtC2xfKviYxYXvaI2bLzaivQLFTeV8
+	 W2aAtIB9few7CkmRaChSU0olawH3pxDbjMKPadzZkJN/pngqjGCpsonjhrArzfkoU5
+	 +OEU0eAWXUgTD2QzJbSTFESKEyvIXPjwSRaQLqcHvfqKe0a795ta1pmMD4UIca4vnV
+	 Z0aMhsrS/Y+rIyFLhGUrxhBy+PsMgytOpiI9EqPoK6sP+oiprTFSdb2nvzJFjk7cuG
+	 yeBwTpLnb5beOgZnzTvQszo/w0Q6YH1uVArfdxbnfLOe5PZxtUxVPnq8MbQ0vp2ATc
+	 AkRwWjyQBvcEOd5Tfz42c+ffZpcVD1IZCyCEjGGk1dETDlPKju7Ff4tA8idygF8BIr
+	 bdE3UHoGpLQV2ePJZW4I2eg0c1t1YrWcP/sbeCz/Cr02jCtJw91GsNdHU/uZ/nYP6X
+	 AWRYr4R0imqSqJ+OGktK2hcg=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BB6D240E00DE;
+	Sun, 17 Aug 2025 08:57:18 +0000 (UTC)
+Date: Sun, 17 Aug 2025 10:57:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.17-rc2
+Message-ID: <20250817085712.GAaKGZaP83Bp4ghNT7@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250817-rt8973a-dt-bindings-yaml-v1-1-150eb4599dc9@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADOYoWgC/x3MTQqAIBBA4avErBtQ++8q0cJ0qoGy0IgiunvS8
- lu890AgzxSgTR7wdHLgzUXINAEzazcRso0GJVQhalmhP+qmyjTaAwd2lt0U8NbrgnlpVDkamWs
- jIOa7p5Gvf9317/sBFCRutGoAAAA=
-X-Change-ID: 20250817-rt8973a-dt-bindings-yaml-46c26fc14ac0
-To: MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3614;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=mOZmGCDS+ifmqcLYmfbp8BPcpAmCwzlvZIOuiRx0LQc=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBooZg09NEWXrXJwt4SiDAZDQjE9ZS2KCbbMIEey
- 5KvZAGVD+OJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaKGYNAAKCRCzu/ihE6BR
- aPx8D/9RwWq/MUMbV2XLphySJXfdeMUzrpjAjItYc+UdsQ2HbpLfdzFn1aw3kAHiEGgY2jYJA1y
- pt0gPAaDPxp7hy/LH6ILKc3Y6tM0LNVUHO0UrCq0VKQUxJvdkf6WlnLlhdoDoeJn7gVavqgVkGw
- vQH32aTAT0t+Zrw+w2ZBhuhUhMiRfQa57b6GpujAbmGrUaGsIqpQEvaPUi+c5xYLpAF1Vt0tdjm
- AX8TmYWcsnHUgUnwLArxK4XTQJKrAl/AgS5eFEQtlrHVedEMBYDtHNcVoP5QnkHv8YppaubNQdn
- XLwlkPQj+wRFApuREojmvBqjuX01dMjjWcKsFcCVSAWuqPtuy21nR9ELqHOG3nIXkIQ6b4NACoT
- yTPEIKm7bqJMhmwE0WvjSGE0eaeFz/sdg38CDJV0b1CJTgoO+5JWxUJDoQW9egfYTDEMKA9uSZE
- sFFbnQYi3SUw/OHJ1DKLn7mnb9Al5E+UD1DBhgbu8O42oU6Hq+7OYTLHTpM826R47Zfb4ih9eFH
- q3/2APguRQpmX9+Sc83aPYWUif0+2apl2ao6KE/4yeHmO9flBxvjcncc+5hMmjmlW3h1q4plOtb
- su/GrPr47uZePmN+sYOJ9Zf/E/u8r5cnPbQfzEbLUrXOcnmZPKGDUe4Ljnbn+QVoyVyIPDC4CW2
- 7kRbZz74pWdUZnw==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Convert the device tree bindings for Richtek RT8973A MUIC to the YAML
-format. No functional changes.
+Hi Linus,
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-I've added Chanwoo Choi as the binding maintainer as he is listed
-as the author of the driver for this device; I can change this if
-needed.
----
- .../devicetree/bindings/extcon/extcon-rt8973a.txt  | 23 ----------
- .../bindings/extcon/richtek,rt8973a-muic.yaml      | 49 ++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 23 deletions(-)
+please pull the x86/urgent lineup for v6.17-rc2.
 
-diff --git a/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt b/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt
-deleted file mode 100644
-index cfcf455ad4deffc1e4819934e6dc6fb3f95a54a5..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--
--* Richtek RT8973A - Micro USB Switch device
--
--The Richtek RT8973A is Micro USB Switch with OVP and I2C interface. The RT8973A
--is a USB port accessory detector and switch that is optimized to protect low
--voltage system from abnormal high input voltage (up to 28V) and supports high
--speed USB operation. Also, RT8973A support 'auto-configuration' mode.
--If auto-configuration mode is enabled, RT8973A would control internal h/w patch
--for USB D-/D+ switching.
--
--Required properties:
--- compatible: Should be "richtek,rt8973a-muic"
--- reg: Specifies the I2C slave address of the MUIC block. It should be 0x14
--- interrupts: Interrupt specifiers for detection interrupt sources.
--
--Example:
--
--	rt8973a@14 {
--		compatible = "richtek,rt8973a-muic";
--		interrupt-parent = <&gpx1>;
--		interrupts = <5 0>;
--		reg = <0x14>;
--	};
-diff --git a/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml b/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..f9e0d816c025957e8b96b15bdf478e589e653e90
---- /dev/null
-+++ b/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/extcon/richtek,rt8973a-muic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Richtek RT8973A MUIC
-+
-+maintainers:
-+  - Chanwoo Choi <cw00.choi@samsung.com>
-+
-+description:
-+  The Richtek RT8973A is Micro USB Switch with OVP and I2C interface. The RT8973A
-+  is a USB port accessory detector and switch that is optimized to protect low
-+  voltage system from abnormal high input voltage (up to 28V) and supports high
-+  speed USB operation. Also, RT8973A support 'auto-configuration' mode.
-+  If auto-configuration mode is enabled, RT8973A would control internal h/w patch
-+  for USB D-/D+ switching.
-+
-+properties:
-+  compatible:
-+    const: richtek,rt8973a-muic
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        usb-switch@14 {
-+          compatible = "richtek,rt8973a-muic";
-+          reg = <0x14>;
-+          interrupt-parent = <&gpio>;
-+          interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+        };
-+    };
+Thx.
 
 ---
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250817-rt8973a-dt-bindings-yaml-46c26fc14ac0
 
-Best regards,
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.17_rc2
+
+for you to fetch changes up to ed6c4b657bca3b39f7b11cba1405931aeb490f3d:
+
+  x86/cpuid: Remove transitional <asm/cpuid.h> header (2025-08-15 17:06:23 +0200)
+
+----------------------------------------------------------------
+- Remove a transitional asm/cpuid.h header which was added only as
+  a fallback during cpuid helpers reorg
+
+- Initialize reserved fields in the SVSM page validation calls structure
+  to zero in order to allow for future structure extensions
+
+- Have the sev-guest driver's buffers used in encryption operations be
+  in linear mapping space as the encryption operation can be offloaded
+  to an accelerator
+
+- Have a read-only MSR write when in an AMD SNP guest trap to the
+  hypervisor as it is usually done. This makes the guest user experience
+  better by simply raising a #GP instead of terminating said guest
+
+- Do not output AVX512 elapsed time for kernel threads because the data
+  is wrong and fix a NULL pointer dereferencing in the process
+
+- Adjust the SRSO mitigation selection to the new attack vectors
+
+----------------------------------------------------------------
+Ahmed S. Darwish (1):
+      x86/cpuid: Remove transitional <asm/cpuid.h> header
+
+David Kaplan (1):
+      x86/bugs: Select best SRSO mitigation
+
+Fushuai Wang (1):
+      x86/fpu: Fix NULL dereference in avx512_status()
+
+Nikunj A Dadhania (1):
+      x86/sev: Improve handling of writes to intercepted TSC MSRs
+
+Tom Lendacky (2):
+      virt: sev-guest: Satisfy linear mapping requirement in get_derived_key()
+      x86/sev: Ensure SVSM reserved fields in a page validation entry are initialized to zero
+
+ .../admin-guide/hw-vuln/attack_vector_controls.rst |  2 +-
+ arch/x86/boot/startup/sev-shared.c                 |  1 +
+ arch/x86/coco/sev/core.c                           |  2 ++
+ arch/x86/coco/sev/vc-handle.c                      | 31 +++++++++++-----------
+ arch/x86/include/asm/cpuid.h                       |  8 ------
+ arch/x86/kernel/cpu/bugs.c                         | 13 +++++++--
+ arch/x86/kernel/fpu/xstate.c                       | 19 ++++++-------
+ drivers/virt/coco/sev-guest/sev-guest.c            | 27 +++++++++----------
+ 8 files changed, 53 insertions(+), 50 deletions(-)
+ delete mode 100644 arch/x86/include/asm/cpuid.h
+
+
 -- 
-Artur Weber <aweber.kernel@gmail.com>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
