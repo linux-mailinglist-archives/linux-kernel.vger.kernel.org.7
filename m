@@ -1,186 +1,173 @@
-Return-Path: <linux-kernel+bounces-772353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC93B291AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0573B291AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BEE1B25EF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BCF2A1E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7561D88D0;
-	Sun, 17 Aug 2025 05:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6782B1DFDB8;
+	Sun, 17 Aug 2025 05:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgXKvwz2"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOtbclsR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5D3194A60
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 05:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE306881E;
+	Sun, 17 Aug 2025 05:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755409335; cv=none; b=YSc5nkhwBM/k+FYBQXddjS5Y5WZZIYw3cUAfdhFsY2XiYS8S8zDnqMgMlZXtCE0+kgt9zzE6k9lf9Y8KI4cxfSkIocstWyEqNnIuzVmDen6o2E6/HBqg5Dd0Rne3sG+zQdR8A71nUcjbtPN6lhf6nAO8mcRc+ICjC9PIw/hICns=
+	t=1755409556; cv=none; b=OE+pWb1hbPED4vhgVbXXqaqfSiGGzT9NlY/Hx3om2urmVuD/LmIFxHK13o+qUX64+SlT5jlY/yuWwlSuJ/38n1EiX0s2ouJ9FW2fCRumWA3g+E+HoKWeMw13ZK65VylCLD7AlxX7zR5udSu0UyH7a92EdkhexErwHD5vG1yLrKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755409335; c=relaxed/simple;
-	bh=+Z/mYmkjlGyP67pyAOekkR7e7NjNa85sfzlsmC09o7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XnKrZ2C12GM2ApxvBh1D0wrpnqlkmbwoSKaxox9pfm9HvNrJZnM4WftuiEohLZWQLtwy3Fxx+HGN9u1HJQvjZ1+R4LMBjpCVMdpsL3Wy8jWV5jLV5NyVyS0I+Jh5fLGxWa1SLSs372BHAIYoWjlbfla0emhQXYxhRiJSCQ5jDjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgXKvwz2; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e44537dccso1109723b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 22:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755409333; x=1756014133; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lztrOR28v6KPQTHH6JN0VDxNFUFZdX/DljHltjGKunA=;
-        b=bgXKvwz23oXhpbUKBaX/t9nibou8LEwReZQlbghnPLpa5SqtUbeDPO2QMOyeiqT/A7
-         YWBHwEF9tpPKYZsIVLtY90nj8u2IWYivzM5ylxYZuZXIGOMtR/J0W+WjzPAVMCLgqZNM
-         wxeUOO5yFIOtEHRAJ0d3oFvoLW5LGcFIZrXxP3cpGMcU+I51RibBx8aeeN99kRPLJ++p
-         FER/hs0EcACeTzWxtqOY13ugDUVjiWOVBUFIHyBQFr0IoyPUnuQMATM7XOGDYh4aBz8n
-         5E79KKZvMbJazah7ae8Bc4DCF1FrZ9UyqnMd+1812KAuXJKkeJ/DfyjVUP4tq8SFKz9f
-         6TeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755409333; x=1756014133;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lztrOR28v6KPQTHH6JN0VDxNFUFZdX/DljHltjGKunA=;
-        b=kw6Alo+C+rhLwQgogEiIXY/R1uzK5vx9o3UkFDoUfQh+tAXXeiyMQbjrHeKmOiiOMH
-         zQZgR32HnoRJR9Je2r+Kkuli5tmyCeG3kZ/Kcw0bJzK28k/hJvVljpsSrdjeDeGSvjtC
-         6dgqyVybY9ageOfup94uzrQ2cXYHw0kG3gYTmzQ/tkv7pt66FFv945ksKYwAvXebT/NL
-         Jz3ASoP0a6rN6/p9ybGKLwikfPvwEpIKl8RwSKYpL1YTmkqpsdv9hIlgObx/Rm7Nm7Pf
-         aycLX3VoesKNaQBLQQOr6qBBzO67Lj6cRcn87h+Xik0K1KlmyBdD7V14cLOQsfu9B0uO
-         eHFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9T29HRwobhOBG7ErQW7TT7goDfBL3CeQhSTtCPev84eqZl/MHWjJo7QqVNStCWBOLnCo1NHKOMbHcyQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMzsWcjlFsc1nI5sQbBEQbroIYOwZtPyILpVKH5Dse+i9ptgiO
-	dcufNJm5QvB6z+3ez5d+LpqrP1+L3FLLHvyXPMy8ZxDT7eyfPP7c1mmwbIvye15krLE=
-X-Gm-Gg: ASbGnctKCMDEDoToPEi0/iU/GuyEm9Bsob/cYIjNnmSZIt2I0z2L5PIqJOBZ4cVB3Lr
-	FmCWCbneuer/08d62GABqSgvz5NjzAt1q79TD8Sc1iozMHasaPibis0vfPwzcGjd+VPP4DigWzZ
-	ligARk+/BSzqne3PyCQpahCLP5CW11zvGk+eA5mjOjT4d1xkvFh71I47rE7x/Ji6HrUzXJ/Th64
-	CS/lXIoIGCHxN+4s6zlpm4Cozkul/fgBWAj1dFTNed1Aekz54V0/HjZk+A+HOxgec+Q3Ut9KP6l
-	FyumsZY/CeTIyR9einV2E/nBKozuYmrPmaOC+/2B4lxjPSnb1I9CEJXC96129lqIc28DwaIE+vi
-	ArE53byHEzU3dSyp3xcfS1t8ObbdnzjXZwBWp+mIJBsRY1Q==
-X-Google-Smtp-Source: AGHT+IHEioWaeVG/U1soMmh47oMpljvSROQMIVcpZi5IAIHMOXfqp4999NtwZNER3LhvdbvVOZKztw==
-X-Received: by 2002:a05:6a20:1594:b0:23d:ae11:e1e1 with SMTP id adf61e73a8af0-240d302fcb8mr10433573637.12.1755409333429;
-        Sat, 16 Aug 2025 22:42:13 -0700 (PDT)
-Received: from 100ask.localdomain ([116.234.47.202])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e452663f0sm4374848b3a.21.2025.08.16.22.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 22:42:13 -0700 (PDT)
-From: Nino Zhang <ninozhang001@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	straube.linux@gmail.com,
-	Nino Zhang <ninozhang001@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: fix coding style issues in core/rtw_mlme.c
-Date: Sun, 17 Aug 2025 13:42:02 +0800
-Message-ID: <20250817054202.31171-1-ninozhang001@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755409556; c=relaxed/simple;
+	bh=ttZ6jtkkRczJ0axAm9jZ0bwV4tHP2+ZyMJp+BLvzgMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jZ6p5UxeVh01bw6YziY6z57pLdLZBmQFce71qSRfp9HBg75fmggTpJuSTEKh2iNpVu3Si45idMWok0jhlnVXL5VegJtrzg9z+bTjB4/E/4y/vf/aUdvYR8WROsQ/t1mxVnMR/inNy1GUXSi6d6tK+0gAj+LID8gUPtUCowpWZPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOtbclsR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DBBC4CEEB;
+	Sun, 17 Aug 2025 05:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755409556;
+	bh=ttZ6jtkkRczJ0axAm9jZ0bwV4tHP2+ZyMJp+BLvzgMU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iOtbclsR3JH/yiCq9pAi1a+x0lWzJk7D8Y/T2R50hJ1WKoaktUJLiayU7r1jOOBz4
+	 xiCxAu03lmMI7AqhXPQ2zxutlhl+gr8bnJ+Tl/QaMjLTYDmmI1fxUMqHOWyvmDvfqg
+	 WFd8D/GnMNU8d9AylcbDhI0m1Q7DlJ+pMXNbMKDYT1nrkhoa/6LkahAv2K7cMLpy25
+	 bb/SgExzEAiQJhY7SYGKbQe8NKNicgEqmpKuJ60067SPm5/8eoZSqVhQUjTmFJuzi0
+	 8oNvHtWFClLH+tvF6Rn5Puxg/ihB+Z3lq0b0SX0yNfp2WDqHc9Jd5TH19mbPDR52rm
+	 46K8D0IxjNFXA==
+Message-ID: <7b6ff2bf-c2f3-411d-ab4a-a907d8edbc57@kernel.org>
+Date: Sun, 17 Aug 2025 07:45:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/nfc: Fix A-B/B-A deadlock between
+ nfc_unregister_device and rfkill_fop_write
+To: Yunseong Kim <ysk@kzalloc.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, Taehee Yoo <ap420073@gmail.com>,
+ Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+ yeoreum.yun@arm.com, ppbuk5246@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+References: <20250814173142.632749-2-ysk@kzalloc.com>
+ <e3cfdd98-6c51-479d-8d99-857316dcd64b@kernel.org>
+ <b8dc1074-725f-4048-9af5-6b62bd2150a3@kzalloc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <b8dc1074-725f-4048-9af5-6b62bd2150a3@kzalloc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch fixes coding style problems in rtw_mlme.c:
-- Delete unnecessary blank lines.
+On 15/08/2025 10:23, Yunseong Kim wrote:
+> Hi Krzysztof,
+> 
+> Thank you for your review.
+> 
+> On 8/15/25 2:55 PM, Krzysztof Kozlowski wrote:
+>> On 14/08/2025 19:31, Yunseong Kim wrote:
+>>> A potential deadlock due to A-B/B-A deadlock exists between the NFC core
+>>> and the RFKill subsystem, involving the NFC device lock and the
+>>> rfkill_global_mutex.
+>>>
+>>> This issue is particularly visible on PREEMPT_RT kernels, which can
+>>> report the following warning:
+>>
+>> Why are not you crediting syzbot and its report?
+>>
+>> there is clear INSTRUCTION in that email from Syzbot.
+> 
+> I wanted to clarify that this report did not originate from syzbot.
+> 
+> I found this issue by building and running syzkaller locally on my own
+> Arm64 RADXA Orion6 board.
+> 
+> This is reproduction series on my local syzkaller.
+> 
+> WARNING in __rt_mutex_slowlock
+> 
+> #	Log	Report	Time	Tag
+> 7	log	report	2025/08/14 20:01	
+> 6	log	report	2025/08/14 05:55	
+> 5	log	report	2025/08/14 02:31	
+> 4	log	report	2025/08/12 09:38	
+> 3	log	report	2025/07/30 07:09	
+> 2	log	report	2025/07/27 23:29	
+> 1	log	report	2025/07/26 04:18	
+> 0	log	report	2025/07/26 04:17
+> 
+> The reason this is coming from syzbot recently is that I worked with Sebastian,
+> the RT maintainer, to fix KCOV to be PREEMPT_RT-aware. This was merged recently:
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=usb-linus&id=9528d32873b38281ae105f2f5799e79ae9d086c2
+> 
+> So, syszbot now report it:
+> https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
 
-Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 10 ----------
- 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 692d0c2b766d..8ec039d832e9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -170,7 +170,6 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
- 
- void _rtw_free_network_nolock(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwork)
- {
--
- 	struct __queue *free_queue = &pmlmepriv->free_bss_pool;
- 
- 	if (!pnetwork)
-@@ -225,7 +224,6 @@ void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
- 
- 	phead = get_list_head(scanned_queue);
- 	list_for_each_safe(plist, tmp, phead) {
--
- 		pnetwork = list_entry(plist, struct wlan_network, list);
- 
- 		_rtw_free_network(pmlmepriv, pnetwork, isfreeall);
-@@ -380,7 +378,6 @@ struct	wlan_network	*rtw_get_oldest_wlan_network(struct __queue *scanned_queue)
- 	phead = get_list_head(scanned_queue);
- 
- 	list_for_each(plist, phead) {
--
- 		pwlan = list_entry(plist, struct wlan_network, list);
- 
- 		if (!pwlan->fixed) {
-@@ -868,7 +865,6 @@ void rtw_indicate_connect(struct adapter *padapter)
- 	pmlmepriv->to_join = false;
- 
- 	if (!check_fwstate(&padapter->mlmepriv, _FW_LINKED)) {
--
- 		set_fwstate(pmlmepriv, _FW_LINKED);
- 
- 		rtw_os_indicate_connect(padapter);
-@@ -929,7 +925,6 @@ void rtw_scan_abort(struct adapter *adapter)
- 	pmlmeext->scan_abort = true;
- 	while (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY)
- 		&& jiffies_to_msecs(start) <= 200) {
--
- 		if (adapter->bDriverStopped || adapter->bSurpriseRemoved)
- 			break;
- 
-@@ -1397,7 +1392,6 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
- 
- 	if (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) ||
- 	      check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
--
- 		rtw_free_stainfo(adapter,  psta);
- 
- 		if (adapter->stapriv.asoc_sta_count == 1) {/* a sta + bc/mc_stainfo (not Ibss_stainfo) */
-@@ -1540,7 +1534,6 @@ static void rtw_auto_scan_handler(struct adapter *padapter)
- 
- 	if (pmlmepriv->auto_scan_int_ms != 0
- 		&& jiffies_to_msecs(jiffies - pmlmepriv->scan_start_time) > pmlmepriv->auto_scan_int_ms) {
--
- 		if (!padapter->registrypriv.wifi_spec) {
- 			if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY | _FW_UNDER_LINKING) == true)
- 				goto exit;
-@@ -1673,7 +1666,6 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
- 	phead = get_list_head(queue);
- 
- 	list_for_each(mlme->pscanned, phead) {
--
- 		pnetwork = list_entry(mlme->pscanned, struct wlan_network,
- 				      list);
- 
-@@ -1770,7 +1762,6 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- 
- 	phead = get_list_head(queue);
- 	list_for_each(pmlmepriv->pscanned, phead) {
--
- 		pnetwork = list_entry(pmlmepriv->pscanned,
- 				      struct wlan_network, list);
- 
-@@ -1863,7 +1854,6 @@ signed int rtw_set_key(struct adapter *adapter, struct security_priv *psecurityp
- 		adapter->securitypriv.key_mask |= BIT(psetkeyparm->keyid);
- 
- 	switch (psetkeyparm->algorithm) {
--
- 	case _WEP40_:
- 		keylen = 5;
- 		memcpy(&psetkeyparm->key[0], &psecuritypriv->dot11DefKey[keyid].skey[0], keylen);
--- 
-2.43.0
+Syzbot reported it before you pasted patch, so it should also receive
+the reported-by credit, even if you discovered it separately.
 
+> 
+>>> | rtmutex deadlock detected
+>>> | WARNING: CPU: 0 PID: 22729 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x68/0xec kernel/locking/rtmutex.c:-1
+>>> | Modules linked in:
+>>> | CPU: 0 UID: 0 PID: 22729 Comm: syz.7.2187 Kdump: loaded Not tainted 6.17.0-rc1-00001-g1149a5db27c8-dirty #55 PREEMPT_RT
+>>> | Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
+> 
+
+
+
+Best regards,
+Krzysztof
 
