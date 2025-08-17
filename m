@@ -1,178 +1,84 @@
-Return-Path: <linux-kernel+bounces-772433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B914DB292A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:23:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E705B292AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542611B23920
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331DA2030F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C78F246776;
-	Sun, 17 Aug 2025 10:23:02 +0000 (UTC)
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D9E2749ED;
+	Sun, 17 Aug 2025 10:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLvlo2oG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8412248B4;
-	Sun, 17 Aug 2025 10:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23998274670;
+	Sun, 17 Aug 2025 10:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755426182; cv=none; b=T3KBK/Gd3PVqQBX/lsWPJFDFoScSBMz9OxE8lIVse1mBCm8hakqYTk1GxqkdLYUtV8e8KqQQTI/zLRVsj1aHLxyzIBnEUE+q/OeMVnGG1X/Qv2xmtmiyoWwmH65jemBalfxT55IyzbxOzbx84YBFj+M7k1lLV7V2Yaw5C/A06u8=
+	t=1755426648; cv=none; b=AgSVEsed/4OOk7Xxq6iloSatqeMMF3fCMusnZnCiAUDyMH44xZSXn1XUIKmxVGkqKgqDNhdgUT/3VqfQOoNIvbuDeFDddxN6U7R53u1fGClRgloCrsX/lsTx4uUhqucqkXEIyed0P5o2gBRGJZQgAbKZcnwCwrUp30FbUXDFxX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755426182; c=relaxed/simple;
-	bh=585Abtsi7kLDK7HjA8PidTqFDuFQS3xTittK7OJfS58=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fsIfSg1wECEUWRjrFDe6bMFUjDiAJ4ILUJVQyCxxVljRQXt39phCY6/lGivVQGQhT9vQRZnkwUu8bfsEK5ZdpkMwljQnSERprkhQBd80CNbIF1wbV45tzN4SvKfGFXoIjjufZCpvRrdusim5rGS4ifmCI9qmLU2AFYlbAPLGCgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 57HARrLH029800;
-	Sun, 17 Aug 2025 10:27:53 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.15.2/8.15.2/Submit) id 57HARrrt029795;
-	Sun, 17 Aug 2025 10:27:53 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dzmitry Sankouski <dsankouski@gmail.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH 6/6] Input: mc13783-pwrbutton: add OF support
-Date: Sun, 17 Aug 2025 10:27:50 +0000
-Message-Id: <20250817102751.29709-7-akurz@blala.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250817102751.29709-1-akurz@blala.de>
-References: <20250817102751.29709-1-akurz@blala.de>
+	s=arc-20240116; t=1755426648; c=relaxed/simple;
+	bh=ZpdIfkm7dfyECGIXzoxLPteZqCTh3B/QC/zL/1RBl48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OBzMkseqm5sxhsZ34wdHCQdjTXKl+HSXjQ+fmNQM7gco8acMIi7E2dlyRKzAnlGFPnSmPvtjWc0zT/RfM98CQZ4DanxrB59Q2lMCvkW4wxKjFSWMx3snjmofpkt67ieA2qwFL7NiqAXhTb0o4r8tGv5G3FbQRbaEs2ZmpfcXACc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLvlo2oG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EF2C4CEF1;
+	Sun, 17 Aug 2025 10:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755426647;
+	bh=ZpdIfkm7dfyECGIXzoxLPteZqCTh3B/QC/zL/1RBl48=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bLvlo2oGKvEOSOUm3rp7JoYFpmM0dsAfHAmxHFhv+Mor6QbLMtWl1ftRlbNlALbfh
+	 gKtw2BATylljYZMjvGuKWxLP7xHQCJsOwQ50F7SgED8rZ8U9Ozajgo3j5szFA8s/BQ
+	 HLQDn9Z6HMvVHB2jFTaqVxOSmE1NyHAiqJf+Y4FGhdtGZ5RQcou2k5L6hhaK+mjhGp
+	 kPVXZcl6ZmioZ4rN2GEh+e+gHdzaBv/BWFlvOb3/J8W4COQB4RvFFQiA1slCKzfXMl
+	 kCMLMfOw2uqFag7+piqh8iBbmAAhG+DMmh+leF6Ogmt+iAsYsCk9ecQW0uwe4XhZwQ
+	 MaSAa/XPbSecg==
+Message-ID: <3287eb4b-24fd-499f-b5f0-4af2b509a29c@kernel.org>
+Date: Sun, 17 Aug 2025 12:30:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] soc: apple: mailbox: Add Apple A11 and T2 mailbox
+ support
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: asahi@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Neal Gompa <neal@gompa.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Janne Grunau <j@jannau.net>, linux-arm-kernel@lists.infradead.org,
+ Keith Busch <kbusch@kernel.org>, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Hector Martin <marcan@marcan.st>,
+ Conor Dooley <conor+dt@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, devicetree@vger.kernel.org,
+ iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+ Robin Murphy <robin.murphy@arm.com>
+References: <20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com>
+ <20250811-t8015-nvme-v1-2-ef9c200e74a7@gmail.com>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <20250811-t8015-nvme-v1-2-ef9c200e74a7@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add OF support for the mc13783-pwrbutton so that it can be used with
-modern DT based systems.
+On 11.08.25 15:50, Nick Chan wrote:
+> Add ASC mailbox support for Apple A11 and T2 SoCs, which is used for
+> coprocessors in the system.
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- drivers/input/misc/mc13783-pwrbutton.c | 78 +++++++++++++++++++++++++-
- 1 file changed, 75 insertions(+), 3 deletions(-)
+Reviewed-by: Sven Peter <sven@kernel.org>
 
-diff --git a/drivers/input/misc/mc13783-pwrbutton.c b/drivers/input/misc/mc13783-pwrbutton.c
-index 49bc5d25f098..11a97ce070a5 100644
---- a/drivers/input/misc/mc13783-pwrbutton.c
-+++ b/drivers/input/misc/mc13783-pwrbutton.c
-@@ -29,6 +29,7 @@
- #include <linux/mfd/mc13783.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- 
- struct mc13783_pwrb {
- 	struct input_dev *pwr;
-@@ -105,8 +106,75 @@ static irqreturn_t button3_irq(int irq, void *_priv)
- 	return button_irq(MC13783_IRQ_ONOFD3, _priv);
- }
- 
-+#ifdef CONFIG_OF
-+static inline struct mc13xxx_buttons_platform_data __init *mc13xxx_pwrbutton_probe_dt(
-+	struct platform_device *pdev)
-+{
-+	struct mc13xxx_buttons_platform_data *pdata;
-+	struct device_node *parent, *child;
-+	struct device *dev = &pdev->dev;
-+	enum mc13xxx_chip_type chip = platform_get_device_id(pdev)->driver_data;
-+	int ret = -ENODATA;
-+
-+	/* ONOFD3 is only supported for MC13783. */
-+	int max_idx = chip != MC13XXX_CHIP_TYPE_MC13783 ? 2 : 1;
-+
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	parent = of_get_child_by_name(dev->parent->of_node, "pwrbuttons");
-+	if (!parent)
-+		goto out_node_put;
-+
-+	for_each_child_of_node(parent, child) {
-+		u32 idx;
-+		u8 dbnc = MC13783_BUTTON_DBNC_30MS;
-+
-+		if (of_property_read_u32(child, "reg", &idx))
-+			continue;
-+
-+		if (idx > max_idx) {
-+			dev_warn(dev, "reg out of range\n");
-+			continue;
-+		}
-+
-+		of_property_read_u8(child, "debounce-delay-value", &dbnc);
-+		if (dbnc > MC13783_BUTTON_DBNC_750MS) {
-+			dev_warn(dev, "debounce-delay-value out of range\n");
-+			continue;
-+		}
-+
-+		if (of_property_read_u32(child, "linux,code", &pdata->b_on_key[idx]))
-+			continue;
-+
-+		if (of_property_read_bool(child, "active-low"))
-+			pdata->b_on_flags[idx] |= MC13783_BUTTON_POL_INVERT;
-+
-+		if (of_property_read_bool(child, "enable-reset"))
-+			pdata->b_on_flags[idx] |= MC13783_BUTTON_RESET_EN;
-+
-+		pdata->b_on_flags[idx] |= MC13783_BUTTON_ENABLE | dbnc;
-+	}
-+
-+	ret = 0;
-+
-+out_node_put:
-+	of_node_put(parent);
-+
-+	return ret ? ERR_PTR(ret) : pdata;
-+}
-+#else
-+static inline struct mc13xxx_buttons_platform_data __init *mc13xxx_pwrbutton_probe_dt(
-+	struct platform_device *pdev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+#endif
-+
- static int mc13783_pwrbutton_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	const struct mc13xxx_buttons_platform_data *pdata;
- 	struct mc13xxx *mc13783 = dev_get_drvdata(pdev->dev.parent);
- 	enum mc13xxx_chip_type chip = platform_get_device_id(pdev)->driver_data;
-@@ -116,9 +184,13 @@ static int mc13783_pwrbutton_probe(struct platform_device *pdev)
- 	int reg = 0;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
--	if (!pdata) {
--		dev_err(&pdev->dev, "missing platform data\n");
--		return -ENODEV;
-+	if (dev->parent->of_node) {
-+		pdata = mc13xxx_pwrbutton_probe_dt(pdev);
-+		if (IS_ERR(pdata))
-+			return PTR_ERR(pdata);
-+	} else if (!pdata) {
-+		dev_err(dev, "missing platform data\n");
-+		return -ENODATA;
- 	}
- 
- 	pwr = devm_input_allocate_device(&pdev->dev);
--- 
-2.39.5
 
 
