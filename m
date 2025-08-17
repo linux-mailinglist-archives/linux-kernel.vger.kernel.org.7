@@ -1,184 +1,164 @@
-Return-Path: <linux-kernel+bounces-772512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE42AB2938E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A640B29390
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE2A208B03
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BE73B337F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8372F90F1;
-	Sun, 17 Aug 2025 14:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB3D2F9C42;
+	Sun, 17 Aug 2025 14:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="DcvrLON4"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTr/44sk"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE8F2F83CA;
-	Sun, 17 Aug 2025 14:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A412F9C27;
+	Sun, 17 Aug 2025 14:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755441649; cv=none; b=GfBtoIyL5Y0+aCn86uYmitoXcuKEdN+OMo6ndvc+PecB1wgad0Y6k4/M++X2rpWgHLKpnrAYgG3iTwfT/mRNoGPgIj0UH60X4WP5cXoeVIX2vHsDGbeU4+tJ6czG5fg9ELZRko75c9jPm1gHm+omSEXzKWM8aqKnfhHLj3sfZYE=
+	t=1755441730; cv=none; b=Hx1aid4lRoaQVwPzKehC8wayM/oM9GOYPTGJt+Rf5r1RGn6u5HDW4QSWwCyuHfaFd+Mfr6hOr8GqnfXK4KAkMu74Ka/fqktoHefcfClRO+9cfPP/JnXkdpppx/IwCBgH+UurItA1GiSe8I2RekF3NsD88N8g1kGFu/EPEmliyQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755441649; c=relaxed/simple;
-	bh=C5O+EoyOlPQcNHOMGrGy4W+Ta3zzOZ7A+ckXJmSQiJM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=DMN1FVhW6f9t96//Si2skd35YHbnxO4vnO6EASu0+Gp3rTEWeGjzqxnKwivaVa3CllEv4O+UwjJzFgfHTRco2IuNjQzCFs/J9xmhHLxHUXTAEdOoCFGKbAvRdcFxJchkG+HIVskw+gqR0iq2PHtnn0MuIqp3/elSailGug6JgrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=DcvrLON4; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id AB83D20E7F;
-	Sun, 17 Aug 2025 16:40:43 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id jhqNozXW2LyZ; Sun, 17 Aug 2025 16:40:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755441643; bh=C5O+EoyOlPQcNHOMGrGy4W+Ta3zzOZ7A+ckXJmSQiJM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=DcvrLON4F3fL35nfNmHCEDN0tx/MKWxtBImknCbtLG5RtYWzvoSIjdegdBeHwfhUn
-	 cqDgfyYD07SN+4pQBHv0W088Ul6PVjUT1QpQkRrxx5WsfYECGTRQo2KYtKKMk9wUPC
-	 eJVvnGhhB541xeSCejMEQhxwllUilGdn1JH8uYeKMuoMUMpYOo/JD1bExy06JHiTkw
-	 0oFx4LkHHPXvl0lDDg7o0282ZEWFE2USxRHwZXXlwkeLMP6Txkw22Z7E8QarZpuHV5
-	 eMpAscHXQeg8K1bOadu4EY4gScUPOjffolyAFzKinvVCpGN39/jNuJHN0iPgWeQzSG
-	 l3Anlo/R3u9vQ==
+	s=arc-20240116; t=1755441730; c=relaxed/simple;
+	bh=VCAAoYXrZeEeZvYFDo8gpSf5FRlsHN77VicwqCg7lnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fC4Ccl3MtMWp4HtMhnVMLk6YeWivlEV+jlc4XzpW5YJ6gBS/ADl7G3xp9e/06nkhtsXEQQSQ49VFk4mGqdHlyJ4MEBBBi0Z33BX/o8B+RZ2MgMyZhjjl+RJJPw3iy5HyHu63CDj/Wu3zYfZPtufPcAtj9dyLCHZlQ029fdgrC5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTr/44sk; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9dc5c2f0eso2314486f8f.1;
+        Sun, 17 Aug 2025 07:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755441727; x=1756046527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JCK0McWcOTuTtwFlnRSx3Lqz/jXdIqFs+uzK4OV710Y=;
+        b=BTr/44skjPhAdxbal7NahWzkVbEdpaUbOUWJ3nUwro/PceJUEoDatGH33kJZJ9najw
+         1JwCcToQdjFPN2RMPrOBxkI3Fb8WhZDjCPhSIWOoCYfBdZXRtOzPpycHPJUyY7PLfIxF
+         7Vz/ht7mMzHCmKQHC6ryqTLJWpqbjo3Kor3UR5iD0VRQYJTFxgHP0tp56WdyO1K7kAZi
+         tBHeYUya2iSuUX7Qx+rsgK2fLfOcW+ZpD+owkMRX4RpttdGsOEO2TNGmZMJou7iRAzQB
+         oNH9l0HAtUe7/7cYXnws003ymvJLK6gZwW0RRq0+vXSuIs4YPdLc/GPuuCKy74OCAJJt
+         GMeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755441727; x=1756046527;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JCK0McWcOTuTtwFlnRSx3Lqz/jXdIqFs+uzK4OV710Y=;
+        b=bfpNgkScJJ58I5k63HRSjj1rwpvhV2zVTbs3FwPsaeywSYRZR/A3EIPlQEqnnVKi+K
+         ne/YFAMnnCb2LNvCXbUbhhhvqyIfHJFM8sli1/JAskrmexYWCff8QKoRpDYGcyUoA0c/
+         pdzqYk8Q9VMEGg8MXwheWVmWkomR9OwCYxziPQ1Y8CiJqYlMRbcpVzKG6/jGxBk7d/cR
+         Y2wEkAUac+qUcoQJXnS77OyW5bkTJ7b57An7uq7zouAJW95knxkEG3NyXk21AmzrgWsW
+         2DXCmZWzJ0UT66E0tRHZptBXg7dAZMd+3F3umIdhH9ln1TZpBye9scmq8S+y/FJqNfXR
+         z+Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVeEEL0gZybcwWqSWiTlZFF9evqm8jnTSYblDwh4ybjTqxMwdClV/g/WZwdZXbb40D24teri02S@vger.kernel.org, AJvYcCXtd9yfTG80Z1FVQ4jOKMUhOXqbVCqcglub4+gYcoNO5HZ5swixVBktayJMgv6TULoqnFeSdH/C6XB6LHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE7SRJomPEFyRZQMK++AzuSaMMduaDpCtiWNuXIOsdEcCCeqDu
+	isN0NkmYvknYC2LWy7vs3wLEf3KTVRwr8YQCZRsAeMrMq5a+46U7HPfV
+X-Gm-Gg: ASbGncv4jXzbxoUiToO89aaIB/1iWU/HfsWOp4xdeYVog1aNVisOH24a43JQ2JViZOP
+	Zdf5wIRUda054fhwzcSEzQrDMOfqk6CfVeypoedR8vhBHjYfpwcTU0KWbPKb7GApGFGMDKNuqS+
+	uTQgypG7aZjX19xoQH5FWjRC6QfYAmnLUC9cBOslpdrsq3D0R+4WYfsRQaLh81t+pcpjrWLRfC7
+	gA62QrAF3mLPY9zQvZgSK+4WcYuP823qxWAM7rbZ2k5hj0ExpFLn/zwQwqca9ss50yveKj49rA4
+	F34RHZ497BVluH0jHtV3NrP9jL+ybgKxzqbUa1VRq2nTIaBIQtw+wSGv+3AAceV5dmr4HJRIhuB
+	amPERpZFQzPZ8yke9xoYwhRdlC9Ip3YO0q5rvfx9U5airHSqNqWWG9BGAZ5Xg
+X-Google-Smtp-Source: AGHT+IFlIuH2NAhG3N61PeoqIDbW0IWOe4t4kn17RiKQqs35q6xh7BpQ/VMASePWLc6529FKkvONyg==
+X-Received: by 2002:a5d:5d11:0:b0:3b8:fa8c:f1ac with SMTP id ffacd0b85a97d-3bc68b89fb3mr4773670f8f.24.1755441726833;
+        Sun, 17 Aug 2025 07:42:06 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a22328b5fsm93743445e9.20.2025.08.17.07.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 07:42:06 -0700 (PDT)
+Date: Sun, 17 Aug 2025 15:42:05 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: ecree.xilinx@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sfc: replace min/max nesting with clamp()
+Message-ID: <20250817154205.6044124e@pumpkin>
+In-Reply-To: <20250812065026.620115-1-zhao.xichao@vivo.com>
+References: <20250812065026.620115-1-zhao.xichao@vivo.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 17 Aug 2025 14:40:42 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] arm64: dts: exynos7870: add DSI support
-In-Reply-To: <6f0451ee-ddb8-4ded-8f0a-b491de9cc308@kernel.org>
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <20250627-exynos7870-drm-dts-v2-3-d4a59207390d@disroot.org>
- <6f0451ee-ddb8-4ded-8f0a-b491de9cc308@kernel.org>
-Message-ID: <00240935c664edaec3092354a303a91f@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-08-13 07:56, Krzysztof Kozlowski wrote:
-> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->>  			reboot-mode {
->>  				compatible = "syscon-reboot-mode";
->>  				offset = <0x080c>;
->> @@ -674,6 +682,83 @@ cmu_isp: clock-controller@144d0000 {
->>  				 <&cmu_mif CLK_GOUT_MIF_CMU_ISP_VRA>;
->>  		};
->> 
->> +		syscon_cam0: syscon@144f1040 {
->> +			compatible = "samsung,exynos7870-cam0-sysreg", "syscon";
->> +			reg = <0x144f1040 0x04>;
->> +		};
->> +
->> +		dsi: dsi@14800000 {
->> +			compatible = "samsung,exynos7870-mipi-dsi";
->> +			reg = <0x14800000 0x100>;
->> +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clock-names = "bus", "pll", "byte", "esc";
->> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_BUS_DISP>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_APB_DISP>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_TXBYTECLKHS_USER>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_RXCLKESC0_USER>;
-> 
-> First clocks, then clock-names, please. Same for phys here and in all
-> other place.
+On Tue, 12 Aug 2025 14:50:26 +0800
+Xichao Zhao <zhao.xichao@vivo.com> wrote:
 
-x-names followed by x approach is followed by the entire dts.
-I will apply your suggestion in the next rev, and will also send a
-separate patch for the same in all other places.
+> The clamp() macro explicitly expresses the intent of constraining
+> a value within bounds.Therefore, replacing min(max(a, b), c) with
+> clamp(val, lo, hi) can improve code readability.
+
+I think you can do a better job of the line wraps?
+The first and third won't exceed 80 cols split onto two lines.
+They might be 86 on one line - plausibly ok (but I like 80 and they are splittable).
+
+	David
 
 > 
->> +
->> +			phy-names = "dsim";
->> +			phys = <&mipi_phy 1>;
->> +
->> +			status = "disabled";
->> +
->> +			ports {
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				port@0 {
->> +					reg = <0>;
->> +
->> +					dsi_to_decon: endpoint {
->> +						remote-endpoint = <&decon_to_dsi>;
->> +					};
->> +				};
->> +			};
->> +		};
->> +
->> +		decon: decon@14830000 {
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/net/ethernet/sfc/efx_channels.c       | 4 ++--
+>  drivers/net/ethernet/sfc/falcon/efx.c         | 5 ++---
+>  drivers/net/ethernet/sfc/siena/efx_channels.c | 4 ++--
+>  3 files changed, 6 insertions(+), 7 deletions(-)
 > 
-> node name: display-controller@
+> diff --git a/drivers/net/ethernet/sfc/efx_channels.c b/drivers/net/ethernet/sfc/efx_channels.c
+> index 06b4f52713ef..0f66324ed351 100644
+> --- a/drivers/net/ethernet/sfc/efx_channels.c
+> +++ b/drivers/net/ethernet/sfc/efx_channels.c
+> @@ -216,8 +216,8 @@ static int efx_allocate_msix_channels(struct efx_nic *efx,
+>  
+>  	if (efx_separate_tx_channels) {
+>  		efx->n_tx_channels =
+> -			min(max(n_channels / 2, 1U),
+> -			    efx->max_tx_channels);
+> +			clamp(n_channels / 2, 1U,
+> +			      efx->max_tx_channels);
+>  		efx->tx_channel_offset =
+>  			n_channels - efx->n_tx_channels;
+>  		efx->n_rx_channels =
+> diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
+> index b07f7e4e2877..d19fbf8732ff 100644
+> --- a/drivers/net/ethernet/sfc/falcon/efx.c
+> +++ b/drivers/net/ethernet/sfc/falcon/efx.c
+> @@ -1394,9 +1394,8 @@ static int ef4_probe_interrupts(struct ef4_nic *efx)
+>  			if (n_channels > extra_channels)
+>  				n_channels -= extra_channels;
+>  			if (ef4_separate_tx_channels) {
+> -				efx->n_tx_channels = min(max(n_channels / 2,
+> -							     1U),
+> -							 efx->max_tx_channels);
+> +				efx->n_tx_channels = clamp(n_channels / 2, 1U,
+> +							   efx->max_tx_channels);
+>  				efx->n_rx_channels = max(n_channels -
+>  							 efx->n_tx_channels,
+>  							 1U);
+> diff --git a/drivers/net/ethernet/sfc/siena/efx_channels.c b/drivers/net/ethernet/sfc/siena/efx_channels.c
+> index d120b3c83ac0..703419866d18 100644
+> --- a/drivers/net/ethernet/sfc/siena/efx_channels.c
+> +++ b/drivers/net/ethernet/sfc/siena/efx_channels.c
+> @@ -217,8 +217,8 @@ static int efx_allocate_msix_channels(struct efx_nic *efx,
+>  
+>  	if (efx_siena_separate_tx_channels) {
+>  		efx->n_tx_channels =
+> -			min(max(n_channels / 2, 1U),
+> -			    efx->max_tx_channels);
+> +			clamp(n_channels / 2, 1U,
+> +			      efx->max_tx_channels);
+>  		efx->tx_channel_offset =
+>  			n_channels - efx->n_tx_channels;
+>  		efx->n_rx_channels =
 
-This was preemptively changed, thanks.
-
-> 
->> +			compatible = "samsung,exynos7870-decon";
->> +			reg = <0x14830000 0x8000>;
->> +			interrupt-names = "fifo", "vsync", "lcd_sys";
->> +			interrupts = <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clock-names = "pclk_decon0", "aclk_decon0",
->> +				      "decon0_eclk", "decon0_vclk";
->> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_PLL>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_ECLK>,
->> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_VCLK>;
->> +
->> +			iommus = <&sysmmu_decon>;
->> +
->> +			status = "disabled";
->> +
->> +			ports {
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				port@0 {
->> +					reg = <0>;
->> +					decon_to_dsi: endpoint {
->> +						remote-endpoint = <&dsi_to_decon>;
->> +					};
->> +				};
->> +			};
->> +		};
->> +
->> +		sysmmu_decon: sysmmu@14860000 {
-> 
-> iommu@
-
-Also preemptively changed.
-
-> 
->> +			compatible = "samsung,exynos-sysmmu";
->> +			reg = <0x14860000 0x1000>;
->> +			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
->> +			#iommu-cells = <0>;
->> +
->> +			clock-names = "sysmmu";
->> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>;
->> +		};
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
 
