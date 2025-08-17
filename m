@@ -1,118 +1,130 @@
-Return-Path: <linux-kernel+bounces-772501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0A2B2936E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA17DB29372
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5102A1E5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25294E16A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD642DC356;
-	Sun, 17 Aug 2025 14:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ED32E266D;
+	Sun, 17 Aug 2025 14:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WOddVjmw"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bsc/ynqH"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183D21B4141
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 14:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49398770FE
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 14:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755440837; cv=none; b=H0QlICEdaa1nd/XTK67WZgBtIWASODkO8IRzT7lBC3kkxAnCzjTWTmSfFkRr0KvwLO8mhbrrLrK4wcKr6FeeQXFdToAykDt6fxLgphgcfqIz8BUU2AeOuYYlLNTUrVPK4Nwx9BXqgMA77ctqvW5Pb+WIjJUekUOQA7+PWQBarPE=
+	t=1755440953; cv=none; b=JUC0GA7B0+EMMZGgL6Or8qVTR4mTRvFNPtpudrIkiev44CK8lvfpUHtGSnBGEc+PF6ubEvt5Bbc5FvE41wcRtUWYZGoWMaFDlgYtLszbHJTNGZ5U0Z03mL8sOAGspC/wXXx6tdHBLAFIS7MJlldRPSkXn43o01UpW2xjyj+4iIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755440837; c=relaxed/simple;
-	bh=lDpq8I98j7ygHtJNnQA9whbnrtcvMAxLIsDOkN+5U5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fA8RpnK+eaaqbnMF3BG31DvsJH2aQ+cs75OKPdjLJnlnrRTEWh8hkzljZ6gCb+WGkNabmIY5EeSPcAgFwoZ4I6GO7Oe+CX65JeRSOh22HVUUjT2kLoZGzuvYv4U5OM55ezacpIQA2289opTNtfVa4/cxgRrOdxJs9IeQtIJ4+Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WOddVjmw; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b109c63e84so36168731cf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 07:27:15 -0700 (PDT)
+	s=arc-20240116; t=1755440953; c=relaxed/simple;
+	bh=28n8CxDuDki+Z2+FJdVcetGs5D37Nu2X6SQ0exxsq6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t/qVPPAJDpQ3SMT2DRbfNRnUDBSKgoYDA7Vylu1osKZ2jPANKlJ2N+XyN4BeTbIYqOBUf/4pubzMpjvvZXxYnhX+iP7FeqjMW4JdR/tQnTzw7wI5HVesUJEk/Wt8IhcATAUUFz7NjXsm2mgQIkEiAzQHSzy4EflPRUHQlmUVGsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bsc/ynqH; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b916fda762so2058224f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 07:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755440835; x=1756045635; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=maDtJ/OnwRzl2mzIghqGwSPF8ovKhpPVT9edc4eCiH8=;
-        b=WOddVjmwX1cayKg/mSl88CsPX8QnfbVX4kuBoisupimerSVu6XvtpA8bg90gE4R/QW
-         M+1d89Gkhhwi75mL6bOhMtvOGIVy9ttl4pdtr3p7NL6+Km1Vz7NnEtksa124k/kPCZQg
-         szKZywRJcN64r8BJnxHVK1v6WDq7U7mkj8l8WU5jKKszOzjZFaGnvRJxLe8S0l+Q0v+H
-         Te0VRODB+dINAY0TNRRDYW0HLIam68oPG1VMfqwLBc7eHM2W62wXRQ5zn847phdSxkaU
-         gvTdGnaN5DzuKsVgqk2qNwjEOfRwM+IJI931iVUWQLZfR6uiDm06irgg0wfuw+isyuQH
-         vCeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755440835; x=1756045635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755440951; x=1756045751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=maDtJ/OnwRzl2mzIghqGwSPF8ovKhpPVT9edc4eCiH8=;
-        b=iGkYffMrhd8FGCbnG+cCWYyMj1TOvLi6C8y7QDatACH1mKAEdPtH5UxRoNzR9XsgEd
-         HIPuYvnbdAgRe2abwne/JSpBsHsAFCRy9gGZoBLst5H12xUafFA/k7Vw72rgaXQ6bj9W
-         NiEzOPcpBzXVdTSyXH34PIZSHvBL6j8KvNs+dgtej36OgD+CKzayWbwf/ULU5KHTk9C2
-         yl7KwO42E+A+3OD9CB6Au8j4obU3+RW6jpm4j7E6MEGT7o+DzuK1mcAhvvgI2A98Rxwf
-         xGaYQ4y130Nrifub1WajHofsjB0piONx3/Eq4f9giuf6kHvOa7KEA2WAvEubSalc2Q9D
-         BJtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9zHMrSULiiwLht4u10LkP+SMT0pCYom+ol0h6Gh4Uqhcmqp6iFg0SbecJewQnDu6GQEKIxOzmzMEbnEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9j2966I9Y2pIvIACfbBG8uCD4S7HV17+uSnfXJXgzNXdQhI7d
-	c9cs1NF0o+cjdtcRkCXa/WiDiil9usLZwUV9vlblnvxg9UfTiibKz93JtKIk5FhNlA==
-X-Gm-Gg: ASbGncvREr0pFuRloF+/MGvT8a1L0UKqcMySptP27LAZPmPhZydAIHY2C3VXFQ3GWCj
-	gw7dlSdBY6G53rfdPOmGq4+u9YPR+1H3BRa6rrvMdbwWSloU17Q8zkWaMVN05GzDwdsabDSzFZo
-	i5He14RxrIk81/aaKR7smjGErIFSM+uNnPE12uMiP5yV40CFfmODV4bDG4MWxCcuHiBirctywfJ
-	QxGfBtfMDsBOJGm95QR9HooBCKs5tSrS0QWX7ObKEEr5pFdXYRdoF4ORS+/0GXtCD6BQPdyozBc
-	hbp2SpzdKjHy6p7y1CsTWPg2Mr5h+QNaH/lvJZgKBzrUVQ42DSAv7liIZ4ZaRHHlRe9ny8a/tr6
-	AtPLiVLoJGzRGN/RJjlmmdpHPP8Nh94ppu4nrdA==
-X-Google-Smtp-Source: AGHT+IE7mcvpDwN6PKRambQsOmtvuGU5trnDeiipWqjRmMVW9O5h9Q9S2jd9sA9uj5EzwPmhQmqFRQ==
-X-Received: by 2002:a05:622a:4c17:b0:4b0:710d:3cbd with SMTP id d75a77b69052e-4b11e060063mr103987241cf.7.1755440835014;
-        Sun, 17 Aug 2025 07:27:15 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::f777])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11ddd8727sm37627401cf.39.2025.08.17.07.27.13
+        bh=P6yEu2AlLzkFYZiSQt2WaNR52waq6ZeZHTHYBBDv5k4=;
+        b=Bsc/ynqHm6skxjBG7mqeISdYmye7r9qAafJzdJDsdswJIF5lOGNGSJwxUXB2WAO1vi
+         3ZXZ0FbnCwzhmOPfkv0HBx/MYDNuUpABsnqfGB9vXjWytf0mgFcygNHVMmi7ot3AfYQL
+         zOK00hqBPsErQZ2foCMitCRQqYAq1V7w1vDVraeyXKGBnSkSlgE/ZhqRfZaaG/oqMkZ2
+         07GUdvSH3sOMuUI6SoMVJmAaMYLb0M2WQ4tBIz5ezHxVuo7SdxrJ/jP1Txq0PGgF9TD7
+         KSjcTo0bzHqHtHkkpopOW2CkeIvaYFdKIvk7iXMGUBODUFIBoNnFVZtYejGMaxZUxmQy
+         GNqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755440951; x=1756045751;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P6yEu2AlLzkFYZiSQt2WaNR52waq6ZeZHTHYBBDv5k4=;
+        b=YzsOkvAUFaGn2tu+KNh9G6l8LlP0YvlLDxy/fZyX+y4cdMfhfJ/4xBuyny/hMdd6pk
+         fIS9VxiduEnVuEgaMDqrw3TiCn19jDHl/Ja1VwAI3TwFPTywf1O/ycQsh9edEK16H/ha
+         1AVlG0zQ6avaBnr5cNrl1IFRcFvjxRujUjXDz7BbCyZv5XwVmKrmMQZYEQOqJKGSYatm
+         JoOFgppLvgqAh/K7njcYguBPWkDKwk283JXYXvaZuBZ5abSpvAxTGHDFgpegf2Ka1nxN
+         dENBu1A6ztXIlqTUEoz9QXJ7hPjlwVvDJ5IhzRJo2d64c6ZQ7BD/N6U+Unv5UTVV67P9
+         FroQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWttuPpppq1c0HmDmG01FZ3eR0SiRUBlZaDediUmXCeWsklJceiYiBesFzjgXccOxGJSr/T2HyiNU4oMHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd7tB2CIzQHopYsEADCyke2pnhr6pKtFkL4WrAzxOLXbzSItf8
+	0bOYz98zISJ/6J5+SsaJQO+FahdHa6k7bG6q3zEMsrpNd4FacHbdjVoT
+X-Gm-Gg: ASbGncuOwG/ViLUO6hpQd/693pjjjR9ctNwY6vE1akulrZUaoOjITrSrKFSOBgPpEXV
+	bNDkUvWmgUSGpS3M0DkdOZy7fz2mSX+D1Uudk8Bxba+K7n+kVKRMXM87hp+YdoVBU8MqxEuJmUU
+	kXKcUpApX4T0TGQiUGAanzykRLLHAJqQc3sJRjTe373C9Qr85sLotsCQlxdT9iVsVdIyl/sxHTW
+	U+gSFxccFz600ndnaGpVhki67DboBbKqpoHZGmiQxhqdY/l8/zkzb2JbxP+AJWLwDyYN5HMtVgV
+	7dMoI4Fff1yedGr/kC6qPjmHlE4mL6BMugN7kmyPboPEkqW5Q7lJC6qDhyvr9fhnkDiz9G+BVQ3
+	EhY2TGxY6bv666QiTKHQWRMssq35hMDfqgvp/rJTp3pQdehdx3bCUmJOkTlzI
+X-Google-Smtp-Source: AGHT+IETKpBYTg/qI7JrrvClWxZ1BBfG1mxEtTNoRR0a+tiu3C2/+FWEGyA6Cb4IoghUZrX3OhMxhw==
+X-Received: by 2002:a5d:64cb:0:b0:3b7:8aa2:9fcb with SMTP id ffacd0b85a97d-3ba508ebe8fmr9326231f8f.14.1755440950520;
+        Sun, 17 Aug 2025 07:29:10 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64758561sm9579067f8f.11.2025.08.17.07.29.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 07:27:14 -0700 (PDT)
-Date: Sun, 17 Aug 2025 10:27:11 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
- <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+        Sun, 17 Aug 2025 07:29:10 -0700 (PDT)
+Date: Sun, 17 Aug 2025 15:29:09 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kuba Piecuch <jpiecuch@google.com>, mingo@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, joshdon@google.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] sched: add ability to throttle sched_yield()
+ calls to reduce contention
+Message-ID: <20250817152909.45567727@pumpkin>
+In-Reply-To: <20250814145308.GB4067720@noisy.programming.kicks-ass.net>
+References: <20250808200250.2016584-1-jpiecuch@google.com>
+	<20250811083609.GB1613200@noisy.programming.kicks-ass.net>
+	<CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
+	<20250814145308.GB4067720@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 16, 2025 at 10:16:34AM -0400, Alan Stern wrote:
-> So it looks like we should be using a different function instead of 
-> local_irq_disable().  We need something which in a non-RT build will 
-> disable interrupts on the local CPU, but in an RT build will merely 
-> disable preemption.  (In fact, every occurrence of local_irq_disable() 
-> in the USB subsystem probably should be changed in this way.)
+On Thu, 14 Aug 2025 16:53:08 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Or maybe what we need is something that in a non-RT build will disable 
-local interrupts and in an RT build will do nothing.  (I suspect that RT 
-kernels won't like it if we call spin_lock() while preemption is 
-disabled.)
+> On Mon, Aug 11, 2025 at 03:35:35PM +0200, Kuba Piecuch wrote:
+> > On Mon, Aug 11, 2025 at 10:36=E2=80=AFAM Peter Zijlstra <peterz@infrade=
+ad.org> wrote: =20
+...
+> > The code calling sched_yield() was in the wait loop for a spinlock. It
+> > would repeatedly yield until the compare-and-swap instruction succeeded
+> > in acquiring the lock. This code runs in the SIGPROF handler. =20
+>=20
+> Well, then don't do that... userspace spinlocks are terrible, and
+> bashing yield like that isn't helpful either.
 
-> Is there such a function?
+All it takes is the kernel to take a hardware interrupt while your
+'spin lock' is held and any other thread trying to acquire the
+lock will sit at 100% cpu until all the interrupt work finishes.
+A typical ethernet interrupt will schedule more work from a softint
+context, with non-threaded napi you have to wait for that to finish.
+That can all take milliseconds.
 
-Alan Stern
+The same is true for a futex based lock - but at least the waiting
+threads sleep.
+
+Pretty much the only solution it to replace the userspace locks with
+atomic operations (and hope the atomics make progress).
+
+I'm pretty sure it only makes sense to have spin locks that disable
+interrupts.
+
+	David
 
