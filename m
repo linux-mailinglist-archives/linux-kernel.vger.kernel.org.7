@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-772575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35862B2945D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29742B29465
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94361B26A28
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482004E7634
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FE029A303;
-	Sun, 17 Aug 2025 17:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713EF302CBA;
+	Sun, 17 Aug 2025 17:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="OzRiKYc+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHY7a6Ej"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA86533D6
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 17:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D732D3229;
+	Sun, 17 Aug 2025 17:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755450454; cv=none; b=F6I+OmPmLvHfyZgE96ojMITeuSbc83QNnhHvUNtsec7syvA2PozIV5uFwfTy8xuJRbycaKSRkzZ7dmN25MQtHd+LCj0BGFTiytuOHr/9I5kXZ1802SZmjHCYoBk1De3+6edv2ufzYhKMnv12cRf7sTL0GGM5gBBpNX0JpFp2L9g=
+	t=1755450584; cv=none; b=JEYmmqPSMdy3Pt/GVkgJfMunjD0XpR+GFB9ClQtT0HA6MAAIljtZxpejzRyKraTJF99g3NghrRVxVWIZgbGOPYzROqn1cyr1Taaw5WNEnWqTzTGIPG6Imax9rw7usz4KgboAlAu2UOnPoKG4TRUr4L7nwjaJU+x7/S3OEt703Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755450454; c=relaxed/simple;
-	bh=TjmdM7VZUJ9ChZjVmrXtQHHjV82KuR9eXiFAuFfZCpI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=VjioK4+ki3aEYsohGKLT/NB8gKgjRRGORlx4IkAnR2AldOrByDIFXnQfNd6aZTMVyoUQj+1UAfGrXzdRmHnWjx2uKjmSZxfDrF+KOPBQu6Hc7YYHTX/U+kNV3n3WQpApeFMGEdTLLdUwH227vu/hQ0DSt0pVfIpBWdNFa0KQNx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=OzRiKYc+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57HH6cwl1326504
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 17 Aug 2025 10:06:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57HH6cwl1326504
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755450400;
-	bh=o4v7X/3ppp2A7Bxl/JAZk096aHONti82Pol+6ge5JrU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=OzRiKYc+BZB3d/SuL+TRMgJfRuY1Fa8xNNhWwOWVdInDt2/Ciu9XjBqQlOWvMvxeb
-	 ogGzMym+AFRwWAWORQan4XRifCdmUG/+rNXf8UpJZEgY5zs5rKN3lnz1SkGjhZDEFe
-	 GqLf9m9xyHGq54iYvhVyd3Tz0NNHEteVQ7aNiepaePuHthYQ50FfgpxFabafOPddt/
-	 fdfq9QyCorCIDImitZuvGXaVWNiFk5C0WzoD5ek/9dCa/fP9NFIoxshCD1L9yKXHmj
-	 DU7BW/kHpVVaTyviRWnlYwY69h57r7WstdENe48kwrQ9he2pfLTU/gSi7BOBvrhZ1R
-	 UvwEy9mRUAp+w==
-Date: Sun, 17 Aug 2025 10:06:38 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Laight <david.laight.linux@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Li RongQing <lirongqing@baidu.com>, Yu Kuai <yukuai3@huawei.com>,
-        Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/2=5D_blk-throttle=3A_kill_the_no_longer?=
- =?US-ASCII?Q?_needed_overflow_check_in_calculate=5Fbytes=5Fallowed=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250817135013.7567dd13@pumpkin>
-References: <20250815164009.GA11676@redhat.com> <20250815164102.GA13658@redhat.com> <20250817135013.7567dd13@pumpkin>
-Message-ID: <FD649A73-0E0B-4518-9A27-B65DD583C99F@zytor.com>
+	s=arc-20240116; t=1755450584; c=relaxed/simple;
+	bh=swz7EduqrJXYn4m0DTsTWGz7NiPMJvLP6reejfaggDA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e0/IxmAT+OBPq6M718gE8Y5KbaTyDhWOFnmPy2W7nofMrE2J6FhEdRAf2xWZ+mTMrEI12JnUf2+IoUOAnPWiurvRrlbD0R1d7T1NF3V0EljU0CFO822jaRAfXMXcdZMSwhB3tYNmcgCiBt4CLC9HH2CCIaTExrwQdyHYCjppCw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHY7a6Ej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 30FC1C4CEEB;
+	Sun, 17 Aug 2025 17:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755450584;
+	bh=swz7EduqrJXYn4m0DTsTWGz7NiPMJvLP6reejfaggDA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=kHY7a6EjbUIjYoX17Cp7SV2M2K7MrvTDSBsAPUgC2CBDWgdv2fTCXlJ6pMdG81zky
+	 MFVIEUrxMY7vcpsNTCFZuUpn2GBYNaophu4LGdRShpFta7z4F9rJ5PUus8mnECR93g
+	 CPXHmwSSIYzx1OzLPVWb7bYcC0OM/6LjTcNKENo+R40Bki+43j5J9uNBou+mohDwTq
+	 Y/tAzcX+Xqiy3oz+tWeWMM2ULyh2yAagHUUAcIzR6LOZ1sdCmV0Es+bTqol7gR421P
+	 zcjLA5XgFTnHozUQVmczrHSCez1Yu2o68NnlSYSdU1WlaF9JuZ2l9a4v5a6BOXhkLu
+	 qEn/W3giQ6aog==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC71CA0EE9;
+	Sun, 17 Aug 2025 17:09:44 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH 0/7] media: i2c: dw9719: add DT compatible and DW9718S
+ support
+Date: Sun, 17 Aug 2025 19:09:19 +0200
+Message-Id: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL8MomgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcwNL3ZRyS3NDS12LRAsLI6PUtGTDJEMloOKCotS0zAqwQdGxtbUA3gN
+ 6gFgAAAA=
+X-Change-ID: 20250709-dw9719-8a8822efc1b1
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Daniel Scally <djrscally@gmail.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Val Packett <val@packett.cool>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755450582; l=1698;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=swz7EduqrJXYn4m0DTsTWGz7NiPMJvLP6reejfaggDA=;
+ b=Ju0qSZUBUEP3Chv/ygqg2puoFe5Q9Mu7/kvpDtNbyaoSpR+dMnKWyz4hMeUna57Fe2rhS4TwG
+ cn01ixbWCCiAGToq1qSUbhczDpEinCYkrhfvRz1YNeRI/tMy71VU5ZO
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On August 17, 2025 5:50:13 AM PDT, David Laight <david=2Elaight=2Elinux@gma=
-il=2Ecom> wrote:
->On Fri, 15 Aug 2025 18:41:02 +0200
->Oleg Nesterov <oleg@redhat=2Ecom> wrote:
->
->> Now that mul_u64_u64_div_u64() can't crash there is no need to check fo=
-r
->> possible overflow in calculate_bytes_allowed()=2E
->>=20
->> Signed-off-by: Oleg Nesterov <oleg@redhat=2Ecom>
->> ---
->>  block/blk-throttle=2Ec | 6 ------
->>  1 file changed, 6 deletions(-)
->>=20
->> diff --git a/block/blk-throttle=2Ec b/block/blk-throttle=2Ec
->> index 397b6a410f9e=2E=2E66339e22cc85 100644
->> --- a/block/blk-throttle=2Ec
->> +++ b/block/blk-throttle=2Ec
->> @@ -601,12 +601,6 @@ static unsigned int calculate_io_allowed(u32 iops_=
-limit,
->> =20
->>  static u64 calculate_bytes_allowed(u64 bps_limit, unsigned long jiffy_=
-elapsed)
->>  {
->> -	/*
->> -	 * Can result be wider than 64 bits?
->> -	 * We check against 62, not 64, due to ilog2 truncation=2E
->> -	 */
->> -	if (ilog2(bps_limit) + ilog2(jiffy_elapsed) - ilog2(HZ) > 62)
->> -		return U64_MAX;
->>  	return mul_u64_u64_div_u64(bps_limit, (u64)jiffy_elapsed, (u64)HZ);
->
->Not directly related, but the two (u64) casts are pointless and can be re=
-moved=2E
->
->	David
->
->>  }
->> =20
->
+The DW9718S voice coil motor is found on various smartphones like
+motorola-nora that are currently being worked on in the postmarketOS
+community. Since the way it operates is very similar to DW9719, this
+patch series adds support for it to the existing dw9719 driver. Because
+that driver did not yet support DT, we also add DT bindings and the
+dongwoon,dw9719 ofw compatible. With DW9718S, the driver was
+tested fully, including runtime PM.
 
-It's also rather broken, because a division with a constant can be impleme=
-nted as a multiply, and both gcc and clang knows how to do that=2E
+This is a follow-up of [1] and [2].
+
+Changes compared to previous submission:
+* Deprecate dongwoon,vcm-freq in favor of dongwoon,vcm-prescale
+* Instead of per-device config struct use model ID to handle cases
+
+[1] https://lore.kernel.org/linux-media/20250210082035.8670-1-val@packett.cool/
+[2] https://lore.kernel.org/linux-media/20250209-dw9761dts-v3-0-14d3f00f0585@apitzsch.eu/
+
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+André Apitzsch (2):
+      dt-bindings: media: i2c: Add DW9718S, DW9719 and DW9761 VCM
+      media: i2c: dw9719: Deprecate dongwoon,vcm-freq
+
+Val Packett (5):
+      media: i2c: dw9719: Add driver_data matching
+      media: i2c: dw9719: Add DW9718S support
+      media: i2c: dw9719: Update PM last busy time upon close
+      media: i2c: dw9719: Add an of_match_table
+      media: i2c: dw9719: Fix power on/off sequence
+
+ .../bindings/media/i2c/dongwoon,dw9719.yaml        | 115 +++++++++++++++++++++
+ drivers/media/i2c/dw9719.c                         | 111 +++++++++++++++++---
+ 2 files changed, 209 insertions(+), 17 deletions(-)
+---
+base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
+change-id: 20250709-dw9719-8a8822efc1b1
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
