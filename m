@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-772574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F54B29453
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35862B2945D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E77982A2E80
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94361B26A28
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4422FFDEA;
-	Sun, 17 Aug 2025 17:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FE029A303;
+	Sun, 17 Aug 2025 17:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I40uVsDd"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="OzRiKYc+"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1331533D6;
-	Sun, 17 Aug 2025 17:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA86533D6
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 17:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755450225; cv=none; b=CmH5kqst6znUfWRgUGTP7IBdT5NvRPUUENyKnSJ+YdG6Wj9JuTLt3Kruwkp1m+vVFJsyL50TL97mCtDKKMNC95kN6Jm8tPVAiLZcJ3lcUwn5+hz+o3xiS1oTWHMUcaviUJ/93bfXZZ4DCQU0Doa7p2yXBDONMzPbhI7NlB4nfAY=
+	t=1755450454; cv=none; b=F6I+OmPmLvHfyZgE96ojMITeuSbc83QNnhHvUNtsec7syvA2PozIV5uFwfTy8xuJRbycaKSRkzZ7dmN25MQtHd+LCj0BGFTiytuOHr/9I5kXZ1802SZmjHCYoBk1De3+6edv2ufzYhKMnv12cRf7sTL0GGM5gBBpNX0JpFp2L9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755450225; c=relaxed/simple;
-	bh=Z4N7YBBSSZzNTU2zD/HGZfT/36C0b5v1Z5vHwSdAxmg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KFarHn4qysEFAKUypW7XxA3Bx8QFVbWFyGDoFwqh7tMmP/BG9OkASiVKEpDDEN/E9oGtxFsAo5eT/eS7YHQ8Qkr7C7+JJGTGWWSbrYcK0m9/H/ZMBnmWYIkabafC6PGEBKy9blds3Y4QsoDxY2P6vVrnYA8nxYP7K5+go4xpkUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I40uVsDd; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-244581cd072so2915595ad.2;
-        Sun, 17 Aug 2025 10:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755450223; x=1756055023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z4N7YBBSSZzNTU2zD/HGZfT/36C0b5v1Z5vHwSdAxmg=;
-        b=I40uVsDdVF5rfmYeHRXsG3lk79IdnVEpbR3WHvQ3rhrME5eOT+P/O+0EZGBQa/0Qc6
-         t60ytExJTbX725DuDyob1Se0tsvBmFZEOXTvuQrsyfWv+fRy6AzUWLrMXiyOaoBhsNNY
-         NbK/YXtRM8pqqPmrhoB0k6e4pG/5Or8HuNfKrcaoLE3KAXnYI9fn5DmaTozSfOPNgnow
-         74EO8kqojaufNf+3TYS0+8zlS46rPgeLE+PY+q4kKmWFrYZjXgcnIF4OvqtPi8hyFAcj
-         cHo9vq/7wterjuoQao1vNTpbqqisk4IJkEnU+1GxcIsnQ03vnBlmeUYaxdR9TQ+E6yXc
-         f8tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755450223; x=1756055023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z4N7YBBSSZzNTU2zD/HGZfT/36C0b5v1Z5vHwSdAxmg=;
-        b=ub+IOpu3Dl46PBFugSlFV9Db3Xhh2JRniamPvFNNhyP0/TboQvDr3bPXFZHPjenRWD
-         dtm0ohIpfYN5e2k/k0v28MLdUlAcdPlfmxAVly126KT0kjioD+EOdeedWpyLAUw5+kQn
-         duSxS3CDMlKnRFicPS99/cFmaAg9Dpjn6fMIfpj3FifCFBalMxALm8pFV7AQ6oL+qfyX
-         NEsT1XdLLX4nVkSHWZYSrzj8uv8Om2JXmWUK7iUOP2tnyZPYzu2mR4K/0zA3UbAl4rtM
-         LKOAy3XnuGxomsSU11P6Q/uvS4pMb4KytLQeIrPOsoLuNNvgCNTo/FqH4Y5HOLd95bMd
-         TIKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV088Rxnqf6ueDz7NxOwZAGvcw2kiGrLGoCwEpUDe74fWIo6Vp3xxnwrU1CFI6LYOhyrVibIkij3TX9wbg=@vger.kernel.org, AJvYcCVUWp2kIwmL9wVn2QkdEnhoKi6EmjCrn5ARa07wyc+By9tTHoiDzVHJjCrNyLmEDQ6Ft4dgmbIUusZmVMoPVbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn0Xjb+L7jvbzpBK49VekmzKYgmTJhXMmn7pNQs3YMq81gRn8B
-	dovMpA/IVku22JsY5Kh0Gfwhc+ofTWIkPiPliKC67+qeIc+1bP8nQn2UaAN33O9CJwx4O2LIS9T
-	5sG6YXthgxxCXIjEcX8c1hIbS6lnKbt8=
-X-Gm-Gg: ASbGncs5bLTpLH0GmWIyxU6DBSHPuZDvz/P79aXDK1REdObOSeI7+k7QcT+NpTajdfG
-	ICkILHGyUXW6MGSliHsKMw9xS9TWOwgAEAlUGq49VYcSH7nHPab5IErKPMysUGketpVxrREhv7Q
-	hBonKuT6df77IK04yfqN3eDUk5h0wyhYch7Zmjle499CbRPR6yw1C3Xto00LtoXzSVCEo+DmVU+
-	hYwAVPM
-X-Google-Smtp-Source: AGHT+IFl+5E3gbiIXwNOLZ0ZIk7qldaCogEMXLZNAeNVsrRBmZHNmW+vv+tlRpUc1L8CpCng3OiKp/WTftzqec5IY0k=
-X-Received: by 2002:a17:902:d4c1:b0:234:df51:d190 with SMTP id
- d9443c01a7336-2446d756119mr64088915ad.4.1755450223123; Sun, 17 Aug 2025
- 10:03:43 -0700 (PDT)
+	s=arc-20240116; t=1755450454; c=relaxed/simple;
+	bh=TjmdM7VZUJ9ChZjVmrXtQHHjV82KuR9eXiFAuFfZCpI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=VjioK4+ki3aEYsohGKLT/NB8gKgjRRGORlx4IkAnR2AldOrByDIFXnQfNd6aZTMVyoUQj+1UAfGrXzdRmHnWjx2uKjmSZxfDrF+KOPBQu6Hc7YYHTX/U+kNV3n3WQpApeFMGEdTLLdUwH227vu/hQ0DSt0pVfIpBWdNFa0KQNx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=OzRiKYc+; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57HH6cwl1326504
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 17 Aug 2025 10:06:39 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57HH6cwl1326504
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755450400;
+	bh=o4v7X/3ppp2A7Bxl/JAZk096aHONti82Pol+6ge5JrU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=OzRiKYc+BZB3d/SuL+TRMgJfRuY1Fa8xNNhWwOWVdInDt2/Ciu9XjBqQlOWvMvxeb
+	 ogGzMym+AFRwWAWORQan4XRifCdmUG/+rNXf8UpJZEgY5zs5rKN3lnz1SkGjhZDEFe
+	 GqLf9m9xyHGq54iYvhVyd3Tz0NNHEteVQ7aNiepaePuHthYQ50FfgpxFabafOPddt/
+	 fdfq9QyCorCIDImitZuvGXaVWNiFk5C0WzoD5ek/9dCa/fP9NFIoxshCD1L9yKXHmj
+	 DU7BW/kHpVVaTyviRWnlYwY69h57r7WstdENe48kwrQ9he2pfLTU/gSi7BOBvrhZ1R
+	 UvwEy9mRUAp+w==
+Date: Sun, 17 Aug 2025 10:06:38 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: David Laight <david.laight.linux@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Li RongQing <lirongqing@baidu.com>, Yu Kuai <yukuai3@huawei.com>,
+        Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/2=5D_blk-throttle=3A_kill_the_no_longer?=
+ =?US-ASCII?Q?_needed_overflow_check_in_calculate=5Fbytes=5Fallowed=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250817135013.7567dd13@pumpkin>
+References: <20250815164009.GA11676@redhat.com> <20250815164102.GA13658@redhat.com> <20250817135013.7567dd13@pumpkin>
+Message-ID: <FD649A73-0E0B-4518-9A27-B65DD583C99F@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816122323.11657-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250816122323.11657-1-shankari.ak0208@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 17 Aug 2025 19:03:31 +0200
-X-Gm-Features: Ac12FXwOlEic4M18w1tw_6HpO5tbPUwKl3q-j4P_YB6oQ9WRk7qpXjv6HNo06e8
-Message-ID: <CANiq72kwTfO7tgCtBgWLP9K2EO9eqXRMV3-UzeVRAG+1__O9Aw@mail.gmail.com>
-Subject: Re: [PATCH] rust: pid_namespace: update AlwaysRefCounted imports from sync::aref
-To: Shankari Anand <shankari.ak0208@gmail.com>, Christian Brauner <brauner@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 16, 2025 at 2:23=E2=80=AFPM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
+On August 17, 2025 5:50:13 AM PDT, David Laight <david=2Elaight=2Elinux@gma=
+il=2Ecom> wrote:
+>On Fri, 15 Aug 2025 18:41:02 +0200
+>Oleg Nesterov <oleg@redhat=2Ecom> wrote:
 >
-> Update call sites in `pid_namespace.rs` to import
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>> Now that mul_u64_u64_div_u64() can't crash there is no need to check fo=
+r
+>> possible overflow in calculate_bytes_allowed()=2E
+>>=20
+>> Signed-off-by: Oleg Nesterov <oleg@redhat=2Ecom>
+>> ---
+>>  block/blk-throttle=2Ec | 6 ------
+>>  1 file changed, 6 deletions(-)
+>>=20
+>> diff --git a/block/blk-throttle=2Ec b/block/blk-throttle=2Ec
+>> index 397b6a410f9e=2E=2E66339e22cc85 100644
+>> --- a/block/blk-throttle=2Ec
+>> +++ b/block/blk-throttle=2Ec
+>> @@ -601,12 +601,6 @@ static unsigned int calculate_io_allowed(u32 iops_=
+limit,
+>> =20
+>>  static u64 calculate_bytes_allowed(u64 bps_limit, unsigned long jiffy_=
+elapsed)
+>>  {
+>> -	/*
+>> -	 * Can result be wider than 64 bits?
+>> -	 * We check against 62, not 64, due to ilog2 truncation=2E
+>> -	 */
+>> -	if (ilog2(bps_limit) + ilog2(jiffy_elapsed) - ilog2(HZ) > 62)
+>> -		return U64_MAX;
+>>  	return mul_u64_u64_div_u64(bps_limit, (u64)jiffy_elapsed, (u64)HZ);
 >
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to `sync`.
+>Not directly related, but the two (u64) casts are pointless and can be re=
+moved=2E
 >
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> ---
-> It part of a subsystem-wise split series, as suggested in:
-> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
-=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-> This split series is intended to ease review and subsystem-level maintena=
-nce.
+>	David
 >
-> The original moving patch is here: (commit 07dad44aa9a93)
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D07dad44aa9a93b16af19e8609a10b241c352b440
+>>  }
+>> =20
 >
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
 
-Cc'ing Christian.
-
-Thanks!
-
-Cheers,
-Miguel
+It's also rather broken, because a division with a constant can be impleme=
+nted as a multiply, and both gcc and clang knows how to do that=2E
 
