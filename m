@@ -1,111 +1,88 @@
-Return-Path: <linux-kernel+bounces-772629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6013FB29517
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D120DB29518
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6857200FD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6410203F2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773401EFF8B;
-	Sun, 17 Aug 2025 20:47:01 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00E021C194;
+	Sun, 17 Aug 2025 20:49:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723F8645;
-	Sun, 17 Aug 2025 20:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8C217F23
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 20:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755463621; cv=none; b=b/jRzBIXs6UKSgYE2kNHDzQMx7cRGO5iAP2p0PRTfC+579Re3YiE9aLwKetNo5ujCY2Iuzlc7okODAlU3RWGH+xFtI7tSnNWpJfutKhuHgr8vipzJZEIRq54thv9KxdhQYnHHJnUwd7KYVXod2dmulXJwZv75NoLFaVmc1o2R2w=
+	t=1755463745; cv=none; b=UHfNFvAqmdQyDQwI3aHEiFJZFVynvHRrlOMG1xXnxJYxlWAw1gpy47VKn2iSO2Wb8+U98lOX8D4kjCaRz3V5GWFtwVBRrl5zNzWNsLLv3zwmaypAYKa3B6JpcGQmgntZ8B8FS7v9iIJsh7knKwuwKjb03DhTwAvR8lt3TeSjSqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755463621; c=relaxed/simple;
-	bh=YPQ/WdibnbtkqiA1eF5o0bftUaTo4lS7AKzt4psd3sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkARLAOYM0WnhyRTeVqWNjglk54MKHCQUD2oEqZYun8QSgqvHEGjq0yUXKmJbr4KJwVVrexG2zFY8jBQXgxxskJhziUEr8w7fGAUCD+CxDKX99eZrECOpSm1FCAz/upLasG4rUvRp83UdPCVpe84iMQ6CWJiFoiGFSURLMsufW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1unkHD-000000001zg-3WzH;
-	Sun, 17 Aug 2025 20:46:51 +0000
-Date: Sun, 17 Aug 2025 21:46:47 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH RFC net-next 06/23] net: dsa: lantiq_gswip: load
- model-specific microcode
-Message-ID: <aKI_t6F0zzLq2AMw@pidgin.makrotopia.org>
-References: <aKDhZ9LQi63Qadvh@pidgin.makrotopia.org>
- <c8128783-6eac-4362-ae31-f2ae28122803@lunn.ch>
+	s=arc-20240116; t=1755463745; c=relaxed/simple;
+	bh=2Kx1zgwIIBL+9fuUH+h3DW3zZOdL4Jcny0pzAvWuEMA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RvVMXazL6Yug0X1lYdkSESNRmyyOJ7gtwXnRqFrS3J9FqAfWuXN/uQaxxMz7UmHlamEaoY0p8o2mZZbxgJi/ZrrKi6A7rymMIGCSxn9YmOFzPej83fN4wKrUfDxsiQVO3eGtNWLaw4ddarp2G6DOw5oj+M1ZYcezRcOwtCMT5hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432e33c84so1038595839f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 13:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755463742; x=1756068542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2kchLK+S5t1W/C5OwakkJrRxozTYQHPngSHdTJJbSJ4=;
+        b=PH/jiX6Q2fevezTzYYAQckmM8+sLm4mxRglo7U1Qw0TgYm0tDZGQU2owVL95CdZAbZ
+         NlhhzXqDNG+02tcgTJq8YbBxMtYi1m+CX7LP9jc/CuX9FSReBVvpG9Pbv50XFocgOVlw
+         1ZfbtqBezGKe1JYmdVCNX4D6jor/h1yqoVX2xcnaPs2eyFTXnkPxqCkqm5oIIyi0Cu9u
+         DVH+Yo3rRi/avPxe4UcHM+005G6tVEdz4GYIM3tVafQxdEsQSNpXiqxOYLDdXR28D4Wo
+         Cnn37/eUjt0at821CdQk9uy0zR7KVW+jShBTbEeH3LYheAQIR5tiEO2XO5/HtGDq6YOe
+         PbLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUENmGHG9oo3U2vHnHrJ2wxTBFhPRjPje802ICBeyf9MaSE0Ir187ZhFaTNFrgVDtHyrVFgOlxTshQXGKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxFYq7aIBTvvTMLBeVXhOCjzCmLFPA4YUVHSkyjx9EnNpQvlXZ
+	vleT5kr/9fqI60nrHB4Xbf0wvjNbYFFfz12SILaVg4dVrYgcG3vykkscyjHwBTAzd18ApzKUyua
+	+Fl86n26aKEiwX4EkJEAW0b8p/bWAPodxlCVkVtT16aK0eG7ogqO0M/5u3k8=
+X-Google-Smtp-Source: AGHT+IFlZthwjE12bH3G4UT2hUET6hZTRAgXBwb5Er88gU7SHdFfBSj4mg8H0QCSa1MRNan5PCxB2dXhUXkHj3LWQrRRpRywlg3e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8128783-6eac-4362-ae31-f2ae28122803@lunn.ch>
+X-Received: by 2002:a05:6e02:18ca:b0:3e5:5af7:7c99 with SMTP id
+ e9e14a558f8ab-3e57e7daad6mr223634705ab.3.1755463742689; Sun, 17 Aug 2025
+ 13:49:02 -0700 (PDT)
+Date: Sun, 17 Aug 2025 13:49:02 -0700
+In-Reply-To: <CAMV7Lq4Uob0YMb+rZQNUApX4YYPQyqarsDCA1pVTLMV5=vUgQw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a2403e.050a0220.e29e5.0076.GAE@google.com>
+Subject: Re: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
+From: syzbot <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
+To: abinashsinghlalotra@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 17, 2025 at 05:29:16PM +0200, Andrew Lunn wrote:
-> >  
-> > +struct gswip_pce_microcode {
-> > +	u16 val_3;
-> > +	u16 val_2;
-> > +	u16 val_1;
-> > +	u16 val_0;
-> > +};
-> > +
-> 
-> I would leave this where it is, and just have
-> 
-> struct gswip_pce_microcode;
-> 
-> Since only a pointer is needed, the compiler does not need the full
-> type info, at this point.
-> 
-> The structure itself is rather opaque, and only makes some sort of
-> sense when next to the MAC_ENTRY macro.
+Hello,
 
-The structure is also used in the function gswip_pce_load_microcode().
-Now, if we keep defining the struct fields along with the microcode this
-will become a problem once there is more than one such set of microcode
-instructions and additional header files for them. Each of them would
-need to define struct gswip_pce_microcode with its fields.
-The lantiq_pce.h header then becomes private to the driver for the
-in-SoC switches, while gswip_pce_load_microcode() would be part of the
-shared/common module use by both, in-SoC/MMIO switches as well as
-(newer) MDIO-connected ones, and I would not want to include any of the
-*_pce.h headers in the shared/common module.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Obviously I can just move the struct definition in the later commit
-which actually separates the MMIO-specific parts of the driver and the
-common/shared parts into different modules. Is it that what you had in
-mind?
+failed to apply patch:
+checking file drivers/net/usb/asix_devices.c
+patch: **** unexpected end of file in patch
+
+
+
+Tested on:
+
+commit:         8d561baa Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ce98061fb8ee27bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=20537064367a0f98d597
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1272aba2580000
 
 
