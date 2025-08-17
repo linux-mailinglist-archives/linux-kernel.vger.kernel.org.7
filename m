@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-772517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D5EB293A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2A5B2939D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729481883A8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CA0205FD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F097018DF9D;
-	Sun, 17 Aug 2025 14:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE701B423C;
+	Sun, 17 Aug 2025 14:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JgXW2Jcy"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6RP8LlU"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1ADB29CE6;
-	Sun, 17 Aug 2025 14:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA181624E1;
+	Sun, 17 Aug 2025 14:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755442173; cv=none; b=pZU6mERmPPcfV+rV7F6psECwdaxcF6mxcW6LO+wr9QE6fRix3FdpsHqUoexjOZzHBOCxuBYITsn/JNj4rWyc7BObRvybtUPxcBs2oGATj6k3Tpr4tVKEXc8gFHN4eaKIHLt1mVgWWwfAXzqWz0asubsQfemkmZnP95gMTDj2d24=
+	t=1755442222; cv=none; b=k2q3YVO/zYKkz25LbkgWMh9faDCsX6tzTsJxdIrW6q4Heey092v9MZD8hJBK10xqlBz+5b1SjeBUfbxB3rHvaAcqmSCsMQHw2NkBvputlzf2M7IN0hWI32HTi7rzZhWaposq1sDVu0A6okcb38IaX01HyYIuV5i/XQU5Faa8qSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755442173; c=relaxed/simple;
-	bh=qIMnvl++/IsEcAL9q+zLlKFvHMY7N9QrxenQ6NuKwmU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=rx72sSH80Wlmem/qphbGvvIKSLVY12pThvNjEyrcekUq9PLjzCczSxvzAlrjE2MZHXnV469hpiamOYivl80taMmhQBoeTvPHYf8CsKfwh4odKBLMpLPIAn53lo07ssZO9FL26ZEn/k+5xdvWEkyyFyKzqYMv35a2YteBiq1UX9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JgXW2Jcy; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 6E85F25C75;
-	Sun, 17 Aug 2025 16:49:29 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Ot2r675AP6tz; Sun, 17 Aug 2025 16:49:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755442168; bh=qIMnvl++/IsEcAL9q+zLlKFvHMY7N9QrxenQ6NuKwmU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=JgXW2Jcyn+RVd6NzXLZp7YOqyKs0eHBZEX5tLffK5+NBAsDCTeLmWpoReaia5w03G
-	 ixK6J/mes9Y1sdRAqJrEPLzsRRsNB4AY3SjQXVAmQchbbQcocWlSKHo6+EcBCOhzfO
-	 ctBn2VP8c3MwfP8uf8/D7lol3aWkD8YWz9Cxuhlryr6dsProyj3hLXNtmfrIklMEPw
-	 LME7EOKW6rkP3nAj9bMl8hm+KDr1P6ZL+Phdw3AtHWiwiSWwQ5PmJuRRyTKn8SdqFr
-	 BcKeXzcVGcZHuarrVHl0xqqX6VfgsKtzfCOazDhsEBVweOjz4UdoayUaZe1D449N/a
-	 bMOCAlRnKLl9w==
+	s=arc-20240116; t=1755442222; c=relaxed/simple;
+	bh=5TTkF6oHixSGI7qMQ0SJNVote1T2AWnDW9/4iyFRL6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGl7YXwTrREwMvp5j8ac8QkGcJwnUOmjW5E1U1WDOeBd92+6g7i6aCbXw61n9ytLsYy6wZUDg5T2JxnU+oFqumhqTBm3o72SojH0C2MMnqZ8uxj86eprk0qVJeC1rHq0Kv0Xjy13KC7lNVXqRvf0IHBsfv7/2UruX3q3ZcvcmwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6RP8LlU; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so18531635e9.1;
+        Sun, 17 Aug 2025 07:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755442219; x=1756047019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcoeDB9zQ9MJNXPgD7LIAzqfPCH8wYV+5xheA0rYfOo=;
+        b=l6RP8LlUBWa6HqQtb2QZmiihKbuV0O3ioVu9Un6vO4/jLXJCVN0la7LAnBZkjMvgMM
+         Ec4JAp3jzKsQF8zvKLo/9BtgNBcZhAlb/UBaox/5ScQxv7dDLqU+x6IiLPokvmqL/wZw
+         nuJq95umrUTbwgrZSMtobnzQdFF7PfXvwsx/unRwRp3qF7IvYngIVFcfNN3yU79WqD1/
+         YspF2vKXekBKXtF7duGvxQwpDglW5m14uu1jMLxu7O20WZXc12mpwG9tEXxb4ngr+WQZ
+         SDrGkyOTAsL+5MdAAi4cl/vRzPrZtxtTCHHWa/QiOs5rSjLxFCVLeLmJD5MENMVls294
+         WNfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755442219; x=1756047019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KcoeDB9zQ9MJNXPgD7LIAzqfPCH8wYV+5xheA0rYfOo=;
+        b=v7+vroo8OqAevjMvam3lf0r8ga52aK1GEMVQlZIuXjnv+gT5Aluj2WTtc2tx42k5OV
+         q3SK9FKVDV6vd47OGUPMt6WggISVIZn99bYe9z6vVPAK5TGwFjJluomH//ly2OVr1Cg+
+         4+nJIvPgDgOnTHQ6pmSdeHGM9EO7lSbZ/vP1SrR2r+l2hOy9Zyg7oApbsDZpVAT6ygfw
+         cKCzH08p3D/hsEfji/U98LUXqpFfaAUPoVrCxL6I9IfZxQEhI95ZboK8SYV4KXHzbCnP
+         HR4AkCnfOLU7Q+P0E32tnjFOSH6wd0FY5eZgoS9SBNtYy0SWp5Y10Y7ZzAnIqKVhlnJc
+         xVmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUevseaICQFNx3CmXhj3jO/M5I+WurYDWw/bEIlAuFaGdESJCBtHOYXcfprHde6c/1r7ZdObyH7Wr7hYIjP@vger.kernel.org, AJvYcCWAQamulddZO/MtXc8+V/AmgUdRizsNut7MyZwDWO2ODkAuF7xxgSpBGQSChuiMBIpSDv8KdSQItAgvhce00VAGruA=@vger.kernel.org, AJvYcCX1Aig2QoMgdo/d58DQfxlsdts2XZkVOTsgn5e/EWE17AJU6OWwT7Jqm1QDEAcAwIwDHgPyhxVMDMPs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwV+MvNrBUMMtO6F0ZLRfyOhr9PT7FRPdMPyifHD8izdO4bx6m
+	wI1pcGRvhdfH06TkdILs0tPv3Qm/+OTIUQot5VXC1W+hH6nwq8FeyhoN
+X-Gm-Gg: ASbGncvROwvLtfv2e7SJs8430o5UMvS3ZTXZZUesgOVovehiDKCuM0TzY804fb5Nn0E
+	+pNErH1JjuxiOZ928VE34+xdNLGOEUQaDHlw8CmfSzkWu41AioWnG0XLGPK1Ym6f26Mp+8JIySF
+	s7mjviAcNOgkjXis7uy2F9U+kyK1Pl+3bdKRrmGED9Gmp8z3tfNkcMx9bN0C+4ztSlWRTb7ohHO
+	B/NP9QVMxC3t/+fsBhwjMz3TSQ/EdjwEW6sXdvOwoj5kGJ6modfm5N2i8b2QTJnye6mqB34uMg+
+	ZS4ujZNtgZArswDGBBMkTGtVyIC+cHtTp1goiH4W1KCsiTUg8PTJYUgeU1JoqEje3MJdk9okhHe
+	GLaHIB2qxnMaOLwY/GCFD87XWPmTRSoDT9KEMP1W+69A7ZAeyv5XJOYBbDrIJXvDgnugeUExALw
+	==
+X-Google-Smtp-Source: AGHT+IFLDFbBdUQw+GthrVEifO7fBIH9RfSFGx1QNaCem709LZONvEVLOz+XMcOMQPBeF4XNBXtbCA==
+X-Received: by 2002:a05:600c:630e:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-45b3e827f65mr4150535e9.9.1755442219481;
+        Sun, 17 Aug 2025 07:50:19 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a2231a448sm94161595e9.12.2025.08.17.07.50.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 07:50:18 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/2] Add Schmitt input for NMI function
+Date: Sun, 17 Aug 2025 15:50:09 +0100
+Message-ID: <20250817145016.166509-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 17 Aug 2025 14:49:28 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-In-Reply-To: <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
-Message-ID: <45fc52d9988d1bf17eca392364c63193@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
-> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->> This series implements changes in the SoC subsystem, which includes
->> devicetree additions. It depends on all sub-series listed below:
->> (Legend: [R]eviewed, [A]ccepted)
->> 
->> exynosdrm-decon            - 
->> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
->> exynos7870-mipi-phy        A 
->> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
->> exynos7870-mipi-phy-fix    - 
->> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
->> exynos7870-dsim            - 
->> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
->> panel-samsung-s6e8aa5x01   - 
->> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
->> panel-synaptics-tddi       - 
->> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
->> 
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> 
-> What is the status of the bindings from dependencies? I think they were
-> not accepted.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Except panel-synaptics-tddi, all have been accepted. A lot of them
-haven't hit next though. I'm waiting for that to send the next revision.
-This rev is pretty old, so the links are old revs too.
+The latest RZ/G3E pin control document (rev 1.2) recommends using Schmitt
+input when PS0 pin used as NMI function. Enable Schmitt input for PS0 pin.
 
-There's also another related patch, on the IOMMU driver, which has also
-been accepted. I will also add it to the list.
+Also fix the gpio key's pin control node.
 
-> 
-> I also replied with few nits for one of DTS patches. Everything else
-> looks fine.
-> 
-> BTW, really great job you did here, I am impressed!
+Biju Das (2):
+  arm64: dts: renesas: r9a09g047e57-smarc: Fix gpio key's pin control
+    node
+  arm64: dts: renesas: r9a09g047e57-smarc: Use schmitt input for NMI
+    function
 
-Thank you! This was quite a ride to work on it and upstream these
-patches. Thanks again to you and other kernel maintainers for all the
-reviews.
+ arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> 
-> Best regards,
-> Krzysztof
+-- 
+2.43.0
+
 
