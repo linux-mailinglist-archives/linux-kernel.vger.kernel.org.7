@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-772405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067F8B29240
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BF4B29241
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6335D16452D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820A41B23261
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF39219302;
-	Sun, 17 Aug 2025 08:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4187721CC79;
+	Sun, 17 Aug 2025 08:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l3PmP9kP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tHQ7wThX"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26667081F;
-	Sun, 17 Aug 2025 08:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8B4219300
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755419462; cv=none; b=ibAy610CIF+zoLuLZFX5Qa6GQMwvlp0AYgqjWfMVTjKoHtO1APq+UyiE3ySGb9Am950IdrM/6JeGUdmNSZTaufikm745AkWL5n8zi3IzE7Ewe+UUiUksl834gPH1KVUZuXq7cBhAfrf74kMa/2yGRoOpCJAN6lnqMjjhV/fBNyw=
+	t=1755419589; cv=none; b=ZhFY1sCKjCR0Tlr+FGhOodoyKVfOaBhLeH5HpgZLQOPc2uNsVYC+malJNT9Qw8w2mtXf3RAt2aif7d4V5wS40Kl8mZmCgdmIePyR1Xem3nnO8t290/J0fbdjlZ3tSpdfgBANr3PlVX5pzUzcxokrbJCC+5VH36RYKC06RX0GiZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755419462; c=relaxed/simple;
-	bh=aXDOIfl6Yp/gQN+k8xyuM5d5hOup3DJ04o2A9M+e3ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIwny4+a/sFqpCHnU9XXNUQvGm0sSp9RHy16SsAAzUYyuLP42FPtN/5DaCTAArvGL6Dn+MFZNZpQiWbjoeUHW8ycIfqsU04s+28+OyUCdD4sXqjicMTn3YbeYzuxXlQGPPGQijyBFXKm6ONQ0HyR7r2jtp2OqlGLmZQC0Ad4nOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l3PmP9kP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1755419453;
-	bh=aXDOIfl6Yp/gQN+k8xyuM5d5hOup3DJ04o2A9M+e3ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l3PmP9kPr7gF2QOPiPA8AiC2+g8PJ3dAtUdsd5f3cblloU3KVAQgBImUbBBoeoWho
-	 x6eISNL3jSxlMeW3KnPoALGFiNWobM64rGWMmffRohZprQ2BFcXnDKyXj/T16Ip65y
-	 TB3MWozHemok/0+0SSEdERd4b3kwPDV0MIvZkWv8=
-Date: Sun, 17 Aug 2025 10:30:52 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 2/3] selftests/nolibc: don't pass CC to toplevel Makefile
-Message-ID: <ebb84a9c-8771-4791-8a81-b615cecec7c3@t-8ch.de>
-References: <20250719-nolibc-llvm-system-v1-0-1730216ce171@weissschuh.net>
- <20250719-nolibc-llvm-system-v1-2-1730216ce171@weissschuh.net>
- <20250721025627.GB1886@1wt.eu>
+	s=arc-20240116; t=1755419589; c=relaxed/simple;
+	bh=9F4kZCt6EM418SfE71rTAkC9O6+5xOXqnezhdzokRY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t0exXywj0yL3JQVmRl1+tQTlqU0SPP/XIjpsDhi9qrK8nEkBSPL+hc2QXDsSktJUIG9gM6ACHNK0p6EJCjQ0yD2Dh4YwsUfkKOqs2frdMmYFDW0qbDih9gypYoaiYGdJVByzfsoxktHeTZBI+LXVe/Mj7PfytNhMhcr16UBXbRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tHQ7wThX; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso3056607f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 01:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755419585; x=1756024385; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hTwTOtGwt6cJGY41AEmiyutI55TEpKyzi4qJ2ueIWhw=;
+        b=tHQ7wThX9HOw62audCRFxL49D6LCANf72ifESGU30yOkHmIZz/ZS16DPwJ3JFHBe0v
+         Xi5NDy3BSnH8QPEsA/57LoH0w3T+r2+74XxQynJQ8gpN7ivK5jCmNO2HP1Ggp+a9WKc+
+         pis3pdetw7I2THUeZe0k3k0dtcsR2FfSDt4vJ2ZqsXw0Weu/8R6uKsMIZfnzqbC4r7Ft
+         9r7vlyWFWD8R7sysk/8nwT8cHNR1VOrOdpyjQdxZ/4F3AmznRGmBQ9do2lIeeKA7f0f1
+         sTqbc3WDz73brb4OlNT9TVyfDeAF2euMjbHCLDchKVeo6o2682OWstbvpayNFFi9OFhr
+         8oWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755419585; x=1756024385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hTwTOtGwt6cJGY41AEmiyutI55TEpKyzi4qJ2ueIWhw=;
+        b=mgMSHCAlBb5v3jr+5ohVLENT8y2W4m5ZzMTCsiUG7vOKFPVteR+bwbBosuHQk79vKR
+         pd2j+M5xbATKKpjNNF5HXTuNxPbXF9GCqQgGem3ceGKffiAiuFTWJo7j0oXSGU8EQu6b
+         H7pMU5r5jb5L1ZwQuKn0SZ0Pn5+fhEb3B9zApy4MVAI0LqKBKKSXLSCu3A6iulK35vA+
+         FO5w5A+LsEdDwF3fkdLwgwcH0CbYEV/UzV805LTgjpED/6zEfTRXAgNAKNach09+Pijn
+         q9JaGUC7XjWyG5mr3hb3W6zTPRK3GcrHvyXeIZ4iPyDBEFxRaQ/Jcupd0ch2D5ft+IMJ
+         5BAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT1MYbFIh1q8DUJ0cUhTsMMFqq495FRC2c24ljnkAW2cm3sRFST+3tLUimBslEeLWM1T1nwBjOUXo/GIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWLgwc9Sd+qfNww1pkFI27WzQDFh2oqKQ6Xj8RuHtSKpxsScM0
+	ik3f4FqJL5tg653XIXUuB0n3caXyl1gkdSNoUvlkKnyauO3lvZGFuTmOpA4PhxjC/Y2wRAG//rY
+	eMw4J7HJtgvmiRqL12A8b8rjoIsz92jY0mtAUn4bs
+X-Gm-Gg: ASbGncuIp1RIl6AFj4KlSIHtyjQQMwj8AmsqeKkgBsau+MP50XuK1GcGnmeSlYzkwxd
+	aWAGaIVVjmDdRVtfRpKiHkTWYjwJk6wuQpe1Ov9tJZK4Djo0sD97RyzVJyGm9T5UexdOMNUoX+d
+	WIhUeFZtu24/ZU5Acb9ZG9P1rusOfS0r1xgyfvweQTyDFeW4fLpSoDwK57heBK6ODahIrTz6a1i
+	XTLvAZp3Rpgfc320+iYnsKIk0yOIPq/p8ts
+X-Google-Smtp-Source: AGHT+IGoRb1xdrYrj6kHKejvqdDcCa7iTaEaP7TOTbmewwBY/XYltNC5+vB1zPlq8+D3PhMalwZdmY0KcTb1ScHU0tU=
+X-Received: by 2002:a05:6000:430b:b0:3b7:9589:1fd1 with SMTP id
+ ffacd0b85a97d-3bb68fdc587mr6365788f8f.44.1755419585362; Sun, 17 Aug 2025
+ 01:33:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721025627.GB1886@1wt.eu>
+References: <20250816210214.2729269-1-ojeda@kernel.org>
+In-Reply-To: <20250816210214.2729269-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sun, 17 Aug 2025 10:32:53 +0200
+X-Gm-Features: Ac12FXzhd2iFnnKjyXBfrCIdB6O_r4X05qYMnlTOhhEd7NQgiE9g9rzOlA9OUao
+Message-ID: <CAH5fLggYHJg+PmLD=Fg2a=pO7JRmM+AqppwBqOBpp6+179YcVg@mail.gmail.com>
+Subject: Re: [PATCH] rust: alloc: fix missing import needed for `rusttest`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+	Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Willy,
+On Sat, Aug 16, 2025 at 11:02=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> There is a missing import of `NumaNode` that is used in the `rusttest`
+> target:
+>
+>     error[E0412]: cannot find type `NumaNode` in this scope
+>       --> rust/kernel/alloc/allocator_test.rs:43:15
+>        |
+>     43 |         _nid: NumaNode,
+>        |               ^^^^^^^^ not found in this scope
+>        |
+>     help: consider importing this struct
+>        |
+>     12 + use crate::alloc::NumaNode;
+>        |
+>
+> Thus fix it by adding it.
+>
+> Fixes: 8405eafa6e94 ("rust: add support for NUMA ids in allocations")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-On 2025-07-21 04:56:27+0200, Willy Tarreau wrote:
-> On Sat, Jul 19, 2025 at 05:38:28PM +0200, Thomas Weißschuh wrote:
-> > The toplevel Makefile is capable of calculating CC from CROSS_COMPILE
-> > and/or ARCH.
-> > 
-> > Stop passing the unnecessary variable.
-> (...) 
-> >  # Execute the toplevel kernel Makefile
-> > -KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CC=$(CC) CROSS_COMPILE=$(CROSS_COMPILE)
-> > +KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE)
-> 
-> Here the goal was not to help the toplevel Makefile figure CC, but rather
-> to permit the user to override it, and it's also listed in "make help",
-> and even used in cc-option.
-> 
-> I understnad that you're trying to avoid forcing CC to clang when
-> building, but in this case, what will CROSS_COMPILE contain ?  My
-> guess is that you intend to make CROSS_COMPILE point to the gcc-based
-> toolchain, and have CC point to clang for userland only. Is this the
-> case ?
-
-Correct.
-
-> I think I'd be fine with this, but then we need to make it
-> explicit in the help message and fix the current one, possibly just
-> with this:
-> 
-> -	@echo "  nolibc-test       build the executable (uses \$$CC and \$$CROSS_COMPILE)"
-> +	@echo "  nolibc-test       build the executable (uses \$$CC)"
-
-I don't think this is correct. $CC itself depends on $CROSS_COMPILE
-through tools/scripts/Makefile.include.
-
-> 	@echo "  libc-test         build an executable using the compiler's default libc instead"
-> 	@echo "  run-user          runs the executable under QEMU (uses \$$XARCH, \$$TEST)"
-> 	@echo "  initramfs.cpio    prepare the initramfs archive with nolibc-test"
-> 	@echo "  initramfs         prepare the initramfs tree with nolibc-test"
->  	@echo "  defconfig         create a fresh new default config (uses \$$XARCH)"
-> -	@echo "  kernel            (re)build the kernel (uses \$$XARCH)"
-> +	@echo "  kernel            (re)build the kernel (uses \$$XARCH, \$$CROSS_COMPILE)"
-
-I'll fold this into the last commit of the series.
-
-
-Thomas
+Acked-by: Alice Ryhl <aliceryhl@google.com>
 
