@@ -1,109 +1,164 @@
-Return-Path: <linux-kernel+bounces-772570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D34B2944A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:51:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C5AB29449
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1AC7168636
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1EA57AC524
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359AC2FE573;
-	Sun, 17 Aug 2025 16:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB6A86337;
+	Sun, 17 Aug 2025 16:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxrnZHJG"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EPiyHYJA"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFA29D26E;
-	Sun, 17 Aug 2025 16:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FA73EA8D
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755449466; cv=none; b=OTVcHcllcyUuydL5dpaX6BavmFP0kbBDoC1fr97eS91SkqOL8FlnQT5UzemcPA8RQt+yJi9keO2f3rOYa0ZjMtQ6OR7Jr6awVWh08cTbChXrg138ZlW7ybDCJ9/i5BYBHUOOA6xWznHe30zHm1V6aoyouHYMtUm7PJidNO4mDuU=
+	t=1755449488; cv=none; b=DhYSrCq5urLLZKf90LzT37F/MoTfk+XIGvYgVB+BSQ1v7YQsEhVPe27F0MtzCYMbIfXBhTt6AANVn5IhJHk/wdBZqjaX/S66KLanv4AwVVtl7FuhLeaJFWITHyCNmF2Rsdz29gjWpFXM63DqJgPyEWMSveZN/ky2OvLdILHPe0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755449466; c=relaxed/simple;
-	bh=2Torhm8j/fnoxbwE+NWjhqTB3RZLtvgEDzOeSV7FLLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TiCwOlsfo3d1LtFGW3BZDobo5NO3L5DS2u/a4iajwPM4X1d0SvEW9utVs8TysGKkUw0Bi6q+p7MQoJ0KxMxyjTTirT50w/GK0q7Ekftw6dlmtoU7mYkNF9tos6xszHwNipB6CdX41gL3dTZuGy2STkMfmvL4nS9G4YkIS+5vj8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxrnZHJG; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b47173edabaso729702a12.1;
-        Sun, 17 Aug 2025 09:51:03 -0700 (PDT)
+	s=arc-20240116; t=1755449488; c=relaxed/simple;
+	bh=mg9G1GrczvFU5RkdMi7X+2IDftbj0oeSDe+aPw5yECo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rOkE3TD389f3zmqQrGmRljlArZFQshaU4qBj+tGHyWFgzjtpiTTZGIQxWOodxUB7Gfkijt/5c5ifB25VHTNJY7jvctbMZCWBKHHj5DKuiy1aRahDU4+Qf94GjRggMRGURwJ3vXH5TQ/6FW1au1xZFmZGGxCrgtWMo1m7GeYtsQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EPiyHYJA; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61bd4e14054so1626717eaf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 09:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755449463; x=1756054263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+k6KmSFypZBY0dtNH22itZ8Soth98wtIKSS3XFXDnQQ=;
-        b=bxrnZHJGDPP/UNA4Z4QPtxJZXgjbRLHkq3x/fnIx2+a8FYHPgm/0jyYF4fkAyWi/jd
-         7tMPjsAgjxXc/T3GitACFR1losDPcHorXQOJS9f5WJX2kGo93CZjpiJhFxfMwCeEpMpm
-         k1doi7kkL4CIg9VtJd2wOSWRchvssH8wmBBkTJR3rcuoxJ4nIAB9/piYW9K/qdKBRZvn
-         16sT6vNt/G+AKI44dmQL6qHWHo/F4/U/HSJLfL59iHi9BxZE8sY9Kc0JeJnzjwWIZjlT
-         eT9JzkZkZ4h9clqIRXNvo777w4NSitF/1xXQ0Xc5f9LIrqIX7IjOCxwcFxCuFcth/Ke9
-         FmRA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755449485; x=1756054285; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XOShuqoDRF3qNIrD82l+4By1/XWbaXr8sdy7PQ1Fw2E=;
+        b=EPiyHYJAdc4q4zs5Cpr/ujY7QAwZqeojGZk721sUIZRT/SKmGLDKXyZNRBoDF1Tf0/
+         n10TL/9En11MhQnUT9lUHojjMcJQKRS4ie/4qnyZhHXyJUA4v2ckP5KkpXGdsKfjf8U0
+         Vw0G4Pb/DHH/Q8jBKhXXGyUZ/5Dg042O0snwsORrzCh+m2BlBk0t9pkKYvCgsK3nw81h
+         DsKPBYblwEUgySmEIQedZ7avCZZ4SLxBQDCtEL3A9JGjlUwZWMvzZaP261WdMOV03Aij
+         ukt/XjUvBhFdhP+woJNej6gKM6FPwSyHqC5zKeU8iRcxFDv/rZHCjt9/TPxinz41MdLw
+         QGsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755449463; x=1756054263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+k6KmSFypZBY0dtNH22itZ8Soth98wtIKSS3XFXDnQQ=;
-        b=fgEfEPqKhhnK0WLXr3KuZ8rIRvsh6BhD99Q2vvYJkxvy7Y2YLMkNAB44CZPwS9yDJ0
-         koluFXtZXja767lX8hilR8ovEHOxZY0ZXifv15sAPU/EMqIPfwdm2PIEzyhCfSGSMS/3
-         RPhDCnev5Va1ZU7S/ycWxBhsNTNbFrBqUL4bTGMdYTce+84pVDOtM2oO6xkygspMdNQx
-         qPvFumR3X10QRtCSyJRauu7Cfg9jOmANh9QURXdnQdTqbK/adE1IFjIcRIDFsGuMBPiO
-         BIOyV8rGtHYQrG4IXUEO3i550PUVtRvzN5uYSDytGYFYvFoeC0cKh2FzuEb0/+AsEmo6
-         9rng==
-X-Forwarded-Encrypted: i=1; AJvYcCVfahqmaNR0ZJxSWLQ2nUBoPjVQY7ggc5on4UeMWp59pPfVf+thuU5vizBI9X6gDBCkW3qP2cNqupsn8XY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFv7Z4Qx5EdKoQTqsCxlNks1qUColLwY0bMIj6A9MWZgBOQa0I
-	A2c4uUQ6KAVtcT1xvRbBBKcwRnkXifG/aVw7kHgkOItqOdbDybJlTSACZ1zrlxwbi2DxurkDQQW
-	Ryub9NkBbZINNNty2FjL05fKP+QqiHMw=
-X-Gm-Gg: ASbGncvsYGiJgmhHxHc81WbWvzgNQ4kd3A8ttkmEUr7+4gpG20UOMmYWlU5lUw2a2D8
-	DGRhxqxtv5tFx+Zzz2btEwFoRtQ6ovtva2nSTsuuJ1Tq4iTws8KKWbpExVLJSkzTGch2xGRCDCL
-	DdoVnS3agbABtdnJA9/gLp7Xn0jmfDcq4KD9bxdcDwUGLEcQjZbyyqdxGjItR2AcYX3q9+ru4DS
-	bsML4Ev
-X-Google-Smtp-Source: AGHT+IHvPO86iKSOAT6sEgZ8UuwY5f1lQR549Xduu5efy+Zyn7wz0cQTBTPT2Fcj5wIilQpeTgfbk9tVnrcZdOsMYhk=
-X-Received: by 2002:a17:902:c40a:b0:240:764e:afab with SMTP id
- d9443c01a7336-2446d8c5734mr66210215ad.6.1755449462640; Sun, 17 Aug 2025
- 09:51:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755449485; x=1756054285;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XOShuqoDRF3qNIrD82l+4By1/XWbaXr8sdy7PQ1Fw2E=;
+        b=GA/cbhR+P/+zc+Fno1y20C3b/e5OSyJcDh9j2LYvvrFvPvjxmRlx5qmSt7qcPuo3P4
+         YDI9uMOPrVmD4jz/M3zluDSYAWNwWNEOTlqY1NdUM95zp8x2BOIRaDLqbcB07P1YO5i1
+         0HrLcRQY/N54UJBROvSNYCkonjOFieylPUFro0/TR4NwAaBdxzaHjYUQRa1LxGVMS6ir
+         4X4AnjgoFeTQKtkNe2RxzvDa2XdJhMvIbV+/kB5Mqz6J9jhavYwHwb/tBhKH7YuZGR2r
+         2DSXsbNZvWZu1Yo6iWwWOImIvrA6okHeH4Bpg9wtU44E10l36ZoB6pe/QzHMeAKqBDiR
+         X1/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWCanApirgnLK1tbMRMGUn3ar+DnLhHTw3QwyXP1i6+tSZKUjV+DImYfWCKkv9eCA1eEik5roSgPGfQEnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLA6Bi84tKIA+tkAtrRevW16t1wuLI4IBLHeikCj0N6jaz9gDz
+	y1gP5PLA6akLM7/EecVJ7i2SjzmKu7mLNsPG+iV8YSyx9x2tMlxkbjFV9wiRun3lJ44=
+X-Gm-Gg: ASbGncsrmAPX/Y6e4MfubYSHuFPEvDSIuCVQzoujDQCv2/u7XFDUnr7rDeow43b0YaU
+	E5FWkDhjPiC3K+k8Eg10GzpH4fAdnw8ZAJCGPKy9cQjtIG/bR6PrtyAY+Q91pfuKiZgOME6RS1t
+	eaw72F2KA6eUnwaYw8RzQ+qEoeJERMhwDsXsjGroHPxXhordYhQAxKQ8CXzpv2XTBASY6zG7PFh
+	XR/pp/1PZA6quHojks8LHd3oBvp0cua3cC/qp1zcp5mxJemak3NawIuTj5KuUeWhoIwpmQTSXQN
+	kedmIlNQ1TTbYQfERwr8i7gbHkW3z1xfmBAxHajBvDuxwSRWv0dKHeiiXLeCivm4rUdton8I0r9
+	n5+bVWz3b6NAuXVcKBvLaM2LeuTwYC8FIgQ1QCwQKuCMloPThq0I48vyUqzLIPrCokIdlqOAnY2
+	Q=
+X-Google-Smtp-Source: AGHT+IHEHGCIqwCnGfFIsenBNXcfcUHPcRSF4zc4J/GNqwgo1/8d2p7odCKgdZCjhOtzdbOmvx212g==
+X-Received: by 2002:a05:6820:5106:b0:61b:fa44:2318 with SMTP id 006d021491bc7-61bfa443307mr1755652eaf.0.1755449485031;
+        Sun, 17 Aug 2025 09:51:25 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:7648:43db:38fd:de4a? ([2600:8803:e7e4:1d00:7648:43db:38fd:de4a])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bebf8d16dsm671683eaf.1.2025.08.17.09.51.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 09:51:24 -0700 (PDT)
+Message-ID: <8e228d2d-d22f-4092-8c6d-94ce989b4a84@baylibre.com>
+Date: Sun, 17 Aug 2025 11:51:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720094838.29530-1-work@onurozkan.dev> <20250720094838.29530-2-work@onurozkan.dev>
-In-Reply-To: <20250720094838.29530-2-work@onurozkan.dev>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 17 Aug 2025 18:50:51 +0200
-X-Gm-Features: Ac12FXyPxlxZqF2l582qQyry0jz0PDhTOBsNJIRcPGSp62_ToacKTsNnDreLjNg
-Message-ID: <CANiq72==r0uDobx4vyRe76W+3R0XmZAqk25PCej7DwyOOXn17A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] rust: make `allocator::aligned_size` a `const fn`
-To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, dakr@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
+ microchip,mcp9601
+To: Jonathan Cameron <jic23@kernel.org>, Ben Collins <bcollins@watter.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250815164627.22002-1-bcollins@watter.com>
+ <20250815164627.22002-2-bcollins@watter.com>
+ <20250816105825.35e69652@jic23-huawei>
+ <66063382-78c6-4d93-be25-46e972e390f4@baylibre.com>
+ <2025081711-coral-aardwark-9f061b@boujee-and-buff>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <2025081711-coral-aardwark-9f061b@boujee-and-buff>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 20, 2025 at 11:49=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.de=
-v> wrote:
->
-> Makes `allocator::aligned_size` a `const fn` to allow
-> compile-time evaluation.
->
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+On 8/17/25 11:37 AM, Ben Collins wrote:
+> On Sat, Aug 16, 2025 at 01:55:31PM -0500, David Lechner wrote:
+>> On 8/16/25 4:58 AM, Jonathan Cameron wrote:
+>>> On Fri, 15 Aug 2025 16:46:03 +0000
+>>> Ben Collins <bcollins@watter.com> wrote:
+>>>
+>>>> The mcp9600 driver supports the mcp9601 chip, but complains about not
+>>>> recognizing the device id on probe. A separate patch...
+>>>>
+>>>> 	iio: mcp9600: Recognize chip id for mcp9601
+>>>>
+>>>> ...addresses this. This patch updates the dt-bindings for this chip to
+>>>> reflect the change to allow explicitly setting microchip,mcp9601 as
+>>>> the expected chip type.
+>>>>
+>>>> The mcp9601 also supports features not found on the mcp9600, so this
+>>>> will also allow the driver to differentiate the support of these
+>>>> features.
+>>>
+>>> If it's additional features only then you can still use a fallback
+>>> compatible.  Intent being that a new DT vs old kernel still 'works'.
+>>>
+>>> Then for the driver on new kernels we match on the new compatible and
+>>> support those new features.  Old kernel users get to keep the ID
+>>> mismatch warning - they can upgrade if they want that to go away ;)
+>>>
+>>> Krzysztof raised the same point on v2 but I'm not seeing it addressed
+>>> in that discussion.
+>>
+>> One could make the argument that these are not entirely fallback
+>> compatible since bit 4 of the STATUS register has a different
+>> meaning depending on if the chip is MCP9601/L01/RL01 or not.
+> 
+> There are some nuances to this register between the two, but it can be
+> used generically as "not in range" for both.
+> 
+> My understanding from the docs is if VSENSE is connected on mcp9601,
+> then it is explicitly open-circuit detection vs. short-circuit, which
+> is bit 5.
+> 
+>> Interestingly, the existing bindings include interrupts for
+>> open circuit and short circuit alert pins. But these pins
+>> also only exist on MCP9601/L01/RL01. If we decide these aren't
+>> fallback compatible, then those properties should have the
+>> proper constraints added as well.
+> 
+> In my v4 patch, I'm going to remove the short/open circuit interrupts
+> since they are not implemented, yet.
 
-For future reference: we wouldn't be able to enable it as-is without
-the unstable feature anyway (which Danilo noticed when applied his
-version of this) -- if it is needed in the future, the patch is at:
+Don't remove them from the devicetree bindings. Even if the Linux driver
+doesn't use it, the bindings should be as complete as possible.
 
-    https://lore.kernel.org/all/CANiq72mUXy6AYkwCW_kO3ikjNBc5pLzXw0+fXFGmYu=
-m0tGmw1g@mail.gmail.com/
+https://docs.kernel.org/devicetree/bindings/writing-bindings.html
 
-Cheers,
-Miguel
+> 
+> I have VSENSE wired on my board so I can work on those interrupts and
+> register support in a later patch series.
+> 
+
 
