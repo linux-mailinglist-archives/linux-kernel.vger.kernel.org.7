@@ -1,130 +1,186 @@
-Return-Path: <linux-kernel+bounces-772453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8052B292D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E28B292D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE38A207FA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593901B235B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E61B28314B;
-	Sun, 17 Aug 2025 11:33:52 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3D4236A73;
+	Sun, 17 Aug 2025 11:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kT9mi3wL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54220469E;
-	Sun, 17 Aug 2025 11:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2B7139D0A;
+	Sun, 17 Aug 2025 11:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755430431; cv=none; b=rwV39tXbwnnzwhnotVORsu2PyUoWakAf51vKDRo49mc8DR19i/ubw1bt4FyGmmikYXe5eBnm1f6WTefkiCP7ob9RK05rK5/WKzXgrWUzfb92rNY/LhyX9E75Glk5nNpXQptMzasMqYwsPy8P+/hSys2EzGzOTFG8xuobHEwIgI0=
+	t=1755430572; cv=none; b=GF3ggj0pXfXjEGOYJXHCYswqwU587bedMmZFTxeZJeUj6fjtHBse5wkQ36K3XQpmIB/8c5Zu5UYdD0EVk3MAkrehgAv6Rd/lixOum4euzNSvQZDi+e5GpSuBlXPDG5X/sHax0U8ziOuT5kJdy/5bQkKx861gVH9MwI2OApYhybU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755430431; c=relaxed/simple;
-	bh=VSL6PEg8MxL2uScEXM1b+TMiDEeE4SxgUT/grljA0sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bgxQoxUGAsyg1kfI86CaxGqz6vRPN0lJ/kLbOnJOPc0mOE/LIn4DWmFUDjMRtQKsaXI5xHHMk+Oiz1lbsBerJbGoQnz4X2Vcrsdjiqc9abzMk54PAgfaF07piAzitMqRh3DtcgljAbgpoJtynP/3TNh8e3/jG3AXngJ9hhp/B9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47173edabaso689417a12.1;
-        Sun, 17 Aug 2025 04:33:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755430430; x=1756035230;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ak6zMtFbySLeOJ64BswfpOwYEwQ7oovCITgLDPUoaxE=;
-        b=qceDRIfwcaQzPIAkeUfdFr/BK+ojWrtQb75EHgIlqT35WUVxyidnRi5850EM4WhW8O
-         3AEn26e4t2NpIZ78J+kwxUnrQfooMNvcTIjycy3nOEpkxSyIuV2x3utBWvpKvHF3FB3b
-         L1HivjsLItkQeMJYdgcQ1SXHpTpbH3eI00Z/TYz4fY9AKZtOksw1QKGZMdyVVtCScS7x
-         KiBc4JyoUnXEKLmlbVt2Cec3TXqnn/Wmh8bRbA9GiF3dI+RiuQr61e4ovGDhHaucNCk9
-         UgXyUylE6Nj8HQR42DHFv/ZYntrSoU6xWlpNNBl352J4nxYrnR2d1zV14J7hll5Cwt3y
-         8EzA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3IpNXHlYoLswyF20OqyHASaEz++S+nnH6Tlc1KWxRclXKyme5AAOebKnVa3l+VF6aUR/EFjfwGFgstU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH/15FdxJWejpNmqpLxQFOq9gfG5/3KrcypG1ZupURu9K6cxWW
-	HlY6/X83luCsprVbgmXIH1tm4a2AqsDh0DEJlDdDmIClkyh8chOcpNGt
-X-Gm-Gg: ASbGncvlpuT4wAuEX8ChSbh1lUx6Cf2bwXggp5lz4ioZ9qqMY91cAaVwp9n2kdllgho
-	m9UOaHjByDjUBjZGJDdmHSHTqzRf+agPW2mvBC4kVc/eFTpygHCnX++NKlkFOuW+IVzio65WOtG
-	A/JUcKXIpYY7kDYJW2QrcTzr5W6Kya81ltOigIwOskR9Voof9JcOp3beXgMXSPTwb9IgifOTl3H
-	g6bQ6K+lamS+NafBejLIcdUPBTGE2np2xh2f9J2SjOCgNo6BuN1RK7JugfIPvIeHdjdjNJPm0is
-	+v0mp5IOLpgQv/53anpWNzYClTs+Vc4/L3a2hEMfFGPJ45i89H+WGMC5rZeRqkNYzC6JpFplP5W
-	/4dCj0WL6b38V
-X-Google-Smtp-Source: AGHT+IGZpxRPHFgkz6nMsx/vmZuGcU8C3T8gkrZOO2a+zfUrlfHCRWnkIiVJMn7vnKCuVpCCuNpSTw==
-X-Received: by 2002:a17:902:e541:b0:240:9dcd:94c0 with SMTP id d9443c01a7336-2446d6f1c95mr53539515ad.2.1755430429491;
-        Sun, 17 Aug 2025 04:33:49 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0f329sm54102285ad.70.2025.08.17.04.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 04:33:49 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>
-Cc: linux-raid@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH] md/raid5-ppl: Fix invalid context sleep in ppl_io_unit_finished() on PREEMPT_RT
-Date: Sun, 17 Aug 2025 11:31:16 +0000
-Message-ID: <20250817113114.1335810-3-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1755430572; c=relaxed/simple;
+	bh=GmRpuf1WWiswTGLBZ8QswzjuANRbxc5t6gbEU4uCTdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EdHNcuJFG6N+l4757KXrHZb5fQuPMYTOUPyfujUTjy+pxRhymJgD39/i3YvIwGv5jFpVBHuSZa4GBaMeDo8ILzz88YAOFRZzCJ06w7KytAemymKo6nTz92D51K4xHnhh5FbgDkKuZ+ZZBCmoAZcJjfa6V9AjSiYeZx9PIyWCDiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kT9mi3wL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A05FFC4CEEB;
+	Sun, 17 Aug 2025 11:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755430571;
+	bh=GmRpuf1WWiswTGLBZ8QswzjuANRbxc5t6gbEU4uCTdM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kT9mi3wLePKByM7ioIfXteIDxbA9/yX1Sq00Pv4MOjf2Nhkw1lwNcywzaH+el8P4G
+	 iM3CcfSZrDt7xwozyuwnrU/zX1IpE+ZHB5TX4DKj0wkU/dUf7dRUD/+BwpHu+dJJIb
+	 WW9sK9Xn4z3R4lVkJ/GIqk08uQqH/jev5SyPqQhg2u40xFd/2erZDlcpQjOGAEDk2G
+	 Sd7SmiiUT4mhduEoa6cQmzN/s8zly1PyLvMF5Zs9+4Ua9BuBb14XcyeDeVmS2EpQuh
+	 V2Q6vo/lgqa8+PgvKIbfOBnup6RITjUEiEJLuCDYV7E2J4Ps3uRYMf35IDFRVbabmh
+	 Hv2n1U2K7atbg==
+Date: Sun, 17 Aug 2025 13:36:06 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+Message-ID: <20250817133606.79d968ed@sal.lan>
+In-Reply-To: <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+	<20250816135538.733b80d3@foz.lan>
+	<acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The function ppl_io_unit_finished() uses a local_irq_save()/spin_lock()
-sequence. On a PREEMPT_RT enabled kernel, spin_lock() can sleep. Calling it
-with interrupts disabled creates an atomic context where sleeping is
-forbidden.
+Em Sun, 17 Aug 2025 18:46:35 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-Ensuring that the interrupt state is managed atomically with the lock
-itself. The change is applied to both the 'log->io_list_lock' and
-'ppl_conf->no_mem_stripes_lock' critical sections within the function.
+> [-CC: bpf@vger]
+> 
+> On Sat, 16 Aug 2025 13:55:38 +0200, Mauro Carvalho Chehab wrote:
+> > Em Sat, 16 Aug 2025 14:06:43 +0900
+> > Akira Yokosawa <akiyks@gmail.com> escreveu:
+> >   
+> 
+> [...]
+> 
+> > Works for me, but let's do it on a separate series. I still have more
+> > than 100 patches on my pile to be merged. This series is focused on
+> > making at least some PDFs to build where possible, addressing major
+> > problems at conf.py that are causing LaTeX to not work on several
+> > distros and to fix wrong package dependencies(*).
+> > 
+> > I'll add a TODO item on my queue to replace fom ImageMagick to
+> > Inkscape on a separate series.
+> > 
+> > (*) One of such problem you blamed sphinx-build-wrapper, but 
+> >     the issue is actually addressed on this series with fixes to conf.py: 
+> >     there are currently several troubles at latex_documents list and at
+> >     latex_elements.
+> > 
+> >     Those are causing wrong font detection on LaTeX.  
+> 
+> I couldn't see what you are talking about at first, because there
+> have not been any such issues reported.
 
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- drivers/md/raid5-ppl.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Heh, as you reported, you had troubles building pdf on Debian/Ubuntu. 
+That's mainly why I took some time finding issues and writing this
+series. Basically, just fixing ImageMagick permissions didn't fix
+everything, as, at least with the Sphinx versions used at the tests
+got troubles with Sphinx hyphernation, which required a Polish font.
 
-diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-index 56b234683ee6..650bd59ead72 100644
---- a/drivers/md/raid5-ppl.c
-+++ b/drivers/md/raid5-ppl.c
-@@ -553,15 +553,13 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
- 
- 	pr_debug("%s: seq: %llu\n", __func__, io->seq);
- 
--	local_irq_save(flags);
--
--	spin_lock(&log->io_list_lock);
-+	spin_lock_irqsave(&log->io_list_lock, flags);
- 	list_del(&io->log_sibling);
--	spin_unlock(&log->io_list_lock);
-+	spin_unlock_irqrestore(&log->io_list_lock, flags);
- 
- 	mempool_free(io, &ppl_conf->io_pool);
- 
--	spin_lock(&ppl_conf->no_mem_stripes_lock);
-+	spin_lock_irqsave(&ppl_conf->no_mem_stripes_lock, flags);
- 	if (!list_empty(&ppl_conf->no_mem_stripes)) {
- 		struct stripe_head *sh;
- 
-@@ -571,9 +569,7 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
- 		set_bit(STRIPE_HANDLE, &sh->state);
- 		raid5_release_stripe(sh);
- 	}
--	spin_unlock(&ppl_conf->no_mem_stripes_lock);
--
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&ppl_conf->no_mem_stripes_lock, flags);
- 
- 	wake_up(&conf->wait_for_quiescent);
- }
--- 
-2.50.0
+Debian LaTeX packages seem to have issues with that. Fedora and
+other rpm-based distros built it fine.
 
+Now, reproducing such bugs could be tricky, specially with LaTeX,
+which is a complex tool with lots of system-specific stuff.
+
+Eventually, this could be related to LANG/LANGUAGE/LC_ALL/...
+env vars. Here, I'm using lxc-attach to bind to the container.
+It doesn't run .bashrc nor set locale vars, and it seems to keep
+some env vars from the host. In the specific case of LANG,
+it doesn't set anything. So, my test script sets LANG and LC_ALL
+to "C". The host has it set to LANG=pt_BR.UTF-8.
+
+> Also, after applying 1/11 ... 4/11 on top of current docs-next
+> (commit 0bbc2548ea85 ("Merge branch 'pre-install' into docs-mw"),
+> despite the changelog of 5/11 which claims to fix an issue under
+> debian, I couldn't reproduce the "! Corrupted NFSS tables" error
+> under Ubuntu 24.04 (noble).
+
+Maybe you could try set LANG/LC_ALL to "C".
+
+I tested it on the following lxc containers (picked from lxc
+download repositories):
+
+  # APT-based (Debian/Ubuntu-like)
+  debian:
+    release: "bookworm"
+    pre_setup_cmds: *apt_pkg_cmd
+    post_setup_cmds:
+      - "systemctl enable ssh"
+    pkg_cmd: *apt_pkg_cmd
+
+  devuan:
+    release: "daedalus"
+    pkg_cmd: *apt_pkg_cmd
+
+  kali:
+    release: "current"
+    pkg_cmd: *apt_pkg_cmd
+
+  mint:
+    release: "wilma"
+    pkg_cmd: *apt_pkg_cmd
+
+  ubuntu:
+    release: "plucky"
+    pkg_cmd: *apt_pkg_cmd
+
+  ubuntu-lts:
+    dist: "ubuntu"
+    release: "noble"
+    pkg_cmd: *apt_pkg_cmd
+
+apt_pkg_cmd: &apt_pkg_cmd
+  - "sudo locale-gen"
+  - "sudo dpkg-reconfigure --frontend=noninteractive locales"
+  - "apt-get update && apt-get install -y openssh-server git python3 make"
+  - |
+    if [ -f /etc/ImageMagick-6/policy.xml ]; then
+      # Remove any existing restrictive policies for PDF/PS/EPS/XPS
+      sed -i '/<policy.*domain="coder".*pattern=".*\(PDF\|PS\|EPS\|XPS\).*"/d' /etc/ImageMagick-6/policy.xml
+      # Allow PDF patterns at the end </policymap>
+      sed -i '/<\/policymap>/i \ \ <policy domain="coder" rights="read|write" pattern="{PS,PS2,PS3,EPS,PDF,XPS}" />' /etc/ImageMagick-6/policy.xml
+    fi
+  - |
+    if [ -f /etc/ImageMagick-7/policy.xml ]; then
+      # Remove any existing restrictive policies for PDF/PS/EPS/XPS
+      sed -i '/<policy.*domain="coder".*pattern=".*\(PDF\|PS\|EPS\|XPS\).*"/d' /etc/ImageMagick-7/policy.xml
+      # Allow PDF patterns at the end </policymap>
+      sed -i '/<\/policymap>/i \ \ <policy domain="coder" rights="read|write" pattern="{PS,PS2,PS3,EPS,PDF,XPS}" />' /etc/ImageMagick-7/policy.xml
+    fi
+
+Packages are installed according using sphinx-pre-install
+instructions.
+
+I don't remember what of those got the corrupted tables LaTeX warning,
+but I got it on more than one Debian-based distro. When I wrote the
+fix, I guess I logged at the Debian container.
+
+> I'm confused ...  How can I reproduce this?
+> 
+> It's getting really hard for me to keep up with your pace of changes
+> in doc build scripts, really.
+> 
+> Akira
 
