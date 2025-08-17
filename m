@@ -1,59 +1,94 @@
-Return-Path: <linux-kernel+bounces-772490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B0EB29353
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3193FB29356
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9441B22E4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B773A1B24A98
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC67228C02B;
-	Sun, 17 Aug 2025 13:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E4E28DF01;
+	Sun, 17 Aug 2025 13:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM3PQDll"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnVMBNmg"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180C7317705;
-	Sun, 17 Aug 2025 13:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C541128B50A;
+	Sun, 17 Aug 2025 13:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755438349; cv=none; b=ZVq7Sk/8J+hrMyy0frR4wmBoFqZC7wjJReM5kdt8V49pd9PhuwE710uE7CS/nTOwZcxnow7zk2PyoO0ZeJ8uNSbY5EXHCqSEkVo4XNKjhVTf++6rraa7GXI1OT0cBeFP+3oFKfGemSYZLM4Sr/pt5J62cz00y3lYQfvwHGITwis=
+	t=1755438612; cv=none; b=o/S0rL6BY10KryOaeKAkQle8hxoV+FFsDIqcP0j0ZwWx8D/7Uc1aJES2X8iO9KGyCBssaH/UIKe2m31y9wm+vmmRZMqRxoS1nGgTXUn9NTw86pa1l+kc2guzo0OfbE/7DWSg0DfbQ5pJRUDK+JJnbCcgJNmTtpRZMuuuNYXQ1Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755438349; c=relaxed/simple;
-	bh=Vu9n2SLp+Hd3vLQf+FJpjNxx1t+sz7+XIWQRxNm7sqA=;
+	s=arc-20240116; t=1755438612; c=relaxed/simple;
+	bh=FAhrRvkDZSSNICXN+K40yB2WSBpz0uSk9J/rhUEE8o4=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VZfilbIf/TQSSlRKIeWs9fvBkO8O3I211sNcp5/WCLMWz1hKolbHSDuUc2JpqeufVgmet3X4UTS78uEnXr/ax96Jyd9eVIByicbQnPsdkd/0ZORxX4zyUknCJsfs7kjUj7E6wwPIaSOAXw/mWOihJh0xyyMoQhAGJ9rFmbO52gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM3PQDll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE76C4CEEB;
-	Sun, 17 Aug 2025 13:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755438349;
-	bh=Vu9n2SLp+Hd3vLQf+FJpjNxx1t+sz7+XIWQRxNm7sqA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TM3PQDllCwGxnkDL0ZOc0kx6AMJDBExHsylvUGqBrg8dguuGWwV5qREJ3E92SyVwW
-	 KGsOYxkwMY2esRLP/9bNHBPjcSit6mBi+aEzhKZOxbiLlwnuB1uZSMgsOuEudpOaPh
-	 EUyg94qQa2wGntkZySelrS5rcF+cOpvOe+c0FU5mneiRu35qEODrk0HWEWDkrQjuga
-	 PVAO0hiIpo1h9YYsdcT05XR5haTKo02K1q5o6e4U1xa+101JojyHI99q1OoRNs+iO7
-	 kPCuKiJNexcoDjCb7gfuWVWblL1abJJSQuDqxtWOm+JgwZHA3urXs5BU6BV7AxkYhM
-	 vMuQ8Q94gWO5A==
-Date: Sun, 17 Aug 2025 15:45:44 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-Message-ID: <20250817154544.78d61029@foz.lan>
-In-Reply-To: <b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
-	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
-	<20250816135538.733b80d3@foz.lan>
-	<acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
-	<20250817133606.79d968ed@sal.lan>
-	<b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=LYuZhZ90mjUtGEwjbVjp8JvRwHFvO8/Ffm4t2vWc+34TaeAGQypwxVKwtdAkr060rFfMsGfHmP7KwddcVN+JZDvuzARZ3i3g59kjskbdtifclIMKSHaA3w1njzyX3aYLzyN6AjOxB5Goqpwx3YpxkLobSyQxl7EUwOZf3oCY3no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnVMBNmg; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b0b2d21so14447215e9.2;
+        Sun, 17 Aug 2025 06:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755438609; x=1756043409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/yoZElYHHluW6HXReDqCRUDoS4VRBHZ+MHdPE0sfQVI=;
+        b=RnVMBNmgtPoLpGfKMaJv6Z6pNSUUJZ/obdTouBzQaPRa2osJlsGZbt1FSRe0GiwmZM
+         t3xF7yJqgon0nqK3m+xl9oJwUemoGuRgjk8MOuQCULGy1iPbMV6DFdz7MhR+z3In0BXn
+         PdMJAIi1tTxguGIrOnzdYvlEataLuJA4oHqmVi7+3CcM5bwycl/RLlS/XLPgwTBRJADC
+         6sVha22L0kFNepa7f7rWMe6mFN69ZrovFYML2WLGCro01H2XDlssj4FJ8AD/we0Z7DRx
+         rNBNVqljh+/nGmezXhIaUDqc/3+jcuEiEtvGAVgq9LBOC9sw0/CZVx8mEXiMLNhBAy8e
+         QCvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755438609; x=1756043409;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/yoZElYHHluW6HXReDqCRUDoS4VRBHZ+MHdPE0sfQVI=;
+        b=SbnjlkcC4G8z94++3etZ3Krmgsq9sAHCDgBdkl5PoGohBGixCxDsKoZeU2T6L8O2aa
+         a8BGQvdFT5WJoCg7OJTr2Oekg3ymT790J7ye1fN9UeNyKQieeEdrFZ961Z+8PbUYEqcL
+         7/hJDRI1QnXvWOKug3Y8ZqeRXA8yGWU0eckxUptK0mSR/QENiCDHZWeHx47XagURi8Jq
+         6dvDf+M10aofsa4wiKKqvDp5l5QZQ0wu/V1C6PPYf5efqILUTQn6aK+5ZG5qrqXPPDP9
+         KYYs8sc/2lptZhi/nSoggvxsCCenyQhNnzVic4gO+52nw5SdBoMfJAG+Ngvf6n/1Mf5V
+         ybyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmM0LuzsaXdvZZX2y+77iPOzY7o9VgLPzkRKNKxuCT/LECqA9Jp34CKtGOUnAc2fO7QB/MglDEfT+NfJDH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCAmTUekhHGyBiRYy/2uwqnL3Zu6H0Mxidj0Ec9syGtKMXYyNN
+	Q10CjAveCd5T841e59LWlTayyZ550a10hOd4bNDjGgarg+g57x79+KbfuUJ+fA==
+X-Gm-Gg: ASbGnct3e4hwp9ZPxshDZZwE0fVUilt8Wn9g+MqwTf2omjAo+7Xc/YwsMem3MU15ixD
+	3NyF2K6sc364Id5Yq6QCvEY4sb/6XB6QbeNxn5IriaY1GwvijuoE0Vw6kUIvOPO5dEWjqiWPQMQ
+	7ot5DaJMkoKIAx8kgJUoRsx/UbW1klgTI1bph2lfQZpck3Jf9tVUei4pBppTyY9iV3ONJuiFjnr
+	RwcHK5ByAXKZjf9gVK6iSqxqT4LUc8ZuhWIsEnZufp71ktbGVRpKmmWlqFqrkL1+4ZdF7CLJ4vJ
+	HVplmAgY7nFZSv11fQag8gewZXXnz1tr9qYadSGBaPeqGC7FJyaxQN39jrvq/L/doH0vKV29HNZ
+	Gdl/8ZQcdbjz3eOCpzMpnxTwyLpJH7+N0Ghhd5nsCuAhSH9cytuRNiG+VPeM38Q+qCoWKKeU=
+X-Google-Smtp-Source: AGHT+IEK2JQHzY9JjOBt/rAKrEsir7aaDbT+/HLG20AKYyI0t/BGE7MCKUX8VvAazzko6xmLdH6ASA==
+X-Received: by 2002:a05:600c:154d:b0:458:b7d1:99f9 with SMTP id 5b1f17b1804b1-45a217fd4e8mr69892265e9.11.1755438608859;
+        Sun, 17 Aug 2025 06:50:08 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c773e57sm138545945e9.23.2025.08.17.06.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 06:50:08 -0700 (PDT)
+Date: Sun, 17 Aug 2025 14:49:43 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250817144943.76b9ee62@pumpkin>
+In-Reply-To: <20250813150610.521355442@linutronix.de>
+References: <20250813150610.521355442@linutronix.de>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,145 +98,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Sun, 17 Aug 2025 21:24:49 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
+On Wed, 13 Aug 2025 17:57:00 +0200 (CEST)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> On Sun, 17 Aug 2025 13:36:06 +0200, Mauro Carvalho Chehab wrote:
-> > Em Sun, 17 Aug 2025 18:46:35 +0900
-> > Akira Yokosawa <akiyks@gmail.com> escreveu:
-> >   
-> >> [-CC: bpf@vger]
-> >>  
+> commit 2865baf54077 ("x86: support user address masking instead of
+> non-speculative conditional") provided an optimization for
+> unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
+> architecture specific way. Currently only x86_64 supports that.
 > 
-> [...]
+> The required code pattern screams for helper functions before it is copied
+> all over the kernel. So far the exposure is limited to futex, x86 and
+> fs/select.
 > 
-> >> I couldn't see what you are talking about at first, because there
-> >> have not been any such issues reported.  
-> > 
-> > Heh, as you reported, you had troubles building pdf on Debian/Ubuntu. 
-> > That's mainly why I took some time finding issues and writing this
-> > series. Basically, just fixing ImageMagick permissions didn't fix
-> > everything, as, at least with the Sphinx versions used at the tests
-> > got troubles with Sphinx hyphernation, which required a Polish font.
-> > 
-> > Debian LaTeX packages seem to have issues with that. Fedora and
-> > other rpm-based distros built it fine.
-> > 
-> > Now, reproducing such bugs could be tricky, specially with LaTeX,
-> > which is a complex tool with lots of system-specific stuff.
-> > 
-> > Eventually, this could be related to LANG/LANGUAGE/LC_ALL/...
-> > env vars. Here, I'm using lxc-attach to bind to the container.
-> > It doesn't run .bashrc nor set locale vars, and it seems to keep
-> > some env vars from the host. In the specific case of LANG,
-> > it doesn't set anything. So, my test script sets LANG and LC_ALL
-> > to "C". The host has it set to LANG=pt_BR.UTF-8.
-> >   
-> >> Also, after applying 1/11 ... 4/11 on top of current docs-next
-> >> (commit 0bbc2548ea85 ("Merge branch 'pre-install' into docs-mw"),
-> >> despite the changelog of 5/11 which claims to fix an issue under
-> >> debian, I couldn't reproduce the "! Corrupted NFSS tables" error
-> >> under Ubuntu 24.04 (noble).  
-> > 
-> > Maybe you could try set LANG/LC_ALL to "C".
-> > 
-> > I tested it on the following lxc containers (picked from lxc
-> > download repositories):
-> > 
-> >   # APT-based (Debian/Ubuntu-like)
-> >   debian:
-> >     release: "bookworm"
-> >     pre_setup_cmds: *apt_pkg_cmd
-> >     post_setup_cmds:
-> >       - "systemctl enable ssh"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> >   devuan:
-> >     release: "daedalus"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> >   kali:
-> >     release: "current"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> >   mint:
-> >     release: "wilma"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> >   ubuntu:
-> >     release: "plucky"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> >   ubuntu-lts:
-> >     dist: "ubuntu"
-> >     release: "noble"
-> >     pkg_cmd: *apt_pkg_cmd
-> > 
-> > apt_pkg_cmd: &apt_pkg_cmd
-> >   - "sudo locale-gen"
-> >   - "sudo dpkg-reconfigure --frontend=noninteractive locales"
-> >   - "apt-get update && apt-get install -y openssh-server git python3 make"
-> >   - |
-> >     if [ -f /etc/ImageMagick-6/policy.xml ]; then
-> >       # Remove any existing restrictive policies for PDF/PS/EPS/XPS
-> >       sed -i '/<policy.*domain="coder".*pattern=".*\(PDF\|PS\|EPS\|XPS\).*"/d' /etc/ImageMagick-6/policy.xml
-> >       # Allow PDF patterns at the end </policymap>
-> >       sed -i '/<\/policymap>/i \ \ <policy domain="coder" rights="read|write" pattern="{PS,PS2,PS3,EPS,PDF,XPS}" />' /etc/ImageMagick-6/policy.xml
-> >     fi
-> >   - |
-> >     if [ -f /etc/ImageMagick-7/policy.xml ]; then
-> >       # Remove any existing restrictive policies for PDF/PS/EPS/XPS
-> >       sed -i '/<policy.*domain="coder".*pattern=".*\(PDF\|PS\|EPS\|XPS\).*"/d' /etc/ImageMagick-7/policy.xml
-> >       # Allow PDF patterns at the end </policymap>
-> >       sed -i '/<\/policymap>/i \ \ <policy domain="coder" rights="read|write" pattern="{PS,PS2,PS3,EPS,PDF,XPS}" />' /etc/ImageMagick-7/policy.xml
-> >     fi
-> > 
-> > Packages are installed according using sphinx-pre-install
-> > instructions.
-> > 
-> > I don't remember what of those got the corrupted tables LaTeX warning,
-> > but I got it on more than one Debian-based distro. When I wrote the
-> > fix, I guess I logged at the Debian container.
-> >   
-> 
-> That explains!  I've stopped using ImageMagick all together.
-> 
-> So it sounds to me like there is some issue in debian/ubuntu/...'s
-> ImageMagick packaging, probably its build config disables some
-> aspect of SVG --> PDF support for security concerns (???).
-> I'm not sure at all.
-> 
-> I think it has nothing to do with XeLaTeX font discovery and I don't
-> see any reason to apply 5/11, at least for the time being.
-> 
-> My suggestion would be to give up ImageMagick and install Inkscape
-> instead.  It is provided as a deb package for debian and its derivatives.
+> Provide a set of helpers for common single size access patterns:
 
-The corrupted table error happened with very simple PDF files and has
-nothing to do with image generation.
+(gmail hasn't decided to accept 1/4 yet - I need to find a better
+mail relay...)
 
-It rises even with very simple PDF targets like this:
++/*
++ * Conveniance macros to avoid spreading this pattern all over the place
+    ^ spelling...
++ */
++#define user_read_masked_begin(src) ({					\
++	bool __ret = true;						\
++									\
++	if (can_do_masked_user_access())				\
++		src = masked_user_access_begin(src);			\
++	else if (!user_read_access_begin(src, sizeof(*src)))		\
++		__ret = false;						\
++	__ret;								\
++})
 
-	make SPHINXDIRS=peci pdfdocs
+I proposed something very similar a while back.
+Since it updated 'src' it really ought to be passed by address.
+For the general case you also need the a parameter for the size.
 
-Which produces \sphinxhyphen{} inside peci.tex, like this one:
+Linus didn't like it, but I've forgotten why.
 
-	controller is acting as a PECI originator and the processor \sphinxhyphen{} as
+I'm also not convinced of the name.
+There isn't any 'masking' involved, so it shouldn't be propagated.
 
-Basically, if this is included, directly or indirectly at the
-.tex file:
+There is also an implementation issue.
+The original masker_user_access_begin() returned ~0 for kernel addresses.
+That requires that the code always access offset zero first.
+I looked up some candidates for this code and found one (possibly epoll)
+that did the accesses in the wrong order.
+The current x86-64 'cmp+cmov' version returns the base of the guard page,
+so is safe provided the accesses are 'reasonably sequential'.
+That probably ought to be a requirement.
 
-	\usepackage[T1]{fontenc}
+	David
 
-the fonts from T1 fontset aren't UTF-8 compatible, causing troubles
-with xelatex. The fixes on this series solved some corner cases, where 
-babel tries to include it and use a Polish font (pzdr.tfm) to
-handle hyphenation.
 
-Such issue likely depends on Sphinx versions (as it is related to a 
-sphinx-specific macro) and what LaTeX packages are installed at 
-the system (fonts, babel, polygrossia).
 
-Regards,
-Mauro
 
