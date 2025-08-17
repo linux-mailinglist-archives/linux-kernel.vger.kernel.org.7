@@ -1,97 +1,79 @@
-Return-Path: <linux-kernel+bounces-772553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D02CB29406
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0F8B293FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DFF2A4C89
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC55D3AD6FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E4F2FE05A;
-	Sun, 17 Aug 2025 16:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDA029B777;
+	Sun, 17 Aug 2025 16:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="XCpqFCqx"
-Received: from aye.elm.relay.mailchannels.net (aye.elm.relay.mailchannels.net [23.83.212.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmxUXaTr"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8314B086;
-	Sun, 17 Aug 2025 16:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755446997; cv=pass; b=ZeG1nUDVRu5CS/x+EI9DnPmVi8qwjSmkBhd7iPJEak8H++eaMnbxUz0Uk+5zgCyDegtGhp8m+uVSQNXOtYv2FlP2hYa8LtU+xaM1TsuRp2THvZTMecppEh5/NsngrHJbvTyBqPaVzTbueBaCMUTKAfdW1heV4PCHHEV5IG6D3c4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755446997; c=relaxed/simple;
-	bh=fjqdlchKoZQp8z6BOQfPzPE/Kn3at+oXweNS0d0qYd0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F939FCE;
+	Sun, 17 Aug 2025 16:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755446848; cv=none; b=SwJaNPKOkAcBFTm8FR6gmrw5uSVAT81l5UEYSD5YX5SnWhx1l7OIGzJkxMTemeEDeKI0V9ZVfwfyWRJFo2+l5KzOxS8JkBACGmsl3USKaqQX9yI8s60gz8rmaw5P1vnEZCOY7jWzRMPLffoY/13oCImq9d2W5xrW0U9imcjrAU4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755446848; c=relaxed/simple;
+	bh=RwLmHjmIgfD34gHzDoKBpmP4OH+hmPxogerz5fS2/KE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aDaBMVWBRLIXSPvD3z+1gXExD3HjLmMK3kvlZ3Hfhuuk285s7otviymqWRe1Ojkd9+4blQuJFeBLI3gPbzXeANwDIKnM6h3fo2hBp1lFgRS7NVuweeKCYmqFLKah1ZsFhUlmX6LrGX+TAV3t4BjIsWAEHVd5YkGhWjDmycKVLZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=XCpqFCqx; arc=pass smtp.client-ip=23.83.212.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 3AA5D2C5FF4;
-	Sun, 17 Aug 2025 16:04:39 +0000 (UTC)
-Received: from pdx1-sub0-mail-a266.dreamhost.com (trex-blue-2.trex.outbound.svc.cluster.local [100.96.24.204])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id A9D5C2C5BC0;
-	Sun, 17 Aug 2025 16:04:38 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1755446678; a=rsa-sha256;
-	cv=none;
-	b=79eaCdimCdxb/iC5hvvHQ0HNM1n+D3OOB0TRZHB7IooDoHyGsXYPyHmQgzKJ92/kSbWxoF
-	ZDD4pdXgyLyx/0J1zojJgIiP2Xhi0TJnpZYh12QO68Df5EbVMp3rvxKGA1gdi+V8zc2iHC
-	0KUJfztwk0KiGkbDl5DnbMyb9mdnncU2HD5cMu2fQVHk5p03MtyIWM4vkdlpgcBu0YnC0d
-	FNZ5S5cyuFvhHZy99dPLCpP8eJZNU6A2gqAimu45PsRit+cJsEdsPmI+1Nl55/M7mpmKN4
-	l0UHKiM6jAG+KWhePC6KnK9VGWAr3GxHE+HEu2tIjK9cshMaHlJxmKQazWZ9iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1755446678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=1UyeYL1cdUfgr+ZEGrn8RJmbevR9bD7UF50xpYXVxks=;
-	b=j9uqFpwWW/V8LMvtx445Rjvn3UEe/k3YyuJm8IJeS4RfFPG7ydSgVr3qTMLzQLGiLpUg8R
-	wLYdC3ckaH3bDP2SkyWoq9y26eRo80cPxkxGWGu+PigkBFcagNWD+gzuM5KDp4cAcJsdcw
-	2Lx4ugPCjC2/Gg5oM+cdQkqwceh0CvYxFb3Nm5cRf0S1SmxD492H2gvG7wGFxPSvr2Z+D5
-	5ZDFu1b2alrxc5TmHHq/yvyCuVPbDED8lXPa4INYBnSbFzTr/xWHkExYXidiV77RkmIOSa
-	vkodUcMM5U2crkPBYfVrtda8N9Fc/JkG1+MtJgNdV9mfkTRZxz2SWj7P5IsgLQ==
-ARC-Authentication-Results: i=1;
-	rspamd-697fb8bd44-8sr7s;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-Shrill-Cooing: 5f6ae9f50f5cf92c_1755446679101_4172374461
-X-MC-Loop-Signature: 1755446679101:843244194
-X-MC-Ingress-Time: 1755446679101
-Received: from pdx1-sub0-mail-a266.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.24.204 (trex/7.1.3);
-	Sun, 17 Aug 2025 16:04:39 +0000
-Received: from [192.168.88.7] (unknown [209.81.127.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a266.dreamhost.com (Postfix) with ESMTPSA id 4c4gdx2LB3zPS;
-	Sun, 17 Aug 2025 09:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1755446678;
-	bh=1UyeYL1cdUfgr+ZEGrn8RJmbevR9bD7UF50xpYXVxks=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=XCpqFCqxcvJJTfy4OTrCUM2Htgr/7IGFok1cVjmYKXOMi1wiqwODNwADQ13rSCESQ
-	 KvqhFDCGeL+c039xlvVPaEcg6pRW0U4Y5wlSwIGq+6ZZO9FnVlwH4jmDkE+GvxBd+Q
-	 cmCzGOP+NY0jTdG7uM10/iobTMZaE3C1OY2yWhYP1aWuhpU2Hy+j2RUgOqiXWsc+cK
-	 uGFI1ZxQM6lqbyvm4sEEgMtR2pU2EJGCiDKn3fbeBQ9UhLeImL9yWGx4t/j5xeMDxM
-	 2v3xSGhAaOC8JJefzQUEaQbjpMiNxrJLR4clZ+cKLRIReShruLL1R8oarPXUKd/vNA
-	 SBmtoP9N2gv8A==
-Message-ID: <dd48568e-90db-430a-b910-623c7aaf566e@landley.net>
-Date: Sun, 17 Aug 2025 11:04:36 -0500
+	 In-Reply-To:Content-Type; b=jdfeNT9iaGj+k07g566v7/M4bmcr+cmvvh/tv0QZHcAFc1afr9JG9t36NuV6rubnCY0dTzH8yo8usc6q1mfqCs0CPBB+Z+vKq1Iw7zMJUalKbmqLc+XuGVN0jW/lmcWiMe1UUTrOvSncqFV5l6Cw1bWgcsTpWANoEMQUd7XqbuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmxUXaTr; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24458317464so35834905ad.3;
+        Sun, 17 Aug 2025 09:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755446846; x=1756051646; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yqglJGOoHmdE3AwUnr2z7/mg8VGZR9xb2JXFvdHi9xI=;
+        b=cmxUXaTrdjazpAUFI7uCIM6rxfDlqipLjLMxDpf/dC1NillC2Po4u566PkpMg5kitr
+         7FkaRyGWYkqsSyX8UjGwUZvFcY0QkXP0fhGI0nxGttAdeaNuecrsYBQZsVWxcGoRJxo5
+         nggL9/A/Ld/y3IFxPM77uztjN6o/QR/G4R7cp4sEykEk9Srl4LKqQK2tPzbe5XLDnxtB
+         BKMo2aTR/wB9g8eP8YQq6Axyu2dgiRIjYfw71lwKl99Z/OYr64eal1T5ZSftuzGTU9Km
+         Fjkr8ufY/ibAGERPHApZCwqmg1EtS5H9kFDedpYd4pcnseEE3Gta8ik/2H+KLDeFvq5/
+         2k0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755446846; x=1756051646;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yqglJGOoHmdE3AwUnr2z7/mg8VGZR9xb2JXFvdHi9xI=;
+        b=byF/8c/ZV6CxQNSI2TOPdEX3/QKsCTvW/IHHod+ao1jJRHWXi6KSyIq+eTRnDmifRe
+         bvDt0u6ybWfoNch7SZBf0936caF1PJLmuz6kQjlLd0rJ9N7pxTgv6kgJIUVGvsvo4rfv
+         mCMMUqEOL1XxkGHEe+g8zQKICiPz4vVqCRhJHsh4dkwiAu3NMkp2odrX3/rv6GInTJL4
+         xjl7wLFx8Hc8dyZTNT3QEm2FGb0wH018P1GfVYbuwXFxuhKfQZOKT4nOSdrx7TpGUEhX
+         DjWJvS2okdWk++n1LRsOhSXoQ9i4Gd8Ivm0yjJnZQjGg29E0LCaeEAdGt8dFAh4cgO4Y
+         ReYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFQmgY3SojNfh8G/spRMe+fN1hRiFWOz3t80XDSFKc1dt0ekCFVYkyv11r9e3ia7+HoQduwy7r7dUpKf4K@vger.kernel.org, AJvYcCWe0smbUHrplSl7twQ7m5OElp9kCqb02NdSLeKhQeTKKdCrVGBl7gdTQV5GAH8ILfUURDd5dLe5Xrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6YViRVtnHSTMFMsI0jq5P7802IxzI2ROjO9sL+IwvUs8E91SA
+	otZ0v+L5VdQI3+TU8Ct7quz9oUcsCLEtBEtvptz8/hHpxzF8fFhwbjpz
+X-Gm-Gg: ASbGncvZjeAedcSyX5d6zD86Q36Dxo7TBdea4eff9SeFY1qrAZUQ1RfoBMEwql8Xm2i
+	6ocqeS3Dfs87xy+tIL1aHk0zNgAMLLxqr4KBHZSVgKKWxmAF2HtAgJxBmGW7jv7N3AWRSduG2Ey
+	UFLW39a3ZrCFG4dEzwjX/We1YtWjBKNy1jOTyQvKoic4BLXp+Uid5Om8ObpghjBJo3NJrPAwYg/
+	OHB0jLqO8k5cA3tpEy6qe8nkiDqXKw0HriavvC3rDEJe9L9GIzMNj6MK4GmovpaXBAmfis1cKJp
+	K6pXo7GY9srESmshdObCInHoU079YKyVtNecgdh3vzGMO367lwg/77PVxIKk+NuQcI5G8IUvCBR
+	ILKSjVN8d9Tleyy0d5tJx2cEEZMRF7D5gLYgXOKFJeXNOpW1ub/6NbxLpDtWdp5Y/mnT1
+X-Google-Smtp-Source: AGHT+IGa9zsh9JiY0zWaJpDmHa4AXa90gix7NYJCU5UvCufiIpP8vguCuxztzuSL85bDPBWtRW9lgA==
+X-Received: by 2002:a17:903:198c:b0:240:a222:230c with SMTP id d9443c01a7336-2446d5af743mr136082825ad.12.1755446846527;
+        Sun, 17 Aug 2025 09:07:26 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5636bfsm57852925ad.144.2025.08.17.09.07.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 09:07:26 -0700 (PDT)
+Message-ID: <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+Date: Mon, 18 Aug 2025 01:07:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,68 +81,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-To: Andrew Lunn <andrew@lunn.ch>, Artur Rojek <contact@artur-rojek.eu>
-Cc: Jeff Dionne <jeff@coresemi.io>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-4-contact@artur-rojek.eu>
- <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
- <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
- <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
- <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+ <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+ <20250816135538.733b80d3@foz.lan>
+ <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+ <20250817133606.79d968ed@sal.lan>
+ <b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
+ <20250817154544.78d61029@foz.lan>
 Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250817154544.78d61029@foz.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/15/25 17:38, Andrew Lunn wrote:
->>>> What support is there for MDIO? Normally the MAC driver would not be
->>>> setting the carrier status, phylink or phylib would do that.
->>>
->>>  From what I can tell, none. This is a very simple FPGA RTL
->>> implementation of a MAC, and looking at the VHDL, I don't see any MDIO
->>> registers.
->>
->>> Moreover, the MDIO pin on the PHY IC on my dev board also
->>> appears unconnected.
->>
->> I spoke too soon on that one. It appears to be connected through a trace
->> that goes under the IC. Nevertheless, I don't think MDIO support is in
->> the IP core design.
+On Sun, 17 Aug 2025 15:45:44 +0200, Mauro Carvalho Chehab wrote:
+
+[...]
+
+> The corrupted table error happened with very simple PDF files and has
+> nothing to do with image generation.
 > 
-> MDIO is actually two pins. MDC and MDIO.
-
-I asked Jeff and he pointed me at 
-https://github.com/j-core/jcore-soc/blob/master/targets/boards/turtle_1v1/pad_ring.vhd#L732 
-and 
-https://github.com/j-core/jcore-soc/blob/master/targets/pins/turtle_1v0.pins 
-and said those two pins are "wired to zero".
-
-He also said: "It would only take a few hrs to add MDIO." but there 
-basically hasn't been a use case yet.
-
-> It might be there is a second IP core which implements MDIO. There is
-> no reason it needs to be tightly integrated into the MAC. But it does
-> make the MAC driver slightly more complex. You then need a Linux MDIO
-> bus driver for it, and the DT for the MAC would include a phy-handle
-> property pointing to the PHY on the MDIO bus.
+> It rises even with very simple PDF targets like this:
 > 
-> Is there an Ethernet PHY on your board?
+> 	make SPHINXDIRS=peci pdfdocs
+> 
+> Which produces \sphinxhyphen{} inside peci.tex, like this one:
+> 
+> 	controller is acting as a PECI originator and the processor \sphinxhyphen{} as
+> 
+> Basically, if this is included, directly or indirectly at the
+> .tex file:
+> 
+> 	\usepackage[T1]{fontenc}
+> 
+> the fonts from T1 fontset aren't UTF-8 compatible, causing troubles
+> with xelatex. The fixes on this series solved some corner cases, where 
+> babel tries to include it and use a Polish font (pzdr.tfm) to
+> handle hyphenation.
+> 
+> Such issue likely depends on Sphinx versions (as it is related to a 
+> sphinx-specific macro) and what LaTeX packages are installed at 
+> the system (fonts, babel, polygrossia).
 
-According to 
-https://github.com/j-core/jcore-jx/blob/master/schematic.pdf it's a 
-https://www.micros.com.pl/mediaserver/info-uiip101a.pdf
+Ah, I have finally understood what 5/11 is trying to do.
 
-> 	Andrew
+Its changelog mainly talks about an issue you saw after adding options
+to xindy in that same commit, and you added
 
-Rob
+   \newfontfamily\headingfont{DejaVu Serif}
+
+to resolve it.
+
+Current changelog didn't make sense at all for me.
+
+Can you please reword it and make it easier to follow?
+
+With that, feel free to add my
+
+Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
+
+        Thanks, Akira
+
+
 
