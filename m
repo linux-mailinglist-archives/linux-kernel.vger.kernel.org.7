@@ -1,88 +1,152 @@
-Return-Path: <linux-kernel+bounces-772630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D120DB29518
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C749B2951C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6410203F2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B8B4E5B0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00E021C194;
-	Sun, 17 Aug 2025 20:49:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A245123F41F;
+	Sun, 17 Aug 2025 21:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNkEzsNH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8C217F23
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 20:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02964221269;
+	Sun, 17 Aug 2025 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755463745; cv=none; b=UHfNFvAqmdQyDQwI3aHEiFJZFVynvHRrlOMG1xXnxJYxlWAw1gpy47VKn2iSO2Wb8+U98lOX8D4kjCaRz3V5GWFtwVBRrl5zNzWNsLLv3zwmaypAYKa3B6JpcGQmgntZ8B8FS7v9iIJsh7knKwuwKjb03DhTwAvR8lt3TeSjSqg=
+	t=1755464607; cv=none; b=ZwllLWmyl3sx3BCQVjBBtsKyzwjur4J0VzU5/KakYoLrkdt9XKQoRx8c2Ul2WyX0nu6SVJ9hl4HjWPMpQdUjNobPxhe6WaN+o1jJFhgPSaDaBrevJOrm6gTAFNKdqHQKNbZK4pFvp/cWlFuqwvRm1DD2TpU3b6ObTw/TpOcz8FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755463745; c=relaxed/simple;
-	bh=2Kx1zgwIIBL+9fuUH+h3DW3zZOdL4Jcny0pzAvWuEMA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RvVMXazL6Yug0X1lYdkSESNRmyyOJ7gtwXnRqFrS3J9FqAfWuXN/uQaxxMz7UmHlamEaoY0p8o2mZZbxgJi/ZrrKi6A7rymMIGCSxn9YmOFzPej83fN4wKrUfDxsiQVO3eGtNWLaw4ddarp2G6DOw5oj+M1ZYcezRcOwtCMT5hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432e33c84so1038595839f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 13:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755463742; x=1756068542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kchLK+S5t1W/C5OwakkJrRxozTYQHPngSHdTJJbSJ4=;
-        b=PH/jiX6Q2fevezTzYYAQckmM8+sLm4mxRglo7U1Qw0TgYm0tDZGQU2owVL95CdZAbZ
-         NlhhzXqDNG+02tcgTJq8YbBxMtYi1m+CX7LP9jc/CuX9FSReBVvpG9Pbv50XFocgOVlw
-         1ZfbtqBezGKe1JYmdVCNX4D6jor/h1yqoVX2xcnaPs2eyFTXnkPxqCkqm5oIIyi0Cu9u
-         DVH+Yo3rRi/avPxe4UcHM+005G6tVEdz4GYIM3tVafQxdEsQSNpXiqxOYLDdXR28D4Wo
-         Cnn37/eUjt0at821CdQk9uy0zR7KVW+jShBTbEeH3LYheAQIR5tiEO2XO5/HtGDq6YOe
-         PbLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUENmGHG9oo3U2vHnHrJ2wxTBFhPRjPje802ICBeyf9MaSE0Ir187ZhFaTNFrgVDtHyrVFgOlxTshQXGKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxFYq7aIBTvvTMLBeVXhOCjzCmLFPA4YUVHSkyjx9EnNpQvlXZ
-	vleT5kr/9fqI60nrHB4Xbf0wvjNbYFFfz12SILaVg4dVrYgcG3vykkscyjHwBTAzd18ApzKUyua
-	+Fl86n26aKEiwX4EkJEAW0b8p/bWAPodxlCVkVtT16aK0eG7ogqO0M/5u3k8=
-X-Google-Smtp-Source: AGHT+IFlZthwjE12bH3G4UT2hUET6hZTRAgXBwb5Er88gU7SHdFfBSj4mg8H0QCSa1MRNan5PCxB2dXhUXkHj3LWQrRRpRywlg3e
+	s=arc-20240116; t=1755464607; c=relaxed/simple;
+	bh=mXDm9pzQ2v2aMXQtgfLc6q6k54TIbxRQKNSFRAvlPm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnN8ryROZdKIz3jlclLnxpMZ/4cGzzafIKEafmkgcuNVZsNJ7alqAUu3TfB1JH7Bv4Apgm1yw61/1djfNxZ9qzUKuyvqyE4XBqbcnCpGGu7T8sLP/7kpD8hTZgjVdyWxBYzI7FrKrcAJlI6g9U8Am8GAd0ce5q4DC66hnlmZ/vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNkEzsNH; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755464605; x=1787000605;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mXDm9pzQ2v2aMXQtgfLc6q6k54TIbxRQKNSFRAvlPm8=;
+  b=lNkEzsNHf2oqXRqd6K88ujvtv0biztLmLcJ85cssiuuattMY7pfwir+9
+   ELTW84DmsB8gOZ6QEYWaPZLsNkr8+gfNAW5PDnxs5u7cEgg49nlnBKY/T
+   bfoAnTteCsF2UXT9YmnE/Hqq4PPAJtfvUrG+CE7JPDYFlvi+tf3K69PXo
+   0x0f7vS93HIMHeG0geIALF2tjLes6igaJkH6ZmhdUg6BHJpePbkWABCs9
+   F6iV8eH2fJ4fIVu3R5X5PoQ3jdvxh9SLr5lyjHbPojc+4PzlXPz7xadkN
+   TlGP3pCS7x3gySSGtt6yv8082gp2NlGILltAJcnxuIvXOkHEd6M9w54qh
+   g==;
+X-CSE-ConnectionGUID: tBKX3zB/QnKfbVObwNkVrA==
+X-CSE-MsgGUID: otkUOeCcQmS8NdOwT0yCVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="69143667"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="69143667"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 14:03:25 -0700
+X-CSE-ConnectionGUID: XDR8jl+CQ7mIMDSoIjuRUw==
+X-CSE-MsgGUID: Itk0I8gxStyf6NnlXNz1YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171644503"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 17 Aug 2025 14:03:21 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unkW4-000Dih-0l;
+	Sun, 17 Aug 2025 21:02:41 +0000
+Date: Mon, 18 Aug 2025 05:01:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	guoren@linux.alibaba.com, guoren@kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Subject: Re: [PATCH] RISC-V: KVM: Write hgatp register with valid mode bits
+Message-ID: <202508180228.aJykn9j0-lkp@intel.com>
+References: <20250816073234.77646-1-fangyu.yu@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:3e5:5af7:7c99 with SMTP id
- e9e14a558f8ab-3e57e7daad6mr223634705ab.3.1755463742689; Sun, 17 Aug 2025
- 13:49:02 -0700 (PDT)
-Date: Sun, 17 Aug 2025 13:49:02 -0700
-In-Reply-To: <CAMV7Lq4Uob0YMb+rZQNUApX4YYPQyqarsDCA1pVTLMV5=vUgQw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2403e.050a0220.e29e5.0076.GAE@google.com>
-Subject: Re: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
-From: syzbot <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
-To: abinashsinghlalotra@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816073234.77646-1-fangyu.yu@linux.alibaba.com>
 
-Hello,
+Hi,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+kernel test robot noticed the following build errors:
 
-failed to apply patch:
-checking file drivers/net/usb/asix_devices.c
-patch: **** unexpected end of file in patch
+[auto build test ERROR on kvm/queue]
+[also build test ERROR on kvm/next mst-vhost/linux-next linus/master v6.17-rc1 next-20250815]
+[cannot apply to kvm/linux-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/fangyu-yu-linux-alibaba-com/RISC-V-KVM-Write-hgatp-register-with-valid-mode-bits/20250816-153513
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+patch link:    https://lore.kernel.org/r/20250816073234.77646-1-fangyu.yu%40linux.alibaba.com
+patch subject: [PATCH] RISC-V: KVM: Write hgatp register with valid mode bits
+config: riscv-allyesconfig (https://download.01.org/0day-ci/archive/20250818/202508180228.aJykn9j0-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250818/202508180228.aJykn9j0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508180228.aJykn9j0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/riscv/kvm/vmid.c:31:24: error: call to undeclared function 'kvm_riscv_gstage_mode'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
+                                 ^
+   arch/riscv/kvm/vmid.c:31:48: warning: shift count >= width of type [-Wshift-count-overflow]
+           csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
+                                                         ^  ~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/csr.h:538:38: note: expanded from macro 'csr_write'
+           unsigned long __v = (unsigned long)(val);               \
+                                               ^~~
+   1 warning and 1 error generated.
 
 
+vim +/kvm_riscv_gstage_mode +31 arch/riscv/kvm/vmid.c
 
-Tested on:
+    24	
+    25	void __init kvm_riscv_gstage_vmid_detect(void)
+    26	{
+    27		unsigned long old;
+    28	
+    29		/* Figure-out number of VMID bits in HW */
+    30		old = csr_read(CSR_HGATP);
+  > 31		csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
+    32		vmid_bits = csr_read(CSR_HGATP);
+    33		vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+    34		vmid_bits = fls_long(vmid_bits);
+    35		csr_write(CSR_HGATP, old);
+    36	
+    37		/* We polluted local TLB so flush all guest TLB */
+    38		kvm_riscv_local_hfence_gvma_all();
+    39	
+    40		/* We don't use VMID bits if they are not sufficient */
+    41		if ((1UL << vmid_bits) < num_possible_cpus())
+    42			vmid_bits = 0;
+    43	}
+    44	
 
-commit:         8d561baa Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce98061fb8ee27bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=20537064367a0f98d597
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1272aba2580000
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
