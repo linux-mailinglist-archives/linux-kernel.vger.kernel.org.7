@@ -1,128 +1,81 @@
-Return-Path: <linux-kernel+bounces-772443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817A7B292B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:48:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC764B292B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5402011F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:48:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D31134E14F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D6F2877DD;
-	Sun, 17 Aug 2025 10:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933F2877E1;
+	Sun, 17 Aug 2025 10:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b="cC4/g1+y"
-Received: from wylie.me.uk (wylie.me.uk [82.68.155.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOpxmImS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A61D1A0728;
-	Sun, 17 Aug 2025 10:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.68.155.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C211AF4D5;
+	Sun, 17 Aug 2025 10:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755427703; cv=none; b=l6G/r9+oN5ViNsElKSrxzJksgEXnfAdYpvjbfC51BQ8PI5l8f+dI0v18LXQ8JAP5HiA5AHTLGxHbc5mN6/jfKjg2pwFgPuGcn2Zh5Y1UcUyjO0pjl+53pW+iQwXSNPk5l30RPhZT5vhETx9j3pXsXHbzJp4y4NP2R8IBztaAL2w=
+	t=1755427855; cv=none; b=W+Q8+gimPexX0LldqGavruhRpAVljE+Y0X4ebbVYFm83ebGDIXKGRrtsZw/DSdd03mWR6nKh+9zsC5pPqVxIoGjsny9q64tJ5cBGdJj9qc78yhQNfyfSVEHl1V+dOIs19jmepid5//b2lpCjwSU1ef1aaRrL5Xssvl/VIQiwYtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755427703; c=relaxed/simple;
-	bh=8y/nQYrJexvHvsyddRBDWw78Fri3Me8pm4TUvREXXQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F2VV0ij51hx1hCkREJdsoapPmrrzFwpG9FH3OXu8NSSw51Z9pvH8nh22+7IdpNC7tg3oIO8lOoHIN5d1RQdWbH9kSKPkYlS5pgwr9gATq0lDIY0bZz10CNQ7EZcgl3b/3TgXgTIVp9hauMAfXx8cYdWGDZuKv5ckmBSlRZrolm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk; spf=pass smtp.mailfrom=wylie.me.uk; dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b=cC4/g1+y; arc=none smtp.client-ip=82.68.155.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wylie.me.uk
-Received: from frodo.int.wylie.me.uk (frodo.int.wylie.me.uk [192.168.21.2])
-	by wylie.me.uk (Postfix) with ESMTP id A24591208FA;
-	Sun, 17 Aug 2025 11:47:35 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=wylie.me.uk;
-	s=mydkim006; t=1755427655;
-	bh=8y/nQYrJexvHvsyddRBDWw78Fri3Me8pm4TUvREXXQs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=cC4/g1+yr026ZMQA4pQTypUdwOrCUm/i/AMvOGPKRzGFy3Z1OWA69q46Xj/PF5MYQ
-	 /svATdqh5y0vvnG1f5znd06rKgFIof60VN5f/Rgal+Z8nKaMVoJhdpUj57MPJe6Pyz
-	 VHSL9aFLZrZqoaqMi5dMqInOypweKiRWGSQq9AYpIaqsrPDFTBUx7DtUqNRr57KPP6
-	 6e1eyvzDft3pboi7A/nEuZSEkJ2FPYjeE4XZkS5iBqoqws08o9MZNDi+gJTnH/W9FZ
-	 Oc3Pmz8Fo3xvV9zAWyftvN15G21YxUTZlCZWUMEcb5xFDvjOLfSC/P29PHjJtJkx13
-	 VYVom48nKqPyQ==
-Date: Sun, 17 Aug 2025 11:47:34 +0100
-From: "Alan J. Wylie" <alan@wylie.me.uk>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: XOP prefix instructions decoder support
-Message-ID: <20250817114734.42e17904@frodo.int.wylie.me.uk>
-In-Reply-To: <20250817093240.527825424989e5e2337b5775@kernel.org>
-References: <175386161199.564247.597496379413236944.stgit@devnote2>
- <20250817093240.527825424989e5e2337b5775@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.49; x86_64-pc-linux-gnu)
-X-Clacks-Overhead: GNU Terry Pratchett
+	s=arc-20240116; t=1755427855; c=relaxed/simple;
+	bh=jYq7d/KI9Fl7n0FN3697SqbIefUMAmBfpP+PbR+dS6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdPm6KFL2AdtfgZY7EVobC3wnH0f+dlC0/Ir1XmCRhrXELPPRLlFYDJWbdtremPKapbJkq4bNK/T+omAg0zrA9G5/zpkFKGUXILx0kJ8kWRCNY0hD0qpFqV5pOJ3GUa1Xl8VTwGeGQPJPLcH4bW8H5Me6T+Lol44Zu11ZlecTwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOpxmImS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1CAC4CEEB;
+	Sun, 17 Aug 2025 10:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755427854;
+	bh=jYq7d/KI9Fl7n0FN3697SqbIefUMAmBfpP+PbR+dS6o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oOpxmImSwwHJZh3R1upYjow3eW8PAtsOA7LQdCIqDJTVHVgedpn9RuwIKhtL/48o3
+	 QFTz4aMH1BRvbIt5iWZ7/eOYz2uUCFbR/ZOqRw79eMLPXXhwJ0uYzkBR1tmu6r06vF
+	 7s8wK844/6Z9N2lrFISXUSiyXjeu9oKBe2nVud/8Ov6O/e0ojUkYH1Lm+XkxEe03ai
+	 PkUYJRjFLKfrA5V9znZP7/bSpYnKpfz5wggXiTt2PRV0AKAgB/6e6jc/bgWApQjJP7
+	 PLLuKXg9OgRc4DfcKTxVGY94iyBRq4rmBPRe3Yjs2KymcarqV0fswaiLJntCpYXqBd
+	 XiFgAvFn7zk4Q==
+Message-ID: <170403b9-f98b-435c-8403-d1b8c2db1244@kernel.org>
+Date: Sun, 17 Aug 2025 12:50:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: asahi@lists.linux.dev, Will Deacon <will@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Neal Gompa <neal@gompa.dev>,
+ Janne Grunau <j@jannau.net>, linux-arm-kernel@lists.infradead.org,
+ Keith Busch <kbusch@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+ Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ devicetree@vger.kernel.org, iommu@lists.linux.dev,
+ linux-nvme@lists.infradead.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+ Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>
+References: <20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com>
+ <20250811-t8015-nvme-v1-3-ef9c200e74a7@gmail.com>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <20250811-t8015-nvme-v1-3-ef9c200e74a7@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sun, 17 Aug 2025 09:32:40 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> Hi Alan, 
+On 11.08.25 15:50, Nick Chan wrote:
+> Add bindings for SARTv0 as found on Apple A11 SoC.
 > 
-> Can you test this with our cros-compile build?
-> 
-> Thank you,
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
 
-Applies cleanly to both 6.16.0 and 6.16.1, builds natively on both on
-my FX-8350 box and boots successfully on both.
+Reviewed-by: Sven Peter <sven@kernel.org>
 
-Tested-by: Alan J. Wylie <alan@wylie.me.uk>
-
-Thanks
-
-Alan.
-
-> 
-> On Wed, 30 Jul 2025 16:46:52 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Support decoding AMD's XOP prefix encoded instructions.
-> > 
-> > These instructions are introduced for Bulldozer micro architecture,
-> > and not supported on Intel's processors. But when compiling kernel
-> > with CONFIG_X86_NATIVE_CPU on some AMD processor (e.g. -march=bdver2),
-> > these instructions can be used.
-> > 
-> > Reported-by: Alan J. Wylie <alan@wylie.me.uk>
-> > Closes: https://lore.kernel.org/all/871pq06728.fsf@wylie.me.uk/
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  arch/x86/include/asm/inat.h                        |   15 +++
-> >  arch/x86/include/asm/insn.h                        |   51 +++++++++
-> >  arch/x86/lib/inat.c                                |   13 ++
-> >  arch/x86/lib/insn.c                                |   35 +++++-
-> >  arch/x86/lib/x86-opcode-map.txt                    |  111 ++++++++++++++++++++
-> >  arch/x86/tools/gen-insn-attr-x86.awk               |   44 ++++++++
-> >  tools/arch/x86/include/asm/inat.h                  |   15 +++
-> >  tools/arch/x86/include/asm/insn.h                  |   51 +++++++++
-> >  tools/arch/x86/lib/inat.c                          |   13 ++
-> >  tools/arch/x86/lib/insn.c                          |   35 +++++-
-> >  tools/arch/x86/lib/x86-opcode-map.txt              |  111 ++++++++++++++++++++
-> >  tools/arch/x86/tools/gen-insn-attr-x86.awk         |   44 ++++++++
-> >  .../util/intel-pt-decoder/intel-pt-insn-decoder.c  |    2 
-> >  13 files changed, 513 insertions(+), 27 deletions(-)
-
-
-
--- 
-Alan J. Wylie     https://www.wylie.me.uk/     mailto:<alan@wylie.me.uk>
-
-Dance like no-one's watching. / Encrypt like everyone is.
-Security is inversely proportional to convenience
 
