@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0573B291AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:46:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1F2B291AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BCF2A1E66
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CC9485C67
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6782B1DFDB8;
-	Sun, 17 Aug 2025 05:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773651DFDB8;
+	Sun, 17 Aug 2025 05:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOtbclsR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8pViEDf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE306881E;
-	Sun, 17 Aug 2025 05:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D8A139579;
+	Sun, 17 Aug 2025 05:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755409556; cv=none; b=OE+pWb1hbPED4vhgVbXXqaqfSiGGzT9NlY/Hx3om2urmVuD/LmIFxHK13o+qUX64+SlT5jlY/yuWwlSuJ/38n1EiX0s2ouJ9FW2fCRumWA3g+E+HoKWeMw13ZK65VylCLD7AlxX7zR5udSu0UyH7a92EdkhexErwHD5vG1yLrKc=
+	t=1755409719; cv=none; b=HeAMa7A+rhP7MND9Va3RDNc6nAjlJ3VqVw3DfQNfEzSDbfAvid0mo++LPSC45uznsYQ6kGRiMSU39Q5XPcbDHH/4lyYhV2oUy/UaW2XI94IDNjqiLjQAXz2GBB9OrOj+D8IMd4L62J8ilWZ7EVZ48BrY+yUCGpxMrtgqZoPKnkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755409556; c=relaxed/simple;
-	bh=ttZ6jtkkRczJ0axAm9jZ0bwV4tHP2+ZyMJp+BLvzgMU=;
+	s=arc-20240116; t=1755409719; c=relaxed/simple;
+	bh=qpbneWZrxAdsiLzyRlwnN1hSf6DqHv/5wCYe4g7IcAg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jZ6p5UxeVh01bw6YziY6z57pLdLZBmQFce71qSRfp9HBg75fmggTpJuSTEKh2iNpVu3Si45idMWok0jhlnVXL5VegJtrzg9z+bTjB4/E/4y/vf/aUdvYR8WROsQ/t1mxVnMR/inNy1GUXSi6d6tK+0gAj+LID8gUPtUCowpWZPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOtbclsR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DBBC4CEEB;
-	Sun, 17 Aug 2025 05:45:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Rzp6Ksubu1AhtWvIBmxCS/v+MncI5UtH/YaKWmZ4BRx5P4zX5J6BZiwhpQYd4YMrVULzeAnlQ+yhntUy1YXSbu6axQYAkuTXel/82ZYzy+Fm3PI2Ynx0j0WyqWXqs1aVlRIsMzwkj7o99lTFPLjuxosm/ZuOPnNfFl/ZwbKsJfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8pViEDf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB4FC4CEEB;
+	Sun, 17 Aug 2025 05:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755409556;
-	bh=ttZ6jtkkRczJ0axAm9jZ0bwV4tHP2+ZyMJp+BLvzgMU=;
+	s=k20201202; t=1755409719;
+	bh=qpbneWZrxAdsiLzyRlwnN1hSf6DqHv/5wCYe4g7IcAg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iOtbclsR3JH/yiCq9pAi1a+x0lWzJk7D8Y/T2R50hJ1WKoaktUJLiayU7r1jOOBz4
-	 xiCxAu03lmMI7AqhXPQ2zxutlhl+gr8bnJ+Tl/QaMjLTYDmmI1fxUMqHOWyvmDvfqg
-	 WFd8D/GnMNU8d9AylcbDhI0m1Q7DlJ+pMXNbMKDYT1nrkhoa/6LkahAv2K7cMLpy25
-	 bb/SgExzEAiQJhY7SYGKbQe8NKNicgEqmpKuJ60067SPm5/8eoZSqVhQUjTmFJuzi0
-	 8oNvHtWFClLH+tvF6Rn5Puxg/ihB+Z3lq0b0SX0yNfp2WDqHc9Jd5TH19mbPDR52rm
-	 46K8D0IxjNFXA==
-Message-ID: <7b6ff2bf-c2f3-411d-ab4a-a907d8edbc57@kernel.org>
-Date: Sun, 17 Aug 2025 07:45:51 +0200
+	b=c8pViEDfhPT80CuDtkfa5S89q4IfusDObfkci/RR218QdWLH6uzNO7mH/mYx+v2D2
+	 c52wtCTq4WtKRJ4wDt5Ki2uMXfcmtvoq0x65BcGuFCecCvZ3g789C9jJLBTAH/AmDa
+	 c7jmC5OVbFKzJwamxByCebMvd1VINFR4Q5i3ujRUidw9cqA9RLs8C/apOraj8JxaFH
+	 89lzb81hyBEC/Xpe7nnLzaRVOGQs95/kKXbMb/AoxRQNXONeDr1jX4eYlpkd0SS7h5
+	 JZl4LZUMlU5B6CjiDWdbfq9+E1o1c7RVjcR4ab4ahKAsfIHznIrRrFnbDWPW01apcw
+	 bKzkP8flEpezg==
+Message-ID: <90091f9a-9fb0-4e5b-9574-0dc12bb7fe27@kernel.org>
+Date: Sun, 17 Aug 2025 07:48:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/nfc: Fix A-B/B-A deadlock between
- nfc_unregister_device and rfkill_fop_write
-To: Yunseong Kim <ysk@kzalloc.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, Taehee Yoo <ap420073@gmail.com>,
- Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
- yeoreum.yun@arm.com, ppbuk5246@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-References: <20250814173142.632749-2-ysk@kzalloc.com>
- <e3cfdd98-6c51-479d-8d99-857316dcd64b@kernel.org>
- <b8dc1074-725f-4048-9af5-6b62bd2150a3@kzalloc.com>
+Subject: Re: [PATCH 1/3] dt-bindings: nvmem: Add the nxp,s32g-ocotp yaml file
+To: Ciprian Costea <dan.carpenter@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Ciprian Costea <ciprianmarian.costea@nxp.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linaro-s32@linaro.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <cover.1755341000.git.dan.carpenter@linaro.org>
+ <7d0e025ed3fdc9e545f1d0b84f6a1cbb9dfb4e91.1755341000.git.dan.carpenter@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,66 +104,98 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <b8dc1074-725f-4048-9af5-6b62bd2150a3@kzalloc.com>
+In-Reply-To: <7d0e025ed3fdc9e545f1d0b84f6a1cbb9dfb4e91.1755341000.git.dan.carpenter@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2025 10:23, Yunseong Kim wrote:
-> Hi Krzysztof,
+On 16/08/2025 12:47, Ciprian Costea wrote:
+> Add bindings to expose the On Chip One-Time Programmable Controller
+> (OCOTP) for the NXP s32g chipset.  There are three versions of this
+> chip but they're compatible so we can fall back to the nxp,s32g2-ocotp
+> compatible.
 > 
-> Thank you for your review.
+> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  .../bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml  | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
 > 
-> On 8/15/25 2:55 PM, Krzysztof Kozlowski wrote:
->> On 14/08/2025 19:31, Yunseong Kim wrote:
->>> A potential deadlock due to A-B/B-A deadlock exists between the NFC core
->>> and the RFKill subsystem, involving the NFC device lock and the
->>> rfkill_global_mutex.
->>>
->>> This issue is particularly visible on PREEMPT_RT kernels, which can
->>> report the following warning:
->>
->> Why are not you crediting syzbot and its report?
->>
->> there is clear INSTRUCTION in that email from Syzbot.
-> 
-> I wanted to clarify that this report did not originate from syzbot.
-> 
-> I found this issue by building and running syzkaller locally on my own
-> Arm64 RADXA Orion6 board.
-> 
-> This is reproduction series on my local syzkaller.
-> 
-> WARNING in __rt_mutex_slowlock
-> 
-> #	Log	Report	Time	Tag
-> 7	log	report	2025/08/14 20:01	
-> 6	log	report	2025/08/14 05:55	
-> 5	log	report	2025/08/14 02:31	
-> 4	log	report	2025/08/12 09:38	
-> 3	log	report	2025/07/30 07:09	
-> 2	log	report	2025/07/27 23:29	
-> 1	log	report	2025/07/26 04:18	
-> 0	log	report	2025/07/26 04:17
-> 
-> The reason this is coming from syzbot recently is that I worked with Sebastian,
-> the RT maintainer, to fix KCOV to be PREEMPT_RT-aware. This was merged recently:
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=usb-linus&id=9528d32873b38281ae105f2f5799e79ae9d086c2
-> 
-> So, syszbot now report it:
-> https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
+> diff --git a/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml b/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
+> new file mode 100644
+> index 000000000000..19f3bb6b7eb0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/nvmem/nxp,s32g-ocotp-nvmem.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP S32G OCOTP NVMEM driver
+> +
+> +maintainers:
+> +  - Ciprian Costea <ciprianmarian.costea@nxp.com>
+> +
+> +description: |
+> +  The drivers provides an interface to access One Time
+> +  Programmable memory pages, such as TMU fuse values.
+> +
+> +allOf:
+> +  - $ref: nvmem.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - nxp,s32g3-ocotp
+> +              - nxp,s32r45-ocotp
+> +          - const: nxp,s32g2-ocotp
+> +
+> +  reg:
+> +    description:
+> +      Address and Size of the fuse bank to be read.
 
+Drop description, redundant.
 
-Syzbot reported it before you pasted patch, so it should also receive
-the reported-by credit, even if you discovered it separately.
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
 
-> 
->>> | rtmutex deadlock detected
->>> | WARNING: CPU: 0 PID: 22729 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x68/0xec kernel/locking/rtmutex.c:-1
->>> | Modules linked in:
->>> | CPU: 0 UID: 0 PID: 22729 Comm: syz.7.2187 Kdump: loaded Not tainted 6.17.0-rc1-00001-g1149a5db27c8-dirty #55 PREEMPT_RT
->>> | Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
-> 
+Drop these cells, already in nvmem.yaml.
 
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/nvmem/s32g-ocotp-nvmem.h>
+
+There is no such file.
+
+> +
+> +    ocotp: ocotp@400a4000 {
+> +      compatible = "nxp,s32g2-ocotp";
+> +      reg = <0x400a4000 0x400>;
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      status = "okay";
+
+Please drop status
+
+> +    };
 
 
 Best regards,
