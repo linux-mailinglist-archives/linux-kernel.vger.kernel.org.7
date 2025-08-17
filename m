@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5B7B29200
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:21:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D1DB29204
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D019201F3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6F3168082
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AA4231A55;
-	Sun, 17 Aug 2025 07:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49F123D7E9;
+	Sun, 17 Aug 2025 07:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSI8vqTN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+lxK1jk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF9D1D61AA;
-	Sun, 17 Aug 2025 07:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E2E202F93;
+	Sun, 17 Aug 2025 07:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755415259; cv=none; b=akfm29dSp3HT6F8nufIK6Rha49EYgl1gPrNh4zswbWtgXaqvq6M/mFfs55SDnJudj+oKTVaOCq4kf5khvGaFdMv3uR6TI+q1sJrWA4xLDJWTgbLOVFvgwdPG6ZQlNBi3m96UIWHQpVWvU+IXbwgg5a5+pWGy7z4sAVvftHV2b8M=
+	t=1755415395; cv=none; b=EAArigniUYx/PyFCLRMsQQymKm5EG73H4uV5skorhQeAu1IfQhmN8EUSoVGMtWFIPm5Qadtm+S95Zysek6kRvCrier1IiAKtenpCuEQxMSi2eKOfwbF1E+70Sb9SygLi3z2mP6jHLZp32DlTschclBobTkxyfyxNHvIrpPTGazM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755415259; c=relaxed/simple;
-	bh=JQ9I2ZA6NpxuMGRw8pMBYPM7Uq05lyYD7RorcnDzmE4=;
+	s=arc-20240116; t=1755415395; c=relaxed/simple;
+	bh=34FTHGnwsJ7syn3/SeG8AvHnM0WI6ebyoXYwAz3kn0I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/LI7/ji+WedAkDIx2NSeWyATlQD1uhHJOZH4HvdFhniRC7Ew50TCzwVHGdOfZ4uIexfxrMEOkJFLOdhtTvcAYT+K69YuTz3glFYdiTjqS8jqGQKcH8LJUkFShmw2WvE1Mrh9xe9fppgkp0ixpm3iNXhzprKZTJMVw0BC9xgAHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSI8vqTN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A674C4CEEB;
-	Sun, 17 Aug 2025 07:20:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qk7nEpuib/GUhTWftGkXcF5L/CXrXc2LOX65sb9PI0lao5OSQN4TdlIqeuD+qweI7mBG4f63p3EOycAsCVlwZP5obXRNAX3q4bNLXnTFbBp0gZ23bRZmdYB1rG/m82Feb+kCwO9upgQdSJv9xnjoQyMkmS7kSZqnXgLHjiZsI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+lxK1jk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F45C4CEEB;
+	Sun, 17 Aug 2025 07:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755415258;
-	bh=JQ9I2ZA6NpxuMGRw8pMBYPM7Uq05lyYD7RorcnDzmE4=;
+	s=k20201202; t=1755415394;
+	bh=34FTHGnwsJ7syn3/SeG8AvHnM0WI6ebyoXYwAz3kn0I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lSI8vqTNzeBPDxdLTp2i2cQaiaCWOq9avtgUBF0WanE+AzYS2kW+QiH+9XEVOKbzK
-	 K1YxBet3nf1oZjkwZoL7StOOhAIu8cAuu08zGQAM/E7lN/SdhUJYQ6XPQmUHa95Rl+
-	 sW+VLqEH2Pcbqp05UuFgokqjlcUXCwkYZbbqKpBnr1fo2p/XI5J0da5FgEqPcvIUKa
-	 5BLd4OYX/ZIyNCNe1HtY/EKvNBenMCVE4Go1iSDMOJ2+pwqZKIqyHi7k9yI96RUg2M
-	 EwPgBZ9mY/XFDV8qQON3sBWLfV/XhMREB5uxpAicYALqVxuuOZQG3nrVimz+H3Yb25
-	 3C0eJ7Rezd3AA==
-Message-ID: <d8248069-c12e-4f72-a625-c4f68aa42f1f@kernel.org>
-Date: Sun, 17 Aug 2025 09:20:54 +0200
+	b=J+lxK1jk6jsLRjQ/u9kBzinNqcuLdrctAsnV8WS06nKwmdFmEgA3xQw3FQpYxv28+
+	 0dfTg/rvO1DFk+BcUWEH+S8ATMqY7m0Vyp+E8IlDppHo6EoRXrNzsKADu/kG8gYaER
+	 R0iiVnMVaigtjwvKlGuD/hm8dzK/aYET9uun4/uuKWYPqOb14WcPR/xd4GUmrqXgpJ
+	 u4BbgdnOx7h0AGT7KVyi1RCDw10P0cSgQtBQq6fpjjsg9z0bTmAn5VnKY5S9Tk7hMS
+	 ucB2jaFmTuHTmWB0A4WzRNclmCwsRNqACjZlhE1vgK0IId0/xBONqOg7058cyM+Jan
+	 8ceTgpJM6W7Xg==
+Message-ID: <ff167728-a4a7-4f7d-a809-d0e482ab7dd6@kernel.org>
+Date: Sun, 17 Aug 2025 09:23:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] spi: dt-bindings: add doc for Amlogic A113L2 SFC
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>,
- Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-References: <20250808-spifc-v1-0-ff4e30e26a6b@amlogic.com>
- <20250808-spifc-v1-1-ff4e30e26a6b@amlogic.com>
- <20250808-adamant-fat-raven-38c8b3@kuoka>
- <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
- <5cc336bc-f071-41d2-b59a-af0df23af00b@kernel.org>
- <d872a711-7442-4e2e-bc59-0d6f4f656fde@amlogic.com>
- <017a4d15-286d-4e0a-89ff-f658009a6de6@kernel.org>
- <cf825229-7294-4fc5-b7dd-09dc1198db74@amlogic.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: update TI TPS23861 bindings
+ with per-port schema
+To: Gregory Fuchedgi <gfuchedgi@gmail.com>
+Cc: Robert Marko <robert.marko@sartura.hr>,
+ Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250811-hwmon-tps23861-add-class-restrictions-v2-0-ebd122ec5e3b@gmail.com>
+ <20250811-hwmon-tps23861-add-class-restrictions-v2-2-ebd122ec5e3b@gmail.com>
+ <eab6d2d2-9337-40fe-81c7-95dc1956ce6f@kernel.org>
+ <CAAcybusHjAR67N0rumb6M_uG1ct3aa=zv2XkpUjhSSxv0NdzFA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,74 +108,59 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <cf825229-7294-4fc5-b7dd-09dc1198db74@amlogic.com>
+In-Reply-To: <CAAcybusHjAR67N0rumb6M_uG1ct3aa=zv2XkpUjhSSxv0NdzFA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/08/2025 08:38, Xianwei Zhao wrote:
-> Hi Krzysztof,
->     Thanks for your reply.
-> 
-> On 2025/8/14 00:19, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On 13/08/2025 11:34, Xianwei Zhao wrote:
->>> Hi Krzysztof,
->>>      Thanks  for your reply.
->>>
->>> On 2025/8/13 15:36, Krzysztof Kozlowski wrote:
->>>> [ EXTERNAL EMAIL ]
->>>>
->>>> On 13/08/2025 08:13, Xianwei Zhao wrote:
->>>>>>> +allOf:
->>>>>>> +  - $ref: /schemas/spi/spi-controller.yaml#
->>>>>>> +
->>>>>>> +properties:
->>>>>>> +  compatible:
->>>>>>> +    const: amlogic,a4-spifc
->>>>>>> +
->>>>>>> +  reg:
->>>>>>> +    items:
->>>>>>> +      - description: core registers
->>>>>>> +      - description: parent clk control registers
->>>>>>
->>>>>> Why are you poking to parent node or to clock registers? This looks like
->>>>>> mixing up device address spaces.
->>>>>>
->>>>>
->>>>> The SPIFC bus clock multiplexes EMMC modules, so the corresponding
->>>>> frequency division register is also in EMMC module. The SPIFC and the
->>>>> EMMC modules cannot be used simultaneously.
->>>>
->>>> Then obviously you cannot put here EMMC or parent registers.
->>>>
->>>> It looks really like you miss proper hardware representation.
->>>>
->>>
->>> It does seem a bit unusual. However, in our hardware design, EMMC and
->>> SFC modules are integrated, and they share common resources such as the
->>> clock and I/O pins .They are mutually exclusive.
->>>
->>
->> How did you express it in DT? This looks similar to serial engines and
->> such are not implemented independently.
->>
-> 
-> The hardware design provides this clock for both modules — EMMC and 
-> SPIFC. A control bit (bit 31: Cfg_NAND, where 0 = Port C only, 1 = NAND) 
-> is used to determine which module uses the clock.
-> 
-> It's not that NAND is using EMMC’s resources; rather, the configuration 
-> register controlling this selection is located within the EMMC module, 
-> which makes the setup appear somewhat unusual.
+On 13/08/2025 05:00, Gregory Fuchedgi wrote:
+> On Tue, Aug 12, 2025 at 12:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>> +  shutdown-gpios:
+>> powerdown-gpios, see gpio-consumer-common.yaml
+> It is called shutdown in the datasheet, but seems like neither powerdown nor
+> shutdown truly reflects its purpose. This pin doesn't power down the controller
+> itself. It shuts down the ports while keeping the controller available for
+> configuration over i2c. Should I call it ti,ports-shutdown-gpios or maybe
+> ti,shutdown-gpios? Any other suggestions?
 
-No, how did you express in DT that they are mutually exclusive?
+
+Feels more like enable-gpios.
 
 > 
-> In the device tree (DT), I'll just refer directly to the clock frequency 
-> division control register.
+>>> +patternProperties:
+>>> +  "^port@[0-3]$":
+>> This goes to ports property.
+> Do you mean I should add another DT node that groups all ports? such as:
+> compatible = "ti,tps23861"; ports { port@0 {...} port@1 {...} }
 
-This does not solve the exclusive usage...
+
+Yes.
+
+> 
+> If that's the case would it make sense to use "^.*$" pattern to allow any name
+> and drop the port label? Is patternProperties even needed in this case?
+
+
+You should use standard graph bindings, so:
+
+git grep 'ref' -- Documentation/devicetree/bindings/ | grep ports
+
+
+> 
+>>> +        tps23861@28 {
+>> Node names should be generic. See also an explanation and list of
+> Ack. Should I also fix the existing example in this patch?
+
+
+You can, up to you.
+
+> 
+>>> +            label = "my_poe_controller";
+>> Use useful names or just drop it.
+> I thought this is good as an example? A useful name would be board specific.
+
+
+Then it should be board specific. You add here real and the most
+complete example.
 
 
 Best regards,
