@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-772448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4350B292CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:05:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37057B292C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0DB77A77C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318BE201AAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA822882A0;
-	Sun, 17 Aug 2025 11:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7EE2877F9;
+	Sun, 17 Aug 2025 10:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="tQASYCgO"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sau3A0p9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955B51C862B;
-	Sun, 17 Aug 2025 11:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9197C1FBCB5;
+	Sun, 17 Aug 2025 10:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755428736; cv=none; b=dqshMNx9z1B74asa6yAbcKyBa9Dor8VLDoduLTpLofIm4GRhWgInvYh3QR+IzvCGYjmPR2NCWBrMqgw9rV55bBvyHz48EzCmHZz+fI3gKDGNcxMkVeZxRED4HZxnQO8NCocdXy+576dEDdLy1et7oOhBRo2UK4mU7sWsEZG/RBE=
+	t=1755428360; cv=none; b=tAEL4602e9dVSInHAWWqsTCo272L3HVhVxrbpTKcveVRN1vQ62kLm+9d1jG+hq1PTBrjgx+2h5bkPp/Leuv/z8tdYdEcr4v8BKZDIh4PHYiCqcgXXM2O/pxbpdcAkWZXqCgl4RDwXR2DSFlrr+fVjfrlnQlb6Pkce35wNIku9ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755428736; c=relaxed/simple;
-	bh=A+sLc0Z2QzPFdW2jsm+Jm9m+mMCPBnli1/PZvtzk2Ro=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=BUxiCE/h1wbkJG9HPA563iwIBa7yPREIvVVa6hpRlfONzOCIPFsD4ixbqlrQY7ejTSu6PF4qu7H9622khaQoevQztsXcCH/Yy+D2Aeuz0MW4txmHw+8TrXlpSpd7u4KdE5W7BRVgUCyaOnTYcyq9YOF8Tn69guXqPjfRIcaH+M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=tQASYCgO; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755428730; bh=S+OOyZCkxFA0z+ofS7rk1Y077krAVqkdrfirLeMW+Bg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=tQASYCgOcPDR3cwn5cUg7L2s1WgbyJT7s/5p2SJWnTa/9cWfAwvkg103opW49EJdY
-	 T4TZeafgBzhKUK4+6dSw2JdHE/KN+rNWAVt+1C/XvOhYW7lf6CKgeQwklORCy8FNpR
-	 NYSol6ZuOJirxgYQGHZBrNVq0FCHhWXu9EeiU8JM=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id ECE30023; Sun, 17 Aug 2025 18:59:14 +0800
-X-QQ-mid: xmsmtpt1755428354tmhsx2fzl
-Message-ID: <tencent_73E16EBC9654E89EECD6CEC4786A6C4C2D0A@qq.com>
-X-QQ-XMAILINFO: NNoVXaH09J176/5h/iQ0jfRyMU9mwW6gLwkUzPyz6XJX+pr5Mjr6Lne0PenVWH
-	 9aEqtFfUu4WEkuC8NUfIWSePcgZodkzia8eOXrcscy2ymwskoRDcWkGAng/rO0y3WR5T9x/Jn/tg
-	 ArnMVZCft2y/9xCfCEpr9pz/X6yJmNESR8UAw9G2sevyd4uTdn+pV7jsz2x+pQ3Mshk3jxk/He7b
-	 x35cihDSc1ouxYJFs2XtRkmBoMeL5YYCYBhVCFxbeGP/UW+nxBF8PhBTRo+RMtgqtS5DXKRsR4xq
-	 svUlM0bjAX2FoftZPTgOLsjv7kpymNwRs+ge/EMY0ppcy15XxqllSe8Bw7CzjxeNeWSn2bItxWLa
-	 xHSFpWUeoBr5g6ImOiVmFwpbyQswhzoiFq1Et/Om4xTt4eGBv5EyrUHx6L7dSY2I4sjooZiaDmUk
-	 ps4bT/PZPI20F6GhOjmhwAjgbtjt19/WslKfE+SJZ0AZd4zDAYXZq+laPC8exwkH72xGI3tdMB3E
-	 BHr5p9qyEf46e8L3hkKxudoI4W0wJDw8qQZS6JvYOQji5p6Dtr8G2pHmuEA2Cv9dETRW0AbKHyTm
-	 gAWoSl+59YnUoFaTZr82Xcp/auV1UxkZJVLufjkfXAOpxcUfqIkrlHSVP0T+HFV7SC6GWvg8+S+r
-	 EBkrHK/LL/wqWP+9puV7Q9BLalkb3zo/tpQ66nl/kugbVQNyb2jr4GN6mbA1v9WyppSn6wuz/Dzp
-	 g7kYNoyl80YzOvyHl7+qWSAg/nH673udlQjdtmcaeJpqfUxk11FfCzeolLlK6iYyQXAdTkkieibd
-	 h0POGLM07jJj6HI3Vk09dFhLOPMTUA/IgvtS5oPGCoy5OOputqJeMwbYVVy+rGet8S+SVGMBeGZ0
-	 O49nrLqKiUP19+TpC8F/NDYYK9UV+Ae9E5E+YFoqi8bI8EEEDgkizUBCaOdEbNCpa07fHgMPQLNl
-	 JsFEHD6xAKMqvYerfiKcxXRdYt0YBWvdn4Kn1+V14ErF78F+xNBDjvVLkvsX+a
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: herbert@gondor.apana.org.au
-Cc: davem@davemloft.net,
-	eadavis@qq.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] crypto: Mark intermediary memory as clean
-Date: Sun, 17 Aug 2025 18:59:15 +0800
-X-OQ-MSGID: <20250817105914.245810-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <aKGYHwT31OaGzc5Z@gondor.apana.org.au>
-References: <aKGYHwT31OaGzc5Z@gondor.apana.org.au>
+	s=arc-20240116; t=1755428360; c=relaxed/simple;
+	bh=YsJgTTsnsXUMnX2YNiPMLa1RfWqepGr89YgSXk7AUX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+Fq1pjc0ZVaNgGHqF4TK6uu34+C79wOHbRZXpZqHX6kqXig7NvoLSYvJP8yGtYoE4Fl8Ih1MDQlEhWU+bosCIrwsfvVSoBq3a5SBUCFQpX9Kj50FN6XzLeC5pzamtkyaKVfyNj0TpzrMczo4eqUfTMHGOigGrsBoRQeM7mq3WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sau3A0p9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F988C4CEEB;
+	Sun, 17 Aug 2025 10:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755428359;
+	bh=YsJgTTsnsXUMnX2YNiPMLa1RfWqepGr89YgSXk7AUX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sau3A0p98zRjWNS2jEXHE5WL+dBNfVSrxqO8/wSlM94f6MA8eeUad5K6+HvrRSLFA
+	 ykZj+4NWA3uQQ+48qylfBzmgrcUtfkQrZAOGsEJlgebPPAZyIwk9Nkvkr+i2NONzwK
+	 aNkh+KcPbc+UaKFH0MeDBEH2WPg6QLrNNkVYndvem1+TvzAQ7KiVJX26DOAsV/MPTE
+	 z0mBr/98Gnfr+OLqVkoRoqbdyUhlm4KjaY/VCxO78L+Z91EL2Ogf4UtJvkx3joCMB2
+	 PdylwXPLH8i5DJXFCpkCYnbTz5Kqq4lu0/U6rD+4hyTSQBnRpscVdVqwq6LOTSxHrZ
+	 OskFbbyDSlcyQ==
+Date: Sun, 17 Aug 2025 12:59:16 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Juxin Gao <gaojuxin@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>, linux-pwm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
+Message-ID: <n5kdswq7oduruqiruyup4rcdwrs76tlinz26swotzeqklterey@off5cbv5i4e5>
+References: <20250816104904.4779-2-xry111@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4mc4hchyujztabjl"
+Content-Disposition: inline
+In-Reply-To: <20250816104904.4779-2-xry111@xry111.site>
 
-This is not a leak! The stack memroy is hashed and fed into the
-entropy pool. We can't recover the original kernel memory from it.
 
-Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: mark it as unpoison
+--4mc4hchyujztabjl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
+MIME-Version: 1.0
 
- crypto/jitterentropy-kcapi.c | 1 +
- 1 file changed, 1 insertion(+)
+Hello,
 
-diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-index 1266eb790708..4020a6e41b0e 100644
---- a/crypto/jitterentropy-kcapi.c
-+++ b/crypto/jitterentropy-kcapi.c
-@@ -117,6 +117,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8 *addtl,
- 		pr_warn_ratelimited("Unexpected digest size\n");
- 		return -EINVAL;
- 	}
-+	kmsan_unpoison_memory(intermediary, SHA3_256_DIGEST_SIZE);
- 
- 	/*
- 	 * This loop fills a buffer which is injected into the entropy pool.
--- 
-2.43.0
+[adding Juxin Gao to Cc:]
 
+On Sat, Aug 16, 2025 at 06:49:05PM +0800, Xi Ruoyao wrote:
+> Per the 7A1000 and 7A2000 user manual, the clock frequency of their
+> PWM controllers is 50 MHz, not 50 kHz.
+>=20
+> Fixes: 2b62c89448dd ("pwm: Add Loongson PWM controller support")
+
+A quick glimpse into
+https://loongson.github.io/LoongArch-Documentation/Loongson-7A1000-usermanu=
+al-EN.pdf
+confirms this, so I tend to apply it. I'll wait a bit to give the people
+involved in 2b62c89448dd a chance to comment.
+
+Best regards
+Uwe
+
+--4mc4hchyujztabjl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmihtgEACgkQj4D7WH0S
+/k5rbQf8CY/bnYqpoMTDvYD/tfhlrlJbUrH2oLdGjTFUo6fTLHNKHQmU4mN80JIZ
+TsfsPiYAexrvNCqcLUqDc6E0ADiPz8ZSU0slzUebNLabt9L8FPnLx6kqLM7lUdX/
+9eUxCxTc1m4WHgOqKfKbQmuRkPQRMl2jTBx405wNJx2Ly/EKIu4f6nf/x12OjJFi
+MXlDThXYRF24k2NsYmIrl+T/lEluf6Xj8J/7EbumRP7eL9TblE246RGi03u9BfDR
+mxA4d8eVQsf5LliGeJm93TUkvp9cd5oZz6ZGtlsQwNM9rVqr1Y7fUy9tbEwMSL41
+cMIVV8bz7ia4tamnjKXi3yGe/Zz+qQ==
+=86Nh
+-----END PGP SIGNATURE-----
+
+--4mc4hchyujztabjl--
 
