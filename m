@@ -1,135 +1,137 @@
-Return-Path: <linux-kernel+bounces-772428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FA9B29289
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:54:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FEBB2928B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BFB1966220
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3393189C197
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA9522FE02;
-	Sun, 17 Aug 2025 09:54:03 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91632309AA;
+	Sun, 17 Aug 2025 09:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeZoIt7a"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EBA1B0F33;
-	Sun, 17 Aug 2025 09:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF50D1D61BB;
+	Sun, 17 Aug 2025 09:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755424443; cv=none; b=dZXeyg2gIemgaa4N/pfOeJgZeGIACQxWSZpq9yIEbs7+51rqBiD9sNP2sjikdFgsjbAkaZTX/Z2D3srh6JDwiiDci17Gi3AzJU4KfNAHS3Px1KBrj4DVuJmZlGzeN3Mn3RfkSCQVqQQbrAwG9oW0s+jsCy8jTSdBdeDNtmmmzAc=
+	t=1755424518; cv=none; b=GpcKALQaftVs6E9GDXTF1pkqXrFNjZXxIHRSCsAtxzNX8uoXp3y0wK80pfCJRbnV8lbTXOUXTNRlux3f6YJ7/6FsAr1Fl8zAx2PO4xDy667XVrgB3r5wIPaxTDpZ4nsymwu7HuyMe0AEDsyqKr+8rIneY73jilLWTM+1Rpe21RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755424443; c=relaxed/simple;
-	bh=eRfsKNbBkxnUUsP07pC1a2kBKCNH/1l/vzUSBUvQwwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmJ7H7qge9hFbYI2/YeVQC1vULGUJcsAc1wNFjAPZ7RjoBh4Fdee21gUazvVZczPv+jYM/MhuBqX+klWROyKmGDjerOtl2ytEOCBFUzD3TXH8fjQ92xO2SYBxI3B0hfuJPsu8WNLNqKa7jBPaDzTiI6ptSZJxjvzfQvD2Vvap54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 5889A2C000BF;
-	Sun, 17 Aug 2025 11:45:17 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 3BF804A8C7; Sun, 17 Aug 2025 11:45:17 +0200 (CEST)
-Date: Sun, 17 Aug 2025 11:45:17 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Tomita Moeko <tomitamoeko@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] x86/pci: Check signature before assigning shadow
- ROM
-Message-ID: <aKGkrSWUA8BTYniZ@wunner.de>
-References: <20250815162041.14826-1-tomitamoeko@gmail.com>
+	s=arc-20240116; t=1755424518; c=relaxed/simple;
+	bh=5mGqUIDf+LX8bqGv7TzokLroBn0Pqi6DYGaWVlXHAPI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Qe+KxX5LbDQoCKeR7zE9GO80Tz6vmxVy4yMIebepRWhj3TC82CcQF5nPp1IoQ88YcaChgfk9lNCyn0fo0KmAFbpQ+2jkiUTDHuixcaAm8MjoRx1r2oxhKC1QFtgE9bWEvlzRtkMxco7ZxcTtDoGQVk98eaxEHaCdK/cqM/v6tFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TeZoIt7a; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4717390ad7so2191682a12.1;
+        Sun, 17 Aug 2025 02:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755424515; x=1756029315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1cmvwdDq9fEzI7gI5zVxq5BwjnNnPgACKd9WbNXnBmE=;
+        b=TeZoIt7aLfhiMwp7d7HKm2DE+2rZ7hHF4FM3YFQxBIJ7aTNhnUF3ujsQFGOyMKct0X
+         wMR05QtNrnq6BLYzWWKewwoqnzx1GDM2Uc4+LREdwfcCAHwp5Jny38c6fDW5m7Z205v9
+         vIO6rCDYMytHc2K3Qs3FUGNGQ+gvQTcYQnwKm4AI7OZGGDxMFV87e6yKh89K8e012BMc
+         6hX5ILznr47E5FYVtI2ZYo0nrjAIrdPOalQBtDfUHKWjgeryBE8KDPj4b5G5V4nqCXvy
+         Ei7cKtdXmFpqj6iWaEIGqPkXyRjYnOVbOERE2tzc6w7kJtPALHWr1kmIVPoPV5kHlQ5i
+         5tZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755424515; x=1756029315;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1cmvwdDq9fEzI7gI5zVxq5BwjnNnPgACKd9WbNXnBmE=;
+        b=c7wKMlxHn3FIxpil84ts3Z+BP0hj2Qkc3B5jTprYulDwp8IBiCxRZKogYi9n8lrJIC
+         6W/BSsttXKz/T09yMdW8l6WEnKob1yeHInNq8s2f/V70aZdkXoBtGNK9gR8lRojHQnEK
+         7j4mW0dIh/9LUcyGMn0LyaOPDjGHe0J5Wxubqyk79hAp1j9fNJnbRcgj8HfXLlU5aK7F
+         N2zW9u56r1rw08FldycJ4DwpEh3YWpLpPqnRdF6gxiUKajVt8RpPqoLtXFGHPncIuuje
+         0zj3zgQv/8+CXnu6yg9k9RDRU7PJFDnGjc/tC1RZdAMorXGSp1DJHB3j1yAffzI5lZ7f
+         orkw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YjuXgd8KP4epFLSgLxwqYswkNxwex4SuAV2xNT8/6PL9M7IFG5imC04qQwZyAeRiKRaXK84NXYU=@vger.kernel.org, AJvYcCWGyS47LP4uEPsRS6SWnAGbZiuYfICHRNu8GTS6mUXqedGkax6gclHvBetT4z5zA3HjbQ2ELWs6I7XAtCsY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9eakJ2zlt3aE9jtLl0t3H6XxdEsr2nSDoo3rCh8x1x0JD/Zmu
+	b5mBKOgAE77URqDk2qQLxtSPJjAKzY6+WG3HJo59qAk1Sh63Ng4oEuXbhVNc7g==
+X-Gm-Gg: ASbGncsEtiATc7w/LRZAZh+sDYwsJDcfrRmB4nmLp4fcoY7nJdXUQs6qTL1iza1LWPK
+	dY3QhU9sAKs3B3SC/btHIo2M0ZfesQ0gyDc3xbLjWFXkXnpWiyJL1c3f0guncs6f7+qih0VahkY
+	eGZBoRIirafYoS5POndX0H35ToTWNZ9J0tPTOASBBC73zFvtp1jhtzoQYp5QpoUgFt0ieL6EJi9
+	6Ia9I1CiKXJIL5pVmmHT91npJ6WOecMgNlYvdENSOZPOqYB+1BSohltqWNr3/4IgWvD0QFfQyj6
+	/UTBnaWz9pfYTwalbV7zd691kVL4PCgoVwfwkn28rgIODA3fNbckqo4nI5wq5W8moG2GpRaShYW
+	cC0AQmZvhHmgxEK3Qe497SBrzPRoWybcGyasyVAFWQb2anK4NqJ0RybuCjPd2qE7RBAhC
+X-Google-Smtp-Source: AGHT+IH1Axs+2f8ZFd8sImHvAUvBgL0gAUZ3lcY6HEZqk8DFv+ake24/oVXSE8Kf/UsSHzPjEihHYg==
+X-Received: by 2002:a17:903:3c6f:b0:23f:df56:c74c with SMTP id d9443c01a7336-2446d715b0bmr99414185ad.14.1755424514982;
+        Sun, 17 Aug 2025 02:55:14 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d554619sm52022805ad.141.2025.08.17.02.55.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 02:55:14 -0700 (PDT)
+Message-ID: <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+Date: Sun, 17 Aug 2025 18:46:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815162041.14826-1-tomitamoeko@gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+ <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+ <20250816135538.733b80d3@foz.lan>
+Content-Language: en-US
+In-Reply-To: <20250816135538.733b80d3@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 16, 2025 at 12:20:41AM +0800, Tomita Moeko wrote:
-> Modern platforms without VBIOS or UEFI CSM support do not contain
-> VGA ROM at 0xC0000, this is observed on Intel Ice Lake and later
-> systems. Check whether the VGA ROM region is a valid PCI option ROM
-> with 0xAA55 signature before assigning the shadow ROM to device.
+[-CC: bpf@vger]
 
-Which spec is the 0xAA55 magic number coming from?
+On Sat, 16 Aug 2025 13:55:38 +0200, Mauro Carvalho Chehab wrote:
+> Em Sat, 16 Aug 2025 14:06:43 +0900
+> Akira Yokosawa <akiyks@gmail.com> escreveu:
+> 
 
-Could you add a spec reference for it in a code comment and the
-commit message?
+[...]
 
-I note that arch/x86/kernel/probe_roms.c contains ...
+> Works for me, but let's do it on a separate series. I still have more
+> than 100 patches on my pile to be merged. This series is focused on
+> making at least some PDFs to build where possible, addressing major
+> problems at conf.py that are causing LaTeX to not work on several
+> distros and to fix wrong package dependencies(*).
+> 
+> I'll add a TODO item on my queue to replace fom ImageMagick to
+> Inkscape on a separate series.
+> 
+> (*) One of such problem you blamed sphinx-build-wrapper, but 
+>     the issue is actually addressed on this series with fixes to conf.py: 
+>     there are currently several troubles at latex_documents list and at
+>     latex_elements.
+> 
+>     Those are causing wrong font detection on LaTeX.
 
-  #define ROMSIGNATURE 0xaa55
+I couldn't see what you are talking about at first, because there
+have not been any such issues reported.
 
-... and a function romsignature() to check the signature.
-I'm wondering why that existing check isn't sufficient?
-Why is it necessary to check again elsewhere?
+Also, after applying 1/11 ... 4/11 on top of current docs-next
+(commit 0bbc2548ea85 ("Merge branch 'pre-install' into docs-mw"),
+despite the changelog of 5/11 which claims to fix an issue under
+debian, I couldn't reproduce the "! Corrupted NFSS tables" error
+under Ubuntu 24.04 (noble).
 
-> +++ b/arch/x86/pci/fixup.c
-> @@ -317,6 +317,7 @@ static void pci_fixup_video(struct pci_dev *pdev)
->  	struct pci_bus *bus;
->  	u16 config;
->  	struct resource *res;
-> +	void __iomem *rom;
->  
->  	/* Is VGA routed to us? */
->  	bus = pdev->bus;
-> @@ -338,9 +339,12 @@ static void pci_fixup_video(struct pci_dev *pdev)
->  		}
->  		bus = bus->parent;
->  	}
-> -	if (!vga_default_device() || pdev == vga_default_device()) {
-> +
-> +	rom = ioremap(0xC0000, 0x20000);
+I'm confused ...  How can I reproduce this?
 
-There's a code comment preceding pci_fixup_video() which says that
-"BIOS [is] copied to 0xC0000 in system RAM".  So this isn't MMIO,
-it's system memory and you can use memremap() instead if ioremap().
+It's getting really hard for me to keep up with your pace of changes
+in doc build scripts, really.
 
-Since you're only interested in the first two bytes, you don't need
-to map the whole 0x20000 bytes.
-
-Instead of amending the if-condition ...
-
-> +	if (rom && (!vga_default_device() || pdev == vga_default_device())) {
->  		pci_read_config_word(pdev, PCI_COMMAND, &config);
-> -		if (config & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY)) {
-> +		if ((config & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY)) &&
-> +		    (readw(rom) == 0xAA55)) {
->  			res = &pdev->resource[PCI_ROM_RESOURCE];
-
-... you could just return on failure to find a valid signature, i.e.:
-
-+	rom = memremap(0xC0000, sizeof(sig), MEMREMAP_WB);
-+	if (!rom)
-+		return;
-+
-+	memcpy(&sig, rom, sizeof(sig));
-+	memunmap(rom);
-+	if (sig != 0xAA55)
-+		return;
-
-May want to emit an error on failure to memremap().
-
-Amending the if-condition makes it messier to find an offending commit
-with "git blame" (more iterations needed).  And returning early reduces
-indentation levels per section 1 of Documentation/process/coding-style.rst.
-
-Thanks,
-
-Lukas
+Akira
 
