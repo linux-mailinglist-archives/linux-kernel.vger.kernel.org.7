@@ -1,284 +1,159 @@
-Return-Path: <linux-kernel+bounces-772532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72CCB293CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD9CB293C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD800483EF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EFE20587F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B16E22A4E1;
-	Sun, 17 Aug 2025 15:18:26 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9F815D1
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 15:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528522264D6;
+	Sun, 17 Aug 2025 15:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NtXSiUtH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043551DED42
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 15:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755443905; cv=none; b=Vk/2tiVEADl6+Bku6RXewpLhSTdzs750e0aGigHY6OGMDwfu4ev4D+rLCALD1CnhFA954VMnudxLm2aTDNyx47QRDwNNn4N3wdha92Yk0ucJVO4Vxfl9s3YvAVs6EilM+dXCc6oY8aXeeJm2hqL//D9TVGsJpQHY9PANq5HT0iY=
+	t=1755443887; cv=none; b=tNKn2ti6qr1iYIIgRv2rLWgqeprHQIEmij8qItw1dJA5voJ8ihfvwtjzN/o1twSGX/TsD9LG182FzVJSvVuZ0VGfY2IDJ8EZSO0frqP7cf0oBUUBsGSiX3Pn3Y6eH76UYJpnH5hXVNihLNxuDlH/m8hQI4E5U3sgdRxGyAPPDEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755443905; c=relaxed/simple;
-	bh=WRNEN9TWeMv9v3vZyVYlvMZENGGCVlwtYBw9k7ugBok=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VjlOSJG8xZ/qssIjbGcH33W4j/9wRb89bawHmBvCSoY2lKlVP4lo9R5qygyK9/0nOY4OJS/8EWuvearIU2kIaEg3t/7C4CHUVdIH5PIgKTrPcZas9uY52iTaT8nEzPqdkbPEMw3xQqn4drD0S7+yXKTJaTH2zfL9UL0O0dbo4i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8DxDeO38qFoKQZBAQ--.22264S3;
-	Sun, 17 Aug 2025 23:18:15 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJAx_8Gw8qForr9TAA--.35417S2;
-	Sun, 17 Aug 2025 23:18:12 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V4] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
-Date: Sun, 17 Aug 2025 23:17:59 +0800
-Message-ID: <20250817151759.2525174-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1755443887; c=relaxed/simple;
+	bh=2ZuRyEbuyq+0YSvoDJJLQbZxh1Ce1UWh+dcD8RCeI1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mu+iqtKvaVpdM0f14y9Bkgasg1w7XbrqjN5ZZ6aTLQyle3H2j4yKEO9qHdaisss1DamvP2glB76pR3GtijPXh81TdS2iiIduCXZWXrw5cy8wW77gW1TJL/TCLZ6TjQqr46uzUFp149zbRAUcxrxid+UMAkgKPGkLJiY22+euCgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NtXSiUtH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57H1jmnb032401
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 15:18:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=DVtq03N2eWvCYxoFDoVCfdAv
+	7zK0fqf0gHFxZ4lyj/E=; b=NtXSiUtHlgu86gRWOaeG2MIGJW1umoVM3jpGMIRe
+	gm9UqHxvnfg3l0Zp4Wx5/ixylGwi3gPsl17vO7iVQCg9126+qoTkWdxklxIA1Mth
+	vUgZ31FsqytD7DjwGMxoenBxaovRcJZcMJQ3Ou/APMyL42rsvq4xGAwIsar/72TP
+	au6UP5rRZC0jl3SZMHWv1DQv5kwoeLdrI/FCdYFn/DFZSJReB5n8FmdGMgVaSXVf
+	0V9XtNngQtjS4gL3bdzFZu/WwLiuwlOkGgnDAK/FDBTPHc2Wurj11Z+24ZbMqNEE
+	foWvwxl0HTMLmlulYcQSNdGA16kjitW6hQuQTIQyx4A/jA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2ua8rg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 15:18:04 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109bc103bso96482331cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755443884; x=1756048684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DVtq03N2eWvCYxoFDoVCfdAv7zK0fqf0gHFxZ4lyj/E=;
+        b=s0LY+YvHs7wlRX3EBJKhfJXNdjLsjuGEjn7n7c+rBPODPhSfrF2HWkWk2iwKj5A/RZ
+         hejuoXvLg3o0mq1dQpOatE2JSnHtLgIDBDxmwMBYwHv3mkcl1/2oXu3IcyxMGtTumc7Y
+         HzU4sy+VRaI6vYmj1hVjAuDVmzQQpVdTFndo1E8uMTRNEyibIWLJMUZvs9zDJB5YaAM6
+         fotWEqGEP/J1tWi+PLN+YbacLyeK1f7Gpbsn5X+YmG4t4gUDT+dzujEbyIflDl0rbg40
+         XAF6zoDlFLdHCES+zi9aW42ABlsnGOsj3gH2NxOItgYwxnL52lfe61Uyk1gOJoReMAtH
+         TNEA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3yl4Yzb1j1FaiMQL/tQxlH1Lt6eJfPMr4lh/UIJ/pbM2G50h80GSgjVvX392cRoKSKl2h5gweh/Y5il4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp4ddYLgXz+qEt+pSi2Zm+xnn5JEQo4V7ZvP2qIjSNDwj3YHn9
+	BvcEexkoa8534HqvdkQ1oJoJiN700/lRQO0olRX/TPFFDSGhLQJ0cV1PI0s8w3J3uGwHjtcOPiD
+	PUnJf69/4bRXIe6LgwpA6auTIR6zgA1gYo5IzVocKFNaa8dXI+Ud/i2uUFPoMd+y4iZ4=
+X-Gm-Gg: ASbGnctecvfPWMLbJtc/LZuzuhcDJczfPzSybsg1DqHxPD2wV70JgzZBnPxDbMYEdC4
+	jqPAxpbmuWxbdLDuUXHQF81+/G5g5LeSgWiaJAYpVvr5yzg8RCjb/xKPcZJbrTsTGerkCqWK8py
+	p9etDTRi4WUhF1uoNiXfxixxU9/J/gOhKC6S7ZNqhrxQWyEDl+sxC43wezkIRw7kqe5HzD0nc5Y
+	Hlr+nXe7sgepE5nRf16TjkmlDxoIiEL/VlcZNAZ6EoQFGzv+wWroDvQECDZVphlGu8WxwmziccN
+	Yi96p1bcN5yY5PZtc63+LPe/3NBj2pjT6U5ThQwaOKQOW8uzaRxsCRFm1IONjk0jaOmKwZbj7pY
+	qRhdi6ufZJLz3dGmPNGKVdy+4i2wMOgCD9yDkiELLlfKwz/Avl2zK
+X-Received: by 2002:a05:622a:903:b0:4b0:83b4:5965 with SMTP id d75a77b69052e-4b134078a61mr46289781cf.14.1755443884035;
+        Sun, 17 Aug 2025 08:18:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHltDHiuCeZCVwTwOe74kK1SRRwV/gj6QEhYgm9ibUJb+8rvx/XnMr2jEUmNikR+oL3wjFGZg==
+X-Received: by 2002:a05:622a:903:b0:4b0:83b4:5965 with SMTP id d75a77b69052e-4b134078a61mr46289391cf.14.1755443883561;
+        Sun, 17 Aug 2025 08:18:03 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351a15sm1267137e87.2.2025.08.17.08.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 08:18:02 -0700 (PDT)
+Date: Sun, 17 Aug 2025 18:18:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
+        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
+        shenjian15@huawei.com, shaojijie@huawei.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 drm-dp 06/11] drm/hisilicon/hibmc: add dp mode valid
+ check
+Message-ID: <uvujumkyv7kkynuepwfmth4oveeiuwb7x4dbcouebkgigbxkyr@woz7syyedvwk>
+References: <20250813094238.3722345-1-shiyongbang@huawei.com>
+ <20250813094238.3722345-7-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx_8Gw8qForr9TAA--.35417S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKF4xGF4kWFWrWF1fAr43Jwc_yoW3ZFy3pF
-	48Ar4UGr48JrW7JF17AF1UAry5Wws7uF4UJr9rGw1UZrn8Ww17GFyUtFy7Zr1rWr45JF17
-	JF1Dtw1Ykr4UJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8loGPUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813094238.3722345-7-shiyongbang@huawei.com>
+X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a1f2ac cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=i0EeH86SAAAA:8 a=EUspDBNiAAAA:8 a=xc3yqRnLLWJKpjLMMokA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: ze3pqVCfsxFvIdGxJ5pDxmlSO035gRG1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX1XFrTZDvNsZq
+ SOjT8gjcYkShFIUeFrPN4ZDDrrl3QLywokEOwGv3+ryna2/uIMgq3chRR8cARd1qgNy3FjYtxHc
+ brI7eg7MxtZRf6sEar5eDTXBcE3dp8GL5tN0ag02vawg/iwS4waiEQ1V54+SpJfr4Umj61w3iwT
+ Ya1vJqDMO95xOjby/BLKUtAUV8lAJcrkVdtXAtluIb+WS7EcrvpFDVCaiON15fJ4f4be9nOyIFZ
+ LqHhfcHOxtkkzBrC8iNjjJ6AS9WmXkBEjAsobKE5Gmu241DApw0Q70+zHq36aEkFQrm7og/6xb2
+ UgZpqYo3W2OG9JtaeRp8Nr3q/JOB2hgp1s/X081LHMQbKAtzCbKUetcMuiiv9GQofdUPjQWpzK0
+ 4NCw69ZR
+X-Proofpoint-GUID: ze3pqVCfsxFvIdGxJ5pDxmlSO035gRG1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-17_06,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
 
-After commit 84caf98838a3e5f4bdb34 ("mm: stop storing migration_ops in
-page->mapping") we get such an error message if CONFIG_ZSMALLOC=m:
+On Wed, Aug 13, 2025 at 05:42:33PM +0800, Yongbang Shi wrote:
+> From: Baihan Li <libaihan@huawei.com>
+> 
+> If DP is connected, check the DP BW in mode_valid_ctx() to ensure
+> that DP's link rate supports high-resolution data transmission.
+> 
+> Fixes: f9698f802e50 ("drm/hisilicon/hibmc: Restructuring the header dp_reg.h")
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> ---
+> ChangeLog:
+> v3 -> v4:
+>   - Remove the clock check, suggested by Dmitry Baryshkov.
+>   - ( I'll add them in next series after redesigning this part)
+> ---
+>  .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  2 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 10 ++++++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  2 ++
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 19 +++++++++++++++++++
+>  4 files changed, 33 insertions(+)
+> 
 
- WARNING: CPU: 3 PID: 42 at mm/migrate.c:142 isolate_movable_ops_page+0xa8/0x1c0
- CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
- pc 9000000000540bd8 ra 9000000000540b84 tp 9000000100420000 sp 9000000100423a60
- a0 9000000100193a80 a1 000000000000000c a2 000000000000001b a3 ffffffffffffffff
- a4 ffffffffffffffff a5 0000000000000267 a6 0000000000000000 a7 9000000100423ae0
- t0 00000000000000f1 t1 00000000000000f6 t2 0000000000000000 t3 0000000000000001
- t4 ffffff00010eb834 t5 0000000000000040 t6 900000010c89d380 t7 90000000023fcc70
- t8 0000000000000018 u0 0000000000000000 s9 ffffff00010eb800 s0 ffffff00010eb800
- s1 000000000000000c s2 0000000000043ae0 s3 0000800000000000 s4 900000000219cc40
- s5 0000000000000000 s6 ffffff00010eb800 s7 0000000000000001 s8 90000000025b4000
-    ra: 9000000000540b84 isolate_movable_ops_page+0x54/0x1c0
-   ERA: 9000000000540bd8 isolate_movable_ops_page+0xa8/0x1c0
-  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-  PRMD: 00000004 (PPLV0 +PIE -PWE)
-  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
- ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
-  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
- CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
- Stack : 90000000021fd000 0000000000000000 9000000000247720 9000000100420000
-         90000001004236a0 90000001004236a8 0000000000000000 90000001004237e8
-         90000001004237e0 90000001004237e0 9000000100423550 0000000000000001
-         0000000000000001 90000001004236a8 725a84864a19e2d9 90000000023fcc58
-         9000000100420000 90000000024c6848 9000000002416848 0000000000000001
-         0000000000000000 000000000000000a 0000000007fe0000 ffffff00010eb800
-         0000000000000000 90000000021fd000 0000000000000000 900000000205cf30
-         000000000000008e 0000000000000009 ffffff00010eb800 0000000000000001
-         90000000025b4000 0000000000000000 900000000024773c 00007ffff103d748
-         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
-         ...
- Call Trace:
- [<900000000024773c>] show_stack+0x5c/0x190
- [<90000000002415e0>] dump_stack_lvl+0x70/0x9c
- [<90000000004abe6c>] isolate_migratepages_block+0x3bc/0x16e0
- [<90000000004af408>] compact_zone+0x558/0x1000
- [<90000000004b0068>] compact_node+0xa8/0x1e0
- [<90000000004b0aa4>] kcompactd+0x394/0x410
- [<90000000002b3c98>] kthread+0x128/0x140
- [<9000000001779148>] ret_from_kernel_thread+0x28/0xc0
- [<9000000000245528>] ret_from_kernel_thread_asm+0x10/0x88
+This more or less matches what (some of) the other drivers do.
 
-The reason is that defined(CONFIG_ZSMALLOC) evaluates to 1 only when
-CONFIG_ZSMALLOC=y, we should use IS_ENABLED(CONFIG_ZSMALLOC) instead.
-But when I use IS_ENABLED(CONFIG_ZSMALLOC), page_movable_ops() cannot
-access zsmalloc_mops because zsmalloc_mops is in a module.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-To solve this problem, we define a set_movable_ops() interface to
-register and unregister offline_movable_ops / zsmalloc_movable_ops in
-mm/migrate.c, and call them at mm/balloon_compaction.c & mm/zsmalloc.c.
-Since offline_movable_ops / zsmalloc_movable_ops are always accessible,
-all #ifdef / #endif are removed in page_movable_ops().
 
-Fixes: 84caf98838a3e5f ("mm: stop storing migration_ops in page->mapping")
-Acked-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Use EXPORT_SYMBOL_GPL_FOR_MODULES instead of EXPORT_SYMBOL and fix build.
-V3: Use register interface instead of set array directly (Thank David).
-V4: Update commit message for V3 changes and fix warning.
 
- include/linux/migrate.h |  5 +++++
- mm/balloon_compaction.c |  6 ++++++
- mm/migrate.c            | 38 ++++++++++++++++++++++++++++++--------
- mm/zsmalloc.c           | 10 ++++++++++
- 4 files changed, 51 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index acadd41e0b5c..9009e27b5f44 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -79,6 +79,7 @@ void migration_entry_wait_on_locked(swp_entry_t entry, spinlock_t *ptl)
- void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
- int folio_migrate_mapping(struct address_space *mapping,
- 		struct folio *newfolio, struct folio *folio, int extra_count);
-+int set_movable_ops(const struct movable_operations *ops, enum pagetype type);
- 
- #else
- 
-@@ -100,6 +101,10 @@ static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
- {
- 	return -ENOSYS;
- }
-+static inline int set_movable_ops(const struct movable_operations *ops, enum pagetype type)
-+{
-+	return -ENOSYS;
-+}
- 
- #endif /* CONFIG_MIGRATION */
- 
-diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
-index 2a4a649805c1..03c5dbabb156 100644
---- a/mm/balloon_compaction.c
-+++ b/mm/balloon_compaction.c
-@@ -254,4 +254,10 @@ const struct movable_operations balloon_mops = {
- 	.putback_page = balloon_page_putback,
- };
- 
-+static int __init balloon_init(void)
-+{
-+	return set_movable_ops(&balloon_mops, PGTY_offline);
-+}
-+core_initcall(balloon_init);
-+
- #endif /* CONFIG_BALLOON_COMPACTION */
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 425401b2d4e1..9e5ef39ce73a 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -43,8 +43,6 @@
- #include <linux/sched/sysctl.h>
- #include <linux/memory-tiers.h>
- #include <linux/pagewalk.h>
--#include <linux/balloon_compaction.h>
--#include <linux/zsmalloc.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -53,6 +51,33 @@
- #include "internal.h"
- #include "swap.h"
- 
-+static const struct movable_operations *offline_movable_ops;
-+static const struct movable_operations *zsmalloc_movable_ops;
-+
-+int set_movable_ops(const struct movable_operations *ops, enum pagetype type)
-+{
-+	/*
-+	 * We only allow for selected types and don't handle concurrent
-+	 * registration attempts yet.
-+	 */
-+	switch (type) {
-+	case PGTY_offline:
-+		if (offline_movable_ops && ops)
-+			return -EBUSY;
-+		offline_movable_ops = ops;
-+		break;
-+	case PGTY_zsmalloc:
-+		if (zsmalloc_movable_ops && ops)
-+			return -EBUSY;
-+		zsmalloc_movable_ops = ops;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(set_movable_ops);
-+
- static const struct movable_operations *page_movable_ops(struct page *page)
- {
- 	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
-@@ -62,15 +87,12 @@ static const struct movable_operations *page_movable_ops(struct page *page)
- 	 * it as movable, the page type must be sticky until the page gets freed
- 	 * back to the buddy.
- 	 */
--#ifdef CONFIG_BALLOON_COMPACTION
- 	if (PageOffline(page))
- 		/* Only balloon compaction sets PageOffline pages movable. */
--		return &balloon_mops;
--#endif /* CONFIG_BALLOON_COMPACTION */
--#if defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION)
-+		return offline_movable_ops;
- 	if (PageZsmalloc(page))
--		return &zsmalloc_mops;
--#endif /* defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION) */
-+		return zsmalloc_movable_ops;
-+
- 	return NULL;
- }
- 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 2c5e56a65354..6c574ab8abff 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -2246,8 +2246,15 @@ EXPORT_SYMBOL_GPL(zs_destroy_pool);
- 
- static int __init zs_init(void)
- {
-+	int rc __maybe_unused;
-+
- #ifdef CONFIG_ZPOOL
- 	zpool_register_driver(&zs_zpool_driver);
-+#endif
-+#ifdef CONFIG_COMPACTION
-+	rc = set_movable_ops(&zsmalloc_mops, PGTY_zsmalloc);
-+	if (rc)
-+		return rc;
- #endif
- 	zs_stat_init();
- 	return 0;
-@@ -2257,6 +2264,9 @@ static void __exit zs_exit(void)
- {
- #ifdef CONFIG_ZPOOL
- 	zpool_unregister_driver(&zs_zpool_driver);
-+#endif
-+#ifdef CONFIG_COMPACTION
-+	set_movable_ops(NULL, PGTY_zsmalloc);
- #endif
- 	zs_stat_exit();
- }
 -- 
-2.47.3
-
+With best wishes
+Dmitry
 
