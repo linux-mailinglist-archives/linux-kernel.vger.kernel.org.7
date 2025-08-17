@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A697B291F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25935B291F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E2E2032AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3701B224BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E123A9AC;
-	Sun, 17 Aug 2025 07:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E98423D7E9;
+	Sun, 17 Aug 2025 07:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I26+5CMk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkicQW+p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3605A4409;
-	Sun, 17 Aug 2025 07:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DE11E5205;
+	Sun, 17 Aug 2025 07:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755414720; cv=none; b=sEJikys4L89zJFOTxC1i864z52DTLwUA5bBdmISQYNKWOelul+v5Qen5Sg0ZkWVc/PmWITnjpsVqSCoSWtbx/Rk5oR7QUXiODMvLHLRNtZ6DMdOtAA+JF1z16+ZGYfxCc6YYjCJFdA7mIdYo55apJBJqV3kuULeHEXNpFCq/Oy4=
+	t=1755414869; cv=none; b=H73bofx9T7GlIhkeSjTBlFtHQ6NlqwuqOB4yFQxjJH5OypGdUCC9OZL5bpncAKfKTzZimlLcjLPVoaTkAJeA5oztGwjO03K6nvaaWYazYF26pANIayvve19dBhpb4B7/+bYH07YfIDOJtGwqHkW+fK9rUV4kveD2cv9rWnMZNso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755414720; c=relaxed/simple;
-	bh=dZKa7N1aqBiqs5mLaxswuwRpB+lHVaX2VCAgzMM5tlw=;
+	s=arc-20240116; t=1755414869; c=relaxed/simple;
+	bh=CThEjxgOwT3iqjGRK3tipYdqduI3LpFx6bUPJIUUNCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CozoKXiQZLpe15FbyFjIYJTc4iTgIIX+A28s124XSm7Jgl51UFNHSBwzzcmTx2GOgzCQ7CdU1RvCx264Vx99AwzlihdZ5K+E/hSTHJ1eNehmCqnLYSuBBoOUehyI+ZTbRpArxRqXHs9SohMjwulUeRraYgxgwJpRmrQzq+s7wvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I26+5CMk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8914EC4CEEB;
-	Sun, 17 Aug 2025 07:11:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dexETC8xivdcJQ3FMbebttsJDw/daNxTUVNrmKsOrPgVWsZsoHiKu6b7qJzqpjwyU0BvyvhZgB+SKU5ndmuSu4DI/WUN69mOWErvaB1ICWkHinCwV2/m65bdLMgDoQQpveM7LQtcrFlVa+vbO+SaGP4zzbyxjxHIhnr/wiDAHo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkicQW+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D05FC4CEEB;
+	Sun, 17 Aug 2025 07:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755414719;
-	bh=dZKa7N1aqBiqs5mLaxswuwRpB+lHVaX2VCAgzMM5tlw=;
+	s=k20201202; t=1755414868;
+	bh=CThEjxgOwT3iqjGRK3tipYdqduI3LpFx6bUPJIUUNCY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I26+5CMkHMusVnh6x/G8jCAfaaktwAs+JF7w4+m60qnPkfSlSbaLJFi3B7WSrhBTE
-	 B7G9VB95MwnfVkCDn/I79vDLNjJ+hFlWcwALJWr0N7yjaAvPqn43OaKXY+T8IOJB1u
-	 B3QEcPGkJfyoBvielyX0Jz9ZUc1HaIG35GU4lVdFJiywm+Ocggr7tfcFXgBiCYyHpI
-	 2xRU6gRIVk8I7dqnOpKb5kOJMba6Uz17zP540oib1iOZBT+tPJueSkGIoI5b4BJSJ4
-	 qvE/BGTzaIzNlYAo3xTv//6mfeHlplxreycNkNR37K8iJRminSoHXR7CmZpgCV2oqL
-	 HkndHbff9Y5mg==
-Message-ID: <cfe595e6-ddb3-4eb3-97df-ba77a2fb66db@kernel.org>
-Date: Sun, 17 Aug 2025 09:11:54 +0200
+	b=pkicQW+pG2ZaMACVhoMtWV/Xq1VnP6h/NTooXNcwt8/xkhBfyYKQ5e1eGmjTo0tkA
+	 Tuz13kyc3KOuZe7cRz2qTt9JYM29ZV4eTJFERZcDb2Rs6tK3V9WGKt2q73ijLpfMBU
+	 c7TkyOkQPqSoh3HlQgACZ+XF5xYJwtQRAOulsS2Ec4oa2okx3lY2FYIG7xIiX02GlC
+	 G1tVfQZX9vNuOaFrnhTDv6muk1Js06/m6spwDn+op/TIHF+zc9KAz/l9bn/P5A+zrR
+	 Xs74RpS7vhZzlLh1Svrs3DQ1IfQ3XGo0pansr/u98T3ULGYkTBA1jucGX/XFZCAGKJ
+	 u+nPfxRRRrrew==
+Message-ID: <c1b848b9-b1da-4976-9838-d474394a0992@kernel.org>
+Date: Sun, 17 Aug 2025 09:14:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: ltc2497: add docs for LTC2495
-To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Cc: Michael.Hennerich@analog.com, andy@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com, jic23@kernel.org,
- krzk+dt@kernel.org, lars@metafoo.de, liambeguin@gmail.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, nuno.sa@analog.com,
- robh@kernel.org
-References: <0ece8b0e-6c20-42ca-a3a6-4c35ee2be07b@kernel.org>
- <20250813084444.1842413-1-y.alperbilgin@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Pinefeat cef168 lens control board
+To: Aliaksandr Smirnou <support@pinefeat.co.uk>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ mchehab@kernel.org, robh@kernel.org
+References: <20250814-intelligent-industrious-cassowary-b73c9b@kuoka>
+ <20250814201038.15054-1-support@pinefeat.co.uk>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,30 +101,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250813084444.1842413-1-y.alperbilgin@gmail.com>
+In-Reply-To: <20250814201038.15054-1-support@pinefeat.co.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 10:44, Yusuf Alper Bilgin wrote:
-> Hi Krzysztof,
+On 14/08/2025 22:10, Aliaksandr Smirnou wrote:
+> On Thu, 14 Aug 2025 11:04:10 +0200, Krzysztof Kozlowski wrote:
+>> You describe here the entire board, not the MCU only or lens motor
+>> only...
 > 
-> Thank you for the review and guidance.
+> Since you asked about 5 V, I was explaining that this power source is not
+> relevant for the driver.
 > 
-> On Tue, Aug 12, 2025 at 07:04:00PM +0200, Krzysztof Kozlowski wrote:
->> What are the differences, why it cannot be made compatible with 2497
->> (fallback)?
+>> Can the board be used outside of above setup? I understand so far this
+>> is only for Rpi where both above supplies - 3.3 V and 5 V - are coming
+>> from the header pins, so supplies would be totally redundant.
 > 
-> The LTC2495 offers a more advanced feature set compared to the LTC2497,
-> including:
-> 
-> - Adjustable input gain
-> - A selectable 50Hz/60Hz lowpass filter to reject line frequency noise
-> - Selectable speed modes
-> - An internal temperature sensor
+> There are several variants of the board, differing only in physical size
+> and type of CSI connector, targeting different cameras. The board should
+> be compatible with any single-board computer that uses a similar CSI
+> connector pinout and MIPI signal lane assignment. For example, the NVIDIA
+> Jetson series replicates the Raspberry Pi camera and GPIO header pinout.
+> So yes, the board can be used outside of a Raspberry Pi setup.
 
-"More advanced" does not mean it is not compatible. If old device (less
-advanced) features are working the same, it is the exact meaning of
-compatible devices.
+If they replicate also power coming from the header and CSI line, then
+it's fine, but if the do not, then you would need a controllable
+regulator supply.
+
+> 
+> As noted above, these supplies are redundant and were not included in the
+> driver description. Given that, is it acceptable to remove the vcc-supply
+> property?
+
+Yeah, for simplicity. Please mention this rationale in the commit msg -
+power supply is derived from fixed supplies (connector/header on RPi),
+so representing it is redundant.
 
 
 Best regards,
