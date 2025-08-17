@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-772635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE2DB29523
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:16:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4ADAB29526
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C480C1963254
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F197AB19C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD12221550;
-	Sun, 17 Aug 2025 21:16:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0289823D2B6;
+	Sun, 17 Aug 2025 21:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ju1QIPfR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rwUftpWj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81071D8E01
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 21:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56D82139C9
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 21:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755465392; cv=none; b=AqCVN4t3dyKPv+uR2BSKToqyjBfLBub/oDJxpjOyqGfwxzomMju4XQmSBYqkhs7taTHVV1HFNSGvVexRM6DK8fcYGGbjnZAc402n7jRKMQ63Wd0BXoQNvii9rJcInyDJHQeE2wKQkCliuUacjTspRpxKQDKi7GMe/84OPbbs8+g=
+	t=1755465792; cv=none; b=ToedeNZwMfsA03O+4y5x6YMQoR8C2UF4OmeJYsG1Hpp/Q18vx92F5SIA2ZFpWFVQL646QnGO1TPGKXdDQpHc7gFfexYE5DyjaARCgdk03SnMPkzrDBvLRuLQ23hPr5/KKgRHamcNFtpOMYNX0GkaN90nqyztO70KQRz+XdZvZes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755465392; c=relaxed/simple;
-	bh=cELf/5hBA7ty2DgyXFWFsQALXI6RcXSejzmDa9bZDS4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KNxSOzLdMUi3OZND7TE03lcegQrxHD7R4rzEj3jgSYzMVoeMhr+bMY4IhnE68Fp6S51D8nA7VQPVg/MuRdk2KcrXF5EBIXUYySFBRW42AtgXoDA9vweyLlmApwKWbruyQ62T3MpbtRl6fcPXWWW3ThueH1CJ070kfa9EUtXMXXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8845b4f5394so15631539f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 14:16:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755465390; x=1756070190;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9xOFL93V9ybpTTQzlx6ceA1J0+rEZ162D18Jclq7jEg=;
-        b=Plx7wxft5z4uKHLkuTUbnCZE73Gy1kTFQFo1hrYX4iB0Srf7tElPiUnHRn4VKy2PoA
-         V8lX8XGJ8ClPxRuxN6BMaLYmecHw0g/xZiXPaHeRACk15PCA9665FxVEtz67PFH98ZiL
-         YlIAW4Nf6gjPfrPWI7Nagi99MEWceT3rQ6WS39Ge82QoXPgjyBdH5rqKWQrUtDhidxFv
-         YN+GYSO/TKG3sIZcPxpeJMLuY+kUiGLhEIxSY6JEMtA91WytkrO+Bo5Xu3j7Y2h0fiz3
-         pEZmseVIcp2A0/dqMkQP4PStGTpzhJjkpDW7vxIX+jsLblwHCGfV5iLSds4yoVnZ7LjU
-         ztPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnL1i/8O/2jKjFEiEG1smlJ+gaUWlKlVm+RCLq9+ObtqSPuIIVbvLaGa1nNN5gupOwz/iWPhyIQnfu1Y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycjP7AIlXUOGd6psuePpPZmi0e5oPLK5RjpjKqsz2UIjxQvZ5D
-	ID3zgZ857MNU3R/A2bK3z6dzHVVT2gwoSWJeWAog1myRMPuz/dWdVl3lWsN5iRCjPFOWa08Iwbk
-	VolJNOS9+Wthk3s1NollLWNjPz11HYG7sZDdgPEdbBOSYFgFwt+yvKp4+akQ=
-X-Google-Smtp-Source: AGHT+IHUgIuGZ+mDB66y6V5ZCmackd0V6NXkrgXQ9lX0LiJJCZZTnfZRx5rCfFfCq17djZrCFyamEyqBJlpZd9B+mF/ZD+O1xtmk
+	s=arc-20240116; t=1755465792; c=relaxed/simple;
+	bh=JLM6RyBndAJw0GwvW7ZS14BSVdWFgA+Lj1ln6FtFnOg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=p1jm/OTAHMHQmowNbC4LZ/GPGQpNOTXudMgzxJVR51luP9y/s9077EeZTyYYm5/xlf09AXK5seCVgY79DcnkszEBcvNe/LhVDGVGQhAKbkKMOExZKXfzHJVct3Xz5vpTsnE7aVrFj7icTFYqP7zqqP7oYjdGVgYhK6c6VYNHnMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ju1QIPfR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rwUftpWj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755465788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SXSjGL2EcyvMAa1DOUKHjPJFqG2gD5J2e+c96wj7Y6w=;
+	b=ju1QIPfRcXZnDBfJpXQPI6tm5tcJrWpxMqVnN0EewbW90iZ2WJuz1Js2T/RA/MmeiQ/9f5
+	raRMcywgpGTUBQH8spHbygHAC6Y/gH5xD001n8LPXPiZRdMkh1l0CS89QFen6ZAwnBp3Uh
+	epQE3Ji2GpFcU71Z/0PwHdlXmbXRR4fcgWphAtssBwMBeHOzRxoJHpBqoYuql9J9hwEJrD
+	ejrTkNDesdBVTYplnoBbhvDuszUkkx2Me4nklqrPqFk1vP5zHVfUn4TcF1l0KtvOEYQexn
+	dRAGUdDTmsL60noNWPwZLDYLCFNSd5nhvo1402OdtpD+T0FZb1F+Ek/5rAXmxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755465788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SXSjGL2EcyvMAa1DOUKHjPJFqG2gD5J2e+c96wj7Y6w=;
+	b=rwUftpWjYKEWfQ91nrerqa97faCx6iv8QXvi+q98X/41nNjv28/nGBau4njZ6auzUFq4nI
+	3Prliyp/QCnSIVCg==
+To: Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Wei Liu <wei.liu@kernel.org>
+Subject: Re: [patch 00/11] rseq: Optimize exit to user space
+In-Reply-To: <877bz67u3j.ffs@tglx>
+References: <20250813155941.014821755@linutronix.de>
+ <12342355-b3fb-4e78-ad5b-dcfff1366ccf@kernel.dk> <87bjoi7vqx.ffs@tglx>
+ <6b428c1f-4118-4ede-8674-eceee96036c1@kernel.dk> <877bz67u3j.ffs@tglx>
+Date: Sun, 17 Aug 2025 23:23:07 +0200
+Message-ID: <87y0rh63t0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d86:b0:883:f01a:5d55 with SMTP id
- ca18e2360f4ac-8843e3b9d76mr1687416939f.5.1755465389864; Sun, 17 Aug 2025
- 14:16:29 -0700 (PDT)
-Date: Sun, 17 Aug 2025 14:16:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a246ad.050a0220.e29e5.0077.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_tx_skb_tid
-From: syzbot <syzbot+8bd4574e8c52c48c2595@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+On Thu, Aug 14 2025 at 00:08, Thomas Gleixner wrote:
+> On Wed, Aug 13 2025 at 15:36, Jens Axboe wrote:
+>> On 8/13/25 3:32 PM, Thomas Gleixner wrote:
+>>> Could you give it a test ride to see whether this makes a difference in
+>>> your environment?
+>>
+>> Yep, I'll give a spin.
+>
+> Appreciated.
 
-syzbot found the following issue on:
+Please do not use the git branch I had in the cover letter. I did some
+more analysis of this and it's even worse than I thought. Use
 
-HEAD commit:    91325f31afc1 Merge tag 'mm-hotfixes-stable-2025-08-12-20-5..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fecda2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=8bd4574e8c52c48c2595
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/wip
 
-Unfortunately, I don't have any reproducer for this issue yet.
+instead.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8c83f4baf60f/disk-91325f31.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/be959267627a/vmlinux-91325f31.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/68dffaf16c63/bzImage-91325f31.xz
+I've rewritten the whole pile by now and made it a real fast path
+without the TIF_NOTIFY horror show, unless the fast path, which runs
+_after_ the TIF work loop faults. So far that happens once for each
+fork() as that has to fault in the copy of the user space rseq region.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8bd4574e8c52c48c2595@syzkaller.appspotmail.com
+There are lightweight per CPU stats for the various events, which can be
+accessed via
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 11866 at net/mac80211/tx.c:6202 ieee80211_tx_skb_tid+0x380/0x420 net/mac80211/tx.c:6202
-Modules linked in:
-CPU: 0 UID: 0 PID: 11866 Comm: syz.1.2132 Not tainted 6.17.0-rc1-syzkaller-00029-g91325f31afc1 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:ieee80211_tx_skb_tid+0x380/0x420 net/mac80211/tx.c:6202
-Code: 9e a4 f6 e9 b1 fe ff ff e8 ed c3 c6 f6 90 0f 0b 90 e9 1f fe ff ff e8 df c3 c6 f6 90 0f 0b 90 e9 2a fe ff ff e8 d1 c3 c6 f6 90 <0f> 0b 90 e8 58 e2 fd ff 31 ff 48 8b 34 24 ba 02 00 00 00 48 83 c4
-RSP: 0018:ffffc9000b697478 EFLAGS: 00010287
-RAX: ffffffff8af8e7df RBX: ffffffff8af8e48f RCX: 0000000000080000
-RDX: ffffc9000b7d9000 RSI: 000000000000298a RDI: 000000000000298b
-RBP: 00000000ffffffff R08: 0000000000000000 R09: ffffffff8af8e48f
-R10: dffffc0000000000 R11: ffffed100ebe1146 R12: ffff888054e94d80
-R13: 0000000000000000 R14: 0000000000000001 R15: dffffc0000000000
-FS:  00007f5035e4d6c0(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f53e6e5ed58 CR3: 000000007d2fc000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ieee80211_tx_skb net/mac80211/ieee80211_i.h:2409 [inline]
- mesh_plink_frame_tx+0x734/0xc10 net/mac80211/mesh_plink.c:354
- mesh_plink_deactivate+0x18e/0x2f0 net/mac80211/mesh_plink.c:410
- mesh_sta_cleanup+0x42/0x150 net/mac80211/mesh.c:171
- __cleanup_single_sta net/mac80211/sta_info.c:167 [inline]
- cleanup_single_sta+0x40f/0x660 net/mac80211/sta_info.c:192
- __sta_info_flush+0x5e4/0x710 net/mac80211/sta_info.c:1683
- sta_info_flush net/mac80211/sta_info.h:970 [inline]
- ieee80211_do_stop+0x399/0x1fb0 net/mac80211/iface.c:509
- ieee80211_stop+0x1b1/0x240 net/mac80211/iface.c:814
- __dev_close_many+0x361/0x6f0 net/core/dev.c:1755
- __dev_close net/core/dev.c:1767 [inline]
- __dev_change_flags+0x2c7/0x6d0 net/core/dev.c:9530
- netif_change_flags+0x88/0x1a0 net/core/dev.c:9595
- dev_change_flags+0x130/0x260 net/core/dev_api.c:68
- dev_ioctl+0x7b4/0x1150 net/core/dev_ioctl.c:824
- sock_do_ioctl+0x22c/0x300 net/socket.c:1252
- sock_ioctl+0x576/0x790 net/socket.c:1359
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5034f8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5035e4d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f50351b5fa0 RCX: 00007f5034f8ebe9
-RDX: 0000200000000000 RSI: 0000000000008914 RDI: 0000000000000004
-RBP: 00007f5035011e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f50351b6038 R14: 00007f50351b5fa0 R15: 00007f50352dfa28
- </TASK>
+      /sys/kernel/debug/rseq/stat
+
+which exposes a racy sum of them. Here is the output after a reboot and
+a full kernel recompile
+
+exit:           85703905    // Total invocations
+signal:            34635    // Invocations from signal delivery
+slowp:               134    // Slow path via TIF_NOTIFY_RESUME
+ids:               70052    // Updates of CPU and MM CID
+cs:                    0    // Critical section analysis
+clear:                 0    // Clearing of critical section
+fixup:                 0    // Fixup of critical section (abort)
+
+Before the rewrite this took more than a million of ID updates and
+critical section evaluations even when completely pointless.
+
+So on any syscall or interrupt heavy workload this should be clearly
+visible as a difference in the profile.
+
+I'm still not happy about the exit to user fast path decision as it's
+two conditionals instead of one, but all attempts to do that lightweight
+somewhere else turned out to make stuff worse as I just burdened other
+fast path operations, i.e. the scheduler with pointless conditionals.
+
+I'll think about that more, but nevertheless this is way better than the
+current horror show.
+
+I also have no real good plan yet how to gradually convert this over,
+but I'm way too tired to think about that now.
+
+It survives the self test suite after I wasted a day to figure out why
+the selftests reliably segfault on a machine which has debian trixie
+installed. The fix is in the branch.
+
+Michael, can you please run your librseq tests against that too? They
+have the same segfault problem as the kernel and they lack a run script,
+so I couldn't be bothered to test against them. See commit 2bff3a0e5998
+in that branch. I'll send out a patch with a proper change log later.
+
+Thanks,
+
+        tglx
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
