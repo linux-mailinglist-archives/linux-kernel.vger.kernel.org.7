@@ -1,88 +1,130 @@
-Return-Path: <linux-kernel+bounces-772617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B6FB294E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:59:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C4AB294EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442A1196806A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6281F3ACE53
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 20:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875BA22424E;
-	Sun, 17 Aug 2025 19:59:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7177E221FB4;
+	Sun, 17 Aug 2025 20:17:14 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8682222B6
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 19:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1E212B3D;
+	Sun, 17 Aug 2025 20:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755460748; cv=none; b=JTUmje4W9x12UfetvK9RjxK6/9SDxLcHFA0t+1NbalVeSZvax/wuoIHsYlGt8l2x1Nqd/Ibk7srR1GpPjNWSJAUc/F4v+1pUp5R5A4ZQCqyLvyHn0bWQl7IEzwLQt6alDj2YMlNzPAYxu9iftOdl4fd+iMEX5WBRwgy0eIyJUIg=
+	t=1755461834; cv=none; b=oI5R2wSgmenYwrb49nj63GPu1DElv9QFPVyoM7W59WINSdmCi1BcDclwG1TB9LDY1PJRp9LBY2O7OXUmnzoR+o53pEHYCeLADbWZP6fcbG4dyc9pJvGW05bbyakLFJC+ZEaf3GQHRq68JCaUZPvFkFqonU7xmE6anmQDphvExF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755460748; c=relaxed/simple;
-	bh=OoPbuFy+H9voP3auMUl1f3cd9ybv01HpYmdr1lSXwlw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YXZSm6iZ/6Ij17xp4MT2mFgijcEOWYhGXp8+2zOzRSOwcbsnTrirESqO9aCzshT5+S3owVllRCYrb7ZFty14Gi4UaFTYDBOkjz/xQTWxC2CvxhZdIvLTN3q4EjvJQPIWJKE2hsPDss9JA4gK9Xs/5+qxwiTPNyB1njAo3QSGAl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-884418a2614so567920739f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 12:59:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755460745; x=1756065545;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SgBX8FaFkdAywE0nZcPSuvylOu9Bub5DK/kif21MHqg=;
-        b=DPpCsYV5GYWHuKKVNSXdCll5ZyJIG0emGPkvYk+a0U58VWK18ZlahPATKmpqHAOoPU
-         GEp3yUygiw17x6pYCspZyOpkKXAFNlI2jP4SD6dhOmkODpi+4Sjwo7o/dAXWaTqC7ZVW
-         eNJXRt4egw9yl/QvLyIrygZZV4W5IeYjtQ7ujQKqzvBlilCvQp11QxLJadmXbrGusN3B
-         b4qYjGkJ5w4+3y5HxyLuqv5t5LWk5GBR4g2VKPkjfBWx0pKp+BfdBgGBlJq6L4dRGqJv
-         +5aka33ccjI6/wnkFox2Vjjj1LOmaoWPWzzBNqy3YZKWtQU+9UznFzGMqR9r5vYVh+aA
-         R2pA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsgxUiBnFQch9CXtjjxowLetLaCW8jRX4Rn5RBkAv3gQTxLfT9HjinbYJKlKJizw8xkrlKPPUqA2wloLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbcR9lFRdGSI5TI71CcS3wLBRRnFY43Jpx7fr1uEnaZXS2zY+W
-	QZw+Y5vq/O29rvzCjKagNYSwkG0JV9shdi0oQb4pWtk9VqJiGFk41TTXG0BRBHb0q9gDF6SDQTp
-	PCz80Ei8bDxeDRB7k7pxqNcayNVHQYFnYvCUFyDweNKXkRVmmMH6C00897a4=
-X-Google-Smtp-Source: AGHT+IGai3ByaaOwjjM/OjSO/nWESUo6aSGgKJVI6XUm6VaSxqlagCR0TWyRCRhX4OplmBTNdiRDCMqTNVoaP5nTc/xRciw+pcpk
+	s=arc-20240116; t=1755461834; c=relaxed/simple;
+	bh=D7myZiWNhx3MHjJJPqnTlE2VCH8CxxYU/ukBho1zS0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imc9QqWbRLBLLYXhqe7xbHoGbhHpNaVBhTlit/VaZOQ7NKi3kBH6Xr7ahp86k59E5iDGAu5lRhIfZdTrUKD/jVXRcsvBWQumk28/S7jJLWhSqoXGq0FzcluKpiiTid8sSadHmbpIX0DuBzPoVc1sXQM1xXaGghhV03ltekSNdJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1unjoA-000000001uE-33Rs;
+	Sun, 17 Aug 2025 20:16:50 +0000
+Date: Sun, 17 Aug 2025 21:16:45 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH RFC net-next 09/23] net: dsa: lantiq_gswip: add support
+ for SWAPI version 2.3
+Message-ID: <aKI4rbGX8f03thgn@pidgin.makrotopia.org>
+References: <aKDhigwyg2v5mtIG@pidgin.makrotopia.org>
+ <712e82b5-62fc-423a-a356-8cc74fc22e3d@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:450d:b0:3e5:7f54:dcda with SMTP id
- e9e14a558f8ab-3e57f54dddbmr127612995ab.1.1755460744900; Sun, 17 Aug 2025
- 12:59:04 -0700 (PDT)
-Date: Sun, 17 Aug 2025 12:59:04 -0700
-In-Reply-To: <CAMV7Lq7rBzOwpyRZjjs9UkXFbfgw_YPX_RvN1gx0rwn0+e=V7A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a23488.050a0220.e29e5.0075.GAE@google.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in shmem_unlink
-From: syzbot <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>
-To: abinashsinghlalotra@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <712e82b5-62fc-423a-a356-8cc74fc22e3d@lunn.ch>
 
-Hello,
+On Sun, Aug 17, 2025 at 05:36:13PM +0200, Andrew Lunn wrote:
+> On Sat, Aug 16, 2025 at 08:52:42PM +0100, Daniel Golle wrote:
+> > Add definition for switch API version 2.3 and a macro to make comparing
+> > the version more conveniant.
+> > 
+> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > ---
+> >  drivers/net/dsa/lantiq_gswip.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/net/dsa/lantiq_gswip.h b/drivers/net/dsa/lantiq_gswip.h
+> > index 433b65b047dd..fd0c01edb914 100644
+> > --- a/drivers/net/dsa/lantiq_gswip.h
+> > +++ b/drivers/net/dsa/lantiq_gswip.h
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/reset.h>
+> > +#include <linux/swab.h>
+> >  #include <net/dsa.h>
+> >  
+> >  /* GSWIP MDIO Registers */
+> > @@ -93,6 +94,8 @@
+> >  #define   GSWIP_VERSION_2_1		0x021
+> >  #define   GSWIP_VERSION_2_2		0x122
+> >  #define   GSWIP_VERSION_2_2_ETC		0x022
+> > +#define   GSWIP_VERSION_2_3		0x023
+> > +#define GSWIP_VERSION_GE(priv, ver)	(swab16(priv->version) >= swab16(ver))
+> 
+> Don't this depend on the endiannes of the CPU?
+> 
+> It seems like it would be better to make your new version member cpu
+> endian, and when writing to it, do le16_to_cpu().
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Yes, that does make sense.
 
-failed to apply patch:
-checking file fs/overlayfs/dir.c
-patch: **** unexpected end of file in patch
+> 
+> Also, if i remember correctly, you made version a u32. Should it
+> really be a u16?
 
+True, it should probably be u16. It would complicate things a bit though
+as the (existing, currently supported) MMIO switches built-into the Lantiq
+SoCs use 32-bit memory operations to access the 16-bit switch registers,
+where the upper 16-bit are always all zero... Hence I got to use
+.val_bits = 32 to not end up with bus errors, and also .reg_shift = -2
+is needed as each 16-bit register address needs to be multiplied by 4 (ie.
+addr =<< 2, which is what .reg_shift = -2 is doing).
+So up to now, eg. when passed as a function paramter in existing code paths,
+the version has been a u32 type. When using a different type for the version
+stored in the priv struct, that would create quite a bit of confusion imho:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/dsa/lantiq_gswip.c?h=v6.16#n2018
 
-Tested on:
-
-commit:         8d561baa Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec9fab8b7f0386b98a17
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10b91234580000
+Let me know what you think.
 
 
