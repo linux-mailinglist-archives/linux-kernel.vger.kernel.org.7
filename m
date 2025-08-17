@@ -1,145 +1,129 @@
-Return-Path: <linux-kernel+bounces-772572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3019B2944D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E47B29451
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA3C177250
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B0117168E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CA72FF676;
-	Sun, 17 Aug 2025 16:52:35 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551E7226CFD;
+	Sun, 17 Aug 2025 17:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfcF9xsR"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B921DED42
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A7012DDA1;
+	Sun, 17 Aug 2025 17:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755449555; cv=none; b=H1k2XorpxkD3cTlGXGhdmKabWZjMVx8ydNdGNx9B5dZlYsg2eFMWzvMg/ZDVvCxWjrfua7KS29hFtYSpY6qv7RrOMVgm9njQcDb/ty7mtGvE+m8guDer07W1JgdAFi+qIABmuKKfbsWY2KMQ5yTZmRGBreJ8mVhH9VqyhhO5IgA=
+	t=1755450079; cv=none; b=TJ7B5KC6/3bQc3QMhA6qvKdeHMhy9Tjh7s/fdRfKxWs4d63uKloRdZ2Oz1h3TGUYtjwQ5tAM6ZOj67VK4fAh2FxsBxCBVAprUz/kLch27F5/o/4NCGfcEL061d4BqNcBoqzYAC4OT1DR4xON5cFe7+seZHI4djIyNRBlWyqvGVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755449555; c=relaxed/simple;
-	bh=La33uNruziC6aK5yC+OZwi/CjaShNe4+LeE5OKVRtsM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YosJxFa0ZB1iDXDaugYX7PlHXjKREG6OCG6StUZMmmssOEg9PweyZf6ZryNGjRWvq8rYtZA/ByxIW5dXg/7JS2fZ1afAAPYIYwVAQZ2Sjq2P9156v6hmqNfu5vk7craOnMhHYNIrNNxRzP5RgPrkBR8/JxULGF49NJyHEPhO3JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e56ffb33b7so111208575ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 09:52:33 -0700 (PDT)
+	s=arc-20240116; t=1755450079; c=relaxed/simple;
+	bh=JUPTTUn0KXfbpVRv4o9mY1HiKJYgIteNrTvI4IwPrsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xkv/zg7d64HCYvYT9AW0WznFjTpBE2Q3fwHOKd4mZtvhbairZ3plcBxo1HltXLMY8dGf/i0pRPgBtlFAPtY0HwNH3/+hl1vmGnQt2NEO/gC7/NzSU1dibje6rvnc2wVdIAVTdyFFM5Nio0q+heZfFaV8Dqp0Y+d0kQKeCR/Xo5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfcF9xsR; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b4716f9a467so674254a12.0;
+        Sun, 17 Aug 2025 10:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755450077; x=1756054877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JUPTTUn0KXfbpVRv4o9mY1HiKJYgIteNrTvI4IwPrsM=;
+        b=QfcF9xsRC7HoM5Ro5o8oobxBpTI0Gmclql+xdfb+EglawUaIlh1ShqT4+NdFZYWyZX
+         einA7UzqDQJCTQJldu2rF+sy8YU/b/W+Hevz96SK0PDpU2TrPkXCN49pJh63vRnT15PL
+         N/PFo7L1t0v8I7jKZKUgYngkyTHLH17UNPezyVM6avAKhNuUTAoh7zecTufcFoIRyw0M
+         9K9VRmVQszYrESDA4b/uwrmQpEzvsIcWUX4OUl7DT2ZJYEUbum32m4+ETp60R1Jl2Igj
+         LLcWt0H3H6wj+USux4aiKossFFdA32MDld23rIQ3tsvDA0YKDnUtgBPhjb3j3ILwWbJ6
+         3x+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755449553; x=1756054353;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SMyjkT6Y8eXPsn2bZrda8Pw4BLi3+j8GhORmxcjlJ2s=;
-        b=J7FPSqtdGI8f8kYU2cb8gvL/WGzvvc4XZ7rzkJZfXdbbkIczDhUAGoXq5cLG/RcPI+
-         OwNyp3HZfm4mtHU7nKUl3X2KG40o/RmK78ywg3lWQGgUdKdKMK3CoLDNnSR2OQhpqmAM
-         gyNjlh1xasb4Dz4HBu7VbCuRwhNxp1DKt7hOYFJ7wl2eLvS0qqtvllWSCIcOJpv3OHTm
-         t7gIRrr+Z6cOnT3cYoAoY0JeT3sokWhGW283bd8LSkTbtRmKLeMaGXpaeGhQ5XoSoG+s
-         +6fMVTdl9oc5nAPt9evv3oLxij/RJi0BiDHSMbfxlbOx9A3gTEwZXxQ84BwDszK/G+0n
-         P6pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaP+O9WS8wihaDED4Xc5hEmnNBDsM2fdhCUCKA/mVqyzenQRrHhvYgKWi1c7ucArT09aRsm1ymHKt6zRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7gnU31YhsWkozH5wlzV7YLGcVWEy3NdGj45J5O3EVQPVaOlsH
-	WA+T6DDPpmE6O0uaNDRu7bfrCoYxgXyhJPOu9HjGdNsYidq8hNeW/ZLAX1BcPRIjE5v+Q0mQqsC
-	2dYBn0y510416jwGnuzgrAoWH2nrUgeBlOO7cXAnK0hAsmmlvnaB47WFgZ1s=
-X-Google-Smtp-Source: AGHT+IER8rHkZb7o5CdFfjUuJKJFKzWg2Lr3WChYbhL47cIydC0zpBc3Cvdtsg86Gu7E4tkZUCkNR+ogQpn0f3GIRRMd4U/vDfEI
+        d=1e100.net; s=20230601; t=1755450077; x=1756054877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUPTTUn0KXfbpVRv4o9mY1HiKJYgIteNrTvI4IwPrsM=;
+        b=Hy3E4gg3Gn6k3QLDWR+DlW8qDTnbxEhqk2F9HZp9gut8bEtApJcne55zkIQN8tGppT
+         pMH1ZRGZPTEwV326hsZJY5p0wUosO1frivN65LYJV1TiL/3QTAev+kRdPAIIeU+bhMg7
+         MkEdsCo0E/ZI6eVMGEROVYZaIcSt1f/c7SjoptbVPu82L6Glj+05466nsHeEcLjt4ulu
+         4irx05j0J3pwNomI3ZUmnAbsw7gmzu2AT9vwYULzMCl4gFD77O0s6vjWe+JImAepcciA
+         hO7MkPUILwwVtqXtbO4VlO8av8/agfpQVIbrhz3VX2KhWPapV0yFwuZ0SMlyzpHUx7fa
+         8igA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyI5V6dnb1mDQUox3OsypJSH3S98CXCW4QHy6mrBC2mzFLxnOfkLZWVElCVf62vmwaoxCwND8vMA+4Sb88W4zZNDjkVYyw@vger.kernel.org, AJvYcCX/6K2MeKuqwjPr3SKaciuND/SuNipq0OBA1a2aX4wdOLcqFC2L3qFkeVVneodssB/d9MmiXkOAouKwrlQ=@vger.kernel.org, AJvYcCXOZtMZXXKN/w9nRC0QPL4Ym25Um7oQUr4W84FlU3xF/SvX0eNYpn2sAj7FdikhoT/dWzkNqGjECcUGTLi2onQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSiVy7e35jok6+8FXtAHLio88xl+Z+tTybyNk491CuOVni00FR
+	Xcg1wAZP8crNC+60JYm+URM8yjnjgPdcUNYmR6NbrnxNM5dIgLD/NW4Ae9a617dOq9djxhXWvJi
+	zDInwagvtBfdlOLuXuXLvu7yTNUdrC8J07Onz0yc=
+X-Gm-Gg: ASbGncvgloeTnTBX31uiBMtBlwxOeH+lyFzg2BdzbX46SrioJO548g4BLeTFSTuxmuE
+	BliuxHiZxfnpflqeP3PfJMqyszFgGt5JC5q7f5nHpmIOEQkbhElYsGa+EFB6F5c4AwsI0ILCJai
+	r+Z716OZV4AHDY/PGyGqtW9RqKEUS6fKCO62QOjJmyvvUHjFNOxO/sfaFGgFn7N7ZUdKKlAIdvM
+	EWm3xAS05iVwPZ6pbY=
+X-Google-Smtp-Source: AGHT+IGKuRXX5XxUCrYMkh6Y6IIFGsYXsZ+LMd+uj1/CYW8e6UkGJYOPJj90YChvvkoUSgUKVjNJ8Dq2C6pu9BYUCEU=
+X-Received: by 2002:a17:902:e751:b0:240:8a87:a187 with SMTP id
+ d9443c01a7336-2446cbc7d83mr61282075ad.0.1755450077467; Sun, 17 Aug 2025
+ 10:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156a:b0:3e3:fe5e:9b96 with SMTP id
- e9e14a558f8ab-3e57e8a6872mr165247005ab.11.1755449553002; Sun, 17 Aug 2025
- 09:52:33 -0700 (PDT)
-Date: Sun, 17 Aug 2025 09:52:32 -0700
-In-Reply-To: <689ff631.050a0220.e29e5.0035.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a208d0.050a0220.e29e5.006e.GAE@google.com>
-Subject: Re: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
-From: syzbot <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 17 Aug 2025 19:01:06 +0200
+X-Gm-Features: Ac12FXySPQHHYs0oPoSuusmeEBRhH524XE58geQtNcmIv6wcCOujPpn1FGAKe-4
+Message-ID: <CANiq72=qd1E62b1xxXg6_5ihgKG1-ii-6UaM5Gr9M68X+PTccQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: cred: update AlwaysRefCounted import to sync::aref
+To: Shankari Anand <shankari.ak0208@gmail.com>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Sat, Aug 16, 2025 at 1:44=E2=80=AFPM Shankari Anand
+<shankari.ak0208@gmail.com> wrote:
+>
+> Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::aref`
+> instead of `types`.
+>
+> This is part of the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to the `sync` module for better modularity.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+> ---
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
+=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintena=
+nce.
+>
+> The original moving patch is here: (commit 07dad44aa9a93)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D07dad44aa9a93b16af19e8609a10b241c352b440
+>
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
 
-HEAD commit:    99bade344cfa Merge tag 'rust-fixes-6.17' of git://git.kern..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ea1234580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce98061fb8ee27bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=20537064367a0f98d597
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d13a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1754faf0580000
+Cc'ing Paul, Serge and -security, just in case.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e140d0491611/disk-99bade34.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f581d5a99c83/vmlinux-99bade34.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/feceb1caceef/bzImage-99bade34.xz
+Thanks!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+20537064367a0f98d597@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in drivers/net/usb/asix_devices.c:679:27
-shift exponent 208 is too large for 64-bit type 'unsigned long'
-CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.17.0-rc1-syzkaller-00214-g99bade344cfa #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- ax88772_init_mdio drivers/net/usb/asix_devices.c:679 [inline]
- ax88772_bind+0xdcf/0xfa0 drivers/net/usb/asix_devices.c:910
- usbnet_probe+0xa96/0x2870 drivers/net/usb/usbnet.c:1781
- usb_probe_interface+0x668/0xc30 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x26a/0x9e0 drivers/base/dd.c:659
- __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
- driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
- __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
- bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
- __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
- bus_probe_device+0x185/0x260 drivers/base/bus.c:537
- device_add+0x7b6/0xb50 drivers/base/core.c:3689
- usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
- usb_probe_device+0x1c1/0x390 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x26a/0x9e0 drivers/base/dd.c:659
- __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
- driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
- __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
- bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
- __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
- bus_probe_device+0x185/0x260 drivers/base/bus.c:537
- device_add+0x7b6/0xb50 drivers/base/core.c:3689
- usb_new_device+0xa39/0x16f0 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x2958/0x4a20 drivers/usb/core/hub.c:5952
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
----[ end trace ]---
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Cheers,
+Miguel
 
