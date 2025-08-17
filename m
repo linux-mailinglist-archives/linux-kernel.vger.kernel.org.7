@@ -1,106 +1,155 @@
-Return-Path: <linux-kernel+bounces-772321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8183EB29136
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67987B29137
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8031966B4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52F1196840F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E256D1940A1;
-	Sun, 17 Aug 2025 02:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5459219FA93;
+	Sun, 17 Aug 2025 02:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="nFpRcdCx"
-Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XY5Wfdrr"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880678488
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 02:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7597E8488
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 02:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755398967; cv=none; b=pqElRuzKYhy8Qz4dSnqjgETjqOy6nTrUZbnv85k0zJ6nI1eUvmp1soOQwvEdyd1WqF2yUL8LEzaXaRdEQPilIUYMPp9kodn7WWla+6z03wbwymToizE0RxIi7zeDS0me8ig+sXqqzGsWDHqyy5DUfwSjoqo41cvRkJJuWx4C3Sg=
+	t=1755399264; cv=none; b=Q3ul2DugsVKoSypZ8W6sHVCKwN7WasE2dJfph3PKDZ7e+GH/7kDN8/Dej9nz5/uSlkRhwVsSDOSks/q7YJNxfDPiUX29sprL9FzoeFRxWkaASvN/EJZzYaFL9PdxumZTH2ID9xo3Z71JHEUtege5dk6DOPt1xEsBERh8hmXAnO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755398967; c=relaxed/simple;
-	bh=jsnUdmVDHRv43P6bFSrI0ZZWUUVikH9IkH2XInAk6Vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ehKojH97AAqw2XQKESCBmXoPUrkEJNXVO4aetoVUz0OtCfUTGoXAH7AQIXeoZSLa4Up9+3ex5aKgiTeXMxvIE/NA3vxiSOfGjujYaWZ/O3SHKyw3eCIIOkYPZeZ41vG9vxgEmmIOE3DVnJSBf+hTM1KOWyzPhNtCInLR/iZySwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=nFpRcdCx; arc=none smtp.client-ip=61.135.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755398958;
-	bh=OkrVSyeS//+CcCqI1oEDz7c3KAgxVfsjKdON8/W43nQ=;
-	h=From:Subject:Date:Message-ID;
-	b=nFpRcdCxGA3s8P4kaPKJgIagwSuX9dGqwg/Mb7HDncjuuVyl81W3gLB+fFb+8Nt7t
-	 DfVxc32Gsti7xUKqY+sTX8kVxeKPHddexxoifrx/44dn/+IEG0n1r9dBz43AgbO9dl
-	 BX2g5AvCtzFus7p3Lch0TqdGckj8X8aqSoSl/uFo=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68A1432900001E53; Sun, 17 Aug 2025 10:49:15 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 237236816158
-X-SMAIL-UIID: 03EE68A4904E433CB8E226C471D70E12-20250817-104915-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+abbfd103085885cf16a2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in usbtmc_interrupt
-Date: Sun, 17 Aug 2025 10:49:02 +0800
-Message-ID: <20250817024904.4820-1-hdanton@sina.com>
-In-Reply-To: <689ff5f6.050a0220.e29e5.0032.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755399264; c=relaxed/simple;
+	bh=1eMkf5LCFwtUYzwXMABjzbSdFSshBHvrGUykSmtf6+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUH5krE5sc5gwYwJP3C6h5p4xEqOZyFt4X6e+ZwO93XVf2vqQOoe+h9xDGWHoqkYuH2VoSA0Xeuq+vm797hgk27dWq7626GD/5lW4sgXT09/Q527fDN73u8MfzmKa9ltBZL5xVwXgKs24Mn416kvfD65Awnn/mcg4XAPW9KiZDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XY5Wfdrr; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 16 Aug 2025 22:54:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755399259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBjFdPleu+KBxiqnCwIGjPrJIE2i+LhqwX8cHNGFxH8=;
+	b=XY5Wfdrrbht625cxTPE5P8/2Tta7XOpOijdt3URKUj6woBKtp5bLqwdzb8FDjjP9RcpbYl
+	FPVXeA09hUUMgOt7ip+xtritug1dMNQMOch+LfyoLSy+1zYYf98GsCnNcr12/YmntJO+U2
+	nsJNrI8Rqfvvo9BJvvWN/ScIAQ2yxzk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <ben.collins@linux.dev>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] iio: mcp9600: Add support for thermocouple-type
+Message-ID: <2025081622-industrious-dragonfly-ed3cba@boujee-and-buff>
+Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
+	Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+References: <20250815164627.22002-1-bcollins@watter.com>
+ <20250815164627.22002-5-bcollins@watter.com>
+ <7cd6f642-b26a-45aa-a2f2-ccb7fbc28b20@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="46wvsol27p4dv5pj"
+Content-Disposition: inline
+In-Reply-To: <7cd6f642-b26a-45aa-a2f2-ccb7fbc28b20@baylibre.com>
+X-Migadu-Flow: FLOW_OUT
 
-> Date: Fri, 15 Aug 2025 20:07:34 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    931e46dcbc7e Add linux-next specific files for 20250814
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11ef65a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bb7fbecfa2364d1c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=abbfd103085885cf16a2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a99842580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17108da2580000
 
-#syz test
+--46wvsol27p4dv5pj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/5] iio: mcp9600: Add support for thermocouple-type
+MIME-Version: 1.0
 
---- x/drivers/usb/class/usbtmc.c
-+++ y/drivers/usb/class/usbtmc.c
-@@ -2365,6 +2365,7 @@ static void usbtmc_free_int(struct usbtm
- 	if (!data->iin_ep_present || !data->iin_urb)
- 		return;
- 	usb_kill_urb(data->iin_urb);
-+	usb_kill_urb(data->iin_urb);
- 	kfree(data->iin_buffer);
- 	data->iin_buffer = NULL;
- 	usb_free_urb(data->iin_urb);
---- x/fs/smb/server/transport_rdma.h
-+++ y/fs/smb/server/transport_rdma.h
-@@ -61,7 +61,7 @@ void init_smbd_max_io_size(unsigned int
- unsigned int get_smbd_max_read_write_size(void);
- #else
- static inline int ksmbd_rdma_init(void) { return 0; }
--static inline void ksmbd_rdma_stop_listening(void) { return };
-+static inline void ksmbd_rdma_stop_listening(void) { }
- static inline void ksmbd_rdma_destroy(void) { return; }
- static inline bool ksmbd_rdma_capable_netdev(struct net_device *netdev) { return false; }
- static inline void init_smbd_max_io_size(unsigned int sz) { }
---
+On Sat, Aug 16, 2025 at 01:24:24PM -0500, David Lechner wrote:
+> On 8/15/25 11:46 AM, Ben Collins wrote:
+> > dt-bindings documentation for this driver claims to support
+> > thermocouple-type, but the driver does not actually make use of
+> > the property.
+> >=20
+> > Implement usage of the property to configure the chip for the
+> > selected thermocouple-type.
+> >=20
+> > Signed-off-by: Ben Collins <bcollins@watter.com>
+> > ---
+>=20
+> ...
+>=20
+> > @@ -453,6 +504,24 @@ static int mcp9600_probe(struct i2c_client *client)
+> >  	data =3D iio_priv(indio_dev);
+> >  	data->client =3D client;
+> > =20
+> > +	/* Accept type from dt with default of Type-K. */
+>=20
+> We still also need a dt-bindings patch to specify the default there as we=
+ll.
+
+The existing bindings file for this already states type-k is the
+default. Is there something else it needs?
+
+> > +	data->thermocouple_type =3D THERMOCOUPLE_TYPE_K;
+> > +	ret =3D device_property_read_u32(&client->dev, "thermocouple-type",
+> > +				       &data->thermocouple_type);
+> > +	if (ret < 0 && ret !=3D -EINVAL)
+> > +		return dev_err_probe(&client->dev, ret,
+> > +				     "Error reading thermocouple-type property\n");
+> > +
+> > +	if (data->thermocouple_type >=3D ARRAY_SIZE(mcp9600_type_map))
+> > +		return dev_err_probe(&client->dev, -EINVAL,
+> > +				     "Invalid thermocouple-type property %u.\n",
+> > +				     data->thermocouple_type);
+> > +
+> > +	/* Set initial config. */
+> > +	ret =3D mcp9600_config(data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> >  	ch_sel =3D mcp9600_probe_alerts(indio_dev);
+> >  	if (ch_sel < 0)
+> >  		return ch_sel;
+>=20
+>=20
+
+--=20
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
+
+--46wvsol27p4dv5pj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmihRFYACgkQXVpXxyQr
+Is+Jgg//fCKYOKY9RxUVrSkR5q+eTSj1b0JFkVtRrzpnfKLnNMSrGeaaE3rqxVGc
+jcNxW/xvWCuold0V3Km6ee12W330vEoT5rgHBapLkYaX2JiS2DwvgMMr+nJGwsSE
+hk0kJWi2SKK1Xwm9Upv5On+Wh3VxkiDcgiiGH+S+GyjhJVN1P9GN70RFZzQUO8pO
+PaCrGyfiOHVBj7A+zXO24N31qKR8hbgcCeS0qbuhMaNRzg154S/0b2nHruGm8ptz
+/hG1CGaUk+gqm3a5Qr7cKwmvagTH0/9Zsxz2Ds6dXXM4WwstO2CNHcNlDk5kaNMn
+YLwTHYz1c6VM0LI12PoHnJZMKZMxuPdVFdR6GGR5rV0Vv5jUdZwwB9SjeJVniLWT
+mux0AicR1id/I2to9IilM71cXQNm4xUSQHHOufXds4Oony3gREva9W2T2UfgMNgq
+V8fwBHAThZXQQCq9fLhmR4Bq7CTovFl3762sxn/gU4xqbfoSkBrOy3sRET5XllgQ
+Et7dqaL86JsKnB/Cf8m/0ByXjC0T12BqLHj3hq199VJqInxjp1i56y6gXkHRi7AW
+kZem7GYG4jiW6g+v0GW12LMvYO71o7pvAsylLJ3Tojol+6ATE/NbxZjVGpSXASZq
+szfpOdTvbPZrYSYJfswoLjYKOtHesYSosEzaKLW9ZIQ97HwR0yM=
+=8Jyl
+-----END PGP SIGNATURE-----
+
+--46wvsol27p4dv5pj--
 
