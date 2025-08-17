@@ -1,297 +1,269 @@
-Return-Path: <linux-kernel+bounces-772486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A771FB29344
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE703B29346
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E96206249
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781E1206393
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCAA24469A;
-	Sun, 17 Aug 2025 13:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111CD2877DD;
+	Sun, 17 Aug 2025 13:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="focXRr4V"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWD0xYsc"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA432746C;
-	Sun, 17 Aug 2025 13:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C67A1A00E7;
+	Sun, 17 Aug 2025 13:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755437276; cv=none; b=Uk26WfjJiL2vLYoZwbaDHH+ZTIVGRKRsHwweoqFsRyZ3H3SkwENoVXaNdmb/vcYICpVWfsNnxguLbQE3jPHVsUyi7va+rdX+VVEtJCFud9Ikh9ZUxdB/fp+n8oaMex7yuhhRjOyYlcaNPW6kTcHkjshF/at6649Ep5Yfi/Q4fzM=
+	t=1755437306; cv=none; b=gBfRp2QQiM5vE91+OuztKMQTtG46ZHhI5lyAXk4kMRj79//zjrZrMiVhwTmzJ2mYjLeUfEuTwwmUZD5ce6tUcMVgjqbrobh2JAGa7eyQoG73ylIeqzT9iPVPc8k8W1OJuxZDXIDAVTF8Kda0/UEhA5IAJsI/06HfctOhHhSSPuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755437276; c=relaxed/simple;
-	bh=nMC27mrpaNOcDuH9P5jD1XWV7p+Xb7aKREuFgN60KjA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gGksgBZHEppPjIWBz9ygpzVVoarSTE5OlbhZxjKPZ1eNmFgF3x4p16dfc7kVgtQY8xQ0oQUdpVpTS8ToWaSDnefzVcPISLjPGmAOA70ZzNPyN1LzpTY8XGmPL17suxKbeMTltvwDvabZySFky5dXtVYK7AxhwoNFUx8FYiMFSQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=focXRr4V; arc=none smtp.client-ip=209.85.214.196
+	s=arc-20240116; t=1755437306; c=relaxed/simple;
+	bh=eTA9ON/yXxqjfMBcdqM/Q7Naw0xU0ljxGkoMRyNqI70=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=tyGXLFf7s4REI2oNKhLfg92RvWKra0BPLFyFkTopqiTwzYVqaBSp6/MSGDBUOcqbCP4QmHVVcaNW3xTNMEOCFmWsTmXpEyENbh2+oLy9oaFQcqe8/MMi8zRzhascEORyjVp4K3rg1+nJqTpZp7ESGco4VU5m0HEwxKjQKvdPvaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWD0xYsc; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-244582a738dso20985415ad.2;
-        Sun, 17 Aug 2025 06:27:54 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e8706a9839so396775485a.3;
+        Sun, 17 Aug 2025 06:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755437274; x=1756042074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PH7UZNl6bH8vkla01SSa3J+pLgFY0n3tQWxYX+3FFq8=;
-        b=focXRr4VOMBR63P1tZoAv+JpwGYbBKp3o2jkZpjswfpFtpjXZ6cGvQBMtkkdrH6/Wy
-         JDmop1YpJUkiD6C+VK+to3+68hcez+nq0pRNhI+lqv68hhM8SjqbN/bb9HjDA/DYplff
-         6KmclcIiPHmqLof4K0Wc06nW/HiXjBtDumviS9giJiAVLOTYH3zURwb9ZUMgdLfM8GEu
-         XCDYJKjeVp2azOk/pMZycWPy9tX+qszFkM097JKGp/uexE/oWW6l1w/9aTZb0Dc2ldMM
-         gKO9ipPDQHUHfaAmXhwwnMwNhQ1TZjT3nh/nSXUgZlPDJbP0m9BljN75uQB/nujGkH5Q
-         IIxg==
+        d=gmail.com; s=20230601; t=1755437303; x=1756042103; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M1MZ6OX1HMPAX7oegSlohuyHPNiQ6mKMIQWVfU4UfFM=;
+        b=dWD0xYscGhuUnTXoSMGj1KKEnqPofGtZE1cS8I8H6DVcYHe1sf5KDmctaM0hjoZPYk
+         45rg1Ll9LCWqBz5mxc1MAwnPrX5MN4biaFY2pjZDyYX3GsjTMq0tPo3niOIhf1hLU3KU
+         jWqvPzZINPRBkyJBU3KYMBoByvwMhlPeCNrWUPKkGeDmqk6rdiPoP+e1o0vN1XXGWZ35
+         wW0aLE3/z+R+KibZgmqInYzSTtSdgF9GUOL3pSMxjvrTMgFWE8Uo66g7MLzZsDjw3Cp2
+         9tqXkFqv0BjQ7OyrqPMW4Xiy8XTPptgLvS30uHGfqN7ZgehjJYR4I+VWHvohANGKGwQX
+         Cc3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755437274; x=1756042074;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PH7UZNl6bH8vkla01SSa3J+pLgFY0n3tQWxYX+3FFq8=;
-        b=X6rODYk5x6rxHh6zmJOg2/jVCSKLqSsbccCng7IypnGW7nsmaWs7zjgX4U3LTfcW8M
-         uEb50JSJFNIYzeHDxbqMi/34LfjgdmPKbQ4Aamr83MknmnF/zVE1TM9HH3XXwVlzsx/G
-         l0NAhbpcQP7LTZxIJyGcZXPAGMCBBP0KOjjJGL7EFwbs7Q0s8GVr8SmYW6kSasjPl+BU
-         vdkvt2I4iuOG3g9qouEm4j5UdfkYLw9CP7eu0xrzocc4ZA29UNn9TjXXxRoxI1s2EAYQ
-         L8XGQMMHVzkIuyqdBfnEyOLQwlgXLTCXnbm9A4MFCX8y1sEfjHSa7QeAT27cyRamPpkl
-         F+MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlcV8HsjNTAetKVODJsHel2DBDVTpohvsdWvKkLIsuw0YNkRxJNT4UqXoGXjJ7zwmjUCv4Q3jIGTHJMhk=@vger.kernel.org, AJvYcCXyDbtMOvs1h2y3aJlpd4NW+/iGVXQA4nliE52eDMrH6W2tLlnJrLXGihySdFFxOj606y07Ezf4QuBYa86EOuu3dg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5i5x3ZUe0afnJ7SD+Yp5VY/hLglcl9Qq4qz5KZAnYf0sNcc87
-	Be8O5JzLevQSC0NzqkvfnIvj2hUu5OQP7ihlYtnLT4q4zh9Sh+M8ovQ4
-X-Gm-Gg: ASbGnctCJSESRQ8Dsr0pKjkSBO3fq9kfNhGktFIxFsqdKqaeC3lYu8jF729fwQ296j4
-	WFxJKpxQN2QHSViQDCRoeoKnTuFcl0zp+iMZ8T0qkDuW6wt4ro2UrbYXK+4yWTOtinURaBxPvqF
-	57D7Re+T70gLDSOEUcdP8T+BE50YaTY7KfG5/OwABWUzJNnUcneVNzrQG+2qN47HLsEj03fN+Jm
-	GLc7BDaOAW2kJllecdOA0mpMOOpDU5OmBPcOxhivzfxhUldX/IYREsi6ZDoeYIbEhfPI+8/kDg9
-	EPsepSyPfT9yIaggE8EOwsKtKcYeHieS6XjvpW7oqeo5Sfr2nRW6uxf+Wuy3fCAfSaiNj72f4WE
-	o7mJ+V8IVLVz+CNKxKkQI1umxnjEC
-X-Google-Smtp-Source: AGHT+IEJEYhKVgh5oRSvpvHJEJqhJTpyCDYsA7m0naGH1w4dtAkQpzI+r/E9RaAQRaXe0WFPrMOIIw==
-X-Received: by 2002:a17:902:e5d2:b0:235:779:edfa with SMTP id d9443c01a7336-2446d8811dfmr149725925ad.32.1755437273504;
-        Sun, 17 Aug 2025 06:27:53 -0700 (PDT)
-Received: from nixos ([115.193.162.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d554619sm55525975ad.141.2025.08.17.06.27.50
+        d=1e100.net; s=20230601; t=1755437303; x=1756042103;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M1MZ6OX1HMPAX7oegSlohuyHPNiQ6mKMIQWVfU4UfFM=;
+        b=IYtB3OvHR6jqPjsSs5f1gExjb9BRXtwRVLwnUeVAroUG6nw8zlys6aGag9k7oQkIN9
+         lpFCobOAyCd9VSlgtzwu4x1K45ydjwbTZeP2aA+UR4J10iOXQcymzCibSL9eo55XLsDm
+         s7Up4iEovkEAzva3n1FTE08mxefLP3Qd26zDzKHKz3Qa3MRN7MFObbBPGqVSX7NpUcPl
+         iV1MShH4TCJdVHLXcTrNrBh9SPMH0ZCubrbApr+C7QXl5/2D1FB9jx7sLoPcDIPKEKeV
+         U/40m5WIK70BuhybNP0nRyjpBtcBphPmEBqSKQOWHzDxpFr/MOETn4l/6jlnLYxGdDJc
+         QUCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFalbueOFZsBo0Jhjsp0VYh1btz6ecKRU0d3+qNfo85pbnWm/FukiS01SjTuxbndVDCyVHmnfaSEKfZb0=@vger.kernel.org, AJvYcCW8rdEiul9QNkz+b8pYzo806haL7FSTHnVpDyv8qsveAno32NwMeretp8RYNSdVprOVF9QsvUDb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvkOyoojC8JmYSq+q5sObEFgwo10aAlbv7MIrFxm+AzMQdfDbj
+	sCsy/aJuh2oHcgkx+4k4rhXT1fmW6qy4MuPhgbQRG917q05URCUlFL7FLvab+yOF
+X-Gm-Gg: ASbGncvBFxqKXo0r7MDG5JSIPiEf2qLMkRFpkoT3njViuogWkbC7gti1F32yskXT172
+	jGx1kn425EiJ3AnPtBhNZB5SKJ7SWmKcsNDr5uFVxsQK8iT7cnvCjHLSRx/Mm/q1QZjpK3Nlb+F
+	T8x21QYjVQ5YYBI5yulpoPBGrkwADj/LQGa9artiOPH2ZLENxOi23sztk6msaJNyXh9QktcSLb3
+	OiXMVQRbMTvWUHNVvQRtnyvQdLTi0Bg8LWG1qR5jvg73waOSOUg2uJwzDNt1IPh7wLaAcsMgBF7
+	IPUkEmMoZeFJzqfa7OAzPjX8YwTiPCvZDQ0I+TCKfzGQnCuWmtRkuZjUx/qeaAEfiGgdzbXmw4n
+	p+tiQpf7t2KyJVgk8S1qY49PRfcI97CcSEon9QchFnuqnlwC8w70QMXoH2mU/YWnJbwbj9w==
+X-Google-Smtp-Source: AGHT+IGu08qWIMtZtymcyUvVGEv6L/U1GXTnwTG/kkwBp6f8pwLAaLRbK8jgM1k7tshetlsYfZvrPQ==
+X-Received: by 2002:a05:620a:1aa2:b0:7e6:9730:3d47 with SMTP id af79cd13be357-7e87e103c51mr940064785a.52.1755437303367;
+        Sun, 17 Aug 2025 06:28:23 -0700 (PDT)
+Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e87e020509sm422362285a.15.2025.08.17.06.28.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 06:27:53 -0700 (PDT)
-From: thaumy.love@gmail.com
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thaumy Cheng <thaumy.love@gmail.com>
-Subject: [PATCH v2] perf/core: Fix missing read event generation on task exit
-Date: Sun, 17 Aug 2025 21:27:42 +0800
-Message-ID: <20250817132742.85154-1-thaumy.love@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Sun, 17 Aug 2025 06:28:22 -0700 (PDT)
+Date: Sun, 17 Aug 2025 09:28:22 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Xin Zhao <jackzxcui1989@163.com>
+Message-ID: <willemdebruijn.kernel.8e1f4bf2adac@gmail.com>
+In-Reply-To: <20250816024831.1451167-1-jackzxcui1989@163.com>
+References: <20250816024831.1451167-1-jackzxcui1989@163.com>
+Subject: Re: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: Thaumy Cheng <thaumy.love@gmail.com>
+Xin Zhao wrote:
+> In a system with high real-time requirements, the timeout mechanism of
+> ordinary timers with jiffies granularity is insufficient to meet the
+> demands for real-time performance. Meanwhile, the optimization of CPU
+> usage with af_packet is quite significant. Use hrtimer instead of timer
+> to help compensate for the shortcomings in real-time performance.
+> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+> This is unacceptable in some high real-time systems that require timely
+> processing of network packets. By replacing it with hrtimer, if a timeout
+> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+> 3 ms.
+> 
+> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+> ---
+> Changes in v3:
+> - return HRTIMER_NORESTART when pkc->delete_blk_timer is true
+>   as suggested by Willem de Bruijn;
+> 
+> Changes in v2:
+> - Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
+>   as suggested by Willem de Bruijn;
+> - Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
+> 
+> Changes in v1:
+> - Do not add another config for the current changes
+>   as suggested by Eric Dumazet;
+> - Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
+>   as suggested by Eric Dumazet;
+> - Add some performance details to the changelog
+>   as suggested by Ferenc Fejes;
+> - Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
+>   as suggested by Willem de Bruijn;
+> - Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
+>   as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
+> - Just return HRTIMER_RESTART directly as all cases return the same value
+>   as suggested by Willem de Bruijn;
+> - Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
+> - Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
+> 
+> ---
+> ---
+>  net/packet/af_packet.c | 24 ++++++++++++++----------
+>  net/packet/internal.h  |  3 +--
+>  2 files changed, 15 insertions(+), 12 deletions(-)
+> 
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index a7017d7f0..763b0c968 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -203,7 +203,7 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
+>  static int prb_queue_frozen(struct tpacket_kbdq_core *);
+>  static void prb_open_block(struct tpacket_kbdq_core *,
+>  		struct tpacket_block_desc *);
+> -static void prb_retire_rx_blk_timer_expired(struct timer_list *);
+> +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
+>  static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
+>  static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
+>  static void prb_clear_rxhash(struct tpacket_kbdq_core *,
+> @@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
+>  
+>  static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+>  {
+> -	timer_delete_sync(&pkc->retire_blk_timer);
+> +	hrtimer_cancel(&pkc->retire_blk_timer);
+>  }
+>  
+>  static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
+> @@ -603,9 +603,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
+>  	struct tpacket_kbdq_core *pkc;
+>  
+>  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+> -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
+> -		    0);
+> -	pkc->retire_blk_timer.expires = jiffies;
+> +	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
+> +		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
+> +	hrtimer_start(&pkc->retire_blk_timer, ms_to_ktime(pkc->retire_blk_tov),
+> +		      HRTIMER_MODE_REL_SOFT);
+>  }
+>  
+>  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+> @@ -676,7 +677,6 @@ static void init_prb_bdqc(struct packet_sock *po,
+>  	else
+>  		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
+>  						req_u->req3.tp_block_size);
+> -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
+>  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
+>  	rwlock_init(&p1->blk_fill_in_prog_lock);
+>  
+> @@ -691,8 +691,8 @@ static void init_prb_bdqc(struct packet_sock *po,
+>   */
+>  static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+>  {
+> -	mod_timer(&pkc->retire_blk_timer,
+> -			jiffies + pkc->tov_in_jiffies);
+> +	hrtimer_set_expires(&pkc->retire_blk_timer,
+> +			    ktime_add(ktime_get(), ms_to_ktime(pkc->retire_blk_tov)));
 
-For events with inherit_stat enabled, a "read" event will be generated
-to collect per task event counts on task exit.
+Here we cannot use hrtimer_add_expires for the same reason you gave in
+the second version of the patch:
 
-The call chain is as follows:
+> Additionally, I think we cannot avoid using ktime_get, as the retire
+> timeout for each block is not fixed. When there are a lot of network packets,
+> a block can retire quickly, and if we do not re-fetch the time, the timeout
+> duration may be set incorrectly.
 
-do_exit
-  -> perf_event_exit_task
-    -> perf_event_exit_task_context
-      -> perf_event_exit_event
-        -> perf_remove_from_context
-          -> perf_child_detach
-            -> sync_child_event
-              -> perf_event_read_event
+Is that right?
 
-However, the child event context detaches the task too early in
-perf_event_exit_task_context, which causes sync_child_event to never
-generate the read event in this case, since child_event->ctx->task is
-always set to TASK_TOMBSTONE. Fix that by moving context lock section
-backward to ensure ctx->task is not set to TASK_TOMBSTONE before
-generating the read event.
+Otherwise patch LGTM.
 
-Because perf_event_free_task calls perf_event_exit_task_context with
-exit = false to tear down all child events from the context, and the
-task never lived, accessing the task PID can lead to a use-after-free.
+>  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
+>  }
+>  
+> @@ -719,8 +719,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+>   * prb_calc_retire_blk_tmo() calculates the tmo.
+>   *
+>   */
+> -static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+> +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
+>  {
+> +	enum hrtimer_restart ret = HRTIMER_RESTART;
+>  	struct packet_sock *po =
+>  		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
+>  	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+> @@ -732,8 +733,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+>  	frozen = prb_queue_frozen(pkc);
+>  	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
+>  
+> -	if (unlikely(pkc->delete_blk_timer))
+> +	if (unlikely(pkc->delete_blk_timer)) {
+> +		ret = HRTIMER_NORESTART;
+>  		goto out;
+> +	}
+>  
+>  	/* We only need to plug the race when the block is partially filled.
+>  	 * tpacket_rcv:
+> @@ -790,6 +793,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+>  
+>  out:
+>  	spin_unlock(&po->sk.sk_receive_queue.lock);
+> +	return ret;
+>  }
+>  
+>  static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+> diff --git a/net/packet/internal.h b/net/packet/internal.h
+> index 1e743d031..9812feb3d 100644
+> --- a/net/packet/internal.h
+> +++ b/net/packet/internal.h
+> @@ -47,10 +47,9 @@ struct tpacket_kbdq_core {
+>  
+>  	unsigned short  retire_blk_tov;
+>  	unsigned short  version;
+> -	unsigned long	tov_in_jiffies;
+>  
+>  	/* timer to retire an outstanding block */
+> -	struct timer_list retire_blk_timer;
+> +	struct hrtimer  retire_blk_timer;
+>  };
+>  
+>  struct pgv {
+> -- 
+> 2.34.1
+> 
 
-To address that, need an extra exit parameter for perf_event_exit_event
-to teach it to distinguish callers. Only the caller that needs to exit
-the task will trigger the read event, which will set the newly added
-sync_child parameter of perf_child_detach.
-
-Since now perf_event_exit_event may not carry DETACH_EXIT, rename it to
-a more appropriate name "perf_event_detach_event".
-
-This bug can be reproduced by running "perf record -s" and attaching to
-any program that generates perf events in its child tasks. If we check
-the result with "perf report -T", the last line of the report will leave
-an empty table like "# PID  TID", which is expected to contain the
-per-task event counts by design.
-
-Fixes: ef54c1a476ae ("perf: Rework perf_event_exit_event()")
-Signed-off-by: Thaumy Cheng <thaumy.love@gmail.com>
----
-Changes in v2:
-- Only trigger read event on task exit.
-- Rename perf_event_exit_event to perf_event_detach_event.
-
-Changes in v1:
-- Set TASK_TOMBSTONE after the read event is tirggered.
-- Link to v1: https://lore.kernel.org/all/20250720000424.12572-1-thaumy.love@gmail.com/
-
- kernel/events/core.c | 53 ++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8060c2857bb2..2e17883f2439 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1306,7 +1306,7 @@ static void put_ctx(struct perf_event_context *ctx)
-  * perf_event_context::mutex nests and those are:
-  *
-  *  - perf_event_exit_task_context()	[ child , 0 ]
-- *      perf_event_exit_event()
-+ *      perf_event_detach_event()
-  *        put_event()			[ parent, 1 ]
-  *
-  *  - perf_event_init_context()		[ parent, 0 ]
-@@ -2318,7 +2318,7 @@ static void perf_group_detach(struct perf_event *event)
- 
- static void sync_child_event(struct perf_event *child_event);
- 
--static void perf_child_detach(struct perf_event *event)
-+static void perf_child_detach(struct perf_event *event, bool sync_child)
- {
- 	struct perf_event *parent_event = event->parent;
- 
-@@ -2336,7 +2336,9 @@ static void perf_child_detach(struct perf_event *event)
- 	lockdep_assert_held(&parent_event->child_mutex);
- 	 */
- 
--	sync_child_event(event);
-+	if (sync_child)
-+		sync_child_event(event);
-+
- 	list_del_init(&event->child_list);
- }
- 
-@@ -2507,7 +2509,7 @@ __perf_remove_from_context(struct perf_event *event,
- 	if (flags & DETACH_GROUP)
- 		perf_group_detach(event);
- 	if (flags & DETACH_CHILD)
--		perf_child_detach(event);
-+		perf_child_detach(event, (flags & DETACH_EXIT) != 0);
- 	list_del_event(event, ctx);
- 
- 	if (!pmu_ctx->nr_events) {
-@@ -2613,7 +2615,7 @@ static void __perf_event_disable(struct perf_event *event,
-  * remains valid.  This condition is satisfied when called through
-  * perf_event_for_each_child or perf_event_for_each because they
-  * hold the top-level event's child_mutex, so any descendant that
-- * goes to exit will block in perf_event_exit_event().
-+ * goes to exit will block in perf_event_detach_event().
-  *
-  * When called from perf_pending_disable it's OK because event->ctx
-  * is the current context on this CPU and preemption is disabled,
-@@ -4579,9 +4581,9 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
- }
- 
- static void perf_remove_from_owner(struct perf_event *event);
--static void perf_event_exit_event(struct perf_event *event,
-+static void perf_event_detach_event(struct perf_event *event,
- 				  struct perf_event_context *ctx,
--				  bool revoke);
-+				  bool revoke, bool exit);
- 
- /*
-  * Removes all events from the current task that have been marked
-@@ -4608,7 +4610,7 @@ static void perf_event_remove_on_exec(struct perf_event_context *ctx)
- 
- 		modified = true;
- 
--		perf_event_exit_event(event, ctx, false);
-+		perf_event_detach_event(event, ctx, false, true);
- 	}
- 
- 	raw_spin_lock_irqsave(&ctx->lock, flags);
-@@ -6178,7 +6180,7 @@ EXPORT_SYMBOL_GPL(perf_event_pause);
- /*
-  * Holding the top-level event's child_mutex means that any
-  * descendant process that has inherited this event will block
-- * in perf_event_exit_event() if it goes to exit, thus satisfying the
-+ * in perf_event_detach_event() if it goes to exit, thus satisfying the
-  * task existence requirements of perf_event_enable/disable.
-  */
- static void perf_event_for_each_child(struct perf_event *event,
-@@ -12413,7 +12415,7 @@ static void __pmu_detach_event(struct pmu *pmu, struct perf_event *event,
- 	/*
- 	 * De-schedule the event and mark it REVOKED.
- 	 */
--	perf_event_exit_event(event, ctx, true);
-+	perf_event_detach_event(event, ctx, true, true);
- 
- 	/*
- 	 * All _free_event() bits that rely on event->pmu:
-@@ -13995,13 +13997,16 @@ static void sync_child_event(struct perf_event *child_event)
- }
- 
- static void
--perf_event_exit_event(struct perf_event *event,
--		      struct perf_event_context *ctx, bool revoke)
-+perf_event_detach_event(struct perf_event *event,
-+		      struct perf_event_context *ctx, bool revoke, bool exit)
- {
- 	struct perf_event *parent_event = event->parent;
--	unsigned long detach_flags = DETACH_EXIT;
-+	unsigned long detach_flags = 0;
- 	unsigned int attach_state;
- 
-+	if (exit)
-+		detach_flags |= DETACH_EXIT;
-+
- 	if (parent_event) {
- 		/*
- 		 * Do not destroy the 'original' grouping; because of the
-@@ -14077,6 +14082,17 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
- 	 */
- 	mutex_lock(&ctx->mutex);
- 
-+	/*
-+	 * Report the task dead after unscheduling the events so that we
-+	 * won't get any samples after PERF_RECORD_EXIT. We can however still
-+	 * get a few PERF_RECORD_READ events.
-+	 */
-+	if (exit)
-+		perf_event_task(task, ctx, 0);
-+
-+	list_for_each_entry_safe(child_event, next, &ctx->event_list, event_entry)
-+		perf_event_detach_event(child_event, ctx, false, exit);
-+
- 	/*
- 	 * In a single ctx::lock section, de-schedule the events and detach the
- 	 * context from the task such that we cannot ever get it scheduled back
-@@ -14101,17 +14117,6 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
- 	if (clone_ctx)
- 		put_ctx(clone_ctx);
- 
--	/*
--	 * Report the task dead after unscheduling the events so that we
--	 * won't get any samples after PERF_RECORD_EXIT. We can however still
--	 * get a few PERF_RECORD_READ events.
--	 */
--	if (exit)
--		perf_event_task(task, ctx, 0);
--
--	list_for_each_entry_safe(child_event, next, &ctx->event_list, event_entry)
--		perf_event_exit_event(child_event, ctx, false);
--
- 	mutex_unlock(&ctx->mutex);
- 
- 	if (!exit) {
--- 
-2.50.1
 
 
