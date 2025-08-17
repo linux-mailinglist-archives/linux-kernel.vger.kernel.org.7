@@ -1,107 +1,152 @@
-Return-Path: <linux-kernel+bounces-772363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C0AB291C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:08:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2729B291C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB772201FB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447D91B26965
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A578202963;
-	Sun, 17 Aug 2025 06:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADEB20E715;
+	Sun, 17 Aug 2025 06:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Z/X7hl5v"
-Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLilhO/0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DBA1A23AC
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 06:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8875524F;
+	Sun, 17 Aug 2025 06:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755410883; cv=none; b=Dfx0Or8O5w99chesyqPvIOKpyXLn7Pb7ILLNJPvCt/76wf+85lZQK/035XL1grF0/9b1F7Q6LCqY5vCSB9vxQpsGJXsQL5W7ab6VFb5mShdBQOiiwywyV2ncB398XQuzsZTI2knAm0vHZXrCkG4j2zK012GPHjQLhRJKWDTGi8A=
+	t=1755410866; cv=none; b=nRpzJM0ilDFO4gzEA/6QEinAtrd24wYLm1T7xwyhCyZD+ck19CDsByCsSpeuBx6OXyMHmoaafrey6KJKx8XKkMkJiOwPqN93Mo7CxrUL0qF7oE/SYXitluUjG4PSPd2y1pkUyM2AnW4x8tY9CJQp05q44YItzapSNbXUcpmE7J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755410883; c=relaxed/simple;
-	bh=/pKa2tcuDzPRYxGGDkCULjqqZUOqBeD6NpUz5htdxOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=msPTrcLCBwjC6ZRnAVnCBQt30Ys82wLF44ORBIOkUQN8yGF5Jl98p0yldYJN7UUNgaYQGhZETEk45dCdPtZdLXkFUvXAQl+B7+2NfHxMwuKjqKosq8K1iXNUrdHZOWy34RPqeAIgnlNyywiShzUyO3K+Pk2TKE0Wlu16AppS3JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Z/X7hl5v; arc=none smtp.client-ip=61.135.153.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755410875;
-	bh=0h7jPbRo9EJP5dkrr+/jiE4pNuHi5PfdP0bNWYSmDtI=;
-	h=From:Subject:Date:Message-ID;
-	b=Z/X7hl5vziajxqClV0xi0g/+48qlep0sdsnENxwiQxYgPsMNbO2LmFokiseX1Rb02
-	 woy0Qo78pATNmgNvhT/ElcOp/ixW13QrEuurnMR8O90R9kSZZiD8xw82HgT9mmJYct
-	 SmJxZJbqTgDQQ7WlMRYp1d3sqP7jqexy4zhOV/sc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68A171B500006035; Sun, 17 Aug 2025 14:07:50 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7402906292018
-X-SMAIL-UIID: D7452AB1BFAC48C1B864500DE7C2AEB2-20250817-140750-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+abbfd103085885cf16a2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in usbtmc_interrupt
-Date: Sun, 17 Aug 2025 14:07:38 +0800
-Message-ID: <20250817060739.4907-1-hdanton@sina.com>
-In-Reply-To: <689ff5f6.050a0220.e29e5.0032.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755410866; c=relaxed/simple;
+	bh=X02f05gY68FIyb1hXHqWMuC+nigmCvh2u0vEQs5OzG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HrSbjfDQfVHImDtvhbAFFCizIxZqnnPDI0Sf2zE8Nv0nIOls48Klse+b7ZLO5moOcZZ1LlMz9pNOqvo7klnBmypATXUs7R0dkC8s6k5kEBVckL2iVyll0G2OyLFYrH3GfuzWzp68YrfVx8mWgosnPgAOENSUNO4aPw96smeo9g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLilhO/0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EAD8C4CEEB;
+	Sun, 17 Aug 2025 06:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755410865;
+	bh=X02f05gY68FIyb1hXHqWMuC+nigmCvh2u0vEQs5OzG8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HLilhO/0wlJQYRgcgAW+/NA9WWbn8955dZvrL/TOogoT0EUhpCvJW4jLCGc8qP6lk
+	 PA04F1yZu1C98lJZGAlbI1c5HPUNFIz4wZ4fxGFILrGUu+5xYKxr0WlLXKsP6/oHmW
+	 dPGs55iO4PzBCAJ3O2JhKc5Wfwbavi4iFitePMU1V9rxJzO2lfOXxbbYnIsHM9OWl3
+	 Xjt0aSq2Tidl/mrE/ASS7fRMRMBOixYFenN8i/4Npy7qevfewl/VhPJed0R1wkXgY7
+	 6fzadZX6cRKt8cOmjCXXVrZU7frnaGN3XKbKBn1WrBxu33Xc/JxHXHbrTV+CxqV0ug
+	 Lp6+f13UvD7NA==
+Message-ID: <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
+Date: Sun, 17 Aug 2025 08:07:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
+ <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Date: Fri, 15 Aug 2025 20:07:34 -0700	[thread overview]
-> Hello,
+On 15/08/2025 11:37, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
 > 
-> syzbot found the following issue on:
+> Add clock device tree support for eic7700 SoC.
 > 
-> HEAD commit:    931e46dcbc7e Add linux-next specific files for 20250814
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11ef65a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bb7fbecfa2364d1c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=abbfd103085885cf16a2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a99842580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17108da2580000
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi | 2283 +++++++++++++++++
+>  1 file changed, 2283 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+> 
+> diff --git a/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+> new file mode 100644
+> index 000000000000..405d06f9190e
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+> @@ -0,0 +1,2283 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (c) 2025, Beijing ESWIN Computing Technology Co., Ltd.
+> + */
+> +
+> +/ {
+> +	clock-controller@51828000 {
+> +		compatible = "eswin,eic7700-clock";
+> +		reg = <0x000000 0x51828000 0x000000 0x80000>;
+> +		#clock-cells = <0>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		/* fixed clock */
+> +		fixed_rate_clk_apll_fout2: fixed-rate-apll-fout2 {
 
-#syz test
+Such pattern was years ago NAKed.
 
---- x/fs/smb/server/transport_rdma.h
-+++ y/fs/smb/server/transport_rdma.h
-@@ -61,7 +61,7 @@ void init_smbd_max_io_size(unsigned int
- unsigned int get_smbd_max_read_write_size(void);
- #else
- static inline int ksmbd_rdma_init(void) { return 0; }
--static inline void ksmbd_rdma_stop_listening(void) { return };
-+static inline void ksmbd_rdma_stop_listening(void) { }
- static inline void ksmbd_rdma_destroy(void) { return; }
- static inline bool ksmbd_rdma_capable_netdev(struct net_device *netdev) { return false; }
- static inline void init_smbd_max_io_size(unsigned int sz) { }
---- x/drivers/usb/class/usbtmc.c
-+++ y/drivers/usb/class/usbtmc.c
-@@ -2453,7 +2453,7 @@ static int usbtmc_probe(struct usb_inter
- 		kref_get(&data->kref);
- 
- 		/* allocate buffer for interrupt in */
--		data->iin_buffer = kmalloc(data->iin_wMaxPacketSize,
-+		data->iin_buffer = kzalloc(max(256, data->iin_wMaxPacketSize),
- 					GFP_KERNEL);
- 		if (!data->iin_buffer) {
- 			retcode = -ENOMEM;
---
+No, don't ever bring nodes per clock.
+
+
+Best regards,
+Krzysztof
 
