@@ -1,147 +1,147 @@
-Return-Path: <linux-kernel+bounces-772315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC09B2912E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5126B29139
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181BA176967
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AB22086D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB441940A1;
-	Sun, 17 Aug 2025 02:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D781C1F12;
+	Sun, 17 Aug 2025 02:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOYP4rV/"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="BA4K8ktN"
+Received: from mail-4321.protonmail.ch (mail-4321.protonmail.ch [185.70.43.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9113C0C;
-	Sun, 17 Aug 2025 02:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C12EEA8
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 02:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755398774; cv=none; b=bdxJFaz+gHidM1gnZPFXDuv6mXFkfsNtMWOBHAVkjTc86sbasHsNE15KRzK1bYUvyAxr6Qj3xhZ97CrqKLihtQl2LmA5tAo8Q0WNdP8G6IoAf+FcFub9wjt6CT8zmCTy4+iFaf+7a46esHLG+jw7UAtLq25SQlJWXZgIbkVvI0E=
+	t=1755399310; cv=none; b=ezlLtSNHLs1BkhGrlGgGkRLRVT5/2R7r5lKXzY13e4Rl7/UEHtO0+6YPIj/4QoR5QuHtPqSqQ6b9Vv1Dl3beFofBXwUWTT7DXYJLgLVcYorWtWLZw4jH2LSeEwmhrgNZTaamozHPmsyOGmOFsCctXOsqlMcSIaZmJByPf2zGeVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755398774; c=relaxed/simple;
-	bh=PThytG6PMf0HxRu2JoQkF35MgVDyyHyOVZU+o5cCL2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MRt4cJWq1rJK0bYg3EKTHO/XQgrfIKpzdQHTRX9SNc9UUyrYo1ay7tWMQR+U2LmBu7gXj2KG5MvHkGEBUROD3EvgbYb8XRqFG9fIMLyGcNW8FBszJEldG2knoVbsPY1JGtsFivtTsD9k+gEyVtHp8YT1yXsiNRxQTv22SjlVbuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jOYP4rV/; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-6188b70abdfso4407632a12.2;
-        Sat, 16 Aug 2025 19:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755398771; x=1756003571; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gezwu8vdaP0tcVdxztG2M2ZkIYiPiwl0RgBAY2ELK6k=;
-        b=jOYP4rV/J0D8ouN5MGR/Y+RLiU+oBcfY4ioKRIn426h4z58MCtNK5Qmya9AO6lrfBZ
-         bP75opren5FzkLHXXjTjZhFEX25Ws9+jrJvz8pxfGS1b3nCBLKAndnrIJdOfrkDYqRct
-         9BW3EMKqGvvXuG5DiAmcpjyGAl+8cWRVZIUA1i/pevXR3+7jb9vgbDNIy0ueE3eFPpSJ
-         1Rg61uOZZzzppjRVaeqPCqCMWAoVl2jMDzDrWXdV51ZlDAXX0W87ohkvvsrqUlS/tIHu
-         LycKJkgFsjYGetli1AH8yXLmTOhfkI01BPgMW6t4lzkinywnQW3Co9n3knq+rfFVsZPp
-         eNtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755398771; x=1756003571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gezwu8vdaP0tcVdxztG2M2ZkIYiPiwl0RgBAY2ELK6k=;
-        b=vFPpHQPhhIb0IL+KPWfDk6/lUlflFYVgxDVuYt1aMSryw59N2MAG1P73YLTdYwuk69
-         QNi52Dr0jQjGw9V3Zc2+vfk7bd69/34kH6P/kf1DGZGvR2qqP5pNtgaJaCq/OrXzVy21
-         bSJUx+M0PkqQTq3SyRbm+L8aYLVRgBq/pqU92HW5FzjCxX7qrWGVqLulDK3cDEZe8s4W
-         aycChFFINGEvzxloiRy2Gc58swpyhrpi1WP27fnLsmusP1ETqrN/yzVjTm8fEvbnniyS
-         Cg6sGXjG1zns5yjH3lPwenLrRb1Vetq6WpFmuhjHyTqgfTACRJCebdC038OWnd/zMFH4
-         YJBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyu0oz+9Wc3VS5a/89iMCHuiEusyc7EtK878EKs0rU7C1HTdX/QuZ1hDeA0oOz+UoJhDRYBKfJVADPxMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5F5hrfQ4Z15LnS7wDZX9zVLdijRC+cS3eEYLTGIgvk1/v2NhB
-	ZXCPl1lPVkDkefbKYPqFuIjaHhFXHLv22fYPnI7XBtWgk8Z6A/x3Htua
-X-Gm-Gg: ASbGnctoug/vflWK8y3mGvuKtd9gT3ObfFLwNjFXJekzloEHu73GR/L1Rk4+btWDC/N
-	uy77I51Vc959veZf3MKC5Qmwf19Sbl2353NhWXFwwXQOQIa10D+UmfmR95beWsPAzLN0McV6UAw
-	5DlSz9adaSioN15x8rmlfL7tAI49OWbFxE17T5u8NDMEtgNETtBFYoZGlwxiC8zScs+TQwyWSLH
-	kln+Wie3EuqHw0QkbL+NyX+SvfEAbj1GoDWro09x2++XY0amWm3mitiWv3IL7+193BxbqPYY411
-	EHfmeUivnEiAeBR6r82dcdQRTkaPpM+NgwrNAA/1etd8ur7XKSJTEvgCikIKCPY4J3HRTS+UiOK
-	zelpDLjttMtulCfFIzVFl/FYxkv72eMLsU7W7A98pgKahxb2Jyc66/2fquDTkxD5RcY8NQtnbpa
-	I78PLOsDaG9CYMeVXe+QOWH8K4UYWrH53vKrhqAwg=
-X-Google-Smtp-Source: AGHT+IFxixfhpAPab7BmK2NcVETFGBTZimxoHCnHm0G13zJ6CzHH+13zxMx+rEAdnCIXpeiM23z2ew==
-X-Received: by 2002:a05:6402:2708:b0:618:adff:66e5 with SMTP id 4fb4d7f45d1cf-618b054dbd5mr5654974a12.17.1755398770612;
-        Sat, 16 Aug 2025 19:46:10 -0700 (PDT)
-Received: from [26.26.26.1] (ec2-63-179-65-141.eu-central-1.compute.amazonaws.com. [63.179.65.141])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b01ae6bcsm4318331a12.37.2025.08.16.19.46.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 19:46:09 -0700 (PDT)
-Message-ID: <64025ba8-948a-4d91-8fc6-a1ede807ca8d@gmail.com>
-Date: Sun, 17 Aug 2025 10:46:08 +0800
+	s=arc-20240116; t=1755399310; c=relaxed/simple;
+	bh=xiHb5R2Xz2iisIz0D4Ww8xTzFkbohh3hOxPIBl+HOfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ooCXHPNeaGgrDkH348g7cN6grrd0cBlXCXDy+SeFvralSfAffoh79EKzlnYc3MWh3u/8x6GwgzuSepfcDiZJ2GQnMHcJaGu7/mWnQoKigYCNY8CIfy6FMWoCsmGOPwfUJDY1JHM/oT2DH8Hf5VjoCMBZAkdvdlBKp0TkSP3e9Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=BA4K8ktN; arc=none smtp.client-ip=185.70.43.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=protonmail3; t=1755398901; x=1755658101;
+	bh=4f14UHlASZVUziWFh99eMbEfCZAlv2WbhRYGxjgiuL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=BA4K8ktN9i5BjeG7AC459t4GXzCSXO4vC75Horq/n5W5tPWHGp82zyk69DWbh5uPH
+	 jip6JjTvzvH6oB/PmUSFJrN6vtjixZuAA+jVE5QeLv+G2raH7Y+H6V3aQvs11Pt/3e
+	 fAEjRnR5VNRTJ0W6/XwmLLRpT+HoaQzlomAzaQ0rMuy783vo4C4iPY9JNHplTXmFCg
+	 53MSuiubawv5FDAHAyLayYz7H+Xz478WcN3iMUrZxljBe9tQVy5QViOfIb7z7mkFEq
+	 TOFBqeGfpJB9wYoNZBlHwGL5PqbYMjO6nWkXiEAhubATe666MKpbbcGz8WSfMHePeg
+	 MZTaZuAc1uu4A==
+X-Pm-Submission-Id: 4c4Kz75Lzpz1DDL2
+Date: Sun, 17 Aug 2025 02:48:17 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Shankari Anand <shankari.ak0208@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: drm: update ARef and AlwaysRefCounted imports from
+ sync::aref
+Message-ID: <aKFBdMOHxlvTOmPn@archiso>
+References: <20250815161706.1324860-1-shankari.ak0208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] pci: Add subordinate check before pci_add_new_bus()
-To: Rui He <rui.he@windriver.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Prashant.Chikhalkar@windriver.com, Jiguang.Xiao@windriver.com
-References: <20250814093937.2372441-1-rui.he@windriver.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <20250814093937.2372441-1-rui.he@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815161706.1324860-1-shankari.ak0208@gmail.com>
 
-
-
-On 8/14/2025 5:39 PM, Rui He wrote:
-> For preconfigured PCI bridge, child bus created on the first scan.
-> While for some reasons(e.g register mutation), the secondary, and subordiante
-> register reset to 0 on the second scan, which caused to create
-> PCI bus twice for the same PCI device.
+On Fri, Aug 15, 2025 at 09:47:06PM +0530, Shankari Anand wrote:
+> Update call sites in drm to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
 > 
-> Following is the related log:
-> [Wed May 28 20:38:36 CST 2025] pci 0000:0b:01.0: PCI bridge to [bus 0d]
-> [Wed May 28 20:38:36 CST 2025] pci 0000:0b:05.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> [Wed May 28 20:38:36 CST 2025] pci 0000:0b:01.0: PCI bridge to [bus 0e-10]
-> [Wed May 28 20:38:36 CST 2025] pci 0000:0b:05.0: PCI bridge to [bus 0f-10]
-Could you help to attach a 'lspci -t' about the topology ?
-bridge 0000:0b:01.0 and 0000:0b:05.0 have the same subordinate
-bus number, that is weird seems they aren't connected as upstream
-and downstream, but siblings.
-
-Does the device behind the bridge 0000:0b:05.0 work after the
-second scan (TLP are forwarded) ?>
-> Here PCI device 000:0b:01.0 assigend to bus 0d and 0e.
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
 > 
-> This patch checks if child PCI bus has been created on the second scan
-> of bridge. If yes, return directly instead of create a new one.
-> 
-> Signed-off-by: Rui He <rui.he@windriver.com>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 > ---
->   drivers/pci/probe.c | 3 +++
->   1 file changed, 3 insertions(+)
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintenance.
 > 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index f41128f91ca76..ec67adbf31738 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1444,6 +1444,9 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
->   			goto out;
->   		}
->   
-The bridge should was marked as broken=1 already, bailed out earlier, 
-wouldn't get here with bridge forwarding was disabled. no further 
-configuration anymore. what is your kernel number ?
+> The original moving patch is here: (commit 07dad44aa9a93)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+> 
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
+> ---
+>  rust/kernel/drm/device.rs  | 3 ++-
+>  rust/kernel/drm/driver.rs  | 2 +-
+>  rust/kernel/drm/gem/mod.rs | 3 ++-
+>  3 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+> index 3bb7c83966cf..4a62f9fd88b7 100644
+> --- a/rust/kernel/drm/device.rs
+> +++ b/rust/kernel/drm/device.rs
+> @@ -10,7 +10,8 @@
+>      error::from_err_ptr,
+>      error::Result,
+>      prelude::*,
+> -    types::{ARef, AlwaysRefCounted, Opaque},
+> +    sync::aref::{ARef, AlwaysRefCounted},
+> +    types::Opaque,
+>  };
+>  use core::{mem, ops::Deref, ptr, ptr::NonNull};
+>  
+> diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
+> index fe7e8d06961a..8fefae41bcc6 100644
+> --- a/rust/kernel/drm/driver.rs
+> +++ b/rust/kernel/drm/driver.rs
+> @@ -8,7 +8,7 @@
+>      bindings, device, devres, drm,
+>      error::{to_result, Result},
+>      prelude::*,
+> -    types::ARef,
+> +    sync::aref::ARef,
+>  };
+>  use macros::vtable;
+>  
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index b71821cfb5ea..a822aedee949 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -10,7 +10,8 @@
+>      drm::driver::{AllocImpl, AllocOps},
+>      error::{to_result, Result},
+>      prelude::*,
+> -    types::{ARef, AlwaysRefCounted, Opaque},
+> +    sync::aref::{ARef, AlwaysRefCounted},
+> +    types::Opaque,
+>  };
+>  use core::{mem, ops::Deref, ptr::NonNull};
+> 
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> -- 
+> 2.34.1
 
-
-Thanks,
-Ethan> +		if(pci_has_subordinate(dev))
-> +			goto out;
-> +
->   		/* Clear errors */
->   		pci_write_config_word(dev, PCI_STATUS, 0xffff);
->   
-
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
