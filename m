@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-772429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FEBB2928B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C0B29286
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3393189C197
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BACA4E1F1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91632309AA;
-	Sun, 17 Aug 2025 09:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED24A2288EE;
+	Sun, 17 Aug 2025 09:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeZoIt7a"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C2M/Z3NW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J5zJW4+S"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF50D1D61BB;
-	Sun, 17 Aug 2025 09:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965519463;
+	Sun, 17 Aug 2025 09:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755424518; cv=none; b=GpcKALQaftVs6E9GDXTF1pkqXrFNjZXxIHRSCsAtxzNX8uoXp3y0wK80pfCJRbnV8lbTXOUXTNRlux3f6YJ7/6FsAr1Fl8zAx2PO4xDy667XVrgB3r5wIPaxTDpZ4nsymwu7HuyMe0AEDsyqKr+8rIneY73jilLWTM+1Rpe21RA=
+	t=1755424305; cv=none; b=K+qRH+fT8dFP44/yHRx3PwIIBsNcIZT9ka4T5vdNHZ1J1f3Tfegq0ev0m4nKkZf+orVcapMEq19fbCxR1t0i6TN63B048L6CtHrhUaH0BG86eV4qPqZnlnWiCEBhPguhQpy8ysqV149hiv0SSjn2kK7HVV+L5LGSbOYh0f7zSjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755424518; c=relaxed/simple;
-	bh=5mGqUIDf+LX8bqGv7TzokLroBn0Pqi6DYGaWVlXHAPI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qe+KxX5LbDQoCKeR7zE9GO80Tz6vmxVy4yMIebepRWhj3TC82CcQF5nPp1IoQ88YcaChgfk9lNCyn0fo0KmAFbpQ+2jkiUTDHuixcaAm8MjoRx1r2oxhKC1QFtgE9bWEvlzRtkMxco7ZxcTtDoGQVk98eaxEHaCdK/cqM/v6tFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TeZoIt7a; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4717390ad7so2191682a12.1;
-        Sun, 17 Aug 2025 02:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755424515; x=1756029315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1cmvwdDq9fEzI7gI5zVxq5BwjnNnPgACKd9WbNXnBmE=;
-        b=TeZoIt7aLfhiMwp7d7HKm2DE+2rZ7hHF4FM3YFQxBIJ7aTNhnUF3ujsQFGOyMKct0X
-         wMR05QtNrnq6BLYzWWKewwoqnzx1GDM2Uc4+LREdwfcCAHwp5Jny38c6fDW5m7Z205v9
-         vIO6rCDYMytHc2K3Qs3FUGNGQ+gvQTcYQnwKm4AI7OZGGDxMFV87e6yKh89K8e012BMc
-         6hX5ILznr47E5FYVtI2ZYo0nrjAIrdPOalQBtDfUHKWjgeryBE8KDPj4b5G5V4nqCXvy
-         Ei7cKtdXmFpqj6iWaEIGqPkXyRjYnOVbOERE2tzc6w7kJtPALHWr1kmIVPoPV5kHlQ5i
-         5tZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755424515; x=1756029315;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cmvwdDq9fEzI7gI5zVxq5BwjnNnPgACKd9WbNXnBmE=;
-        b=c7wKMlxHn3FIxpil84ts3Z+BP0hj2Qkc3B5jTprYulDwp8IBiCxRZKogYi9n8lrJIC
-         6W/BSsttXKz/T09yMdW8l6WEnKob1yeHInNq8s2f/V70aZdkXoBtGNK9gR8lRojHQnEK
-         7j4mW0dIh/9LUcyGMn0LyaOPDjGHe0J5Wxubqyk79hAp1j9fNJnbRcgj8HfXLlU5aK7F
-         N2zW9u56r1rw08FldycJ4DwpEh3YWpLpPqnRdF6gxiUKajVt8RpPqoLtXFGHPncIuuje
-         0zj3zgQv/8+CXnu6yg9k9RDRU7PJFDnGjc/tC1RZdAMorXGSp1DJHB3j1yAffzI5lZ7f
-         orkw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2YjuXgd8KP4epFLSgLxwqYswkNxwex4SuAV2xNT8/6PL9M7IFG5imC04qQwZyAeRiKRaXK84NXYU=@vger.kernel.org, AJvYcCWGyS47LP4uEPsRS6SWnAGbZiuYfICHRNu8GTS6mUXqedGkax6gclHvBetT4z5zA3HjbQ2ELWs6I7XAtCsY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9eakJ2zlt3aE9jtLl0t3H6XxdEsr2nSDoo3rCh8x1x0JD/Zmu
-	b5mBKOgAE77URqDk2qQLxtSPJjAKzY6+WG3HJo59qAk1Sh63Ng4oEuXbhVNc7g==
-X-Gm-Gg: ASbGncsEtiATc7w/LRZAZh+sDYwsJDcfrRmB4nmLp4fcoY7nJdXUQs6qTL1iza1LWPK
-	dY3QhU9sAKs3B3SC/btHIo2M0ZfesQ0gyDc3xbLjWFXkXnpWiyJL1c3f0guncs6f7+qih0VahkY
-	eGZBoRIirafYoS5POndX0H35ToTWNZ9J0tPTOASBBC73zFvtp1jhtzoQYp5QpoUgFt0ieL6EJi9
-	6Ia9I1CiKXJIL5pVmmHT91npJ6WOecMgNlYvdENSOZPOqYB+1BSohltqWNr3/4IgWvD0QFfQyj6
-	/UTBnaWz9pfYTwalbV7zd691kVL4PCgoVwfwkn28rgIODA3fNbckqo4nI5wq5W8moG2GpRaShYW
-	cC0AQmZvhHmgxEK3Qe497SBrzPRoWybcGyasyVAFWQb2anK4NqJ0RybuCjPd2qE7RBAhC
-X-Google-Smtp-Source: AGHT+IH1Axs+2f8ZFd8sImHvAUvBgL0gAUZ3lcY6HEZqk8DFv+ake24/oVXSE8Kf/UsSHzPjEihHYg==
-X-Received: by 2002:a17:903:3c6f:b0:23f:df56:c74c with SMTP id d9443c01a7336-2446d715b0bmr99414185ad.14.1755424514982;
-        Sun, 17 Aug 2025 02:55:14 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d554619sm52022805ad.141.2025.08.17.02.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 02:55:14 -0700 (PDT)
-Message-ID: <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
-Date: Sun, 17 Aug 2025 18:46:35 +0900
+	s=arc-20240116; t=1755424305; c=relaxed/simple;
+	bh=mtJ3gzEv6o+xFkmPgKTzQ3JESw+W8iZciev1RKZWuSU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NtqlInoCEBBJXEbMxojax7R3dxoZzusmjB6TakVzOpHkQ9b13P7xmlJG6dZKTW8ve7sb5COON1pZj4jZ6S0XS47rpixAFKjGqWsKGCyrDBDYYYkRpVsHwdHJfUzG8ATp7KBOrOrH2wqMBvRjw3kZEoJBMmEnv+r9+kw1Ox++RDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C2M/Z3NW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J5zJW4+S; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 17 Aug 2025 09:51:33 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755424296;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N9HdNGuZyBv5MBuRLKD9Imf9j+MQbdgmcchbtdHA9ds=;
+	b=C2M/Z3NWGm8uej/Xzl+D1xE0sFK+Wh6u10hUCJZon3mMkWkATvM+fZVjPFfcRAiSq7hj0T
+	g/i1iP3C0iifIRQO4Yd7K8vX0a3d1bEv8K7PXfz5lQtlqfAXWjTcC7vkr+bR3TUWsjBaeB
+	f2WSNSoPWPmKN245Wl5gAq5e0aDzWUUDzfiJw3NFpy02yj5gwrkfjic/mKxaZ9vY/cEh8Q
+	2RLAZr0z4+XHvp452hLsC9qkoxID/antwj6aYlcn1bN4WYLgKVO/dRM+sxBdFpdoNmULxB
+	bC+rp20xWWk4H4/THsLP46YqoqW7zqiUJn3t8KYOjvX9pGtxqpOaJHmQ383lBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755424296;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N9HdNGuZyBv5MBuRLKD9Imf9j+MQbdgmcchbtdHA9ds=;
+	b=J5zJW4+SpgXZMsxgJhaNUYvrrWf3pgqwFxr+SIjz6y/zKdtsNYUZT2ukUEU2f5L5kGo7pO
+	IUNupFDtnFwzkPDw==
+From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86/build: Remove cc-option from -mno-fp-ret-in-387
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250814-x86-min-ver-cleanups-v1-4-ff7f19457523@kernel.org>
+References: <20250814-x86-min-ver-cleanups-v1-4-ff7f19457523@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
- <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
- <20250816135538.733b80d3@foz.lan>
-Content-Language: en-US
-In-Reply-To: <20250816135538.733b80d3@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <175542429414.1420.18313894506338628845.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-[-CC: bpf@vger]
+The following commit has been merged into the x86/build branch of tip:
 
-On Sat, 16 Aug 2025 13:55:38 +0200, Mauro Carvalho Chehab wrote:
-> Em Sat, 16 Aug 2025 14:06:43 +0900
-> Akira Yokosawa <akiyks@gmail.com> escreveu:
-> 
+Commit-ID:     0a42d732c136d3466cd19fafa7317d3004430318
+Gitweb:        https://git.kernel.org/tip/0a42d732c136d3466cd19fafa7317d30044=
+30318
+Author:        Nathan Chancellor <nathan@kernel.org>
+AuthorDate:    Thu, 14 Aug 2025 18:31:40 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Sun, 17 Aug 2025 11:36:47 +02:00
 
-[...]
+x86/build: Remove cc-option from -mno-fp-ret-in-387
 
-> Works for me, but let's do it on a separate series. I still have more
-> than 100 patches on my pile to be merged. This series is focused on
-> making at least some PDFs to build where possible, addressing major
-> problems at conf.py that are causing LaTeX to not work on several
-> distros and to fix wrong package dependencies(*).
-> 
-> I'll add a TODO item on my queue to replace fom ImageMagick to
-> Inkscape on a separate series.
-> 
-> (*) One of such problem you blamed sphinx-build-wrapper, but 
->     the issue is actually addressed on this series with fixes to conf.py: 
->     there are currently several troubles at latex_documents list and at
->     latex_elements.
-> 
->     Those are causing wrong font detection on LaTeX.
+This has been supported in GCC for forever and clang gained support for it as
+an alias of '-mno-x87' in LLVM 14. Now that x86 requires LLVM 15 or newer
+since
 
-I couldn't see what you are talking about at first, because there
-have not been any such issues reported.
+  7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0"),
 
-Also, after applying 1/11 ... 4/11 on top of current docs-next
-(commit 0bbc2548ea85 ("Merge branch 'pre-install' into docs-mw"),
-despite the changelog of 5/11 which claims to fix an issue under
-debian, I couldn't reproduce the "! Corrupted NFSS tables" error
-under Ubuntu 24.04 (noble).
+this flag can be unconditionally added, saving a compiler invocation.
 
-I'm confused ...  How can I reproduce this?
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://github.com/llvm/llvm-project/commit/a9fba2be35db674971382e38b99=
+a31403444d9bf
+Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-4-ff7f19457523=
+@kernel.org
+---
+ arch/x86/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's getting really hard for me to keep up with your pace of changes
-in doc build scripts, really.
-
-Akira
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 0c82a61..1bbf943 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -148,7 +148,7 @@ else
+=20
+         # Don't autogenerate traditional x87 instructions
+         KBUILD_CFLAGS +=3D -mno-80387
+-        KBUILD_CFLAGS +=3D $(call cc-option,-mno-fp-ret-in-387)
++        KBUILD_CFLAGS +=3D -mno-fp-ret-in-387
+=20
+         # By default gcc and clang use a stack alignment of 16 bytes for x86.
+         # However the standard kernel entry on x86-64 leaves the stack on an
 
