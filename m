@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA74B291B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:58:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1494DB291BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48350203B36
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0E51965AB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F4A20468E;
-	Sun, 17 Aug 2025 05:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7C2040AB;
+	Sun, 17 Aug 2025 06:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pukss/ny"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qq+Qa1Q1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D976253A7;
-	Sun, 17 Aug 2025 05:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1363E1A23AC;
+	Sun, 17 Aug 2025 06:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755410320; cv=none; b=qrVPQ7EdyqOKpGacNA3ahOVVdIbKfdJJPuJxGbEkdTDIJxDCPbQIcP+nds+JzdCxsFqEGgY8beNl/gvT+eRU4Zql4UwwkDqDHzIgk1SQKcdxpKP7DVqor0TVveqcfsR8FZMwzDo5An6SMgPIUwVN9z9VLyKkWavQo78OL8chEPs=
+	t=1755410491; cv=none; b=jhTCwN5QvPZCgLmCzFsNn2bUAon4zExB5l7prEwqzvtuXCICU3AIJu/nO64LG0yXs4z2oVYHrmV/f17V6D9LSIUfSoXJHSN+xCYyn0HysX16kCaXyS9Gp0aFk2eelRA0/fbEWwj+g2FM5OJr6b6EU6cEFpJ0KwacpKHXw/d9lQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755410320; c=relaxed/simple;
-	bh=kVjCOVtPxPkKBG13ruCUgSjZutxtffiOYNecBVrhCsM=;
+	s=arc-20240116; t=1755410491; c=relaxed/simple;
+	bh=mHZUPtn5UficimsWMroxIB90kO/gt16LWXvu1TDftiI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHOQ/m088MEQdMOPXTByCEn1kXP0YCjyYjebiEVKJYQ6vbMFR2QEZapB5pqIeQQtImPnW4bwjOP10aymcbswgFO/o7K24lX35Ewxaib9XWlk5Gy3yZIz4IyIYDw3YvbSr+8ePChTlrwemu3tS1uOfJGM1lHLKi4a1PW04DoUOfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pukss/ny; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9753CC4CEEB;
-	Sun, 17 Aug 2025 05:58:37 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NIpiDi6S+Lcs/fLAZSeA5mwnHQd1r9ZzD/wIDQ+XGvqbKBX3ckgAJxNL54ucO8qH2duoBoA0nuaIS8BBVDh/4J+wt6+fwroQqn51mLuBaWJro5zgn9KOzECAphE8uKY2VnE+K2iZxh1U2gAyM/ItEmoNG/3ObgW/fnFwyXSy2vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qq+Qa1Q1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB26BC4CEEB;
+	Sun, 17 Aug 2025 06:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755410319;
-	bh=kVjCOVtPxPkKBG13ruCUgSjZutxtffiOYNecBVrhCsM=;
+	s=k20201202; t=1755410490;
+	bh=mHZUPtn5UficimsWMroxIB90kO/gt16LWXvu1TDftiI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pukss/nyQ2Q3HHl6r6++EUnmYnRM62KpZb1WCKb+3SNOCkxIGyI/xlqxAUTBx1mpT
-	 /msCYg1I9YlQWHoNN3ifopa/4WewHc+fsWDtUHu5MkBLTp8n1NPpzzsMoIY4wNK17L
-	 D3SuDA6PQlkOoUiWDHLhBFaX1QQhGdE7YdNTHB9MZOeudTd5KM6Z7aTzS5cVz/FVah
-	 kV2Ge9xbha3HKM3ZS+HE9+xRPIHQLISh85e0dGjG4skhQb8IIloI/ganH3Ka42KDcp
-	 2zyJr1ckheKtCXeTGzGyBHbnqH5LHj2DVdIUcHQRkcFziNef+XNzRNvdfWQKg/R8of
-	 BvAHhEChRTADg==
-Message-ID: <bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
-Date: Sun, 17 Aug 2025 07:58:35 +0200
+	b=Qq+Qa1Q1NID6yT4ELg0thEZhShaOpzvUCqLG2VgKDcJPdQTrwBHc6P6O+jm/u/PgU
+	 hWw+v+rZiWQLviUAgQwprPMRVcH3qBMPThs/Fb0XjwYaS9zPgj5lyH7ILdQBCDKM1i
+	 KXQY+ZkXyHGkTDi0GYE21MYhDTf07kdCgcef4q2l1DE8iwuTMIVj1y3CeYsEwq643E
+	 C0fQQzhP36sKEYjgPiuB1/DZJS6xGDXNwB/VlCZhuYhARWn8KLACfIP0gTmSDP4R6d
+	 I4y6dYS5aIDM/0IBBtunQ9rBVZezmuX7qTC6k82hVpAvbQPmyvN7GCHZ5hT7NiY/uF
+	 FSFJiZJPB7ZWg==
+Message-ID: <58e3e3ef-1871-45b1-ba2b-be6981d7d3d1@kernel.org>
+Date: Sun, 17 Aug 2025 08:01:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
-To: Andreas Kemnade <andreas@kemnade.info>,
- Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>,
- Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
- <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
+Subject: Re: [PATCH v4 1/3] clock: eswin: Documentation for eic7700 SoC
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
+ <20250815093653.1033-1-dongxuyang@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,186 +104,214 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
+In-Reply-To: <20250815093653.1033-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/08/2025 21:19, Andreas Kemnade wrote:
-> Add charger driver for ROHM BD718(15/28/78) PMIC charger block.
-> It is a stripped down version of the driver here:
-> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
+On 15/08/2025 11:36, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> Add device tree binding documentation for the ESWIN eic7700
+> clock controller module.
+> 
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  .../bindings/clock/eswin,eic7700-clock.yaml   | 381 ++++++++++++++++++
+>  1 file changed, 381 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+> new file mode 100644
+> index 000000000000..45e70ebc08e6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+> @@ -0,0 +1,381 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/eswin,eic7700-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Eswin EIC7700 SoC clock controller
+> +
+> +maintainers:
+> +  - Yifeng Huang <huangyifeng@eswincomputing.com>
+> +  - Xuyang Dong <dongxuyang@eswincomputing.com>
+> +
+> +description:
+> +  The clock controller generates and supplies clock to all the modules
+> +  for eic7700 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: eswin,eic7700-clock
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +required:
 
-Why are you duplicating the driver? Why original cannot be used?
+Incorrectly placed. required is after all properties.
+
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +patternProperties:
+> +  "^fixed-rate.*":
+> +    type: object
+> +    $ref: /schemas/clock/fixed-clock.yaml#
+
+No, you do not get node per clock.
+
+> +
+> +  ".*pll@[a-f0-9]+$":
+> +    type: object
+> +
+> +    properties:
+> +      compatible:
+> +        const: eswin,pll-clock
 
 
-...
+Nothing explains in the changelog why this appeared. Drop all these
+nodes and fake or redundant compatibles.
+
 
 > +
-> +#define RSENS_DEFAULT_30MOHM 30000 /* 30 mOhm in uOhms*/
+> +      reg:
+> +        items:
+> +          - description: PLL's config 0 register
+> +          - description: PLL's config 1 register
+> +          - description: PLL's config 2 register
+> +          - description: PLL's status register
 > +
-> +static int bd7182x_get_rsens(struct bd71828_power *pwr)
-> +{
-> +	u64 tmp = RSENS_CURR;
-> +	int rsens_ohm = RSENS_DEFAULT_30MOHM;
-> +	struct fwnode_handle *node = NULL;
+> +      '#clock-cells':
+> +        const: 0
 > +
-> +	if (pwr->dev->parent)
-> +		node = dev_fwnode(pwr->dev->parent);
+> +      clock-output-names:
+> +        maxItems: 1
 > +
-> +	if (node) {
-> +		int ret;
-> +		uint32_t rs;
+> +      enable-shift:
+> +        description: Bit shift of the enable register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
 > +
-> +		ret = fwnode_property_read_u32(node,
-> +					       "rohm,charger-sense-resistor-micro-ohms",
+> +      enable-width:
+> +        description: Width of the enable register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      refdiv-shift:
+> +        description: Bit shift of the reference divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      refdiv-width:
+> +        description: Width of the reference divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      fbdiv-shift:
+> +        description: Bit shift of the feedback divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      fbdiv-width:
+> +        description: Width of the feedback divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      frac-shift:
+> +        description: Bit shift of the fractional divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      frac-width:
+> +        description: Width of the fractional divider register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      postdiv1-shift:
+> +        description: Bit shift of the post divider 1 register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      postdiv1-width:
+> +        description: Width of the post divider 1 register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      postdiv2-shift:
+> +        description: Bit shift of the post divider 2 register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      postdiv2-width:
+> +        description: Width of the post divider 2 register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        maximum: 31
+> +
+> +      lock-shift:
+> +        description: Bit shift of the lock register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      lock-width:
+> +        description: Width of the lock register.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +    required:
+> +      - compatible
+> +      - reg
+> +      - '#clock-cells'
+> +      - clock-output-names
+> +      - enable-shift
+> +      - enable-width
+> +      - refdiv-shift
+> +      - refdiv-width
+> +      - fbdiv-shift
+> +      - fbdiv-width
+> +      - frac-shift
+> +      - frac-width
+> +      - postdiv1-shift
+> +      - postdiv1-width
+> +      - postdiv2-shift
+> +      - postdiv2-width
+> +      - lock-shift
+> +      - lock-width
+> +
+> +    additionalProperties: false
+> +
+> +  ".*mux@[a-f0-9]+$":
+> +    type: object
 
-Hm? Are you writing ACPI or DT driver?
-
-> +					       &rs);
-> +		if (ret) {
-> +			if (ret == -EINVAL) {
-> +				rs = RSENS_DEFAULT_30MOHM;
-> +			} else {
-> +				dev_err(pwr->dev, "Bad RSENS dt property\n");
-> +				return ret;
-> +			}
-> +		}
-> +		if (!rs) {
-> +			dev_err(pwr->dev, "Bad RSENS value\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		rsens_ohm = (int)rs;
-> +	}
-> +
-> +	/* Reg val to uA */
-> +	do_div(tmp, rsens_ohm);
-> +
-> +	pwr->curr_factor = tmp;
-> +	pwr->rsens = rsens_ohm;
-> +	dev_dbg(pwr->dev, "Setting rsens to %u micro ohm\n", pwr->rsens);
-> +	dev_dbg(pwr->dev, "Setting curr-factor to %u\n", pwr->curr_factor);
-> +	return 0;
-> +}
-> +
-> +static int bd71828_power_probe(struct platform_device *pdev)
-> +{
-> +	struct bd71828_power *pwr;
-> +	struct power_supply_config ac_cfg = {};
-> +	struct power_supply_config bat_cfg = {};
-> +	int ret;
-> +	struct regmap *regmap;
-> +
-> +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!regmap) {
-> +		dev_err(&pdev->dev, "No parent regmap\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	pwr = devm_kzalloc(&pdev->dev, sizeof(*pwr), GFP_KERNEL);
-> +	if (!pwr)
-> +		return -ENOMEM;
-> +
-> +	pwr->regmap = regmap;
-> +	pwr->dev = &pdev->dev;
-> +	pwr->chip_type = platform_get_device_id(pdev)->driver_data;
-> +
-> +	switch (pwr->chip_type) {
-> +	case ROHM_CHIP_TYPE_BD71828:
-> +		pwr->bat_inserted = bd71828_bat_inserted;
-> +		pwr->get_temp = bd71828_get_temp;
-> +		pwr->regs = &pwr_regs_bd71828;
-> +		dev_dbg(pwr->dev, "Found ROHM BD71828\n");
-
-This is pretty useless debug. You do not use here autodetection, so
-there is no "found" case. It's straightforward bind.
-
-> +		break;
-> +	case ROHM_CHIP_TYPE_BD71815:
-> +		pwr->bat_inserted = bd71815_bat_inserted;
-> +		pwr->get_temp = bd71815_get_temp;
-> +		pwr->regs = &pwr_regs_bd71815;
-> +		dev_dbg(pwr->dev, "Found ROHM BD71815\n");
-
-Same here, drop.
-
-> +	break;
-> +	default:
-> +		dev_err(pwr->dev, "Unknown PMIC\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = bd7182x_get_rsens(pwr);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "sense resistor missing\n");
-> +
-> +	dev_set_drvdata(&pdev->dev, pwr);
-> +	bd71828_init_hardware(pwr);
-> +
-> +	bat_cfg.drv_data	= pwr;
-> +	bat_cfg.fwnode		= dev_fwnode(&pdev->dev);
-> +
-> +	ac_cfg.supplied_to	= bd71828_ac_supplied_to;
-> +	ac_cfg.num_supplicants	= ARRAY_SIZE(bd71828_ac_supplied_to);
-> +	ac_cfg.drv_data		= pwr;
-> +
-> +	pwr->ac = devm_power_supply_register(&pdev->dev, &bd71828_ac_desc,
-> +					     &ac_cfg);
-> +	if (IS_ERR(pwr->ac)) {
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(pwr->ac),
-> +				     "failed to register ac\n");
-> +	}
-> +
-> +	pwr->bat = devm_power_supply_register(&pdev->dev, &bd71828_bat_desc,
-> +					      &bat_cfg);
-> +	if (IS_ERR(pwr->bat)) {
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(pwr->bat),
-> +				     "failed to register bat\n");
-> +	}
-> +
-> +	ret = bd7182x_get_irqs(pdev, pwr);
-> +	if (ret) {
-
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
-
-Drop {}
-
-This applies to other places as well.
-
-> +		return dev_err_probe(&pdev->dev, ret, "failed to request IRQs");
-> +	};
-> +
-> +	/* Configure wakeup capable */
-> +	device_set_wakeup_capable(pwr->dev, 1);
-> +	device_set_wakeup_enable(pwr->dev, 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct platform_device_id bd71828_charger_id[] = {
-> +	{ "bd71815-power", ROHM_CHIP_TYPE_BD71815 },
-> +	{ "bd71828-power", ROHM_CHIP_TYPE_BD71828 },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, bd71828_charger_id);
-> +
-> +static struct platform_driver bd71828_power_driver = {
-> +	.driver = {
-> +		.name = "bd718xx-power",
-> +	},
-> +	.probe = bd71828_power_probe,
-> +	.id_table = bd71828_charger_id,
-> +};
-> +
-> +module_platform_driver(bd71828_power_driver);
-> +MODULE_ALIAS("platform:bd718xx-power");
-
-Drop module alias, incorrect name anyway and you already have proper
-aliases from table.
+NAK, but anyway explain in the changelog WHY you did this...
 
 
 Best regards,
