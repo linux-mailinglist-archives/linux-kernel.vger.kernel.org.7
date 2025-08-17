@@ -1,81 +1,185 @@
-Return-Path: <linux-kernel+bounces-772506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5D8B2937D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:31:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E811B29380
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B3C4E78C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF481B2625E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394372E5B11;
-	Sun, 17 Aug 2025 14:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4pBjttH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E932E5D04;
+	Sun, 17 Aug 2025 14:31:34 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A73242D6D;
-	Sun, 17 Aug 2025 14:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659092E2844;
+	Sun, 17 Aug 2025 14:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755441042; cv=none; b=gr9MosvvfAfXngnD79pQckyO+3neVdLnJDzo1dEV85aigcYb/BxKYpBvijfdaVu1NcqJhArEDnfEC4BVcLDJjomirIzJWDZM16rBAHFjvz2ImCtJV+lWTqXTcoNYpxlWT6iYCQp/dJYL3brRtW5CxPJI3oF+6Fc4jUMno0TEs8A=
+	t=1755441094; cv=none; b=PO6u3I6Zq6++EIN5NX8luTcTBSXUHMktZv1RnIKROyeajdT0i94h365+am54oBYatb9WJVPSScsCc8kJD/30p0Aoqev+vaocveRnqALs5UZGpSPDgXpUC0PCNJOkOm0mkzhOyFpwviYV1yRnQEFZJF+fRQfHRBT8XmPF4He9e04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755441042; c=relaxed/simple;
-	bh=+qZIHhn+udYMdDbnyljd27a3aeI8U31V+FqAr2BsT8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lZc6iMyPziVbGa1PG2CDH55mzv7Aa6xKjUcMvBLDlWcw8qQh6QRuxwQpMYLQWfD1rZ31LD95XSbaW00xnO8Z8XYU9pB/3xL43U2KxqfnBA0eKhV5Q56KDZYxYX5RV4PTuv6w7Dwl9c5VE8+GbVHxTbb/RNDhCOL+0cknCCIH/d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4pBjttH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D003C4CEF1;
-	Sun, 17 Aug 2025 14:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755441042;
-	bh=+qZIHhn+udYMdDbnyljd27a3aeI8U31V+FqAr2BsT8o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a4pBjttHjhv+fB529UmNGLrOUzXKrIBAOJABZnmkLWp8w/EVkvCzuQ+sEieKz70ZI
-	 zskre+Ffx3wepCYS23kgF56E08+2T1oxsYOS7yuikNba3cytB/koFcub/7QbwEWpVQ
-	 qh8xVPX6MvPKWnSXpXPhAFZg8HzOJfK39FudvK7QEHpC0gJjID17u/inaQxZrC0Oc6
-	 Cmf95G14SMvOuBU7JwoqFtMcZwIHxnFzcgD4zr9r/gwQX2ylV593pIPqs4tnPg8gE/
-	 CD/Ti/qi8Ur7/yKI9cSusumJPDWVE1XgqOzIuNqkQYUqDFvFmKwdCV/57hRKkG94kT
-	 j2SfoBlFuSzOg==
-Date: Sun, 17 Aug 2025 15:30:35 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: imu: use min() to improve code
-Message-ID: <20250817153035.1ed54fbf@jic23-huawei>
-In-Reply-To: <f089d2fe-562f-46bf-aef2-f19302d3196e@baylibre.com>
-References: <20250816120510.355835-1-rongqianfeng@vivo.com>
-	<f089d2fe-562f-46bf-aef2-f19302d3196e@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755441094; c=relaxed/simple;
+	bh=zKERsd4Ky7ZjT8BS/T6ajnxDVh0fbPFLQb3r4FQn7yU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=b6/IkHl38ewmOo+OXq0l0uOncNvwoaU3ippQd1zQnoXTH10S46U/72/NxQgBpepM4/FgTI5OglQvrsFVlyWsI0p2WSEr8fjKSkc7C/Mc7CFb/XQeCW40iBWESJdbV1fPloe0u33xWtjWZ7q8cZozGep+Asr1Y/HhFqZHrcz3Wpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1unePp-0000000010a-3YyJ;
+	Sun, 17 Aug 2025 14:31:21 +0000
+Date: Sun, 17 Aug 2025 15:31:18 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Xu Liang <lxu@maxlinear.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 1/3] net: phy: mxl-86110: add basic support for
+ led_brightness_set op
+Message-ID: <aKHntubD3c4luFzt@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 16 Aug 2025 11:56:24 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Add support for forcing each connected LED to be always on or always off
+by implementing the led_brightness_set() op.
+This is done by modifying the COM_EXT_LED_GEN_CFG register to enable
+force-mode and forcing the LED either on or off.
+When calling the led_hw_control_set() force-mode is again disabled for
+that LED.
+Implement mxl86110_modify_extended_reg() locked helper instead of
+manually acquiring and releasing the MDIO bus lock for single
+__mxl86110_modify_extended_reg() calls.
 
-> On 8/16/25 7:05 AM, Qianfeng Rong wrote:
-> > Use min() to reduce code in inv_icm42600_buffer_update_fifo_period()
-> > and inv_icm42600_buffer_update_watermark(), and improve readability.
-> > 
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> > ---  
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> 
-Applied with tweak to patch title to include inv_icm42600.
-When people are deciding whether to look at a patch or not
-having info on what driver it applies to is always useful.
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+v2: introduce mxl86110_modify_extended_reg() helper
 
-Jonathan
+ drivers/net/phy/mxl-86110.c | 68 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/mxl-86110.c b/drivers/net/phy/mxl-86110.c
+index ff2a3a22bd5b..31832018655f 100644
+--- a/drivers/net/phy/mxl-86110.c
++++ b/drivers/net/phy/mxl-86110.c
+@@ -71,6 +71,13 @@
+ 
+ #define MXL86110_MAX_LEDS	3
+ /* LED registers and defines */
++#define MXL86110_COM_EXT_LED_GEN_CFG			0xA00B
++# define MXL86110_COM_EXT_LED_GEN_CFG_LFE(x)		BIT(2 + 3 * (x))
++# define MXL86110_COM_EXT_LED_GEN_CFG_LFM(x)		({ typeof(x) _x = (x); \
++							  GENMASK(1 + (3 * (_x)), \
++								 3 * (_x)); })
++#  define MXL86110_COM_EXT_LED_GEN_CFG_LFME(x)		BIT(3 * (x))
++
+ #define MXL86110_LED0_CFG_REG 0xA00C
+ #define MXL86110_LED1_CFG_REG 0xA00D
+ #define MXL86110_LED2_CFG_REG 0xA00E
+@@ -235,6 +242,29 @@ static int mxl86110_read_extended_reg(struct phy_device *phydev, u16 regnum)
+ 	return ret;
+ }
+ 
++/**
++ * mxl86110_modify_extended_reg() - modify bits of a PHY's extended register
++ * @phydev: pointer to the PHY device structure
++ * @regnum: register number to write
++ * @mask: bit mask of bits to clear
++ * @set: bit mask of bits to set
++ *
++ * Note: register value = (old register value & ~mask) | set.
++ *
++ * Return: 0 or negative error code
++ */
++static int mxl86110_modify_extended_reg(struct phy_device *phydev,
++					u16 regnum, u16 mask, u16 set)
++{
++	int ret;
++
++	phy_lock_mdio_bus(phydev);
++	ret = __mxl86110_modify_extended_reg(phydev, regnum, mask, set);
++	phy_unlock_mdio_bus(phydev);
++
++	return ret;
++}
++
+ /**
+  * mxl86110_get_wol() - report if wake-on-lan is enabled
+  * @phydev: pointer to the phy_device
+@@ -394,6 +424,7 @@ static int mxl86110_led_hw_control_set(struct phy_device *phydev, u8 index,
+ 				       unsigned long rules)
+ {
+ 	u16 val = 0;
++	int ret;
+ 
+ 	if (index >= MXL86110_MAX_LEDS)
+ 		return -EINVAL;
+@@ -423,8 +454,42 @@ static int mxl86110_led_hw_control_set(struct phy_device *phydev, u8 index,
+ 	    rules & BIT(TRIGGER_NETDEV_RX))
+ 		val |= MXL86110_LEDX_CFG_BLINK;
+ 
+-	return mxl86110_write_extended_reg(phydev,
++	ret = mxl86110_write_extended_reg(phydev,
+ 					  MXL86110_LED0_CFG_REG + index, val);
++	if (ret)
++		return ret;
++
++	ret = mxl86110_modify_extended_reg(phydev,
++					   MXL86110_COM_EXT_LED_GEN_CFG,
++					   MXL86110_COM_EXT_LED_GEN_CFG_LFE(index),
++					   0);
++
++	return ret;
++}
++
++static int mxl86110_led_brightness_set(struct phy_device *phydev,
++				       u8 index, enum led_brightness value)
++{
++	u16 mask, set;
++	int ret;
++
++	if (index >= MXL86110_MAX_LEDS)
++		return -EINVAL;
++
++	/* force manual control */
++	set = MXL86110_COM_EXT_LED_GEN_CFG_LFE(index);
++	/* clear previous force mode */
++	mask = MXL86110_COM_EXT_LED_GEN_CFG_LFM(index);
++
++	/* force LED to be permanently on */
++	if (value != LED_OFF)
++		set |= MXL86110_COM_EXT_LED_GEN_CFG_LFME(index);
++
++	ret = mxl86110_modify_extended_reg(phydev,
++					   MXL86110_COM_EXT_LED_GEN_CFG,
++					   mask, set);
++
++	return ret;
+ }
+ 
+ /**
+@@ -596,6 +661,7 @@ static struct phy_driver mxl_phy_drvs[] = {
+ 		.config_init		= mxl86110_config_init,
+ 		.get_wol		= mxl86110_get_wol,
+ 		.set_wol		= mxl86110_set_wol,
++		.led_brightness_set	= mxl86110_led_brightness_set,
+ 		.led_hw_is_supported	= mxl86110_led_hw_is_supported,
+ 		.led_hw_control_get     = mxl86110_led_hw_control_get,
+ 		.led_hw_control_set     = mxl86110_led_hw_control_set,
+-- 
+2.50.1
 
