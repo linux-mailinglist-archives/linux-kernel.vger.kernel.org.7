@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9AEB2922A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:13:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8290B2922D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97EE1484C1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2B81724FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A77246789;
-	Sun, 17 Aug 2025 08:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDE62451F3;
+	Sun, 17 Aug 2025 08:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNgK/nBu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rg38MgBv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD82A945;
-	Sun, 17 Aug 2025 08:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17EC3176F3;
+	Sun, 17 Aug 2025 08:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755418365; cv=none; b=Al2xzlgZKCrElepr9BjzUc5hll8t6mqGch6wKaXKrIZJcKCX6NNmsKMbAbzUgO/5hKSVkyDIQ9Sa2k06D0jkgEAfM3s5Gn+LMrvsOwUZ0+5SfxFIqZKK7o+J/f3TZ2qsXxCkziC3MOQu0nCUfYDwSkylOwbDx1xjdQJsozXz35w=
+	t=1755418440; cv=none; b=NhvmSY0axzCIMzNQdaA8Mq5HZn31qMNJD8cP4qTF9XosYuUUriWEREc06rlz6IGsQOKd1GiMhHHFsIO1Aea31KTs9KNQy09z7LC4Un1APLlxvl7hP/bAjAQBBGGgL+1varb1e2GEsRdEKYVvhgd/mer60Nv1gbQAgDPRktTspoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755418365; c=relaxed/simple;
-	bh=3ogXhEmizaAUsLyP8gBBwxZlw+Leo/hHTvDxWG9rwN0=;
+	s=arc-20240116; t=1755418440; c=relaxed/simple;
+	bh=ZjbZSgLoosl/ukNZrlw2ik9YjO132wkprJIrW2jzC+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pJDw0TMkJ2HAffrZCniS1i7HVqoe0Yob1obbbZv6mQk7ZMHvhDaWvfiramZhtkCoSYF++YUs10s2zNInFFWKrr6qVYYQ/k58OJFeTW5EHN/s6QNbYAaRUPkw7knhKPPe5L3pg7oNx9Y9hudt1TAYKf2DKOagpoMSpOTYTOPP+jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNgK/nBu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D2FC4CEEB;
-	Sun, 17 Aug 2025 08:12:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=fs4MWnREiSDv005xX2lwqa2zlqour8kCVPO5o4hpTd1euji99GVE92h2d7BzJTfsgR9zfPEB3MUTQeXC23oGEVpUmzD3vwToUyDF0buqaGOXgMgeMJD9vjpNE6KZJhHFiOFjXA/MT5pu2+B2tQYie9wu/Geknv9uhVUMhzenEHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rg38MgBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94FF3C4CEEB;
+	Sun, 17 Aug 2025 08:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755418364;
-	bh=3ogXhEmizaAUsLyP8gBBwxZlw+Leo/hHTvDxWG9rwN0=;
+	s=k20201202; t=1755418440;
+	bh=ZjbZSgLoosl/ukNZrlw2ik9YjO132wkprJIrW2jzC+Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vNgK/nBu66g+/TEivXA24x2CkykDm0dh7UOUYnX5w+yIZwCLF33tTXWxHEy0+KBpX
-	 eGafPFmqTueJaLcbr3vPIZsqLmijJzCuKb8g2HOD5LffSxuDMHVg23gwlhbc4+ecVu
-	 TZ7sFN8x2mfprl+3knY19VihVZhk1eJBPonBKJ23tyaRdGo7k2OJ1X3rEHfFVjWsyq
-	 T9OiN2aGwYg4uMwReqM+iNyQNZTz5m4q60619Ws9fePfU3s4OE58sOJ4XevH+Mj9lW
-	 mpK7pPTq/0MMvh1+tcBkG2hgAiHLQ8c8dUVLPpo5m717LAnjJi/wgMtsl1j6Wcg7n6
-	 XtLYJZZQUesqg==
-Message-ID: <18290017-fd9b-499c-be34-55b49efad95a@kernel.org>
-Date: Sun, 17 Aug 2025 10:12:41 +0200
+	b=rg38MgBvBHIdo3mlkl72hZcJFTX9TisxhUO1cS5VVbb24UiSfbyvutrRybi8JsP4l
+	 RTcrWsOB1t+6e54LWEuJqEoATVcwEl5VkOirr2ld7QK+fZ7TMeMiTeA3heIA3UdUtk
+	 zBvL2G3FO3L2vqLj5r8F3bdqWkYpE0NDBsnVUZOiMDJmGvZZLvK6pERDQeWhZ61S7Y
+	 dC+OOR7JrR5s+1aCoH5rdDgpMxNjOmw3HK+rQgezwHKXAtUepqn+gy4dCJDyYyInpV
+	 K82rQfRMH68njp0mwWRxG8NDGJSiiXYRdll2Y6bxYS/AY/pFbSl/cVGNWUnHFslCYq
+	 FuB2avWdL99CQ==
+Message-ID: <bbd17f22-8834-42d8-a109-971bdd2e0fa1@kernel.org>
+Date: Sun, 17 Aug 2025 10:13:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] nfc: s3fwrn5: Use SHA-1 library instead of
- crypto_shash
-To: Eric Biggers <ebiggers@kernel.org>, netdev@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250815022329.28672-1-ebiggers@kernel.org>
+Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
+ <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
+ <bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
+ <20250817101121.19a86716@akair>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,22 +103,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250815022329.28672-1-ebiggers@kernel.org>
+In-Reply-To: <20250817101121.19a86716@akair>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2025 04:23, Eric Biggers wrote:
-> Now that a SHA-1 library API is available, use it instead of
-> crypto_shash.  This is simpler and faster.
+On 17/08/2025 10:11, Andreas Kemnade wrote:
+> Am Sun, 17 Aug 2025 07:58:35 +0200
+> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
 > 
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  drivers/nfc/s3fwrn5/Kconfig    |  3 +--
->  drivers/nfc/s3fwrn5/firmware.c | 17 +----------------
->  2 files changed, 2 insertions(+), 18 deletions(-)
-> 
+>> On 16/08/2025 21:19, Andreas Kemnade wrote:
+>>> Add charger driver for ROHM BD718(15/28/78) PMIC charger block.
+>>> It is a stripped down version of the driver here:
+>>> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/  
+>>
+>> Why are you duplicating the driver? Why original cannot be used?
+>>
+>>
+> I am not duplicating the driver. That patch series never went in. I am
+> stripping it down to let things go in step by step. I have also talked
+> with Sebastian about this. And he also prefers a step by step approach
+> to have it more easily reviewed.
+> I also do not have the infrastructure to test things like capacity
+> degradation over time. There is non-trivial rebasing work involved, so
+> I even do not feel confident submitting such at all.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+OK, but if you refer to other work, then also please explain why this is
+stripped down.
 
 Best regards,
 Krzysztof
