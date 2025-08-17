@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-772641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6FFB29532
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:53:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463F7B29534
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1338C3BA67B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22A07A1CE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1143B2459FB;
-	Sun, 17 Aug 2025 21:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FABE2459FB;
+	Sun, 17 Aug 2025 21:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHAhRwcR"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ/49QcH"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1EB149E17;
-	Sun, 17 Aug 2025 21:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496E2149E17;
+	Sun, 17 Aug 2025 21:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755467573; cv=none; b=bQAaXwEkOc9B4IRkQrxmAi0YO6AHNisF561NUvRkjf0TKv26OOMNEtVD3WV0vclNIFol9yRUex79B8RbOcQWRbNnuRYWBqMAjzjUK+NANo0QUABRhXiIyFNIhm8PlRnIXRZE3SS7PJmUHSyMxiRrJd5H4YODnJqbahoreQPjyVo=
+	t=1755467611; cv=none; b=gDrM6i0MWg/qwz+iMGHtD1gYNATgLTOEyf7PYULHa2/UcCaaOOoIgF5Ur5OsKu+0+Ls5pCG5EW3by4ZsrjjY9plOZMDXFwGg5Dao3yvTSDwTfIFeLKmL3WAfDl0rBeC47/Iz/kO6nKh8X6rhr27yA0Z50WRa9cQoAmTIy7Rm3Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755467573; c=relaxed/simple;
-	bh=JSAWqEaZvCzrKkYij1uGZzVtgT3IZ8ZQWNIaQ2TjScY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=USmH7d4E2pJhwcryMZi5DVb6yU0lhJeE2iSxI6pjnO1BhhEoY9LoGewUzOga57GKPtx3vMjOW5zJ848l7Ri3sdknXVZUuShz24W9TmIXrOY58llOVFA24pjo2JFVXl/rDrRgJf7vCJcA8lfNq4VFsr/vpyKJZzqLUnfH57GYTZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHAhRwcR; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1755467611; c=relaxed/simple;
+	bh=YXCWOViuEUExG1sERbqTpLIfxjyR073h8gnVrwDbKis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXxiEgTZprFARFvBGM4MOVXFdQPjBJlfBoO+7TfpAqKfBFCGZ9FEYqOeqYgaIvG0RtRlFCOGeJvUEXAcJO5wuFMw8SAmQc9fJPjRCyF309wvrZ9MOnwTop/+1gHFVonitI30P6rfJR2VWR50EpNFgV2NE9X5UheQ80tr64qaTXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJ/49QcH; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so22771245e9.0;
-        Sun, 17 Aug 2025 14:52:50 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so3165162b3a.0;
+        Sun, 17 Aug 2025 14:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755467569; x=1756072369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755467609; x=1756072409; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4/fnEGcbHPQa6LaRwLATBTPLNoN3B9wqwWCiNpBDeM=;
-        b=nHAhRwcR9QIOTA+stN05DQOeAUFPO5hLtpOwUl1IAKog8G6pQwW7kawCxniZ9eh0XP
-         5wsf/C4grnXzI6B5bs6i02Xug+2ZaJUR1F35QEjxfumyFTdjSJ5OrfdGcuvLewP0fBFW
-         JKBHvxnjIiND3dh3yGdr2rSuYjl4OBeKSyEZAb91tb3LH7dgraaMjp45OKastxRPTDq3
-         TlOEvq/YVZtQe6VOLLxhgxOZ1l3DIWbRyjDFr5n+ymu8x2mhtLy+A1iqdUFVLkHSDk0V
-         lHVUZmHeymXFDdWimADGAuYLBaDoS6rBILR3W73ecNLjMuY026eS1eRUmmLLfjhdOmTJ
-         8xCQ==
+        bh=fMFOYD7dTng51TwDNUgsmlrPl36b8E0TwBZ9PftmkPU=;
+        b=cJ/49QcHlfRhFpvSFsyDpGtb6Ka2MnJDBOJGma4T/0iXzxAfhV6jRQaXu8QurvcH5T
+         wcbFQAAM9jX8NTtaemFEL7elA2DXZ9mw321G2B9UOwlkz1brCKQrrdKubTxho8zmnH6F
+         P3Iz/TTEOxALoHEo/SYDbkFs1lxDXS70qUsvIcrruuxn5SQK5GvogJMuwEg+7Ju4vuv+
+         eG0ycXciC0Uj9jgbN6z2zaeb4efCGV3JAT+HH/WDVatu/Q4fDjeth3R+8OrBsLIalhEj
+         7wC30e9AGEF/rnPWTtcL8xRUEGcinkTLIeFSPlI64QleCqXXxJ5iSXzN+0HEDmRKuP0o
+         U8HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755467569; x=1756072369;
+        d=1e100.net; s=20230601; t=1755467609; x=1756072409;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c4/fnEGcbHPQa6LaRwLATBTPLNoN3B9wqwWCiNpBDeM=;
-        b=sIIk5Si7NvmiV1w2kqsatqLkh6D4XVaCJgqLNSMXu9HWF1VQnLcwPDci9mJ7jpPaqN
-         RnZ0fKOdyEaxAqADPQMA2Sk0uq3luQ9f0MZIBGrRiJzw+d1yI3c5s7tyP21IbLZ7NM6y
-         v9UG54LiCTnXAbgMdkQJAX68rvNPFFq882s06n1VtyQVctwYKnqaLXczgViFMKi0zgM5
-         xpb43xfX/Hur1rAfKicV03lJsYTDHDMLroMj7lqR5cy7w7lrSLVdPQHT3JkU4nrfm7Hn
-         MYuNRZuy6eK1RJBNQqJAEi1guXjbEZPfSZIXfEhWA51Lo15Zj8FPqZ6P32MzopC8Ne7m
-         BsOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Q2smfaKVVieV8sxWIPK+d4z18ANqMtYMKD0dgMQhlSpHfFDmed/66fhfGtJ5AkIXSGLwZpGHukJp@vger.kernel.org, AJvYcCVPxIzR5gQUzntncFGPnnhbIAqw7SFfbJWT4H8JIXDqY6PHdmtfpEL2vlmDa6NyY4oysq724uDz6m3QHzP4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgPj1kpcJig2zW9AJpO9xNU27rnNUGj+DdAAnOVxAjY3pCN/g/
-	dWzbscyHrXe4Jn2dNnMFN/wgrdj5WPYG/vdn4nM+z+PWPbNWdUUtvzY=
-X-Gm-Gg: ASbGncu4UQbuclhxNWxpy9jfRkObb+6YRuk2F95SFNBuvdd9KyhMuFE2LdMcp+QswU/
-	d3kKbLSmMA10GLIP5HKqUENeJFj0ms01XZeeuJss6xoLYGtAphLEg0dolA0f4v7g1cAn8Hl1AGE
-	9gDL9lCFt/f4v1FC8c4ewgAXjxS23AbHnv06cPkWc3cDldiC2MZfoz0n6mHiNeE2tQWLvMtN6JR
-	wybXLjIf7UPwuksticY2DsAZX97EHF8f+ZV90sqHz9lSWwgx8gWZGMHdU5fWcENMVX8KSM25Bqk
-	NfECRmD6I5aH5fePCztzHI7wSSCAZcbwO9sqQIFcxl0spb1sn1hIw/K7l/JrY3NX9OiDJvrE9ce
-	EWVTwL3m1gkUj9ZHmU1yphKgfOFJH2jbex53UNu3Rob/t
-X-Google-Smtp-Source: AGHT+IHj0/IFlzYMldREBmEo9qvi+sqTJlVZAWQfl7wvlSbuNfs4cTh7du6ZavLqfNRIOLznnbtSVA==
-X-Received: by 2002:a05:600c:3510:b0:459:dde3:1a56 with SMTP id 5b1f17b1804b1-45a2185789bmr59888745e9.28.1755467569107;
-        Sun, 17 Aug 2025 14:52:49 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:55e:d28f:a860:8af:5c69:4d9d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6863fc29sm10990589f8f.66.2025.08.17.14.52.48
+        bh=fMFOYD7dTng51TwDNUgsmlrPl36b8E0TwBZ9PftmkPU=;
+        b=wiTdqCRQhnTz/awwwmoEGVx10Zm7/buhGO25/1auYV756GUNFnAG7ISNbuUl8kzN3l
+         tq9gKbXmOxn23IyEb0EUCfvwhJgj1T3JRAFaIvN1NHsBtGJyGkEeSLqAtsXk9MzGRrnM
+         BTI9gotzPUc4WwK/I385GW5iB89V3N1/NBkIkAiNsAbz/rugUJVCgMGk44zHVmvlCIcD
+         CW9DtyT5rJP+5iT+FKim5HstfHBylY1xUyPtYuZM5yfYomQmtDPLXbuUbsTyDwk2/RFh
+         cXroj/IT1zh6dq+0uuMECMCQHkAiYT86PyST5iL430On/xFu+D3jAjuxF+l8+eP9MOh4
+         dqVQ==
+X-Gm-Message-State: AOJu0YyFhaUJ2vSP1veMY/XPpF/FIUaQNMZKwB1uhBaV0PhxQMKQyHVi
+	OWlbuq7W3Tigv6cK+m2mJaTyGcHuLwFfavDyFtu4tWTH1ApllTAYFRafpD/mdQ==
+X-Gm-Gg: ASbGncvAnNf+6ZxmBLMTYidyUdsGfv9F4QNC+N1uASZ41W3Djs4vIPJi1TY3vDy0Gh0
+	ebVDsUljs7LCmPzWaaS3qZJvFPb1hKjyrE+jIQAeoJ9DLV+sxWX9Xo8s/uqYKM8z0iavVIS1TMP
+	3F+gg7uf8lVWTus6zWW+RIj1cnl5xaRhAGLjk1Ny9nScfuMyz0S5uww/Tvnh0tW5XNJnLnmsV2d
+	Jen+4wFDTojzt1bWVrdQfirZbpojwtYBhnqgEeOketsqjU/078Z8LLCgUagYroCzv2qh6paOelS
+	vBrRYG5z98BzEx5+/cdgPnVuVCeQY97cv6FfadltyPNdw0W/SVLprz/5swPq9IFCMFPRoDn2Y2O
+	ncNdk3H2mG5qBGMec+goLuigaBmGUXZ/kjlaPuqVfEbrV
+X-Google-Smtp-Source: AGHT+IEodPl5+1A1HBCn8jZAoq2asWPuBXactM79Xq02VLDkl9zif4o68L0R168921SXaq7TnHWTqA==
+X-Received: by 2002:a17:903:19f0:b0:240:20a8:cc22 with SMTP id d9443c01a7336-2446bce46c0mr135081285ad.4.1755467609166;
+        Sun, 17 Aug 2025 14:53:29 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-244903222fcsm3832995ad.84.2025.08.17.14.53.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 14:52:48 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: robh@kernel.org,
-	lee@kernel.org
-Cc: peter.ujfalusi@gmail.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH v5] mfd: dt-bindings: ti,twl6040: convert to DT schema
-Date: Sun, 17 Aug 2025 23:52:34 +0200
-Message-Id: <20250817215234.50904-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Sun, 17 Aug 2025 14:53:28 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Eric Miao <eric.y.miao@gmail.com>
+Subject: [PATCH 1/3] Input: pxa27x-keypad - replace uint32_t with u32
+Date: Sun, 17 Aug 2025 14:53:13 -0700
+Message-ID: <20250817215316.1872689-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,295 +86,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the legacy TXT binding for the TWL6040 MFD to the modern YAML
-DT schema format. This adds formal validation and improves documentation
-for the TWL6040/TWL6041 audio codec, which provides audio, vibra, and GPO
-functionality on OMAP4+ platforms.
+u32 is preferred way to refer to unsigned 32 bit values in the kernel,
+use it instead of uint32_t.
 
-Key changes:
-
- - Dropped usage of the 'twl6040,audpwron-gpio' property from the schema
-   as it is not used by the driver.
- - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
-   the original binding's "and/or" phrasing, which allows clk32k, mclk,
-   or both.
- - Updated node name to 'audio-codec@4b' to follow generic naming
-   conventions per the Device Tree specification.
- - Replaced raw interrupt values with standard defines for clarity.
-
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
-Changes in v5:
- - Add missing changelogs
+ drivers/input/keyboard/pxa27x_keypad.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Changes in v4:
- - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
-   the original binding's "and/or" phrasing, which sould allow either
-   clk32k, mclk, or both.
- - Updated node name to 'audio-codec@4b' to follow generic naming
-   conventions per the Device Tree specification.
- - Replaced raw interrupt values with standard defines for clarity.
- - Added clock properties to the example.
-
-Changes in v3:
- - Drop usage of The unused 'twl6040,audpwron-gpio' property from the
-   schema as it is not used by the driver.
- - This patch was originally part of a larger series but has been
-   sent separately per maintainer feedback.
-   v2 (origial patch series) link:
-   https://lore.kernel.org/all/20250814132129.138943-3-jihed.chaibi.dev@gmail.com
-
-Changes in v2:
- - Renamed twl6040,audpwron-gpio to ti,audpwron-gpio for consistency
-   with TI naming, this fixes the dt_binding_check vendor name  error.
- - Minor description clarifications for improved readability.
-
-Changes in v1:
- - Initial conversion of twl6040.txt to YAML format.
- - v1 link :
-   https://lore.kernel.org/all/20250811224739.53869-3-jihed.chaibi.dev@gmail.com/
----
- .../devicetree/bindings/mfd/ti,twl6040.yaml   | 154 ++++++++++++++++++
- .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
- 2 files changed, 154 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
-new file mode 100644
-index 000000000..20865575f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
-@@ -0,0 +1,154 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ti,twl6040.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments TWL6040/TWL6041 Audio Codec
-+
-+maintainers:
-+  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
-+
-+description:
-+  The TWL6040s are 8-channel high quality low-power audio codecs providing
-+  audio, vibra and GPO functionality on OMAP4+ platforms.
-+  They are connected to the host processor via i2c for commands, McPDM for
-+  audio data and commands.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,twl6040
-+      - ti,twl6041
-+
-+  reg:
-+    const: 0x4b
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 1
-+
-+  '#clock-cells':
-+    description: TWL6040 is a provider of PDMCLK which is used by McPDM.
-+    const: 0
-+
-+  vio-supply:
-+    description: Regulator for the VIO supply.
-+
-+  v2v1-supply:
-+    description: Regulator for the V2V1 supply.
-+
-+  enable-active-high:
-+    type: boolean
-+    description: If present, powers on the device during boot.
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+    description: Phandle to the clk32k and/or mclk clock providers.
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      enum: [clk32k, mclk]
-+
-+  # Vibra functionality :
-+
-+  vddvibl-supply:
-+    description: Regulator for the left vibra motor supply.
-+
-+  vddvibr-supply:
-+    description: Regulator for the right vibra motor supply.
-+
-+  vibra:
-+    type: object
-+    description: Node for vibra motor configuration parameters.
-+    properties:
-+      ti,vibldrv-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the left driver.
-+
-+      ti,vibrdrv-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the right driver.
-+
-+      ti,viblmotor-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the left motor.
-+
-+      ti,vibrmotor-res:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Resistance parameter for the right motor.
-+
-+      vddvibl_uV:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Optional override for the VDDVIBL default voltage (in uV).
-+
-+      vddvibr_uV:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Optional override for the VDDVIBR default voltage (in uV).
-+    required:
-+      - ti,vibldrv-res
-+      - ti,vibrdrv-res
-+      - ti,viblmotor-res
-+      - ti,vibrmotor-res
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - '#clock-cells'
-+  - vio-supply
-+  - v2v1-supply
-+  - vddvibl-supply
-+  - vddvibr-supply
-+  - vibra
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      audio-codec@4b {
-+        compatible = "ti,twl6040";
-+        reg = <0x4b>;
-+
-+        interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-parent = <&gic>;
-+
-+        gpio-controller;
-+        #gpio-cells = <1>;
-+        #clock-cells = <0>;
-+
-+        vio-supply = <&v1v8>;
-+        v2v1-supply = <&v2v1>;
-+        enable-active-high;
-+
-+        clocks = <&clk32k>;
-+        clock-names = "clk32k";
-+
-+        /* regulators for vibra motor */
-+        vddvibl-supply = <&vbat>;
-+        vddvibr-supply = <&vbat>;
-+
-+        vibra {
-+          /* Vibra driver, motor resistance parameters */
-+          ti,vibldrv-res = <8>;
-+          ti,vibrdrv-res = <3>;
-+          ti,viblmotor-res = <10>;
-+          ti,vibrmotor-res = <10>;
-+        };
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
-deleted file mode 100644
-index dfd8683ed..000000000
---- a/Documentation/devicetree/bindings/mfd/twl6040.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--Texas Instruments TWL6040 family
--
--The TWL6040s are 8-channel high quality low-power audio codecs providing audio,
--vibra and GPO functionality on OMAP4+ platforms.
--They are connected to the host processor via i2c for commands, McPDM for audio
--data and commands.
--
--Required properties:
--- compatible : "ti,twl6040" for twl6040, "ti,twl6041" for twl6041
--- reg: must be 0x4b for i2c address
--- interrupts: twl6040 has one interrupt line connecteded to the main SoC
--- gpio-controller:
--- #gpio-cells = <1>: twl6040 provides GPO lines.
--- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
--- twl6040,audpwron-gpio: Power on GPIO line for the twl6040
--
--- vio-supply: Regulator for the twl6040 VIO supply
--- v2v1-supply: Regulator for the twl6040 V2V1 supply
--
--Optional properties, nodes:
--- enable-active-high: To power on the twl6040 during boot.
--- clocks: phandle to the clk32k and/or to mclk clock provider
--- clock-names: Must be "clk32k" for the 32K clock and "mclk" for the MCLK.
--
--Vibra functionality
--Required properties:
--- vddvibl-supply: Regulator for the left vibra motor
--- vddvibr-supply: Regulator for the right vibra motor
--- vibra { }: Configuration section for vibra parameters containing the following
--	     properties:
--- ti,vibldrv-res: Resistance parameter for left driver
--- ti,vibrdrv-res: Resistance parameter for right driver
--- ti,viblmotor-res: Resistance parameter for left motor
--- ti,viblmotor-res: Resistance parameter for right motor
--
--Optional properties within vibra { } section:
--- vddvibl_uV: If the vddvibl default voltage need to be changed
--- vddvibr_uV: If the vddvibr default voltage need to be changed
--
--Example:
--&i2c1 {
--	twl6040: twl@4b {
--		compatible = "ti,twl6040";
--
--		interrupts = <0 119 4>;
--		interrupt-parent = <&gic>;
--		twl6040,audpwron-gpio = <&gpio4 31 0>;
--
--		vio-supply = <&v1v8>;
--		v2v1-supply = <&v2v1>;
--		enable-active-high;
--
--		/* regulators for vibra motor */
--		vddvibl-supply = <&vbat>;
--		vddvibr-supply = <&vbat>;
--
--		vibra {
--			/* Vibra driver, motor resistance parameters */
--			ti,vibldrv-res = <8>;
--			ti,vibrdrv-res = <3>;
--			ti,viblmotor-res = <10>;
--			ti,vibrmotor-res = <10>;
--		};
--	};
--};
--
--/include/ "twl6040.dtsi"
+diff --git a/drivers/input/keyboard/pxa27x_keypad.c b/drivers/input/keyboard/pxa27x_keypad.c
+index d4eb839ffbf5..995e4e227581 100644
+--- a/drivers/input/keyboard/pxa27x_keypad.c
++++ b/drivers/input/keyboard/pxa27x_keypad.c
+@@ -108,8 +108,8 @@ struct pxa27x_keypad {
+ 	unsigned int row_shift;
+ 
+ 	/* state row bits of each column scan */
+-	uint32_t matrix_key_state[MAX_MATRIX_KEY_COLS];
+-	uint32_t direct_key_state;
++	u32 matrix_key_state[MAX_MATRIX_KEY_COLS];
++	u32 direct_key_state;
+ 
+ 	unsigned int direct_key_mask;
+ };
+@@ -410,8 +410,8 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
+ 	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 	int row, col, num_keys_pressed = 0;
+-	uint32_t new_state[MAX_MATRIX_KEY_COLS];
+-	uint32_t kpas = keypad_readl(KPAS);
++	u32 new_state[MAX_MATRIX_KEY_COLS];
++	u32 kpas = keypad_readl(KPAS);
+ 
+ 	num_keys_pressed = KPAS_MUKP(kpas);
+ 
+@@ -434,10 +434,10 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
+ 	}
+ 
+ 	if (num_keys_pressed > 1) {
+-		uint32_t kpasmkp0 = keypad_readl(KPASMKP0);
+-		uint32_t kpasmkp1 = keypad_readl(KPASMKP1);
+-		uint32_t kpasmkp2 = keypad_readl(KPASMKP2);
+-		uint32_t kpasmkp3 = keypad_readl(KPASMKP3);
++		u32 kpasmkp0 = keypad_readl(KPASMKP0);
++		u32 kpasmkp1 = keypad_readl(KPASMKP1);
++		u32 kpasmkp2 = keypad_readl(KPASMKP2);
++		u32 kpasmkp3 = keypad_readl(KPASMKP3);
+ 
+ 		new_state[0] = kpasmkp0 & KPASMKP_MKC_MASK;
+ 		new_state[1] = (kpasmkp0 >> 16) & KPASMKP_MKC_MASK;
+@@ -450,7 +450,7 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
+ 	}
+ scan:
+ 	for (col = 0; col < pdata->matrix_key_cols; col++) {
+-		uint32_t bits_changed;
++		u32 bits_changed;
+ 		int code;
+ 
+ 		bits_changed = keypad->matrix_key_state[col] ^ new_state[col];
+@@ -474,7 +474,7 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
+ 
+ #define DEFAULT_KPREC	(0x007f007f)
+ 
+-static inline int rotary_delta(uint32_t kprec)
++static inline int rotary_delta(u32 kprec)
+ {
+ 	if (kprec & KPREC_OF0)
+ 		return (kprec & 0xff) + 0x7f;
+@@ -511,7 +511,7 @@ static void report_rotary_event(struct pxa27x_keypad *keypad, int r, int delta)
+ static void pxa27x_keypad_scan_rotary(struct pxa27x_keypad *keypad)
+ {
+ 	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
+-	uint32_t kprec;
++	u32 kprec;
+ 
+ 	/* read and reset to default count value */
+ 	kprec = keypad_readl(KPREC);
+@@ -529,7 +529,7 @@ static void pxa27x_keypad_scan_direct(struct pxa27x_keypad *keypad)
+ 	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 	unsigned int new_state;
+-	uint32_t kpdk, bits_changed;
++	u32 kpdk, bits_changed;
+ 	int i;
+ 
+ 	kpdk = keypad_readl(KPDK);
 -- 
-2.39.5
+2.51.0.rc1.163.g2494970778-goog
 
 
