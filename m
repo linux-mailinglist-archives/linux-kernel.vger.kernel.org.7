@@ -1,244 +1,573 @@
-Return-Path: <linux-kernel+bounces-772649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6ABB2959D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0286BB295A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90D51964DAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F2E2026E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4602D2376FC;
-	Sun, 17 Aug 2025 22:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF83C136358;
+	Sun, 17 Aug 2025 23:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B765snAx"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WUz8L9Pn"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160A02236F7;
-	Sun, 17 Aug 2025 22:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AF63176F1
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 23:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755470866; cv=none; b=YfCyMea+UQVcpH5WIPyjqSnieD/sGHzBBJvDhLCjVG/kKk0+m67Njv9wk1EYi6G/KwJ0qIg3RjqsVqsxDdNPQl6I47ZxVo1A0pLuHVTtkfJsKaAvgISRtwzOuak+BHPFjxdKyAOqPjjIdg06Y6VRvItHMIuX9RSZKA7rjKIHXA4=
+	t=1755471684; cv=none; b=us2xLRp3Qivhml31WxPAWP/yX2eahPUyCnIpzlPnjXsDerUYc3ycMVKD5S0nDQ5JTqwo+HtyzX0KVyhhMalGFIvl/LCgN+y4Ywfe8PFAS7p1UxSreuoQPH4hcikfgZzP5DTzcnMgwTkNSUuj+xWEpLxmI0cgr6u5+dBDVQGH/fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755470866; c=relaxed/simple;
-	bh=ed8XvC5O8aK1Mynuk6bERZOlPdQE+5MQ2uchyNYhyvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kfm3tHRntbXzz6IIaf3ETAcTtSY6lT4g1PRRPi/IDyc7GDAbrFLbMq81e/TvLC0EIZmhVSeQEw8xJQPYhuSQGpcGz2JgTCVakDYxG8aiJCH/7Q8qUXekkFgKM4d8UNgHsOkrq5c0PoUxgdcVe07ehR/iX2SWwLCuwMkYqlEor3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B765snAx; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea79219so4016392b3a.2;
-        Sun, 17 Aug 2025 15:47:44 -0700 (PDT)
+	s=arc-20240116; t=1755471684; c=relaxed/simple;
+	bh=Fn4C4wXPrkcXJRy0T94ibXqlhbchhBNDB7NSq25GYB0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=dcLujVPoUMEumPUw8x+A8Cbxv5U46Q940/L9DtyOfg6exAA/xKPDlzio0NHGGxuftc5yFQbX0GCDLokC7vHwcl+8pK7MXDBoBvxFv8uZfnccH+ZAYoHuXrrZNlBRB/GX3v6QmxGhchxHEa7jMN838A74ed6uHhjYRQa7qCaUWqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WUz8L9Pn; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb78da8a7so576267966b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755470864; x=1756075664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PNa2Zj6/Px4am483RWwOJO2UkcFvpKOXS+fsWLIJ0BM=;
-        b=B765snAxodVGIeGlwk34uEri7c85oN3rm/xfqdozBLgZBIiYzC8nzR7pt69IUmk7qX
-         N5YpVaB0P1PCSFVcgu5hyp+3HoHusPS2SNHkM2zffQgVJmz93Lq/e4nhNg6G39OCUKNl
-         wWrPraODcElpDaHPMOkWukktz0lhVASYPAKelQB6pIwXYBYgKY0i+Ba+gqcNon6fCW6+
-         fAq61/ehXA5x0g1ZBQUplCFyLptMa5S+PqB7seAZtEZ3zJfn4H3krBHq65E2STDvMxa6
-         d1pcP4yIrHVr8oRvwvO5wEB2myCKi00miHWHgLPWoYqQP4e9z2WU3//oUOEUFsym58Bu
-         3tcQ==
+        d=linux-foundation.org; s=google; t=1755471679; x=1756076479; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4emL4sl8it/o7ZuzgRaLQHdjwzQ9s3HbLDKZ6uMKxc0=;
+        b=WUz8L9PnnQMcbSgDq6/7QvYKIB7H4e3b3wg7Zryx0G/gRF7+sAlpG91xHKNqaoTxHq
+         0EnjBaSOiGfMcuZ908SrDSJPHkSxWSATE+n7c1wRupMAxl6luCUdTPiOJZv/qIM4wpTh
+         V2nf7vUOiiQyj8uyX/mEtzT97nnG2hInALlPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755470864; x=1756075664;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PNa2Zj6/Px4am483RWwOJO2UkcFvpKOXS+fsWLIJ0BM=;
-        b=AJb08spIwzECU+P08CRe9PK51CaVXVyDu74Htm3hBSJBIaVWA/Z5/cyrZAe93ohG1t
-         imgAOyKx94MGHyMw2pGSasicxI9dIa1xFlGnNzk3182WpoaN8dqm2xKQ/OWmVZILbjwK
-         m5km3KCP3mq1IRmK1ZRYkPRte5YEIbCaMORRcQFLF8zFIKhrh0DpgIi8By+5+OdhiERq
-         et04Rg4jQH+tF+hNE9hd3ZkoOcvC6d7usS73QtR+KUTiD8wq4RgnR/E6CAq5bRzivSer
-         LJdFTM1VpnHl2UxtZvG2BphF8isCRoFqntTfd3xNr2+FC6MzJEEXnWt1AR6c5fNY9Ep5
-         +w5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNUZ7Eaow4d64VzKyiApEziwi60aYCvX2hmKOYnjfcHq/7mDo4RDSyWbgqC1jBIM63LukzWIxVma7muw==@vger.kernel.org, AJvYcCUdadLvf2fFrPxHiKZBhfI20rtuQQQF7tBwayWhfRcZoqnjKargLrr1Mvt1nzf+Ofxuf2Zp8EVFTZs3Ch+j@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzrWQrYsjdGgninZ6458RDARDu/JjcckIQY+DjH19STt6h0iOR
-	4GZdAJVbAq65GqvN3Ha1qKQqKv0B0nxr115S2fZHDtTdecVzSnNwGitB
-X-Gm-Gg: ASbGncuslkM8FSNaVJxT8qhZM13co1QqANKN/IfZx+1TEGH6/IT8REFrEyk1tbJ8jjv
-	1Li2rYqyVs9gcpdgRkBhOBxxqYU9bZArADlluvjy5Qc+UzAKornDasjBXNDl31l8CRiwtSD3/Cs
-	3x4ciexyGXabF/36CldojyYDImQm+ipMrwGc7Yn/ThrjcnqNENICn8qTlWOQt0MiniuFk9BG1QA
-	+qAp8Bhjj5Rd6suwVZv+YTBRku30odRohdydwskGMKfhEJ0PFn0tg5Km0CdJMn8jewDZb4XDEzT
-	ysnstzbA06BfaUPvJOLQ6P2HVslj3RJ/vcq7zLU0/eHe4xXm1+X6lS1VXCbjcqnlAEo59AD3hsy
-	Mpp8BZVHohxdHMiVYhUuZLqQ669TyAXGWhG6J4l6PwEJW
-X-Google-Smtp-Source: AGHT+IEe7ZKMvCboWtdT/PjB9ev9bvUSxEnvRdhcIITRdD6jebDPm1UVFIhhOSMuHtQRz2/d1hh62g==
-X-Received: by 2002:a17:902:ea03:b0:240:3dbb:7603 with SMTP id d9443c01a7336-2446d713295mr137721165ad.19.1755470864256;
-        Sun, 17 Aug 2025 15:47:44 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5792f1sm62741795ad.155.2025.08.17.15.47.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 15:47:43 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Lee Jones <lee@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] mfd: rohm-bd718x7: Use software nodes for gpio-keys
-Date: Sun, 17 Aug 2025 15:47:28 -0700
-Message-ID: <20250817224731.1911207-3-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-In-Reply-To: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
-References: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
+        d=1e100.net; s=20230601; t=1755471679; x=1756076479;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4emL4sl8it/o7ZuzgRaLQHdjwzQ9s3HbLDKZ6uMKxc0=;
+        b=hQvF1EjNFQ76PZ4f4KyYnJtTh2mzoq2sZcnXXPg5nl10J8vC0HY5CxdCK9J8vlQeMq
+         tGtoz7F3TprhiCrqrr9bDwBcxpqPz7YTeeIv3WJglnTc2oy1Hp36ZfMrRZHTwtsxzMjZ
+         ycpeD2n1AlO83hDs/U1l1/VXz+Bvre5OugBAqLrHdkz8NWr9/e0GT7IGy8oIS9fCdpmH
+         p8XyGaXjGx7FA3pCze9IOgEZMhKD5GNUjQE72IJ0V+8j+bglgttCMxgZDynIfYWxsrkm
+         cbf5oUM5qZMwOPb7r2qogjFvmjImzxnch5Llah07QLRiPEfUl7SaB+7j1vu1luuF+W8t
+         m0aQ==
+X-Gm-Message-State: AOJu0YxQKWymSbGIsRh0kBlGmdu5VO1rmS0NGgjDOYEOnJEeYnAvjl49
+	ge3AZJv2MUiw5lnnRjIdUxTrMULCfnWFEflRMa10Qu5VJN8eLY4BRScX4eGQiYhU+oN4RN4wIg3
+	7eTd4Ggo=
+X-Gm-Gg: ASbGncs8/ln3uRwW+xqLxDmCSuFtfo3wtu6Z83IvjP3qLqSTHCHDiuw65lJIMlR1oIt
+	OHpu9y7jcfu0a1TYo9esJTNN6fIUNFxvZ6FGk54ujoR5vXbTnH/Itiyi2D+n3PiP5GcsgbZZKhU
+	gRpgXfKGo0R7o9SIjTPM1PW9VyO95RlfeNgiVZEOg8FqrXqGbiTBImy+s2VGAIqrqbcSPXhijuo
+	FCvmLRPGxnYBoaLwTKgGfk82Qb9GNwn7N+cMAlMMnYbll0PA9mEujFnFSsjB1KVrvthoDlo3pGb
+	X59SBV/PaHKTzu7btf9mJCcHP6JZO8co5KqiWDzbb9Hw2eEb1xWjQZO7TDDKk1DqdnHPBDEz/bl
+	/lM4ARt3ZDX3TdBvVyAFHMP4OcYuD1qhEpmsn9V1XdQor6zlIzN5AkOOYHwPnrVJqTUzWng51Ti
+	HKzSJbXv0=
+X-Google-Smtp-Source: AGHT+IG1/WjSvmabpzTQAQ312dJv7/RgELr+TIv3E4YtiEIQbeT29bjhJ789/gZoPo+qlMnlSbi1TQ==
+X-Received: by 2002:a17:907:2d1e:b0:af9:b1c7:844d with SMTP id a640c23a62f3a-afcdc412874mr908772066b.52.1755471678915;
+        Sun, 17 Aug 2025 16:01:18 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce9edbesm670065566b.58.2025.08.17.16.01.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 16:01:18 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-619ff42ae79so2083883a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:01:18 -0700 (PDT)
+X-Received: by 2002:a05:6402:2686:b0:618:6af8:3f71 with SMTP id
+ 4fb4d7f45d1cf-618b05322cfmr7042205a12.9.1755471676844; Sun, 17 Aug 2025
+ 16:01:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 17 Aug 2025 16:01:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiLHgdvJQkEW-pHcUuXOBJ9JOoKcZkzMaPSW60_-Mh90A@mail.gmail.com>
+X-Gm-Features: Ac12FXwi3VdbKIYkK85D8-V39loWQ1nLj5IytoYaIsrQkIJisM4Ebs8k2fvWXK4
+Message-ID: <CAHk-=wiLHgdvJQkEW-pHcUuXOBJ9JOoKcZkzMaPSW60_-Mh90A@mail.gmail.com>
+Subject: Linux 6.17-rc2
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Refactor the rohm-bd7182x7 MFD driver to use software nodes for
-instantiating the gpio-keys child device, replacing the old
-platform_data mechanism.
+So it's been a very calm week, and this is one of the smaller rc2
+releases we've had lately. I'm definitely not complaining, since I've
+been jetlagged much of the week, but I have this suspicion that it
+just means that next week will see more noise. And I'll be traveling
+again later in the week.
 
-The power key's properties are now defined using software nodes and
-property entries. The IRQ is passed as a resource attached to the
-platform device.
+But hey, let's not be pessimistic. Maybe rc2 is small because this
+merge window just didn't have any real issues? Because that's bound to
+happen _eventually_, right?  One day we're bound to hit that mythical
+merge window that doesn't introduce any bugs at all.
 
-This will allow dropping support for using platform data for configuring
-gpio-keys in the future.
+This merge window wasn't _that_ good, but maybe it was simply better than m=
+ost?
+
+Or maybe it's that much of Europe is still on vacation because it's August?
+
+Anyway, most of the fixes in rc2 were to drivers - particularly block
+(although the biggest chunk of that was simply a removal of the drbd
+page pool code). The rest is mostly gpu, networking driver, and sound
+fixes. Some SCSI and firewire fixes too.
+
+Outside of drivers, it's filesystems (smb, xfs, erofs, btrfs), core
+networking (including some new selftests), and some architecture fixes
+(mainly x86).
+
+Other than that, minor random fixes. Shortlog appended.
+
+Let's hope next week ends up as quiet. Wouldn't that be nice?
+
+        Linus
+
 ---
- drivers/mfd/rohm-bd718x7.c | 76 ++++++++++++++++++++++++++++++--------
- 1 file changed, 60 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-index 25e494a93d48..20150656ac9c 100644
---- a/drivers/mfd/rohm-bd718x7.c
-+++ b/drivers/mfd/rohm-bd718x7.c
-@@ -7,7 +7,6 @@
- // Datasheet for BD71837MWV available from
- // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
- 
--#include <linux/gpio_keys.h>
- #include <linux/i2c.h>
- #include <linux/input.h>
- #include <linux/interrupt.h>
-@@ -15,26 +14,41 @@
- #include <linux/mfd/core.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/types.h>
- 
--static struct gpio_keys_button button = {
--	.code = KEY_POWER,
--	.gpio = -1,
--	.type = EV_KEY,
-+static const struct software_node bd718xx_pwrkey_node = {
-+	.name = "bd718xx-power-key",
- };
- 
--static struct gpio_keys_platform_data bd718xx_powerkey_data = {
--	.buttons = &button,
--	.nbuttons = 1,
--	.name = "bd718xx-pwrkey",
-+static const struct property_entry bd718xx_powerkey_props[] = {
-+	PROPERTY_ENTRY_U32("linux,code", KEY_POWER),
-+	PROPERTY_ENTRY_STRING("label", "bd718xx-pwrkey"),
-+	{ }
-+};
-+
-+static const struct software_node bd718xx_powerkey_key_node = {
-+	.properties = bd718xx_powerkey_props,
-+	.parent = &bd718xx_pwrkey_node,
-+};
-+
-+static const struct software_node *bd718xx_swnodes[] = {
-+	&bd718xx_pwrkey_node,
-+	&bd718xx_powerkey_key_node,
-+	NULL,
-+};
-+
-+static struct resource bd718xx_powerkey_irq_resources[] = {
-+	DEFINE_RES_IRQ_NAMED(BD718XX_INT_PWRBTN_S, "bd718xx-pwrkey"),
- };
- 
- static struct mfd_cell bd71837_mfd_cells[] = {
- 	{
- 		.name = "gpio-keys",
--		.platform_data = &bd718xx_powerkey_data,
--		.pdata_size = sizeof(bd718xx_powerkey_data),
-+		.swnode = &bd718xx_pwrkey_node,
-+		.resources = bd718xx_powerkey_irq_resources,
-+		.num_resources = ARRAY_SIZE(bd718xx_powerkey_irq_resources),
- 	},
- 	{ .name = "bd71837-clk", },
- 	{ .name = "bd71837-pmic", },
-@@ -43,8 +57,9 @@ static struct mfd_cell bd71837_mfd_cells[] = {
- static struct mfd_cell bd71847_mfd_cells[] = {
- 	{
- 		.name = "gpio-keys",
--		.platform_data = &bd718xx_powerkey_data,
--		.pdata_size = sizeof(bd718xx_powerkey_data),
-+		.swnode = &bd718xx_pwrkey_node,
-+		.resources = bd718xx_powerkey_irq_resources,
-+		.num_resources = ARRAY_SIZE(bd718xx_powerkey_irq_resources),
- 	},
- 	{ .name = "bd71847-clk", },
- 	{ .name = "bd71847-pmic", },
-@@ -126,6 +141,30 @@ static int bd718xx_init_press_duration(struct regmap *regmap,
- 	return 0;
- }
- 
-+static int bd718xx_reg_cnt;
-+
-+static int bd718xx_i2c_register_swnodes(void)
-+{
-+	int error;
-+
-+	if (bd718xx_reg_cnt == 0) {
-+		error = software_node_register_node_group(bd718xx_swnodes);
-+		if (error)
-+			return error;
-+	}
-+
-+	bd718xx_reg_cnt++;
-+	return 0;
-+}
-+
-+static void bd718xx_i2c_unregister_swnodes(void *dummy)
-+{
-+	if (bd718xx_reg_cnt != 0) {
-+		software_node_unregister_node_group(bd718xx_swnodes);
-+		bd718xx_reg_cnt--;
-+	}
-+}
-+
- static int bd718xx_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regmap *regmap;
-@@ -170,13 +209,18 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c)
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_irq_get_virq(irq_data, BD718XX_INT_PWRBTN_S);
-+	ret = bd718xx_i2c_register_swnodes();
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret, "Failed to register swnodes\n");
-+
-+	ret = devm_add_action_or_reset(&i2c->dev, bd718xx_i2c_unregister_swnodes, NULL);
-+	if (ret)
-+		return ret;
- 
-+	ret = regmap_irq_get_virq(irq_data, BD718XX_INT_PWRBTN_S);
- 	if (ret < 0)
- 		return dev_err_probe(&i2c->dev, ret, "Failed to get the IRQ\n");
- 
--	button.irq = ret;
--
- 	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
- 				   mfd, cells, NULL, 0,
- 				   regmap_irq_get_domain(irq_data));
--- 
-2.51.0.rc1.163.g2494970778-goog
+Adri=C3=A1n Larumbe (1):
+      drm/panfrost: Print RSS for tiler heap BO's in debugfs GEMS file
 
+Ahmed S. Darwish (1):
+      x86/cpuid: Remove transitional <asm/cpuid.h> header
+
+Al Viro (1):
+      habanalabs: fix UAF in export_dmabuf()
+
+Alexey Klimov (1):
+      ASoC: codecs: tx-macro: correct tx_macro_component_drv name
+
+Alok Tiwari (1):
+      net: ti: icss-iep: Fix incorrect type for return value in extts_enabl=
+e()
+
+Andrey Albershteyn (1):
+      xfs: fix scrub trace with null pointer in quotacheck
+
+Andy Yan (1):
+      drm/bridge: Describe the newly introduced drm_connector
+parameter for drm_bridge_detect
+
+Armin Wolf (1):
+      ACPI: EC: Relax sanity check of the ECDT ID string
+
+Arnd Bergmann (1):
+      netfilter: add back NETFILTER_XTABLES dependencies
+
+Baojun Xu (2):
+      ASoC: tas2781: Normalize the volume kcontrol name
+      ALSA: hda/tas2781: Normalize the volume kcontrol name
+
+Barry Song (1):
+      mm: fix the race between collapse and PT_RECLAIM under per-vma lock
+
+Boris Burkov (1):
+      btrfs: fix iteration bug in __qgroup_excl_accounting()
+
+Breno Leitao (1):
+      mm/kmemleak: avoid deadlock by moving pr_warn() outside kmemleak_lock
+
+Buday Csaba (1):
+      net: mdiobus: release reset_gpio in mdiobus_unregister_device()
+
+Budimir Markovic (1):
+      vsock: Do not allow binding to VMADDR_PORT_ANY
+
+Caleb Sander Mateos (1):
+      ublk: check for unprivileged daemon on each I/O fetch
+
+Christoph Hellwig (4):
+      xfs: fix frozen file system assert in xfs_trans_alloc
+      xfs: fully decouple XFS_IBULK* flags from XFS_IWALK* flags
+      xfs: remove XFS_IBULK_SAME_AG
+      xfs: split xfs_zone_record_blocks
+
+Christopher Eby (1):
+      ALSA: hda/realtek: Add Framework Laptop 13 (AMD Ryzen AI 300) to quir=
+ks
+
+Clark Wang (1):
+      net: phy: nxp-c45-tja11xx: fix the PHY ID mismatch issue when using C=
+45
+
+Colin Ian King (3):
+      scsi: scsi_debug: Make read-only arrays static const
+      ASoC: codec: sma1307: replace spelling mistake with new error message
+      ASoC: tas2781: Fix spelling mistake "dismatch" -> "mismatch"
+
+Damien Le Moal (2):
+      scsi: core: sysfs: Correct sysfs attributes access rights
+      ata: libata-eh: Fix link state check for IDE/PATA ports
+
+Dan Carpenter (1):
+      netfilter: conntrack: clean up returns in
+nf_conntrack_log_invalid_sysctl()
+
+Dave Hansen (4):
+      MAINTAINERS: Mark Intel WWAN IOSM driver as orphaned
+      MAINTAINERS: Mark Intel PTP DFL ToD as orphaned
+      MAINTAINERS: Remove bouncing T7XX reviewer
+      MAINTAINERS: Remove bouncing kprobes maintainer
+
+David Howells (1):
+      cifs: Fix collect_sample() to handle any iterator type
+
+David Kaplan (1):
+      x86/bugs: Select best SRSO mitigation
+
+David Thompson (2):
+      Revert "gpio: mlxbf3: only get IRQ for device instance 0"
+      gpio: mlxbf3: use platform_get_irq_optional()
+
+David Wei (1):
+      bnxt: fill data page pool with frags if PAGE_SIZE > BNXT_RX_PAGE_SIZE
+
+Davide Caratti (2):
+      net/sched: ets: use old 'nbands' while purging unused classes
+      selftests: net/forwarding: test purge of active DWRR classes
+
+Dev Jain (1):
+      mm: pass page directly instead of using folio_page
+
+Dmitry Antipov (1):
+      cifs: avoid extra calls to strlen() in cifs_get_spnego_key()
+
+Dmitry Baryshkov (1):
+      drm/bridge: document HDMI CEC callbacks
+
+Erick Karanja (1):
+      Docs: admin-guide: Correct spelling mistake
+
+Fabio Porcedda (1):
+      net: usb: qmi_wwan: add Telit Cinterion FN990A w/audio composition
+
+Fengnan Chang (1):
+      io_uring/io-wq: add check free worker before create new worker
+
+Filipe Manana (1):
+      btrfs: error on missing block group when unaccounting log tree
+extent buffers
+
+Florian Westphal (5):
+      MAINTAINERS: resurrect my netfilter maintainer entry
+      netfilter: ctnetlink: fix refcount leak on table dump
+      netfilter: ctnetlink: remove refcounting in expectation dumpers
+      netfilter: nft_set_pipapo: don't return bogus extension pointer
+      netfilter: nft_set_pipapo: fix null deref for empty set
+
+Frank Min (1):
+      drm/amdgpu: Add PSP fw version check for fw reserve GFX command
+
+Frederic Weisbecker (2):
+      rcu: Fix racy re-initialization of irq_work causing hangs
+      ipvs: Fix estimator kthreads preferred affinity
+
+Fushuai Wang (1):
+      x86/fpu: Fix NULL dereference in avx512_status()
+
+Gao Xiang (1):
+      erofs: fix block count report when 48-bit layout is on
+
+Geert Uytterhoeven (1):
+      erofs: Do not select tristate symbols from bool symbols
+
+Haiyang Zhang (1):
+      hv_netvsc: Fix panic during namespace deletion with VF
+
+Igor Pylypiv (1):
+      ata: libata-scsi: Fix CDL control
+
+Imre Deak (3):
+      drm/omap: Pass along the format info from .fb_create() to
+drm_helper_mode_fill_fb_struct()
+      drm/nouveau: Pass along the format info from .fb_create() to
+drm_helper_mode_fill_fb_struct()
+      drm/radeon: Pass along the format info from .fb_create() to
+drm_helper_mode_fill_fb_struct()
+
+Jack Xiao (1):
+      drm/amdgpu: fix incorrect vm flags to map bo
+
+Jakub Kicinski (6):
+      net: page_pool: allow enabling recycling late, fix false positive war=
+ning
+      selftests: drv-net: don't assume device has only 2 queues
+      net: update NAPI threaded config even for disabled NAPIs
+      net: prevent deadlocks when enabling NAPIs with mixed kthread config
+      tls: handle data disappearing from under the TLS ULP
+      selftests: tls: test TCP stealing data from under the TLS socket
+
+Jann Horn (1):
+      kasan/test: fix protection against compiler elision
+
+Jean Delvare (1):
+      scsi: lpfc: Fix wrong function reference in a comment
+
+Jedrzej Jagielski (2):
+      devlink: let driver opt out of automatic phys_port_name generation
+      ixgbe: prevent from unwanted interface name changes
+
+Jeff Layton (2):
+      nfsd: don't set the ctime on delegated atime updates
+      ref_tracker: use %p instead of %px in debugfs dentry name
+
+Jens Axboe (1):
+      io_uring/net: commit partial buffers on retry
+
+Jeongjun Park (1):
+      ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
+
+Jialin Wang (1):
+      proc: proc_maps_open allow proc_mem_open to return NULL
+
+Jiasheng Jiang (1):
+      scsi: lpfc: Remove redundant assignment to avoid memory leak
+
+Jijie Shao (3):
+      net: hibmcge: fix rtnl deadlock issue
+      net: hibmcge: fix the division by zero issue
+      net: hibmcge: fix the np_link_fail error reporting issue
+
+Jinjiang Tu (2):
+      mm/smaps: fix race between smaps_hugetlb_range and migration
+      fs/proc/task_mmu: hold PTL in pagemap_hugetlb_range and
+gather_hugetlb_stats
+
+Johan Hovold (1):
+      drm/bridge: fix OF node leak
+
+John Garry (3):
+      fs/dax: Reject IOCB_ATOMIC in dax_iomap_rw()
+      xfs: disallow atomic writes on DAX
+      xfs: reject max_atomic_write mount option for no reflink
+
+John Stultz (1):
+      locking: Fix __clear_task_blocked_on() warning from
+__ww_mutex_wound() path
+
+Jon Hunter (1):
+      soc/tegra: pmc: Ensure power-domains are in a known state
+
+Jordan Rife (1):
+      docs: Fix name for net.ipv4.udp_child_hash_entries
+
+Jouni H=C3=B6gander (1):
+      drm/i915/psr: Do not trigger Frame Change events from frontbuffer flu=
+sh
+
+Julian Sun (1):
+      block: restore default wbt enablement
+
+Junli Liu (1):
+      erofs: fix atomic context detection when !CONFIG_DEBUG_LOCK_ALLOC
+
+Karthik Poosa (1):
+      drm/xe/hwmon: Add SW clamp for power limits writes
+
+Kuninori Morimoto (1):
+      ASoC: generic: tidyup standardized ASoC menu for generic
+
+Kuniyuki Iwashima (1):
+      netdevsim: Fix wild pointer access in nsim_queue_free().
+
+Len Brown (1):
+      intel_idle: Allow loading ACPI tables for any family
+
+Leo Martins (1):
+      btrfs: fix subpage deadlock in try_release_subpage_extent_buffer()
+
+Linus Torvalds (1):
+      Linux 6.17-rc2
+
+Liu01 Tong (1):
+      drm/amdgpu: fix task hang from failed job submission during process k=
+ill
+
+Lorenzo Stoakes (1):
+      mm/mremap: avoid expensive folio lookup on mremap folio pte batch
+
+MD Danish Anwar (1):
+      net: ti: icssg-prueth: Fix emac link speed handling
+
+Mario Limonciello (AMD) (1):
+      Revert "ALSA: hda: Add ASRock X670E Taichi to denylist"
+
+Masami Hiramatsu (Google) (1):
+      MAINTAINERS: add Masami as a reviewer of hung task detector
+
+Matt Johnston (1):
+      net: mctp: Fix bad kfree_skb in bind lookup test
+
+Matthew Auld (3):
+      drm/xe/migrate: prevent infinite recursion
+      drm/xe/migrate: don't overflow max copy size
+      drm/xe/migrate: prevent potential UAF
+
+Micha=C5=82 Winiarski (1):
+      drm/xe/pf: Set VF LMEM BAR size
+
+Miguel Ojeda (2):
+      rust: workaround `rustdoc` target modifiers bug
+      rust: kbuild: clean output before running `rustdoc`
+
+Naohiro Aota (1):
+      btrfs: zoned: do not select metadata BG as finish target
+
+NeilBrown (1):
+      nfsd: avoid ref leak in nfsd_open_local_fh()
+
+Nikunj A Dadhania (1):
+      x86/sev: Improve handling of writes to intercepted TSC MSRs
+
+Nitin Rawat (1):
+      scsi: ufs: core: Fix interrupt handling for MCQ Mode
+
+Olga Kornievskaia (1):
+      sunrpc: fix handling of server side tls alerts
+
+Pablo Neira Ayuso (2):
+      netfilter: nft_socket: remove WARN_ON_ONCE with huge level value
+      netfilter: nf_tables: reject duplicate device on updates
+
+Paulo Alcantara (2):
+      smb: client: fix race with concurrent opens in unlink(2)
+      smb: client: fix race with concurrent opens in rename(2)
+
+Peter Wang (1):
+      scsi: ufs: mediatek: Fix out-of-bounds access in MCQ IRQ mapping
+
+Philipp Reisner (1):
+      drbd: Remove the open-coded page pool
+
+Qianfeng Rong (2):
+      block, bfq: remove redundant __GFP_NOWARN
+      blk-cgroup: remove redundant __GFP_NOWARN
+
+Qu Wenruo (3):
+      btrfs: make btrfs_cleanup_ordered_extents() support large folios
+      btrfs: fix wrong length parameter for btrfs_cleanup_ordered_extents()
+      btrfs: do not allow relocation of partially dropped subvolumes
+
+Rafael J. Wysocki (2):
+      cpuidle: governors: menu: Avoid using invalid recent intervals data
+      ACPI: processor: perflib: Move problematic pr->performance check
+
+Russell King (Oracle) (2):
+      net: stmmac: rk: put the PHY clock on remove
+      net: stmmac: dwc-qos: fix clk prepare/enable leak on probe failure
+
+Sabrina Dubroca (4):
+      xfrm: flush all states in xfrm_state_fini
+      xfrm: restore GSO for SW crypto
+      xfrm: bring back device check in validate_xmit_xfrm
+      udp: also consider secpath when evaluating ipsec use for checksumming
+
+Sergio Perez Gonzalez (1):
+      ASoC: stm: stm32_i2s: Fix calc_clk_div() error handling in
+determine_rate()
+
+Shengjiu Wang (1):
+      ASoC: fsl_sai: replace regmap_write with regmap_update_bits
+
+Shuming Fan (2):
+      ASoC: rt721: fix FU33 Boost Volume control not working
+      ASoC: rt1320: fix random cycle mute issue
+
+Srinivas Pandruvada (1):
+      cpufreq: intel_pstate: Support Clearwater Forest OOB mode
+
+Stanislav Fomichev (2):
+      net: lapbether: ignore ops-locked netdevs
+      hamradio: ignore ops-locked netdevs
+
+Stefan Metzmacher (1):
+      smb: client: don't wait for info->send_pending =3D=3D 0 on error
+
+Steve French (2):
+      smb3: fix for slab out of bounds on mount to ksmbd
+      cifs: update internal version number
+
+Sukrut Heroorkar (1):
+      selftests/proc: fix string literal warning in proc-maps-race.c
+
+Suren Baghdasaryan (1):
+      userfaultfd: fix a crash in UFFDIO_MOVE when PMD is a migration entry
+
+Sven Stegemann (1):
+      net: kcm: Fix race condition in kcm_unattach()
+
+Takashi Iwai (3):
+      ALSA: azt3328: Put __maybe_unused for inline functions for gameport
+      ALSA: usb-audio: Validate UAC3 power domain descriptors, too
+      ALSA: usb-audio: Validate UAC3 cluster segment descriptors
+
+Takashi Sakamoto (4):
+      firewire: core: use reference counting to invoke address handlers saf=
+ely
+      firewire: core: call handler for exclusive regions outside RCU
+read-side critical section
+      firewire: core: call FCP address handlers outside RCU read-side
+critical section
+      firewire: core: reallocate buffer for FCP address handlers when
+more than 4 are registered
+
+Tang Yizhou (3):
+      blk-wbt: Optimize wbt_done() for non-throttled writes
+      blk-wbt: Eliminate ambiguity in the comments of struct rq_wb
+      blk-wbt: doc: Update the doc of the wbt_lat_usec interface
+
+Thomas Hellstr=C3=B6m (1):
+      drm/xe: Defer buffer object shrinker write-backs and GPU waits
+
+Thorsten Blum (1):
+      ASoC: codecs: Call strscpy() with correct size argument
+
+Tom Lendacky (3):
+      x86/sev: Evict cache lines during SNP memory validation
+      virt: sev-guest: Satisfy linear mapping requirement in get_derived_ke=
+y()
+      x86/sev: Ensure SVSM reserved fields in a page validation entry
+are initialized to zero
+
+Tristram Ha (1):
+      net: dsa: microchip: Fix KSZ8863 reset problem
+
+Uday Shankar (1):
+      ublk: don't quiesce in ublk_ch_release
+
+Vasiliy Kovalev (1):
+      ALSA: hda/realtek: Fix headset mic on HONOR BRB-X
+
+Vinod Govindapillai (1):
+      drm/i915/fbc: fix the implementation of wa_18038517565
+
+Waiman Long (2):
+      mm/kmemleak: avoid soft lockup in __kmemleak_do_cleanup()
+      futex: Use user_write_access_begin/_end() in futex_put_value()
+
+Wang Zhaolong (2):
+      smb: client: fix mid_q_entry memleak leak with per-mid locking
+      smb: client: remove redundant lstrp update in negotiate protocol
+
+Waqar Hameed (1):
+      scsi: ufs: core: Remove error print for devm_add_action_or_reset()
+
+Xin Long (1):
+      sctp: linearize cloned gso packets in sctp_rcv
+
+Xu Yang (1):
+      net: usb: asix_devices: add phy_mask for ax88772 mdio bus
+
+Yao Zi (3):
+      dt-bindings: net: thead,th1520-gmac: Describe APB interface clock
+      net: stmmac: thead: Get and enable APB clock on initialization
+      riscv: dts: thead: Add APB clocks for TH1520 GMACs
+
+YiPeng Chai (1):
+      drm/amdgpu: fix vram reservation issue
+
+Yuezhang Mo (1):
+      erofs: Fallback to normal access if DAX is not supported on extra dev=
+ice
+
+Zheng Qixing (1):
+      block: fix kobject double initialization in add_disk
 
