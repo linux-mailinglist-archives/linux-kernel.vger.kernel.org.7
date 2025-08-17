@@ -1,156 +1,168 @@
-Return-Path: <linux-kernel+bounces-772308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A5AB29115
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:37:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E471B29117
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B822A2695
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC7D44798E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 01:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F311990C7;
-	Sun, 17 Aug 2025 01:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C34E19E7F7;
+	Sun, 17 Aug 2025 01:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcYsx2I1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIHOeayB"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4117618FDBD
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 01:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3A0A945;
+	Sun, 17 Aug 2025 01:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755394643; cv=none; b=IzZg6gKy0UW36dawEgVufJvht09SRanHDRwt9xZ2BUdCz2kRT3KopnO4pZUIm2VNuv+wmhek2rkFhGtXYzIZCOesqcj0qUwad+YpeP16DxlkJZrKDy13/HKOnyAAfz5BJJrhDA6zH6+CKysDHiC/8rDALyQSctjTH9uuzbQNyl0=
+	t=1755395026; cv=none; b=Eh/Ttzpg6H+a2B/1xLavDwUCT8wRyNmBzfSnYwWVdXfl2v5wv2v43Y8D0isgUJDfbEw88Sw/8CiSklL79LZ506oXZz8xM+gqEmK6kvIjOlUZfXl0K9HFe5LCBGviRJGdTlytMn9Wb0YBsu5THAxUHWhtrQs1OfcOq4exGPmE1Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755394643; c=relaxed/simple;
-	bh=98B3wydd9pNJSwXo9oKtwIU8Z/skWmHQS9kAtrLaLLo=;
+	s=arc-20240116; t=1755395026; c=relaxed/simple;
+	bh=Ldphmxx17wVU8IiRaBaI/KiZxrw5Qx2VOfoV694tjDU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GtKFANoFMyfkmRsS3SosnFLOa2/qWF7il01b3k2wlUnHjl/1tkrdE2epn6jb9JhPHiM/smHhy4tpNC24kPmoG9V7BHiWs4N+Q2sqpTFmdP8eNE3BxFt0y0HpKkLlm2tBJxbE4KzF1cvrZss8yxc3MoeYbbo/irPf2abhB7RsnCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcYsx2I1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB392C4CEF7
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 01:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755394642;
-	bh=98B3wydd9pNJSwXo9oKtwIU8Z/skWmHQS9kAtrLaLLo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rcYsx2I1rgfl9DQKoVL1bDhTn8/Cc3FXxGdkgj8rJFw/zAnQ9GvPS4C6MzNWYL0GK
-	 vTBrnuoXNPr/uv1obdItA0tYnIq2RD8BcRxrKeBkMz4YBleTag1tVoGDj7HmAuC9yN
-	 N2sncmKUln+CxKbkpKVNHpM3Xf8NpxRi+mqA3E+cerh3boyktc9RScJNaihyiYdb4J
-	 6VIR7K8AjivQpv+ivVQiBHmk+Gi7J6ti2jm8W80nhZRz7m38YKEcAdd+9xtgEuoP0r
-	 PIu1hkgvrx/fj5qWWQMfsAAHI+Sdl5iPaauBstO+qblEXdwh4JOYf4qX0CxSfwUPcA
-	 SF5Xndqx0abyQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-619ff42ad8eso1050872a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 18:37:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCniI+NBSGlBhpeljca+oGJZ57rxH/NwBv54/mTcFfrhU7147IfHphiz9HrASb8hmfmT+oKbHwXLfYxdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4w2hl53YXtU6+QI3Dbv4DQcbSNW/mH5pkHu+aIeyBXJ/v9Yny
-	JXswQxAyfjYwTGLW01W+puoeVOxLWiI34zwI4pSJ5EnpmVkCGPmAvY5TtvKt/tkxgvisvwy/2ES
-	cS8pXOC9AFomzLi2bCUfyMQ7MtE1m75w=
-X-Google-Smtp-Source: AGHT+IHXjJ/zZKNED7MRYupguP+hzkILfeOdZashtip7Q2uruj+3o+XpMjNgILr82FhUMA/aEsi0zdq1Ko56W4OITiE=
-X-Received: by 2002:a17:906:c154:b0:ae3:c767:da11 with SMTP id
- a640c23a62f3a-afceae5af28mr383029166b.50.1755394641318; Sat, 16 Aug 2025
- 18:37:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=pj7ujb9NuYw00o9pqYojdUu+BSfky+fd2GMEDZYvdQf9VWCtLxvcSjd/8gJB3G0crXodpqaOxCnqKKD30v9myIJoi8QlZ7aV3Nl+cneQ72/PPL8shAe2SI9yNsZ91+84VM/d3P4EoigU/k/Kk9HNoNOLMOHD6ly2Q3ny1LYPEIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIHOeayB; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e931cdd710dso2443669276.3;
+        Sat, 16 Aug 2025 18:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755395024; x=1755999824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=INXjray7KhWQ4s+QUawoYGEHlUpc1WH3+1Uq1L8isXQ=;
+        b=AIHOeayBinnqRRHYOjYofTTPUentBKgX/qJHBzQAXHJmkd2Fn67v4onG0qs9UjfRhE
+         P7TcgXRxRymurEOk3OwgvCZHLZHnj4CXLOb4lQvyF8hNWIheZQIe/d50afiIiCqO3xJS
+         qRklNYsNEQYbugeY9mWpHBjA5xfI/haf5jf/OXXt/5GwRTME7QYOOtoL71EbhoE8wIHX
+         PtbjAjyLl/esLpgXIYN0SA41S6hnriW5tuhvR+iUhjWD6di7FUJrP+bmA0HRyeemJWyl
+         FrXE0O/vQQK97BZ6t2rtA+GWgWlsaaMhHxVF7tU7bJw1G9WpkpU4+Ml8hZatJqrMNKpu
+         4uDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755395024; x=1755999824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=INXjray7KhWQ4s+QUawoYGEHlUpc1WH3+1Uq1L8isXQ=;
+        b=JSgnZ0dgUUjG01+PY0CHSeLoeO2LiOJ4JvJ42tO62D0NJaCWhl1u0LHzF2qC/fHNOr
+         sAdqXfmaYGfnAsr07Rc7mlRn929Dj3LJWYkmBA4UE9pfN+4EDI9LRWEBqGGkJrLI4tF9
+         otHq2uFRTXFqTOwatmEVJot4KVzUqnG50UvCaT8xjORh5XUgDeu/q4SUrwSlDQKS2AqD
+         vmmv2bKKWmfMmsUVciQe5NshVEjnYefiA6NVTLAk2bToRRvNetvlo3IjilWlzAexIS7j
+         tywcojYDMH5/m9GMYa7Rrf+e1cl/aP3f5HblLv9j9EYoo0D6Xa1WfoZg2g9X/Phz6aOE
+         v51A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAB1G5OoFmd0XuXAoItpTEvC+BFKzQ/fHCGH1NuzSQC31vf8lLdpuUC4Orob7AMgbf3IE=@vger.kernel.org, AJvYcCVNAgYNqH74dMxeWieZhOHJDRfRJHhDQzBczQJpdC01v31AeSoyLLuRMuyC3K8jQvMcuvisZ6Wq2dZJjyDh@vger.kernel.org, AJvYcCVtNpsoeC/eBYtfkqs71wm1mti/Qhxzr3Q/aK9G9bnAvsdRNPcuyQIZR2OzoYzbSLi0I4NRavhLLXqxdDplMwfHW6Yw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyaclJLdOC+kVEq0VX8gLB6iw3TMdX7rn81ZjomYoaHhIMAvZO
+	ABudAa4YMcP5pokwcBGgIVJGlktWiNZ5q7OMKDO50pNsazSQr0ooa3AnuqUxh//uQY/0/lCyLTF
+	ur8Ca2DP1hBZfOqm9IIfrXeY1mOzWuh8=
+X-Gm-Gg: ASbGncukkMJxh1dB56AQZEP/TbPGgUdubK1Fb4bFncAFpCgEgzPrvdQyAhi9xh5ZFOn
+	MFbceZBhql0fwSkN18l//iyDQcyNRpt4sEcXG1FiA25Mtzt27Gs0n1ehUnEk9l6BSRgrROxN2S5
+	3gMk7wgJUlNqOn2KnFM/Rck68dHsQijVM4A8wfNp8gK7mgu5dTSn/iLKjgwR+ZG0A25NnTc8Z/F
+	ON8+Tg=
+X-Google-Smtp-Source: AGHT+IEdmHjLEhNrrPe88/9otODp0jGP4SLgUq93HvJ/zwzTf61gOYM24Jdh4H02MTUmZEZnCbgFken126vUKD8I7bE=
+X-Received: by 2002:a05:690c:34ca:b0:71c:b49:4879 with SMTP id
+ 00721157ae682-71e6de1f3d5mr98075227b3.36.1755395024187; Sat, 16 Aug 2025
+ 18:43:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815090539.1578484-1-chenhuacai@loongson.cn>
- <a20d605c-79a0-4d89-985b-9512a990b492@redhat.com> <CAAhV-H470h2HDEN_NY2qNBxUqQrSRQhLzwqZe9PB8GjnNsZVFQ@mail.gmail.com>
- <66ebc632-6704-4637-b62d-1cb11e5a4782@redhat.com> <9db98f7f-b90f-464b-ae7f-e94ac523bc28@redhat.com>
- <aKCwjCJTEhX4Q6wW@casper.infradead.org> <e06f23d9-adcf-4d0a-8ba1-bda6d4b483b1@redhat.com>
-In-Reply-To: <e06f23d9-adcf-4d0a-8ba1-bda6d4b483b1@redhat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 17 Aug 2025 09:37:08 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6csiOVDco=pocC72WSPiafDJV+1+R7P0KvB15dxOjtow@mail.gmail.com>
-X-Gm-Features: Ac12FXwmxXwhrFiUo2UU-awg0ihzGsCPQXGqVMaq1mgOiUl9KUx_ClVs_iHzOFk
-Message-ID: <CAAhV-H6csiOVDco=pocC72WSPiafDJV+1+R7P0KvB15dxOjtow@mail.gmail.com>
-Subject: Re: [PATCH] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Zi Yan <ziy@nvidia.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, "Michael S. Tsirkin" <mst@redhat.com>
+References: <20250815064712.771089-1-dongml2@chinatelecom.cn>
+ <20250815064712.771089-2-dongml2@chinatelecom.cn> <20250816235023.4dabfbc13a46a859de61cf4d@kernel.org>
+In-Reply-To: <20250816235023.4dabfbc13a46a859de61cf4d@kernel.org>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Sun, 17 Aug 2025 09:43:33 +0800
+X-Gm-Features: Ac12FXwJnuBAOlqW8UHquiz2FqvX4iBojjrgqgjpgY4dXwRalvFvbvrc_28gXwQ
+Message-ID: <CADxym3YB69_mZPWqupocOCvBju2ugNcO7hSddwfv+Xp4dAEgEQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/4] fprobe: use rhltable for fprobe_ip_table
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: olsajiri@gmail.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
+	hca@linux.ibm.com, revest@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 17, 2025 at 1:02=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
+On Sat, Aug 16, 2025 at 10:50=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.=
+org> wrote:
 >
-> On 16.08.25 18:23, Matthew Wilcox wrote:
-> > On Sat, Aug 16, 2025 at 12:54:52PM +0200, David Hildenbrand wrote:
-> >> +++ b/mm/balloon_compaction.c
-> >> @@ -256,8 +256,10 @@ const struct movable_operations balloon_mops =3D =
-{
-> >>   static int __init balloon_init(void)
-> >>   {
-> >> -    movable_ops[MOVABLE_BALLOON] =3D &balloon_mops;
-> >> -    return 0;
-> >> +    int rc;
-> >> +
-> >> +    rc =3D register_movable_ops(&balloon_mops, PGTY_offline);
-> >> +    return rc;
+> Hi Menglong,
+>
+> Sorry, one more thing.
+>
+> > @@ -260,14 +263,12 @@ static int fprobe_entry(struct ftrace_graph_ent *=
+trace, struct fgraph_ops *gops,
+> >       if (WARN_ON_ONCE(!fregs))
+> >               return 0;
 > >
-> > Using 'rc' as the name of this variable is an anti-pattern.  All it
-> > tells you is "this is the return value".  Calling it 'err' is far
-> > better because now we know it's an error number (or zero for success,
-> > of course).
+> > -     first =3D node =3D find_first_fprobe_node(func);
+> > -     if (unlikely(!first))
+> > -             return 0;
+> > -
+> > +     rcu_read_lock();
 >
-> I know, we all have our things to complain about. Some about Cc: above
-> --, others about the name of error variables :P
->
-> $ git grep "int rc" | wc -l
-> 12730
-> $ git grep "int ret" | wc -l
-> 80386
-> $ git grep "int error" | wc -l
-> 4349
-> $ git grep "int err " | wc -l
-> 6117
->
-> >
-> > It seems to be a particularly IBM derived antipattern ;-)
->
-> Careful miser :D
->
-> > Some internal style guide, perhaps?
->
-> Kernel-internal style guide maybe ;)
->
-> >
-> >> +void unregister_movable_ops(const struct movable_operations *ops, enu=
-m pagetype type)
-> >> +{
-> >> +    switch (type) {
-> >> +    case PGTY_offline:
-> >> +            WARN_ON_ONCE(offline_movable_ops !=3D ops);
-> >> +            offline_movable_ops =3D NULL;
-> >> +            break;
-> >> +    case PGTY_zsmalloc:
-> >> +            WARN_ON_ONCE(zsmalloc_movable_ops !=3D ops);
-> >> +            zsmalloc_movable_ops =3D NULL;
-> >> +            break;
-> >
-> > This might be a bit excessive ... just passing the pagetype and not
-> > having the sanity checks should be enough for the tiny number of users
-> > this interface will have.
->
-> Yeah, no strong opinion, this was a 3 minute hack.
-I have tested your code, everything works well. But if the checking is
-too excessive, can I use a set_movalbe_ops() to replace both
-register_movable_ops() and unregister_movable_ops()? Because register
-and unregister are very similar without excessive checking, then we
-can pass a meaningful pointer for register and a NULL for unregister
-via set_movalbe_ops().
+> Actually, we don't need these rcu_read_lock() in this function, because
+> the caller function_graph_enter_regs() uses ftrace_test_recursion_trylock=
+()
+> which disables preemption. Thus we don't need to do this again here.
 
-Huacai
+Yeah, I understand it now. I wondered about this part
+for a long time, as I didn't see any RCU lock in the
+fprobe_entry(). Thanks for the explanation ;)
 
+I'll send a V5 now.
+
+>
+> > +     head =3D rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_para=
+ms);
+> >       reserved_words =3D 0;
+> > -     hlist_for_each_entry_from_rcu(node, hlist) {
+> > +     rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >               if (node->addr !=3D func)
+> > -                     break;
+> > +                     continue;
+> >               fp =3D READ_ONCE(node->fp);
+> >               if (!fp || !fp->exit_handler)
+> >                       continue;
+> > @@ -278,17 +279,19 @@ static int fprobe_entry(struct ftrace_graph_ent *=
+trace, struct fgraph_ops *gops,
+> >               reserved_words +=3D
+> >                       FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->ent=
+ry_data_size);
+> >       }
+> > -     node =3D first;
+> > +     rcu_read_unlock();
+> >       if (reserved_words) {
+> >               fgraph_data =3D fgraph_reserve_data(gops->idx, reserved_w=
+ords * sizeof(long));
+> >               if (unlikely(!fgraph_data)) {
+> > -                     hlist_for_each_entry_from_rcu(node, hlist) {
+> > +                     rcu_read_lock();
+>
+> Ditto.
+>
+> > +                     rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >                               if (node->addr !=3D func)
+> > -                                     break;
+> > +                                     continue;
+> >                               fp =3D READ_ONCE(node->fp);
+> >                               if (fp && !fprobe_disabled(fp))
+> >                                       fp->nmissed++;
+> >                       }
+> > +                     rcu_read_unlock();
+> >                       return 0;
+> >               }
+> >       }
+>
+> Thank you,
+>
 >
 > --
-> Cheers
->
-> David / dhildenb
->
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
