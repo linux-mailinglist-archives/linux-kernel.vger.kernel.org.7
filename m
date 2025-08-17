@@ -1,209 +1,128 @@
-Return-Path: <linux-kernel+bounces-772328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1EDB29148
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:35:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF01B2916F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264C817A7C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E79C7AC444
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E4254739;
-	Sun, 17 Aug 2025 03:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D211F1534;
+	Sun, 17 Aug 2025 03:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsoIKoRh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W6ein0VI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DF9463
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 03:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D367367
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 03:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755401705; cv=none; b=ES/CadKIVoy+OCKcrvbsUkW0/ZaxLdPG0lWAYz8sy2RdRnhXeFXjBp8+7KAmeSKqc1Kpz0I+AvEMIy4YwJRr6z+X2MIMzsP39apnptpDYrcb5jQNY8qtDzRaeD0EOhuOHUl2o5eMn5Qe8dzYoYjpCl6UfyABTdbcnP7NJ9tqDSo=
+	t=1755402063; cv=none; b=HH7YcPEm9uQekpnhqBV0MsxD0cKhTo3v2VCodBlK0Ojr0NuzxPmnG3HFAbkF2B03u1LA/6/C+1SOvEoWiv4+Cx45G5unocJ+bq9v7+9FMN6qklMQsilnaFiOlZuOQH7CSgcMEomL4xyR2z9D7VJoYv5YMbZHjWwmo8PwuiG5Nrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755401705; c=relaxed/simple;
-	bh=QGvQfmyGBskI2a4bjL3wF4QdFXH43utm1OZ204H3S+c=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UZp2MK4NIrzpg8vs83hPkOuiZ09GLug1BTQOJ0eEPYW5g3YUvxvg/f00tHdywPGPtTZf3E+tGpkO+OGU+xj91K/c+9Kf7cXDULZ/jFt2PflYiBdSRyiV1UqwBXxZEEI8/mQ96h0h34ieoiQrpxhH4901nfmIQtPSuvYyQOLAAxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsoIKoRh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32AFC4CEEB;
-	Sun, 17 Aug 2025 03:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755401705;
-	bh=QGvQfmyGBskI2a4bjL3wF4QdFXH43utm1OZ204H3S+c=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=NsoIKoRhMYbefJud78V7JQfGJb3lvcsAVq7mHUqzxoNkOCBhnSfGsvY68Fd1HOJjD
-	 BUxboW6YmR2zerzFIPPsZp3hiWfzpkz49FfUwp9qshKxypqaNllemyQh70GIw3zal4
-	 md3Nk7TPU5vZ3G8sbf06EMuiOvBoJj08qBwYKzAR9a1pnzCrLSw77HoDyq3xOH92hL
-	 sVFLa1ZSFUDE4KVnnUX/QHb2cM7ymj2jvd9fayJ04tFQ9lbkOemRYz71VRCRvHIk2D
-	 U7K1313ovnPUB/0NzAX5TvdVC9PX0YeI/Z0sPtdIfBUvhg6r9cJWpOSwGhOWJzueFU
-	 gfi/a+za9kZng==
-Message-ID: <e5ee313b-8770-446c-9dfd-472740f01bc1@kernel.org>
-Date: Sun, 17 Aug 2025 11:34:59 +0800
+	s=arc-20240116; t=1755402063; c=relaxed/simple;
+	bh=Wi2TRfYpR6wvvg8UpKW2O2TcIJ1xXIhqvyEYdfTO+Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzmLSHJlLL0GQ55BmIs4Vl4CJv0AzVJbN1+p+gkO3D5ar0Y8xWF1Y8JEvQB1/tZarcjBqPjlgwMmUcRzIjE4ZlB2eJDhHELGquDRE/NdnbfYfPcCQS6KCeSgJJpGHn89VWDDLTUVICX8BcSFRpQoYEW1OfConvj7qyAkSdaC+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W6ein0VI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755402061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Y0oXgvbJlVAXUapKet03fj1MIE/RRaWOW5OiNzH2oU=;
+	b=W6ein0VIYzXSSg7u4dmwhBQASf+T28g9MK2uZw8m76651NtZ2JQWEUFf8aawnNLnyJPnRq
+	+jzlmzI0HE/SsYDk5XQfpDAQI3/Jpo70nLqDH9Nlgqb/Mq7uuBuyxD9Q+T9/eA77U0RKN+
+	Xhmztsn5R3AS//RUeKHFH6vOEk/keDs=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-PkT_4EHSPaqREfWT33cFVQ-1; Sat,
+ 16 Aug 2025 23:40:55 -0400
+X-MC-Unique: PkT_4EHSPaqREfWT33cFVQ-1
+X-Mimecast-MFC-AGG-ID: PkT_4EHSPaqREfWT33cFVQ_1755402053
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 544231800340;
+	Sun, 17 Aug 2025 03:40:53 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.34])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5A23180044F;
+	Sun, 17 Aug 2025 03:40:50 +0000 (UTC)
+Date: Sun, 17 Aug 2025 11:40:46 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+	sj@kernel.org, lorenzo.stoakes@oracle.com, elver@google.com,
+	snovitoll@gmail.com
+Subject: Re: [PATCH v2 00/12] mm/kasan: make kasan=on|off work for all three
+ modes
+Message-ID: <aKFPPi2sti7+3JZ9@MiWiFi-R3L-srv>
+References: <20250812124941.69508-1-bhe@redhat.com>
+ <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+ <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com>
+ <aJxzehJYKez5Q1v2@MiWiFi-R3L-srv>
+ <CA+fCnZfv9sbHuRVy8G9QdbKaaeO-Vguf7b2Atc5WXEs+uJx0YQ@mail.gmail.com>
+ <aJ2kpEVB4Anyyo/K@MiWiFi-R3L-srv>
+ <CA+fCnZcdSDEZvRSxEnogBMCFg1f-PK7PKx0KB_1SA0saY6-21g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org
-Subject: Re: [syzbot] [f2fs?] general protection fault in
- f2fs_check_opt_consistency
-To: syzbot <syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com>,
- jaegeuk@kernel.org, lihongbo22@huawei.com,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- sandeen@redhat.com, syzkaller-bugs@googlegroups.com
-References: <689ff889.050a0220.e29e5.0037.GAE@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <689ff889.050a0220.e29e5.0037.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+fCnZcdSDEZvRSxEnogBMCFg1f-PK7PKx0KB_1SA0saY6-21g@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
+On 08/16/25 at 06:50am, Andrey Konovalov wrote:
+> On Thu, Aug 14, 2025 at 10:56 AM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > Ah, I got what you mean. We probably are saying different things.
+> >
+> > In order to record memory content of a corrupted kernel, we need reserve
+> > a memory region during bootup of a normal kernel (usually called 1st
+> > kernel) via kernel parameter crashkernel=nMB in advance. Then load
+> > kernel into the crashkernel memory region, that means the region is not
+> > usable for 1st kernel. When 1st kernel collapsed, we stop the 1st kernel
+> > cpu/irq and warmly switch to the loaded kernel in the crashkernel memory
+> > region (usually called kdump kernel). In kdump kernel, it boots up and
+> > enable necessary features to read out the 1st kernel's memory content,
+> > we usually use user space tool like makeudmpfile to filter out unwanted
+> > memory content.
+> >
+> > So this patchset intends to disable KASAN to decrease the crashkernel
+> > meomry value because crashkernel is not usable for 1st kernel. As for
+> > shadow memory of 1st kernel, we need recognize it and filter it away
+> > in makedumpfile.
+> 
+> Ah, I see, thank you for the explanation!
+> 
+> So kdump kernel runs with the amount of RAM specified by crashkernel=.
+> And KASAN's shadow memory increases RAM usage, which means
+> crashkernel= needs to be set to a higher value for KASAN kernels. Is
+> my understanding of the problem correct?
 
-On 2025/8/16 11:18, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    0e39a731820a Merge tag 'for-6.17-rc1-tag' of git://git.ker..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13344da2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d371efea57d5aeab877b
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c22c34580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a125a2580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e0297ec5b8e1/disk-0e39a731.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0396bfd57e65/vmlinux-0e39a731.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/68482d381f43/bzImage-0e39a731.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/f909676ebee0/mount_0.gz
->    fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=15344da2580000)
-> 
-> The issue was bisected to:
-> 
-> commit d185351325237da688de006a2c579e82ea97bdfe
-> Author: Hongbo Li <lihongbo22@huawei.com>
-> Date:   Thu Jul 10 12:14:13 2025 +0000
-> 
->      f2fs: separate the options parsing and options checking
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137ca5a2580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10fca5a2580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=177ca5a2580000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com
-> Fixes: d18535132523 ("f2fs: separate the options parsing and options checking")
-> 
-> F2FS-fs (loop0): f2fs_recover_fsync_data: recovery fsync data, check_only: 0
-> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
-> Oops: gen[  107.736417][ T5848] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 1 UID: 0 PID: 5848 Comm: syz-executor263 Tainted: G        W           6.17.0-rc1-syzkaller-00014-g0e39a731820a #0 PREEMPT_{RT,(full)}
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:strcmp+0x3c/0xc0 lib/string.c:284
-> Code: 00 fc ff df 45 31 f6 4a 8d 04 37 48 89 c1 48 c1 e9 03 0f b6 0c 19 84 c9 75 2c 42 0f b6 2c 37 4a 8d 04 36 48 89 c1 48 c1 e9 03 <0f> b6 0c 19 84 c9 75 33 42 0f b6 0c 36 40 38 cd 75 48 49 ff c6 40
-> RSP: 0018:ffffc90004adf8f8 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-> RDX: 0000000021ec2c00 RSI: 0000000000000000 RDI: ffff888021ec2c80
-> RBP: 0000000000000066 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffff88803d2c9768 R11: ffffed1007a592fb R12: 1ffff1100611a891
-> R13: 0000000000000000 R14: 0000000000000000 R15: ffff888021ec2c80
-> FS:  0000555575c20480(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000001000 CR3: 000000003d342000 CR4: 00000000003526f0
-> Call Trace:
->   <TASK>
->   f2fs_check_quota_consistency fs/f2fs/super.c:1188 [inline]
->   f2fs_check_opt_consistency+0x1378/0x2c10 fs/f2fs/super.c:1436
->   __f2fs_remount fs/f2fs/super.c:2653 [inline]
->   f2fs_reconfigure+0x482/0x1770 fs/f2fs/super.c:5297
->   reconfigure_super+0x224/0x890 fs/super.c:1077
->   do_remount fs/namespace.c:3314 [inline]
->   path_mount+0xd18/0xfe0 fs/namespace.c:4112
->   do_mount fs/namespace.c:4133 [inline]
->   __do_sys_mount fs/namespace.c:4344 [inline]
->   __se_sys_mount+0x317/0x410 fs/namespace.c:4321
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f13267ca259
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff3d15d4a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f13267ca259
-> RDX: 0000000000000000 RSI: 0000200000000040 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000200000000140 R09: 00007fff3d15d4e0
-> R10: 0000000000000020 R11: 0000000000000246 R12: 00007fff3d15d4e0
-> R13: 00007fff3d15d768 R14: 431bde82d7b634db R15: 00007f132681303b
->   </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:strcmp+0x3c/0xc0 lib/string.c:284
-> Code: 00 fc ff df 45 31 f6 4a 8d 04 37 48 89 c1 48 c1 e9 03 0f b6 0c 19 84 c9 75 2c 42 0f b6 2c 37 4a 8d 04 36 48 89 c1 48 c1 e9 03 <0f> b6 0c 19 84 c9 75 33 42 0f b6 0c 36 40 38 cd 75 48 49 ff c6 40
-> RSP: 0018:ffffc90004adf8f8 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-> RDX: 0000000021ec2c00 RSI: 0000000000000000 RDI: ffff888021ec2c80
-> RBP: 0000000000000066 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffff88803d2c9768 R11: ffffed1007a592fb R12: 1ffff1100611a891
-> R13: 0000000000000000 R14: 0000000000000000 R15: ffff888021ec2c80
-> FS:  0000555575c20480(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000003d342000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess), 4 bytes skipped:
->     0:	45 31 f6             	xor    %r14d,%r14d
->     3:	4a 8d 04 37          	lea    (%rdi,%r14,1),%rax
->     7:	48 89 c1             	mov    %rax,%rcx
->     a:	48 c1 e9 03          	shr    $0x3,%rcx
->     e:	0f b6 0c 19          	movzbl (%rcx,%rbx,1),%ecx
->    12:	84 c9                	test   %cl,%cl
->    14:	75 2c                	jne    0x42
->    16:	42 0f b6 2c 37       	movzbl (%rdi,%r14,1),%ebp
->    1b:	4a 8d 04 36          	lea    (%rsi,%r14,1),%rax
->    1f:	48 89 c1             	mov    %rax,%rcx
->    22:	48 c1 e9 03          	shr    $0x3,%rcx
-> * 26:	0f b6 0c 19          	movzbl (%rcx,%rbx,1),%ecx <-- trapping instruction
->    2a:	84 c9                	test   %cl,%cl
->    2c:	75 33                	jne    0x61
->    2e:	42 0f b6 0c 36       	movzbl (%rsi,%r14,1),%ecx
->    33:	40 38 cd             	cmp    %cl,%bpl
->    36:	75 48                	jne    0x80
->    38:	49 ff c6             	inc    %r14
->    3b:	40                   	rex
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Yeah, you are quite right.
+
+When I tested it, on x86_64 and arm64, usually I set crashkernel=256M
+and it's sufficient. However, when KASAN is enabled and generic mode is
+taken, I need set crashkernel=768M to make vmcore dumping succeed. In
+kdump kernel, read_vmcore() uses ioremap to map the old memory of
+collapsed kernel for reading out, those vmalloc-ed areas are lazily
+freed and cause more shadow memory than what we usually think shadow
+memory only costs 1/8 of physical RAM.
 
 
