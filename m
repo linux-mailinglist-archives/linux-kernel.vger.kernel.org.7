@@ -1,158 +1,155 @@
-Return-Path: <linux-kernel+bounces-772586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80265B2947C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B989B2948B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67DC51673DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDAB4E812D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4373002D3;
-	Sun, 17 Aug 2025 17:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF94D24503F;
+	Sun, 17 Aug 2025 17:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3wHI1jt"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZyiChyiG"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570C228750D;
-	Sun, 17 Aug 2025 17:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEAC1B0F23
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 17:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755450863; cv=none; b=Lb2lydfaDTmweV1lDYcGewH3Nae4zAHlg2GNNftn8MRylKuEnM+GqvHplpVhQ7OgCnL4arBc5wpw11dw9h2l1I3mwWLq2IwEMR/V9uGwyZNmmgGfBYMzj/Oq3Y0ch+Fm8oQLONGRttLKYhqm1JzFFroWRLgJykgM9ydSJH2M1/4=
+	t=1755451218; cv=none; b=KvE0Ntz6kIVpAneElmHDHy5WlLsLRwg15PsK3TypLZSC/LllPunl5WyOxsyVxb3z0tjGoxvoPMdYw4goD3s42guIn0ggOUa1yTOKfk+RUErSBmw9TQvI+FV7JdP8di6OHa03uptQZziQFqB3R9vSdSAuXrW1bq61EKCyegN0Uco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755450863; c=relaxed/simple;
-	bh=EdsXrgswoXc/LcRSdAyb1O3Hx5UkEBDBkHDaZ4mDY/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dB7/UvTs5DELiW1OAu8q/oGIZ5NIWyv+cDXAKtERGlvO0AtKm2oWhwuUzM2s9E5/dPzjhW6vmrfRzWld5YF1rFfp9aZ2uhLCLvUDkZuGnAdHexnOPMCuRnrml0kOz+bFlNhNA/NyMTmZKdQZJjJidxJk3Vl0AKCN2DmndFYDZ1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3wHI1jt; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61a1663be10so1730785a12.1;
-        Sun, 17 Aug 2025 10:14:21 -0700 (PDT)
+	s=arc-20240116; t=1755451218; c=relaxed/simple;
+	bh=QywHrMCGHrpw1N/WF8P8OPYDpdoKfATYmwOmZsutAD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N6AlZitWJSnMCtHA6eREuR17qXdi8dkk5RATm5AUkl7oJPc+XqwwU5Sv7xgyazRnRY0fuxizOIZ8v/DIyz5XQafQDvY/s6+Dz/Qm+5CtZYZw+Pk6HREM8jbfXTt+4UJ+4FlSFHKe1Gs1qB1e4Xu0+zQ8hvKsyVk/kcn+kvDLiD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZyiChyiG; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b134f1c451so7334131cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 10:20:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755450860; x=1756055660; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1755451215; x=1756056015; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LY0YIEoUecUVF5HfBlI2OFzc+QtaIhgG2Wu8Bta8CWI=;
-        b=d3wHI1jtLFAKSO7ubV/8OimppKNUYwng7IUTCWiqfwAfvXI9OPCDsY/bB4KyF/fO9L
-         qb7WiX9d5sxZqRM2PB2Qh1cATBU7e8X+mui1/+8AeUa2qyy8yzcALLpDkRQwnBcJADF6
-         TcKd+5MfGADaqQYd6wu+BE7k1PnkpXXGGAv0KD/h3KfXBCp5Ofx92Tb3YxasgHg0Oubm
-         lulArpoNPSbb6ou6lpttI38E4YpxLBwY23DZdN2pXsrNW8A4w46vL5ffTVoOKQpK8doU
-         KbwnV+Za+DfLxg/rMCvGTiAJKdd4/29sgApKE2U2x1z5HQNG0wMN2rIHzvg3uUz71mK7
-         AfgQ==
+        bh=mSnL06ycRqaedii29t6GSI9Lkyw4QrGbTSVi1KTNBmM=;
+        b=ZyiChyiGBkmghbYceYdmQsAdDOKK0WHt+Tt2kRvC0w0s+gAQ8HNGmXieB9LldrVWXB
+         oxSX5D0PuNOU1lm+l6o1tNsaf0xBqOQxo/NtDuNFcLeLS93oVakRN7afJC3AGHvoJY74
+         aGKHWcSay/XaertrpKw8EQPrSpIS/jzs9QUS7SG7XgKZ0Rz8QQCxKO4KA7AeKfaaPCcu
+         jrf5oqrZ0/c8oJ6UyEhlQB5JqCvF3lH6e3muQE6KcgNMxkiNODKxX+bIGMYpJzQImBbP
+         W1P7Q2YH12mt6byQ1F/aGA4qrRPKhuO9tbGEkwuCRipzvFx91mvl/9lTDvVNDck+AHEw
+         NZZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755450860; x=1756055660;
+        d=1e100.net; s=20230601; t=1755451215; x=1756056015;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LY0YIEoUecUVF5HfBlI2OFzc+QtaIhgG2Wu8Bta8CWI=;
-        b=JkvXHKsj5mAG3y5nRY0Y5y2R90VMfJPaKxXUkZltlAXvA7zXShlNvnBfgm4d+k214Q
-         jbkksxNeWcoUeL+adPO6s79ThtLKyLOJw0I/ipHbyyzthkKEhDdfI31QanOJocNe/FWP
-         WhLV71WvhKKH4EcfWACBS8EhmUD36Naz/+2zW2HrJXz+w1aOf5ZDremBoovKDmwXBxT3
-         2zTEJ4unjnkMi5LsHBpEHUrRdvUtUZxFnC6fyoUlI0IKIznWSpXfBo44/VXwTWKP1H+p
-         EKPMcYfyWZipRV6ad2/DVnZE4Br7Ihl8fs+zW5aYWNMachfnVHSpQylvCcpVBdt7apaW
-         1RAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUb8jSohf93Kc+rxxPf0U8inht59w0///U0ZpVFdoVyM3RXSQgvbHF8D3Zi5RopQ61XxBLMcDWW@vger.kernel.org, AJvYcCW7RfmNfSQGPHzqR6iHu8xP5ft2iI+S8zaZ7B5KzL9irhqTBP/RTtITrVhq0sV4k3dfvMGrXNmpKFNc5Ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqm3GEHfVKjCTUsqfZHp0C/aGKPdSwpgyUgOvgDGGFtwIvUfiy
-	alas/6OAJ9F1GQ9zMnXYw6qOg281/f+NEACQG4QJEgwtz0daiH8xrsBysj7pRQ==
-X-Gm-Gg: ASbGnctkbLtCwO4VDisWcRhDRKA0BSFI+dr0qzWLVu0deecgIaiCIbGDTZFUel5tQ7R
-	zValR1+Y97Xb5pa9LPAzr6M74MeSA1hWPrtPkz119IjaR7KNRLRfB2CuTs03R7z8Y6Vh8FwNpHN
-	5jPFbsAiYtBEmeyZI9OE2R+/Inp2k7sFtlD/2OrnV1y86fTrbA/IiNt3KAZn7/pKi7RXq+S6BIT
-	+BFmJhn2XaV946qrOfcdE8dF5yfNUra09AXHEZw2jV92WyGmCTLbk7EMcwQeBbcPpvMI2m40Hl0
-	XjFmPHUgFrX+aXC9eVOqDb3ZmaJqOIc8BAmfEjtzEPk+FGQxaWSacsy8yWsUDC+UTDxQ817Q3qP
-	UQWUba9N64fmB3+SVXAqy21YR0HIupXMv0w==
-X-Google-Smtp-Source: AGHT+IGTN3iEvbwgt1xnZ9FgE2o8v+iy5yboUBLF5nA0P8h3zvmiBjNvUzKjvIuN7BJmKtdf0bSh6w==
-X-Received: by 2002:a05:6402:234b:b0:617:fe86:6bff with SMTP id 4fb4d7f45d1cf-618b0513fe6mr8219743a12.8.1755450859385;
-        Sun, 17 Aug 2025 10:14:19 -0700 (PDT)
-Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b2e97sm5414399a12.56.2025.08.17.10.14.18
+        bh=mSnL06ycRqaedii29t6GSI9Lkyw4QrGbTSVi1KTNBmM=;
+        b=O48LulBKyJ8MlWE1Fl/xdfmm1SZRtAzrq+LY6IhAr/ufFHesC/JPgNfK90PUmKM0MS
+         iM8rlS0wVjCjOHt0gIiyQJUYjr27gC4z6Rfb37k0rWZi6rqnULYvN5K1CHs8K4Xui2cp
+         A6AqBrR3WcujHHmTcBTBbNkhGN/+4DmwpY7IFyxgzO3FpTrAhSwjrPgOk3ThtwaxmocT
+         +4oUBWbFThpb+7n1vZi7xRM8w/7CzIgt2rWNjYXq7Etsmu089nnT5i5RAYODzO+1NMQO
+         QC8yCJcvGXgdI9qnPHMIJ6KWYmOK/tGroDgy+sYon1PWCJ4saFoTlK71451O+lxzy8G3
+         780g==
+X-Forwarded-Encrypted: i=1; AJvYcCX/lH48ocJDAWXdSP64P5SGzH+T6WUHCHUiC3cxumkr4I7kq2DBgQ6Mez1Rlg8QWqlMQ4kt48m7WcsbXVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLh404B8BE5IHndAvuITJRe6UWYBJ6mJTJl6ckDTe3P+fU/Ml/
+	hWfpGAqIxuEn8O1aCby1CDimXR2Z5verAqa9asS4RA+16Y9UWN+XP7jM9Ie6ZwpvQss=
+X-Gm-Gg: ASbGncs/e17jBnt9t7ci/FNwefbW0HbciV1PaYSJN9Mf2eK5+52NXZ4KiOSCaUgzUPi
+	yuM8BUNJeyh1y3lYiqYWwBuIY/aD50fQMnyVmZwOEb3M4uVhMNtNp1HthJqsQIgdcxdNk9cnjzK
+	YdiJqIstsmWyTca0Tri4cmecv6OqfDILSINYvY2kp8javk2+BwRWnswYZY3vKuSv3+O6E/lQ2wI
+	DmdhAkCAB+I+57sKQ48BvYMNj208JphtNo0m/iVFgGn+u1ZP/5ue2IUJJELm6BWkqYheMKfudwb
+	q+9EwsBuaE7lbqNEcwBJrahuGFYqIgNaN2wwByDs53lQ6jI4VyH46ozp8S/5mNG5/Lpb5bXzncz
+	h9c1x7egGCKaLwAtTLFwepvzuDeK/y/m5R1S9y7TvdffWdCDWNqnVCzno
+X-Google-Smtp-Source: AGHT+IGwz143a26VUvXza9j4UAUrHILartEYg3sAkeI33tXkk2gT37GFXk9hZ2LW7zx6MH72H+UDag==
+X-Received: by 2002:a05:622a:5515:b0:4b0:7a69:7280 with SMTP id d75a77b69052e-4b12a78434dmr91489461cf.45.1755451214902;
+        Sun, 17 Aug 2025 10:20:14 -0700 (PDT)
+Received: from fedora (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc18a0esm39529561cf.9.2025.08.17.10.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 10:14:19 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: gregkh@linuxfoundation.org,
+        Sun, 17 Aug 2025 10:20:14 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-cxl@vger.kernel.org
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: gshahrouzi@gmail.com,
-	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] staging: axis-fifo: fix maximum TX packet length check
-Date: Sun, 17 Aug 2025 20:13:50 +0300
-Message-ID: <20250817171350.872105-1-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	corbet@lwn.net,
+	Gregory Price <gourry@gourry.net>
+Subject: [PATCH] cxl,documentation: remove page-allocator quirk section
+Date: Sun, 17 Aug 2025 13:20:02 -0400
+Message-ID: <20250817172002.43488-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Since commit 2ca34b508774 ("staging: axis-fifo: Correct handling of
-tx_fifo_depth for size validation"), write() operations with packets
-larger than 'tx_fifo_depth - 4' words are no longer rejected with -EINVAL.
+The node/zone quirk section of the cxl documentation is incorrect.
+The actual reason for fallback allocation misbehavior in the
+described configuration is due to how reclaim is engaged when
+the local nodes capacity is exhausted when nodes have no overlapping
+zones.  No fix is available for this issue yet, but the documentation
+here is incorrect, so simply remove it.
 
-Fortunately, the packets are not actually getting transmitted to hardware,
-otherwise they would be raising a 'Transmit Packet Overrun Error'
-interrupt, which requires a reset of the TX circuit to recover from.
-
-Instead, the request times out inside wait_event_interruptible_timeout()
-and always returns -EAGAIN, since the wake up condition can never be true
-for these packets. But still, they unnecessarily block other tasks from
-writing to the FIFO and the EAGAIN return code signals userspace to retry
-the write() call, even though it will always fail and time out.
-
-According to the AXI4-Stream FIFO reference manual (PG080), the maximum
-valid packet length is 'tx_fifo_depth - 4' words, so attempting to send
-larger packets is invalid and should not be happening in the first place:
-
-> The maximum packet that can be transmitted is limited by the size of
-> the FIFO, which is (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
-
-Therefore, bring back the old behavior and outright reject packets larger
-than 'tx_fifo_depth - 4' with -EINVAL. Add a comment to explain why the
-check is necessary. The dev_err() message was removed to avoid cluttering
-the dmesg log if an invalid packet is received from userspace.
-
-Fixes: 2ca34b508774 ("staging: axis-fifo: Correct handling of tx_fifo_depth for size validation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
-Changes in v2:
-- added "cc: stable" tag
+ .../cxl/allocation/page-allocator.rst         | 31 -------------------
+ 1 file changed, 31 deletions(-)
 
- drivers/staging/axis-fifo/axis-fifo.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index e8aa632e0a31..271236ad023f 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -325,11 +325,17 @@ static ssize_t axis_fifo_write(struct file *f, const char __user *buf,
- 		return -EINVAL;
- 	}
+diff --git a/Documentation/driver-api/cxl/allocation/page-allocator.rst b/Documentation/driver-api/cxl/allocation/page-allocator.rst
+index 7b8fe1b8d5bb..3fa584a248bd 100644
+--- a/Documentation/driver-api/cxl/allocation/page-allocator.rst
++++ b/Documentation/driver-api/cxl/allocation/page-allocator.rst
+@@ -41,37 +41,6 @@ To simplify this, the page allocator will prefer :code:`ZONE_MOVABLE` over
+ will fallback to allocate from :code:`ZONE_NORMAL`.
  
--	if (words_to_write > fifo->tx_fifo_depth) {
--		dev_err(fifo->dt_device, "tried to write more words [%u] than slots in the fifo buffer [%u]\n",
--			words_to_write, fifo->tx_fifo_depth);
-+	/*
-+	 * In 'Store-and-Forward' mode, the maximum packet that can be
-+	 * transmitted is limited by the size of the FIFO, which is
-+	 * (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
-+	 *
-+	 * Do not attempt to send a packet larger than 'tx_fifo_depth - 4',
-+	 * otherwise a 'Transmit Packet Overrun Error' interrupt will be
-+	 * raised, which requires a reset of the TX circuit to recover.
-+	 */
-+	if (words_to_write > (fifo->tx_fifo_depth - 4))
- 		return -EINVAL;
--	}
  
- 	if (fifo->write_flags & O_NONBLOCK) {
- 		/*
+-Zone and Node Quirks
+-====================
+-Let's consider a configuration where the local DRAM capacity is largely onlined
+-into :code:`ZONE_NORMAL`, with no :code:`ZONE_MOVABLE` capacity present. The
+-CXL capacity has the opposite configuration - all onlined in
+-:code:`ZONE_MOVABLE`.
+-
+-Under the default allocation policy, the page allocator will completely skip
+-:code:`ZONE_MOVABLE` as a valid allocation target.  This is because, as of
+-Linux v6.15, the page allocator does (approximately) the following: ::
+-
+-  for (each zone in local_node):
+-
+-    for (each node in fallback_order):
+-
+-      attempt_allocation(gfp_flags);
+-
+-Because the local node does not have :code:`ZONE_MOVABLE`, the CXL node is
+-functionally unreachable for direct allocation.  As a result, the only way
+-for CXL capacity to be used is via `demotion` in the reclaim path.
+-
+-This configuration also means that if the DRAM ndoe has :code:`ZONE_MOVABLE`
+-capacity - when that capacity is depleted, the page allocator will actually
+-prefer CXL :code:`ZONE_MOVABLE` pages over DRAM :code:`ZONE_NORMAL` pages.
+-
+-We may wish to invert this priority in future Linux versions.
+-
+-If `demotion` and `swap` are disabled, Linux will begin to cause OOM crashes
+-when the DRAM nodes are depleted. See the reclaim section for more details.
+-
+-
+ CGroups and CPUSets
+ ===================
+ Finally, assuming CXL memory is reachable via the page allocation (i.e. onlined
 -- 
-2.50.0
+2.50.1
 
 
