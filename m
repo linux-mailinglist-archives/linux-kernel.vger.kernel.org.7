@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-772491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3193FB29356
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:50:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA6B2935B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B773A1B24A98
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0623F4E3FE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E4E28DF01;
-	Sun, 17 Aug 2025 13:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DF628F520;
+	Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnVMBNmg"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzajT6UP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C541128B50A;
-	Sun, 17 Aug 2025 13:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD5D28DF01;
+	Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755438612; cv=none; b=o/S0rL6BY10KryOaeKAkQle8hxoV+FFsDIqcP0j0ZwWx8D/7Uc1aJES2X8iO9KGyCBssaH/UIKe2m31y9wm+vmmRZMqRxoS1nGgTXUn9NTw86pa1l+kc2guzo0OfbE/7DWSg0DfbQ5pJRUDK+JJnbCcgJNmTtpRZMuuuNYXQ1Ao=
+	t=1755438638; cv=none; b=cq2NQyRJOUKVCaXEueBoUBbbj534UNwbT1ZBuJXaZxmLAMvIamh2Ap0dQKsM2gjCZPXRoNhXIVqNX2ZLJqih1329wJMgr+xkj6lZni5kw/FiGQyhgEzWuHB2otFfdNVAaVA033mrcBv+0rZcP/ZJ+8IZAJKkjzXvRafnNqoIO6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755438612; c=relaxed/simple;
-	bh=FAhrRvkDZSSNICXN+K40yB2WSBpz0uSk9J/rhUEE8o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LYuZhZ90mjUtGEwjbVjp8JvRwHFvO8/Ffm4t2vWc+34TaeAGQypwxVKwtdAkr060rFfMsGfHmP7KwddcVN+JZDvuzARZ3i3g59kjskbdtifclIMKSHaA3w1njzyX3aYLzyN6AjOxB5Goqpwx3YpxkLobSyQxl7EUwOZf3oCY3no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnVMBNmg; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b0b2d21so14447215e9.2;
-        Sun, 17 Aug 2025 06:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755438609; x=1756043409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/yoZElYHHluW6HXReDqCRUDoS4VRBHZ+MHdPE0sfQVI=;
-        b=RnVMBNmgtPoLpGfKMaJv6Z6pNSUUJZ/obdTouBzQaPRa2osJlsGZbt1FSRe0GiwmZM
-         t3xF7yJqgon0nqK3m+xl9oJwUemoGuRgjk8MOuQCULGy1iPbMV6DFdz7MhR+z3In0BXn
-         PdMJAIi1tTxguGIrOnzdYvlEataLuJA4oHqmVi7+3CcM5bwycl/RLlS/XLPgwTBRJADC
-         6sVha22L0kFNepa7f7rWMe6mFN69ZrovFYML2WLGCro01H2XDlssj4FJ8AD/we0Z7DRx
-         rNBNVqljh+/nGmezXhIaUDqc/3+jcuEiEtvGAVgq9LBOC9sw0/CZVx8mEXiMLNhBAy8e
-         QCvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755438609; x=1756043409;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/yoZElYHHluW6HXReDqCRUDoS4VRBHZ+MHdPE0sfQVI=;
-        b=SbnjlkcC4G8z94++3etZ3Krmgsq9sAHCDgBdkl5PoGohBGixCxDsKoZeU2T6L8O2aa
-         a8BGQvdFT5WJoCg7OJTr2Oekg3ymT790J7ye1fN9UeNyKQieeEdrFZ961Z+8PbUYEqcL
-         7/hJDRI1QnXvWOKug3Y8ZqeRXA8yGWU0eckxUptK0mSR/QENiCDHZWeHx47XagURi8Jq
-         6dvDf+M10aofsa4wiKKqvDp5l5QZQ0wu/V1C6PPYf5efqILUTQn6aK+5ZG5qrqXPPDP9
-         KYYs8sc/2lptZhi/nSoggvxsCCenyQhNnzVic4gO+52nw5SdBoMfJAG+Ngvf6n/1Mf5V
-         ybyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmM0LuzsaXdvZZX2y+77iPOzY7o9VgLPzkRKNKxuCT/LECqA9Jp34CKtGOUnAc2fO7QB/MglDEfT+NfJDH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCAmTUekhHGyBiRYy/2uwqnL3Zu6H0Mxidj0Ec9syGtKMXYyNN
-	Q10CjAveCd5T841e59LWlTayyZ550a10hOd4bNDjGgarg+g57x79+KbfuUJ+fA==
-X-Gm-Gg: ASbGnct3e4hwp9ZPxshDZZwE0fVUilt8Wn9g+MqwTf2omjAo+7Xc/YwsMem3MU15ixD
-	3NyF2K6sc364Id5Yq6QCvEY4sb/6XB6QbeNxn5IriaY1GwvijuoE0Vw6kUIvOPO5dEWjqiWPQMQ
-	7ot5DaJMkoKIAx8kgJUoRsx/UbW1klgTI1bph2lfQZpck3Jf9tVUei4pBppTyY9iV3ONJuiFjnr
-	RwcHK5ByAXKZjf9gVK6iSqxqT4LUc8ZuhWIsEnZufp71ktbGVRpKmmWlqFqrkL1+4ZdF7CLJ4vJ
-	HVplmAgY7nFZSv11fQag8gewZXXnz1tr9qYadSGBaPeqGC7FJyaxQN39jrvq/L/doH0vKV29HNZ
-	Gdl/8ZQcdbjz3eOCpzMpnxTwyLpJH7+N0Ghhd5nsCuAhSH9cytuRNiG+VPeM38Q+qCoWKKeU=
-X-Google-Smtp-Source: AGHT+IEK2JQHzY9JjOBt/rAKrEsir7aaDbT+/HLG20AKYyI0t/BGE7MCKUX8VvAazzko6xmLdH6ASA==
-X-Received: by 2002:a05:600c:154d:b0:458:b7d1:99f9 with SMTP id 5b1f17b1804b1-45a217fd4e8mr69892265e9.11.1755438608859;
-        Sun, 17 Aug 2025 06:50:08 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c773e57sm138545945e9.23.2025.08.17.06.50.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 06:50:08 -0700 (PDT)
-Date: Sun, 17 Aug 2025 14:49:43 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
- access
-Message-ID: <20250817144943.76b9ee62@pumpkin>
-In-Reply-To: <20250813150610.521355442@linutronix.de>
-References: <20250813150610.521355442@linutronix.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755438638; c=relaxed/simple;
+	bh=CvRA/zD+d6lUsBKE5WdIBRx3QjzdFVyMYUsNuuNZ2I4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PIugEXhU6r/L1c3cjnYar7DfAjq4LP90Iek6OWrovC7nYpq82JWRBfgehsDNs8KHuZXqePc+QjU7Oj2cxMTV4usItt5oRJWzkuCHLHhAYme3PWMIZmtjb4Gf6rH9Iam07+lQhB45aDSxzUDfAuj5Q92Zl7GKiFN8tcpJr2/H16M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzajT6UP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C751C4CEF1;
+	Sun, 17 Aug 2025 13:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755438638;
+	bh=CvRA/zD+d6lUsBKE5WdIBRx3QjzdFVyMYUsNuuNZ2I4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AzajT6UPnlejpZlGWJXNuMiz0BaHDA1Q3tgiaBQ6h/fpFSvV86NzZhuwlSVGK+vqa
+	 0kYAyA9SDPJwbkUxb9SkZHGUPoQ+z0Zn3ClnmptMyIsjIsvKqE9HbNroANrHtHdpLj
+	 iIQN7H4rXW1PCqkopGwxbGcC/UchWSf71+pRcJrwcTwlse/IGDiBP8mOu8csEmOnQc
+	 nS1RP4c5SRaEn6uuju6djqHasGTn+FP8G0tVEDawRxJsoM9apqm68Eut2vquV7YDmV
+	 A9M3vMumeiWG3qBteaL4cR+6sKA5y+/gqaaLMhcXikZ8H355NAsyTYTtclGtuwpr/a
+	 4XH2i2PjUlEvg==
+Message-ID: <2c241887-fa46-44ab-a518-43d9ae339009@kernel.org>
+Date: Sun, 17 Aug 2025 15:50:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net 0/8] mptcp: misc fixes for v6.17-rc
+Content-Language: en-GB, fr-BE
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jianguo Wu <wujianguo@chinatelecom.cn>,
+ Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+ Christoph Paasch <cpaasch@openai.com>, stable@vger.kernel.org,
+ Thomas Dreibholz <dreibh@simula.no>
+References: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
+ <20250816112712.209644c8@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250816112712.209644c8@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 13 Aug 2025 17:57:00 +0200 (CEST)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+Hi Jakub,
 
-> commit 2865baf54077 ("x86: support user address masking instead of
-> non-speculative conditional") provided an optimization for
-> unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
-> architecture specific way. Currently only x86_64 supports that.
+On 16/08/2025 20:27, Jakub Kicinski wrote:
+> On Fri, 15 Aug 2025 19:28:18 +0200 Matthieu Baerts (NGI0) wrote:
+>> Here are various fixes:
+>>
+>> - Patch 1: Better handling SKB extension allocation failures. A fix for
+>>   v5.7.
+>>
+>> - Patches 2, 3: Avoid resetting MPTCP limits when flushing MPTCP
+>>   endpoints. With a validation in the selftests. Fixes for v5.7.
+>>
+>> - Patches 4, 5, 6: Disallow '0' as ADD_ADDR retransmission timeout.
+>>   With a preparation patch, and a validation in the selftests. Fixes for
+>>   v5.11.
+>>
+>> - Patches 8, 9: Fix C23 extension warnings in the selftests, spotted by
+>>   GCC. Fixes for v6.16.
 > 
-> The required code pattern screams for helper functions before it is copied
-> all over the kernel. So far the exposure is limited to futex, x86 and
-> fs/select.
-> 
-> Provide a set of helpers for common single size access patterns:
+> userspace_pm.sh which hasn't flaked in 1000 runs has flaked last night,
+> with this series applied:
+> https://netdev-3.bots.linux.dev/vmksft-mptcp/results/255941/8-userspace-pm-sh/
 
-(gmail hasn't decided to accept 1/4 yet - I need to find a better
-mail relay...)
+Thank you for the notification!
 
-+/*
-+ * Conveniance macros to avoid spreading this pattern all over the place
-    ^ spelling...
-+ */
-+#define user_read_masked_begin(src) ({					\
-+	bool __ret = true;						\
-+									\
-+	if (can_do_masked_user_access())				\
-+		src = masked_user_access_begin(src);			\
-+	else if (!user_read_access_begin(src, sizeof(*src)))		\
-+		__ret = false;						\
-+	__ret;								\
-+})
+> Looks unrelated but also quite strange?
 
-I proposed something very similar a while back.
-Since it updated 'src' it really ought to be passed by address.
-For the general case you also need the a parameter for the size.
+Indeed: the whole series should not affect the behaviour validated by
+the selftests. The error messages are not very useful, and the test was
+not really slower than usual. Our CI never complained about that either.
+I will monitor that!
 
-Linus didn't like it, but I've forgotten why.
-
-I'm also not convinced of the name.
-There isn't any 'masking' involved, so it shouldn't be propagated.
-
-There is also an implementation issue.
-The original masker_user_access_begin() returned ~0 for kernel addresses.
-That requires that the code always access offset zero first.
-I looked up some candidates for this code and found one (possibly epoll)
-that did the accesses in the wrong order.
-The current x86-64 'cmp+cmov' version returns the base of the guard page,
-so is safe provided the accesses are 'reasonably sequential'.
-That probably ought to be a requirement.
-
-	David
-
-
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
