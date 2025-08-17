@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-772558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14718B29426
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:31:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F411B29429
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CDF5E3186
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:31:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C617F196393B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428A72FE04A;
-	Sun, 17 Aug 2025 16:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370AE2FE051;
+	Sun, 17 Aug 2025 16:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoTRdFPW"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="oloXTaEW"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2ED72634;
-	Sun, 17 Aug 2025 16:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1AC2FB97B
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755448281; cv=none; b=pBRm3pFoCQY9OsrzyJTWlwERYQYa9Zkm+f3o2ftWquZf1gvboLqcnLkAvT+cvTItCaD3s9sqlK35fi8UudVk95WrxmKd0Mov/qA0vcfNFBCFoP4xsDkQsDkA8PbhoBM5QEJvrGraQv9VIW21+Ex7VN5DMcOKw3v3Rm9GWGeilfE=
+	t=1755448422; cv=none; b=LGL/7tTFBWO7mPbfP61/jcDpw1UpntoL5Wmk/7952xzY2+mNZqrNyc1xN6Z+LrZ01xJlRBxmdLm25rbdIC1hKESejsfCSR5Paengy9Zy5rMgMtWV79rKVRsucajOPJoiqnn5tVfPkJHw3svVjqr01M63MKgVjMayfDBGcVtJaA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755448281; c=relaxed/simple;
-	bh=kLFLEqW/OO6iFtOv4aQQMv287DbBHQu4/itQJciHqy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iox9H26pX/hAR2ql4GRZ8paI6voJng2oTXvVuA5Z107JdvKjDAjEq1MeCIwQ5XjAAjzknwsDsiaS7XxD+nJydv9BUvX3MPr0YGkuLogYkogFF4ZWG/QHH9gdYHq6qRyD06JGTDVncodHemQankh9fs1lsIEUtaeOV2EZIXYhGkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KoTRdFPW; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4717593371so508730a12.3;
-        Sun, 17 Aug 2025 09:31:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755448277; x=1756053077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kLFLEqW/OO6iFtOv4aQQMv287DbBHQu4/itQJciHqy4=;
-        b=KoTRdFPWRAg27GLFE/h8nLtujeUq/xuvaNjdAtEIAzbZct9GOb5MITtnOxkN29mHTg
-         WylIKUzsCyDJgXFMW0lkKBGGxfzR4A+pnW0092zM+CTotV7wjH8/a8+X4j+LGRU2Xmvm
-         PvsbheOFVOtLuhkLGOrigLtDxYrdFM0/kBHK4bKcMqkY/RM6SXmPJbFnkRG7+nmGm6NQ
-         iK9xfhHOGSUpi6Gsafx2WJSlmEyVJubCLdadY1D1Mfap/wQIUOGfhfNDAjRm6p7Lwxqk
-         29Nh/aKgcgIq6Vn2e+UgihmJtjh0432VoZO96pN0VvTKjeHhfl5I24ONmH7sXc+1I/SS
-         dJqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755448277; x=1756053077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kLFLEqW/OO6iFtOv4aQQMv287DbBHQu4/itQJciHqy4=;
-        b=cMekrMXbGn4Exahso8448KlrWmrNtJXf56PMyUmB7Mgdzw2H44cZqtODrS4S+eFXJp
-         7XzdQlGLT0ckPmcePqsz0ECOObEgzq+IYo/mzSB5IEVCDgtHnvtqYtpDJhda63+94HLN
-         km5oURKNpoQAi9hW56R+FGFUoMNe+p7YCF3AUGZ6eBFcDO//D9hIHAGkpxfF6G95StGj
-         n5wfN452qzuWcB38Rdo45WsK7ubLrgsawTQOrToa0p/Dqt3VxJVWo6D5fj+4Enx7ML2a
-         DaUxR99Gk8dWFiqNW7Fap/Jaab3rNF9MCtyYpI71ErGPyI9CoxI9ByA2UXY1CjELwixa
-         zpIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9LIN0GgImpNZdi6JPQAXaUPhgjJKGyLw8PfEnl6S1+x2UzLES9nwsU7OUCJy2CbCJvkaL+dKEH/PnAVwc2Dg=@vger.kernel.org, AJvYcCVqqBHq2yQ77lu0keFPaiK/ITBNF4DugJPdWUl3NMJNJTwSDRfqr8pN0wxT4GSs6EyDKtVxYx5lioUU4/8x@vger.kernel.org, AJvYcCXqubv9wbYHaDrZLrZWMX2EBOJO6ujV/3hIjk0mXAeCYfm6DZxPVPh5onzoXZyjmVM+LrPRUz+oxmNCA7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKeQQSANYppdfPuRnfqnit0dY/1xTpYyAM5egwunrxk3WmDZ1d
-	B++LrT3ub4chE+1rNPI/262aR0BafkhnJjnRJN7hBdcRgzIWAjaBBaqQovPKJOO6cfHxeHGf5w2
-	9K/jcbJaRKrcxmONieJlhNUtZ1VEUCtY=
-X-Gm-Gg: ASbGncs3mA+IZoc7XG1Vkmp2TzWGihArybWrujvuTHjmBZRQT6wnVFN/RO2OMy84uZM
-	YWXS2kSSwptouC17HwgQIIvMJmf7Pu9Ux07eya78Hv7eKI5vGkkHUFqcNW5TERuK184CnaEHb+H
-	KXNw9rZkLn/FNi/61sR7rNrGkdIAJmUWCqxw2wtlpHPluFwTDxP+1m3ZkG2kAb884OKbWtsIy/Y
-	DDvjbTw
-X-Google-Smtp-Source: AGHT+IFFesL79nGBzljk+GNIBmaSr5Ti7vlS1NqrpA13NwKdp6CIpy50L5E7ZQVUz/gfEPq3WyBh66i9w8ESZh9NVSk=
-X-Received: by 2002:a17:903:183:b0:242:fcfd:3f94 with SMTP id
- d9443c01a7336-2446da0fe10mr67054645ad.11.1755448277430; Sun, 17 Aug 2025
- 09:31:17 -0700 (PDT)
+	s=arc-20240116; t=1755448422; c=relaxed/simple;
+	bh=16KfWKmXnvMG8XienSHousVwtT9tO5Q9/eKeHJpXN9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DnjknIsaT2IpLUcP5YEIuhcqOpbRrjFppmxq8HpUN3B/Af8D+QL3bdSgspZu/0bw9JzxHuZvJltFtPwutEBhu2BFn6eFmXaCdNdZNFmqlAxHN93uC+SEfhQTLQiedEGJd8RhXABHmQjXLSCDnSFOwZh/lOg0h+18379qh/yAhWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=oloXTaEW; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1755448414;
+ bh=05X/I2SqxVTRC5UNwPe0jX77RC5+lAMs+Sp0TwX0JKY=;
+ b=oloXTaEWaNcG1u8Vr+ts7sYxUSkZpUJr0LhM7MGFrmmtpoQ512d+0Elv0322xkvKxiYwIijRH
+ H09lgpvNje2ruMcifFCLshCvxZFU6LjSrPgYXKdd3yLHhSXQI5zr91MfY2LPaiL7eoCfcucsrQl
+ TCpWA0W+rrqFdVBDRl/GMcbLR/jA2JDi22nZ4WvXeU0e3By6Iet7U4LSxz3p9e2DXPwjC2TBcrX
+ I6UTtwSVI3KK1sDcq3DfxX8oe2k3FdT5GDsBThZ2NKlf7s1IMNAjgy1oplH5Of7OCKp3t8V8Pec
+ 4zzDNbFTUA3IVQQVy3FpD+D8poJXGLNomjoNjQM3riMg==
+X-Forward-Email-ID: 68a204589a82a81f459cf7d1
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.2.4
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <f55f6c64-f720-437b-ac88-80b6930a9c2c@kwiboo.se>
+Date: Sun, 17 Aug 2025 18:33:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-kbuild-werror-v2-0-c01e596309d2@linutronix.de> <20250814-kbuild-werror-v2-6-c01e596309d2@linutronix.de>
-In-Reply-To: <20250814-kbuild-werror-v2-6-c01e596309d2@linutronix.de>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 17 Aug 2025 18:31:06 +0200
-X-Gm-Features: Ac12FXx8lU8m_BPaxFRjTbqDEK3t89iYkrpuhKf1HEFrkzIWKzMJ0u7O3KHo_Hw
-Message-ID: <CANiq72m+_QK1L2bnjs-oB9fmoGb-1jK3JvOsuH3nsWaPM0ExNg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] kbuild: enable -Werror for hostprogs
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+ <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
+ <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+ <91864a1c047d2bdfce202b070716a694ede47d5e.camel@collabora.com>
+ <a66feb89fa02f05b187e5603ffc3b1501ef3cbd5.camel@collabora.com>
+ <efdf8c99-d166-4b78-afc5-d4a6eb5ac046@kwiboo.se>
+ <25ce30446e8e8d038273fcdfb398c90995c242db.camel@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <25ce30446e8e8d038273fcdfb398c90995c242db.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 12:15=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> The hostprog compilers and linkers do not share the regular compiler flag=
-s,
-> so they are not affected by CONFIG_WERROR or W=3De. As hostprogs are used
-> during the bootstrap of the build, they can't depend on kconfig options.
->
-> Enable -Werror unconditionally.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
-> ---
-> For testing in -next, as discussed in
-> https://lore.kernel.org/lkml/20250812-kbuild-werror-v1-2-36c9ff653700@lin=
-utronix.de/
+Hi Nicolas,
 
-The discussion was on patch 0, i.e. the next message in Lore's tree
-view -- I would suggest adding it to the commit message for reference:
+On 8/12/2025 8:26 PM, Nicolas Dufresne wrote:
+> Hi Jonas,
+> 
+> Le mardi 12 août 2025 à 19:31 +0200, Jonas Karlman a écrit :
+>> On 8/12/2025 2:44 PM, Nicolas Dufresne wrote:
+>>> I forgot, 
+>>>
+>>> Le mardi 12 août 2025 à 08:38 -0400, Nicolas Dufresne a écrit :
+>>>>> JCT-VC-HEVC_V1 on GStreamer-H.265-V4L2SL-Gst1.0:
+>>>>>
+>>>>> - DBLK_D_VIXS_2 (fail)
+>>>>> - DSLICE_A_HHI_5 (fail)
+>>>>> - EXT_A_ericsson_4 (fail)
+>>>>> - PICSIZE_A_Bossen_1 (error)
+>>>>> - PICSIZE_B_Bossen_1 (error)
+>>>>> - PICSIZE_C_Bossen_1 (error)
+>>>>> - PICSIZE_D_Bossen_1 (error)
+>>>>> - SAODBLK_A_MainConcept_4 (fail)
+>>>>> - SAODBLK_B_MainConcept_4 (fail)
+>>>>> - TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+>>>
+>>> I'me getting the same result if I force a single job in fluster. The test I
+>>> posted was with 2 jobs. Detlev found that the iommu reset is required in
+>>> more
+>>> cases on RK3588/3576, perhaps the HEVC decoder in older hardware needs the
+>>> same,
+>>> I will try and report.
+>>
+>> Vendor kernel [1] check following bits from RKVDEC_REG_INTERRUPT reg to
+>> decide if a full HW reset should be done.
+>>
+>>   err_mask = RKVDEC_BUF_EMPTY_STA
+>>   	   | RKVDEC_BUS_STA
+>>   	   | RKVDEC_COLMV_REF_ERR_STA
+>>   	   | RKVDEC_ERR_STA
+>>   	   | RKVDEC_TIMEOUT_STA;
+>>
+>> Adding proper reset support can be rather involved and main reason why
+>> this series does not handle it, better suited for a separate future
+>> series.
+>>
+>> Proper HW reset will require e.g. dt-bindings, DT updates, pmu idle
+>> request integration and for rk3328 vendor even moved VPU reset to TF-A.
+>>
+>> Doing the iommu detach/attach dance not only on RKVDEC_SOFTRESET_RDY
+>> could possible improve some cases, until full reset can be implemented.
+> 
+> Rockchip is following VSI design of "self reset" on error. But since the iommu
+> is part of the device, it also gets reset, which imply having to reprogram it.
+> This showed to be very reliable logic, despite RK doing a hard reset.
+> 
+> Since self reset is documented for RKVDEC_BUS_STA, RKVDEC_ERR_STA,
+> RKVDEC_TIMEOUT_STA, it would seem that RKVDEC_BUF_EMPTY_STA is redundant, unless
+> its asynchronous operation that need to be polled. Possibly something to
+> investigate. RKVDEC_BUF_EMPTY_STA and RKVDEC_COLMV_REF_ERR_STA are not
+> documented a such, so its not quite logical to reprogram the iommu.
+> 
+> I don't immediately trust reference software for these type of things, we should
+> find what works best and have a rationale for. The hard reset is every
+> expensive, and hard to upstream.
 
-Link: https://lore.kernel.org/rust-for-linux/CANiq72k-PdSH2BNgbq=3DX+FhpyEE=
-rifSCKfO5ObXz6bu9_J8+fA@mail.gmail.com/
+I fully agree, and I tried a few things like issue iommu reset for more
+errors, skip use of iommu completely, disable use of performance cache,
+write 0 all regs before writing correct values and nothing seem to
+resolve this issue.
 
-Anyway, since Nathan already applied it, and I see a couple patches on
-top, no big deal if it cannot be added.
+So more investigation will be needed to fully understand what we need to
+do to get a more reliable result.
 
-Thanks!
+Will do a visual inspection of the decoded frames on the tests that is
+flaky to see if that can give any clue on the extend of the issue.
 
-Cheers,
-Miguel
+Regards,
+Jonas
+
+> 
+> Nicolas
+> 
+>>
+>> [1]
+>> https://github.com/Kwiboo/linux-rockchip/blob/linux-6.1-stan-rkr6.1/drivers/video/rockchip/mpp/mpp_rkvdec.c#L924-L931
+>>
+>> Regards,
+>> Jonas
+>>
+>>>
+>>> Nicolas
+
 
