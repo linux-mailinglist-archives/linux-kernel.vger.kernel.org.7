@@ -1,152 +1,294 @@
-Return-Path: <linux-kernel+bounces-772632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C749B2951C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC94CB29519
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B8B4E5B0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EDB1766BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A245123F41F;
-	Sun, 17 Aug 2025 21:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFB922256F;
+	Sun, 17 Aug 2025 21:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNkEzsNH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hF+a+Jc3"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02964221269;
-	Sun, 17 Aug 2025 21:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F6FEEA8
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 21:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755464607; cv=none; b=ZwllLWmyl3sx3BCQVjBBtsKyzwjur4J0VzU5/KakYoLrkdt9XKQoRx8c2Ul2WyX0nu6SVJ9hl4HjWPMpQdUjNobPxhe6WaN+o1jJFhgPSaDaBrevJOrm6gTAFNKdqHQKNbZK4pFvp/cWlFuqwvRm1DD2TpU3b6ObTw/TpOcz8FU=
+	t=1755464580; cv=none; b=tILYEo6Vwr5VSUjWi9hkuKNARVxzcnXAz874EBOQKmt9wB4fXXVZpcdE4TLcUgroS7rLqvUZNZZ8uyhUdAix+rXp49mCeOHlA9erVnsUkG/hZAl4VEiZesz0y8OiH+y/J6e8AP6515n0wJMEjeYuhgB6bwI/dAROzE3BSZKsxYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755464607; c=relaxed/simple;
-	bh=mXDm9pzQ2v2aMXQtgfLc6q6k54TIbxRQKNSFRAvlPm8=;
+	s=arc-20240116; t=1755464580; c=relaxed/simple;
+	bh=8np73MZ3dfgQEKnRTet5owzFjzT1icMTCRFFIayX6Oo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WnN8ryROZdKIz3jlclLnxpMZ/4cGzzafIKEafmkgcuNVZsNJ7alqAUu3TfB1JH7Bv4Apgm1yw61/1djfNxZ9qzUKuyvqyE4XBqbcnCpGGu7T8sLP/7kpD8hTZgjVdyWxBYzI7FrKrcAJlI6g9U8Am8GAd0ce5q4DC66hnlmZ/vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNkEzsNH; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755464605; x=1787000605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mXDm9pzQ2v2aMXQtgfLc6q6k54TIbxRQKNSFRAvlPm8=;
-  b=lNkEzsNHf2oqXRqd6K88ujvtv0biztLmLcJ85cssiuuattMY7pfwir+9
-   ELTW84DmsB8gOZ6QEYWaPZLsNkr8+gfNAW5PDnxs5u7cEgg49nlnBKY/T
-   bfoAnTteCsF2UXT9YmnE/Hqq4PPAJtfvUrG+CE7JPDYFlvi+tf3K69PXo
-   0x0f7vS93HIMHeG0geIALF2tjLes6igaJkH6ZmhdUg6BHJpePbkWABCs9
-   F6iV8eH2fJ4fIVu3R5X5PoQ3jdvxh9SLr5lyjHbPojc+4PzlXPz7xadkN
-   TlGP3pCS7x3gySSGtt6yv8082gp2NlGILltAJcnxuIvXOkHEd6M9w54qh
-   g==;
-X-CSE-ConnectionGUID: tBKX3zB/QnKfbVObwNkVrA==
-X-CSE-MsgGUID: otkUOeCcQmS8NdOwT0yCVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="69143667"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="69143667"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 14:03:25 -0700
-X-CSE-ConnectionGUID: XDR8jl+CQ7mIMDSoIjuRUw==
-X-CSE-MsgGUID: Itk0I8gxStyf6NnlXNz1YQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171644503"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 17 Aug 2025 14:03:21 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unkW4-000Dih-0l;
-	Sun, 17 Aug 2025 21:02:41 +0000
-Date: Mon, 18 Aug 2025 05:01:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	guoren@linux.alibaba.com, guoren@kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Fangyu Yu <fangyu.yu@linux.alibaba.com>
-Subject: Re: [PATCH] RISC-V: KVM: Write hgatp register with valid mode bits
-Message-ID: <202508180228.aJykn9j0-lkp@intel.com>
-References: <20250816073234.77646-1-fangyu.yu@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDVjbXQn1L6hXvOcH7n7inUR1iHX0tPWXjesOBS+f86je3BryJBq58lt7dbeDPiWInU3X2+Fj6ppxqljnZpM3+qKueefrsjXEBxD3D+e4Jri6pZrJEEgfsCWrPxNrfXWFa8l6xUobwhcxG3Y3qqwKKRoc6+3xaLtNHEQJgf8aEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hF+a+Jc3; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 17 Aug 2025 17:02:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755464574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yubaClVIohycjD92nlUFXkhnhtVO15c5HtE18Zh0xMQ=;
+	b=hF+a+Jc3zrp//bC9Yb+0WPwXd1TOkritnpWfcceKHonwGEHnX6tQoFUTMphJt6szHBEKO2
+	j3bqACGfgmRzIu1p/zphmMrZf3B6FO7vdmnJZt+AuHQu6PTg2PY/139OwHxPEWwkYJ1yNv
+	KIUvZgi2ujM2sRx+cTNr1GYbLADQJmg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <ben.collins@linux.dev>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Ben Collins <bcollins@watter.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
+ microchip,mcp9601
+Message-ID: <2025081716-tan-pillbug-ff2cb5@boujee-and-buff>
+Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Ben Collins <bcollins@watter.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+References: <20250815164627.22002-1-bcollins@watter.com>
+ <20250815164627.22002-2-bcollins@watter.com>
+ <20250816105825.35e69652@jic23-huawei>
+ <66063382-78c6-4d93-be25-46e972e390f4@baylibre.com>
+ <2025081711-coral-aardwark-9f061b@boujee-and-buff>
+ <8e228d2d-d22f-4092-8c6d-94ce989b4a84@baylibre.com>
+ <2025081713-wooden-clam-aee35a@boujee-and-buff>
+ <65ca6431-56e1-4798-9ecc-6e6adf664f96@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mfgi7y2gj34ketdi"
 Content-Disposition: inline
-In-Reply-To: <20250816073234.77646-1-fangyu.yu@linux.alibaba.com>
-
-Hi,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on kvm/queue]
-[also build test ERROR on kvm/next mst-vhost/linux-next linus/master v6.17-rc1 next-20250815]
-[cannot apply to kvm/linux-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/fangyu-yu-linux-alibaba-com/RISC-V-KVM-Write-hgatp-register-with-valid-mode-bits/20250816-153513
-base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
-patch link:    https://lore.kernel.org/r/20250816073234.77646-1-fangyu.yu%40linux.alibaba.com
-patch subject: [PATCH] RISC-V: KVM: Write hgatp register with valid mode bits
-config: riscv-allyesconfig (https://download.01.org/0day-ci/archive/20250818/202508180228.aJykn9j0-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250818/202508180228.aJykn9j0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508180228.aJykn9j0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> arch/riscv/kvm/vmid.c:31:24: error: call to undeclared function 'kvm_riscv_gstage_mode'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
-                                 ^
-   arch/riscv/kvm/vmid.c:31:48: warning: shift count >= width of type [-Wshift-count-overflow]
-           csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
-                                                         ^  ~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/csr.h:538:38: note: expanded from macro 'csr_write'
-           unsigned long __v = (unsigned long)(val);               \
-                                               ^~~
-   1 warning and 1 error generated.
+In-Reply-To: <65ca6431-56e1-4798-9ecc-6e6adf664f96@baylibre.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +/kvm_riscv_gstage_mode +31 arch/riscv/kvm/vmid.c
+--mfgi7y2gj34ketdi
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
+ microchip,mcp9601
+MIME-Version: 1.0
 
-    24	
-    25	void __init kvm_riscv_gstage_vmid_detect(void)
-    26	{
-    27		unsigned long old;
-    28	
-    29		/* Figure-out number of VMID bits in HW */
-    30		old = csr_read(CSR_HGATP);
-  > 31		csr_write(CSR_HGATP, (kvm_riscv_gstage_mode() << HGATP_MODE_SHIFT) | HGATP_VMID);
-    32		vmid_bits = csr_read(CSR_HGATP);
-    33		vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
-    34		vmid_bits = fls_long(vmid_bits);
-    35		csr_write(CSR_HGATP, old);
-    36	
-    37		/* We polluted local TLB so flush all guest TLB */
-    38		kvm_riscv_local_hfence_gvma_all();
-    39	
-    40		/* We don't use VMID bits if they are not sufficient */
-    41		if ((1UL << vmid_bits) < num_possible_cpus())
-    42			vmid_bits = 0;
-    43	}
-    44	
+On Sun, Aug 17, 2025 at 12:59:48PM -0500, David Lechner wrote:
+> On 8/17/25 12:34 PM, Ben Collins wrote:
+> > On Sun, Aug 17, 2025 at 11:51:22AM -0500, David Lechner wrote:
+> >> On 8/17/25 11:37 AM, Ben Collins wrote:
+> >>> On Sat, Aug 16, 2025 at 01:55:31PM -0500, David Lechner wrote:
+> >>>> On 8/16/25 4:58 AM, Jonathan Cameron wrote:
+> >>>>> On Fri, 15 Aug 2025 16:46:03 +0000
+> >>>>> Ben Collins <bcollins@watter.com> wrote:
+> >>>>>
+> >>>>>> The mcp9600 driver supports the mcp9601 chip, but complains about =
+not
+> >>>>>> recognizing the device id on probe. A separate patch...
+> >>>>>>
+> >>>>>> 	iio: mcp9600: Recognize chip id for mcp9601
+> >>>>>>
+> >>>>>> ...addresses this. This patch updates the dt-bindings for this chi=
+p to
+> >>>>>> reflect the change to allow explicitly setting microchip,mcp9601 as
+> >>>>>> the expected chip type.
+> >>>>>>
+> >>>>>> The mcp9601 also supports features not found on the mcp9600, so th=
+is
+> >>>>>> will also allow the driver to differentiate the support of these
+> >>>>>> features.
+> >>>>>
+> >>>>> If it's additional features only then you can still use a fallback
+> >>>>> compatible.  Intent being that a new DT vs old kernel still 'works'.
+> >>>>>
+> >>>>> Then for the driver on new kernels we match on the new compatible a=
+nd
+> >>>>> support those new features.  Old kernel users get to keep the ID
+> >>>>> mismatch warning - they can upgrade if they want that to go away ;)
+> >>>>>
+> >>>>> Krzysztof raised the same point on v2 but I'm not seeing it address=
+ed
+> >>>>> in that discussion.
+> >>>>
+> >>>> One could make the argument that these are not entirely fallback
+> >>>> compatible since bit 4 of the STATUS register has a different
+> >>>> meaning depending on if the chip is MCP9601/L01/RL01 or not.
+> >>>
+> >>> There are some nuances to this register between the two, but it can be
+> >>> used generically as "not in range" for both.
+> >>>
+> >>> My understanding from the docs is if VSENSE is connected on mcp9601,
+> >>> then it is explicitly open-circuit detection vs. short-circuit, which
+> >>> is bit 5.
+> >>>
+> >>>> Interestingly, the existing bindings include interrupts for
+> >>>> open circuit and short circuit alert pins. But these pins
+> >>>> also only exist on MCP9601/L01/RL01. If we decide these aren't
+> >>>> fallback compatible, then those properties should have the
+> >>>> proper constraints added as well.
+> >>>
+> >>> In my v4 patch, I'm going to remove the short/open circuit interrupts
+> >>> since they are not implemented, yet.
+> >>
+> >> Don't remove them from the devicetree bindings. Even if the Linux driv=
+er
+> >> doesn't use it, the bindings should be as complete as possible.
+> >>
+> >> https://docs.kernel.org/devicetree/bindings/writing-bindings.html
+> >>
+> >=20
+> > I couldn't find anything that would easily describe this type of layout:
+> >=20
+> > properties:
+> > ...
+> >   interrupts:
+> >     minItems: 1
+> >     maxItems: 4
+> >   interrupt-names:
+> >     minItems: 1
+> >     items:
+> >       - const: alert1
+> >       - const: alert2
+> >       - const: alert3
+> >       - const: alert4
+> >=20
+> > allOf:
+> >   - if:
+> >       properties:
+> >         compatible:
+> >           contains:
+> >             const: microchip,mcp9601
+> >     then:
+> >       # Override maxItems
+> >       interrupts:
+> >         maxItems: 6
+> >       # XXX Add items to existing list???
+> >       interrupt-names:
+> >         items:
+> >           - const: open-circuit
+> >           - const: short-circuit
+> >=20
+>=20
+> We usually do this the other way around. The base binding lists
+> all of the possibilities then an -if: constraint limits them
+> if needed.
+>=20
+>=20
+> So don't change what is there already and then add:
+>=20
+>=20
+> allOf:
+>   - if:
+>       properties:
+>         compatible:
+>           not:
+>             contains:
+>               const: microchip,mcp9601
+>     then:
+>       properties:
+>         interrupts:
+>           maxItems: 4
+>         interrupt-names:
+>           maxItems: 4
+>           enum:
+>             - alert1
+>             - alert2
+>             - alert3
+>             - alert4
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This might be a little more complicated. I want to add a boolean for
+microchip,vsense so the SC/OC aren't even available without that flag
+being true (default false).
+
+I could just assume that having the interrupts means this flag is true,
+but that doesn't cover the case where the interrupts might not be used
+or even wired up, but the SC/OC detection in the status register can be
+used.
+
+I was going with this:
+
+  interrupts:
+    minItems: 1
+    maxItems: 4
+
+  interrupt-names:
+    minItems: 1
+    items:
+      - const: alert1
+      - const: alert2
+      - const: alert3
+      - const: alert4
+
+  microchip,vsense:
+    default: false
+    description:
+      This flag indicates that the chip has been wired with VSENSE to
+      enable open and short circuit detect. By default, this is false,
+      since there's no way to detect that the chip is wired correctly.
+    type: boolean
+
+=2E..
+
+allOf:
+  - if:
+      properties:
+        # XXX Does this work like logical AND? Passes dt_binding_check
+        microchip,vsense: true
+        compatible:
+          contains:
+            const: microchip,mcp9601
+    then:
+      properties:
+        interrupts:
+          minItems: 1
+          maxItems: 6
+        interrupt-names:
+          items:
+            - const: alert1
+            - const: alert2
+            - const: alert3
+            - const: alert4
+            - const: open-circuit
+            - const: short-circuit
+--=20
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
+
+--mfgi7y2gj34ketdi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmiiQ3kACgkQXVpXxyQr
+Is87chAAnkRlb6Abjc1BQ47CcO8XDV+yJCdVNpHugbd70f2sSb0kukUxMk3r83q4
+Y0gG9oA2fOvzp5Y5ZlspcW3vcAu8o2dpxX7MejSIBYh6AmrhIDjkRuzBO+eObs3e
+x/yeWlai/onSKTzC8xVPhNWd2CBciYTqjAuUXPu+2wNN5LvxjFipK/mwQXQXDLue
+3wU1s0gdKej7094eMZqV4sWr/3/b2ZdQxmbXViaDUtOad95lzzwmCuFyzt+2dWxu
+agjjoQhb/IbyxXEGS2cD4hFmarNwN0aegdlt88ZdfNkax7BCQ/V9NXRHVSwtNRHx
+niId+tZ2Cec24bmtJOhCDW4vRPUJ3em2563Ou45BSlgrYuf+w7NZhvAxbkHQo7Nj
+58J4MtgvUw6u9+Sq53clOTRWyvdBlb+F2rt0tDpYJ4IHEl09PUW/TKcySccwKBMs
+BAshdfNOZg+5Lgh8LyXa8gwiJkwTkDgVsFa7gR9v3/nUKOAuon+hBKc7m3GoUnjP
+a0n72vx89YoYuWnhGyffVgD+5j/9Kd/tsxuSrT2axHeNko4ztLdmCI0rz153POFc
+IPxhIHLgysOXKZE3KneQ4vSS9Ez33zBlFIjTXgkNqqz5+W/5lIty624hfyo53dsH
+6/eQGnSS7q3YTGJSxUh1rHqk3LZJqAgGTlqVYN/7YhIPJ0Hsi2w=
+=NhOC
+-----END PGP SIGNATURE-----
+
+--mfgi7y2gj34ketdi--
 
