@@ -1,134 +1,177 @@
-Return-Path: <linux-kernel+bounces-772544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2561B293EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:51:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F64B293EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E26B7ABA6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63B84E61B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2C02FE05C;
-	Sun, 17 Aug 2025 15:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE342FE05A;
+	Sun, 17 Aug 2025 15:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwVgzwA4"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VaB9C6WJ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980A539FCE;
-	Sun, 17 Aug 2025 15:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0709772629;
+	Sun, 17 Aug 2025 15:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755445868; cv=none; b=LxZFtDiqsdCGdEWbTWNSctfBzZ91/GN1TWRr7SsrTaj97Qf291GNyHOKKK1qSx09RmPijXS3leL/tARiQ9RyDV39RjAIB5vDILpViQiXACUUJy4Mzzt4MLkuG1V5W+ZLIOnBaMuSMCg6QuQ4okX4HuS5XByxh8/vKKj337iRN4Q=
+	t=1755446044; cv=none; b=s4nOI1hUB8i8xaN+RLqvGxZKcCPeb68qkdX38yfOIszUUi9DDx+bfOt5hCja0c/R1hHCt6QPU4JtHe7+RHtguLts16NiWbZQ1fir/ncvNWzFrbkqiygH3+aN2GNpxJYDv57vLwfAI1P0AhMkJDTBelfhKtIyHdPzANdbTCQIab4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755445868; c=relaxed/simple;
-	bh=JR8jbMCs8QxjEzkOj58G229hlMPUMqRiNV2+nI2zpTc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=aj64DifwaZX1DKiTQh5HWLFzqhji9VTtObVYLfBkYKYmc3G+hY/MI9+YMEg4IJ3p6C8KgRBzZzCOUbTIhaJSwoJw7ntC0vPbyxL4ACbR92viKQm5O7vimlNJVPiMCxATQAbVnJ6Fyy7Aov3h8CFoke4OKwUouhUuxBQXphv1+dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwVgzwA4; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323266baa22so2563872a91.0;
-        Sun, 17 Aug 2025 08:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755445866; x=1756050666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjOJABZCp548naVzq1SVUQpsRTFmVx7Vnw2LNaJgSpc=;
-        b=OwVgzwA4hXT/z39dvOfJPk1T/+IyPZxIcXdfQ+KS0Dw6DkrZdSO4mrg+THaquOOT9/
-         18WT2m3+fgou8u4dGUni19O4a3GmCxrZQOU6QN2CFhRg0f8d0mb65fzVITy7jeS2RZc+
-         Y67NqDz3gOJnlJM4WSL7+k0TtqWhcglyIGm7/E19NVxLlAer+7i1f19tpEKPQsueYLTT
-         34dgmtpi65pt7B0nAb8TS3GNxoxWipXXgiV/kwFPV33yzXpXdOQc20N/ExUwVJq8ga23
-         OZdpE3QTRnSfcB1SR/Sa1964BSxd1AXb7MUb+2uONM3ePCvEY8FHJHoF3LLUeQIKKMTY
-         /9MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755445866; x=1756050666;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjOJABZCp548naVzq1SVUQpsRTFmVx7Vnw2LNaJgSpc=;
-        b=QOSp0uOBs4EyltwDqpHtSyttQSS/BhwKhjeu9q6T8XDyUTCYu2KNk0khXbz0DMspRG
-         LxHvQI2Cx5O+e/v+SPT1JgiiAHZCJ10IxaiQzIUsIbLxg8GCc0WyvJrcaYNE06BObR5U
-         RLhBh9m7uknP/P7gJvr/zOoTQ+R4wr3IWkyqKTdBqfLKGdDVD/sKYATfnmvOYM5tK9yz
-         2Tmyq1SsiVH6gOrU7wnjS2Om2zkCn1N/QxojPivXwLPXAluekYpArmnyfNkM2v71xZKv
-         BYheb6kVkNZUQWyvKNsPpEffeCNQ1A+1OFgFeBcdyqUtRnUr/XT7OnrPTSDv1Qp0nxzY
-         9xbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD6M3rLp7gQTyq6aEoftRzjlqLlZAWwLa2YRaechT6YhZ9Ztl8+aRZ64YtzK2polI0TiYkE/ggAygKTqc=@vger.kernel.org, AJvYcCXXpT1OhN2NJv8by/P9iwarLwYomA6Xxp4RwKk8l26pUWqY4JjVR8drwScu4nkowq4ySgeZemWpl5KW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLyUFL3ysnEOFj4EGHBdCDmaUNU7/Q8tuOFDesus9nWoM41SCB
-	u/qIWjgiVR98Yaq/3f12VDOlII9kNMEnboPxJf9Hwg3UsRZMIXUoAeIq
-X-Gm-Gg: ASbGnctVC24YD9lzMCtcS0M2dfNnTe9E/OELSK5LqZRcXmsBgzVP7LmwWHLp0AfLHrt
-	fA08T5yqKXp57nNSe9xSxCaKuMT0VomMGtEkZ3ILRtmz0xKfFdebYX6mv4Xud7hES33sl9jiWKq
-	ihNMA1ons3/HAC+fwlft2J2ftXhKnZKxc8pJ6E5pIkWYblWsppaDtRtoBcDYyH3Eqgw3naGS9/5
-	ED5M0+vNJggxByj+TX2+ZBmVTtq+H+agZmgeihObUneQ/lt+QAFsCRDIiaYHydPNqBvQjfDKDD1
-	zSmWbmG78A4LZ11Z6CvyKPAF9MKVXWLzoDb+GO5sD+r0ZDP2edqJbU7LqQUVRxW5TlkazXnbDCx
-	WMXr6kA1xx+dsCL/5t4U=
-X-Google-Smtp-Source: AGHT+IHpRWgCYbDi4joXJa+E8544/3ray+wLKLWD1YuD6ZGN7D13+dewr7cVSoJHVCWGfA+uB3mVkw==
-X-Received: by 2002:a17:90b:3b8c:b0:31c:3651:2d18 with SMTP id 98e67ed59e1d1-3234dc64767mr9865139a91.16.1755445865738;
-        Sun, 17 Aug 2025 08:51:05 -0700 (PDT)
-Received: from fedora ([2804:14c:64:af90::1000])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45292dc1sm5221495b3a.50.2025.08.17.08.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 08:51:05 -0700 (PDT)
-From: Marcelo Moreira <marcelomoreira1905@gmail.com>
-To: cem@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v2] xfs: Replace strncpy with memcpy
-Date: Sun, 17 Aug 2025 12:50:41 -0300
-Message-ID: <20250817155053.15856-1-marcelomoreira1905@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755446044; c=relaxed/simple;
+	bh=hLaRNmAbO70c05wb20YtRVrYJpCnIdM9zpIVbI4zlNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNeCkgG9ESiXEfhZApN18WE4/TIjHyeBmBGRm/emSyvaGqovd8DnydcEr6F/N9IVWEW8zDw6l9+6iWNWN3Lb0nAcggXdlU5TPNqG5HPdghZp0CP0wYQXaS9m7+D7FQq/r7y+x7DNpNDO0ssNCUCQvt8v/GN5Jn4P/LHFw0cR9Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VaB9C6WJ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BgzYxtQckyjVZOGp9Y3h+oWyiWCJpkBXNVoZbUwFcSI=; b=VaB9C6WJd8F7rvrY612y75q5ZJ
+	TCre80TCxTwuDT6dEzSBLMI++b3AYi1cSqIb49Jt/3UbXVREpuCcHj69G2gROjDodVXxKNej6llPX
+	Z98rskyl6JDq3vqWOC/afvj5hhHEo+fy6Nl1pwm98/TXuRIA9/GVZYWhPqLvkSOH+YkxxBp5Rilyh
+	fvQ/Ye/keplgadZz+pkADjwhedzC8mI1777gpk0dHQP6h8qSF5xtwlFrqlytKUKsJI5TmfKgiytja
+	PDUf0yYAvKCpSJb1k9U+NXEfVQ2UenAjsj3ByXX5Mb7KANcio4Bt6gb2ziDl/tTNnvhFRtQ4WiNHu
+	VuRoS0sg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44182)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1unfhT-0000nb-33;
+	Sun, 17 Aug 2025 16:53:40 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1unfhP-0001YF-1M;
+	Sun, 17 Aug 2025 16:53:35 +0100
+Date: Sun, 17 Aug 2025 16:53:35 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Hanna Hawa <hhhawa@amazon.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] i2c: pxa: prevent calling of the generic recovery
+ init code
+Message-ID: <aKH6_1MRqD24QTq5@shell.armlinux.org.uk>
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-2-ca42ea818dc9@gmail.com>
+ <aJpR96Kkj12BwW-M@smile.fi.intel.com>
+ <8cb62eb9-9137-44b4-86f6-82f69813e83f@gmail.com>
+ <aJyOu_GUlDPuJXO5@smile.fi.intel.com>
+ <0bfcb570-dab3-4038-a1aa-8bc7fe2feee8@gmail.com>
+ <aJyvHnLS-A3F2gN7@shell.armlinux.org.uk>
+ <1261d3ed-e057-45b1-913e-f8bf1cd5d7bc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1261d3ed-e057-45b1-913e-f8bf1cd5d7bc@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Following a suggestion from Dave and everyone who contributed to v1, this
-changes modernizes the code by aligning it with current kernel best practices.
-It improves code clarity and consistency, as strncpy is deprecated as explained
-in Documentation/process/deprecated.rst. Furthermore, this change was tested
-by xfstests and as it was not an easy task I decided to document on my blog
-the step by step of how I did it https://meritissimo1.com/blog/2-xfs-tests :).
+On Sun, Aug 17, 2025 at 04:59:22PM +0200, Gabor Juhos wrote:
+> 2025. 08. 13. 17:28 keltezéssel, Russell King (Oracle) írta:
+> > On Wed, Aug 13, 2025 at 05:17:28PM +0200, Gabor Juhos wrote:
+> >> 2025. 08. 13. 15:10 keltezéssel, Andy Shevchenko írta:
+> >>> On Wed, Aug 13, 2025 at 12:36:45PM +0200, Gabor Juhos wrote:
+> >>>> 2025. 08. 11. 22:26 keltezéssel, Andy Shevchenko írta:
+> >>>>> On Mon, Aug 11, 2025 at 09:49:56PM +0200, Gabor Juhos wrote:
+> >>>
+> >>> ...
+> >>>
+> >>>>> TBH this sounds to me like trying to hack the solution and as you pointed out
+> >>>>> the problem is in pinctrl state changes. I think it may affect not only I2C case.
+> >>>>
+> >>>> It is not an error in the pinctrl code. I have checked and even fixed a few bugs
+> >>>> in that.
+> >>>>
+> >>>>> And I didn't get how recovery code affects the initialisation (enumeration).
+> >>>>
+> >>>> Without the fix, it is not possible to initiate a transaction on the bus, which
+> >>>> in turn prevents enumeration.
+> >>>
+> >>> But why? As you said below the first pin control state is changed during the
+> >>> probe, which is fine, and the culprit one happens on the recovery.
+> >>
+> >> Erm, no. Both happens during probe, before the I2C core tries to enumerate the
+> >> devices on the bus.
+> >>
+> >>> Why is recovery involved in probe? This is quite confusing...
+> >> Let me try to explain it differently. Here is the simplified call chain:
+> >>
+> >>   i2c_pxa_probe()
+> >>      ...
+> >>      i2c_pxa_init_recovery()
+> >>         pinctrl_select_state()                  <- selects GPIO state
+> >>         pinctrl_select_state()                  <- selects default (I2C) state
+> >>      ...
+> >>      i2c_add_numbered_adapter()
+> >>          i2c_register_adapter()
+> >>              ...
+> >>              i2c_init_recovery()
+> >>                  i2c_gpio_init_recovery()
+> >>                      i2c_gpio_init_generic_recovery()
+> >>                          pinctrl_select_state() <- selects GPIO state***
+> >>                          ...
+> >>                          pinctrl_select_state() <- selects default (I2C) state
+> >>              ...
+> >>              bus_for_each_drv()
+> >>                  __process_new_adapter()
+> >>                      i2c_do_add_adapter()
+> >>                          i2c_detect()           <- enumerates the devices
+> >>
+> >> The culprit is the first pinctrl_select_state() call in
+> >> i2c_gpio_init_generic_recovery() marked with '***'.
+> >>
+> >> That call causes the controller to go stuck, which makes it impossible to
+> >> transfer anything on the bus.
+> > 
+> > Probably because when GPIO state is selected, the I2C bus pins end up
+> > being set low, which the I2C controller sees, so it thinks there's
+> > another device communicating on the bus.
+> 
+> Yes, it seems so.
+> 
+> When GPIO state is selected, the bits in the Bus Monitor register which are
+> continuously reflecting the value of the SCL and SDA pins contains zeros.
+> 
+> Additionally, the Status register indicates an 'Early Bus Busy' condition, which
+> means that 'The SCL or SDA line is low, without a Start condition'.
+> 
+> 
+> > I could be wrong, as I don't have the hardware to hand to research
+> > the issue again.
+> > 
+> > I have a vague memory that the GPIO state must _always_ reflect the
+> > actual pin state before switching to it to avoid glitches and avoid
+> > inadvertently changing the I2C controller state.
+> 
+> Unfortunately, it only helps to avoid glitches on the external lines. At least,
+> in the current case the controller hungs no matter which value combination is
+> being set on the GPIO pins before switching to GPIO state.
 
-This change does not alter the functionality or introduce any behavioral
-changes.
+Note that my original i2c-pxa recovery implementation was proven
+functional on the uDPU, both by myself and Telus.
 
-Changes include:
- - Replace strncpy with memcpy.
-
----
-Changelog:
-
-Changes since v1:
-- Replace strncpy with memcpy instead of strscpy.
-- The change was tested using xfstests.
-
-Link to v1: https://lore.kernel.org/linux-kernel-mentees/CAPZ3m_jXwp1FfsvtR2s3nwATT3fER=Mc6qj+GzKuUhY5tjQFNQ@mail.gmail.com/T/#t
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
----
- fs/xfs/scrub/symlink_repair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
-index 953ce7be78dc..5902398185a8 100644
---- a/fs/xfs/scrub/symlink_repair.c
-+++ b/fs/xfs/scrub/symlink_repair.c
-@@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
- 		return 0;
- 
- 	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
--	strncpy(target_buf, ifp->if_data, nr);
-+	memcpy(target_buf, ifp->if_data, nr);
- 	return nr;
- }
- 
 -- 
-2.50.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
