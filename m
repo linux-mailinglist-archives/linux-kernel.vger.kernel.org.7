@@ -1,57 +1,86 @@
-Return-Path: <linux-kernel+bounces-772303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC20B29107
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:32:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8ABB29104
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFE13A0D08
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 00:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B961B206A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 00:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CFB72610;
-	Sun, 17 Aug 2025 00:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E8B78F20;
+	Sun, 17 Aug 2025 00:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fUQxl/hn"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293D13FEE;
-	Sun, 17 Aug 2025 00:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="A/+ENWGZ"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5903513FEE
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 00:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755390733; cv=none; b=iz42sb+vRiD9qySbFTqtFdSQKlAkZLU4m5zimr3XX/Jgzfo8DQ+5+lduhovyg9uOATjAz914kzZjvfka7RkHS7Aqq8AmVpbx1zChdckfzzA/3NS8s50ZDOru2RDyee/ri1hEgqCxruwQN5jaU6DQq1i+JdQ7QYTxUAGKCSUTkEw=
+	t=1755390666; cv=none; b=L2NKIhoIc7RCnEToG4NZ3c+90R1FEBh9flcWsjnfhUL2ujFSiU5QYABJh04+JdJ2Jh0MPfk/5lrKXT0ZHSkMdnfT+K89a4TT/s5ttWVk/IfB9O+DyyVCS8qtD4cjQW9zpnuDIOt/LwwTX/h8vEiKEZOfy6aHzOBQBB52gvsPCYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755390733; c=relaxed/simple;
-	bh=SYSf3xnc7zAMoFCLHwjiYQSb+HCoNuTd/lwQn8+geW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RBI1i1ndT68OJTuh21Mb4D2y0Qm3kcXoQ+Q/z48F50jr7hauUoP7La6bX8NRyNx+TVUUtjxfKQ1gGSCQtt6H7Ozn94cXIR9YeWJ8X90dGj/8CRy7OU+VxNUFieiSvtyurL8Nf7P+RjtpknHoe0ufxM5DCfprB5rYNsUruycqDyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fUQxl/hn; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Gy
-	S0BF4N7kb4dNNguU2QXnvUxcXRJcFEexZ/e1tAMcw=; b=fUQxl/hnspEEivhZtF
-	JL0QJAxPnyP9luJrKPdSmTdsxODomk3uHUOVex7eEcFOSm+B9W3l8inamESdlrUU
-	dLQdeX7uzM4oGZBLMlgmFgxtkAR2dmni+in11hR42akVQD5AhlDIqz4S0cfn/mpZ
-	uT37D1WtW3+IFs2wPrdYaTCHk=
-Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wBHEDl3IqFo9GLXBw--.16921S2;
-	Sun, 17 Aug 2025 08:29:53 +0800 (CST)
-From: luoguangfei <15388634752@163.com>
-To: nicolas.ferre@microchip.com,
-	claudiu.beznea@tuxon.dev
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1755390666; c=relaxed/simple;
+	bh=x5kKEdqAtqNqNebOaHqfVFdxNqQXrM4MCJceyaZ88dE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xq4yST3toKxaw2N1YOAzgzf3W7dMeBRvl2mSCwCY1ahHOjLarGx4u03k+3pm0B5lvDcafDV5+KNOsxS0QfmEE3vHPl2ZJUhmRIPiYUzTW5HCZAOBzoHBhHa9MuHStkYmVItX8KNFJOfpdRxRjNCcDVKrS3Zss/LWaqvwi+xnBG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=A/+ENWGZ; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e870689dedso209293685a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 17:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=zetier.com; s=gm; t=1755390661; x=1755995461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jcl7rsZFszSewcnT88rggLmO7NWAsdqT18aHbHiVN6c=;
+        b=A/+ENWGZurkND4Ms4qh7kHQbTAKPZ4HEBQq6sPC+DwBVY6CDJzORXyiMpiyjLcVtyU
+         Wc21fKLElbgo//OlIsICg/J819S4cHtRcLCdDXpG7KU5I7EjphFDxdm3IWK9PFFxnggS
+         zsFV2epWKA5Pc1Na3PPq9OF8ZL9zOAtjJH1m5uIWnHV/1C4VOsqvYxSlpu2i5BN2WXYR
+         9Hfnaq4epyvsnEtg0/XkpOJwwCTGYctoeFA5an79IhkA/jEy/C/fiZ6euwqFzbLLVl+U
+         /k8dD8/L4Rgb4CymoPt0sP6A4clqMtJ3+Sk2GvuMV1FYm/o5MizTNjIf7SoTFgj+rOrK
+         dCrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755390661; x=1755995461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jcl7rsZFszSewcnT88rggLmO7NWAsdqT18aHbHiVN6c=;
+        b=kxPDvZadI2P3XBc5AWviiVKGkf3E1q8Srs/qU91E+0pvqo379aD0NWDl2VMV37WxqV
+         /IfpRWNlbve51wiTuvZDJRmeCZ/IcyzpoEQCjInunB5c0rvs+AWdC9x8theEMEfv9VtD
+         pVLMt4ueL9xescxa33KtPBUNYrJsXhGpV3O6Cf3MqGLjE52ykqtX5TBobwvzPvVHb8/E
+         geJNVrGESenpopJDceM77aQp9EF7vRNRWvnZngLop+/MzXqWbvepDwWN42uHeEE8Iw6p
+         Eh0pVeDnzAdYK7QbaEuiR322/ubqW504yBULits42XlBr7DH0K8kLF3ZsDJiaHAJsiBd
+         AErA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjwxp/ZibwMrb5ce22ln2YrHoNTIrt11LxGQIO+fUkYa4TEvELkfDJ/0lvfxKONn2QxAGm9mMvg3qFASg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxettWNPM9syk/ljzeTKnD8arLmSyB4VCn3cOAUJdXQxI53dTgG
+	f8VCMBoXS59aWq8wbns6fT6dSFR08DPDsI50Kfj/a86tgMmBMOMidzoy3Y6PRV8yR7E=
+X-Gm-Gg: ASbGncslAJrBCWe+SIu7ckTrV3ceJHMEviPuEVDGQ0s5Aa8HwMqRRwoXpjCeSX9yd3E
+	GqaAB8tGWDD0ck22BQmLydJtqmYS5AMMseHq04pBvGwE+Kzeg1Mkb0eGLIzvzUhzn1+uM32THy7
+	G09IqrenyROsDaq37KM7XueIjTIk6jBkmBsfAdkIS5SW6vmrNx77IKfAmP5c/KFL2NPMhqyyDNi
+	RawwRNTgdZTlYhZs+tc4O98uEKprSoUeyNXnAor78OTF9Nbb22/KbAxfY0d9LccxTrUniTzNHTZ
+	7mkkRmcGT1wSRxU4X9PjvEogqUjjrztQAtRj4nEiNI7xgjeeOcNpEnUncFR7Sfvh2+I3c8BDxbo
+	sgxo+w9jcAMENq0y94SFu768o7VjjH0BgF85UpEfmA+ASZuql
+X-Google-Smtp-Source: AGHT+IEEAXUblqUo1pTCJqPCUcZNM3yyVVRue/pei3fvPjMKqyyO3FGgVdLsySEbi7BC0g+mx86jqA==
+X-Received: by 2002:a05:620a:4515:b0:7e8:3fed:a09a with SMTP id af79cd13be357-7e87df4b3a2mr835441485a.9.1755390661307;
+        Sat, 16 Aug 2025 17:31:01 -0700 (PDT)
+Received: from ethanf.zetier.com ([65.222.209.234])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1c42e5sm342402885a.65.2025.08.16.17.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 17:31:00 -0700 (PDT)
+From: Ethan Ferguson <ethan.ferguson@zetier.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	15388634752@163.com
-Subject: [PATCH] net: macb: fix unregister_netdev call order in macb_remove()
-Date: Sun, 17 Aug 2025 08:29:39 +0800
-Message-ID: <20250817002939.3296-1-15388634752@163.com>
-X-Mailer: git-send-email 2.43.0
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: [PATCH v2 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Date: Sat, 16 Aug 2025 20:30:45 -0400
+Message-Id: <20250817003046.313497-1-ethan.ferguson@zetier.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,61 +88,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBHEDl3IqFo9GLXBw--.16921S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw1fXrW3WFyrur47AFWUArb_yoW8Ww48pw
-	43GFyfWryIqrsFyws7Xa1UJFy5Ga47t348Wa4xu393Z39IkryqyrWjkFy8uFy5GrZrAFWa
-	yr15AasxAa1kAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pid-BtUUUUU=
-X-CM-SenderInfo: jprvjmqywtklivs6il2tof0z/
 
-When removing a macb device, the driver calls phy_exit() before
-unregister_netdev(). This leads to a WARN from kernfs:
+Add support for reading / writing to the exfat volume label from the
+FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls.
 
-  ------------[ cut here ]------------
-  kernfs: can not remove 'attached_dev', no directory
-  WARNING: CPU: 1 PID: 27146 at fs/kernfs/dir.c:1683
-  Call trace:
-    kernfs_remove_by_name_ns+0xd8/0xf0
-    sysfs_remove_link+0x24/0x58
-    phy_detach+0x5c/0x168
-    phy_disconnect+0x4c/0x70
-    phylink_disconnect_phy+0x6c/0xc0 [phylink]
-    macb_close+0x6c/0x170 [macb]
-    ...
-    macb_remove+0x60/0x168 [macb]
-    platform_remove+0x5c/0x80
-    ...
+Implemented in similar ways to other fs drivers, namely btrfs and ext4,
+where the ioctls are performed on file inodes.
 
-The warning happens because the PHY is being exited while the netdev
-is still registered. The correct order is to unregister the netdev
-before shutting down the PHY and cleaning up the MDIO bus.
+v2:
+Fix endianness conversion as reported by kernel test robot
+v1:
+Link: https://lore.kernel.org/all/20250815171056.103751-1-ethan.ferguson@zetier.com/
 
-Fix this by moving unregister_netdev() ahead of phy_exit() in
-macb_remove().
+Ethan Ferguson (1):
+  exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+  exfat: Fix endian conversion
 
-Signed-off-by: luoguangfei <15388634752@163.com>
----
- drivers/net/ethernet/cadence/macb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/exfat/exfat_fs.h  |  2 +
+ fs/exfat/exfat_raw.h |  6 +++
+ fs/exfat/file.c      | 56 +++++++++++++++++++++++++
+ fs/exfat/super.c     | 99 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 163 insertions(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index ce55a1f59..7bbb674d5 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -5407,11 +5407,11 @@ static void macb_remove(struct platform_device *pdev)
- 
- 	if (dev) {
- 		bp = netdev_priv(dev);
-+		unregister_netdev(dev);
- 		phy_exit(bp->sgmii_phy);
- 		mdiobus_unregister(bp->mii_bus);
- 		mdiobus_free(bp->mii_bus);
- 
--		unregister_netdev(dev);
- 		cancel_work_sync(&bp->hresp_err_bh_work);
- 		pm_runtime_disable(&pdev->dev);
- 		pm_runtime_dont_use_autosuspend(&pdev->dev);
 -- 
-2.43.0
+2.50.1
 
 
