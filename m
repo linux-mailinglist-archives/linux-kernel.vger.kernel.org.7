@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-772455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4032AB292DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69511B292DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F7A1681A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9375A484DFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FAC2877F3;
-	Sun, 17 Aug 2025 11:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="R1bJPsL0"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7212253AE;
+	Sun, 17 Aug 2025 11:50:29 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC11E3176FD;
-	Sun, 17 Aug 2025 11:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CDE137E;
+	Sun, 17 Aug 2025 11:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755430866; cv=none; b=QNhQ1rJmUZKFpMPwdoaDhw5E52U9gExrVHaqVkIrbQiF+gmwzyrWSBa6gsZMGABM48/iKS4QqtlR3dX8NbKjUIK9N66N9rB7oOdgIidXtig9NAurQ0zPL3QV1zLLgDRSSSuDpPhAzlsdMK6JyeT/JgJcO9+qeY5R6R/4rSQL3J4=
+	t=1755431429; cv=none; b=kWQtY1BQAkw9wRxFoiPmFtvVX0+LxmR2knUl07y9GXekTyXsdy0qkqOFN/IVyZ8p0P3PSs/DPlpyCkVWjLZvBGTKwcu20+tmhbflqM9+z7HaenoQW2/wJhzwihVjPcn3uoh7eF5gUlGhcmv6enm4Azp+xO7RWopawreAtetDhAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755430866; c=relaxed/simple;
-	bh=869c7gcPaIYl+h4mKgJ6Ss13sUo0NWqQFv5exvTjHMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrMuEjSwUtxRqysBu5S6XTodyjeEY3oJMvmHh86ZPEJFAOW7eZxZlxUdHDsKRziuo2Kdyg33jl0C9B3rLZTYJlfMc6Ll2/8WflvmnCrbQcxGbQr1DqmmrFrhlGyJC/FERNU2f24gMePxAjG6+XhF7WvwDHBgXYDw7e8BRJ585QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=R1bJPsL0; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=NXJYL/vOt42RWZZh2Kt3o1FAhTT8s2pj2ozGihGmzPg=; b=R1bJPsL0ucWKskUIdD8xvuEHR6
-	mm/9aAj3gTqsSGNty4OvPdnqm+52hucSvkjRVO5fb2FbRDsrS2ZN5xbqUi9V5fwuzlkUGf0S28jh8
-	90NfeqYXEbigRfhTxvlavwiF+bEZTk3RjUgx1moYkSl5Gj4imSeNxnPteEXUMMJcnQKP3NP00f7q8
-	4OLD/vV8ZnhRn1fCeeYOzj5uO3UZ+9w+kJQ/ImPrmnv7WdgGsORoPld5bc5Q14U48G60XmLUniLrx
-	MC5Y56aRdS419VqlMERmMi4je2EanwzGitSjU5hiGpOI0SsHG4FxZSOFwkqjM7kujRmPF3iNA45RX
-	iU8PQ0kQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1unbVT-00Ez69-39;
-	Sun, 17 Aug 2025 19:40:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 17 Aug 2025 19:40:56 +0800
-Date: Sun, 17 Aug 2025 19:40:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] crypto: Mark intermediary memory as clean
-Message-ID: <aKG_yEuG6F4cqFjf@gondor.apana.org.au>
-References: <aKGYHwT31OaGzc5Z@gondor.apana.org.au>
- <tencent_73E16EBC9654E89EECD6CEC4786A6C4C2D0A@qq.com>
+	s=arc-20240116; t=1755431429; c=relaxed/simple;
+	bh=hccIm5eCUK43zVJAwZT+w4a7yLLZQ4mUmhPY/6ewFmg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=OdDKBHi25W8SHjQEDlfnL/tKyWoQtWnsB5ccYmjBQVy7CP7uZMmocK574O/5HxCUpSsxTvBxA7/9+/gOIHTQzzFwdh42JGQ4bqqOPiHpmBXgPlmFpS7JfINgIZhAgIXlOK0sp/tcsMwOXa8JATAnLN/FwT3V9mS5+oRnAj2nNhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E007F431EB;
+	Sun, 17 Aug 2025 11:50:15 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_73E16EBC9654E89EECD6CEC4786A6C4C2D0A@qq.com>
+Date: Sun, 17 Aug 2025 13:50:15 +0200
+From: Artur Rojek <contact@artur-rojek.eu>
+To: "D. Jeff Dionne" <jeff@coresemi.io>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Landley <rob@landley.net>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+In-Reply-To: <DC855B2C-37F3-4565-8B6F-B122F7E16E25@coresemi.io>
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-4-contact@artur-rojek.eu>
+ <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
+ <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
+ <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
+ <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
+ <7a4154eef1cd243e30953d3423e97ab1@artur-rojek.eu>
+ <ee607928-1845-47aa-90a1-6511decda49d@lunn.ch>
+ <9eab7a4ff3a72117a1a832b87425130f@artur-rojek.eu>
+ <DC855B2C-37F3-4565-8B6F-B122F7E16E25@coresemi.io>
+Message-ID: <93f21de744ea0c4d2b6ddb435e21f6aa@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeelieehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhfkgigtgfesthekjhdttddtjeenucfhrhhomheptehrthhurhcutfhojhgvkhcuoegtohhnthgrtghtsegrrhhtuhhrqdhrohhjvghkrdgvuheqnecuggftrfgrthhtvghrnhephffhkeekteejteevgfevtddttefhlefggfehjeehtdeugeetueevtdefgfevkeefnecukfhppedutddrvddttddrvddtuddrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddtrddvtddtrddvtddurdduledphhgvlhhopeifvggsmhgrihhlrdhgrghnughirdhnvghtpdhmrghilhhfrhhomheptghonhhtrggtthesrghrthhurhdqrhhojhgvkhdrvghupdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehjvghffhestghorhgvshgvmhhirdhiohdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehrohgssehlrghnughlvgihrdhnvghtpdhrtghpthhtohepghhlrghusghithiisehphhihshhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopegrnhgurhgvf
+ idonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+X-GND-Sasl: contact@artur-rojek.eu
 
-On Sun, Aug 17, 2025 at 06:59:15PM +0800, Edward Adam Davis wrote:
-> This is not a leak! The stack memroy is hashed and fed into the
-> entropy pool. We can't recover the original kernel memory from it.
+On 2025-08-17 06:29, D. Jeff Dionne wrote:
+> On Aug 16, 2025, at 22:40, Artur Rojek <contact@artur-rojek.eu> wrote:
 > 
-> Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
-> V1 -> V2: mark it as unpoison
+> The MDIO isn’t implemented yet.  There is a pin driver for it, but it 
+> relies on
+> pin strapping the Phy.  Probably because all the designs that SoC base 
+> is in
+> (IIRC 10 or so customer and prototype designs, plus Turtle and a few
+> derivatives), the SoC was designed in conjunction with board.  A bit 
+> lazy.
 > 
->  crypto/jitterentropy-kcapi.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-> index 1266eb790708..4020a6e41b0e 100644
-> --- a/crypto/jitterentropy-kcapi.c
-> +++ b/crypto/jitterentropy-kcapi.c
-> @@ -117,6 +117,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8 *addtl,
->  		pr_warn_ratelimited("Unexpected digest size\n");
->  		return -EINVAL;
->  	}
-> +	kmsan_unpoison_memory(intermediary, SHA3_256_DIGEST_SIZE);
+> But they all have the MDIO connected, so we should add it (it’s very 
+> simple).
 
-Please change SHA3_256_DIGEST_SIZE to sizeof(intermediary).
+Hi Jeff,
+thanks for the elaboration. It sounds to me then that I should wait with
+the driver upstream until the MDIO interface is implemented.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+At least I gave you guys a little bit of a nudge :-)
+
+Cheers,
+Artur
+
+> 
+> Cheers,
+> J.
+> 
+>> On 2025-08-16 02:18, Andrew Lunn wrote:
+>>>> Yes, it's an IC+ IP101ALF 10/100 Ethernet PHY [1]. It does have both 
+>>>> MDC
+>>>> and MDIO pins connected, however I suspect that nothing really
+>>>> configures it, and it simply runs on default register values (which
+>>>> allow for valid operation in 100Mb/s mode, it seems). I doubt there 
+>>>> is
+>>>> another IP core to handle MDIO, as this SoC design is optimized for
+>>>> minimal utilization of FPGA blocks. Does it make sense to you that a 
+>>>> MAC
+>>>> could run without any access to an MDIO bus?
+>>> It can work like that. You will likely have problems if the link ever
+>>> negotiates 10Mbps or 100Mbps half duplex. You generally need to 
+>>> change
+>>> something in the MAC to support different speeds and duplex. Without
+>>> being able to talk to the PHY over MDIO you have no idea what it has
+>>> negotiated with the link peer.
+>> 
+>> Thanks for the explanation. I just confirmed that there is no activity
+>> on the MDIO bus from board power on, up to the jcore_emac driver start
+>> (and past it), so most likely this SoC design does not provide any
+>> management interface between MAC and PHY. I guess once/if MDIO is
+>> implemented, we can distinguish between IP core revision compatibles,
+>> and properly switch between netif_carrier_*()/phylink logic.
+>> 
+>> Cheers,
+>> Artur
+>> 
+>>> Andrew
 
