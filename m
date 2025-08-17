@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-772360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1494DB291BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:01:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49048B291BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0E51965AB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C6D201EBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7C2040AB;
-	Sun, 17 Aug 2025 06:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A133E2063E7;
+	Sun, 17 Aug 2025 06:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qq+Qa1Q1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9U1k7TM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1363E1A23AC;
-	Sun, 17 Aug 2025 06:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA75917A314;
+	Sun, 17 Aug 2025 06:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755410491; cv=none; b=jhTCwN5QvPZCgLmCzFsNn2bUAon4zExB5l7prEwqzvtuXCICU3AIJu/nO64LG0yXs4z2oVYHrmV/f17V6D9LSIUfSoXJHSN+xCYyn0HysX16kCaXyS9Gp0aFk2eelRA0/fbEWwj+g2FM5OJr6b6EU6cEFpJ0KwacpKHXw/d9lQo=
+	t=1755410831; cv=none; b=pCsmoaiBfnD0w7d1S0zzWeUTZh1H7tkL1bLT5WI0ZlUK9qNvpEQhiqN1VS0snBuueioXBDkiipQA3NeTzP9bvE8csjbpv6xlLwzs/RLPRQQ4/HiyUiwpSEch2INBQwKeyr2Lhr3nKYMiiXvMx7OqZ/5KKhFynMyakWI5BSRUpec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755410491; c=relaxed/simple;
-	bh=mHZUPtn5UficimsWMroxIB90kO/gt16LWXvu1TDftiI=;
+	s=arc-20240116; t=1755410831; c=relaxed/simple;
+	bh=HGGcLRz+ZraRVFfCLWo4kFMnqmPc26FQI/+/W5TGfkk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIpiDi6S+Lcs/fLAZSeA5mwnHQd1r9ZzD/wIDQ+XGvqbKBX3ckgAJxNL54ucO8qH2duoBoA0nuaIS8BBVDh/4J+wt6+fwroQqn51mLuBaWJro5zgn9KOzECAphE8uKY2VnE+K2iZxh1U2gAyM/ItEmoNG/3ObgW/fnFwyXSy2vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qq+Qa1Q1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB26BC4CEEB;
-	Sun, 17 Aug 2025 06:01:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jHOIbfmECNi7aLDyzovQafxx3Zs1iwNT4qu/KHeklr6imrx9wWsyp+HesRSMyxZTODYLs8mipxxDQUnHW5+eIf48R2SgbrZQz+98jY6x8VFfbPSHNfmhCKcQ1Y29wG8XMw4UVH/cD+4NoAkFiTARa8G9e0aoFZDONBul9ubVCvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9U1k7TM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00101C4CEEB;
+	Sun, 17 Aug 2025 06:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755410490;
-	bh=mHZUPtn5UficimsWMroxIB90kO/gt16LWXvu1TDftiI=;
+	s=k20201202; t=1755410831;
+	bh=HGGcLRz+ZraRVFfCLWo4kFMnqmPc26FQI/+/W5TGfkk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qq+Qa1Q1NID6yT4ELg0thEZhShaOpzvUCqLG2VgKDcJPdQTrwBHc6P6O+jm/u/PgU
-	 hWw+v+rZiWQLviUAgQwprPMRVcH3qBMPThs/Fb0XjwYaS9zPgj5lyH7ILdQBCDKM1i
-	 KXQY+ZkXyHGkTDi0GYE21MYhDTf07kdCgcef4q2l1DE8iwuTMIVj1y3CeYsEwq643E
-	 C0fQQzhP36sKEYjgPiuB1/DZJS6xGDXNwB/VlCZhuYhARWn8KLACfIP0gTmSDP4R6d
-	 I4y6dYS5aIDM/0IBBtunQ9rBVZezmuX7qTC6k82hVpAvbQPmyvN7GCHZ5hT7NiY/uF
-	 FSFJiZJPB7ZWg==
-Message-ID: <58e3e3ef-1871-45b1-ba2b-be6981d7d3d1@kernel.org>
-Date: Sun, 17 Aug 2025 08:01:24 +0200
+	b=C9U1k7TMdBHes3n2U3HtU5TgFJ0ido19RMH6bSZZxEcZ7KeIGZcoJwgD+ZTwI9hPY
+	 vsBFJQ88y+z5dVDi+XaD3Fj/8ASlVZDTMwS/79Qb274kFMZC4fhC57S4whrI2topvi
+	 +afrdqypf8plTk6o7c0jfGK6DQKQmR2ZqyBeW7bxJPiS9oAyaWLeScEnJVYH0IyYLP
+	 0AGLUgwFu+Pjvdli51G70bV8CU/wp1yW32WTXYtm+7gUiR+Gjt0eerEqgep6DTPNr/
+	 Fqj6SF9n3QwJMyvGXm5hcPPtwGW9pHM3vrHOm0ifwUH9ePErR56zgNhm0Yv/ZATUJL
+	 Nna1/W4to/9Cg==
+Message-ID: <eb14a865-984c-4288-8139-5650408ebf51@kernel.org>
+Date: Sun, 17 Aug 2025 08:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] clock: eswin: Documentation for eic7700 SoC
+Subject: Re: [PATCH v4 2/3] clock: eswin: Add eic7700 clock driver
 To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -58,7 +58,7 @@ To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
 Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
  huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
 References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
- <20250815093653.1033-1-dongxuyang@eswincomputing.com>
+ <20250815093720.1088-1-dongxuyang@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,216 +104,301 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250815093653.1033-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20250815093720.1088-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2025 11:36, dongxuyang@eswincomputing.com wrote:
+On 15/08/2025 11:37, dongxuyang@eswincomputing.com wrote:
 > From: Xuyang Dong <dongxuyang@eswincomputing.com>
 > 
-> Add device tree binding documentation for the ESWIN eic7700
-> clock controller module.
+> This driver depends on the CCF framework implementation.
+>   Based on this driver, other modules in the SoC can use the APIs
+>   provided by CCF to perform clock-related operations.
+
+Useless description. Instead describe the hardware and architecture of
+your driver. We all know what is the purpose of CCF and how it works.
+
+>   The driver supports eic7700 series chips.
+
+Messed indentation.
+
 > 
 > Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
 > Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 > ---
->  .../bindings/clock/eswin,eic7700-clock.yaml   | 381 ++++++++++++++++++
->  1 file changed, 381 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+>  drivers/clk/Kconfig             |   1 +
+>  drivers/clk/Makefile            |   1 +
+>  drivers/clk/eswin/Kconfig       |  10 +
+>  drivers/clk/eswin/Makefile      |   8 +
+>  drivers/clk/eswin/clk-eic7700.c |  44 ++
+>  drivers/clk/eswin/clk.c         | 734 ++++++++++++++++++++++++++++++++
+>  drivers/clk/eswin/clk.h         |  69 +++
+>  7 files changed, 867 insertions(+)
+>  create mode 100644 drivers/clk/eswin/Kconfig
+>  create mode 100644 drivers/clk/eswin/Makefile
+>  create mode 100644 drivers/clk/eswin/clk-eic7700.c
+>  create mode 100644 drivers/clk/eswin/clk.c
+>  create mode 100644 drivers/clk/eswin/clk.h
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 4d56475f94fc..184b76a406d7 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -505,6 +505,7 @@ source "drivers/clk/actions/Kconfig"
+>  source "drivers/clk/analogbits/Kconfig"
+>  source "drivers/clk/baikal-t1/Kconfig"
+>  source "drivers/clk/bcm/Kconfig"
+> +source "drivers/clk/eswin/Kconfig"
+>  source "drivers/clk/hisilicon/Kconfig"
+>  source "drivers/clk/imgtec/Kconfig"
+>  source "drivers/clk/imx/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 18ed29cfdc11..42c61e216511 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -120,6 +120,7 @@ obj-$(CONFIG_CLK_BAIKAL_T1)		+= baikal-t1/
+>  obj-y					+= bcm/
+>  obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+>  obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+> +obj-$(CONFIG_ARCH_ESWIN)		+= eswin/
+>  obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+>  obj-y					+= imgtec/
+>  obj-y					+= imx/
+> diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
 > new file mode 100644
-> index 000000000000..45e70ebc08e6
+> index 000000000000..f2284c2d790d
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-> @@ -0,0 +1,381 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/eswin,eic7700-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/clk/eswin/Kconfig
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0
 > +
-> +title: Eswin EIC7700 SoC clock controller
+> +config COMMON_CLK_EIC7700
+> +	bool "EIC7700 Clock Driver"
+> +	depends on ARCH_ESWIN
+> +	help
+> +	  Build the Eswin EIC7700 SoC clock driver based on the
+> +	  common clock framework. This driver provides support
+> +	  for the clock control on the Eswin EIC7700 SoC,
+> +	  which is essential for managing clock rates and power management.
+> diff --git a/drivers/clk/eswin/Makefile b/drivers/clk/eswin/Makefile
+> new file mode 100644
+> index 000000000000..a3139e34ee22
+> --- /dev/null
+> +++ b/drivers/clk/eswin/Makefile
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Eswin Clock specific Makefile
+> +#
 > +
-> +maintainers:
-> +  - Yifeng Huang <huangyifeng@eswincomputing.com>
-> +  - Xuyang Dong <dongxuyang@eswincomputing.com>
+> +obj-y	+= clk.o
 > +
-> +description:
-> +  The clock controller generates and supplies clock to all the modules
-> +  for eic7700 SoC.
+> +obj-$(CONFIG_COMMON_CLK_EIC7700)	+= clk-eic7700.o
+> diff --git a/drivers/clk/eswin/clk-eic7700.c b/drivers/clk/eswin/clk-eic7700.c
+> new file mode 100644
+> index 000000000000..278b256b4c52
+> --- /dev/null
+> +++ b/drivers/clk/eswin/clk-eic7700.c
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
+> + * All rights reserved.
+> + *
+> + * ESWIN EIC7700 CLK Provider Driver
+> + *
+> + * Authors:
+> + *	Yifeng Huang <huangyifeng@eswincomputing.com>
+> + *	Xuyang Dong <dongxuyang@eswincomputing.com>
+> + */
 > +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-clock
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +required:
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_address.h>
 
-Incorrectly placed. required is after all properties.
+None of these three are used.
 
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +  - '#address-cells'
-> +  - '#size-cells'
+> +#include "clk.h"
 > +
-> +patternProperties:
-> +  "^fixed-rate.*":
-> +    type: object
-> +    $ref: /schemas/clock/fixed-clock.yaml#
+> +static void __init eic7700_clk_pll_init(struct device_node *np)
+> +{
+> +	eswin_clk_pll_register(np);
+> +}
+> +
+> +static void __init eic7700_clk_mux_init(struct device_node *np)
+> +{
+> +	eswin_clk_mux_register(np);
+> +}
+> +
+> +static void __init eic7700_clk_div_init(struct device_node *np)
+> +{
+> +	eswin_clk_div_register(np);
+> +}
+> +
+> +static void __init eic7700_clk_gate_init(struct device_node *np)
+> +{
+> +	eswin_clk_gate_register(np);
+> +}
+> +
+> +CLK_OF_DECLARE(eic7700_clk_pll, "eswin,pll-clock", eic7700_clk_pll_init);
+> +CLK_OF_DECLARE(eic7700_clk_mux, "eswin,mux-clock", eic7700_clk_mux_init);
+> +CLK_OF_DECLARE(eic7700_clk_div, "eswin,divider-clock", eic7700_clk_div_init);
+> +CLK_OF_DECLARE(eic7700_clk_gate, "eswin,gate-clock", eic7700_clk_gate_init);
 
-No, you do not get node per clock.
+That's empty wrapper. You created just one more layer of indirection,
+with no use at all, instead of calling these directly.
+
+> diff --git a/drivers/clk/eswin/clk.c b/drivers/clk/eswin/clk.c
+> new file mode 100644
+> index 000000000000..e227cc4664ca
+> --- /dev/null
+> +++ b/drivers/clk/eswin/clk.c
+> @@ -0,0 +1,734 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
+> + * All rights reserved.
+> + *
+> + * Authors:
+> + *	Yifeng Huang <huangyifeng@eswincomputing.com>
+> + *	Xuyang Dong <dongxuyang@eswincomputing.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/math.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/slab.h>
+> +#include <linux/util_macros.h>
+> +#include "clk.h"
+> +
+> +enum pll_clk {
+> +	CLK_APLL_FOUT1 = 1,
+> +	CLK_PLL_CPU
+> +};
+> +
+> +static enum pll_clk str_to_pll_clk(const char *str)
+> +{
+> +	if (!strcmp(str, "clk_apll_fout1"))
+> +		return CLK_APLL_FOUT1;
+> +	else if (!strcmp(str, "clk_pll_cpu"))
+> +		return CLK_PLL_CPU;
+> +	else
+> +		return 0;
+> +}
+> +
+> +static void __iomem *parent_base;
+
+Don't write singletons.
 
 > +
-> +  ".*pll@[a-f0-9]+$":
-> +    type: object
-> +
-> +    properties:
-> +      compatible:
-> +        const: eswin,pll-clock
+> +static void __init get_parent_base(struct device_node *parent_np)
 
-
-Nothing explains in the changelog why this appeared. Drop all these
-nodes and fake or redundant compatibles.
-
-
-> +
-> +      reg:
-> +        items:
-> +          - description: PLL's config 0 register
-> +          - description: PLL's config 1 register
-> +          - description: PLL's config 2 register
-> +          - description: PLL's status register
-> +
-> +      '#clock-cells':
-> +        const: 0
-> +
-> +      clock-output-names:
-> +        maxItems: 1
-> +
-> +      enable-shift:
-> +        description: Bit shift of the enable register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      enable-width:
-> +        description: Width of the enable register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      refdiv-shift:
-> +        description: Bit shift of the reference divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      refdiv-width:
-> +        description: Width of the reference divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      fbdiv-shift:
-> +        description: Bit shift of the feedback divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      fbdiv-width:
-> +        description: Width of the feedback divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      frac-shift:
-> +        description: Bit shift of the fractional divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      frac-width:
-> +        description: Width of the fractional divider register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      postdiv1-shift:
-> +        description: Bit shift of the post divider 1 register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      postdiv1-width:
-> +        description: Width of the post divider 1 register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      postdiv2-shift:
-> +        description: Bit shift of the post divider 2 register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      postdiv2-width:
-> +        description: Width of the post divider 2 register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        maximum: 31
-> +
-> +      lock-shift:
-> +        description: Bit shift of the lock register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      lock-width:
-> +        description: Width of the lock register.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - '#clock-cells'
-> +      - clock-output-names
-> +      - enable-shift
-> +      - enable-width
-> +      - refdiv-shift
-> +      - refdiv-width
-> +      - fbdiv-shift
-> +      - fbdiv-width
-> +      - frac-shift
-> +      - frac-width
-> +      - postdiv1-shift
-> +      - postdiv1-width
-> +      - postdiv2-shift
-> +      - postdiv2-width
-> +      - lock-shift
-> +      - lock-width
-> +
-> +    additionalProperties: false
-> +
-> +  ".*mux@[a-f0-9]+$":
-> +    type: object
-
-NAK, but anyway explain in the changelog WHY you did this...
+This is just poor code. Drop.
 
 
+> +{
+> +	if (!parent_base) {
+> +		parent_base = of_iomap(parent_np, 0);
+> +		if (IS_ERR(parent_base)) {
+> +			pr_err("%s: Failed to map registers\n", __func__);
+> +			parent_base = NULL;
+> +		}
+> +	}
+> +}
+> +
+
+
+...
+
+> +
+> +void __init eswin_clk_gate_register(struct device_node *np)
+> +{
+> +	struct clk_hw *clk_hw;
+> +	struct device_node *parent_np;
+> +	const char *clk_name;
+> +	const char *parent_name;
+> +	u32 idx_bit;
+> +	u32 reg;
+> +	int ret;
+> +
+> +	parent_np = of_get_parent(np);
+> +	if (!parent_np) {
+> +		pr_err("%s: Failed to get parent node\n", __func__);
+> +		return;
+> +	}
+> +
+> +	if (of_device_is_compatible(parent_np, "eswin,eic7700-clock"))
+> +		get_parent_base(parent_np);
+> +	else
+> +		return;
+
+What? Don't write drivers like that. All this is completely unnecessary
+and confusing code. You don't get a singleton, you don't reference it
+from some other init code. It's not needed even! Design this properly so
+ other clocks will be instantiated from parent clock driver. Just like
+every other clock controller is doing.
+
+> +
+> +	if (IS_ERR(parent_base)) {
+> +		pr_err("%s: Failed to map registers\n", __func__);
+
+Even more spaghetti code. If you need to check for the value, you check
+right after obtaining it.
+
+> +		goto put_node;
+> +	}
+> +
+> +	ret = of_property_read_string(np, "clock-output-names", &clk_name);
+> +	if (ret) {
+> +		pr_err("%s: Missing clock-output-names\n", __func__);
+> +		goto put_node;
+> +	}
+
+...
+
+> +
+> +#define CLK_FREQ_1800M 1800000000
+> +#define CLK_FREQ_1700M 1700000000
+> +#define CLK_FREQ_1600M 1600000000
+> +#define CLK_FREQ_1500M 1500000000
+> +#define CLK_FREQ_1400M 1400000000
+> +#define CLK_FREQ_1300M 1300000000
+> +#define CLK_FREQ_1200M 1200000000
+> +#define CLK_FREQ_1000M 1000000000
+> +#define CLK_FREQ_900M 900000000
+> +#define CLK_FREQ_800M 800000000
+> +#define CLK_FREQ_700M 700000000
+> +#define CLK_FREQ_600M 600000000
+> +#define CLK_FREQ_500M 500000000
+> +#define CLK_FREQ_400M 400000000
+> +#define CLK_FREQ_200M 200000000
+> +#define CLK_FREQ_100M 100000000
+> +#define CLK_FREQ_24M 24000000
+
+Useless defines, just like: #define true 1
+
+> +
+> +#define APLL_HIGH_FREQ 983040000
+> +#define APLL_LOW_FREQ 225792000
+> +
+> +struct eswin_clk_pll {
+> +	struct clk_hw hw;
+> +	void __iomem *ctrl_reg0;
+> +	u8 pllen_shift;
+> +	u8 pllen_width;
+> +	u8 refdiv_shift;
+> +	u8 refdiv_width;
+> +	u8 fbdiv_shift;
 Best regards,
 Krzysztof
 
