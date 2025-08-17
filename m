@@ -1,872 +1,373 @@
-Return-Path: <linux-kernel+bounces-772644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F329B29538
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:54:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843BBB2957B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D42C19678A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CE5A7A7961
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 22:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D01C2FF16D;
-	Sun, 17 Aug 2025 21:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1264147C9B;
+	Sun, 17 Aug 2025 22:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUXhvSXW"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SOYlgtQY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="uVmB/rbu"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E555246782;
-	Sun, 17 Aug 2025 21:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755467614; cv=none; b=O3kBY1Hw2fbFjT9S2Z9K1rc3kxAzBE3yQaUcwC39+cjZ+DL3lUuSk+0DWN58z5ex0/PRqjsp3FNbQm8JSG3VgTETTj3+pORWNW5z7NHktdCa308qq0utszvBXquq6HYFzm88uAc5VyFMItqVJVKbcq0c/rkPHHG5FVaGl/bWioE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755467614; c=relaxed/simple;
-	bh=/XspesSQsI35dU6WlUc3D0cS8m1G5J4dkSaueI8ex1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kYb+UQP5UTMFrUrOoT4baG+ELFxFXzP2HFIezZqVZJRNu4cBE3jIWvrw8dSqd5NrbZRURijtJiLco0ByBIDUYb4RWcgRAC9m7k8fWIK6Gzbf/egu+RWWfpOlLU4rdbVe6iOT5BwOZwmqEBHBL6vlNejBM98YeGfk22zIqcFybFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUXhvSXW; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea887f6so2528951b3a.2;
-        Sun, 17 Aug 2025 14:53:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA961FBE87;
+	Sun, 17 Aug 2025 22:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755468912; cv=fail; b=TvvLC47cE9vqSoSV5SvtQ44VIHfS+tEkWBEUAkzxTESRc86jGLR8LzzUEZcT/QCwuAkWB/39Boa5ieJTR1cfYQs7G46YuaUg1OFlhWvPZ09Sk1gPNcjkAhyqonAWmiftiuyUth4cEIvUkMlwC3DhOAj1cyV9Wbh1DK9KJ+4PbwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755468912; c=relaxed/simple;
+	bh=UtISSQD/FTLnnog/MH6+no323NyoCBsgTEbKe6ypFoQ=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=cxhWL2lfD22sc8t+k8UgvVpcdkYrWQXlO4jedEv7tQ1dy0qsEqQ+mYDmlHDgONCcad+vM/LRgDFP/b3gXXU1Fsr3T+xQkm5k80Uqe/F3XocsHejkPNqJl3i/VSOOoZfGzjjg9Tq6z/gJM4jgoIRBI06SyCEUrmQ13CFau6sk8oA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SOYlgtQY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=uVmB/rbu; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57H5PSa6000579;
+	Sun, 17 Aug 2025 22:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=vcS2l9ZELKCgC9Ikfi
+	31fJ9fvKDFH/4UQxlHl/V/iuc=; b=SOYlgtQYbdFjVGLv8IfaL6yZH4LRMqfyhF
+	0eoDSm2ka80oN3e8NxRiO5/7sMUCvBidE2dUxYzhgVJxN1fb+tfTGj2HOsQrTA5M
+	woQZ1+jHep9zW6vdyzAkJrYpORjcpc4UtxObvRP4CDqcFa7ycr8u3awVXMB9fmpC
+	aSstxbnZUyGKFIPKA+flIAjm5qkYcKRw9vmxZsr0V8UTNI86qTHbU/vEIR60iGzg
+	BDd/MO/eRJAxp2WGUqyGEUQ1w9/ESRNJu0BEsICUaH05G97a3m9PoT6cA0OZd85g
+	Pmd7oeHyb7HxXLhv2lEZSJwmywR/enC/FEMx1OFz+6XisGkJJ38A==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48jj1e1tcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 17 Aug 2025 22:14:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57HJRvnS011699;
+	Sun, 17 Aug 2025 22:14:34 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48jge8fa7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 17 Aug 2025 22:14:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gL5X1dQY7mBdHZAUy5/lQlIXfbBPW7hVeT6wx+BbDORBYOwJjEpQ/uyAHvmT1ltSzmg171tWT7sdDlzM4th1vGSMyXePLfDOaojARTHopqHIpZ3v0KCqCN7Qt0ljSFAPz3VbH8ib9+MjCG4zeanz6TI/yQ5GQz82Y0bHpebUK9rmNIt7SI0sNZL4Jw4zuJqpESU07nBg9muqN4wjOlC9F5zCW8o+GhDnHFqz/diCJGccNyxOnsXki3cj1sskZzZ6Ai/bIhQC74aSsMn8AUiq8SjnFMtyQEx1qPcGQLS1yJHYmjwAGQGA9DP++TVL1lfPmIZ0BK7SbXoZCC9myySp6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vcS2l9ZELKCgC9Ikfi31fJ9fvKDFH/4UQxlHl/V/iuc=;
+ b=pbDNzEfe9TTXXHm0xukD3qs369A4JB6L10mgG2TMiJjATeMO4CTa9vYDPIONjFDwLrgbJsPfKdrTqnXlyDdOAJGq/p85UKJKSjBvRoHYhj8XJBZNBjqY4RIpggh8cdrEoGSAJVdMvXy/iAWxC7NrEVRQgbHlXSMBUVsTNkgpjIXqYuKRegaNwDsqngpLJNDO7VO4qsf5PO9YdHC0pc98rPDN9y9VozJpSKqg1nQ+MyBwz/VDfqBddagNEDWTPdMwvwTWEHEeksrU0gGQfXvmZx4rP4DzU/u73SCksMVr3vMUc/UtoWXkxb6o/XYStnxKGTIVREnTZFSbTs5sNSanLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755467611; x=1756072411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHGTMXQyfW3VC8b9lA94WS0zG1xETpAiukFdIs/JoDg=;
-        b=eUXhvSXWg6Y2aDgW05rhi1RoBJnPEDa4gETWVfHyfBOQNfebHaYKQlgJGs7FI+0zIc
-         RdkLl0sfgbOwEzNln640+XmQu+6miIBqHumpVHb5n4LNBQAMOpLBjgs5V+pXvCjE6XIS
-         bd6PNDGXO6dgm88rsKOs6wWdtsIXwEMHdGPZ8RKAlJ0YrI6h4Z8GoqhphP0h9Nt7plke
-         lN3Vivm5UwIHbPq1H9ipzaurwNZJJfbWfIOtNhclJsos04T+JZtBslMUppAwd+SkQECG
-         FpTY/Z74MOZ/7iyjfH6fr2iwOqrpoN7/Jzj3E8ayT2HdlfGGjo8ZtWK4xc9qjrbkkFqB
-         8L+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755467611; x=1756072411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHGTMXQyfW3VC8b9lA94WS0zG1xETpAiukFdIs/JoDg=;
-        b=dDDnGB+MKV9x8ehNJK1YXqnuAl+3Jf+2AYeoBTdOqt9lp2PXSKgISirva0LOZsxPg0
-         Ah5KUmHrHapR5s5gYELzfRKkqIwfSdpmb6qMVNbYd4K/ul9uU5CQ2GNIl+czDWDNJfI4
-         jrlun46caYW1lEBA4qfcxi0DstegEbqm3ftiSj+U/W7vg9SciaUvjFkESdQx7Wx3krmQ
-         6UmkhdE37o5QyYF1kU5317BjeQ0j7KKEF2MRRMptyG6AxM5ZNcvrQ0gE0llT03dnUkWX
-         ur0Mck2odFyOe81Kz1jz7wfjBOSo9tmk+OvItGYN968JX+ATPrsYh4EeH7nxTTzVd/x/
-         pIAA==
-X-Gm-Message-State: AOJu0YyzQ8lP/Q4l6NxO97hN7aOozrtvYpVPXRIGy5yvPS4WYbGt58zd
-	LOcOQZFduQCAf8GmQHbvxQy6pmmBWXlMgmPsfOr8k/N4KYXdQFXSpWLFimgIsA==
-X-Gm-Gg: ASbGncug/kBVmOK10UixklTw72XeezRKvANSut2zkzkbNBUciG0nHfPQGRfjWeecMVE
-	jo3IYD/GsbLXt/nelr2j/37s847Th0fykfm4okovBgmcniq4Q3Pjqg2DtUsndNqIXHIycavqjLi
-	sn6shLjoU+7xkmoWP3vqDbRHRVWv2tNIJTZttQ9XpANrAbFXhvQdrsmKDjww4IK86SdDsCXhRM4
-	gk4XEH1k1ad4Ebr0+0ImcbroIxpFU4Yh79gn4ukI6W2xO1194sRMzJWu4Emj+Gx/GcY45Dw0/vZ
-	GaBrPHtE/TlEoM61fj2rKGEG6mXWydzbs1byJuW7JdYNnkRrsISsFdo245UFq/CG7FU2YOfgDBa
-	cC9V1MncYO2io2pHciZLwj/1IZsUxs8xEvCGGNSqw4xyi
-X-Google-Smtp-Source: AGHT+IF6q490HClEhdZmgoS4S5apSZYYJnTB4JY4m+rlzfj3OMPpQCOzlYEQo90XMPvSUZryyO3+5g==
-X-Received: by 2002:a17:903:2442:b0:23f:6fa4:1567 with SMTP id d9443c01a7336-2446d6e5659mr141236155ad.8.1755467611349;
-        Sun, 17 Aug 2025 14:53:31 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-244903222fcsm3832995ad.84.2025.08.17.14.53.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 14:53:30 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Eric Miao <eric.y.miao@gmail.com>
-Subject: [PATCH 3/3] Input: pxa27x-keypad - drop support for platform data
-Date: Sun, 17 Aug 2025 14:53:15 -0700
-Message-ID: <20250817215316.1872689-3-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-In-Reply-To: <20250817215316.1872689-1-dmitry.torokhov@gmail.com>
-References: <20250817215316.1872689-1-dmitry.torokhov@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vcS2l9ZELKCgC9Ikfi31fJ9fvKDFH/4UQxlHl/V/iuc=;
+ b=uVmB/rbuHdPzjtj3+KAxkEvR/+zwsdJ9ikkiaVO9aO0ThshElxR34OukCEUwWJBgfCCgsewrOyvElepUlUEuzsQdyPeEp46KmCWSQxu8DZFN3vdLmJj5nbfwH/XNed7qFhnsz5sDxQV0RmeLeAeMcdhMHR1SARPdyDGYvOUYmqU=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by DS7PR10MB7297.namprd10.prod.outlook.com (2603:10b6:8:d8::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Sun, 17 Aug
+ 2025 22:14:31 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9009.018; Sun, 17 Aug 2025
+ 22:14:31 +0000
+References: <20250627044805.945491-1-ankur.a.arora@oracle.com>
+ <20250627044805.945491-2-ankur.a.arora@oracle.com>
+ <aJXWyxzkA3x61fKA@arm.com> <877bz98sqb.fsf@oracle.com>
+ <aJy414YufthzC1nv@arm.com> <87bjoi2wdf.fsf@oracle.com>
+ <aJ3K4tQCztOXF6hO@arm.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bpf@vger.kernel.org, arnd@arndb.de, will@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org, mark.rutland@arm.com,
+        harisokn@amazon.com, cl@gentwo.org, ast@kernel.org, memxor@gmail.com,
+        zhenglifeng1@huawei.com, xueshuai@linux.alibaba.com,
+        joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com, rafael@kernel.org, daniel.lezcano@linaro.org
+Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+In-reply-to: <aJ3K4tQCztOXF6hO@arm.com>
+Date: Sun, 17 Aug 2025 15:14:26 -0700
+Message-ID: <87plctwq7x.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0218.namprd04.prod.outlook.com
+ (2603:10b6:303:87::13) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS7PR10MB7297:EE_
+X-MS-Office365-Filtering-Correlation-Id: fde01bde-eef5-4dc2-6bd1-08dddddb6e81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oj5PRvUheXfJCmJdjeuyITU8QeyRthY1FHTPH3SZiM81FkdzqNOB7tZa8bOx?=
+ =?us-ascii?Q?S63QtcwcATj3leOIMgQ06HuGTqxLiMCFu/ZB8uOfIDLkO4rd+F6lSakl+ZOc?=
+ =?us-ascii?Q?wpEFiwN4W5wHjHr8y2H3GQ54IDyUE9FD1aZjCDuF7lp8fJt4SsbFspPMRf1K?=
+ =?us-ascii?Q?CAKCBGTK5jiWEaICrez7ljc5igxhmcftAQ85BAjXJt+6MXkBLkWafd/6P1RP?=
+ =?us-ascii?Q?Boaq/u53R5bTDvygaAd5vypQEzpZUQj5N8g29GXHJY1ahVbcE+m3FweJoLZf?=
+ =?us-ascii?Q?lgd5CpyRFODqUwjNiLlMg1WytfDndAZkxC/XnBR9pU1VlfAqrIOX9n31mPl8?=
+ =?us-ascii?Q?+T6In6TydITSHflC4MfXaBBaGpOfObBD413bfTeQpVGTqGimTI5ICG+t0B1d?=
+ =?us-ascii?Q?2BAkUBP9tI6yuVWBePaM2UQiGuEa+VJL1Kg6gpNnpTnAacDMUn+h0Vnm2cJM?=
+ =?us-ascii?Q?jbA8F1XCOykCa99THxrcFdW9JVheOYl4GelPPQwrq6AwkfQpVGm4bi24TrIL?=
+ =?us-ascii?Q?A8D3yCUZ4kmdh0PyZAQyecv99rIrkrDZ+qKwWgUqdQhntpYg/pqaeNewgqqL?=
+ =?us-ascii?Q?Qf4JW/SvpkCTNsk+10bMkYP4cntPtapc3pHEmTgAUmD7LqYF0Y7BEtJlHTqs?=
+ =?us-ascii?Q?zP9HJqI9xlWlXikCQGJbRIrWgItSaHBTUl7qbhdpB7jnAw/YdC/CvuM3Vf22?=
+ =?us-ascii?Q?BfWWPSIwnDb8vFbXJzvUrvPYPQZQUro/vrquiTEQtRULNBfz4Wxe929yvcfl?=
+ =?us-ascii?Q?zhla+ikdCRM6UCybS3MtH75eJmCaAsJoIn5h/fKKa7siI9rNb5k1iXD6FQ+k?=
+ =?us-ascii?Q?5ZtOD+7TBnmv0lgZobkdx4e5TJ6YbptWum5zo5RFUQ+iZkMg7OqpTyHNHwQm?=
+ =?us-ascii?Q?XGPmU1rhIgWbQhhPDCjCnqcGZsp+SgI7p+mKYe4+JQadqJVR43V/9+zPrKx9?=
+ =?us-ascii?Q?DSnDTfSNx6LzpqFbKezzMzbYpTzpZpEXUk586s8lrlrt2/QwM+IKckPM0QJ8?=
+ =?us-ascii?Q?VQ7fzBiCxN5j0kW7Ph54yvQjUHUBwNQywsJSeco3wPpj5DnT7fQDZzzw0jQ7?=
+ =?us-ascii?Q?NdkSJ45Sem5Rm7gi2z15nrI2e30SsTpcokNSiBCYX/0HaeQvARn/awF8h/UP?=
+ =?us-ascii?Q?eGjNDBmek9lZgkcVp7u4lz8xy7atzMRu1cgEyvUrdRA4wXBi0sJl4bGwL2tT?=
+ =?us-ascii?Q?9Qf7D83mWgVu6+hR6u7xZmmBejue0s8Y4aJhh/bcynHEeaHlLIFV3B0qoztm?=
+ =?us-ascii?Q?gm/eAVchfJkIO7lVZdaPYwpByhHpkUfReEtz32ylvs53f7tf8tWt9Mccc7Ch?=
+ =?us-ascii?Q?hsdqI6DCO8GOHH+uzqf+r7M2xR6MFES7kRSUCn5OEsn8Q60PMMnhmwoSOVkT?=
+ =?us-ascii?Q?Q88MzLX6q5JXVGlwX/NgwaZZO0E5DPT0byzN6B/A3izVLt1vIg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?d4AEkMoSrVbwMKuZJUu33pM8MBAVgUhIQnECce2iZgR3MFWcq14k7rbT+DJ9?=
+ =?us-ascii?Q?xhqco0L1mXtPB0VJWONripwj9VVhotxkT2lVoiEBHutRbqpj+eCVsGleXevS?=
+ =?us-ascii?Q?eMulP1OZWmXaeVkrLfr7qTvS27DbkjgmAMtcNH5FT7ZBPZv6mmWwhLGlCGxm?=
+ =?us-ascii?Q?qAc9/6jDDy69LB+7Z5vQ7IyXk59nYLZ+VfM8xIwViMtOf75ccLeckSycIr+/?=
+ =?us-ascii?Q?OU04vbvWROtW2kAXIt3B+1AUbwBVD4cmqJ1phDGAeoGzl5A2GmeYe/wOLEAp?=
+ =?us-ascii?Q?AKzXWa/byDXn2UF9faPv9sAcNXEh8ruv+Y68VPZl/3GKYy72KAr0zFSJAFLF?=
+ =?us-ascii?Q?uPpzBJ9sM74b0ygaufcoUh2naskImGPEZQ/6e0q8dSTOo4+AxJgyZAfmAJ4+?=
+ =?us-ascii?Q?rc/sBAeU3gPLEE0eYR787ARAP4Rzj2EDJ0EBkRkNGsMgkCd1tLBYvsH7AEly?=
+ =?us-ascii?Q?jrc9jsf4gd91v+Sx3u5Xc/qw3lHr4GukHSHTlfHg1niij8Yy+VwscnNcPIAG?=
+ =?us-ascii?Q?JCdTy6R9H7T1qTgFYxJnjqP2zeQwoW0hH0LexFGe+8s8AbPA13yiaWxph1Y+?=
+ =?us-ascii?Q?B3SFzlfG0t9xgOmC5Qof931ve2MdaLFxCnnD6kQ75ofK+EXuWYzFmv9lm0ds?=
+ =?us-ascii?Q?3kDBOW6ucywD0SXRE5twM+kGuIJ5CMp7HVhmIb6m+RU1fsaOoYUd4NU9ed6z?=
+ =?us-ascii?Q?FjP7HZYnhKIiK/beW+UG4rgeNoAWXCXZBTjEOeFElOxR0jw4nidWQVNZMKyl?=
+ =?us-ascii?Q?04uIx3/lexBqojYWyfVU2wovpbgy3dB2euvBUrIupO7MlyuqBWtwwZC4uABq?=
+ =?us-ascii?Q?bn1S+j8a8QmkTkjUPGcgJ98UymcjiR7ZLdeou1eJ9WaHrGap8TfCeqYJy3se?=
+ =?us-ascii?Q?QXlWmw7x5apqOjxPjRcJQGt6CoL5MNngDLawLm3XDXyVXhltQfvW+jh2fbGD?=
+ =?us-ascii?Q?aprDNTjUjGq4PGV8Ci9kR8aTwiL9zoqDtvOYcGgaRWmGTzKRaoJGFyUmxyEU?=
+ =?us-ascii?Q?G9U2kz7MQuRXB+ssFKc7LyZihJFtKZUlPnzg2NVY/tzqlxSeDJ1+Kz6Dz2hH?=
+ =?us-ascii?Q?vwOTrbLB55c+EnxzFAzIaUQ1GjI9oSV8tm03jpO+fqWv1q+9B3Z7fzl1oTRb?=
+ =?us-ascii?Q?ADbxhLJAZQeO/rWk68fYjQWiPMQqOSK3ZLRAfWY/4M1xdU5BrGBz19mzWCvE?=
+ =?us-ascii?Q?7/HNvXaBRx1R8lX81gkrD+kTfD+q+yfwFJM8Ia8IE7ahIk8jjTJ7fspdzOSu?=
+ =?us-ascii?Q?mUSU4Ye2laioelP8NX2MOLrOydSu7BLuMH4JPx3x9ry0lNp/HB35elgWthLT?=
+ =?us-ascii?Q?5mUoXTYdRUMQAD05nrl+O5MBQqKEdoQbH3JFFhrYzcpDYWRfzsxM+Kk3SBJj?=
+ =?us-ascii?Q?1JdAAdvM4N8RnV+W4qa2HYeaTgJcg9Gn4ZzUOJwK95QQ7qMuXOfKKniHaZWD?=
+ =?us-ascii?Q?LH2GLa4uJ+5sWetvzRJwwRUG9zqFmCxsgh0d8WWn5pCJaM/t1Bq9vJivV40s?=
+ =?us-ascii?Q?I1y4y1Q+2oyDAWHedWVUKDTyAaryB2JjWDtm8u6Jcc2p8on5ugWhQ9/pkp+K?=
+ =?us-ascii?Q?muutu31RTPbzbkCIURAHITCtSo+m0tJBYX+WzSJo10brxQGAFHji0CrjIXW5?=
+ =?us-ascii?Q?5Q=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	XQXAKUMqP/pFAFd4a/vzMxtAMswPIK0Crdqp4rkv+cWW1w9EUj0NMr7xwhU6moty3S8hjy81zwYHvDBiRDTVNpWliq5K5E7FA/ybnz7ggQv6aZennpATe61DQ4p8GaQDTxSsWe0nIqFMtcfHeFOC8OomDQBE51g07C6v0wK3a0Wdw1Lnd6PJ76mBts8pOgpfUN+zpBYj8zbJbiLO5mZP8fTwnB6qL03ZkHM6Gdjd/N+HCEquw6hGlFl7gqHRaLYXQzQimQ2tMqln+rOEejLp75wOGD7JDRkLOsWXMabgD2GU4RUuVjjzGhhvCug2Err8vZBwhBwpWNh1eo1KqQFP3T9KIlpl6KPYygLteVmnHnt/uWrUn5bjRpImtcTObaZqreJF4L8aP6fLFr9uQonL28ErEoKIQfrh0TLHX1Te6Qwa9YGLbR7KXveHlh350SNfY83e215Q/2Q4nGD2ymdzInzJlsn1SQODvSB8fJLDpqBC4fs5VUgCsWBToBv1zTb99C8AU9ZrDw7q/wHe/RhQZqmDMPoSm7xI9mWI2hd7G+HnWAxQnCXJdpinfEMbizXCzSlo7e+S6vaWu3vKvLsWSh5OGS9l3Gbmg6HSfW5FlEA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fde01bde-eef5-4dc2-6bd1-08dddddb6e81
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2025 22:14:31.3021
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mTceipUuqoOQyl6CQRg//yeTXNmct/M2TjLOOknNCiEha484oG1KjlQooMND3pC5JTIld456ds9BMqsKKw4p55csb6cVZxe1jVO8yKvdYVY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7297
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-17_09,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 phishscore=0 bulkscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508170231
+X-Proofpoint-GUID: nx6xLz4B6ryF8TukPodsM_C5eqXcXmFx
+X-Authority-Analysis: v=2.4 cv=dN2mmPZb c=1 sm=1 tr=0 ts=68a2544b b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=GoEa3M9JfhUA:10 a=7CQSdrXTAAAA:8 a=BVWbUb0om5YRCFPiKCIA:9
+ a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:12070
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE3MDIzMSBTYWx0ZWRfXzFd9uAxiuiR1
+ 9BVTR0jx2AsptczyYzaMY0Dxu4qaOzkwCfN/v8M3em2DA2VPg4XlIYWdeIsltuJryaRLkpNdRhA
+ 00ZuNfR6roonyS46/mmapZ1hOJ9VeMUZeJGNSliLCw2T3SinMRlHLo5u60DapUKdPZkpp+vwuu7
+ 0aQlGknHB68tqB5vibjBi0Otj80G6YyHeNTvTzvXkeC6Mjev7eZw0I84nlMzvDr5ucmneCxJqpw
+ dgClLaTINN5vxtnyHssHoleKsrC53xJ+4acczDslot8ptHhmlyeZMmN/2Js3dQZn2qIhp7VVi/m
+ cY9gwIydqrtNk/+kEjSWF9rhIjnhP9Hspyc+Sw3SYjyZs942/j1sRMJZfY6FthXox1aOTwJYQxm
+ znmWhQPf43cUZ+D+hMAtOcwTrcOAqS7aZJM+DeDlu75xSefSuWAxJ/9aWRCuvGqC/5xJrvLn
+X-Proofpoint-ORIG-GUID: nx6xLz4B6ryF8TukPodsM_C5eqXcXmFx
 
-There are no in-kernel users of pxa27x_keypad_platform_data in the
-kernel, and the driver supports configuration via device tree, so drop
-support of static platform data and move properties parsing from
-OF-specific methods to generic ones.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/pxa27x_keypad.c      | 378 +++++++-------------
- include/linux/platform_data/keypad-pxa27x.h |  73 ----
- 2 files changed, 121 insertions(+), 330 deletions(-)
- delete mode 100644 include/linux/platform_data/keypad-pxa27x.h
+Catalin Marinas <catalin.marinas@arm.com> writes:
 
-diff --git a/drivers/input/keyboard/pxa27x_keypad.c b/drivers/input/keyboard/pxa27x_keypad.c
-index 376e943dc3dd..bb57bd4c56b1 100644
---- a/drivers/input/keyboard/pxa27x_keypad.c
-+++ b/drivers/input/keyboard/pxa27x_keypad.c
-@@ -21,13 +21,13 @@
- #include <linux/io.h>
- #include <linux/device.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/input/matrix_keypad.h>
- #include <linux/slab.h>
- #include <linux/of.h>
- 
--#include <linux/platform_data/keypad-pxa27x.h>
- /*
-  * Keypad Controller registers
-  */
-@@ -100,54 +100,69 @@
- #define keypad_readl(off)	__raw_readl(keypad->mmio_base + (off))
- #define keypad_writel(off, v)	__raw_writel((v), keypad->mmio_base + (off))
- 
-+#define MAX_MATRIX_KEY_ROWS	8
-+#define MAX_MATRIX_KEY_COLS	8
-+#define MAX_DIRECT_KEY_NUM	8
-+#define MAX_ROTARY_ENCODERS	2
-+
- #define MAX_MATRIX_KEY_NUM	(MAX_MATRIX_KEY_ROWS * MAX_MATRIX_KEY_COLS)
- #define MAX_KEYPAD_KEYS		(MAX_MATRIX_KEY_NUM + MAX_DIRECT_KEY_NUM)
- 
--struct pxa27x_keypad {
--	const struct pxa27x_keypad_platform_data *pdata;
-+struct pxa27x_keypad_rotary {
-+	unsigned short *key_codes;
-+	int rel_code;
-+	bool enabled;
-+};
- 
-+struct pxa27x_keypad {
- 	struct clk *clk;
- 	struct input_dev *input_dev;
- 	void __iomem *mmio_base;
- 
- 	int irq;
- 
--	unsigned short keycodes[MAX_KEYPAD_KEYS];
--	int rotary_rel_code[2];
--
-+	unsigned int matrix_key_rows;
-+	unsigned int matrix_key_cols;
- 	unsigned int row_shift;
- 
-+	unsigned int direct_key_num;
-+	unsigned int direct_key_mask;
-+	bool direct_key_low_active;
-+
-+	/* key debounce interval */
-+	unsigned int debounce_interval;
-+
-+	unsigned short keycodes[MAX_KEYPAD_KEYS];
-+
- 	/* state row bits of each column scan */
- 	u32 matrix_key_state[MAX_MATRIX_KEY_COLS];
- 	u32 direct_key_state;
- 
--	unsigned int direct_key_mask;
-+	struct pxa27x_keypad_rotary rotary[MAX_ROTARY_ENCODERS];
- };
- 
--#ifdef CONFIG_OF
--static int pxa27x_keypad_matrix_key_parse_dt(struct pxa27x_keypad *keypad,
--				struct pxa27x_keypad_platform_data *pdata)
-+static int pxa27x_keypad_matrix_key_parse(struct pxa27x_keypad *keypad)
- {
- 	struct input_dev *input_dev = keypad->input_dev;
- 	struct device *dev = input_dev->dev.parent;
--	u32 rows, cols;
- 	int error;
- 
--	error = matrix_keypad_parse_properties(dev, &rows, &cols);
-+	error = matrix_keypad_parse_properties(dev, &keypad->matrix_key_rows,
-+					       &keypad->matrix_key_cols);
- 	if (error)
- 		return error;
- 
--	if (rows > MAX_MATRIX_KEY_ROWS || cols > MAX_MATRIX_KEY_COLS) {
-+	if (keypad->matrix_key_rows > MAX_MATRIX_KEY_ROWS ||
-+	    keypad->matrix_key_cols > MAX_MATRIX_KEY_COLS) {
- 		dev_err(dev, "rows or cols exceeds maximum value\n");
- 		return -EINVAL;
- 	}
- 
--	pdata->matrix_key_rows = rows;
--	pdata->matrix_key_cols = cols;
-+	keypad->row_shift = get_count_order(keypad->matrix_key_cols);
- 
- 	error = matrix_keypad_build_keymap(NULL,
--					   pdata->matrix_key_rows,
--					   pdata->matrix_key_cols,
-+					   keypad->matrix_key_rows,
-+					   keypad->matrix_key_cols,
- 					   keypad->keycodes, input_dev);
- 	if (error)
- 		return error;
-@@ -155,20 +170,17 @@ static int pxa27x_keypad_matrix_key_parse_dt(struct pxa27x_keypad *keypad,
- 	return 0;
- }
- 
--static int pxa27x_keypad_direct_key_parse_dt(struct pxa27x_keypad *keypad,
--				struct pxa27x_keypad_platform_data *pdata)
-+static int pxa27x_keypad_direct_key_parse(struct pxa27x_keypad *keypad)
- {
- 	struct input_dev *input_dev = keypad->input_dev;
- 	struct device *dev = input_dev->dev.parent;
--	struct device_node *np = dev->of_node;
--	const __be16 *prop;
- 	unsigned short code;
--	unsigned int proplen, size;
-+	int count;
- 	int i;
- 	int error;
- 
--	error = of_property_read_u32(np, "marvell,direct-key-count",
--				     &pdata->direct_key_num);
-+	error = device_property_read_u32(dev, "marvell,direct-key-count",
-+					 &keypad->direct_key_num);
- 	if (error) {
- 		/*
- 		 * If do not have marvel,direct-key-count defined,
-@@ -177,151 +189,121 @@ static int pxa27x_keypad_direct_key_parse_dt(struct pxa27x_keypad *keypad,
- 		return error == -EINVAL ? 0 : error;
- 	}
- 
--	error = of_property_read_u32(np, "marvell,direct-key-mask",
--				     &pdata->direct_key_mask);
-+	error = device_property_read_u32(dev, "marvell,direct-key-mask",
-+					 &keypad->direct_key_mask);
- 	if (error) {
- 		if (error != -EINVAL)
- 			return error;
- 
- 		/*
- 		 * If marvell,direct-key-mask is not defined, driver will use
--		 * default value. Default value is set when configure the keypad.
-+		 * a default value based on number of direct keys set up.
-+		 * The default value is calculated in pxa27x_keypad_config().
- 		 */
--		pdata->direct_key_mask = 0;
-+		keypad->direct_key_mask = 0;
- 	}
- 
--	pdata->direct_key_low_active = of_property_read_bool(np,
--					"marvell,direct-key-low-active");
--
--	prop = of_get_property(np, "marvell,direct-key-map", &proplen);
--	if (!prop)
--		return -EINVAL;
-+	keypad->direct_key_low_active =
-+		device_property_read_bool(dev, "marvell,direct-key-low-active");
- 
--	if (proplen % sizeof(u16))
-+	count = device_property_count_u16(dev, "marvell,direct-key-map");
-+	if (count <= 0 || count > MAX_DIRECT_KEY_NUM)
- 		return -EINVAL;
- 
--	size = proplen / sizeof(u16);
--
--	/* Only MAX_DIRECT_KEY_NUM is accepted.*/
--	if (size > MAX_DIRECT_KEY_NUM)
--		return -EINVAL;
-+	error = device_property_read_u16_array(dev, "marvell,direct-key-map",
-+					       &keypad->keycodes[MAX_MATRIX_KEY_NUM],
-+					       count);
- 
--	for (i = 0; i < size; i++) {
--		code = be16_to_cpup(prop + i);
--		keypad->keycodes[MAX_MATRIX_KEY_NUM + i] = code;
-+	for (i = 0; i < count; i++) {
-+		code = keypad->keycodes[MAX_MATRIX_KEY_NUM + i];
- 		__set_bit(code, input_dev->keybit);
- 	}
- 
- 	return 0;
- }
- 
--static int pxa27x_keypad_rotary_parse_dt(struct pxa27x_keypad *keypad,
--				struct pxa27x_keypad_platform_data *pdata)
-+static int pxa27x_keypad_rotary_parse(struct pxa27x_keypad *keypad)
- {
--	const __be32 *prop;
--	int i, relkey_ret;
--	unsigned int code, proplen;
--	const char *rotaryname[2] = {
--			"marvell,rotary0", "marvell,rotary1"};
--	const char relkeyname[] = {"marvell,rotary-rel-key"};
-+	static const char * const rotaryname[] = { "marvell,rotary0", "marvell,rotary1" };
- 	struct input_dev *input_dev = keypad->input_dev;
- 	struct device *dev = input_dev->dev.parent;
--	struct device_node *np = dev->of_node;
--
--	relkey_ret = of_property_read_u32(np, relkeyname, &code);
--	/* if can read correct rotary key-code, we do not need this. */
--	if (relkey_ret == 0) {
--		unsigned short relcode;
-+	struct pxa27x_keypad_rotary *encoder;
-+	unsigned int code;
-+	int i;
-+	int error;
- 
--		/* rotary0 taks lower half, rotary1 taks upper half. */
--		relcode = code & 0xffff;
--		pdata->rotary0_rel_code = (code & 0xffff);
--		__set_bit(relcode, input_dev->relbit);
-+	error = device_property_read_u32(dev, "marvell,rotary-rel-key", &code);
-+	if (!error) {
-+		for (i = 0; i < MAX_ROTARY_ENCODERS; i++, code >>= 16) {
-+			encoder = &keypad->rotary[i];
-+			encoder->enabled = true;
-+			encoder->rel_code = code & 0xffff;
-+			input_set_capability(input_dev, EV_REL, encoder->rel_code);
-+		}
- 
--		relcode = code >> 16;
--		pdata->rotary1_rel_code = relcode;
--		__set_bit(relcode, input_dev->relbit);
-+		return 0;
- 	}
- 
--	for (i = 0; i < 2; i++) {
--		prop = of_get_property(np, rotaryname[i], &proplen);
-+	for (i = 0; i < MAX_ROTARY_ENCODERS; i++) {
-+		encoder = &keypad->rotary[i];
-+
- 		/*
- 		 * If the prop is not set, it means keypad does not need
- 		 * initialize the rotaryX.
- 		 */
--		if (!prop)
-+		if (!device_property_present(dev, rotaryname[i]))
- 			continue;
- 
--		code = be32_to_cpup(prop);
-+		error = device_property_read_u32(dev, rotaryname[i], &code);
-+		if (error)
-+			return error;
-+
- 		/*
- 		 * Not all up/down key code are valid.
- 		 * Now we depends on direct-rel-code.
- 		 */
--		if ((!(code & 0xffff) || !(code >> 16)) && relkey_ret) {
--			return relkey_ret;
--		} else {
--			unsigned int n = MAX_MATRIX_KEY_NUM + (i << 1);
--			unsigned short keycode;
--
--			keycode = code & 0xffff;
--			keypad->keycodes[n] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			keycode = code >> 16;
--			keypad->keycodes[n + 1] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			if (i == 0)
--				pdata->rotary0_rel_code = -1;
--			else
--				pdata->rotary1_rel_code = -1;
--		}
--		if (i == 0)
--			pdata->enable_rotary0 = 1;
--		else
--			pdata->enable_rotary1 = 1;
--	}
-+		if (!(code & 0xffff) || !(code >> 16))
-+			return -EINVAL;
-+
-+		encoder->enabled = true;
-+		encoder->rel_code = -1;
-+		encoder->key_codes = &keypad->keycodes[MAX_MATRIX_KEY_NUM + i * 2];
-+		encoder->key_codes[0] = code & 0xffff;
-+		encoder->key_codes[1] = code >> 16;
- 
--	keypad->rotary_rel_code[0] = pdata->rotary0_rel_code;
--	keypad->rotary_rel_code[1] = pdata->rotary1_rel_code;
-+		input_set_capability(input_dev, EV_KEY, encoder->key_codes[0]);
-+		input_set_capability(input_dev, EV_KEY, encoder->key_codes[1]);
-+	}
- 
- 	return 0;
- }
- 
--static int pxa27x_keypad_build_keycode_from_dt(struct pxa27x_keypad *keypad)
-+static int pxa27x_keypad_parse_properties(struct pxa27x_keypad *keypad)
- {
- 	struct input_dev *input_dev = keypad->input_dev;
- 	struct device *dev = input_dev->dev.parent;
--	struct device_node *np = dev->of_node;
--	struct pxa27x_keypad_platform_data *pdata;
- 	int error;
- 
--	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(dev, "failed to allocate memory for pdata\n");
--		return -ENOMEM;
--	}
--
--	error = pxa27x_keypad_matrix_key_parse_dt(keypad, pdata);
-+	error = pxa27x_keypad_matrix_key_parse(keypad);
- 	if (error) {
- 		dev_err(dev, "failed to parse matrix key\n");
- 		return error;
- 	}
- 
--	error = pxa27x_keypad_direct_key_parse_dt(keypad, pdata);
-+	error = pxa27x_keypad_direct_key_parse(keypad);
- 	if (error) {
- 		dev_err(dev, "failed to parse direct key\n");
- 		return error;
- 	}
- 
--	error = pxa27x_keypad_rotary_parse_dt(keypad, pdata);
-+	error = pxa27x_keypad_rotary_parse(keypad);
- 	if (error) {
- 		dev_err(dev, "failed to parse rotary key\n");
- 		return error;
- 	}
- 
--	error = of_property_read_u32(np, "marvell,debounce-interval",
--				     &pdata->debounce_interval);
-+	error = device_property_read_u32(dev, "marvell,debounce-interval",
-+					 &keypad->debounce_interval);
- 	if (error) {
- 		dev_err(dev, "failed to parse debounce-interval\n");
- 		return error;
-@@ -333,91 +315,11 @@ static int pxa27x_keypad_build_keycode_from_dt(struct pxa27x_keypad *keypad)
- 	 */
- 	input_dev->keycodemax = ARRAY_SIZE(keypad->keycodes);
- 
--	keypad->pdata = pdata;
--	return 0;
--}
--
--#else
--
--static int pxa27x_keypad_build_keycode_from_dt(struct pxa27x_keypad *keypad)
--{
--	dev_info(keypad->input_dev->dev.parent, "missing platform data\n");
--
--	return -EINVAL;
--}
--
--#endif
--
--static int pxa27x_keypad_build_keycode(struct pxa27x_keypad *keypad)
--{
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
--	struct input_dev *input_dev = keypad->input_dev;
--	unsigned short keycode;
--	int i;
--	int error;
--
--	error = matrix_keypad_build_keymap(pdata->matrix_keymap_data,
--					   pdata->matrix_key_rows,
--					   pdata->matrix_key_cols,
--					   keypad->keycodes, input_dev);
--	if (error)
--		return error;
--
--	/*
--	 * The keycodes may not only include matrix keys but also the direct
--	 * or rotary keys.
--	 */
--	input_dev->keycodemax = ARRAY_SIZE(keypad->keycodes);
--
--	/* For direct keys. */
--	for (i = 0; i < pdata->direct_key_num; i++) {
--		keycode = pdata->direct_key_map[i];
--		keypad->keycodes[MAX_MATRIX_KEY_NUM + i] = keycode;
--		__set_bit(keycode, input_dev->keybit);
--	}
--
--	if (pdata->enable_rotary0) {
--		if (pdata->rotary0_up_key && pdata->rotary0_down_key) {
--			keycode = pdata->rotary0_up_key;
--			keypad->keycodes[MAX_MATRIX_KEY_NUM + 0] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			keycode = pdata->rotary0_down_key;
--			keypad->keycodes[MAX_MATRIX_KEY_NUM + 1] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			keypad->rotary_rel_code[0] = -1;
--		} else {
--			keypad->rotary_rel_code[0] = pdata->rotary0_rel_code;
--			__set_bit(pdata->rotary0_rel_code, input_dev->relbit);
--		}
--	}
--
--	if (pdata->enable_rotary1) {
--		if (pdata->rotary1_up_key && pdata->rotary1_down_key) {
--			keycode = pdata->rotary1_up_key;
--			keypad->keycodes[MAX_MATRIX_KEY_NUM + 2] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			keycode = pdata->rotary1_down_key;
--			keypad->keycodes[MAX_MATRIX_KEY_NUM + 3] = keycode;
--			__set_bit(keycode, input_dev->keybit);
--
--			keypad->rotary_rel_code[1] = -1;
--		} else {
--			keypad->rotary_rel_code[1] = pdata->rotary1_rel_code;
--			__set_bit(pdata->rotary1_rel_code, input_dev->relbit);
--		}
--	}
--
--	__clear_bit(KEY_RESERVED, input_dev->keybit);
--
- 	return 0;
- }
- 
- static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
- {
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
- 	struct input_dev *input_dev = keypad->input_dev;
- 	int row, col, num_keys_pressed = 0;
- 	u32 new_state[MAX_MATRIX_KEY_COLS];
-@@ -435,8 +337,8 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
- 		row = KPAS_RP(kpas);
- 
- 		/* if invalid row/col, treat as no key pressed */
--		if (col >= pdata->matrix_key_cols ||
--		    row >= pdata->matrix_key_rows)
-+		if (col >= keypad->matrix_key_cols ||
-+		    row >= keypad->matrix_key_rows)
- 			goto scan;
- 
- 		new_state[col] = BIT(row);
-@@ -459,7 +361,7 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
- 		new_state[7] = (kpasmkp3 >> 16) & KPASMKP_MKC_MASK;
- 	}
- scan:
--	for (col = 0; col < pdata->matrix_key_cols; col++) {
-+	for (col = 0; col < keypad->matrix_key_cols; col++) {
- 		u32 bits_changed;
- 		int code;
- 
-@@ -467,7 +369,7 @@ static void pxa27x_keypad_scan_matrix(struct pxa27x_keypad *keypad)
- 		if (bits_changed == 0)
- 			continue;
- 
--		for (row = 0; row < pdata->matrix_key_rows; row++) {
-+		for (row = 0; row < keypad->matrix_key_rows; row++) {
- 			if ((bits_changed & BIT(row)) == 0)
- 				continue;
- 
-@@ -496,14 +398,16 @@ static inline int rotary_delta(u32 kprec)
- 
- static void report_rotary_event(struct pxa27x_keypad *keypad, int r, int delta)
- {
-+	struct pxa27x_keypad_rotary *encoder = &keypad->rotary[r];
- 	struct input_dev *dev = keypad->input_dev;
- 
--	if (delta == 0)
-+	if (!encoder->enabled || delta == 0)
- 		return;
- 
--	if (keypad->rotary_rel_code[r] == -1) {
--		int code = MAX_MATRIX_KEY_NUM + 2 * r + (delta > 0 ? 0 : 1);
--		unsigned char keycode = keypad->keycodes[code];
-+	if (encoder->rel_code == -1) {
-+		int idx = delta > 0 ? 0 : 1;
-+		int code = MAX_MATRIX_KEY_NUM + 2 * r + idx;
-+		unsigned char keycode = encoder->key_codes[idx];
- 
- 		/* simulate a press-n-release */
- 		input_event(dev, EV_MSC, MSC_SCAN, code);
-@@ -513,30 +417,28 @@ static void report_rotary_event(struct pxa27x_keypad *keypad, int r, int delta)
- 		input_report_key(dev, keycode, 0);
- 		input_sync(dev);
- 	} else {
--		input_report_rel(dev, keypad->rotary_rel_code[r], delta);
-+		input_report_rel(dev, encoder->rel_code, delta);
- 		input_sync(dev);
- 	}
- }
- 
- static void pxa27x_keypad_scan_rotary(struct pxa27x_keypad *keypad)
- {
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
- 	u32 kprec;
-+	int i;
- 
- 	/* read and reset to default count value */
- 	kprec = keypad_readl(KPREC);
- 	keypad_writel(KPREC, DEFAULT_KPREC);
- 
--	if (pdata->enable_rotary0)
-+	for (i = 0; i < MAX_ROTARY_ENCODERS; i++) {
- 		report_rotary_event(keypad, 0, rotary_delta(kprec));
--
--	if (pdata->enable_rotary1)
--		report_rotary_event(keypad, 1, rotary_delta(kprec >> 16));
-+		kprec >>= 16;
-+	}
- }
- 
- static void pxa27x_keypad_scan_direct(struct pxa27x_keypad *keypad)
- {
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
- 	struct input_dev *input_dev = keypad->input_dev;
- 	unsigned int new_state;
- 	u32 kpdk, bits_changed;
-@@ -544,14 +446,14 @@ static void pxa27x_keypad_scan_direct(struct pxa27x_keypad *keypad)
- 
- 	kpdk = keypad_readl(KPDK);
- 
--	if (pdata->enable_rotary0 || pdata->enable_rotary1)
-+	if (keypad->rotary[0].enabled || keypad->rotary[1].enabled)
- 		pxa27x_keypad_scan_rotary(keypad);
- 
- 	/*
- 	 * The KPDR_DK only output the key pin level, so it relates to board,
- 	 * and low level may be active.
- 	 */
--	if (pdata->direct_key_low_active)
-+	if (keypad->direct_key_low_active)
- 		new_state = ~KPDK_DK(kpdk) & keypad->direct_key_mask;
- 	else
- 		new_state = KPDK_DK(kpdk) & keypad->direct_key_mask;
-@@ -561,7 +463,7 @@ static void pxa27x_keypad_scan_direct(struct pxa27x_keypad *keypad)
- 	if (bits_changed == 0)
- 		return;
- 
--	for (i = 0; i < pdata->direct_key_num; i++) {
-+	for (i = 0; i < keypad->direct_key_num; i++) {
- 		if (bits_changed & BIT(i)) {
- 			int code = MAX_MATRIX_KEY_NUM + i;
- 
-@@ -574,21 +476,11 @@ static void pxa27x_keypad_scan_direct(struct pxa27x_keypad *keypad)
- 	keypad->direct_key_state = new_state;
- }
- 
--static void clear_wakeup_event(struct pxa27x_keypad *keypad)
--{
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
--
--	if (pdata->clear_wakeup_event)
--		(pdata->clear_wakeup_event)();
--}
--
- static irqreturn_t pxa27x_keypad_irq_handler(int irq, void *dev_id)
- {
- 	struct pxa27x_keypad *keypad = dev_id;
- 	unsigned long kpc = keypad_readl(KPC);
- 
--	clear_wakeup_event(keypad);
--
- 	if (kpc & KPC_DI)
- 		pxa27x_keypad_scan_direct(keypad);
- 
-@@ -600,7 +492,6 @@ static irqreturn_t pxa27x_keypad_irq_handler(int irq, void *dev_id)
- 
- static void pxa27x_keypad_config(struct pxa27x_keypad *keypad)
- {
--	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
- 	unsigned int mask = 0, direct_key_num = 0;
- 	unsigned long kpc = 0;
- 
-@@ -608,35 +499,33 @@ static void pxa27x_keypad_config(struct pxa27x_keypad *keypad)
- 	keypad_readl(KPC);
- 
- 	/* enable matrix keys with automatic scan */
--	if (pdata->matrix_key_rows && pdata->matrix_key_cols) {
-+	if (keypad->matrix_key_rows && keypad->matrix_key_cols) {
- 		kpc |= KPC_ASACT | KPC_MIE | KPC_ME | KPC_MS_ALL;
--		kpc |= KPC_MKRN(pdata->matrix_key_rows) |
--		       KPC_MKCN(pdata->matrix_key_cols);
-+		kpc |= KPC_MKRN(keypad->matrix_key_rows) |
-+		       KPC_MKCN(keypad->matrix_key_cols);
- 	}
- 
- 	/* enable rotary key, debounce interval same as direct keys */
--	if (pdata->enable_rotary0) {
-+	if (keypad->rotary[0].enabled) {
- 		mask |= 0x03;
- 		direct_key_num = 2;
- 		kpc |= KPC_REE0;
- 	}
- 
--	if (pdata->enable_rotary1) {
-+	if (keypad->rotary[1].enabled) {
- 		mask |= 0x0c;
- 		direct_key_num = 4;
- 		kpc |= KPC_REE1;
- 	}
- 
--	if (pdata->direct_key_num > direct_key_num)
--		direct_key_num = pdata->direct_key_num;
-+	if (keypad->direct_key_num > direct_key_num)
-+		direct_key_num = keypad->direct_key_num;
- 
- 	/*
- 	 * Direct keys usage may not start from KP_DKIN0, check the platfrom
- 	 * mask data to config the specific.
- 	 */
--	if (pdata->direct_key_mask)
--		keypad->direct_key_mask = pdata->direct_key_mask;
--	else
-+	if (!keypad->direct_key_mask)
- 		keypad->direct_key_mask = GENMASK(direct_key_num - 1, 0) & ~mask;
- 
- 	/* enable direct key */
-@@ -645,7 +534,7 @@ static void pxa27x_keypad_config(struct pxa27x_keypad *keypad)
- 
- 	keypad_writel(KPC, kpc | KPC_RE_ZERO_DEB);
- 	keypad_writel(KPREC, DEFAULT_KPREC);
--	keypad_writel(KPKDI, pdata->debounce_interval);
-+	keypad_writel(KPKDI, keypad->debounce_interval);
- }
- 
- static int pxa27x_keypad_open(struct input_dev *dev)
-@@ -719,19 +608,12 @@ static int pxa27x_keypad_resume(struct device *dev)
- static DEFINE_SIMPLE_DEV_PM_OPS(pxa27x_keypad_pm_ops,
- 				pxa27x_keypad_suspend, pxa27x_keypad_resume);
- 
--
- static int pxa27x_keypad_probe(struct platform_device *pdev)
- {
--	const struct pxa27x_keypad_platform_data *pdata =
--					dev_get_platdata(&pdev->dev);
--	struct device_node *np = pdev->dev.of_node;
- 	struct pxa27x_keypad *keypad;
- 	struct input_dev *input_dev;
--	int irq, error;
--
--	/* Driver need build keycode from device tree or pdata */
--	if (!np && !pdata)
--		return -EINVAL;
-+	int irq;
-+	int error;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
-@@ -746,7 +628,6 @@ static int pxa27x_keypad_probe(struct platform_device *pdev)
- 	if (!input_dev)
- 		return -ENOMEM;
- 
--	keypad->pdata = pdata;
- 	keypad->input_dev = input_dev;
- 	keypad->irq = irq;
- 
-@@ -775,29 +656,12 @@ static int pxa27x_keypad_probe(struct platform_device *pdev)
- 	input_dev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP);
- 	input_set_capability(input_dev, EV_MSC, MSC_SCAN);
- 
--	if (pdata) {
--		error = pxa27x_keypad_build_keycode(keypad);
--	} else {
--		error = pxa27x_keypad_build_keycode_from_dt(keypad);
--		/*
--		 * Data that we get from DT resides in dynamically
--		 * allocated memory so we need to update our pdata
--		 * pointer.
--		 */
--		pdata = keypad->pdata;
--	}
-+	error = pxa27x_keypad_parse_properties(keypad);
- 	if (error) {
--		dev_err(&pdev->dev, "failed to build keycode\n");
-+		dev_err(&pdev->dev, "failed to parse keypad properties\n");
- 		return error;
- 	}
- 
--	keypad->row_shift = get_count_order(pdata->matrix_key_cols);
--
--	if ((pdata->enable_rotary0 && keypad->rotary_rel_code[0] != -1) ||
--	    (pdata->enable_rotary1 && keypad->rotary_rel_code[1] != -1)) {
--		input_dev->evbit[0] |= BIT_MASK(EV_REL);
--	}
--
- 	error = devm_request_irq(&pdev->dev, irq, pxa27x_keypad_irq_handler,
- 				 0, pdev->name, keypad);
- 	if (error) {
-diff --git a/include/linux/platform_data/keypad-pxa27x.h b/include/linux/platform_data/keypad-pxa27x.h
-deleted file mode 100644
-index a376442b9935..000000000000
---- a/include/linux/platform_data/keypad-pxa27x.h
-+++ /dev/null
-@@ -1,73 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ARCH_PXA27x_KEYPAD_H
--#define __ASM_ARCH_PXA27x_KEYPAD_H
--
--#include <linux/input.h>
--#include <linux/input/matrix_keypad.h>
--
--#define MAX_MATRIX_KEY_ROWS	(8)
--#define MAX_MATRIX_KEY_COLS	(8)
--#define MATRIX_ROW_SHIFT	(3)
--#define MAX_DIRECT_KEY_NUM	(8)
--
--/* pxa3xx keypad platform specific parameters
-- *
-- * NOTE:
-- * 1. direct_key_num indicates the number of keys in the direct keypad
-- *    _plus_ the number of rotary-encoder sensor inputs,  this can be
-- *    left as 0 if only rotary encoders are enabled,  the driver will
-- *    automatically calculate this
-- *
-- * 2. direct_key_map is the key code map for the direct keys, if rotary
-- *    encoder(s) are enabled, direct key 0/1(2/3) will be ignored
-- *
-- * 3. rotary can be either interpreted as a relative input event (e.g.
-- *    REL_WHEEL/REL_HWHEEL) or specific keys (e.g. UP/DOWN/LEFT/RIGHT)
-- *
-- * 4. matrix key and direct key will use the same debounce_interval by
-- *    default, which should be sufficient in most cases
-- *
-- * pxa168 keypad platform specific parameter
-- *
-- * NOTE:
-- * clear_wakeup_event callback is a workaround required to clear the
-- * keypad interrupt. The keypad wake must be cleared in addition to
-- * reading the MI/DI bits in the KPC register.
-- */
--struct pxa27x_keypad_platform_data {
--
--	/* code map for the matrix keys */
--	const struct matrix_keymap_data *matrix_keymap_data;
--	unsigned int	matrix_key_rows;
--	unsigned int	matrix_key_cols;
--
--	/* direct keys */
--	int		direct_key_num;
--	unsigned int	direct_key_map[MAX_DIRECT_KEY_NUM];
--	/* the key output may be low active */
--	int		direct_key_low_active;
--	/* give board a chance to choose the start direct key */
--	unsigned int	direct_key_mask;
--
--	/* rotary encoders 0 */
--	int		enable_rotary0;
--	int		rotary0_rel_code;
--	int		rotary0_up_key;
--	int		rotary0_down_key;
--
--	/* rotary encoders 1 */
--	int		enable_rotary1;
--	int		rotary1_rel_code;
--	int		rotary1_up_key;
--	int		rotary1_down_key;
--
--	/* key debounce interval */
--	unsigned int	debounce_interval;
--
--	/* clear wakeup event requirement for pxa168 */
--	void		(*clear_wakeup_event)(void);
--};
--
--extern void pxa_set_keypad_info(struct pxa27x_keypad_platform_data *info);
--
--#endif /* __ASM_ARCH_PXA27x_KEYPAD_H */
--- 
-2.51.0.rc1.163.g2494970778-goog
+> On Thu, Aug 14, 2025 at 12:30:36AM -0700, Ankur Arora wrote:
+>> Catalin Marinas <catalin.marinas@arm.com> writes:
+>> > On Mon, Aug 11, 2025 at 02:15:56PM -0700, Ankur Arora wrote:
+>> >> Catalin Marinas <catalin.marinas@arm.com> writes:
+>> >> > Also I feel the spinning added to poll_idle() is more of an architecture
+>> >> > choice as some CPUs could not cope with local_clock() being called too
+>> >> > frequently.
+>> >>
+>> >> Just on the frequency point -- I think it might be a more general
+>> >> problem that just on specific architectures.
+>> >>
+>> >> Architectures with GENERIC_SCHED_CLOCK could use a multitude of
+>> >> clocksources and from a quick look some of them do iomem reads.
+>> >> (AFAICT GENERIC_SCHED_CLOCK could also be selected by the clocksource
+>> >> itself, so an architecture header might not need to be an arch choice
+>> >> at  all.)
+>> >>
+>> >> Even for something like x86 which doesn't use GENERIC_SCHED_CLOCK,
+>> >> we might be using tsc or jiffies or paravirt-clock all of which would
+>> >> have very different performance characteristics. Or, just using a
+>> >> clock more expensive than local_clock(); rqspinlock uses
+>> >> ktime_get_mono_fast_ns().
+>> >>
+>> >> So, I feel we do need a generic rate limiter.
+>> >
+>> > That's a good point but the rate limiting is highly dependent on the
+>> > architecture, what a CPU does in the loop, how fast a loop iteration is.
+>> >
+>> > That's why I'd keep it hidden in the arch code.
+>>
+>> Yeah, this makes sense. However, I would like to keep as much of the
+>> code that does this common.
+>
+> You can mimic what poll_idle() does for x86 in the generic
+> implementation, maybe with some comment referring to the poll_idle() CPU
+> usage of calling local_clock() in a loop. However, allow the arch code
+> to override the whole implementation and get rid of the policy. If an
+> arch wants to spin for some power reason, it can do it itself. The code
+> duplication for a while loop is much more readable than a policy setting
+> some spin/wait parameters just to have a single spin loop. If at some
+> point we see some pattern, we could revisit the common code.
+>
+> For arm64, I doubt the extra spinning makes any difference. Our
+> cpu_relax() doesn't do anything (almost), it's probably about the same
+> cost as reading the monotonic clock. I also see a single definition
+> close enough to the logic in __delay() on arm64. It would be more
+> readable than a policy callback setting wait/spin with a separate call
+> for actually waiting. Well, gut feel, let's see how that would look
+> like.
 
+So, I tried to pare back the code and the following (untested) is
+what I came up with. Given the straight-forward rate-limiting, and the
+current users not needing accurate timekeeping, this uses a
+bool time_check_expr. Figured I'd keep it simple until someone actually
+needs greater complexity as you suggested.
+
+diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+index d4f581c1e21d..e8793347a395 100644
+--- a/include/asm-generic/barrier.h
++++ b/include/asm-generic/barrier.h
+@@ -273,6 +273,34 @@ do {                                                                       \
+ })
+ #endif
+
++
++#ifndef SMP_TIMEWAIT_SPIN_COUNT
++#define SMP_TIMEWAIT_SPIN_COUNT                200
++#endif
++
++#ifndef smp_cond_load_relaxed_timewait
++#define smp_cond_load_relaxed_timewait(ptr, cond_expr,                 \
++                                       time_check_expr)                \
++({                                                                     \
++       typeof(ptr) __PTR = (ptr);                                      \
++       __unqual_scalar_typeof(*ptr) VAL;                               \
++       u32 __n = 0, __spin = SMP_TIMEWAIT_SPIN_COUNT;                  \
++                                                                       \
++       for (;;) {                                                      \
++               VAL = READ_ONCE(*__PTR);                                \
++               if (cond_expr)                                          \
++                       break;                                          \
++               cpu_relax();                                            \
++               if (++__n < __spin)                                     \
++                       continue;                                       \
++               if ((time_check_expr))                                  \
++                       break;                                          \
++               __n = 0;                                                \
++       }                                                               \
++       (typeof(*ptr))VAL;                                              \
++})
++#endif
+diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+index f5801b0ba9e9..c9934ab68da2 100644
+--- a/arch/arm64/include/asm/barrier.h
++++ b/arch/arm64/include/asm/barrier.h
+@@ -219,6 +219,43 @@ do {                                                                       \
+        (typeof(*ptr))VAL;                                              \
+ })
+
++extern bool arch_timer_evtstrm_available(void);
++
++#ifndef SMP_TIMEWAIT_SPIN_COUNT
++#define SMP_TIMEWAIT_SPIN_COUNT                200
++#endif
++
++#define smp_cond_load_relaxed_timewait(ptr, cond_expr,                 \
++                                         time_check_expr)              \
++({                                                                     \
++       typeof(ptr) __PTR = (ptr);                                      \
++       __unqual_scalar_typeof(*ptr) VAL;                               \
++       u32 __n = 0, __spin = 0;                                        \
++       bool __wfet = alternative_has_cap_unlikely(ARM64_HAS_WFXT);     \
++       bool __wfe = arch_timer_evtstrm_available();                    \
++       bool __wait = false;                                            \
++                                                                       \
++       if (__wfet || __wfe)                                            \
++               __wait = true;                                          \
++       else                                                            \
++               __spin = SMP_TIMEWAIT_SPIN_COUNT;                       \
++                                                                       \
++       for (;;) {                                                      \
++               VAL = READ_ONCE(*__PTR);                                \
++               if (cond_expr)                                          \
++                       break;                                          \
++               cpu_relax();                                            \
++               if (++__n < __spin)                                     \
++                       continue;                                       \
++               if ((time_check_expr))                                  \
++                       break;                                          \
++               if (__wait)                                             \
++                       __cmpwait_relaxed(__PTR, VAL);                  \
++               __n = 0;                                                \
++       }                                                               \
++       (typeof(*ptr))VAL;                                              \
++})
++
+ #include <asm-generic/barrier.h>
+
+__cmpwait_relaxed() will need adjustment to set a deadline for WFET.
+
+AFAICT the rqspinlock code should be able to work by specifying something
+like:
+  ((ktime_get_mono_fast_ns() > tval)) || (deadlock_check(&lock_context)))
+as the time_check_expr.
+
+I think they also want to rate limit how often deadlock_check() is
+called, so they can redefine SMP_TIMEWAIT_SPIN_COUNT to some large
+value for arm64.
+
+How does this look?
+
+
+Thanks
+
+--
+ankur
 
