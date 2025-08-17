@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-772342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0700B29192
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:48:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE5AB29193
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CCE57A3E6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFAF2A32A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9491FF5E3;
-	Sun, 17 Aug 2025 04:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E220FA9C;
+	Sun, 17 Aug 2025 04:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsUcBARA"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY3I7nz5"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D982EAE3;
-	Sun, 17 Aug 2025 04:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB8D2066DE;
+	Sun, 17 Aug 2025 04:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755406111; cv=none; b=PHZFpXz2DXRSmknv61t1DWPWeloafSMqGsgdSijpyQJFhoCCRYS1FhZFdqdtOYcSrEvim5G5d56sQjuCNDFvjjdUN3n5Lrq5R5CxN789jZEfZviYIZYv7LDaDexBn9c+qvIdh67ZB+iyir0mIqyHegFjpRJily68xVATeCZiESw=
+	t=1755406115; cv=none; b=EEVBYBxGVU3db8wlKvzYXCq5OTe9g8cSlZpj7kb8TCcdXIIl19r1Vdy3T2IllljeSQLuCjhAWIuYv4I5LXc4q/HxODAxSEqv5pM0Q9aPFtfP6/o6N41Wj+3trEEWf3msdsAL/5i1pMX7lih0vuORoogap7E0xufkmjj7n048t88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755406111; c=relaxed/simple;
-	bh=OQwbMoUJk9B3pAYI5oFFoHQAGaCqbjTOe0d5lzmvfhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R2hBo5k49IXFWqfBUb/Ey/sxF4U3vyaaLZ7GdWc08usXzBMrRgW+2RaPvX5Bhe2Fdm6TfZZreGc39A4usUqYHTw5uXLoc/09UEqLoMSCLfrLxC/ZBEGGBnJ3gdoTOGc6+tnjoxweoFNcYQuLWsKSFTMfZjuhUPl7pF+ABLE08H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsUcBARA; arc=none smtp.client-ip=209.85.215.177
+	s=arc-20240116; t=1755406115; c=relaxed/simple;
+	bh=zR5XKh7w5gkBdupYDlaIX7+lVBe6u+YpHl1FbIn7Jlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=a1fC3//9L8HQjLmXBQ40HOynkltKU4ddPLpdYvujjIVf0JI9y+gK7k4c0DgjxZwJliUEsn4T02/j7E3EIoN6OEaDef8sEvPcRkhhILgZgWptHzoFFkev9X0eziqmlODYCGKn63hW4KPsJjXr1bKYetUH8IJqUArQAlF1ArF8XGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QY3I7nz5; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4717330f9eso2210570a12.1;
-        Sat, 16 Aug 2025 21:48:29 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47174beccfso2708996a12.2;
+        Sat, 16 Aug 2025 21:48:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755406109; x=1756010909; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XgE34YgoS9IdCfo8BGLVKCTH/aDS4ciuQURnuclWlL8=;
-        b=ZsUcBARABdqsDnomMwg7KSq45Xv4eSXYPZgylyliivcu5DyoJsQnJ/oVICvcROou0Q
-         XEed8qTmIEBvjhAE5qk/gPNo7JYdEGo0ltaLMzbJ6XIDh/r8tTRsIL8VaGDyIxzrYWCQ
-         e/alT9NLblui0UYrCJ3yILitvvZAAbYwGH5c7DZmWTGDPIC459TwL+Lmr8qLrVKO1rQA
-         348pT+5BE/zjmcNL94zsmxH8s2aqO3OPYkZSyn8ECKaRmT4eFZEUHEuTkkoRraw01JYi
-         gbvek0arZ6alEvhg/D9dlzCdxfsT/83IOhray9vN1XemP2zNCrlIaR9nBRMNigHbo3ES
-         gyCw==
+        d=gmail.com; s=20230601; t=1755406113; x=1756010913; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IZeul7DWVgd1xgnUZden0askSft4WTjZ/RPAZ88zu+Q=;
+        b=QY3I7nz5GG73VOxHAu4t6IHTk8csDfmxqlZ461hKsAlca9SHLGD67qUc/BmLzeGCyF
+         fXxK4Bf4ktMBlSAQA3lObqUPE9En3StmHWeqIQveX8EgAWaepqlB/e6+QeOvMzqz1m3K
+         pFd8xPRq7FDjsiTTOa6bDtbtAZtzn+7a3Tnlo/1pielIN2xw2v99ghk4GFV/TJiwATPJ
+         kV4dy/GqMUHQ2f4LiPubHENqb5NSmjOb+toQMPV/es7whQwS/3b4g2mh78tU2WFqbw1P
+         395QUW0Gu5jSNoFHo+aOVDHuiCV4P7kvJAo7z9ZUhIbGHnKtAD1X2oYG2WIyA4s9aZZp
+         /G9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755406109; x=1756010909;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XgE34YgoS9IdCfo8BGLVKCTH/aDS4ciuQURnuclWlL8=;
-        b=HQs71QlQICPN6aUWVies43w+/BISrr+4OVEpG13U4GFbeRm74RuD0dBg2Qaa569lQ8
-         VTQsN02Xiils4vXik3Reks6kntVDaFkEIeM+sjfW8hftoxC9mO5GobEB9wlSAt8BX3Qh
-         nVpzFjUB6gAZcnCvc0HZoCeeG1Gqoq2aFN1CcigJhvbnZExVn1pG8+b62EhPYKOd1Gf/
-         UwZDEEuYZXBIjjpGgY6K0xrSxNFKhkx7zNha1+SEEVtJ82PDGYSCSFhPLUWOPXyRdVgl
-         +SnIgoh7jP6ofgoDNIcugSx7JfhYgAp4JRH3/TRo5iiA6+RyfIJvLt+69EMwQVahbHs8
-         LYrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt+M4NRRNxMdigC/dpN1jjUkD3ny4G5cdABJVaqzioETmFNX6lzXFf3lFYLk0dhJd0BsdL2bSF1SgKW2MNkLQ=@vger.kernel.org, AJvYcCXbE+7OQ5I2MHh4JfJ+rrBLbqBIMZhHlY3PcHbNtm4SED+GBIxvLynhQW/0wznWxQPJFFqOmMXDXgQEm0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwm1fcopzdE0j4SZB7g6CBjR6ui2e2hTOgAAV7NerDebm9acXI
-	sYWAEHd2UlKc/+vn64r7XNnwm8XehxQPd4QbkvAmP5FB/VLZPiHvk6oG
-X-Gm-Gg: ASbGnctSOZ19wDTWhuXyhQYjaWvpea86JGmIfW2JL76BY2B2H7MGLigHzCUxkrJVqFA
-	Rx9PDh+xRjfTeJnsiivHmIxtJREFbprlRNhYKxBiXo7/1JjkEas2wFRif3k3GBHMhSBPkwFVB4J
-	ddcby03+2oA1Yi0WIbjUzClhZJIJiSSGxn6Nig0dJ0NiQEwB+tOPFFdCak0qkHFn7HZ5CPhfprK
-	JeEDgR8rcj3b8yCHtxOgkR2b+yxwETHUVxLub2sAQgjZNFB/mstro0pIvDKokt4eLYAmWKSr+MQ
-	YYFnjjzzRhCkmLT7/Jlgc/nGRmRdFyA52Bvp73RER04Fvp7rKGORiM/MGlAD/cgPNXXpQp9oc5y
-	1c+VB3sovjfLTF7W6cWq31rNAWDJDmAW5NMQtKvV4s0T8f2Jqw0y2I7Avo/lss/Ga3dNcVF0=
-X-Google-Smtp-Source: AGHT+IG0WhsN3fcoBZeKGuWcX20d2nwVP8ml5xEvRJ3Cki/VWV600XuOLv7cSXLSklNRAd38yR3DAw==
-X-Received: by 2002:a17:903:41c3:b0:234:986c:66bf with SMTP id d9443c01a7336-2446d6e45aamr110310115ad.11.1755406108108;
-        Sat, 16 Aug 2025 21:48:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755406113; x=1756010913;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IZeul7DWVgd1xgnUZden0askSft4WTjZ/RPAZ88zu+Q=;
+        b=h7rRLUb7IBM/1939j3lu6LvBbBRsbr5mJh1RucFrrdDR2l89pFPr5/LW+nLcz79EZz
+         6axCx9V0TRFMc54U3m7xHf9apH6SuieX+bOx9fdhNH77tALIyg5vpSsu4cczoP7ZmWE5
+         Qyk7WvoOkQ3ryFzmsnsr8plw3Ar1Y/BcFXvqUEBPK0cI+XIHnSpmLIDcqLBeu2qcrrVR
+         QfF10V5G+q9dMa7PtbtP9G11B42TT167MBTa3iVkMmQDunEfPJ9ovZJaL6LjoncAlPXA
+         zVQX872E+Af7ulwmOnGcHDBYNqYJET1+Uf6ovz+7EZBWtSvEtd8IK2sRGz9FqcxaFYWw
+         kung==
+X-Forwarded-Encrypted: i=1; AJvYcCVa3ChMW/1rD2O6W4n4xJFbQgT4Xa86ZPlJHBtQTtCUBrGtNp6eRXg6lbHif+Pj/ZoSEbdfiq447R275q1Qqjc=@vger.kernel.org, AJvYcCWmcEKeuCPnncgCnQAaL+xejYM3FeizGpN4R4BirTXS5LvfySJj/Rd0pndYD7IcXrx5mYh8EEiBJgHiL6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtWdF7Aoq0Nq1MutZ2Jbqif/F0pAxXUFYfKNJruRCLFvUDaYTb
+	ZCETwzmXJ9thaSZ2bW9Yp2aYY4jHNlai8QPBV0tBxlSIQMC5tOJapPpd
+X-Gm-Gg: ASbGncvEXfaES0Jo2/gS3UopGCUwEkRsJD7DI9oMi56ByaUc35xUgD9fdMujm8LvHXc
+	8bZOW9QCeb5m4+FD3kmsExLS/RZUC20zub2dY/6OkI14h1s8HFlWY3+lk863M+6SukD2ap3uffc
+	PTbzrO9m7M4MJvQAVbe2ecVSb01rSYG/hdDqydcCnlDJVGhV6IqhKGMVyx0hHwquiZLUO0NFvyh
+	KXqcIB32OkMV71vd22NURnFG6lObi8xqzRPu01CkH9JplP0oshPbH+0KAuHUc/Kq7ZBsr7t8w5s
+	VG3aZfOKAWF8vkYxLdDSYHfOe7lBvOAThNNvlABMdc/IwzPpUG6U0HLDVMMzGEU2RK9TNC4tC3i
+	N841TTjzdJonoG9nOe18zJH5wXIV1uscCWx50vUKCN/yCrDuO+Sk078zRdo+dWic7LUJ2aKk=
+X-Google-Smtp-Source: AGHT+IFX9oAZ7mTeM4M0+jCJMK6pzIebt99KVD0HFS1uAkWC989yIHy5IR7AHDIkL/tVgrbmvsNWMg==
+X-Received: by 2002:a17:903:3bc5:b0:242:1b:7f05 with SMTP id d9443c01a7336-2446d725139mr116745755ad.24.1755406113031;
+        Sat, 16 Aug 2025 21:48:33 -0700 (PDT)
 Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3234368aeadsm4740645a91.0.2025.08.16.21.48.23
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3234368aeadsm4740645a91.0.2025.08.16.21.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 21:48:27 -0700 (PDT)
+        Sat, 16 Aug 2025 21:48:32 -0700 (PDT)
 From: FUJITA Tomonori <fujita.tomonori@gmail.com>
 To: a.hindborg@kernel.org,
 	alex.gaynor@gmail.com,
@@ -91,10 +93,12 @@ Cc: aliceryhl@google.com,
 	tmgross@umich.edu,
 	acourbot@nvidia.com,
 	daniel.almeida@collabora.com
-Subject: [PATCH v2 0/2] rust: Add read_poll_timeout
-Date: Sun, 17 Aug 2025 13:47:21 +0900
-Message-ID: <20250817044724.3528968-1-fujita.tomonori@gmail.com>
+Subject: [PATCH v2 1/2] rust: Add cpu_relax() helper
+Date: Sun, 17 Aug 2025 13:47:22 +0900
+Message-ID: <20250817044724.3528968-2-fujita.tomonori@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250817044724.3528968-1-fujita.tomonori@gmail.com>
+References: <20250817044724.3528968-1-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,59 +107,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a helper function to poll periodically until a condition is met or
-a timeout is reached.
+Add cpu_relax() helper in preparation for supporting
+read_poll_timeout().
 
-This patch was previously reviewed as part of another patchset [1] but
-was removed to expedite merging into the mainline. Now that all the
-features it depends on have been merged into the mainline, it is being
-reposted as a new independent patchset.
-
-I put this function kernel/io/poll.rs. This function is not
-necessarily related to I/O though. I don't think this function
-perfectly matches the existing abstraction. Suggestions for a more
-appropriate place are welcome.
-
-After we agree on this patchset, I'll work on
-read_poll_timeout_atomic().
-
-v2
-- make cpu_relax() inline
-- remove the example code to call might_sleep with a lock hold
-- move kernel/time/poll.rs to kernel/io/poll.rs
-- remove the Option for timeout argument
-- avoid the extra variable, sleep.
-- update the comment and commit message
-- writing closures directly inline in the example code
-v1: https://lore.kernel.org/lkml/20250811041039.3231548-1-fujita.tomonori@gmail.com/
-The changes since the last posting [2] are
-- removed might_sleep() change since it was already merged separately.
-- split out cpu_relax() in a separate patch
-- make the example code compilable
-- update the code to use Clocksource (MONOTONIC)
-- call might_sleep() always (even when the function doesn't sleep)
-- cosmetic changes to the doc
-
-[1] https://lore.kernel.org/lkml/20250207132623.168854-1-fujita.tomonori@gmail.com/
-[2] https://lore.kernel.org/lkml/20250220070611.214262-8-fujita.tomonori@gmail.com/
-
-FUJITA Tomonori (2):
-  rust: Add cpu_relax() helper
-  rust: Add read_poll_timeout functions
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+---
  rust/helpers/helpers.c   |  1 +
- rust/helpers/processor.c |  8 ++++
- rust/kernel/io.rs        |  1 +
- rust/kernel/io/poll.rs   | 96 ++++++++++++++++++++++++++++++++++++++++
+ rust/helpers/processor.c |  8 ++++++++
  rust/kernel/lib.rs       |  1 +
- rust/kernel/processor.rs | 14 ++++++
- 6 files changed, 121 insertions(+)
+ rust/kernel/processor.rs | 14 ++++++++++++++
+ 4 files changed, 24 insertions(+)
  create mode 100644 rust/helpers/processor.c
- create mode 100644 rust/kernel/io/poll.rs
  create mode 100644 rust/kernel/processor.rs
 
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 7cf7fe95e41d..04598665e7c8 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -34,6 +34,7 @@
+ #include "pid_namespace.c"
+ #include "platform.c"
+ #include "poll.c"
++#include "processor.c"
+ #include "property.c"
+ #include "rbtree.c"
+ #include "rcu.c"
+diff --git a/rust/helpers/processor.c b/rust/helpers/processor.c
+new file mode 100644
+index 000000000000..d41355e14d6e
+--- /dev/null
++++ b/rust/helpers/processor.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/processor.h>
++
++void rust_helper_cpu_relax(void)
++{
++	cpu_relax();
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ed53169e795c..c098c47c1817 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -110,6 +110,7 @@
+ pub mod platform;
+ pub mod prelude;
+ pub mod print;
++pub mod processor;
+ pub mod rbtree;
+ pub mod regulator;
+ pub mod revocable;
+diff --git a/rust/kernel/processor.rs b/rust/kernel/processor.rs
+new file mode 100644
+index 000000000000..85b49b3614dd
+--- /dev/null
++++ b/rust/kernel/processor.rs
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Processor related primitives.
++//!
++//! C header: [`include/linux/processor.h`](srctree/include/linux/processor.h)
++
++/// Lower CPU power consumption or yield to a hyperthreaded twin processor.
++///
++/// It also happens to serve as a compiler barrier.
++#[inline]
++pub fn cpu_relax() {
++    // SAFETY: Always safe to call.
++    unsafe { bindings::cpu_relax() }
++}
 -- 
 2.43.0
 
