@@ -1,128 +1,85 @@
-Return-Path: <linux-kernel+bounces-772430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CFAB29294
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446C8B2929A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F308E1B2374E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409F02A0231
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1421C1DC075;
-	Sun, 17 Aug 2025 10:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nC1S9mxC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7616523BD1F;
+	Sun, 17 Aug 2025 10:23:01 +0000 (UTC)
+Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51CF4A33
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 10:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613CA14B06C;
+	Sun, 17 Aug 2025 10:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755425789; cv=none; b=oJ6hUGL7TRGiF9DMvEX9OtQlPVRJxBqj4AfbO9vM9X0vNmloZaMZiaqEzHSqVAYZXt8ojbOpO9mnDQwB0fm5+smKQcj517aCNNIR8ZavqeK32lfHpLSRXw0UP6+LxhCwqCNs3CThGTxSLsuV2JvrtEla6UWL53zwNBKKuwkjRtw=
+	t=1755426181; cv=none; b=fUnDxQZ3GeQY1ref0BoxjiRb6N+O5ef8oppdWOHqiB6Ppflgx8Kvm9u4ekYTFIRC+ZUn+ceczZuhwDbQG/nVmks8hQXxa2A1CsoKp8cItEUUER8T2o9koZ3ioW3hvDVeBA0nJeIoWRmg9mhd4WBx53yU59GOJh6+I69hl7N6MnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755425789; c=relaxed/simple;
-	bh=+A14c1W+X+e9ckEeG7fLA+HMWihm8ocOrIT9CAvB0SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCLEO4nTOhVEad6v0fU9oGq65VhT89lIMA3a+zrLuW3bH2f82k7Sv5MpBzA/9vGRKjJzLVHiyU+1XTn8c//v3t8ixFpFSYe42c1ZjY/EwmFFP1IZTWYFzzhNSZEtQ1lU35q0hxSce3kp3DyzIEBjVQqDHzqTRbznyNTNZXuM4+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nC1S9mxC; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755425788; x=1786961788;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+A14c1W+X+e9ckEeG7fLA+HMWihm8ocOrIT9CAvB0SA=;
-  b=nC1S9mxCmxxSUD37U/vwY0JEoTRFjzfilt53HEF0HwXkDEMjuW1kdQBo
-   TlXnVykvrVvEKBevK6E46pxiX3foWQ64iknVibrlJGqZZWT07BjEnZ5oK
-   ncSnv041Nfa5OyRC9hU2AAliwR1PTFLKvxb+8Xd1GkMESNw4xi26OdkNd
-   Q5P0a8nPB2n25RAMPPkaB/CMtflgkeF8TgUF+pZRqOY8RCDkK0eXahWcc
-   le3w0HYJ/7gOcbBzqHBLZfpfw/iaXwtIi7f4niE2DLOqJET3Hl1qexRcB
-   soneRN8qLVyFs8032CY0yCDet+ug8wXtXdfHyh2IwwRK5BfYpw/lZqgm8
-   Q==;
-X-CSE-ConnectionGUID: DefzWpTrR7KkbuMLa9oLUQ==
-X-CSE-MsgGUID: YUuV7qDHT/mw1LmjLqmRCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="61511059"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="61511059"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 03:16:28 -0700
-X-CSE-ConnectionGUID: +9d8gx9kSNufnReCk+lhMw==
-X-CSE-MsgGUID: krM7rEmbTX6xWVFMAnBwOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166847320"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 17 Aug 2025 03:16:24 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unaQz-000DT9-0i;
-	Sun, 17 Aug 2025 10:16:20 +0000
-Date: Sun, 17 Aug 2025 18:15:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huacai Chen <chenhuacai@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
-Message-ID: <202508171758.8m5jQYdz-lkp@intel.com>
-References: <20250817083534.2398601-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1755426181; c=relaxed/simple;
+	bh=lJC10/440A/pwP+F4k2P/0FHtlqf6NxLunA99P4CC7U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WIqj70MjcZhYx5VtaNpsnRkkQFeSCgRVTnZc6lqW3To4SSRW+3rdpmo5gsDdvrgOpzPX1O59JRbPg2Ek/FGmH52O+oj4RsOyZ4wFIExBPuvyhWzbvyW/QI9hV0PdQQ9PYy90YnKcxQgKOkkLk5qVRGXIJBKpM+V7HqTcdqgtNDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
+Received: from blala.de (localhost [127.0.0.1])
+	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 57HARprR029752;
+	Sun, 17 Aug 2025 10:27:51 GMT
+Received: (from akurz@localhost)
+	by blala.de (8.15.2/8.15.2/Submit) id 57HARpKr029751;
+	Sun, 17 Aug 2025 10:27:51 GMT
+From: Alexander Kurz <akurz@blala.de>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dzmitry Sankouski <dsankouski@gmail.com>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
+Subject: [PATCH 0/6] Fix, extend and upport OF to mc13xxx pwrbutton
+Date: Sun, 17 Aug 2025 10:27:44 +0000
+Message-Id: <20250817102751.29709-1-akurz@blala.de>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250817083534.2398601-1-chenhuacai@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Huacai,
+Goal of this patch series is to make the mc13892 PWRON1 button usable,
+found e.g. on amazon kindle D01100/D01200 readers.
+A ten-year-old IRQ issue needed a fix, mc13783-pwrbutton had to be
+extended to the other to mc13xxx PMIC as well (keeping the mc13892
+PWRON3 key unsupported for simplicity) and adding OF support.
+The implementation has been tested on amazon kindle D01100 and D01200
+readers using PWRON1 of a mc13892.
 
-kernel test robot noticed the following build warnings:
+Alexander Kurz (6):
+  Input: mc13783-pwrbutton: fix irq mixup
+  Input: mc13783-pwrbutton: use managed resources
+  Input: mc13783-pwrbutton: enable other mc13xxx PMIC
+  Input: mc13783-pwrbutton: convert members to array
+  dt-bindings: mfd: mc13xxx: add pwrbutton dt support
+  Input: mc13783-pwrbutton: add OF support
 
-[auto build test WARNING on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Huacai-Chen/mm-migrate-Fix-NULL-movable_ops-if-CONFIG_ZSMALLOC-m/20250817-163814
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250817083534.2398601-1-chenhuacai%40loongson.cn
-patch subject: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
-config: x86_64-buildonly-randconfig-002-20250817 (https://download.01.org/0day-ci/archive/20250817/202508171758.8m5jQYdz-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508171758.8m5jQYdz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508171758.8m5jQYdz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   mm/zsmalloc.c: In function 'zs_init':
->> mm/zsmalloc.c:2249:13: warning: unused variable 'rc' [-Wunused-variable]
-    2249 |         int rc;
-         |             ^~
-
-
-vim +/rc +2249 mm/zsmalloc.c
-
-  2246	
-  2247	static int __init zs_init(void)
-  2248	{
-> 2249		int rc;
-  2250	
+ .../devicetree/bindings/mfd/mc13xxx.txt       |  35 +++
+ drivers/input/misc/Kconfig                    |   4 +-
+ drivers/input/misc/mc13783-pwrbutton.c        | 202 +++++++++++++-----
+ include/linux/mfd/mc13783.h                   |   4 +-
+ include/linux/mfd/mc13xxx.h                   |  17 +-
+ 5 files changed, 196 insertions(+), 66 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
