@@ -1,143 +1,166 @@
-Return-Path: <linux-kernel+bounces-772548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A877BB293F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D02CB29406
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 509942A348E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DFF2A4C89
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2577C1C5D57;
-	Sun, 17 Aug 2025 16:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E4F2FE05A;
+	Sun, 17 Aug 2025 16:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t4Y1wYg/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IePmc6Ib"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="XCpqFCqx"
+Received: from aye.elm.relay.mailchannels.net (aye.elm.relay.mailchannels.net [23.83.212.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E51F4FA;
-	Sun, 17 Aug 2025 16:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755446538; cv=none; b=VKpNTk4axcoYNqPdlg03YiwBd+8pguRgaQdg1/HMW8dKbiUPh0y2bX250qOaGXx2UpIebwUAGIHLUemp6sANVUF2PwaTSstm892DfQXB0us0+pB5S6r+gzxVCgFddSkkADjcNwfZanWMkak2camOJYTLxDKV0mv8t6vOz0ktKbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755446538; c=relaxed/simple;
-	bh=MMXn27OEplwXWUcwEO4tzcSlJZT5KRSyXkY1nkELCy4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kJNAQiIm6RQfOUOU9LFWGLqB0QUEBXYdX20JmrmzaLZY8MdnO6lEFODSPPJlU3PvHroi/C2Qb7UMAkcgpUl+YPjf0df4ghcmFUC/Z01LKqZHI/Xb5lJG+wlVRVNuRguNfEbOF1I6MkzAVFZ/1qyZ92H8tBqMMFpENOhmBHvNYik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t4Y1wYg/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IePmc6Ib; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 17 Aug 2025 16:02:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755446533;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8314B086;
+	Sun, 17 Aug 2025 16:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755446997; cv=pass; b=ZeG1nUDVRu5CS/x+EI9DnPmVi8qwjSmkBhd7iPJEak8H++eaMnbxUz0Uk+5zgCyDegtGhp8m+uVSQNXOtYv2FlP2hYa8LtU+xaM1TsuRp2THvZTMecppEh5/NsngrHJbvTyBqPaVzTbueBaCMUTKAfdW1heV4PCHHEV5IG6D3c4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755446997; c=relaxed/simple;
+	bh=fjqdlchKoZQp8z6BOQfPzPE/Kn3at+oXweNS0d0qYd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aDaBMVWBRLIXSPvD3z+1gXExD3HjLmMK3kvlZ3Hfhuuk285s7otviymqWRe1Ojkd9+4blQuJFeBLI3gPbzXeANwDIKnM6h3fo2hBp1lFgRS7NVuweeKCYmqFLKah1ZsFhUlmX6LrGX+TAV3t4BjIsWAEHVd5YkGhWjDmycKVLZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=XCpqFCqx; arc=pass smtp.client-ip=23.83.212.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 3AA5D2C5FF4;
+	Sun, 17 Aug 2025 16:04:39 +0000 (UTC)
+Received: from pdx1-sub0-mail-a266.dreamhost.com (trex-blue-2.trex.outbound.svc.cluster.local [100.96.24.204])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id A9D5C2C5BC0;
+	Sun, 17 Aug 2025 16:04:38 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1755446678; a=rsa-sha256;
+	cv=none;
+	b=79eaCdimCdxb/iC5hvvHQ0HNM1n+D3OOB0TRZHB7IooDoHyGsXYPyHmQgzKJ92/kSbWxoF
+	ZDD4pdXgyLyx/0J1zojJgIiP2Xhi0TJnpZYh12QO68Df5EbVMp3rvxKGA1gdi+V8zc2iHC
+	0KUJfztwk0KiGkbDl5DnbMyb9mdnncU2HD5cMu2fQVHk5p03MtyIWM4vkdlpgcBu0YnC0d
+	FNZ5S5cyuFvhHZy99dPLCpP8eJZNU6A2gqAimu45PsRit+cJsEdsPmI+1Nl55/M7mpmKN4
+	l0UHKiM6jAG+KWhePC6KnK9VGWAr3GxHE+HEu2tIjK9cshMaHlJxmKQazWZ9iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1755446678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=18Fuz6VmX4L7W+FDZrV0Pp1fjZoo/L/reDdeAndWJhE=;
-	b=t4Y1wYg/37FI5QAsWBwOYo4IT5uoWfK8mETQbzwnhJUynzeYMzJuNsoBy0mjb2Vk/Qm6wo
-	ynzyr8RqqZ9CFrZs8kYhsGMkvMC1yPSUVe91N2hii+9u9S89Mv0mord830RZqLx13X7MRu
-	S7REpams/lEjfbULQxtO5xO9ETUXPyV9i8QhV3B8H2CHiYt681DaEAxKDpzIx0rV7VdNK2
-	8AwgqKGXiejueMtgbIAX0qHub7RnH4MySgaV721Xov+5AsjhuX84tc8oq4zlW74I7YC/5c
-	dAR4GMcRGpYjpmdTQRqsQtvSl+v7A9Scibj+u985ACXLJiFicuZ4XsFBO+kP4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755446533;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=18Fuz6VmX4L7W+FDZrV0Pp1fjZoo/L/reDdeAndWJhE=;
-	b=IePmc6IbY8wfEnWpl7QfrQ52QNoXYGriu4SXpIBguVjbIeldQVFHmw6jDsqupyTBDSuH66
-	LqsdDVba1zAx/uBw==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] x86/Kconfig: Clean up LLVM version checks in IBT
- configurations
-Cc: Nathan Chancellor <nathan@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250814-x86-min-ver-cleanups-v1-6-ff7f19457523@kernel.org>
-References: <20250814-x86-min-ver-cleanups-v1-6-ff7f19457523@kernel.org>
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=1UyeYL1cdUfgr+ZEGrn8RJmbevR9bD7UF50xpYXVxks=;
+	b=j9uqFpwWW/V8LMvtx445Rjvn3UEe/k3YyuJm8IJeS4RfFPG7ydSgVr3qTMLzQLGiLpUg8R
+	wLYdC3ckaH3bDP2SkyWoq9y26eRo80cPxkxGWGu+PigkBFcagNWD+gzuM5KDp4cAcJsdcw
+	2Lx4ugPCjC2/Gg5oM+cdQkqwceh0CvYxFb3Nm5cRf0S1SmxD492H2gvG7wGFxPSvr2Z+D5
+	5ZDFu1b2alrxc5TmHHq/yvyCuVPbDED8lXPa4INYBnSbFzTr/xWHkExYXidiV77RkmIOSa
+	vkodUcMM5U2crkPBYfVrtda8N9Fc/JkG1+MtJgNdV9mfkTRZxz2SWj7P5IsgLQ==
+ARC-Authentication-Results: i=1;
+	rspamd-697fb8bd44-8sr7s;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Shrill-Cooing: 5f6ae9f50f5cf92c_1755446679101_4172374461
+X-MC-Loop-Signature: 1755446679101:843244194
+X-MC-Ingress-Time: 1755446679101
+Received: from pdx1-sub0-mail-a266.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.24.204 (trex/7.1.3);
+	Sun, 17 Aug 2025 16:04:39 +0000
+Received: from [192.168.88.7] (unknown [209.81.127.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a266.dreamhost.com (Postfix) with ESMTPSA id 4c4gdx2LB3zPS;
+	Sun, 17 Aug 2025 09:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1755446678;
+	bh=1UyeYL1cdUfgr+ZEGrn8RJmbevR9bD7UF50xpYXVxks=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=XCpqFCqxcvJJTfy4OTrCUM2Htgr/7IGFok1cVjmYKXOMi1wiqwODNwADQ13rSCESQ
+	 KvqhFDCGeL+c039xlvVPaEcg6pRW0U4Y5wlSwIGq+6ZZO9FnVlwH4jmDkE+GvxBd+Q
+	 cmCzGOP+NY0jTdG7uM10/iobTMZaE3C1OY2yWhYP1aWuhpU2Hy+j2RUgOqiXWsc+cK
+	 uGFI1ZxQM6lqbyvm4sEEgMtR2pU2EJGCiDKn3fbeBQ9UhLeImL9yWGx4t/j5xeMDxM
+	 2v3xSGhAaOC8JJefzQUEaQbjpMiNxrJLR4clZ+cKLRIReShruLL1R8oarPXUKd/vNA
+	 SBmtoP9N2gv8A==
+Message-ID: <dd48568e-90db-430a-b910-623c7aaf566e@landley.net>
+Date: Sun, 17 Aug 2025 11:04:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175544652925.1420.2858880325323032694.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
+To: Andrew Lunn <andrew@lunn.ch>, Artur Rojek <contact@artur-rojek.eu>
+Cc: Jeff Dionne <jeff@coresemi.io>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-4-contact@artur-rojek.eu>
+ <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
+ <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
+ <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
+ <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/build branch of tip:
+On 8/15/25 17:38, Andrew Lunn wrote:
+>>>> What support is there for MDIO? Normally the MAC driver would not be
+>>>> setting the carrier status, phylink or phylib would do that.
+>>>
+>>>  From what I can tell, none. This is a very simple FPGA RTL
+>>> implementation of a MAC, and looking at the VHDL, I don't see any MDIO
+>>> registers.
+>>
+>>> Moreover, the MDIO pin on the PHY IC on my dev board also
+>>> appears unconnected.
+>>
+>> I spoke too soon on that one. It appears to be connected through a trace
+>> that goes under the IC. Nevertheless, I don't think MDIO support is in
+>> the IP core design.
+> 
+> MDIO is actually two pins. MDC and MDIO.
 
-Commit-ID:     2c6a28f3ef729ed2d5b174b4e0f33172fb286bab
-Gitweb:        https://git.kernel.org/tip/2c6a28f3ef729ed2d5b174b4e0f33172fb2=
-86bab
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Thu, 14 Aug 2025 18:31:42 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sun, 17 Aug 2025 13:10:39 +02:00
+I asked Jeff and he pointed me at 
+https://github.com/j-core/jcore-soc/blob/master/targets/boards/turtle_1v1/pad_ring.vhd#L732 
+and 
+https://github.com/j-core/jcore-soc/blob/master/targets/pins/turtle_1v0.pins 
+and said those two pins are "wired to zero".
 
-x86/Kconfig: Clean up LLVM version checks in IBT configurations
+He also said: "It would only take a few hrs to add MDIO." but there 
+basically hasn't been a use case yet.
 
-The minimum supported version of LLVM for building the x86 kernel
-was bumped to 15.0.0 in
+> It might be there is a second IP core which implements MDIO. There is
+> no reason it needs to be tightly integrated into the MAC. But it does
+> make the MAC driver slightly more complex. You then need a Linux MDIO
+> bus driver for it, and the DT for the MAC would include a phy-handle
+> property pointing to the PHY on the MDIO bus.
+> 
+> Is there an Ethernet PHY on your board?
 
-  7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0"),
+According to 
+https://github.com/j-core/jcore-jx/blob/master/schematic.pdf it's a 
+https://www.micros.com.pl/mediaserver/info-uiip101a.pdf
 
-so the checks for Clang 14.0.0 and ld.lld 14.0.0 or newer will always been
-true. Clean them up.
+> 	Andrew
 
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-6-ff7f19457523=
-@kernel.org
----
- arch/x86/Kconfig | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58d890f..85b9126 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1753,11 +1753,7 @@ config X86_UMIP
- config CC_HAS_IBT
- 	# GCC >=3D 9 and binutils >=3D 2.29
- 	# Retpoline check to work around https://gcc.gnu.org/bugzilla/show_bug.cgi?=
-id=3D93654
--	# Clang/LLVM >=3D 14
--	# https://github.com/llvm/llvm-project/commit/e0b89df2e0f0130881bf6c39bf31d=
-7f6aac00e0f
--	# https://github.com/llvm/llvm-project/commit/dfcf69770bc522b9e411c66454934=
-a37c1f35332
--	def_bool ((CC_IS_GCC && $(cc-option, -fcf-protection=3Dbranch -mindirect-br=
-anch-register)) || \
--		  (CC_IS_CLANG && CLANG_VERSION >=3D 140000)) && \
-+	def_bool ((CC_IS_GCC && $(cc-option, -fcf-protection=3Dbranch -mindirect-br=
-anch-register)) || CC_IS_CLANG) && \
- 		  $(as-instr,endbr64)
-=20
- config X86_CET
-@@ -1769,8 +1765,6 @@ config X86_KERNEL_IBT
- 	prompt "Indirect Branch Tracking"
- 	def_bool y
- 	depends on X86_64 && CC_HAS_IBT && HAVE_OBJTOOL
--	# https://github.com/llvm/llvm-project/commit/9d7001eba9c4cb311e03cd8cdc231=
-f9e579f2d0f
--	depends on !LD_IS_LLD || LLD_VERSION >=3D 140000
- 	select OBJTOOL
- 	select X86_CET
- 	help
+Rob
 
