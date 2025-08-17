@@ -1,266 +1,120 @@
-Return-Path: <linux-kernel+bounces-772422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7465BB2926D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43242B29271
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544C917E95B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F6D2006E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B2D2248BD;
-	Sun, 17 Aug 2025 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD501D6BB;
+	Sun, 17 Aug 2025 09:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GFpxC4zU"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013027.outbound.protection.outlook.com [40.107.44.27])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="KnWO6qx+"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCE1A841E;
-	Sun, 17 Aug 2025 09:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755422996; cv=fail; b=ImWac0i3ahiubXIcocW5lzWKw38TC2i4VWLEyb9vWvsZFgOCRfpeXk1XlSQ4va8Ui0RVPmtEUSj6u7uCBfCxQ0k1hSio5eQt3YRgEyufhmKgiQsWg1b8NxH6gSyvPlkXl69TuHxqFTMWR/76weVN6T6S0VK16eLK6IaAgs1tMv0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755422996; c=relaxed/simple;
-	bh=32osoICVIV6a0WUVtcKTXFijWatWl2Bp/TMmZLeEYGY=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FHOoVXvQRClitsSxMo1Va7XcmuwQLajmlA4th0jRhhKSzbqz0SpBdSFNuqbeGVzJuM8NQizFMgSxWKlnbZXFUTiyHOh3PU51GOmaFWqijrWrdBcwK+oZlgewZ1XfXurNsMDb1AlJOOkyNmQoWvgclJxuCYsmZKAk56vY3ZIu+hY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GFpxC4zU; arc=fail smtp.client-ip=40.107.44.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D7m9pLSwjxibccQiiUuvvXcYsZjrICyfrdQxyhgawRIw5Ib3DRnZL9UepWwQ/ZDNNvpuO1j6GP10NzvqPttb5+XbXtM5OfQLa9GOxVqNmXTj4nuDEbK3JV6yjNNH5Fai/EZ9/GSuo5wC8cUeAO8tHyCAPcXKvaGelFLS38peAl+xYR2CaOmQHKheiUMA/ED2t+yC3R/55TidOAR7Jor16IL2vX24kWacrpRPRgFznJ0trMtobpULkXYG87TqR/bRbsWSbRXqU30jxmK5viS9fVdwlJdBcQ+8DvHKWaskhcXX7FzgBLQjqNpWny/myxEO2UcB8xO4WM/5BGyj+gw6jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yul5VYtD5+ihW/a3O8jB8NcouS7DtX4szKeGXqGwsn8=;
- b=Ttsv5a3zQjBzAmEFbTOEjG+anBffbo1hr0Jxhl9t4p3IWAZnuiML+OklnyHtBoydoGPJUfckR/hbFmj70P67Txiiz+UrPCJwZNWxxB0QHvsjxV8FmY5Crkof04+Kz13DtuWwhURs5BkF4VZSCvjAG0XYFolKZFMCfQUQtEftajC+a4DZ+4GcnUr3uKlavjBssqcl9kORg4WhVhyFozOEi9eVBmCczvvOV0ci4S/cpc0KOZeDW/FXjMbnlGjM0UD6uULwPmMJbOMa6kh/uJTw9UDpxBC8NKFHSvPGitLZYU/LG1AlcWxwEM78LrSvpuS5IgPtEgq5TRuUxcjsiCUrCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yul5VYtD5+ihW/a3O8jB8NcouS7DtX4szKeGXqGwsn8=;
- b=GFpxC4zUYMWbObjajx58+3Ltx6ebixrvjjQGU62QPFN/SoxJSPoCzZadRIuPcSYtIy7GZ5yy18+I4Kk1TBY2lffxILJRMwcSSjA8gYtXyHJTudjYp7r42EYi3l34Fea64CnPBWyu1GhA5SecKgNJ3HoM5qAyNW0L6aZPMwfgyiJYf9DmNONrtNZss9UaQAz++DbBrhSTmlAfa/dsWcjJCzcauxiYG2joDC4aomkRGgHatqbcOZtly0jGEaMj0GoGaLe0v1WAJRZ9sj+N+lLoBaqf8e0KB2qdflW/IhzzDVUVzp8hmex6sIRfb7f7TLaGDZUoHp+MgrJLZIFMLqwezA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- KUXPR06MB8097.apcprd06.prod.outlook.com (2603:1096:d10:52::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.21; Sun, 17 Aug 2025 09:29:51 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.021; Sun, 17 Aug 2025
- 09:29:51 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH] media: atomisp: use kmalloc_array() for array space allocation
-Date: Sun, 17 Aug 2025 17:29:39 +0800
-Message-Id: <20250817092942.95053-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGXP274CA0008.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::20)
- To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392B3317719
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 09:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755423389; cv=none; b=MGzvdDADqjjskai69d0haAAfRJD9qSHu7Az3OKmgjYkpQKwwGNN+dCagky9EJrtAgmRZv0Il9U5Ypse+pPgm05mrraS0X3J5ZUPJQDZy8Qij0eaEmVUjPzZb8qPTQGHBwaPhmOu/zibdT72uMe1TSsM18EbxmuEqgSNdTEDbZ1M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755423389; c=relaxed/simple;
+	bh=QUVIStTkAQtgw3rORRQT/eO6z9COm4pxchQ0/kMZ11U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UslwIjv6cNxjDohcuHwOPPPGuH5ClS9pbd5ezew30v+GV3vWd2PXLyCp9L82cb8XwFJ4AENUPs0ESlEC4L5CFIeV/CfSnpA29Zhd2HhZwUlf5hJMag83N0+VXVKMaJ1AXM2RT1SuIPVRSbn1odU75K9lkCKZt4AiCSoR06d+k5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=KnWO6qx+; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id EF69A104CFE3
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 15:06:13 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in EF69A104CFE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755423373; bh=QUVIStTkAQtgw3rORRQT/eO6z9COm4pxchQ0/kMZ11U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KnWO6qx+3Omav/kQlEIbycpae23KbLgMyA2EFv9K2qZ9vJAtFXy7YxgYqR/tXlik0
+	 Wqa4pnhpBPmE67nb+13+G8BdzF9Y3qJq6QMlrmWoOW2fZ1MaWfrJDN+KS2gbYGZo8n
+	 evRHblvmZl0u9LstCebco9g3mI6Q+Z5/sA5tH760=
+Received: (qmail 9060 invoked by uid 510); 17 Aug 2025 15:06:13 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.131342 secs; 17 Aug 2025 15:06:13 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 17 Aug 2025 15:06:11 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 5FC76360040;
+	Sun, 17 Aug 2025 15:06:11 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 4AF6E1E812D4;
+	Sun, 17 Aug 2025 15:06:11 +0530 (IST)
+Date: Sun, 17 Aug 2025 15:06:05 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: ming.lei@redhat.com, shuah@kernel.org, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: [PATCH] selftests: ublk: Use ARRAY_SIZE() macro to improve code
+Message-ID: <aKGihYui6/Pcijbk@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KUXPR06MB8097:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05f084fe-4a69-4278-84c7-08dddd709dcf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rzFDACburCWGK/+gFfE7KIlVdKIU18YlLXaV1CK/8W3t99Z5inP8kCtbJr4l?=
- =?us-ascii?Q?yzk1lrl9G+P2UpYOltmjpUr5BB/nVWlmRu8GVHxSB+0UeDMR5z8mhOC7X1Vw?=
- =?us-ascii?Q?QcOJ1JxJfTvNICSnlyeaXVloajljcPGASw62MlQOBhtS3dxGDdouxlKWo6ig?=
- =?us-ascii?Q?pQaRZ9DkcjpkKMXLY9bf7fYQrI9nIrLSzNx0LomeJQ7e+L/sAc5Ci3k1dfWE?=
- =?us-ascii?Q?Rqzet1lHkfV1LfhOBF2lKZpKC5GlhmR7ygbegzXvAPWYP+rX9wjAlzU3jPI/?=
- =?us-ascii?Q?zVF9gHR94kGCLxwcPixf/AKszO1L4yLIKCaYaDsxHYK0YzOF/qQFh6H6N/6j?=
- =?us-ascii?Q?+AJ7EYYXu2sLFc3LWATvbO5E/4AJS6aZqu3/rfMvUXwkpJ10P6zzzg7p91wP?=
- =?us-ascii?Q?ZxHfMoPenlT7PENlGlNPnRg3B9a4b0trx5Quy6KRE3WvcM7G0qEv2exPffNr?=
- =?us-ascii?Q?qflfsej6Ptzi/EXFsESDVuErQghsLt+SlKHrMG+RX2BXWtNNMzEeczIakLp/?=
- =?us-ascii?Q?tOFJkdJpLLwbkcDWqVJBiSVyMp6x0U8F+ulbhQcUsNk+kJdfYKPQx8F+3taj?=
- =?us-ascii?Q?0+wWhBHOB8OtT3foPBgjwzyvLg1RIkocypPERVGD95qZZDAH5ZkU0dK0Papo?=
- =?us-ascii?Q?EuXHSqRBXyGyfK/gXBHoJX4r/qhfAe7iWbVGOqx0MZSz0zJZdcWnQBOMkpvp?=
- =?us-ascii?Q?8j8Wo8AkO9277c+E65v//RUip90H4l7nChGS3r6Q0N6H5YnDm3sVHosN6FQf?=
- =?us-ascii?Q?92Iyq4pu0W369Ni9mMFlaomgBAxMYLNdbEW0D0XlLkG/wwhpJhow0alnBQ3r?=
- =?us-ascii?Q?uVLhIz/ijha8MRkUF3t+JvmcpI6pKb1LbCoZt8sWj6YD/IRY68fRNzVexUMZ?=
- =?us-ascii?Q?lGXDKPAFs44kA579xVNzr3A9tqwEPAmSR0l8H8BRrSbZhdOrP/FXBCSDrs+r?=
- =?us-ascii?Q?bjgFvXgdEjPlkX/9guTN3+MKz8ECb8dFWbUritgKwgsKstUIfHigN05/Uows?=
- =?us-ascii?Q?WrrcBAQVilQkISy2beyIhWyYRO7cAe84wxtnRHz2hxXNfK42rICHb3XJmpjK?=
- =?us-ascii?Q?v1/gx9lAARLMC9wDxOdiohqwAYVom8NspZY3BE0bLaytwxlVoi4YlqjyNpcY?=
- =?us-ascii?Q?a1S6thXyphTSmwoXxQ1ozR3jpSr81n9Yleq2pmBIHY4xZgq5LZVaq9PIKNV5?=
- =?us-ascii?Q?wFfe/IUrRiKwT45NLFiX5DQi0rhz9dNYbQsBBa2yYTJjCGGqdsr5u5K77n4N?=
- =?us-ascii?Q?sSFczai66jECPIm7/+UCr95ynHi0QkVdlwayqPmTCIlbXRivX9b2kEsk0ILh?=
- =?us-ascii?Q?vA8UpJc1/Wfw81nUzM/vSWpx+QBmttp41CL5EZwI6KSUIp7lc8W2zKoGtXyT?=
- =?us-ascii?Q?3uAAJW4BbkbHeek66vWTjxVGKdx/iW8iw5zNHLp62GU/xuRUmKA5q0jy1VxU?=
- =?us-ascii?Q?KScPckx2eQRMp8EfnZG3hKUrJj9w2wBCoWWJMFhrKxdOHiEIRDhms875f3vo?=
- =?us-ascii?Q?d7Jk95+ozqXNzHU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VM/iCODIow1N7O7oFKf5Qxw2d7KyCWtTObV5Sjo6pnEgs4GBH92aYVAUzV11?=
- =?us-ascii?Q?aXC+rRiBRNOeVmygQaCcyi0h4kWL82uvv/4zt4Ir7xFZuJc9J/celpTBAIxL?=
- =?us-ascii?Q?HUJzjpV8SZx1vGJgIUXU1wE0hw2PXHHlnICU4TH5FMuN5wGb8cHImD+zXEE7?=
- =?us-ascii?Q?mIUo4ePo5pBSnEv273Jhtx+4gYj9Rba6eZKVnHlv8UxB0c2xZLnwFWULVYwS?=
- =?us-ascii?Q?VnkM+qaFFZUtAaJRqfWiTxq5PpE/fLLQsgG2DGNiQquRdQEZOm37MTeG4C+Y?=
- =?us-ascii?Q?CKKqS0guGyTptQqUlsNT4SKbenk4HzQdD2y98zZTw76msYBDHdfTZ6D1lnt2?=
- =?us-ascii?Q?T92k0L4pSf1bPVOU0yBSdJgWt3w0FVL1BSAMAPUG+fFEJnuiYK+lwWZmKudI?=
- =?us-ascii?Q?Pcdm3fwGFs+uipUu79K5Tt61WKK+JpYPWRNG47OcnbPlEFnEKORBvX+gjytR?=
- =?us-ascii?Q?jcsfVha8734AvCTctCCmWEx2448KrJBnW0vsugljc4Y+Eh2wTlvDRAx8Z6Ue?=
- =?us-ascii?Q?mmCV/1jM6RtRry2B0ndDtan7RlMdSFfhgNYWsQ3ULF0ocIx+OYgySaAQTVZI?=
- =?us-ascii?Q?nSWA6bb9jq9iTfLl27/+dQXNkFpZny0k9/CmODI2pfLBoA4G13m2DjjNJCG3?=
- =?us-ascii?Q?Y8d36i1c87zlGmf0qJ5OjqUcmysdjN5wNp4UjBNxFVkKbnCk4DJetEgK8MfO?=
- =?us-ascii?Q?x27bY511K5Qqcfx8asSad2euQ7DyZpWyjcmij5wrVVbkYa0SZ5juVZV0PaL3?=
- =?us-ascii?Q?bxUs3CRk/6bfEV/g/Kv62kpR/bfViRPyczpYCshLZeQa7L4ajPXRjXj995ag?=
- =?us-ascii?Q?TE3UjxyVI7z/9Cc7c35icq4X+pjwErd3aKwiVf84sqc30H0pJOubaQIthwIY?=
- =?us-ascii?Q?H/YyWmzqHDWHumn0k2bw8Ihj+wMvGPaNSlMWFFXLad+nnmN/MtD2pd0+1MBq?=
- =?us-ascii?Q?4DycjBT2DbQGFfryQPygNN3NMPdpliX6mtR6kYTfn1H28DvtviGkjIvdnW7M?=
- =?us-ascii?Q?675fboTjfGiai83t0+3v1yUtSLcXQb8z2jnLyaB9JO58qHcdQ3nKZehcyOeV?=
- =?us-ascii?Q?BjFaDVQBd2iuWNw02ovqcQ2AbDAcLGSAwC/QmK6F5bRqv55JFL/TEskOOkZr?=
- =?us-ascii?Q?vp0ed8b5VcmpIXC7wAHpBxJKlReH4Hi3zGn3JSmgh5QyfKLhzD1Kpbj97NiH?=
- =?us-ascii?Q?i5IE6v7Y++n7vyrMgequAaSJGHyKOYWttZvWo8+umG6D7tY701pSsfps/d3f?=
- =?us-ascii?Q?Tjmpil6scymrJD+rsAKQS23XCO0QaIByGKExNHO8BTG+Z4Lm0Du+gF2bfwQK?=
- =?us-ascii?Q?aT2rRXv/rhfLJTaeuAnkeQyS6gcHhhde0AjwBkH4UGwFDLDkgkeN/440LzZW?=
- =?us-ascii?Q?69lBtY23GbReAoC/9Y9EYLEoLmbecbU/tTJHj/Qmqu8cX9A1a8AIH8SEri2D?=
- =?us-ascii?Q?arSgCfgoGB4+TU/E8v5kMZDhe0dY7AfcR8GzTb5WZ+V2BfQczbRPFekgFfSW?=
- =?us-ascii?Q?6vYzwYbm+5pvzb90xTVFuYEYkjV4zYuO0j6+EKhOdS075HQWwvQ393p2FqBD?=
- =?us-ascii?Q?qd4HtFlU2Wvs+Oz0RG0aYO4+9sfZzr4VaMcoLh/k?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05f084fe-4a69-4278-84c7-08dddd709dcf
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2025 09:29:51.1697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: y2EQv0xOF/Jm1INrQbp+IMugfnwTG3W7cym6qBDHWbb+KskNrQ/ByEW2Hu0K0t6NGeYtS/RX5c5ZMMQl7PM+TQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUXPR06MB8097
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Replace kmalloc(count * sizeof) with kmalloc_array() for safer memory
-allocation and overflow prevention.
+Use ARRAY_SIZE() macro while calculating size of an array to improve
+code readability and reduce potential sizing errors.
+Implement this suggestion given by spatch tool by running
+coccinelle script - scripts/coccinelle/misc/array_size.cocci
+Follow ARRAY_SIZE() macro usage pattern in ublk.c introduced by,
+commit ec120093180b9 ("selftests: ublk: fix ublk_find_tgt()")
+wherever appropriate to maintain consistency.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 ---
- drivers/staging/media/atomisp/pci/sh_css.c | 52 +++++++++++-----------
- 1 file changed, 27 insertions(+), 25 deletions(-)
+Testing:
+* build checked for testing/selftests/ublk
+* tested by running 
+	$ ./kublk --help
+Which exercises the impacted code path.
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
-index 73bd87f43a8c..f7ce2872ced7 100644
---- a/drivers/staging/media/atomisp/pci/sh_css.c
-+++ b/drivers/staging/media/atomisp/pci/sh_css.c
-@@ -5821,36 +5821,37 @@ static int ia_css_pipe_create_cas_scaler_desc_single_output(
- 		i *= max_scale_factor_per_stage;
- 	}
+ tools/testing/selftests/ublk/kublk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+index 95188065b2e9..6512dfbdbce3 100644
+--- a/tools/testing/selftests/ublk/kublk.c
++++ b/tools/testing/selftests/ublk/kublk.c
+@@ -1400,7 +1400,7 @@ static int cmd_dev_get_features(void)
  
--	descr->in_info = kmalloc(descr->num_stage *
--				 sizeof(struct ia_css_frame_info),
--				 GFP_KERNEL);
-+	descr->in_info = kmalloc_array(descr->num_stage,
-+				       sizeof(struct ia_css_frame_info),
-+				       GFP_KERNEL);
- 	if (!descr->in_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->internal_out_info = kmalloc(descr->num_stage *
--					   sizeof(struct ia_css_frame_info),
--					   GFP_KERNEL);
-+	descr->internal_out_info = kmalloc_array(descr->num_stage,
-+						 sizeof(struct ia_css_frame_info),
-+						 GFP_KERNEL);
- 	if (!descr->internal_out_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->out_info = kmalloc(descr->num_stage *
--				  sizeof(struct ia_css_frame_info),
--				  GFP_KERNEL);
-+	descr->out_info = kmalloc_array(descr->num_stage,
-+					sizeof(struct ia_css_frame_info),
-+					GFP_KERNEL);
- 	if (!descr->out_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->vf_info = kmalloc(descr->num_stage *
--				 sizeof(struct ia_css_frame_info),
--				 GFP_KERNEL);
-+	descr->vf_info = kmalloc_array(descr->num_stage,
-+				       sizeof(struct ia_css_frame_info),
-+				       GFP_KERNEL);
- 	if (!descr->vf_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->is_output_stage = kmalloc(descr->num_stage * sizeof(bool),
--					 GFP_KERNEL);
-+	descr->is_output_stage = kmalloc_array(descr->num_stage,
-+					       sizeof(bool),
-+					       GFP_KERNEL);
- 	if (!descr->is_output_stage) {
- 		err = -ENOMEM;
- 		goto ERR;
-@@ -5977,29 +5978,30 @@ ia_css_pipe_create_cas_scaler_desc(struct ia_css_pipe *pipe,
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->internal_out_info = kmalloc(descr->num_stage *
--					   sizeof(struct ia_css_frame_info),
--					   GFP_KERNEL);
-+	descr->internal_out_info = kmalloc_array(descr->num_stage,
-+						 sizeof(struct ia_css_frame_info),
-+						 GFP_KERNEL);
- 	if (!descr->internal_out_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->out_info = kmalloc(descr->num_stage *
--				  sizeof(struct ia_css_frame_info),
--				  GFP_KERNEL);
-+	descr->out_info = kmalloc_array(descr->num_stage,
-+					sizeof(struct ia_css_frame_info),
-+					GFP_KERNEL);
- 	if (!descr->out_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->vf_info = kmalloc(descr->num_stage *
--				 sizeof(struct ia_css_frame_info),
--				 GFP_KERNEL);
-+	descr->vf_info = kmalloc_array(descr->num_stage,
-+				       sizeof(struct ia_css_frame_info),
-+				       GFP_KERNEL);
- 	if (!descr->vf_info) {
- 		err = -ENOMEM;
- 		goto ERR;
- 	}
--	descr->is_output_stage = kmalloc(descr->num_stage * sizeof(bool),
--					 GFP_KERNEL);
-+	descr->is_output_stage = kmalloc_array(descr->num_stage,
-+					       sizeof(bool),
-+					       GFP_KERNEL);
- 	if (!descr->is_output_stage) {
- 		err = -ENOMEM;
- 		goto ERR;
+ 			if (!((1ULL << i)  & features))
+ 				continue;
+-			if (i < sizeof(feat_map) / sizeof(feat_map[0]))
++			if (i < ARRAY_SIZE(feat_map))
+ 				feat = feat_map[i];
+ 			else
+ 				feat = "unknown";
+@@ -1477,7 +1477,7 @@ static void __cmd_create_help(char *exe, bool recovery)
+ 	printf("\tdefault: nr_queues=2(max 32), depth=128(max 1024), dev_id=-1(auto allocation)\n");
+ 	printf("\tdefault: nthreads=nr_queues");
+ 
+-	for (i = 0; i < sizeof(tgt_ops_list) / sizeof(tgt_ops_list[0]); i++) {
++	for (i = 0; i < ARRAY_SIZE(tgt_ops_list); i++) {
+ 		const struct ublk_tgt_ops *ops = tgt_ops_list[i];
+ 
+ 		if (ops->usage)
 -- 
 2.34.1
 
