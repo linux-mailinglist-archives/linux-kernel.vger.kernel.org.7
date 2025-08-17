@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-772547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0241B293F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:57:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A877BB293F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D9C202EF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 509942A348E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05502FE05C;
-	Sun, 17 Aug 2025 15:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2577C1C5D57;
+	Sun, 17 Aug 2025 16:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mEVrTWPG"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t4Y1wYg/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IePmc6Ib"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98403176F5;
-	Sun, 17 Aug 2025 15:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E51F4FA;
+	Sun, 17 Aug 2025 16:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755446225; cv=none; b=pxIj5E+x/vnCWDeUTdooQd1ipGuUU96i8Sk7+S1Ej0S9XA4wZ6OIhcvgWq1Phf3CNANdYFczcjiXBcIftk0ZtEBeVv+WPfR8VkDj7VHGNvNbQFMMfOLn5WJQSX0Jkxi3NEJpwhc09tmOVFdkl3CForDYGOcN5EdFVVN3DZNQhuA=
+	t=1755446538; cv=none; b=VKpNTk4axcoYNqPdlg03YiwBd+8pguRgaQdg1/HMW8dKbiUPh0y2bX250qOaGXx2UpIebwUAGIHLUemp6sANVUF2PwaTSstm892DfQXB0us0+pB5S6r+gzxVCgFddSkkADjcNwfZanWMkak2camOJYTLxDKV0mv8t6vOz0ktKbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755446225; c=relaxed/simple;
-	bh=a/orSmfXMgi1VtWB8YVn8eiOv4vzm/oYSSqUn2ETnAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDCl4JuK9uLa2p8t5H78xN3K3/0vUJrvg/ZF0K3N1K2nZZ00SHzNtZP828mYzLFOLSL5c1WALRXc7V39StghV9qLYgmc9dJonPLV8EM1Eo4CP4umIqSXkEuybcK2aO66czaq+K3bIxTVaKio9jP+39xcX8ttBChYOSaKuPrtjSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mEVrTWPG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=db4+86xSzfb3S2h6wVVAiYGER+7ZB8I/pdntCBbI8QY=; b=mEVrTWPGSq/yn0DSOyhEXPEY/4
-	C2lsonYJNEQVgGo6Pi64CBavw2UQonUy3b8sJFuSB61vZtG6i3Y9ZlNAvG/nYFuFYWjOphFCGTvJL
-	Wkvf620I9g/ekncVT7L3cwQE4NDR2pI4bTOcHD+DOiZiq2fDbXthqKq2GC4qodT8MQC4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1unfkX-004yZE-CK; Sun, 17 Aug 2025 17:56:49 +0200
-Date: Sun, 17 Aug 2025 17:56:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
-	dust.li@linux.alibaba.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-Message-ID: <616e3d48-b449-401c-8c8b-501fce66c59d@lunn.ch>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
- <20250815113814.5e135318@kernel.org>
- <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
- <729dee1e-3c8c-40c5-b705-01691e3d85d7@lunn.ch>
- <6a467d85-b524-4962-a3f4-bb2dab157ed7@linux.alibaba.com>
+	s=arc-20240116; t=1755446538; c=relaxed/simple;
+	bh=MMXn27OEplwXWUcwEO4tzcSlJZT5KRSyXkY1nkELCy4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=kJNAQiIm6RQfOUOU9LFWGLqB0QUEBXYdX20JmrmzaLZY8MdnO6lEFODSPPJlU3PvHroi/C2Qb7UMAkcgpUl+YPjf0df4ghcmFUC/Z01LKqZHI/Xb5lJG+wlVRVNuRguNfEbOF1I6MkzAVFZ/1qyZ92H8tBqMMFpENOhmBHvNYik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t4Y1wYg/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IePmc6Ib; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 17 Aug 2025 16:02:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755446533;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=18Fuz6VmX4L7W+FDZrV0Pp1fjZoo/L/reDdeAndWJhE=;
+	b=t4Y1wYg/37FI5QAsWBwOYo4IT5uoWfK8mETQbzwnhJUynzeYMzJuNsoBy0mjb2Vk/Qm6wo
+	ynzyr8RqqZ9CFrZs8kYhsGMkvMC1yPSUVe91N2hii+9u9S89Mv0mord830RZqLx13X7MRu
+	S7REpams/lEjfbULQxtO5xO9ETUXPyV9i8QhV3B8H2CHiYt681DaEAxKDpzIx0rV7VdNK2
+	8AwgqKGXiejueMtgbIAX0qHub7RnH4MySgaV721Xov+5AsjhuX84tc8oq4zlW74I7YC/5c
+	dAR4GMcRGpYjpmdTQRqsQtvSl+v7A9Scibj+u985ACXLJiFicuZ4XsFBO+kP4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755446533;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=18Fuz6VmX4L7W+FDZrV0Pp1fjZoo/L/reDdeAndWJhE=;
+	b=IePmc6IbY8wfEnWpl7QfrQ52QNoXYGriu4SXpIBguVjbIeldQVFHmw6jDsqupyTBDSuH66
+	LqsdDVba1zAx/uBw==
+From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86/Kconfig: Clean up LLVM version checks in IBT
+ configurations
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250814-x86-min-ver-cleanups-v1-6-ff7f19457523@kernel.org>
+References: <20250814-x86-min-ver-cleanups-v1-6-ff7f19457523@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a467d85-b524-4962-a3f4-bb2dab157ed7@linux.alibaba.com>
+Message-ID: <175544652925.1420.2858880325323032694.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 17, 2025 at 11:01:23AM +0800, Wen Gu wrote:
-> 
-> 
-> On 2025/8/16 23:37, Andrew Lunn wrote:
-> > > These sysfs are intended to provide diagnostics and informations.
-> > 
-> > Maybe they should be in debugfs if they are just diagnostics? You then
-> > don't need to document them, because they are not ABI.
-> > 
-> > 	Andrew
-> 
-> Hi Andrew,
-> 
-> Thank you for the suggestion.
-> 
-> But these sysfs aren't only for developer debugging, some cloud components
-> rely on the statistics to assess the health of PTP clocks or to perform
-> corresponding actions based on the reg values. So I prefer to use the stable
-> sysfs.
+The following commit has been merged into the x86/build branch of tip:
 
-Doesn't this somewhat contradict what you said earlier:
+Commit-ID:     2c6a28f3ef729ed2d5b174b4e0f33172fb286bab
+Gitweb:        https://git.kernel.org/tip/2c6a28f3ef729ed2d5b174b4e0f33172fb2=
+86bab
+Author:        Nathan Chancellor <nathan@kernel.org>
+AuthorDate:    Thu, 14 Aug 2025 18:31:42 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Sun, 17 Aug 2025 13:10:39 +02:00
 
-   These sysfs are intended to provide diagnostics and informations.
-   For users, interacting with this PTP clock works the same way as with other
-   PTP clock, through the exposed chardev.
+x86/Kconfig: Clean up LLVM version checks in IBT configurations
 
-So users don't use just the standard chardev, they additionally need
-sysfs.
+The minimum supported version of LLVM for building the x86 kernel
+was bumped to 15.0.0 in
 
-Maybe take a step back. Do what Jakub suggested:
+  7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0"),
 
-   Maybe it's just me, but in general I really wish someone stepped up
-   and created a separate subsystem for all these cloud / vm clocks.
-   They have nothing to do with PTP. In my mind PTP clocks are simple
-   HW tickers on which we build all the time related stuff. While this
-   driver reports the base year for the epoch and leap second status
-   via sysfs.
+so the checks for Clang 14.0.0 and ld.lld 14.0.0 or newer will always been
+true. Clean them up.
 
-Talk with the other cloud vendors and define a common set of
-properties, rather than each vendor having their own incompatible set.
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250814-x86-min-ver-cleanups-v1-6-ff7f19457523=
+@kernel.org
+---
+ arch/x86/Kconfig | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-OS 101: the OS is supposed to abstract over the hardware to make
-different hardware all look the same.
-
-	Andrew
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 58d890f..85b9126 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1753,11 +1753,7 @@ config X86_UMIP
+ config CC_HAS_IBT
+ 	# GCC >=3D 9 and binutils >=3D 2.29
+ 	# Retpoline check to work around https://gcc.gnu.org/bugzilla/show_bug.cgi?=
+id=3D93654
+-	# Clang/LLVM >=3D 14
+-	# https://github.com/llvm/llvm-project/commit/e0b89df2e0f0130881bf6c39bf31d=
+7f6aac00e0f
+-	# https://github.com/llvm/llvm-project/commit/dfcf69770bc522b9e411c66454934=
+a37c1f35332
+-	def_bool ((CC_IS_GCC && $(cc-option, -fcf-protection=3Dbranch -mindirect-br=
+anch-register)) || \
+-		  (CC_IS_CLANG && CLANG_VERSION >=3D 140000)) && \
++	def_bool ((CC_IS_GCC && $(cc-option, -fcf-protection=3Dbranch -mindirect-br=
+anch-register)) || CC_IS_CLANG) && \
+ 		  $(as-instr,endbr64)
+=20
+ config X86_CET
+@@ -1769,8 +1765,6 @@ config X86_KERNEL_IBT
+ 	prompt "Indirect Branch Tracking"
+ 	def_bool y
+ 	depends on X86_64 && CC_HAS_IBT && HAVE_OBJTOOL
+-	# https://github.com/llvm/llvm-project/commit/9d7001eba9c4cb311e03cd8cdc231=
+f9e579f2d0f
+-	depends on !LD_IS_LLD || LLD_VERSION >=3D 140000
+ 	select OBJTOOL
+ 	select X86_CET
+ 	help
 
