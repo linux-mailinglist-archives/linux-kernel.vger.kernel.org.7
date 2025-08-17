@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-772463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53B0B292FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:33:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD0BB292FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 14:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4C91B22592
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591B31B2256D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A8E1EFF96;
-	Sun, 17 Aug 2025 12:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C9A242D84;
+	Sun, 17 Aug 2025 12:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Oi98nZUz"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GWnzBVip"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C12B1CA84
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 12:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2911CA84
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 12:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755434023; cv=none; b=lBqIxUUwPEFhzhLxOMTAgBzEcfBVbFs7Tkzgsp8IPQWTTdis+/mOgInPCh2P49BJy59TTRk9BIP2VLjI0xsJZwOZ3n29WE7RK0vLEDjbgk6zwU1znM97lRXDRM/+gVeZjTd4gz6VbCMhVLeWK86F/HfH+phXWGNkvyvYwU3gHcg=
+	t=1755434027; cv=none; b=cA49XxT+aQxukc8CeUCrT4q8ZTn6nJ6F5E9puklsjrRe8SAJTDkkO/kr7eN9s5RE9h5kd0GA6vNheCDvHiuolmj2sFYVsmOa+Sxw3hLED+2UzS20F3fNtAEcct4KqpON8OZlAbTLTg47nHbST2fQYpwgsiPMAE5pdRhRRMstkmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755434023; c=relaxed/simple;
-	bh=ECKA1N0ozZJky6qyb2l/wy6+UK0bWtlFcU0qrSDIIRQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UX5N2Tz3e0qPxrsYZKZ3DM1CVRoIRMR8sAFD+qicmCYKZUthuKOs8yJ0EXLuijsgBdl9JVRMkedVKRFnQQD44uJ/7safy3lBKiisZoiHmtbVek28JFlya1vODeX8e3L9VSP1xVU8FfmiF+1pxrtQtUZRNrtwJ5QQ4cqeSN/V6o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Oi98nZUz; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1755434027; c=relaxed/simple;
+	bh=BGEWapcJO5F2Bt9H9CNcjKlUy6pXszyUchO3+rDe18U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W6vSpPr0ZoUn7Yz5gUou/xJRZnhJzT8jtJtxFMYUQHDasF97O4154sq7cuizsADWKjGsoPgcwP+dU12PSWtAmb9UzN+QUnScHPsXxQEU7MEwpC9doIGjVcYySNY1mjfUugzW/KNJlTnOHpImHXY0Zh/80aQRCMn7IoYy0UaWaas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GWnzBVip; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32326bd4f4dso2916393a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 05:33:41 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso2314317a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 05:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755434021; x=1756038821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WbiJIeRAyXPasTR+StFJQvgx7M5MTQOS33x2RRGox8=;
-        b=Oi98nZUz3eFNu6StdJOhD12R2OhNoCrURlEhYdQkxKC5OaV6aV8jhT0lr32WEx11DA
-         UQOZvYVP/UkMFehC9ZosdQN9Uw4U4V0ccpvZyL0jxJfo0Fc60By5nB3pEysZTUq2U1o0
-         LUDOowDwSPNSjlqrefxDghYkSjijpxTa/xpmigKWZqTr7WnuLFn806/6eLoGveWO2bTx
-         cGbda4Wl2Wa0nuA/0s/vC10J2WPluqlYxoI8Sp095mXdnzR02rWXY5SVJ2Hg7oi/FgmP
-         hATlvHirGYWAtH4BFJWCOKZrFWnJrx1iVhFbPf3Vc2OiY46yCxSekMcU3nmlCKC1u3FS
-         vOOw==
+        d=ventanamicro.com; s=google; t=1755434026; x=1756038826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WdtyVjgEpxnmEVvN9KL7OGdIrEXqBJ3Mt9H1T0gTjFI=;
+        b=GWnzBVips+KwEYwZ+kznUnRVo0g7347isNIKytAm2M6Cgcm5wr0w1PnO0mNfoq03ny
+         6JdvQA6NOVPXhug+CrZNmGUHAp+I0Kc1CWJRy7FohMr09vlzegal+nFaipNwptaO4A57
+         1xbohDlLW/k1BL4s7y1R50gdMycw8yuGb1gofRr0ec7uDdT85i9oTqlTBapiMpIuL2Px
+         aBXmZQS6vP1LR1jU/Qydtvw+fBDvpm2O+bDgPkr/PkLWOHFq49IZ9ciW/WgUgJOt7DxE
+         RtpmIqGech9XoIF8A+yLLEDBga1WDhFDzvQIG02F/hZYt1wSe57F0rzweDbOMR+iXE0U
+         lU2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755434021; x=1756038821;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7WbiJIeRAyXPasTR+StFJQvgx7M5MTQOS33x2RRGox8=;
-        b=NROlXHUwnDKuRw2S5cVpPirnG8UVj7r9pEhUET33M7bionJsQazOjqaa22zFc/mCxq
-         NrVjPnRPV9+gNydmxTTW9N9G3T41P6yr77OdZsgDOJB8eVJgJ9sef+qeiZbDmYss+vS9
-         GGE7PIX6+ARir0NgR/8alyts40f/GFCUwpA+ScSFcXC00It0H+nPJJ0TjiRoL6A+JBs2
-         mCrkFem/2WbFh9jR3BMM6brpmsAjMv3dn/hDprcERdXAvys41L7XTuEcE4Iri+v5oqYe
-         z0X3PnuYoXTmFTefw/O/w8tmtebiFhONe+19L0fnCO7SHM6Fzzka62h28JNGftLSTUxF
-         Yepw==
-X-Forwarded-Encrypted: i=1; AJvYcCVY5oHsX3XH5V25Z//hDQIMOizzNNCeY2ZivwlT9vt6CKf+0dCn6tgbYcJ2QvbujnApRPHEI6inXCRGNMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCmqZVJPrmYjcq4j7BbP/tXbG/m3Id+JTN6H+V4I7f9F/G8skv
-	H0ZI4rfa1zU09+5bXOfebVeHHynSU7HF3D/vb0pOLo5fhGYnDaohwJ/NJYHnstniJzohbLgLLXy
-	iZ3Op
-X-Gm-Gg: ASbGncvStH7nZAM6NqGUC/ylPem2a/svFnCDxGzVyNrIo9EN5QsbZXJe6E2tH23Gz/h
-	cwjkY9tJix+aiiwm3VtCnlF7UJ3woTBWx41PUBdLLBkZ58KdQYf4UBssXZMblqgQ4QeTPTAJV++
-	AQGoX7hjQ5zFheSi3Opm69HqUiDNYXzwYsCpf1vCiPqG332urOWwxhFrOa+RXotwM2GDI0PjR5N
-	h4YqbAOOCDS2AjQTPuMkIh+e7PFQ5vyY8/ULmx36j/Q+xcyrbfkXRUWJm7zQVN1h0cjxck0SMKl
-	02JjpJvJ8SV5kwU5NjxUw5jO/tWCxScStRV+xDxwJj0kbItKZ7IBd3hNXId2zFN+iw4mAbrPQEE
-	jVcZpgjlGbrX5smpoaFLAij3bLMjE9ocw8A0+qmrQc49vOr9dJaLZ4NnR+4RMb+fBwA==
-X-Google-Smtp-Source: AGHT+IFVbDDjII11gSvR9Q4jewkTQtbKL3ViUFZFZq0yfpKxvIKgRxHNfx519E/5M9iV986Io2UJ3g==
-X-Received: by 2002:a17:90b:3c8c:b0:320:e145:26f3 with SMTP id 98e67ed59e1d1-323296f24bdmr20313460a91.8.1755434020703;
-        Sun, 17 Aug 2025 05:33:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755434026; x=1756038826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WdtyVjgEpxnmEVvN9KL7OGdIrEXqBJ3Mt9H1T0gTjFI=;
+        b=WbSGmaz7gNVuprF0yC9nQyb+X6nuUZODq/F9EqBwPaWFD6WjM5135SooEUJanHLidf
+         N8wqhvxEA9gh6DChAsKpauKpuZfBHVFygrE/OXLYwrtep8ezB/5pE9bdzBqjtjL98kEH
+         /prTKyQ+foxtRBpEVl3lF9Y8bMswvbxVXxR6gzbysF1iDYcylDxvxjkHgsBU3YymSsRQ
+         TOA/T4CrWVtuXk1ObN0eWCkejbh8FF7Kd5h6ug8f6koKNc3+5L83RhkM4lQXejg1gOyX
+         e5as2M62+ARUp5VTQcnkDNU3iVIfAyI72sfDg3i78h4ANJvv6oFleCFLEoVhHXpIA/jt
+         r6MA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOSOQMfDCNS6RBqHe9HlAUzhVKCiRaM/Xq/yi9lZkTBfyoQwJseF8YoDYQ4oJeOjXOOBLdzHBOgbJQe6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq6vb2TGu2uRqVtbFe3XK0KPqYRqyaFqs5sgZtTz4lsWT1FDzG
+	C4feaaE/pswBXvVCCJ0XlKXVWJF68aNTP8qv7Rb1JqGf2IPheTbVpIWbj3X7bBQDFWI=
+X-Gm-Gg: ASbGnct7wWY69xNgH5FFZ3PaoNvHjQtEHWYGHCCo8PJFCodgmzToVDGPFb872lkHQGc
+	ern5iBl0jkWpJiczJ+Rexz+6Dds3YNB/9eAJe+Pzw0nK98XWNjN0Tu+dDeh1OoBVl3dmtylboQu
+	2t/TyTaA7de0N6rJvQ3zJ5owm55UeSYV7I46atY4yb25QfPbNLfPuJzUEzXu0U7qRLjR6MqYCvr
+	HitBU2tCvZg8iLov+qEtXfcWtTs8fsCfkGhmyO56umxvFKeIZPfF4yYyrpH4hHNvvKmODZJZb9Z
+	iEV0qQXse+j1B+Gez2Gtv7QdhKIX/XFxiOxTZRs1tx4tM9Db1ydhodyNtDbHZmbLEL0+OV+Qywd
+	fkCSMY3HAEvegcnKtemzpN/rgSOGBibuKxccfHOZ9Jskj2cZtGA2aT3k=
+X-Google-Smtp-Source: AGHT+IEDEZ+sKN9pizGMbZuUmdosnGUt8+j6ILexLeYj3eWsbGW9HTYMbtimVNOhIKuNFlbVtoY1Dw==
+X-Received: by 2002:a17:90b:2d43:b0:31e:c62b:477b with SMTP id 98e67ed59e1d1-32341ec4ed7mr12210812a91.11.1755434025641;
+        Sun, 17 Aug 2025 05:33:45 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.23.202])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232b291449sm4480912a91.0.2025.08.17.05.33.35
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232b291449sm4480912a91.0.2025.08.17.05.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 05:33:40 -0700 (PDT)
+        Sun, 17 Aug 2025 05:33:45 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Atish Patra <atish.patra@linux.dev>
 Cc: Palmer Dabbelt <palmer@dabbelt.com>,
@@ -86,10 +87,12 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v2 0/6] ONE_REG interface for SBI FWFT extension
-Date: Sun, 17 Aug 2025 18:03:18 +0530
-Message-ID: <20250817123324.239423-1-apatel@ventanamicro.com>
+Subject: [PATCH v2 1/6] RISC-V: KVM: Set initial value of hedeleg in kvm_arch_vcpu_create()
+Date: Sun, 17 Aug 2025 18:03:19 +0530
+Message-ID: <20250817123324.239423-2-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250817123324.239423-1-apatel@ventanamicro.com>
+References: <20250817123324.239423-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,35 +101,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds ONE_REG interface for SBI FWFT extension implemented
-by KVM RISC-V. This was missed out in accepted SBI FWFT patches for
-KVM RISC-V.
+The hedeleg may be updated by ONE_REG interface before the VCPU
+is run at least once hence set the initial value of hedeleg in
+kvm_arch_vcpu_create() instead of kvm_riscv_vcpu_setup_config().
 
-These patches can also be found in the riscv_kvm_fwft_one_reg_v2 branch
-at: https://github.com/avpatel/linux.git
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+---
+ arch/riscv/kvm/vcpu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes since v1:
- - Dropped have_state in PATCH4 as suggested by Drew
- - Added Drew's Reviewed-by in appropriate patches
-
-Anup Patel (6):
-  RISC-V: KVM: Set initial value of hedeleg in kvm_arch_vcpu_create()
-  RISC-V: KVM: Introduce feature specific reset for SBI FWFT
-  RISC-V: KVM: Introduce optional ONE_REG callbacks for SBI extensions
-  RISC-V: KVM: Move copy_sbi_ext_reg_indices() to SBI implementation
-  RISC-V: KVM: Implement ONE_REG interface for SBI FWFT state
-  KVM: riscv: selftests: Add SBI FWFT to get-reg-list test
-
- arch/riscv/include/asm/kvm_vcpu_sbi.h         |  22 +-
- arch/riscv/include/uapi/asm/kvm.h             |  14 ++
- arch/riscv/kvm/vcpu.c                         |   3 +-
- arch/riscv/kvm/vcpu_onereg.c                  |  60 +-----
- arch/riscv/kvm/vcpu_sbi.c                     | 172 ++++++++++++---
- arch/riscv/kvm/vcpu_sbi_fwft.c                | 198 ++++++++++++++++--
- arch/riscv/kvm/vcpu_sbi_sta.c                 |  63 ++++--
- .../selftests/kvm/riscv/get-reg-list.c        |  28 +++
- 8 files changed, 433 insertions(+), 127 deletions(-)
-
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index f001e56403f9..86025f68c374 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -133,6 +133,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+ 
+ 	/* Mark this VCPU never ran */
+ 	vcpu->arch.ran_atleast_once = false;
++
++	vcpu->arch.cfg.hedeleg = KVM_HEDELEG_DEFAULT;
+ 	vcpu->arch.mmu_page_cache.gfp_zero = __GFP_ZERO;
+ 	bitmap_zero(vcpu->arch.isa, RISCV_ISA_EXT_MAX);
+ 
+@@ -570,7 +572,6 @@ static void kvm_riscv_vcpu_setup_config(struct kvm_vcpu *vcpu)
+ 			cfg->hstateen0 |= SMSTATEEN0_SSTATEEN0;
+ 	}
+ 
+-	cfg->hedeleg = KVM_HEDELEG_DEFAULT;
+ 	if (vcpu->guest_debug)
+ 		cfg->hedeleg &= ~BIT(EXC_BREAKPOINT);
+ }
 -- 
 2.43.0
 
