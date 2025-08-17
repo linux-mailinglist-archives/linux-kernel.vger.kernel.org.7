@@ -1,281 +1,200 @@
-Return-Path: <linux-kernel+bounces-772408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D54B29247
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B91EB2924A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB9D16B5E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F314F2A16B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF3521CA02;
-	Sun, 17 Aug 2025 08:36:06 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5C27081F
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755419765; cv=none; b=KPLXz/2jpO10fQTTaNYrWZiMmQ+IRV+LZKrCBM2fuYfwmGZfSHljZxN8ROyY/08Y2T4eyUqH8KHNVPQ/kvOpEiODKKNWbIS6llP68ioU7II0MdHfndrUHBWcv8RwqaOZQ9wBLjq6M39onpYDlE7vFIZFP6UNZL8SbEiGoCmZXaE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755419765; c=relaxed/simple;
-	bh=3PhseAE4KLw3rZ7PxRRnN3YAf7nV/BTfxBWYbucF61M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkJH425IagxaFfPNxmWapzLTHpCGP5qZA28vdWrRP0sDF48GLPOmEDCO9Znn1Rl4pK4eA8Jim6l31BnGxPgWWIa42H6c4R3rEo+rp15ZvhTNUbxoDh8LZVgdEvtrMryJF3ALd+uaWSDSuEqRuu1enXHQepIAs3vq0hce9PKBDBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8BxLHJolKFouPFAAQ--.23170S3;
-	Sun, 17 Aug 2025 16:35:52 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJDxscJilKFolzhTAA--.44172S2;
-	Sun, 17 Aug 2025 16:35:50 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
-Date: Sun, 17 Aug 2025 16:35:34 +0800
-Message-ID: <20250817083534.2398601-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905D721D3CA;
+	Sun, 17 Aug 2025 08:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NunN7ScZ"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012053.outbound.protection.outlook.com [52.101.126.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130071E3DF2;
+	Sun, 17 Aug 2025 08:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755419810; cv=fail; b=oiLz17RKiUeiE+zKOKfejpAxH4pWPLvQtkWJMRZrlgqARJw7xy7tNAjkSv2lhbqe+7XLLE0i6vkrpKC3NPVvi1u2C7L9yGl3hWqerqzbuoEQdcYhth1SVxn+PFuEmTBdYXiCGr+Gc/N3TmqGQkP1CZ1hegNvUPBBySaJcZiNyjY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755419810; c=relaxed/simple;
+	bh=onhf4mPejMm2IoPscA2LI0HEu9MJH3F9/WnnAR4GUPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=c5m8C+RfW6nxE6PlzMjHY9MXSu3OCVByFBxhFEy5DtOn7EbensWo2P1KgFTSoxhCtfaaKScah7G2ahuKb1fyVEWW1TkPKUyGuUGRIhdlZlSDautoIPk0MRerzYn7XHy2jWNoxVBnl+2n/7gWlcoHYvIdGsjnZ0Y9L+EoX/jWBVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NunN7ScZ; arc=fail smtp.client-ip=52.101.126.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CjPgkwJcUWXopOrbF8QzA0/HWGA2C062JlkLhrOx7gWbEnbWxM/Y7uqTqmFmkxpy4Y8azEo1D/utvatif4vXy5za5hpRy/H4s96gECcrvrv93Ru+pAVgPDLG5IvswTiYLS0ndx6qRnhbjOvOC9I4cF1/IGSoiGqKcWB8cRiXyXKncxN+DGSAqSekLSoPEUOESBnkEGfgyQGfNbPaajP8asCnDAfh9mk/VaTykc8YSkLO49hIBw4VNtPFWFg+yZ9/bFVledvIpNA02QyiQnTR4CTR88zdTg/d1loia0llmXLGJqj2wozPBhU9ZL7D1oRmMscyl5qOvkIEh6636KkM+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=emk82Tqwygbgu+q8wPDGWnU3YPopNtEFRjiG44104NM=;
+ b=LbZmw2kf/ARuOVcVNIFtADJHQkHXj+bVdNWjZfNMZ4yJbblrtN2wCKIc6MCn1GNNGnTXNmC3dEXqtMc1Xel5Prx9JZVvJ+ng5nLAFqS6gywCwARa7ftihjCYx6sohCDbb+50SLKAczqq3uZ9TyCZ7N9se3791dJ8VWrMctZPnndEP+HvxADVPHeVF5/93lh8tEVfH4t//8Ytw3bfyiu57feFoSor8XbrSzn1wCREJAawi7Ucu/Kl8V95wIW3PcEV/I1OafCaJ+cqX3DEEj3fmnv2LABmhVg2equYMmAm8xoJWWf5+hAszQ5aO1AzRnlSVfSd2ATZpQ4nakR44EGcww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=emk82Tqwygbgu+q8wPDGWnU3YPopNtEFRjiG44104NM=;
+ b=NunN7ScZEj4w1/NBmetojOwSn3ye8Xy37IxBCF5IzDbqEXzwSw3r/EPtlgEqY4DW7xJga/c9UJ5eFZFlSOjkP0UGUgg0rhfC0nuge1LLd0lwM5ik5TcXdH5sgduqyIl4BdTlb6PyCkk/2YB08HuTtuo5r7/0BLhE76v9iYW4PREAkYvJWGn/qIfeQ7YsU8M8LzCA56S7eaGTRduy7ilkiSeyHTOmRsNc+OZvcg77OwwaWQMlp3PKczyNoiAHlLmHEu4bazuWECdSgf/A5RUnmsPBJ8yPDaTWW1ex5hgXauhEuPh12p+v6SijZ2x2Yz6x90XLRC+Nkhb9BWAA2looAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYZPR06MB5180.apcprd06.prod.outlook.com (2603:1096:400:1f9::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.23; Sun, 17 Aug 2025 08:36:46 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.021; Sun, 17 Aug 2025
+ 08:36:45 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] PM: hibernate: Use vmalloc_array() and vcalloc() to improve code
+Date: Sun, 17 Aug 2025 16:36:36 +0800
+Message-Id: <20250817083636.53872-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::7) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxscJilKFolzhTAA--.44172S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKF4xGF4kWFWrWF1fAr43Jwc_yoW3Aw4DpF
-	48Ar4UGr48JrW7JF17AF1UAry5Wws7uF48Jr9rGw1UZrn8Ww17GFyUtFy7Zr1rWrW5JF17
-	JF1Dtw1Ykr4UJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8svtJUUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB5180:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97ba6833-eca3-4df4-29fa-08dddd693333
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OzpLbUpfDFJcYikO5iJwISYCYdFscr0apsb3fDZowCz8YLvVmNt36dlZeXfD?=
+ =?us-ascii?Q?7sH2QbJndM74mq4AezI+ON0scaJXqw/oPqtLzot6lIJYwFaWOAiQB0Ug/0RT?=
+ =?us-ascii?Q?Y63zOuTaLeqG8nB+M5laIzNo8x+JEYpKuvKlK8qjXtSs0FEFtTeiGqkJQyPB?=
+ =?us-ascii?Q?wdsVBLKQmpgJvoLi4ifq9MT4XqsPMg+glJtaKwOvPAeyoHaDAPEl6U7/DyRH?=
+ =?us-ascii?Q?ZIvbBIxzMa0X2fHqMrtRqe7ROG6YLr2oTYc6koMXRllQ5NIjhtORrbnaVBDx?=
+ =?us-ascii?Q?xMIZp7p8Mye+tyH2g3ZihIMUbZeHYqCXKpCmfUEJ4y3/BqS9LbQLI7iaQwFj?=
+ =?us-ascii?Q?T+wUCuNnaeEAM1b1Ra3CEq5+o47I2vNSLneZVjJt+rWKI/7fop054b/sABgm?=
+ =?us-ascii?Q?IaFpvycAzM5IM/DoQIGlbvDvprwbK2k14tCLR0GbSkju5oZp3MSfCgia1p1l?=
+ =?us-ascii?Q?s4cmGvr44775cWlllb8HX1cRAJVK6ZmmAxxbox51Ez5Q3HDfqRBg/evAsdjM?=
+ =?us-ascii?Q?iKwrlr4DeM1mLEka0lk77r05USZlGJ5+D5ibxQ48yqu91ZDHzwh+aTAOi0PM?=
+ =?us-ascii?Q?Wz/AKk8gc4OnzqllIGKq2yREYZ79bVZSDlJS+oYYR7sRszjpc895qTNz+dwi?=
+ =?us-ascii?Q?BsxHzepNZOHhKuSwk1/OFb76U002KBuhrbbPMvLtYS480AYH/YM8f2Gc52WX?=
+ =?us-ascii?Q?H8Gwe0Jp1DkVgaBNgiH5G0gWeoMTS0pFGRtMuYKjYdP8NkIF7elmhmSSuprp?=
+ =?us-ascii?Q?V5RcB3GpMcP/NCFFxE753q9kZA5obeq04ME9WBRjCWseeTcgWn0Hk4rdCfKM?=
+ =?us-ascii?Q?zOiDfoI8qaOIZ9UGcizpw8V2jg2wKupPLqxVB1S7oMUr8k3BPZTfksnh83Zz?=
+ =?us-ascii?Q?vE+Um5qGlNWmshTn+2Ihq0LolbzbmH8EG8X3+cTp1FwFTfgORYGUpRTWzaB9?=
+ =?us-ascii?Q?iyT3B6msy27xyhx/oqlEsGGV3K1HF/cxG0er5MYaAtWfgRvVFcZnk5gB5ZXQ?=
+ =?us-ascii?Q?ZeSLhsm5NYDO3G6X1WR8OEdRQO3z2XbEfFRW6ToiN0ngN9qhlkvj73l6kfj3?=
+ =?us-ascii?Q?VdAcPgmvSvadIkC88nHVqdNv5fjIGr18LMRnYhNHG8mbHD1qIj6h27+a2zT/?=
+ =?us-ascii?Q?sUDPxa4nqUm8TbvthXV7KNROCkZ9Ec8s+JyTZUlfJJJEH/y5uGFpezhu5q2d?=
+ =?us-ascii?Q?jyizuod8cJ3tPdbVVOSOWjQe6gL2XXg66b2enUymoMDSOgPugXlLQHNci4lh?=
+ =?us-ascii?Q?/d8ig+slPtsT13QtpO3sElAfGdZzbZqlnONU1eOw58zXLZy4FrUT5Tyt3s4y?=
+ =?us-ascii?Q?yMGJ9MfExFxsA4fuZViW7MiS36ljwPH8FT4XmAy1v/+MF3NTRZpAWpoBwacn?=
+ =?us-ascii?Q?kqx90PaWtoOUfSuEZvHSYBhjDrWgMA3tLVFUNOtMTtpP9DIOf4Uzt7tQfxSJ?=
+ =?us-ascii?Q?8Dm8NM0BYjE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pPxWMSX3RBI3CbJTHFkFt+eSKrA+E3maghkY4pN+KNXyo0jwJX62ZUDKYLL0?=
+ =?us-ascii?Q?aXanNbphAFlD5ZkY7ei+zd0Yfj258YxlIMEG2ajuXpvIXfa5zmLsw++ShyP5?=
+ =?us-ascii?Q?p77nx36raJqt9y+tasoMPvVQLIuq1bi0FxAjUSa+5/Kl3i9FhO+2dk92ytZj?=
+ =?us-ascii?Q?TxWZfAcP79Rck8pQ/QSjKrDs+mEmcPifK00P0SJrT4ao8grkHpbybzEdfM5G?=
+ =?us-ascii?Q?MbSqmPd42fZO0Fw9aoPCjhxCLK26HzdcX2473OcoJnOht1v2ZkNhoLkqp3zn?=
+ =?us-ascii?Q?m3xVarh6Foy3pridLnqcu9fl9yRd4LlmlcdPcyOIQlQWaa9AIWODBj7r0Djl?=
+ =?us-ascii?Q?F9bHWpo02x0PILUhGKDJpWj/W9YzvC5XgpPBvWDmxU5mAjZ7lYp8CYLX2TrX?=
+ =?us-ascii?Q?XBD+FobvobEGUIWZdAo23qR+APzHrbHBKKe85q0E7MSg4CC4dbRKPvwQDhk2?=
+ =?us-ascii?Q?AoGuOCo/p2blq24tJ7F0R9G1/WjOGP9G1+ciMTjYHoXLbzXZyz5UjH3cqZsF?=
+ =?us-ascii?Q?avJ5i8WQSBV0kUlNULa/pTEve+jOyUsqOPxOBtEp5UZyByxT+KH7Tx2He4ye?=
+ =?us-ascii?Q?ien4Dwr9qxKajliZLwST32MJZu8LtwXDYKiTJxJqrBWViHiZler5TOP9XXV1?=
+ =?us-ascii?Q?/p8B1S4ZscJTgBuJw1tJNebaxzgtLYfs5EeDFSp89L4iu4anlKm1yCM6VKd/?=
+ =?us-ascii?Q?0e2Cyt111+3LvBXiUW/CNyesZpPgt2u/dmWJMTeOB9uozFG3c0DUstew47mi?=
+ =?us-ascii?Q?OrBYMqm481F/8Jefq7UCiul4j2bI09mZ1e9JZgWMV8o+ERKSM/GyTJRfNDp1?=
+ =?us-ascii?Q?kHRfZVjde58zPAsLPRw0ZFD4Xp5qjxDy3xaegTVezlAx2ffCCJmx55LAGpjU?=
+ =?us-ascii?Q?SJxR6KJI1r5qdZbisRCTYSRsowQGslr8u1MquI1rk3XWCZCcON46QESnV1UW?=
+ =?us-ascii?Q?tea2kSxzYmT9HtZVse7mxJFnLfLUJcxf+tqNwIJ9i4OvapjnLF2QRbBdUc/r?=
+ =?us-ascii?Q?UVWxzigzy1xua+TakGUsXh4/HkeGl/SwCSCK51VjVhboQ2AZv13fCxLO5rz8?=
+ =?us-ascii?Q?J4cgSlQ6xGElizXDGAzS3mdgYaTPD6OGS9voCetOuXz2LJD7Mxy+9byydyXJ?=
+ =?us-ascii?Q?wAw2AxhqGk5IWHAxZE6xUZ4xj6iItCg8DvwROq1F2nZu4WFzmtyQxTpTbdze?=
+ =?us-ascii?Q?Kp93bAk3oum1S2MCWAWbDMw4YJ/Wc0LDHhFWujoPe4AqmaQTfBgXqlNvSE2J?=
+ =?us-ascii?Q?27Xc/k1QMnvDMeUjuQROEX5A4FqmMQTnwUcdLMoYVnQtYlBI2/5pQlYxwjO1?=
+ =?us-ascii?Q?Lu3TizuoXtQQt3/CBF3/FxC/6RDbYfW5Xn7/tBAx0LU8TMWODHq0TrIn3zHZ?=
+ =?us-ascii?Q?/EnXwcqHz131itgXQzBc7X0kasE/HMWio3Bjkdpn6MfPFIbf1myD9bUBfWk0?=
+ =?us-ascii?Q?kvvhHNdOgHKKLmNgL0hlO6esP1Jsp1XXYN2fqcG1wuUt8daJpM+yeb8cDCLr?=
+ =?us-ascii?Q?prNKAijjlftao/9O68Jhs0doFLHBuqk57ikpZYzTs9xW2kW46hwN2GzraBuE?=
+ =?us-ascii?Q?q9IYPJ7RlE0yAp4UvehowEZ/sPieLR6QLF59ksqT?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97ba6833-eca3-4df4-29fa-08dddd693333
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2025 08:36:45.9210
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CrOJ1MBtr+TqaPVqPgP6x4Up3JhMuzq+xEZ4hQz9yH/6mjCEuNDUgmPWX0MaUkh4yndJD1XLwnWuqQLIvYmaGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5180
 
-After commit 84caf98838a3e5f4bdb34 ("mm: stop storing migration_ops in
-page->mapping") we get such an error message if CONFIG_ZSMALLOC=m:
+Remove array_size() calls and replace vmalloc() and vzalloc() with
+vmalloc_array() and vcalloc() respectively to simplify the code in
+save_compressed_image() and load_compressed_image().  vmalloc_array()
+is also optimized better, resulting in less instructions being used,
+and vmalloc_array() handling overflow is more concise [1].
 
- WARNING: CPU: 3 PID: 42 at mm/migrate.c:142 isolate_movable_ops_page+0xa8/0x1c0
- CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
- pc 9000000000540bd8 ra 9000000000540b84 tp 9000000100420000 sp 9000000100423a60
- a0 9000000100193a80 a1 000000000000000c a2 000000000000001b a3 ffffffffffffffff
- a4 ffffffffffffffff a5 0000000000000267 a6 0000000000000000 a7 9000000100423ae0
- t0 00000000000000f1 t1 00000000000000f6 t2 0000000000000000 t3 0000000000000001
- t4 ffffff00010eb834 t5 0000000000000040 t6 900000010c89d380 t7 90000000023fcc70
- t8 0000000000000018 u0 0000000000000000 s9 ffffff00010eb800 s0 ffffff00010eb800
- s1 000000000000000c s2 0000000000043ae0 s3 0000800000000000 s4 900000000219cc40
- s5 0000000000000000 s6 ffffff00010eb800 s7 0000000000000001 s8 90000000025b4000
-    ra: 9000000000540b84 isolate_movable_ops_page+0x54/0x1c0
-   ERA: 9000000000540bd8 isolate_movable_ops_page+0xa8/0x1c0
-  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-  PRMD: 00000004 (PPLV0 +PIE -PWE)
-  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
- ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
-  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
- CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PREEMPT
- Stack : 90000000021fd000 0000000000000000 9000000000247720 9000000100420000
-         90000001004236a0 90000001004236a8 0000000000000000 90000001004237e8
-         90000001004237e0 90000001004237e0 9000000100423550 0000000000000001
-         0000000000000001 90000001004236a8 725a84864a19e2d9 90000000023fcc58
-         9000000100420000 90000000024c6848 9000000002416848 0000000000000001
-         0000000000000000 000000000000000a 0000000007fe0000 ffffff00010eb800
-         0000000000000000 90000000021fd000 0000000000000000 900000000205cf30
-         000000000000008e 0000000000000009 ffffff00010eb800 0000000000000001
-         90000000025b4000 0000000000000000 900000000024773c 00007ffff103d748
-         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
-         ...
- Call Trace:
- [<900000000024773c>] show_stack+0x5c/0x190
- [<90000000002415e0>] dump_stack_lvl+0x70/0x9c
- [<90000000004abe6c>] isolate_migratepages_block+0x3bc/0x16e0
- [<90000000004af408>] compact_zone+0x558/0x1000
- [<90000000004b0068>] compact_node+0xa8/0x1e0
- [<90000000004b0aa4>] kcompactd+0x394/0x410
- [<90000000002b3c98>] kthread+0x128/0x140
- [<9000000001779148>] ret_from_kernel_thread+0x28/0xc0
- [<9000000000245528>] ret_from_kernel_thread_asm+0x10/0x88
+[1]: https://lore.kernel.org/lkml/abc66ec5-85a4-47e1-9759-2f60ab111971@vivo.com/
 
-The reason is that defined(CONFIG_ZSMALLOC) evaluates to 1 only when
-CONFIG_ZSMALLOC=y, we should use IS_ENABLED(CONFIG_ZSMALLOC) instead.
-But when I use IS_ENABLED(CONFIG_ZSMALLOC), page_movable_ops() cannot
-access zsmalloc_mops because zsmalloc_mops is in a module.
-
-To solve this problem, we define a movable_ops[] array in mm/migrate.c,
-initialise its elements at mm/balloon_compaction.c & mm/zsmalloc.c, and
-let the page_movable_ops() function return elements from movable_ops[].
-
-Fixes: 84caf98838a3e5f ("mm: stop storing migration_ops in page->mapping")
-Acked-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-V2: Use EXPORT_SYMBOL_GPL_FOR_MODULES instead of EXPORT_SYMBOL and fix build.
-V3: Use register interface instead of set array directly (Thank David).
+ kernel/power/swap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- include/linux/migrate.h |  5 +++++
- mm/balloon_compaction.c |  6 ++++++
- mm/migrate.c            | 38 ++++++++++++++++++++++++++++++--------
- mm/zsmalloc.c           | 10 ++++++++++
- 4 files changed, 51 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index acadd41e0b5c..9009e27b5f44 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -79,6 +79,7 @@ void migration_entry_wait_on_locked(swp_entry_t entry, spinlock_t *ptl)
- void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
- int folio_migrate_mapping(struct address_space *mapping,
- 		struct folio *newfolio, struct folio *folio, int extra_count);
-+int set_movable_ops(const struct movable_operations *ops, enum pagetype type);
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index ad13c461b657..0beff7eeaaba 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -712,7 +712,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
+ 		goto out_clean;
+ 	}
  
- #else
+-	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	data = vcalloc(nr_threads, sizeof(*data));
+ 	if (!data) {
+ 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
+ 		ret = -ENOMEM;
+@@ -1225,14 +1225,14 @@ static int load_compressed_image(struct swap_map_handle *handle,
+ 	nr_threads = num_online_cpus() - 1;
+ 	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
  
-@@ -100,6 +101,10 @@ static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
- {
- 	return -ENOSYS;
- }
-+static inline int set_movable_ops(const struct movable_operations *ops, enum pagetype type)
-+{
-+	return -ENOSYS;
-+}
+-	page = vmalloc(array_size(CMP_MAX_RD_PAGES, sizeof(*page)));
++	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
+ 	if (!page) {
+ 		pr_err("Failed to allocate %s page\n", hib_comp_algo);
+ 		ret = -ENOMEM;
+ 		goto out_clean;
+ 	}
  
- #endif /* CONFIG_MIGRATION */
- 
-diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
-index 2a4a649805c1..03c5dbabb156 100644
---- a/mm/balloon_compaction.c
-+++ b/mm/balloon_compaction.c
-@@ -254,4 +254,10 @@ const struct movable_operations balloon_mops = {
- 	.putback_page = balloon_page_putback,
- };
- 
-+static int __init balloon_init(void)
-+{
-+	return set_movable_ops(&balloon_mops, PGTY_offline);
-+}
-+core_initcall(balloon_init);
-+
- #endif /* CONFIG_BALLOON_COMPACTION */
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 425401b2d4e1..9e5ef39ce73a 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -43,8 +43,6 @@
- #include <linux/sched/sysctl.h>
- #include <linux/memory-tiers.h>
- #include <linux/pagewalk.h>
--#include <linux/balloon_compaction.h>
--#include <linux/zsmalloc.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -53,6 +51,33 @@
- #include "internal.h"
- #include "swap.h"
- 
-+static const struct movable_operations *offline_movable_ops;
-+static const struct movable_operations *zsmalloc_movable_ops;
-+
-+int set_movable_ops(const struct movable_operations *ops, enum pagetype type)
-+{
-+	/*
-+	 * We only allow for selected types and don't handle concurrent
-+	 * registration attempts yet.
-+	 */
-+	switch (type) {
-+	case PGTY_offline:
-+		if (offline_movable_ops && ops)
-+			return -EBUSY;
-+		offline_movable_ops = ops;
-+		break;
-+	case PGTY_zsmalloc:
-+		if (zsmalloc_movable_ops && ops)
-+			return -EBUSY;
-+		zsmalloc_movable_ops = ops;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(set_movable_ops);
-+
- static const struct movable_operations *page_movable_ops(struct page *page)
- {
- 	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
-@@ -62,15 +87,12 @@ static const struct movable_operations *page_movable_ops(struct page *page)
- 	 * it as movable, the page type must be sticky until the page gets freed
- 	 * back to the buddy.
- 	 */
--#ifdef CONFIG_BALLOON_COMPACTION
- 	if (PageOffline(page))
- 		/* Only balloon compaction sets PageOffline pages movable. */
--		return &balloon_mops;
--#endif /* CONFIG_BALLOON_COMPACTION */
--#if defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION)
-+		return offline_movable_ops;
- 	if (PageZsmalloc(page))
--		return &zsmalloc_mops;
--#endif /* defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION) */
-+		return zsmalloc_movable_ops;
-+
- 	return NULL;
- }
- 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 2c5e56a65354..6c574ab8abff 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -2246,8 +2246,15 @@ EXPORT_SYMBOL_GPL(zs_destroy_pool);
- 
- static int __init zs_init(void)
- {
-+	int rc;
-+
- #ifdef CONFIG_ZPOOL
- 	zpool_register_driver(&zs_zpool_driver);
-+#endif
-+#ifdef CONFIG_COMPACTION
-+	rc = set_movable_ops(&zsmalloc_mops, PGTY_zsmalloc);
-+	if (rc)
-+		return rc;
- #endif
- 	zs_stat_init();
- 	return 0;
-@@ -2257,6 +2264,9 @@ static void __exit zs_exit(void)
- {
- #ifdef CONFIG_ZPOOL
- 	zpool_unregister_driver(&zs_zpool_driver);
-+#endif
-+#ifdef CONFIG_COMPACTION
-+	set_movable_ops(NULL, PGTY_zsmalloc);
- #endif
- 	zs_stat_exit();
- }
+-	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	data = vcalloc(nr_threads, sizeof(*data));
+ 	if (!data) {
+ 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
+ 		ret = -ENOMEM;
 -- 
-2.47.3
+2.34.1
 
 
