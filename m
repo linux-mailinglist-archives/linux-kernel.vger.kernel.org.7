@@ -1,308 +1,319 @@
-Return-Path: <linux-kernel+bounces-772410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4E3B29248
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:37:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314B4B2924D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBD81B25FC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:37:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4710A2A2213
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C8D220F57;
-	Sun, 17 Aug 2025 08:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B79721C166;
+	Sun, 17 Aug 2025 08:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qD/9cUnF"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7UUlK8f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D60F1E3DF2;
-	Sun, 17 Aug 2025 08:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755419819; cv=fail; b=HHBFjGyNnsm1bg3mnas8FQhqlDTK/ynl/1DW8XSoHk2sI/7yuffYLYZ/DXTheFHBYfotDOXAsaBiyi4jrXW5QBAfMwoYqb+jpfMyNO+Dv6RwxQ5XWBkd/OgKpC1T3yiMJBk3HcJZetPMFYjLBmHdbNDgRTsauZPb+DcCwtqZ9J8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755419819; c=relaxed/simple;
-	bh=rM+lrep5tiEr7mh9sKAJXp5FlV2vA/Atine4x8lSK8M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nqvFtTur2vKM9hFlInkPRkg30AB3ODfLH5LyEwjBiaXtFzoBPT0aAH82+GK5PisDXJsVIZh4sbawmnfCobveJQxbUWILj+UZWObYzcN+VJ29siE5BTruMlXfa3XhJ2mUxT6TdZZwqG8ofKjsmuIgwXXojbqw0KmMj2eOSBD6O7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qD/9cUnF; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sH2zA20j+W07kfTvVdfF4fdcArxdIC/uUI6oROnAL6Jo4yO3hucEaXAf3bWRxB0x1epY36djJ2EebGtf6Ibh4P2UEvFglEyEGiDLZwIbb0polJyDZI8SnNJ6MTKl7muFTosGzTBHg0J6TXUhw9nz/BuOTd2KaMuAoZP1YHfyBz86wRIvSdFFTXwPjYx783BwQUK2/xXvA1BeDeJra5Au328d3axoL3v2ziYkV0croc0gddXHGy+N6+xfr37VV+sk9sy5Eh8HEZLqfmgIlOA9aIvoB39CgyfAuzZ4uO72uLkl+KknxdthC0oLzr1rHiDMP7Y+oVXwuaOENWPKT6z4JA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uLUimgvzdyX/02jnV62JDqkj9pv3h320Fd1Dg9wOMf8=;
- b=Q2E1mwKyKosYr8rFtriMeKnayozSwIGUA5W7DtCxNDN0fll/LcLzEWwYhN5z4UZhUHqm/g4GFQF5GtcGrwt6vkgRzA7bgSZjlnRkyMzv0sMy1X2sbasusXjaGleIJEbx8pRiI2n+Y4WgMTOnNUeFbSySBOJQ4jYRe/FdgP64alAZ/k55gYLTLrv32aAmRPPRWHJuJ1chdHGreyZXOx579iSjcHIOD+Zinlx4Qip/kBXr70myioG7kGdujE2OWi3VZK2et5B4CTb8/ZbtUk41DMSIB49uaPlowTRmFRV9ThKn94bZOYnnw/mYpQw62bfSdBsxp+lh5Ykaum7YT/ShCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uLUimgvzdyX/02jnV62JDqkj9pv3h320Fd1Dg9wOMf8=;
- b=qD/9cUnFSjWtSwjxoppsOtVzuJwcPm6zZxzTltV0qpJj1F/57RddRyNYk0Z4ca44XtDNvUCP05mDN7LVT2igElbNSqdF/iEGBceRy/Fewi2dEO0Zhf1ZCt4p6G+NrJamCkhxIOn1l9ikfAc03X9+vREKyB527a+Fa0kPOCX7bpSRhOMRAbqIlZJ2VCpHYMmQMtSWvX9TMIdxzPoLZCzM+xaSVsj5fhV7jO/5Jl6h3bsk639GHWnw3P7x6N9/f9sIioRGt7NUhINhxMcivoPpZb3N+DoTtpjvXDDwwpil8Ey0lTNQdANEKF1DkvygLvDCRkLmm4cYxalgZV9R8zI7eg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW4PR12MB7141.namprd12.prod.outlook.com (2603:10b6:303:213::20)
- by CH3PR12MB8234.namprd12.prod.outlook.com (2603:10b6:610:125::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Sun, 17 Aug
- 2025 08:36:54 +0000
-Received: from MW4PR12MB7141.namprd12.prod.outlook.com
- ([fe80::932c:7607:9eaa:b1f2]) by MW4PR12MB7141.namprd12.prod.outlook.com
- ([fe80::932c:7607:9eaa:b1f2%5]) with mapi id 15.20.9031.014; Sun, 17 Aug 2025
- 08:36:54 +0000
-Message-ID: <3a5673b7-47d2-4a59-a515-95b396364994@nvidia.com>
-Date: Sun, 17 Aug 2025 11:36:43 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 4/6] net/mlx5: Destroy vport QoS element when no
- configuration remains
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Tariq Toukan <tariqt@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>
-References: <1755095476-414026-1-git-send-email-tariqt@nvidia.com>
- <1755095476-414026-5-git-send-email-tariqt@nvidia.com>
- <51908ab2-6184-405a-b723-8b030267e7c1@intel.com>
-Content-Language: en-US
-From: Carolina Jubran <cjubran@nvidia.com>
-In-Reply-To: <51908ab2-6184-405a-b723-8b030267e7c1@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TL2P290CA0025.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::20) To MW4PR12MB7141.namprd12.prod.outlook.com
- (2603:10b6:303:213::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2531E3DF2
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755419847; cv=none; b=US24n85o1zIj+HBdAcGJ0M4RR3z0m00yosTp96g2PcWoWUdwsA5Q4/OB9a+P7/6fEYicq0ZCLz5R6sA1cA0QIZ9gPPNiILTzz22b0kJRHxp5cn13c10pQ8lvxComaYrxRrTnYb2+Xg6oDLPUKIUcmUMgws6hBk80Iv30JSdITLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755419847; c=relaxed/simple;
+	bh=fahrmebLSoKwWLL9QMsG46bTQEaAEKFFWHvwwUUrNZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lnvU/nmYViKDSGt2JG8Q6OOLC16tBMV11y2hzZfzDPW3H48oNpS5BzTFuXw9H1mZjS3FuWKQZ24KbkhWEqAbklxpsheFGWpF7PeZ7WOZh+N9/ygfZHG58F/yJ0Jw5VQ0dru1kIWy6dxtLDlvnhkDOEHkN5eChYyd8wACW5yJikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7UUlK8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE507C116D0
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755419846;
+	bh=fahrmebLSoKwWLL9QMsG46bTQEaAEKFFWHvwwUUrNZI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j7UUlK8fFbuaUdI9gWL1nIf0EMMDi6bejqIP/nFM4LeKziczstI4pW27/rp1LmFCx
+	 a6zlVwNqAq8IsbV17NAzm1vDOM/irmFiOAa29T/Nr7dHqfVSyqdJ0R0MRGK56DeQRr
+	 Aua2BXDMV2lZGW0EphC/uqAsPdHsLFjFqtPiys+52evzEUJKJXeEAgis36t70SGRRE
+	 ZIhQhZW8/FRoHudgwGW56k9h/s8PcMiBVm1P8y5IcxrtmpiozDQ0OYb5lUMvfNkSSF
+	 8TU1C3Xm2pwQStv/W6wVHJrgthuudPVRFmZHuni/HKqRZzl9nrY+oEy5P5pkH/d4+n
+	 5+jgHMuvZmpFA==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-618b83e5b27so1832795a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 01:37:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLHOhSrMYigmfk7/41HsT+HYlHpJTq5pBWacukmYKLFmHhtogfGZ0MdY3O+ostAY186SEEoxyt6Dwq3i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsBWFyRL3tsmHSQZAEMSOess9QUwt/EInjSiAgTRx7Hni/FD+l
+	MdZAbX4bQy0rYhpATfkr3uxuXuI5ms9ByuijC8oI4nEKDU9hp4xI5LiA41KSzE6TSB/kXty/wD5
+	il46KR4vSBy5WconL58k7PV6yG+uPnT8=
+X-Google-Smtp-Source: AGHT+IFK4I416JnNha6gxzDGPiU4JJpXj/m/b37kpw1hRlOYIOqMymOBJ62kHnQDFLTpoC59dWF0inHCHn1MUzpSxhk=
+X-Received: by 2002:a05:6402:510e:b0:615:539b:7ade with SMTP id
+ 4fb4d7f45d1cf-618b054dc65mr5983574a12.20.1755419845354; Sun, 17 Aug 2025
+ 01:37:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7141:EE_|CH3PR12MB8234:EE_
-X-MS-Office365-Filtering-Correlation-Id: d606bcb2-e001-4b82-429d-08dddd693827
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vy9hYmpVSUk4bnMyVVV4cWNYS1NSVGVlalVobnFoWFhlV1NvMjA2SzM1bmlO?=
- =?utf-8?B?OWRtbHVTelZuTmlzMXFsbGJCRXd2MkEyWlBYQWdiNjNqM01XR1RWQ0g0OWR3?=
- =?utf-8?B?cVJaTVQyVVBhK3JPSi9GL01sdHlIQVlMZGhXOXdiTU5saWNZYUROejlTdlIv?=
- =?utf-8?B?czdmQ05IZEMxblBBeGYwZ3RUUkZLa2VpbHVORlJ2Q3ZsQjk5MDdjM1gxQ2RE?=
- =?utf-8?B?SXdlL0p0a0tyOGYvbm5XZEU5TXdWdkM5TU9RRHN2U2U3SnZCSGxxMldoay93?=
- =?utf-8?B?KzIxS3J4WlB1S1BLMzZjV1JBZ0drQjFBSVVmR0MyN0I5S0JGcVBWanpBcE1z?=
- =?utf-8?B?b3dxbnYzUU1NSnFZQlNMZzNaYS95RFZCOVZEWVFvNGwwUFBhMXM0TkFjdTJn?=
- =?utf-8?B?UXJZWjZlem9aZkZpZlpTZ24zMXhYUks5MWtFNFVnMkxSKy9kZ0ovRWlTZ3I1?=
- =?utf-8?B?SkFtWSt5aG5hWVEraTdmQnJvZlVoRmwwSTRCM0RCN09zTlovUDIxQzJaRXlG?=
- =?utf-8?B?SW5OY0NlaXk4V1FIZVFhNExsTXArOWxTS3NhQlBlKzRzNFpJRzNmUlBTWFhD?=
- =?utf-8?B?MEIzbVVLbW9KNEFzQWx4MExZblUwWHo0UmY0Uk54SS9aS1YvV1Q1UXlMdVY5?=
- =?utf-8?B?eFg4VHBQV1VESWZoMEdoSzVrT1VmenFoSGJCWldkRlVSc0xYL0FONHBwV1li?=
- =?utf-8?B?YkZEd21WVThNVXZnM0NZY2I1MThsNzB3WTdaT3BINWk2c2VMWnJpcGJEZG56?=
- =?utf-8?B?UW12RitFSjl0ZzE4b0c1TTRZbVc0cXlhS3Q5ZTkwVWFWQk5wSWFibXYwMVp1?=
- =?utf-8?B?d1IrbFVJZmVHeDZiLzVxcFlJLythQ2ZIMG9HVitNT2xGaUlZdk5iLzk1ZVQr?=
- =?utf-8?B?bVhqKzBuQ0RsNndwVk9QVWZRSUxYTE1RTVZaSU5mMjRaQTd3djlZdXdpRnNN?=
- =?utf-8?B?QVR5SU5Jb1RDb3MrL2NCdkRUNDNCNktxMEpSbjByWEZlcXl5NG9EdkliMlRK?=
- =?utf-8?B?NFZUSHBwR2RWNVNXQnhoNTZwT1h4eDVJMEp6K2t2Umk5Ri8xTXJqQ0pOQ1FP?=
- =?utf-8?B?NklZUjFobzhHYWRNOVBpaS9pQlJYaFZuTlZaWkEyTXlEMGMxL3YxRytTbnBr?=
- =?utf-8?B?b0ZVdzBIeSs3WkdScWI2ZEIxOWxsT1E1YnR4OWJ3dnBhb3F4UEZQV1BJMDVB?=
- =?utf-8?B?VXF1QW56MU5NVjVmaTJITnl6ajBLNGtKenJjbHlDWGVJMjlmUEtRSFpkTVM4?=
- =?utf-8?B?MW1iVTNRdnkyR3lHNDFxVWtFVnEwSFNQcTRSL1RKSkc5RUhJMFBiL2hDUXVJ?=
- =?utf-8?B?VVNraGZtNEs2TmJRaWRwdzVoa2gzRWU3SjMwM254UXFGVnlScXVBOVRmZHM3?=
- =?utf-8?B?d2F4UHUzMjh3dWRBbUl1anBwN1Z2alhhZWlmRHp3YklQVHd4aEd4QlUvNkg5?=
- =?utf-8?B?RnpKcmQ4WFY1N1A2VXRaUHc0aTFjV1FzUlNOVlRMNkZwZk5pN0VEUkFuT0t0?=
- =?utf-8?B?WGZVYkFQaTN0TDh4QXBjNmxMK1RobU4rOGRzN3FuT2RTNnFHR1ZOTmYyM3ph?=
- =?utf-8?B?b3ZVZUw1UVFIS2Z4STNjbTlUQzQ5RDlUY3o3QzNnQ2krVnZLOW4wSy93V25k?=
- =?utf-8?B?QjJHTU1FanJVM3VqUU1kejBZWnc2T09XRnpuZDB2ZHFvMVZsV0VZSW1MZ3V2?=
- =?utf-8?B?R2xCYW5zVjdHanBTUXFxclZCNG1ZNGJkWGVrb0lYV001dzRtV3dlZmoxYkRa?=
- =?utf-8?B?eStOMU92VXZsMXZ2S3hCNjhRVVFYL1o2VVU4WlpIQ0xIYmo4d0VUd29FYkpL?=
- =?utf-8?B?dGREbm0yTHcyaGpiMURDL1p6SlFXWHkvS2tPUXdjeUhNNWtpRkRxaVVHemlj?=
- =?utf-8?B?ZGdRWkxGVm1xWmwxS3NNNTU5dzQ5UTFCcmlTWGx5NnZvbnl3OHptNVMvRXJ0?=
- =?utf-8?Q?31Nb1Dnaiog=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7141.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkpiSHBDL0RzbnR5Q2gwbTR2N2puYi9vQlA0Q3paejBzNXlWc1hJMkxCd0NM?=
- =?utf-8?B?R0h2WUlxY05QODhHTGZic1dDR3A2bndITG13aXVGQU1IeFliejJsSnNrYnIz?=
- =?utf-8?B?Y2UvWlIrV2VXNTBFMGFNdUNucHpVVENFQ0ZvYlJiZStTWGt1Rm9iejZtWXB4?=
- =?utf-8?B?Q1FMUEpERUlrTzVicXB3YVRBUml3Mk9Ucnp0Tzh5YXJiekdwK0lKZzFJN2FX?=
- =?utf-8?B?RXNvY2hGTmNqWDhGRnpHdUZERExHQzNvcWIvbFRnaFRjTTZSM00wanFpdGRs?=
- =?utf-8?B?eGJKaENqSkJxUERYWEt6WFA0Ky9XejVRdnpsWnEvOVRQeUR5TlNCRzUvYUY2?=
- =?utf-8?B?SDR3Z0w0RkticEpHSkJiaDRHLzljSEhrNkVlZG1aSjkrVE5RcndxaGlxMjNQ?=
- =?utf-8?B?UjBpZFZ5N3RGdXhDcE9iZ2VnL1p4Q1ZUb1lkbEdsdEczMytKQXdxRU94bUJt?=
- =?utf-8?B?Ly9oYmpRMjVtQStjR0FMN0Y3VFdab283UkVqUXhNaDRUT0hPN0RJc2gxbVEz?=
- =?utf-8?B?UGtqcjcvMFJ2b3R6VU1KMWc1Zlp4RHhuc2VuQ1RRNG5WNWhKTEkrdnhRMjAr?=
- =?utf-8?B?VUQ0K2FSeklMLzhLUUJYdFhaamgyQUFQRVB2VzdjZnpMVGNtZm1oLzcwZ3JR?=
- =?utf-8?B?OFlwSStmVytFMGlueC9tV0thN2FUNzJKbHByT09XSkVPTnJ6OW0yMVZXdFdl?=
- =?utf-8?B?N0xsUng4dXNMSENwY2FZNlVoYWVBYkN3cklSdjErWjFsRXFLQkQ2YUMzNGpR?=
- =?utf-8?B?RmU4SVArM0xtQWhwaWMvMk15eXQveThNUFI5end1YTFiNE1IT2dGQ2dEZlgr?=
- =?utf-8?B?WGs5ZTZvaE43UXRiN1gwUTFiSFFUdHZoSVlMQWM0cjZYMTFwZEtnRlRlY2tt?=
- =?utf-8?B?ditmaS9INWpnSE5yOXBYZmlaeVVTRWRmN0MrSU5hMDNlZnFsMjRIdHo1ZFEz?=
- =?utf-8?B?YkdSK21tQTcyNUsybnBKNWllYSs2QlU1d0Yvc1g2WE9kczI2Y0tObDhmVlJt?=
- =?utf-8?B?K0xNaGZEZm0yYUtpTEtzbVUzdVZPM1oxcUwzL2tHTUo4R2ticklveDEyNGxT?=
- =?utf-8?B?d2tGZ21xUDNBRVRTWFhhWVpXUWRJRU5uQTM5QUxHb0E0OWFXbXo4Q2s0c1Rv?=
- =?utf-8?B?aDhQVGEwL3VPNVNwdkdFblVBVXcrUURsV0twanViMkRxL2hKNzVYbXhwUzA2?=
- =?utf-8?B?Q2JlMDRWNWh1VWJpMG90YzFMUTRxYXZqN2RwMndoQlRtUXFyemRCbEdZcTh0?=
- =?utf-8?B?WkI1MnlrTXc3WVUxVDZXbkdqOTdWbnR5ZjRYTCtxWWE0Qml2SHFzZ0tNUXBC?=
- =?utf-8?B?ZU1FWDlDWExvWng5a3pFWXNLa05yS1lvSGJKRGxqYjI1RWNGVGFzVjV1R3Rr?=
- =?utf-8?B?eDlLOCtBdDNMa25CRmtmVTN2Q1haRUROSTlmcjZreEd6R1dpbmwzeHJVSXll?=
- =?utf-8?B?K3d3dk12S0tvVk83dmFhYTBGVktIS2Q0OGJCTjF6ZCtGakU1TEQ2NGxQcGll?=
- =?utf-8?B?anJmRWw4MFAzODFSTm0vOFN5alNNQXFPY2I1K3BTQ3BvakhJTWMyc0JsRGY0?=
- =?utf-8?B?QjE3TEFIRUE1Yi9GYk9hWEt6bjlMQ0J4WlRHaWdmOVNzb1doWWV0VzU5Z3dl?=
- =?utf-8?B?NUs5YUZsL0lNRFdwK3Z2NC81b0UwdEJheVN5Y3dKdytFUU9LK1UzOVBXM3oz?=
- =?utf-8?B?NjkwdUp0UktIc1lhSDVrQUpXTjUzeS81Q2RiZkpnRG5QMjkrb2JvWE9pd25Q?=
- =?utf-8?B?eWZrM2NSa1Foc0k4a2lRWTg0dXVFMVlLaGFlM0JYaEpNcmVVVWY2Nk9HSXFZ?=
- =?utf-8?B?dzRxMW5WbUNoY2lPVmZXNU84ZlRPVnhHQjAyM0RGVUVpdTR5WlhQRmdZWFMz?=
- =?utf-8?B?TGNHMlhrZnQ5ZEpTeDRCZkRwdnk0UzBMd2FGRlg1WUszQysvbW1WZDA1UUlJ?=
- =?utf-8?B?alpwQnRDMTNydUxESWE1bGlpWjkxNHdtL0Y3Q2R2TGxxVWE5aW9EMHNVSnhH?=
- =?utf-8?B?UWhndi9HdW04RnFmNmJYSGZlbHNhdmdsMFRIRVBKcHdoR2FHQWQ1ZTZwTkM1?=
- =?utf-8?B?WFloWTA4OXhaeXAybWM4VEpsMUhMOGdZSUZBUDJTeC9TNnkwdm5nYW14SVRm?=
- =?utf-8?Q?P5BFi6Ij8Ow4kt5sPE/3EWTV7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d606bcb2-e001-4b82-429d-08dddd693827
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7141.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2025 08:36:54.3486
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZPqjVEd1Xp4cRA4zMSxnJVIq7zbmBStu1OuWn4SZsnCrDu0IYa5gY8zmiQDofu/MAXoRd93yGEpeb0VZgVh1JQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8234
+References: <20250817083534.2398601-1-chenhuacai@loongson.cn>
+In-Reply-To: <20250817083534.2398601-1-chenhuacai@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 17 Aug 2025 16:37:12 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5gtJD1Krz=EQ1T-=g9DpANkuuiV6wUcjrquYpU3hbrPA@mail.gmail.com>
+X-Gm-Features: Ac12FXyjokHMwxAhvezm72Nx1-D-Pv-iLzcEjwiHvsLvO1fg05HxmcHilpmSkiw
+Message-ID: <CAAhV-H5gtJD1Krz=EQ1T-=g9DpANkuuiV6wUcjrquYpU3hbrPA@mail.gmail.com>
+Subject: Re: [PATCH V3] mm/migrate: Fix NULL movable_ops if CONFIG_ZSMALLOC=m
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	"Michael S . Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Sorry for my stupid, I forgot to update the commit message. :(
 
+Huacai
 
-On 14/08/2025 12:55, Przemek Kitszel wrote:
-> On 8/13/25 16:31, Tariq Toukan wrote:
->> From: Carolina Jubran <cjubran@nvidia.com>
->>
->> If a VF has been configured and the user later clears all QoS settings,
->> the vport element remains in the firmware QoS tree. This leads to
->> inconsistent behavior compared to VFs that were never configured, since
->> the FW assumes that unconfigured VFs are outside the QoS hierarchy.
->> As a result, the bandwidth share across VFs may differ, even though
->> none of them appear to have any configuration.
->>
->> Align the driver behavior with the FW expectation by destroying the
->> vport QoS element when all configurations are removed.
->>
->> Fixes: c9497c98901c ("net/mlx5: Add support for setting VF min rate")
->> Fixes: cf7e73770d1b ("net/mlx5: Manage TC arbiter nodes and implement 
->> full support for tc-bw")
->> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
->> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
->> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
->> ---
->>   .../net/ethernet/mellanox/mlx5/core/esw/qos.c | 54 +++++++++++++++++--
->>   1 file changed, 51 insertions(+), 3 deletions(-)
-> 
-> 
->> +static bool esw_vport_qos_check_and_disable(struct mlx5_vport *vport,
->> +                        struct devlink_rate *parent,
->> +                        u64 tx_max, u64 tx_share,
->> +                        u32 *tc_bw)
->> +{
->> +    struct mlx5_eswitch *esw = vport->dev->priv.eswitch;
->> +
->> +    if (parent || tx_max || tx_share || !esw_qos_tc_bw_disabled(tc_bw))
->> +        return false;
->> +
->> +    esw_qos_lock(esw);
->> +    mlx5_esw_qos_vport_disable_locked(vport);
->> +    esw_qos_unlock(esw);
->> +
->> +    return true;
->> +}
->> +
->>   int mlx5_esw_qos_init(struct mlx5_eswitch *esw)
->>   {
->>       if (esw->qos.domain)
->> @@ -1703,6 +1731,11 @@ int 
->> mlx5_esw_devlink_rate_leaf_tx_share_set(struct devlink_rate 
->> *rate_leaf, void
->>       if (!mlx5_esw_allowed(esw))
->>           return -EPERM;
->> +    if (esw_vport_qos_check_and_disable(vport, rate_leaf->parent,
->> +                        rate_leaf->tx_max, tx_share,
->> +                        rate_leaf->tc_bw))
->> +        return 0;
->> +
-> 
-> I would rather keep executing the code that "sets tx_share to 0 and
-> propagates the info", and only then prune all-0 nodes.
-> Same for other params (tx_max, ...)
-> 
-> That would be less risky and more future-proof, and also would let your
-> check&disable function to take less params.
-> 
-> Finally, the name is poor, what about:?
->      esw_vport_qos_prune_empty(vport, rate_leaf);
-> (after applying my prev suggestion the above line will be at the
-> bottom of function).
-> 
-> Also a note, that if you apply the above, it would be also good to
-> keep the "esw_qos_lock() just once" (as it is now)
-> 
-
-Thanks for the review!
-My initial thought was to reduce the amount of FW commands, but I agree 
-with your points.
-Also, thanks for the name suggestion.
-I’ll fix and send v2.
-
-Carolina
-
->>       err = esw_qos_devlink_rate_to_mbps(vport->dev, "tx_share", 
->> &tx_share, extack);
->>       if (err)
->>           return err;
->> @@ -1724,6 +1757,11 @@ int 
->> mlx5_esw_devlink_rate_leaf_tx_max_set(struct devlink_rate *rate_leaf, 
->> void *
->>       if (!mlx5_esw_allowed(esw))
->>           return -EPERM;
->> +    if (esw_vport_qos_check_and_disable(vport, rate_leaf->parent, 
->> tx_max,
->> +                        rate_leaf->tx_share,
->> +                        rate_leaf->tc_bw))
->> +        return 0;
->> +
->>       err = esw_qos_devlink_rate_to_mbps(vport->dev, "tx_max", 
->> &tx_max, extack);
->>       if (err)
->>           return err;
->> @@ -1749,6 +1787,11 @@ int mlx5_esw_devlink_rate_leaf_tc_bw_set(struct 
->> devlink_rate *rate_leaf,
->>       if (!mlx5_esw_allowed(esw))
->>           return -EPERM;
->> +    if (esw_vport_qos_check_and_disable(vport, rate_leaf->parent,
->> +                        rate_leaf->tx_max,
->> +                        rate_leaf->tx_share, tc_bw))
->> +        return 0;
->> +
->>       disable = esw_qos_tc_bw_disabled(tc_bw);
->>       esw_qos_lock(esw);
->> @@ -1930,6 +1973,11 @@ int 
->> mlx5_esw_devlink_rate_leaf_parent_set(struct devlink_rate *devlink_rate,
->>       struct mlx5_esw_sched_node *node;
->>       struct mlx5_vport *vport = priv;
->> +    if (esw_vport_qos_check_and_disable(vport, parent, devlink_rate- 
->> >tx_max,
->> +                        devlink_rate->tx_share,
->> +                        devlink_rate->tc_bw))
->> +        return 0;
->> +
->>       if (!parent)
->>           return mlx5_esw_qos_vport_update_parent(vport, NULL, extack);
-> 
-
+On Sun, Aug 17, 2025 at 4:36=E2=80=AFPM Huacai Chen <chenhuacai@loongson.cn=
+> wrote:
+>
+> After commit 84caf98838a3e5f4bdb34 ("mm: stop storing migration_ops in
+> page->mapping") we get such an error message if CONFIG_ZSMALLOC=3Dm:
+>
+>  WARNING: CPU: 3 PID: 42 at mm/migrate.c:142 isolate_movable_ops_page+0xa=
+8/0x1c0
+>  CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PRE=
+EMPT
+>  pc 9000000000540bd8 ra 9000000000540b84 tp 9000000100420000 sp 900000010=
+0423a60
+>  a0 9000000100193a80 a1 000000000000000c a2 000000000000001b a3 fffffffff=
+fffffff
+>  a4 ffffffffffffffff a5 0000000000000267 a6 0000000000000000 a7 900000010=
+0423ae0
+>  t0 00000000000000f1 t1 00000000000000f6 t2 0000000000000000 t3 000000000=
+0000001
+>  t4 ffffff00010eb834 t5 0000000000000040 t6 900000010c89d380 t7 900000000=
+23fcc70
+>  t8 0000000000000018 u0 0000000000000000 s9 ffffff00010eb800 s0 ffffff000=
+10eb800
+>  s1 000000000000000c s2 0000000000043ae0 s3 0000800000000000 s4 900000000=
+219cc40
+>  s5 0000000000000000 s6 ffffff00010eb800 s7 0000000000000001 s8 900000000=
+25b4000
+>     ra: 9000000000540b84 isolate_movable_ops_page+0x54/0x1c0
+>    ERA: 9000000000540bd8 isolate_movable_ops_page+0xa8/0x1c0
+>   CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=3DCC DACM=3DCC -WE)
+>   PRMD: 00000004 (PPLV0 +PIE -PWE)
+>   EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+>   ECFG: 00071c1d (LIE=3D0,2-4,10-12 VS=3D7)
+>  ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
+>   PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+>  CPU: 3 UID: 0 PID: 42 Comm: kcompactd0 Not tainted 6.16.0-rc5+ #2133 PRE=
+EMPT
+>  Stack : 90000000021fd000 0000000000000000 9000000000247720 9000000100420=
+000
+>          90000001004236a0 90000001004236a8 0000000000000000 9000000100423=
+7e8
+>          90000001004237e0 90000001004237e0 9000000100423550 0000000000000=
+001
+>          0000000000000001 90000001004236a8 725a84864a19e2d9 90000000023fc=
+c58
+>          9000000100420000 90000000024c6848 9000000002416848 0000000000000=
+001
+>          0000000000000000 000000000000000a 0000000007fe0000 ffffff00010eb=
+800
+>          0000000000000000 90000000021fd000 0000000000000000 900000000205c=
+f30
+>          000000000000008e 0000000000000009 ffffff00010eb800 0000000000000=
+001
+>          90000000025b4000 0000000000000000 900000000024773c 00007ffff103d=
+748
+>          00000000000000b0 0000000000000004 0000000000000000 0000000000071=
+c1d
+>          ...
+>  Call Trace:
+>  [<900000000024773c>] show_stack+0x5c/0x190
+>  [<90000000002415e0>] dump_stack_lvl+0x70/0x9c
+>  [<90000000004abe6c>] isolate_migratepages_block+0x3bc/0x16e0
+>  [<90000000004af408>] compact_zone+0x558/0x1000
+>  [<90000000004b0068>] compact_node+0xa8/0x1e0
+>  [<90000000004b0aa4>] kcompactd+0x394/0x410
+>  [<90000000002b3c98>] kthread+0x128/0x140
+>  [<9000000001779148>] ret_from_kernel_thread+0x28/0xc0
+>  [<9000000000245528>] ret_from_kernel_thread_asm+0x10/0x88
+>
+> The reason is that defined(CONFIG_ZSMALLOC) evaluates to 1 only when
+> CONFIG_ZSMALLOC=3Dy, we should use IS_ENABLED(CONFIG_ZSMALLOC) instead.
+> But when I use IS_ENABLED(CONFIG_ZSMALLOC), page_movable_ops() cannot
+> access zsmalloc_mops because zsmalloc_mops is in a module.
+>
+> To solve this problem, we define a movable_ops[] array in mm/migrate.c,
+> initialise its elements at mm/balloon_compaction.c & mm/zsmalloc.c, and
+> let the page_movable_ops() function return elements from movable_ops[].
+>
+> Fixes: 84caf98838a3e5f ("mm: stop storing migration_ops in page->mapping"=
+)
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+> V2: Use EXPORT_SYMBOL_GPL_FOR_MODULES instead of EXPORT_SYMBOL and fix bu=
+ild.
+> V3: Use register interface instead of set array directly (Thank David).
+>
+>  include/linux/migrate.h |  5 +++++
+>  mm/balloon_compaction.c |  6 ++++++
+>  mm/migrate.c            | 38 ++++++++++++++++++++++++++++++--------
+>  mm/zsmalloc.c           | 10 ++++++++++
+>  4 files changed, 51 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index acadd41e0b5c..9009e27b5f44 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -79,6 +79,7 @@ void migration_entry_wait_on_locked(swp_entry_t entry, =
+spinlock_t *ptl)
+>  void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
+>  int folio_migrate_mapping(struct address_space *mapping,
+>                 struct folio *newfolio, struct folio *folio, int extra_co=
+unt);
+> +int set_movable_ops(const struct movable_operations *ops, enum pagetype =
+type);
+>
+>  #else
+>
+> @@ -100,6 +101,10 @@ static inline int migrate_huge_page_move_mapping(str=
+uct address_space *mapping,
+>  {
+>         return -ENOSYS;
+>  }
+> +static inline int set_movable_ops(const struct movable_operations *ops, =
+enum pagetype type)
+> +{
+> +       return -ENOSYS;
+> +}
+>
+>  #endif /* CONFIG_MIGRATION */
+>
+> diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+> index 2a4a649805c1..03c5dbabb156 100644
+> --- a/mm/balloon_compaction.c
+> +++ b/mm/balloon_compaction.c
+> @@ -254,4 +254,10 @@ const struct movable_operations balloon_mops =3D {
+>         .putback_page =3D balloon_page_putback,
+>  };
+>
+> +static int __init balloon_init(void)
+> +{
+> +       return set_movable_ops(&balloon_mops, PGTY_offline);
+> +}
+> +core_initcall(balloon_init);
+> +
+>  #endif /* CONFIG_BALLOON_COMPACTION */
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 425401b2d4e1..9e5ef39ce73a 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -43,8 +43,6 @@
+>  #include <linux/sched/sysctl.h>
+>  #include <linux/memory-tiers.h>
+>  #include <linux/pagewalk.h>
+> -#include <linux/balloon_compaction.h>
+> -#include <linux/zsmalloc.h>
+>
+>  #include <asm/tlbflush.h>
+>
+> @@ -53,6 +51,33 @@
+>  #include "internal.h"
+>  #include "swap.h"
+>
+> +static const struct movable_operations *offline_movable_ops;
+> +static const struct movable_operations *zsmalloc_movable_ops;
+> +
+> +int set_movable_ops(const struct movable_operations *ops, enum pagetype =
+type)
+> +{
+> +       /*
+> +        * We only allow for selected types and don't handle concurrent
+> +        * registration attempts yet.
+> +        */
+> +       switch (type) {
+> +       case PGTY_offline:
+> +               if (offline_movable_ops && ops)
+> +                       return -EBUSY;
+> +               offline_movable_ops =3D ops;
+> +               break;
+> +       case PGTY_zsmalloc:
+> +               if (zsmalloc_movable_ops && ops)
+> +                       return -EBUSY;
+> +               zsmalloc_movable_ops =3D ops;
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(set_movable_ops);
+> +
+>  static const struct movable_operations *page_movable_ops(struct page *pa=
+ge)
+>  {
+>         VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
+> @@ -62,15 +87,12 @@ static const struct movable_operations *page_movable_=
+ops(struct page *page)
+>          * it as movable, the page type must be sticky until the page get=
+s freed
+>          * back to the buddy.
+>          */
+> -#ifdef CONFIG_BALLOON_COMPACTION
+>         if (PageOffline(page))
+>                 /* Only balloon compaction sets PageOffline pages movable=
+. */
+> -               return &balloon_mops;
+> -#endif /* CONFIG_BALLOON_COMPACTION */
+> -#if defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION)
+> +               return offline_movable_ops;
+>         if (PageZsmalloc(page))
+> -               return &zsmalloc_mops;
+> -#endif /* defined(CONFIG_ZSMALLOC) && defined(CONFIG_COMPACTION) */
+> +               return zsmalloc_movable_ops;
+> +
+>         return NULL;
+>  }
+>
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 2c5e56a65354..6c574ab8abff 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -2246,8 +2246,15 @@ EXPORT_SYMBOL_GPL(zs_destroy_pool);
+>
+>  static int __init zs_init(void)
+>  {
+> +       int rc;
+> +
+>  #ifdef CONFIG_ZPOOL
+>         zpool_register_driver(&zs_zpool_driver);
+> +#endif
+> +#ifdef CONFIG_COMPACTION
+> +       rc =3D set_movable_ops(&zsmalloc_mops, PGTY_zsmalloc);
+> +       if (rc)
+> +               return rc;
+>  #endif
+>         zs_stat_init();
+>         return 0;
+> @@ -2257,6 +2264,9 @@ static void __exit zs_exit(void)
+>  {
+>  #ifdef CONFIG_ZPOOL
+>         zpool_unregister_driver(&zs_zpool_driver);
+> +#endif
+> +#ifdef CONFIG_COMPACTION
+> +       set_movable_ops(NULL, PGTY_zsmalloc);
+>  #endif
+>         zs_stat_exit();
+>  }
+> --
+> 2.47.3
+>
 
