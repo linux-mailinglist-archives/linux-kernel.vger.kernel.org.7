@@ -1,214 +1,119 @@
-Return-Path: <linux-kernel+bounces-772300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EEDB29102
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:22:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC20B29107
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 02:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565AC480010
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 00:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFE13A0D08
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 00:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC104AEE2;
-	Sun, 17 Aug 2025 00:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CFB72610;
+	Sun, 17 Aug 2025 00:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D4XOz9XE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A58645
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 00:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fUQxl/hn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293D13FEE;
+	Sun, 17 Aug 2025 00:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755390138; cv=none; b=Lkbf/MmWcLYMtzrAHUWbe41bs2dvU5eWjzzbWYe3OaSW/OzXUwKCgBZSQtYjHw2uhQSPtG16DH/8ZIAoFyJs+q55wtXKRz/BlqAhjQerjXwUNvmCetbdFa3pAedEenuZsWhgQtB1myZsup6ZfjV03xSHSRXqsTAgjQedK3zcn1c=
+	t=1755390733; cv=none; b=iz42sb+vRiD9qySbFTqtFdSQKlAkZLU4m5zimr3XX/Jgzfo8DQ+5+lduhovyg9uOATjAz914kzZjvfka7RkHS7Aqq8AmVpbx1zChdckfzzA/3NS8s50ZDOru2RDyee/ri1hEgqCxruwQN5jaU6DQq1i+JdQ7QYTxUAGKCSUTkEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755390138; c=relaxed/simple;
-	bh=HzUS/ANJZ+pP1UEOuT1DGIETiwEnSHfyFvRZtXTD+/0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=DP7kJ/5tc4fK78u/eLcrZ5K1/NnLe5x/3sWQwMC1Zsy09sIbIu7T5VA07Sb/J06rnUMbd/bg7izp+o07FcNqky5n5/TdT+hCjpdHBrN48ZGzdyN30B1x5YjfPDBNDHdNZH63dew7TqN0ke3nobV2AbElk3Xi3pcLWQ/v04XUgm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D4XOz9XE; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755390137; x=1786926137;
-  h=date:from:to:cc:subject:message-id;
-  bh=HzUS/ANJZ+pP1UEOuT1DGIETiwEnSHfyFvRZtXTD+/0=;
-  b=D4XOz9XEVfRORQfKEMqz7QjXr8DX79KD2NqqUH3Y0YLmzDwtkh5PX/O4
-   D1gn9nrzVMWNaI5jTzi5Nvfi8HY3bg7dEgHmajzGPDO2bS9JVdkQI3nI+
-   PsQ9cJ5j07x2VspTbSHAx4B5CeJA4C+aCeSsbFYrkJ4vK8bA7nl8zzeyx
-   aJsTr4EBx77GKjx99zLMQwppQZHtwLBzC/6jc7TkIqqjd8NkAg2KCC6w5
-   ksqSUlNGHIGwCqy51sXf7mwlyxuqlJJfnPUIGu4YqdnchdFPTDaHzl+65
-   TVyon5O+3Yl2B7wcjjGwcotUaabN4lC5NeMa6ZXvoU2uADSsdj9htyu3A
-   w==;
-X-CSE-ConnectionGUID: 89aSn+94Rpe2nKVgTBWsLQ==
-X-CSE-MsgGUID: Y7HYrZgsQwKibGOJ1gKnCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="69030365"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="69030365"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 17:22:16 -0700
-X-CSE-ConnectionGUID: OofRZ+L6QB6hJdA5urRQ/A==
-X-CSE-MsgGUID: o4mZTqjHQFKxXFeSn+x4ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="204450027"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 16 Aug 2025 17:22:16 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unR9o-000DHD-0o;
-	Sun, 17 Aug 2025 00:22:08 +0000
-Date: Sun, 17 Aug 2025 08:21:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- bfc22e5ae0a8375d2b9cb83f0194e7aca1283eb2
-Message-ID: <202508170849.qgLhnJjQ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755390733; c=relaxed/simple;
+	bh=SYSf3xnc7zAMoFCLHwjiYQSb+HCoNuTd/lwQn8+geW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RBI1i1ndT68OJTuh21Mb4D2y0Qm3kcXoQ+Q/z48F50jr7hauUoP7La6bX8NRyNx+TVUUtjxfKQ1gGSCQtt6H7Ozn94cXIR9YeWJ8X90dGj/8CRy7OU+VxNUFieiSvtyurL8Nf7P+RjtpknHoe0ufxM5DCfprB5rYNsUruycqDyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fUQxl/hn; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Gy
+	S0BF4N7kb4dNNguU2QXnvUxcXRJcFEexZ/e1tAMcw=; b=fUQxl/hnspEEivhZtF
+	JL0QJAxPnyP9luJrKPdSmTdsxODomk3uHUOVex7eEcFOSm+B9W3l8inamESdlrUU
+	dLQdeX7uzM4oGZBLMlgmFgxtkAR2dmni+in11hR42akVQD5AhlDIqz4S0cfn/mpZ
+	uT37D1WtW3+IFs2wPrdYaTCHk=
+Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wBHEDl3IqFo9GLXBw--.16921S2;
+	Sun, 17 Aug 2025 08:29:53 +0800 (CST)
+From: luoguangfei <15388634752@163.com>
+To: nicolas.ferre@microchip.com,
+	claudiu.beznea@tuxon.dev
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	15388634752@163.com
+Subject: [PATCH] net: macb: fix unregister_netdev call order in macb_remove()
+Date: Sun, 17 Aug 2025 08:29:39 +0800
+Message-ID: <20250817002939.3296-1-15388634752@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBHEDl3IqFo9GLXBw--.16921S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw1fXrW3WFyrur47AFWUArb_yoW8Ww48pw
+	43GFyfWryIqrsFyws7Xa1UJFy5Ga47t348Wa4xu393Z39IkryqyrWjkFy8uFy5GrZrAFWa
+	yr15AasxAa1kAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pid-BtUUUUU=
+X-CM-SenderInfo: jprvjmqywtklivs6il2tof0z/
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: bfc22e5ae0a8375d2b9cb83f0194e7aca1283eb2  Merge branch into tip/master: 'x86/urgent'
+When removing a macb device, the driver calls phy_exit() before
+unregister_netdev(). This leads to a WARN from kernfs:
 
-elapsed time: 1057m
+  ------------[ cut here ]------------
+  kernfs: can not remove 'attached_dev', no directory
+  WARNING: CPU: 1 PID: 27146 at fs/kernfs/dir.c:1683
+  Call trace:
+    kernfs_remove_by_name_ns+0xd8/0xf0
+    sysfs_remove_link+0x24/0x58
+    phy_detach+0x5c/0x168
+    phy_disconnect+0x4c/0x70
+    phylink_disconnect_phy+0x6c/0xc0 [phylink]
+    macb_close+0x6c/0x170 [macb]
+    ...
+    macb_remove+0x60/0x168 [macb]
+    platform_remove+0x5c/0x80
+    ...
 
-configs tested: 122
-configs skipped: 4
+The warning happens because the PHY is being exited while the netdev
+is still registered. The correct order is to unregister the netdev
+before shutting down the PHY and cleaning up the MDIO bus.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Fix this by moving unregister_netdev() ahead of phy_exit() in
+macb_remove().
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250816    gcc-8.5.0
-arc                   randconfig-002-20250816    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                        keystone_defconfig    gcc-15.1.0
-arm                          pxa910_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250816    gcc-12.5.0
-arm                   randconfig-002-20250816    gcc-10.5.0
-arm                   randconfig-003-20250816    gcc-10.5.0
-arm                   randconfig-004-20250816    gcc-10.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250816    clang-22
-arm64                 randconfig-002-20250816    clang-22
-arm64                 randconfig-003-20250816    gcc-8.5.0
-arm64                 randconfig-004-20250816    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250816    gcc-15.1.0
-csky                  randconfig-002-20250816    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250816    clang-19
-hexagon               randconfig-002-20250816    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250816    clang-20
-i386        buildonly-randconfig-002-20250816    gcc-12
-i386        buildonly-randconfig-003-20250816    gcc-12
-i386        buildonly-randconfig-004-20250816    gcc-12
-i386        buildonly-randconfig-005-20250816    gcc-12
-i386        buildonly-randconfig-006-20250816    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250816    gcc-15.1.0
-loongarch             randconfig-002-20250816    gcc-14.3.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                       bvme6000_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          eyeq5_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250816    gcc-10.5.0
-nios2                 randconfig-002-20250816    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250816    gcc-10.5.0
-parisc                randconfig-002-20250816    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc               randconfig-001-20250816    clang-20
-powerpc               randconfig-002-20250816    clang-22
-powerpc               randconfig-003-20250816    clang-22
-powerpc64             randconfig-001-20250816    gcc-8.5.0
-powerpc64             randconfig-002-20250816    clang-22
-powerpc64             randconfig-003-20250816    clang-16
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250816    clang-22
-riscv                 randconfig-002-20250816    gcc-13.4.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250816    clang-22
-s390                  randconfig-002-20250816    gcc-12.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250816    gcc-15.1.0
-sh                    randconfig-002-20250816    gcc-12.5.0
-sh                          rsk7203_defconfig    gcc-15.1.0
-sh                           se7722_defconfig    gcc-15.1.0
-sh                        sh7757lcr_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250816    gcc-15.1.0
-sparc                 randconfig-002-20250816    gcc-15.1.0
-sparc64               randconfig-001-20250816    gcc-11.5.0
-sparc64               randconfig-002-20250816    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250816    gcc-12
-um                    randconfig-002-20250816    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250816    gcc-12
-x86_64      buildonly-randconfig-002-20250816    gcc-12
-x86_64      buildonly-randconfig-003-20250816    gcc-12
-x86_64      buildonly-randconfig-004-20250816    clang-20
-x86_64      buildonly-randconfig-005-20250816    clang-20
-x86_64      buildonly-randconfig-006-20250816    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250816    gcc-10.5.0
-xtensa                randconfig-002-20250816    gcc-9.5.0
+Signed-off-by: luoguangfei <15388634752@163.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index ce55a1f59..7bbb674d5 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -5407,11 +5407,11 @@ static void macb_remove(struct platform_device *pdev)
+ 
+ 	if (dev) {
+ 		bp = netdev_priv(dev);
++		unregister_netdev(dev);
+ 		phy_exit(bp->sgmii_phy);
+ 		mdiobus_unregister(bp->mii_bus);
+ 		mdiobus_free(bp->mii_bus);
+ 
+-		unregister_netdev(dev);
+ 		cancel_work_sync(&bp->hresp_err_bh_work);
+ 		pm_runtime_disable(&pdev->dev);
+ 		pm_runtime_dont_use_autosuspend(&pdev->dev);
+-- 
+2.43.0
+
 
