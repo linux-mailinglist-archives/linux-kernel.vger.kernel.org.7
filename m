@@ -1,125 +1,172 @@
-Return-Path: <linux-kernel+bounces-772594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D1AB2949D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:47:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B003B294A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBDA97AAE62
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670AF2A0D4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50D924503F;
-	Sun, 17 Aug 2025 17:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ehq71RP1"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE48B2FE069;
+	Sun, 17 Aug 2025 17:58:39 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B54189;
-	Sun, 17 Aug 2025 17:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E3018B0F
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 17:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755452866; cv=none; b=tglhslxJrGWdfm2RH+7BPM78fY8922U5JlALYzzFBFdJHIWQJA6V8QkcmJtdSnmNyqtX5XE7rsKrKaoC9+sGpt+/faoSeWCJo62DrhmZlwsiFBAnAL38af1UvVTDr95OxCT+4tgqjGQpwqQ9032Vmm2TfsObmP1pdsiouLqWZvo=
+	t=1755453519; cv=none; b=q0x732u1h+0prmTBkniBRw/yqiJqVMYPGGGgjCQYYvqbek8NdpQzKKi3ldfHMRogh/IKG+9FfvQa52KUcWfoyjJ0xyVQVFHcqZRu9pELHdkSeYXR2n58yA7kGmZioS3gCsLRi9wJInj1aVFvu7FeuWCnDqVOUqqrHvMxaHwezWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755452866; c=relaxed/simple;
-	bh=Nb3p2/dQ3dd2RU2uehYUc8SwM1amhrKz8LeEUiVXMHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plveJcohLyTQrHmuY0PPCrwQ09JZuJuDtsh0Wkd16CVTKuyasiUF8zqT23fknYVvLelLMglWdJq51DzJn9OLgYtcnufks2ZKw1aGufPnfQimriTXxfZEluk0iSqsibtoJQokUhx+vNuZOYRoem4MXiVFBwtxDaNZzheU3p6v0wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ehq71RP1; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pETT1V4Ybq1eUqs8XQoOTyrWdlzRYVHjm07CxdFZWwk=; b=ehq71RP1BHqMeC1TxwPR6osPq+
-	Cn4FRwRVs1JA55vMPiGvQ6YNfyDjgCjPPB/RuUbDE5PdeBk1exhgMwdDBG/jIX5viGVIekkhg93Nk
-	Zx1eX9ixuqd0myxUACTS64RUEHUu3DjCx7G8YhhIp0MYpDezj5j4QETfoO4fDe0N63wXHjIfX3TgB
-	ugAd9Pn9eWjRkBmGckkP0FZZ4G8rRfa8Q0rGTc0vZVuGvalA4SMAEwPM/+WyoUex3+dsE9Qp7WweP
-	/f+gEl5Ep9c2xEp8/miTiZrzSYe3O+vWbmYlYp1DU3WxkGMjPhNmXtWMJzB/nRZtcEX6hlYgMSW/I
-	SFp+exfA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1unhTp-0000000BSQ2-1MKz;
-	Sun, 17 Aug 2025 17:47:41 +0000
-Date: Sun, 17 Aug 2025 18:47:41 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ian Kent <raven@themaw.net>, autofs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spin_lock_irqsave() in autofs_write() is bogus
-Message-ID: <20250817174741.GX222315@ZenIV>
-References: <20250817163609.GV222315@ZenIV>
- <CAHk-=wj-NB_5KTCj7yhBsF145oLDuxQPt4J87tXsd6j+p3vzDw@mail.gmail.com>
+	s=arc-20240116; t=1755453519; c=relaxed/simple;
+	bh=cOm+POGp8rtWWZ/1zY0gimydOD8j12HKIaOb1eZmAYA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i1cWirjDgM5oVbQPL3Ga+QtYz+hI/3ItSsYN+5kxhzMQWbr97URYJcgTbk8e2SsSFjqbVfDVbJ0rA0BgcmsVH8Q0MKIrTeFAqf2J6BuxfRohg7I1jUSsTCEI2V4TmTROP9hRv7Q0yCi7jvdyYX9e1XOjcdxMtdHwysNJUGha8U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8845b4f5394so5661439f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 10:58:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755453517; x=1756058317;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ShM/4HtZujH7pQsnFibFwYjRau9v9FrA30ZExvTQCnE=;
+        b=mID4j9i/8tMdnTBMXrBWbR3Yh1HxYLAigDZq0FWEAliBhA6H+XQTN3u34j6Uvikn5Z
+         ctwEuiedPAC5cj9dSnr+bAj5dUm5UCrqQO0DwKZF6U9YRfZrbsvBRQvTQv7fpcPpSTh5
+         tntB00SNL1VXf9NaPd98IsmYdcVQ6PNOX6GjX8Wd47PJQSJXa33bTOBx4u7WnC+NrKt4
+         vFtha4hIgLKKcJrYFHI2kv9Trp2G1twb6sJ2y28yNE7KBvAQd71elniLK7PTR8Tmtmfh
+         6ykbUfC4H7YyB71JF5hMlN6GFRZGzOJFxT5oeHUByK+AQxfqIguoDGXmvxcVgA1e1rZD
+         8I9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYRmrr3gEn72RTqjoMa6fjcFK4pN1gofQ0HITN+csgZZll679g3KXRQEOEmc18noc10hWsSzkYbgt1ccE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyITuZf1oHWZHC/MIL3LLPh4Hh9hD912FpJvflUei8fYHqaAPSD
+	FG2vP/RrgnltdtFZRkjXfGNo/CtZSWGatDpVj3P9j1IpkNfJTGBt+G4kZQYr3xf+2P2VNrRHRqa
+	u+UOmk79SY/EbEqEzVauV1GnX9j63cOEI1Fnu6wMJWeSvq4j6kdSPppunM8g=
+X-Google-Smtp-Source: AGHT+IEB+XlMWvMkE27pvMl9co5iwrldmB8V/RESRo0PNg9g8dPo1JxT3Dw0Od0OSyvYhLtjOpoWc3T+bK1cGHiHm+ui6J/S0Luw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj-NB_5KTCj7yhBsF145oLDuxQPt4J87tXsd6j+p3vzDw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:198b:b0:3e2:99c3:47c8 with SMTP id
+ e9e14a558f8ab-3e57e9d10a0mr145042245ab.17.1755453516881; Sun, 17 Aug 2025
+ 10:58:36 -0700 (PDT)
+Date: Sun, 17 Aug 2025 10:58:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a2184c.050a0220.e29e5.0070.GAE@google.com>
+Subject: [syzbot] [gfs2?] kernel BUG in gfs2_withdraw (2)
+From: syzbot <syzbot+901524eae72170197041@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 17, 2025 at 09:50:25AM -0700, Linus Torvalds wrote:
-> On Sun, 17 Aug 2025 at 09:36, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >         That function should never be (and never is) called with irqs
-> > disabled - we have an explicit mutex_lock() in there, if nothing else.
-> > Which makes spin_lock_irqsave() use in there pointless - we do need to
-> > disable irqs for ->siglock, but that should be spin_lock_irq().
-> 
-> I think we basically did the irqsave/restore version as the default
-> when not wanting to think about the context.
->
-> Your patch looks fine, but I doubt it's measurable outside of "it
-> makes the code a few bytes smaller".
->
-> So ACK on it, but I'm not convinced it's worth spending time actively
-> _looking_ for these kinds of things.
+Hello,
 
-It's obviously not a hot path of any sort; the only cost is head-scratching
-of later readers.  OTOH, seeing that nobody had looked at it that one in
-what, 28 years...
+syzbot found the following issue on:
 
-For another head-scratcher in that area: I started to look at __rcu sparse
-noise, and ->sighand->siglock accesses had been quite a part of that.
-current->sighand is obviously stable and should need no rcu_dereference(),
-right?  So what the hell is
-        rcu_read_lock();
-	sighand = rcu_dereference(current->sighand);
-	spin_lock_irqsave(&sighand->siglock, flags);
-	recalc_sigpending();
-	spin_unlock_irqrestore(&sighand->siglock, flags);
-	rcu_read_unlock();
-in net/sunrpc/svc.c:svc_unregister() about?  Is there something subtle I'm
-missing there?  AFAICS, that came from 00a87e5d1d67 "SUNRPC: Address
-RCU warning in net/sunrpc/svc.c" and commit message in there contains
-no explanation beyond "sparse is complaining, let's make it STFU"...
+HEAD commit:    8742b2d8935f Merge tag 'pull-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1414cda2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
+dashboard link: https://syzkaller.appspot.com/bug?extid=901524eae72170197041
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-Looking for ->sighand stores gives this:
-fs/exec.c:1070:         rcu_assign_pointer(me->sighand, newsighand);
-	store to current->sighand, called from begin_new_exec(), with
-'me' set to current.
-kernel/exit.c:215:      tsk->sighand = NULL;
-	__exit_signal(), from release_task(), and if it's ever done
-asynchronously to the current thread, we are really fucked (note that
-we do *not* check that sighand is non-NULL in that snippet).
-kernel/fork.c:1608:     RCU_INIT_POINTER(tsk->sighand, sig);
-	copy_sighand(), from copy_process(), done to the child task
-that is nowhere near running at that point.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-So nothing weird has happened and that code looks very much like
-a pointless head-scratcher.  Sure, the cost in execution time is
-not going to be measurable, but the cost for readers is non-trivial...
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-8742b2d8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b561d09cce5a/vmlinux-8742b2d8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0eac1e9113b1/bzImage-8742b2d8.xz
 
-FWIW, I suspect that the right way would be something like
-static inline struct sighand_struct *current_sighand(void)
-{
-	return unrcu_pointer(current->sighand);
-}
-if unrcu_pointer is idiomatic in such case, plus conversion of open-coded
-instances to it...
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+901524eae72170197041@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+gfs2: fsid=syz:syz.0: journal 0 mapped with 5 extents in 0ms
+gfs2: fsid=syz:syz.0: first mount done, others may mount
+gfs2: fsid=syz:syz.0: fatal: invalid metadata block - bh = 2051 (type: exp=14, found=8), function = gfs2_quota_init, file = fs/gfs2/quota.c, line = 1430
+gfs2: fsid=syz:syz.0: about to withdraw this file system
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/util.c:331!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5364 Comm: syz.0.0 Not tainted 6.17.0-rc1-syzkaller-00016-g8742b2d8935f #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:gfs2_withdraw+0x137b/0x1430 fs/gfs2/util.c:331
+Code: ff ff 48 8b 4c 24 18 80 e1 07 80 c1 03 38 c1 0f 8c 55 fb ff ff 48 8b 7c 24 18 e8 20 7c 25 fe e9 46 fb ff ff e8 86 90 c0 fd 90 <0f> 0b 48 8b 4c 24 18 80 e1 07 80 c1 03 38 c1 0f 8c ab fb ff ff 48
+RSP: 0018:ffffc9000d32f680 EFLAGS: 00010293
+RAX: ffffffff83ff2ada RBX: ffffc9000d32f740 RCX: ffff888000aa0000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc9000d32f810 R08: ffff88801fc24253 R09: 1ffff11003f8484a
+R10: dffffc0000000000 R11: ffffed1003f8484b R12: dffffc0000000000
+R13: 1ffff92001a65ee4 R14: 1ffff110087b3815 R15: 0000000000000004
+FS:  00007fc82060a6c0(0000) GS:ffff88808d211000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdc3a1909c0 CR3: 0000000042f3e000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ gfs2_metatype_check_ii+0x78/0x90 fs/gfs2/util.c:514
+ gfs2_metatype_check_i fs/gfs2/util.h:129 [inline]
+ gfs2_quota_init+0xfc8/0x1230 fs/gfs2/quota.c:1430
+ gfs2_make_fs_rw+0x181/0x2b0 fs/gfs2/super.c:149
+ gfs2_fill_super+0x1a7b/0x20d0 fs/gfs2/ops_fstype.c:1278
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
+ gfs2_get_tree+0x51/0x1e0 fs/gfs2/ops_fstype.c:1335
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc81f79038a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc820609e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fc820609ef0 RCX: 00007fc81f79038a
+RDX: 0000200000000400 RSI: 0000200000012500 RDI: 00007fc820609eb0
+RBP: 0000200000000400 R08: 00007fc820609ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000012500
+R13: 00007fc820609eb0 R14: 00000000000125bb R15: 0000200000000900
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:gfs2_withdraw+0x137b/0x1430 fs/gfs2/util.c:331
+Code: ff ff 48 8b 4c 24 18 80 e1 07 80 c1 03 38 c1 0f 8c 55 fb ff ff 48 8b 7c 24 18 e8 20 7c 25 fe e9 46 fb ff ff e8 86 90 c0 fd 90 <0f> 0b 48 8b 4c 24 18 80 e1 07 80 c1 03 38 c1 0f 8c ab fb ff ff 48
+RSP: 0018:ffffc9000d32f680 EFLAGS: 00010293
+RAX: ffffffff83ff2ada RBX: ffffc9000d32f740 RCX: ffff888000aa0000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc9000d32f810 R08: ffff88801fc24253 R09: 1ffff11003f8484a
+R10: dffffc0000000000 R11: ffffed1003f8484b R12: dffffc0000000000
+R13: 1ffff92001a65ee4 R14: 1ffff110087b3815 R15: 0000000000000004
+FS:  00007fc82060a6c0(0000) GS:ffff88808d211000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdc3a1909c0 CR3: 0000000042f3e000 CR4: 0000000000352ef0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
