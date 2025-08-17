@@ -1,235 +1,241 @@
-Return-Path: <linux-kernel+bounces-772554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ABFB29411
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:19:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B5EB29419
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282E71964978
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6C92A4DE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EA72FE057;
-	Sun, 17 Aug 2025 16:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2882E54A9;
+	Sun, 17 Aug 2025 16:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="gyJrorIy"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XfLoi8gN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4C023E358
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755447542; cv=none; b=bqNo0GriOTREb6d0iYwSJYL81Qrn7Ee5wY5BFdRIMVKQPnLLDtp7FfiPBaGFduRwPNPmY/0p/EOLxZQzNvid2S0Yk0B75Z24Rf+jIIEnjXgPgz9f5Akl85NrZao31hufqOxZPieNJ7ui3Wt1HZdWYVMR/oS+3pn2pJN3j6LtjXo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755447542; c=relaxed/simple;
-	bh=7K1JBOlrkJAy846TJDIx/5awKgL+VQXm9kq6dy++U8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z/IpZU0rW7oIB6MvsKGo61cszTlzXzZrzWEupVWGpAt3v8bZ7mhlv6SLAx7LqfTa1QZ6XnbNIVRpcr2z0mzGvyTTMd6EgO3mu+lSG2PYAgMnBdhmZvVSL2avxE898u7Y/cY/PvKd32eh2soV6T4EfVCw0LqzZ0k455tFwCxcVpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=gyJrorIy; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1755447532;
- bh=0CUhYVjW9f0TF6cCOLGbcdcZ9oH4iDwa7H4w1bk9Lv0=;
- b=gyJrorIykmGIARt1tBHrCLhlyQ3u8h5xV05VcWEO5KswAcz7dECSpOoXbXqpqi97U9jbjCSXo
- YNsKKSRyu3umFTKmeRLrJRbnu8HS8dxiMz90RKQtMIDlVe9L2Vv/TRT9SOniCYLUw4z4TOZJFPW
- 9V0C6ug1n9XhAM4bQ+0zdQHz8A5G5afQ5Pvc9tyjhum2H5RERACXTJgKqWMNr1xzIb2K4Yl8N3G
- epkeYZnv3g+pAl2SpGS4O/jX6Cj1T0SaOuve9l5BawiENscWwqykSZjcgE4oE60L33ELNv3SyWm
- rOhyGZAqgyzNErhjQ/e5v2IoEO3DCQrQjHQHI6plZycw==
-X-Forward-Email-ID: 68a200e89a82a81f459cf4aa
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.4
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <a45d0c97-9e31-42a9-aeed-6f874f4f7321@kwiboo.se>
-Date: Sun, 17 Aug 2025 18:18:42 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA331E32CF
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755447621; cv=fail; b=Oo8APlYAwAteaSgNcxMkgjAEA+r16rgY6iWMSNj3Lb5Lmo/WdxlJ/yGHocde0aYS5hmrcqzS86aHQYJqpyjl3lxIwQPnMEvh3HzrXRFdgKa13k5zu3YUpOCEeXlHyZexAa9M8XtoxA9SnAiY+p2d7jfl/foXsA0YZZfLt4KXR9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755447621; c=relaxed/simple;
+	bh=uE3ZCqxIIKSvyGHf4iXzu+iVqayQg38NSHhmwtzfJmY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Pkf1aQBySegF/vClL6NNgQMbDnIY1rAGFEDTTVpTw8aSeD0AwpsZ2FHYLpEJkcMObxfGQg5Tx3BZUW9YLygkI+jxO4ZJn3ugRUhP7D9bcVFgcI0DmNjDqYXTlFFcotHswhd38qzSq+kViu/j4M04qAoS3vEQnBXbvj1fI52uugg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XfLoi8gN; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755447620; x=1786983620;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=uE3ZCqxIIKSvyGHf4iXzu+iVqayQg38NSHhmwtzfJmY=;
+  b=XfLoi8gNXjnBSKPXoqZd7vOoJ0BPlhap25bS7WTuu85HQ2+zaYgiRGuJ
+   b1pUIj5tn4lpUsSP6vzNA4XXyOkSFBV2EDhvxUyOY8+ldVPeBKintU5M4
+   9JVsDMclKrF3sc65+83u2jPXIwoWfgpjIiWlmYy9dPQeJ4awmO1PY05qW
+   lt8VmboCFaqQiVpoWlRBVgY3dH2nCoi7BaK1S0rUm9kC+hVubwjw1Rp5L
+   iqrRFqTyk1dPjYlDUIYVVN2xf181h1iFmRdfcsbAdVma4P9sJjKbong1Z
+   D/bNLiP7/ha/Y9ore1JoeiHK47Up+++wlZxGF5ey4/x91n9FoW3C4uK/e
+   w==;
+X-CSE-ConnectionGUID: f+D1s6xcTt+hLSrB9B8/DA==
+X-CSE-MsgGUID: uho8OFt0THKhJZBa3Abqow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57763621"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57763621"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 09:20:19 -0700
+X-CSE-ConnectionGUID: XtE5l7DnQ5KrpWyASzcNlw==
+X-CSE-MsgGUID: YILBiuVsSWWfDb19tDUBHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171831644"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 09:20:19 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 09:20:18 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 09:20:18 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.69) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 09:20:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zp4sy8HI4IVRgZKi7txDu0Qgp99XS6lnFIv/Nmkg2kfqCs8dKVWhx7HGo1wDkVOC+t0g6iTS/m5v5Fr37PzWlefKW+tAJauQJmiRrnoP5kANor9DzIpyjhPcdV4wtJzE1PT3g29UY8WzQnLedj5dlIYqd3OEpt5ONFW9xHsgPuJgZJgOL56lQvdWI7xSk2lO7Oi+NqbdgbHNwFZH1RXK0erGV3qBdOQYdVzE6KhzIQuvei9zLiSZGwUBfo1cMFzesrmr7aeD8jwEx5imF0WSl3y60eOTmXqGnn/8ly+e+fbCsGC5+zffmolzqTqex5BTDd4oqPQaQwCk2MDW+pLV1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2DtS+1XeMlK0kL51QI5R80E3ouGjLqs+g7lFnh359f4=;
+ b=f7755vRTA8PVqrjgO4GpzViuPHRw/FgtKmIDrPLOlOQDxTNCwY6Q30lmBrYzM1sgfm2NKSTm3fS+dgPClp2xwZ22pSNQiZRWkt6A7oHPaNtk12gWp9OMijpsgJLJ/gph/04UGf9h+leiu7Y5iU608yxO+bSF/UsE9gODJpvLQq4NJPJv6NNfQIqybH60aWuiAt+SHg+JXvdZ7+KbzHfzEF8kfR2F4XPF20EG1hnHCXAGQTWWuNidVpHek1LtJu8MwOzJ+iH+Ztu9K7GpxP8eo37jeMxH9nl8RaGnpftsDtTJbooYDFOh5njLBSfo9sJN8DSylmcIks5Ssu12HFj3rg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
+ by MW6PR11MB8412.namprd11.prod.outlook.com (2603:10b6:303:23a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Sun, 17 Aug
+ 2025 16:20:11 +0000
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.9031.021; Sun, 17 Aug 2025
+ 16:20:10 +0000
+Date: Sun, 17 Aug 2025 12:20:05 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: <zhaoguohan@kylinos.cn>
+CC: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <badal.nilawar@intel.com>,
+	<karthik.poosa@intel.com>, <riana.tauro@intel.com>, "open list:INTEL DRM XE
+ DRIVER (Lunar Lake and newer)" <intel-xe@lists.freedesktop.org>, "open
+ list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/xe/hwmon: Return early on power limit read failure
+Message-ID: <aKIBNeuupayX6awq@intel.com>
+References: <20250815063623.18162-1-zhaoguohan@kylinos.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250815063623.18162-1-zhaoguohan@kylinos.cn>
+X-ClientProxiedBy: SJ0PR03CA0197.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::22) To CYYPR11MB8430.namprd11.prod.outlook.com
+ (2603:10b6:930:c6::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] media: rkvdec: Disable QoS for HEVC and VP9 on
- RK3328
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <20250810212454.3237486-6-jonas@kwiboo.se>
- <3cf31d3b89a66b1bec57486c54c3df31393335e5.camel@collabora.com>
- <9dce97a9-92e6-4803-9e06-b2938e3c4999@kwiboo.se>
- <f2908b2d35671e70e6a8b295de623e3a3ffe2212.camel@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <f2908b2d35671e70e6a8b295de623e3a3ffe2212.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|MW6PR11MB8412:EE_
+X-MS-Office365-Filtering-Correlation-Id: 131473bc-3cfd-44fa-7cdf-08dddda9f044
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/0AG+Ca45WPaNIr5Zj5Rq6KrEuU9yIpXWz7j1ch18tuJWwg3RM+/n+UfXds/?=
+ =?us-ascii?Q?X0cm7/9lj1hPye+zYn9urk2AIYz1arWEw34jrnfAsi/q5glHMKYDSQ82dNpi?=
+ =?us-ascii?Q?KtXOZqjsqLSQjUa51c5OrBxDZxxGrJGNGOhcMfQMO41/YMBIVciljtMoJLFo?=
+ =?us-ascii?Q?Izk3Tp4lN7V0JaEC9yunH1KgfOPqf1q/miFi3iyjenpewtxDehBSMc8rX5fN?=
+ =?us-ascii?Q?HVm0yXYyeARbpRXs+1osbwQMENqalewnYnOJQHgGgTmq6F2W132mHs5cGVp3?=
+ =?us-ascii?Q?ulq56F+Fyh1r6UWUdIhjhZrCjFfxeY8IZJoPzeWaD4C5c8z0sXGLxhtkVNbr?=
+ =?us-ascii?Q?2NcgTp1rbHtX0WlG3Ie+3SocdlUBwVTc06gY12zgfOikOTcRlZs2ZgZNseM2?=
+ =?us-ascii?Q?Z5uvY473pyHKCp4d+6KYf4yxNDF0US8muE5Wuo73xJ8z8ApR3M8kCMQCTCIQ?=
+ =?us-ascii?Q?btV8+HFE91p3taNLIf/6c50+j9kaYrlBA1pBBIP1CV8HYElTotz4iskSyB1B?=
+ =?us-ascii?Q?iucE2tDE5itptw+pMLDc4kZ1SaTZUbNAuRYuvm1mGuZrMbCTGcIQMKJu18LL?=
+ =?us-ascii?Q?nTFMApos0234lczGTQdx5bf2cgf9etrHCn9hHDagRIknm9S5n2ci302bCoja?=
+ =?us-ascii?Q?vnFsEPDN9WjJufw5G+nfTbpcH5/xgkhuCNdefMOtmql4+f7S9H6przgZepP7?=
+ =?us-ascii?Q?/fk5q3eaqJJaejgK4omGGOa0qFsEGrY6/s7sWOaIi+me04/dtveR3Spa1dbz?=
+ =?us-ascii?Q?Rm7KtC/N611IyBukp/Q5BhMf59xUeh+fsANi2g0/5WN+4fGHcbioK/pQ0Iev?=
+ =?us-ascii?Q?7xWU6yYmThllEcNl0EJY5vB+U9i5CFablvWhrBVs2vfxCANTq6VoDOJ81DCk?=
+ =?us-ascii?Q?2aK6s/Lp7XkKKYoyfHWqVWyNC5wjlIrizmK2fVDPd6NJcTYOJib+27Bjmgkq?=
+ =?us-ascii?Q?HSNhRPwS75wEXIb43LMElBMVP3WtCgR4caRtupVis9txDQnS0z85TLATFiFm?=
+ =?us-ascii?Q?GU9lNCh4ih75yL0Bgij9xLM66GsXAAk6YtXNk/e0ipDvIqIRumh0xX2ATBmA?=
+ =?us-ascii?Q?n4AfjbMzqjbtVRzwtX71uq4xfht6o5iRAAs4Jd3dhPTyLrt5KNRO09qP4mKa?=
+ =?us-ascii?Q?+lrinVeiPdWPZkxFV9hPek6sfHchNOtHmhYHwaaSXL69TFws6cAwkFg/maCB?=
+ =?us-ascii?Q?+R01aKZasUJ/rOD+OTjlzuUT8T+trWRux8xI9Vib7KRy6EQgYKduz9WGGK0b?=
+ =?us-ascii?Q?No6qPtNGVHtvR+pxLtQdcBBwrP/sq+d8DiLgmquVUHme/nRPHDZjARpXdcS8?=
+ =?us-ascii?Q?W/Mh+qkL5A3bb4uwQ58FPTCIBELQJy1o52zOrBiA6FF3fE6REb4exZnIi2Yd?=
+ =?us-ascii?Q?bym6741Ucl1ktAGmLLa03DkiYbX7?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+ozU1i92VxJ3pOaYbMglPin2AuI2R3GEctO0yyfBeuyEspdDcRNZl3ER3gsc?=
+ =?us-ascii?Q?0eGeCD/V8+VfBPBS/MkcSPXssqdkyPlnq3oHvxxPnpAyIyDG5+uo1D4siI5m?=
+ =?us-ascii?Q?fRmhIVeMaJppoJIrdtpXrJc+IPq0SmNxYyGc0zrGqlc1kdeWHzww+sLRSbfw?=
+ =?us-ascii?Q?0tmUELS5vLSusU1KML9hmfKWlB30urDDABDlS7PnWlAbPDSbI4/XxK8vdS0y?=
+ =?us-ascii?Q?WKo5XkH3qFnDTtgjBw05zJaS25zX6IfSQbVlTUtTEpB/DV95csYVwJufyRgx?=
+ =?us-ascii?Q?uc9fNxNIvqFE40YD9BkXIJD9pibSc3mhFDLXc/c1aqJu1pk8Qm0nyjzTv+qM?=
+ =?us-ascii?Q?+SeUSkXV9YIOcBCGTzYSYCjLcacgn/OpNiNgblao55DeFg07xIJkCimFlyWn?=
+ =?us-ascii?Q?dmS1q+LOnglEg9o8pbEQXL5I8nb6EQU2haHB8qiN3WPBflcbekuL/ATtw+dr?=
+ =?us-ascii?Q?Dm4DRnQku4Wu2W/B3wjmgdN2ols8QpNUMtLK4n2ONP8qnwwBT91s8QuXAJz3?=
+ =?us-ascii?Q?2vXUk7BfXxPI1MEGUs5DCvA+vvV31c6h7EvdwRsP7zS4+3sswcqoSdhQD5nE?=
+ =?us-ascii?Q?vr8n5VZbjU2jxu+Z/1mk/iqSjveQo5rz/tESCdr6mtGZV8stEINE8haP1tBj?=
+ =?us-ascii?Q?v6x6o2jm8fFqcAXTbL8NWiudf7Hz+l8g/lnndl51O5FlIr2d65Epu+K3gcHg?=
+ =?us-ascii?Q?tewg+EJZrdPTF+JvAmIBCQeK4KZaI60WgKu11bEblScexuo48U7reXwkOnHs?=
+ =?us-ascii?Q?7ZlNKQ+KYwab7svF8ZThINgAh1q4nuJ9KN5i58cFoP4YxPqCfMZHtwmxN2sE?=
+ =?us-ascii?Q?COocm8Y0c/+xqMncUVkAhkG9Jfq4p9z261536MfFg49C7kCammz5VWE2g+wo?=
+ =?us-ascii?Q?CJafxxGyF941ZfeA/au7Vu61kWg64OccA90fN4Ba2W3L2qv/9sZfBmCM73EH?=
+ =?us-ascii?Q?wulwr2ZK0vf3O15DI+iWvFdLHUHLOHd6bdVzgZaiBNrWoZvCFgWVH9LlqxHV?=
+ =?us-ascii?Q?/zkdbp6vVNIx0ifnTspYF6QXsTZC/Om/VXsgeu2iUE4DHhYAooCQEtfy/scL?=
+ =?us-ascii?Q?//A25qEYRgyB2+/ifx4NVLFLvpk2S3Q+YMBHkclOuir8JYiOnV6IxNgkx7xP?=
+ =?us-ascii?Q?I9StLvfVpiQLWTLgmslS3izIUaN9cP0kY5EviqbMwnT06zMskWG3JC4TNSIc?=
+ =?us-ascii?Q?pXx3/s+PxQcmUASXYK9onBgZOjzQjvg/tIxcvqbU2euXMD2hTMxQ4/Rc/gQ2?=
+ =?us-ascii?Q?KnXF9VN9/xquz/s4jyrhrDr6QGhKOotrqbBGIT2XgeZJkfHjw2oJHssqQomS?=
+ =?us-ascii?Q?6FjCxgdybPAAMn9THBLojUF2PZFTYAodsPsDQ5e72JhcLfPI+Suygo5pu2cJ?=
+ =?us-ascii?Q?cUK9dX74lTn/iH1vGrl3MiohFX8xXIxjuLG82YmMi12Ul38qGvKtceA7s0eP?=
+ =?us-ascii?Q?RC1SHGRpwL9Dz9OjowJ9YCYptj4Yjn03NZDV0msyoFitEDjghLWZGc+LdO4g?=
+ =?us-ascii?Q?bKIiKeaoqDj55Rr+UZDvRWJaobfAYDLGAsF0cPWnXGJ5ZaYa7OG+PJhGmdjI?=
+ =?us-ascii?Q?IZu3w7JYNFBrtzHwH7nbnQwLW3CHuCXXQdKaCsEp?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 131473bc-3cfd-44fa-7cdf-08dddda9f044
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2025 16:20:10.9209
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nsrgwtXNs5S3zk2079j5rnabGbHzBdymBhqXxAPGlBiXuFY0xj2tKAp+1Xx4bqEe0PgeARYrUpZItILLKykc2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8412
+X-OriginatorOrg: intel.com
 
-On 8/12/2025 3:00 PM, Nicolas Dufresne wrote:
-> Le mardi 12 août 2025 à 01:08 +0200, Jonas Karlman a écrit :
->> Hi Nicolas,
->>
->> Missed some comments in my last mail.
->>
->> On 8/11/2025 11:25 PM, Nicolas Dufresne wrote:
->>> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
->>>> From: Alex Bee <knaerzche@gmail.com>
->>>>
->>>> The RK3328 VDEC has a HW quirk that require QoS to be disabled when HEVC
->>>> or VP9 is decoded, otherwise the decoded picture may become corrupted.
->>>>
->>>> Add a RK3328 variant with a quirk flag to disable QoS when before
->>>> decoding is started.
->>>>
->>>> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->>>> ---
->>>> Changes in v2:
->>>> - No change
->>>> ---
->>>>  drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c |  9 +++++++++
->>>>  drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h |  2 ++
->>>>  drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c  | 10 ++++++++++
->>>>  drivers/media/platform/rockchip/rkvdec/rkvdec.c      | 12 ++++++++++++
->>>>  drivers/media/platform/rockchip/rkvdec/rkvdec.h      |  4 ++++
->>>>  5 files changed, 37 insertions(+)
->>>>
->>>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->>>> b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->>>> index 1994ea24f0be..f8bb8c4264f7 100644
->>>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->>>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->>>> @@ -789,6 +789,15 @@ static int rkvdec_hevc_run(struct rkvdec_ctx *ctx)
->>>>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_LUMA_CACHE_COMMAND);
->>>>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
->>>>  
->>>> +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
->>>> +		u32 reg;
->>>> +
->>>> +		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->>>> +		reg |= 0xFFFF;
->>>> +		reg &= ~BIT(12);
->>>
->>> I wonder if there is a better way to express that, if not, a comment for
->>> future
->>> readers would be nice. If read it will, we keep the upper 16bit, and
->>> replaced
->>> the lower bits with 0xEFFF (all bits set except 12) ? I'd rather not spend
->>> time
->>> thinking if I walk by this code again.
->>
->> Vendor kernel use following comment to describe the purpose of this [1]:
->>
->>   HW defeat workaround: VP9 and H.265 power save optimization cause
->>   decoding corruption, disable optimization here.
->>
->> From the TRM we can see following for rkvdec_swreg99_qos_ctrl:
->>
->>   27:26 sw_axi_wr_hurry_level
->>     00: hurry off 
->>     01~11: hurry level 
->>   25:24 sw_axi_rd_hurry_level
->>     00: hurry off 
->>     01~11: hurry level 
->>   23:16 sw_bus2mc_buffer_qos_level
->>     range is: 0~255
->>     the value is means that left space <=
->>     sw_bus2mc_buffer_qos_level, it will give hurry
->>   15:0 swreg_block_gating_e
->>
->> So yes this set swreg_block_gating_e to 0xEFFF. Possible this configure
->> hw to not auto gate most internal clocks?
->>
->> Could add a comment and possible use something like following:
->>
->>   reg &= GENMASK(31, 16);
->>   reg |= 0xEFFF;
+On Fri, Aug 15, 2025 at 02:36:23PM +0800, zhaoguohan@kylinos.cn wrote:
+> From: GuoHan Zhao <zhaoguohan@kylinos.cn>
 > 
-> Thanks for the information, I think this form is somewhat nicer indeed, and a
-> little comment, its fine to say that the QOS bits are undocumented.
+> In xe_hwmon_pcode_rmw_power_limit(), when xe_pcode_read() fails,
+> the function logs the error but continues to execute the subsequent
+> logic. This can result in undefined behavior as the values val0 and
+> val1 may contain invalid data.
+> 
+> Fix this by adding an early return after logging the read failure,
+> ensuring that we don't proceed with potentially corrupted data.
+> 
+> Fixes: 8aa7306631f0 ("drm/xe/hwmon: Fix xe_hwmon_power_max_write")
+> 
+> V2:
+> - Change 'drm_dbg' to 'drm_err'
+> - Added the Fixes tag in commit message
 
-Sure, I will update this in a v3.
+There are still missed/unanswered questions/concerns in the original review:
 
-Regards,
-Jonas
+https://lore.kernel.org/intel-xe/aJtG0xmBBgwnTANg@intel.com
+
+Please ensure to address all of them before re-iterating the patch.
+
+Thanks,
+Rodrigo.
 
 > 
-> Nicolas
+> Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+> ---
+>  drivers/gpu/drm/xe/xe_hwmon.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
->>
->> [1]
->> https://github.com/Kwiboo/linux-rockchip/blob/linux-6.1-stan-rkr6.1/drivers/video/rockchip/mpp/mpp_rkvdec.c#L857-L867
->>
->>>
->>>> +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->>>> +	}
->>>> +
->>>>  	/* Start decoding! */
->>>>  	reg = (run.pps->flags & V4L2_HEVC_PPS_FLAG_TILES_ENABLED) ?
->>>>  		0 : RKVDEC_WR_DDR_ALIGN_EN;
->>>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->>>> b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->>>> index 540c8bdf24e4..c627b6b6f53a 100644
->>>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->>>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->>>> @@ -219,6 +219,8 @@
->>>>  #define RKVDEC_REG_H264_ERR_E				0x134
->>>>  #define RKVDEC_H264_ERR_EN_HIGHBITS(x)			((x) &
->>>> 0x3fffffff)
->>>>  
->>>> +#define RKVDEC_REG_QOS_CTRL				0x18C
->>>> +
->>>>  #define RKVDEC_REG_PREF_LUMA_CACHE_COMMAND		0x410
->>>>  #define RKVDEC_REG_PREF_CHR_CACHE_COMMAND		0x450
->>>>  
->>>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->>>> b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->>>> index 0e7e16f20eeb..cadb9d592308 100644
->>>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->>>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->>>> @@ -824,6 +824,16 @@ static int rkvdec_vp9_run(struct rkvdec_ctx *ctx)
->>>>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
->>>>  
->>>>  	writel(0xe, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
->>>> +
->>>> +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
->>>> +		u32 reg;
->>>> +
->>>> +		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->>>> +		reg |= 0xFFFF;
->>>> +		reg &= ~BIT(12);
->>>> +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->>>
->>> Can we deduplicate that ?
->>
->> Guess so, any suggestion on how to best do that?
->>
->> One possible way that comes to mind:
->>
->>   if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS)
->> 	rkvdec_quirk_disable_qos(rkvdec);
->>
->>>
->>>> +	}
->>>> +
->>>>  	/* Start decoding! */
->>>>  	writel(RKVDEC_INTERRUPT_DEC_E | RKVDEC_CONFIG_DEC_CLK_GATE_E |
->>>>  	       RKVDEC_TIMEOUT_E | RKVDEC_BUF_EMPTY_E,
->>
->> [snip]
-
+> diff --git a/drivers/gpu/drm/xe/xe_hwmon.c b/drivers/gpu/drm/xe/xe_hwmon.c
+> index f08fc4377d25..8e29fa155d7e 100644
+> --- a/drivers/gpu/drm/xe/xe_hwmon.c
+> +++ b/drivers/gpu/drm/xe/xe_hwmon.c
+> @@ -190,9 +190,11 @@ static int xe_hwmon_pcode_rmw_power_limit(const struct xe_hwmon *hwmon, u32 attr
+>  						  READ_PL_FROM_PCODE : READ_PL_FROM_FW),
+>  						  &val0, &val1);
+>  
+> -	if (ret)
+> -		drm_dbg(&hwmon->xe->drm, "read failed ch %d val0 0x%08x, val1 0x%08x, ret %d\n",
+> +	if (ret) {
+> +		drm_err(&hwmon->xe->drm, "read failed ch %d val0 0x%08x, val1 0x%08x, ret %d\n",
+>  			channel, val0, val1, ret);
+> +		return ret;
+> +	}
+>  
+>  	if (attr == PL1_HWMON_ATTR)
+>  		val0 = (val0 & ~clr) | set;
+> -- 
+> 2.43.0
+> 
 
