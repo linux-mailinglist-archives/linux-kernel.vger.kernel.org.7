@@ -1,180 +1,122 @@
-Return-Path: <linux-kernel+bounces-772412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B095B2924F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3B7B29251
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F238819665DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CA719665F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 08:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86409220F2C;
-	Sun, 17 Aug 2025 08:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA97A220F2C;
+	Sun, 17 Aug 2025 08:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="SiZIK5pL"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ftvqPqvf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF9A21D3CA
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1264122068B
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 08:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755420156; cv=none; b=OXK76i+z+tKdhRL0XTS4UgU+nAd2OErS0ipPync7gDimZoUU717KlI6puy3RnOP/oqS6ast+HJLHvviLmwm/I7raCchJ1eNcQF/hSTIUpjZ28z4ZN4SGBTBzur/RSItEF2s183/5rmzHue2Lqo2zWHEvlWprqKxYJlIR60KYwis=
+	t=1755420181; cv=none; b=UOoYx7CSrO92WZJAPBkY51eZmhh80CSTFuiSenpwOWOizAWD+mX2uIg1Az8DBMpMmb/IVE4bouPkkse/T9+2hLq8gMuo8RUzVFQk15DWDIhWgzmg6917Sq5T6GMaxQ7QeKxGJWtycEOYkP/7VQrChoZp6GXFRJz5twqfLm4g2g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755420156; c=relaxed/simple;
-	bh=fBnf8WeAF0dOSwSjhG5XgLZ6fmTgeSi3O4YkmGSc76c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0+/CVWOOH4cGIwtHWM5tzYNT+PTSMR6BQD64IQEnr9ehlAa3VuAdlnFfWdCctVgEKWYtWXO3e649EG6ZHxcAbWVGtfboBB7J2N7d59yCRdPlUQiJ23fWxvm44p4D8SJGIPSjdQ/jllgZScLLY5AG1/o1uQkaBDYEE+qq1HWSFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=SiZIK5pL; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2735440b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 01:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1755420154; x=1756024954; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sfkmu36UsEhyXB4ryL2gMWCuVzsfK6S+k6i65pf0ysE=;
-        b=SiZIK5pL890Y0nAYrpzUl/LXSjurKr0TjYOLlteczYFelQn8uxwsof+riCnTJP2fVK
-         zxNUIt5gypSoslh/btFHlHq7oA2HJuV1uXZpzI/0jTGRFXG+pBvaxccRHtLHrXtNj+pp
-         uB/byKpPHRNJ7sX51Ygx+bDcmLBxtUnn5bTZbPZWV2r4PmpL4m+J9gzKhaM4G5Vh2Dqj
-         Wulc62RM/VBCjDFpwgc420ZtHFGjLMikNCPgNyXGl46PY/csQE2G8FmTSEHr5TkFlg+1
-         5GONkl5ESo6cF//QAvSUnFNNvoW7TbB2VkhCz2Do+DPHWy3kAWaaUCmk0FTRHgIQrqr+
-         PG/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755420154; x=1756024954;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sfkmu36UsEhyXB4ryL2gMWCuVzsfK6S+k6i65pf0ysE=;
-        b=UDsb5PdBRx0hfxl5yMNYTwCrTmN8p7yY59rrR7wwl8XHIAyKh/vWevxwSSTGq3NNAk
-         w/SidoX5wEQjUIB5XXHsXejS/6DFFb1Hgym7kkIYL7ll4Yr90F8BoqgTINUReF6rXY0c
-         k2Ywc97OCDld7UkdoVm4xjOezTnKI/23LqcuLpCOMoLpTk86+zkGAvlQzlfsMX33e6Dy
-         GIKshT+DTODgSt8k/sFwIf7go8RZBnEJQPN+8Bt6GlnsJvKtT7OD4pZdbiyKd2yQMjko
-         cBPqRhxFsR/kaG95MuOSij0sDpjNaY9xUAnlsmRTS0iLuJnTTtwJD5F3W71/nCO8zK7G
-         jI8A==
-X-Forwarded-Encrypted: i=1; AJvYcCX+I4X9ZTOhJMSLSFwZVFzOoaV9IbsqrI5w9SoYhDuegNgrRQuXBeW+xVRB3juWP98Mfh5PcJRdOaH+sZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVuav6E4fBER+Yz1XTm2zvvQlaUfKCVmaBFwrBGdCwWGAOl4jm
-	0Bk+0wsYNy8fgB7YoEcu1wXAFLbaRHHcJDh+2H0LPP3idWy5gQoUiXI+sEHy/AY2Bw==
-X-Gm-Gg: ASbGncsdU5ODtUVD9JQentCkVz+tgsLNap5ibnNGaIgkz4TjVJ3zUQfWgM9XbIrqhFG
-	KKhloxlPBOArtwqCFSZ4ezgI6pn4B1BbkOw3QwXN9X0xj0QO3HkN4B9VE5IiNqbnwSquMqticB1
-	eVi3ufh27B11IiH8ODByRKpdzaHR3h8H8rre8qsdXSoZEgHyV8kENoL2Gk/40JZlE9pu2g9hDbQ
-	UyzV/dohU3JKY/eZvjdUeRfsZ5jyZduuJ8ai9gZ3Ubx1+aWfSRmd0FFY+vFSafnDFrc9D0nbJjf
-	E3MGKRnP3w3ZiDMODbS+CUChon/VXEK4fx25+TGg9PfgT5XHxrd9IwIM96AF7EBLvGdWXWsDqPu
-	N8jDoPUC4vsLABy18I/x9A6Jh8w/ELGpJDv38amQ9OK4ydr2+J0pzSVOf1LlPSTwdW1fpMNxF7L
-	k=
-X-Google-Smtp-Source: AGHT+IEj5yKW7F8ws4E5YLdOfdAEX6KIo50dsAXx+hxN+8hXkqsDFHeQl00YGG+6keeJrWj42pTIZQ==
-X-Received: by 2002:a05:6a00:4a0b:b0:76b:fdac:d884 with SMTP id d2e1a72fcca58-76e321f6064mr12072837b3a.3.1755420154608;
-        Sun, 17 Aug 2025 01:42:34 -0700 (PDT)
-Received: from ?IPV6:2401:4900:8898:f586:e00d:52f9:31de:96d4? ([2401:4900:8898:f586:e00d:52f9:31de:96d4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45566937sm4719641b3a.70.2025.08.17.01.42.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 01:42:34 -0700 (PDT)
-Message-ID: <1884651f-5192-4fd4-9d94-ed755ea89570@beagleboard.org>
-Date: Sun, 17 Aug 2025 14:12:28 +0530
+	s=arc-20240116; t=1755420181; c=relaxed/simple;
+	bh=jLvII5gw8wKc83IZ7oomK2SIqox1rNj/UaTnaHMA3yU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FrNnOHdlUd2a6R903KNtI+87NPVJGFupEF4GJTGJKgFlp5PHJ4zAtV134GmC3itPItFuX3zeZW3+itoMnMTNAKYSa+G4HilftCzMZVkU0g6kUfhheZqt6dvg08ifEzGZ8or4wBKV6o5oOg7MCG+bfGYoWItY7HhqklHakPRpXwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ftvqPqvf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CC9BC40E0202;
+	Sun, 17 Aug 2025 08:42:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gauKfWqQ4Lcg; Sun, 17 Aug 2025 08:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755420166; bh=UdVI9fBHSzENOcHJHpqAGbYTrV18W30SlfpO0nkXor8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ftvqPqvfeRptdkM891zUUi8CRPAbXvntSFtnTkpNhZRtyQpmZD4jeMfOtg1zawBOh
+	 2dmqYXEP726SRjSwkonS4zqrHRnhq7UaF8oy9xXZaf5wV0Rnz4wPG4oP8v1M7QKuzs
+	 6R7Cmu5uF8V2PXv2s+sqHtVopa8hUngbNELGS3WJJnS5hIXUoEg51fLtSaJIj1J+ib
+	 +/bqmMYkbsX1ahXqTucuk/qTgJwIFbmA7ZnHJ6nkKQuy4se5fWi2eyKrcw+Yjvf9PE
+	 N5fnxLDYDtl0Aq9h+k/a+TjLHUFHxFA1UpRiaumYiCCV+9uv0VR4mHOvVcRJYPoTqt
+	 UpYo1WjysGX1nismxNcRQ2NXfz1qwiUIF9PN4M5SFCU52o79bPp+9NyOc05eVJBDh1
+	 pLQyEJ4MiJYEQQoQvqEReST+KhqskJPmFVRPa9XYAmwGHnXHCboySRCNqcGx+H9BYb
+	 Ph2e1fHNkuAy2ckjFCyjV00t9VAi0/l9TKx9Li+JaBcq/OboGhE6Me4JjMHjP+qLCm
+	 pHtrpwv+EngtH+VqWVNRwowAkhVIJduk74nioBaFUgy21U5+DvSVPAcB0m9+jSCjrH
+	 l1KQ2JsVUnkoX+9Ik2WCR/l0U4kIMaIR/XnkplP3csb0yxAoy6d4aVA9nOJrqdbUpw
+	 BHxE+YRkWjiItOyNMNRzeccw=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EA0BD40E0206;
+	Sun, 17 Aug 2025 08:42:42 +0000 (UTC)
+Date: Sun, 17 Aug 2025 10:42:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] locking/urgent for v6.17-rc2
+Message-ID: <20250817084235.GAaKGV-7rQHWqTisp3@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Herve Codina <herve.codina@bootlin.com>,
- David Gibson <david@gibson.dropbear.id.au>, Rob Herring <robh@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
- devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250430125154.195498-1-herve.codina@bootlin.com>
- <20250430125154.195498-2-herve.codina@bootlin.com>
- <0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
- <20250528185740.4bf91bef@bootlin.com>
- <49e1e1fc-412d-4334-8337-16e352a34788@kernel.org>
- <20250618113232.6d237208@bootlin.com>
- <ed6beb97-12f1-4d71-b4dc-b34d4d611b81@beagleboard.org>
- <3ff4b3f9-cc8d-4044-b2eb-33010d8951c0@kernel.org>
- <3889e19e-7f1e-4306-9e11-77a61432b402@beagleboard.org>
- <f3184805-3617-4b46-be23-70cebcf27207@kernel.org>
-Content-Language: en-US
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <f3184805-3617-4b46-be23-70cebcf27207@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 8/17/25 13:52, Krzysztof Kozlowski wrote:
+Hi Linus,
 
-> On 17/08/2025 10:18, Ayush Singh wrote:
->>>>> Hardware:
->>>>>      i2c0 from SoC --------- connector 1, I2C A signals
->>>>>      i2c1 from SoC --------- connector 1, I2C B signals
->>>>>
->>>>>      connector1 {
->>>>>          export-symbols {
->>>>> 	  i2c_a = <&i2c0>;
->>>>> 	  i2c_b = <&i2c1>;
->>>>>          };
->>>>>      };
->>>>>
->>>>> In order to avoid the coding style issue, this could be replace
->>>>> with:
->>>>>     connector1 {
->>>>>          export-symbols {
->>>>> 	  symbol-names = "i2c_a", "i2c_b";
->>>>> 	  symbols = <&i2c0>, <&i2c1>;
->>>>>          };
->>>>>      };
->>>>>
->>>>> Krzysztof, Rob, do you think this could be accepted ?
->>>>>
->>>>> Ayush, David, do you thing this could be easily implemented in fdtoverlay ?
->>>>>
->>>>> Best regards,
->>>>> Hervé
->>>>>
->>>> Well, it is possible.
->>>>
->>>> However, on connectors like pb2 header, there will be 50-100 export
->>>> symbols. So it will start becoming difficult to maintain.
->>> And the first syntax solves this how? I don't see the practical difference.
->>
->> Well, I was more worried about matching which phandle belongs to which
->> symbol easily. Let us assume that 2 symbols will be in each line (after
->> accounting for the indention and 80 char limit) and we have 70 symbols,
->> so 35 lines. To check which phandle belongs to the 2nd symbol on line
->> 25th line of  symbol-names, well, you would at the best case need to
->> have something like relative line numbers in your editor. Then you know
->> that the 35th line from the current one is where you need to look.
->>
->> In the current syntax, the symbol name and phandle are on the same line.
->> So well, easy to see which symbols refers to which phandle.
-> OK, that's valid point. Any ideas how to solve it without introducing
-> underscores for properties?
->
-> Best regards,
-> Krzysztof
+please pull the locking/urgent lineup for v6.17-rc2.
+
+Thx.
+
+---
+
+The following changes since commit e703b7e247503b8bf87b62c02a4392749b09eca8:
+
+  futex: Move futex cleanup to __mmdrop() (2025-08-02 15:11:52 +0200)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/locking_urgent_for_v6.17_rc2
+
+for you to fetch changes up to 21924af67d69d7c9fdaf845be69043cfe75196a1:
+
+  locking: Fix __clear_task_blocked_on() warning from __ww_mutex_wound() path (2025-08-13 10:34:54 +0200)
+
+----------------------------------------------------------------
+- Make sure sanity checks down in the mutex lock path happen on the correct
+  type of task so that they don't trigger falsely
+
+- Use the write unsafe user access pairs when writing a futex value to prevent
+  an error on PowerPC which does user read and write accesses differently
+
+----------------------------------------------------------------
+John Stultz (1):
+      locking: Fix __clear_task_blocked_on() warning from __ww_mutex_wound() path
+
+Waiman Long (1):
+      futex: Use user_write_access_begin/_end() in futex_put_value()
+
+ include/linux/sched.h     | 29 +++++++++++++++++------------
+ kernel/futex/futex.h      |  6 +++---
+ kernel/locking/ww_mutex.h |  6 +++++-
+ 3 files changed, 25 insertions(+), 16 deletions(-)
 
 
-Well, we can modify `get_phandle_from_symbols_node` to allow matching 
-`*_*` to `*-*`. And we can do the same in devicetree easily enough. Not 
-sure if implicit loose matching like that are the best idea.
+-- 
+Regards/Gruss,
+    Boris.
 
-Zephyr does something similar for compatible strings. It pretty much 
-replaces the all non alphanumeric characters with `_` in compatible 
-string match. Although that is more to do with the limitation they are 
-working with, i.e. the devicetree being converted to static headers 
-instead of being runtime thing.
-
-Best Regards,
-
-Ayush Singh
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
