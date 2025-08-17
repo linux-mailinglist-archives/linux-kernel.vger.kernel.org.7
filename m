@@ -1,759 +1,171 @@
-Return-Path: <linux-kernel+bounces-772378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144ECB291F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:15:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C95B291F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 09:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9432037B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8B6487E9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD8E20F067;
-	Sun, 17 Aug 2025 07:15:45 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DAB21147B;
+	Sun, 17 Aug 2025 07:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWu2cCZ+"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604E37DA93;
-	Sun, 17 Aug 2025 07:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893718C011;
+	Sun, 17 Aug 2025 07:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755414943; cv=none; b=bFFCoDp6V03TTUu6naVPcjfG6GbQoSywmZ1sIwikgJWjyb3zDgLg/+TVm/KV/Wa2mUaFgAh89PzLN4wplyCQrNjPcMuumKeeuvLZg9n+0s3AVa1vGNNab3HyJQsGnb2hZn1qBYPalT3M/NWBqPS+ydcvKeFBwzTc8GrPyPJz8qE=
+	t=1755415102; cv=none; b=I2WsJCmf3tr4zZ4qoJ489n65PydPbRU7dtBCKJde0hb65x6PbkUORkUsQ4NjM6qOcppMzXkgS6Kr11ppBXbfYA+7zP27hmMJ+9g1Cig/BjF94W9RyzQ0jbXPvPCy9Mcz70abIkW85nAh+Z/HBtN2b9hn/I071eU+O90l5lK0AMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755414943; c=relaxed/simple;
-	bh=R74fpgHV5bubaaCAJP/uiD9gx/gZdvcLZ2Dn4YbgF+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Szx/EvWqBQgcqPozdaPFFanzGZ+EeLmQDYssmANP1RpqpdWKtutEZZ7n4ugLRbHyTkwPM5FWREiS0gNFVIzAKci1zSUFtVboVZIa6gZ+yD5EBYE4v5uAKHy7ChfbXvyDoSz/gyOiMm8Dvi+kas64tRZj11gJKZdsRcFwcDzAheM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com
+	s=arc-20240116; t=1755415102; c=relaxed/simple;
+	bh=YYB5cQdBwmhnkPbs3DQCuTcXEQFORaxBGjppJecTYmY=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fQP+YMvc7sAjREW4w4iGvpQ1Ziu4I5efTbvH4VJXayNotTZQFVnmU8zLS69htSHD9oUgp3pYv/fi1QDATQe5532ZFCmsgebASWcUYyrqY45FiIwVFyNPgUoJpYDqNuYKTBZZ8dPuDlIRwJ1wd+jvS2xIm6WK8urmiXeHD2LJb3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWu2cCZ+; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7a8dd3dso452369066b.3;
-        Sun, 17 Aug 2025 00:15:41 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e434a0118so1780272b3a.0;
+        Sun, 17 Aug 2025 00:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755415100; x=1756019900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MfMC4arSp0JLKDKHa53x0AnEcCZLSQaZ5L9mSSYKNlo=;
+        b=QWu2cCZ+MbttSfY3UbJy9EqBqAz6NaWnbYoHtjVfAWv+OUaw3vpNr1K2ixQhGMz2HY
+         d67m1DaD4SKuyT1UXbI2uyXtNSqfDclAY6RXNFcHDtXhpSdEduXsNjnZLNRJnFHOE6V3
+         Z6LIqVgxL8mkujsIaNTvCu7c2byjzh0hKCZrEz0bGJ7vShKgU9e0btoH3Ewaf05UwI3N
+         AVmNmyJy0UWHvomQi7Lem2ntsq2ulcF/5QVg9x1s8beRBBcO9UdGLitNbWnBir6iLfdX
+         yiv3QI2jj/ybhfiQRO9jpHraPSLh9cN4NLo/Ze1gH8a+Tzjevo2wP8t/2L0ksGy+Nivd
+         PVRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755414940; x=1756019740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=msDghKQiEArCForsiHN/x1NxAoQ84ayOH6l5qycWZKI=;
-        b=VyVsDRZI5S/G6t4g/PjmA69tm5/A/ieUn+AAEfwzOrllc7k24B5gIyNAz5yFtFCapO
-         xndLfzjM7jlJbZ+V4JG7xpv9ktGoJHX8xp19VKRvjQKmvSJOsWBN02MJ5tHyCkO+932W
-         ymhe1euMdcTF8ict6b90oLtNW5Rd80gqluhrQSMNzXoaSmkKq9MlT3uG6g7tJsEWAltK
-         eA1JGSoFqnya4y0jFsNXxgpszqQetE1tPq4B6QQDx43mJpj3iY1U4Ip/TNi70PPfu7IH
-         JAzJ1jiDeN+X0kbPs0krpKibQ4pJvzEpCt8X+0yf1AwSJX84ydv1X0H0mQMWhVDSU3hD
-         5h8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUP0HA4f2uwa+uEhQfuOHbPu5234NgztJfGtdPODxm5IDjFKuczo6ztItPmyQ6naoPj/887f6hKGu/teJw=@vger.kernel.org, AJvYcCUaDzF/ihwBXjbcoIVokYe65jRYe5KOGH7D3uqhgDhy37ITO/uviwJ3BJZosTj9/FlXG0mkpLwXGYX6W3xo@vger.kernel.org, AJvYcCVYHXm169WWy/bUt/orv43SmLpCTkHpGhlHEl73qc8oyuT8jbC9/o56+gvsDUGnpFBwsJSptzWJmlUP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIVdoamS7cUkOxiR8tbUyrPP/kBDNhlazYOiCj8FNzcbl46QGV
-	G8lKVCA0Mx/igTUk8OfZYUf1CjxwCjUpWmcQOkT4W4ODcr2K8x5D4dzlT2SMY196
-X-Gm-Gg: ASbGnct8NmRRYhzsL9Yy05Tfpvj+8t0I5ENM0K04s13p9KEkWY0ClPFRGY+mbHRCjCg
-	EWX3owo3SrVSAwnY7Be9lN2aTnp2Ut2QzwuuFkp55/2SCg9hjqnzJkZ/3f5+qYrMDd5d2o+SFSh
-	yLJa83JPJ7C3NGamq0g9nrFz6zmqXqckOqGZQF3tmvb21iSTfSokKf6ZIv/K3eaBtvN9rRglmvE
-	ehSOTidXj/zbVqZ/0FKw3YIQ39QVt63+FAYa39zFLiLUoZwGQriXlHH6snmBGJ9VNMIo1OcXWne
-	eASG7NlQVtd3ox8wVU5OQSR6+ExigQyVTqptKDga647xzqv7TjimmsIf/GTG1zux9JSXPh0s/43
-	njvmfMO8xBCG8xSBFBQn16eHjQlEursV+tBvslkcVuKYpmA2d+u0jI76aTQ==
-X-Google-Smtp-Source: AGHT+IEkdF0VJVnYMb+wWPiWnwW6U+KVzP6A9I+zA5yN5BHG+RS4rb5u0u/UOUHme596FFITYETSAg==
-X-Received: by 2002:a17:907:1b26:b0:af1:d32f:3e89 with SMTP id a640c23a62f3a-afcdc328bb7mr749395766b.31.1755414939328;
-        Sun, 17 Aug 2025 00:15:39 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd018b54sm530406066b.104.2025.08.17.00.15.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 00:15:39 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so3144938a12.2;
-        Sun, 17 Aug 2025 00:15:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVlUZbI1/Q81I682QY+7zUQUoYV+Y8NCsxwQtoH9Dlh5iS3tHKRa33rWmQt2jN8Uq14w7sc06oUrpfS@vger.kernel.org, AJvYcCXDobujuGctW8mXF8NgMITDCepp0EFREgrUwJ+Hq5k77jCi8thUdXkSpne2u++6y3TnMVSL9EYAeyJ5AEPK@vger.kernel.org, AJvYcCXv6J7tiHAfGiGjtbxOLzbd5xUnTsVN/UC3utUlHM7SlwHx2+nwq5XhRk3M50Vc4R4MYNKgQVz5Yop0q3Q=@vger.kernel.org
-X-Received: by 2002:a05:6402:430c:b0:615:979c:e8b2 with SMTP id
- 4fb4d7f45d1cf-618b056058amr5437479a12.29.1755414938757; Sun, 17 Aug 2025
- 00:15:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755415100; x=1756019900;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MfMC4arSp0JLKDKHa53x0AnEcCZLSQaZ5L9mSSYKNlo=;
+        b=ThpNvCd/JY9tGqdasvpRCa1WwGAkAKzWDlyurlnv5FzB0G1weZZ8SuSuZgO4EhLsgP
+         wy/cUqlT9hVHR+2TxykQxSMQ7+k22rdCdvo5/N9S+DfIh7mVTTZP47INwJ79z46w5ouJ
+         F/PcXEYj8X1K7L+NqDt6lqPszy6mFACkt94tlmJLLRKfI8aXA0H5GbMOvPN/VSD+vPbf
+         3LjnBcDsw1llH2YrREYDD8dQZL4atLIl7uZco/sSQqmO+wdVkEv7tyYQvL1ERkhSu843
+         8nFNK6VAft4TBgHv+G2JZbxm7y8NRoZSrJS9ePfWOhv4WrbZppFUNSWs0Uba8Xn7yALH
+         zUlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpD4PRqzIXAGTpyEF5DHxBuestlYCsC7iO9sxmjCoNTKE2+CKqYUEv6FEeOxdIWO1o9EtcdmQrQk7eGS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+N4z7mXom9RsjyoW0scyddc8NGYZX9TYt+m+eDJqrhcqVuFbV
+	A83foSNDn3K1wdcaamGunRgZOxaCx3P22DA02nvrbCePB+nwyKNFQrcP
+X-Gm-Gg: ASbGncvp7pe2ExKcojb0pz/n6hyG67LrKm97SEU+PFeTf0tSRhV6iKbuNaWYoSGJruU
+	LjYRUZHvkDCU+2mdiXywu27s/m9UkrX/enIAY3D5FB8aK8823Y/Rf7C9NunOqEoLyT1E5lQAA6u
+	fxa1V+Vp+G970nvKU0jDmJasidNdw6HbmbD7NslnhwdNlyytn0b60vASbryXVSGXBbcvwPMIdQl
+	OYbnKsjurhccQiyOA2e4goTTahnESaHhoLI6QaNhT1jymTuvAiEEGKkC6rs1L7PuDwzBdHoWJ4F
+	4czV9V/FAzis9vNVYGu1SmUw6AYDIrH80G6rFUadpmiWcRAJzIWzOFUkwU1D9AvilLFrH0u+Jz+
+	JDuHdW33MH5UAoySAEUpAxKNzZ00rxhgolYMWdJFyPQbCqkcHiFz2paU4vJBphzVv8i3rrCMM2i
+	BFR4DGidehlOE=
+X-Google-Smtp-Source: AGHT+IGoK2G125/Gd07SfKiVd0IYtohQM2A/WcFW0fC/hyWR9+qft+w0WXzp4P+R55yWZYHcilLI6Q==
+X-Received: by 2002:a17:902:e751:b0:23f:e2e0:f89b with SMTP id d9443c01a7336-2446d5ba169mr100734275ad.3.1755415100120;
+        Sun, 17 Aug 2025 00:18:20 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f8ddsm49343985ad.89.2025.08.17.00.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 00:18:19 -0700 (PDT)
+Date: Sun, 17 Aug 2025 16:18:04 +0900 (JST)
+Message-Id: <20250817.161804.1331850210190243752.fujita.tomonori@gmail.com>
+To: lyude@redhat.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, a.hindborg@kernel.org, fujita.tomonori@gmail.com,
+ daniel.almeida@collabora.com, boqun.feng@gmail.com, frederic@kernel.org,
+ anna-maria@linutronix.de, jstultz@google.com, sboyd@kernel.org,
+ ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu, dakr@kernel.org
+Subject: Re: [PATCH v7 6/7] rust: time: Add Instant::from_nanos()
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <20250813224240.3799325-7-lyude@redhat.com>
+References: <20250813224240.3799325-1-lyude@redhat.com>
+	<20250813224240.3799325-7-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250816055432.131912-1-will@willwhang.com> <20250816055432.131912-3-will@willwhang.com>
- <7e27b69b-40df-4ac4-aebf-dbd00044b71b@kernel.org> <CAFoNnrxbzcF+YranTL8Von3BkROhq8X=RX5sa90M6PYgS_vjkQ@mail.gmail.com>
- <daa45e3e-84a6-4c39-854a-1429fb68d415@kernel.org> <CAFoNnrw4yRKGL_m0=g14C583o13ptC6e84TN---ABdyeg8jMhg@mail.gmail.com>
- <04fd00bb-beb4-4f35-88fb-bf1cc7691505@kernel.org>
-In-Reply-To: <04fd00bb-beb4-4f35-88fb-bf1cc7691505@kernel.org>
-From: Will Whang <will@willwhang.com>
-Date: Sun, 17 Aug 2025 00:15:26 -0700
-X-Gmail-Original-Message-ID: <CAFoNnrxd_2=9aJqo9yQ8bcDsyW9pVRCfmUU6tOHoeX5wEB2AhA@mail.gmail.com>
-X-Gm-Features: Ac12FXx6i85Vcrq3vGsLOS4pU-WzsVWk1KJOpcUjg8iVl-rUJIYpZYKz0J8s2v4
-Message-ID: <CAFoNnrxd_2=9aJqo9yQ8bcDsyW9pVRCfmUU6tOHoeX5wEB2AhA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] media: i2c: imx585: Add Sony IMX585 image-sensor driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 17, 2025 at 12:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 17/08/2025 08:46, Will Whang wrote:
-> > On Sat, Aug 16, 2025 at 11:10=E2=80=AFPM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>
-> >> On 16/08/2025 21:58, Will Whang wrote:
-> >>> On Sat, Aug 16, 2025 at 1:04=E2=80=AFAM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> >>>>
-> >>>> On 16/08/2025 07:54, Will Whang wrote:
-> >>>>> +
-> >>>>> +static int imx585_set_ctrl(struct v4l2_ctrl *ctrl)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D container_of(ctrl->handler, struct =
-imx585, ctrl_handler);
-> >>>>> +     const struct imx585_mode *mode, *mode_list;
-> >>>>> +     struct v4l2_subdev_state *state;
-> >>>>> +     struct v4l2_mbus_framefmt *fmt;
-> >>>>> +     unsigned int num_modes;
-> >>>>> +     int ret =3D 0;
-> >>>>> +
-> >>>>> +     state =3D v4l2_subdev_get_locked_active_state(&imx585->sd);
-> >>>>> +     fmt =3D v4l2_subdev_state_get_format(state, 0);
-> >>>>> +
-> >>>>> +     get_mode_table(imx585, fmt->code, &mode_list, &num_modes);
-> >>>>> +     mode =3D v4l2_find_nearest_size(mode_list, num_modes, width, =
-height,
-> >>>>> +                                   fmt->width, fmt->height);
-> >>>>> +
-> >>>>> +     /* Apply control only when powered (runtime active). */
-> >>>>> +     if (!pm_runtime_get_if_active(imx585->clientdev))
-> >>>>> +             return 0;
-> >>>>> +
-> >>>>> +     switch (ctrl->id) {
-> >>>>> +     case V4L2_CID_EXPOSURE: {
-> >>>>> +             u32 shr =3D (imx585->vmax - ctrl->val) & ~1U; /* SHR =
-always a multiple of 2 */
-> >>>>> +
-> >>>>> +             dev_dbg(imx585->clientdev, "EXPOSURE=3D%u -> SHR=3D%u=
- (VMAX=3D%u HMAX=3D%u)\n",
-> >>>>> +                     ctrl->val, shr, imx585->vmax, imx585->hmax);
-> >>>>> +
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_SHR, shr=
-, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "SHR w=
-rite failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     }
-> >>>>> +     case V4L2_CID_ANALOGUE_GAIN:
-> >>>>> +             dev_dbg(imx585->clientdev, "ANALOG_GAIN=3D%u\n", ctrl=
-->val);
-> >>>>
-> >>>> Not much improved. Don't debug V4L2 calls.
-> >>>>
-> >>>> I already commented on this and you just send simialr code. Drop thi=
-s
-> >>>> completely.
-> >>>>
-> >>>
-> >>> I need to debug V4L2 calls for image quality debugging. I don't
-> >>> understand why I can not have dev_dbg().
-> >>> What I read from your comments on the previous patch is that you don'=
-t
-> >>> want to have a noisy driver and I sorta agree with that but for debug
-> >>> purposes this is not an issue.
-> >>> That is why I move it to dev_dbg instead of removing them, if you
-> >>> think this is too noisy, then just don't turn on debugging.
-> >>>
-> >>
-> >>
-> >> Because you do not debug useful parts of the driver, but only invocati=
-on
-> >> of v4l2 controls.
-> >>
-> >>
-> >>>>
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_ANALOG_G=
-AIN, ctrl->val, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "Gain =
-write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     case V4L2_CID_VBLANK: {
-> >>>>> +             u32 current_exposure =3D imx585->exposure->cur.val;
-> >>>>> +
-> >>>>> +             imx585->vmax =3D (mode->height + ctrl->val) & ~1U;
-> >>>>> +
-> >>>>> +             current_exposure =3D clamp_t(u32, current_exposure,
-> >>>>> +                                        IMX585_EXPOSURE_MIN, imx58=
-5->vmax - IMX585_SHR_MIN);
-> >>>>> +             __v4l2_ctrl_modify_range(imx585->exposure,
-> >>>>> +                                      IMX585_EXPOSURE_MIN, imx585-=
->vmax - IMX585_SHR_MIN, 1,
-> >>>>> +                                      current_exposure);
-> >>>>> +
-> >>>>> +             dev_dbg(imx585->clientdev, "VBLANK=3D%u -> VMAX=3D%u\=
-n", ctrl->val, imx585->vmax);
-> >>>>> +
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_VMAX, im=
-x585->vmax, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "VMAX =
-write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     }
-> >>>>> +     case V4L2_CID_HBLANK: {
-> >>>>> +             u64 pixel_rate =3D (u64)mode->width * IMX585_PIXEL_RA=
-TE;
-> >>>>> +             u64 hmax;
-> >>>>> +
-> >>>>> +             do_div(pixel_rate, mode->min_hmax);
-> >>>>> +             hmax =3D (u64)(mode->width + ctrl->val) * IMX585_PIXE=
-L_RATE;
-> >>>>> +             do_div(hmax, pixel_rate);
-> >>>>> +             imx585->hmax =3D (u32)hmax;
-> >>>>> +
-> >>>>> +             dev_dbg(imx585->clientdev, "HBLANK=3D%u -> HMAX=3D%u\=
-n", ctrl->val, imx585->hmax);
-> >>>>> +
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_HMAX, im=
-x585->hmax, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "HMAX =
-write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     }
-> >>>>> +     case V4L2_CID_HFLIP:
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_FLIP_WINMODE=
-H, ctrl->val, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "HFLIP=
- write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     case V4L2_CID_VFLIP:
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_FLIP_WINMODE=
-V, ctrl->val, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "VFLIP=
- write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     case V4L2_CID_BRIGHTNESS: {
-> >>>>> +             u16 blacklevel =3D min_t(u32, ctrl->val, 4095);
-> >>>>> +
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_BLKLEVEL=
-, blacklevel, NULL);
-> >>>>> +             if (ret)
-> >>>>> +                     dev_err_ratelimited(imx585->clientdev, "BLKLE=
-VEL write failed (%d)\n", ret);
-> >>>>> +             break;
-> >>>>> +     }
-> >>>>> +     default:
-> >>>>> +             dev_dbg(imx585->clientdev, "Unhandled ctrl %s: id=3D0=
-x%x, val=3D0x%x\n",
-> >>>>> +                     ctrl->name, ctrl->id, ctrl->val);
-> >>>>> +             break;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     pm_runtime_put(imx585->clientdev);
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static const struct v4l2_ctrl_ops imx585_ctrl_ops =3D {
-> >>>>> +     .s_ctrl =3D imx585_set_ctrl,
-> >>>>> +};
-> >>>>> +
-> >>>>> +static int imx585_init_controls(struct imx585 *imx585)
-> >>>>> +{
-> >>>>> +     struct v4l2_ctrl_handler *hdl =3D &imx585->ctrl_handler;
-> >>>>> +     struct v4l2_fwnode_device_properties props;
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     ret =3D v4l2_ctrl_handler_init(hdl, 16);
-> >>>>> +
-> >>>>> +     /* Read-only, updated per mode */
-> >>>>> +     imx585->pixel_rate =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_op=
-s,
-> >>>>> +                                            V4L2_CID_PIXEL_RATE,
-> >>>>> +                                            1, UINT_MAX, 1, 1);
-> >>>>> +
-> >>>>> +     imx585->link_freq =3D
-> >>>>> +             v4l2_ctrl_new_int_menu(hdl, &imx585_ctrl_ops, V4L2_CI=
-D_LINK_FREQ,
-> >>>>> +                                    0, 0, &link_freqs[imx585->link=
-_freq_idx]);
-> >>>>> +     if (imx585->link_freq)
-> >>>>> +             imx585->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONL=
-Y;
-> >>>>> +
-> >>>>> +     imx585->vblank =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
-> >>>>> +                                        V4L2_CID_VBLANK, 0, 0xFFFF=
-F, 1, 0);
-> >>>>> +     imx585->hblank =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
-> >>>>> +                                        V4L2_CID_HBLANK, 0, 0xFFFF=
-, 1, 0);
-> >>>>> +     imx585->blacklevel =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_op=
-s,
-> >>>>> +                                            V4L2_CID_BRIGHTNESS, 0=
-, 0xFFFF, 1,
-> >>>>> +                                            IMX585_BLKLEVEL_DEFAUL=
-T);
-> >>>>> +
-> >>>>> +     imx585->exposure =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
-> >>>>> +                                          V4L2_CID_EXPOSURE,
-> >>>>> +                                          IMX585_EXPOSURE_MIN, IMX=
-585_EXPOSURE_MAX,
-> >>>>> +                                          IMX585_EXPOSURE_STEP, IM=
-X585_EXPOSURE_DEFAULT);
-> >>>>> +
-> >>>>> +     imx585->gain =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops, V4L=
-2_CID_ANALOGUE_GAIN,
-> >>>>> +                                      IMX585_ANA_GAIN_MIN, IMX585_=
-ANA_GAIN_MAX,
-> >>>>> +                                      IMX585_ANA_GAIN_STEP, IMX585=
-_ANA_GAIN_DEFAULT);
-> >>>>> +
-> >>>>> +     imx585->hflip =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
-> >>>>> +                                       V4L2_CID_HFLIP, 0, 1, 1, 0)=
-;
-> >>>>> +     imx585->vflip =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
-> >>>>> +                                       V4L2_CID_VFLIP, 0, 1, 1, 0)=
-;
-> >>>>> +
-> >>>>> +     if (hdl->error) {
-> >>>>> +             ret =3D hdl->error;
-> >>>>> +             dev_err(imx585->clientdev, "control init failed (%d)\=
-n", ret);
-> >>>>> +             goto err_free;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     ret =3D v4l2_fwnode_device_parse(imx585->clientdev, &props);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_free;
-> >>>>> +
-> >>>>> +     ret =3D v4l2_ctrl_new_fwnode_properties(hdl, &imx585_ctrl_ops=
-, &props);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_free;
-> >>>>> +
-> >>>>> +     imx585->sd.ctrl_handler =3D hdl;
-> >>>>> +     return 0;
-> >>>>> +
-> >>>>> +err_free:
-> >>>>> +     v4l2_ctrl_handler_free(hdl);
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void imx585_free_controls(struct imx585 *imx585)
-> >>>>> +{
-> >>>>> +     v4l2_ctrl_handler_free(imx585->sd.ctrl_handler);
-> >>>>> +}
-> >>>>> +
-> >>>>> +/* ---------------------------------------------------------------=
------------
-> >>>>> + * Pad ops / formats
-> >>>>> + * ---------------------------------------------------------------=
------------
-> >>>>> + */
-> >>>>> +
-> >>>>> +static int imx585_enum_mbus_code(struct v4l2_subdev *sd,
-> >>>>> +                              struct v4l2_subdev_state *sd_state,
-> >>>>> +                              struct v4l2_subdev_mbus_code_enum *c=
-ode)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     unsigned int entries;
-> >>>>> +     const u32 *tbl;
-> >>>>> +
-> >>>>> +     if (imx585->mono) {
-> >>>>> +             if (code->index)
-> >>>>> +                     return -EINVAL;
-> >>>>> +             code->code =3D MEDIA_BUS_FMT_Y12_1X12;
-> >>>>> +             return 0;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     tbl =3D color_codes;
-> >>>>> +     entries =3D ARRAY_SIZE(color_codes) / 4;
-> >>>>> +
-> >>>>> +     if (code->index >=3D entries)
-> >>>>> +             return -EINVAL;
-> >>>>> +
-> >>>>> +     code->code =3D imx585_get_format_code(imx585, tbl[code->index=
- * 4]);
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int imx585_enum_frame_size(struct v4l2_subdev *sd,
-> >>>>> +                               struct v4l2_subdev_state *sd_state,
-> >>>>> +                               struct v4l2_subdev_frame_size_enum =
-*fse)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     const struct imx585_mode *mode_list;
-> >>>>> +     unsigned int num_modes;
-> >>>>> +
-> >>>>> +     get_mode_table(imx585, fse->code, &mode_list, &num_modes);
-> >>>>> +     if (fse->index >=3D num_modes)
-> >>>>> +             return -EINVAL;
-> >>>>> +     if (fse->code !=3D imx585_get_format_code(imx585, fse->code))
-> >>>>> +             return -EINVAL;
-> >>>>> +
-> >>>>> +     fse->min_width  =3D mode_list[fse->index].width;
-> >>>>> +     fse->max_width  =3D fse->min_width;
-> >>>>> +     fse->min_height =3D mode_list[fse->index].height;
-> >>>>> +     fse->max_height =3D fse->min_height;
-> >>>>> +
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int imx585_set_pad_format(struct v4l2_subdev *sd,
-> >>>>> +                              struct v4l2_subdev_state *sd_state,
-> >>>>> +                              struct v4l2_subdev_format *fmt)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     const struct imx585_mode *mode_list, *mode;
-> >>>>> +     unsigned int num_modes;
-> >>>>> +     struct v4l2_mbus_framefmt *format;
-> >>>>> +
-> >>>>> +     get_mode_table(imx585, fmt->format.code, &mode_list, &num_mod=
-es);
-> >>>>> +     mode =3D v4l2_find_nearest_size(mode_list, num_modes, width, =
-height,
-> >>>>> +                                   fmt->format.width, fmt->format.=
-height);
-> >>>>> +
-> >>>>> +     fmt->format.width        =3D mode->width;
-> >>>>> +     fmt->format.height       =3D mode->height;
-> >>>>> +     fmt->format.field        =3D V4L2_FIELD_NONE;
-> >>>>> +     fmt->format.colorspace   =3D V4L2_COLORSPACE_RAW;
-> >>>>> +     fmt->format.ycbcr_enc    =3D V4L2_YCBCR_ENC_601;
-> >>>>> +     fmt->format.quantization =3D V4L2_QUANTIZATION_FULL_RANGE;
-> >>>>> +     fmt->format.xfer_func    =3D V4L2_XFER_FUNC_NONE;
-> >>>>> +
-> >>>>> +     format =3D v4l2_subdev_state_get_format(sd_state, 0);
-> >>>>> +
-> >>>>> +     if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE)
-> >>>>> +             imx585_set_framing_limits(imx585, mode);
-> >>>>> +
-> >>>>> +     *format =3D fmt->format;
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>> +/* ---------------------------------------------------------------=
------------
-> >>>>> + * Stream on/off
-> >>>>> + * ---------------------------------------------------------------=
------------
-> >>>>> + */
-> >>>>> +
-> >>>>> +static int imx585_enable_streams(struct v4l2_subdev *sd,
-> >>>>> +                              struct v4l2_subdev_state *state, u32=
- pad,
-> >>>>> +                              u64 streams_mask)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     const struct imx585_mode *mode_list, *mode;
-> >>>>> +     struct v4l2_subdev_state *st;
-> >>>>> +     struct v4l2_mbus_framefmt *fmt;
-> >>>>> +     unsigned int n_modes;
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     ret =3D pm_runtime_get_sync(imx585->clientdev);
-> >>>>> +     if (ret < 0) {
-> >>>>> +             pm_runtime_put_noidle(imx585->clientdev);
-> >>>>> +             return ret;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     ret =3D cci_multi_reg_write(imx585->regmap, common_regs,
-> >>>>> +                               ARRAY_SIZE(common_regs), NULL);
-> >>>>> +     if (ret) {
-> >>>>> +             dev_err(imx585->clientdev, "Failed to write common se=
-ttings\n");
-> >>>>> +             goto err_rpm_put;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     ret =3D cci_write(imx585->regmap, IMX585_INCK_SEL, imx585->in=
-ck_sel_val, NULL);
-> >>>>> +     if (!ret)
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_REG_BLKLEVEL=
-, IMX585_BLKLEVEL_DEFAULT, NULL);
-> >>>>> +     if (!ret)
-> >>>>> +             ret =3D cci_write(imx585->regmap, IMX585_DATARATE_SEL=
-,
-> >>>>> +                             link_freqs_reg_value[imx585->link_fre=
-q_idx], NULL);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_rpm_put;
-> >>>>> +
-> >>>>> +     ret =3D cci_write(imx585->regmap, IMX585_LANEMODE,
-> >>>>> +                     (imx585->lane_count =3D=3D 2) ? 0x01 : 0x03, =
-NULL);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_rpm_put;
-> >>>>> +
-> >>>>> +     /* Mono bin flag (datasheet: 0x01 mono, 0x00 color) */
-> >>>>> +     ret =3D cci_write(imx585->regmap, IMX585_BIN_MODE, imx585->mo=
-no ? 0x01 : 0x00, NULL);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_rpm_put;
-> >>>>> +
-> >>>>> +     /* Sync configuration */
-> >>>>> +     if (imx585->sync_mode =3D=3D SYNC_INT_FOLLOWER) {
-> >>>>> +             dev_dbg(imx585->clientdev, "Internal sync follower: X=
-VS input\n");
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_EXTMODE, 0x01, N=
-ULL);
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_DRV, 0x03, N=
-ULL); /* XHS out, XVS in */
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_OUTSEL, 0x08=
-, NULL); /* disable XVS OUT */
-> >>>>> +     } else if (imx585->sync_mode =3D=3D SYNC_INT_LEADER) {
-> >>>>> +             dev_dbg(imx585->clientdev, "Internal sync leader: XVS=
-/XHS output\n");
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_EXTMODE, 0x00, N=
-ULL);
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_DRV, 0x00, N=
-ULL); /* XHS/XVS out */
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_OUTSEL, 0x0A=
-, NULL);
-> >>>>> +     } else {
-> >>>>> +             dev_dbg(imx585->clientdev, "Follower: XVS/XHS input\n=
-");
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_DRV, 0x0F, N=
-ULL); /* inputs */
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XXS_OUTSEL, 0x00=
-, NULL);
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     imx585->common_regs_written =3D true;
-> >>>>> +
-> >>>>> +     /* Select mode */
-> >>>>> +     st  =3D v4l2_subdev_get_locked_active_state(&imx585->sd);
-> >>>>> +     fmt =3D v4l2_subdev_state_get_format(st, 0);
-> >>>>> +
-> >>>>> +     get_mode_table(imx585, fmt->code, &mode_list, &n_modes);
-> >>>>> +     mode =3D v4l2_find_nearest_size(mode_list, n_modes, width, he=
-ight,
-> >>>>> +                                   fmt->width, fmt->height);
-> >>>>> +
-> >>>>> +     ret =3D cci_multi_reg_write(imx585->regmap, mode->reg_list.re=
-gs,
-> >>>>> +                               mode->reg_list.num_of_regs, NULL);
-> >>>>> +     if (ret) {
-> >>>>> +             dev_err(imx585->clientdev, "Failed to write mode regi=
-sters\n");
-> >>>>> +             goto err_rpm_put;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     /* Disable digital clamp */
-> >>>>> +     cci_write(imx585->regmap, IMX585_REG_DIGITAL_CLAMP, 0x00, NUL=
-L);
-> >>>>> +
-> >>>>> +     /* Apply user controls after writing the base tables */
-> >>>>> +     ret =3D __v4l2_ctrl_handler_setup(imx585->sd.ctrl_handler);
-> >>>>> +     if (ret) {
-> >>>>> +             dev_err(imx585->clientdev, "Control handler setup fai=
-led\n");
-> >>>>> +             goto err_rpm_put;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     if (imx585->sync_mode !=3D SYNC_EXTERNAL)
-> >>>>> +             cci_write(imx585->regmap, IMX585_REG_XMSTA, 0x00, NUL=
-L);
-> >>>>> +
-> >>>>> +     ret =3D cci_write(imx585->regmap, IMX585_REG_MODE_SELECT, IMX=
-585_MODE_STREAMING, NULL);
-> >>>>> +     if (ret)
-> >>>>> +             goto err_rpm_put;
-> >>>>> +
-> >>>>> +     dev_dbg(imx585->clientdev, "Streaming started\n");
-> >>>>> +     usleep_range(IMX585_STREAM_DELAY_US,
-> >>>>> +                  IMX585_STREAM_DELAY_US + IMX585_STREAM_DELAY_RAN=
-GE_US);
-> >>>>> +
-> >>>>> +     /* vflip, hflip cannot change during streaming */
-> >>>>> +     __v4l2_ctrl_grab(imx585->vflip, true);
-> >>>>> +     __v4l2_ctrl_grab(imx585->hflip, true);
-> >>>>> +
-> >>>>> +     return 0;
-> >>>>> +
-> >>>>> +err_rpm_put:
-> >>>>> +     pm_runtime_put_autosuspend(imx585->clientdev);
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int imx585_disable_streams(struct v4l2_subdev *sd,
-> >>>>> +                               struct v4l2_subdev_state *state, u3=
-2 pad,
-> >>>>> +                               u64 streams_mask)
-> >>>>> +{
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     ret =3D cci_write(imx585->regmap, IMX585_REG_MODE_SELECT, IMX=
-585_MODE_STANDBY, NULL);
-> >>>>> +     if (ret)
-> >>>>> +             dev_err(imx585->clientdev, "Failed to stop streaming\=
-n");
-> >>>>> +
-> >>>>> +     __v4l2_ctrl_grab(imx585->vflip, false);
-> >>>>> +     __v4l2_ctrl_grab(imx585->hflip, false);
-> >>>>> +
-> >>>>> +     pm_runtime_put_autosuspend(imx585->clientdev);
-> >>>>> +
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +/* ---------------------------------------------------------------=
------------
-> >>>>> + * Power / runtime PM
-> >>>>> + * ---------------------------------------------------------------=
------------
-> >>>>> + */
-> >>>>> +
-> >>>>> +static int imx585_power_on(struct device *dev)
-> >>>>> +{
-> >>>>> +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     dev_dbg(imx585->clientdev, "power_on\n");
-> >>>>> +
-> >>>>> +     ret =3D regulator_bulk_enable(IMX585_NUM_SUPPLIES, imx585->su=
-pplies);
-> >>>>> +     if (ret) {
-> >>>>> +             dev_err(imx585->clientdev, "Failed to enable regulato=
-rs\n");
-> >>>>> +             return ret;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     ret =3D clk_prepare_enable(imx585->xclk);
-> >>>>> +     if (ret) {
-> >>>>> +             dev_err(imx585->clientdev, "Failed to enable clock\n"=
-);
-> >>>>> +             goto reg_off;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     gpiod_set_value_cansleep(imx585->reset_gpio, 1);
-> >>>>> +     usleep_range(IMX585_XCLR_MIN_DELAY_US,
-> >>>>> +                  IMX585_XCLR_MIN_DELAY_US + IMX585_XCLR_DELAY_RAN=
-GE_US);
-> >>>>> +     return 0;
-> >>>>> +
-> >>>>> +reg_off:
-> >>>>> +     regulator_bulk_disable(IMX585_NUM_SUPPLIES, imx585->supplies)=
-;
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int imx585_power_off(struct device *dev)
-> >>>>> +{
-> >>>>> +     struct v4l2_subdev *sd =3D dev_get_drvdata(dev);
-> >>>>> +     struct imx585 *imx585 =3D to_imx585(sd);
-> >>>>> +
-> >>>>> +     dev_dbg(imx585->clientdev, "power_off\n");
-> >>>>> +
-> >>>>> +     gpiod_set_value_cansleep(imx585->reset_gpio, 0);
-> >>>>
-> >>>> NAK, I wrote you this is broken and you just ignored and sending the=
- same.
-> >>>>
-> >>>> You are mixing line level with logical level.
-> >>>>
-> >>>> There is no way your code actually works, unless you have broken DTS=
-.
-> >>>> Test your patches correctly (with proper, fixed DTS) and don't send =
-the
-> >>>> same completely ignoring reviewers.
-> >>>
-> >>> See how imx219.c works, ask Sony don't ask me.
-> >>
-> >> So there is a bug, you claim that you may do the same bug and then say=
-:
-> >>
-> >>> That is why I ignore your comments on this.
-> >>
-> >> and ignoring comments that your code is buggy. Great!
-> >>
-> >> If you ever decide to not follow reviewer's opinion, you MUST respond
-> >> and you MUST say WHY in the changelog.
-> >>
-> >> Nothing that happened.
-> >>
-> >> But regardless, this is still buggy and this is still NAK.
-> >>
-> >> NAK means: Don't send the same code.
-> >
-> > What on earth are you talking about?
->
-> Why are you sending me this in two copies?
->
-> Do you understand the difference betweeen logical level and line level?
->
-> > See imx274.c,imx283.c,imx334.c,imx335.c,imx412.c,imx415.c.
-> > Your claim that this is buggy doesn't make sense when all other Sony
-> > imx drivers are using the same logic.
-> >
-> >
-> > imx274.c:
-> > /*
-> >  * imx274_reset - Function called to reset the sensor
-> >  * @priv: Pointer to device structure
-> >  * @rst: Input value for determining the sensor's end state after reset
-> >  *
-> >  * Set the senor in reset and then
-> >  * if rst =3D 0, keep it in reset;
-> >  * if rst =3D 1, bring it out of reset.
->
-> Buggy driver, another old poor code.
->
->
-> >  *
-> >  */
-> > static void imx274_reset(struct stimx274 *priv, int rst)
-> > {
-> > gpiod_set_value_cansleep(priv->reset_gpio, 0);
-> > usleep_range(IMX274_RESET_DELAY1, IMX274_RESET_DELAY2);
-> > gpiod_set_value_cansleep(priv->reset_gpio, !!rst);
-> > usleep_range(IMX274_RESET_DELAY1, IMX274_RESET_DELAY2);
-> > }
-> >
-> >
-> > imx283.c:
-> >
->
-> Way you paste code makes it very unreadable. It's easier to point
-> web.git references.
->
->
-> Anyway, look also here:
->
-> >
-> > static void imx415_power_off(struct imx415 *sensor)
-> > {
-> > clk_disable_unprepare(sensor->clk);
-> > gpiod_set_value_cansleep(sensor->reset, 1);
->
->
-> But if you claim that reset has to be asserted for this device to work -
-> and that's what your code is doing - then this is not a reset line.
->
-> Do you understand what is the meaning of asserted reset (or to assert
-> reset line)?
+On Wed, 13 Aug 2025 18:42:21 -0400
+Lyude Paul <lyude@redhat.com> wrote:
 
-And in all the examples I provided to you, this is the only IMX415
-that has the logic inverted.
-I can apply the same logic and say this is buggy and wrong.
+> For implementing Rust bindings which can return a point in time.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> 
+> ---
+> V4:
+> * Turn from_nanos() into an unsafe function in order to ensure that we
+>   uphold the invariants of Instant
+> V5:
+> * Add debug_assert!() to from_nanos
+> 
+>  rust/kernel/time.rs | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 64c8dcf548d63..75088d080b834 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -200,6 +200,29 @@ pub fn elapsed(&self) -> Delta {
+>      pub(crate) fn as_nanos(&self) -> i64 {
+>          self.inner
+>      }
+> +
+> +    /// Create an [`Instant`] from a time duration specified in nanoseconds without checking if it
+> +    /// is positive.
 
-Do you understand this is writing the GPIO directly and has nothing to
-do with what you think it should be?
-Ask Sony why they use logic high =3D normal mode and logic low =3D reset.
+Can we create Instant (a specific poin in time) from a time duraiton?
 
-Quote your previous comments:
-> This is not how resets work. Logical reset value high means it is
-> asserted and device does not work.
+The caller (the 7th patch) creates Instant from C side's Instant? 
 
-> Read carefully your datasheet. Because if you claim above this is not a
-> reset line, but some other.
+> +    /// # Panics
+> +    ///
+> +    /// On debug builds, this function will panic if `nanos` violates our safety contract.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller promises that `nanos` is in the range from 0 to `KTIME_MAX`.
 
-imx283.c is the latest one landed in 2024, can you read it carefully
-and reply again?
+No conclusion has been made yet, but using a mathematical integer
+interval or a Rust range expression might be a better fit here:
+
+https://lore.kernel.org/lkml/87ms9ktoly.fsf@kernel.org/
+
+> +    #[expect(unused)]
+> +    #[inline]
+> +    pub(crate) unsafe fn from_nanos(nanos: i64) -> Self {
+
+If this function creates Instant from C side's Instant, from_ktime()
+might be better?
 
 
-> Best regards,
-> Krzysztof
+> +        debug_assert!(nanos >= 0);
+> +
+> +        // INVARIANT: Our safety contract ensures that `nanos` is in the range from 0 to
+> +        // `KTIME_MAX`.
+> +        Self {
+> +            inner: nanos as bindings::ktime_t,
+> +            _c: PhantomData,
+> +        }
+> +    }
+>  }
+>  
+>  impl<C: ClockSource> core::ops::Sub for Instant<C> {
+> -- 
+> 2.50.0
+> 
+> 
 
