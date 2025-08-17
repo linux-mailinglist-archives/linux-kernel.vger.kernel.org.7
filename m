@@ -1,81 +1,118 @@
-Return-Path: <linux-kernel+bounces-772444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC764B292B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D17B292BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D31134E14F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B2B203154
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933F2877E1;
-	Sun, 17 Aug 2025 10:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5975A2877DD;
+	Sun, 17 Aug 2025 10:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOpxmImS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GD6Wb82x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C211AF4D5;
-	Sun, 17 Aug 2025 10:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B43285040;
+	Sun, 17 Aug 2025 10:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755427855; cv=none; b=W+Q8+gimPexX0LldqGavruhRpAVljE+Y0X4ebbVYFm83ebGDIXKGRrtsZw/DSdd03mWR6nKh+9zsC5pPqVxIoGjsny9q64tJ5cBGdJj9qc78yhQNfyfSVEHl1V+dOIs19jmepid5//b2lpCjwSU1ef1aaRrL5Xssvl/VIQiwYtk=
+	t=1755427924; cv=none; b=lIeYB6UbAOkAz1lj7uT3CRqjxl1JCjmxgpCLGsTq8evFR7DCiAwYmFPRdoOoHeEjs1VSTEruULYW+ke8esE0ZoBDsIEBOLwGUBSuBDneS50OO4POrilqn+yigtGWCsL4HgVZZyQSCxu+Yk3Z4lK4opOXvj3IQo0ymwRBjsSzY+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755427855; c=relaxed/simple;
-	bh=jYq7d/KI9Fl7n0FN3697SqbIefUMAmBfpP+PbR+dS6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LdPm6KFL2AdtfgZY7EVobC3wnH0f+dlC0/Ir1XmCRhrXELPPRLlFYDJWbdtremPKapbJkq4bNK/T+omAg0zrA9G5/zpkFKGUXILx0kJ8kWRCNY0hD0qpFqV5pOJ3GUa1Xl8VTwGeGQPJPLcH4bW8H5Me6T+Lol44Zu11ZlecTwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOpxmImS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1CAC4CEEB;
-	Sun, 17 Aug 2025 10:50:49 +0000 (UTC)
+	s=arc-20240116; t=1755427924; c=relaxed/simple;
+	bh=pMMIe+P1uAVD+fiUbERzGoVnBS5zowAqRDZnffQAvdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZmcb0/B3RMp9oWFlmf5usPeJfz4FuXtfQxP+LpAZLbwWZr8v8dzAMO4E57KI9CurISI6JphMseXw+p1WLmW0T3Pglvd4vxuBZca0yQQOSeC4UHppVtbR6AUB/zvB1rg2qiCBYBNKZUBS6x+RyJSUCIKN/tsRjzqeKK/xq4fLNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GD6Wb82x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4724C4CEEB;
+	Sun, 17 Aug 2025 10:52:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755427854;
-	bh=jYq7d/KI9Fl7n0FN3697SqbIefUMAmBfpP+PbR+dS6o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oOpxmImSwwHJZh3R1upYjow3eW8PAtsOA7LQdCIqDJTVHVgedpn9RuwIKhtL/48o3
-	 QFTz4aMH1BRvbIt5iWZ7/eOYz2uUCFbR/ZOqRw79eMLPXXhwJ0uYzkBR1tmu6r06vF
-	 7s8wK844/6Z9N2lrFISXUSiyXjeu9oKBe2nVud/8Ov6O/e0ojUkYH1Lm+XkxEe03ai
-	 PkUYJRjFLKfrA5V9znZP7/bSpYnKpfz5wggXiTt2PRV0AKAgB/6e6jc/bgWApQjJP7
-	 PLLuKXg9OgRc4DfcKTxVGY94iyBRq4rmBPRe3Yjs2KymcarqV0fswaiLJntCpYXqBd
-	 XiFgAvFn7zk4Q==
-Message-ID: <170403b9-f98b-435c-8403-d1b8c2db1244@kernel.org>
-Date: Sun, 17 Aug 2025 12:50:48 +0200
+	s=k20201202; t=1755427924;
+	bh=pMMIe+P1uAVD+fiUbERzGoVnBS5zowAqRDZnffQAvdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GD6Wb82xVeCkEiPAPQyVx5fuXm1vBkHKZkGAtnYCNaCbJaPHYYfCVtvPJ6PBcvOfJ
+	 +LFzSKd3W7hs0DUnipS4rLxcDVHTmQ/yJEf1r5eU6dV1gVO91ZvTnOxF5vE3cFynh/
+	 53efBH2w9dxj2LBhggmIhGEoV27gGpqNJio/+Gqhy/MKe6FlVa8o1ch6jnri7owtB8
+	 0t8yaas+8A4woSEhYsmRpCinls/KnKNmrOW49KlDoV4CnFsIwEbvXX1QuF7BBoQMoB
+	 wk2AtYZBpjUPZthfQxerz6kzuWsG5fRYB/md6ny0aXZwuw102swa4xLa8Pjvkqw2Bc
+	 AstkNU+NMsiNA==
+Date: Sun, 17 Aug 2025 12:52:01 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: berlin: Fix wrong register in suspend/resume
+Message-ID: <rscqtwztqwtihcq7rwvyjvnkbo5bmve257i66e3it52cnft7pb@6gwbgx5o7lpt>
+References: <20250815031016.31000-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: asahi@lists.linux.dev, Will Deacon <will@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Neal Gompa <neal@gompa.dev>,
- Janne Grunau <j@jannau.net>, linux-arm-kernel@lists.infradead.org,
- Keith Busch <kbusch@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
- Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
- devicetree@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>
-References: <20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com>
- <20250811-t8015-nvme-v1-3-ef9c200e74a7@gmail.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250811-t8015-nvme-v1-3-ef9c200e74a7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gkb3f744hn3qtrx2"
+Content-Disposition: inline
+In-Reply-To: <20250815031016.31000-1-jszhang@kernel.org>
 
-On 11.08.25 15:50, Nick Chan wrote:
-> Add bindings for SARTv0 as found on Apple A11 SoC.
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+
+--gkb3f744hn3qtrx2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: berlin: Fix wrong register in suspend/resume
+MIME-Version: 1.0
+
+Hello,
+
+On Fri, Aug 15, 2025 at 11:10:16AM +0800, Jisheng Zhang wrote:
+> The 'enable' register should be BERLIN_PWM_EN rather than
+> BERLIN_PWM_ENABLE.
+>=20
+> Fixes: bbf0722c1c66 ("pwm: berlin: Add suspend/resume support")
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
+>  drivers/pwm/pwm-berlin.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+> index 831aed228caf..858d36991374 100644
+> --- a/drivers/pwm/pwm-berlin.c
+> +++ b/drivers/pwm/pwm-berlin.c
+> @@ -234,7 +234,7 @@ static int berlin_pwm_suspend(struct device *dev)
+>  	for (i =3D 0; i < chip->npwm; i++) {
+>  		struct berlin_pwm_channel *channel =3D &bpc->channel[i];
+> =20
+> -		channel->enable =3D berlin_pwm_readl(bpc, i, BERLIN_PWM_ENABLE);
+> +		channel->enable =3D berlin_pwm_readl(bpc, i, BERLIN_PWM_EN);
 
-Reviewed-by: Sven Peter <sven@kernel.org>
+BERLIN_PWM_ENABLE is 1 and BERLIN_PWM_EN is 0. What is the effect? Is
+the low bit just ignored and the right thing happens? Or does this
+result in a bus exception and the machine catches fire?
 
+If it's more the latter than the former, I wonder how that didn't pop up
+earlier.
+
+Best regards
+Uwe
+
+--gkb3f744hn3qtrx2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmihtE4ACgkQj4D7WH0S
+/k4WqggAjURbeqkril2WNTHV0K/mCg4xeuwNXphkZvmDi8Tv0iVHNtY52W4MhG6H
+UrbJ1Z7m+LIJz+t6y0EKRDFPwdmD/7mzK5+4L9uEFIvwqBYHSFzdgi0oMrrUrh95
+NDR1PPFWu34ZD/4DCYLgucDkOPnDctb+naTBOrdWM9NJoPk+Q2WNlfTSMSM2kzU8
+lgeEF8RkmYwwreBC/sBQXQisO09oDhzjVXo1LulBItFUo+JA7hMyTQDAwO4TXjBj
+3QVioNVgOIPhmcahZQIKMuWIJUQAFdTkkREiDCX+0gYI7eMJB5IX5n0MAwzr8rTf
+Giu5LyQ+D3MpRto0DoWHJCo5Q51DCg==
+=LQsI
+-----END PGP SIGNATURE-----
+
+--gkb3f744hn3qtrx2--
 
