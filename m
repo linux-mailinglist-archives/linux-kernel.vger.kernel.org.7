@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-772658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFEDAB295B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D5B295B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4F717D131
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDCF2188E4AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 23:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1E2192F1;
-	Sun, 17 Aug 2025 23:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4663721D3E4;
+	Sun, 17 Aug 2025 23:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EHwZnONA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3qjAasU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189842AE97;
-	Sun, 17 Aug 2025 23:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B4213AD3F;
+	Sun, 17 Aug 2025 23:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755473981; cv=none; b=AVBbi+GBjeLcqwxOIVv74PxqpZDwFhdq1s8+MWmnx2QKMu7oJgGSbwOE3I8esODhzMxt3YbECgw4Ft9YjICzaAFCqnk+CoE5m7GnEp84Wurdw8J2sN6wE8ltHX07YXeaMTNfNriG2SqnR41QbPeHm5cBE6TszeMr46AqT1qxGkQ=
+	t=1755474233; cv=none; b=XPUuvlsCxxxW//EDE8hzbmJ0xAn6NbttBOYYsZ88CTQ9DRtsl6MjK7ISgtl0iXMs9WeMK9IZkO1u0JFtOeggtSubES/Fr4yq5t1qmsglfdB0fMpyFqLTtvOIS7viJyNaP1MFRl99AfaaXXy+JR74fjjxUw545YO7HLNILYpPujE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755473981; c=relaxed/simple;
-	bh=pzm1UjP9hE4FeJ63Ew3loKGQvv0YagQcVQJLY7SyK2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=b2cShfj5EhWHqx1gxendA3ms8plXvoowfaqRRhScWOM8H1xiWiHVb3QnuAPrJZ6d9UjpzytdBQjRUw4VW10MN1Nmwu+tdslTtEKn2rLxFy7uNO8xHQbxHjSHxgL9zvRYizh4S1j4VBWfaY6vvop4MMenMCP8U1at9/cQIKYH00c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EHwZnONA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755473975;
-	bh=2AiyEpiTmSqUWOAqR3Ndw76+2MDusTeIMRaM0b84wVQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EHwZnONALU4CchtbtjnGasznOm0hkakx1ZxAl0/WWbnPSzQGLLsvTUdswRCKbiQUu
-	 rsSUgG0p+GK2f1OtVNVPJJeVWe8ARmQ4hEDFX4MD8bYkroqG4z7Zi7afDNqP4tE/20
-	 pKFZ9tcvZfNL3tzZVj0xtSGz9KClUwFNlzr323r3hcbH2ahv8BrTjVYivolunafAht
-	 VZU/L5H5qwl78IV+khkwOMCQe/KZLzaGVN+m92mqPhs5ox2uFjS2W9voyKkQTpmxf+
-	 W64pHarTvQYLg21eGpomKoXgzHZa3cHqGJV857USonAko/1wpSF48XXsBVkhpQlsu/
-	 7pBZVFL7POa0g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c4skt6t25z4wcd;
-	Mon, 18 Aug 2025 09:39:34 +1000 (AEST)
-Date: Mon, 18 Aug 2025 09:39:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the vfs-brauner-fixes tree
-Message-ID: <20250818093934.69da263f@canb.auug.org.au>
+	s=arc-20240116; t=1755474233; c=relaxed/simple;
+	bh=mqjeVrC5GbIEs+kq7B3jMm6zMRskrNPVoSIIjxkSK38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8n6UwVim3betGp9jyb7fRFxjmBe4zMXo3S8CAjjynRLpZKP8bCdEq+x9N7D/K1pZ6fWNGeBnrpSGTLA45bSXZ7CrgvUBVKxKj+9Er6NAtjgrZAHSzbIFhiKqCyskPVFHk19uF3LejvV2dnkRlZV/I3ESGoOoR7QJgLCONMLzg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3qjAasU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1B9C4CEEB;
+	Sun, 17 Aug 2025 23:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755474233;
+	bh=mqjeVrC5GbIEs+kq7B3jMm6zMRskrNPVoSIIjxkSK38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3qjAasU7BoOxS43FW3V4OWgzaQql/MmGBT07BN99nXrmNGm8l6UgnMlrtEaa5Nf7
+	 003qlgGRNJ5C++6teVoUoZYH1xf6MCf6TgZwK/qfJKbYLLR/YTj3ZE0qElXiS3QtAO
+	 D/ReDpo0AoDO99EwkwTKJbdi2wByRB1onyRlpXzBmWoPorWFbZ0vLrA6BlJFqz7mP7
+	 IUmtw76nAmgLoJQZx0OvoOdc3liV/i+qCEW/AmvueoDgpIZJsbdwtgVzBAt+36NNYQ
+	 3GBbYh9CkMz3LRGoWcQrmyUDvBtYDJyIjr0RPW0rf3mvof+R8TUVdK2enT06S/5Af1
+	 ZcRNSnm7R9kWw==
+Date: Sun, 17 Aug 2025 16:43:52 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH RESEND] fs/ext4: remove unused variable 'de' in
+ ext4_init_new_dir()
+Message-ID: <20250817234352.GH7938@frogsfrogsfrogs>
+References: <20250813182440.17581-1-suchitkarunakaran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BlgyF174Cqgp+Mu+e5Y=TBE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813182440.17581-1-suchitkarunakaran@gmail.com>
 
---Sig_/BlgyF174Cqgp+Mu+e5Y=TBE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 13, 2025 at 11:54:40PM +0530, Suchit Karunakaran wrote:
+> The variable 'de' was declared but never used in the ext4_init_new_dir()
+> function, causing a compiler warning:
+> variable 'de' set but not used [-Werror=unused-but-set-variable]
+> Remove the unused declaration to clean up the code and fix the warning.
+> 
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
 
-Hi all,
+Gets rid of an annoying warning on my build system, so
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-The following commit is also in the mm-hotfixes tree as a different commit
-(but the same patch):
+--D
 
-  546a40359fd2 ("iov_iter: iterate_folioq: fix handling of offset >=3D foli=
-o size")
-
-This is commit
-
-  be8f7457123f ("iov_iter: iterate_folioq: fix handling of offset >=3D foli=
-o size")
-
-in the mm-hotfixes-unstable branch of the mm-hotfixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BlgyF174Cqgp+Mu+e5Y=TBE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiiaDYACgkQAVBC80lX
-0GyfLQf+NtGOvFHBZKpVe3HFyQmoxtPhCEArotpZyXx9YGfP/zvzOpIhx+7BOrDh
-6yXY7fLAk0esmSMwcDt38zF1u0JTVcKA2QSclO3M6SFMCIqjyYmFLtd/aTR79FyV
-GySTgvYgjcmC4mstTjkQ8YUXxHZjC1PmSTDnVYRZ+uPUmC/dxJbIqmcAlzgwPJXL
-GAVRo2Sl7mVmJXi+QzhdU683k/huTFLSiZ6K43k40NInVDckf7IkO3jQ49mM2Ynq
-NN+DzVHbDaK2FB+eMrl+b2GV2uxTiySHHFMvvruw7EDJZwlIYJbaSvQEZKzpxV1D
-ijsF2ebuIjpQu6pb9Frw2IVpcIP3PA==
-=XD1x
------END PGP SIGNATURE-----
-
---Sig_/BlgyF174Cqgp+Mu+e5Y=TBE--
+> ---
+>  fs/ext4/namei.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index d83f91b62317..bb2370829928 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -2965,7 +2965,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
+>  			     struct inode *inode)
+>  {
+>  	struct buffer_head *dir_block = NULL;
+> -	struct ext4_dir_entry_2 *de;
+>  	ext4_lblk_t block = 0;
+>  	int err;
+>  
+> @@ -2982,7 +2981,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
+>  	dir_block = ext4_append(handle, inode, &block);
+>  	if (IS_ERR(dir_block))
+>  		return PTR_ERR(dir_block);
+> -	de = (struct ext4_dir_entry_2 *)dir_block->b_data;
+>  	err = ext4_init_dirblock(handle, inode, dir_block, dir->i_ino, NULL, 0);
+>  	if (err)
+>  		goto out;
+> -- 
+> 2.50.1
+> 
+> 
 
