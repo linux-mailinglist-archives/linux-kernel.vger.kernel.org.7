@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-772585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A933B29477
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:13:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80265B2947C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08C817B3E09
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67DC51673DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 17:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C92028750D;
-	Sun, 17 Aug 2025 17:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4373002D3;
+	Sun, 17 Aug 2025 17:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBICYq3l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3wHI1jt"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4975429E0FD;
-	Sun, 17 Aug 2025 17:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570C228750D;
+	Sun, 17 Aug 2025 17:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755450790; cv=none; b=T+/erMcDLLN0I9smurL9y4aiLiusyiK+B2Wau0LJTGrbAHGmXNTu8h9frJGKydjcY3AzvweInlCLjRsJ4513oj4iZKIJ6TxP52ExvJNGiTvUafn7i2X8CrCLT3UZvxyHSOxfS6yuLCsaHGmMGgL5NuGCza/kIK4u0OdvyO12dgo=
+	t=1755450863; cv=none; b=Lb2lydfaDTmweV1lDYcGewH3Nae4zAHlg2GNNftn8MRylKuEnM+GqvHplpVhQ7OgCnL4arBc5wpw11dw9h2l1I3mwWLq2IwEMR/V9uGwyZNmmgGfBYMzj/Oq3Y0ch+Fm8oQLONGRttLKYhqm1JzFFroWRLgJykgM9ydSJH2M1/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755450790; c=relaxed/simple;
-	bh=zwHvJevAX0OLJRVG/i975HO4aUFnCQOcWVclxqSMgjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AMnpRXMmXfj5QFdlkRrkjsEXGkp9GdYI+uEF1zy8Ow1JHfNGybudz3o1wPtkxPZDdzpWJR43oqjAGxLHHUYvMQiVLsK1/WQNdGPKJX6VEJF20k5DJz5saPydxToJzs/JLXpTiGXMm2w5GoY/zlJJsIfkgrYpBOXHXazr3Pyl5a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBICYq3l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BAA5C4CEEB;
-	Sun, 17 Aug 2025 17:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755450789;
-	bh=zwHvJevAX0OLJRVG/i975HO4aUFnCQOcWVclxqSMgjs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BBICYq3lJBBeqA6vj/M+bIHlcCV18hp6oeSLmpdQ1SChsOhwFNhDyhBVVYlekIxaO
-	 Wqk+yYQYy0AZlF0xa3jrP4fSoFVDJUFWA/lGacWBKyzUdVfmZt6ssjQAJ+AAOhP0ed
-	 Bp8+1GKXNw6IZOoh745uRia4zMqOPDqqKupN+cW+pi0YT/YUUXhLSgaL6E0aJOpAYb
-	 Y7sI/6oafnRVsYoKX3LwsbjYwQ5Xi0KVLtEiKRvz/fcedhvtyVqM2btDUXd3KCZ+Bz
-	 Q5ICKkXN52f8rCTU1yG2Id7mbHl5tv+nLwNOxVKnANKDtvtq4bMy11I5x0uo/NW73a
-	 BL+lUYdF5OzHQ==
-Date: Sun, 17 Aug 2025 18:13:02 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ben Collins <bcollins@watter.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <20250817181302.28bbda69@jic23-huawei>
-In-Reply-To: <59D7D612-D618-4FF0-A932-2EB0B57D321E@watter.com>
-References: <20250813151614.12098-1-bcollins@watter.com>
-	<20250813151614.12098-6-bcollins@watter.com>
-	<a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
-	<20250816105410.70e47dac@jic23-huawei>
-	<DA11BDA3-E4E3-4C1A-9E4E-84E92F62A4B3@watter.com>
-	<20250816160835.3b44a4cd@jic23-huawei>
-	<59D7D612-D618-4FF0-A932-2EB0B57D321E@watter.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755450863; c=relaxed/simple;
+	bh=EdsXrgswoXc/LcRSdAyb1O3Hx5UkEBDBkHDaZ4mDY/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dB7/UvTs5DELiW1OAu8q/oGIZ5NIWyv+cDXAKtERGlvO0AtKm2oWhwuUzM2s9E5/dPzjhW6vmrfRzWld5YF1rFfp9aZ2uhLCLvUDkZuGnAdHexnOPMCuRnrml0kOz+bFlNhNA/NyMTmZKdQZJjJidxJk3Vl0AKCN2DmndFYDZ1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3wHI1jt; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61a1663be10so1730785a12.1;
+        Sun, 17 Aug 2025 10:14:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755450860; x=1756055660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LY0YIEoUecUVF5HfBlI2OFzc+QtaIhgG2Wu8Bta8CWI=;
+        b=d3wHI1jtLFAKSO7ubV/8OimppKNUYwng7IUTCWiqfwAfvXI9OPCDsY/bB4KyF/fO9L
+         qb7WiX9d5sxZqRM2PB2Qh1cATBU7e8X+mui1/+8AeUa2qyy8yzcALLpDkRQwnBcJADF6
+         TcKd+5MfGADaqQYd6wu+BE7k1PnkpXXGGAv0KD/h3KfXBCp5Ofx92Tb3YxasgHg0Oubm
+         lulArpoNPSbb6ou6lpttI38E4YpxLBwY23DZdN2pXsrNW8A4w46vL5ffTVoOKQpK8doU
+         KbwnV+Za+DfLxg/rMCvGTiAJKdd4/29sgApKE2U2x1z5HQNG0wMN2rIHzvg3uUz71mK7
+         AfgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755450860; x=1756055660;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LY0YIEoUecUVF5HfBlI2OFzc+QtaIhgG2Wu8Bta8CWI=;
+        b=JkvXHKsj5mAG3y5nRY0Y5y2R90VMfJPaKxXUkZltlAXvA7zXShlNvnBfgm4d+k214Q
+         jbkksxNeWcoUeL+adPO6s79ThtLKyLOJw0I/ipHbyyzthkKEhDdfI31QanOJocNe/FWP
+         WhLV71WvhKKH4EcfWACBS8EhmUD36Naz/+2zW2HrJXz+w1aOf5ZDremBoovKDmwXBxT3
+         2zTEJ4unjnkMi5LsHBpEHUrRdvUtUZxFnC6fyoUlI0IKIznWSpXfBo44/VXwTWKP1H+p
+         EKPMcYfyWZipRV6ad2/DVnZE4Br7Ihl8fs+zW5aYWNMachfnVHSpQylvCcpVBdt7apaW
+         1RAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8jSohf93Kc+rxxPf0U8inht59w0///U0ZpVFdoVyM3RXSQgvbHF8D3Zi5RopQ61XxBLMcDWW@vger.kernel.org, AJvYcCW7RfmNfSQGPHzqR6iHu8xP5ft2iI+S8zaZ7B5KzL9irhqTBP/RTtITrVhq0sV4k3dfvMGrXNmpKFNc5Ec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqm3GEHfVKjCTUsqfZHp0C/aGKPdSwpgyUgOvgDGGFtwIvUfiy
+	alas/6OAJ9F1GQ9zMnXYw6qOg281/f+NEACQG4QJEgwtz0daiH8xrsBysj7pRQ==
+X-Gm-Gg: ASbGnctkbLtCwO4VDisWcRhDRKA0BSFI+dr0qzWLVu0deecgIaiCIbGDTZFUel5tQ7R
+	zValR1+Y97Xb5pa9LPAzr6M74MeSA1hWPrtPkz119IjaR7KNRLRfB2CuTs03R7z8Y6Vh8FwNpHN
+	5jPFbsAiYtBEmeyZI9OE2R+/Inp2k7sFtlD/2OrnV1y86fTrbA/IiNt3KAZn7/pKi7RXq+S6BIT
+	+BFmJhn2XaV946qrOfcdE8dF5yfNUra09AXHEZw2jV92WyGmCTLbk7EMcwQeBbcPpvMI2m40Hl0
+	XjFmPHUgFrX+aXC9eVOqDb3ZmaJqOIc8BAmfEjtzEPk+FGQxaWSacsy8yWsUDC+UTDxQ817Q3qP
+	UQWUba9N64fmB3+SVXAqy21YR0HIupXMv0w==
+X-Google-Smtp-Source: AGHT+IGTN3iEvbwgt1xnZ9FgE2o8v+iy5yboUBLF5nA0P8h3zvmiBjNvUzKjvIuN7BJmKtdf0bSh6w==
+X-Received: by 2002:a05:6402:234b:b0:617:fe86:6bff with SMTP id 4fb4d7f45d1cf-618b0513fe6mr8219743a12.8.1755450859385;
+        Sun, 17 Aug 2025 10:14:19 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b2e97sm5414399a12.56.2025.08.17.10.14.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 10:14:19 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Cc: gshahrouzi@gmail.com,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] staging: axis-fifo: fix maximum TX packet length check
+Date: Sun, 17 Aug 2025 20:13:50 +0300
+Message-ID: <20250817171350.872105-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,178 +88,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, 16 Aug 2025 11:19:53 -0400
-Ben Collins <bcollins@watter.com> wrote:
+Since commit 2ca34b508774 ("staging: axis-fifo: Correct handling of
+tx_fifo_depth for size validation"), write() operations with packets
+larger than 'tx_fifo_depth - 4' words are no longer rejected with -EINVAL.
 
-> > On Aug 16, 2025, at 11:08=E2=80=AFAM, Jonathan Cameron <jic23@kernel.or=
-g> wrote:
-> >=20
-> > On Sat, 16 Aug 2025 09:12:37 -0400
-> > Ben Collins <bcollins@watter.com> wrote:
-> >  =20
-> >>> On Aug 16, 2025, at 5:54=E2=80=AFAM, Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> >>>=20
-> >>> On Wed, 13 Aug 2025 17:52:04 -0500
-> >>> David Lechner <dlechner@baylibre.com> wrote:
-> >>>  =20
-> >>>> On 8/13/25 10:15 AM, Ben Collins wrote:   =20
-> >>>>> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> >>>>> to allow get/set of this value.
-> >>>>>=20
-> >>>>> Signed-off-by: Ben Collins <bcollins@watter.com>
-> >>>>> ---
-> >>>>> drivers/iio/temperature/mcp9600.c | 43 ++++++++++++++++++++++++++++=
-+++
-> >>>>> 1 file changed, 43 insertions(+)
-> >>>>>=20
-> >>>>> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temper=
-ature/mcp9600.c
-> >>>>> index 5ead565f1bd8c..5bed3a35ae65e 100644
-> >>>>> --- a/drivers/iio/temperature/mcp9600.c
-> >>>>> +++ b/drivers/iio/temperature/mcp9600.c
-> >>>>> @@ -31,6 +31,7 @@
-> >>>>> #define MCP9600_STATUS_ALERT(x) BIT(x)
-> >>>>> #define MCP9600_SENSOR_CFG 0x5
-> >>>>> #define MCP9600_SENSOR_TYPE_MASK GENMASK(6, 4)
-> >>>>> +#define MCP9600_FILTER_MASK GENMASK(2, 0)
-> >>>>> #define MCP9600_ALERT_CFG1 0x8
-> >>>>> #define MCP9600_ALERT_CFG(x) (MCP9600_ALERT_CFG1 + (x - 1))
-> >>>>> #define MCP9600_ALERT_CFG_ENABLE BIT(0)
-> >>>>> @@ -111,6 +112,7 @@ static const struct iio_event_spec mcp9600_even=
-ts[] =3D {
-> >>>>> .address =3D MCP9600_HOT_JUNCTION,        \
-> >>>>> .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |        \
-> >>>>>      BIT(IIO_CHAN_INFO_SCALE) |       \
-> >>>>> +       BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
-> >>>>>      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE), \
-> >>>>> .event_spec =3D &mcp9600_events[hj_ev_spec_off],        \
-> >>>>> .num_event_specs =3D hj_num_ev,        \
-> >>>>> @@ -149,6 +151,7 @@ static const struct iio_chan_spec mcp9600_chann=
-els[][2] =3D {
-> >>>>> struct mcp9600_data {
-> >>>>> struct i2c_client *client;
-> >>>>> u32 thermocouple_type;
-> >>>>> + u32 filter_level;
-> >>>>> };
-> >>>>>=20
-> >>>>> static int mcp9600_read(struct mcp9600_data *data,
-> >>>>> @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev *ind=
-io_dev,
-> >>>>> case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-> >>>>> *val =3D mcp9600_tc_types[data->thermocouple_type];
-> >>>>> return IIO_VAL_CHAR;
-> >>>>> + case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> >>>>> + *val =3D data->filter_level;     =20
-> >>>>=20
-> >>>> We can't just pass the raw value through for this. The ABI is defined
-> >>>> in Documentation/ABI/testing/sysfs-bus-iio and states that the value
-> >>>> is the frequency in Hz.
-> >>>>=20
-> >>>> So we need to do the math to convert from the register value to
-> >>>> the required value.
-> >>>>=20
-> >>>> I'm a bit rusty on my discrete time math, so I had chatgpt help me
-> >>>> do the transform of the function from the datasheet to a transfer
-> >>>> function and use that to find the frequency response.
-> >>>>=20
-> >>>> It seemed to match what my textbook was telling me, so hopefully
-> >>>> it got it right.
-> >>>>=20
-> >>>> Then it spit out the following program that can be used to make
-> >>>> a table of 3dB points for a given sampling frequency. If I read the
-> >>>> datasheet right, the sampling frequency depends on the number of
-> >>>> bits being read.
-> >>>>=20
-> >>>> For example, for 3 Hz sample rate (18-bit samples), I got:
-> >>>>=20
-> >>>> n  f_3dB (Hz)
-> >>>> 1  0.58774
-> >>>> 2  0.24939
-> >>>> 3  0.12063
-> >>>> 4  0.05984
-> >>>> 5  0.02986
-> >>>> 6  0.01492
-> >>>> 7  0.00746
-> >>>>=20
-> >>>> I had to skip n=3D0 though since that is undefined. Not sure how we
-> >>>> handle that since it means no filter. Maybe Jonathan can advise?   =
-=20
-> >>>=20
-> >>> This is always a fun corner case.  Reality is there is always
-> >>> some filtering going on due to the analog side of things we
-> >>> just have no idea what it is if the nicely defined filter is
-> >>> turned off.  I can't remember what we have done in the past,
-> >>> but one option would be to just have anything bigger than 0.58774
-> >>> defined as being filter off and return a big number. Not elegant
-> >>> though.  Or just don't bother supporting it if we think no one
-> >>> will ever want to run with not filter at all.
-> >>>=20
-> >>> Hmm. or given this is a digital filter on a sampled signal, can we es=
-tablish
-> >>> an effective frequency that could be detected without aliasing and
-> >>> use that?  Not sure - I'm way to rusty on filter theory (and was
-> >>> never that good at it!)   =20
-> >>=20
-> >> I=E2=80=99ve seen another driver use { U64_MAX, U64_MAX } for this cas=
-e. It
-> >> didn=E2=80=99t seem very clean. I thought to use { 999999, 999999 } or=
- even
-> >> { 1, 0 }, but anything other than =E2=80=9Coff=E2=80=9D just felt odd.=
- =20
-> > Ah.  Could we use filter_type? (additional attribute)
-> >=20
-> > That already has a 'none' option.  Nothing there yet that works for the=
- 'on'
-> > option here.  These are always tricky to name unless they are a very
-> > well known class of filter.   The datasheet calls this one an Exponenti=
-al
-> > Moving Average filter. Not a term I'd encountered before, but google did
-> > find me some references.  so maybe ema as a filter type? =20
->=20
-> In the docs I have, it says:
->=20
-> 	In addition, this device integrates a first order recursive
-> 	Infinite Impulse Response (IIR) filter, also known as
-> 	Exponential Moving Average (EMA).
->=20
-> The EMA formula I=E2=80=99ve used for an adc-attached thermistor was the =
-same
-> formula I=E2=80=99ve seen used in IIR, so I think they are generally the =
-same.
->=20
-> >>=20
-> >> ChatGPT suggests this:
-> >>=20
-> >>    =E2=80=A2 Clamp to Nyquist frequency
-> >>        =E2=80=A2 For a sample rate f_s, the maximum realizable cutoff =
-is the Nyquist limit f_s/2.
-> >>        =E2=80=A2 At f_s =3D 3\ \text{Hz}, Nyquist is 1.5\ \text{Hz}.
-> >>        =E2=80=A2 You could encode { 1, 500000 } (1.5 Hz) as the maximu=
-m meaningful cutoff. =20
-> >=20
-> > Hmm. Whilst kind of backwards as that's where you'll see aliasing it do=
-es make more sense
-> > I think than just a magic large number.
-> >=20
-> > I think I prefer the filter type route though now your comment on 'off'=
- has lead me to it.
-> >=20
-> > Make sure to add ABI docs for the new filter type if you do go that way=
-. =20
->=20
-> I was considering a new =E2=80=9Cfilter_enable=E2=80=9D attribute and onl=
-y list the
-> other values in the 3db filter available. This seems more robust and
-> doesn=E2=80=99t require any sort of agreed on magic number.
->=20
-New ABI is always annoying painful and it is useful to give userspace some =
-hint
-as to what the filter it is playing with actually is (even if super vague).
+Fortunately, the packets are not actually getting transmitted to hardware,
+otherwise they would be raising a 'Transmit Packet Overrun Error'
+interrupt, which requires a reset of the TX circuit to recover from.
 
-Jonathan
+Instead, the request times out inside wait_event_interruptible_timeout()
+and always returns -EAGAIN, since the wake up condition can never be true
+for these packets. But still, they unnecessarily block other tasks from
+writing to the FIFO and the EAGAIN return code signals userspace to retry
+the write() call, even though it will always fail and time out.
 
+According to the AXI4-Stream FIFO reference manual (PG080), the maximum
+valid packet length is 'tx_fifo_depth - 4' words, so attempting to send
+larger packets is invalid and should not be happening in the first place:
+
+> The maximum packet that can be transmitted is limited by the size of
+> the FIFO, which is (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
+
+Therefore, bring back the old behavior and outright reject packets larger
+than 'tx_fifo_depth - 4' with -EINVAL. Add a comment to explain why the
+check is necessary. The dev_err() message was removed to avoid cluttering
+the dmesg log if an invalid packet is received from userspace.
+
+Fixes: 2ca34b508774 ("staging: axis-fifo: Correct handling of tx_fifo_depth for size validation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+Changes in v2:
+- added "cc: stable" tag
+
+ drivers/staging/axis-fifo/axis-fifo.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+index e8aa632e0a31..271236ad023f 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -325,11 +325,17 @@ static ssize_t axis_fifo_write(struct file *f, const char __user *buf,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (words_to_write > fifo->tx_fifo_depth) {
+-		dev_err(fifo->dt_device, "tried to write more words [%u] than slots in the fifo buffer [%u]\n",
+-			words_to_write, fifo->tx_fifo_depth);
++	/*
++	 * In 'Store-and-Forward' mode, the maximum packet that can be
++	 * transmitted is limited by the size of the FIFO, which is
++	 * (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
++	 *
++	 * Do not attempt to send a packet larger than 'tx_fifo_depth - 4',
++	 * otherwise a 'Transmit Packet Overrun Error' interrupt will be
++	 * raised, which requires a reset of the TX circuit to recover.
++	 */
++	if (words_to_write > (fifo->tx_fifo_depth - 4))
+ 		return -EINVAL;
+-	}
+ 
+ 	if (fifo->write_flags & O_NONBLOCK) {
+ 		/*
+-- 
+2.50.0
 
 
