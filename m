@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-772447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37057B292C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 12:59:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E5DB292CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318BE201AAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 10:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CB33BE9F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 11:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7EE2877F9;
-	Sun, 17 Aug 2025 10:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6BF2882A2;
+	Sun, 17 Aug 2025 11:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sau3A0p9"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rd+JcS+y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9197C1FBCB5;
-	Sun, 17 Aug 2025 10:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DA199EAD
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 11:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755428360; cv=none; b=tAEL4602e9dVSInHAWWqsTCo272L3HVhVxrbpTKcveVRN1vQ62kLm+9d1jG+hq1PTBrjgx+2h5bkPp/Leuv/z8tdYdEcr4v8BKZDIh4PHYiCqcgXXM2O/pxbpdcAkWZXqCgl4RDwXR2DSFlrr+fVjfrlnQlb6Pkce35wNIku9ak=
+	t=1755429008; cv=none; b=sJpkMzJaxg3qgnJQ2tQoBEfxZP830wTHGnLiF9E28rpR3ZsfivlCLusSgNqiekhpVfnhKEQ1LGZokHqms2rlcmtcC3d7vUyoC2vU3dXfHUdpS/WL/n0kgYSwDg6GuwfE9T9Jtq4LWkAFkPbAJGepK/oskQomJmtWAgGodfC92DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755428360; c=relaxed/simple;
-	bh=YsJgTTsnsXUMnX2YNiPMLa1RfWqepGr89YgSXk7AUX8=;
+	s=arc-20240116; t=1755429008; c=relaxed/simple;
+	bh=X2a1xKTP4JikGaTMQ9G8OPuKoSH4ZC5xHNgfMfGlvGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+Fq1pjc0ZVaNgGHqF4TK6uu34+C79wOHbRZXpZqHX6kqXig7NvoLSYvJP8yGtYoE4Fl8Ih1MDQlEhWU+bosCIrwsfvVSoBq3a5SBUCFQpX9Kj50FN6XzLeC5pzamtkyaKVfyNj0TpzrMczo4eqUfTMHGOigGrsBoRQeM7mq3WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sau3A0p9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F988C4CEEB;
-	Sun, 17 Aug 2025 10:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755428359;
-	bh=YsJgTTsnsXUMnX2YNiPMLa1RfWqepGr89YgSXk7AUX8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnbqkEmMPCbHby7gly388uGKStKptTU4kVmVf7aA57zqRupTzj6VohBFKYKvZqS4KmC4Zqan2rUUPbLy87x2uQDxlgHEGRhnjc1gEyJCCIe+aaFSkhsuQmsNskYPGROUrhHj286HZ7Is3oGzAv+5dKunx2wPz8ylra6e4ldgHmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rd+JcS+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13B7C4CEEB;
+	Sun, 17 Aug 2025 11:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755429008;
+	bh=X2a1xKTP4JikGaTMQ9G8OPuKoSH4ZC5xHNgfMfGlvGQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sau3A0p98zRjWNS2jEXHE5WL+dBNfVSrxqO8/wSlM94f6MA8eeUad5K6+HvrRSLFA
-	 ykZj+4NWA3uQQ+48qylfBzmgrcUtfkQrZAOGsEJlgebPPAZyIwk9Nkvkr+i2NONzwK
-	 aNkh+KcPbc+UaKFH0MeDBEH2WPg6QLrNNkVYndvem1+TvzAQ7KiVJX26DOAsV/MPTE
-	 z0mBr/98Gnfr+OLqVkoRoqbdyUhlm4KjaY/VCxO78L+Z91EL2Ogf4UtJvkx3joCMB2
-	 PdylwXPLH8i5DJXFCpkCYnbTz5Kqq4lu0/U6rD+4hyTSQBnRpscVdVqwq6LOTSxHrZ
-	 OskFbbyDSlcyQ==
-Date: Sun, 17 Aug 2025 12:59:16 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Juxin Gao <gaojuxin@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>, linux-pwm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
-Message-ID: <n5kdswq7oduruqiruyup4rcdwrs76tlinz26swotzeqklterey@off5cbv5i4e5>
-References: <20250816104904.4779-2-xry111@xry111.site>
+	b=Rd+JcS+yBf2fV2G3+o35Z1t/oZxhf2hr6tYPmYii9z/M6ZysvzHKPYHQoLZJ80R1X
+	 1uT8YpRKSn7ARmeVQHaW/SFH0VH73DzEvtqTGqaL+8HYiKPQPSHmYUDFthymgGpt2c
+	 HGzXIQb9IMBFih3VPrbYkEZgdNeZ+nXPPT/Xf6So=
+Date: Sun, 17 Aug 2025 13:10:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: alexander.usyskin@intel.com, arnd@arndb.de,
+	linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
+	niecheng1@uniontech.com, guanwentao@uniontech.com
+Subject: Re: [PATCH] mei: vsc: fix potential array bounds violation in ACE
+ address allocation
+Message-ID: <2025081712-tweet-repressed-2aee@gregkh>
+References: <78151482AFE8973A+20250801090600.544000-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4mc4hchyujztabjl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816104904.4779-2-xry111@xry111.site>
+In-Reply-To: <78151482AFE8973A+20250801090600.544000-1-wangyuli@uniontech.com>
 
+On Fri, Aug 01, 2025 at 05:06:00PM +0800, WangYuli wrote:
+> When ACE images require dynamic address allocation, the code accesses
+> frags[frag_index - 1] without bounds checking. This could lead to:
+> 
+> - Array underflow if frag_index is 0
 
---4mc4hchyujztabjl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
-MIME-Version: 1.0
+How can that happen?  It's coming directly from a static array in the
+code itself that it declared right above these lines?
 
-Hello,
+> - Use of uninitialized fragment data for address calculations
 
-[adding Juxin Gao to Cc:]
+Where will that come from?
 
-On Sat, Aug 16, 2025 at 06:49:05PM +0800, Xi Ruoyao wrote:
-> Per the 7A1000 and 7A2000 user manual, the clock frequency of their
-> PWM controllers is 50 MHz, not 50 kHz.
->=20
-> Fixes: 2b62c89448dd ("pwm: Add Loongson PWM controller support")
+> - Silent failures in address allocation
 
-A quick glimpse into
-https://loongson.github.io/LoongArch-Documentation/Loongson-7A1000-usermanu=
-al-EN.pdf
-confirms this, so I tend to apply it. I'll wait a bit to give the people
-involved in 2b62c89448dd a chance to comment.
+Where?
 
-Best regards
-Uwe
+> Add proper validation before accessing the previous fragment and
+> provide clear error messages when validation fails.
 
---4mc4hchyujztabjl
-Content-Type: application/pgp-signature; name="signature.asc"
+But how can any of this really happen?  If it does, it's a bug in the
+code that people added.  So why is any of this needed to the code today?
 
------BEGIN PGP SIGNATURE-----
+How did you hit any of the above, and how was this patch tested?
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmihtgEACgkQj4D7WH0S
-/k5rbQf8CY/bnYqpoMTDvYD/tfhlrlJbUrH2oLdGjTFUo6fTLHNKHQmU4mN80JIZ
-TsfsPiYAexrvNCqcLUqDc6E0ADiPz8ZSU0slzUebNLabt9L8FPnLx6kqLM7lUdX/
-9eUxCxTc1m4WHgOqKfKbQmuRkPQRMl2jTBx405wNJx2Ly/EKIu4f6nf/x12OjJFi
-MXlDThXYRF24k2NsYmIrl+T/lEluf6Xj8J/7EbumRP7eL9TblE246RGi03u9BfDR
-mxA4d8eVQsf5LliGeJm93TUkvp9cd5oZz6ZGtlsQwNM9rVqr1Y7fUy9tbEwMSL41
-cMIVV8bz7ia4tamnjKXi3yGe/Zz+qQ==
-=86Nh
------END PGP SIGNATURE-----
+thanks,
 
---4mc4hchyujztabjl--
+greg k-h
 
