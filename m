@@ -1,163 +1,278 @@
-Return-Path: <linux-kernel+bounces-772339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A4B29186
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:30:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4833FB29189
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BCAE1B263AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD8D48537D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8159D1F91C8;
-	Sun, 17 Aug 2025 04:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=coresemi-io.20230601.gappssmtp.com header.i=@coresemi-io.20230601.gappssmtp.com header.b="bu+CI9fu"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE881A3179;
+	Sun, 17 Aug 2025 04:33:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667A71D86FF
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 04:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A516618B0F
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 04:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755404999; cv=none; b=EX5HzLsoa0OnczYRdyrR8JAr0v+fKU24R9dbH0cj+8vptjs3/5Im90a7/aLcJpKnroYN52zgN0AXoBgkm3KsIdSjGUk+d/+szYh6mwloF/EpB5anotDsX3nKM8Kkc2J2YsY2SLNiXatCfDSPjqwv84R6q4KA/ziBb6AS00raU7k=
+	t=1755405185; cv=none; b=FtNy10Knd6Rybcow4HcBxms7jBIGpW3KaJ9H/QhkJAfKYFu1wSpprTO5DjXC8KmagwKlQiq2NQ/mKD0j1/9dWttxMbArZeQX4YHktymr8esbymEsGoyiXmNpoWaFIma0fSWWVxi+ph5dPOiwy5F5qFYdzIOv0bpaRFnI6SqsxZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755404999; c=relaxed/simple;
-	bh=dJsoDn9ejss6xZxq1+PO6yZOjAfrmBEGOzoE1pFfCOY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mkVsuseiJeVQLVirtOsmRWHfZh8xr59EBRBApHuHbF+cZCBrUmd7AJtiXH1eJHK58DZwULH/fTY05EC3OsyLFIhKYs5tiyx4Yoh4LfQNzwARtie/sMIlue8sGqx6Sg8s7znbLykwq6KjSXGHQHe12gUkwxLUUb2QlX6hcQ7Pa/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coresemi.io; spf=none smtp.mailfrom=coresemi.io; dkim=pass (2048-bit key) header.d=coresemi-io.20230601.gappssmtp.com header.i=@coresemi-io.20230601.gappssmtp.com header.b=bu+CI9fu; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coresemi.io
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=coresemi.io
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2e8e2d2dso1868058b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 21:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=coresemi-io.20230601.gappssmtp.com; s=20230601; t=1755404998; x=1756009798; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D7tOnFcQoia7OLIfjY0GXgnbZUBsSDQdwxwR729Y/e8=;
-        b=bu+CI9fuicYGql7eXCSSIHIhAnefx+/szl65SWoI3A/eRgLojNwzGAZnNuNp4KfYeb
-         5nsFX2jTA79wYBcpGrBDT9J4z1pVvTPc8V6RBUNFd4U6DDlQq/jPWfosMEcQqx/6UNd/
-         uO+O9RP6NIRdJRgHEQas79AvX4WjG0Z8wLxoz9joWS+k7x/RFwRkRWvsj5GaD50rrIcS
-         b9+tRO688Ch3A1WZlazCSTxWdJvysUbusuZfNfWGkK1PL4hZKqPInIUY6rTn4IxKcEdq
-         5U0nr0Gl3lOvb36HYFw7wqdyX5oLf73jVvDWMvlu2rKpUxZq44IpmOJVA9K/oS9NpLgV
-         /HlQ==
+	s=arc-20240116; t=1755405185; c=relaxed/simple;
+	bh=Z1hhr/vKBseKw3oswXMh1Ld1b7j15ExPW7xMisz+Uso=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VhFVUGboRpIP/y+53BI2xDfOHhWSXjqbaKAR5OWmKnJ0M0YlIU7+bmJ0pYRUyyVJDmQMD/nMAkJZWI1aETfukhK56VvbR/8VCP1oqpY0GV3NDBHSBdekEI5FOn//d/7uaIcEA8teaGXJHxod6shnXHjhQPgf1w3qNOYXvivB/G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432cb7627so313220639f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 21:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755404998; x=1756009798;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D7tOnFcQoia7OLIfjY0GXgnbZUBsSDQdwxwR729Y/e8=;
-        b=U8J+BwDra/WLmFjIxiEUkY20qcgU2PTdpoxDw+y4YEP2g+ROoBmtGlfx2KRCbX2k95
-         wtc3yTNl6QmbXnWRqCojF9UYwluXtwzbPfaRqjFU9UwXmheYke4607dEVa9l0tsTJjpP
-         BsJi28q/OjwIrQsmg231SjvpNy1gLEdyxS1Ca1OV8YKIRzgL8GebTBfQkEKY/eieDWHV
-         Ct1l8H2wA8KAOqspEgSZZBQsvybV21o07zHSzMa++qYz7kYmCnWWCkysyniSIsGr5/Eu
-         qVFSntmWhz3OhXn6C2AEvynaoZ32TL3CI3hBx7b0VazDrTUnagvXawyfR11zhOYBQ3Wd
-         JgcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN7qsATGXpfQR5yjc1SEz1giLIXPF8SVYAEZXSGczTXx3kixef6BhopgasN7jSraysPGOWNX7nqGBTi3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQliBSCyv6N0VJHBPp5Th5VOxavqZVl+LUnoW7qY67QG9JVuNF
-	4r4E8h6KGdwhcKuXljkTZWAC8NEP/+LXMsUIX2ZmSu6Gd+3kXo8osrRaf/j3I0kpUtk=
-X-Gm-Gg: ASbGncsKXbUvAc4L76rxKutYaWkGLxIiak5Lz7BjmPEqsch/H8NPhohJCxVZ4pOcu9+
-	WVUnkOHphi1D5/KkzQG6o5u4N98wjpf1GvEu/XT0hq6KapSeggRlINvxRNVHYUTlzAs85lM07tF
-	XhDGbIB37dOieBPQBbNtmOUXLNeDZz0w5JuhhflBclXGJWpEAnnY9VwCc8zXmQYcOKlktv7OqZD
-	VOACpJGcM0CFfSSRpOcO1jRz/PEVukarTZv7vgmP71aMyY+nciBc8dTDPKyAmsZMy/Lg9g6eIb9
-	+zJ9K1Cd2waUMdRHPdAedvJT7mEjQXbbFyktGpaLF0o6bE06MiPbp3D4h14xtFQqk8u+fX2UkyU
-	bl+VyS1MdLZ8JFwiQN8Qzv0KHgsDy1p8ueoLm2TQRpgFMRi127/R7+DCzLUIK7Lnc0Q==
-X-Google-Smtp-Source: AGHT+IGTkulwbSKlMNKTgkK2+N/a2tNWqVdcaDc/+0IBx3cEbIkK7JZwpjqo8gKvMk5mXlc40TvNCw==
-X-Received: by 2002:a05:6a20:9143:b0:23f:f7ae:6e24 with SMTP id adf61e73a8af0-240e6311cc0mr6485220637.29.1755404997708;
-        Sat, 16 Aug 2025 21:29:57 -0700 (PDT)
-Received: from smtpclient.apple (p121132.f.east.v6connect.net. [221.113.121.132])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d73a0a7sm5134883a12.28.2025.08.16.21.29.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Aug 2025 21:29:57 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1755405183; x=1756009983;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tiN15vfpR+AChlkzsG7hJzaaorI82QK/ceQbXiB1rlI=;
+        b=WXG4X03hwaom74FB7/UoQhDJgHYbMXdN1YJY9M/AkVX68Iu/cWocAQvVK+XlwUUADd
+         m+0a/LffIVCFPpBQ94CuFaIqDA0A807D5llXBOaRxHOpkmlDKMqDPVNwCKRVZBEhG3Di
+         yt5/3BJFYrPJ9vfe7oCZhJFH3oI8deUeUBkV9NyBiQXlTqMtYobXf8ARMtyQZGznoA+D
+         xn5tjbuZtcWtbcZmNOL2fUXCiP0J1f1nb4YlHYgxesxA3zqpPEPSKIM8Myhqpmx8RM+k
+         /i5gMUlZh1Soe7uaC10wWXW+JvolD1REJZf5TpJ3jiC0aBEAEBfl4575pJYT4do+U3A6
+         OR3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVzs15afEAXNN3iZgALVAbFtiYbgPPhqkLfJv5yzyrP0USi8COxlbXZvnldfZ+irmjTLEshGRsG6kPFr7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT/XIcVmKfVE8eWLMY8ndRswZCLRAaPz3Q7u9nIhKjsXBR/9xW
+	EFA+5vQ6Dzr8TXUiK8qM8Qq7hXu4Uzj9gXZ/Ol+v/UkqisXHWfj7qsq7o3CMkaXLB1Fpxvyf6kP
+	twoxKbqaOsLOj5+C8SvtmE6iyf599lkKxuehA0hQr2JT4QNVYWyUTFQUzEzU=
+X-Google-Smtp-Source: AGHT+IGK+EAWE5m7Zu49M1346fu2kcPlupiKtS8W2pznat04xXxGcc3cmfYjkZ21O4SCX5M0PYzEwFqbSxhvyxdG6qn1+y/gmRM+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-From: "D. Jeff Dionne" <jeff@coresemi.io>
-In-Reply-To: <9eab7a4ff3a72117a1a832b87425130f@artur-rojek.eu>
-Date: Sun, 17 Aug 2025 13:29:42 +0900
-Cc: Andrew Lunn <andrew@lunn.ch>,
- Rob Landley <rob@landley.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- netdev@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "D. Jeff Dionne" <jeff@coresemi.io>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DC855B2C-37F3-4565-8B6F-B122F7E16E25@coresemi.io>
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-4-contact@artur-rojek.eu>
- <973c6f96-6020-43e0-a7cf-9c129611da13@lunn.ch>
- <b1a9b50471d80d51691dfbe1c0dbe6fb@artur-rojek.eu>
- <02ce17e8f00955bab53194a366b9a542@artur-rojek.eu>
- <fc6ed96e-2bab-4f2f-9479-32a895b9b1b2@lunn.ch>
- <7a4154eef1cd243e30953d3423e97ab1@artur-rojek.eu>
- <ee607928-1845-47aa-90a1-6511decda49d@lunn.ch>
- <9eab7a4ff3a72117a1a832b87425130f@artur-rojek.eu>
-To: Artur Rojek <contact@artur-rojek.eu>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:640e:b0:883:e1b3:19cc with SMTP id
+ ca18e2360f4ac-8843e3912b9mr1675228939f.6.1755405182800; Sat, 16 Aug 2025
+ 21:33:02 -0700 (PDT)
+Date: Sat, 16 Aug 2025 21:33:02 -0700
+In-Reply-To: <20250817041202.4853-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a15b7e.050a0220.e29e5.005a.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in usbtmc_interrupt
+From: syzbot <syzbot+abbfd103085885cf16a2@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Aug 16, 2025, at 22:40, Artur Rojek <contact@artur-rojek.eu> wrote:
+Hello,
 
-The MDIO isn=E2=80=99t implemented yet.  There is a pin driver for it, =
-but it relies on
-pin strapping the Phy.  Probably because all the designs that SoC base =
-is in
-(IIRC 10 or so customer and prototype designs, plus Turtle and a few=20
-derivatives), the SoC was designed in conjunction with board.  A bit =
-lazy.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-out-of-bounds Read in usbtmc_interrupt
 
-But they all have the MDIO connected, so we should add it (it=E2=80=99s =
-very simple).
+usbtmc 1-1:16.0: invalid notification: 33
+usbtmc 1-1:16.0: invalid notification: 36
+usbtmc 1-1:16.0: invalid notification: 8
+==================================================================
+BUG: KASAN: slab-out-of-bounds in usbtmc_interrupt+0x560/0x720 drivers/usb/class/usbtmc.c:2314
+Read of size 1 at addr ffff888028fb8ae1 by task kworker/1:0/24
 
-Cheers,
-J.
+CPU: 1 UID: 0 PID: 24 Comm: kworker/1:0 Not tainted 6.17.0-rc1-next-20250815-syzkaller-g1357b2649c02-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: events nsim_fib_event_work
+Call Trace:
+ <IRQ>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ usbtmc_interrupt+0x560/0x720 drivers/usb/class/usbtmc.c:2314
+ __usb_hcd_giveback_urb+0x376/0x540 drivers/usb/core/hcd.c:1661
+ dummy_timer+0x862/0x4550 drivers/usb/gadget/udc/dummy_hcd.c:1995
+ __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
+ __hrtimer_run_queues+0x529/0xc60 kernel/time/hrtimer.c:1825
+ hrtimer_run_softirq+0x187/0x2b0 kernel/time/hrtimer.c:1842
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:rhashtable_insert_fast+0x1c/0xf70 include/linux/rhashtable.h:831
+Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec 20 01 00 00 <48> 89 74 24 30 49 89 fc 65 48 8b 05 54 a5 c3 0b 48 89 84 24 00 01
+RSP: 0018:ffffc900001e7560 EFLAGS: 00000286
+RAX: 0000000000000000 RBX: ffff888022357068 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff888145eb4e20 RDI: ffff888022357068
+RBP: ffffc900001e76a8 R08: 0001000000000000 R09: 00200000001c0000
+R10: 0000000000000003 R11: 0000000000000000 R12: ffff888022357000
+R13: ffff888142fcb690 R14: ffffc900001e7840 R15: dffffc0000000000
+ nsim_fib6_rt_add drivers/net/netdevsim/fib.c:686 [inline]
+ nsim_fib6_rt_insert drivers/net/netdevsim/fib.c:759 [inline]
+ nsim_fib6_event drivers/net/netdevsim/fib.c:856 [inline]
+ nsim_fib_event drivers/net/netdevsim/fib.c:889 [inline]
+ nsim_fib_event_work+0x2319/0x3180 drivers/net/netdevsim/fib.c:1493
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-> On 2025-08-16 02:18, Andrew Lunn wrote:
->>> Yes, it's an IC+ IP101ALF 10/100 Ethernet PHY [1]. It does have both =
-MDC
->>> and MDIO pins connected, however I suspect that nothing really
->>> configures it, and it simply runs on default register values (which
->>> allow for valid operation in 100Mb/s mode, it seems). I doubt there =
-is
->>> another IP core to handle MDIO, as this SoC design is optimized for
->>> minimal utilization of FPGA blocks. Does it make sense to you that a =
-MAC
->>> could run without any access to an MDIO bus?
->> It can work like that. You will likely have problems if the link ever
->> negotiates 10Mbps or 100Mbps half duplex. You generally need to =
-change
->> something in the MAC to support different speeds and duplex. Without
->> being able to talk to the PHY over MDIO you have no idea what it has
->> negotiated with the link peer.
->=20
-> Thanks for the explanation. I just confirmed that there is no activity
-> on the MDIO bus from board power on, up to the jcore_emac driver start
-> (and past it), so most likely this SoC design does not provide any
-> management interface between MAC and PHY. I guess once/if MDIO is
-> implemented, we can distinguish between IP core revision compatibles,
-> and properly switch between netif_carrier_*()/phylink logic.
->=20
-> Cheers,
-> Artur
->=20
->> Andrew
+Allocated by task 981:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4365 [inline]
+ __kmalloc_noprof+0x27a/0x4f0 mm/slub.c:4377
+ kmalloc_noprof include/linux/slab.h:913 [inline]
+ usbtmc_probe+0xa3a/0x1ad0 drivers/usb/class/usbtmc.c:2467
+ usb_probe_interface+0x665/0xc30 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26d/0x9e0 drivers/base/dd.c:659
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3689
+ usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
+ usb_probe_device+0x1c4/0x390 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26d/0x9e0 drivers/base/dd.c:659
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:801
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:831
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:959
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1031
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3689
+ usb_new_device+0xa39/0x16f0 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x2958/0x4a20 drivers/usb/core/hub.c:5952
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+The buggy address belongs to the object at ffff888028fb8ae0
+ which belongs to the cache kmalloc-8 of size 8
+The buggy address is located 0 bytes to the right of
+ allocated 1-byte region [ffff888028fb8ae0, ffff888028fb8ae1)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x28fb8
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801a841500 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000800080 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c00(GFP_NOIO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1213, tgid 1213 (kworker/0:2), ts 9601359196, free_ts 9100050588
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2487 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2655
+ new_slab mm/slub.c:2709 [inline]
+ ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
+ __slab_alloc mm/slub.c:3981 [inline]
+ __slab_alloc_node mm/slub.c:4056 [inline]
+ slab_alloc_node mm/slub.c:4217 [inline]
+ __kmalloc_cache_noprof+0x296/0x3d0 mm/slub.c:4391
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ usb_control_msg+0x73/0x3e0 drivers/usb/core/message.c:144
+ get_port_status drivers/usb/core/hub.c:611 [inline]
+ hub_ext_port_status+0x116/0x820 drivers/usb/core/hub.c:628
+ usb_hub_port_status drivers/usb/core/hub.c:678 [inline]
+ hub_activate+0x77d/0x1a70 drivers/usb/core/hub.c:1189
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+page last free pid 1213 tgid 1213 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ vfree+0x25a/0x400 mm/vmalloc.c:3434
+ delayed_vfree_work+0x55/0x80 mm/vmalloc.c:3353
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888028fb8980: 04 fc fc fc 06 fc fc fc fa fc fc fc 06 fc fc fc
+ ffff888028fb8a00: 06 fc fc fc 06 fc fc fc 06 fc fc fc fa fc fc fc
+>ffff888028fb8a80: 00 fc fc fc 00 fc fc fc 00 fc fc fc 01 fc fc fc
+                                                       ^
+ ffff888028fb8b00: 00 fc fc fc 00 fc fc fc 00 fc fc fc 00 fc fc fc
+ ffff888028fb8b80: 00 fc fc fc 00 fc fc fc 00 fc fc fc 00 fc fc fc
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	f3 0f 1e fa          	endbr64
+  12:	55                   	push   %rbp
+  13:	48 89 e5             	mov    %rsp,%rbp
+  16:	41 57                	push   %r15
+  18:	41 56                	push   %r14
+  1a:	41 55                	push   %r13
+  1c:	41 54                	push   %r12
+  1e:	53                   	push   %rbx
+  1f:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
+  23:	48 81 ec 20 01 00 00 	sub    $0x120,%rsp
+* 2a:	48 89 74 24 30       	mov    %rsi,0x30(%rsp) <-- trapping instruction
+  2f:	49 89 fc             	mov    %rdi,%r12
+  32:	65 48 8b 05 54 a5 c3 	mov    %gs:0xbc3a554(%rip),%rax        # 0xbc3a58e
+  39:	0b
+  3a:	48                   	rex.W
+  3b:	89                   	.byte 0x89
+  3c:	84 24 00             	test   %ah,(%rax,%rax,1)
+  3f:	01                   	.byte 0x1
+
+
+Tested on:
+
+commit:         1357b264 Add linux-next specific files for 20250815
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ff0ba2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6401f805169ac8b0
+dashboard link: https://syzkaller.appspot.com/bug?extid=abbfd103085885cf16a2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1419baf0580000
 
 
