@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-772610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD86CB294DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:17:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64115B294DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 21:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5178719640D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:18:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58AB120364C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 19:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8AE220687;
-	Sun, 17 Aug 2025 19:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7122173A;
+	Sun, 17 Aug 2025 19:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZzYhwcz"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJ3zc+Jc"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D1E219EB;
-	Sun, 17 Aug 2025 19:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6B31FC0E2;
+	Sun, 17 Aug 2025 19:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755458268; cv=none; b=eARq5BeSz3sVWVROEd9W5toiXvQ0brWIY9S1DTFmpL0eLotoTbvPWqJibjKpnbu9aK8QOfXGsTGCU71QvYQDbDWkVcpxtXxTOO/nRIVanyySxbD+dp8+1hR38et9MYEzq8JwaTXqgiRf7oG200vAeIrQ0HMY9Ea8klBP6LmaToo=
+	t=1755458704; cv=none; b=rUg+RZGRJ7Fh3DM86lqFT7BlS6qAXVsufVL3baicIGAvDWV4dFRep1N07bfkIlFIkTq5b+njioBX5OYfuonMu+jsBPNuWqqWf5ghm078G0CAUy4ZeUHXK+tSdaPw3BOe/r5DMXc8g3yTnfZQZPtb51kpA5AZhGOwbgzVQ6AcV9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755458268; c=relaxed/simple;
-	bh=pQmh+/rMC3Khd+GFeS6kXLNZhR3ipIoRR2wz218fZes=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mlF+CjIxvvxA4tXnkFFwgevSH6dZSCTM7EeO7Sjkc9+8Vzn9dkUo47+FRdhwIV3dKUBj897iV0mOBlLSjTqhNQZJGHWWjIY4zpFxv9Q7RGDVUQK2Baw+WQAktXVky74QWzIBtVD48YQlGaBmwo5IaFvqoMEnFkHbTxUc4UNCQDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZzYhwcz; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1755458704; c=relaxed/simple;
+	bh=xL6R8m/nXCFkJx9BMX3ZnWeIl1yLQn9APl1EfADjcYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQBC9mav8cTUVLL9q9+kg2Zw663A7/un0quMgV6+rgccpiHtd5vHJKUxbElJuN3HubY6/18Z4bmzafmgv17XKpcGfV8yy+yHamz6F8utJms8WzvCACcOHZu4899VtF4L41b0j2uJMrVoRCIOmu3+VWP3Hbm7yvNa66KlSLT59gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJ3zc+Jc; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109bd3f80so6457371cf.2;
-        Sun, 17 Aug 2025 12:17:47 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3bb2fb3a436so1802769f8f.1;
+        Sun, 17 Aug 2025 12:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755458266; x=1756063066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1oewm8//5zzqMzQPl1PxnhJclJc22to6grfT2wZ7V0=;
-        b=GZzYhwcz4EvifjKzbrH886O7GgXnTRLpONeLCZPoip1lfQOxqNs6VtjfLcOwgJ5nYM
-         1Pt+umUueo7vOQ/vZFS6LYenXbFzON5ODtyr4IQo+eRXyqCv2+tMrqBKoToVtYMRRAS6
-         dKqG4YjZ9hDP/aoY7BeMOHnkgyPjfWHRpcYFbvFeWAYvehBcxlHJ5t07bR/ubmii2XxR
-         q0XbTeMI+wTyQfnl/d/FcKVsd1mNT2IisvZ7EiZK57wscAzgcQCy5elR2EjN4D7TlY2v
-         UvNICJr3y6CTvUuMMQfITdyZjZsfyvkEuZ+JB/TDrw4is8F9QO3KtINDqQuxWCuB0n9c
-         PDsA==
+        d=gmail.com; s=20230601; t=1755458700; x=1756063500; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FE5LvxHI/u/9rY7Jgwh0AsRJ/tZlVUrx+gbhVYMLy5Y=;
+        b=EJ3zc+Jc2GYGh8umrsqlufz31wc6rsd9JAktaXa+FeR4nqjOGZQzpA11DBj5FYZ2HS
+         b67rCYEjn3othnXWV2PxyWEqcodUPY1gzzbqdcgRai5hOjiduE7vJGOsk8WFTU9EDaUs
+         GDAXCb2b/NWFd1+RPU4oQLKYcpwS2yHzI/zo5QqKGv0QpVYe497Z8rwJRBWnb23QyPii
+         5GiploqU2J0vtWv3cS7Wrgjgb/sH3vgbefne9l+ZZf2j/izNwix9kP0MSWjMREmh/BoB
+         gCEJpR+5vBBUTYKF5OGrPaRrFbZxHfz5XuK8xWzhBUIoYCYwD5LE70/TIT0W2oVBx+/z
+         eHGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755458266; x=1756063066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1oewm8//5zzqMzQPl1PxnhJclJc22to6grfT2wZ7V0=;
-        b=So/fhxWTfN9FkmPKU1mYMxgAZMIm8zGxSd9JXMGzywuoVWiNr3ITLJ6phpN89HoEmo
-         qw9WMDYcuDlRS1LnGQ0YerPltzbGFeCXW40PwFjJrU/8mO3MjC9ZU/0x1nIC5YRVCoh6
-         ypB3E8bhmHAKONXTWBNeGjAgRl5nDfEb/JqJog+Gw75sjA8oqWBw+E0lZwUtAMdXxLpr
-         lK0J/Ks1+KlZ2ttdi4Dwr8h2FkL/azMdPBRSh0vnP7q+Nhk2w8QG1YVLXkZU289eMDNy
-         uqmshcfiRm1IEucuxOM35wwSd67pUYgelz27RTg0DBUy5xx0UNOFmTQM1YHx6LKoFoQP
-         YTVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM8CmOpEr3jTtCYCJOpqYgDG3Gz7/4FPD54SBoEbaIRT+xMlWsz6y5iGANokj7E28/mKNAKNr4@vger.kernel.org, AJvYcCWy05vOJnurP4P9Ta/uLbcTllS2nMo0Z/RW0AfV+SmVGjyR8y1X0Jere+01MuR5TN2D9ksrQwVauaNmdX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv6GBbSQV4zV6B03LlXK7O74WUgPwrRA9MnKsmMFqjr4PaoUtB
-	dDbyDOY0j8AMa6iIBzNNgJwqnEhbi93KgczJUlEnNxEKYUZQK5DEHCNCVQITUAOJ+NbXqjtbCp+
-	hZ/FsWuOLX4ycADgnmyA/JPQ+4prJjp0=
-X-Gm-Gg: ASbGnctDZu+0iZHcnK4PKwPanDejzzXD8MDh+p+KdkAqI7IJJT19T4EvMb0f5XXWkwK
-	q1fBjQbtHpfIceZQr6ABdqxmNXkmDfZ9HEJpkYqLuX9YT/Ka+2o8UoAKg1GEbDLBHBi3cWUM3V7
-	C6m7wTosP9Wyk1XK0g7gMSSBmoR9rWbSnWiKxZdGXpI9r/Lu/yL+03FDrLkV6Q0qCNcVoec1vCu
-	93NcA==
-X-Google-Smtp-Source: AGHT+IF5Wjtv/qBVOACz2IQw2CXgLu1+h7c6wqUmWZhjl+mnd3gpUk4Y0JWwOnj24qvzHdOxH2nE0wFcqLN7OlqwAag=
-X-Received: by 2002:ac8:59d2:0:b0:4a9:7fc9:d20d with SMTP id
- d75a77b69052e-4b11e127d10mr62965111cf.5.1755458266123; Sun, 17 Aug 2025
- 12:17:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755458700; x=1756063500;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FE5LvxHI/u/9rY7Jgwh0AsRJ/tZlVUrx+gbhVYMLy5Y=;
+        b=hk7KVp2b9n+7f/tQ/3S4cJCT4b0717/JtFFMvxc4NP6wYOOrPLvCmijIyuaOpRwNVd
+         ipdZdGhStPkFMJJJxJvjiajVSrB6HOvJL5v5bwh6ygJt/PoJTmIMbQ+SSxzonFHCRatG
+         JC0Lz6dCD2tPAV10hvvSGWxzXqTALBwUtoX4518EciiESUOb3paE0IuNHyl+9xBp6iMK
+         uYTvjCrW40gBuegyDY6HXqU1I15VffAendrrw+pjJBqOtWZdyWaxWjKChaqf9ht9jsii
+         4R1gt1FLdRh4KUt/LSmZhGaEc/dWzz8o4jVuu5nBvIP8avxkifGhct4F90M1emfTREtb
+         f3qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqarySgrDFWz9IxCiIELLlLnItJvglK6bnIRQV6BwiaPAhUdB9hZmBAQhp+ujs61JpQ6nHKMS3ixoBTp0=@vger.kernel.org, AJvYcCVTFzZEz9skahTO0RtAK5xz8KO2wxd/IGDmTUa25/zlBJv/p8jHc4WTUHkQ5oKUWh0dZiDb8KlCtYD2rlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtI+ccXZREwvfhCNyHDb4LFyaWDiTxDu+IvY2wYhaYoio+G1Ha
+	5GHgrLZy7Lzj/qpf7PGy1e9ezaBeNJJlIBKSc/krSNrssjKfjPkateNW
+X-Gm-Gg: ASbGncsgeSHuPhUno4jCUC9cqmZy4RX9GWUr7Sze8VkwolBp7DyYQiF64vEVfxH/DXu
+	CHwyagTSbESj0Xp2jv++dPfl0DZw3j7jXiya/6SiizLt2bGMgj9E5N3BMufc1mYyzfWYJ0GyV2x
+	+du0iqY0f7c0XsqPwT7wdmtgFgBwelvjj5IgAAGZ6gQhv4R0auo8UZs+h8td4Qkx7MW27U4zR/W
+	9/Nh9+vG0/qdmN7ReG1lQFJuPlQScQa28kIAtHzHgYNi5uoyyohqtRouTutw8jvLJl/QMjkKG/n
+	9HEfhVU0pvD5WFJB6f/42R2mq9IWdFKjawAUH5ZSK+V4bz2K5TnFGZknsGqxYVUkuR9eYGGksOS
+	/bEW1L1nHlCQs7a4qYrggENwnaLa7vcTOvqAfBZ1hHkNlk/gBjYqh/MbOEmIuoOybs7/qWVqKfs
+	TVM5k1qzL7kE6r
+X-Google-Smtp-Source: AGHT+IHbLevYiqVnCty4Q8SzEZcXz+rOpZ/2YyoJYFaBeEoB2NwGJh23htNkZ/5c7jJgxTuiXI+kqQ==
+X-Received: by 2002:a5d:5d0a:0:b0:3b9:8224:d3cf with SMTP id ffacd0b85a97d-3bc6a83c6b0mr4325502f8f.54.1755458700279;
+        Sun, 17 Aug 2025 12:25:00 -0700 (PDT)
+Received: from simo-20nx006jmx (adsl196-126-73-217-196.adsl196-11.iam.net.ma. [196.217.73.126])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cf151sm141569315e9.8.2025.08.17.12.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 12:24:59 -0700 (PDT)
+From: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+To: marvin24@gmx.de,
+	gregkh@linuxfoundation.org
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mohammed Guermoud <mohammed.guermoud@gmail.com>
+Subject: [PATCH] staging: nvec: Silence unused argument warning in NVEC_PHD macro
+Date: Sun, 17 Aug 2025 20:24:25 +0100
+Message-ID: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814193217.819835-1-miguelgarciaroman8@gmail.com> <aKHrttHa0W1RfZjB@secunet.com>
-In-Reply-To: <aKHrttHa0W1RfZjB@secunet.com>
-From: =?UTF-8?B?TWlndWVsIEdhcmPDrWEgUm9tw6Fu?= <miguelgarciaroman8@gmail.com>
-Date: Sun, 17 Aug 2025 21:17:35 +0200
-X-Gm-Features: Ac12FXyVutdXTJcwJlOf5NXD2jbTnjKyPa8rc-hXwfNQUvbsfJF4W10cZ4xXJeU
-Message-ID: <CABKbRoLQQw_E0zFg5nxXwncf1EYA931_L7DUEc4TWvPjBc4j0Q@mail.gmail.com>
-Subject: Re: [PATCH net-next] xfrm: xfrm_user: use strscpy() for alg_name
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-El dom, 17 ago 2025 a las 16:48, Steffen Klassert
-(<steffen.klassert@secunet.com>) escribi=C3=B3:
->
-> On Thu, Aug 14, 2025 at 09:32:17PM +0200, Miguel Garc=C3=ADa wrote:
-> > Replace the strcpy() calls that copy the canonical algorithm name into
-> > alg_name with strscpy() to avoid potential overflows and guarantee NULL
-> > termination.
-> >
-> > Destination is alg_name in xfrm_algo/xfrm_algo_auth/xfrm_algo_aead
-> > (size CRYPTO_MAX_ALG_NAME).
-> >
-> > Tested in QEMU (BusyBox/Alpine rootfs):
-> >  - Added ESP AEAD (rfc4106(gcm(aes))) and classic ESP (sha256 + cbc(aes=
-))
-> >  - Verified canonical names via ip -d xfrm state
-> >  - Checked IPComp negative (unknown algo) and deflate path
-> >
-> > Signed-off-by: Miguel Garc=C3=ADa <miguelgarciaroman8@gmail.com>
->
-> Patch applied, thanks!
-Perfect, thanks!
+The NVEC_PHD macro was defined with three arguments (str, buf, len)
+that were not used in its empty body, causing a compiler warning.
+
+This patch silences the warning by explicitly casting the unused
+arguments to (void), making the intent clear without changing
+functionality.
+
+Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+---
+ drivers/staging/nvec/nvec_ps2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 575233fa1677..7accdcafeeac 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -28,7 +28,7 @@
+ 	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+ 			16, 1, buf, len, false)
+ #else
+-#define NVEC_PHD(str, buf, len) do { } while (0)
++#define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
+ #endif
+ 
+ enum ps2_subcmds {
+-- 
+2.50.1
+
 
