@@ -1,135 +1,167 @@
-Return-Path: <linux-kernel+bounces-772356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44F3B291AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:50:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B912B291B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 07:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CDAB485D9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 911457B4B5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B9420D51C;
-	Sun, 17 Aug 2025 05:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A41F1534;
+	Sun, 17 Aug 2025 05:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZsx3Ijk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCEJfNW6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D701D88D0;
-	Sun, 17 Aug 2025 05:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0C113B58A
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 05:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755409847; cv=none; b=shY5X0htvwB+DfduJBe8mMFron2HM2/FQVkPWw5XMKGEalrTc5ihdpPifjrZ0wztWonTi2lWXpuhsKpqqLFhDRBGxopwYfpqKN5bSzt4jcbiZoANHBdWy9Xm3DzRAy/noA4LJH9FC1jyVFyfvx7bJw2OUDlnNcNZkXhuVRDjVkU=
+	t=1755409935; cv=none; b=n+9n6R894viGz463bQ6RtQcBUbleuyxKcgdC4cvMww47C42jHldtN0EFns4Nn/bgZT6xqcF2hpNhcH4LvNK2CRCtdmwXnkaaBv5Ll+aJZDd2RHoZEiBOjjCkG9JoFu69IRT/hlZedvFsy5zbpb6T8H4sBhTxdwnz7J2AqH9Ejhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755409847; c=relaxed/simple;
-	bh=nyHY7omVt4L3NYX9AX1MTT90Ptj3gLdYmhit4iwSvbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIL2Jj5sCvahmmuhIdsGAbDsB/FJXHLLlh1J2a//XgDPgjeDZ7Z1xen5uIjz1LAdjcmyG2+mzlFIdOzZkzf6zVjToU6h3OvL7eQfyGqUwTm9w2iUxpzFDkDi8xFdGhsxFCP+/KWMSJsCVntwbFHoYqgzx1MJU3OjMW89q0yULFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZsx3Ijk; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755409846; x=1786945846;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nyHY7omVt4L3NYX9AX1MTT90Ptj3gLdYmhit4iwSvbo=;
-  b=PZsx3Ijk3hhAf3EbYu6gOQahLNy1ZSIxNwRka/YhL72zmkEqqeIUZQQI
-   sGmoKsHpt6Imgz8sNj231f2hPx41xfQj6zZ1ARP8CbT8jrbhFJo2/Lg57
-   fnyTGN4cHU3g7ojewo8JzMRKtOm1E2SqFQ6zHZuFceTreWg4dzBi0ewA+
-   vQOVdQ8u1UQ9C2884vis4MCLvnTu2HltxA0qk6yu5rtARgXkLTsLeHsUT
-   xW41UQVDPAfDQRtIoxABnUlIO0b2VoSI34FfxO/Yo8VMifLpkMnVreCZv
-   WQ9d9bsKoU+a5w/y69fM3vbnJQxd0dpXmtWdkx7qiGH11S3VQe6VIzqqv
-   A==;
-X-CSE-ConnectionGUID: waDkMputRQ+3W63kTCxlMg==
-X-CSE-MsgGUID: JDU2pCKtQFCCQIca264Urg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57739989"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57739989"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 22:50:45 -0700
-X-CSE-ConnectionGUID: m4cyg5rXRHmnAQLPkXCxVQ==
-X-CSE-MsgGUID: GN+H44+ORmSvjJ9NK+uWag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171757046"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 16 Aug 2025 22:50:41 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unWHt-000DNd-2i;
-	Sun, 17 Aug 2025 05:50:37 +0000
-Date: Sun, 17 Aug 2025 13:50:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ayush Singh <ayush@beagleboard.org>,
-	Jason Kridner <jkridner@beagleboard.org>,
-	Deepak Khatri <lorforlinux@beagleboard.org>,
-	Robert Nelson <robertcnelson@beagleboard.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Benno Lossin <lossin@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
-Subject: Re: [PATCH v2 2/2] rust: kernel: of: Add overlay id abstraction
-Message-ID: <202508171342.vNfvpebZ-lkp@intel.com>
-References: <20250816-rust-overlay-abs-v2-2-48a2c8921df2@beagleboard.org>
+	s=arc-20240116; t=1755409935; c=relaxed/simple;
+	bh=QcgnRcdrgZ46bj93pLgyVcvWAJGPLerUK+s0G3YsVXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gqGA+ssme8WlsRDMusIWe59YmEMherCeCOt599e7c4W00331QpoBIaVa0v/eJb2hDSyp/7JlAiqPnuLZ0wa4qETbxOyt0Os1noBRd/jhPiHG9QaZiis8svbouvR8sXmLlYeUju3t8gVyFCWOSXhWMS+hv59RtxvEasPeyNN+RaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCEJfNW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074CFC4CEEB;
+	Sun, 17 Aug 2025 05:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755409935;
+	bh=QcgnRcdrgZ46bj93pLgyVcvWAJGPLerUK+s0G3YsVXU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TCEJfNW6Q1lMjsAPUPVkDOVMyTkwwalYlen51FX+pOIGHBRHMXdW3FkFzu7jQTj+v
+	 PjUPNJhL8k+NMMxEUtq6bnocMT5W2FvyTUSK2+ht48J5iBrVtMuu8s839lcjUNqiDC
+	 FkfsOzoHnivIJWRQKpuCPlzfrNJXmZi21jADVHTbwMgIXHoEm0iKymqNqCdYermM8v
+	 ifQVkgESnNAb+5Kzr8LDnAhrWxIWcCk83MTSbF1GpFXSwN1d3TcBuQGl8AnbDyPemi
+	 wORz5eI/1YPM42LRp+xnepQZkmIBhbFP50KIlzLVYs7giYH3LtKcRBV9/wTOWleZTN
+	 Tldl8AxdQgjTw==
+Message-ID: <a5cbd3d4-b8ba-4e1f-8ae1-b0e79fedfd47@kernel.org>
+Date: Sun, 17 Aug 2025 07:52:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816-rust-overlay-abs-v2-2-48a2c8921df2@beagleboard.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
+To: Ciprian Costea <dan.carpenter@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: linaro-s32@linaro.org, NXP S32 Linux Team <s32@nxp.com>,
+ linux-kernel@vger.kernel.org
+References: <cover.1755341000.git.dan.carpenter@linaro.org>
+ <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ayush,
+On 16/08/2025 12:47, Ciprian Costea wrote:
+> Provide access to the On Chip One-Time Programmable Controller (OCOTP)
+> pages on the NXP S32G platform.
+> 
+> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
 
-kernel test robot noticed the following build errors:
+Incomplete chain, missing SoBs. You cannot add someone's Co-developed-by
+if they do not sign the patch.
 
-[auto build test ERROR on 931e46dcbc7e6035a90e9c4a27a84b660e083f0a]
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/nvmem/Kconfig            |  10 ++
+>  drivers/nvmem/Makefile           |   2 +
+>  drivers/nvmem/s32g-ocotp-nvmem.c | 171 +++++++++++++++++++++++++++++++
+>  3 files changed, 183 insertions(+)
+>  create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+> 
+> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ayush-Singh/rust-kernel-of-Add-DeviceNode-abstraction/20250816-140122
-base:   931e46dcbc7e6035a90e9c4a27a84b660e083f0a
-patch link:    https://lore.kernel.org/r/20250816-rust-overlay-abs-v2-2-48a2c8921df2%40beagleboard.org
-patch subject: [PATCH v2 2/2] rust: kernel: of: Add overlay id abstraction
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250817/202508171342.vNfvpebZ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250817/202508171342.vNfvpebZ-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508171342.vNfvpebZ-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
 
->> error[E0425]: cannot find function `of_overlay_fdt_apply` in crate `bindings`
-   --> rust/kernel/of.rs:95:23
-   |
-   95 |             bindings::of_overlay_fdt_apply(
-   |                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
---
->> error[E0425]: cannot find function `of_overlay_remove` in crate `bindings`
-   --> rust/kernel/of.rs:109:28
-   |
-   109 |         unsafe { bindings::of_overlay_remove(&mut self.0) };
-   |                            ^^^^^^^^^^^^^^^^^ not found in `bindings`
+> +
+> +static int s32g_ocotp_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *of_matched_dt_id;
+> +	struct s32g_ocotp_priv *s32g_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct nvmem_device *nvmem;
+> +	struct resource *res;
+> +
+> +	of_matched_dt_id = of_match_device(ocotp_of_match, dev);
+> +	if (!of_matched_dt_id) {
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This is useless check, drop everything around of_matched_dt_id.
+
+> +		dev_err(dev, "Unable to find driver data.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	s32g_data = devm_kzalloc(dev, sizeof(*s32g_data), GFP_KERNEL);
+> +	if (!s32g_data)
+> +		return -ENOMEM;
+> +
+> +	s32g_data->fuse = of_device_get_match_data(dev);
+> +	if (!s32g_data->fuse) {
+> +		dev_err(dev, "Cannot find platform device data.\n");
+
+This is impossible condition, so no need for error message.
+
+> +		return -ENODEV;
+
+And here probably -EINVAL, because if it was probed, the device is there.
+
+> +	}
+Best regards,
+Krzysztof
 
