@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-772492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA6B2935B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:50:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D79B2935C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 15:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0623F4E3FE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12A6208367
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 13:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DF628F520;
-	Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADF828ECF9;
+	Sun, 17 Aug 2025 13:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzajT6UP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zulq9vW0"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD5D28DF01;
-	Sun, 17 Aug 2025 13:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6D528E607
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 13:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755438638; cv=none; b=cq2NQyRJOUKVCaXEueBoUBbbj534UNwbT1ZBuJXaZxmLAMvIamh2Ap0dQKsM2gjCZPXRoNhXIVqNX2ZLJqih1329wJMgr+xkj6lZni5kw/FiGQyhgEzWuHB2otFfdNVAaVA033mrcBv+0rZcP/ZJ+8IZAJKkjzXvRafnNqoIO6w=
+	t=1755438644; cv=none; b=SiwYqter+hTAyCMrGxaHjzoP5BgMSyEEvw1eJZi1oHPytzXUtoASWrjRH2WSYJtBY3zsFZxnQ8l3H65X7YI6wnmbUvKSo9SvV1vlZfX7Jv72CzK98tb8/PEdQZfTZqbOtOofVGIIFmihYKShDvwonJDQ5GrqNZ+FC8ADgSgllW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755438638; c=relaxed/simple;
-	bh=CvRA/zD+d6lUsBKE5WdIBRx3QjzdFVyMYUsNuuNZ2I4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PIugEXhU6r/L1c3cjnYar7DfAjq4LP90Iek6OWrovC7nYpq82JWRBfgehsDNs8KHuZXqePc+QjU7Oj2cxMTV4usItt5oRJWzkuCHLHhAYme3PWMIZmtjb4Gf6rH9Iam07+lQhB45aDSxzUDfAuj5Q92Zl7GKiFN8tcpJr2/H16M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzajT6UP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C751C4CEF1;
-	Sun, 17 Aug 2025 13:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755438638;
-	bh=CvRA/zD+d6lUsBKE5WdIBRx3QjzdFVyMYUsNuuNZ2I4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AzajT6UPnlejpZlGWJXNuMiz0BaHDA1Q3tgiaBQ6h/fpFSvV86NzZhuwlSVGK+vqa
-	 0kYAyA9SDPJwbkUxb9SkZHGUPoQ+z0Zn3ClnmptMyIsjIsvKqE9HbNroANrHtHdpLj
-	 iIQN7H4rXW1PCqkopGwxbGcC/UchWSf71+pRcJrwcTwlse/IGDiBP8mOu8csEmOnQc
-	 nS1RP4c5SRaEn6uuju6djqHasGTn+FP8G0tVEDawRxJsoM9apqm68Eut2vquV7YDmV
-	 A9M3vMumeiWG3qBteaL4cR+6sKA5y+/gqaaLMhcXikZ8H355NAsyTYTtclGtuwpr/a
-	 4XH2i2PjUlEvg==
-Message-ID: <2c241887-fa46-44ab-a518-43d9ae339009@kernel.org>
-Date: Sun, 17 Aug 2025 15:50:30 +0200
+	s=arc-20240116; t=1755438644; c=relaxed/simple;
+	bh=UZjXx5avIfuubM+Zn4X9q7hFFmL/Kbj1tW1DOKGPsnQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=l1obI6bSBdDlkPqqEYaq5zZ8scaotGYS5A0BBvKG1NS3Z0HQMVfQoXJJc63cDYchJens4/ST+YN7y8C1/iFQPSallkzD5avsVoHwfXO811ikMR4j0jCknh9cXyFConH7p84aow+tXUsAu/7yVydyrKyBT9tVropLui8QzCtVCPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zulq9vW0; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244582bc5e4so36872515ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 06:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755438642; x=1756043442; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+XrzEY8HAgXuZ0nsdvKPQkBrNM9LhdmG5VI5NsW7Fq4=;
+        b=Zulq9vW0I2iWgs/i/zHzAzMw3Y/nxlNRGuSc+jeRRG5a/BtBo0VW9GZSylfLpQUfLe
+         LkxF7SV/nhYIsJYB6U2BZkXypGFfjZiDIq40udGZt+1VkfB4aN35KgNRb036CA8cQ1nB
+         Eeo1NwwXfFUkuifQXlgFmUNfZtLPhGM+ZB1esy7EIOFFyGAEBsNFg1k+LnDtqh9fugpd
+         Oboid5mYs8YvwiPDmVRYoTTJ377OkD+qYd5rmsRPLIpEgXpymcI103bvpeobXQ93LwWy
+         BCbnv3BkvlOg5eKWG0uiOZ8VJQzA2wGHc74yyfTYuD53T9O/DO2YMmk8MhXc4xDuPEdF
+         M72g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755438642; x=1756043442;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+XrzEY8HAgXuZ0nsdvKPQkBrNM9LhdmG5VI5NsW7Fq4=;
+        b=Gmemn02wCcihfQNxzUlk3EKg04WsernsNK3wjYBbQ32uthdDBwvErFsVEPFMuRDB5b
+         olAOB74F18JqTvMwpz5loaSPzPubpVHB4hHT52B6GysqBCHUcM/gjPPnvs5OfZM4twYp
+         7rxjtxXkXF2wztZLtIPykjHa+Z7dddtE+Mjs7+FUtkl/VkpjrPm3g4AFLik3rl5O8CZX
+         FMUiPGT8NrwgPuSHXpnmO7IySqaPyfVasGfM+JX3OQGFGndbJ8/BlFungGlX5VQR17vS
+         gkerg4nEFKZq0Wa3g/w7PeC/Jt6wXGnqfLNOLHAyAeVzsdpqFsIDMIy7nEFceSjH8S6B
+         GRYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsq6vKjUADQPqxdwt+Sw6LVnViP6Em7ZSuW+DMfjaLdDjHj2CimY8h9f6CTAKdTs3/Qh22fnsres+Hgn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBeaGlLYWoR+OVT0XrcMBWlhjyuDtQo3/zXjc4JXsjfa9ngOAL
+	bbIV7h5jNNVzfxCVQ9usc2ffh3dIWLjGqvViCphC8EpKwesYBhvCiGlmF1sk67gWih0CtCu/4Uo
+	CDJWPJp2X0twQUA==
+X-Google-Smtp-Source: AGHT+IGZwYycHQyeO1JVo2RV3fpKCRN1QcohTgxiXTuT0tKpzYONqzOdl6u4wdpA9sRYNgyfOEH73e9czcVNuQ==
+X-Received: from plhe7.prod.google.com ([2002:a17:903:1c7:b0:240:707f:e631])
+ (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:37c4:b0:240:71ad:a454 with SMTP id d9443c01a7336-24478e133admr102950865ad.1.1755438642560;
+ Sun, 17 Aug 2025 06:50:42 -0700 (PDT)
+Date: Sun, 17 Aug 2025 13:50:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net 0/8] mptcp: misc fixes for v6.17-rc
-Content-Language: en-GB, fr-BE
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jianguo Wu <wujianguo@chinatelecom.cn>,
- Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- Christoph Paasch <cpaasch@openai.com>, stable@vger.kernel.org,
- Thomas Dreibholz <dreibh@simula.no>
-References: <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
- <20250816112712.209644c8@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
- YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
- c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
- WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
- CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
- nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
- TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
- nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
- VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
- 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
- YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
- AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
- EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
- /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
- MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
- cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
- iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
- jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
- 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
- VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
- BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
- ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
- 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
- 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
- 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
- mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
- Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
- Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
- Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
- x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
- V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
- Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
- HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
- 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
- Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
- voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
- KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
- UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
- vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
- mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
- JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250816112712.209644c8@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250817135034.3692902-1-cmllamas@google.com>
+Subject: [PATCH] binder: remove MODULE_LICENSE()
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, Salvatore Bonaccorso <carnil@debian.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jakub,
+The MODULE_LICENSE() macro is intended for drivers that can be built as
+loadable modules. The binder driver is always built-in, using this macro
+here is unnecessary and potentially confusing. Remove it.
 
-On 16/08/2025 20:27, Jakub Kicinski wrote:
-> On Fri, 15 Aug 2025 19:28:18 +0200 Matthieu Baerts (NGI0) wrote:
->> Here are various fixes:
->>
->> - Patch 1: Better handling SKB extension allocation failures. A fix for
->>   v5.7.
->>
->> - Patches 2, 3: Avoid resetting MPTCP limits when flushing MPTCP
->>   endpoints. With a validation in the selftests. Fixes for v5.7.
->>
->> - Patches 4, 5, 6: Disallow '0' as ADD_ADDR retransmission timeout.
->>   With a preparation patch, and a validation in the selftests. Fixes for
->>   v5.11.
->>
->> - Patches 8, 9: Fix C23 extension warnings in the selftests, spotted by
->>   GCC. Fixes for v6.16.
-> 
-> userspace_pm.sh which hasn't flaked in 1000 runs has flaked last night,
-> with this series applied:
-> https://netdev-3.bots.linux.dev/vmksft-mptcp/results/255941/8-userspace-pm-sh/
+Cc: Salvatore Bonaccorso <carnil@debian.org>
+Signed-off-by: Carlos Llamas <cmllamas@google.com>
+---
+ drivers/android/binder.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thank you for the notification!
-
-> Looks unrelated but also quite strange?
-
-Indeed: the whole series should not affect the behaviour validated by
-the selftests. The error messages are not very useful, and the test was
-not really slower than usual. Our CI never complained about that either.
-I will monitor that!
-
-Cheers,
-Matt
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 312b462e349d..28634f786e70 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -7088,5 +7088,3 @@ device_initcall(binder_init);
+ 
+ #define CREATE_TRACE_POINTS
+ #include "binder_trace.h"
+-
+-MODULE_LICENSE("GPL v2");
 -- 
-Sponsored by the NGI0 Core fund.
+2.51.0.rc1.163.g2494970778-goog
 
 
