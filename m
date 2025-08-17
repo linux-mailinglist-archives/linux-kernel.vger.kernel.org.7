@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-772327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EC0B29147
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:32:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1EDB29148
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 05:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986737ACDE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264C817A7C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 03:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EA61EEA3C;
-	Sun, 17 Aug 2025 03:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E4254739;
+	Sun, 17 Aug 2025 03:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OZxx+DKc"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsoIKoRh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391A215E96
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 03:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DF9463
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 03:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755401533; cv=none; b=dXVy3NXecsyEE1aiqVlmsuAXwQ0COy2F00Ok56/xa5xcCyth5rOwVwUI27klEK646SHMw+qnQLDTyq4+J64W5XJyhANsluoOrCLWFGXHbHZZXDtkrMklrpvnLdqXipYdQdXH2wPN63i49Jq5z5Dp5INrtyfJT+AV4CsHUfjYKCs=
+	t=1755401705; cv=none; b=ES/CadKIVoy+OCKcrvbsUkW0/ZaxLdPG0lWAYz8sy2RdRnhXeFXjBp8+7KAmeSKqc1Kpz0I+AvEMIy4YwJRr6z+X2MIMzsP39apnptpDYrcb5jQNY8qtDzRaeD0EOhuOHUl2o5eMn5Qe8dzYoYjpCl6UfyABTdbcnP7NJ9tqDSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755401533; c=relaxed/simple;
-	bh=lXGqbYs4HzXGILPprhb6wkYaRL/O/aJ+yUDi7RGO1QA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=twQJNASKsdSa6ES8Nu/i+oUmQgPzemeeT9Mf+3AwOTNvosfo+Y+Mnr/ge13tknlScsHrxfVVYVUPkuZb8EY1xOruwiRLfs/ZKoLKAySk7OaYSyb7qW6sZMP5ErQfyIiFxBS4oqk6yoSsK2UpDq3ZsMSPa2cccdi7R6hKOTIliIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OZxx+DKc; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cce86052cso1892536fac.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Aug 2025 20:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755401529; x=1756006329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Jk4M8A7Sq+oUZNkIfHBISleszXEZHXt8JDjM8/2oa3s=;
-        b=OZxx+DKc7X8t5/n4KK8ucRjeDYcQ+7rWGbxnQQwWMgZYy825Tv6CrdiafdW4EG+ht9
-         AJxyDaBtfL9GuiPMm9wfYwNwKk0rjvqwW6uia13uQD/2gWIVD+D2d3uNFDbvgbwpWLgu
-         IsSdOM0hrQnNp/uB4n8h5p8/axAyGF3Jn6Sea+m2xp8MjZ54vVu4tfoNDACYgem837k7
-         yCPXWqAXd9vkraQsWknm/m+ahblxI/dj6CthCB2XSpk7Jyp9TuCv8aeBpYmsNa04tmcU
-         e1GO9WWpvJdvcdwMxTzozxbnPe6+wR874poFv3rhaJqss3zWH5U3s9DV2W694Bk7NPZq
-         BVvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755401529; x=1756006329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jk4M8A7Sq+oUZNkIfHBISleszXEZHXt8JDjM8/2oa3s=;
-        b=W1Ka7jmkXUCFZ6JMG0DlLf051k7BLicL2S92tn/byUvgSaU18M7mt2Ld9bgCf8kyX2
-         /spb4fy/YlMgyg22Dz5SNDEqfPUrDkz+afJb1ADL6QxDzg0tP6u/ND1HfmWmi3O/HNVJ
-         AewlNYF9Skppqbejv7hss1qubSn318EcFqkOMl7tqeJl5BegpzTcUlvZNBjKIMASdex7
-         7kXOLImfWZALH4nC68dfv6UnjHUJqQY3XCB0s3xjvPAhR1x7XwTB/C+jPyqPltTTnYbR
-         VDoyDrBXOuHEe6sbqk71SkzBOSU40kUMiAERw2BufS56xz67j+FsXEFfQnuZYGZxUYpN
-         m9Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkm1c7+ER3TLv4c3GzVI6z2gyUqz49rKhB7JcERHm+dZvbu/HM5meol8yQ+FnQXc2ZT6wy04DUIej51jI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu1d286qZGJnndNIS8RFns1rE50gaBe6uGFMWULgu4kVvDZLYc
-	w6uUe7bb8I605EKSVIXkUVvI8+eZSH82Tz25rW9dIpbQCb5oR/0nUHxwFLwNuuc5BwfnSW37OPt
-	Ce765
-X-Gm-Gg: ASbGncsPnuVboFhrYhKsW0HASM2fFYfA5CopKoYUXOJthmMHm/bY5rzn5R4BHrYkiYU
-	Q4getq/3pti+v5n1EM3YhYkiogFnhaOr1orkyLkUhfXljx3FNYtE+76s4BNTsHOf1/gXWkLh17V
-	AJFWknO1YHj/YGXUyTaRTQ8YpLKPHzYmEqRKwcaxvendWsjniRb4ltT8DGh65WfdNmAcqAihlkk
-	ZmN2M+Ye/Ogvqh2eTgI7ytNxRmy2RUdNvVAO3aUEzqzREx5JuFMYF8xOGkJBSWg2QC52pg4Utn0
-	0oWdVONsGoz7cP8kWUAe4p1m62KHhm0coIn8jPb9iaPSjBD/X7MPHv8m842QC9fo/CYSAF88rH3
-	C3Q2eDZ/DKDsw01cSBTTmHvr1kpA+46TfO84o2Z26rJGbCuX30200z6cGNFGqHx8gUQQ9jCGUVw
-	nr1M0u4Ug=
-X-Google-Smtp-Source: AGHT+IGtnDicEi8JeXTCvIVZIDNNbXd9yYPm529q0KGi/0stnNOfER9iWBc/gi/CqVdyO6UwOjr01w==
-X-Received: by 2002:a05:6871:4195:b0:30b:582d:8eed with SMTP id 586e51a60fabf-310aafed812mr4305356fac.39.1755401528993;
-        Sat, 16 Aug 2025 20:32:08 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fcf8:116:11db:fbac? ([2600:8803:e7e4:1d00:fcf8:116:11db:fbac])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abbf94dasm1629022fac.34.2025.08.16.20.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Aug 2025 20:32:07 -0700 (PDT)
-Message-ID: <0578bf90-49d8-4547-aecb-cdec16b4d6f5@baylibre.com>
-Date: Sat, 16 Aug 2025 22:32:05 -0500
+	s=arc-20240116; t=1755401705; c=relaxed/simple;
+	bh=QGvQfmyGBskI2a4bjL3wF4QdFXH43utm1OZ204H3S+c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UZp2MK4NIrzpg8vs83hPkOuiZ09GLug1BTQOJ0eEPYW5g3YUvxvg/f00tHdywPGPtTZf3E+tGpkO+OGU+xj91K/c+9Kf7cXDULZ/jFt2PflYiBdSRyiV1UqwBXxZEEI8/mQ96h0h34ieoiQrpxhH4901nfmIQtPSuvYyQOLAAxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsoIKoRh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32AFC4CEEB;
+	Sun, 17 Aug 2025 03:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755401705;
+	bh=QGvQfmyGBskI2a4bjL3wF4QdFXH43utm1OZ204H3S+c=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=NsoIKoRhMYbefJud78V7JQfGJb3lvcsAVq7mHUqzxoNkOCBhnSfGsvY68Fd1HOJjD
+	 BUxboW6YmR2zerzFIPPsZp3hiWfzpkz49FfUwp9qshKxypqaNllemyQh70GIw3zal4
+	 md3Nk7TPU5vZ3G8sbf06EMuiOvBoJj08qBwYKzAR9a1pnzCrLSw77HoDyq3xOH92hL
+	 sVFLa1ZSFUDE4KVnnUX/QHb2cM7ymj2jvd9fayJ04tFQ9lbkOemRYz71VRCRvHIk2D
+	 U7K1313ovnPUB/0NzAX5TvdVC9PX0YeI/Z0sPtdIfBUvhg6r9cJWpOSwGhOWJzueFU
+	 gfi/a+za9kZng==
+Message-ID: <e5ee313b-8770-446c-9dfd-472740f01bc1@kernel.org>
+Date: Sun, 17 Aug 2025 11:34:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,48 +49,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] iio: mcp9600: Add support for thermocouple-type
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250815164627.22002-1-bcollins@watter.com>
- <20250815164627.22002-5-bcollins@watter.com>
- <7cd6f642-b26a-45aa-a2f2-ccb7fbc28b20@baylibre.com>
- <2025081622-industrious-dragonfly-ed3cba@boujee-and-buff>
+Cc: chao@kernel.org
+Subject: Re: [syzbot] [f2fs?] general protection fault in
+ f2fs_check_opt_consistency
+To: syzbot <syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, lihongbo22@huawei.com,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ sandeen@redhat.com, syzkaller-bugs@googlegroups.com
+References: <689ff889.050a0220.e29e5.0037.GAE@google.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <2025081622-industrious-dragonfly-ed3cba@boujee-and-buff>
-Content-Type: text/plain; charset=UTF-8
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <689ff889.050a0220.e29e5.0037.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/16/25 9:54 PM, Ben Collins wrote:
-> On Sat, Aug 16, 2025 at 01:24:24PM -0500, David Lechner wrote:
->> On 8/15/25 11:46 AM, Ben Collins wrote:
->>> dt-bindings documentation for this driver claims to support
->>> thermocouple-type, but the driver does not actually make use of
->>> the property.
->>>
->>> Implement usage of the property to configure the chip for the
->>> selected thermocouple-type.
->>>
->>> Signed-off-by: Ben Collins <bcollins@watter.com>
->>> ---
->>
->> ...
->>
->>> @@ -453,6 +504,24 @@ static int mcp9600_probe(struct i2c_client *client)
->>>  	data = iio_priv(indio_dev);
->>>  	data->client = client;
->>>  
->>> +	/* Accept type from dt with default of Type-K. */
->>
->> We still also need a dt-bindings patch to specify the default there as well.
-> 
-> The existing bindings file for this already states type-k is the
-> default. Is there something else it needs?
-> 
-  default: 3
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
 
-in the YAML.
+On 2025/8/16 11:18, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0e39a731820a Merge tag 'for-6.17-rc1-tag' of git://git.ker..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13344da2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d371efea57d5aeab877b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c22c34580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a125a2580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e0297ec5b8e1/disk-0e39a731.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0396bfd57e65/vmlinux-0e39a731.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/68482d381f43/bzImage-0e39a731.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/f909676ebee0/mount_0.gz
+>    fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=15344da2580000)
+> 
+> The issue was bisected to:
+> 
+> commit d185351325237da688de006a2c579e82ea97bdfe
+> Author: Hongbo Li <lihongbo22@huawei.com>
+> Date:   Thu Jul 10 12:14:13 2025 +0000
+> 
+>      f2fs: separate the options parsing and options checking
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137ca5a2580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10fca5a2580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=177ca5a2580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com
+> Fixes: d18535132523 ("f2fs: separate the options parsing and options checking")
+> 
+> F2FS-fs (loop0): f2fs_recover_fsync_data: recovery fsync data, check_only: 0
+> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
+> Oops: gen[  107.736417][ T5848] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 1 UID: 0 PID: 5848 Comm: syz-executor263 Tainted: G        W           6.17.0-rc1-syzkaller-00014-g0e39a731820a #0 PREEMPT_{RT,(full)}
+> Tainted: [W]=WARN
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> RIP: 0010:strcmp+0x3c/0xc0 lib/string.c:284
+> Code: 00 fc ff df 45 31 f6 4a 8d 04 37 48 89 c1 48 c1 e9 03 0f b6 0c 19 84 c9 75 2c 42 0f b6 2c 37 4a 8d 04 36 48 89 c1 48 c1 e9 03 <0f> b6 0c 19 84 c9 75 33 42 0f b6 0c 36 40 38 cd 75 48 49 ff c6 40
+> RSP: 0018:ffffc90004adf8f8 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+> RDX: 0000000021ec2c00 RSI: 0000000000000000 RDI: ffff888021ec2c80
+> RBP: 0000000000000066 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffff88803d2c9768 R11: ffffed1007a592fb R12: 1ffff1100611a891
+> R13: 0000000000000000 R14: 0000000000000000 R15: ffff888021ec2c80
+> FS:  0000555575c20480(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000200000001000 CR3: 000000003d342000 CR4: 00000000003526f0
+> Call Trace:
+>   <TASK>
+>   f2fs_check_quota_consistency fs/f2fs/super.c:1188 [inline]
+>   f2fs_check_opt_consistency+0x1378/0x2c10 fs/f2fs/super.c:1436
+>   __f2fs_remount fs/f2fs/super.c:2653 [inline]
+>   f2fs_reconfigure+0x482/0x1770 fs/f2fs/super.c:5297
+>   reconfigure_super+0x224/0x890 fs/super.c:1077
+>   do_remount fs/namespace.c:3314 [inline]
+>   path_mount+0xd18/0xfe0 fs/namespace.c:4112
+>   do_mount fs/namespace.c:4133 [inline]
+>   __do_sys_mount fs/namespace.c:4344 [inline]
+>   __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f13267ca259
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff3d15d4a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f13267ca259
+> RDX: 0000000000000000 RSI: 0000200000000040 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000200000000140 R09: 00007fff3d15d4e0
+> R10: 0000000000000020 R11: 0000000000000246 R12: 00007fff3d15d4e0
+> R13: 00007fff3d15d768 R14: 431bde82d7b634db R15: 00007f132681303b
+>   </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:strcmp+0x3c/0xc0 lib/string.c:284
+> Code: 00 fc ff df 45 31 f6 4a 8d 04 37 48 89 c1 48 c1 e9 03 0f b6 0c 19 84 c9 75 2c 42 0f b6 2c 37 4a 8d 04 36 48 89 c1 48 c1 e9 03 <0f> b6 0c 19 84 c9 75 33 42 0f b6 0c 36 40 38 cd 75 48 49 ff c6 40
+> RSP: 0018:ffffc90004adf8f8 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+> RDX: 0000000021ec2c00 RSI: 0000000000000000 RDI: ffff888021ec2c80
+> RBP: 0000000000000066 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffff88803d2c9768 R11: ffffed1007a592fb R12: 1ffff1100611a891
+> R13: 0000000000000000 R14: 0000000000000000 R15: ffff888021ec2c80
+> FS:  0000555575c20480(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000003d342000 CR4: 00000000003526f0
+> ----------------
+> Code disassembly (best guess), 4 bytes skipped:
+>     0:	45 31 f6             	xor    %r14d,%r14d
+>     3:	4a 8d 04 37          	lea    (%rdi,%r14,1),%rax
+>     7:	48 89 c1             	mov    %rax,%rcx
+>     a:	48 c1 e9 03          	shr    $0x3,%rcx
+>     e:	0f b6 0c 19          	movzbl (%rcx,%rbx,1),%ecx
+>    12:	84 c9                	test   %cl,%cl
+>    14:	75 2c                	jne    0x42
+>    16:	42 0f b6 2c 37       	movzbl (%rdi,%r14,1),%ebp
+>    1b:	4a 8d 04 36          	lea    (%rsi,%r14,1),%rax
+>    1f:	48 89 c1             	mov    %rax,%rcx
+>    22:	48 c1 e9 03          	shr    $0x3,%rcx
+> * 26:	0f b6 0c 19          	movzbl (%rcx,%rbx,1),%ecx <-- trapping instruction
+>    2a:	84 c9                	test   %cl,%cl
+>    2c:	75 33                	jne    0x61
+>    2e:	42 0f b6 0c 36       	movzbl (%rsi,%r14,1),%ecx
+>    33:	40 38 cd             	cmp    %cl,%bpl
+>    36:	75 48                	jne    0x80
+>    38:	49 ff c6             	inc    %r14
+>    3b:	40                   	rex
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+
 
