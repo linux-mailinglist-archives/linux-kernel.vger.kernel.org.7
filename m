@@ -1,23 +1,23 @@
-Return-Path: <linux-kernel+bounces-772567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76989B2943F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4A9B2943E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 18:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914CE19639AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FA65E4F05
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 16:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20BD2FE573;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3E32FE068;
 	Sun, 17 Aug 2025 16:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Sayp2sr7"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFB11DB95E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2539D52F66
 	for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 16:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
