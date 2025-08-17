@@ -1,139 +1,253 @@
-Return-Path: <linux-kernel+bounces-772336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3238B29182
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64435B29184
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 06:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03ABF7AF5B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236802032DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Aug 2025 04:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D8A1D86FF;
-	Sun, 17 Aug 2025 04:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825111F03D7;
+	Sun, 17 Aug 2025 04:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ds4mzcdH"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFKeloyh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53A11A3A80;
-	Sun, 17 Aug 2025 04:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79EF41760;
+	Sun, 17 Aug 2025 04:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755404511; cv=none; b=eeQgFuv+RjOlIAS9cs8pISpWmcluxhifKcxMdP3ANSzHed/byBsRZLSFYLDRkBKHvW+0KlGl0rDWALZUWnIPBqWRTDBNKF8Y4PkX4kHLrUVfvE+uhHLnDxh0Z6lAg0XSIJKFUW/+rgivgFvNWVpv9S1bvWzrWbIJ3UbXXXA2zWY=
+	t=1755404916; cv=none; b=cm7BuUY7Nsxr5Xpf80G1FG/cS51wtVhFP6F7voIoayaRfgQL7Df3h5RvbJFWfmlHQ7+gZbOtiaVvlmkqbQXe7LAlKxzCtJAGG4ASKK6HXb2+9uIfz/DdLamKG3lqCBGpKjmBneo/QiIoKdMKmlyp0iSFwd/9jwpVvDE+cY4yx5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755404511; c=relaxed/simple;
-	bh=klDD3bSj2iX0ijHV1E5O4mJVLok7iWUKphq+FNfsyhM=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=u9UmomwkNprTxbaF3WFSlAhavOXO9/hwBGdZebNr3ISxqvT8A1yPU0JDODazRCf+0ccM4PdSAeXbbku+elBxOehaNj/ACVCccCek5CFevYnnoRkkeTtBkP9iQWhN3muQkCsGLd782zavV3OdWIn+h8C87F9JZcDBE36F8/xyTKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ds4mzcdH; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e43ee62b8so1141162b3a.2;
-        Sat, 16 Aug 2025 21:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755404509; x=1756009309; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Gxto2WYWn+qE0Oz+kHca1dPDn9IuzFGHvmwvCJpza4=;
-        b=ds4mzcdHncb4f7xXTww5AKENnGjLxhuvyWmhG2U8/dRYXd0+drYlOScAMJZ9oK4LaE
-         0ssfEHM4uubiQIZWoZ0c5S31Le9kuSVpSjJFrcYQDUAa8tF9oVdkSEMvW9oV2Ta9WFc3
-         74EKBGaQ3WmQRZh2gQmiU1d5ngKLjzxwtewo935YIBBEBGdkYyg9XiiywtqZcw0VfsTw
-         4PjsRrh7boonxpHF+7H0M34C8WwQJpDY8jmM5y4BghO9NkoZrVCvAkOyP9Hr+YLLA0bq
-         B0ing2FjUYh7TxIjnxqySwlNzE6CvTUrUGitvN6ADWDfu9941M3G9xivLPMIi6Cni/57
-         N2yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755404509; x=1756009309;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1Gxto2WYWn+qE0Oz+kHca1dPDn9IuzFGHvmwvCJpza4=;
-        b=vs6rqMk+nM10VQn/S2CMV1wKJ2h9+ZxZsbpxFbRozeTZgdThuMt0pBIkm2fx+D2CkT
-         r2pw3ooiuC8F/5hK/NCseYPcIb7+YTAO69sAUqtiEMI0QmXA6PQj+qsFpMDwBU7GDXU1
-         +gEPh3fQgb3bC64tjAyF/TzD/FDmzU4XKgGpaz1gweSvhl/m0wohobwke/H79395e2aQ
-         VbEjBIvKrqK3xUhe5g5WvlD5jgPNftiiGbSlbERlHL7QAC9hhZK7s+CVnJjBwzWbai+e
-         xcXMTxgqNfY/P6/j3FeHZY1bm9KTlSu8Rp1UiOZ1frTCcxKBrICdLDBwZc+0aQnI4OJr
-         qPsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7wluQg66RMgTXSYEyfnlNDcmvp2TtiROqTJd6fvCAZzfocyvt/chlLC5Kbeam0lhLlvLh9m0a4Ey3zH4=@vger.kernel.org, AJvYcCWkDudd/8EVThPST+m78LuTcwYhkgor8XY/wsz02K1MjJNIMrjocv70VktHWTnU1C8xm9EVCylkBWQ2rCPrMZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUWqLua3EiYnglo1Z6E5bT3HOu5lNjF8GIjjE6sg5IHqDEM65G
-	QNNguTeWMDrQYyc0Zfy9qTh2VZSkaGZBxcIqVaS8kfXmPBEmW5m8e0/y
-X-Gm-Gg: ASbGncsrjRU25e+elV4X3iXsVYvkUbiIHIRfd7pW/J4tCUjiXcqoAf9Bu4jowHSgWIY
-	ZUKbpzoGk/gxQNdJG5m+g5VdscNFnhL89Zr2JDBmMS6DdtBJVf/gNAYJR28DCF+8VU76wvyR+3K
-	33ZqhKy0+20XvfsgEq8BLW5Pw91UrfpvFj6P7RTfvDpAb6Ku2KTXlHiZaWIpvwQX6LOb2vrJNe0
-	dEzwBu6OHWL7hqfZQtnKQDrPOLBWLp7LH3qCL8mx9myiH5U+52u0I0oWSZ6S8Sbbj3AG0xQodHn
-	fnqgGYPfDZpTiiVeGhLKJvB3p9QJx0ApJWCwrlR+0zm4gGnQpYDqokkQGzuG0QNDGOqNvTtH4V4
-	hvZ+avV+F44CZfeM3/aVhIYkWK+n1hoDUsNVjNKzui9eWCgZdU4+BImqu8mPWmdNPlXmcy3LOzQ
-	8g
-X-Google-Smtp-Source: AGHT+IFpatqWNmxauQhAp6IXMfZroqzUBzaD9YiyJf1TijKcAJEW8VqrT/Ui7PsnRLmXt4H1MX6yMQ==
-X-Received: by 2002:a05:6a20:6a05:b0:23f:fd87:424b with SMTP id adf61e73a8af0-240d301bf14mr10963475637.44.1755404509034;
-        Sat, 16 Aug 2025 21:21:49 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e455bd252sm4227572b3a.113.2025.08.16.21.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Aug 2025 21:21:48 -0700 (PDT)
-Date: Sun, 17 Aug 2025 13:21:33 +0900 (JST)
-Message-Id: <20250817.132133.2247398178715604981.fujita.tomonori@gmail.com>
-To: aliceryhl@google.com
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
- anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
- jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
- lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
- tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com,
- daniel.almeida@collabora.com, me@kloenk.dev
-Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250814.151147.29094382820492173.fujita.tomonori@gmail.com>
-References: <20250811041039.3231548-3-fujita.tomonori@gmail.com>
-	<aJm9A_D-zlJtbV6X@google.com>
-	<20250814.151147.29094382820492173.fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1755404916; c=relaxed/simple;
+	bh=roBsXTXGnXLtqkdQMkwjW74wVTodWks6KmfOvZGXISw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doRVRO6hNyIi2YLDdqrlawXd6eq5kMJo2di28kZJXSlwjR4MlxcjpIpsOcM1XZhgQlSkPajNCBm4/+S0gW/LWICoT7qNvDvbT81I1S3VQB88ocdy2RLQWmcEPCUtxM3VvF2SCjEoL4CTBGkJN0DU5yrycwu8WYcxN8rqSTjNY3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFKeloyh; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755404914; x=1786940914;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=roBsXTXGnXLtqkdQMkwjW74wVTodWks6KmfOvZGXISw=;
+  b=XFKeloyhlwb8irfoyvgo7Pg+t6KTdTlk+STFtsP+c0JYse5ajNu50EGJ
+   wm68Vl/+1knApzLIn/88eye328LCPhIDknc9dqmD7qU5YIfgR9SzZlRFm
+   c4J5MbXgUC3UDJY7exAMGgwjqWNZwqw/bkiN+zcg51bc1ZlPm8d6esN8/
+   6rB5EmzdZvD74atveiw4CPgHhjCLWyxK+4LFHK8UBi9lCQgUit2MryEUa
+   LK4ltWhNDo9v9Sip37TPPQUlq5qqSE/H+9AKv8JaNlivoOhn6A4Mxyzx3
+   sVRYY9NXpWxuwxH8/eYjPE1JXmfHKwgAzHrCuKw1voIXjCRby8UGgqX2z
+   A==;
+X-CSE-ConnectionGUID: vlZRdxvsRxmgV9anzTiMPg==
+X-CSE-MsgGUID: Xtlx70LnQrKZvoQeaKMzRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57578211"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57578211"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 21:28:33 -0700
+X-CSE-ConnectionGUID: fy5oHdMkTVKdVnTF/IvgEg==
+X-CSE-MsgGUID: ThgxVKmvQRGwUvrdBbVe8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171505443"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 16 Aug 2025 21:28:31 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unV0O-000DMB-2Y;
+	Sun, 17 Aug 2025 04:28:28 +0000
+Date: Sun, 17 Aug 2025 12:28:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chung <seokwoo.chung130@gmail.com>, rostedt@goodmis.org,
+	mhiramat@kernel.org, mathieu.desnoyer@efficios.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: Re: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or
+ symbol list
+Message-ID: <202508171256.CSm9DAkb-lkp@intel.com>
+References: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
 
-On Thu, 14 Aug 2025 15:11:47 +0900 (JST)
-FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
+Hi Ryan,
 
->>> +#[track_caller]
->>> +pub fn read_poll_timeout<Op, Cond, T>(
->>> +    mut op: Op,
->>> +    mut cond: Cond,
->>> +    sleep_delta: Delta,
->>> +    timeout_delta: Option<Delta>,
->>> +) -> Result<T>
->>> +where
->>> +    Op: FnMut() -> Result<T>,
->>> +    Cond: FnMut(&T) -> bool,
->> 
->> I would consider just writing this as:
->>
->> pub fn read_poll_timeout<T>(
->>     mut op: impl FnMut() -> Result<T>,
->>     mut cond: impl FnMut(&T) -> bool,
->>     sleep_delta: Delta,
->>     timeout_delta: Option<Delta>,
->> ) -> Result<T>
-> 
-> Surely, I'll do.
+kernel test robot noticed the following build warnings:
 
-The above change caused the example code to fail to compile with a
-"type annotations needed" error, so I kept the original code.
+[auto build test WARNING on v6.16]
+[also build test WARNING on linus/master next-20250815]
+[cannot apply to trace/for-next v6.17-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chung/trace-trace_fprobe-c-TODO-handle-filter-nofilter-or-symbol-list/20250813-002748
+base:   v6.16
+patch link:    https://lore.kernel.org/r/20250812162101.5981-1-seokwoo.chung130%40gmail.com
+patch subject: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or symbol list
+config: s390-randconfig-r073-20250817 (https://download.01.org/0day-ci/archive/20250817/202508171256.CSm9DAkb-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 8.5.0
 
->> And I would also consider adding a new error type called TimeoutError
->> similar to BadFdError in `rust/kernel/fs/file.rs`. That way, we promise
->> to the caller that we never return error codes other than a timeout.
-> 
-> Understood, I'll.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508171256.CSm9DAkb-lkp@intel.com/
 
-I was reminded that this function can return errors other than
-timeout; Op closure returns an any error like register read failure.
+smatch warnings:
+kernel/trace/trace_fprobe.c:768 __register_trace_fprobe() warn: inconsistent indenting
 
+vim +768 kernel/trace/trace_fprobe.c
+
+   732	
+   733	/* Internal register function - just handle fprobe and flags */
+   734	static int __register_trace_fprobe(struct trace_fprobe *tf)
+   735	{
+   736		int i, ret;
+   737	
+   738		/* Should we need new LOCKDOWN flag for fprobe? */
+   739		ret = security_locked_down(LOCKDOWN_KPROBES);
+   740		if (ret)
+   741			return ret;
+   742	
+   743		if (trace_fprobe_is_registered(tf))
+   744			return -EINVAL;
+   745	
+   746		for (i = 0; i < tf->tp.nr_args; i++) {
+   747			ret = traceprobe_update_arg(&tf->tp.args[i]);
+   748			if (ret)
+   749				return ret;
+   750		}
+   751	
+   752		/* Set/clear disabled flag according to tp->flag */
+   753		if (trace_probe_is_enabled(&tf->tp))
+   754			tf->fp.flags &= ~FPROBE_FL_DISABLED;
+   755		else
+   756			tf->fp.flags |= FPROBE_FL_DISABLED;
+   757	
+   758		if (trace_fprobe_is_tracepoint(tf)) {
+   759	
+   760			/* This tracepoint is not loaded yet */
+   761			if (tf->tpoint == TRACEPOINT_STUB)
+   762				return 0;
+   763	
+   764			return __regsiter_tracepoint_fprobe(tf);
+   765		}
+   766	
+   767	    /* Parse tf->symbol */
+ > 768	    {
+   769	        char *spec, *bang, *p;
+   770	        int n = 0, w = 0, j, rc;
+   771	        char **syms = NULL;
+   772	
+   773	        spec = kstrdup(tf->symbol, GFP_KERNEL);
+   774	        if (!spec)
+   775	            return -ENOMEM;
+   776	
+   777	        /* If a '!' exists, treat it as single symbol + filter */
+   778	        bang = strchr(spec, '!');
+   779	        if (bang) {
+   780	            char *sym, *flt;
+   781	
+   782	            *bang = '\0';
+   783	            sym = strim(spec);
+   784	            flt = strim(bang + 1);
+   785	
+   786	            if (!*sym || !*flt) {
+   787	                kfree(spec);
+   788	                return -EINVAL; /* reject empty symbol/filter */
+   789	            }
+   790	
+   791	            rc = register_fprobe(&tf->fp, sym, flt);
+   792	            kfree(spec);
+   793	            return rc;
+   794	        }
+   795	
+   796	        /* Comma list (or single symbol without '!') */
+   797	        /* First pass: count non-empty tokens */
+   798	        p = spec;
+   799	        while (p) {
+   800	            char *tok = strsep(&p, ",");
+   801	            if (tok && *strim(tok))
+   802	                n++;
+   803	        }
+   804	
+   805	        if (n == 0){
+   806	            kfree(spec);
+   807	            return -EINVAL;
+   808	        }
+   809	
+   810	        /* Allocate array for pointers into spec (callee copies/consumes) */
+   811	        syms = kcalloc(n, sizeof(*syms), GFP_KERNEL);
+   812	        if (!syms) {
+   813	            kfree(spec);
+   814	            return -ENOMEM;
+   815	        }
+   816	
+   817	        /* Second pass: fill, skipping empties */
+   818	        p = spec;
+   819	        while (p) {
+   820	            char *tok = strsep(&p, ",");
+   821	            char *s;
+   822	
+   823	            if (!tok)
+   824	                break;
+   825	            s = strim(tok);
+   826	            if (!*s)
+   827	                continue;
+   828	            syms[w++] = s; 
+   829	        }
+   830	        
+   831	        /* Dedup in-place */
+   832	        for (i = 0; i < w; i++){
+   833	            if (!syms[i])
+   834	                continue;
+   835	            for (j = i + 1; j < w; j++) {
+   836	                if (syms[j] && !strcmp(syms[i], syms[j]))
+   837	                    syms[j] = NULL;
+   838	            }
+   839	        }
+   840	
+   841	        /* Compact */
+   842	        for (i = 0, j = 0; i < w; i++) {
+   843	            if (syms[i])
+   844	                syms[j++] = syms[i];
+   845	        }
+   846	        w = j;
+   847	
+   848	        /* After dedup, ensure we still have at least one symbol */
+   849	        if (w == 0){
+   850	            kfree(syms);
+   851	            kfree(spec);
+   852	            return -EINVAL;
+   853	        }
+   854	
+   855	        /* Register list or single symbol, using the existing bulk API */
+   856	        if (w == 1)
+   857	            rc = register_fprobe(&tf->fp, syms[0], NULL);
+   858	        else
+   859	            rc = register_fprobe_syms(&tf->fp, (const char **)syms, w);
+   860	
+   861	        kfree(syms);
+   862	        kfree(spec);
+   863	        return rc;
+   864	    }
+   865	}
+   866	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
