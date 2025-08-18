@@ -1,87 +1,126 @@
-Return-Path: <linux-kernel+bounces-774026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A4DB2ADB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:05:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789FDB2ADBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06181964508
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:06:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51B6E4E13EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E62340D8B;
-	Mon, 18 Aug 2025 16:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADBE33A013;
+	Mon, 18 Aug 2025 16:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="jTDbiiow"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLhkO/I5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9774A253F3A;
-	Mon, 18 Aug 2025 16:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE3F322C93;
+	Mon, 18 Aug 2025 16:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533128; cv=none; b=XI8SNMgOpAlmHH6nsACeglvyx0tzadj0dGAhoMgZYw8R7IgudA2NaA3b0WbWrlTV84QGsjqDygRgJbBeKQw3z18u6kbXS3yNIDIkGU4sge60hMCoi66TvDPYk1zgENZGKN7iFKEFZ3pipWBkKxewLHWDXo+u/ThURIXmRhwRIdk=
+	t=1755533208; cv=none; b=niozqpDCejFzGV7iFhgkshWe1SDqCJtSEot8Ca2vq3FkKE9PVt2uX+7bhJHc2sPiUyulhXGLeMQD5SP0vq4kce5X8vjCFRfNJwS09zBOdSkzYPr8864X26GvlIxeDVY7WjdtJfuXvQmOIthK5RTjbMBx4uR7RFzwtvXt+Rmm/rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533128; c=relaxed/simple;
-	bh=5mamOuwuN2q0c1HpCm7iCluXnDCuzCY0FW8G1fkNs8I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SCE66YrqFibZDyfTrGYuVy6xrrOS77FSgi+kw5UjeznLnlVsG16Bc7UW2P8j0hvGQ2042q/LeOLUAcTe/kyw87XPBQrUGfNbKOCQkJBNMUk+mhr0FAhT9C+rd0G2OUQZyzXJptFJbudIuWdexKBypOYV7Zs2rVPAmcfNHrSmUwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=jTDbiiow; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AB7A640AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755533126; bh=wk/rXX1AoG7L4arFu7XcJ27vQ+aO9yrhpMlrzmUyPdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=jTDbiiowfIAA2xOD4uU5CeBeWqMnV7BuSLi6XqnYorLlyf5ORDCLrbvz6iIbWtys6
-	 Noh5+xeaOO2cxsWtOhIap65y9wTXy4pShJCTyw5m2xgpdFoJeWvysyXTV9ng0v96W0
-	 aRROIASopbyNyUnJUySksoJgTlPCW9Z03yPxAR+jznpiM9Z8asZnw2xnGvdb3EZolm
-	 BwCnva1idG2KoKtDV2UzTXApepaytbFj+Drf+stuCkUGuJ55fGkDLtPQk1EY3iqm/t
-	 XKtxXnBhOmfeLjYPJNrj9MZVwF85xNd4Bhut++3rAhnoTRcKm9s/+2ZAawPpQ9jvGD
-	 9XvvK8kNdszjQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id AB7A640AB4;
-	Mon, 18 Aug 2025 16:05:26 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>, tglx@linutronix.de,
- bp@alien8.de, peterz@infradead.org, jpoimboe@kernel.org,
- pawan.kumar.gupta@linux.intel.com, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, "Nikola Z. Ivanov"
- <zlatistiv@gmail.com>
-Subject: Re: [PATCH] docs: Replace dead links to spectre side channel white
- papers
-In-Reply-To: <20250816190028.55573-1-zlatistiv@gmail.com>
-References: <20250816190028.55573-1-zlatistiv@gmail.com>
-Date: Mon, 18 Aug 2025 10:05:25 -0600
-Message-ID: <875xekaa4a.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755533208; c=relaxed/simple;
+	bh=8v0DGj5nN7LXQV4s3kH37ZEpxqadMxuWtRA9XKaDv9Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=mKbauO4SyZTHlp4sCByrIhm+FUZV2ttSWKNFYiJ28SnvKii5fEYgetITU+5Svzh2KcBH51T958RPJNhJRNO3bopG8Z5Hv1j6VL5Wdmv0XkQdaHNScSYWDLi8VhQY7DcvNxrTrHFjumjPgPUH/tt1mAIEeQHbLc+QwGiYnlwmsqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLhkO/I5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06318C4CEEB;
+	Mon, 18 Aug 2025 16:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755533208;
+	bh=8v0DGj5nN7LXQV4s3kH37ZEpxqadMxuWtRA9XKaDv9Y=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=nLhkO/I5LOKz8LcXkJw6s406OXNSXyb2a8ICLRCrn0YxIbTmVUchl9L0VOnJ1hNzm
+	 h+UKxqH0PksQediircWskG1IV4nc3tC4Tiq4BRaP9Tvjg0OeTS0o4M4zg5HcNNp5el
+	 chwhjTzmvI//dfy5Y1A+B41xCDfte+A6e+4ZXH8JzMTLmI4PeWMWms3UvQsSrt+y36
+	 33dFrnFPfHFZiAHxD5NVSVt+sQCfUjJNcLOo1ChgIuHgJdaqVXo2oXSe3VmZKgbVEw
+	 SGqBH9NzwKYyGE/DWsLuRBEqnkmKRvE5bBj4HNMszv9S/0UdGUGbU8TZi/rQQGYQQk
+	 DMdojNV4K+e2w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Aug 2025 18:06:42 +0200
+Message-Id: <DC5OKZHPTDWC.L6YD327Z0WJN@kernel.org>
+Subject: Re: [PATCH v2 3/3] rust: pci: provide access to PCI Vendor values
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "John Hubbard" <jhubbard@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250818013305.1089446-1-jhubbard@nvidia.com>
+ <20250818013305.1089446-4-jhubbard@nvidia.com>
+In-Reply-To: <20250818013305.1089446-4-jhubbard@nvidia.com>
 
-"Nikola Z. Ivanov" <zlatistiv@gmail.com> writes:
+On Mon Aug 18, 2025 at 3:33 AM CEST, John Hubbard wrote:
+> +            /// Create a `Vendor` from the raw vendor ID value, or `None=
+` if the value doesn't
+> +            /// match any known vendor.
+> +            pub fn from_u32(value: u32) -> Option<Self> {
+> +                match value {
+> +                    $(x if x =3D=3D Self::$variant.0 =3D> Some(Self::$va=
+riant),)+
+> +                    _ =3D> None,
+> +                }
+> +            }
 
-> The papers are published by Intel, AMD and MIPS.
->
-> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
-> ---
-> The MIPS blog post is nowhere to be found on mips.com,
-> instead a link is placed to the last time the web archive
-> has crawled it.
->
->  Documentation/admin-guide/hw-vuln/spectre.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Same here, I think this should be `impl TryFrom<u32> for Vendor`.
 
-I sure wish I understood why companies feel such a need to break links
-so often ... I've applied this, thanks.
+> +
+> +            /// Get the raw 16-bit vendor ID value.
+> +            pub const fn as_u32(self) -> u32 {
+> +                self.0
+> +            }
+> +        }
+> +    };
+> +}
 
-jon
+>  /// An adapter for the registration of PCI drivers.
+>  pub struct Adapter<T: Driver>(T);
+> =20
+> @@ -335,9 +656,9 @@ pub const fn from_class(class: u32, class_mask: u32) =
+-> Self {
+>      ///
+>      /// This is more targeted than [`DeviceId::from_class`]: in addition=
+ to matching by Vendor, it
+>      /// also matches the PCI Class (up to the entire 24 bits, depending =
+on the mask).
+> -    pub const fn from_class_and_vendor(class: Class, class_mask: u32, ve=
+ndor: u32) -> Self {
+> +    pub const fn from_class_and_vendor(class: Class, class_mask: u32, ve=
+ndor: Vendor) -> Self {
+>          Self(bindings::pci_device_id {
+> -            vendor,
+> +            vendor: vendor.as_u32(),
+>              device: DeviceId::PCI_ANY_ID,
+>              subvendor: DeviceId::PCI_ANY_ID,
+>              subdevice: DeviceId::PCI_ANY_ID,
+> @@ -396,7 +717,7 @@ macro_rules! pci_device_table {
+>  ///     <MyDriver as pci::Driver>::IdInfo,
+>  ///     [
+>  ///         (
+> -///             pci::DeviceId::from_id(bindings::PCI_VENDOR_ID_REDHAT, b=
+indings::PCI_ANY_ID as u32),
+> +///             pci::DeviceId::from_id(pci::Vendor::REDHAT.as_u32(), bin=
+dings::PCI_ANY_ID as u32),
+
+We should change DeviceId::from_id() to consume a pci::Vendor value directl=
+y.
 
