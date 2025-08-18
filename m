@@ -1,86 +1,102 @@
-Return-Path: <linux-kernel+bounces-772987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83037B29A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:53:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A603B29A40
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8D07B10FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11EE189682E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE57278158;
-	Mon, 18 Aug 2025 06:53:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8D9278173;
+	Mon, 18 Aug 2025 06:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SzMQDmWq"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6AE207A20
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5C41487E9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499985; cv=none; b=hEO3AtOXiqn6SJtEKOl7fP7WYkuDh4fC8CiZ8m0grbmeu+OjRQ//awjVCN69teLlQmKd8r2zcOfgC20DSSSWvXiDgO3df1cMrbkLrISsRXL4xfvdbQEGWQtcTXjPJHIcfwC3q44lFrxK1xzq0kLWQgOIMK9pVFDWQ35dpbQGKiU=
+	t=1755500097; cv=none; b=fefoEf9LBgvoE2jGyQFWU4W29BHGpBrSrIlDe/s1zHIlO88+2V7iHXauev8Kdx48K0lCjQjfCy1lDCBBbWteZKtFg5AMplsiG9dX2+2QznT5RuU8la1C8qUSWXRBmUBpejMrEnzK63zE8eaKA5dmlntWA33ts4PU2Ts1c3nYcDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499985; c=relaxed/simple;
-	bh=/ob80odb7KO5pCRvNaIlCDhuGvAwOHSYzGGV5W2yV5k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HSoTw0RQ1ZmjjBJ5hs7ZK4Qr5c4qkNOoriNVjDvSBtvYbCyMghakWM1Qkm3FPgJ+ZSjMNAZka4rUjc6WYL/v1cUPnmSYkGnbquzgY1v1i5YqRmhcM+eNYkegb7NFGOVeEKx8x3PWkO+s2HHl5tgbH6Vb+uIvFiJjodJP7AwC48g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432cb7627so391666439f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 23:53:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755499983; x=1756104783;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aTOpmTrDtQNaIlskACoqAyIcBXyQL/w+QtC5+BMkGn0=;
-        b=WR+dj3QVRHYHGQyJ61I0mTtEPqcQ7AZ5yFemvFY8Ohhg0+sDGnOEVTTCUY0fLCCn82
-         P2PcfHZnBdJgqjNSt4MbbXXRSzdP0vHPIUjOGSCct1HsSmRYOF/7Tppj+oGKpiT6nOGa
-         fPxO9/CCjrqXbrd17EEexJ/cckTziYogm9kThZi715FPErL5J8/YQrFhQkvvO3rVtJZz
-         Ic9/Xzw2AKO0r4e6PSOEGcJNYFrKndJWLimJelVVpzDKs7xfjGVNOvNbtoYZ0tg4bwM1
-         eTBtj94eh2XskUQG8iOUBPK/7olAa9K65JADJDeicNA1fTIuzlaK7MLUgCTllfuFjW6b
-         dc6Q==
-X-Gm-Message-State: AOJu0YwoJSZgyPMSw9CbfF/3VsVLYyK2+HgbBFMjvNeVIIscaivknc+n
-	z1h+Z2znnjyqtkOmNrPQNAcI0P+zDeT1Tr7bmkJcE9rlBNdO5wUJhVflV4AKdNz1N1LL9bYMDs9
-	QfzXmYYPewhLdWvAEBlOq5efyERvC3K0HCluFo04U0BgbGOiLnUZyM1yIOcg=
-X-Google-Smtp-Source: AGHT+IFc7dmb0tNJdid6u1v6/LhPYA9LlnGP8EVvmYs4dpqAD0m6plK1O7Hz9DdEpUTh/4aqT/mE55zX/gc6/S1hAvylx1aoO7K4
+	s=arc-20240116; t=1755500097; c=relaxed/simple;
+	bh=PiRdQi2DNTOyWPjbp/n22ix0QwyXtFNXOR21zOCXrsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qvawUvu/fbasW0N1PGmJBBVEuNtDAjI3YExm5zJMfthakZ5XgHTcdVrdopDrEk/jSm0R2LbLJ1RDmsVbuAMc2watkIapCZKImXwP8kJok3ues4C3PO+H4nXLz6d7FBmUSNQ+k6szUFe+HUFbzSaUtW8l2o4FTXupXXQY0tIOcAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SzMQDmWq; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id ntkVuLsjrZ80pntkVuQAKL; Mon, 18 Aug 2025 08:53:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1755500025;
+	bh=y1i4Ok6MNpfH7xDFQ14ItWKQD+IgHVNXWLSdzG0AENQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=SzMQDmWq1fMPidsfbky5r+WvlhNQxqXcXBUcrWn8deWX3BhFCI6r7xpGV0KMnxIo6
+	 IMEJyjzzb3aP6fVaNdgltHtCAe5snaN7OOQoIl7leo8UE/Jzf371UtU/0QKbTRR2k0
+	 Piv+KxtZAK3r6Nn3IcZPCX20q8AP6GNZkZqc2JGQZTk0w1W0Xgh8lqUCtTsgY6OEhk
+	 2Oks+MJVRi9RaRY4oR+wvcnc73XHCng/QhoRiO889PiUv7rQJdzexF8eUiBvxHOsDq
+	 ml7q8LYN+6oAYmbG/wG2pfQ6JvCFoK1tvU4Gwht7Ro53MIYHevsC+lFnELP2kCkLH3
+	 GrfuRO4pYVtrQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 18 Aug 2025 08:53:45 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <37faa705-4ea0-4dc8-a0d4-c26acf743c6b@wanadoo.fr>
+Date: Mon, 18 Aug 2025 08:53:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164e:b0:3e5:7dac:d696 with SMTP id
- e9e14a558f8ab-3e57e9b4dfamr213947765ab.19.1755499983591; Sun, 17 Aug 2025
- 23:53:03 -0700 (PDT)
-Date: Sun, 17 Aug 2025 23:53:03 -0700
-In-Reply-To: <20250818062217.1231-1-yuichtsu@amazon.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2cdcf.050a0220.e29e5.0091.GAE@google.com>
-Subject: Re: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
-From: syzbot <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yuichtsu@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/amd: use str_plural() to simplify the code
+To: Xichao Zhao <zhao.xichao@vivo.com>, joro@8bytes.org, will@kernel.org
+Cc: suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250818035331.393560-1-zhao.xichao@vivo.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20250818035331.393560-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Le 18/08/2025 à 05:53, Xichao Zhao a écrit :
+> Use the string choice helper function str_plural() to simplify the code.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi,
 
-Reported-by: syzbot+20537064367a0f98d597@syzkaller.appspotmail.com
-Tested-by: syzbot+20537064367a0f98d597@syzkaller.appspotmail.com
+> ---
+>   drivers/iommu/amd/iommu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index eb348c63a8d0..b5c829f89544 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -265,7 +265,7 @@ static inline int get_acpihid_device_id(struct device *dev,
+>   		return -EINVAL;
+>   	if (fw_bug)
+>   		dev_err_once(dev, FW_BUG "No ACPI device matched UID, but %d device%s matched HID.\n",
+> -			     hid_count, hid_count > 1 ? "s" : "");
+> +			     hid_count,  str_plural(hid_count));
 
-Tested on:
+Nitpick: There is a double space after the comma.
 
-commit:         c17b750b Linux 6.17-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d8eba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe8fc1adb24b215
-dashboard link: https://syzkaller.appspot.com/bug?extid=20537064367a0f98d597
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d99234580000
+>   	if (hid_count > 1)
+>   		return -EINVAL;
+>   	if (entry)
 
-Note: testing is done by a robot and is best-effort only.
+You should also include <linux/string_choices.h> I think.
+
+CJ
 
