@@ -1,160 +1,129 @@
-Return-Path: <linux-kernel+bounces-773584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189CBB2A1BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B0BB2A1D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A47DA7AB808
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D36C162003C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FDF3218DA;
-	Mon, 18 Aug 2025 12:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADC627B355;
+	Mon, 18 Aug 2025 12:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7M1+jlz"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bT4IjK8Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFFC3218AF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8FB3218CC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520739; cv=none; b=lRW7ZmkUYfPopb4evptFXPTDiK304VCHl/VbiXWtgyEJ4BrOi6aipoJfDpqrFc3xcLmwDXQ4qk4RdNTpgbtR9kqQ0idWSMcebNfW2XkFdPZdLu5dZQt32Gahxkw03cImQqsAGCiV9KDkgHItf/zv7LhUINeY19iaHT+p094kiOU=
+	t=1755520834; cv=none; b=ZZO6JyECCN+Rh5jLCUy7SMe28ESyvHzsL6VmIdhbKi0E8GuXGqxXRiojN54mQYHnbK7lcOkap/0DOI2ePK9gRX8M+Mwnf9ivNoar2w+HovCAA/JB3pWoLcl4kKarFx8wSfzv9/68BSixzfFbJ6KEH3bsSJ+kilKtCgmDFc3FHDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520739; c=relaxed/simple;
-	bh=NNd+UhxgFiLUKQUDeL+TcsKdGr1tcHid7dcDNUh0G8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=roJup7kxAZBjVInHdGkvnimKoNI6OjbqYP6MRT56MPg46/woECYVMNy1e7MD/iajueq9Lanur9gzw3g+2U27Koh5xRenTUrc47I5CUm31k1cHQ013XQqFI+7eecq5Y63mzOFc7nWEiPXuYgYNkWkj9BLBVMK4L9OwORzI8D40DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F7M1+jlz; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7a96309so50789066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755520735; x=1756125535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eVidIAFOQ1pNMOop8iUArlRul1tpgG751/FDNho3w3s=;
-        b=F7M1+jlzXfUEmjg5x258E7bgy7boqDvREUiPiuHlIIkipjmSgfEt5Ow6BvzRXTgK6N
-         7XHADhnPkDRgyyAPzBLvjPGXj+lmQkFl1n0ILZEEOe+8peyeOe0nFOZ+S91PAmvLWHIL
-         evY61cXcYgiZYGXOKZ9PPFuSpUkigEEbYPZh9L2NRIeYLiHXal673yvhFlND+fAahLYC
-         0uiVBtbIabBqBeFtAEH8F13nrCVKLRVg8+X1WPhkFcHhWHdE7liTjWHCjB40B0Hvj+5P
-         Anyv76J9QcWhSwKsuXPAC1/S0fvGJzBUAzidDrPcfkUskBUpGYzMQ6xoAf9X1fdL1KSw
-         4puA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520735; x=1756125535;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eVidIAFOQ1pNMOop8iUArlRul1tpgG751/FDNho3w3s=;
-        b=JnVSkKMzuqsRcePVyu7/q45phomVmImVCPDuVDVtnmjOuEhyTgP87WnHA8S+EYeOz+
-         6Zyqy3/+L8XsUxqvfCaM2qQhJcJbuk8fuigiI+cQPR6D/wB71C/UddWtizrL0deelBBR
-         o8BmxeWK2ezaOeKGIdFeTsv/cu2tjccQVaOWo/vw37kOlR3cFd/y5VX8ccqOdvBwXw+F
-         dbjixUe59mOwnyD44Yi5D9zgmfpB0TPf7idJOEq51yVuaTq1Hd3u47LHcKQ1tkyLu/jp
-         noggNvn9Ao18qHB+9NemGf9CP/uO8tUu7mR0CClnrfujDYi3wUVD95azCD44Tvo7l0H7
-         ilMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLp33yOq2/5PchnMfgPX7BBsN5dtMCm6qV2pVzBQNuPbLExgS2EpbB3GnZ1mWyKxCcB7FBtyYPOaAtMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs7Kp3owijpDK/Mn0vM28+Ga/TtLbML8F7T4yrFrRe1DWbvnZI
-	ujItVDNfCpdXbLVn5ptgeRLHMiq6aMK35Px1jhCZV/hq9a70wY+Hg+RsVH0ixpU4lM4=
-X-Gm-Gg: ASbGnct+CMA2rymLoqKtN2hiQOZgPVaWdPSf3kJqVbIz1Bae9RQ41/DmyEWZMlc+WOc
-	7yR/LpoFV2Bmw6p9XRZqsYa8Oc2927OJrA/WukWDRfxo8SOnY1U9PG3+6f318ZF/cjIT8wozrRN
-	uF6Orx6rQZV6NPemwmfjAXIEj5cL5IWzgaH773BHWwjNPPBgtVZvBBriPEs+FZS7SeBSTHPZDKV
-	wN5DHZ98RG5nOWKx8B2bOyTl7+SMCQuzA92VfEvPTqM41B6xk/aSd8hKP5z08lyZbt0ndpVUVl2
-	+njWOXnlEVxDmPiMCu+fmEdB/dZZmUVF/Frq0JseJDE8e5EnW9k0xLe+aZ3axQQ438BtMU0S5xL
-	YPpUW9pxFHh+8r9TkRUB6bgRDu1CObJXuVw==
-X-Google-Smtp-Source: AGHT+IHXYdPtY1MDFkC22yLVUpu+WB8sPm6OdmB0qkvl3/Jlp9B/FVBmvXmSnUDcwl7JZMcG0Z1xJA==
-X-Received: by 2002:a17:907:3f90:b0:af9:5903:3696 with SMTP id a640c23a62f3a-afcdbe7be35mr491927266b.2.1755520735432;
-        Mon, 18 Aug 2025 05:38:55 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53dd5sm786600266b.5.2025.08.18.05.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 05:38:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v3] soc: qcom: icc-bwmon: Fix handling dev_pm_opp_find_bw_*() errors
-Date: Mon, 18 Aug 2025 14:38:52 +0200
-Message-ID: <20250818123851.111326-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1755520834; c=relaxed/simple;
+	bh=ENhkK+xGbDwLOaFQa9/K3YzTFBXZHG2lcLkf8U7OY9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEDR6q6IyJlUL7z/1JULhmIXsIS1LOXuAljERWXMBwu3P9nXkekWW526IbKezSi4cCHA9nF+ND8pSIqJ469FQQZ97CpSLErN0dybJvz8GAFgzhrdcywrs17rLxkMLeAdRGoluczhD4uCgc2EdM4BmpsHQ49T8yisoDHE7wRTltw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bT4IjK8Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755520832;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FPgjCYbBQ3o35yfUqnUlwAHknTH8U5Krzrh1HruHa8o=;
+	b=bT4IjK8ZgRs0E4aX0Jbplo58HCPnT0sKtDWibT+4RYHqSBCEXql4IVv2Ua9Ie9+CbJxhc1
+	lyIfrtwTEl5K1lm3fgV3uOq7KKexT1XvOIX61rt5MrbaZPQUdsZZ93vShJVFmsoj6wOyBD
+	eNi9vHmkRPPHTmoV7lVkkCrn60nNf2k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-5Zs9xW6NPRyHF2ZyLa7sqA-1; Mon,
+ 18 Aug 2025 08:40:28 -0400
+X-MC-Unique: 5Zs9xW6NPRyHF2ZyLa7sqA-1
+X-Mimecast-MFC-AGG-ID: 5Zs9xW6NPRyHF2ZyLa7sqA_1755520826
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 92F931800291;
+	Mon, 18 Aug 2025 12:40:24 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.24])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0C26A195419F;
+	Mon, 18 Aug 2025 12:40:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 18 Aug 2025 14:39:07 +0200 (CEST)
+Date: Mon, 18 Aug 2025 14:39:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Li RongQing <lirongqing@baidu.com>, Yu Kuai <yukuai3@huawei.com>,
+	Khazhismel Kumykov <khazhy@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v3 0/2] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250818123900.GB18626@redhat.com>
+References: <20250815164009.GA11676@redhat.com>
+ <20250817140726.223f8f72@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1913; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=NNd+UhxgFiLUKQUDeL+TcsKdGr1tcHid7dcDNUh0G8A=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoox7bkcKP6BHpCB3hJNSehZPEnE/cAIc1+e8fc
- nXJFPNIyO6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKMe2wAKCRDBN2bmhouD
- 17XWD/9Zk77HtVCcEOHh0wTT8Vzbetf+z4DWBIjVrAv0xplZ8veRVqhc+G39eIDi3tDvW0oVSPg
- 0kkKoVzwKDScptyI3Mr/ce0NQohxj3YZK5y6zqe7NcaBwXFZKI9QokTMPD8Xa7M9GK+tXg8HFzu
- K8zoZEOy8mVYqsR22x8NQMMUueIWLclshHZPuJnpAdA6tjWwLeR5oFtUUF93YwreAQ052r2WlXP
- K3vAY4INYsMBWi5VBJRW9x955TK2nAlLOWZkHYsKxpaYU/vB+gp4LF7D3Eo/RPp0IZ0wKfif//r
- j8V05z54SRgx2tjq6ro/GZxCzAdTaNWY9ME973WFyGuj/sauiI77GKHpizNF1YXZ+RESBl1ruIm
- 9hLA00toCc3RCsvRIIZC4DnNAps4KXZ9iVMOSq4iVgYitlMN1M2OHbFdPZy1mjEA0CxT38U5K3u
- Fe3PMC5KBvdb9vQnf26bQlaUc3bcTi6s9HFYuydKYdMsXpzBaKTZN0QsjM2Lz4Cu1hAdOGTKa6S
- 4EK3zaFoSNjy6pc0AHOfo0IPoqi1eQbb00fZuP0DxIy+hxd0Jwcg+ci4Mt4YaX5BeaDvtDq/zEx
- BbYZ3sI1rWdvSplWPTYVebxnrwtksTMDZRq7Gq3vcfp3WuRK6xG/CZLGOEuom3kIarmB4vxROnm b4E/eETCaXtHoOQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817140726.223f8f72@pumpkin>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The ISR calls dev_pm_opp_find_bw_ceil(), which can return EINVAL, ERANGE
-or ENODEV, and if that one fails with ERANGE, then it tries again with
-floor dev_pm_opp_find_bw_floor().
+David,
 
-In theory, following error paths are possible:
-1. First dev_pm_opp_find_bw_ceil() failed with an error different than
-   ERANGE,
-2. Any error from second dev_pm_opp_find_bw_floor().
+We had a lengthy discussion and you have already acked this fix.
 
-However in practice this would mean that there are no suitable OPPs at
-all, which is already being checked in the drivers probe() function.
-This is impossible condition.
+I thought that we agreed on that a) we need to fix the problem first
+and b) x86 version should be consistent with the generic implementation
+regarding ~0ull on overflow.
 
-Relying however in the interrupt handler bwmon_intr_thread() on
-preconditions checked in probe() is not easy to follow from code
-readability and is very difficult to handle in static analysis, thus
-let's make the code just obvious to silence warning reported by Smatch:
+Can we finally merge this fix, then discuss the possible improvements
+and possibly change both implementation?
 
-  icc-bwmon.c:693 bwmon_intr_thread() error: 'target_opp' dereferencing possible ERR_PTR()
+Oleg.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/aJTNEQsRFjrFknG9@stanley.mountain/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Changes in v3:
-1. Grammar commit msg fixes
-2. Drop duplicated reported by smatch
-
-Changes in v2:
-1. Rephrase commit msg (Konrad)
-2. Drop Fixes and cc-stable as this is impossible to trigger
----
- drivers/soc/qcom/icc-bwmon.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-index 3dfa448bf8cf..597f9025e422 100644
---- a/drivers/soc/qcom/icc-bwmon.c
-+++ b/drivers/soc/qcom/icc-bwmon.c
-@@ -656,6 +656,9 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
- 	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
- 		target_opp = dev_pm_opp_find_bw_floor(bwmon->dev, &bw_kbps, 0);
- 
-+	if (IS_ERR(target_opp))
-+		return IRQ_HANDLED;
-+
- 	bwmon->target_kbps = bw_kbps;
- 
- 	bw_kbps--;
--- 
-2.48.1
+On 08/17, David Laight wrote:
+>
+> On Fri, 15 Aug 2025 18:40:09 +0200
+> Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> One of my 'idea patches' is to make mul_u64_u64_div_u64() a wrapper for
+> another function that takes in extra 'int *overflowed' parameter that is
+> set zero/non-zero for success/overflow.
+> The 'overflowed' parameter can either be a compile-time NULL or a
+> valid pointer.
+>
+> So the x86-x64 asm implementation would use different code - you need
+> the 'jump around fail label' to write the ~0 return value to *overflowed.
+> The extra pointer check in the C version normal path may not be worth
+> worrying about (but the '*overflow = 0' could easily be inlined).
+>
+> The typical use would be:
+> 	quotient = mul_u64_u64_div_u64_overflow(..., &overflowed);
+> 	if (quotient == ~0ull && overflowed)
+> 		...
+> That will generate better code than returning 'overflowed' and the
+> quotient by reference.
+>
+> Although I wonder how often ~0ull is a valid result?
+>
+> 	David
+>
 
 
