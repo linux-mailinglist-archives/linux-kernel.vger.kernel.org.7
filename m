@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-774232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B485BB2B029
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:24:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566AAB2B027
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D4F5E27C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C9E17AD907
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F32D24B2;
-	Mon, 18 Aug 2025 18:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388272D24BD;
+	Mon, 18 Aug 2025 18:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wGNArSgz"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRCrtr9J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32D32BF4A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877F52848B1;
+	Mon, 18 Aug 2025 18:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541373; cv=none; b=iNg3j5c+gkeBVXjRwe4fmthB6HSe7Kw1nB0rN9/E0pr99nfX6WU7ueKCQpsYbVQIPwL4Y4/7sN+Qbnog7sMyfHDhXu7PJUrvjoKmkFj9bzz/ip9qAhrJaMwOQKdzJHhzYVOzW06ZKVgn95qW4zb+O2zNBwc0xst2a73y0U/cl9c=
+	t=1755541425; cv=none; b=N9s2l+AYPF6MVSc81pBfICZcO42bZmAc06RGqxUSXTwDHNG3fhvYFTWSrbXwAX3OwT8v6PvDTCWfIw0hSUc9mEiiHAd8OkfkDl86ga3EdwlTFgpYmucmPxBlDKHh4bN5LPptQlrvPjj+fGEsKgDNVL+kGAWPhbX9OdcRpaKbFwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541373; c=relaxed/simple;
-	bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l1b97N8QF+hRn3KLRSq4bBx1WWnx8Bbydah/oOyC1S/j98ZFEiFeyVW3NBmVpeKK2TGBB82fuZFv59Ax1VhRKXKjGM2AblKSd5na8yBIYyr1TzkGxGZ927Wbbo+5gZD7gN89WBQWh9Iyb4IwQI8Fpm/pid1Zsuipo/3ryX37eYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wGNArSgz; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55cc715d0easo1295e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755541369; x=1756146169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
-        b=wGNArSgzawI63dj4Uld/U5lCcb1WVdko8j7tbt1K0xmoUz01hRIs0ldByjP7PdmkEu
-         /2wsoCQ63u+NLC8gLEmLOSmYcH/qtt4MoQ2c4gb9IGTXwEYMiQdtWTaczuAl3uIMq4vV
-         iYSSK7l7IvsFG0xT1BEZMPQLMPBYCU/yRWYtQdFdZegxcQjJLD9NgtLJ1NCv6WTW/dsT
-         J1mWk2iisTUMiEmM+iVdpLXTJFIHzpPbSMpQAbc81UOJcj8jsxo3XfMlDS+t8ABC0VYR
-         H1O4JE5iGI0tnKhATbGsDjQv3jqOsEGwV8DB6dSplNh+l6w6vl24M4lMcIdat4WkjGtq
-         nEQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755541369; x=1756146169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
-        b=GuHx+rTpBSDVq/MJuSDaZY2LKFwpymqy2KRlXyRIsChmVqGeLov+J4HfbtWHl9htri
-         NgFU+Ar5yoFU/TAPCSElyQi0Ayd75DHNZ97AkBOGidQIjdTGv8EZhbABbXYG9eCqI0Uo
-         nnsRaXD9vVdCfbP1qqFTFbG/inFq8OvLAeQSBan8aCfZAz9ksJt2+N8/S55cfTlg5ciL
-         gha8s8RKSIW0srhvcycuI1lHlz4kkH3MnzgyGHskPr4e5QFLB4eFaJ64RdD1WfUN0++s
-         1sHz3wUihJv7claDrJURwm4hxCrgRuFgZbD96CMS//Ugl4PQHFiuDXYqcch1F4zohrnV
-         Jsmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5uBKIiK4w9gb7gi23eqfM8xBBU5dOpfh6gakqJBfNu66cBkIWHTZFkxT/MG5Wud2XHIcEYMPoamSEmM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjvowxnBkhO3qsErGeiIEOKjao/Hct1yqIwTzTazXezr8u3Xo
-	u9g1FwDM7/GqWyTOsy95N7Tg2Q6/j3ec4DY7f4Dv3fR9SeKKa2u+/AGUL0dc9cGlRMljTUiARG+
-	TSO5SU/LruzHYb60FspaYmLkhzZWRybg4FXGwnlJk
-X-Gm-Gg: ASbGncviMcNgJv4b+8Q08gPCIsOrdmaAa9AxDQL24pMB0/AiJtdWxMW9+y/uiixTvzV
-	xeHTXSRL3LipJcVeyXlSL0QA4oqZWcgnAO/a3AQd79/5zdB6vw/Rgwfv3I/1ic4y6SF9NJp6vBp
-	WkaLN5y5RbTgmkgF00dOqv1O9WUcIEw7bna3gFBz+Ev9puHkNllzatTnuGM9x9zsF6/T4QTqdEk
-	7gOjT//Oc1IcxG3rU5YASy92XcC+d1CTTR8yA==
-X-Google-Smtp-Source: AGHT+IE/ZypGD903Psnz6sgZwBXeLKnJ06+8qD7CmCx7MVRcdInxK4pxAypFIbDfggBhfCkhl5iLUbK0SD2EBRPwbow=
-X-Received: by 2002:a05:6512:4406:b0:542:6b39:1d57 with SMTP id
- 2adb3069b0e04-55e001b1b0bmr15322e87.3.1755541369330; Mon, 18 Aug 2025
- 11:22:49 -0700 (PDT)
+	s=arc-20240116; t=1755541425; c=relaxed/simple;
+	bh=ZOIj05MFLCwF+DumLOC4eUsR6lIYbHJI9B1zVCxvqLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OwZ3o+cxNe6LTGRANxa3kG/Os/SehfFpmZD99QDqHhIZztq+RRF3rSag180saXZQmTWdZJcxDOSVlFLzWQIoqB75+NdJkd2dg6pA6KA6mHgur1D0VWAixeMwe+qXAcsGx68+7N648udwx69uz00DDktL5jULOblK1qamzfenQs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRCrtr9J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E360C4CEEB;
+	Mon, 18 Aug 2025 18:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755541425;
+	bh=ZOIj05MFLCwF+DumLOC4eUsR6lIYbHJI9B1zVCxvqLY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cRCrtr9JpLKqj7OGAlfE3sQT9dG3wQFDgOoXncMKpWFYSEN5HMZAU72kx9vXmroWk
+	 C4U15p6Yy+VepETJO8Uws2xDG4yS7Jojl8bZpTNZv71VCJQlJBZass5EC+wY3BYI1V
+	 EaXMk8EaQAtHxHSIkrT4w8V12MO8GcggsFO46GY+H1cUr3g2fsYPU1VkPRuxx+IOSE
+	 JrVpyJSo+adVHRajs509oUcXxJBZEFTYf2BE9JGohj0d49ACGQobieahAWzcmRs+eP
+	 OetLx4s3SyRBnML+MJf7SOo7VJweK60dLTZTQHdrlkZjQ6vtmCNh22K+msWvaLKASa
+	 ZPDqw0yVdj36g==
+Date: Mon, 18 Aug 2025 19:23:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ Markus.Elfring@web.de
+Subject: Re: [PATCH v4 1/3] iio: pressure: bmp280: Use IS_ERR() in
+ bmp280_common_probe()
+Message-ID: <20250818192337.2256ff4a@jic23-huawei>
+In-Reply-To: <20250818092740.545379-2-salah.triki@gmail.com>
+References: <20250818092740.545379-1-salah.triki@gmail.com>
+	<20250818092740.545379-2-salah.triki@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-7-dtatulea@nvidia.com>
-In-Reply-To: <20250815110401.2254214-7-dtatulea@nvidia.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 18 Aug 2025 11:22:35 -0700
-X-Gm-Features: Ac12FXzkAeLodaPcBrWTY9tocxP-EHC3O1a5Xv_mbMxpvvGeCp-LCxHvluNIGic
-Message-ID: <CAHS8izPjyZHDigixCZkcTiNd2JLdgzTMBUZ9+kT_M+SO-uAS-g@mail.gmail.com>
-Subject: Re: [RFC net-next v3 5/7] net: devmem: pull out dma_dev out of net_devmem_bind_dmabuf
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, tariqt@nvidia.com, parav@nvidia.com, 
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> Fetch the DMA device before calling net_devmem_bind_dmabuf()
-> and pass it on as a parameter.
->
-> This is needed for an upcoming change which will read the
-> DMA device per queue.
->
-> This patch has no functional changes.
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+On Mon, 18 Aug 2025 10:27:30 +0100
+Salah Triki <salah.triki@gmail.com> wrote:
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure.
+> Check its return value using `IS_ERR()` and propagate the error if
+> necessary.
+>=20
+> Fixes: df6e71256c84 ("iio: pressure: bmp280: Explicitly mark GPIO optiona=
+l")
+> Cc: David Lechner <dlechner@baylibre.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Nuno S=C3=A1 <nuno.sa@analog.com>
+> Cc: Markus Elfring <Markus.Elfring@web.de>
+> Signed-off-by: Salah Triki <salah.triki@gmail.com>
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
 
---=20
-Thanks,
-Mina
+Applied to the fixes-togreg branch of iio.git and marked for stable.
+
+The rest of the series will have to wait for that to work it's way back
+via upstream.=20
+
+Thanks
+
+Jonathan
+
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bm=
+p280-core.c
+> index 74505c9ec1a0..6cdc8ed53520 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -3213,11 +3213,12 @@ int bmp280_common_probe(struct device *dev,
+> =20
+>  	/* Bring chip out of reset if there is an assigned GPIO line */
+>  	gpiod =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(gpiod))
+> +		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get reset GPIO\n"=
+);
+> +
+>  	/* Deassert the signal */
+> -	if (gpiod) {
+> -		dev_info(dev, "release reset\n");
+> -		gpiod_set_value(gpiod, 0);
+> -	}
+> +	dev_info(dev, "release reset\n");
+> +	gpiod_set_value(gpiod, 0);
+> =20
+>  	data->regmap =3D regmap;
+> =20
+
 
