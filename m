@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-773717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45116B2A76B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EDEB2A75D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869B51B60812
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F16682EFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7B121FF36;
-	Mon, 18 Aug 2025 13:43:30 +0000 (UTC)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CCB271A6D;
+	Mon, 18 Aug 2025 13:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kiRnEJ7G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1822A335BCB;
-	Mon, 18 Aug 2025 13:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAFC258EF3;
+	Mon, 18 Aug 2025 13:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524610; cv=none; b=YsEmkd6aau/9i3F4PyAjbrVpZg44EO54LBnsAZFfBd/B2rXOXqm8jTqFrxI/3DUETFFhaL1GaMyXCk5ZLDLQgqVE9rFPw4i0ZWV07+P5izITiKVdAhGNagbyFl/0e/sW5IV0oBw7xRzR+CKtcIVCuzQ6fb0nv5rsfK0XXDVvjgE=
+	t=1755524623; cv=none; b=B10NHK2wysFL9nGMMBdsY5q+ub/3OJ0pG5DODiR13zomyjin/6o9A9teA+v9d3+VZNNjtHWn0WlYxsdF5SH2BwTRVAvEiV0JeM65U3PlBiwTBCe/dz2XA1EJy8+BnC1MP5NQ5JUs30cG1NFep4XQR8Z0vclv1QJnM+1Z+zf5ZME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524610; c=relaxed/simple;
-	bh=xd6byd9gl8D3GQltTrW+eqkNmCOmcacxF0r9OGp+yj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ROrIAzWhMVcWSBb8NMKuymlXWgBCeyGijt/gYnHU8lJx8IGRixYVsc+uHIXzfDviDPKMa60Hdo+emqmZKhSOeWwed1Ujxwy8FeQsKygfQZujF/EYiZHcrJmXFmTk54ul9t2SVzEU3dST6nTurfdR2m8ibYaqs0lUv3/mzJfXTnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-890190bee8bso2553456241.2;
-        Mon, 18 Aug 2025 06:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755524607; x=1756129407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34HFEWnAnGFYwqsI/6LLj6dpbgFrm7oIFiaBaO3B038=;
-        b=iKYnq3nMMfck/wcc1oPXES1DdpicMdJYK1tT/DYdFRPuz2GP0LQSGjR2uUxwcsAgAD
-         RoNHTLQUvusJv1f29UgRge+2WECbozgC2PnLPbvYDvaIfjMKtwUZTZH/nyJKFgEjl51D
-         soIGg665jWrI/u3uQToDFK9OWqdvXZ3WJdle+8/VkYbgya/ycz6YIezXjSejlIBx2S2D
-         5SbfvdqLtxLz6f6Onh02/pooFfh2e7LK4yGhOoWTvu9gaDH3QO9Jfw61k9r401TOOQaX
-         Gco4ET8oiVZ9vL7R4kGw/pF5nM6cpQbMc/XcPoytCRhCsnE7WcYzzSS+KtRW9kHPeqde
-         MXxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWckRqA9gUtbEYG89ZOW2XKTUL5QQR1wHAA+SpbDEmJf+eVsEha1ejY7THv0KFeJfZU0F8U4o3EhfnQTLQe@vger.kernel.org, AJvYcCWw0fDFJeQi9M3/C4z/DAGJMbpj5ADIJdl3IFqVtvfTnKoq2YhUzwzGZJZkl9zCeBAp3NDTg0ZTqUs2@vger.kernel.org, AJvYcCXWd0DdGE0tWo40Sol70HRlCrbwKqJuwteqIRCIeoK7bRBOlZCvaiBKsb9DbFNEIH//djhihjq5Cx9lc4M/yOGThO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDPnDecHl4MYrCOgj69ovZ9uvVj426oumPxBHg0UPfdsVG+51q
-	6p3XOIqXBeSxF9XBr8Bc1ntUBzWxFEyVNV2enlgUXkPdifwMr6ERqdiSwc9tU3jG
-X-Gm-Gg: ASbGnctyRYSQrP4vxNiPyljTB9CLh5FDiuzzMddriek6yVCdANtDjivs8v6EZfUqU7X
-	ymCrH5dON0brOKGA6srjrhvWAiDabhjTP5rGM/F4lhIkQ/ZX4RRL3L6FAjWUL6x7P+PfIfxGS9H
-	0icm8x2wjJczSxDu4XR8OYVZBBcUPFao8zcDJBIJmnP2VAms5qP9ErbCN+i6I/RQXlcNrT75zw9
-	5I2jybdoXQN5XuZM3cHRPKLYGsFh+SPJAvaHVPEEqb3bLcZYrZqI/+N9QG0sQNExRW89670oF0y
-	Mxh/tkC0rwo2Z8m7OKOdMAlPQAKJBb0efoKMbwatYftUAHVS64wuAaeDa7jqOl7KUVrAt+eZS68
-	gck36KUhfKEh9dWSwKBCDBw5JXkeZzEwVYxv0+m4CrCDc5yR6BdVDElo5aM2P
-X-Google-Smtp-Source: AGHT+IFDO4qJm0w0B/ZWzO2lS7gtwMz8tnDpl0kx2NkAgNk7xWUa8CIdjhHLPYgXMPvKl4s+pWjRFw==
-X-Received: by 2002:a05:6102:41a1:b0:4fa:e005:cb20 with SMTP id ada2fe7eead31-514c8b6839amr3585987137.3.1755524607542;
-        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277bf4c4sm1768928241.2.2025.08.18.06.43.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-50f8ba4d2f2so1570058137.3;
-        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAfspkhW991AIkkprU6SH0bpaM6ILkoVa/O8oSXlo1kM/Ta3hpPl3Iz1vgpDsLB3C+VExG8LSFJ5iNJN7Unz8gnGY=@vger.kernel.org, AJvYcCW3ZtjOob+Y0oNJfMynIL6/wpUZPUuZ28PfWUCYF91x+f+eBPDmkwmMy6Tok5bxx+X8LpUXvduX01l6KDt8@vger.kernel.org, AJvYcCXrb++v15cR5bB8QnGaPEk3yjlkTUVTti69sjjWuUCZeYnlx0vlpJreXkHIbejx9+Q8r7jML3r46buz@vger.kernel.org
-X-Received: by 2002:a05:6102:508f:b0:4e6:a33d:9925 with SMTP id
- ada2fe7eead31-517a237b8c4mr1025399137.5.1755524606962; Mon, 18 Aug 2025
- 06:43:26 -0700 (PDT)
+	s=arc-20240116; t=1755524623; c=relaxed/simple;
+	bh=YlUI847c1ljwtyOmYzO2xGlFoqndiw/0Vuz7F4sMuF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbplrE3qFTfnelFmSSDdzgfeCNIIhKDXqBoAYNaLWhvKrAP1R5x6kugW3V/S85Z0zMtewcffAIV+gFjWvnxyUzCXskixRxualhwF5jqcZLE6oIHh1GgjIO7+jv7cRfH9tkCUtHXpHI/kA+xp+STU1qP5Jk/DDYHfpLqyg0Gqlr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kiRnEJ7G; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755524620; x=1787060620;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YlUI847c1ljwtyOmYzO2xGlFoqndiw/0Vuz7F4sMuF0=;
+  b=kiRnEJ7GyD7kWtc1yk4MKe2vO/J96pcyOd0ff/FuE6QyDrPTZqEK5Ssf
+   r/fq3HqQ+QPT8Ap+puEs1jD8zizuVKIk1ieMmURm7Ht2forbW6fAS+XY6
+   7XInuvBUQWiocAciSmgFPqxGV8NgqQVhQRNy+8lyCsWdv6BHbs3N7U04f
+   M8qCQldziUm7ybYLAGycRl8pUWgXGiF4zj4zunMdMLWX1laYbQvQCFepR
+   p6HXHPFvtg7tq/1G/8eMAktNNQTcLe19mf0ldK9MJBpekBIOZSbhxe8PC
+   RrttoYlv7vWOW3oxlTJudR+KGN+JwQqgcsh/qtHnINchkqeOrWCR6zgXF
+   Q==;
+X-CSE-ConnectionGUID: cfHJmN64ScC0SwISNa4urw==
+X-CSE-MsgGUID: 6fjeJL2TQY6uGx6XBrSKZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57894527"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57894527"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 06:43:40 -0700
+X-CSE-ConnectionGUID: ZjwLrrQUQ7ahWNTixEZUeA==
+X-CSE-MsgGUID: 42Pg1+28S1+iQUxNyHZgCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171814469"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 18 Aug 2025 06:43:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uo098-000F55-3A;
+	Mon, 18 Aug 2025 13:43:34 +0000
+Date: Mon, 18 Aug 2025 21:43:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mohammed Guermoud <mohammed.guermoud@gmail.com>, marvin24@gmx.de,
+	gregkh@linuxfoundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mohammed Guermoud <mohammed.guermoud@gmail.com>
+Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
+ NVEC_PHD macro
+Message-ID: <202508182005.4PiKxXcN-lkp@intel.com>
+References: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com> <CA+V-a8vsQv4jJ4x1rVkeyfg28_RvVtAbnbHtm+RTTMHT_s-YzQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8vsQv4jJ4x1rVkeyfg28_RvVtAbnbHtm+RTTMHT_s-YzQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 15:43:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXTrhOg9EQ+WPqHzQKssJ32BAV2GM0vO_1iKXDD63V5LQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzWy-rBfxhXM66qOzhr9jU8hweBN7mmn8pN6i5_HoyIbeBrPnpeYhFhjbM
-Message-ID: <CAMuHMdXTrhOg9EQ+WPqHzQKssJ32BAV2GM0vO_1iKXDD63V5LQ@mail.gmail.com>
-Subject: Re: [PATCH 05/13] arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add
- user LEDs
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
 
-Hi Prabhakar,
+Hi Mohammed,
 
-On Mon, 18 Aug 2025 at 15:40, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Mon, Aug 18, 2025 at 2:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Add USER LED0-LED8, which are available on RZ/T2H EVK.
-> >
-> > According to the schematics, only the first four are user LEDs?
-> >
-> As per [0] user manual Table 7-4, LEDs4-8 can be used as USER LEDs or
-> for Ethercat Slave. Since ESC is not enabled I haven't added any
-> #ifdefs.
+kernel test robot noticed the following build errors:
 
-OK
+[auto build test ERROR on staging/staging-testing]
 
-> [0] https://www.renesas.com/en/document/mat/rzt2h-evaluation-board-kit-us=
-ers-manual?r=3D25567073
->
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > > --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Guermoud/staging-nvec-Silence-unused-argument-warning-in-NVEC_PHD-macro/20250818-032647
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20250817192425.12983-1-mohammed.guermoud%40gmail.com
+patch subject: [PATCH] staging: nvec: Silence unused argument warning in NVEC_PHD macro
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20250818/202508182005.4PiKxXcN-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250818/202508182005.4PiKxXcN-lkp@intel.com/reproduce)
 
-> Perhaps I'll have LED_FUNCTION_DEBUG for LEDs4-8 as currently they are
-> used as USER LEDs and  function-enumerator =3D 4/5/6/7?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508182005.4PiKxXcN-lkp@intel.com/
 
-That sounds fine, thanks!
+All errors (new ones prefixed by >>):
 
-Gr{oetje,eeting}s,
+>> drivers/staging/nvec/nvec_ps2.c:80:51: error: invalid operands to binary expression ('void' and 'int')
+      80 |                         NVEC_PHD("ps/2 mouse reply: ", &msg[4], msg[1] - 2);
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   drivers/staging/nvec/nvec_ps2.c:31:66: note: expanded from macro 'NVEC_PHD'
+      31 | #define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
+         |                                                            ~~~~~~^~~
+   drivers/staging/nvec/nvec_ps2.c:84:52: error: invalid operands to binary expression ('void' and 'int')
+      84 |                         NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   drivers/staging/nvec/nvec_ps2.c:31:66: note: expanded from macro 'NVEC_PHD'
+      31 | #define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
+         |                                                            ~~~~~~^~~
+   2 errors generated.
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+vim +80 drivers/staging/nvec/nvec_ps2.c
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+32890b98308613 Marc Dietrich       2011-05-19  62  
+32890b98308613 Marc Dietrich       2011-05-19  63  static int nvec_ps2_notifier(struct notifier_block *nb,
+32890b98308613 Marc Dietrich       2011-05-19  64  			     unsigned long event_type, void *data)
+32890b98308613 Marc Dietrich       2011-05-19  65  {
+32890b98308613 Marc Dietrich       2011-05-19  66  	int i;
+0df8f51eed5067 Ben Marsh           2016-03-10  67  	unsigned char *msg = data;
+32890b98308613 Marc Dietrich       2011-05-19  68  
+32890b98308613 Marc Dietrich       2011-05-19  69  	switch (event_type) {
+32890b98308613 Marc Dietrich       2011-05-19  70  	case NVEC_PS2_EVT:
+1e46e6273bc62d Julian Andres Klode 2011-09-27  71  		for (i = 0; i < msg[1]; i++)
+1e46e6273bc62d Julian Andres Klode 2011-09-27  72  			serio_interrupt(ps2_dev.ser_dev, msg[2 + i], 0);
+0eedab704ed93d Marc Dietrich       2011-12-26  73  		NVEC_PHD("ps/2 mouse event: ", &msg[2], msg[1]);
+32890b98308613 Marc Dietrich       2011-05-19  74  		return NOTIFY_STOP;
+32890b98308613 Marc Dietrich       2011-05-19  75  
+32890b98308613 Marc Dietrich       2011-05-19  76  	case NVEC_PS2:
+0eedab704ed93d Marc Dietrich       2011-12-26  77  		if (msg[2] == 1) {
+32890b98308613 Marc Dietrich       2011-05-19  78  			for (i = 0; i < (msg[1] - 2); i++)
+32890b98308613 Marc Dietrich       2011-05-19  79  				serio_interrupt(ps2_dev.ser_dev, msg[i + 4], 0);
+0eedab704ed93d Marc Dietrich       2011-12-26 @80  			NVEC_PHD("ps/2 mouse reply: ", &msg[4], msg[1] - 2);
+32890b98308613 Marc Dietrich       2011-05-19  81  		}
+32890b98308613 Marc Dietrich       2011-05-19  82  
+0eedab704ed93d Marc Dietrich       2011-12-26  83  		else if (msg[1] != 2) /* !ack */
+0eedab704ed93d Marc Dietrich       2011-12-26  84  			NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
+32890b98308613 Marc Dietrich       2011-05-19  85  		return NOTIFY_STOP;
+32890b98308613 Marc Dietrich       2011-05-19  86  	}
+32890b98308613 Marc Dietrich       2011-05-19  87  
+32890b98308613 Marc Dietrich       2011-05-19  88  	return NOTIFY_DONE;
+32890b98308613 Marc Dietrich       2011-05-19  89  }
+32890b98308613 Marc Dietrich       2011-05-19  90  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
