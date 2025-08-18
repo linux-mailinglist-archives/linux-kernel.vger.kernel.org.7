@@ -1,196 +1,224 @@
-Return-Path: <linux-kernel+bounces-773869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53AAB2AB1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439A4B2AB31
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9E57B854E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98037BDF5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E723F431;
-	Mon, 18 Aug 2025 14:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6910F35A29E;
+	Mon, 18 Aug 2025 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="doClhLNL"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011017.outbound.protection.outlook.com [52.101.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IohbkpI8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A89238D54;
-	Mon, 18 Aug 2025 14:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527860; cv=fail; b=Ma5k/mf+olNcVBkDS647O6/Ki4ET2GNRGMYZI7ku4Cam+TjVNBsfHlBr74E46pxCKMXQk5lgwIVFG/FlT+7Jxoh2+UIB6dOxooZB7maFbQ/wt5bMVX2Ck2Zz2faJYOGMmDYimqPT/NKJ2+J4ACwzH5rRzUj+Z4L74gsBFOmCoQU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527860; c=relaxed/simple;
-	bh=FsWGWbKOazysx254ktikTIAWBWQGCq8lyMzRs+oY5kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Hg637tRLzbeT5Q1AQafKSidJW9c7nGws5Lv8XCRMsbTikHveumPoIlTa0yry0Pxq7njRspvAx1XVKOrvfC35lF7XAW9KyleXICou0lIFStylfV83Lqvda2TWC76S6LcFXYAvTW6dmYLsdOp8z9LtK69PQ9yixzwib3CpWfxPTtw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=doClhLNL; arc=fail smtp.client-ip=52.101.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sNQKCZ61CjT/6VzL1zi4IIhuE9e3cJ70MCbZEMxPica3mhWByMQJbLZkkcJm+jnFeKETJGPgzNXg3kt/zsGtepWVxR6cTbM+tCtm4ihqrRX451D85cwLp6ddgUkvEBZEh0zPKBCCevRo6v5XBa6VXg/z+AtmBbUGEIz4S+c0hWm+niiyT3bOu1UyTTQqk1ow7uY6W6SIjW7I2ntY3TlcrPFD8OjwpSThHBUMmYE/gPYJwdcHAZKJXyCqpiAjQUfvnnAY/o0Y6sk9KwAWyU93tE8uiPL0TbEhsM1t7fr6DIui2PVnXDi2CSuQPARDQ/66rCloLxKOjWOE5+VbFYHZeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W7eAIKYBfZPnr1HR5RsQrSTd7GBtcTePM/Djvnz/kVc=;
- b=eiRRjF8RUsMzHa2Sg14ppgmhMcUFW+14qXiX9YyxiVrG/3O4JMSZ7M5zGtVMxGYRjFomhBp+9HmUbIH6TIgnBttxF0qdwcX3uczKsndWvWAPjKQdwFvLdO1wN4WpYwwN9wOcdrT7H8epH7D1HNZhEB75HqR+dW2KYQt1J7DIskvRubhNt+ZU4QNVPr26Hk3D5+b1lC5WIYm4hJPLqcdFRF1dCnBycLhTQV4IVDNyfM/7fdbxCszbGa8IVBNYUhPItIAu/dktvHfd7CJqWf3NXQ1w1Agwi8URNPbCQfrl4nRDuDWTpSCeG6IuTO0IFLu+s6EGpOMZ4U9u+8VVykD/nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W7eAIKYBfZPnr1HR5RsQrSTd7GBtcTePM/Djvnz/kVc=;
- b=doClhLNL3rsJinvgROBefPLFwVV0T9LhpIIvCM0iLNwxiNAqB1F1zQXPchCWPjYrxp/jDoIcWw33wA0uQ7zVISg7dKVo0cORzsUVk/IiykN6W9YwVFBnh2hnK41kwpG9g0Qwfq6/qGf94pkCE7zMA/xWXAqEH77aFFB2W9usNLGsU+joPs+h75kXEJmaGpA6L0Rty6oRuAE36g2KOVJMGiafghWbUSFNbtIsvV6XPDGCSmIeoyXA+Xxi3pNutVxthxdeVxognEyzInDPSXhKQbxNTFMsR+nsp4/V9gWmkLODoFXFnjJvg8Ze+LoZ+wYmHYlU1hVi8xlVWMS5c5QoCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS8PR04MB8658.eurprd04.prod.outlook.com (2603:10a6:20b:429::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Mon, 18 Aug
- 2025 14:37:35 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9052.011; Mon, 18 Aug 2025
- 14:37:35 +0000
-Date: Mon, 18 Aug 2025 17:37:32 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, richardcochran@gmail.com,
-	rmk+kernel@armlinux.org.uk, rosenp@gmail.com,
-	christophe.jaillet@wanadoo.fr, viro@zeniv.linux.org.uk,
-	quentin.schulz@bootlin.com, atenart@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v4] phy: mscc: Fix timestamping for vsc8584
-Message-ID: <20250818143732.q5eymo65iywz44ci@skbuf>
-References: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
- <20250818132141.ezxmflzzg6kj5t7k@skbuf>
- <20250818135658.exs5mrtuio7rm3bf@DEN-DL-M31836.microchip.com>
- <20250818141306.qlytyq3cjryhqkas@skbuf>
- <20250818141925.l7rvjns26gda3bp7@DEN-DL-M31836.microchip.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818141925.l7rvjns26gda3bp7@DEN-DL-M31836.microchip.com>
-X-ClientProxiedBy: BE1P281CA0243.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:8b::8) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9856935A280;
+	Mon, 18 Aug 2025 14:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755527967; cv=none; b=ODmqKJxShQxs18J5yAsOC/OpMvy9V4usXC72k4d3lMm1BAmpGFJ8L/HtZmZdH557eu3OT2RfbdUW6UIE9cfNkwOQPlMZzXkBL42tF4strDKiFZ9HRBFsU4SERIBigGc1gcmVaPdobG8uVetf11zA8Xje6vIxbAllRQ42Q6sAnX4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755527967; c=relaxed/simple;
+	bh=NNGx1BhKiXpo8fP1NrAIVQqjVfRV0yTMXi9fh1F4zrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=do/NLePdXWW4RVjmkXxmoEEosd/JaKKs/BnZZjtQ1+iZ3DhgzW5nL4PA0yQb/M2ZxA9MVM8uJCEPVyqn9PLp6Ljm6wMUbfO/ijGYmeF8c4II6p5dE2WMomr/DcTm4hoMuT2HZRLsMxxtnNhBZW+J6JuoyJv1DtUz1CcgvkiImf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IohbkpI8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C3CC4CEEB;
+	Mon, 18 Aug 2025 14:39:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755527967;
+	bh=NNGx1BhKiXpo8fP1NrAIVQqjVfRV0yTMXi9fh1F4zrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IohbkpI8Oqjzlt/YDjYYRVYKn0OTs7UpZ3CYOJTtRM0KKfLEG1mXf7DnloIT8p/of
+	 9U1LnNJ7jRGeYBndKXNgPCjeF69GvqZgWjAqN+9NvvpuGcKr8WaXJqW4aqKRulGOzW
+	 sevKtR2n4c8VtLo/4jDooMKRi9n8SJtSduy/gbGw5ewRPEgrNX3zWsKXcYQkAca5LO
+	 8BuUy5rdvuU99dw3mwlKHIP7zlWPI2eQP/QHENnpk+mkF247WOX6v32+l0Om8XZFmU
+	 G33Nre2FH6SHIJw0k6l8TehFUFvf4uaz0WnBw4OZm26HEvRbw+F7V/CUyVUDwjRth3
+	 n5Il0Pkuozg5Q==
+Date: Mon, 18 Aug 2025 09:39:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
+Subject: Re: [PATCH v2 01/32] dt-bindings: media: add DW MIPI CSI-2 Host
+ support
+Message-ID: <20250818143926.GA1025181-robh@kernel.org>
+References: <20250808-95_cam-v2-0-4b29fa6919a7@nxp.com>
+ <20250808-95_cam-v2-1-4b29fa6919a7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB8658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d517c82-f042-484f-5eec-08ddde64c5e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|19092799006|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pHilCDku6DXXeLB3ROf59lJX2dZkrkv2hiy6oBBAMVj68zoG8Oa5vr3rdj/m?=
- =?us-ascii?Q?cdGe3KzeapBWVk03YAm+b7/7YOAmN1VFxZqLX2w9o8DwcNkxxpEbBIcFsmXE?=
- =?us-ascii?Q?DiU96hTYbwATlXyFGBeUYTi60Fvy+ARqhymnCM2LcYjndp8rhaTxseVunc/V?=
- =?us-ascii?Q?M2YZVM5c3pOQLusYBISqvpu/LbWnXLlPjmE3CIUOKpMgSBE620074xBdf3D9?=
- =?us-ascii?Q?pvqPYtzavqXhESzWdvLTYBbJOfZon6OKcf9KzXLwPEaJij6N9R7SeFIxM/OH?=
- =?us-ascii?Q?a96ZpyX+TltOCpYUomFwIDGOtKIDwnRcS8a7pDnLD6K6aIoOCDaYgG1MrdRC?=
- =?us-ascii?Q?r0FNRUP38sdRZC47pLwS9tb1zxXHV+RlQKbvm7LadxUwQvQr1G8UB2V0L7Vs?=
- =?us-ascii?Q?PdvBoRb8KmIWHjWcbzS/qvEMS2ogXmJbIKn4g45/fXM1gz53h50ONtUMmwDs?=
- =?us-ascii?Q?Aong3JIRRNyA7s7Ta8nfZaqInTuPAcPzhSw1L/Pm3D5uvay3qlRBJ5zyHGO/?=
- =?us-ascii?Q?432AODDALElroznUoEDR3by+LB8tOXtVFKyDdZ4PAIgpCPx0XyljXa8VKGGv?=
- =?us-ascii?Q?4aE8Cxcs3KMfcYj891HUZfboCKZB61zECxUPoERAmDKz1N+wovBFmorq3kBB?=
- =?us-ascii?Q?6n9IFOkAgx8aCBN0NzvtMiuk0SW3U5xSYx6lT/drIePM17ogwylrzL9BE6Hu?=
- =?us-ascii?Q?zGyQVX4lfQBu7VPNvtQp2ZdBg9hiXnTZDnO0Ncqgf02qjLLRQnMyPSPrHdkO?=
- =?us-ascii?Q?jbbtPLUMLQlWq/b/g6Eo9NCBBiKFCJpBr98N2/6ouC+veK/VXkRgZoidFBtI?=
- =?us-ascii?Q?60UBJfStug45ETVw1ni9JueMkHAULKP3/LYSMFCUUtpktwNMwKNhnqL2lDhq?=
- =?us-ascii?Q?TJl7Ov/VJd+1qs20bxmYpvDs9K2whsNTapEw3/mdTpNJpBSRNKgvWijQ3/93?=
- =?us-ascii?Q?H6h0AEGE+0QyrfNuct4d5Mt1H0Kb+VYpcwzPieSBDJMUkr8KR846kGN3Z5nJ?=
- =?us-ascii?Q?hA/EpiuUVfWDo4De4JAG9jx+I5fidPklK32Jt61lqqr8BeQG0sHimxmJnyB7?=
- =?us-ascii?Q?m86RUsz/w/ddAjHZKJEAydtQuN1USZLTaLMZJq4Kz/H3h3xTuIegn1ndCvpU?=
- =?us-ascii?Q?lBZ6vEjBsegYTSGsWF2Vdvml5sVxYPbdNa8UinEPi9XZxgwyO1yfEDnmIA3Y?=
- =?us-ascii?Q?q4GWhpKRAQ6HPpfvTaVyukt/nSgrJ/6rLi8bhqVWfM2UJQrqcH95BBEczRrc?=
- =?us-ascii?Q?vrdqwkjnRggMKIMZK/hJLGo43/5nj6O/r8+ItU4FZ/apXAb7KJYm72G6gYbJ?=
- =?us-ascii?Q?uGzDXbqlphdGvH5BF0+S5OPszW9W7/kU6l/botftj50rtoyXN7CpKqYDri+V?=
- =?us-ascii?Q?ePRSvfTyUOdnk4FQeJoCHG3LSIsJNZqqt5wWyLIx9XhRJSE3ZGNZWGjIDKJ2?=
- =?us-ascii?Q?lRTXyoy1j1s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(19092799006)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fPXnSM1JrftdTV9Bv5hUwNvp7R73g26LIAxqSxGXKd8drd4u0b5dJ4e1SenU?=
- =?us-ascii?Q?NZHoWs659fWPg8pTbThEo0GuwaIURsNmXwZ0zXfHS1TSIAaQb6F9ppBUGH2D?=
- =?us-ascii?Q?U9NhD2RQH/Zx7ptUQFK1DIchKEgdod8Dn0n/BRimLvw3lHqC4F0aWmRKsz6d?=
- =?us-ascii?Q?2hMhYgTbrRsXgmg0ngqovOvClXe1+eO+1tGN0J+Nkqoc5doEeL+GLmm8i7pl?=
- =?us-ascii?Q?QwhLM/F6GHV37ipjZEeUeIxUYHhMscZS87JNmsPIaz/Fkc3pkh0pdn/io1rT?=
- =?us-ascii?Q?JrfnJ3HJrcmwsVYfwNRUFkDt+ncKzchVNveHjVEZuYgPvG21VdhWsWYCsyJo?=
- =?us-ascii?Q?Jsc/UxmfXCw19vThZviC5HGtTxK6cI00s9X8F7ky90l1Ql2sH5LepFzAQhaF?=
- =?us-ascii?Q?ZGxbB/lrLcDGwzrBNbLDgJYOGDLPliOvNfp18MN3YP7xFtiw1kIXV21ZYyo0?=
- =?us-ascii?Q?apAEGKiPy1uQiN5Jsl30Ncuf7vlObRmzZLebPiqS48ERz2KCXf/6kBhpoSuM?=
- =?us-ascii?Q?0kpJpTKF+n3c9bU3JpqOovD5zjv3hYKn1ES2w5YZYM4+V0YZpM863GmxJuzT?=
- =?us-ascii?Q?dG2g5mjkp6CvFkEx2uYPMDLPJ7f0VlBbKzu2pX3tplva2PlmyjwOAER7W6wR?=
- =?us-ascii?Q?NpL97Ind4OMgHtyWHOPUzhqq++LzTxjXix3i0LtwElQGElosSPL9KXM39zks?=
- =?us-ascii?Q?rFu1E0ubDIrAtaszVRBUs9LqEaFWAnh7o0Je7dZFmMAWtrdduZjg2K4ItXB3?=
- =?us-ascii?Q?m9nVHUhslWnF+9G1bUFdNjk5RnoKfRG8KWxDVrd+eOLYmOblSbQni/cUDYbR?=
- =?us-ascii?Q?GZ4DETtI9/BrX++XV7/qxtW9MZQayhf02ht8bxlGWK6cf/C2dQKQY3CE1j4j?=
- =?us-ascii?Q?43Plhr5Zss4eALoq1oUisegmYY6B22pdU/KYqjAwIR/kq4VVy+96kaCZOR/c?=
- =?us-ascii?Q?2TDsHjw/zNUWgK8GOBreR7IqvNolRDS+RMBZ4V/8jpXSEYFxGkkkH+sdr4AF?=
- =?us-ascii?Q?FqJpyXyB/RHVTGwLswbO8xgfaJ5luKdfyUln650JMpviTSw6dMZ9VPoTs5D8?=
- =?us-ascii?Q?6DvLBYNKDYCn6hh3b4PweqdVOf8GK2FtXtF/rXEA9VEBF/uLk08sl34EIPKn?=
- =?us-ascii?Q?3pIbS8AyFCkssVkvGxw8qDRJpgwKSvo2vEnfz68v7gJ3SPe+92livTWa4PwN?=
- =?us-ascii?Q?AFQ/biq74bycrwievWNZjQpvb0h2xGWurOXJPEoZd09nxyZgpdhGRl9DTcpS?=
- =?us-ascii?Q?QLhjurh/wUMJ3GdfP+FsRJ82kO1ydWvVyR9BXaD3Imo0aj4OiZnYSdYdVzl0?=
- =?us-ascii?Q?x1eLNa14yQerNkmMZxWd/HBeDfolH8IYbO762fX5I3d50W+VhXFoaadWELgO?=
- =?us-ascii?Q?eCogKxOz0TXWbId1lB3udnLLOEEokjHOXOYOhYFaiCbXKC0V0/acQpZvbjoU?=
- =?us-ascii?Q?IWg+yJA11IKXIeYTNHAQOGKEZ3hPhk+YZHZNmQtBDD/zLUSB2OH3O9T+V+iW?=
- =?us-ascii?Q?b72TebETkIom+C2M/38Xo3fMtp8GEmHXYV+oOmgjWkbL70lNZCVkVnBLbNGB?=
- =?us-ascii?Q?WmsDWeOghPoXgpKMRc/+rM7SemwJNESaxqwo+yncRYBrmXgtvaDkSP7RsSu5?=
- =?us-ascii?Q?Uc6i9TddWXSAOKB5Q70hjMzpygbrduKsa4woeWySfIdhZ+32UacYQh0WqVMl?=
- =?us-ascii?Q?gUKdZg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d517c82-f042-484f-5eec-08ddde64c5e1
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:37:35.5541
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F9mbDP3NQGYsJYRCz2daYUkUE75Nkl7jKyL/BNgMDwoIZLovKfxLObKkDC4glzBh7kL3lbfZqTfx8aavSxQRyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8658
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808-95_cam-v2-1-4b29fa6919a7@nxp.com>
 
-On Mon, Aug 18, 2025 at 04:19:25PM +0200, Horatiu Vultur wrote:
-> Nothing prevents me for looking at this issue. I just need to alocate
-> some time for this.
+On Fri, Aug 08, 2025 at 06:39:04PM -0400, Frank Li wrote:
+> From: Eugen Hristev <eugen.hristev@linaro.org>
 > 
-> > The two problems are introduced by the same commit, and fixes will be
-> > backported to all the same stable kernels. I don't exactly understand
-> > why you'd add some code to the PHY's remove() method, but not enough in
-> > order for it to work.
+> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
+> and i.MX95 platform.
 > 
-> Yes, I understand that but the fix for ptp_clock_unregister will fix a
-> different issue that this patch is trying to fix. That is the reason why
-> I prefer not to add that fix now, just to make things more clear.
+> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change in v2
+> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
+> - update ugen Hristev's s-o-b tag to align original author's email address
+> - remove single snps,dw-mipi-csi2-v150 compatible string
+> - move additionalProperties after required
+> ---
+>  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 158 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 159 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..fc1b167d6d3b142a01e2ea7f04230934260a05e6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> @@ -0,0 +1,158 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description:
+> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
+> +  camera. It will convert the incoming CSI-2 stream into a dedicated
+> +  interface called the Synopsys IDI (Image Data Interface).
+> +  This interface is a 32-bit SoC internal only, and can be assimilated
+> +  with a CSI-2 interface.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,imx93-mipi-csi2
+> +      - const: snps,dw-mipi-csi2-v150
+> +
+> +  reg:
+> +    items:
+> +      - description: MIPI CSI-2 core register
+> +
+> +  reg-names:
+> +    items:
+> +      - const: core
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: per
+> +      - const: pixel
+> +
+> +  phys:
+> +    maxItems: 1
+> +    description: MIPI D-PHY
+> +
+> +  phy-names:
+> +    items:
+> +      - const: rx
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port node, single endpoint describing the input port.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +            description: Endpoint connected to input device
+> +
+> +            properties:
+> +              bus-type:
+> +                const: 4
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +                items:
+> +                  maximum: 4
+> +
+> +              clock-lanes:
+> +                maxItems: 1
 
-Not sure "clear" for whom. One of the rules from Documentation/process/stable-kernel-rules.rst
-is "It must be obviously correct and tested.", which to me makes it confusing
-why you wouldn't fix that issue first (within the same patch set), and then
-test this patch during unbind/bind to confirm that it achieves what it intends.
+Drop. clock-lanes is always 1 entry.
 
-I think the current state of the art is that unbinding a PHY that the
-MAC hasn't connected to will work, whereas unbinding a connected PHY,
-where the state machine is running, will crash the kernel. To be
-perfectly clear, the request is just for the case that is supposed to
-work given current phylib implementation, aka with the MAC unconnected
-(put administratively down or also unbound, depending on whether it
-connects to the PHY at probe time or ndo_open() time).
+> +
+> +              remote-endpoint: true
 
-I don't see where the reluctance comes from - is it that there are going
-to be 2 patches instead of 1? My reluctance as a reviewer comes from the
-fact that I'm analyzing the change in the larger context and not seeing
-how the remove() method you introduced makes any practical difference.
-Not sure what I'm supposed to say.
+Drop.
+
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Output port node, single endpoint describing the output port.
+> +
+> +        properties:
+> +          endpoint:
+> +            unevaluatedProperties: false
+> +            $ref: video-interfaces.yaml#
+> +            description: Endpoint connected to output device
+> +
+> +            properties:
+> +              bus-type:
+> +                const: 4
+> +
+> +              remote-endpoint: true
+
+Drop.
+
+Rob
 
