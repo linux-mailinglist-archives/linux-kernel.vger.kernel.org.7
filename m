@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-773207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1408B29CB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB62B29CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F6D189D117
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6AF3BBADF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE791448E0;
-	Mon, 18 Aug 2025 08:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63E63002CB;
+	Mon, 18 Aug 2025 08:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRdnMIdq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DgwNCSNz"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5131E570D;
-	Mon, 18 Aug 2025 08:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FA52FF676;
+	Mon, 18 Aug 2025 08:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506953; cv=none; b=lKJgUy4BBCY0ND7lw7pgys3Pj4uttq3+V+vYfKX5CLMownDsphgkQHQU2Dv8xmpuMSOpLE4M28P4tRomBb1KLu0u/SNLK84T6QXAP4ltdcedeTdERa5DBJOH7vMct0oRBDOeQt4gctkJ0qXniCZQyw2kESReOSxbNFP3+rCp/i8=
+	t=1755507234; cv=none; b=qhoTPq/SiZGkRywIg//mBhGBUL21sEKAGe4r2crWKlb4IeDmXORAWH+m2T/YFduVSLszNrwRraWS+l35c6fVkZ/I4Iyqa9RNG5xFrSdLxKvXE+GibrRQbFlZVZt3QIl1HUTD5Bs5A6DqlscUXr+6OBStVLda89mEzWNtwVG+B3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506953; c=relaxed/simple;
-	bh=rhlsxxRk4EuwzcNd++izNC2AdIT+M5hU7gqXnfBxExo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lyH7rOiA+gJwj+tN3ZpVtQhIpfMImzrJWArxmBJib6XzYaFiZN8jmX1lPy0j/EpeDICvf7VtK6ZbiFmb+mgMe2N+PSh1U2WnGSrr1CIeq4mc7oznZyxNerWQmVwr9cje8h9ZcPqFRql5Uv+ZshuYUDMyKOYUh6lAJKs3FosA46I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRdnMIdq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540DDC4CEEB;
-	Mon, 18 Aug 2025 08:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755506953;
-	bh=rhlsxxRk4EuwzcNd++izNC2AdIT+M5hU7gqXnfBxExo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hRdnMIdqWRyqAgLEgNUSk4MAO2h1laN0DdNxmQoagjStkv8R1rR7Vitf/Svgki16B
-	 gN8Lw/8IdQs45h3awI0Yt2pghON+9UkJTYDFznKAnYUcOGIeHbtBQqDwtzzEYCkW6f
-	 +bKhYEsMbS7GoCzsFEQTbBgEBq2aJiMUma363h4u4WfkuwtbHMdFMDbDvuqTPbmjSl
-	 sK0/ON/lGK9/Nv4eGbw32IEj0DMbnVyxkgqcg2OULyAGE60qjOPYNRq08IQqqloBz7
-	 Yhs390atpNtI5EuiG6u5Kbs3iZjnyrNOqpYfyfgOpZ0ETdDPwqGgfx7YQ9CIkbpMq2
-	 paCBSYfSny+6Q==
-Message-ID: <b1f59033-12d0-4395-85f1-e296a5dbca5f@kernel.org>
-Date: Mon, 18 Aug 2025 10:49:04 +0200
+	s=arc-20240116; t=1755507234; c=relaxed/simple;
+	bh=MtKHVTRgAjbDyX8G+Zck3VIj7UUL290UxStBgxla5g4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RlLr+1E1olCIBnTqrGF/gAshCtbw3AfaoENNc8MiKTTsYGx192wyDCq4Cd5M85K0PbqLzgArubGKYF9vwZIg3xfCFpEfgaVmQPmd4DVU7sO12rewecRTYEsBPL2pHdikLcHhCVNRvBlYsDeYOY0zC+D/slmCVu7g3o5KUwVzsI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DgwNCSNz; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8CiOp007548;
+	Mon, 18 Aug 2025 10:52:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	QcYJ3ZllQHKrlOVK3ksRdOd0b+QUjL79qHjWMDwhUsI=; b=DgwNCSNzbyaN8heo
+	UU0xEchAk1DxJIRpl0CzfVISfbQtCSubvQveObKKpQ39+zrGh2SzAA83ma4r4Bzu
+	sg8CW/A0C9ETidDc/OYRkgZCDRQ2kdvaqGmu3dsbfXJCTylmllfFUMZcowUUmLoG
+	wXmEYOjEX7qPoJU+VgYsSnJcdC2hIXCndPDws8D10b2VIjXZ/XXoSRN5LmByqdoM
+	KeVCQF0jwydnIBhqWMkVrh3gvo7ONl6tcF2hk27BOWPvG93yve1xDVMYyE0iiEqt
+	JNJkMJN8zCo5keUJ5Wq2zMvJis4Hi+JSRT7Qhg6DRV/J8anfWb0ujr+sOz70o7Y5
+	FWPHSw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jhb1nqkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 10:52:31 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17ABB400AA;
+	Mon, 18 Aug 2025 10:49:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 08E79715825;
+	Mon, 18 Aug 2025 10:49:25 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
+ 2025 10:49:22 +0200
+Message-ID: <5fa9ef87-0184-427b-8d64-aae2715d1663@foss.st.com>
+Date: Mon, 18 Aug 2025 10:49:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,349 +66,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/12] media: fsd-csis: Add support for FSD CSIS DMA
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141103epcas5p14516cbe45c21d28ba9e231da99940aa1@epcas5p1.samsung.com>
- <20250814140943.22531-13-inbaraj.e@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 27/38] mmc: sdhci-st: use modern PM macros
+To: Jisheng Zhang <jszhang@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Aubin Constans <aubin.constans@microchip.com>,
+        Nicolas Ferre
+	<nicolas.ferre@microchip.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?=
+	<mirq-linux@rere.qmqm.pl>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        "Krzysztof
+ Kozlowski" <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "Heiko
+ Stuebner" <heiko@sntech.de>,
+        Russell King <linux@armlinux.org.uk>,
+        "Chaotian
+ Jing" <chaotian.jing@mediatek.com>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        "Shawn Guo" <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team"
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper
+	<alcooperx@gmail.com>,
+        "Broadcom internal kernel review list"
+	<bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        "Michal
+ Simek" <michal.simek@amd.com>,
+        Eugen Hristev <eugen.hristev@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Ben Dooks <ben-linux@fluff.org>,
+        Viresh Kumar <vireshk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+        "Baolin
+ Wang" <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter
+	<jonathanh@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec
+	<jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        "Alexey
+ Charkov" <alchark@gmail.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250815013413.28641-1-jszhang@kernel.org>
+ <20250815013413.28641-28-jszhang@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814140943.22531-13-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250815013413.28641-28-jszhang@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
 
-On 14/08/2025 16:09, Inbaraj E wrote:
-> FSD CSIS IP bundles DMA engine for receiving frames from MIPI-CSI2 bus.
-> Add support internal DMA controller to capture the frames.
+
+
+On 8/15/25 03:34, Jisheng Zhang wrote:
+> Use the modern PM macros for the suspend and resume functions to be
+> automatically dropped by the compiler when CONFIG_PM or
+> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
 > 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-
-I commented on order of patches and got more surprise - final driver
-patch after DTS defconfig. It's really wrong order.
-
+> This has the advantage of always compiling these functions in,
+> independently of any Kconfig option. Thanks to that, bugs and other
+> regressions are subsequently easier to catch.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
->  MAINTAINERS                                   |    8 +
->  drivers/media/platform/samsung/Kconfig        |    1 +
->  drivers/media/platform/samsung/Makefile       |    1 +
->  .../media/platform/samsung/fsd-csis/Kconfig   |   18 +
->  .../media/platform/samsung/fsd-csis/Makefile  |    3 +
->  .../platform/samsung/fsd-csis/fsd-csis.c      | 1709 +++++++++++++++++
->  6 files changed, 1740 insertions(+)
->  create mode 100644 drivers/media/platform/samsung/fsd-csis/Kconfig
->  create mode 100644 drivers/media/platform/samsung/fsd-csis/Makefile
->  create mode 100644 drivers/media/platform/samsung/fsd-csis/fsd-csis.c
+>  drivers/mmc/host/sdhci-st.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
+
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bd62ad58a47f..1e17fb0581d2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3334,6 +3334,14 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
->  F:	drivers/media/platform/samsung/s5p-mfc/
+> diff --git a/drivers/mmc/host/sdhci-st.c b/drivers/mmc/host/sdhci-st.c
+> index 9157342ff7a4..bf6685805137 100644
+> --- a/drivers/mmc/host/sdhci-st.c
+> +++ b/drivers/mmc/host/sdhci-st.c
+> @@ -445,7 +445,6 @@ static void sdhci_st_remove(struct platform_device *pdev)
+>  	reset_control_assert(rstc);
+>  }
 >  
-> +ARM/SAMSUNG FSD BRIDGE DRIVER
-
-TESLA FSD BRIDGE DRIVER
-(because ARM/foo are only SoC maintainer entries)
-
-> +M:	Inbaraj E <inbaraj.e@samsung.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-
-Replace above list with samsung-soc list.
-
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
-> +F:	drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-> +
->  ARM/SOCFPGA ARCHITECTURE
->  M:	Dinh Nguyen <dinguyen@kernel.org>
->  S:	Maintained
-> diff --git a/drivers/media/platform/samsung/Kconfig b/drivers/media/platform/samsung/Kconfig
-> index 0e34c5fc1dfc..4cebe2ae24a3 100644
-> --- a/drivers/media/platform/samsung/Kconfig
-> +++ b/drivers/media/platform/samsung/Kconfig
-> @@ -4,6 +4,7 @@ comment "Samsung media platform drivers"
+> -#ifdef CONFIG_PM_SLEEP
+>  static int sdhci_st_suspend(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
+> @@ -492,9 +491,8 @@ static int sdhci_st_resume(struct device *dev)
 >  
->  source "drivers/media/platform/samsung/exynos-gsc/Kconfig"
->  source "drivers/media/platform/samsung/exynos4-is/Kconfig"
-> +source "drivers/media/platform/samsung/fsd-csis/Kconfig"
->  source "drivers/media/platform/samsung/s3c-camif/Kconfig"
->  source "drivers/media/platform/samsung/s5p-g2d/Kconfig"
->  source "drivers/media/platform/samsung/s5p-jpeg/Kconfig"
-> diff --git a/drivers/media/platform/samsung/Makefile b/drivers/media/platform/samsung/Makefile
-> index 21fea3330e4b..fde1b9626713 100644
-> --- a/drivers/media/platform/samsung/Makefile
-> +++ b/drivers/media/platform/samsung/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  obj-y += exynos-gsc/
->  obj-y += exynos4-is/
-> +obj-y += fsd-csis/
->  obj-y += s3c-camif/
->  obj-y += s5p-g2d/
->  obj-y += s5p-jpeg/
-> diff --git a/drivers/media/platform/samsung/fsd-csis/Kconfig b/drivers/media/platform/samsung/fsd-csis/Kconfig
-> new file mode 100644
-> index 000000000000..99803e924682
-> --- /dev/null
-> +++ b/drivers/media/platform/samsung/fsd-csis/Kconfig
-> @@ -0,0 +1,18 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# FSD MIPI CSI-2 Rx controller configurations
-> +
-> +config VIDEO_FSD_CSIS
-
-VIDEO_TSLA_FSD_CSIS
-
-> +	tristate "FSD SoC MIPI-CSI2 media controller driver"
-> +	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
-> +	depends on HAS_DMA
-> +	depends on OF
-
-OF seems unneeded dependency
-
-But you miss ARCH_TESLA_FSD instead.
-
-
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select V4L2_FWNODE
-> +	help
-> +	  This is a video4linux2 driver for FSD SoC MIPI-CSI2 Rx.
-
-Tesla FSD
-
-> +	  The driver provides interface for capturing frames.
-> +
-> +	  To compile this driver as a module, choose M here. The module
-> +	  will be called fsd-csis.
-> +
-> diff --git a/drivers/media/platform/samsung/fsd-csis/Makefile b/drivers/media/platform/samsung/fsd-csis/Makefile
-> new file mode 100644
-> index 000000000000..eba8c0c6a7cc
-> --- /dev/null
-> +++ b/drivers/media/platform/samsung/fsd-csis/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +obj-$(CONFIG_VIDEO_FSD_CSIS) += fsd-csis.o
-> diff --git a/drivers/media/platform/samsung/fsd-csis/fsd-csis.c b/drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-> new file mode 100644
-> index 000000000000..74f46038d506
-> --- /dev/null
-> +++ b/drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-> @@ -0,0 +1,1709 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
-> + *             https://www.samsung.com
-> + *
-> + * FSD CSIS V4L2 Capture driver for FSD SoC.
-
-"Tesla FSD" in both places
-
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/videobuf2-dma-contig.h>
-> +#include <media/v4l2-mc.h>
-
-How can you depend on OF if there is no single OF header?
-
-> +
-> +#define FSD_CSIS_DMA_COHERENT_MASK_SIZE		32
-> +#define FSD_CSIS_NB_MIN_CH			2
-> +#define FSD_CSIS_NB_VC				4
-> +#define FSD_CSIS_MEDIA_NUM_PADS			2
-> +#define FSD_CSIS_NB_DMA_OUT_CH			8
-> +#define FSD_CSIS_MAX_VC				4
-> +#define FSD_CSIS_NB_CLOCK			2
-> +#define FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS	2
-> +#define FSD_CSIS_DMA_LINE_ALIGN_SIZE		128
-> +#define FSD_CSIS_DMA_CH_OFFSET			0x100
-
-...
-
-> +
-> +static int fsd_csis_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct fsd_csis *csis;
-> +	int ret = 0;
-> +	int irq;
-> +
-> +	csis = devm_kzalloc(dev, sizeof(*csis), GFP_KERNEL);
-> +	if (!csis)
-> +		return -ENOMEM;
-> +
-> +	csis->dev = dev;
-> +	csis->info = of_device_get_match_data(dev);
-> +
-> +	csis->dma_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(csis->dma_base))
-> +		return PTR_ERR(csis->dma_base);
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	ret = devm_request_irq(dev, irq,
-> +			csis_irq_handler, IRQF_SHARED, pdev->name, csis);
-
-Please align these (checkpatch --strict)
-
-> +
-> +	ret = fsd_csis_clk_get(csis);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pm_runtime_enable(dev);
-> +	if (!pm_runtime_enabled(dev)) {
-
-That's odd code. Why?
-
-> +		ret = fsd_csis_runtime_resume(dev);
-
-Even more questions why?
-
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, csis);
-> +
-> +	ret = fsd_csis_enable_pll(csis);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = fsd_csis_media_init(csis);
-> +	if (ret)
-> +		return ret;
-
-I think you miss clean up of csis->pll completely. Just use
-devm_clk_get_enabled and convert everything here to devm.
-
-
-> +
-> +	ret = fsd_csis_async_register(csis);
-> +	if (ret)
-> +		goto err_media_cleanup;
-> +
-> +	return 0;
-> +
-> +err_media_cleanup:
-> +	fsd_csis_media_cleanup(csis);
-
-Also this...
-
-> +
-> +	return ret;
-> +}
-> +
-> +static void fsd_csis_remove(struct platform_device *pdev)
-> +{
-> +	struct fsd_csis *csis = platform_get_drvdata(pdev);
-> +
-> +	fsd_csis_media_cleanup(csis);
-> +
-> +	v4l2_async_nf_unregister(&csis->notifier);
-> +	v4l2_async_nf_cleanup(&csis->notifier);
-> +	v4l2_async_unregister_subdev(&csis->subdev.sd);
-> +
-> +	if (!pm_runtime_enabled(csis->dev))
-> +		fsd_csis_runtime_suspend(csis->dev);
-> +
-> +	pm_runtime_disable(csis->dev);
-> +	pm_runtime_set_suspended(csis->dev);
-> +}
-> +
-> +static const struct of_device_id fsd_csis_of_match[] = {
-> +	{ .compatible = "tesla,fsd-csis-media", },
-> +	{ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, fsd_csis_of_match);
-> +
-> +static struct platform_driver fsd_csis_driver = {
-> +	.probe		= fsd_csis_probe,
-> +	.remove		= fsd_csis_remove,
-> +	.driver		= {
-> +		.name		= FSD_CSIS_MODULE_NAME,
-> +		.of_match_table = of_match_ptr(fsd_csis_of_match),
-
-Drop of_match_ptr, it is not really correct.
-
-> +		.pm		= &fsd_csis_pm_ops,
-> +	},
-> +};
-> +
-> +module_platform_driver(fsd_csis_driver);
-> +
-> +MODULE_DESCRIPTION("FSD CSIS Driver");
-> +MODULE_AUTHOR("Inbaraj E <inbaraj.e@samsung.com>");
-> +MODULE_LICENSE("GPL");
-> +
-
-
-Best regards,
-Krzysztof
+>  	return sdhci_resume_host(host);
+>  }
+> -#endif
+>  
+> -static SIMPLE_DEV_PM_OPS(sdhci_st_pmops, sdhci_st_suspend, sdhci_st_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(sdhci_st_pmops, sdhci_st_suspend, sdhci_st_resume);
+>  
+>  static const struct of_device_id st_sdhci_match[] = {
+>  	{ .compatible = "st,sdhci" },
+> @@ -509,7 +507,7 @@ static struct platform_driver sdhci_st_driver = {
+>  	.driver = {
+>  		   .name = "sdhci-st",
+>  		   .probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> -		   .pm = &sdhci_st_pmops,
+> +		   .pm = pm_sleep_ptr(&sdhci_st_pmops),
+>  		   .of_match_table = st_sdhci_match,
+>  		  },
+>  };
 
