@@ -1,67 +1,89 @@
-Return-Path: <linux-kernel+bounces-773340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD887B29E86
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:56:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A16B29E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C73170A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C049B16726D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7EB30FF22;
-	Mon, 18 Aug 2025 09:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B453101A7;
+	Mon, 18 Aug 2025 09:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="tSHnOwDf"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/Yeo2Wr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED69273D77;
-	Mon, 18 Aug 2025 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B45C30FF20;
+	Mon, 18 Aug 2025 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510955; cv=none; b=gJykqO+FJ3o1SrvsjgYOXTuRDlAYjN+YdKC24kwza4UPN87JFvjbNXqEHb0oFa7GHQu8JtmxXnrzEReU85lFJ1Drae6sF7/2zF0uV/JQBcXiWVm7hAKwPFUj/WfS5r7ONulw2Cmhbl0jX88hgo+RwnJDKofY4zNg89Uqmx9CgcM=
+	t=1755510963; cv=none; b=Cq7Jpd9jEza26dy6cOb1Cfv7BtWm8Alki4WTUokSK2+3jUqkS7NCdGD7sqWEmRpCBQYQPXtvg+YIBPpPsZ76d0ofGqLGp99GgSSanf2ZAIaiA0kSiBOcsm2/MWe9VS97q1j6RhZKhTPG4qEV2XSIhh3ySL4mexgoBoqFnm2/4H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510955; c=relaxed/simple;
-	bh=iOMvpR5ULLxiQ8A6H8TBN7iop6QkwuGc8NxBlTGTMVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0nEmsQhy+Zj6vlT5NJM6Qw7b19M8KMfNJsG0WYbNktaXESGasTMv9ecRAVQn3KzeeDDgB73a+H4J3HJWotMyCI599dezsTJwEBOlQpN8EtlLc1Bl9J/BdcMrmBSOaAwlbMnQ1Kp6w373JpRoTSl6H6tREYVZK3T/+QPH3/BqcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=tSHnOwDf; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755510945;
-	bh=VHlf81wL+CZcIODTXXenYL/631OM0f2P2rYjTCgiBzI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=tSHnOwDf90IXxu5Ctnbv2e35M5tIgmxRKNrBxv5PmQ01rnCW1TqlVVkJmxItZEyY0
-	 2ysKAI63mYu/VNSed8S9d0MfkwPNG4ArQBpp61pvOuBQvtozg+5VUfQnFYLbB3HKDs
-	 JGToJCUcQkBS/18eW0gvUd8ljfoUHTB2TDDL9j6o=
-X-QQ-mid: esmtpgz14t1755510939t95958824
-X-QQ-Originating-IP: I8GjGI20rjvRSpDEOuPZgNyL2YsWJO/bsOAUmI2b5HI=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 17:55:38 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8607044835764841759
-EX-QQ-RecipientCnt: 13
-Date: Mon, 18 Aug 2025 17:55:38 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 2/2] pmdomain: thead: create auxiliary device for
- rebooting
-Message-ID: <492D2D5B0A6B3E27+aKL4mqMhxQ3lWDTa@LT-Guozexi>
-References: <20250818074906.2907277-1-uwu@icenowy.me>
- <20250818074906.2907277-3-uwu@icenowy.me>
+	s=arc-20240116; t=1755510963; c=relaxed/simple;
+	bh=1lwTcuQs3PskiizA9ekyNKD+GSvBsWBqRnnJ951KJvk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tA3THg4SThZVUEWxmETf2IVkuaOusCThbrjljSNXXj23/GRzsV37c21ph4KzQPVgYugMT26qq/1VJtmC1cM8UBK2sPnkQ1R468VHJFCgB8XDOqG1yAZ5lQ54MokR9ExNBmusplJI1hmN5z9mP2WLeeou+rFuRxuhzEq8PPJCNjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/Yeo2Wr; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so25714825e9.0;
+        Mon, 18 Aug 2025 02:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755510960; x=1756115760; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3oRQru3gew2EIPWLHHj5TTyDNuIZGAGLZO/bmpncjjo=;
+        b=F/Yeo2Wr15HkUN5K35WSqYNRpEBKtA4H1XiXMviH+VWMMsWHw8TDMRFgzz08bcBr/U
+         vH/gxMRn6GMkGLtBf25qi2F98t5mhKn30cm0h/m/zqSKEAk0Ks/Cr8AWKgAWxPlszKqo
+         AqcXFltR/Nzfd0cxZ+6iO73+F/A3LXGv7ah5pkiwxXH+KsnEMnNgfJb2jXoVY34Z46El
+         UQ8iLAe6LcK8g2KaN0j1Bz6CC9nDuDMykNwu5KadAw9MAI/QVfKvg7Id4UUlxl7s9dBL
+         B43csaGdkXOPt906oNFWJJ3UOUv2x+c8B9XbQzl820T0z3D2bD7oMi5SgLjDDmvGWNhr
+         K+xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755510960; x=1756115760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3oRQru3gew2EIPWLHHj5TTyDNuIZGAGLZO/bmpncjjo=;
+        b=KXrCiCJhFySlcovwe9vEPrWHGyRI+rbl1GuZMVblQh31d6WSqXLiXa6V24H7lAcFaT
+         aTrNHnhD/vALXyInZq1fsFtJ3L+9hrFkS5McQ3R8NbIhKjcNUve5/nGdoWnuJZh8Nf+b
+         AMqmAtOCdYwOnDg2z66IEpy7OxpSbyngCna878aj9YYuxwjDm1cjjgwGbEfU1pUaSExT
+         jbWdJ0AdaqaIqI6R5vKs2r8FND3ppAtCSiKA316rZIlWSOBuwrjlDHUvsi/dO1nAPBJ1
+         9nHcDtOjEQmWlTBxiilRGriDQ8NubfGXQa2KuwAWY1YLKxREQYDvN+YdccYKySB94sZ3
+         ERkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjJdygD6/bR6GPvHImHO7urX8h5oFGeI5CGMhPXqxkHL03Mguir+h8z1JLxJJ3TUoblOweP/BzqECqxS/J@vger.kernel.org, AJvYcCWkZ+IeO4zq4kMoNhTekuDS/mNOm5FwkiFoV68FEY93GQCb7O7SFtWhSn8KeZ8pYUrgxRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3dviUO5F2oF8UYTTGLUDSmE+Sl7X/6Yftex7ChAiZ3KvyBvRi
+	B9rgofbu7NEfiwLJ/MFyMy816wyvJfqX6f91MmR/qSh1RcHvmWpA7C/u
+X-Gm-Gg: ASbGncuFkSdJsNk55JLbF50v9zM9WPL91Pv+DIDUE9DjDuthGGD4iBa+nkIb+ceFVM+
+	0bApvG18LwTKdcPXuLIvW+KGAXupY1kI+Fz9MnBIP5vGQB+04lmPs+2/X5bJzvctU5S1tk6ihLq
+	Wcjvy8K379gszXcNyiqJpZoJADPUFJVdCYoAsY6DG9IZTweriQCF7tn4YaDuRny6pTLkA4Z+P7S
+	vKu1JIp3uAtttxT8eByF1inVYWDet36a4/5sd1T4PwsaA5Vuj3uUJOj3SEvkCEjavfHQKh+RPEY
+	mUHFiSWBd6hiIOMvWFeMVbk6hnXBWPr2b5eBtv1bhW3cP92EUaOPSJf2Vbx5WnwFExbfxdXl
+X-Google-Smtp-Source: AGHT+IG+4FJgOk7tgAjcYQmF5w7tpduhFcNyLI9kWl8zL+KJ9jaeTcdUSLs+BUhcG+uffVppdSawmw==
+X-Received: by 2002:a05:600c:4ec9:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-45a2186486bmr79029285e9.32.1755510959424;
+        Mon, 18 Aug 2025 02:55:59 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a2232de40sm123956115e9.26.2025.08.18.02.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 02:55:58 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 18 Aug 2025 11:55:56 +0200
+To: chenyuan_fl@163.com
+Cc: yonghong.song@linux.dev, olsajiri@gmail.com,
+	aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org, andrii@kernel.org,
+	ast@kernel.org, bpf@vger.kernel.org, chenyuan@kylinos.cn,
+	daniel@iogearbox.net, linux-kernel@vger.kernel.org, qmo@kernel.org
+Subject: Re: [PATCH v6 2/2] bpftool: Add CET-aware symbol matching for x86_64
+ architectures
+Message-ID: <aKL4rB3x8Cd4uUvb@krava>
+References: <74709a08-4536-4c5a-8140-12d8b42e97c0@linux.dev>
+ <20250815025227.6204-1-chenyuan_fl@163.com>
+ <20250815025227.6204-3-chenyuan_fl@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,117 +92,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818074906.2907277-3-uwu@icenowy.me>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: Mf+wQkWJ2TuYCiAPWgFdra0vJujaLRvpFaPKy98YStTXnhQ88yBRsPn2
-	JDJOZn9R3VJCHvC93FGsU0vSF5DfLCyJQwHHDbU84cj+mLP+uOsQPQjelI71Jit8808KQCp
-	G4nn5rb4SDiKCU14QeKuYR4t/shbx8RNUcKZtWCBLtb4HSb5zgja1vc21nTbCoKQIUbWyny
-	aJhbeBRYYs7ktMy+wnQPI9gGBdykqD48gbf2WkuSZtVIVyQliw8dacBVeEcI8UbGfLLOB3g
-	Tped+ycDIaNtJMPYkbXPyxWILCa7gkmurXnjuynl+JgIiqIb+1rHbQune9bpfSA1Z/HguP/
-	agdX8EKNqpABdubnany9Ron7DyuFRTXuIrI99oY2l5VDDK+fRLfjyxL/y0FTeGfFfEh9lx8
-	7hPe1Rnu4mKgxpp4PILOLiv8VZ/AjxIk/hwaUYyOQoHGia1BLv0PvwA4nAJrPW8mRgYCMwS
-	yXmEcY0WfeV4gs8SKw1LDfECGsGrAPqyGbbUAv52lT3eHF/Uzz+YCmTeJSvl1b0VnxVU9jx
-	ORkY6zu+BBWp+iKMW8fuI7PeXZpT93qPi4l9U1czadtRCe87IFSeVMTwPwn4enju7Kf0lvB
-	1kLeAEmtSO25p4IWZd01NJExoiGXagIlxe6Qszr7XA13ifWx72gCBrS7pty0ZhUzNNreKnw
-	21edzBfmCLosgxNUo9IMI71dNfWrOGywU9pNeyfZGDhIdkewMcg7g5I3FaxPkJnRJYxSDHv
-	SZoXHqLFWknLfXJsbITsNrf6in6/IGvUf/4dgN5Qoud6He8C3ZGq4eNktM1R+AWRw1NY0E1
-	gCNN/Ly0V4BojR1nFkiKDaQd53DW4qkrI1mk4owWUKEnxrWmm/OjFqqEi9H7kwtPs502BIn
-	jFGV0uZCT5hANOgXKCA/bl4XVehV3Ugoku3X1Dm2wTAMQoG4sq9g6DzGSGgsaP0vOAolyCS
-	nH3WR92jnKGTCJZlDZtwba4oZsPsEZYf2PkURd+nuCWwqFtK2Kh4MWTTXN4N+z+I0kFpWSA
-	QPhhXrqeYM62OAs85xa7bk973kEPLFKugbFNybqphKwr/kNBTMJF8U6DKj6MF3mA0+/VKNr
-	MZG4E/IRvhs
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20250815025227.6204-3-chenyuan_fl@163.com>
 
-On Mon, Aug 18, 2025 at 03:49:06PM +0800, Icenowy Zheng wrote:
-> The reboot / power off operations require communication with the AON
-> firmware too.
+On Fri, Aug 15, 2025 at 03:52:27AM +0100, chenyuan_fl@163.com wrote:
+> From: Yuan Chen <chenyuan@kylinos.cn>
 > 
-> As the driver is already present, create an auxiliary device with name
-> "reboot" to match that driver, and pass the AON channel by using
-> platform_data.
+> Adjust symbol matching logic to account for Control-flow Enforcement
+> Technology (CET) on x86_64 systems. CET prefixes functions with
+> a 4-byte 'endbr' instruction, shifting the actual hook entry point to
+> symbol + 4.
 > 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-Acked-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-
-Best regards,
-Troy
+> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
 > ---
->  drivers/pmdomain/thead/th1520-pm-domains.c | 35 ++++++++++++++++++++--
->  1 file changed, 33 insertions(+), 2 deletions(-)
+>  tools/bpf/bpftool/link.c | 50 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 48 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
-> index 9040b698e7f7f..8285f552897b0 100644
-> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
-> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-> @@ -129,12 +129,39 @@ static void th1520_pd_init_all_off(struct generic_pm_domain **domains,
->  	}
+> diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
+> index a773e05d5ade..6787971d3167 100644
+> --- a/tools/bpf/bpftool/link.c
+> +++ b/tools/bpf/bpftool/link.c
+> @@ -282,11 +282,52 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
+>  	return data;
 >  }
 >  
-> -static void th1520_pd_pwrseq_unregister_adev(void *adev)
-> +static void th1520_pd_unregister_adev(void *adev)
->  {
->  	auxiliary_device_delete(adev);
->  	auxiliary_device_uninit(adev);
->  }
->  
-> +static int th1520_pd_reboot_init(struct device *dev, struct th1520_aon_chan *aon_chan)
+> +static bool is_x86_ibt_enabled(void)
 > +{
-> +	struct auxiliary_device *adev;
-> +	int ret;
+> +#if defined(__x86_64__)
+> +	struct kernel_config_option options[] = {
+> +		{ "CONFIG_X86_KERNEL_IBT", },
+> +	};
+> +	char *values[ARRAY_SIZE(options)] = { };
+> +	bool ret;
 > +
-> +	adev = devm_kzalloc(dev, sizeof(*adev), GFP_KERNEL);
-> +	if (!adev)
-> +		return -ENOMEM;
+> +	if (read_kernel_config(options, ARRAY_SIZE(options), values, NULL))
+> +		return false;
 > +
-> +	adev->name = "reboot";
-> +	adev->dev.parent = dev;
-> +	adev->dev.platform_data = aon_chan;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, th1520_pd_unregister_adev,
-> +					adev);
+> +	ret = !!values[0];
+> +	free(values[0]);
+> +	return ret;
+> +#else
+> +	return false;
+> +#endif
+
+nit, we could store the result to 'static bool enabled' in this function,
+so we would not need to pass is_ibt_enabled arg below, and just call
+is_x86_ibt_enabled directly, but up to you
+
 > +}
 > +
->  static int th1520_pd_pwrseq_gpu_init(struct device *dev)
->  {
->  	struct auxiliary_device *adev;
-> @@ -169,7 +196,7 @@ static int th1520_pd_pwrseq_gpu_init(struct device *dev)
->  		return ret;
->  	}
->  
-> -	return devm_add_action_or_reset(dev, th1520_pd_pwrseq_unregister_adev,
-> +	return devm_add_action_or_reset(dev, th1520_pd_unregister_adev,
->  					adev);
->  }
->  
-> @@ -235,6 +262,10 @@ static int th1520_pd_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_clean_provider;
->  
-> +	ret = th1520_pd_reboot_init(dev, aon_chan);
-> +	if (ret)
-> +		goto err_clean_provider;
+> +static bool
+> +symbol_matches_target(__u64 sym_addr, __u64 target_addr, bool is_ibt_enabled)
+> +{
+> +	if (sym_addr == target_addr)
+> +		return true;
 > +
->  	return 0;
+> +	/*
+> +	 * On x86_64 architectures with CET (Control-flow Enforcement Technology),
+> +	 * function entry points have a 4-byte 'endbr' instruction prefix.
+> +	 * This causes kprobe hooks to target the address *after* 'endbr'
+> +	 * (symbol address + 4), preserving the CET instruction.
+> +	 * Here we check if the symbol address matches the hook target address
+> +	 * minus 4, indicating a CET-enabled function entry point.
+> +	 */
+> +	if (is_ibt_enabled && sym_addr == target_addr - 4)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  static void
+>  show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+>  {
+>  	struct addr_cookie *data;
+>  	__u32 i, j = 0;
+> +	bool is_ibt_enabled;
 >  
->  err_clean_provider:
-> -- 
-> 2.50.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  	jsonw_bool_field(json_wtr, "retprobe",
+>  			 info->kprobe_multi.flags & BPF_F_KPROBE_MULTI_RETURN);
+> @@ -306,8 +347,10 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+>  	if (!dd.sym_count)
+>  		goto error;
+>  
+> +	is_ibt_enabled = is_x86_ibt_enabled();
+>  	for (i = 0; i < dd.sym_count; i++) {
+> -		if (dd.sym_mapping[i].address != data[j].addr)
+> +		if (!symbol_matches_target(dd.sym_mapping[i].address,
+> +					   data[j].addr, is_ibt_enabled))
+>  			continue;
+>  		jsonw_start_object(json_wtr);
+>  		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
+> @@ -719,6 +762,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
+>  {
+>  	struct addr_cookie *data;
+>  	__u32 i, j = 0;
+> +	bool is_ibt_enabled;
+>  
+>  	if (!info->kprobe_multi.count)
+>  		return;
+> @@ -742,9 +786,11 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
+>  	if (!dd.sym_count)
+>  		goto error;
+>  
+> +	is_ibt_enabled = is_x86_ibt_enabled();
+>  	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
+>  	for (i = 0; i < dd.sym_count; i++) {
+> -		if (dd.sym_mapping[i].address != data[j].addr)
+> +		if (!symbol_matches_target(dd.sym_mapping[i].address,
+> +					   data[j].addr, is_ibt_enabled))
+>  			continue;
+>  		printf("\n\t%016lx %-16llx %s",
+>  		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
+
+I wonder should we display the kprobe attached address instead of symbol
+address in here
+
+otherwise the patchset lgtm
+
+thanks,
+jirka
 
