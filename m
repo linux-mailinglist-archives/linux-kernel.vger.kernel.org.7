@@ -1,306 +1,153 @@
-Return-Path: <linux-kernel+bounces-772899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6839EB29914
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:49:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1947AB2991A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D6B1882337
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE2B204AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FB52701BB;
-	Mon, 18 Aug 2025 05:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26682270576;
+	Mon, 18 Aug 2025 05:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7KHs78T"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hRq/r5OQ"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF307F9D6;
-	Mon, 18 Aug 2025 05:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755496172; cv=none; b=MYKlEUFCojExghSfdjC1VfH3ew/E1EqxH+v7SYPSLOm+ZyIhembsxnCKMBhs6qxgsdyoCLV+pHSY/U28D60/HLodBvPrK9vw6D0xEuknAfPcfT70XE0Pvq70jb/YHzxVe+4E7X8Gpd5L4WMlYXlyBpkkHq9dIKOpW5k61AZKjgM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755496172; c=relaxed/simple;
-	bh=s4ZVtdWQXFlOMESeQQcGAzANdm695ZVoGuKbaeUm0E4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qo8lV0kTWACqQt3IZos+s4eHvNXptEC9RfELCyw4HcttBEtHlqmllX/sGFWU8DjS4zCDu7JQvbHvgRHyJlp8q9jbcUiG3kVr/ztVZfw15ZV/LNZKWqtEmPEOAoTEnukTZjMN1t0pcEsM6jOFA1asBuftRcu+hSSwAP8bGby7tC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7KHs78T; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce526ac04so3569185e87.2;
-        Sun, 17 Aug 2025 22:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755496169; x=1756100969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LRUSO5XeEvrbOshq7Av3JAHBHhQf7+u8lkRg+JM5bBY=;
-        b=b7KHs78TZ33990ZsNeU7ZeMawgFGNia2yyy3Cvs/70SpP5APp3YhccGXZAW/ITJmUa
-         4Y27cEJ+fr0vaZHukpqH8SCG2G1gjdLRpQ8MFhLUvxYbiq0d/nNSbSW3tS/XQvXgzHno
-         sJLJAKmO5mKXUpEFAVqQZYBzU40pBDkDOLvHzpG29TWuvXy8lgxPsokzYBeQdbjJhs/3
-         21520rdq8MtgMsVx67RAIJzGkdMH5posFUKLEBuouAHDhdLa5MbTMepGa/6usxAyV7QZ
-         KLST2B8sSm8/1zVOUrTzvOb9+9gu/kiL+JMLR4OPtXUB0M8bp8QDiVSLEb/xFBT2Ja/g
-         EN1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755496169; x=1756100969;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRUSO5XeEvrbOshq7Av3JAHBHhQf7+u8lkRg+JM5bBY=;
-        b=B30j2jOO5swRX8jO3lEXEviySv+7Mwy5F7Be03EUZCEs8q6ciEVKPRAhJBkOddJbi3
-         pG5vdvLCpbLrVGFe66q7nUBIWY0zbTXiEVMJaK5Ge/xO9ceMwxfxfr29NhKQTpaI0swn
-         UguAW/HTIziSOW3Swp0U+aFSVM9upIV8uKBKa8hUfkpSEFzKR1uRFQ9X4qFFCS3EyPW8
-         Exa7+0SBRIpCJLOAF3qyfNKTHTtQJ+C/R5HQ607tftHWVEr2Qwhki0YtsDtkY3KMzYaP
-         Zz1wNATygdXhvlk/ZUtK42uXR2lhx/B/oxwQr4sjIQKpTg4f8MdFRU9P+XB44VZ4SEST
-         XG/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWR2fX0Qg5jlEZ97zpB/L2tTtPiSD1FQlEAGWKh4bAHOn7tovTP3OyNMSJAAonOfULSEErkRqoiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7QXMMXB5cAduT14m5H4eRsWC0wSw0UFHjMgcH7DFyubsegMtM
-	2rIr9NdF1ZFx2RUiN7EE/r5XbA0altGa63pCUdpfVOx2Xj0zckGIVbvX
-X-Gm-Gg: ASbGnctDz5gk8mfrJKGf2+wKVIVYQbH6H9Xiiv/wvOLCOh8O3gmvfSBSBX+UAK9ECjd
-	K2SSdWmKXnjpXGUA3A4fh8XoLRiBYgCTmyTBrSqS4HqxEiUozwtFzx8BG0szxp4bhLQ5TX3gSt4
-	XBza8juAQYoiHRpTlmxQI/0J0D+h3FsfgAjdeTzzWq2qDbFVnT0x2ULonpnQ1CeMt0/x90iw/qy
-	stfENl3lp+dLgAgV1bGJns0reAHCoZGFgOCuNrlUVl4dSK5xw+MLgTaO0TQi1Elyzc0OBajtNGg
-	OGgJ92ZFuAWWN1X7fEjOAEl4h0/WBPQ8CdhTV5a7l85SrDY0WaIhWGDq0GelWx2JcinOafRfhdF
-	rX9pG1kxutTVcR2KmuDSC1gDv7Jwl/EKBx3rrmXanQVlRUWpljYzseCAp4YNJmewMyxwCPGkS7o
-	/HaWSsj2Ha1umFeQ==
-X-Google-Smtp-Source: AGHT+IEB34sI0qCJ0Y9x9PsAw/WsRsjdL7Hj+K0oOTk1BmS1Ip/nLCiS1xb8s9lFCbSDjpGXumuOGw==
-X-Received: by 2002:a05:6512:3345:b0:55b:89e4:fdfd with SMTP id 2adb3069b0e04-55ceeae3d3cmr2574538e87.14.1755496168679;
-        Sun, 17 Aug 2025 22:49:28 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351384sm1543661e87.35.2025.08.17.22.49.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 22:49:28 -0700 (PDT)
-Message-ID: <6ebcdc8b-0b8e-489b-9f93-ebfd2d850432@gmail.com>
-Date: Mon, 18 Aug 2025 08:49:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97517264602;
+	Mon, 18 Aug 2025 05:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755496315; cv=pass; b=GQ1TdjOYwcPXALguuEVItqo/RT6Y9LWOgoAWSQaKcv2ZXQZNN+PQfFLLfTvmbUuvaFb7pZeJ52Xt6yLfSo3bxbTivZAqljmzDBohk99mEVTKz+l7lvewuXSd395vgFn83JOUl9VRrfPLd4TL6eotqEzcnJkkc2TTTk8EQeAXZG4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755496315; c=relaxed/simple;
+	bh=h8xxOrjgpeHxkrnsKMrxDIvceyZJvMAn1wgc15ow78w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IBJ4J5YC5GGKjjbXg4cpvlPtKlIGW8XoVLqAaWnVpfhORzgNDUko9am5K20WLU3isv7MDEWaN5i+WxpYMJ1li7ZEmpL0Q8jI/STVDC6gRhqbbwonpBfPlJaEmFBaK5/xKHPi1OhLx80lwXVKl3IwW8NlcL5uxABzE73Asrjb5+c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hRq/r5OQ; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755496291; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EalfFgJbPTX6n9LvtQECSDWpavt7WMReVhQUWI+2ZGawGUTVWnoBpZ7ZoYmdgsJsnJTpdulZHkE3NFDshmx6wDRPedh8zWoA08K7rJpPfXhscI7JoktJYEA6F5I3bxijFtFzy9MwjiIFzYcNFy+7y5ige6E2cNa868xLDfPTPWc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755496291; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hR2ARozJLRgULsJvoiLBSidAtOxVnB3UNuqCLTscT/s=; 
+	b=IDUSDzwCBHU0Zy+M+gnX0MrPa73KE7QD2Kwbw27+Cyi5R8NChUhGR3hrp02Z8rQxr9dJB10BNrI9GGrp9wniojgms83gm+L3gXQstj87tfz21LxxGdNKh5e5ibXN8JQ2M4ehyXaV2nGW9ixyKvXTufDykdDhqpKO5OO4mJ2uueg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755496291;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=hR2ARozJLRgULsJvoiLBSidAtOxVnB3UNuqCLTscT/s=;
+	b=hRq/r5OQ8pybsV5Zav0YW3g6goRYPSr7F3kIT+ENl2y9VLd2wbO488+pwGC1Hucj
+	GCYX2oeA+KjiXazqpoYvNeS+MymuSQSeN0oXcLnWhIz7jIZSRruxTwljrkxNz18snQr
+	6mrNNpZfInqaUGbI6qoCcqRf6UYJXYiBYs1j+8DY=
+Received: by mx.zohomail.com with SMTPS id 1755496289543523.409879888822;
+	Sun, 17 Aug 2025 22:51:29 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH 0/7] rust: add initial v4l2 support
+Date: Mon, 18 Aug 2025 02:49:46 -0300
+Message-Id: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mfd: bd71828, bd71815 prepare for power-supply
- support
-To: "Andreas Kemnade,,," <andreas@kemnade.info>, Lee Jones <lee@kernel.org>,
- Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
- <20250816-bd71828-charger-v1-1-71b11bde5c73@kemnade.info>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250816-bd71828-charger-v1-1-71b11bde5c73@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPq+omgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0NT3TKTHCPdNPNECwNjC4vkNHMDJaDSgqLUtMwKsDHRsbW1AEHVOch
+ WAAAA
+X-Change-ID: 20250815-v4l2-f7a80388cf70
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ kernel@collabora.com, linux-media@vger.kernel.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-Thanks a ton for picking up from where I left it Andreas! :) I _really_ 
-do love seeing this proceeding. This has haunted me and I actually still 
-have a JIRA item pending for this work - although that's one of those 
-items which might never get done - I just couldn't delete it after 
-putting quite bit of effort to this :(
+Hi,
 
-I hope that effort benefits someone!
+This topic has been discussed in the last two iterations of the Media
+Summit and it has been dormant since. In my humble opinion, and owing
+to all the progress that Rust in the kernel has seen since my last
+attempts ([0], [1]), it is time to try again.
 
-Just one comment:
+This series reduces the scope of the original attempt considerably. It
+adds APIs to register v4l2 and video devices, and just enough to process
+a single ioctl (VIDIOC_QUERYCAP), including basic support for v4l2_fh.
+It was tested with v4l2-ctl.
 
-On 16/08/2025 22:19, Andreas Kemnade,,, wrote:
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> Add core support for ROHM BD718(15/28/78) PMIC's charger blocks.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->   drivers/mfd/rohm-bd71828.c       | 44 +++++++++++++++++++++------
->   include/linux/mfd/rohm-bd71828.h | 65 ++++++++++++++++++++++++++++++++++++++++
->   include/linux/mfd/rohm-generic.h |  2 ++
->   3 files changed, 102 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
-> index a14b7aa69c3c61d51f2aeeae9afdf222310d63e3..84a64c3b9c9f52e663855c89ed78ede9a7c21f55 100644
-> --- a/drivers/mfd/rohm-bd71828.c
-> +++ b/drivers/mfd/rohm-bd71828.c
-> @@ -45,8 +45,8 @@ static const struct resource bd71828_rtc_irqs[] = {
->   
->   static const struct resource bd71815_power_irqs[] = {
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-dcin-clps-out"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-dcin-clps-in"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_RES, "bd71815-dcin-ovp-res"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_DET, "bd71815-dcin-ovp-det"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_RES, "bd71815-dcin-mon-res"),
-> @@ -56,7 +56,7 @@ static const struct resource bd71815_power_irqs[] = {
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_RES, "bd71815-vsys-low-res"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_DET, "bd71815-vsys-low-det"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_DET, "bd71815-vsys-mon-det"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TEMP, "bd71815-chg-wdg-temp"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TIME, "bd71815-chg-wdg"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_RES, "bd71815-rechg-res"),
-> @@ -87,10 +87,10 @@ static const struct resource bd71815_power_irqs[] = {
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_2_DET, "bd71815-bat-oc2-det"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_RES, "bd71815-bat-oc3-res"),
->   	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_DET, "bd71815-bat-oc3-det"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_RES, "bd71815-bat-low-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_DET, "bd71815-bat-low-det"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_RES, "bd71815-bat-hi-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-bat-hi-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_RES, "bd71815-temp-bat-low-res"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_DET, "bd71815-temp-bat-low-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_RES, "bd71815-temp-bat-hi-res"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-temp-bat-hi-det"),
->   };
->   
->   static const struct mfd_cell bd71815_mfd_cells[] = {
-> @@ -109,7 +109,30 @@ static const struct mfd_cell bd71815_mfd_cells[] = {
->   	},
->   };
->   
-> -static const struct mfd_cell bd71828_mfd_cells[] = {
-> +static const struct resource bd71828_power_irqs[] = {
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_CHG_TOPOFF_TO_DONE,
-> +			     "bd71828-chg-done"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_DCIN_DET, "bd71828-pwr-dcin-in"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_DCIN_RMV, "bd71828-pwr-dcin-out"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_BAT_LOW_VOLT_RES,
-> +			     "bd71828-vbat-normal"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_BAT_LOW_VOLT_DET, "bd71828-vbat-low"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_HI_DET, "bd71828-btemp-hi"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_HI_RES, "bd71828-btemp-cool"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_LOW_DET, "bd71828-btemp-lo"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_LOW_RES,
-> +			     "bd71828-btemp-warm"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_VF_DET,
-> +			     "bd71828-temp-hi"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_VF_RES,
-> +			     "bd71828-temp-norm"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_125_DET,
-> +			     "bd71828-temp-125-over"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_125_RES,
-> +			     "bd71828-temp-125-under"),
-> +};
-> +
-> +static struct mfd_cell bd71828_mfd_cells[] = {
->   	{ .name = "bd71828-pmic", },
->   	{ .name = "bd71828-gpio", },
->   	{ .name = "bd71828-led", .of_compatible = "rohm,bd71828-leds" },
-> @@ -118,8 +141,11 @@ static const struct mfd_cell bd71828_mfd_cells[] = {
->   	 * BD70528 clock gate are the register address and mask.
->   	 */
->   	{ .name = "bd71828-clk", },
-> -	{ .name = "bd71827-power", },
->   	{
-> +		.name = "bd71828-power",
-> +		.resources = bd71828_power_irqs,
-> +		.num_resources = ARRAY_SIZE(bd71828_power_irqs),
-> +	}, {
->   		.name = "bd71828-rtc",
->   		.resources = bd71828_rtc_irqs,
->   		.num_resources = ARRAY_SIZE(bd71828_rtc_irqs),
-> diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-> index ce786c96404a3dc9d5124ffbbd507df89ca0e5ba..a34991984caa8724e925f1c59de4bcfa543ae411 100644
-> --- a/include/linux/mfd/rohm-bd71828.h
-> +++ b/include/linux/mfd/rohm-bd71828.h
-> @@ -189,6 +189,71 @@ enum {
->   /* Charger/Battey */
->   #define BD71828_REG_CHG_STATE		0x65
->   #define BD71828_REG_CHG_FULL		0xd2
-> +#define BD71828_REG_CHG_EN		0x6F
-> +#define BD71828_REG_DCIN_STAT		0x68
-> +#define BD71828_MASK_DCIN_DET		0x01
-> +#define BD71828_REG_VDCIN_U		0x9c
-> +#define BD71828_MASK_CHG_EN		0x01
-> +#define BD71828_CHG_MASK_DCIN_U		0x0f
-> +#define BD71828_REG_BAT_STAT		0x67
-> +#define BD71828_REG_BAT_TEMP		0x6c
-> +#define BD71828_MASK_BAT_TEMP		0x07
-> +#define BD71828_BAT_TEMP_OPEN		0x07
-> +#define BD71828_MASK_BAT_DET		0x20
-> +#define BD71828_MASK_BAT_DET_DONE	0x10
-> +#define BD71828_REG_CHG_STATE		0x65
-> +#define BD71828_REG_VBAT_U		0x8c
-> +#define BD71828_MASK_VBAT_U		0x0f
-> +#define BD71828_REG_VBAT_REX_AVG_U	0x92
-> +
-> +#define BD71828_REG_OCV_PWRON_U		0x8A
-> +
-> +#define BD71828_REG_VBAT_MIN_AVG_U	0x8e
-> +#define BD71828_REG_VBAT_MIN_AVG_L	0x8f
-> +
-> +#define BD71828_REG_CC_CNT3		0xb5
-> +#define BD71828_REG_CC_CNT2		0xb6
-> +#define BD71828_REG_CC_CNT1		0xb7
-> +#define BD71828_REG_CC_CNT0		0xb8
-> +#define BD71828_REG_CC_CURCD_AVG_U	0xb2
-> +#define BD71828_MASK_CC_CURCD_AVG_U	0x3f
-> +#define BD71828_MASK_CC_CUR_DIR		0x80
-> +#define BD71828_REG_VM_BTMP_U		0xa1
-> +#define BD71828_REG_VM_BTMP_L		0xa2
-> +#define BD71828_MASK_VM_BTMP_U		0x0f
-> +#define BD71828_REG_COULOMB_CTRL	0xc4
-> +#define BD71828_REG_COULOMB_CTRL2	0xd2
-> +#define BD71828_MASK_REX_CC_CLR		0x01
-> +#define BD71828_MASK_FULL_CC_CLR	0x10
-> +#define BD71828_REG_CC_CNT_FULL3	0xbd
-> +#define BD71828_REG_CC_CNT_CHG3		0xc1
-> +
-> +#define BD71828_REG_VBAT_INITIAL1_U	0x86
-> +#define BD71828_REG_VBAT_INITIAL1_L	0x87
-> +
-> +#define BD71828_REG_VBAT_INITIAL2_U	0x88
-> +#define BD71828_REG_VBAT_INITIAL2_L	0x89
-> +
-> +#define BD71828_REG_IBAT_U		0xb0
-> +#define BD71828_REG_IBAT_L		0xb1
-> +
-> +#define BD71828_REG_IBAT_AVG_U		0xb2
-> +#define BD71828_REG_IBAT_AVG_L		0xb3
-> +
-> +#define BD71828_REG_VSYS_AVG_U		0x96
-> +#define BD71828_REG_VSYS_AVG_L		0x97
-> +#define BD71828_REG_VSYS_MIN_AVG_U	0x98
-> +#define BD71828_REG_VSYS_MIN_AVG_L	0x99
-> +#define BD71828_REG_CHG_SET1		0x75
-> +#define BD71828_REG_ALM_VBAT_LIMIT_U	0xaa
-> +#define BD71828_REG_BATCAP_MON_LIMIT_U	0xcc
-> +#define BD71828_REG_CONF		0x64
-> +
-> +#define BD71828_REG_DCIN_CLPS		0x71
-> +
-> +#define BD71828_REG_MEAS_CLEAR		0xaf
-> +
-> +
->   
->   /* LEDs */
->   #define BD71828_REG_LED_CTRL		0x4A
-> diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
-> index 579e8dcfcca41d2680283819684a1014617d0d4b..5e9d0da380ec0fc3245bee998c791a162a34e3fa 100644
-> --- a/include/linux/mfd/rohm-generic.h
-> +++ b/include/linux/mfd/rohm-generic.h
-> @@ -13,9 +13,11 @@ enum rohm_chip_type {
->   	ROHM_CHIP_TYPE_BD9574,
->   	ROHM_CHIP_TYPE_BD9576,
->   	ROHM_CHIP_TYPE_BD71815,
-> +	ROHM_CHIP_TYPE_BD71827,
+It builds upon the platform work from Danilo and others in order to
+offer a concise, platform-based driver sample that is currently the only
+user of the abstractions. It draws from all the work done for DRM
+devices and others and uses patterns that are known to work for other
+subsystems.
 
-Reading you drop the BD71827 support (which sounds like the right thing 
-to do) - do we still need this?
+I hope that we can all agree that there is little that can go wrong
+here.
 
->   	ROHM_CHIP_TYPE_BD71828,
->   	ROHM_CHIP_TYPE_BD71837,
->   	ROHM_CHIP_TYPE_BD71847,
-> +	ROHM_CHIP_TYPE_BD71878,
->   	ROHM_CHIP_TYPE_BD96801,
->   	ROHM_CHIP_TYPE_BD96802,
->   	ROHM_CHIP_TYPE_BD96805,
-> 
+I've also added a separate MAINTAINERS entry, as the topic of
+maintaining the Rust abstractions has been a major point of contention
+so far. Hopefully this settles this issue in a satisfactory way for all
+involved. In other words, no one is forced to contribute or alter their
+workflow in any way, while those that want to contribute are invited to
+do so. This approach has worked rather well so far.
 
-Yours,
-	-- Matti
+I've decided to work on this once more after being told by a few people
+that they would likely try to play with Rust v4l2 drivers if only they
+did not have to write all of the infrastructure themselves. This work
+(and subsequent patches) will pave the way for them.
+
+Note: this is v1 and I'm aware that there are a few checkpatch and doc
+issues which I will fix later.
+
+[0]: https://lore.kernel.org/rust-for-linux/20230406215615.122099-1-daniel.almeida@collabora.com/
+[1]: https://lore.kernel.org/rust-for-linux/20240227215146.46487-1-daniel.almeida@collabora.com/
+
+---
+Daniel Almeida (7):
+      rust: media: add the media module
+      rust: v4l2: add support for v4l2_device
+      rust: v4l2: add support for video device nodes
+      rust: v4l2: add support for v4l2 file handles
+      rust: v4l2: add device capabilities
+      rust: v4l2: add basic ioctl support
+      rust: samples: add the v4l2 sample driver
+
+ MAINTAINERS                      |   8 ++
+ rust/bindings/bindings_helper.h  |   2 +
+ rust/helpers/helpers.c           |   1 +
+ rust/helpers/v4l2-device.c       |  30 +++++
+ rust/kernel/lib.rs               |   2 +
+ rust/kernel/media/mod.rs         |   9 ++
+ rust/kernel/media/v4l2/caps.rs   | 193 ++++++++++++++++++++++++++++
+ rust/kernel/media/v4l2/device.rs | 176 +++++++++++++++++++++++++
+ rust/kernel/media/v4l2/file.rs   | 164 ++++++++++++++++++++++++
+ rust/kernel/media/v4l2/ioctl.rs  |  92 +++++++++++++
+ rust/kernel/media/v4l2/mod.rs    |  20 +++
+ rust/kernel/media/v4l2/video.rs  | 269 +++++++++++++++++++++++++++++++++++++++
+ samples/rust/Kconfig             |  11 ++
+ samples/rust/Makefile            |   1 +
+ samples/rust/rust_driver_v4l2.rs | 145 +++++++++++++++++++++
+ 15 files changed, 1123 insertions(+)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250815-v4l2-f7a80388cf70
+
+Best regards,
+-- 
+Daniel Almeida <daniel.almeida@collabora.com>
 
 
