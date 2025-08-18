@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-773718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C114B2A780
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45116B2A76B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446936E04E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869B51B60812
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46C3226D1F;
-	Mon, 18 Aug 2025 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvFliavW"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7B121FF36;
+	Mon, 18 Aug 2025 13:43:30 +0000 (UTC)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB23225413
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1822A335BCB;
+	Mon, 18 Aug 2025 13:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524617; cv=none; b=BoqcD12W5Pdh/mTUJ5h2oPPjqkKPfr2FcNUouENYuHs8dkqzmVW/rZ213tb4cD2sOKs1TJ5W0i4AA5bifoTZ/kREYsBqSmbORrOk/LuTM3Za8q8uXvxFjYayIe/IYMx6P73JWLw8ho7vQknNARwz6rA9/gIe3+kY/mIuwnsURBE=
+	t=1755524610; cv=none; b=YsEmkd6aau/9i3F4PyAjbrVpZg44EO54LBnsAZFfBd/B2rXOXqm8jTqFrxI/3DUETFFhaL1GaMyXCk5ZLDLQgqVE9rFPw4i0ZWV07+P5izITiKVdAhGNagbyFl/0e/sW5IV0oBw7xRzR+CKtcIVCuzQ6fb0nv5rsfK0XXDVvjgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524617; c=relaxed/simple;
-	bh=GY033kBcdEgxbHngwDBH/yn9YX39oDLKhFn0sGJGqTk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iKCiRU0xlsZI6NcCrpGFtvVS4l1r19mxkYuRdXEuwJ8SmsK5DVTtLnse4uF9Sh0agJ5z5kb6pDbaBT6QM4KyzJ0IfXbHgAwYQiI8qEtRbaUCxrN621iA4nz65UILHhCvk/cSijYDnlCeTF/QNdC/orz8dtcFLfvOB26lKzL+14U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvFliavW; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1755524610; c=relaxed/simple;
+	bh=xd6byd9gl8D3GQltTrW+eqkNmCOmcacxF0r9OGp+yj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ROrIAzWhMVcWSBb8NMKuymlXWgBCeyGijt/gYnHU8lJx8IGRixYVsc+uHIXzfDviDPKMa60Hdo+emqmZKhSOeWwed1Ujxwy8FeQsKygfQZujF/EYiZHcrJmXFmTk54ul9t2SVzEU3dST6nTurfdR2m8ibYaqs0lUv3/mzJfXTnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32372c05c5dso719095a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755524615; x=1756129415; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7qFXybMfT0F7pfONRtaANHA6qK/whFnwauoDe2iBodg=;
-        b=YvFliavWVKepM6KZLaDbZ5/tFbC5E55T9GkRKNzftcgC5B2jk5SPqDbrilb4VIgD6Y
-         glwYSN5Z8bK6e9M1MgRqNE2M7sN0EaBN6YEQih4Gd4alT31nIHUrdCXHNLMUEwIYxSho
-         vZIkZdl2TYfI8LTto5qAgd+gqCW8OkNJ70JllYFEO0MOaY9rZwYb8v/hQefzcCw8RkbA
-         8l+lgGyrI5Nn7w7ZnxDqONDm96djO6+Uls7xdM7vpxhMuH6EM8Yaa5zyKN7Kry7pCUhS
-         K1xCoS67kcgJD6rYIflAm1ME7vN41Y7yvZWzlDep11qAs2oCApfnQF6SeWMVcjLgJpBI
-         PPSA==
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-890190bee8bso2553456241.2;
+        Mon, 18 Aug 2025 06:43:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755524615; x=1756129415;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7qFXybMfT0F7pfONRtaANHA6qK/whFnwauoDe2iBodg=;
-        b=BUfoHtBY5J0F7nV2j9EsE5s4cf1YCZH2nSBDWSY0mJgebSIhsJQvbCFM1mMeogx1Tq
-         1HgukePW1AxNW+63ub4jVYPcyv8jJVYZBgB97+ThkgqcQqHm23UrvTf4NiNEYo1TcEQU
-         c6kEGvSpKLQ93hAVCkfeUlrhRxDGE7szEAuu1pehGAhS57R32u70uYzzmnFQOBVmXBQI
-         kRr0oRZ7TvoQX43BB0iuqwEVcsOEK00KwRchp7nJMjp+Fu8ud4+ZGf5A1ESsKkkdsRyl
-         aM1eFiSEpU9geAik5EwU22Bn3uaLkY+8KUEAeA846O9ETBGFejjSVs4LDLCkVrA7Laep
-         6zaQ==
-X-Gm-Message-State: AOJu0YyhrQ894bmL5Jkzyo0QmlAqdpi30vJHuZ8jqMsFqjYby4aSbw8y
-	oGVEeLIlLWLU2EUTHe5OXEBcvKr8XS6HSwkS3knf71iz6kJITA64na0B
-X-Gm-Gg: ASbGncuuC/5t2X0JqjmaQo/FAYRJi37xRDM39LJLCnoHZpjhovNddsqPnqi8SS1882P
-	CcoH8b8hKEaU2L4quSIL4u0nY/1Ozoe5iVOKR49pZMN8nu+TnfuzREXhhmYTv2VVQdevBIWm7Gq
-	n4C8C5ocIWg6BI6r8ROGtVPWoj47yEPnDkXONLrJyhmNW4MjEhJeaxhCzg6vo8xcraOM8NmKw5f
-	gKV3FOvvTIl7Eb3uhJLxEqAEXCURpOxfIgDQZhRAzPOXyLiybrNiFK0RIG3vhksJZUewBdTKxyD
-	fGceTth7kwEHcKrzAC5KMKcqRo9L2dFi0U/+w3x44PfqL/dp6gep4/F2zqENV3PrgkOMquGTflR
-	7LuwswH97Pp+VASqhMsKViW4p2bTwkX49+t4VU4IoRTy124exg4LRNVTQMO8DPAO27BazsboaeV
-	0CEsRNpvWTx+cVhkW9dyyJpnY=
-X-Google-Smtp-Source: AGHT+IFUXtRL/BV8OhH7u51d59Zn+qQRMyYHv+mUm8SHWdo4AoKQhhH4kLrCQLItXf+EwUjuKYY8MQ==
-X-Received: by 2002:a17:90b:180d:b0:321:7a2f:985d with SMTP id 98e67ed59e1d1-3234216190bmr16631104a91.25.1755524614790;
-        Mon, 18 Aug 2025 06:43:34 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (111-254-48-124.dynamic-ip.hinet.net. [111.254.48.124])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d76df62sm8122707a12.41.2025.08.18.06.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:43:34 -0700 (PDT)
-From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	ahuang12@lenovo.com,
-	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-Subject: [PATCH 1/1] signal: Fix memory leak for PIDFD_SELF* sentinels
-Date: Mon, 18 Aug 2025 21:43:10 +0800
-Message-Id: <20250818134310.12273-1-adrianhuang0701@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1755524607; x=1756129407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=34HFEWnAnGFYwqsI/6LLj6dpbgFrm7oIFiaBaO3B038=;
+        b=iKYnq3nMMfck/wcc1oPXES1DdpicMdJYK1tT/DYdFRPuz2GP0LQSGjR2uUxwcsAgAD
+         RoNHTLQUvusJv1f29UgRge+2WECbozgC2PnLPbvYDvaIfjMKtwUZTZH/nyJKFgEjl51D
+         soIGg665jWrI/u3uQToDFK9OWqdvXZ3WJdle+8/VkYbgya/ycz6YIezXjSejlIBx2S2D
+         5SbfvdqLtxLz6f6Onh02/pooFfh2e7LK4yGhOoWTvu9gaDH3QO9Jfw61k9r401TOOQaX
+         Gco4ET8oiVZ9vL7R4kGw/pF5nM6cpQbMc/XcPoytCRhCsnE7WcYzzSS+KtRW9kHPeqde
+         MXxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWckRqA9gUtbEYG89ZOW2XKTUL5QQR1wHAA+SpbDEmJf+eVsEha1ejY7THv0KFeJfZU0F8U4o3EhfnQTLQe@vger.kernel.org, AJvYcCWw0fDFJeQi9M3/C4z/DAGJMbpj5ADIJdl3IFqVtvfTnKoq2YhUzwzGZJZkl9zCeBAp3NDTg0ZTqUs2@vger.kernel.org, AJvYcCXWd0DdGE0tWo40Sol70HRlCrbwKqJuwteqIRCIeoK7bRBOlZCvaiBKsb9DbFNEIH//djhihjq5Cx9lc4M/yOGThO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPnDecHl4MYrCOgj69ovZ9uvVj426oumPxBHg0UPfdsVG+51q
+	6p3XOIqXBeSxF9XBr8Bc1ntUBzWxFEyVNV2enlgUXkPdifwMr6ERqdiSwc9tU3jG
+X-Gm-Gg: ASbGnctyRYSQrP4vxNiPyljTB9CLh5FDiuzzMddriek6yVCdANtDjivs8v6EZfUqU7X
+	ymCrH5dON0brOKGA6srjrhvWAiDabhjTP5rGM/F4lhIkQ/ZX4RRL3L6FAjWUL6x7P+PfIfxGS9H
+	0icm8x2wjJczSxDu4XR8OYVZBBcUPFao8zcDJBIJmnP2VAms5qP9ErbCN+i6I/RQXlcNrT75zw9
+	5I2jybdoXQN5XuZM3cHRPKLYGsFh+SPJAvaHVPEEqb3bLcZYrZqI/+N9QG0sQNExRW89670oF0y
+	Mxh/tkC0rwo2Z8m7OKOdMAlPQAKJBb0efoKMbwatYftUAHVS64wuAaeDa7jqOl7KUVrAt+eZS68
+	gck36KUhfKEh9dWSwKBCDBw5JXkeZzEwVYxv0+m4CrCDc5yR6BdVDElo5aM2P
+X-Google-Smtp-Source: AGHT+IFDO4qJm0w0B/ZWzO2lS7gtwMz8tnDpl0kx2NkAgNk7xWUa8CIdjhHLPYgXMPvKl4s+pWjRFw==
+X-Received: by 2002:a05:6102:41a1:b0:4fa:e005:cb20 with SMTP id ada2fe7eead31-514c8b6839amr3585987137.3.1755524607542;
+        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277bf4c4sm1768928241.2.2025.08.18.06.43.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-50f8ba4d2f2so1570058137.3;
+        Mon, 18 Aug 2025 06:43:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAfspkhW991AIkkprU6SH0bpaM6ILkoVa/O8oSXlo1kM/Ta3hpPl3Iz1vgpDsLB3C+VExG8LSFJ5iNJN7Unz8gnGY=@vger.kernel.org, AJvYcCW3ZtjOob+Y0oNJfMynIL6/wpUZPUuZ28PfWUCYF91x+f+eBPDmkwmMy6Tok5bxx+X8LpUXvduX01l6KDt8@vger.kernel.org, AJvYcCXrb++v15cR5bB8QnGaPEk3yjlkTUVTti69sjjWuUCZeYnlx0vlpJreXkHIbejx9+Q8r7jML3r46buz@vger.kernel.org
+X-Received: by 2002:a05:6102:508f:b0:4e6:a33d:9925 with SMTP id
+ ada2fe7eead31-517a237b8c4mr1025399137.5.1755524606962; Mon, 18 Aug 2025
+ 06:43:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com> <CA+V-a8vsQv4jJ4x1rVkeyfg28_RvVtAbnbHtm+RTTMHT_s-YzQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8vsQv4jJ4x1rVkeyfg28_RvVtAbnbHtm+RTTMHT_s-YzQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 15:43:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXTrhOg9EQ+WPqHzQKssJ32BAV2GM0vO_1iKXDD63V5LQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzWy-rBfxhXM66qOzhr9jU8hweBN7mmn8pN6i5_HoyIbeBrPnpeYhFhjbM
+Message-ID: <CAMuHMdXTrhOg9EQ+WPqHzQKssJ32BAV2GM0vO_1iKXDD63V5LQ@mail.gmail.com>
+Subject: Re: [PATCH 05/13] arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add
+ user LEDs
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit f08d0c3a7111 ("pidfd: add PIDFD_SELF* sentinels to refer to own
-thread/process") introduced a leak by acquiring a pid reference through
-get_task_pid(), which increments pid->count but never drops it with
-put_pid().
+Hi Prabhakar,
 
-As a result, kmemleak reports unreferenced pid objects after running
-tools/testing/selftests/pidfd/pidfd_test, for example:
+On Mon, 18 Aug 2025 at 15:40, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Aug 18, 2025 at 2:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add USER LED0-LED8, which are available on RZ/T2H EVK.
+> >
+> > According to the schematics, only the first four are user LEDs?
+> >
+> As per [0] user manual Table 7-4, LEDs4-8 can be used as USER LEDs or
+> for Ethercat Slave. Since ESC is not enabled I haven't added any
+> #ifdefs.
 
-  unreferenced object 0xff1100206757a940 (size 160):
-    comm "pidfd_test", pid 16965, jiffies 4294853028
-    hex dump (first 32 bytes):
-      01 00 00 00 00 00 00 00 00 00 00 00 fd 57 50 04  .............WP.
-      5e 44 00 00 00 00 00 00 18 de 34 17 01 00 11 ff  ^D........4.....
-    backtrace (crc cd8844d4):
-      kmem_cache_alloc_noprof+0x2f4/0x3f0
-      alloc_pid+0x54/0x3d0
-      copy_process+0xd58/0x1740
-      kernel_clone+0x99/0x3b0
-      __do_sys_clone3+0xbe/0x100
-      do_syscall_64+0x7b/0x2c0
-      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+OK
 
-Fix this by calling put_pid() after do_pidfd_send_signal() returns.
+> [0] https://www.renesas.com/en/document/mat/rzt2h-evaluation-board-kit-us=
+ers-manual?r=3D25567073
+>
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
 
-Fixes: f08d0c3a7111 ("pidfd: add PIDFD_SELF* sentinels to refer to own thread/process")
-Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
----
- kernel/signal.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> Perhaps I'll have LED_FUNCTION_DEBUG for LEDs4-8 as currently they are
+> used as USER LEDs and  function-enumerator =3D 4/5/6/7?
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e2c928de7d2c..fe9190d84f28 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -4067,6 +4067,7 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- {
- 	struct pid *pid;
- 	enum pid_type type;
-+	int ret;
- 
- 	/* Enforce flags be set to 0 until we add an extension. */
- 	if (flags & ~PIDFD_SEND_SIGNAL_FLAGS)
-@@ -4108,7 +4109,10 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 	}
- 	}
- 
--	return do_pidfd_send_signal(pid, sig, type, info, flags);
-+	ret = do_pidfd_send_signal(pid, sig, type, info, flags);
-+	put_pid(pid);
-+
-+	return ret;
- }
- 
- static int
--- 
-2.43.0
+That sounds fine, thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
