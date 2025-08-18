@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-773164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DC7B29C2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA55B29C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F7397A5B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D9F1899D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4B9301472;
-	Mon, 18 Aug 2025 08:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8A23002DB;
+	Mon, 18 Aug 2025 08:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pH0jjYJT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eARKmdTc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DFB3002D3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88BA2FFDEC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505677; cv=none; b=CgFxy1N7SH8AeNiFZz4U9DPdDvGowz3sTIMKOrvaITSXeONxDEZ5oARZDFyXth1hjdZ19NA9IUL94B5DwT5qeev6/aGeL3MR4zEdzJrK4NEVERliR2C+znSj+5Ldp4X5eoljvXqzzif8r+gXoq0ZV/EaqgiVOu2SVZFtLBtd+Ig=
+	t=1755505706; cv=none; b=i6vXV5/NxQ4mGKLg/NZClL0MLgDo+cpjVHxkBa4+CHRPT6gqKAIbaHITSlUkxgTBAnNuryZeWRF5r7K1G08Rx3FOkFDH0Es4V3PDQycDnazmdJfYVDSOR73vtWiuaigPFZAKsSJAPxdRP84ZAWAwfV1fmaomv+FY130XAkNywlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505677; c=relaxed/simple;
-	bh=rq6946DzumILvEIR5XWexmQkysEBR7GbvltHkcSl6YA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S8XkTrDBuUvsIsN0871AcQDiyerSPCp4hycqEdGqvoroPS0L6TaHIb7OLMsD/yczyIIjIwXyel9iTJu+rPSz/PZ1GChJxpHffcrmyej/ApQ+7ItzQgbTKB8RnoXcBc4TBbYj6KpKG0t6CkDTlWtBZ/DGC9DAvzjj8VpWZtnaJNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pH0jjYJT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I7dMCt031717
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rq6946DzumILvEIR5XWexmQkysEBR7GbvltHkcSl6YA=; b=pH0jjYJTAl7re29P
-	eDXYy6doYRSC9/QrUBVDRGmaKfPZCRnt/27BpOESnbmKcDWYQWQE0TN4RjZHB26p
-	r31MIs4hA2/C4q4WvJs0F/TcGgCHu/dmVO2NTsFUfLgXGYc273YerMZN4+uFW9F7
-	hypGSTOfjNaHRAfD5yZE9ln9D4CBCF4ZoWT6/s894AJcWj4w2Ceci1tqrMg7FZ7T
-	8nC/lLMKExRJTWRCvcqmfiA5ilpDfF1xh3HEHJXusTG+HZ4HJHr6VZH5d8Jd3MdY
-	0E5ihcuWt8hBw0jAUsx0ZEQNIeQ0WCoiOmTnd4PZxYXj0A6xg9y5MRgUrzX0TcRD
-	r1n2kA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2ubxht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:27:54 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b47174c65b0so8074264a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:27:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755505673; x=1756110473;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rq6946DzumILvEIR5XWexmQkysEBR7GbvltHkcSl6YA=;
-        b=Ovu8Opu0i/jzvn08szQ2uaGVTtkbLzXlKwVlEYeB8fqMZGuzsyYYN8x9uk2XGN/dBz
-         VokDPLMulaVFgVg0zIVY7QISgmhNo80YOs1jOF5jIq+Efnxu6y9FWRlGVxakxUJ/ZsIx
-         aheKpulCaiKsKuaXk8YMwnSStJjw7inCzMCYrCt5XGSoNEU/qAeZqgUKZC0kjharEzzT
-         r63VbsgmBL+EvIx4fBXpW4u9AQznpCYYy4MjP42LNCUhcnws2uK/gbxiam5j7Uh4vQGc
-         zzlQ8sSsL/OIlIFFOQ9KjnQNUeZA2Dor7aBNiUUeQMxelG++ieCNZvnFYLWpGpzLui+/
-         68UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6j55MpEXWZLcBzcJ7d4HWJD1TbEhKATQoe0QEWWUZI9kcLW/1ZFfiXmiGkF+UWE5BOkqsew3RiuOkq3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj0CZHC8YBhgL42AoRceXKEXJEGxuBTBP9mq7+G+JexkLR+bSu
-	5ETLCJTjivNHVDBd6rYesAadlWjUI8Zh5oTtz4lgV13ieMXwsGJlmfgLhhAJkcjpkAKUurIuRwj
-	ndpLXNL5++7GwV5kpZhg4lBg6EJ5gUyUJhOCSAYzEgC6RHBclMhzD0xtZYV3L8p+ooc7KjwhQOw
-	xMzg7RvncBpouKZtNd9Q+hAP91HAWg96pAA3cRIUg3dA==
-X-Gm-Gg: ASbGncuRrwiHePb14nCdU8EK+VS/vyzrkfPzFh+PHDpyZUuF5TUZXbRxIGyKZ5j165g
-	PVIaOQgdCCbFArhDyuy4iWZTydei04sr2Gvq9VEfjDDQT6MrQ3J4a89+PSVax6UThpWN9dI0cnT
-	SUSWWOIhpY69nc5QawA1k1pA==
-X-Received: by 2002:a17:902:e842:b0:235:ed01:18cd with SMTP id d9443c01a7336-2446d99e6acmr165826885ad.44.1755505673488;
-        Mon, 18 Aug 2025 01:27:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxmEX0bC4rGj0GsL0Ofny3nTaPHYYQ7bo5uu9L4GZIVv1jBDAAlTveYAPi+e7gAhEyyevMd3DrrsmVZDn0oyA=
-X-Received: by 2002:a17:902:e842:b0:235:ed01:18cd with SMTP id
- d9443c01a7336-2446d99e6acmr165826455ad.44.1755505673065; Mon, 18 Aug 2025
- 01:27:53 -0700 (PDT)
+	s=arc-20240116; t=1755505706; c=relaxed/simple;
+	bh=Icogg28ZLs91H1WXJDPU4qMKH1v2aWHOOdl1Ix8d2I4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TgufsXFhKJ9ouXvEbRlQOYuTPf5lWWp68E+lE96jQky00rZk/paPjncZq1izm44YBmXbiYUGBrTlmJbF/a9qrmXX9//qLnlWT+0WC2Cq6O2Cwxi0NX5+EZ5mgsjmfdYVqGwSloTFY2CBRiZJUa7GVlKfHH8xAFFgHOYAhezsE2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eARKmdTc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35468C4CEEB;
+	Mon, 18 Aug 2025 08:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755505706;
+	bh=Icogg28ZLs91H1WXJDPU4qMKH1v2aWHOOdl1Ix8d2I4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=eARKmdTcKCTa1s7Bc4eoFK3Y4UKf9bn5vlz8oM6nMwIa7fhi3m1prdiM/3X2/0k0r
+	 vgvJ9c6VkUmsCOMMnk5YUHl3ccV9E7U845apbUTitYEn81sAbGX7wLWuDV9e16EMiH
+	 4MkgAap41+2V1cX9P0ewqoZVPdbNJr7KfT/iGPqrmL1LeRkE/4v8TEsTaNmgAga8rK
+	 zzgpcPijSardkKlCpUXzaSyD2ufYOeheNtX9AYSLEGIFbDqej3MUYtKLWYw+YNyu59
+	 kVpt1CLJA7VN0waIuwD5LTOi4vBVpiZAg4hV3c9ZdN199W8ik4nwySDTvo0u/214/p
+	 tlTODkNSDEimw==
+Message-ID: <943041c7-5eb2-4ddc-b54e-192b61de4bf7@kernel.org>
+Date: Mon, 18 Aug 2025 16:28:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818-numa_memblks-v1-1-9eb29ade560a@oss.qualcomm.com> <d7cdb65d-c241-478c-aa01-bc1a5f188e4f@redhat.com>
-In-Reply-To: <d7cdb65d-c241-478c-aa01-bc1a5f188e4f@redhat.com>
-From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-Date: Mon, 18 Aug 2025 13:57:41 +0530
-X-Gm-Features: Ac12FXzcSoeiNhok4BzoYQfoalKvL5KSge90N69qQ3e47Ph8xq7Ih6FtZXa_xiM
-Message-ID: <CALzOmR0C8BFY+-u-_aprVeAhq4uPOQa+f2L5m+yZH+=XZ2cv_w@mail.gmail.com>
-Subject: Re: [PATCH] mm/numa: Rename memory_add_physaddr_to_nid to memory_get_phys_to_nid
-To: David Hildenbrand <david@redhat.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-acpi@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-cxl@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a2e40a cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=uSFNSxTeKwDZCnUuY58A:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: tf4u-t4HZ3c46Q8WDD2ukjBzZ0n5jjB2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX17j0/TtnOJXo
- dr6OcN6CRVolFErGbTR5OOr7+TfCQ1IP5X9TxQ90VoAQtTZt0UvrptvSwtBSPK9c4U81vnvgguq
- sSXNSl2BABRplNFm2kU/RHHqH8erlZAdg+3XJXcwBKOdErk/KhtiVCudmZqMUK9B/xdIjBCpx0q
- KNB97BwrkpvTzlWRYohWZMTxIEWxbR9aJl2N3fapDkbEPMLESFRE3ZXywVSG3kSRBY2Wu6bLBRl
- wzLn15gyXweBljj/rYMsLzi2I8Vw/PX5lp0CS7URzAaHWounJKA/b7wABf2M87ggiw/zrzNs+Io
- va31bAF6FdgLrUO9C8LPUwHodmW3xei0hhfldU6XBTlhnEf1LpWr1idLXeHqUreHKguJpPKlVZi
- rUCGTEel
-X-Proofpoint-GUID: tf4u-t4HZ3c46Q8WDD2ukjBzZ0n5jjB2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] f2fs: fix to allow removing qf_name
+To: Hongbo Li <lihongbo22@huawei.com>, jaegeuk@kernel.org
+References: <20250818020939.3529802-1-chao@kernel.org>
+ <20250818020939.3529802-2-chao@kernel.org>
+ <f503b139-ba90-40ae-8900-db0ba7789525@huawei.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <f503b139-ba90-40ae-8900-db0ba7789525@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 12:29=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
->
-> On 18.08.25 08:41, pratyush.brahma@oss.qualcomm.com wrote:
-> > From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-> >
-> > The function `memory_add_physaddr_to_nid` seems a misnomer.
-> > It does not to "add" a physical address to a NID mapping,
-> > but rather it gets the NID associated with a given physical address.
->
-> You probably misunderstood what the function is used for: memory hotplug
-> aka "memory_add".
-Thanks for your feedback. I get the part about memory hotplug here but
-using memory_add still seems a little odd as it doesn't truly reflect
-what this api is doing.
-However, I agree that my current suggestion
-may not be the perfect choice for the name, so I'm open to suggestions.
+On 8/18/25 16:06, Hongbo Li wrote:
+> Hi Chao,
+> 
+> On 2025/8/18 10:09, Chao Yu wrote:
+>> The mount behavior changed after commit d18535132523 ("f2fs: separate the
+>> options parsing and options checking"), let's fix it.
+>>
+>> [Scripts]
+>> mkfs.f2fs -f /dev/vdb
+>> mount -t f2fs -o usrquota /dev/vdb /mnt/f2fs
+>> quotacheck -uc /mnt/f2fs
+>> umount /mnt/f2fs
+>> mount -t f2fs -o usrjquota=aquota.user,jqfmt=vfsold /dev/vdb /mnt/f2fs
+>> mount|grep f2fs
+>> mount -t f2fs -o remount,usrjquota=,jqfmt=vfsold /dev/vdb /mnt/f2fs
+>> mount|grep f2fs
+>> dmesg
+>>
+>> [Before commit]
+>> mount#1: ...,quota,jqfmt=vfsold,usrjquota=aquota.user,...
+>> mount#2: ...,quota,jqfmt=vfsold,...
+>> kmsg: no output
+>>
+>> [After commit]
+>> mount#1: ...,quota,jqfmt=vfsold,usrjquota=aquota.user,...
+>> mount#2: ...,quota,jqfmt=vfsold,usrjquota=aquota.user,...
+>> kmsg: "user quota file already specified"
+>>
+>> [After patch]
+>> mount#1: ...,quota,jqfmt=vfsold,usrjquota=aquota.user,...
+>> mount#2: ...,quota,jqfmt=vfsold,...
+>> kmsg: "remove qf_name aquota.user"
+>>
+>> Fixes: d18535132523 ("f2fs: separate the options parsing and options checking")
+>> Cc: Hongbo Li <lihongbo22@huawei.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>   fs/f2fs/super.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 465604fdc5dd..07f6c8cac07a 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1219,8 +1219,11 @@ static int f2fs_check_quota_consistency(struct fs_context *fc,
+>>                   goto err_jquota_change;
+>>                 if (old_qname) {
+>> -                if (new_qname &&
+>> -                    strcmp(old_qname, new_qname) == 0) {
+>> +                if (!new_qname) {
+> 
+> Thanks for catching this. Do we also need the patch 1/2 ? It seems this patch also solve the syzbot problems.
 
-Perhaps, something like "memory_add_get_nid_by_phys" may work here?
->
-> This patch is making matters worse by stripping that detail, unfortunatel=
-y.
->
->
-> --
-> Cheers
->
-> David / dhildenb
->
-Thanks and Regards
-Pratyush
+I prefer to split it, since it'd better to use one patch to resolve one
+problem. :)
+
+Thanks,
+
+> 
+> Thanks,
+> Hongbo
+> 
+>> +                    f2fs_info(sbi, "remove qf_name %s",
+>> +                                old_qname);
+>> +                    continue;
+>> +                } else if (strcmp(old_qname, new_qname) == 0) {
+>>                       ctx->qname_mask &= ~(1 << i);
+>>                       continue;
+>>                   }
+
 
