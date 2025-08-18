@@ -1,129 +1,302 @@
-Return-Path: <linux-kernel+bounces-773852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CABCB2AB8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:51:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09862B2AB91
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA4F1BC5E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F78F1B653C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B527E231836;
-	Mon, 18 Aug 2025 14:30:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519651624C5;
-	Mon, 18 Aug 2025 14:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24A23D2AB;
+	Mon, 18 Aug 2025 14:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k/UzzCxh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A747523815D;
+	Mon, 18 Aug 2025 14:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527419; cv=none; b=tWlarf8Aja8EgFwUmzPbG8WDFnLa4+Flf+T5Wsl7JrffpbqEuWpY4s5f5+Naw/+ZkXj6cEVMuxSSWt4WU5Gxs15pBU5XK9c7nI0+2hJjzanEXffZljuLEzevVRs1l+0pzOe+A67bCAAk2Vp6ueoD/+1b5GFComOrcQOpqrx3z3M=
+	t=1755527462; cv=none; b=eP+Uo7JhgIT/4b72kchehbYcBRxqpdKDNosaRoo49N+s45MuqdWJqvitLXqW2CJ4KtXcD2kNPjlUWxqCaX9QSLqIsSqNHrWe3cim5XaG2FoGMF/n2lsQMRd5NoK2tz2wuGQsHd9dwqUUratHaq2GhFU5EJH2H8WxjK7jI0HtcQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527419; c=relaxed/simple;
-	bh=k+W6ZWMIkn25jUyNMFtX6rNmrziEa+B3M/eWxufJOlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZbjgxLrO2CtXjupGVQn/XSw5QwUtdw8kHNsMc/gQiXARY0Ko/C2qYRpOwP9+pyAz3obnPu8KRISARloAeiWCQ89GmIhU3L6SajNRhxVEnV2rYtBujkqhwfL7GaZzm7nuXQKc/tTY+4n4YpnfXF/BHC0VlKbicjhyCDosY31hHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C0571596;
-	Mon, 18 Aug 2025 07:30:05 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37D7D3F63F;
-	Mon, 18 Aug 2025 07:30:13 -0700 (PDT)
-Date: Mon, 18 Aug 2025 15:30:11 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	kernel@oss.qualcomm.com, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] coresight-tnoc: Add runtime PM support for
- Interconnect TNOC
-Message-ID: <20250818143011.GB8071@e132581.arm.com>
-References: <20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com>
- <20250815-itnoc-v1-3-62c8e4f7ad32@oss.qualcomm.com>
+	s=arc-20240116; t=1755527462; c=relaxed/simple;
+	bh=iJAMC0HCJO7tKBZkMQPbzlc8d29ZVJcuKp1kUO5veFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iEOxcq4S+J7M/viteUyxtwwm9fKPP/sf1haSwkEeJDT6e3myO5764vqUrS9NEatVn14TyOSicNHcYsWlvjpHNEiae8iS963b0PNQABVT7KiK24M/UQdlEdCXaWvmusfHi+nILVyQ5DzeYQnTW9oJTqMoyZiswMhKfSU5SH+tetA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k/UzzCxh; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755527461; x=1787063461;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=iJAMC0HCJO7tKBZkMQPbzlc8d29ZVJcuKp1kUO5veFQ=;
+  b=k/UzzCxhitapn/0yF6/mjJrnd6sNMyxfuZ0NVsYdxRGcYn/FSV+6bN7m
+   le7vhPy1OhHrvlCc4gDLXfjd3vtph8ppPU2AIrdUM85KpkXOqVSdDLRFq
+   NLjikw5LvT1EiRizeHV8SJohQE5QIbH3OXJlR7hrdE60yfm/fpfHq/b0b
+   +MAh6NyHMXK8nfv6jsJR2iIRHk/HeT0UD7b5THH+PuLqoBu8glFRdYfHh
+   g7bBoeXorGcP+cWgorlja2exStKSBhP2bHqgMHDPBak8BWKZ1H8Iy8BdJ
+   92pyFP0FXrCcWQGH66Owsdc7iI7mYp/V5q5cNM+ReU4F2sW67DJTSe5Cp
+   A==;
+X-CSE-ConnectionGUID: dZZWDnmiTS+cBjNXZlSlXQ==
+X-CSE-MsgGUID: fn4GtpqlSUergW1Vvzh3Bw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="61377964"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61377964"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:31:00 -0700
+X-CSE-ConnectionGUID: n3NaAbFuSNCUSRnuczmQtw==
+X-CSE-MsgGUID: 34KBZ80xT7u9ev+HWcfQEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="172796445"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com ([10.245.245.221])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:30:57 -0700
+From: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Chris Wilson <chris.p.wilson@linux.intel.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org
+Subject:
+ Re: [PATCH 4/4] dma-buf/fence-chain: Speed up processing of rearmed callbacks
+Date: Mon, 18 Aug 2025 16:30:54 +0200
+Message-ID: <2443311.NG923GbCHz@jkrzyszt-mobl2.ger.corp.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173,
+ 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <0920872a-6f8d-4301-b9fb-c8fa54b7ffe7@amd.com>
+References:
+ <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+ <20250814094824.217142-10-janusz.krzysztofik@linux.intel.com>
+ <0920872a-6f8d-4301-b9fb-c8fa54b7ffe7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-itnoc-v1-3-62c8e4f7ad32@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Aug 15, 2025 at 06:18:14AM -0700, Yuanfang Zhang wrote:
-> This patch adds runtime power management support for platform-based
-> CoreSight Interconnect TNOC (ITNOC) devices. It introduces suspend and
-> resume callbacks to manage the APB clock (`pclk`) during device runtime
-> transitions.
-> 
-> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-tnoc.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-> index aa6f48d838c00d71eff22c18e34e00b93755fd82..f12a1698824bc678545319a3f482fd27e67a7352 100644
-> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
-> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-> @@ -270,6 +270,31 @@ static void itnoc_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  }
->  
-> +#ifdef CONFIG_PM
-> +static int itnoc_runtime_suspend(struct device *dev)
-> +{
-> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
-> +
-> +	clk_disable_unprepare(drvdata->pclk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int itnoc_runtime_resume(struct device *dev)
-> +{
-> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(drvdata->pclk);
-> +
-> +	return ret;
+Hi Christian,
 
-Here can be simplified:
+On Thursday, 14 August 2025 14:24:29 CEST Christian K=C3=B6nig wrote:
+>=20
+> On 14.08.25 10:16, Janusz Krzysztofik wrote:
+> > When first user starts waiting on a not yet signaled fence of a chain
+> > link, a dma_fence_chain callback is added to a user fence of that link.
+> > When the user fence of that chain link is then signaled, the chain is
+> > traversed in search for a first not signaled link and the callback is
+> > rearmed on a user fence of that link.
+> >=20
+> > Since chain fences may be exposed to user space, e.g. over drm_syncobj
+> > IOCTLs, users may start waiting on any link of the chain, then many lin=
+ks
+> > of a chain may have signaling enabled and their callbacks added to their
+> > user fences.  Once an arbitrary user fence is signaled, all
+> > dma_fence_chain callbacks added to it so far must be rearmed to another
+> > user fence of the chain.  In extreme scenarios, when all N links of a
+> > chain are awaited and then signaled in reverse order, the dma_fence_cha=
+in
+> > callback may be called up to N * (N + 1) / 2 times (an arithmetic serie=
+s).
+> >=20
+> > To avoid that potential excessive accumulation of dma_fence_chain
+> > callbacks, rearm a trimmed-down, signal only callback version to the ba=
+se
+> > fence of a previous link, if not yet signaled, otherwise just signal the
+> > base fence of the current link instead of traversing the chain in search
+> > for a first not signaled link and moving all callbacks collected so far=
+ to
+> > a user fence of that link.
+>=20
+> Well clear NAK to that! You can easily overflow the kernel stack with tha=
+t!
 
-    return clk_prepare_enable(drvdata->pclk);
+I'll be happy to propose a better solution, but for that I need to understa=
+nd=20
+better your message.  Could you please point out an exact piece of the=20
+proposed code and/or describe a scenario where you can see the risk of stac=
+k=20
+overflow?
 
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops itnoc_dev_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(itnoc_runtime_suspend, itnoc_runtime_resume, NULL)
-> +};
-> +
->  static const struct of_device_id itnoc_of_match[] = {
->  	{ .compatible = "qcom,coresight-itnoc" },
->  	{}
-> @@ -282,6 +307,7 @@ static struct platform_driver itnoc_driver = {
->  	.driver = {
->  		.name = "coresight-itnoc",
->  		.of_match_table = itnoc_of_match,
-> +		.pm = &itnoc_dev_pm_ops,
->  	},
->  };
->  
-> 
-> -- 
-> 2.34.1
-> 
-> _______________________________________________
-> CoreSight mailing list -- coresight@lists.linaro.org
-> To unsubscribe send an email to coresight-leave@lists.linaro.org
+>=20
+> Additional to this messing with the fence ops outside of the dma_fence co=
+de is an absolute no-go.
+
+Could you please explain what piece of code you are referring to when you s=
+ay=20
+"messing with the fence ops outside the dma_fence code"?  If not this patch=
+=20
+then which particular one of this series did you mean?  I'm assuming you=20
+didn't mean drm_syncobj code that I mentioned in my commit descriptions.
+
+Thanks,
+Janusz
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12904
+> > Suggested-by: Chris Wilson <chris.p.wilson@linux.intel.com>
+> > Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+> > ---
+> >  drivers/dma-buf/dma-fence-chain.c | 101 +++++++++++++++++++++++++-----
+> >  1 file changed, 84 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/drivers/dma-buf/dma-fence-chain.c b/drivers/dma-buf/dma-fe=
+nce-chain.c
+> > index a8a90acf4f34d..90eff264ee05c 100644
+> > --- a/drivers/dma-buf/dma-fence-chain.c
+> > +++ b/drivers/dma-buf/dma-fence-chain.c
+> > @@ -119,46 +119,113 @@ static const char *dma_fence_chain_get_timeline_=
+name(struct dma_fence *fence)
+> >          return "unbound";
+> >  }
+> > =20
+> > -static void dma_fence_chain_irq_work(struct irq_work *work)
+> > +static void signal_irq_work(struct irq_work *work)
+> >  {
+> >  	struct dma_fence_chain *chain;
+> > =20
+> >  	chain =3D container_of(work, typeof(*chain), work);
+> > =20
+> > -	/* Try to rearm the callback */
+> > -	if (!dma_fence_chain_enable_signaling(&chain->base))
+> > -		/* Ok, we are done. No more unsignaled fences left */
+> > -		dma_fence_signal(&chain->base);
+> > +	dma_fence_signal(&chain->base);
+> >  	dma_fence_put(&chain->base);
+> >  }
+> > =20
+> > -static void dma_fence_chain_cb(struct dma_fence *f, struct dma_fence_c=
+b *cb)
+> > +static void signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+> > +{
+> > +	struct dma_fence_chain *chain;
+> > +
+> > +	chain =3D container_of(cb, typeof(*chain), cb);
+> > +	init_irq_work(&chain->work, signal_irq_work);
+> > +	irq_work_queue(&chain->work);
+> > +}
+> > +
+> > +static void rearm_irq_work(struct irq_work *work)
+> > +{
+> > +	struct dma_fence_chain *chain;
+> > +	struct dma_fence *prev;
+> > +
+> > +	chain =3D container_of(work, typeof(*chain), work);
+> > +
+> > +	rcu_read_lock();
+> > +	prev =3D rcu_dereference(chain->prev);
+> > +	if (prev && dma_fence_add_callback(prev, &chain->cb, signal_cb))
+> > +		prev =3D NULL;
+> > +	rcu_read_unlock();
+> > +	if (prev)
+> > +		return;
+> > +
+> > +	/* Ok, we are done. No more unsignaled fences left */
+> > +	signal_irq_work(work);
+> > +}
+> > +
+> > +static inline bool fence_is_signaled__nested(struct dma_fence *fence)
+> > +{
+> > +	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+> > +		return true;
+> > +
+> > +	if (fence->ops->signaled && fence->ops->signaled(fence)) {
+> > +		unsigned long flags;
+> > +
+> > +		spin_lock_irqsave_nested(fence->lock, flags, SINGLE_DEPTH_NESTING);
+> > +		dma_fence_signal_locked(fence);
+> > +		spin_unlock_irqrestore(fence->lock, flags);
+> > +
+> > +		return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +static bool prev_is_signaled(struct dma_fence_chain *chain)
+> > +{
+> > +	struct dma_fence *prev;
+> > +	bool result;
+> > +
+> > +	rcu_read_lock();
+> > +	prev =3D rcu_dereference(chain->prev);
+> > +	result =3D !prev || fence_is_signaled__nested(prev);
+> > +	rcu_read_unlock();
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +static void rearm_or_signal_cb(struct dma_fence *f, struct dma_fence_c=
+b *cb)
+> >  {
+> >  	struct dma_fence_chain *chain;
+> > =20
+> >  	chain =3D container_of(cb, typeof(*chain), cb);
+> > -	init_irq_work(&chain->work, dma_fence_chain_irq_work);
+> > +	if (prev_is_signaled(chain)) {
+> > +		/* Ok, we are done. No more unsignaled fences left */
+> > +		init_irq_work(&chain->work, signal_irq_work);
+> > +	} else {
+> > +		/* Try to rearm the callback */
+> > +		init_irq_work(&chain->work, rearm_irq_work);
+> > +	}
+> > +
+> >  	irq_work_queue(&chain->work);
+> > -	dma_fence_put(f);
+> >  }
+> > =20
+> >  static bool dma_fence_chain_enable_signaling(struct dma_fence *fence)
+> >  {
+> >  	struct dma_fence_chain *head =3D to_dma_fence_chain(fence);
+> > +	int err =3D -ENOENT;
+> > =20
+> > -	dma_fence_get(&head->base);
+> > -	dma_fence_chain_for_each(fence, &head->base) {
+> > -		struct dma_fence *f =3D dma_fence_chain_contained(fence);
+> > +	if (WARN_ON(!head))
+> > +		return false;
+> > =20
+> > -		dma_fence_get(f);
+> > -		if (!dma_fence_add_callback(f, &head->cb, dma_fence_chain_cb)) {
+> > +	dma_fence_get(fence);
+> > +	if (head->fence)
+> > +		err =3D dma_fence_add_callback(head->fence, &head->cb, rearm_or_sign=
+al_cb);
+> > +	if (err) {
+> > +		if (prev_is_signaled(head)) {
+> >  			dma_fence_put(fence);
+> > -			return true;
+> > +		} else {
+> > +			init_irq_work(&head->work, rearm_irq_work);
+> > +			irq_work_queue(&head->work);
+> > +			err =3D 0;
+> >  		}
+> > -		dma_fence_put(f);
+> >  	}
+> > -	dma_fence_put(&head->base);
+> > -	return false;
+> > +
+> > +	return !err;
+> >  }
+> > =20
+> >  static bool dma_fence_chain_signaled(struct dma_fence *fence)
+>=20
+>=20
+
+
+
+
 
