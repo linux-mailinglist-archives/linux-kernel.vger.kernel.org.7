@@ -1,43 +1,80 @@
-Return-Path: <linux-kernel+bounces-773015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C286B29A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:03:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B3DB29A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24AB95E64A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118DE7ACE0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF6327C162;
-	Mon, 18 Aug 2025 06:58:42 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C627BF99;
+	Mon, 18 Aug 2025 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpmx6xQ/"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCA7278772;
-	Mon, 18 Aug 2025 06:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C4D27876A;
+	Mon, 18 Aug 2025 06:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500322; cv=none; b=W7ZF422jMcC3ht44sKVTXXsRAEEio8zd6LF6fGHPzTNxlktwAi8we4rnXBThz/zk+oEhzy2fsP6/Z4RMF8BQ5q04Enzr12y39V0lGTDzOMMnp1Ek5FZDy+a8hJtMjfpJ/V1rq4+z8f9gcNtbYQ2i/qmMto4knkUHCRaWMLG9WXg=
+	t=1755500269; cv=none; b=R9TeNIwVzhRNwW/TWmzF+EXgfHWY+cTc9Yg9ZFQrLilDJh9SRghaDPKOfZUMTwmY0FuPLtuQ0Stc0+2qzLevQuNBxbqfmfoFSezz2lrMsBzACa9LLlGyyQGYelAT7Lq5c9o8K41h4liw+EziUiPQmCdIbBlu98S/eHvvDCA+Yok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500322; c=relaxed/simple;
-	bh=ubUFzesfUYXlPF17yj2IvT/HDmVZpKMUPllKQ1ADwfo=;
+	s=arc-20240116; t=1755500269; c=relaxed/simple;
+	bh=VIIO1Ddvq/2Tvip1mlgLuURtsD3Hezu0NuUVGwFs0AU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h5DSUwMnRXQWQ1ipJ3fbYE5adnV+pGPUkAbgxCoI3/2rHpSG/yH/3gHvfyWTBpUpyw7Ztji5En8mpH08zcdUKTpaErUsNemP2nqXn/K12mYMPYdjcUUqgTBU6ZhdZ8tMueb1HtdCtRsNANL6KQVe6Tyae55DweQL3dOJUj46t/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip4t1755500244t6fc68c41
-X-QQ-Originating-IP: sLmbQl3vBpNZ30bWX5N0sBTYr4LYaC7/m/aS7e2wyqY=
-Received: from [IPV6:240f:10b:7440:1:e696:3c18 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 14:57:21 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1927108559509469176
-Message-ID: <BCD8E43E564BC334+1e45d36f-edc7-4c3c-90c9-7b0f2a52360f@radxa.com>
-Date: Mon, 18 Aug 2025 15:57:21 +0900
+	 In-Reply-To:Content-Type; b=PDzRrwLupz7AaI4CBYqOKJRXYOEeOXo5c7c11hv0eYYODcO9DSfnYB1TcFNyfIz4NpEwuF0nVunF77iWc7e35Py/icmkhgstd+Mx8UclP1BepyJwxYBqFzxpSeJrqjqSGwOa8qW0FRLO/IJrt2qpKg9JmsGZdwEX49mh6fo/qfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpmx6xQ/; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce509127bso2870640e87.0;
+        Sun, 17 Aug 2025 23:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755500266; x=1756105066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fT+mslwXDBpZyiRy+Srmj0nFRd3SCnBkaKd9wV14TaI=;
+        b=hpmx6xQ/9GfEbt2FE2tamIOgocuPrWpN/LdLz950eRpnaz/bi5OGtHKMrh5YLGPRtp
+         z3CxTAVJpO+RaNfsm/YR9EEKthFx7j0svx/ODl4wL3X6HT6WT7kp4jlsgVnwfcWD2obM
+         HqZKs2/HqIbfk8tAL69BqS9nC+/voqOJplPm3ke2cABgsKiHhQYGeocGYck6pr5oJquV
+         /cXjCAo79gbhOQlqeK+oK+BfjDbCNVlx2l1nTbSmIVMQHVC7R4+o8eeM4FxAnedC2LhW
+         20u/+sQ3foC/pgYrt1buOx0TeRCC0GoeZnUGcsNWMP3t3qvyh7eULxjtR89Tvox0EWs3
+         Zb8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755500266; x=1756105066;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fT+mslwXDBpZyiRy+Srmj0nFRd3SCnBkaKd9wV14TaI=;
+        b=MdP72FPWrL+5WoeeX1kGXpmuNXTcgIPznyjbfL9yd5s3A5+gJ4aIZ0xtPOS5yXLEQj
+         wHfuu1fIgnfDtqAbfGw+mf7RWshZ5iGhhGCcvgnPRD0Vde7OFHrSXuOcZdQGfcQ+QAEc
+         1tipXHu3bkqfF0qb40tVIrTVhzSSb+0UVAtszXdex++nfpVVwBjlTMWFeJ5xA36TCQhD
+         /38ujXm6A4ALCosEFnEHNjMot/8zcYQmvQ5blr5rK/Ysecl5RTIuwr848Hgu/6TOBVR8
+         8dxCA2RyiPcBzdI2mEU4EU4Aw7bIpsiFzHtOcQQCISUSAYx5avaGgFv+3oUfUPs77poa
+         bO5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPLPWXX+XN5Wk1Dt5cvAIZ3BeuF3/7iV5wzPuWKCfAKTqUBA5BoVxk6QvKU99xrKPD+lOTrWQMxJmUlc1j@vger.kernel.org, AJvYcCWkbg8AEPJZT+HJnf06AeT/+ictvW3MZcitljve+AIe+LDx0MDqvUTgnMxHv2aJh8aoCpM6IGyUe7mwFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiSQeRZVHc+zzAiM8YpezGKiqEKp/L1vYPalAZ6RZD5dnWu9Zb
+	dXHmqJvcgwi7Wq2xIiwoOs/1eQ7obqKwXzfWuVXpCE7LWmHpKpNgiaox
+X-Gm-Gg: ASbGncuQ21z8xDd0MLfgWr0IchyBPfS2/JUFJR4cfQPkJ63EcTMWsBUaul7Qkbd9RQi
+	bDgYkLo4W5Mlu60o9+WRCI+ZJ34LdfM9RBGtltuzsvXMs1T6yBiOO8+VFl1WA3Zi9a3VL5NXKJt
+	XFM0CLmmpSi48fFKTgeN0tY3d0fg66/2zbq15metj7ng/9XTunq5gQOjaIpUVaaS/zp2Qgwln0B
+	GaFYqxnqDKyZiZjxfknrG1kocO1gBKMcyVyFwL6r7jimyqRXJMCPdMF88njuSm84S5GS3YrzU3d
+	KO/Yq8t9ALTRiPNBC1Kleo4TLACKc9biujpY0ilZunjGvLzSLZIcIutpbUnSGWcLdNX4pATOems
+	1Dl3ywjLOXCY1WzroQPi5rgexrwlKhhde+cjR+qTDHPUIldHOyMVu5i4VBMTBgD24nqlq/FEb69
+	dJJUkLzoXGEva9CEKnAfu+CyQr
+X-Google-Smtp-Source: AGHT+IGcaeQ8FuTrtKrzfNJ/q5x6HgjoAMfdIRafAYOq22ATmyShL+bb1qQM+av9ulhVac5DpR80bw==
+X-Received: by 2002:a05:6512:e9d:b0:553:2869:3a5 with SMTP id 2adb3069b0e04-55ceebae4f4mr2902840e87.48.1755500266029;
+        Sun, 17 Aug 2025 23:57:46 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351685sm1563858e87.36.2025.08.17.23.57.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 23:57:45 -0700 (PDT)
+Message-ID: <b15d7ac4-c751-4db8-a825-1e864570de37@gmail.com>
+Date: Mon, 18 Aug 2025 09:57:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,102 +82,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: rockchip: remove vcc_3v3_pmu regulator
- for Radxa E52C
-To: Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250816080030.183931-1-amadeus@jmu.edu.cn>
- <20250816080030.183931-3-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20250816080030.183931-3-amadeus@jmu.edu.cn>
+Subject: Re: [PATCH 3/3] mfd: rohm-bd718x7: Use software nodes for gpio-keys
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
+ <20250817224731.1911207-3-dmitry.torokhov@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250817224731.1911207-3-dmitry.torokhov@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OBUGnm9pFasAcNPGHYEMAopgoh5OwK6sDVK9bpqjd4LE8UhdUNPQ9bKd
-	Eft9UalMA+yEWVadv5T6zu8vxV885J/dFccTojhVAHOFPp4bMUXBCPSVwxd/LFYHuOK47Dk
-	4Pf3qcgL8BXEGSElSYv/4M8iBjpN221bvXwzxf8nlQimUGPyLQFOc72o8jk3WWvQhwvyVJk
-	N++pAcPjMhGi6EZwh8mYFVZg8yybg6OL6jAIN7DcfscMlSpCA8Qm9BAnPvA/XkZcLkrF01P
-	cU83tt+n0jxG39QLqnam+jEniLdShLddKJpN7FbQ2IQRhhuJ2Ae7yC3JcwKiCT1KRbm4L1o
-	55uisvFusSs0snQ/pBidg1zdinBWowBbUbTp7c8FAiQ3SQBuQYY+nIhOCmHoVoOoDd/6qgj
-	UodG2CUSlHj/UxAcVPHDdRkZdBlyz6sAK4fqG9pvdQyfmyqzrqx3oUcWNhkOMSa17XUl/Hl
-	tw5v+HFbDJHUDLX7y4vkfJ8KD7h3qGV82mlWgSmYDhnD+Bx433C4H/vuMDSSlCygbJcAXYS
-	GnUuBjWqcKWV3RO4rzkM7+PZ/y31YoyU4/OE+PQjp36PmdLMnnYOx7ej8A6Rqy4uVBjZVju
-	mm1vqI8w1mdjpQ0tpi4GE+V7+7eotK1libg4gEWWS6MPlRetQn+mA3zAeuvXFrUy+u86pYG
-	g1Z8L0iK+doHUhhyvrAAPkOpsbObkDjS39ZocN/zY5mCTx9X/ryvHW6198iVAC+/Up8vsy9
-	+fVElV2mut9qi7JF001tr4iGW13YAvuTWAYMrXmCX24wgwq7UfcPTNaLwbjtdyveMt+4m1X
-	+TNSjx6dHnY53Sl57Uexu6tfzD9aYWezAGfdJukbeaqFefyzxG0b0yJvDyuT6aBdqJ7tFYx
-	dA8bU2U7pDMLx3DkNj7CWf2L6B0DHJ3aqhVAhfZeiGRmuJPZ8iLjsey9UFpnQUc42aadKSJ
-	H6FS267F7p60Ccr3jSDqVod3S4fvQq+gpNU3Ro0JRGPZmOyoQ/dCAxDiNy1xoW7jBvN4=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-Hi Chukun,
-
-On 8/16/25 17:00, Chukun Pan wrote:
-> According to Radxa E52C Schematic V1.2 [1] page 5, vcc_3v3_pmu
-> is directly connected to vcc_3v3_s3 via a 0 ohm resistor.
-> The vcc_3v3_pmu is not a new regulator, so remove it.
+On 18/08/2025 01:47, Dmitry Torokhov wrote:
+> Refactor the rohm-bd7182x7 MFD driver to use software nodes for
+> instantiating the gpio-keys child device, replacing the old
+> platform_data mechanism.
 > 
-> [1] https://dl.radxa.com/e/e52c/hw/radxa_e52c_v1.2_schematic.pdf
+> The power key's properties are now defined using software nodes and
+> property entries. The IRQ is passed as a resource attached to the
+> platform device.
 > 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> This will allow dropping support for using platform data for configuring
+> gpio-keys in the future.
 > ---
->   arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts | 12 +-----------
->   1 file changed, 1 insertion(+), 11 deletions(-)
+>   drivers/mfd/rohm-bd718x7.c | 76 ++++++++++++++++++++++++++++++--------
+>   1 file changed, 60 insertions(+), 16 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> index 1883bd183396..4a3ae95f122f 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> @@ -98,16 +98,6 @@ vcc_1v1_nldo_s3: regulator-1v1 {
->   		vin-supply = <&vcc_sysin>;
->   	};
+> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+> index 25e494a93d48..20150656ac9c 100644
+> --- a/drivers/mfd/rohm-bd718x7.c
+> +++ b/drivers/mfd/rohm-bd718x7.c
+> @@ -7,7 +7,6 @@
+>   // Datasheet for BD71837MWV available from
+>   // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+
+...
+
 >   
-> -	vcc_3v3_pmu: regulator-3v3-0 {
-> -		compatible = "regulator-fixed";
-> -		regulator-name = "vcc_3v3_pmu";
-> -		regulator-always-on;
-> -		regulator-boot-on;
-> -		regulator-min-microvolt = <3300000>;
-> -		regulator-max-microvolt = <3300000>;
-> -		vin-supply = <&vcc_3v3_s3>;
-> -	};
-> -
->   	vcc_3v3_s0: regulator-3v3-1 {
->   		compatible = "regulator-fixed";
->   		regulator-name = "vcc_3v3_s0";
-> @@ -255,7 +245,7 @@ eeprom@50 {
->   		reg = <0x50>;
->   		pagesize = <16>;
->   		read-only;
-> -		vcc-supply = <&vcc_3v3_pmu>;
-> +		vcc-supply = <&vcc_3v3_s3>;
+> +static int bd718xx_reg_cnt;
+> +
+> +static int bd718xx_i2c_register_swnodes(void)
+> +{
+> +	int error;
+> +
+> +	if (bd718xx_reg_cnt == 0) {
+> +		error = software_node_register_node_group(bd718xx_swnodes);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	bd718xx_reg_cnt++;
+> +	return 0;
+> +}
+> +
+> +static void bd718xx_i2c_unregister_swnodes(void *dummy)
+> +{
+> +	if (bd718xx_reg_cnt != 0) {
+> +		software_node_unregister_node_group(bd718xx_swnodes);
+> +		bd718xx_reg_cnt--;
+> +	}
+> +}
 
-How about the following instead?
+Same questions here as with the patch 2/3.
 
-@@ -538,7 +538,7 @@ regulator-state-mem {
-  				};
-  			};
 
--			vcc_3v3_s3: dcdc-reg8 {
-+			vcc_3v3_pmu: vcc_3v3_s3: dcdc-reg8 {
-  				regulator-name = "vcc_3v3_s3";
-  				regulator-always-on;
-  				regulator-boot-on;
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
->   	};
->   };
->   
-
+Yours,
+	-- Matti
 
