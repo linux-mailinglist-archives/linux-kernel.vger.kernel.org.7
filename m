@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-773401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF43B29F53
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:44:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5246DB29F5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29531179509
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:43:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 461317B14CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C982765EB;
-	Mon, 18 Aug 2025 10:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419012765E6;
+	Mon, 18 Aug 2025 10:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVk7WmVZ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyQ4oDw+"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1783D2765CC;
-	Mon, 18 Aug 2025 10:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D02765DC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755513823; cv=none; b=dXhyXrWE/epzg8PjHxBy6IGk5vY+rq7q1U17egud/1SeADoVjQBu8gM5HSVUlRTa9bnVVGZDougwIOxpM1WcA5FXzLFRAs/X057iGf86v2IVklIv0F+BFrei5NpoO38NcvSc6RH836dvHD2IQgU0dhWZQrSVj0+caxYrjUxXwik=
+	t=1755513901; cv=none; b=qJ/YUWz9zVridHjkuYT+1EEJbBiMUcrCf2TgQt1A4DgBw9WkR1Kg52uWSFIFm1ojZC86evp1J0u6a19l9PbohRNmkrcy12lUCFzuiJXKbr1LQ+k5tP3Bbamjb9EJ7ifF0Lgk1ZZGFL2v7KZ9vzKzWLVdxbTspk63RGQnN5/7T6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755513823; c=relaxed/simple;
-	bh=Zt1gMmCEWLI3/oLyfWB5PLNg8I5VQKWHXz3FvR8qYiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLWjBybmOFmBKwArpUNVfx5IVXrqAAHd5v/lAn8p+6tsQxFc007utTDwr/OwFV85prVbhkkkflxFg7TZMWPfZL8sRQFPxxsff+slj5/ZscXVg6mH+hwCKpCwjy5KRTXbDsNFkQ9QjFaJKGbdPbQijsN8KtYeYvbK1eFr7bLbyVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVk7WmVZ; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1755513901; c=relaxed/simple;
+	bh=MBA6o00TkcecMryApG+WnoZ7je8vQgyjmV3JMU0jG0c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Giw0JcZOhN9F1OUBSS0rSrO7LswBuJNQl76ietSPDDh11kFr+tGMCNa28t3pJzX3rNqnenEFzAG3WRiJ5u4NqutiDvHfGiLtAsLCK7yJnOpbwQk/IbOlw0FAwl29EXuOddKmVMmRel927UUythpyw1yblYUXVsrirqtx2HKON2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyQ4oDw+; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9d41d2a5cso2961307f8f.0;
-        Mon, 18 Aug 2025 03:43:41 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-321cf75482fso4436785a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:45:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755513820; x=1756118620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6r3SaHRyW0coFrYXSGevRrDyhzWvwUgHlOXlsOiQukM=;
-        b=fVk7WmVZS3E/gwjIuPgq1VN1wVMdSOJAHm0z/3N0o9V89LwcM8ffe3tK3O6ztLdHPF
-         5F/4WMbXlC0KFbP98MXxfARrUAvV4Z+7fHGyAvoqAgtsRIsQDG/UDkVtL8+1xNfd3+Ug
-         Py8qt6QXC8/D3dLuFQo708nE+aoheWX/vMpp/oIcikPbMuV5QLmeb/UlVNQid1k7TSdX
-         aP+F2QiFG1RJwewDdYOs1siPJdpPx35XNTA9F+bMBC7ZATgzewsEUX7BKuPNhsk2UGrJ
-         DHR8CHdWOKqEKnfv88u3KiP4r4NwCpJe/oiK38LWXgqt7nmfEFiDnoTipau3c+uSTTkN
-         FAaA==
+        d=gmail.com; s=20230601; t=1755513900; x=1756118700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zI/Nt7+AGO/rMAajmGnpXgwvKkgy60LC/B+5yT8wMm4=;
+        b=CyQ4oDw+AMo3W8KR2eoWaD0wqH/cxTw2iAToqNI2AFRoWa4HjbuADJBN9B3Gag6Aq9
+         djuWtMNB3dIqq9C10cnAZdY8aIurCsaQFmp2UA7HquR1okP7OI2SYhQ1yziz6quodUk4
+         W0wRhOsF8vlI8MQDrNiUO2CZsuDhY7KIvu+vWeIrUSfidHHiPyyVt9RdrUMpnwTyDWs1
+         5iq4AxqKkVweSysE2tAnGJtX7bu7XqC/Ij7kDWTq/cJjmeLsTrnnjr5HiHUt486krKOP
+         zVIWMKEwWkC/CM3Q7lCZCH47pKbix/BFO+bEEcTXFnqCXkoPDcflKAyVfdvLzlJu1GSq
+         EdTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755513820; x=1756118620;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6r3SaHRyW0coFrYXSGevRrDyhzWvwUgHlOXlsOiQukM=;
-        b=L6wDgM8MT3ASTKVJ8C3NUtj43WyMfFM/e4Z/6PZfXibs3q1diImlGPJFD4H9aRuowo
-         62bswpRSlNAFnIxRjz7kDFEW2QCC2RqWxlRUKcU/lBC/IyC/szrNw5mexVrCu7A97Gap
-         0GieHjQ+kHXWj4PrKqL1L9GToiNfNHxzpBufyLWmuXLcTWF/CK0wMPruyD8oDt/qBEHR
-         pbxVxq9cXSmXDuXfopUVP7U3N3zSTyR/+UMe1iC/2qPYstFutgbDIyz4bOwSRP9TCwpq
-         1rnQhYefV+LjpcJ4Za/LKK15misSo6QRmHQbz1YBrJtz/pvejNV4pPwjHpO5ZYlJ+EEi
-         8rDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUddrRQS89iqxFjgL5veu6LxRDrD0mcrdjC5lXvHbaCKzmf6SeZn43jUhiCHEbmo1/4lspoPQbDN/cWg2Il@vger.kernel.org, AJvYcCX275Mn+0dduomMGPngzpWdFmTlyiW/RSPWRr5cEXCMMimHT1WEIitkOGIQETyQUsBGz/iaEUpukfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm9EOjP2YLsdjo18oOxL8HCS3ZTaazNvYV7I/O+9onTBgaxOkh
-	icFFhQpy1EjP48XGiznS5PVTm4sowDtgShc/HZavSNN4Aw8kvFpoMkYQ
-X-Gm-Gg: ASbGnctVO/Xw+QJ47ZYz8+XUC/z+DzIaVMI7IWH+j6toxqI12oojdycEMnRKqio1g86
-	nSn4DkISmS56K64PYSffS/K893UTjEzZY2mc3gxLj7DsUCbpyxN4FSFkHUrrn6n0f966ZiOLr7f
-	BbDcXw2MrDCe9cS+w0Z7pWCXbP9TA4glbIp58UMTxbOB49znrGiTAtEZkIE0dWXT3nHy9JOUhqL
-	1Py2ZSat5SwG1qJ/LxQWhyPoqQ4G8UPFMbycPSk5Af7dyLEdhwStKXBp26AhCcbNt4y913n3Zc+
-	nmHZIZzlCM2In8Uk66vcgaHUYCOBk/qxnPX95Pmsh4Dp2KGgu4P6suB97cNvZhrkUNzu4Y3XIvz
-	239I2uEvtro2P7LWk/cpKmsMDIR5a2g1+BkWbQkQHLHtdGxIzx07IZv4UjBHSYvnZtBr2YlE+tW
-	Ci4+wuBg==
-X-Google-Smtp-Source: AGHT+IFsKR1Ldy5RQ1PDhrHI0xRfPnmBR+5bPKLtaVpXzp3YgdHRXH22mh0OTnGitE+mCt+Wq/AYAg==
-X-Received: by 2002:a05:6000:2501:b0:3b7:8af8:b91d with SMTP id ffacd0b85a97d-3bc69cc2bd2mr6578410f8f.35.1755513820124;
-        Mon, 18 Aug 2025 03:43:40 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::5:7223])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a23327809sm70936965e9.5.2025.08.18.03.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 03:43:39 -0700 (PDT)
-Message-ID: <5560e517-aa26-4693-baf7-e618bec3c5fa@gmail.com>
-Date: Mon, 18 Aug 2025 11:43:35 +0100
+        d=1e100.net; s=20230601; t=1755513900; x=1756118700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zI/Nt7+AGO/rMAajmGnpXgwvKkgy60LC/B+5yT8wMm4=;
+        b=uWxjxh6jiNx0KfP9tVu3vjNvWUrwCCkbqeuNoPGNexEBKJqlILC0dKq2ta8NxNd/XL
+         xj6TF1sS2+zCwky9EZGAyAo73QK/3NMzyQNmCfalRSw/qpBfG2e2kyjXoJSjTmrxkd8X
+         gkYdKTXHc/fn4ZKGVCirj9j6Fwl1lQt4vDaj+7J+0t2WBn8Oj3EQltOOOIi6eaNXAvmw
+         Xwj8p9dvviF5ZzG9uSY9mCf0FLvABuIwKHxtC/4TdWUm1Xk55WsmOY8KL3spa03CUWZJ
+         4g0XM2UD5iueyznU6h65HfPgtpuzyybwMOytvH1op9O5/3gYImmm+UrCt3gzV+puzjeO
+         BZ/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXHXISkkzyuc9DarFicm5kKp23dVjMlYuOoCRM4iHSZuHaRaRgTojsxCbvezeag9WfIBUpM7aFjS0CaFSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeNyOXguMXhqlPPNi2H4/I0lrHBASTJq7e0Vq2F5XhrO4UMNmk
+	jtMCsgQulYCekjmkI5Bs/MECGi1W/1M+BIhgf2w4wdQy+NGykHyN51F8
+X-Gm-Gg: ASbGnctvE0hQT/TEy6WlpNaug68ZJ+lJySjR0wl3jW/fnNbbAAqj83s1el8FDoM5UmB
+	oLWtGKOkEHcS1svhTT5tFgUmv/fpKoHa2gGDQkC6IKoWB7wTlfJRPJ/4eTDnZxIFBrJ+H8DTauG
+	wVNNmX8TcMfxYKSiLDWS2hEWqiysnFaiitr37qJi1I602+z7XZs2G+XqJKcNxbsxncllOloX0Ot
+	qVb6iQ4W3uJLBJFxy7RhtQOhQzsZCTJqnKlW7ZAtiyERKkqAR8hAekKu5lhKmfeJu3OV3o+eg4E
+	ucGYLWqGhvs8QnlFhl5kw8Uz+rvvsrWQJvH+VOiXWEeH2ywrLToGp7k2zLm9MuUQQ62/kauvfg3
+	c6ec5Nx6U2ogEWjgdwm00f0Mi7DF0p3AttBrOJDbDKwNalSc=
+X-Google-Smtp-Source: AGHT+IGc3taSpgAHHOh+V9gwAudEbx1xMbNbGjmO8awFFHCg5952fVvLo7stUlBiQSuCkc+xHp06sg==
+X-Received: by 2002:a17:90b:2c86:b0:31e:f36a:3532 with SMTP id 98e67ed59e1d1-323297ac223mr24272393a91.13.1755513899400;
+        Mon, 18 Aug 2025 03:44:59 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:8899:4b76:ead:acf9:f900:1070])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d5a6df6sm7793773a12.1.2025.08.18.03.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 03:44:59 -0700 (PDT)
+From: darshanrathod475@gmail.com
+To: lyude@redhat.com,
+	dakr@kernel.org
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Darshan Rathod <darshanrathod475@gmail.com>
+Subject: [PATCH] drm/nouveau: move assignment out of condition and fix spacing
+Date: Mon, 18 Aug 2025 16:14:51 +0530
+Message-Id: <20250818104451.916585-1-darshanrathod475@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
- THPs completely
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-7-usamaarif642@gmail.com>
- <a385e09f-f582-4ede-9e60-1d85cee02a3c@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <a385e09f-f582-4ede-9e60-1d85cee02a3c@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Darshan Rathod <darshanrathod475@gmail.com>
 
+Simplify conditional logic by moving the assignment of pll_lim.reg
+to reg1 out of the if() statement. Also adjust spacing in an if()
+statement for consistency with kernel style.
 
-On 18/08/2025 10:36, David Hildenbrand wrote:
->> +
->> +TEST_F(prctl_thp_disable_completely, fork)
->> +{
->> +    int ret = 0;
->> +    pid_t pid;
->> +
->> +    /* Make sure prctl changes are carried across fork */
->> +    pid = fork();
->> +    ASSERT_GE(pid, 0);
->> +
->> +    if (!pid)
->> +        prctl_thp_disable_completely_test(_metadata, self->pmdsize, variant->thp_policy);
->> +
-> 
-> Skimming over this once more ... this raises two questions
-> 
-> (a) There is nothing to wait for in the child
-> (b) Does it work when we return in the child from this function?
-> 
-> I think (b) works by design of the kselftest_harness, as this function is
-> itself executed from a child process.
-> 
-> Regarding (a), it might be cleaner to just
-> 
+Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+---
+ drivers/gpu/drm/nouveau/dispnv04/hw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Makes sense, thanks for pointing this out! Have sent the fixlets.
+diff --git a/drivers/gpu/drm/nouveau/dispnv04/hw.c b/drivers/gpu/drm/nouveau/dispnv04/hw.c
+index 8b376f9c8746..165ba41422a5 100644
+--- a/drivers/gpu/drm/nouveau/dispnv04/hw.c
++++ b/drivers/gpu/drm/nouveau/dispnv04/hw.c
+@@ -172,7 +172,9 @@ nouveau_hw_get_pllvals(struct drm_device *dev, enum nvbios_pll_type plltype,
+ 	int ret;
+ 
+ 	ret = nvbios_pll_parse(bios, plltype, &pll_lim);
+-	if (ret || !(reg1 = pll_lim.reg))
++	reg1 = pll_lim.reg;
++
++	if (ret || !reg1)
+ 		return -ENOENT;
+ 
+ 	pll1 = nvif_rd32(device, reg1);
+@@ -747,7 +749,7 @@ nv_load_state_ext(struct drm_device *dev, int head,
+ 			/* Not waiting for vertical retrace before modifying
+ 			   CRE_53/CRE_54 causes lockups. */
+ 			nvif_msec(&drm->client.device, 650,
+-				if ( (nvif_rd32(device, NV_PRMCIO_INP0__COLOR) & 8))
++				if ((nvif_rd32(device, NV_PRMCIO_INP0__COLOR) & 8))
+ 					break;
+ 			);
+ 			nvif_msec(&drm->client.device, 650,
+-- 
+2.25.1
+
 
