@@ -1,181 +1,256 @@
-Return-Path: <linux-kernel+bounces-773032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CA8B29AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:17:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D5DB29AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3CB1888956
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4161889ACB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D6B279DAE;
-	Mon, 18 Aug 2025 07:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BF8277003;
+	Mon, 18 Aug 2025 07:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="teFAK1vl"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DoXE5yg/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wwbFLpb2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DoXE5yg/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wwbFLpb2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF5A277003
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC78E27A468
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501460; cv=none; b=Ssg6/pekX8JCMfosjmnCYtdNpP1PksO+m97PDqlJagrEA3fO5XhGx6EcIqUKfiNJmJSGBW5bjgTR+3AbExpjEBEnO/YTRPlFGzPzhwBwTyqHUD2pSile8UGK/hiW3Ra2Fbmvr5Sk7a1ddwd9X8h1NRmkBbQQeOqQJWQrHR4DXoQ=
+	t=1755501466; cv=none; b=RZsQCNvaPsLQAV1xkmmIJVJSpQ9obEE+ztLSIAHX3mYHGUto2WrUU15TfL51nrh8KBFb095Umo5axc8b6F2oS/GDjg2/ZoweOEP9SseTQtPAFtN1ASMqrOQ60hw5WCgd2blwzPkJnINVae/bQ+iGSPftUD7m+Yjn2yNF3bKwNBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501460; c=relaxed/simple;
-	bh=GRtOJJ4TU25SLYLaBruGe/0cKnzINtKI69UBlywJ0HU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=G/m1+RuXn3j3c5maQPDTey3YocDl+3AXLA1q+4PUUFjcU4M5xuBvAXOjUZQvKakRhSQ1C0wVA0Fo35Do6rOe6P1TeKpGxQFlgxfQV3KpaVhvtcSFa+1tt9fBZ5jcvLg22wNvAqm80dr+NsoRrC4O3Aksea4Axvx69RW4cWQKRgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=teFAK1vl; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9d41c1149so2909568f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:17:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755501455; x=1756106255; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=00HmFiTKWlOUviqLOmDiviucp/G1KSLyabeRXjoLhH4=;
-        b=teFAK1vlqjAnOufj1cK0esDy07iK6gIPAZO+Kj1pmsTWtYWHEi5Damcdt8kobHlO0n
-         +EfMwuo5qdITFKs+ESDzB91C+xpDuInUEVpmKHoQ3aVz7VNki8YCwvssIVO4QWNL1p4f
-         5o5KIrpybG816yrbD0w7hgF9hWhREA22eGasZUsmpmyPUwtOYkM9yrIbBKXIPmAqQLiD
-         qgb4EJcRMokq4Iht9/A24DqEmIYFH5h92RR99dWD5xuwzF6KjFttfFa+dqDVkqOu5P/m
-         wNnzcOdX9QvIngar97NEu59zd/7fue9bPHitIyhUfSeaGvLnsjhWKdSjDy7dSM7m7k09
-         N5/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755501455; x=1756106255;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=00HmFiTKWlOUviqLOmDiviucp/G1KSLyabeRXjoLhH4=;
-        b=c+psPPYbApRxNIPedpjaWKz6164STHIU8i5dBWMLDNQXfNCVIsuIXp4PlRZB+h7Ue3
-         hdMOVfx1X9mtyH2b1BdtrVCLgmIJ2VPDzj52lFltXH/LORFz6Rmp75zppbxu9MyWyz+H
-         uM1ZJ2UTAF9HPQVIQs/+dnOU9Njec/kBOcTh77boxNMDxFe35HUGZdJjyvgyQB40ISsR
-         K853K+jLMMl8G4tNSjmdbJOk4uMyVaRCtUCWMcBYVy3A9nGtxYpQEqegc9FC7SwGu83h
-         qiCOTXSXwIjCYqRhxpZiIJ5yT2QHz9Ms95+DlBr2NDiJ3CKqowvJk19tWrCwHDgYDhz8
-         9zVA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7p4q3tTyDEo0T9V/kkZYe1if8gmcXEtEW7UvVc2Q6huwcYSkDw0U4jVuj/LthVVCVWvbhBSZqgTBHlNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWIpJOqsAFilwm4grQlEkr+RpkKTgJ+w+vsqN4LzCtlFkKyuJE
-	wU8DhJnE9R/89puMR59yJkHX45wvVWU5XRvuGadPX+yf9AYHXiDxcXsX5iQ5YMrEQbI=
-X-Gm-Gg: ASbGncs5UhCOhNN+9jG99DwlHSQwbugAd4L/6M4zV+cV3zRD/gWADZ5o0NcuGqtw5KA
-	2qpIzHFHR5vGRfNo4lfzBGc/pjolL3aWzRhigklEMoB5ZoXgtbUakHJJJ5Ljm9zF+AYTMZG5xAI
-	eDQWWXh+Wn8EnKkJS4CzQTF4qr+PmCl8zARL1Wp1pYzSQRJSQZVtUU92qFYs9CZDzEoBvDdFSF4
-	5GcM0APZj0ZI2u0gpPE8i7jHvf4xTLaJtembztfWYvLc9Hfe1Mznz3uejk7RCDuSCGn2yGgEgJu
-	4EybMFno7k36oQGJhN7FZ9xVlSXtGC7U8OVyYGzdFJiqqgHkvteQ8GWfwWOmhkdWhiOY4W3sAgo
-	SD/nl6CArqyfBfxeZzvRl7NFwLoiYIC4vYtekdnGCFgo=
-X-Google-Smtp-Source: AGHT+IHyrx5So2JkHy8B3V9n10eIVkllRTMcnOfbIYL9Fak+QjG/0EyC3RMUePQ7ZAM0RE6YfPigZA==
-X-Received: by 2002:a05:6000:250c:b0:3b7:8473:31c3 with SMTP id ffacd0b85a97d-3bb6646e10amr7831271f8f.9.1755501455230;
-        Mon, 18 Aug 2025 00:17:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb67c902dbsm11683675f8f.47.2025.08.18.00.17.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 00:17:34 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:17:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Guodong Xu <guodong@riscstar.com>,
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	duje@dujemihanovic.xyz
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Alex Elder <elder@riscstar.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Guodong Xu <guodong@riscstar.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v4 4/8] dmaengine: mmp_pdma: Add operations structure for
- controller abstraction
-Message-ID: <202508181040.az8RxLrG-lkp@intel.com>
+	s=arc-20240116; t=1755501466; c=relaxed/simple;
+	bh=/yTT29+KsVPprWmJEfrkkbBe5FhxSOJp2jDGhNZbZic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/0XBgXsnr4o4xYylf4+XHX04rVbrTO8otRuZKTJebaPxuLd9bEN3tRfMwnZRe2rJwQh8SvEAzfC3ZAXwP7Yy0nUfCPKCqoj8+2Ei0WwZZgs89RUSDqmnXSVn129d23Z7Zs1h4Ma2awLJWHiJyYXJlaCQu3q9yTpgcg/T20ZxFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DoXE5yg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wwbFLpb2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DoXE5yg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wwbFLpb2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 10E0E211EA;
+	Mon, 18 Aug 2025 07:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755501463; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mN+6g6/ncisl6DggwDS80FBm/cP2ZsvfuYuaOXsBmws=;
+	b=DoXE5yg/b3i+WFGpekbzrhblDxHOOlMZ1nZeK+TwJCbFrFoBSB1ILc/EgSceh/wT75txVX
+	/k9YDCOAetDPDdDpncZeA7dnrG4IFr2cc8Ic7CDMgPSj6Yzyiq5gjZOCQr8/e6ADsinPkw
+	I3YLhmWcfXGBQT2H4Z8ctPGe3xZuFyA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755501463;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mN+6g6/ncisl6DggwDS80FBm/cP2ZsvfuYuaOXsBmws=;
+	b=wwbFLpb2WvSJ4Bl8LwH/NT1lLtP6UgAMRG4IOKFnP3OijVbNUIMJnnFwKqkeiiFa0JwKZi
+	7mqjKD2K/jBNMqDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="DoXE5yg/";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wwbFLpb2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755501463; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mN+6g6/ncisl6DggwDS80FBm/cP2ZsvfuYuaOXsBmws=;
+	b=DoXE5yg/b3i+WFGpekbzrhblDxHOOlMZ1nZeK+TwJCbFrFoBSB1ILc/EgSceh/wT75txVX
+	/k9YDCOAetDPDdDpncZeA7dnrG4IFr2cc8Ic7CDMgPSj6Yzyiq5gjZOCQr8/e6ADsinPkw
+	I3YLhmWcfXGBQT2H4Z8ctPGe3xZuFyA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755501463;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mN+6g6/ncisl6DggwDS80FBm/cP2ZsvfuYuaOXsBmws=;
+	b=wwbFLpb2WvSJ4Bl8LwH/NT1lLtP6UgAMRG4IOKFnP3OijVbNUIMJnnFwKqkeiiFa0JwKZi
+	7mqjKD2K/jBNMqDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF4E213A55;
+	Mon, 18 Aug 2025 07:17:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DQz0LJbTomivEAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 07:17:42 +0000
+Message-ID: <d74f16f0-9615-4816-a49c-efa35b9ab344@suse.de>
+Date: Mon, 18 Aug 2025 09:17:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-working_dma_0701_v2-v4-4-62145ab6ea30@riscstar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/vesadrm: Match framebuffer device by id instead
+ of driver name
+To: Yao Zi <ziyao@disroot.org>, Javier Martinez Canillas
+ <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250816153430.51235-1-ziyao@disroot.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250816153430.51235-1-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 10E0E211EA
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[disroot.org,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -6.51
 
-Hi Guodong,
+Hi
 
-kernel test robot noticed the following build warnings:
+Am 16.08.25 um 17:34 schrieb Yao Zi:
+> Currently the driver matches the platform framebuffer device registered
+> by sysfb through driver name, "vesa-framebuffer", this is a little
+> confusing since this driver registers a DRM device, instead of a
+> framebuffer.
+>
+> Moreover, we have a driver with the same name, enabled by
+> CONFIG_FB_VESA, that acts as a consumer of vesa-framebuffer as well.
+> They cannot be both loaded into the kernel.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guodong-Xu/dt-bindings-dma-Add-SpacemiT-K1-PDMA-controller/20250815-132049
-base:   062b3e4a1f880f104a8d4b90b767788786aa7b78
-patch link:    https://lore.kernel.org/r/20250815-working_dma_0701_v2-v4-4-62145ab6ea30%40riscstar.com
-patch subject: [PATCH v4 4/8] dmaengine: mmp_pdma: Add operations structure for controller abstraction
-config: parisc-randconfig-r072-20250818 (https://download.01.org/0day-ci/archive/20250818/202508181040.az8RxLrG-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
+That is intentional and desired. Please pick one of the drivers and use 
+that. Vesafb is obsolete, but it's slightly smaller footprint might make 
+s difference on ancient systems. For anything new, vesadrm is a better 
+choice.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202508181040.az8RxLrG-lkp@intel.com/
+>
+> Making these two drivers coexist is sometimes useful, e.g., a
+> distribution may want to build fbcon into the kernel image for debugging
+> purpose, but keep the whole DRM subsystem enabled as module. In such
+> case vesadrm could serve as a solution for running DRM-specific
+> userspace programs on platforms with only VESA VBIOS available.
 
-smatch warnings:
-drivers/dma/mmp_pdma.c:546 mmp_pdma_prep_memcpy() warn: variable dereferenced before check 'dchan' (see line 542)
-drivers/dma/mmp_pdma.c:712 mmp_pdma_prep_dma_cyclic() warn: variable dereferenced before check 'dchan' (see line 708)
+You can do debugging with vesadrm as well. We also have DRM-based panic 
+output if you just want the stack trace. If that's not enough, please 
+build better debugging infrastructure for DRM.
 
-vim +/dchan +546 drivers/dma/mmp_pdma.c
+>
+> Let's rename the driver as "vesa-display" to avoid possible confusion.
+> A platform_device_id table is introduced to match "vesa-framebuffer"
+> devices.
 
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  536  static struct dma_async_tx_descriptor *
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  537  mmp_pdma_prep_memcpy(struct dma_chan *dchan,
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  538  		     dma_addr_t dma_dst, dma_addr_t dma_src,
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  539  		     size_t len, unsigned long flags)
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  540  {
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  541  	struct mmp_pdma_chan *chan;
-918da7ee50b22b Guodong Xu       2025-08-15 @542  	struct mmp_pdma_device *pdev = to_mmp_pdma_dev(dchan->device);
-                                                                                                       ^^^^^^^^^^^^^
-The patch adds a new dereference
+NAK.
 
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  543  	struct mmp_pdma_desc_sw *first = NULL, *prev = NULL, *new;
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  544  	size_t copy = 0;
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  545  
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03 @546  	if (!dchan)
-                                                            ^^^^^^
-But the old existing code assumed dchan could be NULL
+Best regards
+Thomas
 
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  547  		return NULL;
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  548  
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  549  	if (!len)
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  550  		return NULL;
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  551  
-c8acd6aa6bed3c Zhangfei Gao     2012-09-03  552  	chan = to_mmp_pdma_chan(dchan);
-
-[ snip ]
-
-2b7f65b11d87f9 Joe Perches      2013-11-17  701  static struct dma_async_tx_descriptor *
-2b7f65b11d87f9 Joe Perches      2013-11-17  702  mmp_pdma_prep_dma_cyclic(struct dma_chan *dchan,
-2b7f65b11d87f9 Joe Perches      2013-11-17  703  			 dma_addr_t buf_addr, size_t len, size_t period_len,
-2b7f65b11d87f9 Joe Perches      2013-11-17  704  			 enum dma_transfer_direction direction,
-31c1e5a1350ae8 Laurent Pinchart 2014-08-01  705  			 unsigned long flags)
-50440d74aae318 Daniel Mack      2013-08-21  706  {
-50440d74aae318 Daniel Mack      2013-08-21  707  	struct mmp_pdma_chan *chan;
-918da7ee50b22b Guodong Xu       2025-08-15 @708  	struct mmp_pdma_device *pdev = to_mmp_pdma_dev(dchan->device);
-                                                                                                       ^^^^^^^^^^^^^
-
-
-50440d74aae318 Daniel Mack      2013-08-21  709  	struct mmp_pdma_desc_sw *first = NULL, *prev = NULL, *new;
-50440d74aae318 Daniel Mack      2013-08-21  710  	dma_addr_t dma_src, dma_dst;
-50440d74aae318 Daniel Mack      2013-08-21  711  
-50440d74aae318 Daniel Mack      2013-08-21 @712  	if (!dchan || !len || !period_len)
-                                                            ^^^^^^
-Same.
-
-
-50440d74aae318 Daniel Mack      2013-08-21  713  		return NULL;
-50440d74aae318 Daniel Mack      2013-08-21  714  
-50440d74aae318 Daniel Mack      2013-08-21  715  	/* the buffer length must be a multiple of period_len */
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>   drivers/gpu/drm/sysfb/vesadrm.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sysfb/vesadrm.c b/drivers/gpu/drm/sysfb/vesadrm.c
+> index 90615e9ac86b..16635dc3d5cc 100644
+> --- a/drivers/gpu/drm/sysfb/vesadrm.c
+> +++ b/drivers/gpu/drm/sysfb/vesadrm.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/aperture.h>
+>   #include <linux/ioport.h>
+>   #include <linux/limits.h>
+> +#include <linux/mod_devicetable.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/screen_info.h>
+>   
+> @@ -517,10 +518,17 @@ static void vesadrm_remove(struct platform_device *pdev)
+>   	drm_dev_unplug(dev);
+>   }
+>   
+> +static const struct platform_device_id vesadrm_platform_id[] = {
+> +	{ "vesa-framebuffer" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, vesadrm_platform_id);
+> +
+>   static struct platform_driver vesadrm_platform_driver = {
+>   	.driver = {
+> -		.name = "vesa-framebuffer",
+> +		.name = "vesa-display",
+>   	},
+> +	.id_table = vesadrm_platform_id,
+>   	.probe = vesadrm_probe,
+>   	.remove = vesadrm_remove,
+>   };
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
