@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-773200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B42AB29CA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:48:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBA1B29D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283A319631AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03FE83B7B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EC2307AF6;
-	Mon, 18 Aug 2025 08:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmkXj6v8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0E7302CB9;
-	Mon, 18 Aug 2025 08:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253AD30DEDD;
+	Mon, 18 Aug 2025 09:20:52 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001DF2D7D42;
+	Mon, 18 Aug 2025 09:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506726; cv=none; b=FpxNirh3x3I1roOt27cxEIboJUjZsH9qePHw34qLUiatbzMWbdLXwp0eibswiYY+QFQ7NScO2zM6vrrBrstHYO/4/d6TwHfQkzEMxsM1lLAgboY3Z9CSLVHodSBHCu+ah8Yg0gwblz0xHuCDwOqC/W7aDkx6iB8dnN8jvGZ6cg0=
+	t=1755508851; cv=none; b=LWuAXsaaVrG8s5Ev329YjA0UQPsDu6XBOpVESZpQ1yZ1coS8qp1se6WEZv1wzFE4VrfojGND2Qbv31sm7zZ4zgIrk0lCURnqiBqcPmprq7eADmBk3SLXCE+/QnkNpYZ26/olc2S5+483kMbeswKB+Nm9Scn1Ad4FbJPw3KeiE7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506726; c=relaxed/simple;
-	bh=aOYWObx4Fq92sxZHONfJQ6t1WE5Gg23eP/MPjI057uE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZ8fc8Meckdu6BHnqBQtdU+lpHFekjEZqMMMYHvP42VcczG9wfpMmdSaHzSHeB98RSIbpf7+k5J8eQzMbL5bvLQf7OIiIO9QRTc4rYBNDeN9Aczk1tQrjlzvmk3o26aPV1CWpKU+ikldHavGNfZwkhgWoOiceBaJmshrKNYmIIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmkXj6v8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31712C4CEEB;
-	Mon, 18 Aug 2025 08:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755506725;
-	bh=aOYWObx4Fq92sxZHONfJQ6t1WE5Gg23eP/MPjI057uE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PmkXj6v8SuiPkJ+tr7JC9jcbehHDz8moMhpjM8Ps4LL8n/rCzxgD1/aW/zVKfqZAk
-	 WFPqLMikWTvz02jyNkmqAauE/d0QZ6V9YRDBJifL/NOZ7Vd0RgG5lranzzhE817i1n
-	 R2JPbPsRfG8bDwtn8lHhEDwT2ncjEN/KLGewsD/oGM8lrzS6V6gkbZiH9k2FR3YpJX
-	 2j3O0pb4/7H0Nc047/IS25pAylpb/VqCUG4qq9RS6OjOGlTyMu4JJu/KzkqQgnDvCD
-	 wgAyCLEW5lRrXVrHzcyY9ZGi0xx8clqiJ2ZoLKAD+xn9bbbYFMEEPCTc4dMmHXN6zX
-	 29Hl86hAl8sRA==
-Message-ID: <c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
-Date: Mon, 18 Aug 2025 10:45:17 +0200
+	s=arc-20240116; t=1755508851; c=relaxed/simple;
+	bh=0zMxvMtVDYI3C0qUdfZ4EOBxyOcB0ghTKA2N/7FYUng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JTGO6j9jvE+ICCZMw2MSSSVO6CmGf9dyJm3cy7DkAcoVH3VUZNJoP33hjeAGn6BeWWFSeoBAr6wwUqrBusWJJ15SrU5cwYFeO/stNWwmm6N2fx0kBmm1szRMgnxrqgOUFR9C+xuyMSKHfSE9ZRgq2nae/++fhkNoKl0xrt/EfXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c55sY4xgJz9sWj;
+	Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id TKGrlbOf_Qrh; Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c55sY45ysz9sWh;
+	Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 767258B765;
+	Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MrqQklRryYxw; Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4E0F48B763;
+	Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/5] Add support of IRQs to QUICC ENGINE GPIOs
+Date: Mon, 18 Aug 2025 10:45:53 +0200
+Message-ID: <cover.1755506608.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
- controller
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
- <20250814140943.22531-11-inbaraj.e@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814140943.22531-11-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755506759; l=1744; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=0zMxvMtVDYI3C0qUdfZ4EOBxyOcB0ghTKA2N/7FYUng=; b=tL7X0n2yGtytrRK48Qz0+3gJn380KbagfKlBBXXWBcvgq0NLI5zZcEzp21zG1+Ed5JQcE+B8J 79JqZWIKUf0B1fKRLDVzvS9O6zqRvtkttEaDYwlmtNYrscdF30FdLSz
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On 14/08/2025 16:09, Inbaraj E wrote:
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - iommus
-> +  - port
+The QUICC Engine provides interrupts for a few I/O ports. This is
+handled via a separate interrupt ID and managed via a triplet of
+dedicated registers hosted by the SoC.
 
-Also, you miss here supplies (as required).
+Implement an interrupt driver for those IRQs then add IRQs capability to
+the QUICC ENGINE GPIOs.
 
-Best regards,
-Krzysztof
+The number of GPIOs for which interrupts are supported depends on
+the microcontroller:
+- mpc8323 has 10 GPIOS supporting interrupts
+- mpc8360 has 28 GPIOS supporting interrupts
+- mpc8568 has 18 GPIOS supporting interrupts
+
+Changes in v2:
+- Fixed warning on PPC64 build (Patch 1)
+- Using devm_kzalloc() instead of kzalloc (Patch 2)
+- Stop using of-mm-gpiochip (New patch 3)
+- Added fsl,qe-gpio-irq-mask propertie in DT binding doc (Patch 4)
+- Fixed problems reported by 'make dt_binding_check' (Patch 5)
+
+Christophe Leroy (5):
+  soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
+  soc: fsl: qe: Change GPIO driver to a proper platform driver
+  soc: fsl: qe: Drop legacy-of-mm-gpiochip.h header from GPIO driver
+  soc: fsl: qe: Add support of IRQ in QE GPIO
+  dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC
+    Engine Ports
+
+ .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       |  58 +++++++
+ .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     |  19 +++
+ arch/powerpc/platforms/Kconfig                |   1 -
+ drivers/soc/fsl/qe/Makefile                   |   2 +-
+ drivers/soc/fsl/qe/gpio.c                     | 145 +++++++++-------
+ drivers/soc/fsl/qe/qe_ports_ic.c              | 156 ++++++++++++++++++
+ 6 files changed, 322 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+ create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
+
+-- 
+2.49.0
+
 
