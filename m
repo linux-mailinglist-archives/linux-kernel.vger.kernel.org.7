@@ -1,184 +1,137 @@
-Return-Path: <linux-kernel+bounces-774145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2D7B2AF0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37897B2AF1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176087AE57A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272B9565C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E832C313;
-	Mon, 18 Aug 2025 17:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838832C32D;
+	Mon, 18 Aug 2025 17:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnGllH9e"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kvOsrAjx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2243920322;
-	Mon, 18 Aug 2025 17:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CA132C302;
+	Mon, 18 Aug 2025 17:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537074; cv=none; b=TI6ZHfJ0w1PuUpRlk58MhyYZLUGRn2D+6ow4NM5xcj+Am/NNQ6O9pWkDH+BnTAP/cZZhT68QUA8aPxXY9HynkVHOIlfcz7HTJTCKsnIJD0QI6CnE2AGimzmQoHMf1o6umkyxSNIQhn+R8yQJyqsAinokzTK5uIqrn+CGzeirdFc=
+	t=1755537161; cv=none; b=K5rBRUIACbunhCuUXLeiqNCdnhjJmZU1aM7YA7QOMLTHkykMYnYIgCOkgARlozoiMCi2G4CdoW1ihmMrXiAoxKnsDFHV2CK865ggRByaOvxj15ObA47a87aOVsfZIQDuXZBV5wGyIVgY3bK9FEPfVm7AKG1dmYoDiJCFNfQXju8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537074; c=relaxed/simple;
-	bh=uvD9Lje1gnJp3DWXLEDE32C5QnDwuvbzSDzpB1cSEj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDK+6nkWNFDnu11v9QwOLZCHnKzx5wm84Q+hoVuHlr4+mRHkA+3z9Sigik4eyq702gq4vJzpgmfls23giVSKxdvqB5P6BTYHAruQaZxYzGc4Zbp1jIaT2FnbqUvfoz/fRowCj15WZoqK7Uv+Mxq1WwIDsyGdj67GDxvF/p0IGFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnGllH9e; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e71c31so3970937a91.3;
-        Mon, 18 Aug 2025 10:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755537072; x=1756141872; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HxE95o2q8GXx6WildR7NlQapGg7YDdXNHQ1dL1GhrD4=;
-        b=gnGllH9eHhuAe/2zSVHlX/drpLIJLGyheX8AMk6fmGhaWtPW0yOD6zztX1UQjhakbe
-         LDnLonbHja7wcmvRGWhIAuI4TmTbAaYYPGiHWHFP33VJD3EOxkg9c+qPBGNPHVsTWkh6
-         AM9hAIxpceN/Y4G/wWvWIFMcsO/S3oMZh2jH1fa8bpD1/4wnkYe4vfTbbnJuuNCSKy7o
-         VQvX2SngRAwD/g1ZQI9gtTLaiOlNmv9TwKvzKEJbTBM8J7Y0axXX/XUANZYPVQ0MOPYk
-         Ha34HuGIq13HcCIhabRGaIqFglw3TpjTGAIIRe0JthXPsRLa/4a9rQeCZuGX2V/SWxA3
-         Ax4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755537072; x=1756141872;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxE95o2q8GXx6WildR7NlQapGg7YDdXNHQ1dL1GhrD4=;
-        b=F+FnkmK24JKdvmS4Go97aRsmlbcPswGrSDsHN6AF+JmgCXOHdf9FCHpVa40U3FtxEF
-         WZWER6p9pzmV2JdjdYUbuX9FcHKmE/HrkrUc5ja5h+n5aG930lxp7SHr5UJ0iNdclmlJ
-         Aq4jQMo1RSeoPZq0qT0blGh4m3J738ElPpoz7TX9YYnYU9DqauIvSJAYH2nyrNJIh7lc
-         LvIE02RI2x8NcAftYqChJ7WFG67TGjs5E2yp8gssNXbWEDd5jqwGAG0oDXM76XKViK/+
-         UVBoziQ7Ypb4bTV10cwcxkXEyL55GE1O10twW5E3QcZFX4qEkGbTVKwf/9vyYCxoiR1v
-         CLyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6IGOHE16S8wY1vWPPXkuzmSVmMb5UhBLpWmNNpyK13Sg+RV4OrcGgyRJ+U8ZgmeifG/Li7H8Ttx0+GPkd@vger.kernel.org, AJvYcCUy8z+lDvzckzY08zqLAoaqOPForM9UiRebQPTV3wFz+sQc60AIX5IzTan2vETtke4azn+uLN7Mq9QVvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZOQQT+wMQNUxRFLifmcjX+XAto9rIhe2nP3RZmBZ+69044+UG
-	5SdNNfxgJz8+p+9lqiunvFOYS+tanI8+I2t2w/Gujcjy6y9r518fiGvG
-X-Gm-Gg: ASbGncstZZeHVyFjISHZZlKDXSQEh4xRWH14b+VMP/EiezyGn0jjN9QdV7062zRR9Tw
-	8qpCQFIXso/b5J29+wX4O9azmV3eG9fw3P/8ZrFRIJhQ0ZweBbsucsFywZjaC29F/vhM9XLAiqR
-	Qs1hRbuKbIsBenDAB7UleroQHoJlIdzSN/1wFdMTFs3jaNEzG/xnFeYZVrQC0yKNxdCm0K8USUR
-	foF9PMh3pN4WYfYZ0M9ebxPBFeknuZvUGK/2qZtB0NsZnd+6ZjEKWCvmB7YV7O0qWpOfBVXI6Rc
-	TaYVlhbr4TQ0HlG65SaMbTEoFyuZh9CvNZVl3StdisbifpHfBB+aHROtUi986YbVKe+a0+nuf97
-	OcVtVOzfSfqSKrUIgepFz0A==
-X-Google-Smtp-Source: AGHT+IHYXBI8/M1isgWQeERz7ruyifgpRjIHlyh4axSUb4fstkhdulG376culEc3ymsgweuRWtBXGw==
-X-Received: by 2002:a17:90b:6c6:b0:312:e8ed:758 with SMTP id 98e67ed59e1d1-3234db8e64amr12130269a91.13.1755537072146;
-        Mon, 18 Aug 2025 10:11:12 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3237e3d9c0asm459472a91.9.2025.08.18.10.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 10:11:11 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:11:09 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: rohm-bd71828: Use software nodes for gpio-keys
-Message-ID: <jnf7z5hlljmoxw6ud3vuz4jaohh2ewjnpparh2dpbhef7ea7vp@up74k2viwhad>
-References: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
- <20250817224731.1911207-2-dmitry.torokhov@gmail.com>
- <0adb5e0a-ea37-4bd5-87ff-654b770261f2@gmail.com>
- <a3fb7466-6774-4ae6-9e67-d35247ffa765@gmail.com>
+	s=arc-20240116; t=1755537161; c=relaxed/simple;
+	bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ldO+NKKOhF7ud61i6BOnoFwWNHc8+lsNBAjVrOAfPe59WbewvjeNhSME8bTtKxgt504+QTOjjirG1rZnTbvwTMD7o8hWIMiK6I7YY08nIIRsL4kJmGXu0qK1VdfNNi+084bYLLv3VApIu022wROa/8mQnjwgLSAcZ7+RkpMowWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kvOsrAjx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755537154;
+	bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=kvOsrAjxoBCrN6ZAjhHp+z6Fuy0Lo20VFIjJfaDaDPOCCe7o0JbPjwjYS76J3ubGS
+	 qWyd/zPiFeiVp7gohcE4Apj156HY4FeK0naTjIE4aMNyogQNoHW5f1ulEKp8N3x7o3
+	 clRVSYPBLI8GmMjwN1qULWlx2p8gWwti1duFk7LY1BqOh0eeskM7g33w8sn8+vPopz
+	 Ho2RU+lzNU2m+iwEitCoL5/vmWbtKsKVegkaJo3WlCjCZXUbT5gRYhwtZgs094fqld
+	 2986+acmaY0ilq+Mdwvvgp+X3L6+2PNnk9TYqKhwgSJP8S/Qd37H7z1fmDXfNn/YYk
+	 KbRBagbd5lMGQ==
+Received: from jupiter.universe (dyndsl-091-248-210-167.ewe-ip-backbone.de [91.248.210.167])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3B4B817E0DE3;
+	Mon, 18 Aug 2025 19:12:34 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id EF42B480044; Mon, 18 Aug 2025 19:12:33 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Date: Mon, 18 Aug 2025 19:12:23 +0200
+Subject: [PATCH] arm64: dts: rockchip: correct network description on Sige5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3fb7466-6774-4ae6-9e67-d35247ffa765@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250818-sige5-network-phy-clock-v1-1-87a9122d41c2@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPZeo2gC/x3MTQqAIBBA4avErBtQSZCuEi3KRhsKDY1+iO6et
+ PwW7z2QKTFlaKsHEh2cOYYCWVdg5yF4Qp6KQQmlhZEGM3vSGGg/Y1pwm2+0a7QLSiuF040ZtVJ
+ Q6i2R4+s/d/37fiaJqhRpAAAA
+X-Change-ID: 20250818-sige5-network-phy-clock-1c10f548b522
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1535; i=sre@kernel.org;
+ h=from:subject:message-id; bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGijXwGfiXygZXsYaSAVonahjYg5JoVKFCg4Q
+ 9VsgfeiOl0lzIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoo18BAAoJENju1/PI
+ O/qaZIAQAIivfyWW5RnxUMO+tth3rMGHps2imw6cUeNR4+0t9cuxpBEADAt80yezHZSyh+zsWxa
+ InHZXkOFhskpyVidwH20dSEH0nOLqfCppPrkMSBZWUtw9C7b7BEnsldbEhAzCL0FieWbcazhjmq
+ JtBVRaLQAvfyQvX4NuWJlkTgOlfSztBRMVEnsbDJVqmAEuUk/GRCyH+WMNV7L9YpoE8JZkLkcy3
+ KV6JGwY4R50uakSP0mGjCErSo03xyKFM9CKMD6P3NVfN6H6Gy5gWb1HFb4ZozKJQblkr9n5nxH3
+ seEihsfl+BPFnJXEr+pNWEgRZ66GGEllIte9hGnndUWLwKRlC8yw6Q1d8gYFHaQHqQ+If+IEUDo
+ vFmy9Fh7M8/afwO7GF5KLF4icJWbGo0iNNJK6jnHofAe54ZHsA+/zMSxyf/HrbCID+ClStZHDdL
+ iSgrMNzj299F/KmnOR2JJKdFUIHYdWLBq75vljDWrBwhLS0M0X/cJ0vi9vE0SSmFoYC/z0LDijE
+ a+5oAgxw4wkRqJ9Dvpsl7Yl9w8egD+C6+GSxTM9G1iOqsmGda9V5fKh3WG+CStHKHe8jekieNSu
+ +0bD8nubWi9aBe13EoFJV1bJc5JpyUHjJftLMwii8LZVNYtd4ZD5MgJaML4bou4fopZC80ayXc4
+ SsZ+jPlbGL6q2WEuwKbIgFQ==
+X-Developer-Key: i=sre@kernel.org; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On Mon, Aug 18, 2025 at 09:56:07AM +0300, Matti Vaittinen wrote:
-> On 18/08/2025 09:54, Matti Vaittinen wrote:
-> > On 18/08/2025 01:47, Dmitry Torokhov wrote:
-> > > Refactor the rohm-bd71828 MFD driver to use software nodes for
-> > > instantiating the gpio-keys child device, replacing the old
-> > > platform_data mechanism.
-> > 
-> > Thanks for doing this Dmitry! I believe I didn't understand how
-> > providing the IRQs via swnode works... :)
-> > 
-> > If I visit the ROHM office this week, then I will try to test this using
-> > the PMIC HW. (Next week I'll be in ELCE, and after it I have probably
-> > already forgotten this...)
-> > 
-> > > The power key's properties are now defined using software nodes and
-> > > property entries. The IRQ is passed as a resource attached to the
-> > > platform device.
-> > > 
-> > > This will allow dropping support for using platform data for configuring
-> > > gpio-keys in the future.
-> > > 
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > ---
-> > >   drivers/mfd/rohm-bd71828.c | 81 +++++++++++++++++++++++++++-----------
-> > >   1 file changed, 58 insertions(+), 23 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
-> > > index a14b7aa69c3c..c29dde9996b7 100644
-> > > --- a/drivers/mfd/rohm-bd71828.c
-> > > +++ b/drivers/mfd/rohm-bd71828.c
-> > > @@ -4,7 +4,6 @@
-> > 
-> > // ...snip
-> > 
-> > > +static int bd71828_reg_cnt;
-> > > +
-> > > +static int bd71828_i2c_register_swnodes(void)
-> > > +{
-> > > +    int error;
-> > > +
-> > > +    if (bd71828_reg_cnt == 0) {
-> > 
-> > Isn't this check racy...
-> > 
-> > > +        error = software_node_register_node_group(bd71828_swnodes);
-> > > +        if (error)
-> > > +            return error;
-> > > +    }
-> > > +
-> > > +    bd71828_reg_cnt++;
-> > 
-> > ... with this...
-> > 
-> > > +    return 0;
-> > > +}
-> > > +
-> > > +static void bd71828_i2c_unregister_swnodes(void *dummy)
-> > > +{
-> > > +    if (bd71828_reg_cnt != 0) {
-> > 
-> > ...this...
-> > 
-> > > +        software_node_unregister_node_group(bd71828_swnodes);
-> > > +        bd71828_reg_cnt--;
-> > 
-> > ...and this? Perhaps add a mutex or use atomics?
-> > 
-> > Also, shouldn't the software_node_unregister_node_group() be only called
-> > for the last instance to exit (Eg, "if (bd71828_reg_cnt == 0)" instead
-> > of the "if (bd71828_reg_cnt != 0) {")?
-> 
-> Oh. Probably "if (bd71828_reg_cnt == 1)".
+Both network PHYs have dedicated crystals for the 25 MHz clock
+and do not source it from the RK3576.
 
-You are right, I am not sure what I was thinking when I wrote this.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-I actually doubt that sharing of nodes between devices would work well.
-But I believe these devices are singletons, it should not be possible to
-have several of them in a single system, right? So maybe the best way is
-to simply instantiate them in probe and bail out if they are already
-registered.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+index 101e2ee9766d7bf5dc09eb29b66f5afd89985b76..3386084f63183efe62beea86bc6fe310cc4ed565 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+@@ -302,8 +302,7 @@ &gmac1 {
+ 		     &eth1m0_tx_bus2
+ 		     &eth1m0_rx_bus2
+ 		     &eth1m0_rgmii_clk
+-		     &eth1m0_rgmii_bus
+-		     &ethm0_clk1_25m_out>;
++		     &eth1m0_rgmii_bus>;
+ 	status = "okay";
+ };
+ 
+@@ -784,7 +783,6 @@ &mdio0 {
+ 	rgmii_phy0: phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <0x1>;
+-		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&gmac0_rst>;
+ 		reset-assert-us = <20000>;
+@@ -797,7 +795,6 @@ &mdio1 {
+ 	rgmii_phy1: phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <0x1>;
+-		clocks = <&cru REFCLKO25M_GMAC1_OUT>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&gmac1_rst>;
+ 		reset-assert-us = <20000>;
 
-Thanks.
+---
+base-commit: e05818ef75bee755fc56811cb54febf4174d7cf2
+change-id: 20250818-sige5-network-phy-clock-1c10f548b522
 
+Best regards,
 -- 
-Dmitry
+Sebastian Reichel <sre@kernel.org>
+
 
