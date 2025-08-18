@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-774107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19BEB2AEB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33D5B2AE95
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DF61B67B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514B468054C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF12534AB0B;
-	Mon, 18 Aug 2025 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6863342CA9;
+	Mon, 18 Aug 2025 16:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dmz4FAiB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BuaHtJtK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B82934AAF3;
-	Mon, 18 Aug 2025 16:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0CB1581EE;
+	Mon, 18 Aug 2025 16:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536301; cv=none; b=fGP5SUdnSeDYmpKPchPIy+G00+teand55qdlCjn48AJ5oB0FqEGU+XRvrTRH+kbtDQ1tLK+xcvTQ6s7c3v62+y5m8bCf13G9ptQANd+lBOyKEiO5XoJfJv2jk53/f1kNS66mUEpJvr/ZdeP7zCfko9IhUxhNenqtUbOZoVBjqrk=
+	t=1755536125; cv=none; b=Zi6W1k4c2Yo+/P83JaVSHJxgggkCoP5iKkJ5L4RULOJA/EGXSgrYYQy+W8Khef/vE8eEPTSwWxZ6ISFhpn9m+YsNtP2nFf9FUj8CxEcdZZyUOZmGoZ0CH6/QI3fX1RvNGHnatjv1yIRPlzAziurjP9hgB0w78wA4lrhkbWRNQHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536301; c=relaxed/simple;
-	bh=Rqws0mfAyO89sg9MY6EW3IwoREbSyg6Bwvu3ZMYwTr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V+eP2yCBQ9vr3tyxwGrYCS7zOwpN1H/22cizFnq1/WLPjkjJP6Y4RO9sbTmkKM544rAM0A6+PDSN66Jx98IhwEGo6VABwOYivQxktsjsCoCb/8dZ0wxUN0RiD9sGYLXb2iyBPG+wMyWqj/8kkAx7aPAR0gbsI+6nOTJfs6wUcnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dmz4FAiB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66BFC4CEF1;
-	Mon, 18 Aug 2025 16:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755536300;
-	bh=Rqws0mfAyO89sg9MY6EW3IwoREbSyg6Bwvu3ZMYwTr4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Dmz4FAiBn1SYCwojJLS4ZwOMsBHRF41inGx/JexLqlhLl+XI1Rpcy+ycv2XShntun
-	 J6giMjsk3sg0TiAhfzVaxi8fYUEf8MFXZ61JjlxkSi/uxWIZRpGTSdfrTyuLJN7KQB
-	 h/DNwT57Rc7IonfFMA9TutyjjF5w1VTvmkKPeOxDZ+xWEBFcG5LHrMVcb7GNHK0ikU
-	 tiy5y2gVX5cCSK+CAoch6j+oGzg9P3yrBXlAxQe/g6nAkzu3YjkaxFIWCk8biX25WG
-	 6/5D8QMZeRi/fP59BtA2uE7XB7thiFQ/MHvEUr5Mrvol4KhqxcCwj1Z3XS6CoyjuPF
-	 +Ax2kdIR+qCCA==
-From: Alexey Gladkov <legion@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Alexey Gladkov <legion@kernel.org>
-Subject: [PATCH v7 8/8] kbuild: vmlinux.unstripped should always depend on .vmlinux.export.o
-Date: Mon, 18 Aug 2025 18:55:02 +0200
-Message-ID: <b2d50fde039a0a7e2d1a9db6bae8b83cd4ec4856.1755535876.git.legion@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755535876.git.legion@kernel.org>
-References: <cover.1755535876.git.legion@kernel.org>
+	s=arc-20240116; t=1755536125; c=relaxed/simple;
+	bh=g4CIE3yRi37sTgTwAwcHt2iySMTeRTXJa+ahuYCtcgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwSN2VE7NQnxv3ynKq9DV2I8ZJjkWGXOu5x/RoH8ffhD9/Wz4/gacy1GhiNZL6Ud8Z1XgPXohbm084f7dcoB1gQXZN1P/P4OSIttErH6wu12qEZYHB6q7mAsMbe8HfPfl8SMFoxJA9+urXowui3vsa6sYPo/jWC7CnSlbwXcATQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BuaHtJtK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QnKxa06RRJ+jhOD5mej1Uo0AmcaFzK3gAg2IgogA8nA=; b=BuaHtJtKwkpSVs+iLrjnAgeJ7O
+	5wC3MHN5ZiBeBMxakDs1ESkotR2+U8lLXVfeKonj2SlFKfZtQYjjQuS5AGiz5Z+6EjJ/aTVN4qxGT
+	Y5LHvARE5CfCzuYOIMSF25jDTL1olqtjRLgTUzkXdvcB8l0eswi2QsykuQS4sVW8ruqs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uo38d-0055Cu-Up; Mon, 18 Aug 2025 18:55:15 +0200
+Date: Mon, 18 Aug 2025 18:55:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next v4 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
+ YT921x switch support
+Message-ID: <7c4bc4cc-61d5-40ce-b0d5-c47072ee2f16@lunn.ch>
+References: <20250818162445.1317670-1-mmyangfl@gmail.com>
+ <20250818162445.1317670-2-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818162445.1317670-2-mmyangfl@gmail.com>
 
-Since .vmlinux.export.c is used to add generated by modpost modaliases
-for builtin modules the .vmlinux.export.o is no longer optional and
-should always be created. The generation of this file is not dependent
-on CONFIG_MODULES.
+> +  motorcomm,switch-id:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Value selected by Pin SWITCH_ID_1 / SWITCH_ID_0.
+> +
+> +      Up to 4 chips can share the same MII port ('reg' in DT) by giving
+> +      different SWITCH_ID values. The default value should work if only one chip
+> +      is present.
+> +    enum: [0, 1, 2, 3]
+> +    default: 0
 
-Signed-off-by: Alexey Gladkov <legion@kernel.org>
+It is like getting blood from a stone.
+
+So what you are saying is that you have:
+
+    mdio {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        switch@1d {
+            compatible = "motorcomm,yt9215";
+            /* default 0x1d, alternate 0x0 */
+            reg = <0x1d>;
+            motorcomm,switch-id = <0>;
+            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+...
+	}
+
+        switch@1d {
+            compatible = "motorcomm,yt9215";
+            reg = <0x1d>;
+            motorcomm,switch-id = <1>;
+            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+...
+	}
+
+        switch@1d {
+            compatible = "motorcomm,yt9215";
+            reg = <0x1d>;
+            motorcomm,switch-id = <2>;
+            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+...
+	}
+    }
+
+Have you tested this? My _guess_ is, it does not work.
+
+I'm not even sure DT allows you to have the same reg multiple times on
+one bus.
+
+I'm pretty sure the MDIO core does not allow multiple devices on one
+MDIO address. Each device is represented by a struct
+mdio_device. struct mii_bus has an array of 32 of these, one per
+address on the bus. You cannot have 4 of them for one address.
+
+    Andrew
+
 ---
- scripts/Makefile.vmlinux | 9 ++-------
- scripts/link-vmlinux.sh  | 5 +----
- 2 files changed, 3 insertions(+), 11 deletions(-)
-
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index fcc188d26ead1..dbbe3bf0cf234 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -53,11 +53,6 @@ endif
- # vmlinux.unstripped
- # ---------------------------------------------------------------------------
- 
--ifdef CONFIG_MODULES
--targets += .vmlinux.export.o
--vmlinux.unstripped: .vmlinux.export.o
--endif
--
- ifdef CONFIG_ARCH_WANTS_PRE_LINK_VMLINUX
- vmlinux.unstripped: arch/$(SRCARCH)/tools/vmlinux.arch.o
- 
-@@ -72,8 +67,8 @@ cmd_link_vmlinux =							\
- 	$< "$(LD)" "$(KBUILD_LDFLAGS)" "$(LDFLAGS_vmlinux)" "$@";	\
- 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
- 
--targets += vmlinux.unstripped
--vmlinux.unstripped: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
-+targets += vmlinux.unstripped .vmlinux.export.o
-+vmlinux.unstripped: scripts/link-vmlinux.sh vmlinux.o .vmlinux.export.o $(KBUILD_LDS) FORCE
- 	+$(call if_changed_dep,link_vmlinux)
- ifdef CONFIG_DEBUG_INFO_BTF
- vmlinux.unstripped: $(RESOLVE_BTFIDS)
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 51367c2bfc21e..433849ff7529e 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -73,10 +73,7 @@ vmlinux_link()
- 		objs="${objs} .builtin-dtbs.o"
- 	fi
- 
--	if is_enabled CONFIG_MODULES; then
--		objs="${objs} .vmlinux.export.o"
--	fi
--
-+	objs="${objs} .vmlinux.export.o"
- 	objs="${objs} init/version-timestamp.o"
- 
- 	if [ "${SRCARCH}" = "um" ]; then
--- 
-2.50.1
-
+pw-bot: cr
 
