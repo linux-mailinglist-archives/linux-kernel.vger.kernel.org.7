@@ -1,201 +1,140 @@
-Return-Path: <linux-kernel+bounces-773319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834DCB29E36
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF8AB29E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53013BB792
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BB83B3E0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FADE30F52E;
-	Mon, 18 Aug 2025 09:42:31 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A64130F536;
+	Mon, 18 Aug 2025 09:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="TlcEiIHo"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D1D30EF7B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2879830EF97;
+	Mon, 18 Aug 2025 09:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510151; cv=none; b=SyGRBvmzwQ9RnAERndOLiiP2BF63reLKvBdWhlhnvP3x80aPSPqhcTbKDnK71oeVxdZf61RU3JFdCEC69+69e33tClCtpeC835mGbf9ukDE0q2G6O+DL+z9sj+ikckB0FmGyVnzpjcxBudW5y/8wrkEnsb8RxbLLdvMDsmA38nI=
+	t=1755510222; cv=none; b=GrpDYuoGi18JGlVXnGLzhkbVJ1bCK0Mm9nlSMekQ8W/n6S/t7FVqDXGO6/nZm7BkKYhMKlc3eaM/egYOy1pfer+oIPqAg1NpMGWKlZlG4E6BWigsNwUJ5r0GaT2JoNKNEyJkQfvjLnE/lAi/Z7z3WNd0MGFeXPKFaFTscUMMsnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510151; c=relaxed/simple;
-	bh=hlExk0bikRjt6rm84KLuXCDdZhI56FTm0T0tv3xFJDI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cN3J0MsNq26lmJCgKgpvCT14whm1PexET50/kzsqO9bzpMDouWNPQ2bFhv7g9tSqAwtyLYU/pEZbqRiPjqohNIp6MXXBIh1iFRkNKxdNXn3ceDhZQbg1pcVps3Uw/mXIyIZwBbk9JRyoyppy8VnPV56NXybKriXSzSzOUmwuiLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88432e3c4ffso423269339f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:42:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755510148; x=1756114948;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wGHxTryICtLob43ykIoK53i3l3ypoaoPwteFMzyRHA=;
-        b=TA+D+MKIm/dELdP41JbOx0H8MFnP8Jqex74xNw0MDGvoelqGBuwGiU1B7xGWMdov6k
-         BewhTnR8wwo+GvsM70m92VwVx2V9yWuyxNTQZrvLh2K6lBqy9PwgZhYyR3cuQLdcaALn
-         pBh07Jx/P09OxDvkRdASCjM810tMSxZ4bxE2AWOuE0w2Q+GmTP5SakR8v3Bi2PBtqijz
-         jHwUofvTCM+/6Rrf6+peRbKrYm9mHxxSDnwuiSFqLXacgVfW7fSefRjRoCN/7RmCcEPP
-         lIi0c6VDKMY45ECLkGRkD2lMWeqBLDW50wq4TfPptUyxSWHi9F7RiRR79le7yseAFSy9
-         tf4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZa+O6TtWdCwAREWy/+9OMzgY01coD9qeEsp6jHZj3dLn7pzNR7clANMvNl63+Q6xuEPdBK/1K2W4guAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhqvc0EBIy+a2kOYjjs3g6uJ0hhfVMl64j0MceHKAsyks8a+QZ
-	weXFpcfHQJuDG6vUKJKgXAG2bySUbXbL1MuEfas5SrjNEpq5Qb9h/KdUOYmsan6PsMwErsTk7X/
-	Ry2ZGGLUOyQdyHpGnH1VKiNCrTo10xQqKwsZzjNF0RMMNtYrWqpPzbzFrCcI=
-X-Google-Smtp-Source: AGHT+IEy+DhZF0kVCFcwYxkEZCvaNAN8vkbPi0qS1D0Zb3xGehBLux0c/k5Qeuv219SQUXlqM/N0D3HZuKAkgonfrZqKlOKyUmIL
+	s=arc-20240116; t=1755510222; c=relaxed/simple;
+	bh=kvFLkZd49qaINmgLXux3yvrYr/hxKrrvscnAQB/WUng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJ0y2DnAvHST/KsCOs8+YAF7qbrOVSqzUsMhuNlzEKriteDup2UOT9Lmnzicjt9zwitlO/23mBc+fJpLigFVtREMr+Mt9oySO45D1jjPYhkfZ+omP6rbvj+Nms/nSIuG81TTfOZucaDgCrDwzM5eSa+AY4Ttq4oMzsQsNUJCCX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=TlcEiIHo; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 3007720E37;
+	Mon, 18 Aug 2025 11:43:31 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id H-l89fRMrwVf; Mon, 18 Aug 2025 11:43:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755510210; bh=kvFLkZd49qaINmgLXux3yvrYr/hxKrrvscnAQB/WUng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=TlcEiIHoMtlAl2saN8yxYLjXkbcsm6JBdVLGzc+jl2AS1b+an/MmtxcFAE/xU7iYd
+	 8jwo4ADl77uY9jj2HxO+oa0lFgL8EDGDKAAj4hgOyN6KhUOqCnBq8VTERoMolFJURT
+	 gQ5yClMwtpJ5p/GxejAUoS7yvD4hTDxp2R85+2D8Sw2UULzeltB6AYUT/1dz7fa7yX
+	 TUINM9Ab/8mb22RQXEAZvtrw85FZtARc8updoorB/uviX7ICX8dKUir2+2syzhlJm1
+	 /ZmnuCr7SpAyQVnEId4dDWa7FodzRHV4dCxwbcnXp081DxwbUzUMlQrQRKK8olBMAE
+	 HuSNR/2QyTMWg==
+Date: Mon, 18 Aug 2025 09:43:13 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>
+Cc: Han Gao <rabenda.cn@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
+ poweroff/reboot via AON FW
+Message-ID: <aKL1sTutiMZPAd70@pie>
+References: <20250818074906.2907277-1-uwu@icenowy.me>
+ <20250818074906.2907277-2-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:60c5:b0:87c:1d65:3aeb with SMTP id
- ca18e2360f4ac-8843e35ceebmr2227386839f.2.1755510148497; Mon, 18 Aug 2025
- 02:42:28 -0700 (PDT)
-Date: Mon, 18 Aug 2025 02:42:28 -0700
-In-Reply-To: <67555b72.050a0220.2477f.0026.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2f584.050a0220.e29e5.009d.GAE@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_umount (3)
-From: syzbot <syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, 
-	bpf@vger.kernel.org, brauner@kernel.org, daniel@iogearbox.net, 
-	davem@davemloft.net, eddyz87@gmail.com, edumazet@google.com, 
-	haoluo@google.com, jack@suse.cz, jiri@resnulli.us, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kerneljasonxing@gmail.com, kpsingh@kernel.org, 
-	kuba@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, viro@zeniv.linux.org.uk, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818074906.2907277-2-uwu@icenowy.me>
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Aug 18, 2025 at 03:49:05PM +0800, Icenowy Zheng wrote:
+> This driver implements poweroff/reboot support for T-Head TH1520 SoCs
+> running the AON firmware by sending a message to the AON firmware's WDG
+> part.
+> 
+> This is a auxiliary device driver, and expects the AON channel to be
+> passed via the platform_data of the auxiliary device.
+> 
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  MAINTAINERS                             |  1 +
+>  drivers/power/reset/Kconfig             |  7 ++
+>  drivers/power/reset/Makefile            |  1 +
+>  drivers/power/reset/th1520-aon-reboot.c | 98 +++++++++++++++++++++++++
+>  4 files changed, 107 insertions(+)
+>  create mode 100644 drivers/power/reset/th1520-aon-reboot.c
 
-HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1321eba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=1ec0f904ba50d06110b1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cba442580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a1eba2580000
+...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/43186d9e448c/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=174ba442580000)
+> diff --git a/drivers/power/reset/th1520-aon-reboot.c b/drivers/power/reset/th1520-aon-reboot.c
+> new file mode 100644
+> index 0000000000000..8256c1703ebe8
+> --- /dev/null
+> +++ b/drivers/power/reset/th1520-aon-reboot.c
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * T-HEAD TH1520 AON Firmware Reboot Driver
+> + *
+> + * Copyright (c) 2025 Icenowy Zheng <uwu@icenowy.me>
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/firmware/thead/thead,th1520-aon.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of.h>
+> +#include <linux/reboot.h>
+> +#include <linux/slab.h>
+> +
+> +#define TH1520_AON_REBOOT_PRIORITY 200
+> +
+> +struct th1520_aon_msg_empty_body {
+> +	struct th1520_aon_rpc_msg_hdr hdr;
+> +	u16 reserved[12];
+> +} __packed __aligned(1);
+> +
+> +static int th1520_aon_pwroff_handler(struct sys_off_data *data)
+> +{
+> +	struct th1520_aon_chan *aon_chan = data->cb_data;
+> +	struct th1520_aon_msg_empty_body msg = {};
+> +
+> +	msg.hdr.svc = TH1520_AON_RPC_SVC_WDG;
+> +	msg.hdr.func = TH1520_AON_WDG_FUNC_POWER_OFF;
+> +	msg.hdr.size = TH1520_AON_RPC_MSG_NUM;
+> +
+> +	th1520_aon_call_rpc(aon_chan, &msg);
 
-The issue was bisected to:
+It's possible for th1520_aon_call_rpc() to fail. Should we check for its
+return value and emit a warning/error if it fails? Though in case of
+failure there may not be much we could do...
 
-commit d15121be7485655129101f3960ae6add40204463
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon May 8 06:17:44 2023 +0000
+> +	return NOTIFY_DONE;
+> +}
 
-    Revert "softirq: Let ksoftirqd do its job"
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1066f9f8580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1266f9f8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1466f9f8580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com
-Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
-
-watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [syz-executor:6662]
-Modules linked in:
-irq event stamp: 355416
-hardirqs last  enabled at (355415): [<ffff80008b00487c>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:86 [inline]
-hardirqs last  enabled at (355415): [<ffff80008b00487c>] exit_to_kernel_mode+0xc0/0xf0 arch/arm64/kernel/entry-common.c:96
-hardirqs last disabled at (355416): [<ffff80008b001cbc>] __el1_irq arch/arm64/kernel/entry-common.c:650 [inline]
-hardirqs last disabled at (355416): [<ffff80008b001cbc>] el1_interrupt+0x24/0x54 arch/arm64/kernel/entry-common.c:668
-softirqs last  enabled at (355404): [<ffff8000803d88a0>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (355404): [<ffff8000803d88a0>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (355387): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
-CPU: 1 UID: 0 PID: 6662 Comm: syz-executor Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : propagation_source fs/pnode.c:77 [inline]
-pc : change_mnt_propagation+0xec/0x77c fs/pnode.c:114
-lr : propagation_source fs/pnode.c:78 [inline]
-lr : change_mnt_propagation+0x120/0x77c fs/pnode.c:114
-sp : ffff8000a4a07a90
-x29: ffff8000a4a07ac0 x28: dfff800000000000 x27: ffff0000efa88b60
-x26: ffff0000efa88bb0 x25: 1fffe0001df51176 x24: ffff0000efa88b18
-x23: ffff0000f331b238 x22: ffff0000efa88a80 x21: ffff0000efa88a80
-x20: 0000000000040000 x19: ffff0000f3339500 x18: 1fffe000337a0688
-x17: ffff80008f7be000 x16: ffff80008af6de48 x15: 0000000000000002
-x14: 1fffe0001df5116f x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001df51171 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000f33395b8 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000008 x3 : 0000000000000000
-x2 : 0000000000000008 x1 : 0000000000000001 x0 : 0000000000000000
-Call trace:
- next_peer fs/pnode.c:19 [inline] (P)
- propagation_source fs/pnode.c:77 [inline] (P)
- change_mnt_propagation+0xec/0x77c fs/pnode.c:114 (P)
- umount_tree+0x7e4/0xbbc fs/namespace.c:1872
- do_umount fs/namespace.c:-1 [inline]
- path_umount+0x90c/0x980 fs/namespace.c:2095
- ksys_umount fs/namespace.c:2118 [inline]
- __do_sys_umount fs/namespace.c:2123 [inline]
- __se_sys_umount fs/namespace.c:2121 [inline]
- __arm64_sys_umount+0x128/0x174 fs/namespace.c:2121
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6746 Comm: syz-executor Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : cpu_relax arch/arm64/include/asm/vdso/processor.h:12 [inline]
-pc : path_init+0xdc0/0xe98 fs/namei.c:2537
-lr : path_init+0xdc0/0xe98 fs/namei.c:2537
-sp : ffff8000a4247680
-x29: ffff8000a42476e0 x28: dfff800000000000 x27: 1fffe00019832884
-x26: ffff0000cc194420 x25: 0000000000000101 x24: 1ffff00014848f43
-x23: ffff80008f745840 x22: ffff8000a4247a1c x21: 0000000000000100
-x20: ffff8000a42479e0 x19: 000000000004a017 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff80008b007230 x15: 0000000000000001
-x14: 1ffff00011ee8b08 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff700011ee8b09 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000da1e0000 x7 : ffff800080daa4c4 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff800080da8a84
-x2 : 0000000000000000 x1 : 0000000000000004 x0 : 0000000000000001
-Call trace:
- path_init+0xdc0/0xe98 fs/namei.c:2537 (P)
- path_openat+0x13c/0x2c40 fs/namei.c:4041
- do_filp_open+0x18c/0x36c fs/namei.c:4073
- do_open_execat+0x124/0x4d8 fs/exec.c:783
- alloc_bprm+0x3c/0x548 fs/exec.c:1410
- do_execveat_common+0x168/0x834 fs/exec.c:1811
- do_execve fs/exec.c:1934 [inline]
- __do_sys_execve fs/exec.c:2010 [inline]
- __se_sys_execve fs/exec.c:2005 [inline]
- __arm64_sys_execve+0x9c/0xb4 fs/exec.c:2005
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Best regards,
+Yao Zi
 
