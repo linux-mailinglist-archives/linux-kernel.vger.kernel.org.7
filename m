@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-773963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF07CB2ACEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAA3B2ACF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D1F566993
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34008189989C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9392125F98B;
-	Mon, 18 Aug 2025 15:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF86265609;
+	Mon, 18 Aug 2025 15:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tu1frsJp"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SCqeFIiW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x/vLP/be"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EDB225D7
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA7723C4E9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531444; cv=none; b=tY+gIpWIXpSG8s00IoRAu2gsC6ORLhjMzQjxpjF+z5Wtt85fr5ychySc6jzfEECMJGsPeT6JhrvsAn2h0wlKh9dMOwp/QWO5Qx9A1UAMxqNUhFiJ6IqpndjI84MUJxEEv1j8+jiF9vOjvfmeZjT/JrB37y/q722ZelKg+3wbolA=
+	t=1755531532; cv=none; b=oBLgGOzfxtK8+jtrduaRLHCgTHLMyqlve8jZwKWz+PArDxik4CzCpWXxhx643OBaZhyZ0WDkNyibVMUUK0ZS5BjJZj3ID7Kn4nb+1fzwsuW2VbDoqRuPPAPzjcTagVd6xz5IdQwtXTJnlw6Bun1nsxXg/6dq8PAlcADWNmChmnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531444; c=relaxed/simple;
-	bh=zUAzaEIJ5VMfDRyaLBauOj1IcucT6KEg1btGJxZi1MA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qWVcwTIN4j0ox4vmmBDB6j5fh83S4ZEs/fweYoTxG5jB+VVzjWu3vZ0ewwnkf1VH5EOIHQp78dqz9CnnWGsYHF8TJBvNeX+Mir25cdGObInCn48FQhw8os9VKoC2bHXxmLkVZd3gq08zvy2leiR48ZksNhdDonsjGhMxKrbJ46U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tu1frsJp; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-333f8d387d6so29108801fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755531440; x=1756136240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUAzaEIJ5VMfDRyaLBauOj1IcucT6KEg1btGJxZi1MA=;
-        b=Tu1frsJpFKIuD2HBPbWhMEcBedXII/ApZ3TmPnE0BcG5ACP0VmvGkaSu864s/MLxuC
-         S+dNANnCZGRgFBY0H/GLTamBYCzuxLui2B4VW9ygUzb8bwN5Vinvn0RZX5Fyt2Mc9fzs
-         3UY8m3tT9A5cDx9OlzkZxyuJuH8zQn4v3hJtTGDhW1p2w9P14q9qe+H4G6pUE8BKvcvG
-         0iVtTzj/3fTMvP9S6LzgBWaSt7im54nvWMSBrmIew+FardCLSiXeKyE6xLg8Tu7zkKaG
-         aJWSTNtz2ulEHNwTkxDLKSwWJUtRS3hyZmSDN4rbUfTL5sx8bFWXQl47RbV9lqb1ffH5
-         Ghig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755531440; x=1756136240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zUAzaEIJ5VMfDRyaLBauOj1IcucT6KEg1btGJxZi1MA=;
-        b=OodonK05kJm9OPe5o1ayY/SW3IRIPrklWfxlK11vwpT0yq/3RqYRvmsfqKUHrn9jSG
-         IHUsT2PeojYybW9zQimvV3Op/7k0WyoEkvLj3wxVyA/0KPzv9KH25hgzLPQKk9PHAZ7a
-         LVfG4sFIfYxKg4xcHy8NSI+4twtgYZo+2BvgYDIN2hORx7r2j1pHYNJrTYGbSuXLn6z/
-         ZbqBgIYNtqgKf/sHH9ijsgP92kOC95bGCeqy4vMMokrLOGZqlcZyfb774DMv/SJMIOEl
-         LBUsdlHuKyKck/A/izrf2dowcIRfPA8AEq5H8B2JqAZ5rWYfuXvsruAMZ0mLoZ6HIan4
-         2wyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXi2GssK0IXoPGJyF6QbdSh6xo5+k0Yfy1arrE68IQniceQEjE0IXO8+MR6poZH9PoodSUdVCmdW7wQnLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKZ9flOMjNPSw/qvZ3yb/ERdIX5d4J/z1w27VcEv4WPfzYLtAQ
-	bADoVFa0NS8PFhR2hNPcK2wrGQfI+w6hvO2QrBBd4YUr4Vx4IMAZWjqP7BbiVLSKD+Wklkf4sHK
-	FV0FxkJPBBZlycc0jndChhRmm9I5oyXkJGu7J2LenVw==
-X-Gm-Gg: ASbGnctxddKiBl5EfuHYZhoHOE9YPNPgxD20U+cKNLrsJ83WidfL8ldMqJ29SgKmRnN
-	aYLfdhBfk6V/6WTWWWveyKzezUDwhI4lhBzVhcdyMD3pyUyZ/8731h0FfeumPlohT9IrTy87NJU
-	lCnz+BglIjc3KGLkbxteRsHeY9UB1kaW2Jlbsrmi5qKaGjl2QjiTuLjsqMUuY8XSHR9bgRwmKQN
-	wfc08E=
-X-Google-Smtp-Source: AGHT+IG+GVJK4tzT6ecV7Ro8lqSck4UpyGZZpSEzRFsmZpSpnYahkHkhTdkt4MWZBGxnnEyxsT/xMtxcYazU23WLelg=
-X-Received: by 2002:a05:651c:1503:b0:332:1c24:d33a with SMTP id
- 38308e7fff4ca-33412b8af4amr28525231fa.3.1755531440277; Mon, 18 Aug 2025
- 08:37:20 -0700 (PDT)
+	s=arc-20240116; t=1755531532; c=relaxed/simple;
+	bh=up58hOgSOKi67XWwzFic+VH/u523boAeoSMCvDuQd3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLLBknEny+cHC9Rn5mFCxQx8C54Vae5kztArwoOhp2Ktuw4fmkkD9zxsucHf7TKEh03j0UWa3ZRMjNKluaAxX6Z2oEogy1odbusVA1laWI4iRwRJUhchRp4SDx9HKFNzajDM7JEGlYuZWDklVtgacMkcFIySxjIaQuw8pFc2fK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SCqeFIiW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x/vLP/be; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 17:38:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755531529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74hSaxb6f6iJvzD3MoE/ujA4oXW3D/CA4ucXVtgWeBw=;
+	b=SCqeFIiWLSNTEmTo1mzU5mNA2Wvu3ZgM2KrbjhO1Pf6qFoEuxBjODn980MDdhuE2FrcXBL
+	Bq61jR6wqrqQpNU4K3C9mSlgD4NoQGINIjDrfxfvQN8lSS2iE6UbZV052UkGHKUP4U7OSj
+	ZjMd+jx2MoD8g9vaYlWx4quazCKvdww1wUgn8wkPAPDoy5xozgZu5LPJ5XivmEuHcIxDAG
+	0rWUNn/lAa2srTjj6pnz0N8TJjXKKnUEIvySmgu6F/6rrfIAFwdSUc2oFS4EKcTT29kMQ9
+	C0xsVm8+dWdq0WMCDwFDLWYS5zW1ia+vcy5hBjrgPTeJ13fyl+hH7nwNEDDimw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755531529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74hSaxb6f6iJvzD3MoE/ujA4oXW3D/CA4ucXVtgWeBw=;
+	b=x/vLP/be87fuBdIthjflSM1B8anS7DiiVXJgZCM+UPrZ9xVFjiy1p+ms4eKAYWHckBBs5t
+	pb2j1lwAn+ZEFvCg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 28/34] x86/cacheinfo: Use parsed CPUID(0x80000005) and
+ CPUID(0x80000006)
+Message-ID: <aKNJB1uM4LIX3WDw@lx-t490>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <20250815070227.19981-29-darwi@linutronix.de>
+ <4a680b7d-2ecb-4579-a5ea-b612c08ebefa@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808151822.536879-1-arnd@kernel.org> <20250808151822.536879-11-arnd@kernel.org>
-In-Reply-To: <20250808151822.536879-11-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Aug 2025 17:37:08 +0200
-X-Gm-Features: Ac12FXyuxmUcXP36pNiGdk8Vf7slpD6KEC6V4qN7-65Nz5kxvlVVKGMXuopzvk0
-Message-ID: <CACRpkdZS1uOMsT3h-kyNQVrVW0R+1mmmOB=EAmqcHQSpo4qAYQ@mail.gmail.com>
-Subject: Re: [PATCH 10/21] leds: gpio: make legacy gpiolib interface optional
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Kees Cook <kees@kernel.org>, Anish Kumar <yesanishhere@gmail.com>, 
-	Mukesh Ojha <quic_mojha@quicinc.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Dmitry Rokosov <ddrokosov@salutedevices.com>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a680b7d-2ecb-4579-a5ea-b612c08ebefa@intel.com>
 
-On Fri, Aug 8, 2025 at 5:22=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, 15 Aug 2025, Dave Hansen wrote:
 >
-> There are still a handful of ancient mips/armv5/sh boards that use the
-> gpio_led:gpio member to pass an old-style gpio number, but all modern
-> users have been converted to gpio descriptors.
+> On 8/15/25 00:02, Ahmed S. Darwish wrote:
+> > +static void legacy_amd_cpuid4(struct cpuinfo_x86 *c, int index, struct leaf_0x4_0 *regs)
+> >  {
+> > -	unsigned int dummy, line_size, lines_per_tag, assoc, size_in_kb;
+> > -	union l1_cache l1i, l1d, *l1;
+> > -	union l2_cache l2;
+> > -	union l3_cache l3;
+> > +	const struct leaf_0x80000005_0 *el5 = cpuid_leaf(c, 0x80000005);
+> > +	const struct leaf_0x80000006_0 *el6 = cpuid_leaf(c, 0x80000006);
+> > +	const struct cpuid_regs *el5_raw = (const struct cpuid_regs *)el5;
 >
-> Make the code that deals with this optional so the legacy interfaces
-> can be left out for all normal builds.
+> Is there any way we could get rid of the casts? The lack of type safety
+> on those always worries me. Maybe a helper like this:
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>     const struct cpuid_regs *el5_raw = cpuid_leaf_raw(c, 0x80000006);
+>
+> (although that would probably just do casts internally).
+>
 
-I like this, it cleans up things for current systems so they do not need
-to carry around so much legacy.
+Indeed.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I already have at <asm/cpuid/api.h>:
 
-Yours,
-Linus Walleij
+    /**
+     * cpuid_leaf_regs() - Access parsed CPUID data in raw format
+     * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
+     * @_leaf:		CPUID leaf, in compile-time 0xN format
+     *
+     * Similar to cpuid_leaf(), but returns a raw 'struct cpuid_regs' pointer to
+     * the parsed CPUID data instead of a "typed" <cpuid/leaf_types.h> pointer.
+     */
+    #define cpuid_leaf_regs(_cpuinfo, _leaf)				\
+	((struct cpuid_regs *)(cpuid_leaf(_cpuinfo, _leaf)))
+
+The only reason I didn't use it in this patch was to avoid a repetion.
+But, you're correct, using the API is better than call-site casting.
+
+Thus, the code shall be:
+
+    const struct leaf_0x80000005_0 *el5 = cpuid_leaf(c, 0x80000005);
+    const struct leaf_0x80000006_0 *el6 = cpuid_leaf(c, 0x80000006);
+    const struct cpuid_regs *el5_raw = cpuid_leaf_regs(c, 0x80000005);
+
+I'll do it like that in v5.
+
+Thanks!
+Ahmed
 
