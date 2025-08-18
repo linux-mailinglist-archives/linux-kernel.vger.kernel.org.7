@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-774242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ABAB2B045
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:27:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E57B2B04A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F436836E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:27:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E0F7AE1C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D863314B3;
-	Mon, 18 Aug 2025 18:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ACE3314BF;
+	Mon, 18 Aug 2025 18:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VU+zvF3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJEbi1py"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093783314A2;
-	Mon, 18 Aug 2025 18:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464AF3314A2;
+	Mon, 18 Aug 2025 18:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541614; cv=none; b=BRmoLQOVDcwd3adG+BCkRI+3K594r5erCXbK+LFv0PBixWMi5WytMo1hf6cXtwWP19VD6jbnAKNkvAnD/wLEWPUAoRqsIwwerz5uQrHUgFtEvtpzcdGTL8LhiOvhbWBTjNhemVQej8U6EdlpOLcw7Ek2oYA3tHn7AzsVMWbL0Gw=
+	t=1755541646; cv=none; b=F8R+KsSE3Qsh7RlUb/YaL8LxbfCgu8NOH5G7vbdrjDxlp19ItXC3wfsevECOl4SajXGRb6ccdPzCWEItNn3Aa9l//zj1Lw/O0U7BU8D6bGJ9ZTsHqvErYgLY6mvLEUyKAeNowt9ujUxy21pMoXXPtdrgHZAC6npIT8kMOhJTfgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541614; c=relaxed/simple;
-	bh=cJtUW+vi9Bpqx+2oOXE9Ny2QyDh2KiaJnBmjqvxVePw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i5kc9gA8jQydOBDE9SsAuO/bR+MUd7EPE5zmvED21kXbB++7kvgB/06PQYJbBenRVevHBWyr/L/p4Sxo2WRcULEqp0J7s62xt5CoBDP90MHcgIonmSENuP5WA780q12DWtQlG5sEzLYsbSRI4+rIVqNsh8xwhuX4PEo8jqDvLE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VU+zvF3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763A9C4CEEB;
-	Mon, 18 Aug 2025 18:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541613;
-	bh=cJtUW+vi9Bpqx+2oOXE9Ny2QyDh2KiaJnBmjqvxVePw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VU+zvF3CVjS8P3Ser0xAJh/8tN9iIuRBdsYurn7nbLgTscoJcby5dBZuPwxWS7zWz
-	 TJzZCuVkgkn+I9uxz9mKTPl9DRnMWPk1ZAxTYeFuru5OsvXz0NlMMdMsUTCzOPSZl2
-	 b2SCWZfbjnZyMV2/QGokXUc8oBYPLK6Wm5RVYwrEWnJuDfvl/8XoZKTmBHE3Qnmr43
-	 2NKdT7dyFDN4IlcuY6j4wWaMJ92eXzhnml+XqOrcsED4gGFBi6HPCAPvKOs1Xzax3Q
-	 xLSwktgrjPbhzS5tjD7Q69X88hG/0CGIWsG6dPHTlZDXagkkSkaNCs1GqfPs0Imboj
-	 8/MmwzRbmNj2w==
-Date: Mon, 18 Aug 2025 19:26:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ramona Nechita
- <ramona.nechita@analog.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
-Message-ID: <20250818192641.61f9af06@jic23-huawei>
-In-Reply-To: <20250818131253.8854-2-Ioana.Risteiu@analog.com>
-References: <20250818131253.8854-1-Ioana.Risteiu@analog.com>
-	<20250818131253.8854-2-Ioana.Risteiu@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755541646; c=relaxed/simple;
+	bh=JCKUiyE7LvQKokD1Uq6GmQAvtruiQweC9XXHp0iTSkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KbE9lzSP0EPRL8TNnfYGImv3tZQ2Du0Y2JzO9/gbsdjflVKpzCLXMVnFf8bLeklU5/dM5sVt+RAEni/ztPUiZPSBLb1YOx6IStj7dsD9LuM1g/962Ek1TfqdfMTLJdSaEAn41a7yzFP03rR+iprsKPlgIIelPbSPJ9hQKirkPlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJEbi1py; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b47156b3b79so3328833a12.0;
+        Mon, 18 Aug 2025 11:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755541644; x=1756146444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1UBICNtV01HOUgPFmy2kmdepvqLkWf1wTnkenSpn6Mc=;
+        b=kJEbi1py1EgtZuF9iamw3yU5fLp70od7KchmM/gYHg2i5nowyPRMSFawTZn5xxmMh9
+         ZZcJ0pvCugHFXUQL8RLTqOkQ6No56qBydMrVTVJNjQ83cG3SmKnHFTv29dasdQtWrhEN
+         tW14dplwrR4gnqiBVfmOHBc6WUrjfN1hpuxSCm/DGkgytfwA2K84Ti3WJSEI4HC3j1jk
+         2nb4Rd3mGUXma8LnWjWXQP5F3TOLiXwzSVPz9fAw5M9lsFtSikykyVqwU09RxH0YVi6x
+         8bGUTGJ9E2GB1uWBjUfLl+MA8a6gf8lE/C+GZ7b1LithCS1rwD7CtLRTadX00LCiXui+
+         Aqfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755541644; x=1756146444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1UBICNtV01HOUgPFmy2kmdepvqLkWf1wTnkenSpn6Mc=;
+        b=hqbZBVa5R8IZm9KDS6EVCRG2JFL6ZmXUd1orHpkxIE3ZFuL0vjJQMFLqc6BnwlPpuv
+         nxdxjaRn365OqYb6AbfyWO2tmf/49xY39l+n4In87dM/+CbhRGY3Xuq3CWPcpHDYSt0n
+         pFkiwocivSZShfsVxPoo5QFpkjgh9q1n08gvg0OI0twmg68A/RjbP8LAzoIqlazYOyPr
+         oaa1HJsKvjiw8JqcfmmdQ1Gg5rNyiHUQ/gYj2NrdPj7qe1HtlihTRFCb0ui1vyWf7hsz
+         RPW8ikXbkZziilNA00ZiXsH2HQX5XJZRT0Xw92G0w3Z/PTBA6v+HfQf9ht56Wp8KLk3s
+         QmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLfNHDkrxfJJEsH+0K//12bcod9KBApLWynYy0Hs5lLdNf1AlOZ/HwOU5kiyStC2IbgYB77jc+ShkLtF9T@vger.kernel.org, AJvYcCXVanXIhf67CDRusINzw72qDIB6FiYinWRfpa1c9P50N+6zHdo/cmzBwSA2u4df+4G3q2XjrqLrMuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh0wwKFmZdt+eAnPjtB10B4rHwgFmNy3+4cUhRmn4v26HVy2ve
+	78TN5EEiKFRRWlyOMXICRzspKnwV2uwdvWoo0KnmyDIkcfj9d0p1d+xN
+X-Gm-Gg: ASbGncttNPDsA2iBKqNeTd41YovI8LGYbZ9zkprbPzaQ77aBadnQYjK3ZpEeTulssA6
+	LOFN35PTXCbD0B8rKfSjsTV3nGv+SVC/iAj+XZx6232bxh7a5FUyTbuBoRsp7bfzf2Akk9itnSB
+	g21ykp64Cn8x0N+Dsi9vVT35W+nB7rSVMAeoJOY2HY+4FvgjQgOkZzW9q+zY6wcNJC14uplCseC
+	pTxnYyDh+Orz3e08mQvVDTXK1HktF2t9Aov5MnPhhHeOglI9wFlgo4QbqkAtldEp+6rgfdXHHEA
+	KUhZ5RI8YcabyHFPgfEpKeOsrl1J+bDggYQNZxQ3REU4AOtDdEAjnHyPDjeT+1BLj1eb7Y2dgCt
+	947U+YUvT4kNwnlQ24W5CzExbH7rqGU/py1mU
+X-Google-Smtp-Source: AGHT+IFo9q22uJAU9Cy1g8OPxX2RxfH+wNKYrCEg9SFElzcpE0VunUzB4MWZu5dWrCeB513oCefNkg==
+X-Received: by 2002:a17:902:ecca:b0:240:5bf7:97ac with SMTP id d9443c01a7336-2449c9be48cmr6168945ad.16.1755541644414;
+        Mon, 18 Aug 2025 11:27:24 -0700 (PDT)
+Received: from Ubuntu24.. ([103.187.64.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f576sm87080265ad.101.2025.08.18.11.27.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 11:27:23 -0700 (PDT)
+From: Shrikant Raskar <raskar.shree97@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: [PATCH] fs: document 'name' parameter in name_contains_dotdot()
+Date: Mon, 18 Aug 2025 23:56:52 +0530
+Message-ID: <20250818182652.29092-1-raskar.shree97@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Aug 2025 16:12:47 +0300
-Ioana Risteiu <Ioana.Risteiu@analog.com> wrote:
+Adds a brief description of the 'name' parameter to resolve
+the kernel-doc warning.
 
-> Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
-> setting number of lanes used by AXI ADC.
-> 
-> Signed-off-by: Ioana Risteiu <Ioana.Risteiu@analog.com>
+Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So far we only have this set for a specific compatible.  Why does it
-now make sense to set it for the 'generic' case? Please add something
-to the patch description.
-
-Jonathan
-
-> ---
->  drivers/iio/adc/adi-axi-adc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index 2d86bb0e08a7..20bb59c24acf 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -617,6 +617,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->  	.chan_status = axi_adc_chan_status,
->  	.interface_type_get = axi_adc_interface_type_get,
->  	.oversampling_ratio_set = axi_adc_oversampling_ratio_set,
-> +	.num_lanes_set = axi_adc_num_lanes_set,
->  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->  };
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..9f5c91962e85 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3281,7 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+ 
+ /**
+  * name_contains_dotdot - check if a file name contains ".." path components
+- *
++ * @name: file name or path string to check
+  * Search for ".." surrounded by either '/' or start/end of string.
+  */
+ static inline bool name_contains_dotdot(const char *name)
+-- 
+2.43.0
 
 
