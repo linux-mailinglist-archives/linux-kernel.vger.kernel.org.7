@@ -1,164 +1,94 @@
-Return-Path: <linux-kernel+bounces-774008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE4AB2AD9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9652CB2AD86
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C233F5E34AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCA218A64F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2484D335BCE;
-	Mon, 18 Aug 2025 15:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD4332A3E6;
+	Mon, 18 Aug 2025 15:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVIqnhJx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPEsLYFv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7940935A28A;
-	Mon, 18 Aug 2025 15:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0432253E;
+	Mon, 18 Aug 2025 15:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532581; cv=none; b=vFFfMy9RskUWY3xy1TeYXGAmtn1l7VCO/ow4h9wRmgYrExdltwkIhLupDFD/hK8xoLzJkqzEnz+IdcSLhdqDHSWOxd5n9un8qwxdWgYa8/wxr90utCl4SC61i4kz/DIuQGGQWkcV7Odx71Ukx7Yd2yAJBwXDzAH4VdPhAolLgSE=
+	t=1755532619; cv=none; b=ZYNiwEcIWMVkxMpXhzYAiEUdDy6Yepy3i+kEucfAufDFZ3jADq5IW7wk/2klIht5GaL8FQQNpxTuG5Gr8CZK2N3yD6GR+VxK0U0pXtbKKhZRkpb0PVDMCe3QerPq860jvO0FFkaLitQ/OEDKw0zm+K2M+OQpMv+dfkPefLf0yZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532581; c=relaxed/simple;
-	bh=5wFwh3p20P5/Jg2Ui6lOZbe2fHtyQ444SI9HF/NknyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1jNg/Kug0IxKwKQkO/vCk7OVRlq8VheTKFbz740lTvZXXcGKnksEQ7X5E3k952mxtIIgD1MtbOWRkNmxSKiq6d6Bl/ToBIWnKaG0L8ZEyxvmf1dJszPSsKMX3j/nspkk4TrT6yMUmcmwPuWvuU7mcho0yexq0/e6Gw6+xwBGRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KVIqnhJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A57C4CEF1;
-	Mon, 18 Aug 2025 15:56:16 +0000 (UTC)
+	s=arc-20240116; t=1755532619; c=relaxed/simple;
+	bh=8d4JxUtDdmnFSWMSh4kLNhDj+8WZAbO078i8EJPbAOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2ndvnZrLOmGjSfenQDcEcERe1fkQXOsLqIkyKwGM4A+yWsNDX5Zswo5uGRFXsBGXbl6kAIY05EBBDdatoC14rdFkFTsLXFAmpA9yY15k5p8b/9zC90M+6fVP4nRumdy3exft0VIFiCxEivM3ZdIvDqRb4+DX3WvFXYmoctyqkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPEsLYFv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463EAC4CEEB;
+	Mon, 18 Aug 2025 15:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755532581;
-	bh=5wFwh3p20P5/Jg2Ui6lOZbe2fHtyQ444SI9HF/NknyI=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KVIqnhJxRfk9+4Oag66JBDeOsYde9p4DeHvnqL00/rkVmbOE5FyC0sEMmC5pMjwMs
-	 Ru8ridbyGmDV8oROz9MYIQDRh71Gvo/uGc5oGN8HKzudTi8LTZ706ZUFYLtcGjAFj2
-	 rxQNEVqCSspNbVmrQcXHf3KAvoypssPHLdkK1EySDG0UCvZpEPVuup+CtqzXBcVob3
-	 Z4+dZicsDP79GTVK0o0DPO+ggImVL5/R2JhvSU/KDFrEmhh5W0ibQjez6pTS53TbmJ
-	 aJgtxXjrLXsChcSxuUFs97GtZpLdIxaAMY2Kv2ZIlgIqoFwVvJO/4hPLUNw5bRvwYL
-	 9iw4uqNWl5j3g==
-Message-ID: <f2dbf110-e2a7-4101-b24c-0444f708fd4e@kernel.org>
-Date: Mon, 18 Aug 2025 23:56:19 +0800
+	s=k20201202; t=1755532618;
+	bh=8d4JxUtDdmnFSWMSh4kLNhDj+8WZAbO078i8EJPbAOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CPEsLYFvKxO45JN/BaXfFUFR2Bye+1F8P7XrRUe/tNgDzsnVUYNujcDZAxN4FtQNE
+	 iqj3UBvVfZfxULxNnnqdnF9FvtzbmJnMkRX0TE2olkdl7qg9HDR+euP3DA7n1E92Rq
+	 VNDR3AHZI/z2AAfg6vGLMEVtlSBCrJa4brw5SYWBmgzBacdjbe28MvlX4UVRdF1Vzx
+	 C0o269GyOj5wJ5cU/PlrLvF28hJgTAS2oLXSMG7lYv3IhUa2Kft6QkoCeB/Po2QJUB
+	 WdlU81wDen413BusE1tw1DsZ8tzybTBOcxOWx7a+af9hPEXZiYgcn5Yx3zXaFiYtS+
+	 IRbQI7rzyc/eg==
+Date: Mon, 18 Aug 2025 10:56:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lakshay Piplani <lakshay.piplani@nxp.com>
+Cc: shashank.rebbapragada@nxp.com, linux-rtc@vger.kernel.org,
+	priyanka.jain@nxp.com, linux-kernel@vger.kernel.org,
+	conor+dt@kernel.org, alexandre.belloni@bootlin.com,
+	vikash.bansal@nxp.com, devicetree@vger.kernel.org,
+	krzk+dt@kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: nxp,pcf85363: add timestamp
+ mode config
+Message-ID: <175553261709.1300451.5942152829890999372.robh@kernel.org>
+References: <20250811082123.1099880-1-lakshay.piplani@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH] md/raid5-ppl: Fix invalid context sleep in
- ppl_io_unit_finished() on PREEMPT_RT
-To: Yunseong Kim <ysk@kzalloc.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- Song Liu <song@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- linux-raid@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250817113114.1335810-3-ysk@kzalloc.com>
- <acd0a040-18ce-05f5-4896-ad24dda6fb00@huaweicloud.com>
- <6450c5b4-b3cf-490f-ba7e-6201669829d9@kzalloc.com>
-Content-Language: en-US
-From: Yu Kuai <yukuai@kernel.org>
-In-Reply-To: <6450c5b4-b3cf-490f-ba7e-6201669829d9@kzalloc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811082123.1099880-1-lakshay.piplani@nxp.com>
 
-Hi,
 
-在 2025/8/18 19:54, Yunseong Kim 写道:
-> Hi Yu,
->
-> On 8/18/25 9:56 AM, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/08/17 19:31, Yunseong Kim 写道:
->>> The function ppl_io_unit_finished() uses a local_irq_save()/spin_lock()
->>> sequence. On a PREEMPT_RT enabled kernel, spin_lock() can sleep. Calling it
->>> with interrupts disabled creates an atomic context where sleeping is
->>> forbidden.
->>>
->> What? I believe spin_lock can never sleep.
-> I think you might have been a bit surprised by me sending a patch out of
-> the blue. It would be helpful to refer to the references below:
->
->   On PREEMPT_RT kernels, these lock types are converted to sleeping locks:
->    local_lock
->    spinlock_t
->    rwlock_t
->
-> Link: https://docs.kernel.org/locking/locktypes.html#sleeping-locks
->
->>> Ensuring that the interrupt state is managed atomically with the lock
->>> itself. The change is applied to both the 'log->io_list_lock' and
->>> 'ppl_conf->no_mem_stripes_lock' critical sections within the function.
->>>
->>> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
->>> ---
->>>    drivers/md/raid5-ppl.c | 12 ++++--------
->>>    1 file changed, 4 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
->>> index 56b234683ee6..650bd59ead72 100644
->>> --- a/drivers/md/raid5-ppl.c
->>> +++ b/drivers/md/raid5-ppl.c
->>> @@ -553,15 +553,13 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
->>>          pr_debug("%s: seq: %llu\n", __func__, io->seq);
->>>    -    local_irq_save(flags);
->>> -
->>> -    spin_lock(&log->io_list_lock);
->>> +    spin_lock_irqsave(&log->io_list_lock, flags);
->   The changes in spinlock_t and rwlock_t semantics on PREEMPT_RT kernels
->   have a few implications. For example, on a non-PREEMPT_RT kernel the
->   following code sequence works as expected:
->
->   local_irq_disable();
->   spin_lock(&lock);
->   
->   and is fully equivalent to:
->   
->   spin_lock_irq(&lock);
->   
->   Same applies to rwlock_t and the _irqsave() suffix variants.
->
-> Link: https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-rwlock-t
+On Mon, 11 Aug 2025 13:51:22 +0530, Lakshay Piplani wrote:
+> NXP PCF85263/PCF85363 provides three timestamp registers (TSR1-TSR3)
+> which latch the current time when a selected event occurs. Add a
+> vendor specific property, nxp,timestamp-mode, to select the event
+> source for each register.
+> 
+> Also introduce a new header 'pcf85363-tsr.h' to expose
+> macros for timestamp mode fields, improving readability
+> of device tree file.
+> 
+> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+> ---
+> Changes in v2:
+> - Addressed review comments from Rob Herring:
+>   * use $ref: /schemas/types.yaml#/definitions/uint32-array
+>   * tuple form with exactly 3 items (TSR1/TSR2/TSR3), per items decimal enums
+>   * define 'nxp,timestamp-mode' clearly
+>   * drop watchdog related vendor properties
+>   * remove watchdog related vendor properties from i2c example
+> 
+>  .../devicetree/bindings/rtc/nxp,pcf85363.yaml | 23 ++++++++++++++-
+>  include/dt-bindings/rtc/pcf85363-tsr.h        | 28 +++++++++++++++++++
+>  2 files changed, 50 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/rtc/pcf85363-tsr.h
+> 
 
-Yes, lessons are learned. Perhaps add a link tag in the commit message
-just in case someone else will be confused?
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thanks,
-Kuai
-
->
->>>        list_del(&io->log_sibling);
->>> -    spin_unlock(&log->io_list_lock);
->>> +    spin_unlock_irqrestore(&log->io_list_lock, flags);
->>>          mempool_free(io, &ppl_conf->io_pool);
->>>    -    spin_lock(&ppl_conf->no_mem_stripes_lock);
->>> +    spin_lock_irqsave(&ppl_conf->no_mem_stripes_lock, flags);
->> Please notice, local_irq_save + spin_lock is the same as
->> spin_lock_irqsave, I don't think your changes have any functonal
->> chagnes.
-> This issue has also been a problem in other subsystems, such as USB:
->
-> [BUG] usb: gadget: dummy_hcd: Sleeping function called from invalid
-> context in dummy_dequeue on PREEMPT_RT
->
-> Link: https://lore.kernel.org/lkml/20250816065933.EPwBJ0Sd@linutronix.de/t/#u
->
-> I am currently contributing to the kernel to address the areas that need to
-> adapt to this paradigm shift so that the PREEMPT_RT Linux kernel can be
-> well supported. I have CC’d other RT people so they can also review
-> this part.
->
->> Thanks,
->> Kuai
-> Thank you!
->
-> Yunseong
->
 
