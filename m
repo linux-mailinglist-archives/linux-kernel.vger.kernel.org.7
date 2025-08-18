@@ -1,140 +1,85 @@
-Return-Path: <linux-kernel+bounces-774398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B137CB2B1B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A14D2B2B1B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87DEC3A6F93
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB553B5FD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2C925485F;
-	Mon, 18 Aug 2025 19:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D643451B3;
+	Mon, 18 Aug 2025 19:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="knEkPWp+"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A587SMQv"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5897C3451B3;
-	Mon, 18 Aug 2025 19:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8AC78F36
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755545520; cv=none; b=vAIiavgDyZRGcOTUVpyyG5Na58BGTfi9haj6l3w2jrswRJQ63/uvUA6BJ9ePJUuYfXVQeJcmjfi9vNQJK1S/FjS5keMKUwdDeU07VXT8zqL7SnSoH8/Avmbv7nudEY7G0xPLd7C27k1ORkhaLhbEVNidTwqos9TRh9xIt8jiaMs=
+	t=1755545528; cv=none; b=posy/D9t91JWvzvq1xAg8Q+dh0T2ejOZ5Yd7ckPm+l4c4GXRUpJkpOC53JYJsUccqlJihZC9nvgVjh4gnstT5tq/ZNdezScJzhFMREBz2PRCko53Sqc+7dk/O1oPa+82cRX3ro9+T89XBX7891SgymaGFRFMknDDLVMRLKg0ZQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755545520; c=relaxed/simple;
-	bh=4xeueHP0P8jeDPQqMipUcwuJSucHzOAimKwUOa+/ThA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLQ9fwVRKEbEignTq+5TK3w9szQLApFxgamxa5mV33IpyTy18MZ4ByuVJNCpaVo9Aob8kFT3mzsWy7KbsH0FwOCFO7J6A5OFLCp/fkEpt1BURa8iOGaTMe+bAomjyxFD+yJZ8HFhNVW5GTWZMP2rJki+uf91wQpDYRYWczUx270=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=knEkPWp+; arc=none smtp.client-ip=91.218.175.171
+	s=arc-20240116; t=1755545528; c=relaxed/simple;
+	bh=XNjz0I2eUY/Kr2G52Qo4E3MpWKIoWqP2+NCSQHIjBqI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pxZrAy7STk3EQsyqwXxZqy0V1lVz5EqyO+aTHd3CaPSUD5brtFChx4Hr2k/8o5XpzB71YdgVcJfGve2tbAaaUwsl4JfscoDInndsVuvMsKIqRftWkOpmi20VAbd+NaKZ4wM//ju/dKZMgMVtGhdwMVp4iStkckuww4+MSDE5v4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A587SMQv; arc=none smtp.client-ip=95.215.58.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 18 Aug 2025 15:31:51 -0400
+Content-Type: text/plain;
+	charset=us-ascii
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755545516;
+	t=1755545524;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=B9ezPEEHY0FHo1StKd0VgUEYpVe8bez2tfysswnYvfI=;
-	b=knEkPWp+5bdN9ZOadZbOJBI/FOhN4BdH+PhZkwvPqZ5apQMFm4hey9t/zg9mr6WEDvMv04
-	HldLmGN+K9pU+iwGd4g+TaozzLOaMeeUmesCAKocoGW5HNmW1lXtRLAjDoVQpVBLTCYFGs
-	Go2zxgNV0JI3/PstW7toC0Vwldt4xnw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ben Collins <ben.collins@linux.dev>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <2025081815-solemn-beaver-b5dce6@boujee-and-buff>
-Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250818035953.35216-1-bcollins@kernel.org>
- <20250818035953.35216-6-bcollins@kernel.org>
- <20250818191539.69e1882a@jic23-huawei>
- <2025081814-grumpy-prawn-ef1a0e@boujee-and-buff>
- <afffc91a-d4fa-47d5-bb59-fad879a2ac6d@baylibre.com>
+	bh=3IWli4z+BgUSiJzQPJlT48mDOgPDj86VGLzv17N+ak4=;
+	b=A587SMQv1d16oej8NYD1kxIDDoIfTcrYAKEql/P9cnEmDztkEDLX3Nx+z5FL+MXz5XxnP3
+	ysQ2HROoynCqG8E6N4kmfXx1Bbi10WsmD6INkAOJes4RwZB4mtrTVmORtg1CoGzwYmgmq0
+	2ZUeSuYqm3xfu8CDT/3hK2tqwE61QOI=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dhh56h7zs442u65s"
-Content-Disposition: inline
-In-Reply-To: <afffc91a-d4fa-47d5-bb59-fad879a2ac6d@baylibre.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] kcsan: test: Replace deprecated strcpy() with strscpy()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <hqvjfoaw5ooucqp3mwswrjxletq6vdzztwvlaxvxf5a6bivdzf@7fcytrsqhz4y>
+Date: Mon, 18 Aug 2025 21:32:01 +0200
+Cc: Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>,
+ linux-hardening@vger.kernel.org,
+ kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <6BC1BD59-839C-4A3B-AE91-8CE963C891AA@linux.dev>
+References: <20250815213742.321911-3-thorsten.blum@linux.dev>
+ <hqvjfoaw5ooucqp3mwswrjxletq6vdzztwvlaxvxf5a6bivdzf@7fcytrsqhz4y>
+To: Justin Stitt <justinstitt@google.com>
 X-Migadu-Flow: FLOW_OUT
 
+On 18. Aug 2025, at 20:26, Justin Stitt wrote:
+> Looks good.
+> 
+> Here's my checklist:
+> 1) strcpy() and strscpy() have differing return values, but we aren't using
+> it.
+> 2) strscpy() can fail with -E2BIG if source is too big, but it isn't in
+> this case.
+> 3) two-arg version of strscpy() is OK to use here as the source has a known
+> size at compile time.
+> 
+> Reviewed-by: Justin Stitt <justinstitt@google.com>
 
---dhh56h7zs442u65s
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 5/5] iio: mcp9600: Add support for IIR filter
-MIME-Version: 1.0
+Thanks for your thorough review.
 
-On Mon, Aug 18, 2025 at 01:59:34PM -0500, David Lechner wrote:
-> On 8/18/25 1:47 PM, Ben Collins wrote:
-> > On Mon, Aug 18, 2025 at 07:15:39PM -0500, Jonathan Cameron wrote:
-> >> On Sun, 17 Aug 2025 23:59:53 -0400
-> >> Ben Collins <bcollins@kernel.org> wrote:
-> >>
-> >>> From: Ben Collins <bcollins@watter.com>
-> >>>
-> >>> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> >>> to allow get/set of this value.
-> >>>
-> >>> Use a filter_type[none, ema] for enabling the IIR filter.
-> >> Hi Ben,
-> >>
-> >> A few comments inline. You also need to send an additional patch to up=
-date
-> >> the filter_type docs in Documentation/ABI/testing/sysfs-bus-iio
-> >=20
-> > Hi Jonathan,
-> >=20
-> > I just sent a v6 because I was getting too many comments on the
-> > dt-bindings patch.
->=20
-> Actually, folks will be happier if you slow down a bit. General
-> advice is only submit one revision per week since some people only
-> have time to review once per week.
+Thorsten
 
-I appreciate the info. Admittedly, when I was more prolific with kernel
-development, the pipline and protocol was much leaner, so I'm not used
-to the more recent "norm" quite yet.
-
-Not complaining, just noting. I'll get there.
-
---=20
- Ben Collins
- https://libjwt.io
- https://github.com/benmcollins
- --
- 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
-
---dhh56h7zs442u65s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmijf6cACgkQXVpXxyQr
-Is8SbQ//ZPDjLa7zQ7U0WEuKZsmZowVbojE/FJFU1VxZJEzdREU0nexLFdF1WI1L
-BGuva5VHhi+LOUUm2nedD7mksAG0UcC1Gw59awlrqG/QAwGWdNd8kH89B7jEIC83
-mdZEnAP1tSrbnuNIPwlQrDCILyD4CFfi6xptJlSu6UcLStb3tNNzTDpVMuVyFapq
-tWYS3CkOS6IA2spsPp44Bw400gsLWW2sQGoVb5sgMDmmKg1MKqvAD1AxiKBXYxXp
-J3edk6FFvmdVTAMI1qIm4A8nmumnL/cHr5w1FKeuODeoramGeLcEW3DFrB+ALYD1
-terG4z228qn1OMogs8ELffPCFtxyQo2S5DVdoxzYI7+dY63hCWV4DXQH/fyJmIox
-92wDmRFiDaFI200DDYbC3zl8wV2NOFdGQ/pxjbf3T7MCEFdy1I/nnkm3mM1WuqhT
-0vQmtCVwbXWVo4l5Bw8IubUS/5OIpydks8sporjN+5IdEod1PS9VsThDJsI3gKGV
-g6gilJnCTempXihl8POQSZsMt5W6l+KcFBijLWWQTWiDR4iXmgYieLWibvlGISFR
-uoAzXgavH5kFZ160vwYhzQFe5HiuG9gEjzijRlKbRiZd6h1AzGleHSxwE9ZBR5Tm
-sKZUc/KbT7DmKd7GSx5fGhPvVLRDXD38Wf14kuO64OYzeNTadkc=
-=RVWa
------END PGP SIGNATURE-----
-
---dhh56h7zs442u65s--
 
