@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-773182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D65B29C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7198B2AF2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C14169A19
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26782A3D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15ECE3009CE;
-	Mon, 18 Aug 2025 08:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23222309B0;
+	Mon, 18 Aug 2025 17:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="m6alafy7"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nsrFQtSg"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28BA2FF665
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E6C1E25EB
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506441; cv=none; b=HVy7p+dZ9lMd9TP4Uij5rNea/zE9nMeqGGwuTMx+/QtBkNR34UPx7uyOoKfcMRX0IATZ4JKxSdU4oxMtQ7+qcl6+vE8LMLajErCc7QwcIT8ILq9ErFWLHc0RSC+cERG4b920SobtK3vdOpBogUg2cSTPgi/5yBoXxXi9BeJrI6s=
+	t=1755537512; cv=none; b=P0/PE7WddDL6O/feb3d52dOf/RIk7KDFN/IYTcsZnvtrY6H7OcyGfqEt/97eBa/fk4+RkoBF4kipq+0yKkZRyOPuHLwEzNfBMcnGFrz401BbP0unaIOa612IDbNwbokdDtJZP34NFqoKicQGyGGB5NmJM79cUh3R0a19SAR04AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506441; c=relaxed/simple;
-	bh=+uOz4NcMUj4DgMcB5calNycuKxf3I7WIu/7rLtSibn8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B1k6zzu1mab2Cc1TYYxNwUWi0DsH1RTT2f8z5HegposwxNfwvcIgt2VAFIgZFYABRBv5diOtAgKd024JUfyzXURDKHf7vYXtlq3w8ZOubeawjQ6KZ9Zcbe0L1WdwRvU53IhmaKu0Px7DJpzTqWUlf+sQz/dAr84O37/d4ldWAMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=m6alafy7; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 00bbb25a7c0f11f08729452bf625a8b4-20250818
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zTc9ILZszspIergQBlX6+NhSE6Fs5a72JurzfDZwPEA=;
-	b=m6alafy7KwEt+jurtbsy7hDyb/+QEIfB7gYhJzobDe1UYJ0JtwAaqbjrY8E53yz09COZVIG9vOC/VWD2KgVbR9AEk/LMly+HbYl+Zhqs4oydBXUtmnB9VQtO4L0EZCvVXp1Pbv/we2Rhd5x2djYC9g+HHv29KXGBpux01xOAW2U=;
-X-CID-CACHE: Type:Local,Time:202508181634+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:9f07d84b-73c4-47e0-95b9-c696bdaa5d14,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:900b0bf4-66cd-4ff9-9728-6a6f64661009,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 00bbb25a7c0f11f08729452bf625a8b4-20250818
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <payne.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 574988635; Mon, 18 Aug 2025 16:40:32 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 18 Aug 2025 16:40:31 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 18 Aug 2025 16:40:31 +0800
-From: payne.lin <payne.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Bincai Liu <bincai.liu@mediatek.com>, Payne Lin <payne.lin@mediatek.com>
-Subject: [PATCH] gpu: drm: mediatek: correct clk setting AUX_RX_UI_CNT_THR_AUX_FOR_26M
-Date: Mon, 18 Aug 2025 16:40:23 +0800
-Message-ID: <20250818084028.1043856-1-payne.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1755537512; c=relaxed/simple;
+	bh=hu75ymby8evG1hDlfMFXLnU+OuYSG3B3jdgOnJy9zEI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=bwaovzmuq9eY1KR079hRF2oGjlLoByy+E9FcDQjCQe8uqIh1TMru0GzaiHL/AxIwt0D63E0kJCgydLz4aH2b7C+K2PW0bWbsNMtxaZ6VnXmfgk6lyGSx0606qCP7VU5CE7iDu+2btr4FLZL1p0K0wSIYEAJPwGK7tzoFeGEO5Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nsrFQtSg; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250818171825epoutp034565c0ca77a35c87032e828d4e0babda~c7A9sHf5R2183621836epoutp037
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:18:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250818171825epoutp034565c0ca77a35c87032e828d4e0babda~c7A9sHf5R2183621836epoutp037
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755537505;
+	bh=3TKLORAFWjyKSjKXEDenOkvdTWQqYqNMRKTqumATFPI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=nsrFQtSgxkMloRzQrb0Fqf74lhUW4JnFr5o/SrFP7NqI4XnQgXNmFNF2SgiJqZNgw
+	 BGbbU8R4rb7Pmt86WSrde1oSJwPRs26gOhSWPsmMbUaefHuI2H6ozm2ctk5Nl+UnFT
+	 Lfydxqj7WSd58mlNrNUUBdv3f1Fsaz2pJ23ecnUs=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250818171824epcas5p22c7cd57b1ceefb7f6ba85f95bb83e1fb~c7A8ntsF32416824168epcas5p2n;
+	Mon, 18 Aug 2025 17:18:24 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5KDb4RJ0z3hhT7; Mon, 18 Aug
+	2025 17:18:23 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250818084108epcas5p2cf03efaffd338376a8d1f4dac8972d94~cz9T6GJJc2176121761epcas5p29;
+	Mon, 18 Aug 2025 08:41:08 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250818084105epsmtip1696e665c75c145cb5e2e7b5854be6a06~cz9RM6cWW2722027220epsmtip19;
+	Mon, 18 Aug 2025 08:41:05 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <linux-pci@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>
+Cc: <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <4a47b758-5c20-4e30-bc61-206acd48bdd0@kernel.org>
+Subject: RE: [PATCH v3 06/12] dt-bindings: PCI: Split exynos host into two
+ files
+Date: Mon, 18 Aug 2025 14:11:04 +0530
+Message-ID: <000801dc101b$d7b22510$87166f30$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHWPHKmIG2WTsjb/5pkHKJ2GfeRPwKMZRF7AtQYMuoCMTwzCLQ3MAYw
+Content-Language: en-in
+X-CMS-MailID: 20250818084108epcas5p2cf03efaffd338376a8d1f4dac8972d94
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250811154721epcas5p26c9e2880ca55a470f595d914b4030745
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+	<CGME20250811154721epcas5p26c9e2880ca55a470f595d914b4030745@epcas5p2.samsung.com>
+	<20250811154638.95732-7-shradha.t@samsung.com>
+	<4a47b758-5c20-4e30-bc61-206acd48bdd0@kernel.org>
 
-From: Bincai Liu <bincai.liu@mediatek.com>
+> >
+> > @@ -19,9 +19,6 @@ allOf:
+> >    - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> >
+> >  properties:
+> > -  compatible:
+> > -    const: samsung,exynos5433-pcie
+> > -
+> >    reg:
+> >      items:
+> >        - description: Data Bus Interface (DBI) registers.
+> 
+> 
+> So the only common part left here is reg and phy? I don't think such
+> common file brings any value.
+> 
+> 
 
-Updated the definition of AUX_RX_UI_CNT_THR_AUX_FOR_26M from 13 to 14.
-No other code or logic changes were made; only the macro value was modified.
-This change affects the timing configuration for AUX RX at 26MHz.
-The formula is xtal_clk / 2 + 1.
+Okay, will keep two separate files. 
 
-Signed-off-by: Bincai Liu <bincai.liu@mediatek.com>
-Signed-off-by: Payne Lin <payne.lin@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_dp_reg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp_reg.h b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
-index 8ad7a9cc259e..f8c7b3c0935f 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp_reg.h
-+++ b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
-@@ -301,7 +301,7 @@
- #define AUX_TIMEOUT_THR_AUX_TX_P0_VAL			0x1595
- #define MTK_DP_AUX_P0_3614			0x3614
- #define AUX_RX_UI_CNT_THR_AUX_TX_P0_MASK		GENMASK(6, 0)
--#define AUX_RX_UI_CNT_THR_AUX_FOR_26M			13
-+#define AUX_RX_UI_CNT_THR_AUX_FOR_26M			14
- #define MTK_DP_AUX_P0_3618			0x3618
- #define AUX_RX_FIFO_FULL_AUX_TX_P0_MASK			BIT(9)
- #define AUX_RX_FIFO_WRITE_POINTER_AUX_TX_P0_MASK	GENMASK(3, 0)
--- 
-2.45.2
+> Best regards,
+> Krzysztof
 
 
