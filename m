@@ -1,135 +1,237 @@
-Return-Path: <linux-kernel+bounces-774384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CFBB2B191
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:27:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F08B2B183
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DFB520163
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D305B5E1B29
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0AF276031;
-	Mon, 18 Aug 2025 19:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526692727E4;
+	Mon, 18 Aug 2025 19:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enYR4qj7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x23odhRo"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE37C275AFA;
-	Mon, 18 Aug 2025 19:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA45923BD17
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755545192; cv=none; b=WlpiJ4X8srgIdDrn2BqLeWTnLHsI84SGNELFhSkCklmveN9gFqctYDZN5VXxFIapknozu71ZxFP64T/GYTPLWSJZLv4Oq0dQcSyBcamYp/E+orCDtLXZwmLWDCaAZgPBfCVeXxOgMjoxSETD6jJuanjKcsKJ1frc9iaLHQ1D5Qo=
+	t=1755544945; cv=none; b=RfeQdLME7vbaFj5UE/3cCljxOwVh+ew145YrFEimbqAN0rTkicVLfOInlz2VbsSF9xJ52h/KCM3ENxjH1FSoXAfROgAldkfVkjMVlQMMtMXvKJxMqu+wqwn6RwVKDVZ7dEO/Y199RTzu2RFJn39bR0icg51I+1W0n46Aa+GvUXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755545192; c=relaxed/simple;
-	bh=Yp4rWZGTDT5KFNRfuZwRUzBhL1WXxvUosbp+WU+yAyM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=loxAxHnsT+Mv4ohU0aI0jtWsYofuY6ewuRut7PpllrxuUrINCl6bTLcWfCPrd+hJVc3mDDfjom5/jblKD/DlDzzvvs5Aah/LHpeimg5zqM4lUTyaGfZFFaFxbGoSVvae1p6IYdZ7VIjnksIQH5tt7imp7/bPvCKR2X9elWvU7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enYR4qj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B7CC4CEED;
-	Mon, 18 Aug 2025 19:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755545192;
-	bh=Yp4rWZGTDT5KFNRfuZwRUzBhL1WXxvUosbp+WU+yAyM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=enYR4qj7ytofyZvFaTFCUCZu1/wM8GKJTrdhnlmPC6ADnC98OmNkXGeWKYxgkkiqa
-	 JS/LtmHCCrQdxGDD8KFOLsz4q8ZxyD2h0cxqCrMLEK3Ze7Bwnj4vbXBAW8SIMc0ELF
-	 7Ipj640hZ51Kz4yC7uauTta29m2s7d9Uo27IIEI9rzQYwkMVvbs1GxRaJ+ENLSWuC6
-	 J6uSsSX9bh3IAYHCOTXWWRNtHgic/0kET6gfjGWr0Juyf5Bs9AWTobf8R0JznyREix
-	 mQO3Ev9ysKTMxqHlbvymgM0A44bC2DcPDSI8EiEZPcW/SbC3YdClUypJYMRReLWSKd
-	 BYz1JaMud4g2g==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Aug 2025 20:21:20 +0100
-Subject: [PATCH v3 3/3] kselftest/arm64: Add lsfe to the hwcaps test
+	s=arc-20240116; t=1755544945; c=relaxed/simple;
+	bh=fx5mISMkXEo1Bxd5OoP9xVO95F0DiAh3Hh+crbMmAEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q+tR6JHoyV0rjBqWKGn12oquKN2wiVaZQFdA1R5U+CZNytJzIyoatF0xgZvWjAaaP+nr7SSDtD9J+27/zBgOheGCly0VE9tRA/1LFOsTjhz4DXDc3J4fXZ2vjuQn6//xq1WJqw3y1Aq+x0dGnMM6rQDv3Jbw20utw+f11su6Z+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x23odhRo; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b474d0f1d5eso694681a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:22:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755544943; x=1756149743; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=toQPxHiy1KMHSW6a7UOwaU4onC0FC5huJ+T+rOz/mHw=;
+        b=x23odhRo0bhkxWdWlx/50WMga3nGLFSmE2Fr8a25cXtkb2h55fTeR7+5RSC8lwhcAs
+         6o4TYSg4w+spQTVfYVFjJyUcP/miVWS8PqYCIZWyfaWcOcH7KMNnNrc7/++vjke75ogr
+         i8DEWKsPb2J9uhkPdJZmakCcTHTv6NSM5PD9b46KDeEhWOVsOqi76oxgwKCAOauWr/00
+         8sBj75xzUDA2cf+8pWEShPhCi86FHHTG0bnclZhjHk9hRumVwO5ZTwIMJqBxHT9TXYl3
+         6g8RMK84W8TxDyaci+2F2pKXC8UzfzN1YWGybqgMkzcKVmgf3lfjfpCk+i+DqbFbh2Rr
+         CT+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755544943; x=1756149743;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=toQPxHiy1KMHSW6a7UOwaU4onC0FC5huJ+T+rOz/mHw=;
+        b=Rd9/C0ay6KBVa8OU+zE/vrSZcKdhhfZK3gE74eJa8I1tCfOojqdnoQ7p20tEmu3x6T
+         IHN7RUznrKDopTyq7r1/cmG+9DXp5hgYr//DPf5VyZq5zMBKdZ0pVCAsloiEMokI5R5g
+         aNqGxMd53wW7myfJw4xjtJ0xr9WF74M23niVUiz5i9BFUXP1Fn/KXh2HLzustLLJo9w7
+         G2PsTqhs2f/rrr3TM0CEeacu4XU4Ja5PiKw+wPx73oU77f4990/k5bNrFKNcb6ignomd
+         SZRJmjbEfChJKTz+3zQ2jagm3hYiUDWU2qkuLGMNv0/hA+7+CYbLP7HehxNp748bUhWX
+         dLbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCIuhV4KInynt4IdR7/zw3KIxdx1+rL/+HoFlut3DRLWZAT9IVBGWzrOww5KkUS6dfDnvHx3m141wIguU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGTAHjHyDfRasaaT2OOsrslKVCAY8ZB6uMJs/cYRAXXf6OaSUX
+	+P0nTYFHX9vHeQ4+aPu3KQf5f66pmzzRBfttpIr2CjPrrhP3Qs5fTcRr/xuynd+MV0mR2PxammD
+	IJ06uJ74WNA3thopFUmMUicq4S10Imh/XWfJQSXZIKg==
+X-Gm-Gg: ASbGnctxyzDG730I2ztUPoGzBDX34WULfJqfZ7Vi6KbQfX4U4hmH9M60CZrdOOUZvGE
+	giD9ydrsb/QDZWuc8vFEFFe2eZ4kvJMat9VsWUaQb3PuhXozYTCaDboSkLzOYE0kCjPU254T9oM
+	y2UfXeYz+Kups5EWjhO9gjXKmlYVwXvtRMcrxPy7yGoZf/NTOID/TXz+KORZKGnCjk/vz5rR52d
+	XHO2kcwcN3fygxpUUktZStIqWfG4ZRaqmR5NHGG0ZHeeJVNIRO7RFaoVajMeA==
+X-Google-Smtp-Source: AGHT+IHS9gRRUinlegBP/u/axpgH2+HbfQ/LUYof3SDqB39/z9xyiC0/E6Z/XZ7VMjN7bYH5hslQ9igO/RaNQuVAvKU=
+X-Received: by 2002:a17:902:db03:b0:240:8f4:b36e with SMTP id
+ d9443c01a7336-2446d8b67eamr205261235ad.34.1755544942812; Mon, 18 Aug 2025
+ 12:22:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-arm64-lsfe-v3-3-af6f4d66eb39@kernel.org>
-References: <20250818-arm64-lsfe-v3-0-af6f4d66eb39@kernel.org>
-In-Reply-To: <20250818-arm64-lsfe-v3-0-af6f4d66eb39@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1403; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Yp4rWZGTDT5KFNRfuZwRUzBhL1WXxvUosbp+WU+yAyM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoo35cNLSX6TytXvCWIkh1aXNAVcK8MraPbgJUI
- mJwRba6cluJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaKN+XAAKCRAk1otyXVSH
- 0CH0CACCOVx3HNaVMqyPEwTi7A3oJxaPSzOk7n4/tjcUwCF85/+WFdLaEaHCuePMjrYUveEuGsw
- xCWs2hJ+6pJG5LR2/YwTcp75aeAxyCPybxR5Km1Lb1yotTpw2ZlaO1vQP6ZA3TbBfa41bQR8EMr
- dWqtGVwyJeN0eJRue9bp2yiwqwvSAKXS1JETnFsjAQSk3L3p6zDU4rf8ozCvjhOfGWm5bTBzO2j
- ePrni6UZoCwVxGZC4twgwRkO71CcRCKhUh+UrJcfAK+aSWcntU1rh7bL/p+qx3+fXAeS1KdYn01
- dZ/0qMkZ6lTfSrIHzp/T+EIBmfzZx4g9Py0TNy5DznPPFols
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250818124505.781598737@linuxfoundation.org>
+In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 19 Aug 2025 00:52:11 +0530
+X-Gm-Features: Ac12FXwVOEvsYKs2Hj_OhG9gGnWNHFXCh_3DRHC0oFh_uKaf6Yom4JJ2icGbgRA
+Message-ID: <CA+G9fYs014sj_hmcu5pROEQoC-bvk3UNcZDHEezsrmcRkzKf8A@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	srinivas.kandagatla@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
-This feature has no traps associated with it so the SIGILL is not reliable.
+On Mon, 18 Aug 2025 at 19:14, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.2 release.
+> There are 570 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/abi/hwcap.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Boot regression occurs on the Qualcomm DragonBoard 410c (arm64) with
+stable-rc 6.16.2-rc1. The kernel crashes during early boot with a
+NULL pointer dereference in the Qualcomm SCM/TZMEM subsystem.
 
-diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
-index 002ec38a8bbb..941890f69df6 100644
---- a/tools/testing/selftests/arm64/abi/hwcap.c
-+++ b/tools/testing/selftests/arm64/abi/hwcap.c
-@@ -17,6 +17,8 @@
- #include <asm/sigcontext.h>
- #include <asm/unistd.h>
- 
-+#include <linux/auxvec.h>
-+
- #include "../../kselftest.h"
- 
- #define TESTS_PER_HWCAP 3
-@@ -169,6 +171,18 @@ static void lse128_sigill(void)
- 		     : "cc", "memory");
- }
- 
-+static void lsfe_sigill(void)
-+{
-+	float __attribute__ ((aligned (16))) mem = 0;
-+	register float *memp asm ("x0") = &mem;
-+
-+	/* LDFADD H0, H0, [X0] */
-+	asm volatile(".inst 0x7c200000"
-+		     : "+r" (memp)
-+		     :
-+		     : "cc", "memory");
-+}
-+
- static void lut_sigill(void)
- {
- 	/* LUTI2 V0.16B, { V0.16B }, V[0] */
-@@ -762,6 +776,13 @@ static const struct hwcap_data {
- 		.cpuinfo = "lse128",
- 		.sigill_fn = lse128_sigill,
- 	},
-+	{
-+		.name = "LSFE",
-+		.at_hwcap = AT_HWCAP3,
-+		.hwcap_bit = HWCAP3_LSFE,
-+		.cpuinfo = "lsfe",
-+		.sigill_fn = lsfe_sigill,
-+	},
- 	{
- 		.name = "LUT",
- 		.at_hwcap = AT_HWCAP2,
+The crash originates in qcom_scm_shm_bridge_enable()
+(drivers/firmware/qcom/qcom_scm.c) and is invoked by
+qcom_tzmem_enable() (drivers/firmware/qcom/qcom_tzmem.c).
+This happens while probing SCM during platform initialization, preventing
+the board from reaching userspace due to kernel panic.
 
--- 
-2.39.5
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
+Boot regression: stable-rc 6.16.2-rc1 arm64 Qualcomm Dragonboard 410c
+kernel NULL pointer dereference qcom_scm_shm_bridge_enable
+qcom_tzmem_enable
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Test log
+[    1.011897] scmi_core: SCMI protocol bus registered
+[    1.014070] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000000
+[    1.018776] Mem abort info:
+[    1.027774]   ESR = 0x0000000096000004
+[    1.030282]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    1.034116]   SET = 0, FnV = 0
+[    1.039581]   EA = 0, S1PTW = 0
+[    1.042433]   FSC = 0x04: level 0 translation fault
+[    1.045486] Data abort info:
+[    1.050341]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    1.053464]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    1.058768]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    1.063891] [0000000000000000] user address but active_mm is swapper
+[    1.069276] Internal error: Oops: 0000000096000004 [#1]  SMP
+[    1.075601] Modules linked in:
+[    1.081240] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.16.2-rc1 #1 PREEMPT
+[    1.084114] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    1.091663] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    1.098607] pc : qcom_scm_shm_bridge_enable
+(drivers/firmware/qcom/qcom_scm.c:1618)
+[    1.105285] lr : qcom_tzmem_enable
+(drivers/firmware/qcom/qcom_tzmem.c:98
+drivers/firmware/qcom/qcom_tzmem.c:475)
+[    1.110491] sp : ffff80008002b730
+[    1.114916] x29: ffff80008002b7c0 x28: 0000000000000000 x27: 0000000000000000
+[    1.118226] x26: 0000000000000000 x25: 0000000000000000 x24: ffff00003fcf2028
+[    1.125343] x23: ffff00003fcc1798 x22: 0000000000000000 x21: ffff000002cdf410
+[    1.132460] x20: ffff000002cdf400 x19: ffff80008288a000 x18: ffff8000813951f0
+[    1.139579] x17: 0000000000000000 x16: 00000000ffffffff x15: fffffffffffffc00
+[    1.146696] x14: ffffffffffffffff x13: 0000000000000020 x12: 0000000000000002
+[    1.153814] x11: 0000000000000000 x10: 0000000000000019 x9 : 0000000000000001
+[    1.160932] x8 : 0000000000000000 x7 : 7f7f7f7f7f7f7f7f x6 : fefefeff35302f37
+[    1.168052] x5 : 8080808000000000 x4 : 0000000000000020 x3 : 0000000036313038
+[    1.175169] x2 : 000000000000001c x1 : 000000000000000c x0 : 0000000000000000
+[    1.182289] Call trace:
+[    1.189393] qcom_scm_shm_bridge_enable
+(drivers/firmware/qcom/qcom_scm.c:1618) (P)
+[    1.191658] qcom_tzmem_enable
+(drivers/firmware/qcom/qcom_tzmem.c:98
+drivers/firmware/qcom/qcom_tzmem.c:475)
+[    1.196862] qcom_scm_probe (drivers/firmware/qcom/qcom_scm.c:2259)
+[    1.200941] platform_probe (drivers/base/platform.c:1405)
+[    1.204587] really_probe (drivers/base/dd.c:581 drivers/base/dd.c:657)
+[    1.208408] __driver_probe_device (drivers/base/dd.c:0)
+[    1.212055] driver_probe_device (drivers/base/dd.c:829)
+[    1.216394] __driver_attach (drivers/base/dd.c:1216)
+[    1.220299] bus_for_each_dev (drivers/base/bus.c:369)
+[    1.224118] driver_attach (drivers/base/dd.c:1233)
+[    1.228285] bus_add_driver (drivers/base/bus.c:679)
+[    1.231844] driver_register (drivers/base/driver.c:250)
+[    1.235403] __platform_driver_register (drivers/base/platform.c:867)
+[    1.239225] qcom_scm_init (drivers/firmware/qcom/qcom_scm.c:2365)
+[    1.244083] do_one_initcall (init/main.c:1252 init/main.c:1275)
+[    1.247730] do_initcall_level (init/main.c:1335)
+[    1.251289] do_initcalls (init/main.c:1349)
+[    1.255455] do_basic_setup (init/main.c:1372)
+[    1.258666] kernel_init_freeable (init/main.c:1588)
+[    1.262488] kernel_init (init/main.c:1476)
+[    1.266826] ret_from_fork (arch/arm64/kernel/entry.S:848)
+[ 1.270045] Code: a904ffff a903ffff a902ffff a900ffff (f9400100)
+All code
+========
+
+Code starting with the faulting instruction
+===========================================
+[    1.273870] ---[ end trace 0000000000000000 ]---
+[    1.279875] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    1.284550] SMP: stopping secondary CPUs
+[    1.291930] ---[ end Kernel panic - not syncing: Attempted to kill
+init! exitcode=0x0000000b ]---
+
+Please refer full test log information in the below links.
+
+## Source
+* Kernel version: 6.16.2-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git describe: v6.16-1192-g7439b60c7df9
+* Git commit: 7439b60c7df9cf7683dbfe417d128304e34a4f22
+* Architectures: arm64 Dragonboard 410c
+* Toolchains: gcc-13, clang-20
+* Kconfigs: defconfig+lkft
+
+## Test
+* Boot log: https://qa-reports.linaro.org/api/testruns/29589924/log_file/
+* Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8407950#L2304
+* Boot details:
+https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.16.y/v6.16-1192-g7439b60c7df9/log-parser-boot/panic-multiline-kernel-panic-not-syncing-attempted-to-kill-init-exitcode/
+* Boot plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/31SnSReSLRhyKacT9vTgYiE9GRJ
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31SnQ9iEVyT81yLXvTtUzBV7I4A/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31SnQ9iEVyT81yLXvTtUzBV7I4A/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
