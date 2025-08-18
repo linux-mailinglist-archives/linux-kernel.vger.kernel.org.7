@@ -1,156 +1,110 @@
-Return-Path: <linux-kernel+bounces-774453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1691B2B282
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490F0B2B27B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DD5E533C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:35:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE73C1BA206D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8717D2236EE;
-	Mon, 18 Aug 2025 20:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B92D22541B;
+	Mon, 18 Aug 2025 20:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IEyknZHQ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQEVHSl+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281E815278E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07181E51FB;
+	Mon, 18 Aug 2025 20:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755549327; cv=none; b=WJcqB1N34qHE54zuZhoTvHVY+FqWMEm23AEZ6Fr4huOyLepJkwh9JG4M2ZnSt3p67Kb5UbJvApy2rlAl2EXxbHUJIfmcRnR9liRMkHCXuNdq5XtAyNzAp/cx+uCgA2stla75xFZCWhCFnQ91AVwiWKFVcmJgOPQHEYMaRpYULOE=
+	t=1755549350; cv=none; b=B/kimMFfhdtgJtSFuTFt8rfP5py4gZvV2C/Tc/a/X3xiov6GI0qUgxATVmuoGbjshpxS/aGcVwz4adhhXSfugWGfYrCbKZoM5861/BwEqZzYBLoskyDE0AV/mdVfZwSReevp1r9DR0nMjOgDo3vbSooHKd0Y51/dquDV4ZmY014=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755549327; c=relaxed/simple;
-	bh=eqVkeZYur4vB9IiQRm1NCdJ4YaR7bQVBv12DWTl1zCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qe/xiHT5gQ1jELr8popAJwgofm32XocEgeyoi5qMIywZs5UgWOITcLuK/ngjnrf9FR3n9fOlho7z4MO86h6CVmNqS+5hH3rKrafKcZC8zOY3Yn6RcL070t/SEpHyy5zHcXdxkT9WmBsUdYFwKIFIDJigu/4wjW+4s0SsJbqwMNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IEyknZHQ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb72d5409so733902566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755549323; x=1756154123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RrUPoAix4GJmNCXAtshi2uvFt0DKJJ/xCnFV+qY1rgk=;
-        b=IEyknZHQ5HTtcAo2Oh+mFmqwS3k4mFoYqp712C8v/Sb+O4Q3ElF5T+kEfmrpD6fjQ6
-         bPFCnWEmV1CvJFPBS/Xiw1x1I5YCZAACr6zpV3J+7l6quwDpV772nWLCeJZe7CFq2vZu
-         C76MyV2JkX53mtKnHiYY6rCi34DNYEV8uZvEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755549323; x=1756154123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RrUPoAix4GJmNCXAtshi2uvFt0DKJJ/xCnFV+qY1rgk=;
-        b=qrvh9+32QtHK1BcpjDbjdk6r/TYwtWuwKHc0b+U65BMqSwHrt/ZMVtEOOejY3XH6wz
-         dPh3VHiaXo0hoNB3yhsbzPXairPyT29t0lC1KKiKkqDotW8glYv6ocNO3taTW/DJeumY
-         QgtNe3fCRXmXjn44jTKrtD8iuw0oAePAoLeok7Mm+aVmPxu4NOLfsvJqdk+Lo3Ni5za8
-         e2mRSM7tUJNAx8rRRn0j6HJqs+BaZo7IoEhJcyBA15Y0UMezJ8UhssfSk+HcrLSrvMv2
-         NorMqzEfFS4YuLL51eeqRx1g4arfPDg/jxkPDm8OPViNRfPcnTceL2cmVXwdb0irj1UJ
-         dJKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwTErb5TUaV6+g/WxAgmDAFnafp20yzhMp+JH0nrZAOvtMdwlF2R3cKejghXZMpK9yVHeHiR9Itf6TtcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFZDc4ReapFC5DVMKaLBijHuq8m53vLVAVtpDPIOQ9j8J11OiF
-	9EejtRsK+crF/vvLNStJ6DE6FZ3hd4srMC9meUNqIQzzkK6czSkpSg/9cnETBND+Z1caFPMpcgP
-	tpw1jY8Lz
-X-Gm-Gg: ASbGnctGfZdhaW+JFHss7EuPz83ik2oPlfUjykPtDb5TC8ZzhbRB4erjzHQ30+/BRr+
-	5f/rBuhxsS/OAaBhrS0BMrWyJekJMJlZl9+k2oojrkgFDgn4jc4V2+/AQTBTCALm9eN9tAEsaI3
-	G2UHbL70uEAWpK8jd2OSEP5Z4FC6lUHrbewLVltp5+32bnhpQuxKSXrOOOU5IrfM3Ro0qDhBQ7D
-	gaOa6OtiEcc3xZ+0Mz4sG1GrD/PsXiwwBNv9vj3eUGXAUsqj7fPVU+qyK4fbPSpfzjHzWL6+hO8
-	nHLyhC6zfCkuRanNFCYgY/9LLhfy8y/7FHREd6kOBT4QYrGFGfbY/PssDiuwc20LOqlkV3ECxyJ
-	pmnSFUo5RiXX0iUZFFuVVydWLz3OLVfeWqecgBXIcfDY5zQIdbKgRt4ULwZ6W1gVDNNLt+mIC
-X-Google-Smtp-Source: AGHT+IF8a75bKlaD6vjH3sZFXLxLIU68+UO6/ymmjyrxO3p+Zkp8+yYURXEfA7Cw5j1gXXvFbsvfjw==
-X-Received: by 2002:a17:907:3d8e:b0:afa:1453:662c with SMTP id a640c23a62f3a-afddc96169cmr11837166b.8.1755549323270;
-        Mon, 18 Aug 2025 13:35:23 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd018a4bsm846200566b.100.2025.08.18.13.35.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 13:35:22 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a8dd3dso651138366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:35:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsYyxG3kAxojgSoT9GDijhTWEVFBhAtjn1KBP0DNreQ/3LHqeTMGwTkSO2hMnU7i6AnWEkDZO6/Z7u0E4=@vger.kernel.org
-X-Received: by 2002:a17:907:94c8:b0:afd:d9e4:51e7 with SMTP id
- a640c23a62f3a-afddd24e88emr11714066b.63.1755549321531; Mon, 18 Aug 2025
- 13:35:21 -0700 (PDT)
+	s=arc-20240116; t=1755549350; c=relaxed/simple;
+	bh=om2cfshnlMUz7DuvRjvZA14In9sewmxBtmoNs13zHqw=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KYJJumbySV3UDGTp8wvIZVySvDKqT3O4KYSwVIzgZBdeHpQPcEjKtT2mJ64CA9MdioZUMf6VUH2IbYbX5LxSi2BOsvYWgpZ4qd5cLKv8B6r7qQu8aIAUGJlfkMvj4KWkos6kPs/7gRBpkngPLfuRUAqVWCMwhd/UHzR6CxVcQDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQEVHSl+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1177C4CEEB;
+	Mon, 18 Aug 2025 20:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755549349;
+	bh=om2cfshnlMUz7DuvRjvZA14In9sewmxBtmoNs13zHqw=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=uQEVHSl+duq+dWLUD9eW7eVtnhv2PmtTTxGShiVKLaoXm1AZwNzmFVVwBWbNLfnKg
+	 94Rptxkq/91UxwElGtWNKiw3S7i/v4rMR6FWZ1ZU6f3UTJDV4YDtGBJ0ulG1WCgOz1
+	 DSfa1jXtrrqlrbJE3cTEvmqjW4E2SWvBobJJfxl9qWfPRA16kgHJSoJ3jTGBtyUbUZ
+	 0LNddIr0zP9JhbNdc9h62WWL6M/vUZYDls/huH7FMIPUj5utoSBbq8q1m+fUwsl8aF
+	 N8Sv1p/4cz8QAo5VRqq6szY9e76eJ2vUc4mEZbqVB2J7MYIXScGH1mPu08d67/1H49
+	 XmSHZe5KSNIgw==
+From: Mark Brown <broonie@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>, Avi Fishman <avifishman70@gmail.com>, 
+ Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+ Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+ Benjamin Fair <benjaminfair@google.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-spi@vger.kernel.org, 
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+ linux-arm-kernel@lists.infradead.org, Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <20250815082118.586422-1-rongqianfeng@vivo.com>
+References: <20250815082118.586422-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH 0/3] spi: use min_t() to improve code
+Message-Id: <175554934664.130972.8355246635589446804.b4-ty@kernel.org>
+Date: Mon, 18 Aug 2025 21:35:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818181153.661431-1-thorsten.blum@linux.dev> <20250818181153.661431-3-thorsten.blum@linux.dev>
-In-Reply-To: <20250818181153.661431-3-thorsten.blum@linux.dev>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 18 Aug 2025 13:35:06 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=W7Qhz4dNnhb3t4+Bz3Fk5iKxRNwrq8u4X73tpGsg=hyA@mail.gmail.com>
-X-Gm-Features: Ac12FXzfHvX5IPb4DpSB34IuOPv7zZbGkqkbrqt_GWvH8ZKvsXy6Qt9lVJvk3rU
-Message-ID: <CAD=FV=W7Qhz4dNnhb3t4+Bz3Fk5iKxRNwrq8u4X73tpGsg=hyA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] kdb: Replace deprecated strcpy() with memcpy() in parse_grep()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
-	Nir Lichtman <nir@lichtman.org>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-hardening@vger.kernel.org, 
-	Daniel Thompson <daniel@riscstar.com>, kgdb-bugreport@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-Hi,
+On Fri, 15 Aug 2025 16:21:14 +0800, Qianfeng Rong wrote:
+> Use min_t() to reduce the code and improve readability.
+> 
+> No functional changes.
+> 
+> Qianfeng Rong (3):
+>   spi: spi-fsl-lpspi: use min_t() to improve code
+>   spi: npcm-fiu: use min_t() to improve code
+>   spi: spl022: use min_t() to improve code
+> 
+> [...]
 
-On Mon, Aug 18, 2025 at 11:14=E2=80=AFAM Thorsten Blum <thorsten.blum@linux=
-.dev> wrote:
->
-> strcpy() is deprecated; use memcpy() instead.
->
-> We can safely use memcpy() because we already know the length of the
-> source string 'cp' and that it is guaranteed to be NUL-terminated within
-> the first KDB_GREP_STRLEN bytes.
->
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  kernel/debug/kdb/kdb_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index 7a4d2d4689a5..cdf91976eb7c 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -860,7 +860,7 @@ static void parse_grep(const char *str)
->                 kdb_printf("search string too long\n");
->                 return;
->         }
-> -       strcpy(kdb_grep_string, cp);
-> +       memcpy(kdb_grep_string, cp, len + 1);
+Applied to
 
-I'm OK with this:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thanks!
 
-A part of me would rather use strscpy() the way it's supposed to be
-used to simplify the code a tiny bit... AKA (untested):
+[1/3] spi: spi-fsl-lpspi: use min_t() to improve code
+      commit: a750050349ea138e3e86c66a8a41de736619b9de
+[2/3] spi: npcm-fiu: use min_t() to improve code
+      commit: 1bdc716023a78c2c41fdcb3fc37f09da1be4b7df
+[3/3] spi: spl022: use min_t() to improve code
+      commit: 90179609efa421b1ccc7d8eafbc078bafb25777c
 
--       len =3D strlen(cp);
-+       len =3D strscpy(kdb_grep_string, cp);
-        if (!len)
-                return;
--       if (len >=3D KDB_GREP_STRLEN) {
-+       if (len < 0) {
-                kdb_printf("search string too long\n");
-                return;
-        }
--       strcpy(kdb_grep_string, cp);
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-I guess this does "change" the behavior in that `kdb_grep_string` will
-still be set to the empty string in the case that "len" was 0 and will
-still be set to a truncated copy in the case that "len" was too big,
-but based on my quick analysis of the code that should be fine.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-In any case, we're getting pretty far into nitpicks here, so I'm also
-OK w/ just leaving it the way you have it. ;-)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
