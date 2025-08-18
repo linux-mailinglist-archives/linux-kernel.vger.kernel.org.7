@@ -1,188 +1,239 @@
-Return-Path: <linux-kernel+bounces-774623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D142B2B525
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DDCB2B52B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF971961D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D89218835EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784A727C158;
-	Mon, 18 Aug 2025 23:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68E327D773;
+	Mon, 18 Aug 2025 23:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mffIIZQB"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gFnuselq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F49922B8D0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402C81EB5B;
+	Mon, 18 Aug 2025 23:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755561530; cv=none; b=SSo2OeYET9Ep058y8lfQPkL1fV6/As/6VC7sRqLbn6jIEV33MgB4mgz+OijouDuvRAA5fpXHwrWMBeo0SjUcaDhzG1y9SyMn/9NMVnOoUclV1zByU2o8ldQ2tOt44Y1MfRAA5v/9OqaNHp1Cup+Mjw1RuF4A40S1h6QnbYF3sec=
+	t=1755561573; cv=none; b=k8g0qMR1AwA2NAz811Es+1QnVlovYJw+sVijgqJ8T/pn8DXLZaiBoYO+ZKji4Qy/l/Zpp8rqw+IibBoPEcG1c/Gkm6eLkUuRIyjls9I4m9KvrLE0cSwmcgHohukFxYaoQfwLMk8Xs3MkPR7l8ih8luAZ8EvaAfG8V0bx7uveooc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755561530; c=relaxed/simple;
-	bh=glVk/hY3UV087gQCtno8h+R3ZP+p7PuN1b//8T9JP7c=;
+	s=arc-20240116; t=1755561573; c=relaxed/simple;
+	bh=kLg7XbYIsk9Q7gmAQl8rX7a/NLVyPEC6NZAox6CGTm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vA2EDCTiN6kTu9JSwcZ27nGAFkAkp0/fmBaa4BDZUymm4WDFJNzhvjhIUVixQbh0tPzmg/Xz2Nzvrrdgn3FQvLMrvotIliZHpY8ilEzCiInx0F8vV4RNpvUaO4Hh8+P0ln0x55zE1z1SDKvrNrbnPUg1S14UvSdkpcCvq2DEL5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mffIIZQB; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e575ff1b80so21786645ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755561528; x=1756166328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i19yi9n59eMxo8uVt+mvLfPM1/Jk8FxebqQQMeUMWso=;
-        b=mffIIZQBPNk6uCAAQSeq90VMwd+6Vm8I5APcRrg+MvbgbrVGOqT+e1VEkMDFn3TQCn
-         2FPd+ucQLZ+e/0lkXeqHTvjAcpyeEFc3Z/Pel8E7USfdvtWYUko64R4PvpFMUkikAbGm
-         YOWbpOpIRakQzg/XkXKAd2QVlFlHtoPMxu9wh0URzJ2T4fTDIVZQasfNH0WmRh4MJGHP
-         E3Hb7RKdbryPQTTsdz0P5Y0fQhJTGnBbyV6dTDe5zHoPoauUgUHAPk/SR7kq+4iuxdUD
-         nbRDRtJ6HWPSotQnB/IvudTZgopRER4k1GDsBByztdnVwxjxzGWQInb1rNUO+MhsFoCo
-         sGow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755561528; x=1756166328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i19yi9n59eMxo8uVt+mvLfPM1/Jk8FxebqQQMeUMWso=;
-        b=LZcqTDOcAgpQz0tn3F5rdxFezvqDdnXbStB9K5Hu+/tImz4igVSg6ZMcfsHMRqorm6
-         FBLMd+bbeRPlwuxIj0yoWwIcPYRp8PoG95Jeb0kvbjRqTao0uy58Rfu1JrHh7fJXG08p
-         70wWM2WUv/WhnSCR1DNVujg0QFXycJ7Ooy4wN8MdH5o7FnOp0R4VDs3ShDjPC8gITrU/
-         3qwFGCQwpDK0XDZD+goRA25fSZpB4oG9zKfaVVTINjIjDNE8LmvwjQqodYvAjH6UoGAF
-         CCekPAg5w5PE9vF3GyjsjxQiUPRp7thgOT/7xGLbpWiO77sbuD/eNMD1FEeJfNtN0sqb
-         pMkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNV/9qN1TYokCTcrjaCezuVawLJ0l20WWm6jdM72Zbe9YHOXD4Hp3IoGs7ryIjQpjhQ15Hnx1ybSRmHvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrI58juANVVog9JDxyMPgwGxTHO6OTkK9nN7EKyAaFbo1fZDU5
-	BJWsqwwrez62ci15R5OaIaYJmpvAJzlbHEOs4TZrno7lpzsS4lC3pasDD/yOsDIO6A==
-X-Gm-Gg: ASbGncub4TTGq2deNrt2WjuCkKYe1glzoFHz1SBZj1sfREVATROi2/5zDi0B06iKjCB
-	A1KYDZDKjulisarmGCLqPdRTLWYM9Y0fHPK5jJHHgugGsaZuT+5ej8b4u4Ho2dL+AnNsk9PMDn3
-	R7E3pkNuwqa50VPARWRK6hCbkn/vWqhxChNKR5E8NhNb40mr/EzC0aahkwayc81ytwGyE2+BF8T
-	R4oP5DcF0zkHHSeO9o63nPktTwvxyxABu5RKx1qNLo7sM4j+3leJHgE5p0j+RE4xCcrnObZUWMT
-	pyBsYLtgYad3YI0vQ2FRQyzX8gS/IDvPaMToxZgSSpfWUe3FOIboETphkH9SL48KE+z2LRduHSU
-	Yg8CdOfeLPg0Az/CcGNKUOOLT4ZmZ2H1rEmXUpgtLHj+Yr4o8Q9yMmM+65mQN/caOcF+Ej3zw1w
-	==
-X-Google-Smtp-Source: AGHT+IEz/EI+LZtyAIW9MjYSAxlsQgeLXFtkoryUpRnIuhRS73z7iBfg2JLP0JM/2ebqh0wR5R8r8g==
-X-Received: by 2002:a05:6e02:1947:b0:3e5:7de6:c348 with SMTP id e9e14a558f8ab-3e6765ce30dmr12922565ab.3.1755561528238;
-        Mon, 18 Aug 2025 16:58:48 -0700 (PDT)
-Received: from google.com (2.82.29.34.bc.googleusercontent.com. [34.29.82.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94781b7csm2898883173.15.2025.08.18.16.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 16:58:47 -0700 (PDT)
-Date: Mon, 18 Aug 2025 16:58:45 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] MIPS: arc: Replace deprecated strcpy() with memcpy()
-Message-ID: <yisgcmjp5cj27yozthudyrdpfcovhcrgpqbyip5kcum4aa7qwl@52bccatjuiak>
-References: <20250817183728.612012-1-thorsten.blum@linux.dev>
- <20250817183728.612012-5-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1ctfnQFIJay2rb9B/q4/XJY2Q5evndqFui4nhaAI8p9m5hnCGCl4M230Dc1gfWQ/gD9tpSTolDwy9lgj9NcGSW/MGPZ9VXElZaMZ0u5qU6VcF9u6AE9DQJkY17vhoRfFXrTOKgYOJrUw5ljQcP60G7+Ebb188gtdVDbIPJC2ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gFnuselq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8E8DDC6D;
+	Tue, 19 Aug 2025 01:58:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755561511;
+	bh=kLg7XbYIsk9Q7gmAQl8rX7a/NLVyPEC6NZAox6CGTm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gFnuselqMyrKeAnAzHveK3dtBfn8bkgX6bdU7LhEzHw4W/qyM/hdFy4IwOfRM0O9A
+	 1ICJ4BzrI34GewR8tXvT/492PBFaly+cUDtihJWjq0Rv3WFUEg6ePrvBh2xI89xna+
+	 h0b43taL5ZgECPA9Ya3tlE3OwkidnLoZRfgjjxEI=
+Date: Tue, 19 Aug 2025 02:59:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Andy Walls <awalls@md.metrocast.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] media: ivtv: Fix invalid access to file *
+Message-ID: <20250818235906.GC10308@pendragon.ideasonboard.com>
+References: <20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com>
+ <20250818-cx18-v4l2-fh-v3-2-5e2f08f3cadc@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250817183728.612012-5-thorsten.blum@linux.dev>
+In-Reply-To: <20250818-cx18-v4l2-fh-v3-2-5e2f08f3cadc@ideasonboard.com>
 
-Hi,
+Hi Jacopo,
 
-On Sun, Aug 17, 2025 at 08:37:15PM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use memcpy() instead.
+Thank you for the patch.
+
+On Mon, Aug 18, 2025 at 10:39:37PM +0200, Jacopo Mondi wrote:
+> Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> all ioctl handlers have been ported to operate on the file * first
+> function argument.
 > 
-> Use pr_debug() instead of printk(KERN_DEBUG) to silence a checkpatch
-> warning.
+> The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
+> needs to start streaming. This function calls the s_input() and
+> s_frequency() ioctl handlers directly, but being called from the driver
+> context, it doesn't have a valid file * to pass them. This causes the
+> ioctl handlers to deference an invalid pointer.
+> 
+> Fix this by wrapping the ioctl handlers implementation in helper
+> functions.
 
-I'd like to see more reasoning for why you chose memcpy() here. With api
-refactors like this I think most folks want to know if 1) there is any
-functional change and 2) why you chose the api.
+You may want to reword this in a similar way as proposed in 1/2.
 
 > 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> The ivtv_do_s_input() helper accepts a struct ivtv * as first argument,
+> which is easily accessible from the DVB layer as well as from the file *
+> argument of the ioctl handler.
+> 
+> The ivtv_s_frequency() takes an ivtv_stream * instead. The stream * can
+> safely be accessed from the DVB layer which hard-codes it to the
+> IVTV_ENC_STREAM_TYPE_MPG stream type, as well as from the ioctl handler
+> a valid stream type is associated to each open file handle depending on
+> which video device node has been opened in the ivtv_open() file
+> operation.
+> 
+> The bug has been reported by Smatch.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > ---
->  arch/mips/fw/arc/cmdline.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
+>  drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
+>  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
+>  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
+>  3 files changed, 25 insertions(+), 14 deletions(-)
 > 
-> diff --git a/arch/mips/fw/arc/cmdline.c b/arch/mips/fw/arc/cmdline.c
-> index 155c5e911723..86b0e377b713 100644
-> --- a/arch/mips/fw/arc/cmdline.c
-> +++ b/arch/mips/fw/arc/cmdline.c
-> @@ -42,12 +42,13 @@ static char __init *move_firmware_args(int argc, LONG *argv, char *cp)
+> diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+> index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..7e2fb98cfccf02f701ceb4484dd1d330dd1dc867 100644
+> --- a/drivers/media/pci/ivtv/ivtv-driver.c
+> +++ b/drivers/media/pci/ivtv/ivtv-driver.c
+> @@ -1260,15 +1260,12 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+>  
+>  int ivtv_init_on_first_open(struct ivtv *itv)
 >  {
->  	char *s;
->  	int actr, i;
-> +	size_t len;
->  
->  	actr = 1; /* Always ignore argv[0] */
->  
->  	while (actr < argc) {
-> -		for(i = 0; i < ARRAY_SIZE(used_arc); i++) {
-> -			int len = strlen(used_arc[i][0]);
-> +		for (i = 0; i < ARRAY_SIZE(used_arc); i++) {
-> +			len = strlen(used_arc[i][0]);
->  
->  			if (!strncmp(prom_argv(actr), used_arc[i][0], len)) {
->  			/* Ok, we want it. First append the replacement... */
-> @@ -57,8 +58,9 @@ static char __init *move_firmware_args(int argc, LONG *argv, char *cp)
->  				s = strchr(prom_argv(actr), '=');
->  				if (s) {
->  					s++;
-> -					strcpy(cp, s);
-> -					cp += strlen(s);
-> +					len = strlen(s);
-> +					memcpy(cp, s, len + 1);
-> +					cp += len;
->  				}
->  				*cp++ = ' ';
->  				break;
-> @@ -74,6 +76,7 @@ void __init prom_init_cmdline(int argc, LONG *argv)
->  {
->  	char *cp;
->  	int actr, i;
-> +	size_t len;
->  
->  	actr = 1; /* Always ignore argv[0] */
->  
-> @@ -86,14 +89,15 @@ void __init prom_init_cmdline(int argc, LONG *argv)
->  
->  	while (actr < argc) {
->  		for (i = 0; i < ARRAY_SIZE(ignored); i++) {
-> -			int len = strlen(ignored[i]);
-> -
-> +			len = strlen(ignored[i]);
->  			if (!strncmp(prom_argv(actr), ignored[i], len))
->  				goto pic_cont;
->  		}
-> +
->  		/* Ok, we want it. */
-> -		strcpy(cp, prom_argv(actr));
-> -		cp += strlen(prom_argv(actr));
-> +		len = strlen(prom_argv(actr));
-> +		memcpy(cp, prom_argv(actr), len + 1);
-> +		cp += len;
->  		*cp++ = ' ';
->  
->  	pic_cont:
-> @@ -105,6 +109,6 @@ void __init prom_init_cmdline(int argc, LONG *argv)
->  	*cp = '\0';
->  
->  #ifdef DEBUG_CMDLINE
-> -	printk(KERN_DEBUG "prom cmdline: %s\n", arcs_cmdline);
-> +	pr_debug("prom cmdline: %s\n", arcs_cmdline);
->  #endif
->  }
-> -- 
-> 2.50.1
-> 
->
+> -	struct v4l2_frequency vf;
+>  	/* Needed to call ioctls later */
 
-Thanks
-Justin
+I'd drop the comment.
+
+> -	struct ivtv_open_id fh;
+> +	struct ivtv_stream *s = &itv->streams[IVTV_ENC_STREAM_TYPE_MPG];
+> +	struct v4l2_frequency vf;
+>  	int fw_retry_count = 3;
+>  	int video_input;
+>  
+> -	fh.itv = itv;
+> -	fh.type = IVTV_ENC_STREAM_TYPE_MPG;
+> -
+>  	if (test_bit(IVTV_F_I_FAILED, &itv->i_flags))
+>  		return -ENXIO;
+>  
+> @@ -1310,13 +1307,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
+>  
+>  	video_input = itv->active_input;
+>  	itv->active_input++;	/* Force update of input */
+> -	ivtv_s_input(NULL, &fh, video_input);
+> +	ivtv_do_s_input(itv, video_input);
+>  
+>  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+>  	   in one place. */
+>  	itv->std++;		/* Force full standard initialization */
+>  	itv->std_out = itv->std;
+> -	ivtv_s_frequency(NULL, &fh, &vf);
+> +	ivtv_do_s_frequency(s, &vf);
+
+	ivtv_do_s_frequency(&itv->streams[IVTV_ENC_STREAM_TYPE_MPG], &vf);
+
+would work too. Up to you.
+
+>  
+>  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
+>  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> index 8077a71d4850ec773caa20c3fca08f92f3117d69..dfbc842b22453868a2075935a81db7ae313ee46c 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> @@ -974,9 +974,8 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+>  	v4l2_std_id std;
+>  	int i;
+>  
+> @@ -1017,6 +1016,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +{
+> +	return ivtv_do_s_input(file2id(file)->itv, inp);
+> +}
+> +
+>  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> @@ -1065,10 +1069,9 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+> -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
+> +	struct ivtv *itv = s->itv;
+>  
+>  	if (s->vdev.vfl_dir)
+>  		return -ENOTTY;
+> @@ -1082,6 +1085,15 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_frequency(struct file *file, void *fh,
+> +			    const struct v4l2_frequency *vf)
+> +{
+> +	struct ivtv_open_id *id = file2id(file);
+> +	struct ivtv *itv = id->itv;
+> +
+> +	return ivtv_do_s_frequency(&itv->streams[id->type], vf);
+> +}
+> +
+>  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..dd713a6b095e5ebca45a234dd6c9a90df0928596 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> @@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
+>  void ivtv_set_funcs(struct video_device *vdev);
+>  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
+>  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
+> +
+> +struct ivtv;
+
+I'd drop this, as the structure is already used above.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf);
+> +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp);
+>  
+>  #endif
+> 
+
+-- 
+Regards,
+
+Laurent Pinchart
 
