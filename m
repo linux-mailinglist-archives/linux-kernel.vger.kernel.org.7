@@ -1,79 +1,95 @@
-Return-Path: <linux-kernel+bounces-773522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF6BB2A159
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:20:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC480B2A109
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62EC16CAF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D612A3A6F78
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF1C310771;
-	Mon, 18 Aug 2025 12:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93AD20299E;
+	Mon, 18 Aug 2025 12:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByzSwL9F"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JIZIkc02";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hXpd5nL3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JIZIkc02";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hXpd5nL3"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE60200BBC;
-	Mon, 18 Aug 2025 12:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFC027B35A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519024; cv=none; b=Iwlmdi+uedzxWf4dzd3PVZdflVOduGX+iorKdU2SCvN/MVESZaSYDIQWVsui8uoTBH+V8KoBjntFo28psgrxDWLLh7NIYt13cAk8GsWAZZdWMDn0HAKZNideq7mFPxkszndH4DIv4C4EDNXn5wBZzO+ow6xZ63Wc/Y8k/p2MOks=
+	t=1755518570; cv=none; b=HYAw+wieB9ixPRiJBvcOP8dugOTJoMtxgGVUSaIZfEpMb1TG5ohS3VJWdyhGidKxoWd5ANu6SgAmcHgnkGuIUCQLTS5wIgTc/8Mysbbt7x3S9ja4pOmQH4Z+idUUcX7gWscgD8Ow8z3mD41JUVFf9BEiqoxnt+Yp0fMpMCwYLJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519024; c=relaxed/simple;
-	bh=YkFLGncSbECdhaZvESZJqJcRkidDZNet17BajrML49o=;
+	s=arc-20240116; t=1755518570; c=relaxed/simple;
+	bh=ZGX2zGsGNvw805IyudKJ15/DmyboLEhvv9LxS0Dbza0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Udh9zTAWruH2js7TwIJZk2QojgQD5oMX/JxdqCk61evaHHOmuDfQVb+1afajNuYsKLlxptKoOKN5CmdhXP8kLBx9NHD3gzNUfNW+YI/1H6yUbYumvLkTEnxYskwRN60+TReeVaUfIF7+u64ZWinsGi3JrEaqrvfmqOxfIMxNQAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByzSwL9F; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b471738daabso3796071a12.1;
-        Mon, 18 Aug 2025 05:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755519022; x=1756123822; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d5RwcRsrB3qBfjkjq7NkATYIehpp0UF3EbzLPQ4iQnc=;
-        b=ByzSwL9FY9KK4kMM6TDfvqOeX4mG8aPNszTn/wIqqMSuB1LHEOXcrEjCzPdiYsa8nt
-         Nr6JiOVpbfEomM3A1GBU5c3KZc6BQUsOWfaOaszq5mmqRSwrR07D4N4BsLdB44ekq9go
-         e7V/iCbMeKFzNuncnIXskAMQz+Ei5AD8zK45G0TQvdLd4BwufbFMbxnSuLGAe6gsX6PU
-         /7zVVW1s5nEGBLhd9jgb4vxKk1ngu5eeySvntqVPNQaCzZ6/xHkN466BL82++X6RWBq/
-         Q4ItbsGHipNmLge3lSG23luHTba7BGVrfZQW5bFkxfJm9Ey6P3kKtSPFdQ9oKPipIMFa
-         eBcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755519022; x=1756123822;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5RwcRsrB3qBfjkjq7NkATYIehpp0UF3EbzLPQ4iQnc=;
-        b=qhVn5uaRjxaw4uvdTaKG4y0RfpcGPZ2nLE96hrTC4maEngkh6LEdcUqBhRI/jgWBLz
-         snlJNQkBVkqW+kfTc5+9ofpzL1abkIX2mIY6ppR+7WOhNPqnSz2iu7grLH40ZhdGzI0k
-         KR1gpBBHTK3pYvrn/D9x6dgU7cKPxJloIeBJhcWSMuUEmt0yOCE0R4bA9TzpixyB/2Xq
-         7b058/x02RJP572FVpLiFNPL0UMENYv4HTmasBiw7zzI7BIZhq6pa28rJghLbb3aRprT
-         0HZph7ZwRmHs6OhLoJQP4IGeancuFjxpo4k7X17BwVQSIu5kpjspfzx2zAiyCMQR7I8G
-         hliw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFi0cjVISBSOhFE0/aTRwk/Ls3WvuJxdVspfrjU6kLXYIc/Gu8h/Wn15D1pZRsaE45Nfr3okVVUkk=@vger.kernel.org, AJvYcCXWk+yITsUxrrjXY3oAsmbKfjerY/tUZOIjqUoO3Q+awVCFyqVpI5i80HWLDz4Vz53mb1W6GrEwRO2Gl3LA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0kAxqgIOLhiCBIaeogibPYhEuI7j1HD7ivqe6/VBAxNxzVwU7
-	k11z1T7VLnil4lWZeJ35rjR+Wlgl89LRHo8+TbprswUqk4bqIK99tE8b
-X-Gm-Gg: ASbGnctUKskYzV0C3hClNaj8nzmu+TIZesbGMVyeGbVjcAqlKHwdG+I0uiFTftcbmZU
-	BgjJUcOhoZhPl8kjNZi8l+kzlMlrtSWOt+Mbl7VCTGox+RKR0MkofaNwsL3M3DZdz5Q34jJODcy
-	1+o0hYpM37KKUq0z+rkToa/auhubC9CALTRm//He6+9hb0TNxwPYae44+X732v5ogrf1a9KE/Zc
-	hgAsLdos598cGtBYJuTA0ZZqpXPt3SdCkbDUGFHC72aRuYOW7HWaCEmO7URmao32QstONFZ/N+Y
-	URoFaHUl/6/GmXftFeUPWQmve0+nboPV7woHP5hlUpuPuBCNWg1IAeRmf5VWPTeRhkK+i9vy+06
-	uqNAd2i7XeqNSLBGCnN3ZLH7B9/ncA45VAdRyZu2NGIHyjf5KdzXqwAwqcZBoHReC4dCD
-X-Google-Smtp-Source: AGHT+IHJoPnaXqghO+4z/heCsbip/wX76fcfe31KQ62rADAvBEdyfegrTBcPpKkgoAMOqBtW3H85Cw==
-X-Received: by 2002:a17:902:d58f:b0:240:5c38:756b with SMTP id d9443c01a7336-2446d710a8fmr145122895ad.14.1755519022013;
-        Mon, 18 Aug 2025 05:10:22 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9d9a7sm79660725ad.23.2025.08.18.05.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 05:10:21 -0700 (PDT)
-Message-ID: <ac5454fa-26d4-4520-aeb3-8838e7bc065f@gmail.com>
-Date: Mon, 18 Aug 2025 21:00:34 +0900
+	 In-Reply-To:Content-Type; b=PCaOEjMcbbedLRmYpmRFebR8NgZcUkZh7x/qgwdfWE2fxn4DnM+Zzdy48ecNrju1f3+hXYvBMXXcOSxcnpdS+wyl33B/5xPe49ZqXqXO0Zsy6cC/Hr32ZUf+WkcF/HVho/F+oVkN+ZbmXVzPRskNZ9EShCQts34zj+vOXKMneL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JIZIkc02; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hXpd5nL3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JIZIkc02; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hXpd5nL3; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4C9FC1F387;
+	Mon, 18 Aug 2025 12:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755518566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+3lGak+12Vl27FVM2SSyx0kSJAGYOUNyyYt5Oy3FxA=;
+	b=JIZIkc02a8dlmuExIatpt2ibFt1oHaVgpfYJlzavqpHiN63uXU3zsBHjuPYfqIMpR4mVG1
+	SJp8AbTMrdjoYyQ4qK8k1fLJwJoVyEBOG3Jsgt3171NJo8DOukjDlkf6n1TiH8+MOsCatu
+	Uzr5aUuu9imvUiEuaKTrR832xM5X4w0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755518566;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+3lGak+12Vl27FVM2SSyx0kSJAGYOUNyyYt5Oy3FxA=;
+	b=hXpd5nL3/MIuI8ZUT7MUGVF7scVkEDjhZHYAWXWWH9MtMDpgE5Y4CT3gVGk/sTAvpyc0ul
+	6QHbKQ9UAUUmsgDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JIZIkc02;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hXpd5nL3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755518566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+3lGak+12Vl27FVM2SSyx0kSJAGYOUNyyYt5Oy3FxA=;
+	b=JIZIkc02a8dlmuExIatpt2ibFt1oHaVgpfYJlzavqpHiN63uXU3zsBHjuPYfqIMpR4mVG1
+	SJp8AbTMrdjoYyQ4qK8k1fLJwJoVyEBOG3Jsgt3171NJo8DOukjDlkf6n1TiH8+MOsCatu
+	Uzr5aUuu9imvUiEuaKTrR832xM5X4w0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755518566;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+3lGak+12Vl27FVM2SSyx0kSJAGYOUNyyYt5Oy3FxA=;
+	b=hXpd5nL3/MIuI8ZUT7MUGVF7scVkEDjhZHYAWXWWH9MtMDpgE5Y4CT3gVGk/sTAvpyc0ul
+	6QHbKQ9UAUUmsgDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4984313A55;
+	Mon, 18 Aug 2025 12:02:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RUFWB2EWo2gSbAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 18 Aug 2025 12:02:41 +0000
+Message-ID: <ff1dcd4b-db64-4982-bfc5-78db033f61d8@suse.de>
+Date: Mon, 18 Aug 2025 14:02:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,61 +97,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
- <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
- <20250816135538.733b80d3@foz.lan>
- <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
- <20250817133606.79d968ed@sal.lan>
- <b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
- <20250817154544.78d61029@foz.lan>
- <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
- <816ec5d2-33ea-4399-86e6-51ddc20ead28@gmail.com>
- <20250818114220.7f82d2f7@foz.lan>
- <fc93e36f-7503-430d-a611-983f0325ab1b@gmail.com>
- <20250818133533.153742ed@foz.lan>
+Subject: Re: [PATCH v2 3/5] mm: add persistent huge zero folio
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ Ritesh Harjani <ritesh.list@gmail.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20250808121141.624469-1-kernel@pankajraghav.com>
+ <20250808121141.624469-4-kernel@pankajraghav.com>
 Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250818133533.153742ed@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250808121141.624469-4-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,infradead.org,kvack.org,gmail.com,kernel.org,samsung.com,lst.de];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	R_RATELIMIT(0.00)[to_ip_from(RLxigy8pr3gnoabpfzcidubger)];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 4C9FC1F387
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On Mon, 18 Aug 2025 13:35:33 +0200, Mauro Carvalho Chehab wrote:
-> Em Mon, 18 Aug 2025 19:06:03 +0900
-> Akira Yokosawa <akiyks@gmail.com> escreveu:
+On 8/8/25 14:11, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
->> How do you install xindy under AlmaLinux release 9.6 (Sage Margay),
->> Amazon Linux release 2023 (Amazon Linux), CentOS Stream release 9,
->> and the likes?
+> Many places in the kernel need to zero out larger chunks, but the
+> maximum segment that can be zeroed out at a time by ZERO_PAGE is limited
+> by PAGE_SIZE.
 > 
-> I didn't install it there. 
+> This is especially annoying in block devices and filesystems where
+> multiple ZERO_PAGEs are attached to the bio in different bvecs. With
+> multipage bvec support in block layer, it is much more efficient to send
+> out larger zero pages as a part of single bvec.
 > 
-> Yet, on some distros it seems that this is packaged together with
-> a texlive collection package and it is called during pdf build. 
+> This concern was raised during the review of adding Large Block Size
+> support to XFS[1][2].
 > 
-> This was also causing font issues. So, I added an option at 
-> latex_elements to ensure that, if used, it will request UTF-8 fonts:
+> Usually huge_zero_folio is allocated on demand, and it will be
+> deallocated by the shrinker if there are no users of it left. At moment,
+> huge_zero_folio infrastructure refcount is tied to the process lifetime
+> that created it. This might not work for bio layer as the completions
+> can be async and the process that created the huge_zero_folio might no
+> longer be alive. And, one of the main points that came up during
+> discussion is to have something bigger than zero page as a drop-in
+> replacement.
 > 
-> 	latex_elements = {
-> 	    # The paper size ('letterpaper' or 'a4paper').
-> 	    "papersize": "a4paper",
-> 	    "passoptionstopackages": dedent(r"""
-> 	        \PassOptionsToPackage{svgnames}{xcolor}
-> 	        % Avoid encoding troubles when creating indexes
-> 	        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
-> 	    """),
+> Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will result in
+> allocating the huge zero folio during early init and never free the memory
+> by disabling the shrinker. This makes using the huge_zero_folio without
+> having to pass any mm struct and does not tie the lifetime of the zero
+> folio to anything, making it a drop-in replacement for ZERO_PAGE.
 > 
-> I just built manually on almalinux. There, all pdfs built fine:
+> If PERSISTENT_HUGE_ZERO_FOLIO config option is enabled, then
+> mm_get_huge_zero_folio() will simply return the allocated page instead of
+> dynamically allocating a new PMD page.
+> 
+> Use this option carefully in resource constrained systems as it uses
+> one full PMD sized page for zeroing purposes.
+> 
+> [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+> [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+> 
+> Co-developed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>   include/linux/huge_mm.h | 16 ++++++++++++++++
+>   mm/Kconfig              | 16 ++++++++++++++++
+>   mm/huge_memory.c        | 40 ++++++++++++++++++++++++++++++----------
+>   3 files changed, 62 insertions(+), 10 deletions(-)
+> 
+As mentioned, I really would like to have a kernel commandline parameter
+for disabling huge zero folio.
+Otherwise:
 
-Ah, xindy is optional then.  
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Got it!
+Cheers,
 
-Sorry for the noise.
-
-Akira
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
