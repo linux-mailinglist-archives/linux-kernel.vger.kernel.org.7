@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-774158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FCB2AF43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98115B2AF45
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657EA5E380F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D2756248E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F2025FA05;
-	Mon, 18 Aug 2025 17:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+WMttaC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B47724BBFD;
+	Mon, 18 Aug 2025 17:20:24 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C321F91C8;
-	Mon, 18 Aug 2025 17:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88D521D3DC;
+	Mon, 18 Aug 2025 17:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537614; cv=none; b=hTUEDrj+naFSTWauBg4dfHku53lm6J4XV1aj5ZZiV1xykm9DYUwygnpHwjaTiEa3YcwkCOab+yc5bcLq5nW/EAcFfe9ZlG2VYPkpj4eh1nxkSQ3C1U4cAnOuXJzDV4dz8Q9zA3bIO02I5ofj/g1bEjyoo7mG1VWysl6hFV7uiC0=
+	t=1755537623; cv=none; b=AxBjTAtgTxCiOOYThEZl2kAvGDyK+oUBQOFI/oo5+dwUkm2dGP/C4W2AA+3pbfNp4yleE0gGq4Rb5uXLOZy6ervuKFafKsgNn78N07klcHAtl4vaE+V2HkF5kceIc9S5OLpUhSSoyGuIsoP7k8pThD7cUlQlNcgeFdBB9hPFP2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537614; c=relaxed/simple;
-	bh=E11dK3FYT6Ml9nmOMIUnAM2Fz9JmU9Xtv7UOfHCb+tE=;
+	s=arc-20240116; t=1755537623; c=relaxed/simple;
+	bh=FLeQ4+JKflMPvM/Dz11rbcDrnCkZbSZwPTCwfMMBuUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7DzgwjN7u+H3O5vqzjoiLova/7SKn6VjKYk6FMDZ/xVfG93OAjG7tqFV+8tE5qO7HecphKw7soF161BW3dDUDBNve/uSHyTlDfzLvLO/vGUuOEgFSfluAap2GMbEPMAJJ+UGHcpa28dh7A7fcc4HC6dwg4KFEEacBMKohO0gKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+WMttaC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F7DFC4CEEB;
-	Mon, 18 Aug 2025 17:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755537614;
-	bh=E11dK3FYT6Ml9nmOMIUnAM2Fz9JmU9Xtv7UOfHCb+tE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K+WMttaC1O9hi7rpl97qqYudfL+t/uXf2mSgraCsYPeY0vM2WBHSWS3pd7KEWJUJm
-	 Ecpvjck+wpvCaQMDe5bGhUEvw6LJBvDteImw1JEZGMGc3B50YjSVz7tmxjV09HDqDP
-	 +eeE0zjwHOUYMByjPEZx8eooKcBFXQScN+RjvKJa++U5++pBOyRIhMWV1wX12t1mfz
-	 fkyn8R3F2kdyiNYFCPKzcFxulNMsphTFqVJADTfbskRNTVfh41ZAmyRyQKsvv25Zmi
-	 jNkPT3W3Nz2IwKt35WDvY1PB/an3jvLQdi8ebOAR5K9twveAnOt0g1JfH2e0fu7CWG
-	 k2GxGLzRAWIAA==
-Date: Mon, 18 Aug 2025 18:20:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Hepp <andrew.hepp@ahepp.dev>,
-	Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] dt-bindings: iio: mcp9600: Add microchip,mcp9601
- and add constraints
-Message-ID: <20250818-platinum-elude-894088c738d2@spud>
-References: <20250818035953.35216-1-bcollins@kernel.org>
- <20250818035953.35216-2-bcollins@kernel.org>
- <cb826943-69d8-4fc9-8597-fbb2439f04f2@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g02gHzMvPCMKE88ow29+gJYa/6PxCfjFzYIBnKEKlRxG8yILxeBey/wrTOCr53xplqg4gTkTX4CyoWR0DDtoRf77ZbUTa/fBpDKw5228LIyRkPuQUxf8Ibs5VK9wXUXIqTEBVZjE+1dmj7x0nK0oH2IKNXkMiv67/PJMQfbdTcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mail.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445826fd9dso49612305ad.3;
+        Mon, 18 Aug 2025 10:20:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755537621; x=1756142421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UwoejNvkuML9Z6Jm4R+g0KULg+/6ABawxJNnc7Rp5AU=;
+        b=uQZWS90rnXr1v0tT+NxV30Xj2MuK7rHAskM7/5hZ4TNzwLy+D2kpwgXk9eyaoXu5iV
+         UNqbRcfDKPxECYADeRaOyxtG5bHGb1O5a88qp62v+d2Trrs0TlhOml613x3P9atOTeQw
+         vNO0RM8aVIGxaqjWQ9JBae/jTp/+mwIXrOQdq3goWbxt+aytQhvnOzryL3/hqwohY1/8
+         fzIty495LTNLinrkqjUuhwOW3YAWXSSeq/WMlIXf2E9230Olr4HlwDFBc3T4p4qeED+W
+         Nz4K7eLSoZL4axXCwcmjfuHsSs7DW1jwaTa/AJN8T8+KkuhmmPknns9RrpkM3uOFt0qx
+         shIg==
+X-Forwarded-Encrypted: i=1; AJvYcCURiPxtBHdlEA7skJJ4tIvW/l0gJABRWj96bgEhh7K+aBOusc/tiviHjS/D2MMWnBuyquXsnsV4vbwNDw==@vger.kernel.org, AJvYcCWAjo+8MGRl2oD99TLiDRYor8kzo3DgMbX/ERpYgB7ZoGWgA4AooDcGpD6ZS4g380jORf6SKmNichv4e4mO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpZKLjbS9ZFaYrKpdM/S8Xy9a2aFpuJ2HVn6xKp9ggaiLMhxoi
+	WDTZ3Ld1jbbvQ+O4fxpbc8wetbTybFpqskPyZxl5dsehaRoMBukaQPXe
+X-Gm-Gg: ASbGncuCwOtCVMMHeXVnwBz+pnRI0pJYpdtLKXaN7OdUJtT+fcSggGIQE4NzLdpdI+a
+	rfcSDoP/1Nc8EyUPxVzxxWT7YQDzs/5wbwNelDBIojJzMVZArYIKnYkvH0MwxuW54hMJzV8b5H7
+	VJmLV9A6cR05SFlwnMO5bV1p/czH4SSQ3Rd+siq3npcdpK6hcgmjTZzOPDet6fGk5RewpYdwTOu
+	iGsF8hycVMXZ2drdHxOho3139yxxRvS9qEdIUnj6bhxF7GXX9rYd1T8OP1AF8P/XohxC7Z+WDen
+	7r+Tmrq2U1cmuY9dBWPhVp+Fo8zmsRTMPQb+LQCQS3XBoirvgjmipY9zbXFi3BC1WcB6n6SKewa
+	SamxqvKA1xHYSXCw=
+X-Google-Smtp-Source: AGHT+IEP8ypl4DnEA9ePzYYdAIZM7mfW4yBcg7sUt3c4DthERUHwm6I7itsQX+/xheLOctNaBBW6/g==
+X-Received: by 2002:a17:902:d4c7:b0:240:7308:aecb with SMTP id d9443c01a7336-2449d05e08dmr2589905ad.32.1755537620840;
+        Mon, 18 Aug 2025 10:20:20 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53bf5dsm84849625ad.114.2025.08.18.10.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 10:20:20 -0700 (PDT)
+Date: Mon, 18 Aug 2025 10:20:17 -0700
+From: Dmitry Torokhov <dtor@mail.ru>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, x0r@dv-life.ru, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: axff: add cleanup allocated struct axff_device heap
+Message-ID: <fv32i2ejsupm64mpadzsfudaeuzkavkazpmnn2e4ijqeobl4gs@porr2zpxn4aj>
+References: <20250818154302.811718-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9HYvEexqxeK9/fff"
-Content-Disposition: inline
-In-Reply-To: <cb826943-69d8-4fc9-8597-fbb2439f04f2@kernel.org>
-
-
---9HYvEexqxeK9/fff
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250818154302.811718-1-aha310510@gmail.com>
 
-On Mon, Aug 18, 2025 at 08:28:30AM +0200, Krzysztof Kozlowski wrote:
-> On 18/08/2025 05:59, Ben Collins wrote:
-> >    interrupts:
-> >      minItems: 1
-> > -    maxItems: 6
-> > +    maxItems: 4
->=20
-> Why?
-> I did not find explanation of this in commit msg.
+Hi Jeongjun,
 
-It's also not correct, since the outermost constraint remains 6 after
-the patch, so the if/else should reduce the constraints, rather than
-increase it as is done here.
+On Tue, Aug 19, 2025 at 12:43:02AM +0900, Jeongjun Park wrote:
+> Currently, acrux hid driver allocates heap memory equal to
+> sizeof(struct axff_device) to support force feedback, but there's no code
+> to free this memory except when initialization fails. This causes the
+> allocated memory to not be freed even if the driver is detached.
+> 
+> Therefore, to properly clean up and safely manage the allocated heap,
+> must be modified to use devm_kzalloc().
 
->=20
-> > =20
-> >    interrupt-names:
-> >      minItems: 1
-> > -    maxItems: 6
-> >      items:
-> > -      enum:
-> > -        - open-circuit
-> > -        - short-circuit
-> > -        - alert1
-> > -        - alert2
-> > -        - alert3
-> > -        - alert4
-> > +      - const: alert1
-> > +      - const: alert2
-> > +      - const: alert3
-> > +      - const: alert4
->=20
-> Neither this and it is ABI break. ABI breaking needs clear reasoning why
-> and some evaluation of impact on users.
+You have not tested this, have you? The private data that is passed to
+input_ff_create_memless() is freed by ml_ff_destroy() which is invoked
+when input core calls input_ff_destroy() as part of input device
+teardown. Your change introduces double-free. 
 
-I think it should be a standalone patch too, since it is a fix for the
-existing mcp9600 device rather than something for the mcp9601 device
-that is being added by this patch...
->=20
->=20
-> > =20
-> >    thermocouple-type:
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> > +    default: 3
+> 
+> Fixes: c0dbcc33c652 ("HID: add ACRUX game controller force feedback support")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  drivers/hid/hid-axff.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-axff.c b/drivers/hid/hid-axff.c
+> index fbe4e16ab029..b8202737f4c8 100644
+> --- a/drivers/hid/hid-axff.c
+> +++ b/drivers/hid/hid-axff.c
+> @@ -96,7 +96,7 @@ static int axff_init(struct hid_device *hid)
+>  		return -ENODEV;
+>  	}
+>  
+> -	axff = kzalloc(sizeof(struct axff_device), GFP_KERNEL);
+> +	axff = devm_kzalloc(&hid->dev, sizeof(struct axff_device), GFP_KERNEL);
+>  	if (!axff)
+>  		return -ENOMEM;
+>  
+> @@ -104,7 +104,7 @@ static int axff_init(struct hid_device *hid)
+>  
+>  	error = input_ff_create_memless(dev, axff, axff_play);
+>  	if (error)
+> -		goto err_free_mem;
+> +		return error;
+>  
+>  	axff->report = report;
+>  	hid_hw_request(hid, axff->report, HID_REQ_SET_REPORT);
+> @@ -112,10 +112,6 @@ static int axff_init(struct hid_device *hid)
+>  	hid_info(hid, "Force Feedback for ACRUX game controllers by Sergei Kolzun <x0r@dv-life.ru>\n");
+>  
+>  	return 0;
+> -
+> -err_free_mem:
+> -	kfree(axff);
+> -	return error;
+>  }
+>  #else
+>  static inline int axff_init(struct hid_device *hid)
+> --
+> 
 
-As is this, which is codifying the existing restriction rather than
-being something new as 0x03 is what THERMOCOUPLE_TYPE_K is defined to
-be.
+Thanks.
 
-> >      description:
-> >        Type of thermocouple (THERMOCOUPLE_TYPE_K if omitted).
-> >        Use defines in dt-bindings/iio/temperature/thermocouple.h.
-
---9HYvEexqxeK9/fff
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKNgyQAKCRB4tDGHoIJi
-0sXWAP9JCGXBBPthOxpSomXlDG+knctam0O5gcVjqRNdWIOQWgD/encff2KHr1D9
-Eg2Om5A2W7Nc+HhhOR1lpLQRmmqeDwg=
-=ZxR8
------END PGP SIGNATURE-----
-
---9HYvEexqxeK9/fff--
+-- 
+Dmitry
 
