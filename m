@@ -1,190 +1,137 @@
-Return-Path: <linux-kernel+bounces-774171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F56B2AF64
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 854C2B29C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22E677ABA0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:26:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D987B2B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AC8345742;
-	Mon, 18 Aug 2025 17:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZO+tUVGW"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E6530496C;
+	Mon, 18 Aug 2025 08:47:19 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A123134573F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750D330147C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755538060; cv=none; b=AF/JDzmCkCA1tLpavm4WYccqTIuUnQrqnouSEWAnDttKhtkhsQrhmvOpL+C8fj0BvkeLDPDuSHZMw8DQyEUUKHbp/1+KANyq9ZR2Bk+kx2v/zjExOzzlavc7PsPFUL734F0z214nnfkFqw099dBIo3hHRddEb4bQN4js5MQoNEI=
+	t=1755506839; cv=none; b=HCuVistftY0fW0BxuANJbK4sABm1N2dYLAkXfCgINSHdvs8UByTGfpIGcL0hlCCmFCESTatmuNoJFWyt/nOVf6qT6OzF6r0b4J0w76eiyjb2iVuXxmmvQX32e8n5H1ISKEHr5qNEU1eLT0VBn2uazG0I2VkynjMjYifeDDKJ95c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755538060; c=relaxed/simple;
-	bh=9JMXztg+Q8fI+L1JfmE621uB0vrUu2BhnBt+O8mpx+U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=o1878oZjQn8tYdNOTpP3fEJAOHv3mNAU+2LtdcoeNZkUvN8b8UWwZj4hu2b8USXsjeuhS1BO/zZWV7a3FQ6nnY4le1PfpkyujwGE+zucFqw+aka9PVbv6RfW4VSkH/y4aYAXQaedyKonVBpKyds/c7tNgGVEiNVPhavEW+DqwHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZO+tUVGW; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250818171833epoutp02ed9b5e7c654b8c76ec95d72fe60d070e~c7BE58_fr3205532055epoutp02e
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:18:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250818171833epoutp02ed9b5e7c654b8c76ec95d72fe60d070e~c7BE58_fr3205532055epoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755537513;
-	bh=JmSGRyHuxg4sFJyN1+ZDBr/4xtXj34dMzItnfLdMcyY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=ZO+tUVGW9j76Gf6QNoG7EvuYBG0IN+U8H9BPj0zJnedSfLSj3GdVWqiZvli1wXQLw
-	 ZtQrILgZa8nIdVn5n70Qo/fmF6dRM/1FHqtrtz8e7N0GGRNkciMmIdRwJW5C7M5OdE
-	 axSFLqrFF8eZN9gdkQRDQel8pmBiLh/xdcjjWOf4=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250818171832epcas5p1538558efb743b5c6f4ca5021cfafef2c~c7BDlpN2R1081410814epcas5p1g;
-	Mon, 18 Aug 2025 17:18:32 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5KDl11mXz3hhT3; Mon, 18 Aug
-	2025 17:18:31 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250818084620epcas5p3ddf1f9039fde76922af543c84d2a37c8~c0B2MjXJr3103431034epcas5p3u;
-	Mon, 18 Aug 2025 08:46:20 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250818084617epsmtip1877f5f85d903a96326fc66b5943907e0~c0BzfnJte3004130041epsmtip1g;
-	Mon, 18 Aug 2025 08:46:17 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <linux-pci@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-phy@lists.infradead.org>
-Cc: <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
-	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
-Subject: RE: [PATCH v3 07/12] dt-bindings: PCI: Add support for Tesla FSD
- SoC
-Date: Mon, 18 Aug 2025 14:16:16 +0530
-Message-ID: <000901dc101c$917bf160$b473d420$@samsung.com>
+	s=arc-20240116; t=1755506839; c=relaxed/simple;
+	bh=T0W/KL+FKoe/ZlpG/YyuJoSaUZIvL7vmNReGARj4bAs=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=LCtzQOhxgz5AAyKMzOANDe0ZiBw3BqzqbZxOdmFRv2ioHs3Xt5O5RDfD+exEtfOM1VG64QwlRbKXPm62zlCvatpIcR5yYtYrgmtELj63kDSsq6RlYZjYYZd7saGqYu81dhs0cGbAYOHFHNFtrYOSRDyyHCs6GESNV+gOUsl44is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4c55tb2WNYz5B13h;
+	Mon, 18 Aug 2025 16:47:03 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 57I8kXYv051001;
+	Mon, 18 Aug 2025 16:46:33 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 18 Aug 2025 16:46:35 +0800 (CST)
+Date: Mon, 18 Aug 2025 16:46:35 +0800 (CST)
+X-Zmail-TransId: 2afa68a2e86b157-0e1c1
+X-Mailer: Zmail v1.0
+Message-ID: <20250818164635573BQolnx5DcBqRicqxF0DMl@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHWPHKmIG2WTsjb/5pkHKJ2GfeRPwFcVLShAs+fyqkBgLjEDbRGWWvg
-Content-Language: en-in
-X-CMS-MailID: 20250818084620epcas5p3ddf1f9039fde76922af543c84d2a37c8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097
-References: <20250811154638.95732-1-shradha.t@samsung.com>
-	<CGME20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097@epcas5p4.samsung.com>
-	<20250811154638.95732-8-shradha.t@samsung.com>
-	<9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <chengzhihao1@huawei.com>
+Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <richard@nod.at>
+Subject: =?UTF-8?B?W1BBVENIXSB1YmlmczogYWRkcmVzcyBiaXQgZmxpcHMgaW4gdW51c2VkIGZyZWUgc3BhY2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 57I8kXYv051001
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Mon, 18 Aug 2025 16:47:03 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68A2E887.000/4c55tb2WNYz5B13h
 
-> > +
-> > +  phys:
-> > +    maxItems: 1
-> > +
-> > +  samsung,syscon-pcie:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description: phandle for system control registers, used to
-> > +                 control signals at system level
-> 
-> What is "system level"? and what are these "signals" being controlled?
-> 
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-I will add a more detailed description for why the syscon is being used
+When the recovery detects a free space bit flip, the UBIFS mount fails,
+rendering the UBIFS unusable. This issue can be addressed by reclaiming
+the affected erase block, which involves relocating its valid data. So
+attempting to fix free space bit flip during recovery reduces scenarios
+where users cannot access UBIFS normally.
 
-> 
-> > +title: Tesla FSD SoC series PCIe Host Controller
-> > +
-> > +maintainers:
-> > +  - Shradha Todi <shradha.t@samsung.com>
-> > +
-> > +description:
-> > +  Tesla FSD SoCs PCIe host controller inherits all the common
-> > +  properties defined in samsung,exynos-pcie.yaml
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/samsung,exynos-pcie.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: tesla,fsd-pcie
-> > +
-> > +  clocks:
-> > +    maxItems: 4
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: aux
-> > +      - const: dbi
-> > +      - const: mstr
-> > +      - const: slv
-> > +
-> > +  num-lanes:
-> > +    maximum: 4
-> > +
-> > +  samsung,syscon-pcie:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description: phandle for system control registers, used to
-> > +                 control signals at system level
-> > +
-> > +required:
-> > +  - samsung,syscon-pcie
-> 
-> clocks are required, compatible as well.
-> 
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+ fs/ubifs/recovery.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Since this was inheriting the common exynos yaml file and that had these properties
-under required, I did not mention again. Will take care in next version.
+diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
+index f0d51dd21c9e..cebf4098557c 100644
+--- a/fs/ubifs/recovery.c
++++ b/fs/ubifs/recovery.c
+@@ -77,6 +77,25 @@ static int first_non_ff(void *buf, int len)
+ 	return -1;
+ }
 
-> Missing supplies, both as properties and required. PCI devices do not
-> work without power.
-> 
++static int ubifs_buf_bitflip_count(void *buf, int len)
++{
++	uint8_t tmp, shift;
++	uint8_t *p = buf;
++	int i, count = 0;
++
++	for (i = 0; i < len; i++) {
++		tmp = *p++;
++		if (tmp != 0xff) {
++			shift = (uint8_t)0;
++			while (shift <= 7)
++				if (!(tmp & (uint8_t)(1 << shift++)))
++					count++;
++		}
++	}
++
++	return count;
++}
++
+ /**
+  * get_master_node - get the last valid master node allowing for corruption.
+  * @c: UBIFS file-system description object
+@@ -690,6 +709,12 @@ struct ubifs_scan_leb *ubifs_recover_leb(struct ubifs_info *c, int lnum,
+ 			 * See header comment for this file for more
+ 			 * explanations about the reasons we have this check.
+ 			 */
++			int bitflip_count = ubifs_buf_bitflip_count(buf, len);
++
++			ubifs_assert(c, bitflip_count > 0);
++			ubifs_msg(c, "corrupt empty space LEB %d:%d, corruption starts at %d, bitflip count %d, try to rescure",
++					lnum, offs, corruption, bitflip_count);
++			goto rescure;
+ 			ubifs_err(c, "corrupt empty space LEB %d:%d, corruption starts at %d",
+ 				  lnum, offs, corruption);
+ 			/* Make sure we dump interesting non-0xFF data */
+@@ -766,6 +790,7 @@ struct ubifs_scan_leb *ubifs_recover_leb(struct ubifs_info *c, int lnum,
+ 	len = c->leb_size - offs;
 
-According to the HW design of FSD SoC, the control to manage PCIe power is given to
-a separate CPU where custom firmware runs. Therefore, the Linux side does not control
-the PCIe power supplies directly and are hence not included in the device tree.
+ 	clean_buf(c, &buf, lnum, &offs, &len);
++rescure:
+ 	ubifs_end_scan(c, sleb, lnum, offs);
 
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/fsd-clk.h>
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    soc {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        pcierc1: pcie@16b00000 {
-> > +            compatible = "tesla,fsd-pcie";
-> > +            reg = <0x0 0x16b00000 0x0 0x2000>,
-> > +                  <0x0 0x168c0000 0x0 0x1000>,
-> > +                  <0x0 0x18000000 0x0 0x1000>;
-> > +            reg-names = "dbi", "elbi", "config";
-> > +            ranges =  <0x82000000 0x0 0x18001000 0x0 0x18001000 0x0 0xffefff>;
-> 
-> Misaligned. Follow closely DTS coding style.
-> 
-
-Will take care.
-
-
+ 	err = fix_unclean_leb(c, sleb, start);
+-- 
+2.25.1
 
