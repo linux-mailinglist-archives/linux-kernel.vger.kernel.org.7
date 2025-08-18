@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-774147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4136EB2AF1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68509B2AF1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552775671ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C799B171DBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABB632C322;
-	Mon, 18 Aug 2025 17:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD6C32C339;
+	Mon, 18 Aug 2025 17:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IXqYppCY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n7X8yHok"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLkCK1XA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBA32C321
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A432C31C;
+	Mon, 18 Aug 2025 17:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537187; cv=none; b=l6SdwR58gYa38OqNORo5DXOUb1163VK/MGjqbti21YPIco6slhxLfkUWH1UkzzIYlfU82+IR2EzE9R5WedMymd5GIzS56xBjKYqc+AxzCFJFWeg/qV8u+KCCPGkQZ6rJok4CbjssrjcCGWRu3hy/bln8yBp40/X9bw7BeGO7tbM=
+	t=1755537250; cv=none; b=WVe9XA2HJEnixOvbu6OmoDNZQ+pnwo7JaW777lXuqiOPEQJORJ1nF3IHCNRcTYuFKd3yAZEZNTmabkr5rApVwp12BTilAwL8d/B0GFvMNzhz6zT33+w246iAfJvlTTyoS8fBzLWx9KmNebjXWNddFDhosdpjhaje7buXQREjrgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537187; c=relaxed/simple;
-	bh=EDPpEGcxMTyYFkkxcAFSr0LROXTLY4QYEBEFD4O3sU0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EFoV11mEY0COfgM2AhkVIgO97ngrqZNaa5VDeFJ+GTr4qyheCdoVKaSfqST3xWvX9BEhIeSBr96thBQrDYD/Kwz7BL4yfEuVkF71tHxfwmHST4u4NAsvJLP6ryJ0tsxifMgHSGoDpOu50XKN4BTAgJ+e2SFWdtqUCTSE90CIMHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IXqYppCY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n7X8yHok; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755537182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YTYUhF3bXD/ytq126zFWKGQIGvLT3hAKpaitCU+9r58=;
-	b=IXqYppCYV8Y/S3PIUPlF7/0gNqu+YzKVv8gZrA4m6uNUU4+6M6aaZlPrEYKuTNZU19TDtn
-	eprKrg6gdbVZIAPEJuCUZWvpzAnsBZ79ZvxARnaRJD4dB2xZ1iJ1Xya9AgluvHDu9KjFJi
-	RK3SK1m43xDPU1VGfW48FFLGfQf+rL9Ff4SUPOgXFQgNgBOtX3FAt43gnxKZ1hKqN8obzR
-	hqU76CFxHePUzBAM2GF1ptK2VmPZhEBKEDL984jXLUAX/zQ15YuLddbt/JnvgRi0U+CorL
-	QXTzgoTAcFQ5k2+j2+nOhOF4XhlPDjS4DJdRKeu/a6TNGYeGfBsRclVxa0Otww==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755537182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YTYUhF3bXD/ytq126zFWKGQIGvLT3hAKpaitCU+9r58=;
-	b=n7X8yHokqh5xZX4SjSXm9dcuTYAwGGHFV0ROnYIFolDYISg4xzBsVcaoTkEbAjLHTzKbtX
-	y3HNoQUo77TTrJAA==
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
- Michael Jeanson <mjeanson@efficios.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Wei Liu <wei.liu@kernel.org>, Sean
- Christopherson <seanjc@google.com>, Samuel Thibault <sthibault@debian.org>
-Subject: Re: BUG: rseq selftests and librseq vs. glibc fail
-In-Reply-To: <lhuect8sol1.fsf@oldenburg.str.redhat.com>
-References: <87frdoybk4.ffs@tglx> <lhuect8sol1.fsf@oldenburg.str.redhat.com>
-Date: Mon, 18 Aug 2025 19:13:01 +0200
-Message-ID: <87cy8sy2n6.ffs@tglx>
+	s=arc-20240116; t=1755537250; c=relaxed/simple;
+	bh=3gFsUEU4Xg6d5vQrEOsWIkbWaaUZWsSenDNCYqPYVT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HaP5N1UNoXwPfkzxTEDDCl1EG6WYbR1t9fTwmc5xq3ixGsn0C9DBUiJD7dF/JAMRHx6mSOOravkJYIsXj2WlyjQ7MqFcDqHoGvfAbInyNDpaHRCFUp1qh6SH/m+2ucaDI7UgWrVIZrEFlecWxfuGjphv1XxtMzmY8Jc6smviq58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLkCK1XA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755537248; x=1787073248;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3gFsUEU4Xg6d5vQrEOsWIkbWaaUZWsSenDNCYqPYVT0=;
+  b=NLkCK1XAHmrs+0V8CLEP2Z66YDwlwPZC37Q+2vBiqC/KW1aX6VO9s/kX
+   lpB42nIRoOgV5vzKFzQw4LZOi4ZkevJ3uvXYbQXyQ1fB2oSkl1LI1lV+5
+   urS+6Rzg8ZJOFRoX9yxUh/LsSupfhZdSgOilziBk9vNSxEuY5WKVi56jY
+   zc88vAAFZQx3ypF0nA1tkMdFneUylDb1tF2N4DyA6enCKcMFpH+KNvF95
+   pSr4cPJ+u+5PDAmAR4KA02KdYDdB+esLqZ0ixcQ5G3D4J8yKCRYakLv16
+   dx6Z92RiiWyt5sjDYUfdw5rar1SDKTkadD+q/gYfAPG79591klLhc+tst
+   A==;
+X-CSE-ConnectionGUID: yXDH3U5bRM2oFuIxt/urIg==
+X-CSE-MsgGUID: 7pIGm8IeRQaYbnm+tHfPQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="80350256"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="80350256"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:14:07 -0700
+X-CSE-ConnectionGUID: C/Zab/TGSXOcxCABzElzAg==
+X-CSE-MsgGUID: V/73e2sBSqGKpNOsAy5U9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="167137036"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.125.108.14])
+  by fmviesa007.fm.intel.com with ESMTP; 18 Aug 2025 10:14:06 -0700
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	ak@linux.intel.com,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: [PATCH v2 0/2] perf record: ratio-to-prev event term for auto counter reload
+Date: Mon, 18 Aug 2025 12:13:53 -0500
+Message-ID: <20250818171358.332331-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18 2025 at 16:15, Florian Weimer wrote:
-> * Thomas Gleixner:
->> It's trivial to reproduce. All it needs is to have in the source:
->>
->> __weak ptrdiff_t __rseq_offset;
->>
->> w/o even being referenced and creating a pthread. Reproducer below.
->
-> Well, that's sort of expected.  You can't define glibc symbols that are
-> not intended for interposition and expect things to work.  It's kind of
-> like writing:
->
-> int _rtld_global;
->
-> That's going to fail rather spectaculary, too.  We make an exception for
-> symbols that are not reserved (you can build in ISO C mode and define
-> open, close, etc., at least as long as you link to glibc only).  But
-> __rseq_offset is a reserved name, so that is not applicable here.
->
-> The real change here is GCC changing from -fcommon (which made a lot of
-> these things work in the past) to -fno-common.
+The Auto Counter Reload (ACR)[1] feature is used to track the
+relative rates of two or more perf events, only sampling
+when a given threshold is exceeded. This helps reduce overhead
+and unnecessary samples. However, enabling this feature
+currently requires setting two parameters:
 
-Thanks for the explanation!
+ -- Event sampling period ("period")
+ -- acr_mask, which determines which events get reloaded
+    when the sample period is reached.
 
-So the only way to make this actually work is to revert that commit and
-the folks who want to link that statically need to come up with:
+For example, in the following command:
 
-#ifdef _BUILD_STATICALLY
-extern ....
+perf record -e "{cpu_atom/branch-misses,period=200000,\
+acr_mask=0x2/ppu,cpu_atom/branch-instructions,period=1000000,\
+acr_mask=0x3/u}" -- ./mispredict
 
-#else
-        ptr = dlsym(...);
-#endif
+The goal is to limit event sampling to cases when the
+branch miss rate exceeds 20%. If the branch instructions
+sample period is exceeded first, both events are reloaded.
+If branch misses exceed their threshold first, only the
+second counter is reloaded, and a sample is taken.
 
-or something daft like that. A proper function interface would avoid all
-that nonsense, but we can't have nice things or can we?
+To simplify this, provide a new “ratio-to-prev” event term
+that works alongside the period event option or -c option.
+This would allow users to specify the desired relative rate
+between events as a ratio, making configuration more intuitive.
 
-Thanks,
+With this enhancement, the equivalent command would be:
 
-        tglx
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+-- ./mispredict
+
+or
+
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+-- ./mispredict
+
+[1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
+
+Changes in v2 (mostly suggested by Ian Rogers):
+
+-- Add documentation explaining acr_mask bitmask used by ACR
+-- Move ACR specific implementation to arch/x86/
+-- Provide test cases for event parsing and perf record tests
+
+Thomas Falcon (2):
+  perf record: Add ratio-to-prev term
+  perf record: add auto counter reload parse and regression tests
+
+ tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+ tools/perf/Documentation/perf-list.txt |  2 +
+ tools/perf/arch/x86/util/evsel.c       | 53 ++++++++++++++++++
+ tools/perf/tests/parse-events.c        | 54 ++++++++++++++++++
+ tools/perf/tests/shell/record.sh       | 40 ++++++++++++++
+ tools/perf/util/evsel.c                | 76 ++++++++++++++++++++++++++
+ tools/perf/util/evsel.h                |  1 +
+ tools/perf/util/evsel_config.h         |  1 +
+ tools/perf/util/parse-events.c         | 22 ++++++++
+ tools/perf/util/parse-events.h         |  3 +-
+ tools/perf/util/parse-events.l         |  1 +
+ tools/perf/util/pmu.c                  |  3 +-
+ 12 files changed, 307 insertions(+), 2 deletions(-)
+ create mode 100644 tools/perf/Documentation/intel-acr.txt
+
+-- 
+2.50.1
+
 
