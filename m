@@ -1,137 +1,268 @@
-Return-Path: <linux-kernel+bounces-773733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ACAB2A752
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81216B2A80C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87D6C4E3C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14955867CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F68335BCB;
-	Mon, 18 Aug 2025 13:51:49 +0000 (UTC)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB8A335BDE;
+	Mon, 18 Aug 2025 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGHfynXo"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FCA335BA3;
-	Mon, 18 Aug 2025 13:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30358335BA3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525109; cv=none; b=km7oEZAcvIN1001d22tx8nbXoljniV6CM2jfItqYInmE+l8jyZT9uWEmJtW1xgXo0LWijt6Ug128cHkY/dGCSNAi9ru/sKmgIqHe2VQ9Pg/DRVW8KrKySW/cXH0ICP9Vo/5ZtFg00iqIKWozVqogBVd3ztx94JuMiFFfh1xvAe8=
+	t=1755525145; cv=none; b=j4Qi+Ns9Ys9B6fborPmePrTPc1Ikg8hzex+riTwAwXZCvupGuNVxdCCaJzKr5HWmNXckl0tTPmRoBiKGmbvNlysNanL/9RVpAQsUdY7o8fUXTzarmcHJCnsoWnzfFWclZgKqdFfMKI4I0kpcUSrZyNEQ/DM5nc7cBznusZO5o0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525109; c=relaxed/simple;
-	bh=TM3v39gvv9yVUxNSjsGy0cb0pbFWdamF+PyxThgcsVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SHRtlhvYuj/26inzbVDZk3Fq3jOVen9fqqlliiaGoshROA025Iz7SC+LKfe9hf6itSiQRWnsoz7A8oH95DopTMBAY0+1A9lYbnRJ9zyV2YFDZSu8rOkDyh0YFZmoH0bQ69TRleDIxwBRWQXZKEmbCToxBOdHjihHDGqjBmHbTZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1755525145; c=relaxed/simple;
+	bh=RMGPVPOt1tsq9iN6V+lrcwWxmxqcpZke9gexpq5KEUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y6dHkvnHKbu8CoPJDYUrm9pUMptJrY4aRDNQ4+P9mErrRJGEojvloDmkzhotYEojYEDwQBkS3OZ6TbXqnPjdWN+mIG66Pnqr+Y7BWTRzhCaueakf5k1niwjPyNy90PILqcVFAyZAbJOLzjHBVu3DjBBjtSYyGtFcK8lC+cwKqZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGHfynXo; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53b1be89386so1331075e0c.3;
-        Mon, 18 Aug 2025 06:51:47 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b472fd93b4aso2391508a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755525143; x=1756129943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JIC+sfaRRNCZ/PpzLr3hvBF4vD7BYR+5HNnrMt71ufA=;
+        b=GGHfynXoj/l9vHnfFzFk76IHz/yt+WLgU20unTA85dlUo98zOYXu/60wHPCSxd9cC0
+         H//DZ4MxOcuwhzQhTXBxBCfdRq6dotqmjFEZI7da944XhYkxKPmjmx5sGVF6C3R81/ZX
+         wIBN53n+UO2wCra3sn2YeaBV2Ypl1NeePLYTWUm5BGvD+Se7EDOsofA4AZDvJGxvAxhN
+         q2ouePDgvl6qwjvA9AiM2rS/yq/KbzEONf0ALThsu8XM+Xoc7HM8MqnU3gov3ffAbk7J
+         0f8nOcM4AIi4ZTZaPzQebBM/D4CeZAwOQLzgXw3Z3+6Sb2xDMpkn0Y9hqxXVa40lmHHh
+         wq3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525107; x=1756129907;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755525143; x=1756129943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AKkclQyL7PgodXAxmHrK7kyRV4SuaKqCEVi7cTjbK6Y=;
-        b=EyX+2SRPMZbetGLioC1SOb0zAK6N2AJu+iX9kCMelUWHnf4a0+krUUzrIVkOsntjgs
-         a+XignvF4baiD6jGXHub2xGb7fKSiwJtT3KoQlOrrU8myFXRBoUtJ7ehuTkZ5egV/gmo
-         ib3MasqiYlLCA0RVS6xIgSA2wVI3BSpchbodAO7JE+eyxu8BAw7ML/42K6tzE+POy8jN
-         qBbdpa+7vp8D2AtSB3m2eZZkZBB356/MWOb8nicNywc1rFiblvJBHZ+s89ejFrYK2NQ1
-         wn5iIMiEYX630+5VY3eDNwn5oVFwvTogRkwEbcLmGJkToWdmqOgeNIeU62U+E0cs81+g
-         z5hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd7wX/5eopfqvBF2z9dXxRj/rIPGPuXGiSO3FCQ648GeHXFZ1cR9svUe5GRSthv5ima0JCtpBHDCsf@vger.kernel.org, AJvYcCVIeAHX7wNwsq7X4vZo+1VEi9KirA81DlKUiFfUxdKG6bUmgxJkU95h7umjPsgy52OFUudvd6NtgTpmBNSr@vger.kernel.org, AJvYcCXXhr02lckAQ82kt12+9N2joONJPALMrXOf7i9sKQwdKKimNq9Jj4STwVyxORS7cR/6Q/rYdC5ks9hiJ3hCdzcfA+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+01Non/5580TP+mJkfGfGSwz/uCvkPQd3FIyGp2K8d1hTQ8+g
-	aLr6lNAKq0Fu4VdcJRHkCndqh8S3gGZkd1TbbdLdqE7ZJt/PKy1doQhElNIiXQwV
-X-Gm-Gg: ASbGncvNARKvH4JResNQwaS1sLbmwJIZ1SQM/CYtEULY/U5Tm8sVngkTh/rrB+HIbPA
-	Df/eWMNex05+LcQLsFHHpIhoVjqLqIUc5X2M/2GheJ6xLFbmKVjpG83Zxvu5FivnCfEwJ5wvjEc
-	u9y+nhQMpE3b+BSTnLvGFLVKCUpY6LdxaiXDSXazAGpNWbhXWI67UanQZKgKMoV/mQVN8l2SHn2
-	9ytrEyXfvJZTzmqhkAiwYVmzyF8wEuWtUns+a4KDHpf/hpdGg5oc30QSU6sfYEjpSNzACD8Kj1c
-	bXfbNHjyFDzlIy2aY4PuO0nVgpdFbR56FUSCrGsvsHm89cAThJSG368mDJ0qXxp9wXhEmeaFU1J
-	M/GTVdBiuPAZN2vJ2IALP2R+O9LVq9/qUzpGDj0yohaJoDqLGFv9kosAZjHKufryMx6bBaic=
-X-Google-Smtp-Source: AGHT+IGznCOKOhSCL22o+0Q40UP71FEaVbM0mKlewj928WEgi2IgKJzUpQBHEuyyElf6QG3s/bZfAw==
-X-Received: by 2002:a05:6122:8284:b0:537:b2b6:e387 with SMTP id 71dfb90a1353d-53b2b8551a7mr5158912e0c.6.1755525106754;
-        Mon, 18 Aug 2025 06:51:46 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bf216c1sm1891916e0c.31.2025.08.18.06.51.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:51:46 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-50f85ec0885so2910762137.0;
-        Mon, 18 Aug 2025 06:51:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWFhvKezA7HMemH82yIaHxGKQcVO7eV8kJnLewEKNrvu9FvvcCKrImjdOM5S+G+vxPLWxhw6cp08f0F@vger.kernel.org, AJvYcCWKfDqv2vmt2WU8ql+tda4yPkRXocseWOk29/YaKymR0VeWDguXfZGXuuBEphHRPafqJiqQN6pfhYBtGFqB@vger.kernel.org, AJvYcCXqbfN9FXWYT3wB69EZFVqRldgJ/bLuCHBWl+YFBM/mra0jz9XmzlIuYDhYdvJodwaLKvmf1Bp8l2tMF8KC7R37nrw=@vger.kernel.org
-X-Received: by 2002:a05:6102:5114:b0:4fb:dd4b:26cb with SMTP id
- ada2fe7eead31-5126af224cemr4478475137.8.1755525106193; Mon, 18 Aug 2025
- 06:51:46 -0700 (PDT)
+        bh=JIC+sfaRRNCZ/PpzLr3hvBF4vD7BYR+5HNnrMt71ufA=;
+        b=bKpOu1closUKoHSkVtBVwhbcP9dPEQqYQXhX2c8YkBrnz3riv97M3bacjXnRa1qJet
+         v9hYbddBa5fvRfcUk2LAZ9y4ELozJ/kj+oVxom18l+bx0abe0ZPmqZAazMNzdDCPtjei
+         Xe7PAfjg4K6YSYPDCMcL5q/C/ROfuvDBA0Wq7PS0cn/A3wj7WQdJOCcAMbZiU2+NspiF
+         ckloPz2g98CsvYUoNTTbNg52P/t0OTpBfnykXrdJ2EQcje6Ce6vCfUzwkV5fD4WrA1KM
+         Vumll+/pCj6c9BhnBPLXg7GBDmIO4NMGioLMThp8VJQQclr2NpoVKVbVOCHVEU/Ex2l0
+         VHIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7oYjxMsTkM1iMdkQKzwDIRKlfVeMOicpUAx6DltJLdK6iLnh5wO5ZLOUJvv671gp1BsJkOqayRX1HYlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKnP++CrbFUZLxNY3fb2i0NVqtY1i6/Twgt4K8sEGyKmv0ZUjD
+	/Sg1LnC/zNw7LX32rGtBj+1x0k1qyH4WB4K9JcSvO0fAgZ3O7ihCWY/x
+X-Gm-Gg: ASbGncuLgB0HxRu12dYvst+dNjtg080vrBof7Tyaxh0yHXaZt+FsmI1m9UlM5bvU/Nk
+	Btl7hX/p3O0Z0+PiKwdxS3qENIG2gXgiKwmnF+OuhssIxncbI7j2/uAinWNStA9jJlA5NFq828K
+	AxlVFZywMtcA/wVVG87/7Bc4RLrEq9/Q0mDaL0Qny/1TICvGQU1fb1gvUSmjvGlFpQj/poDoN4m
+	hKTwnKWI0+ZBd1vcz22WYK0e/p753iceiX7BAD4uwKMZwjey5KdcC76WGo9InIlF2g8TbcftitN
+	4dIk6zVjR+VVlhH6uVmPIt7bxlxljwV6tGurQAqBDnmFD6A0b1JeFTgM3VQzUxIdqSNoM6KkT46
+	5pGSlG75jQKRSBhF6KcCn7TwhNxcZsFHi0+F3oSxF5D0=
+X-Google-Smtp-Source: AGHT+IGgUrKNSua0EDsMH8SxXxNcd6RWSqv8OZx8Xxbo5zF6jRJky+tITPWEVzuGEdbYWfg2E6WWhg==
+X-Received: by 2002:a17:903:4b4c:b0:242:a0b0:3c30 with SMTP id d9443c01a7336-2446d8edf38mr153112465ad.43.1755525143226;
+        Mon, 18 Aug 2025 06:52:23 -0700 (PDT)
+Received: from Fantast-WT.localdomain ([120.229.37.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53b22fsm81848505ad.112.2025.08.18.06.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 06:52:22 -0700 (PDT)
+From: Teng Wu <gigadevice2025@gmail.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	teng.wu@gigadevice.com,
+	Teng Wu <gigadevice2025@gmail.com>
+Subject: [PATCH] mtd: spinand: gigadevice: Add continuous read support
+Date: Mon, 18 Aug 2025 21:51:41 +0800
+Message-ID: <20250818135141.2096-1-gigadevice2025@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812200344.3253781-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 15:51:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVRwZ6PNt6LDi-NZWiUH_eNtw026UscwF9pZTjObVU6fA@mail.gmail.com>
-X-Gm-Features: Ac12FXwTFbY67CZU_pBaw5fN8TBnQVJcI80UHicbT-cI2JgQVmsmIDDqGz2FS0M
-Message-ID: <CAMuHMdVRwZ6PNt6LDi-NZWiUH_eNtw026UscwF9pZTjObVU6fA@mail.gmail.com>
-Subject: Re: [PATCH 09/13] arm64: dts: renesas: r9a09g087m44-rzt2h-evk: Enable
- I2C0 and I2C1 support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+GD5F1GM9 supports a high-speed Continuous Read (CR) mode which allows
+the entire memory array to be read out by a single read command
+without re-issuing the 13h “Page Read to Cache” command for every page.
 
-On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable I2C0 and I2C1 on the RZ/N2H evaluation board.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Datasheet summary
+Feature register B0[3] (NR bit)
+1 = Normal Read (default)
+0 = Continuous Read (CR)
 
-Thanks for your patch!
+ECC status register 7Ch
+Normal read: bits [3:0] → ECC status of last page
+Continuous read: bits [7:4] → accumulated max bit-flips over the
+whole sequential read operation.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+Datasheet:
+https://github.com/WT-886/DATASHEET/blob/main/GD5F1GM9-v1.0.pdf
 
-> +       /*
-> +        * I2C1 Pin Configuration:
-> +        * ------------------------
-> +        * Signal | Pin     | DSW7
-> +        * -------|---------|--------------
-> +        * SCL    | P03_3   | 3: ON, 4: OFF
+Signed-off-by: Teng Wu <gigadevice2025@gmail.com>
+---
+ drivers/mtd/nand/spi/gigadevice.c | 107 +++++++++++++++++++++++++++++-
+ 1 file changed, 105 insertions(+), 2 deletions(-)
 
-1: ON, 2: OFF
-
-> +        * SDA    | P03_4   | 1: ON, 2: OFF
-
-3: ON, 4: OFF
-
-> +        */
-> +       i2c1_pins: i2c1-pins {
-> +               pinmux = <RZN2H_PORT_PINMUX(3, 3, 0x17)>,
-> +                        <RZN2H_PORT_PINMUX(3, 4, 0x17)>;
-> +       };
-> +};
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/mtd/nand/spi/gigadevice.c b/drivers/mtd/nand/spi/gigadevice.c
+index 93e40431dbe2..72ad36c9a126 100644
+--- a/drivers/mtd/nand/spi/gigadevice.c
++++ b/drivers/mtd/nand/spi/gigadevice.c
+@@ -4,6 +4,7 @@
+  *	Chuanhong Guo <gch981213@gmail.com>
+  */
+ 
++#include <linux/bitfield.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
+ #include <linux/mtd/spinand.h>
+@@ -23,6 +24,18 @@
+ #define GD5FXGQ4UXFXXG_STATUS_ECC_1_3_BITFLIPS	(1 << 4)
+ #define GD5FXGQ4UXFXXG_STATUS_ECC_UNCOR_ERROR	(7 << 4)
+ 
++/* Feature bit definitions */
++#define GD_FEATURE_NR	BIT(3)	/* Normal Read(1=normal,0=continuous) */
++#define GD_FEATURE_CRDC	BIT(2)	/* Continuous Read Dummy */
++
++/* ECC status extraction helpers */
++#define GD_ECCSR_LAST_PAGE(eccsr)	FIELD_GET(GENMASK(3, 0), eccsr)
++#define GD_ECCSR_ACCUMULATED(eccsr)	FIELD_GET(GENMASK(7, 4), eccsr)
++
++struct gigadevice_priv {
++	bool continuous_read;
++};
++
+ static SPINAND_OP_VARIANTS(read_cache_variants,
+ 		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 1, NULL, 0, 0),
+ 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0, 0),
+@@ -63,6 +76,74 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
+ 		SPINAND_PROG_LOAD_1S_1S_4S_OP(false, 0, NULL, 0),
+ 		SPINAND_PROG_LOAD_1S_1S_1S_OP(false, 0, NULL, 0));
+ 
++static int gd5fxgm9_get_eccsr(struct spinand_device *spinand, u8 *eccsr)
++{
++	struct gigadevice_priv *priv = spinand->priv;
++	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(0x7c, 1),
++					SPI_MEM_OP_NO_ADDR,
++					SPI_MEM_OP_DUMMY(1, 1),
++					SPI_MEM_OP_DATA_IN(1, eccsr, 1));
++	int ret;
++
++	ret = spi_mem_exec_op(spinand->spimem, &op);
++	if (ret)
++		return ret;
++
++	if (priv->continuous_read)
++		*eccsr = GD_ECCSR_ACCUMULATED(*eccsr);
++	else
++		*eccsr = GD_ECCSR_LAST_PAGE(*eccsr);
++
++	return 0;
++}
++
++static int gd5fxgm9_ecc_get_status(struct spinand_device *spinand, u8 status)
++{
++	struct nand_device *nand = spinand_to_nand(spinand);
++	u8 eccsr;
++	int ret;
++
++	switch (status & STATUS_ECC_MASK) {
++	case STATUS_ECC_NO_BITFLIPS:
++		return 0;
++
++	case GD5FXGQ4XA_STATUS_ECC_1_7_BITFLIPS:
++		ret = gd5fxgm9_get_eccsr(spinand, spinand->scratchbuf);
++		if (ret)
++			return nanddev_get_ecc_conf(nand)->strength;
++
++		eccsr = *spinand->scratchbuf;
++		if (WARN_ON(!eccsr || eccsr > nanddev_get_ecc_conf(nand)->strength))
++			return nanddev_get_ecc_conf(nand)->strength;
++
++		return eccsr;
++
++	case GD5FXGQ4XA_STATUS_ECC_8_BITFLIPS:
++		return 8;
++
++	case STATUS_ECC_UNCOR_ERROR:
++		return -EBADMSG;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static int gd5fxgm9_set_continuous_read(struct spinand_device *spinand, bool enable)
++{
++	struct gigadevice_priv *priv = spinand->priv;
++	int ret;
++
++	ret = spinand_upd_cfg(spinand, GD_FEATURE_NR,
++				enable ? 0 : GD_FEATURE_NR);
++	if (ret)
++		return ret;
++
++	priv->continuous_read = enable;
++
++	return 0;
++}
++
+ static int gd5fxgq4xa_ooblayout_ecc(struct mtd_info *mtd, int section,
+ 				  struct mtd_oob_region *region)
+ {
+@@ -542,7 +623,8 @@ static const struct spinand_info gigadevice_spinand_table[] = {
+ 					      &update_cache_variants),
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&gd5fxgqx_variant2_ooblayout,
+-				     gd5fxgq4uexxg_ecc_get_status)),
++				     gd5fxgm9_ecc_get_status),
++			SPINAND_CONT_READ(gd5fxgm9_set_continuous_read)),
+ 	SPINAND_INFO("GD5F1GM9RExxG",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x81, 0x01),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
+@@ -552,10 +634,31 @@ static const struct spinand_info gigadevice_spinand_table[] = {
+ 					      &update_cache_variants),
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&gd5fxgqx_variant2_ooblayout,
+-				     gd5fxgq4uexxg_ecc_get_status)),
++				     gd5fxgm9_ecc_get_status),
++			SPINAND_CONT_READ(gd5fxgm9_set_continuous_read)),
+ };
+ 
++static int gd5fxgm9_spinand_init(struct spinand_device *spinand)
++{
++	struct gigadevice_priv *priv;
++
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	spinand->priv =  priv;
++
++	return 0;
++}
++
++static void gd5fxgm9_spinand_cleanup(struct spinand_device *spinand)
++{
++	kfree(spinand->priv);
++}
++
+ static const struct spinand_manufacturer_ops gigadevice_spinand_manuf_ops = {
++	.init = gd5fxgm9_spinand_init,
++	.cleanup = gd5fxgm9_spinand_cleanup,
+ };
+ 
+ const struct spinand_manufacturer gigadevice_spinand_manufacturer = {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
