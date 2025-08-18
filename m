@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-774030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B69B2ADC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E23B2ADCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4ED97AD926
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E6367AF77D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAE9321F2A;
-	Mon, 18 Aug 2025 16:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65146340DA4;
+	Mon, 18 Aug 2025 16:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FS1soXLa"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoxCO4uF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286623770B;
-	Mon, 18 Aug 2025 16:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3138334737;
+	Mon, 18 Aug 2025 16:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533304; cv=none; b=uzqxObiUW0V5/KwDbGE974y+FjJSI5MFNyebWi2+5q0TOrcLDMz7UaGA7zz0rM3Untp7AnczUbPlO0EA7ijp4VWjKvA/jRHEa1WGY2xCRbl7sgaCW2Jjds9q0+1gZLf0j/daCCEppHrPUjZ8YflPc2iu9lSvMSpKu47NIakpBUE=
+	t=1755533336; cv=none; b=qwX5yVOtB9wJuVvpZ5TXTvXAzH3TXFO6ZQT14l7Eup6dXqGiW+FESB3BtfdUttrxIJjrVqkzqUtC6KCoewY9fLHw/RGhGitLIvJFt+zzO4WXtGidDbqygBHbC1gq+nxTLa8BrQ88fqH7aocKQlAnkjDtaipZeiJZtZoRhA+leqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533304; c=relaxed/simple;
-	bh=ou2NodSL61SjBBx3oNoEL8d9FXu/qhf54SYinlYpEpw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZgMDNRzIMf6C1EvsD5ClxxovJPOa43e4oQ6VSmdSN6I7NCnbnvwlTuhLwbC7PoGla8+5kqNNoHprCsJFKlmaUz88nO4IC+USEYcRtm/2Bcyxy5Vkovozj6Qt8dT+KI2+uNMueCPw97mRWW184W5bNT6MZmCp0bCVjUVZaMhgFsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FS1soXLa; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CE0F40AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755533302; bh=PgKB2qnc/bRPAL5RwjdygVePDYnntw4ZWdIavREWLBQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FS1soXLa521ujJUbl/402whSSESTHg9tMk1J4yJXD61Dfi279n3ZYdXUxCAqBrXbP
-	 7uzuyvggLkYoXlerUj63roxK9vLzAUnVybiJ8ADgblvGi5LkC02Rne6uNwELG05I+6
-	 k7OuwJQBxt+73WjptP+fON5qK+HI/wyJ2vePn9MgKDmwsi+JYLLCa/Ou+Yk0IU287M
-	 3Bs39RXJcFhH8aA2anPFcTcN3lReE6Ci8Tc22FjnWBpnYKR6l1Y7r40THAF4d2OISs
-	 tpNV3csYjY/jWhXXQNvQZbmv84TtmdKAC3lrG0p2OxW0RInDuM1q8EFkKH6kheFgli
-	 bhQXe4L9M8KpA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 5CE0F40AB4;
-	Mon, 18 Aug 2025 16:08:22 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: hariconscious@gmail.com, shuah@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: HariKrishna <hariconscious@gmail.com>
-Subject: Re: [PATCH] documentation/arm64 : kdump fixed typo errors
-In-Reply-To: <20250816120731.24508-1-hariconscious@gmail.com>
-References: <20250816120731.24508-1-hariconscious@gmail.com>
-Date: Mon, 18 Aug 2025 10:08:21 -0600
-Message-ID: <871pp8a9ze.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755533336; c=relaxed/simple;
+	bh=praVVRYQknEmW2PnOYAUW4g/6bcrHTZgh8UjIqOn6e4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kOXukLcRky0lJlcWCw4dYtef+CLXgf8iZGiv8IhKD/AUiTWGboFvDu9fu9PuMahTLj3SsIWjmza0g3YZIHDBbQoFRKjh1lIkCUdJe2U+TtsYqZhDe7F6zwYdAcTE2dEGJEvqrsk55AhWMnQON/FgLPnkaUJyvKfHqIEmn+9Gr2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoxCO4uF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F23C19421;
+	Mon, 18 Aug 2025 16:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755533336;
+	bh=praVVRYQknEmW2PnOYAUW4g/6bcrHTZgh8UjIqOn6e4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JoxCO4uFGu7BGkAzNrwPeiok1VrtnD0fOKf66zu3gaNU8PiIlLYI1yWqXvCzPC4IT
+	 w/dJ8CJXWBqiU4AsLouwY6U0QasKGD2sNVPrR5WeQkIGyDNx5WZdBcWpQJ6ZbJHUYh
+	 2SdP610Lw2LyAigmoxvlOuEor4JFC+kygH96uDrjpfxuY1oIbas+l6Pi8fqAC3FwSm
+	 4/ODHGp3YsTF6AxM7iB6bWCSzpMA/4VSfwENCnfuE5bIvoGKm7/F14l1n+RG6ItpYs
+	 EFoImdonprr9kZTqtB04dJUDwIKR6TnWVmT3/YvKyprqjNPKIcPNu6qzyz93nYW3Pe
+	 mcYzWLhlL1g9Q==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30cce86052cso2613336fac.1;
+        Mon, 18 Aug 2025 09:08:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6EW+fVaeQ+GZ6AT7XDC5vvyECVI/a7N+Zv+hSMIroYKr9E3PH0lB6zEyYiyHZqjmjyzZSUtgBkgCJsVIf@vger.kernel.org, AJvYcCUmg2qAtg4YgGttN4TeHMjXS56xTieVYlgLsXXUIZoWIW3VEVvtGUGivTsEIuLbtLTcKSQSjs5YkILh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmUE78ozcUpZzIEXIu0wW0aqbFgPI5Y4f9s8CMdalYT3WgEfK+
+	JkQ2d1nUs6cEQOJXSBaxxVnwvz5zNVUm17m1pLW41oPKO3zNcSIjT5lzUgnHQeDtBh7sr5qCmuZ
+	/5KGO51c2AsSLeGXCPKPs9aWG1BlBILo=
+X-Google-Smtp-Source: AGHT+IFkq5KncVYHEk/LN9k0et6idyAoVR2GJ7EVldfLfvV7MKWlr0LQMntLQzrYg4NzYalRknRoMllv2VqRTyG+JhQ=
+X-Received: by 2002:a05:6870:3d9a:b0:2d5:b7b7:2d6e with SMTP id
+ 586e51a60fabf-310aafe4464mr7621787fac.38.1755533335571; Mon, 18 Aug 2025
+ 09:08:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250814161706.4489-1-tony.luck@intel.com> <230e2659-7838-2165-4490-3b3f89cb7838@huawei.com>
+In-Reply-To: <230e2659-7838-2165-4490-3b3f89cb7838@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 18 Aug 2025 18:08:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g8+XsUsYa0vNeCMcjx1wmMf99PfbYfofSqtaOqDajaow@mail.gmail.com>
+X-Gm-Features: Ac12FXxUylNn3wz4tNeEKNr6XV_DMtzkj2Zt0mREl5vK_65erZjinrFq4jvlxXU
+Message-ID: <CAJZ5v0g8+XsUsYa0vNeCMcjx1wmMf99PfbYfofSqtaOqDajaow@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: APEI: EINJ: Check if user asked for EINJV2 injection
+To: Hanjun Guo <guohanjun@huawei.com>, Tony Luck <tony.luck@intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Borislav Petkov <bp@alien8.de>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, 
+	Len Brown <lenb@kernel.org>, Zaid Alali <zaidal@os.amperecomputing.com>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, "Lai, Yi1" <yi1.lai@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-hariconscious@gmail.com writes:
-
-> From: HariKrishna <hariconscious@gmail.com>
+On Mon, Aug 18, 2025 at 5:58=E2=80=AFPM Hanjun Guo <guohanjun@huawei.com> w=
+rote:
 >
-> kdump.rst documentation typos corrected
+> On 2025/8/15 0:17, Tony Luck wrote:
+> > On an EINJV2 capable system, users may still use the old injection
+> > interface but einj_get_parameter_address() takes the EINJV2 path to map
+> > the parameter structure. This results in the address the user supplied
+> > being stored to the wrong location and the BIOS injecting based on an
+> > uninitialized field (0x0 in the reported case).
+> >
+> > Check the version of the request when mapping the EINJ parameter
+> > structure in BIOS reserved memory.
+> >
+> > Fixes: 691a0f0a557b ("ACPI: APEI: EINJ: Discover EINJv2 parameters")
+> > Reported-by: Lai, Yi1 <yi1.lai@intel.com>
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > ---
+> >   drivers/acpi/apei/einj-core.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-cor=
+e.c
+> > index bf8dc92a373a..99f1b841fba9 100644
+> > --- a/drivers/acpi/apei/einj-core.c
+> > +++ b/drivers/acpi/apei/einj-core.c
+> > @@ -315,7 +315,7 @@ static void __iomem *einj_get_parameter_address(voi=
+d)
+> >                       memcpy_fromio(&v5param, p, v5param_size);
+> >                       acpi5 =3D 1;
+> >                       check_vendor_extension(pa_v5, &v5param);
+> > -                     if (available_error_type & ACPI65_EINJV2_SUPP) {
+> > +                     if (is_v2 && available_error_type & ACPI65_EINJV2=
+_SUPP) {
+> >                               len =3D v5param.einjv2_struct.length;
+> >                               offset =3D offsetof(struct einjv2_extensi=
+on_struct, component_arr);
+> >                               max_nr_components =3D (len - offset) /
 >
-> Signed-off-by: HariKrishna <hariconscious@gmail.com>
-> ---
->  Documentation/arch/arm64/kdump.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/arch/arm64/kdump.rst b/Documentation/arch/arm64/kdump.rst
-> index 56a89f45df28..d3195a93a066 100644
-> --- a/Documentation/arch/arm64/kdump.rst
-> +++ b/Documentation/arch/arm64/kdump.rst
-> @@ -5,7 +5,7 @@ crashkernel memory reservation on arm64
->  Author: Baoquan He <bhe@redhat.com>
->  
->  Kdump mechanism is used to capture a corrupted kernel vmcore so that
-> -it can be subsequently analyzed. In order to do this, a preliminarily
-> +it can be subsequently analyzed. In order to do this, a preliminary
->  reserved memory is needed to pre-load the kdump kernel and boot such
->  kernel if corruption happens.
+> Reviewed-by: Hanjun Guo <gouhanjun@huawei.com>
 
-I don't think this is right.  While reserving judgment on
-"preliminarily" as a word, the intended use is adverbial, so this change
-does not make things better.  The better fix, perhaps, is to say
-"previously" instead.
-
-Should you choose to resubmit this, we'll need your real name in the
-Signed-off-by tag, please.
-
-Thanks,
-
-jon
+Applied as 6.17-rc material, thanks!
 
