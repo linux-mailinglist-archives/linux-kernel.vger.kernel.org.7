@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-773325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08111B29E51
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1136B29EF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA0A47ADC4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB4C5E039C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812601448E0;
-	Mon, 18 Aug 2025 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=owo.li header.i=@owo.li header.b="O6Qt4cqR"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7375422068F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4567731814B;
+	Mon, 18 Aug 2025 10:20:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B052701C3;
+	Mon, 18 Aug 2025 10:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510485; cv=none; b=GRiqHwPZVCkkyX4q3o5i71gzYdD5lEB+PIfIi9Jp/p4JkzSvQhaIZkEWdkMF8vtW6jiA0uW3OwkVlrfr6fw5Ogpp/Mw2pNaMSWnOJBO2kq45piF1542cqqm3JGA5hpw43gYsmkLHmjTcQ/U3OAMOiF5zwurO265n/4V9Huk5sC0=
+	t=1755512440; cv=none; b=RcXRRR+yBEOOxaZcAdqMhrpr/obsFLCk45S3du74pKp6ze78YX7LNbS2R0wIbLZ2SKoTi7d1L8+x4I4sKKjKCecvOXx03F7Ua7gNwHVvkKNiT5gL1LdSsMAqDnZhJWoUEo+mVPj6KWJrtKIVyoY3xAv4MmfIO+1eUMPQV5S6/9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510485; c=relaxed/simple;
-	bh=z0Y5zlKyq1iyjTdrH5tIm8cQtHMJc2M8Qax87gsnJ9Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=GlPYe2asWmJExq45ZFxw6iCVl2C4aLWH9q+9cNmo6L2S82sJQ3X8zXx+TRt00Lx9G0o2Fo6IZQAc92IniRKPvp5RgP/33BU7AuRPTzRJapWpXUM67ZdCgHWv1q3WJMNabScJ8F+vCaOfKoLx9SjeZ8wTHosTje15IRIqoeljaIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=owo.li; spf=pass smtp.mailfrom=owo.li; dkim=pass (2048-bit key) header.d=owo.li header.i=@owo.li header.b=O6Qt4cqR; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=owo.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=owo.li
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea6ccb7so2791832b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owo.li; s=google; t=1755510484; x=1756115284; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bxXt0HrR/xsywipkhm+/TKQI7O+RQHahjEth/TvbAXA=;
-        b=O6Qt4cqRkCnN+lrIgKTA1xdboUVE1Cf39VE0kPsHMaFfqYEqyDPUZPLaPVg1B+ozM6
-         EaqcDItl6mIGBqir8/lMsvdDa5GxAnuEssAYtepYfWchVgr4zSuhF9H/B1BAXcodR3tD
-         2vKrPbxXBg9LZFP8cNTlVclKNsldTS6WNlC5mJ0pkZnPGbfBSVArOp66967ypko9kEe/
-         uv+dCcJWWvTd2BbczJpt1Gjx7GammvpPxxnqaebB9aIbvrIedIxJW5qIxlW7A7m/CJ4y
-         BgtoSixqaKZyDUU2eyXYuP0jJHKAfzQMkBlTSo88hKRVLUcCW8BZfpkUwkxu2XeII+K/
-         gzAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755510484; x=1756115284;
-        h=mime-version:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bxXt0HrR/xsywipkhm+/TKQI7O+RQHahjEth/TvbAXA=;
-        b=HpFkGMcJZSKczV6YkcFECmPxeunOaafTwVt6nBUOkRlCmPc8gF2Pv1QF7DGkbdJxv/
-         2qf1+iAZ88j9AvYOu8vSaTe5S2H745xVY6KmtOyTzxBIE3r0XPr3nsu9xlDb64P+JCfW
-         aADbYZNI3XVheaA95Vdv0TyYshBmlLOJMBMWEh8Zog8FX54NhIyEeV1YDzfKkFqFo5w5
-         uzN7rUFPbcsX/bp4g+MiaJgBzxBcdrr8Na9alYPTY4xnt4g79bp90WqJylBbd/KwWCEE
-         otMF7QPzDXB8m3KDC3nkDl1v12Zb5snkZ8w3mYi6IEG5y1BDlsgAez4tzohcgoMPgp+c
-         rARg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxeQQHizcEqyANSNPhaOijWkau2K5jXhm1sWIgCWtuwtruMItYcJbk3N5LEwAtFr0cY1kNfZSxwD5O+Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7b+BXo8rfkZuQY/KubYnLQe0FkpujY9FpR9l+j6Ajm9KZp/6x
-	+0d48O4nUU/1a7kN6T49TiCMBTIhA+DIw1H7fFLuFv478ls0vWWi5mkSSVxdPj5VXvo=
-X-Gm-Gg: ASbGncultEL2rzZEpp9EiwA2ym6Np5qbgrGSU3fSl9enG6qeeFRvNY13Ke/xOZDlpbv
-	Q/Qf95O5tfGtmZgv8VZynxGKe5P/qRuErH48W/f7TS7AChXPpUtaZskKV4JoicFj2t9EB8a1Kll
-	67OeksHE51N5xQEls/6sstALSbmnJwGaKHIa60xiIDz1l2k6kfdwcXHSD8i9lJhXrKlcf+Vvnt0
-	BZq1yYSdpaTR5ApdVEE2GMM8mupAlIRX39eVkkDXpcTEDvhaQrscY7RCdnp2u/XAqKDdT0gvvkP
-	R1AMTIrNZy1UGM1yil7O6eT++QrJ63rnQDPPJeLVy9Eat67JVh+5kTjjB6b8SR8Spefo6uFI95g
-	udVIWBLrOmJ24
-X-Google-Smtp-Source: AGHT+IHLlw/No5aFyj88EmI3LVwF09WQd0xKKENW6U+K7hMbKaPgJph2PKeZJwvSaWehvHET7VDF1w==
-X-Received: by 2002:a05:6a00:21d6:b0:76b:da70:487b with SMTP id d2e1a72fcca58-76e447bf8f4mr14007768b3a.15.1755510483798;
-        Mon, 18 Aug 2025 02:48:03 -0700 (PDT)
-Received: from Iris-s-laptop ([103.143.92.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45565da9sm6703596b3a.60.2025.08.18.02.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:48:02 -0700 (PDT)
-Date: Mon, 18 Aug 2025 17:47:48 +0800 (+08)
-From: Iris Shi <0.0@owo.li>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation/sphinx: Fix typo in automarkup.py
-Message-ID: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
+	s=arc-20240116; t=1755512440; c=relaxed/simple;
+	bh=gi1XBiPa+Y9s7F0E7yYhrqUCfP7ER/mlAOwnS69M9ng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=te2G9oBt92Whq5Kzzh9E2CLyW4VrVfwg8uQ/gOqGDwZ+hzL1YlYr7raGlHsE0IZhqpT60oUOhVJpdhs+9QdTqbm++mtGBKVjpTahgkgKZMkw5FK6CXSgMxtlo5fRFjdy3cfV2gti6rC1Kj5DGC0kl9unCnALe21a+bh+BRva55k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c57Fj32R9z9sSY;
+	Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id v4Dqw6h7vKWf; Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c57Fj2DGkz9sSC;
+	Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 363608B764;
+	Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id nZLLT_AYuvrt; Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F32C8B763;
+	Mon, 18 Aug 2025 11:48:41 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2] netfilter: nft_payload: Use csum_replace4() instead of opencoding
+Date: Mon, 18 Aug 2025 11:48:30 +0200
+Message-ID: <e35d9dca6ce3a67b5a0fb067e02b35f3f53ce561.1755510324.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755510516; l=892; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=gi1XBiPa+Y9s7F0E7yYhrqUCfP7ER/mlAOwnS69M9ng=; b=P1rymAuoU44cHcNRzxv+AAep0JyXqqQEoidtcFyR4aEiH+vmLVBt88Caboz7pYShYjwOIi/bI KQCkRxUQD+2CEd+6njYAuwJQ/QbJYAo/3RyMcVMREZYYauv99G/INzb
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-"whan" -> "when"
+Open coded calculation can be avoided and replaced by the
+equivalent csum_replace4() in nft_csum_replace().
 
-Signed-off-by: Iris Shi <0.0@owo.li>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- Documentation/sphinx/automarkup.py | 2 +-
+v2: Add cast to __be32 to match csum_replace4() expected param types
+---
+ net/netfilter/nft_payload.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-index 563033f764bb..1d9dada40a74 100644
---- a/Documentation/sphinx/automarkup.py
-+++ b/Documentation/sphinx/automarkup.py
-@@ -244,7 +244,7 @@ def add_and_resolve_xref(app, docname, domain, reftype, target, contnode=None):
-     return contnode
+diff --git a/net/netfilter/nft_payload.c b/net/netfilter/nft_payload.c
+index 7dfc5343dae4..059b28ffad0e 100644
+--- a/net/netfilter/nft_payload.c
++++ b/net/netfilter/nft_payload.c
+@@ -684,7 +684,7 @@ static const struct nft_expr_ops nft_payload_inner_ops = {
  
- #
--# Variant of markup_abi_ref() that warns whan a reference is not found
-+# Variant of markup_abi_ref() that warns when a reference is not found
- #
- def markup_abi_file_ref(docname, app, match):
-     return markup_abi_ref(docname, app, match, warning=True)
+ static inline void nft_csum_replace(__sum16 *sum, __wsum fsum, __wsum tsum)
+ {
+-	*sum = csum_fold(csum_add(csum_sub(~csum_unfold(*sum), fsum), tsum));
++	csum_replace4(sum, (__force __be32)fsum, (__force __be32)tsum);
+ 	if (*sum == 0)
+ 		*sum = CSUM_MANGLED_0;
+ }
 -- 
-2.50.1
-
+2.49.0
 
 
