@@ -1,246 +1,176 @@
-Return-Path: <linux-kernel+bounces-773523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C21B2A15C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C6B2A137
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDE32A5A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482785E730B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD9131AF08;
-	Mon, 18 Aug 2025 12:10:32 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341EE30FF29;
+	Mon, 18 Aug 2025 12:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CRbbCsbo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A45226F290;
-	Mon, 18 Aug 2025 12:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9783101CF
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519031; cv=none; b=bYPsmEs/eB6A16tNWb4td4m3F39wA6uadOVvMBx/X73KAwSl9ng7CWKRaVNRf0dl/keY5MP1ba1ybMwEJTREVXl2v7xb+9IOZxrkQlPNZfOC5oWHvms3Ey73H7+AF+1KjtG0Mrd07R6Xjhtff4bPi0IhHw/rZMdwg4t4hci7cXE=
+	t=1755519051; cv=none; b=aYJxEpsWQENTnNFXLRxvL0f162BQQu+gizPey9JqflywnzjJjxLhAjSRBit8wheLrFuE02rtkzX9GvwLZEkZQ6BoQPjyK45/bvf3U8rml3KrL1klbZaRUDiW6QMwgLZZWey+fCA65y1BaKKscdMbRQCDiqykfycFSuwMtnADjDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519031; c=relaxed/simple;
-	bh=pbFQZ6F8H/+ENS2NlxGponIfCWcYPLd8TUnOyp7tAHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtFuXfo8HNymCKGwYapdP1Y1G6R28MDhAHSCpcTQsjQoiiWqLxIoL7p8YYdc4yGq8cOR5++cnQRISMtSmsU15qW1qb7DXM+WOmpBlT01PBb3uFOOaV6Jvcgjr1BBQB04z9mR7GnXd0trufhFlA9Q+KYig73oK3FRseollqYj09c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso5760402a12.0;
-        Mon, 18 Aug 2025 05:10:29 -0700 (PDT)
+	s=arc-20240116; t=1755519051; c=relaxed/simple;
+	bh=ntj8WCLKC48E3RqrJqdwUp6JvG6kd4zyY6tqV2E6kIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dbZlS/Cne/OVOqRPl3/eYty2sdf+9iYWSusHLfMHAVWbNNVLjpKh7pU74EFw98t/gfeHwQsdXFgxXD6rCEuWthZWAMMvoKzW0VhIexUui7P7pEes6PZ/cXBql0MFYjqB/7NQNAjftGEpSB18TT0FjXx86aLRdal2EBSxqLp5eRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CRbbCsbo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8Umaf026299
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:10:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hkCumoRo2vdkK1vJUdNAG8+5dWwDOOe6LmYrb1+L328=; b=CRbbCsboCmEeSV5G
+	He/9QKkQkSmpqBbjylTHOsOuzhgOf2ZhdMWXnzJfyK0gPTKGdEiKKsTzy0fg7u19
+	EByc/RZlQ4mD+wRAmk7W90I5z3hSLiS/Pi0/aB54nJLnE0jtuzkfP54FVMJQKB0L
+	cU7oU/ydbX9pbuGUsGNDh9ExK4dqWRDWUTanvWQLQHKzDU297sSq/kyGCldhQBda
+	UwOSozM4LuL+lz6hT55a5NYtIwLq9wGCYv5z3XaEUDeqIaGBCt64A1NclTy4zx/U
+	a+QHWW069SO57XSNorziTvrd9Lx3aY/TcT/hB4CsV+fl3aPJji/sZXS/coxL0K1r
+	P8bdQA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jjrfvk69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:10:49 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24458027f67so96856665ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:10:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755519028; x=1756123828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RfKJNISuryMHsuKOipur4LoH3AcpITjIZh4IQNVTv60=;
-        b=IzOVxh3vKoXZfWr3URF+nXmfj5lP+uJNh+aRqNNug0PvzSUqCOBDutpmOwZj+rVqQe
-         1o8oaIMc3n/VKgnfZaqg2y5cqOBPYUlLlNcvqpEu2oSAtR2woWU3CYKpYT3I3DsV+AUH
-         vdBkbo1YZ5qcFrDP0HDZoTD5oWXWxacYEwBYKbALKi1nw7JutYD/SdIcRkbrL+uV74NB
-         NrKVZ7gzOtUHeLgq3frjpBs8uo+1nw/yrA8RNp2ZvVi1/w95qhaM5rYd0uzdwnbrPNgt
-         iH97Hn/DLMRURaadZr63xM02uuYemI3OQtPihhlZFyIM8xWHmxZZCOxHALOkR7hxY9eL
-         iedw==
-X-Forwarded-Encrypted: i=1; AJvYcCU27WlNcl7gjEqAuKI4NtXB6//B7sH38rFIsq0fZOX3TF3/Gf6xh5Ij3ZBJ27w9npR9oRQBlJgnWijh2Lg=@vger.kernel.org, AJvYcCXX3qFnKbBmM0b9XL9iEdcWmkoctuMF3RohCpUcfbEA8g6JZvSju5HhMiorNGvPqeSlKXGzXdBR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsNSRAkBOL5PGueYXr17xAA96VO/Qfc2cjTykZtLXSl3U/MeiE
-	Z2Xc11h2sfqq+vQ/qusT0qhfUY8vAEERnju1K3x3E522+/nKfVoF2Bl7
-X-Gm-Gg: ASbGncvYNDFy+/eYEM9XyWQHZL4/+Av5FxbzUlI/60oY2TmWANcHpRSsEcl52p33Ks1
-	MYmrmDlUliJGKMPhYRN+yw8AT457J1ljQm8IM9pe3DfKCC3fh3bEF+hrEuYm6Bset8PwPk+Zqlq
-	YA4LPwekrsfIp/fUQni5XVfGFmsM6MCOZQZJKTKIBAlmh9nv6r6jkAwYdMpGZ4QE4KDv4BSQflA
-	W/wBVV1lykyae385ir8bRvI32BycmE18U08diMJSAQ744b3O42F7NWC4g6pjyZZ0qCWAY2T/5TX
-	d+XNWUeI79skg9lkTuKK7IxXJFn7t4R24m/Dhd6pykiDMjc1f/sV5BYmsIKB3KM0cdGao7lziYD
-	4C/PrXTSAjRE9i0qPQ8yY6T8i
-X-Google-Smtp-Source: AGHT+IEXDazwxgbe1DUH1OV6NThaTWuVSI4WSiRMEI/RXhYH6UQdZyqt2d0zN/4UpH8T3+iqef3u8w==
-X-Received: by 2002:a05:6402:35d0:b0:615:c767:5ba1 with SMTP id 4fb4d7f45d1cf-618b0523173mr10035748a12.3.1755519027500;
-        Mon, 18 Aug 2025 05:10:27 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b11bbsm7034549a12.53.2025.08.18.05.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 05:10:27 -0700 (PDT)
-Date: Mon, 18 Aug 2025 05:10:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Mike Galbraith <efault@gmx.de>, paulmck@kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
-References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
- <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
- <20250814172326.18cf2d72@kernel.org>
- <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
- <20250815094217.1cce7116@kernel.org>
- <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
- <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
+        d=1e100.net; s=20230601; t=1755519048; x=1756123848;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkCumoRo2vdkK1vJUdNAG8+5dWwDOOe6LmYrb1+L328=;
+        b=urvEIlhFT5nCCFizKC+nhqDvEUvXPrblkz2prVUbbB/giIT/xDW11Wh5Y1kEzUC5KS
+         MGe2JHODqyexY2PbiUc3U4ukGsnmv5mYcIqJfBvHg4F4pwlqPcM97x1EweV+1JaDMSQT
+         R/ndYOhOdWuzUOcxuMrHHjTa6k+XKdyFAFmYJxb9GUSp12jcfZdyAH2r2Wu4s5+5WH8B
+         6CjpkYYR43xnD7gRKn/wZfBr00o+ShcF4Y8UGxaMrvOJ0H7PlG8YWiKn+lUMCcZOjY9P
+         qsen4HNh6lRaIVosBs8zBJOdmuGV/qn6mWQREP547zAZROfZm8w9UARkSmyj1bfs6HL6
+         /LHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVc1aVG8IOSKZRCIn0jc/39zOE4U72bwmSNq8JR8P7i8qLrUc2pA9kLOdWSliVdCWlB3+ozkanN1mVrV0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDBLdq1Rf39QV+CvVWrW/xHW//fhU+EUNEjbsa8pZhtkZvF4JD
+	GtkpTY60OleLIdXg9RBTpTF/uj47avS1HHXwc5ImrMONJ064CEhHFBjpescPmbS2NuI7mTTg6kA
+	JyD/TMYOm3Cuwe79QPM+h01iN7lzQk1VJu+8SfpOlkBr3jAL2v4juJkE6hCBAf9VdoHo=
+X-Gm-Gg: ASbGncsNgHaPk2aJRnxjTVRpEpcE1B1E0nHFRoLbPUPVGBarQg+60pXEuAsFkNCrjB2
+	1Hne9irRLYdmuy9Em85z7shPhQLkP2GiAWUOF67SY4e1aPEOezFuHXOu6ZAqgzYBLwHwT+zEZrL
+	YPPyU1znyUXWfAgJKIQLxVfLk41XA2+bkHyv1AbhUaU1acP4eOd5viHzFsq2jq73Rb+zdFnLGie
+	eJg0G5o5QBqi/ycwOEQfSfjJA2nD9aGHW5fZIkPOtL+7WSrwT/cmgTSrOih+gT9yGGXXktjL1l2
+	An4/UWuV6scjkkwsd2XKRDGzCyA4h27jTH3W1B6S8pOF9IsCOA7ioAfrPS//Fm3y
+X-Received: by 2002:a17:902:d4c6:b0:244:5cde:d384 with SMTP id d9443c01a7336-2446d85f7demr181641495ad.31.1755519048381;
+        Mon, 18 Aug 2025 05:10:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZONzJWFtT1XNEyRK6xcm4gebbokS24vhl3Ky3z4naJfpk4imCqD/UHpgAJi8OHvE0+TLUjg==
+X-Received: by 2002:a17:902:d4c6:b0:244:5cde:d384 with SMTP id d9443c01a7336-2446d85f7demr181641135ad.31.1755519047954;
+        Mon, 18 Aug 2025 05:10:47 -0700 (PDT)
+Received: from [192.168.1.4] ([106.222.229.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446c2f441asm79279165ad.0.2025.08.18.05.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 05:10:47 -0700 (PDT)
+Message-ID: <272d2a39-19ce-4ac5-b3c6-3e3d6d9985c5@oss.qualcomm.com>
+Date: Mon, 18 Aug 2025 17:40:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm: skip re-emitting IBs for unusable VMs
+To: Antonino Maniscalco <antomani103@gmail.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250813-unusable_fix_b4-v1-1-3218d166b8a8@gmail.com>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250813-unusable_fix_b4-v1-1-3218d166b8a8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: S9PMBSqlfzAmAgeSzWZNWO-_lAenk4qE
+X-Authority-Analysis: v=2.4 cv=YrsPR5YX c=1 sm=1 tr=0 ts=68a31849 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=9Q8gPALlkHEzzDxkdHlyxw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=b798ue3nI8IKDaXQGNYA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzOSBTYWx0ZWRfX4AxtMXko4rc3
+ gWezlydP+2Jm6skFTr8FPBKNCyEXvYc1fLh/zCNN6ro+Om2MaIMVx7KNC7slmGTFD85rhr3e2pS
+ 0ULBSr5us40YJTco1ph5xTeUSjVDj2JraSYjnHVsfwhc1lyvAK8j4pqw56xARkc/E4Rfadg4r+b
+ /jPphTw4mInSp2fgiaPaSfJJ6odXzn1KqRkYVm94JIYNg+iVDi8fucAl+O5xGYF/hjCELE4Aam6
+ QNqI+qiBamVO2APkmUaJp01x5ZAeTs8LJ8ML6TPUUxFPjqWOSYUOOTw6YgH5AjtvyteuKoVb7T3
+ k4BsdzoU9hH5QDH+r7rIlgfYzdXwrDmtDwX7RQ/8tipYaIEIJaQHaDXgKVr2y1+MwSOFUluSvus
+ 4ppbzT0l
+X-Proofpoint-ORIG-GUID: S9PMBSqlfzAmAgeSzWZNWO-_lAenk4qE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160039
 
-On Fri, Aug 15, 2025 at 09:02:27PM +0100, Pavel Begunkov wrote:
-> On 8/15/25 18:29, Breno Leitao wrote:
-> > On Fri, Aug 15, 2025 at 09:42:17AM -0700, Jakub Kicinski wrote:
-> > > On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
-> > > > On 8/15/25 01:23, Jakub Kicinski wrote:
-> > > 
-> > > I suspect disabling netconsole over WiFi may be the most sensible way out.
-> > 
-> > I believe we might be facing a similar issue with virtio-net.
-> > Specifically, any network adapter where TX is not safe to use in IRQ
-> > context encounters this problem.
-> > 
-> > If we want to keep netconsole enabled on all TX paths, a possible
-> > solution is to defer the transmission work when netconsole is called
-> > inside an IRQ.
-> > 
-> > The idea is that netconsole first checks if it is running in an IRQ
-> > context using in_irq(). If so, it queues the skb without transmitting it
-> > immediately and schedules deferred work to handle the transmission
-> > later.
-> > 
-> > A rough implementation could be:
-> > 
-> > static void send_udp(struct netconsole_target *nt, const char *msg, int len) {
-> > 
-> > 	/* get the SKB that is already populated, with all the headers
-> > 	 * and ready to be sent
-> > 	 */
-> > 	struct sk_buff = netpoll_get_skb(&nt->np, msg, len);
-> > 
-> > 	if (in_irq()) {
+On 8/13/2025 6:34 PM, Antonino Maniscalco wrote:
+> When a VM is marked as an usuable we disallow new submissions from it,
+> however submissions that where already scheduled on the ring would still
+> be re-sent.
 > 
-> It's not just irq handlers but any context that has irqs disabled, and
-> since it's nested under irq-safe console_owner it'd need to always be
-> deferred or somehow moved out of the console_owner critical section.
+> Since this can lead to further hangs, avoid emitting the actual IBs.
+> 
+> Fixes: 6a4d287a1ae6 ("drm/msm: Mark VM as unusable on GPU hangs")
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/msm_gpu.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+> index c317b25a8162edba0d594f61427eac4440871b73..e6cd85c810bd2314c8bba53644a622464713b7f2 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.c
+> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> @@ -553,8 +553,15 @@ static void recover_worker(struct kthread_work *work)
+>  			unsigned long flags;
+>  
+>  			spin_lock_irqsave(&ring->submit_lock, flags);
+> -			list_for_each_entry(submit, &ring->submits, node)
+> +			list_for_each_entry(submit, &ring->submits, node) {
+> +				/*
+> +				 * If the submit uses an unusable vm make sure
+> +				 * we don't actually run it
+> +				 */
+> +				if (to_msm_vm(submit->vm)->unusable)
+> +					submit->nr_cmds = 0;
 
-Agree. An IRQ-unsafe lock (fq lock) should not be reachable from an IRQ
-disabled code path. So, one solution might be to always send TX packets
-from a workqueue (unless it is on panic, as suggested by Calvin).
+Just curious, why not just retire this submit here?
 
-I've created a quick PoC to see how it looks like to always transmit
-from a a work queue:
+-Akhil
 
-commit 02d0f38c3e435e4349de2fa3ce50fa8841aa0df9
-Author: Breno Leitao <leitao@debian.org>
-Date:   Mon Aug 18 04:09:44 2025 -0700
+>  				gpu->funcs->submit(gpu, submit);
+> +			}
+>  			spin_unlock_irqrestore(&ring->submit_lock, flags);
+>  		}
+>  	}
+> 
+> ---
+> base-commit: 8290d37ad2b087bbcfe65fa5bcaf260e184b250a
+> change-id: 20250813-unusable_fix_b4-10bde6f3b756
+> 
+> Best regards,
 
-    netpoll: move packet transmission to workqueue for non-blocking output
-    
-    This patch modifies the netpoll subsystem to perform packet transmission
-    asynchronously via a dedicated workqueue, always sending the packet from
-    a workqueue. This fix potential deadlock when the network locks are not
-    HARDIRQ safe.
-    
-    Packets generated for transmission are queued on tx_queue and the workqueue
-    is scheduled to send them in process context, avoiding sending packets
-    directly from atomic context except during oops handling.
-    
-    This affect only netconsole, given that no other netpoll user uses
-    netpoll_send_udp().
-    
-    Signed-off-by: Breno Leitao <leitao@debian.org>
-
-diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
-index b5ea9882eda8b..bac9dec8bd3bc 100644
---- a/include/linux/netpoll.h
-+++ b/include/linux/netpoll.h
-@@ -35,8 +35,8 @@ struct netpoll {
- 	bool ipv6;
- 	u16 local_port, remote_port;
- 	u8 remote_mac[ETH_ALEN];
--	struct sk_buff_head skb_pool;
--	struct work_struct refill_wq;
-+	struct sk_buff_head skb_pool, tx_queue;
-+	struct work_struct refill_wq, tx_wq;
- };
- 
- #define np_info(np, fmt, ...)				\
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 5f65b62346d4e..92a4186cebb83 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -496,6 +496,16 @@ static void push_eth(struct netpoll *np, struct sk_buff *skb)
- 		eth->h_proto = htons(ETH_P_IP);
- }
- 
-+static int netpoll_queue_skb(struct netpoll *np, struct sk_buff *skb)
-+{
-+	/* Queue at the tail and TX from the head */
-+	skb_queue_tail(&np->tx_queue, skb);
-+	schedule_work(&np->tx_wq);
-+
-+	/* TODO: this will need some refactor to update netconsole stats properly */
-+	return NET_XMIT_SUCCESS;
-+}
-+
- int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
- {
- 	int total_len, ip_len, udp_len;
-@@ -528,7 +538,10 @@ int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
- 	push_eth(np, skb);
- 	skb->dev = np->dev;
- 
--	return (int)netpoll_send_skb(np, skb);
-+	if (oops_in_progress)
-+		return (int)netpoll_send_skb(np, skb);
-+
-+	return netpoll_queue_skb(np, skb);
- }
- EXPORT_SYMBOL(netpoll_send_udp);
- 
-@@ -540,6 +553,23 @@ static void skb_pool_flush(struct netpoll *np)
- 	cancel_work_sync(&np->refill_wq);
- 	skb_pool = &np->skb_pool;
- 	skb_queue_purge_reason(skb_pool, SKB_CONSUMED);
-+
-+	/* tx_queue must be empty here, given we the pkts were flushed
-+	 * after users got disabled.
-+	 */
-+	if (WARN_ON_ONCE(skb_queue_len(&np->tx_queue)))
-+		skb_queue_purge(&np->tx_queue);
-+}
-+
-+static void netpoll_flush_tx_poll(struct work_struct *work)
-+{
-+	struct sk_buff *skb;
-+	struct netpoll *np;
-+
-+	np = container_of(work, struct netpoll, tx_wq);
-+
-+	while ((skb = skb_dequeue(&np->tx_queue)))
-+		netpoll_send_skb(np, skb);
- }
- 
- static void refill_skbs_work_handler(struct work_struct *work)
-@@ -557,6 +587,7 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
- 	int err;
- 
- 	skb_queue_head_init(&np->skb_pool);
-+	skb_queue_head_init(&np->tx_queue);
- 
- 	if (ndev->priv_flags & IFF_DISABLE_NETPOLL) {
- 		np_err(np, "%s doesn't support polling, aborting\n",
-@@ -596,6 +627,7 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
- 	/* fill up the skb queue */
- 	refill_skbs(np);
- 	INIT_WORK(&np->refill_wq, refill_skbs_work_handler);
-+	INIT_WORK(&np->tx_wq, netpoll_flush_tx_poll);
- 
- 	/* last thing to do is link it to the net device structure */
- 	rcu_assign_pointer(ndev->npinfo, npinfo);
-@@ -815,6 +847,8 @@ static void __netpoll_cleanup(struct netpoll *np)
- 	if (!npinfo)
- 		return;
- 
-+	cancel_work_sync(&np->tx_wq);
-+
- 	if (refcount_dec_and_test(&npinfo->refcnt)) {
- 		const struct net_device_ops *ops;
- 
 
