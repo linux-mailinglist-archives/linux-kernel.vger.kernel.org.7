@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-773078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A66B29B2C
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2F2B29B2D
 	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D87C18A60B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:48:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 191C94E1F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C31286D4C;
-	Mon, 18 Aug 2025 07:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBDC286D70;
+	Mon, 18 Aug 2025 07:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XVle09w6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xs6aYqS2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4C37E0E4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3CD286892
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503276; cv=none; b=DWHFvEdAeqMPdyS2/+yKhyzrtc+56YZY9DgaB59pctBzkD01OVekp6JL9Sz8gLtP1270W5uUCH9J0ZNn9TxXKL8y6jogeI9jYCzIYluA6f15w5d2eyG0r04LNCDfgQsCvfqqKODLhOl+Ovpn2k6EuonQdtLk0Y6JRfQcojNYhDk=
+	t=1755503343; cv=none; b=PAeqEjYXqU51M8aNKmrELYpWhh1rlGiHzNcNJOBRQvckG+ZfdBI06yqDZvyE1CR5QuWInePy9FrSLzGrzml7+Ivys6yXD0GMyn7enLWUlNkC4qSdsKEt+OGQhEpz8qwVytelhMm4BFuC9YHGnoyVoC7nTuqE1N3rM1PThWkfa5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503276; c=relaxed/simple;
-	bh=ke/70mwNuZMQ4uUVMWKNowY7SVljptpZBjnzkw07fTo=;
+	s=arc-20240116; t=1755503343; c=relaxed/simple;
+	bh=Z6rH2ecCR4iG8zmsPvbQHzW1R/t/pz4Wpq05s98+st8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smHnBxj5OQbPah6ilLMnnwCYtwJHdTdXdGc1i5BdfdP1zTuNSBaQ8v2wLeGct1Sn92dcOqsRKrVUXk5deURk5hj/5dWh3E0S6jFqhkq7xaA5xfQo1PL3wZpuVwh6YG500eHYjpX9W/Xb8M823+hDz66BPbx689srtDyWSnh61hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XVle09w6; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=tH/YdY+2DMmrwKu3lkTiRYeor5Avv0z8DDU3SWNGNhXu/r4h+MSshgQIfVIkU/s4MXXVwIlNeaH+Icpd/nDb6Zy7scfNJJXl/cW3SmTIyLSyESF99kr/dH3JtQoMkkzLBcSd+2TP5Uz1Xs8gi6udUj3aNPa4zk0f8S38O/d6+WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xs6aYqS2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755503273;
+	s=mimecast20190719; t=1755503340;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yKouifB7G5rcBd40ZGRdNWHNyUYJpa/6R/7rwWgxaNU=;
-	b=XVle09w677mML4zl4ckHmP+KEelydPKilolIXKpTfeYR+I2jKQo5z52ABH2ysvE+IhuIvp
-	QwLopuLCf/QZW8nrg8/uXFQucYI+94DUcuDKau6/g3hIQT90dZ8XL741LTbMAt4Bk+R5V9
-	1PVMCqkiHVbG5+Q4NkJLcHNaBWUG3Js=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=GjrpMMZYmeGBQjqK7bhL6RIFmCyMzvAgb+yhK+WhAXE=;
+	b=Xs6aYqS2Ue5RADRUjQdMUNWYThMI7yKDrXN+5H/VVkUQ/wsBrABZvPG7TMCgD2/VA/b9em
+	IvWePJpV6wO4nrmrntWNLCEpgyP1R9/vB0Xzq37ou5i/79lGwgW+eFAzmwGxInmaZoEEvl
+	gdLa4c/yENPjhUX0xz28GyapG0hOIVM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-EC1sDfcUNse5EKIsYBP6xw-1; Mon, 18 Aug 2025 03:47:51 -0400
-X-MC-Unique: EC1sDfcUNse5EKIsYBP6xw-1
-X-Mimecast-MFC-AGG-ID: EC1sDfcUNse5EKIsYBP6xw_1755503270
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b0015aaso12115465e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:47:51 -0700 (PDT)
+ us-mta-609-SyGpEea4NTafaWxhtqLmNw-1; Mon, 18 Aug 2025 03:48:58 -0400
+X-MC-Unique: SyGpEea4NTafaWxhtqLmNw-1
+X-Mimecast-MFC-AGG-ID: SyGpEea4NTafaWxhtqLmNw_1755503338
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b9d41bd50aso1896727f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:48:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755503270; x=1756108070;
+        d=1e100.net; s=20230601; t=1755503338; x=1756108138;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yKouifB7G5rcBd40ZGRdNWHNyUYJpa/6R/7rwWgxaNU=;
-        b=G1sbcCunNLgHb0ApRLu32SxWcXlueVIs2ko9yGolsnn06pAB7LJJSRHA5yTadL8k+Q
-         2DRFcUri/NxxmnbWr/VSGRts6QPsoEK74gsHsu4mqAnjYoQttXmWUShI+AZeCedPXYVn
-         pUqiTsMump4sk6fbNjp9/bNwp51KJ8vGJERFMVgE+31RjBIIaZKcutAYlBUgVjJIiueC
-         lYRpsy5bbrJCkXUdnDO/XYfso+3xfI7KtprijJ+kF2fm4pI9J4llSpAug+Nsk6CVNWEl
-         In8xYCXht8FxC73nzcN4v7OqDyuUszAdfVdD1jdASjH9QsNkRt2ex7ukpRc6/+jDuD/R
-         4kSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYZWZfKaGYFdd/HCgSoWI8JVkAA5237+AV4GEowOjKEsUXI8tXzRxA1sIgoOYMWoEevlv92NFE/Qx1z5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZGUSySm5ApSUTRf/GFdPSJATkCvzh2bycMCWMSsJJAjx38mMD
-	KRH1tbt1QMxkon6PuRzykcCSFsIZf63o3Jmf4E7JHxUvxfFUfhC5SVMoeq2hcbrevHKFpFGXDb+
-	B3tXKpGgTpNbKuxLEh+3jZ9xmi1GwADT3tgtOZkaTV3H+ZxZniQw9mJz6rEdL7bANLg==
-X-Gm-Gg: ASbGncu+cmGXDA16AGjlwP2YjKWrN8LUvx7nYMGfa3TBJYPTKNRR5NtyiHam7FkuyZg
-	1nmePIc0k6zBKqUm9mzCX0WJFWflow9Q/4W+Qw1V7H8LguAm3JNikAtEeiT9iefYWu9+oPPPjhS
-	aEAi9pp2YDFmf3FljhO1y9FJehdVgg67vNIWUn+1gr4AjsMGyhcx6lRkjTb7PFuncZyFH1rfAmH
-	YOCIPrPOzJFmGEJ9xtPdr/G4URC0KD/iShIpSbZt6Ckxde0fNwgube3zi2Swj2oAluwuqLZaFxY
-	oMZyND0lR2F9DkT8xfGSalXDok2J3nAvR/8htUwW/2hpnf+DV0A5OECDuV1tYjePbtS2AM8t90r
-	5aK8dqW5tx10764Lfqa6wrrAsZ0lOW6O85Uk9jQOe9viJ4GasWZGGGZDJzjBFFE2P
-X-Received: by 2002:a05:600c:154d:b0:459:db5a:b097 with SMTP id 5b1f17b1804b1-45a26784890mr58197405e9.16.1755503270214;
-        Mon, 18 Aug 2025 00:47:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8vuz2TuDec3PC8OQ2oalVcrssQL/Ez40NgjEUbWnLchljSNogxqDtuxCMN5BdLp0bZtq2rQ==
-X-Received: by 2002:a05:600c:154d:b0:459:db5a:b097 with SMTP id 5b1f17b1804b1-45a26784890mr58196695e9.16.1755503269634;
-        Mon, 18 Aug 2025 00:47:49 -0700 (PDT)
+        bh=GjrpMMZYmeGBQjqK7bhL6RIFmCyMzvAgb+yhK+WhAXE=;
+        b=byiSAp3qTL7sTOyTcK226ncmDCWfD/Yt/8sd4XzEPeuqjxLRYB9w8dsD2ygCE95eb9
+         wzlzjcVubr72FGANkZRIzC2hIBT7YgMtXV2ZsOmfLJuGjHJZIOQ6rRcB4lus/cAE9wG5
+         D/ctEcvddFVUcgKMKeLumuqpwtUzoaRNLNIt3uihD2nZjg/6y9qqYSe/Hqzg/N4dxFA9
+         6EWBtbHFOFe46WRJL6wvAz0TKMWf9CEBObO4MZm4Mgf/Pe1mx44GVkNghJuekyNWLym6
+         iZHFC5T3y+2gxzMPRxb/rP06OiTL41Xw6Pcmc/ewvA3JoQSlBE3shEfnfHlUh2Ys9UN7
+         NFpg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/QqmsQ0sg3KWMBtnKlnc4bej6AfMNRZ2Hp4qy1CKIaTaBiaMqPfGW75WlcxMiUS3cjThbEMgixUp46d8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysqdmdX0UVX9PbCrq7ACVr5QP9afq10L9UsU6gRY7TswJOMh0v
+	e9rI3daHFrlEFSMtrrAJ9PMkVMSWxuW95Fit4qp1PYna2PHR96wnZBgAgha4KBobU8DACuRbTxl
+	csDyTiAgLoSdUWEx+u5M6eeHL3f6/XnPHwD3jaQUhAl4bDRIzx1vqAxQW6nYMVE0Tfg==
+X-Gm-Gg: ASbGncspJPOrYRhBu4TlQ7QC+/E1vujM+3gTiyyG3SI/QvbgivTUtMbCiVTvqNNcET6
+	GJYuctXUMB4+59HQPi8ADyZr56wH1H7hyCs9P3tTtoGSHnfg8tXwk6pwp0I4pOQLnqbfRJNo5e1
+	L7O6H3yxS4PvMdSv6JkFf/oXGGwAMKtiEL6RBdBiydCEBKtoPSc/f970GYBi5av4+hQYQww+PZf
+	HZ7pyb1yp6SOZ7g5UTDdn/9wPk1l90In7vldWJWgTrDEj8kzdbioWbiouX+5vMfABtXGrxc6LKh
+	wRKIc9Qv6nc46il6Hqu+pmvdqOcEw9g55splI+EUfgMDXMaeUyTm5mmhLhs8cTctFb1IEfwvM/A
+	AxR6bOGWNdFXZ8yL1RIpOAhCish+HM6FrJSO3RU09nNY4EotDrU6BmicbOYIuGs6q
+X-Received: by 2002:a5d:64eb:0:b0:3b7:95dd:e535 with SMTP id ffacd0b85a97d-3bc6aa272a3mr5576746f8f.42.1755503337561;
+        Mon, 18 Aug 2025 00:48:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0ke0nc9qTEDo66odZ0EQpymOQ3CKNEvHMaJr1zCWdVAjts6OlZqdg3tu05ysjljyYRHtYlQ==
+X-Received: by 2002:a5d:64eb:0:b0:3b7:95dd:e535 with SMTP id ffacd0b85a97d-3bc6aa272a3mr5576724f8f.42.1755503337011;
+        Mon, 18 Aug 2025 00:48:57 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f22:600:53c7:df43:7dc3:ae39? (p200300d82f22060053c7df437dc3ae39.dip0.t-ipconnect.de. [2003:d8:2f22:600:53c7:df43:7dc3:ae39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb68079da7sm11738572f8f.56.2025.08.18.00.47.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a2231f7e8sm127205855e9.14.2025.08.18.00.48.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 00:47:49 -0700 (PDT)
-Message-ID: <def7364e-ef77-4734-b870-278f9975e9c0@redhat.com>
-Date: Mon, 18 Aug 2025 09:47:46 +0200
+        Mon, 18 Aug 2025 00:48:56 -0700 (PDT)
+Message-ID: <0e613cf3-7ff1-49d9-9fff-fcf824f2df72@redhat.com>
+Date: Mon, 18 Aug 2025 09:48:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 mm-hotfixes 1/3] mm: move page table sync declarations
- to linux/pgtable.h
+Subject: Re: [PATCH V5 mm-hotfixes 2/3] mm: introduce and use
+ {pgd,p4d}_populate_kernel()
 To: Harry Yoo <harry.yoo@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -120,7 +120,7 @@ Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
  linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
  linux-mm@kvack.org, stable@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
 References: <20250818020206.4517-1-harry.yoo@oracle.com>
- <20250818020206.4517-2-harry.yoo@oracle.com>
+ <20250818020206.4517-3-harry.yoo@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -167,22 +167,62 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250818020206.4517-2-harry.yoo@oracle.com>
+In-Reply-To: <20250818020206.4517-3-harry.yoo@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 18.08.25 04:02, Harry Yoo wrote:
-> Move ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings() to
-> linux/pgtable.h so that they can be used outside of vmalloc and ioremap.
+> Introduce and use {pgd,p4d}_populate_kernel() in core MM code when
+> populating PGD and P4D entries for the kernel address space.
+> These helpers ensure proper synchronization of page tables when
+> updating the kernel portion of top-level page tables.
+> 
+> Until now, the kernel has relied on each architecture to handle
+> synchronization of top-level page tables in an ad-hoc manner.
+> For example, see commit 9b861528a801 ("x86-64, mem: Update all PGDs for
+> direct mapping and vmemmap mapping changes").
+> 
+> However, this approach has proven fragile for following reasons:
+> 
+>    1) It is easy to forget to perform the necessary page table
+>       synchronization when introducing new changes.
+>       For instance, commit 4917f55b4ef9 ("mm/sparse-vmemmap: improve memory
+>       savings for compound devmaps") overlooked the need to synchronize
+>       page tables for the vmemmap area.
+> 
+>    2) It is also easy to overlook that the vmemmap and direct mapping areas
+>       must not be accessed before explicit page table synchronization.
+>       For example, commit 8d400913c231 ("x86/vmemmap: handle unpopulated
+>       sub-pmd ranges")) caused crashes by accessing the vmemmap area
+>       before calling sync_global_pgds().
+> 
+> To address this, as suggested by Dave Hansen, introduce _kernel() variants
+> of the page table population helpers, which invoke architecture-specific
+> hooks to properly synchronize page tables. These are introduced in a new
+> header file, include/linux/pgalloc.h, so they can be called from common code.
+> 
+> They reuse existing infrastructure for vmalloc and ioremap.
+> Synchronization requirements are determined by ARCH_PAGE_TABLE_SYNC_MASK,
+> and the actual synchronization is performed by arch_sync_kernel_mappings().
+> 
+> This change currently targets only x86_64, so only PGD and P4D level
+> helpers are introduced. Currently, these helpers are no-ops since no
+> architecture sets PGTBL_{PGD,P4D}_MODIFIED in ARCH_PAGE_TABLE_SYNC_MASK.
+> 
+> In theory, PUD and PMD level helpers can be added later if needed by
+> other architectures. For now, 32-bit architectures (x86-32 and arm) only
+> handle PGTBL_PMD_MODIFIED, so p*d_populate_kernel() will never affect
+> them unless we introduce a PMD level helper.
 > 
 > Cc: <stable@vger.kernel.org>
 > Fixes: 8d400913c231 ("x86/vmemmap: handle unpopulated sub-pmd ranges")
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 > Acked-by: Kiryl Shutsemau <kas@kernel.org>
 > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
 > ---
+
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
