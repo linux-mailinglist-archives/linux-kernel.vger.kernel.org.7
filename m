@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-773485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F48B2A0BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:50:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F9CB2A0C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C7F7B729B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:49:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97A07B7565
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C1231987C;
-	Mon, 18 Aug 2025 11:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D431A05F;
+	Mon, 18 Aug 2025 11:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MFPgcHIn"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oRVhocTw"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC838258EE8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8D31A046
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755517824; cv=none; b=natzPtKM2soBjNeexk/N6rZcwouYkbX2udcmHLO71cKvs/AwVw/6wfz945ttwIZZSzmkl5gEvA8NhhyFqQDSRyG26WJhhcR2IzkIQR3l8fFmo8AOo3KmxakgRL9Yn/rrwz+DyJi3eu/dmy/sm8sF1vEFaRpVcbmTWn9OfX+f5W4=
+	t=1755517827; cv=none; b=POO7Liadn1GShd9mYEtnk/yG++4l6blM1SogEaf242eNH55Ws2REWqyzrrdMLwOHguuVPvfsEBLhHSjNm+Kfs1bFeHo/5wRbnSFQdwx7L1ZEcrUbY6yg7C+/9Gkd5Gyx4JW7f65LCTECekbUFlL5evl20AO4jxQPekLRSGl0Rd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755517824; c=relaxed/simple;
-	bh=6NluitXyXQGcxffxnMqCUpCBrGcquTGzvvkkc9bRe0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VpC1r9rSB8uzxkfVHvw6R4Q2LFn6dJVE740JrUTvbfB59n3jPgt7ipTgBEWQiZg31Rn4JPFf2W7jUDKTc0RMlcQ+B+6qxNV5EzXkJAGxFDJTWQ4HmIseXv+c1X6E+nPkCIOrftBZ74X3h5ST3Ni0TMiY7P0c4O0S5XmbLc1X8Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MFPgcHIn; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1755517827; c=relaxed/simple;
+	bh=2F+LQBZ/eBkS2ZxR7ElP8NsgBUf5s8KGbrnq9GqVgok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s9tZu49HwSY7IXIcoYKSuBgavE0ACjRSQ5pviWyKHH3IzNjNKRn3EskxKyxpFj4HKB2QkZoccmMhYL9fhVe3zeA3Sa5VajGOndwAEV3iHe5zqUgCBqgceD89U4deEz1uSNPulaWtC61+fRxEhC0eAcKMEt63VWrWmv0UAwCCNI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oRVhocTw; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so1615628b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:50:22 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b474e8d6d03so220562a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755517822; x=1756122622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UulYzIy5HqPnDw6udvrknuDDM9ViKLj7nBVeIIxwUb4=;
-        b=MFPgcHInslJQXjz1Rk/v0emLAOfZQeQb9BiYzeRz4Hc7ShgoxpYQ/tq5gPN1bwbT+E
-         9wBP6qY2TEQ9D4LTlmZKCcfg3tspYkuPjC4Q9Q+iIsWjq85gR8BAM1BaEpZX9oumhfLo
-         ihNHtyxgkvaFuFVM85EojofDY53H6IWqF4hgY=
+        d=chromium.org; s=google; t=1755517825; x=1756122625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zb1sCPo77mcuKw2zTHcH238POIGc59QSz6qQTiNa2Mw=;
+        b=oRVhocTwrZXDM1tP9B7f0kJK/9LjSmpR7iowfpUU58N4poBJfIc58B8Owi6cabLtbd
+         0w4yixAiWkB1b53mcoqmK/hsv08c3QmBTNpaDJt9Hekm46Qu9ncS8C8ZuUU8gMOgEn1G
+         Crt1UdfCt9JzVGR03TUQiJ51PIMwwYyFG6nmk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755517822; x=1756122622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UulYzIy5HqPnDw6udvrknuDDM9ViKLj7nBVeIIxwUb4=;
-        b=NqjP10Tu3QItwYHXeyWEnVQ6DFN6DFNsrrmnmuUyj8Fnod485HNpS/9MK7z9XkErn3
-         qu7VYC5rL/mOSN9oHgVmLafbTxQs9IGiyQybEZwIpJB1fKPccl4hB1whfD+6m897cgrU
-         ap2wakmNiD5NLATa+Sx0QfvzBe4a+QNJNDvsS0itIu62JvcKJWDcp/oJg3IQoqa6Xwxj
-         YdlzNY0+Hd2gu9Md0hOI8Gbqz5+3DokueCBo7wPjpi1Y+pv9xIjJrjUKH9ti66akpsy5
-         cPPh6q/reyaGTrgVKVNfT6KFkA59qkB60v0C3FLyjO4CuQT9rNTyZWBRs/e6/Lsxmpni
-         iaXA==
-X-Gm-Message-State: AOJu0YxXOD2mwc08epN4vsa9dLzyKK+tdd+gV6INqYNVvsYEbqM5xxbX
-	nxPplCV+joEMwj9gGLZHVhiOlmvxEHf68/dYkb21VFJtixK83mFG8myDyFqOpfZHDw==
-X-Gm-Gg: ASbGncsvFTplktHCYWVoMO3aUx05tAnV6cOHrows/iTSOLua/LXGoZR/CVNXKq3frk6
-	Ks7Acu4o0SoqXd7s3vM+XrvmNEavR9Wo8zQmJdZNW7O5DbWK9xmBcDl0iH5TetN7x3GgRvLzW+w
-	/zP4FCl/SHYwfLDC0wS8Mu0AYa5ZagnFAJUBlALGiMNpOPC6SEUNgNZvCLFmFnQJXyOF3VxsYrM
-	nNnblTFOwuHDboveCZw4BYvVLC3w01C5wPldXvRX7VziIwJ6lIUphsIuUdoGOCKu76ZBd8N/c8m
-	wn04s29pBTnJWDWkFK8tVQ/eTzG7wXAuAgTJ442P+TtQtIhnDkp/Ku6/zRLtyWicbKXtngCLKV9
-	wiSHb5ADxhjhWfuwm6n8QC0kl6P5YpsAmekvr3r5HKU5fzA==
-X-Google-Smtp-Source: AGHT+IG4EnK+v1tzuHZnBIDFTu0lhfCNM/6uvRmVxQYPJatcyzYjE+EpdXCPSuVW/Awh7uepbmS4mQ==
-X-Received: by 2002:a17:903:4b2f:b0:240:127:85f1 with SMTP id d9443c01a7336-2446d722288mr152747785ad.18.1755517821926;
-        Mon, 18 Aug 2025 04:50:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755517825; x=1756122625;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zb1sCPo77mcuKw2zTHcH238POIGc59QSz6qQTiNa2Mw=;
+        b=cqhjn3vBGa0ZRSPr5aGqIPvrZkUJQ3G/xInFnMlfN4brls7W/MabnfxvQaE0Rxxtbr
+         67hyslE3YTj1Vm4LOr70GwFUv2WHaI8C1FxJN1vlrzHTljMS7kpF2dKN9U5hpv+Sn9fK
+         Nr02sKtiCSwJy4DwDY2oSs2srSd8rjc2B+tMQM7XSbA4THRgJcRA/eOJkNO3pgeZvo5i
+         LTDUHaL7Pyife1b6EMrr9JOkhVwzahuKHkPpkWgUvbssnQfL9lRjsWH9EMHiCEg9v/HV
+         duJ1lLu2epgSmLGTa3zBHzs8H5TQBIVVf1X/jcr9hLWBrv6jYGbRtRgq1LxkBJ4Is/Zv
+         rl7w==
+X-Gm-Message-State: AOJu0YzgN4S9h4imMYb8fnkvK6CQmNwavb3VnEMllTTMSQIiDW8sUyzO
+	gKI161fQw0LV0KWfuQ/27xhNv1zplDhHTTWxcSKSPF23M00iiHu/XXgNT95tAWmz5g==
+X-Gm-Gg: ASbGncvE7XViecQw7F2QGtqYlWoq2caGsZFYBfbqC4ywlwaLfDDf9vtXo7Wgq2JOMjM
+	EwkT0Ye/NqtQBeklTA6/IJ9sfcuA5y7yGOXZgIvYn54gTGRSudZFlOl4nPA+Tv+fmrEh3JdGmpb
+	Nj/Mtns6SqcoAoM7G6b0eMOHBlTZz5kvMDGFgb+hkhVQWVInCL03RrS4YnDH6S5Va+Wd92mt/nJ
+	hjNh8gstg4V7wsso/977WMIPUefXeiyQqTukQFO+fxzs5kgnRNB0UrovljMMaumgiOlMYCrlyVY
+	bPd+6naaTla7gzTVDuxow6PXmrMP0e//W8OXF1Dv8TqUC6KpZXQr2B4AtriGl8YxuAJO5nTGtXh
+	BuN2grCn2k9n0U7a0jwpylFlBAtR/RmgOPDtd+6BJ9gglGWxt9H0xnUBd
+X-Google-Smtp-Source: AGHT+IEnZmo97hTPFZMCorIymSRvtFy/EQxRfq2GVJu7TQxCxXPZYFAQNMo9Bj8lA2NgaOC3Q4hnKw==
+X-Received: by 2002:a17:902:d2c9:b0:242:461b:7d4 with SMTP id d9443c01a7336-2446d71ed3amr173689245ad.15.1755517825070;
+        Mon, 18 Aug 2025 04:50:25 -0700 (PDT)
 Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:5130:767b:3a09:59d6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9ee03sm78997715ad.15.2025.08.18.04.50.19
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9ee03sm78997715ad.15.2025.08.18.04.50.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 04:50:21 -0700 (PDT)
+        Mon, 18 Aug 2025 04:50:24 -0700 (PDT)
 From: Pin-yen Lin <treapking@chromium.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -82,10 +84,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Chen-Yu Tsai <wenst@chromium.org>,
 	dri-devel@lists.freedesktop.org,
 	Pin-yen Lin <treapking@chromium.org>
-Subject: [PATCH v3 1/2] drm/panel: Allow powering on panel follower after panel is enabled
-Date: Mon, 18 Aug 2025 19:49:33 +0800
-Message-ID: <20250818115015.2909525-1-treapking@chromium.org>
+Subject: [PATCH v3 2/2] HID: Make elan touch controllers power on after panel is enabled
+Date: Mon, 18 Aug 2025 19:49:34 +0800
+Message-ID: <20250818115015.2909525-2-treapking@chromium.org>
 X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+In-Reply-To: <20250818115015.2909525-1-treapking@chromium.org>
+References: <20250818115015.2909525-1-treapking@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,224 +98,235 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some touch controllers have to be powered on after the panel's backlight
-is enabled. To support these controllers, introduce .panel_enabled() and
-.panel_disabling() to panel_follower_funcs and use them to power on the
-device after the panel and its backlight are enabled.
+Introduce a new HID quirk to indicate that this device has to be enabled
+after the panel's backlight is enabled, and update the driver data for
+the elan devices to enable this quirk. This cannot be a I2C HID quirk
+because the kernel needs to acknowledge this before powering up the
+device and read the VID/PID. When this quirk is enabled, register
+.panel_enabled()/.panel_disabling() instead for the panel follower.
 
+Also rename the *panel_prepare* functions into *panel_follower* because
+they could be called in other situations now.
+
+Fixes: bd3cba00dcc63 ("HID: i2c-hid: elan: Add support for Elan eKTH6915 i2c-hid touchscreens")
+Fixes: d06651bebf99e ("HID: i2c-hid: elan: Add elan-ekth6a12nay timing")
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
 ---
 
 Changes in v3:
-- Update kernel-docs of drm_panel_add_follower() and drm_panel_remove_follower()
-- Fix the order of calling .panel_disabling() and .panel_unpreparing()
-- Add a blank line before the goto label
+- Collect review tag
+- Add fixes tags
 
 Changes in v2:
+- Rename *panel_prepare* functions to *panel_follower*
 - Replace after_panel_enabled flag with enabled/disabling callbacks
 
- drivers/gpu/drm/drm_panel.c | 73 +++++++++++++++++++++++++++++++------
- include/drm/drm_panel.h     | 14 +++++++
- 2 files changed, 76 insertions(+), 11 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-core.c    | 46 ++++++++++++++++-----------
+ drivers/hid/i2c-hid/i2c-hid-of-elan.c | 11 ++++++-
+ include/linux/hid.h                   |  2 ++
+ 3 files changed, 40 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index c8bb28dccdc1b..d1e6598ea3bc0 100644
---- a/drivers/gpu/drm/drm_panel.c
-+++ b/drivers/gpu/drm/drm_panel.c
-@@ -134,6 +134,9 @@ void drm_panel_prepare(struct drm_panel *panel)
- 	panel->prepared = true;
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index d3912e3f2f13a..99ce6386176c6 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -112,9 +112,9 @@ struct i2c_hid {
  
- 	list_for_each_entry(follower, &panel->followers, list) {
-+		if (!follower->funcs->panel_prepared)
-+			continue;
-+
- 		ret = follower->funcs->panel_prepared(follower);
- 		if (ret < 0)
- 			dev_info(panel->dev, "%ps failed: %d\n",
-@@ -179,6 +182,9 @@ void drm_panel_unprepare(struct drm_panel *panel)
- 	mutex_lock(&panel->follower_lock);
- 
- 	list_for_each_entry(follower, &panel->followers, list) {
-+		if (!follower->funcs->panel_unpreparing)
-+			continue;
-+
- 		ret = follower->funcs->panel_unpreparing(follower);
- 		if (ret < 0)
- 			dev_info(panel->dev, "%ps failed: %d\n",
-@@ -209,6 +215,7 @@ EXPORT_SYMBOL(drm_panel_unprepare);
-  */
- void drm_panel_enable(struct drm_panel *panel)
- {
-+	struct drm_panel_follower *follower;
- 	int ret;
- 
- 	if (!panel)
-@@ -219,10 +226,12 @@ void drm_panel_enable(struct drm_panel *panel)
- 		return;
- 	}
- 
-+	mutex_lock(&panel->follower_lock);
-+
- 	if (panel->funcs && panel->funcs->enable) {
- 		ret = panel->funcs->enable(panel);
- 		if (ret < 0)
--			return;
-+			goto exit;
- 	}
- 	panel->enabled = true;
- 
-@@ -230,6 +239,19 @@ void drm_panel_enable(struct drm_panel *panel)
- 	if (ret < 0)
- 		DRM_DEV_INFO(panel->dev, "failed to enable backlight: %d\n",
- 			     ret);
-+
-+	list_for_each_entry(follower, &panel->followers, list) {
-+		if (!follower->funcs->panel_enabled)
-+			continue;
-+
-+		ret = follower->funcs->panel_enabled(follower);
-+		if (ret < 0)
-+			dev_info(panel->dev, "%ps failed: %d\n",
-+				 follower->funcs->panel_enabled, ret);
-+	}
-+
-+exit:
-+	mutex_unlock(&panel->follower_lock);
- }
- EXPORT_SYMBOL(drm_panel_enable);
- 
-@@ -243,6 +265,7 @@ EXPORT_SYMBOL(drm_panel_enable);
-  */
- void drm_panel_disable(struct drm_panel *panel)
- {
-+	struct drm_panel_follower *follower;
- 	int ret;
- 
- 	if (!panel)
-@@ -262,6 +285,18 @@ void drm_panel_disable(struct drm_panel *panel)
- 		return;
- 	}
- 
-+	mutex_lock(&panel->follower_lock);
-+
-+	list_for_each_entry(follower, &panel->followers, list) {
-+		if (!follower->funcs->panel_disabling)
-+			continue;
-+
-+		ret = follower->funcs->panel_disabling(follower);
-+		if (ret < 0)
-+			dev_info(panel->dev, "%ps failed: %d\n",
-+				 follower->funcs->panel_disabling, ret);
-+	}
-+
- 	ret = backlight_disable(panel->backlight);
- 	if (ret < 0)
- 		DRM_DEV_INFO(panel->dev, "failed to disable backlight: %d\n",
-@@ -270,9 +305,12 @@ void drm_panel_disable(struct drm_panel *panel)
- 	if (panel->funcs && panel->funcs->disable) {
- 		ret = panel->funcs->disable(panel);
- 		if (ret < 0)
--			return;
-+			goto exit;
- 	}
- 	panel->enabled = false;
-+
-+exit:
-+	mutex_unlock(&panel->follower_lock);
- }
- EXPORT_SYMBOL(drm_panel_disable);
- 
-@@ -539,13 +577,13 @@ EXPORT_SYMBOL(drm_is_panel_follower);
-  * @follower_dev: The 'struct device' for the follower.
-  * @follower:     The panel follower descriptor for the follower.
-  *
-- * A panel follower is called right after preparing the panel and right before
-- * unpreparing the panel. It's primary intention is to power on an associated
-- * touchscreen, though it could be used for any similar devices. Multiple
-- * devices are allowed the follow the same panel.
-+ * A panel follower is called right after preparing/enabling the panel and right
-+ * before unpreparing/disabling the panel. It's primary intention is to power on
-+ * an associated touchscreen, though it could be used for any similar devices.
-+ * Multiple devices are allowed the follow the same panel.
-  *
-- * If a follower is added to a panel that's already been turned on, the
-- * follower's prepare callback is called right away.
-+ * If a follower is added to a panel that's already been prepared/enabled, the
-+ * follower's prepared/enabled callback is called right away.
-  *
-  * The "panel" property of the follower points to the panel to be followed.
-  *
-@@ -569,12 +607,18 @@ int drm_panel_add_follower(struct device *follower_dev,
- 	mutex_lock(&panel->follower_lock);
- 
- 	list_add_tail(&follower->list, &panel->followers);
--	if (panel->prepared) {
-+	if (panel->prepared && follower->funcs->panel_prepared) {
- 		ret = follower->funcs->panel_prepared(follower);
- 		if (ret < 0)
- 			dev_info(panel->dev, "%ps failed: %d\n",
- 				 follower->funcs->panel_prepared, ret);
- 	}
-+	if (panel->enabled && follower->funcs->panel_enabled) {
-+		ret = follower->funcs->panel_enabled(follower);
-+		if (ret < 0)
-+			dev_info(panel->dev, "%ps failed: %d\n",
-+				 follower->funcs->panel_enabled, ret);
-+	}
- 
- 	mutex_unlock(&panel->follower_lock);
- 
-@@ -587,7 +631,8 @@ EXPORT_SYMBOL(drm_panel_add_follower);
-  * @follower:     The panel follower descriptor for the follower.
-  *
-  * Undo drm_panel_add_follower(). This includes calling the follower's
-- * unprepare function if we're removed from a panel that's currently prepared.
-+ * unpreparing/disabling function if we're removed from a panel that's currently
-+ * prepared/enabled.
-  *
-  * Return: 0 or an error code.
-  */
-@@ -598,7 +643,13 @@ void drm_panel_remove_follower(struct drm_panel_follower *follower)
- 
- 	mutex_lock(&panel->follower_lock);
- 
--	if (panel->prepared) {
-+	if (panel->enabled && follower->funcs->panel_disabling) {
-+		ret = follower->funcs->panel_disabling(follower);
-+		if (ret < 0)
-+			dev_info(panel->dev, "%ps failed: %d\n",
-+				 follower->funcs->panel_disabling, ret);
-+	}
-+	if (panel->prepared && follower->funcs->panel_unpreparing) {
- 		ret = follower->funcs->panel_unpreparing(follower);
- 		if (ret < 0)
- 			dev_info(panel->dev, "%ps failed: %d\n",
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index 843fb756a2950..2407bfa60236f 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -160,6 +160,20 @@ struct drm_panel_follower_funcs {
- 	 * Called before the panel is powered off.
- 	 */
- 	int (*panel_unpreparing)(struct drm_panel_follower *follower);
-+
-+	/**
-+	 * @panel_enabled:
-+	 *
-+	 * Called after the panel and the backlight have been enabled.
-+	 */
-+	int (*panel_enabled)(struct drm_panel_follower *follower);
-+
-+	/**
-+	 * @panel_disabling:
-+	 *
-+	 * Called before the panel and the backlight are disabled.
-+	 */
-+	int (*panel_disabling)(struct drm_panel_follower *follower);
+ 	struct i2chid_ops	*ops;
+ 	struct drm_panel_follower panel_follower;
+-	struct work_struct	panel_follower_prepare_work;
++	struct work_struct	panel_follower_work;
+ 	bool			is_panel_follower;
+-	bool			prepare_work_finished;
++	bool			panel_follower_work_finished;
  };
  
- struct drm_panel_follower {
+ static const struct i2c_hid_quirks {
+@@ -1110,10 +1110,10 @@ static int i2c_hid_core_probe_panel_follower(struct i2c_hid *ihid)
+ 	return ret;
+ }
+ 
+-static void ihid_core_panel_prepare_work(struct work_struct *work)
++static void ihid_core_panel_follower_work(struct work_struct *work)
+ {
+ 	struct i2c_hid *ihid = container_of(work, struct i2c_hid,
+-					    panel_follower_prepare_work);
++					    panel_follower_work);
+ 	struct hid_device *hid = ihid->hid;
+ 	int ret;
+ 
+@@ -1130,7 +1130,7 @@ static void ihid_core_panel_prepare_work(struct work_struct *work)
+ 	if (ret)
+ 		dev_warn(&ihid->client->dev, "Power on failed: %d\n", ret);
+ 	else
+-		WRITE_ONCE(ihid->prepare_work_finished, true);
++		WRITE_ONCE(ihid->panel_follower_work_finished, true);
+ 
+ 	/*
+ 	 * The work APIs provide a number of memory ordering guarantees
+@@ -1139,12 +1139,12 @@ static void ihid_core_panel_prepare_work(struct work_struct *work)
+ 	 * guarantee that a write that happened in the work is visible after
+ 	 * cancel_work_sync(). We'll add a write memory barrier here to match
+ 	 * with i2c_hid_core_panel_unpreparing() to ensure that our write to
+-	 * prepare_work_finished is visible there.
++	 * panel_follower_work_finished is visible there.
+ 	 */
+ 	smp_wmb();
+ }
+ 
+-static int i2c_hid_core_panel_prepared(struct drm_panel_follower *follower)
++static int i2c_hid_core_panel_follower_resume(struct drm_panel_follower *follower)
+ {
+ 	struct i2c_hid *ihid = container_of(follower, struct i2c_hid, panel_follower);
+ 
+@@ -1152,29 +1152,36 @@ static int i2c_hid_core_panel_prepared(struct drm_panel_follower *follower)
+ 	 * Powering on a touchscreen can be a slow process. Queue the work to
+ 	 * the system workqueue so we don't block the panel's power up.
+ 	 */
+-	WRITE_ONCE(ihid->prepare_work_finished, false);
+-	schedule_work(&ihid->panel_follower_prepare_work);
++	WRITE_ONCE(ihid->panel_follower_work_finished, false);
++	schedule_work(&ihid->panel_follower_work);
+ 
+ 	return 0;
+ }
+ 
+-static int i2c_hid_core_panel_unpreparing(struct drm_panel_follower *follower)
++static int i2c_hid_core_panel_follower_suspend(struct drm_panel_follower *follower)
+ {
+ 	struct i2c_hid *ihid = container_of(follower, struct i2c_hid, panel_follower);
+ 
+-	cancel_work_sync(&ihid->panel_follower_prepare_work);
++	cancel_work_sync(&ihid->panel_follower_work);
+ 
+-	/* Match with ihid_core_panel_prepare_work() */
++	/* Match with ihid_core_panel_follower_work() */
+ 	smp_rmb();
+-	if (!READ_ONCE(ihid->prepare_work_finished))
++	if (!READ_ONCE(ihid->panel_follower_work_finished))
+ 		return 0;
+ 
+ 	return i2c_hid_core_suspend(ihid, true);
+ }
+ 
+-static const struct drm_panel_follower_funcs i2c_hid_core_panel_follower_funcs = {
+-	.panel_prepared = i2c_hid_core_panel_prepared,
+-	.panel_unpreparing = i2c_hid_core_panel_unpreparing,
++static const struct drm_panel_follower_funcs
++				i2c_hid_core_panel_follower_prepare_funcs = {
++	.panel_prepared = i2c_hid_core_panel_follower_resume,
++	.panel_unpreparing = i2c_hid_core_panel_follower_suspend,
++};
++
++static const struct drm_panel_follower_funcs
++				i2c_hid_core_panel_follower_enable_funcs = {
++	.panel_enabled = i2c_hid_core_panel_follower_resume,
++	.panel_disabling = i2c_hid_core_panel_follower_suspend,
+ };
+ 
+ static int i2c_hid_core_register_panel_follower(struct i2c_hid *ihid)
+@@ -1182,7 +1189,10 @@ static int i2c_hid_core_register_panel_follower(struct i2c_hid *ihid)
+ 	struct device *dev = &ihid->client->dev;
+ 	int ret;
+ 
+-	ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_funcs;
++	if (ihid->hid->initial_quirks | HID_QUIRK_POWER_ON_AFTER_BACKLIGHT)
++		ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_enable_funcs;
++	else
++		ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_prepare_funcs;
+ 
+ 	/*
+ 	 * If we're not in control of our own power up/power down then we can't
+@@ -1237,7 +1247,7 @@ int i2c_hid_core_probe(struct i2c_client *client, struct i2chid_ops *ops,
+ 	init_waitqueue_head(&ihid->wait);
+ 	mutex_init(&ihid->cmd_lock);
+ 	mutex_init(&ihid->reset_lock);
+-	INIT_WORK(&ihid->panel_follower_prepare_work, ihid_core_panel_prepare_work);
++	INIT_WORK(&ihid->panel_follower_work, ihid_core_panel_follower_work);
+ 
+ 	/* we need to allocate the command buffer without knowing the maximum
+ 	 * size of the reports. Let's use HID_MIN_BUFFER_SIZE, then we do the
+diff --git a/drivers/hid/i2c-hid/i2c-hid-of-elan.c b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
+index 3fcff6daa0d3a..0215f217f6d86 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-of-elan.c
++++ b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
+@@ -8,6 +8,7 @@
+ #include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/gpio/consumer.h>
++#include <linux/hid.h>
+ #include <linux/i2c.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -23,6 +24,7 @@ struct elan_i2c_hid_chip_data {
+ 	unsigned int post_power_delay_ms;
+ 	u16 hid_descriptor_address;
+ 	const char *main_supply_name;
++	bool power_after_backlight;
+ };
+ 
+ struct i2c_hid_of_elan {
+@@ -97,6 +99,7 @@ static int i2c_hid_of_elan_probe(struct i2c_client *client)
+ {
+ 	struct i2c_hid_of_elan *ihid_elan;
+ 	int ret;
++	u32 quirks = 0;
+ 
+ 	ihid_elan = devm_kzalloc(&client->dev, sizeof(*ihid_elan), GFP_KERNEL);
+ 	if (!ihid_elan)
+@@ -131,8 +134,12 @@ static int i2c_hid_of_elan_probe(struct i2c_client *client)
+ 		}
+ 	}
+ 
++	if (ihid_elan->chip_data->power_after_backlight)
++		quirks = HID_QUIRK_POWER_ON_AFTER_BACKLIGHT;
++
+ 	ret = i2c_hid_core_probe(client, &ihid_elan->ops,
+-				 ihid_elan->chip_data->hid_descriptor_address, 0);
++				 ihid_elan->chip_data->hid_descriptor_address,
++				 quirks);
+ 	if (ret)
+ 		goto err_deassert_reset;
+ 
+@@ -150,6 +157,7 @@ static const struct elan_i2c_hid_chip_data elan_ekth6915_chip_data = {
+ 	.post_gpio_reset_on_delay_ms = 300,
+ 	.hid_descriptor_address = 0x0001,
+ 	.main_supply_name = "vcc33",
++	.power_after_backlight = true,
+ };
+ 
+ static const struct elan_i2c_hid_chip_data elan_ekth6a12nay_chip_data = {
+@@ -157,6 +165,7 @@ static const struct elan_i2c_hid_chip_data elan_ekth6a12nay_chip_data = {
+ 	.post_gpio_reset_on_delay_ms = 300,
+ 	.hid_descriptor_address = 0x0001,
+ 	.main_supply_name = "vcc33",
++	.power_after_backlight = true,
+ };
+ 
+ static const struct elan_i2c_hid_chip_data ilitek_ili9882t_chip_data = {
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index 2cc4f1e4ea963..c32425b5d0119 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -364,6 +364,7 @@ struct hid_item {
+  * | @HID_QUIRK_HAVE_SPECIAL_DRIVER:
+  * | @HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE:
+  * | @HID_QUIRK_IGNORE_SPECIAL_DRIVER
++ * | @HID_QUIRK_POWER_ON_AFTER_BACKLIGHT
+  * | @HID_QUIRK_FULLSPEED_INTERVAL:
+  * | @HID_QUIRK_NO_INIT_REPORTS:
+  * | @HID_QUIRK_NO_IGNORE:
+@@ -391,6 +392,7 @@ struct hid_item {
+ #define HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE	BIT(20)
+ #define HID_QUIRK_NOINVERT			BIT(21)
+ #define HID_QUIRK_IGNORE_SPECIAL_DRIVER		BIT(22)
++#define HID_QUIRK_POWER_ON_AFTER_BACKLIGHT	BIT(23)
+ #define HID_QUIRK_FULLSPEED_INTERVAL		BIT(28)
+ #define HID_QUIRK_NO_INIT_REPORTS		BIT(29)
+ #define HID_QUIRK_NO_IGNORE			BIT(30)
 -- 
 2.51.0.rc1.163.g2494970778-goog
 
