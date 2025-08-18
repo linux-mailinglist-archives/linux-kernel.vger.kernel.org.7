@@ -1,183 +1,91 @@
-Return-Path: <linux-kernel+bounces-774293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E898B2B0FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D54B2B0FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8788175B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900FB3B14E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33353272E6D;
-	Mon, 18 Aug 2025 18:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DD1274649;
+	Mon, 18 Aug 2025 18:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdJwzWuo"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BpgbAlog"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070D257854;
-	Mon, 18 Aug 2025 18:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD0270577
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543418; cv=none; b=ulzlwc0Y5L9gDHAcGmlwfZiI/9zCzojco1QLdSVX1XjuKGEZBxBfvdhjQq7HKI6HeVf7ioW104+pKgmxcYsjdJuUfgOJSx1K0ESkuwjP0p9S8Cc30gv5QNUwFcriNeWh2hr54rhjXumE4+tlOLCwq7Wpw4nE/AL76AjjI0fV1mU=
+	t=1755543427; cv=none; b=RYaBjrl7LlTNmOY1IWEVS8/7n7WxOyMBKtETE/QOdQtMB1fczhDrb2v099XyG6yfrZnd+a9OuFEESWPoZiI5NG7vdWL9qcku0cdTq1yt9Dgk9RGPsk6jrSKobNJLPS+75Sk2p8WweGzBaMaXJXGRVzOOjH24bFq+xmN7KosbIFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755543418; c=relaxed/simple;
-	bh=cW6Zw4X6l/8LtzSm0XuIo7DagtVAErRt/WZ2KMJ9BoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C853F+zRZKR8O3tSXA9zo4BqVlnoYIDqm/emND90Oq/TgVWvAN9sfZLZU/Re2cuNeuOxf3nSN9Gcr63hj5MWtNe70BDyuLjP/RhfMAtiqelQHolmFcGBm+IDyVHSMcW5VCrKDsMY608cVwuVbTMYh69YYRCn7FvxF2uNU6Ykp6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdJwzWuo; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333e7517adcso49462301fa.1;
-        Mon, 18 Aug 2025 11:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755543415; x=1756148215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDBB8ZTTu16kBJ12UfAqyQDqCQPi74zEgHxFOpa7z7s=;
-        b=IdJwzWuobAhli6LIjE8P7WwKYJ3KCLOiwbFRAM71xkzRMGDkLfB+L2VfjgHEaeN9yZ
-         eSg1xM2cEHDUZtF/jI+PWA+JC92ch+bT8NDi4iQNs7GGojZS/2sJA6J28eJrfk1T46kh
-         t3yxocXavLAnJgGMnB1TpKXPyLoqkVsqqbWYnsVmotHzBP8Z2ARKqag0tA/hVPtGJPXA
-         C6pbr+ePo09XzsPeIw7h+QpZQZe4Gvcb9Qz9wcWxkhlfsHnFxlctD0rzg9V3inJ8IWzJ
-         DOYsKIJM1lGhac1wvAlA418v4d6J603oSwjTV8+4og14RMAPdZWRbU6VAZrsZ7lz8qE2
-         VD7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755543415; x=1756148215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HDBB8ZTTu16kBJ12UfAqyQDqCQPi74zEgHxFOpa7z7s=;
-        b=whj0U9bD0KaxeQYTVkHFeOd/T08nEOtYNfaUCmv3w16r35LdCV0XBN9EHiGr3Rfk4x
-         7TPBD6fDpjfMZnP3ajxR9uAPKdd1zjI+19qMyhdsaJZYnIGyxpZ9BDFG/RMbamdJzNWn
-         7QwKXmAYKlyBw86hvkWFwjkLsEhQ0GrPaPHrrSYXgjQpVyCG+1mKj6Ew+m+r+9xgB4RS
-         U7zMFDPbQ2nGJICzx6sNVgC2vIoGXuq55I97bv0+s8klVwMKkrZsMAHSSSpfYHwFkwm4
-         L9GVwaXi8U2xrs3beOTDKsf+uNXVGt+mOJkti7gHvPOpK64ra1ey8PUAaaWNgNJtwK0X
-         ywDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5zHDZPFC7/1g23KEZW7qcK3GonAjqiDjBv8ASZAnzXP4FDMlhmeYjcf6Sbv4ee6Nizz0Q7ODEymzdddBb@vger.kernel.org, AJvYcCUZbYG4HNTE5GWOoUGdPx8ORzVrrfEtKQJQYzCFt3kqQq/EJMzHtCgTLtpEkHdzwwE6oFp4yq92FbWANr8=@vger.kernel.org, AJvYcCWMRvSyQapwK2rLXwbixTFvV3sYpnOVIcN75iQV2vXpYufI2D4KjNxXE05ty4tK3s3u8cHBDdL1j2Ti@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoRjfdE+F12OtRj1MWqKA4tlqWa/XfJ9qSFC/wMNi76WRTu3k4
-	sKvHSV70U4jHXsjahTrMgnQM83SuRbCx26o5jCc0lawpNot1cKEpq+5jwJVsyXcLys9oR0ls9CY
-	/w4tTP0FL0L23Ko3K67RRAqQk8U1pqjEfgZnu
-X-Gm-Gg: ASbGncv1al/rBJuTb+UFwYLR+m0/c75PWEh26kD+U7TiTDG0cC9VRJ2VUpR51LAyW1q
-	ryK8CA48WFyJOrHN6QaT5lWJMyLIFKGkBeRFKRITWoRNnoRvJOO78H1D9jX426KofoZ2xswe+Br
-	ZqgMupTV5y4QGrM/dWTyzyNcBO1ks46lzLXo8QKoVOLm0IlgUtepmSDPOfuUoQlQPPnGQ0DNYxZ
-	SQg5rdPRDbtdGJMCw==
-X-Google-Smtp-Source: AGHT+IGLpwruHH1jFqPtCTgTST4GSi1QWs0KmUfeU010gjKHdHCYYcHRxDOhtE/4BKTUsTrlBPwKO5g7s6nZcyt64Xg=
-X-Received: by 2002:a2e:be21:0:b0:32b:a9a4:cd58 with SMTP id
- 38308e7fff4ca-3352ddd4b5dmr1697761fa.15.1755543414532; Mon, 18 Aug 2025
- 11:56:54 -0700 (PDT)
+	s=arc-20240116; t=1755543427; c=relaxed/simple;
+	bh=2NdW87PW5GTjsMl1707lWcIZl6TzB6oCVOOruGf5iJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fev7Xhe0TnKYAsRH0+2/73ZB9mRUnLck05+B2Ahnmzgr3yU+7+2hxBfGTGUVaxI4V35FxgTuYrCiEBT0ayLqPSUp8FHVC8gCjBRBSJq57MeIb5qJ9zjqpoiM0NH6di0l96HL+HvjpgOdhvuPw+evPZkDrQuevYrJXlwk4XUZIK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BpgbAlog; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=JNzSJeGA2KVxjQ7TVG5iBiBWJP0Ic6o9XHWVyDGQ9O4=; b=BpgbAlogHLKVjgwCEw/QM0WqT6
+	FVgoewGQvCQyGv3QE+E9kNg3AGrJEmVaBCieK17JVP1JFDLl80xi7WryocB/hmIj+hxaHw+UjtEoc
+	AcHZjUhWol7ofNpV9z2Jd06w+fbRReyOseVeyKDsr/kS9i+gBNmw2tuBeIDcNjZp0TYhrjMwU53Ti
+	mI36yh2vjcsv351JTCiyhEYvg94GaqCX+6/V/nd8VvJnXXDJJp7lVnlJntRNbJ8kkS9q5qZMupsoZ
+	U+6KOdRPExCw00aRJxWvxPQyr5s15y5BEjihuYqdyEgFx3Nwxav4gEaT4py0NDzz7xRN8cKI3y4T+
+	uJOle4sA==;
+Received: from i53875ad4.versanet.de ([83.135.90.212] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uo52T-0000l0-Bf; Mon, 18 Aug 2025 20:57:01 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: tomeu@tomeuvizoso.net
+Cc: ogabbay@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	heiko@sntech.de
+Subject: [PATCH] accel/rocket: Check the correct DMA irq status to warn about
+Date: Mon, 18 Aug 2025 20:56:58 +0200
+Message-ID: <20250818185658.2585696-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
- <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
- <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
- <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
- <CALHNRZ-HTFz38xZFsbpG6C3r_xDQTLNOZWPX21TzNPaLyxf6Xw@mail.gmail.com> <xmirimw2guubgrf6umt4qiknpyjaepkrx4oggcmaffoyd5sli2@kzewnjv3bkjf>
-In-Reply-To: <xmirimw2guubgrf6umt4qiknpyjaepkrx4oggcmaffoyd5sli2@kzewnjv3bkjf>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 18 Aug 2025 13:56:42 -0500
-X-Gm-Features: Ac12FXzctcgTCF1B-HAlLK99s32lr_bBmhmmmU7bUtTEBs9HP1D4InDwm7lzs-I
-Message-ID: <CALHNRZ9uJ9g6BGhUmBaaMM3DhQDh7mTtqKKr0A98X-5V4ompEg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 1, 2025 at 4:43=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Thu, Jul 31, 2025 at 04:36:17PM -0500, Aaron Kling wrote:
-> > On Mon, Jul 14, 2025 at 12:35=E2=80=AFAM Aaron Kling <webgeek1234@gmail=
-.com> wrote:
-> > >
-> > > On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gmai=
-l.com> wrote:
-> > > >
-> > > > On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@g=
-mail.com> wrote:
-> > > > >
-> > > > > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
-> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > > >
-> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > >
-> > > > > > The p3509 carrier board does not connect the id gpio. Prior to =
-this, the
-> > > > > > gpio role switch driver could not detect the mode of the otg po=
-rt.
-> > > > > >
-> > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > ---
-> > > > > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts =
-| 1 -
-> > > > > >  1 file changed, 1 deletion(-)
-> > > > > >
-> > > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p36=
-36-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > > > > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df=
-355bbcb691ef99b0d0c9d504e 100644
-> > > > > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001=
-.dts
-> > > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001=
-.dts
-> > > > > > @@ -669,7 +669,6 @@ connector {
-> > > > > >                                         vbus-gpios =3D <&gpio
-> > > > > >                                                       TEGRA186_=
-MAIN_GPIO(L, 4)
-> > > > > >                                                       GPIO_ACTI=
-VE_LOW>;
-> > > > > > -                                       id-gpios =3D <&pmic 0 G=
-PIO_ACTIVE_HIGH>;
-> > > > > >                                 };
-> > > > > >                         };
-> > > > > >
-> > > > > >
-> > > > > > ---
-> > > > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > > > > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
-> > > > > >
-> > > > > > Best regards,
-> > > > > > --
-> > > > > > Aaron Kling <webgeek1234@gmail.com>
-> > > > > >
-> > > > > >
-> > > > >
-> > > > > Friendly reminder about this patch.
-> > > >
-> > > > Re-reminder about this patch.
-> > >
-> > > Yet another reminder about this patch. It's been over two months
-> > > without a response and many other patches have been pulled in the
-> > > meantime.
-> >
-> > Reminder yet again about this patch. It's now been two and a half
-> > months without even an acknowledgement from the maintainers.
-> >
-> > This one is getting annoying. What does it take to get a response from
-> > the tegra subsystem maintainers? Does time have to be pre-allocated by
-> > the company to look at patches that aren't from @nvidia.com's? Are
-> > there certain times during a development cycle? When responses happen,
-> > it seems like there's a lot of activity. But then everything goes
-> > silent again for months. I've not seen any pattern to it so far and
-> > it's becoming extremely frustrating.
->
-> Just people being busy. Nothing more, nothing less. I'll pick this up
-> once the merge window closes.
+Right now, the code checks the DMA_READ_ERROR state 2 times, while
+I guess it was supposed to warn about both read and write errors.
 
-If I understand correctly, the merge window closed on August 10th. And
-I still haven't seen any movement on open patches. If everything
-unrelated is on hold until after Tegra264 launch or something like
-that, it would be nice to at least set that expectation instead of
-everything being held arbitrarily in suspense.
+Change the 2nd check to look at the write-error flag.
 
-Aaron
+Fixes: 0810d5ad88a1 ("accel/rocket: Add job submission IOCTL")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/accel/rocket/rocket_job.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
+index 5d4afd692306..3440b862e749 100644
+--- a/drivers/accel/rocket/rocket_job.c
++++ b/drivers/accel/rocket/rocket_job.c
+@@ -422,7 +422,7 @@ static irqreturn_t rocket_job_irq_handler(int irq, void *data)
+ 	u32 raw_status = rocket_pc_readl(core, INTERRUPT_RAW_STATUS);
+ 
+ 	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
+-	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
++	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_WRITE_ERROR);
+ 
+ 	if (!(raw_status & PC_INTERRUPT_RAW_STATUS_DPU_0 ||
+ 	      raw_status & PC_INTERRUPT_RAW_STATUS_DPU_1))
+-- 
+2.47.2
+
 
