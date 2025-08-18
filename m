@@ -1,91 +1,92 @@
-Return-Path: <linux-kernel+bounces-774294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D54B2B0FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B43B2B100
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900FB3B14E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136B817C527
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DD1274649;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A568273D83;
 	Mon, 18 Aug 2025 18:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BpgbAlog"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayVDIn+8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD0270577
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3E5272E6B;
+	Mon, 18 Aug 2025 18:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543427; cv=none; b=RYaBjrl7LlTNmOY1IWEVS8/7n7WxOyMBKtETE/QOdQtMB1fczhDrb2v099XyG6yfrZnd+a9OuFEESWPoZiI5NG7vdWL9qcku0cdTq1yt9Dgk9RGPsk6jrSKobNJLPS+75Sk2p8WweGzBaMaXJXGRVzOOjH24bFq+xmN7KosbIFw=
+	t=1755543427; cv=none; b=dpHWs/e3j3C1H2Z9Jgp690aO1TPgQpBWyhtv1TNE6Fe7nUKwMjvb0yT1OAS5ZcyZwrOfp0XrJTdRwz+g4BZ5ZmgLIeR0JgglecujsMqKWIQAhvaR8o4JEhy6z4AYDxFK1/db2ahwJrkMc+DaJwnyOMd49MswfztVt87nApT/cXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755543427; c=relaxed/simple;
-	bh=2NdW87PW5GTjsMl1707lWcIZl6TzB6oCVOOruGf5iJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fev7Xhe0TnKYAsRH0+2/73ZB9mRUnLck05+B2Ahnmzgr3yU+7+2hxBfGTGUVaxI4V35FxgTuYrCiEBT0ayLqPSUp8FHVC8gCjBRBSJq57MeIb5qJ9zjqpoiM0NH6di0l96HL+HvjpgOdhvuPw+evPZkDrQuevYrJXlwk4XUZIK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BpgbAlog; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=JNzSJeGA2KVxjQ7TVG5iBiBWJP0Ic6o9XHWVyDGQ9O4=; b=BpgbAlogHLKVjgwCEw/QM0WqT6
-	FVgoewGQvCQyGv3QE+E9kNg3AGrJEmVaBCieK17JVP1JFDLl80xi7WryocB/hmIj+hxaHw+UjtEoc
-	AcHZjUhWol7ofNpV9z2Jd06w+fbRReyOseVeyKDsr/kS9i+gBNmw2tuBeIDcNjZp0TYhrjMwU53Ti
-	mI36yh2vjcsv351JTCiyhEYvg94GaqCX+6/V/nd8VvJnXXDJJp7lVnlJntRNbJ8kkS9q5qZMupsoZ
-	U+6KOdRPExCw00aRJxWvxPQyr5s15y5BEjihuYqdyEgFx3Nwxav4gEaT4py0NDzz7xRN8cKI3y4T+
-	uJOle4sA==;
-Received: from i53875ad4.versanet.de ([83.135.90.212] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uo52T-0000l0-Bf; Mon, 18 Aug 2025 20:57:01 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: tomeu@tomeuvizoso.net
-Cc: ogabbay@kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de
-Subject: [PATCH] accel/rocket: Check the correct DMA irq status to warn about
-Date: Mon, 18 Aug 2025 20:56:58 +0200
-Message-ID: <20250818185658.2585696-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	bh=LLrbrlWI1+1Wrpjrc3PeIRE7Z93HYyEAJTPMZ/3akPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHN2pe6xhZurUy1C8w7/pa5GDtFh3XIiIjzUQghLmDlb5mW3sJeVi8y1v0Z+Ri9C6WRgpG6Q185PLixPLaaXxAi1V5UqR8fUlR9318RgYThdcR58wIYcWWnV447FCo4BGEEDoyfkzoITQCQwRLssoGMmgNhqBG4HxCVJC7gUJ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayVDIn+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB86C4CEEB;
+	Mon, 18 Aug 2025 18:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755543427;
+	bh=LLrbrlWI1+1Wrpjrc3PeIRE7Z93HYyEAJTPMZ/3akPw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ayVDIn+8U8Wx4EDu34txQp0k4cUvEI7PP0j0IId9lGTOOiHRy6gfy0+DzeATALLY8
+	 jTSbQbPNF2xefOSoqneA1b0kFBHRCVNapPVfsbVQEzdlrvh7zVFlMA3GvX4CyPwANC
+	 klwjkKeEzA+boXeqgbEyzx2Tt3TM3uOUX/DPs5/P0XDlvo4pUMPgdghgDSofFnAKgz
+	 UUdxX76YVQgDB2rGVCLIUQFQ4TJ0SUyq+3wiAg1Osm7lcoByulhsoNb7ZnbbwDUfPT
+	 BJZ1ueDbYSGUwQZ3nK6YFm3QY/yE9B/0Ir3H7Q2ZmRc16A5/XDoUGAvBWLcVK/S+eO
+	 ozRWNrUGUdxEQ==
+Date: Mon, 18 Aug 2025 11:57:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, Nicolas
+ Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Phil Elwell <phil@raspberrypi.com>, Jonathan
+ Bell <jonathan@raspberrypi.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 0/5] Add ethernet support for RPi5
+Message-ID: <20250818115705.72533d08@kernel.org>
+In-Reply-To: <68c3db9d-daf5-40ed-91a7-1d08b9c8cb52@broadcom.com>
+References: <20250815135911.1383385-1-svarbanov@suse.de>
+	<4c454b3c-f62c-4086-a665-282aa2f4a0e1@broadcom.com>
+	<20250818115041.71041ad6@kernel.org>
+	<68c3db9d-daf5-40ed-91a7-1d08b9c8cb52@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Right now, the code checks the DMA_READ_ERROR state 2 times, while
-I guess it was supposed to warn about both read and write errors.
+On Mon, 18 Aug 2025 11:52:28 -0700 Florian Fainelli wrote:
+> On 8/18/25 11:50, Jakub Kicinski wrote:
+> > On Mon, 18 Aug 2025 11:02:15 -0700 Florian Fainelli wrote:  
+> >> netdev maintainers, do you mind if I take patches 2, 4 and 5 via the
+> >> Broadcom ARM SoC tree to avoid generating conflicts down the road? You
+> >> can take patches 1 and 3. Thanks  
+> > 
+> > 4, 5 make perfect sense, why patch 2? We usually take bindings.  
+> 
+> Because that way when CI runs against the ARM SoC tree, we don't get 
+> errors that the bindings are undocumented.
 
-Change the 2nd check to look at the write-error flag.
-
-Fixes: 0810d5ad88a1 ("accel/rocket: Add job submission IOCTL")
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/accel/rocket/rocket_job.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
-index 5d4afd692306..3440b862e749 100644
---- a/drivers/accel/rocket/rocket_job.c
-+++ b/drivers/accel/rocket/rocket_job.c
-@@ -422,7 +422,7 @@ static irqreturn_t rocket_job_irq_handler(int irq, void *data)
- 	u32 raw_status = rocket_pc_readl(core, INTERRUPT_RAW_STATUS);
- 
- 	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
--	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
-+	WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_WRITE_ERROR);
- 
- 	if (!(raw_status & PC_INTERRUPT_RAW_STATUS_DPU_0 ||
- 	      raw_status & PC_INTERRUPT_RAW_STATUS_DPU_1))
--- 
-2.47.2
-
+Hm, my understanding is that validation should use bindings from
+linux-next.. tho I'm not 100% sure. Perhaps DT maintainers can
+clarify. This problem exists for all DT changes, unless there's
+something exceptional about the patches I'd rather follow the default
+process.
 
