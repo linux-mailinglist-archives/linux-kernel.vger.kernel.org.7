@@ -1,194 +1,189 @@
-Return-Path: <linux-kernel+bounces-772959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2229B299D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:38:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60A3B299D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196123B9DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA04A203DD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6307E275AF5;
-	Mon, 18 Aug 2025 06:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA464275854;
+	Mon, 18 Aug 2025 06:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="m+evjM0C"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013010.outbound.protection.outlook.com [52.101.127.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vNrZ5qvK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bcxpf1FF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XfryVcvv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eX8tHYxx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78901E1A33;
-	Mon, 18 Aug 2025 06:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499086; cv=fail; b=JLE7XlcmymgIFBaJlaxQiQKAzhq1OGdw0hcWAiv0vWY/6QbTmqRnpkaTmjH8s4PyQ1BkGmlIFNQ/fP95JA2n8fkuzRS1VJNJ6ViRmxwsp54zkBJQZnzqVyq+z0sUtt7QFr1kh0YmTunSsnUGL0QE1W2X4R0Cwldjxaxzza1fl+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499086; c=relaxed/simple;
-	bh=sYCiBLhGwA1/uAQR4NC//2VYlxDYe8ChHrNzFUMYfDw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=LL0Yhj3fvUb3BIwOnuGm8hl7GOkEaXMgqymqtawCqYd8p1fXv0dRmvIq6d35caaa+BWQCd7EkKWz5styyU/LiVM6XAvXuX++CagauANnOhuq7Uyio8Sql7PpXG9PFREGWPf3ZIqZnXPDycBsKh86OUpUtS9B/Bp6f9SgcGVcnq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=m+evjM0C; arc=fail smtp.client-ip=52.101.127.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oZVqZG8MpSOPsCsPNg5ttGdwCD3/MhgwBc9DiKzBCY7Dom0Bnvi8fxy6VKwaM0taN4V+gw5c70NZk9mTYcmdWA0yKnEFYzadBkoPyPrUg1XJgXpI/jdUGX8JDpl52b7Dhbnh3WZUC1wzPRRfYGM8JgprFbJ9sNm68gwc8OYsuGZHNZ7/f3jkVPd8sY3oXBMEf85xhUGjMnx5cKiffP5lYShcohmunhN/HuURuhlQEoD31Dor7Or25kweq+JxtB3wD38Zliu75IWgbTAxIrjMM+l5vNiCNF80dvJ86PFlNe0WdO6hRTWsPpMMYd0gRNEwsSYVBdaSLZwDF9PqxkwOrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Atf+UOMkqOjy2v2JNrYzTieLnQlLfEjp9A4oM3xzEJI=;
- b=Z262pbydsyf5cDwTTaftZv3kVArhTvaE5KHgkz7iyf8yhxcR6SQqja9InxMy9vpGNf5nADh6rek35guvZ6af1V5KlOFpyX1XmHMn0Jdtxi01Kffdzg0FURuF7ZCsfiR4IhaVFmrb1UCJqO6bcJZehdYOk64tk5HZqgHbEFmtDW8j7puUtBA2Ak9Lw+WS6NFv4CzN/t37GQMDmQRQ6bd15tsx+1c1SGuP+Tsa8Eb7g5bpE+DlFONqya4T1tDQnnhGIGzjLCrcj74iXxSkY6z0t+nuG4rcjZfCh9IBZihwCIiEhLNTmShrOxNE1FQWNS4gx01B2uXUAhtZvXNa0WTlug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Atf+UOMkqOjy2v2JNrYzTieLnQlLfEjp9A4oM3xzEJI=;
- b=m+evjM0C+qAJO/8aKTzx//CjmzRtXgdMjm8B2Zu5X0ECV2DxTY4LvLDNbcT5V7SWGyJQDgeAzJAw5sVQa7Yb0Xp1p0mvDvZ1zXBY9L7gw6axYDb6teiY04EDjUbYbc/WQDQ4Rk11eC1VSirfyidu9Vuk3lp5LRnz0vu1+P8aYN1huxH09Z5jG/baBiR5O8HaxlFttM8GVmaMDiqBPA5+tEXTj5ojenv0ZLmhTpVYHqMfGgUfVb2VrDyYhPT21rKdsqDk/+te2mvlDJVNC+wv1+uvf4paCuOX1ZM5WfD/gIpkFIxZ1QYhPvg+UtKHC2SYHkWEw/UrWHR8ISjs/0nsfA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SEZPR06MB6690.apcprd06.prod.outlook.com (2603:1096:101:17b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 06:37:58 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 06:37:58 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] i2c: algo: bit: use str_plural() to simplify the code
-Date: Mon, 18 Aug 2025 14:37:48 +0800
-Message-Id: <20250818063748.446466-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0027.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::7) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F0C1DF982
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755499132; cv=none; b=S/OMeSxtiLIFZu2z6k0JwL4K2H1AVgq49DC0ihbI07D5fAg6IxGLUCzeFyu/JBSS2BJsY09oqWJR95LlXTNZkmOvclA5VkuCd8gmg1Gsd7Jjs0mnZ9TOj2r793sR5/eaTpXfiN4Lu+HptZmB3KbKQZ17LJsy61LrhxIvGTUsWvM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755499132; c=relaxed/simple;
+	bh=SIaGcMfKgDQSiqTxbPlJGulJ+RFrVEnWarOcKyCFWg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CIYML8b1l7znzKOJ9d/DSshCDrCZF3369ZQACNm3rrT4pl2mPba4ZlBvrfTlKaoHUYTK3TjWHokxEsqgS7St/zaxpg+5ZoDdEe1pZZ676rM5Tjxuj2JRLLk+frXd2qx/yxQuT4iDNFi/3oqETt+p1DQKydRq+KLFg7tSpA9H2iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vNrZ5qvK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bcxpf1FF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XfryVcvv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eX8tHYxx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B1E49211A2;
+	Mon, 18 Aug 2025 06:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755499128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
+	b=vNrZ5qvKXndkMLAoznbqyLSTFePX3kh6KnRZbHoB9C2zjNYPRlSZNqV1rs87VkIN/NFGA0
+	epO2K8Z7f0c9H8dsf/cWUbqIgfkSDfNRGRDND39rNvY8/xCfs/tNHRHV7tNN0+ADyD5VlJ
+	bdOli6rKzBHRDtEdMB6qsFlPXB5BZNo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755499128;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
+	b=bcxpf1FF5NsMzd0krz+WQR2MFA9E1G0HxMmkiuXlc9+WUvsPrOT8Vm8rqnMZYOF+i+Rb/N
+	aHIjWw3qaa96IUCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XfryVcvv;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eX8tHYxx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755499127; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
+	b=XfryVcvv/Xm/N5A4Mnz0Ajiv+Cf6ifBCBsKqFJtZs8dq+AT/GoxM9groiQMa4kcylxrOVz
+	/94/ult5O2fshQOyeuqzB/qaKTN9maaE/Th5IqJBkGyK8d4LsS7cE3058t21c4tAq1JhCX
+	G4TCi10TJ/pTuH29hHszkqfIeg52AYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755499127;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
+	b=eX8tHYxxj3BHjPj961nVeOjzv++ZbhA1I1wWTvkD1AwqIaG9B5HtDESZSwNrDDdPYl9phW
+	9jBS4Iek66isxuAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DB6413686;
+	Mon, 18 Aug 2025 06:38:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V01TAXbKomgdBAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 18 Aug 2025 06:38:46 +0000
+Message-ID: <bbf3759f-c337-4084-80f5-170e6f1ced34@suse.de>
+Date: Mon, 18 Aug 2025 08:38:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEZPR06MB6690:EE_
-X-MS-Office365-Filtering-Correlation-Id: 071abcf0-602d-4b2e-0635-08ddde21c543
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1mnBVvuEC+wb0ytnbIWKi4faY44zte5U8VBmOtGbq/sFBpaftkGRzbX5bhjj?=
- =?us-ascii?Q?ZIO+V+lvjHEhbl6fzjFndvLp8h41UTmVYrQ58RM9GNuZRejMv14bRxXcM25s?=
- =?us-ascii?Q?WqengiDZAxRbJ6xGrCIgLZplZ7wAhaUoFxZ0Y1W6J5TNRBhQKZQnJIVxcwjR?=
- =?us-ascii?Q?+W3FQlUAKqh9FM2xNkXoHdZwUdcdBw2dFAcRbL0QZVSLs0K35qMOW4Dpx09o?=
- =?us-ascii?Q?7LsVLGkz8Vax6KkL5xgd2X3C7JpNuDXsbBUS+goW9n1F1UkLh/DB4xT5nIfG?=
- =?us-ascii?Q?RyI25h1r8NH9LDoHMgtmziMlitBVnIkFbsCdJKmGJj0YTfAkIQgwekxE5Rqk?=
- =?us-ascii?Q?deh0/Ge6AuTIy7U1YKPJ1d3SBN/hCLItZkqroXDq4iTzG66gIEbFrWu6+k4i?=
- =?us-ascii?Q?EZ4AQKOk7LxoBKVZ8d4uewN5K4zhT2jQnGMt38ZILN84OsZ1EAbQMG+tyrKO?=
- =?us-ascii?Q?Xh7Cs/78bC5NXI9UPXGlynin1WC2Qbvw1bZ705WyM6HTj1W6SweD836Gkzuo?=
- =?us-ascii?Q?7VSTBaQkKpAZz4z2jDaLPG+lnwH2wZxA92KYllw8paOPy6KEwdKTK77i4YYu?=
- =?us-ascii?Q?tatnbSVUtu6yEuHonqbELt2Y1jNehdvo/IyjV9x8ZZvqXuEbr2yGx2Xe/yw6?=
- =?us-ascii?Q?1owBj1w+5Vj/lbAPQmhlyWZmRW8NUujtpOg9gt6K8Zm7yCnVfFAOWUQGdeOr?=
- =?us-ascii?Q?uf5TE88qoEhc1A2i5ul5mLoaGz09eo5fnE7KAVeN1hKJguf/bQCml4uJqDVm?=
- =?us-ascii?Q?QQUN+Oe8WgRIkw6/gJO2CLJ07ILT+74QNxlAvHxIv5I3DmWqbdDjxH9Plwje?=
- =?us-ascii?Q?xtJF2ll75dyrUbWfJOXs6yhb+rU4CuPY353IBaiOP7k5CljtyQsKwRw15sOo?=
- =?us-ascii?Q?WOvFEoYhKn1la8NenYWlfgdYops9EbVKh7DNny49WD4TRWH1ehx6zR4tyi8f?=
- =?us-ascii?Q?XrY2UYll7hzbsUxxr0TTgrS/ezlvW7uuDolVZGYEsRcq8PviQJtHs040gNjf?=
- =?us-ascii?Q?T0nZ6vaml2JHTYL+XFYAyv2BlJWDAAu+Xei0YmiPARQbWlB9225mMG2hkMVQ?=
- =?us-ascii?Q?r0zmB/CmpXQ9bXBG3HlTQ7bq57gkttjD69HaY6eHr37IwPWd5rho0IpK8hU+?=
- =?us-ascii?Q?YPH9dH1ks3qp9M4vBbejDi+phRdHsheuC2erQFmYefvFKAWoIG7A59vB4y6c?=
- =?us-ascii?Q?8WjAqTIy+7BvUicZVgRuVvLEqOjCwpwK8Ia2GpADx3wDCY5aiRm7+8CUGrpM?=
- =?us-ascii?Q?QCp2kIXr9+FzBBmie+HvCrpzYEx5ScjSuEAtHfCJ2GCuAvTp6Z2FpAIn79Aq?=
- =?us-ascii?Q?Jdtb6C+r1ABlcJty4nAuXgVR1eroTgZLjlhU1LwfSXY6XGevGozL4rkh9Mc4?=
- =?us-ascii?Q?pzAH5MN+YRLCTCl0rr9MdIZ+JX7GhpuET7Ra3I4W0c7W6/kPO6KsZyK6lm1F?=
- =?us-ascii?Q?VB7N8CuHQH1i5MEbfP4+T02QYC/6aoLGJBH8QLXH8Jp3et1QNVoRG/Rd/Fkw?=
- =?us-ascii?Q?wO9TPp5JM/ybDy0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6dvqtD/FP+Y7XgTQbUaLEjI9+iURoqn5ahisQBkG3PAifL6GC9vzHmvjP3SH?=
- =?us-ascii?Q?N0jtN2hlfqDF5w6qg1n0Yikq2OwEgG6ZZF6mdT6atgLBvZNXxATEeagUfC4E?=
- =?us-ascii?Q?ktx9WhSYrXRMFWyV1zmU+SyfBcp/KIWtmZbL4T7mrWtr9rC74BOZMU6IP5lY?=
- =?us-ascii?Q?pOvlr2778ZQS9iYDd6wqQyEBk5CVWr2IWeYDTdtCnsqoqDeYKgF8b/GFNT8A?=
- =?us-ascii?Q?RI3DMgFVphqh7bt6tDwndVDG6GJJ+p10dtEnXz+Vslxzn19NFCJzgkLt3Cih?=
- =?us-ascii?Q?PsFZXkwcAf8PVnhoIMyWbhnSW0xfb5uYGOWOtMifdguFF4EF/xFilLrrvBg2?=
- =?us-ascii?Q?z356nhrF6ZHsJrdVv6t9W8BdZR6JIlrjrpIowr0F21PKLo2YZjPVFRE5hHAM?=
- =?us-ascii?Q?7Y/sjJt5KV+zF/S2P8bIpWD9/saOSeuaafGhZwzJIc+l+snjJ7hGTtTNG6Y5?=
- =?us-ascii?Q?bjYGBymaGm+pO/s5gtRwNdmzk3X9H4uJrJhJW3CqeO73OSiELFsSRR+BCgVF?=
- =?us-ascii?Q?7xPmEBj/JPgx2BuRRT88GMZ2nk7Yeg9qATJIYRm9X6HS4EkENSN3wCwkW42o?=
- =?us-ascii?Q?sXsPS09rCLTZkg9XfPC++liLiPFe9XfEDhnVg/aCK1DZ1/n6yrE981U9glch?=
- =?us-ascii?Q?MLY6DdSdIXf47vXJ7piCEZK86Xxurw+PwJSMEaruM9JwrTAsH0GmW2HdyM6X?=
- =?us-ascii?Q?d24o99T1CLBv0+k+A5/3HxGdFgU3ULzLSBself/tUpUALaAQzk1EECQAT+eF?=
- =?us-ascii?Q?1D8Z22hjYmtJDiw/yrV7jv2eaaMgwG3+I+6tUF1V8jLM98kyM7gnhnl5/ErI?=
- =?us-ascii?Q?ZlVh8Mop9kPwwur6zk22W7p5GFVX/iA8XmAY7n/ywejB/EJDa1E8faKRKzsB?=
- =?us-ascii?Q?+EUZN74bVm7/ln7LA9/ECj+1bC1MaCx/6CyDi9zCt/1uVpo2hKYmmtZrfRck?=
- =?us-ascii?Q?q+v/rQPf7Bxq2RWMJVsZYDwbdMF97z0ylWFKt08RscV9QX/RX6qsY1AgmTNA?=
- =?us-ascii?Q?wxmpHnjd3IuDqyEyargHjUdC/sWDfT32363mqIzD7xWrFHbO9z000ZOdw1x9?=
- =?us-ascii?Q?7rCFYvOUKYCXEkYEjziK+jdr+uTtaiu6Tu3DwuMtpngQNCxOi/kZ4yiEN5vM?=
- =?us-ascii?Q?eIfpTsNtxB6PfjulNGqotN4qim19wbdeXrexeoIm7jFe1+d51wmhCre9H3qB?=
- =?us-ascii?Q?Tm/5pYOPVicjUWlTBhrl6i8SIgJeu0Qgj3sUiaxOQuwvqzDWdPYLdpZtT5Ic?=
- =?us-ascii?Q?jE5sMKEFW8kmEnPgMShy0jMXQ38YFGcAFMNfn+OK5Eaca6u8/lOEpCEnEVbo?=
- =?us-ascii?Q?aLxY+hNhoFShdFFFCw22cubJY19qHVw2FAzTvqsqIcmNA/3nz6Jgt2WRrbQm?=
- =?us-ascii?Q?5czwNBrZmgWKNnx5VW+Kqp4KkFa6VI7+F0AYcoOUNE6jbdS16NAP/4VPvT8r?=
- =?us-ascii?Q?dLopC9bakENfnqog86nGCjSgP1UJaa8FiQvtBuiQTZbdmBL19O0t+dkHP+XE?=
- =?us-ascii?Q?YjafoXVyhbSBVXYydWE0ZOkVPQTyYnLwtKw+enAb9rmFt4Ow5tzl70G8KcCv?=
- =?us-ascii?Q?Myu0EnF+EQdj0IrJaet69DFLXjC9czVRsWt1rKXY?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 071abcf0-602d-4b2e-0635-08ddde21c543
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 06:37:58.3626
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dGNo6nQujtvu0koex03nzEbXN3aZrvBU8andjJCmeQ1O81ZCi7Gj74VnuYbRwW90bpWU8366pwPfDDxyihhFtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6690
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] mm: rename huge_zero_page to huge_zero_folio
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ Ritesh Harjani <ritesh.list@gmail.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20250808121141.624469-1-kernel@pankajraghav.com>
+ <20250808121141.624469-2-kernel@pankajraghav.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250808121141.624469-2-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	FREEMAIL_CC(0.00)[vger.kernel.org,infradead.org,kvack.org,gmail.com,kernel.org,samsung.com,lst.de];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLxigy8pr3gnoabpfzcidubger)];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: B1E49211A2
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-Use the string choice helper function str_plural() to simplify the code.
+On 8/8/25 14:11, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> As the transition already happened from exposing huge_zero_page to
+> huge_zero_folio, change the name of the shrinker and the other helper
+> function to reflect that.
+> 
+> No functional changes.
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>   mm/huge_memory.c | 34 +++++++++++++++++-----------------
+>   1 file changed, 17 insertions(+), 17 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/i2c/algos/i2c-algo-bit.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Cheers,
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index 6544d27e4419..d1d9a6c1a1e2 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/errno.h>
- #include <linux/sched.h>
-+#include <linux/string_choices.h>
- #include <linux/i2c.h>
- #include <linux/i2c-algo-bit.h>
- 
-@@ -562,7 +563,7 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
- 			ret = readbytes(i2c_adap, pmsg);
- 			if (ret >= 1)
- 				bit_dbg(2, &i2c_adap->dev, "read %d byte%s\n",
--					ret, ret == 1 ? "" : "s");
-+					ret, str_plural(ret));
- 			if (ret < pmsg->len) {
- 				if (ret >= 0)
- 					ret = -EIO;
-@@ -573,7 +574,7 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
- 			ret = sendbytes(i2c_adap, pmsg);
- 			if (ret >= 1)
- 				bit_dbg(2, &i2c_adap->dev, "wrote %d byte%s\n",
--					ret, ret == 1 ? "" : "s");
-+					ret, str_plural(ret));
- 			if (ret < pmsg->len) {
- 				if (ret >= 0)
- 					ret = -EIO;
+Hannes
 -- 
-2.34.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
