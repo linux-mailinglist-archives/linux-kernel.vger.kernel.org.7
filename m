@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-773801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF1EB2AAC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA003B2AAE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88ABD1BA3124
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E40D684208
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622983375AF;
-	Mon, 18 Aug 2025 14:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB23340D8C;
+	Mon, 18 Aug 2025 14:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nweMstTk"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="gcottf1M"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9263533471F;
-	Mon, 18 Aug 2025 14:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7378288AD;
+	Mon, 18 Aug 2025 14:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526247; cv=none; b=nh8YR0NuG+j2WsE2bBCoYe+qG1jH1RxAig2GXk3lx8WxW8IZSPvK8VPyiGY/YCetp5/FuBzmaRcKxecZ4c7JIFoZF997zG4tCjK7SZBm/mwtXpkp3Lv1DsTho4W8fJui9kgy7sfvyjFTCuP+ZDlhVOmtY7OTnHOdjEC2SO/G+zE=
+	t=1755526353; cv=none; b=Xah3K556OfxB0/0x281stsLsGrVcrn1XCTCC68vRBVOIEwAB4VWqAp0CnC5237CLCcC73NjFiCDZuOc2pJD5sFo5dxAShv5kbnVHOHBa3Y0/zTYZJ8d4PhBPBRttm5niH0oDmUhA0HSt2ZQ1zRpht1jdDCmr8Hm4RCPpJ7YAqnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526247; c=relaxed/simple;
-	bh=j0lyo02IFV4zcgXPYgENMtO59Au22hO0nmUipu26tPk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:References; b=elExSWWS/R2HB5U8rlvPjkIkvwPR2ABgz5XH5yexSjf6egfZ0DloPYyh55+xTEu00CBO0qcwCp8W5LZNe6jhxqygAvcXV+QuMwMqDyS8cyfJAlVCc1N85TXJhujWAvwA7WYa1cMt+GTzOY9ohz8ffNXVOPqTLQMle+6m8S17yGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nweMstTk; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250818141041euoutp01198781292bd5d26e9ea7136d3d3d73e8~c4dDIkjfs2135921359euoutp01S;
-	Mon, 18 Aug 2025 14:10:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250818141041euoutp01198781292bd5d26e9ea7136d3d3d73e8~c4dDIkjfs2135921359euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755526241;
-	bh=ts3A4MvB+pLF9b1fYr1OaRKHsIG9rXzjaSyR872fx0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nweMstTkqZUfTDcgSuzWRYVoV9JvbPK+l2fq2+I3gRx0SKOetrGBglidgci/XLRHG
-	 yKiRGPTghNY65ZYuW+rQetbaj0UlX84N/HJy2tuH4Qs0xmThMbES7YZyWuK/y2EQwa
-	 pANBPLppgOKGZUguwTqkajXJsHrX4XbKh4XzMW6k=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250818141040eucas1p12598f376bdd8cfcb984a8a799373111d~c4dCdErup2133021330eucas1p1j;
-	Mon, 18 Aug 2025 14:10:40 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250818141040eusmtip168497366a830534395c067398c2a3939~c4dCY3Ph_0814408144eusmtip1d;
-	Mon, 18 Aug 2025 14:10:40 +0000 (GMT)
-From: Lukasz Stelmach <l.stelmach@samsung.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org,  linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,  linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
- custom functions
-Date: Mon, 18 Aug 2025 16:10:40 +0200
-In-Reply-To: <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
-	(Jacopo Mondi's message of "Sat, 02 Aug 2025 11:22:33 +0200")
-Message-ID: <oypijda53wra8v.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1755526353; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8wWeZe28P1U42TwNZH+OJWzYkcBfpZ0KIkY7VkRuxUnvY1DRxB1Oms34d4n+OYORcg7aPDiab+0EhLiBkUjVjPiNZKtLsDsFp0hAhlr8NAJuU5S16g96mAr8R+2kvsftP0+59V3woZbchi01OKQlQhfbhocaMmn32+uYVbMrWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=gcottf1M; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1755526340; x=1756131140; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=gcottf1Mtf8OiAmIesS4FkiTAmqMCDeOK3nLZvHK0K7nrvOvAaODXuZl0RO5/Cxp
+	 NIsSH9Tzjqjv7rUBUrDpBKISR4JZn9m72tl/jFDqJic5sH5ZWUdko6XWSmv2xY0VE
+	 57Nb1clYgj11Ye2BsbcywSI6GB/oXhMeyN9k9slrEyyqs99c1oLheQn5F70+uD7/+
+	 7OX7npKFE4TbCVWKMQtrY+CxRfeT13xRmjj8trQaOMfjOuGvl/ep8WUsEG369Vdc0
+	 t1Jgsnnz5hQHfXgA1WkssGWspWPZcv/jTWG03X9e3GeO7oKRlTu7TbeMSNlSV76aG
+	 NNaElchv3NTy1N3MFw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.35.171]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVvPJ-1uxfEH1c3R-00Lpvt; Mon, 18
+ Aug 2025 16:12:20 +0200
+Message-ID: <10cdadc2-6fea-498b-b07e-3a24021fe5b4@gmx.de>
+Date: Mon, 18 Aug 2025 16:12:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-	protocol="application/pgp-signature"
-X-CMS-MailID: 20250818141040eucas1p12598f376bdd8cfcb984a8a799373111d
-X-Msg-Generator: CA
-X-RootMTR: 20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c
-X-EPHeader: CA
-X-CMS-RootMailID: 20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
-	<CGME20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c@eucas1p2.samsung.com>
-	<20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250818124505.781598737@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:RkjMpfHx145exU8PyU4+4hbze01n2EASQHligjBwhasmHdX+yCS
+ PeNAgdLrtWSM7DJ6SReEbU1z16mW+1TM7GbNxmTCrqviqf9BXqomfaJDeMLpNZm2cGo0x5j
+ hDtkU4bfwc64nnFqeUHfms/XMtMvwZQlwMMxgwbiB/5SvZvj84uZjVgptAcvvdw39WNC4mg
+ PoVLYHUN3fNnT/rCsB39g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UD1IAoDxqwc=;HNGdNj0qafXAme1o+i22nS87AH8
+ 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
+ P84w8hDHPzCyDjgXTblzYbNSY=
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi
 
-It was <2025-08-02 sob 11:22>, when Jacopo Mondi wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> Accessing file->private_data manually to retrieve the v4l2_fh pointer is
-> error-prone, as the field is a void * and will happily cast implicitly
-> to any pointer type.
->
-> Replace all remaining locations that read the v4l2_fh pointer directly
-> from file->private_data and cast it to driver-specific file handle
-> structures with driver-specific functions that use file_to_v4l2_fh() and
-> perform the same cast.
->
-> No functional change is intended, this only paves the way to remove
-> direct accesses to file->private_data and make V4L2 drivers safer.
-> Other accesses to the field will be addressed separately.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-[...]
+Thanks
 
-> diff --git a/drivers/media/platform/samsung/s5p-g2d/g2d.c b/drivers/media=
-/platform/samsung/s5p-g2d/g2d.c
-> index ffed16a34493be2edbdaee13619467417487c1e7..44fcedbbc90a9863827aacbcd=
-5f56d850cb552ea 100644
-> --- a/drivers/media/platform/samsung/s5p-g2d/g2d.c
-> +++ b/drivers/media/platform/samsung/s5p-g2d/g2d.c
-> @@ -25,7 +25,10 @@
->  #include "g2d.h"
->  #include "g2d-regs.h"
->=20=20
-> -#define fh2ctx(__fh) container_of(__fh, struct g2d_ctx, fh)
-> +static inline struct g2d_ctx *file2ctx(struct file *filp)
-> +{
-> +	return container_of(file_to_v4l2_fh(filp), struct g2d_ctx, fh);
-> +}
->=20=20
->  static struct g2d_fmt formats[] =3D {
->  	{
-> @@ -272,7 +275,7 @@ static int g2d_open(struct file *file)
->  static int g2d_release(struct file *file)
->  {
->  	struct g2d_dev *dev =3D video_drvdata(file);
-> -	struct g2d_ctx *ctx =3D fh2ctx(file->private_data);
-> +	struct g2d_ctx *ctx =3D file2ctx(file);
->=20=20
->  	mutex_lock(&dev->mutex);
->  	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-
-Acked-by: Lukasz Stelmach <l.stelmach@samsung.com>
-
-
-[...]
-
-
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmijNGAACgkQsK4enJil
-gBDoIQgAm0zhFQfQO2pDJE9DC0t6P4lrJ//jtdrQJtVSYpcaXDYP9Oq1iygQ3s54
-2wjf/n/+kXlE2cUM5pvbFc0c1qeuZipb+lexBpwBdogDE3njAsinDf4ohsWPGhJC
-TMOuWPadHmM0CXjuSWpeF+MoKtOJYJjdyVizq8ZoFwgGHssYApRxGVuXx6DRlsZK
-aqNXp4P9HNaVsxLl5JOCaeEaJLBkU++5rhIooxbmm/jPuM6WuOWil+jQKADaODeJ
-UfkLjfRCLFc4WdsXOBZuwqUiyU4imB8qJOlrjosCChiqKqr7up+cyr3YZ7PJEXPv
-jN4MErP/mPjxbYUi+bON3CbY2FlWfw==
-=alRq
------END PGP SIGNATURE-----
---=-=-=--
 
