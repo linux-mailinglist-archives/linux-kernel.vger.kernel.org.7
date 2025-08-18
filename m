@@ -1,191 +1,179 @@
-Return-Path: <linux-kernel+bounces-773221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB62B29CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:54:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1518B29CC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6AF3BBADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4002A2C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63E63002CB;
-	Mon, 18 Aug 2025 08:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1862B304BA4;
+	Mon, 18 Aug 2025 08:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DgwNCSNz"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="eVfm2EwZ"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012027.outbound.protection.outlook.com [40.107.75.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FA52FF676;
-	Mon, 18 Aug 2025 08:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507234; cv=none; b=qhoTPq/SiZGkRywIg//mBhGBUL21sEKAGe4r2crWKlb4IeDmXORAWH+m2T/YFduVSLszNrwRraWS+l35c6fVkZ/I4Iyqa9RNG5xFrSdLxKvXE+GibrRQbFlZVZt3QIl1HUTD5Bs5A6DqlscUXr+6OBStVLda89mEzWNtwVG+B3Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507234; c=relaxed/simple;
-	bh=MtKHVTRgAjbDyX8G+Zck3VIj7UUL290UxStBgxla5g4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RlLr+1E1olCIBnTqrGF/gAshCtbw3AfaoENNc8MiKTTsYGx192wyDCq4Cd5M85K0PbqLzgArubGKYF9vwZIg3xfCFpEfgaVmQPmd4DVU7sO12rewecRTYEsBPL2pHdikLcHhCVNRvBlYsDeYOY0zC+D/slmCVu7g3o5KUwVzsI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DgwNCSNz; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8CiOp007548;
-	Mon, 18 Aug 2025 10:52:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	QcYJ3ZllQHKrlOVK3ksRdOd0b+QUjL79qHjWMDwhUsI=; b=DgwNCSNzbyaN8heo
-	UU0xEchAk1DxJIRpl0CzfVISfbQtCSubvQveObKKpQ39+zrGh2SzAA83ma4r4Bzu
-	sg8CW/A0C9ETidDc/OYRkgZCDRQ2kdvaqGmu3dsbfXJCTylmllfFUMZcowUUmLoG
-	wXmEYOjEX7qPoJU+VgYsSnJcdC2hIXCndPDws8D10b2VIjXZ/XXoSRN5LmByqdoM
-	KeVCQF0jwydnIBhqWMkVrh3gvo7ONl6tcF2hk27BOWPvG93yve1xDVMYyE0iiEqt
-	JNJkMJN8zCo5keUJ5Wq2zMvJis4Hi+JSRT7Qhg6DRV/J8anfWb0ujr+sOz70o7Y5
-	FWPHSw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jhb1nqkk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 10:52:31 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17ABB400AA;
-	Mon, 18 Aug 2025 10:49:31 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 08E79715825;
-	Mon, 18 Aug 2025 10:49:25 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 10:49:22 +0200
-Message-ID: <5fa9ef87-0184-427b-8d64-aae2715d1663@foss.st.com>
-Date: Mon, 18 Aug 2025 10:49:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1FC3009C8;
+	Mon, 18 Aug 2025 08:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755507141; cv=fail; b=EG9Pz/zPI/h08DX6tpgxJroysn8W51bu2GyS3WWhtORjwtGkaM0XF/W8V07UzyfJEssVKDsjAJ0s4gt1GC0JegvbVWh2wJ5iGpm9EnyBzyhQwvs3KhmqT3UEDVwvC+s4FhYOlTMr19B+Ufd6ELCU0Ja925noGO7WMoD6ZziTjHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755507141; c=relaxed/simple;
+	bh=qiBfJaO8qpOjLIXC/x5i2ud4oF45x2l+4IBCd8ZiVAE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hedbdZCeM4R/sPTAlA916bE17w6ZRROS8ukW7Et+YfgSeCCtvzK4wvJEgneUuAajW3ifT45KwSjS059DdiSRqmOd1Juq4Fq79Uho/UBCtocFZ7fJnn0sNV4mBpsFgWaiHG3x4NFUHsbhiyvazQl5aN4aHLO9EIZ6/tN/uzIVQyY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=eVfm2EwZ; arc=fail smtp.client-ip=40.107.75.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QOILb20cy1RPd64wdGpXi0izllSgNX2xJgA4Eo9rZxppXZjACNNVlBZ0pCNjfhIz3CaipAam3B6GW2Z0L0L7fmllPv/pFoEHgf2cfe8Rxg9W/ZkdezXUtzJtbiF15q34JRFXXcThibvtXzu7t/+0o+OtKFfnHvhxNkXpgN+lww/hQA4D1GMkU7JXexosRlJQTHpExdZE8ccftBLKxckZdh2lalFKl6TCakNLqQnokQEraNWpufN8xgbYQhopG8CQBJQpsfRcVXy4INClpDPmNsu4gFdxY6rId3jyAYeGDVU5QkuPiZqNpIuiYfRla3jKuitCQG40KV4aeAyYo8QbbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GTe1zGyypR/1SPusRH/GqweRMajQVAv3AHpZhtwMFgw=;
+ b=TADb2d899vL6ZjzvgZ7W9piuvJuKKOQmPeMxfjCFqYnDUQtdkl6b/BOWXQWPBiaQjB9YxAMZoQhIcDoZyFmbQ4lB8qZatsfVyX+pZL1zZzEg+qS9stYkDO5cEXMc9sI+2ZXJI3luqWa17fesv2l5qwYIsqhnWd+Z6xMrS3ItSQjixSDTwf8yc8tkJAEJK58Wu8S6ASFMkUgR71i+tnJcrMsc1GDs5iLGOxriBK5B9al/K9MLT+r25KTayezgLLwEBWm4oFSKyW0/JsQfmB+Q5q5OQGy2b/wXqaosDH1/ItlOr/Ee0u22JUaFQRlk210UWVN2YIc/qDg06cWuow/RIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GTe1zGyypR/1SPusRH/GqweRMajQVAv3AHpZhtwMFgw=;
+ b=eVfm2EwZB1iwy+Txwl90O85ypBb2SCUJnAm4sHLqDryblLx5a1/c4EWhSvnPLJxlLhEbSB00EOtDZ6ciLMMyUve+QwSTrp3PYzQiPdfptl/9poosM044fHq6X9WJV2dmqZ/hZ2+3ED26lrmvaSSyauo/ytbtWFBwGDLvBZkUqA45mjAZw54TnKZgt5n238P8r4vVkP4YmXWcnouQeMsv+l1LWXiBFcJ4hOBvjwNm4ov50dlilMx/QzKAqneFuB/wcZ/09NxLchE6IL45j1Cd5Bt83nDd6N2SSLog/zWYoP9p8fFewOco2eRMv3TIJrB4wUJo7lumSO71dcGsXuM1+Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SEZPR06MB5200.apcprd06.prod.outlook.com (2603:1096:101:74::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Mon, 18 Aug
+ 2025 08:52:11 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 08:52:11 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] vfio/pci: drop redundant conversion to bool
+Date: Mon, 18 Aug 2025 16:52:01 +0800
+Message-Id: <20250818085201.510206-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0175.jpnprd01.prod.outlook.com
+ (2603:1096:404:ba::19) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 27/38] mmc: sdhci-st: use modern PM macros
-To: Jisheng Zhang <jszhang@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Aubin Constans <aubin.constans@microchip.com>,
-        Nicolas Ferre
-	<nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?=
-	<mirq-linux@rere.qmqm.pl>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        "Krzysztof
- Kozlowski" <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "Heiko
- Stuebner" <heiko@sntech.de>,
-        Russell King <linux@armlinux.org.uk>,
-        "Chaotian
- Jing" <chaotian.jing@mediatek.com>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team"
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>,
-        Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper
-	<alcooperx@gmail.com>,
-        "Broadcom internal kernel review list"
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        "Michal
- Simek" <michal.simek@amd.com>,
-        Eugen Hristev <eugen.hristev@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Ben Dooks <ben-linux@fluff.org>,
-        Viresh Kumar <vireshk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
-        "Baolin
- Wang" <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter
-	<jonathanh@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec
-	<jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        "Alexey
- Charkov" <alchark@gmail.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250815013413.28641-1-jszhang@kernel.org>
- <20250815013413.28641-28-jszhang@kernel.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20250815013413.28641-28-jszhang@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEZPR06MB5200:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae664926-f4ca-4e2c-7c66-08ddde34852e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8cr3tFgXNQnCVvOc8TL7+YyA+GLFKxifbPnjDyAaDQkzNk+HbUHC07uQ69Ct?=
+ =?us-ascii?Q?Ux3yITZGCOcrJG9bCRNrbmVXU+rnm6Kegg9icoPEJZnbL/Hi425buCuk3NZJ?=
+ =?us-ascii?Q?fXRrPScHjT/+dzLYMd9kHhUW4xY+GGaNFwPzT66gFphTpa9KatcXyGBgXMYM?=
+ =?us-ascii?Q?whfKm9DoKYLWPev260EnJ4LDjOE9O7Oz7CG7z9ZkDVWgYPXrf39zklLbkDO2?=
+ =?us-ascii?Q?SMDRKq++RgHUt2g6d8XUQQPLxqC77Ejw+o/Hvbl9R7+AW4LYn0wcGKiA+TUj?=
+ =?us-ascii?Q?0N/sSIc6Mo0UwqiNsW5KL7Op3G2HJYx/ncIl5lRCU4lfpLTkrDzskogAiDq/?=
+ =?us-ascii?Q?lEDd2mer9nxSubTPGKJxUl6Ecx927MsF9QZAg9ubR1eZSipwCBMPJrsV/5di?=
+ =?us-ascii?Q?4op0gJRcDKOyytEWBvuWbctBdahoUNuIHUkfztkmSayJfACJ9J0G/aICJ8nK?=
+ =?us-ascii?Q?XIXDgAv5BJ3aSA62lR1qrLRfXKdPToD3pieCleBQ8wrWh4aimIJJTUqLgZig?=
+ =?us-ascii?Q?DgiuyUMPSbDrwuljfp6f5UN/ctHfhjdbgIIn1RN57xGs1KhSAMHnOzNE1Eeh?=
+ =?us-ascii?Q?Fv1rEmr6bJhPcG+rf8efIbLVLOVesdV6/4gmG2AG+JRD1NDofG+eJYlWAjyj?=
+ =?us-ascii?Q?GisA77P50vqpnK/zgFlHFsG7EUP/bOJR7RvtdKc6cbcTh57bK16UzQGYB0KZ?=
+ =?us-ascii?Q?J86znGrO+i+n+lmEy6RYr/RRH5XxvQfjbj/hHIjJAE6eg89C7eyelPJ3HqL9?=
+ =?us-ascii?Q?OwD4r9JHdIqPSGL7ICc71l5O78DgHLgqx/ykyBQWB+aSPS69nQ+dMZcWw5MU?=
+ =?us-ascii?Q?E1xR+lgQo7lahX0qqadVjn0umgcF4N/AvZCnTnIcGAoMZfALZWXBueMkQtfK?=
+ =?us-ascii?Q?a5ErP5FysIQ4bXB0Oxb60T2qiOvmCxF60N1Ciuw799Byb7UfN1QSCDvzgNpW?=
+ =?us-ascii?Q?D5mFBolcSyoOp2rvR36CowVdrYiLq8mhd3fy7PQRjPYRa7KHWkzr24kG5xBY?=
+ =?us-ascii?Q?ZG9uLc4aTNG44tL6dJeFdmcD7dERL1QDSAwBAvS5OT+uoJLVz5XY6KLforyq?=
+ =?us-ascii?Q?BG+ble9eL1On0HAulnFeljEY/Xljtma55cRslgxYU/YRKtfdTReuCHanL63+?=
+ =?us-ascii?Q?kmuTVNlo/vtIR84HsjbbJ771fJB5H6yAZrYqq4ZWLlbmxTAGrrtP6AhItmlI?=
+ =?us-ascii?Q?riYQSXhnxNLKjNesw2svrGLLy04xb4nOa58ffWud6BdzU8c1+rz1m8yC8Kbc?=
+ =?us-ascii?Q?hIQzV8LmX7v92njra8uG0zFTf33dP+E9IsJ6RkrxqXWMX3B5s49CcwCQ6Sed?=
+ =?us-ascii?Q?Llv/LZOuPt/AJjeJGK1dGclrOUtjCVlIoflubDZYMT3IE94yBXqXsOCYhbXU?=
+ =?us-ascii?Q?0UsyVe2y4JM7utq1reqn8qDSlDOfHsFx2ictwC6YVe/lyopm/zMOG9gj1EEV?=
+ =?us-ascii?Q?T5icrZbBfA7busnBFk8RofhmuMtIoRw0MisFaBX8jdPwokSmVwqwDQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?x+LhuswELzY5S7IxChj4/zFsjIdM8i2dQ59Y9cvGaHAODmwimfnZ5AvybAgR?=
+ =?us-ascii?Q?VSrJVYOC7dJYPl2t0zzWs0lWE7mEH0ctWpwcByzVSXILnMoYEVwcWskGgV44?=
+ =?us-ascii?Q?fAIlxJr/Vp6TtCCtzsSJapWbj+bqBIR3CYW1xT09KJg4UCAzU0R8o8cn5gQC?=
+ =?us-ascii?Q?ZDBjkSguMq82b8tNQUt0rePCu0pZ5XOJ+r8YRnWf2uv2P1f2XZ2kP1927s5B?=
+ =?us-ascii?Q?Ac/bAwaQjW1EKy7nM0z1coeroZXyqEzNYFQGxMOd15b3NbJFF6HsbOUpynlU?=
+ =?us-ascii?Q?AKuNV7Zreq1ozvkIUGLAorUp1MgjZxv7NyUU9+j4+I0wkk/8vIMzkFKjSKPo?=
+ =?us-ascii?Q?/yoClmRRQxdXHSN8xq9UycW8/JdbMSX7ZJWc88K35K2B9jDblm2oW/H9mq2U?=
+ =?us-ascii?Q?SnjM7oMTFMaFYlx2XQbRsaLApPtn8Su4z0bVjIbLSTZ3tFH4kpBra1xet7Kr?=
+ =?us-ascii?Q?os8E6MZxTVdkSeDCbbxq9wFq9vK+0joeZRnY43N2btS0b0h9N64NVAqO9pMK?=
+ =?us-ascii?Q?8IQzH/Hbp1ZKVR0M2rCyE1ASiy/3HtJfeR+EC+5imGX6W/mxZsZ56BfOHuBB?=
+ =?us-ascii?Q?SRJKxcENIM0maQB8p8MFhd43ZHMKXGGPO6oCaM8h2JV9fD6OHvTYEyrMbtOs?=
+ =?us-ascii?Q?lQw8h5u5J+9OGapc9S4dzVQQxYdiFBEvu8NC/JgfD+JK1Rfvk311qJeo+vuj?=
+ =?us-ascii?Q?kDLLmYSzXG52C6RbYDYVNj3sa3b6QBevhZF1DvNy0MN3Oagrd3Gkr1FfsPk2?=
+ =?us-ascii?Q?oDR8nM+UVj9SJfMMsKzU+h7vEDgYwSzGtZEkeXBtOoJF9iugOJLDvvR6Vr5t?=
+ =?us-ascii?Q?4LUJ995D9xwIHZVXv82M08LDbk7hOYGQwcuNcv0pCZug9MIwW+JdD/RqOiKX?=
+ =?us-ascii?Q?j+5BiwPyKQBHGJJ/TXxijS2goAfFqEqF6IV/oErGbQJo0ashwbk1k5gZZBme?=
+ =?us-ascii?Q?Yw/PcB5aT4KWj50ThJwBXoEMpTNB/egcj7Km8inRZPLe9b+F+D/qTM24gyVT?=
+ =?us-ascii?Q?NUaZiFKASv1LTVj8yuRLUubFgX1rioSwPaHuGisJ2sElkYrBlWCCVMMrW8rd?=
+ =?us-ascii?Q?pbcq/b9NIL1bHJwpKiMSKV4JF/JEA2mJHTykoOBUO3lYu/KVHQ30WwsVou/O?=
+ =?us-ascii?Q?tx1OVXgpMS80ky1L1Zv1NiPh0+pz/KWcgrE4oS/rwivYqQADUde3Mb+zjaBI?=
+ =?us-ascii?Q?HE17JrVSLMPC/MqView8gEzRkIZPF+cZyGJjK6Ch1uUr+hyt1npmn/T0yVQH?=
+ =?us-ascii?Q?FVjVoBUe5lhleYfdVyXvX7GUB98MMVuoWR5sV/+9gA6y3tFdxppIikjCWIZ0?=
+ =?us-ascii?Q?g7d+9J0dRpccjpRmFkC/4+cv5izJo6Pm06qTWr3HCcZaX3jd8g0Nr5Jlz/cs?=
+ =?us-ascii?Q?BdEM61FMVH7lhAkDUtP6+vQZ14SVO5CpTlVANzyByi4NeONiA7kDXrn7Nhvp?=
+ =?us-ascii?Q?LsJUK2FVDTWurRwm/9BvLncEZV8zUZgmDLct/N5gDuDdSZaL/P4z91GSXcuN?=
+ =?us-ascii?Q?PO1I/yUz+Ps3B3rI64lTr25q03PlVLZsC8fDqvLnd79HmaRzFiFL4wCJDFG1?=
+ =?us-ascii?Q?lV3nWKvpTlOWZ3Rkpu+gmVm5csrzlq4z4dFgH92s?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae664926-f4ca-4e2c-7c66-08ddde34852e
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 08:52:11.3230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ID+idXdiQWDu5xuYzDprwqnyfcAv9Bh33jZ1pBkI4Mrpq6+z/mar0nSSk0/e2Rvvsa9VH3LaMFWVZIHb89h+5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5200
 
+The result of integer comparison already evaluates to bool. No need for
+explicit conversion.
 
+No functional impact.
 
-On 8/15/25 03:34, Jisheng Zhang wrote:
-> Use the modern PM macros for the suspend and resume functions to be
-> automatically dropped by the compiler when CONFIG_PM or
-> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
-> 
-> This has the advantage of always compiling these functions in,
-> independently of any Kconfig option. Thanks to that, bugs and other
-> regressions are subsequently easier to catch.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/mmc/host/sdhci-st.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+---
+ drivers/vfio/pci/vfio_pci_intrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 123298a4dc8f..00583909b380 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -677,7 +677,7 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+ {
+ 	struct vfio_pci_irq_ctx *ctx;
+ 	unsigned int i;
+-	bool msix = (index == VFIO_PCI_MSIX_IRQ_INDEX) ? true : false;
++	bool msix = (index == VFIO_PCI_MSIX_IRQ_INDEX);
+ 
+ 	if (irq_is(vdev, index) && !count && (flags & VFIO_IRQ_SET_DATA_NONE)) {
+ 		vfio_msi_disable(vdev, msix);
+-- 
+2.34.1
 
-Thanks
-Patrice
-
-> 
-> diff --git a/drivers/mmc/host/sdhci-st.c b/drivers/mmc/host/sdhci-st.c
-> index 9157342ff7a4..bf6685805137 100644
-> --- a/drivers/mmc/host/sdhci-st.c
-> +++ b/drivers/mmc/host/sdhci-st.c
-> @@ -445,7 +445,6 @@ static void sdhci_st_remove(struct platform_device *pdev)
->  	reset_control_assert(rstc);
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
->  static int sdhci_st_suspend(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
-> @@ -492,9 +491,8 @@ static int sdhci_st_resume(struct device *dev)
->  
->  	return sdhci_resume_host(host);
->  }
-> -#endif
->  
-> -static SIMPLE_DEV_PM_OPS(sdhci_st_pmops, sdhci_st_suspend, sdhci_st_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(sdhci_st_pmops, sdhci_st_suspend, sdhci_st_resume);
->  
->  static const struct of_device_id st_sdhci_match[] = {
->  	{ .compatible = "st,sdhci" },
-> @@ -509,7 +507,7 @@ static struct platform_driver sdhci_st_driver = {
->  	.driver = {
->  		   .name = "sdhci-st",
->  		   .probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> -		   .pm = &sdhci_st_pmops,
-> +		   .pm = pm_sleep_ptr(&sdhci_st_pmops),
->  		   .of_match_table = st_sdhci_match,
->  		  },
->  };
 
