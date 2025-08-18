@@ -1,69 +1,115 @@
-Return-Path: <linux-kernel+bounces-772803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5DEB297AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A28B297CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBCEB179676
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A420442A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D266325C838;
-	Mon, 18 Aug 2025 04:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0A1263F4A;
+	Mon, 18 Aug 2025 04:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bof6DCd4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="H+Nk7L+e"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD821F1513;
-	Mon, 18 Aug 2025 04:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97982627EC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755490182; cv=none; b=IqHqRaSibKydL+l3zsRle1Il2eZSKveBbStx6r7PXlZouHt+JXMYc8DN3aRiU4FS8opsNf++V8a/C9ClYjkambCd61k/hmwfzMDdNyp2KZPBnGS+7mhHzWob/ZZ4w2A+cfWDjvsEA/stTQ0XlPTO4Oswd7JuwWE+nwnSUVA48PQ=
+	t=1755490284; cv=none; b=Z79voKIfX90lslIiNCWwEq+mOCu/naLQHD3vvoaHM5l/SmyNow5LGUThiJKV3dFqPJr7lsH2ZYt2AbmTM2pkqBbmc2lEzJOZdFnl33nSWTK1ZcurkIBf5BuHCa4wZmi7Dyea5O9Q9xQ0Tu0nqm7Y0hUCVyl5w6C2m3wJsGPTFE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755490182; c=relaxed/simple;
-	bh=Hml+Ha094zHzOQUjLW5lwQcO7fMMj/0YC5MRGzzYwDA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p9uFNMRD6/Pf1fmRytKKuxTiJCSKoK4AYQT27z9Am2SI7CddI41ZTgecFwHcR8lP+9/UQewMJX5SXanSMilIWhnDDaKImXd5DuDXpuMDQRu3yl7vZLJD+jUQpVHgLJfL+UPo68Up9o03Pxwj/Jb26L4W3s1q+WQJa4SBuKe1jEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bof6DCd4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57HL7uQP008998;
-	Mon, 18 Aug 2025 04:09:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=sY+EbChppw0FbK1I4gMzLy
-	WucvwpBW1ypbYoZU1VZyc=; b=bof6DCd4V6qU22SsFQ4ExqFhaNj5QXQagqW30k
-	4F19X1KfpP4SOjnqVCDsVifSV/u0ssbX4BongMeMOzK0ixaMIjJdv0U78vSAoT+V
-	KKIJT2it3L1nbNpfTFwsiKr4in0LumYm+FJRtSeVPrEbne9C5YMi3L5YVE6o7To3
-	ZO1sjvFy+6e6B3MCnHuyECN/HiDlDUnbMChzSYjc9QQ7PNNiACzeNU2lzzCGaAtj
-	fo1KbWdiXxz5C5V8clNThUivKB+mnNbBsnpvELdd6Q3B8J1RNvQV3FH3yV6fxuLI
-	Ftt51AR93TUlKtlrUenkaiBXXlFkabvWYi28rnBGaf/vcY4w==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jjrfu57j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 04:09:33 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57I49XjW026418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 04:09:33 GMT
-Received: from hu-pkambar-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Sun, 17 Aug 2025 21:09:30 -0700
-From: Palash Kambar <quic_pkambar@quicinc.com>
-To: <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
-        <martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        Palash Kambar
-	<quic_pkambar@quicinc.com>
-Subject: [PATCH v5] ufs: ufs-qcom: Align programming sequence of Shared ICE for  UFS controller v5
+	s=arc-20240116; t=1755490284; c=relaxed/simple;
+	bh=gqZpMXPd6DL/+kfXUibwUL8SSmPMehps7IgssTY7RG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j2HLx99j0Trfy7xkSAXVHj5J//wMwTpwjh9ogxr8rd2GJosSBei4L9bgIKU64XTeYAAD/r2CYEQcbI2bc/vqf6gWq7Gnor/ZE0z+CsJqBtWU5v029lrqNpu+jOeiJrzAIpWmDVamxeAL7N266HIGnK0KnOGDuNRTaERhpMnwafk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=H+Nk7L+e; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326793a85so2776447a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 21:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755490282; x=1756095082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zMRC5c9xXUgo6eKv4jcoCHH6TENqo9cqAPQxW1Kbofo=;
+        b=H+Nk7L+efF8m2lrCt/Ho1n/pSQasXvNVn+SehJrrfZ7YJP0hDvMEa6bXigGlfI9qPk
+         p/Q0lUa1JrKxvSC4Qu9fs31uoXGBiTlKyfIL0ENWm0dGhSSO+cv2ucdfudOl/payrQ6O
+         sofAfu/h3mqB9+YXD10TCmZMkP4hEt4kqU87sCw2NNZpTXzz6tgRYHPHdZ4xp3mdgi1V
+         zOQrAJJfZFxkYW+IVHdp6Nxw5cxKF/DRfPV3XxVi2/kjhXDGJWqT1VkvVk9Zmrc/3iHm
+         EDDO+2f9Z3z8txPBYEnkHNPxA8z7A4uRP+a718Y6LtmiqO9cy46nxqgzqT/8RRG/4T9m
+         lang==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755490282; x=1756095082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zMRC5c9xXUgo6eKv4jcoCHH6TENqo9cqAPQxW1Kbofo=;
+        b=c1cq3brYaz2N9g6an31laDi/U/z/pl5QMIP5xKlvJyLIgXeun4rC6cL62+mQqKs5Zr
+         brtobJUgBAVklkau6lObiNgArFY7miewlVuEMUkpfzFxUavCootmLHrky224POJGIGg9
+         HE9u1hwJr3fqVX9sYkAevQyMK5H1306e2jEghI6h+mOYC51FBfS1Gz95H1sD5Yiy7JF2
+         ikvkaQeMIaIQZSLA0g4En0n5GbkWhotH4gpDIF5RQH3jFoJYFMqCMGuSx/HZbQdLOW4j
+         lPnjAS7qh8ELgM41x4ERoWe5SVnkVFNB3BCWp14oq5SiikdooMERMYcw//gkbrO/Pz2x
+         OL6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzATyHF/zw+BsnILtltHft8+osgRBuS5z0tyFZxyFWWH71WL5GdHjXW/vsZGsxkJ9LDqM/Rlj5vbAsQpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR5gwCqHbRZLXbtgg1vxtSIcimi5CUAXziy9GU57zPi6U7cl3S
+	PyvZNcdR3maWvQcwPEKrcm7et5oiPpe0+Selni396WIHASdn1+Q7zy0b6O+NNtLO14s=
+X-Gm-Gg: ASbGncuS2KLTYMqe+Ng1lvGTQTw4yZ6qJphVwlWip9zyV5H/NAdwJNSn3QgMlmDPg2l
+	z/7+7mMFRGPcC7ZwVQSlFro9dd2yb828Y5924N/y61fJKFWDnya164ggEtsvT1Nr+p+otfjkGFb
+	fWAFEMQdq7OFkqEv93CQd7cOTqa4j1kvdh0JkJ0UL26tV/NeMLsROouOAG8Kwv+5D1du8v35YNx
+	VzIrUCzSjuyH/A5xWOC/w3acAOBvRGUQWxFuA1Z7tYeSaUl0pRmESR3gKcGCbP5Xv5cqDPWMakn
+	kUzNpkYkL1TLOG3oyE/LlqIASEYL3mBiU1ciSthWhaLE/N+YX+a/o/glZPbkN5KSOoNeVHSdQl7
+	yEIfJeDebcJ53e7L/W7f/C6EcAepYw3SwoH6Q7/nKNYkM7mPn2VH2Ng==
+X-Google-Smtp-Source: AGHT+IHP6UbREeetpnCWOLmWDeaEVguVbF9ClSYn1V6am/aKBqluAMuYoaNtdrC+UjrhiXEkm5ie1w==
+X-Received: by 2002:a17:90b:180d:b0:315:c77b:37d6 with SMTP id 98e67ed59e1d1-3234dc7ba5fmr10093522a91.23.1755490282031;
+        Sun, 17 Aug 2025 21:11:22 -0700 (PDT)
+Received: from localhost.localdomain ([122.171.17.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32343c70356sm6560972a91.25.2025.08.17.21.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 21:11:21 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v10 09/24] dt-bindings: clock: Add RPMI clock service controller bindings
 Date: Mon, 18 Aug 2025 09:39:05 +0530
-Message-ID: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <20250818040920.272664-10-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250818040920.272664-1-apatel@ventanamicro.com>
+References: <20250818040920.272664-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,126 +117,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jZgRcj5zGGVzf7gxF3FBrOrJnZnNfe6A
-X-Authority-Analysis: v=2.4 cv=YrsPR5YX c=1 sm=1 tr=0 ts=68a2a77d cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=A1Z4X6O0DLo03VmHrqwA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzOSBTYWx0ZWRfX7bBLMxMuF9qF
- rv3XKWgAj8nlqrKkg8tP4UBCAHD2Sd3fGrOvHvQEofChHflx4vYLasQspkojnqbWiDBJny6a/q9
- Gml4rmNFnje8gWYW7HLHrk2msbBqoMV8hLc3l8iQlZrLyYKD0F54A0Wh/eu9cKL8GqTDSGdgCwR
- A9sHmgLi2GJOpZeHCa7WsDCmFhiWfT2gHEKQ4mqKiPN4jIHbWDYSGVo7pj65pit5i/6MDuU3oPd
- +lcFPTFmMSDINlH+N6RMeZWmB5lP+E3sLouULF+W20OXs5g3ArgOWfCWMn54fg7vSWSJ2T/5zoB
- VB5CePxkcK1eMAXXMV+erTirET9QvZ/MQeS4YQEolIlThBKbLKLtI9C/BeGTrAd26RyeLpZPIfB
- +jMzThox
-X-Proofpoint-ORIG-GUID: jZgRcj5zGGVzf7gxF3FBrOrJnZnNfe6A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 phishscore=0
- adultscore=0 bulkscore=0 clxscore=1015 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508160039
 
-Disabling the AES core in Shared ICE is not supported during power
-collapse for UFS Host Controller v5.0, which may lead to data errors
-after Hibern8 exit. To comply with hardware programming guidelines
-and avoid this issue, issue a sync reset to ICE upon power collapse
-exit.
+Add device tree bindings for the RPMI clock service group based
+controller for the supervisor software.
 
-Hence follow below steps to reset the ICE upon exiting power collapse
-and align with Hw programming guide.
+The RPMI clock service group is defined by the RISC-V platform
+management interface (RPMI) specification.
 
-a. Assert the ICE sync reset by setting both SYNC_RST_SEL and
-   SYNC_RST_SW bits in UFS_MEM_ICE_CFG
-b. Deassert the reset by clearing SYNC_RST_SW in  UFS_MEM_ICE_CFG
-
-Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
-
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
-changes from V1:
-1) Incorporated feedback from Konrad and Manivannan by adding a delay
-   between ICE reset assertion and deassertion.
-2) Removed magic numbers and replaced them with meaningful constants.
+ .../bindings/clock/riscv,rpmi-clock.yaml      | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
 
-changes from V2:
-1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
-
-changes from V3:
-1) Addressed Manivannan's comments and added bit field values and
-   updated patch description.
-
-change from V4:
-1) Addressed Konrad's comment and fixed reset bit to zero.
----
- drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h |  2 +-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 444a09265ded..242f8d479d4a 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -38,6 +38,9 @@
- #define DEEMPHASIS_3_5_dB	0x04
- #define NO_DEEMPHASIS		0x0
- 
-+#define UFS_ICE_SYNC_RST_SEL	BIT(3)
-+#define UFS_ICE_SYNC_RST_SW	BIT(4)
+diff --git a/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+new file mode 100644
+index 000000000000..5d62bf8215c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/riscv,rpmi-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- enum {
- 	TSTBUS_UAWM,
- 	TSTBUS_UARM,
-@@ -751,11 +754,29 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
- 	int err;
-+	u32 reg_val;
- 
- 	err = ufs_qcom_enable_lane_clks(host);
- 	if (err)
- 		return err;
- 
-+	if ((!ufs_qcom_is_link_active(hba)) &&
-+	    host->hw_ver.major == 5 &&
-+	    host->hw_ver.minor == 0 &&
-+	    host->hw_ver.step == 0) {
-+		ufshcd_writel(hba, UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW, UFS_MEM_ICE_CFG);
-+		reg_val = ufshcd_readl(hba, UFS_MEM_ICE_CFG);
-+		reg_val &= ~(UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW);
-+		/*
-+		 * HW documentation doesn't recommend any delay between the
-+		 * reset set and clear. But we are enforcing an arbitrary delay
-+		 * to give flops enough time to settle in.
-+		 */
-+		usleep_range(50, 100);
-+		ufshcd_writel(hba, reg_val, UFS_MEM_ICE_CFG);
-+		ufshcd_readl(hba, UFS_MEM_ICE_CFG);
-+	}
++title: RISC-V RPMI clock service group based clock controller
 +
- 	return ufs_qcom_ice_resume(host);
- }
- 
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index 6840b7526cf5..81e2c2049849 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -60,7 +60,7 @@ enum {
- 	UFS_AH8_CFG				= 0xFC,
- 
- 	UFS_RD_REG_MCQ				= 0xD00,
--
-+	UFS_MEM_ICE_CFG				= 0x2600,
- 	REG_UFS_MEM_ICE_CONFIG			= 0x260C,
- 	REG_UFS_MEM_ICE_NUM_CORE		= 0x2664,
- 
++maintainers:
++  - Anup Patel <anup@brainfault.org>
++
++description: |
++  The RISC-V Platform Management Interface (RPMI) [1] defines a
++  messaging protocol which is modular and extensible. The supervisor
++  software can send/receive RPMI messages via SBI MPXY extension [2]
++  or some dedicated supervisor-mode RPMI transport.
++
++  The RPMI specification [1] defines clock service group for accessing
++  system clocks managed by a platform microcontroller. The supervisor
++  software can access RPMI clock service group via SBI MPXY channel or
++  some dedicated supervisor-mode RPMI transport.
++
++  ===========================================
++  References
++  ===========================================
++
++  [1] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
++      https://github.com/riscv-non-isa/riscv-rpmi/releases
++
++  [2] RISC-V Supervisor Binary Interface (SBI) v3.0 (or higher)
++      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
++
++properties:
++  compatible:
++    description:
++      Intended for use by the supervisor software.
++    const: riscv,rpmi-clock
++
++  mboxes:
++    maxItems: 1
++    description:
++      Mailbox channel of the underlying RPMI transport or SBI message proxy channel.
++
++  "#clock-cells":
++    const: 1
++    description:
++      Platform specific CLOCK_ID as defined by the RISC-V Platform Management
++      Interface (RPMI) specification.
++
++required:
++  - compatible
++  - mboxes
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller {
++        compatible = "riscv,rpmi-clock";
++        mboxes = <&mpxy_mbox 0x1000 0x0>;
++        #clock-cells = <1>;
++    };
++...
 -- 
-2.34.1
+2.43.0
 
 
