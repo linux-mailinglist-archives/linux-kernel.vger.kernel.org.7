@@ -1,207 +1,179 @@
-Return-Path: <linux-kernel+bounces-773644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39893B2A3CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00F4B2A415
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E1B196711C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85A256652F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A99E321447;
-	Mon, 18 Aug 2025 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I3X1bl1w"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB6131E100;
+	Mon, 18 Aug 2025 13:07:30 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C165320CBA;
-	Mon, 18 Aug 2025 13:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134330F7F8
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522411; cv=none; b=t/qUOaiu6i3DNVr4GP3rMF+MIyYbZMvyeSrzzqu7IDGNWDHjsfYWUchfN94ROHsQpyNFoYuqLBiHW0Vt1EPhirdvKFGnQLDYP5/blDQzjPqQtijwmkHrRj+I0J6y99RRYeGKYob6Hz6Ul17FmqAtCk7jy83LmYzE+8cM1rBdf4k=
+	t=1755522450; cv=none; b=H21oqrdUdn9fiXOBkQAph+ejLyo5baiKdXArgQtdMOo5bevtr8T7euiTw6Ve0pW99BuA2EEi4o3csq6vpn69Bl+BzA03cGtIaCTqRABcbg0dmoFzY5ig3Aff8rn+k+G3HFETeT7yRdjYeVyV/ZGRiF317GswBvyDy/RW2eK7N7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522411; c=relaxed/simple;
-	bh=LxVHiBOsr25dNYOXjvzm0hSTV25ZEk7fNGwyFL4wrOY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lW+BLL4Sj9qwIBlQ6gZ8J08IgLMUgVFJheCHqwxGopyq9+Q686z1jiBHht/lSD9+W23v+Tw/RceY4/iUod+/1MgYaXL9cyIQJqYzUoeXKYEhhKEYrgYG3F3oFc/ZY0KxmrWiK+BG0b4HDZfpXUjTsKyoMX8HbBmh8xm3RJgQ2bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I3X1bl1w; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.172] (mob-5-90-51-68.net.vodafone.it [5.90.51.68])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E6CF2416;
-	Mon, 18 Aug 2025 15:05:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755522350;
-	bh=LxVHiBOsr25dNYOXjvzm0hSTV25ZEk7fNGwyFL4wrOY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=I3X1bl1wYybCFs0xRAnk0nC44sedpL7gzAQ5AtjgfPu0xQiMQXKHY9NfqRAwDi0zX
-	 ZvBAf927J1Vgu4exKRlQnH1mhseq3X6Sq3iUv4ikA6SZIj8x9N1OIhic2GzwzEL1xb
-	 o02eEer+mHgwmD5ejAEvBXD9nYUbhwHMFUJsnQEs=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Mon, 18 Aug 2025 15:06:36 +0200
-Subject: [PATCH v2 2/2] media: ivtv: Fix invalid access to file *
+	s=arc-20240116; t=1755522450; c=relaxed/simple;
+	bh=0zSBC2vvJdjkdCmI+qUeUA655YfIG82HLcSocUu/R8A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5iF2+xl9AD5Pb3JfXy8N/pgD23auyWVOvGR6WAAKtHauSJGZkgXTOJeoumYpen79WC9vnAaTbvuQOSwWIECU8GbUz/2kC8759tUzwCuiCuhyQEIQTLEZbKy5MhWCZXmEZv/BI5hzRVetc8AX5zF1EBT6V6QvB7dFVKEY82QYro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c5Cg15ZkTzKHMd7
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:07:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2D78D1A018D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:07:25 +0800 (CST)
+Received: from huawei.com (unknown [10.67.174.45])
+	by APP4 (Coremail) with SMTP id gCh0CgCXExSFJaNoH6prEA--.57527S2;
+	Mon, 18 Aug 2025 21:07:23 +0800 (CST)
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: x86@kernel.org
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Tengda Wu <wutengda@huaweicloud.com>
+Subject: [PATCH -next] x86: Prevent KASAN false positive warnings in __show_regs()
+Date: Mon, 18 Aug 2025 13:07:15 +0000
+Message-Id: <20250818130715.2904264-1-wutengda@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-cx18-v4l2-fh-v2-2-3f53ce423663@ideasonboard.com>
-References: <20250818-cx18-v4l2-fh-v2-0-3f53ce423663@ideasonboard.com>
-In-Reply-To: <20250818-cx18-v4l2-fh-v2-0-3f53ce423663@ideasonboard.com>
-To: Andy Walls <awalls@md.metrocast.net>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil+cisco@kernel.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4954;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=LxVHiBOsr25dNYOXjvzm0hSTV25ZEk7fNGwyFL4wrOY=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBooyVjWqa5MLaPbzPsnpHYEmG3s7SjfpVRx18Dh
- HGcfgKnNYOJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaKMlYwAKCRByNAaPFqFW
- PGIpD/9UdI7SyVuH3+wLMACjJ0wEL+sVZ2hlq06Nc8p75iergEzkULhPgvuarQA6uU9Pgs5hhBe
- QAe1VQZZwxyqmG0g28cgsR3EKlpHkKpQELDCaY9OxSduj3sNZP8FjqF5ftfO5792S5rn/bOzQYs
- Tofrfu3ML2QY0/kHGt/AqyWQGhKFcRm9Qcb+tX/ShJ90gwHF62gsUbsCMYQEr67oBfmC7bc4bxX
- PSbna0/OFmKdea53kMlfus8Y505787iTe3xod1o8symwX3OldA5b8PxsgifYogov+DxAmWei7Dz
- 6E3jT74R0EvNjVDlbhWV7Tn/RZfFH82PHlXilMqsizvWxgAm2zl22zMKidI1eaCPjWedz8Xj8YE
- P59UUkf7tz4hwGTRu+xfGsShggX1DiMrtLwk3DFRIhY80L87S7u2vCiiKBDMJ8roEb4vXvSsh5A
- nY9d3B6UubD3QM67iIUZF9uSUymaXJKlgGoXyut288jv+IoT0tTgoCSBjZ3IfnzYboWLOOaVw1k
- xAy7X99pSuYNyTR3vlf6mZNU7qdyx6NEgCxgonN+Vuxg3be/I8cVOpCleYu8b6v9TJzb1cr6ad9
- QUAQ73Xzc5pppkdXXk97vyz0S4c0Bz2L8zAVzguk48FIbEgKu8Xw/9+ddU7Khwe26D+Jzl528X2
- 4h2Al/TxnlvEGig==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXExSFJaNoH6prEA--.57527S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZry7Xr4DWF4kGF4DtF1xAFb_yoWrury7pF
+	srAw1kXFWrC3s8ZFW7AF48X3sxuF4DWwn2yrZ3Jr1avFn09r1fJa13CF1jvryfJr98C345
+	Jayqqw1qyFyfCaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-all ioctl handlers have been ported to operate on the file * first
-function argument.
+When process A accesses process B's `regs` from stack memory through
+__show_regs(), the stack of process B keeps changing during runtime.
+This causes false positives like "stack out-of-bounds" [1] or
+"out-of-bounds" [2] warnings when reading `regs` contents.
 
-The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
-needs to start streaming. This function calls the s_input() and
-s_frequency() ioctl handlers directly, but being called from the driver
-context, it doesn't have a valid file * to pass them. This causes the
-ioctl handlers to deference an invalid pointer.
+Add __no_sanitize_address attribute to __show_regs() to suppress these
+false positives while maintaining the ability to debug register states
+across processes.
 
-Fix this by wrapping the ioctl handlers implementation in helper
-functions which accepts a ivtv_open_id pointer as first argument
-and make the ivtv_init_on_first_open() function call the helpers
-without going through the ioctl handlers.
+[1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
+[2] A similar KASAN report:
+[332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
+[332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
+[332706.552562]
+[332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
+[332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
+[332706.552906] Call Trace:
+[332706.552998]  <TASK>
+[332706.553089]  dump_stack_lvl+0x32/0x50
+[332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
+[332706.553303]  print_report+0xbe/0x280
+[332706.553409]  ? __virt_addr_valid+0xed/0x160
+[332706.553512]  ? __show_regs+0x4b/0x340
+[332706.553612]  kasan_report+0xa8/0xe0
+[332706.553716]  ? __show_regs+0x4b/0x340
+[332706.553816]  ? asm_exc_page_fault+0x22/0x30
+[332706.553919]  __show_regs+0x4b/0x340
+[332706.554021]  ? asm_exc_page_fault+0x22/0x30
+[332706.554123]  show_trace_log_lvl+0x274/0x3b0
+[332706.554229]  ? load_elf_binary+0xf6e/0x1610
+[332706.554330]  ? rep_stos_alternative+0x40/0x80
+[332706.554439]  sched_show_task+0x211/0x290
+[332706.554544]  ? __pfx_sched_show_task+0x10/0x10
+[332706.554648]  ? _find_next_bit+0x6/0xc0
+[332706.554749]  ? _find_next_bit+0x37/0xc0
+[332706.554852]  show_state_filter+0x72/0x130
+[332706.554956]  sysrq_handle_showstate+0x7/0x10
+[332706.555062]  __handle_sysrq+0x146/0x2d0
+[332706.555165]  write_sysrq_trigger+0x2f/0x50
+[332706.555270]  proc_reg_write+0xdd/0x140
+[332706.555372]  vfs_write+0x1ff/0x5f0
+[332706.555474]  ? __pfx_vfs_write+0x10/0x10
+[332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
+[332706.555682]  ? __fget_light+0x99/0xf0
+[332706.555785]  ksys_write+0xb8/0x150
+[332706.555887]  ? __pfx_ksys_write+0x10/0x10
+[332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
+[332706.556094]  do_syscall_64+0x55/0x100
+[332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
-The bug has been reported by Smatch.
-
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
-Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
+Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
 ---
- drivers/media/pci/ivtv/ivtv-driver.c |  4 ++--
- drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
- drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
- 3 files changed, 23 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/kdebug.h | 2 +-
+ arch/x86/kernel/process_32.c  | 1 +
+ arch/x86/kernel/process_64.c  | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
-index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..bcbb03271047df9b127039759dbfefbaae67f9c3 100644
---- a/drivers/media/pci/ivtv/ivtv-driver.c
-+++ b/drivers/media/pci/ivtv/ivtv-driver.c
-@@ -1310,13 +1310,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
+diff --git a/arch/x86/include/asm/kdebug.h b/arch/x86/include/asm/kdebug.h
+index d1514e70477b..2e0570d75bbc 100644
+--- a/arch/x86/include/asm/kdebug.h
++++ b/arch/x86/include/asm/kdebug.h
+@@ -36,7 +36,7 @@ extern void die(const char *, struct pt_regs *,long);
+ void die_addr(const char *str, struct pt_regs *regs, long err, long gp_addr);
+ extern int __must_check __die(const char *, struct pt_regs *, long);
+ extern void show_stack_regs(struct pt_regs *regs);
+-extern void __show_regs(struct pt_regs *regs, enum show_regs_mode,
++extern void __no_sanitize_address __show_regs(struct pt_regs *regs, enum show_regs_mode,
+ 			const char *log_lvl);
+ extern void show_iret_regs(struct pt_regs *regs, const char *log_lvl);
+ extern unsigned long oops_begin(void);
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 3ef15c2f152f..1b7ed4dee18b 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -56,6 +56,7 @@
  
- 	video_input = itv->active_input;
- 	itv->active_input++;	/* Force update of input */
--	ivtv_s_input(NULL, &fh, video_input);
-+	ivtv_do_s_input(&fh, video_input);
+ #include "process.h"
  
- 	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
- 	   in one place. */
- 	itv->std++;		/* Force full standard initialization */
- 	itv->std_out = itv->std;
--	ivtv_s_frequency(NULL, &fh, &vf);
-+	ivtv_do_s_frequency(&fh, &vf);
- 
- 	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
- 		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
-diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
-index 8077a71d4850ec773caa20c3fca08f92f3117d69..ba1fce42a8d6d7d9a3779bfc9dfd310060e61103 100644
---- a/drivers/media/pci/ivtv/ivtv-ioctl.c
-+++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
-@@ -974,9 +974,9 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
- 	return 0;
- }
- 
--int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-+int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp)
++__no_sanitize_address
+ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+ 		 const char *log_lvl)
  {
--	struct ivtv *itv = file2id(file)->itv;
-+	struct ivtv *itv = id->itv;
- 	v4l2_std_id std;
- 	int i;
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 52a5c03c353c..921c96154ce3 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -66,6 +66,7 @@
+ #include "process.h"
  
-@@ -1017,6 +1017,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
- 	return 0;
- }
- 
-+static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-+{
-+	return ivtv_do_s_input(file2id(file), inp);
-+}
-+
- static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
+ /* Prints also some state that isn't saved in the pt_regs */
++__no_sanitize_address
+ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+ 		 const char *log_lvl)
  {
- 	struct ivtv *itv = file2id(file)->itv;
-@@ -1065,10 +1070,11 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
- 	return 0;
- }
- 
--int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
-+int ivtv_do_s_frequency(struct ivtv_open_id *id,
-+			const struct v4l2_frequency *vf)
- {
--	struct ivtv *itv = file2id(file)->itv;
--	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
-+	struct ivtv *itv = id->itv;
-+	struct ivtv_stream *s = &itv->streams[id->type];
- 
- 	if (s->vdev.vfl_dir)
- 		return -ENOTTY;
-@@ -1082,6 +1088,12 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
- 	return 0;
- }
- 
-+static int ivtv_s_frequency(struct file *file, void *fh,
-+			    const struct v4l2_frequency *vf)
-+{
-+	return ivtv_do_s_frequency(file2id(file), vf);
-+}
-+
- static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
- {
- 	struct ivtv *itv = file2id(file)->itv;
-diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
-index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..7c91b8963b420761c2afcab1dece4d19a4ec0322 100644
---- a/drivers/media/pci/ivtv/ivtv-ioctl.h
-+++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
-@@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
- void ivtv_set_funcs(struct video_device *vdev);
- void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
- void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
--int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
--int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
-+
-+struct ivtv_open_id;
-+int ivtv_do_s_frequency(struct ivtv_open_id *id, const struct v4l2_frequency *vf);
-+int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp);
- 
- #endif
-
 -- 
-2.50.1
+2.34.1
 
 
