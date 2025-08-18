@@ -1,301 +1,148 @@
-Return-Path: <linux-kernel+bounces-773720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604E7B2A7DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:57:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF98FB2A7EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19305E2AD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08D51B66E78
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF1432252A;
-	Mon, 18 Aug 2025 13:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A00220696;
+	Mon, 18 Aug 2025 13:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOojLOrk"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DONGjlCl"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A706C21FF4B;
-	Mon, 18 Aug 2025 13:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AEC31AF3A;
+	Mon, 18 Aug 2025 13:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524631; cv=none; b=G03kMiFOohsqtIblZ7VMUjvnv59Eeq+DR8AxLuVHsUS7brxwB9Xe8C5xdInL5X8muDYmu8yZ7gun/egB3Uy3gY4Ky8W0Pwwviohx3c1kRRtsJpLS8Nav8eiAPE/+EEgO6XIx7ImDhitOpa/o1Y1PC9zwy/C31urA362+oWXf9PQ=
+	t=1755524661; cv=none; b=YyYmSDM7GPoiErfJWv5JH0iBPjoJcZy9jz7jADCm4ipm5v+ugxBNQ6MiF20RmxYY7l1EF5xR987fDfVLf6SXv3ywcbJ8X9VeV5yk78KYX6JW8pYlqml/A6sOMfkODC8+5eDIn1g3jBOKP37lZyCFChMQYC4HgffAu3NFK5y3xaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524631; c=relaxed/simple;
-	bh=EH5R8gXyWE2kpZZPYkkLNKvw76nMUQCVU5AoWHweeG4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UB1yxId1RvBL8s5e1B+YdQheMzmlc4A2Bba3mgnGtzRB+8eVubAnDoD/Ndft8GPXbfAZMk8hN7zDKcYVGM9Rjx+0JOmiiW29Y5R8IAX1kV7BDgjxste4PnzNXk+v406UKsYdQJk9v2lrXxpPF3SbDDky9mxk6UebifseOftHvCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bOojLOrk; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1755524661; c=relaxed/simple;
+	bh=pIZnCTtl+oja/frA9Sz2wT+DxHf6lpRd8wPl+S40zHw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mVYqfaivVG62iLwz13XfGhdutFqpl+ZREnBJR7Ml4fa/is6bwisEZBgeaj6epkeZPONXK7x6FNP4oT/QEmWGhx69rIjzLXhLUgctscTl5nTw/2lQU4f0dAsu9/jlm0xZOro5x5YDnyt+VaGlG/FN0RrzD+MA3Uq/AOUVONHGab8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DONGjlCl; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso20239295e9.1;
-        Mon, 18 Aug 2025 06:43:49 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9e414252dso1967952f8f.3;
+        Mon, 18 Aug 2025 06:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755524628; x=1756129428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ksd4ZkEJJDNxja3j4P7wzYuF2zcMxe1sJg0wW5wmYxA=;
-        b=bOojLOrkpzV6Zfb7pK42P4HX8/2KLcP2TSFrOLE01qTopIfBTCPhlgpr1aEN8TMdFg
-         ZKElfUWKZ59fqZzR3RglB4cA8BUoeBg+z27zY9VgbIsbYyW4TtISF5LwWuoZSUdPVU0r
-         LbbftkneSkXsHhVVRTj7jeXchh5Ui1GcfQ2x7LPB3Ib+6gxQ8tn0h08CkjX3ulbTFGAI
-         lRJHSWT/RkzBodu8LYYmwSXn9DVo7P0wdgU/luRQ7qO4h1RQajnXTKCGw0C0Tu9b/bVe
-         tMMrHsyYzSGLuFZ5y3zw/HC3aCKCZMXxQAomKFn5MGoesPqzgXkxHbaQa8VueTvycFTD
-         JI3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755524628; x=1756129428;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755524658; x=1756129458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ksd4ZkEJJDNxja3j4P7wzYuF2zcMxe1sJg0wW5wmYxA=;
-        b=cClqV7A+Mqt9vI99/WlI4grMPZahHxSl7wyWugb6YfOkmMEvMGxT8C6lMtEZujMNNL
-         ceiLMCE92VE6FcDcYZ11HCK29u+1t/ldlJs/ctuS19td2xfPgqUgY2Yl+wipBx1aga58
-         iyexewqjbv8ojI76pfLXR74NNiwfDZxs9K6yDlwfYAKynIblmRFNIYHZlmPBKl/KsK9f
-         q/IjiHykIS4Y1UL2TmhgM+2u428h2b7fHbUGhs2HSfk/ILM52R3FZCqWIeOVTVKwuRjL
-         z0SCesPHsclh9VY6tirhPlTnJkaaDKDINXJEYOOqET1bl54N+loMj5iVZGGbgJQrYZ5x
-         bixA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlcMGrBJ/ut6lNzlL8a3iJZiOQfU0RGuzjOosuhEYICtm/OR0KZ69vGZNzJcTv2ueYkiyuRQfusk6JRqLa@vger.kernel.org, AJvYcCUxBuy1vbbsT0rbSeOFdVxgeTve65c65NQLnDxeGu2TZ5gZGhvS4W/nEX+NoMGBWKHelAsm7QFPypEl++ab2pOHVW7J@vger.kernel.org, AJvYcCWtmohFiVteV/sDmYaznRYi6mqpbw3WUijiVU7WpcYRmW6T0rIWE79tvwcC90dqH7O/O6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQvnFHJEDbRPMHIIN7W7yWY+7cYDRUZaRzMLBLR6hMWWY45iy0
-	Ut1IFkV5xxUMflpKAvN0jrxxnQPErLfr84AgjB/lNo+xoDzr08McIIyz
-X-Gm-Gg: ASbGncurVQk+jt6GeePZ5p+uK8iyJc1HHCyZQAeZOUJp1DivJbACWQIwbRrnbZ26U74
-	2U25wf141Xg/A40mIzgqhie16gVC8cWWQA7vfFKl9v0eup1eg2TrGy+OCuCblW0sFo1/QBYhyG0
-	SEzYFOaTt+YqtDuYcdJuC7ZOvhubr/fJxe9+3NRFFyyszzqWMqjJ8KMlksNwqYbwR1kfk2qGOpB
-	3KEkz2LSbQsXY0OWOU6PsuzgtOekCSr1gpiRWuca2eEktW7RwdAvcW5vyQBfL1FvryOnESkiYc8
-	Cy9Ce8uf5ya9l/d3nsLSeWsONfrJIWk+OUxlU11z8hWKMQ3MOC8u9eRcfWCX4ZFN3oWA6GPJ
-X-Google-Smtp-Source: AGHT+IFefD8L/5AECmOQWgwZG7vBzg4GVr69pUWnjr280iqHcR09XLeHb5ncoD/H3ipricvKqKH7cQ==
-X-Received: by 2002:a5d:5f49:0:b0:3a4:ee40:715c with SMTP id ffacd0b85a97d-3bb66a3baa4mr10095478f8f.14.1755524627746;
-        Mon, 18 Aug 2025 06:43:47 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64d29a70sm13155211f8f.17.2025.08.18.06.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:43:47 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 18 Aug 2025 15:43:44 +0200
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, hca@linux.ibm.com,
-	revest@chromium.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v5 1/4] fprobe: use rhltable for fprobe_ip_table
-Message-ID: <aKMuENl9omxi6OwJ@krava>
-References: <20250817024607.296117-1-dongml2@chinatelecom.cn>
- <20250817024607.296117-2-dongml2@chinatelecom.cn>
+        bh=SiEVHskzF1eg+qdMYnVzuXxMv6Gbw4mlKEHXA1k+p/Q=;
+        b=DONGjlClCnVZyAWEI67Y9JSmvDnRwqkIQ1lk2u0H9aUQOcexzOWr3wFQPFF3h6+udr
+         E0iC8IFM8SkbLnWiUfdM3ifD1RKJYz5VAkItzsHtt6pqM+j9GNmR2jcdFG3/yjNFVzGO
+         qA7WGmnCZzM7DIUVI/GvsnGzyrUewGN4/ODf4BDOJ8+bO45B7uY7Mh0m1izVQqxXra0E
+         /EWLB0IhoVBlGj6tD8YyReFQoe5FekMN4HmdUv2WJQJu8SV7tualrde8x/0qZtRCGpei
+         gDNhoaimzxYCzHpNGpmbq7TWBDHxFTUaTGIDlV6V9/sASPDazZD0b3cps74ibFi2heau
+         2ZiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755524658; x=1756129458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SiEVHskzF1eg+qdMYnVzuXxMv6Gbw4mlKEHXA1k+p/Q=;
+        b=fu/NPJuAVsh8F9fLnCk+L+666XBwQNU1d0DieZeKySbMetiGlh2+cIoLBmkflGXSYu
+         +mb1DtTpTmz2gENbM2OXRv5Es63KSih4EXjwWn66rIzpR51rU+qWqmiElF7ePmWjvP7a
+         pZhPwOqP44f5xRlSmc7MuMSNLv25ix//d0Obt5PvEF9sDnr9MBo3Vb3eSdyVJ0d2c0o2
+         DMuanrhiM/W6LsSO4gz0hICO4kghl7eJ++VkFm0uslrgToOo0qRFAnDwdktVuDiBVfl2
+         sLA8gPyNhg0WqoIHW5kWQhCsrCclEU/ugtCORzdBLZi8vtMe/TzHFjdksC80jO+I2bfr
+         wzjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKLhFsrZJqhRugP/lo2dLWHgNZ+bFd8skVX4KenbXMDVjZibekyZV/bAKI73uwvjOmIFXZo8Uf3BXW@vger.kernel.org, AJvYcCX7+/+WWUxmkKbimMDrSkzBMO/3iTeLoHo8SNj9kww9le/yrB8MJE+x5zD7aFHx7T5aOhz1HuXAv4ShA0wx4PVaGLM=@vger.kernel.org, AJvYcCXOheg9z4/5LmdIwgR9QaCsZXfNo3ygxItOIHZqruxVEm5FsIMNv49NNazDY9ntRuedocnHCaYjZs1NL11v@vger.kernel.org
+X-Gm-Message-State: AOJu0YygQzS1AxkWli3dUTJ+LADeLBW9Gy4Gi54G23oOBuCba14I8Gl0
+	d/yChBSTtBKTd81/tW3CoDK6sGGLc0iiwKlbjJ+5zFqhn4qceosQigFHsSi6XkV/ZeXbHx8s6j8
+	ngI8uo/QeFCkDt5GeGT6icgjMVpuwt3s=
+X-Gm-Gg: ASbGncsCil9hO4n9s1q7kzlS3oXBP4NAKqweTALAB9bePZxi6hZLRbow/hwq1I0R5yc
+	1vXtIww5r6GmH1mUslAXon5tbJZrornihsm+1fySE4grkXbQd/ZI2ojGQJ0o+yoR6o6H3xfQHEE
+	wkVKGCurI4IATdb4EMgNG6U7/pkiduyywcLTAF7KkyS5WwGcUU0kukI4OdgHxddQyrSQLSzMhbU
+	7c3Cqqi
+X-Google-Smtp-Source: AGHT+IGEZRZJuCsQmh+GGeOLEN/OTrXJw0LxVaX0n2noAUCzpe61aoMgbS52ARL9CNtZasK+JzTQ+K6fJXYOlMI5UN8=
+X-Received: by 2002:a5d:64e9:0:b0:3bb:2fb3:9ce8 with SMTP id
+ ffacd0b85a97d-3bb68a16ea2mr7880821f8f.30.1755524658087; Mon, 18 Aug 2025
+ 06:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250817024607.296117-2-dongml2@chinatelecom.cn>
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250812200344.3253781-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX=8rdWHyTpUmreOy5Nf-kiAoQMVakU051AyC2BoVP8vA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX=8rdWHyTpUmreOy5Nf-kiAoQMVakU051AyC2BoVP8vA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 18 Aug 2025 14:43:50 +0100
+X-Gm-Features: Ac12FXwREzTEEJN9Bi9j3LYwbmIYhN6Bv0d3u42rM5WXlOcyxKppBQ5xr4C3MMk
+Message-ID: <CA+V-a8tk8FJoynigy0JSWbb7x-BOjUEuzC9fYY0wC+GQKCRiBA@mail.gmail.com>
+Subject: Re: [PATCH 04/13] arm64: dts: renesas: r9a09g087: Add pinctrl node
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 17, 2025 at 10:46:02AM +0800, Menglong Dong wrote:
+Hi Geert,
 
-SNIP
+Thank you for the review.
 
-> +/* Node insertion and deletion requires the fprobe_mutex */
-> +static int insert_fprobe_node(struct fprobe_hlist_node *node)
-> +{
->  	lockdep_assert_held(&fprobe_mutex);
->  
-> -	next = find_first_fprobe_node(ip);
-> -	if (next) {
-> -		hlist_add_before_rcu(&node->hlist, &next->hlist);
-> -		return;
-> -	}
-> -	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
-> -	hlist_add_head_rcu(&node->hlist, head);
-> +	return rhltable_insert(&fprobe_ip_table, &node->hlist, fprobe_rht_params);
->  }
->  
->  /* Return true if there are synonims */
-> @@ -92,9 +92,11 @@ static bool delete_fprobe_node(struct fprobe_hlist_node *node)
->  	/* Avoid double deleting */
->  	if (READ_ONCE(node->fp) != NULL) {
->  		WRITE_ONCE(node->fp, NULL);
-> -		hlist_del_rcu(&node->hlist);
-> +		rhltable_remove(&fprobe_ip_table, &node->hlist,
-> +				fprobe_rht_params);
->  	}
-> -	return !!find_first_fprobe_node(node->addr);
-> +	return !!rhltable_lookup(&fprobe_ip_table, &node->addr,
-> +				 fprobe_rht_params);
+On Mon, Aug 18, 2025 at 2:34=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add pinctrl node to RZ/N2H ("R9A09G087") SoC DTSI.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > @@ -5,6 +5,17 @@
+> >   * Copyright (C) 2025 Renesas Electronics Corp.
+> >   */
+> >
+> > +#define RZN2H_PINS_PER_PORT    8
+> > +
+> > +/*
+> > + * Create the pin index from its bank and position numbers and store i=
+n
+> > + * the upper 16 bits the alternate function identifier
+> > + */
+> > +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + (p=
+) | ((f) << 16))
+> > +
+> > +/* Convert a port and pin label to its global pin index */
+> > +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin))
+>
+> Shouldn't this be in a header file under include/dt-bindings/pinctrl/?
+Agreed, theT2H related macros are used in the driver whereas the above
+aren't. In the past DT maintainers opposed including such headers
+which aren't used in the DT and drivers. Hence I choose this approach.
+Please let me know if you want me to move this into a header file
+under dt-bindings.
 
-I think rhltable_lookup needs rcu lock
+> Else you have to duplicate these definitions in DT overlays.
+>
+> The rest LGTM, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
 
->  }
->  
->  /* Check existence of the fprobe */
-> @@ -249,9 +251,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
->  static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  			struct ftrace_regs *fregs)
->  {
-> -	struct fprobe_hlist_node *node, *first;
->  	unsigned long *fgraph_data = NULL;
->  	unsigned long func = trace->func;
-> +	struct fprobe_hlist_node *node;
-> +	struct rhlist_head *head, *pos;
->  	unsigned long ret_ip;
->  	int reserved_words;
->  	struct fprobe *fp;
-> @@ -260,14 +263,11 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  	if (WARN_ON_ONCE(!fregs))
->  		return 0;
->  
-> -	first = node = find_first_fprobe_node(func);
-> -	if (unlikely(!first))
-> -		return 0;
-> -
-> +	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-
-ditto
-
-jirka
-
-
->  	reserved_words = 0;
-> -	hlist_for_each_entry_from_rcu(node, hlist) {
-> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
->  		if (node->addr != func)
-> -			break;
-> +			continue;
->  		fp = READ_ONCE(node->fp);
->  		if (!fp || !fp->exit_handler)
->  			continue;
-> @@ -278,13 +278,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  		reserved_words +=
->  			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
->  	}
-> -	node = first;
->  	if (reserved_words) {
->  		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
->  		if (unlikely(!fgraph_data)) {
-> -			hlist_for_each_entry_from_rcu(node, hlist) {
-> +			rhl_for_each_entry_rcu(node, pos, head, hlist) {
->  				if (node->addr != func)
-> -					break;
-> +					continue;
->  				fp = READ_ONCE(node->fp);
->  				if (fp && !fprobe_disabled(fp))
->  					fp->nmissed++;
-> @@ -299,12 +298,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  	 */
->  	ret_ip = ftrace_regs_get_return_address(fregs);
->  	used = 0;
-> -	hlist_for_each_entry_from_rcu(node, hlist) {
-> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
->  		int data_size;
->  		void *data;
->  
->  		if (node->addr != func)
-> -			break;
-> +			continue;
->  		fp = READ_ONCE(node->fp);
->  		if (!fp || fprobe_disabled(fp))
->  			continue;
-> @@ -448,25 +447,21 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
->  	return 0;
->  }
->  
-> -static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *head,
-> -					struct fprobe_addr_list *alist)
-> +static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
-> +					 struct fprobe_addr_list *alist)
->  {
-> -	struct fprobe_hlist_node *node;
->  	int ret = 0;
->  
-> -	hlist_for_each_entry_rcu(node, head, hlist,
-> -				 lockdep_is_held(&fprobe_mutex)) {
-> -		if (!within_module(node->addr, mod))
-> -			continue;
-> -		if (delete_fprobe_node(node))
-> -			continue;
-> -		/*
-> -		 * If failed to update alist, just continue to update hlist.
-> -		 * Therefore, at list user handler will not hit anymore.
-> -		 */
-> -		if (!ret)
-> -			ret = fprobe_addr_list_add(alist, node->addr);
-> -	}
-> +	if (!within_module(node->addr, mod))
-> +		return;
-> +	if (delete_fprobe_node(node))
-> +		return;
-> +	/*
-> +	 * If failed to update alist, just continue to update hlist.
-> +	 * Therefore, at list user handler will not hit anymore.
-> +	 */
-> +	if (!ret)
-> +		ret = fprobe_addr_list_add(alist, node->addr);
->  }
->  
->  /* Handle module unloading to manage fprobe_ip_table. */
-> @@ -474,8 +469,9 @@ static int fprobe_module_callback(struct notifier_block *nb,
->  				  unsigned long val, void *data)
->  {
->  	struct fprobe_addr_list alist = {.size = FPROBE_IPS_BATCH_INIT};
-> +	struct fprobe_hlist_node *node;
-> +	struct rhashtable_iter iter;
->  	struct module *mod = data;
-> -	int i;
->  
->  	if (val != MODULE_STATE_GOING)
->  		return NOTIFY_DONE;
-> @@ -486,8 +482,16 @@ static int fprobe_module_callback(struct notifier_block *nb,
->  		return NOTIFY_DONE;
->  
->  	mutex_lock(&fprobe_mutex);
-> -	for (i = 0; i < FPROBE_IP_TABLE_SIZE; i++)
-> -		fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &alist);
-> +	rhltable_walk_enter(&fprobe_ip_table, &iter);
-> +	do {
-> +		rhashtable_walk_start(&iter);
-> +
-> +		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
-> +			fprobe_remove_node_in_module(mod, node, &alist);
-> +
-> +		rhashtable_walk_stop(&iter);
-> +	} while (node == ERR_PTR(-EAGAIN));
-> +	rhashtable_walk_exit(&iter);
->  
->  	if (alist.index < alist.size && alist.index > 0)
->  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> @@ -727,8 +731,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
->  	ret = fprobe_graph_add_ips(addrs, num);
->  	if (!ret) {
->  		add_fprobe_hash(fp);
-> -		for (i = 0; i < hlist_array->size; i++)
-> -			insert_fprobe_node(&hlist_array->array[i]);
-> +		for (i = 0; i < hlist_array->size; i++) {
-> +			ret = insert_fprobe_node(&hlist_array->array[i]);
-> +			if (ret)
-> +				break;
-> +		}
-> +		/* fallback on insert error */
-> +		if (ret) {
-> +			for (i--; i >= 0; i--)
-> +				delete_fprobe_node(&hlist_array->array[i]);
-> +		}
->  	}
->  	mutex_unlock(&fprobe_mutex);
->  
-> @@ -824,3 +836,10 @@ int unregister_fprobe(struct fprobe *fp)
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(unregister_fprobe);
-> +
-> +static int __init fprobe_initcall(void)
-> +{
-> +	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
-> +	return 0;
-> +}
-> +late_initcall(fprobe_initcall);
-> -- 
-> 2.50.1
-> 
-> 
+Cheers,
+Prabhakar
 
