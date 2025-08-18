@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-773719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EDEB2A75D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604E7B2A7DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F16682EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19305E2AD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CCB271A6D;
-	Mon, 18 Aug 2025 13:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF1432252A;
+	Mon, 18 Aug 2025 13:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kiRnEJ7G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOojLOrk"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAFC258EF3;
-	Mon, 18 Aug 2025 13:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A706C21FF4B;
+	Mon, 18 Aug 2025 13:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524623; cv=none; b=B10NHK2wysFL9nGMMBdsY5q+ub/3OJ0pG5DODiR13zomyjin/6o9A9teA+v9d3+VZNNjtHWn0WlYxsdF5SH2BwTRVAvEiV0JeM65U3PlBiwTBCe/dz2XA1EJy8+BnC1MP5NQ5JUs30cG1NFep4XQR8Z0vclv1QJnM+1Z+zf5ZME=
+	t=1755524631; cv=none; b=G03kMiFOohsqtIblZ7VMUjvnv59Eeq+DR8AxLuVHsUS7brxwB9Xe8C5xdInL5X8muDYmu8yZ7gun/egB3Uy3gY4Ky8W0Pwwviohx3c1kRRtsJpLS8Nav8eiAPE/+EEgO6XIx7ImDhitOpa/o1Y1PC9zwy/C31urA362+oWXf9PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524623; c=relaxed/simple;
-	bh=YlUI847c1ljwtyOmYzO2xGlFoqndiw/0Vuz7F4sMuF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbplrE3qFTfnelFmSSDdzgfeCNIIhKDXqBoAYNaLWhvKrAP1R5x6kugW3V/S85Z0zMtewcffAIV+gFjWvnxyUzCXskixRxualhwF5jqcZLE6oIHh1GgjIO7+jv7cRfH9tkCUtHXpHI/kA+xp+STU1qP5Jk/DDYHfpLqyg0Gqlr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kiRnEJ7G; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755524620; x=1787060620;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YlUI847c1ljwtyOmYzO2xGlFoqndiw/0Vuz7F4sMuF0=;
-  b=kiRnEJ7GyD7kWtc1yk4MKe2vO/J96pcyOd0ff/FuE6QyDrPTZqEK5Ssf
-   r/fq3HqQ+QPT8Ap+puEs1jD8zizuVKIk1ieMmURm7Ht2forbW6fAS+XY6
-   7XInuvBUQWiocAciSmgFPqxGV8NgqQVhQRNy+8lyCsWdv6BHbs3N7U04f
-   M8qCQldziUm7ybYLAGycRl8pUWgXGiF4zj4zunMdMLWX1laYbQvQCFepR
-   p6HXHPFvtg7tq/1G/8eMAktNNQTcLe19mf0ldK9MJBpekBIOZSbhxe8PC
-   RrttoYlv7vWOW3oxlTJudR+KGN+JwQqgcsh/qtHnINchkqeOrWCR6zgXF
-   Q==;
-X-CSE-ConnectionGUID: cfHJmN64ScC0SwISNa4urw==
-X-CSE-MsgGUID: 6fjeJL2TQY6uGx6XBrSKZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57894527"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57894527"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 06:43:40 -0700
-X-CSE-ConnectionGUID: ZjwLrrQUQ7ahWNTixEZUeA==
-X-CSE-MsgGUID: 42Pg1+28S1+iQUxNyHZgCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171814469"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 18 Aug 2025 06:43:38 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uo098-000F55-3A;
-	Mon, 18 Aug 2025 13:43:34 +0000
-Date: Mon, 18 Aug 2025 21:43:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mohammed Guermoud <mohammed.guermoud@gmail.com>, marvin24@gmx.de,
-	gregkh@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mohammed Guermoud <mohammed.guermoud@gmail.com>
-Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
- NVEC_PHD macro
-Message-ID: <202508182005.4PiKxXcN-lkp@intel.com>
-References: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
+	s=arc-20240116; t=1755524631; c=relaxed/simple;
+	bh=EH5R8gXyWE2kpZZPYkkLNKvw76nMUQCVU5AoWHweeG4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UB1yxId1RvBL8s5e1B+YdQheMzmlc4A2Bba3mgnGtzRB+8eVubAnDoD/Ndft8GPXbfAZMk8hN7zDKcYVGM9Rjx+0JOmiiW29Y5R8IAX1kV7BDgjxste4PnzNXk+v406UKsYdQJk9v2lrXxpPF3SbDDky9mxk6UebifseOftHvCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bOojLOrk; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso20239295e9.1;
+        Mon, 18 Aug 2025 06:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755524628; x=1756129428; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ksd4ZkEJJDNxja3j4P7wzYuF2zcMxe1sJg0wW5wmYxA=;
+        b=bOojLOrkpzV6Zfb7pK42P4HX8/2KLcP2TSFrOLE01qTopIfBTCPhlgpr1aEN8TMdFg
+         ZKElfUWKZ59fqZzR3RglB4cA8BUoeBg+z27zY9VgbIsbYyW4TtISF5LwWuoZSUdPVU0r
+         LbbftkneSkXsHhVVRTj7jeXchh5Ui1GcfQ2x7LPB3Ib+6gxQ8tn0h08CkjX3ulbTFGAI
+         lRJHSWT/RkzBodu8LYYmwSXn9DVo7P0wdgU/luRQ7qO4h1RQajnXTKCGw0C0Tu9b/bVe
+         tMMrHsyYzSGLuFZ5y3zw/HC3aCKCZMXxQAomKFn5MGoesPqzgXkxHbaQa8VueTvycFTD
+         JI3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755524628; x=1756129428;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ksd4ZkEJJDNxja3j4P7wzYuF2zcMxe1sJg0wW5wmYxA=;
+        b=cClqV7A+Mqt9vI99/WlI4grMPZahHxSl7wyWugb6YfOkmMEvMGxT8C6lMtEZujMNNL
+         ceiLMCE92VE6FcDcYZ11HCK29u+1t/ldlJs/ctuS19td2xfPgqUgY2Yl+wipBx1aga58
+         iyexewqjbv8ojI76pfLXR74NNiwfDZxs9K6yDlwfYAKynIblmRFNIYHZlmPBKl/KsK9f
+         q/IjiHykIS4Y1UL2TmhgM+2u428h2b7fHbUGhs2HSfk/ILM52R3FZCqWIeOVTVKwuRjL
+         z0SCesPHsclh9VY6tirhPlTnJkaaDKDINXJEYOOqET1bl54N+loMj5iVZGGbgJQrYZ5x
+         bixA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlcMGrBJ/ut6lNzlL8a3iJZiOQfU0RGuzjOosuhEYICtm/OR0KZ69vGZNzJcTv2ueYkiyuRQfusk6JRqLa@vger.kernel.org, AJvYcCUxBuy1vbbsT0rbSeOFdVxgeTve65c65NQLnDxeGu2TZ5gZGhvS4W/nEX+NoMGBWKHelAsm7QFPypEl++ab2pOHVW7J@vger.kernel.org, AJvYcCWtmohFiVteV/sDmYaznRYi6mqpbw3WUijiVU7WpcYRmW6T0rIWE79tvwcC90dqH7O/O6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQvnFHJEDbRPMHIIN7W7yWY+7cYDRUZaRzMLBLR6hMWWY45iy0
+	Ut1IFkV5xxUMflpKAvN0jrxxnQPErLfr84AgjB/lNo+xoDzr08McIIyz
+X-Gm-Gg: ASbGncurVQk+jt6GeePZ5p+uK8iyJc1HHCyZQAeZOUJp1DivJbACWQIwbRrnbZ26U74
+	2U25wf141Xg/A40mIzgqhie16gVC8cWWQA7vfFKl9v0eup1eg2TrGy+OCuCblW0sFo1/QBYhyG0
+	SEzYFOaTt+YqtDuYcdJuC7ZOvhubr/fJxe9+3NRFFyyszzqWMqjJ8KMlksNwqYbwR1kfk2qGOpB
+	3KEkz2LSbQsXY0OWOU6PsuzgtOekCSr1gpiRWuca2eEktW7RwdAvcW5vyQBfL1FvryOnESkiYc8
+	Cy9Ce8uf5ya9l/d3nsLSeWsONfrJIWk+OUxlU11z8hWKMQ3MOC8u9eRcfWCX4ZFN3oWA6GPJ
+X-Google-Smtp-Source: AGHT+IFefD8L/5AECmOQWgwZG7vBzg4GVr69pUWnjr280iqHcR09XLeHb5ncoD/H3ipricvKqKH7cQ==
+X-Received: by 2002:a5d:5f49:0:b0:3a4:ee40:715c with SMTP id ffacd0b85a97d-3bb66a3baa4mr10095478f8f.14.1755524627746;
+        Mon, 18 Aug 2025 06:43:47 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64d29a70sm13155211f8f.17.2025.08.18.06.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 06:43:47 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 18 Aug 2025 15:43:44 +0200
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: mhiramat@kernel.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, hca@linux.ibm.com,
+	revest@chromium.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 1/4] fprobe: use rhltable for fprobe_ip_table
+Message-ID: <aKMuENl9omxi6OwJ@krava>
+References: <20250817024607.296117-1-dongml2@chinatelecom.cn>
+ <20250817024607.296117-2-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,77 +90,212 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
+In-Reply-To: <20250817024607.296117-2-dongml2@chinatelecom.cn>
 
-Hi Mohammed,
+On Sun, Aug 17, 2025 at 10:46:02AM +0800, Menglong Dong wrote:
 
-kernel test robot noticed the following build errors:
+SNIP
 
-[auto build test ERROR on staging/staging-testing]
+> +/* Node insertion and deletion requires the fprobe_mutex */
+> +static int insert_fprobe_node(struct fprobe_hlist_node *node)
+> +{
+>  	lockdep_assert_held(&fprobe_mutex);
+>  
+> -	next = find_first_fprobe_node(ip);
+> -	if (next) {
+> -		hlist_add_before_rcu(&node->hlist, &next->hlist);
+> -		return;
+> -	}
+> -	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
+> -	hlist_add_head_rcu(&node->hlist, head);
+> +	return rhltable_insert(&fprobe_ip_table, &node->hlist, fprobe_rht_params);
+>  }
+>  
+>  /* Return true if there are synonims */
+> @@ -92,9 +92,11 @@ static bool delete_fprobe_node(struct fprobe_hlist_node *node)
+>  	/* Avoid double deleting */
+>  	if (READ_ONCE(node->fp) != NULL) {
+>  		WRITE_ONCE(node->fp, NULL);
+> -		hlist_del_rcu(&node->hlist);
+> +		rhltable_remove(&fprobe_ip_table, &node->hlist,
+> +				fprobe_rht_params);
+>  	}
+> -	return !!find_first_fprobe_node(node->addr);
+> +	return !!rhltable_lookup(&fprobe_ip_table, &node->addr,
+> +				 fprobe_rht_params);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Guermoud/staging-nvec-Silence-unused-argument-warning-in-NVEC_PHD-macro/20250818-032647
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20250817192425.12983-1-mohammed.guermoud%40gmail.com
-patch subject: [PATCH] staging: nvec: Silence unused argument warning in NVEC_PHD macro
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20250818/202508182005.4PiKxXcN-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250818/202508182005.4PiKxXcN-lkp@intel.com/reproduce)
+I think rhltable_lookup needs rcu lock
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508182005.4PiKxXcN-lkp@intel.com/
+>  }
+>  
+>  /* Check existence of the fprobe */
+> @@ -249,9 +251,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
+>  static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  			struct ftrace_regs *fregs)
+>  {
+> -	struct fprobe_hlist_node *node, *first;
+>  	unsigned long *fgraph_data = NULL;
+>  	unsigned long func = trace->func;
+> +	struct fprobe_hlist_node *node;
+> +	struct rhlist_head *head, *pos;
+>  	unsigned long ret_ip;
+>  	int reserved_words;
+>  	struct fprobe *fp;
+> @@ -260,14 +263,11 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  	if (WARN_ON_ONCE(!fregs))
+>  		return 0;
+>  
+> -	first = node = find_first_fprobe_node(func);
+> -	if (unlikely(!first))
+> -		return 0;
+> -
+> +	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
 
-All errors (new ones prefixed by >>):
+ditto
 
->> drivers/staging/nvec/nvec_ps2.c:80:51: error: invalid operands to binary expression ('void' and 'int')
-      80 |                         NVEC_PHD("ps/2 mouse reply: ", &msg[4], msg[1] - 2);
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-   drivers/staging/nvec/nvec_ps2.c:31:66: note: expanded from macro 'NVEC_PHD'
-      31 | #define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
-         |                                                            ~~~~~~^~~
-   drivers/staging/nvec/nvec_ps2.c:84:52: error: invalid operands to binary expression ('void' and 'int')
-      84 |                         NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-   drivers/staging/nvec/nvec_ps2.c:31:66: note: expanded from macro 'NVEC_PHD'
-      31 | #define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
-         |                                                            ~~~~~~^~~
-   2 errors generated.
+jirka
 
 
-vim +80 drivers/staging/nvec/nvec_ps2.c
-
-32890b98308613 Marc Dietrich       2011-05-19  62  
-32890b98308613 Marc Dietrich       2011-05-19  63  static int nvec_ps2_notifier(struct notifier_block *nb,
-32890b98308613 Marc Dietrich       2011-05-19  64  			     unsigned long event_type, void *data)
-32890b98308613 Marc Dietrich       2011-05-19  65  {
-32890b98308613 Marc Dietrich       2011-05-19  66  	int i;
-0df8f51eed5067 Ben Marsh           2016-03-10  67  	unsigned char *msg = data;
-32890b98308613 Marc Dietrich       2011-05-19  68  
-32890b98308613 Marc Dietrich       2011-05-19  69  	switch (event_type) {
-32890b98308613 Marc Dietrich       2011-05-19  70  	case NVEC_PS2_EVT:
-1e46e6273bc62d Julian Andres Klode 2011-09-27  71  		for (i = 0; i < msg[1]; i++)
-1e46e6273bc62d Julian Andres Klode 2011-09-27  72  			serio_interrupt(ps2_dev.ser_dev, msg[2 + i], 0);
-0eedab704ed93d Marc Dietrich       2011-12-26  73  		NVEC_PHD("ps/2 mouse event: ", &msg[2], msg[1]);
-32890b98308613 Marc Dietrich       2011-05-19  74  		return NOTIFY_STOP;
-32890b98308613 Marc Dietrich       2011-05-19  75  
-32890b98308613 Marc Dietrich       2011-05-19  76  	case NVEC_PS2:
-0eedab704ed93d Marc Dietrich       2011-12-26  77  		if (msg[2] == 1) {
-32890b98308613 Marc Dietrich       2011-05-19  78  			for (i = 0; i < (msg[1] - 2); i++)
-32890b98308613 Marc Dietrich       2011-05-19  79  				serio_interrupt(ps2_dev.ser_dev, msg[i + 4], 0);
-0eedab704ed93d Marc Dietrich       2011-12-26 @80  			NVEC_PHD("ps/2 mouse reply: ", &msg[4], msg[1] - 2);
-32890b98308613 Marc Dietrich       2011-05-19  81  		}
-32890b98308613 Marc Dietrich       2011-05-19  82  
-0eedab704ed93d Marc Dietrich       2011-12-26  83  		else if (msg[1] != 2) /* !ack */
-0eedab704ed93d Marc Dietrich       2011-12-26  84  			NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
-32890b98308613 Marc Dietrich       2011-05-19  85  		return NOTIFY_STOP;
-32890b98308613 Marc Dietrich       2011-05-19  86  	}
-32890b98308613 Marc Dietrich       2011-05-19  87  
-32890b98308613 Marc Dietrich       2011-05-19  88  	return NOTIFY_DONE;
-32890b98308613 Marc Dietrich       2011-05-19  89  }
-32890b98308613 Marc Dietrich       2011-05-19  90  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  	reserved_words = 0;
+> -	hlist_for_each_entry_from_rcu(node, hlist) {
+> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  		if (node->addr != func)
+> -			break;
+> +			continue;
+>  		fp = READ_ONCE(node->fp);
+>  		if (!fp || !fp->exit_handler)
+>  			continue;
+> @@ -278,13 +278,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  		reserved_words +=
+>  			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
+>  	}
+> -	node = first;
+>  	if (reserved_words) {
+>  		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
+>  		if (unlikely(!fgraph_data)) {
+> -			hlist_for_each_entry_from_rcu(node, hlist) {
+> +			rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  				if (node->addr != func)
+> -					break;
+> +					continue;
+>  				fp = READ_ONCE(node->fp);
+>  				if (fp && !fprobe_disabled(fp))
+>  					fp->nmissed++;
+> @@ -299,12 +298,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  	 */
+>  	ret_ip = ftrace_regs_get_return_address(fregs);
+>  	used = 0;
+> -	hlist_for_each_entry_from_rcu(node, hlist) {
+> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  		int data_size;
+>  		void *data;
+>  
+>  		if (node->addr != func)
+> -			break;
+> +			continue;
+>  		fp = READ_ONCE(node->fp);
+>  		if (!fp || fprobe_disabled(fp))
+>  			continue;
+> @@ -448,25 +447,21 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
+>  	return 0;
+>  }
+>  
+> -static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *head,
+> -					struct fprobe_addr_list *alist)
+> +static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
+> +					 struct fprobe_addr_list *alist)
+>  {
+> -	struct fprobe_hlist_node *node;
+>  	int ret = 0;
+>  
+> -	hlist_for_each_entry_rcu(node, head, hlist,
+> -				 lockdep_is_held(&fprobe_mutex)) {
+> -		if (!within_module(node->addr, mod))
+> -			continue;
+> -		if (delete_fprobe_node(node))
+> -			continue;
+> -		/*
+> -		 * If failed to update alist, just continue to update hlist.
+> -		 * Therefore, at list user handler will not hit anymore.
+> -		 */
+> -		if (!ret)
+> -			ret = fprobe_addr_list_add(alist, node->addr);
+> -	}
+> +	if (!within_module(node->addr, mod))
+> +		return;
+> +	if (delete_fprobe_node(node))
+> +		return;
+> +	/*
+> +	 * If failed to update alist, just continue to update hlist.
+> +	 * Therefore, at list user handler will not hit anymore.
+> +	 */
+> +	if (!ret)
+> +		ret = fprobe_addr_list_add(alist, node->addr);
+>  }
+>  
+>  /* Handle module unloading to manage fprobe_ip_table. */
+> @@ -474,8 +469,9 @@ static int fprobe_module_callback(struct notifier_block *nb,
+>  				  unsigned long val, void *data)
+>  {
+>  	struct fprobe_addr_list alist = {.size = FPROBE_IPS_BATCH_INIT};
+> +	struct fprobe_hlist_node *node;
+> +	struct rhashtable_iter iter;
+>  	struct module *mod = data;
+> -	int i;
+>  
+>  	if (val != MODULE_STATE_GOING)
+>  		return NOTIFY_DONE;
+> @@ -486,8 +482,16 @@ static int fprobe_module_callback(struct notifier_block *nb,
+>  		return NOTIFY_DONE;
+>  
+>  	mutex_lock(&fprobe_mutex);
+> -	for (i = 0; i < FPROBE_IP_TABLE_SIZE; i++)
+> -		fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &alist);
+> +	rhltable_walk_enter(&fprobe_ip_table, &iter);
+> +	do {
+> +		rhashtable_walk_start(&iter);
+> +
+> +		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
+> +			fprobe_remove_node_in_module(mod, node, &alist);
+> +
+> +		rhashtable_walk_stop(&iter);
+> +	} while (node == ERR_PTR(-EAGAIN));
+> +	rhashtable_walk_exit(&iter);
+>  
+>  	if (alist.index < alist.size && alist.index > 0)
+>  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
+> @@ -727,8 +731,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
+>  	ret = fprobe_graph_add_ips(addrs, num);
+>  	if (!ret) {
+>  		add_fprobe_hash(fp);
+> -		for (i = 0; i < hlist_array->size; i++)
+> -			insert_fprobe_node(&hlist_array->array[i]);
+> +		for (i = 0; i < hlist_array->size; i++) {
+> +			ret = insert_fprobe_node(&hlist_array->array[i]);
+> +			if (ret)
+> +				break;
+> +		}
+> +		/* fallback on insert error */
+> +		if (ret) {
+> +			for (i--; i >= 0; i--)
+> +				delete_fprobe_node(&hlist_array->array[i]);
+> +		}
+>  	}
+>  	mutex_unlock(&fprobe_mutex);
+>  
+> @@ -824,3 +836,10 @@ int unregister_fprobe(struct fprobe *fp)
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(unregister_fprobe);
+> +
+> +static int __init fprobe_initcall(void)
+> +{
+> +	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
+> +	return 0;
+> +}
+> +late_initcall(fprobe_initcall);
+> -- 
+> 2.50.1
+> 
+> 
 
