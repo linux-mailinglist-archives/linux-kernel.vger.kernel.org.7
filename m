@@ -1,79 +1,157 @@
-Return-Path: <linux-kernel+bounces-773815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82286B2AAD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5078B2AA46
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1165721880
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:27:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B61257B272E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF4632255F;
-	Mon, 18 Aug 2025 14:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD34322772;
+	Mon, 18 Aug 2025 14:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u7DY+c2a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="UNyTYBSn"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC7B32254C;
-	Mon, 18 Aug 2025 14:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E746322756
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526730; cv=none; b=NntUoVAZoRmmUyVWtuHfLVdnVp4VfkmGrEvhsIrpcaWPS4DM8k6jPhnOBckJo+kVaU2DGSTqkn11WQRvarUyRvpj1DMmETBLRIO5Go6DhB2HJoA0bCvj88TTUX6mN4AmbNAWuEzyXy2oRHunTrU8NM10SlQckEISmWRqI6VsNi4=
+	t=1755526734; cv=none; b=Qv2X6+52J6GOor164dB/s5HCcrTxNpigamKgn561SNDD0gOLwHPiTG166r8dwCAyfRfAzs8jwiUxdsI31QxD+i+fk7weX3MCJDCnFMpexXa5Akfjl2/IAD37D+e2NMc6wu6Uj+u9vA6CK0g0yt7rt+9dRHuCTfiNhZkHiH1hLA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526730; c=relaxed/simple;
-	bh=ZxMFrqapvJ/C17PrCsjyTGRw+DxEIi+3UaqaeIQKDJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiZAhZAs2/hPxyPcsOXPkfmJRzvxqtGcY/YhIu2mwmY57dqHFy7Gq8pYxS4YqrrxZJx+e1fyitr+uJllOcAKqFJTlLhYn++Y2DQzV3LoP8/3JnRjwAVvDvE9Ovapp4ANyBJl4XmnKo6LrghUQBXxyxpXckZczRLw4AQifMZcM+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u7DY+c2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A886C4CEEB;
-	Mon, 18 Aug 2025 14:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755526730;
-	bh=ZxMFrqapvJ/C17PrCsjyTGRw+DxEIi+3UaqaeIQKDJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u7DY+c2aJpG9QTUCMtq5dyWRbJV5FzF3n5+sv278J3+rsGaDFLBhpsns06A9Hyz1/
-	 LB67UxWQsZmCuHKIBN40TXv0TecesdsiTqo936wkJCHFYK/urqVoPgQpq5O5dFwa8I
-	 TbxStWH2Peq26emSvQLVyxVUQEmZwNEhvsy/uI5E=
-Date: Mon, 18 Aug 2025 16:18:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Cc: arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, dakr@kernel.org, lee@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rust-next 0/2] Add llseek support to miscdevice and
- samples
-Message-ID: <2025081818-presume-coral-25c3@gregkh>
-References: <20250818135846.133722-1-ryasuoka@redhat.com>
+	s=arc-20240116; t=1755526734; c=relaxed/simple;
+	bh=lfdMRn/uV9tLn3vOKRg4RShWFCamS+SfodjLk9JPqhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K1G1NRkMsXbElUAsB+AsROdhR+LQFOfvGhhGJP0/zoKNP4OV0XXHAVyhGaipDm8g0xbnDCfyLtyvjfIDxl8a44lH10j53scKcr13UCZ2is32vRFsBKdtc5Odxd9kmlOijwTndhsEf/4v+iMf8mTvv38dZ1jdx3v7lLEL6eoHz14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=UNyTYBSn; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88432d932d6so35122539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1755526731; x=1756131531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AYOfhNBP3fLXotYDWFjRKcPRzvbpTIEaDDDJFw248X4=;
+        b=UNyTYBSnCq6bBL8i4qE3QY30te5PrtZWG9vqca6Dub0SrFSUdW2kow4hfxudsEE7xp
+         f1ep9hi/vRmnNG7jWdK/ld5JafJqijdE1l7Ol148DG7BTuWRha1JNyT59rqXOD5Dy/1/
+         CTk6ihM0k5thQqCid2tKOUzQS8kj89CkFA5MVzvjpyZ+yP+hGmZE+HGY3CCbwpQ84CpR
+         ttyHdh+0FjgT1oR6UW3pLGRTbv5/nGPnuCQ4WRlbaLnNSd9G8gBYarbyoXF56OvUmI3h
+         utYtUVhIhDNLAtzFkcSUxpyK7Q5PI+lO2tlVu+mCT8ujllQ3n9eDi3WLgW/C0/BRd0Uc
+         kDiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755526731; x=1756131531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AYOfhNBP3fLXotYDWFjRKcPRzvbpTIEaDDDJFw248X4=;
+        b=RIdWIj03j/YOpJVIfre3WK5/KNzhzcqQlItGil51ePa2TX+JM+3qT63N2g9xcB0B4U
+         XQKh1NhGAQKfH8X/XhibdgsmdgJ7Hr0ffU68HxFPjSSO33IgfOGJV4fTsNZfo+p02b7j
+         IK3Zg1CqS9HT43N9bJEfKds5a1+4SOFcbqujJEXNwPMWHV3TDPhydWYD2/ardqZpNz+R
+         KCzv7R4Vrn2r+sEzyU1BaYtjUvVuARIkWjvx2ktj3hazaslVnxFB17qh58BvF7pUYJuQ
+         LLCViFsqOo+/4//IgfHPb6DxS2GT8oimr6F76nJJhfD3xzxyqNz1luE9Uv9IgM2EYNb1
+         BFKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqrwFaaHE+bLgS4ggWfit2U3rX7ErOACwZ6EpTua3ACp1wb1hwIj23wNZ6PwU7lC0V7Uni1b7NTLzwmWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/43yidBGeOpamUh+wDCE1ylKfnLcXuAPId6MhXO69RnnFIbVX
+	wwpNOfUTy5MTq86d0dgasjshVXC6Rv0k6lH112CM5fyflAdNa6BI8wjglD1mnA5f5jMK0JYcC99
+	/hujViWhcSrpRVpS06sl/dopTOjer9x5fhZvAZmI+YA==
+X-Gm-Gg: ASbGncvyUrYPW2O1Jtv0PIqyQRKvZ0vg4m0Bozj7IcQYJrG9dcZHCdJOHJ/6BvsyS4r
+	WKaCeu4DLFspiYW5mYQd6hek/qbYFSlGio7hgWKfApfq4leVUeuDi4DjmzrUNZIkJtw5DhYJuq0
+	XXS3/tIBb9md6pwNkyAVzQS5WXfl2udtRNXBR9Q2qI20CbAiBrsjOBdAVOkH6sb4HYBUIKwnjpd
+	BXcfTcP
+X-Google-Smtp-Source: AGHT+IFj/CqMCPnATLcRtW5vpKziqlXbmXhL2wmmOXkawwJHhjlum+QCcKdXnS+PQpPXSzExCCtbyPz6bmKR709p8ek=
+X-Received: by 2002:a05:6e02:2148:b0:3e5:3ce4:6953 with SMTP id
+ e9e14a558f8ab-3e57e9c4a78mr180851065ab.22.1755526731206; Mon, 18 Aug 2025
+ 07:18:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818135846.133722-1-ryasuoka@redhat.com>
+References: <20250807070729.89701-1-fangyu.yu@linux.alibaba.com>
+In-Reply-To: <20250807070729.89701-1-fangyu.yu@linux.alibaba.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Mon, 18 Aug 2025 19:48:39 +0530
+X-Gm-Features: Ac12FXxG0RSI1dIc2x76x-tlkVbmLS809vZnHg6zH0-npCpI10lDp4FSEF7jb90
+Message-ID: <CAAhSdy3omyk7YGVHNV5mgR13cON1SxdpqsxGQJsWWE1Hoyw=5A@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Using user-mode pte within kvm_riscv_gstage_ioremap
+To: fangyu.yu@linux.alibaba.com
+Cc: atish.patra@linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, guoren@linux.alibaba.com, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 10:58:37PM +0900, Ryosuke Yasuoka wrote:
-> This patch series introduces support for the llseek file operation to
-> the Rust miscdevice abstraction.
-> 
-> The first patch, rust: miscdevice: add llseek support, extends the
-> MiscDevice trait with a new llseek method.
-> 
-> The second patch, rust: samples: miscdevice: add lseek samples, add a
-> simple example of how to use the new llseek feature. As currently the
-> MiscDevice trait does not support any read/write file operation yet, the
-> sample is fundamental one.
+On Thu, Aug 7, 2025 at 12:37=E2=80=AFPM <fangyu.yu@linux.alibaba.com> wrote=
+:
+>
+> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+>
+> Currently we use kvm_riscv_gstage_ioremap to map IMSIC gpa to the spa of
+> guest interrupt file within IMSIC.
+>
+> The PAGE_KERNEL_IO property does not include user mode settings, so when
+> accessing the IMSIC address in the virtual machine,  a  guest page fault
+> will occur, this is not expected.
+>
+> According to the RISC-V Privileged Architecture Spec, for G-stage address
+> translation, all memory accesses are considered to be user-level accesses
+> as though executed in Umode.
+>
+> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-As read/write isn't there yet, why is llseek needed just yet?
+Overall, a good fix. Thanks!
 
-thanks,
+The patch subject and description needs improvements. Also, there is no
+Fixes tag which is required for backporting.
 
-greg k-h
+I have taken care of the above things at the time of merging this patch.
+
+Queued this patch as fixes for Linux-6.17
+
+Thanks,
+Anup
+
+> ---
+>  arch/riscv/kvm/mmu.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index 1087ea74567b..800064e96ef6 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -351,6 +351,7 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t g=
+pa,
+>         int ret =3D 0;
+>         unsigned long pfn;
+>         phys_addr_t addr, end;
+> +       pgprot_t prot;
+>         struct kvm_mmu_memory_cache pcache =3D {
+>                 .gfp_custom =3D (in_atomic) ? GFP_ATOMIC | __GFP_ACCOUNT =
+: 0,
+>                 .gfp_zero =3D __GFP_ZERO,
+> @@ -359,8 +360,11 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t =
+gpa,
+>         end =3D (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
+>         pfn =3D __phys_to_pfn(hpa);
+>
+> +       prot =3D pgprot_noncached(PAGE_WRITE);
+> +
+>         for (addr =3D gpa; addr < end; addr +=3D PAGE_SIZE) {
+> -               pte =3D pfn_pte(pfn, PAGE_KERNEL_IO);
+> +               pte =3D pfn_pte(pfn, prot);
+> +               pte =3D pte_mkdirty(pte);
+>
+>                 if (!writable)
+>                         pte =3D pte_wrprotect(pte);
+> --
+> 2.39.3 (Apple Git-146)
+>
 
