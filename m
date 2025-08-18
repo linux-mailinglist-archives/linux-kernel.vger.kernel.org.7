@@ -1,87 +1,106 @@
-Return-Path: <linux-kernel+bounces-772778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C164B2976A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B33B29788
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C4917EC2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308834E35FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB0C25DD0B;
-	Mon, 18 Aug 2025 03:43:47 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5006B25FA1D;
+	Mon, 18 Aug 2025 03:59:09 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20797253B56
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B541519B4;
+	Mon, 18 Aug 2025 03:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755488627; cv=none; b=AXtvA8oU3mHCYgyGQpO1ohPB0zy1+o582DCayHekiiQCICRkGzURwpsCj6SUs+L7GVkhQ0DLXbpiDk0QNFgkB7/apkzFy+xMhFoYf/+1DAOb66KHZrumphcRapa3aqwhdzahaRRtarTlkMFWnzSctsYL2yLaQxmBe4HnlQBBn1E=
+	t=1755489548; cv=none; b=P5FSaIirnIJyqlgvnyuTJqatghoSJJsh8sONxy5B1Gsy6PLZ6Bt+R5GdLcw/fMgOIvEc6UEztuHJDkq7Bz7Ujqomxm69Bp3jP9TkEfLFL1LtOAreZWnT0EZSQEZ+IdSRCuLgQdF3tJLq9tOSJmrYKJhY0U6r83I+/DL231YbGsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755488627; c=relaxed/simple;
-	bh=k0E3ZIogSdm1MaLSCXvsC4uWazhPr3aI2FbDsFS11cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s6GKKoZ/H4bHJwLqy3sGs6eQ7m8qAto1UJZnjtGB40WHxpQnvZN+/B67poU5MrAwVH1md63Q4omAjtO7h1ztH9+A9GLid+nF2JU8KVZ6PLPM6oYjSRlHyBSFlCexQ/G5z1Fnx+XCGj9OHVOLGypLDmKFK+BMehiWuLNXKcCiau0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c4z9n0qPsz3TqWx;
-	Mon, 18 Aug 2025 11:44:45 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 34E5B1A016C;
-	Mon, 18 Aug 2025 11:43:40 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 11:43:39 +0800
-Message-ID: <49395077-1af8-42c2-09bd-b87ed9d4a41b@huawei.com>
-Date: Mon, 18 Aug 2025 11:43:39 +0800
+	s=arc-20240116; t=1755489548; c=relaxed/simple;
+	bh=MKwWHhOQEceDnyzx5lUtzSoEVw4UKIsvKOmLTDtqttU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=asjM9Ute02Q/mEZC6GtsZxV13ijsCJDxnyOlV3wmdhwDGNyoTnU+CjUUnRpgtRyVWW2VZbcMGfMcDcOSxMt2EAHWsq06AQYLma/5MIJsaoSH5xJJb+cGoThUfZhaLaV14mXt1wwPMwttQgzQ3r2wtScpMN7TE8J/So8x0hfkMPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c4zVL3JDyzYQvKx;
+	Mon, 18 Aug 2025 11:59:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 105571A173E;
+	Mon, 18 Aug 2025 11:59:05 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIhP+pKJot61AEA--.17966S2;
+	Mon, 18 Aug 2025 11:59:04 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH -next v3 0/3] some optimization for cpuset
+Date: Mon, 18 Aug 2025 03:44:27 +0000
+Message-Id: <20250818034430.1304069-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v8 0/8] arm64: entry: Convert to generic irq entry
-To: kemal <kmal@cock.li>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250815030633.448613-1-ruanjinjie@huawei.com>
- <20250817211403.31054-1-kmal@cock.li>
-Content-Language: en-US
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20250817211403.31054-1-kmal@cock.li>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIhP+pKJot61AEA--.17966S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xw1rtr4UGw4DCrWrGF1DGFg_yoW3Krc_AF
+	W8ZFyvkr13JF4Sqayayr1rtrWvgw4UCrykAa4DtrsrZF9rArn3Ar1qyayFvr17ZF4fCr15
+	uF9rCrn5J3Z7tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUotCzDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+From: Chen Ridong <chenridong@huawei.com>
 
+This patch series contains several cpuset improvements:
 
-On 2025/8/18 5:14, kemal wrote:
-> Hello,
-> 
->> Since commit a70e9f647f50 ("entry: Split generic entry into generic
->> exception and syscall entry") split the generic entry into generic irq
->> entry and generic syscall entry, it is time to convert arm64 to use
->> the generic irq entry. And ARM64 will be completely converted to generic
->> entry in the upcoming patch series.
-> 
-> I was trying to implement syscall user dispatch support for ARM64,
-> which is simply about converting arm64 to use the generic entry, and I
-> stumbled upon your patchset on Google. So I decided to write the code
-> for generic syscall entry on top of this patchset, and the code seems
-> to be working. (It boots, and SUD works, but I didn't test ptrace etc.)
-> 
-> Should I send the code here?
+1. Decouple cpuset and tmpmasks allocation/freeing.
+2. Add cpuset_full_[un]lock helpers.
 
-I have implement the generic syscall entry in v5 and will completely
-convert arm64 to generic entry in the upcoming patch series.
+---
+v3:
+ - fix typos and comment errors.
+ - rename cpus_read_cpuset_[un]lock to cpuset_full_[un]lock
 
-https://lkml.org/lkml/2024/12/6/609
+v2:
+ - dropped guard helper approach, nusing new helper instead.
+ - added patches for decoupling cpuset/tmpmasks allocation
+
+Chen Ridong (3):
+  cpuset: decouple tmpmasks and cpumasks freeing in cgroup
+  cpuset: separate tmpmasks and cpuset allocation logic
+  cpuset: add helpers for cpus read and cpuset_mutex locks
+
+ kernel/cgroup/cpuset-internal.h |   2 +
+ kernel/cgroup/cpuset-v1.c       |  12 +-
+ kernel/cgroup/cpuset.c          | 220 +++++++++++++++++---------------
+ 3 files changed, 122 insertions(+), 112 deletions(-)
+
+-- 
+2.34.1
+
 
