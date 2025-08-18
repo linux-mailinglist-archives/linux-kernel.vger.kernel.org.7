@@ -1,207 +1,150 @@
-Return-Path: <linux-kernel+bounces-772666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2650DB295CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:11:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4B6B295D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CB11891E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9BF7A6BB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBC4190676;
-	Mon, 18 Aug 2025 00:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C561D7E26;
+	Mon, 18 Aug 2025 00:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BHymdysx"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bx018vEm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A77D17BBF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755475785; cv=fail; b=T5v5UXRJUUjb4ZPjmeaKsW7SWo2LPxOC3LiDeo/n0S3xYJOoQxNzcPFXlqqLY1CtiaJkgB4WlKlJeiukTc++C1nqcu51laIvBKLtBMzAnqlH9cVTkvidS+OG+iAktH2iq7Od20d6xGnvslnE/EXrQOSazrHVjknHdQ44eQqf6+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755475785; c=relaxed/simple;
-	bh=QwrLjSnEmMoCnP3Vtsr+TL92V9b1FhWRgQYqCqDMuk8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oVv8lL9uMLDobPY/PFUDfgBGZJ4MkHRmqybKZZO1LIpGxg4hIAejuAXXxE94mlo6yLHFoNEsSVZ0Vv6cs9YG6Mt80cZgxjK3uwHt4fPLTqCb2oT8hLm9mXpnbHAzMI3zSFFSP3JcGQmZkp+4kwpViKhCnseKqXHZxpTPOLsPfNU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BHymdysx; arc=fail smtp.client-ip=40.107.237.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dImgeS4vg5XANvw9O8tKm8ePBxz33RWcpfIXgesdUCDonHUiDNP0WfWgLH4c0g2Co7+OicpuS1R/nhXweDRHt9DGeG1D9SmE0jqf8bLIalb52kEEX3c79dsYZbELbc+T9t+ATIud8LPdu2F7uZykh4oTheFX1zX7Mlo0ADw430YyRn+KAXJbHhkAGHR+SgI7KKT3pPKOmp7+cRJGE4R8H7ntl4RpqAzfnAywCudYLEGyEdL6rTOkcGdVfxbHWejc/D4MUp7k4JZ7Q+lMPtRcCBpm1317HWj1hsJvw/Lx0Jv4VzgMf9Q/J4wqXqF35RiJyU7hmxHyp2KonKTeIbMJxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=REdHazSIZpzBr7Ik2Q8ME8Ibk5RymWNfCts2Mtq7RIY=;
- b=D0w6ZhJj7nFuPjpwcgxOJrUPWK+znd+H8j+ejUQfF0bi/2c43vro46//elBpgwRoNXsniHlH5OIh1fAQZnLe+zq46o6e9n26OntqyqGb+cmM9y39lXUhZebgcpMbrEpj53Ljsu7Wx9s5qjmAudDQjqlg7mKNwS3BRp16Y4PpR6ar/rkrF0aBeU+cp6VtHV/BaslVbLLC3Vil9n4YJMml5b81nCVi6kR1V48Yx0za/z2Y6LlAhfRdiyHizeBztVq4CIcmAoEazx0tWU2S43xXPoQVHyl45Unhm1cN3RHLoPwaaSnc3/etyIDxuSDRc4Zt0Xa5dtRFThAPDjuvFDPMuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=REdHazSIZpzBr7Ik2Q8ME8Ibk5RymWNfCts2Mtq7RIY=;
- b=BHymdysxF0iiSYAyI3W2jCAA5KlA9MLRLikz8erJ2QA7g26TwdcALMPTz5pZZdSiXJL4Na/7ahIapN7FThKyTfZq9kp4Kl9IZKTl3k73jAOfDL5/SQbwNNgrL+nrIEOrW6yVs9kd7ZtfjuaiB7xVkMZfWopWfrE7tlPXCggX2Pg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by SN7PR12MB6887.namprd12.prod.outlook.com (2603:10b6:806:261::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Mon, 18 Aug
- 2025 00:09:40 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%6]) with mapi id 15.20.9031.019; Mon, 18 Aug 2025
- 00:09:40 +0000
-Message-ID: <5e5b4d9e-b2f6-4198-b8a4-86de74a7e54e@amd.com>
-Date: Sun, 17 Aug 2025 18:09:38 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: replace min/max nesting with clamp()
-To: Xichao Zhao <zhao.xichao@vivo.com>, austin.zheng@amd.com,
- jun.lei@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
- alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
- simona@ffwll.ch
-Cc: siqueira@igalia.com, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250808025209.120448-1-zhao.xichao@vivo.com>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250808025209.120448-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0300.namprd04.prod.outlook.com
- (2603:10b6:303:89::35) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28A18E377;
+	Mon, 18 Aug 2025 00:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755476077; cv=none; b=rl7IewlV4q8zUyWo/kjGlTZierXzJ0DMQrRDspSe7EpxZ9WWgzChz5x1HGa8CJAr7bGCcG1s3jguAEc/w+YNWs8THOD3tPFq6bPpO0R1TVnam5qinnA5N4jkd5kLa3R92d8BbjNY4sDfYmbAlJcbqKJArmJ1vxG/5JaUbXwQfmo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755476077; c=relaxed/simple;
+	bh=cXw8V/2WdskHtmRrZ40s0eLq9HPcJIsdXKFvs+zG3Fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oyui+V/3hLelixBkBqXYp+w8sC/AddAu333QEB0tUof5JdFSS3JXi+77HEONSdr3VagW/KC5PKEb/m1z16wQyNXOPsXL5fyhtQSTab6AtRORAMJgwkJUeRjFMQUzv21P5v9uF1gt/VdzGpnE9EofSujsz8fRDIzBNpbpCNPgPQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bx018vEm; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755476075; x=1787012075;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cXw8V/2WdskHtmRrZ40s0eLq9HPcJIsdXKFvs+zG3Fs=;
+  b=bx018vEmHl50ZXFMeQgVNbXwm+4v72Ab3CKyaZ8E36rp2LyfVXcNJ7//
+   PeJGNwQPMQaVW7jaPrvyzEwvHAI41WgQd+UuqrQu+r88jNyPWI7QBNa1s
+   GZHPS8rshW6o4wVf03C1UIw1LV37NWBFFp/x06OlcP3lhUvFZ0krduTME
+   Am3zS3kskAqgy+x0GChKgptqrQ0O5/SAQHBG+VZoYYr++IOJYQIlL3yXy
+   GNnWpQFQh+/loIRdd4G3/MdyM0X75pnoaP05HUn/haBkXJMCDBS01zuGY
+   KFagaoi4XLGKsiGWheMzAhu38X7Y7uSOl2uUXEjfQnDoIPMOhESkRT8sa
+   A==;
+X-CSE-ConnectionGUID: Uy/F0MUKRjCa0zusQ+jr1g==
+X-CSE-MsgGUID: 2JN/8ObeQfG/CaMIpKw0jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68409212"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="68409212"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 17:14:34 -0700
+X-CSE-ConnectionGUID: rPkKLnjSQ5CNumytd/zTcA==
+X-CSE-MsgGUID: Yli3IW/hTpGQPtHWPRWhLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="168250450"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 17 Aug 2025 17:14:28 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1unnW6-000DnH-1M;
+	Mon, 18 Aug 2025 00:14:26 +0000
+Date: Mon, 18 Aug 2025 08:13:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>, ryabinin.a.a@gmail.com,
+	glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+	vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com
+Cc: oe-kbuild-all@lists.linux.dev, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org, Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: Re: [PATCH v3 1/2] kasan/hw-tags: introduce kasan.write_only option
+Message-ID: <202508180747.PxkbPnyA-lkp@intel.com>
+References: <20250816110018.4055617-2-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|SN7PR12MB6887:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac544748-ac53-45f3-19d8-08ddddeb86a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aEZRbUxKUjJKNzMwNDA3andlSTVrUFBpR1VVaEsvSnQ3UkhOZFM3ZFJPL3NR?=
- =?utf-8?B?bXBZSXBad290Ym1OR3VacXpCSlMyQUVRUGt4ak5YL3pIRE02clhWWkxiUFIv?=
- =?utf-8?B?ZTh2UTVYdEtUQTlVcVhjdk12emVna3o3MEtyUEpWT0Y0c2xoRTNoMkpYSHBD?=
- =?utf-8?B?d2ZueElzdC9FdC8zYmJGYkdlVGNVdUdnRTcrMU41YjNtVklHK1pKZFViSTZR?=
- =?utf-8?B?c29hMDZtOXZ5blRaeUQyVHZReFl2WFo2bElRN0lFMkxIRHcrU2ZsM3hsMDYv?=
- =?utf-8?B?dTNqVENYZGRqaEg3Szk4RlY0ajUrQzR1ZU9ISkgwcXIrRllGUHdCVU9QTHJD?=
- =?utf-8?B?VkpxWjBVV0E3RUo3QWk5SFFSQ2VXemZ0WS9FS1NWWHpYVStzQ081clJLdEZ2?=
- =?utf-8?B?aU5mRFV4Y1d5Sk9NL01CRzl1NFhCdVRZdUxXUGJ4bWx4VXRVeTRzdGdwNzdS?=
- =?utf-8?B?KzhPWGxBUkdKcUM3dU9oMk13czNLOEZ2L3pQK0tZMjZxeEFjYmh1clBvS08v?=
- =?utf-8?B?S0dYek1UOHFNYTZsSDZHQ1lQb2NVbFdwVWlFeWtiVUIwbjlpOXMxU0w2dCt1?=
- =?utf-8?B?aUhBUmttSXo5bFBtWnNNZG1DUExLYnRETkJUMkdCREN6NmYrVm9nUk5BSGVv?=
- =?utf-8?B?LzlsejhkWXA1OHJMVEZNT0VhaUU4TlMxTzJQQ055aXV3aWFOTG1IeFNaV2Rv?=
- =?utf-8?B?STZ0Nlc5S2p0SWFSem1xMFdjeTBUckVRZGlKblgxMG11YXI5OWF2WUdkbFJu?=
- =?utf-8?B?aTEwUlYxM01iU3l0QVlndTBVdzR3ZFVyM2w0UEFjOUV3WVh4SWYyeEpnaDdH?=
- =?utf-8?B?VUp1UFVGNEFlQ0hUL1dsUHZLVDR4Q0dPQ2c4eGliT0haNFZXZVVISVFhajRm?=
- =?utf-8?B?bG4rb1dZQko3RldTeCtxNitweGI0K0ZmbDd5ekNDSzJ6R3doV3RIcTRBaEJE?=
- =?utf-8?B?ek04aVhrMDduNUF3amJvYlRWNDZnWXplWHNSVjJLMmxIbWdNY2pFdDNtRm1X?=
- =?utf-8?B?bzV5VllvRHRYTGM2UnR5RnZ2R1Y2ODFGdlZBV2pWMG5BMFNWR29WQkRFRU1r?=
- =?utf-8?B?RkdqcEVES0VBdzN1L2VoNGZJUnU0VDJ2aEUwMjBqQWJESGkvY0VzWUVqcHNU?=
- =?utf-8?B?TkJQOUhxWmNWT1g2RHV5Y3h6Z1lIRUxSaE1EbTJKNEJRWDlKTG9PajljOHZZ?=
- =?utf-8?B?TVVaeThpTkZhQnFqMlBwMFhCd0d5WEY0SzFzZ2lxNlBmSGNqOVJ5Q0dxTE10?=
- =?utf-8?B?ZjhGQy9KenNUeEl5cjN1THViSnB3Zkg1bVNUc2s2MGdWWWlNbTBOa0YyRWgr?=
- =?utf-8?B?MHpTbFFld3d4K1ZLbk45NzltblVGdStjaWdqSER6ZE9jVThMdmNPSTA3dmkv?=
- =?utf-8?B?b1RScmZxNGIySGNyZ0VOc1dxSnMrT3pOY3BlQ2dOUUtHdGgyU2x3L1ZnRGVR?=
- =?utf-8?B?MnpSSitodytoOFVKYVpQUE9rbTIxZlg5UFNMeVY2R2JIbGtFODlSNkx2TVFo?=
- =?utf-8?B?Ymh3aTlpdG1ESzhtT1hnZ2dIMG8zZW5xeWQrdUw5dEpVZHdnd1pJb2wwVFFC?=
- =?utf-8?B?Nk50NFIwTDVYT3ROY1lLOEhTN2p2cmdMVlVIRThjTXNmZ3hyVWlVVmsvNGFL?=
- =?utf-8?B?NFlSMENtd0NyMlBzNDJIcFZPcjNpT1Q2YzByUFFudXhiYXluajdYN1JyTkNr?=
- =?utf-8?B?aDUvVjZ0ZUFkZHhxODFyWUx6TDN4MjlXdnFSU05rYW1GNDRnQnluYnNocnYw?=
- =?utf-8?B?RlJKNnVCaURpS2ErZHZKM3lFRTIvTnNXcWxaZzh0VDJSUUJENzZvYys3NFNW?=
- =?utf-8?B?QTl0YS9JOW9UKzd4V3lhT0g2cG5ZUHo2ZmlLQXJDNnB1dStvdkN6UUlVTEpa?=
- =?utf-8?B?eGVlUXZPZFlNdHVUeWZKSWFGMVNIMWdvS013bElESWVZb1NhbHJpZEYrYmQ2?=
- =?utf-8?Q?XuJhyr5pIRg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Wm9VdGhYUmw3Z1lsREdjeUkzTit1S3cyZEZBWTVtR1l4NXZYRjBKS0dtMjBl?=
- =?utf-8?B?R2lxTUpHUzlwbzJVUHQ4enNXV3J3NDc4N211ekpzWDUwVEpFM01DMjNlR2xS?=
- =?utf-8?B?NXQxQmZaVGpyOEtjS1NpN0hDKzErZ0dTbXZwNHVqTFVnaDE1YmkrYVdXczJF?=
- =?utf-8?B?QSsvVllNZ2RBaUlPUS96UENSR0lKandJSlJHaDRaMlRiU0NoQzc5K1VrT0Zz?=
- =?utf-8?B?Y0lHMUdIOVJlb0VZalV2TktQS245RHB6ZEVDQW93M2lydWpINnEwZWpqSnlK?=
- =?utf-8?B?NkE1TTRyQTNxUkFPWkdqc3JBeXQ3M0dLMnpwQklGN1UwV1pLU3Z0WmtWdWZs?=
- =?utf-8?B?QWF2ZjZhYVRhN0l0NHh3WElVcjBqelZOUjNuWEFOeEVhYnBrMTJSN3dFVzJO?=
- =?utf-8?B?QngvNEUraC80V2tWWk9OcDhUY1g0aDc4Zi9maVJuN2xWUXdITXl1TlN2bUg0?=
- =?utf-8?B?VUVzN1cydy9DaUZ6N0sxSXlrVW41anl2NHRHTEZ6ZG1qNktzdDhyMVgwSXV3?=
- =?utf-8?B?ZFRaRHVxNWxjQU1xUGx0NWtHdGFGK0dubnZZY2NZRmsrYTJldDk2eXl1dllN?=
- =?utf-8?B?dGZpUzl5MUx2akJvSWNTZ3ZMdFlhaGhxaER0Tk5tUVROemZYSzcxSnRjclRw?=
- =?utf-8?B?Ukx5TUV4cFhtY3lYeVQ4NTBuRmVNdUJtYTdlYStLOFZEbmRBaDdPL3M5Q0ND?=
- =?utf-8?B?OS9TL3RyU2dVWk9TS2laNWd0L0xMZlZRaDE5Zk80ZElvRXF1UEQ4cUxCRVp2?=
- =?utf-8?B?SENpdm1aUC91QmxpYnM4aG8vcW9UcmdnTTU4alI1NlhPVVMyYjZyNk5wdGFu?=
- =?utf-8?B?dmpiYnJkNGJLL3drUWZjSDBHWnlGQjd4Y3AzdG5vRHVYRUhiejYvMGVKa0ZJ?=
- =?utf-8?B?VlpJVXRPT0NVdC9PRmg0RGU5NXpETkVsZGc2R0hvcjZhOWg5ZEFQcmtONURT?=
- =?utf-8?B?NTB1UDZ4NEFBQ0E0aXBLdGxUd0NKUDQwSmUrUnZRMkl0b0xJT090OGprV1o5?=
- =?utf-8?B?T1Nqbi9ia3JMRGFaUUFMN2hnUjFRWjEzYUxRc09YMTV4dnVpdGkxU2lKbVp3?=
- =?utf-8?B?QzNoK1FKYkhvN1BxNmNnOVo2SDFHWWw4aEZSQnloSmhZVjhBOStjSThMNFNP?=
- =?utf-8?B?MWZoU3J4cVUwWTNiNjFkRDlDRWJFT0RUK1dySy9VV0pJdzBtdm1WMTBEYklO?=
- =?utf-8?B?dFNIMGpGZnRUSk1sUVV5RWZybW9aOUxaYUlnU0lsWDVnK2trVWFaVDIwM2R3?=
- =?utf-8?B?K1lEY3FXYnZ1MkxsZVRaRStaSklyVmlUcjJSYW9MckZLMWZzY00yUVJpb3E4?=
- =?utf-8?B?Tks0aEF4QTZzcmNZWkFwUFVpeDRreFloRFRkOUt6Z2JRNDBjSVc2UDRnVERh?=
- =?utf-8?B?V29hak1tT2ZUOHdSdmlqSWxJTDJIa3BxT2w2aWtLREZQdlc2MmRkWElIY2NF?=
- =?utf-8?B?eDl0ZzhnazZQRUo2empFaWY0V2JWWVd4SENRK29QL0ZHaEUvSXN1QVVYTGxG?=
- =?utf-8?B?TWFST21nQ3MzUHZZdmcyLzVWYXlXOWFjQlA3aXBSRUVyK24rZWxLR0QzNnlu?=
- =?utf-8?B?TG1DcVordWFXODZVSEsrT0Z6UDVtclVPQnBlNDIzSEdMOWp1SXdJa2NuS2pn?=
- =?utf-8?B?U3laMjhJUEVraFJqNWN5VStFSTQ0di9KRlVWUlBRZXRjZE1tK1piU1ZEak5z?=
- =?utf-8?B?QWhWK1k4aEhHc0dwK0NLZWVBanNGdms1ckZzWk1LL3Q1aXNtM1NVc1BMZ1ow?=
- =?utf-8?B?NWdQa01oUThhZjZUd2F4Q0R6UWFDaFU5MW1XNFE4WEFnSWxadG8xUXBkdm4w?=
- =?utf-8?B?YU54WmMrWmxvWHVrenYrSE94QmhUTFgyazI3TWRhOElqVE1COER1SDgxL0Qz?=
- =?utf-8?B?bHFVUDlJbzdHYWk1K2k0U3duMWtqREFFRldRQjc3aHJCWWtmMEVBak5NZjZQ?=
- =?utf-8?B?SlNrdTRwOWpteHRqK0ltTTlpdmdtaXRUUTNTWXhONTNJMUpCSFVNM0RseXpV?=
- =?utf-8?B?T2VPajh5UWRWQkROeDM3YURPem9VQzZ2ckV0YzFuMlhzNFZsQUVtb2kzYlFX?=
- =?utf-8?B?WDJzaW4rMjkxNy9pRUFIc3l4dmxaREw4QmhTY1VaL0pRZGtaRFFyQmxCOWZS?=
- =?utf-8?Q?8nYpPNJo3S2HM+xv2G6EQjppM?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac544748-ac53-45f3-19d8-08ddddeb86a8
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 00:09:40.7271
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q728ZLsQ+1l4DXHIkilXNX6pPCPz26seTkRUx71xP/U41172+L+CrYcOXeVPyIwI3SdGUEgtKcRAW8Vlk6GgcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6887
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816110018.4055617-2-yeoreum.yun@arm.com>
 
-Reviewed-by: Alex Hung <alex.hung@amd.com>
+Hi Yeoreum,
 
-On 8/7/25 20:52, Xichao Zhao wrote:
-> The clamp() macro explicitly expresses the intent of constraining
-> a value within bounds.Therefore, replacing min(max(a, b), c) with
-> clamp(val, lo, hi) can improve code readability.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->   drivers/gpu/drm/amd/display/dc/dml/dcn301/dcn301_fpu.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn301/dcn301_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dcn301/dcn301_fpu.c
-> index 0c0b2d67c9cd..00767b8ccdae 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn301/dcn301_fpu.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn301/dcn301_fpu.c
-> @@ -435,12 +435,12 @@ void dcn301_fpu_calculate_wm_and_dlg(struct dc *dc,
->   						&context->bw_ctx.dml, pipes, pipe_cnt);
->   	/* WM Set C */
->   	table_entry = &bw_params->wm_table.entries[WM_C];
-> -	vlevel = min(max(vlevel_req, 2), vlevel_max);
-> +	vlevel = clamp(vlevel_req, 2, vlevel_max);
->   	calculate_wm_set_for_vlevel(vlevel, table_entry, &context->bw_ctx.bw.dcn.watermarks.c,
->   						&context->bw_ctx.dml, pipes, pipe_cnt);
->   	/* WM Set B */
->   	table_entry = &bw_params->wm_table.entries[WM_B];
-> -	vlevel = min(max(vlevel_req, 1), vlevel_max);
-> +	vlevel = clamp(vlevel_req, 1, vlevel_max);
->   	calculate_wm_set_for_vlevel(vlevel, table_entry, &context->bw_ctx.bw.dcn.watermarks.b,
->   						&context->bw_ctx.dml, pipes, pipe_cnt);
->   
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on 8f5ae30d69d7543eee0d70083daf4de8fe15d585]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yeoreum-Yun/kasan-hw-tags-introduce-kasan-write_only-option/20250816-190300
+base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
+patch link:    https://lore.kernel.org/r/20250816110018.4055617-2-yeoreum.yun%40arm.com
+patch subject: [PATCH v3 1/2] kasan/hw-tags: introduce kasan.write_only option
+config: arm64-randconfig-r053-20250818 (https://download.01.org/0day-ci/archive/20250818/202508180747.PxkbPnyA-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250818/202508180747.PxkbPnyA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508180747.PxkbPnyA-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   mm/kasan/hw_tags.c: In function 'kasan_enable_hw_tags':
+>> mm/kasan/hw_tags.c:433:21: warning: comparison between 'enum kasan_arg_mode' and 'enum kasan_arg_write_only' [-Wenum-compare]
+     433 |  if (kasan_arg_mode == KASAN_ARG_WRITE_ONLY_ON &&
+         |                     ^~
+   mm/kasan/hw_tags.c:435:18: warning: comparison between 'enum kasan_arg_mode' and 'enum kasan_arg_write_only' [-Wenum-compare]
+     435 |   kasan_arg_mode == KASAN_ARG_WRITE_ONLY_OFF;
+         |                  ^~
+>> mm/kasan/hw_tags.c:435:18: warning: statement with no effect [-Wunused-value]
+     435 |   kasan_arg_mode == KASAN_ARG_WRITE_ONLY_OFF;
+         |   ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +433 mm/kasan/hw_tags.c
+
+   423	
+   424	void kasan_enable_hw_tags(void)
+   425	{
+   426		if (kasan_arg_mode == KASAN_ARG_MODE_ASYNC)
+   427			hw_enable_tag_checks_async();
+   428		else if (kasan_arg_mode == KASAN_ARG_MODE_ASYMM)
+   429			hw_enable_tag_checks_asymm();
+   430		else
+   431			hw_enable_tag_checks_sync();
+   432	
+ > 433		if (kasan_arg_mode == KASAN_ARG_WRITE_ONLY_ON &&
+   434		    hw_enable_tag_checks_write_only()) {
+ > 435			kasan_arg_mode == KASAN_ARG_WRITE_ONLY_OFF;
+   436			kasan_flag_write_only = false;
+   437			pr_warn_once("System doesn't support write-only option. Disable it\n");
+   438		}
+   439	}
+   440	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
