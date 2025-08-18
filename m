@@ -1,89 +1,106 @@
-Return-Path: <linux-kernel+bounces-772744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06B8B2970D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:30:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20CFB29711
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15FD2028E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:30:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98FA07AAAD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0F42571D4;
-	Mon, 18 Aug 2025 02:30:30 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEFD25742C;
+	Mon, 18 Aug 2025 02:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvhcQeBh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A57F1DFD9A;
-	Mon, 18 Aug 2025 02:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A51111A8;
+	Mon, 18 Aug 2025 02:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755484229; cv=none; b=auzqENvLP2qwle1GvcYctmmuk49rmy6UwiR5fFyCLCXFGn3XsSy4UM4utZQzrgnofaF6y32baWvhy1iHVqysFy3l8c0Kr3vpzjvIi5BtCri6NYeRq9D6X/gCP4toXbDuXB+wxP7cJ7bhA02+GbWZQXGaUkF0mUY596G6ImbqmKw=
+	t=1755484308; cv=none; b=pAiCg7WqcRXOFirufHYl4zu6OSfCH+7jQKSG7VKLwdGxxYglZhBTn/M8j/3WXj64dY96fWFCumJQKqS2ef1aNzXhGgioyZtT3v3pF4uz6u9vcD1gCwnJZATMyTUK6VU2Pyh0cjTxf40Pcdl+94tY5hZSoF2uMehC6Y3yQjF3JoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755484229; c=relaxed/simple;
-	bh=lv/ZJoS9DcMSb+dsAgeD3iAzmuvdsYvlKeTUiqpiYIw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sweid3J4JTF8qpuF9VQ/sxGJX41wkohNR6b2Jx4KXXFsDgtgpUjtx2sV+A/xwoJI6qsFicDgKQWd7o8FSph1pmCm+j9BfVUY4oFruM4Ak/IVT5KaDzWXAFTzgeP/lq2/32Y7hq6kTVzDrwJgZf4Hbvsywg/w3IQpuR0/4j1whDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c4xX06t6zzKHMrg;
-	Mon, 18 Aug 2025 10:30:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5948A1A0DE2;
-	Mon, 18 Aug 2025 10:30:24 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgA3sxM_kKJowp05EA--.7127S3;
-	Mon, 18 Aug 2025 10:30:24 +0800 (CST)
-Subject: Re: [PATCH v4 2/2] loop: use vfs_getattr_nosec for accurate file size
-To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250814191004.60340-1-rajeevm@hpe.com>
- <20250814191004.60340-2-rajeevm@hpe.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a5c57306-d271-c45e-7b5d-295096276a19@huaweicloud.com>
-Date: Mon, 18 Aug 2025 10:30:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755484308; c=relaxed/simple;
+	bh=+4qNgvQy+1/DLXb5T9gVXI3Pk7l/GEhUmzDE8+k73io=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=mIWTyGdRE2Oi6xRJ8gGEuglR3PIfdtqV7wUaFZYVxaQP87JlJDK/UBcbD1UbENFak5G9uZDqtNKD4x/kHHubAQOGI7mltN4rVODN9i1xhqFqo2tiZH844zAGczn3UJbY3V5zMLhsyjwEX6h38adzRIylv5TJs7dLrUpVpVGF+k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FvhcQeBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444D3C4CEEB;
+	Mon, 18 Aug 2025 02:31:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755484308;
+	bh=+4qNgvQy+1/DLXb5T9gVXI3Pk7l/GEhUmzDE8+k73io=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=FvhcQeBhjPfGwyTq8WFWxQUK2NfwdnlgZlEwiUIyhorqrJYjszn5bZ95MvUQq6jv9
+	 6FXfDMGRXYXq+dUZ2zvu4bXlYoPDTQMF05e3tHCqX34ERBlbWc7zrqPnEEqjtsxtgN
+	 oK0iuWPFZwaRhRsMmWajOAOeQE8ZcMA1f5kS5qjHpmHKrAFLK9Ml4IBfb1AL9A29/8
+	 nC26G72IUWXFFQSu61NCKXHBjX9HVy5a6xnJfOutnGrJ6uToteAKyNAmM1A23W3lvc
+	 tf7NsvzJSpmqS+M+6b6pa6O3bgamHYIpEgPE89UQ6oNMFFOW4V69Bsym1rSBg04rVj
+	 3e3vOdYHuCZeQ==
+Date: Sun, 17 Aug 2025 21:31:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250814191004.60340-2-rajeevm@hpe.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3sxM_kKJowp05EA--.7127S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYk7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0
-	xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF
-	0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF9a9DUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org, corbet@lwn.net, 
+ christophe.jaillet@wanadoo.fr, devicetree@vger.kernel.org, 
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ rdunlap@infradead.org, pavel@kernel.org, conor+dt@kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Nam Tran <trannamatk@gmail.com>
+In-Reply-To: <20250818012654.143058-2-trannamatk@gmail.com>
+References: <20250818012654.143058-1-trannamatk@gmail.com>
+ <20250818012654.143058-2-trannamatk@gmail.com>
+Message-Id: <175548430728.3642063.6873272310272616172.robh@kernel.org>
+Subject: Re: [PATCH v13 RESEND 1/4] dt-bindings: leds: add TI/National
+ Semiconductor LP5812 LED Driver
 
-ÔÚ 2025/08/15 3:10, Rajeev Mishra Ð´µÀ:
-> - Use vfs_getattr_nosec() instead of i_size_read() in lo_calculate_size.
-> - Improves accuracy for network/distributed filesystems.
+
+On Mon, 18 Aug 2025 08:26:51 +0700, Nam Tran wrote:
+> The LP5812 is a 4x3 RGB LED driver with an autonomous animation
+> engine and time-cross-multiplexing (TCM) support for up to 12 LEDs
+> or 4 RGB LEDs. It supports both analog (256 levels) and PWM (8-bit)
+> dimming, including exponential PWM for smooth brightness control.
 > 
-> Signed-off-by: Rajeev Mishra<rajeevm@hpe.com>
+> Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->   drivers/block/loop.c | 15 +++++++++++++--
->   1 file changed, 13 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/leds/ti,lp5812.yaml   | 229 ++++++++++++++++++
+>  MAINTAINERS                                   |   6 +
+>  2 files changed, 235 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+> 
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250818012654.143058-2-trannamatk@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
