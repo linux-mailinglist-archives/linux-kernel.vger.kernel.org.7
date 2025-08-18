@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-773470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12F3B2A09F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:40:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A20B2A0A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28BC1B21FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DE2F4E58AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDB82E2293;
-	Mon, 18 Aug 2025 11:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6DF31984A;
+	Mon, 18 Aug 2025 11:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eemp00oN"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLltt4OX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC3D2E2287;
-	Mon, 18 Aug 2025 11:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BE32E22A5;
+	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755516817; cv=none; b=O/BQ5/TGsLm8cK9ypNwSR2wdMpKJtThVwzbIhEHffdJkRwIQ5XjcdZ0N0fNAnAM3ZbiSHHim8BuuptrUSxhnf4AjckaVBu+Ms1DzhTe6KxPbi8mTmxAgbe/ueny/cmPpYyKTJlc9xxNu6houarCW8kIrNCEX+hK6jlRAsdBVsio=
+	t=1755516831; cv=none; b=V11OBgjPP97LGKJQ8XgUPQNzA2ujJxhBsb5OWExMCPJ3M0lqsTCrnkYUd2qXTGq/qA8eBKYU8094IF0YlFhL64jMvRpM8SwT6lhvxhP48ricb7q1xFI2A1CKnQcu87rg7EMCHFKBiqdy6NrF7Rgpk5RODMdCKzmp5YDMzXlG18w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755516817; c=relaxed/simple;
-	bh=xIbtY/GZcuyna3xahbU3yP0WNDvLCRfwL4pyva/pN58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IvlCKWmNao1D9nc9WuagkvlAXGDZzEYGSNrhGk/pXauKtnwIPirv0LLKeLKssurahi07yeu18Uh2D89egiMU/8oE46bnJpDojLhjp6u4U9GdmEEWfUJDjTJ+PR6aoZ1MxaqbKLijbSh3nP5NJhRSkk4GzU8tSSXtl7EbNY93uPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eemp00oN; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso20077855e9.3;
-        Mon, 18 Aug 2025 04:33:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755516814; x=1756121614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=osl2DDNbnjlmzdbtXzLGvTOs9Gay2kvLfiPN9N6P+7g=;
-        b=eemp00oNVjchoVKwmerUREtlKrvOv4MTqmxaq6lXD5sTAntDtLpAu80EU7nEoSMMnC
-         tYa57NBE6F9JwN45ravDXMB+j2A3ws0WhPsUTkefHRJ5Q/gp6v30UzG9aZiSqt0SsiMc
-         ZTWzqxNIur9ZfFjYmlBJfSIN3ZMe2sn+kPTBFg302VeyR9N/49otse0OfNQr3zgHNzkt
-         xDKEgcAwFOqCPMoGXNCN9ivDzQdcsF/63hoS182AQvrjVbQBk+RwyosjQU220YfyvuK5
-         lvew2ObqTzQR/j/eKFUy7rtA60FdrF/jmIMvLQtMaJOD5awrxbf4Ia7D0Naity7hOTI2
-         mBBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755516814; x=1756121614;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=osl2DDNbnjlmzdbtXzLGvTOs9Gay2kvLfiPN9N6P+7g=;
-        b=tgd4QNnRRW3s4zfJK5jJywphgH51Sx/5L0lUeOPrOOXaWfEf6D29Z4zyILcWRslEIT
-         PNuwVjlLLvGFgIGYrKcICnjiteuos2wRcifwVyzIWVtJSs7vxpzK58k/CegwQNxDv5nO
-         hc4eIv5NYYpnH25Q+eMMLTcE4o1mUbxPDnZQ3Z1mF2jvzixEel6HXvz3+begZDZQ67cY
-         DDJ/dYK9gHZeAr/TEol3ru4HaQ6YqOluYx7g7CR/hMa0irvLcDyEed3xeiNNx/A21WnC
-         iESh1bmjkqaKulAJl3fMAwUZMc3/iolxHWbqKRSRGEUXsT8z8cB6qrwSk9WWQnXfsTxB
-         SJLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGkrz4ueKxnewUyxMupQAj/VHpIK7aSttlwu1nxmYMiuYVK0HC3+VtFdrrAo99U+0GAwra2iD+@vger.kernel.org, AJvYcCXntFScKLHV5AKHlWU4vWkN2P+exkH04dna5HG9wwsUc//knZPpVMX+IWoSgkkQ3FQruJfYkgKqU2LSFmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRlE/i978o57AT6Sx5VCcn3Tt3oamUYiykNp2zxxxAZuyMF0J4
-	wGaJEoSGFfC3aOg6WoP8HNQ1esNonjqE8NHAj0YGaKcR2lPrv252s3FG
-X-Gm-Gg: ASbGncsQ1/y0eE0RwKTqXxyOT4pjhIj7UoKf5aOQhOzMJMvsREIotc5/Yr74i6H5gqD
-	oCRwD+n1SiNo3X56FpgXl89fO/WwLLXQM/gSteamrNX7V37dKzQwQyAmnVozhuWqlB8LVNMEaDz
-	57OxaU+SC9X5GDWdQy77E7oC2VyJAIGiP4WnT5NpbL4OB1T+tucfx5IPuKqZyESKJ6hbwuYNYAd
-	kzCGkMOUqY+XgzTZc2zoUPsfGcKS4B0fdDNx5DI2wMkgLJLwTE5RQz5PJukNVMEs/rJ56EDghIC
-	NrciuaMgtgEySGM5mUvGVwLegInC99bRJnsE93Co/AOL1xPvMcwQqU4gF6F/N2U2T74+6xHIdQn
-	ar7HiM2sHOlsQ6fgd8OgeqNkrsV5wAvYt8Q==
-X-Google-Smtp-Source: AGHT+IG3722MgpHrCjYdrulVDf8hszbbpDPFDZNSqn9tHGrFmK690pqAjTDn9sTdA5K7jdEnj830yw==
-X-Received: by 2002:a05:600c:1ca1:b0:456:285b:db3c with SMTP id 5b1f17b1804b1-45a27bd35dfmr68530385e9.3.1755516813667;
-        Mon, 18 Aug 2025 04:33:33 -0700 (PDT)
-Received: from localhost ([45.10.155.11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a2231a67asm126861595e9.11.2025.08.18.04.33.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 04:33:33 -0700 (PDT)
-Message-ID: <52b8d235-d7ab-46a3-b624-5909b638f1b7@gmail.com>
-Date: Mon, 18 Aug 2025 13:33:19 +0200
+	s=arc-20240116; t=1755516831; c=relaxed/simple;
+	bh=0qvPUlus7r6Zs9KuwNFJGjOWcSZWTtIx7LyRA1j0WC4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mDY8BX000UQS+dM0y8RcVIcclwd1rmQ+k22l0mck6QoYRUEM0uIKzk3u3njCno5E1WAj2hOpkgcnVneFgeDb7JWl6iN7z1gIeNLUJv6m0cRH1XtIs+3byfot4BtGvpEIVJ9izAOFMtTe91Sz7wbkWw9kqg5G71VfpQC3X6lFUBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLltt4OX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6009BC4CEEB;
+	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755516831;
+	bh=0qvPUlus7r6Zs9KuwNFJGjOWcSZWTtIx7LyRA1j0WC4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=WLltt4OXakKIZgqbaEuZhXPcZoQrDQXGbWcJHEI9vR1xzxQK2Uq+N7t4/dckVy+VP
+	 gKG3ZB8V06HIfnGK6GIl8EFwDbGEcDkecvacMObtD4m3T++UDd70xAP5ZleFhs67lZ
+	 xpybIY+gTHPvsAWWxiD/Az9jSp/b59VO47bZxH+pmbfsEF+A57FsQGqvIKb4tpatWq
+	 JIOxIHrcmiXIR1UHE94FhUdFG24sYwi/CLc3qJbT+wRlgbwGTnxydSoNwfMKTwdPSN
+	 LgU7SgxHxL/9U/UfdjeG4lO738xpi3LurRKyrmYou2tnOE6yJdN/mHu+0YcUZW01id
+	 L4GdAhggEyJDA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC0ACA0ED1;
+	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH 0/2] Make standalone compatible for IPQ5018 tsens v1
+ without RPM
+Date: Mon, 18 Aug 2025 15:33:45 +0400
+Message-Id: <20250818-ipq5018-tsens-fix-v1-0-0f08cf09182d@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 1/5] net: gro: remove is_ipv6 from napi_gro_cb
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, shenjian15@huawei.com,
- salil.mehta@huawei.com, shaojijie@huawei.com, andrew+netdev@lunn.ch,
- saeedm@nvidia.com, tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
- ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
- kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me, ahmed.zaki@intel.com,
- aleksander.lobakin@intel.com, linux-kernel@vger.kernel.org,
- linux-net-drivers@amd.com
-References: <20250814114030.7683-1-richardbgobert@gmail.com>
- <20250814114030.7683-2-richardbgobert@gmail.com>
- <willemdebruijn.kernel.2d92c3db94507@gmail.com>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.2d92c3db94507@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJkPo2gC/x2MQQqAIBBFrxKzTtBCk64SLSKnmo2ZExGId29o9
+ XgP/i/AmAkZxqZAxoeYzihi2gbWY4k7Kgri0OnOam+8onRZLbwZI6uNXrU5HWyPDsMygOxSRsn
+ /5zTX+gHQ7wF9YwAAAA==
+X-Change-ID: 20250818-ipq5018-tsens-fix-f60d53e6eda7
+To: Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755516829; l=1421;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=0qvPUlus7r6Zs9KuwNFJGjOWcSZWTtIx7LyRA1j0WC4=;
+ b=03TTmvYoMn9nFI1mQELD4NphPbJs+2XpT+x7zS14oVRnEQTArMGcmxD0tJsXSc3DHEBNFjDVl
+ +6Iq6ZCfMCaD9ldazluYAnQtN7DTlrSwEu7eB/9Ew6WmYQjf8h3uc6K
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Willem de Bruijn wrote:
-> Richard Gobert wrote:
->> Remove is_ipv6 from napi_gro_cb and use sk->sk_family instead.
->> This frees up space for another ip_fixedid bit that will be added
->> in the next commit.
->>
->> udp_sock_create always creates either a AP_INET or a AF_INET6 socket,
->> so using sk->sk_family is reliable.
-> 
-> In general, IPv6 socket can accept IPv4 packets. See also
-> cfg->ipv6_v6only in udp_sock_create6.
-> 
-> Not sure about fou, but are we sure that such AF_INET6 sockets
-> cannot receive flows with !is_ipv6.
->  
+The tsens IP found in the IPQ5018 SoC should not use qcom,tsens-v1 as
+fallback since it has no RPM and, as such, must deviate from the
+standard v1 init routine as this version of tsens needs to be explicitly
+reset and enabled in the driver.
 
-FOU sets cfg->ipv6_v6only for IPv6 sockets in parse_nl_config.
-I'll clarify this in v2.
+Accordingly, update the tsens node in the IPQ5018 dts and remove the
+fallback compatible.
 
->> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Additional background: this was already incorporated in the patch series
+which added support for IPQ5018 tsens initially. V9 was applied while
+v13 had already been sent for review. In agreement with Bjorn Andersson,
+I've submitted this new patch set to correct the issue.
+
+I have taken the liberty to re-apply RB tags provided by Krzysztof,
+Konrad, and Dmitry from:
+https://lore.kernel.org/r/20250718-ipq5018-tsens-v14-0-28d8a2472418@outlook.com
+
+---
+George Moussalem (2):
+      dt-bindings: thermal: qcom-tsens: make ipq5018 tsens standalone compatible
+      arm64: dts: qcom: ipq5018: Remove tsens v1 fallback compatible
+
+ Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 7 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi                     | 2 +-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+---
+base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+change-id: 20250818-ipq5018-tsens-fix-f60d53e6eda7
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
 
 
