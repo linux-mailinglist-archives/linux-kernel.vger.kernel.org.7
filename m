@@ -1,263 +1,132 @@
-Return-Path: <linux-kernel+bounces-773769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27973B2A9A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 837EAB2A993
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD5C687EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9569F6E5D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A704321F2B;
-	Mon, 18 Aug 2025 13:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360F6322A01;
+	Mon, 18 Aug 2025 13:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kYgyCtw0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+BkghXQa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EsbW9yPo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36983218C0;
-	Mon, 18 Aug 2025 13:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE45322779
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525513; cv=none; b=UOEB7RZN6vtuvr1SuyWa4xOdLngRUk8HpoisXuEAjRmV/A5sjy116N3TkL8BZ/BbwblcEBoAYyOXX9SOyC+39D61PnTmhD98xHqulKwrkjDGe0GkbyYERSIZQ+Pj0f/ZZhQxorxikoz9I5m402eKraWzOexMocAxOwzXFYiwiZ8=
+	t=1755525582; cv=none; b=TbWYm/52G9RLOxiqb1yDqcN4ZAJZ4qsPnVjvshC0C3oVyjYnpuJSlrV3w2F6YMAsP13Obeie8fhKv7tLW3urkZcJdTAD2j5aOxbLcMjl7dO+KjwJVg43RdgbttQQaxrrMym9oR+OZpvfxcqt111bqQVSK/E+hWNdZ4bWKVNIjWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525513; c=relaxed/simple;
-	bh=e1hglYPW8NUeeJXsmZbwHPx0sk+mI8NBr8vpZq6hj0M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SzSIIKvh2qLaC596v6I9xroNIbfz9OrT8qKoBVb2ZCWCqWuRSB6A+rqbEdoRgmCtlTR997fjXndAp5xLRkgAcDsoBxCnHbfTysCBRrm5mk8ENLMH20Gs+6VJvbAUCfY38Bh6RqyfWeTwHNxH2e+xe3FzHTQ0SbchpfWTn60R0SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kYgyCtw0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+BkghXQa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 13:58:28 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755525510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wpBWEbntYPDnsYwC2DAvDETWCVLWAMWzVGyQyCTilXM=;
-	b=kYgyCtw0lxdW+/cM6OkkUOtrVy35Pd9hWddy7r8zn7yeXCqD71j6EhjrOwKlMOYeWXs9zh
-	kA4FFiZNEHu5BdSlz3pMqJ9Wr3Uc4kfCNy6S3tLGuB8CuQzccdtQkHXz/KaSP/Ssdunb1r
-	UjF0Qpg4uxpB4WwKnqfmZjS7IlCZ/rsk1XOj/YKrbLOmZkOQlmclxtYzS2LHVhZm2NSzcg
-	AyXx2c9qG83tKuvNduyCk3UNoEj9eSuQtdvrHBJlcI7RfUuxPDOAyHxKcSX4DlaI4MzQSt
-	j5UxtPGFbLOv76b6IXoUXPzKWcZ3EkR1BWhL01eIw+LZVMNyDOWnDo7yun4W/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755525510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wpBWEbntYPDnsYwC2DAvDETWCVLWAMWzVGyQyCTilXM=;
-	b=+BkghXQaAZXHLTlCYMEMbp7m3kb4ERGTIaj9Aqx0zDUHGcrbsTPRXrkwiBC0N5PVX44UqI
-	adg9tWhEMFYMx4AA==
-From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Detect FreeBSD Bhyve hypervisor
-Cc: David Woodhouse <dwmw@amazon.co.uk>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- "Ahmed S. Darwish" <darwi@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
-References: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
+	s=arc-20240116; t=1755525582; c=relaxed/simple;
+	bh=CiNgOZGMixsgD0/6qrG9yAA2HxAX+DcIvAlaTGUjvLs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jDgOZDym0qqS94oOQVPipl0m+NeGBD0ls6xCnEJJWUk0cWLEwsZKhSamvIw4Zu3O1XUlzCymI3eOAjUcK0SJspeMJJ1mtXNkVnWOvjlL3Wc3oLL7fp4q82UqpYAXZopiLixuVeyaKEUPSEcqXTZy1MklSgrRgymZ80abVEvOEb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EsbW9yPo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755525580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kyCc4a5+AO/yig/KWWz+VAyj7gnO9/iimj/mS2PVAmg=;
+	b=EsbW9yPooBa2XTevl1U4flJ3zLWRMWFMGbXtO1gZ8KrhTGJO+s4TFIrANrJ4tuoaneWCeh
+	ZqZHacHQ3bKDEzbkjDT/k45/l2rOIRPLAmwNTU0weQHoJbpRUeQN4CghcsKKW5DyDmDiYM
+	wLjCvFImVCh3PE9uHGZXhgBvblXDKmA=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-_Buovj2aM6K9OsoP0wiviw-1; Mon, 18 Aug 2025 09:59:38 -0400
+X-MC-Unique: _Buovj2aM6K9OsoP0wiviw-1
+X-Mimecast-MFC-AGG-ID: _Buovj2aM6K9OsoP0wiviw_1755525577
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32326779c67so3943396a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755525577; x=1756130377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kyCc4a5+AO/yig/KWWz+VAyj7gnO9/iimj/mS2PVAmg=;
+        b=KTRNG2N2Uu6pSNG7lWYDN9ZW2NvY4Vj1+g4uLn0m9LbBgCUTcWY1CF/Jk/TUlLnuQn
+         VLgmHzNgQHAbQWWMXqilxIZG6RcjT/9DTq7RSaxjZ9RUDX0AM4mEBLAPlrdygDevRfhm
+         rkaX2Ksh14r9J9h141sKHuippbv8RwfTQu/A56RoBXpWnKH5lPVYbc35BPoHNd2sgLQF
+         LwSPXFFRIwkMQntrE/jRAwMQB/CzjLMgRne/QkKe8Z1fBG6p2VrVqECR93qMn2SMGmt0
+         gDCp1ta+t+54uVFpwLtwo+Wsqom2hdYJhhNWsfnViu8TUvlK3refr2kWva54z36QH08M
+         KfUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3FWXWi63jm4w7A/XGA4dcRxlwz6qyZ0gFSubEILcP3njFfP46bPuYxOd3DUYP/lTTO5fA5v09mTFlVjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDeFvnO5E9MWFkGivq4h0Le7eP/xRIXso94Z7oVS6eKCJEBGN6
+	7e26euatPbjOaXCJsNF5y1htsCeyE4kgl/IrYax2CsGby/OFL5gEgvjqzYg7emeAa2wtNEk9c1j
+	xfqwGT44KO4gvnZ7ubxCqgvvn04wMoUDIVAtvfn6xG157G5QHi1THxp6qiY6FW083JQ==
+X-Gm-Gg: ASbGnctyuqtxx43lCH1Ues+A4ZtHnVfR+6ey8Tw4afpusuBqLJMPmS7gVVx91Nhkk6d
+	4Cjxb8sI6XAZgOsTh3K/423dj0Bex13M34OwLg17BSJO2jnMlABS1TUkcmZyDpEfkl/mu8wHzju
+	yGA6q9Ij0xCMdSF/uB6RTmS4udMdYtP69hne/uDyY0FlfWcL5nU4kGcoEkgp+Uh1ph6fmTecPwi
+	AheumWPo910ABGM6K0es3g3ML9UqlkdEM9FpnNL67TDGcApNGG6QzAiiBYMvNlIaeNQBhPTDyj5
+	tuFu7YRWQMXF7PMkMOfCzplSgBIZi1P6bQ==
+X-Received: by 2002:a17:90a:dfc4:b0:321:d071:96a2 with SMTP id 98e67ed59e1d1-32341125b39mr20287924a91.0.1755525577054;
+        Mon, 18 Aug 2025 06:59:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEFZhqlZ8fij0sRgHmfXSCb3Qy2WxDI2YZmEvN4xLfCSTRfJG4cO4WUHjpLbXmfR2jjNnVBw==
+X-Received: by 2002:a17:90a:dfc4:b0:321:d071:96a2 with SMTP id 98e67ed59e1d1-32341125b39mr20287875a91.0.1755525576654;
+        Mon, 18 Aug 2025 06:59:36 -0700 (PDT)
+Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 06:59:35 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lee@kernel.org
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rust-next 0/2] Add llseek support to miscdevice and samples
+Date: Mon, 18 Aug 2025 22:58:37 +0900
+Message-ID: <20250818135846.133722-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175552550854.1420.12254414366709516837.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+This patch series introduces support for the llseek file operation to
+the Rust miscdevice abstraction.
 
-Commit-ID:     215596ddc33f20945e8d1188a7e682831f0ef050
-Gitweb:        https://git.kernel.org/tip/215596ddc33f20945e8d1188a7e682831f0=
-ef050
-Author:        David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate:    Sat, 16 Aug 2025 11:06:32 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 18 Aug 2025 15:49:07 +02:00
+The first patch, rust: miscdevice: add llseek support, extends the
+MiscDevice trait with a new llseek method.
 
-x86/cpu: Detect FreeBSD Bhyve hypervisor
+The second patch, rust: samples: miscdevice: add lseek samples, add a
+simple example of how to use the new llseek feature. As currently the
+MiscDevice trait does not support any read/write file operation yet, the
+sample is fundamental one. 
 
-Detect the Bhyve hypervisor and enable 15-bit MSI support if available.
+Ryosuke Yasuoka (2):
+  rust: miscdevice: add llseek support
+  rust: samples: miscdevice: add lseek samples
 
-Detecting Bhyve used to be a purely cosmetic issue of the kernel printing
-'Hypervisor detected: Bhyve' at boot time.
+ rust/kernel/miscdevice.rs        | 36 +++++++++++++++++
+ samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
 
-But FreeBSD 15.0 will support=C2=B9 the 15-bit MSI enlightenment to support
-more than 255 vCPUs (http://david.woodhou.se/ExtDestId.pdf) which means
-there's now actually some functional reason to do so.
 
-  =C2=B9 https://github.com/freebsd/freebsd-src/commit/313a68ea20b4
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.50.1
 
-  [ bp: Massage, move tail comment ontop. ]
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
-Link: https://lore.kernel.org/03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@=
-infradead.org
----
- arch/x86/Kconfig                  |  9 ++++-
- arch/x86/include/asm/hypervisor.h |  2 +-
- arch/x86/kernel/cpu/Makefile      |  1 +-
- arch/x86/kernel/cpu/bhyve.c       | 66 ++++++++++++++++++++++++++++++-
- arch/x86/kernel/cpu/hypervisor.c  |  3 +-
- 5 files changed, 81 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/bhyve.c
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58d890f..ac1c6df 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -879,6 +879,15 @@ config ACRN_GUEST
- 	  IOT with small footprint and real-time features. More details can be
- 	  found in https://projectacrn.org/.
-=20
-+config BHYVE_GUEST
-+	bool "Bhyve (BSD Hypervisor) Guest support"
-+	depends on X86_64
-+	help
-+	  This option allows to run Linux to recognise when it is running as a
-+	  guest in the Bhyve hypervisor, and to support more than 255 vCPUs when
-+	  when doing so. More details about Bhyve can be found at https://bhyve.org
-+	  and https://wiki.freebsd.org/bhyve/.
-+
- config INTEL_TDX_GUEST
- 	bool "Intel TDX (Trust Domain Extensions) - Guest Support"
- 	depends on X86_64 && CPU_SUP_INTEL
-diff --git a/arch/x86/include/asm/hypervisor.h b/arch/x86/include/asm/hypervi=
-sor.h
-index e41cbf2..9ad86a7 100644
---- a/arch/x86/include/asm/hypervisor.h
-+++ b/arch/x86/include/asm/hypervisor.h
-@@ -30,6 +30,7 @@ enum x86_hypervisor_type {
- 	X86_HYPER_KVM,
- 	X86_HYPER_JAILHOUSE,
- 	X86_HYPER_ACRN,
-+	X86_HYPER_BHYVE,
- };
-=20
- #ifdef CONFIG_HYPERVISOR_GUEST
-@@ -64,6 +65,7 @@ extern const struct hypervisor_x86 x86_hyper_xen_pv;
- extern const struct hypervisor_x86 x86_hyper_kvm;
- extern const struct hypervisor_x86 x86_hyper_jailhouse;
- extern const struct hypervisor_x86 x86_hyper_acrn;
-+extern const struct hypervisor_x86 x86_hyper_bhyve;
- extern struct hypervisor_x86 x86_hyper_xen_hvm;
-=20
- extern bool nopv;
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 1e26179..2f8a58e 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_X86_SGX)			+=3D sgx/
- obj-$(CONFIG_X86_LOCAL_APIC)		+=3D perfctr-watchdog.o
-=20
- obj-$(CONFIG_HYPERVISOR_GUEST)		+=3D vmware.o hypervisor.o mshyperv.o
-+obj-$(CONFIG_BHYVE_GUEST)		+=3D bhyve.o
- obj-$(CONFIG_ACRN_GUEST)		+=3D acrn.o
-=20
- obj-$(CONFIG_DEBUG_FS)			+=3D debugfs.o
-diff --git a/arch/x86/kernel/cpu/bhyve.c b/arch/x86/kernel/cpu/bhyve.c
-new file mode 100644
-index 0000000..f1a8ca3
---- /dev/null
-+++ b/arch/x86/kernel/cpu/bhyve.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * FreeBSD Bhyve guest enlightenments
-+ *
-+ * Copyright =C2=A9 2025 Amazon.com, Inc. or its affiliates.
-+ *
-+ * Author: David Woodhouse <dwmw2@infradead.org>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/export.h>
-+#include <asm/processor.h>
-+#include <asm/hypervisor.h>
-+
-+static uint32_t bhyve_cpuid_base;
-+static uint32_t bhyve_cpuid_max;
-+
-+#define BHYVE_SIGNATURE			"bhyve bhyve "
-+
-+#define CPUID_BHYVE_FEATURES		0x40000001
-+
-+/* Features advertised in CPUID_BHYVE_FEATURES %eax */
-+
-+/* MSI Extended Dest ID */
-+#define CPUID_BHYVE_FEAT_EXT_DEST_ID	(1UL << 0)
-+
-+static uint32_t __init bhyve_detect(void)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_HYPERVISOR))
-+                return 0;
-+
-+	bhyve_cpuid_base =3D cpuid_base_hypervisor(BHYVE_SIGNATURE, 0);
-+	if (!bhyve_cpuid_base)
-+		return 0;
-+
-+	bhyve_cpuid_max =3D cpuid_eax(bhyve_cpuid_base);
-+	return bhyve_cpuid_max;
-+}
-+
-+static uint32_t bhyve_features(void)
-+{
-+	unsigned int cpuid_leaf =3D bhyve_cpuid_base | CPUID_BHYVE_FEATURES;
-+
-+	if (bhyve_cpuid_max < cpuid_leaf)
-+		return 0;
-+
-+	return cpuid_eax(cpuid_leaf);
-+}
-+
-+static bool __init bhyve_ext_dest_id(void)
-+{
-+	return !!(bhyve_features() & CPUID_BHYVE_FEAT_EXT_DEST_ID);
-+}
-+
-+static bool __init bhyve_x2apic_available(void)
-+{
-+	return true;
-+}
-+
-+const struct hypervisor_x86 x86_hyper_bhyve __refconst =3D {
-+	.name			=3D "Bhyve",
-+	.detect			=3D bhyve_detect,
-+	.init.init_platform	=3D x86_init_noop,
-+	.init.x2apic_available	=3D bhyve_x2apic_available,
-+	.init.msi_ext_dest_id	=3D bhyve_ext_dest_id,
-+};
-diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hyperviso=
-r.c
-index 553bfbf..f3e9219 100644
---- a/arch/x86/kernel/cpu/hypervisor.c
-+++ b/arch/x86/kernel/cpu/hypervisor.c
-@@ -45,6 +45,9 @@ static const __initconst struct hypervisor_x86 * const hype=
-rvisors[] =3D
- #ifdef CONFIG_ACRN_GUEST
- 	&x86_hyper_acrn,
- #endif
-+#ifdef CONFIG_BHYVE_GUEST
-+	&x86_hyper_bhyve,
-+#endif
- };
-=20
- enum x86_hypervisor_type x86_hyper_type;
 
