@@ -1,197 +1,129 @@
-Return-Path: <linux-kernel+bounces-773808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0FDB2AAF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CD4B2AA98
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62CB5C0F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0645684D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974AA34574A;
-	Mon, 18 Aug 2025 14:15:13 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B500530E835;
+	Mon, 18 Aug 2025 14:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BN7N2vn8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C1C238C33;
-	Mon, 18 Aug 2025 14:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9F621CC59
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526513; cv=none; b=Q64iBa3NVKmMzxSlo+VUKGvck7oSpMWfMDiCiElUl0nCExsc0lzrcoscPUWhcKwsyVYpvXGyEREr+yCAK4Eowg6PYs6CME/Bd1X+QMxbdwoOGVP5emt019x6Wt7gAsaJsxuUvhTguPQa63ZryDd/pbutlJfTxskXyjXUdPsU89Y=
+	t=1755526555; cv=none; b=a+pGab5EhUXl6Hp9Am6+Ay0s7bZVPwD2GcvT1zrycwe2mna7Uq40R/ox+ROPUa4UJm+5oYpZO9AEUlldtF/bbH2O9YEUzvrO4Iqnmz+0ax4iHo7k03lg4vw/q2Mq9l9XsbO61kDisMnZfwThoqBgTM1+O+CECWcCYJeASKFoi7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526513; c=relaxed/simple;
-	bh=T2+bGxtt0/QliYXnLpsMn3ujLdIlP2ETiKcb2c+R1tI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJrtCzVEYzo4DUMbBAHfnxIp139E9CV87FRY7ZYy/k3uFiePkzeCNvZzABHR37OvT0GO6fUJ5IBNt4bkrzsA9hDYIxWSToJlQUqttCkpOfKGdNHHyfOYV1jutJVGKvCzybfN5/z7VS0XNzQ5m1lrcCWtphHxbXkqSEXwByldcLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53b1757a920so1202520e0c.3;
-        Mon, 18 Aug 2025 07:15:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755526510; x=1756131310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D94Qsa+myjFdE/M9+7sXm7iHa3BtVTv2Ph09TlGFvqw=;
-        b=Vf6m0hRi2bpNNTv2GgtRL5DTDq8ebSKw6ehmaHqfcZ94VwqaGEZNOI0xHLPIHKlMXa
-         p6Ikt1+8+PFJFXYayFUHbM1o8U0UT/yyw5k7yGemZnPwfuIoyxROxC0sigvnsS429O4/
-         SnRqxXIICoBSu6vnV1t6//FjJ500CEEj+Q7ql1o8nJzDb9OLgjqUg0MzAH9+TN4D6y2P
-         7yfZmU3Lowpx3Fe8MD+ndE/ebyjGWC0o3VmyfZuMKqnqjyarUM+p1a7L8FBQl5YItW1p
-         X4u2VoR0IExeixE/vPF6zCDPd8In3e0zZQbMZGg5wQ5PJsQc1ZiaHwarbeif6+N0JQcv
-         eu0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyu+S+FXAuuZya2nIL4aDP23WZPWTtq9gGjxtTYGtuq7taaHxEBvpLXLc9Dv+siiSxUdNCb4NfND4abZjdVYFRNKY=@vger.kernel.org, AJvYcCW4Sfcv499IIMluJ223Qa514XPv6Yz0Dgh9sKnUrJ+rl5VcZ47upkg26KxmjbjF2gwe/hTpUW53REuz@vger.kernel.org, AJvYcCWCb2+kx4hDBIDjPvY6uQN+UUFLdthVSqNWbSJzRmxkW/RjzdHRL2+3ymbE+tUSgGTkaA0Wv4iRWVdphuKI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnpY/3dRlMxLHuYsulRsPVEHbprgPsOxDK0x6+BkpWO+L5M3XA
-	2j5cPg8ipOlfmUeJSpYAF8Y7IUAkuONiSArocLf/2tdwC4zFbvoEo0G0QmSmFtk7
-X-Gm-Gg: ASbGncv4v0MvSSbChZ6z2ryeOIonbxTF0Hojd1RiVW5ujg1oo6lsNpGwvEG4RhHBOoT
-	aefRCC6TODfDtmdz+YhU//DgIMgMOhhwqfIluHkrxNMjXS4BWpx85ea6Xa6lOgG9Ui3H7fK3AkV
-	fEmoy1tgybdw9V7ycKlVnzZmoPltj8Ut6kNcyudBK799X3cRnZKrI8soRWhjcupvaI4FnSiTA50
-	Uf7sfJXh0eylcic63gGtIsDkqiKhuw2jp82m+ICeD2SU5Qkbws3adxbgNcbLjjh4XqViEtUZMGG
-	FUG5DpPGRst9huF+cxAU8mIi+qM/6+dRYZojUKtIEfYGQXl7NAyATidQGP8OxVFGt88QCGk9C7g
-	4oyqZA+0rwFKSfPMDM9kFEruXHajlGyeqTN6dfu0VoXLVnllk5JwHHfdGKYMj
-X-Google-Smtp-Source: AGHT+IG2DAP1Jnoj12b0DVjxAibz+5ILx9AtdBp/1sldx/hZu64xXEGS7/pIE6hFZSBdWNi4+YOddQ==
-X-Received: by 2002:a05:6122:a08:b0:538:d49b:719 with SMTP id 71dfb90a1353d-53b2b755d45mr3951132e0c.1.1755526509751;
-        Mon, 18 Aug 2025 07:15:09 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bed8eb8sm1865332e0c.21.2025.08.18.07.15.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 07:15:09 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-50f861bab18so636188137.0;
-        Mon, 18 Aug 2025 07:15:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7uUe8jxGGQuz+iAa7zMcxB5eUa3uBmK6W4eVaArAHQVAORZABm0rcYCq12IXTybHXB7whvcFwEXbHtMP0@vger.kernel.org, AJvYcCXFtDzqz6quB23upXH44SlT7nM5nFl8ryL1FBDRK1cykwyjfNLG6bQQgHJfFRNHDxJxzy5Lf5kSwQYsaLCokAQ1jRQ=@vger.kernel.org, AJvYcCXnqh81KyEYS3kx75dATEe5kPo2d+H1cMSngiRdoJk4rqHaowKxdifkS97kn+6laKDl6uiuUPCxVqZ/@vger.kernel.org
-X-Received: by 2002:a05:6102:3713:b0:4e9:92d3:d20 with SMTP id
- ada2fe7eead31-5126ab29791mr3600838137.4.1755526509280; Mon, 18 Aug 2025
- 07:15:09 -0700 (PDT)
+	s=arc-20240116; t=1755526555; c=relaxed/simple;
+	bh=9USpyRnb1fxPa09Sd5l/boQOMb607B0Z+GkFYZeyGjc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MQvJmRduuefQ9pvjW8YF52hyvkBTmLG+G1j5PP2W9Hs7eKlwXmDz+GyEaS7ED684mnMjc1tq6MEH6p7A67YIDu/8HjfOqR7uf0QkLNjryMnquLySEUPngjii0AU2Sb36YU4XEn0J5EumbYjwTmd90mtL8wmD7GWTIhQT9TenrZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BN7N2vn8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755526552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=939vtpCFL3U8h4rCZHr975ZJTiYuY4xWv6Lielz8HCk=;
+	b=BN7N2vn81tC/uBEW4lt9r6FP8MLbnsU313dP/Mk/vsAk7WVvJpULcmPCtG62P/TeN3SGAU
+	BZXgM/wXh0Uxd+/jIaIHdfC4VBP1lQLhIY9S+7XZ/y6Sn40XuXXLrmioj70Ry+dXW81tHc
+	RPb1EV9z6j0oM24bPzXMIqcSIDjxEg0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-224-6KTG6cDaPKW5yO3H7iIQkw-1; Mon,
+ 18 Aug 2025 10:15:48 -0400
+X-MC-Unique: 6KTG6cDaPKW5yO3H7iIQkw-1
+X-Mimecast-MFC-AGG-ID: 6KTG6cDaPKW5yO3H7iIQkw_1755526546
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED72619560AE;
+	Mon, 18 Aug 2025 14:15:45 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.61])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C172A19560AD;
+	Mon, 18 Aug 2025 14:15:41 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>,  LKML <linux-kernel@vger.kernel.org>,
+  Michael Jeanson <mjeanson@efficios.com>,  Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,  Peter Zijlstra <peterz@infradead.org>,
+  "Paul E. McKenney" <paulmck@kernel.org>,  Boqun Feng
+ <boqun.feng@gmail.com>,  Wei Liu <wei.liu@kernel.org>,  Sean
+ Christopherson <seanjc@google.com>,  Samuel Thibault
+ <sthibault@debian.org>
+Subject: Re: BUG: rseq selftests and librseq vs. glibc fail
+In-Reply-To: <87frdoybk4.ffs@tglx> (Thomas Gleixner's message of "Mon, 18 Aug
+	2025 16:00:27 +0200")
+References: <87frdoybk4.ffs@tglx>
+Date: Mon, 18 Aug 2025 16:15:38 +0200
+Message-ID: <lhuect8sol1.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812200344.3253781-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 16:14:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXsQ7pne45+56f_nO0VA8LeUpZhxXFKPMqOKR4GSsdG4Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyjgHtrFj3K1ZNoypZLsLLtqdfXcJSrMvIWvs3l24dXDsMcOTIrjrOGHMU
-Message-ID: <CAMuHMdXsQ7pne45+56f_nO0VA8LeUpZhxXFKPMqOKR4GSsdG4Q@mail.gmail.com>
-Subject: Re: [PATCH 06/13] arm64: dts: renesas: r9a09g087m44-rzn2h-evk: Add
- user LEDs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Prabhakar,
+* Thomas Gleixner:
 
-On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On Sun, Aug 17 2025 at 23:23, Thomas Gleixner wrote:
+>> It survives the self test suite after I wasted a day to figure out why
+>> the selftests reliably segfault on a machine which has debian trixie
+>> installed. The fix is in the branch.
 >
-> Add USER LED0-LED8, which are available on RZ/N2H EVK.
+> That's glibc 2.41 FWIW. glibc 2.36 from Debian 12 does not have this
+> problem.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> @@ -7,10 +7,64 @@
+> The fix unfortunately only works with a dynamically linked libc,
+> statically linked libc fails. The fix is basically a revert of
 >
->  /dts-v1/;
+>    3bcbc20942db ("selftests/rseq: Play nice with binaries statically linked
+>                   against glibc 2.35+")
 >
-> +#include <dt-bindings/gpio/gpio.h>
-> +
->  #include "r9a09g087m44.dtsi"
->  #include "rzt2h-n2h-evk-common.dtsi"
+> which introduced these weak libc symbols to make static libc linking work.
 >
->  / {
->         model = "Renesas RZ/N2H EVK Board based on r9a09g087m44";
->         compatible = "renesas,rzn2h-evk", "renesas,r9a09g087m44", "renesas,r9a09g087";
-> +
-> +       leds {
-> +               compatible = "gpio-leds";
-> +
-> +               led3 {
-> +                       /* DSW18-7: ON, DSW18-8: OFF */
-> +                       gpios = <&pinctrl RZN2H_GPIO(31, 6) GPIO_ACTIVE_LOW>;
+> I have no idea why this creates havoc, but in GDB I saw that libc
+> manages to overwrite the TLS of the pthread at some place, but I gave up
+> decoding it further. If no pthread is created it just works. Removing
+> this weak muck makes it work too.
+>
+> It's trivial to reproduce. All it needs is to have in the source:
+>
+> __weak ptrdiff_t __rseq_offset;
+>
+> w/o even being referenced and creating a pthread. Reproducer below.
 
-Similar comments like for the RZ/T2H EVB, e.g.
+Well, that's sort of expected.  You can't define glibc symbols that are
+not intended for interposition and expect things to work.  It's kind of
+like writing:
 
-    led-3 {
-            /* DSW18-7: ON, DSW18-8: OFF */
-            gpios = <&pinctrl RZN2H_GPIO(31, 6) GPIO_ACTIVE_LOW>;
-            color = <LED_COLOR_ID_GREEN>;
-            function = LED_FUNCTION_DEBUG;
-            function-enumerator = <4>;
-    };
+int _rtld_global;
 
-> +               };
-> +
-> +               led4 {
-> +                       /* DSW18-9: ON, DSW18-10: OFF */
-> +                       gpios = <&pinctrl RZN2H_GPIO(18, 1) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led5 {
-> +                       /* DSW18-1: ON, DSW18-2: OFF */
-> +                       gpios = <&pinctrl RZN2H_GPIO(22, 7) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led6 {
-> +                       /* DSW18-3: ON, DSW18-4: OFF */
-> +                       gpios = <&pinctrl RZN2H_GPIO(23, 0) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led7 {
-> +                       /*
-> +                        * DSW18-5: ON, DSW18-6: OFF
-> +                        * DSW19-3: ON, DSW19-4: OFF
+That's going to fail rather spectaculary, too.  We make an exception for
+symbols that are not reserved (you can build in ISO C mode and define
+open, close, etc., at least as long as you link to glibc only).  But
+__rseq_offset is a reserved name, so that is not applicable here.
 
-Shouldn't that be "DSW19-3: OFF, DSW19-4: ON"?
+The real change here is GCC changing from -fcommon (which made a lot of
+these things work in the past) to -fno-common.
 
-> +                        */
-> +                       gpios = <&pinctrl RZN2H_GPIO(14, 3) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led8 {
-> +                       /* DSW15-8: OFF, DSW15-9: OFF, DSW15-10: ON */
-> +                       gpios = <&pinctrl RZN2H_GPIO(14, 6) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led9 {
-> +                       /* DSW15-5: OFF, DSW16-6: ON */
+Thanks,
+Florian
 
-s/DSW16/DSW15/
-
-> +                       gpios = <&pinctrl RZN2H_GPIO(14, 7) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led10 {
-> +                       /* DSW17-3: OFF, DSW17-4: ON */
-> +                       gpios = <&pinctrl RZN2H_GPIO(2, 7) GPIO_ACTIVE_LOW>;
-> +               };
-> +
-> +               led11 {
-> +                       /* DSW17-1: OFF, DSW17-2: ON */
-> +                       gpios = <&pinctrl RZN2H_GPIO(3, 0) GPIO_ACTIVE_LOW>;
-> +               };
-> +       };
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
