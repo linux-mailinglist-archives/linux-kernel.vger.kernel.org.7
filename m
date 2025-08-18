@@ -1,597 +1,236 @@
-Return-Path: <linux-kernel+bounces-774074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281EEB2AE54
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:38:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F9EB2AE63
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827394E7724
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548451782AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305B8340DA5;
-	Mon, 18 Aug 2025 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808B6342CAE;
+	Mon, 18 Aug 2025 16:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FbGqX48V"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2057.outbound.protection.outlook.com [40.107.237.57])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="elRkxDAc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C196E35A293
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755535118; cv=fail; b=Oc8yFb6KODVG55nSljyVh3XZqdnqpb6rgelfub6PaFC5Fi/W32G6/Pa+gzriUxKsEbgS992RTJcVqnY4AwnGkF7gBJhLEtNdcx+sq+bmfbS1nnBW7bICyvV0Ut6XtcyXaGB5HSdKzvwCv7ZLrBSqFGRKdeYFcW/ipR5yZsUnT8Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755535118; c=relaxed/simple;
-	bh=4mArL5MWsM2Cdb1RG6L9AvnROPA90zyISrRJ3xspZGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aezooeZFTFVDZz0JZAT/0P8ty+OZ0TS1dGTTJRiopN3VQyJUL4WvWOUJySzYolkNkzj4MPdBY8cmzAATsL3v45Q/lVv/XPXDw/u9cZOe1Mpo+tSCqX6t8JJywNU4KOlmZdNU4F8dPxbyQYtOJjbr3yj6HMSR4q/TWONV3HAVn58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FbGqX48V; arc=fail smtp.client-ip=40.107.237.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JlcsgoA9hwZ+mDQeQ2Mg1yjvu2h56KL4//OCdqDF999PlNFakdpsjDCUDk2iJw/hb647J/ScLSRH/SGEHhJljKaoLcaLRt7V/5KfHPrT5yxxk+B1HH9q9pakAK5hK107IKCegWy1svo3NcmGYUTraAwmUu/sRxYuytjtGi3SZP5e5yx/4u6ze9f+Op15y+EHQwoWj8UeYoSzUeiDbY+BWGtOZ5Zg2+A9kXCXH9bJV++1efROk5B4PZFpW9Bjfo+xH5RHTxJNJzoLxjSl4rOlq1UopJ1Wr7/EYzdFBZah/L72zP+JUlsSuKQdb9lYDdNBeG799z+kBZO0ESWupRi3Qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0XMveDw7j+RG7OCCUF0laeHhU5GCkfOiKfDDjX4/X1o=;
- b=vzkCo/pC8FP6CoJofdhiZehr6bR91pC/lVWzAj1dXXIcXMoPAFdZSyMWDDR/Xaojj3PINmpjIguBB4ln9Dga2vc5xFwRzUY510ZOoWA4rCzG2xUXzeCRq3jZLXolee3EKwa9nurXTYvnzEEV/aKBr15dlWkNMXk5LzoYwmEdgZiUlj6EhshkUTLpjim7ZCiQG1MQoM6POYW6YmY4jWmbakr0kmj6uEhxsArw2u/pPz7ya3D8Q4CnMZHjXmkvGi0tiNuIvGBjRQ3ed7DFaTAX0BQQi9a/r8WXSsceMB3Xj3cPVMKc6OOATW75ecNbVnGLxg+Yy0Xi6skxryW9ZPzkYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0XMveDw7j+RG7OCCUF0laeHhU5GCkfOiKfDDjX4/X1o=;
- b=FbGqX48Vay3Dr0wTrQ9Oyb/nH2mxma4t631eCllmd+tYz9t4M+kTEBwzbHkAfUiNUi6KoOocg7rw/0pTd9sIR5wmEgCu8HneVXM4mZbju7H8WOOqYJAeBRZ+M8nC9FCkec2/iigkKswgLJrbAMgYVL4S/cwv6/CkSpSP/3078B8=
-Received: from SA1P222CA0089.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::19)
- by DM6PR12MB4170.namprd12.prod.outlook.com (2603:10b6:5:219::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 16:38:27 +0000
-Received: from SN1PEPF000397B1.namprd05.prod.outlook.com
- (2603:10b6:806:35e:cafe::a8) by SA1P222CA0089.outlook.office365.com
- (2603:10b6:806:35e::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.21 via Frontend Transport; Mon,
- 18 Aug 2025 16:38:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF000397B1.mail.protection.outlook.com (10.167.248.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Mon, 18 Aug 2025 16:38:26 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 11:38:26 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 11:38:26 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Aug 2025 11:38:25 -0500
-Message-ID: <186f82a7-934f-d001-bab3-edc1e2b0e063@amd.com>
-Date: Mon, 18 Aug 2025 09:38:20 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6B2265609;
+	Mon, 18 Aug 2025 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755535166; cv=none; b=Z/Or/0oW78BFxHlc2x0EiMUU1+mMhlccr1gJVnlDdJ8kKtT0a9WuPivGoESKFrhrQitxhT8lXMkKay6Y6PwgEGaXCzIVpBLhvizIrLfL3lonkZRrP9cA1d38mg1yhhmetmXRmO6GnDpFx39bsv4gstv5yZkon/MIbo9TzrVHn/Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755535166; c=relaxed/simple;
+	bh=IYNw/Mt3VRKskEZVruQwzOyOO8N+aX/C3o/r503fbWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DEAw9V9pEhQpC1rudTMbuBAMdFLDyYm9zP6+FISddSH1zpKdsNfNVhgpZkZOMBVZ9XkHuLo44Y8+uXdudUo7Z8k3uq+am0F4H47uuS1pWbfmCwXaMOBxcMDgMlZvZd1EgNplpPPGnwtLM9If5tSb3o9//4j5A8vjQGaha7sARLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=elRkxDAc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBAPPw024356;
+	Mon, 18 Aug 2025 16:39:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=R2J8minbyc0pri7w8vlrXNn+dDlIo5btiJgX6/Qc+
+	BI=; b=elRkxDAcv9N989+xGVXLS3egVUzJQ7/e8sedaCJr9CrYksmBg3zaJvKxb
+	MKRg5BXChyxkekTuC2M/dYxhbDErkZ9WYK4gGXNpzz2uPCA1QZ3/kVRKkex7mM17
+	aBug5vRtQZ+4u3LcURZoEvfDhp7nOiQWFAevDLHb8PqOhKQiF5qInAO1RQkLyo7a
+	7Y4ISJY9dNifok2X42ymz7ya7WWZ4tzaKXpLcZ5UuO0d3KRrIc9xDGkIpzbztmCu
+	VYtdKPMvusItYTkfdPxCgof2+Bg5yqQnV4QJSZsz9Cjqz540LuWoqflyCs7q5iDu
+	kgJtSgO0RyceMpSzZdxNDPtH8xvpQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jge3t6xu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 16:39:16 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57IGdGvN013935;
+	Mon, 18 Aug 2025 16:39:16 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jge3t6xs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 16:39:16 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57IEnhPd014728;
+	Mon, 18 Aug 2025 16:39:15 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48k5tmpje6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 16:39:15 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57IGdDfu31851052
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Aug 2025 16:39:13 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9893A20043;
+	Mon, 18 Aug 2025 16:39:13 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7DC2920040;
+	Mon, 18 Aug 2025 16:39:13 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 18 Aug 2025 16:39:13 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id 40A66E05D2; Mon, 18 Aug 2025 18:39:13 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Daniel Axtens <dja@axtens.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryan Roberts <ryan.roberts@arm.com>
+Cc: linux-mm@kvack.org, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH 0/2] mm/kasan: fix vmalloc shadow memory population issues
+Date: Mon, 18 Aug 2025 18:39:11 +0200
+Message-ID: <cover.1755528662.git.agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V2] accel/amdxdna: Add a function to walk hardware
- contexts
-Content-Language: en-US
-To: "Limonciello, Mario" <Mario.Limonciello@amd.com>, "ogabbay@kernel.org"
-	<ogabbay@kernel.org>, "quic_jhugo@quicinc.com" <quic_jhugo@quicinc.com>,
-	"jacek.lawrynowicz@linux.intel.com" <jacek.lawrynowicz@linux.intel.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhen, Max"
-	<Max.Zhen@amd.com>, "Santan, Sonal" <sonal.santan@amd.com>
-References: <20250815171634.3417487-1-lizhi.hou@amd.com>
- <bc4d34db-ad0c-409a-b6ff-0e16b36e1cd2@amd.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <bc4d34db-ad0c-409a-b6ff-0e16b36e1cd2@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B1:EE_|DM6PR12MB4170:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4831c817-59c0-4050-63be-08ddde75a806
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjEraUNMYWRubFJwMWQ1S21sNnlzMytuUk5SaDVDZGRrak56M0RYSllvM3pu?=
- =?utf-8?B?dFdXdmpEVmNaN2lseHdZVGtvUnhESGFtUG9qaW1hRlpiVm80U21Jd2hETVpo?=
- =?utf-8?B?Zkw4dXY5NExDcG9raG9oR2tZcWdNYUcxeXQxeEtyd1hVK2hjU0IwNXhzNVpl?=
- =?utf-8?B?aU5WaFBFSGVQQWRNMU9VZGhZU1dFdzVIUlZBYTlFUmFQWlJ2eUxTZXN6bkpF?=
- =?utf-8?B?d0JQaGMvZm5jK3k3MmtsUm9qU0FCN0k3V1lqbC9aMzBSKzVhOCs3MytlT0pI?=
- =?utf-8?B?N2UrVXh3WC9Mb0YxUEpnTFJkM08zY2RoODdBMEwzT0FuVlJuVFI2OXl0WWx1?=
- =?utf-8?B?d3lQdWp5bVhxZGlWL3NFeXFkSW5qRk1DWXFqaXlMdGJGSjBoV1RLek8zRkJB?=
- =?utf-8?B?a2pQa3BOaHQvczJhRU16eFNRd2Rkay9Rand6VnhRUXFoK24rbDF5dXVGZUMz?=
- =?utf-8?B?aHJCaDRXUGlQT2RmaUpXNTF6Y0N3UDhUdWs4TENBVUtmWnhjYjFlM3FMTFVC?=
- =?utf-8?B?cXovRVNOejE4VEx3MkRBM1Q4eTVnc0VDUmx4QVdpUzhPZTkvQXpxeGdDZ1pT?=
- =?utf-8?B?Y2p0cjJCdTBFQ2NZY3dodzA4L0FMQzNBSEx0TFNkN0V5eTRnb2dmU20zS1NM?=
- =?utf-8?B?RHJXaHFLZHpmU1ZmcU56aUlnbVI2R1M3TUlFQ2pnelNpaXJWbjV4cm9CUTRR?=
- =?utf-8?B?SlR3QXo1d0NneW02VDZqSS9TNC8yVC9PNFdpY0Zrckg0UWljUWtHRUhicFZz?=
- =?utf-8?B?UmhkT0d1cWNEZlh5RG9vNW5oRXlMVUhXd1VzSFludm0zTFQra0hSUS9iRkZ5?=
- =?utf-8?B?OTdRbnVwSzFOaitudFFibzZabVBEYmNGRFp6ckl5N0RNWldtY2ZRdGtlNlRq?=
- =?utf-8?B?ZWJXMzZVVlRZYjdkeTc1TnlTdUFSQXJaZC9XRkRoTHAxVm9NVFZodlNSQ21L?=
- =?utf-8?B?NXlwMVRmdkt3UWNsdmR3dmtTMXlhLzJhWmFGVGkyWUFaMHRuVVVmRjk0VkJY?=
- =?utf-8?B?ZGNCU1RCWE5WbTFBTWVRVWFXUHZYUllaSkFlR2pZNVJjTHBMM3F2aHNHUEJI?=
- =?utf-8?B?eUFUN2YrbzkxK3pjZm13QW1SbzdKbUR4cmdGUEhKNi8xSkVJU003NnZjaWpK?=
- =?utf-8?B?ekpwRU1TWlhGOFBsYyt4V1NZVm5ZNW9uVGU2ZDJFZ2N4ZVhuUVcyeEd5aFJy?=
- =?utf-8?B?WnpiV2NuSmFxcHk4ZWRtdTg4Y1Q4aGh2SWU5QkdvYWJTUG9XM0ttbjBNdlBU?=
- =?utf-8?B?S2JnYXpscWZuWXgrYWtCYTBUWVJDUFRuWkluV0Z3dkIrbjVXWnBMeWdTNS8z?=
- =?utf-8?B?SFVhWVNRY2pXNDZqTkdTcGNaWitWeTFDWWVvbTZobk5QWkZQdW9GTWljRVUx?=
- =?utf-8?B?TWJTMEZZa3R0USt5ZGJ2TU5FQVJhOXFrUTB1L092cTJ0QTFnNVRzYjY1K0Vz?=
- =?utf-8?B?TENXRExOZHg3dkFsZ242ZmorM2kvbjE1cE9GMUZ1UElibllvV3J1MTFDZVox?=
- =?utf-8?B?MTY1ZncvaEdpUFV3RUJzY2JxeDhPU0p6WHVQbEhQbWVtaktMbjBzUXhtNXFR?=
- =?utf-8?B?N3pUM2dyQjkycTdOdWNERllrQ3c3L1JlUGJjeWI1cUQxS25yOUs2S2FLeFRI?=
- =?utf-8?B?SnVaN2lYdWh2aUZ1M1JZdFRYR0p2Q0M4S1dUT3NjQ2NPeVRDQUJxTzNXVmRC?=
- =?utf-8?B?Z0QzaHpMU0dhVUVmQzQrZlVPOFlsNEpSNTBidFJoaDZITGUrSXoyMGROV0Qy?=
- =?utf-8?B?SFJranJ1V1dvYUNKLzdBSDA3c1YyNk9TYXNKRlA0Vm54ZXliNlhaTm9UNmxh?=
- =?utf-8?B?aDRSZGZmb3hEQjhlRkJTQWIxcDliMS94MmxwdjIxdTVZem1odkV0dHp1MlFM?=
- =?utf-8?B?QjNaSHRvRyt5TUhUb0grQUxxQUpNTGJGN3p3ZHlLdHcxUmp2b2V6T1k4M3VR?=
- =?utf-8?B?Vnd4TGVjdUZXWTd1bWxLQzd6MlR5ZFZiRHFVc2hua2lnc05ZZS9reGRaOW81?=
- =?utf-8?B?Mnd5WG1PRXdzSU1ORXFoNy9OL0VNVkhWMlJJTUtHUFE1Z3Nra1Y2ZWhwRytt?=
- =?utf-8?Q?nbkMkv?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 16:38:26.7322
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4831c817-59c0-4050-63be-08ddde75a806
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4170
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FcM3xI+6 c=1 sm=1 tr=0 ts=68a35734 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=njq2mmYMnVxNw-6NPcsA:9
+ a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-GUID: rdIg7Bn1EV5ou23bmQ4mIkst8l_YFpvM
+X-Proofpoint-ORIG-GUID: 5LRYwOzw2RvagFJR-QQA6Mi1gd4gE_am
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAxMSBTYWx0ZWRfX5onC88oUqhQC
+ H6CqLLxjSkAUfiIeGXxUzZmW5PLQk++823B6wyrqoe4HgPmhWNK2EOjUVWLk/TTapXScABqO+Jh
+ rXRgSexP136YlBSgmB+kKvvRXejCprjmuR1XiP7JEv6M6ZL+2xzUn5bu7LbMaWzkX2abRJGlece
+ HtTSuJ3j/VayB9lBqYPVaHFDuELwDJwwmJtJIrxwWPR29J8laq0lAGfjyLnxBVhUx6WITxS4r4T
+ tHcMI1YSERl3rJfkKs6O/E9fg3RDykGV+KEe4Ff7w+kk56ZH1hCCoLoKdBWk0D9EcXe5kZ0CcVz
+ 4+3oZE+2dZ67MGMAYfPx+qWai042aU5mHpKE92tRYVEC53rUeRf5/1R0wGlXNvwIDvJ6Qej7QIl
+ YclZM7WR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ phishscore=0 clxscore=1011 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160011
 
-Applied to drm-misc-next
+Hi All,
 
-Thanks,
+While working on the lazy MMU mode enablement for s390 I hit pretty
+curious issues in the kasan code.
 
-Lizhi
+The first is related to a custom kasan-based sanitizer aimed at catching
+invalid accesses to PTEs and is inspired by [1] conversation. The kasan
+complains on valid PTE accesses, while the shadow memory is reported as
+unpoisoned:
 
-On 8/15/25 13:43, Limonciello, Mario wrote:
-> On 8/15/25 12:16 PM, Lizhi Hou wrote:
->> Walking hardware contexts created by a process is duplicated in multiple
->> spots. Add a function, amdxdna_hwctx_walk(), and replace all spots.
->>
->> hwctx_srcu and dev_lock are good enough to protect hardware context list.
->> Remove hwctx_lock.
->>
->> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->
->> ---
->>    drivers/accel/amdxdna/aie2_ctx.c        | 38 +++++-----
->>    drivers/accel/amdxdna/aie2_message.c    | 21 +++---
->>    drivers/accel/amdxdna/aie2_pci.c        | 93 ++++++++++++-------------
->>    drivers/accel/amdxdna/aie2_pci.h        |  2 +-
->>    drivers/accel/amdxdna/amdxdna_ctx.c     | 26 +++++--
->>    drivers/accel/amdxdna/amdxdna_ctx.h     |  8 +--
->>    drivers/accel/amdxdna/amdxdna_pci_drv.c |  7 +-
->>    drivers/accel/amdxdna/amdxdna_pci_drv.h |  2 -
->>    8 files changed, 102 insertions(+), 95 deletions(-)
->>
->> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
->> index 910ffb7051f4..420467a5325c 100644
->> --- a/drivers/accel/amdxdna/aie2_ctx.c
->> +++ b/drivers/accel/amdxdna/aie2_ctx.c
->> @@ -133,11 +133,20 @@ static void aie2_hwctx_wait_for_idle(struct amdxdna_hwctx *hwctx)
->>    	dma_fence_put(fence);
->>    }
->>    
->> +static int aie2_hwctx_suspend_cb(struct amdxdna_hwctx *hwctx, void *arg)
->> +{
->> +	struct amdxdna_dev *xdna = hwctx->client->xdna;
->> +
->> +	aie2_hwctx_wait_for_idle(hwctx);
->> +	aie2_hwctx_stop(xdna, hwctx, NULL);
->> +	aie2_hwctx_status_shift_stop(hwctx);
->> +
->> +	return 0;
->> +}
->> +
->>    void aie2_hwctx_suspend(struct amdxdna_client *client)
->>    {
->>    	struct amdxdna_dev *xdna = client->xdna;
->> -	struct amdxdna_hwctx *hwctx;
->> -	unsigned long hwctx_id;
->>    
->>    	/*
->>    	 * Command timeout is unlikely. But if it happens, it doesn't
->> @@ -145,19 +154,20 @@ void aie2_hwctx_suspend(struct amdxdna_client *client)
->>    	 * and abort all commands.
->>    	 */
->>    	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->> -	guard(mutex)(&client->hwctx_lock);
->> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
->> -		aie2_hwctx_wait_for_idle(hwctx);
->> -		aie2_hwctx_stop(xdna, hwctx, NULL);
->> -		aie2_hwctx_status_shift_stop(hwctx);
->> -	}
->> +	amdxdna_hwctx_walk(client, NULL, aie2_hwctx_suspend_cb);
->>    }
->>    
->> -void aie2_hwctx_resume(struct amdxdna_client *client)
->> +static int aie2_hwctx_resume_cb(struct amdxdna_hwctx *hwctx, void *arg)
->> +{
->> +	struct amdxdna_dev *xdna = hwctx->client->xdna;
->> +
->> +	aie2_hwctx_status_restore(hwctx);
->> +	return aie2_hwctx_restart(xdna, hwctx);
->> +}
->> +
->> +int aie2_hwctx_resume(struct amdxdna_client *client)
->>    {
->>    	struct amdxdna_dev *xdna = client->xdna;
->> -	struct amdxdna_hwctx *hwctx;
->> -	unsigned long hwctx_id;
->>    
->>    	/*
->>    	 * The resume path cannot guarantee that mailbox channel can be
->> @@ -165,11 +175,7 @@ void aie2_hwctx_resume(struct amdxdna_client *client)
->>    	 * mailbox channel, error will return.
->>    	 */
->>    	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->> -	guard(mutex)(&client->hwctx_lock);
->> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
->> -		aie2_hwctx_status_restore(hwctx);
->> -		aie2_hwctx_restart(xdna, hwctx);
->> -	}
->> +	return amdxdna_hwctx_walk(client, NULL, aie2_hwctx_resume_cb);
->>    }
->>    
->>    static void
->> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
->> index 82412eec9a4b..9caad083543d 100644
->> --- a/drivers/accel/amdxdna/aie2_message.c
->> +++ b/drivers/accel/amdxdna/aie2_message.c
->> @@ -290,18 +290,25 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u6
->>    	return 0;
->>    }
->>    
->> +static int amdxdna_hwctx_col_map(struct amdxdna_hwctx *hwctx, void *arg)
->> +{
->> +	u32 *bitmap = arg;
->> +
->> +	*bitmap |= GENMASK(hwctx->start_col + hwctx->num_col - 1, hwctx->start_col);
->> +
->> +	return 0;
->> +}
->> +
->>    int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf,
->>    		      u32 size, u32 *cols_filled)
->>    {
->>    	DECLARE_AIE2_MSG(aie_column_info, MSG_OP_QUERY_COL_STATUS);
->>    	struct amdxdna_dev *xdna = ndev->xdna;
->>    	struct amdxdna_client *client;
->> -	struct amdxdna_hwctx *hwctx;
->> -	unsigned long hwctx_id;
->>    	dma_addr_t dma_addr;
->>    	u32 aie_bitmap = 0;
->>    	u8 *buff_addr;
->> -	int ret, idx;
->> +	int ret;
->>    
->>    	buff_addr = dma_alloc_noncoherent(xdna->ddev.dev, size, &dma_addr,
->>    					  DMA_FROM_DEVICE, GFP_KERNEL);
->> @@ -309,12 +316,8 @@ int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf,
->>    		return -ENOMEM;
->>    
->>    	/* Go through each hardware context and mark the AIE columns that are active */
->> -	list_for_each_entry(client, &xdna->client_list, node) {
->> -		idx = srcu_read_lock(&client->hwctx_srcu);
->> -		amdxdna_for_each_hwctx(client, hwctx_id, hwctx)
->> -			aie_bitmap |= amdxdna_hwctx_col_map(hwctx);
->> -		srcu_read_unlock(&client->hwctx_srcu, idx);
->> -	}
->> +	list_for_each_entry(client, &xdna->client_list, node)
->> +		amdxdna_hwctx_walk(client, &aie_bitmap, amdxdna_hwctx_col_map);
->>    
->>    	*cols_filled = 0;
->>    	req.dump_buff_addr = dma_addr;
->> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
->> index 6fc3191c3097..16ac0cab4f44 100644
->> --- a/drivers/accel/amdxdna/aie2_pci.c
->> +++ b/drivers/accel/amdxdna/aie2_pci.c
->> @@ -10,6 +10,7 @@
->>    #include <drm/drm_managed.h>
->>    #include <drm/drm_print.h>
->>    #include <drm/gpu_scheduler.h>
->> +#include <linux/cleanup.h>
->>    #include <linux/errno.h>
->>    #include <linux/firmware.h>
->>    #include <linux/iommu.h>
->> @@ -465,8 +466,11 @@ static int aie2_hw_resume(struct amdxdna_dev *xdna)
->>    		return ret;
->>    	}
->>    
->> -	list_for_each_entry(client, &xdna->client_list, node)
->> -		aie2_hwctx_resume(client);
->> +	list_for_each_entry(client, &xdna->client_list, node) {
->> +		ret = aie2_hwctx_resume(client);
->> +		if (ret)
->> +			break;
->> +	}
->>    
->>    	return ret;
->>    }
->> @@ -779,65 +783,56 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
->>    	return ret;
->>    }
->>    
->> +static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->> +{
->> +	struct amdxdna_drm_query_hwctx __user *buf, *tmp __free(kfree) = NULL;
->> +	struct amdxdna_drm_get_info *get_info_args = arg;
->> +
->> +	if (get_info_args->buffer_size < sizeof(*tmp))
->> +		return -EINVAL;
->> +
->> +	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
->> +	if (!tmp)
->> +		return -ENOMEM;
->> +
->> +	tmp->pid = hwctx->client->pid;
->> +	tmp->context_id = hwctx->id;
->> +	tmp->start_col = hwctx->start_col;
->> +	tmp->num_col = hwctx->num_col;
->> +	tmp->command_submissions = hwctx->priv->seq;
->> +	tmp->command_completions = hwctx->priv->completed;
->> +
->> +	buf = u64_to_user_ptr(get_info_args->buffer);
->> +
->> +	if (copy_to_user(buf, tmp, sizeof(*tmp)))
->> +		return -EFAULT;
->> +
->> +	get_info_args->buffer += sizeof(*tmp);
->> +	get_info_args->buffer_size -= sizeof(*tmp);
->> +
->> +	return 0;
->> +}
->> +
->>    static int aie2_get_hwctx_status(struct amdxdna_client *client,
->>    				 struct amdxdna_drm_get_info *args)
->>    {
->> -	struct amdxdna_drm_query_hwctx __user *buf;
->>    	struct amdxdna_dev *xdna = client->xdna;
->> -	struct amdxdna_drm_query_hwctx *tmp;
->> +	struct amdxdna_drm_get_info info_args;
->>    	struct amdxdna_client *tmp_client;
->> -	struct amdxdna_hwctx *hwctx;
->> -	unsigned long hwctx_id;
->> -	bool overflow = false;
->> -	u32 req_bytes = 0;
->> -	u32 hw_i = 0;
->> -	int ret = 0;
->> -	int idx;
->> +	int ret;
->>    
->>    	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->>    
->> -	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
->> -	if (!tmp)
->> -		return -ENOMEM;
->> +	info_args.buffer = args->buffer;
->> +	info_args.buffer_size = args->buffer_size;
->>    
->> -	buf = u64_to_user_ptr(args->buffer);
->>    	list_for_each_entry(tmp_client, &xdna->client_list, node) {
->> -		idx = srcu_read_lock(&tmp_client->hwctx_srcu);
->> -		amdxdna_for_each_hwctx(tmp_client, hwctx_id, hwctx) {
->> -			req_bytes += sizeof(*tmp);
->> -			if (args->buffer_size < req_bytes) {
->> -				/* Continue iterating to get the required size */
->> -				overflow = true;
->> -				continue;
->> -			}
->> -
->> -			memset(tmp, 0, sizeof(*tmp));
->> -			tmp->pid = tmp_client->pid;
->> -			tmp->context_id = hwctx->id;
->> -			tmp->start_col = hwctx->start_col;
->> -			tmp->num_col = hwctx->num_col;
->> -			tmp->command_submissions = hwctx->priv->seq;
->> -			tmp->command_completions = hwctx->priv->completed;
->> -
->> -			if (copy_to_user(&buf[hw_i], tmp, sizeof(*tmp))) {
->> -				ret = -EFAULT;
->> -				srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
->> -				goto out;
->> -			}
->> -			hw_i++;
->> -		}
->> -		srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
->> -	}
->> -
->> -	if (overflow) {
->> -		XDNA_ERR(xdna, "Invalid buffer size. Given: %u Need: %u.",
->> -			 args->buffer_size, req_bytes);
->> -		ret = -EINVAL;
->> +		ret = amdxdna_hwctx_walk(tmp_client, &info_args, aie2_hwctx_status_cb);
->> +		if (ret)
->> +			break;
->>    	}
->>    
->> -out:
->> -	kfree(tmp);
->> -	args->buffer_size = req_bytes;
->> +	args->buffer_size = (u32)(info_args.buffer - args->buffer);
->>    	return ret;
->>    }
->>    
->> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
->> index 488d8ee568eb..91a8e948f82a 100644
->> --- a/drivers/accel/amdxdna/aie2_pci.h
->> +++ b/drivers/accel/amdxdna/aie2_pci.h
->> @@ -289,7 +289,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx);
->>    void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx);
->>    int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size);
->>    void aie2_hwctx_suspend(struct amdxdna_client *client);
->> -void aie2_hwctx_resume(struct amdxdna_client *client);
->> +int aie2_hwctx_resume(struct amdxdna_client *client);
->>    int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->>    void aie2_hmm_invalidate(struct amdxdna_gem_obj *abo, unsigned long cur_seq);
->>    
->> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
->> index b47a7f8e9017..4bfe4ef20550 100644
->> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
->> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
->> @@ -68,14 +68,30 @@ static void amdxdna_hwctx_destroy_rcu(struct amdxdna_hwctx *hwctx,
->>    	synchronize_srcu(ss);
->>    
->>    	/* At this point, user is not able to submit new commands */
->> -	mutex_lock(&xdna->dev_lock);
->>    	xdna->dev_info->ops->hwctx_fini(hwctx);
->> -	mutex_unlock(&xdna->dev_lock);
->>    
->>    	kfree(hwctx->name);
->>    	kfree(hwctx);
->>    }
->>    
->> +int amdxdna_hwctx_walk(struct amdxdna_client *client, void *arg,
->> +		       int (*walk)(struct amdxdna_hwctx *hwctx, void *arg))
->> +{
->> +	struct amdxdna_hwctx *hwctx;
->> +	unsigned long hwctx_id;
->> +	int ret = 0, idx;
->> +
->> +	idx = srcu_read_lock(&client->hwctx_srcu);
->> +	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
->> +		ret = walk(hwctx, arg);
->> +		if (ret)
->> +			break;
->> +	}
->> +	srcu_read_unlock(&client->hwctx_srcu, idx);
->> +
->> +	return ret;
->> +}
->> +
->>    void *amdxdna_cmd_get_payload(struct amdxdna_gem_obj *abo, u32 *size)
->>    {
->>    	struct amdxdna_cmd *cmd = abo->mem.kva;
->> @@ -126,16 +142,12 @@ void amdxdna_hwctx_remove_all(struct amdxdna_client *client)
->>    	struct amdxdna_hwctx *hwctx;
->>    	unsigned long hwctx_id;
->>    
->> -	mutex_lock(&client->hwctx_lock);
->>    	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
->>    		XDNA_DBG(client->xdna, "PID %d close HW context %d",
->>    			 client->pid, hwctx->id);
->>    		xa_erase(&client->hwctx_xa, hwctx->id);
->> -		mutex_unlock(&client->hwctx_lock);
->>    		amdxdna_hwctx_destroy_rcu(hwctx, &client->hwctx_srcu);
->> -		mutex_lock(&client->hwctx_lock);
->>    	}
->> -	mutex_unlock(&client->hwctx_lock);
->>    }
->>    
->>    int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
->> @@ -225,6 +237,7 @@ int amdxdna_drm_destroy_hwctx_ioctl(struct drm_device *dev, void *data, struct d
->>    	if (!drm_dev_enter(dev, &idx))
->>    		return -ENODEV;
->>    
->> +	mutex_lock(&xdna->dev_lock);
->>    	hwctx = xa_erase(&client->hwctx_xa, args->handle);
->>    	if (!hwctx) {
->>    		ret = -EINVAL;
->> @@ -241,6 +254,7 @@ int amdxdna_drm_destroy_hwctx_ioctl(struct drm_device *dev, void *data, struct d
->>    
->>    	XDNA_DBG(xdna, "PID %d destroyed HW context %d", client->pid, args->handle);
->>    out:
->> +	mutex_unlock(&xdna->dev_lock);
->>    	drm_dev_exit(idx);
->>    	return ret;
->>    }
->> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
->> index c652229547a3..7cd7a55936f0 100644
->> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
->> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
->> @@ -139,14 +139,10 @@ amdxdna_cmd_get_state(struct amdxdna_gem_obj *abo)
->>    void *amdxdna_cmd_get_payload(struct amdxdna_gem_obj *abo, u32 *size);
->>    int amdxdna_cmd_get_cu_idx(struct amdxdna_gem_obj *abo);
->>    
->> -static inline u32 amdxdna_hwctx_col_map(struct amdxdna_hwctx *hwctx)
->> -{
->> -	return GENMASK(hwctx->start_col + hwctx->num_col - 1,
->> -		       hwctx->start_col);
->> -}
->> -
->>    void amdxdna_sched_job_cleanup(struct amdxdna_sched_job *job);
->>    void amdxdna_hwctx_remove_all(struct amdxdna_client *client);
->> +int amdxdna_hwctx_walk(struct amdxdna_client *client, void *arg,
->> +		       int (*walk)(struct amdxdna_hwctx *hwctx, void *arg));
->>    
->>    int amdxdna_cmd_submit(struct amdxdna_client *client,
->>    		       u32 cmd_bo_hdls, u32 *arg_bo_hdls, u32 arg_bo_cnt,
->> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->> index fbca94183f96..8ef5e4f27f5e 100644
->> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
->> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->> @@ -81,7 +81,6 @@ static int amdxdna_drm_open(struct drm_device *ddev, struct drm_file *filp)
->>    		ret = -ENODEV;
->>    		goto unbind_sva;
->>    	}
->> -	mutex_init(&client->hwctx_lock);
->>    	init_srcu_struct(&client->hwctx_srcu);
->>    	xa_init_flags(&client->hwctx_xa, XA_FLAGS_ALLOC);
->>    	mutex_init(&client->mm_lock);
->> @@ -116,7 +115,6 @@ static void amdxdna_drm_close(struct drm_device *ddev, struct drm_file *filp)
->>    
->>    	xa_destroy(&client->hwctx_xa);
->>    	cleanup_srcu_struct(&client->hwctx_srcu);
->> -	mutex_destroy(&client->hwctx_lock);
->>    	mutex_destroy(&client->mm_lock);
->>    	if (client->dev_heap)
->>    		drm_gem_object_put(to_gobj(client->dev_heap));
->> @@ -142,8 +140,8 @@ static int amdxdna_flush(struct file *f, fl_owner_t id)
->>    
->>    	mutex_lock(&xdna->dev_lock);
->>    	list_del_init(&client->node);
->> -	mutex_unlock(&xdna->dev_lock);
->>    	amdxdna_hwctx_remove_all(client);
->> +	mutex_unlock(&xdna->dev_lock);
->>    
->>    	drm_dev_exit(idx);
->>    	return 0;
->> @@ -330,11 +328,8 @@ static void amdxdna_remove(struct pci_dev *pdev)
->>    					  struct amdxdna_client, node);
->>    	while (client) {
->>    		list_del_init(&client->node);
->> -		mutex_unlock(&xdna->dev_lock);
->> -
->>    		amdxdna_hwctx_remove_all(client);
->>    
->> -		mutex_lock(&xdna->dev_lock);
->>    		client = list_first_entry_or_null(&xdna->client_list,
->>    						  struct amdxdna_client, node);
->>    	}
->> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
->> index 40bbb3c06320..b6b3b424d1d5 100644
->> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
->> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
->> @@ -116,8 +116,6 @@ struct amdxdna_device_id {
->>    struct amdxdna_client {
->>    	struct list_head		node;
->>    	pid_t				pid;
->> -	struct mutex			hwctx_lock; /* protect hwctx */
->> -	/* do NOT wait this srcu when hwctx_lock is held */
->>    	struct srcu_struct		hwctx_srcu;
->>    	struct xarray			hwctx_xa;
->>    	u32				next_hwctxid;
+[  102.783993] ==================================================================
+[  102.784008] BUG: KASAN: out-of-bounds in set_pte_range+0x36c/0x390
+[  102.784016] Read of size 8 at addr 0000780084cf9608 by task vmalloc_test/0/5542
+[  102.784019] 
+[  102.784040] CPU: 1 UID: 0 PID: 5542 Comm: vmalloc_test/0 Kdump: loaded Tainted: G           OE       6.16.0-gcc-ipte-kasan-11657-gb2d930c4950e #340 PREEMPT 
+[  102.784047] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[  102.784049] Hardware name: IBM 8561 T01 703 (LPAR)
+[  102.784052] Call Trace:
+[  102.784054]  [<00007fffe0147ac0>] dump_stack_lvl+0xe8/0x140 
+[  102.784059]  [<00007fffe0112484>] print_address_description.constprop.0+0x34/0x2d0 
+[  102.784066]  [<00007fffe011282c>] print_report+0x10c/0x1f8 
+[  102.784071]  [<00007fffe090785a>] kasan_report+0xfa/0x220 
+[  102.784078]  [<00007fffe01d3dec>] set_pte_range+0x36c/0x390 
+[  102.784083]  [<00007fffe01d41c2>] leave_ipte_batch+0x3b2/0xb10 
+[  102.784088]  [<00007fffe07d3650>] apply_to_pte_range+0x2f0/0x4e0 
+[  102.784094]  [<00007fffe07e62e4>] apply_to_pmd_range+0x194/0x3e0 
+[  102.784099]  [<00007fffe07e820e>] __apply_to_page_range+0x2fe/0x7a0 
+[  102.784104]  [<00007fffe07e86d8>] apply_to_page_range+0x28/0x40 
+[  102.784109]  [<00007fffe090a3ec>] __kasan_populate_vmalloc+0xec/0x310 
+[  102.784114]  [<00007fffe090aa36>] kasan_populate_vmalloc+0x96/0x130 
+[  102.784118]  [<00007fffe0833a04>] alloc_vmap_area+0x3d4/0xf30 
+[  102.784123]  [<00007fffe083a8ba>] __get_vm_area_node+0x1aa/0x4c0 
+[  102.784127]  [<00007fffe083c4f6>] __vmalloc_node_range_noprof+0x126/0x4e0 
+[  102.784131]  [<00007fffe083c980>] __vmalloc_node_noprof+0xd0/0x110 
+[  102.784135]  [<00007fffe083ca32>] vmalloc_noprof+0x32/0x40 
+[  102.784139]  [<00007fff608aa336>] fix_size_alloc_test+0x66/0x150 [test_vmalloc] 
+[  102.784147]  [<00007fff608aa710>] test_func+0x2f0/0x430 [test_vmalloc] 
+[  102.784153]  [<00007fffe02841f8>] kthread+0x3f8/0x7a0 
+[  102.784159]  [<00007fffe014d8b4>] __ret_from_fork+0xd4/0x7d0 
+[  102.784164]  [<00007fffe299c00a>] ret_from_fork+0xa/0x30 
+[  102.784173] no locks held by vmalloc_test/0/5542.
+[  102.784176] 
+[  102.784178] The buggy address belongs to the physical page:
+[  102.784186] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x84cf9
+[  102.784198] flags: 0x3ffff00000000000(node=0|zone=1|lastcpupid=0x1ffff)
+[  102.784212] page_type: f2(table)
+[  102.784225] raw: 3ffff00000000000 0000000000000000 0000000000000122 0000000000000000
+[  102.784234] raw: 0000000000000000 0000000000000000 f200000000000001 0000000000000000
+[  102.784248] page dumped because: kasan: bad access detected
+[  102.784250] 
+[  102.784252] Memory state around the buggy address:
+[  102.784260]  0000780084cf9500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  102.784274]  0000780084cf9580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  102.784277] >0000780084cf9600: fd 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  102.784290]                          ^
+[  102.784293]  0000780084cf9680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  102.784303]  0000780084cf9700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  102.784306] ==================================================================
+
+The second issue hits when the custom sanitizer above is not implemented,
+but the kasan itself is still active:
+
+[ 1554.438028] Unable to handle kernel pointer dereference in virtual kernel address space
+[ 1554.438065] Failing address: 001c0ff0066f0000 TEID: 001c0ff0066f0403
+[ 1554.438076] Fault in home space mode while using kernel ASCE.
+[ 1554.438103] AS:00000000059d400b R2:0000000ffec5c00b R3:00000000c6c9c007 S:0000000314470001 P:00000000d0ab413d 
+[ 1554.438158] Oops: 0011 ilc:2 [#1]SMP 
+[ 1554.438175] Modules linked in: test_vmalloc(E+) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) nft_reject(E) nft_ct(E) nft_chain_nat(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) nf_tables(E) sunrpc(E) pkey_pckmo(E) uvdevice(E) s390_trng(E) rng_core(E) eadm_sch(E) vfio_ccw(E) mdev(E) vfio_iommu_type1(E) vfio(E) sch_fq_codel(E) drm(E) loop(E) i2c_core(E) drm_panel_orientation_quirks(E) nfnetlink(E) ctcm(E) fsm(E) zfcp(E) scsi_transport_fc(E) diag288_wdt(E) watchdog(E) ghash_s390(E) prng(E) aes_s390(E) des_s390(E) libdes(E) sha3_512_s390(E) sha3_256_s390(E) sha512_s390(E) sha1_s390(E) sha_common(E) pkey(E) autofs4(E)
+[ 1554.438319] Unloaded tainted modules: pkey_uv(E):1 hmac_s390(E):2
+[ 1554.438354] CPU: 1 UID: 0 PID: 1715 Comm: vmalloc_test/0 Kdump: loaded Tainted: G            E       6.16.0-gcc-ipte-kasan-11657-gb2d930c4950e #350 PREEMPT 
+[ 1554.438368] Tainted: [E]=UNSIGNED_MODULE
+[ 1554.438374] Hardware name: IBM 8561 T01 703 (LPAR)
+[ 1554.438381] Krnl PSW : 0704e00180000000 00007fffe1d3d6ae (memset+0x5e/0x98)
+[ 1554.438396]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+[ 1554.438409] Krnl GPRS: 0000000000000001 001c0ff0066f0000 001c0ff0066f0000 00000000000000f8
+[ 1554.438418]            00000000000009fe 0000000000000009 0000000000000000 0000000000000002
+[ 1554.438426]            0000000000005000 000078031ae655c8 00000feffdcf9f59 0000780258672a20
+[ 1554.438433]            0000780243153500 00007f8033780000 00007fffe083a510 00007f7fee7cfa00
+[ 1554.438452] Krnl Code: 00007fffe1d3d6a0: eb540008000c	srlg	%r5,%r4,8
+           00007fffe1d3d6a6: b9020055		ltgr	%r5,%r5
+          #00007fffe1d3d6aa: a784000b		brc	8,00007fffe1d3d6c0
+          >00007fffe1d3d6ae: 42301000		stc	%r3,0(%r1)
+           00007fffe1d3d6b2: d2fe10011000	mvc	1(255,%r1),0(%r1)
+           00007fffe1d3d6b8: 41101100		la	%r1,256(%r1)
+           00007fffe1d3d6bc: a757fff9		brctg	%r5,00007fffe1d3d6ae
+           00007fffe1d3d6c0: 42301000		stc	%r3,0(%r1)
+[ 1554.438539] Call Trace:
+[ 1554.438545]  [<00007fffe1d3d6ae>] memset+0x5e/0x98 
+[ 1554.438552] ([<00007fffe083a510>] remove_vm_area+0x220/0x400)
+[ 1554.438562]  [<00007fffe083a9d6>] vfree.part.0+0x26/0x810 
+[ 1554.438569]  [<00007fff6073bd50>] fix_align_alloc_test+0x50/0x90 [test_vmalloc] 
+[ 1554.438583]  [<00007fff6073c73a>] test_func+0x46a/0x6c0 [test_vmalloc] 
+[ 1554.438593]  [<00007fffe0283ac8>] kthread+0x3f8/0x7a0 
+[ 1554.438603]  [<00007fffe014d8b4>] __ret_from_fork+0xd4/0x7d0 
+[ 1554.438613]  [<00007fffe299ac0a>] ret_from_fork+0xa/0x30 
+[ 1554.438622] INFO: lockdep is turned off.
+[ 1554.438627] Last Breaking-Event-Address:
+[ 1554.438632]  [<00007fffe1d3d65c>] memset+0xc/0x98
+[ 1554.438644] Kernel panic - not syncing: Fatal exception: panic_on_oops
+
+This series fixes the above issues and is a pre-requisite for the s390
+lazy MMU mode implementation.
+
+test_vmalloc was used to stress-test the fixes.
+
+1. https://lore.kernel.org/linux-mm/5b0609c9-95ee-4e48-bb6d-98f57c5d2c31@arm.com/
+
+Thanks!
+
+Alexander Gordeev (2):
+  mm/kasan: fix vmalloc shadow memory (de-)population races
+  mm/kasan: avoid lazy MMU mode hazards
+
+ mm/kasan/shadow.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+-- 
+2.48.1
+
 
