@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-774595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64061B2B4C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:34:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDD7B2B4F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660E05E8094
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A014F3B41D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B660271A71;
-	Mon, 18 Aug 2025 23:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F001327E1AC;
+	Mon, 18 Aug 2025 23:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ALV5OOfJ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R+y7Ozgy"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418081482F2
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D059F2737EA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755560033; cv=none; b=WDvmVUUqGHz61kmhp9/P5PmpG6dV/02DBYiHppGPG2dnH6H2FpMz4GiCjUDChLg3XjmmJYBtVcESkf4advXaqSCT3Uipu8ZdrrxJuGtG3Ox9DPRD8pLsb1V2V/wuLRU0tBh/ObiGMaIX2a1bLXlW58qEPPQoDI5iWIkXdR7OBkw=
+	t=1755560438; cv=none; b=I74F9yZ3S5nOQz0mzfjj35Jv3hx8VmCbSWfgT80wTyiYG8ltcqYeYNPB8TmBV8FdYMQpeBTu23FkcgsLVNSeDnqA9oUHA/aw9U55Y/qUQAwLCU2KOyfp8LPfjoKVMHgKXlek1TZX9m6QJavYUzQSzbr6lQa7ND2ahiM9tt3k0BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755560033; c=relaxed/simple;
-	bh=OoeYFB/BvC/0eRzNt4z96d91dntS57ys6UGlVQXsAGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aPD4rmNngZWloZaAWmdAgLuKRX6G7KJoYGi1ytQWwvMpqRSkmCxNPz/BUSa0aaxUVMpqXAZNaXOP0qXhRjnNFIAlq4M35jbBKVpK3TGJ0ehSXE4XhLiLcXaHS2h/ouoK7LldajH2rf+vTgcYtNGWZqS2vAhnKhu015+DgK5J1mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ALV5OOfJ; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1755560438; c=relaxed/simple;
+	bh=wb94KLjt5N8FwYnn6nR18SO9z15Pu5lGZqzVknWG76c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4JM0EswiPBzDbmFt879zbtJUPxGnQYJSJGmThl+IBLabzIB8tOtiRhkcip1i5iWWl52BrLCEr8DAmU+RLFL9fZV6/wFH3885fkVheD9HJ4MkgKuHuFm8BB/ouCZxGyek6JHy1RyF2Tufve2Hgh0bBAUDEW+zM6saGUyz4wssrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R+y7Ozgy; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55cdfd57585so2063e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:33:51 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3e571d40088so29815575ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755560029; x=1756164829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ve2DzLaZnDqnbb7Kf6oBSozuJ15Yl3sv46ZZmhVCBOo=;
-        b=ALV5OOfJwrWkFApNk++CdI5JqRT1SFNkuoBR4ninRxPJOMlvyDvldgDZNL1bbqIork
-         rlf1DuToLYUSz1sgNPLqDkWrU80C86K1mbWu/MihZVc83F0TTUAeeUM05iVw156UhtCK
-         GKMtpjJMyquMEjMu67PLzfHsZG7Fh5J5kdfUBg1HrTUKoNCN1L+fKoUpliwjRYiqFwa4
-         DGitOVsWqb0+yWyFhs8SMvHAtBAeAfS5fyKff5dtjmgO6FhOTPcnw7RZQ+mxjh06bIJU
-         DmZC4VKYXrhfIPowsfQLRUeDT4YfhOHEgjm6ujaesoUkK2hRfSwcODwGpyHyA4Asp0f8
-         XdZA==
+        d=google.com; s=20230601; t=1755560436; x=1756165236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wA2dGu/eo8bDyGQ+eks03J0QXMslB/lfrKKitSgi3Fs=;
+        b=R+y7OzgylI0PmwLLY44VEJGslW53N7wa4Aa1IHi4gPWnrSX1bZqBcX3rVnKKVOgT4b
+         x3lYoiBRJa/GtF4URuEI5HCUAJWiz53hIpkbfiUpho/OaSuwzaKVkxaWmTBcRfcy+Ovv
+         EFoeK7NiDodFCpOAh8LlzzCWHMg2B+SeWisi4OilVMadak1FAFB3Q7SAAygJ2WOLerO6
+         xMy7896zI7dHz9JysJsT56ti3wVRTlPuj5kLEi4ysoIAFHXFHKH1jNr/AqA4+HB+9HAt
+         sxOqs+t/Tv9+zQgxwHdXZsjBoKWV4csd3Kw92+fdT0KS8ST5hQTIlgwYRaPuaLhkIxN4
+         rK7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755560029; x=1756164829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ve2DzLaZnDqnbb7Kf6oBSozuJ15Yl3sv46ZZmhVCBOo=;
-        b=f7Q4v/aQFIaHdvS1CQgVw1T6a26qvb30fGWxs7B+LAIEc/5vbcOWQqzTgw693ckf1z
-         xjvCvsD85QDo54dMylQrAGS/uG35v1L8ZABGWKzkEJ7ve1RZZ1nACKS44BSdYdAnEo8u
-         zUabDNefAgt2ubVKMKv7PDMVOM11JyKVeb/Zfe5nNMFa8Kpz8xs7hajEodkIkuKzxkkF
-         MaiMQE+cFUaFWeyxkpUrWGWqIKovmCkFl+ksm5k11EIKdgDDnu3EsahnJMC5our3By1m
-         9ZpsaOuJge2XNvGBIW1L8NESPjRHdeN9/CTlItnfyhPXpPbEO98dRXpK0II8ucpcT+JC
-         XCNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI6VmV3izrps7VGPKVDhno5/Q8p2QdCXkDSp7tuKWCwVLh3sf+dV6Rj9HGWYEdRoDXoQJnY4345Wr5tIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwavojgdID3cC6gYShrY4fYPFlLVAPkafhitY8gNaIGBcxDItJh
-	GbvxRzADP1MuMnizyBvLUJEXe6zJqULgKgHqrWfOORKob6CcwAH4dr7vlRAtglkYn+9c+9qhQPJ
-	PkJ9UhtHHlKQ7a3NXA+Tns3Mizitbeg0hb1gYBQ/+
-X-Gm-Gg: ASbGncsi+In3tVHA07wYmS5TF9DoxCmVX6Buk1kRp6vjz4BBtbTORmKpXLYsN2sGLsh
-	nvBFU7rH9BLCN9uf78B+NK3gmteYpk6ciFXdIla68ppaUAlxZiIjt9JGmnIatd5YdmDTuvXNvzS
-	QVvtq3SCkUr6s+zad4jHcWc7B1bCmEN25FHSSomao7PHfwvyQM9rdET5P45MZnzie6KUwNfGVkT
-	4cuy1nMmjqcYj0yhOo61Mat1ioqaF3EAb4eCIxI+tl0Y8sOC9hul1g=
-X-Google-Smtp-Source: AGHT+IFwQTCOO7naIVkzrh2yLXB0Ye5C7kP2H4rJJJq+y1I2xqZOOFQLhHsiWjrfXhQk7xhvimRErO3eSsYfBgTtoKg=
-X-Received: by 2002:a05:6512:134d:b0:558:fd83:bac6 with SMTP id
- 2adb3069b0e04-55e009c6000mr76627e87.4.1755560029185; Mon, 18 Aug 2025
- 16:33:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755560436; x=1756165236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wA2dGu/eo8bDyGQ+eks03J0QXMslB/lfrKKitSgi3Fs=;
+        b=SgIEKk6uudAeRMtP4xvdovPqDou+46OSZHIpA5URgbulO/2TStN2dPjQ90WJyuPXh3
+         Hq93MZixNVTVQ8W5+BSjfxPS7Fyn0pMMfvTLY3lYaLQF0OT6OWuMZ4DAHOihaLHBr4ZX
+         ODJod2SvqypfRAQChhebs43Gdyju+QTG2Th83PN1AVY0wI7XzXyLo9K8a4eBtrl4i5Pb
+         NUpBIXLw62J3FvJUq2LRyOr63nMjREKxtEuCByDOLmfAxDVTY+MPHVChiXJq7rd4CXQD
+         2Ky8AzNOpe/A3QmWIRq4E6wWU0xJeHJDFHDKsyo9W3tz2EvEojBy6Gvft9MwMgRuwRhU
+         MYag==
+X-Forwarded-Encrypted: i=1; AJvYcCWDern1ALLBRVez1xIqPRbpsHI9WPj4IZWKuz2YqYIAYp8//BXVmS2u5LN+WfUR0l5w9QLEMGZCeFKeCkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp7eIPXXsFwXynj/cKuNkMuhFS8CbFZSHSsT7zFf0YvTatZhpG
+	/pNoq3BmBDhIzptUrFPhx6+pbUI1iH9LCQZwW/N9SWwXZXoqn6+RcSv+iIaoGTgK9w==
+X-Gm-Gg: ASbGnctprj6IHcarqZkm0EoUdBWDJVl8Owjxf8gBbINqP6rHPzg3jc27t2aSdqx2Ljv
+	gVhsA8TkQgVqXGA7GteCEIZADlJOOekPGKh6qr7oq/he6RPLIZ+Nshzq10lBt8mC3hBCAHGKHot
+	ACd/yf4x1kiIr2NKek9piP4nQfbffK1oLjRQRbha01k6hXs15BfyLWo3nHkKqhQRkyr8eHknHov
+	Gd42HjnQaqeyv3FYuTbsXibXS92jlpB09AXbfoTIf6AXs7Fzv9xs4q8z8DIvfSiX3C3WJ1SoPq2
+	DyMPgWHJ6AEflL9G4wioLGFY8IjSQfUx6CkG/NG2eJRYbxIoFPcCbvVvlBkgY+cAan+gY61TYkS
+	oOg9XJXmoBSQPd1LA83watRXlAnbRGnV/aoenINqhF3Nc69KMYdQsD14FZO8sRgU=
+X-Google-Smtp-Source: AGHT+IFinOuMzyrwtYFXdoNFknlpEPk5CHa0T0D9qEO7QHRs26OORGLd2trxJDntZT6T7ED5hQka9w==
+X-Received: by 2002:a05:6e02:1a6e:b0:3e5:50a5:a7dc with SMTP id e9e14a558f8ab-3e67665cac2mr12677825ab.18.1755560435840;
+        Mon, 18 Aug 2025 16:40:35 -0700 (PDT)
+Received: from google.com (2.82.29.34.bc.googleusercontent.com. [34.29.82.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e66ed69ccdsm11182285ab.22.2025.08.18.16.40.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 16:40:35 -0700 (PDT)
+Date: Mon, 18 Aug 2025 16:40:33 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] MIPS: sgi-ip32: Replace deprecated strcpy() in
+ plat_mem_setup()
+Message-ID: <6d7mznlomgbhqexp64tswbozmlqk7svrek66zggjnhljsdzan3@3f66zsc5jm5y>
+References: <20250817183728.612012-1-thorsten.blum@linux.dev>
+ <20250817183728.612012-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <9b6b42be0d7fb60b12203fe4f0f762e882f0d798.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <9b6b42be0d7fb60b12203fe4f0f762e882f0d798.1755499376.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 18 Aug 2025 16:33:35 -0700
-X-Gm-Features: Ac12FXwfrqXSKcjrhl3FF7ja5U6Np0FPNPSAiVBM9uAKgBQErhZT7EQQpCxE7UU
-Message-ID: <CAHS8izO76s61JY8SMwDar=76Ech0B_xprzc1KgSDEjaAvbdDfA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 01/23] net: page_pool: sanitise allocation order
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817183728.612012-2-thorsten.blum@linux.dev>
 
-On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+Hi,
+
+On Sun, Aug 17, 2025 at 08:37:12PM +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
+> 
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/mips/sgi-ip32/ip32-setup.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/mips/sgi-ip32/ip32-setup.c b/arch/mips/sgi-ip32/ip32-setup.c
+> index aeb0805aae57..c2ebc4bbd866 100644
+> --- a/arch/mips/sgi-ip32/ip32-setup.c
+> +++ b/arch/mips/sgi-ip32/ip32-setup.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/param.h>
+>  #include <linux/sched.h>
+> +#include <linux/string.h>
+
+This new include isn't strictly necessary as it was building with
+strcpy() fine before?
+
+>  
+>  #include <asm/bootinfo.h>
+>  #include <asm/mipsregs.h>
+> @@ -90,7 +91,7 @@ void __init plat_mem_setup(void)
+>  			static char options[8] __initdata;
+>  			char *baud = ArcGetEnvironmentVariable("dbaud");
+>  			if (baud)
+> -				strcpy(options, baud);
+> +				strscpy(options, baud);
+>  			add_preferred_console("ttyS", *(con + 1) == '2' ? 1 : 0,
+>  					      baud ? options : NULL);
+>  		}
+> -- 
+> 2.50.1
+> 
 >
-> We're going to give more control over rx buffer sizes to user space, and
-> since we can't always rely on driver validation, let's sanitise it in
-> page_pool_init() as well. Note that we only need to reject over
-> MAX_PAGE_ORDER allocations for normal page pools, as current memory
-> providers don't need to use the buddy allocator and must check the order
-> on init.
->
-> Suggested-by: Stanislav Fomichev <stfomichev@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
-I think I noticed an unrelated bug in this code and we need this fix?
-
-```
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 343a6cac21e3..ba70569bd4b0 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -287,8 +287,10 @@ static int page_pool_init(struct page_pool *pool,
-        }
-
-        if (pool->mp_ops) {
--               if (!pool->dma_map || !pool->dma_sync)
--                       return -EOPNOTSUPP;
-+               if (!pool->dma_map || !pool->dma_sync) {
-+                       err =3D -EOPNOTSUPP;
-+                       goto free_ptr_ring;
-+               }
-
-                if (WARN_ON(!is_kernel_rodata((unsigned long)pool->mp_ops))=
-) {
-                        err =3D -EFAULT;
-```
-
-I'll send a separate fix.
-
-
---
-Thanks,
-Mina
+Thanks
+Justin
 
