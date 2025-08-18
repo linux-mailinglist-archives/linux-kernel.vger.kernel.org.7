@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-773772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0BEB2A98D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B888B2A9C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBFEB1BA5329
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AB46E5EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F07322A35;
-	Mon, 18 Aug 2025 13:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83900322DBD;
+	Mon, 18 Aug 2025 13:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JNQR1zH2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VjGbqSsY"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E97322A20
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE54322A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525591; cv=none; b=FT89PW5+rZ8+kl4O+pBHJjVip3SvEUZ+5FQ3Tb2plH/lIKlA+BVt42WXH1Bwf/0Pgc1MaRHKfZ6ySkzxx3ND4KlVqysDmE6QzCENY50aqoTVXN7kFAbh6492Wp4++sgDuaPYaeitLPMg0G58ZWbRRpA5otWWGeeZa1pKOm54yOg=
+	t=1755525594; cv=none; b=eaBHJWvl8+7bgX60aYcqvdoWc+TEVZXpLzTaLS/OBjNJGiXmbycD+4d3wlGW7KOal4bssahouxRMiq1UL7Y4X8U+4+DHjhQJGLqNSwQxmPZLJWr/2vGYQ5y22yiF3KBnhkRPUnByDsYgHaL0lwRHwUmove6B8u4dc6FTHZgMkFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525591; c=relaxed/simple;
-	bh=cgwwu95M0/PjQLKh9VcFW9sZO8JImGY2MFIZ04G52J4=;
+	s=arc-20240116; t=1755525594; c=relaxed/simple;
+	bh=Y+NmXte2jVt9vIilx+qaBiTo6qTI0LRZmsoTSTKd/O4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=acaAXRsAMUwgEvU0kp7zcs2OPgqYlomQIubeVt7YnddDlSvWgW/Lkf1mTLmmvTVEQ+Zp1d6tp1GMSx3pFCvp4q+nHMDT7zIZmgIy2mXKk6ayh4kOz9392/UijCJmQzeIpjmZUEapFg6B7gXTZ86SR5+Whxvuc5+9SJ/mbKh7YX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JNQR1zH2; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=cTJBXIIK9cLFljTgBy1GL3KygAudVLMlxZThxvcLk316Uxqp1vpahgckY4twKQnH+O+BQjAY3XSJhtzttTZgwQ9Z1cGQxmw3KR+LUEq3K8lwczqe2YAVx+0ts9JpjIb7XSva4ca7y9qk0dHRRxgDaUehSqIP7JMuDTmf/LcXZeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VjGbqSsY; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755525588;
+	s=mimecast20190719; t=1755525592;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=n2CKq6YUad3/DjmNn/azhMuZRDmF+l+ZwOAVkMKXPNs=;
-	b=JNQR1zH28BjKjDGtsNSpqfZim77Z/vqEI1BhSkod+r30K2gqdEjnap55uCHcxN+E1A4ek6
-	rVET9xWIl2SLhSHrP9dOoTjicmnd6RFJ5Ns616yrjeg2GiNWR0Qdj8AEwRLJeSUoVgvQYU
-	/+r9Jaow5nKdus8tNQ68xm1Ecgf9Lr8=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8YMRGYhZCgVYyf6TKWipcOATVyFwuIq5BqY8EP2wiQo=;
+	b=VjGbqSsYvGUY5oXr0OzM7Z8q1SUSlWsaZ89vnCZiJSFK77VRbsiYEgHKgMEWTTmQfwHGWE
+	1F4qtATORIU7VH4hpGar5C+/f8NcI4g9feqheANFitXU3G7RTyotRvctxnHnGY0NbkPRQm
+	wwW1auXnw74kOZv0MFU2KEocshVbS+U=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-3eE1a3RkNJeILLsF9fWpBQ-1; Mon, 18 Aug 2025 09:59:46 -0400
-X-MC-Unique: 3eE1a3RkNJeILLsF9fWpBQ-1
-X-Mimecast-MFC-AGG-ID: 3eE1a3RkNJeILLsF9fWpBQ_1755525586
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b47174c8fd2so7984204a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:46 -0700 (PDT)
+ us-mta-568-009AGrh8P8iV3AxCY-YpHA-1; Mon, 18 Aug 2025 09:59:51 -0400
+X-MC-Unique: 009AGrh8P8iV3AxCY-YpHA-1
+X-Mimecast-MFC-AGG-ID: 009AGrh8P8iV3AxCY-YpHA_1755525590
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32326e2506aso3959839a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525586; x=1756130386;
+        d=1e100.net; s=20230601; t=1755525590; x=1756130390;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n2CKq6YUad3/DjmNn/azhMuZRDmF+l+ZwOAVkMKXPNs=;
-        b=JSBXnIbHCCgSxgMRmauIA1lLPN/Yb44OQ2vqF9NQu9sQmcUMjgGuL2etPQYW0y5CkL
-         5tajGxyurQPhgL9h2T/tSCWKyOZo1lh97M8Q9/9OAu4tLrC0PBMTEm7498FDwAbElNh5
-         RQyEc6alrkWyi9qQT9UFP+cQdgxLcVrIfUa5TI8hcU00COS0Ye9pQFk6PxIoZRGR/D7w
-         UQ76E5v9RSzistP0BHz4vTcxkALzSnvw5mftQPPQRylUf7eh0CuCZUv85cj7cu9gsfZ/
-         Cf9AF/yV/OttfABMlxXS6Tv/q9hIdci1mMJydzYYoPnkjH14/6e9R4MXPx9/um1D6d4d
-         qugg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcT2LNgmNj2dUS+iCwxP+L3MzMP7WhL1I+UqVrfi3VdJBsO6GmIVgW1T7TSPGsOlOHSc8OrlExV+GQn1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHv14xpz2zvzYTOj3ZX4Mx8CXRkT/Hl4rj6uxy7Xzds7tVChuv
-	nUesm29NCmXij545W9Qxj6yOfNIpGZq1WZ0iSU7WfwDj6mKhwwoBYr7TmWOS/lABQWT3Pwuth3m
-	xIOIbdcHy8TB57ra/Ge68QRkQ17lI/Br4zTa6AS0zy9EcdIennbFJoc37IJPk3dPbEQ==
-X-Gm-Gg: ASbGncsKRfoYrb5TtG/fdqDsC56wqVj72n0PEmdzUJYH637is/nXV1O01qYuhNQjaUY
-	fV5gcMk79xtzx9H3fgAJ4eLgw1YpmPaz+0NhcgUMUD+0sbRb1sEIAIZ8gVEf4we0cnZHzb3+3LB
-	K4LLD7KknjMlBAwq8REAuSlHHRINPMNAYYlH26NkDZcRNYr45Qo1BS55XSSl+T0MejLcho6PhCK
-	6n0ucJ57NuRMS1yOBC8Odqve7+n6dJPxRJDXMsHEBJTp4WZ8PfJ5z1aeyyliLcVVncuFf7/Heh8
-	oGUox9mf5g6cbKzHBN/1q854OcV4Cs76Nw==
-X-Received: by 2002:a05:6a20:939f:b0:240:a53:79fc with SMTP id adf61e73a8af0-240d2fb95ffmr17025513637.29.1755525585642;
-        Mon, 18 Aug 2025 06:59:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELiXPnW7YPO4rEF/tv+C6PkkDunFLclnjtOiZ6LrUtYCR63sCROrCmDGY+0H8Di4y4hwCxWg==
-X-Received: by 2002:a05:6a20:939f:b0:240:a53:79fc with SMTP id adf61e73a8af0-240d2fb95ffmr17025476637.29.1755525585240;
-        Mon, 18 Aug 2025 06:59:45 -0700 (PDT)
+        bh=8YMRGYhZCgVYyf6TKWipcOATVyFwuIq5BqY8EP2wiQo=;
+        b=SpO6L+wRQkXUSRMx7P8PRl1WaFrBUN228/YIaFyO3Etkc8pq92Q6h+XtM5A88uwruX
+         O9bIPZGqFFN3v0Fndey2qlTSx8pUdl7KFQHW534jODQX3mrMl9CO299PMIhKPYLsUvNK
+         pO3NwoGs0nFNSrEW97W1H/7GlraSk1EN3mlIfhwGb2y+vgFOkhIDlO/4YqmviCrVowx3
+         AIVQMLSkuBLwEk3MnOqSoy/AENRek0M8xtD90e560Z6VOo1HiHoxU+fAtHT4A2sG2bAG
+         ZThJebaDx4c7sy0A95tS1WH154SohvQ8UmcFe5+TnS5J28zsocJ3MjUZX8FObGqzNsmW
+         0hvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIb3WelDXWnC6eAast1sntLxEoWzcjZ1BQlyzcIFogiqAxL3OMhhOSuJeIWz9XRhfDLGgT7tbUixxY/O8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjZLUn4ZXTsLbsdPmGsRaGcgYiJLTGewYo2iQ6AQZeQSRm/OXO
+	2XJTMvQjk8EC0Z6o9z/FNLtc+pndKDcQ0RyhDvoByazSAwiPh7mje7Mgd/j/Rj5tSvRm9BSc0RG
+	nltmxNboFA17WAbg47hTra5W9coCKXpeZ/gMNJIuSpVhlJS/QwURe3eNhNC+2XuBiQw==
+X-Gm-Gg: ASbGncv4AZYGO8eU2Hp7ZQlV9IMSjmUVOjMe4PPmbAHh+2hxwYlYA9TFgU+QKJsEK1t
+	RPzFl6goUUD1hDyC2Euu8ETw/6ykwvGae7+s4slD9aGaJ8D1KUAV85aEN92zy4HjGdDF7FUuZh6
+	sut7V2sLtNWTQdmyJHwl+Hc8FFlIZ4IgAww4w3EPaqZEyHmUPW6loWx3i65yek8QkpUYlg8bxCY
+	VutHpxtLey4XbKRxswGWH4AjQHf3lNfktsaZ4uU482Ihjx156r0h9xWiG5LhkClkj6K9U0GBJ+s
+	5F9YyrGhfD2QZVSqwbXgSmSxMEd5MMiFoA==
+X-Received: by 2002:a17:90b:5303:b0:31f:1744:e7fd with SMTP id 98e67ed59e1d1-32342121790mr15990085a91.31.1755525589656;
+        Mon, 18 Aug 2025 06:59:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu7vo2Z28+oGIgafdRKdRRdnXgn+83ZqnfwYDbcN4yit1cp5xdUDY79kWLpeCIOW3hf6Uyng==
+X-Received: by 2002:a17:90b:5303:b0:31f:1744:e7fd with SMTP id 98e67ed59e1d1-32342121790mr15990028a91.31.1755525589147;
+        Mon, 18 Aug 2025 06:59:49 -0700 (PDT)
 Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.41
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:59:44 -0700 (PDT)
+        Mon, 18 Aug 2025 06:59:48 -0700 (PDT)
 From: Ryosuke Yasuoka <ryasuoka@redhat.com>
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -95,9 +95,9 @@ To: arnd@arndb.de,
 Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH rust-next 1/2] rust: miscdevice: add llseek support
-Date: Mon, 18 Aug 2025 22:58:38 +0900
-Message-ID: <20250818135846.133722-2-ryasuoka@redhat.com>
+Subject: [PATCH rust-next 2/2] rust: samples: miscdevice: add lseek samples
+Date: Mon, 18 Aug 2025 22:58:39 +0900
+Message-ID: <20250818135846.133722-3-ryasuoka@redhat.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250818135846.133722-1-ryasuoka@redhat.com>
 References: <20250818135846.133722-1-ryasuoka@redhat.com>
@@ -109,75 +109,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the ability to write a file_operations->llseek hook in Rust when
-using the miscdevice abstraction.
+Add lseek samples in Rust MiscDevice samples
 
 Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
 ---
- rust/kernel/miscdevice.rs | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index 6373fe183b27..597e7b66e493 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -125,6 +125,16 @@ fn release(device: Self::Ptr, _file: &File) {
-         drop(device);
-     }
+diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+index e7ab77448f75..991a59a3ea16 100644
+--- a/samples/rust/rust_misc_device.rs
++++ b/samples/rust/rust_misc_device.rs
+@@ -86,6 +86,33 @@
+ //!     return -1;
+ //!   }
+ //!
++//!   // Set a file offset
++//!   printf("Call lseek SEEK_SET\n");
++//!   ret = lseek(fd, 10, SEEK_SET);
++//!   if (ret == 10)
++//!     printf("lseek: Succeed to SEEK_SET\n");
++//!   else
++//!     printf("lseek: Failed to SEEK_SET\n");
++//!
++//!   // Change the file offset from the initial value
++//!   printf("Call lseek SEEK_CUR\n");
++//!   ret = lseek(fd, 10, SEEK_CUR);
++//!   if (ret == 20)
++//!     printf("lseek: Succeed to SEEK_CUR\n");
++//!   else
++//!     printf("lseek: Failed to SEEK_CUR\n");
++//!
++//!   // i_size is 0. So the following task always should fail.
++//!   printf("Call lseek SEEK_END\n");
++//!   ret = lseek(fd, -10, SEEK_END);
++//!   if (ret < 0)
++//!     perror("lseek: Succeeded to fail - this was expected");
++//!   else {
++//!     printf("lseek: Failed to fail SEEK_END\n");
++//!     close(fd);
++//!     return -1;
++//!   }
++//!
+ //!   // Close the device file
+ //!   printf("Closing /dev/rust-misc-device\n");
+ //!   close(fd);
+@@ -114,6 +141,10 @@
+ const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('|' as u32, 0x81);
+ const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('|' as u32, 0x82);
  
-+    /// Handler for llseek.
-+    fn llseek(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _file: &File,
-+        _offset: i64,
-+        _whence: i32,
-+    ) -> Result<isize> {
-+        build_error!(VTABLE_DEFAULT_ERROR)
-+    }
++const SEEK_SET: i32 = 0;
++const SEEK_CUR: i32 = 1;
++const SEEK_END: i32 = 2;
 +
-     /// Handle for mmap.
-     ///
-     /// This function is invoked when a user space process invokes the `mmap` system call on
-@@ -245,6 +255,27 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-         0
+ module! {
+     type: RustMiscDeviceModule,
+     name: "rust_misc_device",
+@@ -173,6 +204,43 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
+         )
      }
  
-+    /// # Safety
-+    ///
-+    /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
-+    unsafe extern "C" fn llseek(file: *mut bindings::file, offset: i64, whence: c_int) -> i64 {
-+        // SAFETY: The llseek call of a file can access the private data.
-+        let private = unsafe { (*file).private_data };
-+        // SAFETY: This is a Rust Miscdevice, so we call `into_foreign` in `open` and
-+        // `from_foreign` in `release`, and `fops_llseek` is guaranteed to be called between those
-+        // two operations.
-+        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
++    fn llseek(me: Pin<&RustMiscDevice>, file: &File, offset: i64, whence: i32) -> Result<isize> {
++        dev_info!(me.dev, "LLSEEK Rust Misc Device Sample\n");
++        let pos: i64;
++        let eof: i64;
++
 +        // SAFETY:
 +        // * The file is valid for the duration of this call.
-+        // * There is no active fdget_pos region on the file on this thread.
-+        let file = unsafe { File::from_raw_file(file) };
-+
-+        match T::llseek(device, file, offset, whence) {
-+            Ok(res) => res as i64,
-+            Err(err) => i64::from(err.to_errno()),
++        // * f_inode must be valid while the file is valid.
++        unsafe {
++            pos = (*file.as_ptr()).f_pos;
++            eof = (*(*file.as_ptr()).f_inode).i_size;
 +        }
++
++        let new_pos = match whence {
++            SEEK_SET => offset,
++            SEEK_CUR => pos + offset,
++            SEEK_END => eof + offset,
++            _ => {
++                dev_err!(me.dev, "LLSEEK does not recognised: {}.\n", whence);
++                return Err(EINVAL);
++            }
++        };
++
++        if new_pos < 0 {
++            dev_err!(me.dev, "The file offset becomes negative: {}.\n", new_pos);
++            return Err(EINVAL);
++        }
++
++        // SAFETY: The file is valid for the duration of this call.
++        let ret: isize = unsafe {
++            (*file.as_ptr()).f_pos = new_pos;
++            new_pos as isize
++        };
++
++        Ok(ret)
 +    }
 +
-     /// # Safety
-     ///
-     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
-@@ -340,6 +371,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-     const VTABLE: bindings::file_operations = bindings::file_operations {
-         open: Some(Self::open),
-         release: Some(Self::release),
-+        llseek: if T::HAS_LLSEEK {
-+            Some(Self::llseek)
-+        } else {
-+            None
-+        },
-         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
-         unlocked_ioctl: if T::HAS_IOCTL {
-             Some(Self::ioctl)
+     fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result<isize> {
+         dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
+ 
 -- 
 2.50.1
 
