@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-773110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5783B29B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4F9B29B97
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F961711AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660D03A76EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F3B2D661E;
-	Mon, 18 Aug 2025 08:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A34E2376EB;
+	Mon, 18 Aug 2025 08:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDdk3jf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UmKpTFJZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92FA2D0C67;
-	Mon, 18 Aug 2025 08:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28918277CBF
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504163; cv=none; b=b7MT5S2Ia91TVgcYCDM3sr1n7T9XCGIopowOF4LV+AmJGm0ULQodn4XyX6p46L347BYFHH62m0FAVS5lrQRYSPwKQ34aSGADTJ14iJqpQViToaVgwhqEZ0g8XRSKE4/LhjmPXy2kzxAFMR7u0rQYaGWYJtCey0IXVmpLJUvKQaw=
+	t=1755504178; cv=none; b=nBoQRSCeMyDIWUdNf6yAtIBn/wBWDTLDV/R6bNFKk3LGltuA6Ri4jStbsRs/ORCJBHEgbiU8EoiR8D0v+cFnCtIyh0FEIr6VLbBt5XaJGu0xPJlmy0gHTt0R7fiScBJ/r9WwVkkrcJ1IOvEDn8AX+PToC7/9ogV+gSzLtE1zRaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504163; c=relaxed/simple;
-	bh=KRncozpJ/Y3KOjGqTTsQ0QxSex4kd5b3qvPtmzx5aLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwJSmjU+n1ngK3Hg9JI8dpXloU3JVlTmPQosA+lJiypsQoicLPQpWdja2q/PyTU9MtDrUExsO/qg5c/ZgUc0kkdLxfmcm3CIALEtFnDleDoC5i5RFA8bV5CKNTbkleLVv53FuJOYA3QiUZc6piHIfsHRmjgDpeLiVEJVA1CqDoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDdk3jf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD437C4CEEB;
-	Mon, 18 Aug 2025 08:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755504162;
-	bh=KRncozpJ/Y3KOjGqTTsQ0QxSex4kd5b3qvPtmzx5aLY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iDdk3jf17E/+ZGV7UtX19PUJT/JKh6hW9+zL1ZmN3nAPd36Knq8X3E10QnHpV4ilS
-	 Qg4m1dlCHk4LfKLz1or2Sw4fHBb6f6MKIIy2WE14dMLYPPBy2o6jNwM+zUZnH2Vm8M
-	 79Xo8QAdv+AfDagpP/3ANacD2iAjDI1CBZKuq3F5BQzUPCxzjr7AuZdkkNMrx1yGhx
-	 BGoJzvMWNl5Fj5/nYyrvAuxH4xuHDO0xjBsALFTXAOL9TOAZuNr/t8IMadLrfF6sOt
-	 U0/3SXAE5mNVN0wTedd2CJRopwqtMhMYUdogvhHGADCsOGewkBWHrI6k6IuIJsV3/L
-	 YlZ/XdCabWW5A==
-Message-ID: <14ea3a7f-003d-4893-9c43-c21bd2e7f922@kernel.org>
-Date: Mon, 18 Aug 2025 10:02:37 +0200
+	s=arc-20240116; t=1755504178; c=relaxed/simple;
+	bh=BTDvtIT10/Y7dpj6Bwu/egzP7OKMQ3oLE5KC8jPsBrs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Iq0rsfvnFBLEmRW9efZgpTDX8cEGvEqRjwmU8P6LRALv75pFJHH6eBxEgiMaA69OVtoz4AgI97EQAda9mufyw3RNnUSi2lUj769R1J2rnBOAhv8jIF8EABfPd6N0b0ZrnXceg9jPXz/cdaTwg/vshwXgxwlvdGnBi9JXTZ38jKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UmKpTFJZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755504175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BTDvtIT10/Y7dpj6Bwu/egzP7OKMQ3oLE5KC8jPsBrs=;
+	b=UmKpTFJZgVRbvB3GOQlsq08+4K9d+F4jRERJSGY/NYDEaCgNfL7wOM7UFjK/DlER9AEyfj
+	uru4qI3v9Jav8z/L6uOtqUk4M8HmHPwSxzpLxJevdWxBJiSFziND90+OLHZIdrT5L0zOW5
+	MuHu8ReIm0troJRnP2K6LyQZAcmNSjE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438-0MykIm82N2SQrLok2vl5xg-1; Mon, 18 Aug 2025 04:02:53 -0400
+X-MC-Unique: 0MykIm82N2SQrLok2vl5xg-1
+X-Mimecast-MFC-AGG-ID: 0MykIm82N2SQrLok2vl5xg_1755504173
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a88ddec70so39213646d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:02:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755504173; x=1756108973;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTDvtIT10/Y7dpj6Bwu/egzP7OKMQ3oLE5KC8jPsBrs=;
+        b=IZc0UwBTJ3aQsmcl121srvrZHo96pHNF/34SBxDrz+zEFf/cmZKi/QRdusJ5K2ftwP
+         tB4gpgcyHckeoOIo42tYU0K/OfcceBZye06aybRDBnCUC2fzAk/Yeyk08sLqJRJi2guh
+         BsDH1bW24LKtiaE38jkVcJCo1pIWwKN153MCMq8biqj8SujqxVuHsNmydIMSTIjODZJd
+         /Uyi94CFM5v6CseUO+Aft4VbGvqTkXYIMEocGSC5RMTxmvs8KIIufr61vyj4G+2SUoy5
+         sWf0Uq0+KGg+y3G7Er7rEtjt0P91ts6d2qCoHib4BhPcxYSVNwL0LFBBeQV38Wim0+uL
+         COrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA71oHbLK8Pba2y/90ZiMktRQtSWsJjy2c710fG1N9JjCSuR6B96opTvOULGzxdaMFmDv1qL+nQ+P68Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB1J3gw49LXBhVJsEe39lFv2n4QpB11ZGhCmzHOFtrepxi0cvc
+	0lL+fVq29+xMhFPOMXHUf/XYL4JkPjX4XA2pO5CfIA8YDst02uLuVCli9NuIp7aBzQ+KHUT20YX
+	t6qBen9iHN0dnR9Ircl9zMfgUlFfiP5bjPSxKLsPrdsw+sVMNsFyIIzQ49fkwgsIxsA==
+X-Gm-Gg: ASbGnctMzn6xg/86aJqq6a3PtM621wh+eVKUVb/AnRiXplK+np2nPWSaNXJ8aE9RGrX
+	+DLF4d10tnvCc+BufOw+LmtLDRwkg57nR7DEVKGv+aQ+gSazR9nk4Pd3M7AXe8uHWmw6fUSrct6
+	zzqnXGNuUrxmtI2qduskdRzWrgkiOG0pfg1WuQ2Om84b1d1eF6+/fegkbcLHqcFmM3ZkaKUk/QH
+	bIb9pEKsXMVrmfjWwTI7x5kGU9vZjqJ9XZdtb9ArJFbew92nNzj1wnPz50N+u1ueoFmf5ONWVTh
+	1vZsFBpCrrJXs+pTB03Izfy+M6oC4tumpuTb7GY2hhuWPwzkpuD2BkuMr3Re3nd0Qw==
+X-Received: by 2002:a05:6214:21e2:b0:707:5e7e:20f with SMTP id 6a1803df08f44-70ba7a8e0c9mr127652456d6.5.1755504173095;
+        Mon, 18 Aug 2025 01:02:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHbS9oN+bmVLXNWkCtLoe4KkJAUB/SBpAzOahmwwKpbcS5hEqU1zFKZK8VNdKmOFa0tdBVBA==
+X-Received: by 2002:a05:6214:21e2:b0:707:5e7e:20f with SMTP id 6a1803df08f44-70ba7a8e0c9mr127652076d6.5.1755504172501;
+        Mon, 18 Aug 2025 01:02:52 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba959f401sm48756146d6.69.2025.08.18.01.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 01:02:52 -0700 (PDT)
+Message-ID: <93e01a77105007dff602ab9a2a9af5b4cff86522.camel@redhat.com>
+Subject: Re: [PATCH] Documentation/rv: Fix minor typo in monitor_synthesis
+ page
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>, rostedt@goodmis.org
+Cc: corbet@lwn.net, skhan@linuxfoundation.org, 
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Date: Mon, 18 Aug 2025 10:02:49 +0200
+In-Reply-To: <20250810111249.93181-1-krishnagopi487@gmail.com>
+References: <20250810111249.93181-1-krishnagopi487@gmail.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: defconfig: Modularize SX150X GPIO expander
-To: Fange Zhang <fange.zhang@oss.qualcomm.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, dmitry.baryshkov@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, xiangxu.yin@oss.qualcomm.com
-References: <20250818-modularize-sx150x-gpio-expander-v1-0-c2a027200fed@oss.qualcomm.com>
- <20250818-modularize-sx150x-gpio-expander-v1-2-c2a027200fed@oss.qualcomm.com>
- <43e2a824-d7a3-4142-9b59-416df0c0c2c9@kernel.org>
- <77067ec1-4f1f-45d1-8027-4c7a6f66ecff@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <77067ec1-4f1f-45d1-8027-4c7a6f66ecff@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 18/08/2025 09:10, Fange Zhang wrote:
-> 
-> 
-> On 8/18/2025 2:33 PM, Krzysztof Kozlowski wrote:
->> On 18/08/2025 06:41, Fange Zhang wrote:
->>> Modularize the SX150X GPIO expander which is equipped on the QCS615 Ride
->>
->> Qualcomm QCS615 Ride
->>
->> You are changing defconfig for all platforms, it's not your personal or
->> company defconfig.
-> 
-> Thank you for the feedback. Yes, The change is intended to support the 
-> Qualcomm QCS615 Ride platform, which is now upstream-ready and actively 
-> maintained.
-> I believe enabling it as a module ensures it's available without 
-> impacting other platforms. While it's not currently used directly in the 
-> kernel, having it built as a module allows flexibility for platforms 
+On Sun, 2025-08-10 at 16:42 +0530, Gopi Krishna Menon wrote:
+> Specifically, fix spelling of "practice"
+>=20
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
 
-Hm? Not used? So this rationale is incorrect.
+Thanks for finding this!
 
-> like QCS615 that may require it in future use cases.
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 
-No, we do not make defconfig changes for future.
+> ---
+> =C2=A0Documentation/trace/rv/monitor_synthesis.rst | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/trace/rv/monitor_synthesis.rst
+> b/Documentation/trace/rv/monitor_synthesis.rst
+> index ac808a7554f5..3a7d7b2f6cb6 100644
+> --- a/Documentation/trace/rv/monitor_synthesis.rst
+> +++ b/Documentation/trace/rv/monitor_synthesis.rst
+> @@ -181,7 +181,7 @@ which is the list of atomic propositions present
+> in the LTL specification
+> =C2=A0functions interacting with the Buchi automaton.
+> =C2=A0
+> =C2=A0While generating code, `rvgen` cannot understand the meaning of the
+> atomic
+> -propositions. Thus, that task is left for manual work. The
+> recommended pratice
+> +propositions. Thus, that task is left for manual work. The
+> recommended practice
+> =C2=A0is adding tracepoints to places where the atomic propositions
+> change; and in the
+> =C2=A0tracepoints' handlers: the Buchi automaton is executed using::
+> =C2=A0
 
-
-Best regards,
-Krzysztof
 
