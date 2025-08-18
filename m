@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-774489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F0DB2B2F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AABB2B2F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108581B228DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8951B22C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA59E2749E0;
-	Mon, 18 Aug 2025 20:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F1C20A5E5;
+	Mon, 18 Aug 2025 20:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="QoR529ja"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gKq9Pmf6"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53EC27CCE2
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC8274B31
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755550148; cv=none; b=Z0An/K7Ew3MFLDYnvv598JpFCIjci7N5pezbWlvN7emsjT7disvbBsDYTsE00tRMV4jfz9L3q+yrlG2qFQb5BO+0ADt9PrP1iHq/fBCGBZSUVs5oPLAd97POLDS8l8iR7P63wBzur97/A/4w+xxDQunPzkXT6isAtUhJKOGmYU4=
+	t=1755550162; cv=none; b=hleajr6xyksJQ3w+sTkgp72eb2lnLW4s9wlTn2SSGcg3gpjlYzDOIkb7G1D1EIzFjQPF6qQiWJJ42F8nhgNK8BKo1O8DyQB4I7MuJRYXThr9iMRZrWpU1ox6Ila4eWNsNEJMIegy1xqTLn9KqxLbnjSJPihqQYuiHNJuvWEYEwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755550148; c=relaxed/simple;
-	bh=vVEo6kZb63DLaAYkOac+NkFRMnu2eeTeYkx3Rhj9H/c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=o1sDR1yRkfKY3XY9Q6PGHQ6I2rXPNpUOX4cZkcw9xjLNheARulki5zv4f3InC/fZriaF4PZXyxYhiNR44fYHOhcvXVr+zEVdwr27u2zvQr7g+oUcKTwpvOesJlBT2vTj/ucOwAdATs1Hw1FKCcdTs8aMOQxfno3z95zIi/m2PCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=QoR529ja; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755550162; c=relaxed/simple;
+	bh=r/tlFuEp24RY7LW1HU003dO2ILYoTGwJZsLmDtFGX/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9gDusc7aWEK9rBGDSpyHmQXyo2S/oDFS/EM89DiYsCxmLkS1a+dANEK7hYs+6deKdtU+iWp/AliXp28ce0PWvVSPJB6cJ1ihe7NKUQYUs8CjzMILjMpVoTJXQFLIBvfly1wwXGE4JEXeKCmtpdukV8mNV8i2r0cLl8rhN0xMzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gKq9Pmf6; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e56fe7a3d6so43152405ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755550160; x=1756154960; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yTx0AGgPrDbS3KcN6ga5NW90Vwf9DBfaoRIUpUUDTXY=;
+        b=gKq9Pmf6bc026odWyjA8oa2uHAwlkeuX8nz8Vc5gX71wfDlBxMCicnWGl24Os8raWA
+         C8e3H77OQyY9VMrP6OSYX1sYsQOpySph0Ire4kdjx6PhSImZBmZGKT2g0X5hPM8FtDB2
+         sHxBvyV6luwDJwuYiMejeBe4POxSngVIS+8+tz3JFgeYu4ZLmgGR2AzVf2KkEx0OKKkg
+         u1HG7NvsPegxs+9duAXZuSIbi1OqEE25xFI/HgumMMMNkT7/JByDZBvVLLBPy7BsV6Tp
+         t/y+AJ//4E6MVXJuyBUDIvdCaWDmMZaACyoqtDj4D+qhZlS1p3EF2aMNCaeUKunId+lZ
+         ZvhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755550160; x=1756154960;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yTx0AGgPrDbS3KcN6ga5NW90Vwf9DBfaoRIUpUUDTXY=;
+        b=RPRujKe/eplmPG8yb6UBf7kH4OLlQYSerofdT+u7tqDO5qs8EgKVsK6ETp62/7hS03
+         mL+uc699OZQdGi7fsI/HYIF5WQg7zSp/2F1k4N6jgg+otitew9A6/Czd658gIy5snWJD
+         R3fmdoSDHOtzp9xPOMKFX3m+ihUV9HSeWqNuTDDdRZjx4m0dX5kv408wfetZgH2aUGDX
+         HNF0eStrPev37dsyQlGE5OLpoLe3IbCzcx2xvlI9nStsoVadVr5O/eQAdUApP418WPna
+         YyAwhz3WAUuoyCENERQDvk7NsZ23aGu+c13DKAu7iRvCVum/tE/KPnXzP0LbBxvze+TJ
+         msTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3itRg0vgtmN5dMr/rVHCaOwkJ5zgNQbYQGX0ARbzySCQ47pR5vKHzc0LRv4GBa/dh1gBtizGenaSzuUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwmCDJU9+b6nlOx8VnXeKYDf9iVm55pMIEp+9zvXuctNshnBDk
+	l2rqJPLmy7aae6voNHGFZlD04ToHaf1jp0+PwhvDKTZSdDzdFu7IS0UIVq1aqE/pzf4=
+X-Gm-Gg: ASbGncucZxXWq30OzFUsXxw41oZu52OeX9LbuyMWwmUnxaw5VAgqCfAhTYzv1cijkjW
+	BAarc+wvAgNlIbM4OUF0SyuBpGgweuFLcsckykdPfB7YOgezaz2VRUvo5e85hYo/lTWMFYLjw/s
+	wthLLxEHtR21h9Du5dp6V7B72mDwXSroH4Wpw4n99Eui2YGBeJVV/7W6+iZMomHJjwLaUcy9eyk
+	1sSFgo79N1cf/uEOZABftzDIgITzHEVvYe5W2dpfGH4Uce1HMAOgtWGZpw9loVSrhr8jVFMXk2c
+	8npLL1/N4CXUxlHR/pxUss5b55wkJQMf6g7DsjRAPCOHbPt0txPcI+KJnnRuS7XufBiA4Mk2q0j
+	vAL7YeTVxtQCbmtHMpiz0mqWoXIKPZRirGUw=
+X-Google-Smtp-Source: AGHT+IHxcwWqm3fjBflzgEs6NvcilbQYpbaH0XAlN7Sox/42b5vyAZqiL/BamV9P4rahkCtx7tHI7Q==
+X-Received: by 2002:a05:6e02:18ce:b0:3e5:6696:202d with SMTP id e9e14a558f8ab-3e67665caeemr2588935ab.20.1755550159855;
+        Mon, 18 Aug 2025 13:49:19 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949f68eesm2778428173.77.2025.08.18.13.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 13:49:19 -0700 (PDT)
+Date: Mon, 18 Aug 2025 15:49:18 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: dayss1224@gmail.com
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atish.patra@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: Re: [PATCH v2 2/3] KVM: riscv: selftests: Use the existing
+ RISCV_FENCE macro in `rseq-riscv.h`
+Message-ID: <20250818-617bdc4613bfa02c291a6b47@orel>
+References: <cover.1754308799.git.dayss1224@gmail.com>
+ <7de4aedb44be3166a6568c28da70c0d2d4850571.1754308799.git.dayss1224@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755550140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ByNT5QgUCDMMaAGJVbx79L00vBRPCMUQu0+uv6XCpzM=;
-	b=QoR529jaPqvL6O3cMXGkjzv6jK29vWphwfTy0I0w3aVwBQt22E0Tm0v0vrTHjX5XQSw2kR
-	+P5fqG6y/3FZ7GsiQtIGhmQlJyc5YA77rh3eSfOunxMi4Pc8owbe56z4BBUwb2n/i0hfSn
-	v2JzPcZXUMHoNe7Tqz4gSgggb0Xs3f++FIj2J56x/ifbXB76xIvFkKbL17paawt2/mTK6S
-	YSsU18tnzZyU4VCZ8Ba2Ndju41HaXB0/WjkHoantOiP27Q11vzPRIzf+w4PESmXSJWNhHm
-	nsvthBu4BLSQXTjliGmm96ngTXVZJjoqkdmJhsqJvumiaBWyzPw1OCheD6u5tg==
-Content-Type: multipart/signed;
- boundary=74404bb997a85f20169c389c59a45f42fa781e52e1caa9a2b257d66156fa;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 18 Aug 2025 22:48:48 +0200
-Message-Id: <DC5UKZ9F6CQZ.2NDFY4S322T2G@cknow.org>
-Cc: <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re: [BUG report] kernel warnings with Samsung 970 EVO 2TB SSD
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Keith Busch" <kbusch@kernel.org>
-References: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
- <aKCFjzai3Y0RcGHP@kbusch-mbp> <DC3WVB8IOMNV.14F1RIJHNO33Q@cknow.org>
- <aKN30RVeM3p5NJm1@kbusch-mbp>
-In-Reply-To: <aKN30RVeM3p5NJm1@kbusch-mbp>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7de4aedb44be3166a6568c28da70c0d2d4850571.1754308799.git.dayss1224@gmail.com>
 
---74404bb997a85f20169c389c59a45f42fa781e52e1caa9a2b257d66156fa
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi,
-
-First of all: thanks for taking the time to answer my questions :)
-
-On Mon Aug 18, 2025 at 8:58 PM CEST, Keith Busch wrote:
-> On Sat, Aug 16, 2025 at 04:11:00PM +0200, Diederik de Haas wrote:
->> On Sat Aug 16, 2025 at 3:20 PM CEST, Keith Busch wrote:
->>=20
->> > If you want to see what the driver is reacting to, you can check the
->> > subnqn from command line:
->> >
->> >   # nvme id-ctrl /dev/nvme0 | grep subnqn
->> >
->> > It'll probably be all zeros. The field has been required by spec, but
->> > the driver tolerates ones that don't implement it.
->>=20
->> root@nanopi-r5s:~# nvme id-ctrl /dev/nvme0 | grep subnqn
->> subnqn    :
->>=20
->> So it seems to be just empty?
+On Thu, Aug 07, 2025 at 10:59:29PM +0800, dayss1224@gmail.com wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> To avoid redefinition issues with RISCV_FENCE,
+>  directly reference the existing macro in `rseq-riscv.h`.
+> 
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> Signed-off-by: Dong Yang <dayss1224@gmail.com>
+> ---
+>  tools/testing/selftests/rseq/rseq-riscv.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/rseq/rseq-riscv.h b/tools/testing/selftests/rseq/rseq-riscv.h
+> index 67d544aaa..06c840e81 100644
+> --- a/tools/testing/selftests/rseq/rseq-riscv.h
+> +++ b/tools/testing/selftests/rseq/rseq-riscv.h
+> @@ -8,6 +8,7 @@
+>   * exception when executed in all modes.
+>   */
+>  #include <endian.h>
+> +#include <asm/fence.h>
+>  
+>  #if defined(__BYTE_ORDER) ? (__BYTE_ORDER == __LITTLE_ENDIAN) : defined(__LITTLE_ENDIAN)
+>  #define RSEQ_SIG   0xf1401073  /* csrr mhartid, x0 */
+> @@ -24,8 +25,6 @@
+>  #define REG_L	__REG_SEL("ld ", "lw ")
+>  #define REG_S	__REG_SEL("sd ", "sw ")
+>  
+> -#define RISCV_FENCE(p, s) \
+> -	__asm__ __volatile__ ("fence " #p "," #s : : : "memory")
+>  #define rseq_smp_mb()	RISCV_FENCE(rw, rw)
+>  #define rseq_smp_rmb()	RISCV_FENCE(r, r)
+>  #define rseq_smp_wmb()	RISCV_FENCE(w, w)
+> -- 
+> 2.34.1
 >
-> They, it's interpreted as a string. All 0's would be an empty string.
 
-Ah yes, makes sense.
-
->> The other kernel warning is this:
->>=20
->>   nvme nvme0: using unchecked data buffer
->>=20
->> The SUBNQN message appears every time, this one appears often, but not
->> always.
->
-> That one means you've sent a user space passthrough command to a device
-> that doesn't support SGL DMA. Without that, the nvme protocol uses
-> implicitly sized DMA that the driver can't be sure is accurate. The user
-> could theoretically provide a short buffer that can corrupt memory if
-> done by accident, or be used as an attack vector if done by malicious
-> software.
->
-> This is also not something to worry about unless you run malicious or
-> buggy software.
-
-I would be surprised if I was running malicious software, but pretty
-much all software has bugs, so that's ofc possible.
-(I run Debian Testing or Unstable on pretty much all my devices)
-
-I thought it was a HW problem as the problem seemed to disappear from my
-PC when I removed the NVMe drive from it. And when put in my NanoPi R5S
-it appeared again on that device.
-Seemed, as I just found out it happened on my PC as well (with Samsung=20
-960 PRO 1TB) this boot (but not the 20 boots prior).
-
-Uninstalled the 3 programs from R5S that showed up the most around the
-warning message and it's still there.=20
-Would 'dyndbg' be helpful to determine what program is buggy?
-=20
->> When researching this/these issues, I discovered the nvme-cli package
->> (with the nvme command) and via its manpage I found this command:
->>=20
->>   nvme get-feature /dev/nvme0 -f 3
->>=20
->> I didn't even know NVMe's had namespaces, but this didn't look good:
->>=20
->>   The namespace or the format of that namespace is invalid(0x200b)
->>=20
->> ... without actually understanding what it means and/or what its
->> consequences are. It could be harmless and/or normal though.
->
-> The feature you're requesting is the LBA range, which is namespace
-> scoped. You need to specify a namespace id, either by opening the
-> namespace's block device (/dev/nvme0n1) instead of the admin handle
-> (/dev/nvme0), or you can manually specify the namespace with paramters
-> "--namespace-id=3D1" or just "-n1".
-
-Adding "-n1" does show normal (AFAICT) output. It's all zeros though.
-And now the error message makes sense too :-)
-The nvme-cli man page could/should have a better (ie working) example,
-but that's not a kernel problem.
-
-Thanks for your help and reassurances :-)
-
-Cheers,
-  Diederik
-
---74404bb997a85f20169c389c59a45f42fa781e52e1caa9a2b257d66156fa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKORtAAKCRDXblvOeH7b
-bpB0AQDnJ4HcRvflUUhFeXsj+tfNwP2JOCXKBs0eHuFJ03qZiAEAisV8mhu5Uwfo
-IDyywKOQTyFNwS+aKWk3T5OKt61hKg0=
-=4lmg
------END PGP SIGNATURE-----
-
---74404bb997a85f20169c389c59a45f42fa781e52e1caa9a2b257d66156fa--
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
