@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-772867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0753B298A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:50:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D32EB298AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6703B9062
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCC42025B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73172690D5;
-	Mon, 18 Aug 2025 04:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HVjaZZZC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ABC266B52;
-	Mon, 18 Aug 2025 04:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9FD26A1AD;
+	Mon, 18 Aug 2025 04:58:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A748268C42
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755492589; cv=none; b=W2MUJX4+cDgxx3EhaNHs9xcsx8pP79ZLJnaloW/plX3ux5nvN14uyGxHUaIGDyy/61+vw1FjJaHrIsaHkjTLZwLeJYDt3K4QlxcD3yvza1tTrt5ErvvOqbyfh2qIxDri/V6+2pZHR7AFxkiAAEILRhrmsp3b8G4YmHXAKOKY3XY=
+	t=1755493098; cv=none; b=PqNmAUyX8ITci/bkeBmKs9LOmUFga++xLqqZ0C+zEDbBECY82XZTBhKGn7G5GryIGKs68+QVcFdYg+2vvsMplD6UOooHYQJoc8Hwuexzhfh6ENKn0hHQxUJy78RaJqUFRwHkCFSzdkfJNlGrRx69acIgZhL7scavIA/pwn1MemI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755492589; c=relaxed/simple;
-	bh=2xiu+FMyARWPvdBkrpzI426lbAfhGzmT1iq+5AQH6AQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6oq7mNXIqtMwCVo2MruniMKsQ2dXiqxnRKIwNzSsDbObY4aC8rDdNETQnQMDa3gHVHih7W/SjyPWBzEHwUDtpnZHTtHn5FSc1tKcM0aFxGHzInYY6xdG43V44REzNMHTEAVyl1JgNqRMIO2bJveHkqNUaQ0jE1YTkFmgBx8V7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HVjaZZZC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ttDOyJ9w06X6rxoGDLLTdEiuNaoms1y6eq8r/nuoeZ8=; b=HVjaZZZCdVPhEdUeOcwob2tWtT
-	xnaAz9b9md8WBgEFG3gBCKxURg7ynuH9Iye3+Rcf7KHkpEnGhFuXuBQw8kI2CgOCuiCmPUzZ1uJVa
-	E2yFR2ATrbgD6wmA+k4B8GPurypLjpPEemnK0ZUtkopYvC/OHWr1h1o98X0Ysyujml5148edmLH+8
-	Up7uT1qie1WcEUeUSyc5H1bpBNgDkdWE3cPczwaroFAadFp5t28cXvMQGrK4X5G6ZT72oFydFqP4d
-	oYBtnMWyGlqb1LbtYnGa3etEHjo8ZN7rZNkw74nSMVrbC7EiKBREnK+4XuXecSPrc+Wf8hSZpe6Md
-	4m6Z+Vcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1unroZ-00000006V4T-12en;
-	Mon, 18 Aug 2025 04:49:47 +0000
-Date: Sun, 17 Aug 2025 21:49:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
-Message-ID: <aKKw60JVunFUkvup@infradead.org>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <20250805141123.332298-2-kbusch@meta.com>
- <aJzwO9dYeBQAHnCC@kbusch-mbp>
- <yq11ppf2bnf.fsf@ca-mkp.ca.oracle.com>
- <aJ0JLLWrdfR5cRaW@kbusch-mbp>
+	s=arc-20240116; t=1755493098; c=relaxed/simple;
+	bh=+ZAomHC0EeizW3/iczkaqcDPujZyt42UesNjmJgW+as=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fgmyQvckvsdZF3/uzyLxxI6FPah2drpfn37k1GWUYdtn1sEeWIDDaglJewuyDHz2j3aik3PV35DE2i1oFN7oFut8juLW6D9OJ8fPdW8c+4zAornXzJmt7BroTB1r5z1CpwVEEMyrSuDChz17oQ5LsKDC4Rim/EEzwkse5bPzo24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96C631762;
+	Sun, 17 Aug 2025 21:58:01 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E67E13F58B;
+	Sun, 17 Aug 2025 21:58:06 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] arm64/sysreg: Clean up TCR_XXX field macros
+Date: Mon, 18 Aug 2025 10:27:55 +0530
+Message-Id: <20250818045759.672408-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJ0JLLWrdfR5cRaW@kbusch-mbp>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 03:52:44PM -0600, Keith Busch wrote:
-> On Wed, Aug 13, 2025 at 05:23:47PM -0400, Martin K. Petersen wrote:
-> > dma_alignment defines the alignment of the DMA starting address. We
-> > don't have a dedicated queue limit for the transfer length granularity
-> > described by NVMe.
-> 
-> Darn, but thanks for confirming. I'll see if I can get by without
-> needing a new limit, or look into adding one if not. Worst case, I can
-> also let the device return the error, though I think we prefer not to
-> send an IO that we know should fail.
+Currently [V]TCR[1|2]_EL[1|2] sysreg field macros are sprinkled across the
+arm64 platform code including KVM implementation. Clean these up via adding
+required register filed definitions in tools sysreg format and subsequently
+doing all necessary replacements. The cleanup does not cause any functional
+change.
 
-Allowing an unprivileged user application to trivially trigger an I/O
-error sounds like a bad idea.
+This applies on v6.17-rc2
 
-But I think simply applying the dma_alignment to the length of
-READ/WRITE commands might be work, while ignoring it for other types
-of commands.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+
+Anshuman Khandual (4):
+  arm64/sysreg: Update TCR_EL1 register
+  arm64/sysreg: Replace TCR_EL1 field macros
+  arm64/sysreg: Add TCR_EL2 register
+  arm64/sysreg: Add VTCR_EL2 register
+
+ arch/arm64/include/asm/assembler.h         |   6 +-
+ arch/arm64/include/asm/cputype.h           |   2 +-
+ arch/arm64/include/asm/kvm_arm.h           |  45 +-----
+ arch/arm64/include/asm/kvm_nested.h        |   6 +-
+ arch/arm64/include/asm/mmu_context.h       |   4 +-
+ arch/arm64/include/asm/pgtable-hwdef.h     | 107 ++------------
+ arch/arm64/include/asm/pgtable-prot.h      |   2 +-
+ arch/arm64/include/asm/sysreg.h            |   4 -
+ arch/arm64/kernel/cpufeature.c             |   4 +-
+ arch/arm64/kernel/pi/map_kernel.c          |   8 +-
+ arch/arm64/kernel/vmcore_info.c            |   2 +-
+ arch/arm64/kvm/arm.c                       |   6 +-
+ arch/arm64/kvm/at.c                        |  48 +++----
+ arch/arm64/kvm/hyp/include/hyp/switch.h    |   2 +-
+ arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h |   2 +-
+ arch/arm64/kvm/hyp/nvhe/switch.c           |   2 +-
+ arch/arm64/kvm/hyp/nvhe/tlb.c              |   2 +-
+ arch/arm64/kvm/hyp/pgtable.c               |   6 +-
+ arch/arm64/kvm/hyp/vhe/tlb.c               |   2 +-
+ arch/arm64/kvm/nested.c                    |  10 +-
+ arch/arm64/kvm/pauth.c                     |  12 +-
+ arch/arm64/mm/proc.S                       |  29 ++--
+ arch/arm64/tools/sysreg                    | 153 +++++++++++++++++++--
+ tools/arch/arm64/include/asm/cputype.h     |   2 +-
+ 24 files changed, 241 insertions(+), 225 deletions(-)
+
+-- 
+2.25.1
+
 
