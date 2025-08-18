@@ -1,231 +1,246 @@
-Return-Path: <linux-kernel+bounces-773530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76934B2A14E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C21B2A15C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D90A3BFBE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:14:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDE32A5A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E39D29B0;
-	Mon, 18 Aug 2025 12:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1hz90Qtb"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD9131AF08;
+	Mon, 18 Aug 2025 12:10:32 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887AB326D79;
-	Mon, 18 Aug 2025 12:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A45226F290;
+	Mon, 18 Aug 2025 12:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519263; cv=none; b=eKrD62oAj57FaNrUMEa3BSR40CreQhWzp8vs1wQgGBAEcYvC3bThmKq7mCQD5AmIlTbbRqy4rL6Sf6D2EN1bXL8gWgh7L3KwpcSScIJ/FT39XnbEMcjo/ws0R3sGEOaTjlz/Jt3l1vXciVH+dz8m3fZOQyYJ0lfOuaZkzvD9lY8=
+	t=1755519031; cv=none; b=bYPsmEs/eB6A16tNWb4td4m3F39wA6uadOVvMBx/X73KAwSl9ng7CWKRaVNRf0dl/keY5MP1ba1ybMwEJTREVXl2v7xb+9IOZxrkQlPNZfOC5oWHvms3Ey73H7+AF+1KjtG0Mrd07R6Xjhtff4bPi0IhHw/rZMdwg4t4hci7cXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519263; c=relaxed/simple;
-	bh=mD40O8ELAQZNuLx/Q1w5PsWpc3asVslfYsz2e2ICqJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nCPQj+U30wLaD4VFkdlTd4ywAN+LzTPUnd2ZOTMEHOfvwbvoextdnP2oXYCpqjJudiR2YkODpMALuFVo//Q7/yiKfnRKOOye3jvqT0BGErAAGQNrXYy+rWikGupe/640Vtu6lYVTDhqBCi0Bgyzk9d8u8azkAmXcSGOTcpJGtmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1hz90Qtb; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBp5bh013848;
-	Mon, 18 Aug 2025 14:13:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Di2sJMGDTfc2gFtc34a6qY4519gtg5sAUPBz5vhubF0=; b=1hz90Qtb072d/lZA
-	y9NnyHsNccVQIbaFxcx7E7yMN9BVd6YWYCKylGEN0e+OTGXy865/O0Gbf3dEl9Z1
-	+pyjnZtqZmY2hzn9RxRMNrPWlLtWLnBzv9SpI7iBuZ/YBnTIyzd+BxQeYYhkAnBf
-	lX0UbccWrDFNhEjef3I/A05Gy8if96eAhsYMdQYBIYX+g0MMFq0OgbfziCesFdFl
-	nXQ1MgcAlJriBhvCSa3kyLIDJFZiBSDm3BbHyZUB9/jrK0ro6YbspzGy9IWCI7bL
-	FHgHd+KEt/UAXCrUnRbJH4HCqt+6p5voVSZk9OWqBUOTtwg3MAsd6wUIGVvnupeu
-	MGwV9Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48k4xmm2ax-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 14:13:38 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 53C774004D;
-	Mon, 18 Aug 2025 14:11:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5BF7971CEFF;
-	Mon, 18 Aug 2025 14:09:58 +0200 (CEST)
-Received: from [10.48.87.121] (10.48.87.121) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 14:09:53 +0200
-Message-ID: <836b8be6-ec6a-413d-8657-ee02025ebc24@foss.st.com>
-Date: Mon, 18 Aug 2025 14:09:52 +0200
+	s=arc-20240116; t=1755519031; c=relaxed/simple;
+	bh=pbFQZ6F8H/+ENS2NlxGponIfCWcYPLd8TUnOyp7tAHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtFuXfo8HNymCKGwYapdP1Y1G6R28MDhAHSCpcTQsjQoiiWqLxIoL7p8YYdc4yGq8cOR5++cnQRISMtSmsU15qW1qb7DXM+WOmpBlT01PBb3uFOOaV6Jvcgjr1BBQB04z9mR7GnXd0trufhFlA9Q+KYig73oK3FRseollqYj09c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso5760402a12.0;
+        Mon, 18 Aug 2025 05:10:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755519028; x=1756123828;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RfKJNISuryMHsuKOipur4LoH3AcpITjIZh4IQNVTv60=;
+        b=IzOVxh3vKoXZfWr3URF+nXmfj5lP+uJNh+aRqNNug0PvzSUqCOBDutpmOwZj+rVqQe
+         1o8oaIMc3n/VKgnfZaqg2y5cqOBPYUlLlNcvqpEu2oSAtR2woWU3CYKpYT3I3DsV+AUH
+         vdBkbo1YZ5qcFrDP0HDZoTD5oWXWxacYEwBYKbALKi1nw7JutYD/SdIcRkbrL+uV74NB
+         NrKVZ7gzOtUHeLgq3frjpBs8uo+1nw/yrA8RNp2ZvVi1/w95qhaM5rYd0uzdwnbrPNgt
+         iH97Hn/DLMRURaadZr63xM02uuYemI3OQtPihhlZFyIM8xWHmxZZCOxHALOkR7hxY9eL
+         iedw==
+X-Forwarded-Encrypted: i=1; AJvYcCU27WlNcl7gjEqAuKI4NtXB6//B7sH38rFIsq0fZOX3TF3/Gf6xh5Ij3ZBJ27w9npR9oRQBlJgnWijh2Lg=@vger.kernel.org, AJvYcCXX3qFnKbBmM0b9XL9iEdcWmkoctuMF3RohCpUcfbEA8g6JZvSju5HhMiorNGvPqeSlKXGzXdBR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsNSRAkBOL5PGueYXr17xAA96VO/Qfc2cjTykZtLXSl3U/MeiE
+	Z2Xc11h2sfqq+vQ/qusT0qhfUY8vAEERnju1K3x3E522+/nKfVoF2Bl7
+X-Gm-Gg: ASbGncvYNDFy+/eYEM9XyWQHZL4/+Av5FxbzUlI/60oY2TmWANcHpRSsEcl52p33Ks1
+	MYmrmDlUliJGKMPhYRN+yw8AT457J1ljQm8IM9pe3DfKCC3fh3bEF+hrEuYm6Bset8PwPk+Zqlq
+	YA4LPwekrsfIp/fUQni5XVfGFmsM6MCOZQZJKTKIBAlmh9nv6r6jkAwYdMpGZ4QE4KDv4BSQflA
+	W/wBVV1lykyae385ir8bRvI32BycmE18U08diMJSAQ744b3O42F7NWC4g6pjyZZ0qCWAY2T/5TX
+	d+XNWUeI79skg9lkTuKK7IxXJFn7t4R24m/Dhd6pykiDMjc1f/sV5BYmsIKB3KM0cdGao7lziYD
+	4C/PrXTSAjRE9i0qPQ8yY6T8i
+X-Google-Smtp-Source: AGHT+IEXDazwxgbe1DUH1OV6NThaTWuVSI4WSiRMEI/RXhYH6UQdZyqt2d0zN/4UpH8T3+iqef3u8w==
+X-Received: by 2002:a05:6402:35d0:b0:615:c767:5ba1 with SMTP id 4fb4d7f45d1cf-618b0523173mr10035748a12.3.1755519027500;
+        Mon, 18 Aug 2025 05:10:27 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618b02b11bbsm7034549a12.53.2025.08.18.05.10.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 05:10:27 -0700 (PDT)
+Date: Mon, 18 Aug 2025 05:10:24 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, 
+	Johannes Berg <johannes@sipsolutions.net>, Mike Galbraith <efault@gmx.de>, paulmck@kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, boqun.feng@gmail.com
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+Message-ID: <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
+References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
+ <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
+ <20250814172326.18cf2d72@kernel.org>
+ <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
+ <20250815094217.1cce7116@kernel.org>
+ <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
+ <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 059/114] clk: stm32: stm32mp1: convert from round_rate()
- to determine_rate()
-To: <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-        "Cristian Marussi" <cristian.marussi@arm.com>,
-        Chen Wang
-	<unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@gmail.com>,
-        Nicolas
- Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Keguang Zhang
-	<keguang.zhang@gmail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        "Takao Orito" <orito.takao@socionext.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Huang
-	<ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        "Vladimir
- Zapolskiy" <vz@mleia.com>,
-        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Samuel Holland
-	<samuel.holland@sifive.com>,
-        Yixun Lan <dlan@gentoo.org>,
-        Steen Hegelund
-	<Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@amd.com>,
-        "Maxime
- Ripard" <mripard@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>, Sven Peter
-	<sven@kernel.org>,
-        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig
-	<alyssa@rosenzweig.io>,
-        Neal Gompa <neal@gompa.dev>,
-        Eugeniy Paltsev
-	<Eugeniy.Paltsev@synopsys.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>,
-        Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner
-	<heiko@sntech.de>,
-        Andrea della Porta <andrea.porta@suse.com>,
-        "Krzysztof
- Kozlowski" <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <sophgo@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
-        <spacemit@lists.linux.dev>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <patches@opensource.cirrus.com>, <linux-actions@lists.infradead.org>,
-        <asahi@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <soc@lists.linux.dev>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-59-b3bf97b038dc@redhat.com>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-59-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
 
+On Fri, Aug 15, 2025 at 09:02:27PM +0100, Pavel Begunkov wrote:
+> On 8/15/25 18:29, Breno Leitao wrote:
+> > On Fri, Aug 15, 2025 at 09:42:17AM -0700, Jakub Kicinski wrote:
+> > > On Fri, 15 Aug 2025 11:44:45 +0100 Pavel Begunkov wrote:
+> > > > On 8/15/25 01:23, Jakub Kicinski wrote:
+> > > 
+> > > I suspect disabling netconsole over WiFi may be the most sensible way out.
+> > 
+> > I believe we might be facing a similar issue with virtio-net.
+> > Specifically, any network adapter where TX is not safe to use in IRQ
+> > context encounters this problem.
+> > 
+> > If we want to keep netconsole enabled on all TX paths, a possible
+> > solution is to defer the transmission work when netconsole is called
+> > inside an IRQ.
+> > 
+> > The idea is that netconsole first checks if it is running in an IRQ
+> > context using in_irq(). If so, it queues the skb without transmitting it
+> > immediately and schedules deferred work to handle the transmission
+> > later.
+> > 
+> > A rough implementation could be:
+> > 
+> > static void send_udp(struct netconsole_target *nt, const char *msg, int len) {
+> > 
+> > 	/* get the SKB that is already populated, with all the headers
+> > 	 * and ready to be sent
+> > 	 */
+> > 	struct sk_buff = netpoll_get_skb(&nt->np, msg, len);
+> > 
+> > 	if (in_irq()) {
+> 
+> It's not just irq handlers but any context that has irqs disabled, and
+> since it's nested under irq-safe console_owner it'd need to always be
+> deferred or somehow moved out of the console_owner critical section.
 
-On 8/11/25 17:18, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Agree. An IRQ-unsafe lock (fq lock) should not be reachable from an IRQ
+disabled code path. So, one solution might be to always send TX packets
+from a workqueue (unless it is on panic, as suggested by Calvin).
 
-> ---
->   drivers/clk/stm32/clk-stm32mp1.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
-> index b8b45ed22f981df580506f3d4ca801ba11d2bab2..2d9ccd96ec98c05eb836d632bfd9903de60ba1bb 100644
-> --- a/drivers/clk/stm32/clk-stm32mp1.c
-> +++ b/drivers/clk/stm32/clk-stm32mp1.c
-> @@ -970,12 +970,15 @@ static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
->   	return mult;
->   }
->   
-> -static long timer_ker_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				 unsigned long *parent_rate)
-> +static int timer_ker_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
->   {
-> -	unsigned long factor = __bestmult(hw, rate, *parent_rate);
-> +	unsigned long factor = __bestmult(hw, req->rate,
-> +					  req->best_parent_rate);
->   
-> -	return *parent_rate * factor;
-> +	req->rate = req->best_parent_rate * factor;
-> +
-> +	return 0;
->   }
->   
->   static int timer_ker_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -1026,7 +1029,7 @@ static unsigned long timer_ker_recalc_rate(struct clk_hw *hw,
->   
->   static const struct clk_ops timer_ker_ops = {
->   	.recalc_rate	= timer_ker_recalc_rate,
-> -	.round_rate	= timer_ker_round_rate,
-> +	.determine_rate = timer_ker_determine_rate,
->   	.set_rate	= timer_ker_set_rate,
->   
->   };
->
+I've created a quick PoC to see how it looks like to always transmit
+from a a work queue:
+
+commit 02d0f38c3e435e4349de2fa3ce50fa8841aa0df9
+Author: Breno Leitao <leitao@debian.org>
+Date:   Mon Aug 18 04:09:44 2025 -0700
+
+    netpoll: move packet transmission to workqueue for non-blocking output
+    
+    This patch modifies the netpoll subsystem to perform packet transmission
+    asynchronously via a dedicated workqueue, always sending the packet from
+    a workqueue. This fix potential deadlock when the network locks are not
+    HARDIRQ safe.
+    
+    Packets generated for transmission are queued on tx_queue and the workqueue
+    is scheduled to send them in process context, avoiding sending packets
+    directly from atomic context except during oops handling.
+    
+    This affect only netconsole, given that no other netpoll user uses
+    netpoll_send_udp().
+    
+    Signed-off-by: Breno Leitao <leitao@debian.org>
+
+diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
+index b5ea9882eda8b..bac9dec8bd3bc 100644
+--- a/include/linux/netpoll.h
++++ b/include/linux/netpoll.h
+@@ -35,8 +35,8 @@ struct netpoll {
+ 	bool ipv6;
+ 	u16 local_port, remote_port;
+ 	u8 remote_mac[ETH_ALEN];
+-	struct sk_buff_head skb_pool;
+-	struct work_struct refill_wq;
++	struct sk_buff_head skb_pool, tx_queue;
++	struct work_struct refill_wq, tx_wq;
+ };
+ 
+ #define np_info(np, fmt, ...)				\
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 5f65b62346d4e..92a4186cebb83 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -496,6 +496,16 @@ static void push_eth(struct netpoll *np, struct sk_buff *skb)
+ 		eth->h_proto = htons(ETH_P_IP);
+ }
+ 
++static int netpoll_queue_skb(struct netpoll *np, struct sk_buff *skb)
++{
++	/* Queue at the tail and TX from the head */
++	skb_queue_tail(&np->tx_queue, skb);
++	schedule_work(&np->tx_wq);
++
++	/* TODO: this will need some refactor to update netconsole stats properly */
++	return NET_XMIT_SUCCESS;
++}
++
+ int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ {
+ 	int total_len, ip_len, udp_len;
+@@ -528,7 +538,10 @@ int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ 	push_eth(np, skb);
+ 	skb->dev = np->dev;
+ 
+-	return (int)netpoll_send_skb(np, skb);
++	if (oops_in_progress)
++		return (int)netpoll_send_skb(np, skb);
++
++	return netpoll_queue_skb(np, skb);
+ }
+ EXPORT_SYMBOL(netpoll_send_udp);
+ 
+@@ -540,6 +553,23 @@ static void skb_pool_flush(struct netpoll *np)
+ 	cancel_work_sync(&np->refill_wq);
+ 	skb_pool = &np->skb_pool;
+ 	skb_queue_purge_reason(skb_pool, SKB_CONSUMED);
++
++	/* tx_queue must be empty here, given we the pkts were flushed
++	 * after users got disabled.
++	 */
++	if (WARN_ON_ONCE(skb_queue_len(&np->tx_queue)))
++		skb_queue_purge(&np->tx_queue);
++}
++
++static void netpoll_flush_tx_poll(struct work_struct *work)
++{
++	struct sk_buff *skb;
++	struct netpoll *np;
++
++	np = container_of(work, struct netpoll, tx_wq);
++
++	while ((skb = skb_dequeue(&np->tx_queue)))
++		netpoll_send_skb(np, skb);
+ }
+ 
+ static void refill_skbs_work_handler(struct work_struct *work)
+@@ -557,6 +587,7 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
+ 	int err;
+ 
+ 	skb_queue_head_init(&np->skb_pool);
++	skb_queue_head_init(&np->tx_queue);
+ 
+ 	if (ndev->priv_flags & IFF_DISABLE_NETPOLL) {
+ 		np_err(np, "%s doesn't support polling, aborting\n",
+@@ -596,6 +627,7 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
+ 	/* fill up the skb queue */
+ 	refill_skbs(np);
+ 	INIT_WORK(&np->refill_wq, refill_skbs_work_handler);
++	INIT_WORK(&np->tx_wq, netpoll_flush_tx_poll);
+ 
+ 	/* last thing to do is link it to the net device structure */
+ 	rcu_assign_pointer(ndev->npinfo, npinfo);
+@@ -815,6 +847,8 @@ static void __netpoll_cleanup(struct netpoll *np)
+ 	if (!npinfo)
+ 		return;
+ 
++	cancel_work_sync(&np->tx_wq);
++
+ 	if (refcount_dec_and_test(&npinfo->refcnt)) {
+ 		const struct net_device_ops *ops;
+ 
 
