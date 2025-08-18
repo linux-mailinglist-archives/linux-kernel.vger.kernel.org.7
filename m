@@ -1,180 +1,130 @@
-Return-Path: <linux-kernel+bounces-774268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976CFB2B0B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A24FB2B0B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160B95E68AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE40A5E672E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38939271465;
-	Mon, 18 Aug 2025 18:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B428F26FD8F;
+	Mon, 18 Aug 2025 18:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Kuhfz07M"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tZdRi83b"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5894426FA70;
-	Mon, 18 Aug 2025 18:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CC621CFFA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755542683; cv=none; b=kprzMb+6wtE2bn7A5kYeMjNfSGROeJav2NvcAxN4naWVVySoNkxCf7QYJ3NbfbhEClEaaYdxrWL5hZ+4sB7bYSAOm6Q2zcTwAe2KBh0aba6aHQg4R8/VJkwKnYpYX+vPdByhi2Fzs0fyPuEQUm3qMEnwVzcMJAO+fbyc1Dc+EU4=
+	t=1755542777; cv=none; b=fBn8WfbyJMlHxhBnSaBqIGpqsbsc2ujA4Re9+EuAXsY846RccVo9B71bWx4LFQRxKrgezNt71EX8Em1B/NQvVU6GcvIDs7LUGnxwOeoXFktcPVZzfmOHPj75NEFcxI7kMfb/PaGfAQN+wItErsnEyUxHnBtY0wJ9bV3+mHkmAoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755542683; c=relaxed/simple;
-	bh=ZAPT9fuu0IPx5iygoOI781s8oP2NzNCflbQUWvHrXSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=huMKhukZPi0/3qfyPPTJM+JJ2hyFx65lmZl1CK01PVvzwgwX74gO5bRmu+ynQAW1NnsEVX38NPhVmz79pHp9bxiu7yuqlHJ0xxGvl9eNfxEYgTtR2QNY9CKf4fkUOxJQZ+Q9aXNNlIEzvyhy1pxWubQAEB/EuFU7ooS3kPw1BEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Kuhfz07M; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=ubTyn2ugoz2/Rq288NzNSXVDl2tAW+oxgRy2HaQbf9M=; b=Kuhfz07MorWp4PpYWOL7VftqW3
-	kPWgyELtaB1PJADPBexGvgKpFWJAjB9NSqmoY9lEjr/ulldNLSkZMDWbwN/ys/NhkWXtzctQYkM5d
-	qi9dmeWfUm9UUfL8ZPKEWlrMl2MSIDqynWNMwVGU1ulHL+9zK4rP5/W2uGSEYipRh45UxzfSC2M3W
-	P1WC6KTQln6tu8kKt9crOLps0HY4zkfBf53iO0c+RG12QWMwJo0JqIJHu62AQ5IGghbLxc3ZyjipZ
-	E5SNbYPtwLeFrA73I+1N+f4+yBLvsafZaZidS1gPqyqJXSGblIgnQ0h5GeiQ/9zfq24JwH3xNtF+W
-	5qymsxLQ==;
-Received: from i53875ad4.versanet.de ([83.135.90.212] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uo4q8-0000eZ-KQ; Mon, 18 Aug 2025 20:44:16 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH] thermal: rockchip: shut up GRF warning
-Date: Mon, 18 Aug 2025 20:44:15 +0200
-Message-ID: <8402789.eFmWaWnqpD@diego>
-In-Reply-To:
- <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
-References:
- <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
+	s=arc-20240116; t=1755542777; c=relaxed/simple;
+	bh=C53WQThecyRHyG2y2doWAd9gG6VnMVqKUiUacXtVys8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GumB+KPIo92To9ZXZxiAtqEkr+gZRVIxZP4GNrU/Gxqri8MaRT4RATo2JFaYYnRm5LKIVLFSf662+V8nMzQzC1gQYdSUvyv23dZFcB7vG+nOhcLKeLNJrMClMCJRhf8AlZJy1vIgfwzBGqSgXY1pQW5LIIKAcOQqV82P5Hqfs5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tZdRi83b; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-30cce90227aso1595240fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755542774; x=1756147574; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xKwtzpSJXdc0i1E4Lfs0SQasfYwFsWMXD3Ma/0/zLOY=;
+        b=tZdRi83b5/lGbwbqyUZCK7mV3MvjoGwbpVAVo5cHe0Gc1e985xD0G30vgFM2AUaHEB
+         VdJF/MhJxmANr9c8mxvnVxPnwUJIgtJo2Dzt8uXEH1JpV/N8xRqv51PVAcNGeuqxsXX7
+         NnM50nB+DU0YJGKj6uu04yy6Mc5h93ZuDhco+6InF1NiUDy7Gw7S0tMRCAuXdiTzs6F/
+         nbSYac0zzv9AOxOI5URwnD8GkPNDIVhHkveb5syE4Pw/23bBiGzS/jgGyST0NiuR1ASu
+         PVlmgBMIXrps4XE/ydhNswnSSCYI00Vnlwy6QPlV1YHeCh0Zd7TFDJCcYLXX0hRUNSBR
+         ohaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755542774; x=1756147574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKwtzpSJXdc0i1E4Lfs0SQasfYwFsWMXD3Ma/0/zLOY=;
+        b=K3ZaRBAN1yKIbf47GbSaCMI745sNp6Mep8IxrgGDtyeA5951yx9Eb/c+6mSZGaaJTj
+         EpyNGff6PBTW/F3qz+/9gLGpk4Np6bAcQnYCQNwYJ/8GgHMyNudakLgkV8QL66Qi4m4D
+         IMasfBj+tA6KDFMrJvlF7ljs2R112jre09EIjvFyONtjcrZgbMU+1/GKHnFybkpIabsj
+         6Bwm7E2uE2q90mpJV8lE2XgRvHO3sfpDgLzQGHroD5fnU0xFz5EhLNcc8S4SoeRgnnw9
+         ZqDUSmkhJ1X4QpX0eFfG76AQjNbNg7c1SyXI+OirRYPQIdGRyjajsyea3ARxSCgHE/Az
+         nIAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH8aOyFQEMJLKQwsRdu7PwN8qvc9GHvWCSjMBeemRpb0vhL6RDA2nae7Im1DotgMxbK1QXWuvPa3grMiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCnunLZr3cDatYw/I11Q2p66MRuyhmbdd1IK0yLn9oDEVWUa1o
+	O3mUq/jxDz/1kklKE8S85mZFiDMDj0nN5QTBKzGJZqRtqlNvfxaBo6LTMbjQtxxicSCzQspW2OR
+	sSHTd
+X-Gm-Gg: ASbGncsxPMpWt7lmFnj/L1fGojK3M8jxIB0W7y9ZTK5ZRwtmQDLcpuPQmbF/hpPG/f0
+	Utn6/VxlFhKQNSWXtt5EOEjnqGQ3jGO7SK1klkKaUxVBw4H5ld0jMBgJJ2kIjbeiFbxjDMqpsQ1
+	XECqaPoDdDOmBuLSCsNYh+uI3/uPhrFPADH7YSBhN5iKd8PmeB2jgLV+qcRs/VHjbKYdlZgZDpr
+	baogJu9YbWQlV5AGNtgz9+XjZz+PqDIjJd5KWA2U1Fcrz3C3IXIe+D6+6/Ox7UxHmXOammShxD7
+	7iu4mc7Y0NDTo45/JuHaQvX+3Pe1fWZksrimr4/jt2WzWs0kQZH9IOTFQHvem7b/U3VTvLp/Kpe
+	DpdEmcW20k0cC6gs580gn494Numla4VHqm6LDpleV3ivfikcwxTJLsgl5sJQZ1mLP2gooCH+SpA
+	I=
+X-Google-Smtp-Source: AGHT+IFa8rtZwWPOCpTppRhVyDky9XeYSaC4LBjLvLnOvIueLM8NbOrIzbBeJn1GmEaCymt6Vt/peA==
+X-Received: by 2002:a05:6870:789:b0:2e9:4038:83d7 with SMTP id 586e51a60fabf-310be4c509emr5219307fac.11.1755542774067;
+        Mon, 18 Aug 2025 11:46:14 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73? ([2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7439204e556sm1987755a34.43.2025.08.18.11.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 11:46:13 -0700 (PDT)
+Message-ID: <8127b81f-d2a1-4dfc-b8c6-45615ba9e431@baylibre.com>
+Date: Mon, 18 Aug 2025 13:46:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Support ROHM BD7910[0,1,2,3]
+To: Jonathan Cameron <jic23@kernel.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sukrut Bellary <sbellary@baylibre.com>,
+ Lothar Rubusch <l.rubusch@gmail.com>
+References: <cover.1755504346.git.mazziesaccount@gmail.com>
+ <20250818191932.42c22df3@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250818191932.42c22df3@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sebastian,
-
-Am Montag, 18. August 2025, 19:26:15 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Sebastian Reichel:
-> Most of the recent Rockchip devices do not have a GRF associated
-> with the tsadc IP. Let's avoid printing a warning on those devices.
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-thanks a lot for tracking down the GRF usage for all the soc variants :-)
-
-> ---
->  drivers/thermal/rockchip_thermal.c | 53 ++++++++++++++++++++++++++++++++=
-+-----
->  1 file changed, 46 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchi=
-p_thermal.c
-> index 3beff9b6fac3abe8948b56132b618ff1bed57217..1e8091cebd6673ab39fa0c4de=
-e835c68aeb7e8b5 100644
-> --- a/drivers/thermal/rockchip_thermal.c
-> +++ b/drivers/thermal/rockchip_thermal.c
-> @@ -1099,6 +1114,8 @@ static const struct rockchip_tsadc_chip px30_tsadc_=
-data =3D {
->  	.chn_offset =3D 0,
->  	.chn_num =3D 2, /* 2 channels for tsadc */
-> =20
-> +	.grf_mode =3D GRF_MANDATORY,
-> +
->  	.tshut_mode =3D TSHUT_MODE_CRU, /* default TSHUT via CRU */
->  	.tshut_temp =3D 95000,
-> =20
-> @@ -1123,6 +1140,8 @@ static const struct rockchip_tsadc_chip rv1108_tsad=
-c_data =3D {
->  	.chn_offset =3D 0,
->  	.chn_num =3D 1, /* one channel for tsadc */
-> =20
-> +	.grf_mode =3D GRF_NONE,
-> +
-
-nit: I guess instead of adding an empty line, you could also just drop
-the empty line above, to bring the "older" variants into the form
-rk3576 and rk3588 use.
-
-
->  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
->  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
->  	.tshut_temp =3D 95000,
-
-[...]
-
-> @@ -1321,6 +1354,7 @@ static const struct rockchip_tsadc_chip rk3576_tsad=
-c_data =3D {
->  	/* top, big_core, little_core, ddr, npu, gpu */
->  	.chn_offset =3D 0,
->  	.chn_num =3D 6, /* six channels for tsadc */
-> +	.grf_mode =3D GRF_NONE,
->  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
->  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
->  	.tshut_temp =3D 95000,
-> @@ -1345,6 +1379,7 @@ static const struct rockchip_tsadc_chip rk3588_tsad=
-c_data =3D {
->  	/* top, big_core0, big_core1, little_core, center, gpu, npu */
->  	.chn_offset =3D 0,
->  	.chn_num =3D 7, /* seven channels for tsadc */
-> +	.grf_mode =3D GRF_NONE,
->  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
->  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
->  	.tshut_temp =3D 95000,
-
-[...]
-
-> @@ -1621,12 +1656,16 @@ static int rockchip_configure_from_dt(struct devi=
-ce *dev,
->  		return -EINVAL;
->  	}
-> =20
-> -	/* The tsadc wont to handle the error in here since some SoCs didn't
-> -	 * need this property.
-> -	 */
-> -	thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
-> -	if (IS_ERR(thermal->grf))
-> -		dev_warn(dev, "Missing rockchip,grf property\n");
-> +	if (thermal->chip->grf_mode !=3D GRF_NONE) {
-> +		thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
-> +		if (IS_ERR(thermal->grf)) {
-> +			ret =3D PTR_ERR(thermal->grf);
-> +			if (thermal->chip->grf_mode =3D=3D GRF_OPTIONAL)
-> +				dev_warn(dev, "Missing rockchip,grf property\n");
-
-I guess it might make it easier for people seeing the log, if we could
-insert an "optional" into that message for the optional tier.
-
-> +			else
-> +				return dev_err_probe(dev, ret, "Missing rockchip,grf property\n");
-> +		}
-> +	}
-> =20
->  	rockchip_get_trim_configuration(dev, np, thermal);
-
-Overall, though
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-Thanks
-Heiko
-
+On 8/18/25 1:19 PM, Jonathan Cameron wrote:
+> On Mon, 18 Aug 2025 11:11:56 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> Add support for ROHM BD7910[0,1,2,3] ADCs.
+>>
+>> The ROHM BD79100, BD79101, BD79102 and BD79103 are ADCs derived from the
+>> BD79104. According to the data-sheets, the BD79103 is compatible with the
+>> BD79104. Rest of the ICs have different number of analog input channels.
+>>
+>> This series adds support for these ICs using the ti-adc128s052.c.
+>>
+>> NOTE: There has been work on couple of other patch series [1][2] touching
+>> this same driver. I haven't considered those changes because, AFAICS,
+>> there has been no new revisions of these series since mid June.
+>>
+>> [1]: https://lore.kernel.org/all/20250614091504.575685-1-sbellary@baylibre.com/
+>> [2]: https://lore.kernel.org/all/20250625170218.545654-2-l.rubusch@gmail.com/
+> 
+> Pretty simple replies to the changes requested in v1 reviews and nice and clean
+> so I'll gamble (a tiny bit) that everyone is happy with this and at least
+> queue it up for build testing.
+> 
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
 
