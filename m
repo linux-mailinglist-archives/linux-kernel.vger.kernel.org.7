@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-773100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58E2B29B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:57:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44A3B29B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFF9E4E21DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9EF18A6391
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306BA29B214;
-	Mon, 18 Aug 2025 07:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AB629D27A;
+	Mon, 18 Aug 2025 07:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LUu9/U64"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PAthyycl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D9C2798E1
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0132798E1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503789; cv=none; b=HGtWTe68oWK0salvvGdylJzsP2XN4qh2WXsxbqXQZAyrz1H2NcleW8RTM4Vc1f9CVKSqwE53xb82DS3aVpuWL6o9JQVmPZIfdFMs2YYbi8tq1sk8LyYfYemhMCR4a8lLcR+S+s60CyD111TOrkb+i+39zVkiLBa4jUf5cw2YWuE=
+	t=1755503821; cv=none; b=fbJpBjWn0Uwy8v9WKlL4WLXuR4hAtVULMKxWUHRFlYJxf4ClJUh8pNugtL9K6PMDBrs823gAxajOSiNtm7JlJskHuNRzRqzTc7zVW6TgiHch1etz+lCZaIx3UTohwt0OJeak+NXAoUb/FIdm75Ok+9xE9bn0q7GC74C3rXspUQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503789; c=relaxed/simple;
-	bh=yuON3RAO/SPbn7wdOZ9G3BwNB6Xn0S2WhI8ic7+Zm70=;
+	s=arc-20240116; t=1755503821; c=relaxed/simple;
+	bh=K0dZwX9WTtx/x2BEJYu3yffZw1uIj+EcVsnjsBwJmkQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=psLqJ3SX9Pgp7iJ6ka8FWkKNmI2PO7QIEo/9QHPFtjrnQP5KWLJWW0eTONKCizz9W/9u2HcEneXbs98LNFaS9mzEqXEJl5aEF90B57wlX7w3D3YmNF2VSEpTNNx0gCYvvV/YDocC5yqhuVGkfl1dvSKcHsgGsYFGgChJRHq7MVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LUu9/U64; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=q9CLeOOgrf9EzZdURiXiNm7TDYnklwtwmQCEkELcoqPVknU8Cg1EP391SxyZsABZJNDr5iaXjYM8IkxpaGd5VrZGdp66qwUrHrk2YnU5F4cW5rygjA1eHmMIMxpctcHEWWQ0TDg0k2dB/l08CedD2gBb0fYiQxml1QKYxf+eIJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PAthyycl; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755503786;
+	s=mimecast20190719; t=1755503818;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MG+P3KZK4DCofFAEgECVm3tRlJVmdNEsPB4AH15/8wI=;
-	b=LUu9/U64NZtsOTZxNaSN2LdEJYYjyVG9tD2UV3WN8/tBLQcMYC+xDW5gvYe9zbz+zXXX+s
-	CY1ZDYhouUkT0vycbg0oeoxIMG0DbVowWk6NuaCi49nKpx9VurxwCKW7jHn2/iKG4oaPLY
-	LRjMvOXy9/DoyTAYgz2cFkbiLH7vF1M=
+	bh=BJ/waxf7shlm26D4jZ2oS7S6MeDF1K+mmlGn6PRutyk=;
+	b=PAthyyclQWdrDgNtzUF+humolfwfYNaztnFBLuKyHdYorrNLaS33CEkyLdMFY1tmWF1b/T
+	bPlemwVgzJRlI6dv6q6vcU5G9BtD8ny9Gnfi30laeAr3EQSDWyGhytnRNYZCjdxRN8DOpB
+	kXtJNlotzU4TArS4YbMg7f+JLqtxA28=
 Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
  [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-nVwggmZsOD2mfqEsZb-hsw-1; Mon, 18 Aug 2025 03:56:25 -0400
-X-MC-Unique: nVwggmZsOD2mfqEsZb-hsw-1
-X-Mimecast-MFC-AGG-ID: nVwggmZsOD2mfqEsZb-hsw_1755503784
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1ad21752so14802685e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:56:24 -0700 (PDT)
+ us-mta-533-Ad-0cRFnN5ivhGGtIEiZDg-1; Mon, 18 Aug 2025 03:56:57 -0400
+X-MC-Unique: Ad-0cRFnN5ivhGGtIEiZDg-1
+X-Mimecast-MFC-AGG-ID: Ad-0cRFnN5ivhGGtIEiZDg_1755503816
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b0d0feaso23296795e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:56:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755503784; x=1756108584;
+        d=1e100.net; s=20230601; t=1755503816; x=1756108616;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MG+P3KZK4DCofFAEgECVm3tRlJVmdNEsPB4AH15/8wI=;
-        b=iUh/6pXHgHCKij/qGsSvuR04itl0qfzpikNQyAFGCSiipU7ynBVXGwuWQhCib+NrOM
-         qjIVax4ceYz/1G4fcPR4zsvwcucCfH0TIva7ScPLfPDLLhCZGqJEq6U7S5iUgEBXLmd7
-         zjRjCdeANS4/mbvo3qiBAjMsyps78sWj+1fGxsTENgJLCeM4Q33RBVXBqFPZM5scNwGn
-         sdXlQaJM1V0klJMTNRbynOI1OLUMK9x50H+PeW/ase6mMVCguSE7OXGPWxB6R/Alby5x
-         I5IISCJ6Wuv6yDn8gadQjXoAJ3827fnXBB3+JcYnmJNiAdNEmpQe3AT+dCr/7fnvB2to
-         hadQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqbOFFrSnuE7WnybW3hmPEskNjasAYmvywkBZcLm1UjpnzaC9YAziC5aFZuZ/BEtBnbMnFpWwQziTMZU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAiCUGb9T4e302pwLxGWSi6VrF5ecsOuoF+nW1NNdm1V6ZWUlb
-	V26T/VvId0a6pKRhOv2kKv0D8wMgv+Fue0xnQfDY57+pJV7bWwyBy3M7VSzbnNDckykYzS6z0mX
-	rcole0dB1LuMc1s1P+MosihzBdSuj/IZ5u4YQfR17MqEFG+W33mWvf76vOwGi8dnQug==
-X-Gm-Gg: ASbGnctCL7EctdN6tUlhL+pteMFuoHF6wa6gpNsYLrUZsZJTWcu3uSE+en83KsWOguA
-	Q7uQmyjn8BHluDnvSyRmSJq4IjT5uGblQc/H1l6JsCM/aSd4zQxz+MTlRFKDb/CJH0jIgKcMu9y
-	ul8a7HbyX/zn86VQkqD9LaBBn/S23qjTkaHjn+C952S5MNGD3+78rKgMHKVV4QwPV5PXlP8I9uY
-	Xz6bg15c2JllXr5CckhFOqAlDVvgfloDSuiDbTIGxPLMrLVdVIIPN5PlWfO2oxobBijvcmcCLv5
-	CrEcY19lQFl2PZkjTJ71SVADYP1YNFYokAGGBHkKx/ubg6j8taySf0cC6B/uAapoKOOtqpaM8SW
-	T7JNSFHU28muHa0BEMxyJUsDmLSKYL7rb8GLfcGluoN8FhnS0z6AVr61crjdc80YB
-X-Received: by 2002:a05:600c:1ca8:b0:459:e002:8b1e with SMTP id 5b1f17b1804b1-45a1b6bf03fmr135531765e9.13.1755503783784;
-        Mon, 18 Aug 2025 00:56:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFi28hsboEh9Wu3Gf8U19Lp8pFZTMJNS3/XSgcBRFfdKS9JByMGi0h9ov3jkz1u39rS2KFugA==
-X-Received: by 2002:a05:600c:1ca8:b0:459:e002:8b1e with SMTP id 5b1f17b1804b1-45a1b6bf03fmr135531535e9.13.1755503783309;
-        Mon, 18 Aug 2025 00:56:23 -0700 (PDT)
+        bh=BJ/waxf7shlm26D4jZ2oS7S6MeDF1K+mmlGn6PRutyk=;
+        b=a/EfV9GhOtxW1exyPQ31bH9dhs91iW8E0O/GXuJTJD08QuWdvfcsuVPDDayhfn2M+B
+         6TkAi859Hkx9uJoaw3qHMd+xBD7jinLfIGNvruXdIb/ldU6DjldWAcsClwLtZc1Y+XuB
+         TdV/pVumeOayUeRX/yemj6T4izFKGyHWIpn/6J2xJDH4ktbLiGO9Uk12Nn+v72x/YYN2
+         A7MeOgk1MIrLuaZyEwGYtJAeaxXPSnTtekjn8N7NwQeV6Ux09/VUVQNg9IzQmQ/H60S6
+         7dN9xeAhCUlrlaH3JJQSME1VQOIm4k64epvPM126HSTuOn7BFqNI/udpbh7etrngskFy
+         oznQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Jwjc51AFY1oKg3oVXKMlLCYNGvj8/kkwvkHi5q4gpLL8lIlkbOH/ig5wALcJfxAxRZe1yzNHV904T7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY7ocmjkP6puKMG84/Qo9SHB5vsBEG5U1n/TH+flK0z+22fMLJ
+	ui0fEhM6rrsH+FSEfEiq9kM0s2jWqH+1cq1rBA9kt3Vo4tqRf7RjzMM3GFNixCmN+4j6ZEm+ZV+
+	ymY9HgYIVteI5A/IBiQfDlP+NYarstmvp7dxG9SuHZWaaB1zHFB8MJTX6itIP9sfCjw==
+X-Gm-Gg: ASbGncuDG9x2VtXasDLpGbWrx41f0eq0XscXXGNdSxWn+BidLsa9zIh4MudXvc5QFe+
+	s6iq6RKBY0bL+P0yaxp2wXPxyVCCwnM51bVR8T1D2lsZeAE/J6me+F0KEIm4qHuoG8rySUSBten
+	foO90Qov+xIWaPYw362GAeVHnFAtobu0Rg9VjuX4os7MGSg0mBf/yCk9anyP1ZR4Ikegp5ejAhl
+	XAtX0SHORmuoRC/afhICXYFiJ8TfOMCchd0e5lIum/pz1ag1BKkp0gxAC2kiAqnj4h7QtHloPHX
+	s3Nk8/JXjVdfIDbpvSurl2SLmDJFA+/6UiBz7UR5xxHDrGgjaNDbV7/kK63bYuMg5XxjQoypjHr
+	3QOcmd26kqG2bmU5gYC5qK5Xhw3ko67TnlqDTD4Dl9En1t+iOKR7HlBBNwW1eR3L4
+X-Received: by 2002:a05:6000:2485:b0:3b7:99cb:16e5 with SMTP id ffacd0b85a97d-3bb68cfaedfmr8252290f8f.28.1755503816003;
+        Mon, 18 Aug 2025 00:56:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5lIFG/pwp9cWcad1i1QkSJoxL9baJo8KcsDGdZ6bqql9vBoqBBDo9o9ETypZV9s2yLKqg8w==
+X-Received: by 2002:a05:6000:2485:b0:3b7:99cb:16e5 with SMTP id ffacd0b85a97d-3bb68cfaedfmr8252265f8f.28.1755503815615;
+        Mon, 18 Aug 2025 00:56:55 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f22:600:53c7:df43:7dc3:ae39? (p200300d82f22060053c7df437dc3ae39.dip0.t-ipconnect.de. [2003:d8:2f22:600:53c7:df43:7dc3:ae39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a22321985sm119855405e9.17.2025.08.18.00.56.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6863d9a4sm11799764f8f.61.2025.08.18.00.56.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 00:56:22 -0700 (PDT)
-Message-ID: <5f9eeb98-9881-4c46-93f9-e13419d92b61@redhat.com>
-Date: Mon, 18 Aug 2025 09:56:21 +0200
+        Mon, 18 Aug 2025 00:56:55 -0700 (PDT)
+Message-ID: <36a05826-76e4-4723-8f9a-592c745af38c@redhat.com>
+Date: Mon, 18 Aug 2025 09:56:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,15 +89,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] selftests/mm/uffd: Refactor non-composite global
- vars into struct
-To: Ujwal Kundur <ujwal.kundur@gmail.com>, akpm@linux-foundation.org,
- peterx@redhat.com, jackmanb@google.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, shuah@kernel.org
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250817065211.855-1-ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v4 2/5] selftests/mm: mark all functions static in
+ split_huge_page_test.c
+To: Zi Yan <ziy@nvidia.com>, Wei Yang <richard.weiyang@gmail.com>,
+ wang lian <lianux.mm@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250815023915.1394655-1-ziy@nvidia.com>
+ <20250815023915.1394655-3-ziy@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -144,114 +150,17 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250817065211.855-1-ujwal.kundur@gmail.com>
+In-Reply-To: <20250815023915.1394655-3-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17.08.25 08:52, Ujwal Kundur wrote:
-> Refactor macros and non-composite global variable definitions into a
-> struct that is defined at the start of a test and is passed around
-> instead of relying on global vars.
+On 15.08.25 04:39, Zi Yan wrote:
+> All functions are only used within the file.
 > 
-> Signed-off-by: Ujwal Kundur <ujwal.kundur@gmail.com>
-> Acked-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 > ---
-> Previous versions and discussion at:
-> https://lore.kernel.org/all/20250702152057.4067-1-ujwal.kundur@gmail.com/
-> 
->   Changes since v6:
->   - rebased on 6.17-rc1 changes (cd79a1d9b08a)
->     - removes unused args and adds the __unused attribute; since change
-> 	 is cosmetic-only, carry forward Acked-by tag
->   - verified output remains unchanged using virtme-ng
->   Changes since v5:
->   - ensure uffd_global_test_opts_t instances are initialized
->   - verified output remains unchanged using virtme-ng
->   Changes since v4:
->   - define gopts as global within uffd-stress.c to retain existing
->     sigalrm handler logic
->   Changes since v3:
->   - more formatting fixes
->   Changes since v2:
->   - redo patch on mm-new branch
->   Changes since v1:
->   - indentation fixes
->   - squash into single patch to assist bisections
-> 
->   tools/testing/selftests/mm/uffd-common.c     | 275 ++++-----
->   tools/testing/selftests/mm/uffd-common.h     |  78 +--
->   tools/testing/selftests/mm/uffd-stress.c     | 228 ++++----
->   tools/testing/selftests/mm/uffd-unit-tests.c | 561 ++++++++++---------
->   tools/testing/selftests/mm/uffd-wp-mremap.c  |  23 +-
->   5 files changed, 623 insertions(+), 542 deletions(-)
 
-That's a lot of churn, but sounds reasonable. Only skimmed over it and 
-found two nits.
-
-> 
-> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-> index e309ec886fa7..f4e9a5f43e24 100644
-> --- a/tools/testing/selftests/mm/uffd-common.c
-> +++ b/tools/testing/selftests/mm/uffd-common.c
-> @@ -7,18 +7,30 @@
->   
->   #include "uffd-common.h"
->   
-> -#define BASE_PMD_ADDR ((void *)(1UL << 30))
-> -
-> -volatile bool test_uffdio_copy_eexist = true;
-> -unsigned long nr_parallel, nr_pages, nr_pages_per_cpu, page_size;
-> -char *area_src, *area_src_alias, *area_dst, *area_dst_alias, *area_remap;
-> -int uffd = -1, uffd_flags, finished, *pipefd, test_type;
-> -bool map_shared;
-> -bool test_uffdio_wp = true;
-> -unsigned long long *count_verify;
->   uffd_test_ops_t *uffd_test_ops;
->   uffd_test_case_ops_t *uffd_test_case_ops;
-> -atomic_bool ready_for_fork;
-> +
-> +#define BASE_PMD_ADDR ((void *)(1UL << 30))
-> +
-> +/* pthread_mutex_t starts at page offset 0 */
-> +pthread_mutex_t *area_mutex(char *area, unsigned long nr, uffd_global_test_opts_t *gopts)
-> +{
-> +	return (pthread_mutex_t *) (area + nr * gopts->page_size);
-> +}
-> +
-> +/*
-> + * count is placed in the page after pthread_mutex_t naturally aligned
-> + * to avoid non alignment faults on non-x86 archs.
-> + */
-> +volatile unsigned long long *area_count(
-> +		char *area, unsigned long nr,
-> +		uffd_global_test_opts_t *gopts)
-
-You can fit some parameters into the first line to make this look less 
-weird.
-
-[...]
-
->   	}
->   
-> diff --git a/tools/testing/selftests/mm/uffd-wp-mremap.c b/tools/testing/selftests/mm/uffd-wp-mremap.c
-> index b2b6116e6580..ec860625b25b 100644
-> --- a/tools/testing/selftests/mm/uffd-wp-mremap.c
-> +++ b/tools/testing/selftests/mm/uffd-wp-mremap.c
-> @@ -152,7 +152,11 @@ static bool range_is_swapped(void *addr, size_t size)
->   	return true;
->   }
->   
-> -static void test_one_folio(size_t size, bool private, bool swapout, bool hugetlb)
-> +static void test_one_folio(uffd_global_test_opts_t *gopts,
-> +			   size_t size,
-> +			   bool private,
-> +			   bool swapout,
-> +			   bool hugetlb)
-
-Please avoid that.
-
-static void test_one_folio(uffd_global_test_opts_t *gopts, size_t size,
-		bool private, bool swapout, bool hugetlb)
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers
