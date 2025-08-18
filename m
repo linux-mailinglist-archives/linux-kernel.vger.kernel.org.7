@@ -1,350 +1,132 @@
-Return-Path: <linux-kernel+bounces-773338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1ADB29E79
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD71B29E84
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D7416EC30
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E31A3B5041
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542F030F81B;
-	Mon, 18 Aug 2025 09:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB0430FF32;
+	Mon, 18 Aug 2025 09:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RbNPA893"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkIFS709"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B582630F81D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1310F278146;
+	Mon, 18 Aug 2025 09:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510852; cv=none; b=SnA6PG0IWsow3m1yc2glVBMYH0w1dK0oeOcELc/BOm+KQI7atGzpymjAa0wXs/B3zt3W1Imv1DCU3OllDv8yL8Cd9PB4dJTp0M7IyHZ7wl6Sl/Y6TnEe+MEYVWcWnPFv0HQskhaJVQCDy3hehKYI6ZJMguufTMerRfqdLtplpsg=
+	t=1755510941; cv=none; b=cpOmBBgZN+Uzb9fdh7qwcKjcVsdw6G89V90EwaOnqk8dZK8W80FTdQjjdQn1T2xXPuULbJmW0Hjl9ISAR0r6yE8OSZAXvcJuT7epTKnEaDhbdoUp0UeRU7u20ey5vMuvJlqCpRveNL8NURUtLpwllXeeatIWezgNiJ2m9Wy7EU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510852; c=relaxed/simple;
-	bh=KamMMg3EPLxz9RNtKPmbItFIk1+dod4t8rzqhV+MQOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C8j3INY4+yZWvM8Tl0fhjuY153F4diJKZwTcTUnoyS537QQLOVKiH2YcCJwbEUtkqDERb8fFEdhmBTGjQaQ+ecHelNqurMSHyHY+sp6hKj/7PxFixIOKlUxWLRTqsHUIPHiv9znxC91ypWjmKPlyQ9mqKvRzYGsH2tMQ5aP80Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RbNPA893; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755510849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HA01auwQvB/7QYUCmwkzOYCmVjJiDGJJtQy2+vOWF9k=;
-	b=RbNPA89374MYBlnLXHy99XaQpoq9IAsPbiai+NVXd8f3fB+Xfggcm8+G+edHQ6ywig7wjf
-	n39SOJ6hDgS3s28YQt/rEzjCPemtjDw/HoN1jTFjSFhxAGd69qM1lFobhKzAf4oVgQB1SX
-	1QV/BVXfzigk2c8Kq9XaXBuQ0ppNqG8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-dviG2_HNPhqoFEcFhbL_ng-1; Mon,
- 18 Aug 2025 05:54:07 -0400
-X-MC-Unique: dviG2_HNPhqoFEcFhbL_ng-1
-X-Mimecast-MFC-AGG-ID: dviG2_HNPhqoFEcFhbL_ng_1755510846
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C363118002E8;
-	Mon, 18 Aug 2025 09:54:05 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.225.124])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E991319560AD;
-	Mon, 18 Aug 2025 09:54:01 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: linux-hyperv@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Tianyu Lan <tiala@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Li Tian <litian@redhat.com>,
-	Philipp Rudo <prudo@redhat.com>
-Subject: [PATCH v2] x86/hyperv: Fix kdump on Azure CVMs
-Date: Mon, 18 Aug 2025 11:54:00 +0200
-Message-ID: <20250818095400.1610209-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1755510941; c=relaxed/simple;
+	bh=IV4bPZmBEtnxV/SEjS2Qeu5Z6YHK0JsLisi/u8YBojg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P1Grrw0FnZEYH4ehRZRQ+7GxdnpLgbFvFOg2gPvuzXuFbwHfZjzqeBlixPQFlttWlA4Z922xaOPOIvQ9C/eEa8Hac8V3maa080RTVZXUNVpU1G9rqGlhsKX2x7zgJhgvH0mjbLvYKMvNtZ27JNVJGep7N10xliIbSqjUAw8NJuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkIFS709; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB81DC4CEEB;
+	Mon, 18 Aug 2025 09:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755510940;
+	bh=IV4bPZmBEtnxV/SEjS2Qeu5Z6YHK0JsLisi/u8YBojg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KkIFS709x8lYmWmrSuAbEvmL/Ukks/PyE+IyhowtIXWJrX5YjkOTSG9gRsr7W4vxS
+	 M6eiX76ZSu+glstH3DBNvo2wiEz7yYkfyBxoxgBMoPphqglSg57NVDTthieDza87o8
+	 VGH8jj6T8PrfUwWXw9iBUr0/x3CgZygMqW9E3bGNJqwAqKhMjKTyFugT0Prjmq8yqU
+	 zl4FJnAO7swFVZuSNmUGiSGjjIh4etFjS5AApSUv1VhlorTA9anh0VNX2PUWqHAyDi
+	 hnN5uBLlV2KWcSP+Mln3CEDROh8JyylqW9+j9da7wcqVdO38EzRyQ8gBkNtxueTunJ
+	 2Glc2kfQqq4CA==
+Message-ID: <9dfd2eb2-fda7-4f29-881b-e1c4a2b3f6fc@kernel.org>
+Date: Mon, 18 Aug 2025 11:55:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] dt-bindings: interconnect: Add OSM L3 compatible
+ for QCS615 SoC
+To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Sibi Sankar
+ <quic_sibis@quicinc.com>, Odelu Kukatla <quic_okukatla@quicinc.com>,
+ Mike Tipton <mike.tipton@oss.qualcomm.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804061536.110-1-raviteja.laggyshetty@oss.qualcomm.com>
+ <20250804061536.110-2-raviteja.laggyshetty@oss.qualcomm.com>
+ <3b79dc0c-0bcd-47d0-ab10-ba1514466d65@kernel.org>
+ <14d0e02e-350c-42bc-93b5-c81e11b3bd5d@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <14d0e02e-350c-42bc-93b5-c81e11b3bd5d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Azure CVM instance types featuring a paravisor hang upon kdump. The
-investigation shows that makedumpfile causes a hang when it steps on a page
-which was previously share with the host
-(HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY). The new kernel has no
-knowledge of these 'special' regions (which are Vmbus connection pages,
-GPADL buffers, ...). There are several ways to approach the issue:
-- Convey the knowledge about these regions to the new kernel somehow.
-- Unshare these regions before accessing in the new kernel (it is unclear
-if there's a way to query the status for a given GPA range).
-- Unshare these regions before jumping to the new kernel (which this patch
-implements).
+On 18/08/2025 11:12, Raviteja Laggyshetty wrote:
+>>>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml        | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>> No, slow down, this conflicts with other patch and makes your entry
+>> duplicated. Just squash both commits.
+>>
+> The conflicting patch 
+> https://lore.kernel.org/all/20250711102540.143-2-raviteja.laggyshetty@oss.qualcomm.com/
+> got picked into v6.17-rc1.
 
-To make the procedure as robust as possible, store PFN ranges of shared
-regions in a linked list instead of storing GVAs and re-using
-hv_vtom_set_host_visibility(). This also allows to avoid memory allocation
-on the kdump/kexec path.
+Then why you could not rebase on next if you sent it afterwards? You are
+not making the process easier for us.
 
-The patch skips implementing weird corner case in hv_list_enc_remove()
-when a PFN in the middle of a region is unshared. First, it is unlikely
-that such requests happen. Second, it is not a big problem if
-hv_list_enc_remove() doesn't actually remove some regions as this will
-only result in an extra hypercall doing nothing upon kexec/kdump; there's
-no need to be perfect.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v1:
- - fix build on ARM [kernel test robot]
----
- arch/arm64/include/asm/mshyperv.h |   3 +
- arch/x86/hyperv/ivm.c             | 153 ++++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h   |   2 +
- drivers/hv/vmbus_drv.c            |   2 +
- 4 files changed, 160 insertions(+)
-
-diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
-index b721d3134ab6..af11abf403b4 100644
---- a/arch/arm64/include/asm/mshyperv.h
-+++ b/arch/arm64/include/asm/mshyperv.h
-@@ -53,6 +53,9 @@ static inline u64 hv_get_non_nested_msr(unsigned int reg)
- 	return hv_get_msr(reg);
- }
- 
-+/* Isolated VMs are unsupported on ARM, no cleanup needed */
-+static inline void hv_ivm_clear_host_access(void) {}
-+
- /* SMCCC hypercall parameters */
- #define HV_SMCCC_FUNC_NUMBER	1
- #define HV_FUNC_ID	ARM_SMCCC_CALL_VAL(			\
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index ade6c665c97e..a6e614672836 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -462,6 +462,150 @@ void hv_ivm_msr_read(u64 msr, u64 *value)
- 		hv_ghcb_msr_read(msr, value);
- }
- 
-+/*
-+ * Keep track of the PFN regions which were shared with the host. The access
-+ * must be revoked upon kexec/kdump (see hv_ivm_clear_host_access()).
-+ */
-+struct hv_enc_pfn_region {
-+	struct list_head list;
-+	u64 pfn;
-+	int count;
-+};
-+
-+static LIST_HEAD(hv_list_enc);
-+static DEFINE_RAW_SPINLOCK(hv_list_enc_lock);
-+
-+static int hv_list_enc_add(const u64 *pfn_list, int count)
-+{
-+	struct hv_enc_pfn_region *ent;
-+	unsigned long flags;
-+	bool found = false;
-+	u64 pfn;
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		pfn = pfn_list[i];
-+
-+		found = false;
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_for_each_entry(ent, &hv_list_enc, list) {
-+			if ((ent->pfn <= pfn) && (ent->pfn + ent->count - 1 >= pfn)) {
-+				/* Nothin to do - pfn is already in the list */
-+				found = true;
-+			} else if (ent->pfn + ent->count == pfn) {
-+				/* Grow existing region up */
-+				found = true;
-+				ent->count++;
-+			} else if (pfn + 1 == ent->pfn) {
-+				/* Grow existing region down */
-+				found = true;
-+				ent->pfn--;
-+				ent->count++;
-+			}
-+		};
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+
-+		if (found)
-+			continue;
-+
-+		/* No adajacent region found -- creating a new one */
-+		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
-+		if (!ent)
-+			return -ENOMEM;
-+
-+		ent->pfn = pfn;
-+		ent->count = 1;
-+
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_add(&ent->list, &hv_list_enc);
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static void hv_list_enc_remove(const u64 *pfn_list, int count)
-+{
-+	struct hv_enc_pfn_region *ent, *t;
-+	unsigned long flags;
-+	u64 pfn;
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		pfn = pfn_list[i];
-+
-+		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+		list_for_each_entry_safe(ent, t, &hv_list_enc, list) {
-+			if (pfn == ent->pfn + count - 1) {
-+				/* Removing tail pfn */
-+				ent->count--;
-+				if (!ent->count) {
-+					list_del(&ent->list);
-+					kfree(ent);
-+				}
-+			} else if (pfn == ent->pfn) {
-+				/* Removing head pfn */
-+				ent->count--;
-+				ent->pfn++;
-+				if (!ent->count) {
-+					list_del(&ent->list);
-+					kfree(ent);
-+				}
-+			}
-+
-+			/*
-+			 * Removing PFNs in the middle of a region is not implemented; the
-+			 * list is currently only used for cleanup upon kexec and there's
-+			 * no harm done if we issue an extra unneeded hypercall making some
-+			 * region encrypted when it already is.
-+			 */
-+		};
-+		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+	}
-+}
-+
-+void hv_ivm_clear_host_access(void)
-+{
-+	struct hv_gpa_range_for_visibility *input;
-+	struct hv_enc_pfn_region *ent;
-+	unsigned long flags;
-+	u64 hv_status;
-+	int cur, i;
-+
-+	if (!hv_is_isolation_supported())
-+		return;
-+
-+	raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-+
-+	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-+	if (!input)
-+		goto unlock;
-+
-+	list_for_each_entry(ent, &hv_list_enc, list) {
-+		for (i = 0, cur = 0; i < ent->count; i++) {
-+			input->gpa_page_list[cur] = ent->pfn + i;
-+			cur++;
-+
-+			if (cur == HV_MAX_MODIFY_GPA_REP_COUNT || i == ent->count - 1) {
-+				input->partition_id = HV_PARTITION_ID_SELF;
-+				input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
-+				input->reserved0 = 0;
-+				input->reserved1 = 0;
-+				hv_status = hv_do_rep_hypercall(
-+					HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
-+					cur, 0, input, NULL);
-+				WARN_ON_ONCE(!hv_result_success(hv_status));
-+				cur = 0;
-+			}
-+		}
-+
-+	};
-+
-+unlock:
-+	raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-+}
-+EXPORT_SYMBOL_GPL(hv_ivm_clear_host_access);
-+
- /*
-  * hv_mark_gpa_visibility - Set pages visible to host via hvcall.
-  *
-@@ -475,6 +619,7 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
- 	struct hv_gpa_range_for_visibility *input;
- 	u64 hv_status;
- 	unsigned long flags;
-+	int ret;
- 
- 	/* no-op if partition isolation is not enabled */
- 	if (!hv_is_isolation_supported())
-@@ -486,6 +631,14 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
- 		return -EINVAL;
- 	}
- 
-+	if (visibility == VMBUS_PAGE_NOT_VISIBLE) {
-+		hv_list_enc_remove(pfn, count);
-+	} else {
-+		ret = hv_list_enc_add(pfn, count);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	local_irq_save(flags);
- 	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
- 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index abc4659f5809..6a988001e46f 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -263,10 +263,12 @@ static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip,
- void hv_vtom_init(void);
- void hv_ivm_msr_write(u64 msr, u64 value);
- void hv_ivm_msr_read(u64 msr, u64 *value);
-+void hv_ivm_clear_host_access(void);
- #else
- static inline void hv_vtom_init(void) {}
- static inline void hv_ivm_msr_write(u64 msr, u64 value) {}
- static inline void hv_ivm_msr_read(u64 msr, u64 *value) {}
-+static inline void hv_ivm_clear_host_access(void) {}
- #endif
- 
- static inline bool hv_is_synic_msr(unsigned int reg)
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 2ed5a1e89d69..2e891e108218 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -2784,6 +2784,7 @@ static void hv_kexec_handler(void)
- 	/* Make sure conn_state is set as hv_synic_cleanup checks for it */
- 	mb();
- 	cpuhp_remove_state(hyperv_cpuhp_online);
-+	hv_ivm_clear_host_access();
- };
- 
- static void hv_crash_handler(struct pt_regs *regs)
-@@ -2799,6 +2800,7 @@ static void hv_crash_handler(struct pt_regs *regs)
- 	cpu = smp_processor_id();
- 	hv_stimer_cleanup(cpu);
- 	hv_synic_disable_regs(cpu);
-+	hv_ivm_clear_host_access();
- };
- 
- static int hv_synic_suspend(void)
--- 
-2.50.0
-
+Best regards,
+Krzysztof
 
