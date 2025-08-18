@@ -1,154 +1,134 @@
-Return-Path: <linux-kernel+bounces-774161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D13EB2AF4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:21:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFA6B2AEF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF49C1892154
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE617B7197
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6902C2848B5;
-	Mon, 18 Aug 2025 17:20:43 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8726C398;
-	Mon, 18 Aug 2025 17:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA2C32C321;
+	Mon, 18 Aug 2025 17:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukN+n/GX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C0832C300;
+	Mon, 18 Aug 2025 17:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537638; cv=none; b=YV2QAs1gC/iVVUbui/TVyLdpGgZiaqSOQmP92ZNYGoGrvRN9EdQIUWn+8ugx9diY+Tz7scWVs49gQpjYJAhW2KGYBxQdi39byy4CIuOHpJY9mpoUe106jxsqfexvZaE6qUugWDOHxrQabA9c2MVLDYJPLfJKeh9Mk16jYnFTqM4=
+	t=1755536945; cv=none; b=u57wTXl7lE6IRRTQnNgXcGtjGL1Kd14gJIsME7mb0s146L4O6qUnUgPD9mFCHWwc4ZG4e+XtXIhboSsRkRGoTyK1cQ+FeKgVxhbADeqqSDsOlX3D1uvZh/z3HsWCpMN7a8sYPa1DlwEa0wbCR2vAdxEPYAEAtuKFZGPBowsg1g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537638; c=relaxed/simple;
-	bh=antcrhCguodTcTOhvbLUOOfuYhTcaV/a1botVNHGusU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3r2vE8NJDqgAzdFbJAqUeeE5dRsFWuZPPSUY2qy/Lx8Hh+Sbfr6kfuny69mQNZGylt2q7KI/CF/jssdThQhDK8VhQ+c+8LLpAjiag31iq5oWsPAr35GvArrgaIRoY+a2qUDjni0ty04VYF1zMdXVIlGQiLj5za0T66/HY8NYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c5K1X3wsYz9sSW;
-	Mon, 18 Aug 2025 19:08:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id MrZScAyopd0z; Mon, 18 Aug 2025 19:08:48 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c5K1X2hLYz9sSV;
-	Mon, 18 Aug 2025 19:08:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 44EC58B764;
-	Mon, 18 Aug 2025 19:08:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id aw5_3grXJjSH; Mon, 18 Aug 2025 19:08:48 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9EC3B8B763;
-	Mon, 18 Aug 2025 19:08:47 +0200 (CEST)
-Message-ID: <732b5fb6-ec38-43d9-b544-b27802a844ab@csgroup.eu>
-Date: Mon, 18 Aug 2025 19:08:47 +0200
+	s=arc-20240116; t=1755536945; c=relaxed/simple;
+	bh=Hyw53ZDx364pKmLbo4gCQTxyQwdoGy/IOG7eSwG74Yw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtzXkP03CGe0tdy1ZM8kYNuu4SLMaf2Ry1NViCc/BpuGUK0E+JsUQr2rSOzwD1scF/ajTY3SeayXXOJTOIZDlgmXOB8uMH7keLxHWXmEUv+cTesAjWcnah3b73Wts45EvSdGldOmkYk2wwFtYg2P08Wx63D9ZFTE9dCQtcRW77U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukN+n/GX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C177BC4CEEB;
+	Mon, 18 Aug 2025 17:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755536944;
+	bh=Hyw53ZDx364pKmLbo4gCQTxyQwdoGy/IOG7eSwG74Yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ukN+n/GXzklqVJkTZne+d5giZDpSaa18ONEWXelzNI9h/TiFDmr5VPh5xVQUWmkc/
+	 KWmA/NbSPEVHpIPxy4tkwEIqirz4obvDRTc3+KaHTnBradG09dGa2p31WeDMO8vXhg
+	 sEMXVQFaXI0r1IReF0FXjCRgd+svrakkcEZvjXdGZkd6812sS9BX3VTRHHXDUTsdOx
+	 4NDJj9x7fckyP0glb57uRmro3ix6/33rTryeMLE4hdd3oWtsoYHIUubIBl03WYmh7w
+	 FC2OyDlHhwSj2tpvmlhmr4pd+jAmxV5hvKSNUXDipLL4EZwYh+piiufJaqUFF6wtx3
+	 dUDhOVNgevt6A==
+Date: Mon, 18 Aug 2025 12:09:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, krzk+dt@kernel.org,
+	conor+dt@kernel.org, hauke@hauke-m.de,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: watchdog: lantiq,wdt: convert bindings to
+ dtschema
+Message-ID: <20250818170904.GA1477625-robh@kernel.org>
+References: <20250811131104.837210-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] soc: fsl: qe: Add support of IRQ in QE GPIO
-To: Conor Dooley <conor@kernel.org>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1755506608.git.christophe.leroy@csgroup.eu>
- <cddc5e900b84826614a63b8b29a048c09dd20853.1755506608.git.christophe.leroy@csgroup.eu>
- <20250818-tyke-pungent-20d9ffd47ecc@spud>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250818-tyke-pungent-20d9ffd47ecc@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811131104.837210-1-olek2@wp.pl>
 
-
-
-Le 18/08/2025 à 19:03, Conor Dooley a écrit :
-> On Mon, Aug 18, 2025 at 10:45:57AM +0200, Christophe Leroy wrote:
->> In the QE, a few GPIOs are IRQ capable. Similarly to
->> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
->> GPIO"), add IRQ support to QE GPIO.
->>
->> Add property 'fsl,qe-gpio-irq-mask' similar to
->> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
->>
->> Here is an exemple for port B of mpc8323 which has IRQs for
->> GPIOs PB7, PB9, PB25 and PB27.
->>
->> 	qe_pio_b: gpio-controller@1418 {
->> 		#gpio-cells = <2>;
->> 		compatible = "fsl,mpc8323-qe-pario-bank";
->> 		reg = <0x1418 0x18>;
->> 		interrupts = <4 5 6 7>;
->> 		fsl,qe-gpio-irq-mask = <0x01400050>;
->> 		interrupt-parent = <&qepic>;
->> 		gpio-controller;
->> 	};
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> ---
->> v2: Document fsl,qe-gpio-irq-mask
->> ---
->>   .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     | 19 ++++++++++++++++++
->>   drivers/soc/fsl/qe/gpio.c                     | 20 +++++++++++++++++++
->>   2 files changed, 39 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
->> index 09b1b05fa677..9cd6e5ac2a7b 100644
->> --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
->> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
->> @@ -32,6 +32,15 @@ Required properties:
->>     "fsl,mpc8323-qe-pario-bank".
->>   - reg : offset to the register set and its length.
->>   - gpio-controller : node to identify gpio controllers.
->> +Optional properties:
->> +- fsl,qe-gpio-irq-mask : For banks having interrupt capability this item tells
->> +  which ports have an associated interrupt (ports are listed in the same order
->> +  QE ports registers)
->> +- interrupts : This property provides the list of interrupt for each GPIO having
->> +  one as described by the fsl,cpm1-gpio-irq-mask property. There should be as
->> +  many interrupts as number of ones in the mask property. The first interrupt in
->> +  the list corresponds to the most significant bit of the mask.
->> +- interrupt-parent : Parent for the above interrupt property.
->>   
->>   Example:
->>   	qe_pio_a: gpio-controller@1400 {
->> @@ -42,6 +51,16 @@ Example:
->>   		gpio-controller;
->>   	  };
->>   
->> +	qe_pio_b: gpio-controller@1418 {
->> +		#gpio-cells = <2>;
->> +		compatible = "fsl,mpc8323-qe-pario-bank";
->> +		reg = <0x1418 0x18>;
->> +		interrupts = <4 5 6 7>;
->> +		fsl,qe-gpio-irq-mask = <0x01400050>;
->> +		interrupt-parent = <&qepic>;
->> +		gpio-controller;
->> +	  };
->> +
->>   	qe_pio_e: gpio-controller@1460 {
->>   		#gpio-cells = <2>;
->>   		compatible = "fsl,mpc8360-qe-pario-bank",
+On Mon, Aug 11, 2025 at 03:10:54PM +0200, Aleksander Jan Bajkowski wrote:
+> Convert the Lantiq WDT Watchdog bindings to yaml format.
 > 
-> Why is there a binding change hiding in here alongside a driver one?
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> ---
+>  .../bindings/watchdog/lantiq,wdt.yaml         | 50 +++++++++++++++++++
+>  .../bindings/watchdog/lantiq-wdt.txt          | 24 ---------
+>  2 files changed, 50 insertions(+), 24 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+> new file mode 100644
+> index 000000000000..f1102fff2d92
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/watchdog/lantiq,wdt.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lantiq WTD watchdog
+> +
+> +maintainers:
+> +  - Hauke Mehrtens <hauke@hauke-m.de>
+> +
+> +allOf:
+> +  - $ref: watchdog.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - lantiq,falcon-wdt
+> +          - lantiq,wdt
+> +          - lantiq,xrx100-wdt
+> +      - items:
+> +          - enum:
+> +              - lantiq,xrx200-wdt
+> +              - lantiq,xrx300-wdt
+> +          - const: lantiq,xrx100-wdt
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  lantiq,rcu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the RCU syscon node (required for
+> +      "lantiq,falcon-wdt" and "lantiq,xrx100-wdt")
 
-I did the same way as commit 726bd223105c ("powerpc/8xx: Adding support 
-of IRQ in MPC8xx GPIO")
+Express the 'required' as a schema, not freeform text.
 
-Should it be done differently ?
-
-Thanks
-Christophe
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    watchdog@803f0 {
+> +        compatible = "lantiq,xrx200-wdt", "lantiq,xrx100-wdt";
+> +        reg = <0x803f0 0x10>;
+> +
+> +        lantiq,rcu = <&rcu0>;
+> +    };
 
