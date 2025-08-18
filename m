@@ -1,106 +1,141 @@
-Return-Path: <linux-kernel+bounces-772948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC07DB299B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C512EB299B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60DCA3BF10F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80BD2166855
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBDE2750F3;
-	Mon, 18 Aug 2025 06:30:58 +0000 (UTC)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B2D27511E;
+	Mon, 18 Aug 2025 06:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDXjJtv8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89831223DE8;
-	Mon, 18 Aug 2025 06:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C119223DE8;
+	Mon, 18 Aug 2025 06:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755498657; cv=none; b=Qgfb4+N425RG5P1mTba5mP9Jlbj+cIlc8PliZKbA94NcQ6htwvNWYcT0NwqaZXDA3wD/djh1aURraBjHZhGBWPsXnMHzsfsiLoYdEhBejqt92I1y6HTi+5KSEuRljQtmKgd+1cC/h7PLFG9R3Fzvg9SQlN2PYJlAxSk+tLDYo2E=
+	t=1755498668; cv=none; b=pAkBIOYtSz8jcS3VvULy9dJ4Rig0UP2jQFP5ZLxbG6l1/4TlWhna7ijzqVD8hTfJVOab0tCNAJiTQ2jiI75s88D7uauUacZdWdtCow6y3CiH841P4Dpz6D74eoPxa1EbT1MACQTp90zN0A8A2pypO8aV1iCdGZaACZa1yL6w0Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755498657; c=relaxed/simple;
-	bh=VoNHNqo8fUGvNqIOg37Qh0MYP91XFhZxSxTsoOiS8Ls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R2CMcs57///+cBeTRy38qyMeSG+TO8mthIiiaOtqQvDjoAT2J21KPIYU1gA+h78uDaqddRDJcLKsUTeEkRxDHotm8G8Lj1R2yP6C0ApeqOhGKwx52vNw5J6/k5rifS+nz9B25y/UCPax7InpxIn0mPi61aB2X7/PUsINxeExY+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89019119eeeso2430119241.3;
-        Sun, 17 Aug 2025 23:30:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755498654; x=1756103454;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KOcu/p0cV7w38P/APFmgt8wjqwiJZHneIgQmVX2LtzA=;
-        b=ndn44/1Js1hjOR7W09wtReUHF0UgwFs5XIQmtGYawAMIEHoMPj9VIQgKBVXiUuv36o
-         9Mo7jd6Efz2APPNivrvYqzo/joCmuIAvkn4PIOwPADW6/JbCzOEI3hrmWfxKPz2woxJu
-         jyUZ+YtevXOBlZY4t0Agj+Z+hg4+pVv10nlbyWwPsAMjxG8HDK2ydZmm1q1X4CVgolYm
-         jB0ktuP1Y5mVO50HX2ZxIKqOZkepLAQ9WkBfTrbDh0BHVBBEOJRC9d89C9Rd+Lg/rv3h
-         TUlqBJsVMYof7KEC1sbT8Wt1ohxniKtGNdyT/xl6OPY5t8OsZl1zwz+YyDMTzD1ZdCU8
-         d+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKgKSc+J3sL4eWKCt8v0SM7QCB151TTOhj8TaUtdr3FFzqUVm03iAPn1mdSUejODcYbbI2UwT8sXx0MIb7@vger.kernel.org, AJvYcCXZjHra1+mjCfUvrBkZC2taWJHbnVC+SnSGfPKQQWuyTtj37tmnDt0FoqybwBw5yQm05q0KZHrpUmFd2A==@vger.kernel.org, AJvYcCXfT6N375E7WRyiqWaYLc2+rW9keb4bbkfkhshONGIzesGGWT3eAkcl/9w0Qk64H+m3awgOeDpj8Z4k7+CcHpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyA5c9+mAjDCTx3LDChEav1OEuJV2mAH5nNmyf26v7ry+1CXGX
-	wWpezvjYWlt/cJ+n3VbPSuN/La5ZjmepbGf8blAe/l/5hbOrZBJoV0J8vzGR2EJe
-X-Gm-Gg: ASbGncucwPfQSZnQmSMKMQUEwbmj9gmpyI7KCUgjWZJiIlE6kfjIiJUZoKz1FNLxFE/
-	nN+Lq8B/6WYvP/Q/rjlpMcAIVQH6HgpdZTm7sQg01266C0RWfJapeaqwPgrADK07RJlYHcO3yHX
-	aMo6rFIeT5zae/aLfNbUjzaLRoH49SblWN+48Si8qWR/lP5XS/XOwsRoxtXD3DoOnnmbdXtrQt1
-	qxgyu3AZpHz0AZrpgyE2wrIxyR9I7bLf3ML9sF4F1EMH0jVnEFb/vFN8jYtbyYdounelrY3Of1C
-	IbZ1egVMLrnRW8yHu21UQ41rt/Jobrmt7n7EMH8INKBb9auTDCTcN5Fj4O4EWVsU18xY029UiLM
-	mJT6XFozYJsY5AJOSn2aZ0LQu97p5lzzX1/Uj+M8J/rGr6R8aZBo2aSBu8FMnjC9wg+S8FUg=
-X-Google-Smtp-Source: AGHT+IHq6NW2gxSf1SiiUYzjyJCIne3mIKLZM7LKKCNsYMEYvMfzX4JmGDZ9fVqfCNGX0NxkXvSqzw==
-X-Received: by 2002:a05:6102:41a1:b0:4fa:e005:cb20 with SMTP id ada2fe7eead31-514c8b6839amr2937481137.3.1755498654216;
-        Sun, 17 Aug 2025 23:30:54 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127fb10254sm1923168137.18.2025.08.17.23.30.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 23:30:54 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-890190bee8bso2389929241.2;
-        Sun, 17 Aug 2025 23:30:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7hPAWM3Xfpp0Af0jODS9O3FLr7Anu3PCxXUAO0m+bVFxjLsDZXPnRZvd/HJgczy1IB2yfaAyOrvI/Ng==@vger.kernel.org, AJvYcCWC7ecIeCA2vo2jwmkaKmrzLIC1D77l8OjN/SJBcPs0lbsFj0JGTlJ7RNHw1A8/d0+VfiTYeha/cMAhw9fT@vger.kernel.org, AJvYcCWOt3WhELc4iX4cvaOP73c0EJS3drZ5bPO9ZkPu4QcDuJHpaUkDTHomGAO2Q4Co1wcPlh0Xb5Y0RyhOa0jJYjY=@vger.kernel.org
-X-Received: by 2002:a05:6102:418a:b0:4f9:6a93:2a3a with SMTP id
- ada2fe7eead31-514cb1a473dmr2883727137.26.1755498653860; Sun, 17 Aug 2025
- 23:30:53 -0700 (PDT)
+	s=arc-20240116; t=1755498668; c=relaxed/simple;
+	bh=eAB0iQM8ECb1EUyPVWktZLwwrkSHRpvjpaj/cofnVnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XvCfjgfXSVYvc0b5pnYlieyBRt+Mc/ZUOsqLIM4WsIY2HdzsQ3f6Mi47JVn8GxvwbCIP3lTRYck8kMJbeIsws0tcwLHyMZyZJHxI+H5N0ITjNprj5jKMHtpa65GL9SEKgm7HEwrTiYP+YSWQghwvQY41aSMeVyJk1/LyIZQyTW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDXjJtv8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32190C4CEEB;
+	Mon, 18 Aug 2025 06:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755498668;
+	bh=eAB0iQM8ECb1EUyPVWktZLwwrkSHRpvjpaj/cofnVnw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aDXjJtv8cLaM97vdKMKLBX5/eDHrjUrHBjFcTeDJ0Vdiwkenbnpl7H/1M4lENygVG
+	 Z2oJAz/aD3by4o/qKfUDETPe65UkwQ3KFhNmVttyrcRPVLs9S7bLDWI7SVFlCjutO+
+	 MGuNmhKYa8m/QmgbXFl3M8u0wcHpSyk0VcKgrq6BSjLv50zydqNTQriGvjtFZSZhSz
+	 K7J0Y/vm4vkPmycGRqcijygrIcz8kwzWufibtzurNAwTVzur6P2Sq4kdRlAAPQjFKQ
+	 eXkIPtbZm6QHZW1CeZuTUo+4+bpKbHt+oLYJLlIJ5e1RFGRgBHmg4BnddxeDHD/Lci
+	 U5mUxj/TIgkgQ==
+Message-ID: <d009e0b2-2906-4436-b6a6-c24fecce9298@kernel.org>
+Date: Mon, 18 Aug 2025 08:31:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817183728.612012-1-thorsten.blum@linux.dev> <20250817183728.612012-4-thorsten.blum@linux.dev>
-In-Reply-To: <20250817183728.612012-4-thorsten.blum@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 08:30:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVwvTGSyqTt4z=EgDrZ9=UxvQcb8kKzOx5H4s40sWTq+A@mail.gmail.com>
-X-Gm-Features: Ac12FXwVhRbO3bMzLwzayoRGg_slz1P9TUgElvRbnD6lMZ2Ht0pOA0TsGu9z7N4
-Message-ID: <CAMuHMdVwvTGSyqTt4z=EgDrZ9=UxvQcb8kKzOx5H4s40sWTq+A@mail.gmail.com>
-Subject: Re: [PATCH 4/8] MIPS: txx9: Replace deprecated strcpy() with strscpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+ <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
+ <cc3e798e-bb66-4e91-8fda-d1c8fcecf301@kernel.org>
+ <CALHNRZ9kLabyFv5PiMb7jrZgPyjOKe5sWEq7EJPb5LO6E6FUMg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ9kLabyFv5PiMb7jrZgPyjOKe5sWEq7EJPb5LO6E6FUMg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 17 Aug 2025 at 20:38, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> strcpy() is deprecated; use strscpy() instead.
->
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On 18/08/2025 05:23, Aaron Kling wrote:
+>>>
+>>> +Optional properties for limiting frequency:
+>>> +- nvidia,dfll-max-freq: Maximum scaling frequency.
+>>
+>>
+>> 1. Frequency is in units.
+> Ack, will fix in whatever form a new revision takes.
+> 
+>> 2. OPP defines it already, doesn't it?
+> The dfll driver generates the cpu opp table based on soc sku's, it
+> doesn't use dt opp tables. This property is intended to modify the
+> generation of said table. That said, if there's a generic dt opp
+> paradigm for this that I missed which works without dt opp tables, I'd
+> be happy to use that instead.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Usually list of frequencies is via OPP, if it is not applicable here, it
+should be explained briefly.
 
-Gr{oetje,eeting}s,
+Just like - why same devices have different values should be explained
+(commit msg is not precise here).
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
 
