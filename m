@@ -1,112 +1,263 @@
-Return-Path: <linux-kernel+bounces-773774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36744B2A91D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27973B2A9A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D9B1BA5427
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD5C687EB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A387322DD0;
-	Mon, 18 Aug 2025 13:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A704321F2B;
+	Mon, 18 Aug 2025 13:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="E9j1yP6x"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kYgyCtw0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+BkghXQa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5FC322A39;
-	Mon, 18 Aug 2025 13:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36983218C0;
+	Mon, 18 Aug 2025 13:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525595; cv=none; b=qatoY2sRIv7DCyWjtLuDLRzY4/P+oivtEEVdN5h8PB1Wpw/5ibk5JP9xsaKdMGRGl01qCbP/oH4g4987CmYTyfbFs+DXhy8g1hjCWjzv6TPfY2VFQ3hTBfMx8Fb3V3xrGRClgwzBf3wUOwFWU4l4ZHaA1chFjGUO7m+wBbFHcAs=
+	t=1755525513; cv=none; b=UOEB7RZN6vtuvr1SuyWa4xOdLngRUk8HpoisXuEAjRmV/A5sjy116N3TkL8BZ/BbwblcEBoAYyOXX9SOyC+39D61PnTmhD98xHqulKwrkjDGe0GkbyYERSIZQ+Pj0f/ZZhQxorxikoz9I5m402eKraWzOexMocAxOwzXFYiwiZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525595; c=relaxed/simple;
-	bh=jj53V94zqaHhX9kDmLB5IOaA+ZJ0TvHlFvFNhVaoAyw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pfhUBb5igOOvQJLXtuBT7mFBk0mPOdcPTMvtl3WPan2MnjugefjEy/cQ3kIEh2bUXYcytjI/yb0p7p5bP4Vb8us5JIS0p3p+AUH/BPhn3B5r/ssTfGdTkV9JLmlfUxn/Cv41JolvHYyNN/Xa6YoN2YqTFHLYtTCh7mzjFYbvsx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=E9j1yP6x; arc=none smtp.client-ip=43.163.128.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755525590; bh=jO6mm0SEtl/dOnAj5fjSuDHUXJTe4jEIzLbN9ric9mE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E9j1yP6xB/FVZKl3MZ5Jbl4KeFZ3CUdAatvjnj3U70z1SvU7KDFnzBfJtZObSLvIp
-	 zcIqwhn8+JB0mznKoD9rPmflmFlfGycghdH/SEIBQFP3Xtwm20YAjga+FhRebRcCiW
-	 wmfhOfMHpUYLp0cFf03z7yGgGmhvmAZYEfdInG8U=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E9707618; Mon, 18 Aug 2025 21:58:23 +0800
-X-QQ-mid: xmsmtpt1755525503ta32cnhnn
-Message-ID: <tencent_44D70651C9BAEEF1EEC70C85A7DF46D71206@qq.com>
-X-QQ-XMAILINFO: NrNHTFHgCqYay8hiWnes+LpuXKDZczPVfsB5vT53Rni7ByHTB2ibBRUXX1XttM
-	 yQXsRWCkVr0TF/fWCln+paXfY9fn9/CsA2QeZiaGxDYVDM4Ld/E32gxv7uhzZ2kaDuaDsYvA/oej
-	 Hc8NZpU2MMuFMDWmGNn6iU41wvyAowKFpPstpk21ZO/LHn+lV0gS9utlsMWbbxkMV98bObycHxDg
-	 1h/v3t2x/2NsuSdjsj+RhlX+uLA+7LhbHoZs7hn9/Ucphnr2W+MeDV1PdLKMQxh6oUXZVmFRyOZ/
-	 fEXvqCz+2MQ2U42P0JcZfnugMZezqwSg0DE8i14eXtS4HWJ1PqR5d8ICS7KWyxd7y8AnwiTgHd2j
-	 J7bO/JeRMY+qS32K4WxSV1KpGL/nVva0NmVRLSCFYCSufAERIDZD025WTH1RUOXIXjvAJcTLPAob
-	 Rey1E26RWOPuCmYS57Uh56vsOUIHB5/6aK3UmTjR/OnU8cCgBbLjTM6PjTa6+DdyGArNUUFt89OM
-	 uPgp1I8Mo27UKfxe0Lu+L23FReHi5b2vGiwmWUeu0j4R8Edq/RWIkKWjRi3VYUd/28WD+TNyc/UL
-	 gRn3hRRjqf6wcclOV2MgIK+iSFlsaITohuFOIWLp/2pKeJNaQjOIbMGMYYMc638yd/Z+NNOmtUTV
-	 5pU/krEfyNrQPB9bqcy1c6dhiQtUCt2AGAeK7fbbje+SdVxQOd7ik/ZlcNmeqal6b/yIecE/MRWP
-	 JLmTtladJTUq2thrJWGLylJB/mN6gDu/NZZO99FyH6B8mZBg+/5lusgViH4ita5Kf7KtJy2oqxlE
-	 dTBLNiaeeGoa+WlJQtpl5E5NOj5w068Na5emcbbWymGkB6KP2/P6WW62qNu80/56tifoQJ+WJd3p
-	 Sj1zSJm9M98Apx1W+YnRpMg34aBnVjkjWIXZggTZs8M3yt4Q8ltYslc9jDtqdw6ceAkyDQwUxWBI
-	 dEAvXikeZ2yFFhFgaGvAEjclnn/5KK4zMjLjTglS5iPEy97GsIJiEH/tj+KiX8uMmkVzvQJt89wR
-	 U/yHIJZkNZ2Cjr460V73nKJi7GWCM=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: viro@zeniv.linux.org.uk
-Cc: eadavis@qq.com,
-	hirofumi@mail.parknet.co.jp,
-	linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sj1557.seo@samsung.com,
-	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] fat: Prevent the race of read/write the FAT32 entry
-Date: Mon, 18 Aug 2025 21:58:23 +0800
-X-OQ-MSGID: <20250818135822.535841-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250729100635.GH222315@ZenIV>
-References: <20250729100635.GH222315@ZenIV>
+	s=arc-20240116; t=1755525513; c=relaxed/simple;
+	bh=e1hglYPW8NUeeJXsmZbwHPx0sk+mI8NBr8vpZq6hj0M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=SzSIIKvh2qLaC596v6I9xroNIbfz9OrT8qKoBVb2ZCWCqWuRSB6A+rqbEdoRgmCtlTR997fjXndAp5xLRkgAcDsoBxCnHbfTysCBRrm5mk8ENLMH20Gs+6VJvbAUCfY38Bh6RqyfWeTwHNxH2e+xe3FzHTQ0SbchpfWTn60R0SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kYgyCtw0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+BkghXQa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 13:58:28 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755525510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wpBWEbntYPDnsYwC2DAvDETWCVLWAMWzVGyQyCTilXM=;
+	b=kYgyCtw0lxdW+/cM6OkkUOtrVy35Pd9hWddy7r8zn7yeXCqD71j6EhjrOwKlMOYeWXs9zh
+	kA4FFiZNEHu5BdSlz3pMqJ9Wr3Uc4kfCNy6S3tLGuB8CuQzccdtQkHXz/KaSP/Ssdunb1r
+	UjF0Qpg4uxpB4WwKnqfmZjS7IlCZ/rsk1XOj/YKrbLOmZkOQlmclxtYzS2LHVhZm2NSzcg
+	AyXx2c9qG83tKuvNduyCk3UNoEj9eSuQtdvrHBJlcI7RfUuxPDOAyHxKcSX4DlaI4MzQSt
+	j5UxtPGFbLOv76b6IXoUXPzKWcZ3EkR1BWhL01eIw+LZVMNyDOWnDo7yun4W/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755525510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wpBWEbntYPDnsYwC2DAvDETWCVLWAMWzVGyQyCTilXM=;
+	b=+BkghXQaAZXHLTlCYMEMbp7m3kb4ERGTIaj9Aqx0zDUHGcrbsTPRXrkwiBC0N5PVX44UqI
+	adg9tWhEMFYMx4AA==
+From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Detect FreeBSD Bhyve hypervisor
+Cc: David Woodhouse <dwmw@amazon.co.uk>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ "Ahmed S. Darwish" <darwi@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
+References: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <175552550854.1420.12254414366709516837.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 29 Jul 2025 11:06:35 +0100, Al Viro wrote:
-syzbot reports data-race in fat32_ent_get/fat32_ent_put.
+The following commit has been merged into the x86/cpu branch of tip:
 
-	CPU0(Task A)			CPU1(Task B)
-	====				====
-	vfs_write
-	new_sync_write
-	generic_file_write_iter
-	fat_write_begin
-	block_write_begin
-	fat_get_block			vfs_statfs
-	fat_add_cluster			statfs_by_dentry
-	fat_chain_add			fat_statfs
-	fat_ent_write			fat_count_free_clusters
-	fat32_ent_put			fat32_ent_get
+Commit-ID:     215596ddc33f20945e8d1188a7e682831f0ef050
+Gitweb:        https://git.kernel.org/tip/215596ddc33f20945e8d1188a7e682831f0=
+ef050
+Author:        David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate:    Sat, 16 Aug 2025 11:06:32 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 18 Aug 2025 15:49:07 +02:00
 
-In fat_add_cluster(), fat_alloc_clusters() retrieves an free
-cluster and marks the entry with a value of FAT_ENT_EOF, protected
-by lock_fat(). There is no lock protection in fat_chain_add().
-When fat_ent_write() writes the last entry to new_dclus, this has
-no effect on fat_count_free_clusters() in the statfs operation.
-The last entry is not FAT_ENT_FREE before or after the write.
+x86/cpu: Detect FreeBSD Bhyve hypervisor
 
-Therefore, the race condition reported here is invalid.
+Detect the Bhyve hypervisor and enable 15-bit MSI support if available.
 
-BR,
-Edward
+Detecting Bhyve used to be a purely cosmetic issue of the kernel printing
+'Hypervisor detected: Bhyve' at boot time.
 
+But FreeBSD 15.0 will support=C2=B9 the 15-bit MSI enlightenment to support
+more than 255 vCPUs (http://david.woodhou.se/ExtDestId.pdf) which means
+there's now actually some functional reason to do so.
+
+  =C2=B9 https://github.com/freebsd/freebsd-src/commit/313a68ea20b4
+
+  [ bp: Massage, move tail comment ontop. ]
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
+Link: https://lore.kernel.org/03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@=
+infradead.org
+---
+ arch/x86/Kconfig                  |  9 ++++-
+ arch/x86/include/asm/hypervisor.h |  2 +-
+ arch/x86/kernel/cpu/Makefile      |  1 +-
+ arch/x86/kernel/cpu/bhyve.c       | 66 ++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/hypervisor.c  |  3 +-
+ 5 files changed, 81 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/bhyve.c
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 58d890f..ac1c6df 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -879,6 +879,15 @@ config ACRN_GUEST
+ 	  IOT with small footprint and real-time features. More details can be
+ 	  found in https://projectacrn.org/.
+=20
++config BHYVE_GUEST
++	bool "Bhyve (BSD Hypervisor) Guest support"
++	depends on X86_64
++	help
++	  This option allows to run Linux to recognise when it is running as a
++	  guest in the Bhyve hypervisor, and to support more than 255 vCPUs when
++	  when doing so. More details about Bhyve can be found at https://bhyve.org
++	  and https://wiki.freebsd.org/bhyve/.
++
+ config INTEL_TDX_GUEST
+ 	bool "Intel TDX (Trust Domain Extensions) - Guest Support"
+ 	depends on X86_64 && CPU_SUP_INTEL
+diff --git a/arch/x86/include/asm/hypervisor.h b/arch/x86/include/asm/hypervi=
+sor.h
+index e41cbf2..9ad86a7 100644
+--- a/arch/x86/include/asm/hypervisor.h
++++ b/arch/x86/include/asm/hypervisor.h
+@@ -30,6 +30,7 @@ enum x86_hypervisor_type {
+ 	X86_HYPER_KVM,
+ 	X86_HYPER_JAILHOUSE,
+ 	X86_HYPER_ACRN,
++	X86_HYPER_BHYVE,
+ };
+=20
+ #ifdef CONFIG_HYPERVISOR_GUEST
+@@ -64,6 +65,7 @@ extern const struct hypervisor_x86 x86_hyper_xen_pv;
+ extern const struct hypervisor_x86 x86_hyper_kvm;
+ extern const struct hypervisor_x86 x86_hyper_jailhouse;
+ extern const struct hypervisor_x86 x86_hyper_acrn;
++extern const struct hypervisor_x86 x86_hyper_bhyve;
+ extern struct hypervisor_x86 x86_hyper_xen_hvm;
+=20
+ extern bool nopv;
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 1e26179..2f8a58e 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -58,6 +58,7 @@ obj-$(CONFIG_X86_SGX)			+=3D sgx/
+ obj-$(CONFIG_X86_LOCAL_APIC)		+=3D perfctr-watchdog.o
+=20
+ obj-$(CONFIG_HYPERVISOR_GUEST)		+=3D vmware.o hypervisor.o mshyperv.o
++obj-$(CONFIG_BHYVE_GUEST)		+=3D bhyve.o
+ obj-$(CONFIG_ACRN_GUEST)		+=3D acrn.o
+=20
+ obj-$(CONFIG_DEBUG_FS)			+=3D debugfs.o
+diff --git a/arch/x86/kernel/cpu/bhyve.c b/arch/x86/kernel/cpu/bhyve.c
+new file mode 100644
+index 0000000..f1a8ca3
+--- /dev/null
++++ b/arch/x86/kernel/cpu/bhyve.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * FreeBSD Bhyve guest enlightenments
++ *
++ * Copyright =C2=A9 2025 Amazon.com, Inc. or its affiliates.
++ *
++ * Author: David Woodhouse <dwmw2@infradead.org>
++ */
++
++#include <linux/init.h>
++#include <linux/export.h>
++#include <asm/processor.h>
++#include <asm/hypervisor.h>
++
++static uint32_t bhyve_cpuid_base;
++static uint32_t bhyve_cpuid_max;
++
++#define BHYVE_SIGNATURE			"bhyve bhyve "
++
++#define CPUID_BHYVE_FEATURES		0x40000001
++
++/* Features advertised in CPUID_BHYVE_FEATURES %eax */
++
++/* MSI Extended Dest ID */
++#define CPUID_BHYVE_FEAT_EXT_DEST_ID	(1UL << 0)
++
++static uint32_t __init bhyve_detect(void)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_HYPERVISOR))
++                return 0;
++
++	bhyve_cpuid_base =3D cpuid_base_hypervisor(BHYVE_SIGNATURE, 0);
++	if (!bhyve_cpuid_base)
++		return 0;
++
++	bhyve_cpuid_max =3D cpuid_eax(bhyve_cpuid_base);
++	return bhyve_cpuid_max;
++}
++
++static uint32_t bhyve_features(void)
++{
++	unsigned int cpuid_leaf =3D bhyve_cpuid_base | CPUID_BHYVE_FEATURES;
++
++	if (bhyve_cpuid_max < cpuid_leaf)
++		return 0;
++
++	return cpuid_eax(cpuid_leaf);
++}
++
++static bool __init bhyve_ext_dest_id(void)
++{
++	return !!(bhyve_features() & CPUID_BHYVE_FEAT_EXT_DEST_ID);
++}
++
++static bool __init bhyve_x2apic_available(void)
++{
++	return true;
++}
++
++const struct hypervisor_x86 x86_hyper_bhyve __refconst =3D {
++	.name			=3D "Bhyve",
++	.detect			=3D bhyve_detect,
++	.init.init_platform	=3D x86_init_noop,
++	.init.x2apic_available	=3D bhyve_x2apic_available,
++	.init.msi_ext_dest_id	=3D bhyve_ext_dest_id,
++};
+diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hyperviso=
+r.c
+index 553bfbf..f3e9219 100644
+--- a/arch/x86/kernel/cpu/hypervisor.c
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -45,6 +45,9 @@ static const __initconst struct hypervisor_x86 * const hype=
+rvisors[] =3D
+ #ifdef CONFIG_ACRN_GUEST
+ 	&x86_hyper_acrn,
+ #endif
++#ifdef CONFIG_BHYVE_GUEST
++	&x86_hyper_bhyve,
++#endif
+ };
+=20
+ enum x86_hypervisor_type x86_hyper_type;
 
