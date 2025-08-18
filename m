@@ -1,146 +1,194 @@
-Return-Path: <linux-kernel+bounces-774498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387DBB2B330
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9690B2B32E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1F4196229E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9635E3254
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC972571C5;
-	Mon, 18 Aug 2025 21:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E31C25DD07;
+	Mon, 18 Aug 2025 21:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjqN5qLR"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i2yqPDn7"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0A013C8EA;
-	Mon, 18 Aug 2025 21:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F612DDA1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755551085; cv=none; b=fHMdnGxG40fiaX+om6nfoHoCLcrMZUF3hiY+f8slpns1fMIACjE6OxMzNrRv6YSRtS9UzKWEV6V/96vYRmrs9SuhDcMpKRUIZWKJEDztkjRe7dMGjcIbASss24WNacsr+wHcE2XSH1MKEk2MW8nXT42HeUCY36X9/L4ktWTH0iU=
+	t=1755551114; cv=none; b=QS9XtCpOk0SsjHbjU+18iZpeobUHk6R6PMZ9WaVtzBas4xaeOzb4IW7UJFSicPtsAHIAPMcGKNb4dIe9vUpX1xBK3sCJPu5NfxGyhxh3ZvH/6smgKS9jGCSX4N+4J9lsT38o7OQCmAd70iDBlEgAv2re7JIF74dO9QAYvawC8Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755551085; c=relaxed/simple;
-	bh=jD/Q8MH/+DVDele+pNqzm76x53yFPBsn2qI6OIESsis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUmfNtDhrwJ+nlxJ7Nx2ZsdoLSO9QuUdQROpXE4fOCjWSR82liFtvBwNUoCz2st9Dhmg9wzzXXgvVpb+kC8gQuVViTlNU8x479mazlipkLA53vkaIYT3VtutwAbM5HLkOqj/x902Ro6XmYE4viuVgKNUpDViKPsAHaYDT2AO4YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjqN5qLR; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b0056cfso6490655e9.0;
-        Mon, 18 Aug 2025 14:04:43 -0700 (PDT)
+	s=arc-20240116; t=1755551114; c=relaxed/simple;
+	bh=vs33q/xMLjGp5f/8wOcGTqry10cy1yx1Vec5ZubeWiE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EdadQ1ck3e5V5mdAkbb54Ft4XGrOY+ztjxcucVRu99ICUvotACR4hLxk84zLCXaCB8KOXBxViquXsrtfwNYoI0ew5hp/RRuR1w2YqrJfRgrBtDi3vVAsKFoTTkaMF3ZR3rUBv+h3jEaOPSzi4FLaTYnWllVzNob/Jaq1L8QQFVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i2yqPDn7; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47173ae6easo8287866a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755551082; x=1756155882; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w0c4f87pIHFq5nF6Cv0v2IC5Lhi5/aICX8TIOVgnmtk=;
-        b=DjqN5qLRVevrOxwnjuzqhokR3M1Ilmxig7QyYGLvx3MSS89Id+tMWiUD0ZELGfyv46
-         OL/2Wchp2YQRCN8FDGpRmc8Nw/lZEFLuqIvZSw7fWbEpYsCKsixO3/I0amAhsYIsd9kA
-         s5Vzq3TtoLtU45CIXBb14HQ3Egi3XwNklxgCEG6csi3PgNRIQsJleLMqOBfnE7u7KkxY
-         7/KDL5PK55cVNM0xE3kFDonUCr4cfBv3s3UXFReu7oLCHY4lqkDlZhlQst0e+KETtBY9
-         0DBcF3wuqfqIH7AFGozt2SV2S3lWwKThL3+fB1KOIxM71YiyAITut2fkV3J4MzN/qYfN
-         OKBg==
+        d=google.com; s=20230601; t=1755551112; x=1756155912; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Cqttlk/hbJyxL50WlgnQ4IHuWmhf7bPxr6NxrThxPlI=;
+        b=i2yqPDn7ucS2GuKvnXOt9MOEpKbo1DF7Ey074p4QmI+j2eRsq8GkaQCdoH0yKJq88R
+         Vvy3FBvlRRldiGltY/dRrn0m4MDuOLueVEayl/tj9XhClTJXWDNrBQuQCryvhgZn9kPJ
+         htGYmaJGM5d1p0S1nKH1Ks7cat/PFKxc0vK69tBj/fFsUdQQWWvVeoGftootDzFRc5a2
+         E6XwBhAOAbUHw4RdQPJcSq/wMKQAdl7NX16N+D/TYa8yrrGmOQ8/X3Eh/BNYtjqovrOK
+         X5H3djINkUhklY8SP9h/AxiSa2V1IuvdGjqmymm3oGMnnQGVunVyJQrZgLjzkw6Be8wX
+         2IPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755551082; x=1756155882;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w0c4f87pIHFq5nF6Cv0v2IC5Lhi5/aICX8TIOVgnmtk=;
-        b=aJNAgP5Y7EX58qawWIsH0baylACVCpdEloOUEEHUQ+S17d+k8H9Wc8ZCz8YWbPiWU2
-         zG9iWK2NwMvKMDG8/oi+oDP1iu2g4eTZUFD67Nm5tynP498EtMvV+GRRsEEE9Wx/5dUE
-         u9MyCABbpl5SoGcYgUd/ZE4KXzpRGW5VSMugjsMi+Xdq+DJkb/E2xAGFk7ke1HCcLHs5
-         HAuThbmaSvHBUJjL9JJJjVlr2G5aJyliNJ6Dab6aXPAwiylEvGU+K8ougvsN4icjJVos
-         aAiE6h5A/kT1QtcobRZ3QfwxFOwS7XHudjDobrT/F4EMT/zRkmuvEZQ/O97KxmNZ39fl
-         cB4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUEitaHPqNSa3+uhANAt0v4FQtlaZy9t34aNevQRXP12m4Ta9pEadyZZdXW5yHrsB3g+WQbPerlIvrxP00Y@vger.kernel.org, AJvYcCUVzkSYYXbIvlkiGGSLobyhsNPBWRr22NhxcWcxc7gFSpf+8YkWk+5yE5s+Sl6Q/L8ZRY+0Q8cHLQOc@vger.kernel.org, AJvYcCVjq6Jj37MeEDWZgZ7k6n1uMnIXOn5/Zmaij2FgFUckPsgaXmjQ+SZYHqoTKjNVjNK/SGnzl/M6kvk9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNXs9+/pn8w4poVNKl3ifukWEHO0c570gQFvdbL8L5Zsmdt+rb
-	NPChYV0U7xyuA2fpMiKC8B+CBxZPe7OvpDXBTlpbkwLi59von2aBeyXn
-X-Gm-Gg: ASbGncuU/EYSyNtqf6OyShp4uqS68ZZHy9gN1t9gBC8qRlbsJTpIwCEu3W++8D4SjI6
-	MUTcA5EMnuI5ofumNRCEpH68D5LcbNhtKSoGB1BIvkjQK9siMkd3aIeuB4orYlQV9sg2Whs0ps2
-	k9MxUSIWaoXQs4Ez3kuyjsSUJFPh8F2q+hglUpT4qrbsy1gYint1ZxkKyQ5e8QXtiDrnzdh2Vps
-	qnYi6vxuty9366EYmdYY86aRvPuF5G99gAfviGc3aTYnqEPrR7KGTp17KxRsbjb8qFC0VtMTwo2
-	Cu4feDNXLPi3U8R+u4FF8Sf5cdI7ASGYrn4FjA3ntcDoSBmkLn/XF8d+DZi6I/bKi5I6XBb5+Ll
-	N3IZ+/Xtnktq5bJ1ibOs3mkfmL3HFIxL3l9HGEPz4
-X-Google-Smtp-Source: AGHT+IEvhsbtuIaGsrpE1s24ml2ui6U94GLIFMyT+dKn6bmUDagR1ClEqnsHuYM8QZIS7IGwLZD/TQ==
-X-Received: by 2002:a05:600c:4f50:b0:450:d5ed:3c20 with SMTP id 5b1f17b1804b1-45b43e0bf85mr5335e9.6.1755551081832;
-        Mon, 18 Aug 2025 14:04:41 -0700 (PDT)
-Received: from JSANTO12-L01.ad.analog.com ([189.79.20.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07487986fsm1013912f8f.1.2025.08.18.14.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 14:04:41 -0700 (PDT)
-Date: Mon, 18 Aug 2025 18:04:35 -0300
-From: Jonathan Santos <jonath4nns@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
- parts
-Message-ID: <aKOVY+F8JfOFr0O4@JSANTO12-L01.ad.analog.com>
-Reply-To: 20250816141220.0dd8d68f@jic23-huawei.smtp.subspace.kernel.org
-References: <cover.1754617360.git.Jonathan.Santos@analog.com>
- <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
- <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
- <aJ0UEUVmIH94Nuwi@JSANTO12-L01.ad.analog.com>
- <8c27b00c-5b80-400f-8538-b9ad96fd5feb@kernel.org>
- <20250816141220.0dd8d68f@jic23-huawei>
+        d=1e100.net; s=20230601; t=1755551112; x=1756155912;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cqttlk/hbJyxL50WlgnQ4IHuWmhf7bPxr6NxrThxPlI=;
+        b=dOMrQnsmNeUW2TBiHhLnyUhookw7A8nr0MKq+e8x3HDyTtZQbCzUXBggosPYcFvpmS
+         AfYVFCxy+Xv68CShiVGSEWmLyocWG2q8i+YrqcCz0S5wDbVQcQ3PNeEyZo3G/ijVhYOa
+         Jcq+CMtxEVgYY/2SE0n/zxsVNTChnEhr9DT5dRm8R8x/gDPMj4KkWkUTvH4l6n3NidIc
+         Bai1RDkPkU0mKAF92AZSMGAwoQdERt44fPt/CcugMRse4ayvch+OCnzM58qRetZ0xkV/
+         MKhwhZvdV51XZUMtjoWXKzVh0bcThHnZhwGpbq3l9eZpmKeTHxjVVZ5mKPeRm3QX2s9X
+         qB2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBgjBUBN7rtapz42f1eAKGhgGsMoi6wJDQceqRcR0SOmgsEGGDu+/q206qx7nINNAOUZ0Ffu4pwaYrIT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJgxWJjnrjOs71p4nPnbJPr5mO8/0qgJehtk6x5PaFu4SRiS8O
+	ykBhwtWWDO6Obhgd9ScscRf1wKAtiEZmKz0NkKmatcPvZ3KAwYGrDo8NA3ENkUksrAyEM8jsVaQ
+	DRwcwdDzqbNcVkR0ymVoKQjnxiw==
+X-Google-Smtp-Source: AGHT+IHj+SISdeINEA8J4Jb4DADUwlz+KRawELTru597TLDhi2fzxgvYCQ9Kylo2E41s3lu1cj3YXOvo9fh/pZ8HHw==
+X-Received: from pfod1.prod.google.com ([2002:aa7:8681:0:b0:76b:da8d:7393])
+ (user=hramamurthy job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:4320:b0:238:351a:6437 with SMTP id adf61e73a8af0-2430d4d3d9emr7675637.43.1755551112265;
+ Mon, 18 Aug 2025 14:05:12 -0700 (PDT)
+Date: Mon, 18 Aug 2025 21:05:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816141220.0dd8d68f@jic23-huawei>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
+Message-ID: <20250818210507.3781705-1-hramamurthy@google.com>
+Subject: [PATCH net-next v2] gve: support unreadable netmem
+From: Harshitha Ramamurthy <hramamurthy@google.com>
+To: netdev@vger.kernel.org
+Cc: jeroendb@google.com, hramamurthy@google.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	willemb@google.com, pkaligineedi@google.com, joshwash@google.com, 
+	horms@kernel.org, linux-kernel@vger.kernel.org, 
+	Mina Almasry <almasrymina@google.com>, Ziwei Xiao <ziweixiao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/16, Jonathan Cameron wrote:
-> On Thu, 14 Aug 2025 08:03:23 +0200
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
-> > On 14/08/2025 00:39, Jonathan Santos wrote:
-> > >>>  
-> > >>> +  adi,aaf-gain:
-> > >>> +    description: |
-> > >>> +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
-> > >>> +      ADC input, measured in milli-units. The AAF provides additional signal  
-> > >>
-> > >> What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
-> > >> unpopular to see mB, but we cannot use 1/100 of dB, so I could
-> > >> understand it.
-> > >>  
-> > > 
-> > > Actually, the gain is expressed in V/V, not in dB. I may have phrased it poorly, but since
-> > > there are fractional values like 0.364 and 0.143, I chose to represent it
-> > > in milli-units.  
-> > 
-> > Why your reply to is corrupted:
-> > "c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org"?
-> > 
-> > 
-> > What sort of unit is milli-unit? Isn't this 1/1000 of some BASE unit,
-> > but you do not have here a base?
-> >
-> > I think you want just basis point if this is V/V (already in common
-> > property suffixes)
-> Nice. I didn't know about -bp.   That does sound like a good choice for ratio
-> stuff and here would be 100x larger actual values which is fine.
-> 
+From: Mina Almasry <almasrymina@google.com>
 
-Yes, it would be, but the here it is 1000x larger than the
-actual value (1/1000 V/V). I don't see another unit in
-property-units.yaml for this specifc case. Maybe using -milli suffix
-like in 'adi,ad4000.yaml' and 'adi,ad7380.yaml'?
+Declare PP_FLAG_ALLOW_UNREADABLE_NETMEM to turn on unreadable netmem
+support in GVE.
 
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
+We also drop any net_iov packets where header split is not enabled.
+We're unable to process packets where the header landed in unreadable
+netmem.
+
+Use page_pool_dma_sync_netmem_for_cpu in lieu of
+dma_sync_single_range_for_cpu to correctly handle unreadable netmem
+that should not be dma-sync'd.
+
+Disable rx_copybreak optimization if payload is unreadable netmem as
+that needs access to the payload.
+
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
+Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
+---
+ Changes in v2:
+ * Change to handle error paths using existing 'goto error' in gve_rx_dqo
+   (Simon Horman)
+---
+ .../ethernet/google/gve/gve_buffer_mgmt_dqo.c |  5 +++
+ drivers/net/ethernet/google/gve/gve_rx_dqo.c  | 35 ++++++++++++++++---
+ 2 files changed, 35 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
+index 8f5021e59e0a..0e2b703c673a 100644
+--- a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
+@@ -260,6 +260,11 @@ struct page_pool *gve_rx_create_page_pool(struct gve_priv *priv,
+ 		.offset = xdp ? XDP_PACKET_HEADROOM : 0,
+ 	};
+ 
++	if (priv->header_split_enabled) {
++		pp.flags |= PP_FLAG_ALLOW_UNREADABLE_NETMEM;
++		pp.queue_idx = rx->q_num;
++	}
++
+ 	return page_pool_create(&pp);
+ }
+ 
+diff --git a/drivers/net/ethernet/google/gve/gve_rx_dqo.c b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+index 7380c2b7a2d8..55393b784317 100644
+--- a/drivers/net/ethernet/google/gve/gve_rx_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+@@ -718,6 +718,24 @@ static int gve_rx_xsk_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 	return 0;
+ }
+ 
++static void gve_dma_sync(struct gve_priv *priv, struct gve_rx_ring *rx,
++			 struct gve_rx_buf_state_dqo *buf_state, u16 buf_len)
++{
++	struct gve_rx_slot_page_info *page_info = &buf_state->page_info;
++
++	if (rx->dqo.page_pool) {
++		page_pool_dma_sync_netmem_for_cpu(rx->dqo.page_pool,
++						  page_info->netmem,
++						  page_info->page_offset,
++						  buf_len);
++	} else {
++		dma_sync_single_range_for_cpu(&priv->pdev->dev, buf_state->addr,
++					      page_info->page_offset +
++					      page_info->pad,
++					      buf_len, DMA_FROM_DEVICE);
++	}
++}
++
+ /* Returns 0 if descriptor is completed successfully.
+  * Returns -EINVAL if descriptor is invalid.
+  * Returns -ENOMEM if data cannot be copied to skb.
+@@ -793,13 +811,18 @@ static int gve_rx_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 		rx->rx_hsplit_unsplit_pkt += unsplit;
+ 		rx->rx_hsplit_bytes += hdr_len;
+ 		u64_stats_update_end(&rx->statss);
++	} else if (!rx->ctx.skb_head && rx->dqo.page_pool &&
++		   netmem_is_net_iov(buf_state->page_info.netmem)) {
++		/* when header split is disabled, the header went to the packet
++		 * buffer. If the packet buffer is a net_iov, those can't be
++		 * easily mapped into the kernel space to access the header
++		 * required to process the packet.
++		 */
++		goto error;
+ 	}
+ 
+ 	/* Sync the portion of dma buffer for CPU to read. */
+-	dma_sync_single_range_for_cpu(&priv->pdev->dev, buf_state->addr,
+-				      buf_state->page_info.page_offset +
+-				      buf_state->page_info.pad,
+-				      buf_len, DMA_FROM_DEVICE);
++	gve_dma_sync(priv, rx, buf_state, buf_len);
+ 
+ 	/* Append to current skb if one exists. */
+ 	if (rx->ctx.skb_head) {
+@@ -837,7 +860,9 @@ static int gve_rx_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 		u64_stats_update_end(&rx->statss);
+ 	}
+ 
+-	if (eop && buf_len <= priv->rx_copybreak) {
++	if (eop && buf_len <= priv->rx_copybreak &&
++	    !(rx->dqo.page_pool &&
++	      netmem_is_net_iov(buf_state->page_info.netmem))) {
+ 		rx->ctx.skb_head = gve_rx_copy(priv->dev, napi,
+ 					       &buf_state->page_info, buf_len);
+ 		if (unlikely(!rx->ctx.skb_head))
+-- 
+2.51.0.rc0.155.g4a0f42376b-goog
+
 
