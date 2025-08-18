@@ -1,556 +1,207 @@
-Return-Path: <linux-kernel+bounces-773634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE62B2A2E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F538B2A2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78AA7AEB5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:02:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25A57B2707
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9702431B107;
-	Mon, 18 Aug 2025 13:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oIJCQ8UY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o8EgLg+d";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u+yiZr6y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LOLao4zZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA3531E0FD;
+	Mon, 18 Aug 2025 13:03:36 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241C231B13E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C3C31E0E5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522209; cv=none; b=S9bLJmpaRgQefBhFdQoddDACdKcCyia/u8fQNTQjr6OgPxwZ4HvqVU1GJ0x1x3Yxy9FiQplIaxw6hdNZKJYRR95A2Z+BJSBdgcmVF/6EX8lBriNPEzjLAbRiMvT7S9gGid0Tvl2BmihKZrcwKvdtso4rjIwMGFHRr4qhM22eU10=
+	t=1755522215; cv=none; b=Mxq/fWNc5tXcOGil5Z1Q6Azu9wcWVxhaX7dFwPu6Kpq2Xm5iblGZrldIoLKzxknHwAP4INTUNq3zFetmRsqlCTzirSAf+Kkb90IUeHawzpLwZe7kpl6wBfTDmmkA15WA93JJFSwtXwRodhqvbMs0zIPK2P9wgpMd+9GGRS/RAAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522209; c=relaxed/simple;
-	bh=3cS1hJkWEvQhg3u/OJ+VnPRBbAhIKpCfd0WJ83Bg21I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lk5spgdScLJ6S1DVDmvy1GYpff3oo5xssYksGsDz+LmTZdZt07UHkSmWkats9oBdf0sH0fsN1Pez5D5hXjMQjvuO7bMaxRlm0gpi+v0o6lfez46NpnozfDHCtezxkr9l5n1rwEiv1QYSgxExdR/V6Dh9+ytRvBAPRMuKO8NVv1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oIJCQ8UY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o8EgLg+d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u+yiZr6y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LOLao4zZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4673E1F387;
-	Mon, 18 Aug 2025 13:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755522205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/bUJbG86JgbU2HrIojB8n3uukjzYWuC6Sx8leLNt9/k=;
-	b=oIJCQ8UYReB9kJdNoqoC92YDDQ4GPuZHHPJqJRFmywscgJHcLx6imk31M5GVURJDIQod2L
-	0rn4s2OFGVNIY4ZTvQvnPD+h+qqRIPBz8BJVABJOdNs8xNjo/2TkJoBgW3EEH39viObjud
-	Z4ywgeh8+B2t8pdc3W4/+Px2l7xhCM4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755522205;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/bUJbG86JgbU2HrIojB8n3uukjzYWuC6Sx8leLNt9/k=;
-	b=o8EgLg+dnNTcGj+G3DZ20LeVe5djMMHxfR/y++C+HYco2WjcDtzK8xms+TrBh4RIU7aM1G
-	hA9R9eDyVVXA3UBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=u+yiZr6y;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=LOLao4zZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755522204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/bUJbG86JgbU2HrIojB8n3uukjzYWuC6Sx8leLNt9/k=;
-	b=u+yiZr6y/8mksRn7O40ku4IX2SpoparHNld2gs1aDbudYA31Va1ykMX/eKsrsIpbaBND5G
-	UBc4fYmxvJo4c5lTK8hJVZbuwEhBTrpCCJBbRvUxCTjZQ9RUDmGM56+IyXvKMyQu8QopJG
-	0Y6LzhQ9ebf7ix4fiEG0cUyeXjq2oZI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755522204;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/bUJbG86JgbU2HrIojB8n3uukjzYWuC6Sx8leLNt9/k=;
-	b=LOLao4zZ8JjuaYKzD3+wfhHBDSIJBzCajBm6ZgW1VsaXn+HcHUWqk7iJUhP+7sIWzvpVeo
-	lBIQw1S7Nrqo5BCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D917713686;
-	Mon, 18 Aug 2025 13:03:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id btRvM5sko2gpfwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 13:03:23 +0000
-Message-ID: <1f70e353-002c-40c4-878d-6b884adf2bbf@suse.de>
-Date: Mon, 18 Aug 2025 15:03:23 +0200
+	s=arc-20240116; t=1755522215; c=relaxed/simple;
+	bh=VWQDe+tdPUG9+IU46gdoK6WXGm8lfqys7RG0ouhkjNk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EW6Wg1MzqU0DwiP/xDPEkdmYiRzrMwj+v2iMNAzKbLirCFcNS6qLnrxKdccgxmtXZLn8zzniwCqwHwPmL6joBPzPmXv1WjxjIQHNkzdzSNIvJgT8Fe40A3WGiZcR0EI1QGF5aVGm9wJSwzDiX87gEH5qpuiT+zqIgBvJswF+YRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88432e140b8so471676039f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:03:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755522213; x=1756127013;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J6D/MLSyEOvx+mf01Y+3hlSzu1UvpzFqY9eDSOwkeYQ=;
+        b=KEI0YlUk4drrDAxtebcL9r78I89lVe7x/OGjGJVq/SEdkhdIlp3nMlf+jqPKHmM4aW
+         pd1B5zx6BFex02GKzOJl/1fMM1e2PCAYeuPVvQZxHBvpFLtvfVknXQQtFx3AXAG3hVw6
+         NY9VOzpI+IB6HYsmizwjHT5AXjrLSyiD9LS5qdu99B/AEQVmX+7km8LObBngcejIiD7t
+         EcSel3XtveWsHQTrbShi2k8BSsXlRYlXKLCw1q5UnQ3ojuhSZAPmd6uRmILzCnK7qj2O
+         4oIPwRm1U+kjK5lPXHuctYOqnuc0D8x3U+cEORVU544GHMIiTk1CT19XMiYY/pcsW8pd
+         afFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2RjxAL5rOLZb2Qw4thnVDgBstXVn3+96jBuI8r45onEOVJZyj6qnX165GmyNIIAliiT/SGnHsSIOiOKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt9ZVWLmHQnzDNP+dOBOXsUPWh5E+T3Q0QFLxx78UAhX4ShsCS
+	Q4+M8ZBRgtktb4B+yCNIV4kigqZ3xM/po0N8zfiL4d7YPJnRfV0n8c5Vr9q4r618a/YPTsMKwKh
+	jeuWMp0htInU0IaGyy40BnV9O7sMR92keilgwb7VdDRfRjfv280VIxm1urPs=
+X-Google-Smtp-Source: AGHT+IGjcDaJWe46xzthBaKdKkQgFfnYtUt9n3274K0vkPhMdTkgnX2cWwcPvLSiwFEJ/BcNafUkJRyQBJL0w96L+uBEZP5YpK8M
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v2] drm/gud: Replace simple display pipe with DRM atomic
- helpers
-To: Ruben Wauters <rubenru09@aol.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jani Nikula <jani.nikula@intel.com>,
- Jocelyn Falempe <jfalempe@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250816100223.5588-1-rubenru09.ref@aol.com>
- <20250816100223.5588-1-rubenru09@aol.com>
-Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250816100223.5588-1-rubenru09@aol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,intel.com,redhat.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 4673E1F387
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-Received: by 2002:a05:6e02:12ea:b0:3e5:5466:1aa2 with SMTP id
+ e9e14a558f8ab-3e57e7fd2b0mr214245375ab.10.1755522212847; Mon, 18 Aug 2025
+ 06:03:32 -0700 (PDT)
+Date: Mon, 18 Aug 2025 06:03:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a324a4.050a0220.e29e5.00a8.GAE@google.com>
+Subject: [syzbot] [bpf?] INFO: rcu detected stall in task_work_add
+From: syzbot <syzbot+f2cf09711ff194bc2c22@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi
+Hello,
 
-Am 16.08.25 um 11:57 schrieb Ruben Wauters:
-> The simple display pipe is obsolete and the atomic helpers allow for
-> more control over the rendering process. As such, this patch replaces
-> the old simple display pipe system with the newer atomic helpers.
->
-> As the code is mainly the same, merely replaced with the new atomic
-> system, there should be no change in functionality.
->
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> ---
-> I have been able to test this now, having obtained the hardware, and it
-> works fine, though some other unrelated issues have popped up, which I
-> shall try and debug and address in other patches.
+syzbot found the following issue on:
 
-Thanks for the update. Great to hear that it works. What's that other 
-problem? Maybe it's a known issue with a known workaround.
+HEAD commit:    3b5ca25ecfa8 Merge branch 'net-don-t-use-pk-through-printk..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=104365a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2cf09711ff194bc2c22
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140b0da2580000
 
-I left additional comments below.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3a41dee6422d/disk-3b5ca25e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/37991dc02c89/vmlinux-3b5ca25e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48eac1c2fff5/bzImage-3b5ca25e.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f2cf09711ff194bc2c22@syzkaller.appspotmail.com
 
->
-> v2 changes:
-> - address review comments by reorganising gud_probe()
-> ---
-> drivers/gpu/drm/gud/gud_connector.c | 24 +++++-----
-> drivers/gpu/drm/gud/gud_drv.c | 52 +++++++++++++++++-----
-> drivers/gpu/drm/gud/gud_internal.h | 13 +++---
-> drivers/gpu/drm/gud/gud_pipe.c | 69 ++++++++++++++++++++---------
-> 4 files changed, 108 insertions(+), 50 deletions(-)
-
-AFAICT you should be able to un-include <drm/drm_simple_kms_helper.h> 
-from the various files within the driver.
-
-
->
-> diff --git a/drivers/gpu/drm/gud/gud_connector.c 
-> b/drivers/gpu/drm/gud/gud_connector.c
-> index 0f07d77c5d52..75f404ec08b4 100644
-> --- a/drivers/gpu/drm/gud/gud_connector.c
-> +++ b/drivers/gpu/drm/gud/gud_connector.c
-> @@ -607,13 +607,16 @@ int gud_connector_fill_properties(struct 
-> drm_connector_state *connector_state,
-> return gconn->num_properties;
-> }
-> +static const struct drm_encoder_funcs 
-> gud_drm_simple_encoder_funcs_cleanup = {
-> + .destroy = drm_encoder_cleanup,
-> +};
-> +
-> static int gud_connector_create(struct gud_device *gdrm, unsigned int 
-> index,
-> struct gud_connector_descriptor_req *desc)
-> {
-> struct drm_device *drm = &gdrm->drm;
-> struct gud_connector *gconn;
-> struct drm_connector *connector;
-> - struct drm_encoder *encoder;
-> int ret, connector_type;
-> u32 flags;
-> @@ -681,20 +684,13 @@ static int gud_connector_create(struct 
-> gud_device *gdrm, unsigned int index,
-> return ret;
-> }
-> - /* The first connector is attached to the existing simple pipe 
-> encoder */
-> - if (!connector->index) {
-> - encoder = &gdrm->pipe.encoder;
-> - } else {
-> - encoder = &gconn->encoder;
-> -
-> - ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
-> - if (ret)
-> - return ret;
-> -
-> - encoder->possible_crtcs = 1;
-> - }
-> + gdrm->encoder.possible_crtcs = drm_crtc_mask(&gdrm->crtc);
-> + ret = drm_encoder_init(drm, &gdrm->encoder, 
-> &gud_drm_simple_encoder_funcs_cleanup,
-> + DRM_MODE_ENCODER_NONE, NULL);
-
-The display pipeline sends pixels from plane to CRTC to a number of 
-encoder/connector pairs. Hence you have to initialize the encoder at 
-gconn->encoder. The encoder in gud_device should  be removed.
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6488/1:b..l
+rcu: 	(detected by 1, t=10502 jiffies, g=19581, q=865 ncpus=2)
+task:syz.6.33        state:R  running task     stack:25096 pid:6488  tgid:6488  ppid:6264   task_flags:0x400040 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7288
+ irqentry_exit+0x6f/0x90 kernel/entry/common.c:197
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
+Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 eb 93 02 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
+RSP: 0018:ffffc900047776f0 EFLAGS: 00000206
+RAX: c2093f235efbe900 RBX: 0000000000000000 RCX: c2093f235efbe900
+RDX: 0000000000000001 RSI: ffffffff8dba39e3 RDI: ffffffff8be32680
+RBP: ffffffff81cea1f6 R08: 0000000000000000 R09: ffffffff81cea1f6
+R10: ffffc90004777878 R11: ffffffff81ac3890 R12: 0000000000000002
+R13: ffffffff8e139ee0 R14: 0000000000000000 R15: 0000000000000246
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ is_bpf_text_address+0x47/0x2b0 kernel/bpf/core.c:776
+ kernel_text_address+0xa5/0xe0 kernel/extable.c:125
+ __kernel_text_address+0xd/0x40 kernel/extable.c:79
+ unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
+ arch_stack_walk+0xfc/0x150 arch/x86/kernel/stacktrace.c:26
+ stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ task_work_add+0xb1/0x420 kernel/task_work.c:65
+ __fput_deferred+0x154/0x390 fs/file_table.c:529
+ fput_close+0x119/0x200 fs/file_table.c:585
+ filp_close+0x27/0x40 fs/open.c:1561
+ __range_close fs/file.c:767 [inline]
+ __do_sys_close_range fs/file.c:826 [inline]
+ __se_sys_close_range+0x359/0x650 fs/file.c:790
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fed93f8ebe9
+RSP: 002b:00007ffcb5611318 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: ffffffffffffffda RBX: 00007fed941b7da0 RCX: 00007fed93f8ebe9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007fed941b7da0 R08: 0000000000000000 R09: 00000006b561160f
+R10: 00007fed941b7cb0 R11: 0000000000000246 R12: 0000000000057219
+R13: 00007fed941b6090 R14: ffffffffffffffff R15: 0000000000000003
+ </TASK>
+rcu: rcu_preempt kthread starved for 1596 jiffies! g19581 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:27160 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
+ rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
+ rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 1 UID: 0 PID: 6401 Comm: napi/wg0-0 Not tainted 6.16.0-syzkaller-12122-g3b5ca25ecfa8 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:finish_task_switch+0x26b/0x950 kernel/sched/core.c:5225
+Code: 0f 84 3c 01 00 00 48 85 db 0f 85 63 01 00 00 0f 1f 44 00 00 4c 8b 75 d0 4c 89 e7 e8 cf 37 ea 09 e8 5a 3f 36 00 fb 4c 8b 65 c0 <49> 8d bc 24 18 16 00 00 48 89 f8 48 c1 e8 03 42 0f b6 04 28 84 c0
+RSP: 0018:ffffc9000458fa78 EFLAGS: 00000286
+RAX: e330458c080e4500 RBX: 0000000000000000 RCX: e330458c080e4500
+RDX: 0000000000000000 RSI: ffffffff8d9b49fa RDI: ffffffff8be32680
+RBP: ffffc9000458fad0 R08: ffffffff8fa34737 R09: 1ffffffff1f468e6
+R10: dffffc0000000000 R11: fffffbfff1f468e7 R12: ffff8880252d0000
+R13: dffffc0000000000 R14: ffff8880256a3c00 R15: ffff8880b873ab58
+FS:  0000000000000000(0000) GS:ffff888125d21000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055ea52750000 CR3: 0000000077f62000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5360 [inline]
+ __schedule+0x17a0/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ napi_thread_wait net/core/dev.c:7583 [inline]
+ napi_threaded_poll+0xfa/0x2b0 net/core/dev.c:7634
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
-> + if (ret)
-> + return ret;
-> - return drm_connector_attach_encoder(connector, encoder);
-> + return drm_connector_attach_encoder(connector, &gdrm->encoder);
-> }
-> int gud_get_connectors(struct gud_device *gdrm)
-> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-> index 5385a2126e45..65c3a83c4037 100644
-> --- a/drivers/gpu/drm/gud/gud_drv.c
-> +++ b/drivers/gpu/drm/gud/gud_drv.c
-> @@ -16,6 +16,7 @@
-> #include <drm/clients/drm_client_setup.h>
-> #include <drm/drm_atomic_helper.h>
-> #include <drm/drm_blend.h>
-> +#include <drm/drm_crtc_helper.h>
-> #include <drm/drm_damage_helper.h>
-> #include <drm/drm_debugfs.h>
-> #include <drm/drm_drv.h>
-> @@ -289,7 +290,7 @@ static int gud_get_properties(struct gud_device *gdrm)
-> * but mask out any additions on future devices.
-> */
-> val &= GUD_ROTATION_MASK;
-> - ret = drm_plane_create_rotation_property(&gdrm->pipe.plane,
-> + ret = drm_plane_create_rotation_property(&gdrm->plane,
-> DRM_MODE_ROTATE_0, val);
-> break;
-> default:
-> @@ -338,10 +339,30 @@ static int gud_stats_debugfs(struct seq_file *m, 
-> void *data)
-> return 0;
-> }
-> -static const struct drm_simple_display_pipe_funcs gud_pipe_funcs = {
-> - .check = gud_pipe_check,
-> - .update = gud_pipe_update,
-> - DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS
-> +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
-> + .atomic_check = drm_crtc_helper_atomic_check
-> +};
-> +
-> +static const struct drm_crtc_funcs gud_crtc_funcs = {
-> + .reset = drm_atomic_helper_crtc_reset,
-> + .destroy = drm_crtc_cleanup,
-> + .set_config = drm_atomic_helper_set_config,
-> + .page_flip = drm_atomic_helper_page_flip,
-> + .atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-> + .atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-> +};
-> +
-> +static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
-> + DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-> + .atomic_check = gud_plane_atomic_check,
-> + .atomic_update = gud_plane_atomic_update,
-> +};
-> +
-> +static const struct drm_plane_funcs gud_plane_funcs = {
-> + .update_plane = drm_atomic_helper_update_plane,
-> + .disable_plane = drm_atomic_helper_disable_plane,
-> + .destroy = drm_plane_cleanup,
-> + DRM_GEM_SHADOW_PLANE_FUNCS,
-> };
-> static const struct drm_mode_config_funcs gud_mode_config_funcs = {
-> @@ -350,7 +371,7 @@ static const struct drm_mode_config_funcs 
-> gud_mode_config_funcs = {
-> .atomic_commit = drm_atomic_helper_commit,
-> };
-> -static const u64 gud_pipe_modifiers[] = {
-> +static const u64 gud_plane_modifiers[] = {
-> DRM_FORMAT_MOD_LINEAR,
-> DRM_FORMAT_MOD_INVALID
-> };
-> @@ -567,12 +588,17 @@ static int gud_probe(struct usb_interface *intf, 
-> const struct usb_device_id *id)
-> return -ENOMEM;
-> }
-> - ret = drm_simple_display_pipe_init(drm, &gdrm->pipe, &gud_pipe_funcs,
-> - formats, num_formats,
-> - gud_pipe_modifiers, NULL);
-> + ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
-> + &gud_plane_funcs,
-> + formats, num_formats,
-> + gud_plane_modifiers,
-> + DRM_PLANE_TYPE_PRIMARY, NULL);
-> if (ret)
-> return ret;
-> + drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
-> + drm_plane_enable_fb_damage_clips(&gdrm->plane);
-> +
-> devm_kfree(dev, formats);
-> devm_kfree(dev, formats_dev);
-> @@ -582,7 +608,13 @@ static int gud_probe(struct usb_interface *intf, 
-> const struct usb_device_id *id)
-> return ret;
-> }
-> - drm_plane_enable_fb_damage_clips(&gdrm->pipe.plane);
-> + ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
-> + &gud_crtc_funcs, NULL);
-> +
-> + if (ret)
-> + return ret;
-> +
-> + drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
-> ret = gud_get_connectors(gdrm);
-> if (ret) {
-> diff --git a/drivers/gpu/drm/gud/gud_internal.h 
-> b/drivers/gpu/drm/gud/gud_internal.h
-> index d6fb25388722..6152a9b5da43 100644
-> --- a/drivers/gpu/drm/gud/gud_internal.h
-> +++ b/drivers/gpu/drm/gud/gud_internal.h
-> @@ -15,7 +15,9 @@
-> struct gud_device {
-> struct drm_device drm;
-> - struct drm_simple_display_pipe pipe;
-> + struct drm_plane plane;
-> + struct drm_crtc crtc;
-> + struct drm_encoder encoder;
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-As mentioned above, the encoder field should be removed.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> struct work_struct work;
-> u32 flags;
-> const struct drm_format_info *xrgb8888_emulation_format;
-> @@ -62,11 +64,10 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 
-> request, u8 val);
-> void gud_clear_damage(struct gud_device *gdrm);
-> void gud_flush_work(struct work_struct *work);
-> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
-> - struct drm_plane_state *new_plane_state,
-> - struct drm_crtc_state *new_crtc_state);
-> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
-> - struct drm_plane_state *old_state);
-> +int gud_plane_atomic_check(struct drm_plane *plane,
-> + struct drm_atomic_state *state);
-> +void gud_plane_atomic_update(struct drm_plane *plane,
-> + struct drm_atomic_state *atomic_state);
-> int gud_connector_fill_properties(struct drm_connector_state 
-> *connector_state,
-> struct gud_property_req *properties);
-> int gud_get_connectors(struct gud_device *gdrm);
-> diff --git a/drivers/gpu/drm/gud/gud_pipe.c 
-> b/drivers/gpu/drm/gud/gud_pipe.c
-> index 8d548d08f127..6a0e6234224a 100644
-> --- a/drivers/gpu/drm/gud/gud_pipe.c
-> +++ b/drivers/gpu/drm/gud/gud_pipe.c
-> @@ -451,14 +451,15 @@ static void gud_fb_handle_damage(struct 
-> gud_device *gdrm, struct drm_framebuffer
-> gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
-> }
-> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
-> - struct drm_plane_state *new_plane_state,
-> - struct drm_crtc_state *new_crtc_state)
-> +int gud_plane_atomic_check(struct drm_plane *plane,
-> + struct drm_atomic_state *state)
-> {
-> - struct gud_device *gdrm = to_gud_device(pipe->crtc.dev);
-> - struct drm_plane_state *old_plane_state = pipe->plane.state;
-> - const struct drm_display_mode *mode = &new_crtc_state->mode;
-> - struct drm_atomic_state *state = new_plane_state->state;
-> + struct gud_device *gdrm = to_gud_device(plane->dev);
-> + struct drm_plane_state *old_plane_state = 
-> drm_atomic_get_old_plane_state(state, plane);
-> + struct drm_plane_state *new_plane_state = 
-> drm_atomic_get_new_plane_state(state, plane);
-> + struct drm_crtc *crtc = new_plane_state->crtc;
-> + struct drm_crtc_state *crtc_state;
-> + const struct drm_display_mode *mode;
-> struct drm_framebuffer *old_fb = old_plane_state->fb;
-> struct drm_connector_state *connector_state = NULL;
-> struct drm_framebuffer *fb = new_plane_state->fb;
-> @@ -472,17 +473,35 @@ int gud_pipe_check(struct 
-> drm_simple_display_pipe *pipe,
-> if (WARN_ON_ONCE(!fb))
-> return -EINVAL;
-> + if (WARN_ON_ONCE(!crtc))
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Please use drm_WARN_ON_ONCE() here.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> + return -EINVAL;
-> +
-> + crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-> +
-> + mode = &crtc_state->mode;
-> +
-> + ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
-> + DRM_PLANE_NO_SCALING,
-> + DRM_PLANE_NO_SCALING,
-> + false, false);
-> +
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-No empty line here and before similar "if (ret)" statements.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> + if (ret)
-> + return ret;
-> +
-> + if (!new_plane_state->visible)
-> + return 0;
-> +
-> if (old_plane_state->rotation != new_plane_state->rotation)
-> - new_crtc_state->mode_changed = true;
-> + crtc_state->mode_changed = true;
-> if (old_fb && old_fb->format != format)
-> - new_crtc_state->mode_changed = true;
-> + crtc_state->mode_changed = true;
-> - if (!new_crtc_state->mode_changed && 
-> !new_crtc_state->connectors_changed)
-> + if (!crtc_state->mode_changed && !crtc_state->connectors_changed)
-> return 0;
-> /* Only one connector is supported */
-> - if (hweight32(new_crtc_state->connector_mask) != 1)
-> + if (hweight32(crtc_state->connector_mask) != 1)
-> return -EINVAL;
-
-In case you're wondering: this is really a problem with user-space 
-programs. Most compositors (Xorg, Gnome, etc) don't support a single 
-display that is mirrored to multiple outputs. It's only found in low-end 
-hardware and complicated to get right; hence there's little incentive 
-for user space to fix the problem.
-
-
-> if (format->format == DRM_FORMAT_XRGB8888 && 
-> gdrm->xrgb8888_emulation_format)
-> @@ -500,7 +519,7 @@ int gud_pipe_check(struct drm_simple_display_pipe 
-> *pipe,
-> if (!connector_state) {
-> struct drm_connector_list_iter conn_iter;
-> - drm_connector_list_iter_begin(pipe->crtc.dev, &conn_iter);
-> + drm_connector_list_iter_begin(plane->dev, &conn_iter);
-> drm_for_each_connector_iter(connector, &conn_iter) {
-> if (connector->state->crtc) {
-> connector_state = connector->state;
-> @@ -567,16 +586,19 @@ int gud_pipe_check(struct 
-> drm_simple_display_pipe *pipe,
-> return ret;
-> }
-> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
-> - struct drm_plane_state *old_state)
-> +void gud_plane_atomic_update(struct drm_plane *plane,
-> + struct drm_atomic_state *atomic_state)
-> {
-> - struct drm_device *drm = pipe->crtc.dev;
-> + struct drm_device *drm = plane->dev;
-> struct gud_device *gdrm = to_gud_device(drm);
-> - struct drm_plane_state *state = pipe->plane.state;
-> - struct drm_shadow_plane_state *shadow_plane_state = 
-> to_drm_shadow_plane_state(state);
-> - struct drm_framebuffer *fb = state->fb;
-> - struct drm_crtc *crtc = &pipe->crtc;
-> + struct drm_plane_state *old_state = 
-> drm_atomic_get_old_plane_state(atomic_state, plane);
-> + struct drm_plane_state *new_state = 
-> drm_atomic_get_new_plane_state(atomic_state, plane);
-> + struct drm_shadow_plane_state *shadow_plane_state = 
-> to_drm_shadow_plane_state(new_state);
-> + struct drm_framebuffer *fb = new_state->fb;
-> + struct drm_crtc *crtc = new_state->crtc;
-> struct drm_rect damage;
-> + struct drm_rect dst_clip;
-> + struct drm_atomic_helper_damage_iter iter;
-> int ret, idx;
-> if (crtc->state->mode_changed || !crtc->state->enable) {
-> @@ -611,8 +633,15 @@ void gud_pipe_update(struct 
-> drm_simple_display_pipe *pipe,
-> if (ret)
-> goto ctrl_disable;
-> - if (drm_atomic_helper_damage_merged(old_state, state, &damage))
-> + drm_atomic_helper_damage_iter_init(&iter, old_state, new_state);
-> + drm_atomic_for_each_plane_damage(&iter, &damage) {
-> + dst_clip = new_state->dst;
-> +
-> + if (!drm_rect_intersect(&dst_clip, &damage))
-> + continue;
-
-Where did you get this code snippet? This test should not be necessary 
-here and can even lead to incorrect display updates. Just call 
-gud_fb_handle_damage() with the damage area.
-
-Best regards
-Thomas
-
-> +
-> gud_fb_handle_damage(gdrm, fb, &shadow_plane_state->data[0], &damage);
-> + }
-> drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+If you want to undo deduplication, reply with:
+#syz undup
 
