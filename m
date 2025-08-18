@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-772676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279E2B295F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB913B295FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D367B0E6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B226C196287A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB8D21A436;
-	Mon, 18 Aug 2025 00:52:42 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498C21F9F47;
-	Mon, 18 Aug 2025 00:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4C12236E3;
+	Mon, 18 Aug 2025 00:56:15 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D46F1DF75C;
+	Mon, 18 Aug 2025 00:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755478362; cv=none; b=in4YBLDh/9nlYRuM4cnDWdpwqX0L+JkfviXkO+SWDEeLItyY8PY683bCfL1aamcNqQpRp+cG0UUJ9MYAFAYXTm1QNwufJ/V+OJYXIZQvOFArkWrb1FfrjqxUXkuPjpoNbXtAVDVgR04meaO/dp+8NrkPY0fH567By9pP2sE5SCc=
+	t=1755478575; cv=none; b=IDY6r5dS8NWmyNDsQlFIQCZw/+GhzXN/bEiociytIJTX04NhJqtc/jLVn7kqKsPF7JasmNW8DU5R3SepWDMwVW7K4TuCfSuH9u8UKkcWXz7VeP9btpq3UtSIelxMqbaAQPLy7qCnprt5ad5TipBGsJLha1i4NLpWshR3dNzFCIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755478362; c=relaxed/simple;
-	bh=zverf+i839FeEH1z5oH6cTC5zYeVbvbSWasiO5A2aBE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Dni87uE7oyoYAJ36U7vPJZHLN9qtIHhPMmQFh1+N+klzAEH0peIrtbUfnujdsNIUfKC41/XgTxBK2g34QsU4PnrEqJgQ+PfxQHGdWk1V6FM+HkLudNsW1xKh9dkKoWfX7NQ7ms7lwpzBfuppSpBAURWKLB49HQoxDPdhhTqE+LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: CUT4fKZSSq+EPIuxPCTUOQ==
-X-CSE-MsgGUID: PcQg34JjTGWhMxizu7Ij5w==
-X-IronPort-AV: E=Sophos;i="6.17,293,1747670400"; 
-   d="scan'208";a="149500033"
-From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
-To: =?gb2312?B?Sm9zqKYgRXhwqK5zaXRv?= <jose.exposito89@gmail.com>, Jiri Kosina
-	<jikos@kernel.org>
-CC: "bentiss@kernel.org" <bentiss@kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, =?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>,
-	=?gb2312?B?VGhvbWFzIFpoYW8g1dTqzQ==?= <zhaohui7@xiaomi.com>,
-	"tkjos@google.com" <tkjos@google.com>, =?gb2312?B?wqy5+rrq?=
-	<luguohong@xiaomi.com>
-Subject: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFtQQVRDSCB2MiAyLzJdIEhJRDog?=
- =?gb2312?B?aW5wdXQ6IHJlcG9ydCBiYXR0ZXJ5IHN0YXR1cyBjaGFuZ2VzIGltbWVkaWF0?=
- =?gb2312?Q?ely?=
-Thread-Topic: [External Mail]Re: [PATCH v2 2/2] HID: input: report battery
- status changes immediately
-Thread-Index: AQHcCrXbrGKdcLZC0kSUAM9u6AlyFrRhdOIAgAYpLxg=
-Date: Mon, 18 Aug 2025 00:52:31 +0000
-Message-ID: <5209b6cc4fd94859896b0ec7c3f34be3@xiaomi.com>
-References: <20250806073944.5310-1-jose.exposito89@gmail.com>
- <20250806073944.5310-2-jose.exposito89@gmail.com>
- <4q4qn3p8-6s3s-289n-44s2-43s76qrs2oo4@xreary.bet>,<aJ29tlqoQYFa-WYt@fedora>
-In-Reply-To: <aJ29tlqoQYFa-WYt@fedora>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1755478575; c=relaxed/simple;
+	bh=lQQXRYy245OiG2IPuYscDsZGqJXrQUjtXiEFU+b6U5I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PjXmWJnGltEGjeh3PN3e6I5Gj72uQhujnHM5dKzW8OYAVScY29PRp937AOE7hJ/l/r5zObNQgPC1aIcebZccqFSIV/VQtw4mmMBUiKSJohI3OizuFW56/HQC+KPkreMcdIVrTk8M/EEmu2IVMpNoyKVZGMb3tsDVq9RCtKGaAUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c4vR84Jr9zKHMVF;
+	Mon, 18 Aug 2025 08:56:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 03CF81A1797;
+	Mon, 18 Aug 2025 08:56:04 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDnrxAieqJoRB0yEA--.17918S3;
+	Mon, 18 Aug 2025 08:56:03 +0800 (CST)
+Subject: Re: [PATCH] md/raid5-ppl: Fix invalid context sleep in
+ ppl_io_unit_finished() on PREEMPT_RT
+To: Yunseong Kim <ysk@kzalloc.com>, Song Liu <song@kernel.org>
+Cc: linux-raid@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250817113114.1335810-3-ysk@kzalloc.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <acd0a040-18ce-05f5-4896-ad24dda6fb00@huaweicloud.com>
+Date: Mon, 18 Aug 2025 08:56:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250817113114.1335810-3-ysk@kzalloc.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnrxAieqJoRB0yEA--.17918S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFy5XFW7Wry7Cry7XF1kZrb_yoW8uryUpF
+	WrWF9Iv3WkXrsYqwsFk3WIkrWfta1Igry7Cw45uwn7ArZ8XryxJr17Jr9xGryqqF4xJrW8
+	Xa4UJa9xCrsxA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-SGkgSmlyaSwNCkhvdydzIHlvdXIgcmV2aWV3IG9mIHRoaXMgcGF0Y2ggZ29pbmc/IFdlIGxvb2sg
-Zm9yd2FyZCB0byBoZWFyaW5nIGZyb20geW91LiBUaGFuayB5b3UhDQpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IEpvc6imIEV4cKiuc2l0byA8am9zZS5l
-eHBvc2l0bzg5QGdtYWlsLmNvbT4NCreiy83KsbzkOiAyMDI1xOo41MIxNMjVIDE4OjQzDQrK1bz+
-yMs6IEppcmkgS29zaW5hDQqzrcvNOiBiZW50aXNzQGtlcm5lbC5vcmc7IMKsufq66jsgbGludXgt
-aW5wdXRAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQrW98zi
-OiBbRXh0ZXJuYWwgTWFpbF1SZTogW1BBVENIIHYyIDIvMl0gSElEOiBpbnB1dDogcmVwb3J0IGJh
-dHRlcnkgc3RhdHVzIGNoYW5nZXMgaW1tZWRpYXRlbHkNCg0KW83isr/Tyrz+XSC0y9PKvP7AtNS0
-09rQocPXuavLvs3isr+jrMfrvffJ97SmwO2ho8j0ttTTyrz+sLLIq9DUtObSyaOsx+u9q9PKvP7X
-qreiuPhtaXNlY0B4aWFvbWkuY29tvfjQ0Le0wKENCg0KSGkgSmlyaSwNCg0KT24gTW9uLCBBdWcg
-MTEsIDIwMjUgYXQgMDE6NDg6MjJQTSArMDIwMCwgSmlyaSBLb3NpbmEgd3JvdGU6DQo+IE9uIFdl
-ZCwgNiBBdWcgMjAyNSwgSm9zqKYgRXhwqK5zaXRvIHdyb3RlOg0KPg0KPiA+IFdoZW4gdGhlIGJh
-dHRlcnkgc3RhdHVzIGNoYW5nZXMsIHJlcG9ydCB0aGUgY2hhbmdlIGltbWVkaWF0ZWx5IHRvIHVz
-ZXINCj4gPiBzcGFjZS4NCj4NCj4gQ291bGQgeW91IHBsZWFzZSBtYWtlIHRoZSBjaGFuZ2Vsb2cg
-YSBsaXR0bGUgYml0IG1vcmUgZWxhYm9yYXRpdmUsIGkuZS4NCj4gd2h5IGlzIGl0IG5lZWRlZCwg
-d2hhdCB1c2VyLXZpc2libGUgYmVoYXZpb3IgY2hhbmdlL2ltcHJvdmVtZW50IGl0IGJyaW5ncywN
-Cj4gZXRjLg0KPg0KPiBJIGtub3cgaXQncyBpbiB0aGUgZS1tYWlsIHRocmVhZCwgYnV0IGF0IGxl
-YXN0IHNvbWUgc3VtbWFyeSBzaG91bGQgZ28gYWxzbw0KPiB0byB0aGUgY29tbWl0IGl0c2VsZi4N
-Cg0KVGhhbmtzIGEgbG90IGZvciByZXZpZXdpbmcgdGhlc2UgcGF0Y2hlcy4NCg0KSSBzZW50IHYz
-IHdpdGggYSBtb3JlIGRldGFpbGVkIGRlc2NyaXB0aW9uIG9mIHRoZSBmaXg6DQpodHRwczovL2xv
-cmUua2VybmVsLm9yZy9saW51eC1pbnB1dC8yMDI1MDgxNDEwMzk0Ny4xMTYxMzktMS1qb3NlLmV4
-cG9zaXRvODlAZ21haWwuY29tLw0KDQpKb3NlDQoNCj4gVGhhbmtzLA0KPg0KPiAtLQ0KPiBKaXJp
-IEtvc2luYQ0KPiBTVVNFIExhYnMNCj4NCiMvKioqKioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD17mr
-y761xLGjw9zQxc+io6y99s/e09q3osvNuPjJz8PmtdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGjvfvW
-ucjOus7G5Mv7yMvS1MjOus7Qzsq9yrnTw6OosPzAqLWrsrvP3tPayKuyv7vysr+31rXY0LnCtqGi
-uLTWxqGiu/LJoreio6mxvtPKvP7W0LXE0MXPoqGjyOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6waK8
-tLXnu7C78tPKvP7NqNaqt6K8/sjLsqLJvrP9sb7Tyrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0cyBh
-dHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9NSSwg
-d2hpY2ggaXMgaW50ZW5kZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRk
-cmVzcyBpcyBsaXN0ZWQgYWJvdmUuIEFueSB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5l
-ZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5nLCBidXQgbm90IGxpbWl0ZWQgdG8sIHRvdGFs
-IG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9kdWN0aW9uLCBvciBkaXNzZW1pbmF0aW9uKSBi
-eSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVudChzKSBpcyBwcm9oaWJp
-dGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0
-aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQhKioq
-KioqLyMNCg==
+Hi,
+
+ÔÚ 2025/08/17 19:31, Yunseong Kim Ð´µÀ:
+> The function ppl_io_unit_finished() uses a local_irq_save()/spin_lock()
+> sequence. On a PREEMPT_RT enabled kernel, spin_lock() can sleep. Calling it
+> with interrupts disabled creates an atomic context where sleeping is
+> forbidden.
+> 
+What? I believe spin_lock can never sleep.
+
+> Ensuring that the interrupt state is managed atomically with the lock
+> itself. The change is applied to both the 'log->io_list_lock' and
+> 'ppl_conf->no_mem_stripes_lock' critical sections within the function.
+> 
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>   drivers/md/raid5-ppl.c | 12 ++++--------
+>   1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+> index 56b234683ee6..650bd59ead72 100644
+> --- a/drivers/md/raid5-ppl.c
+> +++ b/drivers/md/raid5-ppl.c
+> @@ -553,15 +553,13 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
+>   
+>   	pr_debug("%s: seq: %llu\n", __func__, io->seq);
+>   
+> -	local_irq_save(flags);
+> -
+> -	spin_lock(&log->io_list_lock);
+> +	spin_lock_irqsave(&log->io_list_lock, flags);
+>   	list_del(&io->log_sibling);
+> -	spin_unlock(&log->io_list_lock);
+> +	spin_unlock_irqrestore(&log->io_list_lock, flags);
+>   
+>   	mempool_free(io, &ppl_conf->io_pool);
+>   
+> -	spin_lock(&ppl_conf->no_mem_stripes_lock);
+> +	spin_lock_irqsave(&ppl_conf->no_mem_stripes_lock, flags);
+
+Please notice, local_irq_save + spin_lock is the same as
+spin_lock_irqsave, I don't think your changes have any functonal
+chagnes.
+
+Thanks,
+Kuai
+
+>   	if (!list_empty(&ppl_conf->no_mem_stripes)) {
+>   		struct stripe_head *sh;
+>   
+> @@ -571,9 +569,7 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
+>   		set_bit(STRIPE_HANDLE, &sh->state);
+>   		raid5_release_stripe(sh);
+>   	}
+> -	spin_unlock(&ppl_conf->no_mem_stripes_lock);
+> -
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&ppl_conf->no_mem_stripes_lock, flags);
+>   
+>   	wake_up(&conf->wait_for_quiescent);
+>   }
+> 
+
 
