@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-773518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D87B2A12A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B396CB2A152
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266093BFD9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24577188F44E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EB130DD10;
-	Mon, 18 Aug 2025 12:08:30 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DDD30DEA5;
+	Mon, 18 Aug 2025 12:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PZFmpJE1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QlsHi7Pm"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87A01EF36C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76B5189;
+	Mon, 18 Aug 2025 12:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755518909; cv=none; b=bc4LSg9L8mzbUU00JjXni2LLUyfejIigZsWkmHo7jixMloA8jh65RXH7vx8wwY6vzMVdNFr30ih79qJAk/tOxHBUQ19kw6vhjXdlehOEOAOqgCjPxQUe0KgHkuKh2WSY7gk5jysSlChZ+BFDLP3PwaUIEMLz9Yn9C28Ymy3prDM=
+	t=1755518925; cv=none; b=SXePj0vC8MB4aMgvKDUUca1GzhgRVTcGvybx4dOa5+Yo/fHETBaHIc1SvmxJHuczkzY0wY08YoXQRmGQWx4RypwhivU6qh5uQzpqjN6tjaEbcdO36Asgx7vJWe5YnwawDreLcYzQdcZnyBx3fvWCokGVgX05Ytx92VhQR1wgCuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755518909; c=relaxed/simple;
-	bh=GVPHf1kGP4Q5WQrYADTsKIrm99q71Z83ItiVvd9p9zk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hXWriMG0Hi1lBWbFIEwdk/i/Zf5g+dDxuWykgHbgPQr8o53IQctFTGXXgRyVkCWs8nnlhyE7yItR/Kny+sQfSJ+BduFAkEFEfCDO1lmranqIhsB7ntRBtdZv9SwV3IhCN7FB8s5p4RUEz6+TYhNcjqQ41udYl8hpEyErYyVNj2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c5BLj5FtxzYl6Cw;
-	Mon, 18 Aug 2025 20:08:13 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
- 2025 20:08:24 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
- 2025 20:08:23 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
-	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <mingo@redhat.com>,
-	<npache@redhat.com>, <peterz@infradead.org>, <rientjes@google.com>,
-	<shakeel.butt@linux.dev>, <tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v4 2/3] mm/oom_kill: Only delay OOM reaper for processes using robust futexes
-Date: Mon, 18 Aug 2025 20:08:19 +0800
-Message-ID: <20250818120819.26709-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aKIvd4ZCdWUEpBT_@tiehlicka>
-References: <aKIvd4ZCdWUEpBT_@tiehlicka>
+	s=arc-20240116; t=1755518925; c=relaxed/simple;
+	bh=bh6OIfO4EELLg333GBIihIzx8g8wZEEARzEm1lA1wgA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GcnTPGJC44wviaev5x/0RPefkTUD9U5cizGOKm6OnJesHPuEjS7lHAEkOkYt7M9b1pCyUYTX3r2qnSOjfhD/pb7UKRuSDGcj5jKZTyExeUCyKKr8u+9IURZsg1hdvngwpsnr2zS2oUCXpLdHrGlmQ4pudW8V/5D/WBWjbDNPoXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PZFmpJE1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QlsHi7Pm; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0BFA61400177;
+	Mon, 18 Aug 2025 08:08:43 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 18 Aug 2025 08:08:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755518923;
+	 x=1755605323; bh=xQdgyGA5COaCrzWAChLbDJ+k+lzLu0z9z0SAOXUT6IU=; b=
+	PZFmpJE1SIC0ikjX2oHaqNM6DnBCadXASQTuhYXCsK+w7Y5zL8DAAQR6ob3dDUqe
+	jwLZnpxKI6/IibAOqlxOoGneXquxM0rCvsL+CaaJhGSeb465FVt7EC4Jz6N8bTjh
+	atf3fbws0BCfEqZJ4nQGhOZSmDGKZ98PThJ7u65IraJQIsA0RsnuJXhGxQBXsee5
+	AShi0wFgrQYfo2OkZpMXJ+Tnz1693FY8rIkQxWh41pEaPzcy8/5aTAXRUqIrz8nI
+	gnps6evmvxVP8d12IchRmVa2m5XGkGn5Ilm171BSI1QaTlfC7BaiWnOmmQIz89DG
+	uvzNw7vsaevQAabV7cgyLg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755518923; x=
+	1755605323; bh=xQdgyGA5COaCrzWAChLbDJ+k+lzLu0z9z0SAOXUT6IU=; b=Q
+	lsHi7Pm1rZLZHQJtksrghMt0VUT9jNPcm3xovM5rJ/CCW7qxyh9loEB/g8EO6Ajp
+	8TRXN6BIWUjvtzN0isKS+bO4l0fdXqQWA2csTPSuwbRIIwKPYiYUNvHg2IEcQbEo
+	XdwwRqUZ66MCPb5WIvvSPUP1/GOaoqHWVwtg2JfkioPnqNSKxeu2/uOh368n9+GQ
+	YGycwqlzmA8c+c74gCW7DPHY1Stb6FHkmi5D5IVbxDiEtTxPbY9KuN0NEQgHx4oS
+	GgdlZr9hcpksMzjDaB/BJWvGV1e/c83HkAR915BdEEYnobWKsTRSToeyPB+eyPzK
+	url7v9zbKtder0cz6B0lg==
+X-ME-Sender: <xms:yRejaCqIZ3AGCURGRIlytMnCHfErMm7O_syE0cyNe-2YuKo50f-OCA>
+    <xme:yRejaArSGBva9y0cZZZ4lTFsL4VtQI3dW-1yB_FTQHtmWAA7rOJJBSjlSK7rCmUob
+    MtBeHreYZw0lPd1dpE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvheejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtg
+    hpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpthhtohepughi
+    nhhgrdifrghnghessghsthdrrghipdhrtghpthhtohepghhorhguohhnrdhgvgessghsth
+    drrghipdhrtghpthhtohepsghsthdquhhpshhtrhgvrghmsegsshhtrghirdhtohhppdhr
+    tghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtth
+    hopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgu
+    theskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:yRejaF6BKJ9KbL9B2ut29tSL58MeD3qPX_I_sQ3FXIg2oS7mws-kbw>
+    <xmx:yRejaJeSxwQ2DaDjOy7Yp2mOZ20MbZ9bT8d1Lu-05voCl9vG9NIl_A>
+    <xmx:yRejaOJxxIDgpIHsMGO_c8hSSz_LiLB1-QwXCuyLAcPu5gbq73CdNg>
+    <xmx:yRejaHnbPPwLJ82TxrvKEU3-LqT0cm8Cpn8rPVdHvfWRuTILLcW2sw>
+    <xmx:yxejaDqi-zXF_mMXhoi3J-UJkoYExW_yqvxdzr2z3myvYYWDiKMWXgo9>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1E17D700068; Mon, 18 Aug 2025 08:08:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: AXmPW4ZJGxVF
+Date: Mon, 18 Aug 2025 14:08:20 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ krzk+dt@kernel.org, "Conor Dooley" <conor+dt@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Adrian Hunter" <adrian.hunter@intel.com>,
+ "Robin Murphy" <robin.murphy@arm.com>, ding.wang@bst.ai,
+ "gordon.ge" <gordon.ge@bst.ai>, bst-upstream <bst-upstream@bstai.top>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ soc@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <689f58fe-6339-4a3e-9aad-175bff7681f8@app.fastmail.com>
+In-Reply-To: 
+ <CAPDyKFon7Q2UHOJbbVtPTHvqxYeOJr8HK5BOk6TAJaph8FcwvQ@mail.gmail.com>
+References: <20250812123110.2090460-1-yangzh0906@thundersoft.com>
+ <20250812123110.2090460-6-yangzh0906@thundersoft.com>
+ <CAPDyKFon7Q2UHOJbbVtPTHvqxYeOJr8HK5BOk6TAJaph8FcwvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] mmc: sdhci: add Black Sesame Technologies BST C1200
+ controller driver
 Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a018.hihonor.com
- (10.68.17.250)
+Content-Transfer-Encoding: 7bit
 
-> On Thu 14-08-25 21:55:54, zhongjinji@honor.com wrote:
-> > From: zhongjinji <zhongjinji@honor.com>
-> > 
-> > The OOM reaper can quickly reap a process's memory when the system encounters
-> > OOM, helping the system recover. Without the OOM reaper, if a process frozen
-> > by cgroup v1 is OOM killed, the victims' memory cannot be freed, and the
-> > system stays in a poor state. Even if the process is not frozen by cgroup v1,
-> > reaping victims' memory is still meaningful, because having one more process
-> > working speeds up memory release.
-> > 
-> > When processes holding robust futexes are OOM killed but waiters on those
-> > futexes remain alive, the robust futexes might be reaped before
-> > futex_cleanup() runs. It would cause the waiters to block indefinitely.
-> > To prevent this issue, the OOM reaper's work is delayed by 2 seconds [1].
-> > The OOM reaper now rarely runs since many killed processes exit within 2
-> > seconds.
-> > 
-> > Because robust futex users are few, it is unreasonable to delay OOM reap for
-> > all victims. For processes that do not hold robust futexes, the OOM reaper
-> > should not be delayed and for processes holding robust futexes, the OOM
-> > reaper must still be delayed to prevent the waiters to block indefinitely [1].
-> > 
-> > Link: https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u [1]
-> 
-> What has happened to
-> https://lore.kernel.org/all/aJGiHyTXS_BqxoK2@tiehlicka/T/#u ?
+On Mon, Aug 18, 2025, at 12:48, Ulf Hansson wrote:
+> On Tue, 12 Aug 2025 at 14:31, Albert Yang <yangzh0906@thundersoft.com> wrote:
 
-If a process holding robust futexes gets frozen, robust futexes might be reaped before
-futex_cleanup() runs when an OOM occurs. I am not sure if this will actually happen.
+>> +       /*
+>> +        * Silicon constraints for BST C1200:
+>> +        * - System RAM base is 0x800000000 (above 32-bit addressable range)
+>> +        * - The eMMC controller DMA engine is limited to 32-bit addressing
+>> +        * - SMMU cannot be used on this path due to hardware design flaws
+>> +        * - These are fixed in silicon and cannot be changed in software
+>> +        *
+>> +        * Bus/controller mapping:
+>> +        * - No registers are available to reprogram the address mapping
+>> +        * - The 32-bit DMA limit is a hard constraint of the controller IP
+>> +        *
+>> +        * Given these constraints, an SRAM-based bounce buffer in the 32-bit
+>> +        * address space is required to enable eMMC DMA on this platform.
+>> +        */
+>> +       err = bst_sdhci_reallocate_bounce_buffer(host);
+>> +       if (err) {
+>> +               dev_err(&pdev->dev, "Failed to allocate bounce buffer: %d\n", err);
+>> +               goto err_remove_host;
+>> +       }
+>
+> FYI, I will be awaiting a confirmation from Arnd to be with the above
+> hack, before I queue this up.
 
-> 
-> Generally speaking it would be great to provide a link to previous
-> versions of the patchset. I do not see v3 in my inbox (which is quite
-> messy ATM so I might have easily missed it).
+The explanations here are clear enough to me,
 
-This is version v3, where I mainly fixed the error in the Subject prefix,
-changing it from futex to mm/oom_kill.
-
-https://lore.kernel.org/all/20250804030341.18619-1-zhongjinji@honor.com/
-https://lore.kernel.org/all/20250804030341.18619-2-zhongjinji@honor.com/
-
-> -- 
-> Michal Hocko
-> SUSE Labs
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
