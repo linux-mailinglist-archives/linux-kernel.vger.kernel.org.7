@@ -1,195 +1,145 @@
-Return-Path: <linux-kernel+bounces-773787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FB4B2A90F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:14:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E212BB2AA0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F957BE38A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:11:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D2B6E4000
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271BD342CB6;
-	Mon, 18 Aug 2025 14:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0114C350835;
+	Mon, 18 Aug 2025 14:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TB/BbVCx"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="updHvFjI"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63A5340DAF;
-	Mon, 18 Aug 2025 14:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF7D34575E;
+	Mon, 18 Aug 2025 14:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525795; cv=none; b=tLi0IMbUewWx+VHhaLxW9D+bmt78tlQp91pvp8qkyOehf/7TIdnU5WXl0F9YrTZRNTK3ZQXP4SnTVVh7HiJwj/jAsRzWC6UH+V1lhLzH0g1DDexp7QyYVrVfOBS02MtVFhwvL9AtNZyGwaP8pn51uAFDIkUpQ6fropaM3XeMZnU=
+	t=1755525877; cv=none; b=OzOr44z0JSOdEPKDkmSWEvq3iuzVt/yM6EbTSEwu+4xpZTZeuEDk4PL1dRiutrGkEJWLQyfqP+AinSu77n0JkDDe2HkfMULQc85lpdqh5wcli/WeYmEM6D+yhnIk9yg5sFqJS0ZepSe8jCulz7wjF9zMGQHahWG7IEAGiIPzm+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525795; c=relaxed/simple;
-	bh=cqEMvBDIJh7sk0fkOOAjgfqJjUAGTMyPiTk2mzsorz4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I6uEj4jPFWPszpI3C1reh9yLSRH/9clqxPURQxWLkmO2RtWUes0Qk+E5EAvlJEuzKDfpnYzcrXLFM2VYeXZJOQJcEnmJ1Hrrcyfxwpn0zBhxlAPW7co8PkRnzQwQgpx5eNelKHHyFlLo00ewAa6guOgO5ttcewNaR7HDhWU0+o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TB/BbVCx; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 08A1B43977;
-	Mon, 18 Aug 2025 14:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755525791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uKrzRB/Gdry9CrfnOHOsusIysuNG4TtE8dFjQjPlkg0=;
-	b=TB/BbVCxzzQE/PbTdC2h8/PGF3ZOHi89W61dj13jSBz+LvTWljHBkELKYTr9Qj/5Bu5ePb
-	2IkKGA2udMB+ZLjnlTCskufFCcnVYmThjzLyq7VTlCm+hQUk51DbHSOSr1nAD0444EDfRk
-	LXPrpf2O+w0iqB/8aiLI34KDuFWCD0Fa4o+OhL04LtzR2v6j5EQlTkZMsdAJM2tS7o5khC
-	gNglfXCfbBIMWrHNoay982mXSJfeDYUzw6kodRO77jiG+cuHoubQm7R/SesqhDP4rt1W6H
-	mAeAuaLlvf8lRZpnBgV9mevnenzG8btGaQdFUlQep3hIXychvxhQ+p7OcKsdGg==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Mon, 18 Aug 2025 16:02:51 +0200
-Subject: [PATCH v4 6/6] mmc: sdhci-cadence: implement multi-block read gap
- tuning
+	s=arc-20240116; t=1755525877; c=relaxed/simple;
+	bh=LoJpb8ayV/4M9p2M6PFV8FZtQ6WHFDuKd8GwXtvVNII=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=KYrJ1f6eUiQa0woxnbmv5Vi0VE3TmwkmIuFKyIVBXay8g18vRvUON4HydslQ1CJ3PvZEf5PpYYJwvkf1JB/ZyapyQVU763fOgEPzjyj/kcXb5gynnIRzMnl4QR05k+C9eDYz7HVKqO+J2lfkPPNx+HSmeMFqR+mVpL5a72SHdVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=updHvFjI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IDgcJo022338;
+	Mon, 18 Aug 2025 16:04:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	SdXtjCINBYYl2y0vIxcCS+dE3WLQsljv6X6tY5i9tL4=; b=updHvFjI2C7p8gFG
+	QApsM9kyPimXAFYNBtIJyCaOhgx34foyMQH8xFMKefIBW+7P4qrrBKQjv/+4MlWd
+	k9YUeze9h79r4aBprU144nzdU+645oUPSQfb2QrnR9xNSJ3PCXJ3dhobR5dlqRKP
+	BTKkql0SwE0FfJqE3yYpQygUApIRrIdSqndKrCM0ZQRHDU0mVKanAqrz+sK7WFsr
+	gEa59GXrFUd08Y6PUpLHQXHeJzXd01flU7UtHnq1uAccc3o7yzM+jcSsP3F9Hgwl
+	e0Lz6wjPWPgRXYi4ZjvaUcewO39FQnC4lcmAO01P8udM2urXTLtEvqm84m5pfWEL
+	YO4whw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jf47phne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 16:04:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6CD724004F;
+	Mon, 18 Aug 2025 16:03:29 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 99821738B2D;
+	Mon, 18 Aug 2025 16:02:55 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
+ 2025 16:02:54 +0200
+Message-ID: <fa1f6952-dba5-421d-9a79-03904059df0d@foss.st.com>
+Date: Mon, 18 Aug 2025 16:02:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250818-mobileye-emmc-for-upstream-4-v4-6-34ecb3995e96@bootlin.com>
-References: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
-In-Reply-To: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomhepuegvnhhofphtucfoohhnihhnuceosggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedufefgudfgfffguefhgeeuvdeuhfekkedtleduledvleetleetjeejieetteevtdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehpdhhvghloheplgduledvrdduieekrddutddrudekjegnpdhmrghilhhfrhhomhepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesi
- hhnthgvlhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhmtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrgh
-X-GND-Sasl: benoit.monin@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] dt-bindings: arm: sti: drop B2120 board support
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20250714-sti-rework-v2-0-f4274920858b@gmail.com>
+ <20250714-sti-rework-v2-3-f4274920858b@gmail.com>
+ <517de150-9fb1-4098-92a3-d5a24eea67a1@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <517de150-9fb1-4098-92a3-d5a24eea67a1@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
 
-The controller suspends the clock between blocks when reading from the
-MMC as part of its flow-control, called read block gap. At higher clock
-speed and with IO delay between the controller and the MMC, this clock
-pause can happen too late, during the read of the next block and
-trigger a read error.
 
-To prevent this, the delay can be programmed for each mode via the pair
-of registers HRS37/38. This delay is obtained during tuning, by trying
-a multi-block read and increasing the delay until the read succeeds.
 
-For now, the tuning is only done in HS200, as the read error has only
-been observed at that speed.
+On 7/28/25 11:26, Patrice CHOTARD wrote:
+> 
+> 
+> On 7/14/25 15:49, Raphael Gallais-Pou wrote:
+>> B2120 boards are internal boards which never were commercialised.
+>>
+>> Remove them from bindings.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+>>
+>> ---
+>> Changes in v2:
+>> - Added Krzysztof's acked-by
+>> - Put this patch last to get a bisectable series
+>> ---
+>>  Documentation/devicetree/bindings/arm/sti.yaml | 4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/sti.yaml b/Documentation/devicetree/bindings/arm/sti.yaml
+>> index 842def3e3f2bce470763d3665c7603b9058b1e4e..177358895fe1c9f80f8c825142cf015d04286ce8 100644
+>> --- a/Documentation/devicetree/bindings/arm/sti.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/sti.yaml
+>> @@ -14,12 +14,8 @@ properties:
+>>      const: '/'
+>>    compatible:
+>>      oneOf:
+>> -      - items:
+>> -          - const: st,stih407-b2120
+>> -          - const: st,stih407
+>>        - items:
+>>            - enum:
+>> -              - st,stih410-b2120
+>>                - st,stih410-b2260
+>>            - const: st,stih410
+>>        - items:
+>>
+> 
+> 
+> Hi Raphael
+> 
+> Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> 
+> Thanks
+Applied to sti-next
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- drivers/mmc/host/sdhci-cadence.c | 63 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 62 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 2d823e158c59844dc7916db6a1d6e3d8b02ea5a0..a2a4a5b0ab964883cef8c5d7f6e0c961fe76bc13 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -36,6 +36,24 @@
- #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400	0x5
- #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400ES	0x6
- 
-+/* Read block gap */
-+#define SDHCI_CDNS_HRS37		0x94	/* interface mode select */
-+#define   SDHCI_CDNS_HRS37_MODE_DS		0x0
-+#define   SDHCI_CDNS_HRS37_MODE_HS		0x1
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR12	0x8
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR25	0x9
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR50	0xa
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR104	0xb
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_DDR50	0xc
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_LEGACY	0x20
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_SDR		0x21
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_DDR		0x22
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS200	0x23
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400	0x24
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400ES	0x25
-+#define SDHCI_CDNS_HRS38		0x98	/* Read block gap coefficient */
-+#define   SDHCI_CDNS_HRS38_BLKGAP_MAX		0xf
-+
- /* SRS - Slot Register Set (SDHCI-compatible) */
- #define SDHCI_CDNS_SRS_BASE		0x200
- 
-@@ -251,6 +269,44 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
- 	return 0;
- }
- 
-+/**
-+ * sdhci_cdns_tune_blkgap() - tune multi-block read gap
-+ * @mmc: MMC host
-+ *
-+ * Tune delay used in multi block read. To do so,
-+ * try sending multi-block read command with incremented gap, unless
-+ * it succeeds.
-+ *
-+ * Return: error code
-+ */
-+static int sdhci_cdns_tune_blkgap(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_cdns_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	void __iomem *hrs37_reg = priv->hrs_addr + SDHCI_CDNS_HRS37;
-+	void __iomem *hrs38_reg = priv->hrs_addr + SDHCI_CDNS_HRS38;
-+	int ret;
-+	u32 gap;
-+	u32 hrs37_mode;
-+
-+	/* Currently only needed in HS200 mode */
-+	if (host->timing != MMC_TIMING_MMC_HS200)
-+		return 0;
-+
-+	writel(hrs37_mode, hrs37_reg);
-+
-+	for (gap = 0; gap <= SDHCI_CDNS_HRS38_BLKGAP_MAX; gap++) {
-+		writel(gap, hrs38_reg);
-+		ret = mmc_read_tuning(mmc, 512, 32);
-+		if (!ret)
-+			break;
-+	}
-+
-+	dev_dbg(mmc_dev(mmc), "read block gap tune %s, gap %d\n", ret ? "failed" : "OK", gap);
-+	return ret;
-+}
-+
- /*
-  * In SD mode, software must not use the hardware tuning and instead perform
-  * an almost identical procedure to eMMC.
-@@ -261,6 +317,7 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	int max_streak = 0;
- 	int end_of_streak = 0;
- 	int i;
-+	int ret;
- 
- 	/*
- 	 * Do not execute tuning for UHS_SDR50 or UHS_DDR50.
-@@ -288,7 +345,11 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		return -EIO;
- 	}
- 
--	return sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
-+	ret = sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
-+	if (ret)
-+		return ret;
-+
-+	return sdhci_cdns_tune_blkgap(host->mmc);
- }
- 
- static void sdhci_cdns_set_uhs_signaling(struct sdhci_host *host,
-
--- 
-2.50.1
-
+Thanks
+Patrice
 
