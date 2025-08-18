@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-772729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092F3B296E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9B2B296FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCFF17F73F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52D65E0034
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA8F246761;
-	Mon, 18 Aug 2025 02:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDF42550D7;
+	Mon, 18 Aug 2025 02:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="lpr76ho+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BoT1UgP4"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D082236E3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5745725394B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755483506; cv=none; b=pGbiUGB/723na1RSFMLJIqjtdpZQaDDidDf1VmWyofUTVHziWjMqoOHigE2ANa5pwSpyvpLu6dgjcDDcI75U8yLpg7jmdAeTD6YRfYnoia8mevlq3vwnO14rh/a9/JWO30ExfAvDso2ow0F4h2dZyiYyPg1y74vtO+JkAArnt8k=
+	t=1755483880; cv=none; b=CfCL9FjvN9YA6bSTrywdNC+S3tcWMGiAh+8c9a7JoB6zLUAvmUPL5/yLO+MDmd7C8ZWigyedwWkoi/uUf23Ny8ZugdnNiDMpup5ZWji/yYejMzJ4DUOrZPo1jkA5yLPBQtvjE3RHRDjJ4JCH1nI2iTwVC751YuDudtYSNh9mdmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755483506; c=relaxed/simple;
-	bh=9C/OgKK6Jq11I3HNli6+hEImiLYRcGL+i1Wirubu1pg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=T8qnaV98LTo3Vs9xhhtBrQqwIGeNT0pvmmxbbzKIcJMluEx+2NAYjcxGZKBQhA2r/NUNyZklcIUSqCPcrKd3nSqt22oZYqXvzLK9eIAdPeltXJfy5DAbu0//PWX5HwQLroRQwdno+Dsy+zSmjGMjuRK049M8XLKV4EaHsvdpCuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=lpr76ho+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B524C4CEEB;
-	Mon, 18 Aug 2025 02:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755483506;
-	bh=9C/OgKK6Jq11I3HNli6+hEImiLYRcGL+i1Wirubu1pg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lpr76ho+zHkCH8DUobo58mMCHRbtad+s7SQTnCQyeirtDgY37aWah5P6lU8L2w0K7
-	 xl/l1EsrF1GE8DvmboWvCUAMZmBC9KkbO/071ToGKEEs3/O6iqd9OJL8LO9wURKbBZ
-	 ygcd4/hL5eORSHfwjx9vrcTDpcFO6qz1Nv/n5oms=
-Date: Sun, 17 Aug 2025 19:18:25 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: yaozhenguo <yaozhenguo1@gmail.com>
-Cc: tglx@linutronix.de, yaoma@linux.alibaba.com, max.kellermann@ionos.com,
- lihuafei1@huawei.com, yaozhenguo@jd.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog/softlockup:Fix incorrect CPU utilization
- output during softlockup
-Message-Id: <20250817191825.ef254428d688d987333d4f4e@linux-foundation.org>
-In-Reply-To: <20250812082510.32291-1-yaozhenguo@jd.com>
-References: <20250812082510.32291-1-yaozhenguo@jd.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755483880; c=relaxed/simple;
+	bh=IjSu0FqxtK8qVNVlBAVyRBAm9ZI3BxjjnWb4CJZra1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=B1sThr8dN5U6o+HqEGlUNQ+ywTXAQ4QznQISz0qJ/r/ZaZ9Qh4YkkWOkDXfLrlJG50YWIHYJ0+Nm8V3+XBo8eozbOWNGH6QdOONJ2Uz9eZX49rVA33knmURXx3neFX/HzCkUuYUaE/SMR9br3WNC24IMlOGA7ibGATk0/ozMtpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BoT1UgP4; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250818022435epoutp02e3bba2334ae9a1f78337009568bb5b80~cu0ieOGCk1708417084epoutp02a
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:24:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250818022435epoutp02e3bba2334ae9a1f78337009568bb5b80~cu0ieOGCk1708417084epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755483875;
+	bh=qQuJQ6PIs6ycumh8Z3M1kZRXSBJcfL6xMyJNTAbCb/o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BoT1UgP47ZwIXTCFwuQdwElDFoY/QurjgpamzYm1Y8mKlIE1806FmKUz2EpoLFkJU
+	 IhrILd0sTPNAgLebhXfpd89a9U9oQP8TSZiQpVJQdmCCUZiuqm/1I5AEIsw47an1By
+	 ZSHFLghSZztGn8FwJO3u2o2Lw2O+nvgVQptfZOxk=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250818022434epcas2p48a2039081745d48c81ae1d2525ed196d~cu0iHWMsa2945329453epcas2p4W;
+	Mon, 18 Aug 2025 02:24:34 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c4xPG2rCFz2SSKt; Mon, 18 Aug
+	2025 02:24:34 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250818022433epcas2p15ec2e45f26f6ff5fb69f0b1e377616f4~cu0hB1wga1646616466epcas2p1s;
+	Mon, 18 Aug 2025 02:24:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250818022433epsmtip1417e39541ef8e8ca54bf08bf507fcf7a~cu0g96fme2020320203epsmtip1P;
+	Mon, 18 Aug 2025 02:24:33 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, semen.protsenko@linaro.org, dongil01.park@samsung.com,
+	khwan.seo@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
+	<sw617.shin@samsung.com>
+Subject: [PATCH v6 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
+ supported features
+Date: Mon, 18 Aug 2025 11:18:26 +0900
+Message-Id: <20250818021826.623830-6-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250818021826.623830-1-sw617.shin@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250818022433epcas2p15ec2e45f26f6ff5fb69f0b1e377616f4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250818022433epcas2p15ec2e45f26f6ff5fb69f0b1e377616f4
+References: <20250818021826.623830-1-sw617.shin@samsung.com>
+	<CGME20250818022433epcas2p15ec2e45f26f6ff5fb69f0b1e377616f4@epcas2p1.samsung.com>
 
-On Tue, 12 Aug 2025 16:25:10 +0800 yaozhenguo <yaozhenguo1@gmail.com> wrote:
+Enable supported features for ExynosAutov9 SoC.
+- QUIRK_HAS_DBGACK_BIT
+- QUIRK_HAS_32BIT_CNT
 
-> From: ZhenguoYao <yaozhenguo1@gmail.com>
-> 
-> Since we use 16-bit precision, the raw data will undergo
-> integer division, which may sometimes result in data loss.
-> This can lead to slightly inaccurate CPU utilization calculations.
-> Under normal circumstances, this isn’t an issue.  However,
-> when CPU utilization reaches 100%, the calculated result might
-> exceed 100%.  For example, with raw data like the following:
-> 
-> sample_period 400000134 new_stat 83648414036 old_stat 83247417494
-> 
-> sample_period=400000134/2^24=23
-> new_stat=83648414036/2^24=4985
-> old_stat=83247417494/2^24=4961
-> util=105%
-> 
-> Below log will output：
-> 
-> CPU#3 Utilization every 0s during lockup:
->     #1:   0% system,          0% softirq,   105% hardirq,     0% idle
->     #2:   0% system,          0% softirq,   105% hardirq,     0% idle
->     #3:   0% system,          0% softirq,   100% hardirq,     0% idle
->     #4:   0% system,          0% softirq,   105% hardirq,     0% idle
->     #5:   0% system,          0% softirq,   105% hardirq,     0% idle
-> 
-> To avoid confusion, we enforce a 100% display cap when
-> calculations exceed this threshold.
-> 
-> ...
->
-> --- a/kernel/watchdog.c
-> +++ b/kernel/watchdog.c
-> @@ -444,6 +444,13 @@ static void update_cpustat(void)
->  		old_stat = __this_cpu_read(cpustat_old[i]);
->  		new_stat = get_16bit_precision(cpustat[tracked_stats[i]]);
->  		util = DIV_ROUND_UP(100 * (new_stat - old_stat), sample_period_16);
-> +		/* Since we use 16-bit precision, the raw data will undergo
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-		/*
-		 * Since ...
-
-please.
-
-> +		 * integer division, which may sometimes result in data loss,
-> +		 * and then result might exceed 100%. To avoid confusion,
-> +		 * we enforce a 100% display cap when calculations exceed this threshold.
-> +		 */
-> +		if (util > 100)
-> +			util = 100;
->  		__this_cpu_write(cpustat_util[tail][i], util);
->  		__this_cpu_write(cpustat_old[i], new_stat);
->  	}
-
-Can we do something to make this output more accurate?  For example,
-
-	return (data_ns + (1 << 23)) >> 24LL;
-
-would round to the nearest multiple of 16.8ms?
-
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 915d3c88565a..b774477190b6 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -306,7 +306,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
+ 	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
+ 	.cnt_en_bit = 7,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+-		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
+ };
+ 
+ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
+@@ -318,7 +319,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
+ 	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
+ 	.cnt_en_bit = 7,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+-		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
+ };
+ 
+ static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
+-- 
+2.25.1
 
 
