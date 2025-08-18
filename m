@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-774518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D735B2B37E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:36:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4FEB2B385
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97662684B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF80563A01
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323DF2773D9;
-	Mon, 18 Aug 2025 21:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F390277C9E;
+	Mon, 18 Aug 2025 21:35:36 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D997275B18;
-	Mon, 18 Aug 2025 21:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ECA277013;
+	Mon, 18 Aug 2025 21:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552934; cv=none; b=RT9HlnCAF42imsD2NwCACipTE4KWZZh3PIKd83eyvVvV7PSXhyrLPo83xGX2MHEFwR/cYgVx2il2Zbfhmum6TkzppRSrJ15DgEAvemcACSamTNB9AjEXpfk2t4anCfDxgaPd1gWmvjjWKNIkN4FlxqXHPUOZyEMaIATCBkjqcPg=
+	t=1755552936; cv=none; b=chtJ61LlmtiZhw95pR/MRq1QqwQT0K1bm7SzqVQimi8gKzifCGVO8XQDkr/0bLwJXyQWIaMFehN2ZwyY//s2i8S4DGHfQElmY7atXnbjFIRGt/8GJhiAJoghWqUZvvNQyLJWWZbaJY//O5P/X5E3InsKcz2LTHRXIq1JU3FOWa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552934; c=relaxed/simple;
-	bh=tLsK2O10wieJb1mRRo5CrgznO7vx9YT47u2gJ4bUwQs=;
+	s=arc-20240116; t=1755552936; c=relaxed/simple;
+	bh=qGKi7nFEQeTEbuUFTQQot3rZpaYZ++xqYf/CsvSj1kg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVewHepNX8nSZLrfK5KCqfSg/pKOj4rUY6Tk2D+RsF52o/9OTC4vWcPqXNP+eej3MaHL0r5xfiwk2KnSdyvT8bcDIw9VcOf8Tr4VjFFADAG69zsRN+wR6lbGQwu7Nw9khz4Sl4FklmaxgLKDgbWG7NhAl+ggcOTqsa5lt6d3b9A=
+	 MIME-Version; b=QPRrMC/Uh5iAuAKn8YnwigTTkRhv1s13sN1TeaUFVog/HybGNsgk2mc+Qj/W+WI8FTLz8ccXbhDhppmAb2dsB5ve14sxxoSB2/4773FpjVzoKX8cbnOvMQf4QFFajciqrr6c3iD35eKJ5odOhN5iORuaBluGo6jJnkgTmaEUd3o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADA271AED;
-	Mon, 18 Aug 2025 14:35:24 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E7C51BB2;
+	Mon, 18 Aug 2025 14:35:26 -0700 (PDT)
 Received: from u200865.usa.arm.com (U203867.austin.arm.com [10.118.30.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CC6A3F738;
-	Mon, 18 Aug 2025 14:35:32 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFA373F738;
+	Mon, 18 Aug 2025 14:35:33 -0700 (PDT)
 From: Jeremy Linton <jeremy.linton@arm.com>
 To: linux-trace-kernel@vger.kernel.org
 Cc: linux-perf-users@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc: linux-perf-users@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v6 6/7] arm64: Kconfig: Remove GCS restrictions on UPROBES
-Date: Mon, 18 Aug 2025 16:34:51 -0500
-Message-ID: <20250818213452.50439-7-jeremy.linton@arm.com>
+Subject: [PATCH v6 7/7] uprobes: uprobe_warn should use passed task
+Date: Mon, 18 Aug 2025 16:34:52 -0500
+Message-ID: <20250818213452.50439-8-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250818213452.50439-1-jeremy.linton@arm.com>
 References: <20250818213452.50439-1-jeremy.linton@arm.com>
@@ -71,27 +71,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the uprobe paths have been made GCS compatible
-drop the Kconfig restriction.
+uprobe_warn() is passed a task structure, yet its using current. For
+the most part this shouldn't matter, but since a task structure is
+provided, lets use it.
 
+Fixes: 248d3a7b2f10 ("uprobes: Change uprobe_copy_process() to dup return_instances")
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- arch/arm64/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/events/uprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index e9bbfacc35a6..c61572bbe59b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2225,7 +2225,6 @@ config ARM64_GCS
- 	default y
- 	select ARCH_HAS_USER_SHADOW_STACK
- 	select ARCH_USES_HIGH_VMA_FLAGS
--	depends on !UPROBES
- 	help
- 	  Guarded Control Stack (GCS) provides support for a separate
- 	  stack with restricted access which contains only return
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 7ca1940607bd..4b97d16f731c 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -121,7 +121,7 @@ struct xol_area {
+ 
+ static void uprobe_warn(struct task_struct *t, const char *msg)
+ {
+-	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
++	pr_warn("uprobe: %s:%d failed to %s\n", t->comm, t->pid, msg);
+ }
+ 
+ /*
 -- 
 2.50.1
 
