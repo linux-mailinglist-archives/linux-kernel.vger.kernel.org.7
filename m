@@ -1,169 +1,145 @@
-Return-Path: <linux-kernel+bounces-773045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B942CB29ACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:29:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AC0B29AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA5B3B3DE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:27:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9D737ABF9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DFD279DCE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BA827A461;
 	Mon, 18 Aug 2025 07:27:45 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bKOp1Dh5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EC4275B1E;
-	Mon, 18 Aug 2025 07:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5454279912;
+	Mon, 18 Aug 2025 07:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755502064; cv=none; b=LCoB7tOnWn2etXi4sBs51HPXbbFKymlX7gOU06SXN5jZimie47VDTZsb5+AgOwZWofbRgpmep6GFz8g/H57poih5BdXpFFikEa2WvrpmnUMJ8JryWKfnep/xIzPkyo60uNmqqkzjJDQXBNN1zrIqp7kuvjTjn6mVetecndgXifQ=
+	t=1755502065; cv=none; b=MI2szCJGTazes0jaODqTxWNKFcuMRFC/UIpUmBRJeHgjuPCpg9gubguzK1MyUdEp9+FB0uXgEeY+Tlr2tgFywzDXLWKXiBRl0a+D3KFxrdmR6Da8e9/HwH4BqsKOIGcTStJtrSo4KQ5x2CbexhR4gGKMT74+0V7r4rSna1wHlho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755502064; c=relaxed/simple;
-	bh=NhIq3CKXSSEJm6cafNoGY2GRYvK8gPc1gLScvyg8Rrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXfkCpEVtiXO8NQqZTYxICgjXMRY6AR/At0G2xSzRUuwQ7hOgvLmQcIkq11JuUhjXKKfk+xa/bQs896hFe37v04rNEuWbZF2cmxguCP8WjhRN/Y5HIgb1VYcjVlNwddkdWSIVdB5DBaQuxrTh9xnrZXtpMjdAZECsLOjQpxZySE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip3t1755501983te195c171
-X-QQ-Originating-IP: Ed+ORawxXpZ6NA7jhmANWyut2oLJqIWX2Q7j4Aj9hhs=
-Received: from [IPV6:240f:10b:7440:1:e696:3c18 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 15:26:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17431412545650112022
-Message-ID: <ABB74D9D1E3774F3+5a8c0d7d-fb7f-47c0-8308-e2b69f0628c1@radxa.com>
-Date: Mon, 18 Aug 2025 16:26:18 +0900
+	s=arc-20240116; t=1755502065; c=relaxed/simple;
+	bh=/IATY42vjj/EiI2I3jfWVqaesftL+zv9sUJt/ycw4D0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uzrfnALcO7Aq0vYneVtGB3oZ+jG1vaHEvy2JxjIBrlmpPlukAmJLV7u7/Z8d/pCbIEY3c6DM6TmGq2BkFL+NenBwT0hx5GLbOZLQNrPwwxxT/AoNzk/fXnUp7kgWt5b4n7U7Kh5K0B5r4lCjDfwDEpZYe9NSSMhK4EStVgmG5nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bKOp1Dh5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57HKdx8E019836;
+	Mon, 18 Aug 2025 07:27:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xdVVAzf36pUa69kXHC7sHDc4pa5fKd6qColFI3EWbF0=; b=bKOp1Dh5fPEV9qHv
+	exLPaXuLdYHM1JUB+s2W9MOL7Li8325NJWsgFTQLHNAOvz+litELo2WgOh/YChQ1
+	9S7iFrivz2bool87/taaAkX+OBKBzn0BSdrz40gtTRgWAB8U9alBF9jdFFU62iOD
+	U9yrUga75EMVzZmVyZ+aO4Se7OGRUEMrBzGPIpQi1eGxOeC6WXEJO9sKr2OZPPjN
+	Msrg4mSsX4+I24+VKTpJCK0LzoKMeG7gZuUojAevjm+QKst0e7NJm5Xs6we28eBC
+	18HqzbNpWsDp1JJajeJKdJ2o3Y8nI8HvUh1jz8vtsx7WRj43OfJlKMALV70183mn
+	rVxmhA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jjc7urkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 07:27:32 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57I7RV2L027946
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 07:27:31 GMT
+Received: from [10.216.58.185] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 18 Aug
+ 2025 00:27:27 -0700
+Message-ID: <99d478f0-9f3e-b8d3-8f0f-febe871a7983@quicinc.com>
+Date: Mon, 18 Aug 2025 12:57:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: update pinctrl names for
- Radxa E52C
-To: Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250816080030.183931-1-amadeus@jmu.edu.cn>
- <20250816080030.183931-4-amadeus@jmu.edu.cn>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 19/24] media: iris: Add platform-specific capabilities
+ for encoder video device
 Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20250816080030.183931-4-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-19-c725ff673078@quicinc.com>
+ <4848990e-7c57-1369-93a3-ecbed5e92f1b@quicinc.com>
+ <417b17e5-0173-aa5f-cfd3-697086571314@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <417b17e5-0173-aa5f-cfd3-697086571314@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MKbpLBOB35npu3RU/ctuzE+hm7xbZHPJ2wwAbMbVT+X4X0iRIT8KoPyS
-	Pvzm5j3MytJCZS7iYJ6WNpiNxTZ45+aMDmsoekRu1lvOeuMnsJfKJt0QhwXSZFfHLJesg6J
-	a8wRVrcID52m3wa5jbefVboeaMnx/YN72hTF1Io5C9c9EGpJFTCG9JlUzZJ4lntXdUbXASj
-	cqclzqvBA/kaX5PCafgbXtiXboSbrYnk2zxDuAgnQeH6CZO2likKk1zF4udFQTobijzvJiE
-	iBCGynEU5t+6pLDTkw+tUKEXTQl32A4MJzZSDeRA8vONKNhYHFkTlIZ/IEzZ5JrSDy13uPV
-	yU56/2s/QUwnRKYw4GxUphVkmjy9nDglG8of3DvqUuid51eYpO35sd7+EhHnzmIaO/m0YbJ
-	kbQUnqUuQf+0zzGNIR4XEfcmrGSIZmhgA/+XQmoIRFALmgpHxSBso4eatJcXE05E09Bhycl
-	zUulg18Qn6j7pBtA9WCijuwVpfUDIDP0RChvNjlu2Hm0Qi/HlVDqaTqimAeYPOpo3XZUHw8
-	fa0i9xtXU8xBM6NW9M2GtwFdQsTcxgg48buVJGEpTmD1LLxkeih24YusB7Q7rwjZXra9ROc
-	5ZNkzsFzaK4ZZJ7IYMszExdmqbLmR8COnSDEsapzRB0nKv8+ZT8lObLZNSskjcU5DtqxEad
-	u+edAGZU6sK61Xnkjxy/WLhJtVhOuLpLbER6vv7eGmdXBsb3IxbcuapqXR2ZpJZouWg+Q6P
-	KAam6ZTLzIYB5mvEfbNRyMpUMKD4Aly4Qt15JRl0W6RxN/13buxvM9nA5iz8vLWn8KQuCG2
-	hWNYPXUEOtgmILxcady5xcTJKOMOUEGDt/9UbT7BY5A85ebNcV5M//h2KzWcyeNFTeWIRsB
-	3NLLCJHGxuBSE3TeEj4voAHA5vddDsTMP4xmcQa/zlO7fPQiNEIVFpnpoWRT0XY+C5n5AIj
-	HuZN07ZMMP2505AVLFw5ThiMUolpecARXI/Gt4pnZi1FhKw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX6dAt0RzgmX4I
+ Yq3OX82KWMOo1w1EksHGK2JzrPVGfF00YgVdgYP+8n7PbXnxbkw4MWgQ9Eau83aEUQNUgZYCy1P
+ wN6VuQ/qpc4DDZGvJtOJqr+Xs/ATNtYWB1bGz7sEx31ovSXdR5LjesUN9EP/EUssnI0jRBu5m9K
+ LYqUhiCRfAJs57NeyVniUrUnL7ZN6mOsyyjwFOL7pMvEMKSgU5nV/vhOGKHIw0EFZkOf1iVabEW
+ rxWdrJfAfB7B4Z3SMDyyVYB8Tbu2Lnsg4VUZLaX4Jao28kA9dcqlmLEIcTXqaSIapB61E5TwTGl
+ z7UKXMVgPcU5O8LzpsI4lZITGzh7VZGijpdReSYnXc7lJxRBqHq+xxTj7rlvLIK6p+ZXv2Ns7go
+ azWCdU4X
+X-Authority-Analysis: v=2.4 cv=c4mrQQ9l c=1 sm=1 tr=0 ts=68a2d5e4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=4oBrDv6uFTw0o7ESNfQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 6IulmZfjqV2IUAVjXPBEp8TwecX9eP2z
+X-Proofpoint-ORIG-GUID: 6IulmZfjqV2IUAVjXPBEp8TwecX9eP2z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160033
 
-Hi Chukun,
 
-On 8/16/25 17:00, Chukun Pan wrote:
-> Updated the pinctrl names of the user key and power LED according
-> to the schematic. Also updated the nodenames of other pinctrls.
-> 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->   arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> index 4a3ae95f122f..f93b129a0032 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> @@ -42,7 +42,7 @@ button-0 {
->   	keys-1 {
->   		compatible = "gpio-keys";
->   		pinctrl-names = "default";
-> -		pinctrl-0 = <&btn_0>;
-> +		pinctrl-0 = <&pwm15_ir_m1>;
->   
->   		button-1 {
->   			label = "User";
-> @@ -55,7 +55,7 @@ button-1 {
->   	leds-0 {
->   		compatible = "gpio-leds";
->   		pinctrl-names = "default";
-> -		pinctrl-0 = <&led_0>;
-> +		pinctrl-0 = <&power_led>;
->   
->   		led-0 {
->   			color = <LED_COLOR_ID_GREEN>;
-> @@ -306,13 +306,13 @@ &pcie2x1l2 {
->   
->   &pinctrl {
->   	keys {
-> -		btn_0: button-0 {
-> +		pwm15_ir_m1: pwm15-ir-m1 {
+On 8/18/2025 12:55 PM, Dikshita Agarwal wrote:
+>>> +	{
+>>> +		.cap_id = LEVEL_HEVC,
+>>> +		.min = V4L2_MPEG_VIDEO_HEVC_LEVEL_1,
+>>> +		.max = V4L2_MPEG_VIDEO_HEVC_LEVEL_6_2,
+>>> +		.step_or_mask = BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_2) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_2_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_3) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_3_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_4) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_4_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_5) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_5_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_5_2) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_6) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_6_1) |
+>>> +				BIT(V4L2_MPEG_VIDEO_HEVC_LEVEL_6_2),
+>>> +		.value = V4L2_MPEG_VIDEO_H264_LEVEL_1_0,
+>> Fix the default value to V4L2_MPEG_VIDEO_HEVC_LEVEL_1
+> Seems like a typo, thanks for pointing out, will fix.
 
-"The name of a node should be somewhat generic".
-
-  https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst?plain=1#L193
-  https://lore.kernel.org/all/20241216113052.15696-1-naoki@radxa.com/T/#u
-
-(I don't understand why this only applies to me...)
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
->   			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
->   		};
->   	};
->   
->   	leds {
-> -		led_0: led-0 {
-> +		power_led: power-led {
->   			rockchip,pins = <3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
->   		};
->   	};
-> @@ -328,19 +328,19 @@ pcie20x1_2_perstn_m0: pcie-2 {
->   	};
->   
->   	regulators {
-> -		vcc_5v0_pwren_h: regulator-5v0-1 {
-> +		vcc_5v0_pwren_h: vcc-5v0-pwren-h {
->   			rockchip,pins = <4 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
->   		};
->   	};
->   
->   	rtc {
-> -		rtc_int_l: rtc-0 {
-> +		rtc_int_l: rtc-int-l {
->   			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
->   		};
->   	};
->   
->   	usb {
-> -		usb_otg_pwren_h: regulator-5v0-0 {
-> +		usb_otg_pwren_h: usb-otg-pwren-h {
->   			rockchip,pins = <0 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
->   		};
->   	};
+With that fixed,
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
