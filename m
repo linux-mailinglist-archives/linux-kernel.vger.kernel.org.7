@@ -1,215 +1,115 @@
-Return-Path: <linux-kernel+bounces-773773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B888B2A9C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4032B2A975
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AB46E5EF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AF81BA7DEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83900322DBD;
-	Mon, 18 Aug 2025 13:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50A6321F5F;
+	Mon, 18 Aug 2025 13:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VjGbqSsY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HI9FsVDI"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE54322A2F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8061D321F43;
+	Mon, 18 Aug 2025 13:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525594; cv=none; b=eaBHJWvl8+7bgX60aYcqvdoWc+TEVZXpLzTaLS/OBjNJGiXmbycD+4d3wlGW7KOal4bssahouxRMiq1UL7Y4X8U+4+DHjhQJGLqNSwQxmPZLJWr/2vGYQ5y22yiF3KBnhkRPUnByDsYgHaL0lwRHwUmove6B8u4dc6FTHZgMkFo=
+	t=1755525518; cv=none; b=KoiHaehZ01XX+lOHQFPyJaMGqfunITrs+xeEaEUwXzGyj8A7c01znI81+PXTHMAVUXLKwFZy7ni+VbOh6O0+c0YVJDTNAJ0hbopzeTs3W/V9anb9vWQYrzNM4GJO4QPiQAlS756UreCXllO3GgbsqPF0+fJUs86UgoaiT9we6hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525594; c=relaxed/simple;
-	bh=Y+NmXte2jVt9vIilx+qaBiTo6qTI0LRZmsoTSTKd/O4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cTJBXIIK9cLFljTgBy1GL3KygAudVLMlxZThxvcLk316Uxqp1vpahgckY4twKQnH+O+BQjAY3XSJhtzttTZgwQ9Z1cGQxmw3KR+LUEq3K8lwczqe2YAVx+0ts9JpjIb7XSva4ca7y9qk0dHRRxgDaUehSqIP7JMuDTmf/LcXZeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VjGbqSsY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755525592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YMRGYhZCgVYyf6TKWipcOATVyFwuIq5BqY8EP2wiQo=;
-	b=VjGbqSsYvGUY5oXr0OzM7Z8q1SUSlWsaZ89vnCZiJSFK77VRbsiYEgHKgMEWTTmQfwHGWE
-	1F4qtATORIU7VH4hpGar5C+/f8NcI4g9feqheANFitXU3G7RTyotRvctxnHnGY0NbkPRQm
-	wwW1auXnw74kOZv0MFU2KEocshVbS+U=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-009AGrh8P8iV3AxCY-YpHA-1; Mon, 18 Aug 2025 09:59:51 -0400
-X-MC-Unique: 009AGrh8P8iV3AxCY-YpHA-1
-X-Mimecast-MFC-AGG-ID: 009AGrh8P8iV3AxCY-YpHA_1755525590
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32326e2506aso3959839a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:50 -0700 (PDT)
+	s=arc-20240116; t=1755525518; c=relaxed/simple;
+	bh=udImFYEyvcy0P5Lzw36Tuio32ZiyjGbkEpFXoChFLk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hYP3e5hWroFTYnen0WSA2nZcWingLkLbaEyQKHoKH3qkvV4Zkek+Amv1dQjqviZLU10rmYZdkMvwweVo4trpp9OS8BHDY0CZ/92AxO9WyXd4OenI4jK7p0RA1bpK2j/PXm/cpgl9FHhPRzeDGy+L5DqrpDHGG6Qnc7Lm0RbKqpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HI9FsVDI; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so33184155e9.2;
+        Mon, 18 Aug 2025 06:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755525515; x=1756130315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4J2qOoplxm5/COGTn/SHR0+UbFimv4xPGKDMv/3jRlg=;
+        b=HI9FsVDIdABVPxgdQ9izfZn6O8uF9O5/MgoJyGpMIFE69h4uIJI5kNS8C1SW28PgKQ
+         4UqzUsp3Zu6JiJ8O/AKyuO3+fPhD4DkV94szlcJut5I4Wnl9tMyv/q9mw7hupZ/FDFwy
+         080gGBMEsKPWDbclkCltlD/kppkYG0myInL4nYL4fZxPCkHBMqOrVhNdR9Chd3iO7/fu
+         wcQKv9dH+/0xT7RPlSe3Qp0ERS/vK1sMBjO6mRScK9fAwCycP5ZmPfFfWKl0D80PdCps
+         bKsCLLIHUTTLe5AFe1itCQ1at2OSG7Lqyoo16RclBp+TMjARhxjvbdIpyDhnD6S6kXK9
+         ZGpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525590; x=1756130390;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8YMRGYhZCgVYyf6TKWipcOATVyFwuIq5BqY8EP2wiQo=;
-        b=SpO6L+wRQkXUSRMx7P8PRl1WaFrBUN228/YIaFyO3Etkc8pq92Q6h+XtM5A88uwruX
-         O9bIPZGqFFN3v0Fndey2qlTSx8pUdl7KFQHW534jODQX3mrMl9CO299PMIhKPYLsUvNK
-         pO3NwoGs0nFNSrEW97W1H/7GlraSk1EN3mlIfhwGb2y+vgFOkhIDlO/4YqmviCrVowx3
-         AIVQMLSkuBLwEk3MnOqSoy/AENRek0M8xtD90e560Z6VOo1HiHoxU+fAtHT4A2sG2bAG
-         ZThJebaDx4c7sy0A95tS1WH154SohvQ8UmcFe5+TnS5J28zsocJ3MjUZX8FObGqzNsmW
-         0hvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIb3WelDXWnC6eAast1sntLxEoWzcjZ1BQlyzcIFogiqAxL3OMhhOSuJeIWz9XRhfDLGgT7tbUixxY/O8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjZLUn4ZXTsLbsdPmGsRaGcgYiJLTGewYo2iQ6AQZeQSRm/OXO
-	2XJTMvQjk8EC0Z6o9z/FNLtc+pndKDcQ0RyhDvoByazSAwiPh7mje7Mgd/j/Rj5tSvRm9BSc0RG
-	nltmxNboFA17WAbg47hTra5W9coCKXpeZ/gMNJIuSpVhlJS/QwURe3eNhNC+2XuBiQw==
-X-Gm-Gg: ASbGncv4AZYGO8eU2Hp7ZQlV9IMSjmUVOjMe4PPmbAHh+2hxwYlYA9TFgU+QKJsEK1t
-	RPzFl6goUUD1hDyC2Euu8ETw/6ykwvGae7+s4slD9aGaJ8D1KUAV85aEN92zy4HjGdDF7FUuZh6
-	sut7V2sLtNWTQdmyJHwl+Hc8FFlIZ4IgAww4w3EPaqZEyHmUPW6loWx3i65yek8QkpUYlg8bxCY
-	VutHpxtLey4XbKRxswGWH4AjQHf3lNfktsaZ4uU482Ihjx156r0h9xWiG5LhkClkj6K9U0GBJ+s
-	5F9YyrGhfD2QZVSqwbXgSmSxMEd5MMiFoA==
-X-Received: by 2002:a17:90b:5303:b0:31f:1744:e7fd with SMTP id 98e67ed59e1d1-32342121790mr15990085a91.31.1755525589656;
-        Mon, 18 Aug 2025 06:59:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEu7vo2Z28+oGIgafdRKdRRdnXgn+83ZqnfwYDbcN4yit1cp5xdUDY79kWLpeCIOW3hf6Uyng==
-X-Received: by 2002:a17:90b:5303:b0:31f:1744:e7fd with SMTP id 98e67ed59e1d1-32342121790mr15990028a91.31.1755525589147;
-        Mon, 18 Aug 2025 06:59:49 -0700 (PDT)
-Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:59:48 -0700 (PDT)
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-To: arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lee@kernel.org
-Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rust-next 2/2] rust: samples: miscdevice: add lseek samples
-Date: Mon, 18 Aug 2025 22:58:39 +0900
-Message-ID: <20250818135846.133722-3-ryasuoka@redhat.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250818135846.133722-1-ryasuoka@redhat.com>
-References: <20250818135846.133722-1-ryasuoka@redhat.com>
+        d=1e100.net; s=20230601; t=1755525515; x=1756130315;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4J2qOoplxm5/COGTn/SHR0+UbFimv4xPGKDMv/3jRlg=;
+        b=ncWxNTRn0Yq4R7r0+za8/OT22IKpyoWH5zrZAedMSecQwUv+FhQmftVN14wLCqx8A0
+         JmMurDHOReio7sjY5mF03fgin/YMMKKFdR6VZatOhIhJS20nVl0WT1VcjspqfwCAy+M1
+         zqqxlUPG715YxSbVzPtyCTFlMhrEQtvBPkQBSCNMVVB/k0WEfXJKSRfR9P9dnwBto+Sh
+         BSXiQAW0QMAeGPbxk17XhuKoetz3B7/YAixNB+WGy7fNeu4wFCbwRCsLmXe9ZFlHhWWN
+         R5miNfDEYfKwPGoKJFn78f+87Vg0r2j+nlRI5c1C0smgn32GPHD5SIQq5HDM1sC3k+Ln
+         9lXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0ba5zX5ZFCabBrcZQlxDGzHyFDkBPJEqMAS/9CeAJeSz0tjEZxiJTPHKmFzK+0k0gb+xYMtUVWg==@vger.kernel.org, AJvYcCW1qwTlMZnDMKFemOrq2o0RrVDh4eUndYGWtehzj5MB1jrDTWIzMoM4cYk07oG4QjtTkJHhY6CI@vger.kernel.org, AJvYcCXccQoXEs7t3/WjZSWEwyMb7ih207OooioFLxVFlm3U6K629OxnECNGzvlEMqqVb8AczPX5COrztJmad9QN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN9yDMAGx6UzCsj+6TmUFXHVSs9jxdzTqFwumHc4uVDxi1bde8
+	5VpOorDYjTIdGk0i7Z2LKnfFmyjrymqP4QnLJLjvc036w/cvi2mpC/ek
+X-Gm-Gg: ASbGncvBgsodfe7g4Kh9uN8QjYJGzo/h6WqBt9ezxPvI5bXP1vwqzkhkZhxTbmt1Hr2
+	ft7bRWRqy8RdhqbcPjoLu8zEXjjXJjfx0qyVGtTaZotBZDOJ/+RcI18nUNKeMJeqMv6cFCShA6U
+	d1KAkXJ8pMLDs+FgW4co8W7FBYD3GYP6eNF4eJEWpKRlxKmN0Z18JA4uCnIOjn5UGNSnOvx0Q7v
+	sbHOgW3QItQQ0gw/Mcnsi3+Ts62FLoCVJHB/IR3POtXo57wGH6+TP7YTG9ARKBSsE8pdcwJ3TD+
+	RSGmvV+Wj3oECfOm2gPXt/9mS79GeC0wuS0YsJJGjBFlCOIaUyFWRrjV08gd0LRBDkTaJif4QlA
+	lF9RRDXg8OSztt3bDAxuXTgLiD1rcdg==
+X-Google-Smtp-Source: AGHT+IF2nSSJ1vpyZ8Q4Drk6IzqIjIiKmjZ/df6jowsqi46vTHnishqb15aL/CEwNQNCubGU2CO5Ow==
+X-Received: by 2002:a5d:5f89:0:b0:3b7:78c8:9392 with SMTP id ffacd0b85a97d-3bb67007abbmr9891260f8f.19.1755525514523;
+        Mon, 18 Aug 2025 06:58:34 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a983f7sm1150745e9.24.2025.08.18.06.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:58:33 -0700 (PDT)
+Message-ID: <9b55ae03-01b3-4a49-8eb7-b1f24e9e1ce0@gmail.com>
+Date: Mon, 18 Aug 2025 14:59:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
+ buffer providers
+To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, Willem de Bruijn
+ <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <cover.1755499375.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1755499375.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add lseek samples in Rust MiscDevice samples
+On 8/18/25 14:57, Pavel Begunkov wrote:
+> Pull request with netdev only patches that add support for per queue
+> configuration and large rx buffers for memory providers. The zcrx
+> patch using it is separately and can be found at [2].
 
-Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
----
- samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+I'm sending it out as a v6.17-rc2 based pull request since I'll also
+need it in another tree for zcrx. The patch number is over the limit,
+however most of them are just taken from Jakub's series, and it'll
+likely be esier this way for cross tree work. Please let me know if
+that's acceptable or whether I need to somehow split or trim it
+down.
 
-diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-index e7ab77448f75..991a59a3ea16 100644
---- a/samples/rust/rust_misc_device.rs
-+++ b/samples/rust/rust_misc_device.rs
-@@ -86,6 +86,33 @@
- //!     return -1;
- //!   }
- //!
-+//!   // Set a file offset
-+//!   printf("Call lseek SEEK_SET\n");
-+//!   ret = lseek(fd, 10, SEEK_SET);
-+//!   if (ret == 10)
-+//!     printf("lseek: Succeed to SEEK_SET\n");
-+//!   else
-+//!     printf("lseek: Failed to SEEK_SET\n");
-+//!
-+//!   // Change the file offset from the initial value
-+//!   printf("Call lseek SEEK_CUR\n");
-+//!   ret = lseek(fd, 10, SEEK_CUR);
-+//!   if (ret == 20)
-+//!     printf("lseek: Succeed to SEEK_CUR\n");
-+//!   else
-+//!     printf("lseek: Failed to SEEK_CUR\n");
-+//!
-+//!   // i_size is 0. So the following task always should fail.
-+//!   printf("Call lseek SEEK_END\n");
-+//!   ret = lseek(fd, -10, SEEK_END);
-+//!   if (ret < 0)
-+//!     perror("lseek: Succeeded to fail - this was expected");
-+//!   else {
-+//!     printf("lseek: Failed to fail SEEK_END\n");
-+//!     close(fd);
-+//!     return -1;
-+//!   }
-+//!
- //!   // Close the device file
- //!   printf("Closing /dev/rust-misc-device\n");
- //!   close(fd);
-@@ -114,6 +141,10 @@
- const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('|' as u32, 0x81);
- const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('|' as u32, 0x82);
- 
-+const SEEK_SET: i32 = 0;
-+const SEEK_CUR: i32 = 1;
-+const SEEK_END: i32 = 2;
-+
- module! {
-     type: RustMiscDeviceModule,
-     name: "rust_misc_device",
-@@ -173,6 +204,43 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
-         )
-     }
- 
-+    fn llseek(me: Pin<&RustMiscDevice>, file: &File, offset: i64, whence: i32) -> Result<isize> {
-+        dev_info!(me.dev, "LLSEEK Rust Misc Device Sample\n");
-+        let pos: i64;
-+        let eof: i64;
-+
-+        // SAFETY:
-+        // * The file is valid for the duration of this call.
-+        // * f_inode must be valid while the file is valid.
-+        unsafe {
-+            pos = (*file.as_ptr()).f_pos;
-+            eof = (*(*file.as_ptr()).f_inode).i_size;
-+        }
-+
-+        let new_pos = match whence {
-+            SEEK_SET => offset,
-+            SEEK_CUR => pos + offset,
-+            SEEK_END => eof + offset,
-+            _ => {
-+                dev_err!(me.dev, "LLSEEK does not recognised: {}.\n", whence);
-+                return Err(EINVAL);
-+            }
-+        };
-+
-+        if new_pos < 0 {
-+            dev_err!(me.dev, "The file offset becomes negative: {}.\n", new_pos);
-+            return Err(EINVAL);
-+        }
-+
-+        // SAFETY: The file is valid for the duration of this call.
-+        let ret: isize = unsafe {
-+            (*file.as_ptr()).f_pos = new_pos;
-+            new_pos as isize
-+        };
-+
-+        Ok(ret)
-+    }
-+
-     fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result<isize> {
-         dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
- 
 -- 
-2.50.1
+Pavel Begunkov
 
 
