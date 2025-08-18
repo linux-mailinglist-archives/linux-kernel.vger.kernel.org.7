@@ -1,165 +1,197 @@
-Return-Path: <linux-kernel+bounces-773676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C482B2A50E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27736B2A4BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20982680BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42563681EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3FC322DCE;
-	Mon, 18 Aug 2025 13:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380E7334737;
+	Mon, 18 Aug 2025 13:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TZ/7ahQ/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tu+7gXqE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A8F27B337;
-	Mon, 18 Aug 2025 13:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E633472D;
+	Mon, 18 Aug 2025 13:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522978; cv=none; b=m3T2dRu3L1rOjhqlu0ceQi2HcXucHvpKIJBWB/cOiHTy8P9olCXBzLtuV3Vmw6lCnuOcfwXhJBNgW00nZrAFltUuL0SIDjzLz+E6+nirJtNnX0ykqNDJ4QeCf0o1a1GhZae+M8xpX34oDzQrV41TBJdPF6o0MKcDDTrQBRz1Pvc=
+	t=1755522939; cv=none; b=YFAB5SiS59+7a8PLS048J1VnkeyKknGSSViYBtRb9nnZ4FQtEQnj6qJMLkJD7hVzvtyXrK4rYSsL1XaRKHhM6xMOIVdrW+oFd1MfrFcFsAfo8TH9NUZpLVP0epjmE7FGsl6tW4PnFifuUtRNIxTAQndVrA+hhmA3zO3/+zNrqHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522978; c=relaxed/simple;
-	bh=KiDPy1cxOdeELjnRkJDjki4GEmLdwlakrZkevLJOoHI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nqyvIjkkPN1BDezfzp5L36ytqcxtSX58iSyQqHCUhjNbCvBIMRUyWY7NXsvy/InxdvOTVEismyZVoBxFCSM7aynMOKPhw0/tCJmO9ZDdNw96qV38ONaXAvuFZX8G7dzdv6Z70nPZoN3Rnh7rlawwKIEBFB85S6N3CvZ+mb6Uj/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TZ/7ahQ/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8tIoF023680;
-	Mon, 18 Aug 2025 13:16:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o2zBJ1kF8rqlydRWoZr48MXsVk6ZGhBtWvLOFfPakRs=; b=TZ/7ahQ/6C6EQeNs
-	2Dp4YcV760dkOWlhuPlxCx1883IIsdu2FOikw4hEoHT/sIPEcNeWcFvGUOJAxc19
-	nyuwRAy02zi0cq1/E7+rh+ewwU8SiZvqSXlVSxS2SkrVF4jDUQP2qZtfYD6P9F/Z
-	l9oJBE/mo+IOK7IAtDrlL5WiSW2qKKGJhdC1OSpPAWFtwAjOqBsm8ylSu7jS2PHx
-	eEz1Dt1EzGslx6VKDDJVCDw4MUl4W6/O6C4Kot+CLcSjYkzxhC2jCne1uR+BTtmI
-	0MFYc9lBxhsKJ9i9UrJvMg73GVecP7T/6XgelYn22NziOWEOSGKWxICsmTivqrwA
-	nQRIpQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jk99mp6m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 13:16:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57IDG6aL002890
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 13:16:06 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 18 Aug 2025 06:16:01 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Mon, 18 Aug 2025 21:14:38 +0800
-Subject: [PATCH net-next v8 14/14] MAINTAINERS: Add maintainer for Qualcomm
- PPE driver
+	s=arc-20240116; t=1755522939; c=relaxed/simple;
+	bh=mLd7BZogqKcenILnPCzuRX50DR7oIy0Az02q9N/0AGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHzf+m1OssPYN77+ILGIpyYEAqES5VXHsAkxYwfIby89iAStPWNTwLLokKrAehFOjb+MoVpDyxnwP8NtauKw4DdWA5kninLFCMA2Qm75vfbgGgX3DcK7vb0u8wBdfiZMi9QLU1zU9VN7om3aFcUT4vdELQt92gyyViNZ+gmNn/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tu+7gXqE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E2C671249;
+	Mon, 18 Aug 2025 15:14:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755522879;
+	bh=mLd7BZogqKcenILnPCzuRX50DR7oIy0Az02q9N/0AGE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tu+7gXqEIdN9xZeZ/GM9Ce2Sf2/dCS6rSTP9l4dP+zgHdqkeEazgH6Uaxk7wXhb6Q
+	 bWg8e87DRKgFwAVU60wbf0ocILyCxvld9ABPUQHCSVlnrTDtG8MmVXGpN/96HXOgvt
+	 2X/hpIWd1tqPNeFLdnOPEfZWirn4WQpH0Uwys2d4=
+Date: Mon, 18 Aug 2025 16:15:14 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Andy Walls <awalls@md.metrocast.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] media: ivtv: Fix invalid access to file *
+Message-ID: <20250818131514.GE5862@pendragon.ideasonboard.com>
+References: <20250818-cx18-v4l2-fh-v2-0-3f53ce423663@ideasonboard.com>
+ <20250818-cx18-v4l2-fh-v2-2-3f53ce423663@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250818-qcom_ipq_ppe-v8-14-1d4ff641fce9@quicinc.com>
-References: <20250818-qcom_ipq_ppe-v8-0-1d4ff641fce9@quicinc.com>
-In-Reply-To: <20250818-qcom_ipq_ppe-v8-0-1d4ff641fce9@quicinc.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
-        Suruchi Agarwal
-	<quic_suruchia@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook
-	<kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>
-CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755522889; l=898;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=KiDPy1cxOdeELjnRkJDjki4GEmLdwlakrZkevLJOoHI=;
- b=o/jAb7n5ltBInNmpH4KYTMHYeLmqQnsrkz5K5Oqr72c6AaNLVzal5YbgrlpLgWweagOcHBfKT
- NvpxV/nbz1/BFr+L0Qo2sOAponmU9jM3XlTEijv3DBEfNi/Q9tJfdIN
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4wWyHXU2LbcfTCbT92riSnDsgkgBZ0Zk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDA0NSBTYWx0ZWRfX7H8oWu8zgt2+
- tB4Ngx9NwTlnweEq3/oJzlzVBAamSGuyfzc/tDFtWGj6+Z6ps7oeJbd/HHSLZsmxU+6h88DBPcp
- pMPqrsJXrmbn3iGimr2GmGDsxZgH9WxwjsgaFkGy3JzUM3+9W0sN87JldDBg52QbgLY2Qrkwy/B
- D14VeYAk0kUXLX5sOhztC5UHnheP9aLe+F2DHqx38jJ7fgLFWkf8ixswVg3zKOraZxMUieJKrj3
- urv7KAXZpskQi4sjiTpnnw4GcMcZt/vlno8DdddLSLf+7+JE+HxHGEFPUITCiRzO2zJzlW5Zb/l
- BplmwenUEt6AvKk4CdAloE9iLiHeyhiUhqvXslMS4uVH9TWdO21h2B4AW3QColb3C+NX1SYjR9G
- nIZzyH/b
-X-Authority-Analysis: v=2.4 cv=IIMCChvG c=1 sm=1 tr=0 ts=68a32796 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=-_PooAnB-Ua2z9syxaEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 4wWyHXU2LbcfTCbT92riSnDsgkgBZ0Zk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 clxscore=1015 impostorscore=0 phishscore=0
- adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508160045
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250818-cx18-v4l2-fh-v2-2-3f53ce423663@ideasonboard.com>
 
-Add maintainer entry for PPE (Packet Process Engine) driver supported
-for Qualcomm IPQ SoCs.
+On Mon, Aug 18, 2025 at 03:06:36PM +0200, Jacopo Mondi wrote:
+> Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> all ioctl handlers have been ported to operate on the file * first
+> function argument.
+> 
+> The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
+> needs to start streaming. This function calls the s_input() and
+> s_frequency() ioctl handlers directly, but being called from the driver
+> context, it doesn't have a valid file * to pass them. This causes the
+> ioctl handlers to deference an invalid pointer.
+> 
+> Fix this by wrapping the ioctl handlers implementation in helper
+> functions which accepts a ivtv_open_id pointer as first argument
+> and make the ivtv_init_on_first_open() function call the helpers
+> without going through the ioctl handlers.
+> 
+> The bug has been reported by Smatch.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+>  drivers/media/pci/ivtv/ivtv-driver.c |  4 ++--
+>  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
+>  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
+>  3 files changed, 23 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+> index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..bcbb03271047df9b127039759dbfefbaae67f9c3 100644
+> --- a/drivers/media/pci/ivtv/ivtv-driver.c
+> +++ b/drivers/media/pci/ivtv/ivtv-driver.c
+> @@ -1310,13 +1310,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
+>  
+>  	video_input = itv->active_input;
+>  	itv->active_input++;	/* Force update of input */
+> -	ivtv_s_input(NULL, &fh, video_input);
+> +	ivtv_do_s_input(&fh, video_input);
+>  
+>  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+>  	   in one place. */
+>  	itv->std++;		/* Force full standard initialization */
+>  	itv->std_out = itv->std;
+> -	ivtv_s_frequency(NULL, &fh, &vf);
+> +	ivtv_do_s_frequency(&fh, &vf);
+>  
+>  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
+>  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> index 8077a71d4850ec773caa20c3fca08f92f3117d69..ba1fce42a8d6d7d9a3779bfc9dfd310060e61103 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> @@ -974,9 +974,9 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+> +	struct ivtv *itv = id->itv;
+>  	v4l2_std_id std;
+>  	int i;
+>  
+> @@ -1017,6 +1017,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +{
+> +	return ivtv_do_s_input(file2id(file), inp);
+> +}
+> +
+>  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> @@ -1065,10 +1070,11 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> +int ivtv_do_s_frequency(struct ivtv_open_id *id,
+> +			const struct v4l2_frequency *vf)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+> -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
+> +	struct ivtv *itv = id->itv;
+> +	struct ivtv_stream *s = &itv->streams[id->type];
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Same comments as for 1/2. Additionally, you can pass the ivtv_stream
+pointer to this function, either along with the ivtv pointer, or alone
+as you can access ivtv through s->itv.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4dcce7a5894b..aaa306b6b582 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20836,6 +20836,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
- F:	drivers/power/supply/qcom_smbx.c
- 
-+QUALCOMM PPE DRIVER
-+M:	Luo Jie <quic_luoj@quicinc.com>
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml
-+F:	Documentation/networking/device_drivers/ethernet/qualcomm/ppe/ppe.rst
-+F:	drivers/net/ethernet/qualcomm/ppe/
-+
- QUALCOMM QSEECOM DRIVER
- M:	Maximilian Luz <luzmaximilian@gmail.com>
- L:	linux-arm-msm@vger.kernel.org
+>  
+>  	if (s->vdev.vfl_dir)
+>  		return -ENOTTY;
+> @@ -1082,6 +1088,12 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_frequency(struct file *file, void *fh,
+> +			    const struct v4l2_frequency *vf)
+> +{
+> +	return ivtv_do_s_frequency(file2id(file), vf);
+> +}
+> +
+>  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..7c91b8963b420761c2afcab1dece4d19a4ec0322 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> @@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
+>  void ivtv_set_funcs(struct video_device *vdev);
+>  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
+>  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
+> +
+> +struct ivtv_open_id;
+> +int ivtv_do_s_frequency(struct ivtv_open_id *id, const struct v4l2_frequency *vf);
+> +int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp);
+>  
+>  #endif
+> 
 
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
