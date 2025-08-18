@@ -1,172 +1,160 @@
-Return-Path: <linux-kernel+bounces-774021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96792B2ADC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28783B2ADC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C03C626F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56832680315
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB5F340D8F;
-	Mon, 18 Aug 2025 16:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QjnHGDAz"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D0E322C78;
+	Mon, 18 Aug 2025 16:03:40 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E1D307AD4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CE6255F28;
+	Mon, 18 Aug 2025 16:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533011; cv=none; b=pIFAsc2gO3PZ2HrazmaCdc0h2qdQC/JtsYshDBDMLg67An8AG2IbmLblmk8PIF38OWwDsUy9Wm92UW3QfQGyY2KZibQmWogOrrPLk1hm08A21XUctX6dHY/r3qqBsbHIM3bRbo/KEVCXTQ3hZvzAWubBtu3qAYak9F3CldaodsM=
+	t=1755533020; cv=none; b=ludwmgvVsDKXVMRCerxoTJKaU1FgqTgpF8ZTboAW7NwrvrRIClblvVc4JzDRBthuKpbZiyV7R1mK6viXy/iKtKOuGjLK3pn7nt9+NHUY9steMlc/Id8o71R+q1fiad6rcgzUooFwwE8qnjvVU12uh1OpLVjqMUXHtd13UxCKjnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533011; c=relaxed/simple;
-	bh=C5r0WHOtFObLFpKCMhNyDDNdrXKyoewOu/87RMDqYBA=;
+	s=arc-20240116; t=1755533020; c=relaxed/simple;
+	bh=xyfdRNQ9wOGdGfyWnM7p+9yHlJfRgUR40bWdHshNDl0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fH91m3DCoYEcptKcUCekeseLW8TliCW/YGCH58Ctuv+ZZzbI4itzT3ygrqbhl+kvZd2PSe9fd8qi5XciQf0Vqo09Z0T4WwQdDrCHdy1x55rNFWJ5mvIoBVQd0adMkB+jorTZ9lTpG9p7B6lgDjAFNfQfRyXCOJezE8VwhtbeIcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QjnHGDAz; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-242d1e947feso387505ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755533009; x=1756137809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vy6Ekik4wtxdU/sGrdmJ5Z/mbLCDvKAO6pGEYg8MRYc=;
-        b=QjnHGDAzl+nxno+dqXnshxozgbcrgdgg3zUKEeC8r//WaltXZRe3ZwwbjGTdr3wCft
-         GJ9MXT1LkSZhoC3aVHd01s76cvrwcUYCYiI4C9jXqnVeuaROGA+PXPrZ6BgxPPrX8dzO
-         QYON+QwkBZyYaY5eamMzQMvM9nWjE4L2OjmSlCLLBzZPHMYeGlcbNkOXimwuo+TvdDAn
-         z0ZuQjDAq9c8yjJDZBQmsL8lud7Q35pb8vzvbtPj/goEzDgQOw6Td88axLsKTmJwBSsy
-         IWEqGt076VZNF5p4rBFs5SGKXxf6ywgUWBUBJFeeCCTovXTRu+v3J02zdYWL4u/oLief
-         8EKw==
+	 To:Cc:Content-Type; b=Gy4gsxyjOraRZDhBGQ4P/ZPL7U2k+d/veC9wCaKPK/nj9igTLOxwVifRf9QiVmdLibTqhIxHd1i66vuX7YqVW9RV8YC9nXm480ithVHMiAKyBEuHUsnYFbbfxyObDuuRyMeN7gKBGSFjsLgIbf3DpIcTe8wroBO2g/hrVcvU9pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-53b174f7cf0so3030270e0c.2;
+        Mon, 18 Aug 2025 09:03:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755533009; x=1756137809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vy6Ekik4wtxdU/sGrdmJ5Z/mbLCDvKAO6pGEYg8MRYc=;
-        b=GIqzQwL1vQD5msdssd3EZiMfpLMqHFySnANplMr87G+CH1+0S867WxJq4Grxt4/aWq
-         HegS/Ob5z57338TtQL49w9HY38pSy+/heTK0D265ZMzMLzml/sZDn8OOS6Z273qibsce
-         RrW1ayzPRrnUiq9QK9ThsqZEIfYJo6sEz/0qq2+ZIDku90GLhW4R6yQ1KLWgxqEcdKh5
-         PwsorfNYxl68PWQOANH5cmkYCNyUoQlBpXD2HJxgWkNIdvI1hmuj2Sm1d5kTunP/Z3Ix
-         HNxUVDh7n4iuxli207smeviNY5D/X7+7DCD6aaYCrh+31RUk9adXvRRgQVV9Q9Uv6CUI
-         TMZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPhqqSvtTm9ajLqF/fVHblFnEBZrffu6h04EL4bOqKyRzw+sg2neuVJ2MFtlJJMMLz+XelDtUKkfxYrAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU7iMKz3KhsQqpD3G81TNw1RIjtjsjCe0IPMsp1tG8OllL8LNO
-	4yeRH2/66chx6yTg5oigM1OJMnQKueQkZos9ojUebN3DqFMdgi2HCxqloi+I5LvGjAsNBUG9Z5D
-	7uxnnNqJOuyky2dwc6GTcTdqE1nvHPIY7VVLBB0FK
-X-Gm-Gg: ASbGncvnxyoBI7UB3k2ETsVS+sXv0uMZYI2YvBLAd9mCvcAoU7bmMqHn+2iL77vTAou
-	pHLpVYQGbg5yyXxhvkTC98KgkVe23EVcm8nOVZDFAt3Q/3OUFCduvvl4CqwJoKuqH8B8/VbBkUG
-	eMvTEVYHfzayRnfzG2Kovb1170r6mG1AmCvqnSUbgFMzmuRxDU/Ra+jjsV1k3x0DkbbJIGvUgEO
-	Fr2Fmp08gZzqBTYT3Ho0K6ildr1w58hdgB3PKYpyNM4kSY=
-X-Google-Smtp-Source: AGHT+IFveFdgcbnAa0xdAeel5El0U/UpEV28fWYRdt1wjZXR/9I3EHWlOUiuyZoLjhTOw+/kwb0Rj4OlzWrWcdRxPtw=
-X-Received: by 2002:a17:903:2302:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-24478e4ace3mr6846525ad.8.1755533007752; Mon, 18 Aug 2025
- 09:03:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755533015; x=1756137815;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dz6yNhmiJ0lVb3itTQpXkImGCQB1PaG43nCPS3Jgfts=;
+        b=kPu08DEtku/yGKklItZtFCvZvX6WL/3uX4Lkz/MExxiweWkFL9Ocl/HvZRddDZi0UT
+         WlmiAiPVo0eD1g65ymebH9ZVl2fZ2k52o5J4whrpYCIKA10/GwqngvLBLJlwKK7fzmEQ
+         j+yIXdMiAuVAvjyr+EnGmC/9Hmd1yujlCjcVk4atjyvIrHNJBC9APZ5e/BGSJIZ/QY3A
+         6RAb2qXXEG3iQV+1qslRGDbPsW4BkIY+eBW6qKxQEn2fQ4IIQ7i2IWY9rUwJ0KvOxn4p
+         G3vcKhjZ3REx3sQ65xc5YSwyl8w7+XT/0oYjgr6ixep60yD00BFwM/CyJHiplCf3HHKi
+         Vs8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUouimGbToOmg0EyiyLrOISk1S6SHIOihmInEDHILFjdVZvb0b2r2DoyVmQUq905ngZDZtNWTpCjqAh@vger.kernel.org, AJvYcCVmA2SRfaN0F4Rw9YwGeAtea8v7TDPS0Y0aWhS33DfRIYRcG+UZ7EhlO6gdsttX2ZF/ZrdEKP6mYllFOxlKs7GiQCM=@vger.kernel.org, AJvYcCWlyLuws5CfN7YR2/WYWaJMICGgMZn13/aEHeBhMK5HFY22yzsHe7i9zHm74RNZ2VTP5ZowE7ruoKotTbBK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3x/IwFXdEl14As6j3YhBnYAPnM7g1ygXmIIC+axkQB1j5DQDa
+	lvt9JiO53QKxfHqq8p8KdzIYxiXn2Ak7fzHJL0ECmbkcbmdb9qzVE0DbJhv+dPHz
+X-Gm-Gg: ASbGncso3/Ry2C7nvPzeBs0WU6FaysgaD94gEwuEjocBUVK08/AWKmSuTIJyVDUvBxg
+	pknxzbTrxm6eWWxzjEZJS5WS4BmxnCbh+YMVA5jQBHKARnzJdr4UyjzipZHqPzcw3mAwvgk8o6y
+	muXSMbAnAxL+gvSfHdszBMxpnPSDOUEHyrArutNVnJ/Tyt/LEhPwA5JbR66wcWMThaZrOAN+AsZ
+	GxHaLSzoGAmXVT76LI3UiCUTMEn6CCfIP1Jy8bmqv0Di41FD4DL2W9iRkhBIJbdkHXCKWd18M1h
+	A2kq0cG7oVCmRhuT17cifK/5s5FEW32nTyIGy3C8TlyJmvO0JVCNBeyJs5FO5KrXSFOTx/jB+iD
+	Y1UtANKGfETqYrvUEW+b947trB4auQ1XHSP5VxcbwlhDiqRUlAik2R4cRxAAg
+X-Google-Smtp-Source: AGHT+IFLs+6/xq3CfEpeMZWLac0ZWV87WUFUiE4yZPoGVqkC9rcNY2lGxbVXgqrQw1OirqO9Y59jNA==
+X-Received: by 2002:a05:6122:8c6:b0:534:765a:8c3c with SMTP id 71dfb90a1353d-53b2b76a0afmr5033812e0c.5.1755533014987;
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd5514csm1938225e0c.6.2025.08.18.09.03.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-89018fdf5a0so3080029241.1;
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDU0xS1+ttDu2tl+wT3rQXkcF9DsNNvbvT3PA02nFnHtjsHyW33glQaa8uEjyyazXO3FgYu1/iRR4ZMRFEpcc3f7I=@vger.kernel.org, AJvYcCVz6pj7TlG084rqMXNr5fwzrPdaWGDYFKZT+lgKoe9vkDWwrbkuwZRJqQEwvtXhmg1y20gEKaFuirzk@vger.kernel.org, AJvYcCXkQ/046f1mr7IhpRGSb4O2mBuapGGpybBCUZZkzMTTskmwczVxZnWitNhy6HQEQ8WGS8RL0uUfwfCmzNo4@vger.kernel.org
+X-Received: by 2002:a05:6102:a53:b0:4e6:f7e9:c481 with SMTP id
+ ada2fe7eead31-5126b10e52bmr4914294137.7.1755533014567; Mon, 18 Aug 2025
+ 09:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626054826.433453-2-irogers@google.com> <202507050736.b4hX0Xks-lkp@intel.com>
- <87o6tcrzh2.ffs@tglx> <CAP-5=fWbmo3ejmeWbweSk5waPtS2VTc1obtaWiibZC3cVmvVvg@mail.gmail.com>
- <CAP-5=fWeK4RnL8=BQm3o3u0KoONYEptwEYFBC5_DkJTbgpbx9g@mail.gmail.com>
-In-Reply-To: <CAP-5=fWeK4RnL8=BQm3o3u0KoONYEptwEYFBC5_DkJTbgpbx9g@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 18 Aug 2025 09:03:16 -0700
-X-Gm-Features: Ac12FXzxrkQN2qF-Ga-gtgg0Fff-w28PrY7z1q2GVj_JWSudKFY9dllqpgV61kk
-Message-ID: <CAP-5=fW=tWLwLoozZfVHQ7QgKS3ACf0_LxztGcs5mhpAO23sww@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] vdso: Switch get/put unaligned from packed struct
- to memcpy
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel test robot <lkp@intel.com>, Eric Biggers <ebiggers@google.com>, Yuzhuo Jing <yuzhuo@google.com>, 
-	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 18:03:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVx2_D=B=UHWjwL3dk+jO-85HrYyoiA4SV15xiRQYRt6Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzp5dE-fnt9Gs99h43L_XyP0JhWgde5mQ1-qcSrAXuvIIToag4FSJZsG20
+Message-ID: <CAMuHMdVx2_D=B=UHWjwL3dk+jO-85HrYyoiA4SV15xiRQYRt6Q@mail.gmail.com>
+Subject: Re: [PATCH 13/13] arm64: dts: renesas: rzt2h/rzn2h: Enable SD card slot
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 10:00=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
+Hi Prabhakar,
+
+On Tue, 12 Aug 2025 at 22:04, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On Tue, Jul 22, 2025 at 9:44=E2=80=AFAM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Tue, Jul 22, 2025 at 8:56=E2=80=AFAM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> > >
-> > > Ian!
-> > >
-> > > On Sat, Jul 05 2025 at 08:05, kernel test robot wrote:
-> > > > kernel test robot noticed the following build warnings:
-> > > >
-> > > > [auto build test WARNING on linus/master]
-> > > > [also build test WARNING on tip/timers/vdso v6.16-rc4 next-20250704=
-]
-> > > > [cannot apply to acme/perf/core]
-> > > > [If your patch is applied to the wrong git tree, kindly drop us a n=
-ote.
-> > > > And when submitting patch, we suggest to use '--base' as documented=
- in
-> > > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > > >
-> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Rogers/v=
-dso-Switch-get-put-unaligned-from-packed-struct-to-memcpy/20250626-135005
-> > > > base:   linus/master
-> > > > patch link:    https://lore.kernel.org/r/20250626054826.433453-2-ir=
-ogers%40google.com
-> > > > patch subject: [PATCH v3 1/3] vdso: Switch get/put unaligned from p=
-acked struct to memcpy
-> > > > config: s390-randconfig-002-20250705 (https://download.01.org/0day-=
-ci/archive/20250705/202507050736.b4hX0Xks-lkp@intel.com/config)
-> > > > compiler: clang version 21.0.0git (https://github.com/llvm/llvm-pro=
-ject 61529d9e36fa86782a2458e6bdeedf7f376ef4b5)
-> > > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci=
-/archive/20250705/202507050736.b4hX0Xks-lkp@intel.com/reproduce)
-> > > >
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a ne=
-w version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202507050736.b4hX0X=
-ks-lkp@intel.com/
-> > > >
-> > > > All warnings (new ones prefixed by >>):
-> > > >
-> > > >    In file included from arch/s390/boot/decompressor.c:48:
-> > > >    In file included from arch/s390/include/uapi/../../../../lib/dec=
-ompress_unlz4.c:10:
-> > > >    In file included from arch/s390/include/uapi/../../../../lib/lz4=
-/lz4_decompress.c:36:
-> > > >>> arch/s390/include/uapi/../../../../lib/lz4/lz4defs.h:109:9: warni=
-ng: default initialization of an object of type 'typeof (*((const U16 *)ptr=
-))' (aka 'const unsigned short') leaves the object uninitialized [-Wdefault=
--const-init-var-unsafe]
-> > > >      109 |         return get_unaligned((const U16 *)ptr);
-> > > >          |                ^
-> > >
-> > > Any update on this one?
+> Enable SD card slot which is connected to SDHI0 on the RZ/T2H and
+> RZ/N2H EVKs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Thomas,
+Thanks for your patch!
 
-I sent out a v4 patch set:
-https://lore.kernel.org/lkml/20250722215754.672330-1-irogers@google.com/
-which has no bot complaints but also no reviews. It side stepped some
-of the challenges by always operating on pointer types. If people
-could PTAL it would be appreciated as then we can pick up the changes
-in tools and drop:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/commit/tools/perf/Makefile.config?h=3Dperf-tools-next&id=3D55a18d2f3ff79c=
-9082225f44e0abbaea6286bf99
+> --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
 
-Thanks,
-Ian
+> @@ -104,6 +116,35 @@ sd0-emmc-ctrl-pins {
+>                 };
+>         };
+>
+> +#if SD0_SD
+> +       sdhi0-pwen-hog {
+> +               gpio-hog;
+> +               gpios = <RZT2H_GPIO(2, 5) GPIO_ACTIVE_HIGH>;
+> +               output-high;
+> +               line-name = "SD0_PWEN";
+> +       };
+> +#endif
+> +
+> +       sdhi0_sd_pins: sd0-sd-group {
+> +               sd0-sd-data-pins {
+
+No need for repeated sd0-sd-prefixes in the subnodes.
+
+> +                       pinmux = <RZT2H_PORT_PINMUX(12, 2, 0x29)>, /* SD0_DATA0 */
+> +                                <RZT2H_PORT_PINMUX(12, 3, 0x29)>, /* SD0_DATA1 */
+> +                                <RZT2H_PORT_PINMUX(12, 4, 0x29)>, /* SD0_DATA2 */
+> +                                <RZT2H_PORT_PINMUX(12, 5, 0x29)>, /* SD0_DATA3 */
+> +                                <RZT2H_PORT_PINMUX(12, 6, 0x29)>, /* SD0_DATA4 */
+> +                                <RZT2H_PORT_PINMUX(12, 7, 0x29)>, /* SD0_DATA5 */
+> +                                <RZT2H_PORT_PINMUX(13, 0, 0x29)>, /* SD0_DATA6 */
+> +                                <RZT2H_PORT_PINMUX(13, 1, 0x29)>; /* SD0_DATA7 */
+> +               };
+
+SDcard uses only DATA0-3?
+
+> +
+> +               sd0-sd-ctrl-pins {
+> +                       pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
+> +                                <RZT2H_PORT_PINMUX(12, 1, 0x29)>, /* SD0_CMD */
+> +                                <RZT2H_PORT_PINMUX(22, 5, 0x29)>, /* SD0_CD */
+> +                                <RZT2H_PORT_PINMUX(22, 6, 0x29)>; /* SD0_WP */
+> +               };
+> +       };
+> +
+>  #if SD1_MICRO_SD
+>         sdhi1-pwen-hog {
+>                 gpio-hog;
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
