@@ -1,271 +1,116 @@
-Return-Path: <linux-kernel+bounces-773928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D693B2AC78
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A62B2AC7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D6216CA3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42751702F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48261254AE4;
-	Mon, 18 Aug 2025 15:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137D9248F72;
+	Mon, 18 Aug 2025 15:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYWCd55x";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cRz4Sfdg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYWCd55x";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cRz4Sfdg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DRWiZ4Hh"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F20E253B40
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F1524886A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530134; cv=none; b=dOQtvtfYyIYXMoJvadmb9srM9GG9PdI+X87FjZNuN6ErFFP1wL9XH5qAdwKbqS72+n59CPKhWfpKzc7UPnFXMDNaW2R76lOsA81Ky9Y6n8dBo11x48UW9osWOH0iYq9ZbvRfLQtWQZ0LHFOMw/DhrSq5ei0l0x66/ahm9TNFF4g=
+	t=1755530187; cv=none; b=fVBsBMFZu7Hd81t/nB5v7v3vwr7SBY1UXdj9/nfRCYsB799BI0VhmmpBp/Z9I2lyoR9BDNdHFKqk3uq70d9CfAMinbl7BAWbmLR0Ik2hxdyBwph2zGcYTFW+SMkuZ0YERZZTCUchhl6oSA+y5ADyL+Zje2c6F+9Tij2oJDBu/Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530134; c=relaxed/simple;
-	bh=/DEWLfNZmTeQoMapMuFwvgUXML/vKMdXW8QhW0BLYj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3CuRLvBeWl5D7PMg51NkrGclL7HTaixkIr+ou4Ia2FIYe7KvdIS9xzdS4xJJcIcaUIAxOfAfFmukCGhoEY+/qgYek7gHjkxx1dRtpUFIrgw/Qi32lu5HmVgCsOg6ocMsKpfS5cnBUyDG6bFdrCsx0Lq6GAr4mRQxaIGqiZJKc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYWCd55x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cRz4Sfdg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYWCd55x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cRz4Sfdg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3D3F921747;
-	Mon, 18 Aug 2025 15:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755530130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
-	b=RYWCd55xZLaZONp7prQ3mH50rrSmh1QQtWKv8V+nio8tdSTQHXRYh5PmwpFl+N6Sy1VF1o
-	6/FwfAZVGfp10PzYPSASQb5xyjxFZQ25Uj/hj8ncNTItLzbECMxocBfjmaajynAtHbiA69
-	pa3y1YcBYek9CeYfJ1h/YLd6G+S61Qo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755530130;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
-	b=cRz4Sfdg3ADJWsIAuK/dNAM76hCO7xUoz0dlG2jiVqh6Wc/l+ztT9xi9RMEEyprkCUOI7C
-	MlLhzOZY5szA5pAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RYWCd55x;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cRz4Sfdg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755530130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
-	b=RYWCd55xZLaZONp7prQ3mH50rrSmh1QQtWKv8V+nio8tdSTQHXRYh5PmwpFl+N6Sy1VF1o
-	6/FwfAZVGfp10PzYPSASQb5xyjxFZQ25Uj/hj8ncNTItLzbECMxocBfjmaajynAtHbiA69
-	pa3y1YcBYek9CeYfJ1h/YLd6G+S61Qo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755530130;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
-	b=cRz4Sfdg3ADJWsIAuK/dNAM76hCO7xUoz0dlG2jiVqh6Wc/l+ztT9xi9RMEEyprkCUOI7C
-	MlLhzOZY5szA5pAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D549C13A55;
-	Mon, 18 Aug 2025 15:15:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vDi1MpFDo2jXLQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 15:15:29 +0000
-Message-ID: <7a470b3f-fc20-476e-bc97-be9008d5aeef@suse.de>
-Date: Mon, 18 Aug 2025 17:15:29 +0200
+	s=arc-20240116; t=1755530187; c=relaxed/simple;
+	bh=5l8fao5tyyCXjqpBW/epFwUkG6rVSrLdqtcUPVUunrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L8vbUyQvs4Qgxm4gbN8lpU+maW5pXW9Eop9mVKpUGH1RWB4mAlL7Ggewf+rqiXPrc3zEt3IPD+OzgmgKpoeyukx16SXxoHIcCg6CUCojSm/qM5eR427ZZXk2GfydX3uLxdDcCngADa5sFGRoWbZJT2oa4injx/TB7UWgFpxuSK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DRWiZ4Hh; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-333f8db5aedso30982851fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755530184; x=1756134984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5l8fao5tyyCXjqpBW/epFwUkG6rVSrLdqtcUPVUunrE=;
+        b=DRWiZ4HhajMQipwt5VgmjcjbAgFaTzu5dOHCeOm8wgz+TuTymCz3Xvd/uvYowflnks
+         lrPUb9WpvXqwR2eiUgXD5DaILJHL4ll0yk6n9E51imjvtNfsB6+jHcm9+7OZtJAtZgPY
+         v2WS/ZTXfyu44y6w6+91J7nIHXoSwE9AIFXhyiUDxpghkjtNSil9+/471Z2jN+wHjS4W
+         ZgRcyuG63jZ5CdapfpZhecMM7MLaqO3g1pupwEtO520OXuyVXOiKUTgTROGD/9Qmmr4Z
+         bSfSz6+4OiGUSVq2oSXg2mgsM2DKZa0W0ImYEG/fiVKnJFiZ00+eOT6IC10/IYlEpyrA
+         s+Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755530184; x=1756134984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5l8fao5tyyCXjqpBW/epFwUkG6rVSrLdqtcUPVUunrE=;
+        b=NpdH4SD309oTPDOKQJIrGOIj+qoPPWzYfc6VCe+Gw4MRfKsBQwrPbD3sggTb5wvUyI
+         jqcQY9lm7YWb87WInZS8GUfqIGRUYsjMLNoCKFLrtU4lu9FfIH7FUIycGrvUgoEjO3IX
+         orxz/O43BNDPB6trKS5h6AICFNfamf6F+hjDwnJdk0ragSQgx38VqR8j2GZJOQvyzJBR
+         5T4hfmXLM/mjS7K6p1Tkc23HEcWd4UdyAYNVCMjTlrHly4olW7UUnXNbmpPnRXUQV+Fx
+         QqYaCt9kfveWb0LCQJkvDfW1H94kK8UEUf850oE6j0ObyhSQww+JtB8XzS4OqQAnDbBp
+         4EcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlwPe1r35J6kBsxoKBMAWSpSm8Q4UHqBU+FMKfNeXz8P+/L3ndoC9txxYN0qPv7CyF4+h+BHHCHvNtTXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9MXL5JlGtOhV94pF1EHv9y+NAGm+Bxj5XSW75tlhk2v7LLivr
+	V8fN5FaJiaguXY0isibOTLukUyLxPIqINq44d/biWZKiBEvIydDJLK6ztUPhBzWBxVKV4/ciUQ7
+	VD0NoKGS3zQJt2BJsNa5jqJrGOgEM0TsqYGvWvgG49A==
+X-Gm-Gg: ASbGnctkz1+dBAe3GEhD+je+t1lJi2800i9yzKVIzLJgi1elfLM9hYPcgWQ95wsbdlN
+	blef/reVuB8aqH0dMqHCDz3mfGq3oXrTUma28v425/csZ5RT23iT6ADVykduQOWp2YuV+BwBwqV
+	KGFUL7TzZCbIFtrGyom1JVQfSIHHLWuaR43lB6h8FdnpsBrpLkBMTA6pri1cHZGv5aSsP8Me1NH
+	l7t5iw=
+X-Google-Smtp-Source: AGHT+IGzqxCnqLVvPxKCko2DlB85KniY6TF5HHlMzLUiXgvNhvXoucfmnrbgjKUH/ALtayc9hnqKx6ybbX/dLc1uNDE=
+X-Received: by 2002:a05:651c:198d:b0:332:4528:c0e0 with SMTP id
+ 38308e7fff4ca-3340996011cmr37441011fa.32.1755530183649; Mon, 18 Aug 2025
+ 08:16:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: Pin buffer while vmap'ing exported dma-buf
- objects
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- sumit.semwal@linaro.org, oushixiong@kylinos.cn, alexander.deucher@amd.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20250818084148.212443-1-tzimmermann@suse.de>
- <6f409954-2e01-4e87-b8b7-5688bea837f6@amd.com>
- <7c2d8894-7eb5-4c86-a80a-935fcf24ef83@suse.de>
- <6cb1d152-898a-4cc4-a086-44d85cf7a24d@amd.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <6cb1d152-898a-4cc4-a086-44d85cf7a24d@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 3D3F921747
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[amd.com,linaro.org,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com> <20250801-mtk-dtb-warnings-v1-7-6ba4e432427b@collabora.com>
+In-Reply-To: <20250801-mtk-dtb-warnings-v1-7-6ba4e432427b@collabora.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 18 Aug 2025 17:16:12 +0200
+X-Gm-Features: Ac12FXxjGtIqn77Wg-HXxURZEtSYdu71ByUfcWhpILl9XIWrUY16-cZaSQJoAaQ
+Message-ID: <CACRpkdZpUhPERPFvNTwormrqz-H-5VUDaOrRQQ2ap+Oe6YN2Qg@mail.gmail.com>
+Subject: Re: [PATCH 7/9] dt-bindings: pinctrl: mediatek: mt8183: Allow gpio-line-names
+To: Julien Massot <julien.massot@collabora.com>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>, 
+	Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev <eugen.hristev@linaro.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christian
+On Fri, Aug 1, 2025 at 1:18=E2=80=AFPM Julien Massot
+<julien.massot@collabora.com> wrote:
 
-Am 18.08.25 um 15:23 schrieb Christian König:
-> On 18.08.25 14:46, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 18.08.25 um 14:40 schrieb Christian König:
->> [...]
->>>> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
->>>> +{
->>>> +    struct drm_gem_object *obj = dma_buf->priv;
->>>> +    struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->>>> +    int ret;
->>>> +
->>>> +    /*
->>>> +     * Pin to keep buffer in place while it's vmap'ed. The actual
->>>> +     * location is not important as long as it's mapable.
->>> Yeah, exactly that won't work here. Most of the locations are not CPU accessible.
->>>
->>> You could use AMDGPU_GEM_DOMAIN_GTT, that should most likely work in all cases but isn't necessarily the most optimal solution.
->> No problem about that, but why not a bit more flexibility? When udl copies from the buffer, it is likely pinned to VRAM.
->>
->> A bit mask of _CPU, _GTT, and _VRAM should work fine. The other domains are probably irrelevant for our use case.
-> The problem is that as soon as you pin into this domain you get an error if you try to pin into another domain.
+> Add support for the 'gpio-line-names' property in the MT8183 pinctrl
+> binding.
+> This allows naming the GPIOs, which is already done in several
+> device trees (e.g. mt8183-kukui-jacuzzi.dtsi, mt8183-kukui-kakadu.dtsi,
+> mt8183-kukui-krane.dtsi), but was previously generating DT schema
+> warnings.
 >
-> So if you try to use the same buffer with udl and amdgpu scanout and pin it into GTT -> error.
->
-> If you try to use the same buffer with udl and V4L and pin it into VRAM -> error.
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
 
-What you're describing is exactly the current situation for udl plus 
-amdgpu now. When udl tries to pin, amdgpu has already pinned the buffer 
-to VRAM. So it doesn't work. There needs to be at least VRAM and GTT in 
-the list. What does work is to try pinning to various domains in the 
-preferred order.
+This patch 7/9 applied to the pinctrl tree.
 
-Best regards
-Thomas
-
->
-> There is not works for everybody case here and we need to guess. Pinning it into GTT is just what works most likely.
->
-> Regards,
-> Christian.
->
->> Best regards
->> Thomas
->>
->>> Regards,
->>> Christian.
->>>
->>>> +     *
->>>> +     * This code is required for exporting to GEM-SHMEM without S/G table.
->>>> +     * Once GEM-SHMEM supports dynamic imports, it should be dropped.
->>>> +     */
->>>> +    ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_MASK);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +    ret = drm_gem_dmabuf_vmap(dma_buf, map);
->>>> +    if (ret)
->>>> +        amdgpu_bo_unpin(bo);
->>>> +
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
->>>> +{
->>>> +    struct drm_gem_object *obj = dma_buf->priv;
->>>> +    struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->>>> +
->>>> +    drm_gem_dmabuf_vunmap(dma_buf, map);
->>>> +    amdgpu_bo_unpin(bo);
->>>> +}
->>>> +
->>>>    const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>>>        .attach = amdgpu_dma_buf_attach,
->>>>        .pin = amdgpu_dma_buf_pin,
->>>> @@ -294,8 +326,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>>>        .release = drm_gem_dmabuf_release,
->>>>        .begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
->>>>        .mmap = drm_gem_dmabuf_mmap,
->>>> -    .vmap = drm_gem_dmabuf_vmap,
->>>> -    .vunmap = drm_gem_dmabuf_vunmap,
->>>> +    .vmap = amdgpu_dma_buf_vmap,
->>>> +    .vunmap = amdgpu_dma_buf_vunmap,
->>>>    };
->>>>      /**
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Yours,
+Linus Walleij
 
