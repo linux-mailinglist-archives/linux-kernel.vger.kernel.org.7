@@ -1,184 +1,248 @@
-Return-Path: <linux-kernel+bounces-774619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D54B2B51A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBF6B2B51C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6D74E4D93
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14BC526EE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A227A931;
-	Mon, 18 Aug 2025 23:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8028C22B8D0;
+	Mon, 18 Aug 2025 23:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tvEYtR27"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2069.outbound.protection.outlook.com [40.107.220.69])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BjhAlDrn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6501EB5B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755561337; cv=fail; b=izLTvt3s8RnCPSL4Mrn6mszzPPevoB5c3f5pRnK/xUkwXv+h0ThPdvdH6WajwqKI++nT8JT4e9TRNLFpJdMajS0rwCYyilBXtCbc2gDdd3ZFWdc8l5uSUPXCHpozAO9x00WnGAADcdCFWrbXq5ETrgwo/qdaQSRhRUPP12akRj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755561337; c=relaxed/simple;
-	bh=AFF5W1Wv9d4Gts8JGDpZVGAH1cacwFj6CqqzLSigD8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dV4mia+lmR3NIEYAVN0ZslX53lCVBxRhhAd6bSEePPxAnSlNP1BYk+Fnkeq5yu6+D6X6jt5vDjF1S7oUD/5zlODQHPYMM+2fRXn5YVzED/+b1t0e9hxnKj3DrrRR6WsUsNDUJ0QgwKJmfMntb7FQonNX8RAuh2LO/6gou0E9/rA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tvEYtR27; arc=fail smtp.client-ip=40.107.220.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jHumC661mCXlNSccfZTuR7nWK+589H5g4EtQUhXsEslFu1Rd/kmfGrfqFM4YhHICwI5CijrBw1YVxAdGCKi0KTlEkB2gfaY+T41eZVqn611u9wA+sfi6WX8mf8Ao6R270avd9x8hXLKdOe/tqEVwgVXPZZe+RaqLxpdZLW3HOcNBR33bFNcrN0n0JNItFPYTYgik2qFTVAE2ZS1xqM+LfVoLuivPRyCRxeQp3tYDfPjSeYlBIwhp23bH45AWXvQ0f6gm8f370W0KnNjmwEyUWoHMqltRMkB5PI0Q4x9l2jMa+OjYzbBPhV/+NCtfl4adMz7ofNSho855HxMIjbSttg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g0lSKtaqlLoP1q5HbGRu5aLkxjtXntTwY5JVSi2Fjfg=;
- b=TPFY1X+5XCVJLTulZ5hhsI/SKrL+FdlyianOz6fZUW2T6QLAjjGu43MWDFPmnuUBcvRTY7kBa0pvxRk2yAy6sDmKtj9UE9uzMMRdUfKzpGiqvevDVuymLOPP2lKK7TIvuxGFH2fJpTpItWy/bPRcp2oKPUWBPxxYKr+WGUtpHRzlkLLlGPKv0idG8oIiOrgyz/UpibAF0/O8ACQw0nFEgsJincKmKxVXcCxivYnrrlUS3U/XR4Tm40S/dotAiv2btdDzU6tlBLcsaGuzQlfNEhyeTniFZvuWuuF2SLc1SyCK/7zD8dEijyiuIxPL02NQuo/wTGiSCFY8xmJfO39sVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g0lSKtaqlLoP1q5HbGRu5aLkxjtXntTwY5JVSi2Fjfg=;
- b=tvEYtR27Gqvwm2mRUHky+qnDE4yXK5hXzK3s2iJ7yTkCZI1spXh/vJ0BSCEvR0Jw+GnfXmvjFfx6gOs5DkqXNX7BPa/eZiRa5G+TMlWWliAsiZv9ZcLaC/p1KW5qb9oMul+A1Bk8pEopbTq6cOMzQlXBYiVwhuMgx9zByqqktGyWXzU8Z23nP1qopYq/f8XFg2BjV4YVUD5YlLFqrOzeih5UdyAwUTQH21OudctbKThNycTv4p44of6SeaI4gb44gN/7oJJmmt7VQv3z0Kd9ec6bVECOdwBZskA3NSKu+IYG+x/DR504xkCrQvwb5THXzJwapU7u4M3jpECK6QT1Tw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MW3PR12MB4476.namprd12.prod.outlook.com (2603:10b6:303:2d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 23:55:32 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 23:55:31 +0000
-Date: Mon, 18 Aug 2025 20:55:29 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: saeedm@nvidia.com, itayavr@nvidia.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, Jonathan.Cameron@huawei.com,
-	Markus.Elfring@web.de, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: Re: [PATCH v2] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
-Message-ID: <20250818235529.GA1098127@nvidia.com>
-References: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
- <aKAjCoF9cT3VEbSE@bhairav-test.ee.iitb.ac.in>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKAjCoF9cT3VEbSE@bhairav-test.ee.iitb.ac.in>
-X-ClientProxiedBy: SN7P220CA0009.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:806:123::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015621EB5B;
+	Mon, 18 Aug 2025 23:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755561421; cv=none; b=PoSLKrBEgyEXn+IL240YUi4TAJpGMyYAYcQb8YRxZ7AhJohF1WS087kVPo1tnA4qzn02sZU4rqp3ngtjcpBZuhsYoov23nWSbLjjeqwLD11lpS88OtKA/ZFN0IwSM5C7+0BHkc9NvgvvwEOTC5KFQSPz4MkrpZM4VQ79IaopbAc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755561421; c=relaxed/simple;
+	bh=k2SOJJyZ30Tv1dCrQqDeA/Bl7Hdx/r6HItV5FdyXa3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q6nUvgNH2wmAlCbda5Jq6K/Brla8cZlMp96eAZPytEnIhHvsLKTQEr8yuJRXl/Tm9hV9h9RnVhVDsCsc9bmzbv03ga8ub4gTJntpG0aQ/dGdvEPxSjPGEz3ey55BD0KzL90I1w7LOeMasf/viD5iwb4LUVc8hE1UubxN1KUZKA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BjhAlDrn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5D7EDC6D;
+	Tue, 19 Aug 2025 01:55:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755561357;
+	bh=k2SOJJyZ30Tv1dCrQqDeA/Bl7Hdx/r6HItV5FdyXa3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BjhAlDrnI0QJyWBu4TgPbu7luvx2WxXd8LXtVqe1pcq7TFf9HryTeiQLvws2W95fZ
+	 m4JlOW6S8fyK5blZkT2Fg4SLJzdAvzB/1ZVl3rg7VYtjZ16cU/zlyTeK+7GxAjCxJB
+	 wvFNJLfxkrFBkbPT46b5woUgHIv4NYGhQk1pdy7s=
+Date: Tue, 19 Aug 2025 02:56:32 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Andy Walls <awalls@md.metrocast.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] media: cx18: Fix invalid access to file *
+Message-ID: <20250818235632.GB10308@pendragon.ideasonboard.com>
+References: <20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com>
+ <20250818-cx18-v4l2-fh-v3-1-5e2f08f3cadc@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW3PR12MB4476:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3fdfb7e-1659-4907-0b24-08dddeb2b709
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1Jtc1lPugmuUX9BwEOEfYTKsy337y2gxGlzJZgEtJIdxXVJ2wvw+x/g4rcNZ?=
- =?us-ascii?Q?BHVeBoAJHrwXNAMERoHdJY9Y9hKrt9ERckar6BxuNE+o2MpiNpqzqBEx4LHP?=
- =?us-ascii?Q?JakdTxlcdQXHMXJpR0sD4mlJccmQ7MICmYFZVeyXJr567FEJQODLJ6joK6Ny?=
- =?us-ascii?Q?2Cd9KysLZ1qHSTbz3q88/fqXMDVvht+Ft9D5sOCLusWQMCt6MkaU/5sWR1vP?=
- =?us-ascii?Q?y4RnMPLfa5bixcFBYNk7rAYbrxN073ThqoqRc6fFFreNXFZXHWKfwOcQ9SAR?=
- =?us-ascii?Q?E4CKNr5rTXm11As7QRJObBodVhXv2DpljA826Sll/ssXXZcqy3nBkSbuzowe?=
- =?us-ascii?Q?7jwUfaZr/YabQtvXaynzVZKEVwKg4iEeRCUpsLZPr+iaqd/6so0t3iqVhdcu?=
- =?us-ascii?Q?d7hWTZYf/xTIByYzuuKVh5HPLACdWqSXaNU2R0eFe263D356/Oswf1t3B0BW?=
- =?us-ascii?Q?POBa+0NsLBfHQLJxSQWofEWEmW7Ym+DC40p3MFZoCsxTLe/gUYvhDqOYdvkt?=
- =?us-ascii?Q?fdq5cypWaQI3M9sRAiGrCsKoQ/h9BG2P2i53CJ0BtgBE42ie3LCAUmPgrGyA?=
- =?us-ascii?Q?o2tyMUpgZGWxGrKifmRjkC3oJykivIJCrljyJeBwPiLskUUsvEVJoZ/tu0I6?=
- =?us-ascii?Q?TVEIg8xLKWV4h+3rB9J9P9sDR0ymSIhvB37ydzlbMKFDznoczVdTgjz7JMic?=
- =?us-ascii?Q?PRJWO9xcccii2JWyJ9uKFEOCEdUJwXS3Kl2el25hccVevDM+WN3kBYuXdluQ?=
- =?us-ascii?Q?HPVRaNq6vGm/2UYuyGWcO72L4bvMVnI0rD6WKKFDFVsGYT+XydTNUFk7apoC?=
- =?us-ascii?Q?SdCeRtMyPORp0qTRwvcrgRSeoMe6+GCS9DQS4UHryPfGoBCjcWgUF1LZqKdH?=
- =?us-ascii?Q?BL5l8W+jNNZuhPGgqfqt+zX8iPvgHr6d4Kj5393KeGZLfkCEUPGo1anE2tbe?=
- =?us-ascii?Q?Z4Az47Jr5D2fG6fgZ6AvpvVdzjwYHgcg4QfYWq/L/J2KU2KsuvCG01U3Y9g2?=
- =?us-ascii?Q?S7yfvvv7yNf1YU5VyTDeu/N4/Et7+HPj6Bkkdn1f5SNPvaIXezqxnB+pVUBG?=
- =?us-ascii?Q?fXWD+QAm+K/GJGhK5S0GrvNkmHrT3/QSuQO4trDrZ6QenNbnX+4Q2YYS4HG2?=
- =?us-ascii?Q?sxEylVl8FAr4ec+5zMn2Tu586iAu7809U3xXGexgR8A/AfYiX9L1TFvRXMSy?=
- =?us-ascii?Q?GcHPWV72OxLadmnGaSnORNCwxnofYC4ChlxiHsUjN0spQRm6F/sRL4F7Vwq+?=
- =?us-ascii?Q?gpmru1q+H5nzJ5ppRqyPaZ6XDabZdeSxVzUJnld55/WxJX54AEezTKzGnaOi?=
- =?us-ascii?Q?8yau1wdW0KfyYFPDaTZhbstPN8xMg/3vU5B9KkUNL4mfySkVR1kUE21o/vP0?=
- =?us-ascii?Q?wGOkAUVR+/ccJl2rwIhQpWT2DqMG8vbJcJBKb6Ph4xT/Klke2g+ix61c3PDS?=
- =?us-ascii?Q?xn0h1TU6LDE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ogHURXioQ5+qdKFczwB+9jFynJ+7KazaQ+aq0fvgk6/i9BZ0O5QQJooAEZjg?=
- =?us-ascii?Q?5rssp9HG/S9YjWFkhFlEQMiX/beBi/bnuKHsmXI9XeaWz87NwhFK8YDNm75u?=
- =?us-ascii?Q?YnJe73AZAZoV3VvAKvFrW4Cxy/cyWnZAAKFm2EYOLO1ua1hrPiSEaiur8D6Y?=
- =?us-ascii?Q?zDRdyHi/g923bYu5JWKYdQcZflh6303nDM+rz3NuobmivasOiZzf9kUHCx7f?=
- =?us-ascii?Q?/hlQwIi4ZsQ6L+USNe64ZNdq/obw599Q5IucJPhzV7xuEQXKT5teXPX3J6Np?=
- =?us-ascii?Q?+G0jYTGjsa6LHKU1Pnft1i0Hs3Wb326S+3y3ikbUJJTjfxRwBr7cmTUvP054?=
- =?us-ascii?Q?JZ14SdZOaEwaJW3grBX3kHuUhsJTG9sbOYF6AuoHnsYT8Sp1a2+HDL/x4eX6?=
- =?us-ascii?Q?qoRPBO7iZgn+I9quGwf76pETes9nHTyeReUqBUJXUbnt6DgdRu5cr2vyEyYV?=
- =?us-ascii?Q?kzs/lAjw6uYLjg/zEpCkseoIUYy//emAjKIPTbM0ypPk+egYViGmicA9UAkD?=
- =?us-ascii?Q?m9FaswJ4fLYlXqzvu1CpQOgkV2jD5geCO8EfmyD20GLk/huIb/vH37lUJcBL?=
- =?us-ascii?Q?A+vmoRGCoOEt3V25MTk921NdNy/K4Tzfshy41s0Dq/rV+u6aEKn7pkMgcTFj?=
- =?us-ascii?Q?ck3NOBtjoui1UlMDhzAvjzvbwbbbywLWXwAm1Y3A6JM0iew/pVzx3m4O0sFF?=
- =?us-ascii?Q?efcBhRczf0K2EcgZj1xdCb6c6CmO/1SV13O+DQWwT58g4ZNIe3edYTAeNDax?=
- =?us-ascii?Q?ist18aqzA85Qih8l8Lger6+6oq0L8ACbt6r2dO3RVqfsr/3zf2q5xXSMgQRG?=
- =?us-ascii?Q?wRWtWkzD7Qv3/h2Z0Ibt7gcLbMfhS4S6SjqbAJOctmgsA86OSpldRQ99VQ86?=
- =?us-ascii?Q?ZoDcfXOptEjtOJilkqmm4NxDrXcPCIJLQFd4h+aYUzepPDxBjkmCfDYTKpyH?=
- =?us-ascii?Q?SsTXlpojd2mxj2SneWYMhN20lPEsNc3qwAyzUyKi7wEBLU7Lur7xVEmcGu/B?=
- =?us-ascii?Q?yTX+rcCF3qUZK5W2N4PTTTCZM5FZC5oUiN7vU893beptk9olJfVsExCkeurW?=
- =?us-ascii?Q?5lye9NaJUiYYnRfO4wLChSaNaDvqLyUEwPXJwuw78x0iQUxxtHmyCmG0dCV+?=
- =?us-ascii?Q?9/bkKPUwSPR4tO1IgSKsT4NVtDsXK6CJf05pNIes74NslFoF+nPCAlv2fBEA?=
- =?us-ascii?Q?sxeeIW+kUTOwLju87lCbvm+lOvvWceUXFmLdZItuTDLqv5DBpngWzSmWOmL8?=
- =?us-ascii?Q?rJpC/TD1k0RkxNSx4MQr+T2rAV25VeMCyvv2Fb/QvWny9c0/z7RCew+jbidc?=
- =?us-ascii?Q?OhYdea5apIsMJvqEdYq9dwrEJvmOqRojfCf1grCbbwbRh4HGOCx+oqPYEH7J?=
- =?us-ascii?Q?qzpn9Hu4Iy5wcVQL6eqUcjTaQl3GjBw/BwBIbaBCVS9mIaueLjiM7qe/Pn3z?=
- =?us-ascii?Q?rUDMcECTJFlERvl8Z6812Rbb4CXS9sFYNMGJsCNs7QllnAlBar+N5TsWGd0P?=
- =?us-ascii?Q?wk78FDl2X3MpxzZ9PLpBCPYdQH1s/LMNGJCkJIqjkBRjMoFn+VGiFSll8gbV?=
- =?us-ascii?Q?RXcEBkxBxN89u6iPWvFYmzBF8Eok3wh/oFstCtI2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3fdfb7e-1659-4907-0b24-08dddeb2b709
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 23:55:31.5047
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I6T55Ja9ActHlDPT1pb7S0bhun7RmZsgBuMOxay+hqxyuoqTMbABa8pr4jQiefaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4476
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250818-cx18-v4l2-fh-v3-1-5e2f08f3cadc@ideasonboard.com>
 
-On Sat, Aug 16, 2025 at 11:49:54AM +0530, Akhilesh Patil wrote:
-> Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
-> Avoid potential memory management issue considering kvzalloc() can
-> internally choose to use either kmalloc() or vmalloc() based on memory
-> request and current system memory state. Hence, use more appropriate
-> kvfree() which automatically determines correct free method to avoid
-> potential hard to debug memory issues.
-> Fix this issue discovered by running spatch static analysis tool using
-> coccinelle script - scripts/coccinelle/api/kfree_mismatch.cocci
+On Mon, Aug 18, 2025 at 10:39:36PM +0200, Jacopo Mondi wrote:
+> Sice commit 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+
+s/Sice/Since/
+
+> all ioctl handlers have been ported to operate on the file * first
+> function argument.
 > 
-> Fixes: 52929c2142041 ("fwctl/mlx5: Support for communicating with mlx5 fw")
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
-> changes v1 -> v2:
-> - Update commit message with details on why this issue needs to be fixed
->   as suggested by Alison <alison.schofield@intel.com>
-> - Update commit message with details on how this issue was discovered
->   using coccinelle scripts as suggested by Markus <Markus.Elfring@web.de>
-> - Carry forward Reviewd-by tag from Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/fwctl/mlx5/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The cx18 DVB layer calls cx18_init_on_first_open() when the driver needs
+> to start streaming. This function calls the s_input(), s_std() and
+> s_frequency() ioctl handlers directly, but being called from the driver
+> context, it doesn't have a valid file * to pass them. This causes
+> the ioctl handlers to deference an invalid pointer.
+> 
+> Fix this by wrapping the ioctl handlers implementation in helper
+> functions which accepts a cx18 pointer as first argument
+> and make the cx18_init_on_first_open() function call the helpers
+> without going through the ioctl handlers.
 
-Applied to for-rc thanks
+It's the other way around, the ioctl handlers are not wrapper. I'd write
 
-Jason
+Fix this by moving the implementation of those ioctls to functions that
+take a cx18 pointer instead of a file pointer, and turn the V4L2 ioctl
+handlers into wrappers that get the cx18 from the file. When calling
+from cx18_init_on_first_open(), pass the cx18 pointer directly. This
+allows removing the fake fh in cx18_init_on_first_open().
+
+> 
+> The bug has been reported by Smatch:
+> 
+> --> 1223         cx18_s_input(NULL, &fh, video_input);
+> The patch adds a new dereference of "file" but some of the callers pass a
+> NULL pointer.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> Fixes: 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/pci/cx18/cx18-driver.c |  9 +++------
+>  drivers/media/pci/cx18/cx18-ioctl.c  | 30 +++++++++++++++++++-----------
+>  drivers/media/pci/cx18/cx18-ioctl.h  |  8 +++++---
+>  3 files changed, 27 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+> index 743fcc9613744bfc1edeffc51e908fe88520405a..cd84dfcefcf971a7adb9aac2bafb9089dbe0f33f 100644
+> --- a/drivers/media/pci/cx18/cx18-driver.c
+> +++ b/drivers/media/pci/cx18/cx18-driver.c
+> @@ -1136,11 +1136,8 @@ int cx18_init_on_first_open(struct cx18 *cx)
+>  	int video_input;
+>  	int fw_retry_count = 3;
+>  	struct v4l2_frequency vf;
+> -	struct cx18_open_id fh;
+>  	v4l2_std_id std;
+>  
+> -	fh.cx = cx;
+> -
+>  	if (test_bit(CX18_F_I_FAILED, &cx->i_flags))
+>  		return -ENXIO;
+>  
+> @@ -1220,14 +1217,14 @@ int cx18_init_on_first_open(struct cx18 *cx)
+>  
+>  	video_input = cx->active_input;
+>  	cx->active_input++;	/* Force update of input */
+> -	cx18_s_input(NULL, &fh, video_input);
+> +	cx18_do_s_input(cx, video_input);
+>  
+>  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+>  	   in one place. */
+>  	cx->std++;		/* Force full standard initialization */
+>  	std = (cx->tuner_std == V4L2_STD_ALL) ? V4L2_STD_NTSC_M : cx->tuner_std;
+> -	cx18_s_std(NULL, &fh, std);
+> -	cx18_s_frequency(NULL, &fh, &vf);
+> +	cx18_do_s_std(cx, std);
+> +	cx18_do_s_frequency(cx, &vf);
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/media/pci/cx18/cx18-ioctl.c b/drivers/media/pci/cx18/cx18-ioctl.c
+> index bf16d36448f888d9326b5f4a8f9c8f0e13d0c3a1..6e869c43cbd520feb720a71d8eb2dd60c05b0ae9 100644
+> --- a/drivers/media/pci/cx18/cx18-ioctl.c
+> +++ b/drivers/media/pci/cx18/cx18-ioctl.c
+> @@ -521,10 +521,8 @@ static int cx18_g_input(struct file *file, void *fh, unsigned int *i)
+>  	return 0;
+>  }
+>  
+> -int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+> +int cx18_do_s_input(struct cx18 *cx, unsigned int inp)
+>  {
+> -	struct cx18_open_id *id = file2id(file);
+> -	struct cx18 *cx = id->cx;
+>  	v4l2_std_id std = V4L2_STD_ALL;
+>  	const struct cx18_card_video_input *card_input =
+>  				cx->card->video_inputs + inp;
+> @@ -558,6 +556,11 @@ int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+>  	return 0;
+>  }
+>  
+> +static int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+> +{
+> +	return cx18_do_s_input(file2id(file)->cx, inp);
+> +}
+> +
+>  static int cx18_g_frequency(struct file *file, void *fh,
+>  				struct v4l2_frequency *vf)
+>  {
+> @@ -570,11 +573,8 @@ static int cx18_g_frequency(struct file *file, void *fh,
+>  	return 0;
+>  }
+>  
+> -int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> +int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf)
+>  {
+> -	struct cx18_open_id *id = file2id(file);
+> -	struct cx18 *cx = id->cx;
+> -
+>  	if (vf->tuner != 0)
+>  		return -EINVAL;
+>  
+> @@ -585,6 +585,12 @@ int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+>  	return 0;
+>  }
+>  
+> +static int cx18_s_frequency(struct file *file, void *fh,
+> +			    const struct v4l2_frequency *vf)
+> +{
+> +	return cx18_do_s_frequency(file2id(file)->cx, vf);
+> +}
+> +
+>  static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
+>  {
+>  	struct cx18 *cx = file2id(file)->cx;
+> @@ -593,11 +599,8 @@ static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
+>  	return 0;
+>  }
+>  
+> -int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+> +int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std)
+>  {
+> -	struct cx18_open_id *id = file2id(file);
+> -	struct cx18 *cx = id->cx;
+> -
+>  	if ((std & V4L2_STD_ALL) == 0)
+>  		return -EINVAL;
+>  
+> @@ -642,6 +645,11 @@ int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+>  	return 0;
+>  }
+>  
+> +static int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+> +{
+> +	return cx18_do_s_std(file2id(file)->cx, std);
+> +}
+> +
+>  static int cx18_s_tuner(struct file *file, void *fh, const struct v4l2_tuner *vt)
+>  {
+>  	struct cx18_open_id *id = file2id(file);
+> diff --git a/drivers/media/pci/cx18/cx18-ioctl.h b/drivers/media/pci/cx18/cx18-ioctl.h
+> index 221e2400fb3e2d817eaff7515fa89eb94f2d7f8a..7a42ac99312ab6502e1abe4f3d5c88c9c7f144f3 100644
+> --- a/drivers/media/pci/cx18/cx18-ioctl.h
+> +++ b/drivers/media/pci/cx18/cx18-ioctl.h
+> @@ -12,6 +12,8 @@ u16 cx18_service2vbi(int type);
+>  void cx18_expand_service_set(struct v4l2_sliced_vbi_format *fmt, int is_pal);
+>  u16 cx18_get_service_set(struct v4l2_sliced_vbi_format *fmt);
+>  void cx18_set_funcs(struct video_device *vdev);
+> -int cx18_s_std(struct file *file, void *fh, v4l2_std_id std);
+> -int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> -int cx18_s_input(struct file *file, void *fh, unsigned int inp);
+> +
+> +struct cx18;
+> +int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std);
+> +int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf);
+> +int cx18_do_s_input(struct cx18 *cx, unsigned int inp);
+> 
+
+-- 
+Regards,
+
+Laurent Pinchart
 
