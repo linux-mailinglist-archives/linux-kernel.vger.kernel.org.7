@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-774365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ACAB2B161
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF0AB2B165
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77FA32A7AAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F188D2A7FB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556AA274649;
-	Mon, 18 Aug 2025 19:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E78274FCB;
+	Mon, 18 Aug 2025 19:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ECWbyR/8"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSQq1w5J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C42A3451C5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0AF3451B2;
+	Mon, 18 Aug 2025 19:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755544256; cv=none; b=AP220CkfRRkTRzdjtc9m5MTnckQDkboXrQbMLpglIJVUasXrKKA7SPJ6lXQN3NefNQGrgfuesxzxf5q3XrP0GR403ZGGxtpAsBKz+euMc5uas2iMkoJW4HHg0IaN+ei9DdD03WamHzgPAr8W/2dV4L8YdUU7Q3BYkCY5QFoqj1M=
+	t=1755544269; cv=none; b=dfaL0tx51eY1ojSxHh5U/M62jKCtsqh1MfIF4f3xLL5OM0SUulNGHFm2E0uGUYCL8fQUhxyqetZQem5rYdY9ZPN3r4AjoctDlKSf79nzGBa3vrTOkuhMpHqA4MvSf+NcQ8NYR94dDLOboSDwlW9RqkX+0srWf3ig+D72tb3Cwtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755544256; c=relaxed/simple;
-	bh=hH9A4ga/R+X23C4gJ+oGriVYHNeRobhPQRPx1lX/z8k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TxwkLkW7w2S1fgt2hvRoVZCVqWJzYOQt+vaxoS9uc6DuBcOkUbW30kk75XpbyjDj2AqNee5JrpRwGyRS57oRJFWuxvbtJZRxfKHe+Um0VmdlUH9eBcqpoFpE6SNdk3XJVd9YCLM9V+hMvUTIbwsi0YTprOpuz77qBNBTUtjK5eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ECWbyR/8; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3e66937e452so7278765ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755544253; x=1756149053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98s4oxjoCh9JFMdNor4pD8PSiVTI+34Wp/PkZUG9epY=;
-        b=ECWbyR/8GEFEjhhelsoRYVb9Qh6gM3j+rROQFNH0RcT9Wg4WB7s/zzguZGi6NVWG4R
-         XrGxNFesBBdigVyNHgzmVm6+KunnElc7mCgUwWqbKHXm4YVmD5rCIxswgPzvaGXku55o
-         tKIAnHrHBF3ppTWBMMuXtijXFRpQk/tlH0AtHP1XgtoAJ95e8xS4ceYnOTuPBNvmxa3g
-         dYpRVCFN8irnPh550e5zRzDcj5WFYqZOfMA8O2+4rMv12SuTthmpAvGBwyOVfx7gZk1+
-         VCPneoUZlgNgyPF5x6rS4VZzUjtK9UMRJm0C+dGpeu4IGh8fXA7GTRjSSf+L4g5KMINe
-         K5qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755544253; x=1756149053;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=98s4oxjoCh9JFMdNor4pD8PSiVTI+34Wp/PkZUG9epY=;
-        b=astf6OBG2yz6ENYoQ7wcaUDuvRHlZbT5L+83aEZiRHsgcn1nCwvAB13QEAcsmfd+fd
-         kgucgr45o94obQutgyodRPSd37K6WVuMThDg5JjLDRQ0ZKAkbgWegh7ZuRC/3KW6/Yat
-         7U05/I86kjongEAii7E0e4XkcwxGlQ+7PXpj0ZIQffvGe3wuQQfh+DOSovC3P57Z8ZTq
-         2oYIz4WDY8d/M6vCNv+m85PN8KE864G6AZaTSWCfa656P40uEgRpIdwPqB17vbHh6GHp
-         56YJxc05JsvQW5O1UflSvbyFYn3V0rs6bXt3S3HGCpb246J6zO4vbR+rM+ZMI37eYKK4
-         lCyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFkhXsPKicBn2nTe8jdn+QKJ9in5aTN1H6dXSfSEvDx8zkgPKav6ifXgYG0U+L/+heF5myj45Qhh/tPDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOhLVKUdmDWqx8N6K9OTc+uIvuurEX6JS2GYzYoXNUO04Odh+Y
-	biSjpfh3K8Cn9XzXjl5gBzWsNW+K1NJOCCnTeNelSrGAl1/VBgW1LvjLDqp9F2QGoJg=
-X-Gm-Gg: ASbGncvQLc212cSNGbmiIZqNgQbRvy7RGlTFoQ0WKTAXNcB7faD4XcMftqoeg+PycUZ
-	iqfvTrgfPMbwAuMpj3UtU/Acq9SZvZMdf8+WCl/TPYrwJKvxrhgmtcohK0dtRAqeWK3V2490eLZ
-	LD4W6dvRKx4WxDzxWgaGWQJN4cCbYRCMkR+amrKS3xpvAlmg9BbQFK7S9KRgum3Mgyu73oqfOOc
-	mUUFCuUi/IwGgy27+Q5SN7afNxVotPrtIjgmW61wmys1nqOAni8mjxGeOLeQvqZE4UX0czs8gjy
-	90c7nunQF8HWPdvMLQU5tEXh9khWYeJklUsjDWN2cTTmtAKutck2HdOj6G4dbFRtLn/KxgA1kDM
-	D1u2EmrrKBo08kMYP67g0jrrc
-X-Google-Smtp-Source: AGHT+IExPQWHNXEp87a6gdTrRalijU8TTfNUlXZ8z/6M63ZuM5HFn5QSpjqem+d6JzrncNeyYbRK+Q==
-X-Received: by 2002:a05:6e02:2705:b0:3e5:5937:e54d with SMTP id e9e14a558f8ab-3e57e9c8e73mr229307185ab.15.1755544253574;
-        Mon, 18 Aug 2025 12:10:53 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e667540aa6sm19589805ab.32.2025.08.18.12.10.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 12:10:52 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: yukuai1@huaweicloud.com, Rajeev Mishra <rajeevm@hpe.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250818184821.115033-1-rajeevm@hpe.com>
-References: <20250818184821.115033-1-rajeevm@hpe.com>
-Subject: Re: fixed commit message
-Message-Id: <175554425273.106072.9130682116879021274.b4-ty@kernel.dk>
-Date: Mon, 18 Aug 2025 13:10:52 -0600
+	s=arc-20240116; t=1755544269; c=relaxed/simple;
+	bh=OZK5CyXw1PInn/yqI4pDY8A9Y5pwSG9xCax8VqYzUdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ndTrS6uxs7het8I6oBcaGxQ+3iS8ABbK01/bNHG6Fp5JKolMsSHeENPROVEAyoJuYDSQJV2lnWF0EVB/XjEQf/RjeJKhhcEZfxfNVLiXbVZwYE8Z9K0Tm34yTH7q4hFcoWA8KwxrxaIzt7Tw2yrmqceZKYtmYj3FB2nMfc83emg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSQq1w5J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5769AC4CEEB;
+	Mon, 18 Aug 2025 19:11:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755544269;
+	bh=OZK5CyXw1PInn/yqI4pDY8A9Y5pwSG9xCax8VqYzUdI=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=BSQq1w5JizmpSZUf4s5+tSO15Q/XuPUlIXNgf1lPgC6Pnth2YBndwPcZNe43Yz22l
+	 aiAO/8djv6cgRjptjNlsO74pfWV92BT333yfBGhdxxO98IDtl22SSCsx3zVYv4NqzB
+	 +BYzAH6+UQvq8qtZXQQ3H0ovg0z8at8SU1kKuzNcG+QMQnJGJclFDJwzkORw/cyvpw
+	 XzRJ6qLivhVK38NONmfhs3MqKXQMUPujPlT2Tk37jMqef1ss8NnQOXHk83xn7Ll5mD
+	 nyG/zTRJhjyz+DA7kC0kkMqTnXtCU4WEEjdG0E10KmP7TTsNiGgMRdmHrMmelN8F1f
+	 tOfVwQIQBekwg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 07D41CE0CC4; Mon, 18 Aug 2025 12:11:09 -0700 (PDT)
+Date: Mon, 18 Aug 2025 12:11:09 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFC] net: stmmac: Make DWMAC_ROCKCHIP and DWMAC_STM32 depend
+ on PM_SLEEP
+Message-ID: <7ee6a142-1ed9-4874-83b7-128031e41874@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hello!
 
-On Mon, 18 Aug 2025 18:48:19 +0000, Rajeev Mishra wrote:
-> fixed the commit message
-> Rajeev Mishra (2):
->   loop: Consolidate size calculation logic into lo_calculate_size()
->   loop: use vfs_getattr_nosec for accurate file size
-> 
-> drivers/block/loop.c | 39 +++++++++++++++++++++------------------
->  1 file changed, 21 insertions(+), 18 deletions(-)
-> 
-> [...]
+This might be more of a bug report than a patch, but here goes...
 
-Applied, thanks!
+Running rcuscale or refscale performance tests on datacenter ARM systems
+gives the following build errors with CONFIG_HIBERNATION=n:
 
-[1/2] loop: Consolidate size calculation logic into lo_calculate_size()
-      commit: 8aa5a3b68ad144da49a3d17f165e6561255e3529
-[2/2] loop: use vfs_getattr_nosec for accurate file size
-      commit: 47b71abd58461a67cae71d2f2a9d44379e4e2fcf
+ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-rk.ko] undefined!
+ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.ko] undefined!
 
-Best regards,
--- 
-Jens Axboe
+The problem is that these two drivers unconditionally reference
+stmmac_simple_pm_ops, which is not exported to modules in kernels built
+without CONFIG_PM_SLEEP, which depends on CONFIG_HIBERNATION.
 
+Therefore, update drivers/net/ethernet/stmicro/stmmac/Kconfig so that
+CONFIG_DWMAC_ROCKCHIP and CONFIG_DWMAC_STM32 depend on CONFIG_PM_SLEEP,
+thus preventing the dependence on a symbol when it is not exported.
+With this change, rcuscale and refscale build and run happily on the
+ARM system that I have access to.
 
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: <netdev@vger.kernel.org>
+Cc: <linux-stm32@st-md-mailman.stormreply.com>
+Cc: <linux-arm-kernel@lists.infradead.org>
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index 67fa879b1e521e..150f662953a24b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -146,7 +146,7 @@ config DWMAC_RENESAS_GBETH
+ config DWMAC_ROCKCHIP
+ 	tristate "Rockchip dwmac support"
+ 	default ARCH_ROCKCHIP
+-	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
++	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST) && PM_SLEEP
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for Ethernet controller on Rockchip RK3288 SoC.
+@@ -231,7 +231,7 @@ config DWMAC_STI
+ config DWMAC_STM32
+ 	tristate "STM32 DWMAC support"
+ 	default ARCH_STM32
+-	depends on OF && HAS_IOMEM && (ARCH_STM32 || COMPILE_TEST)
++	depends on OF && HAS_IOMEM && (ARCH_STM32 || COMPILE_TEST) && PM_SLEEP
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for ethernet controller on STM32 SOCs.
 
